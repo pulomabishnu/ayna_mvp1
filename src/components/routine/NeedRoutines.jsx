@@ -67,7 +67,7 @@ function StartItem({ routine, item, act, onOpenProduct, onCheckIn, alternatives 
           {item.kind === 'product'
             ? <h4><button type="button" className="ay-rx__namebtn" onClick={() => onOpenProduct?.(item.product)}>{item.title}</button></h4>
             : <h4>{item.title}</h4>}
-          {(pct || item.owned) && <p className="ay-rx__meta">{[pct, item.owned ? 'You have this' : ''].filter(Boolean).join(' · ')}</p>}
+          {(pct || item.owned || item.suggested) && <p className="ay-rx__meta">{[pct, item.owned ? 'You have this' : item.suggested ? 'Suggested for you' : ''].filter(Boolean).join(' · ')}</p>}
         </div>
       </div>
       <Facts item={item} onCheckIn={onCheckIn} />

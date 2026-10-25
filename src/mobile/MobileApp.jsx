@@ -258,7 +258,8 @@ function seedEcosystemFromAnswers(quizAnswers, matchOpts) {
   const { mergedProducts, seedMeta } = getEcosystemSeedFromQuiz(quizAnswers, null, matchOpts);
   return capProductsPerBrand(Object.values(mergedProducts || {}).map((p) => {
     const area = resolveEcosystemProductArea(p, REAL_ECOSYSTEM_AREAS);
-    return { ...p, areaKey: area ? area.key : null, needId: seedMeta?.[p.id]?.needId || null };
+    // intakeGenerated: ayna picked it from her answers, she did not add it (QA M3; same flag as the website).
+    return { ...p, areaKey: area ? area.key : null, needId: seedMeta?.[p.id]?.needId || null, intakeGenerated: true };
   }));
 }
 
@@ -979,6 +980,9 @@ export default function MobileApp() {
     const ecosystemProduct = {
       ...product,
       areaKey: product.areaKey || area?.key || null,
+      // She added it herself, so it is hers even if ayna suggested it first.
+      intakeGenerated: false,
+      userAdded: true,
     };
 
     addedHaptic();

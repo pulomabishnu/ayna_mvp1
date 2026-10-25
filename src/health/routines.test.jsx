@@ -118,3 +118,29 @@ describe('remembered', () => {
     expect(m.has('heat')).toBe(false);
   });
 });
+
+describe('QA M3: auto-built picks are suggestions, not hers', async () => {
+  const { renderToStaticMarkup } = await import('react-dom/server');
+  const { default: NeedRoutines } = await import('../components/routine/NeedRoutines.jsx');
+  const items = (inRoutine, prefs = {}) => { const [r] = buildRoutines({ needs: ['period_pain'], profile: notPregnant, catalog, inRoutine, prefs }); return [...r.start, ...r.other].filter((x) => x.kind === 'product'); };
+  it('a quiz-seeded pick is "suggested", not owned', () => {
+    const a = items({ 'p-heat-a': { ...heatPad, intakeGenerated: true } }).find((x) => x.ref === 'p-heat-a');
+    expect(a.owned).toBe(false);
+    expect(a.suggested).toBe(true);
+    expect(a.inRoutine).toBe(true);
+  });
+  it('one she added, or marked as hers, is owned', () => {
+    expect(items({ 'p-heat-a': heatPad }).find((x) => x.ref === 'p-heat-a').owned).toBe(true);
+    expect(items({ 'p-heat-a': { ...heatPad, intakeGenerated: true, userAdded: true } }).find((x) => x.ref === 'p-heat-a').owned).toBe(true);
+    const marked = items({ 'p-heat-a': { ...heatPad, intakeGenerated: true } }, { owned: { 'p-heat-a': true } }).find((x) => x.ref === 'p-heat-a');
+    expect(marked.owned).toBe(true);
+    expect(marked.suggested).toBe(false);
+  });
+  it('the card says "Suggested for you", never "You have this", for an auto pick', () => {
+    const [r] = buildRoutines({ needs: ['period_pain'], profile: notPregnant, catalog, inRoutine: { 'p-heat-a': { ...heatPad, intakeGenerated: true } } });
+    const state = { routines: [r], act: new Proxy({}, { get: () => () => {} }), note: null, alternativesFor: () => [] };
+    const html = renderToStaticMarkup(<NeedRoutines state={state} variant="app" />);
+    expect(html).toContain('Suggested for you');
+    expect(html).not.toContain('You have this');
+  });
+});

@@ -169,6 +169,8 @@ export function routineProducts(needId, { catalog = [], inRoutine = {}, detailsF
  *   today      'YYYY-MM-DD'
  * @returns {Array<{ need, title, start, track, other, later, tried, postponed, hiddenCount }>}
  */
+const isAutoPick = (p) => Boolean(p && typeof p === 'object' && !p._userSwapped && !p.userAdded && (p.intakeGenerated || p.llmGenerated));
+
 export function buildRoutines({ needs = {}, profile = null, catalog = [], inRoutine = {}, detailsFor = null, tries = [], prefs = {}, today = todayKey(), saved = {}, omitted = {} } = {}) {
   const ctx = safetyContextFrom(profile || null);
   const ids = (Array.isArray(needs) ? needs : Object.keys(needs || {})).filter((id) => ROUTINE_NEEDS[id]);
@@ -181,7 +183,14 @@ export function buildRoutines({ needs = {}, profile = null, catalog = [], inRout
       .map((cls) => actionItem(cls, needId, ctx, tries))
       .filter(Boolean);
     const products = routineProducts(needId, { catalog, inRoutine, detailsFor, ctx, hidden: omitted })
-      .map((r) => ({ ...productItem(r.product, needId, { details: r.details, intakeNeeds, tries }), owned: r.owned || Boolean(prefs.owned?.[r.product.id]), inRoutine: r.owned, saved: Boolean(saved[r.product.id]) }));
+      .map((r) => {
+        // Only what she added or marked as hers counts as hers. A pick ayna
+        // built from her answers (quiz seed, AI build) is "Suggested for you"
+        // (QA M3; same rule as utils/ecosystemStore.js isGeneratedPick).
+        const auto = r.owned && isAutoPick(inRoutine[r.product.id]);
+        const owned = (r.owned && !auto) || Boolean(prefs.owned?.[r.product.id]);
+        return { ...productItem(r.product, needId, { details: r.details, intakeNeeds, tries }), owned, suggested: auto && !owned, inRoutine: r.owned, saved: Boolean(saved[r.product.id]) };
+      });
     const all = [...actions, ...products];
     const byKey = new Map(all.map((it) => [it.key, it]));
 

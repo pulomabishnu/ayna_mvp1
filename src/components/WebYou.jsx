@@ -163,7 +163,7 @@ function relativeDay(iso) {
 /* Same as the app's "Recently": Ecosystem products (dated ones first), saved
    products and finished reads, taking turns. Only real dates are shown. */
 function buildRecent(products, savedProducts, progress, articles) {
-  const eco = [...products].reverse().filter((p) => p?.id).map((p) => ({ key: `eco-${p.id}`, label: 'In your routine', product: { ...(PRODUCT_BY_ID.get(p.id) || {}), ...p }, at: p.addedAt || null }));
+  const eco = [...products].reverse().filter((p) => p?.id).map((p) => ({ key: `eco-${p.id}`, label: (p.intakeGenerated || p.llmGenerated) && !p._userSwapped && !p.userAdded ? 'Suggested for you' : 'In your routine', product: { ...(PRODUCT_BY_ID.get(p.id) || {}), ...p }, at: p.addedAt || null }));
   const ecoIds = new Set(products.map((p) => p?.id));
   const saved = Object.values(savedProducts || {}).filter(Boolean).reverse().filter((p) => p?.id && !ecoIds.has(p.id))
     .map((p) => ({ key: `saved-${p.id}`, label: 'Saved', product: { ...(PRODUCT_BY_ID.get(p.id) || {}), ...p }, at: null }));

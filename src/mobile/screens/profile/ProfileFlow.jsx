@@ -337,7 +337,7 @@ const CATALOG_BY_ID = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
  * nothing else stores one, so those show without "x days ago".
  */
 function buildRecent({ myProducts = [], savedProducts = {}, readProgress = {} }) {
-  const eco = [...myProducts].reverse().filter((p) => p?.id).map((p) => ({ key: `eco-${p.id}`, kind: 'eco', label: 'In your routine', product: p, title: p.name, at: p.addedAt || null }));
+  const eco = [...myProducts].reverse().filter((p) => p?.id).map((p) => ({ key: `eco-${p.id}`, kind: 'eco', label: (p.intakeGenerated || p.llmGenerated) && !p._userSwapped && !p.userAdded ? 'Suggested for you' : 'In your routine', product: p, title: p.name, at: p.addedAt || null }));
   const ecoIds = new Set(myProducts.map((p) => p?.id));
   const saved = Object.values(savedProducts || {}).reverse()
     .filter((p) => p?.id && !ecoIds.has(p.id))
