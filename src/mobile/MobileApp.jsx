@@ -17,6 +17,7 @@ import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from '../utils/ecosystemStore.js';
+import { forYouPicks } from './utils/forYouPicks.js';
 import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake.js';
 import { behaviorFrom } from '../utils/matchDisplay.js';
@@ -862,10 +863,8 @@ export default function MobileApp() {
   }, [baseMatchOpts, healthContext, healthRecords, outcomeHistory]);
   const suggestedEcosystemProducts = useMemo(() => {
     if (!effectiveQuizAnswers) return [];
-    const savedIds = new Set(myProducts.map((product) => product.id));
-    return seedEcosystemFromAnswers(effectiveQuizAnswers, matchOpts)
-      .filter((product) => !savedIds.has(product.id))
-      .slice(0, 6);
+    // Only what she added herself is left out (utils/forYouPicks.js).
+    return forYouPicks(seedEcosystemFromAnswers(effectiveQuizAnswers, matchOpts), myProducts, 6);
   }, [effectiveQuizAnswers, myProducts, matchOpts]);
 
   // End of the quiz (connect -> plan -> matches): her new answers wait in

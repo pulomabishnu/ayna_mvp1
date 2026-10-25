@@ -71,6 +71,8 @@ export const getProfileMatchLabelsForProduct = call('getProfileMatchLabelsForPro
 export const getEcosystemSeedFromQuiz = call('getEcosystemSeedFromQuiz', () => ({ seedMeta: null, mergedProducts: {}, shelves: [] }));
 export const getProfileMatchPercentForProduct = call('getProfileMatchPercentForProduct', () => null);
 export const getProductRelevanceScore = call('getProductRelevanceScore', () => null);
+// Nothing implies a fit before the catalog (and its eligibility gate) loads.
+export const fitsHerProfile = call('fitsHerProfile', () => false);
 export const isTeenProduct = call('isTeenProduct', () => false);
 // Rx-only care gate: nothing passes before the catalog loads (it can't be checked yet).
 export const filterPrescriptionCareGate = call('filterPrescriptionCareGate', () => []);

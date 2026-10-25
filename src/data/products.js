@@ -1940,6 +1940,21 @@ export function getProductMatchDetailsForProduct(product, quizAnswers, healthPro
     return buildMatchDetails(product, quizAnswers, healthProfile, opts);
 }
 
+/**
+ * Can this product sit in a list that implies it fits her (a For you
+ * fallback, a "Products" row under her profile)? No for "Not for me", an
+ * exclusion, or bleeding after menopause (B1). True without a profile.
+ */
+export function fitsHerProfile(product, quizAnswers, healthProfile = null, opts = {}) {
+    if (!product || !quizAnswers) return true;
+    const d = buildMatchDetails(product, quizAnswers, healthProfile, opts);
+    if (d.eligible === false || d.matchStatus === 'excluded' || d.matchStatus === 'bleeding-evaluation') return false;
+    // Bleeding after menopause: no period product or accessory (a cup steamer) either.
+    if (d.careFlags?.contradictions?.some((c) => c.code === 'period_need_vs_stage') && PERIOD_PRODUCT_CATEGORIES.has(String(product.category || '').toLowerCase())) return false;
+    return true;
+}
+const PERIOD_PRODUCT_CATEGORIES = new Set(['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cup-steamer', 'liner', 'pantyliner']);
+
 export function getProductRelevanceScore(product, quizAnswers, healthProfile = null, opts = {}) {
     const d = buildMatchDetails(product, quizAnswers, healthProfile, opts);
     // A safety hold has no percent to show; 0 keeps it last when sorting.
@@ -2408,5 +2423,6 @@ provideCatalog({
     filterPrescriptionCareGate,
     getProfileMatchPercentForProduct,
     getProductRelevanceScore,
+    fitsHerProfile,
     isTeenProduct,
 });

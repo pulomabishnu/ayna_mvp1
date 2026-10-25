@@ -14,6 +14,7 @@ import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { rankReadsForProfile } from '../utils/personalReads.js';
 import { readRecentSearches, rememberSearch, clearRecentSearches } from '../../utils/search/recentSearches.js';
 import { FAMILIAR_PHRASES } from '../../components/shop/shopNeeds.js';
+import { fitsHerProfile } from '../../data/catalog.js';
 import '../explore.css';
 
 const ROW = 8;
@@ -138,7 +139,7 @@ export default function ExploreScreen(props) {
               {onStartQuiz && <button type="button" className="ax-invite__go" onClick={onStartQuiz}>Create your health profile</button>}
             </div></>}
       </section>
-      {!(hasProfile && forYouProducts.length > 0) && <section className="ax-sec" aria-labelledby="ax-products-h"><SectionHead id="ax-products-h" title="Products" onAll={() => go('products')} allLabel="See all" />{productRow(catalog.slice(0, ROW))}</section>}
+      {!(hasProfile && forYouProducts.length > 0) && <section className="ax-sec" aria-labelledby="ax-products-h"><SectionHead id="ax-products-h" title="Products" onAll={() => go('products')} allLabel="See all" />{productRow((hasProfile ? catalog.filter((p) => fitsHerProfile(p, quizAnswers || lastQuizAnswers, null, matchOpts || undefined)) : catalog).slice(0, ROW))}</section>}
       {(forYouReads.length > 0 || articles.length > 0) && <section className="ax-sec" aria-labelledby="ax-res-h"><SectionHead id="ax-res-h" title={forYouReads.length ? 'Reads for you' : 'Reads'} onAll={() => go('resources')} allLabel="Open Library" />{readRow(forYouReads.length ? forYouReads : articles.slice(0, 4))}</section>}
     </>;
   }

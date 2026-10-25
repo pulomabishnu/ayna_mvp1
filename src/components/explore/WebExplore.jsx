@@ -5,7 +5,7 @@ import { minutesFor } from '../library/readTime.js';
 import { ARTICLES } from '../Articles.jsx';
 import { ExploreHeader } from './ExploreNav.jsx';
 import { FOR_YOU_EMPTY } from '../nav/mainTabs.js';
-import { ALL_PRODUCTS, getProductById, getProductMatchDetailsForProduct, filterPrescriptionCareGate } from '../../data/products.js';
+import { ALL_PRODUCTS, getProductById, getProductMatchDetailsForProduct, filterPrescriptionCareGate, fitsHerProfile } from '../../data/products.js';
 import { RELEASED_STARTUPS } from '../../data/startups.js';
 import { matchBadge, isSafetyHold } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
@@ -157,7 +157,7 @@ export default function WebExplore({
               {onStartQuiz && <button type="button" className="ay-btn ay-btn--primary" onClick={onStartQuiz}>Create your health profile</button>}
             </div>}
         </section>}
-      {!(hasProfile && forYou.length > 0) && <section className="wx-sec" aria-labelledby="wx-products-h">{head('wx-products-h', 'Products', allLink('products', 'See all products'))}{productRow(products.slice(0, ROW), 'explore_overview')}</section>}
+      {!(hasProfile && forYou.length > 0) && <section className="wx-sec" aria-labelledby="wx-products-h">{head('wx-products-h', 'Products', allLink('products', 'See all products'))}{productRow((hasProfile ? products.filter((p) => fitsHerProfile(p, quizResults, healthProfile, matchOpts)) : products).slice(0, ROW), 'explore_overview')}</section>}
       <section className="wx-sec" aria-labelledby="wx-res-h">{head('wx-res-h', 'Resources', allLink('resources', `All ${ARTICLES.length} reads`))}{readRow(ARTICLES.slice(0, 6))}</section>
     </>;
   }
