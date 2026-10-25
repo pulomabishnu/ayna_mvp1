@@ -142,6 +142,7 @@ import './styles/chrome.css';
 // Oct 21-22 design language as one kit, then the per-screen pass (DESIGN_SYSTEM_OCT25).
 import './styles/ds.css';
 import './styles/ds-screens.css';
+import './styles/product-card-ds.css';
 import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';

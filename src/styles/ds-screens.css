@@ -122,8 +122,6 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.is-compac
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-head .ay-h2 { font: 700 var(--ay-type-h2)/1.12 var(--ay-heading) !important; letter-spacing: -.02em !important; }
 /* product rows: Shop's tile */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-row { padding: 4px 6px 10px 2px; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) :is(.wx-row, .wx-grid) .ay-product-card__tile { border: 1.5px solid var(--ds-line) !important; border-radius: var(--ds-r) !important; box-shadow: var(--ds-shadow) !important; transition: transform .15s, box-shadow .15s; }
-@media (hover: hover) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) :is(.wx-row, .wx-grid) .ay-product-card__link:hover .ay-product-card__tile { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ds-line) !important; } }
 /* category chips as stickers: outline + 3px hard shadow, a pop of pink when on */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-topics { gap: 10px 10px; padding: 2px 4px 6px 0; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec:not(.wx-phrases) .wx-topics .ay-chip { border: 1.5px solid var(--ds-line) !important; background: var(--ds-group) !important; color: var(--ds-ink) !important; box-shadow: 3px 3px 0 var(--ds-line) !important; font-weight: 600 !important; transition: transform .15s, box-shadow .15s; }
