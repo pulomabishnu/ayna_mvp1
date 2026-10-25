@@ -12,7 +12,7 @@ import './reference-system.css';
 import './tokens.css';
 import './app-play.css';
 import './no-focus-ring.css';
-import { ALL_PRODUCTS, getProductById, getEcosystemAlternatives, getEcosystemSeedFromQuiz, filterPrescriptionCareGate, hydrateCatalogProduct, getSelectedNeeds } from '../data/products.js';
+import { ALL_PRODUCTS, getProductById, getEcosystemAlternatives, getEcosystemSeedFromQuiz, filterPrescriptionCareGate, hydrateCatalogProduct, getSelectedNeeds, getProductMatchDetailsForProduct } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
@@ -1789,6 +1789,8 @@ export default function MobileApp() {
           product={sheetProduct}
           onClose={() => setSheetProduct(null)}
           matchState={productMatchState(sheetProduct, effectiveQuizAnswers, matchOpts)}
+          details={effectiveQuizAnswers ? getProductMatchDetailsForProduct(sheetProduct, effectiveQuizAnswers, null, matchOpts) : null}
+          onAsk={(q) => { setSheetProduct(null); nav.onAskAyna({ question: q }); }}
           saved={isSaved(sheetProduct.id)}
           onToggleSaved={handleToggleSaved}
           inRoutine={myProducts.some((p) => p.id === sheetProduct.id)}

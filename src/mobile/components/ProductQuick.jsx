@@ -20,13 +20,13 @@ export function SheetMatch({ state }) {
 }
 
 /** Buy (the existing buy link, with "You're leaving ayna"), Save, Add to my routine. One tap each. */
-export function ProductQuickActions({ product, saved, onToggleSaved, inRoutine, onAddToRoutine, placement = 'product_sheet', compact = false }) {
+export function ProductQuickActions({ product, saved, onToggleSaved, inRoutine, onAddToRoutine, placement = 'product_sheet', compact = false, big = false }) {
   const buyUrl = getBuyUrl(product);
   const label = product?.category === 'telehealth' ? 'Book' : product?.type === 'digital' ? 'Get the app' : 'Buy';
   return (
     <div className={`ay-pquick${compact ? ' is-compact' : ''}`} data-tour="quick-actions">
-      <div className="ay-pquick__row">
-        {buyUrl && <a className="ay-pquick__buy" href={buyUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement })}>{label}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens the seller’s site)</span></a>}
+      <div className={`ay-pquick__row${big ? ' ayv-actions' : ''}`}>
+        {buyUrl && <a className={`ay-pquick__buy${big ? ' ayv-buy' : ''}`} href={buyUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement })}>{label}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens the seller’s site)</span></a>}
         {onToggleSaved && <button type="button" className={`ay-pquick__save${saved ? ' is-on' : ''}`} aria-pressed={saved} onClick={() => onToggleSaved(product)} aria-label={saved ? `Saved. Remove ${product?.name} from Saved` : `Save ${product?.name}`}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
           <span>{saved ? 'Saved' : 'Save'}</span>

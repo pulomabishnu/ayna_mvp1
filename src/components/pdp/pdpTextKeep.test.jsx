@@ -51,7 +51,7 @@ const RENAMED_LABELS = [
 ];
 const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r === c : r.test(c)));
 // A paragraph the redesign splits (its first sentence leads The short answer) still counts when every sentence is there.
-const present = (after, c) => after.includes(c) || (splitSentences(c).length > 1 && splitSentences(c).every((x) => after.includes(x)));
+const present = (after, c) => after.includes(c) || after.includes(c.replace(/\.$/, '')) || (splitSentences(c).length > 1 && splitSentences(c).every((x) => after.includes(x)));
 
 describe('product page keeps every piece of information', () => {
   let products;

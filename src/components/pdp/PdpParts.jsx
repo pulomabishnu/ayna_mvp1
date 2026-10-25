@@ -66,8 +66,8 @@ export function MatchLine({ state, onWhy = null, onFix = null, onQuiz = null }) 
       ? <button type="button" className="ayv-match is-none" data-tour="pdp-why" onClick={onWhy}><span className="ayv-match__why">{state.text}</span><span className="ayv-match__go">See why</span></button>
       : <p className="ayv-match is-none" data-tour="pdp-why"><span className="ayv-match__why">{state.text}</span></p>;
   }
-  if (state.kind === 'quiz' && onQuiz) {
-    return <button type="button" className="ayv-match is-none" data-tour="pdp-why" onClick={onQuiz}><span className="ayv-match__why">See how it fits you</span><span className="ayv-match__go">Get matched</span></button>;
+  if (state.kind === 'quiz') {
+    return <button type="button" className="ayv-match is-none" data-tour="pdp-why" onClick={onQuiz || undefined}><span className="ayv-match__why">See how it fits you</span><span className="ayv-match__go">Get matched</span></button>;
   }
   return null;
 }
