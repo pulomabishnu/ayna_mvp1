@@ -52,4 +52,12 @@ describe('Ask ayna signed out', () => {
     expect(scrolls.length).toBeGreaterThan(0);
     expect(scrolls.every((s) => s.top === 0)).toBe(true);
   });
+  it('the sign-in note sits in the list, after the cycle-data card is gone (round 2)', async () => {
+    await ask({ id: 5, question: 'How much sleep do adults need?', usesHealth: true, buildContext: () => '' }, {});
+    const note = host.querySelector('.ay-ask-account');
+    expect(note).toBeTruthy();
+    expect(note.parentElement.contains(host.querySelector('.ay-ask-health'))).toBe(false);
+    expect(host.querySelector('.ay-ask-health')).toBeNull();
+    expect(note.nextElementSibling).toBeTruthy(); // the list's bottom marker follows: it is inside the list
+  });
 });

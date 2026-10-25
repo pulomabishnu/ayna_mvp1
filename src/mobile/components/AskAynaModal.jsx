@@ -286,6 +286,12 @@ export default function AskAynaModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
+  // The sign-in note sits at the end of the list: bring it into view.
+  useEffect(() => {
+    const list = bottomRef.current?.parentElement;
+    if (needsAccount && list) list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
+  }, [needsAccount]);
+
   const send = async (msg, context = screenContext, stats = null) => {
     if (!msg || sending) return;
     // Her match for a product comes from ayna's match engine on this device,
@@ -558,7 +564,8 @@ export default function AskAynaModal({
           </div>
         ))}
         {sending && !guidePage && <div className="ay-typing" role="status" aria-label="Looking into it"><i /><i /><i /></div>}
-        {healthAsk && !guidePage && (
+        {/* The cycle and sleep switch is about ayna's AI: only signed in (QA round 2). */}
+        {healthAsk && !guidePage && Boolean(session?.access_token) && (
           <div className="ay-ask-health">
             <p>{askHealth.on ? 'Your next questions here can use your cycle and sleep data. Oura and WHOOP data is never sent.' : 'This answer did not use your cycle and sleep data.'}</p>
             <button type="button" role="switch" aria-checked={askHealth.on} className="ay-ask-health__switch" onClick={() => {
@@ -571,15 +578,16 @@ export default function AskAynaModal({
             </button>
           </div>
         )}
+        {/* In the list, after the last message, so it never covers a card (QA round 2). */}
+        {needsAccount && session === null && !guidePage && (
+          <div className="ay-ask-error ay-ask-account" role="status" style={{ margin: '4px 0 0' }}>
+            <span>“{needsAccount.length > 90 ? `${needsAccount.slice(0, 88)}…` : needsAccount}” uses ayna’s AI, so it needs a free account. Your question is kept below.</span>
+            <button type="button" onClick={() => onRequireAuth?.('Ask ayna')}>Sign in</button>
+          </div>
+        )}
         <div ref={bottomRef} />
       </div>
 
-      {needsAccount && session === null && (
-        <div className="ay-ask-error ay-ask-account" role="status">
-          <span>“{needsAccount.length > 90 ? `${needsAccount.slice(0, 88)}…` : needsAccount}” uses ayna’s AI, so it needs a free account. Your question is kept below.</span>
-          <button type="button" onClick={() => onRequireAuth?.('Ask ayna')}>Sign in</button>
-        </div>
-      )}
       {sendError && (
         <div className="ay-ask-error" role="alert">
           <span>{sendError}</span>
