@@ -21,3 +21,14 @@ describe('vercel.json serves every app route', () => {
     expect(vercel.rewrites.some((r) => r.source === '/(.*)')).toBe(false);
   });
 });
+
+describe('one origin for sign-in', () => {
+  it('sends aynahealth.co to www.aynahealth.co, keeping the path', () => {
+    const r = (vercel.redirects || []).find((x) => x.has?.some((h) => h.type === 'host' && h.value === 'aynahealth.co'));
+    expect(r).toMatchObject({ source: '/:path*', destination: 'https://www.aynahealth.co/:path*', permanent: true });
+  });
+  it('the page itself also moves an apex visit to www', () => {
+    const main = fs.readFileSync(new URL('./main.jsx', import.meta.url), 'utf8');
+    expect(main).toMatch(/hostname === 'aynahealth\.co'/);
+  });
+});

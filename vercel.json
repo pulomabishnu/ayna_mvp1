@@ -154,6 +154,19 @@
       "permanent": true
     }
   ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "aynahealth.co"
+        }
+      ],
+      "destination": "https://www.aynahealth.co/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/a/:slug([A-Za-z0-9]{10})",

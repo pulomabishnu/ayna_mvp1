@@ -173,6 +173,7 @@ import { compareStore, useCompare } from './utils/compareStore.js';
 import { addedToRoutineText, REMOVED_FROM_ROUTINE } from './utils/routineCopy.js';
 import { openTodayLog } from './components/today/openLog.js';
 import HomeWidgets from './home/HomeWidgets.jsx';
+import { markReturnToFreeProduct, takeReturnToFreeProduct } from './utils/freeProductCampaign';
 
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
 const WEB_TAB_VIEWS = {
@@ -1266,6 +1267,8 @@ function App() {
       setShowWrapped(true);
     } else if (pendingAction === 'browse' || pendingAction === 'personalize') {
       handleViewDiscovery('');
+    } else if (pendingAction === 'free-product') {
+      setCurrentView('free-product');
     } else if (pendingAction === 'login') {
       // Signing in lands on Today, the home for signed-in accounts.
       setCurrentView('today');
@@ -2540,7 +2543,7 @@ function App() {
             quizResults={quizResults}
             healthProfile={healthProfile}
             matchOpts={matchOpts}
-            onClose={() => setShowWrapped(false)}
+            onClose={() => { setShowWrapped(false); if (user && takeReturnToFreeProduct()) setCurrentView('free-product'); }}
             onBack={handleWrappedBackToQuiz}
             onBrowse={() => { setShowWrapped(false); handleViewDiscovery(''); }}
           />
@@ -2797,8 +2800,10 @@ function App() {
             authLoading={authLoading}
             stage={currentView === 'free-product-reward' ? 'reward' : 'progress'}
             onNavigate={(view) => setCurrentView(view)}
-            onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }}
-            onStartQuiz={handleStartQuiz}
+            // Back to this page after signing in (Google, Apple or email), not to My Ecosystem.
+            onSignIn={() => { setPendingAction('free-product'); pendingActionRef.current = 'free-product'; setShowAuthModal(true); }}
+            // New here: quiz, save matches (makes the account), see them, then back to this page.
+            onStartQuiz={() => { markReturnToFreeProduct(); handleStartQuiz(); }}
           />
         )}
         {currentView === 'admin-campaign' && (
@@ -3362,10 +3367,10 @@ function App() {
             allowSignup={pendingAction === 'quiz-complete' || pendingAction === 'share-friend'}
             initialMode={pendingAction === 'share-friend' ? shareAuthMode : undefined}
             onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
-            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'save-item' ? 'save-item' : pendingAction === 'ecosystem' ? 'ecosystem' : pendingAction === 'feature' ? 'feature' : undefined}
+            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' || pendingAction === 'free-product' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'save-item' ? 'save-item' : pendingAction === 'ecosystem' ? 'ecosystem' : pendingAction === 'feature' ? 'feature' : undefined}
             feature={authFeature}
             onBeforeOAuthRedirect={() => {
-              markOAuthSource(pendingAction === 'quiz-complete' ? 'save' : 'signin');
+              markOAuthSource(pendingAction === 'quiz-complete' ? 'save' : pendingAction === 'free-product' ? 'free-product' : 'signin');
               try {
                 if (pendingAction) sessionStorage.setItem('ayna_pending_auth_action', pendingAction);
                 if (pendingAction === 'quiz-complete' && pendingQuizResults) {
