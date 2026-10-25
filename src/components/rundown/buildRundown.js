@@ -16,14 +16,17 @@
 import { addDays, daysBetweenDays } from '../../health/dailyLog.js';
 import { cycleStartsFrom, cyclesFrom, PATTERN_METRICS } from '../../health/cyclePatterns.js';
 import { READ_SUMMARIES } from '../../data/readPicks.js';
+import { DATA_RULES, deltaCard, periodCard, periodStatus, sleepCard, stepsCard } from './rundownData.js';
 
 export const CATEGORY_RANK = {
-  safety: 1, goal: 2, change: 3, symptom: 4, pattern: 5, education: 6, match: 7, saved: 8, community: 9, win: 10,
+  // Her data comes right after safety and care (founder, Oct 24 23:29).
+  safety: 1, data: 2, goal: 3, change: 4, symptom: 5, pattern: 6, education: 7, match: 8, saved: 9, community: 10, win: 11,
 };
 export const CATEGORIES = Object.keys(CATEGORY_RANK);
 // Ranking heuristics, not clinical thresholds.
 export const RUNDOWN_RULES = {
-  maxContentCards: 6,
+  maxContentCards: 8,
+  maxDataCards: DATA_RULES.maxDataCards,
   rotateCategories: ['education', 'match', 'saved', 'community', 'win'], // not two days running
   patternRepeatDays: 3, // a pattern card shows at most 2 of any 3 days
   sleepChangeMinutes: 45, // last night vs her recent average
@@ -50,7 +53,6 @@ const FIELD_OPTIONS = {
 };
 
 const weekday = (day) => new Date(`${day}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long' });
-const fmtMinutes = (m) => `${Math.floor(m / 60)}h ${String(Math.round(m % 60)).padStart(2, '0')}m`;
 
 // .gov sources for the "what it may affect / what you can do" lines (founder: .gov or brand site only).
 export const RUNDOWN_SOURCES = {
@@ -186,26 +188,23 @@ export function buildRundown(input = {}) {
     if (it.type === 'follow_up') add({ key: it.id, category: 'goal', kind: 'followup', kicker: 'Something you tried', title: it.title, body: it.body, item: it, followUps: ['Does this change my routine?'] });
   }
 
-  // 3. Recent change, weighted to last night: each card is data -> action
-  //    (what changed / what it may affect / what you can do / see data).
-  const sc = sleepChange(healthRows, today);
-  if (sc && sc.diff <= -RUNDOWN_RULES.sleepChangeMinutes) {
-    add({
-      key: `change:sleep:${today}`, category: 'change', topic: 'sleep', kind: 'text', kicker: 'Your focus today',
-      title: 'Sleep may matter a little more today.',
-      body: 'You slept less than your recent average last night.',
-      facts: [{ k: 'Recent average', v: fmtMinutes(sc.avg) }, { k: 'Last night', v: fmtMinutes(sc.lastNight) }],
-      changed: `Last night: ${fmtMinutes(sc.lastNight)}, about ${fmtMinutes(Math.abs(sc.diff))} less than your recent average of ${fmtMinutes(sc.avg)}.`,
-      mayAffect: 'Short sleep can make it harder to focus, react and manage emotions.',
-      canDo: 'Go to bed and wake up at the same time, and keep any nap to 20 minutes or less, earlier in the afternoon.',
-      sources: [RUNDOWN_SOURCES.nhlbiSleepEffects, RUNDOWN_SOURCES.nhlbiSleepHabits],
-      seeData: { tab: 'sleep' },
-      basisLine: 'Why ayna noticed: your connected sleep data.',
-      ask: 'Why might my sleep be shorter than usual?',
-      followUps: ['Why was my sleep flagged?', 'What can I do about my energy today?'],
-      explain: { kind: 'sleep', lastNight: sc.lastNight, avg: sc.avg, nights: sc.nights },
-    });
-  } else if (sc) skipped.push({ key: 'change:sleep', why: 'within_usual' });
+  // 3. Her data first: period or cycle, last night's sleep, steps, heart,
+  //    since yesterday (src/components/rundown/rundownData.js). Each card is
+  //    data -> context from her own usual -> one thing to do. Max 4.
+  const cycleNeed = needs.some((n) => ['period_pain', 'pms', 'cycle_sleep'].includes(n));
+  const quiet = Boolean(input.postCycle || input.pregnant);
+  const answer = memory?.periodAnswers?.[today] || null;
+  const dataCards = [];
+  const pc = periodCard({ log, healthRows, today, answer, hormonalBC: Boolean(input.hormonalBC), quiet, cycleNeed });
+  if (pc) dataCards.push(pc);
+  const sl = sleepCard(healthRows, today);
+  if (sl) dataCards.push(sl);
+  // Gentler on a period day or with moderate or severe pain logged (rest counts too).
+  const onPeriod = !quiet && periodStatus({ log, healthRows, today, answer }).state === 'on';
+  const sorePain = [log?.[today]?.pain, log?.[addDays(today, -1)]?.pain].some((v) => typeof v === 'number' && v >= 2);
+  const stc = stepsCard(healthRows, today, { gentle: onPeriod || sorePain });
+  if (stc) dataCards.push(stc);
+  // 3b. Recent change from connected signals (existing baseline logic), drawn as her range.
   const usedSignals = new Set();
   for (const sig of BASELINE_SIGNALS) {
     if (usedSignals.has(sig.title)) continue;
@@ -214,8 +213,9 @@ export function buildRundown(input = {}) {
     const flagged = sig.worse === 'lower' ? b.z <= -sig.z : b.z >= sig.z;
     if (!flagged) { skipped.push({ key: `change:${sig.metric}`, why: 'within_range' }); continue; }
     usedSignals.add(sig.title);
-    add({
-      key: `change:${sig.metric}:${b.day}`, category: 'change', kind: 'text', kicker: 'Something changed',
+    dataCards.push({
+      key: `change:${sig.metric}:${b.day}`, category: 'data', topic: sig.metric, kind: 'signal', tone: 'sky', kicker: 'Something changed',
+      range: { low: b.mean - b.sd, high: b.mean + b.sd, last: b.last, lowLabel: sig.unit(b.mean - b.sd), highLabel: sig.unit(b.mean + b.sd), lastLabel: sig.unit(b.last), what: sig.what },
       title: sig.title,
       facts: [{ k: 'Your recent range', v: `${sig.unit(b.mean - b.sd)} to ${sig.unit(b.mean + b.sd)}` }, { k: b.day === today ? 'Today' : 'Last night', v: sig.unit(b.last) }],
       changed: `${sig.what}: ${sig.unit(b.last)}, outside your recent range from ${b.n} days of your connected data.`,
@@ -226,6 +226,27 @@ export function buildRundown(input = {}) {
       explain: { kind: 'signal', what: sig.what, last: sig.unit(b.last), low: sig.unit(b.mean - b.sd), high: sig.unit(b.mean + b.sd), n: b.n },
     });
   }
+  const dc = deltaCard(healthRows, today);
+  if (dc) dataCards.push(dc);
+  // Nothing flagged: one calm heart card, only when the data is there.
+  if (!usedSignals.size) {
+    for (const sig of BASELINE_SIGNALS) {
+      const b = baselineSignal(healthRows, sig.metric, today);
+      if (!b) continue;
+      dataCards.push({
+        key: `data:heart:${today}`, category: 'data', topic: 'heart_steady', kind: 'signal', tone: 'sky', kicker: sig.what,
+        title: `${b.day === today ? 'Today' : 'Last night'}: ${sig.unit(b.last)}, inside your usual range.`,
+        range: { low: b.mean - b.sd, high: b.mean + b.sd, last: b.last, lowLabel: sig.unit(b.mean - b.sd), highLabel: sig.unit(b.mean + b.sd), lastLabel: sig.unit(b.last), what: sig.what },
+        seeData: { tab: sig.tab },
+        basisLine: `Your usual range is from your last ${b.n} days of connected data.`,
+        followUps: [`What does my ${sig.what.toLowerCase()} tell me?`],
+        explain: { kind: 'signal_steady', what: sig.what, last: sig.unit(b.last) },
+      });
+      break;
+    }
+  }
+  for (const c of dataCards.slice(0, RUNDOWN_RULES.maxDataCards)) add(c);
+  for (const c of dataCards.slice(RUNDOWN_RULES.maxDataCards)) skipped.push({ key: c.key, why: 'data_cap' });
   // Yesterday's own check-in, when it was clearly off her usual.
   for (const field of ['pain', 'pms', 'sleep', 'mood']) {
     const lc = logChange(log, field, today);
@@ -348,11 +369,11 @@ export function buildRundown(input = {}) {
     kept.push(c);
   }
   kept.sort((a, b) => CATEGORY_RANK[a.category] - CATEGORY_RANK[b.category]);
-  // One card per topic among the "what changed" cards (no two sleep cards in a row).
+  // One card per topic among her data and "what changed" cards (no two sleep cards).
   for (let k = kept.length - 1; k >= 0; k -= 1) {
     const c = kept[k];
-    if (c.category !== 'change' || !c.topic) continue;
-    if (kept.slice(0, k).some((x) => x.category === 'change' && x.topic === c.topic)) { skipped.push({ key: c.key, why: 'same_topic' }); kept.splice(k, 1); }
+    if (!['change', 'data'].includes(c.category) || !c.topic) continue;
+    if (kept.slice(0, k).some((x) => ['change', 'data'].includes(x.category) && x.topic === c.topic)) { skipped.push({ key: c.key, why: 'same_topic' }); kept.splice(k, 1); }
   }
   const protectedCards = kept.filter((c) => c.protected);
   const rest = kept.filter((c) => !c.protected).slice(0, Math.max(0, RUNDOWN_RULES.maxContentCards - protectedCards.length));
