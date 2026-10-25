@@ -8,7 +8,7 @@ import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
 import TodayFeed from './today/TodayFeed.jsx';
 import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './personality/DS.jsx';
-import { readHomeLook } from '../mobile/components/homeLook.js';
+import { headline, readHomeLook } from '../mobile/components/homeLook.js';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
 
@@ -123,6 +123,37 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
   );
 }
 
+/**
+ * Today's page top, in every state (no data, data, loading): an espresso band
+ * with a wavy edge; the greeting at title size, a day strip, her headline
+ * number as the one bold graphic (cycle day, else last night's sleep; none
+ * without data) and one die-cut product sticker.
+ */
+function TodayBand({ title, today, name, cycle, sleepPoints, products }) {
+  const hour = new Date().getHours();
+  const hello = hour < 5 ? 'Hi' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const look = readHomeLook();
+  const num = headline({ cycle, sleepPoints });
+  return (
+    <header className={`ay-wh-hello ay-pagehead ay-band--espresso is-look-${look}`}>
+      <h1 id="ay-wh-title" className="sr-only">{title}</h1>
+      <p className="ay-wh-hello__date">{fmtLongDay(today)}</p>
+      <p className="ay-wh-hello__hi">{hello}{name ? `, ${name}` : ''}.</p>
+      {/* The number in words for screen readers (the ring is decoration). */}
+      {num && <p className="sr-only">{`${num.label}: ${num.value}`}</p>}
+      <DayStrip iso={today} className="ay-wh-hello__days" />
+      <span className={`ay-wh-hello__art${num ? ' has-ring' : ''}`} aria-hidden="true">
+        <Shapes className="ay-wh-hello__shapes" />
+        {num && (cycle?.cycleDay
+          ? <CycleRing day={cycle.cycleDay} length={cycle.avgLength} className="ay-wh-hello__ring" />
+          : <CycleRing label={num.label} value={num.value} className="ay-wh-hello__ring" />)}
+        <ProductStickers products={products} max={1} className="ay-wh-hello__stickers" />
+        {look === 'b' && <span className="ay-wh-hello__curvebox"><CurvedRing text="your week · your week · your week · " className="ay-wh-hello__curve" /></span>}
+      </span>
+    </header>
+  );
+}
+
 export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null, compact = false, aside = null, widgets = null }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
@@ -171,34 +202,22 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   // Today only: her widgets under the Rundown and today's things (Customize Today).
   const todayFeed = widgets ? <>{feed}{widgets}</> : feed;
 
+  const sleepPoints = dash.groups.flatMap((g) => g.charts).find((c) => c.metric === 'sleep_minutes')?.points || [];
+  const band = compact ? <TodayBand title={title} today={today} name={name} cycle={week.cycle?.cycleDay ? week.cycle : null} sleepPoints={sleepPoints} products={demoData?.products || products} /> : null;
+
   // Today (compact, the first main tab): a greeting from her own clock and one
   // sentence (UX spec 6), then two columns on desktop: the day on the left
   // (Rundown, the 1 to 3 things, her log) and "More for you" on the right.
   // The right column only exists when it has something in it.
   // With synced health data, Today stays the full dashboard (HealthHome carries the feed).
   if (compact && !(signedIn && hasData)) {
-    const hour = new Date().getHours();
-    const hello = hour < 5 ? 'Hi' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
     const connect = !(signedIn && (h.connected || []).length > 0)
       ? <ConnectNote signedIn={signedIn} onSignIn={onSignIn} onOpenConnections={onOpenConnections} />
       : null;
     const more = [aside, connect].filter(Boolean);
-    const look = readHomeLook();
     return (
       <section className="ay-wh ay-wh--today" aria-labelledby="ay-wh-title">
-        {/* Page top: an espresso band with a wavy edge; the greeting at title size, a day strip, her number as the one bold graphic. */}
-        <header className={`ay-wh-hello ay-pagehead ay-band--espresso is-look-${look}`}>
-          <h1 id="ay-wh-title" className="sr-only">{title}</h1>
-          <p className="ay-wh-hello__date">{fmtLongDay(today)}</p>
-          <p className="ay-wh-hello__hi">{hello}{name ? `, ${name}` : ''}.</p>
-          <DayStrip iso={today} className="ay-wh-hello__days" />
-          <span className={`ay-wh-hello__art${week.cycle?.cycleDay ? ' has-ring' : ''}`} aria-hidden="true">
-            <Shapes className="ay-wh-hello__shapes" />
-            <CycleRing day={week.cycle?.cycleDay} length={week.cycle?.avgLength} className="ay-wh-hello__ring" />
-            <ProductStickers products={demoData?.products || products} max={1} className="ay-wh-hello__stickers" />
-            {look === 'b' && <span className="ay-wh-hello__curvebox"><CurvedRing text="your week · your week · your week · " className="ay-wh-hello__curve" /></span>}
-          </span>
-        </header>
+        {band}
         {intro}
         <div className={`ay-wh-day${more.length ? ' has-more' : ''}`}>
           <div className="ay-wh-day__main">
@@ -276,9 +295,14 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   }
 
   return (
-    <section className="ay-wh" aria-labelledby="ay-wh-title">
-      {header}
+    <section className={`ay-wh${compact ? ' ay-wh--today has-data' : ''}`} aria-labelledby="ay-wh-title">
+      {compact ? <>
+        {band}
+        {intro}
+      </> : header}
       <HealthHome
+        hello={!compact}
+        helloAside={compact && onOpenConnections ? <button type="button" className="ay-wh-btn is-quiet is-small" onClick={onOpenConnections}>Connected apps</button> : null}
         name={name}
         rows={rows}
         sections={sections}

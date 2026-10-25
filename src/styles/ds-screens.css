@@ -37,6 +37,13 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__sti
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__stickers { right: 90px; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__stickers .ds-psticker.is-1 { right: 0; top: 4px; width: 84px; height: 84px; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__stickers .ds-psticker.is-2 { right: 64px; top: 52px; width: 64px; height: 64px; }
+/* last night's sleep in the ring ("7h 12m"): smaller than a day numeral */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring.is-text b { font-size: 19px; letter-spacing: -.01em; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b small { font: 700 12px/1.1 var(--ay-sans-stack); letter-spacing: 0; }
+/* with health data: the band stays; under it, the source line and Connected apps on one quiet row */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.has-data .ay-hh-hello.is-quiet { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin: 0 0 16px !important; padding: 0 !important; min-height: 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.has-data .ay-hh-hello.is-quiet p { margin: 0 !important; font: 600 14px/1.35 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
+@media (max-width: 767px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring.is-text b { font-size: 15px; } }
 /* Sticker budget: a = one product cutout; b = cutout + curved-text ring + the Rundown card's sparkle. */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh:has(.ay-wh-hello.is-look-a) .ay-rd-hero__sticker { display: none; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__curvebox { position: absolute; right: 36px; top: 50%; width: 136px; height: 136px; margin-top: -68px; color: #f7badd; }
@@ -50,8 +57,11 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='b
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days { margin-right: -112px; gap: 4px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days li { flex: 1; min-width: 0; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art { top: 12px; bottom: auto; height: 104px; width: 112px; }
-  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring { right: 4px; top: 0; margin-top: 0; width: 96px; height: 96px; }
-  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b { width: 62px; height: 62px; font-size: 26px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring { right: 2px; top: 2px; margin-top: 0; width: 104px; height: 104px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b { width: 74px; height: 74px; font-size: 26px; }
+  /* with her number, the day strip keeps to the left column (five days) so the ring never covers a date */
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello:has(.has-ring) .ay-wh-hello__days { margin-right: 0; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello:has(.has-ring) .ay-wh-hello__days li:is(:first-child, :last-child) { display: none; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__shapes, html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art.has-ring .ay-wh-hello__stickers { display: none; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__stickers { right: 8px; top: 4px; width: 80px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__stickers .ds-psticker.is-1 { width: 72px; height: 72px; }

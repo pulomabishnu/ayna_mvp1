@@ -390,6 +390,9 @@ export default function HealthHome({
   name = '', rows = [], sections = [], matchContext = null, today, needIds = [], hormonalBC = false,
   products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, onAsk, onAddGoal, onOpenRoutine, onOpenCheckin, footer = null, surface = 'app',
   todayFeed = null,
+  // false where the page already greets her (web Today's band): only the data-source line stays.
+  hello: showHello = true,
+  helloAside = null,
 }) {
   const [tab, setTab] = useState('summary');
   const [range, setRange] = useState('month');
@@ -686,10 +689,11 @@ export default function HealthHome({
 
   return (
     <div className={`ay-hh is-${surface}`}>
-      <header className="ay-hh-hello" ref={topRef}>
-        <p>{fmtLongDay(today)}</p>
-        <h2>{hello}{name ? `, ${name}` : ''}</h2>
+      <header className={`ay-hh-hello${showHello ? '' : ' is-quiet'}`} ref={topRef}>
+        {showHello && <p>{fmtLongDay(today)}</p>}
+        {showHello && <h2>{hello}{name ? `, ${name}` : ''}</h2>}
         {sources.length > 0 && <p>Health data from {sourceNames(sources)} · compared with your own history</p>}
+        {helloAside}
       </header>
       {(surface !== 'app' || current !== 'summary') && <div className="ay-hh-areas"><Tabs tabs={tabs} value={current} onChange={pickTab} label="Health areas" idBase="ay-hh-area" className="is-areas" /></div>}
       <div className="ay-hh-panel" role={surface === 'app' && current === 'summary' ? 'region' : 'tabpanel'} id="ay-hh-area-panel" aria-label={surface === 'app' && current === 'summary' ? 'Today' : undefined} aria-labelledby={surface === 'app' && current === 'summary' ? undefined : `ay-hh-area-tab-${current}`} key={current}>
