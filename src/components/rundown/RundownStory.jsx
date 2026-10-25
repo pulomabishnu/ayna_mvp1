@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import NotUsefulMenu from './NotUsefulMenu.jsx';
 import ProductImage from '../../mobile/components/ProductImage.jsx';
 import { matchText } from '../../utils/matchDisplay.js';
+import { READ_PHOTOS } from '../../data/readCovers.js';
 
 /**
  * The rundown as a full-screen story (UX spec 8): progress at the top, tap
@@ -23,6 +24,22 @@ const isControl = (el) => Boolean(el?.closest?.('button, a, input, select, texta
 function Evidence({ level }) {
   if (!level) return null;
   return <span className="ay-rd-meter" role="img" aria-label={LEVEL_WORDS[level]} data-level={level}><i /><i /><i /><b>{LEVEL_WORDS[level]}</b></span>;
+}
+
+/* Type as form (Wrapped 2024): one big visual per card, only from real data:
+   today's date, the story's own contents, the read's real photo, her own count. */
+function CardArt({ card }) {
+  if (card.kind === 'opening') {
+    const day = String(card.key || '').split(':')[1] || '';
+    const d = day ? new Date(`${day}T12:00:00`) : null;
+    return d ? <div className="ay-rd-art is-opening" aria-hidden="true"><span className="ay-rd-art__num">{d.getDate()}</span></div> : null;
+  }
+  if (card.kind === 'read' && READ_PHOTOS[card.readId]) return <div className="ay-rd-art is-photo" aria-hidden="true"><img src={READ_PHOTOS[card.readId]} alt="" /></div>;
+  if (card.kind === 'stat') {
+    const m = String(card.title || '').match(/\d+/);
+    return m ? <div className="ay-rd-art is-stat" aria-hidden="true"><span className="ay-rd-art__num">{m[0]}</span></div> : null;
+  }
+  return null;
 }
 
 function Body({ card, h, done }) {
@@ -85,6 +102,11 @@ function Body({ card, h, done }) {
               : <a className="ay-rd-primary" href={HRSA_FIND_CARE} target="_blank" rel="noopener noreferrer">Find care<span className="sr-only"> (opens in a new tab)</span></a>}
         </span>
       );
+    }
+    case 'opening': {
+      // What is inside, in story order (the real card labels).
+      const inside = (h.list || []).filter((c) => c.category !== 'frame');
+      return inside.length ? <ol className="ay-rd-art__inside" aria-label="In this rundown">{inside.map((c) => <li key={c.key}>{c.kicker}</li>)}</ol> : null;
     }
     case 'list':
       return <ul className="ay-rd-lines">{card.lines.map((l) => <li key={l}>{l}</li>)}</ul>;
@@ -149,6 +171,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   if (!card) return null;
 
   const h = {
+    list,
     next: () => go(1),
     close,
     checkIn: (c, v) => { onCheckIn?.(c.field, v); setDone((s) => ({ ...s, [c.key]: { value: v } })); onAction?.(c, 'answer'); },
@@ -172,7 +195,9 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   const tone = card.category === 'safety' ? 'is-ink' : card.kind === 'opening' || card.kind === 'closing' ? 'is-ink' : ({ pattern: 'is-sky', change: 'is-sky', match: 'is-pink', saved: 'is-pink', education: 'is-butter', symptom: 'is-butter', goal: 'is-butter', community: 'is-sky', win: 'is-pink', week: 'is-sky' })[card.category] || 'is-butter';
 
   const node = (
-    <div ref={rootRef} className={`ay-rd ${tone}${rm ? ' is-still' : ''}`} role="dialog" aria-modal="true" aria-roledescription="story" aria-label={title} tabIndex={-1}>
+    <div ref={rootRef} className={`ay-rd ${tone} is-${card.kind}${rm ? ' is-still' : ''}`} role="dialog" aria-modal="true" aria-roledescription="story" aria-label={title} tabIndex={-1}>
+      {/* Phone: the frame is the screen. Desktop: a 9:16 poster on a dark scrim (DESIGN_RESEARCH_OCT24 B5). */}
+      <div className="ay-rd-frame">
       <div className="ay-rd-top">
         <ol className="ay-rd-progress" aria-hidden="true">
           {list.map((c, k) => <li key={c.key} className={k < i ? 'is-done' : k === i ? `is-now${auto ? ' is-running' : ''}` : ''} style={k === i ? { '--ay-rd-ms': `${AUTO_MS}ms` } : undefined}><i /></li>)}
@@ -191,6 +216,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
         onPointerUp={(e) => { if (startX.current == null) return; const dx = e.clientX - startX.current; startX.current = null; if (Math.abs(dx) > 50 && !isControl(e.target)) { e.preventDefault(); go(dx < 0 ? 1 : -1); } }}
       >
         <article className="ay-rd-card" key={card.key} aria-labelledby={`ay-rd-t-${i}`}>
+          <CardArt card={card} />
           <p className="ay-rd-kicker">{card.kicker}</p>
           <h2 id={`ay-rd-t-${i}`} className="ay-rd-title">{card.title}</h2>
           {card.body && <p className="ay-rd-body">{card.body}</p>}
@@ -222,6 +248,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
         <button type="button" className="ay-rd-icon" onClick={() => go(-1)} disabled={i === 0} aria-label="Previous card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
         <span aria-hidden="true">{i + 1} / {n}</span>
         <button type="button" className="ay-rd-icon" onClick={() => (i === n - 1 ? close() : go(1))} aria-label={i === n - 1 ? 'Finish' : 'Next card'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+      </div>
       </div>
     </div>
   );
