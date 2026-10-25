@@ -15,7 +15,7 @@ export default function Comparison({ onBack = null, compareList, onRemove, onCle
         return (
             <div className="ay-container aycmp">
                 <header className="aycmp__head">
-                    {onBack && <BackLink label="Your ecosystem" href="/ecosystem" onClick={onBack} />}
+                    {onBack && <BackLink label="Your ecosystem" href="/you/ecosystem" onClick={onBack} />}
                     <h1 className="ay-h1">Side by side</h1>
                     <p className="aycmp__lede">
                         Compare 2 to {COMPARE_MAX} products on your match, price, evidence, ingredients and safety.
@@ -94,7 +94,7 @@ export default function Comparison({ onBack = null, compareList, onRemove, onCle
         <div className="ay-container aycmp">
             <header className="aycmp__head is-row">
                 <div>
-                    {onBack && <BackLink label="Your ecosystem" href="/ecosystem" onClick={onBack} />}
+                    {onBack && <BackLink label="Your ecosystem" href="/you/ecosystem" onClick={onBack} />}
                     <h1 className="ay-h1">Side by side</h1>
                     <p className="aycmp__lede">{compareList.length < 2 ? 'Add one more product to see them side by side.' : 'Side by side, from what is on file. ayna never calls one product the best for everyone.'}</p>
                 </div>

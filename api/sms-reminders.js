@@ -24,7 +24,7 @@ import { SITE } from './_email.js';
 import { isSmsConfigured, sendSms } from './_twilio.js';
 import { canText, claimReminderDay, countEventsToday, etDay, prefsFromRow } from './_smsStore.js';
 
-export const PERIOD_TEXT = `ayna: your next period may start in about 3 days. Restock your period products? ${SITE}/shop`;
+export const PERIOD_TEXT = `ayna: your next period may start in about 3 days. Restock your period products? ${SITE}/explore/products`;
 export const CHECKIN_TEXT = `ayna: your monthly check-in is ready. ${SITE}/you`;
 const PAGE = 500;
 const DAY = 86400000;

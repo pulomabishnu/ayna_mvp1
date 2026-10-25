@@ -18,11 +18,15 @@ function SectionNav({ label, sections, active, onGo, className = '' }) {
   );
 }
 
-/** Explore's header: title and the five sections (For you, Health topics, Products, Services, Resources). */
-export function ExploreHeader({ active, onGo, children = null, compact = false }) {
+/**
+ * Explore's header: title and the five sections (For you, Health topics, Products, Services, Resources).
+ * `titleAs="p"` when the section below has its own H1 (Resources), so the page has one H1.
+ */
+export function ExploreHeader({ active, onGo, children = null, compact = false, titleAs = 'h1' }) {
+  const Title = titleAs;
   return (
     <header className={`wx-top ay-container${compact ? ' is-compact' : ''}`}>
-      <h1 className="ay-h1 wx-title">Explore</h1>
+      <Title className="ay-h1 wx-title">Explore</Title>
       {children}
       <SectionNav label="Explore sections" sections={EXPLORE_SECTIONS} active={active} onGo={onGo} />
     </header>

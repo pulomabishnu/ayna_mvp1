@@ -68,3 +68,7 @@ html body .app-container .wx-askpage .ayna-ask-panel.is-page { position: relativ
 .app-container .wx-nav a:hover { background: none; text-decoration: underline; text-underline-offset: 4px; }
 .app-container .wx-nav a.is-on { background: none; color: var(--ay-text); border-bottom-color: var(--ay-text); }
 .app-container .ayshop__note--explore { margin: 16px 0 0; font: 400 14px/1.5 var(--ay-sans-stack); color: var(--ay-text); }
+
+/* Explore > Resources: the read list has the page's H1, so "Explore" is a <p>
+   there (one H1 per page). It keeps the size the H1 version gets elsewhere. */
+html body .app-container.app-container main p.wx-title { font-size: var(--ay-fs-title) !important; line-height: 1.1 !important; }

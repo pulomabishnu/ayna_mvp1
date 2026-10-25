@@ -90,7 +90,7 @@ function Search({ onSearch }) {
 
 function Hero({ onStartQuiz, onSearch, personal = null, banner = null, posts = [] }) {
   const cta = personal && (personal.ecoCount > 0 || personal.hasQuiz)
-    ? <Go className="ay-btn ay-btn--primary" href="/ecosystem" onGo={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></Go>
+    ? <Go className="ay-btn ay-btn--primary" href="/you/ecosystem" onGo={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></Go>
     : banner || <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>;
   return (
     <section className="hm-hero" aria-labelledby="hm-hero-title">
@@ -222,7 +222,7 @@ function ShopBand({ onOpenProduct, onViewDiscovery, picks = null }) {
         </ul>
         {need && !need.picks && (
           <div className="hm-shop__foot">
-            <Go className="ay-btn ay-btn--secondary" href="/shop" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label.toLowerCase()} products</Go>
+            <Go className="ay-btn ay-btn--secondary" href="/explore/products" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label.toLowerCase()} products</Go>
           </div>
         )}
       </div>
@@ -261,7 +261,7 @@ function Familiar({ onSearch }) {
         <ul className="hm-needs">
           {rows.map((t) => (
             <li key={t.q}>
-              <a className="hm-needs__row" href={`/shop?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
+              <a className="hm-needs__row" href={`/explore/products?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
                 <span className="hm-needs__ph is-product">{t.product ? <img src={t.product.image} alt="" loading="lazy" decoding="async" /> : null}</span>
                 <span className="hm-needs__quote">“{t.q}”</span>
                 <span className="hm-needs__go">See what helps <Arrow /></span>
@@ -399,7 +399,7 @@ function Evidence({ onViewArticles }) {
               </li>
             ))}
           </ul>
-          <Go className="ay-btn ay-btn--text" href="/library" onGo={onViewArticles}>Read our sources<Arrow /></Go>
+          <Go className="ay-btn ay-btn--text" href="/explore/resources" onGo={onViewArticles}>Read our sources<Arrow /></Go>
         </div>
       </div>
     </section>
@@ -420,7 +420,7 @@ function Reads({ onViewArticle, onViewArticles }) {
       <div className="hm-wrap">
         <header className="hm-head">
           <h2 id="hm-reads-title" className="hm-h2">Quick reads about your body, with sources</h2>
-          <a className="ay-btn ay-btn--text hm-head__all" href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}><span className="hm-head__long">Open the Library</span><span className="hm-head__short">See all<span className="ed-sr"> reads in the Library</span></span><Arrow /></a>
+          <a className="ay-btn ay-btn--text hm-head__all" href="/explore/resources" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}><span className="hm-head__long">Open the Library</span><span className="hm-head__short">See all<span className="ed-sr"> reads in the Library</span></span><Arrow /></a>
         </header>
         {/* Plain rows (master prompt 154: no bento): photo, title, one line, sources. */}
         <ul className="hm-readlist">
