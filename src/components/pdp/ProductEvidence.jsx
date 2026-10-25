@@ -350,14 +350,25 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // The tab row sticks just under the website's header (the app has none above it).
   const [stickTop, setStickTop] = useState(0);
   useEffect(() => {
+    // The website header hides while she scrolls down: follow its visible
+    // bottom edge so the tabs sit right under it, or at the very top once it is gone.
+    const nav = document.querySelector('.app-nav-wrap');
     const read = () => {
-      const nav = document.querySelector('.app-nav-wrap');
       const pos = nav ? window.getComputedStyle(nav).position : '';
-      setStickTop(nav && (pos === 'sticky' || pos === 'fixed') ? Math.round(nav.getBoundingClientRect().height) : 0);
+      setStickTop(nav && (pos === 'sticky' || pos === 'fixed') ? Math.max(0, Math.round(nav.getBoundingClientRect().bottom)) : 0);
     };
+    let raf = 0;
+    const onScroll = () => { if (!raf) raf = window.requestAnimationFrame(() => { raf = 0; read(); }); };
     read();
     window.addEventListener('resize', read);
-    return () => window.removeEventListener('resize', read);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    nav?.addEventListener('transitionend', read);
+    return () => {
+      window.removeEventListener('resize', read);
+      window.removeEventListener('scroll', onScroll);
+      nav?.removeEventListener('transitionend', read);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
   }, []);
   const reduce = () => Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
   const scrollToEl = (el) => el?.scrollIntoView({ behavior: reduce() ? 'auto' : 'smooth', block: 'start' });
