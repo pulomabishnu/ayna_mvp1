@@ -11,6 +11,7 @@ const openSection = (id) => { try { window.dispatchEvent(new CustomEvent('ay-ope
 const jumpOpen = (id, domId) => { openSection(id); setTimeout(() => jumpTo(domId), 30); };
 import './ProductSections.css';
 import SafetyHoldNote from '../match/SafetyHoldNote.jsx';
+import { productAskStarters, PRODUCT_ASK_TITLE, PRODUCT_ASK_PLACEHOLDER } from '../../utils/productAsk.js';
 
 /**
  * "ayna at a glance": the product page's consolidated information, open by
@@ -596,11 +597,14 @@ export function ProductMatch({ glance, matchPercent, why = '', fallback = '', on
   );
 }
 
-// Questions the page can't answer on its own: they're about her (product page audit).
-const ASK_SITUATION = ['Is this right for me?', 'Is it safe with what I already use?', 'How does it compare with what I have now?'];
-export function ProductAsk({ productName, onAsk }) {
+// Ask about this product (founder, Oct 24): one heading, three starters that
+// fit her (src/utils/productAsk.js), one box. Every question goes to Ask
+// anchored to this product ("About <name>: ..."); her match is answered by
+// the engine on her device, never by the model.
+export function ProductAsk({ productName, onAsk, hasProfile = false }) {
   // While this strip is on screen the floating "Ask ayna" button steps aside (it covered the compare table).
   const ref = React.useRef(null);
+  const [text, setText] = React.useState('');
   React.useEffect(() => {
     const el = ref.current;
     if (!el || typeof IntersectionObserver === 'undefined') return undefined;
@@ -609,13 +613,18 @@ export function ProductAsk({ productName, onAsk }) {
     return () => { io.disconnect(); document.body.classList.remove('ay-ask-inline-on'); };
   }, []);
   if (!onAsk) return null;
+  const send = (q) => { const t = String(q || '').trim(); if (t) { onAsk(`About ${productName}: ${t}`); setText(''); } };
   return (
     <section ref={ref} className="ay-askrow" aria-labelledby="ay-ask-h">
-      <h2 id="ay-ask-h">Ask about your situation</h2>
+      <h2 id="ay-ask-h">{PRODUCT_ASK_TITLE}</h2>
       <ul>
-        {ASK_SITUATION.map((q) => <li key={q}><button type="button" onClick={() => onAsk(`About ${productName}: ${q}`)}>{q}</button></li>)}
-        <li><button type="button" onClick={() => onAsk(`About ${productName}: `)}>Ask your own question</button></li>
+        {productAskStarters({ hasProfile }).map((q) => <li key={q}><button type="button" onClick={() => send(q)}>{q}</button></li>)}
       </ul>
+      <form className="ay-askrow__form" onSubmit={(e) => { e.preventDefault(); send(text); }}>
+        <label className="sr-only" htmlFor="ay-askrow-input">{PRODUCT_ASK_PLACEHOLDER}</label>
+        <input id="ay-askrow-input" type="text" value={text} onChange={(e) => setText(e.target.value)} placeholder={PRODUCT_ASK_PLACEHOLDER} maxLength={300} />
+        <button type="submit" disabled={!text.trim()}>Ask</button>
+      </form>
     </section>
   );
 }

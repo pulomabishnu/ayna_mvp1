@@ -44,6 +44,8 @@ import '../eco-needs.css';
 import '../pdp-polish.css';
 import '../app-pdp.css';
 import { fetchWithTimeout } from '../../utils/network.js';
+import { productAskStarters, productMatchContext, PRODUCT_ASK_TITLE, PRODUCT_ASK_PLACEHOLDER } from '../../utils/productAsk.js';
+import { localMatchAnswer } from '../../utils/askMatch.js';
 
 function toneFor(product) {
   const functions = product?.healthFunctions || [];
@@ -72,7 +74,7 @@ function SafetyFlag({ text }) {
  * changed (mobile's own inline-style patterns instead of the desktop
  * pdp-* classes).
  */
-function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) {
+function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, matchOpts }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
@@ -92,15 +94,14 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
     return () => { cancelled = true; };
   }, []);
 
-  const suggestions = [
-    `What is ${product?.name ? 'this' : 'it'} and how is it used?`,
-    'Who is this good for?',
-    'Any safety concerns I should know about?',
-  ];
+  const suggestions = productAskStarters({ hasProfile: Boolean(quizAnswers) });
 
   const ask = async (question) => {
     const q = String(question || '').trim();
     if (!q || sending) return;
+    // Her match comes from ayna's engine on this device (same % as the page), no account needed.
+    const local = await localMatchAnswer(q, { quizAnswers, matchOpts, focusProduct: product }).catch(() => null);
+    if (local) { setError(''); setInput(''); setMessages((prev) => [...prev, { role: 'user', text: q }, { role: 'assistant', text: local.answer }]); return; }
     if (!session?.access_token) { onRequireAuth?.('Ask ayna'); return; }
     setError('');
     setInput('');
@@ -119,6 +120,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
           aiInsights: {},
           userContext: quizAnswers?.fullHealthIntake ? JSON.stringify(quizAnswers.fullHealthIntake).slice(0, 4000) : '',
           ecosystemProducts: Array.isArray(ecosystemProducts) ? ecosystemProducts.slice(0, 20) : [],
+          matchContext: quizAnswers ? productMatchContext(product, getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts)) : '',
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -142,6 +144,8 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
 
   return (
     <div className="ay-pdp-ask" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {/* Anchored to the product: every question here is about it. */}
+      <p className="ay-pdp-ask-note" style={{ margin: 0 }}>About {product?.name || 'this product'}</p>
       {messages.length === 0 && (
         <>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
@@ -191,7 +195,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={session === undefined ? 'One moment…' : 'Ask about this product…'}
+          placeholder={session === undefined ? 'One moment…' : PRODUCT_ASK_PLACEHOLDER}
           disabled={sending || session === undefined}
           style={{ flex: 1, minWidth: 0, padding: '11px 14px', borderRadius: 99, border: '1px solid var(--ayna-border)', fontSize: 'max(16px, calc(13.5px * var(--ayna-text-scale, 1)))', background: 'var(--ayna-surface)', color: 'var(--ayna-text)' }}
         />
@@ -538,10 +542,9 @@ export default function ProductDetailScreen({
 
           <section className="ay-pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="ay-pdp-ask-h">
             <div className="ay-pdp-sechead">
-              <h2 id="ay-pdp-ask-h">Questions? Ask ayna</h2>
-              <p>Ask anything about this product.</p>
+              <h2 id="ay-pdp-ask-h">{PRODUCT_ASK_TITLE}</h2>
             </div>
-            <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />
+            <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} matchOpts={matchOpts} />
           </section>
 
           {related.compare.length > 0 && (

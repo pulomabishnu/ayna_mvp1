@@ -196,7 +196,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={session === undefined ? 'One moment…' : 'Ask about this product…'}
+          placeholder={session === undefined ? 'One moment…' : 'Ask anything about this product…'}
           disabled={sending || session === undefined}
           style={{
             flex: 1, padding: '0.6rem 0.85rem', borderRadius: 'var(--radius-md)',
@@ -1011,7 +1011,7 @@ export default function ProductModal({
         <section className="ay-section ayp-askshare" aria-label="Ask or share">
           <PhoneFold id="pdp-askshare" title="Ask or share" line="Ask ayna about your situation, or write a review if you have tried it.">
             <div className="ayp-askshare__grid">
-              <div className="ayp-askshare__ask"><ProductAsk productName={displayName} onAsk={onAskAyna} /></div>
+              <div className="ayp-askshare__ask"><ProductAsk productName={displayName} onAsk={onAskAyna} hasProfile={Boolean(quizResults)} /></div>
               {onCommunityAction && (
                 <section className="ay-group is-padded ayp-tried" aria-labelledby="pdp-community-h">
                   <h2 id="pdp-community-h" className="ay-h3">Tried it?</h2>

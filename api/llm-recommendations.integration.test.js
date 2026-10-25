@@ -488,7 +488,7 @@ describe('postmenopausal AI candidate gating', () => {
   it('withholds period trackers and products for unselected symptoms before generation', async () => {
     const { catalogCandidatesForConcern } = await import('./llm-recommendations.js');
     const { ALL_PRODUCTS } = await import('../src/data/products.js');
-    const intake = { lifeStageSelections: ['I am post-menopause'], supportSelections: ['Bone health'] };
+    const intake = { lifeStageSelections: ['I am post-menopause'], supportSelections: ['Bone health'], takesCurrent: 'No' }; // Safety answered: unanswered, the supplement is on a safety hold.
     const candidates = catalogCandidatesForConcern(ALL_PRODUCTS, 'Bone health', 60, intake);
     const ids = candidates.map(p => p.id);
     expect(ids).toContain('p-citracal-bone-health');
