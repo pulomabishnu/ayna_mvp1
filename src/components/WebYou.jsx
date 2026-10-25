@@ -18,6 +18,7 @@ import { useHealthMatchPref } from '../health/matchPref.js';
 import FreeProductAccountCard from './freeProduct/FreeProductAccountCard';
 import { getCareProfile } from '../utils/careProfile';
 import EmailSettings from './EmailSettings';
+import TipsSettings from '../mobile/tutorial/TipsSettings.jsx';
 import { getMyCommunityProfile, getProfileStats, listPlaylists } from '../utils/community/communityStore.js';
 import { publicMediaUrl } from '../utils/community/imageUpload.js';
 import { buildDashboard, formatMetric } from '../health/dashboard.js';
@@ -590,6 +591,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
         </section>
       </div>
       <div className="wy-col">
+        <TipsSettings variant="web" />
         <EmailSettings user={user} />
         <InviteCard userId={user.id} />
       </div>
