@@ -81,13 +81,13 @@ export default function ExploreScreen(props) {
   const readRow = (items) => <div className="ax-row is-reads">{items.map((a) => <div className="ax-item is-read" key={a.id}><LibraryCard article={a} onClick={() => onOpenArticle?.(a)} /></div>)}</div>;
   const topicChips = (items) => <div className="ax-topics" role="group" aria-label="Categories">{items.map((t) => <button type="button" key={t.key} onClick={() => { setQuery(t.label); setRecent(rememberSearch(t.label)); }}>{t.label}</button>)}</div>;
 
-  const chips = <nav className="ax-sections" aria-label="Explore sections">
+  const chips = <nav className="ax-sections" data-tour="explore-sections" aria-label="Explore sections">
     {EXPLORE_SECTIONS.map((s) => <button type="button" key={s.key} aria-current={section === s.key ? 'page' : undefined} className={section === s.key ? 'is-on' : ''} onClick={() => go(s.key)}>{s.label}</button>)}
   </nav>;
 
   // Products: the existing Shop, under Explore's header.
   if (section === 'products') {
-    return <div className="ax ax--embed">
+    return <div className="ax ax--embed" data-tour="explore">
       <MobileHeader onOpenSaved={onOpenSaved} />
       <header className="ax-top"><h1 className="ax-title">Explore</h1>{chips}</header>
       <BrowseScreen {...props} embedded />
@@ -136,7 +136,7 @@ export default function ExploreScreen(props) {
     </>;
   }
 
-  return <div className="ax">
+  return <div className="ax" data-tour="explore">
     <MobileHeader onOpenSaved={onOpenSaved} />
     <header className="ax-top">
       <h1 className="ax-title">Explore</h1>
