@@ -33,6 +33,29 @@ export function loadSavedProducts() {
   }
 }
 
+// The device's saved list exactly as stored (no catalog check), for merging
+// before the catalog has loaded so nothing stored is dropped.
+export function loadSavedProductsRaw() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * What to store after a save or unsave. Before the stored list has been
+ * restored into the page, `next` only holds this one change, so merge it into
+ * the stored list instead of replacing it (a guest's list shrank to one item).
+ */
+export function savedListToPersist(next, { restored, removedId = null } = {}) {
+  if (restored) return next;
+  const merged = { ...loadSavedProductsRaw(), ...next };
+  if (removedId) delete merged[removedId];
+  return merged;
+}
+
 export function persistSavedProducts(map) {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(map || {}));
