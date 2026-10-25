@@ -1,4 +1,5 @@
-import { useId } from 'react';
+import { useEffect, useId, useState } from 'react';
+import { dieCut } from './cutout.js';
 /**
  * Oct 21-22 design language, shared by the website and the app
  * (scratchpad DESIGN_SYSTEM_OCT25.md). Decoration only: every piece here is
@@ -36,30 +37,50 @@ export function MarkSticker({ name = 'sparkle', tone = 'butter', className = '' 
 
 const photoOf = (p) => p?.image || p?.imageUrl || p?.image_url || '';
 
-/** Her products' real photos as die-cut stickers (white tile, outline, hard shadow, tilt). Renders nothing without photos. */
+/**
+ * Her products' real photos as die-cut stickers: the product cut out of its
+ * white backdrop, a thin white die-cut edge with an espresso hairline, a
+ * small tilt (cutout.js). Photos that cut cleanly go first; until the cut is
+ * ready (or if it can't be made) nothing shows, never a white photo frame.
+ * Renders nothing without photos.
+ */
 export function ProductStickers({ products = [], max = 3, className = '' }) {
-  const list = products.filter((p) => photoOf(p)).slice(0, max);
-  if (!list.length) return null;
+  const srcs = [...new Set(products.map(photoOf).filter(Boolean))].slice(0, max + 3);
+  const key = srcs.join('|');
+  const [cuts, setCuts] = useState({ key: '', list: [] });
+  useEffect(() => {
+    let live = true;
+    const want = key ? key.split('|') : [];
+    Promise.all(want.map((s) => dieCut(s))).then((res) => {
+      if (!live) return;
+      const ok = res.filter(Boolean);
+      setCuts({ key, list: [...ok.filter((r) => r.clean), ...ok.filter((r) => !r.clean)].slice(0, max) });
+    });
+    return () => { live = false; };
+  }, [key, max]);
+  if (!srcs.length) return null;
+  const list = cuts.key === key ? cuts.list : [];
   return (
     <span className={`ds-pstickers ${className}`.trim()} aria-hidden="true">
-      {list.map((p, i) => <span key={p.id || i} className={`ds-psticker is-${i + 1}`}><img src={photoOf(p)} alt="" /></span>)}
+      {list.map((c, i) => <span key={`${i}-${c.url.length}`} className={`ds-psticker is-${i + 1}${c.clean ? '' : ' is-photo'}`}><img src={c.url} alt="" /></span>)}
     </span>
   );
 }
 
 /** Her cycle day as a drawn ring. The arc is drawn only against her own usual length; otherwise a dotted ring. */
-export function CycleRing({ day, length = null, className = '' }) {
-  if (!day) return null;
-  const frac = length ? Math.min(1, day / length) : null;
+export function CycleRing({ day, length = null, className = '', label = 'Cycle day', value = null }) {
+  // `value` + `label`: another headline number in the same ring (last night's sleep), dotted track, no arc.
+  if (!day && !value) return null;
+  const frac = day && length ? Math.min(1, day / length) : null;
   const C = 2 * Math.PI * 38;
   return (
-    <span className={`ds-ring ${className}`.trim()} aria-hidden="true">
+    <span className={`ds-ring${value ? ' is-text' : ''} ${className}`.trim()} aria-hidden="true">
       <svg viewBox="0 0 92 92">
         <circle cx="46" cy="46" r="38" className="is-track" />
         {frac != null && <circle cx="46" cy="46" r="38" className="is-arc" strokeDasharray={`${C * frac} ${C}`} transform="rotate(-90 46 46)" />}
         {frac != null && <circle cx={46 + 38 * Math.sin(2 * Math.PI * frac)} cy={46 - 38 * Math.cos(2 * Math.PI * frac)} r="5.5" className="is-dot" />}
       </svg>
-      <b><small>Cycle day</small>{day}</b>
+      <b><small>{value ? label : 'Cycle day'}</small>{value || day}</b>
     </span>
   );
 }

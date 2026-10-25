@@ -78,7 +78,7 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__shapes .is-dot { right: 14px; bottom: 26px; width: 8px; height: 8px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-home-art__shapes .is-flower { color: #769ebe; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__stickers { position: absolute; right: 138px; top: -14px; width: 50px; height: 50px; }
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__stickers .ds-psticker { width: 50px; height: 50px; border-radius: 16px; padding: 4px; transform: rotate(-9deg); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__stickers .ds-psticker { width: 54px; height: 54px; transform: rotate(-9deg); }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__curve { color: #f7badd; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__curve text { font-size: 9px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__spark { position: absolute; right: 150px; top: 108px; width: 20px; height: 20px; color: #ffedac; }
