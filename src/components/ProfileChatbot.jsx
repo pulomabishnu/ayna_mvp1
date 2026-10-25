@@ -265,14 +265,19 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   // start; her own message or "Thinking…" just scrolls to the bottom.
   useEffect(() => {
     const box = messagesRef.current;
+    // The Ask home (hello + starters) reads from the top.
+    if (home && !sending) { if (box) box.scrollTop = 0; return; }
     const last = messages[messages.length - 1];
     if (box && last && last.role !== 'user') {
       const answers = box.querySelectorAll('.ayna-ask-message--ayna:not(.ayna-ask-message--typing)');
       const target = answers[answers.length - 1];
       if (target) { box.scrollTo({ top: target.offsetTop - box.offsetTop - 8, behavior: 'smooth' }); return; }
     }
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, [messages, sending]);
+    // Scroll the conversation box only: scrollIntoView also moved the whole
+    // page on /ask, so the page opened scrolled past its own title.
+    if (box) box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+    else bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages, sending, home]);
 
   const updateMessage = (index, patch) => setMessages((prev) => {
     const next = prev.map((m, i) => (i === index ? { ...m, ...patch } : m));

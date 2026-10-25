@@ -156,6 +156,7 @@ import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } fro
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
 import RoutineSummary from './components/routine/RoutineSummary.jsx';
 import TodayRead from './components/today/TodayRead.jsx';
+import AskBasedOn from './components/ask/AskBasedOn.jsx';
 import { SaveFollowUpStrip } from './components/save/SaveFollowUp.jsx';
 import { savePrompt, stashPendingSave, takePendingSave } from './utils/savePrompt.js';
 import { setSavedRemindersOwner } from './utils/savedReminders.js';
@@ -2666,6 +2667,14 @@ function App() {
           <div className="ay-container wx-askpage">
             <h1 className="ay-sr">Ask ayna</h1>
             {user && quizResults ? (
+              <div className="wx-ask">
+              {/* Desktop: the page title and what ayna answers from on the left, the conversation on the right (team direction 10). */}
+              <aside className="wx-ask__side" aria-label="About Ask ayna">
+                <p className="wx-ask__title" aria-hidden="true">Ask ayna</p>
+                <p className="wx-ask__lead">Ask about your body, a product or your day. ayna answers from your health profile, the products you use and checked sources, and says why.</p>
+                <AskBasedOn quizResults={quizResults} />
+                <p className="wx-ask__note">Not medical advice. For anything urgent, contact a clinician.</p>
+              </aside>
               <ProfileChatbot
                 asPage
                 onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
@@ -2690,6 +2699,7 @@ function App() {
                 onOpenDashboard={handleViewEcosystemDashboard}
                 onOpenRead={handleViewArticle}
               />
+              </div>
             ) : (
               <>
                 <p className="ay-h1 wx-title" aria-hidden="true">Ask ayna</p>
