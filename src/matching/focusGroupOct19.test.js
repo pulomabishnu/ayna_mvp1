@@ -105,8 +105,9 @@ describe('bug 1: no period/cycle products for someone who does not menstruate', 
   it('explicit asks still work: fertility/ovulation support, and period products for period needs she selected', () => {
     const fert = seedFor({ age: '44', lifeStageSelections: ['I do not currently get periods'], supportSelections: ['Ovulation tracking or support'] }, 'v1');
     expect(fert.shelves[0].productIds.length).toBeGreaterThan(0);
+    // Spotting after menopause: evaluation first, no products for it (founder, Oct 24).
     const pads = seedFor({ age: '56', lifeStageSelections: ['I am in menopause'], supportSelections: ['Spotting between periods'] }, 'v1');
-    expect(pads.shelves[0].productIds.length).toBeGreaterThan(0);
+    expect(pads.shelves.flatMap((sh) => sh.productIds).filter((id) => !/^d-|telehealth/.test(id))).toEqual([]);
     // "No periods now" (cause not stated) can still track an irregular cycle she asked about.
     const paused = seedFor({ age: '28', lifeStageSelections: ['I do not currently get periods'], supportSelections: ['Irregular periods'] }, 'v1');
     expect(paused.shelves[0].productIds.length).toBeGreaterThan(0);

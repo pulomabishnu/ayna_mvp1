@@ -153,6 +153,8 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
  */
 export default function TodayFeed({ variant = 'app', userId = null, intake = null, healthRows = [], cycle = null, hormonalBC = false, products = [], onOpenProduct, onAsk, onEditAnswers, onFindCare, onSaveToProfile = null,
   saved = [], community = [], onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, matchOpts = undefined, healthProfile = null, onSetUp, moreHeading = true, showHead = true,
+  // The app's ayna home: a Community card's post, and the hand-off to the chat when the rundown ends.
+  onOpenPost, onRundownFinish,
 }) {
   // DEV only (?fixture=today): sample logs and tries, dropped from production builds.
   const [fixture] = useState(() => (import.meta.env.DEV && todayFixtureOn() ? makeTodayFixture() : null));
@@ -193,6 +195,8 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         onFindCare={onFindCare}
         onEditAnswers={onEditAnswers}
         onSetUp={onSetUp}
+        onOpenPost={onOpenPost}
+        onFinish={onRundownFinish}
         variant={variant}
         onSeeData={(d) => { try { window.dispatchEvent(new CustomEvent('ayna:health-tab', { detail: { tab: d?.tab } })); } catch { /* old browser */ } }}
       />

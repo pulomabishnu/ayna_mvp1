@@ -519,3 +519,16 @@ describe('cycle patterns and pregnancy', () => {
     expect(decide({ today: TODAY, logs: [fullLog(TODAY)], patterns: [pat], profile: profile(CLEAR) }).items[0].type).toBe('insight');
   });
 });
+
+describe('bleeding after menopause picked in setup (founder, Oct 24)', () => {
+  it('shows the prompt-evaluation care item without any log', async () => {
+    const { buildTodayState } = await import('./todayState.js');
+    const { decide: run } = await import('./decisionEngine.js');
+    const intake = { age: '57', lifeStageSelections: ['I am post-menopause'], supportSelections: ['Spotting between periods'] };
+    const d = run(buildTodayState({ today: '2026-10-25', intake }));
+    const item = d.items.find((i) => i.id === 'care:postmenopausal_bleeding');
+    expect(item).toBeTruthy();
+    expect(item.body).toMatch(/checked promptly by an ob-gyn/);
+    expect(item.basis.sources[0].url).toMatch(/medlineplus\.gov/);
+  });
+});

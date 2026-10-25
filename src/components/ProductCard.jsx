@@ -29,6 +29,8 @@ const HEART = 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7
 export default function ProductCard({
   product,
   matchPercent = null,
+  // Held back for safety: "Safety hold" instead of any number (founder, Oct 24).
+  matchHold = false,
   // "82% for period cramps": accessible name for the match pill (no tooltip).
   matchLabel = '',
   // One plain line under the % on why it fits her, from the engine's reasons
@@ -107,13 +109,14 @@ export default function ProductCard({
         </div>
       </Link>
       {/* Her match sits outside the open-the-product link: tapping it opens Why this match. */}
-      {hasMatch && (
+      {(hasMatch || (matchHold && !isMine)) && (
         <div className="ay-product-card__fit">
           <MatchPill
+            hold={!hasMatch && matchHold}
             percent={matchPercent}
             size="sm"
             className="ay-product-card__pill"
-            label={`${matchLabel || matchText(matchPercent)}. Why this match for ${product.name}`}
+            label={hasMatch ? `${matchLabel || matchText(matchPercent)}. Why this match for ${product.name}` : `Safety hold, match unavailable for ${product.name}`}
             onClick={() => {
               if (onShowWhy) { onShowWhy(product); return; }
               requestProductTab('why');

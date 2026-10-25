@@ -15,7 +15,8 @@ describe('matchDisplay', () => {
   it('uses the engine tiers and words', () => {
     expect([80, 65, 50, 49].map(tierOf)).toEqual(['excellent', 'strong', 'exploratory', 'browse']);
     expect(tierWord('exploratory')).toBe('Worth a look');
-    expect(tierWord(undefined, 66)).toBe('Strong');
+    // Fit labels by score (founder, Oct 24): 80+ Strong fit, 60 to 79 Good fit, under 60 none.
+    expect([85, 80, 79, 60, 59, 40].map((n) => tierWord(undefined, n))).toEqual(['Strong fit', 'Strong fit', 'Good fit', 'Good fit', '', '']);
   });
 
   it('leads with the need and lists every selected need', () => {
@@ -72,5 +73,13 @@ describe('matchDisplay ASK2', () => {
     expect(w.restricted).toBe(true);
     expect(w.missing).toEqual(['what medicines or supplements you take']);
     expect(matchBadge(details({ eligibility: 'restricted' })).restricted).toBe(true);
+  });
+});
+
+describe('worth checking is severity-based', () => {
+  it('shows important actionable cautions, hides non-actionable uncertainty', async () => {
+    const { confidenceNotes } = await import('./matchDisplay.js');
+    const d = { needId: 'x', needMatches: [{ needId: 'x', confidenceReasons: [{ code: 'medication_caution' }, { code: 'low_metadata' }, { code: 'pain_varies' }, { code: 'stale_answers' }] }] };
+    expect(confidenceNotes(d, { evidenceStrength: 'limited' })).toEqual(['Check with your medicines']);
   });
 });

@@ -12,7 +12,7 @@
  * Daily Rundown" needs a rundown. Tiles fill the box; nothing sends on its own.
  */
 
-export const SURFACES = ['today', 'pdp', 'shop', 'explore', 'ecosystem', 'compare', 'other'];
+export const SURFACES = ['home', 'today', 'pdp', 'shop', 'explore', 'ecosystem', 'compare', 'other'];
 
 const t = (label, question, icon, tone, sub) => ({ label, question, icon, tone, ...(sub ? { sub } : {}) });
 
@@ -34,6 +34,17 @@ export function startersFor({ surface = 'other', signals = {}, productName = '',
   const name = String(productName || '').trim();
   let out;
   switch (surface) {
+    // The app's ayna tab, where the chat is home (founder, Oct 24 20:12).
+    case 'home':
+      out = [
+        t('What should I focus on today?', 'What should I focus on today?', 'week', 'pink', 'From your log and data'),
+        s.lowSleepOrEnergy && t('Why am I feeling so tired today?', 'Why am I feeling so tired today?', 'chat', 'ink'),
+        s.hasRundown && t('Explain my Daily Rundown', 'Explain my Daily Rundown', 'chat', 'sky'),
+        s.hasYesterdayLog && t('What changed from yesterday?', 'What changed from yesterday?', 'week', 'group'),
+        t('Explain my top match', 'Explain my top match', 'match', 'ink', 'The % and why, from your profile'),
+        t('Check a product for me', 'Check a product for me', 'safety', 'sky', 'Ingredients, safety notes and evidence'),
+      ].filter(Boolean).slice(0, 5);
+      break;
     case 'today':
       out = [
         t('What should I focus on today?', 'What should I focus on today?', 'week', 'pink', 'From your log and data'),
@@ -88,6 +99,7 @@ export function askSurfaceFrom({ doc = typeof document !== 'undefined' ? documen
   const app = doc.querySelector?.('.ayna-mobile[data-screen]');
   if (app) {
     const screen = app.getAttribute('data-screen');
+    if (screen === 'ayna') return doc.querySelector('.ay-home[data-view="dashboard"]') ? 'today' : 'home';
     if (screen === 'today') return 'today';
     if (screen === 'eco') return doc.querySelector('.eco-seg[data-on="dashboard"]') ? 'today' : 'ecosystem';
     if (screen === 'browse' || screen === 'shop') return 'shop';
@@ -101,4 +113,21 @@ export function askSurfaceFrom({ doc = typeof document !== 'undefined' ? documen
   if (view === 'articles' || view === 'explore') return 'explore';
   if (view === 'comparison') return 'compare';
   return 'other';
+}
+
+/**
+ * Signed out on the app's chat home: only starters ayna answers on this
+ * phone (src/utils/askToday.js, askHistory.js, askMatch.js), so every one
+ * works without an account. "Explain my top match" needs her profile saved
+ * here. Tiles fill the box; nothing sends on its own.
+ */
+export function onDeviceStarters({ hasProfile = false, signals = {} } = {}) {
+  const s = signals || {};
+  return [
+    t('What should I focus on today?', 'What should I focus on today?', 'week', 'pink', 'Answered on this phone'),
+    s.hasRundown && t('Explain my Daily Rundown', 'Explain my Daily Rundown', 'chat', 'sky', 'Answered on this phone'),
+    t('What changed from yesterday?', 'What changed from yesterday?', 'week', 'group', 'From your log on this phone'),
+    hasProfile && t('Explain my top match', 'Explain my top match', 'match', 'ink', 'The % and why, on this phone'),
+    t('What helped last time?', 'What helped last time?', 'chat', 'group', 'From what you recorded here'),
+  ].filter(Boolean);
 }

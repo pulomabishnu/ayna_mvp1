@@ -29,6 +29,9 @@ export default function TodayScreen({
   onEditIntakeStep, onUpdateIntake, savedProducts = {}, onToggleSaved, onOpenWhyMatch, articles = [], onOpenArticle, onBrowse,
   // The app's match inputs (Not for me, saved, history), so the Rundown shows the same % as Shop.
   matchOpts, omittedProducts = {}, onGoEco,
+  // Inside the ayna tab (AynaHomeScreen): the switch row replaces the header,
+  // Community posts and the chat hand-off feed the Daily Rundown.
+  homeTop = null, rundownCommunity = [], onOpenCommunityPost, onRundownFinish,
 }) {
   // "See your routine": her full routine, schedule and shopping list in You > My ecosystem.
   const openRoutine = () => { onGoEco?.(); setTimeout(() => document.getElementById('ay-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 400); };
@@ -44,9 +47,9 @@ export default function TodayScreen({
   const showCheckin = Boolean(checkinDue && onOpenMonthlyCheckin);
 
   return <div className="ayna-fresh-ecosystem ayna-cabinet-home eco-app ay-today-screen">
-    <MobileHeader onOpenSaved={onOpenSaved} />
+    {homeTop || <MobileHeader onOpenSaved={onOpenSaved} />}
     {/* The greeting and date below (HealthHome) are the visible title, as on the website. */}
-    <h1 id="ay-today-title" className="sr-only">Today</h1>
+    <h1 id="ay-today-title" className="sr-only">{homeTop ? 'My dashboard' : 'Today'}</h1>
 
     {/* An unfinished setup stays in view; with no profile at all, the Daily
         Rundown card itself says how to make one (UX spec 3, 34). */}
@@ -57,7 +60,7 @@ export default function TodayScreen({
         sits under "More for you"; the full routine schedule and shopping list
         live in You > My ecosystem. */}
     <div className="ay-eco-routine">
-      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length && onGoEco ? openRoutine : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined, onSetUp: !hasProfile && !quizDraft ? onStartQuiz : undefined }} />
+      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length && onGoEco ? openRoutine : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined, onSetUp: !hasProfile && !quizDraft ? onStartQuiz : undefined, community: rundownCommunity, onOpenPost: onOpenCommunityPost, onRundownFinish }} />
       {/* Her routine per need, short (src/components/routine); the full one is in You > My ecosystem. */}
       <div className="ay-today-routines">
         <RoutineSummary variant="app" userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} hideMedicines

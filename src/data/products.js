@@ -1667,6 +1667,33 @@ const TEEN_EXCLUDED = {
     exclusionReasons: ['Made for teens. ayna is for adults 18 and over, so we don’t match it to anyone.'],
 };
 
+// Which setup question resolves a missing safety answer (the intake step id).
+const SAFETY_FIELD_STEP = { medications: 'medications', pregnancy_status: 'lifeStage', breastfeeding_status: 'lifeStage' };
+const SAFETY_FIELD_QUESTION = { medications: 'Taking any medicines or supplements?', pregnancy_status: 'Your life stage (pregnancy)', breastfeeding_status: 'Your life stage (breastfeeding)' };
+
+/**
+ * A safety hold, said plainly: why the match is unavailable and what would
+ * resolve it. `fix.step` opens that setup question; product-side gaps have
+ * no step (ayna has to find the label facts first).
+ */
+export function safetyHoldFor(safety) {
+    const fields = (safety?.missingFields || []).filter((f) => REQUIRED_FIELD_TEXT[f]);
+    const info = (safety?.missingProductInfo || []).filter((f) => PRODUCT_INFO_TEXT[f]);
+    if (fields.length) {
+        const f = fields[0];
+        return {
+            kind: 'profile',
+            reason: `We don’t know ${fields.map((x) => REQUIRED_FIELD_TEXT[x]).join(' or ')} yet, and that decides whether this product is safe for you.`,
+            fix: { label: `Answer: ${SAFETY_FIELD_QUESTION[f] || 'one safety question'}`, step: SAFETY_FIELD_STEP[f] || null },
+        };
+    }
+    return {
+        kind: 'product',
+        reason: `We don’t have ${info.map((x) => PRODUCT_INFO_TEXT[x]).join(' or ') || 'all the safety facts for this product'} yet, and your answers make that matter.`,
+        fix: { label: 'ayna is checking the label. Nothing for you to do.', step: null },
+    };
+}
+
 function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
     if (isTeenProduct(savedProduct)) return { ...TEEN_EXCLUDED };
     const product = hydrateCatalogProduct(savedProduct);
@@ -1824,6 +1851,12 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
             basedOn: inputsFor(best, up),
             profileHint: confidenceLevel === 'high' ? null : PROFILE_HINT,
         };
+        // Held back for safety (founder, Oct 24): no percent anywhere, ever.
+        // The card, product page, Compare, Rundown, Ask and Why show the hold,
+        // its exact reason and what resolves it. 0 is only for sorting.
+        if (details.eligibility === 'restricted' && details.matchStatus === 'scored') {
+            details = { ...details, percent: null, score: 0, sortScore: 0, matchStatus: 'safety-hold', tier: 'browse', goalMatch: null, healthMatch: null, needMatches: details.needMatches.map((m) => ({ ...m, score: null, held: true })), safetyHold: safetyHoldFor(safety) };
+        }
     }
     if (!focusId) entry.details = details;
     return details;
@@ -1853,11 +1886,11 @@ function careFlagsFor(up) {
     if (up.safety.pregnant) notes.push({ code: 'pregnancy_unknown', text: 'Pregnancy safety is not confirmed for most products. Check new products with your clinician.' });
     if (up.safety.breastfeeding === 'yes') notes.push({ code: 'breastfeeding_unknown', text: 'Breastfeeding safety is not confirmed for most products. Check new products with your clinician.' });
     if (up.physiology.confidenceFlags.includes('needs_clarification')) notes.push({ code: 'stage_needs_clarification', text: 'Some life stages you chose do not usually go together. Update your profile so we can match better.' });
-    for (const c of up.contradictions.filter((x) => x.code === 'period_need_vs_stage')) notes.push({ code: c.code, text: c.text });
+    for (const c of up.contradictions.filter((x) => x.code === 'period_need_vs_stage')) notes.push({ code: c.code, text: c.text, source: c.source || null, prominent: Boolean(c.prominent) });
     return {
         urgent: up.safety.urgent,
         careFirst: up.safety.careFirst,
-        careProminent: Boolean(up.safety.careProminent || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length),
+        careProminent: Boolean(up.safety.careProminent || up.contradictions.some((x) => x.code === 'period_need_vs_stage') || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length),
         utiRightNow,
         utiFirstTime,
         severePain,
@@ -1899,7 +1932,9 @@ export function getProductMatchDetailsForProduct(product, quizAnswers, healthPro
 }
 
 export function getProductRelevanceScore(product, quizAnswers, healthProfile = null, opts = {}) {
-    return buildMatchDetails(product, quizAnswers, healthProfile, opts).percent;
+    const d = buildMatchDetails(product, quizAnswers, healthProfile, opts);
+    // A safety hold has no percent to show; 0 keeps it last when sorting.
+    return d.matchStatus === 'safety-hold' ? 0 : d.percent;
 }
 
 /**

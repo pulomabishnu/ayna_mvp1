@@ -24,9 +24,9 @@ describe('Daily Rundown auto-launch', () => {
     expect(autoLaunchDecision({ ...base, now: at(9), firstTime: true })).toBe('none');
     expect(autoLaunchDecision({ ...base, now: at(9), dialogOpen: true })).toBe('none');
   });
-  it('website and reduced motion: highlight the card, no full screen', () => {
+  it('website: highlight the card; reduced motion still opens (static)', () => {
     expect(autoLaunchDecision({ ...base, now: at(9), surface: 'web' })).toBe('highlight');
-    expect(autoLaunchDecision({ ...base, now: at(9), reducedMotion: true })).toBe('highlight');
+    expect(autoLaunchDecision({ ...base, now: at(9), reducedMotion: true })).toBe('open');
   });
   it('external opens and deep links are recognised', () => {
     noteExternalOpen(1000);

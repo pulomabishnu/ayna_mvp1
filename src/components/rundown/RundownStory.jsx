@@ -1,9 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import NotUsefulMenu from './NotUsefulMenu.jsx';
 import ProductImage from '../../mobile/components/ProductImage.jsx';
 import { matchText } from '../../utils/matchDisplay.js';
 import { READ_PHOTOS } from '../../data/readCovers.js';
+import { ProductSheetContext } from '../../mobile/productSheetContext.js';
+import { ProductQuickActions } from '../../mobile/components/ProductQuick.jsx';
+import { holdLine } from '../../utils/matchState.js';
 
 /**
  * The rundown as a full-screen story (UX spec 8): progress at the top, tap
@@ -63,6 +66,25 @@ function Body({ card, h, done }) {
       );
     case 'match': {
       const m = card.match;
+      // The app (product sheet available): tap the product for the sheet over
+      // this card, and Buy, Save, Add to my routine are one tap each.
+      if (h.sheet) {
+        return (
+          <div className="ay-rd-product has-open">
+            <button type="button" className="ay-rd-product__open" onClick={() => h.openSheet(m.product)} aria-label={`${m.product.name}, ${matchText(m.percent)}. Open product details`}>
+              <span className="ay-rd-product__img"><ProductImage product={m.product} src={m.product.image || m.product.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
+              <span className="ay-rd-product__text">
+                <b>{m.product.name}</b>
+                <span className="ay-rd-pill">{matchText(m.percent)}</span>
+                {m.why && <span>{m.why}</span>}
+                <Evidence level={m.evidence} />
+              </span>
+            </button>
+            <ProductQuickActions product={m.product} saved={h.sheet.isSaved(m.product.id)} onToggleSaved={h.sheetSave} inRoutine={h.sheet.inRoutine(m.product.id)} onAddToRoutine={h.sheetAdd} placement="rundown" />
+            <span className="ay-rd-actions"><button type="button" className="ay-rd-link" onClick={() => h.openSheet(m.product)}>Why this match?</button></span>
+          </div>
+        );
+      }
       return (
         <div className="ay-rd-product">
           <span className="ay-rd-product__img"><ProductImage product={m.product} src={m.product.image || m.product.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
@@ -78,11 +100,19 @@ function Body({ card, h, done }) {
         </div>
       );
     }
-    case 'saved':
+    case 'saved': {
+      // A product held back for safety never shows a %: "Safety hold · Match unavailable".
+      const st = h.sheet?.matchStateFor?.(card.product) || null;
+      const face = (<>
+        <span className="ay-rd-product__img"><ProductImage product={card.product} src={card.product.image || card.product.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
+        <span className="ay-rd-product__text"><b>{card.product.name}</b>
+          {st?.kind === 'scored' && <span className="ay-rd-pill">{st.label}</span>}
+          {st?.kind === 'held' && <span><span className="ay-rd-hold">{st.label}</span>{holdLine(st)}</span>}
+        </span>
+      </>);
       return (
-        <div className="ay-rd-product">
-          <span className="ay-rd-product__img"><ProductImage product={card.product} src={card.product.image || card.product.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
-          <span className="ay-rd-product__text"><b>{card.product.name}</b></span>
+        <div className={`ay-rd-product${h.sheet ? ' has-open' : ''}`}>
+          {h.sheet ? <button type="button" className="ay-rd-product__open" onClick={() => h.openSheet(card.product)} aria-label={`${card.product.name}. Open product details`}>{face}</button> : face}
           <span className="ay-rd-actions">
             {h.compare && <button type="button" className="ay-rd-primary" onClick={() => h.compare(card.product)}>Compare</button>}
             {h.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(`Is ${card.product.name} a good fit for me?`)}>Ask ayna</button>}
@@ -91,6 +121,9 @@ function Body({ card, h, done }) {
           </span>
         </div>
       );
+    }
+    case 'community':
+      return h.openPost && card.communityItem?.id ? <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => h.openPost(card.communityItem.id)}>Read the post</button></span> : null;
     case 'read':
       return h.openRead ? <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => h.openRead(card.readId)}>Learn more</button></span> : null;
     case 'care': {
@@ -135,7 +168,11 @@ function Body({ card, h, done }) {
 /**
  * @param {{ cards, title, onClose, onSeen, onCheckIn, onOutcome, onAsk, onWhyMatch, onSave, onCompare, onUnsave, onOpenRead, onExplore, onFindCare, onNotUseful, onRemindTomorrow, onAction }} props
  */
-export default function RundownStory({ cards, title = 'Your daily rundown', onClose, onSeen, onCheckIn, onOutcome, onAsk, onAskFollowUp, onSeeData, onWhyMatch, onSave, onCompare, onUnsave, onOpenRead, onExplore, onFindCare, onNotUseful, onRemindTomorrow, onAction }) {
+export default function RundownStory({ cards, title = 'Your daily rundown', onClose, onSeen, onCheckIn, onOutcome, onAsk, onAskFollowUp, onSeeData, onWhyMatch, onSave, onCompare, onUnsave, onOpenRead, onOpenPost, onExplore, onFindCare, onNotUseful, onRemindTomorrow, onAction }) {
+  // The app's product sheet (null on the website): opens over this story,
+  // which stays on the same card, paused, until the sheet closes.
+  const sheet = useContext(ProductSheetContext);
+  const suspended = Boolean(sheet?.isOpen);
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
   const [done, setDone] = useState({});
@@ -148,7 +185,8 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   const list = cards.filter((c) => !hidden[c.key]);
   const n = list.length;
   const card = list[Math.min(i, n - 1)];
-  const auto = !rm && !paused && card && !STILL.has(card.kind) && card.kind !== 'closing';
+  // In the app the product card has one-tap Buy, Save and Add: it waits for her.
+  const auto = !rm && !paused && !suspended && card && !STILL.has(card.kind) && card.kind !== 'closing' && !(sheet && card.kind === 'match');
 
   const close = useCallback(() => { onClose?.({ seen: i + 1, count: n }); try { backTo?.focus?.(); } catch { /* gone */ } }, [onClose, i, n, backTo]);
   const go = useCallback((d) => setI((x) => Math.max(0, Math.min(n - 1, x + d))), [n]);
@@ -161,13 +199,14 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   }, [auto, i, go]);
   useEffect(() => {
     const key = (e) => {
+      if (suspended) return; // the product sheet on top has the keys
       if (e.key === 'Escape') { e.preventDefault(); close(); }
       else if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
       else if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
     };
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
-  }, [go, close]);
+  }, [go, close, suspended]);
   if (!card) return null;
 
   const h = {
@@ -180,6 +219,11 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     compare: onCompare ? (p) => { onAction?.(card, 'open'); onCompare(p); } : null,
     unsave: onUnsave ? (p) => { onUnsave(p); setMsg('Removed from your saved items.'); onAction?.(card, 'not_relevant'); go(1); } : null,
     openRead: onOpenRead ? (id) => { onAction?.(card, 'open'); onOpenRead(id); } : null,
+    openPost: onOpenPost ? (id) => { onAction?.(card, 'open'); onOpenPost(id); } : null,
+    sheet,
+    openSheet: sheet ? (p) => { onAction?.(card, 'open'); sheet.open(p); } : null,
+    sheetSave: sheet ? (p) => { const was = sheet.isSaved(p.id); sheet.toggleSaved(p); if (!was) onAction?.(card, 'save'); } : null,
+    sheetAdd: sheet ? (p) => { sheet.addToRoutine(p); onAction?.(card, 'add'); } : null,
     ask: onAsk ? (q) => { onAction?.(card, 'ask'); onAsk(q); } : null,
     explore: onExplore ? () => { onAction?.(card, 'open'); onExplore(); } : null,
     askFollowUp: onAskFollowUp ? (f) => { onAction?.(card, 'ask'); onAskFollowUp(f); } : null,
@@ -236,7 +280,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
           <Body card={card} h={h} done={done[card.key]} />
           {card.kind !== 'opening' && card.kind !== 'closing' && (
             <div className="ay-rd-foot">
-              {savable && onSave && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
+              {savable && onSave && !sheet && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
               {onAsk && card.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>Ask ayna about this</button>}
               {!card.protected && onNotUseful && <NotUsefulMenu onPick={(reason) => { onNotUseful(card, reason); setHidden((s) => ({ ...s, [card.key]: true })); setMsg('Thanks. You will see less like this.'); }} />}
             </div>

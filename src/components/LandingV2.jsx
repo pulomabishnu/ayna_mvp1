@@ -649,7 +649,8 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
   const rest = useAfterHeroPaint();
   return (
     <div className={`ed ed-home hm${paused ? ' is-paused' : ''}`}>
-      <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} banner={heroBanner} posts={communityPosts} paused={paused} onTogglePause={togglePause} />
+      {/* Community posts sit lower down, after how it works, never above the value prop (founder, Oct 24). */}
+      <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} banner={heroBanner} posts={[]} paused={paused} onTogglePause={togglePause} />
       {personal?.dashboard ? <div className="hm-slot">{personalSlot}</div> : <Brands onViewWaitlist={onViewWaitlist} />}
       {!personal?.dashboard && personalSlot && <div className="hm-slot">{personalSlot}</div>}
       <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />

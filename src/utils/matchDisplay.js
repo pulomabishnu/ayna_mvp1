@@ -14,6 +14,15 @@ export const RESTRICTED_LINE = 'Add a safety detail to see this match';
 // matches; views that show their own restricted box drop it.
 export const RESTRICTED_CONSIDERATION = /^Safety not checked yet/;
 
+// Safety hold (founder, Oct 24): a product held back for safety shows no
+// percent anywhere, never 0%. These words, then the exact reason and what
+// resolves it (details.safetyHold from src/data/products.js).
+export const SAFETY_HOLD = 'Safety hold';
+export const MATCH_UNAVAILABLE = 'Match unavailable';
+export const SAFETY_HOLD_LINE = 'We need one more safety detail before we can determine your match.';
+export const SAFETY_HOLD_PRODUCT_LINE = 'We need one more safety fact about this product before we can determine your match.';
+export const isSafetyHold = (details) => details?.matchStatus === 'safety-hold';
+
 const TIER_WORDS = { excellent: 'Excellent', strong: 'Strong', exploratory: 'Worth a look', browse: 'Browse' };
 
 /** Engine tiers: excellent 80+, strong 65+, exploratory 50+, browse under 50. */
@@ -25,7 +34,16 @@ export function tierOf(score) {
   return 'browse';
 }
 
+// Match labels (founder, Oct 24): 80+ Strong fit, 60 to 79 Good fit, under 60
+// no label (under 50 the number itself becomes "Partial fit").
+export function fitLabel(score) {
+  const s = Number(score);
+  if (!Number.isFinite(s)) return '';
+  return s >= 80 ? 'Strong fit' : s >= 60 ? 'Good fit' : '';
+}
+
 export function tierWord(tier, score) {
+  if (Number.isFinite(Number(score)) && score != null) return fitLabel(score);
   return TIER_WORDS[tier] || TIER_WORDS[tierOf(score)];
 }
 
@@ -140,7 +158,7 @@ export function needBreakdown(details) {
     phrase: m.phrase,
     score: m.relevant ? m.score : 0,
     tier: m.relevant ? m.tier : 'browse',
-    word: m.restricted ? 'Needs a safety detail' : m.relevant && m.score > 0 ? tierWord(m.tier, m.score) : 'Not for this',
+    word: m.restricted || m.held ? 'Needs a safety detail' : m.relevant && m.score > 0 ? tierWord(m.tier, m.score) : 'Not for this',
     restricted: Boolean(m.restricted),
   }));
 }
@@ -180,13 +198,32 @@ const CONFIDENCE_NOTES = {
   age_unknown_age_limited: 'Age not on file',
 };
 
-/** Short confidence notes for the best need, deduped. */
+/**
+ * "Worth checking" is severity-based (founder, Oct 24):
+ *   hard safety issue           held back (safety hold / excluded), never a note here
+ *   important, actionable       'check': could change whether or how she uses it
+ *   minor preference mismatch   the normal explanation only (reasons), not here
+ *   tiny, non-actionable        'hide': not shown
+ */
+export const CONFIDENCE_SEVERITY = {
+  pregnancy_unknown: 'check', ttc_pregnancy_unknown: 'check', pregnancy_caution: 'check', ttc_pregnancy_contraindicated: 'check',
+  breastfeeding_unknown: 'check', breastfeeding_caution: 'check', medication_unknown: 'check', medication_caution: 'check',
+  allergen_unknown: 'check', allergen_variant: 'check', broad_allergy_class: 'check', unresolved_allergy: 'check', allergy_status_unsure: 'check',
+  urgent_not_sure_high_risk: 'check', similar_reaction_caution: 'check',
+  flow_contradiction: 'check', stage_needs_clarification: 'check', answer_contradiction: 'check', pregnancy_reported: 'check',
+  medications_not_shared: 'check', pregnancy_status_unknown: 'check', allergy_status_unknown: 'check',
+  stale_pregnancy: 'check', stale_medications: 'check',
+  // Non-actionable for her, or about data quality rather than her safety.
+  leave_out_unknown: 'hide', low_metadata: 'hide', pain_varies: 'hide', unusual_combination: 'hide',
+  stale_answers: 'hide', interpretation_uncertain: 'hide', age_unknown_age_limited: 'hide',
+};
+
+/** "Worth checking" notes for the best need: only important, actionable ones, deduped. */
 export function confidenceNotes(details, product = null) {
+  void product; // Evidence level is shown with the evidence, not as something to check.
   const best = bestNeed(details);
-  const codes = (best?.confidenceReasons || []).map((r) => r.code);
-  const notes = codes.map((c) => CONFIDENCE_NOTES[c]).filter(Boolean);
-  if (product?.evidenceStrength === 'limited') notes.push('Limited evidence');
-  return [...new Set(notes)];
+  const codes = (best?.confidenceReasons || []).map((r) => r.code).filter((c) => CONFIDENCE_SEVERITY[c] === 'check');
+  return [...new Set(codes.map((c) => CONFIDENCE_NOTES[c]).filter(Boolean))];
 }
 
 /** "Not shown because you said this made things worse" for excluded products. */

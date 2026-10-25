@@ -15,14 +15,14 @@ const Check = () => (
 
 /* ---------- chips + stickers ---------- */
 
-export function ChipList({ items, selected = [], onToggle, compact = false, muted = [] }) {
+export function ChipList({ items, selected = [], onToggle, compact = false, muted = [], labels = {} }) {
   return (
     <div className={`ip-chips${compact ? ' is-compact' : ''}`}>
       {items.map((item) => {
         const on = selected.includes(item);
         return (
           <button type="button" key={item} aria-pressed={on} className={`ip-chip${muted.includes(item) ? ' is-muted' : ''}${findTerm(item) ? ' has-term' : ''}`} onClick={() => onToggle(item)}>
-            {on && <Check />}<span>{conditionDisplayName(item)}</span>
+            {on && <Check />}<span>{labels[item] || conditionDisplayName(item)}</span>
           </button>
         );
       })}
@@ -67,7 +67,7 @@ export function SearchField({ value, onChange, placeholder }) {
 
 // Plain, high-clarity single choice. Used for every safety question, so it
 // deliberately has no playful treatment: full-width rows, radio dot, label.
-export function ChoiceRows({ options, value, onChange }) {
+export function ChoiceRows({ options, value, onChange, labels = {} }) {
   return (
     <div className="ip-rows" role="radiogroup">
       {options.map((opt) => {
@@ -75,7 +75,7 @@ export function ChoiceRows({ options, value, onChange }) {
         return (
           <button type="button" key={opt} role="radio" aria-checked={on} className="ip-row" onClick={() => onChange(opt)}>
             <span className="ip-radio" aria-hidden="true" />
-            <span>{opt}</span>
+            <span>{labels[opt] || opt}</span>
           </button>
         );
       })}

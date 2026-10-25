@@ -6,7 +6,7 @@ import { ARTICLES } from '../Articles.jsx';
 import { ExploreHeader } from './ExploreNav.jsx';
 import { ALL_PRODUCTS, getProductById, getProductMatchDetailsForProduct, filterPrescriptionCareGate } from '../../data/products.js';
 import { RELEASED_STARTUPS } from '../../data/startups.js';
-import { matchBadge } from '../../utils/matchDisplay.js';
+import { matchBadge, isSafetyHold } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { HEALTH_TOPICS, searchExplore, matchTopics } from '../../utils/search/exploreSearch.js';
 import { searchSuggestions } from '../../utils/search/index.js';
@@ -94,7 +94,7 @@ export default function WebExplore({
     const details = hasProfile ? getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts) : null;
     const badge = details ? matchBadge(details) : null;
     const pct = badge ? badge.percent : null;
-    return <ProductCard key={p.id} product={p} matchPercent={pct} matchLabel={badge ? badge.label : ''} why={pct != null ? whyLine(p, details) : ''}
+    return <ProductCard key={p.id} product={p} matchPercent={pct} matchHold={isSafetyHold(details)} matchLabel={badge ? badge.label : ''} why={pct != null ? whyLine(p, details) : ''}
       isSaved={!!savedProducts[p.id]} inEcosystem={!!myProducts[p.id]} onToggleSaved={onToggleSaved}
       onOpen={(item) => onOpenProduct?.(item, { source, position: i })} />;
   };

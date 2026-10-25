@@ -6,7 +6,7 @@ import ProductDetailScreen from './ProductDetailScreen.jsx';
 describe('ProductDetailScreen match display', () => {
   it('shows a relevant mid-range score as the one match pill', () => {
     const product = ALL_PRODUCTS.find((item) => item.id === 'p-vitex');
-    const quizAnswers = { fullHealthIntake: { supportSelections: ['PMS symptoms'] } };
+    const quizAnswers = { fullHealthIntake: { supportSelections: ['PMS symptoms'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } };
     const details = getProductMatchDetailsForProduct(product, quizAnswers);
     const percent = details.percent;
     expect(percent).toBeGreaterThan(0);

@@ -1026,9 +1026,25 @@ function worseStage(a, b) {
  * What the engine reads from the passport. Missing passport -> everything
  * unknown, nothing excluded.
  */
+// A reviewed passport fact can carry stage_status: 'avoid' | 'caution' | 'ok',
+// a reviewer's reading of exactly what the source says (the quote is the
+// fact's value). 'ok' only counts from a .gov source and only fills an unknown;
+// it never loosens a caution from the label or anywhere else.
+const GOV_SOURCE = /^https:\/\/([a-z0-9-]+\.)*(nih\.gov|medlineplus\.gov|fda\.gov|cdc\.gov|womenshealth\.gov|ahrq\.gov|hhs\.gov)\//i;
+function stageFromReview(fact) {
+  const s = fact?.stage_status;
+  const evidence = fact?.source_url || 'product passport (reviewed source)';
+  const at = fact?.verified_at || null;
+  const all = (overall, extra = {}) => ({ overall, trimester_1: overall, trimester_2: overall, trimester_3: overall, evidence_source: evidence, last_reviewed: at, ...extra });
+  if (s === 'avoid') return all('contraindicated');
+  if (s === 'caution') return all('caution');
+  if (s === 'ok' && GOV_SOURCE.test(fact?.source_url || '')) return all('verified', { onlyIfUnknown: true });
+  return null;
+}
+
 function passportLayer(product, passport, applicable) {
   if (!passport) {
-    return { status: null, freshness: null, completeness: null, missingCritical: [], ingredientIds: [], ingredientClasses: [], reviewedText: '', pregnancyText: '', breastfeedingText: '', interactionText: '', known: {}, claims: [], qa: null };
+    return { status: null, freshness: null, completeness: null, missingCritical: [], ingredientIds: [], ingredientClasses: [], reviewedText: '', pregnancyText: '', breastfeedingText: '', pregnancyStage: null, breastfeedingStage: null, interactionText: '', known: {}, claims: [], qa: null };
   }
   const c = passport.composition;
   const sf = passport.safety;
@@ -1047,6 +1063,9 @@ function passportLayer(product, passport, applicable) {
     reviewedText,
     pregnancyText: reviewed(sf.pregnancy) ? normalizeClinician(factText(sf.pregnancy)) : '',
     breastfeedingText: reviewed(sf.breastfeeding) ? normalizeClinician(factText(sf.breastfeeding)) : '',
+    // A reviewer's reading of what the source says (stage_status), with its source.
+    pregnancyStage: reviewed(sf.pregnancy) ? stageFromReview(sf.pregnancy) : null,
+    breastfeedingStage: reviewed(sf.breastfeeding) ? stageFromReview(sf.breastfeeding) : null,
     interactionText: reviewed(sf.medication_interactions) ? factText(sf.medication_interactions).toLowerCase() : '',
     // Safety facts we have any information on (catalog or reviewed). Not applicable counts as known.
     known: {
@@ -1162,11 +1181,11 @@ export function buildProductProfile(product) {
   // breastfeeding months later, so research breastfeeding status skips them.
   const internalPeriod = !ingested && (['tampon', 'cup', 'disc', 'menstrual-cup', 'menstrual-disc'].includes(f.cat)
     || /tampon|menstrual (cup|disc)|\b(cup|disc)\b/.test(String(product.name || '').toLowerCase()) && (f.cat === 'period' || formats.includes('period_care')));
-  const pregnancy = worseStage(worseStage(stageSafety(stText, PREGNANCY_RULES, stageApplies), ppLayer.pregnancyText ? stageSafety(ppLayer.pregnancyText, PREGNANCY_RULES, stageApplies) : null),
-    researchStage(product.id, 'pregnancy', stageApplies));
+  const pregnancy = worseStage(worseStage(worseStage(stageSafety(stText, PREGNANCY_RULES, stageApplies), ppLayer.pregnancyText ? stageSafety(ppLayer.pregnancyText, PREGNANCY_RULES, stageApplies) : null),
+    stageApplies ? ppLayer.pregnancyStage : null), researchStage(product.id, 'pregnancy', stageApplies));
   if (internalPeriod && pregnancy.overall !== 'not_applicable') pregnancy.pregnantOnly = true;
-  const breastfeeding = worseStage(worseStage(stageSafety(stText, BREASTFEEDING_RULES, stageApplies), ppLayer.breastfeedingText ? stageSafety(ppLayer.breastfeedingText, BREASTFEEDING_RULES, stageApplies) : null),
-    internalPeriod ? null : researchStage(product.id, 'breastfeeding', stageApplies));
+  const breastfeeding = worseStage(worseStage(worseStage(stageSafety(stText, BREASTFEEDING_RULES, stageApplies), ppLayer.breastfeedingText ? stageSafety(ppLayer.breastfeedingText, BREASTFEEDING_RULES, stageApplies) : null),
+    stageApplies ? ppLayer.breastfeedingStage : null), internalPeriod ? null : researchStage(product.id, 'breastfeeding', stageApplies));
 
   // Relevance. Unconditional levels merge by MAX; contextual levels are kept
   // separately (with the contexts they require) and only count at scoring

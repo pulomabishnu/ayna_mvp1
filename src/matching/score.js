@@ -36,7 +36,7 @@ import { NEED_BY_ID, needPhrase, canonicalNeedId, CONDITION_PATHWAYS, CONDITION_
 import { buildProductProfile, normalizeBrand, CONTEXT_BONUS, productSimilarity, CYCLE_DEPENDENT_RULES, CYCLE_TRACKING_RULES } from './productProfile.js';
 import { checkMedicationInteractions, INTERACTION_TABLE } from './medications.js';
 import { normalizeName } from './userProfile.js';
-import { lifeStageBlock, lifeStageNeedBlock } from './eligibility.js';
+import { lifeStageBlock, lifeStageNeedBlock, postmenopausalBleedingBlock } from './eligibility.js';
 
 // Preference dimension weights (only known + applicable ones count).
 export const DIMENSION_WEIGHTS = { context: 3, format: 2, values: 2, price: 2, evidence: 2, brand: 1, effort: 1 };
@@ -570,9 +570,9 @@ export function resolveRelevance(pp, up, needId) {
  *   fertility need she picked; a care service keeps its fertility relevance.
  * - After menopause, relevance from a claim about a current cycle (PMS,
  *   cyclical breast tenderness, conception) is dropped (lifeStageNeedBlock).
- * - Period products stay for period needs she explicitly selected (bleeding
- *   still needs products; the contradiction lowers confidence and care
- *   notes cover it).
+ * - Bleeding after menopause (a period or bleeding need she picked while in
+ *   menopause or post-menopause): no products for it, only the prompt-
+ *   evaluation message (founder, Oct 24; postmenopausalBleedingBlock).
  */
 export function notMenstruatingBlock(rel, up, needId) {
   const m = up.physiology?.menstruation;
@@ -1030,8 +1030,10 @@ export function scoreProductForNeed(productOrProfile, up, needIdIn, opts = {}) {
   const rel = resolveRelevance(pp, up, needId);
   // She does not menstruate now: relevance that only holds for someone who
   // does (period products, cycle trackers, ovulation tests) does not count.
-  const cycleBlocked = notMenstruatingBlock(rel, up, needId);
-  if (cycleBlocked) notes.filtered = 'not_menstruating';
+  // Bleeding after menopause: evaluation first, no products for it (founder, Oct 24).
+  const bleedingBlocked = rel.base > 0 && postmenopausalBleedingBlock(pp, up, needId);
+  const cycleBlocked = bleedingBlocked || notMenstruatingBlock(rel, up, needId);
+  if (cycleBlocked) notes.filtered = bleedingBlocked ? 'postmenopausal_bleeding' : 'not_menstruating';
   const base = cycleBlocked ? 0 : rel.base;
   const health = healthComponent(pp, up, need, base, notes);
   const relationship = cycleBlocked ? 'unrelated' : rel.relationship;
