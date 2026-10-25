@@ -55,7 +55,8 @@
   letter-spacing: -0.01em;
 }
 .ay-tour .ay-tour__card p { color: var(--t-ink); margin: 0; font-size: 15px; line-height: 1.45; }
-.ay-tour__off-note { display: block; margin-top: 6px; font-size: 13px; font-weight: 500; opacity: 0.85; }
+.ay-tour .ay-tour__card p.ay-tour__text { font-size: 16px; font-weight: 600; line-height: 1.35; padding-right: 4px; }
+.ay-tour .ay-tour__card p.ay-tour__off-note { margin-top: 6px; font-size: 13px; font-weight: 500; }
 
 /* The little pointer to the anchor. */
 .ay-tour__tip::before {
@@ -120,5 +121,5 @@
 /* Settings: Tips group (TipsSettings.jsx). */
 .ay-tips-set__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; }
 .ay-tips-set__row span { display: flex; flex-direction: column; gap: 2px; }
-.ay-tips-set__row small { font-size: 13px; opacity: 0.8; }
-.ay-tips-set__status { margin: 4px 0 0; font-size: 13px; }
+.ay-tips-set__row small { font-size: 13px; font-weight: 500; }
+.ay-tips-set__status { margin: 4px 0 0; font-size: 13px; font-weight: 500; }

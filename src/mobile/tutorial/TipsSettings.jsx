@@ -21,7 +21,7 @@ export default function TipsSettings({ renderSwitch }) {
       <h2>Tips</h2>
       <div className="ay-set-card">
         <div className="ay-set-row ay-tips-set__row">
-          <span className="ay-set-title"><b>Show tips</b><small>A short tip the first time you open each page</small></span>
+          <span className="ay-set-title"><b>Show tips</b><small>Once on each page</small></span>
           {renderSwitch({ on, onClick: toggle, label: 'Show tips' })}
         </div>
         <button type="button" className="ay-set-row ay-tips-set__replay" onClick={replay}>

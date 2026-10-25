@@ -190,18 +190,18 @@ export default function TutorialLayer({ userId = null }) {
         key={tip.id}
         className={`ay-tour__card ay-tour__tip is-${g?.side || 'below'}`}
         style={g ? { left: g.left, top: g.top, '--ay-tour-arrow': `${g.arrow}px` } : { visibility: 'hidden', left: EDGE, top: EDGE }}
-        role="dialog" aria-modal="true" aria-labelledby={`ay-tour-${tip.id}-h`} aria-describedby={`ay-tour-${tip.id}-p`}
+        role="dialog" aria-modal="true" aria-labelledby={`ay-tour-${tip.id}-h`} aria-describedby={tip.offNote ? `ay-tour-${tip.id}-p` : undefined}
         data-tip={tip.id}
       >
         {total > 1 && <p className="ay-tour__dots" aria-label={`Tip ${run.index + 1} of ${total}`}>{run.tips.map((t, i) => <i key={t.id} className={i === run.index ? 'is-on' : ''} aria-hidden="true" />)}</p>}
-        <h2 id={`ay-tour-${tip.id}-h`}>{tip.title}</h2>
-        <p id={`ay-tour-${tip.id}-p`}>{tip.body}{tip.offNote && <span className="ay-tour__off-note"> {tip.offNote}</span>}</p>
+        <p id={`ay-tour-${tip.id}-h`} className="ay-tour__text">{tip.text}</p>
+        {tip.offNote && <p id={`ay-tour-${tip.id}-p`} className="ay-tour__off-note">{tip.offNote}</p>}
         <div className="ay-tour__actions">
           <button type="button" className="ay-tour__link" onClick={() => end('off')}>Turn off tips</button>
           <button type="button" className="ay-tour__go" data-primary onClick={() => (last ? end('done') : setRun({ ...run, index: run.index + 1 }))}>{last ? 'Got it' : 'Next'}</button>
         </div>
       </section>
-      <p className="sr-only" aria-live="polite">{`Tip ${run.index + 1} of ${total}. ${tip.title}`}</p>
+      <p className="sr-only" aria-live="polite">{`Tip ${run.index + 1} of ${total}. ${tip.text}`}</p>
     </div>,
     document.body,
   );

@@ -60,13 +60,13 @@ describe('tips overlay', () => {
     click('Show me tips');
     expect(readTour().enabled).toBe(true);
     wait(1000);
-    expect(dialog().textContent).toContain('Ask ayna');
-    expect(dialog().textContent).toContain('turn tips off any time in You, then Settings');
+    expect(dialog().textContent).toContain('Ask about your health');
+    expect(dialog().textContent).toContain('Turn tips off any time in Settings.');
     expect(dialog().getAttribute('aria-modal')).toBe('true');
-    expect(document.querySelectorAll('.ay-tour__dots i')).toHaveLength(3);
+    expect(document.querySelectorAll('.ay-tour__dots i')).toHaveLength(2);
     click('Next');
-    expect(dialog().textContent).toContain('Your Daily Rundown');
-    click('Next');
+    expect(dialog().textContent).toContain('Daily Rundown');
+    expect(dialog().textContent).not.toContain('Turn tips off any time');
     click('Got it');
     expect(dialog()).toBeNull();
     expect(readTour().seen.home).toBeTruthy();
@@ -105,7 +105,7 @@ describe('tips overlay', () => {
     setTipsEnabled(true);
     mountApp({ html: '<div data-tour="home"><button data-tour="home-ask" data-offscreen="1">Ask</button><nav data-tour="home-links">Links</nav></div>' });
     wait(1000);
-    expect(dialog().textContent).toContain('One tap away');
+    expect(dialog().textContent).toContain('My dashboard');
     expect(document.querySelectorAll('.ay-tour__dots i')).toHaveLength(0);
   });
 
@@ -113,7 +113,7 @@ describe('tips overlay', () => {
     setTipsEnabled(true);
     mountApp({ html: '<div data-tour="explore"><div class="ax-top"><input aria-label="Search" /></div><nav data-tour="explore-sections">x</nav></div>' });
     wait(1000);
-    expect(dialog().textContent).toContain('Search everything');
+    expect(dialog().textContent).toContain('Search products');
     act(() => { window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); });
     expect(dialog()).toBeNull();
     expect(readTour().seen.explore).toBeTruthy();

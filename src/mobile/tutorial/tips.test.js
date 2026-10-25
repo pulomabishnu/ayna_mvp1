@@ -99,6 +99,9 @@ describe('tips to show', () => {
     const list = tipsToShow(home, (sel) => !sel.includes('rundown-card'));
     expect(list.map((t) => t.id)).toEqual(['home-ask', 'home-links']);
   });
+  it('never more than 2 on a screen', () => {
+    expect(tipsToShow(home, () => true).map((t) => t.id)).toEqual(['home-ask', 'home-rundown']);
+  });
   it('nothing usable means nothing to show', () => {
     expect(tipsToShow(home, () => false)).toEqual([]);
   });
@@ -114,11 +117,11 @@ describe('copy', () => {
       expect(s.tips.length).toBeGreaterThan(0);
       expect(s.tips.length).toBeLessThanOrEqual(3);
       for (const t of s.tips) {
-        const text = `${t.title} ${t.body}`;
-        expect(text).not.toMatch(/[—–]/);
-        expect(text).not.toMatch(/chatbot|agent/i);
-        expect(t.body.length).toBeLessThanOrEqual(120);
-        expect(t.title[0]).toBe(t.title[0].toUpperCase());
+        expect(t.text).not.toMatch(/[—–]/);
+        expect(t.text).not.toMatch(/chatbot|agent/i);
+        expect(t.text.split(/\s+/).length).toBeLessThanOrEqual(12);
+        expect(t.text.match(/[.!?]/g)).toHaveLength(1); // one sentence
+        expect(t.text[0]).toBe(t.text[0].toUpperCase());
       }
     }
   });
