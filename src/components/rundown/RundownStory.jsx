@@ -6,6 +6,8 @@ import { matchText } from '../../utils/matchDisplay.js';
 import { ProductSheetContext } from '../../mobile/productSheetContext.js';
 import { ProductQuickActions } from '../../mobile/components/ProductQuick.jsx';
 import { holdLine } from '../../utils/matchState.js';
+import { DataViz, DATA_KINDS } from './DataCharts.jsx';
+import './rundown-data.css';
 
 /**
  * The rundown as a full-screen story (UX spec 8): progress at the top, tap
@@ -119,6 +121,24 @@ function Body({ card, h, done }) {
         </span>
       );
     }
+    case 'period':
+    case 'cycle':
+      if (card.check) {
+        return (
+          <div className="ay-rd-choices ay-rdd-check" role="group" aria-label={card.title}>
+            {card.check.options.map((o) => <button key={o.value} type="button" className="ay-rd-chip" onClick={() => h.periodAnswer(card, o.value)}>{o.label}</button>)}
+          </div>
+        );
+      }
+      return (<>
+        {card.flowAsk && (
+          <div className="ay-rd-choices ay-rdd-check" role="group" aria-label={card.flowAsk.title}>
+            <p className="ay-rd-basis">{card.flowAsk.title}</p>
+            {card.flowAsk.options.map((o) => <button key={o.value} type="button" className="ay-rd-chip" onClick={() => h.logFlow(card, o.value)}>{o.label}</button>)}
+          </div>
+        )}
+        {card.note && <p className="ay-rd-note" role="status">{card.note}</p>}
+      </>);
     case 'list':
       return <ul className="ay-rd-lines">{card.lines.map((l) => <li key={l}>{l}</li>)}</ul>;
     case 'closing':
@@ -146,7 +166,7 @@ function Body({ card, h, done }) {
 /**
  * @param {{ cards, title, onClose, onSeen, onCheckIn, onOutcome, onAsk, onWhyMatch, onSave, onCompare, onUnsave, onOpenRead, onExplore, onFindCare, onNotUseful, onRemindTomorrow, onAction }} props
  */
-export default function RundownStory({ cards, title = 'Your daily rundown', onClose, onSeen, onCheckIn, onOutcome, onAsk, onAskFollowUp, onSeeData, onWhyMatch, onSave, onCompare, onUnsave, onOpenRead, onOpenPost, onExplore, onFindCare, onNotUseful, onRemindTomorrow, onAction }) {
+export default function RundownStory({ cards, title = 'Your daily rundown', onClose, onSeen, onCheckIn, onOutcome, onAsk, onAskFollowUp, onSeeData, onWhyMatch, onSave, onCompare, onUnsave, onOpenRead, onOpenPost, onExplore, onFindCare, onNotUseful, onRemindTomorrow, onAction, onPeriodAnswer }) {
   // The app's product sheet (null on the website): opens over this story,
   // which stays on the same card, paused, until the sheet closes.
   const sheet = useContext(ProductSheetContext);
@@ -163,8 +183,21 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   const list = cards.filter((c) => !hidden[c.key]);
   const n = list.length;
   const card = list[Math.min(i, n - 1)];
+  // The cards can be rebuilt while she is on one (her period answer adjusts
+  // the rest): stay on the same card by key, never jump.
+  const curKey = useRef(card?.key);
+  const sig = list.map((c) => c.key).join('|');
+  const prevSig = useRef(sig);
+  useEffect(() => {
+    if (prevSig.current !== sig) {
+      prevSig.current = sig;
+      const k = sig.split('|').indexOf(curKey.current);
+      if (k >= 0 && k !== i) { setI(k); return; }
+    }
+    curKey.current = sig.split('|')[Math.min(i, n - 1)];
+  }, [sig, i, n]);
   // In the app the product card has one-tap Buy, Save and Add: it waits for her.
-  const auto = !rm && !paused && !suspended && card && !STILL.has(card.kind) && card.kind !== 'closing' && !(sheet && card.kind === 'match');
+  const auto = !rm && !paused && !suspended && card && !STILL.has(card.kind) && !card.check && !card.flowAsk && card.kind !== 'closing' && !(sheet && card.kind === 'match');
 
   const close = useCallback(() => { onClose?.({ seen: i + 1, count: n }); try { backTo?.focus?.(); } catch { /* gone */ } }, [onClose, i, n, backTo]);
   const go = useCallback((d) => setI((x) => Math.max(0, Math.min(n - 1, x + d))), [n]);
@@ -191,6 +224,8 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     next: () => go(1),
     close,
     checkIn: (c, v) => { onCheckIn?.(c.field, v); setDone((s) => ({ ...s, [c.key]: { value: v } })); onAction?.(c, 'answer'); },
+    periodAnswer: (c, v) => { onPeriodAnswer?.(v); onAction?.(c, 'answer'); },
+    logFlow: (c, v) => { onCheckIn?.('flow', v); onAction?.(c, 'answer'); },
     outcome: (c, v) => { onOutcome?.(c.item, v); setDone((s) => ({ ...s, [c.key]: { value: v } })); onAction?.(c, 'answer'); },
     whyMatch: onWhyMatch ? (p) => { onAction?.(card, 'open'); onWhyMatch(p); } : null,
     compare: onCompare ? (p) => { onAction?.(card, 'open'); onCompare(p); } : null,
@@ -207,13 +242,16 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     findCare: onFindCare,
     remindTomorrow: onRemindTomorrow ? async () => { setMsg(await onRemindTomorrow()); onAction?.(card, 'remind'); } : null,
   };
+  const isData = DATA_KINDS.has(card.kind);
+  const dataAsk = isData && onAsk ? (card.ask || card.followUps?.[0] || null) : null;
+  const hasMore = isData && Boolean(card.facts || card.changed || card.mayAffect || card.canDo || card.more || card.basisLine || card.sources?.length || (!card.protected && onNotUseful));
   const savable = card.kind === 'match' ? card.match.product : card.kind === 'read' ? null : null;
   const tap = (e) => {
     if (isControl(e.target)) return;
     const r = e.currentTarget.getBoundingClientRect();
     go(e.clientX - r.left < r.width * 0.3 ? -1 : 1);
   };
-  const tone = card.category === 'safety' ? 'is-ink' : card.kind === 'opening' || card.kind === 'closing' ? 'is-ink' : ({ pattern: 'is-sky', change: 'is-sky', match: 'is-pink', saved: 'is-pink', education: 'is-butter', symptom: 'is-butter', goal: 'is-butter', community: 'is-sky', win: 'is-pink', week: 'is-sky' })[card.category] || 'is-butter';
+  const tone = card.tone && card.category !== 'safety' ? `is-${card.tone}` : card.category === 'safety' ? 'is-ink' : card.kind === 'opening' || card.kind === 'closing' ? 'is-ink' : ({ pattern: 'is-sky', change: 'is-sky', match: 'is-pink', saved: 'is-pink', education: 'is-butter', symptom: 'is-butter', goal: 'is-butter', community: 'is-sky', win: 'is-pink', week: 'is-sky' })[card.category] || 'is-butter';
 
   const node = (
     <div ref={rootRef} className={`ay-rd ${tone}${rm ? ' is-still' : ''}`} role="dialog" aria-modal="true" aria-roledescription="story" aria-label={title} tabIndex={-1}>
@@ -234,32 +272,59 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
         onPointerDown={(e) => { startX.current = e.clientX; }}
         onPointerUp={(e) => { if (startX.current == null) return; const dx = e.clientX - startX.current; startX.current = null; if (Math.abs(dx) > 50 && !isControl(e.target)) { e.preventDefault(); go(dx < 0 ? 1 : -1); } }}
       >
-        <article className="ay-rd-card" key={card.key} aria-labelledby={`ay-rd-t-${i}`}>
+        <article className={`ay-rd-card${isData ? ' is-data' : ''}`} key={`${card.key}:${card.title}`} aria-labelledby={`ay-rd-t-${i}`}>
           <p className="ay-rd-kicker">{card.kicker}</p>
           <h2 id={`ay-rd-t-${i}`} className="ay-rd-title">{card.title}</h2>
           {card.body && <p className="ay-rd-body">{card.body}</p>}
-          {card.facts && <dl className="ay-rd-facts">{card.facts.map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}
-          {(card.changed || card.mayAffect || card.canDo) && (
-            <dl className="ay-rd-steps">
-              {card.changed && <div><dt>What changed</dt><dd>{card.changed}</dd></div>}
-              {card.mayAffect && <div><dt>What it may affect</dt><dd>{card.mayAffect}</dd></div>}
-              {card.canDo && <div><dt>What you can do</dt><dd>{card.canDo}</dd></div>}
-            </dl>
-          )}
-          {card.seeData && onSeeData && <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => { onAction?.(card, 'open'); onSeeData(card.seeData); }}>See data</button></span>}
-          {card.reason && <p className="ay-rd-basis">{card.reason}</p>}
-          {card.basisLine && <p className="ay-rd-basis">{card.basisLine}</p>}
-          {card.footnote && <p className="ay-rd-basis">{card.footnote}</p>}
-          {(card.sources || []).length > 0 && <p className="ay-rd-basis">Source: {card.sources.map((s, k) => <span key={s.url}>{k ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></span>)}</p>}
-          <Body card={card} h={h} done={done[card.key]} />
-          {card.kind !== 'opening' && card.kind !== 'closing' && (
-            <div className="ay-rd-foot">
-              {savable && onSave && !sheet && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
-              {/* A fact from her data: "Ask why" under it (team sync, Oct 25). */}
-              {onAsk && card.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>{['change', 'pattern'].includes(card.category) ? 'Ask why' : 'Ask ayna about this'}</button>}
-              {!card.protected && onNotUseful && <NotUsefulMenu onPick={(reason) => { onNotUseful(card, reason); setHidden((s) => ({ ...s, [card.key]: true })); setMsg('Thanks. You will see less like this.'); }} />}
-            </div>
-          )}
+          {isData && <DataViz card={card} />}
+          {isData ? (<>
+            <Body card={card} h={h} done={done[card.key]} />
+            {/* One action (founder, Oct 24 23:53): Ask why, else See data. The
+                working (how ayna got this, sources, Not useful) folds away. */}
+            {!card.check && !card.flowAsk && (dataAsk ? <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => h.ask(dataAsk)}>Ask why</button></span>
+              : card.seeData && onSeeData ? <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => { onAction?.(card, 'open'); onSeeData(card.seeData); }}>See data</button></span> : null)}
+            {hasMore && (
+              <details className="ay-rdd-more">
+                <summary>How ayna got this</summary>
+                {card.facts && <dl className="ay-rd-facts">{card.facts.map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}
+                {(card.changed || card.mayAffect || card.canDo) && (
+                  <dl className="ay-rd-steps">
+                    {card.changed && <div><dt>What changed</dt><dd>{card.changed}</dd></div>}
+                    {card.mayAffect && <div><dt>What it may affect</dt><dd>{card.mayAffect}</dd></div>}
+                    {card.canDo && <div><dt>What you can do</dt><dd>{card.canDo}</dd></div>}
+                  </dl>
+                )}
+                {card.more && <p className="ay-rd-basis">{card.more}</p>}
+                {card.basisLine && <p className="ay-rd-basis">{card.basisLine}</p>}
+                {(card.sources || []).length > 0 && <p className="ay-rd-basis">Source: {card.sources.map((s, k) => <span key={s.url}>{k ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></span>)}</p>}
+                {dataAsk && card.seeData && onSeeData && <button type="button" className="ay-rd-link" onClick={() => { onAction?.(card, 'open'); onSeeData(card.seeData); }}>See data</button>}
+                {!card.protected && onNotUseful && <NotUsefulMenu onPick={(reason) => { onNotUseful(card, reason); setHidden((s) => ({ ...s, [card.key]: true })); setMsg('Thanks. You will see less like this.'); }} />}
+              </details>
+            )}
+          </>) : (<>
+            {card.facts && <dl className="ay-rd-facts">{card.facts.map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}
+            {(card.changed || card.mayAffect || card.canDo) && (
+              <dl className="ay-rd-steps">
+                {card.changed && <div><dt>What changed</dt><dd>{card.changed}</dd></div>}
+                {card.mayAffect && <div><dt>What it may affect</dt><dd>{card.mayAffect}</dd></div>}
+                {card.canDo && <div><dt>What you can do</dt><dd>{card.canDo}</dd></div>}
+              </dl>
+            )}
+            {card.seeData && onSeeData && <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => { onAction?.(card, 'open'); onSeeData(card.seeData); }}>See data</button></span>}
+            {card.reason && <p className="ay-rd-basis">{card.reason}</p>}
+            {card.basisLine && <p className="ay-rd-basis">{card.basisLine}</p>}
+            {card.footnote && <p className="ay-rd-basis">{card.footnote}</p>}
+            {(card.sources || []).length > 0 && <p className="ay-rd-basis">Source: {card.sources.map((s, k) => <span key={s.url}>{k ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></span>)}</p>}
+            <Body card={card} h={h} done={done[card.key]} />
+            {card.kind !== 'opening' && card.kind !== 'closing' && (
+              <div className="ay-rd-foot">
+                {savable && onSave && !sheet && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
+                {/* A fact from her data: "Ask why" under it (team sync, Oct 25). */}
+                {onAsk && card.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>{['change', 'pattern', 'data'].includes(card.category) ? 'Ask why' : 'Ask ayna about this'}</button>}
+                {!card.protected && onNotUseful && <NotUsefulMenu onPick={(reason) => { onNotUseful(card, reason); setHidden((s) => ({ ...s, [card.key]: true })); setMsg('Thanks. You will see less like this.'); }} />}
+              </div>
+            )}
+          </>)}
           {msg && <p className="ay-rd-note" role="status">{msg}</p>}
         </article>
       </div>
