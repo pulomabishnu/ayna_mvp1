@@ -166,9 +166,9 @@ export function periodCard({ log, healthRows, today, answer, hormonalBC = false,
         : st.reasons.includes('gap') ? `You last logged flow ${plural(daysBetweenDays(st.cur.end, today), 'day')} ago.`
           : 'You have logged one day so far.';
       return {
-        ...common, kicker: 'Quick check', title: 'Are you still on your period?', body: `${why} One tap, and the rest of your rundown adjusts.`,
+        ...common, kicker: 'Quick check', title: 'Are you still on your period?', body: why,
         check: { options: CHECK_OPTIONS }, strip, day: st.day, usual: st.usual,
-        basisLine: 'Your answer goes into your daily log.',
+        basisLine: 'Your answer goes into your daily log, and the rest of your rundown adjusts.',
         followUps: [],
         explain: { kind: 'period', state: 'asking', day: st.day },
       };
@@ -240,7 +240,8 @@ export function periodCard({ log, healthRows, today, answer, hormonalBC = false,
   return {
     ...common, kind: 'cycle', tone: 'sky', kicker: 'Your cycle, an estimate',
     title: `Cycle day ${cycleDay}. ${phase.id === 'ovulation' ? 'In your possible ovulation days.' : `Probably ${phase.name.toLowerCase()}.`}`,
-    body: `${endedNote}${phase.what}${next}`,
+    body: `${endedNote}${next.trim()}`,
+    more: phase.what,
     cycleDay, avgLength: avg, periodLength: st.cur.length, phase: { id: phase.id, name: phase.name, windowStart: phase.windowStart, windowEnd: phase.windowEnd },
     note: answeredNote,
     basisLine: phase.basis,
@@ -285,7 +286,8 @@ export function sleepCard(healthRows, today) {
       explain: { kind: 'sleep_data', lastNight: s.lastNight },
     };
   }
-  const usualLine = `Your usual is ${FMT.minutes(s.usual)}, from your last ${s.nights} nights.`;
+  const usualLine = `Your usual: ${FMT.minutes(s.usual)}.`;
+  const sleepBasis = `Your usual is your average over your last ${s.nights} nights, from your connected sleep data.`;
   if (s.diff <= -DATA_RULES.sleepChangeMinutes) {
     return {
       ...common, pct: s.pct,
@@ -295,7 +297,7 @@ export function sleepCard(healthRows, today) {
       mayAffect: 'Short sleep can make it harder to focus, react and manage emotions.',
       canDo: 'Go to bed and wake up at the same time, and keep any nap to 20 minutes or less, earlier in the afternoon.',
       sources: [SLEEP_SOURCES.effects, SLEEP_SOURCES.habits],
-      basisLine: 'Why ayna noticed: your connected sleep data.',
+      basisLine: `Why ayna noticed: ${sleepBasis}`,
       ask: 'Why might my sleep be shorter than usual?',
       followUps: ['Why was my sleep shorter last night?', 'What can I do about my energy today?'],
       explain: { kind: 'sleep', lastNight: s.lastNight, avg: s.usual, nights: s.nights },
@@ -305,7 +307,7 @@ export function sleepCard(healthRows, today) {
     return {
       ...common, pct: s.pct,
       title: `You slept ${FMT.minutes(s.lastNight)}, about ${FMT.minutes(s.diff)} more than usual.`,
-      body: usualLine, basisLine: 'From your connected sleep data.',
+      body: usualLine, basisLine: sleepBasis,
       followUps: ['Why did I sleep longer last night?'],
       explain: { kind: 'sleep_data', lastNight: s.lastNight, avg: s.usual, longer: true },
     };
@@ -358,12 +360,11 @@ export function stepsCard(healthRows, today, { gentle = false } = {}) {
       explain: { kind: 'steps', learning: true },
     };
   }
-  const yLine = d.yesterday != null ? `Yesterday: ${FMT.steps(d.yesterday)} steps. Your usual is about ${FMT.steps(d.usual)} a day.` : `Your usual is about ${FMT.steps(d.usual)} a day. Nothing came in for yesterday.`;
-  const extra = msg?.level === 'gentle' ? ' Rest counts too.' : msg?.level === 'low' ? ' A short walk counts.' : '';
+  const yLine = d.yesterday != null ? `Yesterday: ${FMT.steps(d.yesterday)}. Your usual: about ${FMT.steps(d.usual)}.` : `Your usual: about ${FMT.steps(d.usual)} a day.`;
   return {
     ...common, level: msg?.level || null,
     title: msg ? msg.title : 'Your steps this week.',
-    body: `${yLine}${extra}`,
+    body: yLine,
     basisLine: `Your usual: your daily average over the 4 weeks before yesterday (${d.baseDays} days). Today shows steps so far.`,
     followUps: [msg && (msg.level === 'low' || msg.level === 'gentle') ? 'How can I fit in a little more movement today?' : 'How do my steps compare with last month?'],
     explain: { kind: 'steps', yesterday: d.yesterday, usual: Math.round(d.usual), level: msg?.level || null },

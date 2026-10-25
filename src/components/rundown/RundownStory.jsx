@@ -242,6 +242,9 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     findCare: onFindCare,
     remindTomorrow: onRemindTomorrow ? async () => { setMsg(await onRemindTomorrow()); onAction?.(card, 'remind'); } : null,
   };
+  const isData = DATA_KINDS.has(card.kind);
+  const dataAsk = isData && onAsk ? (card.ask || card.followUps?.[0] || null) : null;
+  const hasMore = isData && Boolean(card.facts || card.changed || card.mayAffect || card.canDo || card.more || card.basisLine || card.sources?.length || (!card.protected && onNotUseful));
   const savable = card.kind === 'match' ? card.match.product : card.kind === 'read' ? null : null;
   const tap = (e) => {
     if (isControl(e.target)) return;
@@ -269,33 +272,59 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
         onPointerDown={(e) => { startX.current = e.clientX; }}
         onPointerUp={(e) => { if (startX.current == null) return; const dx = e.clientX - startX.current; startX.current = null; if (Math.abs(dx) > 50 && !isControl(e.target)) { e.preventDefault(); go(dx < 0 ? 1 : -1); } }}
       >
-        <article className={`ay-rd-card${DATA_KINDS.has(card.kind) ? ' is-data' : ''}`} key={`${card.key}:${card.title}`} aria-labelledby={`ay-rd-t-${i}`}>
+        <article className={`ay-rd-card${isData ? ' is-data' : ''}`} key={`${card.key}:${card.title}`} aria-labelledby={`ay-rd-t-${i}`}>
           <p className="ay-rd-kicker">{card.kicker}</p>
           <h2 id={`ay-rd-t-${i}`} className="ay-rd-title">{card.title}</h2>
           {card.body && <p className="ay-rd-body">{card.body}</p>}
-          {DATA_KINDS.has(card.kind) && <DataViz card={card} />}
-          {card.facts && <dl className="ay-rd-facts">{card.facts.map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}
-          {(card.changed || card.mayAffect || card.canDo) && (
-            <dl className="ay-rd-steps">
-              {card.changed && <div><dt>What changed</dt><dd>{card.changed}</dd></div>}
-              {card.mayAffect && <div><dt>What it may affect</dt><dd>{card.mayAffect}</dd></div>}
-              {card.canDo && <div><dt>What you can do</dt><dd>{card.canDo}</dd></div>}
-            </dl>
-          )}
-          {card.seeData && onSeeData && <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => { onAction?.(card, 'open'); onSeeData(card.seeData); }}>See data</button></span>}
-          {card.reason && <p className="ay-rd-basis">{card.reason}</p>}
-          {card.basisLine && <p className="ay-rd-basis">{card.basisLine}</p>}
-          {card.footnote && <p className="ay-rd-basis">{card.footnote}</p>}
-          {(card.sources || []).length > 0 && <p className="ay-rd-basis">Source: {card.sources.map((s, k) => <span key={s.url}>{k ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></span>)}</p>}
-          <Body card={card} h={h} done={done[card.key]} />
-          {card.kind !== 'opening' && card.kind !== 'closing' && (
-            <div className="ay-rd-foot">
-              {savable && onSave && !sheet && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
-              {/* A fact from her data: "Ask why" under it (team sync, Oct 25). */}
-              {onAsk && card.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>{['change', 'pattern', 'data'].includes(card.category) ? 'Ask why' : 'Ask ayna about this'}</button>}
-              {!card.protected && onNotUseful && <NotUsefulMenu onPick={(reason) => { onNotUseful(card, reason); setHidden((s) => ({ ...s, [card.key]: true })); setMsg('Thanks. You will see less like this.'); }} />}
-            </div>
-          )}
+          {isData && <DataViz card={card} />}
+          {isData ? (<>
+            <Body card={card} h={h} done={done[card.key]} />
+            {/* One action (founder, Oct 24 23:53): Ask why, else See data. The
+                working (how ayna got this, sources, Not useful) folds away. */}
+            {!card.check && !card.flowAsk && (dataAsk ? <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => h.ask(dataAsk)}>Ask why</button></span>
+              : card.seeData && onSeeData ? <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => { onAction?.(card, 'open'); onSeeData(card.seeData); }}>See data</button></span> : null)}
+            {hasMore && (
+              <details className="ay-rdd-more">
+                <summary>How ayna got this</summary>
+                {card.facts && <dl className="ay-rd-facts">{card.facts.map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}
+                {(card.changed || card.mayAffect || card.canDo) && (
+                  <dl className="ay-rd-steps">
+                    {card.changed && <div><dt>What changed</dt><dd>{card.changed}</dd></div>}
+                    {card.mayAffect && <div><dt>What it may affect</dt><dd>{card.mayAffect}</dd></div>}
+                    {card.canDo && <div><dt>What you can do</dt><dd>{card.canDo}</dd></div>}
+                  </dl>
+                )}
+                {card.more && <p className="ay-rd-basis">{card.more}</p>}
+                {card.basisLine && <p className="ay-rd-basis">{card.basisLine}</p>}
+                {(card.sources || []).length > 0 && <p className="ay-rd-basis">Source: {card.sources.map((s, k) => <span key={s.url}>{k ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></span>)}</p>}
+                {dataAsk && card.seeData && onSeeData && <button type="button" className="ay-rd-link" onClick={() => { onAction?.(card, 'open'); onSeeData(card.seeData); }}>See data</button>}
+                {!card.protected && onNotUseful && <NotUsefulMenu onPick={(reason) => { onNotUseful(card, reason); setHidden((s) => ({ ...s, [card.key]: true })); setMsg('Thanks. You will see less like this.'); }} />}
+              </details>
+            )}
+          </>) : (<>
+            {card.facts && <dl className="ay-rd-facts">{card.facts.map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}
+            {(card.changed || card.mayAffect || card.canDo) && (
+              <dl className="ay-rd-steps">
+                {card.changed && <div><dt>What changed</dt><dd>{card.changed}</dd></div>}
+                {card.mayAffect && <div><dt>What it may affect</dt><dd>{card.mayAffect}</dd></div>}
+                {card.canDo && <div><dt>What you can do</dt><dd>{card.canDo}</dd></div>}
+              </dl>
+            )}
+            {card.seeData && onSeeData && <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => { onAction?.(card, 'open'); onSeeData(card.seeData); }}>See data</button></span>}
+            {card.reason && <p className="ay-rd-basis">{card.reason}</p>}
+            {card.basisLine && <p className="ay-rd-basis">{card.basisLine}</p>}
+            {card.footnote && <p className="ay-rd-basis">{card.footnote}</p>}
+            {(card.sources || []).length > 0 && <p className="ay-rd-basis">Source: {card.sources.map((s, k) => <span key={s.url}>{k ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></span>)}</p>}
+            <Body card={card} h={h} done={done[card.key]} />
+            {card.kind !== 'opening' && card.kind !== 'closing' && (
+              <div className="ay-rd-foot">
+                {savable && onSave && !sheet && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
+                {/* A fact from her data: "Ask why" under it (team sync, Oct 25). */}
+                {onAsk && card.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>{['change', 'pattern', 'data'].includes(card.category) ? 'Ask why' : 'Ask ayna about this'}</button>}
+                {!card.protected && onNotUseful && <NotUsefulMenu onPick={(reason) => { onNotUseful(card, reason); setHidden((s) => ({ ...s, [card.key]: true })); setMsg('Thanks. You will see less like this.'); }} />}
+              </div>
+            )}
+          </>)}
           {msg && <p className="ay-rd-note" role="status">{msg}</p>}
         </article>
       </div>

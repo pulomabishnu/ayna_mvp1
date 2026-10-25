@@ -217,6 +217,7 @@ export function buildRundown(input = {}) {
       key: `change:${sig.metric}:${b.day}`, category: 'data', topic: sig.metric, kind: 'signal', tone: 'sky', kicker: 'Something changed',
       range: { low: b.mean - b.sd, high: b.mean + b.sd, last: b.last, lowLabel: sig.unit(b.mean - b.sd), highLabel: sig.unit(b.mean + b.sd), lastLabel: sig.unit(b.last), what: sig.what },
       title: sig.title,
+      body: 'Log how you feel today, so ayna can see whether this goes with anything else.',
       facts: [{ k: 'Your recent range', v: `${sig.unit(b.mean - b.sd)} to ${sig.unit(b.mean + b.sd)}` }, { k: b.day === today ? 'Today' : 'Last night', v: sig.unit(b.last) }],
       changed: `${sig.what}: ${sig.unit(b.last)}, outside your recent range from ${b.n} days of your connected data.`,
       canDo: 'Log how you feel today, so ayna can see whether this goes with anything else.',

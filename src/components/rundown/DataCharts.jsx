@@ -82,12 +82,7 @@ export function SleepRing({ lastNight, usual = null, pct = null, nights = 0, lea
       </svg>
       {learning ? (
         <div className="ay-rdd-dots" aria-hidden="true">{Array.from({ length: 7 }, (_, i) => <i key={i} className={`ay-rdd-anim${i < nights ? ' is-on' : ''}`} style={stagger(i, 200)} />)}</div>
-      ) : (
-        <dl className="ay-rdd-pair">
-          <div><dt>Last night</dt><dd>{FMT.minutes(lastNight)}</dd></div>
-          <div><dt>Your usual</dt><dd>{FMT.minutes(usual)}</dd></div>
-        </dl>
-      )}
+      ) : null}
     </figure>
   );
 }
