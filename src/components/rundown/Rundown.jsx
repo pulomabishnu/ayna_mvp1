@@ -2,12 +2,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { buildRundown } from './buildRundown.js';
 import { buildWeeklyRecap } from './weeklyRecap.js';
 import RundownStory from './RundownStory.jsx';
-import { markCardSeen, markNotUseful, markPeriodAnswer, markRundownViewed, markWeeklySeen, readRundownMemory, setRundownOwner } from './rundownStore.js';
+import { markCardSeen, markNotUseful, markPeriodAnswer, markRundownViewed, markWeeklySeen, readRundownMemory, setRundownOwner, finishedRundown } from './rundownStore.js';
 import { autoLaunchDecision, listenForExternalOpens, openedExternally, urlIsDeepLink } from './autoLaunch.js';
 import { setTodayAskContext } from '../../utils/askToday.js';
 import { getAskHealthPref } from '../../health/askHealthPref.js';
 import { getProductMatchDetailsForProduct, getSelectedNeeds, useCatalogReady } from '../../data/catalog.js';
 import { whyLine } from '../../utils/whyLine.js';
+import { isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { evidenceLevel } from '../pdp/evidenceLevel.js';
 import { addDays } from '../../health/dailyLog.js';
 import { trackToday } from '../../health/todayAnalytics.js';
@@ -73,6 +74,15 @@ export default function Rundown({
     }).filter(Boolean);
   }, [products, intake, catalogReady, t.tries, saved, healthProfile, matchOpts]);
 
+  // Bleeding after menopause: a saved period or bleeding product is not
+  // brought back on the Saved card (founder, Oct 24: no products for it).
+  const savedForRundown = useMemo(() => {
+    if (!intake || !catalogReady) return saved;
+    return (saved || []).filter((product) => {
+      try { return !isBleedingEvaluation(getProductMatchDetailsForProduct(product, intake, healthProfile, matchOpts)); } catch { return true; }
+    });
+  }, [saved, intake, catalogReady, healthProfile, matchOpts]);
+
   // Her goals in her own words, for the match card's title ("A match for your hot flashes goal").
   const needLabels = useMemo(() => {
     if (!intake || !catalogReady) return {};
@@ -80,9 +90,9 @@ export default function Rundown({
   }, [intake, catalogReady]);
   const daily = useMemo(() => buildRundown({
     today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries, healthRows: t.healthRows,
-    matches, saved, reads: Boolean(onOpenRead), community, memory, hasProfile: Boolean(intake), needLabels,
+    matches, saved: savedForRundown, reads: Boolean(onOpenRead), community, memory, hasProfile: Boolean(intake), needLabels,
     hormonalBC: Boolean(t.hormonalBC), postCycle: Boolean(t.postCycle), pregnant: Boolean(t.pregnant),
-  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, saved, onOpenRead, community, memory, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
+  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, savedForRundown, onOpenRead, community, memory, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
   const weekly = useMemo(() => buildWeeklyRecap({ today, log: t.log, tries: t.tries, patterns: t.patterns, saved }), [today, t.log, t.tries, t.patterns, saved]);
   const cards = open === 'weekly' ? weekly.cards : daily.cards;
 
@@ -111,8 +121,10 @@ export default function Rundown({
         hasRecentChanges: weekChanges.length > 0 || content.some((c) => c.category === 'change'),
         hasHistory: (t.tries || []).some((x) => x?.outcome),
       },
-      focus: (t.decision?.items || []).map((it) => ({ title: it.title, reason: it.reason })),
-      rundown: content.map(({ category, title, changed, canDo, explain }) => ({ category, title, changed, canDo, explain })),
+      // With what each item and card says, so "Ask why" and the card questions
+      // are answered on this device too (askToday.js answerItemQuestion).
+      focus: (t.decision?.items || []).map((it) => ({ title: it.title, reason: it.reason, body: it.body, sources: it.basis?.sources || [] })),
+      rundown: content.map(({ category, title, changed, canDo, explain, body, reason, basisLine, ask, followUps, sources }) => ({ category, title, changed, canDo, explain, body, reason, basisLine, ask, followUps, sources })),
       log: { today: t.log?.[today] || null, yesterday: t.log?.[y] || null },
       recent: weekChanges,
     });
@@ -214,7 +226,7 @@ export default function Rundown({
         <RundownStory
           cards={cards}
           title={open === 'weekly' ? 'Your week on ayna' : 'Your daily rundown'}
-          onClose={(s) => { close(s); finish(true); }}
+          onClose={(s) => { close(s); finish(finishedRundown(s)); }}
           onSeen={onSeen}
           onAction={onAction}
           onCheckIn={(field, value) => t.saveLog(today, { [field]: value })}

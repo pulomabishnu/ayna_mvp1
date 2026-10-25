@@ -120,7 +120,10 @@ export function safetyContextFrom(profile) {
     // No menstrual cycle now (menopause, post-menopause, pregnancy), from her
     // own answers (userProfile.js physiology.menstruation). Today never offers
     // cycle tracking or treats her pain as period pain then.
-    noCycle: phys.menstruation === 'none',
+    // A menopause or post-menopause stage counts even with a flow answer:
+    // bleeding then is something to get checked, not a cycle (QA M9, the
+    // same rule as src/matching/ontology.js bleedingAfterMenopause).
+    noCycle: phys.menstruation === 'none' || stages.some((st) => st === 'menopause' || st === 'postmenopause'),
     allergyStatus: s?.allergyStatus || 'unknown',
     allergyIds: new Set((s?.allergies || []).map((a) => a?.id).filter(Boolean)),
     medicationsState: s?.medicationsState || 'skipped',
@@ -138,6 +141,25 @@ export function safetyContextFrom(profile) {
 export const isPregnant = (ctx) => ctx.pregnancy === 'pregnant' || ctx.pregnancy === 'reported';
 /** After menopause (no cycle, not pregnant): period and PMS needs do not apply. */
 export const isPostCycle = (ctx) => Boolean(ctx.noCycle && ctx.menopause && !isPregnant(ctx));
+
+/**
+ * Without a cycle (menopause, post-menopause, pregnancy), cycle words do not
+ * apply (QA M9): a try is timed in weeks, not cycles, and a class whose cited
+ * evidence is about periods or PMS is not offered for her sleep.
+ */
+const NO_CYCLE_HORIZON = { 'one cycle': 'about 4 weeks', 'two cycles': 'about 8 weeks', '2 to 3 cycles': '2 to 3 months' };
+export const horizonLabelFor = (label, ctx) => (ctx?.noCycle && NO_CYCLE_HORIZON[label]) || label;
+export function classAppliesFor(clsId, need, ctx) {
+  // Gentle movement's sources here are period pain and PMS pages; with no
+  // cycle they say nothing about sleep, so it is not put in her sleep routine.
+  if (ctx?.noCycle && !isPregnant(ctx) && clsId === 'movement' && need === 'cycle_sleep') return false;
+  return true;
+}
+/** A class's sources for her: the PMS page is dropped when she has no cycle. */
+export function classSourcesFor(cls, ctx) {
+  const list = cls?.sources || [];
+  return ctx?.noCycle ? list.filter((s) => s !== SOURCES.owhPms && s !== SOURCES.medlinePms) : list;
+}
 
 /** How a need reads for her: "your sleep" rather than "sleep around your cycle" once she has no cycle. */
 export function needLabelFor(need, ctx) {

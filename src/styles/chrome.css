@@ -318,3 +318,10 @@ html body .app-container.app-container.app-container.app-container.app-container
 .app-container.app-container .hdi-full > summary:focus-visible { outline: 3px solid var(--ay-focus); outline-offset: 2px; border-radius: 6px; }
 .app-container.app-container .hdi-full > p { margin: var(--ay-s4) 0 0; font: 400 15px/1.55 var(--ay-sans-stack); color: var(--ay-text-2); }
 @media (prefers-reduced-motion: reduce) { .app-container.app-container .hdi-full > summary::after { transition: none; } }
+
+/* Phones, signed out on the landing: the header keeps a Log in button
+   (QA, Oct 25). Elsewhere the drawer carries it. */
+@media (max-width: 899px) {
+  .app-container.app-container .ay-nav__account.is-landing-guest { display: block !important; }
+  .app-container.app-container .ay-nav__account.is-landing-guest .ay-nav__login { min-height: 44px; height: 44px; padding: 0 14px !important; font-size: 14px !important; white-space: nowrap; }
+}

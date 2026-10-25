@@ -48,7 +48,7 @@ export default function AynaGuideHub({ page, guide, onChange, recap, recapSource
     {page === 'recap' && <>
       <p className="ay-guide-muted">{periodLabel} · Your recent readings, compared with your own usual where there is enough data.</p>
       <div className="ay-guide-card"><p>{recap || 'Connect health data or start a check-back to build your personal recap.'}</p></div>
-      {recapSources && <p className="ay-guide-muted">From: {recapSources}. Review the full charts in Today.</p>}
+      {recapSources && <p className="ay-guide-muted">From: {recapSources}. Review the full charts on Home.</p>}
       {dueTrials.length > 0 && <p className="ay-guide-muted">{dueTrials.length} check-back{dueTrials.length === 1 ? ' is' : 's are'} ready. Open “Try & check back” to record how you feel.</p>}
       <p className="ay-guide-muted">An observation can help you decide what to track next. It cannot identify a cause or diagnose a condition.</p>
       {onAsk && <button type="button" className="ay-guide-primary" onClick={() => onAsk('What stands out in my week?')}>Ask ayna about my week</button>}

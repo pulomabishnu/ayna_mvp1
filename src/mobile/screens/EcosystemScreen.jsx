@@ -321,7 +321,7 @@ export default function EcosystemScreen({
 
     {showTabs && <div className="eco-seg" role="group" aria-label="Ecosystem view" data-on={ecoTab === 'dashboard' ? 'dashboard' : 'products'}>
       <span className="eco-seg__thumb" aria-hidden="true" />
-      {[['dashboard', 'Today'], ['products', 'Products']].map(([id, label]) => <button key={id} type="button" aria-pressed={ecoTab === id} className={ecoTab === id ? 'is-on' : ''} onClick={() => onEcoTab(id)}>{label}</button>)}
+      {[['dashboard', 'Home'], ['products', 'Products']].map(([id, label]) => <button key={id} type="button" aria-pressed={ecoTab === id} className={ecoTab === id ? 'is-on' : ''} onClick={() => onEcoTab(id)}>{label}</button>)}
     </div>}
 
     {ecoTab === 'dashboard' && showTabs ? <div className="ay-eco-routine">

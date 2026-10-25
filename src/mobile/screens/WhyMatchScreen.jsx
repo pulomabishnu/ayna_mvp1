@@ -1,8 +1,9 @@
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
 import MatchFeedback from '../../components/today/MatchFeedback.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
-import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE, shownMatchPercent, PARTIAL_FIT, isSafetyHold, SAFETY_HOLD } from '../../utils/matchDisplay.js';
+import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE, shownMatchPercent, PARTIAL_FIT, isSafetyHold, SAFETY_HOLD, isBleedingEvaluation, BLEEDING_EVALUATION } from '../../utils/matchDisplay.js';
 import SafetyHoldNote from '../../components/match/SafetyHoldNote.jsx';
+import BleedingEvaluationNote from '../../components/match/BleedingEvaluationNote.jsx';
 import '../match.css';
 import '../eco-needs.css';
 import '../../styles/match-ui.css';
@@ -37,6 +38,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
   const excluded = matchStatus === 'excluded' || eligible === false;
   // Held back for safety: no percent, no per-need numbers (founder, Oct 24).
   const held = isSafetyHold(details);
+  const evaluation = isBleedingEvaluation(details);
   const why = whyMatch(details);
   const rows = matchStatus === 'no-profile' ? [] : needBreakdown(details);
   // Needs this product scores 0 on are listed once as "not for this" instead of empty bars.
@@ -46,7 +48,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
   const notes = hasScore ? confidenceNotes(details, product) : [];
   const exclusionReasons = excluded ? exclusionLines(details) : [];
   const exclusions = exclusionReasons.length ? exclusionReasons : excluded ? considerations.map((c) => c.text).filter(Boolean) : [];
-  const title = excluded ? 'Not in your matches' : held ? SAFETY_HOLD : hasScore ? 'Why this matches' : matchStatus === 'no-profile' ? 'About this match' : 'No clear match';
+  const title = excluded ? 'Not in your matches' : held ? SAFETY_HOLD : evaluation ? BLEEDING_EVALUATION : hasScore ? 'Why this matches' : matchStatus === 'no-profile' ? 'About this match' : 'No clear match';
 
   return (
     <main className="ayna-match-page">
@@ -70,6 +72,8 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
               {access?.label && <p className="ay-match-access"><span aria-hidden="true">●</span> {access.label}</p>}
             </div>
           </section>
+        ) : evaluation ? (
+          <BleedingEvaluationNote note={details.bleedingEvaluation} />
         ) : held ? (
           <SafetyHoldNote hold={details.safetyHold} onFix={onFixSafety || (onUpdateHealth ? () => onUpdateHealth() : null)} />
         ) : excluded ? (

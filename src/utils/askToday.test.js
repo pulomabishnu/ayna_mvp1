@@ -39,3 +39,35 @@ describe('Ask about today, answered on this device', () => {
     expect(answerTodayQuestion('Explain my Daily Rundown').answer).toMatch(/doesn't have today's picture/);
   });
 });
+
+describe('QA M1: Ask why and Rundown questions answered on this device when signed out', async () => {
+  const { localItemAnswer, answerItemQuestion } = await import('./askToday.js');
+  const { askWhyFor } = await import('./askPrompts.js');
+  const rich = {
+    ...ctx,
+    focus: [{ title: 'Your pain has been higher before your period', reason: 'In 3 of your last 4 cycles.', body: 'Heat and gentle movement can help.', sources: [{ label: 'MedlinePlus: Period pain', url: 'https://medlineplus.gov/periodpain.html' }] }],
+    rundown: [
+      { category: 'data', title: 'You slept less than usual.', explain: { kind: 'sleep', lastNight: 340, avg: 420, nights: 10 }, ask: 'Why might my sleep be shorter than usual?', followUps: ['Why was my sleep shorter last night?', 'What can I do about my energy today?'], canDo: 'Keep a steady bedtime tonight.' },
+      { category: 'data', title: 'Last night: 7h 10m.', followUps: ['How much sleep do adults need?'] },
+    ],
+  };
+  it('"Ask why" under a Today item answers from the item, with its reason and sources', async () => {
+    setTodayAskContext(rich);
+    const a = await localItemAnswer(askWhyFor('Your pain has been higher before your period'));
+    expect(a.answer).toContain('In 3 of your last 4 cycles.');
+    expect(a.answer).toContain('medlineplus.gov');
+    expect(a.answer).toMatch(/not why/);
+  });
+  it('a Rundown card question answers from the card', async () => {
+    setTodayAskContext(rich);
+    expect((await localItemAnswer('Why was my sleep shorter last night?')).answer).toMatch(/5h 40m.*7h 00m/);
+    expect((await localItemAnswer('What can I do about my energy today?')).answer).toContain('Keep a steady bedtime tonight.');
+    expect((await localItemAnswer('Why might my sleep be shorter than usual?')).answer).toMatch(/5h 40m/);
+  });
+  it('general questions still need ayna AI; unknown facts are not invented', () => {
+    setTodayAskContext(rich);
+    expect(answerItemQuestion('How much sleep do adults need?')).toBeNull();
+    expect(answerItemQuestion(askWhyFor('Something ayna never showed'))).toBeNull();
+    expect(answerItemQuestion('What helps with cramps?')).toBeNull();
+  });
+});

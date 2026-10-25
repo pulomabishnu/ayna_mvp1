@@ -34,6 +34,7 @@ export default function WebHealthData({ user, quizResults, onBack, onSignIn, onE
             authUser={user}
             onSignIn={onSignIn}
             onOpenInsights={() => push('insights')}
+            tabName="Today"
           />
         )}
       </div>

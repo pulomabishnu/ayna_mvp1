@@ -23,6 +23,11 @@ export const SAFETY_HOLD_LINE = 'We need one more safety detail before we can de
 export const SAFETY_HOLD_PRODUCT_LINE = 'We need one more safety fact about this product before we can determine your match.';
 export const isSafetyHold = (details) => details?.matchStatus === 'safety-hold';
 
+// Bleeding after menopause (founder, Oct 24): a period or bleeding product
+// shows the prompt-evaluation message instead of a match, never a percent.
+export const BLEEDING_EVALUATION = 'Get this bleeding checked first';
+export const isBleedingEvaluation = (details) => details?.matchStatus === 'bleeding-evaluation';
+
 const TIER_WORDS = { excellent: 'Excellent', strong: 'Strong', exploratory: 'Worth a look', browse: 'Browse' };
 
 /** Engine tiers: excellent 80+, strong 65+, exploratory 50+, browse under 50. */

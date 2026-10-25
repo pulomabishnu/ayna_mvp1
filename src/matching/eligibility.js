@@ -20,7 +20,7 @@
 //
 // Nothing here reads partner, price or commission fields.
 import { CYCLE_TRACKING_RULES, buildProductProfile } from './productProfile.js';
-import { isCyclePremisedNeed, MENSTRUAL_PRODUCT_NEEDS } from './ontology.js';
+import { isCyclePremisedNeed, MENSTRUAL_PRODUCT_NEEDS, isAfterMenopauseStage } from './ontology.js';
 
 // ─── 1. Catalog recommendation eligibility ──────────────────────────────────
 // Accessories, refills and add-ons: useful next to the product they belong
@@ -84,7 +84,6 @@ export function isCycleTrackingProduct(pp) {
 }
 
 const noCycle = (up) => up?.physiology?.menstruation === 'none';
-const midlifeNoCycle = (up) => noCycle(up) && (up.physiology.lifeStages || []).some((st) => st === 'menopause' || st === 'postmenopause');
 
 export const LIFE_STAGE_TEXT = {
   no_cycle_tracking: 'Built around tracking a menstrual cycle, and you told us you do not get periods now',
@@ -117,11 +116,13 @@ export function postmenopausalBleedingBlock(pp, up, needId) {
   // Founder, Oct 24: bleeding or spotting 12+ months after the last period
   // gets a prompt-evaluation message and NO products for that bleeding. Care
   // services stay (they are the evaluation path); other needs are untouched.
-  return midlifeNoCycle(up) && MENSTRUAL_PRODUCT_NEEDS.has(needId) && !(pp?.is_digital || pp?.access?.is_care_service);
+  // Same stage predicate as the profile warning (ontology.js bleedingAfterMenopause):
+  // a flow answer like "Heavy" no longer hides it.
+  return isAfterMenopauseStage(up?.physiology?.lifeStages) && MENSTRUAL_PRODUCT_NEEDS.has(needId) && !(pp?.is_digital || pp?.access?.is_care_service);
 }
 
 export function lifeStageNeedBlock(rel, up, needId) {
-  if (!midlifeNoCycle(up) || !(rel?.base > 0)) return false;
+  if (!isAfterMenopauseStage(up?.physiology?.lifeStages) || !(rel?.base > 0)) return false;
   const rule = rel.contextUsed?.rule || rel.entry?.rule;
   return CYCLE_CLAIM_RULES.has(rule) && isCyclePremisedNeed(needId);
 }

@@ -2437,7 +2437,8 @@ function App() {
               </button>
             )}
             {/* No unlabeled heart in the header (team direction 25): Saved lives in You (You > Saved, or the account menu). */}
-            <div ref={accountMenuRef} className="ay-nav__account">
+            {/* Signed out on the landing: Log in stays in the header on phones too (QA, Oct 25). */}
+            <div ref={accountMenuRef} className={`ay-nav__account${!user && ['welcome', 'hero'].includes(currentView) ? ' is-landing-guest' : ''}`}>
               {user ? (
                 // Avatar opens a small account menu: profile, health profile, saved, log out.
                 <button
@@ -2733,7 +2734,8 @@ function App() {
         {currentView === 'ask' && (
           <div className="ay-container wx-askpage" data-tour="ask">
             <h1 className="ay-sr">Ask ayna</h1>
-            {user && quizResults ? (
+            {/* Signed out with quiz answers too: the guided chat, answered on this device where it can (QA M5). */}
+            {quizResults ? (
               <div className="wx-ask">
               {/* Desktop: the page title and what ayna answers from on the left, the conversation on the right (team direction 10). */}
               <aside className="wx-ask__side" aria-label="About Ask ayna">

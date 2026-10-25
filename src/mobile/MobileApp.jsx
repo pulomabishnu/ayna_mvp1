@@ -258,7 +258,8 @@ function seedEcosystemFromAnswers(quizAnswers, matchOpts) {
   const { mergedProducts, seedMeta } = getEcosystemSeedFromQuiz(quizAnswers, null, matchOpts);
   return capProductsPerBrand(Object.values(mergedProducts || {}).map((p) => {
     const area = resolveEcosystemProductArea(p, REAL_ECOSYSTEM_AREAS);
-    return { ...p, areaKey: area ? area.key : null, needId: seedMeta?.[p.id]?.needId || null };
+    // intakeGenerated: ayna picked it from her answers, she did not add it (QA M3; same flag as the website).
+    return { ...p, areaKey: area ? area.key : null, needId: seedMeta?.[p.id]?.needId || null, intakeGenerated: true };
   }));
 }
 
@@ -979,6 +980,9 @@ export default function MobileApp() {
     const ecosystemProduct = {
       ...product,
       areaKey: product.areaKey || area?.key || null,
+      // She added it herself, so it is hers even if ayna suggested it first.
+      intakeGenerated: false,
+      userAdded: true,
     };
 
     addedHaptic();
@@ -1431,7 +1435,8 @@ export default function MobileApp() {
   // "New in Community" for the Daily Rundown: real public posts for her topics and follows.
   const rundownCommunity = useRundownCommunity(authUser?.id || null, effectiveQuizAnswers);
   // The Daily Rundown ended (or she closed it): its questions become the chat's
-  // starters; ending or exiting lands her in the chat (founder, Oct 24 20:12).
+  // starters; finishing it lands her in the chat (founder, Oct 24 20:12), X
+  // mid-story stays on Home (QA, Oct 25: toChat is false then).
   const handleRundownFinish = ({ starters = [], toChat = false } = {}) => {
     setAskStarters(Array.isArray(starters) ? starters.slice(0, 3) : []);
     if (!toChat) return;

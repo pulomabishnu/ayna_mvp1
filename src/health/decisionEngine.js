@@ -42,7 +42,7 @@ import { cycleStartsFrom, MIN_CYCLES, MIN_SHARE, PATTERN_METRICS } from './cycle
 import { MENSTRUAL_PRODUCT_NEEDS } from '../matching/ontology.js';
 import {
   INTERVENTION_CLASSES, INTAKE_NEED_MAP, NEEDS, SOURCES,
-  classesForNeed, evaluateClassSafety, isPregnant, isPostCycle, needLabelFor, productsForClass, safetyContextFrom,
+  classesForNeed, evaluateClassSafety, isPregnant, isPostCycle, needLabelFor, productsForClass, safetyContextFrom, classAppliesFor, classSourcesFor,
 } from './interventions.js';
 
 export { addDays };
@@ -590,6 +590,8 @@ function optionCandidates({ needs, ctx, ready, intent, products, removedBySafety
       if (cls.id === 'care') return;
       // "Track it for three cycles" needs a cycle: never for someone without one.
       if (cls.id === 'tracking' && ctx.noCycle && need !== 'pregnancy_pain') return;
+      // Cycle evidence does not apply to her sleep without a cycle (QA M9).
+      if (!classAppliesFor(cls.id, need, ctx)) return;
       const id = `option:${cls.id}:${need}`;
       const safetyResult = evaluateClassSafety(cls.id, ctx, need);
       if (safetyResult.verdict === 'block') {
@@ -616,7 +618,7 @@ function optionCandidates({ needs, ctx, ready, intent, products, removedBySafety
           ...(consult ? [] : [{ id: 'try_this', label: 'Try this', classId: cls.id, need, horizonDays: cls.followUpDays }]),
           { id: 'not_relevant', label: 'Not relevant' },
         ],
-        basis: { kind: 'class', classId: cls.id, drugClass: cls.drugClass, need, sources: (preg && cls.sourcesPregnancy) || cls.sources, informationOnly: Boolean(cls.informationOnly), consult: consult ? safetyResult.consults.map(pick) : null },
+        basis: { kind: 'class', classId: cls.id, drugClass: cls.drugClass, need, sources: (preg && cls.sourcesPregnancy) || classSourcesFor(cls, ctx), informationOnly: Boolean(cls.informationOnly), consult: consult ? safetyResult.consults.map(pick) : null },
         classId: cls.id, drugClass: cls.drugClass, need,
       }));
       // Requested products: lowest tier, only for classes that allow them,

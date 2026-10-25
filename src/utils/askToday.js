@@ -14,8 +14,8 @@ let current = null;
 /**
  * ctx: {
  *   today, signals: { hasRundown, hasYesterdayLog, lowSleepOrEnergy, hasRecentChanges, hasHistory },
- *   focus: [{ title, reason }],                       decide() items, in order
- *   rundown: [{ category, title, changed, canDo, explain }],  content cards
+ *   focus: [{ title, reason, body, sources }],        decide() items, in order
+ *   rundown: [{ category, title, changed, canDo, explain, body, reason, basisLine, ask, followUps, sources }],  content cards
  *   log: { today: entry|null, yesterday: entry|null },
  *   recent: [string]                                   plain week-on-week change lines
  * }
@@ -97,10 +97,63 @@ function answerFlagged(text, ctx) {
   return null;
 }
 
+// "Ask why" under a fact (askPrompts.js askWhyFor): "Why might this be? <fact>."
+const WHY_FACT = /^why might this be\?\s*(.*)$/i;
+// General questions (what a body or a cycle usually does) need ayna's AI: her
+// own data can't answer them. Questions about her ("for me", "my sleep") can.
+const GENERAL = /^(how much|how many|what happens|what are possible|is it normal|what is a|what are)\b/i;
+const norm = (s) => String(s || '').toLowerCase().replace(/[\u2019']/g, "'").replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim();
+const sourceLine = (sources) => {
+  const list = (sources || []).filter((x) => x?.url);
+  return list.length ? `\n\nSources: ${list.map((x) => `[${x.label || 'Source'}](${x.url})`).join(', ')}` : '';
+};
+
+/** The precise line for a card's own data, when ayna has one (sleep, a signal, a check-in). */
+function explainLine(e) {
+  if (!e) return null;
+  const fmt = (m) => `${Math.floor(m / 60)}h ${String(Math.round(m % 60)).padStart(2, '0')}m`;
+  if (e.kind === 'sleep' && Number.isFinite(e.lastNight) && Number.isFinite(e.avg)) return `Last night you slept ${fmt(e.lastNight)}, about ${fmt(Math.abs(e.avg - e.lastNight))} less than your average of ${fmt(e.avg)}${e.nights ? ` over your last ${e.nights} nights of connected sleep data` : ''}.`;
+  if (e.kind === 'signal' && e.what) return `${e.what} was ${e.last}, outside your recent range of ${e.low} to ${e.high}${e.n ? ` (from ${e.n} days of your connected data)` : ''}.`;
+  if (e.kind === 'log' && e.field) return `Yesterday you logged your ${e.field} as ${e.word}. Usually it is closer to ${e.usual}.`;
+  return null;
+}
+
+/** One card or Today item, as an answer: what ayna saw, why it shows it, what she can do. */
+function answerFromItem(it, { why = false } = {}) {
+  const lines = [`**${it.title}**`];
+  const exact = explainLine(it.explain);
+  if (exact) lines.push(exact);
+  for (const t of [it.changed, it.body, it.reason, it.basisLine]) if (t && !lines.includes(t) && t !== exact) lines.push(t);
+  if (it.canDo) lines.push(`What you can do: ${it.canDo}`);
+  if (why) lines.push('Your data shows what changed, not why. If it keeps happening or worries you, a clinician can help find the cause.');
+  return { answer: `${lines.join('\n\n')}${sourceLine(it.sources)}\n\n${NOTE}` };
+}
+
+/**
+ * "Ask why" under a fact, and the questions under a Daily Rundown card,
+ * answered from that item's own data on this device (QA M1). null when no
+ * item on Today asked it, or when it is a general question for ayna's AI.
+ */
+export function answerItemQuestion(text, ctx = current) {
+  if (!ctx) return null;
+  const q = String(text || '').trim();
+  const items = [...(ctx.focus || []), ...(ctx.rundown || [])].filter((it) => it?.title);
+  const fact = q.match(WHY_FACT);
+  if (fact) {
+    const f = norm(fact[1]);
+    const it = f && items.find((x) => { const t = norm(x.title); return t && (f === t || f.includes(t) || t.includes(f)); });
+    return it ? answerFromItem(it, { why: true }) : null;
+  }
+  if (GENERAL.test(q) && !/\bfor me\b/i.test(q)) return null;
+  const nq = norm(q);
+  const card = (ctx.rundown || []).find((c) => [c.ask, ...(c.followUps || [])].some((x) => x && norm(x) === nq));
+  return card ? answerFromItem(card, { why: /^why\b/i.test(q) }) : null;
+}
+
 export function answerTodayQuestion(text, ctx = current) {
   const kind = todayQuestionKind(text);
   if (!kind) return null;
-  if (!ctx) return { answer: "ayna doesn't have today's picture on this device yet. Open Today, check in, and ask again." };
+  if (!ctx) return { answer: "ayna doesn't have today's picture on this device yet. Do today's check-in and ask again." };
   if (kind === 'focus') return answerFocus(ctx);
   if (kind === 'explain_rundown') return answerRundown(ctx);
   if (kind === 'yesterday') return answerYesterday(ctx);
@@ -112,5 +165,15 @@ export function answerTodayQuestion(text, ctx = current) {
 /** Same shape as localMatchAnswer / localHistoryAnswer: { answer, followUps } or null. */
 export async function localTodayAnswer(text) {
   const r = answerTodayQuestion(text);
+  return r ? { followUps: [], ...r } : null;
+}
+
+/**
+ * Signed out (no ayna AI): "Ask why" and the Daily Rundown card questions,
+ * answered from Today's own items on this device. Signed in, these go to
+ * ayna's AI, which can say more. Same shape as localTodayAnswer.
+ */
+export async function localItemAnswer(text) {
+  const r = answerItemQuestion(text);
   return r ? { followUps: [], ...r } : null;
 }

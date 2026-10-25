@@ -11,7 +11,7 @@ import {
   PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS,
   STOP_REASONS, SUPPORT_GROUPS, UTI_FREQUENCY, buildSnapshot,
   getLifeStages, isMinorAge, normalizeSuggestion, readIntakeDraft, reconstructIntakeFromSnapshot,
-  requiredReady, asksBreastfeedingOnTiming, ttcDurationOptions, resumeStepId, withSavedOption, isValidUsZip, setPerimenopausePeriods, syncPerimenopausePeriods,
+  requiredReady, missingAnswerHint, AGE_MIN, AGE_MAX, asksBreastfeedingOnTiming, ttcDurationOptions, resumeStepId, withSavedOption, isValidUsZip, setPerimenopausePeriods, syncPerimenopausePeriods,
 } from '../mobile/data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../mobile/data/intakeCatalog.js';
 import { WEB_FOLLOWUP_STEP_IDS } from '../mobile/data/quizDraftProgress.js';
@@ -130,23 +130,24 @@ function AgeField({ value, onChange, underage, onOpenGate }) {
   // who finds dragging to an exact number hard.
   const n = Number.parseInt(value, 10);
   const set = Number.isFinite(n);
-  const slider = set ? Math.min(80, Math.max(18, n)) : 18;
-  const label = set ? (n >= 80 ? '80 or older' : `${n}`) : 'Not set';
-  const nudge = (d) => onChange(String(Math.min(80, Math.max(18, (set ? slider : 17) + d))));
+  // One range with the app (intakeModel AGE_MIN / AGE_MAX).
+  const slider = set ? Math.min(AGE_MAX, Math.max(AGE_MIN, n)) : AGE_MIN;
+  const label = set ? (n >= AGE_MAX ? `${AGE_MAX} or older` : `${n}`) : 'Not set';
+  const nudge = (d) => onChange(String(Math.min(AGE_MAX, Math.max(AGE_MIN, (set ? slider : AGE_MIN - 1) + d))));
   return <div className={`qz-age is-slider${underage ? ' is-under' : ''}`}>
     <div className="qz-age-top">
       <label className="qz-age-label" htmlFor="qz-age-range">Your age</label>
-      <output className={`qz-age-out${set ? '' : ' is-empty'}`} htmlFor="qz-age-range" aria-live="polite">{set ? <>{label}{n < 80 && <small> years</small>}</> : 'Slide to set'}</output>
+      <output className={`qz-age-out${set ? '' : ' is-empty'}`} htmlFor="qz-age-range" aria-live="polite">{set ? <>{label}{n < AGE_MAX && <small> years</small>}</> : 'Slide to set'}</output>
     </div>
     <div className={`qz-age-slide${set ? '' : ' is-empty'}`}>
-      <button type="button" className="qz-age-step" aria-label="One year younger" onClick={() => nudge(-1)} disabled={set && slider <= 18}>−</button>
-      <input id="qz-age-range" type="range" min={18} max={80} step={1} value={slider} name="age"
-        aria-valuetext={set ? (n >= 80 ? '80 or older' : `${n} years`) : 'Not set'} aria-describedby={underage ? 'qz-age-alert' : 'qz-age-ends'} aria-invalid={underage || undefined}
-        style={{ '--qz-fill': `${((slider - 18) / 62) * 100}%` }}
+      <button type="button" className="qz-age-step" aria-label="One year younger" onClick={() => nudge(-1)} disabled={set && slider <= AGE_MIN}>−</button>
+      <input id="qz-age-range" type="range" min={AGE_MIN} max={AGE_MAX} step={1} value={slider} name="age"
+        aria-valuetext={set ? (n >= AGE_MAX ? `${AGE_MAX} or older` : `${n} years`) : 'Not set'} aria-describedby={underage ? 'qz-age-alert' : 'qz-age-ends'} aria-invalid={underage || undefined}
+        style={{ '--qz-fill': `${((slider - AGE_MIN) / (AGE_MAX - AGE_MIN)) * 100}%` }}
         onChange={(e) => onChange(String(e.target.value))} />
-      <button type="button" className="qz-age-step" aria-label="One year older" onClick={() => nudge(1)} disabled={set && slider >= 80}>+</button>
+      <button type="button" className="qz-age-step" aria-label="One year older" onClick={() => nudge(1)} disabled={set && slider >= AGE_MAX}>+</button>
     </div>
-    <p className="qz-age-ends" id="qz-age-ends"><span>18</span><span>80+</span></p>
+    <p className="qz-age-ends" id="qz-age-ends"><span>{AGE_MIN}</span><span>{AGE_MAX}+</span></p>
     {/* Team direction, Oct 24 (section 32): type it, or use the slider. Whichever is faster. */}
     <label className="qz-age-type">Or type it <input type="text" inputMode="numeric" autoComplete="off" maxLength={3} value={value} placeholder="e.g. 34" onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 3))} /></label>
     {underage
@@ -293,10 +294,10 @@ function webOnboardingSteps(intake) {
     : s), obPart }));
   return [
     { id: 'welcome', section: 'welcome', type: 'welcome', screen: 0, title: 'Here’s how ayna helps', optional: false, required: false, obPart: 'core' },
-    ...web(getOnboardingSteps(intake, { part: 'core' }), 'core'),
+    ...web(getOnboardingSteps(intake, { part: 'core', surface: 'web' }), 'core'),
     { id: 'connect', section: 'connect', type: 'connect', screen: 7, title: 'Connect health data', subtitle: 'Optional. Quick check-ins work too.', optional: true, required: false, obPart: 'core' },
     { id: 'ready', section: 'ready', type: 'ready', screen: 7, title: '', optional: false, required: false, obPart: 'core' },
-    ...web(getOnboardingSteps(intake, { part: 'more' }), 'more'),
+    ...web(getOnboardingSteps(intake, { part: 'more', surface: 'web' }), 'more'),
   ];
 }
 
@@ -785,7 +786,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       </header>
 
       <div className="qz-label-row">
-        <span className="qz-section">{onboarding ? `${ONBOARDING_SCREENS[step.screen - 1]?.label}${step.optional ? ', optional' : step.safety ? ', for your safety' : ''}` : phase === 'more' ? 'Optional' : SECTION_NAMES[step.section]}</span>
+        <span className="qz-section">{onboarding ? `${ONBOARDING_SCREENS[step.screen - 1]?.label}${step.optional ? ', optional' : ''}` : phase === 'more' ? 'Optional' : SECTION_NAMES[step.section]}</span>
         <span className="qz-label-tools">
           {phase === 'more' && <button type="button" className="qz-skip qz-to-results" onClick={() => finish()} disabled={saving}>See my results</button>}
           {step.info && !onboarding && <button type="button" className="qz-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen} onClick={() => setInfoOpen((v) => !v)}>i</button>}
@@ -806,6 +807,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       <footer className="qz-foot">
         {step.optional || step.type === 'topics' ? <button type="button" className="qz-skip" onClick={skip} disabled={saving}>Skip</button> : <span className="qz-required">{step.section === 'safety' ? 'Needed for safety' : 'Needed for your matches'}</span>}
         {ready && !saving && <span className="qz-noted" aria-hidden="true">noted</span>}
+        {!ready && missingAnswerHint(answerId, intake) && <p className="ip-why" role="status">{missingAnswerHint(answerId, intake)}</p>}
         <button type="button" className="qz-btn" onClick={next} disabled={!ready || saving}>{saving ? 'Saving…' : (isLast && phase === 'more') || singleStep ? (singleStep ? 'Save' : 'See my results') : 'Next'} <span aria-hidden="true">→</span></button>
       </footer>
     </div>

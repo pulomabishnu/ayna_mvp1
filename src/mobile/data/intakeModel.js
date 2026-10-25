@@ -70,6 +70,11 @@ export const MIDLIFE_LIFE_STAGES = ['I am in perimenopause', 'I am in menopause'
 // exclusive (it clears the stages, and picking a stage clears it), so nobody
 // has to pick a stage that is not true for them. Stored as-is; they never
 // imply a stage.
+// The age control's range, the same on the app and the website (QA, Oct 25):
+// the top end reads "90+" / "90 or older".
+export const AGE_MIN = 18;
+export const AGE_MAX = 90;
+
 export const LIFE_STAGE_NOT_SURE = 'None of these / not sure';
 export const LIFE_STAGE_PREFER_NOT = 'Prefer not to say';
 export const LIFE_STAGE_EXCLUSIVE = [LIFE_STAGE_NOT_SURE, LIFE_STAGE_PREFER_NOT];
@@ -750,6 +755,20 @@ export function isStepAnswered(stepId, intake) {
 }
 
 /** May she continue past this step? Optional steps never block; required ones need an answer. */
+/**
+ * One line under a disabled Next on a required safety question, naming what
+ * is missing (QA, Oct 25). Same words as the buttons ("Prefer not to answer").
+ * '' when nothing is missing or the step is not a safety question.
+ */
+export function missingAnswerHint(stepId, intake) {
+  if (requiredReady(stepId, intake)) return '';
+  const any = 'None, Not sure and Prefer not to answer all count.';
+  if (stepId === 'allergies') return intake?.allergyStatus === 'Yes' ? 'Add at least one allergy, or pick another answer.' : `Pick an answer to go on. ${any}`;
+  if (stepId === 'medications') return intake?.takesCurrent === 'Yes' ? 'Add at least one medicine or supplement, or pick another answer.' : `Pick an answer to go on. ${any}`;
+  if (stepId === 'conditions' || stepId === 'safety') return `Pick an answer to go on. ${any}`;
+  return '';
+}
+
 export function requiredReady(stepId, intake) {
   if (stepId === 'aboutYou') return isStepAnswered('aboutYou', intake);
   const step = getIntakeSteps(intake).find((s) => s.id === stepId);

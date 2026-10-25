@@ -25,7 +25,7 @@
  *
  * Pure functions plus the store. No network.
  */
-import { INTERVENTION_CLASSES, INTAKE_NEED_MAP, NEEDS, classesForNeed, evaluateClassSafety, productSafety, safetyContextFrom } from './interventions.js';
+import { INTERVENTION_CLASSES, INTAKE_NEED_MAP, NEEDS, classesForNeed, evaluateClassSafety, productSafety, safetyContextFrom, needLabelFor, horizonLabelFor, classAppliesFor, classSourcesFor } from './interventions.js';
 import { HORIZONS, interventionKindFor } from './outcomes.js';
 import { howLine, reasonForProduct, slotFor, SLOTS } from './plan.js';
 import { fitFor } from './weekPicks.js';
@@ -69,9 +69,9 @@ export const tryIdFor = (needId, key) => `plan:${needId}:${key}`.replace(/[^A-Za
 
 const lowerFirst = (s) => { const t = String(s || ''); return /^[A-Z][a-z]/.test(t) ? t.charAt(0).toLowerCase() + t.slice(1) : t; };
 
-function horizonFor(kind) {
+function horizonFor(kind, ctx = null) {
   const h = HORIZONS[kind] || HORIZONS.default;
-  return { kind: HORIZONS[kind] ? kind : 'default', days: h.days, label: h.label };
+  return { kind: HORIZONS[kind] ? kind : 'default', days: h.days, label: horizonLabelFor(h.label, ctx) };
 }
 
 function knowLine(need, horizon) {
@@ -87,20 +87,21 @@ function latestTry(tries, needId, key, ref) {
 }
 
 function actionItem(cls, needId, ctx, tries) {
+  if (!classAppliesFor(cls.id, needId, ctx)) return null;
   const safety = evaluateClassSafety(cls.id, ctx, needId);
   if (safety.verdict === 'block' || safety.verdict === 'ask') return null;
   const consult = safety.verdict === 'consult';
-  const horizon = horizonFor(CLASS_KIND[cls.id]);
+  const horizon = horizonFor(CLASS_KIND[cls.id], ctx);
   const key = keyFor('action', cls.id);
   return {
     key, kind: 'action', ref: cls.id, need: needId,
     title: cls.label,
-    why: `For your ${NEEDS[needId].label}. ${cls.summary}`,
+    why: `For your ${needLabelFor(needId, ctx)}. ${cls.summary}`,
     caution: [consult ? `Ask a doctor or pharmacist before using this. ${safety.consults.map((c) => c.reason).join(' ')}` : '', cls.caution || ''].filter(Boolean).join(' ') || null,
     when: CLASS_WHEN[cls.id] || null,
     horizon: NOT_TRIED.has(cls.id) ? null : horizon,
     know: NOT_TRIED.has(cls.id) ? null : knowLine(needId, horizon),
-    sources: cls.sources || [],
+    sources: classSourcesFor(cls, ctx),
     informationOnly: Boolean(cls.informationOnly),
     consult,
     canStart: !cls.informationOnly && !consult && !NOT_TRIED.has(cls.id),
@@ -108,13 +109,13 @@ function actionItem(cls, needId, ctx, tries) {
   };
 }
 
-function productItem(product, needId, { details = null, intakeNeeds = [], tries }) {
-  const horizon = horizonFor(interventionKindFor({ kind: 'product', product }));
+function productItem(product, needId, { details = null, intakeNeeds = [], tries, ctx = null }) {
+  const horizon = horizonFor(interventionKindFor({ kind: 'product', product }), ctx);
   const key = keyFor('product', product.id);
   const how = howLine(product);
   const engineWhy = details ? whyLine(product, details) : '';
   // Named for this routine's need (the engine's own line can name another need).
-  const why = reasonForProduct(product, intakeNeeds) || (engineWhy && !/^Another option/i.test(engineWhy) ? engineWhy : '') || `For your ${NEEDS[needId].label}`;
+  const why = reasonForProduct(product, intakeNeeds) || (engineWhy && !/^Another option/i.test(engineWhy) ? engineWhy : '') || `For your ${needLabelFor(needId, ctx)}`;
   return {
     key, kind: 'product', ref: product.id, need: needId, product,
     title: product.name,
@@ -169,6 +170,8 @@ export function routineProducts(needId, { catalog = [], inRoutine = {}, detailsF
  *   today      'YYYY-MM-DD'
  * @returns {Array<{ need, title, start, track, other, later, tried, postponed, hiddenCount }>}
  */
+const isAutoPick = (p) => Boolean(p && typeof p === 'object' && !p._userSwapped && !p.userAdded && (p.intakeGenerated || p.llmGenerated));
+
 export function buildRoutines({ needs = {}, profile = null, catalog = [], inRoutine = {}, detailsFor = null, tries = [], prefs = {}, today = todayKey(), saved = {}, omitted = {} } = {}) {
   const ctx = safetyContextFrom(profile || null);
   const ids = (Array.isArray(needs) ? needs : Object.keys(needs || {})).filter((id) => ROUTINE_NEEDS[id]);
@@ -181,7 +184,14 @@ export function buildRoutines({ needs = {}, profile = null, catalog = [], inRout
       .map((cls) => actionItem(cls, needId, ctx, tries))
       .filter(Boolean);
     const products = routineProducts(needId, { catalog, inRoutine, detailsFor, ctx, hidden: omitted })
-      .map((r) => ({ ...productItem(r.product, needId, { details: r.details, intakeNeeds, tries }), owned: r.owned || Boolean(prefs.owned?.[r.product.id]), inRoutine: r.owned, saved: Boolean(saved[r.product.id]) }));
+      .map((r) => {
+        // Only what she added or marked as hers counts as hers. A pick ayna
+        // built from her answers (quiz seed, AI build) is "Suggested for you"
+        // (QA M3; same rule as utils/ecosystemStore.js isGeneratedPick).
+        const auto = r.owned && isAutoPick(inRoutine[r.product.id]);
+        const owned = (r.owned && !auto) || Boolean(prefs.owned?.[r.product.id]);
+        return { ...productItem(r.product, needId, { details: r.details, intakeNeeds, tries, ctx }), owned, suggested: auto && !owned, inRoutine: r.owned, saved: Boolean(saved[r.product.id]) };
+      });
     const all = [...actions, ...products];
     const byKey = new Map(all.map((it) => [it.key, it]));
 
@@ -205,7 +215,7 @@ export function buildRoutines({ needs = {}, profile = null, catalog = [], inRout
     // Products past the first few go behind "More products" in the view.
     return {
       need: needId,
-      label: NEEDS[needId].label,
+      label: needLabelFor(needId, ctx),
       title: ROUTINE_NEEDS[needId].title,
       start,
       track: { ...ROUTINE_NEEDS[needId].track, body: 'About 30 seconds a day. It is how you and ayna see what helps.' },

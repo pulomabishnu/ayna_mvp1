@@ -1694,6 +1694,8 @@ export function safetyHoldFor(safety) {
     };
 }
 
+const BLEEDING_EVALUATION_TEXT = 'Bleeding or spotting 12 months or more after your last period should be checked promptly by an ob-gyn or your clinician. ayna does not suggest products for it.';
+
 function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
     if (isTeenProduct(savedProduct)) return { ...TEEN_EXCLUDED };
     const product = hydrateCatalogProduct(savedProduct);
@@ -1857,6 +1859,13 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
         if (details.eligibility === 'restricted' && details.matchStatus === 'scored') {
             details = { ...details, percent: null, score: 0, sortScore: 0, matchStatus: 'safety-hold', tier: 'browse', goalMatch: null, healthMatch: null, needMatches: details.needMatches.map((m) => ({ ...m, score: null, held: true })), safetyHold: safetyHoldFor(safety) };
         }
+        // Bleeding after menopause (founder, Oct 24): a period or bleeding
+        // product gets no match for it, only the prompt-evaluation message
+        // (the same one Home shows; ontology.js bleedingAfterMenopause).
+        if (!best && needMatches.some((m) => m.filtered === 'postmenopausal_bleeding')) {
+            const note = up.contradictions.find((c) => c.code === 'period_need_vs_stage');
+            details = { ...details, percent: null, score: 0, sortScore: 0, matchStatus: 'bleeding-evaluation', tier: 'browse', bleedingEvaluation: { text: note?.text || BLEEDING_EVALUATION_TEXT, source: note?.source || null } };
+        }
     }
     if (!focusId) entry.details = details;
     return details;
@@ -1934,7 +1943,7 @@ export function getProductMatchDetailsForProduct(product, quizAnswers, healthPro
 export function getProductRelevanceScore(product, quizAnswers, healthProfile = null, opts = {}) {
     const d = buildMatchDetails(product, quizAnswers, healthProfile, opts);
     // A safety hold has no percent to show; 0 keeps it last when sorting.
-    return d.matchStatus === 'safety-hold' ? 0 : d.percent;
+    return d.matchStatus === 'safety-hold' || d.matchStatus === 'bleeding-evaluation' ? 0 : d.percent;
 }
 
 /**

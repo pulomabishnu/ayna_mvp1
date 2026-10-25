@@ -71,6 +71,7 @@ import {
   readIntakeDraft,
   reconstructIntakeFromSnapshot,
   requiredReady,
+  missingAnswerHint,
   resumeStepId,
   ttcDurationOptions,
   withSavedOption,
@@ -1057,7 +1058,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
               ? <span className={`ip-label ip-label--${step.section}`}>{ONBOARDING_SCREENS[step.screen - 1]?.label}</span>
               : scene.label && <span className={`ip-label ip-label--${step.section}`}>{scene.label}</span>}
             {(phase === 'optional' || (onboarding && step.optional)) && <span className="ip-tag-optional">Optional</span>}
-            {onboarding && step.safety && <span className="ip-tag-optional ip-tag-safety">For your safety</span>}
+            {/* The screen label already says "For your safety": no second pill (QA, Oct 25). */}
             {!onboarding && flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
             {step.info && !onboarding && <button type="button" className="ip-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen === step.id} onClick={() => setInfoOpen((v) => v === step.id ? null : step.id)}>i</button>}
           </div>
@@ -1080,6 +1081,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         </div>
       </div>}
       <footer className={`ip-foot${phase === 'optional' ? ' ip-foot--optional' : ''}`}>
+        {!ready && missingAnswerHint(step.id, intake) && <p className="ip-why" role="status">{missingAnswerHint(step.id, intake)}</p>}
         <button type="button" className="ip-next" onClick={goNext} disabled={!ready}>
           <span>{isLast && phase === 'optional' ? 'See my results' : 'Next'}</span>
           {countForStep > 0 && <b>{countForStep}</b>}

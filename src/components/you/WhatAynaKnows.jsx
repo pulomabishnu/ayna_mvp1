@@ -58,7 +58,8 @@ export default function WhatAynaKnows({ variant = 'app', quizAnswers = null, use
       {groups.map((g) => (
         <div key={g.id} className="ay-know__group" data-group={g.id}>
           <h3>{g.title}</h3>
-          {g.note && <p className="ay-know__note">{g.note}</p>}
+          {/* The app's tab is Home; the website keeps Today (QA, Oct 25). */}
+          {g.note && <p className="ay-know__note">{variant === 'web' ? g.note : g.note.replace(/\bToday\b/g, 'Home')}</p>}
           <ul>
             {g.rows.map((row) => (
               <li key={row.id} className={row.missing ? 'is-missing' : ''}>

@@ -26,6 +26,8 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
   const goals = (answers?.fullHealthIntake?.goals || []).slice(0, 2);
   const remaining = useMemo(() => (answers?.fullHealthIntake ? moreRemaining(reconstructIntakeFromSnapshot(answers.fullHealthIntake)) : 0), [answers]);
   const Tag = variant === 'web' ? 'section' : 'main';
+  // The app's tab is Home; the website's is still Today (QA, Oct 25).
+  const tab = variant === 'web' ? 'Today' : 'Home';
   return (
     <Tag className={`ay-ob-ready is-${variant}`} aria-labelledby="ay-ob-ready-h">
       {onBack && (
@@ -47,12 +49,12 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
       ) : !ready ? (
         <p className="ay-ob-ready__lead" role="status">Getting your focus ready…</p>
       ) : (
-        <p className="ay-ob-ready__lead">You didn’t pick anything specific, so Today starts with quick check-ins. Add what you want help with any time in You.</p>
+        <p className="ay-ob-ready__lead">You didn’t pick anything specific, so {tab} starts with quick check-ins. Add what you want help with any time in You.</p>
       )}
       {goals.length > 0 && <p className="ay-ob-ready__goals">With your goals in mind: {goals.map((g) => g.charAt(0).toLowerCase() + g.slice(1)).join(' and ')}.</p>}
-      <p className="ay-ob-ready__note">Today is where your daily rundown lives. You can see and change everything ayna uses in You, My health.</p>
+      <p className="ay-ob-ready__note">{tab} is where your daily rundown lives. You can see and change everything ayna uses in You, My health.</p>
       <div className="ay-ob-ready__actions">
-        <button type="button" className="ay-ob-primary" onClick={onSeeToday}>See my Today</button>
+        <button type="button" className="ay-ob-primary" onClick={onSeeToday}>See my {tab}</button>
         {onMorePersonal && remaining > 0 && (
           <button type="button" className="ay-ob-more" onClick={onMorePersonal}>
             <span>Make my matches more personal</span>

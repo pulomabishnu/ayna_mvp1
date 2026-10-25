@@ -330,11 +330,21 @@ describe('Rundown to chat hand-off', () => {
   const sleepRows = [...Array.from({ length: 10 }, (_, i) => ({ metric: 'sleep_minutes', day: addDays(today, -(i + 1)), value: 420 })), { metric: 'sleep_minutes', day: today, value: 330 }];
   const t = { today, decision: { items: [] }, patterns: [], log: {}, tries: [], healthRows: sleepRows, saveLog: () => {}, recordOutcome: () => {} };
 
-  it('closing the daily rundown lands in the chat with questions about the cards she saw', () => {
+  it('X mid-story stays on Home (QA, Oct 25), the starters still carry over', () => {
     const onFinish = vi.fn();
     mount(<Rundown t={t} onFinish={onFinish} onAsk={() => {}} />);
     act(() => btn('Start rundown').click());
     act(() => btn('Close rundown').click());
+    expect(onFinish).toHaveBeenCalledTimes(1);
+    expect(onFinish.mock.calls[0][0].toChat).toBe(false);
+  });
+
+  it('finishing the daily rundown lands in the chat with questions about the cards she saw', () => {
+    const onFinish = vi.fn();
+    mount(<Rundown t={t} onFinish={onFinish} onAsk={() => {}} />);
+    act(() => btn('Start rundown').click());
+    for (let i = 0; i < 20 && !btn('Finish'); i += 1) act(() => btn('Next card').click());
+    act(() => btn('Finish').click());
     expect(onFinish).toHaveBeenCalledTimes(1);
     const { starters, toChat } = onFinish.mock.calls[0][0];
     expect(toChat).toBe(true);

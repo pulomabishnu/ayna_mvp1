@@ -16,7 +16,7 @@ import { mayAutoFocus } from '../../utils/delightRuntime.js';
 import { guideContext } from '../utils/aynaGuide.js';
 import { localMatchAnswer } from '../../utils/askMatch.js';
 import { localHistoryAnswer } from '../../utils/askHistory.js';
-import { localTodayAnswer } from '../../utils/askToday.js';
+import { localTodayAnswer, localItemAnswer } from '../../utils/askToday.js';
 import { guidedTiles } from '../../utils/askGuided.js';
 import { onDeviceStarters } from '../../utils/askStarters.js';
 import { getTodayAskContext } from '../../utils/askToday.js';
@@ -174,8 +174,9 @@ export default function AskAynaModal({
   // "Try again", so a dropped connection never loses what she typed.
   const [failedMsg, setFailedMsg] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
-  // Signed out and the last question needed ayna's AI: say why, inline.
-  const [needsAccount, setNeedsAccount] = useState(false);
+  // Signed out and the last question needed ayna's AI: that question, named
+  // inline with why (QA M1). '' once a later question is answered.
+  const [needsAccount, setNeedsAccount] = useState('');
   const [hasOpened, setHasOpened] = useState(open);
   // A bottom sheet: grabber, drag down to close (useSheetDrag).
   const { sheetRef, grabberProps } = useSheetDrag(onClose);
@@ -276,7 +277,11 @@ export default function AskAynaModal({
     // Scroll only the message list: scrollIntoView also scrolls every
     // ancestor, which pushed the whole app shell up behind the sheet.
     const list = bottomRef.current?.parentElement;
-    if (open && list) list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
+    // Nothing asked yet (the chat-first Home, ?home=chat): open at the top so
+    // "Hello" shows (QA M7). This runs after the home effect above, so it must
+    // not push the empty list to its bottom.
+    const asked = messages.some((m) => m.role === 'user');
+    if (open && list) list.scrollTo(asked && !home ? { top: list.scrollHeight, behavior: 'smooth' } : { top: 0 });
     // Reopening preserves the existing scroll position.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
@@ -287,11 +292,15 @@ export default function AskAynaModal({
     // never from the language model, so it is the same % the product shows.
     const local = (await localMatchAnswer(msg, { quizAnswers: profile, matchOpts, focusProduct }).catch(() => null))
       || (await localHistoryAnswer(msg, { guideTrials: guide?.trials || [], guide: true }).catch(() => null))
-      || (await localTodayAnswer(msg).catch(() => null));
+      || (await localTodayAnswer(msg).catch(() => null))
+      // Signed out: "Ask why" and the Rundown questions from Today's own items (QA M1).
+      || (!session?.access_token ? await localItemAnswer(msg).catch(() => null) : null);
     if (local) {
       setInput('');
       setSendError('');
       setFailedMsg('');
+      // A later question answered here clears the stale "needs an account" note.
+      setNeedsAccount('');
       setHome(false);
       const next = [...messages, { role: 'user', text: msg }, { role: 'assistant', text: local.answer, followUps: local.followUps }];
       setMessages(next);
@@ -300,12 +309,12 @@ export default function AskAynaModal({
     }
     if (!session?.access_token) {
       // Kept in the box, so signing in (or closing the sheet) loses nothing.
+      // No sign-in wall: the note names the question and offers Sign in.
       setInput(msg);
-      setNeedsAccount(true);
-      onRequireAuth?.('Ask ayna');
+      setNeedsAccount(msg);
       return;
     }
-    setNeedsAccount(false);
+    setNeedsAccount('');
     setInput('');
     setSendError('');
     setFailedMsg('');
@@ -567,7 +576,7 @@ export default function AskAynaModal({
 
       {needsAccount && session === null && (
         <div className="ay-ask-error ay-ask-account" role="status">
-          <span>This question uses ayna’s AI, so it needs a free account. Your question is kept below.</span>
+          <span>“{needsAccount.length > 90 ? `${needsAccount.slice(0, 88)}…` : needsAccount}” uses ayna’s AI, so it needs a free account. Your question is kept below.</span>
           <button type="button" onClick={() => onRequireAuth?.('Ask ayna')}>Sign in</button>
         </div>
       )}
