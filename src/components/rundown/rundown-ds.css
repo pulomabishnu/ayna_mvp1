@@ -90,3 +90,5 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-product { grid-template-columns: minmax(0, 1fr) !important; gap: 14px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-product > :is(.ay-product-card, .ay-pc) { max-width: 520px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-product > .ay-rd-meter { justify-self: start; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-holdline { margin: 0; font: 500 14px/1.4 var(--ay-font-ui, 'Figtree', sans-serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-holdline .ay-rd-hold { display: block; font-weight: 700; }

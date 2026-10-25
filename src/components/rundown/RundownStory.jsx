@@ -8,6 +8,7 @@ import { READ_PHOTOS } from '../../data/readCovers.js';
 import { ProductSheetContext } from '../../mobile/productSheetContext.js';
 import { ProductQuickActions } from '../../mobile/components/ProductQuick.jsx';
 import { Mark, Shapes } from '../personality/DS.jsx';
+import { holdLine } from '../../utils/matchState.js';
 import { Seal } from '../personality/Bits.jsx';
 import './rundown-ds.css';
 import { DataViz, DATA_KINDS } from './DataCharts.jsx';
@@ -102,12 +103,15 @@ function Body({ card, h, done }) {
       );
     }
     case 'saved': {
-      // A product held back for safety never shows a %: "Safety hold · Match unavailable".
+      // A product held back for safety never shows a %: "Safety hold · Match unavailable",
+      // with what ayna still needs, under the card.
+      const st = h.sheet?.matchStateFor?.(card.product) || null;
       return (
         <div className={`ay-rd-product${h.sheet ? ' has-open' : ''}`}>
           {h.sheet
             ? <AppProductCard product={card.product} variant="row" quizAnswers={h.sheet.quizAnswers || null} matchOpts={h.sheet.matchOpts} onClick={() => h.openSheet(card.product)} onOpenWhyMatch={() => h.openSheet(card.product)} />
             : <ProductCard product={card.product} className="is-row" onOpen={h.whyMatch || undefined} />}
+          {st?.kind === 'held' && <p className="ay-rd-holdline"><span className="ay-rd-hold">{st.label}</span>{holdLine(st)}</p>}
           <span className="ay-rd-actions">
             {h.compare && <button type="button" className="ay-rd-primary" onClick={() => h.compare(card.product)}>Compare</button>}
             {h.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(`Is ${card.product.name} a good fit for me?`)}>Ask ayna</button>}
