@@ -295,7 +295,7 @@ function StickyTabs({ tabs, active, onChange, stickTop, swipe = false }) {
   return (
     <>
       <div className="ayq-st" style={{ '--ayq-stick-top': `${stickTop}px` }}>
-        <div className="ayq-st__list" role="tablist" aria-label="About this product" ref={listRef} onKeyDown={onKeyDown}>
+        <div className="ayq-st__list" data-tour="evidence-tabs" role="tablist" aria-label="About this product" ref={listRef} onKeyDown={onKeyDown}>
           {tabs.map((t) => {
             const on = t.id === active;
             return (

@@ -1,0 +1,125 @@
+/* Tips overlay (TutorialLayer.jsx). Founder rule (Oct 25, 23:49): an outlined
+   card with a hard shadow, a row of pill buttons, an optional small sparkle.
+   Palette only: butter, espresso, pink, sky. Portaled to <body>, so the
+   tokens live here, keyed on the layer's own data-theme. */
+.ay-tour {
+  --t-bg: #ffedac;
+  --t-ink: #3e2723;
+  --t-line: #3e2723;
+  --t-pop: #f7badd;
+  --t-sky: #769ebe;
+  --t-shade: rgba(62, 39, 35, 0.42);
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+  font-family: 'Figtree', system-ui, sans-serif;
+  color: var(--t-ink);
+}
+.ay-tour[data-theme='dark'] {
+  --t-bg: #3e2723;
+  --t-ink: #ffedac;
+  --t-line: #ffedac;
+  --t-shade: rgba(20, 12, 10, 0.6);
+}
+.ay-tour__dim { position: fixed; inset: 0; }
+.ay-tour__dim.is-soft { background: var(--t-shade); opacity: 0.6; }
+.ay-tour__shade { fill: var(--t-shade); }
+.ay-tour__ring {
+  position: fixed;
+  border: 2px solid var(--t-pop);
+  border-radius: 16px;
+  box-shadow: 0 0 0 2px var(--t-line);
+}
+
+.ay-tour__card {
+  position: fixed;
+  pointer-events: auto;
+  box-sizing: border-box;
+  width: min(320px, calc(100vw - 32px));
+  padding: 14px 16px 12px;
+  background: var(--t-bg);
+  color: var(--t-ink);
+  border: 1.5px solid var(--t-line);
+  border-radius: 18px;
+  box-shadow: 3px 3px 0 var(--t-line);
+  animation: ay-tour-in 0.18s ease-out;
+}
+.ay-tour .ay-tour__card h2 {
+  color: var(--t-ink) !important;
+  margin: 0 0 4px;
+  font-family: 'ayna Display', 'Figtree', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.ay-tour .ay-tour__card p { color: var(--t-ink); margin: 0; font-size: 15px; line-height: 1.45; }
+.ay-tour .ay-tour__card p.ay-tour__text { font-size: 16px; font-weight: 600; line-height: 1.35; padding-right: 4px; }
+.ay-tour .ay-tour__card p.ay-tour__off-note { margin-top: 6px; font-size: 13px; font-weight: 500; }
+
+/* The little pointer to the anchor. */
+.ay-tour__tip::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--ay-tour-arrow, 40px) - 7px);
+  width: 12px;
+  height: 12px;
+  background: var(--t-bg);
+  border: 1.5px solid var(--t-line);
+  transform: rotate(45deg);
+}
+.ay-tour__tip.is-below::before { top: -7.5px; border-right: 0; border-bottom: 0; }
+.ay-tour__tip.is-above::before { bottom: -7.5px; border-left: 0; border-top: 0; }
+.ay-tour__tip.is-pin-top::before, .ay-tour__tip.is-pin-bottom::before { display: none; }
+
+.ay-tour__dots { display: flex; gap: 5px; margin: 0 0 8px; }
+.ay-tour__dots i { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--t-line); }
+.ay-tour__dots i.is-on { background: var(--t-pop); }
+
+.ay-tour__actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; }
+.ay-tour__go, .ay-tour__ghost {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--t-line);
+  font: 600 15px/1 'Figtree', system-ui, sans-serif;
+  cursor: pointer;
+}
+.ay-tour__go { background: var(--t-ink); color: var(--t-bg); box-shadow: 2px 2px 0 var(--t-pop); }
+.ay-tour__ghost { background: transparent; color: var(--t-ink); }
+.ay-tour__link {
+  min-height: 44px;
+  padding: 0 4px;
+  background: none;
+  border: 0;
+  color: var(--t-ink);
+  font: 500 14px/1 'Figtree', system-ui, sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.ay-tour button:focus-visible { outline: 2px solid var(--t-sky); outline-offset: 2px; }
+
+/* Welcome: a small card above the tab bar. */
+.ay-tour__welcome {
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  bottom: calc(62px + max(7px, env(safe-area-inset-bottom)) + 16px);
+  padding-top: 18px;
+}
+.ay-tour__welcome h2 { font-size: 20px; padding-right: 40px; }
+.ay-tour__welcome .ay-tour__actions { justify-content: flex-end; }
+.ay-tour__mark { position: absolute; top: 12px; right: 14px; width: 28px; height: 28px; color: var(--t-pop); }
+.ay-tour__mark svg { width: 100%; height: 100%; fill: currentColor; stroke: var(--t-line); stroke-width: 1.2; }
+
+@keyframes ay-tour-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.ay-tour.is-still .ay-tour__card { animation: none; }
+@media (prefers-reduced-motion: reduce) { .ay-tour__card { animation: none !important; } }
+
+/* Settings: Tips group (TipsSettings.jsx). */
+.ay-tips-set__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; }
+.ay-tips-set__row span { display: flex; flex-direction: column; gap: 2px; }
+.ay-tips-set__row small { font-size: 13px; font-weight: 500; }
+.ay-tips-set__status { margin: 4px 0 0; font-size: 13px; font-weight: 500; }

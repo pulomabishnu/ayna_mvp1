@@ -405,6 +405,7 @@ export default function AskAynaModal({
 
   return (
     <div
+      data-tour="chat"
       className={`ayna-ask-drawer${asTab ? ' is-tab' : ''}${homeMode ? ' is-home' : ''}${homeMode && onBackHome ? ' is-full' : ''}`}
       data-open={open ? 'true' : 'false'}
       style={{
@@ -454,13 +455,13 @@ export default function AskAynaModal({
         {guidePage === 'voice' ? <VoiceSettings tapSupported={voice.supported} onBack={() => setGuidePage('')} /> : guidePage ? <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recapAskable ? recap : ''); } : null} onBack={() => setGuidePage('')} /> : null}
         {home && !sending && !guidePage && (<>
           {/* After today's Daily Rundown: questions about the cards she just saw (this session only). */}
-          {homeMode && starters.length > 0 && <section className="ay-chat-starters" aria-labelledby="ay-chat-starters-h">
+          {homeMode && starters.length > 0 && <section className="ay-chat-starters" data-tour="chat-starters" aria-labelledby="ay-chat-starters-h">
             <h2 id="ay-chat-starters-h">From your Daily Rundown today</h2>
             <ul>{starters.map((st) => <li key={st.question}><button type="button" onClick={() => (onStarter ? onStarter(st) : send(st.question))}><span>{st.question}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>)}</ul>
           </section>}
           {/* A list of rows like the Ask home, not a 2x2 grid (master prompt 154). */}
           {session === null && !homeMode && <p className="ay-ask-local">Questions about your matches, what helped before, your day and your Daily Rundown are answered on this phone, no account needed. Other questions use ayna’s AI and need a free account.</p>}
-          {session !== null && <ul className="ay-guide-launches" aria-label="Your personal guide">
+          {session !== null && <ul className="ay-guide-launches" data-tour="chat-guide" aria-label="Your personal guide">
             <li><button type="button" onClick={() => setGuidePage('recap')}><span className="ay-guide-launch__text"><b>Your week</b><span>What changed for you</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
             <li><button type="button" onClick={() => setGuidePage('memory')}><span className="ay-guide-launch__text"><b>Memory</b><span>What ayna can remember</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
             <li><button type="button" onClick={() => setGuidePage('trial')}><span className="ay-guide-launch__text"><b>Try & check back</b><span>See how it felt later</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
@@ -588,6 +589,7 @@ export default function AskAynaModal({
         <div className="ay-ask-error" role="alert"><span>{voice.error}</span><button type="button" onClick={voice.clearError}>OK</button></div>
       )}
       {!guidePage && <form
+        data-tour="chat-input"
         onSubmit={handleSend}
         style={{
           display: 'flex',

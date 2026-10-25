@@ -77,11 +77,11 @@ export default function AynaHomeScreen(props) {
             </div>}
         </div>
       )}
-      <div className={`ay-home__view ay-homescreen is-look-${look}`} hidden={homeView !== 'home'}>
+      <div className={`ay-home__view ay-homescreen is-look-${look}`} hidden={homeView !== 'home'} data-tour="home">
         <MobileHeader hideAsk />
         <h1 className="sr-only">Home</h1>
         <HomeHello name={firstName} today={today} />
-        <button type="button" className="ay-homeask__bar" aria-haspopup="dialog" onClick={() => setAsking(true)}>
+        <button type="button" className="ay-homeask__bar" data-tour="home-ask" aria-haspopup="dialog" onClick={() => setAsking(true)}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg>
           <span>Ask ayna</span>
         </button>
@@ -134,7 +134,7 @@ export default function AynaHomeScreen(props) {
             openCommunity: onOpenCommunitySeed ? () => onOpenCommunitySeed({}) : null, openArticle: onOpenArticle,
           }}
         >
-          <nav className="ay-homelinks" aria-label="More on Home">
+          <nav className="ay-homelinks" data-tour="home-links" aria-label="More on Home">
             <button type="button" onClick={() => openDashboard()}><span><b>My dashboard</b><small>Routine, log and health data</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
             <button type="button" onClick={() => onHomeView?.('products')}><span><b>Your matches</b><small>{hasProducts ? `${myProducts.length} in your ecosystem` : 'Products that fit you'}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
           </nav>

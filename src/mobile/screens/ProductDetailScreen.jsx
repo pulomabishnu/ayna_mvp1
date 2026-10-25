@@ -420,7 +420,7 @@ export default function ProductDetailScreen({
   // ecosystem is a quiet text action under them (it is not a second Buy).
   // In the page under the price, not pinned to the bottom.
   const buyBar = (
-    <div className="ay-pdp-buyrow">
+    <div className="ay-pdp-buyrow" data-tour="pdp-actions">
       {shopAction
         ? <a className="ay-pdp-buyrow__buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}{barPrice && <span className="ay-pdp-buyrow__price"> · {barPrice}</span>}<span aria-hidden="true"> ↗</span><span className="sr-only"> {shopAction.sr}</span></a>
         : <button type="button" className={`ay-pdp-buyrow__buy${isInEcosystem ? ' is-on' : ''}`} aria-pressed={isInEcosystem} onClick={onAddToEcosystem}>{isInEcosystem ? IN_ROUTINE : ADD_TO_ROUTINE}</button>}
@@ -436,7 +436,7 @@ export default function ProductDetailScreen({
 
   return (
     <div id="ay-pdp" className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
-      <div key={product.id} className="ay-pdp-scroll" style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out' }}>
+      <div key={product.id} className="ay-pdp-scroll" data-tour="pdp" style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out' }}>
         <div className="ay-pdp-top">
           <button type="button" className="ay-pdp-round" onClick={onBack} aria-label="Back to products">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
@@ -486,7 +486,7 @@ export default function ProductDetailScreen({
             {perUnit && <small className="is-unit">{perUnit}</small>}
             {price && shownPrice.sub && <small>{shownPrice.sub}</small>}
           </div>}
-          <ul className="ay-pdp-why" aria-label="Why it is here">
+          <ul className="ay-pdp-why" data-tour="pdp-why" aria-label="Why it is here">
             {isSafetyHold(matchDetails) && <li><button type="button" className="ay-pdp-why__row is-match" onClick={openWhyMatch} aria-label={`${SAFETY_HOLD}. ${MATCH_UNAVAILABLE}. See why`}><MatchPill hold size="sm" /><span>{MATCH_UNAVAILABLE}</span><span className="ay-pdp-why__go">See why</span></button></li>}
             {matchPercent != null && <li><button type="button" className="ay-pdp-why__row is-match" onClick={openWhyMatch} aria-label={`${matchText(matchPercent)}${headLine ? `. ${headLine}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span>{headLine || 'Why ayna picked this for you'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
             {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={openWhyMatch}><span>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'}</span><span className="ay-pdp-why__go">See why</span></button></li>}

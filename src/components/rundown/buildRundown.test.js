@@ -28,9 +28,10 @@ describe('Daily Rundown', () => {
     expect(r.cards[0].kind).toBe('opening');
     expect(r.cards.at(-1).kind).toBe('closing');
     const content = cats(r).slice(1, -1);
-    expect(content[0]).toBe('goal'); // the due follow-up
+    expect(content[0]).toBe('data'); // her data first: where she is in her cycle
+    expect(content[1]).toBe('goal'); // then the due follow-up
     expect(content).toContain('pattern');
-    const ranks = { goal: 2, change: 3, symptom: 4, pattern: 5, win: 10 };
+    const ranks = { data: 1, goal: 2, change: 3, symptom: 4, pattern: 5, win: 10 };
     expect(content.map((c) => ranks[c])).toEqual([...content.map((c) => ranks[c])].sort((a, b) => a - b));
     expect(r.cards.find((c) => c.category === 'pattern').title).toMatch(/may be coming up to the days before your period/);
   });
@@ -81,7 +82,8 @@ describe('Daily Rundown', () => {
     const log = {};
     for (let i = 1; i <= 12; i += 1) log[addDays(TODAY, -i)] = { day: addDays(TODAY, -i), sleep: i === 1 ? 1 : 3 };
     const r = buildRundown({ today: TODAY, decision: decide(buildTodayState({ today: TODAY, log })), log, healthRows: rows });
-    expect(r.cards.filter((c) => c.category === 'change' && c.topic === 'sleep')).toHaveLength(1);
+    expect(r.cards.filter((c) => ['change', 'data'].includes(c.category) && c.topic === 'sleep')).toHaveLength(1);
+    expect(r.cards.find((c) => c.topic === 'sleep').kind).toBe('sleep'); // her data card wins over the check-in change
     expect(r.skipped.some((x) => x.why === 'same_topic')).toBe(true);
   });
 
@@ -104,8 +106,11 @@ describe('Daily Rundown', () => {
     const rows = Array.from({ length: 10 }, (_, i) => ({ metric: 'sleep_minutes', day: addDays(TODAY, -(i + 1)), value: 420 }));
     expect(sleepChange([...rows, { metric: 'sleep_minutes', day: TODAY, value: 340 }], TODAY).diff).toBe(-80);
     const r = buildRundown({ ...fromFixture(), healthRows: [...rows, { metric: 'sleep_minutes', day: TODAY, value: 340 }] });
-    expect(r.cards.find((c) => c.category === 'change')).toMatchObject({ title: 'Sleep may matter a little more today.', facts: [{ k: 'Recent average', v: '7h 00m' }, { k: 'Last night', v: '5h 40m' }] });
-    expect(buildRundown({ ...fromFixture(), healthRows: [...rows, { metric: 'sleep_minutes', day: TODAY, value: 400 }] }).cards.some((c) => c.key.startsWith('change:sleep'))).toBe(false);
+    expect(r.cards.find((c) => c.kind === 'sleep')).toMatchObject({ title: 'You slept 5h 40m, about 1h 20m less than usual.', lastNight: 340, usual: 420 });
+    // Within her usual: still her data, but no "what it may affect" lines.
+    const ok = buildRundown({ ...fromFixture(), healthRows: [...rows, { metric: 'sleep_minutes', day: TODAY, value: 400 }] }).cards.find((c) => c.kind === 'sleep');
+    expect(ok.title).toBe('You slept 6h 40m, close to your usual.');
+    expect(ok.mayAffect).toBeUndefined();
   });
 
   it('cycle position from her own period logs', () => {
@@ -140,7 +145,7 @@ describe('Rundown weighted to last night and recent context (data -> action)', (
   ];
   it('sleep card says what changed, what it may affect, what you can do, with .gov sources and See data', () => {
     const rows = Array.from({ length: 10 }, (_, i) => ({ metric: 'sleep_minutes', day: addDays(TODAY, -(i + 1)), value: 420 }));
-    const c = buildRundown({ ...fromFixture(), healthRows: [...rows, { metric: 'sleep_minutes', day: TODAY, value: 340 }] }).cards.find((x) => x.category === 'change');
+    const c = buildRundown({ ...fromFixture(), healthRows: [...rows, { metric: 'sleep_minutes', day: TODAY, value: 340 }] }).cards.find((x) => x.kind === 'sleep');
     expect(c.changed).toBe('Last night: 5h 40m, about 1h 20m less than your recent average of 7h 00m.');
     expect(c.mayAffect).toMatch(/focus/);
     expect(c.canDo).toMatch(/same time/);

@@ -16,7 +16,7 @@ export function SheetMatch({ state }) {
   if (state.kind === 'held') {
     return <div className="ay-psheet__hold" role="note"><b>{state.label}</b><span>{holdLine(state)}</span></div>;
   }
-  return <div className="ay-psheet__match"><MatchPill percent={state.percent} size="sm" />{state.why && <span>{state.why}</span>}</div>;
+  return <div className="ay-psheet__match" data-tour="psheet-match"><MatchPill percent={state.percent} size="sm" />{state.why && <span>{state.why}</span>}</div>;
 }
 
 /** Buy (the existing buy link, with "You're leaving ayna"), Save, Add to my routine. One tap each. */
@@ -24,7 +24,7 @@ export function ProductQuickActions({ product, saved, onToggleSaved, inRoutine, 
   const buyUrl = getBuyUrl(product);
   const label = product?.category === 'telehealth' ? 'Book' : product?.type === 'digital' ? 'Get the app' : 'Buy';
   return (
-    <div className={`ay-pquick${compact ? ' is-compact' : ''}`}>
+    <div className={`ay-pquick${compact ? ' is-compact' : ''}`} data-tour="quick-actions">
       <div className="ay-pquick__row">
         {buyUrl && <a className="ay-pquick__buy" href={buyUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement })}>{label}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens the seller’s site)</span></a>}
         {onToggleSaved && <button type="button" className={`ay-pquick__save${saved ? ' is-on' : ''}`} aria-pressed={saved} onClick={() => onToggleSaved(product)} aria-label={saved ? `Saved. Remove ${product?.name} from Saved` : `Save ${product?.name}`}>

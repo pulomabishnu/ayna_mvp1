@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { buildRundown } from './buildRundown.js';
 import { buildWeeklyRecap } from './weeklyRecap.js';
 import RundownStory from './RundownStory.jsx';
-import { markCardSeen, markNotUseful, markRundownViewed, markWeeklySeen, readRundownMemory, setRundownOwner } from './rundownStore.js';
+import { markCardSeen, markNotUseful, markPeriodAnswer, markRundownViewed, markWeeklySeen, readRundownMemory, setRundownOwner } from './rundownStore.js';
 import { autoLaunchDecision, listenForExternalOpens, openedExternally, urlIsDeepLink } from './autoLaunch.js';
 import { setTodayAskContext } from '../../utils/askToday.js';
 import { getAskHealthPref } from '../../health/askHealthPref.js';
@@ -81,7 +81,8 @@ export default function Rundown({
   const daily = useMemo(() => buildRundown({
     today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries, healthRows: t.healthRows,
     matches, saved, reads: Boolean(onOpenRead), community, memory, hasProfile: Boolean(intake), needLabels,
-  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, saved, onOpenRead, community, memory, intake, needLabels]);
+    hormonalBC: Boolean(t.hormonalBC), postCycle: Boolean(t.postCycle), pregnant: Boolean(t.pregnant),
+  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, saved, onOpenRead, community, memory, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
   const weekly = useMemo(() => buildWeeklyRecap({ today, log: t.log, tries: t.tries, patterns: t.patterns, saved }), [today, t.log, t.tries, t.patterns, saved]);
   const cards = open === 'weekly' ? weekly.cards : daily.cards;
 
@@ -188,9 +189,7 @@ export default function Rundown({
   return (
     <section className={`ay-rd-hero${compact ? ' is-compact' : ''}`} aria-labelledby="ay-rd-hero-h">
       {daily.cards.length > 0 && (
-        <div className={`ay-rd-hero__card${highlight ? ' is-new' : ''}`}>
-          {/* The date as type (Wrapped: numerals as form); only today's real date. */}
-          <span className="ay-rd-hero__date" aria-hidden="true"><b>{Number(String(today).slice(8, 10))}</b><small>{new Date(`${today}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long' })}</small></span>
+        <div className={`ay-rd-hero__card${highlight ? ' is-new' : ''}`} data-tour="rundown-card">
           <MarkSticker name="sparkle" tone="pink" className="ay-rd-hero__sticker" />
           {highlight && <p className="ay-rd-hero__new">Ready for today</p>}
           <p className="ay-rd-hero__kicker">{daily.cards.some((c) => c.protected) ? 'Something important today' : 'Today'}</p>
@@ -219,6 +218,12 @@ export default function Rundown({
           onSeen={onSeen}
           onAction={onAction}
           onCheckIn={(field, value) => t.saveLog(today, { [field]: value })}
+          onPeriodAnswer={(answer) => {
+            // "No, ended yesterday" is a real log answer (no flow today); "Yes"
+            // and "Not sure" are kept for today on this device (rundownStore.js).
+            if (answer === 'ended') t.saveLog(today, { flow: 'none' });
+            setMemory(markPeriodAnswer(today, answer));
+          }}
           onOutcome={(item, outcome) => t.recordOutcome(item, outcome)}
           onAsk={onAsk ? (q) => { close({ seen: 0, count: cards.length }); finish(false); onAsk(q); } : undefined}
           onAskFollowUp={open === 'daily' ? askFollowUp : undefined}

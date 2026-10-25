@@ -27,7 +27,7 @@ const isObj = (v) => v && typeof v === 'object' && !Array.isArray(v);
 export function readRundownMemory(storage = globalThis.localStorage) {
   const m = bucketOf(loadState(RUNDOWN_KEY, storage)).items.memory;
   const v = isObj(m) ? m : {};
-  return { shown: isObj(v.shown) ? v.shown : {}, shownCategories: isObj(v.shownCategories) ? v.shownCategories : {}, signatures: isObj(v.signatures) ? v.signatures : {}, notUseful: isObj(v.notUseful) ? v.notUseful : {}, weeklySeen: v.weeklySeen || null, viewedDay: v.viewedDay || null, autoDay: v.autoDay || null };
+  return { shown: isObj(v.shown) ? v.shown : {}, shownCategories: isObj(v.shownCategories) ? v.shownCategories : {}, signatures: isObj(v.signatures) ? v.signatures : {}, notUseful: isObj(v.notUseful) ? v.notUseful : {}, weeklySeen: v.weeklySeen || null, viewedDay: v.viewedDay || null, autoDay: v.autoDay || null, periodAnswers: isObj(v.periodAnswers) ? v.periodAnswers : {} };
 }
 
 function write(memory, storage) {
@@ -70,4 +70,19 @@ export function markWeeklySeen(today, storage = globalThis.localStorage) {
 export function markRundownViewed(today, { auto = false } = {}, storage = globalThis.localStorage) {
   const m = readRundownMemory(storage);
   return write({ ...m, viewedDay: today, ...(auto ? { autoDay: today } : {}) }, storage);
+}
+
+export const PERIOD_ANSWERS = ['yes', 'ended', 'unsure'];
+/**
+ * Her answer to "Are you still on your period?" for one day (device only).
+ * The flow itself goes into the daily log (No -> flow "none", Yes -> the
+ * level she picks); this keeps "Yes" before a level and "Not sure", which
+ * the log has no field for, so the rundown does not ask again today.
+ */
+export function markPeriodAnswer(today, answer, storage = globalThis.localStorage) {
+  const m = readRundownMemory(storage);
+  if (!PERIOD_ANSWERS.includes(answer)) return m;
+  const cutoff = addDays(today, -KEEP_DAYS);
+  const periodAnswers = Object.fromEntries(Object.entries({ ...m.periodAnswers, [today]: answer }).filter(([d]) => d >= cutoff));
+  return write({ ...m, periodAnswers }, storage);
 }

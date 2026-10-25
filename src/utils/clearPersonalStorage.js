@@ -10,7 +10,7 @@
 // Her own on-device records, kept per account (src/health/ownedStore.js), so
 // nothing unsynced is lost. Signing out switches them to the signed-out
 // (device) bucket below, which signing in had emptied into hers, so the next person on this computer sees none of it.
-export const OWNED_KEYS = ['ayna_daily_log_v1', 'ayna_tries_v1', 'ayna_today_v1', 'ayna_routine_plan_v1', 'ayna_saved_reminders_v1', 'ayna_rundown_v1'];
+export const OWNED_KEYS = ['ayna_daily_log_v1', 'ayna_tries_v1', 'ayna_today_v1', 'ayna_routine_plan_v1', 'ayna_saved_reminders_v1', 'ayna_rundown_v1', 'ayna_home_layout_v1', 'ayna_tour_v1'];
 // Keyed by account id inside the value (src/mobile/utils/aynaGuide.js).
 const KEEP_PER_ACCOUNT = ['ayna_guide_v1'];
 const KEEP = new Set([

@@ -56,11 +56,11 @@ export default function HomeAskSheet({ onClose, onAsk, signedIn = false, hasProf
   const node = (
     <div className="ay-asksheet-layer">
       <div className="ay-asksheet-dim" aria-hidden="true" onClick={close} />
-      <section ref={sheetRef} className="ay-asksheet" role="dialog" aria-modal="true" aria-labelledby="ay-asksheet-h">
+      <section ref={sheetRef} className="ay-asksheet" data-tour="ask-sheet" role="dialog" aria-modal="true" aria-labelledby="ay-asksheet-h">
         <button {...grabberProps} aria-label="Close Ask ayna" />
         <h2 id="ay-asksheet-h">Ask ayna</h2>
         {prompts.length > 0 && (
-          <ul className="ay-asksheet__prompts" aria-label="From your data">
+          <ul className="ay-asksheet__prompts" data-tour="ask-prompts" aria-label="From your data">
             {prompts.map((p) => (
               <li key={p.question}>
                 <button type="button" onClick={() => ask(askFromPrompt(p))}>

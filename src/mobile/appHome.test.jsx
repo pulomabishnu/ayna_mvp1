@@ -338,7 +338,7 @@ describe('Rundown to chat hand-off', () => {
     expect(onFinish).toHaveBeenCalledTimes(1);
     const { starters, toChat } = onFinish.mock.calls[0][0];
     expect(toChat).toBe(true);
-    expect(starters.map((s) => s.question)).toContain('Why was my sleep flagged?');
+    expect(starters.map((s) => s.question)).toContain('Why was my sleep shorter last night?'); // from the sleep data card she saw
     expect(starters[0].usesHealth).toBe(true);
     expect(typeof starters[0].buildContext).toBe('function');
   });
