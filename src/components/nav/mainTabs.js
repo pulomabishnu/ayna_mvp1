@@ -89,3 +89,7 @@ export function legacyPathFor(pathname) {
   if (p === '/today') return '/health';
   return null;
 }
+
+// Explore "For you" with quiz answers but nothing that fits yet (QA M4): the
+// empty state, on the website and the app. Never the "create your profile" invite.
+export const FOR_YOU_EMPTY = 'Nothing in this section fits your answers yet';

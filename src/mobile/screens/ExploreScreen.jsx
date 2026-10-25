@@ -6,7 +6,7 @@ import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import BrowseScreen from './BrowseScreen.jsx';
-import { APP_EXPLORE_SECTIONS as EXPLORE_SECTIONS } from '../../components/nav/mainTabs.js';
+import { APP_EXPLORE_SECTIONS as EXPLORE_SECTIONS, FOR_YOU_EMPTY } from '../../components/nav/mainTabs.js';
 import { HEALTH_TOPICS, searchExplore, splitCatalog } from '../../utils/search/exploreSearch.js';
 import { searchCommunityTolerant } from '../../utils/search/communitySearch.js';
 import { searchCommunity } from '../../utils/community/communityStore.js';
@@ -126,11 +126,17 @@ export default function ExploreScreen(props) {
       <section className="ax-sec" aria-labelledby="ax-foryou-h">
         {hasProfile && forYouProducts.length > 0
           ? <><SectionHead id="ax-foryou-h" title="Picked for you" onAll={() => go('products')} allLabel="See all" />{productRow(forYouProducts)}</>
-          : <><h2 id="ax-foryou-h" className="sr-only">For you</h2><div className="ax-invite">
-            <h3>See how well this matches you</h3>
-            <p>Create your health profile to see your personalized match and why.</p>
-            {onStartQuiz && <button type="button" className="ax-invite__go" onClick={onStartQuiz}>Create your health profile</button>}
-          </div></>}
+          : hasProfile
+            // She answered, nothing fits yet (QA M4): say so, never ask her to make a profile again.
+            ? <><h2 id="ax-foryou-h" className="sr-only">For you</h2><div className="ax-invite is-empty">
+              <h3>{FOR_YOU_EMPTY}</h3>
+              <button type="button" className="ax-invite__go" onClick={() => go('products')}>Browse all products</button>
+            </div></>
+            : <><h2 id="ax-foryou-h" className="sr-only">For you</h2><div className="ax-invite">
+              <h3>See how well this matches you</h3>
+              <p>Create your health profile to see your personalized match and why.</p>
+              {onStartQuiz && <button type="button" className="ax-invite__go" onClick={onStartQuiz}>Create your health profile</button>}
+            </div></>}
       </section>
       {!(hasProfile && forYouProducts.length > 0) && <section className="ax-sec" aria-labelledby="ax-products-h"><SectionHead id="ax-products-h" title="Products" onAll={() => go('products')} allLabel="See all" />{productRow(catalog.slice(0, ROW))}</section>}
       {(forYouReads.length > 0 || articles.length > 0) && <section className="ax-sec" aria-labelledby="ax-res-h"><SectionHead id="ax-res-h" title={forYouReads.length ? 'Reads for you' : 'Reads'} onAll={() => go('resources')} allLabel="Open Library" />{readRow(forYouReads.length ? forYouReads : articles.slice(0, 4))}</section>}
