@@ -33,10 +33,12 @@ export function buyModel(product, { variant = null, brand = '', name = '', price
   if (!url && site) url = `https://${site.toLowerCase()}`;
   const amazon = isAmazonUrl(url);
   const b = String(brand || product.brand || '').trim();
-  const retailer = !url ? '' : amazon ? 'Amazon' : partner && b ? b : host(url);
+  const shownName = String(name || product.name || '').trim();
+  // A service's own site reads as the service ("Planned Parenthood Direct"), not a domain.
+  const retailer = !url ? '' : amazon ? 'Amazon' : partner && b ? b : isService && shownName.length <= 34 ? shownName : host(url);
   const fp = formatPrice(product);
   const price = priceMain != null ? priceMain : (fp.main !== 'Price at retailer' && fp.main.length <= 12 ? fp.main : '');
-  const shown = String(name || product.name || '').trim();
+  const shown = shownName;
   const label = prelaunch ? (product.waitlistCtaLabel || 'Join the waitlist')
     : isService ? `Visit ${shown.length <= 34 ? shown : retailer || 'the site'}`
     : retailer ? `Buy at ${retailer.length <= 24 ? retailer : 'the seller'}${price ? ` · ${price}` : ''}` : '';
@@ -46,7 +48,7 @@ export function buyModel(product, { variant = null, brand = '', name = '', price
   const named = (product.whereToBuy || []).map((w) => String(w).trim()).filter((w) => w && !SITE.test(w));
   const inStock = Object.entries(product.whereToBuyInStock || {}).filter(([, v]) => v).map(([k]) => k);
   const rows = [
-    url && { name: retailer, url, price, primary: true },
+    url && { name: retailer, url, price, primary: true, host: host(url) !== retailer ? host(url) : '' },
     ...others.map((r) => ({ name: r.name, url: r.url, price: '' })),
     ...named.filter((n) => ![retailer, ...others.map((r) => r.name)].some((x) => String(x).toLowerCase() === n.toLowerCase())).map((n) => ({ name: n, url: '', price: '' })),
   ].filter(Boolean).map((r) => ({ ...r, inStock: inStock.some((s) => s.toLowerCase() === String(r.name).toLowerCase()) }));

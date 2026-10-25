@@ -119,7 +119,7 @@ export function WhereToBuy({ rows, onOpen = null }) {
         {rows.map((r) => (
           <li key={`${r.name}-${r.url}`}>
             {r.url
-              ? <a href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => onOpen?.(r)}><span className="ayv-where__name">{r.name}</span>{r.price && <span className="ayv-where__price">{r.price}</span>}{r.inStock && <span className="ayv-where__stock">In stock</span>}<span aria-hidden="true" className="ayv-where__go">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+              ? <a href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => onOpen?.(r)}><span className="ayv-where__name">{r.name}{r.host && <small className="ayv-where__host">{r.host}</small>}</span>{r.price && <span className="ayv-where__price">{r.price}</span>}{r.inStock && <span className="ayv-where__stock">In stock</span>}<span aria-hidden="true" className="ayv-where__go">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
               : <span className="ayv-where__row"><span className="ayv-where__name">{r.name}</span>{r.inStock && <span className="ayv-where__stock">In stock</span>}<span className="ayv-where__nolink">No link yet</span></span>}
           </li>
         ))}
@@ -146,7 +146,8 @@ export function StickyBuy({ model, watch, saved = false, onSave = null, mode = '
     const el = watch?.current;
     if (!el || typeof IntersectionObserver === 'undefined') return undefined;
     let root = null;
-    for (let n = el.parentElement; n; n = n.parentElement) { const oy = window.getComputedStyle(n).overflowY; if (oy === 'auto' || oy === 'scroll') { root = n; break; } }
+    // The element that really scrolls (the app's page or sheet); the website scrolls the document (root null).
+    for (let n = el.parentElement; n && n !== document.body && n !== document.documentElement; n = n.parentElement) { const oy = window.getComputedStyle(n).overflowY; if ((oy === 'auto' || oy === 'scroll') && n.scrollHeight > n.clientHeight + 1) { root = n; break; } }
     const io = new IntersectionObserver(([e]) => {
       const top = root ? root.getBoundingClientRect().top : 0;
       setPast(!e.isIntersecting && e.boundingClientRect.bottom < top + 8);
