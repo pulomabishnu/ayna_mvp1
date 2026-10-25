@@ -5,8 +5,7 @@ import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import BrowseScreen from './BrowseScreen.jsx';
-import LibraryScreen from './LibraryScreen.jsx';
-import { EXPLORE_SECTIONS } from '../../components/nav/mainTabs.js';
+import { APP_EXPLORE_SECTIONS as EXPLORE_SECTIONS } from '../../components/nav/mainTabs.js';
 import { HEALTH_TOPICS, searchExplore, splitCatalog } from '../../utils/search/exploreSearch.js';
 import { searchCommunityTolerant } from '../../utils/search/communitySearch.js';
 import { searchCommunity } from '../../utils/community/communityStore.js';
@@ -46,11 +45,11 @@ function useCommunityResults(query) {
 }
 
 /**
- * Explore: Shop and Library in one place (founder, Oct 24 2026; UX spec 11).
- * Search on top, then For you, Health topics, Products, Services, Resources.
- * Products is the whole Shop (filters, sort, Best match unchanged) and
- * Resources is the whole Library; both are the existing screens, mounted here.
- * Browsing works with no profile at all.
+ * Explore (UX spec 11): search on top, then For you, Categories, Products,
+ * Services. Products is the whole Shop (filters, sort, Best match unchanged).
+ * In the app the reads have their own tab, Library (founder, Oct 24 20:12):
+ * "All reads" and "Resources" links here open that tab. Browsing works with
+ * no profile at all.
  */
 export default function ExploreScreen(props) {
   const {
@@ -86,14 +85,12 @@ export default function ExploreScreen(props) {
     {EXPLORE_SECTIONS.map((s) => <button type="button" key={s.key} aria-current={section === s.key ? 'page' : undefined} className={section === s.key ? 'is-on' : ''} onClick={() => go(s.key)}>{s.label}</button>)}
   </nav>;
 
-  // Products and Resources: the existing Shop and Library, under Explore's header.
-  if (section === 'products' || section === 'resources') {
+  // Products: the existing Shop, under Explore's header.
+  if (section === 'products') {
     return <div className="ax ax--embed">
       <MobileHeader onOpenSaved={onOpenSaved} />
       <header className="ax-top"><h1 className="ax-title">Explore</h1>{chips}</header>
-      {section === 'products'
-        ? <BrowseScreen {...props} embedded />
-        : <LibraryScreen {...props} embedded />}
+      <BrowseScreen {...props} embedded />
     </div>;
   }
 
@@ -106,7 +103,7 @@ export default function ExploreScreen(props) {
       {r.topics.length > 0 && <section className="ax-sec" aria-labelledby="ax-r-topics"><SectionHead id="ax-r-topics" title="Categories" />{topicChips(r.topics)}</section>}
       {r.products.length > 0 && <section className="ax-sec" aria-labelledby="ax-r-products"><SectionHead id="ax-r-products" title="Products" onAll={() => go('products', q)} allLabel={`See all ${r.products.length}`} />{productRow(r.products.slice(0, ROW))}</section>}
       {r.services.length > 0 && <section className="ax-sec" aria-labelledby="ax-r-services"><SectionHead id="ax-r-services" title="Services" />{productRow(r.services.slice(0, ROW))}</section>}
-      {r.resources.length > 0 && <section className="ax-sec" aria-labelledby="ax-r-res"><SectionHead id="ax-r-res" title="Resources" onAll={() => go('resources')} allLabel="All reads" />{readRow(r.resources.slice(0, 4))}</section>}
+      {r.resources.length > 0 && <section className="ax-sec" aria-labelledby="ax-r-res"><SectionHead id="ax-r-res" title="Reads" onAll={() => go('resources')} allLabel="Open Library" />{readRow(r.resources.slice(0, 4))}</section>}
       {posts.length > 0 && <section className="ax-sec" aria-labelledby="ax-r-comm"><SectionHead id="ax-r-comm" title="Community" onAll={onGoCommunity} allLabel="Open Community" />
         <ul className="ax-posts">{posts.map((p) => <li key={p.id}><button type="button" onClick={() => onOpenCommunityPost?.(p.id)}><small>{postKind(p)}</small><span>{String(p.body || '').slice(0, 140)}{String(p.body || '').length > 140 ? '…' : ''}</span></button></li>)}</ul>
       </section>}
@@ -135,7 +132,7 @@ export default function ExploreScreen(props) {
           </div></>}
       </section>
       {!(hasProfile && forYouProducts.length > 0) && <section className="ax-sec" aria-labelledby="ax-products-h"><SectionHead id="ax-products-h" title="Products" onAll={() => go('products')} allLabel="See all" />{productRow(catalog.slice(0, ROW))}</section>}
-      {(forYouReads.length > 0 || articles.length > 0) && <section className="ax-sec" aria-labelledby="ax-res-h"><SectionHead id="ax-res-h" title={forYouReads.length ? 'Reads for you' : 'Resources'} onAll={() => go('resources')} allLabel={`All ${articles.length} reads`} />{readRow(forYouReads.length ? forYouReads : articles.slice(0, 4))}</section>}
+      {(forYouReads.length > 0 || articles.length > 0) && <section className="ax-sec" aria-labelledby="ax-res-h"><SectionHead id="ax-res-h" title={forYouReads.length ? 'Reads for you' : 'Reads'} onAll={() => go('resources')} allLabel="Open Library" />{readRow(forYouReads.length ? forYouReads : articles.slice(0, 4))}</section>}
     </>;
   }
 

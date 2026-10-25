@@ -65,6 +65,8 @@ export default function EcosystemScreen({
   onSavePlaylist, onOpenPlaylist, onConnectHealth, onRequireAuth, onPersonalize, lastQuizAnswers = null,
   quizDraft = null, onResumeQuiz, onStartOverQuiz, onFixLifeStages, onStartQuiz, onEditIntakeStep, onUpdateIntake, articles = [], onBack,
   omittedProducts = {}, onToggleOmit, onGoToday,
+  // Inside the ayna tab's Products view: the switch row replaces the header.
+  homeTop = null,
 }) {
   const rootRef = useRef(null);
   const titleRef = useRef(null);
@@ -275,7 +277,7 @@ export default function EcosystemScreen({
   const showTabs = Boolean(onEcoTab);
 
   return <div ref={rootRef} className={`ayna-fresh-ecosystem ayna-cabinet-home eco-app${careFirst ? ' is-care-first' : ''}`}>
-    <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onBack={onBack} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
+    {homeTop || <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onBack={onBack} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />}
     <div className="eco-awning eco-awning--app" aria-hidden="true" />
 
     {careBlock}

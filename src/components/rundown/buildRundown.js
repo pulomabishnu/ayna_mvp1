@@ -324,9 +324,13 @@ export function buildRundown(input = {}) {
   const savedPick = oldSaved.find((p) => shownOn(memory, `saved:${p.id}`, today, 7) === 0);
   if (savedPick) add({ key: `saved:${savedPick.id}`, category: 'saved', kind: 'saved', kicker: 'You saved this', title: 'Still thinking about this?', product: savedPick });
 
-  // 9. Community: only real items handed in.
-  const cm = community.find((c) => c?.id && c?.title);
-  if (cm) add({ key: `community:${cm.id}`, category: 'community', kind: 'community', kicker: 'Community', title: cm.count ? `${cm.count} people are talking about this` : 'People are talking about this', body: cm.title, communityItem: cm, footnote: 'Experiences differ. The same symptom can have different causes.' });
+  // 9. Community: only real items handed in (the app passes real public posts
+  //    for her topics and the people she follows; nothing when there are none).
+  const cm = community.find((c) => c?.id && c?.title && shownOn(memory, `community:${c.id}`, today, 30) === 0);
+  if (cm) {
+    const title = cm.isNew ? (cm.topic ? `New in ${cm.topic}` : 'New in Community') : cm.count ? `${cm.count} people are talking about this` : 'People are talking about this';
+    add({ key: `community:${cm.id}`, category: 'community', kind: 'community', kicker: cm.isNew ? 'New in Community' : 'Community', title, body: cm.title, communityItem: cm, footnote: 'Experiences differ. The same symptom can have different causes.' });
+  }
 
   // 10. Extra: a plain count of her own check-ins this week.
   const days = Array.from({ length: 7 }, (_, i) => addDays(today, -i)).filter((d) => log?.[d] && Object.keys(FIELD_OPTIONS).concat('flow', 'skin').some((f) => log[d][f] != null));
