@@ -353,7 +353,7 @@
 .app-container .hm .hm-slot__layer { position: absolute; inset: 0; display: block; }
 .app-container .hm .hm-slot.is-skel { background: var(--hm-butter-2); border-radius: 20px; }
 /* photo slots: framed like the approved collage */
-.app-container .hm .hm-slot--main { top: 0; right: 0; width: 58%; aspect-ratio: 4 / 5; rotate: 1.5deg; z-index: 1; }
+.app-container .hm .hm-slot--main { top: 0; right: 2%; width: 52%; aspect-ratio: 4 / 5; rotate: 1.5deg; z-index: 1; }
 .app-container .hm .hm-slot--main .hm-slot__layer { border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); overflow: hidden; background: var(--hm-butter-2); }
 .app-container .hm .hm-slot--photo { left: 3%; bottom: 3%; width: 31%; aspect-ratio: 3 / 4; rotate: -4deg; z-index: 3; }
 .app-container .hm .hm-slot--photo .hm-slot__layer { border: 7px solid var(--hm-butter); border-radius: 20px; box-shadow: 0 0 0 1.5px var(--hm-ink); overflow: hidden; background: var(--hm-butter-2); }

@@ -13,28 +13,22 @@ import { productSeoTitle, productSeoDescription } from '../src/utils/seoMeta.js'
 import { productJsonLd, breadcrumbJsonLd } from '../src/components/pdp/commerce.js';
 import { resolveBuyUrl } from '../src/utils/buyLink.js';
 import { buildHeroSeed } from '../src/components/pdp/heroSeed.js';
+import { SEO_PAGES, HOME_TITLE, organizationJsonLd, websiteJsonLd, readBreadcrumbJsonLd } from '../src/utils/seoPages.js';
 
 const SITE = 'https://www.aynahealth.co';
 const DIST = new URL('../dist/', import.meta.url);
 const shell = fs.readFileSync(new URL('index.html', DIST), 'utf8');
 
-const DEFAULT_TITLE = "ayna | Personalized Women's Health Product Discovery";
-const PAGES = {
-  // /shop and /library are permanent redirects now (vercel.json): Explore > Products and Resources.
-  '/explore': ['Explore | ayna', "Explore women's health: search products, symptoms, topics, services and plain-language reads."],
-  '/explore/products': ['Products | ayna', "Shop women's health products ranked by how well they fit you: period care, intimate care, fertility, menopause and more."],
-  '/explore/resources': ['Resources | ayna', "Plain-language guides to women's health topics, with sources, from the ayna Library."],
-  '/community': ['Community | ayna', "Real experiences with women's health products from the ayna community."],
-  '/about': ['About | ayna', "Women's wellness products matched to your needs, with the research and reviews beside them. Meet ayna's founders and advisors."],
-  '/how-it-works': ['How it works | ayna', 'How ayna matches products to you: your profile, the market, the evidence and your shop.'],
-  '/how-we-make-money': ['How we make money | ayna', 'How ayna earns money, and why it never changes your matches.'],
-  '/partners': ['Partner brands | ayna', 'The brands ayna works with, and how partnerships are disclosed.'],
-  '/contact': ['Contact | ayna', 'Get in touch with the ayna team.'],
-  '/privacy-policy': ['Privacy Policy | ayna', 'How ayna collects, uses and protects your information.'],
-  '/terms-of-use': ['Terms of Use | ayna', 'The terms for using ayna.'],
-  '/consumer-health-data': ['Consumer Health Data Privacy Notice | ayna', 'How ayna handles consumer health data.'],
-  '/campus-resources': ['Campus resources | ayna', 'Find verified sexual assault support, advocacy, reporting, medical, and campus resources for your college or university.'],
-  '/quiz': ['Get matched | ayna', 'Answer six questions and get health products matched to your body.'],
+// Titles and descriptions for the site's own pages live in src/utils/seoPages.js
+// (the app's title effect uses the same list). /shop and /library are permanent
+// redirects (vercel.json) to Explore > Products and Resources, so they have no page.
+const PAGES = SEO_PAGES;
+// Personal pages get a noindex page of their own as well as the X-Robots-Tag
+// header (vercel.json), so the rule is in the HTML even without that header.
+const NOINDEX_PAGES = {
+  '/today': ['Today | ayna', 'Today with ayna: what matters for you today, and your daily log.'],
+  '/ask': ['Ask ayna', 'Ask ayna about your health and the products you use.'],
+  '/you': ['You | ayna', 'Your profile, saved products, ecosystem and settings on ayna.'],
 };
 
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -49,7 +43,7 @@ const jsonLdTag = (id, data) => {
   return `<script type="application/ld+json" id="${id}">${JSON.stringify(list.length === 1 ? list[0] : list).replace(/</g, '\\u003c')}</script>`;
 };
 
-function page(url, title, description, { image = null, noindex = false, jsonLd = '', body = '' } = {}) {
+function page(url, title, description, { image = null, noindex = false, jsonLd = '', body = '', ogType = '' } = {}) {
   let html = shell;
   // Replacement functions, not strings: catalog text has "$" (prices), which a replacement string would read as a group reference.
   const set = (re, tag) => { html = re.test(html) ? html.replace(re, () => tag) : html.replace('</head>', () => `  ${tag}\n</head>`); };
@@ -58,6 +52,7 @@ function page(url, title, description, { image = null, noindex = false, jsonLd =
   set(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="${esc(title)}" />`);
   set(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${esc(description)}" />`);
   if (image) set(/<meta property="og:image"[^>]*>/, `<meta property="og:image" content="${esc(image)}" />`);
+  if (ogType) set(/<meta property="og:type"[^>]*>/, `<meta property="og:type" content="${esc(ogType)}" />`);
   if (url) {
     set(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${esc(SITE + url)}" />`);
     set(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${esc(SITE + (url === '/' ? '/' : url))}" />`);
@@ -65,7 +60,7 @@ function page(url, title, description, { image = null, noindex = false, jsonLd =
   if (noindex) set(/<meta name="robots"[^>]*>/, '<meta name="robots" content="noindex" />');
   if (jsonLd) html = html.replace('</head>', () => `  ${jsonLd}\n</head>`);
   // Readable without JavaScript (crawlers that don't run it); React replaces it on load.
-  if (url && url !== '/') html = html.replace(/<body([^>]*)>/, (_, attrs) => `<body${attrs}>\n  <noscript>${body || `<h1>${esc(title.replace(/ \| ayna( Library)?$/, ''))}</h1><p>${esc(description)}</p>`}</noscript>`);
+  if (url && url !== '/' && !noindex) html = html.replace(/<body([^>]*)>/, (_, attrs) => `<body${attrs}>\n  <noscript>${body || `<h1>${esc(title.replace(/ \| ayna( Library)?$/, ''))}</h1><p>${esc(description)}</p>`}</noscript>`);
   return html;
 }
 
@@ -125,18 +120,23 @@ const SHOP_PRELOAD = [routeLinks('Discovery'), ...[CATALOG_CHUNK, SEARCH_CHUNK].
 // so the product page styles apply from the start (about 37KB, beside index.css).
 const PDP_PRELOAD = routeLinks('ProductModal', { cssRel: 'stylesheet' });
 
-// Home: the first hero photo starts with the HTML (the right width via imagesrcset).
-// dist/index.html is also the shell for routes without their own page, so it
-// is a small AVIF (15KB at 390w, 20KB at 480w, 49KB at 736w; the source is 736px).
+// Home (dist/index.html, also the shell for app-only routes). The old hero
+// photo preload (/landing/pink-stripe-floor*.avif) is gone: the landing hero is
+// the product scatter now and no page shows that photo, so the preload only
+// competed with what the page does paint. The new animated hero should add its
+// own preload here only for an image that is its largest paint.
 {
   const shellFile = new URL('index.html', DIST);
-  const heroPreload = '<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="/landing/pink-stripe-floor-390.avif 390w, /landing/pink-stripe-floor-480.avif 480w, /landing/pink-stripe-floor.avif 736w" imagesizes="(max-width: 767px) 68vw, (max-width: 1279px) 40vw, 460px" />';
-  const html = fs.readFileSync(shellFile, 'utf8');
-  if (!html.includes('pink-stripe-floor-480.avif') && fs.existsSync(new URL('landing/pink-stripe-floor-480.avif', DIST))) fs.writeFileSync(shellFile, withHead(html, heroPreload));
+  let html = fs.readFileSync(shellFile, 'utf8');
+  // Who runs the site and what it is called (Google uses the WebSite name as the site name).
+  // These two describe the site, so they hold on any route the shell serves.
+  if (!html.includes('id="ay-site-jsonld"')) html = withHead(html, jsonLdTag('ay-site-jsonld', [organizationJsonLd(), websiteJsonLd()]));
+  fs.writeFileSync(shellFile, html);
 }
 
 let count = 0;
 for (const [url, [title, desc]] of Object.entries(PAGES)) { write(url, withHead(page(url, title, desc), url === '/explore/products' ? SHOP_PRELOAD : '')); count += 1; }
+for (const [url, [title, desc]] of Object.entries(NOINDEX_PAGES)) { write(url, page(url, title, desc, { noindex: true })); count += 1; }
 
 const absImage = (src) => (!src ? null : /^https?:/i.test(src) ? src : `${SITE}${src.startsWith('/') ? '' : '/'}${src}`);
 const asList = (v) => (Array.isArray(v) ? v : v ? [v] : []).map((x) => String(x ?? '').trim()).filter(Boolean);
@@ -225,10 +225,10 @@ for (const chunk of chunks) {
     isPartOf: { '@type': 'WebSite', name: 'ayna', url: SITE },
   };
   const body = `<h1>${esc(headline)}</h1>${writer ? `<p>By ${esc(writer)}</p>` : ''}${paras.slice(0, 2).map((t) => `<p>${esc(t)}</p>`).join('')}`;
-  write(url, page(url, `${headline} | ayna Library`, description, { image: absImage(image), jsonLd: jsonLdTag('ay-read-jsonld', [ld]), body }));
+  write(url, page(url, `${headline} | ayna Library`, description, { image: absImage(image), ogType: 'article', jsonLd: jsonLdTag('ay-read-jsonld', [ld, readBreadcrumbJsonLd(id, headline)]), body }));
   count += 1;
 }
 
 // Real 404 page: same app shell (it shows ayna's "Page not found"), never indexed.
 fs.writeFileSync(new URL('404.html', DIST), page(null, 'Page not found | ayna', "This page doesn't exist on ayna.", { noindex: true }));
-console.log(`prerender: ${count} pages + 404.html (default title kept for /: ${DEFAULT_TITLE})`);
+console.log(`prerender: ${count} pages + 404.html (home keeps the shell title: ${HOME_TITLE})`);

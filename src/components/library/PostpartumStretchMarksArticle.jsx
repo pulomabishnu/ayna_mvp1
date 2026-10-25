@@ -181,7 +181,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
 
       <main style={{ maxWidth: "1180px", margin: "0 auto", padding: "28px clamp(16px,4vw,48px) 96px", display: "grid", gap: "40px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", flexWrap: "wrap" }}>
-          <BackLink label="Library" href="/library" onClick={onBack} />
+          <BackLink label="Library" href="/explore/resources" onClick={onBack} />
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
             <span style={{ padding: "7px 12px", borderRadius: "99px", background: "#769ebe", color: "#2a1a19", font: "700 13px/1 'Figtree'" }}>Postpartum</span>
             <span style={{ padding: "7px 12px", borderRadius: "99px", border: "1.5px solid var(--g-fg)", font: "600 13px/1 'Figtree'" }}>Skin</span>

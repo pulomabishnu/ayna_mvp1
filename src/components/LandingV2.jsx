@@ -91,7 +91,7 @@ function Search({ onSearch }) {
 
 function Hero({ onStartQuiz, onSearch, personal = null, banner = null, posts = [], paused, onTogglePause }) {
   const cta = personal && (personal.ecoCount > 0 || personal.hasQuiz)
-    ? <Go className="ay-btn ay-btn--primary" href="/ecosystem" onGo={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></Go>
+    ? <Go className="ay-btn ay-btn--primary" href="/you/ecosystem" onGo={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></Go>
     : banner || <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>;
   return (
     <section className="hm-hero" aria-labelledby="hm-hero-title">
@@ -238,7 +238,8 @@ function HeroScatter({ posts = [], paused = false, onTogglePause }) {
   return (
     <div ref={ref} className={`hm-hero__art hm-scatter${still ? ' is-still' : ''}`}>
       <p className="ed-sr">Pictured: ayna photography, real products from Explore, an evidence rating, the Daily Rundown card and a check-in{pools.day.some((x) => x.kind === 'post') ? ', and posts from the ayna Community' : ''}.</p>
-      <span className="hm-slot hm-slot--main" aria-hidden="true" style={{ '--i': 0 }}><span className="hm-slot__layer is-pop"><Photo src="/landing/pink-stripe-floor.webp" alt="" sizes="(max-width: 767px) 52vw, (max-width: 1279px) 30vw, 340px" fetchPriority="high" /></span></span>
+      {/* No pop and no fetch priority: the H1 is the largest paint (LCP); this photo just arrives. */}
+      <span className="hm-slot hm-slot--main" aria-hidden="true"><span className="hm-slot__layer"><Photo src="/landing/pink-stripe-floor.webp" alt="" sizes="(max-width: 767px) 50vw, (max-width: 1279px) 28vw, 300px" /></span></span>
       <Slot name="photo" pool={pools.photo} step={steps.photo} index={1} still={still} />
       <Slot name="left" pool={pools.left} step={steps.left} index={2} still={still} />
       <Slot name="ev" pool={pools.ev} step={steps.ev} index={3} still={still} />
@@ -330,7 +331,7 @@ function ShopBand({ onOpenProduct, onViewDiscovery, picks = null }) {
         </ul>
         {need && !need.picks && (
           <div className="hm-shop__foot">
-            <Go className="ay-btn ay-btn--secondary" href="/shop" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label.toLowerCase()} products</Go>
+            <Go className="ay-btn ay-btn--secondary" href="/explore/products" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label.toLowerCase()} products</Go>
           </div>
         )}
       </div>
@@ -369,7 +370,7 @@ function Familiar({ onSearch }) {
         <ul className="hm-needs">
           {rows.map((t) => (
             <li key={t.q}>
-              <a className="hm-needs__row" href={`/shop?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
+              <a className="hm-needs__row" href={`/explore/products?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
                 <span className="hm-needs__ph"><Photo src={t.photo} alt="" sizes="96px" loading="lazy" />{t.product && <span className="hm-needs__prod"><img src={t.product.image} alt="" loading="lazy" decoding="async" /></span>}</span>
                 <span className="hm-needs__quote">“{t.q}”</span>
                 <span className="hm-needs__go">See what helps <Arrow /></span>
@@ -502,7 +503,7 @@ function Evidence({ onViewArticles }) {
               </li>
             ))}
           </ul>
-          <Go className="ay-btn ay-btn--text" href="/library" onGo={onViewArticles}>Read our sources<Arrow /></Go>
+          <Go className="ay-btn ay-btn--text" href="/explore/resources" onGo={onViewArticles}>Read our sources<Arrow /></Go>
         </div>
       </div>
     </section>
@@ -523,7 +524,7 @@ function Reads({ onViewArticle, onViewArticles }) {
       <div className="hm-wrap">
         <header className="hm-head">
           <h2 id="hm-reads-title" className="hm-h2">Quick reads about your body, with sources</h2>
-          <a className="ay-btn ay-btn--text hm-head__all" href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}><span className="hm-head__long">Open the Library</span><span className="hm-head__short">See all<span className="ed-sr"> reads in the Library</span></span><Arrow /></a>
+          <a className="ay-btn ay-btn--text hm-head__all" href="/explore/resources" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}><span className="hm-head__long">Open the Library</span><span className="hm-head__short">See all<span className="ed-sr"> reads in the Library</span></span><Arrow /></a>
         </header>
         {/* Plain rows (master prompt 154: no bento): photo, title, one line, sources. */}
         <ul className="hm-readlist">

@@ -127,6 +127,7 @@ import { identifyAccount } from './utils/analyticsIdentity';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, productRouteKey, parseProductIdFromPath } from './utils/productRoute';
 import { productSeoTitle, productSeoDescription } from './utils/seoMeta';
+import { SEO_PAGES, HOME_TITLE, HOME_DESCRIPTION, isNoindexPath } from './utils/seoPages.js';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, optionalProgress, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
 import { clearIntakeDraft, readDraftProgress } from './mobile/data/quizDraftProgress';
 import FinishQuizCard, { MorePersonalCard } from './components/FinishQuizCard';
@@ -257,10 +258,13 @@ const VIEW_TITLES = {
   'admin-campaign': 'Free product campaign',
 };
 
-const DEFAULT_DESCRIPTION = "Personalized women's health product recommendations, matched to your body and backed by real research, doctor input, and other women's experiences.";
+// The home page's words, the same as index.html (src/utils/seoPages.js).
+const DEFAULT_DESCRIPTION = HOME_DESCRIPTION;
 const VIEW_DESCRIPTIONS = {
   explore: "Explore women's health: search products, symptoms, topics, services and plain-language reads.",
   today: 'Today with ayna: what matters for you today, and your daily log.',
+  ask: 'Ask ayna about your health and the products you use.',
+  you: 'Your profile, saved products, ecosystem and settings on ayna.',
   discovery: "Shop women's health products ranked by how well they fit you: period care, intimate care, fertility, menopause and more.",
   articles: "Plain-language guides to women's health topics, with sources, from the ayna Library.",
   ecosystem: 'Your ecosystem: the products and care you use, what each one is for and what fits next.',
@@ -273,8 +277,22 @@ const VIEW_DESCRIPTIONS = {
 function setCanonical(path) {
   try {
     let el = document.querySelector('link[rel="canonical"]');
+    // A missing page has no canonical address.
+    if (path == null) { el?.remove(); return; }
     if (!el) { el = document.createElement('link'); el.setAttribute('rel', 'canonical'); document.head.appendChild(el); }
     el.setAttribute('href', `https://www.aynahealth.co${String(path || '/').replace(/\/+$/, '') || '/'}`);
+  } catch { /* no document */ }
+}
+
+// Personal pages (Today, Ask, You, account pages, Community member pages) and
+// missing pages are never indexed. The server sends the same rule as an
+// X-Robots-Tag header (vercel.json); this keeps the tag right as she moves around.
+function setRobots(noindex) {
+  try {
+    let el = document.querySelector('meta[name="robots"]');
+    if (!noindex) { el?.remove(); return; }
+    if (!el) { el = document.createElement('meta'); el.setAttribute('name', 'robots'); document.head.appendChild(el); }
+    el.setAttribute('content', 'noindex');
   } catch { /* no document */ }
 }
 
@@ -294,7 +312,7 @@ function setOg(property, value) {
   } catch { /* no document */ }
 }
 function setShareCard({ title, image } = {}) {
-  setOg('og:title', title || "ayna | Personalized Women's Health Product Discovery");
+  setOg('og:title', title || HOME_TITLE);
   const abs = image ? (/^https?:/i.test(image) ? image : `https://www.aynahealth.co${image.startsWith('/') ? '' : '/'}${image}`) : 'https://www.aynahealth.co/og/wrapped.png';
   setOg('og:image', abs);
 }
@@ -2208,8 +2226,9 @@ function App() {
   // preview when sharing (found live, 2026-08-24 bug bash). One page,
   // dynamic title per route/product instead.
   useEffect(() => {
-    const base = "ayna | Personalized Women's Health Product Recommendations";
+    const base = HOME_TITLE;
     if (currentView === 'product') {
+      setRobots(!displayedProduct?.name && !productStillResolving);
       document.title = displayedProduct?.name
         ? productSeoTitle(displayedProduct)
         : (productStillResolving ? 'Loading… | ayna' : 'Product not found | ayna');
@@ -2223,12 +2242,16 @@ function App() {
       }
       return;
     }
-    setCanonical(window.location.pathname);
+    const missing = currentView === 'not-found';
+    setRobots(missing || isNoindexPath(window.location.pathname));
+    setCanonical(missing ? null : window.location.pathname);
     // The prerendered read's Article JSON-LD only belongs on that read.
     if (currentView !== 'articles' || !selectedArticleId) document.getElementById('ay-read-jsonld')?.remove();
+    // Public pages use the same title and description as their prerendered HTML.
+    const seo = SEO_PAGES[VIEW_TO_PATH[currentView]];
     const label = VIEW_TITLES[currentView];
-    document.title = label ? `${label} | ayna` : base;
-    setMetaDescription(VIEW_DESCRIPTIONS[currentView] || DEFAULT_DESCRIPTION);
+    document.title = seo ? seo[0] : label ? (/\bayna$/.test(label) ? label : `${label} | ayna`) : base;
+    setMetaDescription(seo ? seo[1] : VIEW_DESCRIPTIONS[currentView] || DEFAULT_DESCRIPTION);
     setShareCard({ title: document.title });
     // G10: an article and a community profile each get their own title and
     // description (Articles is lazy, so its data is read from the same chunk).
@@ -2769,7 +2792,7 @@ function App() {
             />
           </Suspense>
         )}
-        {currentView === 'articles' && !selectedArticleId && <ExploreHeader compact active="resources" onGo={(key) => openExplore(key)} />}
+        {currentView === 'articles' && !selectedArticleId && <ExploreHeader compact titleAs="p" active="resources" onGo={(key) => openExplore(key)} />}
         {currentView === 'articles' && (
           <Suspense fallback={<ViewLoadingFallback />}>
             <Articles
@@ -3189,7 +3212,7 @@ function App() {
             links={[
               { href: '/explore/products', label: 'Explore', go: () => handleViewDiscovery('') },
               { href: '/quiz', label: 'See my matches', go: () => setCurrentView('quiz') },
-              { href: '/library', label: 'Library', go: () => { setSelectedArticleId(null); setCurrentView('articles'); } },
+              { href: '/explore/resources', label: 'Resources', go: () => { setSelectedArticleId(null); setCurrentView('articles'); } },
             ]}
           />
         )}

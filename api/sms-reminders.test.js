@@ -82,7 +82,7 @@ describe('/api/sms-reminders', () => {
     expect(sent).toHaveLength(1);
     expect(sent[0].To).toBe('+15550000001');
     expect(sent[0].MessagingServiceSid).toBe('MG_test');
-    expect(sent[0].Body).toBe('ayna: your next period may start in about 3 days. Restock your period products? https://www.aynahealth.co/shop');
+    expect(sent[0].Body).toBe('ayna: your next period may start in about 3 days. Restock your period products? https://www.aynahealth.co/explore/products');
   });
 
   it('at most one reminder per person per day', async () => {

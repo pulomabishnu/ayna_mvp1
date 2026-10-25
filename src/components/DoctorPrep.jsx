@@ -46,7 +46,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
     return (
         <div className="container ay-acct-page dp2 animate-fade-in">
             <div className="dp-noprint">
-                <AccountHead title="Appointment prep" back={onBack ? { label: 'Your ecosystem', href: '/ecosystem', onClick: onBack } : null}>
+                <AccountHead title="Appointment prep" back={onBack ? { label: 'Your ecosystem', href: '/you/ecosystem', onClick: onBack } : null}>
                     <p>A one-page summary of what you told ayna and the products you use. Bring it to your <GlossaryTerm term="OB/GYN">OB-GYN</GlossaryTerm> or primary care visit.</p>
                 </AccountHead>
             </div>

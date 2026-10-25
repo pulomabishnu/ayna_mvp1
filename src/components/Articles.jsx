@@ -1244,8 +1244,8 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         <header className={`lb-rhead lb-tone--${tone}`}>
           <div className="lb-wrap lb-rhead__in">
             <nav className="lb-crumbs" aria-label="Breadcrumb">
-              <BackLink label="Library" href="/library" onClick={closeRead} />
-              {sec && <><span aria-hidden="true">/</span><a href="/library" className="lb-crumb" onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); setJumpTo(`lib-${sec.id}`); closeRead(); }}>{sec.label}</a></>}
+              <BackLink label="Library" href="/explore/resources" onClick={closeRead} />
+              {sec && <><span aria-hidden="true">/</span><a href="/explore/resources" className="lb-crumb" onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); setJumpTo(`lib-${sec.id}`); closeRead(); }}>{sec.label}</a></>}
             </nav>
             <div className="lb-rhead__grid">
               <div className="lb-rhead__text">
@@ -1360,7 +1360,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           <p className="ct-404__code">404</p>
           <h2>We couldn’t find that read.</h2>
           <p>It may have moved, or the link may be wrong.</p>
-          <a href="/library" className="ay-btn ay-btn--primary" onClick={(e) => { e.preventDefault(); onArticleChange?.(null); }}>See all reads</a>
+          <a href="/explore/resources" className="ay-btn ay-btn--primary" onClick={(e) => { e.preventDefault(); onArticleChange?.(null); }}>See all reads</a>
         </div></div>
       )}
       <header className="lb-top">

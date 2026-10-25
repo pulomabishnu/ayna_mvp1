@@ -81,6 +81,33 @@
           "value": "noindex"
         }
       ]
+    },
+    {
+      "source": "/:page(today|ask|you|recommendations|comparison|omitted|recalls|tracked|screenings|appointment-prep|profile|text-ayna|delete-account|health-data|auth|confirmed|admin|internal|free-product|mobile-preview|wrapped|join|a)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/:page(today|ask|you|recommendations|comparison|omitted|recalls|tracked|screenings|appointment-prep|profile|text-ayna|delete-account|health-data|auth|confirmed|admin|internal|free-product|mobile-preview|wrapped|join|a)/:rest*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/community/:rest+",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
     }
   ],
   "redirects": [

@@ -258,7 +258,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
               <p className="ed-body" style={{ marginTop: 6 }}>{partner.blurb}</p>
               <p className="ed-brandpanel__links">
                 {partner.waitlistUrl && <a className="ay-btn ay-btn--text" href={partner.waitlistUrl} target="_blank" rel="noopener noreferrer">{partner.waitlistCta || 'Join the waitlist'} →</a>}
-                <a className="ay-btn ay-btn--text" href={`/shop?q=${encodeURIComponent(partner.brand)}`} onClick={(e) => {
+                <a className="ay-btn ay-btn--text" href={`/explore/products?q=${encodeURIComponent(partner.brand)}`} onClick={(e) => {
                   if (!onBrowseBrand || !isPlainLeftClick(e)) return;
                   e.preventDefault();
                   onBrowseBrand(partner.brand);

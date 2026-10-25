@@ -8,7 +8,7 @@ export default function OmittedProducts({ omittedProducts, toggleOmitProduct, on
 
     return (
         <div className="container ay-acct-page animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-            <AccountHead title="Not for me" back={onBack ? { label: 'Your ecosystem', href: '/ecosystem', onClick: onBack } : null}>
+            <AccountHead title="Not for me" back={onBack ? { label: 'Your ecosystem', href: '/you/ecosystem', onClick: onBack } : null}>
                 <p>Products you hid. They won&rsquo;t appear in Explore or your matches. Restore one any time.</p>
             </AccountHead>
 

@@ -97,7 +97,7 @@ export function breadcrumbs(product) {
   const cat = categoryLabel(product);
   return [
     { label: 'Explore', href: '/explore/products', kind: 'shop' },
-    ...(cat ? [{ label: cat, href: '/shop', kind: 'category', category: product.category }] : []),
+    ...(cat ? [{ label: cat, href: '/explore/products', kind: 'category', category: product.category }] : []),
     { label: product.name, kind: 'current' },
   ];
 }
@@ -295,6 +295,10 @@ export function breadcrumbJsonLd(product, { origin = 'https://www.aynahealth.co'
   const crumbs = breadcrumbs(product);
   if (!crumbs.length) return null;
   const base = origin.replace(/\/$/, '');
+  // The page's crumbs both lead to Explore > Products; in search results each
+  // level gets its own address: Explore (the hub), the category (Products,
+  // which the category crumb opens filtered), then the product.
+  const href = (c) => (c.kind === 'shop' && crumbs.some((x) => x.kind === 'category') ? '/explore' : c.href);
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -302,7 +306,7 @@ export function breadcrumbJsonLd(product, { origin = 'https://www.aynahealth.co'
       '@type': 'ListItem',
       position: i + 1,
       name: c.label,
-      ...(c.kind === 'current' ? {} : { item: `${base}${c.href}` }),
+      ...(c.kind === 'current' ? {} : { item: `${base}${href(c)}` }),
     })),
   };
 }
