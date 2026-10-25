@@ -175,7 +175,7 @@ export default function Rundown({
   if (!daily.cards.length && !weekly.cards.length) {
     if (intake || !onSetUp) return null;
     return (
-      <section className="ay-rd-hero" aria-labelledby="ay-rd-hero-h">
+      <section className={`ay-rd-hero${compact ? ' is-compact' : ''}`} aria-labelledby="ay-rd-hero-h">
         <div className="ay-rd-hero__card is-setup">
           <p className="ay-rd-hero__kicker">Today</p>
           <h2 id="ay-rd-hero-h">Your Daily Rundown</h2>
