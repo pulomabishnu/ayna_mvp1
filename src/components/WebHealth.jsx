@@ -7,7 +7,7 @@ import { DEV_HEALTH_DEMO, DEV_HEALTH_DEMO_EMPTY, localToday } from '../mobile/ho
 import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
 import TodayFeed from './today/TodayFeed.jsx';
-import { CurvedRing, CycleRing, DayStrip, Mark, ProductStickers, Shapes } from './personality/DS.jsx';
+import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './personality/DS.jsx';
 import { readHomeLook } from '../mobile/components/HomeArt.jsx';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
@@ -195,9 +195,8 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
           <span className={`ay-wh-hello__art${week.cycle?.cycleDay ? ' has-ring' : ''}`} aria-hidden="true">
             <Shapes className="ay-wh-hello__shapes" />
             <CycleRing day={week.cycle?.cycleDay} length={week.cycle?.avgLength} className="ay-wh-hello__ring" />
-            <ProductStickers products={demoData?.products || products} max={look === 'b' ? 2 : 1} className="ay-wh-hello__stickers" />
+            <ProductStickers products={demoData?.products || products} max={1} className="ay-wh-hello__stickers" />
             {look === 'b' && <span className="ay-wh-hello__curvebox"><CurvedRing text="your week · your week · your week · " className="ay-wh-hello__curve" /></span>}
-            {look === 'b' && <Mark name="sparkle" className="ay-wh-hello__spark" />}
           </span>
         </header>
         {intro}
