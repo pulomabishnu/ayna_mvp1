@@ -2165,7 +2165,7 @@ export default function MyEcosystem({
                                     )
                                 )}
                                 {typeof onResetEcosystem === 'function' && (
-                                    <ConfirmButton role="menuitem" className="ay-confirm" armedLabel="Tap again to reset. Clears your ecosystem and answers." onConfirm={(e) => { e.currentTarget.closest('details').open = false; onResetEcosystem(); }}>Reset my ecosystem</ConfirmButton>
+                                    <ConfirmButton role="menuitem" className="ay-confirm" ms={8000} cancelLabel="Cancel, keep everything" armedLabel="Tap again to erase your ecosystem, its tracking and your quiz answers. Saved products and check-ins stay." onConfirm={(e) => { e.currentTarget.closest('details').open = false; onResetEcosystem(); }}>Reset my ecosystem</ConfirmButton>
                                 )}
                             </div>
                         </details>

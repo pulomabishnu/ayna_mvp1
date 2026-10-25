@@ -28,6 +28,8 @@
   background: #f7badd !important; color: #3e2723 !important; border-color: #3e2723 !important;
 }
 .ay-confirm.is-armed > span, button[data-armed='true'] > span { animation: ay-morph-in var(--t-fast) var(--ease-out) both; }
+.ay-confirm.is-armed { white-space: normal; padding-block: 8px !important; }
+.ay-confirm-cancel { text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---- One skeleton timing everywhere (synced in utils/delightRuntime.js) ---- */
 @keyframes ay-skel { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
