@@ -696,7 +696,7 @@ export default function ProductModal({
       : <p className="ayp-buy__note">No buy link yet.</p>;
   })();
   const actionButtons = (
-    <div className="ayp-buy__box">
+    <div className="ayp-buy__box" data-tour="pdp-actions">
       {variantBlock}
       <div className="ayp-buy__actions">
         {buyButton()}
@@ -878,13 +878,13 @@ export default function ProductModal({
     if (settled && !(matchPercent > 0) && quizResults) rows.push(<li key="fit"><button type="button" className="ayp-why__row" onClick={() => setShowWhy(true)}><span className="ayp-why__main">{matchExclusions[0] || 'No clear match for what you told us'}</span><span className="ayp-why__go">See why</span></button></li>);
     if (!quizResults && !user && onStartQuiz) rows.push(<li key="fit"><button type="button" className="ayp-why__row" onClick={onStartQuiz}><span className="ayp-why__main">How well does this fit you?</span><span className="ayp-why__go">See my matches</span></button></li>);
     if (!rows.length && !settled && (quizResults || healthProfile)) return <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" />;
-    return rows.length ? <ul className="ayp-why" aria-label="Your match">{rows}</ul> : null;
+    return rows.length ? <ul className="ayp-why" data-tour="pdp-why" aria-label="Your match">{rows}</ul> : null;
   })();
   // The full "why it fits you" (reasons, breakdown link): right column on wide screens, ayna summary otherwise.
   const fitBlock = !settled && (quizResults || healthProfile)
     ? <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" />
     : (
-      <div className="ayp-fit">
+      <div className="ayp-fit" data-tour="pdp-fit">
         <ProductMatch glance={glance} matchPercent={matchPercent} why={whyLine(product, matchDetails)} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} hold={matchDetails?.safetyHold || null} onFixHold={onFixSafety} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />
         {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && <p className="ayp-fit__note">In your routine</p>}
       </div>
@@ -903,7 +903,7 @@ export default function ProductModal({
   const relatedReads = readsForProduct(product, 3);
 
   return (
-    <div className="ayp" id="pdp-v4">
+    <div className="ayp" id="pdp-v4" data-tour="pdp">
       <div className="ay-container ayp__page">
 
         {showWhy && <WhyMatchPanel product={product} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onClose={() => setShowWhy(false)} onUpdateHealth={() => { window.location.href = '/quiz'; }} />}

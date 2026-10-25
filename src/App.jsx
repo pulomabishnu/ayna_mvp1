@@ -5,6 +5,8 @@ import { createPortal } from 'react-dom';
 import AynaLanding from './components/AynaLanding';
 import SiteFooter from './components/SiteFooter';
 import ConsentBanner from './components/ConsentBanner';
+// Tips: the app's overlay and store, on the website's screens (src/mobile/tutorial).
+import TutorialLayer from './mobile/tutorial/TutorialLayer.jsx';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import { useWebTheme } from './utils/useWebTheme';
@@ -2656,7 +2658,7 @@ function App() {
         )}
         {/* Today: the first main tab and the home for signed-in accounts. Same page /health showed. */}
         {currentView === 'today' && (
-          <div className="wx-today">
+          <div className="wx-today" data-tour="today">
             {React.cloneElement(webHealth, {
               title: 'Today',
               // Same model as the app: the Daily Rundown card leads (with no profile
@@ -2729,7 +2731,7 @@ function App() {
         )}
         {/* Ask ayna as a page: the same conversation as the floating panel. */}
         {currentView === 'ask' && (
-          <div className="ay-container wx-askpage">
+          <div className="ay-container wx-askpage" data-tour="ask">
             <h1 className="ay-sr">Ask ayna</h1>
             {user && quizResults ? (
               <div className="wx-ask">
@@ -3445,6 +3447,8 @@ function App() {
           view, fixed to the bottom of the viewport, so DOM order here is
           only about it never being unmounted by navigation. */}
       {currentView !== 'campus-resources' && <ConsentBanner />}
+      {/* First visit tips (same store and key as the app): after setup only. */}
+      <TutorialLayer surface="web" userId={user?.id || null} ready={Boolean(quizResults)} />
     </div>
   );
 }

@@ -18,6 +18,7 @@ import { useHealthMatchPref } from '../health/matchPref.js';
 import FreeProductAccountCard from './freeProduct/FreeProductAccountCard';
 import { getCareProfile } from '../utils/careProfile';
 import EmailSettings from './EmailSettings';
+import TipsSettings from '../mobile/tutorial/TipsSettings.jsx';
 import { getMyCommunityProfile, getProfileStats, listPlaylists } from '../utils/community/communityStore.js';
 import { publicMediaUrl } from '../utils/community/imageUpload.js';
 import { buildDashboard, formatMetric } from '../health/dashboard.js';
@@ -349,7 +350,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
   const [avatarFailed, setAvatarFailed] = useState(false);
 
   if (!user) {
-    return <section className="ct wy ay-container">{quizSlot}
+    return <section className="ct wy ay-container" data-tour="you">{quizSlot}
       <div className="wy-signedout">
         <h1 className="ay-h1">You</h1>
         <h2 className="ay-h2 wy-signedout__h">Build your health ecosystem</h2>
@@ -357,7 +358,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
         <div className="wy-signedout__doors">{!quizSlot && <button type="button" className="ay-btn ay-btn--primary" onClick={onStartQuiz}>Build mine</button>}{onSignIn && <button type="button" className="ay-btn ay-btn--secondary" onClick={onSignIn}>Sign in</button>}</div>
       </div>
       {/* Explore first: her answers already work on this device, so she can see and change them. */}
-      {quizResults?.fullHealthIntake && <div className="wy-know"><WhatAynaKnows variant="web" quizAnswers={quizResults} connected={healthConnected} onUpdateIntake={onUpdateIntakeLocal} onEditStep={onEditAnswerAt || (() => onEditProfile?.())} onManageData={onOpenHealthData} /></div>}
+      {quizResults?.fullHealthIntake && <div className="wy-know" data-tour="you-know"><WhatAynaKnows variant="web" quizAnswers={quizResults} connected={healthConnected} onUpdateIntake={onUpdateIntakeLocal} onEditStep={onEditAnswerAt || (() => onEditProfile?.())} onManageData={onOpenHealthData} /></div>}
     </section>;
   }
 
@@ -403,7 +404,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
 
   </>;
 
-  return <section className="ct wy ay-container">
+  return <section className="ct wy ay-container" data-tour="you">
     <header className="wy-head">
       <ArchAvatar className="wy-arch" src={cp?.avatar_url && !avatarFailed ? publicMediaUrl(cp.avatar_url) : ''} initial={initial} onError={() => setAvatarFailed(true)} />
       <div className="wy-who">
@@ -444,7 +445,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
       </div>
       <div className="wy-col">
         {onOpenFreeProduct && <FreeProductAccountCard onOpen={onOpenFreeProduct} />}
-        <section className="wy-sec" aria-labelledby="wy-sections-h">
+        <section className="wy-sec" data-tour="you-sections" aria-labelledby="wy-sections-h">
           <h2 className="ay-group__title" id="wy-sections-h">Your sections</h2>
           <ul className="ay-group wy-rows">
             {linkRow('eco', 'My ecosystem', fmtCount(products.length), onOpenEcosystem, 'Your shelves, one for each need')}
@@ -486,7 +487,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
         <HouseBlend className="wy-sec" intake={intake} onSave={onUpdateIntake} />
       </div>
       {/* See and edit what ayna believes about you (UX spec 29, trust center). */}
-      <div className="wy-know"><WhatAynaKnows variant="web" quizAnswers={quizResults} userId={user?.id || null} connected={healthConnected} onUpdateIntake={onUpdateIntakeLocal || onUpdateIntake} onEditStep={(step) => (step && onEditAnswerAt ? onEditAnswerAt(step) : onEditProfile?.())} onManageData={onOpenHealthData} /></div>
+      <div className="wy-know" data-tour="you-know"><WhatAynaKnows variant="web" quizAnswers={quizResults} userId={user?.id || null} connected={healthConnected} onUpdateIntake={onUpdateIntakeLocal || onUpdateIntake} onEditStep={(step) => (step && onEditAnswerAt ? onEditAnswerAt(step) : onEditProfile?.())} onManageData={onOpenHealthData} /></div>
       <div className="wy-col">
         {shopper ? <Glance profile={shopper} products={products} quizResults={quizResults} /> : <section className="wy-sec"><h2 className="ay-group__title">At a glance</h2><div className="ay-group is-padded wy-week is-empty"><p className="wy-note">Take the quiz to see it.</p><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={onStartQuiz}>Take the quiz</button></div></section>}
         {/* The per-type counts repeated "Your shelves" in At a glance (audit), so only the interest chips stay. */}
@@ -590,6 +591,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
         </section>
       </div>
       <div className="wy-col">
+        <TipsSettings variant="web" />
         <EmailSettings user={user} />
         <InviteCard userId={user.id} />
       </div>

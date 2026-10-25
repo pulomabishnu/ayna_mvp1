@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { createPortal } from 'react-dom';
 import { onboardingJustFinished } from '../../health/onboardingSignal.js';
 import { readRundownMemory } from '../../components/rundown/rundownStore.js';
-import { tourDecision, tipsToShow, rundownSettled } from './tips.js';
+import { tourDecision, tipsToShow, rundownSettled, screensFor, avoidFor } from './tips.js';
 import { readTour, setTourOwner, setTipsEnabled, markScreenSeen, markWelcomeOffered, markOffNoteShown } from './tourStore.js';
 import { topDialog, usableAnchor, currentScreen, visibleAvoidRects, placeBubble, EDGE } from './tourDom.js';
 import './tutorial.css';
@@ -18,8 +18,38 @@ import './tutorial.css';
  * Tapping outside closes (the tap still reaches the page), Escape closes,
  * focus stays in the bubble and goes back after, reduced motion = no motion.
  * Portaled to <body> so a sheet's inert never reaches it.
+ *
+ * `surface`: 'app' (src/mobile, the default) or 'web' (src/App.jsx). The web
+ * reads its own screens (tips.js WEB_SCREENS) off `.app-container`, keeps
+ * bubbles clear of the top nav, and on desktop puts them beside the anchor.
+ * `ready` (web): setup is done; before that nothing shows.
  */
 const ONBOARDING = new Set(['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready']);
+// Website views that are setup or the landing pages, never a tip.
+const WEB_SETUP = new Set(['welcome', 'hero', 'quiz', 'profile-edit']);
+const visibleBottomOf = (el) => { if (!el) return 0; const r = el.getBoundingClientRect(); return r.height > 0 && r.bottom > 0 ? Math.max(0, r.bottom) : 0; };
+const SURFACES = {
+  app: {
+    host: '.ayna-mobile',
+    themeOf: (host) => (host?.dataset.theme === 'dark' ? 'dark' : host?.dataset.theme ? 'light' : null),
+    onboarding: (host) => ONBOARDING.has(host?.dataset.screen || ''),
+    topInset: () => 0,
+    bottomInset: () => { const bar = document.querySelector('.ayna-mobile .ayna-bottom-nav'); return bar ? Math.max(0, window.innerHeight - bar.getBoundingClientRect().top) : 0; },
+    beside: () => false,
+    busy: () => false,
+  },
+  web: {
+    host: '.app-container',
+    themeOf: (host) => (/dark/.test(host?.dataset.theme || '') ? 'dark' : host ? 'light' : null),
+    onboarding: (host, ready) => !ready || WEB_SETUP.has(host?.dataset.view || ''),
+    // The header slides away on scroll down; while it shows, nothing goes under it.
+    topInset: () => { const nav = document.querySelector('.app-nav-wrap'); return nav && !nav.classList.contains('is-away') ? visibleBottomOf(nav) : 0; },
+    bottomInset: () => { const bar = document.querySelector('.app-container nav.ay-tabbar--main'); if (!bar || !bar.getClientRects().length) return 0; const top = bar.getBoundingClientRect().top; return top > 0 && top < window.innerHeight ? window.innerHeight - top : 0; },
+    beside: () => window.innerWidth >= 900,
+    // The floating Ask panel, the auth modal and the wrapped story are hers to finish first.
+    busy: () => Boolean(document.querySelector('.ayna-ask-panel:not(.is-page), .ayna-ask-scrim, .ay-auth-overlay, .wwr')),
+  },
+};
 // Same local day string as the Rundown memory uses.
 const localToday = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const POLL_MS = 450;
@@ -27,7 +57,12 @@ const STABLE_POLLS = 2;
 
 const reduceMotion = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
 
-export default function TutorialLayer({ userId = null }) {
+export default function TutorialLayer({ userId = null, surface = 'app', ready = true }) {
+  const cfg = SURFACES[surface] || SURFACES.app;
+  const screens = screensFor(surface);
+  const avoid = avoidFor(surface);
+  const readyRef = useRef(ready);
+  useLayoutEffect(() => { readyRef.current = ready; }, [ready]);
   const [run, setRun] = useState(null); // { kind: 'welcome' } | { kind: 'tips', screenId, tips, index }
   const [geo, setGeo] = useState(null);
   const [theme, setTheme] = useState('light');
@@ -61,20 +96,21 @@ export default function TutorialLayer({ userId = null }) {
   // Watch the page: which screen, what the decision is, open once it's stable.
   useEffect(() => {
     const tick = () => {
-      const host = document.querySelector('.ayna-mobile');
-      if (host?.dataset.theme) setTheme(host.dataset.theme === 'dark' ? 'dark' : 'light');
+      const host = document.querySelector(cfg.host);
+      const th = cfg.themeOf(host);
+      if (th) setTheme(th);
       if (runRef.current || document.visibilityState === 'hidden') return;
       const dialog = topDialog();
-      const screen = currentScreen(dialog);
+      const screen = currentScreen(dialog, screens);
       const today = localToday();
       const now = new Date();
-      if (screen?.id === 'home') { if (!homeSinceRef.current) homeSinceRef.current = Date.now(); } else homeSinceRef.current = 0;
+      if (screen?.welcome) { if (!homeSinceRef.current) homeSinceRef.current = Date.now(); } else homeSinceRef.current = 0;
       const p = readTour();
       const decision = tourDecision({
         screen, prefs: p, today,
-        onboarding: ONBOARDING.has(host?.dataset.screen || ''),
+        onboarding: cfg.onboarding(host, readyRef.current),
         rundownOpen: Boolean(document.querySelector('.ay-rd')),
-        foreignDialog: Boolean(dialog && !screen),
+        foreignDialog: Boolean(dialog && !screen) || cfg.busy(),
         settled: rundownSettled({ memory: readRundownMemory(), today, now, justOnboarded: onboardingJustFinished({ hours: 12 }), settledMs: homeSinceRef.current ? Date.now() - homeSinceRef.current : 0 }),
       });
       const key = decision.kind === 'none' ? '' : `${decision.kind}:${decision.screen?.id || ''}`;
@@ -87,14 +123,15 @@ export default function TutorialLayer({ userId = null }) {
         setRun({ kind: 'welcome' });
         return;
       }
-      const tips = tipsToShow(decision.screen, (sel) => Boolean(usableAnchor(sel, { dialog })), { offNoteShown: p.offNoteShown });
+      const insets = { topInset: cfg.topInset(), bottomInset: cfg.bottomInset() };
+      const tips = tipsToShow(decision.screen, (sel) => Boolean(usableAnchor(sel, { dialog, avoid, ...insets })), { offNoteShown: p.offNoteShown });
       if (!tips.length) return; // try again on a later visit
       openerRef.current = document.activeElement;
       setRun({ kind: 'tips', screenId: decision.screen.id, tips, index: 0 });
     };
     const id = window.setInterval(tick, POLL_MS);
     return () => window.clearInterval(id);
-  }, []);
+  }, [cfg, screens, avoid]);
 
   // Follow the anchor while a tip is open (scroll, resize, layout changes).
   const tip = run?.kind === 'tips' ? run.tips[run.index] : null;
@@ -103,27 +140,26 @@ export default function TutorialLayer({ userId = null }) {
     let raf = 0;
     let last = '';
     const frame = () => {
-      const el = usableAnchor(tip.anchor);
+      const el = usableAnchor(tip.anchor, { avoid });
       if (!el) {
         // The anchor went away: skip to the next one that's still there, or finish.
         const r = runRef.current;
-        const nextIndex = r.tips.findIndex((t, i) => i > r.index && usableAnchor(t.anchor));
+        const nextIndex = r.tips.findIndex((t, i) => i > r.index && usableAnchor(t.anchor, { avoid }));
         if (nextIndex > 0) setRun({ ...r, index: nextIndex }); else end('done');
         return;
       }
       const a = el.getBoundingClientRect();
       const b = bubbleRef.current?.getBoundingClientRect();
-      const tabBar = document.querySelector('.ayna-mobile .ayna-bottom-nav');
-      const bottomInset = tabBar ? Math.max(0, window.innerHeight - tabBar.getBoundingClientRect().top) : 0;
-      const place = placeBubble(a, { w: b?.width || Math.min(320, window.innerWidth - 2 * EDGE), h: b?.height || 170 }, { vw: window.innerWidth, vh: window.innerHeight, avoid: visibleAvoidRects(), bottomInset });
-      const next = { anchor: { left: a.left, top: a.top, width: a.width, height: a.height }, holes: visibleAvoidRects().map((r) => ({ left: r.left, top: r.top, width: r.width, height: r.height })), ...place };
+      const holes = visibleAvoidRects(avoid);
+      const place = placeBubble(a, { w: b?.width || Math.min(320, window.innerWidth - 2 * EDGE), h: b?.height || 170 }, { vw: window.innerWidth, vh: window.innerHeight, avoid: holes, bottomInset: cfg.bottomInset(), topInset: cfg.topInset(), beside: cfg.beside() });
+      const next = { anchor: { left: a.left, top: a.top, width: a.width, height: a.height }, holes: holes.map((r) => ({ left: r.left, top: r.top, width: r.width, height: r.height })), ...place };
       const sig = JSON.stringify(next);
       if (sig !== last) { last = sig; setGeo(next); }
       raf = window.requestAnimationFrame(frame);
     };
     frame();
     return () => window.cancelAnimationFrame(raf);
-  }, [tip, end]);
+  }, [tip, end, cfg, avoid]);
 
   // Focus in, trap Tab, Escape closes, a tap outside closes (and still reaches the page).
   useEffect(() => {
@@ -148,13 +184,13 @@ export default function TutorialLayer({ userId = null }) {
 
   if (!run) return null;
   const still = reduceMotion();
-  const cls = `ay-tour${still ? ' is-still' : ''}`;
+  const cls = `ay-tour is-${surface}${still ? ' is-still' : ''}`;
 
   if (run.kind === 'welcome') {
     return createPortal(
       <div className={cls} data-theme={theme}>
         <div className="ay-tour__dim is-soft" aria-hidden="true" />
-        <section ref={bubbleRef} className="ay-tour__card ay-tour__welcome" role="dialog" aria-modal="true" aria-labelledby="ay-tour-w-h" aria-describedby="ay-tour-w-p">
+        <section ref={bubbleRef} className="ay-tour__card ay-tour__welcome" style={surface === 'web' ? { bottom: cfg.bottomInset() + 24 } : undefined} role="dialog" aria-modal="true" aria-labelledby="ay-tour-w-h" aria-describedby="ay-tour-w-p">
           <span className="ay-tour__mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg></span>
           <h2 id="ay-tour-w-h">Want a quick tour?</h2>
           <p id="ay-tour-w-p">Tips show up the first time you open each page.</p>
@@ -189,7 +225,7 @@ export default function TutorialLayer({ userId = null }) {
         ref={bubbleRef}
         key={tip.id}
         className={`ay-tour__card ay-tour__tip is-${g?.side || 'below'}`}
-        style={g ? { left: g.left, top: g.top, '--ay-tour-arrow': `${g.arrow}px` } : { visibility: 'hidden', left: EDGE, top: EDGE }}
+        style={g ? { left: g.left, top: g.top, '--ay-tour-arrow': `${g.arrow}px`, '--ay-tour-arrow-y': `${g.arrowY}px` } : { visibility: 'hidden', left: EDGE, top: EDGE }}
         role="dialog" aria-modal="true" aria-labelledby={`ay-tour-${tip.id}-h`} aria-describedby={tip.offNote ? `ay-tour-${tip.id}-p` : undefined}
         data-tip={tip.id}
       >

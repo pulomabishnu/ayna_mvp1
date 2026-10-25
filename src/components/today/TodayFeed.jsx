@@ -236,13 +236,13 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         onSeeData={(d) => { try { window.dispatchEvent(new CustomEvent('ayna:health-tab', { detail: { tab: d?.tab } })); } catch { /* old browser */ } }}
       />
       {compact && (items.length > 0
-        ? <ul className="ay-today__list is-compact">
+        ? <ul className="ay-today__list is-compact" data-tour="today-things">
           {/* Safety and care always show; the rest stop at three things. */}
           {items.filter((it, i) => PROTECTED.has(it.tier) || i < 3).map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={onOpenFull} />)}
         </ul>
         : <p className="ay-today__empty">{t.decision.empty}</p>)}
       {!compact && (items.length > 0
-        ? <ul className="ay-today__list">
+        ? <ul className="ay-today__list" data-tour="today-things">
           {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} onOpenLog={() => setLogOpen(true)} />)}
           {/* One skipped setup question at a time (profileCompleteness.nextProgressiveAsk). */}
           {items.length < 3 && !items.some((i) => i.type === 'ask' || i.level === 'urgent') && <ProfileAskCard intake={intake} today={t.today} onAnswer={onEditAnswers} />}

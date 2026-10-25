@@ -1261,7 +1261,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           <span className="cm-pinned-ann__go">Read the announcement <span aria-hidden="true">→</span></span>
         </button>}
         {/* Start a post: one line to write, and prompt tiles on For you (visitors get sent to sign in). */}
-        {tab !== 'following' && <section className="cm-start" aria-label="Start a post">
+        {tab !== 'following' && <section className="cm-start" data-tour="community-compose" aria-label="Start a post">
           {user && <button type="button" className="cm-start__line" onClick={() => openCompose(tab === 'question' ? 'question' : tab === 'review' ? 'review' : 'post')}>
             <Avatar size={36} name={profile?.display_name || 'You'} path={profile?.avatar_url} />
             <span>{tab === 'question' ? 'Ask the community a question' : tab === 'review' ? 'Review a product you’ve tried' : 'Share with the community'}</span>
@@ -1315,7 +1315,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const questionsSide = sideQuestions.filter((q) => !(page?.type === 'post' && page.id === q.id)).slice(0, SIDE_MAX);
   const playlistsSide = page?.type === 'playlist' ? [] : sidePlaylists.slice(0, SIDE_MAX);
 
-  const tabList = <div className="cm-folders" role="tablist" aria-label="Community feeds">{TABS.map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={onFeed && tab === k} className={`cm-folder is-${k}`} onClick={() => switchTab(k)}>
+  const tabList = <div className="cm-folders" data-tour="community-tabs" role="tablist" aria-label="Community feeds">{TABS.map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={onFeed && tab === k} className={`cm-folder is-${k}`} onClick={() => switchTab(k)}>
     <svg className="cm-folder__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{TAB_ICONS[k]}</svg>
     <span>{l}</span>{k === 'announcements' && newAnns.length > 0 && <b className="cm-folder__new">{newAnns.length} new</b>}
   </button>)}</div>;
@@ -1325,7 +1325,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     <button type="button" className="cm-topic is-suggest" onClick={() => setSuggestTopic(true)}><Icon name="plus" size={14} />Suggest a topic</button>
   </div>;
 
-  return <section className="ct cm ay-container">
+  return <section className="ct cm ay-container" data-tour="community">
     <header className={`cm-head${page ? ' is-page' : ' ay-pagehead ay-band ay-band--sky'}`}>
       {page ? <BackLink className="cm-back" label="Community" href="/community" onClick={closePage} />
         : <div className="cm-head__title"><h1 className="ay-h1">Ask, review, share.</h1><p className="ct-lede">Real talk between women, about the products we actually use.</p></div>}
