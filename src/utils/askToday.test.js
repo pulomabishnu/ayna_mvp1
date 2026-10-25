@@ -71,3 +71,18 @@ describe('QA M1: Ask why and Rundown questions answered on this device when sign
     expect(answerItemQuestion('What helps with cramps?')).toBeNull();
   });
 });
+
+describe('QA round 2: "What should I focus on today?" with no Today picture yet', async () => {
+  const { EMPTY } = await import('../mobile/data/intakeModel.js');
+  const PERSONA = { fullHealthIntake: { ...EMPTY, personalizationCompleted: true, age: '54', lifeStageSelections: ['I am post-menopause'], supportSelections: ['Heavy periods', 'Hot flashes', 'Trouble sleeping'], periodFlow: 'Heavy' }, personalizationCompleted: true };
+  it('answers from her answers, with the bleeding care item first', async () => {
+    setTodayAskContext(null);
+    const a = await localTodayAnswer('What should I focus on today?', { intake: PERSONA });
+    expect(a.answer).not.toMatch(/doesn't have today's picture/);
+    expect(a.answer).toMatch(/^Here's what stands out today:\n1\. \*\*Get bleeding after menopause checked\*\*/);
+  });
+  it('care comes first even when Today listed it later', () => {
+    setTodayAskContext({ ...ctx, focus: [{ title: 'Try heat', tier: 'symptom' }, { title: 'Get this checked', tier: 'care' }] });
+    expect(answerTodayQuestion('What should I focus on today?').answer).toMatch(/1\. \*\*Get this checked\*\*/);
+  });
+});

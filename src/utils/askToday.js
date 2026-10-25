@@ -9,6 +9,12 @@
  * tab); Ask reads it through localTodayAnswer().
  */
 
+import { decide } from '../health/decisionEngine.js';
+import { buildTodayState } from '../health/todayState.js';
+import { readLog, todayKey } from '../health/dailyLog.js';
+import { readTries } from '../health/outcomes.js';
+import { readToday } from '../health/todayStore.js';
+
 let current = null;
 
 /**
@@ -66,8 +72,10 @@ function answerYesterday(ctx) {
   return { answer: `Here's what you logged:\n${lines.join('\n')}\n\n${NOTE}` };
 }
 
+const FIRST = { safety: 0, care: 1 };
 function answerFocus(ctx) {
-  const items = (ctx?.focus || []).slice(0, 3);
+  // Safety and care first, always (QA round 2), then Today's own order.
+  const items = (ctx?.focus || []).map((it, i) => ({ it, i })).sort((a, b) => (FIRST[a.it.tier] ?? 2) - (FIRST[b.it.tier] ?? 2) || a.i - b.i).map(({ it }) => it).slice(0, 3);
   if (!items.length) return { answer: `Nothing unusual stands out today. Your log and connected data look like your usual.\n\n${NOTE}` };
   return { answer: `Here's what stands out today:\n${items.map((it, i) => `${i + 1}. **${it.title}**${it.reason ? ` ${it.reason}` : ''}`).join('\n')}\n\n${NOTE}` };
 }
@@ -150,9 +158,24 @@ export function answerItemQuestion(text, ctx = current) {
   return card ? answerFromItem(card, { why: /^why\b/i.test(q) }) : null;
 }
 
-export function answerTodayQuestion(text, ctx = current) {
+/**
+ * Today's decision items built straight from her answers and this device's
+ * log, for when Today has not been opened in this tab (the website's /ask).
+ * Same engine as Today (decide), so a care item shows here too.
+ */
+export function todayContextFromIntake(intake) {
+  if (!intake) return null;
+  try {
+    const today = todayKey();
+    const d = decide(buildTodayState({ today, log: readLog() || {}, tries: readTries({ today }), intake, store: readToday() || {} }));
+    return { today, signals: {}, focus: (d.items || []).map((it) => ({ title: it.title, reason: it.reason, body: it.body, tier: it.tier, sources: it.basis?.sources || [] })), rundown: [], log: { today: null, yesterday: null }, recent: [] };
+  } catch { return null; }
+}
+
+export function answerTodayQuestion(text, ctx = current, { intake = null } = {}) {
   const kind = todayQuestionKind(text);
   if (!kind) return null;
+  if (!ctx && intake) ctx = todayContextFromIntake(intake);
   if (!ctx) return { answer: "ayna doesn't have today's picture on this device yet. Do today's check-in and ask again." };
   if (kind === 'focus') return answerFocus(ctx);
   if (kind === 'explain_rundown') return answerRundown(ctx);
@@ -163,8 +186,8 @@ export function answerTodayQuestion(text, ctx = current) {
 }
 
 /** Same shape as localMatchAnswer / localHistoryAnswer: { answer, followUps } or null. */
-export async function localTodayAnswer(text) {
-  const r = answerTodayQuestion(text);
+export async function localTodayAnswer(text, { intake = null } = {}) {
+  const r = answerTodayQuestion(text, current, { intake });
   return r ? { followUps: [], ...r } : null;
 }
 

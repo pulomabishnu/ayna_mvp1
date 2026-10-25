@@ -361,7 +361,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     const local = retryOf == null
       ? (await localMatchAnswer(msg, { quizAnswers: profile, healthProfile, matchOpts, focusProduct }).catch(() => null))
         || (await localHistoryAnswer(msg).catch(() => null))
-        || (await localTodayAnswer(msg).catch(() => null))
+        || (await localTodayAnswer(msg, { intake: profile }).catch(() => null))
         // Signed out: "Ask why" and the Rundown questions from Today's own items (QA M5, like the app).
         || (!session?.access_token ? await localItemAnswer(msg).catch(() => null) : null)
       : null;

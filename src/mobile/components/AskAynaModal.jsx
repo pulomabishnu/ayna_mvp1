@@ -298,7 +298,7 @@ export default function AskAynaModal({
     // never from the language model, so it is the same % the product shows.
     const local = (await localMatchAnswer(msg, { quizAnswers: profile, matchOpts, focusProduct }).catch(() => null))
       || (await localHistoryAnswer(msg, { guideTrials: guide?.trials || [], guide: true }).catch(() => null))
-      || (await localTodayAnswer(msg).catch(() => null))
+      || (await localTodayAnswer(msg, { intake: profile }).catch(() => null))
       // Signed out: "Ask why" and the Rundown questions from Today's own items (QA M1).
       || (!session?.access_token ? await localItemAnswer(msg).catch(() => null) : null);
     if (local) {

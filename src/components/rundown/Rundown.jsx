@@ -123,7 +123,7 @@ export default function Rundown({
       },
       // With what each item and card says, so "Ask why" and the card questions
       // are answered on this device too (askToday.js answerItemQuestion).
-      focus: (t.decision?.items || []).map((it) => ({ title: it.title, reason: it.reason, body: it.body, sources: it.basis?.sources || [] })),
+      focus: (t.decision?.items || []).map((it) => ({ title: it.title, reason: it.reason, body: it.body, tier: it.tier, sources: it.basis?.sources || [] })),
       rundown: content.map(({ category, title, changed, canDo, explain, body, reason, basisLine, ask, followUps, sources }) => ({ category, title, changed, canDo, explain, body, reason, basisLine, ask, followUps, sources })),
       log: { today: t.log?.[today] || null, yesterday: t.log?.[y] || null },
       recent: weekChanges,
