@@ -242,7 +242,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         </ul>
         : <p className="ay-today__empty">{t.decision.empty}</p>)}
       {!compact && (items.length > 0
-        ? <ul className="ay-today__list">
+        ? <ul className="ay-today__list" data-tour="today-things">
           {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} onOpenLog={() => setLogOpen(true)} />)}
           {/* One skipped setup question at a time (profileCompleteness.nextProgressiveAsk). */}
           {items.length < 3 && !items.some((i) => i.type === 'ask' || i.level === 'urgent') && <ProfileAskCard intake={intake} today={t.today} onAnswer={onEditAnswers} />}
