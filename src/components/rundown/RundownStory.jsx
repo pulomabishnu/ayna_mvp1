@@ -1,12 +1,12 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import NotUsefulMenu from './NotUsefulMenu.jsx';
-import ProductImage from '../../mobile/components/ProductImage.jsx';
+import ProductCard from '../ProductCard.jsx';
+import AppProductCard from '../../mobile/components/ProductCard.jsx';
 import { matchText } from '../../utils/matchDisplay.js';
 import { READ_PHOTOS } from '../../data/readCovers.js';
 import { ProductSheetContext } from '../../mobile/productSheetContext.js';
 import { ProductQuickActions } from '../../mobile/components/ProductQuick.jsx';
-import { holdLine } from '../../utils/matchState.js';
 import { Mark, Shapes } from '../personality/DS.jsx';
 import { Seal } from '../personality/Bits.jsx';
 import './rundown-ds.css';
@@ -81,53 +81,33 @@ function Body({ card, h, done }) {
       );
     case 'match': {
       const m = card.match;
-      // The app (product sheet available): tap the product for the sheet over
-      // this card, and Buy, Save, Add to my routine are one tap each.
+      // The founder's product card (the one in Explore), as a row. The app
+      // (product sheet available): tap it for the sheet over this card, and
+      // Buy, Save, Add to my routine are one tap each under it.
       if (h.sheet) {
         return (
           <div className="ay-rd-product has-open">
-            <button type="button" className="ay-rd-product__open" onClick={() => h.openSheet(m.product)} aria-label={`${m.product.name}, ${matchText(m.percent)}. Open product details`}>
-              <span className="ay-rd-product__img"><ProductImage product={m.product} src={m.product.image || m.product.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
-              <span className="ay-rd-product__text">
-                <b>{m.product.name}</b>
-                <span className="ay-rd-pill">{matchText(m.percent)}</span>
-                {m.why && <span>{m.why}</span>}
-                <Evidence level={m.evidence} />
-              </span>
-            </button>
+            <AppProductCard product={m.product} variant="row" quizAnswers={h.sheet.quizAnswers || null} matchOpts={h.sheet.matchOpts} onClick={() => h.openSheet(m.product)} onOpenWhyMatch={() => h.openSheet(m.product)} />
+            <Evidence level={m.evidence} />
             <ProductQuickActions product={m.product} saved={h.sheet.isSaved(m.product.id)} onToggleSaved={h.sheetSave} inRoutine={h.sheet.inRoutine(m.product.id)} onAddToRoutine={h.sheetAdd} placement="rundown" />
-            <span className="ay-rd-actions"><button type="button" className="ay-rd-link" onClick={() => h.openSheet(m.product)}>Why this match?</button></span>
           </div>
         );
       }
       return (
         <div className="ay-rd-product">
-          <span className="ay-rd-product__img"><ProductImage product={m.product} src={m.product.image || m.product.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
-          <span className="ay-rd-product__text">
-            <b>{m.product.name}</b>
-            <span className="ay-rd-pill">{matchText(m.percent)}</span>
-            {m.why && <span>{m.why}</span>}
-            <Evidence level={m.evidence} />
-          </span>
-          <span className="ay-rd-actions">
-            <button type="button" className="ay-rd-primary" onClick={() => h.whyMatch(m.product)}>Why this match?</button>
-          </span>
+          <ProductCard product={m.product} className="is-row" matchPercent={m.percent} matchLabel={matchText(m.percent)} why={m.why} onOpen={h.whyMatch || undefined} onShowWhy={h.whyMatch || null} />
+          <Evidence level={m.evidence} />
+          {h.whyMatch && <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => h.whyMatch(m.product)}>Why this match?</button></span>}
         </div>
       );
     }
     case 'saved': {
       // A product held back for safety never shows a %: "Safety hold · Match unavailable".
-      const st = h.sheet?.matchStateFor?.(card.product) || null;
-      const face = (<>
-        <span className="ay-rd-product__img"><ProductImage product={card.product} src={card.product.image || card.product.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
-        <span className="ay-rd-product__text"><b>{card.product.name}</b>
-          {st?.kind === 'scored' && <span className="ay-rd-pill">{st.label}</span>}
-          {st?.kind === 'held' && <span><span className="ay-rd-hold">{st.label}</span>{holdLine(st)}</span>}
-        </span>
-      </>);
       return (
         <div className={`ay-rd-product${h.sheet ? ' has-open' : ''}`}>
-          {h.sheet ? <button type="button" className="ay-rd-product__open" onClick={() => h.openSheet(card.product)} aria-label={`${card.product.name}. Open product details`}>{face}</button> : face}
+          {h.sheet
+            ? <AppProductCard product={card.product} variant="row" quizAnswers={h.sheet.quizAnswers || null} matchOpts={h.sheet.matchOpts} onClick={() => h.openSheet(card.product)} onOpenWhyMatch={() => h.openSheet(card.product)} />
+            : <ProductCard product={card.product} className="is-row" onOpen={h.whyMatch || undefined} />}
           <span className="ay-rd-actions">
             {h.compare && <button type="button" className="ay-rd-primary" onClick={() => h.compare(card.product)}>Compare</button>}
             {h.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(`Is ${card.product.name} a good fit for me?`)}>Ask ayna</button>}

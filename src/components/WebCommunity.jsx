@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { hasWhy, whyLead } from '../utils/whyLine';
-import { shownMatchPercent, PARTIAL_FIT } from '../utils/matchDisplay';
+import { isSafetyHold } from '../utils/matchDisplay';
 import BackLink from './nav/BackLink.jsx';
 import { createPortal } from 'react-dom';
 import { getSupabaseClient } from '../utils/supabaseClient';
@@ -17,6 +17,7 @@ import { scoreSearchMatch } from '../utils/search/index.js';
 import { searchCommunityTolerant } from '../utils/search/communitySearch.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import ProductCard from './ProductCard.jsx';
 import { customProductId, customProductName } from '../utils/customProductTag.js';
 import { RuleField, CommunityRulesList } from './community/RuleField.jsx';
 import { useSheetViewport, backdropTap } from './community/useSheetViewport.js';
@@ -136,7 +137,7 @@ function SkeletonPlaylists() {
   return <div className="cm-pl-grid" aria-hidden="true">{[0, 1, 2, 3].map((i) => <div key={i} className="cm-skel-pl"><span className="cm-skel-cover" /><span className="cm-skel-line is-mid" /><span className="cm-skel-line is-short" /></div>)}</div>;
 }
 
-function Mention({ productId, productsById, quizResults, healthProfile = null, matchOpts = undefined, onOpenProduct, hideView = false }) {
+function Mention({ productId, productsById, quizResults, healthProfile = null, matchOpts = undefined, onOpenProduct }) {
   const product = productsById.get(String(productId));
   if (!product) {
     const customName = customProductName(String(productId || ''));
@@ -146,16 +147,13 @@ function Mention({ productId, productsById, quizResults, healthProfile = null, m
       <span><strong>{customName}</strong><small>Not in the ayna catalog yet</small></span>
     </span>;
   }
-  // Same engine inputs as her cards, so the chip shows the card's percent.
+  // Same engine inputs as her cards, so the card shows the card's percent.
   const match = quizResults ? getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts) : null;
   const show = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
   // The % explained in plain words ("For your period cramps").
   const why = show && hasWhy(match) ? whyLead(match) : '';
-  return <button type="button" className="cm-mention" onClick={() => onOpenProduct(product)}>
-    <span className="cm-mention-photo"><ProductTileImage product={product} imgStyle={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: 6 }} letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />} /></span>
-    <span><strong>{product.name}</strong><small>{why || product.brand || 'ayna product'}</small></span>
-    {show ? (shownMatchPercent(match.percent) != null ? <em className="cm-match"><b>{shownMatchPercent(match.percent)}%</b> match</em> : <em className="cm-match is-partial">{PARTIAL_FIT}</em>) : !hideView && <em className="cm-view">View</em>}
-  </button>;
+  // The founder's product card (the one in Explore), as a row.
+  return <ProductCard product={product} className="is-row cm-mention-card" matchPercent={show ? match.percent : null} matchHold={!show && isSafetyHold(match)} why={why} onOpen={onOpenProduct} partnerMark={false} />;
 }
 
 
@@ -1134,7 +1132,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       </div>
       <ul className="ay-group cm-pl-list" aria-label="Products in this playlist">
         {items.map((it) => <li key={it.product_id} className="cm-pl-row">
-          <Mention productId={it.product_id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} hideView={canEdit} />
+          <Mention productId={it.product_id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />
           {addedBy(it) && <small className="cm-pl-by">Added by {addedBy(it)}</small>}
           {canEdit && <button type="button" className="ct-link cm-pl-remove" disabled={busy} onClick={() => removeItem(it.product_id)} aria-label={`Remove ${productsById.get(String(it.product_id))?.name || customProductName(String(it.product_id)) || 'product'}`}>Remove</button>}
         </li>)}

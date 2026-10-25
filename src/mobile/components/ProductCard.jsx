@@ -65,7 +65,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
     const oneBadge = cardBadge(product);
     const facts = cardPrice({ ...product, price: price || priceDisplay });
     return (
-      <article className="ay-pc">
+      <article className={`ay-pc${variant === 'row' ? ' is-row' : ''}`}>
         <button type="button" className="ay-pc-main" onClick={onClick} aria-label={`${name}, ${facts.main}${facts.sub ? ` ${facts.sub}` : ''}${oneBadge ? `, ${oneBadge}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>
           <span className="ay-pc-photo">
             <ProductImage product={product} src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />

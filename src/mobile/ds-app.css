@@ -281,6 +281,14 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc-save svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc-save.is-on svg { fill: #f7badd; stroke: #3e2723; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) :is(.ax-row, .ax-grid, .ay-browse-grid, .ayna-shelf-row) { padding-bottom: 10px; padding-right: 8px; }
+/* the same card as a row (Rundown story, Community mentions): photo panel left, text right */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc.is-row { height: auto; padding: 10px !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc.is-row .ay-pc-main { flex-direction: row; align-items: flex-start; gap: 12px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc.is-row .ay-pc-photo { flex: none; width: 92px; padding: 7px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc.is-row .ay-pc-copy { gap: 3px; padding-top: 2px !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc.is-row .ay-pc-price { margin-top: 4px !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc.is-row:not(:has(.ay-pc-save)) :is(.ay-pc-price, .ay-pc-why, .ay-pc-hbadge) { padding-right: 0 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc.is-row .ay-pc-match { top: 13px !important; left: 13px !important; }
 
 
 /* ---------------------------------------------------------------------
