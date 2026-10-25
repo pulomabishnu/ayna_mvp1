@@ -60,14 +60,18 @@ describe('app routing: Home, dashboard first', () => {
     expect(navTabFor('today')).toBe('home');
     expect(navTabFor('library')).toBe('explore');
   });
-  it('?home=chat keeps the chat-first Home for the focus group (and remembers it); default is the dashboard', () => {
-    const store = { v: {}, getItem(k) { return this.v[k] ?? null; }, setItem(k, x) { this.v[k] = x; }, removeItem(k) { delete this.v[k]; } };
+  it('?home=chat shows the chat-first Home for the focus group; only the address decides (QA round 2)', () => {
+    const store = { v: { ayna_home_variant: 'chat' }, getItem(k) { return this.v[k] ?? null; }, setItem(k, x) { this.v[k] = x; }, removeItem(k) { delete this.v[k]; } };
+    // An old remembered choice is cleared, not obeyed.
     expect(readHomeVariant({ search: '', storage: store })).toBe('dashboard');
+    expect(store.v.ayna_home_variant).toBeUndefined();
     expect(readHomeVariant({ search: '?home=chat', storage: store })).toBe('chat');
-    expect(readHomeVariant({ search: '', storage: store })).toBe('chat');
+    expect(readHomeVariant({ search: '', storage: store })).toBe('dashboard');
     expect(initialAppRoute({ hasProfile: true, variant: 'chat' })).toEqual({ screen: 'ayna', view: 'chat' });
     expect(readHomeVariant({ search: '?home=dashboard', storage: store })).toBe('dashboard');
-    expect(readHomeVariant({ search: '', storage: store })).toBe('dashboard');
+    // The hand-set dev flag still works.
+    store.v.ayna_dev_home_chat = '1';
+    expect(readHomeVariant({ search: '', storage: store })).toBe('chat');
   });
   it('chat-first Home: the switch is a tablist; arrows move between Chat, Products and My dashboard', () => {
     const onChange = vi.fn();
