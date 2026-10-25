@@ -736,7 +736,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     // Where to buy, Sold by and the price check live with the Buy button now (one source of truth).
     ...(glance?.facts || []).filter((f) => !f.unknown && !['format', 'size', 'perunit', 'fsa', 'inside', 'fda', 'hipaa', 'data', 'where'].includes(f.id) && f.value).map((f) => ({ label: f.label, value: noDash(f.value), note: f.note && !/verified|checked/i.test(f.note) ? fmtDate(f.note) : '' })),
     ...extraRows.filter((r) => r && (r.value || r.node)).map((r) => ({ ...r, value: r.value || 'x' })),
-    listedAs.length > 0 && { label: 'Listed as', value: listedAs.join(', ') },
+    listedAs.length > 0 && { label: 'Listed as', value: cap(listedAs.join(', ')) },
     { label: 'Price note', value: dt.priceNote },
   ].filter((r, i, arr) => r && r.value && arr.findIndex((x) => x && x.label === r.label) === i)
     // Two rows that say the same thing ("Where to buy" and "Sold at", "Works with" and "Available on"): keep the first.

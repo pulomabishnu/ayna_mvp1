@@ -48,7 +48,7 @@ export function buyModel(product, { variant = null, brand = '', name = '', price
   const named = (product.whereToBuy || []).map((w) => String(w).trim()).filter((w) => w && !SITE.test(w));
   const inStock = Object.entries(product.whereToBuyInStock || {}).filter(([, v]) => v).map(([k]) => k);
   const rows = [
-    url && { name: retailer, url, price, primary: true, host: host(url) !== retailer ? host(url) : '' },
+    url && { name: retailer, url, price, primary: true, host: host(url).toLowerCase().startsWith(String(retailer).toLowerCase()) ? '' : host(url) },
     ...others.map((r) => ({ name: r.name, url: r.url, price: '' })),
     ...named.filter((n) => ![retailer, ...others.map((r) => r.name)].some((x) => String(x).toLowerCase() === n.toLowerCase())).map((n) => ({ name: n, url: '', price: '' })),
   ].filter(Boolean).map((r) => ({ ...r, inStock: inStock.some((s) => s.toLowerCase() === String(r.name).toLowerCase()) }));
