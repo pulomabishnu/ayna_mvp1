@@ -36,6 +36,7 @@ export function MarkSticker({ name = 'sparkle', tone = 'butter', className = '' 
 }
 
 const photoOf = (p) => p?.image || p?.imageUrl || p?.image_url || '';
+const isCatalogPhoto = (src) => typeof src === 'string' && /^\/(?!\/)/.test(src) && !/\.svg(\?|$)/i.test(src);
 
 /**
  * Her products' real photos as die-cut stickers: the product cut out of its
@@ -45,7 +46,8 @@ const photoOf = (p) => p?.image || p?.imageUrl || p?.image_url || '';
  * Renders nothing without photos.
  */
 export function ProductStickers({ products = [], max = 3, className = '' }) {
-  const srcs = [...new Set(products.map(photoOf).filter(Boolean))].slice(0, max + 3);
+  // Only our own catalog photos (served from this site), never a hotlinked logo or remote image.
+  const srcs = [...new Set(products.map(photoOf).filter(isCatalogPhoto))].slice(0, max + 3);
   const key = srcs.join('|');
   const [cuts, setCuts] = useState({ key: '', list: [] });
   useEffect(() => {

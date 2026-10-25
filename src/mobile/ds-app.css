@@ -77,13 +77,14 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__shapes .is-slash { right: 124px; bottom: 22px; width: 18px; height: 18px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__shapes .is-dot { right: 14px; bottom: 26px; width: 8px; height: 8px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-home-art__shapes .is-flower { color: #769ebe; }
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__stickers { position: absolute; right: 138px; top: -14px; width: 50px; height: 50px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__stickers { position: absolute; right: 30px; top: 50px; width: 54px; height: 54px; }
+/* QA Oct 25: clear of the eyebrow and title; beside her ring when there is a number */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art:has(.ay-home-art__num) .ay-home-art__stickers { right: 142px; top: 46px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__stickers .ds-psticker { width: 54px; height: 54px; transform: rotate(-9deg); }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__curve { color: #f7badd; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__curve text { font-size: 9px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__spark { position: absolute; right: 150px; top: 108px; width: 20px; height: 20px; color: #ffedac; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-home-art__spark { color: #3e2723; }
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-b .ay-home-art__stickers { right: auto; left: 150px; top: -16px; }
 @keyframes ds-wiggle { 0%, 100% { transform: rotate(-9deg); } 30% { transform: rotate(-18deg) scale(1.06); } 65% { transform: rotate(2deg); } }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen:has(.ay-rd-hero__go:active) .ay-home-art__stickers .ds-psticker { animation: ds-wiggle .42s var(--ease-pop, ease) both; }
 
@@ -107,6 +108,15 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact .ay-today__actions > *::after { content: ''; position: absolute; inset: -6px -2px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact .ay-today__actions > :first-child { background: var(--d-ink) !important; color: var(--d-page) !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:has(button:active) { transform: scale(.98); }
+/* QA Oct 25: a row with three actions (safety, care) puts the actions under the title, which may wrap to 2 lines; never "Get blee…" */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:has(.ay-today__actions > :nth-child(3)) { grid-template-columns: minmax(0, 1fr); row-gap: 8px; padding: 12px 12px 12px 50px !important; border-radius: 24px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:has(.ay-today__actions > :nth-child(3))::before { top: 14px; margin-top: 0; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:has(.ay-today__actions > :nth-child(3)) .ay-today__actions { grid-column: 1; grid-row: auto; flex-wrap: wrap; gap: 6px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:has(.ay-today__actions > :nth-child(3)) .ay-today__title { white-space: normal !important; }
+/* the pink (care, safety) and sky rows keep espresso text in dark mode too */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:is(.is-care, .is-safety) :is(.ay-today__title, .ay-today__text, p, small) { color: #3e2723 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-homescreen .ay-today__item.is-compact:is(.is-care, .is-safety) .ay-today__actions > :not(:first-child) { border-color: #3e2723 !important; background: #ffedac !important; color: #3e2723 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-homescreen .ay-today__item.is-compact:is(.is-care, .is-safety) .ay-today__actions > :first-child { border-color: #3e2723 !important; background: #3e2723 !important; color: #ffedac !important; }
 
 /* widgets: colour blocks with a mini graphic, numbers in Bricolage, no outlines */
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homewidgets { gap: 10px; }
@@ -311,3 +321,8 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list > li:first-child .ay-askh-tile-label { font: 700 20px/1.15 var(--ay-app-heading) !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list button:active { transform: scale(.97); }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list button:active { transform: none; } }
+
+/* QA Oct 25: Home's log row in a small cell stacks (title, then Log today); its sentence only restates the button, so it waits for the wide size */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homewidgets__cell:not(.is-wide) .ay-w--health.ay-homehealth { flex-direction: column !important; align-items: flex-start !important; justify-content: space-between; gap: 6px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homewidgets__cell:not(.is-wide) .ay-w--health .ay-homehealth__text p:not(.has-data) { display: none !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homewidgets .ay-w--small .ay-w__empty { -webkit-line-clamp: 4; }
