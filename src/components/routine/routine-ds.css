@@ -1,0 +1,28 @@
+/* =====================================================================
+   Need routines (web My ecosystem, app Your matches) in the Oct 21-22
+   language (DESIGN_SYSTEM_OCT25.md). The steps are a sequence (start with
+   one or two), so each is an outlined card with a circle numeral sticker
+   on its corner (pink, sky, butter in turn) and its label as a folder tab;
+   the one primary is raised with the hard shadow. Shared web + app.
+   ===================================================================== */
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__list { counter-reset: rxn; display: grid; gap: 40px; padding: 30px 0 4px 6px !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item {
+  counter-increment: rxn; position: relative; padding: 20px 16px 14px 18px !important; border: 1.5px solid var(--ds-line) !important; border-radius: 18px !important; border-top-left-radius: 0 !important;
+  background: var(--ds-group) !important; color: var(--ds-ink);
+}
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item::after {
+  content: counter(rxn); position: absolute; top: -16px; right: 14px; display: grid; place-items: center; width: 34px; height: 34px; box-sizing: border-box;
+  border: 1.5px solid #3e2723; border-radius: 50%; background: #f7badd; color: #3e2723; font: 700 16px/1 var(--ds-display); transform: rotate(8deg); box-shadow: 2px 2px 0 #3e2723;
+}
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item:nth-child(3n+2)::after { background: #769ebe; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item:nth-child(3n)::after { background: #ffedac; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item .ay-rx__kicker {
+  position: absolute; left: -1.5px; top: auto; bottom: calc(100% - 1.5px); display: inline-flex; align-items: center; min-height: 28px; margin: 0 !important; padding: 0 12px !important;
+  border: 1.5px solid var(--ds-line); border-bottom: 0; border-radius: 10px 10px 0 0; background: #769ebe; color: #3e2723 !important; opacity: 1 !important;
+  font: 600 13px/1 var(--ds-ui) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item.is-product .ay-rx__kicker { background: #f7badd; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__item h4 { font: 700 20px/1.15 var(--ds-display) !important; letter-spacing: -.01em; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__primary { border: 1.5px solid var(--ds-line) !important; box-shadow: 3px 3px 0 #f7badd !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__chip { border: 1.5px solid var(--ds-line) !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__chip[aria-pressed='true'] { background: #f7badd !important; color: #3e2723 !important; }

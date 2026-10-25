@@ -7,6 +7,7 @@ import { leavingLine } from '../../utils/leavingAyna.js';
 import { OUTCOME_LABELS } from '../../health/outcomes.js';
 import { START_MAX } from '../../health/routines.js';
 import './routine.css';
+import './routine-ds.css';
 
 /**
  * "Your period-pain routine": one routine per active need (team direction
