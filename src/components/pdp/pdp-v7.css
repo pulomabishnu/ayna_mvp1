@@ -201,3 +201,30 @@
   :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-meter__bars > i.is-on::after { animation: none !important; }
   #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-st__tab, #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-more__chev { transition: none !important; }
 }
+
+/* screen-reader text stays hidden on every surface (the sheet had no rule of its own) */
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .sr-only { position: absolute !important; width: 1px !important; height: 1px !important; margin: -1px !important; padding: 0 !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; border: 0 !important; }
+
+/* Ask about this product (website and sheet): 3 starters that send on tap, then her own question */
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-askrow { display: grid; gap: 12px; margin: 0 !important; padding: 20px !important; border: 1.5px solid var(--v-ink) !important; border-radius: 20px !important; background: var(--v-tint) !important; box-shadow: none !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-askrow h2 { margin: 0 !important; font: 700 var(--v-h)/1.15 var(--v-display) !important; color: var(--v-ink) !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-askrow ul { display: grid !important; gap: 8px !important; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-askrow li { margin: 0 !important; padding: 0 !important; list-style: none !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-askrow li::before { content: none !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-askrow li button { display: flex !important; align-items: center; width: 100%; min-height: 48px; margin: 0 !important; padding: 10px 16px !important; box-sizing: border-box; border: 1.5px solid var(--v-ink) !important; border-radius: 16px !important; background: var(--v-bg) !important; color: var(--v-ink) !important; text-align: left; font: 600 var(--v-small)/1.35 var(--v-ui) !important; box-shadow: none !important; cursor: pointer; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-askrow__form { display: flex !important; gap: 8px; margin: 0 !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-askrow__form input { flex: 1; min-width: 0; min-height: 48px; padding: 0 16px !important; box-sizing: border-box; border: 1.5px solid var(--v-ink) !important; border-radius: 99px !important; background: var(--v-bg) !important; color: var(--v-ink) !important; font: 500 16px/1.2 var(--v-ui) !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-askrow__form button { min-height: 48px; padding: 0 20px !important; border: 0 !important; border-radius: 99px !important; background: #3e2723 !important; color: #ffedac !important; font: 600 15px/1 var(--v-ui) !important; cursor: pointer; }
+:is([data-theme='brand-dark'], [data-theme='dark']) #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-askrow__form button { background: #ffedac !important; color: #3e2723 !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-askrow__form button:disabled { opacity: .5; cursor: default; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-pdp-askcard { margin: 0 !important; padding: 20px !important; border: 1.5px solid var(--v-ink) !important; border-radius: 20px !important; background: var(--v-tint) !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-pdp-askcard h2 { margin: 0 0 8px !important; font: 700 var(--v-h)/1.15 var(--v-display) !important; color: var(--v-ink) !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-checks__mark svg, :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-checks__mark svg * { fill: none !important; stroke: currentColor !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-checks > li.is-yes .ayv-checks__mark svg * { stroke: #ffedac !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-checks > li.is-yes .ayv-checks__mark svg * { stroke: #3e2723 !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-ask .ay-askrow li button { text-decoration: none !important; }
+@media (min-width: 1100px) {
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 #ay-tabs .ayq-sum { max-width: 880px; }
+}
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-step { background: transparent !important; border-radius: 16px !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-evo { background: var(--v-tint) !important; border-radius: 20px !important; }

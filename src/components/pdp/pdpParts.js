@@ -186,7 +186,8 @@ export function mainCaution(m, topWarning = '') {
   const top = norm(topWarning);
   const same = (t) => top && (norm(t) === top || norm(t).startsWith(top.replace(/ $/, '')) || top.startsWith(norm(t)));
   const real = m.safety.warnings.filter((w) => !TIP.test(String(w).trim()));
-  const pick = [...real.filter((w) => DOC.test(w)), ...real.filter((w) => !DOC.test(w))].find((w) => !same(w));
+  // Clinician checks already show in Is it for you, so the summary's caution is the first other real warning (else a clinician check).
+  const pick = [...real.filter((w) => !DOC.test(w)), ...real.filter((w) => DOC.test(w))].find((w) => !same(w));
   return pick || '';
 }
 

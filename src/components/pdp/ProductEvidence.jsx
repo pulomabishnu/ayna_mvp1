@@ -787,7 +787,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
             <ul className="ayv-short">{sa.bullets.map((t) => <li key={t}><Tx>{t}</Tx></li>)}</ul>
           </>}
           {sa.fromTeam && ex.attribution && <p className="ayq-bottom__by">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" onClick={() => goTo('clinical')}>Read the clinical opinion</button></p>}
-          <EvidenceMeter meter={meter} onMore={() => goTo('literature')} />
+          {/* The meter's sentence is left off when the short answer already says it. */}
+          <EvidenceMeter meter={sa.bullets.includes(meter.note) ? { ...meter, note: '' } : meter} onMore={() => goTo('literature')} />
           {caution && (
             <div className="ayv-caution" role="note">
               <p><b>Main caution: </b><Tx>{caution}</Tx></p>
