@@ -9,7 +9,7 @@ import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partnerBrands.js';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
-import { exclusionLines, matchText, isSafetyHold, SAFETY_HOLD, MATCH_UNAVAILABLE } from '../../utils/matchDisplay.js';
+import { exclusionLines, matchText, isSafetyHold, isBleedingEvaluation, BLEEDING_EVALUATION, SAFETY_HOLD, MATCH_UNAVAILABLE } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
 import { whyLine } from '../../utils/whyLine.js';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
@@ -294,7 +294,9 @@ export default function ProductDetailScreen({
       .slice(0, 4)
       .map(({ p }) => p) : [];
     const personal = more.length > 0;
-    if (onOpenProduct && more.length < 4) more = [...more, ...sameNeedProducts(product, { pool: photoPool, limit: 4 - more.length, exclude: [...used, ...more.map((p) => p.id)] })];
+    // Bleeding after menopause: no period or bleeding product is suggested, even unscored.
+    const fallbackPool = quizAnswers ? photoPool.filter((p) => !isBleedingEvaluation(getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts))) : photoPool;
+    if (onOpenProduct && more.length < 4) more = [...more, ...sameNeedProducts(product, { pool: fallbackPool, limit: 4 - more.length, exclude: [...used, ...more.map((p) => p.id)] })];
     return { compare, more, personal };
   }, [product, onOpenProduct, ecosystemProducts, quizAnswers, matchOpts]);
 
@@ -431,7 +433,7 @@ export default function ProductDetailScreen({
     </div>
   );
   const fitBlock = quizAnswers ? (
-    <ProductMatch glance={glance} matchPercent={matchPercent} why={headLine} fallback={matchLine(matchDetails)} onShowWhy={openWhyMatch} hasProfile exclusions={exclusions} hold={matchDetails.safetyHold || null} onFixHold={onFixSafety} />
+    <ProductMatch glance={glance} matchPercent={matchPercent} why={headLine} fallback={matchLine(matchDetails)} onShowWhy={openWhyMatch} hasProfile exclusions={exclusions} hold={matchDetails.safetyHold || null} evaluation={matchDetails.bleedingEvaluation || null} onFixHold={onFixSafety} />
   ) : null;
 
   return (
@@ -489,6 +491,7 @@ export default function ProductDetailScreen({
           <ul className="ay-pdp-why" data-tour="pdp-why" aria-label="Why it is here">
             {isSafetyHold(matchDetails) && <li><button type="button" className="ay-pdp-why__row is-match" onClick={openWhyMatch} aria-label={`${SAFETY_HOLD}. ${MATCH_UNAVAILABLE}. See why`}><MatchPill hold size="sm" /><span>{MATCH_UNAVAILABLE}</span><span className="ay-pdp-why__go">See why</span></button></li>}
             {matchPercent != null && <li><button type="button" className="ay-pdp-why__row is-match" onClick={openWhyMatch} aria-label={`${matchText(matchPercent)}${headLine ? `. ${headLine}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span>{headLine || 'Why ayna picked this for you'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
+            {isBleedingEvaluation(matchDetails) && quizAnswers && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={openWhyMatch}><span>{BLEEDING_EVALUATION}</span><span className="ay-pdp-why__go">See why</span></button></li>}
             {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={openWhyMatch}><span>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
             {matchDetails.matchStatus === 'no-profile' && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={onStartQuiz}><span>See how it fits you</span><span className="ay-pdp-why__go">Get matched</span></button></li>}
           </ul>

@@ -1,7 +1,7 @@
 // Ask about this product (founder, Oct 24): one heading, three starters that
 // fit her, one box, and a conversation anchored to the product. Shared by the
 // app and website product pages.
-import { matchText, isSafetyHold, SAFETY_HOLD, MATCH_UNAVAILABLE } from './matchDisplay.js';
+import { matchText, isSafetyHold, isBleedingEvaluation, SAFETY_HOLD, MATCH_UNAVAILABLE } from './matchDisplay.js';
 import { whyLine } from './whyLine.js';
 
 export const PRODUCT_ASK_TITLE = 'Ask about this product';
@@ -24,6 +24,7 @@ export function productAskStarters({ hasProfile = false } = {}) {
 export function productMatchContext(product, details) {
   if (!details || details.matchStatus === 'no-profile') return '';
   if (isSafetyHold(details)) return `${SAFETY_HOLD}, ${MATCH_UNAVAILABLE.toLowerCase()}. ${details.safetyHold?.reason || ''}`.trim();
+  if (isBleedingEvaluation(details)) return `No match: ${details.bleedingEvaluation?.text || ''}`.trim();
   if (details.matchStatus === 'excluded' || details.eligible === false) return 'Not in her matches.';
   if (details.matchStatus !== 'scored' || !(details.percent > 0)) return 'No clear match to her needs.';
   const why = whyLine(product, details);

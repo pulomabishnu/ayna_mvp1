@@ -4,7 +4,7 @@ import { useResearchState } from '../data/researchLoader';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
-import { exclusionLines, matchText, isSafetyHold } from '../utils/matchDisplay.js';
+import { exclusionLines, matchText, isSafetyHold, isBleedingEvaluation, BLEEDING_EVALUATION } from '../utils/matchDisplay.js';
 import { whyLine } from '../utils/whyLine';
 import '../styles/match-ui.css';
 import { getAynaRating, getAynaRatingCount } from '../data/aynaReviews';
@@ -472,7 +472,8 @@ export default function ProductModal({
     [product, quizResults, healthProfile, matchOpts, settled]
   );
   // No profile, no %: a stored number on the product is not a fit to her.
-  const heldForSafety = useMemo(() => Boolean(quizResults && settled && isSafetyHold(getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts))), [product, quizResults, healthProfile, matchOpts, settled]);
+  // Bleeding after menopause shows the prompt-evaluation message, never a number either.
+  const heldForSafety = useMemo(() => { if (!quizResults || !settled) return false; const d = getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts); return isSafetyHold(d) || isBleedingEvaluation(d); }, [product, quizResults, healthProfile, matchOpts, settled]);
   // A safety hold shows no number at all, not even a stored one (founder, Oct 24).
   const matchPercent = quizResults && !heldForSafety ? (profileMatchPercent ?? explicitMatchPercent) : null;
   // The engine's per-need view feeds the one-line "what it matches" and the
@@ -542,7 +543,9 @@ export default function ProductModal({
     }
     if (more.length < 4) {
       const have = new Set([...used, ...more.map((p) => p.id)]);
-      more = [...more, ...sameNeed.filter((p) => !have.has(p.id)).slice(0, 4 - more.length)];
+      // Bleeding after menopause: no period or bleeding product is suggested, even unscored.
+      const forBleeding = (p) => quizResults && isBleedingEvaluation(getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts));
+      more = [...more, ...sameNeed.filter((p) => !have.has(p.id) && !forBleeding(p)).slice(0, 4 - more.length)];
     }
     return { compare, more, personal: Boolean(quizResults) && more.some((p) => p._match) };
   }, [product, ecosystemProducts, quizResults, healthProfile, matchOpts, settled]);
@@ -875,7 +878,7 @@ export default function ProductModal({
     const rows = [];
     const why = whyLine(product, matchDetails) || headMatchLine;
     if (matchPercent > 0) rows.push(<li key="why"><button type="button" className="ayp-why__row" onClick={() => setShowWhy(true)} aria-label={`${matchText(matchPercent)}${why ? `. ${why}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span className="ayp-why__main">{why || 'Why ayna picked this for you'}</span><span className="ayp-why__go">See why</span></button></li>);
-    if (settled && !(matchPercent > 0) && quizResults) rows.push(<li key="fit"><button type="button" className="ayp-why__row" onClick={() => setShowWhy(true)}><span className="ayp-why__main">{matchExclusions[0] || 'No clear match for what you told us'}</span><span className="ayp-why__go">See why</span></button></li>);
+    if (settled && !(matchPercent > 0) && quizResults) rows.push(<li key="fit"><button type="button" className="ayp-why__row" onClick={() => setShowWhy(true)}><span className="ayp-why__main">{isBleedingEvaluation(matchDetails) ? BLEEDING_EVALUATION : matchExclusions[0] || 'No clear match for what you told us'}</span><span className="ayp-why__go">See why</span></button></li>);
     if (!quizResults && !user && onStartQuiz) rows.push(<li key="fit"><button type="button" className="ayp-why__row" onClick={onStartQuiz}><span className="ayp-why__main">How well does this fit you?</span><span className="ayp-why__go">See my matches</span></button></li>);
     if (!rows.length && !settled && (quizResults || healthProfile)) return <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" />;
     return rows.length ? <ul className="ayp-why" aria-label="Your match">{rows}</ul> : null;
@@ -885,7 +888,7 @@ export default function ProductModal({
     ? <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" />
     : (
       <div className="ayp-fit">
-        <ProductMatch glance={glance} matchPercent={matchPercent} why={whyLine(product, matchDetails)} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} hold={matchDetails?.safetyHold || null} onFixHold={onFixSafety} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />
+        <ProductMatch glance={glance} matchPercent={matchPercent} why={whyLine(product, matchDetails)} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} hold={matchDetails?.safetyHold || null} evaluation={matchDetails?.bleedingEvaluation || null} onFixHold={onFixSafety} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />
         {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && <p className="ayp-fit__note">In your routine</p>}
       </div>
     );

@@ -22,7 +22,7 @@ import {
   LIFE_STAGE_ID_BY_OPTION, LIFE_STAGE_COMPATIBILITY, ageBandFor, UNUSUAL_AGE_FOR_STAGE, FORMAT_ID_BY_OPTION, LEAVE_OUT_BY_OPTION,
   VALUE_ID_BY_OPTION, ALLERGEN_BY_OPTION, ALLERGEN_BY_ID, PCOS_REINFORCING_NEEDS, URINARY_UTI_NEEDS, MENSTRUAL_PRODUCT_NEEDS, POSTPARTUM_NEEDS,
   normalizeText, LEGACY_FRUSTRATION_NEEDS, LEGACY_CONCERN_NEEDS, LEGACY_SYMPTOM_NEEDS, LEGACY_PREFERENCE, LEGACY_SENSITIVITY_ALLERGEN,
-  CONTEXTS, LIFE_STAGE_BY_ID, needKind,
+  CONTEXTS, LIFE_STAGE_BY_ID, needKind, bleedingAfterMenopause, isBleedingAfterMenopauseNeed,
 } from './ontology.js';
 import { normalizeMedication } from './medications.js';
 import { extractFreeText, summarizeFreeText } from './freeText.js';
@@ -727,8 +727,8 @@ export function buildUserProfile(intakeInput, options = {}) {
   const urgent = intake.safetyConcern === 'Yes' ? 'yes' : intake.safetyConcern === 'Not sure' ? 'not_sure' : intake.safetyConcern === 'No' ? 'no' : null;
 
   // ── Contradictions between explicit answers (spec B) ─────────────────
-  const periodNeeds = needs.filter((n) => MENSTRUAL_PRODUCT_NEEDS.has(n.id) || n.id === 'pain.menstrual_cramp').map((n) => n.id);
-  if (periodNeeds.length && ['menopause', 'postmenopause'].some((st) => lifeStages.includes(st))) {
+  const periodNeeds = needs.filter((n) => isBleedingAfterMenopauseNeed(n.id)).map((n) => n.id);
+  if (bleedingAfterMenopause(lifeStages, periodNeeds)) {
     // Founder, Oct 24: bleeding or spotting after menopause gets a prompt-evaluation
     // message and no products for it (src/matching/eligibility.js postmenopausalBleedingBlock).
     contradictions.push({ code: 'period_need_vs_stage', affects: periodNeeds, prominent: true, source: { label: 'MedlinePlus: Vaginal or uterine bleeding', url: 'https://medlineplus.gov/ency/article/007496.htm' }, text: 'You chose period or bleeding support and also menopause or post-menopause. Bleeding or spotting 12 months or more after your last period should be checked promptly by an ob-gyn or your clinician. ayna does not suggest products for it.' });

@@ -339,6 +339,21 @@ export const URINARY_UTI_NEEDS = new Set(['urinary.burning', 'urinary.frequency'
 // Needs whose products are menstrual products, where flow characteristics apply.
 export const MENSTRUAL_PRODUCT_NEEDS = new Set(['period.product_support', 'period.heavy', 'period.light', 'cycle.spotting']);
 
+// Bleeding after menopause (founder, Oct 24): ONE predicate, read by the
+// profile warning (userProfile.js period_need_vs_stage) and by the product
+// gate (eligibility.js postmenopausalBleedingBlock), so whenever the warning
+// shows, period / bleeding products get no match. A flow answer ("Heavy")
+// never overrides the stage: bleeding 12+ months after the last period is
+// the very thing to get checked. Perimenopause is not in this set.
+export const AFTER_MENOPAUSE_STAGES = new Set(['menopause', 'postmenopause']);
+export const isAfterMenopauseStage = (lifeStages) => (lifeStages || []).some((st) => AFTER_MENOPAUSE_STAGES.has(st));
+// Needs whose pick, with an after-menopause stage, means bleeding after menopause.
+export const isBleedingAfterMenopauseNeed = (needId) => MENSTRUAL_PRODUCT_NEEDS.has(needId) || needId === 'pain.menstrual_cramp';
+/** True when this profile gets the prompt-evaluation message (and no products for that bleeding). */
+export function bleedingAfterMenopause(lifeStages, needIds) {
+  return isAfterMenopauseStage(lifeStages) && [...(needIds || [])].some(isBleedingAfterMenopauseNeed);
+}
+
 // Needs whose meaning presumes a menstrual cycle (periods, the cycle itself,
 // ovulation and conception). Selecting one is how someone who does not
 // currently menstruate still asks for period or cycle products on purpose.

@@ -11,6 +11,7 @@ const openSection = (id) => { try { window.dispatchEvent(new CustomEvent('ay-ope
 const jumpOpen = (id, domId) => { openSection(id); setTimeout(() => jumpTo(domId), 30); };
 import './ProductSections.css';
 import SafetyHoldNote from '../match/SafetyHoldNote.jsx';
+import BleedingEvaluationNote from '../match/BleedingEvaluationNote.jsx';
 import { productAskStarters, PRODUCT_ASK_TITLE, PRODUCT_ASK_PLACEHOLDER } from '../../utils/productAsk.js';
 
 /**
@@ -530,8 +531,16 @@ function MatchSeal({ children }) {
   );
 }
 
-export function ProductMatch({ glance, matchPercent, why = '', fallback = '', onShowWhy, onFindFit = null, hasProfile = false, exclusions = [], health = null, hold = null, onFixHold = null }) {
+export function ProductMatch({ glance, matchPercent, why = '', fallback = '', onShowWhy, onFindFit = null, hasProfile = false, exclusions = [], health = null, hold = null, onFixHold = null, evaluation = null }) {
   if (!glance) return null;
+  // Bleeding after menopause: the prompt-evaluation message, no match (founder, Oct 24).
+  if (evaluation && hasProfile) {
+    return (
+      <section className="ay-story ay-story--match is-none" aria-label="Your match">
+        <BleedingEvaluationNote note={evaluation} />
+      </section>
+    );
+  }
   // Held back for safety: no number, the reason and what resolves it (founder, Oct 24).
   if (hold && hasProfile) {
     return (

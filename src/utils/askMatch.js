@@ -103,6 +103,11 @@ export function answerMatchQuestion(text, ctx) {
     return { productId: String(product.id), followUps: open, answer: [`**${name}**: ${SAFETY_HOLD} · ${MATCH_UNAVAILABLE}.`, hold?.kind === 'product' ? SAFETY_HOLD_PRODUCT_LINE : SAFETY_HOLD_LINE, hold?.reason || '', hold?.fix?.label ? (hold.fix.step ? `To resolve it: ${hold.fix.label.replace(/^Answer: /, 'answer “')}${hold.fix.label.startsWith('Answer: ') ? '” in your profile.' : ''}` : hold.fix.label) : ''].filter(Boolean).join('\n\n') };
   }
 
+  if (details?.matchStatus === 'bleeding-evaluation') {
+    // Bleeding after menopause (founder, Oct 24): the prompt-evaluation message, no match.
+    return { productId: String(product.id), followUps: open, answer: [`**${name}** has no match for you.`, details.bleedingEvaluation?.text || ''].filter(Boolean).join('\n\n') };
+  }
+
   const percent = details?.percent;
   if (!Number.isFinite(percent) || percent <= 0 || details?.matchStatus !== 'scored') {
     return { productId: String(product.id), followUps: open, answer: `**${name}** doesn’t match any of the needs you’ve told ayna about, so there’s no match to show.` };

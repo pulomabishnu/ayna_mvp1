@@ -2,7 +2,8 @@ import { createPortal } from 'react-dom';
 import MatchFeedback from './today/MatchFeedback.jsx';
 import { useEffect } from 'react';
 import { getProductMatchDetailsForProduct } from '../data/products.js';
-import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE, shownMatchPercent, PARTIAL_FIT } from '../utils/matchDisplay';
+import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE, shownMatchPercent, PARTIAL_FIT, isBleedingEvaluation } from '../utils/matchDisplay';
+import BleedingEvaluationNote from './match/BleedingEvaluationNote.jsx';
 import '../styles/match-ui.css';
 import HealthWhyLine from './health/HealthWhyLine.jsx';
 import { whyLine } from '../utils/whyLine';
@@ -52,7 +53,7 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
         </div>
       </section> : excluded ? <section className="ay-why-excluded">
         {exclusions.length > 0 ? exclusions.map((line) => <p key={line}>{tidy(line)}</p>) : <p>This product does not fit your current health profile.</p>}
-      </section> : <p className="ay-why-intro">{matchStatus === 'no-profile' ? 'Take the quiz to see how this product relates to your answers.' : 'We couldn’t match this product to your answers, so we leave the score blank instead of guessing.'}</p>}
+      </section> : isBleedingEvaluation(details) ? <BleedingEvaluationNote note={details.bleedingEvaluation} /> : <p className="ay-why-intro">{matchStatus === 'no-profile' ? 'Take the quiz to see how this product relates to your answers.' : 'We couldn’t match this product to your answers, so we leave the score blank instead of guessing.'}</p>}
       {!excluded && why.considerations.length > 0 && <section className="ay-why-cautions is-first"><h3>Before you choose</h3>{why.considerations.map((n, i) => <p key={i}>{tidy(n.text)}</p>)}</section>}
       {hasScore && why.restricted && <section className="ay-why-restricted">
         <h3>Safety not checked yet</h3>

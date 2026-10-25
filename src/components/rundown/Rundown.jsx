@@ -8,6 +8,7 @@ import { setTodayAskContext } from '../../utils/askToday.js';
 import { getAskHealthPref } from '../../health/askHealthPref.js';
 import { getProductMatchDetailsForProduct, getSelectedNeeds, useCatalogReady } from '../../data/catalog.js';
 import { whyLine } from '../../utils/whyLine.js';
+import { isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { evidenceLevel } from '../pdp/evidenceLevel.js';
 import { addDays } from '../../health/dailyLog.js';
 import { trackToday } from '../../health/todayAnalytics.js';
@@ -73,6 +74,15 @@ export default function Rundown({
     }).filter(Boolean);
   }, [products, intake, catalogReady, t.tries, saved, healthProfile, matchOpts]);
 
+  // Bleeding after menopause: a saved period or bleeding product is not
+  // brought back on the Saved card (founder, Oct 24: no products for it).
+  const savedForRundown = useMemo(() => {
+    if (!intake || !catalogReady) return saved;
+    return (saved || []).filter((product) => {
+      try { return !isBleedingEvaluation(getProductMatchDetailsForProduct(product, intake, healthProfile, matchOpts)); } catch { return true; }
+    });
+  }, [saved, intake, catalogReady, healthProfile, matchOpts]);
+
   // Her goals in her own words, for the match card's title ("A match for your hot flashes goal").
   const needLabels = useMemo(() => {
     if (!intake || !catalogReady) return {};
@@ -80,9 +90,9 @@ export default function Rundown({
   }, [intake, catalogReady]);
   const daily = useMemo(() => buildRundown({
     today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries, healthRows: t.healthRows,
-    matches, saved, reads: Boolean(onOpenRead), community, memory, hasProfile: Boolean(intake), needLabels,
+    matches, saved: savedForRundown, reads: Boolean(onOpenRead), community, memory, hasProfile: Boolean(intake), needLabels,
     hormonalBC: Boolean(t.hormonalBC), postCycle: Boolean(t.postCycle), pregnant: Boolean(t.pregnant),
-  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, saved, onOpenRead, community, memory, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
+  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, savedForRundown, onOpenRead, community, memory, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
   const weekly = useMemo(() => buildWeeklyRecap({ today, log: t.log, tries: t.tries, patterns: t.patterns, saved }), [today, t.log, t.tries, t.patterns, saved]);
   const cards = open === 'weekly' ? weekly.cards : daily.cards;
 
