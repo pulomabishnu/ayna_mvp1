@@ -336,7 +336,7 @@ html body .app-container.app-container.app-container .ayp-gallery__stamp .ayp-ga
 .ayq-badges { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .ayq-badges > li { display: grid; place-content: center; justify-items: center; gap: 2px; width: 84px; height: 84px; padding: 8px; border-radius: 50%; border: 1.5px solid #3e2723; background: #ffedac; color: #3e2723; text-align: center; box-sizing: border-box; }
 .ayq-badges > li:nth-child(2) { background: #f7badd; }
-.ayq-badges > li:nth-child(3) { background: #cfdeea; }
+.ayq-badges > li:nth-child(3) { background: #769ebe; }
 .ayq-badges span { font: 600 12.5px/1.15 var(--ay-sans-stack, 'Figtree', sans-serif); }
 .ayq-badges small { font: 500 10.5px/1.1 var(--ay-sans-stack, 'Figtree', sans-serif); opacity: .8; }
 html body .app-container .ayq-badges.is-web { margin-top: 14px; }
@@ -554,3 +554,5 @@ html body .app-container.app-container.app-container .ayq.ayq.ayq .ay-gloss.ay-g
   .ayq.ayq .ayq-tiles > li:last-child:nth-child(odd) { grid-column: auto; }
   .ayq.ayq .ayq-tiles__label { padding: 0; border: 0; }
 }
+/* Oct 25: the round stickers keep espresso ink on their light fills in dark mode (they read as blank discs before). */
+html body .app-container[data-theme='brand-dark'] :is(#pdp-v4, #ay-x) .ayq-badges > li, html body .app-container[data-theme='brand-dark'] :is(#pdp-v4, #ay-x) .ayq-badges > li :is(span, small) { color: #3e2723 !important; }

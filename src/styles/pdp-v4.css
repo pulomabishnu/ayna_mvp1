@@ -15,12 +15,12 @@
 #pdp-v4 {
   --v-fg: #3e2723; --v-fg-rgb: 62, 39, 35;
   --v-bg: #ffedac;
-  --v-panel: #fff6cf;
-  --v-butter: #fffaeb;         /* butter cards sit on a butter page in light mode, so they turn cream */
+  --v-panel: #f6e3a1;
+  --v-butter: #f6e3a1;         /* butter cards on the butter page use the butter tint (founder: no cream) */
   --v-pink: #f7badd; --v-sky: #769ebe;
-  --v-accent-text: #a8487a;    /* deep rose: pink kickers would not read on yellow */
-  --v-next-bg: #fffaeb; --v-next-fg: #3e2723;
-  --v-num: #fffaeb;
+  --v-accent-text: #3e2723;    /* espresso: palette only (deep rose was off-palette); pink kickers would not read on yellow */
+  --v-next-bg: #f6e3a1; --v-next-fg: #3e2723;
+  --v-num: #f6e3a1;
   --v-btn-bg: #3e2723; --v-btn-fg: #ffedac;
   --v-ink: #3e2723; --v-deep: #2a1a19;
   color: var(--v-fg);

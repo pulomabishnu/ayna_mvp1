@@ -249,3 +249,25 @@ html body #pdp-v4 .ay-buy__warn .ayp-textlink, html body #pdp-v4 .ayp-buy__fine 
 .ayna-mobile .ay-pdp .ay-pdp-safetyflag button { min-height: 44px; }
 /* Stars: filled and empty differ by shape, not only by a faint colour (team direction 64). */
 html body #pdp-v4 .ayp-stars span { color: var(--pt-ink) !important; }
+
+/* =====================================================================
+   Oct 25 design pass: the four tabs as folder tabs that stand on the
+   panel's top rule (INSPO 1bed1ebe / ab7c8179 Bordeaux folder tabs;
+   spacing rule 9: tabs sit ON the edge). The open tab is pink and joins
+   the rule; the others are outlined tabs. The in-tab jump row is quiet
+   underlined links, so there is one row of tabs, not two rows of pills.
+   ===================================================================== */
+.ayq--tabs .ayq-st { padding-bottom: 0 !important; border-bottom: 1.5px solid var(--pt-ink); }
+.ayq--tabs .ayq-st__list { align-items: end; gap: 4px !important; }
+.ayq--tabs .ayq-st__tab { margin-bottom: -1.5px; border-radius: 14px 14px 0 0 !important; border-bottom-color: transparent; box-shadow: none !important; }
+.ayq--tabs .ayq-st__tab.is-on { min-height: 56px; border-color: var(--pt-ink); border-bottom-color: var(--pt-on); font-weight: 700; box-shadow: none !important; }
+[data-theme='brand-dark'] .ayq--tabs .ayq-st__tab.is-on { border-color: #ffedac; border-bottom-color: var(--pt-on); }
+.ayq--tabs .ayq-st__tab:not(.is-on):hover { background: rgba(var(--v-fg-rgb, 62, 39, 35), .06); }
+@media (min-width: 768px) {
+  .ayq--tabs .ayq-st__list { flex-wrap: nowrap !important; }
+  .ayq--tabs .ayq-st__tab { min-height: 48px; padding: 0 24px !important; border-radius: 16px 16px 0 0 !important; }
+  .ayq--tabs .ayq-st__tab.is-on { min-height: 56px; }
+}
+.ayq--tabs .ayq-sum__jump { gap: 4px 20px; }
+.ayq--tabs .ayq-sum__jump button { min-height: 44px; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+.ayq--tabs .ayq-sum__jump button.is-alert { background: none !important; text-decoration-color: #f7badd; text-decoration-thickness: 3px; }
