@@ -5,7 +5,7 @@
  * "Not on file", and nothing here makes up ratings, stock or shipping.
  */
 import { ALL_PRODUCTS, HEALTH_FUNCTIONS } from '../../data/products.js';
-import { matchText } from '../../utils/matchDisplay.js';
+import { matchText, isSafetyHold, SAFETY_HOLD, MATCH_UNAVAILABLE, SAFETY_HOLD_LINE } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { PRODUCT_IMAGE_OVERRIDES, productImageOverride } from '../../data/productImageOverrides.js';
 import { getPassport } from '../../data/passport/index.js';
@@ -237,9 +237,10 @@ export function compareRows(products, { matchFor = null, detailsFor = null } = {
     } },
     { label: 'FSA/HSA', get: (p) => { if (['pad', 'tampon', 'cup', 'disc'].includes(p?.category)) return 'Eligible'; const f = getPassport(p)?.pricing?.fsa_hsa; return f?.known ? (f.value === 'eligible' ? 'Eligible' : 'Not eligible') : NOT_ON_FILE; } },
     // Same rule as the cards: under 50 no number, just "Partial fit".
-    matchFor ? { label: 'Your match', get: (p) => { const m = matchFor(p); return Number.isFinite(m) && m > 0 ? matchText(m) : 'No clear match'; } } : null,
+    // A safety hold never shows a number: its reason and what resolves it instead.
+    matchFor ? { label: 'Your match', get: (p) => { const d = detailsFor ? detailsFor(p) : null; if (isSafetyHold(d)) return `${SAFETY_HOLD}. ${MATCH_UNAVAILABLE}. ${d.safetyHold?.reason || SAFETY_HOLD_LINE} ${d.safetyHold?.fix?.label || ''}`.trim(); const m = matchFor(p); return Number.isFinite(m) && m > 0 ? matchText(m) : 'No clear match'; } } : null,
     // Plain reasons behind the %, from the engine (src/utils/whyLine.js).
-    detailsFor ? { label: 'Why it fits you', get: (p) => whyLine(p, detailsFor(p), { max: 2 }) || 'Not one of your needs' } : null,
+    detailsFor ? { label: 'Why it fits you', get: (p) => (isSafetyHold(detailsFor(p)) ? MATCH_UNAVAILABLE : whyLine(p, detailsFor(p), { max: 2 }) || 'Not one of your needs') } : null,
     detailsFor ? { label: 'Fits your budget', get: (p) => reasonFlag(detailsFor(p), /^Within your budget$/i, /^Above your usual budget$/i) } : null,
     detailsFor ? { label: 'Format you prefer', get: (p) => reasonFlag(detailsFor(p), /^In a format you prefer$/i) } : null,
   ].filter(Boolean);

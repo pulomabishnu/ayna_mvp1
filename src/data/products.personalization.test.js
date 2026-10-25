@@ -100,14 +100,15 @@ describe('personalized relevance scoring', () => {
         expect(vitex).toBeTruthy();
         expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['Cramps or period pain'] } })).toBe(0);
         expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PCOS support'] } })).toBe(0);
-        const pmsMatch = getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'] } });
+        // Medicines answered, so the supplement is scored rather than on a safety hold.
+        const pmsMatch = getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } });
         expect(pmsMatch).toBeGreaterThan(0);
         // v2: research grade B for PMS (NCCIH: low-to-moderate quality trials) and
         // a secondary relevance (an unreviewed research row can't lift it), so
         // never a Strong match. v1 held it under 60 for "limited" evidence.
         expect(pmsMatch).toBeLessThan(75);
-        expect(getProductMatchDetailsForProduct(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'] } }).v2.grade).toBe('B');
-        expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'] } }, null, { engine: 'v1' })).toBeLessThan(60);
+        expect(getProductMatchDetailsForProduct(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } }).v2.grade).toBe('B');
+        expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } }, null, { engine: 'v1' })).toBeLessThan(60);
     });
 
     it('does not match evening primrose oil to PCOS, cramps, or bloating', () => {
@@ -129,7 +130,7 @@ describe('personalized relevance scoring', () => {
     });
 
     it('keeps preliminary PCOS supplements below a strong-match claim', () => {
-        const pcosOnly = { fullHealthIntake: { supportSelections: ['PCOS support'], diagnosisSelections: ['PCOS'] } };
+        const pcosOnly = { fullHealthIntake: { supportSelections: ['PCOS support'], diagnosisSelections: ['PCOS'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } };
         for (const id of ['p-inositol-wholesome', 'p-spearmint-pcos']) {
             const product = ALL_PRODUCTS.find((entry) => entry.id === id);
             const match = getProductMatchDetailsForProduct(product, pcosOnly);
@@ -177,7 +178,9 @@ describe('personalized relevance scoring', () => {
     it('returns a 0–100 number for every catalog product after meaningful intake', () => {
         const quiz = { fullHealthIntake: { supportSelections: ['Cramps or period pain', 'PCOS symptoms'], lifeStageSelections: ['I get periods regularly'], age: 27, priceRange: ['Under $25'] } };
         ALL_PRODUCTS.forEach((product) => {
-            const { percent } = getProductMatchDetailsForProduct(product, quiz);
+            const { percent, matchStatus } = getProductMatchDetailsForProduct(product, quiz);
+            // A safety hold shows no number at all (founder, Oct 24).
+            if (matchStatus === 'safety-hold') { expect(percent).toBeNull(); return; }
             expect(Number.isInteger(percent)).toBe(true);
             expect(percent).toBeGreaterThanOrEqual(0);
             expect(percent).toBeLessThanOrEqual(100);
@@ -227,7 +230,7 @@ describe('personalized relevance scoring', () => {
 
     it('restores health tags for older saved Ecosystem products before scoring them', () => {
         const savedProduct = { id: 'p-spearmint-pcos', name: 'Traditional Medicinals Organic Spearmint Tea', category: 'supplement' };
-        const quiz = { fullHealthIntake: { supportSelections: ['PCOS support'], age: 27 } };
+        const quiz = { fullHealthIntake: { supportSelections: ['PCOS support'], age: 27, takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } };
         expect(savedProduct.tags).toBeUndefined();
         expect(hydrateCatalogProduct(savedProduct).tags).toContain('pcos');
         expect(getProductRelevanceScore(savedProduct, quiz)).toBeGreaterThan(0);
@@ -257,7 +260,7 @@ describe('personalized relevance scoring', () => {
         const unrelated = getProductMatchDetailsForProduct(iron, { fullHealthIntake: { supportSelections: ['PCOS support', 'Cramps or period pain', 'Fatigue or low energy'] } });
         expect(unrelated.percent).toBe(0);
         expect(unrelated.matchStatus).toBe('excluded');
-        const diagnosed = getProductMatchDetailsForProduct(iron, { fullHealthIntake: { supportSelections: ['Fatigue or low energy'], diagnosisSelections: ['Anemia or iron deficiency'] } });
+        const diagnosed = getProductMatchDetailsForProduct(iron, { fullHealthIntake: { supportSelections: ['Fatigue or low energy'], diagnosisSelections: ['Anemia or iron deficiency'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } });
         expect(diagnosed.percent).toBeGreaterThan(0);
     });
 
@@ -433,18 +436,22 @@ describe('ASK2 adapters', () => {
         expect(getProductMatchDetailsForProduct(heat, quiz).needId).toBe('pain.menstrual_cramp');
     });
 
-    it('a restricted product keeps its percent but is never recommended', () => {
+    it('a product on a safety hold shows no percent (never 0%), says why and how to resolve it, and is never recommended', () => {
         const quiz = { fullHealthIntake: { supportSelections: ['Cramps or period pain'] } };
         const mag = byId('p-magnesium-glycinate');
         const d = getProductMatchDetailsForProduct(mag, quiz);
         expect(d.eligibility).toBe('restricted');
-        expect(d.percent).toBeGreaterThan(0);
+        expect(d.matchStatus).toBe('safety-hold');
+        expect(d.percent).toBeNull();
+        expect(getProductRelevanceScore(mag, quiz)).toBe(0);
+        expect(d.safetyHold.reason).toMatch(/medicines/);
+        expect(d.safetyHold.fix.step).toBe('medications');
         expect(d.missingSafetyText.join(' ')).toMatch(/medicines/);
         expect(d.considerations[0].text).toMatch(/Safety not checked yet/);
         expect(getPersonalizedProductIds(quiz)).not.toContain('p-magnesium-glycinate');
-        const answered = { fullHealthIntake: { supportSelections: ['Cramps or period pain'], takesCurrent: 'No' } };
+        const answered = { fullHealthIntake: { supportSelections: ['Cramps or period pain'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } };
         expect(getProductMatchDetailsForProduct(mag, answered).eligibility).toBe('eligible');
-        expect(getProductMatchDetailsForProduct(mag, answered).percent).toBe(d.percent);
+        expect(getProductMatchDetailsForProduct(mag, answered).percent).toBeGreaterThan(0);
     });
 
     it('details list the actual inputs used and a soft hint when confidence is limited', () => {

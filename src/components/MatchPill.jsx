@@ -1,13 +1,20 @@
 import React from 'react';
 import './MatchPill.css';
-import { shownMatchPercent, matchText, PARTIAL_FIT } from '../utils/matchDisplay.js';
+import { shownMatchPercent, matchText, PARTIAL_FIT, SAFETY_HOLD, MATCH_UNAVAILABLE } from '../utils/matchDisplay.js';
 
 /**
  * The one way a profile match is shown (founder's pick): an ink pill,
  * bold "88%" + lighter "match". No ring, no underline, no tooltip.
  * With onClick it is a button that opens the Why view.
  */
-export default function MatchPill({ percent, onClick, size = 'md', label, className = '' }) {
+export default function MatchPill({ percent, onClick, size = 'md', label, className = '', hold = false }) {
+  // Held back for safety: "Safety hold", never a number (not even 0%).
+  if (hold) {
+    const holdCls = `ay-match-pill is-${size} is-hold ${className}`.trim();
+    const body = <span>{SAFETY_HOLD}</span>;
+    const named = label || `${SAFETY_HOLD}. ${MATCH_UNAVAILABLE}`;
+    return onClick ? <button type="button" className={holdCls} aria-label={`${named}. See why`} onClick={onClick}>{body}</button> : <span className={holdCls} aria-label={named}>{body}</span>;
+  }
   if (!Number.isFinite(percent) || percent <= 0) return null;
   // Under 50: no number, just "Partial fit" (src/utils/matchDisplay.js, one rule everywhere).
   const pct = shownMatchPercent(percent);

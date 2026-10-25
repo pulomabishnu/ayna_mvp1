@@ -3112,6 +3112,7 @@ function App() {
             // product's state over.
             <ProductModal
               onStartQuiz={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
+              onFixSafety={(step) => { setEditAtStep(step || ''); setCurrentView(quizResults ? 'profile-edit' : 'quiz'); }}
               key={displayedProduct.id}
               product={displayedProduct}
               isTracked={!!trackedProducts[displayedProduct.id]}

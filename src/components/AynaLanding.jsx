@@ -561,9 +561,9 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
     let live = true;
     const supabase = getSupabaseClient();
     if (!supabase) return undefined;
-    // The two most helpful real posts (very short ones, like test posts, are skipped).
+    // About three curated public posts: the most helpful real ones (very short ones, like test posts, are skipped).
     communityStore.listFeedPosts(supabase, { limit: 12, sort: 'helpful' }).then((rows) => {
-      if (live) setPosts((rows || []).filter((r) => String(r.body || '').trim().length >= 20).slice(0, 2));
+      if (live) setPosts((rows || []).filter((r) => String(r.body || '').trim().length >= 20).slice(0, 3));
     }).catch(() => {});
     return () => { live = false; };
   }, []);
@@ -705,7 +705,7 @@ function FirstVisitLanding({ heroBanner = null, onStartQuiz, onViewCommunity, on
     const supabase = getSupabaseClient();
     if (!supabase) return undefined;
     communityStore.listFeedPosts(supabase, { limit: 12, sort: 'helpful' }).then((rows) => {
-      if (live) setPosts((rows || []).filter((r) => String(r.body || '').trim().length >= 20).slice(0, 2));
+      if (live) setPosts((rows || []).filter((r) => String(r.body || '').trim().length >= 20).slice(0, 3));
     }).catch(() => {});
     return () => { live = false; };
   }, []);

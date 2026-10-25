@@ -16,7 +16,8 @@ describe('match explanation truthfulness', () => {
     // Under 50: no number, just "Partial fit" (one rule with the cards).
     expect(html).toContain('Partial fit for heavy periods');
     expect(html).not.toContain('37%');
-    expect(html).toContain('Browse');
+    // Under 60 no fit label (founder, Oct 24: 80+ Strong fit, 60 to 79 Good fit).
+    expect(html).not.toContain('Browse');
     expect(html).toContain('Available online');
     expect(html).toContain('Relates to heavy periods');
     expect(html).toContain('Ingredient information is incomplete');

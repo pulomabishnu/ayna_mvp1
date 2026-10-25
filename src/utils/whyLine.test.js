@@ -58,7 +58,7 @@ describe('whyLine is never empty for a scored match', () => {
     expect(whyLine({}, d({ needMatches: [{ needId: 'cycle.pms', label: 'PMS symptoms' }], needId: 'cycle.pms', reasonDetails: [{ text: 'Something new from the engine' }], outputs: {} }))).toBe('For your PMS symptoms');
   });
   it('real engine: vitex for PMS (a Partial fit with a missing safety detail) gets a plain line', () => {
-    const q = { age: 24, lifeStageSelections: ['I get periods regularly'], supportSelections: ['PMS symptoms'] };
+    const q = { age: 24, lifeStageSelections: ['I get periods regularly'], supportSelections: ['PMS symptoms'], takesCurrent: 'No' };
     const p = getProductById('p-vitex');
     expect(whyLine(p, getProductMatchDetailsForProduct(p, q))).toBe('Another option for your PMS symptoms');
   });

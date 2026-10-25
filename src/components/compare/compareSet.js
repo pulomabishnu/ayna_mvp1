@@ -16,11 +16,11 @@
  */
 import { compareRows } from '../pdp/commerce.js';
 import { formatLabel, NOT_ON_FILE } from '../pdp/glance.js';
-import { evidenceLevel } from '../pdp/evidenceLevel.js';
+import { evidenceLevel, LEVEL_WORDS } from '../pdp/evidenceLevel.js';
 import { buildProductProfile } from '../../matching/productProfile.js';
 import { recallFacts } from '../../utils/productFacts.js';
 import { safetyAlertText } from '../../data/passport/content.js';
-import { matchText } from '../../utils/matchDisplay.js';
+import { matchText, isSafetyHold, SAFETY_HOLD, MATCH_UNAVAILABLE } from '../../utils/matchDisplay.js';
 import { whyFirstLine, whyLine } from '../../utils/whyLine.js';
 
 import { COMPARE_MAX, COMPARE_MIN } from '../../utils/compareStore.js';
@@ -132,9 +132,11 @@ export function compareSetRows(products = [], { matchFor = null, detailsFor = nu
         const d = detailsFor ? detailsFor(p) : null;
         const pct = matchFor ? matchFor(p) : d?.percent;
         if (d && (d.matchStatus === 'excluded' || d.eligible === false)) return 'Not a fit for you right now';
+        // Held back for safety: never a number (founder, Oct 24); the reason is in the note.
+        if (isSafetyHold(d)) return `${SAFETY_HOLD} · ${MATCH_UNAVAILABLE}`;
         return Number(pct) > 0 ? matchText(pct) : 'No clear match';
       }),
-      notes: list.map((p) => (detailsFor ? whyLine(p, detailsFor(p)) : '')),
+      notes: list.map((p) => { const d = detailsFor ? detailsFor(p) : null; if (isSafetyHold(d)) return [d.safetyHold?.reason, d.safetyHold?.fix?.label].filter(Boolean).join(' '); return d ? whyLine(p, d) : ''; }),
       keep: true,
     });
   }

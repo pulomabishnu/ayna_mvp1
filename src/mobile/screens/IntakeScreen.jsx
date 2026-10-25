@@ -20,6 +20,8 @@ import {
   CHECKPOINT_STEP,
   LIFE_STAGE_EXCLUSIVE,
   MEDICATION_STATUS,
+  SAFETY_ANSWER_LABELS,
+  CONDITION_EXCLUSIVE,
   URGENT_STATUS,
   firstUnansweredStepId,
   firstOptionalResumeStepId,
@@ -185,8 +187,8 @@ function ChoiceGrid({ items, selected = [], onToggle, icons, labels, glyphs }) {
 
 // Chip spec (design pattern C1/G1), flex-wrapped pills, not vertical rows.
 // Used both flat (conditions) and grouped under a label (SearchableGroups).
-function RowChoiceList({ items, selected = [], onToggle }) {
-  return <ChipList items={items} selected={selected} onToggle={onToggle} />;
+function RowChoiceList({ items, selected = [], onToggle, labels }) {
+  return <ChipList items={items} selected={selected} onToggle={onToggle} labels={labels} />;
 }
 
 // Shared search-bar chrome (design rule: "search on every list over ~12
@@ -210,7 +212,7 @@ function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd,
   return <div className="ip-picker">
     {searchable && <SearchBar value={search} onChange={onSearch} placeholder={placeholder} />}
     <AddCustomChoice query={search} options={[...items, ...selected]} onAdd={onAdd} />
-    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} labels={labels} glyphs={glyphs} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} /> : <p className="ip-empty">No matches</p>}
+    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} labels={labels} glyphs={glyphs} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} labels={labels} /> : <p className="ip-empty">No matches</p>}
     {custom.length > 0 && <div className="ip-custom"><small>Added by you</small><RowChoiceList items={custom} selected={selected} onToggle={onToggle} /></div>}
   </div>;
 }
@@ -227,8 +229,8 @@ function Pills({ options, selected, onToggle, compact, exclusiveValues = [] }) {
 // Vertical single-select radio list (design pattern F1), the workhorse
 // pattern for every Yes/No/Not-sure-style question, replacing the old
 // horizontal segmented-button bar.
-function Segmented({ options, value, onChange }) {
-  return <ChoiceRows options={options} value={value} onChange={onChange} />;
+function Segmented({ options, value, onChange, labels }) {
+  return <ChoiceRows options={options} value={value} onChange={onChange} labels={labels} />;
 }
 
 // Pattern K1: price bands as a vertical row list rather than chips, a
@@ -782,7 +784,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
     if (step.type === 'conditions') {
       return (
-        <SearchableChoices items={['None that I know of', 'Prefer not to say', ...CONDITIONS.filter((item) => !['None that I know of', 'Prefer not to say'].includes(item))]} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('diagnosisSelections', value, ['None that I know of', 'Prefer not to say'])} placeholder="Search conditions" />
+        <SearchableChoices items={[...CONDITION_EXCLUSIVE, ...CONDITIONS.filter((item) => !CONDITION_EXCLUSIVE.includes(item))]} labels={SAFETY_ANSWER_LABELS} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, CONDITION_EXCLUSIVE)} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('diagnosisSelections', value, CONDITION_EXCLUSIVE)} placeholder="Search conditions" />
       );
     }
 
@@ -790,13 +792,14 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       <>
         <Segmented
           options={ALLERGY_STATUS}
+          labels={SAFETY_ANSWER_LABELS}
           value={intake.allergyStatus}
           onChange={(value) => setIntake((prev) => ({ ...prev, allergyStatus: value, allergyItems: value === 'Yes' ? prev.allergyItems : [] }))}
         />
         {intake.allergyStatus === 'Yes' && (
           <div className="ip-gap">
             <TokenInput values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Allergy or sensitivity" suggestions={ALLERGIES} suggestionLimit={8} />
-            {intake.allergyItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick No.</p>}
+            {intake.allergyItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick None.</p>}
           </div>
         )}
       </>
@@ -804,11 +807,11 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
     if (step.type === 'medications') return (
       <>
-        <Segmented options={MEDICATION_STATUS} value={intake.takesCurrent} onChange={(value) => setIntake((prev) => ({ ...prev, takesCurrent: value, currentMedicationItems: value === 'Yes' ? prev.currentMedicationItems : [] }))} />
+        <Segmented options={MEDICATION_STATUS} labels={SAFETY_ANSWER_LABELS} value={intake.takesCurrent} onChange={(value) => setIntake((prev) => ({ ...prev, takesCurrent: value, currentMedicationItems: value === 'Yes' ? prev.currentMedicationItems : [] }))} />
         {intake.takesCurrent === 'Yes' && (
           <div className="ip-gap">
             <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medicine or supplement" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} />
-            {intake.currentMedicationItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick No.</p>}
+            {intake.currentMedicationItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick None.</p>}
           </div>
         )}
         <p className="ip-callout">Check with a clinician before starting anything new.</p>

@@ -20,7 +20,7 @@
 //
 // Nothing here reads partner, price or commission fields.
 import { CYCLE_TRACKING_RULES, buildProductProfile } from './productProfile.js';
-import { isCyclePremisedNeed } from './ontology.js';
+import { isCyclePremisedNeed, MENSTRUAL_PRODUCT_NEEDS } from './ontology.js';
 
 // ─── 1. Catalog recommendation eligibility ──────────────────────────────────
 // Accessories, refills and add-ons: useful next to the product they belong
@@ -113,6 +113,13 @@ export const CYCLE_CLAIM_RULES = new Set([
  * for a bleeding need she picked stay (handled in notMenstruatingBlock, with
  * a "worth raising with a clinician" note), as do care services and heat.
  */
+export function postmenopausalBleedingBlock(pp, up, needId) {
+  // Founder, Oct 24: bleeding or spotting 12+ months after the last period
+  // gets a prompt-evaluation message and NO products for that bleeding. Care
+  // services stay (they are the evaluation path); other needs are untouched.
+  return midlifeNoCycle(up) && MENSTRUAL_PRODUCT_NEEDS.has(needId) && !(pp?.is_digital || pp?.access?.is_care_service);
+}
+
 export function lifeStageNeedBlock(rel, up, needId) {
   if (!midlifeNoCycle(up) || !(rel?.base > 0)) return false;
   const rule = rel.contextUsed?.rule || rel.entry?.rule;

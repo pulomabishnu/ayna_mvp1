@@ -39,6 +39,7 @@ import RED_FLAGS from '../data/matching/redFlags.research.json';
 import { addDays, daysBetweenDays, normalizeEntry } from './dailyLog.js';
 import { OUTCOMES, OUTCOME_LABELS, tryStatus } from './outcomes.js';
 import { cycleStartsFrom, MIN_CYCLES, MIN_SHARE, PATTERN_METRICS } from './cyclePatterns.js';
+import { MENSTRUAL_PRODUCT_NEEDS } from '../matching/ontology.js';
 import {
   INTERVENTION_CLASSES, INTAKE_NEED_MAP, NEEDS, SOURCES,
   classesForNeed, evaluateClassSafety, isPregnant, isPostCycle, needLabelFor, productsForClass, safetyContextFrom,
@@ -433,11 +434,13 @@ function careCandidates({ state, ctx, logs, today, tries, window }) {
 
   // Bleeding after menopause: get it checked. MedlinePlus 007496: contact your provider if "You have bleeding or spotting
   // after reaching menopause".
-  if (ctx.menopause && bleeding.length) out.push(care({
+  // Also when she picked a bleeding need in setup while in menopause or post-menopause (founder, Oct 24).
+  const pickedBleeding = (state.profile?.healthIntent?.needs || []).some((n) => n?.explicit && MENSTRUAL_PRODUCT_NEEDS.has(n.id));
+  if (ctx.menopause && (bleeding.length || pickedBleeding)) out.push(care({
     id: 'care:postmenopausal_bleeding', type: 'care', level: 'prompt', priority: PRIORITY.prompt,
     title: 'Get bleeding after menopause checked',
-    body: 'MedlinePlus says to contact your provider about any bleeding or spotting after menopause.',
-    reason: 'You logged bleeding and said you are in menopause or post-menopause.',
+    body: 'Bleeding or spotting 12 months or more after your last period should be checked promptly by an ob-gyn or your clinician. MedlinePlus says to contact your provider about any bleeding or spotting after menopause. ayna does not suggest products for it.',
+    reason: bleeding.length ? 'You logged bleeding and said you are in menopause or post-menopause.' : 'In setup you chose period or bleeding support and also menopause or post-menopause.',
     actions: [{ id: 'get_care', label: 'Find care' }],
     basis: { kind: 'log', days: bleeding.map((l) => l.day), sources: [SOURCES.medlineVaginalBleeding] },
   }));
