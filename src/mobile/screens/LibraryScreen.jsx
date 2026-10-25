@@ -43,7 +43,7 @@ function FeaturedRead({ article, label, progress, onOpen }) {
   </section>;
 }
 
-export default function LibraryScreen({ articles = [], quizAnswers = null, lastQuizAnswers = null, readProgress = {}, onOpenArticle, onOpenSaved, onStartQuiz, embedded = false }) {
+export default function LibraryScreen({ articles = [], quizAnswers = null, lastQuizAnswers = null, readProgress = {}, onOpenArticle, onOpenSaved, onStartQuiz, embedded = false, onBack = null }) {
   const [query, setQuery] = useState('');
   const [topic, setTopic] = useState('all');
   const q = query.trim().toLowerCase();
@@ -86,7 +86,8 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   }
 
   return <main className="ay-lib al">
-    {!embedded && <MobileHeader onOpenSaved={onOpenSaved} title="Library" titleFor="ay-lib-title" />}
+    {/* In the app the Library is pushed from Explore: Back returns there. */}
+    {!embedded && <MobileHeader onOpenSaved={onOpenSaved} onBack={onBack} title="Library" titleFor="ay-lib-title" />}
     <header className="al-top ay-lib-head">
       {/* Inside Explore the Library is the Resources section; Explore owns the page title. */}
       {embedded ? <h2 id="ay-lib-title" className="al-top__title">Resources</h2> : <h1 id="ay-lib-title" className="al-top__title">Library</h1>}

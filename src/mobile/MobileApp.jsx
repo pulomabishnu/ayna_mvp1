@@ -56,6 +56,9 @@ import ProfileFlow, { AboutAynaScreen } from './screens/profile/ProfileFlow.jsx'
 
 import LandingScreen from './screens/LandingScreen.jsx';
 import AynaHomeScreen from './screens/AynaHomeScreen.jsx';
+import AynaHomeChatScreen from './screens/AynaHomeChatScreen.jsx';
+import { readHomeVariant } from './utils/homeVariant.js';
+import { APP_TABS, APP_TABS_CHAT_FIRST } from '../components/nav/mainTabs.js';
 import ExploreScreen from './screens/ExploreScreen.jsx';
 import LibraryScreen from './screens/LibraryScreen.jsx';
 import ProductSheet from './components/ProductSheet.jsx';
@@ -148,11 +151,14 @@ function displayNameFromUser(user) {
 
 const SCREENS = {
   landing: LandingScreen,
-  // App tabs (founder, Oct 24 20:12): Explore · Library · ayna (centre) ·
-  // Community · You. 'ayna' is the chat as home with a switch to Products and
-  // My dashboard; the old 'today' and 'ask' keys open it (navTab.js aynaRoute).
+  // App tabs (founder, Oct 24 22:03; team sync Oct 25): Explore · Library ·
+  // Home (centre) · Community · You. 'ayna' is Home: dashboard first on one
+  // screen, with the chat and Products one tap away; ?home=chat shows the
+  // chat-first Home for the focus group (AynaHomeChatScreen). The old 'today',
+  // 'ask' and 'ayna' keys open it (navTab.js aynaRoute).
   // Explore's Products section keeps the 'browse' key, so its $screen name
-  // (and the app dashboard) does not change; 'library' is its own tab now.
+  // (and the app dashboard) does not change. 'library' is a pushed screen
+  // under Explore (founder, Oct 24 22:12: no Library tab), with Back.
   ayna: AynaHomeScreen,
   explore: ExploreScreen,
   browse: ExploreScreen,
@@ -288,7 +294,11 @@ export default function MobileApp() {
   // move into their ecosystem once auth finishes restoring their session.
   // Returning on this phone (signed out too) with her profile or ecosystem
   // saved here, she lands on the ayna chat, never back on the first-run welcome.
+  // Dashboard-first Home by default; ?home=chat (or the dev flag) shows the chat-first one.
+  const [homeVariant] = useState(() => readHomeVariant());
+  const chatFirst = homeVariant === 'chat';
   const [initialRoute] = useState(() => initialAppRoute({
+    variant: homeVariant,
     devScreen: import.meta.env.DEV ? new URLSearchParams(window.location.search).get('screen') : null,
     pendingQuiz: Boolean(session.pendingQuiz),
     quizStep: session.pendingQuiz ? quizStepToResume() : null,
@@ -296,11 +306,13 @@ export default function MobileApp() {
     hasDraft: hasSavedIntakeDraft(),
   }));
   const [screen, setScreenRaw] = useState(initialRoute.screen);
-  // The ayna tab's view (founder, Oct 24 20:12): the chat is home every launch.
-  const [homeView, setHomeView] = useState(initialRoute.view || 'chat');
-  // Every way in still works: 'today' opens ayna on My dashboard, 'ask' on the chat.
+  // Home's view: 'home' (one-screen dashboard), 'dashboard', 'chat', 'products'
+  // (chat-first variant: 'chat', 'products', 'dashboard').
+  const homeRoot = chatFirst ? 'chat' : 'home';
+  const [homeView, setHomeView] = useState(initialRoute.view || homeRoot);
+  // Every way in still works: 'today' and 'ayna' open Home, 'ask' the chat.
   const setScreen = (next) => {
-    const r = aynaRoute(next);
+    const r = aynaRoute(next, homeVariant);
     if (r.view) setHomeView(r.view);
     setScreenRaw(r.screen);
   };
@@ -325,14 +337,14 @@ export default function MobileApp() {
   const overlayProductCategory = overlay?.type === 'product' ? overlay?.item?.category || null : null;
   // The ayna tab's views keep the old $screen names (Ask and Today), so the
   // "Mobile App (TestFlight)" dashboard keeps counting; Products is new.
-  const screenForAnalytics = screen === 'ayna' ? ({ chat: 'ask', dashboard: 'today', products: 'ayna_products' })[homeView] || 'ask' : screen;
+  const screenForAnalytics = screen === 'ayna' ? ({ home: 'today', chat: 'ask', dashboard: 'today', products: 'ayna_products' })[homeView] || 'today' : screen;
   useEffect(() => {
     const name = appScreenName(screenForAnalytics, overlayType);
     try { window.__aynaView = name; } catch { /* no window */ }
     // $screen_name keeps the old names where a screen moved (browse, library,
     // eco, profile), so the app dashboard keeps counting; nav_tab says which
     // of the five tabs it now sits under.
-    trackApp('$screen', { $screen_name: name, nav_tab: navTabFor(screen, overlayType) || 'none' });
+    trackApp('$screen', { $screen_name: name, nav_tab: navTabFor(screen, overlayType) || 'none', home_variant: homeVariant });
   }, [screenForAnalytics, screen, overlayType]);
   // recommendation_viewed: the products ayna matched to her needs (seeded with
   // a needId), on her Ecosystem screen, in shelf order.
@@ -352,14 +364,15 @@ export default function MobileApp() {
     if (restoringRef.current) { restoringRef.current = false; return; }
     const stack = navStackRef.current;
     const last = stack[stack.length - 1];
-    if (last && last.screen === screen && last.overlay === overlay) return;
-    stack.push({ screen, overlay });
+    if (last && last.screen === screen && last.overlay === overlay && last.homeView === homeView) return;
+    // Home's views are steps too: Back from the chat or Products returns to Home.
+    stack.push({ screen, overlay, homeView });
     if (stack.length > 60) stack.splice(0, stack.length - 60);
     try {
       if (stack.length === 1) window.history.replaceState({ ...(window.history.state || {}), aynaNav: 0 }, '');
       else window.history.pushState({ aynaNav: stack.length - 1 }, '');
     } catch { /* history unavailable */ }
-  }, [screen, overlay]);
+  }, [screen, overlay, homeView]);
   useEffect(() => {
     const onPop = () => {
       const stack = navStackRef.current;
@@ -368,7 +381,8 @@ export default function MobileApp() {
       const prev = stack[stack.length - 1];
       restoringRef.current = true;
       setOverlay(prev.overlay);
-      setScreen(prev.screen);
+      if (prev.homeView) setHomeView(prev.homeView);
+      setScreenRaw(prev.screen);
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -440,7 +454,9 @@ export default function MobileApp() {
   }, [screen]);
   const swipeStart = useRef(null);
   const handleMainTouchStart = (event) => {
-    if (overlay || !['library', 'browse', 'explore'].includes(screen) || event.touches.length !== 1) return;
+    // Home (its dashboard view) and Explore, the first two tabs; never on the chat.
+    const onHomeRoot = screen === 'ayna' && homeView === (chatFirst ? 'dashboard' : 'home');
+    if (overlay || !(onHomeRoot || ['browse', 'explore'].includes(screen)) || event.touches.length !== 1) return;
     const target = event.target;
     if (target.closest('input, textarea, select, [contenteditable="true"], [data-no-page-swipe]')) return;
     swipeStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
@@ -451,9 +467,9 @@ export default function MobileApp() {
     const dy = event.changedTouches[0].clientY - swipeStart.current.y;
     swipeStart.current = null;
     if (Math.abs(dx) < 85 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
-    // Swipe between the first two tabs, Explore and Library (never on the chat).
-    if ((screen === 'explore' || screen === 'browse') && dx < 0) setScreen('library');
-    if (screen === 'library' && dx > 0) { setExploreSection('overview'); setScreen('explore'); }
+    // Swipe between the first two tabs, Home and Explore.
+    if (screen === 'ayna' && dx < 0) { setExploreSection('overview'); setScreen('explore'); }
+    if ((screen === 'explore' || screen === 'browse') && dx > 0) { setHomeView(homeRoot); setScreenRaw('ayna'); }
   };
   const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
@@ -777,7 +793,7 @@ export default function MobileApp() {
   }, []);
   const browseProducts = buildBrowseProducts(discoveredProducts);
 
-  const Screen = SCREENS[screen] || LandingScreen;
+  const Screen = screen === 'ayna' && chatFirst ? AynaHomeChatScreen : SCREENS[screen] || LandingScreen;
 
   // BrowseScreen/EcosystemScreen/EcosystemIntroScreen all default this to
   // the literal letter 'A' when it's not passed, that default was always
@@ -1224,13 +1240,15 @@ export default function MobileApp() {
     // that question with what she's looking at (e.g. her dashboard numbers).
     onAskAyna: (opts) => {
       if (opts && typeof opts.question === 'string') setAskSeed({ id: Date.now(), question: opts.question, context: typeof opts.context === 'string' ? opts.context : '', buildContext: typeof opts.buildContext === 'function' ? opts.buildContext : null, usesHealth: opts.usesHealth === true, stats: Array.isArray(opts.stats) ? opts.stats.slice(0, 3) : null });
-      // On the ayna tab the chat is the home: switch to it instead of a sheet.
+      // On Home the chat is one of its views: open it there instead of a sheet.
       if (screen === 'ayna' && !overlay) { setAskAynaOpen(false); setHomeView('chat'); return; }
       // Signed out too: the guided chat opens, answers what it can on this
       // phone, and asks to sign in only for questions that need the AI.
       setAskAynaOpen(true);
     },
     onBack: () => {
+      // The Library is pushed from Explore (or a link): Back returns where she came from.
+      if (screen === 'library') { if (navStackRef.current.length > 1) { try { window.history.back(); return; } catch { /* fall through */ } } setScreen('explore'); return; }
       if (screen === 'quiz' && intakeFlow === 'more') { setIntakeFlow('auto'); setScreen('ready'); return; }
       if (screen === 'reveal' && revealFrom) { const to = revealFrom; setRevealFrom(null); goBackTo(to); return; }
       if (['building', 'reveal', 'connect'].includes(screen)) {
@@ -1391,7 +1409,9 @@ export default function MobileApp() {
     hasEcosystem,
   };
 
-  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
+  // The chat from Home is full screen (Back returns to Home), so no tab bar there.
+  const chatFullScreen = screen === 'ayna' && !chatFirst && homeView === 'chat' && !askAynaOpen && !overlay;
+  const showTabBar = !chatFullScreen && !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
   // Deep round 2: the tab bar stays on drilled-in screens (product, read, why
   // this match), as in iOS; tapping a tab pops back to that tab's root.
   // Reads ranked from her app answers (personalReads.js): matching reads
@@ -1414,7 +1434,7 @@ export default function MobileApp() {
     setAskAynaOpen(false);
     setAskSeed(null);
     setHomeView('chat');
-    setScreen('ayna');
+    setScreenRaw('ayna');
   };
   // Siri and Shortcuts (when the iOS App Intent lands, see the report):
   // co.aynahealth.app://ask opens the chat; ?q= puts the question in the box.
@@ -1517,6 +1537,7 @@ export default function MobileApp() {
         ]}
         homeView={homeView}
         onHomeView={(v) => { setAskAynaOpen(false); setHomeView(v); }}
+        healthInsightRows={health.insightRows || []}
         rundownCommunity={rundownCommunity}
         onRundownFinish={handleRundownFinish}
       />
@@ -1532,9 +1553,9 @@ export default function MobileApp() {
       {showTabBar && <MobileTabBar
         active={activeTab}
         onExplore={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setExploreSection('overview'); setScreen('explore'); }}
-        onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setScreen('library'); }}
-        // Back to the ayna tab keeps the view she left; tapping it again while there goes to the chat (iOS pops to the root).
-        onAyna={() => { if (screen === 'ayna' && !overlay) setHomeView('chat'); setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreen('ayna'); }}
+        // Home always opens on its root (the dashboard, or the chat in the chat-first variant).
+        onHome={() => { setHomeView(homeRoot); setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreenRaw('ayna'); }}
+        tabList={chatFirst ? APP_TABS_CHAT_FIRST : APP_TABS}
         onCommunity={() => { setAskAynaOpen(false); setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
         // You opens for everyone: signed out it says what an account keeps, and Settings still works.
         onProfile={() => { setAskAynaOpen(false); authResumeRef.current = null; setOverlay({ type: 'profile' }); }}
@@ -1712,8 +1733,9 @@ export default function MobileApp() {
         key={authUser?.id || 'anonymous'}
         open={askAynaOpen || (screen === 'ayna' && homeView === 'chat' && !overlay)}
         asTab={screen === 'ayna' && homeView === 'chat' && !askAynaOpen}
-        // The ayna tab: the chat is home, with the Chat · Products · My dashboard switch on top.
-        renderHomeTop={screen === 'ayna' && !askAynaOpen ? (leading) => <HomeSwitch view={homeView} onChange={(v) => { setAskAynaOpen(false); setHomeView(v); }} leading={leading} /> : null}
+        // Home: the chat full screen with Back to Home; chat-first variant: the switch on top.
+        renderHomeTop={chatFirst && screen === 'ayna' && !askAynaOpen ? (leading) => <HomeSwitch view={homeView} onChange={(v) => { setAskAynaOpen(false); setHomeView(v); }} leading={leading} /> : null}
+        onBackHome={!chatFirst && screen === 'ayna' && !askAynaOpen ? () => setHomeView('home') : null}
         starters={askStarters}
         onStarter={(st) => nav.onAskAyna(st)}
         draft={askDraft}

@@ -1,12 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { APP_TABS, TabIcon } from '../../components/nav/tabs.jsx';
 
-// The app's tabs (founder, Oct 24 20:12): Explore · Library · ayna (centre,
-// the chat as home) · Community · You. The website keeps its own five.
-const tabs = APP_TABS.map((t) => [t.key, t.label, !!t.center]);
+// The app's tabs (founder, Oct 24 22:12): Home · Explore · Community · You.
+// The website keeps its own five.
+const toRows = (list) => list.map((t) => [t.key, t.label, !!t.center, t.icon || t.key]);
 
-export default function MobileTabBar({ active, onExplore, onLibrary, onAyna, onCommunity, onProfile }) {
-  const actions = { explore: onExplore, library: onLibrary, ayna: onAyna, community: onCommunity, profile: onProfile };
+// `tabList`: the chat-first Home (focus group) names the centre tab "ayna".
+export default function MobileTabBar({ active, onExplore, onHome, onCommunity, onProfile, tabList = APP_TABS }) {
+  const tabs = toRows(tabList);
+  const actions = { explore: onExplore, home: onHome, community: onCommunity, profile: onProfile };
   // No seam (founder, Oct 21): the bar is the page colour and shows its hairline
   // only while the screen's content runs on under it (iOS scroll-edge behaviour).
   const navRef = useRef(null);
@@ -38,9 +40,9 @@ export default function MobileTabBar({ active, onExplore, onLibrary, onAyna, onC
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, [active]);
-  return <nav ref={navRef} className="ayna-bottom-nav" aria-label="Main navigation">
-    {tabs.map(([key, label, center]) => <button type="button" key={key} className={`${active === key ? 'is-active' : ''}${center ? ' is-center' : ''}`} onClick={actions[key]} aria-current={active === key ? 'page' : undefined} data-tab-target={key}>
-      {center ? <span className="ay-nav-center" aria-hidden="true"><TabIcon kind={key} on={active === key} /></span> : <TabIcon kind={key} on={active === key} />}
+  return <nav ref={navRef} className={`ayna-bottom-nav is-${tabs.length}-tabs`} aria-label="Main navigation">
+    {tabs.map(([key, label, center, icon]) => <button type="button" key={key} className={`${active === key ? 'is-active' : ''}${center ? ' is-center' : ''}`} onClick={actions[key]} aria-current={active === key ? 'page' : undefined} data-tab-target={key}>
+      {center ? <span className="ay-nav-center" aria-hidden="true"><TabIcon kind={icon} on={active === key} /></span> : <TabIcon kind={icon} on={active === key} />}
       <span>{label}</span>
     </button>)}
   </nav>;

@@ -1,36 +1,85 @@
+import { useMemo, useState } from 'react';
 import TodayScreen from './TodayScreen.jsx';
 import EcosystemScreen from './EcosystemScreen.jsx';
-import HomeSwitch from '../components/HomeSwitch.jsx';
+import MobileHeader from '../components/MobileHeader.jsx';
+import HomeAskSheet from '../components/HomeAskSheet.jsx';
+import { askFromPrompt } from '../../utils/askPrompts.js';
 import EmptyState from '../components/EmptyState.jsx';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
+import TodayFeed from '../../components/today/TodayFeed.jsx';
+import { openTodayLog } from '../../components/today/openLog.js';
+import { buildDashboard } from '../../health/dashboard.js';
+import { usesHormonalBC } from '../../health/weekInsights.js';
+import { localToday } from '../hooks/useHealthData.js';
+import '../../styles/week-explained.css';
 import '../ayna-home.css';
 
+/** Health data or her log, as one fact with "Ask why", and the way to log today. */
+function HealthRow({ summary = null, connectedCount = 0, onAsk, onLog, onConnect }) {
+  return (
+    <section className="ay-homehealth" aria-labelledby="ay-homehealth-h">
+      <div className="ay-homehealth__text">
+        <h2 id="ay-homehealth-h">{summary ? summary.title : 'Your log'}</h2>
+        <p>{summary?.headline || (connectedCount ? 'Your health data is still coming in.' : 'Log how you feel today; it shapes tomorrow.')}</p>
+      </div>
+      <div className="ay-homehealth__actions">
+        {summary?.headline && <button type="button" className="ay-today__text" onClick={() => onAsk?.({ question: 'What stands out in my health data this week?' })}>Ask why</button>}
+        <button type="button" className="ay-today__text" onClick={onLog}>Log today</button>
+        {!connectedCount && onConnect && <button type="button" className="ay-today__text" onClick={onConnect}>Connect</button>}
+      </div>
+    </section>
+  );
+}
+
 /**
- * The app's centre tab, "ayna" (founder, Oct 24 20:12). Three views under one
- * small switch at the top:
- *   Chat          the guided Ask ayna chat, the home. MobileApp draws it
- *                 (AskAynaModal as the tab's content), over this screen.
- *   Products      her matches and My ecosystem shelves (EcosystemScreen).
- *   My dashboard  the Today content (TodayScreen): the Daily Rundown card for
- *                 replay, decision items, her log, routine, health data,
- *                 More for you.
- * The dashboard stays mounted under the chat (hidden), so the Daily Rundown
- * still opens on its own each morning (autoLaunch.js) whichever view is up.
+ * The app's centre tab, Home (team sync, Oct 25; founder, Oct 24 22:05):
+ * dashboard first, on ONE phone screen with no scrolling. The "Ask ayna"
+ * bar (its sheet has prompts from her data, the box and the mic), the Daily
+ * Rundown card, 1 to 3 things for today (each the fact, then "Ask why"), one
+ * health data / log row, and the rest one tap away:
+ *   dashboard  everything else from Today (routine, the log, health data,
+ *              More for you), Back to Home
+ *   products   her matches and My ecosystem shelves, Back to Home
+ *   chat       Ask ayna full screen (MobileApp draws AskAynaModal), Back to Home
+ * Home stays mounted (hidden) under the chat and Products, so the Daily
+ * Rundown still opens on its own each morning (autoLaunch.js). Only one
+ * Today feed is ever mounted: the full dashboard replaces it while open.
  */
 export default function AynaHomeScreen(props) {
-  const { homeView = 'chat', onHomeView, hasEcosystem = false, myProducts = [], quizDraft = null, onResumeQuiz, onStartOverQuiz, onStartQuiz, onBrowse, lastQuizAnswers = null } = props;
-  const top = <HomeSwitch view={homeView} onChange={onHomeView} />;
+  const {
+    homeView = 'home', onHomeView, onAskAyna, hasEcosystem = false, myProducts = [], suggestedEcosystemProducts = [],
+    quizDraft = null, onResumeQuiz, onStartOverQuiz, onStartQuiz, onBrowse, lastQuizAnswers = null, quizAnswers = null, matchOpts, authUser = null,
+    onOpenProduct, onEditIntakeStep, onRetake, onUpdateIntake, savedProducts = {}, onToggleSaved, onOpenWhyMatch, articles = [], onOpenArticle,
+    rundownCommunity = [], onOpenCommunityPost, onRundownFinish, healthInsightRows = [], healthSummary = null, healthConnectedCount = 0, onOpenHealthData, onConnectHealth,
+  } = props;
+  const [asking, setAsking] = useState(false);
+  const goHome = () => onHomeView?.('home');
+  const openDashboard = (thenLog = false) => { onHomeView?.('dashboard'); if (thenLog) setTimeout(() => openTodayLog('app'), 400); };
+  const hasProfile = Boolean(lastQuizAnswers || quizAnswers);
   const hasProducts = hasEcosystem || myProducts.length > 0;
+  const today = localToday();
+  const cycle = useMemo(() => { const w = buildDashboard(healthInsightRows || [], { days: 30, today }); return w.cycle?.cycleDay ? w.cycle : null; }, [healthInsightRows, today]);
+  const ask = (q, extra) => onAskAyna?.(typeof q === 'string' ? { question: q, ...(extra || {}) } : q);
+
+  if (homeView === 'dashboard') {
+    return (
+      <div className="ay-home" data-view="dashboard">
+        <div className="ay-home__view">
+          <TodayScreen {...props} homeTop={<MobileHeader onBack={goHome} />} />
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="ay-home" data-view={homeView}>
       {homeView === 'products' && (
-        <div role="tabpanel" aria-label="Products">
+        <div role="region" aria-label="Your matches" className="ay-home__view">
           {hasProducts
-            ? <EcosystemScreen {...props} onBack={null} homeTop={top} />
+            ? <EcosystemScreen {...props} onBack={goHome} />
             : <div className="ayna-fresh-ecosystem eco-app">
-              {top}
-              <h1 className="sr-only">Products</h1>
+              <MobileHeader onBack={goHome} />
+              <h1 className="sr-only">Your matches</h1>
               {quizDraft && onResumeQuiz
                 ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />
                 : <EmptyState art="spark" title={lastQuizAnswers ? 'No strong matches yet' : 'Your matches live here'} body={lastQuizAnswers ? 'Nothing passed the bar for your goals yet. Explore has everything, with your match on each product.' : 'Create your health profile and ayna shows the products that fit you, each with the reason why.'} actionLabel={lastQuizAnswers ? 'Explore products' : 'Create your health profile'} onAction={lastQuizAnswers ? () => onBrowse?.() : onStartQuiz} secondaryLabel={lastQuizAnswers ? null : 'Explore products'} onSecondary={() => onBrowse?.()} />}
@@ -38,9 +87,50 @@ export default function AynaHomeScreen(props) {
             </div>}
         </div>
       )}
-      <div role="tabpanel" aria-label="My dashboard" hidden={homeView !== 'dashboard'}>
-        <TodayScreen {...props} homeTop={top} />
+      <div className="ay-home__view ay-homescreen" hidden={homeView !== 'home'}>
+        <MobileHeader hideAsk />
+        <h1 className="sr-only">Home</h1>
+        <button type="button" className="ay-homeask__bar" aria-haspopup="dialog" onClick={() => setAsking(true)}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg>
+          <span>Ask ayna</span>
+        </button>
+        {!hasProfile && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
+        {/* .ay-hd: the dashboard's own tokens and card styles, as on the full dashboard. */}
+        <div className="ay-hd ay-homefeed">
+        <TodayFeed
+          compact
+          variant="app"
+          userId={authUser?.id || null}
+          intake={quizAnswers}
+          healthRows={healthInsightRows || []}
+          cycle={cycle}
+          hormonalBC={usesHormonalBC(quizAnswers)}
+          products={[...myProducts, ...suggestedEcosystemProducts]}
+          onOpenProduct={onOpenProduct}
+          onAsk={ask}
+          onEditAnswers={onEditIntakeStep || onRetake}
+          onSaveToProfile={onUpdateIntake || null}
+          matchOpts={matchOpts}
+          saved={Object.values(savedProducts || {})}
+          onToggleSaved={onToggleSaved}
+          onWhyMatch={onOpenWhyMatch}
+          onOpenRead={(id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }}
+          onExplore={onBrowse ? () => onBrowse() : undefined}
+          onSetUp={!hasProfile && !quizDraft ? onStartQuiz : undefined}
+          community={rundownCommunity}
+          onOpenPost={onOpenCommunityPost}
+          onRundownFinish={onRundownFinish}
+          onOpenFull={() => openDashboard()}
+          moreHeading={false}
+        />
+        </div>
+        <HealthRow summary={healthSummary} connectedCount={healthConnectedCount} onAsk={ask} onLog={() => openDashboard(true)} onConnect={authUser ? onOpenHealthData || onConnectHealth : onConnectHealth} />
+        <nav className="ay-homelinks" aria-label="More on Home">
+          <button type="button" onClick={() => openDashboard()}><span><b>My dashboard</b><small>Routine, log and health data</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+          <button type="button" onClick={() => onHomeView?.('products')}><span><b>Your matches</b><small>{hasProducts ? `${myProducts.length} in your ecosystem` : 'Products that fit you'}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+        </nav>
       </div>
+      {asking && <HomeAskSheet signedIn={Boolean(authUser?.id)} hasProfile={hasProfile} onClose={() => setAsking(false)} onAsk={(req) => ask(req.question ? req : askFromPrompt(req))} />}
     </div>
   );
 }

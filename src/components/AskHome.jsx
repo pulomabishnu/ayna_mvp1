@@ -7,7 +7,7 @@ import '../styles/ask-home.css';
  * a hello line, the starter questions as a plain list of rows (one "New";
  * master prompt 154: no bento), recent questions, and one curved-text ribbon
  * as the page's single seal.
- * A row fills the box so she can edit before asking; nothing sends on its own.
+ * A row is asked as soon as she taps it (founder, Oct 24 22:17).
  */
 
 const ICONS = {

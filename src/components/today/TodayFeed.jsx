@@ -8,7 +8,36 @@ import { todayFixtureOn, makeTodayFixture } from '../../health/todayDevFixture.j
 import Rundown from '../rundown/Rundown.jsx';
 import NotUsefulMenu from './NotUsefulMenu.jsx';
 import ProfileAskCard from './ProfileAskCard.jsx';
+import { askWhyFor } from '../../utils/askPrompts.js';
 import '../../styles/today-feed.css';
+
+// The fact first, then "Ask why" (team sync, Oct 25). Not on questions she
+// answers here (check-ins, quick questions) or on a product list.
+const ASK_WHY = new Set(['insight', 'option', 'care', 'follow_up']);
+const askWhy = (item, onAsk) => (onAsk && ASK_WHY.has(item.type) ? () => onAsk(askWhyFor(item.title), { context: [item.title, item.reason].filter(Boolean).join(' ') }) : null);
+
+/** Home's one-screen version of an item: the fact, its reason, and at most three actions. */
+function CompactItem({ item, t, onAsk, onFindCare, onOpenFull }) {
+  const kicker = item.type === 'care' ? CARE_KICKER[item.level] || 'Care' : KICKER[item.type] || '';
+  const acts = item.actions || [];
+  const tel = item.type === 'care' && item.level === 'urgent' && /911/.test(item.title);
+  const why = askWhy(item, onAsk);
+  return (
+    <li className={`ay-today__item is-compact is-${item.tier} is-${item.type}${item.level ? ` is-${item.level}` : ''}`}>
+      <p className="ay-today__kicker">{kicker}</p>
+      <h3 className="ay-today__title">{item.title}</h3>
+      {item.reason && <p className="ay-today__why">{item.reason}</p>}
+      <div className="ay-today__actions">
+        {tel && <a className="ay-today__primary" href="tel:911" onClick={() => t.opened(item)}>Call 911</a>}
+        {!tel && acts.some((a) => a.id === 'get_care') && (onFindCare
+          ? <button type="button" className="ay-today__primary" onClick={() => { t.opened(item); onFindCare(item); }}>Find care</button>
+          : <a className="ay-today__primary" href={HRSA_FIND_CARE} target="_blank" rel="noopener noreferrer" onClick={() => t.opened(item)}>Find care<span className="sr-only"> (opens in a new tab)</span></a>)}
+        {why && <button type="button" className="ay-today__text" onClick={why}>Ask why</button>}
+        {onOpenFull && <button type="button" className="ay-today__text" onClick={() => onOpenFull(item)}>{acts.some((a) => /^(outcome|answer):|open_triage|show_options|try_this|open_check_in/.test(a.id)) ? 'Answer' : 'More'}</button>}
+      </div>
+    </li>
+  );
+}
 
 /**
  * Today with ayna (master prompt sections 62, 135, 136): what decide()
@@ -135,6 +164,7 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
         {!tel && has('get_care') && (onFindCare
           ? <button type="button" className="ay-today__primary" onClick={() => { t.opened(item); onFindCare(item); }}>Find care</button>
           : <a className="ay-today__primary" href={HRSA_FIND_CARE} target="_blank" rel="noopener noreferrer" onClick={() => t.opened(item)}>Find care<span className="sr-only"> (opens in a new tab)</span></a>)}
+        {askWhy(item, onAsk) && <button type="button" className="ay-today__text" onClick={askWhy(item, onAsk)}>Ask why</button>}
         {has('care_summary') && onAsk && <button type="button" className="ay-today__text" onClick={() => { t.opened(item); onAsk('Help me write a short summary of my pain to bring to a doctor visit.'); }}>Make a summary for my visit</button>}
         {has('open_check_in') && <a className="ay-today__primary" href={`#${checkinId}`} onClick={(e) => { e.preventDefault(); t.opened(item); onOpenLog?.(); requestAnimationFrame(() => document.getElementById(checkinId)?.scrollIntoView({ block: 'start', behavior: 'smooth' })); }}>Check in</a>}
         {acts.filter((a) => a.id === 'show_options').map((a) => <button key={a.id} type="button" className="ay-today__primary" onClick={() => t.showOptions(item, a.need)}>Show options</button>)}
@@ -155,6 +185,10 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   saved = [], community = [], onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, matchOpts = undefined, healthProfile = null, onSetUp, moreHeading = true,
   // The app's ayna home: a Community card's post, and the hand-off to the chat when the rundown ends.
   onOpenPost, onRundownFinish,
+  // The app's Home (team sync, Oct 25): one phone screen. The Rundown card and
+  // 1 to 3 things for today, each the fact, "Ask why" and one way in;
+  // everything else (answering, the log, saves) is on the full dashboard.
+  compact = false, onOpenFull = null,
 }) {
   // DEV only (?fixture=today): sample logs and tries, dropped from production builds.
   const [fixture] = useState(() => (import.meta.env.DEV && todayFixtureOn() ? makeTodayFixture() : null));
@@ -172,8 +206,8 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
     return () => window.removeEventListener(OPEN_LOG_EVENT, open);
   }, []);
   return (
-    <section className={`ay-today is-${variant}`} aria-labelledby={`ay-today-h-${variant}`}>
-      <div className="ay-today__head">
+    <section className={`ay-today is-${variant}${compact ? ' is-compact' : ''}`} aria-labelledby={`ay-today-h-${variant}`}>
+      <div className={compact ? 'sr-only' : 'ay-today__head'}>
         <h2 id={`ay-today-h-${variant}`}>Today with ayna</h2>
       </div>
       <Rundown
@@ -198,9 +232,16 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         onOpenPost={onOpenPost}
         onFinish={onRundownFinish}
         variant={variant}
+        compact={compact}
         onSeeData={(d) => { try { window.dispatchEvent(new CustomEvent('ayna:health-tab', { detail: { tab: d?.tab } })); } catch { /* old browser */ } }}
       />
-      {items.length > 0
+      {compact && (items.length > 0
+        ? <ul className="ay-today__list is-compact">
+          {/* Safety and care always show; the rest stop at three things. */}
+          {items.filter((it, i) => PROTECTED.has(it.tier) || i < 3).map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={onOpenFull} />)}
+        </ul>
+        : <p className="ay-today__empty">{t.decision.empty}</p>)}
+      {!compact && (items.length > 0
         ? <ul className="ay-today__list">
           {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} onOpenLog={() => setLogOpen(true)} />)}
           {/* One skipped setup question at a time (profileCompleteness.nextProgressiveAsk). */}
@@ -209,8 +250,8 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         : <>
           <p className="ay-today__empty">{t.decision.empty}</p>
           <ProfileAskCard asList intake={intake} today={t.today} onAnswer={onEditAnswers} />
-        </>}
-      {(t.pendingProfileSaves.length > 0 || t.notes['save:done']) && (
+        </>)}
+      {!compact && (t.pendingProfileSaves.length > 0 || t.notes['save:done']) && (
         <div className="ay-today__save" role="group" aria-label="Save to your health profile">
           {t.pendingProfileSaves.map((p) => (
             <div key={p.field} className="ay-today__saverow">
@@ -225,11 +266,11 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
           {t.notes['save:done'] && <p className="ay-today__note" role="status">{t.notes['save:done']}</p>}
         </div>
       )}
-      {showLog && <div id={checkinId} className="ay-today__log">
+      {showLog && !compact && <div id={checkinId} className="ay-today__log">
         <DailyCheckinCard variant={variant} log={t.log} save={t.saveLog} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} />
       </div>}
       {/* The top of Today ends here (rundown, 1 to 3 items, her log); the rest is below this line. */}
-      {moreHeading && <h2 className="ay-today__more" id={`ay-today-more-${variant}`}>More for you</h2>}
+      {moreHeading && !compact && <h2 className="ay-today__more" id={`ay-today-more-${variant}`}>More for you</h2>}
     </section>
   );
 }

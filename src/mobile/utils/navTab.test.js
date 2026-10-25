@@ -4,12 +4,13 @@ import { routeForPush } from '../hooks/usePushNotifications.js';
 
 describe('navTabFor', () => {
   it('puts each screen under its main tab', () => {
-    expect(navTabFor('ayna')).toBe('ayna');
-    expect(navTabFor('today')).toBe('ayna');
-    expect(navTabFor('ask')).toBe('ayna');
+    expect(navTabFor('ayna')).toBe('home');
+    expect(navTabFor('today')).toBe('home');
+    expect(navTabFor('ask')).toBe('home');
     expect(navTabFor('explore')).toBe('explore');
     expect(navTabFor('browse')).toBe('explore');
-    expect(navTabFor('library')).toBe('library');
+    // The Library is pushed from Explore, not a tab.
+    expect(navTabFor('library')).toBe('explore');
     expect(navTabFor('community')).toBe('community');
     expect(navTabFor('eco')).toBe('profile');
     expect(navTabFor('saved')).toBe('profile');
@@ -19,9 +20,12 @@ describe('navTabFor', () => {
 });
 
 describe('aynaRoute (old screens keep working)', () => {
-  it('maps Today to the ayna tab on My dashboard and Ask to the chat', () => {
-    expect(aynaRoute('today')).toEqual({ screen: 'ayna', view: 'dashboard' });
+  it('maps Today and ayna to Home, Ask to the chat; the chat-first Home keeps its own views', () => {
+    expect(aynaRoute('today')).toEqual({ screen: 'ayna', view: 'home' });
+    expect(aynaRoute('ayna')).toEqual({ screen: 'ayna', view: 'home' });
     expect(aynaRoute('ask')).toEqual({ screen: 'ayna', view: 'chat' });
+    expect(aynaRoute('ayna', 'chat')).toEqual({ screen: 'ayna', view: 'chat' });
+    expect(aynaRoute('today', 'chat')).toEqual({ screen: 'ayna', view: 'dashboard' });
     expect(aynaRoute('explore')).toEqual({ screen: 'explore', view: null });
   });
 });

@@ -29,7 +29,7 @@ export default function TodayScreen({
   onEditIntakeStep, onUpdateIntake, savedProducts = {}, onToggleSaved, onOpenWhyMatch, articles = [], onOpenArticle, onBrowse,
   // The app's match inputs (Not for me, saved, history), so the Rundown shows the same % as Shop.
   matchOpts, omittedProducts = {}, onGoEco,
-  // Inside the ayna tab (AynaHomeScreen): the switch row replaces the header,
+  // Inside Home (AynaHomeScreen): the header with the Ask ayna bar replaces the header,
   // Community posts and the chat hand-off feed the Daily Rundown.
   homeTop = null, rundownCommunity = [], onOpenCommunityPost, onRundownFinish,
 }) {
@@ -49,7 +49,7 @@ export default function TodayScreen({
   return <div className="ayna-fresh-ecosystem ayna-cabinet-home eco-app ay-today-screen">
     {homeTop || <MobileHeader onOpenSaved={onOpenSaved} />}
     {/* The greeting and date below (HealthHome) are the visible title, as on the website. */}
-    <h1 id="ay-today-title" className="sr-only">{homeTop ? 'My dashboard' : 'Today'}</h1>
+    <h1 id="ay-today-title" className="sr-only">{homeTop ? 'Home' : 'Today'}</h1>
 
     {/* An unfinished setup stays in view; with no profile at all, the Daily
         Rundown card itself says how to make one (UX spec 3, 34). */}
