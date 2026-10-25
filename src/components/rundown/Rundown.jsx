@@ -170,10 +170,18 @@ export default function Rundown({
     <section className="ay-rd-hero" aria-labelledby="ay-rd-hero-h">
       {daily.cards.length > 0 && (
         <div className={`ay-rd-hero__card${highlight ? ' is-new' : ''}`}>
+          {/* The date as type (Wrapped: numerals as form); only today's real date. */}
+          <span className="ay-rd-hero__date" aria-hidden="true"><b>{Number(String(today).slice(8, 10))}</b><small>{new Date(`${today}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long' })}</small></span>
           {highlight && <p className="ay-rd-hero__new">Ready for today</p>}
           <p className="ay-rd-hero__kicker">{daily.cards.some((c) => c.protected) ? 'Something important today' : 'Today'}</p>
           <h2 id="ay-rd-hero-h">Your Daily Rundown</h2>
           <p>60 seconds. The things worth knowing about your health today.</p>
+          {/* A peek at what is inside: the real card labels, in story order. */}
+          {daily.cards.filter((c) => c.category !== 'frame').length > 0 && (
+            <ol className="ay-rd-hero__inside" aria-label="Inside today's rundown">
+              {daily.cards.filter((c) => c.category !== 'frame').slice(0, 4).map((c) => <li key={c.key} className={`is-${c.category}`}>{c.kicker}</li>)}
+            </ol>
+          )}
           <button type="button" className="ay-rd-hero__go" onClick={() => start('daily')}>Start rundown</button>
         </div>
       )}

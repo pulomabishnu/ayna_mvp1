@@ -100,3 +100,31 @@
 /* Web: the card is highlighted instead of opening full screen on its own. */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__card.is-new { outline: 3px solid #f7badd; outline-offset: 3px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__new { justify-self: start; margin: 0 !important; padding: 3px 9px; border-radius: 999px; background: #f7badd; color: #3e2723 !important; font: 700 11px/1.3 var(--x-sans) !important; letter-spacing: .06em; text-transform: uppercase; }
+
+/* =====================================================================
+   Oct 25 design pass: the hero as a poster (Wrapped 2024: numerals as
+   form, text on a flat colour field; Oura "One Big Thing"). The date is
+   today's real date set huge; the contents peek is the real card labels.
+   No caps eyebrows. Rules: scratchpad DESIGN_RESEARCH_OCT24.md (B, C).
+   ===================================================================== */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__card { position: relative; overflow: hidden; gap: 10px; padding: 24px !important; border-radius: 28px; isolation: isolate; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__date { position: absolute; top: 14px; right: 18px; z-index: -1; display: grid; justify-items: end; gap: 2px; color: #f7badd; pointer-events: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__date b { font: 700 clamp(84px, 11vw, 148px)/.78 var(--x-serif); letter-spacing: -.06em; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__date small { font: 600 13px/1.2 var(--x-sans); color: var(--x-on-2); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__kicker { opacity: 1; color: var(--x-on-2) !important; font: 600 13px/1.3 var(--x-sans) !important; letter-spacing: 0; text-transform: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__card h2 { max-width: 12ch; font-size: calc(32px * var(--x-scale)) !important; line-height: .98 !important; letter-spacing: -.03em !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__card > p:not(.ay-rd-hero__kicker):not(.ay-rd-hero__new) { max-width: 34ch; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__inside { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 6px 0 0 !important; padding: 12px 0 0 !important; list-style: none; counter-reset: rdi; border-top: 1px solid var(--x-on-hair); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__inside li { counter-increment: rdi; display: inline-flex; align-items: center; gap: 6px; font: 600 13px/1.3 var(--x-sans); color: var(--x-on); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__inside li::before { content: counter(rdi); display: grid; place-items: center; width: 20px; height: 20px; border-radius: 999px; background: var(--x-on); color: var(--x-feature); font: 700 11px/1 var(--x-sans); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__inside li:is(.is-match, .is-saved, .is-win)::before { background: #f7badd; color: #3e2723; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__inside li:is(.is-pattern, .is-change, .is-community)::before { background: #769ebe; color: #3e2723; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__inside li.is-safety::before { background: #f7badd; color: #3e2723; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__go { box-shadow: 3px 3px 0 var(--x-on) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__card.is-setup h2 { max-width: 14ch; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__new { letter-spacing: 0 !important; text-transform: none !important; font-size: 12px !important; }
+@media (min-width: 1024px) {
+  html body .app-container .ay-wh.ay-wh .ay-rd-hero__card { padding: 32px !important; gap: 12px; min-height: 280px; align-content: end; }
+  html body .app-container .ay-wh.ay-wh .ay-rd-hero__card h2 { font-size: 44px !important; }
+  html body .app-container .ay-wh.ay-wh .ay-rd-hero__date { top: 24px; right: 28px; }
+}

@@ -154,6 +154,7 @@ import { ExploreHeader, YouNav } from './components/explore/ExploreNav.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
 import RoutineSummary from './components/routine/RoutineSummary.jsx';
+import TodayRead from './components/today/TodayRead.jsx';
 import { SaveFollowUpStrip } from './components/save/SaveFollowUp.jsx';
 import { savePrompt, stashPendingSave, takePendingSave } from './utils/savePrompt.js';
 import { setSavedRemindersOwner } from './utils/savedReminders.js';
@@ -2601,14 +2602,18 @@ function App() {
               intro: !quizResults && !dataLoading ? finishQuizCard() || null : null,
               compact: true,
               rundown: { ...webHealth.props.rundown, onSetUp: !quizResults && !dataLoading && !finishQuizCard() ? handleStartQuiz : undefined },
+              // More for you (right column on desktop): her routine, short (the full
+              // one is in You > My ecosystem), and one read that fits her answers.
+              aside: (quizResults || myProducts.length > 0) ? (
+                <>
+                  <RoutineSummary variant="web" hideMedicines userId={user?.id || null} quizAnswers={quizResults} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts}
+                    onOpenRoutine={() => { handleViewEcosystem(); window.setTimeout(() => document.getElementById('eco-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 600); }}
+                    onOpenProduct={(p) => handleOpenProduct(p, { source: 'today_routine' })}
+                    onCheckIn={() => openTodayLog('web')} />
+                  <TodayRead quizResults={quizResults} healthProfile={healthProfile} onOpen={handleViewArticle} />
+                </>
+              ) : null,
             })}
-            {/* Her routine per need, short; the full one is in You > My ecosystem (src/components/routine). */}
-            <div className="ay-container wx-today-routine">
-              <RoutineSummary variant="web" hideMedicines userId={user?.id || null} quizAnswers={quizResults} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts}
-                onOpenRoutine={() => { handleViewEcosystem(); window.setTimeout(() => document.getElementById('eco-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 600); }}
-                onOpenProduct={(p) => handleOpenProduct(p, { source: 'today_routine' })}
-                onCheckIn={() => openTodayLog('web')} />
-            </div>
           </div>
         )}
         {(currentView === 'explore' || currentView === 'explore-topics' || currentView === 'explore-services') && (

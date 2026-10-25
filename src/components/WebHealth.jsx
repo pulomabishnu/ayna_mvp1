@@ -8,6 +8,7 @@ import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
 import TodayFeed from './today/TodayFeed.jsx';
 import '../styles/web-health.css';
+import '../styles/today-web.css';
 
 /**
  * Website "Your health" (/health): the app's health dashboard laid out for
@@ -120,7 +121,7 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
   );
 }
 
-export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null, compact = false }) {
+export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null, compact = false, aside = null }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
   // checked without an account. import.meta.env.DEV is false in production builds.
@@ -160,11 +161,57 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
       onAsk={onAsk ? (q) => onAsk(q) : undefined}
       onEditAnswers={onEditAnswers}
       onSaveToProfile={onSaveToProfile}
+      moreHeading={!compact}
+      showHead={!compact}
       {...rundown}
     />
   );
 
-  // Today (the first main tab) passes its title and, with no profile yet, a way to make one.
+  // Today (compact, the first main tab): a greeting from her own clock and one
+  // sentence (UX spec 6), then two columns on desktop: the day on the left
+  // (Rundown, the 1 to 3 things, her log) and "More for you" on the right.
+  // The right column only exists when it has something in it.
+  // With synced health data, Today stays the full dashboard (HealthHome carries the feed).
+  if (compact && !(signedIn && hasData)) {
+    const hour = new Date().getHours();
+    const hello = hour < 5 ? 'Hi' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    const connect = !(signedIn && (h.connected || []).length > 0)
+      ? <ConnectNote signedIn={signedIn} onSignIn={onSignIn} onOpenConnections={onOpenConnections} />
+      : null;
+    const more = [aside, connect].filter(Boolean);
+    return (
+      <section className="ay-wh ay-wh--today" aria-labelledby="ay-wh-title">
+        <header className="ay-wh-hello">
+          <h1 id="ay-wh-title" className="sr-only">{title}</h1>
+          <p className="ay-wh-hello__date">{fmtLongDay(today)}</p>
+          <p className="ay-wh-hello__hi">{hello}{name ? `, ${name}` : ''}.</p>
+          <p className="ay-wh-hello__lead">Here’s what’s worth knowing today.</p>
+        </header>
+        {intro}
+        <div className={`ay-wh-day${more.length ? ' has-more' : ''}`}>
+          <div className="ay-wh-day__main">
+            {todayFeed}
+            {signedIn && (h.status === 'loading' || h.status === 'idle') && !rows.length && <div className="ay-wh-loading" role="status"><i /><i /><i /><span>Loading your health data</span></div>}
+            {signedIn && h.status === 'error' && !rows.length && (
+              <div className="ay-wh-error">
+                <h2>We couldn't load your health data</h2>
+                <p>Nothing was changed. Check your connection and try again.</p>
+                <button type="button" className="ay-wh-btn" onClick={() => h.refresh?.()}>Try again</button>
+              </div>
+            )}
+          </div>
+          {more.length > 0 && (
+            <aside className="ay-wh-day__more" aria-labelledby="ay-wh-more-h">
+              <h2 id="ay-wh-more-h" className="ay-wh-day__moreh">More for you</h2>
+              {more.map((m, i) => <div key={i} className="ay-wh-day__mod">{m}</div>)}
+            </aside>
+          )}
+        </div>
+      </section>
+    );
+  }
+
+  // Your health (/health) passes its title.
   const header = (
     <>
       <header className="ay-wh-top">
