@@ -33,7 +33,8 @@ export function ProductImageFallback({ compact = false, style, className, produc
         style={{ width: '100%', height: '100%', display: 'grid', alignContent: 'center', justifyItems: 'center', gap: 8, padding: 14, boxSizing: 'border-box', background: tint, color: '#3e2723', textAlign: 'center', ...style }}>
         <span aria-hidden="true" style={{ font: "700 19px/1.05 'ayna Display', var(--ay-font-logo), sans-serif", letterSpacing: '-0.01em', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: '100%' }}>{key || 'ayna'}</span>
         <span aria-hidden="true" style={{ width: 28, height: 1.5, background: '#3e2723' }} />
-        <span aria-hidden="true" style={{ font: "500 12.5px/1.2 'Figtree', system-ui, sans-serif" }}>Photo coming soon</span>
+        {/* Services (apps, telehealth, programs) have no product photo to come: say what they are. */}
+        <span aria-hidden="true" style={{ font: "500 12.5px/1.2 'Figtree', system-ui, sans-serif" }}>{product.type === 'digital' ? (String(product.category || 'Service').replace(/[-_]/g, ' ').replace(/^./, (c) => c.toUpperCase())) : 'Photo coming soon'}</span>
       </div>
     );
   }

@@ -61,7 +61,7 @@ body .ay-why-chips li { border-color: var(--ay-ink, #1d1a2b); }
 
 /* ---------- Ecosystem: care first, care notes ---------- */
 .app-container .eco3-carefirst { margin: 24px 0 0; padding: 24px; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-pink); color: var(--ay-ink); box-shadow: var(--ay-shadow); }
-.app-container .eco3-carefirst__eyebrow { margin: 0 0 6px !important; font: 700 12px/1 var(--ay-font-ui) !important; letter-spacing: .08em; text-transform: uppercase; color: var(--ay-ink) !important; }
+.app-container .eco3-carefirst__eyebrow { margin: 0 0 6px !important; font: 700 12px/1 var(--ay-font-ui) !important; letter-spacing: 0; text-transform: none; color: var(--ay-ink) !important; }
 .app-container .eco3-carefirst h2 { margin: 0 0 10px !important; font: 800 clamp(26px, 2.4vw, 34px)/1.05 var(--ay-font-display) !important; letter-spacing: -.04em !important; color: var(--ay-ink) !important; }
 .app-container .eco3-carefirst__note { margin: 0 0 8px !important; max-width: 70ch; font: 500 15px/1.5 var(--ay-font-ui) !important; color: var(--ay-ink) !important; }
 .app-container .eco3-carefirst .care-near-panel { margin-top: 16px; padding: 16px; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-md); background: var(--ay-paper); }
@@ -69,7 +69,7 @@ body .ay-why-chips li { border-color: var(--ay-ink, #1d1a2b); }
 .app-container .eco3-carenote.is-prominent { border-color: var(--ay-ink); border-left-width: 8px; border-left-color: var(--ay-pink); }
 .app-container .eco3-carenote p { margin: 0 !important; font: 500 14px/1.5 var(--ay-font-ui) !important; color: var(--ay-ink) !important; }
 .app-container .eco3-secondary { margin-top: 32px; padding-top: 8px; opacity: .88; }
-.app-container .eco3-secondary__label { margin: 0 !important; color: var(--ay-ink-soft) !important; font: 700 13px/1.2 var(--ay-font-ui) !important; letter-spacing: .06em; text-transform: uppercase; }
+.app-container .eco3-secondary__label { margin: 0 !important; color: var(--ay-ink-soft) !important; font: 700 13px/1.2 var(--ay-font-ui) !important; letter-spacing: 0; text-transform: none; }
 
 /* ---------- Ecosystem: one row per need ---------- */
 .app-container .eco3-needs { margin: 40px 0 0; }

@@ -323,7 +323,7 @@
 .ay-reel.is-pink { --reel-bg: var(--ay-pink); }
 .ay-reel.is-mint { --reel-bg: var(--ay-mint); }
 .ay-reel.is-peri { --reel-bg: #cfd5f7; }
-.ay-reel-head { display: flex; justify-content: space-between; font: 500 13px/1 var(--ay-font-ui); letter-spacing: .06em; text-transform: uppercase; }
+.ay-reel-head { display: flex; justify-content: space-between; font: 500 13px/1 var(--ay-font-ui); letter-spacing: 0; text-transform: none; }
 .ay-reel-next { position: absolute; inset: 0; z-index: 1; border: 0; background: transparent; cursor: pointer; }
 .ay-reel-stage { flex: 1; min-height: 0; display: grid; place-items: center; animation: ay-reel-in .5s var(--ay-ease) both; }
 @keyframes ay-reel-in { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
@@ -360,7 +360,7 @@
 @keyframes ay-ring { from { stroke-dashoffset: 302; } }
 .ay-reel-score { position: absolute; top: 50%; left: 50%; translate: -50% -62%; display: grid; justify-items: center; }
 .ay-reel-score strong { font: 400 28px/1.15 var(--ay-font-display); letter-spacing: -.06em; }
-.ay-reel-score span { font: 500 11.5px/1 var(--ay-font-ui); text-transform: uppercase; letter-spacing: .06em; }
+.ay-reel-score span { font: 500 13px/1 var(--ay-font-ui); text-transform: none; letter-spacing: 0; }
 .ay-reel-tags { display: flex; gap: 6px; margin-top: 8px; }
 .ay-reel-tags span { padding: 5px 10px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); font: 500 11.5px/1 var(--ay-font-ui); animation: ay-reel-in .4s var(--ay-pop) both; }
 .ay-reel-tags span:nth-child(2) { animation-delay: .12s; } .ay-reel-tags span:nth-child(3) { animation-delay: .24s; }
@@ -822,7 +822,7 @@
 .ayna-mobile .ay-discover-art i:nth-child(3) { background: var(--ay-pink) !important; }
 
 /* Wrapped montage match art: word form, no invented percent. */
-.ay-reel-score.is-word span { font: 500 13px/1 var(--ay-font-ui); letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
+.ay-reel-score.is-word span { font: 500 13px/1 var(--ay-font-ui); letter-spacing: 0; text-transform: none; opacity: .7; }
 .ay-reel-score.is-word strong { font-size: 30px; line-height: 1.15; font-weight: 600; letter-spacing: -0.01em; }
 .ay-deck-meta { flex-wrap: wrap; } .ay-deck-meta .ay-deck-why { flex-basis: 100%; font: 500 13px/1.35 var(--ay-font-ui); }
 

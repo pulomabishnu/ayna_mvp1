@@ -3,6 +3,8 @@ import TodayScreen from './TodayScreen.jsx';
 import EcosystemScreen from './EcosystemScreen.jsx';
 import MobileHeader from '../components/MobileHeader.jsx';
 import HomeAskSheet from '../components/HomeAskSheet.jsx';
+import { HomeHello, HomeHeroArt } from '../components/HomeArt.jsx';
+import { readHomeLook } from '../components/homeLook.js';
 import { askFromPrompt } from '../../utils/askPrompts.js';
 import EmptyState from '../components/EmptyState.jsx';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
@@ -45,6 +47,10 @@ export default function AynaHomeScreen(props) {
   const hasProducts = hasEcosystem || myProducts.length > 0;
   const today = localToday();
   const cycle = useMemo(() => { const w = buildDashboard(healthInsightRows || [], { days: 30, today }); return w.cycle?.cycleDay ? w.cycle : null; }, [healthInsightRows, today]);
+  // Sticker density preview (?homestyle=a|b, kept for the tab); the hero's number is her own data.
+  const [look] = useState(readHomeLook);
+  const sleepPoints = useMemo(() => buildDashboard(healthInsightRows || [], { days: 7, today }).groups.flatMap((g) => g.charts).find((c) => c.metric === 'sleep_minutes')?.points || [], [healthInsightRows, today]);
+  const firstName = String(authUser?.user_metadata?.first_name || '').split(' ')[0];
   const ask = (q, extra) => onAskAyna?.(typeof q === 'string' ? { question: q, ...(extra || {}) } : q);
 
   if (homeView === 'dashboard') {
@@ -72,9 +78,10 @@ export default function AynaHomeScreen(props) {
             </div>}
         </div>
       )}
-      <div className="ay-home__view ay-homescreen" hidden={homeView !== 'home'} data-tour="home">
+      <div className={`ay-home__view ay-homescreen is-look-${look}`} hidden={homeView !== 'home'} data-tour="home">
         <MobileHeader hideAsk />
         <h1 className="sr-only">Home</h1>
+        <HomeHello name={firstName} today={today} />
         <button type="button" className="ay-homeask__bar" data-tour="home-ask" aria-haspopup="dialog" onClick={() => setAsking(true)}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg>
           <span>Ask ayna</span>
@@ -82,6 +89,7 @@ export default function AynaHomeScreen(props) {
         {!hasProfile && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
         {/* .ay-hd: the dashboard's own tokens and card styles, as on the full dashboard. */}
         <div className="ay-hd ay-homefeed">
+        <HomeHeroArt look={look} products={[...myProducts, ...suggestedEcosystemProducts]} cycle={cycle} sleepPoints={sleepPoints} />
         <TodayFeed
           compact
           variant="app"

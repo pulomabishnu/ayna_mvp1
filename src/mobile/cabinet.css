@@ -351,7 +351,7 @@
 /* Account navigation uses one quiet index. */
 .ayna-settings-scroll { flex:1; min-height:0; overflow-y:auto; padding:0 20px 24px; }
 .ayna-settings-scroll section { margin:16px 0 32px; }
-.ayna-settings-scroll h2 { margin:0 0 8px; color:var(--ayna-text-muted); font:500 11.5px/1.4 var(--ayna-font-ui); text-transform:uppercase; letter-spacing:.08em; }
+.ayna-settings-scroll h2 { margin:0 0 8px; color:var(--ayna-text-muted); font:500 13px/1.4 var(--ayna-font-ui); text-transform: none; letter-spacing: 0; }
 .ayna-settings-scroll section :is(button,a) { display:flex; align-items:center; justify-content:space-between; gap:16px; box-sizing:border-box; width:100%; min-height:56px; padding:12px 0; border:0; border-bottom:1px solid var(--ayna-border); background:transparent; color:var(--ayna-text); text-decoration:none; text-align:left; font-size:calc(15px * var(--ayna-text-scale,1)); line-height: 1.45; font-weight: 400; }
 .ayna-account-session { display:block; min-height:44px; margin:24px 0; padding:8px 0; border:0; background:transparent; color:var(--ayna-accent-dark); font-size:15px; line-height: 1.45; font-weight: 400; }
 
@@ -399,7 +399,7 @@
 .ayna-slide-start { position:relative; width:100%; height:64px; overflow:hidden; border-radius:999px; background:var(--ayna-heading); color:#fff; touch-action:none; }
 .ayna-slide-start-fill { position:absolute; inset:0 auto 0 0; width:58px; border-radius:999px; background:var(--ayna-accent); opacity:.3; pointer-events:none; }
 .ayna-slide-start-label { position:absolute; inset:0 18px 0 74px; display:flex; align-items:center; justify-content:space-between; gap:8px; font:600 17px/1 var(--ayna-font-ui); pointer-events:none; }
-.ayna-slide-start-label span { font:500 11.5px/1 var(--ayna-font-ui); text-transform:uppercase; letter-spacing:.08em; opacity:.72; }
+.ayna-slide-start-label span { font:500 13px/1 var(--ayna-font-ui); text-transform: none; letter-spacing: 0; opacity:.72; }
 .ayna-slide-start-handle { position:absolute; top:5px; left:5px; display:grid; place-items:center; width:54px; height:54px; padding:0; border:0; border-radius:50%; background:var(--ayna-color-pop); color:var(--ayna-color-ink); cursor:grab; touch-action:none; transition:transform 180ms var(--ease-out); }
 .ayna-slide-start-handle:active { cursor:grabbing; transition:none; }
 .ayna-slide-start-handle:focus-visible { outline:3px solid #fff; outline-offset:-5px; }
@@ -420,7 +420,7 @@
 .ayna-context-orbit>button[aria-pressed='true'] { border-color:var(--ayna-heading); scale:1.07; }
 .ayna-context-orbit>button:focus-visible { outline:3px solid var(--ayna-heading); outline-offset:3px; }
 .ayna-context-you { left:32%; top:30%; width:36%; height:40%; background:var(--ayna-color-pop); font:400 28px/1.15 var(--ayna-font-display)!important; align-content:center; gap:5px; }
-.ayna-context-you small { font:500 11.5px/1 var(--ayna-font-ui); text-transform:uppercase; letter-spacing:.08em; }
+.ayna-context-you small { font:500 13px/1 var(--ayna-font-ui); text-transform: none; letter-spacing: 0; }
 .ayna-context-goals { left:8%; top:2%; width:34%; height:32%; background:#f1e5b9; }
 .ayna-context-health { right:0; top:15%; width:32%; height:34%; background:#F7BADD; }
 .ayna-context-preferences { left:17%; bottom:0; width:43%; height:30%; background:#F7BADD; }
@@ -442,7 +442,7 @@
 .ayna-ecosystem-chart-segment { stroke-linecap:round; animation:ayna-chart-arrive 700ms cubic-bezier(.2,.8,.2,1) backwards; animation-delay:calc(var(--segment-index) * 85ms); }
 .ayna-ecosystem-chart-center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--ayna-heading); }
 .ayna-ecosystem-chart-center strong { font:600 30px/1.15 var(--ayna-font-ui); letter-spacing:-0.01em; letter-spacing:-.07em; }
-.ayna-ecosystem-chart-center span { margin-top:6px; font:500 11.5px/1 var(--ayna-font-ui); letter-spacing:.11em; text-transform:uppercase; }
+.ayna-ecosystem-chart-center span { margin-top:6px; font:500 13px/1 var(--ayna-font-ui); letter-spacing: 0; text-transform: none; }
 .ayna-ecosystem-chart-legend { display:flex; flex-direction:column; gap:2px; min-width:0; }
 .ayna-ecosystem-chart-legend a { display:grid; grid-template-columns:10px minmax(0,1fr) auto; align-items:center; gap:8px; min-height:48px; border-bottom:1px solid var(--ayna-border); color:var(--ayna-heading); text-decoration:none; transition:transform 180ms ease,color 180ms ease; }
 .ayna-ecosystem-chart-legend a:last-child { border-bottom:0; }
@@ -492,7 +492,7 @@
 
 /* Ecosystem reveal uses a story rhythm and the same restrained palette. */
 .ayna-story-orbit i:nth-of-type(1) { top:-8%; left:14%; }.ayna-story-orbit i:nth-of-type(2) { right:-7%; bottom:17%; background:#F7BADD; }
-.ayna-story-product-name span { font-size:13px; font-weight: 500; text-transform:uppercase; letter-spacing:.08em; }.ayna-story-product-name strong { font:400 22px/1.15 var(--ayna-font-display); }
+.ayna-story-product-name span { font-size:13px; font-weight: 500; text-transform: none; letter-spacing: 0; }.ayna-story-product-name strong { font:400 22px/1.15 var(--ayna-font-display); }
 .ayna-story-cloud-item:nth-child(1) { left:2%; top:0; transform:rotate(-8deg); }.ayna-story-cloud-item:nth-child(2) { right:0; top:10%; transform:rotate(8deg); }.ayna-story-cloud-item:nth-child(3) { left:4%; bottom:2%; transform:rotate(6deg); }.ayna-story-cloud-item:nth-child(4) { right:3%; bottom:0; transform:rotate(-6deg); }
 @keyframes ayna-story-enter { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
 @keyframes ayna-story-product { from { opacity:0; scale:.8; } to { opacity:1; scale:1; } }

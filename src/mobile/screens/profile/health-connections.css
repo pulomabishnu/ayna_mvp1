@@ -203,4 +203,4 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 /* Data connection UX (team direction 42-43): what each source can provide, and what it is used for. */
 .ay-hc-row-provides { display: block; margin-top: 2px; color: var(--ay-ink-soft); font: 500 calc(12px * var(--ayna-text-scale, 1))/1.4 var(--ay-font-ui); }
 .ay-hc-usedfor { margin: -4px 0 10px; color: var(--ay-ink); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.5 var(--ay-font-ui); }
-.ay-hc-catgroup { display: block; margin: 0 0 4px; color: var(--ay-ink); font: 700 11px/1.3 var(--ay-font-ui); letter-spacing: .06em; text-transform: uppercase; }
+.ay-hc-catgroup { display: block; margin: 0 0 4px; color: var(--ay-ink); font: 700 13px/1.3 var(--ay-font-ui); letter-spacing: 0; text-transform: none; }

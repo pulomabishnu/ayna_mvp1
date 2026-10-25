@@ -3,9 +3,13 @@ import { createPortal } from 'react-dom';
 import NotUsefulMenu from './NotUsefulMenu.jsx';
 import ProductImage from '../../mobile/components/ProductImage.jsx';
 import { matchText } from '../../utils/matchDisplay.js';
+import { READ_PHOTOS } from '../../data/readCovers.js';
 import { ProductSheetContext } from '../../mobile/productSheetContext.js';
 import { ProductQuickActions } from '../../mobile/components/ProductQuick.jsx';
 import { holdLine } from '../../utils/matchState.js';
+import { Mark, Shapes } from '../personality/DS.jsx';
+import { Seal } from '../personality/Bits.jsx';
+import './rundown-ds.css';
 import { DataViz, DATA_KINDS } from './DataCharts.jsx';
 import './rundown-data.css';
 
@@ -28,6 +32,32 @@ const isControl = (el) => Boolean(el?.closest?.('button, a, input, select, texta
 function Evidence({ level }) {
   if (!level) return null;
   return <span className="ay-rd-meter" role="img" aria-label={LEVEL_WORDS[level]} data-level={level}><i /><i /><i /><b>{LEVEL_WORDS[level]}</b></span>;
+}
+
+/* One drawn mark per kind of card, in a disc beside its label (decoration only). */
+const KICKER_MARK = { pattern: 'wave', change: 'star', match: 'heart', saved: 'heart', education: 'asterisk', symptom: 'flower', goal: 'star', community: 'flower', win: 'sparkle', week: 'moon', safety: 'asterisk', frame: 'sparkle' };
+
+/* Type as form (Wrapped 2024): one big visual per card, only from real data:
+   today's date, the story's own contents, the read's real photo, her own count. */
+function CardArt({ card }) {
+  if (card.kind === 'opening') {
+    const day = String(card.key || '').split(':')[1] || '';
+    const d = day ? new Date(`${day}T12:00:00`) : null;
+    // Today's date as a big Bricolage numeral on a colour disc, with drawn shapes around it.
+    return d ? <div className="ay-rd-art is-opening" aria-hidden="true"><span className="ay-rd-art__date"><b>{d.getDate()}</b><small>{d.toLocaleDateString('en-US', { weekday: 'long' })}</small></span><Shapes className="ay-rd-art__shapes" /></div> : null;
+  }
+  if (card.kind === 'closing') return <div className="ay-rd-art is-closing" aria-hidden="true"><Seal className="ay-rd-art__seal" text="your rundown · see you tomorrow · " /></div>;
+  if (card.kind === 'read' && READ_PHOTOS[card.readId]) return <div className="ay-rd-art is-photo" aria-hidden="true"><img src={READ_PHOTOS[card.readId]} alt="" /></div>;
+  if (card.kind === 'stat') {
+    const m = String(card.title || '').match(/\d+/);
+    return m ? <div className="ay-rd-art is-stat" aria-hidden="true"><span className="ay-rd-art__num">{m[0]}</span></div> : null;
+  }
+  // Cards that are only words get a small drawn composition from their own kind (Wrapped's layered shapes, ayna's marks).
+  if (!card.facts && !card.steps && (['text', 'checkin', 'followup', 'safety'].includes(card.kind) || card.category === 'symptom' || card.category === 'safety')) {
+    const mark = KICKER_MARK[card.category] || 'sparkle';
+    return <div className="ay-rd-art is-marks" aria-hidden="true"><span className="ay-rd-art__disc"><Mark name={mark} /></span><Mark name="sparkle" className="ay-rd-art__s1" /><Mark name={mark === 'flower' ? 'star' : 'flower'} className="ay-rd-art__s2" /></div>;
+  }
+  return null;
 }
 
 function Body({ card, h, done }) {
@@ -120,6 +150,11 @@ function Body({ card, h, done }) {
               : <a className="ay-rd-primary" href={HRSA_FIND_CARE} target="_blank" rel="noopener noreferrer">Find care<span className="sr-only"> (opens in a new tab)</span></a>}
         </span>
       );
+    }
+    case 'opening': {
+      // What is inside, in story order (the real card labels).
+      const inside = (h.list || []).filter((c) => c.category !== 'frame');
+      return inside.length ? <ol className="ay-rd-art__inside" aria-label="In this rundown">{inside.map((c) => <li key={c.key}>{c.kicker}</li>)}</ol> : null;
     }
     case 'period':
     case 'cycle':
@@ -221,6 +256,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   if (!card) return null;
 
   const h = {
+    list,
     next: () => go(1),
     close,
     checkIn: (c, v) => { onCheckIn?.(c.field, v); setDone((s) => ({ ...s, [c.key]: { value: v } })); onAction?.(c, 'answer'); },
@@ -254,7 +290,9 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   const tone = card.tone && card.category !== 'safety' ? `is-${card.tone}` : card.category === 'safety' ? 'is-ink' : card.kind === 'opening' || card.kind === 'closing' ? 'is-ink' : ({ pattern: 'is-sky', change: 'is-sky', match: 'is-pink', saved: 'is-pink', education: 'is-butter', symptom: 'is-butter', goal: 'is-butter', community: 'is-sky', win: 'is-pink', week: 'is-sky' })[card.category] || 'is-butter';
 
   const node = (
-    <div ref={rootRef} className={`ay-rd ${tone}${rm ? ' is-still' : ''}`} role="dialog" aria-modal="true" aria-roledescription="story" aria-label={title} tabIndex={-1}>
+    <div ref={rootRef} className={`ay-rd ${tone} is-${card.kind}${rm ? ' is-still' : ''}`} role="dialog" aria-modal="true" aria-roledescription="story" aria-label={title} tabIndex={-1}>
+      {/* Phone: the frame is the screen. Desktop: a 9:16 poster on a dark scrim (DESIGN_RESEARCH_OCT24 B5). */}
+      <div className="ay-rd-frame">
       <div className="ay-rd-top">
         <ol className="ay-rd-progress" aria-hidden="true">
           {list.map((c, k) => <li key={c.key} className={k < i ? 'is-done' : k === i ? `is-now${auto ? ' is-running' : ''}` : ''} style={k === i ? { '--ay-rd-ms': `${AUTO_MS}ms` } : undefined}><i /></li>)}
@@ -273,8 +311,9 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
         onPointerUp={(e) => { if (startX.current == null) return; const dx = e.clientX - startX.current; startX.current = null; if (Math.abs(dx) > 50 && !isControl(e.target)) { e.preventDefault(); go(dx < 0 ? 1 : -1); } }}
       >
         <article className={`ay-rd-card${isData ? ' is-data' : ''}`} key={`${card.key}:${card.title}`} aria-labelledby={`ay-rd-t-${i}`}>
-          <p className="ay-rd-kicker">{card.kicker}</p>
-          <h2 id={`ay-rd-t-${i}`} className="ay-rd-title">{card.title}</h2>
+          {!isData && <CardArt card={card} />}
+          <p className="ay-rd-kicker"><span className="ay-rd-kicker__disc" aria-hidden="true"><Mark name={KICKER_MARK[card.category] || 'sparkle'} /></span>{card.kicker}</p>
+          <h2 id={`ay-rd-t-${i}`} className={`ay-rd-title${String(card.title || '').length > 64 ? ' is-long' : ''}`}>{card.title}</h2>
           {card.body && <p className="ay-rd-body">{card.body}</p>}
           {isData && <DataViz card={card} />}
           {isData ? (<>
@@ -332,6 +371,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
         <button type="button" className="ay-rd-icon" onClick={() => go(-1)} disabled={i === 0} aria-label="Previous card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
         <span aria-hidden="true">{i + 1} / {n}</span>
         <button type="button" className="ay-rd-icon" onClick={() => (i === n - 1 ? close() : go(1))} aria-label={i === n - 1 ? 'Finish' : 'Next card'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+      </div>
       </div>
     </div>
   );

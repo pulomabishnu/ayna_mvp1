@@ -76,6 +76,12 @@ function MotionToggle() {
     document.documentElement.classList.toggle('ay-motion-paused', paused);
     try { localStorage.setItem('ayna_motion_paused', paused ? '1' : '0'); } catch { /* storage unavailable */ }
   }, [paused]);
+  // The home hero has its own Pause motion button (one setting for the page): follow it.
+  React.useEffect(() => {
+    const mo = new MutationObserver(() => setPaused(document.documentElement.classList.contains('ay-motion-paused')));
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => mo.disconnect();
+  }, []);
   return <button type="button" className="ay-footer-legal__link" aria-pressed={paused} onClick={() => setPaused((v) => !v)}>{paused ? 'Play motion' : 'Pause motion'}</button>;
 }
 

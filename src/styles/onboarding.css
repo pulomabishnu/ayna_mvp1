@@ -70,7 +70,7 @@
 :is(.ayna-mobile, .app-container) .ay-qc-uses dt { margin: 0; color: var(--o-ink); font: 700 14px/1.3 var(--o-sans); }
 :is(.ayna-mobile, .app-container) .ay-qc-uses dd { margin: 2px 0 0; color: var(--o-soft); font: 500 13.5px/1.45 var(--o-sans); }
 .ayna-mobile .ay-qc-count { margin-left: auto; color: var(--hd-ink, #3e2723); font: 600 13px/1 'Figtree', sans-serif; }
-.ayna-mobile .ay-qc-kicker { margin: 0 0 6px !important; color: var(--hd-ink, #3e2723) !important; font: 700 12px/1 'Figtree', sans-serif !important; letter-spacing: .08em; text-transform: uppercase; }
+.ayna-mobile .ay-qc-kicker { margin: 0 0 6px !important; color: var(--hd-ink, #3e2723) !important; font: 700 12px/1 'Figtree', sans-serif !important; letter-spacing: 0; text-transform: none; }
 
 /* ── "Not useful" with reasons ─────────────────────────────────────────── */
 :is(.ayna-mobile, .app-container, .ay-why) .ay-nu { display: contents; }
@@ -160,3 +160,82 @@
 :is(.ayna-mobile, .app-container) .ay-know .ay-know__group ul > li::before,
 :is(.ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) > li::before { content: none !important; display: none !important; }
 :is(.ayna-mobile, .app-container) .ay-know .ay-know__group li.is-missing small::before { content: '' !important; display: inline-block !important; }
+
+/* =====================================================================
+   Oct 25 design pass: "Your ayna is ready" as the onboarding's one
+   orchestrated moment (UX spec 5 "should feel rewarding"; INSPO
+   onboarding 0 + 4: dark playful splash, result as a seal; homepage
+   huge coloured numerals). Espresso field, the seal stamps in once, the
+   title huge and tight, her focus as three big numbered rows whose
+   numerals are type-as-form (pink, sky, butter). Rows rise in, 45ms
+   apart. Reduced motion: everything static.
+   ===================================================================== */
+:is(.ayna-mobile, .app-container) .ay-ob-ready:not(.is-web) { background: #3e2723 !important; --o-ink: #ffedac; --o-soft: rgba(255, 237, 172, .86); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.is-web { max-width: 720px; margin: 32px auto 64px; padding: 40px 40px 44px !important; border-radius: 32px; background: #3e2723 !important; --o-ink: #ffedac; --o-soft: rgba(255, 237, 172, .86); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-back { color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__art { width: auto; height: auto; margin: 0 0 4px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__seal { position: relative !important; inset: auto !important; display: grid; place-items: center; width: 112px; height: 112px; border-radius: 50%; background: #f7badd; color: #3e2723; border: 1.5px solid #ffedac; rotate: -8deg; animation: ay-ob-stamp 620ms var(--ease-pop, cubic-bezier(.34, 1.2, .64, 1)) 120ms both; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__seal svg { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); overflow: visible; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__seal text { font: 600 12.5px 'Figtree', sans-serif; letter-spacing: .06em; fill: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__seal b { position: relative; display: grid; place-items: center; width: 50px; height: 50px; border-radius: 50%; background: #3e2723; color: #ffedac; font: 800 17px/1 'ayna Display', sans-serif; }
+@keyframes ay-ob-stamp { from { opacity: 0; transform: scale(1.35); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__title { font: 700 clamp(44px, 12.5vw, 64px)/.92 var(--o-serif) !important; letter-spacing: -.035em !important; color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__lead { color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list { gap: 0; border-top: 1.5px solid rgba(255, 237, 172, .3); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li { display: flex !important; align-items: center; gap: 16px; min-height: 64px; padding: 6px 0 !important; border: 0 !important; border-bottom: 1.5px solid rgba(255, 237, 172, .3) !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: #ffedac !important; font: 700 22px/1.15 var(--o-serif) !important; letter-spacing: -.01em; animation: ay-ob-rise 420ms var(--ease-out, ease-out) both; animation-delay: calc(360ms + var(--i, 0) * 45ms); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li span { width: auto !important; height: auto !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: #f7badd !important; font: 700 56px/.8 var(--o-serif) !important; letter-spacing: -.05em; min-width: 40px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li:nth-child(2) span { color: #769ebe !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li:nth-child(3) span { color: #ffedac !important; }
+@keyframes ay-ob-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-primary { background: #ffedac !important; color: #3e2723 !important; box-shadow: 3px 3px 0 #f7badd !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-quiet { color: #ffedac !important; }
+@media (prefers-reduced-motion: reduce) {
+  :is(.ayna-mobile, .app-container) :is(.ay-ob-ready__seal, .ay-ob-ready__list li) { animation: none !important; }
+}
+/* the optional extra questions are a quiet second action on the espresso field, not a second pink block */
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more { background: transparent !important; border: 1.5px solid rgba(255, 237, 172, .55) !important; box-shadow: none !important; color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more small { color: #ffedac !important; opacity: .86; }
+
+/* Oct 25: the first screen of setup ("Here's how ayna helps") is the other
+   bookend of the reveal: espresso splash (INSPO bbe2830f), three numbered
+   rows with huge coloured numerals, one butter primary. Web: a centred card. */
+:is(.ayna-mobile, .app-container) .ay-ob-value { --o-ink: #ffedac; --o-soft: rgba(255, 237, 172, .86); background: #3e2723 !important; color: #ffedac; }
+.app-container .qz-card.ay-ob-value.is-web { max-width: 720px; padding: 40px !important; border-radius: 32px !important; border: 0 !important; box-shadow: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value :is(h1, .qz-title) { font: 700 clamp(44px, 12vw, 64px)/.92 var(--o-serif) !important; letter-spacing: -.035em !important; color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value .ay-ob-back { color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list { gap: 0; border-top: 1.5px solid rgba(255, 237, 172, .3); }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li { grid-template-columns: 56px 1fr !important; padding: 14px 0 !important; border: 0 !important; border-bottom: 1.5px solid rgba(255, 237, 172, .3) !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li span { width: auto !important; height: auto !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: #f7badd !important; font: 700 56px/.8 var(--o-serif) !important; letter-spacing: -.05em; place-items: start !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li:nth-child(2) span { color: #769ebe !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li:nth-child(3) span { color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list b { color: #ffedac !important; font: 700 20px/1.15 var(--o-serif) !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list p { color: #ffedac !important; opacity: .9; }
+:is(.ayna-mobile, .app-container) .ay-ob-value .ay-ob-primary { background: #ffedac !important; color: #3e2723 !important; box-shadow: 3px 3px 0 #f7badd !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value .ay-ob-quiet { color: #ffedac !important; border-color: rgba(255, 237, 172, .55) !important; background: transparent !important; }
+html body :is(#ay-x, .app-container.app-container.app-container) .qz-page .qz-card.qz-card.ay-ob-value.is-web { background: #3e2723 !important; color: #ffedac !important; }
+html body :is(#ay-x, .app-container.app-container.app-container) .qz-page .qz-card.qz-card.ay-ob-value.is-web { padding: 40px 40px 32px !important; border-radius: 32px !important; }
+html body :is(#ay-x, .app-container.app-container.app-container) .qz-page .qz-card.qz-card.ay-ob-value.is-web .qz-title.qz-title { margin: 0 0 20px !important; color: #ffedac !important; font: 700 clamp(44px, 5vw, 64px)/.92 var(--o-serif, 'ayna Display') !important; letter-spacing: -.035em !important; }
+@media (max-width: 600px) { html body :is(#ay-x, .app-container.app-container.app-container) .qz-page .qz-card.qz-card.ay-ob-value.is-web { padding: 28px 20px 24px !important; border-radius: 24px !important; } }
+
+/* =====================================================================
+   Oct 25 (DESIGN_SYSTEM_OCT25): back to the Oct 21-22 scale. The espresso
+   bookends stay, the seal stays, but titles sit at 30 (app) / 40 (web
+   card) instead of 64, and the 56px coloured numerals become circle
+   numeral stickers (pink, sky, butter, outlined), rows as pills.
+   ===================================================================== */
+:is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready .ay-ob-ready__title, .ay-ob-value :is(h1, .qz-title)) { font: 700 calc(30px * var(--ayna-text-scale, 1))/1.06 var(--o-serif, 'ayna Display') !important; letter-spacing: -.02em !important; }
+@media (min-width: 768px) { :is(#ds-o, .app-container):is(#ds-o, .app-container) :is(.ay-ob-ready .ay-ob-ready__title, .qz-page .qz-card.ay-ob-value.is-web .qz-title) { font-size: 40px !important; } }
+:is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) { display: grid; gap: 10px; border-top: 0 !important; }
+:is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) li { min-height: 56px; padding: 10px 14px 10px 10px !important; border: 1.5px solid rgba(255, 237, 172, .55) !important; border-radius: 18px !important; }
+:is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) li span {
+  display: grid !important; place-items: center !important; align-self: center; flex: none; width: 36px !important; min-width: 36px; height: 36px !important; box-sizing: border-box; padding: 0 !important; text-align: center;
+  border: 1.5px solid #3e2723 !important; border-radius: 50% !important; background: #f7badd !important; color: #3e2723 !important;
+  font: 700 17px/1 var(--o-serif, 'ayna Display') !important; letter-spacing: 0 !important; box-shadow: 2px 2px 0 #ffedac !important; transform: rotate(-6deg);
+}
+:is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) li:nth-child(2) span { background: #769ebe !important; color: #3e2723 !important; transform: rotate(5deg); }
+:is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) li:nth-child(3) span { background: #ffedac !important; color: #3e2723 !important; }
+:is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) .ay-ob-value__list li { grid-template-columns: 44px 1fr !important; align-items: center; }
+:is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) .ay-ob-value__list b { font-size: 17px !important; }
+/* the web card carries one sparkle sticker on its corner (decoration) */
+:is(#ds-o, .app-container):is(#ds-o, .app-container) .qz-card.ay-ob-value.is-web { position: relative; overflow: visible !important; }
+:is(#ds-o, .app-container):is(#ds-o, .app-container) .qz-card.ay-ob-value.is-web::after { content: ''; position: absolute; top: -22px; right: 28px; width: 54px; height: 54px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 50%; background: #f7badd url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5c.7 5.6 4.9 9.8 10.5 10.5-5.6.7-9.8 4.9-10.5 10.5-.7-5.6-4.9-9.8-10.5-10.5C7.1 11.3 11.3 7.1 12 1.5z' fill='%233e2723'/%3E%3C/svg%3E") center / 24px no-repeat; transform: rotate(10deg); box-shadow: 3px 3px 0 #3e2723; pointer-events: none; }

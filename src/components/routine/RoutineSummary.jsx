@@ -33,12 +33,13 @@ export default function RoutineSummary({ variant = 'app', onOpenRoutine, onOpenP
                 {it.kind === 'product' && onOpenProduct
                   ? <button type="button" className="ay-rx__namebtn" onClick={() => onOpenProduct(it.product)}>{it.title}</button>
                   : <b>{it.title}</b>}
-                <span>{[it.when, it.horizon ? `try for ${it.horizon.label}` : ''].filter(Boolean).join(' · ')}</span>
+                {/* A sentence, not a middot string: "When cramps start. Try for one cycle." */}
+                <span>{[it.when, it.horizon ? `try for ${it.horizon.label}` : ''].filter(Boolean).map((x) => `${x.charAt(0).toUpperCase()}${x.slice(1)}.`).join(' ')}</span>
               </li>
             ))}
             <li className="is-track">
               <b>{r.track.title}</b>
-              <span>About 30 seconds{onCheckIn ? ' · ' : ''}{onCheckIn && <button type="button" className="ay-rx__link" onClick={onCheckIn}>Check in</button>}</span>
+              <span>About 30 seconds.{onCheckIn ? ' ' : ''}{onCheckIn && <button type="button" className="ay-rx__link" onClick={onCheckIn}>Check in</button>}</span>
             </li>
           </ul>
         </div>

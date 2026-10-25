@@ -342,75 +342,122 @@
 .app-container .hm .ay-band--scallop, .app-container .hm .ay-band--scallop-bottom { z-index: 1; }
 
 /* =====================================================================
-   Oct 24 (team direction 48-52): one CTA, real products and real UI in
-   place of mood-board photos, readable type over butter.
+   Oct 25 design pass: the approved Oct 21 page restored (photos, rhythm,
+   bands), plus the founder's animated hero scatter. Rules and sources:
+   scratchpad DESIGN_RESEARCH_OCT24.md (A). Only transform and opacity
+   animate; every slot is a fixed box, so nothing shifts while it changes.
    ===================================================================== */
-/* hero: a slow scatter of real products, ayna UI and a community post */
-.app-container .hm .hm-scatter { position: relative; aspect-ratio: 1 / .92; min-height: 320px; }
-.app-container .hm .hm-scatter__item { position: absolute; display: block; border: 1.5px solid var(--hm-ink); background: var(--hm-butter); color: var(--hm-ink); box-sizing: border-box; }
-.app-container .hm .hm-scatter__prod { width: 26%; aspect-ratio: 1 / 1; padding: 10px; border-radius: 22px; background: #fff; overflow: hidden; }
-.app-container .hm .hm-scatter__prod img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
-.app-container .hm .hm-scatter__prod.is-skel { background: var(--hm-butter-2); }
-.app-container .hm .hm-scatter__prod.is-1 { top: 4%; left: 30%; width: 34%; rotate: -3deg; }
-.app-container .hm .hm-scatter__prod.is-2 { top: 0; right: 0; rotate: 4deg; }
-.app-container .hm .hm-scatter__prod.is-3 { top: 44%; left: 4%; rotate: -5deg; }
-.app-container .hm .hm-scatter__prod.is-4 { bottom: 2%; left: 40%; rotate: 2deg; }
-.app-container .hm .hm-scatter__prod.is-5 { bottom: 10%; right: 2%; width: 22%; rotate: -2deg; }
-.app-container .hm .hm-scatter__ui { display: grid; gap: 6px; padding: 12px 14px; border-radius: 18px; box-shadow: 3px 3px 0 var(--hm-ink); }
-.app-container .hm .hm-scatter__ui small { font: 700 12px/1.2 var(--ay-sans-stack); letter-spacing: .04em; text-transform: uppercase; }
-.app-container .hm .hm-scatter__ui.is-evidence { top: 38%; right: 4%; width: 42%; max-width: 230px; background: var(--hm-pink); }
-.app-container .hm .hm-scatter__note { font: 500 13px/1.35 var(--ay-sans-stack); }
-.app-container .hm .hm-scatter__ui.is-post { bottom: 0; left: 0; width: 44%; max-width: 260px; background: var(--hm-butter); }
-.app-container .hm .hm-scatter__body { font: 500 14px/1.4 var(--ay-sans-stack); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-.app-container .hm .hm-scatter__seal { top: -18px; left: 2%; right: auto; bottom: auto; }
-.app-container[data-theme='brand-dark'] .hm .hm-scatter__item { border-color: var(--hm-butter); }
+/* stage: a fixed-ratio box; slots are placed in % of it */
+.app-container .hm .hm-scatter { position: relative; aspect-ratio: 1 / .96; min-height: 360px; isolation: isolate; }
+.app-container .hm .hm-slot { position: absolute; display: block; box-sizing: border-box; color: var(--hm-ink); --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline: var(--hm-ink); --ay-ink: var(--hm-ink); }
+.app-container .hm .hm-slot__layer { position: absolute; inset: 0; display: block; }
+.app-container .hm .hm-slot.is-skel { background: var(--hm-butter-2); border-radius: 20px; }
+/* photo slots: framed like the approved collage */
+.app-container .hm .hm-slot--main { top: 0; right: 2%; width: 52%; aspect-ratio: 4 / 5; rotate: 1.5deg; z-index: 1; }
+.app-container .hm .hm-slot--main .hm-slot__layer { border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); overflow: hidden; background: var(--hm-butter-2); }
+.app-container .hm .hm-slot--photo { left: 3%; bottom: 3%; width: 31%; aspect-ratio: 3 / 4; rotate: -4deg; z-index: 3; }
+.app-container .hm .hm-slot--photo .hm-slot__layer { border: 7px solid var(--hm-butter); border-radius: 20px; box-shadow: 0 0 0 1.5px var(--hm-ink); overflow: hidden; background: var(--hm-butter-2); }
+.app-container .hm :is(.hm-slot--main, .hm-slot--photo) :is(img, picture) { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; }
+.app-container .hm .hm-slot--main img { object-position: 50% 40%; }
+/* product slots: die-cut product on a white tile (the shelf tile) */
+.app-container .hm :is(.hm-slot--left, .hm-slot--right) { width: 23%; aspect-ratio: 1 / 1; }
+.app-container .hm :is(.hm-slot--left, .hm-slot--right) .hm-slot__layer { padding: 10%; background: #fff; border: 1.5px solid var(--hm-ink); border-radius: 22px; box-sizing: border-box; }
+.app-container .hm :is(.hm-slot--left, .hm-slot--right) img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
+.app-container .hm .hm-slot--left { top: 5%; left: 6%; rotate: -5deg; z-index: 2; }
+.app-container .hm .hm-slot--right { bottom: 1%; left: 39%; width: 21%; rotate: 3deg; z-index: 4; }
+/* UI slots: real ayna pieces, raised (outline + the hard offset shadow) */
+.app-container .hm .hm-slot--ev { top: 33%; left: 0; width: 41%; height: 23%; z-index: 5; rotate: -1.5deg; }
+.app-container .hm .hm-slot--day { right: 0; bottom: 6%; width: 39%; height: 25%; z-index: 5; rotate: 2deg; }
+.app-container .hm .hm-ui { position: absolute; inset: auto 0 0 0; display: grid; align-content: start; gap: 6px; padding: 12px 14px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: 18px; box-shadow: 3px 3px 0 var(--hm-ink); box-sizing: border-box; text-align: left; }
+.app-container .hm .hm-slot--ev .hm-ui { inset: 0 0 auto 0; }
+.app-container .hm .hm-ui__label { font: 600 13px/1.2 var(--ay-sans-stack); }
+.app-container .hm .hm-ui__note { font: 500 13px/1.35 var(--ay-sans-stack); }
+.app-container .hm .hm-ui__title { font: 700 18px/1.05 var(--ay-heading); letter-spacing: -.02em; }
+.app-container .hm .hm-ui--evidence { background: var(--hm-pink); }
+.app-container .hm .hm-ui--product { grid-template-columns: 52px minmax(0, 1fr); align-items: center; column-gap: 10px; }
+.app-container .hm .hm-ui__thumb { grid-row: span 2; width: 52px; aspect-ratio: 1 / 1; padding: 4px; background: #fff; border: 1.5px solid var(--hm-ink); border-radius: 12px; box-sizing: border-box; }
+.app-container .hm .hm-ui__thumb img { width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
+.app-container .hm .hm-ui__text { display: grid; gap: 1px; min-width: 0; }
+.app-container .hm .hm-ui__brand { font: 500 12px/1.2 var(--ay-sans-stack); }
+.app-container .hm .hm-ui__name { font: 600 14px/1.2 var(--ay-sans-stack); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container .hm .hm-ui__price { font: 600 13px/1.2 var(--ay-sans-stack); font-variant-numeric: tabular-nums; }
+.app-container .hm .hm-ui__save { justify-self: start; grid-column: 2; padding: 3px 12px; border: 1.5px solid var(--hm-ink); border-radius: 999px; background: var(--hm-pink); font: 600 12px/1.3 var(--ay-sans-stack); }
+.app-container .hm .hm-ui--rundown { background: var(--hm-ink); color: var(--hm-butter); box-shadow: 3px 3px 0 var(--hm-pink); }
+.app-container .hm .hm-ui__pill { justify-self: start; margin-top: 2px; padding: 5px 12px; border-radius: 999px; background: var(--hm-pink); color: var(--hm-ink); font: 600 12px/1.2 var(--ay-sans-stack); }
+.app-container .hm .hm-ui__opts { display: flex; flex-wrap: wrap; gap: 4px; }
+.app-container .hm .hm-ui__opts span { padding: 4px 9px; border: 1.5px solid var(--hm-ink); border-radius: 999px; font: 600 12px/1.2 var(--ay-sans-stack); }
+.app-container .hm .hm-ui__opts span.is-on { background: var(--hm-ink); color: var(--hm-butter); }
+.app-container .hm .hm-ui--post { background: #fff8de; }
+.app-container .hm .hm-ui__body { font: 500 14px/1.4 var(--ay-sans-stack); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container .hm .hm-scatter__seal { top: -26px; left: calc(42% - 60px); right: auto; bottom: auto; z-index: 6; }
+/* the pause control (WCAG 2.2.2), quiet, on the stage edge */
+.app-container .hm .hm-scatter__pause { position: absolute; right: 0; top: calc(100% + 8px); display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 4px; background: none; border: 0; color: var(--ay-text); font: 600 14px/1 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.app-container .hm .hm-scatter__pause svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.app-container .hm .hm-scatter__pause:focus-visible { outline: 3px solid var(--ay-outline); outline-offset: 2px; border-radius: 8px; }
+/* dark: frames and ink flip to butter outlines; the UI pieces keep their light fills (readable) */
+.app-container[data-theme='brand-dark'] .hm .hm-slot--main .hm-slot__layer,
+.app-container[data-theme='brand-dark'] .hm :is(.hm-slot--left, .hm-slot--right) .hm-slot__layer { border-color: var(--hm-butter); }
+.app-container[data-theme='brand-dark'] .hm .hm-slot--photo .hm-slot__layer { border-color: var(--hm-ink); box-shadow: 0 0 0 1.5px var(--hm-butter); }
+.app-container[data-theme='brand-dark'] .hm .hm-ui { box-shadow: 3px 3px 0 var(--hm-butter); }
+.app-container[data-theme='brand-dark'] .hm .hm-ui--rundown { border-color: var(--hm-butter); box-shadow: 3px 3px 0 var(--hm-pink); }
+
+/* motion: pop in once, then one slot at a time rains in its next piece */
 @media (prefers-reduced-motion: no-preference) {
-  .app-container .hm:not(.is-paused) .hm-scatter__item { animation: hm-drift 9s var(--ease-in-out, ease-in-out) infinite alternate; }
-  .app-container .hm:not(.is-paused) .hm-scatter__item:nth-child(2n) { animation-duration: 11s; animation-delay: -3s; }
-  .app-container .hm:not(.is-paused) .hm-scatter__item:nth-child(3n) { animation-duration: 13s; animation-delay: -6s; }
+  .app-container .hm .hm-scatter:not(.is-still) .hm-slot__layer.is-pop { animation: hm-pop 560ms var(--ease-pop) both; animation-delay: calc(var(--i, 0) * 90ms + 120ms); }
+  .app-container .hm .hm-scatter:not(.is-still) .hm-slot__layer.is-in { animation: hm-rain 640ms var(--ease-pop) both; }
+  .app-container .hm .hm-scatter:not(.is-still) .hm-slot__layer.is-out { animation: hm-leave 360ms var(--ease-exit) both; }
 }
-@keyframes hm-drift { from { translate: 0 0; } to { translate: 0 -8px; } }
+@keyframes hm-pop { from { opacity: 0; transform: translateY(14px) scale(.92); } to { opacity: 1; transform: none; } }
+@keyframes hm-rain { from { opacity: 0; transform: translateY(-36px) rotate(5deg); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
+@keyframes hm-leave { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(18px) rotate(-3deg); } }
+.app-container .hm .hm-slot__layer.is-out { pointer-events: none; }
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  .app-container .hm .hm-ui { padding: 10px; }
+  .app-container .hm .hm-ui__note { display: none; }
+}
 @media (max-width: 767px) {
-  .app-container .hm .hm-scatter { aspect-ratio: 1 / .7; min-height: 0; }
-  .app-container .hm .hm-scatter__prod { padding: 6px; border-radius: 16px; }
-  .app-container .hm .hm-scatter__prod.is-5 { display: none; }
-  .app-container .hm .hm-scatter__ui { padding: 8px 10px; border-radius: 14px; }
-  .app-container .hm .hm-scatter__ui.is-evidence { width: 48%; top: 40%; }
-  .app-container .hm .hm-scatter__ui.is-post { width: 50%; }
-  .app-container .hm .hm-scatter__body { font-size: 13px; -webkit-line-clamp: 3; }
-  .app-container .hm .hm-scatter__note { display: none; }
+  .app-container .hm .hm-scatter { aspect-ratio: 1 / .9; min-height: 0; margin-bottom: 40px; }
+  .app-container .hm .hm-slot--main { width: 46%; right: 4%; }
+  .app-container .hm .hm-slot--photo .hm-slot__layer { border-width: 5px; border-radius: 14px; }
+  .app-container .hm :is(.hm-slot--left, .hm-slot--right) .hm-slot__layer { border-radius: 14px; padding: 8%; }
+  .app-container .hm .hm-slot--ev { width: 46%; height: 26%; top: 31%; }
+  .app-container .hm .hm-slot--day { width: 46%; height: 30%; bottom: 3%; }
+  .app-container .hm .hm-ui { padding: 8px 10px; gap: 4px; border-radius: 14px; }
+  .app-container .hm .hm-ui__note { font-size: 12px; }
+  .app-container .hm .hm-ui__title { font-size: 15px; }
+  .app-container .hm .hm-ui__label { font-size: 12px; }
+  .app-container .hm .hm-ui--product { grid-template-columns: 40px minmax(0, 1fr); column-gap: 8px; }
+  .app-container .hm .hm-ui__thumb { width: 40px; border-radius: 10px; }
+  .app-container .hm .hm-ui__name { font-size: 13px; }
+  .app-container .hm .hm-ui__body { font-size: 13px; }
+  .app-container .hm .hm-ui--evidence .hm-ui__note { display: none; }
+  .app-container .hm .hm-scatter__seal { top: -18px; left: calc(44% - 50px); width: 84px; height: 84px; }
+  .app-container .hm .hm-scatter__seal b { width: 36px; height: 36px; font-size: 13px; }
 }
-/* the hero headline stays readable: a little smaller now it is a sentence */
-.app-container.app-container .hm h1.hm-display:not(.hm-display--personal) { font-size: clamp(56px, 6.6vw, 100px) !important; }
-@media (max-width: 767px) { .app-container.app-container .hm h1.hm-display:not(.hm-display--personal) { font-size: clamp(40px, 12vw, 52px) !important; } }
-.app-container .hm .hm-hero__copy .hm-lead { max-width: 40ch; }
 
-/* sound familiar: a real product for each need */
-.app-container .hm .hm-needs__ph.is-product { background: #fff; padding: 6px; box-sizing: border-box; }
-.app-container .hm .hm-needs__ph.is-product img { object-fit: contain; }
+/* sound familiar: the approved photo with a real product stuck on its corner */
+.app-container .hm .hm-needs__ph { position: relative; overflow: visible; }
+.app-container .hm .hm-needs__ph > picture, .app-container .hm .hm-needs__ph > img { border-radius: 14.5px !important; overflow: hidden; }
+.app-container .hm .hm-needs__ph :is(picture) img { border-radius: 14.5px !important; }
+.app-container .hm .hm-needs__prod { position: absolute; right: -10px; bottom: -8px; width: 40px; aspect-ratio: 1 / 1; padding: 3px; background: #fff; border: 1.5px solid var(--hm-ink); border-radius: 10px; box-sizing: border-box; rotate: 6deg; }
+.app-container .hm .hm-needs__prod img { width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
+@media (max-width: 767px) { .app-container .hm .hm-needs__prod { width: 32px; right: -8px; } }
 
-/* how it works: real UI instead of photos */
-.app-container .hm .hm-step__ph.is-ui { display: grid; place-items: center; aspect-ratio: 4 / 4; padding: 14px; background: var(--hm-butter); color: var(--hm-ink); box-sizing: border-box; --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline: var(--hm-ink); --ay-ink: var(--hm-ink); }
-.app-container .hm .hm-scatter__ui { --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline: var(--hm-ink); --ay-ink: var(--hm-ink); }
-.app-container .hm .hm-stepui { display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 6px; width: 100%; }
-.app-container .hm .hm-stepui small { flex-basis: 100%; text-align: center; font: 700 12px/1.2 var(--ay-sans-stack); letter-spacing: .04em; text-transform: uppercase; }
-.app-container .hm .hm-stepui .ay-chip { pointer-events: none; min-height: 32px; font-size: 13px; }
-.app-container.app-container .hm .hm-stepui .ay-chip { height: 32px; }
+/* how it works: the approved photo, the real UI piece as a sticker on its lower edge */
+.app-container .hm .hm-step__ph { position: relative; }
+.app-container .hm .hm-stepui { position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 4px; padding: 8px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: 14px; box-sizing: border-box; --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline: var(--hm-ink); --ay-ink: var(--hm-ink); }
+.app-container .hm .hm-stepui .ay-chip { pointer-events: none; min-height: 28px; height: 28px !important; padding: 0 10px; font-size: 12px; }
 .app-container.app-container .hm .hm-stepui .ay-chip.is-on { background: var(--hm-ink) !important; color: var(--hm-butter) !important; }
-.app-container .hm .hm-stepui.is-evidence { flex-direction: column; align-items: stretch; gap: 10px; }
-.app-container .hm .hm-stepui.is-matches { flex-wrap: nowrap; }
-.app-container .hm .hm-stepui__prod { width: 32%; aspect-ratio: 1 / 1; padding: 6px; border: 1.5px solid var(--hm-ink); border-radius: 14px; background: #fff; box-sizing: border-box; }
-.app-container .hm .hm-stepui__prod:nth-child(2) { translate: 0 -10px; }
+.app-container .hm .hm-stepui.is-evidence { flex-direction: column; gap: 6px; background: var(--hm-pink); }
+.app-container .hm .hm-stepui.is-matches { left: auto; width: 62%; flex-wrap: nowrap; gap: 6px; padding: 6px; background: transparent; border: 0; }
+.app-container .hm .hm-stepui__prod { flex: 1; aspect-ratio: 1 / 1; padding: 4px; border: 1.5px solid var(--hm-ink); border-radius: 12px; background: #fff; box-sizing: border-box; }
+.app-container .hm .hm-stepui__prod:nth-child(2) { translate: 0 -8px; }
 .app-container .hm .hm-stepui__prod img { width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
-.app-container .hm .hm-stepui.is-decide { flex-direction: column; align-items: center; gap: 8px; }
-.app-container .hm .hm-stepui__btn { display: inline-flex; align-items: center; justify-content: center; min-width: 120px; min-height: 40px; padding: 0 18px; border: 1.5px solid var(--hm-ink); border-radius: 999px; background: var(--hm-pink); font: 700 15px/1 var(--ay-sans-stack); }
-.app-container .hm .hm-stepui__btn.is-quiet { background: transparent; }
+.app-container .hm .hm-stepui.is-decide { left: auto; flex-direction: column; align-items: stretch; gap: 6px; padding: 0; background: transparent; border: 0; }
+.app-container .hm .hm-stepui__btn { display: inline-flex; align-items: center; justify-content: center; min-height: 34px; padding: 0 16px; border: 1.5px solid var(--hm-ink); border-radius: 999px; background: var(--hm-pink); font: 600 14px/1 var(--ay-sans-stack); }
+.app-container .hm .hm-stepui__btn.is-quiet { background: var(--hm-butter); }
 .app-container .hm .hm-step__text p { color: var(--ay-text) !important; }
-
-/* the one clear call to action, its own section near the end */
-.app-container .hm .hm-startsec .hm-start { margin-top: 0; }
-
-/* photo slots removed: the copy takes the width */
-.app-container .hm .hm-comm__grid.is-nophoto { grid-template-columns: minmax(0, 1fr); }
-.app-container .hm .hm-comm__grid.is-nophoto .hm-news { margin-top: 8px; }
-.app-container .hm .hm-invest__grid.is-nophoto { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 767px) {
+  .app-container .hm .hm-stepui { display: none; }
+}

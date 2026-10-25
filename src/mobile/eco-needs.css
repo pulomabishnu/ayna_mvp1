@@ -50,7 +50,7 @@
 
 /* ---------- Ecosystem: care first, care notes, per-need shelves ---------- */
 .ayna-mobile .ay-care-first { margin: 12px var(--ay-gutter, 20px) 0; padding: 18px; border: 2px solid #3e2723; border-radius: 22px; background: var(--ay-pink); color: #3e2723; box-shadow: 3px 3px 0 #3e2723; }
-.ayna-mobile .ay-care-first__eyebrow { margin: 0 0 4px; font: 500 13px/1.2 var(--ay-font-ui); text-transform: uppercase; letter-spacing: .06em; }
+.ayna-mobile .ay-care-first__eyebrow { margin: 0 0 4px; font: 500 13px/1.2 var(--ay-font-ui); text-transform: none; letter-spacing: 0; }
 .ayna-mobile .ay-care-first h2 { margin: 0 0 8px; font: 400 22px/1.15 var(--ay-font-display, var(--ay-font-ui)); letter-spacing: -.04em; color: #3e2723; }
 .ayna-mobile .ay-care-first > p { margin: 0 0 8px; font-size: 15px; font-weight: 400; line-height: 1.45; color: #3e2723; }
 .ayna-mobile .ay-care-first .ay-care-links a { background: #ffffff; color: #3e2723; border-color: #3e2723; }

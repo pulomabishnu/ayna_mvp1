@@ -15,7 +15,8 @@ function PhotoPlaceholder({ style, product }) {
     <div className={`ayna-fresh-photo-placeholder ay-ph is-${tint}`} role="img" aria-label={name ? `No photo yet for ${name}` : 'Product photo unavailable'} style={{ position: 'absolute', inset: 0, ...style }}>
       <span aria-hidden="true" className="ay-ph-name">{key}</span>
       <span aria-hidden="true" className="ay-ph-rule" />
-      <span aria-hidden="true" className="ay-ph-soon">Photo coming soon</span>
+      {/* Services (apps, telehealth, programs) have no product photo to come: say what they are. */}
+      <span aria-hidden="true" className="ay-ph-soon">{product?.type === 'digital' ? String(product.category || 'Service').replace(/[-_]/g, ' ').replace(/^./, (c) => c.toUpperCase()) : 'Photo coming soon'}</span>
     </div>
   );
 }

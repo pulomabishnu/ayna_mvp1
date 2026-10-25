@@ -1,0 +1,265 @@
+/* =====================================================================
+   Website screens in the Oct 21-22 language (DESIGN_SYSTEM_OCT25.md).
+   Loaded after every other stylesheet; selectors carry two ID-weight
+   :is() steps so lazily loaded component CSS can't undo the type scale.
+   Type: H1 44/30, H2 30/24, H3 22/20, card title 17/16, body 17/16.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   TODAY (/today), chosen direction: data as graphics + a light sticker.
+   Espresso band with a wavy edge (ecddcbf4): greeting at H1, a day strip
+   (e69dca39), her cycle day as a ring with drawn shapes around it
+   (bbe2830f, bf3f538c), one product cutout (00434cdc; two with
+   ?homestyle=b). Below: the Rundown as a filled pink block, the 1 to 3
+   things as filled colour blocks with a pill label, More for you as a
+   plain section. No tabs, stamps or tape.
+   --------------------------------------------------------------------- */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today { padding-top: 0 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead {
+  --ph-top: 40px; position: relative; display: grid; gap: 8px; align-content: center; min-height: 196px; margin: 0 0 56px !important; padding: 32px 380px 44px 0 !important; color: var(--ay-text);
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead p { margin: 0 !important; color: var(--ay-text) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__date { font: 600 14px/1.3 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__hi { font: 700 var(--ay-type-h1)/1.02 var(--ay-heading) !important; letter-spacing: -.02em !important; text-wrap: balance; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days { margin-top: 12px; color: var(--ay-text); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days li { min-width: 44px; border-color: color-mix(in srgb, currentColor 35%, transparent); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art { position: absolute; right: 0; top: 24px; bottom: 32px; width: 340px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring { position: absolute; right: 36px; top: 50%; width: 136px; height: 136px; margin-top: -68px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b { width: 86px; height: 86px; font-size: 36px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh-hello__ring .is-track { stroke: rgba(62, 39, 35, .25); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__shapes .is-flower { right: 4px; top: 0; width: 32px; height: 32px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__shapes .is-asterisk { right: 196px; top: 18px; width: 22px; height: 22px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__shapes .is-slash { right: 190px; bottom: 6px; width: 22px; height: 22px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__shapes .is-dot { right: 18px; bottom: 4px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh-hello__shapes .is-flower { color: #769ebe; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__shapes .is-asterisk { right: 60px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__stickers { position: absolute; right: 196px; top: 30px; width: 130px; height: 120px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__stickers { right: 90px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__stickers .ds-psticker.is-1 { right: 0; top: 4px; width: 84px; height: 84px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__stickers .ds-psticker.is-2 { right: 64px; top: 52px; width: 64px; height: 64px; }
+/* Sticker budget: a = one product cutout; b = cutout + curved-text ring + the Rundown card's sparkle. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh:has(.ay-wh-hello.is-look-a) .ay-rd-hero__sticker { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__curvebox { position: absolute; right: 36px; top: 50%; width: 136px; height: 136px; margin-top: -68px; color: #f7badd; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__curvebox { right: 74px; top: 18px; width: 116px; height: 116px; margin-top: 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .is-look-b .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__shapes .is-asterisk { right: 30px; top: 70px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__curve text { font-size: 8.5px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh-hello__curvebox { color: #3e2723; }
+@media (max-width: 760px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__curvebox { display: none; } }
+@media (max-width: 767px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead { --ph-top: 24px; min-height: 0; margin-bottom: 40px !important; padding: 20px 112px 32px 0 !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days { margin-right: -112px; gap: 4px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days li { flex: 1; min-width: 0; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art { top: 12px; bottom: auto; height: 104px; width: 112px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring { right: 4px; top: 0; margin-top: 0; width: 96px; height: 96px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b { width: 62px; height: 62px; font-size: 26px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__shapes, html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art.has-ring .ay-wh-hello__stickers { display: none; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__stickers { right: 8px; top: 4px; width: 80px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__stickers .ds-psticker.is-1 { width: 72px; height: 72px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__stickers .ds-psticker.is-2 { display: none; }
+}
+
+/* the Rundown: a filled pink block with the hard shadow; its label a small pill; the peek as numbered pills */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero { gap: 12px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card {
+  --x-feature: #f7badd; --x-on: #3e2723; --x-on-2: rgba(62, 39, 35, .8); --x-on-hair: rgba(62, 39, 35, .25);
+  position: relative; overflow: visible; min-height: 0; align-content: start; gap: 12px;
+  padding: 28px 28px 26px !important; border-radius: 24px!important; border: 2px solid #3e2723; box-shadow: 6px 6px 0 #3e2723; background: #f7badd !important; color: #3e2723;
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh .ay-rd-hero__card { border-color: #ffedac; box-shadow: 6px 6px 0 #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card.is-new { outline: 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__date { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__kicker { justify-self: start; display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px !important; border-radius: 999px; background: #ffedac; color: #3e2723 !important; opacity: 1; font: 600 13px/1 var(--ay-sans-stack) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__sticker { top: -18px; right: 22px; --tilt: 12deg; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card h2 { max-width: none; font: 700 var(--ay-type-h2)/1.1 var(--ay-heading) !important; letter-spacing: -.02em !important; color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card > p:not(.ay-rd-hero__kicker):not(.ay-rd-hero__new) { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside { gap: 8px; margin: 2px 0 4px !important; padding: 0 !important; border: 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside li { min-height: 36px; padding: 0 14px 0 4px; gap: 8px; border-radius: 999px; background: #ffedac; color: #3e2723; font: 600 14px/1.2 var(--ay-sans-stack); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside li::before { width: 28px; height: 28px; border: 1.5px solid #3e2723; box-sizing: border-box; background: #f7badd; color: #3e2723; font: 700 13px/1 var(--ay-heading); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside li:is(.is-pattern, .is-change, .is-community)::before { background: #769ebe; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__go { position: relative; min-height: 52px; margin-top: 4px !important; padding: 0 58px 0 24px !important; border: 1.5px solid #3e2723 !important; background: #3e2723 !important; color: #ffedac !important; box-shadow: 3px 3px 0 #ffedac !important; font: 600 16px/1 var(--ay-sans-stack) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__go::after { content: ''; position: absolute; right: 7px; top: 50%; width: 38px; height: 38px; margin-top: -19px; border-radius: 50%; background: #f7badd; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__go::before { content: ''; position: absolute; z-index: 1; right: 17px; top: 50%; width: 18px; height: 18px; margin-top: -9px; background: #3e2723; -webkit-mask: var(--ds-arrow) center / contain no-repeat; mask: var(--ds-arrow) center / contain no-repeat; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__week { min-height: 56px; border: 0 !important; border-radius: 999px!important; padding: 8px 20px !important; background: var(--ds-group) !important; }
+
+/* the 1 to 3 things: filled blocks (sky, butter), label as a pill inside, the primary raised */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today { gap: 24px !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__list { gap: 12px; padding-top: 0; margin-top: 0; overflow: visible; border-radius: 0; background: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item { position: relative; gap: 8px; padding: 22px 24px !important; border: 0 !important; border-radius: 24px; background: #769ebe; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item:nth-child(3n+2) { background: var(--ds-group); color: var(--ds-ink); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item:is(.is-care, .is-safety) { background: #f7badd; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item.is-urgent { background: #3e2723; color: #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item:not(:nth-child(3n+2)):not(.is-urgent) :is(.ay-today__title, .ay-today__body, .ay-today__why, .ay-today__text, .ay-today__note, small, p, button:not(.ay-today__primary)) { color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item .ay-today__kicker { justify-self: start; display: inline-flex; align-items: center; min-height: 26px; padding: 0 12px !important; border: 0 !important; border-radius: 999px; background: rgba(62, 39, 35, .12) !important; color: inherit !important; opacity: 1; font: 600 13px/1 var(--ay-sans-stack) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh .ay-today__item:nth-child(3n+2) .ay-today__kicker { background: rgba(255, 237, 172, .14) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__title { font: 700 var(--ay-type-h3)/1.2 var(--ay-heading) !important; letter-spacing: -.01em !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__primary { box-shadow: 3px 3px 0 #f7badd !important; }
+
+/* More for you: a plain section on a butter-deep block, title at H3, routine steps with coloured numerals */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__more { padding: 28px; border: 0; border-radius: 24px; background: var(--ds-group); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .ay-wh.ay-wh--today .ay-wh-day__moreh { margin: 0 0 8px !important; font: 700 var(--ay-type-h3)/1.15 var(--ay-heading) !important; letter-spacing: -.01em !important; color: var(--ds-ink) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__more .ay-rxr .ay-rxs__list > li::before { border: 1.5px solid #3e2723; box-sizing: border-box; background: #f7badd; color: #3e2723; font-family: var(--ay-heading); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__more .ay-rxr .ay-rxs__list > li:nth-child(2)::before { background: #769ebe; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__more .ay-rxr .ay-rxs__list > li.is-track::before { background: #ffedac; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .ay-wh.ay-wh--today .ay-wh-day__more .ay-rxr .ay-rxs__head h2 { font: 700 17px/1.2 var(--ay-sans-stack) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-tread__cover { border-radius: 16px; overflow: hidden; }
+@media (max-width: 767px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card { padding: 22px 18px 20px !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item { padding: 18px !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__more { padding: 20px 18px; }
+}
+
+/* ---------------------------------------------------------------------
+   EXPLORE (/explore/*). The Shop band at Shop's size: title 44/30 (was
+   80/44), the round seal on the band's right edge, tabs on its scallop.
+   Categories: need stickers (die-cut, hard shadow) and categories as
+   sticker chips; product rows use the Shop tile (outline + 4px shadow);
+   services without a photo get an oval label sticker instead of a slab.
+   --------------------------------------------------------------------- */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-top.ay-pagehead :is(h1, p).wx-title { margin: 0 0 20px !important; font: 700 var(--ay-type-h1)/1.02 var(--ay-heading) !important; letter-spacing: -.02em !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead { position: relative; padding-right: 140px !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal { right: 0; top: 22px; width: 104px; height: 104px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal b { width: 46px; height: 46px; font-size: 15px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.is-compact .wx-seal { top: 14px; width: 84px; height: 84px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.is-compact .wx-seal b { width: 38px; height: 38px; font-size: 13px; }
+@media (max-width: 767px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead { padding-right: 0 !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-top.ay-pagehead :is(h1, p).wx-title { margin-bottom: 14px !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal { top: 6px; right: 0; width: 58px; height: 58px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal b { width: 26px; height: 26px; font-size: 10px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-top.ay-pagehead :is(h1, p).wx-title { min-height: 48px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal text { font-size: 15px; }
+}
+/* section titles at H2 */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-head .ay-h2 { font: 700 var(--ay-type-h2)/1.12 var(--ay-heading) !important; letter-spacing: -.02em !important; }
+/* product rows: Shop's tile */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-row { padding: 4px 6px 10px 2px; }
+/* category chips as stickers: outline + 3px hard shadow, a pop of pink when on */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-topics { gap: 10px 10px; padding: 2px 4px 6px 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec:not(.wx-phrases) .wx-topics .ay-chip { border: 1.5px solid var(--ds-line) !important; background: var(--ds-group) !important; color: var(--ds-ink) !important; box-shadow: 3px 3px 0 var(--ds-line) !important; font-weight: 600 !important; transition: transform .15s, box-shadow .15s; }
+@media (hover: hover) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ds-line) !important; } }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ds-line) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+1) { background: #f7badd !important; color: #3e2723 !important; }
+/* reads: covers get the outline + small shadow */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-reads { padding: 4px 6px 10px 2px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-reads a > :first-child { border: 1.5px solid var(--ds-line); border-radius: 16px; box-shadow: var(--ds-shadow-sm); overflow: hidden; }
+
+/* no-photo tiles (services, a few products): the page colour with an oval label sticker, not a colour slab */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-nophoto { position: relative; isolation: isolate; background: var(--ds-group) !important; color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-nophoto::before { content: ''; position: absolute; z-index: -1; left: 16%; right: 16%; top: 50%; height: 44%; max-height: 120px; transform: translateY(-50%) rotate(-6deg); border-radius: 50%; border: 1.5px solid #3e2723; box-shadow: inset 0 0 0 4px var(--ov, #f7badd), inset 0 0 0 5.5px #3e2723, 3px 3px 0 #3e2723; background: var(--ov, #f7badd); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) :is(.wx-row, .ayshop__grid, .ay-grid, .ay-product-grid) > :nth-child(3n+2) .ay-nophoto::before { --ov: #769ebe; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) :is(.wx-row, .ayshop__grid, .ay-grid, .ay-product-grid) > :nth-child(3n) .ay-nophoto::before { --ov: #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-nophoto::before { border-color: #ffedac; box-shadow: inset 0 0 0 4px var(--ov, #f7badd), inset 0 0 0 5.5px #3e2723, 3px 3px 0 #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-nophoto > span:first-child { max-width: 66% !important; }
+
+/* ---------------------------------------------------------------------
+   ASK AYNA (/ask). Title at H1 (was 80), her goals as sticker chips, the
+   starter list as one outlined group; signed out, the invite is a card
+   with a sparkle sticker instead of a floating box.
+   --------------------------------------------------------------------- */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__title { font: 700 var(--ay-type-h1)/1.02 var(--ay-heading) !important; letter-spacing: -.02em !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-askpage > p.wx-title { margin: 0 0 8px !important; font: 700 var(--ay-type-h1)/1.02 var(--ay-heading) !important; letter-spacing: -.02em !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based li { border: 1.5px solid var(--ds-line); box-shadow: 3px 3px 0 var(--ds-line); background: var(--ds-group); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based li:first-child { background: #f7badd; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list,
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-askh-list { border: 1.5px solid var(--ds-line); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-hello h2 { font-size: 28px !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .wx-invite {
+  position: relative; max-width: 640px; margin-top: 24px !important; padding: 28px 28px 26px !important; border: 2px solid var(--ds-line) !important; border-radius: 24px!important;
+  background: var(--ds-page) !important; color: var(--ds-ink) !important; box-shadow: var(--ds-shadow) !important;
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .wx-invite::after { content: ''; position: absolute; top: -20px; right: 24px; width: 48px; height: 48px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 50%; background: #ffedac url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5c.7 5.6 4.9 9.8 10.5 10.5-5.6.7-9.8 4.9-10.5 10.5-.7-5.6-4.9-9.8-10.5-10.5C7.1 11.3 11.3 7.1 12 1.5z' fill='%233e2723'/%3E%3C/svg%3E") center / 22px no-repeat; transform: rotate(10deg); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .wx-invite h3 { font: 700 var(--ay-type-h3)/1.2 var(--ay-heading) !important; color: var(--ds-ink) !important; }
+
+/* ---------------------------------------------------------------------
+   YOU (/you and its sections). Name at H1; three stat boxes as filled
+   pops (72419ae7); the section links as a pill segmented control
+   (59f3adc7, 186125f6); section titles plain, groups filled, no outlines.
+   --------------------------------------------------------------------- */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wy-who h1.ay-h1 { font: 700 var(--ay-type-h1)/1.02 var(--ay-heading) !important; letter-spacing: -.02em !important; }
+/* One highlighter swipe per page (founder map): under the You name and the Ask title, low on the letters so text contrast is untouched. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wy-who h1.ay-h1, html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__title { display: inline; width: fit-content; max-width: 100%; align-self: flex-start; justify-self: start; padding: 0 .08em; background: linear-gradient(transparent 72%, #f7badd 72%, #f7badd 94%, transparent 94%) no-repeat; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) main .wy-who h1.ay-h1, html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .wx-ask__title { background-image: linear-gradient(transparent 80%, #769ebe 80%, #769ebe 96%, transparent 96%); }
+@media (min-width: 761px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__title { background-image: linear-gradient(transparent 72%, #ffedac 72%, #ffedac 94%, transparent 94%) !important; } }
+/* Awning stripes only as a thin band (b6387c05): one 8px rule over the You header. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-head { position: relative; padding-top: 24px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-head::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 8px; border-radius: 999px; background: repeating-linear-gradient(90deg, #f7badd 0 18px, #769ebe 18px 36px, #ffedac 36px 54px); box-shadow: inset 0 0 0 1.5px #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li .ay-stat { background: #f7badd !important; color: #3e2723 !important; border-color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li:nth-child(2) .ay-stat { background: #769ebe !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li:nth-child(3) .ay-stat { background: #ffedac !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li .ay-stat :is(b, span) { color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li .ay-stat b { font-family: var(--ay-heading) !important; font-variant-numeric: tabular-nums; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-younav .wx-nav { display: flex; gap: 4px; width: max-content; max-width: 100%; padding: 4px !important; border: 1.5px solid var(--ds-line) !important; border-radius: 999px; overflow-x: auto; scrollbar-width: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-younav .wx-nav a { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px !important; border: 0 !important; border-radius: 999px!important; background: none; color: var(--ds-ink) !important; opacity: 1 !important; font: 600 14px/1 var(--ay-sans-stack) !important; text-decoration: none; white-space: nowrap; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-younav .wx-nav a::after { content: none !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-younav .wx-nav a.is-on { background: #f7badd; color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-younav .wx-nav a:not(.is-on):hover { background: var(--ds-group); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .ay-group__title { font: 700 17px/1.25 var(--ay-sans-stack) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--ds-ink) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy :is(.ay-group, .wy-progress) { border: 0 !important; }
+
+/* ---------------------------------------------------------------------
+   COMPARE (/comparison). Each product column starts at the top with its
+   white tile (outline + hard shadow, a small tilt in turn), names in the
+   display face, the table as one outlined group; the best match column
+   gets a pink top rule.
+   --------------------------------------------------------------------- */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2 table thead th { vertical-align: top !important; padding-top: 18px !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2__thumb { border: 1.5px solid var(--ds-line) !important; border-radius: 16px!important; box-shadow: var(--ds-shadow-sm) !important; transform: rotate(-2deg); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2 thead th:nth-child(odd) .ay-cmp2__thumb { transform: rotate(2deg); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2__name { font: 700 18px/1.15 var(--ay-heading) !important; letter-spacing: -.01em; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2__scroll { border: 1.5px solid var(--ds-line); border-radius: var(--ds-r); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2 thead th.is-best { box-shadow: inset 0 6px 0 #f7badd; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2__best { padding: 12px 16px; border: 1.5px solid #3e2723; border-radius: 16px; background: #f7badd; color: #3e2723; box-shadow: 3px 3px 0 #3e2723; }
+
+/* =====================================================================
+   Oct 25 second pass (founder: "sm fun but even better"): fewer outlines,
+   filled colour blocks, her product photos, one real graphic per screen.
+   ===================================================================== */
+/* EXPLORE: her picks as stickers fanned out beside the seal, over the band */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead:has(.wx-stickers) { padding-right: 360px !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-stickers { position: absolute; right: 118px; top: 18px; width: 220px; height: 130px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-stickers .ds-psticker.is-1 { right: 0; top: 0; width: 92px; height: 92px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-stickers .ds-psticker.is-2 { right: 78px; top: 40px; width: 78px; height: 78px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-stickers .ds-psticker.is-3 { right: 150px; top: 6px; width: 70px; height: 70px; }
+@media (max-width: 1023px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-stickers { display: none; } html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead:has(.wx-stickers) { padding-right: 140px !important; } }
+@media (max-width: 767px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead:has(.wx-stickers) { padding-right: 0 !important; } }
+/* EXPLORE: fewer outlines; category chips as filled stickers, the "By need" row on a pink block */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec.wx-needs { padding: 20px 24px 14px; border-radius: 20px; background: #f7badd; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec.wx-needs .ay-h2 { color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec.wx-needs .ay-needsticker { color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec:not(.wx-phrases) .wx-topics .ay-chip { border-color: transparent !important; box-shadow: none !important; background: var(--ds-group) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+1) { background: #f7badd !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+3) { background: #769ebe !important; color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:hover { box-shadow: 3px 3px 0 var(--ds-line) !important; }
+/* ASK: what ayna answers from sits on a filled pink block; the starters become filled colour tiles (Oct 22 Ask landing), no outlines */
+@media (min-width: 1024px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__side { padding: 28px 26px; border-radius: 20px; background: #f7badd; color: #3e2723; box-shadow: 6px 6px 0 #3e2723; } }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__side :is(p, h1, .wx-ask__title, .wx-ask__basedh, .wx-ask__note) { color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based { border-top-color: rgba(62, 39, 35, .3); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based li { border-color: #3e2723; background: #ffedac; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based li:first-child { background: #769ebe; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .wx-ask__side { box-shadow: 6px 6px 0 #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 !important; border: 0 !important; background: none !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li { border-top: 0 !important; border-radius: 16px; background: var(--ds-group); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-pink { background: #f7badd; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-sky { background: #769ebe; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-ink { background: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li:is(.is-pink, .is-sky) :is(button, small, .ay-askh-tile-label) { color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-ink :is(button, small, .ay-askh-tile-label) { color: #ffedac !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-ink .ay-askh-icon { border-color: #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li:first-child { grid-row: span 2; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li:first-child button { flex-direction: column !important; align-items: flex-start !important; justify-content: space-between; height: 100%; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li:first-child .ay-askh-tile-label { font: 700 20px/1.15 var(--ay-heading) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list button { padding: 14px !important; min-height: 72px; transition: transform .14s var(--ease-out, ease-out); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list button:active { transform: translate(2px, 2px); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li:first-child .ay-askh-go { align-self: flex-end; }
+@media (max-width: 599px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list { grid-template-columns: 1fr; } html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li:first-child { grid-row: auto; } html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li:first-child button { flex-direction: row !important; align-items: center !important; } }
+@media (prefers-reduced-motion: reduce) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list button { transition: none; transform: none !important; } }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-group { background: #f6e3a1; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-group :is(button, small, .ay-askh-tile-label) { color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-group .ay-askh-icon { border-color: #3e2723; color: #3e2723; }
+
+/* Cut pass (founder, Oct 25 23:53: "do not overcrowd"): description lines
+   that restate their title are hidden; lines with a number, reason or
+   date stay. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list small { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .wy-row .ay-group__note { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec[aria-labelledby='wx-topics-h'] .wx-note { display: none; }

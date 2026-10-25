@@ -139,6 +139,13 @@ import './styles/site-polish.css';
 import './styles/ayna-system.css';
 import './styles/content.css';
 import './styles/chrome.css';
+// Oct 21-22 design language as one kit, then the per-screen pass (DESIGN_SYSTEM_OCT25).
+import './styles/ds.css';
+import './styles/ds-screens.css';
+import './styles/product-card-ds.css';
+import { readHomeLook } from './mobile/components/homeLook.js';
+// Keep the ?homestyle=a|b preview pick before the router rewrites the address (Today loads lazily).
+readHomeLook();
 import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
@@ -157,6 +164,8 @@ import { ExploreHeader, YouNav } from './components/explore/ExploreNav.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
 import RoutineSummary from './components/routine/RoutineSummary.jsx';
+import TodayRead from './components/today/TodayRead.jsx';
+import AskBasedOn from './components/ask/AskBasedOn.jsx';
 import { SaveFollowUpStrip } from './components/save/SaveFollowUp.jsx';
 import { savePrompt, stashPendingSave, takePendingSave } from './utils/savePrompt.js';
 import { setSavedRemindersOwner } from './utils/savedReminders.js';
@@ -2652,6 +2661,17 @@ function App() {
               intro: !quizResults && !dataLoading ? finishQuizCard() || null : null,
               compact: true,
               rundown: { ...webHealth.props.rundown, onSetUp: !quizResults && !dataLoading && !finishQuizCard() ? handleStartQuiz : undefined },
+              // More for you (right column on desktop): her routine, short (the full
+              // one is in You > My ecosystem), and one read that fits her answers.
+              aside: (quizResults || myProducts.length > 0) ? (
+                <>
+                  <RoutineSummary variant="web" hideMedicines userId={user?.id || null} quizAnswers={quizResults} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts}
+                    onOpenRoutine={() => { handleViewEcosystem(); window.setTimeout(() => document.getElementById('eco-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 600); }}
+                    onOpenProduct={(p) => handleOpenProduct(p, { source: 'today_routine' })}
+                    onCheckIn={() => openTodayLog('web')} />
+                  <TodayRead quizResults={quizResults} healthProfile={healthProfile} onOpen={handleViewArticle} />
+                </>
+              ) : null,
               // Customize Today: her widgets; none by default, so Today looks as it did.
               widgets: (
                 <HomeWidgets
@@ -2680,13 +2700,6 @@ function App() {
                 />
               ),
             })}
-            {/* Her routine per need, short; the full one is in You > My ecosystem (src/components/routine). */}
-            <div className="ay-container wx-today-routine">
-              <RoutineSummary variant="web" hideMedicines userId={user?.id || null} quizAnswers={quizResults} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts}
-                onOpenRoutine={() => { handleViewEcosystem(); window.setTimeout(() => document.getElementById('eco-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 600); }}
-                onOpenProduct={(p) => handleOpenProduct(p, { source: 'today_routine' })}
-                onCheckIn={() => openTodayLog('web')} />
-            </div>
           </div>
         )}
         {(currentView === 'explore' || currentView === 'explore-topics' || currentView === 'explore-services') && (
@@ -2716,6 +2729,14 @@ function App() {
           <div className="ay-container wx-askpage">
             <h1 className="ay-sr">Ask ayna</h1>
             {user && quizResults ? (
+              <div className="wx-ask">
+              {/* Desktop: the page title and what ayna answers from on the left, the conversation on the right (team direction 10). */}
+              <aside className="wx-ask__side" aria-label="About Ask ayna">
+                <p className="wx-ask__title" aria-hidden="true">Ask ayna</p>
+                <p className="wx-ask__lead">Ask about your body, a product or your day. ayna answers from your health profile, the products you use and checked sources, and says why.</p>
+                <AskBasedOn quizResults={quizResults} />
+                <p className="wx-ask__note">Not medical advice. For anything urgent, contact a clinician.</p>
+              </aside>
               <ProfileChatbot
                 asPage
                 onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
@@ -2740,6 +2761,7 @@ function App() {
                 onOpenDashboard={handleViewEcosystemDashboard}
                 onOpenRead={handleViewArticle}
               />
+              </div>
             ) : (
               <>
                 <p className="ay-h1 wx-title" aria-hidden="true">Ask ayna</p>

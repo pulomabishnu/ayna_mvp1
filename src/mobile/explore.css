@@ -28,7 +28,7 @@
 .ayna-mobile:is(#ay, .ayna-mobile) .ax-empty { margin: 18px var(--d-gutter, 20px); color: var(--d-ink-2); font: 400 calc(15px * var(--ayna-text-scale, 1))/1.45 var(--ay-font-ui); }
 .ayna-mobile:is(#ay, .ayna-mobile) .ax-posts { list-style: none; margin: 0; padding: 0 var(--d-gutter, 20px); display: grid; gap: 8px; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ax-posts button { display: grid; gap: 4px; width: 100%; min-height: 44px; padding: 12px 14px; border: 1.5px solid var(--d-hair); border-radius: 14px; background: transparent; color: var(--d-ink); text-align: left; font: 400 calc(15px * var(--ayna-text-scale, 1))/1.4 var(--ay-font-ui); cursor: pointer; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ax-posts small { font: 600 calc(12px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui); text-transform: uppercase; letter-spacing: .06em; color: var(--d-ink-2); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ax-posts small { font: 600 calc(12px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui); text-transform: none; letter-spacing: 0; color: var(--d-ink-2); }
 /* Shop and Library inside Explore: their own titles become section titles. */
 .ayna-mobile:is(#ay, .ayna-mobile) .ax--embed .ay-shop-embedded-title,
 .ayna-mobile:is(#ay, .ayna-mobile) .ax--embed .ay-lib-head h2.al-top__title { margin: 0 !important; font: 400 calc(28px * var(--ayna-text-scale, 1))/1 var(--ay-app-heading, var(--ay-font-display)) !important; letter-spacing: -.02em !important; color: var(--d-ink) !important; }
@@ -55,7 +55,7 @@
 /* Recent searches, under the search box while it is empty. */
 .ayna-mobile:is(#ay, .ayna-mobile) .ax-recent { display: flex; align-items: center; gap: 8px; overflow-x: auto; margin: -4px calc(-1 * var(--d-gutter, 20px)) 12px; padding: 0 var(--d-gutter, 20px); scrollbar-width: none; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ax-recent::-webkit-scrollbar { display: none; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ax-recent > span { flex: none; color: var(--d-ink-2); font: 600 calc(12px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui); text-transform: uppercase; letter-spacing: .06em; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ax-recent > span { flex: none; color: var(--d-ink-2); font: 600 calc(12px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui); text-transform: none; letter-spacing: 0; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ax-recent button { flex: none; min-height: 44px; padding: 0 14px; border: 1.5px solid var(--d-hair); border-radius: 99px; background: transparent; color: var(--d-ink); font: 500 calc(14px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui); cursor: pointer; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ax-recent .ax-recent__clear { border: 0; text-decoration: underline; padding: 0 4px; }
 /* Explore's search box: the same look in light and dark (outlined, page colour). */

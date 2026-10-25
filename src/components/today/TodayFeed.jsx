@@ -182,7 +182,7 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
  * @param {{ variant: 'app'|'web', userId, intake, healthRows, cycle, hormonalBC, products, onOpenProduct, onAsk, onEditAnswers, onFindCare }} props
  */
 export default function TodayFeed({ variant = 'app', userId = null, intake = null, healthRows = [], cycle = null, hormonalBC = false, products = [], onOpenProduct, onAsk, onEditAnswers, onFindCare, onSaveToProfile = null,
-  saved = [], community = [], onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, matchOpts = undefined, healthProfile = null, onSetUp, moreHeading = true,
+  saved = [], community = [], onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, matchOpts = undefined, healthProfile = null, onSetUp, moreHeading = true, showHead = true,
   // The app's ayna home: a Community card's post, and the hand-off to the chat when the rundown ends.
   onOpenPost, onRundownFinish,
   // The app's Home (team sync, Oct 25): one phone screen. The Rundown card and
@@ -207,7 +207,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   }, []);
   return (
     <section className={`ay-today is-${variant}${compact ? ' is-compact' : ''}`} aria-labelledby={`ay-today-h-${variant}`}>
-      <div className={compact ? 'sr-only' : 'ay-today__head'}>
+      <div className={compact || !showHead ? 'sr-only' : 'ay-today__head'}>
         <h2 id={`ay-today-h-${variant}`}>Today with ayna</h2>
       </div>
       <Rundown
