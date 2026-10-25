@@ -195,3 +195,24 @@
 /* the optional extra questions are a quiet second action on the espresso field, not a second pink block */
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more { background: transparent !important; border: 1.5px solid rgba(255, 237, 172, .55) !important; box-shadow: none !important; color: #ffedac !important; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more small { color: #ffedac !important; opacity: .86; }
+
+/* Oct 25: the first screen of setup ("Here's how ayna helps") is the other
+   bookend of the reveal: espresso splash (INSPO bbe2830f), three numbered
+   rows with huge coloured numerals, one butter primary. Web: a centred card. */
+:is(.ayna-mobile, .app-container) .ay-ob-value { --o-ink: #ffedac; --o-soft: rgba(255, 237, 172, .86); background: #3e2723 !important; color: #ffedac; }
+.app-container .qz-card.ay-ob-value.is-web { max-width: 720px; padding: 40px !important; border-radius: 32px !important; border: 0 !important; box-shadow: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value :is(h1, .qz-title) { font: 700 clamp(44px, 12vw, 64px)/.92 var(--o-serif) !important; letter-spacing: -.035em !important; color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value .ay-ob-back { color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list { gap: 0; border-top: 1.5px solid rgba(255, 237, 172, .3); }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li { grid-template-columns: 56px 1fr !important; padding: 14px 0 !important; border: 0 !important; border-bottom: 1.5px solid rgba(255, 237, 172, .3) !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li span { width: auto !important; height: auto !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: #f7badd !important; font: 700 56px/.8 var(--o-serif) !important; letter-spacing: -.05em; place-items: start !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li:nth-child(2) span { color: #769ebe !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li:nth-child(3) span { color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list b { color: #ffedac !important; font: 700 20px/1.15 var(--o-serif) !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list p { color: #ffedac !important; opacity: .9; }
+:is(.ayna-mobile, .app-container) .ay-ob-value .ay-ob-primary { background: #ffedac !important; color: #3e2723 !important; box-shadow: 3px 3px 0 #f7badd !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-value .ay-ob-quiet { color: #ffedac !important; border-color: rgba(255, 237, 172, .55) !important; background: transparent !important; }
+html body :is(#ay-x, .app-container.app-container.app-container) .qz-page .qz-card.qz-card.ay-ob-value.is-web { background: #3e2723 !important; color: #ffedac !important; }
+html body :is(#ay-x, .app-container.app-container.app-container) .qz-page .qz-card.qz-card.ay-ob-value.is-web { padding: 40px 40px 32px !important; border-radius: 32px !important; }
+html body :is(#ay-x, .app-container.app-container.app-container) .qz-page .qz-card.qz-card.ay-ob-value.is-web .qz-title.qz-title { margin: 0 0 20px !important; color: #ffedac !important; font: 700 clamp(44px, 5vw, 64px)/.92 var(--o-serif, 'ayna Display') !important; letter-spacing: -.035em !important; }
+@media (max-width: 600px) { html body :is(#ay-x, .app-container.app-container.app-container) .qz-page .qz-card.qz-card.ay-ob-value.is-web { padding: 28px 20px 24px !important; border-radius: 24px !important; } }
