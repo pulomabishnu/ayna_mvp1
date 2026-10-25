@@ -36,6 +36,7 @@ const SURFACES = {
     topInset: () => 0,
     bottomInset: () => { const bar = document.querySelector('.ayna-mobile .ayna-bottom-nav'); return bar ? Math.max(0, window.innerHeight - bar.getBoundingClientRect().top) : 0; },
     beside: () => false,
+    busy: () => false,
   },
   web: {
     host: '.app-container',
@@ -45,6 +46,8 @@ const SURFACES = {
     topInset: () => { const nav = document.querySelector('.app-nav-wrap'); return nav && !nav.classList.contains('is-away') ? visibleBottomOf(nav) : 0; },
     bottomInset: () => { const bar = document.querySelector('.app-container nav.ay-tabbar--main'); if (!bar || !bar.getClientRects().length) return 0; const top = bar.getBoundingClientRect().top; return top > 0 && top < window.innerHeight ? window.innerHeight - top : 0; },
     beside: () => window.innerWidth >= 900,
+    // The floating Ask panel, the auth modal and the wrapped story are hers to finish first.
+    busy: () => Boolean(document.querySelector('.ayna-ask-panel:not(.is-page), .ayna-ask-scrim, .ay-auth-overlay, .wwr')),
   },
 };
 // Same local day string as the Rundown memory uses.
@@ -107,7 +110,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
         screen, prefs: p, today,
         onboarding: cfg.onboarding(host, readyRef.current),
         rundownOpen: Boolean(document.querySelector('.ay-rd')),
-        foreignDialog: Boolean(dialog && !screen),
+        foreignDialog: Boolean(dialog && !screen) || cfg.busy(),
         settled: rundownSettled({ memory: readRundownMemory(), today, now, justOnboarded: onboardingJustFinished({ hours: 12 }), settledMs: homeSinceRef.current ? Date.now() - homeSinceRef.current : 0 }),
       });
       const key = decision.kind === 'none' ? '' : `${decision.kind}:${decision.screen?.id || ''}`;
