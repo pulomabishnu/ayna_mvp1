@@ -1,6 +1,7 @@
 import { EXPLORE_SECTIONS, YOU_SECTIONS } from '../nav/mainTabs.js';
 import '../../styles/explore-web.css';
 import { Seal } from '../personality/Bits.jsx';
+import { ProductStickers } from '../personality/DS.jsx';
 
 const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0);
 
@@ -23,7 +24,7 @@ function SectionNav({ label, sections, active, onGo, className = '' }) {
  * Explore's header: title and the five sections (For you, Health topics, Products, Services, Resources).
  * `titleAs="p"` when the section below has its own H1 (Resources), so the page has one H1.
  */
-export function ExploreHeader({ active, onGo, children = null, compact = false, titleAs = 'h1' }) {
+export function ExploreHeader({ active, onGo, children = null, compact = false, titleAs = 'h1', stickers = [] }) {
   const Title = titleAs;
   return (
     // The approved Shop header, kept for all of Explore: a full-bleed espresso band with a scalloped edge (INSPO 1: colour separates sections).
@@ -31,6 +32,8 @@ export function ExploreHeader({ active, onGo, children = null, compact = false, 
       <Title className="ay-h1 wx-title">Explore</Title>
       {/* The band's one seal, as on the Oct 21-22 Shop band. */}
       <Seal className="wx-seal" />
+      {/* Her picks as die-cut stickers beside the seal (real photos only; nothing without them). */}
+      <ProductStickers products={stickers} max={3} className="wx-stickers" />
       {children}
       <SectionNav label="Explore sections" sections={EXPLORE_SECTIONS} active={active} onGo={onGo} />
     </header>

@@ -7,7 +7,7 @@ import { DEV_HEALTH_DEMO, DEV_HEALTH_DEMO_EMPTY, localToday } from '../mobile/ho
 import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
 import TodayFeed from './today/TodayFeed.jsx';
-import { DateStamp } from './personality/DS.jsx';
+import { CycleRing, DateStamp, ProductStickers } from './personality/DS.jsx';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
 
@@ -188,7 +188,12 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
           <p className="ay-wh-hello__date">{fmtLongDay(today)}</p>
           <p className="ay-wh-hello__hi">{hello}{name ? `, ${name}` : ''}.</p>
           <p className="ay-wh-hello__lead">Here’s what’s worth knowing today.</p>
-          <DateStamp iso={today} className="ay-wh-hello__stamp" />
+          {/* One real graphic: her cycle day as a ring when known, her products as stickers, today's stamp. */}
+          <span className={`ay-wh-hello__art${week.cycle?.cycleDay ? ' has-ring' : ''}`} aria-hidden="true">
+            <ProductStickers products={demoData?.products || products} max={2} className="ay-wh-hello__stickers" />
+            <CycleRing day={week.cycle?.cycleDay} length={week.cycle?.avgLength} className="ay-wh-hello__ring" />
+            <DateStamp iso={today} className="ay-wh-hello__stamp" />
+          </span>
         </header>
         {intro}
         <div className={`ay-wh-day${more.length ? ' has-more' : ''}`}>

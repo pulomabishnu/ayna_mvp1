@@ -48,3 +48,33 @@ export function MarkSticker({ name = 'sparkle', tone = 'butter', className = '' 
     </span>
   );
 }
+
+const photoOf = (p) => p?.image || p?.imageUrl || p?.image_url || '';
+
+/** Her products' real photos as die-cut stickers (white tile, outline, hard shadow, tilt). Renders nothing without photos. */
+export function ProductStickers({ products = [], max = 3, className = '' }) {
+  const list = products.filter((p) => photoOf(p)).slice(0, max);
+  if (!list.length) return null;
+  return (
+    <span className={`ds-pstickers ${className}`.trim()} aria-hidden="true">
+      {list.map((p, i) => <span key={p.id || i} className={`ds-psticker is-${i + 1}`}><img src={photoOf(p)} alt="" /></span>)}
+    </span>
+  );
+}
+
+/** Her cycle day as a drawn ring. The arc is drawn only against her own usual length; otherwise a dotted ring. */
+export function CycleRing({ day, length = null, className = '' }) {
+  if (!day) return null;
+  const frac = length ? Math.min(1, day / length) : null;
+  const C = 2 * Math.PI * 38;
+  return (
+    <span className={`ds-ring ${className}`.trim()} aria-hidden="true">
+      <svg viewBox="0 0 92 92">
+        <circle cx="46" cy="46" r="38" className="is-track" />
+        {frac != null && <circle cx="46" cy="46" r="38" className="is-arc" strokeDasharray={`${C * frac} ${C}`} transform="rotate(-90 46 46)" />}
+        {frac != null && <circle cx={46 + 38 * Math.sin(2 * Math.PI * frac)} cy={46 - 38 * Math.cos(2 * Math.PI * frac)} r="5.5" className="is-dot" />}
+      </svg>
+      <b><small>Cycle day</small>{day}</b>
+    </span>
+  );
+}
