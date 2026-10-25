@@ -1,36 +1,34 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { trackApp } from '../utils/appAnalytics.js';
 import { PANEL_ICONS } from '../components/pdpIcons.jsx';
 import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../../data/products.js';
 import ProductCard from '../components/ProductCard.jsx';
-import { getBuyUrl } from '../data/buyUrl.js';
 import { matchPercentFor } from '../utils/matchScore.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partnerBrands.js';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
-import { exclusionLines, matchText, isSafetyHold, isBleedingEvaluation, BLEEDING_EVALUATION, SAFETY_HOLD, MATCH_UNAVAILABLE } from '../../utils/matchDisplay.js';
-import MatchPill from '../../components/MatchPill.jsx';
+import { isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
+import { MatchLine, SafetyLine, WhereToBuy, StickyBuy, PriceLine } from '../../components/pdp/PdpParts.jsx';
+import { buyModel } from '../../components/pdp/buyModel.js';
+import { heroPriceView } from '../../components/pdp/heroPrice.js';
+import { priceParts } from '../../data/passport/priceParts.js';
+import { matchLineState, topWarningFor, pageRecall, heroNotes, pregnancyFirstFrom } from '../../components/pdp/pdpParts.js';
 import { useResearchState } from '../../data/researchLoader.js';
 import { attributeBadges } from '../../components/pdp/evidenceModel.js';
-import { firstSentence } from '../../components/pdp/sentences.js';
-import { getPassport } from '../../data/passport';
-import { recallFacts } from '../../utils/productFacts.js';
 import { matchLine } from '../../data/passport/content.js';
 import { buildGlance, perUnitLabel } from '../../components/pdp/glance.js';
-import { galleryImages, retailerLinks, similarProducts, sameNeedProducts } from '../../components/pdp/commerce.js';
+import { galleryImages, similarProducts, sameNeedProducts } from '../../components/pdp/commerce.js';
 import ProductGallery from '../../components/pdp/ProductGallery.jsx';
-import { ProductMatch } from '../../components/passport/ProductSections.jsx';
 import '../../components/pdp/pdp-tabs.css';
 import ComparePanel from '../../components/pdp/ComparePanel.jsx';
 import { worksWith } from '../../utils/aynaIntegrations.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { SaveFollowUpInline } from '../../components/save/SaveFollowUp.jsx';
-import { leavingLine } from '../../utils/leavingAyna.js';
-import { ADD_TO_ROUTINE, IN_ROUTINE, ROUTINE_EXPLAINER, routineExplainerDue } from '../../utils/routineCopy.js';
+import { ADD_TO_ROUTINE, IN_ROUTINE } from '../../utils/routineCopy.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
 import { apiUrl } from '../../utils/apiUrl.js';
@@ -54,17 +52,6 @@ function toneFor(product) {
   if (functions.includes('fertility') || ['diagnostics', 'supplement', 'vitamin'].includes(category)) return 'butter';
   if (['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'pelvic-floor'].includes(category)) return 'mint';
   return 'pink';
-}
-
-/** The one safety line next to Buy (pink, the alert colour); Safety tab has the rest. */
-function SafetyFlag({ text }) {
-  return (
-    <div className="ay-pdp-safetyflag" role="note">
-      <span aria-hidden="true" className="ay-safety-mark">!</span>
-      <p>{text || 'Safety note on file.'}</p>
-      <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'safety' }))}>All safety info</button>
-    </div>
-  );
 }
 
 /**
@@ -145,17 +132,16 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, ma
   return (
     <div className="ay-pdp-ask" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {/* Anchored to the product: every question here is about it. */}
-      <p className="ay-pdp-ask-note" style={{ margin: 0 }}>About {product?.name || 'this product'}</p>
       {messages.length === 0 && (
         <>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+          <div className="ayv-askstarters" style={{ display: 'grid', gap: 8 }}>
             {suggestions.map((s) => (
               <button
                 type="button"
                 disabled={sending}
                 key={s}
                 onClick={() => ask(s)}
-                style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 500, minHeight: 44, border: 0, padding: '8px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', cursor: 'pointer' }}
+                style={{ width: '100%', textAlign: 'left', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 600, minHeight: 48, border: '1.5px solid currentColor', padding: '10px 16px', borderRadius: 16, background: 'transparent', color: 'var(--ayna-text)', cursor: 'pointer' }}
               >
                 {s}
               </button>
@@ -301,7 +287,8 @@ export default function ProductDetailScreen({
   }, [product, onOpenProduct, ecosystemProducts, quizAnswers, matchOpts]);
 
   // The first time she sees "Add to my routine", one line says what it means.
-  const [explainRoutine] = useState(routineExplainerDue);
+  // Watched by the sticky Buy bar.
+  const actionsRef = useRef(null);
   if (!product) {
     return (
       <div style={{ padding: 40, textAlign: 'center', color: 'var(--ayna-text-muted)', fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>
@@ -329,7 +316,6 @@ export default function ProductDetailScreen({
   // One pill + one short line. Per-need numbers live in the Why view only.
   // The line beside the pill explains the % in plain words (engine reasons).
   const headLine = matchPercent != null ? (whyLine(product, matchDetails) || matchLine(matchDetails)) : '';
-  const exclusions = quizAnswers && matchDetails.matchStatus === 'excluded' ? exclusionLines(matchDetails) : [];
   const openWhyMatch = () => setShowWhyMatch(true);
 
   const {
@@ -342,7 +328,8 @@ export default function ProductDetailScreen({
 
   // Sentence case at render (docs/terminology.md): the data keeps the team's casing.
   const categoryLabel = cardKind({ category });
-  const buyUrl = getBuyUrl(product);
+  // One source of truth for where she buys (pdp/buyModel, the website's rule).
+  const buy = buyModel(product, { brand, name: displayName(product) });
   const isPartner = isPartnerBrandItem(product);
   const partnerDisclosure = getPartnerDisclosureText(product);
   // Same information architecture as the website's product page
@@ -351,31 +338,10 @@ export default function ProductDetailScreen({
   // Details tabs with their source cards.
   const glance = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
   const brandLine = brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : categoryLabel;
-  // One recall answer for the page (utils/productFacts), as on the website.
-  const recall = (() => {
-    const live = getPassport(product)?.recall;
-    if (live?.status === 'recalled') return { status: 'past', label: 'Active recall found', detail: '' };
-    return recallFacts(product);
-  })();
-  // The one caution that sits next to Buy, in plain words from the record (same rule as the website).
-  const topWarning = (() => {
-    const first = (t) => {
-      const one = firstSentence(t, { min: 8, max: 400 }).replace(/\s*—\s*/g, ', ').trim();
-      const colon = one.indexOf(':');
-      if (one.length > 100 && colon > 8 && colon <= 70) return `${one.slice(0, colon)}.`;
-      return one.length > 120 ? firstSentence(one, { max: 120 }) : one;
-    };
-    if (recall.status === 'past' || recall.status === 'note') return first(recall.detail || recall.label);
-    if (glance?.alert) return first(glance.alert);
-    const preg = getPassport(product)?.safety?.pregnancy;
-    const pv = preg?.known && !preg.notApplicable ? (Array.isArray(preg.value) ? preg.value.join(', ') : String(preg.value || '')) : '';
-    if (pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv)) return `Pregnancy: ${firstSentence(pv, { min: 8, max: 200 })}`.replace(/^Pregnancy:\s*Brand:\s*(.*?)\.?$/i, 'Pregnancy: $1 (per the brand).');
-    const TIP = /^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i;
-    const w = (product.warnings || []).find((x) => x && !TIP.test(String(x).trim()));
-    return w ? first(w) : '';
-  })();
+  // One recall answer and the one critical caution for the page, as on the website (pdp/pdpParts).
+  const recall = pageRecall(product);
+  const topWarning = topWarningFor(product, glance, recall, { pregnancyFirst: pregnancyFirstFrom(quizAnswers) });
   const images = galleryImages(product);
-  const retailers = retailerLinks(product, buyUrl);
   const matchFor = quizAnswers ? (p) => matchPercentFor(p, quizAnswers, matchOpts) : null;
   const detailsFor = quizAnswers ? (p) => getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts) : null;
 
@@ -401,40 +367,32 @@ export default function ProductDetailScreen({
   const perUnit = perUnitLabel(product);
   // Same price model as the cards (and the website): short main + detail line.
   const shownPrice = formatPrice(product);
-  const hasDisplayPrice = shownPrice.main !== 'Price at retailer';
 
   // Round badges beside the photo: only facts on file (FSA/HSA, fragrance, prescription, app).
   const badges = attributeBadges(product, glance);
   const variantLabels = (product.variants || []).map((v) => String(v?.label || '').replace(/\s*—\s*/g, ', ')).filter(Boolean);
   const variantKind = variantLabels.some((l) => /\d|\b(xs|s|m|l|xl|small|medium|large|regular|super|light|heavy|mini|plus|size|pack|count|oz|ml)\b/i.test(l)) ? 'Sizes' : 'Options';
-  const barPrice = hasDisplayPrice && String(shownPrice.main).length <= 9 ? shownPrice.main : '';
-  // Where to buy without a verified product link: the brand's own site when the
-  // record names one (the website does the same), else the stores it lists.
-  const siteOnFile = !buyUrl ? (product.whereToBuy || []).map((w) => String(w).trim()).find((w) => /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(w)) : null;
-  const shopAction = buyUrl
-    ? { href: buyUrl, label: category === 'telehealth' ? 'Book' : product.type === 'digital' ? 'Get the app' : 'Buy', sr: '(opens the seller’s site)', placement: 'product_detail' }
-    : retailers[0] ? { href: retailers[0].url, label: 'Buy', sr: `at ${retailers[0].name} (opens the store’s site)`, placement: 'product_detail_retailer' }
-    : siteOnFile ? { href: `https://${siteOnFile.toLowerCase()}`, label: 'Visit site', sr: `(opens ${siteOnFile.toLowerCase()})`, placement: 'product_detail_site' } : null;
+  const shopAction = buy?.url ? { href: buy.url, label: buy.label, sr: '(opens the seller’s site)', placement: 'product_detail' } : null;
   const storesOnFile = !shopAction ? [...new Set((product.whereToBuy || []).map((w) => String(w).trim()).filter(Boolean))].map((w) => (/^app store$/i.test(w) ? 'the App Store' : w)) : [];
   const andList = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
 
-  // First screen (team direction 9): one primary Buy and Save. Adding to the
-  // ecosystem is a quiet text action under them (it is not a second Buy).
-  // In the page under the price, not pinned to the bottom.
+  // First screen: Buy, Save and Add to my routine side by side (founder, Oct 25:
+  // the ecosystem action goes up top, in the action row). In the page, not pinned.
+  const routineBtn = <button type="button" className={`ay-pdp-buyrow__eco${isInEcosystem ? ' is-on' : ''}`} aria-pressed={isInEcosystem} onClick={onAddToEcosystem}>{isInEcosystem ? IN_ROUTINE : ADD_TO_ROUTINE}</button>;
   const buyBar = (
-    <div className="ay-pdp-buyrow" data-tour="pdp-actions">
-      {shopAction
-        ? <a className="ay-pdp-buyrow__buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}{barPrice && <span className="ay-pdp-buyrow__price"> · {barPrice}</span>}<span aria-hidden="true"> ↗</span><span className="sr-only"> {shopAction.sr}</span></a>
-        : <button type="button" className={`ay-pdp-buyrow__buy${isInEcosystem ? ' is-on' : ''}`} aria-pressed={isInEcosystem} onClick={onAddToEcosystem}>{isInEcosystem ? IN_ROUTINE : ADD_TO_ROUTINE}</button>}
+    <div className="ay-pdp-buyrow ayv-actions" data-tour="pdp-actions" ref={actionsRef}>
+      {shopAction && <a className="ay-pdp-buyrow__buy ayv-buy" href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: shopAction.placement })}>{shopAction.label}<span aria-hidden="true"> ↗</span><span className="sr-only"> {shopAction.sr}</span></a>}
+      {!shopAction && routineBtn}
       <button type="button" className={`ay-pdp-buyrow__save${isSaved ? ' is-on' : ''}`} onClick={onToggleSaved} aria-label={isSaved ? `Saved. Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
         <span>{isSaved ? 'Saved' : 'Save'}</span>
       </button>
+      {shopAction && routineBtn}
     </div>
   );
-  const fitBlock = quizAnswers ? (
-    <ProductMatch glance={glance} matchPercent={matchPercent} why={headLine} fallback={matchLine(matchDetails)} onShowWhy={openWhyMatch} hasProfile exclusions={exclusions} hold={matchDetails.safetyHold || null} evaluation={matchDetails.bleedingEvaluation || null} onFixHold={onFixSafety} />
-  ) : null;
+  // Her match in one line: % + why, a safety hold or the bleeding evaluation (never a %), or Get matched.
+  const matchState = matchLineState({ details: matchDetails, percent: matchPercent, hasProfile: Boolean(quizAnswers), why: headLine, fallback: matchLine(matchDetails), canQuiz: true });
+  const fitData = { details: quizAnswers ? matchDetails : null, hasProfile: Boolean(quizAnswers), onShowWhy: openWhyMatch };
 
   return (
     <div id="ay-pdp" className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
@@ -483,22 +441,18 @@ export default function ProductDetailScreen({
               under the name now opens "What it is" further down. */}
           {brandLine && <div className="ay-pdp-eyebrow">{brandLine}</div>}
           <h1>{shownName}</h1>
-          {(price || perUnit) && <div className="ay-pdp-price">
-            {price && <span className={hasDisplayPrice ? 'is-price' : 'is-note'}>{shownPrice.main}</span>}
-            {perUnit && <small className="is-unit">{perUnit}</small>}
-            {price && shownPrice.sub && <small>{shownPrice.sub}</small>}
-          </div>}
-          <ul className="ay-pdp-why" data-tour="pdp-why" aria-label="Why it is here">
-            {isSafetyHold(matchDetails) && <li><button type="button" className="ay-pdp-why__row is-match" onClick={openWhyMatch} aria-label={`${SAFETY_HOLD}. ${MATCH_UNAVAILABLE}. See why`}><MatchPill hold size="sm" /><span>{MATCH_UNAVAILABLE}</span><span className="ay-pdp-why__go">See why</span></button></li>}
-            {matchPercent != null && <li><button type="button" className="ay-pdp-why__row is-match" onClick={openWhyMatch} aria-label={`${matchText(matchPercent)}${headLine ? `. ${headLine}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span>{headLine || 'Why ayna picked this for you'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
-            {isBleedingEvaluation(matchDetails) && quizAnswers && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={openWhyMatch}><span>{BLEEDING_EVALUATION}</span><span className="ay-pdp-why__go">See why</span></button></li>}
-            {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={openWhyMatch}><span>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
-            {matchDetails.matchStatus === 'no-profile' && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={onStartQuiz}><span>See how it fits you</span><span className="ay-pdp-why__go">Get matched</span></button></li>}
-          </ul>
+          {/* Name, price (with count and supply), her match, then the actions (founder, Oct 25). */}
+          {(() => { const v = heroPriceView(product, { price: priceParts(product), perUnit, glance, brand }); return <PriceLine main={price ? shownPrice.main : ''} notes={heroNotes(v.notes).keep} />; })()}
+          {matchState?.kind !== 'quiz' && <MatchLine state={matchState} onWhy={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} />}
           {buyBar}
-          {shopAction && <p className="ay-pdp-commission">{leavingLine(shopAction.href, null, shopAction.label === 'Book' ? 'book' : shopAction.label === 'Get the app' ? 'get it' : 'buy')}</p>}
+          {/* One tiny muted line: the price check, where Buy goes and the commission. */}
+          {/* The price check on its own muted line; the ↗ on Buy already says she leaves ayna (founder, Oct 25). */}
+          {shopAction && buy.checked && <p className="ay-pdp-commission ayv-fine">{buy.checked}</p>}
+          {shopAction && !isPartner && <p className="ay-pdp-commission ayv-fine">Some links earn ayna a commission. It never changes your matches.</p>}
+          <WhereToBuy rows={buy?.rows} />
           <SaveFollowUpInline product={product} onCompare={onCompare} />
-          {topWarning && <SafetyFlag text={topWarning} />}
+          {matchState?.kind === 'quiz' && <div className="ayv-quizline"><MatchLine state={matchState} onWhy={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} /></div>}
+          <SafetyLine text={topWarning} />
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
           {isPartner ? (
             <div className="ayna-figma-partner-disclosure">
@@ -507,7 +461,7 @@ export default function ProductDetailScreen({
               </button>
               {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships</a></div>}
             </div>
-          ) : buyUrl && <p className="ay-pdp-commission">Some links earn ayna a commission. It never changes your matches.</p>}
+          ) : null}
         </div>
         <div className="ay-pdp-passport">
           <ProductEvidence
@@ -517,19 +471,15 @@ export default function ProductDetailScreen({
             image={images[0] || ''}
             safetyLead={topWarning}
             glance={glance}
-            recall={recall}
-            heroLine=""
-            fitSlot={fitBlock}
+            fit={fitData}
+            askSlot={<div className="ay-pdp-askcard" id="ay-sec-ask" tabIndex={-1}><div className="ay-pdp-sechead"><h2 id="ay-pdp-ask-h">{PRODUCT_ASK_TITLE}</h2></div><AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} matchOpts={matchOpts} /></div>}
             onOpenReview={onOpenReview}
             onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null}
-            extraRows={[{ label: 'Sold by', value: buyUrl ? (/amazon\.|amzn\./i.test(buyUrl) ? 'Amazon' : (() => { try { return new URL(buyUrl).hostname.replace(/^www\./, ''); } catch { return ''; } })()) : '' }]}
           />
 
           {/* Team direction 9: the first screen is Buy, Save and the match row.
               Routine, variants, "Not for me", connections and other stores sit here. */}
           <section className="ayq-sheet ay-pdp-more" aria-label="More for this product">
-            {shopAction && <button type="button" className={`ay-pdp-ecolink${isInEcosystem ? ' is-on' : ''}`} aria-pressed={isInEcosystem} onClick={onAddToEcosystem}>{isInEcosystem ? `${IN_ROUTINE}. Remove` : ADD_TO_ROUTINE}</button>}
-            {!isInEcosystem && explainRoutine && <p className="ay-pdp-commission">{ROUTINE_EXPLAINER}</p>}
             {variantLabels.length > 0 && (
               <div className="ayq-variants">
                 <p>{variantKind}</p>
@@ -538,22 +488,7 @@ export default function ProductDetailScreen({
             )}
             {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
             {works.ayna && onOpenHealthData && <button type="button" className="ay-pdp-works" onClick={onOpenHealthData}>Works with ayna: connect {works.ayna.name} in Health data</button>}
-            {retailers.length > 0 && (
-              <div className="ay-retailers">
-                <span id="ay-pdp-also-at">Also at</span>
-                <ul aria-labelledby="ay-pdp-also-at">
-                  {retailers.map((r) => <li key={r.url}><a href={r.url} target="_blank" rel="noopener noreferrer">{r.name}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg></a></li>)}
-                </ul>
-              </div>
-            )}
           </section>
-          <section className="ay-pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="ay-pdp-ask-h">
-            <div className="ay-pdp-sechead">
-              <h2 id="ay-pdp-ask-h">{PRODUCT_ASK_TITLE}</h2>
-            </div>
-            <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} matchOpts={matchOpts} />
-          </section>
-
           {related.compare.length > 0 && (
             <ComparePanel
               product={product}
@@ -575,8 +510,15 @@ export default function ProductDetailScreen({
 
         {onCommunityAction && <section className="ay-pdp-community-actions" aria-label="Community">
           <div className="ay-pdp-community-head"><svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS.community}</svg><h2>Community</h2></div>
-          <div className="ay-pdp-community-grid">
-            {[['post', 'Mention in a post'], ['review', 'Write a review'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>)}
+          {/* One button, the rest under Share (founder, Oct 25: four big buttons was heavy). */}
+          <div className="ayv-community">
+            <button type="button" className="ayv-community__main" onClick={() => onCommunityAction('review')}>Write a review</button>
+            <details className="ayv-community__more">
+              <summary>Share</summary>
+              <ul>
+                {[['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => <li key={kind}><button type="button" onClick={() => onCommunityAction(kind)}>{label}</button></li>)}
+              </ul>
+            </details>
           </div>
         </section>}
 
@@ -596,6 +538,7 @@ export default function ProductDetailScreen({
           </section>
         )}
         <LegalFooter />
+        <StickyBuy model={buy} watch={actionsRef} mode="scroll" saved={isSaved} onSave={onToggleSaved} onBuy={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: 'sticky_bar' })} />
       </div>
     </div>
   );

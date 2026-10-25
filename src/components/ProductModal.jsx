@@ -1,10 +1,9 @@
-import { recallFacts } from '../utils/productFacts';
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useResearchState } from '../data/researchLoader';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
-import { exclusionLines, matchText, isSafetyHold, isBleedingEvaluation, BLEEDING_EVALUATION } from '../utils/matchDisplay.js';
+import { isSafetyHold, isBleedingEvaluation } from '../utils/matchDisplay.js';
 import { whyLine } from '../utils/whyLine';
 import '../styles/match-ui.css';
 import { getAynaRating, getAynaRatingCount } from '../data/aynaReviews';
@@ -14,18 +13,19 @@ import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import WhyMatchPanel from './WhyMatchPanel';
-import MatchPill from './MatchPill';
 import { matchLine, priceParts } from '../data/passport/content';
-import { buildGlance, categoryLabel, perUnitLabel } from './pdp/glance';
+import { buildGlance, perUnitLabel } from './pdp/glance';
 import { heroPriceView } from './pdp/heroPrice';
 import HeroPrice from './pdp/HeroPrice.jsx';
-import { getPassport } from '../data/passport';
-import { ProductMatch, ProductAsk } from './passport/ProductSections';
-import { firstSentence } from './pdp/sentences';
+import { ProductAsk } from './passport/ProductSections';
 import ProductEvidence from './pdp/ProductEvidence';
-import { evidenceLevel } from './pdp/evidenceLevel';
-import { attributeBadges, noDash } from './pdp/evidenceModel';
-import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
+import { MatchLine, SafetyLine, WhereToBuy, StickyBuy } from './pdp/PdpParts.jsx';
+import { buyModel } from './pdp/buyModel.js';
+import { heroNotes } from './pdp/pdpParts.js';
+import { matchLineState, topWarningFor, pageRecall, pregnancyFirstFrom } from './pdp/pdpParts.js';
+import { HealthBackedBadge } from './health';
+import { attributeBadges } from './pdp/evidenceModel';
+import { galleryImages, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
 import ProductGallery from './pdp/ProductGallery.jsx';
 import { readsForProduct } from '../data/readLinks.js';
 import { takeProductTabIf } from '../utils/community/reviewRatings.js';
@@ -53,7 +53,7 @@ import './pdp/pdp-tabs.css';
 import { fetchWithTimeout } from '../utils/network.js';
 import { SaveFollowUpInline } from './save/SaveFollowUp.jsx';
 import { leavingLine } from '../utils/leavingAyna.js';
-import { ROUTINE_EXPLAINER, routineExplainerDue } from '../utils/routineCopy.js';
+
 
 /**
  * Product Q&A, for a user who doesn't know what a product actually IS (a
@@ -379,25 +379,6 @@ export default function ProductModal({
     const frame = requestAnimationFrame(() => { timer = setTimeout(() => setSettled(true), 0); });
     return () => { cancelAnimationFrame(frame); clearTimeout(timer); };
   }, [settled]);
-  // Phones (under 760px, the same width the sections use) get the app's first
-  // screen: photo, name, price, why with the % match, evidence, fit, Buy.
-  const [isPhone, setIsPhone] = useState(() => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 760px)').matches);
-  useEffect(() => {
-    if (typeof window.matchMedia !== 'function') return undefined;
-    const mq = window.matchMedia('(max-width: 760px)');
-    const on = () => setIsPhone(mq.matches);
-    mq.addEventListener?.('change', on);
-    return () => mq.removeEventListener?.('change', on);
-  }, []);
-  // Wide screens (1100px+) use the width: photos, then name and buy, then a column of what matters to her.
-  const [isWide, setIsWide] = useState(() => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(min-width: 1100px)').matches);
-  useEffect(() => {
-    if (typeof window.matchMedia !== 'function') return undefined;
-    const mq = window.matchMedia('(min-width: 1100px)');
-    const on = () => setIsWide(mq.matches);
-    mq.addEventListener?.('change', on);
-    return () => mq.removeEventListener?.('change', on);
-  }, []);
   const [zoomOpen, setZoomOpen] = useState(false);
   // Size / pack options (product.variants): Buy now, photo, name and price
   // follow the chosen option.
@@ -483,7 +464,6 @@ export default function ProductModal({
     () => (quizResults && settled ? getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts) : null),
     [product, quizResults, healthProfile, matchOpts, settled]
   );
-  const matchExclusions = matchDetails?.matchStatus === 'excluded' ? exclusionLines(matchDetails) : [];
   const headMatchLine = useMemo(() => matchLine(matchDetails), [matchDetails]);
   // utils/buyLink.js: partners go to their own link; everything else to
   // ayna's Amazon link when Amazon carries it, else the brand/retailer page.
@@ -493,7 +473,6 @@ export default function ProductModal({
   const isAmazonBuyLink = isAmazonUrl(buyUrl);
   const isPartner = isPartnerBrandItem(product);
   const isPrelaunch = isPrelaunchPartnerItem(product);
-  const retailers = retailerLinks(product, buyUrl);
 
   const aynaData = useMemo(
     () => (aynaReviews && product ? (aynaReviews[product.id] || { ratings: [], reviews: [] }) : { ratings: [], reviews: [] }),
@@ -558,7 +537,8 @@ export default function ProductModal({
   ] : []);
 
   // The first time she sees "Add to my routine", one line says what it means.
-  const [explainRoutine] = useState(routineExplainerDue);
+  // Watched by the sticky Buy bar on phones.
+  const actionsRef = useRef(null);
 
   if (!product) return null;
 
@@ -579,39 +559,9 @@ export default function ProductModal({
 
   // One recall answer for the whole page (utils/productFacts): a named recall is
   // never shown as "No recalls", and "check current notices" isn't a check.
-  const recall = (() => {
-    const live = getPassport(product)?.recall;
-    if (live?.status === 'recalled') return { status: 'past', label: 'Active recall found', detail: '' };
-    return recallFacts(product);
-  })();
-
-  // The one or two cautions that should sit next to the Buy button (pregnancy,
-  // the product's own safety alert), in plain words from the record.
-  const keyCautions = (() => {
-    const out = [];
-    const first = (t) => firstSentence(t, { min: 8, max: 200 });
-    const pp = getPassport(product);
-    const preg = pp?.safety?.pregnancy;
-    const pv = preg?.known && !preg.notApplicable ? (Array.isArray(preg.value) ? preg.value.join(', ') : String(preg.value || '')) : '';
-    if (pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv)) out.push(`Pregnancy: ${first(pv)}`);
-    return [...new Set(out.filter(Boolean))].slice(0, 2);
-  })();
-  const topWarning = (() => {
-    const first = (t) => {
-      // A long note becomes its headline ("2021 lawsuit, later dropped"); the full story is in Details and safety.
-      const one = firstSentence(t, { min: 8, max: 400 }).replace(/\s*—\s*/g, ', ').trim();
-      const colon = one.indexOf(':');
-      if (one.length > 100 && colon > 8 && colon <= 70) return `${one.slice(0, colon)}.`;
-      return one.length > 120 ? firstSentence(one, { max: 120 }) : one;
-    };
-    if (recall.status === 'past' || recall.status === 'note') return first(recall.detail || recall.label);
-    if (glance?.alert) return first(glance.alert);
-    if (keyCautions[0]) return keyCautions[0].replace(/^Pregnancy:\s*Brand:\s*(.*?)\.?$/i, 'Pregnancy: $1 (per the brand).');
-    // Only a real safety item goes next to Buy; care and hygiene tips belong in How to use.
-    const TIP = /^(wash|rinse|boil|clean|store|keep it|dry|sanitize|sterili[sz]e|empty)\b/i;
-    const w = (product.warnings || []).find((x) => x && !TIP.test(String(x).trim()));
-    return w ? first(w) : '';
-  })();
+  const recall = pageRecall(product);
+  // The one critical line for the safety box near the top (pdp/pdpParts topWarningFor, shared with the app).
+  const topWarning = topWarningFor(product, glance, recall, { pregnancyFirst: pregnancyFirstFrom(quizResults) });
   // Who actually sells it, so the button says where it goes ("Buy at LOLA ↗").
   let sellerName = '';
   const brandName = brand || product.brand || '';
@@ -620,10 +570,12 @@ export default function ProductModal({
   const priceSays = `${product.price || ''}`;
   const isCare = product.category === 'telehealth' || product.type === 'digital';
   const verb = /free trial/i.test(priceSays) ? 'Start free trial' : product.category === 'telehealth' ? 'Book' : isCare ? 'Get started' : 'Buy';
-  const buyLabel = sellerName && sellerName.length <= 32 ? `${verb} at ${sellerName}` : `${verb} with the seller`;
+  // One source of truth for where she buys (pdp/buyModel, shared with the app): "Buy at Amazon · $30".
+  const buy = buyModel(product, { variant: choice.variant, brand: brandName, name: displayName, priceMain: price.known && !price.isPlaceholder && String(price.main).length <= 12 ? price.main : '' });
+  const buyLabel = buy?.label || (sellerName && sellerName.length <= 32 ? `${verb} at ${sellerName}` : `${verb} with the seller`);
   const buyButton = (extraClass = '') => (buyUrl ? (
     <a
-      className={`ay-btn ay-btn--primary ayp-buy__main ${extraClass}`.trim()}
+      className={`ay-btn ay-btn--primary ayp-buy__main ayv-buy ${extraClass}`.trim()}
       href={buyUrl}
       target="_blank"
       rel="noopener noreferrer"
@@ -692,16 +644,14 @@ export default function ProductModal({
   ) : null);
 
   // First screen (team direction 9): one primary Buy, Save beside it. Everything else is a quiet text action.
-  const noLinkBuy = !buyUrl && (() => {
-    const sites = (product.whereToBuy || []).filter((w) => /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(String(w).trim()));
-    return sites.length
-      ? <a className="ay-btn ay-btn--primary ayp-buy__main" href={`https://${sites[0].trim()}`} target="_blank" rel="noopener noreferrer">{product.category === 'telehealth' ? 'Book at' : 'Visit'} {sites[0]} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
-      : <p className="ayp-buy__note">No buy link yet.</p>;
-  })();
+  const noLinkBuy = !buyUrl && (buy?.url
+    ? <a className="ay-btn ay-btn--primary ayp-buy__main ayv-buy" href={buy.url} target="_blank" rel="noopener noreferrer">{buy.label} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+    : <p className="ayp-buy__note">No buy link yet.</p>);
   const actionButtons = (
     <div className="ayp-buy__box" data-tour="pdp-actions">
       {variantBlock}
-      <div className="ayp-buy__actions">
+      {/* Buy, Save and Add to my routine, side by side (founder, Oct 25: the ecosystem action goes up top). */}
+      <div className="ayp-buy__actions ayv-actions" ref={actionsRef}>
         {buyButton()}
         {noLinkBuy}
         {onToggleSaved && (
@@ -710,17 +660,15 @@ export default function ProductModal({
             <span>{isSaved ? 'Saved' : 'Save'}</span>
           </button>
         )}
+        {onAddToEcosystem && user && (
+          <button type="button" className={`ay-btn ay-btn--secondary ayv-eco${isInEcosystem ? ' is-on' : ''}`} aria-pressed={isInEcosystem} onClick={() => onAddToEcosystem(product)}>
+            {isInEcosystem ? 'In my routine' : 'Add to my routine'}
+          </button>
+        )}
       </div>
-      {!isInEcosystem && user && onAddToEcosystem && explainRoutine && <p className="ayp-buy__fine">{ROUTINE_EXPLAINER}</p>}
       <SaveFollowUpInline product={product} onCompare={onCompare} />
-      {buyUrl && !isPrelaunch && <p className="ayp-buy__fine ayp-buy__leaving">{leavingLine(buyUrl, sellerName && sellerName.length <= 32 ? sellerName : '', verb === 'Buy' ? 'buy' : verb === 'Book' ? 'book' : 'get started')}</p>}
-      {((onAddToEcosystem && user) || (onOmit && user)) && (
+      {onOmit && user && (
         <p className="ayp-buy__more">
-          {onAddToEcosystem && user && (
-            <button type="button" className="ayp-textlink" aria-pressed={isInEcosystem} onClick={() => onAddToEcosystem(product)}>
-              {isInEcosystem ? 'In my routine. Remove' : 'Add to my routine'}
-            </button>
-          )}
           {onOmit && user && (
             <button type="button" className="ayp-textlink" onClick={() => onOmit(product)}>
               {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
@@ -730,44 +678,20 @@ export default function ProductModal({
       )}
     </div>
   );
-  // Commission, partner disclosure, other stores: under Buy on phones, in the right column on wide screens.
-  const purchaseNotes = (
+  // One tiny muted line under the actions (founder, Oct 25): where Buy goes and the commission, together.
+  const purchaseNotes = buyUrl && !isPrelaunch ? (
     <>
-      {/* One commission line (there used to be two that said different things). */}
-      {buyUrl && !isPrelaunch && (
-        <p className="ayp-buy__fine">
-          {isPartner
-            ? 'ayna partner. We may earn a commission.'
-            : isAmazonBuyLink
-              ? 'ayna may earn a commission from Amazon.'
-              : 'ayna may earn a commission.'}
-          {' '}{isPartner && <button type="button" className="ayp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'How partnerships work'}</button>}
-          {/* Returns are the seller's: link Amazon's own policy when Buy goes there (product page audit). */}
-          {isAmazonBuyLink && <>{' '}<a className="ayp-textlink" href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GKM69DUUYKQWKWX7" target="_blank" rel="noopener noreferrer">Amazon’s return policy<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></>}
-        </p>
-      )}
+      <p className="ayp-buy__fine ayv-fine">
+        {buy?.checked && <>{buy.checked}. </>}
+        {leavingLine(buyUrl, sellerName && sellerName.length <= 32 ? sellerName : '', verb === 'Buy' ? 'buy' : verb === 'Book' ? 'book' : 'get started')}{' '}
+        {isPartner ? 'ayna partner. We may earn a commission.' : isAmazonBuyLink ? 'ayna may earn a commission from Amazon.' : 'ayna may earn a commission.'}
+        {' '}{isPartner && <button type="button" className="ayp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'How partnerships work'}</button>}
+        {/* Returns are the seller's: link Amazon's own policy when Buy goes there (product page audit). */}
+        {isAmazonBuyLink && <>{' '}<a className="ayp-textlink" href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GKM69DUUYKQWKWX7" target="_blank" rel="noopener noreferrer">Amazon’s return policy<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></>}
+      </p>
       {isPartner && showDisclosure && <p className="ayp-buy__fine ayp-buy__disclosure">{getPartnerDisclosureText(product)}</p>}
-      {retailers.length > 0 && (
-        <p className="ayp-buy__fine ayp-retailers">
-          <span id="pdp-also-at">Also at </span>
-          {retailers.map((r, i) => (
-            <React.Fragment key={r.url}>
-              {i > 0 && ', '}
-              <a
-                href={r.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ayp-textlink"
-                onClick={() => posthog.capture('product_retailer_clicked', { productId: product.id, retailer: r.name })}
-              >
-                {r.name}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span>
-              </a>
-            </React.Fragment>
-          ))}
-        </p>
-      )}
     </>
-  );
+  ) : null;
 
   const galleryTile = (
     <div className="ayp-gallery">
@@ -873,36 +797,16 @@ export default function ProductModal({
     match: <button type="button" className="ay-psec-action" onClick={() => setShowWhy(true)}>See the full breakdown</button>,
   };
 
-  // Her match in one row: the % (or Partial fit under 50) and one plain line why, tappable to Why this match.
-  const fitRow = (() => {
-    const rows = [];
-    const why = whyLine(product, matchDetails) || headMatchLine;
-    if (matchPercent > 0) rows.push(<li key="why"><button type="button" className="ayp-why__row" onClick={() => setShowWhy(true)} aria-label={`${matchText(matchPercent)}${why ? `. ${why}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span className="ayp-why__main">{why || 'Why ayna picked this for you'}</span><span className="ayp-why__go">See why</span></button></li>);
-    if (settled && !(matchPercent > 0) && quizResults) rows.push(<li key="fit"><button type="button" className="ayp-why__row" onClick={() => setShowWhy(true)}><span className="ayp-why__main">{isBleedingEvaluation(matchDetails) ? BLEEDING_EVALUATION : matchExclusions[0] || 'No clear match for what you told us'}</span><span className="ayp-why__go">See why</span></button></li>);
-    if (!quizResults && !user && onStartQuiz) rows.push(<li key="fit"><button type="button" className="ayp-why__row" onClick={onStartQuiz}><span className="ayp-why__main">How well does this fit you?</span><span className="ayp-why__go">See my matches</span></button></li>);
-    if (!rows.length && !settled && (quizResults || healthProfile)) return <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" />;
-    return rows.length ? <ul className="ayp-why" data-tour="pdp-why" aria-label="Your match">{rows}</ul> : null;
-  })();
-  // The full "why it fits you" (reasons, breakdown link): right column on wide screens, ayna summary otherwise.
-  const fitBlock = !settled && (quizResults || healthProfile)
+  // Her match in one line under the price: the % with its plain why, a safety hold or the bleeding
+  // evaluation (never a %), or "See how it fits you" signed out (pdp/pdpParts matchLineState).
+  const matchState = matchLineState({ details: matchDetails, percent: matchPercent, hasProfile: Boolean(quizResults), why: whyLine(product, matchDetails), fallback: headMatchLine, canQuiz: !quizResults && !user && Boolean(onStartQuiz) });
+  const fitRow = !settled && (quizResults || healthProfile)
     ? <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" />
-    : (
-      <div className="ayp-fit" data-tour="pdp-fit">
-        <ProductMatch glance={glance} matchPercent={matchPercent} why={whyLine(product, matchDetails)} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} hold={matchDetails?.safetyHold || null} evaluation={matchDetails?.bleedingEvaluation || null} onFixHold={onFixSafety} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />
-        {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && <p className="ayp-fit__note">In your routine</p>}
-      </div>
-    );
-  // The one most important caution, next to Buy (phones) or in Key considerations (wide).
-  const warningLine = topWarning ? (
-    <div className="ay-buy__warn" role="note">
-      <span className="ay-buy__bang" aria-hidden="true">!</span>
-      <span className="ay-buy__warntext">
-        <span>{topWarning}</span>
-        <button type="button" className="ayp-textlink pdp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'safety' }))}>All safety info</button>
-      </span>
-    </div>
-  ) : null;
-  const whoLines = (product.whoItsFor || []).map((w) => noDash(String(w || '')).trim()).filter(Boolean).slice(0, 3);
+    : <MatchLine state={matchState} onWhy={() => setShowWhy(true)} onFix={onFixSafety} onQuiz={onStartQuiz} />;
+  // Is it for you: the website's right column on wide screens, above the tabs otherwise.
+  const fitData = { details: matchDetails, hasProfile: Boolean(quizResults), onShowWhy: () => setShowWhy(true), extra: matchDetails?.healthData ? <HealthBackedBadge backed={{ section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) }} /> : null };
+  // The one critical caution, in the safety box right under Buy.
+  const warningLine = <SafetyLine text={topWarning} />;
   const relatedReads = readsForProduct(product, 3);
 
   return (
@@ -924,18 +828,18 @@ export default function ProductModal({
           </button>
         </div>
 
-        {/* Photos, then name, price and Buy, then (wide screens) a column of what matters to her. No box around it. */}
+        {/* Wide screens (1024+): two columns, the product on the left (sticky), the tabs on the right (founder, Oct 25). */}
+        <div className="ayv-split">
+        <div className="ayv-split__left">
+        {/* Photos, then name, price, her match, Buy. No box around it. */}
         <div className="ayp-hero pdp-head ayp-hero--3" ref={boardRef}>
           <div className="ayp-hero__media pdp-head__media">
             {galleryTile}
           </div>
 
           <div className="ayp-buy pdp-head__detail" id="ay-buycard">
-            {(() => {
-              // Brand · category tag above the name (main #73, the Neycher page design).
-              const tag = [brand || product.brand, categoryLabel(product)].filter(Boolean).join(' · ');
-              return tag ? <p className="ayp-buy__brand pdp-tag">{tag}</p> : null;
-            })()}
+            {/* The brand as text above the name; the category is in the breadcrumb (founder, Oct 25). */}
+            {(brand || product.brand) && <p className="ayv-brand">{brand || product.brand}</p>}
             <h1 className="ay-h1 ayp-buy__name pdp-head__name">{displayName}</h1>
             {aynaRating != null && ratingCount > 0 && (
               <button type="button" className="ayp-buy__rating" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'reviews' }))}>
@@ -945,63 +849,29 @@ export default function ProductModal({
               </button>
             )}
 
-            <HeroPrice view={heroPriceView(product, { price, perUnit, glance, brand })} />
+            {(() => { const v = heroPriceView(product, { price, perUnit, glance, brand }); return <HeroPrice view={{ ...v, notes: heroNotes(v.notes).keep }} />; })()}
 
-            {/* Her match and the one line why, tappable to Why this match (wide screens show it in the right column). */}
-            {!isWide && fitRow}
-
-            {(() => {
-              const raw = noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, ''));
-              const lead = firstSentence(raw, { min: 20, max: 420 });
-              // On phones the line moves into "What it is" in ayna summary.
-              return lead && !isPhone ? <p className="ayp-buy__lead pdp-lead">{lead}</p> : null;
-            })()}
+            {/* Her match and the one line why, tappable to Why this match. */}
+            {matchState?.kind !== 'quiz' && fitRow}
 
             <section className="ayp-buy__section ay-story--buy" aria-labelledby="ay-buy-h">
               <h2 id="ay-buy-h" className="sr-only">Buy</h2>
               {actionButtons}
-              {warningLine}
-              {(() => {
-                // The evidence in one honest line, next to Buy (team direction 11-12).
-                const ev = evidenceLevel(product);
-                return (
-                  <p className="ayp-buy__ev">
-                    <b>Evidence: </b>{ev.scope === 'type' ? ev.line : ev.level > 0 ? `${ev.word}${ev.need ? ` for ${ev.need}` : ''}.` : 'No .gov-checked evidence yet.'}{' '}
-                    <button type="button" className="ayp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'literature' }))}>See the literature</button>
-                  </p>
-                );
-              })()}
               {purchaseNotes}
+              <WhereToBuy rows={buy?.rows} onOpen={(r) => posthog.capture('product_retailer_clicked', { productId: product.id, retailer: r.name })} />
+              {matchState?.kind === 'quiz' && <div className="ayv-quizline">{fitRow}</div>}
+              {warningLine}
+              <StickyBuy model={buy} watch={actionsRef} mode="fixed" wideOff saved={isSaved} onSave={onToggleSaved ? () => onToggleSaved(product) : null} onBuy={() => { try { recordRetailerVisit(product, choice.variant); } catch { /* ignore */ } posthog.capture('product_buy_now_clicked', { productId: product.id, category: product.category, destination: buy?.url, placement: 'sticky_bar' }); }} />
             </section>
           </div>
 
-          {isWide && (
-            <aside className="ayp-rail" aria-label="For you">
-              <section className="ayp-rail__sec ayp-rail__fit">{fitBlock}</section>
-              {whoLines.length > 0 && (
-                <section className="ayp-rail__sec" aria-labelledby="ayp-rail-who">
-                  <h2 id="ayp-rail-who" className="ayp-rail__h">Who it may be for</h2>
-                  <ul className="ayp-rail__list">{whoLines.map((w) => <li key={w}>{w}</li>)}</ul>
-                  <button type="button" className="ayp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'summary' }))}>More in ayna summary</button>
-                </section>
-              )}
-            </aside>
-          )}
+        </div>
         </div>
 
         {/* Sticky tabs: Clinical opinion, Scientific literature, ayna summary, Reviews (founder, Oct 24). */}
-        <div className="ayp-tabsarea pdp-head__info">
-          <ProductEvidence loading={!researchLoaded} product={product} image={images[0] || ''} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} recall={recall} heroLine={isPhone ? '' : firstSentence(noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 })} fitSlot={isWide ? null : fitBlock} extraRows={(() => {
-            const pp = getPassport(product);
-            const checked = pp?.pricing?.price?.verified_at;
-            let seller = '';
-            try { seller = buyUrl ? (isAmazonBuyLink ? 'Amazon' : isPartner ? `${brand || product.brand} (ayna partner)` : new URL(buyUrl).hostname.replace(/^www\./, '')) : ''; } catch { seller = ''; }
-            const d = checked ? new Date(`${String(checked).slice(0, 10)}T12:00:00`) : null;
-            return [
-              { label: 'Sold by', value: seller },
-              { label: 'Price check', value: d && !Number.isNaN(d.getTime()) && price.known && !price.isPlaceholder ? `Checked ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '' },
-            ];
-          })()} />
+        <div className="ayv-split__right ayp-tabsarea pdp-head__info">
+          <ProductEvidence loading={!researchLoaded} product={product} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} fit={fitData} askSlot={onAskAyna ? <ProductAsk productName={displayName} onAsk={onAskAyna} hasProfile={Boolean(quizResults)} /> : null} />
+        </div>
         </div>
 
         {/* Compare, then Ask or share side by side on desktop. */}
@@ -1011,26 +881,22 @@ export default function ProductModal({
           </PhoneFold>
         </section>}
 
-        <section className="ay-section ayp-askshare" aria-label="Ask or share">
-          <PhoneFold id="pdp-askshare" title="Ask or share" line="Ask ayna about your situation, or write a review if you have tried it.">
-            <div className="ayp-askshare__grid">
-              <div className="ayp-askshare__ask"><ProductAsk productName={displayName} onAsk={onAskAyna} hasProfile={Boolean(quizResults)} /></div>
-              {onCommunityAction && (
-                <section className="ay-group is-padded ayp-tried" aria-labelledby="pdp-community-h">
-                  <h2 id="pdp-community-h" className="ay-h3">Tried it?</h2>
-                  <div className="ayp-tried__actions">
-                    <button type="button" className="ay-btn ay-btn--primary" onClick={() => onCommunityAction('review')}>Write a review</button>
-                  </div>
-                  <ul className="ay-group__rows ayp-tried__more" aria-label="More ways to share">
-                    {[['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
-                      <li key={kind}><button type="button" className="ay-group__row ay-group__row--link" onClick={() => onCommunityAction(kind)}><span className="ay-group__value">{label}</span><span className="ay-group__end" aria-hidden="true">›</span></button></li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-            </div>
-          </PhoneFold>
-        </section>
+        {/* Ask about this product now sits at the end of ayna summary; sharing stays here. */}
+        {onCommunityAction && (
+          <section className="ay-section ayp-askshare" aria-label="Share">
+            <section className="ay-group is-padded ayp-tried" aria-labelledby="pdp-community-h">
+              <h2 id="pdp-community-h" className="ay-h3">Tried it?</h2>
+              <div className="ayp-tried__actions">
+                <button type="button" className="ay-btn ay-btn--primary" onClick={() => onCommunityAction('review')}>Write a review</button>
+              </div>
+              <ul className="ay-group__rows ayp-tried__more" aria-label="More ways to share">
+                {[['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
+                  <li key={kind}><button type="button" className="ay-group__row ay-group__row--link" onClick={() => onCommunityAction(kind)}><span className="ay-group__value">{label}</span><span className="ay-group__end" aria-hidden="true">›</span></button></li>
+                ))}
+              </ul>
+            </section>
+          </section>
+        )}
 
         {relatedReads.length > 0 && (
           <section className="ay-section ayp-reads" aria-labelledby="pdp-reads-h">
