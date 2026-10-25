@@ -199,3 +199,5 @@
   :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd, :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-frame { transition: none; }
   :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-card > * { animation: none; }
 }
+/* a long claim steps down a size so it stays a poster, not a paragraph */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-title.is-long { font-size: clamp(32px, 8.6vw, 40px); line-height: 1; }

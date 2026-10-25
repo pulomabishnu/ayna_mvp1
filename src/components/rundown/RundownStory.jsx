@@ -262,7 +262,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
         <article className="ay-rd-card" key={card.key} aria-labelledby={`ay-rd-t-${i}`}>
           <CardArt card={card} />
           <p className="ay-rd-kicker">{card.kicker}</p>
-          <h2 id={`ay-rd-t-${i}`} className="ay-rd-title">{card.title}</h2>
+          <h2 id={`ay-rd-t-${i}`} className={`ay-rd-title${String(card.title || '').length > 64 ? ' is-long' : ''}`}>{card.title}</h2>
           {card.body && <p className="ay-rd-body">{card.body}</p>}
           {card.facts && <dl className="ay-rd-facts">{card.facts.map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}
           {(card.changed || card.mayAffect || card.canDo) && (
