@@ -3,6 +3,7 @@ import TodayScreen from './TodayScreen.jsx';
 import EcosystemScreen from './EcosystemScreen.jsx';
 import MobileHeader from '../components/MobileHeader.jsx';
 import HomeAskSheet from '../components/HomeAskSheet.jsx';
+import { HomeHeroArt, HomeHealthArt, readHomeLook } from '../components/HomeArt.jsx';
 import { askFromPrompt } from '../../utils/askPrompts.js';
 import EmptyState from '../components/EmptyState.jsx';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
@@ -16,9 +17,10 @@ import '../../styles/week-explained.css';
 import '../ayna-home.css';
 
 /** Health data or her log, as one fact with "Ask why", and the way to log today. */
-function HealthRow({ summary = null, connectedCount = 0, onAsk, onLog, onConnect }) {
+function HealthRow({ summary = null, connectedCount = 0, onAsk, onLog, onConnect, art = null }) {
   return (
     <section className="ay-homehealth" aria-labelledby="ay-homehealth-h">
+      {art}
       <div className="ay-homehealth__text">
         <h2 id="ay-homehealth-h">{summary ? summary.title : 'Your log'}</h2>
         <p>{summary?.headline || (connectedCount ? 'Your health data is still coming in.' : 'Log how you feel today; it shapes tomorrow.')}</p>
@@ -60,6 +62,9 @@ export default function AynaHomeScreen(props) {
   const hasProducts = hasEcosystem || myProducts.length > 0;
   const today = localToday();
   const cycle = useMemo(() => { const w = buildDashboard(healthInsightRows || [], { days: 30, today }); return w.cycle?.cycleDay ? w.cycle : null; }, [healthInsightRows, today]);
+  // Design preview (dev only): three Home directions over the same structure and content.
+  const [look] = useState(readHomeLook);
+  const sleepPoints = useMemo(() => (look ? (buildDashboard(healthInsightRows || [], { days: 7, today }).groups.flatMap((g) => g.charts).find((c) => c.metric === 'sleep_minutes')?.points || []) : []), [look, healthInsightRows, today]);
   const ask = (q, extra) => onAskAyna?.(typeof q === 'string' ? { question: q, ...(extra || {}) } : q);
 
   if (homeView === 'dashboard') {
@@ -87,7 +92,7 @@ export default function AynaHomeScreen(props) {
             </div>}
         </div>
       )}
-      <div className="ay-home__view ay-homescreen" hidden={homeView !== 'home'}>
+      <div className={`ay-home__view ay-homescreen${look ? ` is-look-${look}` : ''}`} hidden={homeView !== 'home'}>
         <MobileHeader hideAsk />
         <h1 className="sr-only">Home</h1>
         <button type="button" className="ay-homeask__bar" aria-haspopup="dialog" onClick={() => setAsking(true)}>
@@ -97,6 +102,7 @@ export default function AynaHomeScreen(props) {
         {!hasProfile && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
         {/* .ay-hd: the dashboard's own tokens and card styles, as on the full dashboard. */}
         <div className="ay-hd ay-homefeed">
+        <HomeHeroArt look={look} products={[...myProducts, ...suggestedEcosystemProducts]} today={today} cycle={cycle} sleepPoints={sleepPoints} />
         <TodayFeed
           compact
           variant="app"
@@ -124,11 +130,13 @@ export default function AynaHomeScreen(props) {
           moreHeading={false}
         />
         </div>
-        <HealthRow summary={healthSummary} connectedCount={healthConnectedCount} onAsk={ask} onLog={() => openDashboard(true)} onConnect={authUser ? onOpenHealthData || onConnectHealth : onConnectHealth} />
+        <HealthRow art={<HomeHealthArt look={look} sleepPoints={sleepPoints} products={[...myProducts, ...suggestedEcosystemProducts]} />} summary={healthSummary} connectedCount={healthConnectedCount} onAsk={ask} onLog={() => openDashboard(true)} onConnect={authUser ? onOpenHealthData || onConnectHealth : onConnectHealth} />
         <nav className="ay-homelinks" aria-label="More on Home">
           <button type="button" onClick={() => openDashboard()}><span><b>My dashboard</b><small>Routine, log and health data</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
           <button type="button" onClick={() => onHomeView?.('products')}><span><b>Your matches</b><small>{hasProducts ? `${myProducts.length} in your ecosystem` : 'Products that fit you'}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
         </nav>
+        {/* Customize Home widgets go here (built separately); empty until then, it takes no space. */}
+        <div className="ay-home-widgets" data-slot="home-widgets" />
       </div>
       {asking && <HomeAskSheet signedIn={Boolean(authUser?.id)} hasProfile={hasProfile} onClose={() => setAsking(false)} onAsk={(req) => ask(req.question ? req : askFromPrompt(req))} />}
     </div>

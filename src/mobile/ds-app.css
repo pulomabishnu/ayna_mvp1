@@ -233,3 +233,133 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc-save svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc-save.is-on svg { fill: #f7badd; stroke: #3e2723; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) :is(.ax-row, .ax-grid, .ay-browse-grid, .ayna-shelf-row) { padding-bottom: 10px; padding-right: 8px; }
+
+/* =====================================================================
+   HOME DIRECTIONS (preview, ?homelook=a|b|c). Same structure, content and
+   one-screen fit; three dressings. Shared: the widgets slot, the art layer,
+   and micro-interactions that answer taps (none with reduced motion).
+   ===================================================================== */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-widgets:empty { display: none; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homefeed { position: relative; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art { position: absolute; z-index: 4; left: 0; right: 0; top: 0; height: 0; pointer-events: none; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-hart { flex: none; pointer-events: none; }
+
+/* taps: the Ask disc wiggles, cards sink into their shadow, the Rundown card peels at the corner */
+@keyframes ds-wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-12deg) scale(1.06); } 60% { transform: rotate(9deg); } }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homeask__bar:active svg { animation: ds-wiggle .42s var(--ease-pop, ease) both; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen:has(.ay-rd-hero__go:active) .ay-home-art__sticker { animation: ds-wiggle .42s var(--ease-pop, ease) both; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact .ay-rd-hero__card::after {
+  content: ''; position: absolute; right: -1.5px; bottom: -1.5px; width: 0; height: 0; border-bottom-right-radius: 18px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(255, 237, 172, .95) 0 48%, rgba(62, 39, 35, .25) 50%, var(--d-page) 52%);
+  transition: width .22s var(--ease-out, ease-out), height .22s var(--ease-out, ease-out);
+}
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact .ay-rd-hero__card:has(.ay-rd-hero__go:active)::after { width: 34px; height: 34px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact { transition: transform .14s var(--ease-out, ease-out), box-shadow .14s var(--ease-out, ease-out); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:has(button:active) { transform: translate(2px, 2px); }
+@media (prefers-reduced-motion: reduce) {
+  .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen *, .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen *::after { animation: none !important; transition: none !important; }
+  .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact .ay-rd-hero__card:has(.ay-rd-hero__go:active)::after { width: 0; height: 0; }
+  .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:has(button:active) { transform: none; }
+}
+
+/* ---------------- A. Sticker board ---------------- */
+/* filled blocks: the Rundown pink, the three things in sky / butter / sky, links in espresso and butter */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-rd-hero.is-compact { margin-top: 30px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-rd-hero.is-compact .ay-rd-hero__card { --x-on: #3e2723; --x-on-2: rgba(62, 39, 35, .8); --x-on-hair: rgba(62, 39, 35, .25); background: #f7badd !important; color: #3e2723 !important; border: 2px solid #3e2723; box-shadow: 5px 5px 0 #3e2723 !important; border-top-left-radius: 18px !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-rd-hero.is-compact .ay-rd-hero__card :is(h2, li) { color: #3e2723 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-rd-hero.is-compact .ay-rd-hero__kicker { left: 14px; bottom: calc(100% - 12px); min-height: 24px; border-radius: 4px; background: rgba(255, 237, 172, .92); color: #3e2723 !important; transform: rotate(-4deg); border-inline: 2px dotted rgba(62, 39, 35, .35); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-rd-hero.is-compact .ay-rd-hero__kicker::after { background: #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-rd-hero.is-compact .ay-rd-hero__go { background: #3e2723 !important; color: #ffedac !important; box-shadow: 3px 3px 0 #ffedac !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-rd-hero.is-compact .ay-rd-hero__inside { border-top: 0; padding-top: 0 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-today__item.is-compact { border: 2px solid #3e2723 !important; background: #769ebe; color: #3e2723; box-shadow: 4px 4px 0 #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-today__item.is-compact:nth-child(2) { background: #ffedac; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-today__item.is-compact :is(.ay-today__title, .ay-today__why, button) { color: #3e2723 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-today__item.is-compact::before { background: #ffedac; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-today__item.is-compact:nth-child(2)::before { background: #f7badd; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-today__item.is-compact:has(button:active) { box-shadow: 1px 1px 0 #3e2723; }
+/* washi tape on the first thing */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-today__item.is-compact:first-child::after { content: ''; position: absolute; top: -9px; right: 34px; width: 62px; height: 18px; background: rgba(247, 186, 221, .85); border-inline: 2px dotted rgba(62, 39, 35, .35); transform: rotate(4deg); pointer-events: none; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-homehealth { background: #ffedac; border-width: 2px; color: #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-homehealth :is(p, button) { color: #3e2723 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-homelinks button:nth-child(2) { background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-homelinks button:nth-child(2) small { color: rgba(255, 237, 172, .85); }
+/* the stickers: today's stamp and her two products, die-cut, tilted, over the card's corner */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-a .ay-home-art__stamp { position: absolute; right: 6px; top: -8px; --tilt: 8deg; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-a .ay-home-art__stamp .ds-stamp__in { min-width: 54px; min-height: 64px; padding: 8px 8px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-a .ay-home-art__stamp b { font-size: 26px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-a .ay-home-art__stamp small { font-size: 10.5px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__sticker { position: absolute; display: block; width: 58px; height: 58px; padding: 4px; box-sizing: border-box; background: #fff; border: 1.5px solid #3e2723; border-radius: 14px; box-shadow: 3px 3px 0 #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__sticker img { width: 100%; height: 100%; object-fit: contain; border-radius: 10px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__sticker.is-1 { right: 72px; top: -10px; width: 50px; height: 50px; transform: rotate(-9deg); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__sticker.is-2 { right: 126px; top: -4px; width: 42px; height: 42px; transform: rotate(7deg); border-radius: 50%; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__sticker.is-2 img { border-radius: 50%; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-hart.is-mark { display: grid; place-items: center; width: 34px; height: 34px; margin-right: 10px; border: 1.5px solid #3e2723; border-radius: 50%; background: #769ebe; color: #3e2723; font-size: 16px; transform: rotate(-8deg); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-homehealth h2 { left: auto; right: 16px; }
+
+/* ---------------- B. Data as graphics ---------------- */
+/* the Rundown as a scalloped espresso block with her cycle ring on the right; nights as bars in the health row */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-rd-hero.is-compact { margin-top: 4px; margin-bottom: 14px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b { gap: 6px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-today__list.is-compact { gap: 6px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-rd-hero.is-compact .ay-rd-hero__card { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'title' 'go' 'inside'; justify-items: start; row-gap: 6px !important; padding: 12px 118px 12px 16px !important; border-radius: 22px 22px 0 0 !important; border-top-left-radius: 22px !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-rd-hero.is-compact .ay-rd-hero__card::before { content: ''; position: absolute; left: 0; right: 0; bottom: -13px; height: 14px; pointer-events: none; background: radial-gradient(circle at 10px 0, var(--d-feature, #3e2723) 9.5px, transparent 10px) 0 0 / 20px 14px repeat-x; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-rd-hero.is-compact .ay-rd-hero__card::after { display: none; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-rd-hero.is-compact .ay-rd-hero__kicker { position: static; grid-area: auto; justify-self: start; min-height: 0; padding: 0 !important; background: none; color: var(--d-on-feature-2, rgba(255, 237, 172, .78)) !important; order: -1; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-rd-hero.is-compact .ay-rd-hero__card { grid-template-areas: 'kicker' 'title' 'go' 'inside'; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-rd-hero.is-compact .ay-rd-hero__kicker { grid-area: kicker; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-rd-hero.is-compact .ay-rd-hero__inside { margin-right: -104px !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-b .ay-home-art__ring { position: absolute; right: 14px; top: 12px; display: grid; place-items: center; width: 96px; height: 96px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-b svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-b circle.is-track { fill: none; stroke: rgba(255, 237, 172, .28); stroke-width: 9; stroke-dasharray: 2 4.5; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-b circle.is-arc { fill: none; stroke: #f7badd; stroke-width: 9; stroke-linecap: round; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-b circle.is-dot { fill: #ffedac; stroke: #3e2723; stroke-width: 2; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-b .ay-home-art__ring b { position: relative; display: grid; place-items: center; align-content: center; width: 60px; height: 60px; border-radius: 50%; background: #ffedac; color: #3e2723; border: 1.5px solid #3e2723; font: 700 24px/1 var(--ay-app-heading); letter-spacing: -.02em; box-shadow: inset 0 0 0 3px #ffedac, inset 0 0 0 4.5px #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-b .ay-home-art__ring b small { font: 600 10px/1 var(--ay-font-ui, 'Figtree', sans-serif); margin-bottom: 1px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-b .ay-home-art__ring.is-sleep b { width: 84px; height: 84px; font-size: 18px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile)[data-theme='dark']:is(#ds-a, .ayna-mobile) .ay-home-art.is-b circle.is-track { stroke: rgba(62, 39, 35, .3); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-today__item.is-compact { border: 0 !important; background: var(--d-group); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-today__item.is-compact::before { width: 28px; height: 28px; top: 9px; border-radius: 50%; font-size: 13px; box-shadow: inset 0 0 0 2px var(--d-group); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-homehealth { display: flex; align-items: center; gap: 12px; border: 0; background: #769ebe; color: #3e2723; border-top-left-radius: 16px; margin-top: 8px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-homehealth h2 { position: static; min-height: 0; padding: 0; border: 0; background: none; font-weight: 700 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-homehealth :is(p, button, h2) { color: #3e2723 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-hart.is-bars { display: flex; align-items: flex-end; gap: 3px; width: 58px; height: 40px; padding: 4px 6px; box-sizing: border-box; border-radius: 10px; background: #ffedac; border: 1.5px solid #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-hart.is-bars i { flex: 1; border-radius: 2px; background: #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-hart.is-bars i.is-last { background: #f7badd; outline: 1.5px solid #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-homelinks button:first-child { background: var(--d-page) !important; color: var(--d-ink) !important; border-color: var(--d-ink) !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-b .ay-homelinks button:first-child small { color: var(--d-ink-2); }
+
+/* ---------------- C. Folder / scrapbook ---------------- */
+/* the Rundown as the front folder with two sheets behind it, a taped polaroid, a hand-drawn underline and arrow */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-rd-hero.is-compact { margin-top: 30px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-rd-hero.is-compact .ay-rd-hero__card { isolation: isolate; background-image: var(--grain-dark, none) !important; background-size: 160px !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-rd-hero.is-compact::before,
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-rd-hero.is-compact::after { content: ''; position: absolute; z-index: 0; left: 72px; right: 20px; top: -12px; height: 40px; border: 1.5px solid var(--d-ink); border-bottom: 0; border-radius: 10px 10px 0 0; background: #769ebe; transform: rotate(1.5deg); pointer-events: none; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-rd-hero.is-compact::after { left: 120px; right: 60px; top: -22px; background: #f7badd; transform: rotate(-2deg); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-rd-hero.is-compact { position: relative; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-rd-hero.is-compact .ay-rd-hero__card { z-index: 1; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-rd-hero.is-compact h2 { padding-bottom: 8px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6c20-5 38 3 58-1s40-4 58 1' fill='none' stroke='%23f7badd' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") left bottom / 150px 9px no-repeat; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-c .ay-home-art__polaroid { position: absolute; right: 14px; top: 2px; width: 82px; margin: 0; padding: 6px 6px 0; background: #ffedac; border: 1.5px solid #3e2723; border-radius: 4px; transform: rotate(5deg); box-shadow: 3px 3px 0 #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-c .ay-home-art__polaroid::before { content: ''; position: absolute; top: -9px; left: 50%; width: 46px; height: 16px; margin-left: -23px; background: rgba(118, 158, 190, .85); border-inline: 2px dotted rgba(62, 39, 35, .35); transform: rotate(-6deg); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-c .ay-home-art__polaroid img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; background: #fff; border: 1px solid rgba(62, 39, 35, .25); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-c .ay-home-art__polaroid figcaption { padding: 4px 0 5px; font: 600 10.5px/1.1 var(--ay-font-ui, 'Figtree', sans-serif); color: #3e2723; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-c .ay-home-art__arrow { position: absolute; right: 150px; top: 6px; width: 44px; height: 30px; fill: none; stroke: #f7badd; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; transform: rotate(10deg); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-today__item.is-compact { border-radius: 4px !important; border-bottom-right-radius: 0 !important; background: var(--d-group); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-today__item.is-compact:nth-child(odd) { transform: rotate(-.5deg); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-today__item.is-compact:nth-child(even) { transform: rotate(.5deg); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-today__item.is-compact::after { content: ''; position: absolute; right: -1.5px; bottom: -1.5px; width: 16px; height: 16px; background: linear-gradient(135deg, rgba(62, 39, 35, .2) 0 50%, var(--d-page) 50%); border-top: 1.5px solid var(--d-ink); border-left: 1.5px solid var(--d-ink); border-top-left-radius: 3px; pointer-events: none; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-homelinks button { border-radius: 4px 14px 14px 14px !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-homelinks button::before { content: ''; position: absolute; left: -1.5px; top: -10px; width: 52px; height: 10px; border: 1.5px solid currentColor; border-bottom: 0; border-radius: 6px 6px 0 0; background: inherit; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-c .ay-homelinks { margin-top: 8px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-hart.is-mark.is-c { background: #f7badd; }
+
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-hart.is-polaroid { position: relative; width: 40px; margin: -4px 10px -4px 0; padding: 3px 3px 9px; background: #ffedac; border: 1.5px solid #3e2723; border-radius: 3px; transform: rotate(-6deg); box-shadow: 2px 2px 0 #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-hart.is-polaroid img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; background: #fff; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-hart.is-polaroid::before { content: ''; position: absolute; top: -7px; left: 8px; width: 26px; height: 11px; background: rgba(247, 186, 221, .85); border-inline: 1.5px dotted rgba(62, 39, 35, .35); transform: rotate(8deg); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen:is(.is-look-a, .is-look-c) .ay-homehealth { display: flex; align-items: center; }
+/* the three directions fit one 390x844 screen: one notch tighter */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen:is(.is-look-a, .is-look-b, .is-look-c) .ay-today__item.is-compact .ay-today__title { font-size: calc(16px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen:is(.is-look-a, .is-look-b, .is-look-c) .ay-today__item.is-compact { padding-top: 7px !important; padding-bottom: 0 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen:is(.is-look-a, .is-look-b, .is-look-c) .ay-homelinks button { min-height: 52px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-rd-hero.is-compact .ay-rd-hero__inside li::before { background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723; box-sizing: border-box; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen.is-look-a .ay-rd-hero.is-compact .ay-rd-hero__inside li:is(.is-pattern, .is-change, .is-community)::before { background: #769ebe !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art.is-c .ay-home-art__arrow { right: 132px !important; top: 52px !important; z-index: 5; }
