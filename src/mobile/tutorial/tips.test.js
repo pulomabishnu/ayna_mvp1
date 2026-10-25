@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { SCREENS, screenById, tourDecision, tipsToShow, rundownSettled, OFF_NOTE } from './tips.js';
-import { readTour, setTipsEnabled, markScreenSeen, replayTour, markWelcomeOffered, setTourOwner, mergeTourPrefs, TOUR_KEY } from './tourStore.js';
+import { readTour, setTipsEnabled, markScreenSeen, replayTour, setTourOwner, mergeTourPrefs, TOUR_KEY } from './tourStore.js';
 
 function mem() {
   const m = new Map();
