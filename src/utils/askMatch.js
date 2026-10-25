@@ -4,7 +4,7 @@
 // Ask can never make up a different percent. Anything else goes to Ask ayna.
 
 import { findConfidentProductMatch } from './naturalLanguageSearch.js';
-import { whyMatch, exclusionLines, confidenceNotes, needBreakdown, tierWord, shownMatchPercent } from './matchDisplay.js';
+import { whyMatch, exclusionLines, confidenceNotes, needBreakdown, tierWord, shownMatchPercent, SAFETY_HOLD, MATCH_UNAVAILABLE, SAFETY_HOLD_LINE, SAFETY_HOLD_PRODUCT_LINE } from './matchDisplay.js';
 import { whyLine } from './whyLine.js';
 
 // Questions about her fit for one product. Kept narrow on purpose: "does this
@@ -97,9 +97,10 @@ export function answerMatchQuestion(text, ctx) {
     const reasons = lines.length ? lines : (why.considerations || []).map((c) => c.text).filter(Boolean);
     return { productId: String(product.id), followUps: open, answer: [`**${name}** isn’t in your matches, so it has no match for you.`, reasons.length ? list(reasons.slice(0, 3)) : '', 'This is based on what you’ve shared with ayna. You can change your answers in your profile.'].filter(Boolean).join('\n\n') };
   }
-  if (why.restricted) {
-    const missing = (why.missing || []).slice(0, 3);
-    return { productId: String(product.id), followUps: open, answer: [`I need one safety detail before I can give you a match for **${name}**.`, missing.length ? list(missing) : '', 'Add it in your profile and the match shows up here and on the product.'].filter(Boolean).join('\n\n') };
+  if (why.restricted || details?.matchStatus === 'safety-hold') {
+    // Same words as the card and product page (founder, Oct 24): no percent, the reason, the fix.
+    const hold = details?.safetyHold;
+    return { productId: String(product.id), followUps: open, answer: [`**${name}**: ${SAFETY_HOLD} · ${MATCH_UNAVAILABLE}.`, hold?.kind === 'product' ? SAFETY_HOLD_PRODUCT_LINE : SAFETY_HOLD_LINE, hold?.reason || '', hold?.fix?.label ? (hold.fix.step ? `To resolve it: ${hold.fix.label.replace(/^Answer: /, 'answer “')}${hold.fix.label.startsWith('Answer: ') ? '” in your profile.' : ''}` : hold.fix.label) : ''].filter(Boolean).join('\n\n') };
   }
 
   const percent = details?.percent;

@@ -10,6 +10,7 @@ import { useEdgeFade } from '../pdp/useEdgeFade';
 const openSection = (id) => { try { window.dispatchEvent(new CustomEvent('ay-open-section', { detail: id })); } catch { /* ignore */ } };
 const jumpOpen = (id, domId) => { openSection(id); setTimeout(() => jumpTo(domId), 30); };
 import './ProductSections.css';
+import SafetyHoldNote from '../match/SafetyHoldNote.jsx';
 
 /**
  * "ayna at a glance": the product page's consolidated information, open by
@@ -528,8 +529,16 @@ function MatchSeal({ children }) {
   );
 }
 
-export function ProductMatch({ glance, matchPercent, why = '', fallback = '', onShowWhy, onFindFit = null, hasProfile = false, exclusions = [], health = null }) {
+export function ProductMatch({ glance, matchPercent, why = '', fallback = '', onShowWhy, onFindFit = null, hasProfile = false, exclusions = [], health = null, hold = null, onFixHold = null }) {
   if (!glance) return null;
+  // Held back for safety: no number, the reason and what resolves it (founder, Oct 24).
+  if (hold && hasProfile) {
+    return (
+      <section className="ay-story ay-story--match is-none" aria-label="Your match">
+        <SafetyHoldNote hold={hold} onFix={onFixHold} />
+      </section>
+    );
+  }
   // Signed in with a profile but no score (a partner bundle, an excluded item):
   // the block still shows, worded honestly, instead of disappearing.
   if (!(matchPercent > 0) && hasProfile) {

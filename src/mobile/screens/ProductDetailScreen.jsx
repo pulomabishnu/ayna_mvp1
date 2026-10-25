@@ -9,7 +9,7 @@ import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partnerBrands.js';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
-import { exclusionLines, matchText } from '../../utils/matchDisplay.js';
+import { exclusionLines, matchText, isSafetyHold, SAFETY_HOLD, MATCH_UNAVAILABLE } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
 import { whyLine } from '../../utils/whyLine.js';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
@@ -232,6 +232,8 @@ export default function ProductDetailScreen({
   onOpenReview = null,
   onRequireAuth,
   onStartQuiz,
+  // A safety hold's fix: open that setup question (e.g. 'medications').
+  onFixSafety = null,
   whyMatched,
   reads = [],
   quizAnswers = null,
@@ -425,7 +427,7 @@ export default function ProductDetailScreen({
     </div>
   );
   const fitBlock = quizAnswers ? (
-    <ProductMatch glance={glance} matchPercent={matchPercent} why={headLine} fallback={matchLine(matchDetails)} onShowWhy={openWhyMatch} hasProfile exclusions={exclusions} />
+    <ProductMatch glance={glance} matchPercent={matchPercent} why={headLine} fallback={matchLine(matchDetails)} onShowWhy={openWhyMatch} hasProfile exclusions={exclusions} hold={matchDetails.safetyHold || null} onFixHold={onFixSafety} />
   ) : null;
 
   return (
@@ -481,6 +483,7 @@ export default function ProductDetailScreen({
             {price && shownPrice.sub && <small>{shownPrice.sub}</small>}
           </div>}
           <ul className="ay-pdp-why" aria-label="Why it is here">
+            {isSafetyHold(matchDetails) && <li><button type="button" className="ay-pdp-why__row is-match" onClick={openWhyMatch} aria-label={`${SAFETY_HOLD}. ${MATCH_UNAVAILABLE}. See why`}><MatchPill hold size="sm" /><span>{MATCH_UNAVAILABLE}</span><span className="ay-pdp-why__go">See why</span></button></li>}
             {matchPercent != null && <li><button type="button" className="ay-pdp-why__row is-match" onClick={openWhyMatch} aria-label={`${matchText(matchPercent)}${headLine ? `. ${headLine}` : ''}. See why`}><MatchPill percent={matchPercent} size="sm" /><span>{headLine || 'Why ayna picked this for you'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
             {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={openWhyMatch}><span>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'}</span><span className="ay-pdp-why__go">See why</span></button></li>}
             {matchDetails.matchStatus === 'no-profile' && <li><button type="button" className="ay-pdp-why__row is-fit" onClick={onStartQuiz}><span>See how it fits you</span><span className="ay-pdp-why__go">Get matched</span></button></li>}

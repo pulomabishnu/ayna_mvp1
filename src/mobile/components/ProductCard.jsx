@@ -9,7 +9,7 @@ import { displayName } from '../utils/displayName.js';
 import { brandOf } from '../data/brandFallback.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { HEART_PATH } from '../utils/heart.js';
-import { matchBadge } from '../../utils/matchDisplay.js';
+import { matchBadge, isSafetyHold, SAFETY_HOLD, MATCH_UNAVAILABLE } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
 import { saveFeedback } from '../../utils/feedback.js';
 import { whyLine } from '../../utils/whyLine.js';
@@ -33,6 +33,8 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   // Badge = her best need score, only with a profile and 50+ ("82% for period cramps").
   const badge = matchBadge(match, { needId });
   const showMatch = Boolean(badge);
+  // Held back for safety: "Safety hold" in place of a number (never 0%).
+  const held = !badge && isSafetyHold(match);
   // The % explained in one plain line from the engine's reasons (src/utils/whyLine.js).
   const why = showMatch ? whyLine(product, match) : '';
   // "Backed by your sleep data": her connected data supports the need this card is shown for.
@@ -78,6 +80,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           </span>
         </button>
         {showMatch && <MatchPill percent={badge.percent} size="sm" className="ay-pc-match" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
+        {held && <MatchPill hold size="sm" className="ay-pc-match" label={`${SAFETY_HOLD}, ${MATCH_UNAVAILABLE.toLowerCase()} for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
         {onToggleSaved && <button type="button" className={`ay-pc-save${isSaved ? ' is-on' : ''}`} aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
         <CompareCheck product={product} />
       </article>
@@ -102,6 +105,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
       </span>
       </button>
       {showMatch && <MatchPill percent={badge.percent} size="sm" className="ayna-fresh-match-badge ayna-match-action" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
+      {held && <MatchPill hold size="sm" className="ayna-fresh-match-badge ayna-match-action" label={`${SAFETY_HOLD}, ${MATCH_UNAVAILABLE.toLowerCase()} for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
       {onToggleSaved && <button type="button" className="ayna-card-save" aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
       {isList && <div className="ayna-fresh-product-actions">
         <button type="button" onClick={onClick}>Details</button>

@@ -377,7 +377,7 @@ export const CONDITIONS = [
   { id: 'stomach_ulcer', option: 'Stomach ulcer or stomach bleeding' },
   { id: 'asthma', option: 'Asthma' },
 ];
-export const NON_CONDITION_OPTIONS = new Set(['None that I know of', 'Prefer not to say', 'Other / not listed']);
+export const NON_CONDITION_OPTIONS = new Set(['None that I know of', 'Not sure', 'Prefer not to say', 'Other / not listed']);
 export const CONDITION_ID_BY_OPTION = Object.fromEntries(CONDITIONS.map((c) => [c.option, c.id]));
 // Legacy snapshot `conditions` slugs (buildSnapshot lowercases most options).
 export const CONDITION_ID_BY_LEGACY = {

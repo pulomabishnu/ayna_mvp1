@@ -14,7 +14,7 @@ import './shop-page.css';
 // utils/search/lazy.js): the page head renders at once and the grid shows
 // placeholder cards until both have arrived (`ready` below).
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct, isTeenProduct, useCatalogReady } from '../data/catalog.js';
-import { behaviorFrom, matchBadge } from '../utils/matchDisplay';
+import { behaviorFrom, matchBadge, isSafetyHold } from '../utils/matchDisplay';
 import { whyLine } from '../utils/whyLine';
 import { hasClinicalSources, CLINICAL_SOURCES_LABEL } from '../utils/clinicalSources';
 import { sortByBestMatch, bestMatchNeedsQuiz, shownMatchPercent } from '../utils/bestMatchSort.js';
@@ -1867,7 +1867,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     // Badge = best need score, only with a profile and 50+ ("82% for period cramps").
                     // Personalized off means no scores on cards (the toggle does what it says).
                     const hasProfile = Boolean(hasQuizFrustrations || hasHealthImport) && personalizationFilter;
-                    const badge = hasProfile ? matchBadge(getProductMatchDetailsForProduct(item, quizResults, healthProfile, matchOpts)) : null;
+                    const itemDetails = hasProfile ? getProductMatchDetailsForProduct(item, quizResults, healthProfile, matchOpts) : null;
+                    const badge = itemDetails ? matchBadge(itemDetails) : null;
+                    const matchHold = isSafetyHold(itemDetails);
                     // No profile, no %: a number needs her answers to be honest.
                     const matchPercent = hasProfile && badge ? badge.percent : null;
                     const why = matchPercent != null ? whyLine(item, getProductMatchDetailsForProduct(item, quizResults, healthProfile, matchOpts)) : '';
@@ -1892,6 +1894,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             product={item}
                             style={undefined}
                             matchPercent={matchPercent}
+                            matchHold={matchHold}
                             matchLabel={badge ? badge.label : ''}
                             why={why}
                             rating={(() => { const d = aynaReviews[item.id]; const v = getAynaRating(item, d); const n = getAynaRatingCount(d); return v != null && n > 0 ? { value: Number(v), count: n } : null; })()}

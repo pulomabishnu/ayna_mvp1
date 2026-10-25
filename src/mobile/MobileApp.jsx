@@ -1512,6 +1512,7 @@ export default function MobileApp() {
               setOverlay(null);
               setScreen('community');
             }}
+            onFixSafety={(step) => { setOverlay(null); nav.onEditIntakeStep(step); }}
             onStartQuiz={() => { returnProductRef.current = overlay.item || null; setOverlay(null); setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); }}
             authUser={authUser}
             onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
@@ -1568,6 +1569,7 @@ export default function MobileApp() {
             matchOpts={matchOpts}
             onBack={() => setOverlay(null)}
             onUpdateHealth={() => { setOverlay(null); setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
+            onFixSafety={(step) => { setOverlay(null); nav.onEditIntakeStep(step); }}
             onViewDetails={() => setOverlay({ type: 'product', item: overlay.item })}
           />
         </PushLayer>

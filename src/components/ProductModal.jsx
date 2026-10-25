@@ -4,7 +4,7 @@ import { useResearchState } from '../data/researchLoader';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
-import { exclusionLines, matchText } from '../utils/matchDisplay';
+import { exclusionLines, matchText, isSafetyHold } from '../utils/matchDisplay.js';
 import { whyLine } from '../utils/whyLine';
 import '../styles/match-ui.css';
 import { getAynaRating, getAynaRatingCount } from '../data/aynaReviews';
@@ -363,6 +363,8 @@ export default function ProductModal({
   // "Add to my ecosystem" (there is no ecosystem yet).
   user = undefined,
   onStartQuiz = null,
+  // A safety hold's fix: open that setup question.
+  onFixSafety = null,
 }) {
   // Research loads on demand on the product page only (data/researchLoader.js).
   const { product, loaded: researchLoaded } = useResearchState(catalogProduct);
@@ -470,7 +472,9 @@ export default function ProductModal({
     [product, quizResults, healthProfile, matchOpts, settled]
   );
   // No profile, no %: a stored number on the product is not a fit to her.
-  const matchPercent = quizResults ? (profileMatchPercent ?? explicitMatchPercent) : null;
+  const heldForSafety = useMemo(() => Boolean(quizResults && settled && isSafetyHold(getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts))), [product, quizResults, healthProfile, matchOpts, settled]);
+  // A safety hold shows no number at all, not even a stored one (founder, Oct 24).
+  const matchPercent = quizResults && !heldForSafety ? (profileMatchPercent ?? explicitMatchPercent) : null;
   // The engine's per-need view feeds the one-line "what it matches" and the
   // "Why ayna matched it to you" section. Raw per-need numbers are never
   // shown in the header.
@@ -881,7 +885,7 @@ export default function ProductModal({
     ? <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" />
     : (
       <div className="ayp-fit">
-        <ProductMatch glance={glance} matchPercent={matchPercent} why={whyLine(product, matchDetails)} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />
+        <ProductMatch glance={glance} matchPercent={matchPercent} why={whyLine(product, matchDetails)} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} hold={matchDetails?.safetyHold || null} onFixHold={onFixSafety} exclusions={matchExclusions} health={matchDetails?.healthData ? { section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) } : null} />
         {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && <p className="ayp-fit__note">In your routine</p>}
       </div>
     );

@@ -129,6 +129,12 @@ export const PERI_NONE_12 = 'None for over 12 months';
 export const PERIMENOPAUSE_LAST_PERIOD = [PERI_STILL_REGULAR, PERI_IRREGULAR, PERI_NONE_3_12, PERI_NONE_12, "I'm not sure", 'Prefer not to say'];
 export const TTC_DURATION = ['Not trying yet', 'Less than 6 months', '6–12 months', 'More than 12 months', 'Prefer not to say'];
 export const MEDICATION_STATUS = ['Yes', 'No', "I'm not sure", 'Prefer not to say'];
+// Safety questions are required (founder, Oct 24): every one offers None,
+// Not sure and Prefer not to answer. Saved values stay as they were; only
+// the words she reads change. Missing or unsure answers are never guessed:
+// only the products that depend on them are held back (src/matching/score.js).
+export const SAFETY_ANSWER_LABELS = { No: 'None', "I'm not sure": 'Not sure', 'Prefer not to say': 'Prefer not to answer', 'None that I know of': 'None', 'Not sure': 'Not sure' };
+export const CONDITION_EXCLUSIVE = ['None that I know of', 'Not sure', 'Prefer not to say'];
 export const ALLERGY_STATUS = ['Yes', 'No', "I'm not sure", 'Prefer not to say'];
 export const URGENT_STATUS = ['Yes', 'No', 'Not sure'];
 export const BREASTFEEDING_STATUS = ['Yes', 'No', 'Prefer not to say'];
@@ -143,7 +149,7 @@ export const CONDITIONS = [
   'PCOS', 'Endometriosis', 'Fibroids', 'Adenomyosis', 'PMS', 'PMDD', 'Infertility', 'Thyroid condition',
   'Diabetes', 'Insulin resistance', 'High blood pressure', 'Migraine with aura', 'Anemia or iron deficiency',
   'IBS or another digestive condition', 'Autoimmune condition', 'Anxiety', 'Depression',
-  'None that I know of', 'Prefer not to say',
+  'None that I know of', 'Not sure', 'Prefer not to say',
 ];
 
 export const ALLERGIES = [
@@ -502,12 +508,12 @@ export function buildSnapshot(intake) {
     intake.supportOtherText.trim(),
   ].filter(Boolean))];
   const customLifeStages = lifeStageSelections.filter((item) => !LIFE_STAGES.includes(item) && !LIFE_STAGE_EXCLUSIVE.includes(item) && item !== 'Other');
-  const customConditions = (intake.diagnosisSelections || []).filter((item) => !CONDITIONS.includes(item) && !['None that I know of', 'Prefer not to say', 'Other / not listed'].includes(item));
+  const customConditions = (intake.diagnosisSelections || []).filter((item) => !CONDITIONS.includes(item) && !['None that I know of', 'Not sure', 'Prefer not to say', 'Other / not listed'].includes(item));
   const customFormats = (intake.preferredFormats || []).filter((item) => !PRODUCT_FORMATS.includes(item) && item !== 'Other');
   const customPreferences = (intake.avoidIngredients || []).filter((item) => !AVOID_INGREDIENTS.includes(item) && item !== 'Other');
 
   const conditions = (intake.diagnosisSelections || [])
-    .filter((v) => !['None that I know of', 'Prefer not to say', 'Other / not listed'].includes(v))
+    .filter((v) => !['None that I know of', 'Not sure', 'Prefer not to say', 'Other / not listed'].includes(v))
     .map((v) => CONDITION_TO_LEGACY[v] || v.toLowerCase());
   if (intake.diagnosisSelections.includes('Other / not listed') && intake.conditionOtherText.trim()) conditions.push(intake.conditionOtherText.trim().toLowerCase());
 
@@ -758,7 +764,7 @@ export function getAnswerStates(intake) {
   put('postpartumTiming', singleAnswerState(intake.postpartumTiming));
   put('pregnancyTrimester', singleAnswerState(intake.pregnancyTrimester));
   const dx = intake.diagnosisSelections || [];
-  put('conditions', dx.includes('Prefer not to say') ? 'prefer_not' : dx.includes('None that I know of') ? 'explicit_no' : isStepAnswered('conditions', intake) ? 'answered' : null);
+  put('conditions', dx.includes('Prefer not to say') ? 'prefer_not' : dx.includes('Not sure') ? 'not_sure' : dx.includes('None that I know of') ? 'explicit_no' : isStepAnswered('conditions', intake) ? 'answered' : null);
   put('allergies', intake.allergyStatus === 'Yes' ? (filled(intake.allergyItems) ? 'answered' : null) : singleAnswerState(intake.allergyStatus, { no: ['No'] }));
   put('medications', intake.takesCurrent === 'Yes' ? (filled(intake.currentMedicationItems) ? 'answered' : null) : singleAnswerState(intake.takesCurrent, { no: ['No'] }));
   put('safety', singleAnswerState(intake.safetyConcern, { no: ['No'] }));
@@ -879,7 +885,7 @@ export function getIntakeSteps(intake) {
     ...(utiRequired(intake) ? [req({ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', info: 'How often UTI-type symptoms come back. Symptoms right now point you to testing and care first; repeat symptoms bring prevention forward.' })] : []),
     ...(postpartumRequired(intake) ? [req({ id: 'postpartumTiming', section: 'support', title: 'How long ago did you give birth?', type: 'postpartumTiming', info: 'How long since you gave birth. Recovery, nursing and hair needs change a lot over the first year.' })] : []),
     ...(trimesterRequired(intake) ? [req(trimesterStep)] : []),
-    req({ id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', info: 'Only conditions a clinician has diagnosed. Some products are not a good fit with certain conditions, so we filter those out. "None that I know of" and "Prefer not to say" both count.' }),
+    req({ id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', info: 'Only conditions a clinician has diagnosed. Some products are not a good fit with certain conditions, so we filter those out. "None", "Not sure" and "Prefer not to answer" all count.' }),
     req({ id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', info: 'Anything you react to. Products with these ingredients or materials will not show up in your picks.' }),
     req({ id: 'medications', section: 'safety', title: 'Taking anything?', subtitle: 'Medicines + supplements', type: 'medications', info: 'Some supplements interact with medicines, for example St. John’s wort with birth control. We use this to flag those combinations.' }),
     req({ id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', info: 'ayna does not diagnose. If you have new or quickly worsening symptoms, we point you to care before products.' }),

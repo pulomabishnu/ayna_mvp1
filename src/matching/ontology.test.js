@@ -34,7 +34,7 @@ describe('ontology covers every intake option', () => {
   });
 
   it('maps every condition, life stage, format, allergy and avoid option', () => {
-    INTAKE_CONDITIONS.filter((c) => !['None that I know of', 'Prefer not to say'].includes(c)).forEach((c) => expect(CONDITION_ID_BY_OPTION[c]).toBeTruthy());
+    INTAKE_CONDITIONS.filter((c) => !['None that I know of', 'Not sure', 'Prefer not to say'].includes(c)).forEach((c) => expect(CONDITION_ID_BY_OPTION[c]).toBeTruthy());
     INTAKE_LIFE_STAGES.forEach((s) => expect(LIFE_STAGE_ID_BY_OPTION[s]).toBeTruthy());
     PRODUCT_FORMATS.filter((f) => f !== 'No preference').forEach((f) => expect(FORMAT_ID_BY_OPTION[f]).toBeTruthy());
     ALLERGIES.forEach((a) => expect(ALLERGEN_BY_OPTION[a]).toBeTruthy());

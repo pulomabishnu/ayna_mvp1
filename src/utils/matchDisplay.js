@@ -14,6 +14,15 @@ export const RESTRICTED_LINE = 'Add a safety detail to see this match';
 // matches; views that show their own restricted box drop it.
 export const RESTRICTED_CONSIDERATION = /^Safety not checked yet/;
 
+// Safety hold (founder, Oct 24): a product held back for safety shows no
+// percent anywhere, never 0%. These words, then the exact reason and what
+// resolves it (details.safetyHold from src/data/products.js).
+export const SAFETY_HOLD = 'Safety hold';
+export const MATCH_UNAVAILABLE = 'Match unavailable';
+export const SAFETY_HOLD_LINE = 'We need one more safety detail before we can determine your match.';
+export const SAFETY_HOLD_PRODUCT_LINE = 'We need one more safety fact about this product before we can determine your match.';
+export const isSafetyHold = (details) => details?.matchStatus === 'safety-hold';
+
 const TIER_WORDS = { excellent: 'Excellent', strong: 'Strong', exploratory: 'Worth a look', browse: 'Browse' };
 
 /** Engine tiers: excellent 80+, strong 65+, exploratory 50+, browse under 50. */

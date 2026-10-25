@@ -388,6 +388,7 @@ export function buildUserProfile(intakeInput, options = {}) {
   }
   const conditionIds = new Set(conditions.map((c) => c.id));
   const conditionsState = diagnosisSel.includes('Prefer not to say') && !conditions.length ? 'prefer_not'
+    : diagnosisSel.includes('Not sure') && !conditions.length ? 'not_sure'
     : diagnosisSel.includes('None that I know of') && !conditions.length ? 'explicit_no'
       : conditions.length ? 'answered' : diagnosisSel.length || arr(intake.conditions).length ? 'answered' : 'skipped';
 

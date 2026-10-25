@@ -3,7 +3,7 @@ import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake.js';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
 import { defineOption } from '../mobile/data/glossary.js';
 import {
-  ALLERGY_STATUS, AVOID_LABELS, CHECKPOINT_STEP, LIFE_STAGE_EXCLUSIVE, MEDICATION_STATUS, URGENT_STATUS,
+  ALLERGY_STATUS, SAFETY_ANSWER_LABELS, CONDITION_EXCLUSIVE, AVOID_LABELS, CHECKPOINT_STEP, LIFE_STAGE_EXCLUSIVE, MEDICATION_STATUS, URGENT_STATUS,
   firstOptionalResumeStepId, firstUnansweredStepId, isStepAnswered, markSkipped, splitIntakeSteps, toggleLifeStageSelection,
   ALLERGIES, AVOID_GROUPS, AVOID_INGREDIENTS, AVOID_PAIRS, BRAND_OPENNESS, BREASTFEEDING_STATUS,
   CONDITIONS, EMPTY, FOLLOWUP_QUESTIONS, FREE_TEXT_PROMPTS, FSA_HSA, INTAKE_DRAFT_KEY, LARGE_PURCHASE_FREQUENCY, LIFE_STAGES,
@@ -39,10 +39,10 @@ function Chips({ items, selected = [], onToggle, labels = {}, small = false, sin
   </div>;
 }
 
-function Rows({ options, value, onChange }) {
+function Rows({ options, value, onChange, labels = {} }) {
   return <div className="qz-rows" role="radiogroup">
     {options.map((option) => <button type="button" role="radio" key={option} aria-checked={value === option} className={`qz-row${value === option ? ' is-on' : ''}`} onClick={() => onChange(option)}>
-      <span className="qz-radio" aria-hidden="true" />{option}
+      <span className="qz-radio" aria-hidden="true" />{labels[option] || option}
     </button>)}
   </div>;
 }
@@ -569,21 +569,21 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       </>;
       case 'pregnancyTrimester': return <Rows options={PREGNANCY_TRIMESTER} value={intake.pregnancyTrimester} onChange={(v) => set('pregnancyTrimester', v)} />;
       case 'conditions': {
-        const items = ['None that I know of', 'Prefer not to say', ...CONDITIONS.filter((i) => !['None that I know of', 'Prefer not to say', 'Other / not listed'].includes(i)), ...WEB_EXTRA_CONDITIONS, 'Other / not listed'];
+        const items = [...CONDITION_EXCLUSIVE, ...CONDITIONS.filter((i) => ![...CONDITION_EXCLUSIVE, 'Other / not listed'].includes(i)), ...WEB_EXTRA_CONDITIONS, 'Other / not listed'];
         const q = search.trim().toLowerCase();
         const custom = intake.diagnosisSelections.filter((i) => !items.includes(i));
         return <>
           <Search value={search} onChange={setSearch} placeholder="Search conditions" />
-          <AddCustom query={search} options={[...items, ...intake.diagnosisSelections]} onAdd={(v) => addCustom('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} />
-          <Chips items={[...(q ? items.filter((i) => matchesSearchOption(q, i)) : items), ...custom]} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} />
+          <AddCustom query={search} options={[...items, ...intake.diagnosisSelections]} onAdd={(v) => addCustom('diagnosisSelections', v, CONDITION_EXCLUSIVE)} />
+          <Chips items={[...(q ? items.filter((i) => matchesSearchOption(q, i)) : items), ...custom]} selected={intake.diagnosisSelections} labels={SAFETY_ANSWER_LABELS} onToggle={(v) => toggleExclusive('diagnosisSelections', v, CONDITION_EXCLUSIVE)} />
         </>;
       }
       case 'allergies': return <>
-        <Rows options={ALLERGY_STATUS} value={intake.allergyStatus} onChange={(v) => setIntake((prev) => ({ ...prev, allergyStatus: v, allergyItems: v === 'Yes' ? prev.allergyItems : [] }))} />
+        <Rows options={ALLERGY_STATUS} labels={SAFETY_ANSWER_LABELS} value={intake.allergyStatus} onChange={(v) => setIntake((prev) => ({ ...prev, allergyStatus: v, allergyItems: v === 'Yes' ? prev.allergyItems : [] }))} />
         {intake.allergyStatus === 'Yes' && <Tokens values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Type an allergy or sensitivity" suggestions={ALLERGIES} />}
       </>;
       case 'medications': return <>
-        <Rows options={MEDICATION_STATUS} value={intake.takesCurrent} onChange={(v) => setIntake((prev) => ({ ...prev, takesCurrent: v, currentMedicationItems: v === 'Yes' ? prev.currentMedicationItems : [] }))} />
+        <Rows options={MEDICATION_STATUS} labels={SAFETY_ANSWER_LABELS} value={intake.takesCurrent} onChange={(v) => setIntake((prev) => ({ ...prev, takesCurrent: v, currentMedicationItems: v === 'Yes' ? prev.currentMedicationItems : [] }))} />
         {intake.takesCurrent === 'Yes' && <Tokens values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medication, supplement, or birth control" suggestions={MEDICATION_SUGGESTIONS} limit={10} />}
         <p className="qz-note">Check with a clinician before starting anything new.</p>
       </>;
