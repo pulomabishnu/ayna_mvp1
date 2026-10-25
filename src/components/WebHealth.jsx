@@ -120,7 +120,7 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
   );
 }
 
-export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null, compact = false }) {
+export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null, compact = false, widgets = null }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
   // checked without an account. import.meta.env.DEV is false in production builds.
@@ -147,7 +147,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   const name = demo ? '' : (user?.user_metadata?.first_name || user?.user_metadata?.name || '').split(' ')[0];
 
   // Today with ayna leads every state: it runs on her local log, signed out too.
-  const todayFeed = (
+  const feed = (
     <TodayFeed
       variant="web"
       userId={user?.id || null}
@@ -163,6 +163,8 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
       {...rundown}
     />
   );
+  // Today only: her widgets under the Rundown and today's things (Customize Today).
+  const todayFeed = widgets ? <>{feed}{widgets}</> : feed;
 
   // Today (the first main tab) passes its title and, with no profile yet, a way to make one.
   const header = (

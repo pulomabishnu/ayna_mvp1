@@ -1188,6 +1188,7 @@ export default function MobileApp() {
       setScreen('explore');
     },
     onOpenCommunityPost: (postId) => { setOverlay(null); setCommunitySeed({ postId, token: Date.now() }); setScreen('community'); },
+    onOpenCommunitySeed: (seed) => { setOverlay(null); setCommunitySeed({ ...(seed || {}), token: Date.now() }); setScreen('community'); },
     onGoLanding: () => setScreen('landing'),
     onOpenProduct: (p) => growTransition(() => setOverlay({ type: 'product', item: p }), { target: 'product', from: 'img' }),
     onOpenArticle: (a) => {
@@ -1540,6 +1541,7 @@ export default function MobileApp() {
         healthInsightRows={health.insightRows || []}
         rundownCommunity={rundownCommunity}
         onRundownFinish={handleRundownFinish}
+        recentAsks={screen === 'ayna' ? askAynaHistory : undefined}
       />
       </AskContext.Provider>
       {newAccountStart && authUser && !['quiz', 'building', 'connect', 'plan', 'ready'].includes(screen) && (

@@ -163,6 +163,7 @@ import { setSavedRemindersOwner } from './utils/savedReminders.js';
 import { compareStore, useCompare } from './utils/compareStore.js';
 import { addedToRoutineText, REMOVED_FROM_ROUTINE } from './utils/routineCopy.js';
 import { openTodayLog } from './components/today/openLog.js';
+import HomeWidgets from './home/HomeWidgets.jsx';
 
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
 const WEB_TAB_VIEWS = {
@@ -2651,6 +2652,33 @@ function App() {
               intro: !quizResults && !dataLoading ? finishQuizCard() || null : null,
               compact: true,
               rundown: { ...webHealth.props.rundown, onSetUp: !quizResults && !dataLoading && !finishQuizCard() ? handleStartQuiz : undefined },
+              // Customize Today: her widgets; none by default, so Today looks as it did.
+              widgets: (
+                <HomeWidgets
+                  surface="web"
+                  userId={user?.id || null}
+                  data={{
+                    healthRows: health?.insightRows || [], healthSummary: user ? (health?.insights?.sections || []).find((sec) => sec.status === 'ready') || null : null,
+                    healthConnectedCount: (health?.connected || []).length, hormonalBC: usesHormonalBC(quizResults), quizAnswers: quizResults,
+                    saved: Object.values(savedProducts || {}), myProducts: Object.values(myProducts || {}),
+                    routineSource: { userId: user?.id || null, quizAnswers: quizResults, matchOpts, products: myProducts, saved: savedProducts, omitted: omittedProducts },
+                    askHistory: chatHistory,
+                  }}
+                  on={{
+                    ask: (q) => openAsk(typeof q === 'string' ? q : q?.question),
+                    openLog: () => openTodayLog('web'),
+                    openHealth: user ? () => setCurrentView('health-data') : null,
+                    connect: user ? () => setCurrentView('health-data') : null,
+                    openProduct: (p) => handleOpenProduct(p, { source: 'today_widget' }),
+                    openSaved: handleViewWishlist,
+                    openEcosystem: handleViewEcosystem,
+                    openRoutine: () => { handleViewEcosystem(); window.setTimeout(() => document.getElementById('eco-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 600); },
+                    openPost: (postId) => { setCommunitySeed({ postId, token: Date.now() }); setCurrentView('community'); },
+                    openCommunity: () => setCurrentView('community'),
+                    openDoctorPrep: () => setCurrentView('doctor-prep'),
+                  }}
+                />
+              ),
             })}
             {/* Her routine per need, short; the full one is in You > My ecosystem (src/components/routine). */}
             <div className="ay-container wx-today-routine">
