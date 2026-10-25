@@ -12,6 +12,7 @@ import { ROUTINE_BUCKET_LABELS, ROUTINE_BUCKETS, useRoutine } from '../../hooks/
 import { getProfileCompletionPct } from '../../utils/profileCompleteness.js';
 import { TEXT_SIZE_STEPS } from '../../hooks/useTextSize.js';
 import '../../settings.css';
+import TipsSettings from '../../tutorial/TipsSettings.jsx';
 import '../../you-sections.css';
 import EmptyState from '../../components/EmptyState.jsx';
 import MobileHeader from '../../components/MobileHeader.jsx';
@@ -484,7 +485,7 @@ function ProfileHub({ recentAsks = [], intake = null, authUserId, name, initial,
   // health, Tracking, Connected data, My activity, Settings and privacy. Every
   // row opens a screen that already existed; nothing here is new data.
   const row = (r) => r && (
-    <button type="button" key={r.key} className="ay-you-row" onClick={r.onClick}>
+    <button type="button" key={r.key} className="ay-you-row" data-tour={`you-${r.key}`} onClick={r.onClick}>
       <svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true">{HUB_ICONS[r.icon || r.key]}</svg>
       <span className="ay-you-row-title">{r.title}{r.sub && <small className="ay-you-row-sub">{r.sub}</small>}</span>
       {r.value && <span className="ay-you-row-value">{r.value}</span>}
@@ -500,7 +501,7 @@ function ProfileHub({ recentAsks = [], intake = null, authUserId, name, initial,
   );
 
   return (
-    <div className="ayna-fresh-profile-hub ay-you" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+    <div className="ayna-fresh-profile-hub ay-you" data-tour="you" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <MobileHeader onOpenSettings={onOpenSettings} />
       <header className="ay-you-head">
         <div className="ay-you-id">
@@ -1720,6 +1721,7 @@ function SettingsScreen({ onBack, onOpenTexts, onOpenPreferences, onOpenHowItWor
             : <button type="button" key={row.title} className="ay-set-row" onClick={row.onClick}>{rowInner(row)}</button>)}
         </div>
       </section>)}
+      <TipsSettings renderSwitch={(p) => <Toggle {...p} />} />
       <button type="button" className={`ayna-account-session ay-set-session${authUser ? ' is-out' : ''}`} onClick={authUser ? onSignOut : onSignIn}>{authUser ? 'Sign out' : 'Sign in'}</button>
       <LegalFooter />
     </div>
