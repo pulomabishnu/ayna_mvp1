@@ -140,6 +140,9 @@ export const URGENT_STATUS = ['Yes', 'No', 'Not sure'];
 export const BREASTFEEDING_STATUS = ['Yes', 'No', 'Prefer not to say'];
 // Follow-up question copy, shared so the app and the website ask the same thing.
 export const FOLLOWUP_QUESTIONS = {
+  ttcDuration: 'How long have you been trying?',
+  pregnancyTrimester: 'How far along are you?',
+  postpartumTiming: 'How long ago did you give birth?',
   breastfeedingStatus: 'Are you breastfeeding or pumping?',
   perimenopauseLastPeriod: 'How are your periods now?',
   largePurchaseFrequency: 'How often are you comfortable making $75+ purchases?',
@@ -497,6 +500,35 @@ export function asksBreastfeedingOnTiming(intake) {
   return isPostpartumRelevant(intake) && !hasLifeStage(intake, 'I am postpartum');
 }
 
+// Life stage follow-ups (founder, Oct 24): a stage that has a follow-up asks
+// it right under the life stage tiles, never again later. Same saved fields
+// as before. The separate step is kept only for a need without the stage
+// (for example "Trying to conceive" picked as a need).
+export const LIFE_STAGE_FOLLOWUPS = {
+  'I am trying to conceive': ['ttcDuration'],
+  'I am pregnant': ['pregnancyTrimester'],
+  'I am postpartum': ['postpartumTiming', 'breastfeedingStatus'],
+  'I am in perimenopause': ['perimenopauseLastPeriod'],
+};
+/** The follow-up fields shown under the life stage tiles for her picks, in tile order. */
+export function lifeStageFollowUps(intake) {
+  const stages = getLifeStages(intake);
+  return LIFE_STAGES.filter((stage) => stages.includes(stage)).flatMap((stage) => LIFE_STAGE_FOLLOWUPS[stage] || []);
+}
+/** Follow-up options plus an older saved answer that is no longer listed, so it still shows as picked. */
+export function withSavedOption(options, value) {
+  return value && !options.includes(value) ? [...options, value] : options;
+}
+// Steps that can now live under the life stage tiles. A draft saved on one of
+// them before the move resumes on the life stage question instead.
+const INLINE_CAPABLE_STEPS = new Set(['ttcDuration', 'pregnancyTrimester', 'postpartumTiming']);
+/** Where a saved step id resumes now: a follow-up that moved under the life stage resumes there. */
+export function resumeStepId(intake, stepId) {
+  if (!INLINE_CAPABLE_STEPS.has(stepId)) return stepId;
+  if (getIntakeSteps(intake).some((s) => s.id === stepId)) return stepId;
+  return lifeStageFollowUps(intake).includes(stepId) ? 'lifeStage' : stepId;
+}
+
 export function buildSnapshot(intake) {
   const lifeStageSelections = getLifeStages(intake);
   const realLifeStages = lifeStageSelections.filter((item) => !LIFE_STAGE_EXCLUSIVE.includes(item));
@@ -682,9 +714,9 @@ export function isStepAnswered(stepId, intake) {
     case 'lifeStage': {
       const stages = getLifeStages(intake);
       if (!stages.length) return false;
-      if (stages.includes('I am postpartum') && !filled(intake.breastfeedingStatus)) return false;
-      if (stages.includes('I am in perimenopause') && !filled(intake.perimenopauseLastPeriod)) return false;
-      return true;
+      // Every follow-up shown under the tiles is required (ttcRequired,
+      // trimesterRequired, postpartumRequired: the stage alone makes each one required).
+      return lifeStageFollowUps(intake).every((field) => filled(intake[field]));
     }
     case 'aboutYou': return isStepAnswered('age', intake) && isStepAnswered('lifeStage', intake);
     case 'zip': return isValidUsZip(intake.zipcode);
@@ -746,7 +778,7 @@ const singleAnswerState = (value, { no = [], notSure = [], preferNot = [] } = {}
  * opened (she went straight to her results). Neutral for matching.
  */
 export function getAnswerStates(intake) {
-  const shown = new Set(getIntakeSteps(intake).map((s) => s.id));
+  const shown = new Set([...getIntakeSteps(intake).map((s) => s.id), ...lifeStageFollowUps(intake)]);
   const out = {};
   const put = (id, state) => { out[id] = shown.has(id) ? (state || 'skipped') : 'not_asked'; };
   const stages = getLifeStages(intake);
@@ -872,8 +904,11 @@ export function getIntakeSteps(intake) {
   const req = (step) => ({ ...step, phase: 'required', required: true, optional: false });
   const opt = (step) => ({ ...step, phase: 'optional', required: false, optional: true });
   const flowStep = { id: 'periodFlow', section: 'support', title: 'Your period flow', type: 'flow', info: 'How much you bleed on a typical heavy day. We use it to match pad, tampon, cup and underwear absorbency.' };
-  const ttcStep = { id: 'ttcDuration', section: 'support', title: 'How long have you been trying?', type: 'ttcDuration', info: 'How long you have been trying to get pregnant. It changes whether we lead with tracking and prenatal basics, or with fertility care options.' };
-  const trimesterStep = { id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'pregnancyTrimester', info: 'Which part of pregnancy you are in. We only show products generally considered safe for that stage.' };
+  const ttcStep = { id: 'ttcDuration', section: 'support', title: FOLLOWUP_QUESTIONS.ttcDuration, type: 'ttcDuration', info: 'How long you have been trying to get pregnant. It changes whether we lead with tracking and prenatal basics, or with fertility care options.' };
+  const trimesterStep = { id: 'pregnancyTrimester', section: 'support', title: FOLLOWUP_QUESTIONS.pregnancyTrimester, type: 'pregnancyTrimester', info: 'Which part of pregnancy you are in. We only show products generally considered safe for that stage.' };
+  // Asked under the life stage tiles when the stage is picked (lifeStageFollowUps).
+  const ttcStepOwn = ttcRequired(intake) && !hasLifeStage(intake, 'I am trying to conceive');
+  const postpartumStepOwn = postpartumRequired(intake) && !hasLifeStage(intake, 'I am postpartum');
   return [
     // Required minimum
     req({ id: 'age', section: 'core', title: 'Your age', type: 'age', info: 'We use your age to skip products that are not meant for you, like menopause supplements in your 20s. Type it, tap plus or minus, or slide the ruler.' }),
@@ -881,10 +916,9 @@ export function getIntakeSteps(intake) {
     req({ id: 'support', section: 'support', title: 'What needs support?', type: 'support', info: 'Pick everything you want help with. Each one becomes its own shelf of products in your ecosystem. Use the tabs or search to find more. "Nothing right now" counts too.' }),
     ...(flowRequired(intake) ? [req(flowStep)] : []),
     ...(painRequired(intake) ? [req({ id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list.' })] : []),
-    ...(ttcRequired(intake) ? [req(ttcStep)] : []),
+    ...(ttcStepOwn ? [req(ttcStep)] : []),
     ...(utiRequired(intake) ? [req({ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', info: 'How often UTI-type symptoms come back. Symptoms right now point you to testing and care first; repeat symptoms bring prevention forward.' })] : []),
-    ...(postpartumRequired(intake) ? [req({ id: 'postpartumTiming', section: 'support', title: 'How long ago did you give birth?', type: 'postpartumTiming', info: 'How long since you gave birth. Recovery, nursing and hair needs change a lot over the first year.' })] : []),
-    ...(trimesterRequired(intake) ? [req(trimesterStep)] : []),
+    ...(postpartumStepOwn ? [req({ id: 'postpartumTiming', section: 'support', title: FOLLOWUP_QUESTIONS.postpartumTiming, type: 'postpartumTiming', info: 'How long since you gave birth. Recovery, nursing and hair needs change a lot over the first year.' })] : []),
     req({ id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', info: 'Only conditions a clinician has diagnosed. Some products are not a good fit with certain conditions, so we filter those out. "None", "Not sure" and "Prefer not to answer" all count.' }),
     req({ id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', info: 'Anything you react to. Products with these ingredients or materials will not show up in your picks.' }),
     req({ id: 'medications', section: 'safety', title: 'Taking anything?', subtitle: 'Medicines + supplements', type: 'medications', info: 'Some supplements interact with medicines, for example St. John’s wort with birth control. We use this to flag those combinations.' }),

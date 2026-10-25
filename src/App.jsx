@@ -117,7 +117,7 @@ import AuthCallback from './components/AuthCallback';
 import './styles/editorial.css';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { clearGeneratedPicksForUser, isGeneratedPick, loadEcosystemForUser, upsertProductState, upsertProductsBatch, removeGeneratedProductsFromEcosystem, clearEcosystemForUser } from './utils/ecosystemStore';
-import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
+import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser, savedListToPersist } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 import { growTransition } from './utils/viewTransition.js';
@@ -148,6 +148,8 @@ import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/Ecosy
 import EcosystemPreview from './components/v3/EcosystemPreview';
 import EcosystemViewTabs from './components/EcosystemViewTabs';
 import { clearPersonalStorage } from './utils/clearPersonalStorage';
+import { syncUserData } from './health/userDataSync.js';
+import { GUEST_ECO_KEY, handOffGuestEcosystem } from './utils/guestEcosystemHandoff.js';
 import { toast } from './utils/toast';
 import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
 import { recordProductView } from './utils/recentActivity';
@@ -683,8 +685,8 @@ function App() {
   // Signed-out "Add to ecosystem" survives a refresh (focus group Oct 19): the
   // guest shelf is mirrored to this browser and merged into the account at
   // sign-in, then cleared. Best effort: storage can be blocked.
-  const GUEST_ECO_KEY = 'ayna_guest_ecosystem_v1';
   const guestEcoRestoredRef = useRef(false);
+  const guestEcoJustRestoredRef = useRef(false);
   // Product page → Community: which composer to open and for which product.
   const [communitySeed, setCommunitySeed] = useState(null);
   useEffect(() => {
@@ -756,6 +758,7 @@ function App() {
   useEffect(() => {
     if (authLoading || user || guestEcoRestoredRef.current) return;
     guestEcoRestoredRef.current = true;
+    guestEcoJustRestoredRef.current = true;
     try {
       const saved = JSON.parse(localStorage.getItem(GUEST_ECO_KEY) || 'null');
       if (saved && saved.myProducts && typeof saved.myProducts === 'object' && Object.keys(saved.myProducts).length) {
@@ -766,9 +769,13 @@ function App() {
   }, [authLoading, user]);
   useEffect(() => {
     if (authLoading || user || !guestEcoRestoredRef.current) return;
+    // The restore above just queued her saved products; this pass still sees
+    // the empty state, so it must not remove the saved copy.
+    const justRestored = guestEcoJustRestoredRef.current;
+    guestEcoJustRestoredRef.current = false;
     try {
       if (Object.keys(myProducts).length) localStorage.setItem(GUEST_ECO_KEY, JSON.stringify({ myProducts, order: ecosystemOrder, at: Date.now() }));
-      else localStorage.removeItem(GUEST_ECO_KEY);
+      else if (!justRestored) localStorage.removeItem(GUEST_ECO_KEY);
     } catch { /* storage blocked or full */ }
   }, [authLoading, user, myProducts, ecosystemOrder]);
   const [dataLoading, setDataLoading] = useState(false);
@@ -1124,12 +1131,18 @@ function App() {
       if (ecosystem) {
         // Everything she has on a shelf shows; nothing is hidden by an old reset marker.
         const visibleEcosystem = ecosystem;
+        // What she built as a guest on this browser goes to her account first;
+        // the device copy is removed only once that save succeeded.
+        handOffGuestEcosystem({ supabase, userId: loadForUserId, account: ecosystem }).then(({ products, order }) => {
+          if (cancelled || !products.length) return;
+          setMyProducts((prev) => ({ ...Object.fromEntries(products.map((p) => [p.id, p])), ...prev }));
+          setEcosystemOrder((prev) => [...prev, ...[...order, ...products.map((p) => p.id)].filter((id, i, all) => !prev.includes(id) && all.indexOf(id) === i)]);
+        }).catch(() => {});
         if (!llmBuiltThisSessionRef.current) {
           // Merge, don't replace: anything the user toggled while the load was
           // in flight is already persisted, and clobbering it here made her
           // change vanish from the UI a few seconds after she made it.
           setMyProducts(prev => (Object.keys(prev).length ? { ...visibleEcosystem.myProducts, ...prev } : visibleEcosystem.myProducts));
-          try { localStorage.removeItem(GUEST_ECO_KEY); } catch { /* ignore */ }
           setEcosystemOrder(prev => {
             const merged = Object.keys(visibleEcosystem.myProducts);
             const extra = prev.filter(id => !merged.includes(id));
@@ -1679,7 +1692,21 @@ function App() {
   // Explicit log out: clear every user-scoped thing right away (header
   // badges, ecosystem, saved, profile) instead of waiting for the debounced
   // auth event, then land on the top of Home (audit G20, G09).
-  const handleSignOut = () => {
+  const signingOutRef = useRef(false);
+  const handleSignOut = async () => {
+    if (signingOutRef.current) return;
+    signingOutRef.current = true;
+    setShowAccountMenu(false);
+    // Push any unsynced daily log and tries while her session is still valid
+    // (never waits more than a moment). Whatever doesn't make it stays on this
+    // device under her account and goes up at her next sign-in.
+    if (user?.id) {
+      await Promise.race([
+        syncUserData({ userId: user.id, force: true }).catch(() => null),
+        new Promise((resolve) => { setTimeout(resolve, 2500); }),
+      ]);
+    }
+    signingOutRef.current = false;
     getSupabaseClient()?.auth.signOut();
     forgetSharedIntake();
     // A shelf layout saved before layouts were per account belongs to whoever is signing out now.
@@ -1979,7 +2006,7 @@ function App() {
     if (wasSaved) delete next[product.id];
     else next[product.id] = product;
     setSavedProducts(next);
-    persistSavedProducts(next);
+    persistSavedProducts(savedListToPersist(next, { restored: savedRestoredRef.current, removedId: wasSaved ? product.id : null }));
     if (!wasSaved) posthog.capture('product_saved_for_later', { category: product.category });
     // Saved: "Remind me later · Compare" next to it (inline on its product page).
     if (wasSaved) { savePrompt.hide(); toast('Removed from Saved', { label: 'Undo', onClick: () => toggleSavedRef.current?.(product, { fromSheet: true }) }); } else savePrompt.show(product);
