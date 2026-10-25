@@ -241,3 +241,10 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-group { background: #f6e3a1; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-group :is(button, small, .ay-askh-tile-label) { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-group .ay-askh-icon { border-color: #3e2723; color: #3e2723; }
+
+/* Cut pass (founder, Oct 25 23:53: "do not overcrowd"): description lines
+   that restate their title are hidden; lines with a number, reason or
+   date stay. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list small { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .wy-row .ay-group__note { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec[aria-labelledby='wx-topics-h'] .wx-note { display: none; }
