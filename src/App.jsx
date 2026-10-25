@@ -2435,7 +2435,8 @@ function App() {
               </button>
             )}
             {/* No unlabeled heart in the header (team direction 25): Saved lives in You (You > Saved, or the account menu). */}
-            <div ref={accountMenuRef} className="ay-nav__account">
+            {/* Signed out on the landing: Log in stays in the header on phones too (QA, Oct 25). */}
+            <div ref={accountMenuRef} className={`ay-nav__account${!user && ['welcome', 'hero'].includes(currentView) ? ' is-landing-guest' : ''}`}>
               {user ? (
                 // Avatar opens a small account menu: profile, health profile, saved, log out.
                 <button
