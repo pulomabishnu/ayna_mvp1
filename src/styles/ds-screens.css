@@ -179,7 +179,7 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-progress { bo
 /* section links as folder tabs on a rule */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-younav .wx-nav { display: flex; align-items: flex-end; gap: 4px; padding: 10px 2px 0; border-bottom: 1.5px solid var(--ds-line) !important; overflow-x: auto; scrollbar-width: none; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-younav .wx-nav a {
-  flex: none; display: inline-flex; align-items: center; min-height: 42px; margin: 0 0 -1.5px; padding: 0 16px 1.5px !important;
+  flex: none; display: inline-flex; align-items: center; min-height: 44px; margin: 0 0 -1.5px; padding: 0 16px 1.5px !important;
   border: 1.5px solid var(--ds-line) !important; border-bottom: 0 !important; border-radius: 10px 10px 0 0 !important;
   background: var(--ds-group); color: var(--ds-ink) !important; opacity: 1 !important; font: 600 14px/1 var(--ay-sans-stack) !important; text-decoration: none; white-space: nowrap;
   transition: min-height var(--t-fast, 160ms) var(--ease-out, ease-out);
