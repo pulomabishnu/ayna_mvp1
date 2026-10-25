@@ -14,6 +14,7 @@ import './shop-page.css';
 // utils/search/lazy.js): the page head renders at once and the grid shows
 // placeholder cards until both have arrived (`ready` below).
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct, isTeenProduct, useCatalogReady } from '../data/catalog.js';
+import { hasMatchAnswers } from '../utils/hasMatchAnswers.js';
 import { behaviorFrom, matchBadge, isSafetyHold } from '../utils/matchDisplay';
 import { whyLine } from '../utils/whyLine';
 import { hasClinicalSources, CLINICAL_SOURCES_LABEL } from '../utils/clinicalSources';
@@ -535,13 +536,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // Coming back from a product page keeps the order (App.jsx keeps the Shop
     // mounted then), so she doesn't lose her place.
     const [shuffleSeed] = useState(() => `visit-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`);
-    // Personalization requires an actual account (quiz results / health import /
-    // real recommendations all live behind login) -- never on for a logged-out
-    // visitor, regardless of any of those other signals somehow being truthy.
+    // Personalization starts on only with an account. Signed out with quiz
+    // answers, picking "Best match" turns it on for this visit (QA round 2:
+    // same answers and engine as For you).
     // Remembered choice wins, so a reload never flips the toggle after first paint (S02).
     const storedPersonalized = (() => { try { return localStorage.getItem(PERSONALIZED_KEY); } catch { return null; } })();
     const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(user) && (storedPersonalized === null ? true : storedPersonalized === '1'));
-    const hasProfileForSort = Boolean(user) && Boolean(hasQuizFrustrations || hasHealthImport);
+    // Her answers, from the same source as For you (signed out too, QA round 2):
+    // any need the engine reads from her quiz, or the older frustrations / a health import.
+    const hasAnswers = hasMatchAnswers({ quizResults, healthProfile, hasQuizFrustrations, hasHealthImport });
+    const hasProfileForSort = hasAnswers;
     const [showFilters, setShowFilters] = useState(false);
     const [priceFilter, setPriceFilter] = useState(() => memo('priceFilter', 'all'));
     const [ratingFilter, setRatingFilter] = useState(() => memo('ratingFilter', 'all'));
@@ -906,7 +910,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         // the numbers.
         // 'best' is also saved as-is when picked before she had a profile; once
         // she has one it sorts by match, until then it keeps the Featured order.
-        const sortByShownMatch = (sortBy === 'default' || sortBy === 'best') && personalizationFilter && Boolean(hasQuizFrustrations || hasHealthImport);
+        const sortByShownMatch = (sortBy === 'default' || sortBy === 'best') && personalizationFilter && hasAnswers;
         const shownPct = sortByShownMatch ? new Map(list.map((it) => [it.id, shownMatchPercent(getProductMatchDetailsForProduct(it, quizResults, healthProfile, matchOpts))])) : null;
 
         // Price sorts compare like with like: products first, then apps and services
@@ -1016,7 +1020,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             }
         }
         return list;
-    }, [combined, passesActiveFilters, categoryFilter, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, combinedRelevance, aynaReviews, shuffleSeed, hasQuizFrustrations, hasHealthImport, quizResults, healthProfile, matchOpts]);
+    }, [combined, passesActiveFilters, categoryFilter, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, combinedRelevance, aynaReviews, shuffleSeed, hasAnswers, quizResults, healthProfile, matchOpts]);
 
     // Back to the first page whenever the underlying result set actually
     // changes (new filter/search/sort), not when AI suggestions arrive later
@@ -1796,7 +1800,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             <button key={v} type="button" className="ay-chip is-on" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || AREA_LABEL(v)}`}>{LABELS[v] || AREA_LABEL(v)} <span aria-hidden="true">×</span></button>
                         ))}
                         {applied.length > 0 && <button type="button" className="ay-btn ay-btn--text ayshop__clear" onClick={clearSheetFilters}>Clear all</button>}
-                        {!user && <button type="button" className="ay-btn ay-btn--text ayshop__matches is-phone" onClick={() => onRequirePersonalizeAuth?.()}>See my matches →</button>}
+                        {!user && !hasAnswers && <button type="button" className="ay-btn ay-btn--text ayshop__matches is-phone" onClick={() => onRequirePersonalizeAuth?.()}>See my matches →</button>}
                     </div>
                 );
             })()}
@@ -1879,7 +1883,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
                     // Badge = best need score, only with a profile and 50+ ("82% for period cramps").
                     // Personalized off means no scores on cards (the toggle does what it says).
-                    const hasProfile = Boolean(hasQuizFrustrations || hasHealthImport) && personalizationFilter;
+                    const hasProfile = hasAnswers && personalizationFilter;
                     const itemDetails = hasProfile ? getProductMatchDetailsForProduct(item, quizResults, healthProfile, matchOpts) : null;
                     const badge = itemDetails ? matchBadge(itemDetails) : null;
                     const matchHold = isSafetyHold(itemDetails);
