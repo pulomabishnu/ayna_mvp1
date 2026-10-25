@@ -1,0 +1,136 @@
+/*
+ * Daily Rundown data cards (period, cycle, sleep, steps, heart, since
+ * yesterday). Graphics: DataCharts.jsx. Research and borrowed devices:
+ * scratchpad/RUNDOWN_DATA_RESEARCH.md. Palette only: butter #ffedac, pink
+ * #f7badd, sky #769ebe, espresso #3e2723. One device per card, set in a
+ * filled colour block with a 1.5px outline (no hard shadow: not tappable).
+ * Motion: 700ms ease-out, 60ms stagger; still mode and reduced motion show
+ * the final state.
+ */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd {
+  --rdd-block: #ffedac; --rdd-line: #3e2723; --rdd-ease: cubic-bezier(.2, .8, .2, 1); --rdd-ms: 700ms;
+}
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd:not(.is-sky):not(.is-pink):not(.is-ink) { --rdd-block: #769ebe; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-ink { --rdd-block: #769ebe; --rdd-line: #ffedac; }
+
+/* Moderate titles on data cards (design system 1a: 28 phone, 34 stage). */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-card.is-data .ay-rd-title { font-size: 28px; line-height: 1.1; }
+@media (min-width: 900px) { :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-card.is-data .ay-rd-title { font-size: 34px; } }
+
+/* The filled colour block. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-viz {
+  position: relative; margin: 4px 0 0; padding: 16px; border: 1.5px solid var(--rdd-line); border-radius: 20px; background: var(--rdd-block); color: #3e2723;
+  display: grid; gap: 12px; justify-items: center; list-style: none;
+}
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-viz svg { display: block; width: 100%; height: auto; overflow: visible; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-viz text { font-family: var(--f-ui, 'Figtree', sans-serif); fill: currentColor; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-axis { font-size: 11px; font-weight: 600; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-axis.is-today { font-weight: 800; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tag { font-size: 11px; font-weight: 700; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-big { font: 700 17px var(--f-display, var(--ay-serif, 'ayna Display', serif)) !important; letter-spacing: -0.02em; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-small { font-size: 8.5px; font-weight: 600; }
+
+/* Steps (inspo 13a05788 bars, cefbab0a stat card): butter bars on a sky block, today pink. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-steps svg { max-width: 420px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-bar { fill: #ffedac; stroke: #3e2723; stroke-width: 1.5; transform-box: fill-box; transform-origin: 50% 100%; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-bar.is-today { fill: #f7badd; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-miss { fill: none; stroke: #3e2723; stroke-width: 1.5; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-usual { stroke: #3e2723; stroke-width: 2; stroke-dasharray: 6 5; transform-box: fill-box; transform-origin: 0 50%; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-usual-label { font-size: 11px; font-weight: 700; }
+
+/* Sleep (inspo a1120fb9 ring tiles): one ring filled to the share of her usual, the hours in a pink seal. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-sleep { grid-template-columns: minmax(120px, 156px) 1fr; align-items: center; justify-items: stretch; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-ring { max-width: 156px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-track { fill: none; stroke: currentColor; stroke-opacity: .2; stroke-width: 12; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-arc { fill: none; stroke: #ffedac; stroke-width: 12; stroke-linecap: round; stroke-dasharray: 100; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-arc.is-over { stroke: #f7badd; stroke-width: 5; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-sleep .ay-rdd-seal { fill: #f7badd; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-sleep .ay-rdd-seal ~ text { fill: #3e2723; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-pair { display: grid; gap: 10px; margin: 0; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-pair dt { font: 600 13px/1.2 var(--f-ui, 'Figtree', sans-serif); opacity: .85; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-pair dd { margin: 2px 0 0; font: 700 22px/1.1 var(--f-display, 'ayna Display', serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dots { display: flex; gap: 8px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dots i { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid currentColor; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dots i.is-on { background: #f7badd; }
+
+/* Period (inspo 8cd3b680 countdown tiles; Clue's lighter predicted days): day tiles + a days-left stamp. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-period { grid-template-columns: 1fr auto; align-items: center; justify-items: start; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tile { transform-box: fill-box; transform-origin: 50% 100%; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tile rect { stroke: #3e2723; stroke-width: 1.5; fill: transparent; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tile text { font-size: 13px; font-weight: 700; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tile.is-done rect { fill: #f7badd; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tile.is-today rect { fill: #3e2723; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tile.is-today text { fill: #ffedac; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tile:is(.is-ahead, .is-maybe, .is-gap) rect { stroke-dasharray: 4 3; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-tile.is-maybe rect { fill: #f7badd; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-pin { fill: #3e2723; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-stamp {
+  display: grid; justify-items: center; align-content: center; min-width: 76px; min-height: 76px; padding: 8px; border-radius: 10px;
+  background: #3e2723; color: #ffedac; outline: 1.5px dashed #ffedac; outline-offset: -6px; transform: rotate(-4deg);
+}
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-stamp b { font: 700 30px/1 var(--f-display, 'ayna Display', serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-stamp small { font: 600 11px/1.2 var(--f-ui, 'Figtree', sans-serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-stamp.is-round { border-radius: 50%; min-width: 104px; min-height: 104px; transform: rotate(-6deg); }
+
+/* Cycle (Stardust wheel, inspo bf3f538c ring): one ring, period pink, possible ovulation days sky, today a dot. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-cycle { grid-template-columns: minmax(120px, 156px) 1fr; align-items: center; justify-items: stretch; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-cycle.is-solo { grid-template-columns: 1fr; justify-items: center; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-seg { fill: none; stroke-width: 12; stroke-linecap: round; stroke-dasharray: 1; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-seg.is-period { stroke: #f7badd; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-seg.is-window { stroke: #769ebe; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-today { fill: #3e2723; stroke: #ffedac; stroke-width: 3; transform-box: fill-box; transform-origin: center; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-cycle .ay-rdd-seal { fill: #3e2723; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-cycle .ay-rdd-seal ~ text { fill: #ffedac; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; font: 600 14px/1.3 var(--f-ui, 'Figtree', sans-serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key li { display: flex; align-items: center; gap: 8px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key i { flex: none; width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #3e2723; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key i.is-period { background: #f7badd; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key i.is-window { background: #769ebe; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key i.is-today { background: #3e2723; }
+
+/* Heart (inspo 0936322f progress rows): her usual range as a band, last night a dot. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-range svg { max-width: 460px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-axisline { stroke: #3e2723; stroke-width: 1.5; stroke-opacity: .35; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-band { fill: #769ebe; stroke: #3e2723; stroke-width: 1.5; transform-box: fill-box; transform-origin: center; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dot circle { fill: #f7badd; stroke: #3e2723; stroke-width: 2; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dot { transform-box: fill-box; transform-origin: center; }
+
+/* Since yesterday (inspo 72419ae7 stat boxes, Apple Trends arrows). */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); justify-items: stretch; gap: 8px; padding: 12px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li { display: grid; gap: 4px; padding: 12px; border: 1.5px solid #3e2723; border-radius: 16px; background: #ffedac; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li:nth-child(2) { background: #f7badd; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li:nth-child(3) { background: #769ebe; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-delta-label { font: 600 13px/1.2 var(--f-ui, 'Figtree', sans-serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas b { font: 700 22px/1.1 var(--f-display, 'ayna Display', serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-delta { display: inline-flex; align-items: center; gap: 4px; font: 700 13px/1.2 var(--f-ui, 'Figtree', sans-serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-delta svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Period check-in: big pill answers, one tap each. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-check { flex-wrap: wrap; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-check .ay-rd-basis { flex-basis: 100%; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-check .ay-rd-chip { min-height: 48px; padding: 0 20px; background: var(--rd-ink); color: var(--rd-bg); }
+
+/* Motion. */
+@keyframes ay-rdd-grow { from { transform: scaleY(0); } }
+@keyframes ay-rdd-wipe { from { transform: scaleX(0); } }
+@keyframes ay-rdd-draw { from { stroke-dashoffset: 100; } }
+@keyframes ay-rdd-draw1 { from { stroke-dashoffset: 1; } }
+@keyframes ay-rdd-pop { from { transform: scale(0); opacity: 0; } }
+@keyframes ay-rdd-fade { from { opacity: 0; } }
+@keyframes ay-rdd-rise { from { transform: translateY(12px); opacity: 0; } }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-bar.ay-rdd-anim { animation: ay-rdd-grow var(--rdd-ms) var(--rdd-ease) var(--d, 0ms) both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-usual.ay-rdd-anim { animation: ay-rdd-wipe 600ms var(--rdd-ease) var(--d, 0ms) both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-arc.ay-rdd-anim { animation: ay-rdd-draw 900ms var(--rdd-ease) var(--d, 0ms) both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-seg.ay-rdd-anim { animation: ay-rdd-draw1 700ms var(--rdd-ease) var(--d, 0ms) both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) :is(.ay-rdd-pop, .ay-rdd-tile, .ay-rdd-dots i, .ay-rdd-stamp).ay-rdd-anim { animation: ay-rdd-pop 600ms var(--rdd-ease) var(--d, 0ms) both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-band.ay-rdd-anim { animation: ay-rdd-wipe 700ms var(--rdd-ease) var(--d, 0ms) both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-fade.ay-rdd-anim { animation: ay-rdd-fade 400ms ease-out var(--d, 0ms) both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li.ay-rdd-anim { animation: ay-rdd-rise 600ms var(--rdd-ease) var(--d, 0ms) both; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-still .ay-rdd-anim { animation: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-anim { animation: none !important; }
+}
+
+@media (max-width: 360px) {
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) :is(.ay-rdd-sleep, .ay-rdd-cycle, .ay-rdd-period) { grid-template-columns: 1fr; justify-items: center; }
+}

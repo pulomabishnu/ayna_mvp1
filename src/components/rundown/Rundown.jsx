@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { buildRundown } from './buildRundown.js';
 import { buildWeeklyRecap } from './weeklyRecap.js';
 import RundownStory from './RundownStory.jsx';
-import { markCardSeen, markNotUseful, markRundownViewed, markWeeklySeen, readRundownMemory, setRundownOwner } from './rundownStore.js';
+import { markCardSeen, markNotUseful, markPeriodAnswer, markRundownViewed, markWeeklySeen, readRundownMemory, setRundownOwner } from './rundownStore.js';
 import { autoLaunchDecision, listenForExternalOpens, openedExternally, urlIsDeepLink } from './autoLaunch.js';
 import { setTodayAskContext } from '../../utils/askToday.js';
 import { getAskHealthPref } from '../../health/askHealthPref.js';
@@ -80,7 +80,8 @@ export default function Rundown({
   const daily = useMemo(() => buildRundown({
     today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries, healthRows: t.healthRows,
     matches, saved, reads: Boolean(onOpenRead), community, memory, hasProfile: Boolean(intake), needLabels,
-  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, saved, onOpenRead, community, memory, intake, needLabels]);
+    hormonalBC: Boolean(t.hormonalBC), postCycle: Boolean(t.postCycle), pregnant: Boolean(t.pregnant),
+  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, saved, onOpenRead, community, memory, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
   const weekly = useMemo(() => buildWeeklyRecap({ today, log: t.log, tries: t.tries, patterns: t.patterns, saved }), [today, t.log, t.tries, t.patterns, saved]);
   const cards = open === 'weekly' ? weekly.cards : daily.cards;
 
@@ -209,6 +210,12 @@ export default function Rundown({
           onSeen={onSeen}
           onAction={onAction}
           onCheckIn={(field, value) => t.saveLog(today, { [field]: value })}
+          onPeriodAnswer={(answer) => {
+            // "No, ended yesterday" is a real log answer (no flow today); "Yes"
+            // and "Not sure" are kept for today on this device (rundownStore.js).
+            if (answer === 'ended') t.saveLog(today, { flow: 'none' });
+            setMemory(markPeriodAnswer(today, answer));
+          }}
           onOutcome={(item, outcome) => t.recordOutcome(item, outcome)}
           onAsk={onAsk ? (q) => { close({ seen: 0, count: cards.length }); finish(false); onAsk(q); } : undefined}
           onAskFollowUp={open === 'daily' ? askFollowUp : undefined}

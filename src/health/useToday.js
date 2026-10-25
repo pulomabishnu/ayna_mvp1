@@ -180,6 +180,8 @@ export function useToday({ userId = null, intake = null, healthRows = [], cycle 
     patterns: state.patterns, tries, healthRows,
     // After menopause: the log hides PMS and asks about bleeding, not flow.
     postCycle: isPostCycle(safetyContextFrom(state.profile)),
+    // Cycle estimates are skipped on hormonal birth control and in pregnancy ("not sure" counts).
+    hormonalBC, pregnant: ['pregnant', 'reported'].includes(state.profile?.safety?.pregnancyStatus),
     log, saveLog: daily.save, saveState: daily.saveState,
     remindedTonight: Boolean(store.reminders?.[today]?.tonight),
     ...api,
