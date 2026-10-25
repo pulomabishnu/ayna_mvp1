@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MatchPill from '../MatchPill.jsx';
 import SafetyHoldNote from '../match/SafetyHoldNote.jsx';
 import BleedingEvaluationNote from '../match/BleedingEvaluationNote.jsx';
@@ -106,5 +106,97 @@ export function SafetyLine({ text, onGo = null }) {
       <span className="ayv-safeline__text"><span className="sr-only">Safety: </span>{text}</span>
       <button type="button" className="ayv-textbtn ayv-safeline__go" onClick={go}>Safety</button>
     </p>
+  );
+}
+
+/** Every store on file, one row each: the Buy link first, price where known, ↗ for links. Only when there is more than one. */
+export function WhereToBuy({ rows, onOpen = null }) {
+  if (!rows || rows.length < 2) return null;
+  return (
+    <section className="ayv-where" aria-labelledby="ayv-where-h">
+      <h2 id="ayv-where-h" className="ayv-where__h">Where to buy</h2>
+      <ul className="ayv-where__list">
+        {rows.map((r) => (
+          <li key={`${r.name}-${r.url}`}>
+            {r.url
+              ? <a href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => onOpen?.(r)}><span className="ayv-where__name">{r.name}</span>{r.price && <span className="ayv-where__price">{r.price}</span>}{r.inStock && <span className="ayv-where__stock">In stock</span>}<span aria-hidden="true" className="ayv-where__go">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+              : <span className="ayv-where__row"><span className="ayv-where__name">{r.name}</span>{r.inStock && <span className="ayv-where__stock">In stock</span>}<span className="ayv-where__nolink">No link yet</span></span>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+const HEART = 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z';
+
+/**
+ * Buy stays in reach (founder, Oct 25): once the hero's action row scrolls
+ * out of view, a slim bar with the price, Buy and Save. `mode` 'scroll' sits
+ * at the bottom of the app's own scroll area (page or sheet, above the tab
+ * bar); 'fixed' sits above the website's phone tab bar. Hidden while she is
+ * typing (keyboard open) and before she has scrolled past the actions.
+ */
+export function StickyBuy({ model, watch, saved = false, onSave = null, mode = 'scroll', onBuy = null, wideOff = false }) {
+  const [past, setPast] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [wide, setWide] = useState(() => wideOff && typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(min-width: 1024px)').matches);
+  const [bottom, setBottom] = useState(0);
+  useEffect(() => {
+    const el = watch?.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    let root = null;
+    for (let n = el.parentElement; n; n = n.parentElement) { const oy = window.getComputedStyle(n).overflowY; if (oy === 'auto' || oy === 'scroll') { root = n; break; } }
+    const io = new IntersectionObserver(([e]) => {
+      const top = root ? root.getBoundingClientRect().top : 0;
+      setPast(!e.isIntersecting && e.boundingClientRect.bottom < top + 8);
+    }, { root, threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [watch]);
+  useEffect(() => {
+    const isField = (t) => t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) && !/^(button|checkbox|radio|submit)$/i.test(t.type || '');
+    const on = (e) => setTyping(isField(e.target));
+    const off = () => setTyping(false);
+    document.addEventListener('focusin', on);
+    document.addEventListener('focusout', off);
+    return () => { document.removeEventListener('focusin', on); document.removeEventListener('focusout', off); };
+  }, []);
+  useEffect(() => {
+    if (mode !== 'fixed') return undefined;
+    const read = () => {
+      const nav = document.querySelector('nav.ay-tabbar--main');
+      const r = nav ? nav.getBoundingClientRect() : null;
+      setBottom(r && r.height && window.getComputedStyle(nav).display !== 'none' ? Math.max(0, window.innerHeight - r.top) : 0);
+      if (wideOff && typeof window.matchMedia === 'function') setWide(window.matchMedia('(min-width: 1024px)').matches);
+    };
+    read();
+    window.addEventListener('resize', read);
+    return () => window.removeEventListener('resize', read);
+  }, [mode, wideOff]);
+  if (!model?.url || !past || typing || wide) return null;
+  return (
+    <div className={`ayv-stickybuy is-${mode}`} style={mode === 'fixed' ? { bottom } : undefined} role="region" aria-label="Buy">
+      {model.price && <span className="ayv-stickybuy__price">{model.price}</span>}
+      <a className="ayv-stickybuy__buy" href={model.url} target="_blank" rel="noopener noreferrer" onClick={() => onBuy?.()}>
+        {model.isService ? 'Visit' : model.retailer && model.retailer.length <= 14 ? `Buy at ${model.retailer}` : 'Buy'}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens the seller’s site)</span>
+      </a>
+      {onSave && (
+        <button type="button" className={`ayv-stickybuy__save${saved ? ' is-on' : ''}`} aria-pressed={saved} aria-label={saved ? 'Saved' : 'Save'} onClick={onSave}>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill={saved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART} /></svg>
+        </button>
+      )}
+    </div>
+  );
+}
+
+/** The price, big, and one muted line of what it buys (count, supply, per unit). */
+export function PriceLine({ main, notes = [] }) {
+  if (!main && !notes.length) return null;
+  return (
+    <div className="ayv-price">
+      {main && <span className="ayv-price__main">{main}</span>}
+      {notes.length > 0 && <span className="ayv-price__notes">{notes.join(' · ')}</span>}
+    </div>
   );
 }

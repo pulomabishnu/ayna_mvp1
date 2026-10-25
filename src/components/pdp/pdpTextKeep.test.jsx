@@ -56,12 +56,34 @@ const RENAMED_LABELS = [
   'All safety info', // the hero's safety line now says "Safety"
   'See the literature', // now "See the research"
   'What it is', 'Helps with:', 'At a glance', 'Before you use it', 'Ingredients and dose', 'What’s in it', 'What’s included', 'Size and price',
-  'Sold by', 'Sold at', 'In stock at', 'Available on', // a Key facts row with the same value as an earlier row is shown once
+  'Sold by', 'Sold at', 'In stock at', 'Available on',
+  // Oct 25 shopper pass (founder: "be a user"):
+  'Where to buy', 'Price check', 'Ingredients', 'Materials', // stores live in one Where to buy list by Buy; a device's parts are "What it's made of"
+  /^Verified [A-Z][a-z]{2} \d{1,2}, \d{4}$/, // every "Verified <date>" became one "Facts checked <date>" line
+  /^Checked [A-Z][a-z]{2} \d{1,2}, \d{4}$/, // the price check is one muted line under Buy
+  'No .gov-checked evidence yet', 'No .gov-checked evidence yet.', // now "No checked research yet"
+  'From the product listing.', // dropped when the How to use intro already names the source
+  'Your routine keeps what you use, when to use it, and a quick check-in to see if it helps.', // in the Add to my routine confirmation
+  /^About .+$/, // the Ask label repeated the product name
+  'Cramp & pain relief, Cramps', // Helps with, deduped
+  'Carbon fiber heating element, soft fabric', // a device's materials repeat its parts list; one is kept
+  'Supplements · tablets', 'Virtual care · digital service', 'Cramp relief', // the category sub-note under Format (category stays in the breadcrumb)
+  'comfytemp.com', // the app's old Buy link; app and web now share one link (Amazon)
+  'rechargeable', '(rechargeable)',
+  'Comfytemp · Cramp relief', 'Nature Made · Supplements', // the brand · category pill: brand is text above the name, category is the breadcrumb
+  'Also at', 'Where to get it', // other stores are rows in Where to buy
+  /^You’re leaving ayna to (buy|book|get started) at .+\.$/, // the leaving line names the one shared Buy link now
+  'Book at ppd.plannedparenthood.org', 'Visit site', '(opens ppd.plannedparenthood.org)', // services: "Visit Planned Parenthood Direct"
+  'Digital service', // Format says what it is: "Virtual care service"
+ // a feature next to the price: Key facts "Listed as"
+ // a Key facts row with the same value as an earlier row is shown once
   'What’s included and details', 'Works with:', 'Check with a clinician first', 'Possible side effects', 'Also worth knowing', 'Downsides to know', 'Label and regulatory facts', 'Labels on file', 'Privacy',
 ];
 const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r === c : r.test(c)));
 // A paragraph the redesign splits (its first sentence leads The short answer) still counts when every sentence is there.
-const present = (after, c) => after.includes(c) || after.toLowerCase().includes(c.toLowerCase()) || after.includes(c.replace(/\.$/, '')) || (splitSentences(c).length > 1 && splitSentences(c).every((x) => after.includes(x)));
+const squash = (t) => t.toLowerCase().replace(/[\s,]+/g, '');
+// Bold first clauses and list rows split a line into pieces: compare without spaces, and a comma list item by item.
+const present = (after, c) => after.includes(c) || after.toLowerCase().includes(c.toLowerCase()) || squash(after).includes(squash(c)) || (c.includes(', ') && c.split(', ').every((x) => after.toLowerCase().includes(x.trim().toLowerCase()))) || after.includes(c.replace(/\.$/, '')) || (splitSentences(c).length > 1 && splitSentences(c).every((x) => after.includes(x)));
 
 describe('product page keeps every piece of information', () => {
   let products;
@@ -99,9 +121,9 @@ describe('product page keeps every piece of information', () => {
       const m = buildEvidence(p, {});
       const top = topWarningFor(p, buildGlance(p, {}));
       for (const surface of ['web', 'app', 'sheet']) {
-        const after = flat(html[surface]);
+        const after = squash(flat(html[surface]));
         for (const line of [...m.who, ...m.safety.warnings]) {
-          const n = count(after, line);
+          const n = count(after, squash(line));
           const allowed = top && (line.startsWith(top.replace(/\.$/, '')) || top.startsWith(line)) ? 2 : 1;
           if (n !== 1 && n > allowed) twice.push(`${p.id} ${surface} x${n}: ${line}`);
           if (n === 0) twice.push(`${p.id} ${surface} missing: ${line}`);

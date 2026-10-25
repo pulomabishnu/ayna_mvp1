@@ -1,5 +1,5 @@
 import MatchPill from '../../components/MatchPill.jsx';
-import { getBuyUrl } from '../data/buyUrl.js';
+import { buyModel } from '../../components/pdp/buyModel.js';
 import { leavingLine } from '../../utils/leavingAyna.js';
 import { ADD_TO_ROUTINE, IN_ROUTINE } from '../../utils/routineCopy.js';
 import { HEART_PATH } from '../utils/heart.js';
@@ -20,9 +20,11 @@ export function SheetMatch({ state }) {
 }
 
 /** Buy (the existing buy link, with "You're leaving ayna"), Save, Add to my routine. One tap each. */
-export function ProductQuickActions({ product, saved, onToggleSaved, inRoutine, onAddToRoutine, placement = 'product_sheet', compact = false, big = false }) {
-  const buyUrl = getBuyUrl(product);
-  const label = product?.category === 'telehealth' ? 'Book' : product?.type === 'digital' ? 'Get the app' : 'Buy';
+export function ProductQuickActions({ product, saved, onToggleSaved, inRoutine, onAddToRoutine, placement = 'product_sheet', compact = false, big = false, buy = null }) {
+  // The sheet passes the product page's one buy model (pdp/buyModel): same link and "Buy at Amazon · $30" label everywhere.
+  const model = buy || buyModel(product);
+  const buyUrl = model?.url || null;
+  const label = big && model?.label ? model.label : product?.category === 'telehealth' ? 'Book' : product?.type === 'digital' ? 'Get the app' : 'Buy';
   return (
     <div className={`ay-pquick${compact ? ' is-compact' : ''}`} data-tour="quick-actions">
       <div className={`ay-pquick__row${big ? ' ayv-actions' : ''}`}>
@@ -33,7 +35,7 @@ export function ProductQuickActions({ product, saved, onToggleSaved, inRoutine, 
         </button>}
         {onAddToRoutine && <button type="button" className={`ay-pquick__eco${inRoutine ? ' is-on' : ''}`} aria-pressed={inRoutine} onClick={() => onAddToRoutine(product)}>{inRoutine ? IN_ROUTINE : ADD_TO_ROUTINE}</button>}
       </div>
-      {buyUrl && <p className="ay-pquick__leave">{leavingLine(buyUrl, null, label === 'Book' ? 'book' : label === 'Get the app' ? 'get it' : 'buy')}</p>}
+      {buyUrl && <p className={`ay-pquick__leave${big ? ' ayv-fine' : ''}`}>{big && model?.checked && `${model.checked}. `}{leavingLine(buyUrl, model?.retailer, big ? model?.verb || 'buy' : label === 'Book' ? 'book' : label === 'Get the app' ? 'get it' : 'buy')}</p>}
     </div>
   );
 }

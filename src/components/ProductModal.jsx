@@ -14,17 +14,18 @@ import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import WhyMatchPanel from './WhyMatchPanel';
 import { matchLine, priceParts } from '../data/passport/content';
-import { buildGlance, categoryLabel, perUnitLabel } from './pdp/glance';
+import { buildGlance, perUnitLabel } from './pdp/glance';
 import { heroPriceView } from './pdp/heroPrice';
 import HeroPrice from './pdp/HeroPrice.jsx';
-import { getPassport } from '../data/passport';
 import { ProductAsk } from './passport/ProductSections';
 import ProductEvidence from './pdp/ProductEvidence';
-import { MatchLine, SafetyLine } from './pdp/PdpParts.jsx';
+import { MatchLine, SafetyLine, WhereToBuy, StickyBuy } from './pdp/PdpParts.jsx';
+import { buyModel } from './pdp/buyModel.js';
+import { heroNotes } from './pdp/pdpParts.js';
 import { matchLineState, topWarningFor, pageRecall } from './pdp/pdpParts.js';
 import { HealthBackedBadge } from './health';
 import { attributeBadges } from './pdp/evidenceModel';
-import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
+import { galleryImages, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
 import ProductGallery from './pdp/ProductGallery.jsx';
 import { readsForProduct } from '../data/readLinks.js';
 import { takeProductTabIf } from '../utils/community/reviewRatings.js';
@@ -52,7 +53,7 @@ import './pdp/pdp-tabs.css';
 import { fetchWithTimeout } from '../utils/network.js';
 import { SaveFollowUpInline } from './save/SaveFollowUp.jsx';
 import { leavingLine } from '../utils/leavingAyna.js';
-import { ROUTINE_EXPLAINER, routineExplainerDue } from '../utils/routineCopy.js';
+
 
 /**
  * Product Q&A, for a user who doesn't know what a product actually IS (a
@@ -472,7 +473,6 @@ export default function ProductModal({
   const isAmazonBuyLink = isAmazonUrl(buyUrl);
   const isPartner = isPartnerBrandItem(product);
   const isPrelaunch = isPrelaunchPartnerItem(product);
-  const retailers = retailerLinks(product, buyUrl);
 
   const aynaData = useMemo(
     () => (aynaReviews && product ? (aynaReviews[product.id] || { ratings: [], reviews: [] }) : { ratings: [], reviews: [] }),
@@ -537,7 +537,8 @@ export default function ProductModal({
   ] : []);
 
   // The first time she sees "Add to my routine", one line says what it means.
-  const [explainRoutine] = useState(routineExplainerDue);
+  // Watched by the sticky Buy bar on phones.
+  const actionsRef = useRef(null);
 
   if (!product) return null;
 
@@ -569,7 +570,9 @@ export default function ProductModal({
   const priceSays = `${product.price || ''}`;
   const isCare = product.category === 'telehealth' || product.type === 'digital';
   const verb = /free trial/i.test(priceSays) ? 'Start free trial' : product.category === 'telehealth' ? 'Book' : isCare ? 'Get started' : 'Buy';
-  const buyLabel = sellerName && sellerName.length <= 32 ? `${verb} at ${sellerName}` : `${verb} with the seller`;
+  // One source of truth for where she buys (pdp/buyModel, shared with the app): "Buy at Amazon · $30".
+  const buy = buyModel(product, { variant: choice.variant, brand: brandName, name: displayName, priceMain: price.known && !price.isPlaceholder && String(price.main).length <= 12 ? price.main : '' });
+  const buyLabel = buy?.label || (sellerName && sellerName.length <= 32 ? `${verb} at ${sellerName}` : `${verb} with the seller`);
   const buyButton = (extraClass = '') => (buyUrl ? (
     <a
       className={`ay-btn ay-btn--primary ayp-buy__main ayv-buy ${extraClass}`.trim()}
@@ -641,17 +644,14 @@ export default function ProductModal({
   ) : null);
 
   // First screen (team direction 9): one primary Buy, Save beside it. Everything else is a quiet text action.
-  const noLinkBuy = !buyUrl && (() => {
-    const sites = (product.whereToBuy || []).filter((w) => /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(String(w).trim()));
-    return sites.length
-      ? <a className="ay-btn ay-btn--primary ayp-buy__main ayv-buy" href={`https://${sites[0].trim()}`} target="_blank" rel="noopener noreferrer">{product.category === 'telehealth' ? 'Book at' : 'Visit'} {sites[0]} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
-      : <p className="ayp-buy__note">No buy link yet.</p>;
-  })();
+  const noLinkBuy = !buyUrl && (buy?.url
+    ? <a className="ay-btn ay-btn--primary ayp-buy__main ayv-buy" href={buy.url} target="_blank" rel="noopener noreferrer">{buy.label} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+    : <p className="ayp-buy__note">No buy link yet.</p>);
   const actionButtons = (
     <div className="ayp-buy__box" data-tour="pdp-actions">
       {variantBlock}
       {/* Buy, Save and Add to my routine, side by side (founder, Oct 25: the ecosystem action goes up top). */}
-      <div className="ayp-buy__actions ayv-actions">
+      <div className="ayp-buy__actions ayv-actions" ref={actionsRef}>
         {buyButton()}
         {noLinkBuy}
         {onToggleSaved && (
@@ -666,7 +666,6 @@ export default function ProductModal({
           </button>
         )}
       </div>
-      {!isInEcosystem && user && onAddToEcosystem && explainRoutine && <p className="ayp-buy__fine">{ROUTINE_EXPLAINER}</p>}
       <SaveFollowUpInline product={product} onCompare={onCompare} />
       {onOmit && user && (
         <p className="ayp-buy__more">
@@ -683,6 +682,7 @@ export default function ProductModal({
   const purchaseNotes = buyUrl && !isPrelaunch ? (
     <>
       <p className="ayp-buy__fine ayv-fine">
+        {buy?.checked && <>{buy.checked}. </>}
         {leavingLine(buyUrl, sellerName && sellerName.length <= 32 ? sellerName : '', verb === 'Buy' ? 'buy' : verb === 'Book' ? 'book' : 'get started')}{' '}
         {isPartner ? 'ayna partner. We may earn a commission.' : isAmazonBuyLink ? 'ayna may earn a commission from Amazon.' : 'ayna may earn a commission.'}
         {' '}{isPartner && <button type="button" className="ayp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'How partnerships work'}</button>}
@@ -692,15 +692,6 @@ export default function ProductModal({
       {isPartner && showDisclosure && <p className="ayp-buy__fine ayp-buy__disclosure">{getPartnerDisclosureText(product)}</p>}
     </>
   ) : null;
-  // Other stores: a row in Key facts.
-  const alsoAt = retailers.length > 0 ? retailers.map((r, i) => (
-    <React.Fragment key={r.url}>
-      {i > 0 && ', '}
-      <a href={r.url} target="_blank" rel="noopener noreferrer" className="ayp-textlink" onClick={() => posthog.capture('product_retailer_clicked', { productId: product.id, retailer: r.name })}>
-        {r.name}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span>
-      </a>
-    </React.Fragment>
-  )) : null;
 
   const galleryTile = (
     <div className="ayp-gallery">
@@ -847,11 +838,8 @@ export default function ProductModal({
           </div>
 
           <div className="ayp-buy pdp-head__detail" id="ay-buycard">
-            {(() => {
-              // Brand · category tag above the name (main #73, the Neycher page design).
-              const tag = [brand || product.brand, categoryLabel(product)].filter(Boolean).join(' · ');
-              return tag ? <p className="ayp-buy__brand pdp-tag">{tag}</p> : null;
-            })()}
+            {/* The brand as text above the name; the category is in the breadcrumb (founder, Oct 25). */}
+            {(brand || product.brand) && <p className="ayv-brand">{brand || product.brand}</p>}
             <h1 className="ay-h1 ayp-buy__name pdp-head__name">{displayName}</h1>
             {aynaRating != null && ratingCount > 0 && (
               <button type="button" className="ayp-buy__rating" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'reviews' }))}>
@@ -861,16 +849,19 @@ export default function ProductModal({
               </button>
             )}
 
-            <HeroPrice view={heroPriceView(product, { price, perUnit, glance, brand })} />
+            {(() => { const v = heroPriceView(product, { price, perUnit, glance, brand }); return <HeroPrice view={{ ...v, notes: heroNotes(v.notes).keep }} />; })()}
 
             {/* Her match and the one line why, tappable to Why this match. */}
-            {fitRow}
+            {matchState?.kind !== 'quiz' && fitRow}
 
             <section className="ayp-buy__section ay-story--buy" aria-labelledby="ay-buy-h">
               <h2 id="ay-buy-h" className="sr-only">Buy</h2>
               {actionButtons}
               {purchaseNotes}
+              <WhereToBuy rows={buy?.rows} onOpen={(r) => posthog.capture('product_retailer_clicked', { productId: product.id, retailer: r.name })} />
+              {matchState?.kind === 'quiz' && <div className="ayv-quizline">{fitRow}</div>}
               {warningLine}
+              <StickyBuy model={buy} watch={actionsRef} mode="fixed" wideOff saved={isSaved} onSave={onToggleSaved ? () => onToggleSaved(product) : null} onBuy={() => { try { recordRetailerVisit(product, choice.variant); } catch { /* ignore */ } posthog.capture('product_buy_now_clicked', { productId: product.id, category: product.category, destination: buy?.url, placement: 'sticky_bar' }); }} />
             </section>
           </div>
 
@@ -879,18 +870,7 @@ export default function ProductModal({
 
         {/* Sticky tabs: Clinical opinion, Scientific literature, ayna summary, Reviews (founder, Oct 24). */}
         <div className="ayv-split__right ayp-tabsarea pdp-head__info">
-          <ProductEvidence loading={!researchLoaded} product={product} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} fit={fitData} askSlot={onAskAyna ? <ProductAsk productName={displayName} onAsk={onAskAyna} hasProfile={Boolean(quizResults)} /> : null} extraRows={(() => {
-            const pp = getPassport(product);
-            const checked = pp?.pricing?.price?.verified_at;
-            let seller = '';
-            try { seller = buyUrl ? (isAmazonBuyLink ? 'Amazon' : isPartner ? `${brand || product.brand} (ayna partner)` : new URL(buyUrl).hostname.replace(/^www\./, '')) : ''; } catch { seller = ''; }
-            const d = checked ? new Date(`${String(checked).slice(0, 10)}T12:00:00`) : null;
-            return [
-              { label: 'Sold by', value: seller },
-              { label: 'Also at', value: alsoAt ? retailers.map((r) => r.name).join(', ') : '', node: alsoAt },
-              { label: 'Price check', value: d && !Number.isNaN(d.getTime()) && price.known && !price.isPlaceholder ? `Checked ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '' },
-            ];
-          })()} />
+          <ProductEvidence loading={!researchLoaded} product={product} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} fit={fitData} askSlot={onAskAyna ? <ProductAsk productName={displayName} onAsk={onAskAyna} hasProfile={Boolean(quizResults)} /> : null} />
         </div>
         </div>
 

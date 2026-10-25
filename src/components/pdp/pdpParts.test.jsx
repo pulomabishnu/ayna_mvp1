@@ -2,7 +2,8 @@
 import { describe, it, expect } from 'vitest';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { fitChecklist, matchLineState, evidenceMeter, splitShow, shortAnswer, mainCaution, sortSources, clinicianOf, glanceTiles, whoLists, keyFormat, criticalIndex } from './pdpParts.js';
+import { fitChecklist, matchLineState, evidenceMeter, splitShow, shortAnswer, mainCaution, sortSources, clinicianOf, glanceTiles, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause } from './pdpParts.js';
+import { buyModel } from './buyModel.js';
 import { MatchLine, ShowAll, EvidenceMeter, SafetyLine } from './PdpParts.jsx';
 import { ALL_PRODUCTS, withResearch } from '../../data/products.js';
 import { PRODUCT_RESEARCH } from '../../data/productResearch.js';
@@ -75,22 +76,23 @@ describe('the match line: never 0%, hold and evaluation replace the number', () 
 
 describe('the evidence meter maps the existing grade', () => {
   it('levels 1-3 fill that many of 3 bars with the grade word; no grade is its own state', () => {
-    expect(evidenceMeter({ level: 0 })).toMatchObject({ level: 0, empty: true, label: 'No .gov-checked evidence yet' });
-    expect(evidenceMeter({ level: 2, word: 'Some support for this type', scope: 'type', line: 'L', need: 'cramps' })).toMatchObject({ level: 2, of: 3, empty: false, label: 'Some support for this type', note: 'L' });
+    expect(evidenceMeter({ level: 0 })).toMatchObject({ level: 0, empty: true, label: 'No checked research yet' });
+    expect(evidenceMeter({ level: 2, word: 'Supported for this type', scope: 'type', line: 'L', need: 'period cramps' })).toMatchObject({ level: 2, of: 3, empty: false, label: 'Good evidence for this type of product for period cramps · not studied as this exact product', note: 'L' });
     expect(evidenceMeter({ level: 3, word: 'Strong evidence', scope: 'product' }).note).toBe('Graded by ayna from .gov health sources.');
     expect(evidenceMeter({ level: 1, word: 'Limited evidence', scope: 'team' }).note).toMatch(/team recorded/);
     expect(evidenceMeter({ level: 9 }).level).toBe(3);
   });
   it('draws filled bars for the level and an accessible name', () => {
-    const html = renderToStaticMarkup(<EvidenceMeter meter={evidenceMeter({ level: 2, word: 'Some evidence', scope: 'team' })} />);
+    const html = renderToStaticMarkup(<EvidenceMeter meter={{ level: 2, of: 3, empty: false, label: 'Some evidence', note: '' }} />);
     expect((html.match(/class="is-on"/g) || []).length).toBe(2);
     expect(html).toContain('aria-label="Some evidence, 2 of 3"');
-    expect(text(<EvidenceMeter meter={evidenceMeter({ level: 0 })} />)).toContain('No .gov-checked evidence yet');
+    expect(text(<EvidenceMeter meter={evidenceMeter({ level: 0 })} />)).toContain('No checked research yet');
   });
   it('a real graded product reads the same grade as everywhere else', () => {
     const p = product('p-portable-heating');
     const ev = evidenceLevel(p);
-    expect(evidenceMeter(ev)).toMatchObject({ level: ev.level, label: ev.word });
+    expect(evidenceMeter(ev).level).toBe(ev.level);
+    expect(evidenceMeter(ev).label).toMatch(/evidence for this type of product for period cramps · not studied as this exact product/);
   });
 });
 
@@ -152,4 +154,30 @@ describe('summary pieces', () => {
     expect(criticalIndex(['a'], '')).toBe(-1);
   });
 
+});
+
+describe('shopper pass', () => {
+  it('one buy model: the same link and label on every surface', () => {
+    const b = buyModel(product('p-portable-heating'));
+    expect(b.retailer).toBe('Amazon');
+    expect(b.label).toBe('Buy at Amazon · $30');
+    expect(b.rows[0]).toMatchObject({ name: 'Amazon', primary: true });
+    expect(buyModel(product('d-ppd'), { name: 'Planned Parenthood Direct' }).label).toBe('Visit Planned Parenthood Direct');
+  });
+  it('a spec first sentence becomes Strength and the next sentence is the one-liner', () => {
+    const s = splitLead(product('p-nature-made-iron-65mg'));
+    expect(s.strength).toMatch(/^65 mg elemental iron/);
+    expect(s.lead).toMatch(/^Supports red blood cell/);
+    expect(splitLead(product('p-portable-heating')).strength).toBe('');
+  });
+  it('price notes keep units by the price, features move out', () => {
+    expect(heroNotes(['$0.06 per tablet', '180 tablets', 'Rechargeable', 'Sliding scale'])).toEqual({ keep: ['$0.06 per tablet', '180 tablets', 'Sliding scale'], moved: ['Rechargeable'] });
+  });
+  it('dedupes a list and finds the first clause', () => {
+    expect(dedupeList('Cramp & pain relief, Cramps')).toBe('Cramp & pain relief');
+    expect(dedupeList('Contraception, UTI support, UTI')).toBe('Contraception, UTI support');
+    expect(leadClause('People with period cramps who want heat')).toEqual(['People with period cramps', ' who want heat']);
+    expect(leadClause('Those who like to adjust the heat, since it has 3 settings')).toEqual(['Those who like to adjust the heat', ', since it has 3 settings']);
+    expect(leadClause('Short line')).toEqual(['', 'Short line']);
+  });
 });

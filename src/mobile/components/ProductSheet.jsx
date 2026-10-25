@@ -8,8 +8,13 @@ import { useResearchState } from '../../data/researchLoader.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
 import { SheetMatch, ProductQuickActions } from './ProductQuick.jsx';
-import { MatchLine, SafetyLine } from '../../components/pdp/PdpParts.jsx';
-import { matchLineState, topWarningFor } from '../../components/pdp/pdpParts.js';
+import { MatchLine, SafetyLine, WhereToBuy, StickyBuy, PriceLine } from '../../components/pdp/PdpParts.jsx';
+import { buyModel } from '../../components/pdp/buyModel.js';
+import { heroPriceView } from '../../components/pdp/heroPrice.js';
+import { perUnitLabel } from '../../components/pdp/glance.js';
+import { priceParts } from '../../data/passport/priceParts.js';
+import { cardKind } from '../../utils/productCardFacts.js';
+import { matchLineState, topWarningFor, heroNotes } from '../../components/pdp/pdpParts.js';
 import { ProductAsk } from '../../components/passport/ProductSections.jsx';
 import { whyLine } from '../../utils/whyLine.js';
 import '../../components/pdp/pdp-tabs.css';
@@ -40,6 +45,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
   const [full, setFull] = useState(false);
   const rootRef = useRef(null);
   const sheetRef = useRef(null);
+  const actionsRef = useRef(null);
   const closeBtnRef = useRef(null);
   const [opener] = useState(() => (typeof document !== 'undefined' ? document.activeElement : null));
   const finish = () => onClose?.();
@@ -93,6 +99,8 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
   const brand = product.brand && String(product.brand).trim().toLowerCase() !== String(product.name || '').trim().toLowerCase() ? product.brand : '';
   const glance = buildGlance(product, {});
   const topWarning = topWarningFor(product, glance);
+  const buy = buyModel(product, { brand, name });
+  const priceNotes = heroNotes(heroPriceView(product, { price: priceParts(product), perUnit: perUnitLabel(product), glance, brand }).notes).keep;
   const still = reduceMotion();
 
   const node = (
@@ -110,17 +118,19 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
             <div className="ay-psheet__head">
               <span className="ay-psheet__img"><ProductImage product={product} src={product.image || product.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
               <div className="ay-psheet__id">
-                {brand && <p className="ay-psheet__brand">{brand}</p>}
+                {(brand || cardKind(product)) && <p className="ay-psheet__brand">{brand || cardKind(product)}</p>}
                 <h2 id="ay-psheet-title">{name}</h2>
-                {product.price && <p className="ay-psheet__price">{price.main}{price.sub && <small> {price.sub}</small>}</p>}
+                <PriceLine main={product.price ? price.main : ''} notes={priceNotes} />
               </div>
             </div>
             {details
               ? <MatchLine state={matchLineState({ details, percent: details.percent, hasProfile: true, why: whyLine(product, details) })} onWhy={onShowWhy} onFix={onFixSafety} />
               : <SheetMatch state={matchState} />}
-            <ProductQuickActions product={product} saved={saved} onToggleSaved={onToggleSaved} inRoutine={inRoutine} onAddToRoutine={onAddToRoutine} big />
+            <div ref={actionsRef}><ProductQuickActions product={product} saved={saved} onToggleSaved={onToggleSaved} inRoutine={inRoutine} onAddToRoutine={onAddToRoutine} big buy={buy} /></div>
+            <WhereToBuy rows={buy?.rows} />
             <SafetyLine text={topWarning} />
             <ProductEvidence key={product.id} product={product} glance={glance} loading={!loaded} swipeTabs syncHash={false} safetyLead={topWarning} fit={{ details, hasProfile: Boolean(details && details.matchStatus !== 'no-profile'), onShowWhy }} askSlot={onAsk ? <ProductAsk productName={name} onAsk={onAsk} hasProfile={Boolean(details && details.matchStatus !== 'no-profile')} /> : null} />
+            <StickyBuy model={buy} watch={actionsRef} mode="scroll" saved={saved} onSave={onToggleSaved ? () => onToggleSaved(product) : null} />
             {renderFull && <button type="button" className="ay-psheet__more" onClick={() => setFull(true)}>Read more <span aria-hidden="true">→</span><span className="sr-only"> about {name} on its full page</span></button>}
           </div>
         </>)}

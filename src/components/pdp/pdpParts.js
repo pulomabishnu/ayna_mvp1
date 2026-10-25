@@ -6,10 +6,11 @@
  * where. Research: scratchpad/PDP_RESEARCH.md.
  */
 import { isSafetyHold, isBleedingEvaluation, whyMatch, exclusionLines, BLEEDING_EVALUATION, MATCH_UNAVAILABLE } from '../../utils/matchDisplay.js';
-import { firstSentence, splitNote } from './sentences.js';
+import { firstSentence, splitNote, splitSentences } from './sentences.js';
 import { getPassport } from '../../data/passport/index.js';
 import { recallFacts } from '../../utils/productFacts.js';
 import { noDash } from './evidenceModel.js';
+import { TYPE_WORDS } from './evidenceLevel.js';
 
 const cap = (t) => String(t || '').replace(/^./, (c) => c.toUpperCase());
 const norm = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -94,10 +95,17 @@ export function fitChecklist({ details = null, who = [], warnings = [] } = {}) {
 // ---------------------------------------------------------------------------
 export function evidenceMeter(ev) {
   const level = Math.max(0, Math.min(3, Number(ev?.level) || 0));
-  if (!level) return { level: 0, of: 3, empty: true, label: 'No .gov-checked evidence yet', note: '' };
-  const label = ev.word || '';
+  if (!level) return { level: 0, of: 3, empty: true, label: 'No checked research yet', note: '' };
+  const need = ev.need ? ` for ${ev.need}` : '';
+  let label = ev.word || '';
+  if (ev.scope === 'type') {
+    // "Good evidence for this type of product for period cramps · not studied as this exact product" (founder, Oct 25).
+    const raw = Math.max(1, TYPE_WORDS.indexOf(ev.word));
+    label = `${['', 'Limited', 'Some', 'Good'][raw]} evidence for this type of product${need} · not studied as this exact product`;
+  } else if (ev.scope === 'product') label = `${ev.word}${need}`;
+  else if (ev.scope === 'team') label = `${ev.word}${need} (the team’s rating, not yet checked)`;
   const note = ev.scope === 'type' ? (ev.line || '') : ev.scope === 'team' ? 'The level the team recorded. Not yet checked against .gov health sources.' : 'Graded by ayna from .gov health sources.';
-  return { level, of: 3, empty: false, label, need: ev.need || '', note };
+  return { level, of: 3, empty: false, label, need: '', note };
 }
 
 // ---------------------------------------------------------------------------
@@ -246,4 +254,38 @@ export function criticalIndex(texts, topWarning) {
   const t = norm(topWarning).replace(/^pregnancy /, '');
   if (!t) return -1;
   return (texts || []).findIndex((x) => { const n = norm(x).replace(/^pregnancy /, ''); return n && (n.startsWith(t.slice(0, 40)) || t.startsWith(n.slice(0, 40)) || n.includes(t.slice(0, 40))); });
+}
+
+// ---------------------------------------------------------------------------
+// Oct 25, shopper pass
+// ---------------------------------------------------------------------------
+const SPEC = /^\s*(\d[\d.,]*\s*(mg|mcg|µg|iu|g|ml|mL|oz|%)\b|\d+\s*(count|ct|pack|capsules?|tablets?|softgels?))/i;
+/** The one-liner: the summary's first sentence, unless it is a spec ("65 mg elemental iron…"), which becomes Key facts "Strength". */
+export function splitLead(product) {
+  const parts = splitSentences(noDash(String(product?.summary || '').replace(/\s*\(see [^()]+\)/i, '')));
+  if (parts.length > 1 && SPEC.test(parts[0])) return { strength: parts[0], lead: parts[1], used: `${parts[0]} ${parts[1]}` };
+  const lead = firstSentence(noDash(String(product?.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 });
+  return { strength: '', lead, used: lead };
+}
+
+/** Hero price notes: units, sizes and pricing terms stay by the price; a feature word ("rechargeable") moves to Key facts. */
+export function heroNotes(notes = []) {
+  const keep = []; const moved = [];
+  for (const n of notes) (/\d|scale|per |month|year|visit|day|pack|count|supply|free|insurance|subscription|eligible|prescription|online|at home|program/i.test(n) ? keep : moved).push(n);
+  return { keep, moved };
+}
+
+/** "Cramp & pain relief, Cramps" -> "Cramp & pain relief": one entry per first word (plural or not). */
+export function dedupeList(text) {
+  const items = String(text || '').split(/,\s*/).map((x) => x.trim()).filter(Boolean);
+  const seen = new Set();
+  return items.filter((x) => { const k = x.toLowerCase().split(/[\s&/]+/)[0].replace(/s$/, ''); if (seen.has(k)) return false; seen.add(k); return true; }).join(', ');
+}
+
+/** The first clause of a "who it's for" line, for bold: up to the first comma or " who ", whichever leaves 3+ words. */
+export function leadClause(text) {
+  const t = String(text || '');
+  const cands = [t.search(/,/), t.search(/\swho\s/), t.search(/:/)].filter((i) => i > 0).sort((a, b) => a - b);
+  const at = cands.find((i) => t.slice(0, i).trim().split(/\s+/).length >= 3);
+  return at ? [t.slice(0, at), t.slice(at)] : ['', t];
 }

@@ -16,7 +16,8 @@ import ProductCommunityReviews from './ProductCommunityReviews.jsx';
 import ProductPeopleSay from './ProductPeopleSay.jsx';
 import { useProductReviews } from './useProductReviews.js';
 import { evidenceLevel, gradeWords } from './evidenceLevel.js';
-import { evidenceMeter, leadSentence, sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex } from './pdpParts.js';
+import { evidenceMeter, sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause } from './pdpParts.js';
+import { formatPrice } from '../../utils/formatPrice.js';
 import { EvidenceMeter, ShowAll } from './PdpParts.jsx';
 import { FROM_LISTING } from '../../utils/howToSource.js';
 import './pdp-complete.css';
@@ -346,9 +347,11 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   askSlot = null }) {
   const product = useApprovedResearch(baseProduct);
   // The short answer leads with the summary's first sentence (unless the team wrote a short take), so "What it is" starts after it.
-  const lead = useMemo(() => leadSentence(product), [product]);
+  // A spec first sentence ("65 mg elemental iron…") becomes Key facts "Strength"; the next sentence is the one-liner.
+  const leadParts = useMemo(() => splitLead(product), [product]);
+  const lead = leadParts.lead;
   const teamShort = Boolean(String(product?.doctorOpinionShort || '').trim());
-  const m = useMemo(() => buildEvidence(product, { heroLine: teamShort ? '' : lead, glance }), [product, lead, teamShort, glance]);
+  const m = useMemo(() => buildEvidence(product, { heroLine: teamShort ? '' : leadParts.used, glance }), [product, leadParts, teamShort, glance]);
   const works = worksWith(product);
   const reviewRows = useProductReviews(baseProduct?.id);
   const liveStats = reviewRows.length ? summarizeReviewRows(reviewRows)[baseProduct?.id] : null;
@@ -699,7 +702,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     <>
       {m.how?.intro && <p className="ayq-p ayq-intro"><Tx>{m.how.intro}</Tx></p>}
       {m.how && <ShowAll items={m.how.steps} label="steps" className="ayv-steps" render={(st, i) => <><span className="ayv-steps__n" aria-hidden="true">{i + 1}</span><span className="ayq-p"><Tx>{st}</Tx></span></>} />}
-      {m.how && !m.how.source && m.how.fromListing && <p className="ayq-meta">{FROM_LISTING}.</p>}
+      {/* The listing footer only when the intro does not already name the source. */}
+      {m.how && !m.how.source && m.how.fromListing && !/\b(per|listing|instructions|according)\b/i.test(m.how.intro || '') && <p className="ayq-meta">{FROM_LISTING}.</p>}
       {m.how && (m.how.source || m.how.faq) && (
         <p className="ayq-meta">Source: {[m.how.source, m.how.faq].filter(Boolean).map((l, i) => <React.Fragment key={l.url}>{i > 0 && ', '}<a href={l.url} target="_blank" rel="noopener noreferrer">{l.publisher && !l.title.toLowerCase().includes(String(l.publisher).toLowerCase()) ? `${l.publisher}: ` : ''}{l.title}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></React.Fragment>)}</p>
       )}
@@ -712,36 +716,45 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const factOf = (id) => (glance?.facts || []).find((f) => f.id === id && !f.unknown && f.value);
   const howText = m.how ? [m.how.intro, ...m.how.steps].join(' ') : '';
   const wear = howText.match(/\b(?:up to|every|for up to|for)\s+\d+(?:\s*(?:to|-|–)\s*\d+)?\s*hours?\b/i);
-  const fmtFact = factOf('format');
+  // Dates behind single facts collapse into one footer ("Facts checked Oct 13, 2026").
+  const checkedDates = ['size', 'perunit', 'fsa'].map((id) => factOf(id)?.note).filter((n) => /verified|checked/i.test(String(n || ''))).map((n) => String(n).replace(/^(verified|checked)\s*/i, ''));
+  const factsChecked = checkedDates.length ? fmtDate(checkedDates.sort().slice(-1)[0]) : '';
+  const listedAs = heroNotes(formatPrice(product).sub ? String(formatPrice(product).sub).split(/\s+·\s+/) : []).moved;
   const keyFacts = [
-    { label: 'Format', value: keyFormat(product, m.brand || glance?.brand), note: fmtFact ? noDash(fmtFact.value) : '' },
-    factOf('size') && { label: 'Size or count', value: noDash(factOf('size').value), note: factOf('size').note ? fmtDate(factOf('size').note) : '' },
-    factOf('perunit') && { label: 'Price per unit', value: noDash(factOf('perunit').value), note: factOf('perunit').note || '' },
-    factOf('fsa') && { label: 'FSA/HSA', value: factOf('fsa').value, note: factOf('fsa').note ? fmtDate(factOf('fsa').note) : '' },
-    sf.fdaRaw && { label: m.isDigital ? 'Regulation' : 'FDA status', value: sf.fdaRaw, node: fdaValue },
+    { label: 'Format', value: keyFormat(product, m.brand || glance?.brand) },
+    leadParts.strength && { label: 'Strength', value: leadParts.strength },
+    factOf('size') && { label: 'Size or count', value: noDash(factOf('size').value) },
+    factOf('perunit') && { label: 'Price per unit', value: noDash(factOf('perunit').value), note: /verified|checked/i.test(factOf('perunit').note || '') ? '' : factOf('perunit').note || '' },
+    factOf('fsa') && { label: 'FSA/HSA', value: factOf('fsa').value },
+    // FDA status: the short value, the explanation behind "What this means".
+    sf.fdaRaw && { label: m.isDigital ? 'Regulation' : 'FDA status', value: sf.fda?.label || sf.fdaRaw, node: sf.fda?.label ? <>{sf.fda.label}<details className="ayv-more2"><summary>What this means</summary><span>{sf.fda?.line && <>{sf.fda.line} </>}{sf.fdaRaw.trim().replace(/\.$/, '').toLowerCase() !== sf.fda.label.toLowerCase() && <>On file: <Tx>{fmtDate(sf.fdaRaw)}</Tx></>}</span></details></> : fdaValue },
     wear && { label: 'How long it lasts', value: cap(wear[0]), note: 'From the instructions' },
     works.items.length > 0 && { label: 'Works with', value: works.items.join(', '), node: <>{works.items.map((t, i) => <React.Fragment key={t}>{i > 0 && ', '}{t === 'ayna' && works.ayna ? <a href="/health-data">ayna</a> : t}</React.Fragment>)}</> },
-    (glance?.who?.helps || []).length > 0 && { label: 'Helps with', value: glance.who.helps.join(', ') },
+    (glance?.who?.helps || []).length > 0 && { label: 'Helps with', value: dedupeList(glance.who.helps.join(', ')) },
     ...sf.labelRows.filter((r) => !SAFETY_ROWS.test(r.label)).map((r) => ({ label: r.label, value: r.value })),
     dt.badges.length > 0 && { label: 'Labels on file', value: dt.badges.join(', '), note: 'Claims and labels from the brand or listing. ayna hasn’t checked each one.' },
-    ...(glance?.facts || []).filter((f) => !f.unknown && !['format', 'size', 'perunit', 'fsa', 'inside', 'fda', 'hipaa', 'data'].includes(f.id) && f.value).map((f) => ({ label: f.label, value: noDash(f.value), note: f.note ? fmtDate(f.note) : '' })),
+    // Where to buy, Sold by and the price check live with the Buy button now (one source of truth).
+    ...(glance?.facts || []).filter((f) => !f.unknown && !['format', 'size', 'perunit', 'fsa', 'inside', 'fda', 'hipaa', 'data', 'where'].includes(f.id) && f.value).map((f) => ({ label: f.label, value: noDash(f.value), note: f.note && !/verified|checked/i.test(f.note) ? fmtDate(f.note) : '' })),
     ...extraRows.filter((r) => r && (r.value || r.node)).map((r) => ({ ...r, value: r.value || 'x' })),
+    listedAs.length > 0 && { label: 'Listed as', value: listedAs.join(', ') },
     { label: 'Price note', value: dt.priceNote },
-    { label: 'Sold at', value: dt.whereToBuy.join(', ') },
-    { label: 'In stock at', value: dt.inStock.join(', ') },
   ].filter((r, i, arr) => r && r.value && arr.findIndex((x) => x && x.label === r.label) === i)
     // Two rows that say the same thing ("Where to buy" and "Sold at", "Works with" and "Available on"): keep the first.
     .filter((r, i, arr) => arr.findIndex((x) => String(x.value).toLowerCase() === String(r.value).toLowerCase()) === i);
 
   // ---- Ingredients: 5 then Show all -------------------------------------------
   const chips = dt.ingredientsText ? ingredientChips(dt.ingredientsText) : null;
+  // A device's "ingredients" and "materials" often list the same parts: show one (founder, Oct 25).
+  const words = (t) => String(t || '').toLowerCase().match(/[a-z]{3,}/g) || [];
+  const materialsDup = Boolean(chips && dt.materials && (() => { const have = new Set(words(dt.ingredientsText)); const mw = words(dt.materials); return mw.filter((w) => have.has(w)).length / Math.max(1, mw.length) >= 0.6; })());
+  const isDevice = !m.isDigital && !['ingestible', 'topical', 'vaginal_insert'].includes(m.pp?.risk?.route);
   const hasInside = Boolean(dt.ingredientsText || dt.materials);
   const insideBody = hasInside ? (
     <>
       {dt.ingredientsText && (chips
         ? <ShowAll items={chips} n={5} label={m.isDigital ? 'items' : 'ingredients'} className="ayv-chips" render={(c) => c} />
         : <p className="ayq-p ayq-pre">{dt.ingredientsText}</p>)}
-      {dt.materials && <p className="ayq-p"><b className="ayv-item__lead">Materials: </b><Tx>{dt.materials}</Tx></p>}
+      {dt.materials && !materialsDup && <p className="ayq-p"><b className="ayv-item__lead">Materials: </b><Tx>{dt.materials}</Tx></p>}
     </>
   ) : null;
 
@@ -768,7 +781,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
 
   // ---- ayna summary: one reading column, each fact once (founder, Oct 25) -----
   const whoL = whoLists({ details: fit?.hasProfile ? fit.details : null, who: m.who });
-  const evNote = meter.empty ? '' : meter.note;
   const sec = (id, title, body, extra = '') => body && (
     <section id={id} className={`ayq-anchor ayv-sec${extra ? ` ${extra}` : ''}`} aria-labelledby={`${id}-h`}>
       <h3 id={`${id}-h`} className="ayv-sec__h">{title}</h3>
@@ -779,24 +791,26 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     <div className="ayq-sum ayv-read">
       {(lead || m.summary.length > 0) && (
         <section id="ay-sum-about" className="ayq-anchor ayv-sec ayv-sec--lead" aria-label="What it is">
-          {lead && !teamShort && <p className="ayv-oneline"><Tx>{lead}</Tx></p>}
-          {teamShort && lead && <p className="ayv-oneline"><Tx>{lead}</Tx></p>}
-          {m.summary.length > 0 && <div className="ayq-prose"><Paras list={m.summary.filter((x) => !(teamShort && lead && x.startsWith(lead)))} /></div>}
+          {lead && <p className="ayv-oneline"><Tx>{lead}</Tx></p>}
+          {m.summary.length > 0 && <div className="ayq-prose"><Paras list={m.summary.filter((x) => !(teamShort && x.startsWith(leadParts.used)))} /></div>}
         </section>
       )}
       {sec('ay-sum-who', 'Who it’s for', (whoL.yes.length > 0 || whoL.no.length > 0) && (
         <>
-          {whoL.yes.length > 0 && <ShowAll items={whoL.yes} label="" className="ayv-list ayv-list--yes" render={(t) => <><span className="ayv-mark is-yes" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span><span className="ayq-p"><span className="sr-only">For: </span><Tx>{t}</Tx></span></>} />}
+          {whoL.yes.length > 0 && <ShowAll items={whoL.yes} label="" className="ayv-list ayv-list--yes" render={(t) => <><span className="ayv-mark is-yes" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span><span className="ayq-p"><span className="sr-only">For: </span>{(() => { const [a, b] = leadClause(t); return a ? <><b className="ayv-clause">{a}</b><Tx>{b}</Tx></> : <Tx>{t}</Tx>; })()}</span></>} />}
           {whoL.no.length > 0 && <>
             <p className="ayv-sub">Not for</p>
-            <ShowAll items={whoL.no} n={2} label="" className="ayv-list ayv-list--no" render={(t) => <><span className="ayv-mark is-no" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M7 7l10 10M17 7 7 17" /></svg></span><span className="ayq-p"><span className="sr-only">Not for: </span><Tx>{t}</Tx></span></>} />
+            <ShowAll items={whoL.no} n={2} label="" className="ayv-list ayv-list--no" render={(t) => <><span className="ayv-mark is-no" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M7 7l10 10M17 7 7 17" /></svg></span><span className="ayq-p"><span className="sr-only">Not for: </span>{(() => { const [a, b] = leadClause(t); return a ? <><b className="ayv-clause">{a}</b><Tx>{b}</Tx></> : <Tx>{t}</Tx>; })()}</span></>} />
           </>}
           {fit?.hasProfile && fit?.onShowWhy && <p className="ayv-links"><button type="button" className="ayv-textbtn" onClick={fit.onShowWhy}>See the breakdown</button><a className="ayv-textbtn" href="/how-it-works">How we match</a></p>}
           {fit?.extra}
         </>
       ))}
       {sec('ay-sum-facts', 'Key facts', keyFacts.length > 0 && (
-        <ShowAll items={keyFacts} n={6} label="facts" className="ayv-facts" render={(r) => <><span className="ayv-facts__k">{r.label}</span><span className="ayv-facts__v">{r.node || <Tx>{r.value}</Tx>}{r.note && <small>{r.note}</small>}</span></>} />
+        <>
+          <ShowAll items={keyFacts} n={6} label="facts" className="ayv-facts" render={(r) => <><span className="ayv-facts__k">{r.label}</span><span className="ayv-facts__v">{r.node || <Tx>{r.value}</Tx>}{r.note && <small>{r.note}</small>}</span></>} />
+          {factsChecked && <p className="ayq-meta ayv-facts__foot">Facts checked {factsChecked}</p>}
+        </>
       ))}
       {sec('ay-sum-how', 'How to use', howBody)}
       {sec('ay-sum-safety', 'Safety', safetyBody, 'ayv-sec--safety')}
@@ -806,14 +820,13 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
             <EvidenceMeter meter={{ ...meter, note: '' }} />
             <button type="button" className="ayv-textbtn" onClick={() => goTo('literature')}>See the research</button>
           </div>
-          {evNote && <p className="ayq-meta"><Tx>{evNote}</Tx></p>}
           {teamShort && ex.short.length > 0 && <>
             <ul className="ayv-bullets">{ex.short.map((t) => <li key={t}><Tx>{t}</Tx></li>)}</ul>
             {ex.attribution && <p className="ayq-meta">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" className="ayv-textbtn" onClick={() => goTo('clinical')}>Read the clinical opinion</button></p>}
           </>}
         </>
       ))}
-      {sec('ay-sum-details', m.isDigital ? 'What’s included' : 'Ingredients', insideBody)}
+      {sec('ay-sum-details', m.isDigital ? 'What’s included' : isDevice ? 'What it’s made of' : 'Ingredients', insideBody)}
       {askSlot && <section className="ayv-ask" aria-label="Ask about this product">{askSlot}</section>}
     </div>
   );
