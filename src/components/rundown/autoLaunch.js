@@ -6,8 +6,9 @@
  *   - Already viewed or skipped today (auto or by hand): never again today.
  *   - Opened from a link or a notification for something else, during the
  *     first-time flow, or with another dialog open: don't take over.
- *   - Website, and reduced motion: highlight the card instead of a full
- *     screen story.
+ *   - Website: highlight the card instead of a full screen story.
+ *   - Reduced motion (founder, Oct 24): it still opens, but static: no
+ *     transitions and no auto-advance (RundownStory reads the same setting).
  * Pure decision here; the memory (viewedDay, autoDay) lives per owner in
  * rundownStore.js.
  */
@@ -24,7 +25,8 @@ export function autoLaunchDecision({
   if (!hasContent || !today) return 'none';
   if (memory.viewedDay === today || memory.autoDay === today) return 'none';
   if (now.getHours() < AUTO_HOUR) return 'none';
-  if (surface !== 'app' || reducedMotion) return 'highlight';
+  void reducedMotion; // Opens either way; RundownStory makes it static.
+  if (surface !== 'app') return 'highlight';
   if (externalOpen || firstTime || dialogOpen) return 'none';
   return 'open';
 }
