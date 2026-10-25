@@ -115,8 +115,8 @@ export function answerMatchQuestion(text, ctx) {
   const head = shown == null
     ? `**${name}** is a **partial fit** for you${best?.phrase ? `, for ${best.phrase}` : ''}.${line ? ` ${line}.` : ''}`
     : best?.phrase
-      ? `**${name}** is a **${shown}% match** for you, for ${best.phrase}${tierWord(details.tier, percent) ? ` (${tierWord(details.tier, percent).toLowerCase()})` : ''}.`
-      : `**${name}** is a **${shown}% match** for you${tierWord(details.tier, percent) ? ` (${tierWord(details.tier, percent).toLowerCase()})` : ''}.`;
+      ? `**${name}** is ${/^(8|11|18)/.test(String(shown)) ? 'an' : 'a'} **${shown}% match** for you, for ${best.phrase}${tierWord(details.tier, percent) ? ` (${tierWord(details.tier, percent).toLowerCase()})` : ''}.`
+      : `**${name}** is ${/^(8|11|18)/.test(String(shown)) ? 'an' : 'a'} **${shown}% match** for you${tierWord(details.tier, percent) ? ` (${tierWord(details.tier, percent).toLowerCase()})` : ''}.`;
   const notes = confidenceNotes(details, product);
   const parts = [
     head,
