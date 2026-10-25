@@ -245,5 +245,5 @@ export function keyFormat(product, brand = '') {
 export function criticalIndex(texts, topWarning) {
   const t = norm(topWarning).replace(/^pregnancy /, '');
   if (!t) return -1;
-  return (texts || []).findIndex((x) => { const n = norm(x); return n && (n.startsWith(t.slice(0, 40)) || t.startsWith(n.slice(0, 40)) || n.includes(t.slice(0, 40))); });
+  return (texts || []).findIndex((x) => { const n = norm(x).replace(/^pregnancy /, ''); return n && (n.startsWith(t.slice(0, 40)) || t.startsWith(n.slice(0, 40)) || n.includes(t.slice(0, 40))); });
 }

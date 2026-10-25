@@ -51,7 +51,6 @@ describe('Is it for you: built only from data on file', () => {
     expect(whoLists({ details: { matchStatus: 'safety-hold', safetyHold: { reason: 'x' } }, who: ['A'] })).toEqual({ yes: ['A'], no: [] });
   });
 });
-});
 
 describe('the match line: never 0%, hold and evaluation replace the number', () => {
   it('maps every state', () => {
