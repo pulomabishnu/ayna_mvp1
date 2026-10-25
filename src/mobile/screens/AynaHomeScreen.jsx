@@ -3,7 +3,7 @@ import TodayScreen from './TodayScreen.jsx';
 import EcosystemScreen from './EcosystemScreen.jsx';
 import MobileHeader from '../components/MobileHeader.jsx';
 import HomeAskSheet from '../components/HomeAskSheet.jsx';
-import { HomeHeroArt, HomeHealthArt, readHomeLook } from '../components/HomeArt.jsx';
+import { HomeHeroArt, readHomeLook } from '../components/HomeArt.jsx';
 import { askFromPrompt } from '../../utils/askPrompts.js';
 import EmptyState from '../components/EmptyState.jsx';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
@@ -13,26 +13,9 @@ import { openTodayLog } from '../../components/today/openLog.js';
 import { buildDashboard } from '../../health/dashboard.js';
 import { usesHormonalBC } from '../../health/weekInsights.js';
 import { localToday } from '../hooks/useHealthData.js';
+import HomeWidgets from '../../home/HomeWidgets.jsx';
 import '../../styles/week-explained.css';
 import '../ayna-home.css';
-
-/** Health data or her log, as one fact with "Ask why", and the way to log today. */
-function HealthRow({ summary = null, connectedCount = 0, onAsk, onLog, onConnect, art = null }) {
-  return (
-    <section className="ay-homehealth" aria-labelledby="ay-homehealth-h">
-      {art}
-      <div className="ay-homehealth__text">
-        <h2 id="ay-homehealth-h">{summary ? summary.title : 'Your log'}</h2>
-        <p>{summary?.headline || (connectedCount ? 'Your health data is still coming in.' : 'Log how you feel today; it shapes tomorrow.')}</p>
-      </div>
-      <div className="ay-homehealth__actions">
-        {summary?.headline && <button type="button" className="ay-today__text" onClick={() => onAsk?.({ question: 'What stands out in my health data this week?' })}>Ask why</button>}
-        <button type="button" className="ay-today__text" onClick={onLog}>Log today</button>
-        {!connectedCount && onConnect && <button type="button" className="ay-today__text" onClick={onConnect}>Connect</button>}
-      </div>
-    </section>
-  );
-}
 
 /**
  * The app's centre tab, Home (team sync, Oct 25; founder, Oct 24 22:05):
@@ -54,6 +37,7 @@ export default function AynaHomeScreen(props) {
     quizDraft = null, onResumeQuiz, onStartOverQuiz, onStartQuiz, onBrowse, lastQuizAnswers = null, quizAnswers = null, matchOpts, authUser = null,
     onOpenProduct, onEditIntakeStep, onRetake, onUpdateIntake, savedProducts = {}, onToggleSaved, onOpenWhyMatch, articles = [], onOpenArticle,
     rundownCommunity = [], onOpenCommunityPost, onRundownFinish, healthInsightRows = [], healthSummary = null, healthConnectedCount = 0, onOpenHealthData, onConnectHealth,
+    omittedProducts = {}, onOpenSaved, onOpenCommunitySeed, recentAsks = [], readProgress = {},
   } = props;
   const [asking, setAsking] = useState(false);
   const goHome = () => onHomeView?.('home');
@@ -130,13 +114,29 @@ export default function AynaHomeScreen(props) {
           moreHeading={false}
         />
         </div>
-        <HealthRow art={<HomeHealthArt look={look} sleepPoints={sleepPoints} products={[...myProducts, ...suggestedEcosystemProducts]} />} summary={healthSummary} connectedCount={healthConnectedCount} onAsk={ask} onLog={() => openDashboard(true)} onConnect={authUser ? onOpenHealthData || onConnectHealth : onConnectHealth} />
-        <nav className="ay-homelinks" aria-label="More on Home">
-          <button type="button" onClick={() => openDashboard()}><span><b>My dashboard</b><small>Routine, log and health data</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
-          <button type="button" onClick={() => onHomeView?.('products')}><span><b>Your matches</b><small>{hasProducts ? `${myProducts.length} in your ecosystem` : 'Products that fit you'}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
-        </nav>
-        {/* Customize Home widgets go here (built separately); empty until then, it takes no space. */}
-        <div className="ay-home-widgets" data-slot="home-widgets" />
+        {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
+        <HomeWidgets
+          surface="app"
+          userId={authUser?.id || null}
+          data={{
+            healthRows: healthInsightRows || [], healthSummary, healthConnectedCount, hormonalBC: usesHormonalBC(quizAnswers), quizAnswers,
+            saved: Object.values(savedProducts || {}), myProducts,
+            routineSource: { userId: authUser?.id || null, quizAnswers, matchOpts, products: myProducts, saved: savedProducts, omitted: omittedProducts },
+            askHistory: recentAsks, readProgress, articles, newPosts: rundownCommunity,
+          }}
+          on={{
+            ask, openLog: () => openDashboard(true), openHealth: authUser && onOpenHealthData ? onOpenHealthData : () => openDashboard(),
+            connect: authUser ? onOpenHealthData || onConnectHealth : onConnectHealth, openProduct: onOpenProduct, openSaved: onOpenSaved,
+            openEcosystem: () => onHomeView?.('products'), openRoutine: () => openDashboard(), openPost: onOpenCommunityPost,
+            openPlaylist: onOpenCommunitySeed ? (playlistId) => onOpenCommunitySeed({ playlistId }) : null,
+            openCommunity: onOpenCommunitySeed ? () => onOpenCommunitySeed({}) : null, openArticle: onOpenArticle,
+          }}
+        >
+          <nav className="ay-homelinks" aria-label="More on Home">
+            <button type="button" onClick={() => openDashboard()}><span><b>My dashboard</b><small>Routine, log and health data</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+            <button type="button" onClick={() => onHomeView?.('products')}><span><b>Your matches</b><small>{hasProducts ? `${myProducts.length} in your ecosystem` : 'Products that fit you'}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+          </nav>
+        </HomeWidgets>
       </div>
       {asking && <HomeAskSheet signedIn={Boolean(authUser?.id)} hasProfile={hasProfile} onClose={() => setAsking(false)} onAsk={(req) => ask(req.question ? req : askFromPrompt(req))} />}
     </div>
