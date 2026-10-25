@@ -11,7 +11,7 @@ import {
   PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS,
   STOP_REASONS, SUPPORT_GROUPS, UTI_FREQUENCY, buildSnapshot,
   getLifeStages, isMinorAge, normalizeSuggestion, readIntakeDraft, reconstructIntakeFromSnapshot,
-  requiredReady, asksBreastfeedingOnTiming, ttcDurationOptions, isValidUsZip, setPerimenopausePeriods, syncPerimenopausePeriods,
+  requiredReady, asksBreastfeedingOnTiming, ttcDurationOptions, resumeStepId, withSavedOption, isValidUsZip, setPerimenopausePeriods, syncPerimenopausePeriods,
 } from '../mobile/data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../mobile/data/intakeCatalog.js';
 import { WEB_FOLLOWUP_STEP_IDS } from '../mobile/data/quizDraftProgress.js';
@@ -275,6 +275,12 @@ function firstUnansweredStep(intake) {
   const id = firstUnansweredStepId(intake);
   return id === 'lifeStage' ? 'age' : id;
 }
+// A saved step id as the website shows it: follow-ups that moved under the
+// life stage, and the life stage itself, open the About you screen.
+function webResumeStep(intake, id) {
+  const next = resumeStepId(intake, id);
+  return next === 'lifeStage' ? 'age' : next;
+}
 
 // Website first run: the seven setup screens (onboardingFlow.js) with age and
 // life stage on one screen, then health data, then the reveal.
@@ -302,14 +308,14 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const [stepId, setStepId] = useState(() => {
     if (singleStep) return startAtStep;
     if (onboarding) {
-      const draftId = savedDraft?.stepId === 'lifeStage' ? 'age' : savedDraft?.stepId;
+      const draftId = savedDraft?.stepId ? webResumeStep({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId) : savedDraft?.stepId;
       return draftId && webOnboardingSteps({ ...EMPTY, ...(savedDraft?.intake || {}) }).some((s) => s.id === draftId && s.id !== 'ready') ? draftId : 'welcome';
     }
-    if (savedDraft?.stepId) return savedDraft.stepId === 'lifeStage' ? 'age' : savedDraft.stepId;
+    if (savedDraft?.stepId) return webResumeStep({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId);
     if (!initialSnapshot) return 'age';
     // "Make my matches more personal": the first optional question still open.
     const resumed = reconstructIntakeFromSnapshot(initialSnapshot);
-    if (startAtStep) return startAtStep === 'lifeStage' ? 'age' : startAtStep;
+    if (startAtStep) return webResumeStep(resumed, startAtStep);
     if (startAtOptional) { const id = firstOptionalResumeStepId(resumed); return id === 'lifeStage' ? 'age' : id; }
     return firstUnansweredStep(resumed);
   });
@@ -490,6 +496,10 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
         <p className="qz-sub-q" id="qz-stage-q">Your life stage <small>Pick every stage that fits</small></p>
         <Tiles label="Your life stage" items={lifeStageOptions} selected={lifeStages} labels={LIFE_STAGE_LABELS} onToggle={toggleLifeStage} />
         <Chips small label="Other answers" items={LIFE_STAGE_EXCLUSIVE} selected={lifeStages} onToggle={toggleLifeStage} />
+        {/* Each stage's follow-up sits right under the tiles (asked once, never again later). */}
+        {lifeStages.includes('I am trying to conceive') && <div className="qz-follow"><b>{FOLLOWUP_QUESTIONS.ttcDuration}</b><Chips small single items={withSavedOption(ttcDurationOptions(intake), intake.ttcDuration)} selected={intake.ttcDuration ? [intake.ttcDuration] : []} onToggle={(v) => set('ttcDuration', v)} /></div>}
+        {lifeStages.includes('I am pregnant') && <div className="qz-follow"><b>{FOLLOWUP_QUESTIONS.pregnancyTrimester}</b><Chips small single items={withSavedOption(PREGNANCY_TRIMESTER, intake.pregnancyTrimester)} selected={intake.pregnancyTrimester ? [intake.pregnancyTrimester] : []} onToggle={(v) => set('pregnancyTrimester', v)} /></div>}
+        {lifeStages.includes('I am postpartum') && <div className="qz-follow"><b>{FOLLOWUP_QUESTIONS.postpartumTiming}</b><Chips small single items={withSavedOption(POSTPARTUM_TIMING, intake.postpartumTiming)} selected={intake.postpartumTiming ? [intake.postpartumTiming] : []} onToggle={(v) => set('postpartumTiming', v)} /></div>}
         {lifeStages.includes('I am postpartum') && <div className="qz-follow"><b>{FOLLOWUP_QUESTIONS.breastfeedingStatus}</b><Chips small single items={BREASTFEEDING_STATUS} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} /></div>}
         {lifeStages.includes('I am in perimenopause') && <div className="qz-follow"><b>{FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}</b><Chips small single items={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => setIntake((prev) => setPerimenopausePeriods(prev, v))} /></div>}
       </>;

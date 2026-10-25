@@ -71,7 +71,9 @@ import {
   readIntakeDraft,
   reconstructIntakeFromSnapshot,
   requiredReady,
+  resumeStepId,
   ttcDurationOptions,
+  withSavedOption,
 } from '../data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../data/intakeCatalog.js';
 import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../data/onboardingFlow.js';
@@ -559,7 +561,9 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   // Opened from "Make my matches more personal" (Ecosystem): straight into the optional questions.
   const [enteredAtOptional] = useState(() => Boolean(startAtOptional && initialSnapshot && !savedDraft));
   const [intake, setIntake] = useState(() => savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot));
-  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtStep && initialSnapshot ? startAtStep : null) || (flow === 'more' ? getOnboardingSteps(reconstructIntakeFromSnapshot(initialSnapshot), { part: 'more' })[0]?.id : null) || (onboarding ? (savedDraft && getOnboardingSteps({ ...EMPTY, ...savedDraft.intake }, { part: 'core' }).some((st) => st.id === savedDraft.stepId) ? savedDraft.stepId : 'helpTopics') : null) || savedDraft?.stepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
+  // A draft or deep link on a follow-up that moved under the life stage opens the life stage.
+  const [draftStepId] = useState(() => (savedDraft?.stepId ? resumeStepId({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId) : ''));
+  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtStep && initialSnapshot ? resumeStepId(reconstructIntakeFromSnapshot(initialSnapshot), startAtStep) : null) || (flow === 'more' ? getOnboardingSteps(reconstructIntakeFromSnapshot(initialSnapshot), { part: 'more' })[0]?.id : null) || (onboarding ? (savedDraft && getOnboardingSteps({ ...EMPTY, ...savedDraft.intake }, { part: 'core' }).some((st) => st.id === draftStepId) ? draftStepId : 'helpTopics') : null) || draftStepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started (not
   // re-derived as answers change), so a step's flag clears only by actually
@@ -716,6 +720,25 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         {showMidlifeFirst && <p className="ip-hint">Midlife stages moved up. You can pick Perimenopause and Regular periods together.</p>}
         <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" labels={LIFE_STAGE_LABELS} glyphs={LIFE_STAGE_GLYPHS} searchable={false} />
         <div className="ip-gap"><ChipList items={LIFE_STAGE_EXCLUSIVE} selected={selectedLifeStages} onToggle={toggleLifeStage} muted={LIFE_STAGE_EXCLUSIVE} compact /></div>
+        {/* Each stage's follow-up sits right under the tiles (asked once, never again later). */}
+        {selectedLifeStages.includes('I am trying to conceive') && (
+          <div className="ip-followup">
+            <strong>{FOLLOWUP_QUESTIONS.ttcDuration}</strong>
+            <ChipList items={withSavedOption(ttcDurationOptions(intake), intake.ttcDuration)} selected={intake.ttcDuration ? [intake.ttcDuration] : []} onToggle={(v) => set('ttcDuration', v)} compact />
+          </div>
+        )}
+        {selectedLifeStages.includes('I am pregnant') && (
+          <div className="ip-followup">
+            <strong>{FOLLOWUP_QUESTIONS.pregnancyTrimester}</strong>
+            <ChipList items={withSavedOption(PREGNANCY_TRIMESTER, intake.pregnancyTrimester)} selected={intake.pregnancyTrimester ? [intake.pregnancyTrimester] : []} onToggle={(v) => set('pregnancyTrimester', v)} compact />
+          </div>
+        )}
+        {selectedLifeStages.includes('I am postpartum') && (
+          <div className="ip-followup">
+            <strong>{FOLLOWUP_QUESTIONS.postpartumTiming}</strong>
+            <ChipList items={withSavedOption(POSTPARTUM_TIMING, intake.postpartumTiming)} selected={intake.postpartumTiming ? [intake.postpartumTiming] : []} onToggle={(v) => set('postpartumTiming', v)} compact />
+          </div>
+        )}
         {selectedLifeStages.includes('I am postpartum') && (
           <div className="ip-followup">
             <strong>{FOLLOWUP_QUESTIONS.breastfeedingStatus}</strong>
@@ -725,7 +748,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         {selectedLifeStages.includes('I am in perimenopause') && (
           <div className="ip-followup">
             <strong>{FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}</strong>
-            <ChipList items={intake.perimenopauseLastPeriod && !PERIMENOPAUSE_LAST_PERIOD.includes(intake.perimenopauseLastPeriod) ? [...PERIMENOPAUSE_LAST_PERIOD, intake.perimenopauseLastPeriod] : PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => setIntake((prev) => setPerimenopausePeriods(prev, v))} compact />
+            <ChipList items={withSavedOption(PERIMENOPAUSE_LAST_PERIOD, intake.perimenopauseLastPeriod)} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => setIntake((prev) => setPerimenopausePeriods(prev, v))} compact />
           </div>
         )}
       </>

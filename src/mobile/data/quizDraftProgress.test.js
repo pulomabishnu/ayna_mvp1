@@ -39,6 +39,13 @@ describe('draftProgress', () => {
     expect(follow.total).toBe(requiredIds(patch).length - 2);
   });
 
+  it('a draft left on a follow-up that moved under the life stage resumes on the life stage', () => {
+    const patch = { age: '31', lifeStageSelections: ['I am trying to conceive'] };
+    expect(requiredIds(patch)).not.toContain('ttcDuration');
+    expect(draftProgress(draft('ttcDuration', patch))).toMatchObject({ stepId: 'lifeStage', index: requiredIds(patch).indexOf('lifeStage') + 1, requiredDone: false });
+    expect(draftProgress(draft('postpartumTiming', { lifeStageSelections: ['I am postpartum'] }), { surface: 'web' })).toMatchObject({ stepId: 'age', index: 1 });
+  });
+
   it('marks the required part done at the checkpoint or in the optional part', () => {
     expect(draftProgress(draft(CHECKPOINT_STEP))).toMatchObject({ requiredDone: true, fraction: 1 });
     expect(draftProgress(draft('zip'))).toMatchObject({ requiredDone: true, stepId: 'zip' });

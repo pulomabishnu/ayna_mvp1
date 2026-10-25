@@ -1,4 +1,4 @@
-import { CHECKPOINT_STEP, EMPTY, INTAKE_DRAFT_KEY, readIntakeDraft, splitIntakeSteps } from './intakeModel.js';
+import { CHECKPOINT_STEP, EMPTY, INTAKE_DRAFT_KEY, readIntakeDraft, resumeStepId, splitIntakeSteps } from './intakeModel.js';
 
 // Follow-ups (flow, pain, timing...) keep their parent's number on the
 // website quiz, and age + life stage share one screen there.
@@ -22,7 +22,8 @@ export function draftProgress(draft, { surface = 'app' } = {}) {
   const web = surface === 'web';
   const counted = web ? required.filter((s) => s.id !== 'lifeStage' && !WEB_FOLLOWUP_STEP_IDS.has(s.id)) : required;
   const total = counted.length;
-  const { stepId } = draft;
+  // A draft saved on a follow-up that now sits under the life stage resumes there.
+  const stepId = resumeStepId(intake, draft.stepId);
   if (stepId === CHECKPOINT_STEP || optional.some((s) => s.id === stepId)) {
     return { stepId, requiredDone: true, index: total, total, fraction: 1 };
   }
