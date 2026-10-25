@@ -273,3 +273,17 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list small { display: none; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy .wy-row .ay-group__note { display: none; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec[aria-labelledby='wx-topics-h'] .wx-note { display: none; }
+/* Cut pass 2 (Oct 25, p6): lines that restate their title or button, on Today
+   (both states) and Ask. Lines that carry a number, reason or date stay. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__new { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__week small { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item:is(.is-check_in, .is-follow_up, .is-insight) .ay-today__why { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-wh-day__mod .ay-tread__teaser { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-wh-connect > p { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-hh-tile.is-paper .ay-hh-tile-sub { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-hh-fold > summary small { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-hh-effects > p { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .ay-askh-hello p { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .ay-askh-note { display: none; }
+/* Categories: the example searches, six at most (fewer, larger elements) */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec[aria-labelledby='wx-phrases-h'] .wx-topics > :nth-child(n+7) { display: none; }
