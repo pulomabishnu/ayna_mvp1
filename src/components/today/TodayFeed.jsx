@@ -236,7 +236,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         onSeeData={(d) => { try { window.dispatchEvent(new CustomEvent('ayna:health-tab', { detail: { tab: d?.tab } })); } catch { /* old browser */ } }}
       />
       {compact && (items.length > 0
-        ? <ul className="ay-today__list is-compact">
+        ? <ul className="ay-today__list is-compact" data-tour="today-things">
           {/* Safety and care always show; the rest stop at three things. */}
           {items.filter((it, i) => PROTECTED.has(it.tier) || i < 3).map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={onOpenFull} />)}
         </ul>

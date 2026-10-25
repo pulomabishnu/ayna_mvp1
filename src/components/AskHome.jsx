@@ -57,7 +57,7 @@ export default function AskHome({ name = '', intro = '', note = '', tiles = [], 
         <h2>{name ? `Hello, ${name}` : 'Hello'}</h2>
         {intro && <p>{intro}</p>}
       </div>
-      <ul className="ay-askh-list" aria-label="Questions to start with">
+      <ul className="ay-askh-list" data-tour="ask-starters" aria-label="Questions to start with">
         {tiles.map((t, i) => (
           <li key={t.label} className={`is-${t.tone || 'group'}`} style={{ '--i': i }}>
             <button type="button" onClick={() => { haptic('selection'); onPick(t.question); }}>

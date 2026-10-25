@@ -11,7 +11,7 @@ export default function AskBasedOn({ quizResults }) {
   const list = [...new Set(needs)].slice(0, 5);
   if (!list.length) return null;
   return (
-    <div className="wx-ask__based">
+    <div className="wx-ask__based" data-tour="ask-based">
       <p className="wx-ask__basedh">Your goals ayna keeps in mind</p>
       <ul>{list.map((n) => <li key={n}>{n.charAt(0).toUpperCase() + n.slice(1)}</li>)}</ul>
     </div>

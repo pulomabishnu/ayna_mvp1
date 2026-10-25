@@ -155,9 +155,9 @@ export default function WebExplore({
     </>;
   }
 
-  return <div className="wx">
+  return <div className="wx" data-tour="explore">
     <ExploreHeader active={section} stickers={forYou} onGo={(key) => { setQuery(''); onSection?.(key, ''); }}>
-      <form className="wx-search" role="search" onSubmit={(e) => { e.preventDefault(); if (q.length >= 2) commit(q); }}
+      <form className="wx-search" data-tour="explore-search" role="search" onSubmit={(e) => { e.preventDefault(); if (q.length >= 2) commit(q); }}
         onFocus={() => setFocused(true)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false); }}>
         <label>
           <span className="ay-sr">Search Explore</span>
