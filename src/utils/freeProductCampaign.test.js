@@ -141,3 +141,17 @@ describe('vintedIdsFromText', () => {
     expect(vintedIdsFromText('150ml 30')).toEqual([]);
   });
 });
+
+describe('return to /free-product after the quiz', () => {
+  const mem = () => { const m = {}; return { getItem: (k) => m[k] ?? null, setItem: (k, v) => { m[k] = String(v); }, removeItem: (k) => { delete m[k]; } }; };
+  it('comes back once, and only within 2 hours', async () => {
+    const { markReturnToFreeProduct, takeReturnToFreeProduct } = await import('./freeProductCampaign.js');
+    const s = mem();
+    expect(takeReturnToFreeProduct(s)).toBe(false);
+    markReturnToFreeProduct(s);
+    expect(takeReturnToFreeProduct(s)).toBe(true);
+    expect(takeReturnToFreeProduct(s)).toBe(false);
+    markReturnToFreeProduct(s);
+    expect(takeReturnToFreeProduct(s, Date.now() + 3 * 60 * 60 * 1000)).toBe(false);
+  });
+});

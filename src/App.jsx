@@ -119,6 +119,7 @@ import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
 import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
+import { markReturnToFreeProduct, takeReturnToFreeProduct } from './utils/freeProductCampaign';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
@@ -2251,7 +2252,7 @@ function App() {
           <WebWrapped
             products={Object.values(myProducts || {})}
             quizResults={quizResults}
-            onClose={() => setShowWrapped(false)}
+            onClose={() => { setShowWrapped(false); if (user && takeReturnToFreeProduct()) setCurrentView('free-product'); }}
             onBack={handleWrappedBackToQuiz}
             onBrowse={() => { setShowWrapped(false); handleViewDiscovery(''); }}
           />
@@ -2368,7 +2369,8 @@ function App() {
             onNavigate={(view) => setCurrentView(view)}
             // Back to this page after signing in (Google, Apple or email), not to My Ecosystem.
             onSignIn={() => { setPendingAction('free-product'); pendingActionRef.current = 'free-product'; setShowAuthModal(true); }}
-            onStartQuiz={handleStartQuiz}
+            // New here: quiz, save matches (makes the account), see them, then back to this page.
+            onStartQuiz={() => { markReturnToFreeProduct(); handleStartQuiz(); }}
           />
         )}
         {currentView === 'admin-campaign' && (

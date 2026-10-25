@@ -16,3 +16,12 @@ describe('free product sign-in returns to the campaign', () => {
     expect(app).toMatch(/if \(pendingAction\) sessionStorage\.setItem\('ayna_pending_auth_action', pendingAction\)/);
   });
 });
+
+describe('new people who take the quiz from /free-product', () => {
+  it('the quiz button remembers to come back', () => {
+    expect(app).toMatch(/onStartQuiz=\{\(\) => \{ markReturnToFreeProduct\(\); handleStartQuiz\(\); \}\}/);
+  });
+  it('closing their matches (after saving) opens the free product page', () => {
+    expect(app).toMatch(/onClose=\{\(\) => \{ setShowWrapped\(false\); if \(user && takeReturnToFreeProduct\(\)\) setCurrentView\('free-product'\); \}\}/);
+  });
+});
