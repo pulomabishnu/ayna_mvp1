@@ -72,6 +72,10 @@
 .ay-tour__tip.is-below::before { top: -7.5px; border-right: 0; border-bottom: 0; }
 .ay-tour__tip.is-above::before { bottom: -7.5px; border-left: 0; border-top: 0; }
 .ay-tour__tip.is-pin-top::before, .ay-tour__tip.is-pin-bottom::before { display: none; }
+/* Website desktop: beside the anchor, the pointer on the near edge. */
+.ay-tour__tip.is-right::before, .ay-tour__tip.is-left::before { left: auto; top: calc(var(--ay-tour-arrow-y, 40px) - 7px); }
+.ay-tour__tip.is-right::before { left: -7.5px; border-top: 0; border-right: 0; }
+.ay-tour__tip.is-left::before { right: -7.5px; border-bottom: 0; border-left: 0; }
 
 .ay-tour__dots { display: flex; gap: 5px; margin: 0 0 8px; }
 .ay-tour__dots i { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--t-line); }

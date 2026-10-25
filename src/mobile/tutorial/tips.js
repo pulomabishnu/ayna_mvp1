@@ -55,6 +55,7 @@ export const SCREENS = [
     id: 'home',
     root: '[data-tour="home"]',
     rundown: true,
+    welcome: true,
     tips: [
       { id: 'home-ask', anchor: '[data-tour="home-ask"]', text: 'Ask about your health, a product or your day.' },
       { id: 'home-rundown', anchor: '[data-tour="rundown-card"]', text: 'Your Daily Rundown opens each morning, 60 seconds long.' },
@@ -87,7 +88,71 @@ export const SCREENS = [
   },
 ];
 
-export const screenById = (id) => SCREENS.find((s) => s.id === id) || null;
+/**
+ * The website's screens (src/App.jsx main tabs and the product page). Same
+ * rules and the same seen-state as the app: one store, one key
+ * (ayna_tour_v1), so a screen id both have (explore, product-page,
+ * community, you) counts once for her on either. Today is the web's Home:
+ * the welcome is offered there, under the same Daily Rundown rules.
+ */
+export const WEB_SCREENS = [
+  {
+    id: 'product-page',
+    root: '[data-tour="pdp"]',
+    tips: [
+      { id: 'pdp-why', anchor: '[data-tour="pdp"] [data-tour="pdp-why"]', text: 'Tap your match to see why it fits you.' },
+      { id: 'pdp-fit', anchor: '[data-tour="pdp"] [data-tour="pdp-fit"]', text: 'Your match, with the reasons it fits you.' },
+      { id: 'pdp-tabs', anchor: '[data-tour="pdp"] [data-tour="evidence-tabs"]', text: 'Summary, clinical opinion, research and reviews each have a tab.' },
+      { id: 'pdp-buy', anchor: '[data-tour="pdp"] [data-tour="pdp-actions"]', text: 'Buy it, or save it for later.' },
+    ],
+  },
+  {
+    id: 'today',
+    root: '[data-tour="today"]',
+    rundown: true,
+    welcome: true,
+    tips: [
+      { id: 'today-rundown', anchor: '[data-tour="today"] [data-tour="rundown-card"]', text: 'Your Daily Rundown is new each morning, 60 seconds long.' },
+      { id: 'today-things', anchor: '[data-tour="today"] [data-tour="today-things"]', text: 'A few things for today, picked from your answers.' },
+    ],
+  },
+  {
+    id: 'ask',
+    root: '[data-tour="ask"]',
+    tips: [
+      { id: 'ask-starters', anchor: '[data-tour="ask"] [data-tour="ask-starters"]', text: 'Tap a question to ask it right away.' },
+      { id: 'ask-based', anchor: '[data-tour="ask"] [data-tour="ask-based"]', text: 'Answers keep these goals of yours in mind.' },
+    ],
+  },
+  {
+    id: 'explore',
+    root: '[data-tour="explore"]',
+    tips: [
+      { id: 'explore-search', anchor: '[data-tour="explore"] [data-tour="explore-search"]', text: 'Search products, symptoms, topics and services in one place.' },
+      { id: 'explore-sections', anchor: '[data-tour="explore"] [aria-label="Explore sections"]', text: 'Switch between picks for you, categories, products, services and reads.' },
+    ],
+  },
+  {
+    id: 'community',
+    root: '[data-tour="community"]',
+    tips: [
+      { id: 'community-tabs', anchor: '[data-tour="community"] [data-tour="community-tabs"]', text: 'Questions, reviews and playlists from members, one tab each.' },
+      { id: 'community-compose', anchor: '[data-tour="community"] [data-tour="community-compose"]', text: 'Ask a question or review a product, even anonymously.' },
+    ],
+  },
+  {
+    id: 'you',
+    root: '[data-tour="you"]',
+    tips: [
+      { id: 'you-know', anchor: '[data-tour="you"] [data-tour="you-know"]', text: 'See or change anything ayna uses to match you.' },
+      { id: 'you-sections', anchor: '[data-tour="you"] [data-tour="you-sections"]', text: 'Your ecosystem, saved products and health live here.' },
+      { id: 'you-settings', anchor: '[aria-label="You sections"] a[href="/you/settings"]', text: 'Turn tips off or replay them in Settings and privacy.' },
+    ],
+  },
+];
+
+export const screensFor = (surface = 'app') => (surface === 'web' ? WEB_SCREENS : SCREENS);
+export const screenById = (id, surface = 'app') => screensFor(surface).find((s) => s.id === id) || null;
 
 /**
  * Safety and care items and the Ask inputs: a tip bubble never covers them
@@ -98,6 +163,13 @@ export const AVOID = [
   '[data-tour-avoid]', '[role="alert"]',
   '.ay-asksheet__form', '.ay-ask-input',
 ];
+/** The website adds its own: the product page's safety hold and cautions, and the Ask composer. */
+export const WEB_AVOID = [
+  ...AVOID,
+  '.ay-hold', '.ay-buy__warn', '.ayq-alert',
+  '.ayna-ask-panel__composer',
+];
+export const avoidFor = (surface = 'app') => (surface === 'web' ? WEB_AVOID : AVOID);
 
 /**
  * Has the Daily Rundown had its chance to open? (rundownStore memory +
@@ -120,7 +192,7 @@ export function tourDecision({ screen, prefs, today, onboarding = false, rundown
   if (!screen || !prefs || onboarding || rundownOpen || foreignDialog) return { kind: 'none' };
   if (screen.rundown && !settled) return { kind: 'none' };
   if (prefs.enabled === null) {
-    if (screen.id !== 'home' || prefs.welcomeDay === today) return { kind: 'none' };
+    if (!screen.welcome || prefs.welcomeDay === today) return { kind: 'none' };
     return { kind: 'welcome' };
   }
   if (prefs.enabled === false || prefs.seen[screen.id]) return { kind: 'none' };
