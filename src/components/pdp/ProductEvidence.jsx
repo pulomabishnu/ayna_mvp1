@@ -729,7 +729,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     { label: 'Price note', value: dt.priceNote },
     { label: 'Sold at', value: dt.whereToBuy.join(', ') },
     { label: 'In stock at', value: dt.inStock.join(', ') },
-  ].filter((r, i, arr) => r && r.value && arr.findIndex((x) => x && x.label === r.label) === i);
+  ].filter((r, i, arr) => r && r.value && arr.findIndex((x) => x && x.label === r.label) === i)
+    // Two rows that say the same thing ("Where to buy" and "Sold at", "Works with" and "Available on"): keep the first.
+    .filter((r, i, arr) => arr.findIndex((x) => String(x.value).toLowerCase() === String(r.value).toLowerCase()) === i);
 
   // ---- Ingredients: 5 then Show all -------------------------------------------
   const chips = dt.ingredientsText ? ingredientChips(dt.ingredientsText) : null;

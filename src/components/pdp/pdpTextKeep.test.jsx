@@ -56,6 +56,7 @@ const RENAMED_LABELS = [
   'All safety info', // the hero's safety line now says "Safety"
   'See the literature', // now "See the research"
   'What it is', 'Helps with:', 'At a glance', 'Before you use it', 'Ingredients and dose', 'What’s in it', 'What’s included', 'Size and price',
+  'Sold by', 'Sold at', 'In stock at', 'Available on', // a Key facts row with the same value as an earlier row is shown once
   'What’s included and details', 'Works with:', 'Check with a clinician first', 'Possible side effects', 'Also worth knowing', 'Downsides to know', 'Label and regulatory facts', 'Labels on file', 'Privacy',
 ];
 const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r === c : r.test(c)));

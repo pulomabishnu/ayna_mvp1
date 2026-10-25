@@ -194,3 +194,8 @@
   :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-meter__bars > i.is-on::after { animation: none !important; }
   #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-st__tab { transition: none !important; }
 }
+
+/* Show all: rows waiting behind "Show all N" stay hidden (beats the row display rules above) */
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) ul > li[hidden], :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) ol > li[hidden], :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) div[hidden] { display: none !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-intro { padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .pdp-tag { color: #3e2723 !important; }
