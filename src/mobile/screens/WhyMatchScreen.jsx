@@ -63,7 +63,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
               ? <div className="ayna-match-ring" aria-hidden="true" style={{ '--match-angle': `${percent * 3.6}deg` }}><span>{percent}<small>%</small></span></div>
               : <div className="ayna-match-ring is-partial" aria-hidden="true" style={{ '--match-angle': '0deg' }}><span><small>{PARTIAL_FIT}</small></span></div>}
             <div>
-              <span className="ay-match-tier">{tierWord(tier, percent)}</span>
+              {tierWord(tier, percent) && <span className="ay-match-tier">{tierWord(tier, percent)}</span>}
               <h2>{needHeadline(percent, best?.phrase)}</h2>
               {whyLine(product, details, { max: 2 }) && <p className="ay-match-why">{whyLine(product, details, { max: 2 })}</p>}
               <p className="ay-match-based">{BASED_ON_LINE}</p>
@@ -129,8 +129,8 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
           <section className="ayna-match-section ayna-match-cautions"><h2>Before you choose</h2>{why.considerations.map((note, index) => <div key={index}><p>{tidy(note.text)}</p>{note.cta && onViewDetails && <button type="button" onClick={onViewDetails}>{note.cta}</button>}</div>)}</section>
         )}
         {(notes.length > 0 || unknowns.length > 0) && (
-          <section className="ayna-match-section"><h2>What we could not confirm</h2>
-            {notes.length > 0 && <ul className="ay-match-notes" aria-label="What lowers our confidence">{notes.map((n) => <li key={n}>{n}</li>)}</ul>}
+          <section className="ayna-match-section"><h2>{notes.length ? 'Worth checking' : 'What we could not confirm'}</h2>
+            {notes.length > 0 && <ul className="ay-match-notes" aria-label="Worth checking">{notes.map((n) => <li key={n}>{n}</li>)}</ul>}
             {unknowns.map((note) => <p key={note}>{tidy(note)}</p>)}
           </section>
         )}

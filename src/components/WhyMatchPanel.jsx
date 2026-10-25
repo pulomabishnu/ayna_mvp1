@@ -45,7 +45,7 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
           ? <div className="ay-why-ring" style={{ '--a': `${percent * 3.6}deg` }}><span>{percent}<small>%</small></span></div>
           : <div className="ay-why-ring is-partial" style={{ '--a': '0deg' }}><span><small>{PARTIAL_FIT}</small></span></div>}
         <div>
-          <span className="ay-why-tier">{tierWord(tier, percent)}</span>
+          {tierWord(tier, percent) && <span className="ay-why-tier">{tierWord(tier, percent)}</span>}
           <strong>{needHeadline(percent, best?.phrase)}</strong>
           {whyLine(product, details, { max: 2 }) && <p className="ay-why-line">{whyLine(product, details, { max: 2 })}</p>}
           <p className="ay-why-based">{BASED_ON_LINE}</p>
