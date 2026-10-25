@@ -9,6 +9,28 @@ export function topDialog() {
   const all = [...document.querySelectorAll('[aria-modal="true"]')].filter((el) => !inLayer(el) && el.getAttribute('aria-hidden') !== 'true');
   return all[all.length - 1] || null;
 }
+/**
+ * Is any of this element actually on top (not under a pushed screen or a
+ * sheet)? Hit-tests a few points inside its visible part. No layout engine
+ * (tests): treat it as on top.
+ */
+export function onTop(el, vw = window.innerWidth, vh = window.innerHeight) {
+  if (typeof document.elementFromPoint !== 'function') return true;
+  const r = el.getBoundingClientRect();
+  const left = Math.max(r.left, 0); const right = Math.min(r.right, vw);
+  const top = Math.max(r.top, 0); const bottom = Math.min(r.bottom, vh);
+  if (right - left < 2 || bottom - top < 2) return false;
+  const xs = [left + (right - left) / 2, left + (right - left) * 0.2];
+  const ys = [top + (bottom - top) / 2, top + Math.min(24, (bottom - top) / 2)];
+  let tested = false;
+  for (const x of xs) for (const y of ys) {
+    const hit = document.elementFromPoint(x, y);
+    if (!hit || inLayer(hit)) continue;
+    tested = true;
+    if (el === hit || el.contains(hit)) return true;
+  }
+  return !tested;
+}
 const hiddenUp = (el) => Boolean(el.closest('[hidden], [inert], [aria-hidden="true"]'));
 const avoids = (el) => AVOID.some((sel) => { try { return el.matches(sel) || Boolean(el.closest(sel)); } catch { return false; } });
 
@@ -21,14 +43,14 @@ export function usableAnchor(selector, { dialog = topDialog(), vh = window.inner
   const r = el.getBoundingClientRect();
   if (r.width < 4 || r.height < 4) return null;
   if (r.top < 0 || r.bottom > vh - 4 || r.left < -2 || r.right > vw + 2) return null;
-  return el;
+  return onTop(el, vw, vh) ? el : null;
 }
 
 /** The registered screen she's looking at (the topmost one when a sheet is open). */
 export function currentScreen(dialog) {
   for (const s of SCREENS) {
     const roots = [...document.querySelectorAll(s.root)].filter((n) => !inLayer(n) && !hiddenUp(n));
-    const root = roots.find((n) => (dialog ? dialog.contains(n) || n.contains(dialog) : true) && n.getClientRects().length > 0);
+    const root = roots.find((n) => (dialog ? dialog.contains(n) || n.contains(dialog) : true) && n.getClientRects().length > 0 && onTop(n));
     if (root) return s;
   }
   return null;

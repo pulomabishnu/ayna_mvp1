@@ -16,7 +16,7 @@ export const SCREENS = [
     id: 'product-page',
     root: '[data-tour="pdp"]',
     tips: [
-      { id: 'pdp-why', anchor: '[data-tour="pdp-why"]', title: 'Your match', body: 'How well this fits you. Tap See why for what in your profile it comes from.' },
+      { id: 'pdp-why', anchor: '[data-tour="pdp-why"]', title: 'Your match', body: 'How well this fits you and why. Tap it for the details.' },
       { id: 'pdp-tabs', anchor: '[data-tour="pdp"] [data-tour="evidence-tabs"]', title: 'The full picture', body: 'ayna summary, clinical opinion, scientific literature and reviews, one tab each.' },
       { id: 'pdp-buy', anchor: '[data-tour="pdp-actions"]', title: 'Buy or add it', body: 'Buy opens the seller’s site. Add to my routine puts it in your ecosystem.' },
     ],
