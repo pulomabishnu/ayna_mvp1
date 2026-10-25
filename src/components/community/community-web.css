@@ -2,23 +2,15 @@
    Community, website (WebCommunity.jsx, cm-*). Moved out of content.css
    on Oct 21 so Community owns its styles.
 
-   Idea: a noticeboard in the bathroom cabinet. Feeds are folder tabs
-   (Bordeaux deck), posts are paper notes on butter with a matte grain,
-   reviews carry a strip of washi tape and questions a sky index ear
-   (Digital Wave course site), photos sit in polaroids, and one real member
-   quote gets a pink highlighter (Spicy Margarita). Interactions borrowed
-   from real feeds: Strava's instant kudos fill + faces row, Threads/X's
-   character ring, Reddit's sticky left rail, Peanut's anonymous posting.
-   Motion uses one easing token; nothing loops except loading skeletons.
-
-   Rollout (Oct 24), matching the approved homepage and Library card
-   language, rule numbers from INSPO_BOARD "SPACING + LAYOUT":
-   - the sky header band with a scalloped edge and a huge tight title (1, 4)
-   - notes are 1.5px espresso outlined cards with the hard offset shadow;
-     kind labels and module titles are folder tabs ON the card edge (8, 9)
-   - 12px between cards in the feed, 8px between prompt tiles (2)
-   - chip rows are one scrolling line with a fade, the chosen chip pink (6)
-   - side modules: title tab left, "See all" right on the same line (7)
+   Oct 25: in the design system (data as graphics + a light sticker; no
+   folder tabs, washi, ears or polaroids). Feeds are pills, kind labels
+   are pills inside the card, posts are outlined notes with the hard offset
+   shadow, product mentions use the founder's product card, one member
+   quote gets the pink highlighter. Interactions borrowed from real feeds:
+   Strava's instant kudos fill + faces row, Threads/X's character ring,
+   Reddit's sticky left rail, Peanut's anonymous posting. Motion uses one
+   easing token; nothing loops except loading skeletons. See the system
+   pass block at the end of this file.
    Likes and who-liked stay visible; views stay private to the author.
    ===================================================================== */
 .app-container {
@@ -563,3 +555,53 @@ html.ay-motion-paused body .app-container :is(.cm-note, .cm-prompt, .cm-skel-pos
 
 /* Never more than 64px of empty butter between the last card and the footer (rule 1). */
 .app-container.app-container:has(.cm) footer.ay-foot { margin-top: var(--ay-s48, 48px); }
+
+/* =====================================================================
+   Oct 25 system pass (DESIGN_SYSTEM_OCT25 section 6): no folder tabs,
+   index dividers, ears or polaroids. Feeds are pills; kind labels and
+   module titles are small pills INSIDE their card; photos are plain
+   rounded images; the band title is a moderate H1 (44 / 30). Post content
+   is untouched.
+   ===================================================================== */
+html body .app-container.app-container.app-container.app-container.app-container {
+  .cm-head.ay-pagehead h1.ay-h1:not(#cm-id) { max-width: 16ch; font: 700 var(--ay-type-h1)/1.02 var(--ay-heading) !important; letter-spacing: -.02em !important; }
+  .cm-head__title .ct-lede { font-size: 17px !important; font-weight: 500 !important; }
+
+  /* feeds: pills, the open one filled pink; no pulled-out dividers */
+  .cm-folder { border-radius: 999px; transform: none !important; box-shadow: none; }
+  .cm-folder:hover { background: var(--ay-hover); }
+  .cm-folder[aria-selected='true'] { background: #f7badd; border-color: #f7badd; box-shadow: none; }
+
+  /* kind label (question / review / pinned / said in Community): a pill inside the card, not a tab on its edge */
+  .cm-note:is(.is-question, .is-review) { margin-top: 0; }
+  .cm-note:is(.is-question, .is-review):not(.is-full) { border-top-left-radius: 20px; }
+  :is(.cm-ear, .cm-quote__label, .cm-pinned-ann__label) { position: static; transform: none; justify-self: start; height: 26px; padding: 0 12px; border: 0 !important; border-radius: 999px; font: 600 13px/1 var(--ay-sans-stack); }
+  .cm-ear { margin: 2px 0 -4px; }
+  .cm-quote, .cm-pinned-ann { margin-top: 0; border-radius: 20px !important; }
+  .cm-quote.is-inline { margin-top: 0; }
+
+  /* side modules: a plain title over a rounded group, "See all" on the same line */
+  .cm-mod__head { align-items: baseline; margin: 0 0 10px; }
+  .cm-mod__head h2.cm-mod__tab { height: auto; margin: 0; padding: 0; border: 0; border-radius: 0; background: none; color: var(--ay-text) !important; font: 700 20px/1.2 var(--ay-heading) !important; letter-spacing: -.01em !important; }
+  .cm-mod__list { border-radius: 20px !important; }
+
+  /* photos: plain rounded images, no white frame, no tilt */
+  .cm-polaroid { padding: 0; border: 0; border-radius: 16px; background: none; transform: none; overflow: hidden; }
+  button.cm-polaroid:hover { transform: translateY(-2px); }
+  .cm-polaroid img { border: 0; border-radius: 16px !important; }
+
+  /* product mentions: the founder's product card (row) sits in the post with no extra frame */
+  .cm-note .cm-mention-card { margin: 2px 0 6px; }
+  .cm-pl-row .cm-mention-card { flex: 1 1 260px; }
+}
+@media (max-width: 1199px) {
+  html body .app-container.app-container.app-container.app-container.app-container {
+    .cm-folders { gap: 8px; padding: 2px 2px 6px; margin: 0; border-bottom: 0; }
+    .cm-folder { min-height: 44px; margin: 0; border-radius: 999px; }
+    .cm-folder[aria-selected='true'] { min-height: 44px; margin-top: 0; padding-top: 0; }
+  }
+}
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container.app-container.app-container .cm-head.ay-pagehead h1.ay-h1:not(#cm-id) { font-size: var(--ay-type-h1) !important; }
+}
+html body .app-container.app-container.app-container.app-container.app-container:is([data-theme='brand-dark'], [data-theme='dark']) .cm-folder[aria-selected='true'] { border-color: #f7badd !important; color: #3e2723 !important; }

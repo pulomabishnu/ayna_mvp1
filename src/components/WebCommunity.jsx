@@ -922,8 +922,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {full ? <p className="cm-body">{post.body}</p> : <button type="button" className={`cm-body${long ? ' is-clamped' : ''}`} onClick={() => openPost(post)}>{post.body}</button>}
       {long && <button type="button" className="cm-readmore" onClick={() => openPost(post)}>Read the rest</button>}
       {media.length > 0 && <div className={`cm-photos n-${Math.min(media.length, 4)}`}>{media.slice(0, 4).map((m, k) => (full
-        ? <span key={m.path} className="cm-polaroid" style={{ '--tilt': `${k % 2 ? 1.2 : -1.2}deg` }}><img src={publicMediaUrl(m.path)} alt="" loading="lazy" /></span>
-        : <button type="button" key={m.path} className="cm-polaroid" style={{ '--tilt': `${k % 2 ? 1.2 : -1.2}deg` }} onClick={() => openPost(post)} aria-label={`Open ${name}'s post, photo ${k + 1}`}><img src={publicMediaUrl(m.path)} alt="" loading="lazy" /></button>))}</div>}
+        ? <span key={m.path} className="cm-polaroid"><img src={publicMediaUrl(m.path)} alt="" loading="lazy" /></span>
+        : <button type="button" key={m.path} className="cm-polaroid" onClick={() => openPost(post)} aria-label={`Open ${name}'s post, photo ${k + 1}`}><img src={publicMediaUrl(m.path)} alt="" loading="lazy" /></button>))}</div>}
       {postProductIds(post).slice(0, 1).map((id) => <Mention key={id} productId={id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />)}
       <PostStats post={post} engagement={engagement} onOpenLikers={setLikersPost} />
       <footer className="cm-actions">
