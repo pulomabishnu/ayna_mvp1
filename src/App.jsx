@@ -2731,7 +2731,8 @@ function App() {
         {currentView === 'ask' && (
           <div className="ay-container wx-askpage">
             <h1 className="ay-sr">Ask ayna</h1>
-            {user && quizResults ? (
+            {/* Signed out with quiz answers too: the guided chat, answered on this device where it can (QA M5). */}
+            {quizResults ? (
               <div className="wx-ask">
               {/* Desktop: the page title and what ayna answers from on the left, the conversation on the right (team direction 10). */}
               <aside className="wx-ask__side" aria-label="About Ask ayna">

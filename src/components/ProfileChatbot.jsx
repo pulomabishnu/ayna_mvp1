@@ -10,7 +10,8 @@ import AskFollowUps from './AskFollowUps.jsx';
 import { chipsFor, followUpRequestFields } from '../utils/askFollowUps.js';
 import { localMatchAnswer } from '../utils/askMatch.js';
 import { localHistoryAnswer } from '../utils/askHistory.js';
-import { localTodayAnswer } from '../utils/askToday.js';
+import { localTodayAnswer, localItemAnswer, getTodayAskContext } from '../utils/askToday.js';
+import { onDeviceStarters } from '../utils/askStarters.js';
 import { guidedTiles } from '../utils/askGuided.js';
 import { fetchWithTimeout, isNetworkError } from '../utils/network.js';
 import AskHome, { AskStatCard } from './AskHome.jsx';
@@ -118,6 +119,8 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     return () => window.clearTimeout(t);
   }, [sending]);
   const [sendError, setSendError] = useState('');
+  // Signed out: the last question that needs ayna's AI, named with a Sign in button.
+  const [needsAccount, setNeedsAccount] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
   const [mode, setMode] = useState('chat');
   const [speaking, setSpeaking] = useState(false);
@@ -359,16 +362,27 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       ? (await localMatchAnswer(msg, { quizAnswers: profile, healthProfile, matchOpts, focusProduct }).catch(() => null))
         || (await localHistoryAnswer(msg).catch(() => null))
         || (await localTodayAnswer(msg).catch(() => null))
+        // Signed out: "Ask why" and the Rundown questions from Today's own items (QA M5, like the app).
+        || (!session?.access_token ? await localItemAnswer(msg).catch(() => null) : null)
       : null;
     if (local) {
       setInput('');
       setSendError('');
+      setNeedsAccount('');
       setHome(false);
       const next = [...messages, { role: 'user', text: msg }, { role: 'assistant', text: local.answer, followUps: local.followUps }];
       setMessages(next);
       onChatHistoryUpdate?.(next);
       return;
     }
+    if (!session?.access_token && !user) {
+      // Signed out and this one needs ayna's AI: name it, keep it in the box (QA M5).
+      setInput(msg);
+      setSendError('');
+      setNeedsAccount(msg);
+      return;
+    }
+    setNeedsAccount('');
     setInput('');
     setSendError('');
     setHome(false);
@@ -543,7 +557,9 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                 name={firstName}
                 intro="Ask about a product, an ingredient, or what to try."
                 note={WELCOME}
-                tiles={guidedTiles({ focusProduct, hasHealthData, fallback: askTiles(hasHealthData) })}
+                tiles={session === null && !user && !focusProduct
+                  ? onDeviceStarters({ hasProfile: Boolean(profile), signals: getTodayAskContext()?.signals || {}, device: 'device' })
+                  : guidedTiles({ focusProduct, hasHealthData, fallback: askTiles(hasHealthData) })}
                 recent={recentQuestions(messages)}
                 // A starter is sent on tap (founder, Oct 24 22:17).
                 onPick={(q) => sendText(q)}
@@ -616,6 +632,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
           </div>
 
           {sendError && <p className="ayna-ask-panel__error">{sendError}</p>}
+          {needsAccount && !sendError && <p className="ayna-ask-panel__error" role="status">“{needsAccount.length > 90 ? `${needsAccount.slice(0, 88)}…` : needsAccount}” uses ayna’s AI, so it needs a free account. Your question is kept below. {onRequireAuth && <button type="button" onClick={() => onRequireAuth('Ask ayna')}>Sign in</button>}</p>}
 
           <form ref={formRef} className="ayna-ask-panel__composer" onSubmit={handleSend}>
             <div className="ayna-ask-panel__inputrow">

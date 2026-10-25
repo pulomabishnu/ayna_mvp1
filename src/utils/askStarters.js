@@ -121,13 +121,14 @@ export function askSurfaceFrom({ doc = typeof document !== 'undefined' ? documen
  * works without an account. "Explain my top match" needs her profile saved
  * here. Tiles fill the box; nothing sends on its own.
  */
-export function onDeviceStarters({ hasProfile = false, signals = {} } = {}) {
+export function onDeviceStarters({ hasProfile = false, signals = {}, device = 'phone' } = {}) {
   const s = signals || {};
+  const here = `this ${device}`;
   return [
-    t('What should I focus on today?', 'What should I focus on today?', 'week', 'pink', 'Answered on this phone'),
-    s.hasRundown && t('Explain my Daily Rundown', 'Explain my Daily Rundown', 'chat', 'sky', 'Answered on this phone'),
-    t('What changed from yesterday?', 'What changed from yesterday?', 'week', 'group', 'From your log on this phone'),
-    hasProfile && t('Explain my top match', 'Explain my top match', 'match', 'ink', 'The % and why, on this phone'),
+    t('What should I focus on today?', 'What should I focus on today?', 'week', 'pink', `Answered on ${here}`),
+    s.hasRundown && t('Explain my Daily Rundown', 'Explain my Daily Rundown', 'chat', 'sky', `Answered on ${here}`),
+    t('What changed from yesterday?', 'What changed from yesterday?', 'week', 'group', `From your log on ${here}`),
+    hasProfile && t('Explain my top match', 'Explain my top match', 'match', 'ink', `The % and why, on ${here}`),
     t('What helped last time?', 'What helped last time?', 'chat', 'group', 'From what you recorded here'),
   ].filter(Boolean);
 }
