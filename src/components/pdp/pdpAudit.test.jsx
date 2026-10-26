@@ -178,6 +178,14 @@ describe('cost per cycle: ayna\'s own maths from real price and real lifespan or
     expect(costPerUse({ price: '$0-15/visit' })).toBe(null);
     expect(costPerUse({ price: '$29', summary: 'Saves ~$150/year vs disposables.' })).toBe(null);
   });
+  it('subscriptions: a plain monthly plan or an N-month supply becomes a per-day chip; ranges and mixed plans do not', () => {
+    expect(costPerUse({ price: '$39/month' })).toMatchObject({ unit: 'day', text: '≈ $1.30 a day' });
+    expect(costPerUse({ price: '$39/month' }).math).toBe('ayna’s maths: $39 a month ÷ 30 days.');
+    expect(costPerUse({ price: '$49.99 (2-month supply)' })).toMatchObject({ unit: 'day', text: '≈ $0.83 a day' });
+    expect(costPerUse({ price: '$15–20/month' })).toBe(null);
+    expect(costPerUse({ price: '$30/month or $180/year (14-day free trial; HSA/FSA eligible)' })).toBe(null);
+    expect(costPerUse({ price: '$299 + $6/month' })).toBe(null);
+  });
 });
 
 describe('decision block contents (audit 13.1, 14)', () => {

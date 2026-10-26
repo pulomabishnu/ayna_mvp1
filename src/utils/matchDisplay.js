@@ -64,10 +64,15 @@ export function shortNeedLabel(label) {
 // fit" beside the why line. A low number reads as a grade she can't act on.
 export const PARTIAL_FIT = 'Partial fit';
 
-/** The % to print (rounded), or null when it is under 50 or not a score. */
+// Display cap (PDP build brief, "Ongoing: match scores"): no product shows more
+// than 97%. Only the printed number is capped; the engine's own percent still
+// ranks and sorts, and the "Why 97%?" explainer shows the capped points.
+export const MAX_SHOWN_PERCENT = 97;
+
+/** The % to print (rounded, at most 97), or null when it is under 50 or not a score. */
 export function shownMatchPercent(score) {
   const n = Math.round(Number(score));
-  return Number.isFinite(n) && n >= MIN_BADGE_SCORE ? n : null;
+  return Number.isFinite(n) && n >= MIN_BADGE_SCORE ? Math.min(MAX_SHOWN_PERCENT, n) : null;
 }
 
 /** "82% match", "Partial fit" for 1 to 49, '' for no score. */

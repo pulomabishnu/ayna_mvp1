@@ -1,7 +1,7 @@
 // Ask about this product (founder, Oct 24): one heading, three starters that
 // fit her, one box, and a conversation anchored to the product. Shared by the
 // app and website product pages.
-import { matchText, isSafetyHold, isBleedingEvaluation, SAFETY_HOLD, MATCH_UNAVAILABLE } from './matchDisplay.js';
+import { matchText, shownMatchPercent, isSafetyHold, isBleedingEvaluation, SAFETY_HOLD, MATCH_UNAVAILABLE } from './matchDisplay.js';
 import { whyLine } from './whyLine.js';
 
 export const PRODUCT_ASK_TITLE = 'Ask about this product';
@@ -15,7 +15,7 @@ export const PRODUCT_ASK_PLACEHOLDER = 'Ask anything about this product…';
  */
 export function productAskStarters({ hasProfile = false, percent = null, kind = '', hasIud = false, hasSizes = false } = {}) {
   const out = [];
-  if (hasProfile && Number(percent) >= 50) out.push(`Why is my match ${Math.round(percent)}%?`);
+  if (hasProfile && shownMatchPercent(percent) != null) out.push(`Why is my match ${shownMatchPercent(percent)}%?`);
   else out.push(hasProfile ? 'Why is this my match?' : 'Who is this good for?');
   if (kind && hasIud) out.push(`Is this OK with my IUD?`);
   if (kind && hasProfile) out.push('Cup or disc for my flow?');
