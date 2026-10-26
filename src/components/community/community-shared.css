@@ -147,8 +147,8 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 :is(.app-container, .ayna-mobile) .cr-ann-reply-box .cr-btn { justify-self: start; }
 :is(.app-container, .ayna-mobile) .cr-ann-reply-box .cr-ring { justify-self: end; margin-top: -4px; }
 :is(.app-container, .ayna-mobile) .cr-ann-thread > .cr-btn { justify-self: start; }
-:is(.app-container, .ayna-mobile) .cr-ann-empty { display: grid; gap: 8px; justify-items: center; padding: 48px 24px; border: 2px dashed var(--ay-ink-faint); border-radius: 20px; text-align: center; }
-:is(.app-container, .ayna-mobile) .cr-ann-empty h2 { margin: 0; color: var(--legacy-ink); font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
+:is(.app-container, .ayna-mobile) .cr-ann-empty { display: grid; gap: 8px; justify-items: center; padding: 32px 24px; border: var(--ay-rule, 1px solid rgba(62, 39, 35, .15)); border-radius: 16px; text-align: center; }
+:is(.app-container, .ayna-mobile) .cr-ann-empty h2 { margin: 0; color: var(--legacy-ink); font: 700 20px/1.15 var(--ay-font-display, var(--ay-serif)) !important; letter-spacing: -0.01em !important; }
 :is(.app-container, .ayna-mobile) .cr-ann-empty p { margin: 0; color: var(--ay-ink-soft); font: 500 var(--ay-fs-secondary)/1.45 var(--ay-sans); }
 @keyframes cr-skel { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
 :is(.app-container, .ayna-mobile) .cr-ann-skel { display: grid; gap: 16px; }
@@ -186,7 +186,7 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 
 /* Announcement formatting (Oct 16) */
 .cr-fmt { display: flex; gap: 6px; margin: 4px 0 6px; }
-.cr-fmt__btn { min-width: 36px; height: 34px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 10px; background: #fff; color: #3e2723; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
+.cr-fmt__btn { min-width: 36px; height: 34px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 10px; background: #f6e3a1; color: #3e2723; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
 .cr-fmt__btn.is-underline { text-decoration: underline; }
 .cr-fmt__btn.is-italic { font-style: italic; font-family: var(--ay-serif); font-weight: 400; }
 .cr-fmt__btn:hover { background: #f7badd; }

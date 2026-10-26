@@ -22,8 +22,8 @@ const MobileApp = React.lazy(() => import('./mobile/MobileApp.jsx'))
 import './styles/search-focus.css'
 import { installNoEmDash } from './utils/noEmDashDom.js'
 installDelight()
-// DEV only: remember ?fixture=community for this tab before the router tidies
-// the URL (src/utils/community/devFixture.js). Removed from production builds.
+// DEV and local production builds on localhost only (never real hosts, never the native app):
+// remember ?fixture=community|today for this tab before the router tidies the URL.
 if (devPreviewOn()) {
   // ?fixture=today (and today-care, today-pregnant): src/health/todayDevFixture.js.
   try { const f = new URLSearchParams(window.location.search).get('fixture'); if (/^(community|today(-care|-pregnant)?)$/.test(f || '')) sessionStorage.setItem('ayna_dev_fixture', f) } catch { /* private mode */ }

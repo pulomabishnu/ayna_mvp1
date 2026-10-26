@@ -25,8 +25,8 @@ let guestClient = null;
 
 export function getGuestClient() {
   if (guestClient) return guestClient;
-  // DEV only (?fixture=community): sample posts without Supabase. Dropped from production builds.
-  if (import.meta.env.DEV && communityFixtureOn()) { guestClient = makeCommunityFixtureClient(); return guestClient; }
+  // ?fixture=community on vite dev or a local http build only (devFixture.js): sample posts without Supabase.
+  if (communityFixtureOn()) { guestClient = makeCommunityFixtureClient(); return guestClient; }
   const url = import.meta.env.VITE_SUPABASE_URL;
   const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   if (!url || !anonKey) return null;

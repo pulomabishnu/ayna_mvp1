@@ -256,6 +256,16 @@ function Sheet({ title, onClose, children, className = '', overlay = null }) {
 
 export default function WebCommunity({ user, products = [], quizResults = null, healthProfile = null, matchOpts = undefined, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, onStartQuiz = null, seedKind = null, seedProductId = null, seedRating = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
   const supabase = user ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
+  // Phones: the search box shares its row with Post, so the long placeholder was cut off mid-word.
+  const [narrowSearch, setNarrowSearch] = useState(false);
+  useEffect(() => {
+    const mq = typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(max-width: 600px)') : null;
+    if (!mq) return undefined;
+    const on = () => setNarrowSearch(mq.matches);
+    on();
+    mq.addEventListener?.('change', on);
+    return () => mq.removeEventListener?.('change', on);
+  }, []);
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   // Relative times ("5m", "Yesterday") refresh every minute.
   const now = useNow();
@@ -1313,7 +1323,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     const firstLoad = loading && (tab === 'playlists' ? playlists.length === 0 : posts.length === 0);
     main = tab === 'announcements' ? <Announcements supabase={supabase} user={user} products={products} productsById={productsById} loadArticles={loadArticles} teamBadges={teamBadges} variant="web" onOpenProduct={onOpenProduct} onOpenPlaylist={openPlaylistById} onOpenArticle={onOpenArticle} onOpenProfile={openProfile} onRequireAuth={requireAccount} onShowRules={openRules} /> : <>
       {tab === 'playlists' ? <>
-        <div className="cm-row is-split cm-subbar"><label className="cm-plfilter"><span>Show</span><select value={playlistSection} onChange={(e) => switchSection(e.target.value)}>{[['recent', 'Everyone’s playlists'], ['friends', 'Friends’ playlists'], ['mine', 'My playlists']].map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select></label><button type="button" className="ay-btn ay-btn--primary" onClick={() => openCompose('playlist')}>Create playlist</button></div>
+        <div className="cm-row is-split cm-subbar"><div className="cm-seg cm-plswitch" role="group" aria-label="Show playlists from">{[['recent', 'Community'], ['friends', 'Friends'], ['mine', 'My playlists']].map(([k, l]) => <button type="button" key={k} aria-pressed={playlistSection === k} onClick={() => switchSection(k)}>{l}</button>)}</div><button type="button" className="ay-btn ay-btn--primary" onClick={() => openCompose('playlist')}>Create playlist</button></div>
         {firstLoad ? <SkeletonPlaylists /> : playlists.length ? <div className="cm-pl-grid">{playlists.map(playlistCard)}</div> : <div className="cm-empty"><h2>{playlistSection === 'mine' ? 'You haven’t made a playlist yet' : playlistSection === 'friends' ? 'No playlists from friends yet' : 'No playlists yet'}</h2><p>Collect your favorites in one place.</p><button type="button" className="ay-btn ay-btn--primary" onClick={() => openCompose('playlist')}>Create playlist</button></div>}
       </> : <>
         {tab === 'for-you' && pinnedAnn && <button type="button" className={`cm-pinned-ann ay-group${newAnns.some((a) => a.id === pinnedAnn.id) ? ' is-new' : ''}`} onClick={() => switchTab('announcements')}>
@@ -1381,7 +1391,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {page ? <BackLink className="cm-back" label="Community" href="/community" onClick={closePage} />
         : <div className="cm-head__title"><h1 className="ay-h1 cm-title">Community</h1><p className="ct-lede">Ask, review, share. Real talk between women, about the products we actually use.</p></div>}
       <div className="cm-head__actions">
-        <label className="ct-search cm-search"><Icon name="search" size={20} /><input ref={searchRef} value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search community" aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'} />{search ? <button type="button" className="cm-search__clear" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); searchRef.current?.focus(); }}>×</button> : <kbd className="cm-kbd" aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>}</label>
+        <label className="ct-search cm-search"><Icon name="search" size={20} /><input ref={searchRef} value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder={narrowSearch ? 'Search' : 'Search people, posts, playlists'} aria-label="Search community" aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'} />{search ? <button type="button" className="cm-search__clear" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); searchRef.current?.focus(); }}>×</button> : <kbd className="cm-kbd" aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>}</label>
         {user && <button type="button" className="cm-iconbtn cm-bell" onClick={openUpdates} aria-label={unreadCount + newAnns.length ? `Updates, ${unreadCount + newAnns.length} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount + newAnns.length > 0 && <span className="cm-bell-dot" aria-hidden="true">{unreadCount + newAnns.length > 9 ? '9+' : unreadCount + newAnns.length}</span>}</button>}
         <button type="button" className="ay-btn ay-btn--primary cm-post-btn" data-tour="community-compose" onClick={openPostTypes}><Icon name="plus" size={18} />Post</button>
         {user && <button type="button" className="cm-iconbtn cm-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Set up your Community profile'}><Avatar size={44} name={profile?.display_name || 'You'} path={profile?.avatar_url} /></button>}

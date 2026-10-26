@@ -124,7 +124,7 @@
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 12px; align-items: start; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row > * { grid-column: 2; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row > .ay-pcard__plate { grid-column: 1; grid-row: 1 / span 9; margin: 0; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row .ayk-plate__sticker { display: none; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row .ayk-plate__sticker { display: none !important; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row .ay-pcard__name { min-height: 0; }
 /* ServiceCard: the same card with a logo plate (a wide plate: logos are wide), name · format, covers, cost. */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__plate { aspect-ratio: 1 / 1; }

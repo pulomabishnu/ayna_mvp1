@@ -81,8 +81,10 @@ export function renderMarkdownLite(text) {
   const flushList = (key) => {
     if (!listBuffer.length) return;
     const Tag = listOrdered ? 'ol' : 'ul';
+    // Items that bring their own mark (✓ raised, △ worth checking) drop the bullet, so there is one mark per line.
+    const marked = !listOrdered && listBuffer.every((item) => /^[✓△✗]\s/.test(item));
     blocks.push(
-      <Tag key={key} style={{ margin: '0.25rem 0', paddingLeft: '1.25rem' }}>
+      <Tag key={key} className={marked ? 'md-marked' : undefined} style={{ margin: '0.25rem 0', paddingLeft: marked ? 0 : '1.25rem', listStyle: marked ? 'none' : undefined }}>
         {listBuffer.map((item, i) => <li key={i}>{renderInline(item, `${key}-li-${i}`)}</li>)}
       </Tag>
     );

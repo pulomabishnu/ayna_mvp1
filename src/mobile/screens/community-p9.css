@@ -11,7 +11,7 @@
   .am-top-actions .am-post-btn { display: inline-flex !important; align-items: center; gap: 6px; width: auto !important; min-width: 0 !important; height: 40px !important; min-height: 40px; padding: 0 16px !important; border: 1.5px solid #3e2723 !important; border-radius: 999px !important; background: #3e2723 !important; color: #ffedac !important; box-shadow: 3px 3px 0 #f7badd !important; font: 600 15px/1 var(--ay-font-ui) !important; white-space: nowrap; }
   .am-top-actions .am-post-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #f7badd; }
   .am-face, .am-face .ay-face-ini { font-size: 13px !important; }
-  .am-face.is-sky { background: #ffffff !important; }
+  .am-face.is-sky { background: #f6e3a1 !important; }
 
   /* five feeds, one pill track, espresso selected */
   .am-segs { display: flex; gap: 2px; margin: 4px 0 10px; padding: 3px; border-radius: 999px; background: var(--d-group); }
@@ -42,7 +42,7 @@
   .am-note > .ay-pc.is-row { border: 1.5px solid var(--d-ink) !important; border-radius: 16px !important; }
   .am-mention-wrap { display: grid; border: 1.5px solid var(--d-ink); border-radius: 16px; }
   .am-mention-wrap .ay-pc { border: 0 !important; }
-  .am-seematch { position: relative; justify-self: start; display: inline-flex; align-items: center; min-height: 32px; margin: -4px 12px 12px; padding: 0 12px; border: 1.5px solid var(--d-ink); border-radius: 999px; background: transparent; color: var(--d-ink); font: 600 13px/1 var(--ay-font-ui); }
+  .am-seematch { position: relative; justify-self: start; display: inline-flex; align-items: center; min-height: 32px; margin: 0 12px 12px 116px; padding: 0 12px; border: 1.5px solid var(--d-ink); border-radius: 999px; background: transparent; color: var(--d-ink); font: 600 13px/1 var(--ay-font-ui); }
   .am-seematch::after { content: ''; position: absolute; inset: -6px -2px; }
   .am-modnote { margin: 0; font: 500 13px/1.4 var(--ay-font-ui); color: var(--d-ink-2, var(--d-ink)); }
   :is(.ay-pc-kindtext, .ay-pc-unit, .ay-pc-why, .ay-pc-brand, .ay-pc-mark) { font-size: 13px !important; }
@@ -76,7 +76,7 @@
   .am-types { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; border-top: 0; }
   .am-types > li { border-bottom: 0; }
   .am-type { grid-template-columns: minmax(0, 1fr); align-content: start; justify-items: start; gap: 10px; height: 100%; min-height: 128px; padding: 14px; border: 1.5px solid #3e2723; border-radius: 16px; background: #f6e3a1; color: #3e2723; }
-  .am-type-icon { background: #ffffff; border-color: #3e2723; }
+  .am-type-icon { background: #ffedac; border-color: #3e2723; }
   .am-type small { color: rgba(62, 39, 35, .78); }
 }
 /* selected topic chips: pink (state), never blue; focus ring in ink */
@@ -84,3 +84,27 @@
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-topic-grid button:focus-visible { outline: 3px solid currentColor !important; }
 /* dark: the Post sticker turns butter with espresso text */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .am-screen .am-top-actions .am-post-btn { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
+/* Loop D: same framed row as the website: 12px inside, "See your match" in the text column. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .ay-pcard.ay-pcard.is-row { padding: 12px !important; border: 1.5px solid var(--d-ink) !important; border-radius: 16px !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .am-mention-wrap .ay-pcard.ay-pcard.is-row { padding-bottom: 8px !important; border: 0 !important; }
+/* Loop D: a disabled primary (Post reply before she types) reads as waiting, not as a muddy filled button. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-primary:disabled { opacity: 1 !important; background: transparent !important; color: var(--d-ink-2) !important; border: 1.5px solid var(--d-hair) !important; border-color: color-mix(in srgb, var(--d-ink) 30%, transparent) !important; box-shadow: none !important; }
+/* Loop D: playlist switch selected state is the espresso pill used by every other switch (and the website). */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-playlist-switch button { border: 1.5px solid var(--d-ink) !important; background: transparent !important; color: var(--d-ink) !important; font-weight: 600 !important; box-shadow: none !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-playlist-switch button[aria-pressed='true'] { background: var(--d-ink) !important; color: var(--d-page) !important; }
+/* Loop D: selected chips (topic scope, followed topics) are espresso like the website and the feed bar. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-topic-grid button.is-on { background: var(--d-ink) !important; color: var(--d-page) !important; border-color: var(--d-ink) !important; }
+/* Loop D: in dark the four ways-to-post cards are the dark surface (butter 8%) with butter ink, not four bright butter tiles. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .am-type { background: rgba(255, 237, 172, .08) !important; color: #ffedac !important; border-color: #ffedac !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .am-type-icon { background: transparent !important; border-color: #ffedac !important; color: #ffedac !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .am-type small { color: rgba(255, 237, 172, .8) !important; }
+/* Loop D: replies at the 13px floor: name 15/600, time 13, text 15, Reply a 44px target. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-comment .am-author > span:not(.am-avatar) { font: 600 15px/1.3 var(--ay-font-ui) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-comment .am-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-comment .am-meta > span { font: 500 13px/1.3 var(--ay-font-ui) !important; color: var(--d-ink-2, var(--d-ink)) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-comment p { margin: 8px 0 0 !important; font: 500 15px/1.5 var(--ay-font-ui) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-comment > button { min-height: 44px; padding: 0 !important; font: 600 13px/1 var(--ay-font-ui) !important; color: var(--d-ink) !important; text-decoration: underline; text-underline-offset: 3px; }
+/* Loop D r4: replies read like the post header (name ink 600, time right after it), and the Question / Answered pills share one baseline. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-comment .am-author > span:not(.am-avatar) { color: var(--d-ink) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-comment .am-meta { justify-content: flex-start; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-kindrow > * { margin-top: 0 !important; margin-bottom: 0 !important; }

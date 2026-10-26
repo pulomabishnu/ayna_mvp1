@@ -649,7 +649,7 @@ html body .app-container.app-container.app-container.app-container.app-container
 
   /* product in a post: outlined (1.5px), no shadow; her match or "See your match" */
   .cm-mention-wrap { display: grid; border: 1.5px solid var(--ay-text); border-radius: var(--ay-r-md); }
-  .cm-seematch { position: relative; justify-self: start; display: inline-flex; align-items: center; min-height: 32px; margin: -4px 12px 12px 138px; padding: 0 12px; border: 1.5px solid var(--ay-text); border-radius: var(--ay-r-pill); background: transparent; color: var(--ay-text); font: 600 13px/1 var(--ay-font-ui); cursor: pointer; }
+  .cm-seematch { position: relative; justify-self: start; display: inline-flex; align-items: center; min-height: 32px; margin: 0 12px 12px 116px; padding: 0 12px; border: 1.5px solid var(--ay-text); border-radius: var(--ay-r-pill); background: transparent; color: var(--ay-text); font: 600 13px/1 var(--ay-font-ui); cursor: pointer; }
   .cm-seematch::after { content: ''; position: absolute; inset: -6px -2px; }
   .cm-seematch:hover { background: var(--ay-hover); }
   .cm-modnote { margin: 0; font: 500 13px/1.4 var(--ay-font-ui); color: var(--ay-text-2); }
@@ -658,14 +658,18 @@ html body .app-container.app-container.app-container.app-container.app-container
   .cm-quote { border-radius: var(--ay-r-md) !important; }
   .cm-quote__label { border: 1.5px solid currentColor !important; background: transparent !important; color: inherit !important; }
   .cm-quote figcaption { font-size: 13px; }
+  /* Loop D: the caption as plain stacked lines (no stray leading dots when it wraps); quote at a calmer 18px. */
+  .cm-quote figcaption { display: grid; gap: 2px; font-size: 14px; }
+  .cm-quote figcaption > * + *::before { content: none; }
+  .cm-quote blockquote button { font-size: 18px !important; line-height: 1.4 !important; }
 
   /* 13px floor: times, counts, small labels */
   :is(.cm, .cm-sheet) :is(small, time, .ay-post-stats, .ay-likers-more, .ay-post-views, .ay-post-views-today) { font-size: 13px !important; }
   .ay-ring b { font-size: 13px; }
   .ay-ring { width: 36px; height: 36px; }
 
-  /* no blue: default faces are pink, butter or white */
-  .cm-avatar.is-sky { background: #ffffff; }
+  /* no blue: default faces are pink, butter or butter-deep */
+  .cm-avatar.is-sky { background: #f6e3a1; }
 
   /* one Post button opens this: four rows, then the two starters */
   .cm-types { display: grid; margin: 0; padding: 0; list-style: none; border-top: var(--ay-rule); }
@@ -686,6 +690,10 @@ html body .app-container.app-container.app-container.app-container.app-container
   .cm-folder__new { font-size: 13px; }
   .cm-folder[aria-selected='true'] { background: #3e2723 !important; border-color: #3e2723 !important; color: #ffedac !important; }
   .cm-folder[aria-selected='true'] .cm-folder__new { background: #ffedac; color: #3e2723; }
+  /* Loop D (#55 Minds): only the selected feed is a pill; the others are quiet rows, so six outlines don't stack up. */
+  .cm-folder:not([aria-selected='true']) { border-color: transparent !important; background: transparent !important; }
+  .cm-folder:not([aria-selected='true']):hover { background: var(--ay-hover) !important; }
+  .cm-folders { gap: 4px; }
 
   /* questions: a status pill from the real answer count */
   .cm-kindrow { display: flex; align-items: center; gap: 8px; margin: 0 0 -4px; }
@@ -731,7 +739,7 @@ html body .app-container.app-container.app-container.app-container.app-container
     .cm-head.cm-titlerow h1.cm-title { font-size: 26px !important; }
     .cm-head.cm-titlerow .cm-head__actions { flex-wrap: nowrap; }
     .cm-post-btn { padding: 0 16px; }
-    .cm-seematch { margin-left: 118px; }
+    .cm-seematch { margin-left: 116px; }
     .cm-note { padding: var(--ay-s16) 0 var(--ay-s4); }
     .cm-topics-btn { padding: 0 12px; }
   }
@@ -745,7 +753,7 @@ html body .app-container.app-container.app-container.app-container.app-container
   .cm-types > li { border-bottom: 0; }
   .cm-type { grid-template-columns: minmax(0, 1fr); align-content: start; justify-items: start; gap: 10px; min-height: 132px; padding: 16px; border: 1.5px solid var(--ay-text); border-radius: var(--ay-r-md); background: var(--ay-butter-deep); color: #3e2723 !important; }
   .cm-type:hover { background: var(--ay-pink); }
-  .cm-type__icon { background: #ffffff; border-color: #3e2723; color: #3e2723; }
+  .cm-type__icon { background: #ffedac; border-color: #3e2723; color: #3e2723; }
   .cm-type__copy small { color: rgba(62, 39, 35, .78) !important; }
 }
 /* dark: selected feed is butter with espresso text (espresso on espresso disappears) */
@@ -764,4 +772,27 @@ html body .app-container.app-container.app-container.app-container.app-container
   .ay-liker-avatar { background: #f7badd; }
   .ay-liker-avatar.is-anon { background: #ffedac; }
   .cm-topic[aria-pressed='true'] { background: #f7badd !important; color: #3e2723 !important; border-color: #f7badd !important; }
+}
+/* Loop D: a product inside a post is one framed row (plate left, slots right), 12px inside the frame,
+   and "See your match" sits in the text column, not under the plate. Category sticker off in rows. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm .ay-pcard.ay-pcard.is-row.cm-mention-card { padding: 12px !important; border: 1.5px solid var(--ay-text) !important; border-radius: 16px !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm .cm-mention-wrap .ay-pcard.ay-pcard.is-row.cm-mention-card { padding-bottom: 8px !important; border: 0 !important; }
+/* Loop D: disabled primary (Post reply before she types): outline and muted text, no sticker. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .cm .ay-btn.ay-btn--primary:disabled { opacity: 1 !important; background: transparent !important; color: var(--ay-text-2) !important; border: 1.5px solid var(--ay-hairline, rgba(62, 39, 35, .3)) !important; box-shadow: none !important; cursor: default; }
+/* Loop D r2: rail lists use the full rail width (they shrank to their text), one link size, no dashed outlines. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container {
+  .cm-rail__more > :is(.cm-topicset.is-rail, .ut-rail) { justify-self: stretch; }
+  .ut-rail__links .ct-link, .cm-rail .cm-rules-btn { font: 600 14px/1.4 var(--ay-font-ui) !important; }
+  .cm-topic.is-suggest { border-style: solid !important; }
+  /* Playlists: the same three-way switch as the app (was a native select). */
+  .cm-plswitch button { min-height: 40px; }
+  /* Selected filter chips are espresso like every other selected pill (pink stays for the one accent moments). */
+  .cm-topic[aria-pressed='true'] { background: var(--ay-text) !important; color: var(--ay-page) !important; border-color: var(--ay-text) !important; }
+  .cm-plswitch button[aria-pressed='true'] { background: var(--ay-text); border-color: var(--ay-text); color: var(--ay-page) !important; }
+}
+/* Loop D: dark ways-to-post cards are the dark surface with butter ink (were four bright butter tiles). */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container:is([data-theme='brand-dark'], [data-theme='dark']) {
+  .cm-type { background: rgba(255, 237, 172, .08) !important; color: #ffedac !important; border-color: #ffedac !important; }
+  .cm-type__icon { background: transparent !important; border-color: #ffedac !important; color: #ffedac !important; }
+  .cm-type__copy small { color: rgba(255, 237, 172, .8) !important; }
 }
