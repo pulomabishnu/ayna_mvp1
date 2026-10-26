@@ -315,10 +315,10 @@ export function MatchLockup({ state, breakdown = null, onAskWhy = null, onFull =
         {lists.length ? lists.map(([title, items]) => (
           <div key={title} className="ayv-lock__list">
             <p className="ayv-lock__h">{title}</p>
-            <ul>{items.map((t) => <li key={t}>{t}</li>)}</ul>
+            <ul>{items.map((t) => <li key={t.text}><span>{t.text}</span>{Number.isFinite(t.delta) && t.delta !== 0 && <span className="ayv-lock__delta">{t.delta > 0 ? '+' : '−'}{Math.abs(Math.round(t.delta))}</span>}</li>)}</ul>
           </div>
         )) : <p className="ayv-lock__h">The engine’s reasons are on the full breakdown.</p>}
-        <p className="ayv-lock__foot">Partnerships never change this score.</p>
+        <p className="ayv-lock__foot">{breakdown?.note || 'Partnerships never change this score.'}</p>
         <p className="ayv-lock__actions">
           {onAskWhy && <button type="button" className="ayv-obtn" onClick={() => onAskWhy(`Why is my match ${shown != null ? `${shown}%` : 'a partial fit'}?`)}><PdpIcon name="ask" size={16} />Ask ayna why</button>}
           {onFull && <button type="button" className="ayv-textbtn" onClick={onFull}>See the full breakdown</button>}

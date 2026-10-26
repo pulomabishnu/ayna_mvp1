@@ -109,8 +109,8 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
   const perUse = costPerUse(product);
   const highlights = highlightsFor(product, glance);
   const others = alsoAt(buy?.rows);
-  // TODO(p8/match-honesty): pass that branch's per-product breakdown as `breakdown`.
-  const breakdown = details ? matchBreakdownFor(product, details, { percent: details.percent, breakdown: product?.matchBreakdown || null }) : null;
+  // "Why 92%?": raised / lowered / not known yet from the one engine (matching/breakdown.js).
+  const breakdown = details ? matchBreakdownFor(product, details) : null;
   const buyLink = (extra = '') => (buy?.url ? <a className={`ay-pquick__buy ayv-buy ayv-sticker ${extra}`.trim()} href={buy.url} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: extra ? 'sheet_summary_end' : 'product_sheet' })}>{buy.label || 'Buy'}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens the seller’s site)</span></a> : null);
 
   const node = (

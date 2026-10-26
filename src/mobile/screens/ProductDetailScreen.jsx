@@ -380,8 +380,8 @@ export default function ProductDetailScreen({
   // Her match in one line: % + why, a safety hold or the bleeding evaluation (never a %), or Get matched.
   const matchState = matchLineState({ details: matchDetails, percent: matchPercent, hasProfile: Boolean(quizAnswers), why: headLine, fallback: matchLine(matchDetails), canQuiz: true });
   // PDP audit 14: the same decision block as the website, app dialect.
-  // TODO(p8/match-honesty): pass that branch's per-product breakdown as `breakdown`.
-  const breakdown = matchBreakdownFor(product, quizAnswers ? matchDetails : null, { percent: matchPercent, breakdown: product?.matchBreakdown || null });
+  // "Why 92%?": raised / lowered / not known yet from the one engine (matching/breakdown.js).
+  const breakdown = matchBreakdownFor(product, quizAnswers ? matchDetails : null);
   const perUse = costPerUse(product);
   const metaLine = metaLineFor(product, glance, keyFormat(product, brand));
   const highlights = highlightsFor(product, glance);

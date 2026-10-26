@@ -11,7 +11,8 @@
  * - matchBreakdownFor: the "Why 92%?" explainer's three lists.
  * - alsoAt: other stores with a live link only ("Also at Target").
  */
-import { whyMatch, isSafetyHold, isBleedingEvaluation } from '../../utils/matchDisplay.js';
+import { isSafetyHold, isBleedingEvaluation } from '../../utils/matchDisplay.js';
+import { breakdownFromDetails, PARTNER_NOTE } from '../../matching/breakdown.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { sizeCount } from './glance.js';
 import { wearHours, cupOrDisc } from './pdpParts.js';
@@ -118,29 +119,21 @@ export function metaLineFor(product, glance = null, format = '') {
   return parts.filter(Boolean).join(' · ');
 }
 
-const MISS = /\b(above|over|outside|not|no|doesn.t|does not|isn.t|missing|lower|less|unknown|can.t|cannot|without|firmer|softer|check)\b/i;
-
 /**
- * The "Why 92%?" explainer's data. TODO(p8/match-honesty): the match-honesty
- * agent (branch p8/match-honesty) exposes a per-product breakdown
- * { raised: [], lowered: [], unknown: [] } plus a product-specific reason line.
- * Until it lands this builds the same shape from today's engine details
- * (whyLine + whyMatch): her reasons raised it, misses and considerations
- * lowered it, missing answers are what ayna does not know yet. Swap the body
- * of this function for that selector; the UI reads only this shape.
- * @returns {{ percent: number|null, reason: string, raised: string[], lowered: string[], unknown: string[] }}
+ * The "Why 92%?" explainer's data, from the one engine (src/matching
+ * breakdownFromDetails, p8/match-honesty): what raised the score, what lowered
+ * it and what ayna doesn't know yet, whose parts add up to the percent; the
+ * product-specific reason line; and the partnership note. Safety holds and the
+ * bleeding evaluation never get a percent or a breakdown here.
+ * @returns {{ percent: number|null, reason: string, note: string, raised: {text, delta?}[], lowered: {text, delta?}[], unknown: {text}[] }}
  */
-export function matchBreakdownFor(product, details, { percent = null, breakdown = null } = {}) {
-  if (breakdown && (breakdown.raised || breakdown.lowered || breakdown.unknown)) {
-    return { percent, reason: breakdown.reason || whyLine(product, details) || '', raised: breakdown.raised || [], lowered: breakdown.lowered || [], unknown: breakdown.unknown || [] };
-  }
-  if (!details || isSafetyHold(details) || isBleedingEvaluation(details)) return { percent: null, reason: '', raised: [], lowered: [], unknown: [] };
-  const w = whyMatch(details);
-  const raised = w.reasons.filter((r) => !MISS.test(r));
-  const lowered = [...w.reasons.filter((r) => MISS.test(r)), ...w.considerations.map((c) => String(c?.text || c || '')).filter(Boolean)];
-  const unknown = [...(w.missing || []), ...(w.hint ? [w.hint] : [])].map((x) => String(x?.text || x || '')).filter(Boolean);
-  const uniq = (xs) => [...new Set(xs.map((x) => x.trim()).filter(Boolean))];
-  return { percent, reason: whyLine(product, details) || '', raised: uniq(raised), lowered: uniq(lowered), unknown: uniq(unknown) };
+export function matchBreakdownFor(product, details) {
+  const none = { percent: null, reason: '', note: PARTNER_NOTE, raised: [], lowered: [], unknown: [] };
+  if (!details || isSafetyHold(details) || isBleedingEvaluation(details)) return none;
+  const b = breakdownFromDetails(product, details);
+  if (!b || b.percent == null) return { ...none, reason: whyLine(product, details) || '' };
+  const items = (xs) => (xs || []).filter((x) => x && x.text).map((x) => ({ text: String(x.text), ...(Number.isFinite(x.delta) ? { delta: x.delta } : {}) }));
+  return { percent: b.percent, reason: b.reason || '', note: b.note || PARTNER_NOTE, raised: items(b.raised), lowered: items(b.lowered), unknown: items(b.unknown) };
 }
 
 /** Other stores with a live link (never "No link yet"): "Also at Target · $29". */

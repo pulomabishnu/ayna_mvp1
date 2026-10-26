@@ -19,6 +19,9 @@ import { evidenceFor, levelOfLink, levelLabel, isPeerReviewed } from './evidence
 import { linkKind } from './evidenceModel.js';
 import { compareRows } from './commerce.js';
 import { evidenceCountsLine } from '../compare/compareSet.js';
+import { costPerUse, singlePrice, lifespanYears, supplyDays, highlightsFor, metaLineFor, matchBreakdownFor } from './decision.js';
+import { getProductMatchDetailsForProduct } from '../../data/products.js';
+import { breakdownFromDetails } from '../../matching/breakdown.js';
 
 const byId = (id) => ALL_PRODUCTS.find((p) => p.id === id);
 const SAALT = 'p-saalt-cup';
@@ -27,7 +30,7 @@ const IRON = 'p-nature-made-iron-65mg';
 let R = {};
 beforeAll(async () => { R = await loadResearch(); });
 const full = (id) => withResearch(byId(id), R);
-const IUD_PROFILE = { fullHealthIntake: { takesCurrent: 'Yes', currentMedicationItems: ['Hormonal IUD'] }, personalizationCompleted: true };
+const IUD_PROFILE = { fullHealthIntake: { age: '24', lifeStageSelections: ['I get periods regularly'], supportSelections: ['Period product support', 'Heavy periods'], periodFlow: 'Heavy', conditions: ['None'], allergies: ['None'], medications: ['None'], safety: ['None'], allergyStatus: 'No', diagnosisSelections: ['None that I know of'], takesCurrent: 'Yes', currentMedicationItems: ['Hormonal IUD'] }, personalizationCompleted: true };
 
 const tabsOf = (html) => [...html.matchAll(/<button[^>]*role="tab"[^>]*>/g)].map((m) => ({ id: (m[0].match(/data-tab="([^"]+)"/) || [])[1], selected: /aria-selected="true"/.test(m[0]) }));
 
@@ -149,5 +152,86 @@ describe('evidence: four labelled levels, the .gov-only grading rule kept (audit
     expect(html).not.toMatch(/No checked research yet/);
     expect(html).not.toMatch(/research sources/);
     expect(html).not.toMatch(/Not a \.gov source, not checked by ayna[^<]*Lancet|Lancet[^]{0,400}Not a \.gov source, not checked by ayna/);
+  });
+});
+
+describe('cost per cycle: ayna\'s own maths from real price and real lifespan or supply only (audit 10.4)', () => {
+  it('Saalt: $29 over a 10-year lifespan is about $0.24 a cycle (29 / 120)', () => {
+    const c = costPerUse(byId(SAALT));
+    expect(singlePrice(byId(SAALT))).toBe(29);
+    expect(lifespanYears(byId(SAALT))).toEqual({ years: 10, upTo: true });
+    expect(c.unit).toBe('cycle');
+    expect(c.value).toBeCloseTo(29 / 120, 2);
+    expect(c.text).toBe('≈ $0.24 a cycle if it lasts 10 years');
+    expect(c.math).toMatch(/\$29 ÷ 120 cycles/);
+  });
+  it('the iron supplement: $10.59 for a 180-day supply is about $0.06 a day', () => {
+    const c = costPerUse(byId(IRON));
+    expect(supplyDays(byId(IRON))).toBe(180);
+    expect(c.unit).toBe('day');
+    expect(c.value).toBeCloseTo(10.59 / 180, 2);
+    expect(c.text).toBe('≈ $0.06 a day');
+  });
+  it('skips when either number is missing, for ranges and "A or B" prices, and never uses a savings claim', () => {
+    expect(costPerUse(byId('p-tampontribe-menstrual-cup'))).toBe(null); // "$39.99 ... or $69.99"
+    expect(costPerUse({ price: '$30 (rechargeable)' })).toBe(null);
+    expect(costPerUse({ price: '$0-15/visit' })).toBe(null);
+    expect(costPerUse({ price: '$29', summary: 'Saves ~$150/year vs disposables.' })).toBe(null);
+  });
+});
+
+describe('decision block contents (audit 13.1, 14)', () => {
+  it('highlights and the meta line come only from the record', () => {
+    const p = full(SAALT);
+    const g = buildGlance(p, {});
+    expect(highlightsFor(p, g).map((h) => h.value)).toEqual(['25–37 mL', '12 hrs', '10 yrs', 'FSA/HSA']);
+    expect(metaLineFor(p, g)).toBe('Menstrual cup · Reusable up to 10 years · FSA/HSA');
+    expect(highlightsFor({ name: 'X', price: '$5' }, null)).toEqual([]);
+  });
+  it('Why 92%? reads the one engine: the same raised / lowered / unknown, reason and note as matching/breakdown.js', () => {
+    const p = byId(SAALT);
+    const d = getProductMatchDetailsForProduct(p, IUD_PROFILE);
+    const mine = matchBreakdownFor(p, d);
+    const eng = breakdownFromDetails(p, d);
+    expect(eng.percent).toBeGreaterThan(0);
+    {
+      expect(mine.percent).toBe(eng.percent);
+      expect(mine.raised.map((x) => x.text)).toEqual(eng.raised.map((x) => x.text));
+      expect(mine.lowered.map((x) => x.text)).toEqual(eng.lowered.map((x) => x.text));
+      expect(mine.unknown.map((x) => x.text)).toEqual(eng.unknown.map((x) => x.text));
+      expect(mine.reason).toBe(eng.reason);
+    }
+    expect(mine.note).toBe('Partnerships never change this score.');
+    expect(matchBreakdownFor(p, null).percent).toBe(null);
+  });
+  it('website: name, match, price with cost per cycle, one sticker button, disclosure, safety line, actions, in that order; no fact chips, no pinned buy bar, no "No link yet"', () => {
+    const html = renderToStaticMarkup(<ProductModal product={byId(SAALT)} quizResults={IUD_PROFILE} onToggleSaved={() => {}} onAskAyna={() => {}} />);
+    const at = (needle) => html.indexOf(needle);
+    const order = ['<h1', 'class="ayv-metaline"', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ayv-safeline"', 'class="ayv-acts"', 'role="tablist"'];
+    const pos = order.map(at);
+    pos.forEach((x, i) => { expect(x, order[i]).toBeGreaterThan(-1); if (i) expect(x, order[i]).toBeGreaterThan(pos[i - 1]); });
+    expect(html).toMatch(/≈ \$0\.24 a cycle if it lasts 10 years/);
+    expect((html.slice(0, at('role="tablist"')).match(/ayv-sticker/g) || []).length).toBe(1);
+    expect(html).not.toMatch(/ayq-badges/);
+    expect(html).not.toMatch(/ayv-stickybuy/);
+    expect(html).not.toMatch(/No link yet/);
+  });
+  it('app page: the same block, and the partner disclosure is never collapsed', () => {
+    const html = renderToStaticMarkup(<ProductDetailScreen product={byId('p-tampontribe-menstrual-cup')} quizAnswers={IUD_PROFILE} />);
+    const order = ['<h1', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ayv-safeline"', 'class="ayv-acts"', 'class="ayv-hl"', 'role="tablist"'];
+    const pos = order.map((n) => html.indexOf(n));
+    pos.forEach((x, i) => { expect(x, order[i]).toBeGreaterThan(-1); if (i) expect(x, order[i]).toBeGreaterThan(pos[i - 1]); });
+    expect(html).not.toMatch(/We may earn a commission<\/span><span aria-hidden="true">\+/);
+    expect(html).toMatch(/ayna partner\. We may earn a commission\./);
+    // The "Why N%?" explainer is in the page (closed), with the engine's note, whenever there is a percent.
+    const plain = { fullHealthIntake: { ...IUD_PROFILE.fullHealthIntake, currentMedicationItems: ['Ibuprofen'] }, personalizationCompleted: true };
+    const d = getProductMatchDetailsForProduct(byId(SAALT), plain);
+    const html2 = renderToStaticMarkup(<ProductDetailScreen product={byId(SAALT)} quizAnswers={plain} />);
+    expect(d?.matchStatus).toBe('scored');
+    {
+      expect(html2).toMatch(/class="ayv-lock__why"/);
+      expect(html2).toMatch(/Partnerships never change this score\./);
+    }
+    expect(html).not.toMatch(/ayv-stickybuy/);
   });
 });

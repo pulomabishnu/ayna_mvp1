@@ -768,8 +768,8 @@ export default function ProductModal({
   // Her match in one line under the price: the % with its plain why, a safety hold or the bleeding
   // evaluation (never a %), or "See how it fits you" signed out (pdp/pdpParts matchLineState).
   const matchState = matchLineState({ details: matchDetails, percent: matchPercent, hasProfile: Boolean(quizResults), why: whyLine(product, matchDetails), fallback: headMatchLine, canQuiz: !quizResults && !user && Boolean(onStartQuiz) });
-  // The "Why 92%?" lists. TODO(p8/match-honesty): pass that branch's per-product breakdown as `breakdown`.
-  const breakdown = matchBreakdownFor(product, matchDetails, { percent: matchPercent, breakdown: product?.matchBreakdown || null });
+  // "Why 92%?": raised / lowered / not known yet from the one engine (matching/breakdown.js), and its reason line.
+  const breakdown = matchBreakdownFor(product, matchDetails);
   const matchRow = !settled && (quizResults || healthProfile)
     ? <div className="ay-skel__bar is-sub ayp-fit__skel" role="status" aria-label="Checking your match" />
     : <MatchLockup state={matchState} breakdown={breakdown} onAskWhy={onAskAyna ? (q) => onAskAyna(`About ${displayName}: ${q}`) : null} onFull={() => setShowWhy(true)} onFix={onFixSafety} onQuiz={onStartQuiz} idBase="ay-web-why" />;
