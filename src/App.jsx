@@ -1,4 +1,5 @@
 import FeedbackPrompts from './components/FeedbackPrompts';
+import { devPreviewOn } from './utils/devPreview.js';
 import { markOnboardingDone } from './health/onboardingSignal.js';
 import { noteRoutineAdd, noteRoutineRemove } from './health/routineFollowUps.js';
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
@@ -185,11 +186,11 @@ import { trackQuizStarted, trackFirstMatchShown, eventSurface } from './utils/an
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
 const WEB_TAB_VIEWS = {
   today: ['today'],
-  explore: ['explore', 'explore-topics', 'explore-services', 'discovery', 'product', 'articles', 'screenings'],
+  explore: ['explore', 'explore-topics', 'explore-services', 'discovery', 'product', 'articles'],
   ask: ['ask'],
   community: ['community'],
   // My ecosystem and everything reached from it live under You.
-  profile: ['you', 'ecosystem', 'comparison', 'omitted', 'recalls', 'health-data', 'delete-account', 'phone-verify', 'tracked', 'doctor-prep', 'recommendations'],
+  profile: ['you', 'ecosystem', 'comparison', 'omitted', 'recalls', 'health-data', 'delete-account', 'phone-verify', 'tracked', 'doctor-prep', 'recommendations', 'screenings'],
 };
 /** Explore's sections as views (Products is the Shop, Resources the Library). */
 const EXPLORE_VIEW = { overview: 'explore', topics: 'explore-topics', services: 'explore-services', products: 'discovery', resources: 'articles' };
@@ -838,7 +839,8 @@ function App() {
   }, [pendingQuizResults]);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   // From the app: Wrapped story after the quiz, and an Ask ayna button in the header.
-  const [showWrapped, setShowWrapped] = useState(false);
+  // Design QA only (devPreviewOn: vite dev or a local build on http://localhost:<port>, never a real host): ?preview=wrapped opens Wrapped.
+  const [showWrapped, setShowWrapped] = useState(() => devPreviewOn() && new URLSearchParams(window.location.search).get('preview') === 'wrapped');
   // Back from the first Wrapped slide (signed in) reopens the quiz from its
   // draft, on the last step, instead of the saved profile's first gap.
   const [quizResume, setQuizResume] = useState(false);

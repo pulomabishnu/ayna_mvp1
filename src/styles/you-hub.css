@@ -97,6 +97,10 @@ html body .app-container.app-container.app-container.app-container.app-container
   #ayeco .ay-shelf__head { border-bottom: 1px solid rgba(62, 39, 35, .15) !important; }
   #ayeco .eco3-empty { transform: none !important; border-radius: 16px !important; box-shadow: none !important; }
   #ayeco .eco-stack__cost span { background: #f6e3a1 !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; border-radius: 16px !important; box-shadow: none !important; }
+  /* Your tools: icons and the open/close marker follow the theme (they were espresso on espresso in dark). */
+  #ayeco .eco3-tool-ic, #ayeco .eco3-tool-ic svg { color: var(--ay-fg) !important; stroke: currentColor !important; border-color: currentColor !important; }
+  #ayeco .eco3-details__item summary::after { border-color: var(--ay-fg) !important; color: var(--ay-fg) !important; }
+  #ayeco .eco3-details__item[open] summary::after { background: var(--ay-fill-ink) !important; color: var(--ay-on-ink) !important; }
   .ay-shelf__menu-list { box-shadow: none !important; border-width: 1.5px !important; border-radius: 16px !important; }
   .ay-shelf .ay-shelf__menu > summary { box-shadow: none !important; border: 1.5px solid var(--ay-text, #3e2723); }
   .ay-shelf__working { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; margin-top: 6px; padding: 0; border: 0; background: none; color: var(--ay-text, #3e2723) !important; font: 600 13px/1.2 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
@@ -161,3 +165,16 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, 
 
 /* Signed-out You: the page container already has the gutter; the preview adds none of its own. */
 html body .app-container.app-container.app-container.app-container.app-container .yh .ay-ecoprev { padding-left: 0 !important; padding-right: 0 !important; }
+
+/* Loop E round 4 (inspo: Intelly-style colour-block stat tiles, #29/#56 big numbers, #72419ae7 profile stat boxes):
+   the three numbers read as a data strip. One quiet tile, one pink, one solid; Bricolage numerals, captions under. */
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-facts li:nth-child(2) .yh-fact { border-color: #3e2723; background: #f7badd; color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-facts li:nth-child(2) .yh-fact span { color: #3e2723; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-facts li:nth-child(3) .yh-fact { border-color: var(--ay-fill-ink); background: var(--ay-fill-ink); color: var(--ay-on-ink) !important; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-facts li:nth-child(3) .yh-fact span { color: var(--ay-on-ink); opacity: .85; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-fact b { font-size: 34px; letter-spacing: -.02em; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-fact { min-height: 96px; align-content: space-between; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-fact:not(:disabled):hover { transform: translateY(-1px); }
+@media (prefers-reduced-motion: reduce) { html body .app-container.app-container.app-container.app-container.app-container .yh .yh-fact:hover { transform: none; } }
+/* Signed out: the one sticker heading on the page (PRIMITIVES #2) carries the promise. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container) .yh.is-signedout .ay-ecoprev__title { display: inline-flex; align-items: center; padding: 6px 22px 8px !important; border: var(--ay-border-ink); border-radius: var(--ay-r-pill); background: var(--ay-chip-bg); box-shadow: var(--ay-sticker); }

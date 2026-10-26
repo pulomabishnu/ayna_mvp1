@@ -69,3 +69,15 @@
 .wwr :is(.wwr-stats div, .wwr-ranks li, .wwr-card, .wwr-toast span) { border-width: 1.5px !important; border-radius: 16px; box-shadow: none !important; rotate: 0deg !important; }
 .wwr .wwr-toast span { border-radius: 999px; }
 .wwr .wwr-cta { box-shadow: 3px 3px 0 #f7badd !important; }
+.wwr.wwr { box-shadow: none !important; border-width: 1.5px !important; border-radius: 16px !important; }
+/* Loop E round 4: the top row never squeezes the 44px buttons; on a phone the title steps aside
+   (still the dialog's name for screen readers). One drawn shape, not three. Stats as an even data strip. */
+.wwr .wwr-top { gap: 8px; }
+.wwr .wwr-top > button, .wwr .wwr-top > div > button { flex: none; border-width: 1.5px; }
+.wwr .wwr-top > span { flex: 1; min-width: 0; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 480px) { .wwr .wwr-top > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+.wwr .wwr-shapes i:nth-child(n+2) { display: none; }
+.wwr .wwr-shapes i { border-width: 1.5px; }
+.wwr .wwr-stats { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.wwr .wwr-stats div { min-height: 88px; align-content: space-between; }
+.wwr .wwr-badge { box-shadow: none !important; border-width: 1.5px !important; }
