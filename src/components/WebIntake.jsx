@@ -21,7 +21,6 @@ import { commonNeedOptions } from '../matching/commonNeeds.js';
 import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../mobile/data/onboardingFlow.js';
 import { CATEGORIES } from '../health/metrics.js';
 import ReadyReveal from './onboarding/ReadyReveal.jsx';
-import { eventSurface, trackQuizStarted } from '../utils/analyticsEvents.js';
 import '../styles/onboarding.css';
 import './WebIntake.audit.css';
 // Website-only conditions that change what is safe (condition research, Oct 17).
@@ -347,9 +346,8 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const [showAllNeeds, setShowAllNeeds] = useState(false);
   const [helpOtherOpen, setHelpOtherOpen] = useState(false);
 
-  // Analytics: a fresh first run started (quiz start; first match is on the reveal).
-  useEffect(() => { if (onboarding && !singleStep && !savedDraft) trackQuizStarted({ surface: eventSurface(), signed_in: signedIn }); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
+  // quiz_started fires from the landing's entry points (landing agent); the
+  // reveal sends first_match_shown (once per device), so nothing fires here.
   // Same draft the app keeps, so an unfinished quiz resumes on either.
   useEffect(() => {
     if (initialSnapshot) return;

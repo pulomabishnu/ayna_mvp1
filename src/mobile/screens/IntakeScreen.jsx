@@ -4,7 +4,6 @@ import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { ChipList, StickerGrid, SearchField, ChoiceRows, AgeDial, ZipTicket, LevelMeter, TrackLine, PriceStacks, DotScale, BrandSpectrum, AccountCards, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import { haptic } from '../../utils/haptics.js';
-import { eventSurface, trackQuizStarted } from '../../utils/analyticsEvents.js';
 import { INTAKE_SCENES, SECTION_TONES, SECTION_LABELS } from '../components/intake/intakeScenes.js';
 import '../intake-play.css';
 import '../../styles/onboarding.css';
@@ -568,8 +567,6 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const [draftStepId] = useState(() => (savedDraft?.stepId ? resumeStepId({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId) : ''));
   const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtStep && initialSnapshot ? resumeStepId(reconstructIntakeFromSnapshot(initialSnapshot), startAtStep) : null) || (flow === 'more' ? getOnboardingSteps(reconstructIntakeFromSnapshot(initialSnapshot), { part: 'more' })[0]?.id : null) || (onboarding ? (savedDraft && getOnboardingSteps({ ...EMPTY, ...savedDraft.intake }, { part: 'core' }).some((st) => st.id === draftStepId) ? draftStepId : 'helpTopics') : null) || draftStepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
   const [search, setSearch] = useState('');
-  // Analytics: a fresh first run started (first match is tracked on the reveal).
-  useEffect(() => { if (onboarding && obPart === 'core' && !savedDraft) trackQuizStarted({ surface: eventSurface() }); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // Computed once, from how things stood when this resume started (not
   // re-derived as answers change), so a step's flag clears only by actually
   // reaching and answering it. Skipped optional steps are not flagged.
