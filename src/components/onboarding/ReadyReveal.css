@@ -15,3 +15,6 @@
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match .ay-match-pill { align-self: start; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__chip { justify-self: start; padding: 3px 8px; border: 1.5px solid #3e2723; border-radius: var(--ay-r-pill, 999px); font: 600 13px/1.1 var(--ay-font-ui, 'Figtree'), sans-serif; font-style: normal; color: #3e2723; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 2px; }
+/* The row is butter in both themes, so the pill keeps its light-theme ink look. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match .ay-match-pill { background: #3e2723 !important; border-color: #3e2723 !important; color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match .ay-match-pill * { color: inherit !important; }

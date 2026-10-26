@@ -120,3 +120,7 @@
 .ay-auth-ack a { color: var(--ay-ink); text-decoration: underline; text-underline-offset: 2px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-primary:not(:disabled) { box-shadow: var(--ay-sticker) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-primary:not(:disabled):active { box-shadow: none !important; transform: translate(3px, 3px); }
+/* Beats app-direction.css (which uses :is(#ay, …) for id weight): outlined white fields, plain consent row. */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-auth .ayna-fresh-auth-field.ayna-fresh-auth-field { border: 1.5px solid var(--d-ink, var(--ay-ink)) !important; border-radius: 8px !important; background: var(--ay-surface) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-auth .ayna-fresh-auth-field.ayna-fresh-auth-field.is-invalid { border-width: 2px !important; background: var(--ay-pink) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-auth .ay-auth-consent.ay-auth-consent { margin: 8px 0 !important; padding: 0 !important; background: transparent !important; }
