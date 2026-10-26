@@ -138,7 +138,7 @@ export default function Recalls({ myProducts = {}, onBack = null }) {
                 </div>
 
                 <aside className="ay-info-stack ay-info-stack--tight">
-                    <div className="ay-info-card ay-info-card--pad ay-info-card--peri">
+                    <div className="ay-info-card ay-info-card--pad">
                         <h2 className="ay-info__h3">What ayna actually checks</h2>
                         <p className="ay-info__body">When you open a product, ayna queries OpenFDA live for that product:</p>
                         {/* CPSC, EPA and "Community Watch" were listed here as daily-scanned

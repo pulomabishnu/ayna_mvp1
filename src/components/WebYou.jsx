@@ -415,7 +415,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
   </section>;
 
   const facts = [
-    { key: 'picks', value: fmtCount(products.length), caption: products.length === 1 ? 'Product in your ecosystem' : 'Products in your ecosystem', onClick: onOpenEcosystem },
+    { key: 'picks', value: fmtCount(products.length), caption: 'In your ecosystem', onClick: onOpenEcosystem },
     { key: 'saved', value: fmtCount(savedCount), caption: savedCount === 1 ? 'Saved product' : 'Saved products', onClick: onOpenSaved || (() => goSection('saved')) },
     { key: 'checkins', value: checkinCount != null ? fmtCount(checkinCount) : checkin.settled ? '–' : '…', caption: checkinCount === 1 ? 'Monthly check-in' : 'Monthly check-ins', onClick: onOpenCheckin },
   ];
@@ -465,12 +465,12 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
         <ul className="yh-facts" aria-label="At a glance">{facts.map((f) => <li key={f.key}><button type="button" className="yh-fact" onClick={f.onClick} disabled={!f.onClick}><b>{f.value}</b><span>{f.caption}</span></button></li>)}</ul>
         <section className="wy-sec" data-tour="you-sections" aria-labelledby="wy-sections-h">
           <h2 className="ay-group__title" id="wy-sections-h">Your sections</h2>
-          <ul className="ay-group wy-rows">
-            {linkRow('eco', 'My ecosystem', products.length ? `${fmtCount(products.length)} ${products.length === 1 ? 'product' : 'products'}` : null, onOpenEcosystem, 'Your shelves, one for each need')}
-            {linkRow('saved', 'Saved', savedCount ? fmtCount(savedCount) : null, () => goSection('saved'), 'Products and posts you saved')}
-            {linkRow('health', 'My health', null, () => goSection('health'), 'Dashboard, tracking and connected apps')}
-            {linkRow('activity', 'Activity', null, () => goSection('activity'), 'Questions, posts and reviews')}
-            {linkRow('settings', 'Settings & privacy', null, () => goSection('settings'), 'Account, emails, appearance and your data')}
+          <ul className="ay-group wy-rows yh-sections">
+            {linkRow('eco', 'My ecosystem', products.length ? `${fmtCount(products.length)} ${products.length === 1 ? 'product' : 'products'}` : null, onOpenEcosystem, 'Grouped by need')}
+            {linkRow('saved', 'Saved', savedCount ? fmtCount(savedCount) : null, () => goSection('saved'), 'Products and posts')}
+            {linkRow('health', 'My health', null, () => goSection('health'), 'Dashboard, tracking, apps')}
+            {linkRow('activity', 'Activity', null, () => goSection('activity'), 'Questions, posts, reviews')}
+            {linkRow('settings', 'Settings & privacy', null, () => goSection('settings'), 'Account and your data')}
           </ul>
         </section>
         <p className="yh-quick">
