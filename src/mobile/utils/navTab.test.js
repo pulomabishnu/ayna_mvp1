@@ -6,7 +6,12 @@ describe('navTabFor', () => {
   it('puts each screen under its main tab', () => {
     expect(navTabFor('ayna')).toBe('home');
     expect(navTabFor('today')).toBe('home');
-    expect(navTabFor('ask')).toBe('home');
+    // Ask ayna is its own tab again (all-pages brief, Oct 25): the chat view, or the old 'ask' key.
+    expect(navTabFor('ask')).toBe('ask');
+    expect(navTabFor('ayna', null, { view: 'chat' })).toBe('ask');
+    expect(navTabFor('ayna', null, { view: 'home' })).toBe('home');
+    // Chat-first Home (?home=chat): the chat is home.
+    expect(navTabFor('ayna', null, { view: 'chat', variant: 'chat' })).toBe('home');
     expect(navTabFor('explore')).toBe('explore');
     expect(navTabFor('browse')).toBe('explore');
     // The Library is pushed from Explore, not a tab.

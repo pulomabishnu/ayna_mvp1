@@ -99,10 +99,10 @@ function AddCard({ def, widgets, surface, ctx, onAdd }) {
         <SizeToggle sizes={def.sizes} value={size} label={def.title} onChange={setSize} />
         {def.configurable && <SummaryConfig idPrefix={`chs-add-${def.id}`} config={config} onChange={setConfig} />}
         {on
-          ? <span className="ay-chs-on">On your {surface === 'web' ? 'Today' : 'Home'}</span>
+          ? <span className="ay-chs-on">On your Today</span>
           : <button type="button" className="ay-chs-addbtn" disabled={!room} onClick={() => onAdd(candidate)} aria-label={`Add ${def.title}`}>Add</button>}
       </div>
-      {!on && !room && <p className="ay-chs-full">{surface === 'web' ? FULL_LINE.replace('Home', 'Today') : FULL_LINE}</p>}
+      {!on && !room && <p className="ay-chs-full">{FULL_LINE}</p>}
     </li>
   );
 }
@@ -114,7 +114,7 @@ function AddCard({ def, widgets, surface, ctx, onAdd }) {
  */
 export default function CustomizeHomeSheet({ surface = 'app', widgets, onChange, onReset, onClose, ctx, custom = false }) {
   const hid = useId();
-  const where = surface === 'web' ? 'Today' : 'Home';
+  const where = 'Today';
   const [category, setCategory] = useState(null);
   const [opener] = useState(() => (typeof document !== 'undefined' ? document.activeElement : null));
   const finish = () => {

@@ -13,26 +13,31 @@ export const MAIN_TABS = [
 ];
 
 /**
- * The app's tab bar (founder, Oct 24 22:12): four tabs, Home first. Home,
- * Explore, Community, You. Home opens on her dashboard with an "Ask ayna"
- * bar on top; the chat and her Products are one tap from it. The Library is
- * not a tab: Explore links to it ("Open Library") and it opens as a pushed
- * screen with Back. The website keeps MAIN_TABS for now. The old `today`,
- * `ask` and `ayna` screens open Home (navTab.js aynaRoute).
+ * The app's tab bar (all-pages build brief, Oct 25 23:03, supersedes the
+ * Oct 24 22:12 four tabs): the same five as the website, Today · Explore ·
+ * Ask ayna · Community · You. Today is the dashboard (AynaHomeScreen, the
+ * 'ayna' screen); its key stays 'home' so analytics and CSS keep working.
+ * Ask ayna opens the full chat as a tab screen (the 'ayna' screen's 'chat'
+ * view). The Library is not a tab: it lives inside Explore (Reads) as a
+ * pushed screen with Back. The old `today`, `ask` and `ayna` screens still
+ * route (navTab.js aynaRoute).
  */
 export const APP_TABS = [
-  { key: 'home', label: 'Home' },
+  { key: 'home', label: 'Today', icon: 'today' },
   { key: 'explore', label: 'Explore' },
+  { key: 'ask', label: 'Ask ayna', center: true, icon: 'ask' },
   { key: 'community', label: 'Community' },
   { key: 'profile', label: 'You' },
 ];
 
 /**
- * The chat-first Home kept for Monday's focus group (?home=chat): the centre
- * tab is "ayna", the chat is home, and a small switch flips to Products and
- * My dashboard (founder, Oct 24 20:12).
+ * The chat-first Home kept for the focus group (?home=chat): the first tab
+ * is "ayna", the chat is home, and a small switch flips to Products and My
+ * dashboard (founder, Oct 24 20:12). The chat is that tab, so no Ask tab.
  */
-export const APP_TABS_CHAT_FIRST = APP_TABS.map((t) => (t.key === 'home' ? { ...t, label: 'ayna', icon: 'ask' } : t));
+export const APP_TABS_CHAT_FIRST = APP_TABS
+  .filter((t) => t.key !== 'ask')
+  .map((t) => (t.key === 'home' ? { ...t, label: 'ayna', icon: 'ask' } : t));
 export const AYNA_HOME_VIEWS = [
   { key: 'chat', label: 'Chat' },
   { key: 'products', label: 'Products' },
