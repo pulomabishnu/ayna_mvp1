@@ -23,6 +23,7 @@ import { getListingStatus as passportListingStatus } from './passport/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
 import { buildEcosystemV2, scoreProductV2, withV2Score, userKeyOf } from '../matching/v2.js';
 import { isRecommendable, recommendationEligibility } from '../matching/eligibility.js';
+import { matchPercentFromDetails } from '../matching/breakdown.js';
 import { needSignals, orderForYou, historyState, NOT_RECOMMENDED_AGAIN } from '../matching/forYou.js';
 import { shapeEcosystemWithHealth } from '../matching/healthShaping.js';
 import { getCareResourceBundle } from './careResources.js';
@@ -2202,10 +2203,13 @@ export function getProfileMatchLabelsForProduct(product, quizAnswers, healthProf
 /**
  * Personalized match shown across the app and the website: the product's
  * best per-need score (0..100). A relevance score, not a diagnosis or a
- * probability. null when there is no profile; 0 when excluded or unrelated.
+ * probability. The app's matchPercentFor reads the same function
+ * (matching/breakdown.js matchPercentFromDetails), so both platforms print the
+ * same number. null when there is no profile, a hold, an exclusion or no fit.
  */
 export function getProfileMatchPercentForProduct(product, quizAnswers, healthProfile = null, opts = {}) {
-    return getProfileMatchStatsForProduct(product, quizAnswers, healthProfile, opts).percent;
+    if (!product || !quizAnswers) return null;
+    return matchPercentFromDetails(buildMatchDetails(product, quizAnswers, healthProfile, opts));
 }
 
 /**

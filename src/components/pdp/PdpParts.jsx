@@ -314,7 +314,7 @@ export function MatchLockup({ state, breakdown = null, onAskWhy = null, onFull =
         {lists.length ? lists.map(([title, items]) => (
           <div key={title} className="ayv-lock__list">
             <p className="ayv-lock__h">{title}</p>
-            <ul>{items.map((t) => <li key={t.text}><span>{t.text}</span>{Number.isFinite(t.delta) && t.delta !== 0 && <span className="ayv-lock__delta">{t.delta > 0 ? '+' : '−'}{Math.abs(Math.round(t.delta))}</span>}</li>)}</ul>
+            <ul>{items.map((t) => <li key={t.text}><span>{t.text}</span>{Number.isFinite(t.points) && t.points !== 0 && <span className="ayv-lock__delta">{t.points > 0 ? '+' : '−'}{Math.abs(t.points)}</span>}</li>)}</ul>
           </div>
         )) : <p className="ayv-lock__h">The engine’s reasons are on the full breakdown.</p>}
         <p className="ayv-lock__foot">{breakdown?.note || 'Partnerships never change this score.'}</p>
@@ -334,7 +334,7 @@ export function PriceRow({ main = '', perUse = null, notes = [] }) {
   return (
     <p className="ayv-pricerow">
       {main && <span className="ayv-pricerow__main">{main}</span>}
-      {perUse && <span className="ayv-pricerow__per" title={perUse.math}>{perUse.text}<span className="sr-only">. {perUse.math}</span></span>}
+      {perUse && <span className="ayv-pricerow__per is-chip" title={perUse.math}>{perUse.text}<span className="sr-only">. {perUse.math}</span></span>}
       {!perUse && notes.length > 0 && <span className="ayv-pricerow__per">{notes.join(' · ')}</span>}
     </p>
   );
