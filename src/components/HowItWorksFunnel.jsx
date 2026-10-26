@@ -1,5 +1,5 @@
 import React from 'react';
-import { getSampleFunnel } from '../utils/sampleFunnel';
+import { getSampleFunnel, SAMPLE_LABEL } from '../utils/sampleFunnel';
 
 /**
  * The narrowing story with live numbers (audit HW02/HW03), drawn as rounded
@@ -13,7 +13,7 @@ export default function HowItWorksFunnel() {
   const STAGES = [
     { label: 'In the ayna catalog today', value: f.catalog },
     { label: 'Matched to this profile', value: f.matched },
-    { label: 'Strong matches (90+)', value: f.strong },
+    { label: 'Strong fits (80+)', value: f.strong },
   ];
   const max = STAGES[0].value || 1;
   return (
@@ -21,7 +21,7 @@ export default function HowItWorksFunnel() {
       <ol
         className="ip-bars"
         role="img"
-        aria-label={`Sample profile: ${STAGES[0].value} products in the catalog, ${STAGES[1].value} matched, ${STAGES[2].value} strong matches`}
+        aria-label={`${SAMPLE_LABEL}: ${STAGES[0].value} products in the catalog, ${STAGES[1].value} matched, ${STAGES[2].value} strong fits`}
       >
         {STAGES.map((stage) => (
           <li key={stage.label} aria-hidden="true">
@@ -32,7 +32,7 @@ export default function HowItWorksFunnel() {
           </li>
         ))}
       </ol>
-      <figcaption className="ed-caption" style={{ marginTop: 16 }}>Example: a sample profile, run live on today's catalog. Bar heights to scale, with a minimum so small numbers stay readable.</figcaption>
+      <figcaption className="ed-caption" style={{ marginTop: 16 }}>{SAMPLE_LABEL}, run live on today's catalog. Bar heights to scale, with a minimum so small numbers stay readable.</figcaption>
     </figure>
   );
 }

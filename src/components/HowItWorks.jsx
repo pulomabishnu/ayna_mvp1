@@ -102,7 +102,7 @@ export default function HowItWorks({ onBack, backLabel, onViewSources }) {
             <p>Your strongest fits, each shown with its match reason and source context.</p>
             <div className="ed-hiw__demo">
               <span className="ed-caption">Sample profile</span>
-              <div className="ed-figrow"><span>strong matches, each with its match reason</span><b>{funnel.strong}</b></div>
+              <div className="ed-figrow"><span>strong fits (80+), each with its match reason</span><b>{funnel.strong}</b></div>
             </div>
           </li>
         </ol>

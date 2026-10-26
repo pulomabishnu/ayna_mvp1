@@ -68,3 +68,7 @@
   .app-container.app-container .hm .hm-levels--row .hm-levels > li,
   .app-container.app-container .hm .hm-levels--row .hm-levels > li:last-child { padding: 0; border: 0; }
 }
+
+/* hero: the standards row closes the hero; 40px to the ticker, not 72 (dead butter band) */
+@media (min-width: 768px) { .app-container.app-container .hm .hm-hero { padding-bottom: 40px; } }
+@media (max-width: 767px) { .app-container.app-container .hm .hm-hero { padding-bottom: 32px; } }

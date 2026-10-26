@@ -15,6 +15,12 @@ function Thumb({ product }) {
   return <span className="ay-cmp2__thumb" aria-hidden="true"><Plate src={src && !broken ? src : ''} alt="" fallback={product?.brand || product?.name || ''} imgProps={{ onError: () => setBroken(true) }} /></span>;
 }
 
+/* A shortened cell with its full text one tap away, expanded in place (nothing is cut for good). */
+function MoreCell({ short, full }) {
+  const [open, setOpen] = useState(false);
+  return <>{open ? full : short}{' '}<button type="button" className="ay-cmp2__more" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : 'Show more'}</button></>;
+}
+
 /**
  * The compare table for 2 to 4 products (app and website). Rows from
  * compareSet.js. "Best match for your profile" shows only when the engine
@@ -58,7 +64,8 @@ export default function CompareTable({ products: picked = [], matchFor = null, d
                   <td key={products[i].id} className={v === NOT_ON_FILE ? 'is-unknown' : undefined}>
                     {v === NOT_ON_FILE ? 'Not on file'
                       : r.noProfile && onSeeMatch ? <button type="button" className="ay-cmp2__see" onClick={onSeeMatch}>{v}</button>
-                        : v}
+                        : r.full?.[i] ? <MoreCell short={v.replace(/\s*More on its page\.$/, '')} full={r.full[i]} />
+                          : v}
                     {r.notes?.[i] && <small>{r.notes[i]}</small>}
                   </td>
                 ))}

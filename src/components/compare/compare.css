@@ -66,3 +66,6 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2 .ay-cmp2
 /* 13px floor for the row hints and notes; radii from the set (8 / 16 / 999). */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2 :is(th, td) small, :is(.ayna-mobile:is(#ay, .ayna-mobile)) .ay-cmp2 :is(th, td) small { font-size: 13px !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2__scroll { border-radius: 16px; }
+/* "Show more" in a shortened cell: a quiet text button, full text expands in place (loop A, Oct 26). */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__more { display: inline; min-height: 0; margin: 0; padding: 0; border: 0; background: none; color: inherit; font: 600 13px/1.4 var(--ay-font-ui, 'Figtree', sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__more:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 4px; }

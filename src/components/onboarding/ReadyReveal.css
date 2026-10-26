@@ -43,3 +43,7 @@ html body .app-container.app-container.app-container.app-container.app-container
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready .ay-ob-primary.ay-ob-primary,
 html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-ob-ready .ay-ob-primary.ay-ob-primary { box-shadow: 3px 3px 0 #f7badd !important; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-ob-ready .ay-ob-primary.ay-ob-primary { box-shadow: 3px 3px 0 #f7badd !important; }
+/* the match plate is the shared scalloped Plate (no square tile behind it) */
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-match__plate.is-plate { width: 64px; height: 64px; background: transparent; border-radius: 0; overflow: visible; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-match__plate.is-plate .ayk-plate { width: 100%; height: 100%; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-match { grid-template-columns: 64px minmax(0, 1fr); }

@@ -3,6 +3,7 @@ import { getSelectedNeeds, useCatalogReady } from '../../data/catalog.js';
 import { moreRemaining } from '../../mobile/data/onboardingFlow.js';
 import { reconstructIntakeFromSnapshot } from '../../mobile/data/intakeModel.js';
 import { Seal } from '../personality/Bits.jsx';
+import { Plate } from '../ui/ay';
 import MatchPill from '../MatchPill.jsx';
 import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct } from '../../data/products.js';
 import { isSafetyHold, isBleedingEvaluation } from '../../utils/matchDisplay.js';
@@ -56,7 +57,8 @@ function firstMatches(answers, limit = 3) {
 function MatchPlate({ src, product }) {
   const [failed, setFailed] = useState(false);
   const word = String(product.brand || product.name || '').split(/\s+/)[0];
-  return <span className="ay-ob-match__plate" aria-hidden="true">{src && !failed ? <img src={src} alt="" loading="lazy" onError={() => setFailed(true)} /> : <i>{word}</i>}</span>;
+  // The shared white scalloped plate (signature 1), same as every product elsewhere.
+  return <span className="ay-ob-match__plate is-plate" aria-hidden="true"><Plate src={src && !failed ? src : ''} alt="" fallback={word} imgProps={{ loading: 'lazy', onError: () => setFailed(true) }} /></span>;
 }
 
 export default function ReadyReveal({ answers = null, variant = 'app', signedIn = false, onSeeToday, onCreateAccount, onBack, onMorePersonal }) {

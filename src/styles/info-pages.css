@@ -198,3 +198,7 @@ html body .app-container .ed.ed-page--info .ed-hiw li .ed-hiw__n { background: v
   .app-container.app-container .ed.ed-page--info .ed-principles li { padding: 16px !important; }
   .app-container.app-container .ed.ed-page--info .ed-principles svg { width: 26px; height: 26px; }
 }
+/* Partners on wide screens: two columns of rows, so the count sits next to its brand instead of 900px away. */
+@media (min-width: 1024px) {
+  .app-container.app-container .ip-partners { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; }
+}

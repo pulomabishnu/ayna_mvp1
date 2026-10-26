@@ -105,6 +105,25 @@ export function safetyOf(product) {
   return notes.length ? `${notes.map((n) => (/[.!?…]$/.test(n) ? n : `${n}.`)).join(' ')}${more}` : 'None flagged';
 }
 
+/** The full text behind a shortened cell ("Show more" in the table); null when nothing was cut. */
+const clean = (t) => String(t || '').replace(/\s+/g, ' ').trim();
+export function intendedUseFull(product) {
+  const who = (product?.whoItsFor || []).map(clean).filter(Boolean);
+  const full = who.length ? who.join(' ') : clean(product?.summary);
+  return full && full !== intendedUse(product) ? full : null;
+}
+export function safetyFull(product) {
+  const notes = [];
+  const side = clean(product?.safety?.sideEffects);
+  if (side && !/^(none|n\/a|no known|not applicable)/i.test(side)) notes.push(side);
+  notes.push(...(product?.warnings || []).map(clean).filter(Boolean));
+  if (recallFacts(product).status === 'past') notes.push('Past recall');
+  const alert = clean(safetyAlertText(product));
+  if (alert && !notes.length) notes.push(alert);
+  const full = notes.map((n) => (/[.!?…]$/.test(n) ? n : `${n}.`)).join(' ');
+  return full && full !== safetyOf(product) ? full : null;
+}
+
 function preferences(details) {
   if (!details) return NO_PROFILE;
   const texts = (details.reasonDetails || []).map((r) => String(r?.text || '')).filter((t) => PREF_TEXTS.some((re) => re.test(t)));
@@ -150,12 +169,12 @@ export function compareSetRows(products = [], { matchFor = null, detailsFor = nu
     });
   }
   rows.push({ id: 'price', label: 'Price', values: base.Price || list.map(() => NOT_ON_FILE) });
-  rows.push({ id: 'use', label: 'Intended use', values: list.map(intendedUse), hint: 'What the brand or ayna’s team says it is for' });
+  rows.push({ id: 'use', label: 'Intended use', values: list.map(intendedUse), full: list.map(intendedUseFull), hint: 'What the brand or ayna’s team says it is for' });
   rows.push({ id: 'format', label: 'Format', values: list.map(formatOf) });
   // The grade (only from .gov) plus the same counts per level as the product page (pdp/evidenceLevels).
   rows.push({ id: 'evidence', label: 'Evidence', values: list.map(govEvidence), notes: list.map(evidenceCountsLine), hint: 'Graded only from .gov health pages' });
   if (base['Ingredients or materials']) rows.push({ id: 'ingredients', label: 'Ingredients or materials', values: base['Ingredients or materials'] });
-  rows.push({ id: 'safety', label: 'Safety considerations', values: list.map(safetyOf), hint: 'From the label and the brand’s warnings' });
+  rows.push({ id: 'safety', label: 'Safety considerations', values: list.map(safetyOf), full: list.map(safetyFull), hint: 'From the label and the brand’s warnings' });
   rows.push({ id: 'prefs', label: 'Your preferences', values: list.map((p) => preferences(detailsFor ? detailsFor(p) : null)), keep: true });
   rows.push({ id: 'reviews', label: 'Reviews', values: list.map((p) => reviews(p, ratingFor)), keep: true });
   return rows.filter((r) => r.keep || r.values.some((v) => v && v !== NOT_ON_FILE));

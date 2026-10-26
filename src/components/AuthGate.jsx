@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { picksAreasLine } from '../utils/needAreas.js';
 import { getSupabaseClient, setRememberMe } from '../utils/supabaseClient';
+import { devPreviewOn } from '../utils/devPreview.js';
 import { CODE_COPY, EMAIL_CODE_LENGTH, SMS_CODE_LENGTH, cleanCode, codeErrorText, isEmailNotConfirmed, verifyEmailCode } from '../utils/authCodes.js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
@@ -120,6 +121,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const [phoneCode, setPhoneCode] = useState('');
 
   const supabase = getSupabaseClient();
+  // Design QA only: a local production build on http://localhost:<port> has no sign-in service, so it
+  // shows the normal sign-in/sign-up state instead of the outage notice (never on a real host, never native).
+  const designPreview = !supabase && devPreviewOn();
   const isSignup = allowSignup && mode === 'signup';
   // Per-feature sign-in titles that name the action (walkthrough P1-23,
   // docs/terminology.md), not "Sign in to use posting".
@@ -222,6 +226,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+    if (!supabase) { setError('Sign-in is unavailable right now. Please try again later.'); return; }
     setError('');
     setSuccessMsg('');
     setResendMsg('');
@@ -569,7 +574,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           </div>
         )}
 
-        {!supabase && (
+        {!supabase && !designPreview && (
           // Without this, a missing/blank .env.local silently disabled the
           // email/password submit button with zero feedback, clicking it
           // did nothing, no error, no console output, nothing to search for.
@@ -882,7 +887,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           <button
             type="submit"
             className="ay-auth-submit"
-            disabled={loading || !supabase}
+            disabled={loading || (!supabase && !designPreview)}
             style={{
               ...styles.primaryBtn,
             }}
