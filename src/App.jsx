@@ -162,7 +162,8 @@ import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
 import { MAIN_TABS, TabIcon, AskMark } from './components/nav/tabs.jsx';
 import { YOU_SECTIONS, YOU_SECTION_ALIASES } from './components/nav/mainTabs.js';
-import { ExploreHeader, YouNav } from './components/explore/ExploreNav.jsx';
+import { ExploreHeader } from './components/explore/ExploreNav.jsx';
+import YouTabs from './components/you/YouTabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
 import RoutineSummary from './components/routine/RoutineSummary.jsx';
@@ -2590,7 +2591,7 @@ function App() {
         {currentView === 'you' && (
           <WebYou
             section={youSection}
-            nav={<YouNav active={youSection || 'overview'} onGo={(key) => openYou(key === 'overview' ? null : key)} />}
+            nav={youSection ? <YouTabs active={youSection} onGo={(key) => openYou(key === 'overview' ? null : key)} /> : null}
             onOpenSection={openYou}
             recentAsks={chatHistory}
             savedSlot={(
@@ -2637,6 +2638,21 @@ function App() {
             theme={themeMode}
             onThemeChange={setThemeMode}
             quizSlot={finishQuizCard()}
+            signedOutSlot={!user && !authLoading ? (
+              <EcosystemPreview
+                products={ALL_PRODUCTS}
+                matches={guestPreview?.products || []}
+                onBuild={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
+                onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }}
+                onSave={() => {
+                  if (guestPreview?.results) setPendingQuizResults(guestPreview.results);
+                  setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
+                  setShowAuthModal(true);
+                }}
+                onOpenProduct={handleOpenProduct}
+                onBrowse={() => handleViewDiscovery('')}
+              />
+            ) : null}
           />
         )}
         {currentView === 'quiz' && (
@@ -2953,7 +2969,7 @@ function App() {
         {/* My ecosystem (You > My ecosystem, /you/ecosystem). Its old Dashboard tab is Today. */}
         {currentView === 'ecosystem' && (
           <EcosystemViewTabs dashboard={null} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
-          <YouNav active="ecosystem" onGo={(key) => openYou(key)} />
+          <YouTabs active="ecosystem" onGo={(key) => openYou(key === 'overview' ? null : key)} />
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
           <ViewSkeleton
             label="Loading your ecosystem"

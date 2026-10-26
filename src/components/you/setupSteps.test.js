@@ -29,3 +29,13 @@ describe('You set-up steps (endowed progress from real data)', () => {
     expect(countAnswers({ age: 24 })).toBeGreaterThanOrEqual(1);
   });
 });
+
+describe('routineDay', () => {
+  it('day 1 is the day she added it, from her own date only', async () => {
+    const { routineDay } = await import('./setupSteps.js');
+    const now = new Date(2026, 9, 26, 9);
+    expect(routineDay(new Date(2026, 9, 26, 8).toISOString(), now)).toBe(1);
+    expect(routineDay(new Date(2026, 9, 15, 20).toISOString(), now)).toBe(12);
+    expect(routineDay(null, now)).toBeNull();
+  });
+});

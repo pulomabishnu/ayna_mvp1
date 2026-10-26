@@ -53,22 +53,16 @@ export default function EcosystemViewTabs({ dashboard, onHero = false, children 
   };
 
   // No dashboard passed: My ecosystem under You (Today is its own tab now), so
-  // the page is the products view alone, under its awning, with no switch.
+  // the page is the products view alone, with no switch. No awning: blue is for
+  // chart lines only, and a scallop belongs at a section edge (You audit P2).
   if (!dashboard) {
-    return (
-      <>
-        <div className="eco-awning" aria-hidden="true" />
-        <div className="ay-ecoview2__panel">{children}</div>
-      </>
-    );
+    return <div className="ay-ecoview2__panel">{children}</div>;
   }
 
   return (
     <>
       {/* Over the Products hero the strip takes the hero's espresso, so the
           switch reads as the top of that block rather than a band above it. */}
-      {/* The striped awning: the Ecosystem's own top band (sky and butter, scalloped). */}
-      <div className="eco-awning" aria-hidden="true" />
       <div className={`ay-container ay-tabs ay-ecoview2${onHero && view === 'products' ? ' is-onhero' : ''}`}>
         <div className="ay-tabs__list eco-inklist" role="tablist" aria-label="Ecosystem view" onKeyDown={onKeyDown} ref={listRef}>
           <span className="eco-ink" aria-hidden="true" style={ink} />

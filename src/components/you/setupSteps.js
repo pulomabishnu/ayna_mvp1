@@ -41,3 +41,12 @@ const SOURCE_NAMES = { apple_health: 'Apple Health', oura: 'Oura', fitbit: 'Fitb
 export function connectedNames(connected = []) {
   return [...new Set((connected || []).filter((c) => !c?.status || c.status === 'connected').map((c) => SOURCE_NAMES[c?.source] || (c?.source ? String(c.source).replace(/_/g, ' ').replace(/^\w/, (m) => m.toUpperCase()) : null)).filter(Boolean))];
 }
+
+/** "Day 12": the day of her routine for a product she added herself (addedAt), counted in local days, day 1 = the day she added it. Null when there is no date. */
+export function routineDay(addedAt, now = new Date()) {
+  const t = Date.parse(addedAt || '');
+  if (!Number.isFinite(t)) return null;
+  const start = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x.getTime(); };
+  const days = Math.round((start(now) - start(t)) / 86400000);
+  return days < 0 ? null : days + 1;
+}
