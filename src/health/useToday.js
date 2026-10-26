@@ -138,6 +138,8 @@ export function useToday({ userId = null, intake = null, healthRows = [], cycle 
       const t = tries.find((x) => x.id === item.basis?.tryId);
       if (!t) return;
       saveTry(recordOutcome(t, outcome, { day: today }));
+      // Counts toward "N of M done today" (todayProgress.js).
+      put('seen', markInteracted(readToday().seen, item.id, today));
       setTriesVersion((v) => v + 1);
       sync();
       trackToday('followup_completed', { completed: true });

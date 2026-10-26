@@ -27,7 +27,7 @@ const isObj = (v) => v && typeof v === 'object' && !Array.isArray(v);
 export function readRundownMemory(storage = globalThis.localStorage) {
   const m = bucketOf(loadState(RUNDOWN_KEY, storage)).items.memory;
   const v = isObj(m) ? m : {};
-  return { shown: isObj(v.shown) ? v.shown : {}, shownCategories: isObj(v.shownCategories) ? v.shownCategories : {}, signatures: isObj(v.signatures) ? v.signatures : {}, notUseful: isObj(v.notUseful) ? v.notUseful : {}, weeklySeen: v.weeklySeen || null, viewedDay: v.viewedDay || null, autoDay: v.autoDay || null, periodAnswers: isObj(v.periodAnswers) ? v.periodAnswers : {} };
+  return { shown: isObj(v.shown) ? v.shown : {}, shownCategories: isObj(v.shownCategories) ? v.shownCategories : {}, signatures: isObj(v.signatures) ? v.signatures : {}, notUseful: isObj(v.notUseful) ? v.notUseful : {}, weeklySeen: v.weeklySeen || null, viewedDay: v.viewedDay || null, autoDay: v.autoDay || null, firstViewedDay: v.firstViewedDay || v.viewedDay || null, hiddenDay: v.hiddenDay || null, periodAnswers: isObj(v.periodAnswers) ? v.periodAnswers : {} };
 }
 
 function write(memory, storage) {
@@ -69,8 +69,16 @@ export function markWeeklySeen(today, storage = globalThis.localStorage) {
 /** She opened (or skipped) today's rundown: it never opens on its own again today. */
 export function markRundownViewed(today, { auto = false } = {}, storage = globalThis.localStorage) {
   const m = readRundownMemory(storage);
-  return write({ ...m, viewedDay: today, ...(auto ? { autoDay: today } : {}) }, storage);
+  return write({ ...m, viewedDay: today, firstViewedDay: m.firstViewedDay || today, ...(auto ? { autoDay: today } : {}) }, storage);
 }
+
+/** "Hide today" from the Rundown card's "…" menu: the card waits until tomorrow (safety and care never hide). */
+export function markRundownHidden(today, hidden = true, storage = globalThis.localStorage) {
+  return write({ ...readRundownMemory(storage), hiddenDay: hidden ? today : null }, storage);
+}
+
+/** She has seen at least one Daily Rundown (opened or skipped) on this device: the tour and the notification ask wait for it. */
+export const seenFirstRundown = (memory) => Boolean(memory?.firstViewedDay || memory?.viewedDay);
 
 export const PERIOD_ANSWERS = ['yes', 'ended', 'unsure'];
 /**

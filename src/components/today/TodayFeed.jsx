@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { OPEN_LOG_EVENT } from './openLog.js';
 import { useToday } from '../../health/useToday.js';
 import { STEP_FOR_FIELD } from '../../health/todayProfilePatch.js';
@@ -7,8 +7,18 @@ import { getProductById } from '../../data/catalog.js';
 import { todayFixtureOn, makeTodayFixture } from '../../health/todayDevFixture.js';
 import Rundown from '../rundown/Rundown.jsx';
 import NotUsefulMenu from './NotUsefulMenu.jsx';
+import ItemMenu from './ItemMenu.jsx';
+import RundownNotifyAsk from './RundownNotifyAsk.jsx';
+import { readRundownPush } from './rundownPush.js';
+import { NOT_HELPING, nextBestMatch } from './nextBest.js';
+import { markReviewAsk, reviewsDue } from '../../health/routineFollowUps.js';
+import { readRundownMemory, seenFirstRundown } from '../rundown/rundownStore.js';
+import { eventSurface, trackCheckin } from '../../utils/analyticsEvents.js';
+import { Chip, StatusPill } from '../ui/ay';
 import ProfileAskCard from './ProfileAskCard.jsx';
 import { askWhyFor } from '../../utils/askPrompts.js';
+import { todayProgress, triesInProgress } from './todayProgress.js';
+import { LOG_FIELDS } from '../../health/dailyLog.js';
 import '../../styles/today-feed.css';
 
 // The fact first, then "Ask why" (team sync, Oct 25). Not on questions she
@@ -16,28 +26,118 @@ import '../../styles/today-feed.css';
 const ASK_WHY = new Set(['insight', 'option', 'care', 'follow_up']);
 const askWhy = (item, onAsk) => (onAsk && ASK_WHY.has(item.type) ? () => onAsk(askWhyFor(item.title), { context: [item.title, item.reason].filter(Boolean).join(' ') }) : null);
 
-/** Home's one-screen version of an item: the fact, its reason, and at most three actions. */
-function CompactItem({ item, t, onAsk, onFindCare, onOpenFull }) {
+// Answer chips shown before "More" (Today audit, section 6: first 3 visible).
+const FIRST_CHIPS = 3;
+// The log row each check-in chip opens (DailyCheckin.jsx labels its rows ay-checkin-<field>).
+const FIELD_CHIP = { pain: 'Pain', flow: 'Flow', pms: 'PMS', sleep: 'Sleep', mood: 'Mood', skin: 'Skin' };
+
+// Tick / cross / dash on a follow-up's answers (audit v2 #21, Clean Curls' do's and don'ts).
+const OUTCOME_ICON = { helpful: 'M5 12.5l4.5 4.5L19 7.5', worse: 'M6.5 6.5l11 11M17.5 6.5l-11 11', no_change: 'M6 12h12' };
+const OutcomeIcon = ({ id }) => (OUTCOME_ICON[id] ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d={OUTCOME_ICON[id]} /></svg> : null);
+
+// A status pill per item (Today audit v2, section 11, from the drawing-course
+// app's to-do pills): "New" the first day ayna shows it, "Answered" once she
+// acted on it today. From her own seen record (decisionEngine markShown).
+function statusOf(item, t) {
+  const s = t.store?.seen?.[item.id];
+  if (!s) return null;
+  if (s.lastInteracted === t.today) return 'Answered';
+  if ((s.shownDays || []).length === 1 && s.shownDays[0] === t.today) return 'New';
+  return null;
+}
+
+/** Home's one-screen version of an item: the fact, one way to act, and "Ask why". */
+function CompactItem({ item, t, onAsk, onFindCare, onOpenFull, onOutcome }) {
   const kicker = item.type === 'care' ? CARE_KICKER[item.level] || 'Care' : KICKER[item.type] || '';
   const acts = item.actions || [];
   const tel = item.type === 'care' && item.level === 'urgent' && /911/.test(item.title);
-  const why = askWhy(item, onAsk);
+  // On Home a follow-up or check-in already has its answers on the row; "Ask why" stays on the full dashboard.
+  const why = ['follow_up', 'check_in'].includes(item.type) ? null : askWhy(item, onAsk);
+  // The 10-second action right on Home (audit v2, section 12): a follow-up's
+  // first three answers, a check-in's fields. Anything more opens the dashboard.
+  const outcomes = item.type === 'follow_up' ? acts.filter((a) => a.id.startsWith('outcome:') && a.id !== 'outcome:stopped') : [];
+  const fields = item.type === 'check_in' ? ((acts.find((a) => a.id === 'open_check_in')?.fields) || []).filter((f) => FIELD_CHIP[f]) : [];
+  const status = statusOf(item, t);
+  const full = onOpenFull ? (opts) => onOpenFull(item, opts) : null;
+  const primaryLabel = acts.some((a) => a.id === 'show_options') ? 'Show options' : acts.some((a) => /^(outcome|answer):|open_triage|try_this|open_check_in/.test(a.id)) ? 'Answer' : 'More';
   return (
     <li className={`ay-today__item is-compact is-${item.tier} is-${item.type}${item.level ? ` is-${item.level}` : ''}`}>
-      <p className="ay-today__kicker">{kicker}</p>
+      <p className="ay-today__kicker">{kicker}{status && <span className="ay-today__status">{status}</span>}</p>
       <h3 className="ay-today__title">{item.title}</h3>
       {item.reason && <p className="ay-today__why">{item.reason}</p>}
+      {outcomes.length > 0 && (
+        <div className="ay-today__chips is-inline" role="group" aria-label="How did it go?">
+          {outcomes.slice(0, FIRST_CHIPS).map((a) => <button key={a.id} type="button" className="ay-chip" onClick={() => onOutcome(item, a.id.slice(8))}>{a.label}</button>)}
+          {full && <button type="button" className="ay-chip is-more" onClick={() => full()}>More</button>}
+        </div>
+      )}
+      {fields.length > 0 && (
+        <div className="ay-today__chips is-inline" role="group" aria-label="Log today">
+          {fields.map((f) => <button key={f} type="button" className="ay-chip" onClick={() => { t.opened(item); full?.({ log: f }); }}>{FIELD_CHIP[f]}</button>)}
+        </div>
+      )}
       <div className="ay-today__actions">
         {tel && <a className="ay-today__primary" href="tel:911" onClick={() => t.opened(item)}>Call 911</a>}
         {!tel && acts.some((a) => a.id === 'get_care') && (onFindCare
           ? <button type="button" className="ay-today__primary" onClick={() => { t.opened(item); onFindCare(item); }}>Find care</button>
           : <a className="ay-today__primary" href={HRSA_FIND_CARE} target="_blank" rel="noopener noreferrer" onClick={() => t.opened(item)}>Find care<span className="sr-only"> (opens in a new tab)</span></a>)}
+        {full && !outcomes.length && !fields.length && <button type="button" className="ay-today__primary is-quiet" onClick={() => full()}>{primaryLabel}</button>}
         {why && <button type="button" className="ay-today__text" onClick={why}>Ask why</button>}
-        {onOpenFull && <button type="button" className="ay-today__text" onClick={() => onOpenFull(item)}>{acts.some((a) => /^(outcome|answer):|open_triage|show_options|try_this|open_check_in/.test(a.id)) ? 'Answer' : 'More'}</button>}
       </div>
     </li>
   );
 }
+
+
+/** "Not helping?": the next best match with its reason, from the one engine (nextBest.js). */
+function NextBest({ pick, onOpenProduct, onClose }) {
+  return (
+    <section className="ay-today__nextbest" aria-labelledby="ay-today-nextbest-h">
+      <p className="ay-today__kicker">Not helping?</p>
+      <h3 id="ay-today-nextbest-h" className="ay-today__title">Your next best match: {pick.product.name}</h3>
+      <p className="ay-today__match"><StatusPill tone="ink">{pick.percent}% match</StatusPill>{pick.reason && <span>{pick.reason}</span>}</p>
+      <div className="ay-today__actions">
+        {onOpenProduct && <button type="button" className="ay-today__primary" onClick={() => onOpenProduct(pick.product)}>See it</button>}
+        <button type="button" className="ay-today__text" onClick={onClose}>Not now</button>
+      </div>
+    </section>
+  );
+}
+
+/** Three cycles after "Add to routine": ask how it is going (retention checklist e). */
+function ReviewAsk({ due, t, onOpenProduct, onDone, compact }) {
+  const p = getProductById(due.productId);
+  if (!p) return null;
+  const answer = (a) => { markReviewAsk(due.productId, a, { today: t.today }); onDone(); };
+  return (
+    <li className={`ay-today__item is-review${compact ? ' is-compact' : ''}`}>
+      <p className="ay-today__kicker">Review<StatusPill>In my routine</StatusPill></p>
+      <h3 className="ay-today__title">{compact ? `How is ${p.name} going?` : `You have used ${p.name} for 3 cycles. How is it going?`}</h3>
+      {!compact && <p className="ay-today__why">A short review helps the next person decide.</p>}
+      <div className="ay-today__actions">
+        {onOpenProduct && <button type="button" className="ay-today__primary" onClick={() => { answer('written'); onOpenProduct(p); }}>{compact ? 'Review' : 'Write a review'}</button>}
+        <button type="button" className="ay-today__text" onClick={() => answer('later')}>Not now</button>
+        {!compact && (
+          <ItemMenu label={`More for ${p.name}`}>
+            <button type="button" onClick={() => answer('no')}>Don’t ask about this</button>
+          </ItemMenu>
+        )}
+      </div>
+    </li>
+  );
+}
+
+function Progress({ items, t }) {
+  const { done, total } = todayProgress(items, t);
+  if (total < 2) return null;
+  return (
+    <p className="ay-today__progress">
+      <span>{done} of {total} done today</span>
+      <span className="ay-today__dots" aria-hidden="true">{Array.from({ length: total }, (_, i) => <i key={i} className={i < done ? 'is-on' : ''} />)}</span>
+    </p>
+  );
+}
+
 
 /**
  * Today with ayna (master prompt sections 62, 135, 136): what decide()
@@ -45,7 +145,8 @@ function CompactItem({ item, t, onAsk, onFindCare, onOpenFull }) {
  * 1 to 3 items (safety and care can be more), or "Nothing unusual stands out
  * today". Then her daily log card.
  *
- * Every non-safety item has Useful and Not relevant. Safety and care items
+ * Every non-safety item has Useful and Not useful in its "…" menu (one
+ * primary action and at most one text link per item). Safety and care items
  * cannot be dismissed. Products appear only as a 'products' item after she
  * taps Show options. Copy comes from the decision engine; this file adds
  * only labels for controls.
@@ -112,27 +213,61 @@ function TriageForm({ questions, onDone }) {
 // "My information changed": which part of her profile to open.
 const infoSection = (item) => (['pregnancy', 'breastfeeding'].includes(item.basis?.field) ? 'lifeStage' : item.basis?.field || 'support');
 
-function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checkinId, onOpenLog }) {
+function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checkinId, onOpenLog, onOutcome }) {
   const protectedItem = PROTECTED.has(item.tier);
   const noteText = t.notes[item.id];
   const kicker = item.type === 'care' ? CARE_KICKER[item.level] || 'Care' : KICKER[item.type] || '';
   const acts = item.actions || [];
   const outcomeActs = acts.filter((a) => a.id.startsWith('outcome:'));
+  // "Stopped" is not an answer to "did it help?": it lives in the "…" menu as "Stopped using".
+  const stopAct = outcomeActs.find((a) => a.id === 'outcome:stopped');
+  const chipActs = outcomeActs.filter((a) => a !== stopAct);
+  const [allChips, setAllChips] = useState(false);
   const answerActs = acts.filter((a) => a.id.startsWith('answer:'));
   const triage = acts.find((a) => a.id === 'open_triage');
   const productsAct = acts.find((a) => a.id === 'see_products');
+  const checkIn = acts.find((a) => a.id === 'open_check_in');
   const has = (id) => acts.some((a) => a.id === id);
   const tel = item.type === 'care' && item.level === 'urgent' && /911/.test(item.title);
+  const why = askWhy(item, onAsk);
+  const remind = !protectedItem && REMINDABLE.has(item.type) ? () => t.remindTonight(item) : null;
+  // One quiet text link per item (audit section 6): Ask why on a pattern or
+  // option, Remind me tonight on a follow-up or check-in. Everything else
+  // that is not the primary goes in the "…" menu.
+  const linkIsWhy = Boolean(why) && !['follow_up', 'check_in'].includes(item.type);
+  const linkIsRemind = !linkIsWhy && Boolean(remind);
 
   const answer = (a) => {
     const [, field, value] = a.id.split(':');
     if (value === 'add' || (value === 'yes' && ['allergies', 'medications', 'conditions'].includes(field))) { t.opened(item); onEditAnswers?.(STEP_FOR_FIELD[field] || field); return; }
     t.answerSafety(item, field, value);
   };
+  const openLogAt = (e, field) => {
+    e.preventDefault();
+    t.opened(item);
+    onOpenLog?.();
+    requestAnimationFrame(() => {
+      const row = field ? document.getElementById(`ay-checkin-${field}`)?.closest('.ay-checkin__row') : null;
+      (row || document.getElementById(checkinId))?.scrollIntoView({ block: field ? 'center' : 'start', behavior: 'smooth' });
+    });
+  };
+  const fields = (checkIn?.fields || []).filter((f) => FIELD_CHIP[f]);
+  const first = fields.length ? LOG_FIELDS.find((f) => f.id === fields[0]) || null : null;
+  const shownChips = allChips ? chipActs : chipActs.slice(0, FIRST_CHIPS);
+  const menu = !protectedItem && (
+    <ItemMenu label={`More for ${item.title}`}>
+      {why && !linkIsWhy && <button type="button" onClick={why}>Ask why</button>}
+      {remind && !linkIsRemind && <button type="button" onClick={remind}>Remind me tonight</button>}
+      {stopAct && <button type="button" onClick={() => onOutcome(item, 'stopped')}>Stopped using</button>}
+      {!noteText && <button type="button" onClick={() => t.useful(item)}>Useful</button>}
+      <NotUsefulMenu onPick={(reason) => { t.notUseful(item, reason); if (reason === 'info_changed') onEditAnswers?.(infoSection(item)); }} />
+      {item.type === 'check_in' && <button type="button" onClick={() => t.notUseful(item, 'dont_show_type')}>Turn off check-ins</button>}
+    </ItemMenu>
+  );
 
   return (
     <li className={`ay-today__item is-${item.tier} is-${item.type}${item.level ? ` is-${item.level}` : ''}`}>
-      <p className="ay-today__kicker">{kicker}</p>
+      <p className="ay-today__kicker">{kicker}{statusOf(item, t) && <StatusPill>{statusOf(item, t)}</StatusPill>}</p>
       <h3 className="ay-today__title">{item.title}</h3>
       {item.body && <p className="ay-today__body">{item.body}</p>}
       {item.reason && <p className="ay-today__why">{item.reason}</p>}
@@ -140,14 +275,27 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
 
       {triage && <TriageForm questions={triage.questions || []} onDone={(answers) => t.answerTriage(item, answers)} />}
 
-      {outcomeActs.length > 0 && (
+      {chipActs.length > 0 && (
         <div className="ay-today__chips" role="group" aria-label="How did it go?">
-          {outcomeActs.map((a) => <button key={a.id} type="button" className="ay-chip" onClick={() => t.recordOutcome(item, a.id.slice(8))}>{a.label}</button>)}
+          {shownChips.map((a) => <Chip key={a.id} aria-pressed={undefined} icon={OUTCOME_ICON[a.id.slice(8)] ? <OutcomeIcon id={a.id.slice(8)} /> : null} onClick={() => onOutcome(item, a.id.slice(8))}>{a.label}</Chip>)}
+          {!allChips && chipActs.length > FIRST_CHIPS && <Chip className="is-more" aria-pressed={undefined} aria-expanded="false" onClick={() => setAllChips(true)}>More</Chip>}
         </div>
       )}
       {answerActs.length > 0 && (
         <div className="ay-today__chips" role="group" aria-label={item.title}>
-          {answerActs.map((a) => <button key={a.id} type="button" className="ay-chip" onClick={() => answer(a)}>{a.label}</button>)}
+          {answerActs.map((a) => <Chip key={a.id} aria-pressed={undefined} onClick={() => answer(a)}>{a.label}</Chip>)}
+        </div>
+      )}
+      {/* The first question inline (dashboard audit 7.5; #17's tap-to-answer chips), the rest one tap away. */}
+      {checkIn && first && (
+        <div className="ay-today__chips is-first" role="group" aria-label={first.label}>
+          <span className="ay-today__qlabel">{first.label}</span>
+          {first.values.map((v, i) => <Chip key={String(v)} aria-pressed={undefined} onClick={() => { trackCheckin({ surface: eventSurface(), where: 'today_item' }); t.saveLog(t.today, { [first.id]: v }); }}>{first.options[i]}</Chip>)}
+        </div>
+      )}
+      {checkIn && fields.length > 1 && (
+        <div className="ay-today__chips" role="group" aria-label="Log the rest of today">
+          {fields.slice(1).map((f) => <Chip key={f} aria-pressed={undefined} aria-controls={checkinId} onClick={(e) => openLogAt(e, f)}>{FIELD_CHIP[f]}</Chip>)}
         </div>
       )}
       {productsAct && (
@@ -164,14 +312,14 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
         {!tel && has('get_care') && (onFindCare
           ? <button type="button" className="ay-today__primary" onClick={() => { t.opened(item); onFindCare(item); }}>Find care</button>
           : <a className="ay-today__primary" href={HRSA_FIND_CARE} target="_blank" rel="noopener noreferrer" onClick={() => t.opened(item)}>Find care<span className="sr-only"> (opens in a new tab)</span></a>)}
-        {askWhy(item, onAsk) && <button type="button" className="ay-today__text" onClick={askWhy(item, onAsk)}>Ask why</button>}
-        {has('care_summary') && onAsk && <button type="button" className="ay-today__text" onClick={() => { t.opened(item); onAsk('Help me write a short summary of my pain to bring to a doctor visit.'); }}>Make a summary for my visit</button>}
-        {has('open_check_in') && <a className="ay-today__primary" href={`#${checkinId}`} onClick={(e) => { e.preventDefault(); t.opened(item); onOpenLog?.(); requestAnimationFrame(() => document.getElementById(checkinId)?.scrollIntoView({ block: 'start', behavior: 'smooth' })); }}>Check in</a>}
+        {checkIn && !fields.length && <a className="ay-today__primary" href={`#${checkinId}`} onClick={(e) => openLogAt(e, null)}>Check in</a>}
         {acts.filter((a) => a.id === 'show_options').map((a) => <button key={a.id} type="button" className="ay-today__primary" onClick={() => t.showOptions(item, a.need)}>Show options</button>)}
         {acts.filter((a) => a.id === 'try_this').map((a) => <button key={a.id} type="button" className="ay-today__primary" onClick={() => t.startTry(item, a)}>Try this</button>)}
-        {!protectedItem && REMINDABLE.has(item.type) && <button type="button" className="ay-today__text" onClick={() => t.remindTonight(item)}>Remind me tonight</button>}
-        {!protectedItem && !noteText && <button type="button" className="ay-today__text" onClick={() => t.useful(item)}>Useful</button>}
-        {!protectedItem && <NotUsefulMenu className="ay-today__text" onPick={(reason) => { t.notUseful(item, reason); if (reason === 'info_changed') onEditAnswers?.(infoSection(item)); }} />}
+        {protectedItem && why && <button type="button" className="ay-today__text" onClick={why}>Ask why</button>}
+        {has('care_summary') && onAsk && <button type="button" className="ay-today__text" onClick={() => { t.opened(item); onAsk('Help me write a short summary of my pain to bring to a doctor visit.'); }}>Make a summary for my visit</button>}
+        {!protectedItem && linkIsWhy && <button type="button" className="ay-today__text" onClick={why}>Ask why</button>}
+        {linkIsRemind && <button type="button" className="ay-today__text" onClick={remind}>Remind me tonight</button>}
+        {menu}
       </div>
       {noteText && <p className="ay-today__note" role="status">{noteText}</p>}
     </li>
@@ -189,12 +337,41 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   // 1 to 3 things for today, each the fact, "Ask why" and one way in;
   // everything else (answering, the log, saves) is on the full dashboard.
   compact = false, onOpenFull = null,
+  // Website Today's right column: the weekly recap's lines and what she is trying now (WebHealth).
+  onWeekly = null, onTries = null, onSetup = null,
 }) {
   // DEV only (?fixture=today): sample logs and tries, dropped from production builds.
   const [fixture] = useState(() => (import.meta.env.DEV && todayFixtureOn() ? makeTodayFixture() : null));
   const t = useToday({ userId, intake: fixture?.intake || intake, healthRows: fixture?.healthRows || healthRows, cycle, hormonalBC, products, fixture, onSaveToProfile, onEditStep: onEditAnswers ? (step) => onEditAnswers(step) : null });
   const { items } = t.decision;
+  const trying = triesInProgress(t.tries, t.today);
+  const tryingKey = trying.map((x) => `${x.id}:${x.day}`).join(',');
+  useEffect(() => { onTries?.(trying); }, [tryingKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Set-up as a count that starts with what she already did (endowed progress, checklist c).
+  const logged = Object.values(t.log || {}).some((e) => e && Object.values(e).some((v) => v != null));
+  const setupKey = `${Boolean(intake)}|${logged}|${readRundownPush().on}`;
+  useEffect(() => {
+    onSetup?.([
+      { id: 'profile', label: 'Create your health profile', done: Boolean(intake) },
+      { id: 'checkin', label: 'Log your first check-in', done: logged },
+      { id: 'notify', label: 'Get your Daily Rundown each morning', done: readRundownPush().on },
+    ]);
+  }, [setupKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const checkinId = `ay-today-log-${variant}`;
+  // The notification ask waits for her first Daily Rundown (retention checklist b).
+  const [rundownSeen, setRundownSeen] = useState(() => seenFirstRundown(readRundownMemory()));
+  // A follow-up answered "No change" or "Worse" on a product: the next best match (checklist d).
+  const [nextBest, setNextBest] = useState(null);
+  const onOutcome = (item, outcome) => {
+    const tried = (t.tries || []).find((x) => x.id === item.basis?.tryId);
+    t.recordOutcome(item, outcome);
+    if (!NOT_HELPING.has(outcome) || tried?.kind !== 'product') return;
+    const intakeNow = fixture?.intake || intake;
+    setNextBest(nextBestMatch(tried.ref, intakeNow, { healthProfile, matchOpts }));
+  };
+  // Review asks three cycles after "Add to routine" (routineFollowUps.js).
+  const [reviewTick, setReviewTick] = useState(0);
+  const reviewDue = useMemo(() => reviewsDue({ today: t.today })[0] || null, [t.today, reviewTick]); // eslint-disable-line react-hooks/exhaustive-deps
   // The check-in item and the full log are one action: while the item is on
   // screen, the log opens from its "Check in" instead of also sitting below it.
   const checkInItem = items.some((it) => (it.actions || []).some((a) => a.id === 'open_check_in'));
@@ -231,19 +408,24 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         onSetUp={onSetUp}
         onOpenPost={onOpenPost}
         onFinish={onRundownFinish}
+        onWeekly={onWeekly}
+        onClosed={() => setRundownSeen(seenFirstRundown(readRundownMemory()))}
         variant={variant}
         compact={compact}
         onSeeData={(d) => { try { window.dispatchEvent(new CustomEvent('ayna:health-tab', { detail: { tab: d?.tab } })); } catch { /* old browser */ } }}
       />
+      {items.length > 0 && <Progress items={items} t={t} />}
       {compact && (items.length > 0
         ? <ul className="ay-today__list is-compact" data-tour="today-things">
           {/* Safety and care always show; the rest stop at three things. */}
-          {items.filter((it, i) => PROTECTED.has(it.tier) || i < 3).map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={onOpenFull} />)}
+          {items.filter((it, i) => PROTECTED.has(it.tier) || i < 3).map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={onOpenFull} onOutcome={onOutcome} />)}
+          {reviewDue && items.length < 3 && <ReviewAsk compact due={reviewDue} t={t} onOpenProduct={onOpenProduct} onDone={() => setReviewTick((n) => n + 1)} />}
         </ul>
         : <p className="ay-today__empty">{t.decision.empty}</p>)}
       {!compact && (items.length > 0
         ? <ul className="ay-today__list" data-tour="today-things">
-          {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} onOpenLog={() => setLogOpen(true)} />)}
+          {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} onOpenLog={() => setLogOpen(true)} onOutcome={onOutcome} />)}
+          {reviewDue && <ReviewAsk due={reviewDue} t={t} onOpenProduct={onOpenProduct} onDone={() => setReviewTick((n) => n + 1)} />}
           {/* One skipped setup question at a time (profileCompleteness.nextProgressiveAsk). */}
           {items.length < 3 && !items.some((i) => i.type === 'ask' || i.level === 'urgent') && <ProfileAskCard variant={variant} intake={intake} today={t.today} onAnswer={onEditAnswers} />}
         </ul>
@@ -251,6 +433,9 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
           <p className="ay-today__empty">{t.decision.empty}</p>
           <ProfileAskCard asList variant={variant} intake={intake} today={t.today} onAnswer={onEditAnswers} />
         </>)}
+      {/* After the items, and never on a day with a safety or care item. */}
+      <RundownNotifyAsk today={t.today} show={rundownSeen && !items.some((it) => PROTECTED.has(it.tier))} />
+      {nextBest && <NextBest pick={nextBest} onOpenProduct={onOpenProduct} onClose={() => setNextBest(null)} />}
       {!compact && (t.pendingProfileSaves.length > 0 || t.notes['save:done']) && (
         <div className="ay-today__save" role="group" aria-label="Save to your health profile">
           {t.pendingProfileSaves.map((p) => (
@@ -267,7 +452,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         </div>
       )}
       {showLog && !compact && <div id={checkinId} className="ay-today__log">
-        <DailyCheckinCard variant={variant} log={t.log} save={t.saveLog} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} />
+        <DailyCheckinCard variant={variant} log={t.log} save={(...a) => { trackCheckin({ surface: eventSurface(), where: 'today' }); return t.saveLog(...a); }} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} />
       </div>}
       {/* The top of Today ends here (rundown, 1 to 3 items, her log); the rest is below this line. */}
       {moreHeading && !compact && <h2 className="ay-today__more" id={`ay-today-more-${variant}`}>More for you</h2>}

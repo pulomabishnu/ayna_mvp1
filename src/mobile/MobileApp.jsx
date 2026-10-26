@@ -28,6 +28,8 @@ import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
 import { usePushNotifications, usePushRoutes } from './hooks/usePushNotifications.js';
+import { PUSH_ASK_EVENT } from '../components/today/rundownPush.js';
+import { noteRoutineAdd, noteRoutineRemove } from '../health/routineFollowUps.js';
 import { useHealthData, DEV_HEALTH_DEMO } from './hooks/useHealthData.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
@@ -122,6 +124,8 @@ import { savedHaptic, addedHaptic } from '../utils/feedback.js';
 import { useSheetDrag } from './hooks/useSheetDrag.js';
 import PushLayer from './components/PushLayer.jsx';
 import GlobalToast from '../components/v3/GlobalToast.jsx';
+import HeardAboutPrompt from '../components/HeardAboutPrompt.jsx';
+import { shouldAskHeardAbout } from '../utils/signupConsent.js';
 import { toast } from '../utils/toast.js';
 // Motion moments (sheets, push, tab fade) and app-wide press states; last so it wins.
 import './app-motion.css';
@@ -298,6 +302,7 @@ const AUTH_NO_RETURN = new Set(['landing', 'signin', 'quiz', 'building', 'reveal
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
   const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName, omittedProducts = {} } = session;
+  const [heardDismissed, setHeardDismissed] = useState(false);
   const myProducts = useMemo(() => storedProducts.map(hydrateCatalogProduct), [storedProducts]);
   // The welcome screen is the signed-out entry point. Returning accounts
   // move into their ecosystem once auth finishes restoring their session.
@@ -596,6 +601,12 @@ export default function MobileApp() {
   const [askPush, setAskPush] = useState(() => { try { return localStorage.getItem('ayna_push_asked_v1') === '1'; } catch { return false; } });
   const markPushMoment = () => { if (askPush) return; try { localStorage.setItem('ayna_push_asked_v1', '1'); } catch { /* storage blocked */ } setAskPush(true); };
   usePushNotifications(authUser?.id, askPush);
+  // Today's "Get your Daily Rundown each morning?" (after her first Rundown) is also a push moment.
+  useEffect(() => {
+    const ask = () => markPushMoment();
+    window.addEventListener(PUSH_ASK_EVENT, ask);
+    return () => window.removeEventListener(PUSH_ASK_EVENT, ask);
+  });
   // A tapped notification opens Today, or the product a recall alert is about.
   usePushRoutes((route) => {
     setAskAynaOpen(false);
@@ -979,9 +990,12 @@ export default function MobileApp() {
         }).catch((error) => console.warn('[Ayna] mobile ecosystem remove sync failed:', error));
         delete ecosystemFlagsRef.current.trackedProducts[product.id];
       }
+      noteRoutineRemove(product.id);
       toast(REMOVED_FROM_ROUTINE, { label: 'Undo', onClick: () => addToEcosystemRef.current?.(product) });
       return;
     }
+    // Follow-ups at day 7 and cycle 3, and a review ask after 3 cycles (routineFollowUps.js).
+    noteRoutineAdd(product);
 
     trackApp('product_added', { productId: product.id, category: product.category, type: product.type });
     const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);
@@ -1192,6 +1206,8 @@ export default function MobileApp() {
     onBrowse: (query) => { setBrowseQuery(typeof query === 'string' ? query : ''); setScreen('browse'); },
     onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
     onOpenSaved: () => setScreen('saved'),
+    // Saved > Startups (waitlists), which lives in the You flow.
+    onOpenStartups: () => setOverlay({ type: 'profile', screen: 'startups' }),
     onOpenCompare: openCompare,
     onToggleOmit: handleToggleOmit,
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
@@ -1407,6 +1423,8 @@ export default function MobileApp() {
     authUser,
     onSignUp: signUpWithPassword,
     onSignIn: signInWithPassword,
+    // Her first name from the quiz: sign-up never asks again (onboarding audit #1).
+    firstName: lastQuizAnswers?.firstName || session.pendingQuiz?.firstName || '',
     // Remember where Google/Apple started: the post-quiz save may create an
     // account; a plain sign-in that does gets the "build it first" step.
     onGoogleSignIn: () => { const mode = authMode === 'signup' || lastQuizAnswers || session.pendingQuiz ? 'save' : 'signin'; markOAuthSource(mode); return signInWithGoogle({ mode }); },
@@ -1837,6 +1855,8 @@ export default function MobileApp() {
       <FeedbackPrompts key={realAuthUser?.id || 'guest'} user={realAuthUser} authLoading={authLoading} currentView={overlayType || askAynaOpen ? 'busy' : screen} safeViews={APP_FEEDBACK_SCREENS} />
       <OfflineBanner rootRef={rootRef} />
       <GlobalToast variant="app" />
+      {/* "Where did you hear about us?" once after sign-up, optional (onboarding audit #1). */}
+      {authUser && !heardDismissed && screen !== 'signin' && shouldAskHeardAbout(authUser) && <HeardAboutPrompt variant="app" onDone={() => setHeardDismissed(true)} />}
       {/* First-visit tips (src/mobile/tutorial): one overlay, reads data-tour anchors. */}
       <TutorialLayer userId={authUser?.id || null} />
     </div>

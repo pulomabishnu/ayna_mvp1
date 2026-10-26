@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { onboardingJustFinished } from '../../health/onboardingSignal.js';
-import { readRundownMemory } from '../../components/rundown/rundownStore.js';
+import { readRundownMemory, seenFirstRundown } from '../../components/rundown/rundownStore.js';
 import { tourDecision, tipsToShow, rundownSettled, screensFor, avoidFor } from './tips.js';
 import { readTour, setTourOwner, setTipsEnabled, markScreenSeen, markWelcomeOffered, markOffNoteShown } from './tourStore.js';
 import { topDialog, usableAnchor, currentScreen, visibleAvoidRects, placeBubble, EDGE } from './tourDom.js';
@@ -119,6 +119,9 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
       pendingRef.current = key === pending.key ? { key, count: pending.count + 1 } : { key, count: 1 };
       if (!key || pendingRef.current.count < STABLE_POLLS) return;
       if (decision.kind === 'welcome') {
+        // App (Today audit, issue 8): the tour offer waits until she has seen
+        // her first Daily Rundown, so it never covers the Rundown card.
+        if (surface === 'app' && document.querySelector('.ay-rd-hero__card:not(.is-setup)') && !seenFirstRundown(readRundownMemory())) return;
         markWelcomeOffered(today);
         openerRef.current = document.activeElement;
         setRun({ kind: 'welcome' });
@@ -132,7 +135,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
     };
     const id = window.setInterval(tick, POLL_MS);
     return () => window.clearInterval(id);
-  }, [cfg, screens, avoid]);
+  }, [cfg, screens, avoid, surface]);
 
   // Follow the anchor while a tip is open (scroll, resize, layout changes).
   const tip = run?.kind === 'tips' ? run.tips[run.index] : null;
@@ -165,10 +168,12 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
   // Focus in, trap Tab, Escape closes, a tap outside closes (and still reaches the page).
   useEffect(() => {
     if (!run) return undefined;
-    const t = window.setTimeout(() => bubbleRef.current?.querySelector('[data-primary]')?.focus({ preventScroll: true }), 30);
+    // The app's welcome banner is not modal: no focus move, no Tab trap.
+    const banner = run.kind === 'welcome' && surface === 'app';
+    const t = banner ? 0 : window.setTimeout(() => bubbleRef.current?.querySelector('[data-primary]')?.focus({ preventScroll: true }), 30);
     const onKey = (e) => {
       if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); end('escape'); return; }
-      if (e.key !== 'Tab') return;
+      if (e.key !== 'Tab' || banner) return;
       e.stopPropagation();
       const nodes = [...(bubbleRef.current?.querySelectorAll('button') || [])];
       if (!nodes.length) return;
@@ -181,17 +186,19 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
     window.addEventListener('keydown', onKey, true);
     document.addEventListener('pointerdown', onDown, true);
     return () => { window.clearTimeout(t); window.removeEventListener('keydown', onKey, true); document.removeEventListener('pointerdown', onDown, true); };
-  }, [run, end]);
+  }, [run, end, surface]);
 
   if (!run) return null;
   const still = reduceMotion();
   const cls = `ay-tour is-${surface}${still ? ' is-still' : ''}`;
 
   if (run.kind === 'welcome') {
+    // App: a small banner above the tab bar, no dimming (Today audit, issue 8).
+    const banner = surface === 'app';
     return createPortal(
-      <div className={cls} data-theme={theme}>
-        <div className="ay-tour__dim is-soft" aria-hidden="true" />
-        <section ref={bubbleRef} className="ay-tour__card ay-tour__welcome" style={surface === 'web' ? { bottom: cfg.bottomInset() + 24 } : undefined} role="dialog" aria-modal="true" aria-labelledby="ay-tour-w-h" aria-describedby="ay-tour-w-p">
+      <div className={`${cls}${banner ? ' is-banner' : ''}`} data-theme={theme}>
+        {!banner && <div className="ay-tour__dim is-soft" aria-hidden="true" />}
+        <section ref={bubbleRef} className={`ay-tour__card ay-tour__welcome${banner ? ' is-banner' : ''}`} style={surface === 'web' ? { bottom: cfg.bottomInset() + 24 } : { bottom: cfg.bottomInset() + 12 }} role="dialog" aria-modal={banner ? 'false' : 'true'} aria-labelledby="ay-tour-w-h" aria-describedby="ay-tour-w-p">
           <span className="ay-tour__mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg></span>
           <h2 id="ay-tour-w-h">Want a quick tour?</h2>
           <p id="ay-tour-w-p">Tips show up the first time you open each page.</p>

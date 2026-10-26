@@ -31,8 +31,11 @@ import NeedRoutines from '../../components/routine/NeedRoutines.jsx';
 import { useRoutines } from '../../components/routine/useRoutines.js';
 import { ADD_TO_ROUTINE } from '../../utils/routineCopy.js';
 import { openTodayLog } from '../../components/today/openLog.js';
+import { routineDay } from '../../components/you/setupSteps.js';
+import '../you-hub-app.css';
 
-const AREA_TONES = ['#F7BADD', '#769EBE', '#3E2723', '#F7BADD', '#769EBE', '#3E2723'];
+// Shelf tones: pink and espresso only (data-blue is for chart lines, You audit P2).
+const AREA_TONES = ['#F7BADD', '#3E2723', '#F7BADD', '#3E2723', '#F7BADD', '#3E2723'];
 const MIN_SHELF_SCORE = 50;
 
 function CareLinks({ care, limit = 4 }) {
@@ -278,7 +281,6 @@ export default function EcosystemScreen({
 
   return <div ref={rootRef} className={`ayna-fresh-ecosystem ayna-cabinet-home eco-app${careFirst ? ' is-care-first' : ''}`}>
     {homeTop || <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onBack={onBack} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />}
-    <div className="eco-awning eco-awning--app" aria-hidden="true" />
 
     {careBlock}
 
@@ -312,8 +314,11 @@ export default function EcosystemScreen({
       {ecoTab !== 'dashboard' && myProducts.length === 0 && forYouButton && <div className="eco-app-stack__row is-loose">{forYouButton}</div>}
       {/* Empty: one clear way in (the quiz), the Shop as the quiet second choice. */}
       {ecoTab !== 'dashboard' && !hasAnything && !quizDraft && (hasAnswers
-        ? <EmptyState compact art="search" tone="mint" title="No strong matches yet" body="Nothing in the catalog fits your answers well enough yet. Change an answer, or browse Explore by need." actionLabel={onRetake ? 'Edit my answers' : undefined} onAction={onRetake} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />
-        : <EmptyState compact art="search" tone="mint" title="Nothing here yet" body="Answer a few short questions and your matches land here, grouped by need." actionLabel={onStartQuiz ? 'See my matches' : undefined} onAction={onStartQuiz} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />)}
+        ? <EmptyState compact art="search" tone="pink" title="No strong matches yet" body="Nothing in the catalog fits your answers well enough yet. Change an answer, or browse Explore by need." actionLabel={onRetake ? 'Edit my answers' : undefined} onAction={onRetake} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />
+        // Name what is missing (You audit P3): with health data connected it is the products, not everything.
+        : healthConnectedCount > 0
+          ? <EmptyState compact art="search" tone="pink" title="No products yet" body="Your health data is connected. Answer a few short questions and your matches land here, grouped by need." actionLabel={onStartQuiz ? 'See my matches' : undefined} onAction={onStartQuiz} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />
+          : <EmptyState compact art="search" tone="pink" title="Nothing here yet" body="Answer a few short questions and your matches land here, grouped by need." actionLabel={onStartQuiz ? 'See my matches' : undefined} onAction={onStartQuiz} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />)}
       {/* An unfinished quiz stays in view; everything else waits in "For you". */}
       {ecoTab !== 'dashboard' && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
@@ -360,9 +365,11 @@ export default function EcosystemScreen({
           </div>}
           {!section.products.length && shown.length > 0 && <p className="ay-shelf2-note">Not in your routine yet</p>}
           {shown.length > 0 && <div className="ay-shelf2-row">{shown.map((product) => section.products.length
-            ? <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={quizAnswers} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />
+            ? <div className="ay-shelf2-pick eco-app-mine" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={quizAnswers} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />
+              {/* A living routine (You audit 12): "Day 12 · Is it working?" from the date she added it, to her daily log. */}
+              {routineDay(product.addedAt) && openCheckIn && <button type="button" className="eco-app-working" onClick={openCheckIn}><span className="ayk-status is-quiet">Day {routineDay(product.addedAt)}</span>Is it working?</button>}</div>
             : <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={quizAnswers} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />{ADD_TO_ROUTINE}</button></div>)}
-            <button type="button" className="ay-shelf2-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add a product to ${section.label}`}><PlusIcon size={20} />Add</button>
+            <button type="button" className="ay-shelf2-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Find a product for ${section.label}`}><PlusIcon size={20} />Find one</button>
           </div>}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
         </section>;
@@ -375,7 +382,7 @@ export default function EcosystemScreen({
       {visibleSections.length === 0 && seed && <HealthShapedNote shaped={seed.healthShaped} userId={authUser?.id || null} onConnect={onConnectHealth || onOpenHealthData} className="ay-eco-hsn" />}
       {visibleSections.length === 0 && careBanner}
 
-      {worthALook.length > 0 && activeChip === 'all' && !q && <section className="ay-shelf2 eco-app-shelf eco-app-worth" style={{ '--area-tone': '#769EBE', '--area-ink': '#3E2723' }} aria-labelledby="ayna-cabinet-next-title">
+      {worthALook.length > 0 && activeChip === 'all' && !q && <section className="ay-shelf2 eco-app-shelf eco-app-worth" style={{ '--area-tone': '#F7BADD', '--area-ink': '#3E2723' }} aria-labelledby="ayna-cabinet-next-title">
         <div className="ay-shelf2-head"><h2 id="ayna-cabinet-next-title">Worth a look</h2><span className="ay-shelf2-count">{worthALook.length}</span></div>
         <div className="ay-shelf2-row">{worthALook.map((product) => <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={quizAnswers} matchOpts={matchOpts} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />{ADD_TO_ROUTINE}</button></div>)}</div>
       </section>}
@@ -400,7 +407,7 @@ export default function EcosystemScreen({
           <span className="eco-app-list__txt"><b>{healthConnectedCount ? 'Your health' : 'Bring in your health data'}</b><small>{healthSummary ? `${healthSummary.title}: ${healthSummary.headline}` : healthConnectedCount ? 'Your trends appear after about two weeks of data.' : 'Connect Apple Health, Oura or upload a file to see your trends.'}</small></span>{chev}
         </button></li>}
         {(ecoTab !== 'dashboard' || !myProducts.length) && onOpenMonthlyCheckin && <li><button type="button" onClick={onOpenMonthlyCheckin}>
-          <span className="eco-app-list__ic is-sky" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" /><path d="M8 3v4M16 3v4M4 10h16" /></svg></span>
+          <span className="eco-app-list__ic is-butter" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" /><path d="M8 3v4M16 3v4M4 10h16" /></svg></span>
           <span className="eco-app-list__txt"><b>Monthly check-in</b><small>A few quick questions so your matches keep up with how you feel.</small></span>{chev}
         </button></li>}
         {onRetake && <li><button type="button" onClick={onRetake}>

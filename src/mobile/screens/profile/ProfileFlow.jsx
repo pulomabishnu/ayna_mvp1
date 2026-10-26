@@ -53,8 +53,9 @@ import ConfirmButton from '../../../components/ui/ConfirmButton.jsx';
 import { maskedChange, formatUsPhone } from '../../../utils/inputMask.js';
 import usePersistentState from '../../../hooks/usePersistentState.js';
 import CharRing from '../../../components/ui/CharRing.jsx';
-import { StatBoxes, PillTabs, ArchAvatar, HouseBlend } from '../../../components/you/YouBits.jsx';
-import { useSavedPosts, postLine } from '../../../hooks/useSavedPosts.js';
+import { PillTabs, ArchAvatar, HouseBlend } from '../../../components/you/YouBits.jsx';
+import { setupSteps, knowsLine, countAnswers, connectedNames } from '../../../components/you/setupSteps.js';
+import '../../you-hub-app.css';
 import { recentQuestions } from '../../../utils/askRecent.js';
 import { useCheckinCountStatus } from '../../../hooks/useCheckinCount.js';
 import { isOverLimit } from '../../../utils/charLimit.js';
@@ -127,6 +128,8 @@ const HUB_ICONS = {
   shopper: <><path d="M6 9h12l-1 11H7L6 9Z" /><path d="M9.5 9V7a2.5 2.5 0 0 1 5 0v2" /></>,
   startups: <><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /><path d="M18.5 17.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8Z" /></>,
   badges: <><circle cx="12" cy="9.5" r="5.5" /><path d="M8.8 14 7.5 21l4.5-2.5 4.5 2.5-1.3-7" /></>,
+  activity: <><path d="M5 6h14M5 12h14M5 18h9" /></>,
+  settings: <><circle cx="12" cy="12" r="3" /><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8" /></>,
 };
 
 function AccountIcon({ type }) {
@@ -465,7 +468,7 @@ function greetingForNow(date = new Date()) {
   return h < 5 ? 'Hi' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
 }
 
-function ProfileHub({ recentAsks = [], intake = null, authUserId, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, myProducts, savedProducts, readProgress, onOpen, onOpenSettings, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin, onOpenProduct, onOpenArticle, onOpenCommunity, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
+function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [], intake = null, authUserId, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, myProducts, savedProducts, readProgress, onOpen, onOpenSettings, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin, onOpenProduct, onOpenArticle, onOpenCommunity, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
   const { profile, stats, playlists } = useMyCommunity(authUserId);
   const [avatarFailed, setAvatarFailed] = useState(false);
   const showPhoto = profile?.avatar_url && !avatarFailed;
@@ -478,12 +481,13 @@ function ProfileHub({ recentAsks = [], intake = null, authUserId, name, initial,
   const checkins = useCheckinCountStatus(authUserId);
   const checkinCount = checkins.count;
   const showBlend = signedIn && !!intake;
-  const savedPosts = useSavedPosts(signedIn ? authUserId : null, 4);
   const asks = recentQuestions(recentAsks || [], 3);
   const alerts = shopperAlertsCount > 0 ? `${shopperAlertsCount} ${shopperAlertsCount === 1 ? 'alert' : 'alerts'}` : '';
-  // You, in the seven sections of the UX spec (19): My ecosystem, Saved, My
-  // health, Tracking, Connected data, My activity, Settings and privacy. Every
-  // row opens a screen that already existed; nothing here is new data.
+  const connectedCount = (healthConnected || []).filter((c) => !c?.status || c.status === 'connected').length;
+  // Her set-up as a count that starts with what she already did (You audit 12, Pai #12).
+  const setup = setupSteps({ hasAnswers: !!intake, productCount: ecosystemCount, connectedCount, checkinCount });
+  const SETUP_GO = { quiz: onEditProfile, ecosystem: onOpenEcosystem, connect: () => onOpen('healthData'), checkin: onOpenMonthlyCheckin };
+  const knows = knowsLine({ answerCount: countAnswers(intake), connectedNames: connectedNames(healthConnected), savedCount });
   const row = (r) => r && (
     <button type="button" key={r.key} className="ay-you-row" data-tour={`you-${r.key}`} onClick={r.onClick}>
       <svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true">{HUB_ICONS[r.icon || r.key]}</svg>
@@ -499,7 +503,90 @@ function ProfileHub({ recentAsks = [], intake = null, authUserId, name, initial,
       {rows.filter(Boolean).length > 0 && <nav className="ay-you-list" aria-label={title}>{rows.filter(Boolean).map(row)}</nav>}
     </section>
   );
+  const shell = (title, children) => (
+    <div className="ayna-fresh-profile-hub ay-you ay-you-sub" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title={title} onBack={onBack} />
+      <div className="ay-you-body">{children}</div>
+      <LegalFooter />
+    </div>
+  );
 
+  // My health (pushed from the hub): the old My health, Tracking and Connected data groups in one place.
+  if (view === 'health') {
+    return shell('My health', <>
+      <ThisWeek authUserId={authUserId} onOpenDashboard={() => onOpen('healthInsights')} onConnect={() => onOpen('healthData')} />
+      {group('connected', 'Connected apps', [
+        { key: 'healthData', title: 'Health data', sub: 'Apple Health, Oura and uploads', value: connectedCount ? `${connectedCount} connected` : '', onClick: () => onOpen('healthData') },
+      ])}
+      <DailyCheckin variant="app" userId={authUserId || null} />
+      {group('checkins', 'Check-ins', [
+        onOpenMonthlyCheckin && { key: 'checkin', title: 'Monthly check-in', value: checkinCount ? fmtCount(checkinCount) : '', onClick: onOpenMonthlyCheckin },
+      ], SHOW_BOX_WAITLIST ? <BoxWaitlist variant="app" /> : null)}
+      {group('profile', 'Your profile', [
+        { key: 'beliefs', title: 'What ayna knows about you', sub: 'See, change or remove anything ayna uses', onClick: () => onOpen('beliefs') },
+        signedIn && onEditProfile && { key: 'profile', icon: 'checkin', title: 'Health profile', sub: 'Symptoms, goals, life stage and preferences', value: `${profileFilledPct}%`, onClick: onEditProfile },
+        showBlend && { key: 'blend', icon: 'startups', title: 'Your blend', sub: 'How much each answer counts', onClick: () => onOpen('blend') },
+        { key: 'shopper', title: 'At a glance', sub: 'Your routine, brands and safety alerts', value: alerts, onClick: () => onOpen('shopper') },
+      ])}
+    </>);
+  }
+
+  // Activity (pushed from the hub): questions, what she looked at, playlists, posts and reviews.
+  if (view === 'activity') {
+    return shell('Activity', <section className="ay-you-section ay-you-group" aria-label="Activity">
+      {asks.length > 0 && <><h2 className="ay-you-h2">Recent questions</h2><ul className="ay-you-posts-list" aria-label="Recent questions">{asks.map((q) => <li key={q}><span className="ay-you-ask-line"><small>You asked</small><span>{q}</span></span></li>)}</ul></>}
+      {recent.length > 0 && <>
+        <h2 className="ay-you-h2">Recently</h2>
+        <ul className="ay-you-recent" aria-label="Recently viewed">
+          {recent.map((item) => {
+            const when = relativeDay(item.at);
+            const open = item.article ? onOpenArticle && (() => onOpenArticle(item.article)) : onOpenProduct && (() => onOpenProduct(item.product));
+            return (
+              <li key={item.key}>
+                <button type="button" onClick={open || undefined} disabled={!open}>
+                  <RecentThumb item={item} />
+                  <span className="ay-you-recent-title">{item.title}</span>
+                  <small>{item.label}{when && <><br /><RelativeTime at={item.at} /></>}</small>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </>}
+      {shownPlaylists.length > 0 && <>
+        <div className="ay-you-h2-row">
+          <h2 className="ay-you-h2">Your playlists</h2>
+          {playlists.length > HUB_PLAYLIST_LIMIT && openMyProfile && <button type="button" className="ay-you-link" onClick={openMyProfile}>See all</button>}
+        </div>
+        <ul className="ay-you-playlists">
+          {shownPlaylists.map((pl) => (
+            <li key={pl.id}>
+              <button type="button" onClick={onOpenCommunity ? () => onOpenCommunity({ playlistId: pl.id }) : undefined}>
+                <PlaylistCover playlist={pl} />
+                <span className="ay-you-pl-title">{pl.title}</span>
+                <small>{pickWord(pl.item_count || 0)}</small>
+              </button>
+            </li>
+          ))}
+          {onOpenCommunity && (
+            <li>
+              <button type="button" className="ay-you-pl-new" onClick={() => onOpenCommunity({ kind: 'playlist' })}>
+                <span className="ay-you-cover is-new"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></span>
+                <span className="ay-you-pl-title">New playlist</span>
+              </button>
+            </li>
+          )}
+        </ul>
+      </>}
+      <nav className="ay-you-list" aria-label="Activity">
+        {openMyProfile && row({ key: 'posts', icon: 'saved', title: 'Your reviews and posts', onClick: openMyProfile })}
+        {signedIn && row({ key: 'badges', title: 'Badges', onClick: () => onOpen('badges') })}
+      </nav>
+      {!asks.length && !recent.length && !shownPlaylists.length && <p className="ay-you-empty">Nothing here yet. What you ask, read and look at shows up here.</p>}
+    </section>);
+  }
+
+  // The You hub (You audit section 6): who she is, what ayna knows, her set-up, and the five sections.
   return (
     <div className="ayna-fresh-profile-hub ay-you" data-tour="you" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <MobileHeader onOpenSettings={onOpenSettings} />
@@ -519,114 +606,50 @@ function ProfileHub({ recentAsks = [], intake = null, authUserId, name, initial,
           </button>
         )}
         {signedIn && (
-          <button type="button" className="ay-you-progress" onClick={onEditProfile} aria-label={`Health profile ${profileFilledPct}% filled in. Edit health profile.`}>
-            <span>Health profile <b>{profileFilledPct}%</b> done</span>
+          <button type="button" className="ay-you-progress" onClick={onEditProfile} aria-label={`Health profile ${profileFilledPct}% complete. ${profileFilledPct >= 100 ? 'Review answers' : 'Finish it'}.`}>
+            <span>Health profile <b>{profileFilledPct}% complete</b> <u>{profileFilledPct >= 100 ? 'Review' : 'Finish'}</u></span>
             <i aria-hidden="true"><i style={{ width: `${profileFilledPct}%` }} /></i>
           </button>
         )}
+        {signedIn && knows && <p className="ay-you-knows"><b>What ayna knows:</b> {knows}</p>}
       </header>
 
-      {signedIn && <StatBoxes className="ay-you-stats" items={[
-        { key: 'picks', label: ecosystemCount === 1 ? 'Pick' : 'Picks', value: fmtCount(ecosystemCount), onClick: onOpenEcosystem },
-        { key: 'saved', label: 'Saved', value: fmtCount(savedCount), onClick: onOpenSaved },
-        { key: 'checkins', label: checkinCount === 1 ? 'Check-in' : 'Check-ins', value: checkinCount != null ? fmtCount(checkinCount) : checkins.settled ? '–' : null, ariaValue: checkinCount == null && checkins.settled ? 'Unknown number of' : undefined, onClick: onOpenMonthlyCheckin },
-      ]} />}
       <div className="ay-you-body">
         {!signedIn && <SignedOutCard><b>Build your health ecosystem</b><br />Keep your concerns, matches, saved products and health insights connected in one place.</SignedOutCard>}
 
         {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
 
-        {group('ecosystem', 'My ecosystem', [
-          onOpenEcosystem && { key: 'ecosystem', title: 'My ecosystem', sub: 'Your matches and routine, grouped by need', value: ecosystemCount ? pickWord(ecosystemCount) : '', onClick: onOpenEcosystem },
-        ])}
+        {/* Pai #12: set-up as "2 of 4" with one next step; gone once everything is done. */}
+        {signedIn && setup.next && (
+          <section className="ay-you-setup" aria-labelledby="ay-you-setup-h">
+            <div className="ay-you-setup-top"><h2 className="ay-you-h2" id="ay-you-setup-h">Your set-up</h2><span>{setup.done} of {setup.total} steps done</span></div>
+            <span className="ay-you-setup-bar" aria-hidden="true">{setup.steps.map((st) => <i key={st.key} className={st.done ? 'is-done' : ''} />)}</span>
+            {SETUP_GO[setup.next.key] && <button type="button" className="ay-you-setup-go" onClick={SETUP_GO[setup.next.key]}>Next: {setup.next.label} <ChevronIcon /></button>}
+          </section>
+        )}
 
-        {group('saved', 'Saved', [
-          onOpenSaved && { key: 'saved', title: 'Saved', sub: 'Products and posts you saved', value: savedCount ? fmtCount(savedCount) : '', onClick: onOpenSaved },
-          { key: 'startups', title: 'Startups', sub: 'Waitlists and new companies', onClick: () => onOpen('startups') },
-        ], signedIn && savedPosts.posts.length > 0 && onOpenCommunity && (
-          <ul className="ay-you-posts-list" aria-label="Saved posts">
-            {savedPosts.posts.map((post) => {
-              const line = postLine(post);
-              return <li key={post.id}><button type="button" onClick={() => onOpenCommunity({ postId: post.id })}><small>Saved {line.kind.toLowerCase()}</small><span>{line.text}</span></button></li>;
-            })}
-          </ul>
-        ))}
+        {signedIn && <ul className="ay-you-facts" aria-label="At a glance">
+          {[
+            { key: 'picks', value: fmtCount(ecosystemCount), caption: ecosystemCount === 1 ? 'Product in your ecosystem' : 'Products in your ecosystem', onClick: onOpenEcosystem },
+            { key: 'saved', value: fmtCount(savedCount), caption: savedCount === 1 ? 'Saved product' : 'Saved products', onClick: onOpenSaved },
+            { key: 'checkins', value: checkinCount != null ? fmtCount(checkinCount) : checkins.settled ? '–' : '…', caption: checkinCount === 1 ? 'Monthly check-in' : 'Monthly check-ins', onClick: onOpenMonthlyCheckin },
+          ].map((f) => <li key={f.key}><button type="button" onClick={f.onClick} disabled={!f.onClick}><b>{f.value}</b><span>{f.caption}</span></button></li>)}
+        </ul>}
 
-        {group('health', 'My health', [
-          { key: 'beliefs', title: 'What ayna knows about you', sub: 'See, change or remove anything ayna uses', onClick: () => onOpen('beliefs') },
-          signedIn && onEditProfile && { key: 'profile', icon: 'checkin', title: 'Health profile', sub: 'Symptoms, goals, life stage and preferences', value: `${profileFilledPct}%`, onClick: onEditProfile },
-          showBlend && { key: 'blend', icon: 'startups', title: 'Your blend', sub: 'How much each answer counts', onClick: () => onOpen('blend') },
-          { key: 'shopper', title: 'At a glance', sub: 'Your routine, brands and safety alerts', value: alerts, onClick: () => onOpen('shopper') },
-        ])}
+        <nav className="ay-you-section ay-you-list ay-you-five" aria-label="You sections">
+          {[
+            onOpenEcosystem && { key: 'ecosystem', title: 'My ecosystem', sub: 'Grouped by need', value: ecosystemCount ? pickWord(ecosystemCount) : '', onClick: onOpenEcosystem },
+            onOpenSaved && { key: 'saved', title: 'Saved', sub: 'Products, posts, startups', value: savedCount ? fmtCount(savedCount) : '', onClick: onOpenSaved },
+            { key: 'health', icon: 'healthData', title: 'My health', sub: 'Dashboard, tracking, apps', onClick: () => onOpen('myHealth') },
+            { key: 'activity', title: 'Activity', sub: 'Questions, posts, reviews', onClick: () => onOpen('activity') },
+            { key: 'settings', title: 'Settings & privacy', sub: 'Account and your data', onClick: onOpenSettings },
+          ].filter(Boolean).map(row)}
+        </nav>
 
-        {group('tracking', 'Tracking', [
-          onOpenMonthlyCheckin && { key: 'checkin', title: 'Monthly check-in', onClick: onOpenMonthlyCheckin },
-        ], <>
-          <ThisWeek authUserId={authUserId} onOpenDashboard={() => onOpen('healthInsights')} onConnect={() => onOpen('healthData')} />
-          <DailyCheckin variant="app" userId={authUserId || null} />
-          {SHOW_BOX_WAITLIST && <BoxWaitlist variant="app" />}
-        </>)}
-
-        {group('connected', 'Connected data', [
-          { key: 'healthData', title: 'Health data', sub: 'Apple Health, Oura and uploads', onClick: () => onOpen('healthData') },
-        ])}
-
-        <section className="ay-you-section ay-you-group" aria-labelledby="ay-you-sec-activity">
-          <h2 className="ay-you-h2" id="ay-you-sec-activity">My activity</h2>
-          {asks.length > 0 && <ul className="ay-you-posts-list" aria-label="Recent questions">{asks.map((q) => <li key={q}><span className="ay-you-ask-line"><small>You asked</small><span>{q}</span></span></li>)}</ul>}
-          {recent.length > 0 && (
-            <ul className="ay-you-recent" aria-label="Recently viewed">
-              {recent.map((item) => {
-                const when = relativeDay(item.at);
-                const open = item.article ? onOpenArticle && (() => onOpenArticle(item.article)) : onOpenProduct && (() => onOpenProduct(item.product));
-                return (
-                  <li key={item.key}>
-                    <button type="button" onClick={open || undefined} disabled={!open}>
-                      <RecentThumb item={item} />
-                      <span className="ay-you-recent-title">{item.title}</span>
-                      <small>{item.label}{when && <><br /><RelativeTime at={item.at} /></>}</small>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-          {shownPlaylists.length > 0 && <>
-            <div className="ay-you-h2-row">
-              <h3 className="ay-you-h3">Your playlists</h3>
-              {playlists.length > HUB_PLAYLIST_LIMIT && openMyProfile && <button type="button" className="ay-you-link" onClick={openMyProfile}>See all</button>}
-            </div>
-            <ul className="ay-you-playlists">
-              {shownPlaylists.map((pl) => (
-                <li key={pl.id}>
-                  <button type="button" onClick={onOpenCommunity ? () => onOpenCommunity({ playlistId: pl.id }) : undefined}>
-                    <PlaylistCover playlist={pl} />
-                    <span className="ay-you-pl-title">{pl.title}</span>
-                    <small>{pickWord(pl.item_count || 0)}</small>
-                  </button>
-                </li>
-              ))}
-              {onOpenCommunity && (
-                <li>
-                  <button type="button" className="ay-you-pl-new" onClick={() => onOpenCommunity({ kind: 'playlist' })}>
-                    <span className="ay-you-cover is-new"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></span>
-                    <span className="ay-you-pl-title">New playlist</span>
-                  </button>
-                </li>
-              )}
-            </ul>
-          </>}
-          <nav className="ay-you-list" aria-label="My activity">
-            {openMyProfile && row({ key: 'posts', icon: 'saved', title: 'Your reviews and posts', onClick: openMyProfile })}
-            {signedIn && row({ key: 'badges', title: 'Badges', onClick: () => onOpen('badges') })}
-          </nav>
-          {!asks.length && !recent.length && !shownPlaylists.length && <p className="ay-you-empty">Nothing here yet. What you ask, read and look at shows up here.</p>}
-        </section>
-
-        {group('settings', 'Settings and privacy', [
-          { key: 'settings', icon: 'checkin', title: 'Settings', sub: 'Account, notifications and appearance', onClick: onOpenSettings },
-          { key: 'privacy', icon: 'healthData', title: 'Privacy and your data', onClick: () => onOpen('privacyData') },
-        ])}
+        <p className="ay-you-quick">
+          {onOpenMonthlyCheckin && <button type="button" onClick={onOpenMonthlyCheckin}>Monthly check-in</button>}
+          {signedIn && onEditProfile && <button type="button" onClick={onEditProfile}>Update answers</button>}
+        </p>
       </div>
       <LegalFooter />
     </div>
@@ -3647,9 +3670,12 @@ export default function ProfileFlow({
   const shopperAlertsCount = getSafetyAlerts(myProducts, quizAnswers).length;
 
   let body;
-  if (screen === 'hub') {
+  if (screen === 'hub' || screen === 'myHealth' || screen === 'activity') {
     body = (
       <ProfileHub
+        view={screen === 'myHealth' ? 'health' : screen === 'activity' ? 'activity' : 'hub'}
+        onBack={goBack}
+        healthConnected={healthConnected}
         recentAsks={recentAsks}
         intake={quizAnswers?.fullHealthIntake || null}
         onUpdateIntake={onUpdateIntake}

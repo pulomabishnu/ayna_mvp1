@@ -1,5 +1,6 @@
 import FeedbackPrompts from './components/FeedbackPrompts';
 import { markOnboardingDone } from './health/onboardingSignal.js';
+import { noteRoutineAdd, noteRoutineRemove } from './health/routineFollowUps.js';
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import AynaLanding from './components/AynaLanding';
@@ -109,6 +110,9 @@ import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from
 import { forgetSharedIntake, loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate, { ConsentGate } from './components/AuthGate';
+import HeardAboutPrompt from './components/HeardAboutPrompt.jsx';
+import GatedFeaturePreview from './components/GatedFeaturePreview.jsx';
+import { shouldAskHeardAbout } from './utils/signupConsent.js';
 import './finalAynaPolish.css';
 import './brand-v2.css';
 import './web-play.css';
@@ -161,13 +165,13 @@ import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
 import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
 import { MAIN_TABS, TabIcon, AskMark } from './components/nav/tabs.jsx';
-import { YOU_SECTIONS } from './components/nav/mainTabs.js';
-import { ExploreHeader, YouNav } from './components/explore/ExploreNav.jsx';
+import { YOU_SECTIONS, YOU_SECTION_ALIASES } from './components/nav/mainTabs.js';
+import { ExploreHeader } from './components/explore/ExploreNav.jsx';
+import YouTabs from './components/you/YouTabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
 import RoutineSummary from './components/routine/RoutineSummary.jsx';
 import TodayRead from './components/today/TodayRead.jsx';
-import AskBasedOn from './components/ask/AskBasedOn.jsx';
 import { SaveFollowUpStrip } from './components/save/SaveFollowUp.jsx';
 import { savePrompt, stashPendingSave, takePendingSave } from './utils/savePrompt.js';
 import { setSavedRemindersOwner } from './utils/savedReminders.js';
@@ -372,7 +376,10 @@ function communityPostFromPath(path) {
 const YOU_SECTION_KEYS = YOU_SECTIONS.map((x) => x.key).filter((k) => k !== 'ecosystem');
 function youSectionFromPath(path) {
   const m = String(path || '').match(/^\/you\/([a-z]+)\/?$/i);
-  return m && YOU_SECTION_KEYS.includes(m[1].toLowerCase()) ? m[1].toLowerCase() : null;
+  if (!m) return null;
+  // /you/tracking and /you/connected are inside My health now (You audit): old links still land there.
+  const key = YOU_SECTION_ALIASES[m[1].toLowerCase()] || m[1].toLowerCase();
+  return YOU_SECTION_KEYS.includes(key) ? key : null;
 }
 function viewFromSubPath(path) {
   if (slugFromPath(path)) return 'shared-answer';
@@ -506,6 +513,11 @@ function App() {
   const [productRouteId, setProductRouteId] = useState(getInitialProductId);
   // You's open section (/you/saved, /you/health, ...); null is the You overview.
   const [youSection, setYouSection] = useState(() => youSectionFromPath(window.location.pathname));
+  // An old /you/tracking or /you/connected link shows My health under its own address.
+  useEffect(() => {
+    const m = window.location.pathname.match(/^\/you\/(tracking|connected)\/?$/i);
+    if (m) window.history.replaceState(window.history.state, '', `/you/health${window.location.search}${window.location.hash}`);
+  }, []);
   const [publicRouteProduct, setPublicRouteProduct] = useState(null);
   const [publicRouteProductLoading, setPublicRouteProductLoading] = useState(false);
   // Ref always mirrors currentView synchronously, safe to read inside Supabase callbacks
@@ -793,6 +805,8 @@ function App() {
   const [dataLoadNonce, setDataLoadNonce] = useState(0);
   // Google account with no recorded consent (created straight from Log in): gate until agreed.
   const [consentGateOpen, setConsentGateOpen] = useState(false);
+  // "Where did you hear about us?" after sign-up, optional (HeardAboutPrompt).
+  const [heardDismissed, setHeardDismissed] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authFeature, setAuthFeature] = useState('');
   // Shared answer page (/a/<slug>): Sign up or Sign in, from its Add friend prompt.
@@ -840,9 +854,10 @@ function App() {
   const [askPrefillStats, setAskPrefillStats] = useState(null);
   const [askPrefill, setAskPrefill] = useState('');
   // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
+  // Opens for everyone (Ask audit, Oct 25): signed out or before the quiz,
+  // product and read questions are answered on this device and a personal
+  // one names itself and offers Sign in inside the panel, never a wall.
   const openAsk = useCallback((text = '', stats = null) => {
-    if (!user) { setAuthFeature('Ask ayna'); setPendingAction('feature'); pendingActionRef.current = 'feature'; setShowAuthModal(true); return; }
-    if (!quizResults) { setCurrentView('quiz'); return; }
     setAskPrefill(text);
     setAskPrefillStats(Array.isArray(stats) ? stats.slice(0, 3) : null);
     setAskOpenSignal((n) => n + 1);
@@ -1363,8 +1378,12 @@ function App() {
   }, [user, authLoading, currentView]);
 
   const PROTECTED_VIEWS = ['omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings', 'delete-account', 'health-data'];
+  // Signed out, these show what the feature does with the sign-in panel
+  // (GatedFeaturePreview), not the landing page under a modal (onboarding audit #6).
+  const GATED_PREVIEW_VIEWS = ['screenings', 'recalls', 'tracked', 'doctor-prep'];
+  const gatedPreview = !user && GATED_PREVIEW_VIEWS.includes(currentView);
   useEffect(() => {
-    if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
+    if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView) && !GATED_PREVIEW_VIEWS.includes(currentView)) {
       // Say what the page was, so the sign-in sheet explains itself.
       const FEATURE = { 'doctor-prep': 'appointment prep', recalls: 'recall alerts', tracked: 'recall alerts', comparison: 'comparisons', omitted: 'your hidden products', 'profile-edit': 'your health profile', 'phone-verify': 'ayna by text', screenings: 'screening reminders', 'delete-account': 'account settings', 'health-data': 'health data' };
       setCurrentView('welcome', { replace: true });
@@ -1766,6 +1785,7 @@ function App() {
   const handleQuizComplete = async (results, opts = {}) => {
     // First run ends on the reveal's "See my Today" (WebIntake): open Today, not the story.
     const toToday = opts?.land === 'today';
+    const toSave = opts?.land === 'save';
     await loadCatalog(); // her matches come from the catalog (already loaded by the quiz page)
     const completedResults = {
       ...results,
@@ -1780,7 +1800,16 @@ function App() {
       const { mergedProducts: guestSeed } = getEcosystemSeedFromQuiz(completedResults, healthProfile, seedOpts);
       const guestProducts = Object.values(guestSeed || {});
       trackFirstMatchShown({ surface: eventSurface(), matches_count: guestProducts.length });
-      setGuestPreview({ results: completedResults, products: guestProducts, done: toToday });
+      setGuestPreview({ results: completedResults, products: guestProducts, done: toToday || toSave, fromReveal: toSave });
+      if (toSave) {
+        // "Save these matches" on the reveal: her matches are already on
+        // screen; the account is only for keeping them (onboarding audit).
+        markOnboardingDone();
+        setQuizResults(completedResults);
+        setCurrentView('today');
+        setShowAuthModal(true);
+        return;
+      }
       if (toToday) {
         // Explore first: her answers work signed out; Save stays one tap away.
         markOnboardingDone();
@@ -1994,6 +2023,8 @@ function App() {
 
     // A toast named after the action; a more specific one (a shelf's Undo) replaces it.
     toast(wasIn ? REMOVED_FROM_ROUTINE : addedToRoutineText(), wasIn ? { label: 'Undo', onClick: () => toggleMyProductRef.current?.(product) } : { label: 'See it', onClick: () => setCurrentView('ecosystem') });
+    // Follow-ups at day 7 and cycle 3, and a review ask after 3 cycles (routineFollowUps.js).
+    if (wasIn) noteRoutineRemove(product.id); else noteRoutineAdd(product);
     if (!wasIn) {
       const origin = lastOpenOrigin?.productId === product.id ? lastOpenOrigin : null;
       posthog.capture('product_added', {
@@ -2593,7 +2624,7 @@ function App() {
         {currentView === 'you' && (
           <WebYou
             section={youSection}
-            nav={<YouNav active={youSection || 'overview'} onGo={(key) => openYou(key === 'overview' ? null : key)} />}
+            nav={youSection ? <YouTabs inPage active={youSection} onGo={(key) => openYou(key === 'overview' ? null : key)} /> : null}
             onOpenSection={openYou}
             recentAsks={chatHistory}
             savedSlot={(
@@ -2640,10 +2671,25 @@ function App() {
             theme={themeMode}
             onThemeChange={setThemeMode}
             quizSlot={finishQuizCard()}
+            signedOutSlot={!user && !authLoading ? (
+              <EcosystemPreview
+                products={ALL_PRODUCTS}
+                matches={guestPreview?.products || []}
+                onBuild={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
+                onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }}
+                onSave={() => {
+                  if (guestPreview?.results) setPendingQuizResults(guestPreview.results);
+                  setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
+                  setShowAuthModal(true);
+                }}
+                onOpenProduct={handleOpenProduct}
+                onBrowse={() => handleViewDiscovery('')}
+              />
+            ) : null}
           />
         )}
         {currentView === 'quiz' && (
-          <WebIntake key={quizResume ? 'quiz-resume' : `quiz-${quizRun}`} introEnabled={!quizResume} initialSnapshot={quizResume ? null : quizResults?.fullHealthIntake || null} onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} onExplore={() => handleViewDiscovery('')} />
+          <WebIntake key={quizResume ? 'quiz-resume' : `quiz-${quizRun}`} introEnabled={!quizResume} initialSnapshot={quizResume ? null : quizResults?.fullHealthIntake || null} onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} onExplore={() => handleViewDiscovery('')} signedIn={Boolean(user)} />
         )}
 
         {currentView === 'profile-edit' && (
@@ -2745,54 +2791,33 @@ function App() {
         {currentView === 'ask' && (
           <div className="ay-container wx-askpage" data-tour="ask">
             <h1 className="ay-sr">Ask ayna</h1>
-            {/* Signed out with quiz answers too: the guided chat, answered on this device where it can (QA M5). */}
-            {quizResults ? (
-              <div className="wx-ask">
-              {/* Desktop: the page title and what ayna answers from on the left, the conversation on the right (team direction 10). */}
-              <aside className="wx-ask__side" aria-label="About Ask ayna">
-                <p className="wx-ask__title" aria-hidden="true">Ask ayna</p>
-                <p className="wx-ask__lead">Ask about your body, a product or your day. ayna answers from your health profile, the products you use and checked sources, and says why.</p>
-                <AskBasedOn quizResults={quizResults} />
-                <p className="wx-ask__note">Not medical advice. For anything urgent, contact a clinician.</p>
-              </aside>
-              <ProfileChatbot
-                asPage
-                onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
-                openSignal={askOpenSignal}
-                prefill={askPrefill}
-                prefillStats={askPrefillStats}
-                profile={quizResults}
-                user={user}
-                onProfileUpdate={setQuizResults}
-                chatHistory={chatHistory}
-                onChatHistoryUpdate={setChatHistory}
-                disabled={false}
-                onNavigateToDiscovery={handleViewDiscovery}
-                onViewRecommendations={() => handleViewEcosystem()}
-                products={myProducts}
-                matchOpts={matchOpts}
-                healthProfile={healthProfile}
-                focusProduct={null}
-                hasHealthData={!!user && health.connected.length > 0}
-                resolveProduct={(id) => myProducts[id] || Object.values(myProducts).find((p) => String(p?.id) === String(id)) || getProductById(id) || null}
-                onOpenProduct={(product) => handleOpenProduct(product, { source: 'ask_followup' })}
-                onOpenDashboard={handleViewEcosystemDashboard}
-                onOpenRead={handleViewArticle}
-              />
-              </div>
-            ) : (
-              <>
-                <p className="ay-h1 wx-title" aria-hidden="true">Ask ayna</p>
-                <section className="wx-invite" aria-labelledby="wx-ask-invite-h">
-                  <h3 id="wx-ask-invite-h">Ask about your health, products and the evidence</h3>
-                  <p>ayna answers from your health profile, the products you use and checked sources, and tells you why. {user ? 'Create your health profile to start asking.' : 'Create your health profile, or log in, to start asking.'}</p>
-                  <div className="wx-invite__acts">
-                    <button type="button" className="ay-btn ay-btn--primary" onClick={handleStartQuiz}>Create your health profile</button>
-                    {!user && <button type="button" className="ay-btn ay-btn--secondary" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}>Log in</button>}
-                  </div>
-                </section>
-              </>
-            )}
+            {/* One Ask for everyone (Ask audit, Oct 25): signed out, product and read
+                questions are answered on this device and personal ones ask her to sign
+                in; the same panel as the right-side one, as a page. */}
+            <ProfileChatbot
+              asPage
+              onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
+              openSignal={askOpenSignal}
+              prefill={askPrefill}
+              prefillStats={askPrefillStats}
+              profile={quizResults}
+              user={user}
+              onProfileUpdate={setQuizResults}
+              chatHistory={chatHistory}
+              onChatHistoryUpdate={setChatHistory}
+              disabled={false}
+              onNavigateToDiscovery={handleViewDiscovery}
+              onViewRecommendations={() => handleViewEcosystem()}
+              products={myProducts}
+              matchOpts={matchOpts}
+              healthProfile={healthProfile}
+              focusProduct={null}
+              hasHealthData={!!user && health.connected.length > 0}
+              resolveProduct={(id) => myProducts[id] || Object.values(myProducts).find((p) => String(p?.id) === String(id)) || getProductById(id) || null}
+              onOpenProduct={(product) => handleOpenProduct(product, { source: 'ask_followup' })}
+              onOpenDashboard={handleViewEcosystemDashboard}
+              onOpenRead={handleViewArticle}
+            />
           </div>
         )}
         {currentView === 'health-data' && user && (
@@ -2855,7 +2880,7 @@ function App() {
             onZipCodeChange={handleZipCodeChange}
           />
         )}
-        {currentView === 'tracked' && (
+        {currentView === 'tracked' && !gatedPreview && (
           <TrackedItems
             onBack={() => setCurrentView('you')}
             trackedProducts={trackedProducts}
@@ -2956,7 +2981,7 @@ function App() {
         {/* My ecosystem (You > My ecosystem, /you/ecosystem). Its old Dashboard tab is Today. */}
         {currentView === 'ecosystem' && (
           <EcosystemViewTabs dashboard={null} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
-          <YouNav active="ecosystem" onGo={(key) => openYou(key)} />
+          <YouTabs active="ecosystem" onGo={(key) => openYou(key === 'overview' ? null : key)} />
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
           <ViewSkeleton
             label="Loading your ecosystem"
@@ -3084,13 +3109,21 @@ function App() {
           </Suspense>
           </div>
         )}
-        {currentView === 'screenings' && (
+        {gatedPreview && !authLoading && (
+          <GatedFeaturePreview
+            view={currentView}
+            onAuthenticated={(authenticatedUser, session) => { if (!authenticatedUser) return; setUser(authenticatedUser); if (session) setUserSession(session); setAuthLoading(false); }}
+            onStartEcosystem={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
+            onBeforeOAuthRedirect={() => { markOAuthSource('signin'); }}
+          />
+        )}
+        {currentView === 'screenings' && !gatedPreview && (
           <Screenings checkinData={checkinData} onNavigate={setCurrentView} onOpenProduct={handleOpenProduct} onOpenCheckin={() => setShowCheckin(true)} onBack={() => handleViewEcosystem()} />
         )}
         {currentView === 'omitted' && (
           <OmittedProducts omittedProducts={omittedProducts} toggleOmitProduct={toggleOmitProduct} onBack={() => handleViewEcosystem()} onBrowse={() => handleViewDiscovery('')} />
         )}
-        {currentView === 'recalls' && (
+        {currentView === 'recalls' && !gatedPreview && (
           <Recalls trackedProducts={trackedProducts} myProducts={myProducts} onBack={() => handleViewEcosystem()} />
         )}
         {currentView === 'comparison' && (
@@ -3110,7 +3143,7 @@ function App() {
             onSeeMatch={handleStartQuiz}
           />
         )}
-        {currentView === 'doctor-prep' && (
+        {currentView === 'doctor-prep' && !gatedPreview && (
           <DoctorPrep
             checkinData={checkinData}
             myProducts={myProducts}
@@ -3332,7 +3365,7 @@ function App() {
           </div>
         )}
 
-        {showAuthModal && !user && pendingAction === 'quiz-complete' && guestPreview?.done && createPortal(
+        {showAuthModal && !user && pendingAction === 'quiz-complete' && guestPreview?.done && !guestPreview.fromReveal && createPortal(
           <button type="button" className="ay-flow-auth-back" onClick={() => {
             setShowAuthModal(false);
             setGuestPreview((g) => (g ? { ...g, done: false, atEnd: true } : g));
@@ -3381,6 +3414,9 @@ function App() {
             // Create account exists only in the save step after the quiz (Wrapped).
             // Everywhere else: sign in, or "Build your ecosystem" to start the quiz.
             allowSignup={pendingAction === 'quiz-complete' || pendingAction === 'share-friend'}
+            // Her first name comes from the quiz only (onboarding audit #1).
+            firstName={pendingQuizResults?.firstName || guestPreview?.results?.firstName || quizResults?.firstName || ''}
+            title={pendingAction === 'share-friend' ? 'Create your account' : ''}
             initialMode={pendingAction === 'share-friend' ? shareAuthMode : undefined}
             onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' || pendingAction === 'free-product' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'save-item' ? 'save-item' : pendingAction === 'ecosystem' ? 'ecosystem' : pendingAction === 'feature' ? 'feature' : undefined}
@@ -3408,6 +3444,9 @@ function App() {
               setPendingAction(null); pendingActionRef.current = null;
             }}
           />
+        )}
+        {user && !heardDismissed && !consentGateOpen && !showAuthModal && !newAccountStart && !['auth-callback', 'campus-resources'].includes(currentView) && shouldAskHeardAbout(user) && (
+          <HeardAboutPrompt variant="web" onDone={() => setHeardDismissed(true)} onSaved={(u) => { if (u) setUser(u); }} />
         )}
         {newAccountStart && user && currentView !== 'quiz' && (
           <NewAccountStart
