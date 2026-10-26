@@ -341,7 +341,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   onWeekly = null, onTries = null, onSetup = null,
 }) {
   // DEV only (?fixture=today): sample logs and tries, dropped from production builds.
-  const [fixture] = useState(() => (import.meta.env.DEV && todayFixtureOn() ? makeTodayFixture() : null));
+  const [fixture] = useState(() => (todayFixtureOn() ? makeTodayFixture() : null));
   const t = useToday({ userId, intake: fixture?.intake || intake, healthRows: fixture?.healthRows || healthRows, cycle, hormonalBC, products, fixture, onSaveToProfile, onEditStep: onEditAnswers ? (step) => onEditAnswers(step) : null });
   const { items } = t.decision;
   const trying = triesInProgress(t.tries, t.today);

@@ -348,7 +348,7 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__dots i { width: 8px; height: 8px; border: 1.5px solid var(--d-ink); border-radius: 50%; box-sizing: border-box; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__dots i.is-on { background: var(--d-ink); }
 /* "Get your Daily Rundown each morning?" on Today, once, after her first Rundown */
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__notify { display: grid; gap: 6px; padding: 12px 14px; border: 1.5px solid var(--d-ink); border-radius: 16px; background: var(--ay-surface, #fff); color: var(--d-ink); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__notify { display: grid; gap: 6px; padding: 12px 14px; border: 0; border-left: 3px solid var(--d-ink); border-radius: 8px; background: var(--ay-surface, #fff); color: var(--d-ink); }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-homescreen .ay-today__notify { background: rgba(255, 237, 172, .08); }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__notify h3 { margin: 0 !important; font: 700 15px/1.3 var(--ay-font-ui, 'Figtree', sans-serif) !important; color: var(--d-ink) !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__notify p { margin: 0 !important; font: 500 13px/1.4 var(--ay-font-ui, 'Figtree', sans-serif) !important; color: var(--d-ink-2) !important; }
@@ -390,3 +390,21 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__menulist button { display: flex; align-items: center; width: 100%; min-height: 44px; padding: 0 12px !important; border: 0 !important; border-radius: 8px; background: none !important; color: inherit !important; font: 600 15px/1.3 var(--ay-font-ui, 'Figtree', sans-serif) !important; text-align: left; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen { gap: 8px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today.is-compact { gap: 8px !important; }
+
+/* ---------- Loop B (Oct 26): Today on the app ---------- */
+/* Rows: the title and its one action share one line; no empty grid rows under the title. */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact { row-gap: 0; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:is(.is-care, .is-safety) .ay-today__kicker { margin: 0 0 4px !important; }
+/* Health row: label, then the words, then the number and her usual (words before numbers). */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health p.has-data { display: grid; gap: 1px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health .ay-homehealth__words { font: 700 calc(15px * var(--ayna-text-scale, 1))/1.25 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-w--health .ay-homehealth__val { font: 500 13px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--d-ink-2); font-variant-numeric: tabular-nums; }
+/* My dashboard / Your matches: one line each, outlined (one shadow rule: only primaries carry the pink sticker). */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homelinks button { padding: 0 10px 0 16px; box-shadow: none !important; white-space: nowrap; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homelinks button:active { transform: scale(.98); box-shadow: none !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homelinks b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homelinks svg { width: 18px !important; height: 18px !important; padding: 0; border-radius: 0; background: none; stroke: var(--d-ink) !important; stroke-width: 2; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homewidgets__bar.has-links .ay-homewidgets__edit { flex-direction: row; gap: 6px; min-width: 0; min-height: 48px; padding: 0 14px; border: 1.5px solid var(--d-ink); border-radius: 999px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homelinks button { justify-content: center; padding: 0 12px; text-align: center; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homelinks svg { display: none; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homewidgets__bar.has-links { grid-template-columns: minmax(0, 1fr) auto; }

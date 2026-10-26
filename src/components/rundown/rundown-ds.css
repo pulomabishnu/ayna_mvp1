@@ -16,7 +16,7 @@
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-kicker::before { content: none; }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-kicker__disc { display: grid; place-items: center; width: 26px; height: 26px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 50%; background: #f7badd; color: #3e2723; font-size: 13px; transform: rotate(-8deg); }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-pink .ay-rd-kicker__disc { background: #ffedac; }
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-butter .ay-rd-kicker__disc { background: #769ebe; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-butter .ay-rd-kicker__disc { background: #f7badd; }
 
 /* the claim at the restored scale */
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-title { font: 700 calc(28px * var(--ayna-text-scale, 1))/1.08 var(--f-display, var(--ay-heading, 'ayna Display'), sans-serif) !important; letter-spacing: -.025em; }
@@ -27,11 +27,11 @@
 
 /* her numbers as stat boxes (outline + hard shadow), the second in pink */
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 4px 4px 4px 0; border: 0; }
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-facts > div { display: grid; gap: 6px; align-content: start; padding: 12px 14px; border: 1.5px solid #3e2723; border-radius: 16px; background: #ffedac; color: #3e2723; box-shadow: 3px 3px 0 #3e2723 !important; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-facts > div { display: grid; gap: 6px; align-content: start; padding: 12px 14px; border: 1.5px solid #3e2723; border-radius: 16px; background: #ffedac; color: #3e2723; box-shadow: none !important; }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-facts > div:nth-child(2) { background: #f7badd; transform: rotate(1.5deg); }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-facts dt { color: #3e2723 !important; opacity: 1 !important; }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-facts dd { margin: 0; font: 700 calc(28px * var(--ayna-text-scale, 1))/1 var(--f-display, 'ayna Display', sans-serif) !important; letter-spacing: -.03em; color: #3e2723; }
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-ink .ay-rd-facts > div { box-shadow: 3px 3px 0 #ffedac !important; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-ink .ay-rd-facts > div { box-shadow: none !important; }
 
 /* opening: today's date as a big numeral on a pink disc (a colour block, not a stamp), drawn shapes around it */
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-opening { position: relative; display: grid; justify-items: start; gap: 22px; padding: 8px 0 0; }
@@ -47,11 +47,11 @@
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__inside { border-top: 0; display: grid; gap: 8px; }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__inside li { padding: 0; border: 0; font-size: 16px; }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__inside li::before { border: 1.5px solid #3e2723; box-sizing: border-box; background: #f7badd; color: #3e2723; }
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__inside li:nth-child(3n+2)::before { background: #769ebe; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__inside li:nth-child(3n+2)::before { background: #ffedac; }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__inside li:nth-child(3n)::before { background: #ffedac; }
 
 /* a win: her number inside a round sticker, not a 260px numeral */
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-stat { display: grid; place-items: center; width: 136px; height: 136px; border: 1.5px solid #3e2723; border-radius: 50%; background: #ffedac; box-shadow: inset 0 0 0 5px #ffedac, inset 0 0 0 6.5px #3e2723, 3px 3px 0 #3e2723 !important; transform: rotate(-6deg); }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-stat { display: grid; place-items: center; width: 136px; height: 136px; border: 1.5px solid #3e2723; border-radius: 50%; background: #ffedac; box-shadow: inset 0 0 0 5px #ffedac, inset 0 0 0 6.5px #3e2723 !important; transform: rotate(-6deg); }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-stat .ay-rd-art__num { margin: 0; font-size: 56px !important; line-height: 1; color: #3e2723 !important; letter-spacing: -.04em; }
 
 /* closing: the seal */
@@ -64,8 +64,8 @@
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-closing .ay-rd-asks button { font-size: 17px !important; }
 
 /* check-in answers as raised pills */
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-chip { border: 1.5px solid var(--rd-ink) !important; box-shadow: 3px 3px 0 var(--rd-ink) !important; }
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-chip[aria-pressed='true'] { background: #f7badd !important; color: #3e2723 !important; transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--rd-ink) !important; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-chip { border: 1.5px solid var(--rd-ink) !important; box-shadow: none !important; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-chip[aria-pressed='true'] { background: #f7badd !important; color: #3e2723 !important; box-shadow: none !important; }
 /* the read photo: framed, with the hard shadow (no tape) */
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-photo { border-radius: 24px; }
 
@@ -77,10 +77,10 @@
 
 /* word-only cards: a big disc with the card's mark, two small marks around it */
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art.is-marks { position: relative; width: 210px; height: 150px; margin-bottom: 8px; }
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__disc { position: absolute; left: 0; top: 6px; display: grid; place-items: center; width: 132px; height: 132px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 50%; background: #f7badd; color: #3e2723; font-size: 60px; box-shadow: 4px 4px 0 #3e2723 !important; transform: rotate(-8deg); }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__disc { position: absolute; left: 0; top: 6px; display: grid; place-items: center; width: 132px; height: 132px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 50%; background: #f7badd; color: #3e2723; font-size: 60px; box-shadow: none !important; transform: rotate(-8deg); }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-pink .ay-rd-art__disc { background: #ffedac; }
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-butter .ay-rd-art__disc { background: #769ebe; }
-:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-ink .ay-rd-art__disc { box-shadow: 4px 4px 0 #ffedac !important; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-butter .ay-rd-art__disc { background: #f7badd; }
+:is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-ink .ay-rd-art__disc { box-shadow: none !important; }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__s1 { position: absolute; left: 150px; top: 0; width: 30px; height: 30px; color: var(--rd-ink); transform: rotate(14deg); }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd-art__s2 { position: absolute; left: 156px; top: 92px; width: 40px; height: 40px; color: #f7badd; transform: rotate(-12deg); filter: drop-shadow(1.5px 0 0 #3e2723) drop-shadow(-1.5px 0 0 #3e2723) drop-shadow(0 1.5px 0 #3e2723) drop-shadow(0 -1.5px 0 #3e2723); }
 :is(#ds-s, .ayna-mobile, .app-container):is(#ds-s, .ayna-mobile, .app-container) .ay-rd.is-pink .ay-rd-art__s2 { color: #ffedac; }

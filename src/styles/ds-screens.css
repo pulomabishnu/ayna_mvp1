@@ -34,8 +34,8 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--tod
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days li small { font: 500 13px/1.1 var(--ay-font-ui); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days li b { font-size: 15px; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art { position: absolute; right: 0; top: 8px; bottom: 20px; width: 200px; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring { position: absolute; right: 8px; top: 50%; width: 92px; height: 92px; margin-top: -46px; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b { width: 76px; height: 76px; font-size: 24px; gap: 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring { position: absolute; right: 8px; top: 50%; width: 108px; height: 108px; margin-top: -54px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b { width: 90px; height: 90px; font-size: 26px; gap: 0; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh-hello__ring .is-track { stroke: rgba(62, 39, 35, .25); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__shapes .is-flower { right: 0; top: 0; width: 20px; height: 20px; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__shapes .is-asterisk { right: 100px; top: 4px; width: 16px; height: 16px; }
@@ -59,9 +59,15 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-her
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'date' 'hi' 'days'; row-gap: 4px; margin-bottom: 24px !important; padding: 16px 92px 28px 0 !important; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__hi { font-size: 26px !important; white-space: normal; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days { margin-top: 8px; margin-right: -92px; width: calc(100% + 92px); justify-content: space-between; gap: 4px; }
+  /* Loop B: with the cycle ring in the band, the day strip stays left of it (no overlap). */
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello:has(.ay-wh-hello__art.has-ring) .ay-wh-hello__days { margin-right: 0; width: 100%; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days li { flex: 1; min-width: 0; max-width: 48px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art { top: 12px; bottom: auto; height: 76px; width: 84px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring { right: 0; top: 0; margin-top: 0; width: 80px; height: 80px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art.has-ring { width: 92px; height: 88px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring { width: 88px !important; height: 88px !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b { width: 74px; height: 74px; font-size: 22px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b small { font-size: 13px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__shapes, html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art.has-ring .ay-wh-hello__stickers { display: none; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__stickers { right: 4px; top: 0; }
 }
@@ -84,9 +90,9 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-her
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card.is-setup > p:not(.ay-rd-hero__kicker) { display: block; max-width: 52ch; font: 500 15px/1.45 var(--ay-font-ui) !important; color: var(--x-on-2) !important; }
 /* what is inside, as one meta line ("Your cycle, an estimate · Last night · …"); the count is in the button's row */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside { display: flex !important; flex-wrap: wrap; gap: 0; margin: 2px 0 0 !important; padding: 0 !important; border: 0; list-style: none; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside li { min-height: 0; padding: 0; border-radius: 0; background: none; color: var(--x-on-2); font: 500 14px/1.45 var(--ay-font-ui); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside li { min-height: 0; padding: 0; border-radius: 0; background: none; color: var(--x-on-2); font: 500 14px/1.45 var(--ay-font-ui); white-space: nowrap; display: inline-block !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside li::before { content: none !important; display: none !important; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside li + li::before { content: '·' !important; display: inline !important; margin: 0 8px; width: auto; height: auto; border: 0; background: none; color: inherit; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside li:not(:last-child)::after { content: '·' !important; display: inline !important; margin: 0 8px; width: auto; height: auto; border: 0; background: none; color: inherit; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__go { grid-column: 2 !important; grid-row: 1 / span 4; position: relative; min-height: 48px; margin: 0 !important; padding: 0 52px 0 22px !important; border: 1.5px solid #3e2723 !important; border-radius: 999px !important; background: #f7badd !important; color: #3e2723 !important; box-shadow: none !important; font: 600 15px/1 var(--ay-font-ui) !important; white-space: nowrap; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__go::after { content: ''; position: absolute; right: 6px; top: 50%; width: 34px; height: 34px; margin-top: -17px; border-radius: 50%; background: #3e2723; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__go::before { content: ''; position: absolute; z-index: 1; right: 14px; top: 50%; width: 18px; height: 18px; margin-top: -9px; background: #ffedac; -webkit-mask: var(--ds-arrow) center / contain no-repeat; mask: var(--ds-arrow) center / contain no-repeat; }
@@ -153,6 +159,14 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side__rows
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side__rows > li { display: grid; gap: 2px; padding: 12px 0 !important; border-top: 1px solid var(--tdy-hair); color: var(--tdy-ink); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side__rows > li.has-ring { grid-template-columns: 40px minmax(0, 1fr); align-items: center; column-gap: 12px; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side__rows > li.has-ring > span { display: grid; gap: 2px; }
+/* Loop B: "Your week" rows carry the dashboard's 7-day line (blue line, butter-deep usual band, espresso today dot). */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side__rows > li.has-spark { grid-template-columns: minmax(0, 1fr) 96px; align-items: center; column-gap: 16px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side__rows > li.has-spark > span { display: grid; gap: 2px; min-width: 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side .ay-db-spark { display: block; width: 96px; height: 24px; overflow: visible; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side .ay-db-band { fill: rgba(62, 39, 35, .1); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side .ay-db-line { fill: none; stroke: #769ebe; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side .ay-db-today { fill: var(--tdy-ink); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh-side .ay-db-band { fill: rgba(255, 237, 172, .14); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side__label { font: 500 13px/1.4 var(--ay-font-ui); color: var(--tdy-muted); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side__rows b { font: 700 17px/1.3 var(--ay-font-ui); color: var(--tdy-ink); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side__rows b.is-line { font: 500 15px/1.45 var(--ay-font-ui); }
@@ -177,14 +191,14 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-her
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card .ay-today__menu > summary { color: var(--x-on); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card:has(.ay-today__menu) { grid-template-columns: minmax(0, 1fr) auto auto; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside { display: block !important; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside li { display: inline !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__inside li { display: inline-block !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today .ay-chip { background: #ffedac !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh .ay-today .ay-chip { background: transparent !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today .ay-chip:is([aria-pressed='true'], :active) { background: #3e2723 !important; color: #ffedac !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today .ay-chip svg { width: 16px; height: 16px; margin-right: 6px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days li small { font-size: 13px !important; }
 /* "Get your Daily Rundown each morning?": asked once, after her first Rundown */
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__notify { display: grid; gap: 8px; padding: 18px 20px; border: 1.5px solid var(--tdy-ink); border-radius: 16px; background: var(--tdy-surface); color: var(--tdy-ink); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__notify { display: grid; gap: 8px; padding: 18px 20px; border: 0; border-left: 3px solid var(--tdy-ink); border-radius: 8px; background: var(--tdy-surface); color: var(--tdy-ink); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__notify h3 { font: 700 17px/1.3 var(--ay-font-ui) !important; color: var(--tdy-ink) !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__notify p { font: 500 15px/1.45 var(--ay-font-ui) !important; color: var(--tdy-muted) !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__notify-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 4px; }

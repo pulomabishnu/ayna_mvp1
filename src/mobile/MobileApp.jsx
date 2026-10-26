@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { devPreviewOn } from '../utils/devPreview.js';
 import { needAreaLabels } from '../utils/needAreas.js';
 import { markOnboardingDone } from '../health/onboardingSignal.js';
 import { trackApp, appScreenName } from './utils/appAnalytics.js';
@@ -275,7 +276,7 @@ function seedEcosystemFromAnswers(quizAnswers, matchOpts) {
 // Which quiz-end step (connect / plan) this tab was on, so a full-page sign-in
 // redirect (Oura, WHOOP, Google, Apple) comes back to it. Tab-only storage.
 const QUIZ_STEP_KEY = 'ayna_quiz_step';
-const DEV_DEMO_USER = import.meta.env.DEV ? { id: 'dev-health-demo', email: 'demo@localhost', user_metadata: { full_name: 'Demo' } } : null;
+const DEV_DEMO_USER = devPreviewOn() ? { id: 'dev-health-demo', email: 'demo@localhost', user_metadata: { full_name: 'Demo' } } : null;
 function quizStepToResume() {
   try { const v = sessionStorage.getItem(QUIZ_STEP_KEY); return ['connect', 'plan'].includes(v) ? v : null; } catch { return null; }
 }

@@ -571,7 +571,7 @@ export default function HealthHome({
             <H className="ay-db-h1">{title}</H>
             {sourceLine}
           </div>
-          {cycle && !hormonalBC && <span className="ay-db-ring" role="img" aria-label={`Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`}><DsRing day={cycle.cycleDay} length={cycle.avgLength} /></span>}
+          {cycle && !hormonalBC && <span className="ay-db-ringwrap"><span className="ay-db-ringcap" aria-hidden="true">Cycle day</span><span className="ay-db-ring" role="img" aria-label={`Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`}><DsRing day={cycle.cycleDay} length={cycle.avgLength} /></span></span>}
         </header>
       )}
       {(tabs.length > 1 || (!showTitle && sourceLine)) && (

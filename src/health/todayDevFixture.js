@@ -1,4 +1,5 @@
 import { localDayKey } from '../utils/localDate.js';
+import { devPreviewOn } from '../utils/devPreview.js';
 // DEV-ONLY sample data for looking at Today without real logs.
 // Open /ecosystem?fixture=today (web) or /mobile-preview?screen=eco&fixture=today
 // on `vite` dev. Variants: fixture=today-care (severe pain today) and
@@ -14,7 +15,7 @@ const plus = (day, n) => { const [y, m, d] = day.split('-').map(Number); return 
 
 /** 'today' | 'today-care' | 'today-pregnant' on `vite` dev with ?fixture=..., else null. Always null in a production build. */
 export function todayFixtureOn() {
-  if (!import.meta.env.DEV || typeof window === 'undefined') return null;
+  if (!devPreviewOn() || typeof window === 'undefined') return null;
   try {
     const v = new URLSearchParams(window.location.search).get('fixture') || sessionStorage.getItem('ayna_dev_fixture');
     return /^today(-care|-pregnant)?$/.test(v || '') ? v : null;

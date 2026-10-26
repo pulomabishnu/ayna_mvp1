@@ -8,6 +8,7 @@
  * (src/health/records.js) are saved on her phone only, never on the server.
  */
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
+import { devPreviewOn } from '../../utils/devPreview.js';
 import { fetchHealthData, fetchLiveRows, syncDeviceRows, syncOAuthSource } from '../../health/healthApi.js';
 import { LIVE_ONLY_SOURCES } from '../../health/metrics.js';
 import { buildInsights } from '../../health/insights.js';
@@ -19,7 +20,7 @@ import { DEV_DEMO_CONNECTIONS, devDemoRows } from '../../health/devDemo.js';
 import { localToday } from '../../utils/localDate.js';
 
 // DEVELOPMENT ONLY (?healthdemo=1 in the local preview): made-up rows so the screens can be checked. Off in production builds.
-export const DEV_HEALTH_DEMO = Boolean(import.meta.env.DEV && typeof window !== 'undefined' && ['1', 'empty'].includes(new URLSearchParams(window.location.search).get('healthdemo')));
+export const DEV_HEALTH_DEMO = Boolean(devPreviewOn() && typeof window !== 'undefined' && ['1', 'empty'].includes(new URLSearchParams(window.location.search).get('healthdemo')));
 /** DEVELOPMENT ONLY (?healthdemo=empty): a demo account with no health data, to check the empty dashboard. */
 export const DEV_HEALTH_DEMO_EMPTY = DEV_HEALTH_DEMO && new URLSearchParams(window.location.search).get('healthdemo') === 'empty';
 

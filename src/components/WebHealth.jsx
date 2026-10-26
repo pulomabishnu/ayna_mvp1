@@ -12,9 +12,9 @@ import { OutlineButton } from './ui/ay/index.js';
 import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './personality/DS.jsx';
 import { headline, readHomeLook } from '../mobile/components/homeLook.js';
 import { comingUp } from '../health/comingUp.js';
-import { formatMetric } from '../health/dashboard.js';
 import { CountRing, ProgressCount } from './ui/ay';
-import { syncState } from '../health/dashView.js';
+import { glanceRows, syncState } from '../health/dashView.js';
+import { Sparkline } from '../mobile/components/DashParts.jsx';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
 
@@ -97,7 +97,7 @@ const fmtShortDay = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString('en-
  * weekly recap, synced health rows, her cycle estimate, her tries). Words
  * first, the number under them. Nothing here when there is nothing real.
  */
-function TodaySide({ week, tiles, coming, trying, setup }) {
+function TodaySide({ week, tiles, coming, trying, setup, today }) {
   const glance = [...(week?.stats || []), ...(week?.changes || [])];
   const done = setup.filter((x) => x.done).length;
   return (
@@ -116,7 +116,7 @@ function TodaySide({ week, tiles, coming, trying, setup }) {
           <h2 id="ay-wh-week-h" className="ay-wh-side__h">Your week</h2>
           <ul className="ay-wh-side__rows">
             {tiles.map((x) => (
-              <li key={x.id}><span className="ay-wh-side__label">{x.label}</span><b>{x.word}</b><span className="ay-wh-side__val">{x.value}{x.usual ? ` · usual ${x.usual}` : ''}</span></li>
+              <li key={x.id} className="has-spark"><span><span className="ay-wh-side__label">{x.label}</span><b>{x.words}</b><span className="ay-wh-side__val">{x.value}</span></span><Sparkline points={x.points} band={x.band} metric={x.metric} w={96} label={`${x.label}, last 7 days`} /></li>
             ))}
             {glance.map((line) => <li key={line}><b className="is-line">{line}</b></li>)}
           </ul>
@@ -127,7 +127,7 @@ function TodaySide({ week, tiles, coming, trying, setup }) {
         <section className="ay-wh-side" aria-labelledby="ay-wh-coming-h">
           <h2 id="ay-wh-coming-h" className="ay-wh-side__h">Coming up</h2>
           <ul className="ay-wh-side__rows">
-            {coming.map((c) => <li key={`${c.day}-${c.title}`}><span className="ay-wh-side__label">{fmtShortDay(c.day)}</span><b>{c.title}</b></li>)}
+            {coming.map((c) => <li key={`${c.day}-${c.title}`}><span className="ay-wh-side__label">{c.day === today ? 'Today' : fmtShortDay(c.day)}</span><b>{c.title}</b></li>)}
           </ul>
         </section>
       )}
@@ -234,8 +234,12 @@ function DashBand({ title, today, cycle, sync, hormonalBC }) {
         <h1 className="ay-db-bandhead__h">Your week</h1>
       </div>
       {cycle?.cycleDay && !hormonalBC && (
-        <span className="ay-db-bandhead__ring" role="img" aria-label={`Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`}>
-          <CycleRing day={cycle.cycleDay} length={cycle.avgLength} />
+        <span className="ay-db-bandhead__cyc">
+          {/* Every number captioned (Loop B): the ring's number says what it is. */}
+          <span className="ay-db-bandhead__cap" aria-hidden="true">Cycle day</span>
+          <span className="ay-db-bandhead__ring" role="img" aria-label={`Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`}>
+            <CycleRing day={cycle.cycleDay} length={cycle.avgLength} />
+          </span>
         </span>
       )}
     </header>
@@ -328,10 +332,8 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
       ? <ConnectNote signedIn={signedIn} onSignIn={onSignIn} onOpenConnections={onOpenConnections} />
       : null;
     // "Your week" from synced health rows, when there are any: words, then the number and her usual.
-    const tiles = (dash.tiles || []).filter((x) => x.id !== 'cycle').map((x) => {
-      const c = dash.groups.flatMap((g) => g.charts).find((ch) => ch.metric === x.metric);
-      return { id: x.id, label: x.label, word: x.word, value: x.value, usual: c?.usual != null ? (x.metric === 'steps' ? Math.round(c.usual).toLocaleString('en-US') : formatMetric(x.metric, c.usual)) : null };
-    });
+    // "Your week": the dashboard's own glance rows (same words, number + usual, 7-day line).
+    const tiles = glanceRows(rows, today).map((x) => ({ ...x, id: x.metric }));
     const estimate = sections.find((sec) => sec.id === 'cycle')?.estimate || null;
     const coming = comingUp(week.cycle?.cycleDay ? week.cycle : null, estimate, today, { hormonalBC, hasProducts: false });
     const setupLeft = setup.some((x) => x.done) && setup.some((x) => !x.done);
@@ -356,7 +358,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
           {hasSide && (
             <aside className="ay-wh-day__more" aria-label="Your week and coming up">
               <div className="ay-wh-day__mod">
-                <TodaySide week={weekInfo} tiles={tiles} coming={coming} trying={trying} setup={setup} />
+                <TodaySide week={weekInfo} tiles={tiles} coming={coming} trying={trying} setup={setup} today={today} />
                 {signedIn && hasData && <button type="button" className="ay-wh-side__more is-data" onClick={() => goData(true)}><span>See your data</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
               </div>
               {aside && <div className="ay-wh-day__mod">{aside}</div>}
