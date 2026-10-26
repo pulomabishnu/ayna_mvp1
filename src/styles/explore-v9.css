@@ -9,13 +9,15 @@
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs { margin: 0 0 8px; }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs { max-width: 640px; }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs__tab { font-size: 15px !important; }
-/* On the espresso band the selected pill is butter with ink text so it reads (dark band, dark fill). */
-:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs { border-color: var(--ay-butter) !important; background: rgba(255, 237, 172, .14) !important; }
-:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs__tab { color: var(--ay-butter) !important; }
-:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs__tab.is-on { background: var(--ay-butter) !important; color: var(--ay-espresso, #3e2723) !important; }
-:is(#wx1, html):is(#wx2, html):is(#wx3, html) body [data-theme='brand-dark'] main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs { border-color: var(--ay-espresso, #3e2723) !important; background: rgba(62, 39, 35, .1) !important; }
-:is(#wx1, html):is(#wx2, html):is(#wx3, html) body [data-theme='brand-dark'] main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs__tab { color: var(--ay-espresso, #3e2723) !important; }
-:is(#wx1, html):is(#wx2, html):is(#wx3, html) body [data-theme='brand-dark'] main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs__tab.is-on { background: var(--ay-espresso, #3e2723) !important; color: var(--ay-butter) !important; }
+/* On the espresso band the pill tabs take band colours through their own tokens (set on the
+   element, so the primitive's rules apply as written): butter track line and text, butter selected
+   pill with espresso text. In the dark theme the band is butter, so it flips. */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs { --ay-ink: #ffedac; --ay-outline: 1.5px solid #ffedac; --ay-track: rgba(255, 237, 172, .14); --ay-fill-ink: #ffedac; --ay-on-ink: #3e2723; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body [data-theme='brand-dark'] main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs { --ay-ink: #3e2723; --ay-outline: 1.5px solid #3e2723; --ay-track: rgba(62, 39, 35, .08); --ay-fill-ink: #3e2723; --ay-on-ink: #ffedac; }
+/* Website dark theme: older sheets pin --ay-ink to espresso on .app-container, so Explore's own
+   content (cards, chips, tiles, strips) gets the dark-theme ink on itself. The header band keeps its own. */
+[data-theme='brand-dark'] :is(.wx-body, .ay-pcard, .ay-rcard, .ay-avoid, .ay-needtiles, .lb-body, .lb-featured, .ayshop .ay-avoid) { --ay-ink: #ffedac; --ay-ink-muted: rgba(255, 237, 172, .8); --ay-rule: 1px solid rgba(255, 237, 172, .2); }
+[data-theme='brand-dark'] :is(.wx-body, .ay-avoid, .ay-needtiles) :is(.ayk-chip, .ayk-btn) { --ay-ink: #ffedac; --ay-fill-ink: #ffedac; --ay-on-ink: #3e2723; }
 @media (max-width: 720px) {
   :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 { padding-top: 16px !important; margin-bottom: 24px !important; }
   :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 :is(h1, p).wx-title { font-size: 26px !important; }
