@@ -256,6 +256,16 @@ function Sheet({ title, onClose, children, className = '', overlay = null }) {
 
 export default function WebCommunity({ user, products = [], quizResults = null, healthProfile = null, matchOpts = undefined, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, onStartQuiz = null, seedKind = null, seedProductId = null, seedRating = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
   const supabase = user ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
+  // Phones: the search box shares its row with Post, so the long placeholder was cut off mid-word.
+  const [narrowSearch, setNarrowSearch] = useState(false);
+  useEffect(() => {
+    const mq = typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(max-width: 600px)') : null;
+    if (!mq) return undefined;
+    const on = () => setNarrowSearch(mq.matches);
+    on();
+    mq.addEventListener?.('change', on);
+    return () => mq.removeEventListener?.('change', on);
+  }, []);
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   // Relative times ("5m", "Yesterday") refresh every minute.
   const now = useNow();
@@ -1381,7 +1391,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {page ? <BackLink className="cm-back" label="Community" href="/community" onClick={closePage} />
         : <div className="cm-head__title"><h1 className="ay-h1 cm-title">Community</h1><p className="ct-lede">Ask, review, share. Real talk between women, about the products we actually use.</p></div>}
       <div className="cm-head__actions">
-        <label className="ct-search cm-search"><Icon name="search" size={20} /><input ref={searchRef} value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search community" aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'} />{search ? <button type="button" className="cm-search__clear" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); searchRef.current?.focus(); }}>×</button> : <kbd className="cm-kbd" aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>}</label>
+        <label className="ct-search cm-search"><Icon name="search" size={20} /><input ref={searchRef} value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder={narrowSearch ? 'Search' : 'Search people, posts, playlists'} aria-label="Search community" aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'} />{search ? <button type="button" className="cm-search__clear" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); searchRef.current?.focus(); }}>×</button> : <kbd className="cm-kbd" aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>}</label>
         {user && <button type="button" className="cm-iconbtn cm-bell" onClick={openUpdates} aria-label={unreadCount + newAnns.length ? `Updates, ${unreadCount + newAnns.length} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount + newAnns.length > 0 && <span className="cm-bell-dot" aria-hidden="true">{unreadCount + newAnns.length > 9 ? '9+' : unreadCount + newAnns.length}</span>}</button>}
         <button type="button" className="ay-btn ay-btn--primary cm-post-btn" data-tour="community-compose" onClick={openPostTypes}><Icon name="plus" size={18} />Post</button>
         {user && <button type="button" className="cm-iconbtn cm-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Set up your Community profile'}><Avatar size={44} name={profile?.display_name || 'You'} path={profile?.avatar_url} /></button>}

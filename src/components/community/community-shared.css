@@ -147,8 +147,8 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 :is(.app-container, .ayna-mobile) .cr-ann-reply-box .cr-btn { justify-self: start; }
 :is(.app-container, .ayna-mobile) .cr-ann-reply-box .cr-ring { justify-self: end; margin-top: -4px; }
 :is(.app-container, .ayna-mobile) .cr-ann-thread > .cr-btn { justify-self: start; }
-:is(.app-container, .ayna-mobile) .cr-ann-empty { display: grid; gap: 8px; justify-items: center; padding: 48px 24px; border: 2px dashed var(--ay-ink-faint); border-radius: 20px; text-align: center; }
-:is(.app-container, .ayna-mobile) .cr-ann-empty h2 { margin: 0; color: var(--legacy-ink); font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
+:is(.app-container, .ayna-mobile) .cr-ann-empty { display: grid; gap: 8px; justify-items: center; padding: 32px 24px; border: var(--ay-rule, 1px solid rgba(62, 39, 35, .15)); border-radius: 16px; text-align: center; }
+:is(.app-container, .ayna-mobile) .cr-ann-empty h2 { margin: 0; color: var(--legacy-ink); font: 700 20px/1.15 var(--ay-font-display, var(--ay-serif)) !important; letter-spacing: -0.01em !important; }
 :is(.app-container, .ayna-mobile) .cr-ann-empty p { margin: 0; color: var(--ay-ink-soft); font: 500 var(--ay-fs-secondary)/1.45 var(--ay-sans); }
 @keyframes cr-skel { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
 :is(.app-container, .ayna-mobile) .cr-ann-skel { display: grid; gap: 16px; }

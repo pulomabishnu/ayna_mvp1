@@ -29,9 +29,20 @@ const profiles = () => [1, 2, 3, 4].map((n) => ({ user_id: `00000000-0000-4000-8
 
 const likers = (postId, n) => Array.from({ length: Math.min(n, 5) }, (_, i) => ({ post_id: postId, user_id: i === 2 ? null : `00000000-0000-4000-8000-0000000001${(i % 4) + 1}0`, username: i === 2 ? null : `sample_member_${(i % 4) + 1}`, display_name: i === 2 ? null : `Sample member ${(i % 4) + 1}`, is_anonymous: i === 2, total_count: n }));
 
-/** True on `vite` dev with ?fixture=community. Always false in a production build. */
+/**
+ * Local production builds (`npm run build` served on http://localhost or
+ * 127.0.0.1 for design review) can't reach Supabase either, so the switch
+ * also works there. Never on a real host: the Capacitor apps use
+ * capacitor://localhost and https://localhost, which this excludes.
+ */
+export function localFixtureHost() {
+  if (typeof window === 'undefined') return false;
+  try { return window.location.protocol === 'http:' && /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname); } catch { return false; }
+}
+
+/** True with ?fixture=community on `vite` dev or a local http build. Always false on real hosts. */
 export function communityFixtureOn() {
-  if (!import.meta.env.DEV || typeof window === 'undefined') return false;
+  if (typeof window === 'undefined' || !(import.meta.env.DEV || localFixtureHost())) return false;
   try { return new URLSearchParams(window.location.search).get('fixture') === 'community' || sessionStorage.getItem('ayna_dev_fixture') === 'community'; } catch { return false; }
 }
 

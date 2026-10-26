@@ -4,6 +4,7 @@ import { useSheetDrag } from '../hooks/useSheetDrag.js';
 import { useTapToTalk } from '../hooks/useTapToTalk.js';
 import { homePrompts, askFromPrompt } from '../../utils/askPrompts.js';
 import { getTodayAskContext, TODAY_ASK_EVENT } from '../../utils/askToday.js';
+import { AskSparkle, AskComposer } from '../../components/ask/AskPanel.jsx';
 import '../../components/ask/ask-panel.css';
 
 /** Today's context on this device, kept current as Today publishes it. */
@@ -54,36 +55,44 @@ export default function HomeAskSheet({ onClose, onAsk, signedIn = false, hasProf
   const ask = (req) => { if (voice.listening) voice.stop(); onClose?.(); onAsk?.(req); };
   const submit = (e) => { e.preventDefault(); const q = text.trim(); if (q) ask({ question: q }); };
 
+  // Drawn with Ask's own parts (AskPanel): the same white surface, title with the
+  // one sparkle, outline prompt pills with the pink arrow, and the same composer.
+  const ARROW = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>;
   const node = (
     <div className="ay-asksheet-layer">
       <div className="ay-asksheet-dim" aria-hidden="true" onClick={close} />
       <section ref={sheetRef} className="ay-asksheet" data-tour="ask-sheet" role="dialog" aria-modal="true" aria-labelledby="ay-asksheet-h">
         <button {...grabberProps} aria-label="Close Ask ayna" />
-        <h2 id="ay-asksheet-h">Ask ayna</h2>
-        {prompts.length > 0 && (
-          <ul className="ay-asksheet__prompts" data-tour="ask-prompts" aria-label="From your data">
-            {prompts.map((p) => (
-              <li key={p.question}>
-                <button type="button" onClick={() => ask(askFromPrompt(p))}>
-                  <span className="ay-asksheet__reason">{p.reason}</span>
-                  <span className="ay-asksheet__q">{p.question}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-        {voice.listening && <p className="ay-listening" role="status"><i className="ay-listening__dot" aria-hidden="true" /><span>{voice.text ? `Listening: ${voice.text}` : 'Listening… say your question.'}</span></p>}
-        {voice.error && !voice.listening && <p className="ay-asksheet__error" role="alert">{voice.error}</p>}
-        <form className="ay-asksheet__form" onSubmit={submit}>
-          {voice.supported && (
-            <button type="button" className="ay-mic" aria-pressed={voice.listening} aria-label={voice.listening ? 'Stop listening' : 'Speak your question'} onClick={() => (voice.listening ? voice.stop() : voice.start())}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" /></svg>
-            </button>
-          )}
-          <input ref={inputRef} type="text" className="ay-asksheet__input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Ask about your health, a product, your day…" aria-label="Your question" />
-          <button type="submit" className="ay-asksheet__send" disabled={!text.trim()}>Ask</button>
-        </form>
-        <p className="ay-asksheet__note">Not medical advice.</p>
+        <div className="ay-askp ay-askp--mini">
+          <div className="ay-askp-head"><h2 id="ay-asksheet-h" className="ay-askp-title">Ask ayna<AskSparkle /></h2></div>
+          <div className="ay-askp-scroll">
+            {prompts.length > 0 && (
+              <ul className="ay-asksheet__prompts" data-tour="ask-prompts" aria-label="From your data">
+                {prompts.map((p) => (
+                  <li key={p.question}>
+                    <button type="button" className="ay-askp-pill has-reason" onClick={() => ask(askFromPrompt(p))}>
+                      <span><span className="ay-askp-pill__reason">{p.reason}</span><span className="ay-askp-pill__q">{p.question}</span></span>{ARROW}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          {voice.listening && <p className="ay-askp-pinned ay-listening" role="status"><span><i className="ay-listening__dot" aria-hidden="true" /> {voice.text ? `Listening: ${voice.text}` : 'Listening… say your question.'}</span></p>}
+          {voice.error && !voice.listening && <p className="ay-askp-pinned" role="alert">{voice.error}</p>}
+          <AskComposer
+            value={text}
+            onChange={setText}
+            onSubmit={submit}
+            inputRef={inputRef}
+            inputClassName="ay-asksheet__input"
+            sendDisabled={!text.trim()}
+            sendLabel="Ask"
+            tour="ask-sheet-input"
+            mic={{ supported: voice.supported, listening: voice.listening, onToggle: () => (voice.listening ? voice.stop() : voice.start()) }}
+            below={<p className="ay-askp-foot">Not medical advice.</p>}
+          />
+        </div>
       </section>
     </div>
   );

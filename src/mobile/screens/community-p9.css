@@ -42,7 +42,7 @@
   .am-note > .ay-pc.is-row { border: 1.5px solid var(--d-ink) !important; border-radius: 16px !important; }
   .am-mention-wrap { display: grid; border: 1.5px solid var(--d-ink); border-radius: 16px; }
   .am-mention-wrap .ay-pc { border: 0 !important; }
-  .am-seematch { position: relative; justify-self: start; display: inline-flex; align-items: center; min-height: 32px; margin: -4px 12px 12px; padding: 0 12px; border: 1.5px solid var(--d-ink); border-radius: 999px; background: transparent; color: var(--d-ink); font: 600 13px/1 var(--ay-font-ui); }
+  .am-seematch { position: relative; justify-self: start; display: inline-flex; align-items: center; min-height: 32px; margin: 0 12px 12px 116px; padding: 0 12px; border: 1.5px solid var(--d-ink); border-radius: 999px; background: transparent; color: var(--d-ink); font: 600 13px/1 var(--ay-font-ui); }
   .am-seematch::after { content: ''; position: absolute; inset: -6px -2px; }
   .am-modnote { margin: 0; font: 500 13px/1.4 var(--ay-font-ui); color: var(--d-ink-2, var(--d-ink)); }
   :is(.ay-pc-kindtext, .ay-pc-unit, .ay-pc-why, .ay-pc-brand, .ay-pc-mark) { font-size: 13px !important; }
@@ -84,3 +84,8 @@
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-topic-grid button:focus-visible { outline: 3px solid currentColor !important; }
 /* dark: the Post sticker turns butter with espresso text */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .am-screen .am-top-actions .am-post-btn { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
+/* Loop D: same framed row as the website: 12px inside, "See your match" in the text column. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .ay-pcard.ay-pcard.is-row { padding: 12px !important; border: 1.5px solid var(--d-ink) !important; border-radius: 16px !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .am-mention-wrap .ay-pcard.ay-pcard.is-row { padding-bottom: 8px !important; border: 0 !important; }
+/* Loop D: a disabled primary (Post reply before she types) reads as waiting, not as a muddy filled button. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-primary:disabled { opacity: 1 !important; background: transparent !important; color: var(--d-ink-2) !important; border: 1.5px solid var(--d-hair) !important; border-color: color-mix(in srgb, var(--d-ink) 30%, transparent) !important; box-shadow: none !important; }
