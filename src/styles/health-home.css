@@ -13,8 +13,8 @@
    rounded before / after bars with values at the base, #4 status pills. */
 
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db {
-  --db-ink: var(--ay-ink, #3e2723); --db-muted: var(--ay-ink-muted, rgba(62, 39, 35, .78)); --db-deep: var(--ay-butter-deep, #f6e3a1);
-  --db-surface: var(--ay-surface, #fff); --db-blue: var(--ay-data-blue, #769ebe); --db-rule: rgba(62, 39, 35, .15); --db-on-ink: #ffedac;
+  --db-ink: var(--ay-ink, #3e2723); --db-muted: var(--ay-ink-muted, rgba(62, 39, 35, .78)); --db-deep: rgba(62, 39, 35, .14);
+  --db-surface: #f6e3a1; --db-blue: var(--ay-data-blue, #769ebe); --db-rule: rgba(62, 39, 35, .15); --db-on-ink: #ffedac;
   --db-ui: var(--ay-font-ui, 'Figtree', system-ui, sans-serif); --db-display: var(--ay-font-display, 'ayna Display', 'Bricolage Grotesque', sans-serif);
   --db-scale: var(--ayna-text-scale, 1);
   --legacy-outline: 1.5px solid var(--legacy-ink, #3e2723); /* older rules inside the dashboard */
@@ -269,3 +269,8 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-chart-ticks b { font: 600 15px/1.2 var(--db-ui); color: var(--db-ink); font-variant-numeric: tabular-nums; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-chart-ticks small { font: 500 13px/1.2 var(--db-ui); color: var(--db-muted); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-labels small.is-now { text-decoration: none !important; font-weight: 700 !important; color: var(--db-ink) !important; }
+/* Loop B: in dark, "Before" reads as a filled bar on its track (butter at 55%), not a faint tint. */
+:is([data-theme='brand-dark'], [data-theme='dark']) .ay-db .ay-db-bars .is-before .ay-db-bars-track i { background: rgba(255, 237, 172, .55) !important; box-shadow: none !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) .ay-db .ay-db-bars-track { background: rgba(255, 237, 172, .12) !important; }
+/* Founder 13:38: dashboard cards butter-deep with a thin espresso rule (light). */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db :is(.ay-db-card, .ay-db-rundown, .ay-db-row, .ay-db-fold, .ay-wx-picks) { box-shadow: inset 0 0 0 1px rgba(62, 39, 35, .15) !important; }

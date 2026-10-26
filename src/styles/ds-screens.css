@@ -15,7 +15,7 @@
    plain section. No tabs, stamps or tape.
    --------------------------------------------------------------------- */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today { padding-top: 0 !important; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh { --tdy-ink: #3e2723; --tdy-muted: rgba(62, 39, 35, .78); --tdy-surface: #fff; --tdy-hair: rgba(62, 39, 35, .15); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh { --tdy-ink: #3e2723; --tdy-muted: rgba(62, 39, 35, .78); --tdy-surface: #f6e3a1; --tdy-hair: rgba(62, 39, 35, .15); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh { --tdy-ink: #ffedac; --tdy-muted: rgba(255, 237, 172, .8); --tdy-surface: rgba(255, 237, 172, .08); --tdy-hair: rgba(255, 237, 172, .2); }
 /* Today audit (Oct 25, issues 3, 5, 6 and section 7): a slim band (≈110px
    on desktop, greeting 30px), the Rundown as the one espresso card with the
@@ -61,12 +61,13 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-her
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days { margin-top: 8px; margin-right: -92px; width: calc(100% + 92px); justify-content: space-between; gap: 4px; }
   /* Loop B: with the cycle ring in the band, the day strip stays left of it (no overlap). */
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello:has(.ay-wh-hello__art.has-ring) .ay-wh-hello__days { margin-right: 0; width: 100%; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead:has(.ay-wh-hello__art.has-ring) { padding-right: 108px !important; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__days li { flex: 1; min-width: 0; max-width: 48px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art { top: 12px; bottom: auto; height: 76px; width: 84px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring { right: 0; top: 0; margin-top: 0; width: 80px; height: 80px; }
-  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art.has-ring { width: 92px; height: 88px; }
-  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring { width: 88px !important; height: 88px !important; }
-  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b { width: 74px; height: 74px; font-size: 22px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art.has-ring { width: 100px; height: 96px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring { width: 96px !important; height: 96px !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b { width: 84px; height: 84px; font-size: 22px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b small { font-size: 13px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__shapes, html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art.has-ring .ay-wh-hello__stickers { display: none; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__art:not(.has-ring) .ay-wh-hello__stickers { right: 4px; top: 0; }
@@ -411,3 +412,5 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec[aria-labe
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-wh-back { margin: -16px 0 16px !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-wh-back .ay-wh-side__more { border-top: 0 !important; justify-content: flex-start; gap: 6px; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-wh-side__more.is-data { margin-top: 16px !important; font-weight: 700 !important; }
+/* Founder 13:38: calm Today items are butter-deep with a thin espresso rule (the 3px left rule stays). */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):not([data-theme='dark']):not([data-theme='brand-dark']) .ay-wh :is(.ay-today__item, .ay-today__notify, .ay-today__nextbest) { box-shadow: inset 0 0 0 1px rgba(62, 39, 35, .15) !important; }

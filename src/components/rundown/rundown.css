@@ -28,8 +28,8 @@
   font-family: var(--f-ui, var(--ay-sans, 'Figtree', sans-serif)); outline: none; overscroll-behavior: contain;
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-ink { --rd-bg: #3e2723; --rd-ink: #ffedac; --rd-soft: rgba(255, 237, 172, .8); --rd-hair: rgba(255, 237, 172, .25); --rd-accent: #f7badd; --rd-on-accent: #3e2723; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-sky { --rd-bg: #ffffff; --rd-ink: #3e2723; --rd-soft: rgba(62, 39, 35, .8); --rd-accent: #3e2723; --rd-on-accent: #ffedac; }
-/* Loop B: the calm card is white paper in light (blue is for chart lines only); butter in dark so it never glares. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-sky { --rd-bg: #f6e3a1; --rd-ink: #3e2723; --rd-soft: rgba(62, 39, 35, .8); --rd-accent: #3e2723; --rd-on-accent: #ffedac; }
+/* Loop B: the calm card is butter-deep (blue is for chart lines only; founder 13:38: no white); butter in dark. */
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-rd.is-sky { --rd-bg: #ffedac !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-pink { --rd-bg: #f7badd; --rd-ink: #3e2723; --rd-soft: rgba(62, 39, 35, .82); --rd-accent: #3e2723; --rd-on-accent: #ffedac; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd :is(h2, p, ul, ol, dl, dd) { margin: 0; }
