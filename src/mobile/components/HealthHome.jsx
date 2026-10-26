@@ -548,7 +548,8 @@ export default function HealthHome({
   const sourceLine = (sources.length > 0 || sync) && (
     <p className={`ay-db-source${sync?.stale ? ' is-stale' : ''}`}>
       {sources.length > 0 ? `From ${sourceNames(sources)}` : 'Your data'}
-      {sync && <> · {sync.label}</>}
+      {/* The website's band already says when it synced; the stale state shows here on both. */}
+      {sync && (showTitle || sync.stale) && <> · {sync.label}</>}
       {' · compared with your usual'}
       {sync?.stale && onRefresh && <button type="button" className="ay-db-outline is-small" onClick={onRefresh}>Refresh</button>}
     </p>

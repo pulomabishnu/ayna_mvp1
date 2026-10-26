@@ -94,7 +94,7 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-her
 /* the 1 to 3 things: filled blocks (sky, butter), label as a pill inside, the primary raised */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today { gap: 24px !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__list { gap: 12px; padding-top: 0; margin-top: 0; overflow: visible; border-radius: 0; background: none; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item { position: relative; gap: 8px; padding: 22px 24px !important; border: 0 !important; border-radius: 24px; background: #769ebe; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item { position: relative; gap: 8px; padding: 22px 24px !important; border: 0 !important; border-radius: 24px; background: var(--ay-surface, #fff); color: var(--ay-ink, #3e2723); /* white check-in card: blue is for chart lines only */ }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item:nth-child(3n+2) { background: var(--ds-group); color: var(--ds-ink); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item:is(.is-care, .is-safety) { background: #f7badd; color: #3e2723; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item.is-urgent { background: #3e2723; color: #ffedac; }
