@@ -382,3 +382,17 @@
 .app-container[data-theme='brand-dark'] .hm .hm-ui--evidence, .app-container[data-theme='brand-dark'] .hm .hm-ui__pill, .app-container[data-theme='brand-dark'] .hm .hm-ui__save, .app-container[data-theme='brand-dark'] .hm .hm-stepui__btn:not(.is-quiet), .app-container[data-theme='brand-dark'] .hm .hm-swipe { --hm-pink: #f7badd; }
 .app-container[data-theme='brand-dark'] .hm .hm-ui--evidence { background: #f7badd; }
 .app-container[data-theme='brand-dark'] .hm .hm-step__n { text-shadow: 3px 3px 0 #f7badd; }
+
+/* Chips: the shared Chip reads --ay-outline as a full border, but the older
+   site sheets set --ay-outline to a bare colour, which drops the outline.
+   Scope the token's own value to the chip row (reported for a global fix). */
+.app-container .hm .hm-chips { --ay-outline: 1.5px solid currentColor; }
+/* phones: keep the long page shorter without dropping anything */
+@media (max-width: 767px) {
+  .app-container .hm .hm-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .app-container .hm .hm-levels > li, .app-container .hm .hm-levels > li:last-child { align-content: start; padding: 10px 0 0; border-bottom: 0; }
+  .app-container .hm .hm-levels .ay-meter__word { font-size: 13px; }
+  .app-container .hm .hm-levels__note { font-size: 13px; line-height: 1.35; }
+  .app-container .hm .hm-comm__ph { aspect-ratio: 16 / 8; }
+  .app-container .hm .hm-polaroid__ph { aspect-ratio: 16 / 9; }
+}
