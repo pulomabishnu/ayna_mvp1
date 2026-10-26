@@ -181,3 +181,5 @@
 /* Size pills share one wrapping line under the price (they stacked one per row in narrow cards). */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__sizes { flex: 1 1 100%; flex-direction: row; flex-wrap: wrap; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__mono { position: relative; color: #3e2723; font: 700 40px/1 var(--ay-font-display, 'Bricolage Grotesque') !important; letter-spacing: -.02em; }
+/* The name no longer reserves a second line (Group A: a one-line name left a visible gap before the price). */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__name { min-height: 0 !important; margin-bottom: 8px !important; }
