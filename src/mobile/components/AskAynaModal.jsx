@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
-import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
 import ShareAnswerButton from '../../components/ShareAnswerButton.jsx';
 import { questionForAnswer } from '../../utils/sharedAnswer.js';
@@ -10,31 +9,17 @@ import { chipsFor, followUpRequestFields } from '../../utils/askFollowUps.js';
 import { fetchWithTimeout } from '../../utils/network.js';
 import { haptic } from '../../utils/haptics.js';
 import { useSheetDrag } from '../hooks/useSheetDrag.js';
-import AskHome, { AskStatCard } from '../../components/AskHome.jsx';
+import { AskStatCard } from '../../components/AskHome.jsx';
+import AskPanel, { AskHeader, AskStart, AskMessage, AskComposer } from '../../components/ask/AskPanel.jsx';
 import { recentQuestions } from '../../utils/askRecent.js';
 import { mayAutoFocus } from '../../utils/delightRuntime.js';
 import { guideContext } from '../utils/aynaGuide.js';
-import { localMatchAnswer } from '../../utils/askMatch.js';
-import { localHistoryAnswer } from '../../utils/askHistory.js';
-import { localTodayAnswer, localItemAnswer } from '../../utils/askToday.js';
-import { guidedTiles } from '../../utils/askGuided.js';
-import { onDeviceStarters } from '../../utils/askStarters.js';
-import { getTodayAskContext } from '../../utils/askToday.js';
+import { localAnswer, aiAnswerExtras } from '../../utils/askAnswer.js';
+import { useAskSetup } from '../../components/ask/useAskSetup.js';
 import { useTapToTalk } from '../hooks/useTapToTalk.js';
 import { readWakeWordPref, startWakeWord, wakeWordSupport, writeWakeWordPref } from '../utils/wakeWord.js';
 import AynaGuideHub from './AynaGuideHub.jsx';
 import { useAskHealthPref, ASK_HEALTH_LABEL } from '../../health/askHealthPref.js';
-
-// Ask ayna's first screen: tiles fill the box so she can edit before asking.
-function askTiles(hasHealthData) {
-  return [
-    { label: 'Ask about your week', sub: hasHealthData ? 'Read against your cycle' : 'Best with health data connected', question: 'What stands out in my health data this week?', icon: 'week', tone: 'pink', isNew: true },
-    { label: 'What helps with cramps?', question: 'What helps with cramps?', icon: 'cramps', tone: 'sky' },
-    { label: 'Is this safe with my birth control?', question: 'Is this safe with my birth control?', icon: 'safety', tone: 'group' },
-    { label: 'Explain my top match', sub: 'Why it fits you, with the evidence', question: 'Explain my top match', icon: 'match', tone: 'ink' },
-    { label: 'What helped last time?', sub: 'From what you recorded', question: 'What helped last time?', icon: 'chat', tone: 'group' },
-  ];
-}
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
@@ -77,8 +62,9 @@ function summarizeProfile(profile) {
   return parts.join(' ');
 }
 
+// No opening bubble: the first screen (greeting, intro, prompts) does that job.
 function buildWelcome() {
-  return [{ role: 'assistant', text: 'What are you looking for?' }];
+  return [];
 }
 
 /**
@@ -190,6 +176,12 @@ export default function AskAynaModal({
   const [healthAsk, setHealthAsk] = useState(null); // { buildContext } while the inline switch shows
   // Home (tiles + recent questions) until she asks something.
   const [home, setHome] = useState(true);
+  // The sheet opens at half height and goes full once she asks or types
+  // (PDP build brief: 50% and 100%). The tab and Home's full-screen chat are always full.
+  const [detent, setDetent] = useState('half');
+  useEffect(() => { if (open) setDetent('half'); }, [open]);
+  // Prompts grouped About you · Safety · Products, Safety first when flagged (components/ask/useAskSetup.js).
+  const { safety, groups } = useAskSetup({ open, profile, matchOpts, products, signedIn: Boolean(session?.access_token), focusProduct, hasHealthData });
   const [guidePage, setGuidePage] = useState('');
   // Back on the home view: start at the top, not where the chat was scrolled.
   useEffect(() => { if (home) bottomRef.current?.parentElement?.scrollTo({ top: 0 }); }, [home]);
@@ -294,13 +286,10 @@ export default function AskAynaModal({
 
   const send = async (msg, context = screenContext, stats = null) => {
     if (!msg || sending) return;
-    // Her match for a product comes from ayna's match engine on this device,
-    // never from the language model, so it is the same % the product shows.
-    const local = (await localMatchAnswer(msg, { quizAnswers: profile, matchOpts, focusProduct }).catch(() => null))
-      || (await localHistoryAnswer(msg, { guideTrials: guide?.trials || [], guide: true }).catch(() => null))
-      || (await localTodayAnswer(msg, { intake: profile }).catch(() => null))
-      // Signed out: "Ask why" and the Rundown questions from Today's own items (QA M1).
-      || (!session?.access_token ? await localItemAnswer(msg).catch(() => null) : null);
+    // Answered on this device first (src/utils/askAnswer.js): her match from
+    // the one engine (the same % the product shows), what helped, today, the
+    // Safety questions, product facts and reads. Signed out too.
+    const local = await localAnswer(msg, { profile, matchOpts, focusProduct, guideTrials: guide?.trials || [], guide: true, signedIn: Boolean(session?.access_token), safety }).catch(() => null);
     if (local) {
       setInput('');
       setSendError('');
@@ -308,7 +297,9 @@ export default function AskAynaModal({
       // A later question answered here clears the stale "needs an account" note.
       setNeedsAccount('');
       setHome(false);
-      const next = [...messages, { role: 'user', text: msg }, { role: 'assistant', text: local.answer, followUps: local.followUps }];
+      setDetent('full');
+      const { answer, ...extras } = local;
+      const next = [...messages, { role: 'user', text: msg }, { role: 'assistant', text: answer, ...extras, followUps: local.followUps || [] }];
       setMessages(next);
       onChatHistoryUpdate?.(next);
       return;
@@ -325,6 +316,7 @@ export default function AskAynaModal({
     setSendError('');
     setFailedMsg('');
     setHome(false);
+    setDetent('full');
     const userMsg = { role: 'user', text: msg, ...(stats?.length ? { stats } : {}) };
     const messagesWithUser = [...messages, userMsg];
     setMessages(messagesWithUser);
@@ -350,7 +342,9 @@ export default function AskAynaModal({
       if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
       if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
 
-      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer, followUps: Array.isArray(data.followUps) ? data.followUps : [], ...(stats?.length ? { stats } : {}) }];
+      const profileSummary = [summarizeProfile(profile || {}), allowGuideContext ? guideContext(guide) : ''].filter(Boolean).join('\n');
+      const extras = await aiAnswerExtras(data, { msg, profileSent: Boolean(profileSummary), contextSent: Boolean(context), healthSent: Boolean(context && askHealth.on && healthAsk), resolveProduct, profile, matchOpts }).catch(() => ({ basedOn: ['ayna’s AI'], sources: [] }));
+      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer, ...extras, followUps: Array.isArray(data.followUps) ? data.followUps : [], ...(stats?.length ? { stats } : {}) }];
 
       const merged = mergeProfileUpdate(profile || {}, data.profileUpdate || {});
       if (merged) {
@@ -418,152 +412,151 @@ export default function AskAynaModal({
 
   if (!enabled || (!open && !hasOpened)) return null;
 
+  const signedOut = session === null;
+  const full = asTab || homeMode || detent === 'full';
+  const backBtn = !home && !guidePage
+    ? <button type="button" aria-label="Back to Ask ayna home" onClick={() => setHome(true)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
+    : null;
+  const header = homeMode && renderHomeTop ? (<>
+    <h1 className="sr-only">ayna chat</h1>
+    {renderHomeTop(!home && !guidePage ? <button type="button" className="ay-home-top__back" aria-label="Back to the chat home" onClick={() => setHome(true)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button> : null)}
+  </>) : (
+    <AskHeader
+      start={homeMode && onBackHome
+        ? <button type="button" className="ay-chat-top__back" onClick={onBackHome}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Today</button>
+        : backBtn}
+      end={<>
+        {!full && onClose && <button type="button" aria-label="Full height" onClick={() => setDetent('full')}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" /></svg></button>}
+        {onClose && <button type="button" className="ay-ask-done" onClick={onClose}>Done</button>}
+      </>}
+    />
+  );
+  // "How Ask works": the honest split between this phone and ayna's AI, and her data choices.
+  const how = (<>
+    <p>Questions about your matches, what helped before, your day, your Daily Rundown, products and reads are answered on this phone, no account needed. Other questions use ayna’s AI and need a free account.</p>
+    <p>Your cycle and sleep data goes to ayna’s AI only if you turn it on. Oura and WHOOP data is never sent.</p>
+    <p>Every answer ends with its sources, marked by evidence level, and what it was based on. Not medical advice.</p>
+    <p><button type="button" className="ay-askp-textbtn" onClick={() => setGuidePage('voice')}>Voice settings</button></p>
+  </>);
+
   return (
     <div
       data-tour="chat"
       className={`ayna-ask-drawer${asTab ? ' is-tab' : ''}${homeMode ? ' is-home' : ''}${homeMode && onBackHome ? ' is-full' : ''}`}
       data-open={open ? 'true' : 'false'}
-      style={{
-        position: 'absolute',
-        inset: '0 0 var(--ayna-bottom-nav-height) 0',
-        zIndex: 60,
-        background: 'var(--ayna-bg)',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
+      data-detent={full ? 'full' : 'half'}
+      style={{ position: 'absolute', inset: '0 0 var(--ayna-bottom-nav-height) 0', zIndex: 60, background: 'var(--ayna-bg)', display: 'flex', flexDirection: 'column' }}
     >
       <div ref={sheetRef} className="ayna-ask-drawer-content" role={asTab ? 'region' : 'dialog'} aria-label="Ask ayna" aria-modal={open && !asTab ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
       {onClose && <button {...grabberProps} aria-label="Close Ask ayna" />}
-      {homeMode && renderHomeTop ? (<>
-        <h1 className="sr-only">ayna chat</h1>
-        {renderHomeTop(!home && !guidePage ? <button type="button" className="ay-home-top__back" aria-label="Back to the chat home" onClick={() => setHome(true)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button> : null)}
-      </>) : homeMode ? (
-        <div className="ay-chat-top">
-          <button type="button" className="ay-chat-top__back" onClick={onBackHome}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Today</button>
-          <h1>Ask ayna</h1>
-          <span className="ay-chat-top__spacer" aria-hidden="true" />
-        </div>
-      ) : <div
-        style={{
-          paddingTop: 'max(20px, env(safe-area-inset-top))',
-          paddingLeft: 20,
-          paddingRight: 20,
-          paddingBottom: 14,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-          borderBottom: '1px solid var(--ayna-border)',
-        }}
-      >
-        {!home && !guidePage && (
-          <button type="button" className="ay-askh-homebtn" aria-label="Back to Ask ayna home" onClick={() => setHome(true)}>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
-          </button>
-        )}
-        <div style={{ flex: 1 }}>
-          <h1 className="ay-ask-title">Ask ayna</h1>
-        </div>
-        {onClose && <button type="button" className="ay-ask-done" onClick={onClose}>Done</button>}
-      </div>}
-
-      <div className={home && !sending ? 'ay-askh-scroll' : undefined} style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {guidePage === 'voice' ? <VoiceSettings tapSupported={voice.supported} onBack={() => setGuidePage('')} /> : guidePage ? <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recapAskable ? recap : ''); } : null} onBack={() => setGuidePage('')} /> : null}
-        {home && !sending && !guidePage && (<>
-          {/* After today's Daily Rundown: questions about the cards she just saw (this session only). */}
-          {homeMode && starters.length > 0 && <section className="ay-chat-starters" data-tour="chat-starters" aria-labelledby="ay-chat-starters-h">
-            <h2 id="ay-chat-starters-h">From your Daily Rundown today</h2>
-            <ul>{starters.map((st) => <li key={st.question}><button type="button" onClick={() => (onStarter ? onStarter(st) : send(st.question))}><span>{st.question}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>)}</ul>
-          </section>}
-          {/* A list of rows like the Ask home, not a 2x2 grid (master prompt 154). */}
-          {session === null && !homeMode && <p className="ay-ask-local">Questions about your matches, what helped before, your day and your Daily Rundown are answered on this phone, no account needed. Other questions use ayna’s AI and need a free account.</p>}
-          {session !== null && <ul className="ay-guide-launches" data-tour="chat-guide" aria-label="Your personal guide">
-            <li><button type="button" onClick={() => setGuidePage('recap')}><span className="ay-guide-launch__text"><b>Your week</b><span>What changed for you</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
-            <li><button type="button" onClick={() => setGuidePage('memory')}><span className="ay-guide-launch__text"><b>Memory</b><span>What ayna can remember</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
-            <li><button type="button" onClick={() => setGuidePage('trial')}><span className="ay-guide-launch__text"><b>Try & check back</b><span>See how it felt later</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
-            <li><button type="button" onClick={() => setGuidePage('report')}><span className="ay-guide-launch__text"><b>Appointment note</b><span>Review before sharing</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
-          </ul>}
-          <AskHome
-            name={name ? String(name).split(' ')[0] : ''}
-            intro={homeMode && session === null
-              ? 'Ask about your day, your matches and what helped. These questions are answered on this phone from what you saved here, no account needed. Questions that use ayna’s AI need a free account. Not medical advice.'
-              : 'Ask about a product, your week, or what to try. Not medical advice.'}
-            tiles={homeMode && session === null
-              ? onDeviceStarters({ hasProfile: Boolean(profile), signals: getTodayAskContext()?.signals || {} })
-              : guidedTiles({ focusProduct, hasHealthData, fallback: askTiles(hasHealthData) })}
-            recent={recentQuestions(messages)}
-            // A starter is sent on tap (founder, Oct 24 22:17); typing still waits for Ask.
-            onPick={(q) => send(q)}
-            onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
-          />
-          {homeMode && session === null && <div className="ay-chat-intro"><button type="button" className="ay-chat-intro__signin" onClick={() => onRequireAuth?.('Ask ayna')}>Sign in for ayna’s AI answers</button></div>}
-          {homeMode && <button type="button" className="ay-chat-voicelink" onClick={() => setGuidePage('voice')}>Voice settings</button>}
-        </>)}
-        {!guidePage && !(home && !sending) && messages.map((m, i) => (
-          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
-            {m.role === 'assistant' && <AskStatCard stats={m.stats} />}
-            <div
-              style={{
-                maxWidth: '85%',
-                background: m.role === 'user' ? 'var(--ayna-heading)' : 'var(--d-group, transparent)',
-                color: m.role === 'user' ? 'var(--ayna-bg)' : 'var(--ayna-text)',
-                border: 0,
-                borderRadius: m.role === 'user' ? '18px 18px 6px 18px' : '18px 18px 18px 6px',
-                padding: '11px 14px',
-                fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
-                lineHeight: 1.45,
-                whiteSpace: 'pre-wrap',
-              }}
-            >
-              {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
+      <AskPanel
+        variant={asTab ? 'tab' : 'sheet'}
+        header={header}
+        footer={<>
+          {sendError && (
+            <div className="ay-askp-pinned ay-ask-error" role="alert">
+              <span>{sendError}</span>
+              {failedMsg && <button type="button" onClick={() => { const q = failedMsg; setFailedMsg(''); send(q); }} disabled={sending}>Try again</button>}
             </div>
-            {m.pendingProfile && <div className="ay-guide-actions" style={{ marginTop: 6 }}><button type="button" onClick={() => decideProfile(i, true)}>Remember</button><button type="button" onClick={() => decideProfile(i, false)}>Not now</button></div>}
-            {m.role === 'assistant' && questionForAnswer(messages, i) && (
-              <ShareAnswerButton
-                question={questionForAnswer(messages, i)}
-                answer={m.text}
-                sources={m.sources || []}
-                share={m.share || null}
-                onShareChange={(share) => {
-                  const next = messages.map((x, j) => (j === i ? { ...x, share } : x));
-                  setMessages(next);
-                  onChatHistoryUpdate?.(next);
-                }}
-                session={session}
-                surface="app"
-              />
+          )}
+          {voice.listening && !guidePage && (
+            <div className="ay-askp-pinned ay-listening" role="status" aria-live="polite">
+              <i className="ay-listening__dot" aria-hidden="true" />
+              <span>{voice.text ? `Listening: ${voice.text}` : 'Listening… say your question.'}</span>
+              <button type="button" onClick={() => voice.stop()}>Done</button>
+            </div>
+          )}
+          {voice.error && !voice.listening && !guidePage && (
+            <div className="ay-askp-pinned ay-ask-error" role="alert"><span>{voice.error}</span><button type="button" onClick={voice.clearError}>OK</button></div>
+          )}
+        </>}
+        composer={!guidePage && (
+          <AskComposer
+            value={input}
+            onChange={setInput}
+            onSubmit={handleSend}
+            inputRef={inputRef}
+            inputClassName="ay-ask-input"
+            placeholder={session === undefined ? 'Loading…' : 'Ask anything…'}
+            disabled={sending || session === undefined}
+            sendDisabled={sending || !input.trim() || session === undefined}
+            mic={{ supported: voice.supported, listening: voice.listening, disabled: sending || session === undefined, onToggle: () => (voice.listening ? voice.stop() : voice.start()) }}
+          />
+        )}
+      >
+        {guidePage === 'voice' ? <VoiceSettings tapSupported={voice.supported} onBack={() => setGuidePage('')} /> : guidePage ? <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recapAskable ? recap : ''); } : null} onBack={() => setGuidePage('')} /> : null}
+        {home && !sending && !guidePage && (
+          <AskStart
+            name={name ? String(name).split(' ')[0] : ''}
+            intro={signedOut ? 'Answered on this phone, no account needed. Not medical advice.' : 'Uses your profile and checked sources. Not medical advice.'}
+            how={how}
+            top={<>
+              {/* After today's Daily Rundown: questions about the cards she just saw (this session only). */}
+              {starters.length > 0 && (
+                <section className="ay-askp-group is-rundown" data-tour="chat-starters" aria-labelledby="ay-chat-starters-h">
+                  <h3 id="ay-chat-starters-h">From your Daily Rundown today</h3>
+                  <ul>{starters.map((st) => <li key={st.question}><button type="button" className="ay-askp-pill" onClick={() => (onStarter ? onStarter(st) : send(st.question))}><span>{st.question}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg></button></li>)}</ul>
+                </section>
+              )}
+            </>}
+            groups={groups}
+            // A suggested question is sent on tap (founder, Oct 24 22:17); typing still waits for Send.
+            onPick={(q) => send(q)}
+            recent={recentQuestions(messages)}
+            onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
+            bottom={session !== null && session !== undefined && (
+              <section className="ay-askp-group is-guide" data-tour="chat-guide" aria-labelledby="ay-askp-g-guide">
+                <h3 id="ay-askp-g-guide">Your guide</h3>
+                <ul>
+                  <li><button type="button" className="ay-askp-pill is-quiet" onClick={() => setGuidePage('recap')}><span>Your week: what changed for you</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
+                  <li><button type="button" className="ay-askp-pill is-quiet" onClick={() => setGuidePage('memory')}><span>Memory: what ayna can remember</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
+                  <li><button type="button" className="ay-askp-pill is-quiet" onClick={() => setGuidePage('trial')}><span>Try and check back</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
+                  <li><button type="button" className="ay-askp-pill is-quiet" onClick={() => setGuidePage('report')}><span>Appointment note</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
+                </ul>
+              </section>
             )}
-            {m.role === 'assistant' && questionForAnswer(messages, i) && (
-              <AskFollowUps
-                chips={chipsFor(m.followUps, {
-                  hasDashboard: !!onOpenDashboard,
-                  hasGuide: true,
-                  canOpen: (f) => (f.type === 'open_product' ? !!(onOpenProduct && resolveProduct?.(f.productId)) : !!(onOpenRead && reads.some((r) => r.id === f.articleId))),
-                })}
-                disabled={sending}
-                onAction={runFollowUp}
-              />
-            )}
-            {m.showViewRecommendations && onViewRecommendations && (
-              <button
-                type="button"
-                className="ay-ask-viewrecs"
-                onClick={onViewRecommendations}
-                style={{
-                  marginTop: 6,
-                  fontFamily: "var(--ayna-font-ui)",
-                  fontWeight: 500,
-                  fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
-                  color: 'var(--ayna-accent-dark)',
-                  cursor: 'pointer',
-                  textDecoration: 'underline',
-                }}
-              >
-                View recommendations →
-              </button>
-            )}
-          </div>
+          />
+        )}
+        {!guidePage && !(home && !sending) && messages.map((m, i) => (
+          <AskMessage
+            key={i}
+            m={m}
+            before={m.role === 'assistant' ? <AskStatCard stats={m.stats} /> : null}
+            onOpenProduct={onOpenProduct && resolveProduct ? (p) => { const full = resolveProduct(p.id); if (full) onOpenProduct(full); } : null}
+            onOpenRead={onOpenRead ? (id) => { const a = reads.find((r) => r.id === id); if (a) onOpenRead(a); } : null}
+            after={<>
+              {m.pendingProfile && <div className="ay-askp-acts"><button type="button" className="ay-askp-act is-primary" onClick={() => decideProfile(i, true)}>Remember</button><button type="button" className="ay-askp-act" onClick={() => decideProfile(i, false)}>Not now</button></div>}
+              {m.role === 'assistant' && questionForAnswer(messages, i) && (
+                <ShareAnswerButton
+                  question={questionForAnswer(messages, i)}
+                  answer={m.text}
+                  sources={m.sources || []}
+                  share={m.share || null}
+                  onShareChange={(share) => {
+                    const next = messages.map((x, j) => (j === i ? { ...x, share } : x));
+                    setMessages(next);
+                    onChatHistoryUpdate?.(next);
+                  }}
+                  session={session}
+                  surface="app"
+                />
+              )}
+              {m.role === 'assistant' && questionForAnswer(messages, i) && (
+                <AskFollowUps
+                  chips={chipsFor(m.followUps, {
+                    hasDashboard: !!onOpenDashboard,
+                    hasGuide: true,
+                    canOpen: (f) => (f.type === 'open_product' ? !!(onOpenProduct && resolveProduct?.(f.productId)) : !!(onOpenRead && reads.some((r) => r.id === f.articleId))),
+                  })}
+                  disabled={sending}
+                  onAction={runFollowUp}
+                />
+              )}
+              {m.showViewRecommendations && onViewRecommendations && <button type="button" className="ay-askp-act" onClick={onViewRecommendations}>View recommendations</button>}
+            </>}
+          />
         ))}
-        {sending && !guidePage && <div className="ay-typing" role="status" aria-label="Looking into it"><i /><i /><i /></div>}
+        {sending && !guidePage && <div className="ay-askp-typing ay-typing" role="status" aria-label="Looking into it"><i /><i /><i /></div>}
         {/* The cycle and sleep switch is about ayna's AI: only signed in (QA round 2). */}
         {healthAsk && !guidePage && Boolean(session?.access_token) && (
           <div className="ay-ask-health">
@@ -580,85 +573,13 @@ export default function AskAynaModal({
         )}
         {/* In the list, after the last message, so it never covers a card (QA round 2). */}
         {needsAccount && session === null && !guidePage && (
-          <div className="ay-ask-error ay-ask-account" role="status" style={{ margin: '4px 0 0' }}>
-            <span>“{needsAccount.length > 90 ? `${needsAccount.slice(0, 88)}…` : needsAccount}” uses ayna’s AI, so it needs a free account. Your question is kept below.</span>
+          <div className="ay-ask-account" role="status">
+            <p>“{needsAccount.length > 90 ? `${needsAccount.slice(0, 88)}…` : needsAccount}” uses ayna’s AI, so it needs a free account. Your question is kept below.</p>
             <button type="button" onClick={() => onRequireAuth?.('Ask ayna')}>Sign in</button>
           </div>
         )}
         <div ref={bottomRef} />
-      </div>
-
-      {sendError && (
-        <div className="ay-ask-error" role="alert">
-          <span>{sendError}</span>
-          {failedMsg && <button type="button" onClick={() => { const q = failedMsg; setFailedMsg(''); send(q); }} disabled={sending}>Try again</button>}
-        </div>
-      )}
-
-      {voice.listening && !guidePage && (
-        <div className="ay-listening" role="status" aria-live="polite">
-          <i className="ay-listening__dot" aria-hidden="true" />
-          <span>{voice.text ? `Listening: ${voice.text}` : 'Listening… say your question.'}</span>
-          <button type="button" onClick={() => voice.stop()}>Done</button>
-        </div>
-      )}
-      {voice.error && !voice.listening && !guidePage && (
-        <div className="ay-ask-error" role="alert"><span>{voice.error}</span><button type="button" onClick={voice.clearError}>OK</button></div>
-      )}
-      {!guidePage && <form
-        data-tour="chat-input"
-        onSubmit={handleSend}
-        style={{
-          display: 'flex',
-          gap: 8,
-          padding: '12px 20px',
-          paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
-          borderTop: '1px solid var(--ayna-border)',
-        }}
-      >
-        {voice.supported && (
-          <button type="button" className="ay-mic" aria-pressed={voice.listening} aria-label={voice.listening ? 'Stop listening' : 'Speak your question'} disabled={sending || session === undefined} onClick={() => (voice.listening ? voice.stop() : voice.start())}>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" /></svg>
-          </button>
-        )}
-        <input
-          ref={inputRef}
-          type="text"
-          className="ay-ask-input"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder={session === undefined ? 'Loading…' : 'Ask ayna anything…'}
-          disabled={sending || session === undefined}
-          style={{
-            flex: 1,
-            minWidth: 0,
-            padding: '12px 16px',
-            borderRadius: 99,
-            border: '1px solid var(--ayna-border)',
-            fontSize: 'max(16px, calc(14px * var(--ayna-text-scale, 1)))',
-            background: 'var(--ayna-surface)',
-            color: 'var(--ayna-text)',
-          }}
-        />
-        <button
-          type="submit"
-          disabled={sending || !input.trim() || session === undefined}
-          style={{
-            padding: '12px 20px',
-            borderRadius: 99,
-            border: 'none',
-            background: 'var(--ayna-cta-bg)',
-            color: 'var(--ayna-cta-text)',
-            fontFamily: "var(--ayna-font-ui)",
-            fontWeight: 500,
-            fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
-            cursor: 'pointer',
-            opacity: sending || !input.trim() || session === undefined ? 0.5 : 1,
-          }}
-        >
-          Ask
-        </button>
-      </form>}
+      </AskPanel>
       </div>
     </div>
   );
