@@ -18,7 +18,7 @@ import { localHistoryAnswer } from './askHistory.js';
 import { localTodayAnswer, localItemAnswer } from './askToday.js';
 import { localSafetyAnswer } from './askSafety.js';
 import { localCatalogAnswer, markSources, relatedReads } from './askCatalog.js';
-import { productCard } from './askProducts.js';
+import { productCard, listableCards } from './askProducts.js';
 
 const safe = (p) => Promise.resolve(p).catch(() => null);
 
@@ -83,5 +83,6 @@ export async function aiAnswerExtras(data, ctx = {}) {
     if (p) products.push(await productCard(p, ctx).catch(() => null));
   }
   const related = await relatedReads(ctx.msg || '').catch(() => []);
-  return { basedOn, sources: [], related, products: products.filter(Boolean) };
+  // Products the engine left out for her are not listed (QA3 M10).
+  return { basedOn, sources: [], related, products: listableCards(products, 3).shown };
 }
