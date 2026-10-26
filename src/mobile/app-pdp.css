@@ -298,3 +298,6 @@
 #ay-pdp .ay-compare thead tr > td:first-child { position: sticky; left: 0; z-index: 2; width: 96px; max-width: 96px; background: var(--pdp-compare-bg, var(--ay-paper)) !important; box-shadow: 1px 0 0 var(--ay-line); }
 #ay-pdp .ay-compare tbody :is(th, td) { border-top: 1px solid var(--ay-line) !important; }
 
+
+/* The app's legal footer under the product page: caption size (13px floor). */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal :is(p, a, button, span) { font-size: 13px !important; }
