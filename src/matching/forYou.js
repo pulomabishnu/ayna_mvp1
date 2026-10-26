@@ -56,6 +56,9 @@ export function needSignals(up) {
     else tier = 'picked';
     out.set(n.id, { tier, weak: tier === 'weak', weight: FOR_YOU.tierWeight[tier], reason });
   }
+  // The profile these signals came from, so a v2 re-score that only has the
+  // signals (products.js getEcosystemAlternatives) still scores product facts.
+  if (up && typeof up === 'object') Object.defineProperty(out, 'profile', { value: up, enumerable: false });
   SIGNAL_CACHE.set(up, out);
   return out;
 }

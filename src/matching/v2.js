@@ -23,10 +23,11 @@
 // Evidence grades below are DRAFTS derived from the evidence on file
 // (reviewed: false). Reviewed rows in NEED_MAP_REVIEWED override them.
 import { buildProductProfile } from './productProfile.js';
-import { scoreProduct, scoreProductForNeed, evaluateSafety, evidenceFor, MAX_SCORE, EXPERIENCE_POINTS } from './score.js';
+import { scoreProduct, scoreProductForNeed, evaluateSafety, evidenceFor, budgetFit, MAX_SCORE, EXPERIENCE_POINTS } from './score.js';
 import { qualificationForEcosystem, buildEcosystem } from './ecosystem.js';
 import { needSignals, discoveryValue, historyState, NOT_RECOMMENDED_AGAIN } from './forYou.js';
 import { isRecommendable } from './eligibility.js';
+import { MENSTRUAL_PRODUCT_NEEDS, VALUE_BY_ID, needPhrase } from './ontology.js';
 
 export const V2 = {
   S: { direct: 1.0, strong: 1.0, secondary: 0.6 },
@@ -66,7 +67,42 @@ export const V2 = {
   // Ecosystem choices within this much value count as tied; curated discovery
   // (forYou.js discoveryValue) decides between them.
   nearTie: 0.005,
+  // Match honesty (Oct 26, PDP audit P0 #1: every cup and disc said 99%).
+  // Health fit above the knee is compressed (0.84 -> 0.84, 1.0 -> 0.92), so a
+  // product that is simply "made for this need" lands around 92%. Anything
+  // higher has to come from product-level facts below. Under the knee nothing
+  // changes, so other needs keep their numbers.
+  knee: 0.84,
+  kneeSlope: 0.5,
 };
+
+/**
+ * Product-level fit inside one need (Oct 26). Each factor is a small, bounded
+ * change to the shown fit, read from a real product fact and something she
+ * told ayna. Missing data on either side is "unknown": listed in the
+ * breakdown, never counted as a fit. Weights are fractions of 100% (0.03 = 3
+ * points). Ranking heuristics, not clinical thresholds.
+ *   capacity  cups, discs, period underwear: brand-stated mL vs her flow
+ *   material  free of something she is allergic to or wants left out
+ *   price     upfront price vs the budget she chose
+ *   reusable  she asked for reusable
+ *   values    other things she asked for (organic, unscented...)
+ *   fsaHsa    she uses an FSA or HSA
+ *   evidence  a clinician-reviewed A grade (draft grades can only lower, above)
+ * Max total raise is 0.14, so 99% needs strong facts on several factors.
+ */
+export const FACTOR_WEIGHTS = {
+  capacity: { roomy: 0.03, enough: 0.01, small: -0.04, midForVeryHeavy: -0.01 },
+  material: { free: 0.02, contains: -0.03 },
+  price: { within: 0.02, slightlyOver: -0.02, over: -0.05 },
+  reusable: { yes: 0.02, no: -0.04 },
+  values: { each: 0.01, max: 0.02, miss: -0.02 },
+  fsaHsa: { yes: 0.01, no: -0.01 },
+  evidence: { reviewedA: 0.02 },
+};
+// mL a cup, disc or period underwear holds (largest size the brand lists).
+// For scale, FDA's tampon absorbency ranges run 6 to 18 g (21 CFR 801.430).
+export const CAPACITY_ML = { roomy: 40, enough: 25, moderate: 20 };
 
 // Reviewed product x need rows (clinical sign-off). Empty until the review
 // starts; each row: { product, need, strength: 'primary'|'secondary', grade: 'A'|'B'|'C', reviewer, reviewed }.
@@ -151,8 +187,10 @@ export function experienceOf(r) {
 
 /**
  * THE match percent shown for a product on every surface: v2 health fit
- * plus her history, 0..99. Preferences never enter it (they only order
- * products), so telling ayna more never makes a match look worse.
+ * (compressed above the knee) plus product-level facts (productFactors) plus
+ * her history, 0..99. Her format and brand preferences still only order
+ * products; budget, reusable, sensitivities and FSA/HSA move the percent by a
+ * few points each when the product's own facts show it (Oct 26, PDP audit).
  */
 export function v2Percent(v2) {
   if (!v2 || !(v2.fit > 0)) return 0;
@@ -167,7 +205,7 @@ function hash01(s) {
 }
 
 /** v2 numbers for one v1 result (r = scoreProductForNeed output). */
-export function scoreV2(pp, r, needIds, userKey = '', signals = null) {
+export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signals?.profile || null) {
   const isEffect = !NO_EFFECT_CATEGORIES.has(String(pp.category || '').toLowerCase());
   const grade = evidenceGrade(pp, r.needId);
   const needFit = strengthOf(pp, r.needId, r.relationship) * (isEffect ? V2.E[grade] : 1);
@@ -178,17 +216,203 @@ export function scoreV2(pp, r, needIds, userKey = '', signals = null) {
   const modifiers = Math.max(0.5, Math.min(1.1, (r.components?.health ?? base) / base));
   const signal = signals?.get(r.needId) || null;
   const weak = Boolean(signal?.weak);
-  const health = Math.min(1, needFit * (1 - V2.focusWeight + V2.focusWeight * focus) * modifiers * (weak ? V2.weakFitFactor : 1));
+  const focusTerm = 1 - V2.focusWeight + V2.focusWeight * focus;
+  const weakTerm = weak ? V2.weakFitFactor : 1;
+  const health = Math.min(1, needFit * focusTerm * modifiers * weakTerm);
   const pref = Number.isFinite(r.outputs?.preferenceFit) ? r.outputs.preferenceFit : 1;
   // Her product history (v1 experience points, scaled to the cap). Before Oct 24
   // this read components.experience, a 0..1 index with a 0.6 "no history"
   // baseline, so every product got +0.03 and bad history could never push down.
   const experience = health > 0 ? experienceOf(r) : 0;
-  // Shown fit: health plus her history. Floors, bands and the percent use it.
-  const fit = Math.max(0, Math.min(1, health + experience));
-  const rankKey = health * (1 - V2.prefWeight + V2.prefWeight * pref) + experience + hash01(`${userKey}|${pp.product_id}`) * 0.001;
+  // Product-level facts inside this need (capacity, material, price...).
+  const pf = health > 0 && up ? productFactors(pp, r, up, { isEffect, grade }) : { parts: [], unknown: [], total: 0 };
+  // Shown fit: compressed health + product facts + her history. Floors, bands
+  // and the percent use it.
+  const shownHealth = kneeOf(health);
+  const fit = Math.max(0, Math.min(1, shownHealth + pf.total + experience));
+  const rankKey = (shownHealth + pf.total) * (1 - V2.prefWeight + V2.prefWeight * pref) + experience + hash01(`${userKey}|${pp.product_id}`) * 0.001;
   const band = bandFor(fit, r.confidence ?? 1);
-  return { health: round3(health), fit: round3(fit), experience: round3(experience), needFit: round3(needFit), focus: round3(focus), grade, pref: round3(pref), rankKey: round3(rankKey), band, bandLabel: BAND_LABEL[band] || null, needTier: signal?.tier || null, ...(weak ? { weakNeed: signal.reason } : {}) };
+  // The breakdown (raised / lowered / unknown), from the same numbers: the
+  // base parts telescope from "made for this need" to shownHealth, so
+  // sum(parts) + experience is exactly the fit before clamping.
+  const strength = strengthOf(pp, r.needId, r.relationship);
+  const baseParts = health > 0 ? healthParts(pp, r, needIds, { strength, E: isEffect ? V2.E[grade] : 1, grade, isEffect, focusTerm, focus, modifiers, weakTerm, weakReason: signal?.reason || null }) : [];
+  const expPart = experience ? [{ factor: 'history', kind: experience > 0 ? 'raised' : 'lowered', delta: round3(experience), text: experience > 0 ? 'You said this or something like it helped' : 'You said this or something like it did not help' }] : [];
+  const parts = [...baseParts, ...pf.parts, ...expPart];
+  const top = pf.parts.filter((x) => x.kind === 'raised' && x.reason).sort((a, b) => REASON_ORDER.indexOf(a.factor) - REASON_ORDER.indexOf(b.factor) || b.delta - a.delta)[0] || null;
+  const reason = top?.reason || null;
+  return { health: round3(health), fit: round3(fit), experience: round3(experience), needFit: round3(needFit), focus: round3(focus), grade, pref: round3(pref), rankKey: round3(rankKey), band, bandLabel: BAND_LABEL[band] || null, needTier: signal?.tier || null, ...(weak ? { weakNeed: signal.reason } : {}), factorTotal: round3(pf.total), parts, unknown: pf.unknown, reason, reasonFactor: top?.factor || null };
+}
+
+/** Health fit as shown: unchanged under the knee, half as steep above it. */
+export function kneeOf(health) {
+  const h = Math.max(0, Math.min(1, Number(health) || 0));
+  return h <= V2.knee ? h : V2.knee + (h - V2.knee) * V2.kneeSlope;
+}
+
+const FREE_WORDS = {
+  latex: 'Latex-free', fragrance: 'Fragrance-free', dyes: 'Dye-free', parabens: 'Paraben-free', sulfates: 'Sulfate-free',
+  phthalates: 'Phthalate-free', synthetic_materials: 'No synthetic materials', animal_derived: 'No animal-derived ingredients',
+  added_sugar: 'No added sugar', artificial_sweeteners: 'No artificial sweeteners', adhesives: 'No adhesives', nickel: 'Nickel-free',
+  essential_oils: 'No essential oils',
+};
+const ATTR_WORDS = {
+  latex: 'latex', fragrance: 'fragrance', dyes: 'dyes', parabens: 'parabens', sulfates: 'sulfates', phthalates: 'phthalates',
+  synthetic_materials: 'synthetic materials', animal_derived: 'animal-derived ingredients', added_sugar: 'added sugar',
+  artificial_sweeteners: 'artificial sweeteners', adhesives: 'adhesives', nickel: 'nickel', essential_oils: 'essential oils',
+};
+// The reason line names the most specific product fact that raised the
+// match (a measured capacity before a material, before price), not the
+// biggest number: "reusable" is true of every cup, its mL is not.
+const REASON_ORDER = ['capacity', 'material', 'reusable', 'evidence', 'values', 'price', 'fsaHsa'];
+const FLOW_WORDS = { very_light: 'very light', light: 'light', moderate: 'moderate', heavy: 'heavy', very_heavy: 'very heavy' };
+const ml = (n) => `${Math.round(n * 10) / 10} mL`;
+const money = (n) => `$${Number.isInteger(n) ? n : n.toFixed(2)}`;
+const orList = (xs) => (xs.length > 1 ? `${xs.slice(0, -1).join(', ')} or ${xs[xs.length - 1]}` : xs[0] || '');
+const lowerFirst = (s) => s.charAt(0).toLowerCase() + s.slice(1);
+
+/** The base of the match, split into parts that add up to kneeOf(health). */
+function healthParts(pp, r, needIds, x) {
+  const phrase = needPhrase(r.needId) || 'this need';
+  const steps = [
+    { factor: 'need', value: 1 },
+    { factor: 'strength', value: Math.min(1, x.strength) },
+    { factor: 'evidence', value: Math.min(1, x.strength * x.E) },
+    { factor: 'focus', value: Math.min(1, x.strength * x.E * x.focusTerm) },
+    { factor: 'details', value: Math.min(1, x.strength * x.E * x.focusTerm * x.modifiers) },
+    { factor: 'need_signal', value: Math.min(1, x.strength * x.E * x.focusTerm * x.modifiers * x.weakTerm) },
+  ];
+  const out = [{ factor: 'need', kind: 'raised', delta: round3(kneeOf(1)), text: x.strength >= 1 ? `Made for the ${phrase} you told ayna about` : `Matches the ${phrase} you told ayna about` }];
+  for (let i = 1; i < steps.length; i += 1) {
+    const delta = round3(kneeOf(steps[i].value) - kneeOf(steps[i - 1].value));
+    if (!delta) continue;
+    const kind = delta > 0 ? 'raised' : 'lowered';
+    let text = '';
+    if (steps[i].factor === 'strength') text = `A secondary option for your ${phrase}, not made mainly for it`;
+    else if (steps[i].factor === 'evidence') text = `Evidence for your ${phrase} is graded ${x.grade} in ayna's draft review (not yet clinically reviewed)`;
+    else if (steps[i].factor === 'focus') {
+      const others = Object.entries(pp.health_need_relevance || {}).filter(([id, e]) => !needIds.has(id) && ((typeof e === 'number' ? e : e?.score) || 0) >= 0.55).length;
+      text = others ? `Also made for ${others} other ${others === 1 ? 'need' : 'needs'} you did not pick` : 'Also made for needs you did not pick';
+    } else if (steps[i].factor === 'details') {
+      if (delta > 0) text = r.contextUsed?.phrase ? `Designed for ${r.contextUsed.phrase}` : `Suits the details you gave about your ${phrase}`;
+      else text = MENSTRUAL_PRODUCT_NEEDS.has(r.needId) && r.flowFit != null && r.flowFit < 1 ? 'Its absorbency is not the best fit for the flow you described' : `Less suited to the details you gave about your ${phrase}`;
+    } else if (steps[i].factor === 'need_signal') text = x.weakReason === 'contradicts_life_stage' ? 'This need does not fit the life stage you shared' : 'A need you did not pick yourself';
+    out.push({ factor: steps[i].factor, kind, delta, text });
+  }
+  return out;
+}
+
+/**
+ * Product-level factors for one product and need. Returns the parts that
+ * moved the fit (each { factor, kind, delta, text, reason? }), what ayna does
+ * not know yet ({ factor, text }), and the total change.
+ */
+export function productFactors(pp, r, up, { isEffect = false, grade = null } = {}) {
+  const W = FACTOR_WEIGHTS;
+  const parts = [];
+  const unknown = [];
+  const add = (factor, delta, text, reason = null) => parts.push({ factor, kind: delta > 0 ? 'raised' : 'lowered', delta, text, ...(reason ? { reason } : {}) });
+  const cat = String(pp.category || '').toLowerCase();
+  const shopping = up.shopping || {};
+
+  // Capacity vs her flow (cups, discs, period underwear).
+  if (MENSTRUAL_PRODUCT_NEEDS.has(r.needId) && pp.menstrual && ['cup', 'disc', 'period-underwear'].includes(cat)) {
+    const flow = up.physiology?.flow || null;
+    const cap = pp.menstrual.capacity_ml;
+    const sized = cap?.sizes?.filter((s) => s.label) || [];
+    if (sized.length > 1 && cat !== 'period-underwear') unknown.push({ factor: 'size', text: `Which size fits you (${orList(sized.map((s) => s.label))})` });
+    if (!flow || flow === 'varies') {
+      unknown.push({ factor: 'capacity', text: 'Your usual flow, which decides how much it needs to hold' });
+    } else if (['moderate', 'heavy', 'very_heavy'].includes(flow)) {
+      if (!cap) unknown.push({ factor: 'capacity', text: 'How much it holds (not confirmed on the brand\u2019s own site yet)' });
+      else {
+        const top = cap.sizes.find((s) => s.ml === cap.max);
+        const size = top?.label && cap.sizes.length > 1 ? ` (${top.label} size)` : '';
+        const holds = `Holds up to ${ml(cap.max)}${size}`;
+        const flowWord = FLOW_WORDS[flow];
+        if (flow === 'moderate') {
+          if (cap.max >= CAPACITY_ML.moderate) add('capacity', W.capacity.enough, `${holds}, for your moderate flow`, `${holds}, for your moderate flow`);
+        } else if (cap.max >= CAPACITY_ML.roomy) add('capacity', W.capacity.roomy, `${holds}, for your ${flowWord} flow`, `${holds}, for your ${flowWord} flow`);
+        else if (cap.max >= CAPACITY_ML.enough) {
+          if (flow === 'heavy') add('capacity', W.capacity.enough, `${holds}, for your heavy flow`, `${holds}, for your heavy flow`);
+          else add('capacity', W.capacity.midForVeryHeavy, `${holds}, a mid-size capacity for a very heavy flow`);
+        } else add('capacity', W.capacity.small, `${holds}; you said your flow is ${flowWord}`);
+      }
+    }
+  }
+
+  // Material: free of what she is allergic to or wants left out.
+  const attrs = new Set([...(up.safety?.allergies || []).map((a) => a.attr), ...(shopping.leaveOut || []).map((l) => l.attr)].filter((a) => a && FREE_WORDS[a]));
+  if (attrs.size) {
+    const free = [];
+    const contains = [];
+    for (const a of attrs) {
+      const st = pp.safety?.[a];
+      if (st === 'not_applicable') continue;
+      if (st === 'no') free.push(a);
+      else if (st === 'yes') contains.push(a);
+      else unknown.push({ factor: 'material', text: `Whether it contains ${ATTR_WORDS[a]}` });
+    }
+    if (contains.length) add('material', W.material.contains, `Contains ${contains.map((a) => ATTR_WORDS[a]).join(' and ')}, which you want to avoid`);
+    else if (free.length) {
+      const words = free.slice(0, 2).map((a, i) => (i ? lowerFirst(FREE_WORDS[a]) : FREE_WORDS[a])).join(' and ');
+      add('material', W.material.free, `${words}, which you asked for`, `${words}, which you asked for`);
+    }
+  }
+
+  // Price vs her budget (upfront price, US dollars).
+  const priceScored = shopping.budget && !shopping.priceNotImportant && !(up.contradictions || []).some((c) => (c.affects || []).includes('price'));
+  if (priceScored) {
+    const price = pp.price || {};
+    if (price.is_free) add('price', W.price.within, 'Free, fits your budget', 'Free, fits your budget');
+    else if (price.amount == null || (price.currency && price.currency !== 'USD')) unknown.push({ factor: 'price', text: 'Its current price in US dollars' });
+    else {
+      const fit = budgetFit(price.amount, shopping.budget);
+      if (price.amount <= shopping.budget.max) add('price', W.price.within, `${money(price.amount)} fits your budget`, `${money(price.amount)} fits your budget`);
+      else if (fit >= 0.85) add('price', W.price.slightlyOver, `${money(price.amount)}, a little over your budget`);
+      else add('price', W.price.over, `${money(price.amount)}, over your budget`);
+    }
+  }
+
+  // Reusable, and the other things she asked for.
+  const asked = new Set((shopping.shouldBe || []).map((v) => v.id));
+  if (asked.has('reusable')) {
+    const v = pp.values?.reusable;
+    if (v === 'yes' || pp.pricing?.reusable || pp.reusable_by_brand) add('reusable', W.reusable.yes, 'Reusable, like you asked', 'Reusable, like you asked');
+    else if (v === 'no') add('reusable', W.reusable.no, 'Single use; you asked for reusable');
+    else unknown.push({ factor: 'reusable', text: 'Whether it is reusable' });
+  }
+  let valueRaise = 0;
+  const met = [];
+  for (const id of asked) {
+    if (id === 'reusable' || !VALUE_BY_ID[id]) continue;
+    const v = pp.values?.[id];
+    if (v === 'not_applicable') continue;
+    const phrase = VALUE_BY_ID[id].phrase;
+    if (v === 'yes') { if (valueRaise < W.values.max) { valueRaise = round3(valueRaise + W.values.each); met.push(phrase); } }
+    else if (v === 'no') add('values', W.values.miss, `Not ${phrase}, which you asked for`);
+    else unknown.push({ factor: 'values', text: `Whether it is ${phrase}` });
+  }
+  if (valueRaise) {
+    const words = met.join(' and ');
+    add('values', valueRaise, `${words.charAt(0).toUpperCase()}${words.slice(1)}, like you asked`, `${words.charAt(0).toUpperCase()}${words.slice(1)}, like you asked`);
+  }
+
+  // FSA / HSA, when she uses one.
+  if (['fsa', 'hsa', 'both'].includes(shopping.fsaHsa)) {
+    const acct = shopping.fsaHsa === 'both' ? 'FSA or HSA' : shopping.fsaHsa.toUpperCase();
+    if (pp.fsa_hsa === 'yes') add('fsaHsa', W.fsaHsa.yes, `Eligible for your ${acct}`, `Eligible for your ${acct}`);
+    else if (pp.fsa_hsa === 'no') add('fsaHsa', W.fsaHsa.no, `Not eligible for your ${acct}`);
+    else unknown.push({ factor: 'fsaHsa', text: `Whether it is eligible for your ${acct}` });
+  }
+
+  // Evidence: only a clinician-reviewed A grade raises (draft grades only lower, in health).
+  if (isEffect && grade === 'A' && CLINICIAN_REVIEWED.get(`${pp.product_id}|${r.needId}`)?.grade === 'A') {
+    add('evidence', W.evidence.reviewedA, 'Clinician-reviewed evidence for this need', 'Clinician-reviewed evidence for this need');
+  }
+
+  const total = round3(parts.reduce((s, p) => s + p.delta, 0));
+  return { parts, unknown, total };
 }
 
 /** The key that ties her v2 ecosystem order to one user (stable tie-break). */
@@ -201,9 +425,9 @@ export function userKeyOf(up) {
  * come from v2; v1Score keeps the old number for comparison. Safety, relevance,
  * explanations and every other field stay v1's (safety runs first).
  */
-export function withV2Score(pp, r, needIds, userKey = '', signals = null) {
+export function withV2Score(pp, r, needIds, userKey = '', signals = null, up = signals?.profile || null) {
   if (!r || !r.safety?.eligible || !(r.relevance > 0)) return { ...r, v1Score: r?.score ?? 0, score: 0, tier: 'browse', v2: null };
-  const v2 = scoreV2(pp, r, needIds, userKey, signals);
+  const v2 = scoreV2(pp, r, needIds, userKey, signals, up);
   const score = v2Percent(v2);
   return { ...r, v1Score: r.score, score, tier: score > 0 ? BAND_TIER[v2.band] : 'browse', v2 };
 }
@@ -219,7 +443,7 @@ export function scoreProductV2(pp, up) {
   const key = userKeyOf(up);
   const signals = needSignals(up);
   const needs = v1.needs
-    .map((r) => withV2Score(pp, r, needIds, key, signals))
+    .map((r) => withV2Score(pp, r, needIds, key, signals, up))
     .sort((a, b) => b.score - a.score || (b.v2?.rankKey ?? 0) - (a.v2?.rankKey ?? 0) || b.relevance - a.relevance);
   const best = needs.find((r) => r.relevance > 0) || null;
   return { ...v1, needs, best, engine: 'v2' };
@@ -277,7 +501,7 @@ export function buildEcosystemV2(up, products, options = {}) {
       // v1's ingested-product floors stay as a safety net (e.g. "PMS" in a name alone never qualifies).
       const q = qualificationForEcosystem(r, pp, 50);
       if (q.effectiveScore < q.floor) continue;
-      const scored = withV2Score(pp, r, needIds, userKey, signals);
+      const scored = withV2Score(pp, r, needIds, userKey, signals, up);
       const { v2 } = scored;
       if (v2.fit < V2.partialFloor) continue;
       results.set(n.id, { r: scored, v2, partial: v2.fit < V2.ecosystemFloor });
@@ -365,7 +589,7 @@ export function buildEcosystemV2(up, products, options = {}) {
         .map((r) => {
           // The shown percent is still v2's for this need (same number as the product page).
           const pp = profileById.get(r.productId);
-          const scored = pp ? withV2Score(pp, r, needIds, userKey, signals) : { ...r, v1Score: r.score, score: 0, tier: 'browse', v2: null };
+          const scored = pp ? withV2Score(pp, r, needIds, userKey, signals, up) : { ...r, v1Score: r.score, score: 0, tier: 'browse', v2: null };
           return { ...scored, v2: { ...(scored.v2 || {}), band: 'partial', bandLabel: BAND_LABEL.partial || null, fallback: true }, alsoCovers: [] };
         });
       if (fallback.length) {

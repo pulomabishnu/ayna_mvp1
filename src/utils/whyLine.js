@@ -103,10 +103,30 @@ function needWords(details) {
  */
 export function whyLine(product, details, { max = 1 } = {}) {
   if (product?.userAdded === true || !hasWhy(details)) return '';
+  // Product-specific first (PDP audit, Oct 26): the engine's strongest
+  // product fact for her, with its real value ("Holds up to 50 mL (Regular
+  // size), for your heavy flow"). Only when no such fact exists does the
+  // line fall back to the need ("For your period care").
+  const specific = productReason(details);
   const lead = whyLead(details);
+  // Price, FSA/HSA and asked-for values say little about what the product is
+  // for, so they follow the need: "For your period cramps, $12.99 fits your budget".
+  if (specific && lead && SHOPPING_REASONS.has(details.v2.reasonFactor)) return `${lead}, ${/^[A-Z][a-z]/.test(specific) ? specific.charAt(0).toLowerCase() + specific.slice(1) : specific}`;
+  if (specific) return specific;
   if (!lead) return '';
-  const clauses = whyClauses(details).slice(0, Math.max(0, max));
+  // A cup or disc whose capacity is not on file gets no capacity clause: the
+  // generic "holds a heavy flow" came from its category, not from the product.
+  const capacityUnknown = (details?.v2?.unknown || []).some((u) => u.factor === 'capacity');
+  const clauses = whyClauses(details).filter((c) => !(capacityUnknown && /^holds a /.test(c))).slice(0, Math.max(0, max));
   return [lead, ...clauses].join(', ');
+}
+
+const SHOPPING_REASONS = new Set(['price', 'fsaHsa', 'values']);
+
+/** The engine's product-specific reason for this match (v2.reason), or ''. */
+export function productReason(details) {
+  const r = details?.v2?.reason;
+  return typeof r === 'string' ? r.trim() : '';
 }
 
 /**
@@ -151,6 +171,7 @@ export function whyLineForPick(pick, phrase, opts) {
     needMatches: [{ needId: pick.needId, phrase: phrase || '' }],
     reasonDetails: (pick.explanations || []).map((text) => ({ text })),
     outputs: pick.outputs || null,
+    v2: pick.v2 || null,
   };
   return whyLine(pick.product || null, details, opts);
 }

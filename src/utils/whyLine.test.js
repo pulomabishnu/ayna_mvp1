@@ -47,7 +47,8 @@ describe('whyLine', () => {
     for (const p of matches.slice(0, 5)) {
       const line = whyLine(p, getProductMatchDetailsForProduct(p, q));
       expect(line).toMatch(/^(For|Another option for) your period cramps/);
-      expect(line).not.toMatch(/\d|%|—/);
+      // Real product values (a price, mL) are allowed since Oct 26; a percent or an em dash never.
+      expect(line).not.toMatch(/%|—/);
     }
   });
 });
