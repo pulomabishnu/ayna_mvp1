@@ -498,15 +498,14 @@ export default function BrowseScreen({
           {embedded && <div className="ayshop__chips" data-tour="explore-sections">
             <ShopGroups active={activeGroup} onPick={setActiveGroup} subs={false} label="Filter by need" className="ay-shop-groups" />
           </div>}
-          {embedded && <div className="ay-shop-bar">
+          {/* Founder Oct 26 19:50: "don't just stack stuff". Filters, Compare and Swipe share one sideways row. */}
+          {embedded && <div className="ay-shop-extras ay-shop-tools">
             {typeToggle}
             <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
               Filters
               {activeFilterCount > 0 && <span aria-label={`${activeFilterCount} on`}>{activeFilterCount}</span>}
             </button>
-          </div>}
-          {embedded && <div className="ay-shop-extras">
             {hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}
             <CompareToggle className="ay-shop-compare" />
             {!searchValue.trim() && <button type="button" className="ay-discover-cta" aria-label="Swipe through products: right to save, left to skip" onClick={() => setShowDeck(true)}>
