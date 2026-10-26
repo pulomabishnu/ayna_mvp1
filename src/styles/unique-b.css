@@ -133,3 +133,9 @@ html body .app-container .cm .cm-body.is-clamped { -webkit-line-clamp: 3 !import
 
 /* App dark: flip the header bands wherever the dark theme attribute sits (the You hub renders under a different root). */
 [data-theme='dark'] :is(#ay, .ay-you-band, .ay-home-hello.is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band) { --ubx: #FFEDAC !important; --ubf: #3E2723 !important; }
+
+/* Glance pass (p14): one row of topic pills on the feeds; the rest scroll sideways, the Topics sheet keeps all. */
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics).is-onerow { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics).is-onerow::-webkit-scrollbar { display: none; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics).is-onerow .ub-topic { flex: none; min-height: 44px; align-items: center; padding: 8px 10px 8px 14px; border-radius: 999px; font-size: 15px; white-space: nowrap; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics).is-onerow .ub-topic svg { width: 24px; height: 24px; padding: 5px; }

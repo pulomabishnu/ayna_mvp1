@@ -47,9 +47,11 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   // The two covers beside the feature: her next picks (or the first topic's reads); they are not repeated in the rails below.
   const pair = (hasProfile && forYou.length ? forYou : rows[0]?.items || []).filter((a) => a !== featured).slice(0, 2);
   const notPaired = (items) => items.filter((a) => !pair.includes(a));
-  const tile = (a, small = false) => <div className={`al-item${small ? ' is-small' : ''}`} key={a.id}>
-    <ReadCard article={a} layout="rail" onOpen={() => onOpenArticle?.(a)} progress={progressOf(a)} />
+  const tile = (a, small = false, wide = false) => <div className={`al-item${small ? ' is-small' : ''}${wide ? ' is-wide' : ''}`} key={a.id}>
+    <ReadCard article={a} layout="rail" summary={!small} onOpen={() => onOpenArticle?.(a)} progress={progressOf(a)} />
   </div>;
+  // Editorial grid (glance pass): one wide cover first, then halves; an odd last one goes wide so no tile sits beside an empty half.
+  const grid = (items) => <div className="al-grid al-grid--ed">{items.map((a, i) => tile(a, false, i === 0 || (i === items.length - 1 && (items.length - 1) % 2 === 1)))}</div>;
   const row = (id, label, items, extra = null, topicId = null, total = items.length) => items.length > 0 && <section className="al-shelf" key={id} aria-labelledby={`al-${id}-h`}>
     <div className="al-shelf__head"><h2 id={`al-${id}-h`}>{sentence(label)}</h2>{extra || (topicId && <button type="button" className="al-seeall" onClick={() => setTopic(topicId)}>See all {total}</button>)}</div>
     <div className="al-row">{items.map((a) => tile(a, true))}</div>
@@ -58,10 +60,10 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   let body;
   if (q.length >= 2) {
     const results = searchArticles(query, articles);
-    body = results.length ? <div className="al-grid">{results.map((a) => tile(a))}</div> : <p className="al-empty">No reads match.</p>;
+    body = results.length ? grid(results) : <p className="al-empty">No reads match.</p>;
   } else if (topic !== 'all') {
     const items = topic === 'foryou' ? forYou : (rows.find((r) => r.id === topic)?.items || []);
-    body = <div className="al-grid">{items.map((a) => tile(a))}</div>;
+    body = grid(items);
   } else {
     body = <>
       <FeaturedRead article={featured} label={featuredLabel} progress={featured ? progressOf(featured) : 0} onOpen={onOpenArticle} pair={pair} progressOf={progressOf} />

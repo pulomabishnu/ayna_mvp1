@@ -152,7 +152,7 @@ html body .app-container.app-container.app-container.app-container {
   .cm-body { display: block; margin: 0; padding: 0; border: 0; background: none; color: var(--ay-text) !important; font: 400 var(--ay-type-body)/1.55 var(--ay-sans-stack) !important; text-align: left; white-space: pre-wrap; overflow-wrap: anywhere; cursor: pointer; }
   .cm-note.is-question .cm-body { font-weight: 600 !important; font-size: 18px !important; line-height: 1.45 !important; }
   .cm-note.is-full .cm-body { cursor: auto; font-size: 18px !important; }
-  .cm-body.is-clamped { display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
+  .cm-body.is-clamped { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .cm-readmore { justify-self: start; min-height: 36px; margin-top: -8px; padding: 0; border: 0; background: none; color: var(--ay-text) !important; font: 600 14px/1 var(--ay-sans-stack) !important; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 
   /* photos as polaroids, tilted a hair */

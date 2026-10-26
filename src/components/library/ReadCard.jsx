@@ -28,7 +28,7 @@ function sourceList(text) {
  *   (the one big feature of the Reads editorial grid, #4dfb3fbd FEEL FITS).
  * A real link on the website (`href`), a button in the app (no `href`).
  */
-export default function ReadCard({ article, layout = 'rail', href = null, onOpen, progress = 0, headingLevel = 3, className = '' }) {
+export default function ReadCard({ article, layout = 'rail', href = null, onOpen, progress = 0, headingLevel = 3, className = '', summary = false }) {
   if (!article) return null;
   const { id, title, teaser, source } = article;
   const minutes = minutesFor(article);
@@ -65,6 +65,7 @@ export default function ReadCard({ article, layout = 'rail', href = null, onOpen
     <article className={`ay-rcard is-rail ${className}`.trim()}>
       <span className="ay-rcard__cover" aria-hidden="true"><ReadCover article={article} minutes={minutes} /></span>
       <H className="ay-rcard__title"><Link className="ay-rcard__link" {...linkProps} onClick={click} aria-label={`${title}, ${minutes} min read`}>{title}</Link></H>
+      {summary && teaser && <p className="ay-rcard__sum">{teaser}</p>}
       {state}
     </article>
   );

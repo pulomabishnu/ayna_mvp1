@@ -963,7 +963,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     const kind = post.kind === 'question' || post.kind === 'review' ? post.kind : 'post';
     const media = post.media || [];
     // Glance (advisor + founder 16:54): about two lines in the feed, the full post one tap away.
-    const long = !full && String(post.body || '').length > 140;
+    const long = !full && String(post.body || '').length > 220;
     const replyWord = kind === 'question' ? 'Answer' : 'Reply';
     return <article ref={engagement.trackView(post.id)} className={`cm-post cm-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(i, 6) }} data-kind={kind} data-vt-target={full ? 'post' : undefined} key={post.id}>
       {/* What kind of post this is: an outlined label with an icon (Community audit, issue 2). */}
@@ -1421,7 +1421,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         </div>
       </nav>
       <div className="cm-main">
-        {onFeed && topicsTab && <TopicBands followed={followedTopics} scope={topicScope} onScope={setTopicScope} onEdit={() => setTopicSheetOpen(true)} suggest={['periods', 'cramps', 'pcos']} onFollow={toggleTopic} />}
+        {onFeed && topicsTab && <TopicBands className="is-onerow" followed={followedTopics} scope={topicScope} onScope={setTopicScope} onEdit={() => setTopicSheetOpen(true)} suggest={['periods', 'cramps', 'pcos']} onFollow={toggleTopic} />}
         {onFeed && topicsTab && scopedTopicList && !loading && posts.length === 0 && <div className="ay-group is-padded cm-topic-empty"><p className="cm-muted">{topicScope === 'mine' ? 'Nothing in your topics yet. New posts tagged with them show up here.' : `No ${topicLabel(topicScope)} posts yet.`}</p><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={() => setTopicScope('all')}>See all posts</button></div>}
         {onFeed && (topics.length > 0 || userTopics.available) && tab !== 'announcements' && tab !== 'playlists' && topicChips('is-row')}
         {user && !profile && profileChecked ? <div className="ay-group is-padded cm-join"><h2 className="ay-h3">Join the community</h2><p className="cm-muted">Pick a name people will see. Your health answers stay private.</p>

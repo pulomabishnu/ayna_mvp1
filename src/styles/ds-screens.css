@@ -423,3 +423,17 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--tod
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead { max-width: 760px; margin-left: auto !important; margin-right: auto !important; padding-right: 150px !important; column-gap: 24px; }
 }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day.is-single .ay-wh-day__connect .ay-wh-connect { display: grid !important; gap: 12px; }
+
+/* Glance pass (p14): below the week bento, Today's text rows become tiles side by side (halves; a lone last one runs wide). */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows > li { align-content: space-between; min-height: 96px; padding: 16px !important; border: 0; border-radius: 16px; background: var(--ay-butter-deep, #f6e3a1); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows > li:nth-child(even) { background: #f7badd; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows > li:nth-child(even) b { color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows > li:last-child:nth-child(odd) { grid-column: 1 / -1; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows b.is-line { font: 700 17px/1.35 var(--ay-font-ui); }
+:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows > li:nth-child(odd) { background: rgba(255, 237, 172, .1); }
+html body .app-container .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0; }
+html body .app-container .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div { padding: 16px !important; border: 0 !important; border-radius: 16px; background: var(--ay-butter-deep, #f6e3a1); color: #3e2723; }
+html body .app-container .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div:nth-child(4n+2), html body .app-container .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div:nth-child(4n+3) { background: #f7badd; }
+html body .app-container .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div :is(dt, dd) { color: #3e2723 !important; }
+html body .app-container .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div:last-child:nth-child(odd) { grid-column: 1 / -1; }

@@ -87,3 +87,12 @@
 @media (max-width: 420px) {
   :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rxr .ay-rx__facts > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }
+
+/* Glance pass (p14): on Today, each routine is a tile; two sit side by side, one runs wide. */
+section.ay-rxr.ay-rxs.is-web { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+section.ay-rxr.ay-rxs.is-web > .ay-rxs__head { grid-column: 1 / -1; }
+section.ay-rxr.ay-rxs.is-web > .ay-rxs__one { min-width: 0; margin: 0; padding: 16px; border-radius: 16px; background: var(--ay-butter-deep, #f6e3a1); color: #3e2723; }
+section.ay-rxr.ay-rxs.is-web > .ay-rxs__one:nth-child(3) { background: #f7badd; }
+section.ay-rxr.ay-rxs.is-web > .ay-rxs__one:last-child:nth-child(even) { grid-column: 1 / -1; }
+section.ay-rxr.ay-rxs.is-web > .ay-rxs__one :is(h3, b, span, p, li) { color: #3e2723; }
+@media (max-width: 560px) { section.ay-rxr.ay-rxs.is-web { grid-template-columns: minmax(0, 1fr); } }

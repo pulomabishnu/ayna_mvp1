@@ -286,7 +286,7 @@
 .ayna-mobile .am-post-stars { color: var(--legacy-ink); }
 /* Filled stars are ink: butter on a white card read as five empty outlines. */
 .ayna-mobile .am-post-stars svg.is-on { fill: var(--legacy-ink) !important; }
-.ayna-mobile.ayna-mobile .am-scroll .am-postbody { min-height: 0; padding: 0 !important; color: var(--legacy-ink); font: 400 15px/1.45 var(--ay-font-ui) !important; letter-spacing: 0 !important; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6; overflow: hidden; }
+.ayna-mobile.ayna-mobile .am-scroll .am-postbody { min-height: 0; padding: 0 !important; color: var(--legacy-ink); font: 400 15px/1.45 var(--ay-font-ui) !important; letter-spacing: 0 !important; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
 .ayna-mobile.ayna-mobile .am-scroll .am-subpage .am-postbody { display: block; -webkit-line-clamp: unset; font-size: 17px !important; font-weight: 600 !important; }
 .ayna-mobile.ayna-mobile .am-scroll .am-post-card .am-photo-grid { width: 100%; margin: 0; border-radius: 12px; }
 .ayna-mobile.ayna-mobile .am-scroll .am-post-card .am-product { width: 100%; margin: 0; min-height: 0; padding: 6px 8px 6px 6px !important; border: 1.5px solid var(--ay-line) !important; border-radius: 14px !important; background: var(--ay-cream, var(--ay-paper)) !important; }
