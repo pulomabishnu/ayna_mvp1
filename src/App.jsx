@@ -109,6 +109,8 @@ import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from
 import { forgetSharedIntake, loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate, { ConsentGate } from './components/AuthGate';
+import HeardAboutPrompt from './components/HeardAboutPrompt.jsx';
+import { shouldAskHeardAbout } from './utils/signupConsent.js';
 import './finalAynaPolish.css';
 import './brand-v2.css';
 import './web-play.css';
@@ -792,6 +794,8 @@ function App() {
   const [dataLoadNonce, setDataLoadNonce] = useState(0);
   // Google account with no recorded consent (created straight from Log in): gate until agreed.
   const [consentGateOpen, setConsentGateOpen] = useState(false);
+  // "Where did you hear about us?" after sign-up, optional (HeardAboutPrompt).
+  const [heardDismissed, setHeardDismissed] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authFeature, setAuthFeature] = useState('');
   // Shared answer page (/a/<slug>): Sign up or Sign in, from its Add friend prompt.
@@ -1759,6 +1763,7 @@ function App() {
   const handleQuizComplete = async (results, opts = {}) => {
     // First run ends on the reveal's "See my Today" (WebIntake): open Today, not the story.
     const toToday = opts?.land === 'today';
+    const toSave = opts?.land === 'save';
     await loadCatalog(); // her matches come from the catalog (already loaded by the quiz page)
     const completedResults = {
       ...results,
@@ -1772,7 +1777,16 @@ function App() {
       setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
       const { mergedProducts: guestSeed } = getEcosystemSeedFromQuiz(completedResults, healthProfile, seedOpts);
       const guestProducts = Object.values(guestSeed || {});
-      setGuestPreview({ results: completedResults, products: guestProducts, done: toToday });
+      setGuestPreview({ results: completedResults, products: guestProducts, done: toToday || toSave, fromReveal: toSave });
+      if (toSave) {
+        // "Save these matches" on the reveal: her matches are already on
+        // screen; the account is only for keeping them (onboarding audit).
+        markOnboardingDone();
+        setQuizResults(completedResults);
+        setCurrentView('today');
+        setShowAuthModal(true);
+        return;
+      }
       if (toToday) {
         // Explore first: her answers work signed out; Save stays one tap away.
         markOnboardingDone();
@@ -3320,7 +3334,7 @@ function App() {
           </div>
         )}
 
-        {showAuthModal && !user && pendingAction === 'quiz-complete' && guestPreview?.done && createPortal(
+        {showAuthModal && !user && pendingAction === 'quiz-complete' && guestPreview?.done && !guestPreview.fromReveal && createPortal(
           <button type="button" className="ay-flow-auth-back" onClick={() => {
             setShowAuthModal(false);
             setGuestPreview((g) => (g ? { ...g, done: false, atEnd: true } : g));
@@ -3369,6 +3383,9 @@ function App() {
             // Create account exists only in the save step after the quiz (Wrapped).
             // Everywhere else: sign in, or "Build your ecosystem" to start the quiz.
             allowSignup={pendingAction === 'quiz-complete' || pendingAction === 'share-friend'}
+            // Her first name comes from the quiz only (onboarding audit #1).
+            firstName={pendingQuizResults?.firstName || guestPreview?.results?.firstName || quizResults?.firstName || ''}
+            title={pendingAction === 'share-friend' ? 'Create your account' : ''}
             initialMode={pendingAction === 'share-friend' ? shareAuthMode : undefined}
             onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' || pendingAction === 'free-product' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'save-item' ? 'save-item' : pendingAction === 'ecosystem' ? 'ecosystem' : pendingAction === 'feature' ? 'feature' : undefined}
@@ -3396,6 +3413,9 @@ function App() {
               setPendingAction(null); pendingActionRef.current = null;
             }}
           />
+        )}
+        {user && !heardDismissed && !consentGateOpen && !showAuthModal && !newAccountStart && !['auth-callback', 'campus-resources'].includes(currentView) && shouldAskHeardAbout(user) && (
+          <HeardAboutPrompt variant="web" onDone={() => setHeardDismissed(true)} onSaved={(u) => { if (u) setUser(u); }} />
         )}
         {newAccountStart && user && currentView !== 'quiz' && (
           <NewAccountStart
