@@ -271,7 +271,7 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc-main { display: flex !important; flex-direction: column; gap: 10px; flex: 1; padding: 0 !important; border: 0 !important; background: none !important; color: inherit !important; text-align: left; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc-photo {
   position: relative; display: block; aspect-ratio: 1 / 1; padding: 9px; box-sizing: border-box; overflow: hidden;
-  border: 1.5px solid rgba(62, 39, 35, .16) !important; border-radius: 10px!important; background: #fbfaf6 !important; box-shadow: none !important;
+  border: 1.5px solid rgba(62, 39, 35, .16) !important; border-radius: 10px!important; background: #ffffff !important; box-shadow: none !important;
 }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc-photo img { width: 100% !important; height: 100% !important; object-fit: contain !important; border-radius: 0 !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc-copy { display: flex !important; flex-direction: column; gap: 3px; flex: 1; min-width: 0; padding: 0 1px !important; }

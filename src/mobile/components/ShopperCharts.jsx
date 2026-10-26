@@ -1,7 +1,7 @@
 import './ShopperCharts.css';
 // Two small animated charts for the shopper card. Every number shown is real:
 // product counts from the Ecosystem, and the order the person ranked trust in.
-const TONES = ['var(--ay-pink)', 'var(--ay-mint)', 'var(--ay-butter)', 'var(--ay-peri)', 'var(--ay-paper)'];
+const TONES = ['var(--legacy-pink)', 'var(--ay-mint)', 'var(--legacy-butter)', 'var(--ay-peri)', 'var(--ay-paper)'];
 
 export function ShelfDonut({ shelf = [], total = 0 }) {
   if (!total || !shelf.length) return null;

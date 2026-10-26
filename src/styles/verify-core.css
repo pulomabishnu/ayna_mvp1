@@ -4,7 +4,7 @@
    min-height 100px) leaked into the site header and stretched every count to
    100px tall. Reset it, and pin the Ecosystem count to the tab's corner so it
    never takes layout width (no reserved gap, no shift when it arrives). */
-.app-container .ay-badge { min-height: 0 !important; height: 20px !important; min-width: 20px !important; padding: 0 6px !important; gap: 0 !important; align-content: center !important; animation: none !important; border: 2px solid var(--ay-ink) !important; font: 600 var(--ay-fs-caption)/1 var(--ay-sans) !important; font-variant-numeric: tabular-nums; }
+.app-container .ay-badge { min-height: 0 !important; height: 20px !important; min-width: 20px !important; padding: 0 6px !important; gap: 0 !important; align-content: center !important; animation: none !important; border: 2px solid var(--legacy-ink) !important; font: 600 var(--ay-fs-caption)/1 var(--ay-sans) !important; font-variant-numeric: tabular-nums; }
 .app-container .app-nav.app-nav a.app-nav__tab { position: relative; }
 .app-container .app-nav .app-nav__tab .ay-badge { position: absolute !important; top: -6px; right: -6px; box-shadow: 0 0 0 2px var(--ay-paper); }
 .app-container .app-nav .ay-badge.is-empty { display: none !important; }
@@ -13,7 +13,7 @@
 /* M5: centre the beta pill on the wordmark's x-height (measured 2.6px high) */
 .app-container .app-nav__logo .app-nav__beta-badge { transform: translateY(2.5px); }
 /* The landing header variant paints every span cream (!important); counts must stay ink on butter. */
-.app-container .app-nav .ay-badge, .app-container .mobile-nav-drawer .ay-badge { color: var(--ay-ink) !important; -webkit-text-fill-color: currentColor; background: var(--ay-butter) !important; font-family: var(--ay-sans) !important; }
+.app-container .app-nav .ay-badge, .app-container .mobile-nav-drawer .ay-badge { color: var(--legacy-ink) !important; -webkit-text-fill-color: currentColor; background: var(--legacy-butter) !important; font-family: var(--ay-sans) !important; }
 
 /* S12 / M11: titles reserve two lines (a 1.5em-tall eyebrow row is already fixed),
    so the main price line sits at the same height across a row; a unit or list
@@ -30,14 +30,14 @@
 /* E06: Saved uses the same section heading as Your shelves; count is the standard badge */
 .app-container .eco-saved__head { justify-content: flex-start !important; align-items: center !important; gap: 12px !important; }
 .app-container .eco-saved__head h2 { font: 700 var(--ay-fs-title)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
-.app-container .eco-saved__count { min-width: 24px !important; height: 24px !important; padding: 0 7px !important; border: 2px solid var(--ay-ink) !important; background: var(--ay-butter) !important; color: var(--ay-ink) !important; font: 600 var(--ay-fs-caption)/1 var(--ay-sans) !important; font-variant-numeric: tabular-nums; }
+.app-container .eco-saved__count { min-width: 24px !important; height: 24px !important; padding: 0 7px !important; border: 2px solid var(--legacy-ink) !important; background: var(--legacy-butter) !important; color: var(--legacy-ink) !important; font: 600 var(--ay-fs-caption)/1 var(--ay-sans) !important; font-variant-numeric: tabular-nums; }
 /* Ecosystem card: the product name is a text link, not a boxed button */
 .app-container .eco-bubbles__card-name { border: 0 !important; background: none !important; padding: 0 !important; box-shadow: none !important; border-radius: 0 !important; text-decoration: underline !important; text-decoration-thickness: 2px !important; text-underline-offset: 4px; }
 /* Shelves: product names get room (were squeezed into 120px and wrapped to 5 lines) */
 .app-container .eco-shelf__row-tiles { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important; align-items: center; }
 .app-container .eco-shelf__tile-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 /* M37 / M38 / G15: empty slots share one dash (2px ink), no grey dashed boxes */
-.app-container :is(.eco-shelf__addchip, .eco-shelf__tile--add, .eco-bubble--gap) { border: 2px dashed var(--ay-ink) !important; }
+.app-container :is(.eco-shelf__addchip, .eco-shelf__tile--add, .eco-bubble--gap) { border: 2px dashed var(--legacy-ink) !important; }
 
 /* MW05: one 20px gutter on phones. The landing hero column and the ecosystem
    sections added their own 16 to 20px on top of the page gutter (36 to 40px). */
@@ -48,7 +48,7 @@
 
 /* MW02: the sheet covered the header's X, so it gets its own 44px close target;
    G17: the Ask launcher hides while the menu is open. */
-.app-container .mobile-nav-close { position: absolute; top: 18px; right: 16px; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); color: var(--ay-ink); cursor: pointer; }
+.app-container .mobile-nav-close { position: absolute; top: 18px; right: 16px; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 2px solid var(--legacy-ink); border-radius: 50%; background: var(--ay-paper); color: var(--legacy-ink); cursor: pointer; }
 .app-container .mobile-nav-close svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
 body:has(.mobile-nav-drawer) .app-container :is(.ayna-ask-dock, .ayna-ask-tab) { display: none !important; }
 
@@ -77,7 +77,7 @@ body:has(.mobile-nav-drawer) .app-container :is(.ayna-ask-dock, .ayna-ask-tab) {
 .app-container .eco2-details__body :is(p, label, a, li, button, input, select) { font-size: var(--ay-fs-secondary) !important; }
 .app-container .eco2-details__body div:not(:has(*)) { font-size: var(--ay-fs-secondary) !important; }
 .app-container .eco2-details__body :is(h3, h4) { font-size: var(--ay-fs-body) !important; font-weight: 600 !important; font-family: var(--ay-sans) !important; letter-spacing: 0 !important; }
-.app-container .eco2-details__body :is(h3, h4, h5) { color: var(--ay-ink) !important; }
+.app-container .eco2-details__body :is(h3, h4, h5) { color: var(--legacy-ink) !important; }
 
 /* E08: the refresh notice spans exactly the content column below it */
 .app-container .eco2-notice { max-width: 1100px; margin-left: auto !important; margin-right: auto !important; box-sizing: border-box; }
@@ -86,7 +86,7 @@ body:has(.mobile-nav-drawer) .app-container :is(.ayna-ask-dock, .ayna-ask-tab) {
 .app-container .app-nav.app-nav--landing { padding-top: 20px !important; padding-bottom: 20px !important; }
 
 /* Article and product titles are now the page H1 (G19); keep their look */
-.app-container .ay-web-lib-article > h1.ay-article-title { font: 700 var(--ay-fs-display)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; color: var(--ay-ink) !important; }
+.app-container .ay-web-lib-article > h1.ay-article-title { font: 700 var(--ay-fs-display)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; color: var(--legacy-ink) !important; }
 /* Footer text on the type scale */
 .app-container .site-footer :is(p, a, button, span, li) { font-size: var(--ay-fs-secondary); }
 .app-container .site-footer .site-footer__legal, .app-container .site-footer .site-footer__legal * { font-size: var(--ay-fs-caption) !important; }
@@ -100,4 +100,4 @@ body:has(.mobile-nav-drawer) .app-container :is(.ayna-ask-dock, .ayna-ask-tab) {
   .app-container main { padding-bottom: 88px !important; }
 }
 /* Care near you headings: site display type, not Bricolage 400 */
-.app-container .eco2-details__body :is(h3, h4) { font-family: var(--ay-sans) !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--ay-ink) !important; }
+.app-container .eco2-details__body :is(h3, h4) { font-family: var(--ay-sans) !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--legacy-ink) !important; }

@@ -1,21 +1,21 @@
 /* Shopper profile charts (app You tab and website You page). */
-.ay-chart { margin: 0; padding: 14px; border: 1.5px solid var(--ay-ink); border-radius: 18px; background: var(--ay-cream); }
+.ay-chart { margin: 0; padding: 14px; border: 1.5px solid var(--legacy-ink); border-radius: 18px; background: var(--ay-cream); }
 .ay-chart figcaption { margin-bottom: 10px; font: 500 13px/1 var(--ay-font-ui); letter-spacing: -.01em; }
 .ay-donut-body { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: center; }
 .ay-donut svg { width: 112px; height: 112px; rotate: -90deg; overflow: visible; }
-.ay-donut-track { fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 7.6; }
+.ay-donut-track { fill: var(--ay-paper); stroke: var(--legacy-ink); stroke-width: 7.6; }
 .ay-donut-seg { fill: none; stroke-width: 6; stroke-linecap: butt; animation: ay-donut-grow .9s var(--ease-out) both; animation-delay: calc(.2s + var(--i) * .12s); }
-.ay-donut-num, .ay-donut-cap { rotate: 90deg; transform-origin: 21px 21px; text-anchor: middle; fill: var(--ay-ink); }
+.ay-donut-num, .ay-donut-cap { rotate: 90deg; transform-origin: 21px 21px; text-anchor: middle; fill: var(--legacy-ink); }
 .ay-donut-num { font: 500 11.5px/1 'Figtree', system-ui, sans-serif; }
 .ay-donut-cap { font: 500 11.5px/1 var(--ay-font-ui); opacity: .7; }
 .ay-donut ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .ay-donut li { display: flex; align-items: center; gap: 8px; font: 500 13px/1.2 var(--ay-font-ui); min-width: 0; animation: ay-shopper-tile .4s var(--ay-ease) both; animation-delay: calc(.4s + var(--i) * .08s); }
-.ay-donut li i { width: 12px; height: 12px; flex: none; border: 1.5px solid var(--ay-ink); border-radius: 4px; }
+.ay-donut li i { width: 12px; height: 12px; flex: none; border: 1.5px solid var(--legacy-ink); border-radius: 4px; }
 .ay-donut li b { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; }
 .ay-trust ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .ay-trust li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 8px; align-items: center; }
-.ay-trust-rank { width: 28px; height: 28px; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); font: 500 13px/1 var(--ay-font-ui); }
-.ay-trust-bar { display: block; width: var(--w); min-width: fit-content; height: 32px; border: 1.5px solid var(--ay-ink); border-radius: 10px; background: var(--tone); transform-origin: left; animation: ay-bar-grow .7s var(--ease-out) both; animation-delay: calc(.3s + var(--i) * .12s); overflow: hidden; }
+.ay-trust-rank { width: 28px; height: 28px; display: grid; place-items: center; border: 1.5px solid var(--legacy-ink); border-radius: 50%; background: var(--ay-paper); font: 500 13px/1 var(--ay-font-ui); }
+.ay-trust-bar { display: block; width: var(--w); min-width: fit-content; height: 32px; border: 1.5px solid var(--legacy-ink); border-radius: 10px; background: var(--tone); transform-origin: left; animation: ay-bar-grow .7s var(--ease-out) both; animation-delay: calc(.3s + var(--i) * .12s); overflow: hidden; }
 .ay-trust li:nth-child(2) .ay-trust-bar { background: var(--ay-paper); }
 .ay-trust li:nth-child(3) .ay-trust-bar { background: var(--ay-tile); }
 .ay-trust-bar b { display: block; padding: 0 10px; font: 500 13px/29px var(--ay-font-ui); white-space: nowrap; }

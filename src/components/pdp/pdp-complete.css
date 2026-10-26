@@ -330,7 +330,7 @@
 /* Scalloped edge: a radial-gradient mask repeated with "round" (Temani Afif's
    CSS shapes technique, also used by .ay-stamp in ayna-system.css). */
 /* The product photo in the product card's light inset panel (no postage-stamp edge: banned Oct 25). */
-.ayq-stamp { display: block; padding: 12px; box-sizing: border-box; border: 1.5px solid rgba(62, 39, 35, .16); border-radius: 16px; background: #fbfaf6; }
+.ayq-stamp { display: block; padding: 12px; box-sizing: border-box; border: 1.5px solid rgba(62, 39, 35, .16); border-radius: 16px; background: #ffffff; }
 html body .app-container.app-container.app-container .ayp-gallery__stamp .ayp-gallery__tile { border-radius: 10px; }
 
 /* Round badges beside the photo: facts on file only. */

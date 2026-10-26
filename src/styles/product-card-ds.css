@@ -10,7 +10,7 @@
    pill (one engine) is a small stamp on the photo's top-left corner.
    ===================================================================== */
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card {
-  --pc-ink: #3e2723; --pc-bg: #ffedac; --pc-panel: #fbfaf6; --pc-panel-line: rgba(62, 39, 35, .16); --pc-soft: rgba(62, 39, 35, .72); --pc-shadow: none;
+  --pc-ink: #3e2723; --pc-bg: #ffedac; --pc-panel: #ffffff; --pc-panel-line: rgba(62, 39, 35, .16); --pc-soft: rgba(62, 39, 35, .72); --pc-shadow: none;
   position: relative; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; min-width: 0;
   padding: 14px 14px 16px !important; border: 2px solid var(--pc-ink) !important; border-radius: 16px!important; background: var(--pc-bg) !important; color: var(--pc-ink);
   box-shadow: var(--pc-shadow) !important; overflow: visible !important; transition: transform .16s var(--ease-out, ease-out), box-shadow .16s var(--ease-out, ease-out);

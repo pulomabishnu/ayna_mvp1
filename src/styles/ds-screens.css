@@ -192,10 +192,10 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today_
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__notify-done { margin: 0 !important; font: 500 15px/1.45 var(--ay-font-ui) !important; color: var(--tdy-ink) !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side .ayk-progress { margin: 0 0 4px; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-side__rows > li.is-step.is-done b { color: var(--tdy-muted); }
-/* the ui/ay primitives inside Today read Today's own ink (legacy layers reset --ay-ink to espresso under the dark page) */
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh { --ay-ink: var(--tdy-ink); --ay-ink-muted: var(--tdy-muted); --ay-chip-bg: #ffedac; --ay-fill-ink: #3e2723; --ay-on-ink: #ffedac; --ay-outline: 1.5px solid var(--tdy-ink); --ay-track: rgba(62, 39, 35, .15); }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh { --ay-chip-bg: transparent; --ay-fill-ink: #ffedac; --ay-on-ink: #3e2723; --ay-track: rgba(255, 237, 172, .2); }
-/* pink stays pink in dark here: rules naming brand-dark are left alone by darkAccentSwap.js (blue is for chart lines only) */
+/* Today: older (pre-token) rules inside read --legacy-*; the --ay-* tokens switch on their own. Today's own pill track. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh { --legacy-ink: var(--tdy-ink); --legacy-outline: 1.5px solid var(--tdy-ink); --ay-track: rgba(62, 39, 35, .15); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh { --ay-track: rgba(255, 237, 172, .2); }
+/* pink stays pink in dark (blue is for chart lines only) */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh .ay-rd-hero__go { background: #f7badd !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh .ay-rd-hero__kicker::before { background: #f7badd; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh .ay-today__primary { box-shadow: 3px 3px 0 #f7badd !important; }

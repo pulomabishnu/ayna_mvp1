@@ -13,9 +13,3 @@
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-avoid__label { margin: 0 !important; color: var(--ay-ink); font: 700 15px/1.3 var(--ay-font-ui) !important; }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-avoid__label span { display: block; color: var(--ay-ink-muted); font: 500 13px/1.4 var(--ay-font-ui); }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ayna-mobile .ay-avoid { margin: 12px var(--d-gutter, 16px) 16px; }
-/* Token guard (Oct 26): older page sheets reuse --ay-outline as a colour and --ay-butter as pink
-   on the website (ayna-system.css, theme-v3.css), which blanks the shared primitives' borders and
-   tints. The primitives on Explore get the real token values on themselves (not on the page), so
-   no older rule changes. */
-:is(.wx, .wx-top, .lb, .ax, .ay-lib, .ayshop, .ay-avoid, .ay-needtiles) :is(.ayk-chip, .ayk-tabs, .ayk-btn, .ayk-plate, .ayk-sticker) { --ay-outline: 1.5px solid var(--ay-ink, #3e2723); --ay-butter: #ffedac; --ay-chip-bg: #ffedac; }
-:is([data-theme='brand-dark'], [data-theme='dark']) :is(.wx, .wx-top, .lb, .ax, .ay-lib, .ayshop, .ay-avoid, .ay-needtiles) :is(.ayk-chip, .ayk-tabs, .ayk-btn) { --ay-outline: 1.5px solid #ffedac; --ay-chip-bg: transparent; }

@@ -102,7 +102,7 @@
   --ay-text: #3e2723;
   --ay-text-2: rgba(62, 39, 35, .78);
   --ay-hairline: rgba(62, 39, 35, .15);
-  --ay-outline-color: #3e2723; --ay-outline: 1.5px solid #3e2723;
+  --ay-outline-color: #3e2723; --legacy-outline: 1.5px solid #3e2723;
   --ay-feature-bg: #3e2723;
   --ay-feature-fg: #ffedac;
   --ay-tile-bg: #ffffff;
@@ -170,7 +170,7 @@
   --ay-text: #ffedac;
   --ay-text-2: rgba(255, 237, 172, .8);
   --ay-hairline: rgba(255, 237, 172, .18);
-  --ay-outline-color: #ffedac; --ay-outline: 1.5px solid #ffedac;
+  --ay-outline-color: #ffedac; --legacy-outline: 1.5px solid #ffedac;
   --ay-feature-bg: #ffedac;
   --ay-feature-fg: #3e2723;
   --ay-focus: #ffedac;
@@ -592,11 +592,11 @@
 .app-container .ay-band--pink { --band: #f7badd; }
 .app-container .ay-band--sky { --band: #f6e3a1; }
 .app-container .ay-band--butter { --band: #ffedac; }
-.app-container :is(.ay-band--pink, .ay-band--sky, .ay-band--butter) { --ay-text: #3e2723; --ay-text-2: #3e2723; --ay-outline-color: #3e2723; --ay-outline: 1.5px solid #3e2723; --ay-hairline: rgba(62, 39, 35, .3); --ay-hover: rgba(62, 39, 35, .08); --ay-focus: #3e2723; --ay-feature-bg: #3e2723; --ay-feature-fg: #ffedac; --ay-press-shadow: 3px 3px 0 #3e2723; --ay-group: rgba(255, 237, 172, .55); --ay-page-on: #ffedac; --ed-text: #3e2723; --ed-text-2: #3e2723; --ed-outline: #3e2723; --ed-hairline: rgba(62, 39, 35, .3); --ed-page: #ffedac; color: #3e2723; }
-.app-container .ay-band--espresso { --band: #3e2723; --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ay-outline-color: #ffedac; --ay-outline: 1.5px solid #ffedac; --ay-hairline: rgba(255, 237, 172, .22); --ay-hover: rgba(255, 237, 172, .1); --ay-focus: #ffedac; --ay-feature-bg: #ffedac; --ay-feature-fg: #3e2723; --ay-press-shadow: 3px 3px 0 #f7badd; --ed-text: #ffedac; --ed-text-2: rgba(255, 237, 172, .86); --ed-outline: #ffedac; --ed-hairline: rgba(255, 237, 172, .22); --ed-page: #3e2723; color: #ffedac; }
+.app-container :is(.ay-band--pink, .ay-band--sky, .ay-band--butter) { --ay-text: #3e2723; --ay-text-2: #3e2723; --ay-outline-color: #3e2723; --legacy-outline: 1.5px solid #3e2723; --ay-hairline: rgba(62, 39, 35, .3); --ay-hover: rgba(62, 39, 35, .08); --ay-focus: #3e2723; --ay-feature-bg: #3e2723; --ay-feature-fg: #ffedac; --ay-press-shadow: 3px 3px 0 #3e2723; --ay-group: rgba(255, 237, 172, .55); --ay-page-on: #ffedac; --ed-text: #3e2723; --ed-text-2: #3e2723; --ed-outline: #3e2723; --ed-hairline: rgba(62, 39, 35, .3); --ed-page: #ffedac; color: #3e2723; }
+.app-container .ay-band--espresso { --band: #3e2723; --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ay-outline-color: #ffedac; --legacy-outline: 1.5px solid #ffedac; --ay-hairline: rgba(255, 237, 172, .22); --ay-hover: rgba(255, 237, 172, .1); --ay-focus: #ffedac; --ay-feature-bg: #ffedac; --ay-feature-fg: #3e2723; --ay-press-shadow: 3px 3px 0 #f7badd; --ed-text: #ffedac; --ed-text-2: rgba(255, 237, 172, .86); --ed-outline: #ffedac; --ed-hairline: rgba(255, 237, 172, .22); --ed-page: #3e2723; color: #ffedac; }
 /* brand dark: the page is espresso, so the espresso band turns butter */
-.app-container[data-theme='brand-dark'] .ay-band--espresso { --band: #ffedac; --ay-text: #3e2723; --ay-text-2: #3e2723; --ay-outline-color: #3e2723; --ay-outline: 1.5px solid #3e2723; --ay-hairline: rgba(62, 39, 35, .3); --ay-hover: rgba(62, 39, 35, .08); --ay-focus: #3e2723; --ay-feature-bg: #3e2723; --ay-feature-fg: #ffedac; --ay-press-shadow: 3px 3px 0 #3e2723; --ed-text: #3e2723; --ed-text-2: #3e2723; --ed-outline: #3e2723; --ed-hairline: rgba(62, 39, 35, .3); --ed-page: #ffedac; color: #3e2723; }
-.app-container[data-theme='brand-dark'] .ay-band--butter { --band: #4a312c; --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ay-outline-color: #ffedac; --ay-outline: 1.5px solid #ffedac; --ed-text: #ffedac; --ed-text-2: rgba(255, 237, 172, .86); --ed-outline: #ffedac; color: #ffedac; }
+.app-container[data-theme='brand-dark'] .ay-band--espresso { --band: #ffedac; --ay-text: #3e2723; --ay-text-2: #3e2723; --ay-outline-color: #3e2723; --legacy-outline: 1.5px solid #3e2723; --ay-hairline: rgba(62, 39, 35, .3); --ay-hover: rgba(62, 39, 35, .08); --ay-focus: #3e2723; --ay-feature-bg: #3e2723; --ay-feature-fg: #ffedac; --ay-press-shadow: 3px 3px 0 #3e2723; --ed-text: #3e2723; --ed-text-2: #3e2723; --ed-outline: #3e2723; --ed-hairline: rgba(62, 39, 35, .3); --ed-page: #ffedac; color: #3e2723; }
+.app-container[data-theme='brand-dark'] .ay-band--butter { --band: #4a312c; --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ay-outline-color: #ffedac; --legacy-outline: 1.5px solid #ffedac; --ed-text: #ffedac; --ed-text-2: rgba(255, 237, 172, .86); --ed-outline: #ffedac; color: #ffedac; }
 .app-container .ay-band :is(h1, h2, h3, h4, p, li, dt, dd, small, figcaption) { color: inherit; }
 .app-container .ay-band--scallop::before, .app-container .ay-band--scallop-bottom::after { content: ''; position: absolute; left: 0; right: 0; height: 16px; pointer-events: none; background: radial-gradient(circle at 12px 16px, var(--band) 11.5px, transparent 12px) 0 0 / 24px 16px repeat-x; }
 .app-container .ay-band--scallop::before { top: -15px; }

@@ -123,7 +123,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
                 cursor: 'pointer',
                 fontFamily: "var(--ayna-font-ui)",
                 textAlign: 'center',
-                color: '#1A1714',
+                color: '#3e2723',
                 background: seat.gap ? 'transparent' : isSelected ? '#F7BADD' : 'var(--ayna-surface)',
                 borderWidth: 1.5,
                 borderStyle: seat.gap ? 'dashed' : 'solid',

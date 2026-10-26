@@ -168,7 +168,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
               style={{
                 alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
                 maxWidth: '85%',
-                background: m.role === 'user' ? 'var(--ay-ink)' : 'var(--ay-cream)',
+                background: m.role === 'user' ? 'var(--legacy-ink)' : 'var(--ay-cream)',
                 color: m.role === 'user' ? 'var(--ay-paper)' : 'inherit',
                 borderRadius: '12px',
                 padding: '0.55rem 0.8rem',

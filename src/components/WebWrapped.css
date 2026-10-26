@@ -1,10 +1,10 @@
-.wwr-backdrop { position: fixed; inset: 0; z-index: 3500; display: grid; place-items: center; padding: 16px; background: rgba(29, 26, 43, .6); }
-.wwr { --ink: #1d1a2b; --paper: #fffcf5; --peri: #b9c2f4; --pink: #f7badd; --mint: #bdebd6; --butter: #f7e78e; --tone: var(--peri);
+.wwr-backdrop { position: fixed; inset: 0; z-index: 3500; display: grid; place-items: center; padding: 16px; background: rgba(62, 39, 35, .6); }
+.wwr { --ink: #3e2723; --paper: #ffedac; --peri: #f7badd; --pink: #f7badd; --mint: #f6e3a1; --butter: #ffedac; --tone: var(--peri);
   position: relative; display: flex; flex-direction: column; width: min(460px, 100%); height: min(780px, calc(100dvh - 32px)); padding: 16px 20px 18px; border: 2px solid var(--ink); border-radius: 30px; background: var(--tone); box-shadow: 8px 8px 0 var(--ink); color: var(--ink); font-family: var(--ay-sans); overflow: hidden; transition: background .4s ease; }
 .wwr.is-focus { --tone: var(--pink); } .wwr.is-match { --tone: var(--butter); } .wwr.is-persona { --tone: var(--mint); } .wwr.is-lineup { --tone: var(--pink); } .wwr.is-finish { --tone: var(--peri); }
 .wwr button { font-family: inherit; cursor: pointer; }
 .wwr-progress { display: flex; gap: 4px; }
-.wwr-progress span { flex: 1; height: 5px; border-radius: 99px; background: rgba(29, 26, 43, .2); overflow: hidden; }
+.wwr-progress span { flex: 1; height: 5px; border-radius: 99px; background: rgba(62, 39, 35, .2); overflow: hidden; }
 .wwr-progress i { display: block; height: 100%; background: var(--ink); }
 .wwr-top { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); }
 .wwr-top > div { display: flex; gap: 6px; }
@@ -41,7 +41,7 @@
 .wwr-card-mark { font: 400 var(--ay-fs-section)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
 .wwr-card strong { font: 400 var(--ay-fs-title)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
 .wwr-card ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.wwr-card li { display: flex; justify-content: space-between; gap: 12px; padding-top: 8px; border-top: 1px solid rgba(29, 26, 43, .12); font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans); }
+.wwr-card li { display: flex; justify-content: space-between; gap: 12px; padding-top: 8px; border-top: 1px solid rgba(62, 39, 35, .12); font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans); }
 .wwr-card li b { text-align: right; }
 .wwr-actions { display: grid; gap: 16px; }
 .wwr-cta { width: 100%; min-height: 54px; border: 2px solid var(--ink); border-radius: 99px; background: var(--ink); color: var(--paper); font: 600 var(--ay-fs-body)/1 var(--ay-sans); }

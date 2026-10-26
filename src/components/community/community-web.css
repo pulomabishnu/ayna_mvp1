@@ -753,8 +753,9 @@ html body .app-container.app-container.app-container.app-container.app-container
   .cm-folder[aria-selected='true'], .cm-navrow .cm-folder[aria-selected='true'] { background: #ffedac !important; border-color: #ffedac !important; color: #3e2723 !important; }
   .cm-type { border-color: #3e2723; }
 }
-/* Written for brand dark on purpose, so the Oct 17 dark accent swap leaves them pink:
-   the all-pages brief keeps blue for chart lines only. */
+/* Brand dark: the pink moments (quote, Post, open status, avatars, selected topic). The accent
+   swap is off now, so most of these match the light rules; kept because the quote and the
+   anonymous/photo avatars differ from their light colours in dark. */
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] {
   .cm-quote { background: #f7badd !important; color: #3e2723 !important; }
   .cm-post-btn { box-shadow: 3px 3px 0 #f7badd !important; }

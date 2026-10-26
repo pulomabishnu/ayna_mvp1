@@ -138,6 +138,3 @@
 }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__covers { margin: 0 0 8px !important; color: var(--pc-ink); font: 500 15px/1.4 var(--ay-font-ui) !important; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__cost { margin: 0 0 8px !important; color: var(--pc-ink); font: 700 15px/1.3 var(--ay-font-ui) !important; }
-/* Token guard: the card's sticker and plate get the real token values on themselves (older web sheets
-   redefine --ay-butter as pink and --ay-outline as a bare colour). The sticker is an outlined butter label. */
-.ay-pcard :is(.ayk-plate, .ayk-sticker) { --ay-outline: 1.5px solid #3e2723; --ay-butter: #ffedac; --ay-chip-bg: #ffedac; }

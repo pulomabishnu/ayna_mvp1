@@ -9,8 +9,8 @@
   margin: 0;
   border: 0;
   border-radius: 999px;
-  background: var(--ay-ink, #1d1a2b);
-  color: var(--ay-paper, #fffcf5);
+  background: var(--legacy-ink, #3e2723);
+  color: var(--ay-paper, #ffedac);
   font-family: var(--ay-sans);
   line-height: 1;
   white-space: nowrap;
@@ -29,19 +29,19 @@ button.ay-match-pill { cursor: pointer; transition: transform 150ms ease, box-sh
 button.ay-match-pill::after { content: ''; position: absolute; inset: -8px -4px; } /* 44px tap area */
 button.ay-match-pill:hover { transform: translateY(-1px); }
 button.ay-match-pill:active { transform: scale(.98); }
-button.ay-match-pill:focus-visible { outline: 3px solid var(--ay-peri, #b9c2f4); outline-offset: 2px; }
+button.ay-match-pill:focus-visible { outline: 3px solid var(--ay-peri, #f7badd); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { button.ay-match-pill { transition: none; } button.ay-match-pill:hover, button.ay-match-pill:active { transform: none; } }
 /* Page-level button/text rules (cabinet.css, web-play.css) must not recolor the pill. */
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-match-pill.ay-match-pill { background: #1d1a2b !important; color: #fff !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-match-pill.ay-match-pill { background: #3e2723 !important; color: #fff !important; }
 /* Website: brand espresso with butter text (navy is not a brand colour). */
 .app-container.app-container .ay-match-pill.ay-match-pill { background: #3e2723 !important; color: #ffedac !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-match-pill.ay-match-pill,
 .app-container.app-container[data-theme='dark'] .ay-match-pill.ay-match-pill,
-:root[data-ay-theme='dark'] .app-container.app-container .ay-match-pill.ay-match-pill { background: #fff !important; color: #1d1a2b !important; }
+:root[data-ay-theme='dark'] .app-container.app-container .ay-match-pill.ay-match-pill { background: #fff !important; color: #3e2723 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-match-pill.ay-match-pill > :is(strong, span),
 .app-container.app-container .ay-match-pill.ay-match-pill > :is(strong, span) { color: inherit !important; }
 /* Under 50: "Partial fit", outlined so it never reads as a score. */
-.ay-match-pill.is-partial { background: transparent; color: var(--ay-ink, #3e2723); box-shadow: inset 0 0 0 1.5px var(--ay-ink, #3e2723); }
+.ay-match-pill.is-partial { background: transparent; color: var(--legacy-ink, #3e2723); box-shadow: inset 0 0 0 1.5px var(--legacy-ink, #3e2723); }
 .ay-match-pill.is-partial span { font-weight: 600; }
 /* Safety hold: no number. Pink (care) pill with ink text, readable on both themes. */
 .ay-match-pill.is-hold { background: #f7badd; color: #3e2723; }

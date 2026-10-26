@@ -19,5 +19,3 @@
 [data-theme='dark'] .ay-heard__primary, [data-theme='brand-dark'] .ay-heard__primary { background: #ffedac; color: #3e2723; border-color: #ffedac; }
 .ay-heard__skip { min-height: 44px; padding: 0; border: 0; background: none; color: var(--hp-ink); font: 600 15px/1 var(--ay-font-ui, 'Figtree'), sans-serif; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 .ay-heard :is(button, input):focus-visible { outline: 3px solid var(--hp-ink); outline-offset: 2px; }
-/* On the website --ay-ink stays espresso in dark mode (theme-v3.css); --ay-text switches. */
-.app-container .ay-heard { --hp-ink: var(--ay-text, #3e2723); --hp-ink-2: var(--ay-text-2, rgba(62, 39, 35, .78)); }

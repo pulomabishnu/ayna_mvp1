@@ -3,12 +3,12 @@
    shells define the --ay-* tokens, so light and dark follow automatically. */
 
 .ay-suggest {
-  --sg-ink: var(--ay-ink, #1d1a2b);
-  --sg-soft: var(--ay-ink-soft, rgba(29, 26, 43, .62));
-  --sg-faint: var(--ay-ink-faint, rgba(29, 26, 43, .16));
-  --sg-paper: var(--ay-paper, #fffcf5);
+  --sg-ink: var(--legacy-ink, #3e2723);
+  --sg-soft: var(--ay-ink-soft, rgba(62, 39, 35, .62));
+  --sg-faint: var(--ay-ink-faint, rgba(62, 39, 35, .16));
+  --sg-paper: var(--ay-paper, #ffedac);
   --sg-tile: var(--ay-tile, #eeeae0);
-  --sg-on-pastel: #1d1a2b;
+  --sg-on-pastel: #3e2723;
   --sg-ui: var(--ay-sans);
   --sg-display: var(--ay-serif);
   box-sizing: border-box;
@@ -19,7 +19,7 @@
   border-radius: 20px;
   background: var(--sg-paper);
   color: var(--sg-ink);
-  box-shadow: var(--ay-shadow, 3px 3px 0 #1d1a2b);
+  box-shadow: var(--ay-shadow, 3px 3px 0 #3e2723);
   font-family: var(--ay-sans);
   text-align: left;
 }
@@ -35,9 +35,9 @@
 /* Collapsed */
 .ay-suggest__intro { display: flex; align-items: center; gap: 16px; }
 .ay-suggest__copy { display: grid; gap: 4px; flex: 1; min-width: 0; }
-.ay-suggest__icon, .ay-suggest__check { display: grid; place-items: center; width: 48px; height: 48px; flex: none; border: 2px solid var(--sg-ink); border-radius: 14px; background: var(--ay-butter, #f7e78e); color: var(--sg-on-pastel); }
-.ay-suggest__icon.is-read { background: var(--ay-peri, #b9c2f4); }
-.ay-suggest__check { border-radius: 50%; background: var(--ay-mint, #bdebd6); }
+.ay-suggest__icon, .ay-suggest__check { display: grid; place-items: center; width: 48px; height: 48px; flex: none; border: 2px solid var(--sg-ink); border-radius: 14px; background: var(--legacy-butter, #ffedac); color: var(--sg-on-pastel); }
+.ay-suggest__icon.is-read { background: var(--ay-peri, #f7badd); }
+.ay-suggest__check { border-radius: 50%; background: var(--ay-mint, #f6e3a1); }
 .ay-suggest__icon svg, .ay-suggest__check svg { width: 24px; height: 24px; }
 
 /* Buttons */
@@ -63,7 +63,7 @@
   display: grid; place-items: center; width: 44px; height: 44px; margin: -8px -8px -8px 0; padding: 0;
   border: 0; border-radius: 50%; background: transparent; color: var(--sg-ink); cursor: pointer;
 }
-.ay-suggest :is(button, input, textarea):focus-visible { outline: 3px solid var(--ay-peri, #b9c2f4); outline-offset: 2px; }
+.ay-suggest :is(button, input, textarea):focus-visible { outline: 3px solid var(--ay-peri, #f7badd); outline-offset: 2px; }
 
 /* Open form */
 .ay-suggest__form { display: grid; gap: 16px; }

@@ -69,7 +69,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero :is(.ay-eco-play-label, p) { color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero .ay-eco-play { background: var(--b-rose) !important; color: var(--b-espresso) !important; border: 2px solid var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero .ay-text-btn { color: var(--b-butter) !important; border-color: var(--b-butter) !important; background: transparent !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero .ay-eco-cover { background: var(--b-butter) !important; border: 0 !important; box-shadow: none !important; color: var(--b-espresso) !important; --ay-ink: #3e2723; --ay-paper: #ffedac; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero .ay-eco-cover { background: var(--b-butter) !important; border: 0 !important; box-shadow: none !important; color: var(--b-espresso) !important; --legacy-ink: #3e2723; --ay-paper: #ffedac; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero .ay-eco-cover :is(span, strong, small, li, p) { color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero :is(.ay-empty, [class*='empty']) :is(h2, h3, p) { color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-eco-hero { background: #1f1310 !important; }

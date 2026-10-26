@@ -1,6 +1,6 @@
 // Shared by MyEcosystem + WebEcosystemChart: area colours from the site
 // tokens (light + dark) and the app's eased glide to an area section.
-export const AREA_TONES = ['var(--ay-pink)', 'var(--ay-mint)', 'var(--ay-peri)', 'var(--ay-butter)'];
+export const AREA_TONES = ['var(--legacy-pink)', 'var(--ay-mint)', 'var(--ay-peri)', 'var(--legacy-butter)'];
 export const areaTone = (index) => AREA_TONES[index % AREA_TONES.length];
 
 function scrollParent(el) {

@@ -47,7 +47,7 @@
   --f-logo: 'Bricolage Grotesque', 'Figtree', sans-serif;
 
   /* older tokens, mapped onto the roles so every existing screen follows */
-  --ay-ink: var(--r-ink);
+  --legacy-ink: var(--r-ink);
   --ay-ink-soft: var(--r-ink-2);
   --ay-ink-faint: var(--r-line);
   --ay-paper: var(--r-surface);
@@ -55,9 +55,9 @@
   --ay-peri: var(--r-accent-soft);
   --ay-peri-deep: var(--b-sky);
   --ay-peri-ink: var(--r-ink);
-  --ay-butter: var(--b-butter);
+  --legacy-butter: var(--b-butter);
   --ay-butter-deep: #ffedac;
-  --ay-pink: var(--b-rose);
+  --legacy-pink: var(--b-rose);
   --ay-pink-deep: var(--b-rose);
   --ay-mint: var(--r-accent-soft);
   --ay-mint-deep: var(--b-sky);
@@ -130,9 +130,9 @@
   --r-shadow: 3px 3px 0 rgba(0, 0, 0, .45);
   --r-shadow-sm: 2px 2px 0 rgba(0, 0, 0, .45);
 
-  --ay-butter: rgba(255, 237, 172, .16);
+  --legacy-butter: rgba(255, 237, 172, .16);
   --ay-butter-deep: rgba(255, 237, 172, .28);
-  --ay-pink: var(--b-sky);
+  --legacy-pink: var(--b-sky);
   --ay-pink-deep: var(--b-sky);
   --ay-peri: rgba(247, 186, 221, .22);
   --ay-peri-deep: var(--b-rose);
