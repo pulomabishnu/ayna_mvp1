@@ -108,7 +108,7 @@
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__text { min-width: 0; display: grid; gap: 4px; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__name { font: 600 15px/1.3 var(--ay-font-ui) !important; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__match:empty { display: none; }
-.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__match .ay-match-pill { font-size: 13px !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__match :is(.ay-match-pill, .ay-match-pill *) { font-size: 13px !important; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__see { font: 600 13px/1.4 var(--ay-font-ui) !important; text-decoration: underline; text-underline-offset: 3px; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__why { font: 500 13px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
 /* Sources (evidence marks) and Based on */

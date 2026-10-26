@@ -62,8 +62,9 @@ function summarizeProfile(profile) {
   return parts.join(' ');
 }
 
+// No opening bubble: the first screen (greeting, intro, prompts) does that job.
 function buildWelcome() {
-  return [{ role: 'assistant', text: 'What are you looking for?' }];
+  return [];
 }
 
 /**
