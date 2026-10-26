@@ -5,7 +5,7 @@ import { matchText, shownMatchPercent, isSafetyHold, isBleedingEvaluation, SAFET
 import { whyLine } from './whyLine.js';
 
 export const PRODUCT_ASK_TITLE = 'Ask about this product';
-export const PRODUCT_ASK_PLACEHOLDER = 'Ask anything about this product…';
+export const PRODUCT_ASK_PLACEHOLDER = 'Ask about this product…';
 
 /**
  * Three starters that change with what ayna knows (PDP audit 7.8): her match

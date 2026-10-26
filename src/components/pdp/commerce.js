@@ -212,7 +212,7 @@ export function compareRows(products, { matchFor = null, detailsFor = null } = {
     !isDigital ? { label: 'Size or count', get: (p) => sizeCount(p)?.text || NOT_ON_FILE } : null,
     !isDigital ? { label: 'Price per unit', get: (p) => perUnitLabel(p) || NOT_ON_FILE } : null,
     isDigital ? { label: 'Available on', get: (p) => String(p.platform || '').trim() || NOT_ON_FILE } : null,
-    !isDigital ? { label: 'Ingredients or materials', get: (p) => ingredientHeadline(p, 48) || NOT_ON_FILE } : null,
+    !isDigital ? { label: 'Ingredients or materials', get: (p) => ingredientHeadline(p, 160) || NOT_ON_FILE } : null,
     // The one evidence function (audit 7.6): the same grade and per-level counts as the product page.
     { label: 'Evidence', get: (p) => evidenceFor(p).summary.replace(/ · \d+ people’s experiences?$/, '') },
     // Finished-product evidence vs ingredient evidence (never collapsed).

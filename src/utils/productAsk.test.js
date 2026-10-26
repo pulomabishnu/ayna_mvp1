@@ -9,7 +9,7 @@ const heat = ALL_PRODUCTS.find((p) => p.id === 'p-thermacare');
 describe('Ask about this product', () => {
   it('title, three starters that fit her, one box', () => {
     expect(PRODUCT_ASK_TITLE).toBe('Ask about this product');
-    expect(PRODUCT_ASK_PLACEHOLDER).toBe('Ask anything about this product…');
+    expect(PRODUCT_ASK_PLACEHOLDER).toBe('Ask about this product…');
     expect(productAskStarters({ hasProfile: true })).toEqual(['Why is this my match?', 'Anything I should know before using it?', 'How does this compare with another option?']);
     expect(productAskStarters({ hasProfile: false })[0]).toBe('Who is this good for?');
   });
