@@ -160,7 +160,7 @@
 .app-container .hm .hm-needs__go { grid-area: go; align-self: start; display: inline-flex; align-items: center; gap: 6px; font: 600 15px/1.3 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; }
 .app-container .hm .ay-btn svg, .app-container .hm .hm-step svg, .app-container .hm .hm-needs__go svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: translate var(--t-fast, 160ms) var(--ease-out, ease-out); }
 @media (hover: hover) { .app-container .hm .hm-needs__row:hover .hm-needs__go svg { translate: 4px 0; } }
-.app-container .hm .hm-needs__row:focus-visible { outline: 3px solid var(--ay-outline, #3e2723); outline-offset: 2px; border-radius: 10px; }
+.app-container .hm .hm-needs__row:focus-visible { outline: 3px solid var(--ay-outline-color, #3e2723); outline-offset: 2px; border-radius: 10px; }
 @media (max-width: 767px) {
   .app-container .hm .hm-familiar .hm-h2 { font-size: 27px !important; }
   .app-container .hm .hm-needs__row { grid-template-columns: 72px minmax(0, 1fr); gap: 4px 16px; padding: 12px 0; }
@@ -180,7 +180,7 @@
 .app-container .hm .hm-step__text { grid-area: text; display: grid; gap: 6px; padding-top: 2px; }
 .app-container .hm .hm-step__text p { margin: 0; font: 400 16px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
 /* the one call to action for the quiz, a pink card at the foot of the band */
-.app-container .hm .hm-start { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px 32px; position: relative; margin-top: 64px; padding: 32px; background: var(--hm-pink); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline: var(--hm-ink); --ay-feature-bg: var(--hm-ink); --ay-feature-fg: var(--hm-butter); --ay-press-shadow: 3px 3px 0 var(--hm-butter); --ay-focus: var(--hm-ink); }
+.app-container .hm .hm-start { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px 32px; position: relative; margin-top: 64px; padding: 32px; background: var(--hm-pink); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline-color: var(--hm-ink); --ay-outline: 1.5px solid var(--hm-ink); --ay-feature-bg: var(--hm-ink); --ay-feature-fg: var(--hm-butter); --ay-press-shadow: 3px 3px 0 var(--hm-butter); --ay-focus: var(--hm-ink); }
 .app-container .hm .hm-start > div:first-child { display: grid; gap: 8px; }
 .app-container .hm .hm-start .hm-h2 { max-width: none; }
 .app-container .hm .hm-start__cta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 24px; }
@@ -211,13 +211,13 @@
 .app-container .hm .hm-ev__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: start; }
 .app-container .hm .hm-ev__panel { display: grid; gap: 16px; }
 .app-container .hm .hm-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; margin: 8px 0 0; }
-.app-container .hm .hm-stat { padding: 16px 0 20px; border-top: 1.5px solid var(--ay-outline); min-width: 0; }
+.app-container .hm .hm-stat { padding: 16px 0 20px; border-top: 1.5px solid var(--ay-outline-color); min-width: 0; }
 .app-container .hm .hm-stat__n { display: block; font: 700 clamp(64px, 7vw, 112px)/.86 var(--ay-heading); letter-spacing: -.05em; color: var(--ay-text); font-variant-numeric: tabular-nums; }
 .app-container .hm .hm-stat:nth-child(1) .hm-stat__n, .app-container .hm .hm-stat:nth-child(4) .hm-stat__n { color: var(--ay-text); }
 .app-container .hm .hm-stat dd { margin: 10px 0 0; font: 500 16px/1.35 var(--ay-sans-stack); color: var(--ay-text); max-width: 26ch; }
 .app-container .hm .hm-stat__skel { display: inline-block; width: 2.2ch; height: .8em; border-radius: 12px; background: var(--ay-group); }
 .app-container .hm .hm-ev__side { display: grid; gap: 16px; justify-items: start; }
-.app-container .hm .hm-ev__ph { display: block; width: 100%; aspect-ratio: 4 / 3; border: 1.5px solid var(--ay-outline); border-radius: var(--hm-r); overflow: hidden; }
+.app-container .hm .hm-ev__ph { display: block; width: 100%; aspect-ratio: 4 / 3; border: 1.5px solid var(--ay-outline-color); border-radius: var(--hm-r); overflow: hidden; }
 .app-container .hm .hm-ev__ph :is(img, picture) { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; }
 .app-container .hm .hm-levels { list-style: none; margin: 0; padding: 0; width: 100%; }
 .app-container .hm .hm-levels > li { display: grid; grid-template-columns: minmax(0, 190px) minmax(0, 1fr); gap: 16px; align-items: center; padding: 12px 0; border-top: 1px solid var(--ay-hairline); }
@@ -235,7 +235,7 @@
   .app-container .hm .hm-ev__ph { display: none; }
   .app-container .hm .hm-ev__side { gap: 8px; }
   .app-container .hm .hm-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-  .app-container .hm .hm-levels > li, .app-container .hm .hm-levels > li:last-child { grid-template-columns: 1fr; align-content: start; gap: 6px; padding: 10px 0 0; border-bottom: 0; border-top: 1.5px solid var(--ay-outline); }
+  .app-container .hm .hm-levels > li, .app-container .hm .hm-levels > li:last-child { grid-template-columns: 1fr; align-content: start; gap: 6px; padding: 10px 0 0; border-bottom: 0; border-top: 1.5px solid var(--ay-outline-color); }
   .app-container .hm .hm-levels .ay-meter__word { font-size: 13px; }
   .app-container .hm .hm-levels__note { font-size: 12.5px; line-height: 1.35; }
 }
@@ -244,7 +244,7 @@
 .app-container .hm .hm-readlist { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ay-hairline, rgba(62, 39, 35, .15)); }
 .app-container .hm .hm-readlist > li { border-bottom: 1px solid var(--ay-hairline, rgba(62, 39, 35, .15)); }
 .app-container .hm .hm-readlist__row { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 24px; align-items: center; padding: 20px 0; color: inherit; text-decoration: none; }
-.app-container .hm .hm-readlist__row:focus-visible { outline: 3px solid var(--ay-outline, #3e2723); outline-offset: 2px; border-radius: 10px; }
+.app-container .hm .hm-readlist__row:focus-visible { outline: 3px solid var(--ay-outline-color, #3e2723); outline-offset: 2px; border-radius: 10px; }
 .app-container .hm .hm-readlist__ph { display: block; aspect-ratio: 4 / 3; overflow: hidden; border: 1.5px solid var(--hm-ink); border-radius: 16px; }
 .app-container[data-theme='brand-dark'] .hm .hm-readlist__ph { border-color: var(--hm-butter); }
 .app-container .hm .hm-readlist__ph :is(img, picture) { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; }
@@ -349,7 +349,7 @@
    ===================================================================== */
 /* stage: a fixed-ratio box; slots are placed in % of it */
 .app-container .hm .hm-scatter { position: relative; aspect-ratio: 1 / .96; min-height: 360px; isolation: isolate; }
-.app-container .hm .hm-slot { position: absolute; display: block; box-sizing: border-box; color: var(--hm-ink); --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline: var(--hm-ink); --ay-ink: var(--hm-ink); }
+.app-container .hm .hm-slot { position: absolute; display: block; box-sizing: border-box; color: var(--hm-ink); --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline-color: var(--hm-ink); --ay-outline: 1.5px solid var(--hm-ink); --ay-ink: var(--hm-ink); }
 .app-container .hm .hm-slot__layer { position: absolute; inset: 0; display: block; }
 .app-container .hm .hm-slot.is-skel { background: var(--hm-butter-2); border-radius: 20px; }
 /* photo slots: framed like the approved collage */
@@ -393,7 +393,7 @@
 /* the pause control (WCAG 2.2.2), quiet, on the stage edge */
 .app-container .hm .hm-scatter__pause { position: absolute; right: 0; top: calc(100% + 8px); display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 4px; background: none; border: 0; color: var(--ay-text); font: 600 14px/1 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .app-container .hm .hm-scatter__pause svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
-.app-container .hm .hm-scatter__pause:focus-visible { outline: 3px solid var(--ay-outline); outline-offset: 2px; border-radius: 8px; }
+.app-container .hm .hm-scatter__pause:focus-visible { outline: 3px solid var(--ay-outline-color); outline-offset: 2px; border-radius: 8px; }
 /* dark: frames and ink flip to butter outlines; the UI pieces keep their light fills (readable) */
 .app-container[data-theme='brand-dark'] .hm .hm-slot--main .hm-slot__layer,
 .app-container[data-theme='brand-dark'] .hm :is(.hm-slot--left, .hm-slot--right) .hm-slot__layer { border-color: var(--hm-butter); }
@@ -446,7 +446,7 @@
 
 /* how it works: the approved photo, the real UI piece as a sticker on its lower edge */
 .app-container .hm .hm-step__ph { position: relative; }
-.app-container .hm .hm-stepui { position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 4px; padding: 8px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: 14px; box-sizing: border-box; --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline: var(--hm-ink); --ay-ink: var(--hm-ink); }
+.app-container .hm .hm-stepui { position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 4px; padding: 8px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: 14px; box-sizing: border-box; --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline-color: var(--hm-ink); --ay-outline: 1.5px solid var(--hm-ink); --ay-ink: var(--hm-ink); }
 .app-container .hm .hm-stepui .ay-chip { pointer-events: none; min-height: 28px; height: 28px !important; padding: 0 10px; font-size: 12px; }
 .app-container.app-container .hm .hm-stepui .ay-chip.is-on { background: var(--hm-ink) !important; color: var(--hm-butter) !important; }
 .app-container .hm .hm-stepui.is-evidence { flex-direction: column; gap: 6px; background: var(--hm-pink); }

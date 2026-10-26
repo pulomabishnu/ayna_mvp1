@@ -10,14 +10,14 @@
    Ask lives in the header on desktop too. */
 .app-container.app-container .ay-nav__ask {
   display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 6px;
-  border: 1.5px solid var(--ay-outline); border-radius: 999px; background: transparent;
+  border: 1.5px solid var(--ay-outline-color); border-radius: 999px; background: transparent;
   color: var(--ay-text); font: 600 15px/1 var(--ay-sans-stack); white-space: nowrap; cursor: pointer;
   transition: transform var(--t-press, 110ms) var(--ease-pop, ease-out), background-color var(--t-fast, 160ms) var(--ease-out, ease-out);
 }
 .app-container.app-container .ay-nav__ask:hover { background: var(--ay-hover); }
 .app-container.app-container .ay-nav__ask:active { transform: scale(.97); }
 .app-container.app-container .ay-nav__ask:focus-visible { outline: 3px solid var(--ay-focus) !important; outline-offset: 2px !important; }
-.app-container.app-container .ay-nav__ask-orb { display: grid; place-items: center; width: 32px; height: 32px; border: 1.5px solid var(--ay-outline); border-radius: 50%; background: var(--ay-alert-bg); color: #3e2723; }
+.app-container.app-container .ay-nav__ask-orb { display: grid; place-items: center; width: 32px; height: 32px; border: 1.5px solid var(--ay-outline-color); border-radius: 50%; background: var(--ay-alert-bg); color: #3e2723; }
 .app-container.app-container .ay-nav__ask-orb svg { width: 16px; height: 16px; }
 html body .app-container .ayna-ask-dock, html body .app-container .ayna-ask-tab { display: none !important; }
 @media (max-width: 899px) {
@@ -202,7 +202,7 @@ html body .app-container .ed .ed-step.ay-tabcard .ed-step__in { display: grid; g
 html body .app-container .ed .ed-step.ay-tabcard .ed-step__img { aspect-ratio: 4 / 3; width: 100%; }
 @media (max-width: 767px) {
   html body .app-container .ed .ed-steps:has(.ay-tabcard) { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: var(--ay-s12) !important; border: 0 !important; }
-  html body .app-container .ed .ed-step.ay-tabcard { display: flex !important; flex-direction: column; padding: 0 !important; border: 1.5px solid var(--ay-outline) !important; }
+  html body .app-container .ed .ed-step.ay-tabcard { display: flex !important; flex-direction: column; padding: 0 !important; border: 1.5px solid var(--ay-outline-color) !important; }
   html body .app-container .ed .ed-step.ay-tabcard .ed-rowtitle { font-size: 15px !important; }
   html body .app-container .ed .ed-step.ay-tabcard p { font-size: 14px !important; line-height: 1.4 !important; }
   html body .app-container .ed .ed-step.ay-tabcard .ed-step__in { padding: var(--ay-s8) var(--ay-s8) var(--ay-s12); gap: var(--ay-s8); }
@@ -276,7 +276,7 @@ html body .app-container.app-container.app-container.app-container.app-container
    columns from 760px; questions are a numbered list. Print keeps .dp-summary. */
 .app-container.app-container .dp2 { max-width: 1040px; padding: var(--ay-s24) var(--ay-s20) var(--ay-s48) !important; }
 .app-container.app-container .dp2-sheet { display: grid; gap: var(--ay-s32); margin-top: var(--ay-s16); }
-.app-container.app-container .dp2-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ay-s12) var(--ay-s16); padding-bottom: var(--ay-s16); border-bottom: 1.5px solid var(--ay-outline, #3e2723); }
+.app-container.app-container .dp2-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ay-s12) var(--ay-s16); padding-bottom: var(--ay-s16); border-bottom: 1.5px solid var(--ay-outline-color, #3e2723); }
 .app-container.app-container .dp2-title { margin: 0; font: 700 24px/1.15 var(--ay-heading) !important; letter-spacing: -.02em; color: var(--ay-text) !important; }
 .app-container.app-container .dp2-date { margin: 2px 0 0; font: 500 14px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
 .app-container.app-container .dp2-print { min-height: 44px; }

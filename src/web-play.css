@@ -1081,7 +1081,7 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 @keyframes aySkel { from { opacity: .5; } to { opacity: 1; } }
 
 /* ---------- Polish pass: micro items + one set of borders, radii, shadows (G15, G16) ---------- */
-.app-container { --ay-r-sm: 8px; --ay-r-md: 16px; --ay-r-pill: 99px; }
+.app-container { --ay-r-sm: 8px; --ay-r-md: 16px; --ay-r-pill: 999px; }
 /* Header: everything 40px tall, one lifted shadow */
 .app-container .app-nav.app-nav .app-nav__tab--active { box-shadow: var(--ay-shadow) !important; }
 .app-container .app-nav .beta, .app-container [class*='beta-tag'] { align-self: center; transform: translateY(-2px); }
