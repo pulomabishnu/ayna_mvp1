@@ -413,4 +413,13 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-wh-bac
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-wh-back .ay-wh-side__more { border-top: 0 !important; justify-content: flex-start; gap: 6px; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-wh-side__more.is-data { margin-top: 16px !important; font-weight: 700 !important; }
 /* Founder 13:38: calm Today items are butter-deep with a thin espresso rule (the 3px left rule stays). */
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container):not([data-theme='dark']):not([data-theme='brand-dark']) .ay-wh :is(.ay-today__item, .ay-today__notify, .ay-today__nextbest) { box-shadow: inset 0 0 0 1px rgba(62, 39, 35, .15) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):not([data-theme='dark']):not([data-theme='brand-dark']) .ay-wh :is(.ay-today__item, .ay-today__notify, .ay-today__nextbest) { box-shadow: inset 0 0 0 1px rgba(62, 39, 35, .22) !important; }
+/* Loop B: Today is one centred column on every width (no column gaps). Your week / Coming up follow the day's items. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day.is-single { display: block; max-width: 760px; margin-left: auto; margin-right: auto; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__flow { display: grid; gap: 32px; margin: 16px 0 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__flow .ay-wh-side + .ay-wh-side { margin-top: 0; }
+/* The band's content lines up with the centred Today column (its colour still runs edge to edge). */
+@media (min-width: 900px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead { max-width: 760px; margin-left: auto !important; margin-right: auto !important; padding-right: 150px !important; column-gap: 24px; }
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day.is-single .ay-wh-day__connect .ay-wh-connect { display: grid !important; gap: 12px; }

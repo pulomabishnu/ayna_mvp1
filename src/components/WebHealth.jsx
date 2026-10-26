@@ -337,14 +337,25 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
     const estimate = sections.find((sec) => sec.id === 'cycle')?.estimate || null;
     const coming = comingUp(week.cycle?.cycleDay ? week.cycle : null, estimate, today, { hormonalBC, hasProducts: false });
     const setupLeft = setup.some((x) => x.done) && setup.some((x) => !x.done);
-    const hasSide = (signedIn && hasData) || Boolean(aside) || tiles.length > 0 || coming.length > 0 || trying.length > 0 || Boolean(weekInfo) || setupLeft;
+    const hasSide = (signedIn && hasData) || tiles.length > 0 || coming.length > 0 || trying.length > 0 || Boolean(weekInfo) || setupLeft;
+    // Loop B (founder 10/10 pass): one centred column on every width, like the app. The day first
+    // (Rundown, the 1 to 3 things), then Your week, Coming up and what she is trying, then her widgets.
+    // Two columns left a tall empty butter gap under whichever column was shorter.
     return (
       <section className="ay-wh ay-wh--today" aria-labelledby="ay-wh-title">
         {band}
         {intro}
-        <div className={`ay-wh-day${hasSide ? ' has-more' : ''}`}>
+        <div className="ay-wh-day is-single">
           <div className="ay-wh-day__main">
-            {todayFeed}
+            {feed}
+            {hasSide && (
+              <div className="ay-wh-day__flow" role="region" aria-label="Your week and coming up">
+                <TodaySide week={weekInfo} tiles={tiles} coming={coming} trying={trying} setup={setup} today={today} />
+                {signedIn && hasData && <button type="button" className="ay-wh-side__more is-data" onClick={() => goData(true)}><span>See your data</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
+              </div>
+            )}
+            {aside && <div className="ay-wh-day__flow">{aside}</div>}
+            {widgets}
             {signedIn && (h.status === 'loading' || h.status === 'idle') && !rows.length && <div className="ay-wh-loading" role="status"><i /><i /><i /><span>Loading your health data</span></div>}
             {signedIn && h.status === 'error' && !rows.length && (
               <div className="ay-wh-error">
@@ -355,15 +366,6 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
             )}
             {connect && <div className="ay-wh-day__connect">{connect}</div>}
           </div>
-          {hasSide && (
-            <aside className="ay-wh-day__more" aria-label="Your week and coming up">
-              <div className="ay-wh-day__mod">
-                <TodaySide week={weekInfo} tiles={tiles} coming={coming} trying={trying} setup={setup} today={today} />
-                {signedIn && hasData && <button type="button" className="ay-wh-side__more is-data" onClick={() => goData(true)}><span>See your data</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
-              </div>
-              {aside && <div className="ay-wh-day__mod">{aside}</div>}
-            </aside>
-          )}
         </div>
       </section>
     );

@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import NotUsefulMenu from './NotUsefulMenu.jsx';
+import ItemMenu from '../today/ItemMenu.jsx';
 import ProductCard from '../ProductCard.jsx';
 import AppProductCard from '../../mobile/components/ProductCard.jsx';
 import { matchText } from '../../utils/matchDisplay.js';
@@ -28,7 +29,7 @@ const LEVEL_WORDS = ['', 'Limited evidence', 'Some evidence', 'Strong evidence']
 const STILL = new Set(['checkin', 'care', 'followup']); // never auto-advance past these
 
 const reducedMotion = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
-const isControl = (el) => Boolean(el?.closest?.('button, a, input, select, textarea, [role="group"]'));
+const isControl = (el) => Boolean(el?.closest?.('button, a, input, select, textarea, summary, details[open], [role="group"]'));
 
 function Evidence({ level }) {
   if (!level) return null;
@@ -344,7 +345,12 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
                 {savable && onSave && !sheet && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
                 {/* A fact from her data: "Ask why" under it (team sync, Oct 25). */}
                 {onAsk && card.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>{['change', 'pattern', 'data'].includes(card.category) ? 'Ask why' : 'Ask ayna about this'}</button>}
-                {!card.protected && onNotUseful && <NotUsefulMenu onPick={(reason) => { onNotUseful(card, reason); setHidden((s) => ({ ...s, [card.key]: true })); setMsg('Thanks. You will see less like this.'); }} />}
+                {/* One action + a quiet "…" (Today audit, issue 2): Not useful and its reasons live in the menu. */}
+                {!card.protected && onNotUseful && (
+                  <ItemMenu label="More for this card" className="ay-rd-menu">
+                    <NotUsefulMenu onPick={(reason) => { onNotUseful(card, reason); setHidden((s) => ({ ...s, [card.key]: true })); setMsg('Thanks. You will see less like this.'); }} />
+                  </ItemMenu>
+                )}
               </div>
             )}
           </>)}

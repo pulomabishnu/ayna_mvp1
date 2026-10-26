@@ -273,4 +273,4 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 :is([data-theme='brand-dark'], [data-theme='dark']) .ay-db .ay-db-bars .is-before .ay-db-bars-track i { background: rgba(255, 237, 172, .55) !important; box-shadow: none !important; }
 :is([data-theme='brand-dark'], [data-theme='dark']) .ay-db .ay-db-bars-track { background: rgba(255, 237, 172, .12) !important; }
 /* Founder 13:38: dashboard cards butter-deep with a thin espresso rule (light). */
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db :is(.ay-db-card, .ay-db-rundown, .ay-db-row, .ay-db-fold, .ay-wx-picks) { box-shadow: inset 0 0 0 1px rgba(62, 39, 35, .15) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db :is(.ay-db-card, .ay-db-rundown, .ay-db-row, .ay-db-fold, .ay-wx-picks) { box-shadow: inset 0 0 0 1px rgba(62, 39, 35, .22) !important; }

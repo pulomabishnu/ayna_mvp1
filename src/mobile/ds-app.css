@@ -414,4 +414,4 @@
 /* Founder 13:38: no white surfaces. Calm surfaces on Today are butter-deep with a thin espresso rule (light only; dark keeps butter at 8%). */
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):not([data-theme='dark']) :is(.ay-homescreen, .ay-hd) { --ay-surface: #f6e3a1; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):not([data-theme='dark']) .ay-homescreen :is(.ay-today__item.is-compact, .ay-w--health, .ay-today__notify),
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):not([data-theme='dark']) .ay-hd .ay-today__item:not(.is-compact) { background: #f6e3a1 !important; box-shadow: inset 0 0 0 1px rgba(62, 39, 35, .15) !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):not([data-theme='dark']) .ay-hd .ay-today__item:not(.is-compact) { background: #f6e3a1 !important; box-shadow: inset 0 0 0 1px rgba(62, 39, 35, .22) !important; }

@@ -194,7 +194,7 @@ function RundownEntry({ onShown }) {
 
 export default function HealthHome({
   rows = [], sections = [], matchContext = null, today, needIds = [], hormonalBC = false,
-  products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, onAsk, onAddGoal, onOpenRoutine, onOpenCheckin, footer = null, surface = 'app',
+  products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, onAsk, onAddGoal, onOpenRoutine, onExplore = null, onOpenCheckin, footer = null, surface = 'app',
   todayFeed = null,
   // The app shows its title row ("Your data" + ring); the website's band carries it (hello=false).
   hello: showTitle = true,
@@ -260,7 +260,8 @@ export default function HealthHome({
     ...(week.cycle ? [{ id: 'cycle', label: 'Cycle' }] : []),
     ...(sleepCharts.length ? [{ id: 'sleep', label: 'Sleep' }] : []),
     ...(bodyCharts.length ? [{ id: 'body', label: 'Body' }] : []),
-    ...(hasRoutine ? [{ id: 'routine', label: 'Routine' }] : []),
+    // Always offered (same tab set everywhere); without a routine it shows a calm empty state, never sample data.
+    { id: 'routine', label: 'Routine' },
   ] : [];
   const current = tabs.some((t) => t.id === tab) ? tab : 'summary';
   const open = (id) => {
@@ -539,6 +540,13 @@ export default function HealthHome({
 
   const routineTab = (
     <div className="ay-db-detail">
+      {!hasRoutine && (
+        <section className="ay-db-card ay-db-empty" aria-labelledby="ay-db-routine-empty">
+          <h2 id="ay-db-routine-empty" className="ay-db-h2">Is your routine working?</h2>
+          <p>Add a product to your routine to see if it&rsquo;s working.</p>
+          {onExplore && <OutlineButton onClick={onExplore}>Find a product</OutlineButton>}
+        </section>
+      )}
       {routineWorking}
       {goals.length > 0 && (
         <section className="ay-db-card" aria-labelledby="ay-db-goals-title">

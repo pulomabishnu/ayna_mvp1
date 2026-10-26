@@ -29,8 +29,10 @@
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-ink { --rd-bg: #3e2723; --rd-ink: #ffedac; --rd-soft: rgba(255, 237, 172, .8); --rd-hair: rgba(255, 237, 172, .25); --rd-accent: #f7badd; --rd-on-accent: #3e2723; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-sky { --rd-bg: #f6e3a1; --rd-ink: #3e2723; --rd-soft: rgba(62, 39, 35, .8); --rd-accent: #3e2723; --rd-on-accent: #ffedac; }
-/* Loop B: the calm card is butter-deep (blue is for chart lines only; founder 13:38: no white); butter in dark. */
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-rd.is-sky { --rd-bg: #ffedac !important; }
+/* Loop B: the calm card is butter-deep (blue is for chart lines only; founder 13:38: no white).
+   Dark: each register stays distinct. ink = espresso, butter = butter, pink = pink, and the calm
+   "pattern / change / community / week" card is pink at 18% over espresso with butter type. */
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-rd.is-sky { --rd-bg: #5f4144 !important; --rd-ink: #ffedac !important; --rd-soft: rgba(255, 237, 172, .82) !important; --rd-hair: rgba(255, 237, 172, .25) !important; --rd-accent: #f7badd !important; --rd-on-accent: #3e2723 !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-pink { --rd-bg: #f7badd; --rd-ink: #3e2723; --rd-soft: rgba(62, 39, 35, .82); --rd-accent: #3e2723; --rd-on-accent: #ffedac; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd :is(h2, p, ul, ol, dl, dd) { margin: 0; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd :is(button, a):focus-visible { outline: 3px solid var(--rd-ink); outline-offset: 2px; }
@@ -203,3 +205,12 @@
 }
 /* a long claim steps down a size so it stays a poster, not a paragraph */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-title.is-long { font-size: clamp(32px, 8.6vw, 40px); line-height: 1; }
+
+/* Loop B: the quiet "…" on story cards (reuses Today's ItemMenu). Opens upward, in the card's own inks. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu { position: relative; margin-left: auto; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu > summary { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; color: var(--rd-ink); cursor: pointer; list-style: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu > summary::-webkit-details-marker { display: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu > summary svg { width: 22px; height: 22px; fill: currentColor; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu > summary:focus-visible { outline: 3px solid var(--rd-ink); outline-offset: 2px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu .ay-today__menulist { position: absolute; right: 0; bottom: calc(100% + 6px); z-index: 5; display: grid; gap: 8px; width: max-content; max-width: min(320px, calc(100vw - 48px)); padding: 12px; border: 1.5px solid var(--rd-ink); border-radius: 16px; background: var(--rd-bg); color: var(--rd-ink); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu .ay-rd-link { min-height: 44px; }

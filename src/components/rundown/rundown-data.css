@@ -12,9 +12,9 @@
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd:not(.is-sky):not(.is-pink):not(.is-ink) { --rdd-block: #f6e3a1; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-ink { --rdd-block: #ffedac; --rdd-line: #ffedac; }
-/* Loop B (Oct 26): blue is for chart lines only, never a block. The calm butter-deep card gets a butter block; in dark it is butter, so its block is butter-deep (founder 13:38: no white surfaces). */
+/* Loop B (Oct 26): blue is for chart lines only, never a block. The calm butter-deep card gets a butter block; in dark it is pink-tinted espresso, so its block is butter (founder 13:38: no white surfaces). */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-sky { --rdd-block: #ffedac; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-rd.is-sky { --rdd-block: #f6e3a1 !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-rd.is-sky { --rdd-block: #ffedac !important; --rdd-line: #ffedac !important; }
 
 /* Moderate titles on data cards (design system 1a: 28 phone, 34 stage). */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-card.is-data .ay-rd-title { font-size: 28px; line-height: 1.1; }
