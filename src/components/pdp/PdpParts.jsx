@@ -8,6 +8,7 @@ import { splitShow, SHOW_FIRST } from './pdpParts.js';
 import { LEVELS, levelLabel, levelCountWords } from './evidenceLevels.js';
 import { ScallopPlate } from '../ui/ay/ScallopPlate.jsx';
 import EvidenceMark from './EvidenceMark.jsx';
+import '../ui/ay/ay-bold.css';
 import './pdp.css';
 
 /**
@@ -267,34 +268,66 @@ export { ScallopPlate };
  * "Partnerships never change this score." and Ask ayna why.
  * Other states (safety hold, bleeding evaluation, no profile) keep MatchLine.
  */
+/** The plain promise under every match explainer (team meeting, Oct 26: "93% looks arbitrary"). */
+export const MATCH_BASIS = 'Based on your answers, the product’s evidence and safety. Brands can’t pay to change it.';
+
+/**
+ * "What's this?" (team meeting, Oct 26): which of HER answers counted, as up to four rows with a bar each
+ * (the one engine's breakdown, matching/breakdown.js; nothing new is computed), what ayna doesn't know yet,
+ * the plain promise, and "How we match". The full lists stay one tap away ("See the full breakdown").
+ */
+export function MatchExplain({ breakdown = null, onFull = null, onAskWhy = null, shown = null, id }) {
+  const rows = breakdown ? [
+    ...(breakdown.raised || []).map((x) => ({ ...x, up: true })),
+    ...(breakdown.lowered || []).map((x) => ({ ...x, up: false })),
+  ].filter((x) => x && x.text) : [];
+  const top = [...rows].sort((x, y) => Math.abs(y.points || 0) - Math.abs(x.points || 0)).slice(0, 4);
+  const max = Math.max(1, ...top.map((x) => Math.abs(x.points || 0)));
+  const unknown = breakdown?.unknown || [];
+  return (
+    <div id={id} className="ayv-explain">
+      {top.length > 0 ? (
+        <ul className="ayv-explain__rows" aria-label="What counted">
+          {top.map((x) => (
+            <li key={`${x.up ? 'u' : 'd'}-${x.text}`} className={x.up ? 'is-up' : 'is-down'}>
+              <span className="ayv-explain__icon" aria-hidden="true">{x.up ? '+' : '−'}</span>
+              <span className="ayv-explain__text">{x.text}<span className="sr-only">{x.up ? ', raised it' : ', lowered it'}{Number.isFinite(x.points) && x.points !== 0 ? ` by ${Math.abs(x.points)} points` : ''}</span></span>
+              {Number.isFinite(x.points) && x.points !== 0 && <span className="ayv-explain__bar" aria-hidden="true"><i style={{ width: `${Math.round((Math.abs(x.points) / max) * 100)}%` }} /></span>}
+              {Number.isFinite(x.points) && x.points !== 0 && <span className="ayv-explain__pts" aria-hidden="true">{x.points > 0 ? '+' : '−'}{Math.abs(x.points)}</span>}
+            </li>
+          ))}
+        </ul>
+      ) : <p className="ayv-explain__none">The engine’s reasons are on the full breakdown.</p>}
+      {unknown.length > 0 && <p className="ayv-explain__unknown"><b>ayna doesn’t know yet:</b> {unknown.map((u) => u.text).join('; ')}</p>}
+      <p className="ayv-explain__basis">{MATCH_BASIS}</p>
+      <p className="ayv-lock__foot">{breakdown?.note || 'Partnerships never change this score.'}</p>
+      <p className="ayv-lock__actions">
+        {onAskWhy && <button type="button" className="ayv-obtn" onClick={() => onAskWhy(`Why is my match ${shown != null ? `${shown}%` : 'a partial fit'}?`)}><PdpIcon name="ask" size={16} />Ask ayna why</button>}
+        {onFull && <button type="button" className="ayv-textbtn" onClick={onFull}>See the full breakdown</button>}
+        <a className="ayv-textbtn" href="/how-it-works">How we match</a>
+      </p>
+    </div>
+  );
+}
+
+/**
+ * The match pill, its one-line reason, and "What's this?" opening the explainer in place.
+ */
 export function MatchLockup({ state, breakdown = null, onAskWhy = null, onFull = null, onFix = null, onQuiz = null, idBase = 'ay-why' }) {
   const [open, setOpen] = useState(false);
   if (!state) return null;
   if (state.kind !== 'pct') return <MatchLine state={state} onWhy={onFull} onFix={onFix} onQuiz={onQuiz} />;
   const shown = shownMatchPercent(state.percent);
-  const why = shown != null ? `Why ${shown}%?` : 'Why this fit?';
   const reason = breakdown?.reason || state.why || '';
-  const lists = breakdown ? [['Raised it', breakdown.raised], ['Lowered it', breakdown.lowered], ['ayna doesn’t know yet', breakdown.unknown]].filter(([, l]) => l && l.length) : [];
   return (
     <div className="ayv-lock" data-tour="pdp-why">
       <p className="ayv-lock__row">
         <MatchPill percent={state.percent} size="lock" className="ayv-lock__pill" />
         {reason && <span className="ayv-lock__reason">{reason}.</span>}
-        {' '}<button type="button" className="ayv-lock__why" aria-expanded={open} aria-controls={`${idBase}-panel`} onClick={() => setOpen((v) => !v)}>{open ? 'Hide' : why}</button>
+        {' '}<button type="button" className="ayv-lock__why" aria-expanded={open} aria-controls={`${idBase}-panel`} aria-label={open ? 'Hide what this match means' : `What's this? Why ${shown != null ? `${shown}%` : 'this fit'}`} onClick={() => setOpen((v) => !v)}>{open ? 'Hide' : 'What’s this?'}</button>
       </p>
       <div id={`${idBase}-panel`} className="ayv-lock__panel" hidden={!open || undefined}>
-        {lists.length ? lists.map(([title, items]) => (
-          <div key={title} className="ayv-lock__list">
-            <p className="ayv-lock__h">{title}</p>
-            <ul>{items.map((t) => <li key={t.text}><span>{t.text}</span>{Number.isFinite(t.points) && t.points !== 0 && <span className="ayv-lock__delta">{t.points > 0 ? '+' : '−'}{Math.abs(t.points)}</span>}</li>)}</ul>
-          </div>
-        )) : <p className="ayv-lock__h">The engine’s reasons are on the full breakdown.</p>}
-        <p className="ayv-lock__foot">{breakdown?.note || 'Partnerships never change this score.'}</p>
-        <p className="ayv-lock__actions">
-          {onAskWhy && <button type="button" className="ayv-obtn" onClick={() => onAskWhy(`Why is my match ${shown != null ? `${shown}%` : 'a partial fit'}?`)}><PdpIcon name="ask" size={16} />Ask ayna why</button>}
-          {onFull && <button type="button" className="ayv-textbtn" onClick={onFull}>See the full breakdown</button>}
-          <a className="ayv-textbtn" href="/how-it-works">How we match</a>
-        </p>
+        <MatchExplain breakdown={breakdown} onFull={onFull} onAskWhy={onAskWhy} shown={shown} />
       </div>
     </div>
   );
@@ -313,18 +346,25 @@ export function PriceRow({ main = '', perUse = null, notes = [] }) {
 }
 
 /** Highlights (12, signature 5): 2-4 white tiles, a big number (Bricolage 800 22) and a 13px caption. */
+// Bento tones by position (uniqueness pass, Oct 26; Glossier PDP big-number claims + #455687ac bento):
+// one big pink tile, one espresso, then butter and deeper butter. Sizes come from the count (CSS).
+const HL_TONES = ['pink', 'ink', 'butter', 'deep'];
 export function Highlights({ items = [], note = '' }) {
   if (!items.length) return null;
   return (
     <section className="ayv-hl" aria-label="Highlights">
-      <ul className="ayv-hl__row">
-        {items.map((h) => (
-          <li key={h.id} className="ayv-hl__tile">
-            <PdpIcon name={h.icon} size={20} />
-            <span className="ayv-hl__num">{(() => { const m = String(h.value).match(/^(.*?\d)\s+(mL|hrs|yrs|days|mg|mcg|IU)$/); return m ? <>{m[1]}<span className="ayv-hl__unit"> {m[2]}</span></> : h.value; })()}</span>
-            <span className="ayv-hl__cap">{h.caption}</span>
-          </li>
-        ))}
+      <ul className={`ayv-hl__row ayb-bento ayv-hlb is-n${items.length}`}>
+        {items.map((h, i) => {
+          const m = String(h.value).match(/^(.*?\d)\s+(mL|hrs|yrs|days|mg|mcg|IU)$/);
+          const word = !/\d/.test(String(h.value));
+          return (
+            <li key={h.id} className={`ayv-hl__tile ayb-tile is-${HL_TONES[i % HL_TONES.length]}${word ? ' is-word' : ''}`}>
+              <PdpIcon name={h.icon} size={20} />
+              <span className="ayv-hl__num ayb-tile__big">{m ? <>{m[1]}<span className="ayv-hl__unit ayb-tile__unit">{m[2]}</span></> : h.value}</span>
+              <span className="ayv-hl__cap ayb-tile__cap">{h.caption}</span>
+            </li>
+          );
+        })}
       </ul>
       {note && <p className="ayv-hl__note">{note}</p>}
     </section>

@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { MATCH_BASIS } from './pdp/PdpParts.jsx';
 import MatchFeedback from './today/MatchFeedback.jsx';
 import { useEffect } from 'react';
 import { getProductMatchDetailsForProduct } from '../data/products.js';
@@ -50,6 +51,7 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
           <strong>{needHeadline(percent, best?.phrase)}</strong>
           {whyLine(product, details, { max: 2 }) && <p className="ay-why-line">{whyLine(product, details, { max: 2 })}</p>}
           <p className="ay-why-based">{BASED_ON_LINE}</p>
+          <p className="ay-why-based">{MATCH_BASIS} <a href="/how-it-works">How we match</a></p>
         </div>
       </section> : excluded ? <section className="ay-why-excluded">
         {exclusions.length > 0 ? exclusions.map((line) => <p key={line}>{tidy(line)}</p>) : <p>This product does not fit your current health profile.</p>}

@@ -1,4 +1,6 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import ShopGroups from '../../components/shop/ShopGroups.jsx';
+import { SHOP_GROUPS } from '../../data/catalogTaxonomy.js';
 import { hasClinicalSources, CLINICAL_SOURCES_LABEL } from '../../utils/clinicalSources.js';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
@@ -448,7 +450,7 @@ export default function BrowseScreen({
   // Applied filters, shown as removable chips under the toolbar.
   const activeFilters = FILTER_FIELDS.filter(([key]) => filters[key] !== 'all').map(([key, , options]) => [key, (options.find(([value]) => value === filters[key]) || [])[1] || CATEGORY_LABELS[filters[key]] || String(filters[key]).replaceAll('-', ' ')]);
   const activeFilterCount = activeFilters.length + (embedded && activeGroup !== 'all' ? 1 : 0);
-  const areaLabel = (id) => sentenceCase(MACRO_GROUPS.find((g) => g.id === id)?.label || String(id).replaceAll('-', ' '));
+  const areaLabel = (id) => sentenceCase((SHOP_GROUPS.find((g) => g.id === id) || MACRO_GROUPS.find((g) => g.id === id))?.label || String(id).replaceAll('-', ' '));
   const matchingReads = searchTermRaw.length >= 2 ? searchArticles(searchTermRaw, articles) : [];
   // SearchAssist above already says "No results for 'xyz'" in this case;
   // the grid's own empty line would say it a second time.
@@ -487,6 +489,8 @@ export default function BrowseScreen({
       {searchTermRaw.length >= 2 && <SearchAssist variant="app" query={searchTermRaw} resultCount={searchScored.length} onUse={setSearchValue} />}
 
       {mode === 'products' && (() => { const toolbar = <>
+          {/* Five shopping groups, the areas one tap deeper (team meeting, Oct 26). */}
+          {embedded && !searchTermRaw && <ShopGroups active={activeGroup} onPick={setActiveGroup} className="ay-shop-groups" />}
           <div className="ay-shop-toolbar">
             <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
@@ -527,7 +531,7 @@ export default function BrowseScreen({
           <div className="ayna-shop-filter-fields">
           {/* P2-15: the same filter control as the website's sheet: chip groups (selected = pink + check), tap again to clear. */}
           <fieldset className="ay-chipgroup"><legend>Sort</legend><div className="ay-chipgroup__chips">{sortChoices.map(([value, text]) => <button key={value} type="button" className="ay-chipgroup__chip" aria-pressed={sortBy === value} onClick={() => setSortBy(value)}>{text}</button>)}</div>{bestNeedsQuiz && bestQuizNote}</fieldset>
-          {embedded && <fieldset className="ay-chipgroup"><legend>Area</legend><div className="ay-chipgroup__chips">{MACRO_GROUPS.filter((g) => g.id !== 'all').map((g) => <button key={g.id} type="button" className="ay-chipgroup__chip" aria-pressed={activeGroup === g.id} onClick={() => setActiveGroup(activeGroup === g.id ? 'all' : g.id)}>{sentenceCase(g.label)}</button>)}</div></fieldset>}
+          {embedded && <fieldset className="ay-chipgroup"><legend>Area</legend><div className="ay-chipgroup__chips">{SHOP_GROUPS.map((g) => <button key={g.id} type="button" className="ay-chipgroup__chip" aria-pressed={activeGroup === g.id} onClick={() => setActiveGroup(activeGroup === g.id ? 'all' : g.id)}>{g.label}</button>)}</div></fieldset>}
           {FILTER_FIELDS.map(([key, label, options]) => (
             <fieldset key={key} className="ay-chipgroup"><legend>{label}</legend><div className="ay-chipgroup__chips">
               {(key === 'category' ? [...options, ...[...new Set(products.map((p) => p.category).filter(Boolean))].sort().map((category) => [category, sentenceCase(CATEGORY_LABELS[category] || category.replaceAll('-', ' '))])] : options).filter(([value]) => value !== 'all').map(([value, text]) => (

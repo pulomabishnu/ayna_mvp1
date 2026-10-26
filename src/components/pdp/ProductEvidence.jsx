@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEdgeFade } from './useEdgeFade';
 import PLAIN from '../../data/matching/plainRationales.js';
 import { needPhrase } from '../../matching/ontology';
 import { useApprovedResearch } from '../../utils/approvedResearch';
@@ -103,6 +104,20 @@ function ReadShelf({ list, label, leadIn = false, min = 3 }) {
       <Paras list={first} leadIn={leadIn} />
       <div hidden={!open || undefined}><Paras list={rest} leadIn={leadIn} /></div>
       <button type="button" className="ayv-showall" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : `Show all ${list.length} parts`}</button>
+    </div>
+  );
+}
+
+/**
+ * Glance first, read more on tap (founder, Oct 26 16:54): the full text stays in the page (hidden until
+ * opened) behind one obvious button with aria-expanded. Never used for safety text.
+ */
+function ReadMore({ children, label = 'Read more', className = '' }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className={`ayv-more ${className}`.trim()}>
+      <div hidden={!open || undefined}>{children}</div>
+      <button type="button" className="ayv-showall ayv-more__btn" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : label}</button>
     </div>
   );
 }
@@ -302,6 +317,24 @@ function scrollsSideways(el, stop) {
 
 function StickyTabs({ tabs, active, onChange, stickTop, swipe = false }) {
   const listRef = useRef(null);
+  // Laptop reading column (380-430px): the four full names sit on one row that scrolls sideways,
+  // with an edge fade where there is more, and the chosen tab kept in view (never two-line labels).
+  useEdgeFade(listRef, [tabs.length]);
+  useEffect(() => {
+    const list = listRef.current;
+    const tab = list?.querySelector(`[data-tab="${active}"]`);
+    if (!list || !tab) return undefined;
+    const id = window.requestAnimationFrame(() => {
+      if (list.scrollWidth <= list.clientWidth + 1) return;
+      const box = list.getBoundingClientRect();
+      const r = tab.getBoundingClientRect();
+      const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      // Past the 24px edge fade on either side: scroll the row (never the page).
+      if (r.left < box.left + 24) list.scrollBy({ left: r.left - box.left - 24, behavior: reduce ? 'auto' : 'smooth' });
+      else if (r.right > box.right - 24) list.scrollBy({ left: r.right - box.right + 24, behavior: reduce ? 'auto' : 'smooth' });
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, [active]);
   // The app's product sheet: swipe left or right on a tab to move to the next one.
   const touch = useRef(null);
   const swipeProps = swipe ? {
@@ -770,7 +803,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const howBody = (m.how || adds('how').length) ? (
     <>
       {m.how?.intro && <p className="ayq-p ayq-intro"><Tx>{m.how.intro}</Tx></p>}
-      {m.how && <ShowAll items={m.how.steps} n={Infinity} label="steps" className="ayv-steps" render={(st, i) => <><span className="ayv-steps__n" aria-hidden="true">{i + 1}</span><span className="ayq-p"><Tx>{st}</Tx></span></>} />}
+      {m.how && <ShowAll items={m.how.steps} n={2} label="steps" className="ayv-steps" render={(st, i) => <><span className="ayv-steps__n" aria-hidden="true">{i + 1}</span><span className="ayq-p"><Tx>{st}</Tx></span></>} />}
       {/* The listing footer only when the intro does not already name the source. */}
       {m.how && !m.how.source && m.how.fromListing && !/\b(per|listing|instructions|according)\b/i.test(m.how.intro || '') && <p className="ayq-meta">{FROM_LISTING}.</p>}
       {m.how && (m.how.source || m.how.faq) && (
@@ -862,13 +895,14 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {(lead || m.summary.length > 0) && (
         <section id="ay-sum-about" className="ayq-anchor ayv-sec ayv-sec--lead" aria-label="What it is">
           {lead && <p className={`ayv-oneline${String(lead).length > 140 ? ' is-long' : ''}`}><Tx>{brandVoice(lead, m.brand || glance?.brand)}</Tx></p>}
-          {m.summary.length > 0 && <div className="ayq-prose"><Paras list={m.summary.filter((x) => !(teamShort && x.startsWith(leadParts.used)))} /></div>}
+          {/* Glance first (founder, Oct 26 16:54): the one line shows; the team's full write-up is one tap away. */}
+          {m.summary.length > 0 && <ReadMore label="Read more" className="ayq-prose"><Paras list={m.summary.filter((x) => !(teamShort && x.startsWith(leadParts.used)))} /></ReadMore>}
         </section>
       )}
       {sec('ay-sum-who', 'Who it’s for', (whoL.yes.length > 0 || whoL.no.length > 0) && (
         <>
           {whoL.yes.length > 0 && <p className="ayv-leadin">Good for:</p>}
-          {whoL.yes.length > 0 && <ShowAll items={whoL.yes} n={Infinity} label="" className="ayv-list ayv-list--yes" render={(t) => <><span className="ayv-mark is-yes" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span><span className="ayq-p"><span className="sr-only">For: </span><LR text={t} /></span></>} />}
+          {whoL.yes.length > 0 && <ShowAll items={whoL.yes} n={2} label="" className="ayv-list ayv-list--yes" render={(t) => <><span className="ayv-mark is-yes" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span><span className="ayq-p"><span className="sr-only">For: </span><LR text={t} /></span></>} />}
           {whoL.no.length > 0 && <>
             <p className="ayv-leadin ayv-sub">Not for:</p>
             <ShowAll items={whoL.no} n={Infinity} label="" className="ayv-list ayv-list--no" render={(t) => <><span className="ayv-mark is-no" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M7 7l10 10M17 7 7 17" /></svg></span><span className="ayq-p"><span className="sr-only">Not for: </span><LR text={t} /></span></>} />
@@ -881,7 +915,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         <>
           <div className="ayv-panel ayv-pf" role="group" aria-labelledby="ayv-pf-h">
             <p id="ayv-pf-h" className="ayv-panel__title">Product facts</p>
-            <ShowAll items={keyFacts} n={8} label="facts" className="ayv-facts" render={(r) => <><span className="ayv-facts__k">{r.label}</span><span className="ayv-facts__v">{r.node || <Tx>{r.value}</Tx>}{r.note && <small>{r.note}</small>}</span></>} />
+            <ShowAll items={keyFacts} n={4} label="facts" className="ayv-facts" render={(r) => <><span className="ayv-facts__k">{r.label}</span><span className="ayv-facts__v">{r.node || <Tx>{r.value}</Tx>}{r.note && <small>{r.note}</small>}</span></>} />
             {factsChecked && <p className="ayq-meta ayv-facts__foot">Facts checked {factsChecked}</p>}
           </div>
         </>
@@ -890,7 +924,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         <>
           <EvidenceHeader ev={evx} compact onMore={() => goTo('literature')} />
           {teamShort && ex.short.length > 0 && <>
-            <ul className="ayv-bullets">{ex.short.map((t) => <li key={t}><Tx>{t}</Tx></li>)}</ul>
+            <ShowAll items={ex.short} n={2} label="points" className="ayv-bullets" render={(t) => <Tx>{t}</Tx>} />
             {ex.attribution && <p className="ayq-meta">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" className="ayv-textbtn" onClick={() => goTo('clinical')}>Read the clinical opinion</button></p>}
           </>}
         </>

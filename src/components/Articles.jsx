@@ -913,55 +913,43 @@ const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || 
    featured reads, each with its photo, section, time, title, one line and who
    wrote and reviewed it; then one row for her pick (or getting matched) and
    one for asking or suggesting a read. */
-function FeatureRow({ feature, onOpen, first = false }) {
-  const art = ARTICLES.find((a) => a.id === feature.id);
-  if (!art) return null;
-  // The one ReadCard, list-row layout: cover, topic and time, title, one line, who wrote and reviewed it, sources.
-  return <li className="lb-frow" id={first ? 'lib-featured' : `lib-featured-${feature.id}`}><ReadCard article={art} layout="row" href={`/library/${art.id}`} onOpen={(a) => onOpen(a.id)} /></li>;
-}
-
 function LibraryFeatured({ onOpen, pick = null, onAsk = null }) {
   const go = (id) => (e) => { if (!plainClick(e)) return; e.preventDefault(); onOpen(id); };
+  const [lead, second] = FEATURED_READS.map((f) => ARTICLES.find((a) => a.id === f.id)).filter(Boolean);
+  // Uniqueness pass (Oct 26): an editorial grid with one big feature (#4dfb3fbd FEEL FITS grid), not a list.
+  // Same reads, same words: the lead read big with its photo, the second as a tall cover, her pick on
+  // pink and "Can't find it?" on espresso.
   return (
-    <section className="lb-featured" aria-labelledby="lib-featured-h">
+    <section className="lb-featured lb-ed" aria-labelledby="lib-featured-h">
       <header className="lb-shelf__head"><h2 id="lib-featured-h" className="lb-shelf__title">Featured reads</h2></header>
-      <ul className="lb-flist">
-        {FEATURED_READS.map((f, i) => <FeatureRow key={f.id} feature={f} onOpen={onOpen} first={i === 0} />)}
-      </ul>
-      <ul className="lb-more">
-        <li>
+      <div className="lb-ed__grid">
+        {lead && <div className="lb-ed__big" id="lib-featured"><ReadCard article={lead} layout="feature" href={`/library/${lead.id}`} onOpen={(a) => onOpen(a.id)} /></div>}
+        {second && <div className="lb-ed__tall" id={`lib-featured-${second.id}`}><ReadCard article={second} layout="rail" href={`/library/${second.id}`} onOpen={(a) => onOpen(a.id)} /></div>}
+        <div className="lb-ed__tile is-pink">
           {pick ? (
-            <a href={`/library/${pick.id}`} className="lb-more__row" onClick={go(pick.id)}>
-              <span className="lb-more__cover"><ReadCover article={pick} /></span>
-              <span className="lb-more__body">
-                <span className="lb-more__label">Top pick for you</span>
-                <strong className="lb-more__title">{pick.title}</strong>
-                <span className="lb-more__meta">{minutesFor(pick)} min read</span>
-              </span>
+            <a href={`/library/${pick.id}`} className="lb-ed__pick" onClick={go(pick.id)}>
+              <span className="lb-more__label">Top pick for you</span>
+              <strong className="lb-ed__title">{pick.title}</strong>
+              <span className="lb-more__meta">{minutesFor(pick)} min read</span>
+              <span className="lb-ed__cover"><ReadCover article={pick} /></span>
             </a>
           ) : (
-            <div className="lb-more__row">
-              <span className="lb-more__body">
-                <span className="lb-more__label">For you</span>
-                <strong className="lb-more__title">Get reads picked for what you told us.</strong>
-              </span>
+            <>
+              <span className="lb-more__label">For you</span>
+              <strong className="lb-ed__title">Get reads picked for what you told us.</strong>
               <a className="lb-btn lb-btn--small" href="/quiz">See my matches <span aria-hidden="true">→</span></a>
-            </div>
+            </>
           )}
-        </li>
-        <li>
-          <div className="lb-more__row">
-            <span className="lb-more__body">
-              <span className="lb-more__label">Can’t find it?</span>
-              <strong className="lb-more__title">Ask about anything, or tell us what to write next.</strong>
-            </span>
-            <span className="lb-more__actions">
-              {onAsk && <button type="button" className="lb-btn lb-btn--small" onClick={() => onAsk('')}>Ask ayna</button>}
-              <button type="button" className="lb-link" onClick={() => document.querySelector('.ct-suggest')?.scrollIntoView({ behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' })}>Suggest a read</button>
-            </span>
-          </div>
-        </li>
-      </ul>
+        </div>
+        <div className="lb-ed__tile is-ink">
+          <span className="lb-more__label">Can’t find it?</span>
+          <strong className="lb-ed__title">Ask about anything, or tell us what to write next.</strong>
+          <span className="lb-more__actions">
+            {onAsk && <button type="button" className="lb-btn lb-btn--small" onClick={() => onAsk('')}>Ask ayna</button>}
+            <button type="button" className="lb-link" onClick={() => document.querySelector('.ct-suggest')?.scrollIntoView({ behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' })}>Suggest a read</button>
+          </span>
+        </div>
+      </div>
     </section>
   );
 }

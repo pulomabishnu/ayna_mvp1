@@ -79,3 +79,20 @@ export function FactChips({ product, facts = undefined }) {
   if (!list.length) return null;
   return <ul className="ay-pcard__facts" aria-label="Key facts">{list.map((f) => <li key={f}>{f}</li>)}</ul>;
 }
+
+/**
+ * Glance-only card (founder, Oct 26 16:54: "quickly glance ... read more on the product page"): the
+ * ONE key fact chip from the record (the first of cardFacts), never a list.
+ */
+export function OneFact({ product, facts = undefined }) {
+  const list = facts === undefined ? cardFacts(product) : facts;
+  if (!list.length) return null;
+  return <ul className="ay-pcard__facts is-one" aria-label="Key fact"><li>{list[0]}</li></ul>;
+}
+
+/** The safety note stays on the glance card (safety beats brevity): an icon and two words on their own line. */
+export function SafetyTag({ product, safety = undefined }) {
+  const warn = safety === undefined ? cardSafety(product) : safety;
+  if (!warn) return null;
+  return <p className="ay-pcard__ev is-safety"><span className="ay-pcard__safe" title={warn}><SafetyGlyph /><span>Safety note</span><span className="sr-only">: {warn}</span></span></p>;
+}

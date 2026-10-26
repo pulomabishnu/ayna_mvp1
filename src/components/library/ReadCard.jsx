@@ -24,6 +24,8 @@ function sourceList(text) {
  * - layout "row": 120px cover · topic · title · one line · Written by /
  *   Reviewed by (when the team recorded them) · sources with evidence marks.
  * - layout "rail": the 4:5 cover (topic and read time on it) and the title.
+ * - layout "feature": the row's anatomy with the photo or cover big on top
+ *   (the one big feature of the Reads editorial grid, #4dfb3fbd FEEL FITS).
  * A real link on the website (`href`), a button in the app (no `href`).
  */
 export default function ReadCard({ article, layout = 'rail', href = null, onOpen, progress = 0, headingLevel = 3, className = '' }) {
@@ -36,12 +38,13 @@ export default function ReadCard({ article, layout = 'rail', href = null, onOpen
   const linkProps = href ? { href } : { type: 'button' };
   const H = `h${headingLevel}`;
   const state = progress > 0 ? <span className="ay-rcard__state">{progress >= 1 ? 'Finished' : `${Math.round(progress * 100)}% read`}</span> : null;
-  if (layout === 'row') {
+  if (layout === 'row' || layout === 'feature') {
     const sources = sourceList(source);
+    const feature = layout === 'feature';
     return (
-      <article className={`ay-rcard is-row ${className}`.trim()}>
+      <article className={`ay-rcard ${feature ? 'is-feature' : 'is-row'} ${className}`.trim()}>
         <span className="ay-rcard__thumb" aria-hidden="true">
-          {readPhoto(id) ? <img src={readPhoto(id)} alt="" loading="lazy" /> : <ReadCover article={article} size="thumb" />}
+          {readPhoto(id) ? <img src={readPhoto(id)} alt="" loading={feature ? 'eager' : 'lazy'} /> : <ReadCover article={article} size={feature ? 'hero' : 'thumb'} />}
         </span>
         <div className="ay-rcard__text">
           <p className="ay-rcard__topic">{sectionLabel(id)} <span aria-hidden="true">·</span> {minutes} min read</p>

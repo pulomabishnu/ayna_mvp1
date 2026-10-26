@@ -6,13 +6,13 @@ import { isKnownPrice } from '../utils/formatPrice.js';
 import { sentenceCase } from '../utils/sentenceCase.js';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import ProductTileImage from './ProductTileImage';
-import { PlateName, EvidenceRow, PriceExtras, FactChips } from './cards/CardBits.jsx';
+import { PlateName, OneFact, SafetyTag } from './cards/CardBits.jsx';
 import { Plate } from './ui/ay';
 import MatchPill from './MatchPill';
 import { matchText } from '../utils/matchDisplay.js';
 import '../styles/card-fit.css';
 import { displayName } from '../mobile/utils/displayName.js';
-import { requestProductTab, formatAverage } from '../utils/community/reviewRatings.js';
+import { requestProductTab } from '../utils/community/reviewRatings.js';
 import { brandOf } from '../mobile/data/brandFallback.js';
 import { saveFeedback } from '../utils/feedback.js';
 import '../styles/match-ui.css';
@@ -36,13 +36,10 @@ export default function ProductCard({
   matchHold = false,
   // "82% for period cramps": accessible name for the match pill (no tooltip).
   matchLabel = '',
-  // One plain line under the % on why it fits her, from the engine's reasons
-  // (src/utils/whyLine.js), so the number is explained.
-  why = '',
+  // (The reason line `why` and review `rating` are no longer read: glance cards leave them to the product page, founder Oct 26 16:54.)
   isSaved = false,
   inEcosystem = false,
   labels = null,
-  rating = null,
   tile = null,
   onOpen,
   onToggleSaved,
@@ -74,6 +71,12 @@ export default function ProductCard({
   // Slot 7: one tag (Pre-order, Sponsored or ayna partner) beside the heart.
   const sticker = !isMine ? kind || categoryLabel : '';
   const showSeeMatch = !isMine && !hasMatch && !matchHold && typeof onSeeMatch === 'function';
+  const showWhy = () => {
+    if (onShowWhy) { onShowWhy(product); return; }
+    requestProductTab('why');
+    if (onOpen) onOpen(product);
+    else window.location.assign(productHref(product));
+  };
   const open = (e) => {
     if (!isPlainLeftClick(e)) return;
     e.preventDefault();
@@ -103,34 +106,19 @@ export default function ProductCard({
             size="sm"
             className="ay-pcard__pill"
             label={hasMatch ? `${matchLabel || matchText(matchPercent)}. Why this match for ${product.name}` : `Safety hold, match unavailable for ${product.name}`}
-            onClick={() => {
-              if (onShowWhy) { onShowWhy(product); return; }
-              requestProductTab('why');
-              if (onOpen) onOpen(product);
-              else window.location.assign(productHref(product));
-            }}
+            onClick={showWhy}
           />
-          {why && <span className="ay-pcard__why">{why}</span>}
+          {/* "What's this?" (team meeting, Oct 26): the match is explained, never a black box. */}
+          {hasMatch && <button type="button" className="ay-pcard__what" onClick={showWhy} aria-label={`What's this? How the ${matchPercent}% match for ${product.name} was worked out`}>What’s this?</button>}
         </div>
       )}
       {showSeeMatch && <button type="button" className="ay-pcard__seematch" onClick={() => onSeeMatch(product)}>See your match <span aria-hidden="true">→</span></button>}
       {badge}
-      {/* 4. Price with its unit, the per-use chip and the real size pills. */}
-      {!isMine && (
-        <div className="ay-pcard__price">
-          {isKnownPrice(price.main) && <span className="ay-pcard__amount">{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
-            ? (() => { const [was, ...rest] = price.sub.replace(/^list\s+/i, '').split(/\s+·\s+/); return <small><span className="sr-only">List price </span><s>{was}</s>{rest.length > 0 && <span> {rest.join(' · ')}</span>}</small>; })()
-            : <small>{price.sub}</small>)}</span>}
-          <PriceExtras product={product} />
-        </div>
-      )}
-      {/* Stars once there are 3 or more reviews (Explore audit v3, section 12). */}
-      {rating && Number.isFinite(rating.value) && rating.count >= 3 && (
-        <a className="ay-pcard__rating" href={productHref(product)} onClick={open}><span aria-hidden="true">★</span> <span className="sr-only">Rated </span>{formatAverage(rating.value)}<span className="sr-only"> out of 5</span> · <u>{rating.count} review{rating.count === 1 ? '' : 's'}</u></a>
-      )}
-      {/* 5. Facts from the record. 6. Evidence mark and the safety icon. */}
-      {!isMine && <FactChips product={product} />}
-      {!isMine && <EvidenceRow product={product} />}
+      {/* 4. Price (glance only: the detail lines, per-use maths, sizes, reviews and evidence live on the product page). */}
+      {!isMine && isKnownPrice(price.main) && <div className="ay-pcard__price"><span className="ay-pcard__amount">{price.main}</span></div>}
+      {/* 5. One key fact. */}
+      {!isMine && <OneFact product={product} />}
+      {!isMine && <SafetyTag product={product} />}
       {/* 7. The one tag and the save heart. Ownership reads as text, never over the photo. */}
       <div className="ay-pcard__foot">
         <span className="ay-pcard__tags">

@@ -792,73 +792,79 @@ export default function ProductModal({
 
         {showWhy && <WhyMatchPanel product={product} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onClose={() => setShowWhy(false)} onUpdateHealth={() => { window.location.href = '/quiz'; }} />}
 
-        <div className="ayp-top">
-          {onBack && (
-            <button type="button" className="ayp-top__back" onClick={onBack} aria-label="Back">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+        {/* Uniqueness pass (Oct 26): the hero is a full-width pink band (AirPods colour-blocked apps, Glossier
+            PDP): the product big on its white plate, the decision block on a butter panel beside it (under it on
+            phones). Safety-first order unchanged: name, match, price, Buy, disclosure, safety line, actions. */}
+        <div className="ayv-hero">
+          <div className="ayp-top">
+            {onBack && (
+              <button type="button" className="ayp-top__back" onClick={onBack} aria-label="Back">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+              </button>
+            )}
+            <Breadcrumbs product={product} onNavigate={onOpenShop} />
+            <button type="button" className="ayp-top__share" onClick={handleShare} aria-label={`Share ${product?.name || 'this product'}`}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /></svg>
+              <span>Share</span>
             </button>
-          )}
-          <Breadcrumbs product={product} onNavigate={onOpenShop} />
-          <button type="button" className="ayp-top__share" onClick={handleShare} aria-label={`Share ${product?.name || 'this product'}`}>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /></svg>
-            <span>Share</span>
-          </button>
-        </div>
-
-        {/* PDP audit Oct 25 (13, 13.1): three columns from 1024px wide: the gallery, the decision block
-            (identity, match, price, one button, disclosure, the safety line, actions), and the tabs.
-            Everything to the safety line fits the first screen of a 13" laptop. */}
-        <div className="ayv-dk">
-          {/* Highlights sit under the photo so they stay in the first screen (audit 7.11, 13.1 #11). */}
-          <div className="ayv-dk__gallery">{galleryTile}<Highlights items={highlights} note={highlights.length ? 'From the product record. Not tested by ayna.' : ''} /></div>
-
-          <div className="ayv-dk__decide ayp-buy pdp-head__detail" id="ay-buycard">
-            {/* Identity (brand, name, meta, rating) in one block: from 1024 to 1279px it sits beside a compact plate. */}
-            <div className="ayv-ident">
-              {(brand || product.brand) && <p className="ayv-brand">{brand || product.brand}</p>}
-              <h1 className="ay-h1 ayp-buy__name pdp-head__name">{displayName}</h1>
-              {metaLine && <p className="ayv-metaline">{metaLine}</p>}
-              {aynaRating != null && ratingCount > 0 && (
-                <button type="button" className="ayp-buy__rating" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'reviews' }))}>
-                  <span className="ayp-stars" aria-hidden="true">{[1, 2, 3, 4, 5].map((n) => <span key={n} className={n <= Math.round(aynaRating) ? 'is-on' : undefined}>{n <= Math.round(aynaRating) ? '★' : '☆'}</span>)}</span>
-                  <span><b>{aynaRating.toFixed(1)}</b> from {ratingCount} ayna {ratingCount === 1 ? 'review' : 'reviews'}</span>
-                  <span className="sr-only">, go to reviews</span>
-                </button>
-              )}
-            </div>
-
-            {/* Her match: the pill, a reason about this product, and "Why 92%?" opening in place. */}
-            {matchState?.kind !== 'quiz' && matchRow}
-
-            {priceView.deposit || priceView.rx
-              ? <HeroPrice view={{ ...priceView, notes: priceNotes }} />
-              : <PriceRow main={priceView.known ? priceView.main : ''} perUse={perUse} notes={priceNotes} />}
-
-            <section className="ayp-buy__section ay-story--buy" aria-labelledby="ay-buy-h">
-              <h2 id="ay-buy-h" className="sr-only">Buy</h2>
-              {variantBlock}
-              <div className="ayp-buy__actions ayv-actions" ref={actionsRef} data-tour="pdp-actions">
-                {buyButton('ayv-sticker')}
-                {noLinkBuy}
-              </div>
-              {purchaseNotes}
-              {warningLine}
-              <ActionsRow
-                saved={isSaved}
-                saveLabel={isSaved ? `Saved. Remove ${displayName} from Saved` : `Save ${displayName}`}
-                onSave={onToggleSaved ? () => { onToggleSaved(product); showToast(isSaved ? 'Removed from Saved' : user ? 'Saved to My Ecosystem' : 'Saved on this device. Sign in to keep it everywhere.'); } : null}
-                inRoutine={isInEcosystem}
-                onRoutine={onAddToEcosystem && user ? () => onAddToEcosystem(product) : null}
-                routineWords={['Routine', 'In my routine']}
-                onAsk={onAskAyna ? () => setAskOpen(true) : null}
-                notForMe={onOmit && user ? <p className="ayv-acts__more"><button type="button" className="ayv-textbtn" onClick={() => onOmit(product)}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button></p> : null}
-              />
-              {sizesLine}
-              <SaveFollowUpInline product={product} onCompare={onCompare} />
-              {matchState?.kind === 'quiz' && <div className="ayv-quizline">{matchRow}</div>}
-            </section>
           </div>
 
+          <div className="ayv-dk">
+            <div className="ayv-dk__gallery">{galleryTile}</div>
+
+            <div className="ayv-dk__decide ayp-buy pdp-head__detail" id="ay-buycard">
+              {/* Identity (brand, name, meta, rating) in one block: from 1024 to 1279px it sits beside a compact plate. */}
+              <div className="ayv-ident">
+                {(brand || product.brand) && <p className="ayv-brand">{brand || product.brand}</p>}
+                <h1 className="ay-h1 ayp-buy__name pdp-head__name">{displayName}</h1>
+                {metaLine && <p className="ayv-metaline">{metaLine}</p>}
+                {aynaRating != null && ratingCount > 0 && (
+                  <button type="button" className="ayp-buy__rating" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'reviews' }))}>
+                    <span className="ayp-stars" aria-hidden="true">{[1, 2, 3, 4, 5].map((n) => <span key={n} className={n <= Math.round(aynaRating) ? 'is-on' : undefined}>{n <= Math.round(aynaRating) ? '★' : '☆'}</span>)}</span>
+                    <span><b>{aynaRating.toFixed(1)}</b> from {ratingCount} ayna {ratingCount === 1 ? 'review' : 'reviews'}</span>
+                    <span className="sr-only">, go to reviews</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Her match: the pill, a reason about this product, and "Why 92%?" opening in place. */}
+              {matchState?.kind !== 'quiz' && matchRow}
+
+              {priceView.deposit || priceView.rx
+                ? <HeroPrice view={{ ...priceView, notes: priceNotes }} />
+                : <PriceRow main={priceView.known ? priceView.main : ''} perUse={perUse} notes={priceNotes} />}
+
+              <section className="ayp-buy__section ay-story--buy" aria-labelledby="ay-buy-h">
+                <h2 id="ay-buy-h" className="sr-only">Buy</h2>
+                {variantBlock}
+                <div className="ayp-buy__actions ayv-actions" ref={actionsRef} data-tour="pdp-actions">
+                  {buyButton('ayv-sticker')}
+                  {noLinkBuy}
+                </div>
+                {purchaseNotes}
+                {warningLine}
+                <ActionsRow
+                  saved={isSaved}
+                  saveLabel={isSaved ? `Saved. Remove ${displayName} from Saved` : `Save ${displayName}`}
+                  onSave={onToggleSaved ? () => { onToggleSaved(product); showToast(isSaved ? 'Removed from Saved' : user ? 'Saved to My Ecosystem' : 'Saved on this device. Sign in to keep it everywhere.'); } : null}
+                  inRoutine={isInEcosystem}
+                  onRoutine={onAddToEcosystem && user ? () => onAddToEcosystem(product) : null}
+                  routineWords={['Routine', 'In my routine']}
+                  onAsk={onAskAyna ? () => setAskOpen(true) : null}
+                  notForMe={onOmit && user ? <p className="ayv-acts__more"><button type="button" className="ayv-textbtn" onClick={() => onOmit(product)}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button></p> : null}
+                />
+                {sizesLine}
+                <SaveFollowUpInline product={product} onCompare={onCompare} />
+                {matchState?.kind === 'quiz' && <div className="ayv-quizline">{matchRow}</div>}
+              </section>
+            </div>
+          </div>
+        </div>
+
+        {/* The facts that matter, as big numbers (Glossier's claims row, rebuilt as a bento). */}
+        <Highlights items={highlights} note={highlights.length ? 'From the product record. Not tested by ayna.' : ''} />
+
+        <div className="ayv-body">
           {/* Tabs: ayna summary (open), Clinical opinion, Scientific literature, Reviews (PDP audit, Oct 25). */}
           <div className="ayv-dk__tabs ayp-tabsarea pdp-head__info">
             <ProductEvidence loading={!researchLoaded} product={product} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} fit={fitData} extraRows={unlinkedStores.length ? [{ label: 'Also sold at', value: unlinkedStores.join(', ') }] : []} askSlot={onAskAyna ? <ProductAsk productName={displayName} onAsk={onAskAyna} hasProfile={Boolean(quizResults)} /> : null} endCta={buyUrl && !isPrelaunch ? buyButton('ayv-sticker is-compact') : null} />

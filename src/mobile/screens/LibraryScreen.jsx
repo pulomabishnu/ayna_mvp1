@@ -13,12 +13,17 @@ import '../library-v2.css';
 import { sentenceCase as sentence } from '../../utils/sentenceCase.js';
 const FEATURED_READ_ID = 'postpartum-stretch-marks';
 
-/** The one featured read (where she left off, else her top pick, else the editors' pick), as the shared ReadCard list row: who wrote and reviewed it, and its sources. */
-function FeaturedRead({ article, label, progress, onOpen }) {
+/**
+ * The one featured read (where she left off, else her top pick, else the editors' pick) as the big
+ * feature of an editorial grid (uniqueness pass, Oct 26; #4dfb3fbd FEEL FITS): its photo or cover big,
+ * who wrote and reviewed it and its sources, then the next two reads as covers side by side.
+ */
+function FeaturedRead({ article, label, progress, onOpen, pair = [], progressOf = () => 0 }) {
   if (!article) return null;
-  return <section className="al-feature al-feature--v9" aria-labelledby="al-feature-h">
+  return <section className="al-feature al-feature--v9 al-ed" aria-labelledby="al-feature-h">
     <h2 id="al-feature-h" className="al-feature__h">{label}</h2>
-    <ReadCard article={article} layout="row" headingLevel={3} progress={progress} onOpen={() => onOpen?.(article)} />
+    <ReadCard article={article} layout="feature" headingLevel={3} progress={progress} onOpen={() => onOpen?.(article)} />
+    {pair.length > 0 && <div className="al-ed__pair">{pair.map((a) => <div className="al-ed__item" key={a.id}><ReadCard article={a} layout="rail" headingLevel={3} progress={progressOf(a)} onOpen={() => onOpen?.(a)} /></div>)}</div>}
   </section>;
 }
 
@@ -39,6 +44,9 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   const featured = keepReading[0] || (hasProfile && forYou[0]) || articles.find((a) => a.id === FEATURED_READ_ID) || articles[0] || null;
   const featuredLabel = keepReading[0] ? 'Pick up where you left off' : hasProfile && forYou[0] ? 'Top pick for you' : 'Featured read';
 
+  // The two covers beside the feature: her next picks (or the first topic's reads); they are not repeated in the rails below.
+  const pair = (hasProfile && forYou.length ? forYou : rows[0]?.items || []).filter((a) => a !== featured).slice(0, 2);
+  const notPaired = (items) => items.filter((a) => !pair.includes(a));
   const tile = (a, small = false) => <div className={`al-item${small ? ' is-small' : ''}`} key={a.id}>
     <ReadCard article={a} layout="rail" onOpen={() => onOpenArticle?.(a)} progress={progressOf(a)} />
   </div>;
@@ -56,10 +64,10 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
     body = <div className="al-grid">{items.map((a) => tile(a))}</div>;
   } else {
     body = <>
-      <FeaturedRead article={featured} label={featuredLabel} progress={featured ? progressOf(featured) : 0} onOpen={onOpenArticle} />
-      {row('keep', 'Keep reading', keepReading.filter((a) => a !== featured))}
-      {hasProfile ? row('foryou', 'For you', forYou.filter((a) => a !== featured), null, 'foryou', forYou.length) : canAskForQuiz && onStartQuiz && <div className="al-match--v9"><OutlineButton onClick={onStartQuiz}>Get reads for you</OutlineButton></div>}
-      {rows.map((r) => row(r.id, r.label, r.items, null, r.id))}
+      <FeaturedRead article={featured} label={featuredLabel} progress={featured ? progressOf(featured) : 0} onOpen={onOpenArticle} pair={pair} progressOf={progressOf} />
+      {row('keep', 'Keep reading', notPaired(keepReading.filter((a) => a !== featured)))}
+      {hasProfile ? row('foryou', 'For you', notPaired(forYou.filter((a) => a !== featured)), null, 'foryou', forYou.length) : canAskForQuiz && onStartQuiz && <div className="al-match--v9"><OutlineButton onClick={onStartQuiz}>Get reads for you</OutlineButton></div>}
+      {rows.map((r) => row(r.id, r.label, notPaired(r.items), null, r.id, r.items.length))}
     </>;
   }
 

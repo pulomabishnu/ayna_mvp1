@@ -16,3 +16,39 @@
 /* Loop C r1: eight needs read as one complete set, never 7 + an orphan (8 across on a laptop, 4 x 2 on a tablet). */
 @media (min-width: 721px) { :is(#wx1, html):is(#wx2, html):is(#wx3, html):is(#wx4, html) body .ay-needtiles:not(.is-row) { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (min-width: 1100px) { :is(#wx1, html):is(#wx2, html):is(#wx3, html):is(#wx4, html) body .ay-needtiles:not(.is-row) { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
+/* Uniqueness pass (Oct 26): the Needs tab as a bento (#455687ac intelly): one big pink tile, one wide
+   espresso tile, calm butter and deeper-butter tiles. Label top left in the display face, the product
+   on its white plate bottom right (white only behind the photo). Website and app. */
+:is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile) { justify-content: flex-start; min-height: 132px; padding: 16px; cursor: pointer; font: inherit; }
+:is(#ayk, .ay-needbento__label):is(#ayk, .ay-needbento__label):is(#ayk, .ay-needbento__label):is(#ayk, .ay-needbento__label) { position: relative; z-index: 1; max-width: 62%; font: 700 22px/1.05 var(--ay-font-display) !important; letter-spacing: -.01em; color: inherit; text-wrap: balance; }
+:is(#ayk, .ay-needbento__plate):is(#ayk, .ay-needbento__plate):is(#ayk, .ay-needbento__plate):is(#ayk, .ay-needbento__plate) { position: absolute; right: 8px; bottom: 8px; width: 96px; transition: transform .2s ease; }
+:is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile).is-wide .ay-needbento__plate { width: 120px; right: 16px; }
+:is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile).is-big { padding: 24px; }
+:is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile).is-big .ay-needbento__label { max-width: 70%; font-size: clamp(36px, 4.2vw, 56px) !important; line-height: .95; letter-spacing: -.03em; font-weight: 800 !important; }
+:is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile).is-big .ay-needbento__plate { width: min(62%, 240px); right: 16px; bottom: 16px; }
+:is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):hover .ay-needbento__plate { transform: rotate(-6deg) scale(1.04); }
+:is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile)[aria-pressed='true'] .ay-needbento__label { text-decoration: underline; text-underline-offset: 4px; }
+:is([data-theme='brand-dark'], [data-theme='dark']) :is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile).is-ink { border: 1.5px solid var(--ay-butter-base) !important; }
+@media (prefers-reduced-motion: reduce) { :is(#ayk, .ay-needbento__plate):is(#ayk, .ay-needbento__plate):is(#ayk, .ay-needbento__plate):is(#ayk, .ay-needbento__plate) { transition: none; } }
+@media (max-width: 720px) {
+  :is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile) { min-height: 120px; padding: 12px; }
+  :is(#ayk, .ay-needbento__label):is(#ayk, .ay-needbento__label):is(#ayk, .ay-needbento__label):is(#ayk, .ay-needbento__label) { font-size: 20px !important; }
+  :is(#ayk, .ay-needbento__plate):is(#ayk, .ay-needbento__plate):is(#ayk, .ay-needbento__plate):is(#ayk, .ay-needbento__plate) { width: 76px; right: 6px; bottom: 6px; }
+  :is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile).is-wide .ay-needbento__plate { width: 96px; }
+  :is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile).is-big { padding: 16px; }
+  :is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile).is-big .ay-needbento__label { font-size: 40px !important; }
+  :is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile).is-big .ay-needbento__plate { width: 58%; }
+}
+.ayna-mobile :is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile) { min-height: 120px; padding: 12px; }
+.ayna-mobile :is(#ayk, .ay-needbento__label):is(#ayk, .ay-needbento__label):is(#ayk, .ay-needbento__label):is(#ayk, .ay-needbento__label) { font-size: 20px !important; }
+.ayna-mobile :is(#ayk, .ay-needbento__plate):is(#ayk, .ay-needbento__plate):is(#ayk, .ay-needbento__plate):is(#ayk, .ay-needbento__plate) { width: 76px; right: 6px; bottom: 6px; }
+.ayna-mobile :is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile).is-big .ay-needbento__label { font-size: 40px !important; }
+.ayna-mobile :is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile):is(#ayk, .ay-needbento__tile).is-big .ay-needbento__plate { width: 58%; }
+/* The one motion moment on Explore: a pink ticker of need names under the espresso header (real names only). */
+.ay-needticker { margin: -16px 0 32px; }
+.ayna-mobile .ay-needticker { margin: 0 0 16px; }
+@media (max-width: 720px) { .ay-needticker { margin: -8px 0 24px; } }
+/* Five shopping groups on Products (website and app); the areas one tap deeper on a second row. */
+.ay-shopgroups { display: grid; gap: 8px; margin: 0 0 16px; }
+.ay-shopgroups__subs { padding-left: 12px; border-left: 1.5px solid currentColor; }
+.ayna-mobile .ay-shopgroups.ay-shop-groups { margin: 4px var(--d-gutter, 16px) 12px; }

@@ -13,11 +13,10 @@ import { matchBadge, isSafetyHold, SAFETY_HOLD, MATCH_UNAVAILABLE } from '../../
 import MatchPill from '../../components/MatchPill.jsx';
 import { saveFeedback } from '../../utils/feedback.js';
 import { whyLine } from '../../utils/whyLine.js';
-import HealthBackedBadge from '../../components/health/HealthBackedBadge.jsx';
 import { cardKind, cardBadge, cardPrice } from '../../utils/productCardFacts.js';
 import { CompareCheck } from '../../components/compare/CompareControls.jsx';
 import { matchBreakdownFor } from '../../components/pdp/decision.js';
-import { PlateName, PriceExtras, FactChips, EvidenceRow } from '../../components/cards/CardBits.jsx';
+import { PlateName, OneFact, SafetyTag } from '../../components/cards/CardBits.jsx';
 import { Plate } from '../../components/ui/ay';
 
 export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts, needId = null, onSeeMatch = null }) {
@@ -40,9 +39,6 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   // The % explained in one plain line from the engine's reasons (src/utils/whyLine.js).
   // The reason line from the one engine's breakdown (src/matching), else the why line.
   const why = showMatch ? (matchBreakdownFor(product, match).reason || whyLine(product, match)) : '';
-  // "Backed by your sleep data": her connected data supports the need this card is shown for.
-  const backedBy = showMatch ? match?.needMatches?.find((m) => m.needId === (needId || match.needId))?.healthData : null;
-  const healthBacked = backedBy ? { section: backedBy.section, tracker: ['tracker', 'wearable'].includes(String(category || '').toLowerCase()) } : null;
   const relevantReason = match?.matchStatus === 'scored' && !showMatch
     ? match.reasonDetails?.find((reason) => ['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency', 'diagnoses', 'lifeStage'].includes(reason.component))
     : null;
@@ -86,19 +82,16 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         {(showMatch || held) && (
           <span className="ay-pcard__fit">
             {showMatch && <MatchPill percent={badge.percent} size="sm" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
+            {showMatch && <button type="button" className="ay-pcard__what" onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} aria-label={`What's this? How the ${badge.percent}% match for ${name} was worked out`}>What’s this?</button>}
             {held && <MatchPill hold size="sm" label={`${SAFETY_HOLD}, ${MATCH_UNAVAILABLE.toLowerCase()} for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
-            {why && <small className="ay-pcard__why">{why}</small>}
           </span>
         )}
         {!showMatch && !held && typeof onSeeMatch === 'function' && <button type="button" className="ay-pcard__seematch" onClick={() => onSeeMatch(product)}>See your match <span aria-hidden="true">→</span></button>}
-        {healthBacked && <HealthBackedBadge backed={healthBacked} className="ay-pc-hbadge" />}
-        {/* 4. Price + unit, per use, sizes. 5. Facts. 6. Evidence + safety. */}
-        <span className="ay-pcard__price">
-          {knownPrice && <span className="ay-pcard__amount"><b>{facts.main}</b>{facts.sub && <small>{facts.sub}</small>}</span>}
-          <PriceExtras product={product} />
-        </span>
-        <FactChips product={product} />
-        <EvidenceRow product={product} />
+        {/* 4. Price. 5. One key fact (glance only, founder Oct 26 16:54: the reason line, price detail, sizes,
+            evidence and her data badge are on the product page, one tap away). */}
+        {knownPrice && <span className="ay-pcard__price"><span className="ay-pcard__amount"><b>{facts.main}</b></span></span>}
+        <OneFact product={product} />
+        <SafetyTag product={product} />
         {/* 7. The one tag and the save heart. */}
         <span className="ay-pcard__foot">
           <span className="ay-pcard__tags">{oneBadge && <span className={`ay-pcard__tag${oneBadge === 'Pre-order' ? ' is-alert' : ''}`}>{oneBadge}</span>}</span>

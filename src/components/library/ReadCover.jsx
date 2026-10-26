@@ -19,7 +19,7 @@ const WORD = {
   'yeast-infection-basics': 'Yeast infection', 'period-pain-when-to-seek-care': 'Period pain', 'pcos-basics': 'PMOS',
   'pelvic-floor-dysfunction': 'Pelvic floor', 'endometriosis-basics': 'Endometriosis', 'bacterial-vaginosis': 'BV', pmdd: 'PMDD',
   fibroids: 'Fibroids', 'iron-deficiency-anemia': 'Iron deficiency', 'ovarian-cysts': 'Ovarian cysts', 'hormonal-birth-control': 'Birth control',
-  'postpartum-stretch-marks': 'Stretch marks',
+  'postpartum-stretch-marks': 'Stretch marks', 'genitourinary-syndrome-of-menopause': 'GSM',
 };
 // Long single words (Endometriosis) step the type down so they never break.
 const wordSize = (w) => { const n = Math.max(...String(w).split(/\s+/).map((x) => x.length)); return n >= 12 ? ' rc--w3' : n >= 10 ? ' rc--w2' : ''; };

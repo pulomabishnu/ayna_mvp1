@@ -8,7 +8,7 @@ import ReadCard from '../../components/library/ReadCard.jsx';
 import ServiceCard from '../../components/cards/ServiceCard.jsx';
 import NeedTiles from '../../components/explore/NeedTiles.jsx';
 import { needGroups } from '../../components/explore/needGroups.js';
-import { Chip, ChipRow, PillTabs, StickerButton, OutlineButton } from '../../components/ui/ay';
+import { Chip, ChipRow, PillTabs, StickerButton, OutlineButton, Shout, Marquee } from '../../components/ui/ay';
 import { featuredOrder } from '../../data/packshots.js';
 import { SERVICE_FORMATS, serviceFacts } from '../../data/startups.js';
 import { productMatch } from '../utils/matchScore.js';
@@ -89,6 +89,7 @@ export default function ExploreScreen(props) {
   const posts = useCommunityResults(searching ? q : '');
   const hasProfile = Boolean(lastQuizAnswers || quizAnswers);
   const forYouReads = useMemo(() => (hasProfile ? rankReadsForProfile(articles, quizAnswers || lastQuizAnswers).slice(0, 4) : []), [hasProfile, articles, quizAnswers, lastQuizAnswers]);
+  const ticker = useMemo(() => needGroups().flatMap((g) => g.topics.map((t) => t.label)), []);
   const forYouProducts = hasProfile ? suggestedEcosystemProducts.slice(0, ROW) : [];
   const go = (key, search = '') => { setQuery(''); onExploreSection?.(key, search); };
 
@@ -111,8 +112,9 @@ export default function ExploreScreen(props) {
   const chips = <nav className="ax-sections" data-tour="explore-sections" aria-label="Explore sections">
     <PillTabs idBase="ax" label="Explore sections" active={section} onChange={(key) => go(key)} tabs={EXPLORE_SECTIONS.map((s) => ({ id: s.key, label: s.label }))} />
   </nav>;
-  const top = (withSearch) => <header className="ax-top">
-    <h1 className="ax-title">Explore</h1>
+  // The espresso band with the page's one shout (#4dfb3fbd FEEL FITS), as on the website.
+  const top = (withSearch) => <header className="ax-top ax-top--band">
+    <Shout className="ax-title ax-shout">Explore</Shout>
     <Seal className="ax-seal" />
     {/* The tabs sit straight under the title on every tab (they jumped below the search on three of five). */}
     {chips}
@@ -154,7 +156,7 @@ export default function ExploreScreen(props) {
     </div>;
   } else if (section === 'topics') {
     body = <>
-      <section className="ax-sec" aria-labelledby="ax-needs-h"><SectionHead id="ax-needs-h" title="By need" /><div className="ax-pad"><NeedTiles onPick={pick} /></div></section>
+      <section className="ax-sec" aria-labelledby="ax-needs-h"><SectionHead id="ax-needs-h" title="By need" /><div className="ax-pad"><NeedTiles onPick={pick} bento /></div></section>
       <section className="ax-sec" aria-labelledby="ax-topics-h"><SectionHead id="ax-topics-h" title="All needs" />
         <div className="ax-groups">{needGroups().map((g) => <div key={g.id} className="ax-group"><h3 className="ax-group__h">{g.label}</h3>{topicChips(g.topics, g.label)}</div>)}</div>
       </section>
@@ -193,6 +195,8 @@ export default function ExploreScreen(props) {
   return <div className="ax" data-tour="explore">
     <MobileHeader onOpenSaved={onOpenSaved} />
     {top(true)}
+    {/* The page's one motion moment: need names on a pink strip (For you and Needs, not while searching). */}
+    {!searching && (section === 'overview' || section === 'topics') && <Marquee items={ticker} tone="pink" className="ay-needticker" />}
     {body}
     <LegalFooter />
   </div>;

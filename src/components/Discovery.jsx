@@ -13,6 +13,8 @@ import './shop-page.css';
 // The catalog and the search engine load after first paint (data/catalog.js,
 // utils/search/lazy.js): the page head renders at once and the grid shows
 // placeholder cards until both have arrived (`ready` below).
+import ShopGroups from './shop/ShopGroups.jsx';
+import { SHOP_GROUPS } from '../data/catalogTaxonomy.js';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct, isTeenProduct, useCatalogReady } from '../data/catalog.js';
 import { hasMatchAnswers } from '../utils/hasMatchAnswers.js';
 import { behaviorFrom, matchBadge, isSafetyHold } from '../utils/matchDisplay';
@@ -1785,6 +1787,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     setAiRelatedSearches([]);
                 }}
             />}
+            {/* Five shopping groups, the areas one tap deeper (team meeting, Oct 26). */}
+            {inExplore && !submittedQuery && <ShopGroups active={macroGroup} onPick={pickArea} available={availableMacroGroups.map((g) => g.id)} className="ayshop__groups" />}
             <div className="ayshop__toolbar">
                 <div className="ayshop__toolbar-left">
                     <button type="button" className={`ay-btn ay-btn--secondary ayshop__filters${activeFilterCount ? ' is-active' : ''}${showFilters ? ' is-open' : ''}`} onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
@@ -1812,7 +1816,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ayshop__avoid" />
 
             {(() => {
-                const AREA_LABEL = (v) => { const g = MACRO_GROUPS.find((x) => x.id === v); return g ? sentenceCase(g.label) : v; };
+                const AREA_LABEL = (v) => { const g = SHOP_GROUPS.find((x) => x.id === v) || MACRO_GROUPS.find((x) => x.id === v); return g ? sentenceCase(g.label) : v; };
                 const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription or membership', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: CLINICAL_SOURCES_LABEL, community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my routine', fertility: 'Trying to conceive', pregnancy: 'Pregnant', postpartum: 'Postpartum', perimenopause: 'Perimenopause and menopause', menopause: 'Menopause', period: 'Period years', products: 'Products', services: 'Apps & services' };
                 const applied = [...(inExplore && macroGroup !== 'all' ? [[macroGroup, () => setMacroGroup('all')]] : []), [typeFilter, setTypeFilter], [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
@@ -1831,7 +1835,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {showFilters && (
                 <FilterSheet
                     groups={[
-                        ...(inExplore ? [['Area', macroGroup, pickArea, availableMacroGroups.filter((g) => g.id !== 'all').map((g) => [g.id, sentenceCase(g.label)])]] : []),
+                        ...(inExplore ? [['Area', macroGroup, pickArea, SHOP_GROUPS.map((g) => [g.id, g.label])]] : []),
                         ['Type', typeFilter, setTypeFilter, [['products', 'Products'], ['services', 'Apps & services']]],
                         ['Price', priceFilter, setPriceFilter, [['under-25', 'Under $25'], ['25-50', '$25–49'], ['50-100', '$50–99'], ['100-plus', '$100+']]],
                         ['Billing', priceFilter, setPriceFilter, [['subscription', 'Subscription or membership']]],
