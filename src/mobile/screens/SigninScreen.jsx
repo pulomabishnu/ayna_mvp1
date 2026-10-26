@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { picksAreasLine } from '../../utils/needAreas.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { hydrateCatalogProduct } from '../../data/products.js';
@@ -167,9 +168,11 @@ export default function SigninScreen({
   onAuthBack,
   onStartEcosystem,
   myProducts = [],
-  topAreas = [],
+  // Her picked needs' labels (QA3 M11), never product categories.
+  saveAreas = [],
   firstName: intakeName = '',
 }) {
+  const topAreas = saveAreas || [];
   const ecoPicks = (myProducts || []).filter(Boolean);
   // Thumbnails use the catalog photo (same lookup as the product page), and
   // picks that have one go first so the row shows real products.
@@ -443,7 +446,7 @@ export default function SigninScreen({
           {mode === 'signup' && showEcoSummary && (
             <section className="ay-auth-eco" aria-label="Your ecosystem">
               <div className="ay-auth-eco-copy">
-                <strong>{ecoPicks.length} {ecoPicks.length === 1 ? 'pick' : 'picks'}{topAreas.length ? ` · ${topAreas.length} ${topAreas.length === 1 ? 'area' : 'areas'}` : ''}</strong>
+                <strong>{picksAreasLine(ecoPicks.length, topAreas.length)}</strong>
                 {topAreas.length > 0 && <span>{topAreas.slice(0, 4).join(', ')}</span>}
               </div>
               <div className="ay-auth-eco-thumbs" aria-hidden="true">

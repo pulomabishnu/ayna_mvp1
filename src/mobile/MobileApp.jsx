@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { needAreaLabels } from '../utils/needAreas.js';
 import { markOnboardingDone } from '../health/onboardingSignal.js';
 import { trackApp, appScreenName } from './utils/appAnalytics.js';
 import { navTabFor, aynaRoute, initialAppRoute } from './utils/navTab.js';
@@ -831,6 +832,8 @@ export default function MobileApp() {
     .map((key) => AREA_LABELS.find((a) => a.key === key)?.label)
     .filter(Boolean)
     .slice(0, 3);
+  // Save sheet: her picked needs (QA3 M11), from her latest answers.
+  const saveAreaLabels = useMemo(() => needAreaLabels(lastQuizAnswers || session.pendingQuiz?.answers || null, getSelectedNeeds), [lastQuizAnswers, session.pendingQuiz]);
   const goalCount = lastQuizAnswers?.frustrations?.length || 0;
   // "Personalize with my data" (Preferences > AI & Personalization), off
   // suppresses ambient personalization (match %, the For You toggles, Ask
@@ -1565,7 +1568,8 @@ export default function MobileApp() {
         headerInitial={headerInitial}
         tags={topAreaLabels.length ? `${topAreaLabels.length} area${topAreaLabels.length === 1 ? '' : 's'} covered` : ''}
         relatedReads={ecosystemReads}
-        topAreas={screen === 'reveal' ? topAreaLabels : topAreaLabels.length ? topAreaLabels : ['Period', 'Hormones', 'Sleep']}
+        topAreas={topAreaLabels}
+        saveAreas={saveAreaLabels}
         productCount={myProducts.length}
         readCount={ARTICLES.length}
         goalCount={goalCount}

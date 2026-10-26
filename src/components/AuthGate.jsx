@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { picksAreasLine } from '../utils/needAreas.js';
 import { getSupabaseClient, setRememberMe } from '../utils/supabaseClient';
 import { CODE_COPY, EMAIL_CODE_LENGTH, SMS_CODE_LENGTH, cleanCode, codeErrorText, isEmailNotConfirmed, verifyEmailCode } from '../utils/authCodes.js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
@@ -589,7 +590,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
               ))}
             </div>
             <div>
-              <strong>{summary.count} pick{summary.count === 1 ? '' : 's'}{summary.areas?.length ? ` · ${summary.areas.length} area${summary.areas.length === 1 ? '' : 's'}` : ''}</strong>
+              <strong>{picksAreasLine(summary.count, summary.areas?.length)}</strong>
               <span>{(summary.areas || []).slice(0, 3).join(', ')}</span>
             </div>
           </div>
