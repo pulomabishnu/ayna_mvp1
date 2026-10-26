@@ -868,7 +868,7 @@ export default function ProductModal({
         </div>
         </div>
 
-        {/* Sticky tabs: Clinical opinion, Scientific literature, ayna summary, Reviews (founder, Oct 24). */}
+        {/* Tabs: ayna summary (open), Clinical opinion, Scientific literature, Reviews (PDP audit, Oct 25). */}
         <div className="ayv-split__right ayp-tabsarea pdp-head__info">
           <ProductEvidence loading={!researchLoaded} product={product} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} fit={fitData} askSlot={onAskAyna ? <ProductAsk productName={displayName} onAsk={onAskAyna} hasProfile={Boolean(quizResults)} /> : null} />
         </div>

@@ -16,7 +16,7 @@ import ProductCommunityReviews from './ProductCommunityReviews.jsx';
 import ProductPeopleSay from './ProductPeopleSay.jsx';
 import { useProductReviews } from './useProductReviews.js';
 import { evidenceLevel, gradeWords } from './evidenceLevel.js';
-import { evidenceMeter, sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause, brandVoice, safetyGroupOf, groupSafety } from './pdpParts.js';
+import { evidenceMeter, sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause, brandVoice, safetyGroupOf, groupSafety, TAB_ORDER, TAB_LABELS, DEFAULT_TAB } from './pdpParts.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { EvidenceMeter, ShowAll } from './PdpParts.jsx';
 import { FROM_LISTING } from '../../utils/howToSource.js';
@@ -259,13 +259,14 @@ function Rows({ rows }) {
 }
 
 // ---------------------------------------------------------------------------
-// Sticky top tabs (founder, Oct 24): Clinical opinion, Scientific literature,
-// ayna summary, Reviews. Same on phone and desktop, website and app. The tab
-// row sticks under the site header once she scrolls past the product hero.
-// WAI-ARIA tabs pattern: arrow keys, Home and End move and select.
+// Sticky top tabs: ayna summary (first and open by default), Clinical
+// opinion, Scientific literature, Reviews (PDP audit Oct 25, 7.16: people
+// read tabs left to right, so the open tab is the first one; this replaces
+// the Oct 24 order with ayna summary third). Same on phone and desktop,
+// website and app. The tab row sticks under the site header once she scrolls
+// past the product hero. WAI-ARIA tabs pattern: arrow keys, Home and End.
 // ---------------------------------------------------------------------------
-const TAB_ORDER = ['clinical', 'literature', 'summary', 'reviews'];
-const TAB_LABELS = { clinical: 'Clinical opinion', literature: 'Scientific literature', summary: 'ayna summary', reviews: 'Reviews' };
+// TAB_ORDER, DEFAULT_TAB and TAB_LABELS live in pdpParts.js (shared, tested).
 // Every id other parts of the site link to, mapped onto a tab (and a spot in it).
 const TARGETS = {
   facts: { tab: 'summary', anchor: 'ay-sum-facts' },
@@ -386,8 +387,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const ratingCount = liveStats ? liveStats.count : ratingCountProp;
 
   const [tab, setTab] = useState(() => {
-    if (typeof window === 'undefined' || !syncHash) return 'summary';
-    return resolveTarget(window.location.hash.slice(1))?.tab || 'summary';
+    if (typeof window === 'undefined' || !syncHash) return DEFAULT_TAB;
+    return resolveTarget(window.location.hash.slice(1))?.tab || DEFAULT_TAB;
   });
   // The tab row sticks just under the website's header (the app has none above it).
   const [stickTop, setStickTop] = useState(0);
@@ -945,12 +946,12 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
 
   const bodies = { clinical: clinicalBody, literature: literatureBody, summary: summaryBody, reviews: reviewsTab };
   const tabs = TAB_ORDER.map((id) => ({ id, label: TAB_LABELS[id], body: bodies[id] }));
-  const activeTab = TAB_ORDER.includes(tab) ? tab : 'summary';
+  const activeTab = TAB_ORDER.includes(tab) ? tab : DEFAULT_TAB;
 
   return (
     <TermsCtx.Provider value={plan}>
       <div id="ay-tabs" className="ayq ayq--tabs ayv">
-        <section id="ay-pt" className="ayq-tabsec" aria-label="Clinical opinion, scientific literature, ayna summary and reviews">
+        <section id="ay-pt" className="ayq-tabsec" aria-label="ayna summary, clinical opinion, scientific literature and reviews">
           <StickyTabs tabs={tabs} active={activeTab} onChange={chooseTab} stickTop={stickTop} swipe={swipeTabs} />
         </section>
         {afterOverview}

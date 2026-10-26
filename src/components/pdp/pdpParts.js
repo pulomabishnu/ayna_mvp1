@@ -15,6 +15,16 @@ import { TYPE_WORDS } from './evidenceLevel.js';
 const cap = (t) => String(t || '').replace(/^./, (c) => c.toUpperCase());
 const norm = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
+// ---------------------------------------------------------------------------
+// The four tabs (PDP audit Oct 25, 7.16, P0): ayna summary first and open by
+// default, then Clinical opinion, Scientific literature, Reviews. Names are
+// unchanged; only the order moved (it was Clinical / Scientific / ayna summary
+// / Reviews with the third tab open).
+// ---------------------------------------------------------------------------
+export const TAB_ORDER = ['summary', 'clinical', 'literature', 'reviews'];
+export const DEFAULT_TAB = 'summary';
+export const TAB_LABELS = { summary: 'ayna summary', clinical: 'Clinical opinion', literature: 'Scientific literature', reviews: 'Reviews' };
+
 /** Long lists show this many, then "Show all N" in place (PDP rule 8). */
 export const SHOW_FIRST = 3;
 
