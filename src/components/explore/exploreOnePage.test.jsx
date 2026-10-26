@@ -17,34 +17,38 @@ describe('Explore as one shop page', () => {
     expect(text(html)).toContain('Explore');
     expect(html).not.toMatch(OLD_TABS);
     for (const label of ['For you', 'Needs', 'Reads']) expect(text(html)).not.toContain(label);
+    // The Shop and Services tabs name the band (Oct 26).
+    expect(text(renderToStaticMarkup(<ExploreHeader compact title="Shop" />))).toContain('Shop');
+    expect(text(renderToStaticMarkup(<ExploreHeader compact title="Services" />))).toContain('Services');
   });
 
-  it('app: one page with the group chips, a type toggle and the grid', () => {
+  it('app: Shop is one page with the group chips and the grid; the tab picks the type, so no toggle (Oct 26)', () => {
     const html = renderToStaticMarkup(<ExploreScreen products={ALL_PRODUCTS.slice(0, 12)} articles={[]} quizAnswers={null} onStartQuiz={() => {}} />);
     const t = text(html);
     expect(html).not.toMatch(OLD_TABS);
     expect(t).not.toContain('For you');
     expect(t).toContain('All');
     for (const g of SHOP_GROUPS) expect(t).toContain(g.label);
-    expect(html).toMatch(/aria-label="Show"/);
-    expect(t).toContain('Products');
-    expect(t).toContain('Services');
+    expect(html).not.toMatch(/aria-label="Show"/);
+    expect(t).toContain('Shop');
+    expect(html).toMatch(/data-kind="products"/);
     expect(t).toContain('Filters');
     // Signed out: cards keep the "See your match" invite.
     expect(t).toContain('See your match');
     // Reads stay one tap away.
-    expect(t).toContain('Reads: guides and research');
+    expect(t).toContain('Library: guides and research');
   });
 
-  it('app: the old Services address opens with Services picked', () => {
+  it('app: the Services tab (and the old Services address) opens with Services picked, no toggle', () => {
     const html = renderToStaticMarkup(<ExploreScreen exploreSection="services" products={ALL_PRODUCTS.slice(0, 4)} articles={[]} />);
-    expect(html).toMatch(/aria-pressed="true"[^>]*>Services</);
-    expect(html).toMatch(/aria-pressed="false"[^>]*>Products</);
+    expect(html).toMatch(/data-kind="services"/);
+    expect(text(html)).toContain('Services');
+    expect(html).not.toMatch(/aria-label="Show"/);
   });
 
   it('app: Reads (the library screen) still opens the reads', () => {
     const html = renderToStaticMarkup(<ExploreScreen exploreSection="resources" products={[]} articles={[]} />);
-    expect(text(html)).toContain('Reads');
+    expect(text(html)).toContain('Library');
     expect(html).not.toMatch(OLD_TABS);
   });
 });

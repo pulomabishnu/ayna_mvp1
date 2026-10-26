@@ -1,33 +1,35 @@
 /**
  * The one main tab set for the app (bottom tab bar) and the website (top nav
- * and the phone tab bar): Today · Explore · Ask ayna · Community · You.
- * Founder decision, Oct 24 2026 (UX spec section 2). Same names and order on
- * web, iOS and Android. Keys stay stable for analytics and CSS.
+ * and the phone tab bar): Today · Shop · Services · Community · Library
+ * (founder, Oct 26 2026: "CAN WE HAVE SHOP services community and library and
+ * keep the ask ayna at the top"). Ask ayna is the button at the top of every
+ * page; You is the round profile button beside it. Keys stay stable for
+ * analytics and CSS: Shop keeps the 'explore' key (it is the old Explore page).
+ * Shop is /explore (Products), Services /explore/services, Library
+ * /explore/resources. The /ask and /you addresses still work.
  */
 export const MAIN_TABS = [
   { key: 'today', label: 'Today', href: '/today' },
-  { key: 'explore', label: 'Explore', href: '/explore' },
-  { key: 'ask', label: 'Ask ayna', href: '/ask', center: true },
+  { key: 'explore', label: 'Shop', href: '/explore', icon: 'shop' },
+  { key: 'services', label: 'Services', href: '/explore/services', icon: 'services' },
   { key: 'community', label: 'Community', href: '/community' },
-  { key: 'profile', label: 'You', href: '/you' },
+  { key: 'library', label: 'Library', href: '/explore/resources', icon: 'library' },
 ];
 
 /**
- * The app's tab bar (all-pages build brief, Oct 25 23:03, supersedes the
- * Oct 24 22:12 four tabs): the same five as the website, Today · Explore ·
- * Ask ayna · Community · You. Today is the dashboard (AynaHomeScreen, the
- * 'ayna' screen); its key stays 'home' so analytics and CSS keep working.
- * Ask ayna opens the full chat as a tab screen (the 'ayna' screen's 'chat'
- * view). The Library is not a tab: it lives inside Explore (Reads) as a
- * pushed screen with Back. The old `today`, `ask` and `ayna` screens still
- * route (navTab.js aynaRoute).
+ * The app's tab bar: the same five as the website. Today is the dashboard
+ * (AynaHomeScreen, the 'ayna' screen); its key stays 'home' so analytics and
+ * CSS keep working. Shop is the 'explore' screen, Services the same screen
+ * with Services picked, Library the 'library' screen. Ask ayna opens from the
+ * header pill (and the suggestion pills under it); You from the round profile
+ * button. The old `today`, `ask` and `ayna` screens still route (navTab.js aynaRoute).
  */
 export const APP_TABS = [
   { key: 'home', label: 'Today', icon: 'today' },
-  { key: 'explore', label: 'Explore' },
-  { key: 'ask', label: 'Ask ayna', center: true, icon: 'ask' },
+  { key: 'explore', label: 'Shop', icon: 'shop' },
+  { key: 'services', label: 'Services', icon: 'services' },
   { key: 'community', label: 'Community' },
-  { key: 'profile', label: 'You' },
+  { key: 'library', label: 'Library', icon: 'library' },
 ];
 
 /**
@@ -36,7 +38,6 @@ export const APP_TABS = [
  * dashboard (founder, Oct 24 20:12). The chat is that tab, so no Ask tab.
  */
 export const APP_TABS_CHAT_FIRST = APP_TABS
-  .filter((t) => t.key !== 'ask')
   .map((t) => (t.key === 'home' ? { ...t, label: 'ayna', icon: 'ask' } : t));
 export const AYNA_HOME_VIEWS = [
   { key: 'chat', label: 'Chat' },

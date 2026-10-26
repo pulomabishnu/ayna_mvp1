@@ -1,0 +1,110 @@
+/* Ask ayna suggestions: one slim line under the top bar (founder, Oct 26).
+   Brand colours only: butter, butter-deep, espresso, pink. */
+.ay-asksug {
+  --asksug-butter: #FFEDAC;
+  --asksug-butter-deep: #F6E3A1;
+  --asksug-espresso: #3E2723;
+  --asksug-pink: #F7BADD;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  flex: none;
+  min-height: 48px;
+}
+.ay-asksug__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding: 2px 16px 6px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  min-height: 44px;
+}
+.ay-asksug__row::-webkit-scrollbar { display: none; }
+.ay-asksug__lead {
+  flex: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--asksug-espresso);
+  opacity: 0.8;
+}
+.ay-asksug__pill,
+.ay-asksug__hide {
+  flex: none;
+  box-sizing: border-box;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--asksug-butter-deep);
+  background: var(--asksug-butter);
+  color: var(--asksug-espresso);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+}
+/* 44px tap target around the 40px pill. */
+.ay-asksug__pill::after,
+.ay-asksug__hide::after { content: ''; position: absolute; inset: -2px 0; }
+.ay-asksug__pill:hover,
+.ay-asksug__pill:focus-visible { background: var(--asksug-pink); border-color: var(--asksug-pink); }
+.ay-asksug__pill:focus-visible,
+.ay-asksug__hide:focus-visible { outline: 2px solid var(--asksug-espresso); outline-offset: 2px; }
+.ay-asksug__hide {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border-color: transparent;
+  font-size: 13px;
+  padding: 0 10px;
+}
+.ay-asksug__hide:hover { background: var(--asksug-butter-deep); }
+/* Brand dark: espresso page, butter text. */
+[data-theme="brand-dark"] .ay-asksug__lead,
+[data-theme="dark"] .ay-asksug__lead,
+[data-theme="brand-dark"] .ay-asksug__hide,
+[data-theme="dark"] .ay-asksug__hide { color: var(--asksug-butter); }
+/* Website: sits under the fixed top nav, inside the page column. */
+.ay-asksug--web { max-width: 1200px; margin: 0 auto; }
+.ay-asksug--web .ay-asksug__row { padding: 8px 24px; }
+@media (max-width: 720px) { .ay-asksug--web .ay-asksug__row { padding: 6px 16px; } }
+/* App: the round profile button beside Ask ayna in the header. */
+.ayna-mobile .ay-header-actions .ay-header-profile,
+.ay-header-profile {
+  width: 44px; height: 44px; min-width: 44px;
+  border-radius: 999px !important;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #F6E3A1 !important; color: #3E2723 !important;
+  border: 1px solid #3E2723 !important; padding: 0; cursor: pointer;
+  box-shadow: none !important;
+  font-size: 13px; font-weight: 700;
+}
+.ay-header-profile:focus-visible { outline: 2px solid #3E2723; outline-offset: 2px; }
+/* Website: the guest's round profile button sits beside Log in, one row. */
+.ay-nav__account:has(> .ay-nav__profile) { display: flex; align-items: center; gap: 8px; flex-direction: row; }
+.ay-nav__profile {
+  width: 44px; height: 44px; min-width: 44px;
+  border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #F6E3A1; color: #3E2723;
+  border: 1px solid #3E2723;
+  text-decoration: none;
+}
+.ay-nav__profile:focus-visible { outline: 2px solid #3E2723; outline-offset: 2px; }
+/* Phones (website): You is no longer a tab, so the round profile button (or her
+   avatar) stays in the header beside Ask ayna; Log in stays in the drawer. */
+@media (max-width: 899px) {
+  .app-container.app-container .ay-nav .ay-nav__account:not(.is-landing-guest) { display: flex !important; align-items: center; }
+  .app-container.app-container .ay-nav .ay-nav__account:not(.is-landing-guest) .ay-nav__login { display: none !important; }
+}
+/* App: fill the screen column (Today's column is already inset). */
+.ay-asksug--app { width: auto; }
+.ay-homescreen > .ay-asksug--app .ay-asksug__row { padding-left: 0; padding-right: 0; }

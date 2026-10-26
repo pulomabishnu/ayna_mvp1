@@ -19,9 +19,16 @@ export function TabIcon({ kind, on = false }) {
   if (kind === 'library') return <svg {...common}><path {...solid} {...(on ? { stroke: 'none' } : {})} d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13ZM13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" />{!on && <path d="M7 8h1.5M16 8h1.5" />}</svg>;
   // The app's centre tab, Home: a plain house, same stroke rule.
   if (kind === 'home') return <svg {...common}><path {...solid} d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1v-8.5Z" /></svg>;
-  if (kind === 'browse') return <svg {...common}><path {...solid} d="M4 8h16l-1 12H5L4 8Z" /><path d="M9 9V6a3 3 0 0 1 6 0v3" /></svg>;
+  // Services: a calendar with a check (care you book).
+  if (kind === 'services') return <svg {...common}><rect {...solid} x="4" y="5.5" width="16" height="14.5" rx="2" /><path d="M8 3.5v4M16 3.5v4M4 10h16" /><path d="m9 15 2 2 4-4" {...(on ? { stroke: 'var(--ay-tab-on-ink, #FFEDAC)' } : {})} /></svg>;
+  if (kind === 'browse' || kind === 'shop') return <svg {...common}><path {...solid} d="M4 8h16l-1 12H5L4 8Z" /><path d="M9 9V6a3 3 0 0 1 6 0v3" /></svg>;
   if (kind === 'community') return <svg {...common}><path {...solid} d="M4 5h16v11H9l-5 4V5Z" />{!on && <path d="M8 10h8m-8 3h5" />}</svg>;
   return <svg {...common}><circle {...solid} cx="12" cy="8" r="3.3" /><path {...solid} d="M5 20c0-3.3 2.8-5.5 7-5.5s7 2.2 7 5.5" /></svg>;
+}
+
+/** The round profile button's person mark (You moved out of the tab bar, Oct 26). */
+export function ProfileMark() {
+  return <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8.5" r="3.5" /><path d="M5 20c0-3.6 3-6 7-6s7 2.4 7 6" /></svg>;
 }
 
 /** The Ask ayna mark used by the header pill on the phone website and the app. */

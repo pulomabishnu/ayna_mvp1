@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Seal } from '../../components/personality/Bits.jsx';
 import MobileHeader from '../components/MobileHeader.jsx';
 import LibraryScreen from './LibraryScreen.jsx';
@@ -9,7 +9,6 @@ import { splitCatalog } from '../../utils/search/exploreSearch.js';
 import '../explore.css';
 import '../explore-v9.css';
 
-const TYPES = [['products', 'Products'], ['services', 'Services']];
 
 /**
  * Explore in the app: one shop page (founder, Oct 26: "isn't that all just
@@ -21,7 +20,8 @@ const TYPES = [['products', 'Products'], ['services', 'Services']];
  */
 export default function ExploreScreen(props) {
   const { exploreSection = 'overview', onExploreSection, products = [], onOpenSaved } = props;
-  const [kind, setKind] = useState(exploreSection === 'services' ? 'services' : 'products');
+  // Shop and Services are their own tabs now (founder, Oct 26): the tab picks the type, so no toggle.
+  const kind = exploreSection === 'services' ? 'services' : 'products';
   const { products: catalog, services } = useMemo(() => splitCatalog(products), [products]);
   // Products is the Shop as before (products only, QA3 M8); Services lists the services.
   const shown = kind === 'services' ? services : catalog;
@@ -34,19 +34,16 @@ export default function ExploreScreen(props) {
   if (exploreSection === 'resources') {
     return <div className="ax ax--embed" data-tour="reads">
       <MobileHeader onOpenSaved={onOpenSaved} />
-      {band('Reads')}
+      {band('Library')}
       <LibraryScreen {...props} embedded />
     </div>;
   }
 
-  const typeToggle = <div className="ayshop__type" role="group" aria-label="Show">
-    {TYPES.map(([v, label]) => <button key={v} type="button" aria-pressed={kind === v} onClick={() => setKind(v)}>{label}</button>)}
-  </div>;
-  return <div className="ax ax--embed" data-tour="explore">
+  return <div className="ax ax--embed" data-tour="explore" data-kind={kind}>
     <MobileHeader onOpenSaved={onOpenSaved} />
-    {band('Explore')}
-    <BrowseScreen {...props} products={shown} embedded typeToggle={typeToggle} />
-    <p className="ayshop__reads"><a href="/library" onClick={(e) => { e.preventDefault(); onExploreSection?.('resources'); }}>Reads: guides and research</a></p>
+    {band(kind === 'services' ? 'Services' : 'Shop')}
+    <BrowseScreen key={kind} {...props} products={shown} embedded typeToggle={null} />
+    <p className="ayshop__reads"><a href="/library" onClick={(e) => { e.preventDefault(); onExploreSection?.('resources'); }}>Library: guides and research</a></p>
     <LegalFooter />
   </div>;
 }

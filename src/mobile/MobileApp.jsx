@@ -85,7 +85,7 @@ import EcosystemScreen from './screens/EcosystemScreen.jsx';
 import EcosystemResetDialog from './components/EcosystemResetDialog.jsx';
 import SavedScreen from './screens/SavedScreen.jsx';
 import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
-import { AskContext } from './askContext.js';
+import { AskContext, AppHeaderContext } from './askContext.js';
 import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
 import CommunityScreen from './screens/CommunityScreen.jsx';
 import QuizConnectScreen from './screens/QuizConnectScreen.jsx';
@@ -1460,7 +1460,7 @@ export default function MobileApp() {
     .concat(rankedEcosystemReads.filter((article) => readArticleIds.includes(article.id)))
     .slice(0, 3);
   // Ask ayna is a tab (all-pages brief, Oct 25): the chat view of 'ayna', or the drawer when it is open.
-  const activeTab = askAynaOpen && !chatFirst && !overlay ? 'ask' : navTabFor(screen, overlay?.type, { view: homeView, variant: homeVariant });
+  const activeTab = askAynaOpen && !chatFirst && !overlay ? 'ask' : navTabFor(screen, overlay?.type, { view: homeView, variant: homeVariant, section: exploreSection });
 
   // "New in Community" for the Daily Rundown: real public posts for her topics and follows.
   const rundownCommunity = useRundownCommunity(authUser?.id || null, effectiveQuizAnswers);
@@ -1503,6 +1503,14 @@ export default function MobileApp() {
     })();
     return () => { live = false; remove?.remove?.(); };
   }, []);
+  // Header: You is the round profile button beside Ask ayna (founder, Oct 26), and
+  // on the five tab roots a slim row of Ask suggestions sits under the header.
+  const suggestOn = !overlay && !askAynaOpen && ((screen === 'ayna' && homeView === 'home') || ['explore', 'browse', 'library', 'community'].includes(screen));
+  const headerValue = {
+    onOpenProfile: () => { setAskAynaOpen(false); authResumeRef.current = null; setOverlay({ type: 'profile' }); },
+    initial: String(resolvedName || '').trim().charAt(0).toUpperCase(),
+    suggest: suggestOn ? { signedIn: Boolean(authUser?.id), hasProfile: Boolean(effectiveQuizAnswers) } : null,
+  };
   const sheetValue = {
     open: (product) => { if (product?.id) setSheetProduct(product); },
     isOpen: Boolean(sheetProduct),
@@ -1524,6 +1532,7 @@ export default function MobileApp() {
     <div ref={rootRef} className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
       <ProductSheetContext.Provider value={sheetValue}>
       <AskContext.Provider value={nav.onAskAyna}>
+      <AppHeaderContext.Provider value={headerValue}>
       <Screen
         key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen === 'browse' && browseQuery ? `browse-${browseQuery}` : screen}
         {...nav}
@@ -1586,6 +1595,7 @@ export default function MobileApp() {
         onRundownFinish={handleRundownFinish}
         recentAsks={screen === 'ayna' ? askAynaHistory : undefined}
       />
+      </AppHeaderContext.Provider>
       </AskContext.Provider>
       {newAccountStart && authUser && !['quiz', 'building', 'connect', 'plan', 'ready'].includes(screen) && (
         <NewAccountStart
@@ -1598,6 +1608,9 @@ export default function MobileApp() {
       {showTabBar && <MobileTabBar
         active={activeTab}
         onExplore={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setExploreSection('overview'); setScreen('explore'); }}
+        // Services: the Shop page with Services picked. Library: the reads.
+        onServices={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setExploreSection('services'); setScreen('explore'); }}
+        onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setExploreSection('resources'); setScreen('library'); }}
         // Home always opens on its root (the dashboard, or the chat in the chat-first variant).
         onHome={() => { setHomeView(homeRoot); setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreenRaw('ayna'); }}
         // Ask ayna: the full chat as a tab screen (the 'ayna' screen's chat view).
