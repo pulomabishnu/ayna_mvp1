@@ -18,6 +18,8 @@ import HomeWidgets from '../../home/HomeWidgets.jsx';
 import WeekBento, { cycleWordsFor, glanceCharts } from '../../components/today/WeekBento.jsx';
 import { usualBand } from '../../health/dashView.js';
 import '../../styles/week-explained.css';
+import TodayViews from '../components/TodayViews.jsx';
+import RoutineSummary from '../../components/routine/RoutineSummary.jsx';
 import '../ayna-home.css';
 
 /**
@@ -40,7 +42,7 @@ export default function AynaHomeScreen(props) {
     quizDraft = null, onResumeQuiz, onStartOverQuiz, onStartQuiz, onBrowse, lastQuizAnswers = null, quizAnswers = null, matchOpts, authUser = null,
     onOpenProduct, onEditIntakeStep, onRetake, onUpdateIntake, savedProducts = {}, onToggleSaved, onOpenWhyMatch, articles = [], onOpenArticle,
     rundownCommunity = [], onOpenCommunityPost, onRundownFinish, healthInsightRows = [], healthSummary = null, healthConnectedCount = 0, onOpenHealthData, onConnectHealth,
-    omittedProducts = {}, onOpenSaved, onOpenCommunitySeed, recentAsks = [], readProgress = {},
+    omittedProducts = {}, routineExcluded = {}, routineOutcomes = {}, routineHave = {}, onOpenSaved, onOpenCommunitySeed, recentAsks = [], readProgress = {},
   } = props;
   const [asking, setAsking] = useState(false);
   const goHome = () => onHomeView?.('home');
@@ -104,7 +106,6 @@ export default function AynaHomeScreen(props) {
         {/* .ay-hd: the dashboard's own tokens and card styles, as on the full dashboard. */}
         <div className="ay-hd ay-homefeed">
         {/* Picture first (founder Oct 26 16:43): with health data, her week as a bento of real charts; else the hero art. */}
-        {!weekBento && <HomeHeroArt look={look} products={[...myProducts, ...suggestedEcosystemProducts]} cycle={cycle} sleepPoints={sleepPoints} />}
         <TodayFeed
           compact
           variant="app"
@@ -131,8 +132,22 @@ export default function AynaHomeScreen(props) {
           onOpenFull={(item, o) => openDashboard(Boolean(o?.log))}
           moreHeading={false}
         />
-        {weekBento && <section className="ay-homeweek" aria-labelledby="ay-homeweek-h"><h2 id="ay-homeweek-h">Your week</h2>{weekBento}</section>}
         </div>
+        {/* One toggle, one view at a time (founder Oct 26 evening): nothing stacked, nothing removed. */}
+        <TodayViews
+          onOpenProduct={onOpenProduct}
+          onAllProducts={() => onHomeView?.('products')}
+          groups={[
+            { id: 'routine', label: 'Routine', items: myProducts.filter((p) => p?.id && !routineExcluded[p.id]) },
+            { id: 'saved', label: 'Saved', items: Object.values(savedProducts || {}).filter((p) => p?.id) },
+            { id: 'tried', label: 'Tried', items: myProducts.filter((p) => p?.id && Array.isArray(routineOutcomes[p.id]) && routineOutcomes[p.id].length) },
+          ]}
+          week={weekBento
+            ? <section className="ay-homeweek ay-hd" aria-labelledby="ay-homeweek-h"><h2 id="ay-homeweek-h" className="sr-only">Your week</h2>{weekBento}</section>
+            : <div className="ay-hd"><HomeHeroArt look={look} products={[...myProducts, ...suggestedEcosystemProducts]} cycle={cycle} sleepPoints={sleepPoints} /></div>}
+          routine={<RoutineSummary variant="app" userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} hideMedicines onOpenRoutine={() => openDashboard()} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} />}
+          checkin={<>
+            <div className="ay-tv__log"><b>Your log</b><button type="button" className="ay-tv__more" onClick={() => openDashboard(true)}>Check in</button></div>
         {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
         <HomeWidgets
           // The week bento already shows sleep; its default health row would repeat it (unless she chose it in Edit).
@@ -158,6 +173,8 @@ export default function AynaHomeScreen(props) {
             <button type="button" onClick={() => onHomeView?.('products')}><span><b>Your products</b><small>{hasProducts ? `${myProducts.length} in your ecosystem` : 'Products that fit you'}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
           </nav>
         </HomeWidgets>
+          </>}
+        />
       </div>
       {asking && <HomeAskSheet signedIn={Boolean(authUser?.id)} hasProfile={hasProfile} onClose={() => setAsking(false)} onAsk={(req) => ask(req.question ? req : askFromPrompt(req))} />}
     </div>

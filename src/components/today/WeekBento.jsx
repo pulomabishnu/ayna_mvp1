@@ -1,4 +1,3 @@
-import { cloneElement } from 'react';
 import { Bento, Tile, Plate } from '../ui/ay';
 import { Sparkline } from '../../mobile/components/DashParts.jsx';
 import { estimatePhase } from '../../health/phase.js';
@@ -131,11 +130,10 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
   if (cycle?.cycleDay) {
     const value = hormonalBC ? `Day ${cycle.cycleDay} since your last bleed` : `Day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`;
     tiles.push(
-      <Tile key="cycle" tone="ink" span="big" className="wb-tile is-cycle" {...btn('cycle', `Cycle: ${cycleWords || 'where you are'}. ${value}.${onOpen ? ' Open cycle.' : ''}`)}>
+      <Tile key="cycle" tone="ink" className="wb-tile is-cycle" {...btn('cycle', `Cycle: ${cycleWords || 'where you are'}. ${value}.${onOpen ? ' Open cycle.' : ''}`)}>
         <span className="ayb-tile__label">Cycle</span>
         <CycleWheel cycle={cycle} hormonalBC={hormonalBC} />
         <span className="wb-take"><b>{cycleWords || 'Where you are'}</b><span>{value}{hormonalBC ? '' : ' · estimated'}</span></span>
-        {!hormonalBC && <span className="wb-key" aria-hidden="true"><i className="is-period" />Period<i className="is-ovu" />Possible ovulation<i className="is-today" />Today</span>}
       </Tile>,
     );
   }
@@ -146,14 +144,15 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
     const [num, unit] = splitUnit(now);
     const words = glanceWords(c);
     const usual = c.usual != null ? `usual ${short(c.metric, c.usual)}` : 'still learning your usual';
+    // Fewer than 3 days of data: the number and "vs usual" only, no near-empty chart (founder Oct 26 19:46).
+    const enough = lastDays(c.points, today).filter((p) => p?.value != null).length >= 3;
     const bars = c.metric === 'sleep_minutes' || c.metric === 'steps';
-    const wide = c.metric === 'sleep_minutes' || (!cycle?.cycleDay && i === 0);
     const tone = TONE[c.metric] || (i % 2 ? 'butter' : 'deep');
     const area = c.area || c.metric;
     tiles.push(
-      <Tile key={c.metric} tone={tone} span={wide ? 'wide' : ''} className={`wb-tile is-${c.metric}`} {...btn(area, `${LABEL(c)}: ${words}. ${now}, ${usual}.${onOpen ? ` Open ${LABEL(c).toLowerCase()}.` : ''}`)}>
+      <Tile key={c.metric} tone={tone} className={`wb-tile is-${c.metric}`} {...btn(area, `${LABEL(c)}: ${words}. ${now}, ${usual}.${onOpen ? ` Open ${LABEL(c).toLowerCase()}.` : ''}`)}>
         <span className="ayb-tile__label">{LABEL(c)}</span>
-        {bars
+        {!enough ? null : bars
           ? <WeekBars points={c.points} usual={c.usual} today={today} metric={c.metric} label={LABEL(c)} />
           : <span className="wb-spark"><Sparkline points={lastDays(c.points, today)} band={bandOf(c.metric)} metric={c.metric} w={160} h={44} label={`${LABEL(c)}, last 7 days`} /></span>}
         <span className="wb-num"><span className="ayb-tile__big">{num}</span>{unit && <span className="ayb-tile__unit">{unit}</span>}</span>
@@ -177,8 +176,7 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
   if (shown.length) {
     const aria = `${productsLabel}: ${products.length} ${products.length === 1 ? 'product' : 'products'}, ${shown.map((p) => p.name).join(', ')}.${onOpenProducts ? ' Open.' : ''}`;
     // A lone wide tile on the last row spans the whole width (no empty half row).
-    const before = tiles.reduce((n, t) => n + ({ big: 4, wide: 2 }[t.props.span] || 1), 0);
-    const full = !coming.length && (before + 2) % 4 === 2;
+    const full = true;
     const props = onOpenProducts ? { as: 'button', type: 'button', onClick: onOpenProducts, 'aria-label': aria } : { role: 'group', 'aria-label': aria };
     tiles.push(
       <Tile key="products" tone="ink" span="wide" className={`wb-tile is-products${full ? ' is-full' : ''}`} {...props}>
@@ -210,11 +208,8 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
   }
 
   if (!tiles.length) return null;
-  // Two columns, always: a single tile never sits alone beside an empty half.
-  // If the half-width tiles don't pair up, the last one takes the full row.
-  const singles = tiles.filter((t) => !t.props.span);
-  const laid = singles.length % 2
-    ? tiles.map((t) => (t === singles[singles.length - 1] ? cloneElement(t, { span: 'wide' }) : t))
-    : tiles;
+  // Two columns of half tiles side by side (founder Oct 26 19:46: "everything is still just stacked").
+  // Only the products row and Coming up run the full width; a lone half stays a half.
+  const laid = tiles;
   return <Bento className={`wb ${className}`.trim()}>{laid}</Bento>;
 }

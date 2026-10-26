@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import WeekBento from './WeekBento.jsx';
 
 describe('WeekBento layout', () => {
-  it('never leaves a lone half-width tile: an unpaired single tile takes the full row', () => {
+  it('cycle and a metric sit side by side as halves; only the products row is wide; under 3 days shows no chart', () => {
     const html = renderToStaticMarkup(
       <WeekBento
         today="2026-10-26"
@@ -13,6 +13,9 @@ describe('WeekBento layout', () => {
       />,
     );
     const steps = html.match(/class="[^"]*is-steps[^"]*"/)?.[0] || '';
-    expect(steps).toContain('is-wide');
+    expect(steps).not.toContain('is-wide');
+    expect(html.match(/class="[^"]*is-cycle[^"]*"/)?.[0] || '').not.toMatch(/is-(wide|big)/);
+    expect(html.match(/class="[^"]*is-products[^"]*"/)?.[0] || '').toContain('is-wide');
+    expect(html).not.toContain('wb-bars');
   });
 });
