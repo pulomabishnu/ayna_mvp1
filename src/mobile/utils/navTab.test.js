@@ -14,8 +14,11 @@ describe('navTabFor', () => {
     expect(navTabFor('ayna', null, { view: 'chat', variant: 'chat' })).toBe('home');
     expect(navTabFor('explore')).toBe('explore');
     expect(navTabFor('browse')).toBe('explore');
-    // The Library is pushed from Explore, not a tab.
-    expect(navTabFor('library')).toBe('explore');
+    // Today · Shop · Services · Community · Library (founder, Oct 26): Shop keeps the 'explore' key.
+    expect(navTabFor('explore', null, { section: 'services' })).toBe('services');
+    expect(navTabFor('explore', null, { section: 'products' })).toBe('explore');
+    expect(navTabFor('library')).toBe('library');
+    expect(navTabFor('explore', null, { section: 'resources' })).toBe('library');
     expect(navTabFor('community')).toBe('community');
     expect(navTabFor('eco')).toBe('profile');
     expect(navTabFor('saved')).toBe('profile');

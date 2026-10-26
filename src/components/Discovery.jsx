@@ -500,7 +500,7 @@ function FilterSheet({ groups, personalizedToggle, sort = null, extra = null, re
     );
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null, matchOpts: matchOptsProp = null, inExplore = false, initialType = null, onOpenReads = null }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null, matchOpts: matchOptsProp = null, inExplore = false, initialType = null, onOpenReads = null, lockType = false }) {
     // Arriving with an intent (a category link, a search) starts fresh; plain "Shop" restores her own filters.
     const memoUid = user?.id || '';
     if (shopMemo.uid !== memoUid) { shopMemo.uid = memoUid; shopMemo.v = readShopMemo(memoUid); }
@@ -527,7 +527,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return MACRO_GROUPS.find(g => g.categories.includes(initialCategory))?.id || 'all';
     });
     const [categoryFilter, setCategoryFilter] = useState(() => memo('categoryFilter', initialCategory || 'all'));
-    const [typeFilter, setTypeFilter] = useState(() => initialType || memo('typeFilter', 'all'));
+    // lockType: the Shop and Services tabs pick the type (founder, Oct 26), so it follows the tab and the toggle hides.
+    const [typeFilter, setTypeFilter] = useState(() => (lockType ? (initialType === 'services' ? 'services' : 'all') : initialType || memo('typeFilter', 'all')));
+    useEffect(() => { if (lockType) setTypeFilter(initialType === 'services' ? 'services' : 'all'); }, [lockType, initialType]);
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
     const searchPlaceholder = useRotatingPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
@@ -1645,7 +1647,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setAynaFilter('all');
     };
     const areaOn = inExplore && macroGroup !== 'all' ? 1 : 0;
-    const sheetFilterCount = [typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length + areaOn;
+    const sheetFilterCount = [lockType ? 'all' : typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length + areaOn;
     const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, inExplore ? 'all' : typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0) + areaOn + avoidAttrs.length;
     // Explore's Filters sheet picks the area (the folder tabs did this outside Explore).
     const pickArea = (id) => {
@@ -1795,11 +1797,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 groups), then Products or Services, then the grid. Deeper filters stay behind Filters. */}
             {inExplore && <div className="ayshop__chips" data-tour="explore-sections">
                 <ShopGroups active={macroGroup} onPick={pickArea} available={availableMacroGroups.map((g) => g.id)} subs={false} label="Filter by need" className="ayshop__groups" />
-                <div className="ayshop__type" role="group" aria-label="Show">
+                {!lockType && <div className="ayshop__type" role="group" aria-label="Show">
                     {/* Products keeps the Shop's default grid ('all' browses products only); Services lists the services. */}
                     <button type="button" aria-pressed={typeFilter !== 'services'} onClick={() => setTypeFilter('all')}>Products</button>
                     <button type="button" aria-pressed={typeFilter === 'services'} onClick={() => setTypeFilter('services')}>Services</button>
-                </div>
+                </div>}
             </div>}
             <div className="ayshop__toolbar">
                 <div className="ayshop__toolbar-left">
@@ -1849,7 +1851,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <FilterSheet
                     groups={[
                         ...(inExplore ? [['Area', macroGroup, pickArea, SHOP_GROUPS.map((g) => [g.id, g.label])]] : []),
-                        ['Type', typeFilter, setTypeFilter, [['products', 'Products'], ['services', 'Apps & services']]],
+                        ...(lockType ? [] : [['Type', typeFilter, setTypeFilter, [['products', 'Products'], ['services', 'Apps & services']]]]),
                         ['Price', priceFilter, setPriceFilter, [['under-25', 'Under $25'], ['25-50', '$25–49'], ['50-100', '$50–99'], ['100-plus', '$100+']]],
                         ['Billing', priceFilter, setPriceFilter, [['subscription', 'Subscription or membership']]],
                         ['Eligibility', eligibilityFilter, setEligibilityFilter, [['fsa-hsa', 'FSA/HSA eligible']]],

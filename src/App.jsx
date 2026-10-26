@@ -164,7 +164,8 @@ import { toast } from './utils/toast';
 import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
 import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
-import { MAIN_TABS, TabIcon, AskMark } from './components/nav/tabs.jsx';
+import { MAIN_TABS, TabIcon, AskMark, ProfileMark } from './components/nav/tabs.jsx';
+import AskSuggestRow from './components/nav/AskSuggestRow.jsx';
 import { YOU_SECTIONS, YOU_SECTION_ALIASES } from './components/nav/mainTabs.js';
 import { ExploreHeader } from './components/explore/ExploreNav.jsx';
 import YouTabs from './components/you/YouTabs.jsx';
@@ -183,9 +184,12 @@ import { markReturnToFreeProduct, takeReturnToFreeProduct } from './utils/freePr
 import { trackQuizStarted, trackFirstMatchShown, eventSurface } from './utils/analyticsEvents.js';
 
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
+// Today · Shop · Services · Community · Library (founder, Oct 26). Shop keeps the 'explore' key.
 const WEB_TAB_VIEWS = {
   today: ['today'],
-  explore: ['explore', 'explore-topics', 'explore-services', 'discovery', 'product', 'articles'],
+  explore: ['explore', 'explore-topics', 'discovery', 'product'],
+  services: ['explore-services'],
+  library: ['articles'],
   ask: ['ask'],
   community: ['community'],
   // My ecosystem and everything reached from it live under You.
@@ -199,6 +203,8 @@ const EXPLORE_VIEW = { overview: 'explore', topics: 'explore-topics', services: 
 const SHOP_VIEWS = new Set(['discovery', 'explore', 'explore-topics', 'explore-services']);
 /** Focused flows: a minimal header (logo · Exit), no tab bar, no footer (P1-28). */
 const FOCUSED_FLOW_VIEWS = ['quiz', 'profile-edit'];
+/** The five tab pages: a slim row of Ask ayna suggestions sits under the top bar on these. */
+const ASK_SUGGEST_VIEWS = new Set(['today', 'explore', 'explore-topics', 'explore-services', 'discovery', 'community', 'articles']);
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
 const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about', 'how-it-works'];
 
@@ -263,7 +269,7 @@ const VIEW_TO_PATH = {
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
   quiz: 'Get matched', ecosystem: 'My ecosystem', discovery: 'Products', you: 'You', community: 'Community',
-  today: 'Today', explore: 'Explore', 'explore-topics': 'Health topics', 'explore-services': 'Services', ask: 'Ask ayna',
+  today: 'Today', explore: 'Shop', 'explore-topics': 'Health topics', 'explore-services': 'Services', ask: 'Ask ayna',
   waitlist: 'Partner brands', recommendations: 'Your recommendations', articles: 'Resources', screenings: 'Screenings',
   omitted: 'Omitted products', comparison: 'Compare products', recalls: 'Recalls',
   'doctor-prep': 'Appointment prep', 'profile-edit': 'Edit my answers',
@@ -2406,7 +2412,10 @@ function App() {
   // Where each main tab goes (top nav and phone tab bar).
   const mainTabGo = {
     today: () => setCurrentView('today'),
+    // Shop is the old Explore page (/explore); Services the same page with Services picked; Library the reads.
     explore: () => openExplore('overview'),
+    services: () => setCurrentView('explore-services'),
+    library: () => openExplore('resources'),
     ask: () => setCurrentView('ask'),
     community: () => setCurrentView('community'),
     profile: () => openYou(null),
@@ -2457,7 +2466,7 @@ function App() {
             <span className="ay-nav__beta">beta</span>
           </a>
 
-          {/* The five main tabs, same names and order as the app (Today, Explore, Ask ayna, Community, You). Real links (G02). */}
+          {/* The five main tabs, same names and order as the app (Today, Shop, Services, Community, Library). Real links (G02). */}
           <div className="ay-nav__links">
             {MAIN_TABS.map((t) => (
               <a key={t.key} href={t.href} className="ay-nav__link" aria-current={WEB_TAB_VIEWS[t.key].includes(currentView) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
@@ -2499,6 +2508,13 @@ function App() {
                   {checkinDue && <span className="ay-nav__dot" aria-hidden />}
                 </button>
               ) : (
+                <>
+                {/* You (founder, Oct 26): out of the tabs, a round profile button beside Ask ayna. */}
+                {!['welcome', 'hero'].includes(currentView) && (
+                  <a href="/you" className="ay-nav__icon ay-avatar ay-nav__profile" aria-label="You: your profile and settings" aria-current={currentView === 'you' ? 'page' : undefined} {...linkProps(() => { setShowAccountMenu(false); openYou(null); })}>
+                    <ProfileMark />
+                  </a>
+                )}
                 <button
                   type="button"
                   className="ay-nav__login"
@@ -2507,6 +2523,7 @@ function App() {
                 >
                   Log in
                 </button>
+                </>
               )}
               {showAccountMenu && user && (
                 <div className="nav-account-menu" role="menu">
@@ -2532,6 +2549,10 @@ function App() {
         </div>
       <main data-view={currentView}>
         <div id="ay-content" tabIndex={-1} />
+        {/* Ask ayna suggestions under the top bar (founder, Oct 26): tap sends the question, Hide collapses it for the session. */}
+        {ASK_SUGGEST_VIEWS.has(currentView) && (
+          <AskSuggestRow className="ay-asksug--web" signedIn={Boolean(user)} hasProfile={Boolean(quizResults)} onAsk={(q) => openAsk(q)} />
+        )}
 
         {(currentView === 'welcome' || currentView === 'hero') && (
           <AynaLanding
@@ -3052,7 +3073,7 @@ function App() {
         )}
         {(SHOP_VIEWS.has(currentView) || (currentView === 'product' && discoveryKeepAliveRef.current)) && (
           <div data-tour="explore" style={SHOP_VIEWS.has(currentView) ? undefined : { display: 'none' }}>
-          <ExploreHeader compact />
+          <ExploreHeader compact title={currentView === 'explore-services' ? 'Services' : 'Shop'} />
           <Suspense fallback={<ViewLoadingFallback />}>
           <Discovery
             matchOpts={matchOpts}
@@ -3085,7 +3106,8 @@ function App() {
             user={user}
             onRequirePersonalizeAuth={handleRequirePersonalizeAuth}
             onAsk={(q) => openAsk(`Help me find ${q}`)}
-            initialType={currentView === 'explore-services' ? 'services' : null}
+            initialType={currentView === 'explore-services' ? 'services' : 'products'}
+            lockType
             onOpenReads={() => openExplore('resources')}
             inExplore
           />
@@ -3192,7 +3214,7 @@ function App() {
               const go = mainTabGo[t.key];
               return (
                 <a key={t.key} href={t.href} className={`${on ? 'is-on' : ''}${t.center ? ' is-center' : ''}`} aria-current={on ? 'page' : undefined} {...linkProps(go)}>
-                  <span className="ay-tabbar__icon" aria-hidden="true"><TabIcon kind={t.key} on={on} /></span><span className="ay-tabbar__label">{t.label}</span>
+                  <span className="ay-tabbar__icon" aria-hidden="true"><TabIcon kind={t.icon || t.key} on={on} /></span><span className="ay-tabbar__label">{t.label}</span>
                 </a>
               );
             })}

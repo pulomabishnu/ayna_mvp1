@@ -58,7 +58,7 @@ describe('app routing: Home, dashboard first', () => {
     expect(initialAppRoute({ devScreen: 'today', hasProfile: true })).toEqual({ screen: 'ayna', view: 'home' });
     expect(aynaRoute('ask')).toEqual({ screen: 'ayna', view: 'chat' });
     expect(navTabFor('today')).toBe('home');
-    expect(navTabFor('library')).toBe('explore');
+    expect(navTabFor('library')).toBe('library');
   });
   it('?home=chat shows the chat-first Home for the focus group; only the address decides (QA round 2)', () => {
     const store = { v: { ayna_home_variant: 'chat' }, getItem(k) { return this.v[k] ?? null; }, setItem(k, x) { this.v[k] = x; }, removeItem(k) { delete this.v[k]; } };

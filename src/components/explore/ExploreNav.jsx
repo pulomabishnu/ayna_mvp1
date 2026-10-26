@@ -28,12 +28,12 @@ function SectionNav({ label, sections, active, onGo, className = '' }) {
  * so there are no section tabs; the filters sit on the page under the search.
  * `titleAs="p"` when the page below has its own H1, so the page has one H1.
  */
-export function ExploreHeader({ children = null, compact = false, titleAs = 'h1', stickers = [] }) {
+export function ExploreHeader({ children = null, compact = false, titleAs = 'h1', stickers = [], title = 'Explore' }) {
   return (
     // The approved Shop header, kept for all of Explore: a full-bleed espresso band with a scalloped edge (signature 3: scallops at section edges only).
     <header className={`wx-top ay-container ay-pagehead ay-band ay-band--espresso wx-top--v9${compact ? ' is-compact' : ''}`}>
       {/* The page's one shout (#4dfb3fbd FEEL FITS): "Explore" oversized in the espresso band. */}
-      <Shout as={titleAs} className="wx-title wx-shout">Explore</Shout>
+      <Shout as={titleAs} className="wx-title wx-shout">{title}</Shout>
       {/* The band's one seal, as on the Oct 21-22 Shop band. */}
       <Seal className="wx-seal" />
       {/* Her picks as die-cut stickers beside the seal (real photos only; nothing without them). */}

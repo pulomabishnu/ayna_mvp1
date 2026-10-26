@@ -1,15 +1,18 @@
 /**
  * Which of the app's five tabs a screen (or overlay) sits under:
- * Today · Explore · Ask ayna · Community · You (all-pages brief, Oct 25).
- * Today (key 'home') is the 'ayna' screen; its 'chat' view is the Ask ayna
- * tab. In the chat-first variant (?home=chat) the chat is home, so every
- * 'ayna' view sits under the first tab. The Library is pushed under Explore.
+ * Today · Shop · Services · Community · Library (founder, Oct 26).
+ * Today (key 'home') is the 'ayna' screen. Shop keeps the 'explore' key; the
+ * same screen with the Services section is the Services tab. The chat ('ask')
+ * and You ('profile') are reached from the header, so no tab lights for them.
+ * In the chat-first variant (?home=chat) the chat is home.
  */
-export function navTabFor(screen, overlayType = null, { view = null, variant = 'dashboard' } = {}) {
+export function navTabFor(screen, overlayType = null, { view = null, variant = 'dashboard', section = null } = {}) {
   if (['profile', 'profile-auth'].includes(overlayType)) return 'profile';
   if (variant !== 'chat' && (screen === 'ask' || (screen === 'ayna' && view === 'chat'))) return 'ask';
   if (['ayna', 'today', 'ask'].includes(screen)) return 'home';
-  if (['explore', 'browse', 'library'].includes(screen)) return 'explore';
+  if (screen === 'library' || (screen === 'explore' && section === 'resources')) return 'library';
+  if (screen === 'explore' && section === 'services') return 'services';
+  if (['explore', 'browse'].includes(screen)) return 'explore';
   if (screen === 'community') return 'community';
   // My ecosystem and Saved live under You.
   if (['eco', 'ecointro', 'saved'].includes(screen)) return 'profile';
