@@ -404,7 +404,6 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         compact={compact}
         onSeeData={(d) => { try { window.dispatchEvent(new CustomEvent('ayna:health-tab', { detail: { tab: d?.tab } })); } catch { /* old browser */ } }}
       />
-      <RundownNotifyAsk today={t.today} show={rundownSeen} />
       {items.length > 0 && <Progress items={items} t={t} />}
       {compact && (items.length > 0
         ? <ul className="ay-today__list is-compact" data-tour="today-things">
@@ -424,6 +423,8 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
           <p className="ay-today__empty">{t.decision.empty}</p>
           <ProfileAskCard asList variant={variant} intake={intake} today={t.today} onAnswer={onEditAnswers} />
         </>)}
+      {/* After the items, and never on a day with a safety or care item. */}
+      <RundownNotifyAsk today={t.today} show={rundownSeen && !items.some((it) => PROTECTED.has(it.tier))} />
       {nextBest && <NextBest pick={nextBest} onOpenProduct={onOpenProduct} onClose={() => setNextBest(null)} />}
       {!compact && (t.pendingProfileSaves.length > 0 || t.notes['save:done']) && (
         <div className="ay-today__save" role="group" aria-label="Save to your health profile">
