@@ -79,3 +79,6 @@
   .am-type-icon { background: #ffffff; border-color: #3e2723; }
   .am-type small { color: rgba(62, 39, 35, .78); }
 }
+/* selected topic chips: pink (state), never blue; focus ring in ink */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-topic-grid button.is-on { background: #f7badd !important; color: #3e2723 !important; border-color: #3e2723 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-topic-grid button:focus-visible { outline: 3px solid currentColor !important; }
