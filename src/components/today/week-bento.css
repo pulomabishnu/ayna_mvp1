@@ -81,3 +81,8 @@
 .wb-date { display: grid; justify-items: center; padding: 6px 0; border-radius: 8px; background: #3E2723; color: #FFEDAC; }
 .wb-date b { font: 800 20px/1 var(--ay-font-display); }
 .wb-date small { font: 600 13px/1.2 var(--ay-font-ui); }
+
+/* Founder Oct 26 18:18: no tile left alone with an empty half. The week is always a 2-column bento
+   (big = full row, wide = full row, singles pair; WeekBento widens an unpaired last single). */
+:is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-auto-flow: row dense; }
+:is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) .is-wide .wb-bars svg { height: 96px; }

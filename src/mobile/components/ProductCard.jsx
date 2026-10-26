@@ -19,6 +19,14 @@ import { matchBreakdownFor } from '../../components/pdp/decision.js';
 import { PlateName, OneFact, SafetyTag } from '../../components/cards/CardBits.jsx';
 import { Plate } from '../../components/ui/ay';
 
+// Whole card opens the product: a click anywhere that isn't its own button or link
+// forwards to the card's one link (keyboard users still reach that link directly).
+function openFromCard(e) {
+  if (e.defaultPrevented || e.target?.closest?.('a, button, input, select, textarea, label, [role="button"]')) return;
+  const link = e.currentTarget.querySelector('.ay-pcard__link:not(.is-static)');
+  if (link) link.click();
+}
+
 export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts, needId = null, onSeeMatch = null }) {
   const { name, category, price, priceDisplay, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
@@ -68,7 +76,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
     // Unknown price: nothing printed (QA3 M8), never "Price at retailer".
     const knownPrice = isKnownPrice(facts.main);
     return (
-      <article data-pid={product.id} className={`ay-pcard${variant === 'row' ? ' is-row' : ''}${isSaved ? ' is-saved' : ''}`}>
+      <article onClick={openFromCard} data-pid={product.id} className={`ay-pcard${variant === 'row' ? ' is-row' : ''}${isSaved ? ' is-saved' : ''}`}>
         {/* 2. Brand · name. The button covers the card (same as the website's link). */}
         <small className="ay-pcard__brand" aria-hidden={showBrand ? undefined : true}>{showBrand ? secondaryLabel : '\u00a0'}</small>
         <strong className="ay-pcard__name">

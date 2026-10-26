@@ -29,6 +29,14 @@ const HEART = 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7
  * `tile` lets Shop pass its own image node (it resolves images live);
  * everyone else gets ProductTileImage.
  */
+// Whole card opens the product: a click anywhere that isn't its own button or link
+// forwards to the card's one link (keyboard users still reach that link directly).
+function openFromCard(e) {
+  if (e.defaultPrevented || e.target?.closest?.('a, button, input, select, textarea, label, [role="button"]')) return;
+  const link = e.currentTarget.querySelector('.ay-pcard__link:not(.is-static)');
+  if (link) link.click();
+}
+
 export default function ProductCard({
   product,
   matchPercent = null,
@@ -79,13 +87,15 @@ export default function ProductCard({
   };
   const open = (e) => {
     if (!isPlainLeftClick(e)) return;
-    e.preventDefault();
     // The star line is the way to the reviews: the page opens on Reviews.
     if (e.target?.closest?.('.ay-pcard__rating')) requestProductTab('reviews');
-    onOpen?.(product);
+    // No in-app opener: let the link navigate to the product page.
+    if (typeof onOpen !== 'function') return;
+    e.preventDefault();
+    onOpen(product);
   };
   return (
-    <article data-pid={product.id} className={`ay-pcard${inEcosystem ? ' is-in-eco' : ''}${isSaved ? ' is-saved' : ''}${hasMatch ? ' has-fit' : ''} ${className}`.trim()} style={style}>
+    <article onClick={openFromCard} data-pid={product.id} className={`ay-pcard${inEcosystem ? ' is-in-eco' : ''}${isSaved ? ' is-saved' : ''}${hasMatch ? ' has-fit' : ''} ${className}`.trim()} style={style}>
       {/* 1. The product on its plate, same scale on every card, with one category sticker. */}
       <Plate className="ay-pcard__plate" saved={isSaved} sticker={sticker || null}>
         {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<PlateName product={product} />} />}

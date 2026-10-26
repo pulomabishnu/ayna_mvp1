@@ -1,3 +1,4 @@
+import { cloneElement } from 'react';
 import { Bento, Tile, Plate } from '../ui/ay';
 import { Sparkline } from '../../mobile/components/DashParts.jsx';
 import { estimatePhase } from '../../health/phase.js';
@@ -209,5 +210,11 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
   }
 
   if (!tiles.length) return null;
-  return <Bento className={`wb ${className}`.trim()}>{tiles}</Bento>;
+  // Two columns, always: a single tile never sits alone beside an empty half.
+  // If the half-width tiles don't pair up, the last one takes the full row.
+  const singles = tiles.filter((t) => !t.props.span);
+  const laid = singles.length % 2
+    ? tiles.map((t) => (t === singles[singles.length - 1] ? cloneElement(t, { span: 'wide' }) : t))
+    : tiles;
+  return <Bento className={`wb ${className}`.trim()}>{laid}</Bento>;
 }

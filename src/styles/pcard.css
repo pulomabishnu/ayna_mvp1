@@ -187,3 +187,4 @@
 :is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ay-pcard.ay-pcard .ay-pcard__fit { display: flex !important; flex-wrap: wrap; align-items: center; column-gap: 8px; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ay-pcard.ay-pcard .ay-pcard__what { position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 44px; margin: -6px 0; padding: 0; border: 0; background: none; color: var(--pc-ink, currentColor); font: 600 13px/1.2 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ay-pcard.ay-pcard .ay-pcard__what:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 4px; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard { cursor: pointer; }
