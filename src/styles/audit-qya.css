@@ -59,7 +59,7 @@
 .app-container .wyou .ay-donut-num, .app-container .wyou .ay-donut-cap { rotate: 0deg; }
 
 /* ---------------- Auth modal ---------------- */
-.app-container .ay-auth-card { --qya-err: #b4402a; background: var(--ay-paper) !important; border-color: var(--ay-ink) !important; box-shadow: 6px 6px 0 var(--ay-ink) !important; color: var(--ay-ink); gap: 16px !important; padding: 32px !important; }
+.app-container .ay-auth-card { --qya-err: #b4402a; background: var(--ay-paper) !important; border-color: var(--ay-ink) !important; box-shadow: none !important; color: var(--ay-ink); gap: 16px !important; padding: 32px !important; }
 .app-container[data-theme='dark'] .ay-auth-card { --qya-err: #ff9b85; }
 .app-container .ay-auth-logo { color: var(--ay-ink) !important; }
 .app-container .ay-auth-tagline { margin: -8px 0 0 !important; color: var(--ay-ink-soft) !important; font: 600 var(--ay-fs-secondary)/1.4 var(--ay-sans) !important; }

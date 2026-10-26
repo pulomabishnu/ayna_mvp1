@@ -73,9 +73,9 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-her
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card {
   --x-feature: #f7badd; --x-on: #3e2723; --x-on-2: rgba(62, 39, 35, .8); --x-on-hair: rgba(62, 39, 35, .25);
   position: relative; overflow: visible; min-height: 0; align-content: start; gap: 12px;
-  padding: 28px 28px 26px !important; border-radius: 24px!important; border: 2px solid #3e2723; box-shadow: 6px 6px 0 #3e2723; background: #f7badd !important; color: #3e2723;
+  padding: 28px 28px 26px !important; border-radius: 24px!important; border: 2px solid #3e2723; box-shadow: none; background: #f7badd !important; color: #3e2723;
 }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh .ay-rd-hero__card { border-color: #ffedac; box-shadow: 6px 6px 0 #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh .ay-rd-hero__card { border-color: #ffedac; box-shadow: none; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card.is-new { outline: 0; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__date { display: none; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__kicker { justify-self: start; display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px !important; border-radius: 999px; background: #ffedac; color: #3e2723 !important; opacity: 1; font: 600 13px/1 var(--ay-sans-stack) !important; }
@@ -148,7 +148,7 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-row { padding
 /* category chips as stickers: outline + 3px hard shadow, a pop of pink when on */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-topics { gap: 10px 10px; padding: 2px 4px 6px 0; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec:not(.wx-phrases) .wx-topics .ay-chip { border: 1.5px solid var(--ds-line) !important; background: var(--ds-group) !important; color: var(--ds-ink) !important; box-shadow: 3px 3px 0 var(--ds-line) !important; font-weight: 600 !important; transition: transform .15s, box-shadow .15s; }
-@media (hover: hover) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ds-line) !important; } }
+@media (hover: hover) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:hover { transform: translate(-1px, -1px); box-shadow: none !important; } }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ds-line) !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+1) { background: #f7badd !important; color: #3e2723 !important; }
 /* reads: covers get the outline + small shadow */
@@ -244,12 +244,12 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topic
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+3) { background: #769ebe !important; color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:hover { box-shadow: 3px 3px 0 var(--ds-line) !important; }
 /* ASK: what ayna answers from sits on a filled pink block; the starters become filled colour tiles (Oct 22 Ask landing), no outlines */
-@media (min-width: 1024px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__side { padding: 28px 26px; border-radius: 20px; background: #f7badd; color: #3e2723; box-shadow: 6px 6px 0 #3e2723; } }
+@media (min-width: 1024px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__side { padding: 28px 26px; border-radius: 20px; background: #f7badd; color: #3e2723; box-shadow: none; } }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__side :is(p, h1, .wx-ask__title, .wx-ask__basedh, .wx-ask__note) { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based { border-top-color: rgba(62, 39, 35, .3); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based li { border-color: #3e2723; background: #ffedac; color: #3e2723; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based li:first-child { background: #769ebe; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .wx-ask__side { box-shadow: 6px 6px 0 #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .wx-ask__side { box-shadow: none; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 !important; border: 0 !important; background: none !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li { border-top: 0 !important; border-radius: 16px; background: var(--ds-group); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-pink { background: #f7badd; }

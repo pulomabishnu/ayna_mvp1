@@ -164,7 +164,7 @@
 
 /* ---------- Confirm dialog (v3 sheet) ---------- */
 .app-container .fp .fp-dialog { position: fixed; inset: 0; z-index: 6000; display: grid; place-items: center; padding: 16px; background: rgba(62, 39, 35, .42); backdrop-filter: blur(3px); }
-.app-container .fp .fp-dialog__box { width: min(500px, 100%); padding: 32px; border: 1.5px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 8px 8px 0 var(--ay-ink); text-align: left; animation: fpPop .32s var(--ease-out) both; }
+.app-container .fp .fp-dialog__box { width: min(500px, 100%); padding: 32px; border: 1.5px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: none; text-align: left; animation: fpPop .32s var(--ease-out) both; }
 @keyframes fpPop { from { opacity: 0; transform: translateY(14px) scale(.97); } }
 .app-container .fp .fp-dialog__box h2 { margin: 0 0 12px !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; font-size: var(--ay-fs-title) !important; line-height: 1.1 !important; letter-spacing: -0.01em !important; }
 .app-container .fp .fp-dialog__box p { margin: 0; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }

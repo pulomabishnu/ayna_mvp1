@@ -83,7 +83,7 @@ html body .app-container[data-theme='brand-dark'] #pdp-v4 {
 #pdp-v4 .ay-buy__warn .pdp-textlink { justify-self: start; padding: 0 !important; border: 0 !important; background: none !important; color: var(--v-deep) !important; font: 700 15px/1.3 'Figtree', sans-serif !important; text-decoration: underline !important; text-underline-offset: 3px; cursor: pointer; }
 
 /* ---------- Photo ---------- */
-#pdp-v4 .pdp-head__tile { width: 100% !important; max-height: 560px !important; min-height: 0 !important; aspect-ratio: 1 / 1 !important; height: auto !important; display: grid !important; place-items: center; overflow: hidden !important; padding: 0 !important; border: 3px solid var(--v-fg) !important; border-radius: 36px !important; background: #fff !important; box-shadow: 8px 8px 0 var(--v-pink) !important; }
+#pdp-v4 .pdp-head__tile { width: 100% !important; max-height: 560px !important; min-height: 0 !important; aspect-ratio: 1 / 1 !important; height: auto !important; display: grid !important; place-items: center; overflow: hidden !important; padding: 0 !important; border: 3px solid var(--v-fg) !important; border-radius: 36px !important; background: #fff !important; box-shadow: none !important; }
 #pdp-v4 .pdp-head__tile img { position: static !important; inset: auto !important; transform: none !important; width: 72% !important; height: 82% !important; max-width: none !important; max-height: none !important; margin: auto !important; object-fit: contain !important; }
 #pdp-v4 .pdp-head__tile > button { width: 100% !important; height: 100% !important; border-radius: 33px !important; background: transparent !important; overflow: hidden !important; }
 #pdp-v4 .pdp-gallery { display: grid !important; gap: 12px; height: auto !important; }
@@ -207,7 +207,7 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-itabs__bar >
 #pdp-v4 .ay-bubble .ay-ev__body { font-size: 19px !important; line-height: 1.6 !important; margin: 0 !important; }
 #pdp-v4 .ay-bubble .ay-ev__by { font-weight: 500 !important; opacity: 1; }
 #pdp-v4 .ay-itabs__panel.is-reviews .ay-src > ul { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
-#pdp-v4 .ay-itabs__panel.is-reviews .ay-src__card:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--v-pink) !important; background: transparent !important; }
+#pdp-v4 .ay-itabs__panel.is-reviews .ay-src__card:hover { transform: translate(-2px, -2px); box-shadow: none !important; background: transparent !important; }
 
 /* ---------- How to use ---------- */
 #pdp-v4 .ay-tabs__steps { display: grid; gap: 4px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
@@ -282,7 +282,7 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-itabs__bar >
 /* Photo: white tile, thick outline, pink offset shadow (the branch's stamp edge gives way to it). */
 #pdp-v4 .ayp-gallery__stamp { padding: 0 !important; background: none !important; -webkit-mask: none !important; mask: none !important; filter: none !important; }
 #pdp-v4 .ayp-gallery__stamp::before, #pdp-v4 .ayp-gallery__stamp::after { content: none !important; }
-#pdp-v4 .ayp-gallery__tile { width: 100% !important; max-height: 560px !important; aspect-ratio: 1 / 1 !important; overflow: hidden !important; border: 3px solid var(--v-fg) !important; border-radius: 36px !important; background: #fff !important; box-shadow: 8px 8px 0 var(--v-pink) !important; }
+#pdp-v4 .ayp-gallery__tile { width: 100% !important; max-height: 560px !important; aspect-ratio: 1 / 1 !important; overflow: hidden !important; border: 3px solid var(--v-fg) !important; border-radius: 36px !important; background: #fff !important; box-shadow: none !important; }
 #pdp-v4 .ayp-gallery__zoom { border-radius: 33px !important; }
 #pdp-v4 .ayp-gallery__zoom img { width: 72% !important; height: 82% !important; margin: auto !important; object-fit: contain !important; }
 

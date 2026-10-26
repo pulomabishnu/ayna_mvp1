@@ -82,7 +82,7 @@
   border: 2px solid #1d1a2b; border-radius: 99px; background: #fffcf5; color: #1d1a2b; box-shadow: 3px 3px 0 #1d1a2b;
   font: 700 14px/1 'Figtree', system-ui, sans-serif; cursor: pointer; transition: transform .14s ease, box-shadow .14s ease;
 }
-.ay-flow-back:hover, .ay-flow-auth-back:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #1d1a2b; }
+.ay-flow-back:hover, .ay-flow-auth-back:hover { transform: translate(-1px, -1px); box-shadow: none; }
 .ay-flow-back:active, .ay-flow-auth-back:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #1d1a2b; }
 .ay-flow-back svg, .ay-flow-auth-back svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 @media (max-width: 560px) {

@@ -19,7 +19,7 @@
   --ds-line: #3e2723;
   --ds-pink: #f7badd;
   --ds-sky: #769ebe;
-  --ds-shadow: 4px 4px 0 var(--ds-line);
+  --ds-shadow: none;
   --ds-shadow-sm: 3px 3px 0 var(--ds-line);
   --ds-r: 20px;
   --ds-display: var(--ay-heading, var(--ay-app-heading, 'ayna Display', 'Bricolage Grotesque', system-ui, sans-serif));

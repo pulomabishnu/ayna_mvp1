@@ -807,7 +807,7 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
 .ed .ed-statement__line mark { color: inherit; background: linear-gradient(transparent 55%, #f7badd 55%, #f7badd 95%, transparent 95%); padding: 0 .08em; }
 .app-container[data-theme='brand-dark'] .ed .ed-statement__line mark, .app-container[data-theme='dark'] .ed .ed-statement__line mark { background: linear-gradient(transparent 55%, rgba(247, 186, 221, .45) 55%, rgba(247, 186, 221, .45) 95%, transparent 95%); }
 .ed .ed-statement__stickers { display: flex; justify-content: center; gap: 18px; pointer-events: none; }
-.ed .ed-statement__sticker { display: block; width: 120px; height: 120px; padding: 8px; box-sizing: border-box; background: #fff; border: 1.5px solid #3e2723; border-radius: 22px; box-shadow: 4px 4px 0 #3e2723; }
+.ed .ed-statement__sticker { display: block; width: 120px; height: 120px; padding: 8px; box-sizing: border-box; background: #fff; border: 1.5px solid #3e2723; border-radius: 22px; box-shadow: none; }
 .ed .ed-statement__sticker img { width: 100%; height: 100%; object-fit: contain; }
 .ed .ed-statement__sticker.is-0 { rotate: -8deg; translate: 0 -18px; }
 .ed .ed-statement__sticker.is-1 { rotate: 5deg; translate: 0 22px; }

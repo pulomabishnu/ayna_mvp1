@@ -257,7 +257,7 @@
   --pc-ink: #3e2723; --pc-bg: #ffedac; --pc-soft: rgba(62, 39, 35, .72);
   position: relative; display: flex; flex-direction: column; box-sizing: border-box; height: 100%;
   padding: 9px 9px 10px !important; border: 2px solid var(--pc-ink) !important; border-radius: 16px!important; background: var(--pc-bg) !important; color: var(--pc-ink) !important;
-  box-shadow: 5px 5px 0 var(--pc-ink) !important; overflow: visible !important; transition: transform .14s var(--ease-out, ease-out), box-shadow .14s var(--ease-out, ease-out);
+  box-shadow: none !important; overflow: visible !important; transition: transform .14s var(--ease-out, ease-out), box-shadow .14s var(--ease-out, ease-out);
 }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-pc { --pc-ink: #ffedac; --pc-bg: #4a312c; --pc-soft: rgba(255, 237, 172, .78); }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc:has(.ay-pc-main:active) { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--pc-ink) !important; }
