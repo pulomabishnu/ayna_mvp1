@@ -28,7 +28,7 @@ describe('answerMatchQuestion', () => {
     const out = answerMatchQuestion(`what's my % match for ${p.name}`, ctx());
     expect(out.productId).toBe(String(p.id));
     expect(out.answer).toContain(`${d.percent}% match`);
-    expect(out.answer).toContain('**Why**');
+    expect(out.answer).toContain('**What raised it**');
     expect(out.answer).not.toMatch(/—/);
     expect(out.followUps).toEqual([{ type: 'open_product', productId: String(p.id), label: 'See full match details' }]);
   });
