@@ -848,6 +848,7 @@ export default function ProductModal({
                 onSave={onToggleSaved ? () => { onToggleSaved(product); showToast(isSaved ? 'Removed from Saved' : user ? 'Saved to My Ecosystem' : 'Saved on this device. Sign in to keep it everywhere.'); } : null}
                 inRoutine={isInEcosystem}
                 onRoutine={onAddToEcosystem && user ? () => onAddToEcosystem(product) : null}
+                routineWords={['Routine', 'In my routine']}
                 onAsk={onAskAyna ? () => setAskOpen(true) : null}
                 notForMe={onOmit && user ? <p className="ayv-acts__more"><button type="button" className="ayv-textbtn" onClick={() => onOmit(product)}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button></p> : null}
               />

@@ -862,7 +862,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
             <p className="ayv-leadin ayv-sub">Not for:</p>
             <ShowAll items={whoL.no} n={Infinity} label="" className="ayv-list ayv-list--no" render={(t) => <><span className="ayv-mark is-no" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M7 7l10 10M17 7 7 17" /></svg></span><span className="ayq-p"><span className="sr-only">Not for: </span><LR text={t} /></span></>} />
           </>}
-          {fit?.hasProfile && fit?.onShowWhy && <p className="ayv-links"><button type="button" className="ayv-textbtn" onClick={fit.onShowWhy}>See the breakdown</button><a className="ayv-textbtn" href="/how-it-works">How we match</a></p>}
+          {/* "See the breakdown / How we match" moved to the Why N%? explainer under the match pill (audit 7.3). */}
           {fit?.extra}
         </>
       ))}

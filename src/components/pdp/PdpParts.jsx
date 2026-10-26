@@ -321,6 +321,7 @@ export function MatchLockup({ state, breakdown = null, onAskWhy = null, onFull =
         <p className="ayv-lock__actions">
           {onAskWhy && <button type="button" className="ayv-obtn" onClick={() => onAskWhy(`Why is my match ${shown != null ? `${shown}%` : 'a partial fit'}?`)}><PdpIcon name="ask" size={16} />Ask ayna why</button>}
           {onFull && <button type="button" className="ayv-textbtn" onClick={onFull}>See the full breakdown</button>}
+          <a className="ayv-textbtn" href="/how-it-works">How we match</a>
         </p>
       </div>
     </div>
