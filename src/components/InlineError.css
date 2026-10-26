@@ -4,7 +4,7 @@
 .ay-inline-err.ay-inline-err {
   display: flex; align-items: flex-start; gap: 8px;
   margin: 4px 0 0 !important; padding: 0 !important;
-  color: var(--ay-ink, #3e2723) !important;
+  color: var(--legacy-ink, #3e2723) !important;
   font: 600 var(--ay-fs-caption)/1.4 var(--ay-sans) !important;
   text-align: left;
 }

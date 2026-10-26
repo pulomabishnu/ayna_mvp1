@@ -392,7 +392,7 @@ body:has(.lv) .site-footer :is(.site-footer__legal) { border-color: rgba(62,39,3
 body:has(.lv) .site-footer :is(a, p, span, li, small, h2, h3, h4) { color: #3e2723; }
 .app-container .lv .lv-search input { background: #ffedac !important; }
 body:has(.lv), body:has(.lv) .app-container, body:has(.lv) .app-container .app-nav, body:has(.lv) .app-container .site-footer {
-  --ay-ink: #3e2723 !important; --ay-paper: #ffedac !important; --ay-butter: #f7badd !important; --ay-shadow: 3px 3px 0 #3e2723 !important; }
+  --legacy-ink: #3e2723 !important; --ay-paper: #ffedac !important; --legacy-butter: #f7badd !important; --ay-shadow: 3px 3px 0 #3e2723 !important; }
 html body:has(.lv) .app-container .ay-footer .ay-footer-col__title { color: rgba(62,39,35,.75) !important; }
 html body:has(.lv) .app-container .site-footer .site-footer__legal { border-color: rgba(62,39,35,.15) !important; }
 .app-container .lv .lv-stamp svg { fill: var(--ink); }
@@ -504,7 +504,7 @@ body:has(.lv), body:has(.lv) .app-container, body:has(.lv) .app-container .site-
 .app-container .lv .lv-pause:hover, .app-container .lv .lv-pause:focus-visible { opacity: 1; }
 .app-container .lv .lv-pause svg { width: 14px; height: 14px; fill: var(--ink); }
 /* the old welcome carousel, back, in the v3 palette and without its colour band */
-.app-container .lv .whc { --ay-ink: #3e2723; --ay-paper: #ffedac; --ay-cream: #ffedac; --ay-tile: #ffedac; --ay-pink: #f7badd; --ay-butter: #f7badd; --ay-mint: #769ebe; --ay-peri: #769ebe; --ay-shadow: 4px 4px 0 #3e2723; --ay-font-display: var(--ay-serif); --ay-font-ui: var(--ay-sans);
+.app-container .lv .whc { --legacy-ink: #3e2723; --ay-paper: #ffedac; --ay-cream: #ffedac; --ay-tile: #ffedac; --legacy-pink: #f7badd; --legacy-butter: #f7badd; --ay-mint: #769ebe; --ay-peri: #769ebe; --ay-shadow: 4px 4px 0 #3e2723; --ay-font-display: var(--ay-serif); --ay-font-ui: var(--ay-sans);
   padding: 0; border-block: 0; background: transparent !important; }
 .app-container .lv .whc :is(h2, .whc-title) { font-family: var(--ay-serif) !important; font-weight: 400 !important; }
 .app-container .lv .whc :is(p, a, button, li, b, span) { font-family: var(--ay-sans) !important; }

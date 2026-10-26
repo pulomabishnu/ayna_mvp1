@@ -542,9 +542,9 @@ export default function SigninScreen({
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMeChecked(e.target.checked)}
-                style={{ width: 18, height: 18, flex: 'none', margin: 0, accentColor: 'var(--ay-ink, #3e2723)' }}
+                style={{ width: 18, height: 18, flex: 'none', margin: 0, accentColor: 'var(--legacy-ink, #3e2723)' }}
               />
-              <span style={{ fontFamily: "var(--ayna-font-ui)", lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', fontWeight: 400, color: 'var(--ay-ink, #3e2723)' }}>Remember me</span>
+              <span style={{ fontFamily: "var(--ayna-font-ui)", lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', fontWeight: 400, color: 'var(--legacy-ink, #3e2723)' }}>Remember me</span>
             </label>
           )}
 

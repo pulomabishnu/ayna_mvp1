@@ -189,10 +189,10 @@
   gap: 8px;
   margin: 0;
   padding: 8px 10px 8px 14px;
-  border: 1.5px solid var(--ay-ink, var(--ayna-text, #3e2723));
+  border: 1.5px solid var(--legacy-ink, var(--ayna-text, #3e2723));
   border-radius: 999px;
   background: var(--ay-paper, var(--ayna-surface, #ffedac));
-  color: var(--ay-ink, var(--ayna-text, #3e2723));
+  color: var(--legacy-ink, var(--ayna-text, #3e2723));
   font: 500 13px/1.2 var(--ay-font-ui, Figtree, system-ui, sans-serif);
   box-shadow: 0 8px 22px -12px rgba(62, 39, 35, .45);
   animation: qi-mini-in .3s ease both;

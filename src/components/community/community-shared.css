@@ -10,20 +10,20 @@
 /* ---------- Rule-checked field (mirror overlay) ---------- */
 :is(.app-container, .ayna-mobile) .cr-field { position: relative; display: grid; gap: 0; min-width: 0; width: 100%; }
 :is(.app-container, .ayna-mobile) .cr-field > :is(textarea, :is(.app-container, .ayna-mobile) input) { width: 100%; }
-:is(.app-container, .ayna-mobile) .cr-mirror { position: absolute; z-index: 1; margin: 0; overflow: hidden; border-style: solid; border-color: transparent; background: transparent; color: var(--ay-ink); white-space: pre-wrap; overflow-wrap: break-word; word-break: normal; pointer-events: none; text-rendering: inherit; }
+:is(.app-container, .ayna-mobile) .cr-mirror { position: absolute; z-index: 1; margin: 0; overflow: hidden; border-style: solid; border-color: transparent; background: transparent; color: var(--legacy-ink); white-space: pre-wrap; overflow-wrap: break-word; word-break: normal; pointer-events: none; text-rendering: inherit; }
 :is(.app-container, .ayna-mobile) .cr-field.is-input .cr-mirror { white-space: pre; display: flex; align-items: center; }
 :is(.app-container, .ayna-mobile) .cr-mirror mark.cr-flag { padding: 0; border-radius: 3px; background: var(--cr-red-bg); color: var(--cr-red); font: inherit; text-decoration: underline wavy var(--cr-red); text-decoration-skip-ink: none; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
-:is(.app-container, .ayna-mobile) .cr-field.is-flagged > :is(textarea, input) { -webkit-text-fill-color: transparent !important; caret-color: var(--ay-ink) !important; border-color: var(--cr-red) !important; }
+:is(.app-container, .ayna-mobile) .cr-field.is-flagged > :is(textarea, input) { -webkit-text-fill-color: transparent !important; caret-color: var(--legacy-ink) !important; border-color: var(--cr-red) !important; }
 :is(.app-container, .ayna-mobile) .cr-field.is-flagged > :is(textarea, input):focus-visible { outline-color: var(--cr-red) !important; }
 :is(.app-container, .ayna-mobile) .cr-note-slot:empty { display: none; }
 :is(.app-container, .ayna-mobile) .cr-note { display: flex; align-items: flex-start; gap: 8px; margin: 8px 0 0; color: var(--cr-red); font: 600 var(--ay-fs-secondary)/1.4 var(--ay-sans); text-align: left; }
-:is(.app-container, .ayna-mobile) .cr-note.is-care { color: var(--ay-ink); font-weight: 500; }
+:is(.app-container, .ayna-mobile) .cr-note.is-care { color: var(--legacy-ink); font-weight: 500; }
 :is(.app-container, .ayna-mobile) .cr-note-dot { flex: none; width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; background: var(--cr-red); }
-:is(.app-container, .ayna-mobile) .cr-note.is-care .cr-note-dot { background: var(--ay-mint); box-shadow: 0 0 0 1.5px var(--ay-ink); }
+:is(.app-container, .ayna-mobile) .cr-note.is-care .cr-note-dot { background: var(--ay-mint); box-shadow: 0 0 0 1.5px var(--legacy-ink); }
 :is(.app-container, .ayna-mobile) .cr-note-link { display: inline; min-height: 0; margin: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 
 /* ---------- Verified badge ---------- */
-:is(.app-container, .ayna-mobile) .cr-verified { display: inline-flex; align-items: center; gap: 4px; flex: none; min-width: 0; color: var(--ay-ink); font: 600 var(--ay-fs-caption)/1.2 var(--ay-sans); white-space: nowrap; vertical-align: middle; }
+:is(.app-container, .ayna-mobile) .cr-verified { display: inline-flex; align-items: center; gap: 4px; flex: none; min-width: 0; color: var(--legacy-ink); font: 600 var(--ay-fs-caption)/1.2 var(--ay-sans); white-space: nowrap; vertical-align: middle; }
 :is(.app-container, .ayna-mobile) .cr-verified svg { flex: none; }
 :is(.app-container, .ayna-mobile) .cr-verified-seal { fill: #b9c2f4; stroke: #1d1a2b; stroke-width: 1.4; }
 :is(.app-container, .ayna-mobile) .cr-verified-tick { stroke: #1d1a2b; }
@@ -31,54 +31,54 @@
 :is(.app-container, .ayna-mobile) .cr-verified.is-compact { font-size: var(--ay-fs-caption); }
 
 /* ---------- Rules list ---------- */
-:is(.app-container, .ayna-mobile) .cr-rules-wrap { display: grid; gap: 16px; color: var(--ay-ink); font-family: var(--ay-sans); }
+:is(.app-container, .ayna-mobile) .cr-rules-wrap { display: grid; gap: 16px; color: var(--legacy-ink); font-family: var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-rules-lead, :is(.app-container, .ayna-mobile) .cr-rules-foot { margin: 0; color: var(--ay-ink-soft); font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-rules { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
 :is(.app-container, .ayna-mobile) .cr-rules li { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; align-items: start; padding: 12px 0; border-bottom: 1px solid var(--ay-line); }
 :is(.app-container, .ayna-mobile) .cr-rules li:last-child { border-bottom: 0; }
-:is(.app-container, .ayna-mobile) .cr-rules-n { display: grid; place-items: center; width: 32px; height: 32px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-butter); color: #1d1a2b; font: 500 var(--ay-fs-secondary)/1 var(--ay-sans); }
+:is(.app-container, .ayna-mobile) .cr-rules-n { display: grid; place-items: center; width: 32px; height: 32px; border: 2px solid var(--legacy-ink); border-radius: 50%; background: var(--legacy-butter); color: #1d1a2b; font: 500 var(--ay-fs-secondary)/1 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-rules strong { display: block; font: 600 var(--ay-fs-body)/1.3 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-rules small { display: block; margin-top: 4px; color: var(--ay-ink-soft); font: 500 var(--ay-fs-secondary)/1.45 var(--ay-sans); }
 
 /* ---------- Buttons and inputs used by Announcements ---------- */
-:is(.app-container, .ayna-mobile) .cr-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; transition: transform .15s, box-shadow .15s, opacity .15s; }
-:is(.app-container, .ayna-mobile) .cr-btn:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 2px 2px 0 var(--ay-ink); }
+:is(.app-container, .ayna-mobile) .cr-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border: 2px solid var(--legacy-ink); border-radius: 99px; background: var(--legacy-ink); color: var(--ay-paper); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; transition: transform .15s, box-shadow .15s, opacity .15s; }
+:is(.app-container, .ayna-mobile) .cr-btn:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 2px 2px 0 var(--legacy-ink); }
 :is(.app-container, .ayna-mobile) .cr-btn:disabled { opacity: .4; cursor: not-allowed; }
-:is(.app-container, .ayna-mobile) .cr-btn.is-ghost { background: var(--ay-paper); color: var(--ay-ink); }
+:is(.app-container, .ayna-mobile) .cr-btn.is-ghost { background: var(--ay-paper); color: var(--legacy-ink); }
 :is(.app-container, .ayna-mobile) .cr-btn.is-small { min-height: 40px; padding: 0 16px; font-size: var(--ay-fs-secondary); }
 :is(.app-container, .ayna-mobile)[data-theme='dark'] .cr-btn:not(.is-ghost) { color: #0c0b11; }
 :is(.app-container, .ayna-mobile) .cr-text-btn { min-height: 36px; padding: 0 8px; border: 0; border-radius: 99px; background: none; color: var(--ay-ink-soft); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); cursor: pointer; }
-:is(.app-container, .ayna-mobile) .cr-text-btn:hover { background: var(--ay-tile); color: var(--ay-ink); }
-:is(.app-container, .ayna-mobile) .cr-icon-btn { display: grid; place-items: center; flex: none; width: 44px; height: 44px; padding: 0; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); color: var(--ay-ink); cursor: pointer; }
-:is(.app-container, .ayna-mobile) .cr-input { box-sizing: border-box; width: 100%; min-height: 48px; margin: 0; padding: 12px 16px; border: 2px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); color: var(--ay-ink); font: 500 var(--ay-fs-body)/1.55 var(--ay-sans); box-shadow: none; }
+:is(.app-container, .ayna-mobile) .cr-text-btn:hover { background: var(--ay-tile); color: var(--legacy-ink); }
+:is(.app-container, .ayna-mobile) .cr-icon-btn { display: grid; place-items: center; flex: none; width: 44px; height: 44px; padding: 0; border: 2px solid var(--legacy-ink); border-radius: 50%; background: var(--ay-paper); color: var(--legacy-ink); cursor: pointer; }
+:is(.app-container, .ayna-mobile) .cr-input { box-sizing: border-box; width: 100%; min-height: 48px; margin: 0; padding: 12px 16px; border: 2px solid var(--legacy-ink); border-radius: 14px; background: var(--ay-paper); color: var(--legacy-ink); font: 500 var(--ay-fs-body)/1.55 var(--ay-sans); box-shadow: none; }
 :is(.app-container, .ayna-mobile) textarea.cr-input { resize: none; overflow-y: auto; }
 :is(.app-container, .ayna-mobile) .cr-error { margin: 0; padding: 12px 16px; border-radius: 12px; background: var(--cr-red-bg); color: var(--cr-red); font: 600 var(--ay-fs-secondary)/1.4 var(--ay-sans); }
 
 /* ---------- Dialog ---------- */
 :is(.app-container, .ayna-mobile) .cr-dialog-backdrop { position: fixed; inset: 0; z-index: 3000; display: grid; place-items: center; padding: 24px 16px; background: rgba(29, 26, 43, .45); }
 :is(.app-container, .ayna-mobile)[data-theme='dark'] .cr-dialog-backdrop { background: rgba(0, 0, 0, .6); }
-:is(.app-container, .ayna-mobile) .cr-dialog { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; width: min(680px, 100%); max-height: calc(100dvh - 48px); border: 2px solid var(--ay-ink); border-radius: 28px; background: var(--ay-paper); color: var(--ay-ink); box-shadow: 6px 6px 0 var(--ay-ink); font-family: var(--ay-sans); overflow: hidden; }
+:is(.app-container, .ayna-mobile) .cr-dialog { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; width: min(680px, 100%); max-height: calc(100dvh - 48px); border: 2px solid var(--legacy-ink); border-radius: 28px; background: var(--ay-paper); color: var(--legacy-ink); box-shadow: 6px 6px 0 var(--legacy-ink); font-family: var(--ay-sans); overflow: hidden; }
 :is(.app-container, .ayna-mobile)[data-theme='dark'] .cr-dialog { box-shadow: 6px 6px 0 rgba(0, 0, 0, .5); }
 :is(.app-container, .ayna-mobile) .cr-dialog:focus { outline: none; }
 :is(.app-container, .ayna-mobile) .cr-dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px 32px 16px; }
-:is(.app-container, .ayna-mobile) .cr-dialog-head h2 { margin: 0; color: var(--ay-ink); font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
+:is(.app-container, .ayna-mobile) .cr-dialog-head h2 { margin: 0; color: var(--legacy-ink); font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
 :is(.app-container, .ayna-mobile) .cr-dialog-body { display: grid; gap: 24px; padding: 8px 32px 24px; overflow-y: auto; }
 :is(.app-container, .ayna-mobile) .cr-dialog-foot { display: grid; gap: 12px; padding: 16px 32px 24px; border-top: 1px solid var(--ay-line); background: var(--ay-paper); }
 :is(.app-container, .ayna-mobile) .cr-dialog-actions { display: flex; justify-content: flex-end; gap: 12px; }
 :is(.app-container, .ayna-mobile) .cr-group { display: grid; gap: 8px; padding: 0; border: 0; }
 :is(.app-container, .ayna-mobile) .cr-group + .cr-group { padding-top: 24px; border-top: 1px solid var(--ay-line); }
 :is(.app-container, .ayna-mobile) .cr-group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
-:is(.app-container, .ayna-mobile) .cr-group-head h3 { margin: 0; font: 600 var(--ay-fs-body)/1.2 var(--ay-sans) !important; letter-spacing: 0 !important; color: var(--ay-ink); }
+:is(.app-container, .ayna-mobile) .cr-group-head h3 { margin: 0; font: 600 var(--ay-fs-body)/1.2 var(--ay-sans) !important; letter-spacing: 0 !important; color: var(--legacy-ink); }
 :is(.app-container, .ayna-mobile) .cr-group-head small { color: var(--ay-ink-soft); font: 500 var(--ay-fs-caption)/1.2 var(--ay-sans); }
-:is(.app-container, .ayna-mobile) .cr-label { display: block; margin: 8px 0 0; color: var(--ay-ink); font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans); }
+:is(.app-container, .ayna-mobile) .cr-label { display: block; margin: 8px 0 0; color: var(--legacy-ink); font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-label:first-child { margin-top: 0; }
 :is(.app-container, .ayna-mobile) .cr-seg { display: flex; flex-wrap: wrap; gap: 8px; }
-:is(.app-container, .ayna-mobile) .cr-seg button { min-height: 40px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
-:is(.app-container, .ayna-mobile) .cr-seg button[aria-pressed='true'] { background: var(--ay-ink); color: var(--ay-paper); }
+:is(.app-container, .ayna-mobile) .cr-seg button { min-height: 40px; padding: 0 16px; border: 2px solid var(--legacy-ink); border-radius: 99px; background: var(--ay-paper); color: var(--legacy-ink); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
+:is(.app-container, .ayna-mobile) .cr-seg button[aria-pressed='true'] { background: var(--legacy-ink); color: var(--ay-paper); }
 :is(.app-container, .ayna-mobile)[data-theme='dark'] .cr-seg button[aria-pressed='true'] { color: #0c0b11; }
 :is(.app-container, .ayna-mobile) .cr-attach-panel { display: grid; gap: 8px; padding: 12px; border: 2px solid var(--ay-line); border-radius: 18px; background: var(--ay-cream); }
 :is(.app-container, .ayna-mobile) .cr-pick-list { display: grid; margin: 0; padding: 0; list-style: none; }
-:is(.app-container, .ayna-mobile) .cr-pick-list button { display: grid; gap: 2px; width: 100%; min-height: 48px; padding: 8px 12px; border: 0; border-radius: 12px; background: none; color: var(--ay-ink); text-align: left; cursor: pointer; }
+:is(.app-container, .ayna-mobile) .cr-pick-list button { display: grid; gap: 2px; width: 100%; min-height: 48px; padding: 8px 12px; border: 0; border-radius: 12px; background: none; color: var(--legacy-ink); text-align: left; cursor: pointer; }
 :is(.app-container, .ayna-mobile) .cr-pick-list button:hover { background: var(--ay-tile); }
 :is(.app-container, .ayna-mobile) .cr-pick-list strong { font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-pick-list small, :is(.app-container, .ayna-mobile) .cr-pick-empty { color: var(--ay-ink-soft); font: 500 var(--ay-fs-caption)/1.3 var(--ay-sans); }
@@ -87,57 +87,57 @@
 :is(.app-container, .ayna-mobile) .cr-inline-field { display: grid; gap: 4px; color: var(--ay-ink-soft); font: 600 var(--ay-fs-caption)/1.2 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-link-form .cr-btn { justify-self: start; }
 :is(.app-container, .ayna-mobile) .cr-photo-row { display: flex; flex-wrap: wrap; gap: 8px; }
-:is(.app-container, .ayna-mobile) .cr-thumb { position: relative; width: 88px; height: 88px; border: 2px solid var(--ay-ink); border-radius: 14px; overflow: hidden; }
+:is(.app-container, .ayna-mobile) .cr-thumb { position: relative; width: 88px; height: 88px; border: 2px solid var(--legacy-ink); border-radius: 14px; overflow: hidden; }
 :is(.app-container, .ayna-mobile) .cr-thumb img { width: 100%; height: 100%; object-fit: cover; }
-:is(.app-container, .ayna-mobile) .cr-thumb-x { position: absolute; top: 4px; right: 4px; display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 1.5px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); color: var(--ay-ink); cursor: pointer; }
+:is(.app-container, .ayna-mobile) .cr-thumb-x { position: absolute; top: 4px; right: 4px; display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 1.5px solid var(--legacy-ink); border-radius: 50%; background: var(--ay-paper); color: var(--legacy-ink); cursor: pointer; }
 :is(.app-container, .ayna-mobile) .cr-photo-add { position: relative; display: grid; place-items: center; align-content: center; gap: 4px; width: 88px; height: 88px; border: 2px dashed var(--ay-ink-faint); border-radius: 14px; color: var(--ay-ink-soft); font: 600 var(--ay-fs-caption)/1.2 var(--ay-sans); text-align: center; cursor: pointer; }
-:is(.app-container, .ayna-mobile) .cr-photo-add:hover, :is(.app-container, .ayna-mobile) .cr-photo-add:focus-within { border-color: var(--ay-ink); color: var(--ay-ink); }
+:is(.app-container, .ayna-mobile) .cr-photo-add:hover, :is(.app-container, .ayna-mobile) .cr-photo-add:focus-within { border-color: var(--legacy-ink); color: var(--legacy-ink); }
 :is(.app-container, .ayna-mobile) .cr-file { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
 
 /* ---------- Attachments ---------- */
 :is(.app-container, .ayna-mobile) .cr-att-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
-:is(.app-container, .ayna-mobile) .cr-att { box-sizing: border-box; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 12px; width: 100%; min-height: 60px; padding: 8px 12px 8px 8px; border: 1.5px solid var(--ay-line); border-radius: 16px; background: var(--ay-cream); color: var(--ay-ink); font-family: var(--ay-sans); text-align: left; text-decoration: none; cursor: pointer; transition: border-color .15s, background .15s; }
-a.cr-att:hover, button.cr-att:hover { border-color: var(--ay-ink); }
+:is(.app-container, .ayna-mobile) .cr-att { box-sizing: border-box; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 12px; width: 100%; min-height: 60px; padding: 8px 12px 8px 8px; border: 1.5px solid var(--ay-line); border-radius: 16px; background: var(--ay-cream); color: var(--legacy-ink); font-family: var(--ay-sans); text-align: left; text-decoration: none; cursor: pointer; transition: border-color .15s, background .15s; }
+a.cr-att:hover, button.cr-att:hover { border-color: var(--legacy-ink); }
 :is(.app-container, .ayna-mobile) .cr-att.is-edit { cursor: default; }
 :is(.app-container, .ayna-mobile) .cr-att-photo { position: relative; width: 44px; height: 44px; border-radius: 10px; background: var(--ay-product-tile, #fff); box-shadow: inset 0 0 0 1.5px var(--ay-line); overflow: hidden; }
-:is(.app-container, .ayna-mobile) .cr-att-kind { display: grid; place-items: center; width: 44px; height: 44px; border: 2px solid var(--ay-ink); border-radius: 12px; background: var(--ay-peri); color: #1d1a2b; font: 600 var(--ay-fs-card)/1 var(--ay-sans); }
-:is(.app-container, .ayna-mobile) .cr-att-kind.is-playlist { background: var(--ay-pink); }
+:is(.app-container, .ayna-mobile) .cr-att-kind { display: grid; place-items: center; width: 44px; height: 44px; border: 2px solid var(--legacy-ink); border-radius: 12px; background: var(--ay-peri); color: #1d1a2b; font: 600 var(--ay-fs-card)/1 var(--ay-sans); }
+:is(.app-container, .ayna-mobile) .cr-att-kind.is-playlist { background: var(--legacy-pink); }
 :is(.app-container, .ayna-mobile) .cr-att-kind.is-read { background: var(--ay-mint); }
-:is(.app-container, .ayna-mobile) .cr-att-kind.is-link { background: var(--ay-butter); }
+:is(.app-container, .ayna-mobile) .cr-att-kind.is-link { background: var(--legacy-butter); }
 :is(.app-container, .ayna-mobile) .cr-att-text { display: grid; gap: 2px; min-width: 0; }
 :is(.app-container, .ayna-mobile) .cr-att-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-att-text small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ay-ink-soft); font: 500 var(--ay-fs-caption)/1.3 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-att-go { display: grid; place-items: center; width: 32px; height: 32px; color: var(--ay-ink-soft); }
 
 /* ---------- Announcements ---------- */
-:is(.app-container, .ayna-mobile) .cr-ann { display: grid; gap: 16px; min-width: 0; color: var(--ay-ink); font-family: var(--ay-sans); }
-:is(.app-container, .ayna-mobile) .cr-ann-intro { display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 16px; border: 2px solid var(--ay-ink); border-radius: 20px; background: var(--ay-butter); color: var(--ay-ink); }
-:is(.app-container, .ayna-mobile) .cr-ann-intro-icon { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); color: var(--ay-ink); }
+:is(.app-container, .ayna-mobile) .cr-ann { display: grid; gap: 16px; min-width: 0; color: var(--legacy-ink); font-family: var(--ay-sans); }
+:is(.app-container, .ayna-mobile) .cr-ann-intro { display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 16px; border: 2px solid var(--legacy-ink); border-radius: 20px; background: var(--legacy-butter); color: var(--legacy-ink); }
+:is(.app-container, .ayna-mobile) .cr-ann-intro-icon { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border: 2px solid var(--legacy-ink); border-radius: 50%; background: var(--ay-paper); color: var(--legacy-ink); }
 :is(.app-container, .ayna-mobile) .cr-ann-intro p { display: grid; gap: 2px; flex: 1; min-width: 0; margin: 0; }
 :is(.app-container, .ayna-mobile) .cr-ann-intro strong { font: 600 var(--ay-fs-body)/1.25 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-ann-intro small { color: var(--ay-ink-soft); font: 500 var(--ay-fs-secondary)/1.35 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-ann-intro .cr-btn { flex: none; }
 :is(.app-container, .ayna-mobile) .cr-ann-list { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
-:is(.app-container, .ayna-mobile) .cr-ann-card { display: grid; gap: 12px; padding: 16px 16px 8px; border: 2px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); }
+:is(.app-container, .ayna-mobile) .cr-ann-card { display: grid; gap: 12px; padding: 16px 16px 8px; border: 2px solid var(--legacy-ink); border-radius: 20px; background: var(--ay-paper); }
 :is(.app-container, .ayna-mobile) .cr-ann-head { display: flex; align-items: center; gap: 12px; min-width: 0; }
-:is(.app-container, .ayna-mobile) .cr-ann-avatar { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-peri); color: #1d1a2b; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); }
+:is(.app-container, .ayna-mobile) .cr-ann-avatar { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border: 2px solid var(--legacy-ink); border-radius: 50%; background: var(--ay-peri); color: #1d1a2b; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-ann-meta { display: grid; gap: 2px; flex: 1; min-width: 0; }
 :is(.app-container, .ayna-mobile) .cr-ann-meta time, :is(.app-container, .ayna-mobile) .cr-ann-reply-head time { color: var(--ay-ink-soft); font: 500 var(--ay-fs-caption)/1.2 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .cr-ann-who { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; }
-:is(.app-container, .ayna-mobile) .cr-ann-name { padding: 0; border: 0; background: none; color: var(--ay-ink); font: 600 var(--ay-fs-secondary)/1.25 var(--ay-sans); text-align: left; cursor: pointer; }
+:is(.app-container, .ayna-mobile) .cr-ann-name { padding: 0; border: 0; background: none; color: var(--legacy-ink); font: 600 var(--ay-fs-secondary)/1.25 var(--ay-sans); text-align: left; cursor: pointer; }
 strong.cr-ann-name { cursor: default; }
 button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3px; }
-:is(.app-container, .ayna-mobile) .cr-ann-title { margin: 0; color: var(--ay-ink); font: 400 var(--ay-fs-section)/1.15 var(--ay-serif) !important; letter-spacing: -0.01em !important; overflow-wrap: anywhere; }
-:is(.app-container, .ayna-mobile) .cr-ann-body { margin: 0; max-width: 62ch; color: var(--ay-ink); font: 500 var(--ay-fs-body)/1.55 var(--ay-sans); white-space: pre-wrap; overflow-wrap: anywhere; }
+:is(.app-container, .ayna-mobile) .cr-ann-title { margin: 0; color: var(--legacy-ink); font: 400 var(--ay-fs-section)/1.15 var(--ay-serif) !important; letter-spacing: -0.01em !important; overflow-wrap: anywhere; }
+:is(.app-container, .ayna-mobile) .cr-ann-body { margin: 0; max-width: 62ch; color: var(--legacy-ink); font: 500 var(--ay-fs-body)/1.55 var(--ay-sans); white-space: pre-wrap; overflow-wrap: anywhere; }
 :is(.app-container, .ayna-mobile) .cr-ann-photos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 :is(.app-container, .ayna-mobile) .cr-ann-photos.is-1 { grid-template-columns: minmax(0, 1fr); }
-:is(.app-container, .ayna-mobile) .cr-ann-photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border: 2px solid var(--ay-ink); border-radius: 14px; }
+:is(.app-container, .ayna-mobile) .cr-ann-photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border: 2px solid var(--legacy-ink); border-radius: 14px; }
 :is(.app-container, .ayna-mobile) .cr-ann-photos.is-1 img { aspect-ratio: 16 / 9; }
 :is(.app-container, .ayna-mobile) .cr-ann-actions { display: flex; gap: 4px; margin-left: -8px; }
 :is(.app-container, .ayna-mobile) .cr-ann-actions button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 0; border-radius: 99px; background: none; color: var(--ay-ink-soft); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
-:is(.app-container, .ayna-mobile) .cr-ann-actions button:hover { background: var(--ay-tile); color: var(--ay-ink); }
-:is(.app-container, .ayna-mobile) .cr-ann-actions button[aria-pressed='true'] { color: var(--ay-ink); }
-:is(.app-container, .ayna-mobile) .cr-ann-actions button[aria-pressed='true'] path { fill: var(--ay-pink); stroke: var(--ay-ink); }
+:is(.app-container, .ayna-mobile) .cr-ann-actions button:hover { background: var(--ay-tile); color: var(--legacy-ink); }
+:is(.app-container, .ayna-mobile) .cr-ann-actions button[aria-pressed='true'] { color: var(--legacy-ink); }
+:is(.app-container, .ayna-mobile) .cr-ann-actions button[aria-pressed='true'] path { fill: var(--legacy-pink); stroke: var(--legacy-ink); }
 :is(.app-container, .ayna-mobile) .cr-ann-thread { display: grid; gap: 8px; margin: 0 0 8px; padding-top: 12px; border-top: 1px solid var(--ay-line); }
 :is(.app-container, .ayna-mobile) .cr-ann-reply { display: grid; gap: 4px; padding: 8px 12px; border-radius: 14px; background: var(--ay-cream); }
 :is(.app-container, .ayna-mobile) .cr-ann-reply-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
@@ -148,7 +148,7 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 :is(.app-container, .ayna-mobile) .cr-ann-reply-box .cr-ring { justify-self: end; margin-top: -4px; }
 :is(.app-container, .ayna-mobile) .cr-ann-thread > .cr-btn { justify-self: start; }
 :is(.app-container, .ayna-mobile) .cr-ann-empty { display: grid; gap: 8px; justify-items: center; padding: 48px 24px; border: 2px dashed var(--ay-ink-faint); border-radius: 20px; text-align: center; }
-:is(.app-container, .ayna-mobile) .cr-ann-empty h2 { margin: 0; color: var(--ay-ink); font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
+:is(.app-container, .ayna-mobile) .cr-ann-empty h2 { margin: 0; color: var(--legacy-ink); font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
 :is(.app-container, .ayna-mobile) .cr-ann-empty p { margin: 0; color: var(--ay-ink-soft); font: 500 var(--ay-fs-secondary)/1.45 var(--ay-sans); }
 @keyframes cr-skel { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
 :is(.app-container, .ayna-mobile) .cr-ann-skel { display: grid; gap: 16px; }
@@ -216,14 +216,14 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 [data-theme='brand-dark'] .cr-fmt__btn[aria-pressed="true"] { background: #ffedac; color: #3e2723; }
 
 /* Review stars (RatingStars.jsx): filled stars are ink, so they read on any card. */
-.cr-stars { display: inline-flex; align-items: center; gap: 2px; color: var(--ay-ink, #3e2723); line-height: 1; }
+.cr-stars { display: inline-flex; align-items: center; gap: 2px; color: var(--legacy-ink, #3e2723); line-height: 1; }
 .cr-stars svg { display: block; flex: none; }
-.cr-rating-picker { display: flex; gap: 4px; color: var(--ay-ink, #3e2723); }
+.cr-rating-picker { display: flex; gap: 4px; color: var(--legacy-ink, #3e2723); }
 .cr-rating-picker button { width: 40px; height: 40px; display: grid; place-items: center; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
 .cr-rating-picker button:focus-visible { outline: 2px solid #769ebe; outline-offset: 2px; border-radius: 8px; }
-.cr-review-link { display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: var(--ay-ink, #3e2723); font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.cr-review-link { display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: var(--legacy-ink, #3e2723); font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .cr-product-reviews { display: grid; gap: 10px; margin: 8px 0 12px; padding: 0; list-style: none; }
-.cr-product-reviews li { display: grid; gap: 4px; padding: 10px 12px; border: 1.5px solid var(--ay-ink, #3e2723); border-radius: 14px; }
+.cr-product-reviews li { display: grid; gap: 4px; padding: 10px 12px; border: 1.5px solid var(--legacy-ink, #3e2723); border-radius: 14px; }
 .cr-product-reviews li > button, .cr-product-reviews li > a { display: grid; gap: 4px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; text-decoration: none; cursor: pointer; }
 .cr-product-reviews p { margin: 0; overflow-wrap: anywhere; }
 .cr-product-reviews small { opacity: .75; }

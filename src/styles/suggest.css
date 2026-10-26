@@ -3,7 +3,7 @@
    shells define the --ay-* tokens, so light and dark follow automatically. */
 
 .ay-suggest {
-  --sg-ink: var(--ay-ink, #1d1a2b);
+  --sg-ink: var(--legacy-ink, #1d1a2b);
   --sg-soft: var(--ay-ink-soft, rgba(29, 26, 43, .62));
   --sg-faint: var(--ay-ink-faint, rgba(29, 26, 43, .16));
   --sg-paper: var(--ay-paper, #fffcf5);
@@ -35,7 +35,7 @@
 /* Collapsed */
 .ay-suggest__intro { display: flex; align-items: center; gap: 16px; }
 .ay-suggest__copy { display: grid; gap: 4px; flex: 1; min-width: 0; }
-.ay-suggest__icon, .ay-suggest__check { display: grid; place-items: center; width: 48px; height: 48px; flex: none; border: 2px solid var(--sg-ink); border-radius: 14px; background: var(--ay-butter, #f7e78e); color: var(--sg-on-pastel); }
+.ay-suggest__icon, .ay-suggest__check { display: grid; place-items: center; width: 48px; height: 48px; flex: none; border: 2px solid var(--sg-ink); border-radius: 14px; background: var(--legacy-butter, #f7e78e); color: var(--sg-on-pastel); }
 .ay-suggest__icon.is-read { background: var(--ay-peri, #b9c2f4); }
 .ay-suggest__check { border-radius: 50%; background: var(--ay-mint, #bdebd6); }
 .ay-suggest__icon svg, .ay-suggest__check svg { width: 24px; height: 24px; }

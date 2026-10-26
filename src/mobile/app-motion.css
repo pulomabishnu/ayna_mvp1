@@ -10,7 +10,7 @@
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { transform: translateY(100%); transition: transform var(--t-sheet-out) var(--ease-exit); }
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer[data-open='true'] .ayna-ask-drawer-content { transform: none; transition: transform var(--t-sheet) var(--ease-out); }
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer-content > div:first-child::before { display: none !important; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer-content > .ay-sheet-grabber { flex: none; margin: 0; height: 24px; color: var(--ay-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer-content > .ay-sheet-grabber { flex: none; margin: 0; height: 24px; color: var(--legacy-ink); }
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer-content > .ay-sheet-grabber + div { padding-top: 6px !important; }
 
 .ayna-mobile:is(#ay, .ayna-mobile) :is(.ayna-shop-filter-backdrop, .ayna-profile-auth-backdrop) { background: var(--sheet-dim) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; animation: ay-dim-in var(--t-base) var(--ease-out) both; }
@@ -54,7 +54,7 @@
    Reset to look exactly as the div did; inline styles still win. */
 .ayna-mobile .ay-plain-btn { -webkit-appearance: none; appearance: none; margin: 0; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: inherit; line-height: inherit; letter-spacing: inherit; cursor: pointer; }
 .ayna-mobile .ay-plain-btn.is-block { display: flex; width: 100%; text-align: left; }
-.ayna-mobile .ay-plain-btn:focus-visible { outline: 2px solid var(--ay-ink); outline-offset: 2px; }
+.ayna-mobile .ay-plain-btn:focus-visible { outline: 2px solid var(--legacy-ink); outline-offset: 2px; }
 
 /* ---- Finish: one film-grain layer for the app (see src/styles/finish.css) ----
    Replaces the two SVG grains layered by tokens.css and app-polish.css. */

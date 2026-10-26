@@ -123,7 +123,7 @@
 
 /* ---------- audit pass 1 fixes ---------- */
 /* Wrapped keeps the brand palette in dark mode too */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-wrapped { --ay-ink: #3e2723; --ay-paper: #ffffff; --ay-butter: #ffedac; --ay-pink: #f7badd; --ay-mint: #769ebe; --ay-peri: #769ebe; --ay-cream: #ffedac; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-wrapped { --legacy-ink: #3e2723; --ay-paper: #ffffff; --legacy-butter: #ffedac; --legacy-pink: #f7badd; --ay-mint: #769ebe; --ay-peri: #769ebe; --ay-cream: #ffedac; }
 /* quiz and check-in in dark: flat espresso, butter type, no grid */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake { background-image: none !important; color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(button, label) { opacity: 1 !important; }

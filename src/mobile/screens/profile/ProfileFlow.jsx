@@ -848,7 +848,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
         {lowCategories.length > 0 && (
           <div>
             <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 11 }}>
-              <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: 'var(--ay-ink)' }}>Least-represented</div>
+              <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: 'var(--legacy-ink)' }}>Least-represented</div>
               <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>Fewest picks</div>
             </div>
             <div style={{ background: 'var(--d-group)', border: 0, borderRadius: 20, padding: '6px 16px' }}>
@@ -2029,7 +2029,7 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
 // publishing.
 const HEALTH_DATA_PROCESSORS = [
   { initial: 'S', name: 'Supabase', role: 'Hosts your account and stored data.', bg: 'var(--ayna-border)', fg: 'var(--ayna-heading)' },
-  { initial: 'A', name: 'Anthropic, OpenAI, Google', role: 'Write product summaries and Ask ayna answers.', bg: 'var(--ay-pink)', fg: 'var(--ay-ink)' },
+  { initial: 'A', name: 'Anthropic, OpenAI, Google', role: 'Write product summaries and Ask ayna answers.', bg: 'var(--legacy-pink)', fg: 'var(--legacy-ink)' },
   { initial: 'T', name: 'Twilio', role: 'Sends verification codes and opt-in safety-recall texts.', bg: 'var(--ayna-border)', fg: 'var(--ayna-heading)' },
   { initial: 'R', name: 'Resend', role: 'Delivers email, including contact-form messages.', bg: 'var(--ayna-border)', fg: 'var(--ayna-heading)' },
   { initial: 'P', name: 'PostHog', role: 'Anonymised usage analytics, off any time in Privacy & data.', bg: 'var(--ayna-border)', fg: 'var(--ayna-text-muted)' },
@@ -2045,7 +2045,7 @@ function NumberedCard({ n, title, children }) {
   return (
     <div style={{ background: 'var(--d-group)', marginTop: 14, border: 0, borderRadius: 20, padding: 18 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        {n && <div style={{ width: 26, height: 26, borderRadius: 99, background: 'var(--ay-pink)', color: 'var(--ay-ink)', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>{n}</div>}
+        {n && <div style={{ width: 26, height: 26, borderRadius: 99, background: 'var(--legacy-pink)', color: 'var(--legacy-ink)', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>{n}</div>}
         <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>{title}</div>
       </div>
       {children}
@@ -2149,7 +2149,7 @@ function ConsumerHealthDataPolicyScreen({ onBack }) {
 /* ---------------------------- Open-source licences ---------------------------- */
 
 const LICENSE_GROUP_STYLES = {
-  MIT: { tint: 'var(--ay-pink)', ink: 'var(--ay-ink)' },
+  MIT: { tint: 'var(--legacy-pink)', ink: 'var(--legacy-ink)' },
   'Apache-2.0': { tint: 'var(--ayna-border)', ink: 'var(--ayna-heading)' },
   '(MPL-2.0 OR Apache-2.0)': { tint: 'var(--ayna-border)', ink: 'var(--ayna-heading)' },
   '(Apache-2.0 AND MIT)': { tint: 'var(--ayna-border)', ink: 'var(--ayna-heading)' },
@@ -2276,7 +2276,7 @@ function TypefaceRow({ face, open, onToggle }) {
   return (
     <div style={{ background: 'var(--d-group)', marginTop: 14, border: 0, borderRadius: 20, overflow: 'hidden' }}>
       <button type="button" className="ay-plain-btn is-block" onClick={onToggle} aria-expanded={open} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px', cursor: 'pointer' }}>
-        <div style={{ width: 44, height: 44, borderRadius: 14, flex: 'none', background: 'var(--ay-pink)', color: 'var(--ay-ink)', fontFamily: face.font, fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Ag</div>
+        <div style={{ width: 44, height: 44, borderRadius: 14, flex: 'none', background: 'var(--legacy-pink)', color: 'var(--legacy-ink)', fontFamily: face.font, fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Ag</div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{face.name}</div>
           <div style={{ fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{face.role}</div>

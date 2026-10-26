@@ -18,7 +18,7 @@ html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-ask-drawer input:focus, html 
    (html[data-ay-kbd], set by keyboardModality.js) the search pill shows a
    3px ink ring with a 2px offset, neon butter in dark. */
 html[data-ay-kbd] body .ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-fresh-search, .am-search, .am-product-search, .ip-search):has(input:focus-visible) {
-  outline: 3px solid var(--ay-ink, #3e2723) !important;
+  outline: 3px solid var(--legacy-ink, #3e2723) !important;
   outline-offset: 2px !important;
 }
 html[data-ay-kbd] body .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-fresh-search, .am-search, .am-product-search, .ip-search):has(input:focus-visible) {

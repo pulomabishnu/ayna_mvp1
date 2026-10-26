@@ -4,16 +4,16 @@
    Radii: 8 / 16 / 999 / 50%. One shadow: the 3px pink "sticker" on primary buttons.
    Type: 8 styles, 13px minimum. */
 :root {
-  --ay-ink: #3e2723;
+  --ay-ink: #3e2723; --legacy-ink: #3e2723;
   --ay-ink-muted: rgba(62, 39, 35, .78);
-  --ay-butter: #ffedac;
+  --ay-butter: #ffedac; --legacy-butter: #ffedac;
   --ay-butter-deep: #f6e3a1;
-  --ay-pink: #f7badd;
+  --ay-pink: #f7badd; --legacy-pink: #f7badd;
   --ay-data-blue: #769ebe;
-  --ay-surface: #ffffff;
+  --ay-surface: #ffffff; --legacy-surface: #ffffff;
   --ay-r-sm: 8px; --ay-r-md: 16px; --ay-r-pill: 999px; --ay-r-round: 50%;
   --ay-rule: 1px solid rgba(62, 39, 35, .15);
-  --ay-outline: 1.5px solid #3e2723; /* always a full border; the bare colour is --ay-outline-color */
+  --ay-outline: 1.5px solid #3e2723; --legacy-outline: 1.5px solid #3e2723; /* always a full border; the bare colour is --ay-outline-color */
   --ay-outline-color: #3e2723;
   --ay-sticker: 3px 3px 0 #f7badd;
   --ay-dur-press: 120ms; --ay-dur-ui: 180ms; --ay-dur-sheet: 240ms;
@@ -46,11 +46,11 @@
 }
 .ayna-mobile { --ay-size-display: 32px; --ay-size-h1: 26px; --ay-size-h2: 20px; --ay-gutter-page: 16px; }
 :is([data-theme='brand-dark'], [data-theme='dark']) {
-  --ay-ink: #ffedac;
+  --ay-ink: #ffedac; --legacy-ink: #ffedac;
   --ay-ink-muted: rgba(255, 237, 172, .8);
-  --ay-surface: rgba(255, 237, 172, .08);
+  --ay-surface: rgba(255, 237, 172, .08); --legacy-surface: rgba(255, 237, 172, .08);
   --ay-rule: 1px solid rgba(255, 237, 172, .2);
-  --ay-outline: 1.5px solid #ffedac;
+  --ay-outline: 1.5px solid #ffedac; --legacy-outline: 1.5px solid #ffedac;
   --ay-outline-color: #ffedac;
   --ay-fg: #ffedac; --ay-fg-muted: rgba(255, 237, 172, .8);
   --ay-border-ink: 1.5px solid #ffedac;

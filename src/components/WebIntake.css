@@ -165,11 +165,11 @@ div.wq-count button.is-on { background: var(--butter); box-shadow: 3px 3px 0 var
 /* Avoid or must-have: one list at a time */
 .wq-avoid { display: grid; gap: 16px; }
 .wq-avoid .wq-chips { gap: 8px !important; }
-.wq-avoid-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; max-width: 440px; padding: 4px; border: 2px solid var(--ay-ink, #1d1a2b); border-radius: 99px; background: var(--ay-paper, #fffcf5); }
-.wq-avoid-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border: 0; border-radius: 99px; background: transparent; color: var(--ay-ink, #1d1a2b); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
-.wq-avoid-tabs button.is-on.is-avoid { background: var(--ay-pink, #f7badd); }
+.wq-avoid-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; max-width: 440px; padding: 4px; border: 2px solid var(--legacy-ink, #1d1a2b); border-radius: 99px; background: var(--ay-paper, #fffcf5); }
+.wq-avoid-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border: 0; border-radius: 99px; background: transparent; color: var(--legacy-ink, #1d1a2b); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
+.wq-avoid-tabs button.is-on.is-avoid { background: var(--legacy-pink, #f7badd); }
 .wq-avoid-tabs button.is-on.is-want { background: var(--ay-mint, #bfe8cf); }
-.wq-avoid-tabs button span { display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 99px; background: var(--ay-ink, #1d1a2b); color: #fff; font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
+.wq-avoid-tabs button span { display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 99px; background: var(--legacy-ink, #1d1a2b); color: #fff; font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
 .wq-avoid-panel { display: grid; gap: 16px; animation: wq-avoid-in .25s ease-out both; }
 .wq-avoid-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
 .wq-avoid-foot .wq-addown { flex: 1 1 100%; }
@@ -227,7 +227,7 @@ div.wq-count button.is-on { background: var(--butter); box-shadow: 3px 3px 0 var
 /* Age: type it or slide it (the app has the same pairing). */
 .app-container .wq-age-slide { display: flex; align-items: center; gap: 12px; max-width: 360px; margin: 16px auto 0; }
 .app-container .wq-age-slide > span { color: var(--ay-ink-soft); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
-.app-container .wq-age-slide input[type='range'] { flex: 1; appearance: none; height: 6px; border-radius: 99px; background: var(--ay-line); accent-color: var(--ay-ink); cursor: pointer; }
-.app-container .wq-age-slide input[type='range']::-webkit-slider-thumb { appearance: none; width: 24px; height: 24px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-butter); box-shadow: 2px 2px 0 var(--ay-ink); }
-.app-container .wq-age-slide input[type='range']::-moz-range-thumb { width: 24px; height: 24px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-butter); box-shadow: 2px 2px 0 var(--ay-ink); }
-.app-container .wq-age-slide input[type='range']:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 4px; }
+.app-container .wq-age-slide input[type='range'] { flex: 1; appearance: none; height: 6px; border-radius: 99px; background: var(--ay-line); accent-color: var(--legacy-ink); cursor: pointer; }
+.app-container .wq-age-slide input[type='range']::-webkit-slider-thumb { appearance: none; width: 24px; height: 24px; border: 2px solid var(--legacy-ink); border-radius: 50%; background: var(--legacy-butter); box-shadow: 2px 2px 0 var(--legacy-ink); }
+.app-container .wq-age-slide input[type='range']::-moz-range-thumb { width: 24px; height: 24px; border: 2px solid var(--legacy-ink); border-radius: 50%; background: var(--legacy-butter); box-shadow: 2px 2px 0 var(--legacy-ink); }
+.app-container .wq-age-slide input[type='range']:focus-visible { outline: 3px solid var(--legacy-ink); outline-offset: 4px; }

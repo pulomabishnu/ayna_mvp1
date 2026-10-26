@@ -11,13 +11,13 @@
   box-shadow: none !important;
 }
 .app-container :is(.lx-search__bar, .wc-search, .wq-search, .ay-web-lib-search, .ayna-landing-searchbar, .ayna-landing-search, .ayna-landing-glass):has(input:focus-visible) {
-  outline: 3px solid var(--ay-ink, #1d1a2b) !important;
+  outline: 3px solid var(--legacy-ink, #1d1a2b) !important;
   outline-offset: 2px !important;
 }
 
 /* Inputs that are the box themselves: same ink ring as the pills, outside the border */
 .app-container .ayna-browse__search input:focus-visible {
-  outline: 3px solid var(--ay-ink, #1d1a2b) !important;
+  outline: 3px solid var(--legacy-ink, #1d1a2b) !important;
   outline-offset: 2px !important;
 }
 

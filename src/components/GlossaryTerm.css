@@ -28,10 +28,10 @@
   z-index: 6000;
   box-sizing: border-box;
   padding: 16px;
-  border: 2px solid var(--ay-ink, #1d1a2b);
+  border: 2px solid var(--legacy-ink, #1d1a2b);
   border-radius: 16px;
   background: var(--ay-paper, #fffcf5);
-  color: var(--ay-ink, #1d1a2b);
+  color: var(--legacy-ink, #1d1a2b);
   box-shadow: var(--ay-shadow, 3px 3px 0 #1d1a2b);
   font-family: var(--ay-sans);
   text-align: left;

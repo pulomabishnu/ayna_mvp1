@@ -17,5 +17,5 @@
    on the website (ayna-system.css, theme-v3.css), which blanks the shared primitives' borders and
    tints. The primitives on Explore get the real token values on themselves (not on the page), so
    no older rule changes. */
-:is(.wx, .wx-top, .lb, .ax, .ay-lib, .ayshop, .ay-avoid, .ay-needtiles) :is(.ayk-chip, .ayk-tabs, .ayk-btn, .ayk-plate, .ayk-sticker) { --ay-outline: 1.5px solid var(--ay-ink, #3e2723); --ay-butter: #ffedac; --ay-chip-bg: #ffedac; }
-:is([data-theme='brand-dark'], [data-theme='dark']) :is(.wx, .wx-top, .lb, .ax, .ay-lib, .ayshop, .ay-avoid, .ay-needtiles) :is(.ayk-chip, .ayk-tabs, .ayk-btn) { --ay-outline: 1.5px solid #ffedac; --ay-chip-bg: transparent; }
+:is(.wx, .wx-top, .lb, .ax, .ay-lib, .ayshop, .ay-avoid, .ay-needtiles) :is(.ayk-chip, .ayk-tabs, .ayk-btn, .ayk-plate, .ayk-sticker) { --ay-outline: 1.5px solid var(--ay-ink, #3e2723); --legacy-outline: 1.5px solid var(--legacy-ink, #3e2723); --ay-butter: #ffedac; --legacy-butter: #ffedac; --ay-chip-bg: #ffedac; }
+:is([data-theme='brand-dark'], [data-theme='dark']) :is(.wx, .wx-top, .lb, .ax, .ay-lib, .ayshop, .ay-avoid, .ay-needtiles) :is(.ayk-chip, .ayk-tabs, .ayk-btn) { --ay-outline: 1.5px solid #ffedac; --legacy-outline: 1.5px solid #ffedac; --ay-chip-bg: transparent; }

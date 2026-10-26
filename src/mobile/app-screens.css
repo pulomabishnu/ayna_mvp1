@@ -19,7 +19,7 @@
   background: var(--b-butter) !important; color: var(--b-espresso) !important;
   border-radius: 22px !important; padding: 18px 18px 14px !important;
   box-shadow: none !important;
-  --ay-ink: #3e2723; --ay-paper: #ffffff;
+  --legacy-ink: #3e2723; --ay-paper: #ffffff;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel { height: 300px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy { padding: 8px 24px 0 !important; }

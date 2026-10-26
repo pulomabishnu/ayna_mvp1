@@ -20,9 +20,9 @@
   --ay-ink-faint: rgba(168, 181, 255, .28);
   /* Muted pastel fills stay (light ink reads on them) but sit a touch deeper. */
   --ay-peri: #252a63;
-  --ay-pink: #4c1d3e;
+  --legacy-pink: #4c1d3e;
   --ay-mint: #123f36;
-  --ay-butter: #2c2a14;
+  --legacy-butter: #2c2a14;
   /* Offset shadows become glows. */
   --ay-shadow: 0 0 0 1px rgba(168, 181, 255, .08), 0 0 18px rgba(168, 181, 255, .16);
   --ay-shadow-lg: 0 0 0 1px rgba(168, 181, 255, .1), 0 0 28px rgba(168, 181, 255, .2);
@@ -144,7 +144,7 @@
 
 /* Ecosystem ring: neon segments and swatches (no text sits on them). */
 .app-container.app-container[data-theme='dark'] :is(.eco3-chart, .lx-ring-card) {
-  --ay-pink: #ff78cf; --ay-mint: #69ffc1; --ay-peri: #a8b5ff; --ay-butter: #f5ff68;
+  --legacy-pink: #ff78cf; --ay-mint: #69ffc1; --ay-peri: #a8b5ff; --legacy-butter: #f5ff68;
 }
 .app-container.app-container[data-theme='dark'] .eco3-chart__segment { filter: drop-shadow(0 0 6px rgba(168, 181, 255, .35)); }
 .app-container.app-container[data-theme='dark'] .eco3-chart__swatch { box-shadow: 0 0 8px var(--area-color); }

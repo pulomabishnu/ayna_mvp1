@@ -50,11 +50,11 @@
   margin: 0;
   padding: 8px;
   list-style: none;
-  border: 2px solid var(--ay-ink, #1d1a2b);
+  border: 2px solid var(--legacy-ink, #1d1a2b);
   border-radius: 16px;
   background: var(--ay-paper, #fffcf5);
-  box-shadow: 4px 4px 0 var(--ay-ink, #1d1a2b);
-  color: var(--ay-ink, #1d1a2b);
+  box-shadow: 4px 4px 0 var(--legacy-ink, #1d1a2b);
+  color: var(--legacy-ink, #1d1a2b);
   text-align: left;
   animation: aysIn .15s ease-out both;
 }
@@ -89,7 +89,7 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--ay-ink, #1d1a2b);
+  color: var(--legacy-ink, #1d1a2b);
   font: inherit;
   font-weight: 600;
   font-style: italic;
@@ -97,15 +97,15 @@
   cursor: pointer;
 }
 .ays-assist__fix:hover { text-decoration: underline; text-underline-offset: 3px; }
-.ays-assist__fix:focus-visible, .ays-assist__chips button:focus-visible { outline: 3px solid var(--ay-ink, #1d1a2b); outline-offset: 2px; border-radius: 6px; }
+.ays-assist__fix:focus-visible, .ays-assist__chips button:focus-visible { outline: 3px solid var(--legacy-ink, #1d1a2b); outline-offset: 2px; border-radius: 6px; }
 .ays-assist__chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .ays-assist__chips button {
   min-height: 44px;
   padding: 0 16px;
-  border: 2px solid var(--ay-ink, #1d1a2b);
+  border: 2px solid var(--legacy-ink, #1d1a2b);
   border-radius: 99px;
   background: var(--ay-paper, #fffcf5);
-  color: var(--ay-ink, #1d1a2b);
+  color: var(--legacy-ink, #1d1a2b);
   font: 600 var(--ay-fs-secondary)/1 var(--ay-sans);
   cursor: pointer;
   transition: transform .15s ease-out;
