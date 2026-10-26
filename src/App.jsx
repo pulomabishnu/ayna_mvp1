@@ -2591,7 +2591,7 @@ function App() {
         {currentView === 'you' && (
           <WebYou
             section={youSection}
-            nav={youSection ? <YouTabs active={youSection} onGo={(key) => openYou(key === 'overview' ? null : key)} /> : null}
+            nav={youSection ? <YouTabs inPage active={youSection} onGo={(key) => openYou(key === 'overview' ? null : key)} /> : null}
             onOpenSection={openYou}
             recentAsks={chatHistory}
             savedSlot={(

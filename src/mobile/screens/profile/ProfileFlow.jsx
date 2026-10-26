@@ -514,16 +514,14 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
   // My health (pushed from the hub): the old My health, Tracking and Connected data groups in one place.
   if (view === 'health') {
     return shell('My health', <>
-      {group('dashboard', 'Your dashboard', [], <ThisWeek authUserId={authUserId} onOpenDashboard={() => onOpen('healthInsights')} onConnect={() => onOpen('healthData')} />)}
+      <ThisWeek authUserId={authUserId} onOpenDashboard={() => onOpen('healthInsights')} onConnect={() => onOpen('healthData')} />
       {group('connected', 'Connected apps', [
         { key: 'healthData', title: 'Health data', sub: 'Apple Health, Oura and uploads', value: connectedCount ? `${connectedCount} connected` : '', onClick: () => onOpen('healthData') },
       ])}
-      {group('tracking', 'Tracking', [
+      <DailyCheckin variant="app" userId={authUserId || null} />
+      {group('checkins', 'Check-ins', [
         onOpenMonthlyCheckin && { key: 'checkin', title: 'Monthly check-in', value: checkinCount ? fmtCount(checkinCount) : '', onClick: onOpenMonthlyCheckin },
-      ], <>
-        <DailyCheckin variant="app" userId={authUserId || null} />
-        {SHOW_BOX_WAITLIST && <BoxWaitlist variant="app" />}
-      </>)}
+      ], SHOW_BOX_WAITLIST ? <BoxWaitlist variant="app" /> : null)}
       {group('profile', 'Your profile', [
         { key: 'beliefs', title: 'What ayna knows about you', sub: 'See, change or remove anything ayna uses', onClick: () => onOpen('beliefs') },
         signedIn && onEditProfile && { key: 'profile', icon: 'checkin', title: 'Health profile', sub: 'Symptoms, goals, life stage and preferences', value: `${profileFilledPct}%`, onClick: onEditProfile },
@@ -640,11 +638,11 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
 
         <nav className="ay-you-section ay-you-list ay-you-five" aria-label="You sections">
           {[
-            onOpenEcosystem && { key: 'ecosystem', title: 'My ecosystem', sub: 'Your matches and routine, grouped by need', value: ecosystemCount ? pickWord(ecosystemCount) : '', onClick: onOpenEcosystem },
-            onOpenSaved && { key: 'saved', title: 'Saved', sub: 'Products, posts and startups you saved', value: savedCount ? fmtCount(savedCount) : '', onClick: onOpenSaved },
-            { key: 'health', icon: 'healthData', title: 'My health', sub: 'Dashboard, tracking and connected apps', onClick: () => onOpen('myHealth') },
-            { key: 'activity', title: 'Activity', sub: 'Questions, posts and reviews', onClick: () => onOpen('activity') },
-            { key: 'settings', title: 'Settings & privacy', sub: 'Account, notifications, appearance and your data', onClick: onOpenSettings },
+            onOpenEcosystem && { key: 'ecosystem', title: 'My ecosystem', sub: 'Grouped by need', value: ecosystemCount ? pickWord(ecosystemCount) : '', onClick: onOpenEcosystem },
+            onOpenSaved && { key: 'saved', title: 'Saved', sub: 'Products, posts, startups', value: savedCount ? fmtCount(savedCount) : '', onClick: onOpenSaved },
+            { key: 'health', icon: 'healthData', title: 'My health', sub: 'Dashboard, tracking, apps', onClick: () => onOpen('myHealth') },
+            { key: 'activity', title: 'Activity', sub: 'Questions, posts, reviews', onClick: () => onOpen('activity') },
+            { key: 'settings', title: 'Settings & privacy', sub: 'Account and your data', onClick: onOpenSettings },
           ].filter(Boolean).map(row)}
         </nav>
 

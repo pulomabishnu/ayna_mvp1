@@ -12,10 +12,10 @@ const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || 
  * ones on a phone), so it never scrolls sideways. No Back button: these are
  * the You tab's own sections. Real links, so they open in a new tab too.
  */
-export default function YouTabs({ active, onGo }) {
+export default function YouTabs({ active, onGo, inPage = false }) {
   const current = YOU_SECTIONS.find((s) => s.key === active);
   return (
-    <div className="ay-container yh-tabs">
+    <div className={`${inPage ? '' : 'ay-container '}yh-tabs`}>
       <nav className="yh-crumb" aria-label="Breadcrumb">
         <a href="/you" onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); onGo?.('overview'); }}>You</a>
         {current && <><span aria-hidden="true">/</span><span aria-current="page">{current.label}</span></>}
