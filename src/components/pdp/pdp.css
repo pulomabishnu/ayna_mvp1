@@ -2527,3 +2527,12 @@ html body .ayq--tabs .ayq-st__tab:not(.is-on):hover { background: rgba(var(--v-f
 :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayq-folder__tab { font-size: 17px !important; }
 :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-compare :is(td, th) { border-color: rgba(255, 237, 172, .2) !important; }
 :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ay-compare__thumb, .ayv-community__main) { border-color: var(--ay-outline-color) !important; }
+
+/* QA3 M9: at laptop heights (1113x683) the safety line under Buy sat half below
+   the fold when a care note leads the match. With a mouse, "See why" needs no
+   44px touch row and the match block sits a little closer to the name. */
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
+  :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-match.is-hold { margin-top: 10px !important; }
+  :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-match .ayv-textbtn { min-height: 28px; }
+  :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-story--buy > .ayv-safeline { margin-top: 2px !important; }
+}
