@@ -18,10 +18,11 @@ import { WEB_FOLLOWUP_STEP_IDS } from '../mobile/data/quizDraftProgress.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../utils/search/index.js';
 import { commonNeedOptions } from '../matching/commonNeeds.js';
-import { VALUE_POINTS, GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../mobile/data/onboardingFlow.js';
+import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../mobile/data/onboardingFlow.js';
 import { CATEGORIES } from '../health/metrics.js';
 import ReadyReveal from './onboarding/ReadyReveal.jsx';
 import '../styles/onboarding.css';
+import './WebIntake.audit.css';
 // Website-only conditions that change what is safe (condition research, Oct 17).
 const WEB_EXTRA_CONDITIONS = ['Kidney disease', 'Bleeding or clotting disorder', 'History of blood clots', 'Heart disease', 'Liver disease', 'Stomach ulcer or stomach bleeding', 'Asthma'];
 
@@ -29,7 +30,6 @@ const WEB_EXTRA_CONDITIONS = ['Kidney disease', 'Bleeding or clotting disorder',
 // the app (all of that lives in mobile/data/intakeModel.js); only the layout
 // and controls are built for a browser.
 
-const SECTION_NAMES = { core: 'The basics', support: 'Your needs', safety: 'Safety', history: 'What you tried', preferences: 'Your preferences', trust: 'Last bits' };
 /* ------------------------------ Controls ------------------------------ */
 
 function Chips({ items, selected = [], onToggle, labels = {}, small = false, single = false, label }) {
@@ -662,7 +662,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
         // First run: two plain questions instead of one with tabs (team direction, section 30).
         if (step.type !== 'avoidIngredients') {
           const isAvoid = step.type === 'avoidOnly';
-          return <div className="qz-avoid">
+          return <div className={`qz-avoid${isAvoid ? ' is-avoid' : ''}`}>
             <Chips label={step.title} items={isAvoid ? [...AVOID_GROUPS.avoid, ...customAvoid] : [...AVOID_GROUPS.want, ...customWant]} selected={isAvoid ? avoidSel : wantSel} onToggle={toggle} labels={AVOID_LABELS} />
             <div className="qz-avoid-foot">
               {isAvoid
@@ -671,7 +671,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
             </div>
           </div>;
         }
-        return <div className="qz-avoid">
+        return <div className={`qz-avoid${onAvoid ? ' is-avoid' : ''}`}>
           <div className="qz-avoid-tabs" role="tablist" aria-label="Leave out or should be">
             <button type="button" role="tab" aria-selected={onAvoid} className={`is-avoid${onAvoid ? ' is-on' : ''}`} onClick={() => setAvoidTab('avoid')}>Leave out{avoidSel.length > 0 && <span>{avoidSel.length}</span>}</button>
             <button type="button" role="tab" aria-selected={!onAvoid} className={`is-want${!onAvoid ? ' is-on' : ''}`} onClick={() => setAvoidTab('want')}>Should be{wantSel.length > 0 && <span>{wantSel.length}</span>}</button>
@@ -777,14 +777,14 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
         {!initialSnapshot && <p className="qz-saved-note">Answers are saved on this device</p>}
       </header>
 
-      {/* No eyebrow label above the question (onboarding audit #4). */}
-      <div className="qz-label-row">
+      {/* No eyebrow label above the question (onboarding audit #4); the row keeps only its tools. */}
+      {((onboarding && index === 0 && onExplore) || phase === 'more' || (step.info && !onboarding)) && <div className="qz-label-row">
         <span className="qz-label-tools">
           {onboarding && index === 0 && onExplore && <button type="button" className="qz-skip qz-explore" onClick={onExplore}>Explore first</button>}
           {phase === 'more' && <button type="button" className="qz-skip qz-to-results" onClick={() => finish()} disabled={saving}>See my results</button>}
           {step.info && !onboarding && <button type="button" className="qz-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen} onClick={() => setInfoOpen((v) => !v)}>i</button>}
         </span>
-      </div>
+      </div>}
       <h1 className="qz-title">{step.title}</h1>
       {step.subtitle && <p className="qz-subtitle">{step.subtitle}</p>}
       {infoOpen && step.info && <p className="qz-info-pop" role="note">{step.info}</p>}

@@ -701,3 +701,21 @@
 .ip-results-link { font-weight: 500; font-size: 13px; }
 @media (prefers-reduced-motion: reduce) { .ip-more { transition: none; } }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-tag-optional { border-color: currentColor; }
+
+/* Onboarding audit (Oct 25). Scoped past app-landing.css / app-ux-fixes.css (12-13 .ayna-mobile). */
+/* #3: the "Not sure? Tap Next" line sits below the last chip, never on it. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-hint--after { position: static !important; margin: 16px 0 0 !important; }
+/* Helper text 14px (section 7). */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake :is(.ip-hint, .ip-subtitle, .ip-why) { font-size: calc(14px * var(--ayna-text-scale, 1)) !important; }
+/* #7: text inputs white with a 1.5px ink outline, radius 8. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake :is(.ip-input, .ip-other-text input, .ip-name input, .ip-addown-form input) { border: 1.5px solid var(--ay-ink) !important; border-radius: 8px !important; background: var(--ay-surface) !important; color: var(--ay-ink) !important; }
+.ip-name { display: grid; gap: 8px; margin: 0 0 20px; }
+.ip-name > span { font: 600 15px/1.3 var(--ay-font-ui); color: var(--ay-ink); }
+.ip-name small { margin-left: 6px; font: 500 13px/1 var(--ay-font-ui); color: var(--ay-ink-muted); }
+.ip-name input { width: 100%; min-height: 48px; box-sizing: border-box; padding: 0 14px; font: 400 max(16px, calc(15px * var(--ayna-text-scale, 1)))/1.3 var(--ay-font-ui); }
+/* #16: "Skip for now" centred under Next. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-foot .ip-skip--foot { display: block; width: 100%; min-height: 44px; margin: 4px 0 0; color: var(--ay-ink); font: 500 14px/1 var(--ay-font-ui); text-align: center; }
+/* #17: "things to avoid" chips carry a crossed circle. */
+.ayna-play-intake :is(.ip-avoid-list, .ip-avoid-panel).is-avoid .ip-chip:not(.is-dashed)::before { content: ''; display: inline-block; flex: none; width: 14px; height: 14px; margin-right: 6px; vertical-align: -2px; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M6 6l12 12'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M6 6l12 12'/%3E%3C/svg%3E") center / contain no-repeat; }

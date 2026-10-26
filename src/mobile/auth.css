@@ -14,7 +14,7 @@
 
 /* Form: fields and their button stay together */
 .ay-auth-form { display: grid; gap: 8px; margin-top: 32px; }
-.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field { margin: 0 !important; min-height: 64px; padding: 10px 16px !important; border: 1.5px solid var(--ay-line) !important; border-radius: 16px !important; background: var(--ay-paper) !important; box-shadow: none !important; transition: border-color .15s; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field { margin: 0 !important; min-height: 64px; padding: 10px 16px !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 8px !important; background: var(--ay-surface) !important; box-shadow: none !important; transition: border-color .15s; }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field:focus-within { border-color: var(--ay-ink) !important; }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field svg { stroke: var(--ay-ink); opacity: .55; }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field span { color: var(--ay-ink) !important; font-size: 13px !important; font-weight: 500 !important; opacity: .7; }
@@ -63,7 +63,7 @@
 .ay-auth-check-title { margin-bottom: 8px; text-align: center; font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.04em; color: var(--ay-ink); }
 .ay-auth-check-copy { max-width: 32ch; margin: 0 auto 16px; text-align: center; font: 400 15px/1.45 var(--ay-font-ui); color: var(--ay-ink); opacity: .8; }
 .ay-auth-check-msg { margin-bottom: 8px; text-align: center; font: 500 13px/1.4 var(--ay-font-ui); color: var(--ay-ink); }
-.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field > div:first-child:not(:last-child) { width: 22px !important; height: 22px !important; font: 500 11.5px/1 var(--ay-font-ui) !important; background: var(--ay-peri) !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field > div:first-child:not(:last-child) { width: 22px !important; height: 22px !important; font: 500 13px/1 var(--ay-font-ui) !important; background: var(--ay-butter-deep, #f6e3a1) !important; color: var(--ay-ink) !important; }
 .ay-auth-head { min-height: 64px; display: flex; align-items: center; }
 
 /* Post-quiz sign up: a small summary of the Ecosystem being saved */
@@ -107,3 +107,16 @@
 .ayna-mobile.ayna-mobile .ay-auth .ay-auth-code .ayna-fresh-auth-field { display: grid; gap: 2px; }
 /* What an account adds, under the sign-in sheet title (team direction 56). */
 .ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-why { margin: -8px 0 18px; color: var(--ay-ink, #3e2723); font: 400 15px/1.45 var(--ay-font-ui, 'Figtree'), sans-serif; }
+
+/* Onboarding audit (Oct 25): white fields with a 1.5px ink outline (radius 8),
+   Apple then Google first, one consent box with trust badges (#12 Pai), the
+   acknowledgement sentence above the button, sticker shadow on the button. */
+.ayna-mobile .ay-auth .ay-auth-social { margin-top: 24px; }
+.ayna-mobile .ay-auth .ay-auth-or { margin: 20px 0 4px; }
+.ayna-mobile .ay-auth .ay-auth-form { margin-top: 12px; }
+.ay-auth-badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 0 32px; }
+.ay-auth-badges span { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border: 1.5px solid var(--ay-ink); border-radius: 999px; font: 600 13px/1 var(--ay-font-ui); color: var(--ay-ink); }
+.ay-auth-ack { margin: 8px 0 0; font: 500 13px/1.5 var(--ay-font-ui); color: var(--ay-ink-muted); }
+.ay-auth-ack a { color: var(--ay-ink); text-decoration: underline; text-underline-offset: 2px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-primary:not(:disabled) { box-shadow: var(--ay-sticker) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-primary:not(:disabled):active { box-shadow: none !important; transform: translate(3px, 3px); }

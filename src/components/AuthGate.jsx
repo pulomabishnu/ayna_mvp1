@@ -626,17 +626,17 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
               onClick={(e) => e.stopPropagation()}
               style={{ width: '100%', maxWidth: '420px', background: '#fff', borderRadius: '20px', padding: '2rem', boxShadow: '0 18px 50px rgba(28, 25, 23, 0.18)', textAlign: 'center' }}
             >
-              <div style={{ color: '#f97316', fontWeight: 600, fontSize: 14, letterSpacing: '0.04em', marginBottom: '0.75rem' }}>ayna</div>
-              <h2 id="phone-coming-soon-title" style={{ margin: '0 0 0.75rem', fontSize: 'var(--ay-fs-section)', color: '#1c1917' }}>
+              <div style={{ color: '#3e2723', fontWeight: 600, fontSize: 14, letterSpacing: '0.04em', marginBottom: '0.75rem' }}>ayna</div>
+              <h2 id="phone-coming-soon-title" style={{ margin: '0 0 0.75rem', fontSize: 'var(--ay-fs-section)', color: '#3e2723' }}>
                 Phone sign-up is coming soon
               </h2>
-              <p style={{ margin: '0 0 1.5rem', color: '#57534e', lineHeight: 1.6 }}>
+              <p style={{ margin: '0 0 1.5rem', color: '#3e2723', lineHeight: 1.6 }}>
                 We’re still putting the finishing touches on phone verification. For now, please create your ayna account with Apple, Google or email.
               </p>
               <button
                 type="button"
                 onClick={() => setShowPhoneNotice(false)}
-                style={{ width: '100%', border: 'none', borderRadius: '12px', padding: '0.9rem 1rem', background: '#f97316', color: '#fff', fontWeight: 600, fontSize: 16, cursor: 'pointer' }}
+                style={{ width: '100%', border: 'none', borderRadius: '12px', padding: '0.9rem 1rem', background: '#3e2723', color: '#ffedac', fontWeight: 600, fontSize: 16, cursor: 'pointer' }}
               >
                 Continue with email
               </button>
@@ -1076,7 +1076,7 @@ const styles = {
     lineHeight: 1.45,
   },
   configWarning: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: '#3e2723',
     background: 'rgba(247, 186, 221, 0.45)',
     border: '1px solid #f7badd',
@@ -1152,7 +1152,7 @@ const styles = {
     border: 'none',
     padding: '0.15rem 0',
     color: '#281B3D',
-    fontSize: 12.5,
+    fontSize: 13,
     fontWeight: '600',
     cursor: 'pointer',
     fontFamily: 'var(--ay-sans)',
@@ -1180,12 +1180,12 @@ const styles = {
     cursor: 'pointer',
   },
   consentText: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: 'var(--color-text-muted)',
     lineHeight: 1.4,
   },
   legalNotice: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: 'var(--color-text-muted)',
     lineHeight: 1.45,
     margin: '-0.1rem 0 0',
@@ -1213,13 +1213,13 @@ const styles = {
     cursor: 'not-allowed',
   },
   error: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: '#B91C1C',
     margin: 0,
     lineHeight: 1.4,
   },
   success: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: '#15803D',
     margin: 0,
     lineHeight: 1.4,
@@ -1236,7 +1236,7 @@ const styles = {
     display: 'block',
   },
   dividerText: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: 'var(--color-text-muted)',
   },
   oauthRow: {
@@ -1249,7 +1249,7 @@ const styles = {
     justifyContent: 'center',
     gap: '0.4rem',
     padding: '0.7rem 0.35rem',
-    fontSize: 12.5,
+    fontSize: 13,
     fontWeight: '500',
     background: '#FFFFFF',
     color: '#2C2333',
@@ -1271,7 +1271,7 @@ const styles = {
     cursor: 'not-allowed',
   },
   fine: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: 'var(--color-text-muted)',
     textAlign: 'center',
     lineHeight: 1.45,
@@ -1281,7 +1281,7 @@ const styles = {
     background: 'none',
     border: 'none',
     color: 'var(--color-text-muted)',
-    fontSize: 12.5,
+    fontSize: 13,
     cursor: 'pointer',
     textDecoration: 'underline',
     textAlign: 'center',

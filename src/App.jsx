@@ -110,6 +110,7 @@ import { forgetSharedIntake, loadHealthIntakeForCurrentUser, saveHealthIntakeFor
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate, { ConsentGate } from './components/AuthGate';
 import HeardAboutPrompt from './components/HeardAboutPrompt.jsx';
+import GatedFeaturePreview from './components/GatedFeaturePreview.jsx';
 import { shouldAskHeardAbout } from './utils/signupConsent.js';
 import './finalAynaPolish.css';
 import './brand-v2.css';
@@ -1360,8 +1361,12 @@ function App() {
   }, [user, authLoading, currentView]);
 
   const PROTECTED_VIEWS = ['omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings', 'delete-account', 'health-data'];
+  // Signed out, these show what the feature does with the sign-in panel
+  // (GatedFeaturePreview), not the landing page under a modal (onboarding audit #6).
+  const GATED_PREVIEW_VIEWS = ['screenings', 'recalls', 'tracked', 'doctor-prep'];
+  const gatedPreview = !user && GATED_PREVIEW_VIEWS.includes(currentView);
   useEffect(() => {
-    if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
+    if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView) && !GATED_PREVIEW_VIEWS.includes(currentView)) {
       // Say what the page was, so the sign-in sheet explains itself.
       const FEATURE = { 'doctor-prep': 'appointment prep', recalls: 'recall alerts', tracked: 'recall alerts', comparison: 'comparisons', omitted: 'your hidden products', 'profile-edit': 'your health profile', 'phone-verify': 'ayna by text', screenings: 'screening reminders', 'delete-account': 'account settings', 'health-data': 'health data' };
       setCurrentView('welcome', { replace: true });
@@ -2646,7 +2651,7 @@ function App() {
           />
         )}
         {currentView === 'quiz' && (
-          <WebIntake key={quizResume ? 'quiz-resume' : `quiz-${quizRun}`} introEnabled={!quizResume} initialSnapshot={quizResume ? null : quizResults?.fullHealthIntake || null} onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} onExplore={() => handleViewDiscovery('')} />
+          <WebIntake key={quizResume ? 'quiz-resume' : `quiz-${quizRun}`} introEnabled={!quizResume} initialSnapshot={quizResume ? null : quizResults?.fullHealthIntake || null} onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} onExplore={() => handleViewDiscovery('')} signedIn={Boolean(user)} />
         )}
 
         {currentView === 'profile-edit' && (
@@ -2858,7 +2863,7 @@ function App() {
             onZipCodeChange={handleZipCodeChange}
           />
         )}
-        {currentView === 'tracked' && (
+        {currentView === 'tracked' && !gatedPreview && (
           <TrackedItems
             onBack={() => setCurrentView('you')}
             trackedProducts={trackedProducts}
@@ -3087,13 +3092,21 @@ function App() {
           </Suspense>
           </div>
         )}
-        {currentView === 'screenings' && (
+        {gatedPreview && !authLoading && (
+          <GatedFeaturePreview
+            view={currentView}
+            onAuthenticated={(authenticatedUser, session) => { if (!authenticatedUser) return; setUser(authenticatedUser); if (session) setUserSession(session); setAuthLoading(false); }}
+            onStartEcosystem={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
+            onBeforeOAuthRedirect={() => { markOAuthSource('signin'); }}
+          />
+        )}
+        {currentView === 'screenings' && !gatedPreview && (
           <Screenings checkinData={checkinData} onNavigate={setCurrentView} onOpenProduct={handleOpenProduct} onOpenCheckin={() => setShowCheckin(true)} onBack={() => handleViewEcosystem()} />
         )}
         {currentView === 'omitted' && (
           <OmittedProducts omittedProducts={omittedProducts} toggleOmitProduct={toggleOmitProduct} onBack={() => handleViewEcosystem()} onBrowse={() => handleViewDiscovery('')} />
         )}
-        {currentView === 'recalls' && (
+        {currentView === 'recalls' && !gatedPreview && (
           <Recalls trackedProducts={trackedProducts} myProducts={myProducts} onBack={() => handleViewEcosystem()} />
         )}
         {currentView === 'comparison' && (
@@ -3112,7 +3125,7 @@ function App() {
             onOpenProduct={(p) => handleOpenProduct(p, { source: 'compare' })}
           />
         )}
-        {currentView === 'doctor-prep' && (
+        {currentView === 'doctor-prep' && !gatedPreview && (
           <DoctorPrep
             checkinData={checkinData}
             myProducts={myProducts}

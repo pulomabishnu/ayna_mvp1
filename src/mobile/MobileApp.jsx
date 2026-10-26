@@ -123,6 +123,8 @@ import { savedHaptic, addedHaptic } from '../utils/feedback.js';
 import { useSheetDrag } from './hooks/useSheetDrag.js';
 import PushLayer from './components/PushLayer.jsx';
 import GlobalToast from '../components/v3/GlobalToast.jsx';
+import HeardAboutPrompt from '../components/HeardAboutPrompt.jsx';
+import { shouldAskHeardAbout } from '../utils/signupConsent.js';
 import { toast } from '../utils/toast.js';
 // Motion moments (sheets, push, tab fade) and app-wide press states; last so it wins.
 import './app-motion.css';
@@ -296,6 +298,7 @@ const AUTH_NO_RETURN = new Set(['landing', 'signin', 'quiz', 'building', 'reveal
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
   const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName, omittedProducts = {} } = session;
+  const [heardDismissed, setHeardDismissed] = useState(false);
   const myProducts = useMemo(() => storedProducts.map(hydrateCatalogProduct), [storedProducts]);
   // The welcome screen is the signed-out entry point. Returning accounts
   // move into their ecosystem once auth finishes restoring their session.
@@ -1399,6 +1402,8 @@ export default function MobileApp() {
     authUser,
     onSignUp: signUpWithPassword,
     onSignIn: signInWithPassword,
+    // Her first name from the quiz: sign-up never asks again (onboarding audit #1).
+    firstName: lastQuizAnswers?.firstName || session.pendingQuiz?.firstName || '',
     // Remember where Google/Apple started: the post-quiz save may create an
     // account; a plain sign-in that does gets the "build it first" step.
     onGoogleSignIn: () => { const mode = authMode === 'signup' || lastQuizAnswers || session.pendingQuiz ? 'save' : 'signin'; markOAuthSource(mode); return signInWithGoogle({ mode }); },
@@ -1829,6 +1834,8 @@ export default function MobileApp() {
       <FeedbackPrompts key={realAuthUser?.id || 'guest'} user={realAuthUser} authLoading={authLoading} currentView={overlayType || askAynaOpen ? 'busy' : screen} safeViews={APP_FEEDBACK_SCREENS} />
       <OfflineBanner rootRef={rootRef} />
       <GlobalToast variant="app" />
+      {/* "Where did you hear about us?" once after sign-up, optional (onboarding audit #1). */}
+      {authUser && !heardDismissed && screen !== 'signin' && shouldAskHeardAbout(authUser) && <HeardAboutPrompt variant="app" onDone={() => setHeardDismissed(true)} />}
       {/* First-visit tips (src/mobile/tutorial): one overlay, reads data-tour anchors. */}
       <TutorialLayer userId={authUser?.id || null} />
     </div>
