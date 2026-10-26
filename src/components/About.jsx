@@ -1,6 +1,7 @@
 import React from 'react';
 import { EdPage, EdBlock } from './editorial/EdPage';
-import { StickerButton, OutlineButton } from './ui/ay';
+import { StickerButton, OutlineButton, Bento, Tile } from './ui/ay';
+import ReadMore from './info/ReadMore.jsx';
 import { TEAM_CAPTION } from '../data/welcomeSlides.js';
 
 /**
@@ -122,15 +123,24 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
         title="Find what fits your body, with the research right next to it."
         intro="ayna matches women’s health products to your answers and puts the research and reviews beside each one, so you spend less time searching."
       >
-        <ol className="ed-principles">
-          {PRINCIPLES.map((p) => (
-            <li key={p.title}>
+        {/* Bento (uniqueness pass A): the four promises in four tones, with the
+            meaning of the name on the mirror photograph (moved here from the story, verbatim). */}
+        <Bento as="ol" className="ip-bento ip-about">
+          {PRINCIPLES.map((p, i) => (
+            <Tile key={p.title} as="li" tone={['ink', 'pink', 'butter', 'deep'][i]} span={i === 0 ? 'wide' : i === 3 ? 'wide' : ''} className="ip-bt ip-principle">
               {p.icon}
               <h3 className="ed-rowtitle">{p.title}</h3>
               <p>{p.body}</p>
-            </li>
+            </Tile>
           ))}
-        </ol>
+          <Tile as="li" tone="butter" span="wide" className="ip-bt ip-mirror">
+            <span className="ip-mirror__ph"><img src="/landing/vanity-mirror.webp" alt="A woman taking notes at her vanity table" loading="lazy" /></span>
+            <span className="ip-mirror__q">
+              <strong>ayna means “mirror.”</strong>
+              <span>Our name means mirror in Bengali and Turkish. To us, it expresses what we want this experience to feel like: a place that reflects you, your questions and what matters to you.</span>
+            </span>
+          </Tile>
+        </Bento>
       </EdBlock>
 
       <EdBlock title="We kept asking the same thing: why is this so hard to find?">
@@ -141,6 +151,7 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
               which products could help manage her symptoms, she was told to “look it up.” Finding guidance on
               non-prescription products brought another challenge: figuring out where to begin.
             </p>
+            <ReadMore label="Read our story">
             <p>
               For Eliz and Ameera, growing up in households where intimate health wasn’t openly discussed meant looking
               online for answers to questions that were difficult to ask elsewhere.
@@ -153,13 +164,7 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
               ayna grew out of that question. We’re building a place where women can compare wellness products,
               understand the information behind them and find options that reflect their individual needs.
             </p>
-            <div className="ed-pull">
-              <p>ayna means “mirror.”</p>
-              <p>
-                Our name means mirror in Bengali and Turkish. To us, it expresses what we want this experience to feel like:
-                a place that reflects you, your questions and what matters to you.
-              </p>
-            </div>
+            </ReadMore>
           </div>
           <TeamPhoto />
         </div>
@@ -222,7 +227,7 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
         </div>
       </EdBlock>
 
-      <section className="ed-block ip-closer" aria-labelledby="ed-about-closer">
+      <section className="ed-block ip-closer uq-bleed is-pink uq-band" aria-labelledby="ed-about-closer">
         <div>
           <h2 id="ed-about-closer" className="ed-h2">A place to return to as your needs change.</h2>
           <p className="ed-body" style={{ marginTop: 8 }}>

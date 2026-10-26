@@ -46,17 +46,21 @@ export default function HowWeMakeMoney({ onBack, backLabel }) {
             crumb="How we make money"
             photo="bag-tubes"
             toc
-        >
-            <div className="ay-group is-padded ed-keyline">
-                <h2>Partnerships never change your matches</h2>
+            glance
+            bandLabel="Partnerships never change your matches"
+            band={
+            <div className="uq-keyline">
+                <h2 className="uq-keyline__h">Partnerships never change your matches</h2>
                 <p>
                     Partnerships and affiliate links help support ayna. They can affect visibility in general Browse when clearly labeled, but they do not decide your personalized match score or recommendation order.
                 </p>
                 <p className="ip-disclose">See <a href="/how-it-works">how matches are made</a> and <a href="/partners">the brands we work with</a>.</p>
             </div>
-
+            }
+        >
             {SECTIONS.map((section) => (
-                <section key={section.eyebrow}>
+                // The Amazon Associates disclosure is legally required: that section stays open.
+                <section key={section.eyebrow} data-keep={section.paragraphs.some((p) => /Amazon Associate/.test(p)) ? '' : undefined}>
                     <h2>{section.eyebrow}</h2>
                     {section.paragraphs.map((p, i) => (
                         <p key={i}>{p}</p>

@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { defineOption } from '../data/glossary.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
-import { ChipList, StickerGrid, SearchField, ChoiceRows, AgeDial, ZipTicket, LevelMeter, TrackLine, PriceStacks, DotScale, BrandSpectrum, AccountCards, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
+import { ChipList, StickerGrid, SearchField, ChoiceRows, AgeDial, ZipTicket, TrackLine, PriceStacks, AccountCards, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
+import BlendScale from '../../components/quiz/BlendScale.jsx';
+import { BRAND_SHORT } from '../../components/quiz/blendLabels.js';
 import { haptic } from '../../utils/haptics.js';
 import { INTAKE_SCENES, SECTION_TONES, SECTION_LABELS } from '../components/intake/intakeScenes.js';
 import '../intake-play.css';
@@ -794,12 +796,13 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     );
 
     // First run: named answers instead of an unlabeled level meter (team direction, section 33).
-    if (onboarding && (step.type === 'flow' || step.type === 'pain')) {
+    // Uniqueness pass A: the House Blend slider, with every level named and tappable (so the
+    // named answers stay, section 33); the same options are saved verbatim.
+    if (step.type === 'flow' || step.type === 'pain') {
       const key = step.type === 'flow' ? 'periodFlow' : 'periodPain';
-      return <ChipList items={step.type === 'flow' ? PERIOD_FLOW : PERIOD_PAIN} selected={intake[key] ? [intake[key]] : []} onToggle={(v) => set(key, intake[key] === v ? '' : v)} />;
+      const opts = step.type === 'flow' ? PERIOD_FLOW : PERIOD_PAIN;
+      return <BlendScale variant="app" label={step.title} levels={opts.slice(0, 5)} extras={opts.slice(5)} value={intake[key]} onChange={(v) => set(key, v)} />;
     }
-    if (step.type === 'flow') return <LevelMeter options={PERIOD_FLOW} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} shape="drop" />;
-    if (step.type === 'pain') return <LevelMeter options={PERIOD_PAIN} value={intake.periodPain} onChange={(v) => set('periodPain', v)} shape="bar" />;
     if (step.type === 'utiFrequency') return <TrackLine options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
     if (step.type === 'ttcDuration') return <TrackLine options={ttcDurationOptions(intake)} value={intake.ttcDuration} onChange={(v) => set('ttcDuration', v)} />;
     if (step.type === 'postpartumTiming') return (
@@ -889,13 +892,11 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         <>
           <PriceStacks options={PRICE_RANGES.filter((opt) => opt !== notAFactor)} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
           <ChipList items={[notAFactor]} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} compact />
-          {onboarding
-            ? <div className="ip-followup"><strong>{FOLLOWUP_QUESTIONS.largePurchaseFrequency}</strong><ChipList items={LARGE_PURCHASE_FREQUENCY} selected={intake.largePurchaseFrequency ? [intake.largePurchaseFrequency] : []} onToggle={(v) => set('largePurchaseFrequency', intake.largePurchaseFrequency === v ? '' : v)} compact /></div>
-            : <DotScale label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />}
+          <div className="ip-followup"><strong>{FOLLOWUP_QUESTIONS.largePurchaseFrequency}</strong><BlendScale variant="app" label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} levels={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} /></div>
         </>
       );
     }
-    if (step.type === 'brand') return <BrandSpectrum options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
+    if (step.type === 'brand') return <BlendScale variant="app" label={step.title} levels={BRAND_OPENNESS.slice(0, 4)} extras={BRAND_OPENNESS.slice(4)} short={BRAND_SHORT} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
     if (step.type === 'avoidIngredients' || step.type === 'avoidOnly' || step.type === 'wantOnly') {
       // "Leave out: Fragrance" also stores "Fragrance-free", the value the match engine already scores, so logic is unchanged.
       const selected = intake.avoidIngredients || [];

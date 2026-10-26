@@ -25,9 +25,9 @@ export function Shout({ as: Tag = 'h1', size = 'xl', className = '', children, .
   return <Tag className={`ayb-shout is-${size} ${className}`.trim()} {...rest}>{children}</Tag>;
 }
 
-/** Bento grid. Children are <Tile>. */
-export function Bento({ className = '', children, ...rest }) {
-  return <div className={`ayb-bento ${className}`.trim()} {...rest}>{children}</div>;
+/** Bento grid. Children are <Tile>. as: 'div' (default) | 'ol' | 'ul' (then pass Tiles as="li"). */
+export function Bento({ as: Tag = 'div', className = '', children, ...rest }) {
+  return <Tag className={`ayb-bento ${className}`.trim()} {...rest}>{children}</Tag>;
 }
 
 /**
@@ -46,7 +46,7 @@ export function Tile({ tone = 'deep', span = '', label, big, unit, caption, as: 
 }
 
 /** House Blend slider: two words at the ends, a chunky thumb. Controlled. */
-export function BlendSlider({ id, left, right, value = 50, onChange, min = 0, max = 100, step = 1, label, className = '' }) {
+export function BlendSlider({ id, left, right, value = 50, onChange, min = 0, max = 100, step = 1, label, valueText, className = '' }) {
   return (
     <div className={`ayb-blend ${className}`.trim()}>
       {label && <label className="ayb-blend__label" htmlFor={id}>{label}</label>}
@@ -60,7 +60,7 @@ export function BlendSlider({ id, left, right, value = 50, onChange, min = 0, ma
           max={max}
           step={step}
           value={value}
-          aria-valuetext={`${value} of ${max}, ${left} to ${right}`}
+          aria-valuetext={valueText || `${value} of ${max}, ${left} to ${right}`}
           style={{ '--ayb-fill': `${((value - min) / (max - min)) * 100}%` }}
           onChange={(e) => onChange?.(Number(e.target.value))}
         />

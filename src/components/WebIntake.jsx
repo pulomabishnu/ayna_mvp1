@@ -22,6 +22,8 @@ import '../styles/loop-a-quiz.css';
 import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../mobile/data/onboardingFlow.js';
 import { CATEGORIES } from '../health/metrics.js';
 import ReadyReveal from './onboarding/ReadyReveal.jsx';
+import BlendScale from './quiz/BlendScale.jsx';
+import { BRAND_SHORT } from './quiz/blendLabels.js';
 import '../styles/onboarding.css';
 import './WebIntake.audit.css';
 // Website-only conditions that change what is safe (condition research, Oct 17).
@@ -59,20 +61,6 @@ function Tiles({ items, selected = [], onToggle, labels = {}, label }) {
         </button>
       </div>;
     })}
-  </div>;
-}
-
-function Scale({ options, value, onChange }) {
-  // Ordered levels as a stepped bar; anything that is not a level (e.g. "It varies") sits underneath as a chip.
-  const levels = options.slice(0, 5);
-  const extras = options.slice(5);
-  return <div className="qz-scale">
-    <div className="qz-scale-bars">
-      {levels.map((option, i) => <button type="button" key={option} className={`qz-bar${value === option ? ' is-on' : ''}`} style={{ '--h': `${28 + i * 18}px` }} aria-pressed={value === option} onClick={() => onChange(option)}>
-        <i aria-hidden="true" /><span>{option}</span>
-      </button>)}
-    </div>
-    {extras.length > 0 && <Chips items={extras} selected={value ? [value] : []} onToggle={onChange} small single />}
   </div>;
 }
 
@@ -580,8 +568,9 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
           {custom.length > 0 && <section className="qz-group"><h3>Added by you</h3><Chips small items={custom} selected={custom} onToggle={(v) => toggleExclusive('supportSelections', v)} /></section>}
         </>;
       }
-      case 'flow': return <Scale options={PERIOD_FLOW} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} />;
-      case 'pain': return <Scale options={PERIOD_PAIN} value={intake.periodPain} onChange={(v) => set('periodPain', v)} />;
+      // House Blend slider (uniqueness pass A): the same options, saved verbatim.
+      case 'flow': return <BlendScale label={step.title} levels={PERIOD_FLOW.slice(0, 5)} extras={PERIOD_FLOW.slice(5)} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} />;
+      case 'pain': return <BlendScale label={step.title} levels={PERIOD_PAIN.slice(0, 5)} extras={PERIOD_PAIN.slice(5)} value={intake.periodPain} onChange={(v) => set('periodPain', v)} />;
       case 'utiFrequency': return <Rows options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
       case 'ttcDuration': return <Rows options={ttcDurationOptions(intake)} value={intake.ttcDuration} onChange={(v) => set('ttcDuration', v)} />;
       case 'postpartumTiming': return <>
@@ -638,10 +627,10 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
         const notAFactor = 'Price is not a major factor for me';
         return <>
           <Chips items={PRICE_RANGES} selected={sel} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
-          <div className="qz-follow"><b>{FOLLOWUP_QUESTIONS.largePurchaseFrequency}</b><Chips small single items={LARGE_PURCHASE_FREQUENCY} selected={intake.largePurchaseFrequency ? [intake.largePurchaseFrequency] : []} onToggle={(v) => set('largePurchaseFrequency', v)} /></div>
+          <div className="qz-follow"><b>{FOLLOWUP_QUESTIONS.largePurchaseFrequency}</b><BlendScale label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} levels={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} /></div>
         </>;
       }
-      case 'brand': return <Rows options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
+      case 'brand': return <BlendScale label={step.title} levels={BRAND_OPENNESS.slice(0, 4)} extras={BRAND_OPENNESS.slice(4)} short={BRAND_SHORT} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
       case 'avoidOnly':
       case 'wantOnly':
       case 'avoidIngredients': {

@@ -50,3 +50,23 @@ html body .app-container.app-container.app-container.app-container.app-container
 
 /* Reveal + any small plate: a brand-name fallback never breaks mid-word */
 :is(.ayna-mobile, .app-container) .ay-ob-match__plate :is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name) { font-size: 13px !important; line-height: 1.1 !important; overflow-wrap: normal !important; word-break: normal !important; }
+
+/* ---- Uniqueness pass A (Oct 26): the reveal is a Shout and three products shown big.
+   The lead match sits on a pink tile with a large plate; the next two on butter tiles
+   (#38 Rhode / #32 Glossier packshots on tinted blocks). Nothing removed. ---- */
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-ready__title { font: 800 clamp(48px, 13vw, 76px)/.92 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.035em !important; color: #ffedac !important; text-wrap: balance; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-matches__list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-match { grid-template-columns: minmax(0, 1fr); align-items: start; align-content: start; gap: 8px; padding: 10px; border: 0; border-radius: 16px; background: #ffedac; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-match.is-lead { grid-column: 1 / -1; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr); align-items: center; gap: 14px; padding: 14px; background: #f7badd; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-match__plate.is-plate { width: 100%; height: auto; aspect-ratio: 1; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-match:not(.is-lead) .ay-ob-match__plate.is-plate { width: 72%; justify-self: center; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-match.is-lead .ay-ob-match__text b { font: 800 22px/1.1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.01em; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-match.is-lead .ay-ob-match__why { font-size: 14px; }
+@media (min-width: 640px) {
+  :is(#uq, .app-container):is(#uq, .app-container) .uq-reveal.is-web .ay-ob-matches__list { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); }
+  :is(#uq, .app-container):is(#uq, .app-container) .uq-reveal.is-web .ay-ob-match.is-lead { grid-column: auto; grid-template-columns: minmax(0, 1fr); }
+}
+:is(#uq, .app-container) .uq-reveal .ay-ob-matches__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+:is(#uq, .app-container) .uq-reveal .ay-ob-how { display: inline-flex; align-items: center; min-height: 44px; color: #ffedac !important; font: 700 15px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+:is(#uq, .app-container) .uq-reveal .ay-ob-how:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 8px; }
+.ay-ob-sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

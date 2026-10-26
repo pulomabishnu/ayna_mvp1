@@ -3,11 +3,11 @@ import { EdPage } from './editorial/EdPage';
 
 export default function TermsOfUse({ onBack, backLabel }) {
   return (
-    <EdPage title="Terms of use" crumb="Terms" updated="Last updated October 19, 2026" onBack={onBack} backLabel={backLabel} toc>
+    <EdPage title="Terms of use" crumb="Terms" updated="Last updated October 19, 2026" onBack={onBack} backLabel={backLabel} toc glance bandLabel="In short" band={<div className="uq-legal-intro">
         <p>
           These Terms govern your use of www.aynahealth.co and related ayna services (the “Services”). The Services are currently operated by Ayna Health, Inc., doing business as ayna (“ayna,” “we,” “us,” or “our”). By using the Services, you agree to these Terms and our Privacy Policy.
         </p>
-
+        </div>}>
         <section>
           <h2>1. Adults only</h2>
           <p>
@@ -15,7 +15,8 @@ export default function TermsOfUse({ onBack, backLabel }) {
           </p>
         </section>
 
-        <section>
+        {/* Safety beats brevity: this section stays fully open. */}
+        <section data-keep="">
           <h2>2. Wellness information, not medical care</h2>
           <p>
             ayna is a wellness, educational, and product-discovery service. ayna is not a healthcare provider, pharmacy, emergency service, medical device, diagnosis service, or substitute for a qualified healthcare professional. Information, match scores, AI responses, summaries, product comparisons, safety notes, and recommendations may be incomplete or incorrect and should not be used as medical instructions.

@@ -68,3 +68,5 @@ a:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile
 
 /* Dark: an espresso tile on the espresso page gets a butter rule so its edge reads (group B, uniqueness pass). */
 :is([data-theme='dark'], [data-theme='brand-dark']) :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-ink { border: 1.5px solid rgba(255, 237, 172, .45) !important; }
+/* Pause motion (footer / page button sets html.ay-motion-paused) and keyboard focus also stop the marquee (uniqueness pass A). */
+html.ay-motion-paused .ayb-marquee__track, .ayb-marquee:focus-within .ayb-marquee__track { animation-play-state: paused; }
