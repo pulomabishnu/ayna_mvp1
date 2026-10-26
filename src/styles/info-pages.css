@@ -190,3 +190,11 @@ html body .app-container .ed.ed-page--info .ed-hiw li .ed-hiw__n { background: v
   .app-container.app-container .ed.ed-page--info .ed-page__body:has(.ed-toc) { padding-top: 0; }
   .app-container.app-container .ed.ed-page--info .ed-toc { border-top: 0; margin-bottom: 24px; }
 }
+/* About value tiles: the thin espresso rule (founder change) and 2 x 2 on phones (four full-width tiles were a whole screen). */
+.app-container.app-container .ed.ed-page--info .ed-principles li:nth-child(n) { border: 1px solid rgba(62, 39, 35, .15) !important; }
+.app-container[data-theme='brand-dark'] .ed.ed-page--info .ed-principles li:nth-child(n) { border-color: rgba(255, 237, 172, .2) !important; }
+@media (max-width: 479px) {
+  .app-container.app-container .ed.ed-page--info .ed-principles { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .app-container.app-container .ed.ed-page--info .ed-principles li { padding: 16px !important; }
+  .app-container.app-container .ed.ed-page--info .ed-principles svg { width: 26px; height: 26px; }
+}

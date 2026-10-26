@@ -57,3 +57,14 @@
 .app-container.app-container .hm .hm-stats .ayk-fact { --ay-surface: #f6e3a1; --legacy-surface: #f6e3a1; background: #f6e3a1 !important; border: 1px solid rgba(62, 39, 35, .15) !important; }
 .app-container.app-container .hm .hm-ui--post,
 .app-container.app-container .hm .hm-rc .hm-post { background: #f6e3a1; }
+
+/* ---- how it works: evidence levels as one ruled three-column row under the steps on wide screens ---- */
+.app-container.app-container .hm .hm-levelswrap { display: grid; justify-items: start; }
+.app-container.app-container .hm .hm-levels--row { display: none; }
+@media (min-width: 1024px) {
+  .app-container.app-container .hm .hm-levels--in { display: none; }
+  .app-container.app-container .hm .hm-levels--row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--ay-hairline); }
+  .app-container.app-container .hm .hm-levels--row .hm-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin: 0; }
+  .app-container.app-container .hm .hm-levels--row .hm-levels > li,
+  .app-container.app-container .hm .hm-levels--row .hm-levels > li:last-child { padding: 0; border: 0; }
+}

@@ -39,3 +39,6 @@
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ob-ready .ay-ob-match .ay-match-pill.ay-match-pill { background: #3e2723 !important; border-color: #3e2723 !important; color: #ffedac !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-ob-ready .ay-ob-match .ay-match-pill.ay-match-pill :is(strong, span),
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ob-ready .ay-ob-match .ay-match-pill.ay-match-pill :is(strong, span) { color: #ffedac !important; }
+/* the reveal's primary keeps the one sticker shadow on web and app (layered sheets were removing it) */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready .ay-ob-primary.ay-ob-primary,
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-ob-ready .ay-ob-primary.ay-ob-primary { box-shadow: 3px 3px 0 #f7badd !important; }

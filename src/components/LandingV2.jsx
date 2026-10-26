@@ -453,6 +453,24 @@ function useCatalogNumbers() {
     ];
   }, [ready]);
 }
+function Levels({ className, onViewArticles }) {
+  return (
+    <div className={`hm-levelswrap ${className}`}>
+      <ul className="hm-levels" aria-label="The three evidence levels">
+        {LEVELS.map((l) => (
+          <li key={l.n}>
+            <span className="ay-meter" data-level={l.n}>
+              <span className="ay-meter__word">{l.word}</span>
+              <span className="ay-meter__bars" role="img" aria-label={`${l.n} of 3`}>{[1, 2, 3].map((b) => <i key={b} />)}</span>
+            </span>
+            <span className="hm-levels__note">{l.note}</span>
+          </li>
+        ))}
+      </ul>
+      <Go className="ay-btn ay-btn--text hm-levels__more" href="/explore/resources" onGo={onViewArticles}>Read our sources<Arrow /></Go>
+    </div>
+  );
+}
 function HowEvidence({ onViewHowItWorks, onViewArticles, onStartQuiz, showStart = true }) {
   const nums = useCatalogNumbers();
   return (
@@ -471,24 +489,14 @@ function HowEvidence({ onViewHowItWorks, onViewArticles, onStartQuiz, showStart 
               <div className="hm-step__text">
                 <h3 className="hm-h3"><span className="ed-sr">Step {i + 1}: </span>{st.t}</h3>
                 <p>{st.d}</p>
-                {st.ui === 'evidence' && <>
-                  <ul className="hm-levels" aria-label="The three evidence levels">
-                    {LEVELS.map((l) => (
-                      <li key={l.n}>
-                        <span className="ay-meter" data-level={l.n}>
-                          <span className="ay-meter__word">{l.word}</span>
-                          <span className="ay-meter__bars" role="img" aria-label={`${l.n} of 3`}>{[1, 2, 3].map((b) => <i key={b} />)}</span>
-                        </span>
-                        <span className="hm-levels__note">{l.note}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Go className="ay-btn ay-btn--text hm-levels__more" href="/explore/resources" onGo={onViewArticles}>Read our sources<Arrow /></Go>
-                </>}
+                {st.ui === 'evidence' && <Levels className="hm-levels--in" onViewArticles={onViewArticles} />}
               </div>
             </li>
           ))}
         </ol>
+        {/* Wide screens: the three levels as one ruled row under the steps (no tall column under step 2 only).
+            Phones keep them inside step 2. One of the two is display: none, so it is read once. */}
+        <Levels className="hm-levels--row" onViewArticles={onViewArticles} />
         <ul className="hm-stats" aria-busy={nums ? undefined : 'true'} aria-label="ayna in numbers">
           {(nums || [0, 1, 2, 3].map(() => null)).map((s, i) => (
             <li key={i}>{s ? <BigFact value={s.n.toLocaleString('en-US')} caption={s.label} /> : <span className="hm-stat__skel" aria-hidden="true" />}</li>
