@@ -2625,3 +2625,15 @@ html body :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-p
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-match.is-hold .ay-hold__fix { max-width: calc(100% - 96px); }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayp-buy__actions .ayp-buy__main { margin-top: 4px !important; }
 }
+/* No photo (or it failed): the brand name sits centred on the plate (it hung off the plate's top-left). */
+#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-gal.is-empty, :is(#ay-pdp, #ay-psheet):is(#ay-pdp, #ay-psheet):is(#ay-pdp, #ay-psheet) .ay-gal.is-empty { position: relative; aspect-ratio: 1 / 1; max-width: 100%; margin-inline: auto; }
+#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-gal.is-empty .ay-plate-name { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; padding: 22%; }
+@media (max-width: 767px) { #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayp-gallery .ay-gal.is-empty { width: 196px; height: 196px; } }
+@media (min-width: 900px) {
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide > .ayv-match { margin-top: 8px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide > .ayv-pricerow { margin-top: 8px !important; }
+  :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-hold.is-compact > * + * { margin-top: 2px !important; }
+  :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-hold.is-compact > .ay-hold__fix { margin-top: 6px !important; }
+}
+/* The hold's answer button wraps to two lines on a phone: it grows instead of squeezing the text. */
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-hold__fix { height: auto !important; min-height: 44px !important; padding: 8px 16px !important; line-height: 1.25 !important; }
