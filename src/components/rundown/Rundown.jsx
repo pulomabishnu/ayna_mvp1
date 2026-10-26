@@ -210,6 +210,8 @@ export default function Rundown({
   // "Your week · 3 changes" (Today audit, issue 6): say what the row opens.
   const weekChanges = weekly.cards.find((c) => c.key === 'weekly:changes')?.lines || [];
   const weekStats = weekly.cards.filter((c) => c.kind === 'stat').map((c) => c.title);
+  // The logged-days figure as data (Today's week bento draws it as dots).
+  const weekLogged = weekly.cards.find((c) => c.key === 'weekly:days')?.figure || null;
   const weekLabel = weekChanges.length ? `Play your week recap · ${weekChanges.length} ${weekChanges.length === 1 ? 'change' : 'changes'}` : 'Play your week recap';
   const weekKey = weekly.cards.length ? `${weekLabel}|${weekStats.join('|')}|${weekChanges.join('|')}` : '';
   const onWeeklyRef = useRef(onWeekly);
@@ -218,7 +220,7 @@ export default function Rundown({
   useEffect(() => { startRef.current = start; });
   useEffect(() => {
     if (!onWeeklyRef.current) return;
-    onWeeklyRef.current(weekKey ? { label: weekLabel, changes: weekChanges, stats: weekStats, open: () => startRef.current?.('weekly') } : null);
+    onWeeklyRef.current(weekKey ? { label: weekLabel, changes: weekChanges, stats: weekStats, logged: weekLogged, open: () => startRef.current?.('weekly') } : null);
   }, [weekKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const protectedToday = daily.cards.some((c) => c.protected);

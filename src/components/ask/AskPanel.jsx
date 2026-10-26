@@ -6,6 +6,8 @@ import { levelLabel } from '../pdp/evidenceMarks.js';
 import MatchPill from '../MatchPill.jsx';
 import ProductTileImage, { ProductImageFallback } from '../ProductTileImage.jsx';
 import './ask-panel.css';
+import { Shout } from '../ui/ay';
+import '../../styles/unique-b.css';
 
 /**
  * Ask ayna, one component on both platforms (Ask audit, Oct 25, issue 4):
@@ -182,13 +184,17 @@ export function AskHow({ open, children }) {
 export function AskStart({ name = '', intro = '', how = null, top = null, groups = [], onPick, recent = [], onContinue = null, bottom = null }) {
   const [howOpen, setHowOpen] = useState(false);
   return (
-    <div className="ay-askp-start">
-      <h2 className="ay-askp-hello">{name ? `Hi ${name}` : 'Hi there'}</h2>
-      <p className="ay-askp-intro">
-        {intro}
-        {how && <> <button type="button" className="ay-askp-howlink" aria-expanded={howOpen} aria-controls="ay-askp-how" onClick={() => setHowOpen((v) => !v)}>How Ask works</button></>}
-      </p>
-      <AskHow open={howOpen}>{how}</AskHow>
+    <div className="ay-askp-start is-bold">
+      {/* Uniqueness pass: a bold espresso start (the greeting as the page's one shout), then colour-blocked question groups. */}
+      <div className="ay-askp-hero">
+        <AskSparkle />
+        <Shout as="h2" size="l" className="ay-askp-hello">{name ? `Hi ${name}` : 'Hi there'}</Shout>
+        <p className="ay-askp-intro">
+          {intro}
+          {how && <> <button type="button" className="ay-askp-howlink" aria-expanded={howOpen} aria-controls="ay-askp-how" onClick={() => setHowOpen((v) => !v)}>How Ask works</button></>}
+        </p>
+        <AskHow open={howOpen}>{how}</AskHow>
+      </div>
       {top}
       <AskPrompts groups={groups} onPick={onPick} />
       {(recent.length > 0 || onContinue) && (

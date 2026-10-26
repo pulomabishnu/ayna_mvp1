@@ -1,3 +1,5 @@
+import { Shout } from '../../components/ui/ay';
+import '../../styles/unique-b.css';
 import { CurvedRing, DayStrip, Mark, ProductStickers, Shapes } from '../../components/personality/DS.jsx';
 import { headline } from './homeLook.js';
 
@@ -6,8 +8,10 @@ export function HomeHello({ name = '', today }) {
   const hour = new Date().getHours();
   const hello = hour < 5 ? 'Hello' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   return (
-    <div className="ay-home-hello">
-      <p className="ay-home-hello__hi">{hello}{name ? `, ${name}` : ''}</p>
+    <div className="ay-home-hello is-band">
+      {today && <p className="ay-home-hello__date">{new Date(`${today}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>}
+      {/* The page's one shout (uniqueness pass): the greeting, oversized on the espresso band. */}
+      <Shout as="p" size="l" className="ay-home-hello__hi">{hello}{name ? `, ${name}` : ''}</Shout>
       <DayStrip iso={today} className="ay-home-hello__days" />
     </div>
   );

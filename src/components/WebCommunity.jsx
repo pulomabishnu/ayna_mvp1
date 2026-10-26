@@ -54,6 +54,8 @@ import { MyTopicRows, PostInPicker } from './community/topics/TopicBits.jsx';
 import { useUserTopics } from './community/topics/useUserTopics.js';
 import { joinTopicByCode, parseTopicInviteCode } from '../utils/community/userTopics.js';
 import './community/topics/user-topics.css';
+import TopicBands from './community/TopicBands.jsx';
+import { Shout } from './ui/ay';
 
 // The app's Community, built for the website. Same data and rules (shared
 // community store, ranking, topics, guest posting). Three columns on wide
@@ -1387,9 +1389,9 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
 
   return <section className="ct cm ay-container" data-tour="community">
     {/* Butter title row (Community audit, issue 2): title, search, one Post button. */}
-    <header className={`cm-head${page ? ' is-page' : ' cm-titlerow'}`}>
+    <header className={`cm-head${page ? ' is-page' : ' cm-titlerow ay-pagehead ay-band--espresso'}`}>
       {page ? <BackLink className="cm-back" label="Community" href="/community" onClick={closePage} />
-        : <div className="cm-head__title"><h1 className="ay-h1 cm-title">Community</h1><p className="ct-lede">Ask, review, share. Real talk between women, about the products we actually use.</p></div>}
+        : <div className="cm-head__title"><Shout as="h1" size="l" className="cm-title">Community</Shout><p className="ct-lede">Ask, review, share. Real talk between women, about the products we actually use.</p></div>}
       <div className="cm-head__actions">
         <label className="ct-search cm-search"><Icon name="search" size={20} /><input ref={searchRef} value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder={narrowSearch ? 'Search' : 'Search people, posts, playlists'} aria-label="Search community" aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'} />{search ? <button type="button" className="cm-search__clear" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); searchRef.current?.focus(); }}>×</button> : <kbd className="cm-kbd" aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>}</label>
         {user && <button type="button" className="cm-iconbtn cm-bell" onClick={openUpdates} aria-label={unreadCount + newAnns.length ? `Updates, ${unreadCount + newAnns.length} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount + newAnns.length > 0 && <span className="cm-bell-dot" aria-hidden="true">{unreadCount + newAnns.length > 9 ? '9+' : unreadCount + newAnns.length}</span>}</button>}
@@ -1418,12 +1420,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         </div>
       </nav>
       <div className="cm-main">
-        {onFeed && topicsTab && <div className="cm-topicset cm-pods" role="group" aria-label="Filter posts by topic">
-          {followedTopics.length > 0 && <button type="button" className="cm-topic" aria-pressed={topicScope === 'mine'} onClick={() => setTopicScope('mine')}>My topics</button>}
-          <button type="button" className="cm-topic" aria-pressed={topicScope === 'all'} onClick={() => setTopicScope('all')}>All</button>
-          {followedTopics.map((key) => <button type="button" key={key} className="cm-topic" aria-pressed={topicScope === key} onClick={() => setTopicScope(topicScope === key ? 'mine' : key)}>{topicLabel(key)}</button>)}
-          <button type="button" className="cm-topic is-suggest" onClick={() => setTopicSheetOpen(true)}>{followedTopics.length ? 'Edit topics' : 'Follow topics'}</button>
-        </div>}
+        {onFeed && topicsTab && <TopicBands followed={followedTopics} scope={topicScope} onScope={setTopicScope} onEdit={() => setTopicSheetOpen(true)} suggest={['periods', 'cramps', 'pcos']} onFollow={toggleTopic} />}
         {onFeed && topicsTab && scopedTopicList && !loading && posts.length === 0 && <div className="ay-group is-padded cm-topic-empty"><p className="cm-muted">{topicScope === 'mine' ? 'Nothing in your topics yet. New posts tagged with them show up here.' : `No ${topicLabel(topicScope)} posts yet.`}</p><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={() => setTopicScope('all')}>See all posts</button></div>}
         {onFeed && (topics.length > 0 || userTopics.available) && tab !== 'announcements' && tab !== 'playlists' && topicChips('is-row')}
         {user && !profile && profileChecked ? <div className="ay-group is-padded cm-join"><h2 className="ay-h3">Join the community</h2><p className="cm-muted">Pick a name people will see. Your health answers stay private.</p>

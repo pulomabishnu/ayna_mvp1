@@ -56,6 +56,9 @@ import CharRing from '../../../components/ui/CharRing.jsx';
 import { PillTabs, ArchAvatar, HouseBlend } from '../../../components/you/YouBits.jsx';
 import { setupSteps, knowsLine, countAnswers, connectedNames } from '../../../components/you/setupSteps.js';
 import '../../you-hub-app.css';
+import YouBento from '../../../components/you/YouBento.jsx';
+import { Shout } from '../../../components/ui/ay';
+import '../../../styles/unique-b.css';
 import { recentQuestions } from '../../../utils/askRecent.js';
 import { useCheckinCountStatus } from '../../../hooks/useCheckinCount.js';
 import { isOverLimit } from '../../../utils/charLimit.js';
@@ -590,11 +593,12 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
   return (
     <div className="ayna-fresh-profile-hub ay-you" data-tour="you" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <MobileHeader onOpenSettings={onOpenSettings} />
-      <header className="ay-you-head">
+      <header className="ay-you-head ay-you-band">
         <div className="ay-you-id">
           <ArchAvatar className="ay-you-arch" src={showPhoto ? publicMediaUrl(profile.avatar_url) : ''} initial={realName ? initial : ''} onError={() => setAvatarFailed(true)} />
           <span className="ay-you-names">
-            <h1>{realName ? <><span className="ay-you-hello">{greetingForNow()},</span> {realName}</> : <span className="ay-you-hello is-solo">{greetingForNow()}</span>}</h1>
+            {/* The page's one shout (uniqueness pass): her name, oversized, on the espresso band. */}
+            <h1>{realName ? <><span className="ay-you-hello">{greetingForNow()},</span> <Shout as="span" size="l" className="ay-you-shout">{realName}</Shout></> : <Shout as="span" size="l" className="ay-you-shout">{greetingForNow()}</Shout>}</h1>
             {profile?.username ? <span>@{profile.username}</span> : memberSince ? <span>{memberSince}</span> : null}
           </span>
         </div>
@@ -628,23 +632,22 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
           </section>
         )}
 
-        {signedIn && <ul className="ay-you-facts" aria-label="At a glance">
-          {[
-            { key: 'picks', value: fmtCount(ecosystemCount), caption: 'In your ecosystem', onClick: onOpenEcosystem },
-            { key: 'saved', value: fmtCount(savedCount), caption: savedCount === 1 ? 'Saved product' : 'Saved products', onClick: onOpenSaved },
-            { key: 'checkins', value: checkinCount != null ? fmtCount(checkinCount) : checkins.settled ? '–' : '…', caption: checkinCount === 1 ? 'Monthly check-in' : 'Monthly check-ins', onClick: onOpenMonthlyCheckin },
-          ].map((f) => <li key={f.key}><button type="button" onClick={f.onClick} disabled={!f.onClick}><b>{f.value}</b><span>{f.caption}</span></button></li>)}
-        </ul>}
-
-        <nav className="ay-you-section ay-you-list ay-you-five" aria-label="You sections">
-          {[
-            onOpenEcosystem && { key: 'ecosystem', title: 'My ecosystem', sub: 'Grouped by need', value: ecosystemCount ? pickWord(ecosystemCount) : '', onClick: onOpenEcosystem },
-            onOpenSaved && { key: 'saved', title: 'Saved', sub: 'Products, posts, startups', value: savedCount ? fmtCount(savedCount) : '', onClick: onOpenSaved },
-            { key: 'health', icon: 'healthData', title: 'My health', sub: 'Dashboard, tracking, apps', onClick: () => onOpen('myHealth') },
-            { key: 'activity', title: 'Activity', sub: 'Questions, posts, reviews', onClick: () => onOpen('activity') },
-            { key: 'settings', title: 'Settings & privacy', sub: 'Account and your data', onClick: onOpenSettings },
-          ].filter(Boolean).map(row)}
-        </nav>
+        {/* Uniqueness pass: the three numbers and the five sections as one bento (same as the website). */}
+        <div className="ay-you-bento" data-tour="you-sections" aria-label="You sections" role="navigation">
+          <YouBento
+            products={Array.isArray(myProducts) ? myProducts : Object.values(myProducts || {})}
+            intake={showBlend ? intake : null}
+            onOpenBlend={() => onOpen('blend')}
+            tiles={{
+              eco: onOpenEcosystem ? { caption: 'My ecosystem', value: fmtCount(ecosystemCount), sub: ecosystemCount === 1 ? 'product, grouped by need' : 'products, grouped by need', onClick: onOpenEcosystem } : null,
+              saved: onOpenSaved ? { caption: 'Saved', value: fmtCount(savedCount), sub: 'Products, posts, startups', onClick: onOpenSaved } : null,
+              checkins: signedIn ? { caption: checkinCount === 1 ? 'Monthly check-in' : 'Monthly check-ins', value: checkinCount != null ? fmtCount(checkinCount) : checkins.settled ? '–' : '…', sub: 'Done so far', onClick: onOpenMonthlyCheckin } : null,
+              health: { caption: 'My health', sub: 'Dashboard, tracking, apps', onClick: () => onOpen('myHealth') },
+              activity: { caption: 'Activity', sub: 'Questions, posts, reviews', onClick: () => onOpen('activity') },
+              settings: { caption: 'Settings & privacy', sub: 'Account and your data', onClick: onOpenSettings },
+            }}
+          />
+        </div>
 
         <p className="ay-you-quick">
           {onOpenMonthlyCheckin && <button type="button" onClick={onOpenMonthlyCheckin}>Monthly check-in</button>}

@@ -27,8 +27,11 @@ import { localToday, useHealthData } from '../mobile/hooks/useHealthData.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import RelativeTime from './ui/RelativeTime.jsx';
 import { ArchAvatar, HouseBlend } from './you/YouBits.jsx';
+import YouBento from './you/YouBento.jsx';
+import { Shout } from './ui/ay';
 import { setupSteps, knowsLine, countAnswers, connectedNames } from './you/setupSteps.js';
 import '../styles/you-hub.css';
+import '../styles/unique-b.css';
 import { useSavedPosts, postLine } from '../hooks/useSavedPosts.js';
 import { recentQuestions } from '../utils/askRecent.js';
 import usePersistentState from '../hooks/usePersistentState.js';
@@ -421,10 +424,11 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
   ];
 
   return <section className="ct wy yh ay-container" data-tour="you">
-    <header className="yh-head">
+    <header className="yh-head ay-pagehead ay-band--espresso">
       <ArchAvatar className="wy-arch" src={cp?.avatar_url && !avatarFailed ? publicMediaUrl(cp.avatar_url) : ''} initial={initial} onError={() => setAvatarFailed(true)} />
       <div className="wy-who">
-        <h1 className="ay-h1">{name || 'You'}</h1>
+        {/* The page's one shout (uniqueness pass): her name, oversized, on the espresso band. */}
+        <Shout as="h1" size="l" className="wy-shout">{name || 'You'}</Shout>
         <p className="wy-who__meta">{[cp?.username ? `@${cp.username}` : null, memberSince(user.created_at)].filter(Boolean).join(' · ')}</p>
         {stats && openMyProfile && <button type="button" className="wy-counts" onClick={openMyProfile} aria-label={`${fmtCount(stats.followers)} followers, ${fmtCount(stats.following)} following. Open your Community profile.`}>
           <span><b>{fmtCount(stats.followers)}</b> {stats.followers === 1 ? 'follower' : 'followers'}</span>
@@ -445,6 +449,22 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
 
     <div className={`wy-grid is-${section || 'overview'}`}>
       {!section && <>
+      {/* Uniqueness pass: the three numbers and the five sections as one bento (web + app share it). */}
+      <div className="wy-bento" data-tour="you-sections">
+        <YouBento
+          products={products}
+          intake={intake}
+          onOpenBlend={() => goSection('health')}
+          tiles={{
+            eco: onOpenEcosystem || products.length ? { caption: 'My ecosystem', value: fmtCount(products.length), sub: products.length === 1 ? 'product, grouped by need' : 'products, grouped by need', onClick: onOpenEcosystem } : null,
+            saved: { caption: 'Saved', value: fmtCount(savedCount), sub: 'Products and posts', onClick: onOpenSaved || (() => goSection('saved')) },
+            checkins: { caption: checkinCount === 1 ? 'Monthly check-in' : 'Monthly check-ins', value: facts[2].value, sub: 'Done so far', onClick: onOpenCheckin },
+            health: { caption: 'My health', sub: 'Dashboard, tracking, apps', onClick: () => goSection('health') },
+            activity: { caption: 'Activity', sub: 'Questions, posts, reviews', onClick: () => goSection('activity') },
+            settings: { caption: 'Settings & privacy', sub: 'Account and your data', onClick: () => goSection('settings') },
+          }}
+        />
+      </div>
       <div className="wy-col">
         {/* Pai #12: her set-up as "2 of 4" with a tick per step and one next step. Gone once all are done. */}
         {setup.next && <section className="wy-sec yh-setup" aria-labelledby="yh-setup-h">
@@ -455,24 +475,13 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
             {SETUP_GO[setup.next.key] && <button type="button" className="ay-btn ay-btn--primary yh-setup__go" onClick={SETUP_GO[setup.next.key]}>{setup.next.label}</button>}
           </div>
         </section>}
-        {safetySection}
         <section className="wy-sec" aria-labelledby="yh-knows-h">
           <h2 className="ay-group__title" id="yh-knows-h">What ayna knows</h2>
           <ul className="ay-group wy-rows">{linkRow('knows', knows || 'Nothing yet', null, () => goSection('health'), 'See, change or remove anything ayna uses')}</ul>
         </section>
       </div>
       <div className="wy-col">
-        <ul className="yh-facts" aria-label="At a glance">{facts.map((f) => <li key={f.key}><button type="button" className="yh-fact" onClick={f.onClick} disabled={!f.onClick}><b>{f.value}</b><span>{f.caption}</span></button></li>)}</ul>
-        <section className="wy-sec" data-tour="you-sections" aria-labelledby="wy-sections-h">
-          <h2 className="ay-group__title" id="wy-sections-h">Your sections</h2>
-          <ul className="ay-group wy-rows yh-sections">
-            {linkRow('eco', 'My ecosystem', products.length ? `${fmtCount(products.length)} ${products.length === 1 ? 'product' : 'products'}` : null, onOpenEcosystem, 'Grouped by need')}
-            {linkRow('saved', 'Saved', savedCount ? fmtCount(savedCount) : null, () => goSection('saved'), 'Products and posts')}
-            {linkRow('health', 'My health', null, () => goSection('health'), 'Dashboard, tracking, apps')}
-            {linkRow('activity', 'Activity', null, () => goSection('activity'), 'Questions, posts, reviews')}
-            {linkRow('settings', 'Settings & privacy', null, () => goSection('settings'), 'Account and your data')}
-          </ul>
-        </section>
+        {safetySection}
         <p className="yh-quick">
           {onOpenCheckin && <button type="button" className="ct-link" onClick={onOpenCheckin}>Monthly check-in</button>}
           {onEditProfile && <button type="button" className="ct-link" onClick={onEditProfile}>Update answers</button>}

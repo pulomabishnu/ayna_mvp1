@@ -12,11 +12,12 @@ import { OutlineButton } from './ui/ay/index.js';
 import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './personality/DS.jsx';
 import { headline, readHomeLook } from '../mobile/components/homeLook.js';
 import { comingUp } from '../health/comingUp.js';
-import { CountRing, ProgressCount } from './ui/ay';
-import { glanceRows, syncState } from '../health/dashView.js';
-import { Sparkline } from '../mobile/components/DashParts.jsx';
+import { CountRing, ProgressCount, Shout } from './ui/ay';
+import { syncState, usualBand } from '../health/dashView.js';
+import WeekBento, { cycleWordsFor, glanceCharts } from './today/WeekBento.jsx';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
+import '../styles/unique-b.css';
 
 /**
  * Website "Your health" (/health): the app's health dashboard laid out for
@@ -97,8 +98,9 @@ const fmtShortDay = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString('en-
  * weekly recap, synced health rows, her cycle estimate, her tries). Words
  * first, the number under them. Nothing here when there is nothing real.
  */
-function TodaySide({ week, tiles, coming, trying, setup, today }) {
-  const glance = [...(week?.stats || []), ...(week?.changes || [])];
+function TodaySide({ week, bento, coming, trying, setup, today }) {
+  // The logged-days line is drawn as dots in the bento; the other recap lines stay as words.
+  const glance = [...(week?.stats || []).filter((x) => !(week?.logged && /^You logged /.test(x))), ...(week?.changes || [])];
   const done = setup.filter((x) => x.done).length;
   return (
     <>
@@ -111,19 +113,19 @@ function TodaySide({ week, tiles, coming, trying, setup, today }) {
           </ul>
         </section>
       )}
-      {(glance.length > 0 || tiles.length > 0) && (
-        <section className="ay-wh-side" aria-labelledby="ay-wh-week-h">
+      {(glance.length > 0 || bento) && (
+        <section className="ay-wh-side ay-wh-week" aria-labelledby="ay-wh-week-h">
           <h2 id="ay-wh-week-h" className="ay-wh-side__h">Your week</h2>
-          <ul className="ay-wh-side__rows">
-            {tiles.map((x) => (
-              <li key={x.id} className="has-spark"><span><span className="ay-wh-side__label">{x.label}</span><b>{x.words}</b><span className="ay-wh-side__val">{x.value}</span></span><Sparkline points={x.points} band={x.band} metric={x.metric} w={96} label={`${x.label}, last 7 days`} /></li>
-            ))}
-            {glance.map((line) => <li key={line}><b className="is-line">{line}</b></li>)}
-          </ul>
+          {bento}
+          {glance.length > 0 && (
+            <ul className="ay-wh-side__rows">
+              {glance.map((line) => <li key={line}><b className="is-line">{line}</b></li>)}
+            </ul>
+          )}
           {week?.open && <button type="button" className="ay-wh-side__more" onClick={week.open}><span>{week.label}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
         </section>
       )}
-      {coming.length > 0 && (
+      {coming.length > 0 && !bento && (
         <section className="ay-wh-side" aria-labelledby="ay-wh-coming-h">
           <h2 id="ay-wh-coming-h" className="ay-wh-side__h">Coming up</h2>
           <ul className="ay-wh-side__rows">
@@ -194,16 +196,18 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
  * number as the one bold graphic (cycle day, else last night's sleep; none
  * without data) and one die-cut product sticker.
  */
-function TodayBand({ title, today, name, cycle, sleepPoints, products }) {
+function TodayBand({ title, today, name, cycle, sleepPoints, products, ring = true }) {
   const hour = new Date().getHours();
   const hello = hour < 5 ? 'Hi' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   const look = readHomeLook();
-  const num = headline({ cycle, sleepPoints });
+  // The cycle wheel in the week bento carries the number when there is health data (no repeat up here).
+  const num = ring ? headline({ cycle, sleepPoints }) : null;
   return (
     <header className={`ay-wh-hello ay-pagehead ay-band--espresso is-look-${look}`}>
       <h1 id="ay-wh-title" className="sr-only">{title}</h1>
       <p className="ay-wh-hello__date">{fmtLongDay(today)}</p>
-      <p className="ay-wh-hello__hi">{hello}{name ? `, ${name}` : ''}.</p>
+      {/* The page's one shout (uniqueness pass): the greeting, oversized. */}
+      <Shout as="p" size="l" className="ay-wh-hello__hi">{hello}{name ? `, ${name}` : ''}.</Shout>
       {/* The number in words for screen readers (the ring is decoration). */}
       {num && <p className="sr-only">{`${num.label}: ${num.value}`}</p>}
       <DayStrip iso={today} className="ay-wh-hello__days" />
@@ -320,7 +324,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   const todayFeed = widgets ? <>{feed}{widgets}</> : feed;
 
   const sleepPoints = dash.groups.flatMap((g) => g.charts).find((c) => c.metric === 'sleep_minutes')?.points || [];
-  const band = compact ? <TodayBand title={title} today={today} name={name} cycle={week.cycle?.cycleDay ? week.cycle : null} sleepPoints={sleepPoints} products={demoData?.products || products} /> : null;
+  const band = compact ? <TodayBand title={title} today={today} name={name} cycle={week.cycle?.cycleDay ? week.cycle : null} sleepPoints={sleepPoints} products={demoData?.products || products} ring={!(rows.length > 0)} /> : null;
 
   // Today (compact, the first main tab): a greeting from her own clock and one
   // sentence (UX spec 6), then two columns on desktop: the day on the left
@@ -333,9 +337,31 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
       : null;
     // "Your week" from synced health rows, when there are any: words, then the number and her usual.
     // "Your week": the dashboard's own glance rows (same words, number + usual, 7-day line).
-    const tiles = glanceRows(rows, today).map((x) => ({ ...x, id: x.metric }));
     const estimate = sections.find((sec) => sec.id === 'cycle')?.estimate || null;
     const coming = comingUp(week.cycle?.cycleDay ? week.cycle : null, estimate, today, { hormonalBC, hasProducts: false });
+    // Picture first (founder Oct 26 16:43): the dashboard's week as a bento of real charts.
+    const longDash = buildDashboard(rows, { days: 90, today });
+    const bandOf = (m) => usualBand(longDash.groups.flatMap((g) => g.charts).find((c) => c.metric === m)?.points, today);
+    const weekCycle = week.cycle?.cycleDay ? week.cycle : null;
+    const bentoCharts = glanceCharts(week);
+    const bentoProducts = demoData?.products || products;
+    const hasBento = Boolean(weekCycle) || bentoCharts.length > 0 || Boolean(weekInfo?.logged?.n);
+    const bento = hasBento ? (
+      <WeekBento
+        cycle={weekCycle}
+        cycleWords={cycleWordsFor(weekCycle, hormonalBC)}
+        hormonalBC={hormonalBC}
+        charts={bentoCharts}
+        bandOf={bandOf}
+        today={today}
+        products={bentoProducts}
+        productsLabel="Your products"
+        logged={weekInfo?.logged || null}
+        coming={coming}
+        onOpen={signedIn && hasData ? () => goData(true) : null}
+      />
+    ) : null;
+    const tiles = bentoCharts;
     const setupLeft = setup.some((x) => x.done) && setup.some((x) => !x.done);
     const hasSide = (signedIn && hasData) || tiles.length > 0 || coming.length > 0 || trying.length > 0 || Boolean(weekInfo) || setupLeft;
     // Loop B (founder 10/10 pass): one centred column on every width, like the app. The day first
@@ -350,7 +376,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
             {feed}
             {hasSide && (
               <div className="ay-wh-day__flow" role="region" aria-label="Your week and coming up">
-                <TodaySide week={weekInfo} tiles={tiles} coming={coming} trying={trying} setup={setup} today={today} />
+                <TodaySide week={weekInfo} bento={bento} coming={coming} trying={trying} setup={setup} today={today} />
                 {signedIn && hasData && <button type="button" className="ay-wh-side__more is-data" onClick={() => goData(true)}><span>See your data</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
               </div>
             )}

@@ -28,7 +28,7 @@ export function buildWeeklyRecap({ today, log = {}, tries = [], patterns = [], s
   const logged = week.filter((d) => log?.[d] && FIELDS.some((f) => log[d][f] != null));
   if (logged.length < WEEKLY_MIN_DAYS) return { cards: [] };
   const cards = [{ key: `weekly:opening:${today}`, category: 'frame', kind: 'opening', kicker: 'Your week on ayna', title: 'Your week on ayna', body: 'Here is what changed.' }];
-  cards.push({ key: 'weekly:days', category: 'week', kind: 'stat', kicker: 'This week', title: `You logged ${logged.length} of 7 days.`, body: 'Only you can see this.' });
+  cards.push({ key: 'weekly:days', category: 'week', kind: 'stat', kicker: 'This week', title: `You logged ${logged.length} of 7 days.`, body: 'Only you can see this.', figure: { n: logged.length, of: 7, days: [...week].sort().map((d) => ({ day: d, on: logged.includes(d) })) } });
 
   const counts = FIELDS.map((f) => [f, week.filter((d) => log?.[d]?.[f] != null).length]).sort((a, b) => b[1] - a[1]);
   if (counts[0][1] >= WEEKLY_MIN_DAYS) cards.push({ key: 'weekly:most', category: 'week', kind: 'stat', kicker: 'Most tracked', title: `You tracked ${NAMES[counts[0][0]].toLowerCase()} most, on ${counts[0][1]} days.` });

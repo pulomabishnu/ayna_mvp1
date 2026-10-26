@@ -18,6 +18,7 @@ import { AreaChart, FindingItem, GoalList, PhaseLine, RangeBar, RangePills, Rout
 import { OutlineButton, PillTabs, StatusPill, StickerButton, TextButton } from '../../components/ui/ay/index.js';
 import { insightStories } from '../../health/insightStory.js';
 import { displayName } from '../utils/displayName.js';
+import WeekBento from '../../components/today/WeekBento.jsx';
 import '../../styles/week-explained.css';
 import '../../styles/health-home.css';
 
@@ -308,21 +309,22 @@ export default function HealthHome({
     ...(!heart ? ['Heart'] : []),
     ...(!steps ? ['Activity'] : []),
   ];
+  // Picture first (founder Oct 26 16:43): one chart per tile, one big number, one takeaway line.
   const glanceBlock = glance.length > 0 && (
-    <section className="ay-db-card ay-db-glance" aria-labelledby="ay-db-glance-title">
+    <section className="ay-db-card ay-db-glance is-bento" aria-labelledby="ay-db-glance-title">
       <h2 id="ay-db-glance-title" className="ay-db-h2">Your week at a glance</h2>
-      <ul>
-        {glance.map((g) => (
-          <li key={g.id}>
-            <button type="button" onClick={() => open(g.area)} aria-label={`${g.label}: ${g.words}. ${g.value}. Open ${g.area}.`}>
-              <span className="ay-db-glance-k">{g.label}</span>
-              <span className="ay-db-glance-w">{g.words}</span>
-              <span className="ay-db-glance-v">{g.value}</span>
-              <span className="ay-db-glance-viz" aria-hidden="true">{g.visual}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
+      <WeekBento
+        cycle={cycle}
+        cycleWords={glance[0]?.id === 'cycle' ? glance[0].words : ''}
+        hormonalBC={hormonalBC}
+        charts={glanceMetrics.map((c) => ({ ...c, area: AREA_OF_METRIC(c.metric, groupOf) }))}
+        bandOf={bandOf}
+        today={today}
+        products={routineProducts.length ? routineProducts : products}
+        productsLabel={routineProducts.length ? 'Your routine' : 'Your products'}
+        onOpenProducts={tabs.some((t) => t.id === 'routine') ? () => open('routine') : null}
+        onOpen={open}
+      />
       {missing.length > 0 && missing.length < 3 && <p className="ay-db-muted">{missing.join(' and ')}: connect a watch or ring to see {missing.length > 1 ? 'these' : 'this'}.</p>}
     </section>
   );

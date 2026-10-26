@@ -15,6 +15,8 @@ import { buildDashboard } from '../../health/dashboard.js';
 import { usesHormonalBC } from '../../health/weekInsights.js';
 import { localToday } from '../hooks/useHealthData.js';
 import HomeWidgets from '../../home/HomeWidgets.jsx';
+import WeekBento, { cycleWordsFor, glanceCharts } from '../../components/today/WeekBento.jsx';
+import { usualBand } from '../../health/dashView.js';
 import '../../styles/week-explained.css';
 import '../ayna-home.css';
 
@@ -50,6 +52,18 @@ export default function AynaHomeScreen(props) {
   // Sticker density preview (?homestyle=a|b, kept for the tab); the hero's number is her own data.
   const [look] = useState(readHomeLook);
   const sleepPoints = useMemo(() => buildDashboard(healthInsightRows || [], { days: 7, today }).groups.flatMap((g) => g.charts).find((c) => c.metric === 'sleep_minutes')?.points || [], [healthInsightRows, today]);
+  // Today's week bento (same tiles as the dashboard), from her synced rows only.
+  const weekBento = useMemo(() => {
+    const rows = healthInsightRows || [];
+    if (!rows.length) return null;
+    const w = buildDashboard(rows, { days: 30, today });
+    const long = buildDashboard(rows, { days: 90, today });
+    const charts = glanceCharts(w);
+    if (!charts.length && !cycle) return null;
+    const bandOf = (m) => usualBand(long.groups.flatMap((g) => g.charts).find((c) => c.metric === m)?.points, today);
+    const hbc = usesHormonalBC(quizAnswers);
+    return <WeekBento cycle={cycle} cycleWords={cycleWordsFor(cycle, hbc)} hormonalBC={hbc} charts={charts} bandOf={bandOf} today={today} products={myProducts} productsLabel="Your products" onOpenProducts={() => onHomeView?.('products')} onOpen={() => onHomeView?.('dashboard')} />;
+  }, [healthInsightRows, today, cycle, quizAnswers, myProducts, onHomeView]);
   const firstName = String(authUser?.user_metadata?.first_name || '').split(' ')[0];
   const ask = (q, extra) => onAskAyna?.(typeof q === 'string' ? { question: q, ...(extra || {}) } : q);
 
@@ -89,7 +103,8 @@ export default function AynaHomeScreen(props) {
         {!hasProfile && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
         {/* .ay-hd: the dashboard's own tokens and card styles, as on the full dashboard. */}
         <div className="ay-hd ay-homefeed">
-        <HomeHeroArt look={look} products={[...myProducts, ...suggestedEcosystemProducts]} cycle={cycle} sleepPoints={sleepPoints} />
+        {/* Picture first (founder Oct 26 16:43): with health data, her week as a bento of real charts; else the hero art. */}
+        {!weekBento && <HomeHeroArt look={look} products={[...myProducts, ...suggestedEcosystemProducts]} cycle={cycle} sleepPoints={sleepPoints} />}
         <TodayFeed
           compact
           variant="app"
@@ -116,6 +131,7 @@ export default function AynaHomeScreen(props) {
           onOpenFull={(item, o) => openDashboard(Boolean(o?.log))}
           moreHeading={false}
         />
+        {weekBento && <section className="ay-homeweek" aria-labelledby="ay-homeweek-h"><h2 id="ay-homeweek-h">Your week</h2>{weekBento}</section>}
         </div>
         {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
         <HomeWidgets
