@@ -361,7 +361,7 @@
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__icon { flex: none; margin-top: 3px; color: var(--ay-ink); }
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__body { flex: 1 1 auto; min-width: 0; display: grid; gap: 2px; }
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__text { margin: 0 !important; font: 600 15px/1.4 var(--v-ui) !important; color: var(--ay-ink) !important; }
-:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__go { justify-self: start; min-height: 44px !important; margin: -8px 0 -12px !important; font: 600 15px/1.2 var(--v-ui) !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__go { display: inline !important; min-height: 0 !important; margin: 0 !important; padding: 12px 0 !important; font: 600 15px/1.4 var(--v-ui) !important; vertical-align: baseline; }
 
 /* ---------- PDP audit: evidence marks, header, key, pointer (7.6, 15 EvidenceHeader / EvidenceMark) ---------- */
 :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-mark8 { flex: none; display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: -1px; color: var(--ay-ink); }
@@ -392,7 +392,7 @@
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__tabs { grid-column: 1 / -1; }
 }
 @media (min-width: 1024px) {
-  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk { grid-template-columns: minmax(0, 1fr) 356px minmax(0, 1.5fr); gap: 24px; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk { grid-template-columns: minmax(0, 1fr) 372px minmax(0, 1.5fr); gap: 24px; }
   html body .app-container.app-container.app-container #pdp-v4 .ayp-top { margin-bottom: 4px !important; min-height: 36px; }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__gallery .ayv-hl { margin: 16px 0 0 !important; }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__gallery .ayv-hl__row { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px; }
@@ -561,3 +561,26 @@
 /* The pinned tab row never hides what has focus (WCAG 2.4.11). */
 html:has(#pdp-v4) { scroll-padding-top: 140px; }
 .ay-pdp-scroll:has(#ay-tabs), .ay-psheet__scroll:has(#ay-tabs) { scroll-padding-top: 64px; }
+
+/* ---------- app hero: the plate on butter in a 4:5 frame, sized so the decision block fits a 390x844 screen (14, 14.1) ---------- */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ayq-apphero { padding: 12px 16px 4px !important; background: transparent !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ayq-apphero__stage { display: block !important; padding: 0 !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ayq-apphero__stamp { width: min(52vw, 204px, calc((34svh - 40px) * .8)) !important; margin: 0 auto !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; transform: none !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ayq-apphero__tile { aspect-ratio: 4 / 5 !important; overflow: visible !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ayq-apphero__tile .ay-gal.has-plate .ay-gal__open :is(img, picture, span) { position: absolute !important; inset: 20% !important; width: 60% !important; height: 60% !important; object-fit: contain !important; mix-blend-mode: multiply; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ayq-apphero__tile .ay-gal.has-plate .ay-gal__open { position: absolute !important; inset: 0; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-top { position: absolute; left: 0; right: 0; top: 0; z-index: 3; background: transparent !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-title { padding-top: 12px !important; margin-top: 0 !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-title .ayv-hl { margin: 16px 0 0 !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-title .ayv-hl__tile { padding: 10px !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-title .ayv-hl__num { font-size: 20px !important; }
+@media (min-width: 1024px) {
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-metaline { margin-top: 2px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-disclose { margin-top: 6px !important; }
+}
+@media (min-width: 1024px) {
+  html body .app-container .ayp#pdp-v4 > .ayp__page { padding-top: 2px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-lock { margin-top: 8px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-pricerow { margin-top: 6px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk { margin-top: 4px !important; }
+}

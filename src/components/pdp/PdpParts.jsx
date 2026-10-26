@@ -166,8 +166,7 @@ export function SafetyLine({ text = '', lines = null, onGo = null }) {
     <div className="ayv-safeline" role="note" aria-label="Safety">
       <svg className="ayv-safeline__icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M10.3 3.9 2.4 17.6A2 2 0 0 0 4.1 20.6h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /><path d="M12 9v4.5M12 17.2h.01" /></svg>
       <div className="ayv-safeline__body">
-        {list.map((l, i) => <p key={`${l.kind}-${i}`} className={`ayv-safeline__text is-${l.kind}`}>{i === 0 && <span className="sr-only">Safety: </span>}{l.text}</p>)}
-        <button type="button" className="ayv-textbtn ayv-safeline__go" onClick={go}>Safety details</button>
+        {list.map((l, i) => <p key={`${l.kind}-${i}`} className={`ayv-safeline__text is-${l.kind}`}>{i === 0 && <span className="sr-only">Safety: </span>}{l.text}{i === list.length - 1 && <>{' '}<button type="button" className="ayv-textbtn ayv-safeline__go" onClick={go}>Safety details</button></>}</p>)}
       </div>
     </div>
   );

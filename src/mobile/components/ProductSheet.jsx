@@ -139,7 +139,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
             <div className="ayv-actions" data-tour="quick-actions">{buyLink()}</div>
             {buy?.url && (
               <p className="ay-pquick__leave ayv-fine ayv-disclose">
-                <span>{buy.partner ? 'ayna partner. We may earn a commission.' : 'Some links earn ayna a commission. It never changes your matches.'}</span>
+                <span>{buy.partner ? 'ayna partner. We may earn a commission.' : 'ayna may earn a commission.'}</span>
                 {buy.checked && <span>{buy.checked}</span>}
                 {others.length > 0 && <span>Also at {others.map((r, i) => <span key={r.url}>{i > 0 && ', '}<a href={r.url} target="_blank" rel="noopener noreferrer">{r.name}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</span>}
               </p>

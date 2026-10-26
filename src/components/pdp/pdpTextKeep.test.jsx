@@ -93,6 +93,7 @@ const RENAMED_LABELS = [
   'Who wrote this:', 'ayna’s clinical summary, not reviewed by a named clinician.',
   'Reviews are people’s experiences. They are not evidence that a product works.', 'Online reviews and posts are people’s experiences, not clinical evidence.',
   'Library reads on the same topic, checked against .gov sources.',
+  'Some links earn ayna a commission. It never changes your matches.', // app disclosure is the website's one line now; "Partnerships never change this score." sits in Why N%?
   'App or online', // a fact chip above the name (removed, audit 7.2); Format says "Virtual care service"
   'What’s included and details', 'Works with:', 'Check with a clinician first', 'Possible side effects', 'Also worth knowing', 'Downsides to know', 'Label and regulatory facts', 'Labels on file', 'Privacy',
 ];

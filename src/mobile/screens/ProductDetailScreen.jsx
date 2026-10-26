@@ -340,7 +340,9 @@ export default function ProductDetailScreen({
   // Clinical opinion / Scientific literature / Reviews / Safety / How to use /
   // Details tabs with their source cards.
   const glance = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
-  const brandLine = brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : categoryLabel;
+  // The brand above the name (the record's brand, else the brand the page already knows from glance), then the category.
+  const brandName = brand || glance?.brand || '';
+  const brandLine = brandName && String(brandName).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brandName : categoryLabel;
   // One recall answer and the one critical caution for the page, as on the website (pdp/pdpParts).
   const recall = pageRecall(product);
   const topWarning = topWarningFor(product, glance, recall, { pregnancyFirst: pregnancyFirstFrom(quizAnswers) });
@@ -444,7 +446,7 @@ export default function ProductDetailScreen({
           {/* The disclosure, always visible under the button (audit 7.9: the app no longer collapses it). */}
           {shopAction && (
             <p className="ay-pdp-commission ayv-fine ayv-disclose">
-              <span>{isPartner ? 'ayna partner. We may earn a commission.' : 'Some links earn ayna a commission. It never changes your matches.'}</span>
+              <span>{isPartner ? 'ayna partner. We may earn a commission.' : 'ayna may earn a commission.'}</span>
               {buy.checked && <span>{buy.checked}</span>}
               {others.length > 0 && <span>Also at {others.map((r, i) => <span key={r.url}>{i > 0 && ', '}<a href={r.url} target="_blank" rel="noopener noreferrer">{r.name}{r.price ? ` · ${r.price}` : ''}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</span>}
               {isPartner && <span><button type="button" className="ayp-textlink" aria-expanded={partnerOpen} onClick={() => setPartnerOpen((v) => !v)}>{partnerOpen ? 'Less' : 'How partnerships work'}</button></span>}
