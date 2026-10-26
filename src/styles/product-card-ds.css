@@ -10,13 +10,13 @@
    pill (one engine) is a small stamp on the photo's top-left corner.
    ===================================================================== */
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card {
-  --pc-ink: #3e2723; --pc-bg: #ffedac; --pc-panel: #fbfaf6; --pc-panel-line: rgba(62, 39, 35, .16); --pc-soft: rgba(62, 39, 35, .72); --pc-shadow: 7px 7px 0 #3e2723;
+  --pc-ink: #3e2723; --pc-bg: #ffedac; --pc-panel: #ffffff; --pc-panel-line: rgba(62, 39, 35, .16); --pc-soft: rgba(62, 39, 35, .72); --pc-shadow: none;
   position: relative; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; min-width: 0;
   padding: 14px 14px 16px !important; border: 2px solid var(--pc-ink) !important; border-radius: 16px!important; background: var(--pc-bg) !important; color: var(--pc-ink);
   box-shadow: var(--pc-shadow) !important; overflow: visible !important; transition: transform .16s var(--ease-out, ease-out), box-shadow .16s var(--ease-out, ease-out);
 }
-:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-product-card { --pc-ink: #ffedac; --pc-bg: #4a312c; --pc-soft: rgba(255, 237, 172, .78); --pc-shadow: 6px 6px 0 #ffedac; }
-@media (hover: hover) { :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card:has(.ay-product-card__link:hover) { transform: translate(-2px, -2px); box-shadow: 9px 9px 0 var(--pc-ink) !important; } }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-product-card { --pc-ink: #ffedac; --pc-bg: #4a312c; --pc-soft: rgba(255, 237, 172, .78); --pc-shadow: none; }
+@media (hover: hover) { :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card:has(.ay-product-card__link:hover) { transform: translate(-2px, -2px); box-shadow: none !important; } }
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card:has(.ay-product-card__link:active) { transform: translate(3px, 3px); box-shadow: 3px 3px 0 var(--pc-ink) !important; }
 @media (prefers-reduced-motion: reduce) { :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card { transition: none; transform: none !important; } }
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__link { display: flex !important; flex-direction: column; gap: 16px; flex: 1; min-width: 0; padding: 0 !important; color: inherit !important; text-decoration: none !important; }
@@ -61,10 +61,10 @@
 /* rows and grids leave room for the shadow */
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) :is(.wx-row, .ayshop__grid, .wx-grid, .ay-product-grid) { padding-bottom: 12px; padding-right: 10px; row-gap: 28px; }
 @media (max-width: 699px) {
-  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card { --pc-shadow: 5px 5px 0 var(--pc-ink); padding: 10px 10px 12px !important; }
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card { --pc-shadow: none; padding: 10px 10px 12px !important; }
   :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__tile { padding: 10px !important; }
   :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__price { padding-right: 46px !important; }
-  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__why { margin-right: 46px; font-size: 12.5px; }
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__why { margin-right: 46px; font-size: 13px; }
   :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__name { font-size: 15.5px !important; }
   :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__price { font-size: 16px !important; }
   :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__heart { width: 44px !important; height: 44px !important; right: 10px !important; bottom: 10px !important; }
@@ -73,8 +73,8 @@
 
 /* The same card as a row (Rundown story, Community mentions): photo panel left, text right,
    the match stamp still on the photo corner, the why line under the text. */
-:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row { height: auto; padding: 12px !important; --pc-shadow: 5px 5px 0 var(--pc-ink); }
-:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-product-card.is-row { --pc-shadow: 5px 5px 0 #ffedac; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row { height: auto; padding: 12px !important; --pc-shadow: none; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-product-card.is-row { --pc-shadow: none; }
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__link { flex-direction: row; align-items: flex-start; gap: 14px; }
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__tile { flex: none; width: 112px; padding: 8px !important; }
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__body { gap: 4px; padding: 2px 0 0 !important; }

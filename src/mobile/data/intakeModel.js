@@ -245,6 +245,9 @@ export const EMPTY = {
   // First-run setup (onboardingFlow.js): what she wants help with (an
   // interest, never a need) and her goals. Neither changes a match.
   helpTopics: [], goals: [],
+  // Her first name, asked once in the quiz (optional) so sign-up never asks
+  // again (onboarding audit, WCAG 3.3.7). Only used to greet her.
+  name: '',
 };
 
 // Field-name map from the legacy snapshot shape (buildSnapshot()'s output,
@@ -268,7 +271,7 @@ export const RESUMABLE_PASSTHROUGH_FIELDS = [
   'brandOpenness', 'trustedBrands', 'brandSupportPreferences',
   'avoidIngredients', 'avoidIngredientsOtherText',
   'anythingElse', 'skippedSteps', 'recommendationCountTouched',
-  'helpTopics', 'goals',
+  'helpTopics', 'goals', 'name',
 ];
 
 export function reconstructIntakeFromSnapshot(snapshot) {
@@ -678,6 +681,8 @@ export function buildSnapshot(intake) {
     anythingElse: intake.anythingElse.trim(),
     goals: [...new Set((intake.goals || []).filter(Boolean))],
     helpTopics: [...new Set((intake.helpTopics || []).filter(Boolean))],
+    // Saved only when she gave one, so older snapshots keep their shape.
+    ...(cleanFirstName(intake.name) ? { name: cleanFirstName(intake.name) } : {}),
     // Steps she chose to skip, and every question's answer state
     // (answered / explicit_no / not_sure / prefer_not / skipped / not_asked).
     // Skipped is neutral: it never lowers a match.
@@ -689,6 +694,12 @@ export function buildSnapshot(intake) {
     personalizationCompletedAt: new Date().toISOString(),
     intakeVersion: 'spec-2026-10',
   };
+}
+
+/** Her first name as typed, trimmed to one line and 50 characters ('' when blank). */
+export const FIRST_NAME_MAX = 50;
+export function cleanFirstName(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim().slice(0, FIRST_NAME_MAX);
 }
 
 /** A plausible US ZIP: exactly five digits, and not 00000. Shared by app and website quiz. */

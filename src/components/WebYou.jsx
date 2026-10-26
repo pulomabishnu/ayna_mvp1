@@ -26,11 +26,14 @@ import { estimatePhase } from '../health/phase.js';
 import { localToday, useHealthData } from '../mobile/hooks/useHealthData.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import RelativeTime from './ui/RelativeTime.jsx';
-import { StatBoxes, ArchAvatar, HouseBlend } from './you/YouBits.jsx';
+import { ArchAvatar, HouseBlend } from './you/YouBits.jsx';
+import { setupSteps, knowsLine, countAnswers, connectedNames } from './you/setupSteps.js';
+import '../styles/you-hub.css';
 import { useSavedPosts, postLine } from '../hooks/useSavedPosts.js';
 import { recentQuestions } from '../utils/askRecent.js';
 import usePersistentState from '../hooks/usePersistentState.js';
 import { useCheckinCountStatus } from '../hooks/useCheckinCount.js';
+import { localDayKey } from '../utils/localDate.js';
 
 // The app's "You" tab, built for the website: profile progress, your shelf
 // (charts from real data), badges, routine + safety alerts, and account
@@ -181,7 +184,7 @@ const WEEK_METRICS = ['sleep_minutes', 'steps', 'active_energy_kcal', 'workout_m
 const SIDE_METRICS = ['readiness_score', 'resting_hr_bpm', 'sleep_minutes', 'steps'];
 const METRIC_PER = { sleep_minutes: 'Sleep a night', steps: 'Steps a day', active_energy_kcal: 'Active energy a day', workout_minutes: 'Workouts a day', readiness_score: 'Readiness', resting_hr_bpm: 'Resting heart rate' };
 const showMetric = (c) => (c.metric === 'steps' ? fmtCount(Math.round(c.week)) : formatMetric(c.metric, c.week));
-const isoDay = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const isoDay = (d) => localDayKey(d);
 
 /* "This week": cycle day and one or two real metrics from connected data, or
    the way to connect. Days with no data stay as a stub, never an invented bar. */
@@ -244,7 +247,7 @@ function HealthMatchStatus({ userId, onOpen }) {
   );
 }
 
-export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = null, healthConnected = [], section = null, nav = null, onOpenSection, recentAsks = [], savedSlot = null, onOpenPost, onUpdateIntake = null, onOpenCommunity, onOpenArticle, user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null }) {
+export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = null, healthConnected = [], section = null, nav = null, onOpenSection, recentAsks = [], savedSlot = null, onOpenPost, onUpdateIntake = null, onOpenCommunity, onOpenArticle, user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null, signedOutSlot = null }) {
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   const checkin = useCheckinCountStatus(user?.id);
   const checkinCount = checkin.count;
@@ -349,15 +352,18 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
   const asks = recentQuestions(recentAsks || [], 4);
   const [avatarFailed, setAvatarFailed] = useState(false);
 
+  const goSection = (key) => onOpenSection?.(key);
+
   if (!user) {
-    return <section className="ct wy ay-container" data-tour="you">{quizSlot}
-      <div className="wy-signedout">
-        <h1 className="ay-h1">You</h1>
-        <h2 className="ay-h2 wy-signedout__h">Build your health ecosystem</h2>
+    // Signed out (You audit P2): the example shelves and the 3 steps, the same honest preview My ecosystem shows.
+    return <section className="ct wy yh ay-container is-signedout" data-tour="you">
+      {quizSlot}
+      {signedOutSlot || <div className="wy-signedout">
+        <h1 className="ay-h1">Build your health ecosystem</h1>
         <p className="ct-lede">Keep your concerns, matches, saved products and health insights connected in one place.</p>
         <div className="wy-signedout__doors">{!quizSlot && <button type="button" className="ay-btn ay-btn--primary" onClick={onStartQuiz}>Build mine</button>}{onSignIn && <button type="button" className="ay-btn ay-btn--secondary" onClick={onSignIn}>Sign in</button>}</div>
-      </div>
-      {/* Explore first: her answers already work on this device, so she can see and change them. */}
+      </div>}
+      {/* Her answers already work on this device, so she can see and change them. */}
       {quizResults?.fullHealthIntake && <div className="wy-know" data-tour="you-know"><WhatAynaKnows variant="web" quizAnswers={quizResults} connected={healthConnected} onUpdateIntake={onUpdateIntakeLocal} onEditStep={onEditAnswerAt || (() => onEditProfile?.())} onManageData={onOpenHealthData} /></div>}
     </section>;
   }
@@ -371,7 +377,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
   const fyi = alerts.length - activeAlerts;
   // First sentence, without cutting at "v." or "e.g." (it used to stop at "Manson v."), and no emoji.
   const firstLine = (t) => {
-    const text = String(t || '').replace(/^(?:\u26a0\ufe0f?|\s)+/, '').trim();
+    const text = String(t || '').replace(/^(?:⚠️?|\s)+/, '').trim();
     const re = /[.!?](?=\s+[A-Z(]|$)/g; let m;
     while ((m = re.exec(text))) {
       const before = text.slice(0, m.index + 1);
@@ -383,29 +389,39 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
   const row = (key, label, value, end, extra = {}) => <div className="ay-group__row wy-row" key={key} {...extra}><span className="ay-group__text"><span className="ay-group__label">{label}</span><span className="ay-group__value">{value}</span></span>{end && <span className="ay-group__end">{end}</span>}</div>;
   const linkRow = (key, label, value, onClick, note) => onClick && <li key={key}><button type="button" className="ay-group__row ay-group__row--link wy-row" onClick={onClick}><span className="ay-group__text"><span className="ay-group__value">{label}</span>{note && <span className="ay-group__note">{note}</span>}</span><span className="ay-group__end">{value != null && <span className="wy-rowval">{value}</span>}<Chev /></span></button></li>;
 
-  // Safety alerts lead the You overview (what matters right now).
-  const safetySection = <>
-        <section className="wy-sec" aria-labelledby="wy-safety-h">
-          <div className="wy-sec__head"><h2 className="ay-group__title" id="wy-safety-h">Safety alerts</h2><span className="wy-count">{activeAlerts ? `${activeAlerts} to check` : 'Nothing urgent'}{fyi > 0 ? ` · ${fyi} FYI` : ''}</span></div>
-          {sortedAlerts.length ? <ul className="ay-group wy-alerts">{sortedAlerts.map((a) => {
-            const one = a.kind === 'note' ? '' : firstLine(a.body);
-            const named = a.kind === 'sensitivity' ? products.filter((p) => p?.name && String(a.body).includes(p.name)) : [];
-            return <li key={a.id} className={`wy-alert is-${a.kind}`}>
-              <span className="wy-alert__tier">{TIER[a.kind]?.[1] || 'Note'}</span>
-              <strong>{a.title}</strong>
-              {one && <p>{one}</p>}
-              {one !== a.body && <details><summary>Details</summary><p>{a.body}</p></details>}
-              {named.length > 1
-                ? <div className="wy-alert__links">{named.map((p) => <button key={p.id} type="button" className="ct-link" onClick={() => onOpenProduct?.(p)}>{p.name}</button>)}</div>
-                : a.product && <button type="button" className="ct-link" onClick={() => onOpenProduct?.(a.product)}>View product</button>}
-            </li>;
-          })}</ul> : <p className="ay-group is-padded wy-note">No alerts on your ecosystem.</p>}
-        </section>
+  // Set-up as a count that starts with what she already did (You audit 12, endowed progress).
+  const setup = setupSteps({ hasAnswers: !!intake, productCount: products.length, connectedCount: healthConnectedCount, checkinCount });
+  const SETUP_GO = { quiz: intake ? onEditProfile : onStartQuiz, ecosystem: onOpenEcosystem, connect: onOpenHealthData, checkin: onOpenCheckin };
+  const knows = knowsLine({ answerCount: countAnswers(intake), connectedNames: connectedNames(healthConnected), savedCount });
+  const care = getCareProfile(quizResults);
+  const avoid = [...new Set([...care.allergies, ...(care.prefersFragranceFree ? ['Fragrance'] : [])].map((x) => x.replace(/^\w/, (c) => c.toUpperCase())))];
 
-  </>;
+  // Safety alerts lead the You hub (what matters right now).
+  const safetySection = <section className="wy-sec" aria-labelledby="wy-safety-h">
+    <div className="wy-sec__head"><h2 className="ay-group__title" id="wy-safety-h">Safety alerts</h2><span className="wy-count">{activeAlerts ? `${activeAlerts} to check` : 'Nothing urgent'}{fyi > 0 ? ` · ${fyi} FYI` : ''}</span></div>
+    {sortedAlerts.length ? <ul className="ay-group wy-alerts">{sortedAlerts.map((a) => {
+      const one = a.kind === 'note' ? '' : firstLine(a.body);
+      const named = a.kind === 'sensitivity' ? products.filter((p) => p?.name && String(a.body).includes(p.name)) : [];
+      return <li key={a.id} className={`wy-alert is-${a.kind}`}>
+        <span className="wy-alert__tier">{TIER[a.kind]?.[1] || 'Note'}</span>
+        <strong>{a.title}</strong>
+        {one && <p>{one}</p>}
+        {one !== a.body && <details><summary>Details</summary><p>{a.body}</p></details>}
+        {named.length > 1
+          ? <div className="wy-alert__links">{named.map((p) => <button key={p.id} type="button" className="ct-link" onClick={() => onOpenProduct?.(p)}>{p.name}</button>)}</div>
+          : a.product && <button type="button" className="ct-link" onClick={() => onOpenProduct?.(a.product)}>View product</button>}
+      </li>;
+    })}</ul> : <p className="ay-group is-padded wy-note">No alerts on your ecosystem.</p>}
+  </section>;
 
-  return <section className="ct wy ay-container" data-tour="you">
-    <header className="wy-head">
+  const facts = [
+    { key: 'picks', value: fmtCount(products.length), caption: products.length === 1 ? 'Product in your ecosystem' : 'Products in your ecosystem', onClick: onOpenEcosystem },
+    { key: 'saved', value: fmtCount(savedCount), caption: savedCount === 1 ? 'Saved product' : 'Saved products', onClick: onOpenSaved || (() => goSection('saved')) },
+    { key: 'checkins', value: checkinCount != null ? fmtCount(checkinCount) : checkin.settled ? '–' : '…', caption: checkinCount === 1 ? 'Monthly check-in' : 'Monthly check-ins', onClick: onOpenCheckin },
+  ];
+
+  return <section className="ct wy yh ay-container" data-tour="you">
+    <header className="yh-head">
       <ArchAvatar className="wy-arch" src={cp?.avatar_url && !avatarFailed ? publicMediaUrl(cp.avatar_url) : ''} initial={initial} onError={() => setAvatarFailed(true)} />
       <div className="wy-who">
         <h1 className="ay-h1">{name || 'You'}</h1>
@@ -415,48 +431,53 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
           <span><b>{fmtCount(stats.following)}</b> following</span>
         </button>}
       </div>
-      <button type="button" className="wy-progress" onClick={onEditProfile} aria-label={`Health profile ${pct}% complete. Edit`}>
-        <span className="wy-progress__top"><span>Health profile</span><b>{pct}%</b></span>
+      {/* GlowCare #15: the profile as a count with one next step. */}
+      <button type="button" className="yh-profile" onClick={onEditProfile} aria-label={`Health profile ${pct}% complete. ${pct >= 100 ? 'Review answers' : 'Finish it'}`}>
+        <span className="yh-profile__top"><span>Health profile</span><b>{pct}% complete</b></span>
         <i aria-hidden="true"><em style={{ width: `${pct}%` }} /></i>
-        <span className="wy-progress__go">{pct >= 100 ? 'Review answers' : 'Finish it'} <span aria-hidden="true">→</span></span>
+        <span className="yh-profile__go">{pct >= 100 ? 'Review answers' : 'Finish it'} <span aria-hidden="true">→</span></span>
       </button>
     </header>
-    <StatBoxes className="wy-stats" items={[
-      { key: 'picks', label: products.length === 1 ? 'Pick' : 'Picks', value: fmtCount(products.length), onClick: onOpenEcosystem },
-      { key: 'saved', label: 'Saved', value: fmtCount(savedCount), onClick: onOpenSaved },
-      { key: 'checkins', label: checkinCount === 1 ? 'Check-in' : 'Check-ins', value: checkinCount != null ? fmtCount(checkinCount) : checkin.settled ? '–' : null, onClick: onOpenCheckin },
-    ]} />
 
     {quizSlot}
 
     {nav}
 
-    {/* You, in the sections of the UX spec (19). The section links sit above
-        (App.jsx YouNav); /you is the overview, each section has its own address. */}
     <div className={`wy-grid is-${section || 'overview'}`}>
       {!section && <>
-      {/* Overview, like Apple Health's Summary: what matters now (safety), her
-          profile at a glance and her week, then the sections. The left column
-          no longer ends after one short box. */}
       <div className="wy-col">
+        {/* Pai #12: her set-up as "2 of 4" with a tick per step and one next step. Gone once all are done. */}
+        {setup.next && <section className="wy-sec yh-setup" aria-labelledby="yh-setup-h">
+          <div className="wy-sec__head"><h2 className="ay-group__title" id="yh-setup-h">Your set-up</h2><span className="wy-count">{setup.done} of {setup.total} steps done</span></div>
+          <div className="yh-card">
+            <span className="yh-setup__bar" aria-hidden="true">{setup.steps.map((st) => <i key={st.key} className={st.done ? 'is-done' : ''} />)}</span>
+            <ol className="yh-setup__list">{setup.steps.map((st) => <li key={st.key} className={st.done ? 'is-done' : ''}><span className="yh-tick" aria-hidden="true">{st.done ? <svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg> : null}</span><span>{st.label}<span className="sr-only">{st.done ? ', done' : ', not done yet'}</span></span></li>)}</ol>
+            {SETUP_GO[setup.next.key] && <button type="button" className="ay-btn ay-btn--primary yh-setup__go" onClick={SETUP_GO[setup.next.key]}>{setup.next.label}</button>}
+          </div>
+        </section>}
         {safetySection}
-        {shopper && <Glance profile={shopper} products={products} quizResults={quizResults} />}
-        <ThisWeek userId={user.id} onOpen={onOpenHealth || onOpenHealthData} onConnect={onOpenHealthData || onOpenHealth} />
+        <section className="wy-sec" aria-labelledby="yh-knows-h">
+          <h2 className="ay-group__title" id="yh-knows-h">What ayna knows</h2>
+          <ul className="ay-group wy-rows">{linkRow('knows', knows || 'Nothing yet', null, () => goSection('health'), 'See, change or remove anything ayna uses')}</ul>
+        </section>
       </div>
       <div className="wy-col">
-        {onOpenFreeProduct && <FreeProductAccountCard onOpen={onOpenFreeProduct} />}
+        <ul className="yh-facts" aria-label="At a glance">{facts.map((f) => <li key={f.key}><button type="button" className="yh-fact" onClick={f.onClick} disabled={!f.onClick}><b>{f.value}</b><span>{f.caption}</span></button></li>)}</ul>
         <section className="wy-sec" data-tour="you-sections" aria-labelledby="wy-sections-h">
           <h2 className="ay-group__title" id="wy-sections-h">Your sections</h2>
           <ul className="ay-group wy-rows">
-            {linkRow('eco', 'My ecosystem', fmtCount(products.length), onOpenEcosystem, 'Your shelves, one for each need')}
-            {linkRow('saved', 'Saved', fmtCount(savedCount), () => onOpenSection?.('saved'), 'Products and posts you saved')}
-            {linkRow('health', 'My health', `${pct}%`, () => onOpenSection?.('health'), 'Symptoms, goals, life stage and preferences')}
-            {linkRow('tracking', 'Tracking', checkinCount != null ? fmtCount(checkinCount) : null, () => onOpenSection?.('tracking'), 'Daily log, check-ins and trends')}
-            {linkRow('connected', 'Connected data', healthConnectedCount ? fmtCount(healthConnectedCount) : null, () => onOpenSection?.('connected'), 'Apple Health, Oura and uploads')}
-            {linkRow('activity', 'My activity', null, () => onOpenSection?.('activity'), 'Recent questions and what you looked at')}
-            {linkRow('settings', 'Settings and privacy', null, () => onOpenSection?.('settings'), 'Account, emails, appearance and your data')}
+            {linkRow('eco', 'My ecosystem', products.length ? `${fmtCount(products.length)} ${products.length === 1 ? 'product' : 'products'}` : null, onOpenEcosystem, 'Your shelves, one for each need')}
+            {linkRow('saved', 'Saved', savedCount ? fmtCount(savedCount) : null, () => goSection('saved'), 'Products and posts you saved')}
+            {linkRow('health', 'My health', null, () => goSection('health'), 'Dashboard, tracking and connected apps')}
+            {linkRow('activity', 'Activity', null, () => goSection('activity'), 'Questions, posts and reviews')}
+            {linkRow('settings', 'Settings & privacy', null, () => goSection('settings'), 'Account, emails, appearance and your data')}
           </ul>
         </section>
+        <p className="yh-quick">
+          {onOpenCheckin && <button type="button" className="ct-link" onClick={onOpenCheckin}>Monthly check-in</button>}
+          {onEditProfile && <button type="button" className="ct-link" onClick={onEditProfile}>Update answers</button>}
+        </p>
+        {onOpenFreeProduct && <FreeProductAccountCard onOpen={onOpenFreeProduct} />}
       </div>
       </>}
 
@@ -478,32 +499,21 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
       </div>
       </>}
 
+      {/* My health = the old My health, Tracking and Connected data tabs, in one place (You audit P1). */}
       {section === 'health' && <>
       <div className="wy-col">
-        <section className="wy-sec" aria-labelledby="wy-profile-h">
-          <h2 className="ay-group__title" id="wy-profile-h">Health profile</h2>
-          <div className="ay-group wy-rows">{row('profile', 'Symptoms, goals, life stage and preferences', `${pct}% complete`, <button type="button" className="ct-link" onClick={onEditProfile}>Update</button>)}</div>
-        </section>
-        <HouseBlend className="wy-sec" intake={intake} onSave={onUpdateIntake} />
-      </div>
-      {/* See and edit what ayna believes about you (UX spec 29, trust center). */}
-      <div className="wy-know" data-tour="you-know"><WhatAynaKnows variant="web" quizAnswers={quizResults} userId={user?.id || null} connected={healthConnected} onUpdateIntake={onUpdateIntakeLocal || onUpdateIntake} onEditStep={(step) => (step && onEditAnswerAt ? onEditAnswerAt(step) : onEditProfile?.())} onManageData={onOpenHealthData} /></div>
-      <div className="wy-col">
-        {shopper ? <Glance profile={shopper} products={products} quizResults={quizResults} /> : <section className="wy-sec"><h2 className="ay-group__title">At a glance</h2><div className="ay-group is-padded wy-week is-empty"><p className="wy-note">Take the quiz to see it.</p><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={onStartQuiz}>Take the quiz</button></div></section>}
-        {/* The per-type counts repeated "Your shelves" in At a glance (audit), so only the interest chips stay. */}
-        {affinity.length > 0 && <section className="wy-sec" aria-labelledby="wy-into-h">
-          <h2 className="ay-group__title" id="wy-into-h">What you’re into</h2>
-          <ul className="ay-group wy-into">{affinity.map((a) => <li key={a.tag}><span>{a.label}</span><span className="wy-into__bar" aria-hidden="true"><i style={{ width: `${Math.max(4, Math.min(100, a.score))}%` }} /></span><b>{a.score}%</b></li>)}</ul>
-        </section>}
-      </div>
-      </>}
-
-      {section === 'tracking' && <>
-      <div className="wy-col">
-        <DailyCheckin userId={user?.id || null} />
         <ThisWeek userId={user.id} onOpen={onOpenHealth || onOpenHealthData} onConnect={onOpenHealthData || onOpenHealth} />
-      </div>
-      <div className="wy-col">
+        <section className="wy-sec" aria-labelledby="wy-things-h">
+          <h2 className="ay-group__title" id="wy-things-h">Connected apps</h2>
+          <ul className="ay-group wy-rows">
+            {linkRow('health', onOpenHealth ? 'Your health dashboard' : 'Health data', null, onOpenHealth || onOpenHealthData, healthSummary ? `${healthSummary.title}: ${healthSummary.headline}` : healthConnectedCount ? 'Connected. Your trends appear after about two weeks of data.' : 'Connect Apple Health, Oura or upload a file, and see your sleep, cycle and activity trends.')}
+            {onOpenHealth && linkRow('manage', 'Manage connected apps and uploads', healthConnectedCount ? fmtCount(healthConnectedCount) : null, onOpenHealthData)}
+          </ul>
+          {/* One setting in one place (P1-19): the switch is on Health data; this row says where it stands. */}
+          <h3 className="yh-h3" id="wy-hmatch-h">Health data in your matches</h3>
+          <HealthMatchStatus userId={user.id} onOpen={onOpenHealthData} />
+        </section>
+        <DailyCheckin userId={user?.id || null} />
         <section className="wy-sec" aria-labelledby="wy-checkins-h">
           <h2 className="ay-group__title" id="wy-checkins-h">Check-ins</h2>
           <ul className="ay-group wy-rows">{linkRow('checkin', 'Monthly check-in', checkinCount != null ? fmtCount(checkinCount) : null, onOpenCheckin, 'A few quick questions so your matches keep up with how you feel')}</ul>
@@ -511,25 +521,25 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
         {consumables.length > 0 && <Routine products={consumables} />}
         {SHOW_BOX_WAITLIST && <BoxWaitlist email={user?.email || ''} />}
       </div>
-      </>}
-
-      {section === 'connected' && <>
       <div className="wy-col">
-        <section className="wy-sec" aria-labelledby="wy-things-h">
-          <h2 className="ay-group__title" id="wy-things-h">Connected data</h2>
-          <ul className="ay-group wy-rows">
-            {linkRow('health', onOpenHealth ? 'Your health' : 'Health data', null, onOpenHealth || onOpenHealthData, healthSummary ? `${healthSummary.title}: ${healthSummary.headline}` : healthConnectedCount ? 'Connected. Your trends appear after about two weeks of data.' : 'Connect Apple Health, Oura or upload a file, and see your sleep, cycle and activity trends.')}
-            {onOpenHealth && linkRow('manage', 'Manage connected apps and uploads', null, onOpenHealthData)}
-          </ul>
+        <section className="wy-sec" aria-labelledby="wy-profile-h">
+          <h2 className="ay-group__title" id="wy-profile-h">Health profile</h2>
+          <div className="ay-group wy-rows">{row('profile', 'Symptoms, goals, life stage and preferences', `${pct}% complete`, <button type="button" className="ct-link" onClick={onEditProfile}>Update</button>)}</div>
         </section>
+        {/* Food-scan #17: what she avoids, as crossed chips. */}
+        {avoid.length > 0 && <section className="wy-sec" aria-labelledby="yh-avoid-h">
+          <h2 className="ay-group__title" id="yh-avoid-h">You avoid</h2>
+          <ul className="yh-avoid">{avoid.map((a) => <li key={a}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M6 18 18 6" /></svg>{a}</li>)}</ul>
+        </section>}
+        {shopper ? <Glance profile={shopper} products={products} quizResults={quizResults} /> : <section className="wy-sec"><h2 className="ay-group__title">At a glance</h2><div className="ay-group is-padded wy-week is-empty"><p className="wy-note">Take the quiz to see it.</p><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={onStartQuiz}>Take the quiz</button></div></section>}
+        {affinity.length > 0 && <section className="wy-sec" aria-labelledby="wy-into-h">
+          <h2 className="ay-group__title" id="wy-into-h">What you’re into</h2>
+          <ul className="ay-group wy-into">{affinity.map((a) => <li key={a.tag}><span>{a.label}</span><span className="wy-into__bar" aria-hidden="true"><i style={{ width: `${Math.max(4, Math.min(100, a.score))}%` }} /></span><b>{a.score}%</b></li>)}</ul>
+        </section>}
+        <HouseBlend className="wy-sec" intake={intake} onSave={onUpdateIntake} />
       </div>
-      <div className="wy-col">
-        <section className="wy-sec" aria-labelledby="wy-hmatch-h">
-          <h2 className="ay-group__title" id="wy-hmatch-h">Health data in your matches</h2>
-          {/* One setting in one place (P1-19): the switch is on Health data; this row says where it stands. */}
-          <HealthMatchStatus userId={user.id} onOpen={onOpenHealthData} />
-        </section>
-      </div>
+      {/* See and edit what ayna believes about you (UX spec 29, trust center). */}
+      <div className="wy-know" data-tour="you-know"><WhatAynaKnows variant="web" quizAnswers={quizResults} userId={user?.id || null} connected={healthConnected} onUpdateIntake={onUpdateIntakeLocal || onUpdateIntake} onEditStep={(step) => (step && onEditAnswerAt ? onEditAnswerAt(step) : onEditProfile?.())} onManageData={onOpenHealthData} /></div>
       </>}
 
       {section === 'activity' && <>
@@ -563,13 +573,13 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
         </section>}
         <section className="wy-sec" aria-labelledby="wy-cp-h">
           <h2 className="ay-group__title" id="wy-cp-h">Community</h2>
-          <ul className="ay-group wy-rows">{linkRow('community', 'Community profile', cp?.username ? `@${cp.username}` : null, openMyProfile)}</ul>
+          <ul className="ay-group wy-rows">{linkRow('community', 'Community profile', cp?.username ? `@${cp.username}` : null, openMyProfile, 'Your posts and reviews')}</ul>
         </section>
       </div>
       </>}
 
       {section === 'settings' && <>
-      <div className="wy-col">
+      <div className="wy-col yh-calm">
         <section className="wy-sec" id="wyou-account" aria-labelledby="wy-account-h">
           <div className="wy-sec__head"><h2 className="ay-group__title" id="wy-account-h">Account</h2>{note && <span className="wy-count" role="status">{note}</span>}</div>
           <div className="ay-group wy-rows">
@@ -581,7 +591,13 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
             {provider === 'email' && row('password', 'Password', '••••••••', <button type="button" className="ct-link" onClick={resetPassword}>Send reset link</button>)}
             {onOpenPhoneVerify && row('text', 'Text ayna', <>Get quick answers by text<small className="ay-group__note">Optional. Add and verify your phone number.</small></>, <button type="button" className="ct-link" onClick={onOpenPhoneVerify}>Set up</button>)}
             {onThemeChange && <div className="ay-group__row wy-row wy-row--stack"><span className="ay-group__text"><span className="ay-group__label">Appearance</span><span className="ay-group__value">{theme === 'dark' ? 'Dark' : theme === 'system' ? 'Match my device' : 'Light'}</span></span><span className="wy-seg" role="group" aria-label="Appearance">{[['light', 'Light'], ['dark', 'Dark'], ['system', 'Match my device']].map(([m, l]) => <button type="button" key={m} className="ay-chip" aria-pressed={theme === m} onClick={() => onThemeChange(m)}>{l}</button>)}</span></div>}
+          </div>
+        </section>
+        <section className="wy-sec" aria-labelledby="yh-privacy-h">
+          <h2 className="ay-group__title" id="yh-privacy-h">Privacy and your data</h2>
+          <div className="ay-group wy-rows">
             {row('analytics', 'Usage analytics', 'Anonymous, no session recording', <AnalyticsToggle />)}
+            {onOpenHealthData && row('healthdata', 'Health data', healthConnectedCount ? `${fmtCount(healthConnectedCount)} connected` : 'Nothing connected', <button type="button" className="ct-link" onClick={onOpenHealthData}>Manage</button>)}
             {row('data', 'Your data', <>Everything we store about you<small className="ay-group__note">A JSON file: your health profile, ecosystem, reviews, phone and text settings, and AI usage.</small></>, <button type="button" className="ct-link" onClick={downloadData}>Download</button>)}
           </div>
           <div className="wy-actions">
@@ -590,7 +606,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
           </div>
         </section>
       </div>
-      <div className="wy-col">
+      <div className="wy-col yh-calm">
         <TipsSettings variant="web" />
         <EmailSettings user={user} />
         <InviteCard userId={user.id} />

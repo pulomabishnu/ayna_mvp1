@@ -1,12 +1,12 @@
 /* Ayna's shared visual language: strong type, real imagery, quiet surfaces. */
 :root {
   /* Same palette as the shipped design (see web-play.css --ay-*). */
-  --brand-blue: #b9c2f4;
-  --brand-lime: #f7e78e;
-  --brand-mint: #bdebd6;
-  --brand-paper: #faf8f1;
-  --brand-ink: #1d1a2b;
-  --brand-rule: rgba(29, 26, 43, .16);
+  --brand-blue: #f7badd;
+  --brand-lime: #ffedac;
+  --brand-mint: #f6e3a1;
+  --brand-paper: #ffedac;
+  --brand-ink: #3e2723;
+  --brand-rule: rgba(62, 39, 35, .16);
 }
 
 .mockup-landing { background: var(--brand-paper); color: var(--brand-ink); }
@@ -33,12 +33,12 @@
   max-width: 760px;
   white-space: normal;
   color: #fff;
-  font: 400 var(--ay-fs-display)/1.1 var(--ay-serif);
+  font: 700 var(--ay-fs-display)/1.1 var(--ay-serif);
   letter-spacing: -0.01em;
 }
 .ayna-landing-headline span { color: var(--brand-lime); }
 .ayna-landing-eyebrow { color: var(--brand-lime); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); letter-spacing: normal; }
-.ayna-landing-sub { max-width: 480px; color: #fff; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
+.ayna-landing-sub { max-width: 480px; color: #fff; font: 500 var(--ay-fs-body)/1.55 var(--ay-sans); }
 .ayna-landing-hero-photo { position: relative; min-width: 0; min-height: 420px; margin: 0; overflow: hidden; background: #D6D8CF; }
 .ayna-landing-hero-photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 59% 50%; }
 .ayna-landing-hero-photo figcaption { position: absolute; right: 16px; bottom: 16px; max-width: 250px; padding: 9px 12px; background: var(--brand-lime); color: var(--brand-ink); font: 600 var(--ay-fs-caption)/1.25 var(--ay-sans); }
@@ -49,16 +49,16 @@
 .ayna-landing-chips button { border-radius: 7px; }
 .ayna-landing-band { background: var(--brand-mint); border-bottom: 0; }
 .ayna-landing-band__inner { padding-top: 42px; padding-bottom: 42px; }
-.ayna-landing-band__copy { max-width: 560px; font: 400 var(--ay-fs-display)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
+.ayna-landing-band__copy { max-width: 560px; font: 700 var(--ay-fs-display)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
 .ayna-landing-band__copy span { max-width: 420px; margin-top: 12px; color: var(--brand-ink); font-size: var(--ay-fs-body); font-weight: 500; letter-spacing: normal; }
 .ayna-landing-btn { border-radius: 9px; font-family: var(--ay-sans); font-weight: 600; }
 .ayna-landing-btn--navy { background: var(--brand-blue); }
 .ayna-landing-shop { background: var(--brand-paper); padding-top: 58px; }
-.ayna-landing-shop-title { font: 400 var(--ay-fs-display)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
+.ayna-landing-shop-title { font: 700 var(--ay-fs-display)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
 .ayna-landing-filters button { border-radius: 7px; }
 .ayna-browse-card .ayna-discover-card__tile { border-radius: 7px; background: #F1F1EB; }
 .ayna-browse-card .ayna-discover-card__body { padding-top: 12px; }
-.ayna-browse__heading h2 { font: 400 var(--ay-fs-display)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
+.ayna-browse__heading h2 { font: 700 var(--ay-fs-display)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
 .ayna-browse__search input { border-radius: 8px; }
 .ayna-browse__categories button, .ayna-browse__filter-button { border-radius: 7px; }
 .ayna-browse__filters { border-radius: 8px; box-shadow: none; background: #fff; }
@@ -67,18 +67,18 @@
 .app-nav--landing.app-nav--scrolled { background: var(--brand-blue) !important; }
 .mockup-landing--returning .ayna-landing-hero { padding-top: 65px; padding-bottom: 70px; }
 .mockup-landing--returning .ayna-landing-btn--browse { border-radius: 9px; background: #fff; color: var(--brand-blue); font-weight: 600; }
-.mockup-landing--returning .ayna-landing-shop-title--returning { font-size: var(--ay-fs-display); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
+.mockup-landing--returning .ayna-landing-shop-title--returning { font-size: var(--ay-fs-display); font-family: var(--ay-serif); font-weight: 700; letter-spacing: -0.01em; }
 
 @media (max-width: 860px) {
   .mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero { grid-template-columns: 1fr; }
   .mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero-col { max-width: none; padding: 44px var(--mockup-gutter) 36px; }
-  .mockup-landing:not(.mockup-landing--returning) .ayna-landing-headline { font-size: var(--ay-fs-display); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
+  .mockup-landing:not(.mockup-landing--returning) .ayna-landing-headline { font-size: var(--ay-fs-display); font-family: var(--ay-serif); font-weight: 700; letter-spacing: -0.01em; }
   .ayna-landing-hero-photo { min-height: 280px; max-height: 390px; }
   .ayna-landing-band__inner { align-items: flex-start; }
 }
 @media (max-width: 600px) {
   .mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero-col { padding-top: 38px; padding-bottom: 30px; }
-  .mockup-landing:not(.mockup-landing--returning) .ayna-landing-headline { font-size: var(--ay-fs-display); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
+  .mockup-landing:not(.mockup-landing--returning) .ayna-landing-headline { font-size: var(--ay-fs-display); font-family: var(--ay-serif); font-weight: 700; letter-spacing: -0.01em; }
   .ayna-landing-hero-photo { min-height: 240px; }
   .ayna-landing-band__inner { flex-direction: column; gap: 24px; }
   .ayna-landing-shop-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }

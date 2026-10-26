@@ -3,6 +3,7 @@ import '../styles/free-product.css';
 import { adminAction, getAdminOverview } from './freeProduct/campaignClient';
 import { FEEDBACK_QUESTIONS, FULFILLMENT_LABELS, REFERRAL_STATUS_LABELS, feedbackAsText, feedbackByQuestion, vintedIdsFromText } from '../utils/freeProductCampaign';
 import ConfirmButton from './ui/ConfirmButton.jsx';
+import { localToday } from '../utils/localDate.js';
 
 /**
  * Internal view of the free product campaign: /admin/campaign. Not linked from
@@ -27,7 +28,7 @@ function downloadCsv(people) {
   const blob = new Blob([[head, ...rows].map((r) => r.map(csvCell).join(',')).join('\n')], { type: 'text/csv' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `free-product-campaign-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = `free-product-campaign-${localToday()}.csv`;
   a.click();
   URL.revokeObjectURL(a.href);
 }

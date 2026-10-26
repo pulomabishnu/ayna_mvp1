@@ -93,7 +93,7 @@ html[data-ay-vt] .ay-push-in { animation: none !important; }
 
 /* "≈ €23" next to a US price, outside the US only (src/utils/localPrice.js). */
 .app-container .ay-price-local, .ayna-mobile .ay-price-local { margin-left: 8px; font: 500 var(--ay-fs-secondary, 14px)/1.3 var(--ay-sans, inherit); color: inherit; opacity: .75; white-space: nowrap; }
-.app-container .ay-price-region { margin: 6px 0 0; font: 400 var(--ay-fs-caption, 13px)/1.4 var(--ay-sans, inherit); opacity: .8; }
+.app-container .ay-price-region { margin: 6px 0 0; font: 500 var(--ay-fs-caption, 13px)/1.4 var(--ay-sans, inherit); opacity: .8; }
 
 /* You: daily log card (src/components/you/DailyCheckin.jsx), web and app. */
 :is(.app-container, .ayna-mobile) .ay-checkin { display: grid; gap: 12px; }
@@ -105,7 +105,7 @@ html[data-ay-vt] .ay-push-in { animation: none !important; }
 :is(.app-container, .ayna-mobile) .ay-checkin__week { display: inline-flex; gap: 4px; }
 :is(.app-container, .ayna-mobile) .ay-checkin__week i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid currentColor; background: transparent; }
 :is(.app-container, .ayna-mobile) .ay-checkin__week i.is-1 { background: #f7badd; }
-:is(.app-container, .ayna-mobile) .ay-checkin__week i.is-2 { background: #769ebe; }
+:is(.app-container, .ayna-mobile) .ay-checkin__week i.is-2 { background: #f6e3a1; }
 :is(.app-container, .ayna-mobile) .ay-checkin__week i.is-3 { background: currentColor; }
 :is(.app-container, .ayna-mobile) .ay-checkin__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
 :is(.app-container, .ayna-mobile) .ay-checkin__more { min-height: 40px; padding: 0; border: 0; background: none; color: inherit; font: 600 var(--ay-fs-secondary, 14px)/1.2 var(--ay-sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
@@ -126,8 +126,8 @@ html[data-ay-vt] .ay-push-in { animation: none !important; }
 :is(.app-container, .ayna-mobile) .ay-box__form { display: grid; gap: 8px; }
 :is(.app-container, .ayna-mobile) .ay-box__lede { margin: 0 0 4px; font: 600 var(--ay-fs-body, 16px)/1.35 var(--ay-sans, inherit); }
 :is(.app-container, .ayna-mobile) .ay-box__label { font: 600 14px/1.3 var(--ay-sans, inherit); }
-:is(.app-container, .ayna-mobile) .ay-box__label small { font-weight: 400; opacity: .75; }
-:is(.app-container, .ayna-mobile) .ay-box__input { min-height: 44px; padding: 0 14px; border: 1.5px solid currentColor; border-radius: 12px; background: transparent; color: inherit; font: 400 16px/1.2 var(--ay-sans, inherit); }
+:is(.app-container, .ayna-mobile) .ay-box__label small { font-weight: 500; opacity: .75; }
+:is(.app-container, .ayna-mobile) .ay-box__input { min-height: 44px; padding: 0 14px; border: 1.5px solid currentColor; border-radius: 12px; background: transparent; color: inherit; font: 500 16px/1.2 var(--ay-sans, inherit); }
 :is(.app-container, .ayna-mobile) .ay-box__err { margin: 0; font: 600 14px/1.35 var(--ay-sans, inherit); }
 :is(.app-container, .ayna-mobile) .ay-box__form > button { justify-self: start; margin-top: 4px; }
 :is(.app-container, .ayna-mobile) .ay-box__done { margin: 0; font: 600 var(--ay-fs-body, 16px)/1.4 var(--ay-sans, inherit); }

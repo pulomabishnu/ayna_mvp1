@@ -3,10 +3,10 @@
    neon periwinkle top edge, matching the dark canvas. */
 .app-container.app-container .site-footer {
   background: var(--ay-paper) !important;
-  color: var(--ay-ink) !important;
-  border-top: 2px solid var(--ay-ink) !important;
+  color: var(--legacy-ink) !important;
+  border-top: 2px solid var(--legacy-ink) !important;
 }
-.app-container.app-container .site-footer :is(a, button, p, span, div, h2, h3, h4, li, strong, b) { color: var(--ay-ink) !important; }
+.app-container.app-container .site-footer :is(a, button, p, span, div, h2, h3, h4, li, strong, b) { color: var(--legacy-ink) !important; }
 .app-container.app-container .site-footer :is(.site-footer__baseline, .site-footer__legal) { border-color: var(--ay-line) !important; }
 .app-container.app-container .site-footer .site-footer__columns :is(h2, h3, h4, [class*='heading'], [class*='title']) { color: var(--ay-ink-soft) !important; }
 .app-container.app-container[data-theme='dark'] .site-footer {

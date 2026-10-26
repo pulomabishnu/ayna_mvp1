@@ -13,54 +13,65 @@ export const MAIN_TABS = [
 ];
 
 /**
- * The app's tab bar (founder, Oct 24 22:12): four tabs, Home first. Home,
- * Explore, Community, You. Home opens on her dashboard with an "Ask ayna"
- * bar on top; the chat and her Products are one tap from it. The Library is
- * not a tab: Explore links to it ("Open Library") and it opens as a pushed
- * screen with Back. The website keeps MAIN_TABS for now. The old `today`,
- * `ask` and `ayna` screens open Home (navTab.js aynaRoute).
+ * The app's tab bar (all-pages build brief, Oct 25 23:03, supersedes the
+ * Oct 24 22:12 four tabs): the same five as the website, Today · Explore ·
+ * Ask ayna · Community · You. Today is the dashboard (AynaHomeScreen, the
+ * 'ayna' screen); its key stays 'home' so analytics and CSS keep working.
+ * Ask ayna opens the full chat as a tab screen (the 'ayna' screen's 'chat'
+ * view). The Library is not a tab: it lives inside Explore (Reads) as a
+ * pushed screen with Back. The old `today`, `ask` and `ayna` screens still
+ * route (navTab.js aynaRoute).
  */
 export const APP_TABS = [
-  { key: 'home', label: 'Home' },
+  { key: 'home', label: 'Today', icon: 'today' },
   { key: 'explore', label: 'Explore' },
+  { key: 'ask', label: 'Ask ayna', center: true, icon: 'ask' },
   { key: 'community', label: 'Community' },
   { key: 'profile', label: 'You' },
 ];
 
 /**
- * The chat-first Home kept for Monday's focus group (?home=chat): the centre
- * tab is "ayna", the chat is home, and a small switch flips to Products and
- * My dashboard (founder, Oct 24 20:12).
+ * The chat-first Home kept for the focus group (?home=chat): the first tab
+ * is "ayna", the chat is home, and a small switch flips to Products and My
+ * dashboard (founder, Oct 24 20:12). The chat is that tab, so no Ask tab.
  */
-export const APP_TABS_CHAT_FIRST = APP_TABS.map((t) => (t.key === 'home' ? { ...t, label: 'ayna', icon: 'ask' } : t));
+export const APP_TABS_CHAT_FIRST = APP_TABS
+  .filter((t) => t.key !== 'ask')
+  .map((t) => (t.key === 'home' ? { ...t, label: 'ayna', icon: 'ask' } : t));
 export const AYNA_HOME_VIEWS = [
   { key: 'chat', label: 'Chat' },
   { key: 'products', label: 'Products' },
   { key: 'dashboard', label: 'My dashboard' },
 ];
 
-/** Explore's sections, one row of text tabs (UX spec 11; team direction 17, Oct 24). `href` is the website address. */
+/**
+ * Explore's five sections, the same on web and app (Explore audit, Oct 25:
+ * "5 short tabs on both", pill tabs that never scroll on a phone): For you ·
+ * Needs · Products · Services · Reads. Keys and addresses stay the same so
+ * links, analytics and CSS keep working. `href` is the website address.
+ */
 export const EXPLORE_SECTIONS = [
   { key: 'overview', label: 'For you', href: '/explore' },
-  { key: 'topics', label: 'Categories', href: '/explore/topics' },
+  { key: 'topics', label: 'Needs', href: '/explore/topics' },
   { key: 'products', label: 'Products', href: '/explore/products' },
   { key: 'services', label: 'Services', href: '/explore/services' },
-  { key: 'resources', label: 'Resources', href: '/explore/resources' },
+  { key: 'resources', label: 'Reads', href: '/explore/resources' },
 ];
 
-/** In the app the reads have their own tab (Library), so Explore has no Resources section. */
-export const APP_EXPLORE_SECTIONS = EXPLORE_SECTIONS.filter((s) => s.key !== 'resources');
+/** The app has the same five, Reads included (the Library's reads live there now). */
+export const APP_EXPLORE_SECTIONS = EXPLORE_SECTIONS;
 
-/** You's sections, in order (UX spec section 19). `href` is the website address. */
+/** You's five sections, in order (You audit, Oct 25: one hub on web and app). `href` is the website address. */
 export const YOU_SECTIONS = [
   { key: 'ecosystem', label: 'My ecosystem', href: '/you/ecosystem' },
   { key: 'saved', label: 'Saved', href: '/you/saved' },
   { key: 'health', label: 'My health', href: '/you/health' },
-  { key: 'tracking', label: 'Tracking', href: '/you/tracking' },
-  { key: 'connected', label: 'Connected data', href: '/you/connected' },
-  { key: 'activity', label: 'My activity', href: '/you/activity' },
-  { key: 'settings', label: 'Settings and privacy', href: '/you/settings' },
+  { key: 'activity', label: 'Activity', href: '/you/activity' },
+  { key: 'settings', label: 'Settings & privacy', href: '/you/settings' },
 ];
+
+/** Old You section addresses (before the You audit merged 8 tabs into 5): Tracking and Connected data are inside My health now. */
+export const YOU_SECTION_ALIASES = { tracking: 'health', connected: 'health' };
 
 /**
  * Old addresses keep working (bookmarks, texts, emails, shared links). The

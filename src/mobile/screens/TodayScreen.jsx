@@ -49,7 +49,8 @@ export default function TodayScreen({
   return <div className="ayna-fresh-ecosystem ayna-cabinet-home eco-app ay-today-screen">
     {homeTop || <MobileHeader onOpenSaved={onOpenSaved} />}
     {/* The greeting and date below (HealthHome) are the visible title, as on the website. */}
-    <h1 id="ay-today-title" className="sr-only">{homeTop ? 'Home' : 'Today'}</h1>
+    {/* Inside Home (My dashboard) HealthHome's "Your data" is the visible h1. */}
+    {!homeTop && <h1 id="ay-today-title" className="sr-only">Today</h1>}
 
     {/* An unfinished setup stays in view; with no profile at all, the Daily
         Rundown card itself says how to make one (UX spec 3, 34). */}
@@ -60,7 +61,7 @@ export default function TodayScreen({
         sits under "More for you"; the full routine schedule and shopping list
         live in You > My ecosystem. */}
     <div className="ay-eco-routine">
-      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length && onGoEco ? openRoutine : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined, onSetUp: !hasProfile && !quizDraft ? onStartQuiz : undefined, community: rundownCommunity, onOpenPost: onOpenCommunityPost, onRundownFinish }} />
+      <HealthDashboard view={homeTop ? 'data' : 'today'} authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length && onGoEco ? openRoutine : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined, onSetUp: !hasProfile && !quizDraft ? onStartQuiz : undefined, community: rundownCommunity, onOpenPost: onOpenCommunityPost, onRundownFinish }} />
       {/* Her routine per need, short (src/components/routine); the full one is in You > My ecosystem. */}
       <div className="ay-today-routines">
         <RoutineSummary variant="app" userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} hideMedicines

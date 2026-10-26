@@ -1,3 +1,4 @@
+import { localToday } from '../utils/localDate.js';
 /**
  * ayna news for the "ayna news" Home widget. Written by the ayna team only
  * (Eliz, Puloma, Geena, Ameera). Never add one that the team did not write.
@@ -15,7 +16,7 @@ export const ANNOUNCEMENTS = [];
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 
 /** Live announcements on `today`, newest first. */
-export function liveAnnouncements(list = ANNOUNCEMENTS, today = new Date().toISOString().slice(0, 10)) {
+export function liveAnnouncements(list = ANNOUNCEMENTS, today = localToday()) {
   return (list || [])
     .filter((a) => a?.id && a.title && DAY.test(a.date || '') && DAY.test(a.expires || '') && a.date <= today && today <= a.expires)
     .sort((a, b) => b.date.localeCompare(a.date));

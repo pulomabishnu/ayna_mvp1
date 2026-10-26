@@ -75,6 +75,7 @@ import {
   resumeStepId,
   ttcDurationOptions,
   withSavedOption,
+  FIRST_NAME_MAX,
 } from '../data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../data/intakeCatalog.js';
 import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../data/onboardingFlow.js';
@@ -135,7 +136,7 @@ function AvoidMustHave({ avoidItems, avoidSelected, wantItems, wantSelected, onT
         <button type="button" role="tab" aria-selected={isAvoid} className={`is-avoid${isAvoid ? ' is-on' : ''}`} onClick={() => setTab('avoid')}>Leave out{avoidSelected.length > 0 && <span>{avoidSelected.length}</span>}</button>
         <button type="button" role="tab" aria-selected={!isAvoid} className={`is-want${!isAvoid ? ' is-on' : ''}`} onClick={() => setTab('want')}>Should be{wantSelected.length > 0 && <span>{wantSelected.length}</span>}</button>
       </div>
-      <div className="ip-avoid-panel" role="tabpanel" key={tab}>
+      <div className={`ip-avoid-panel${isAvoid ? ' is-avoid' : ''}`} role="tabpanel" key={tab}>
         <ChipList items={(isAvoid ? avoidItems : wantItems).map(label)} selected={(isAvoid ? avoidSelected : wantSelected).map(label)} onToggle={(text) => onToggle(AVOID_VALUE_BY_LABEL[text] || text)} />
       </div>
       <div className="ip-avoid-foot">
@@ -713,7 +714,14 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
   const renderBody = () => {
     if (step.type === 'age') return (
-      <AgeDial value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />
+      <>
+        {/* Her first name, asked here only (sign-up never asks again). */}
+        <label className="ip-name">
+          <span>Your first name <small>Optional</small></span>
+          <input type="text" autoComplete="given-name" maxLength={FIRST_NAME_MAX} value={intake.name || ''} onChange={(e) => set('name', e.target.value)} />
+        </label>
+        <AgeDial value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />
+      </>
     );
 
     if (step.type === 'lifeStage') return (
@@ -769,7 +777,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             <input value={intake.supportOtherText} maxLength={80} placeholder="For example, migraines" onChange={(e) => set('supportOtherText', e.target.value)} />
           </label>
         )}
-        <p className="ip-hint">Not sure? Tap Next and we will show everything.</p>
+        {/* Own spacing below the chips so it never overlaps "Something else" (audit #3). */}
+        <p className="ip-hint ip-hint--after">Not sure? Tap Next and we will show everything.</p>
       </>
     );
     if (step.type === 'goals') return <ChipList items={GOALS} selected={intake.goals || []} onToggle={(v) => setIntake((prev) => ({ ...prev, goals: (prev.goals || []).includes(v) ? prev.goals.filter((x) => x !== v) : [...(prev.goals || []), v] }))} />;
@@ -908,7 +917,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         const items = isAvoid ? [...AVOID_GROUPS.avoid, ...customAvoid] : [...AVOID_GROUPS.want, ...customWant];
         return (
           <>
-            <ChipList items={items.map((v) => AVOID_LABELS[v] || v)} selected={items.filter(isOn).concat(isAvoid ? customAvoid : customWant).map((v) => AVOID_LABELS[v] || v)} onToggle={(text) => toggleAvoid(AVOID_VALUE_BY_LABEL[text] || text)} />
+            <div className={isAvoid ? 'ip-avoid-list is-avoid' : 'ip-avoid-list'}><ChipList items={items.map((v) => AVOID_LABELS[v] || v)} selected={items.filter(isOn).concat(isAvoid ? customAvoid : customWant).map((v) => AVOID_LABELS[v] || v)} onToggle={(text) => toggleAvoid(AVOID_VALUE_BY_LABEL[text] || text)} /></div>
             <div className="ip-gap"><AddOwn placeholder={isAvoid ? 'Add something to avoid' : 'Add something you prefer'} onAdd={(v) => (isAvoid ? addCustomSelection('avoidIngredients', `No ${v.replace(/^no\s+/i, '')}`, ['No preference']) : addCustomSelection('avoidIngredients', v, ['No preference']))} /></div>
           </>
         );
@@ -1002,7 +1011,6 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         </header>
         <div className="ip-body">
           <div className="ip-question" key="q-checkpoint">
-            <div className="ip-label-row"><span className="ip-label ip-label--done">Done</span></div>
             <h1 className="ip-title">Your first matches are ready</h1>
             <p className="ip-subtitle">{careFirst ? 'You said something may be urgent, so your results start with ways to reach care.' : 'That’s enough for safe, personal picks.'}</p>
             {careFirst && <div className="ip-care-now" role="note"><b>If this is an emergency, call 911.</b> <span>If you're thinking about harming yourself, call or text 988.</span> <span>Your results open with clinician and urgent care options.</span></div>}
@@ -1038,7 +1046,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
           {/* Later questions depend on earlier answers, so the total can grow mid-quiz.
               Show a fill bar for progress instead of a "02/08" total that shifts. */}
           <span className="ip-count ip-count--plain">{onboarding ? obProgress.label : phase === 'optional' ? `Optional ${countedIndex + 1} of ${countedSteps.length}` : `Question ${countedIndex + 1}`}</span>
-          {step.optional || step.type === 'topics' ? <button type="button" className="ip-skip" onClick={skipStep}>Skip</button> : <span className="ip-skip-spacer" />}
+          <span className="ip-skip-spacer" />
         </div>
         {onboarding ? (
           <div className="ip-progress ip-progress--fill" role="progressbar" aria-label="Setup progress" aria-valuemin={1} aria-valuemax={obProgress.total} aria-valuenow={obProgress.now}>
@@ -1053,15 +1061,13 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
       <div className="ip-body">
         <div className="ip-question" key={`q-${step.id}`}>
-          <div className="ip-label-row">
-            {onboarding
-              ? <span className={`ip-label ip-label--${step.section}`}>{ONBOARDING_SCREENS[step.screen - 1]?.label}</span>
-              : scene.label && <span className={`ip-label ip-label--${step.section}`}>{scene.label}</span>}
+          {/* No eyebrow label above the question (onboarding audit #4): the row keeps only status and info. */}
+          {((phase === 'optional' || (onboarding && step.optional)) || (!onboarding && flaggedStepIds.has(step.id)) || (step.info && !onboarding)) && <div className="ip-label-row">
             {(phase === 'optional' || (onboarding && step.optional)) && <span className="ip-tag-optional">Optional</span>}
             {/* The screen label already says "For your safety": no second pill (QA, Oct 25). */}
             {!onboarding && flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
             {step.info && !onboarding && <button type="button" className="ip-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen === step.id} onClick={() => setInfoOpen((v) => v === step.id ? null : step.id)}>i</button>}
-          </div>
+          </div>}
           <h1 className="ip-title">{step.title}</h1>
           {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
           {onboarding && step.why && <p className="ip-why"><b>Why we ask:</b> {step.why}</p>}
@@ -1087,6 +1093,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
           {countForStep > 0 && <b>{countForStep}</b>}
           <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></i>
         </button>
+        {/* #16 The Ordinary: "Skip for now" under the main button. */}
+        {(step.optional || step.type === 'topics') && <button type="button" className="ip-skip ip-skip--foot" onClick={skipStep}>Skip for now</button>}
         {phase === 'optional' && !isLast && <button type="button" className="ip-results-link" onClick={() => finish()}>See my results now</button>}
       </footer>
     </div>

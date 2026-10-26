@@ -2044,7 +2044,7 @@ export default function MyEcosystem({
                     one section per area of care using the Shop card. */}
                 <header className="eco3-head ayeco__head">
                     <div className="eco3-head__text">
-                        <h1 id="eco3-title" className="ay-h1">Your ecosystem</h1>
+                        <h1 id="eco3-title" className="ay-h1">My ecosystem</h1>
                         <p className="eco3-head__sub">
                             {llmLoading && myProductList.length === 0 ? 'Building your matches…' : myProductList.length === 0 ? 'No picks yet' : 'Everything you use and what it is for, sorted onto shelves by need.'}
                         </p>
@@ -2270,6 +2270,7 @@ export default function MyEcosystem({
                         onOpenProduct={onOpenProduct}
                         onToggleProduct={onToggleProduct}
                         onAddMore={typeof onGoToSearch === 'function' ? (group) => onGoToSearch(exploreAreaOptions(group)) : null}
+                        onCheckIn={onOpenCheckIn}
                     />
                 )}
 

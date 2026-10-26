@@ -64,3 +64,16 @@ describe('compare rows a shopper needs (TD 21)', () => {
     expect(safety[1]).not.toBe('None flagged');
   });
 });
+
+describe('sample comparison, signed out (info-pages audit issue 3)', () => {
+  it('the three sample cups are real catalog products', () => {
+    for (const id of ['p-saalt-cup', 'p-diva-cup', 'p-lunette-cup']) expect(ALL_PRODUCTS.find((p) => p.id === id)).toBeTruthy();
+  });
+  it('without her answers the match row says "See your match", never a number', () => {
+    const cups = ['p-saalt-cup', 'p-diva-cup', 'p-lunette-cup'].map((id) => ALL_PRODUCTS.find((p) => p.id === id));
+    const match = compareSetRows(cups, { noProfileText: 'See your match' }).find((r) => r.id === 'match');
+    expect(match.values).toEqual(['See your match', 'See your match', 'See your match']);
+    expect(match.noProfile).toBe(true);
+    expect(match.values.join(' ')).not.toMatch(/%/);
+  });
+});

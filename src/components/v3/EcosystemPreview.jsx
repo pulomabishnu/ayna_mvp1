@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import ProductTileImage, { ProductImageFallback, resolveCatalogProductImage } from '../ProductTileImage';
+import '../../styles/you-hub.css';
 
 /* Your ecosystem for someone who is not signed in: the page itself, so she can
    see what it is before being asked for anything. The shelves are real Shop

@@ -40,8 +40,8 @@ import { normalizeRating, ratingLabel } from '../utils/community/reviewRatings.j
 import '../styles/verify-content.css';
 import { apiUrl } from '../utils/apiUrl';
 import { fetchWithTimeout } from '../utils/network.js';
-import { relTime, fullTime, pickMemberQuote, PROMPTS, isOnlyStarter, sharePost, applyToggle, faceTone } from '../utils/community/notes.js';
-import { CharRing, DefaultFace, PromptIcon } from './community/notesKit.jsx';
+import { relTime, fullTime, pickTeamQuote, PROMPTS, isOnlyStarter, sharePost, applyToggle, faceTone } from '../utils/community/notes.js';
+import { CharRing, DefaultFace } from './community/notesKit.jsx';
 import { useMinuteNow as useNow } from '../utils/relativeTime.js';
 import { growTransition } from '../utils/viewTransition.js';
 import { autofocusTarget } from '../utils/delightRuntime.js';
@@ -80,9 +80,24 @@ const TAB_ICONS = {
   playlists: <><path d="M4 6.5h11M4 11.5h11M4 16.5h7" /><circle cx="17.5" cy="16.5" r="2.5" /><path d="M20 16.5V7l-2.5 1" /></>,
   announcements: <><path d="M4 10v4h3l6 4V6L7 10H4Z" /><path d="M16.5 9a4 4 0 0 1 0 6" /></>,
 };
+// The one "Post" button opens this sheet (Community audit, issue 2): what she wants to share.
+const POST_TYPES = [
+  ['post', 'Post', 'A tip, a win or a photo'],
+  ['question', 'Question', 'Answers from women who tried it'],
+  ['review', 'Review', 'Stars, and how it really went'],
+  ['playlist', 'Playlist', 'Collect your favorites in one place'],
+];
+const TYPE_ICONS = { ...TAB_ICONS, post: <path d="M20 11.5a8 8 0 0 1-8 8 8.4 8.4 0 0 1-3.3-.7L4 20l1.2-4.7A8 8 0 1 1 20 11.5Z" />, playlist: TAB_ICONS.playlists };
+function TypeIcon({ kind, size = 16 }) {
+  return <svg className="cm-type-icon" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{TYPE_ICONS[kind]}</svg>;
+}
+// Outlined label with an icon: what kind of post this is (same colour for every kind).
+function KindLabel({ kind, children }) {
+  return <span className={`cm-kind is-${kind}`}><TypeIcon kind={kind} size={14} />{children}</span>;
+}
 const VERB = { post: 'Post', question: 'Ask', review: 'Review', playlist: 'Playlist', recommend: 'Recommend' };
 const KIND_TITLES = { post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' };
-const COVER_COLORS = ['#1D1A2B', '#B9C2F4', '#F7BADD', '#BDEBD6', '#F7E78E'];
+const COVER_COLORS = ['#3e2723', '#f7badd', '#F7BADD', '#f6e3a1', '#ffedac'];
 const AUDIENCE = [['private', 'Only me'], ['friends', 'Friends'], ['public', 'Public']];
 const POST_MAX = 2000;
 const COMMENT_MAX = 1000;
@@ -137,7 +152,7 @@ function SkeletonPlaylists() {
   return <div className="cm-pl-grid" aria-hidden="true">{[0, 1, 2, 3].map((i) => <div key={i} className="cm-skel-pl"><span className="cm-skel-cover" /><span className="cm-skel-line is-mid" /><span className="cm-skel-line is-short" /></div>)}</div>;
 }
 
-function Mention({ productId, productsById, quizResults, healthProfile = null, matchOpts = undefined, onOpenProduct }) {
+function Mention({ productId, productsById, quizResults, healthProfile = null, matchOpts = undefined, onOpenProduct, onSeeMatch = null }) {
   const product = productsById.get(String(productId));
   if (!product) {
     const customName = customProductName(String(productId || ''));
@@ -153,7 +168,10 @@ function Mention({ productId, productsById, quizResults, healthProfile = null, m
   // The % explained in plain words ("For your period cramps").
   const why = show && hasWhy(match) ? whyLead(match) : '';
   // The founder's product card (the one in Explore), as a row.
-  return <ProductCard product={product} className="is-row cm-mention-card" matchPercent={show ? match.percent : null} matchHold={!show && isSafetyHold(match)} why={why} onOpen={onOpenProduct} partnerMark={false} />;
+  const card = <ProductCard product={product} className="is-row cm-mention-card" matchPercent={show ? match.percent : null} matchHold={!show && isSafetyHold(match)} why={why} onOpen={onOpenProduct} partnerMark={false} />;
+  // No answers yet (signed out, or no quiz): the match is one step away, never a made-up number.
+  if (quizResults || !onSeeMatch) return card;
+  return <div className="cm-mention-wrap">{card}<button type="button" className="cm-seematch" onClick={onSeeMatch} aria-label={`See your match for ${product.name}`}>See your match</button></div>;
 }
 
 
@@ -236,7 +254,7 @@ function Sheet({ title, onClose, children, className = '', overlay = null }) {
   </div>{overlay}</div>, host);
 }
 
-export default function WebCommunity({ user, products = [], quizResults = null, healthProfile = null, matchOpts = undefined, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, seedKind = null, seedProductId = null, seedRating = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
+export default function WebCommunity({ user, products = [], quizResults = null, healthProfile = null, matchOpts = undefined, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, onStartQuiz = null, seedKind = null, seedProductId = null, seedRating = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
   const supabase = user ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   // Relative times ("5m", "Yesterday") refresh every minute.
@@ -375,6 +393,16 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
 
   const notifyError = (e) => setError(community.friendlyError(e));
   const requireAccount = (feature = 'this feature') => onRequireAuth?.(feature);
+  // "See your match" on a product in a post: the quiz gives her the match (signed out works too).
+  const seeMatch = () => (onStartQuiz ? onStartQuiz() : requireAccount('your match'));
+  // The one Post button: a sheet to choose Post, Question, Review or Playlist.
+  const [typeSheet, setTypeSheet] = useState(false);
+  const openPostTypes = () => { if (!user) { requireAccount('posting'); return; } setTypeSheet(true); };
+  // Topics live in one sheet on narrow screens (instead of two sideways chip rows).
+  const [topicsSheet, setTopicsSheet] = useState(false);
+  // Team picks: the pull quote only shows a post the ayna team picked by hand.
+  const [teamPicks, setTeamPicks] = useState([]);
+  const [pickedPost, setPickedPost] = useState(null);
   const closePage = () => { setPage(null); setDetails(null); setComments([]); setItems([]); setError(''); setEditingProfile(false); setProfileStats(null); };
   const openCompose = (kind = 'post', prompt = null) => {
     // Posting in a health community needs an account (no anonymous guest posts).
@@ -456,6 +484,22 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     }, 250);
     return () => { active = false; window.clearTimeout(t); };
   }, [search, supabase]);
+
+  // Team picks (newest first). The picked post comes from the feed when it's
+  // loaded, else it's fetched on its own. No picks, no quote.
+  useEffect(() => {
+    if (!supabase || composeOnly) return undefined;
+    let active = true;
+    community.listTeamPicks(supabase, { limit: 3 }).then((rows) => { if (active) setTeamPicks(rows || []); }).catch(() => {});
+    return () => { active = false; };
+  }, [supabase, composeOnly, refresh]);
+  const pickId = teamPicks[0]?.post_id || null;
+  useEffect(() => {
+    if (!supabase || !pickId) { setPickedPost(null); return undefined; }
+    let active = true;
+    community.getFeedPost(supabase, pickId).then((p) => { if (active) setPickedPost(p || null); }).catch(() => { if (active) setPickedPost(null); });
+    return () => { active = false; };
+  }, [supabase, pickId]);
 
   // Side modules: recent questions and community playlists, loaded once.
   useEffect(() => {
@@ -886,6 +930,16 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const hashtagMatch = body.match(/(?:^|\s)#([A-Za-z][\w-]*)?$/);
   const hashtagSuggestions = hashtagMatch ? suggestHashtags(hashtagMatch[1] || '', 6) : [];
 
+  // ayna team: pick a post for the pull quote, or take the pick back (RLS checks it too).
+  const isTeam = Boolean(user && teamBadges.get(user.id));
+  const toggleTeamPick = async (post) => {
+    const on = !teamPicks.some((t) => t.post_id === post.id);
+    try {
+      await community.setTeamPick(supabase, post.id, on);
+      setTeamPicks((rows) => (on ? [{ post_id: post.id, picked_at: new Date().toISOString() }, ...rows] : rows.filter((t) => t.post_id !== post.id)));
+      toast(on ? 'Picked for Community' : 'Team pick removed');
+    } catch (e) { notifyError(e); }
+  };
   const popIcon = (e) => { const b = e.currentTarget; b.classList.remove('is-pop'); void b.offsetWidth; b.classList.add('is-pop'); };
   const renderPost = (post, full = false, i = 0) => {
     const anon = post.is_anonymous || !post.author_id;
@@ -899,32 +953,39 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     const long = !full && String(post.body || '').length > 360;
     const replyWord = kind === 'question' ? 'Answer' : 'Reply';
     return <article ref={engagement.trackView(post.id)} className={`cm-post cm-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(i, 6) }} data-kind={kind} data-vt-target={full ? 'post' : undefined} key={post.id}>
-      {/* Folder tab on the card's top edge (inspo rule 9): what kind of note this is. */}
-      {kind === 'review' && <span className="cm-ear is-review" aria-hidden="true">Review</span>}
-      {kind === 'question' && <span className="cm-ear">Question</span>}
+      {/* What kind of post this is: an outlined label with an icon (Community audit, issue 2). */}
+      {kind === 'review' && <KindLabel kind="review">Review</KindLabel>}
+      {kind === 'question' && <span className="cm-kindrow"><KindLabel kind="question">Question</KindLabel><span className={`cm-status${replies ? '' : ' is-open'}`}>{replies ? 'Answered' : 'Needs answers'}</span></span>}
       <header className="cm-post-head">
         <Avatar size={40} name={name} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
         <div className="cm-post-who">
           {anon || !post.author_username ? <strong>{name}</strong> : <button type="button" className="cm-name" onClick={() => openProfile(post.author_username)}>{name}</button>}
-          <span className="cm-post-meta"><TeamTag title={badgeFor(post.author_id, anon)} />{kind === 'review' && <span className="ay-sr">Review</span>}<time dateTime={post.created_at || undefined} title={fullTime(post.created_at)}>{timeLabel(post.created_at)}</time>{post.edited_at && <span>Edited</span>}</span>
+          <span className="cm-post-meta"><TeamTag title={badgeFor(post.author_id, anon)} /><time dateTime={post.created_at || undefined} title={fullTime(post.created_at)}>{timeLabel(post.created_at)}</time>{post.edited_at && <span>Edited</span>}</span>
         </div>
         <div className="cm-menu-wrap">
           <button type="button" className="cm-more" aria-label={`More options for ${name}'s post`} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => { setArmedDelete(null); setMenuId(menuOpen ? null : post.id); }}><Icon name="more" size={18} /></button>
           {menuOpen && <div className="cm-menu" role="menu">
             {post.is_mine && user && <button type="button" role="menuitem" onClick={() => { setMenuId(null); setEditPost(post); setEditBody(post.body || ''); setEditRating(normalizeRating(post.rating)); }}>{post.kind === 'review' ? 'Edit review' : 'Edit post'}</button>}
             <button type="button" role="menuitem" onClick={() => { setMenuId(null); share(post); }}>Copy link</button>
+            {isTeam && <button type="button" role="menuitem" onClick={() => { setMenuId(null); toggleTeamPick(post); }}>{teamPicks.some((t) => t.post_id === post.id) ? 'Remove team pick' : 'Pick for Community'}</button>}
             {post.is_mine ? <button type="button" role="menuitem" className={armed ? 'is-armed' : undefined} aria-live="polite" disabled={busy} onClick={() => (armed ? confirmDelete(post) : setArmedDelete(post.id))}>{armed ? 'Tap again to delete' : 'Delete post'}</button>
               : <button type="button" role="menuitem" onClick={() => { setMenuId(null); setReportPost(post); }}>Report post</button>}
           </div>}
         </div>
       </header>
-      {kind === 'review' && <div className="cm-review-stars"><Stars value={post.rating} size={20} /><span aria-hidden="true">{normalizeRating(post.rating) ? `${normalizeRating(post.rating)} of 5` : ''}</span></div>}
+      {/* Review highlights in rounded label boxes, only from what she entered (stars, would recommend). */}
+      {kind === 'review' && <div className="cm-review-facts">
+        <span className="cm-factbox cm-review-stars"><Stars value={post.rating} size={18} /><span aria-hidden="true">{normalizeRating(post.rating) ? `${normalizeRating(post.rating)} of 5` : ''}</span></span>
+        {post.would_recommend === true && <span className="cm-factbox">Would recommend</span>}
+        {post.would_recommend === false && <span className="cm-factbox">Wouldn’t recommend</span>}
+      </div>}
       {full ? <p className="cm-body">{post.body}</p> : <button type="button" className={`cm-body${long ? ' is-clamped' : ''}`} onClick={() => openPost(post)}>{post.body}</button>}
       {long && <button type="button" className="cm-readmore" onClick={() => openPost(post)}>Read the rest</button>}
       {media.length > 0 && <div className={`cm-photos n-${Math.min(media.length, 4)}`}>{media.slice(0, 4).map((m, k) => (full
         ? <span key={m.path} className="cm-polaroid"><img src={publicMediaUrl(m.path)} alt="" loading="lazy" /></span>
         : <button type="button" key={m.path} className="cm-polaroid" onClick={() => openPost(post)} aria-label={`Open ${name}'s post, photo ${k + 1}`}><img src={publicMediaUrl(m.path)} alt="" loading="lazy" /></button>))}</div>}
-      {postProductIds(post).slice(0, 1).map((id) => <Mention key={id} productId={id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />)}
+      {full && postProductIds(post).length > 0 && <p className="cm-modnote">Experiences, not medical advice.</p>}
+      {postProductIds(post).slice(0, 1).map((id) => <Mention key={id} productId={id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} onSeeMatch={seeMatch} />)}
       <PostStats post={post} engagement={engagement} onOpenLikers={setLikersPost} />
       <footer className="cm-actions">
         <button type="button" className="cm-act-helpful" aria-pressed={Boolean(post.viewer_found_helpful)} aria-label={`Helpful${helpful ? `, ${helpful}` : ''}`} onClick={(e) => { if (user && !post.viewer_found_helpful) popIcon(e); togglePost(post, 'helpful'); }}><Icon name="thumb" size={18} /><span aria-hidden="true">Helpful{helpful ? <b>{helpful}</b> : null}</span></button>
@@ -934,9 +995,11 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       </footer>
     </article>;
   };
-  const playlistCard = (p) => <button type="button" className="cm-playlist" key={p.id} onClick={() => openPlaylist(p)}>
+  // Playlists are stacked rounded rows: cover, name, count and owner (Community audit v2, Skin Routine boards).
+  const playlistCard = (p) => <button type="button" className="cm-playlist cm-pl-rowbtn" key={p.id} onClick={() => openPlaylist(p)}>
     <PlaylistCover playlist={p} productsById={productsById} />
-    <span className="cm-playlist-copy"><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · {p.owner_display_name || 'ayna community'}</small></span>
+    <span className="cm-playlist-copy"><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · by {p.owner_display_name || 'ayna community'}</small></span>
+    <svg className="cm-pl-go" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
   </button>;
 
   const composeLabel = compose === 'question' ? 'Your question' : compose === 'review' ? 'Your review' : compose === 'recommend' ? 'Note to your friends' : 'Your post';
@@ -969,7 +1032,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <section className="cm-group">
           <h3 className="cm-label">Cover</h3>
           <div className="cm-cover-pick">
-            <span className="cm-cover-preview" style={coverPreview ? undefined : { background: coverColor, color: coverColor === COVER_COLORS[0] ? '#fffcf5' : '#1d1a2b' }} aria-hidden="true">{coverPreview ? <img src={coverPreview} alt="" /> : <span>{playlistTitle.trim() || 'ayna'}</span>}</span>
+            <span className="cm-cover-preview" style={coverPreview ? undefined : { background: coverColor, color: coverColor === COVER_COLORS[0] ? '#ffedac' : '#3e2723' }} aria-hidden="true">{coverPreview ? <img src={coverPreview} alt="" /> : <span>{playlistTitle.trim() || 'ayna'}</span>}</span>
             <div className="cm-cover-opts">
               <div className="cm-colors">{COVER_COLORS.map((c) => <button type="button" key={c} aria-label={`Cover color ${c}`} aria-pressed={!coverPhoto && coverColor === c} style={{ background: c }} onClick={() => { setCoverColor(c); setCoverPhoto(null); }} />)}</div>
               <label className="ay-btn ay-btn--secondary cm-small cm-upload">{coverPhoto ? 'Change photo' : 'Upload a photo'}<input type="file" accept="image/*" className="cm-file" onChange={(e) => { const f = e.target.files?.[0]; if (f) { try { checkImageFile(f); setCoverPhoto(f); } catch (err) { setError(err.message); } } e.target.value = ''; }} /></label>
@@ -1068,8 +1131,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const replyEmpty = <p className="cm-muted">No replies yet.</p>;
 
   const visiblePosts = posts.filter((p) => !isBlocked(p.author_id));
-  // One big member quote, only from real posts other members found helpful.
-  const memberQuote = pickMemberQuote(visiblePosts, { isBlocked });
+  // The pull quote: only a post the ayna team picked by hand, labelled as theirs.
+  const memberQuote = pickTeamQuote([...visiblePosts, ...(pickedPost ? [pickedPost] : [])], teamPicks, { isBlocked });
   // Inline (phones), the quote sits a few notes away from the post it quotes.
   const quotedAt = memberQuote ? visiblePosts.findIndex((p) => p.id === memberQuote.post.id) : -1;
   const quoteSlot = quotedAt >= 0 && quotedAt <= 5 ? quotedAt + 4 : 2;
@@ -1081,7 +1144,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     const product = postProductIds(q).map((id) => productsById.get(String(id))).find(Boolean);
     const n = Number(q.helpful_count) || 0;
     return <figure className={`cm-quote ${where}`}>
-      <span className="cm-quote__label">Said in Community</span>
+      <span className="cm-quote__label">Picked by the ayna team</span>
       <blockquote><button type="button" onClick={() => openPost(q)}><mark>{memberQuote.lead}</mark>{memberQuote.rest ? ` ${memberQuote.rest}` : ''}</button></blockquote>
       <figcaption><strong>{who}</strong>{product ? <span>on {product.name}</span> : null}<span>{n} found this helpful</span></figcaption>
     </figure>;
@@ -1101,7 +1164,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {comments.map((c) => <div className="cm-comment" key={c.id}>
         <header><Avatar size={30} name={c.author_display_name || c.author_username} path={!c.is_anonymous && c.author_id ? profileById.get(c.author_id)?.avatar_url : null} anonymous={c.is_anonymous || !c.author_id} /><strong>{c.is_anonymous || !c.author_id ? 'Anonymous' : c.author_display_name || c.author_username}</strong><TeamTag title={badgeFor(c.author_id, c.is_anonymous)} /><small>{timeLabel(c.created_at)}</small></header>
         <p>{c.body}</p>
-        {c.product_id && <Mention productId={c.product_id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />}
+        {c.product_id && <Mention productId={c.product_id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} onSeeMatch={seeMatch} />}
         <button type="button" className="ct-link cm-link" onClick={() => setReplyTo(c.id)}>Reply</button>
       </div>)}
       {comments.length > 0 && REPLY_BOX}
@@ -1132,7 +1195,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       </div>
       <ul className="ay-group cm-pl-list" aria-label="Products in this playlist">
         {items.map((it) => <li key={it.product_id} className="cm-pl-row">
-          <Mention productId={it.product_id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} />
+          <Mention productId={it.product_id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} onSeeMatch={seeMatch} />
           {addedBy(it) && <small className="cm-pl-by">Added by {addedBy(it)}</small>}
           {canEdit && <button type="button" className="ct-link cm-pl-remove" disabled={busy} onClick={() => removeItem(it.product_id)} aria-label={`Remove ${productsById.get(String(it.product_id))?.name || customProductName(String(it.product_id)) || 'product'}`}>Remove</button>}
         </li>)}
@@ -1254,21 +1317,10 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         {firstLoad ? <SkeletonPlaylists /> : playlists.length ? <div className="cm-pl-grid">{playlists.map(playlistCard)}</div> : <div className="cm-empty"><h2>{playlistSection === 'mine' ? 'You haven’t made a playlist yet' : playlistSection === 'friends' ? 'No playlists from friends yet' : 'No playlists yet'}</h2><p>Collect your favorites in one place.</p><button type="button" className="ay-btn ay-btn--primary" onClick={() => openCompose('playlist')}>Create playlist</button></div>}
       </> : <>
         {tab === 'for-you' && pinnedAnn && <button type="button" className={`cm-pinned-ann ay-group${newAnns.some((a) => a.id === pinnedAnn.id) ? ' is-new' : ''}`} onClick={() => switchTab('announcements')}>
-          <span className="cm-pinned-ann__label">{newAnns.some((a) => a.id === pinnedAnn.id) ? 'New from ayna' : 'From ayna'}</span>
+          <KindLabel kind="announcements">{newAnns.some((a) => a.id === pinnedAnn.id) ? 'New from ayna' : 'From ayna'}</KindLabel>
           <strong>{pinnedAnn.title}</strong>
           <span className="cm-pinned-ann__go">Read the announcement <span aria-hidden="true">→</span></span>
         </button>}
-        {/* Start a post: one line to write, and prompt tiles on For you (visitors get sent to sign in). */}
-        {tab !== 'following' && <section className="cm-start" data-tour="community-compose" aria-label="Start a post">
-          {user && <button type="button" className="cm-start__line" onClick={() => openCompose(tab === 'question' ? 'question' : tab === 'review' ? 'review' : 'post')}>
-            <Avatar size={36} name={profile?.display_name || 'You'} path={profile?.avatar_url} />
-            <span>{tab === 'question' ? 'Ask the community a question' : tab === 'review' ? 'Review a product you’ve tried' : 'Share with the community'}</span>
-            <span className="cm-start__plus" aria-hidden="true"><Icon name="plus" size={18} /></span>
-          </button>}
-          {tab === 'for-you' && <div className="cm-prompts">{PROMPTS.map((pr, i) => <button type="button" key={pr.key} className={`cm-prompt is-${pr.tone}`} style={{ '--i': i }} onClick={() => openCompose(pr.kind, pr)}>
-            <PromptIcon name={pr.icon} size={22} /><span><strong>{pr.title}</strong><small>{pr.hint}</small></span>
-          </button>)}</div>}
-        </section>}
         {firstLoad ? <div className="cm-skel-list" aria-busy="true" aria-label="Loading posts"><SkeletonPost /><SkeletonPost i={1} /><SkeletonPost i={2} /></div> : visiblePosts.map((p, i) => <Fragment key={p.id}>
           {renderPost(p, false, i)}
           {i === quoteSlot && tab === 'for-you' && quoteBlock('is-inline')}
@@ -1324,12 +1376,14 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   </div>;
 
   return <section className="ct cm ay-container" data-tour="community">
-    <header className={`cm-head${page ? ' is-page' : ' ay-pagehead ay-band ay-band--sky'}`}>
+    {/* Butter title row (Community audit, issue 2): title, search, one Post button. */}
+    <header className={`cm-head${page ? ' is-page' : ' cm-titlerow'}`}>
       {page ? <BackLink className="cm-back" label="Community" href="/community" onClick={closePage} />
-        : <div className="cm-head__title"><h1 className="ay-h1">Ask, review, share.</h1><p className="ct-lede">Real talk between women, about the products we actually use.</p></div>}
+        : <div className="cm-head__title"><h1 className="ay-h1 cm-title">Community</h1><p className="ct-lede">Ask, review, share. Real talk between women, about the products we actually use.</p></div>}
       <div className="cm-head__actions">
         <label className="ct-search cm-search"><Icon name="search" size={20} /><input ref={searchRef} value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search community" aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'} />{search ? <button type="button" className="cm-search__clear" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); searchRef.current?.focus(); }}>×</button> : <kbd className="cm-kbd" aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>}</label>
         {user && <button type="button" className="cm-iconbtn cm-bell" onClick={openUpdates} aria-label={unreadCount + newAnns.length ? `Updates, ${unreadCount + newAnns.length} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount + newAnns.length > 0 && <span className="cm-bell-dot" aria-hidden="true">{unreadCount + newAnns.length > 9 ? '9+' : unreadCount + newAnns.length}</span>}</button>}
+        <button type="button" className="ay-btn ay-btn--primary cm-post-btn" data-tour="community-compose" onClick={openPostTypes}><Icon name="plus" size={18} />Post</button>
         {user && <button type="button" className="cm-iconbtn cm-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Set up your Community profile'}><Avatar size={44} name={profile?.display_name || 'You'} path={profile?.avatar_url} /></button>}
       </div>
     </header>
@@ -1337,7 +1391,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     {notice && <p className="cm-notice" role="status">{notice}</p>}
     <div className={`cm-layout${page?.type === 'profile' ? ' is-profile' : ''}`}>
       <nav className="cm-rail" aria-label="Community">
-        {tabList}
+        <div className="cm-navrow">{tabList}<button type="button" className="cm-topics-btn" aria-haspopup="dialog" onClick={() => setTopicsSheet(true)}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4" /></svg>Topics{onFeed && topicsTab && topicScope !== 'all' ? <span className="cm-topics-btn__on">{topicScope === 'mine' ? 'Mine' : topicLabel(topicScope)}</span> : null}</button></div>
         <div className="cm-rail__more">
           {user && profile && <button type="button" className="cm-me" onClick={() => openProfile(profile.username)}><Avatar size={36} name={profile.display_name || 'You'} path={profile.avatar_url} /><span><strong>{profile.display_name || 'You'}</strong><small>@{profile.username}</small></span></button>}
           <h2 className="cm-rail__h">Topics</h2>
@@ -1381,6 +1435,26 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     </div>
 
     {composeSheet}
+    {typeSheet && <Sheet title="Share with the community" onClose={() => setTypeSheet(false)} className="cm-types-sheet">
+      <ul className="cm-types">{POST_TYPES.map(([k, l, hint]) => <li key={k}><button type="button" className="cm-type" onClick={() => { setTypeSheet(false); openCompose(k); }}>
+        <span className="cm-type__icon"><TypeIcon kind={k} size={20} /></span><span className="cm-type__copy"><strong>{l}</strong><small>{hint}</small></span>
+      </button></li>)}</ul>
+      <div className="cm-group cm-starters"><p className="cm-label">Or start with</p><div className="cm-seg">{PROMPTS.filter((pr) => pr.starter).map((pr) => <button type="button" key={pr.key} onClick={() => { setTypeSheet(false); openCompose(pr.kind, pr); }}>{pr.title}</button>)}</div></div>
+    </Sheet>}
+    {topicsSheet && <Sheet title="Topics" onClose={() => setTopicsSheet(false)} className="cm-topics-sheet">
+      {topicsTab && <section className="cm-group"><h3 className="cm-label">Show</h3><div className="cm-topicset is-grid">
+        {followedTopics.length > 0 && <button type="button" className="cm-topic" aria-pressed={topicScope === 'mine'} onClick={() => { setTopicScope('mine'); setTopicsSheet(false); }}>My topics</button>}
+        <button type="button" className="cm-topic" aria-pressed={topicScope === 'all'} onClick={() => { setTopicScope('all'); setTopicsSheet(false); }}>All</button>
+        {followedTopics.map((key) => <button type="button" key={key} className="cm-topic" aria-pressed={topicScope === key} onClick={() => { setTopicScope(key); setTopicsSheet(false); }}>{topicLabel(key)}</button>)}
+      </div></section>}
+      <section className="cm-group"><button type="button" className="ay-btn ay-btn--secondary" onClick={() => { setTopicsSheet(false); setTopicSheetOpen(true); }}>{followedTopics.length ? 'Edit topics you follow' : 'Follow topics'}</button></section>
+      {topics.length > 0 && <section className="cm-group"><h3 className="cm-label">Talked about now</h3><div className="cm-topicset is-grid">{topics.map((t) => <button type="button" className="cm-topic" key={t} onClick={() => { setTopicsSheet(false); if (page) closePage(); setSearch(t); setSearchResults(null); }}>#{t}</button>)}</div></section>}
+      <section className="cm-group cm-topics-links">
+        {userTopics.available && <button type="button" className="ct-link" onClick={() => { setTopicsSheet(false); openTopics(); }}>Topics by members</button>}
+        <button type="button" className="ct-link" onClick={() => { setTopicsSheet(false); setSuggestTopic(true); }}>Suggest a topic</button>
+        <button type="button" className="ct-link" onClick={() => { setTopicsSheet(false); switchTab('announcements'); }}>Announcements from ayna</button>
+      </section>
+    </Sheet>}
     {showUpdates && <Sheet title="Updates" className="cm-updates" onClose={() => setShowUpdates(false)}>
       {!notifications ? <div className="cm-skel-list" aria-busy="true" aria-label="Loading updates"><span className="cm-skel-line" /><span className="cm-skel-line is-mid" /></div>
         : notifications.length ? (() => {

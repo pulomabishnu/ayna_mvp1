@@ -20,6 +20,7 @@
 import { resolveDaily, series } from './dedupe.js';
 import { estimatePhase } from './phase.js';
 import { fmtMinutes, RECENT_DAYS, BASELINE_DAYS } from './insights.js';
+import { localToday } from '../utils/localDate.js';
 
 const DAY = 86400000;
 const MIN_RECENT = 4;
@@ -132,6 +133,11 @@ export function heartInsight(resolved, today) {
     sources,
     from: sourcesOf(pts),
     rhrRecent: r ? r.recentAvg : null,
+    // For the finding's title ("Resting heart rate: 4 bpm above your usual, all 7 days").
+    rhrDelta: rhrUp || rhrDown ? bpm : null,
+    rhrDaysOff: r && (rhrUp || rhrDown) ? r.recent.filter((p) => (rhrUp ? p.value > r.usual : p.value < r.usual)).length : null,
+    rhrDays: r ? r.recent.length : null,
+    hrvPct: hrvDown ? -pct : null,
     question: rhrUp ? 'Why is my resting heart rate higher this week?' : rhrDown ? 'Why is my resting heart rate lower this week?' : 'Why is my heart rate variability lower this week?',
     signal: rhrUp || hrvDown ? 'heart-up' : 'heart-down',
   };
@@ -165,6 +171,8 @@ export function sleepInsight(resolved, today, ctx) {
     question: less ? 'Why have I been sleeping less this week?' : 'Why am I sleeping more this week?',
     signal: less ? 'sleep-short' : 'sleep-long',
     shortNights: less ? short : 0,
+    // For the finding's title ("Sleep: 52 min under your usual, 5 of 7 nights").
+    deltaMin: c.delta, nightsOff: k, nights: nights.length,
   };
 }
 
@@ -180,6 +188,7 @@ export function stepsInsight(resolved, today) {
     text: `Your steps were below your usual on ${lowerDays} of the last ${c.recent.length} days. You averaged ${Math.round(c.recentAvg).toLocaleString('en-US')} steps a day this week, compared with ${Math.round(c.usual).toLocaleString('en-US')} before.`,
     basis: `We compared days in the last week with your own average from the 4 weeks before. A day counts here when its steps are at least 20% below that average.`,
     sources: [], from: sourcesOf(pts),
+    lowerDays, days: c.recent.length,
     question: 'What changed in my activity this week?',
   };
 }
@@ -196,7 +205,7 @@ export function cycleLengthInsight(cycle) {
     id: 'cycle_length', metric: 'cycle_length', signal: 'cycle-shorter',
     text: `Your last completed cycle was ${latest.days} days, about ${Math.round(usual - latest.days)} days shorter than your previous three-cycle average. One shorter cycle does not tell us why it changed.`,
     basis: `Your last completed cycle: ${latest.days} days. The three cycles before it averaged ${Math.round(usual)} days. This compares only your logged period start dates.`,
-    sources: [EVIDENCE.cycle], from: cycle.sources || [], latestDays: latest.days,
+    sources: [EVIDENCE.cycle], from: cycle.sources || [], latestDays: latest.days, shorterBy: Math.round(usual - latest.days),
     question: 'My last cycle was shorter than usual. What should I track?',
   };
 }
@@ -249,6 +258,7 @@ export function tempInsight(resolved, today, ctx, { hormonalBC = false } = {}) {
     from: sourcesOf(all),
     question: 'What does a temperature rise after ovulation mean?',
     signal: 'temp-rise',
+    deg, days: rise.days,
   };
 }
 
@@ -260,11 +270,12 @@ export function periodInsight(ctx, estimate, cycle) {
     id: 'period',
     metric: 'menstrual_flow',
     text: `Your period is due ${inDays(ctx.daysToPeriod)}${n >= 2 ? `, going by your last ${plural(n, 'cycle')}` : ''}. Cramps can start a day or two before.`,
-    basis: `${estimate?.basis || 'From your period logs.'} Estimates can be off by several days.`,
+    basis: /off by several days/.test(estimate?.basis || '') ? estimate.basis : `${estimate?.basis || 'From your period logs.'} Estimates can be off by several days.`,
     sources: [EVIDENCE.cramps],
     from: cycle?.sources || [],
     question: 'How can I get ready for my next period?',
     signal: 'period-soon',
+    daysToPeriod: ctx.daysToPeriod,
   };
 }
 
@@ -273,8 +284,14 @@ export function periodInsight(ctx, estimate, cycle) {
  * @param {object} opts  { today, cycle, estimate, hormonalBC, preferred, max }
  * @returns {{ insights: Array, ctx: object }}  insights is [] when data is thin.
  */
+function missingToday(name) {
+  if (import.meta.env?.DEV) console.warn(`${name}: pass { today: localToday() }`);
+  return localToday();
+}
+
 export function explainWeek(rows, opts = {}) {
-  const today = opts.today || isoDay(Date.now());
+  // `today` is her local day (P0 date bug): callers pass localToday(). Never the UTC date.
+  const today = opts.today || missingToday('explainWeek');
   const resolved = resolveDaily(rows || [], opts.preferred);
   const ctx = cycleContext({ cycle: opts.cycle, estimate: opts.estimate, today, hormonalBC: opts.hormonalBC });
   const all = [

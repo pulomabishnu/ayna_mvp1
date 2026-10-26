@@ -43,7 +43,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-kind .ay-pc-mark {
   min-height: 24px; padding: 0 9px; box-sizing: border-box;
   border: 1.5px solid #3e2723; border-radius: 999px;
   background: #ffedac; color: #3e2723;
-  font: 600 calc(12.5px * var(--ayna-text-scale, 1))/1 var(--f-ui, 'Figtree', system-ui, sans-serif);
+  font: 600 calc(13px * var(--ayna-text-scale, 1))/1 var(--f-ui, 'Figtree', system-ui, sans-serif);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-kind .ay-pc-mark::before { width: 8px; height: 8px; border-width: 1.5px; }
@@ -87,7 +87,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-danger-btn[aria-disabled='true']
 /* ---------- Small text and small targets ----------
    The legal footer was 11.5px (direction: captions 12.5 on phones). */
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-legal,
-html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-legal :is(p, a, button, span) { font-size: calc(12.5px * var(--ayna-text-scale, 1)) !important; line-height: 1.6 !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-legal :is(p, a, button, span) { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; line-height: 1.6 !important; }
 /* Community author names were 20px-tall buttons: a 44px hit area around them. */
 html body .ayna-mobile:is(#ay,.ayna-mobile) .am-author-line button { position: relative; }
 html body .ayna-mobile:is(#ay,.ayna-mobile) .am-author-line button::after { content: ''; position: absolute; inset: -12px -8px; }
@@ -168,4 +168,4 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-fold > :not(sum
 /* Inside the folded routine card the time-of-day groups are plain sections (no card in a card). */
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-rt-slot { background: none !important; box-shadow: none !important; border: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
 /* Ask ayna signed out: what works on this phone, and what needs an account. */
-html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-ask-local { margin: 0 0 6px; color: var(--ayna-text-muted); font: 400 calc(14px * var(--ayna-text-scale, 1))/1.45 var(--ayna-font-ui); }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-ask-local { margin: 0 0 6px; color: var(--ayna-text-muted); font: 500 calc(14px * var(--ayna-text-scale, 1))/1.45 var(--ayna-font-ui); }

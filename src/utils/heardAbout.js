@@ -1,5 +1,5 @@
-// "Where did you hear about us?" on account creation (website AuthGate and the
-// app's SigninScreen). Required on the create-account forms (2026-10 spec), single choice. Saved in Supabase auth user
+// "Where did you hear about us?", asked once right after sign-up, optional
+// (HeardAboutPrompt.jsx; onboarding audit, Oct 25). Single choice. Saved in Supabase auth user
 // metadata next to first_name and the consent fields, so no table or
 // migration is needed:
 //   heard_about        one of HEARD_ABOUT_OPTIONS[].value
@@ -23,4 +23,12 @@ export function heardAboutMetadata(value, otherText = '') {
   const other = String(otherText || '').trim().replace(/\s+/g, ' ').slice(0, HEARD_ABOUT_OTHER_MAX);
   if (value === 'other' && other) meta.heard_about_other = other;
   return meta;
+}
+
+/** The label string main's admin reviews (api/reviews-admin.js) read from heard_about_us. */
+export function heardAboutUsLabel(value, otherText = '') {
+  const option = HEARD_ABOUT_OPTIONS.find((o) => o.value === value);
+  if (!option) return '';
+  const other = String(otherText || '').trim().replace(/\s+/g, ' ').slice(0, HEARD_ABOUT_OTHER_MAX);
+  return value === 'other' && other ? `Other: ${other}` : option.label;
 }

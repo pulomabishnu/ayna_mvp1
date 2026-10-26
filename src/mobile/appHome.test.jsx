@@ -320,7 +320,7 @@ describe('a tapped prompt is sent right away (founder, Oct 24 22:17)', () => {
     act(() => { const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set; set.call(input, typed); input.dispatchEvent(new Event('input', { bubbles: true })); });
     await flush();
     expect(document.body.textContent).not.toContain('Here\'s what stands out today');
-    const tile = [...document.querySelectorAll('.ay-askh-list button')].find((b) => b.textContent.includes('What should I focus on today?'));
+    const tile = [...document.querySelectorAll('.ay-askp-pill')].find((b) => b.textContent.includes('What should I focus on today?'));
     await act(async () => { tile.click(); await new Promise((r) => setTimeout(r, 0)); });
     await flush();
     // Sent: her question and ayna's answer are in the thread, not waiting in the box.
@@ -376,9 +376,9 @@ describe('Rundown to chat hand-off', () => {
     expect(document.body.textContent).toContain('From your Daily Rundown today');
     act(() => btn('Why was my sleep flagged?').click());
     expect(onStarter).toHaveBeenCalledWith(starters[0]);
-    // Full screen from Home: Back returns to Home.
+    // Full screen with a Back (Today) when a caller asks for one; the Ask ayna tab itself has none.
     expect(document.querySelector('.ayna-ask-drawer.is-full')).toBeTruthy();
-    act(() => btn('Home').click());
+    act(() => btn('Today').click());
     expect(onBackHome).toHaveBeenCalled();
   });
 });

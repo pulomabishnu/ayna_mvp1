@@ -21,7 +21,7 @@ export const HOME_LAYOUT_KEY = 'ayna_home_layout_v1';
 export const SURFACES = ['app', 'web'];
 export const SPACE = { small: 1, large: 2 };
 export const CAPS = { app: 4, web: 8 };
-export const FULL_LINE = 'Home is full. Turn one off to add another.';
+export const FULL_LINE = 'Today is full. Turn one off to add another.';
 
 /** Never customizable: always on Home, never counted against the cap. */
 export const FIXED_ITEMS = [
@@ -48,8 +48,8 @@ export const capFor = (surface) => CAPS[surfaceOf(surface)];
 export function capLine(widgets, surface) {
   const cap = capFor(surface);
   const used = usedSpace(widgets);
-  const where = surfaceOf(surface) === 'web' ? 'Today' : 'Home';
-  if (used >= cap) return surfaceOf(surface) === 'web' ? FULL_LINE.replace('Home', 'Today') : FULL_LINE;
+  const where = 'Today';
+  if (used >= cap) return FULL_LINE;
   return `${where} fits ${cap} spaces: a small widget takes 1, a large one takes 2. ${used} of ${cap} used.`;
 }
 

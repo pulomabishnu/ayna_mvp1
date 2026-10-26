@@ -3,17 +3,19 @@ import ProductCard from '../ProductCard';
 import { toast } from '../../utils/toast';
 import { loadCustom, saveCustom } from './shelfLayout.js';
 import { PlusIcon, CloseIcon, ChevronLeftIcon, ChevronRightIcon } from '../icons/UiIcons.jsx';
+import { routineDay } from '../you/setupSteps.js';
+import '../../styles/you-hub.css';
 
 /* "Your shelves": one row per area of care, products as the same polaroid
    card used in the Shop, scrolling sideways with an Add tile at the end.
    Shelves can be renamed, recoloured, reordered and products moved; that
    layout is kept in this browser only and never touches her products. */
 // Folder-tab colours the shelves take in turn (until she paints one herself).
-const TONES = ['pink', 'sky', 'ink'];
+// Pink and espresso only: data-blue is for chart lines (all-pages brief). A shelf painted Sky before keeps its default tone.
+const TONES = ['pink', 'ink'];
 const PAINTS = [
   { id: 'butter', label: 'Butter', bg: '#ffedac' },
   { id: 'rose', label: 'Rose', bg: '#f7badd' },
-  { id: 'sky', label: 'Sky', bg: '#769ebe' },
 ];
 
 function Row({ children, label }) {
@@ -67,7 +69,7 @@ function placeShelfMenu(e) {
   window.addEventListener('resize', close, { once: true });
 }
 
-export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAddMore, userId = '' }) {
+export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAddMore, onCheckIn = null, userId = '' }) {
   const [custom, setCustom] = useState(() => loadCustom(userId));
   const [editing, setEditing] = useState(null);
   const [painting, setPainting] = useState(null);
@@ -211,13 +213,15 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
                       </details>
                     )}
                   />
+                  {/* A living routine (You audit 12): "Day 12 · Is it working?" from the date she added it, to her daily log on Today. */}
+                  {onCheckIn && routineDay(p.addedAt) && <button type="button" className="ay-shelf__working" onClick={onCheckIn}><span className="ayk-status is-quiet">Day {routineDay(p.addedAt)}</span>Is it working?</button>}
                 </li>
               ))}
               {onAddMore && group.key !== 'other' && !small && (
                 <li>
                   <button type="button" className="ay-shelf__addtile" onClick={() => onAddMore(group)}>
                     <span aria-hidden="true">+</span>
-                    Add to {nameOf(group)}
+                    Find one<span className="sr-only"> for {nameOf(group)}</span>
                   </button>
                 </li>
               )}

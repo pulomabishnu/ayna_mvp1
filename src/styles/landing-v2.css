@@ -1,8 +1,8 @@
 /* Landing v2: one palette (cream 60 / pink 30 / butter 10, ink for text + lines, one dark band),
    two fonts ('ayna Display' display, Figtree UI), one radius/border/shadow/motion scale. */
 .lv {
-  --ink: #161616; --ink-2: #4a4a4a; --paper: #fffcf5; --white: #fff;
-  --pink: #f7badd; --pink-soft: #fde3ef; --butter: #f7e78e; --sky: #c9ecff;
+  --ink: #161616; --ink-2: #4a4a4a; --paper: #ffedac; --white: #fff;
+  --pink: #f7badd; --pink-soft: #fde3ef; --butter: #ffedac; --sky: #c9ecff;
   --display: var(--ay-serif); --ui: var(--ay-sans);
   --fs-hero: var(--ay-fs-display); --fs-h2: var(--ay-fs-display); --fs-h3: var(--ay-fs-section); --fs-lead: var(--ay-fs-body); --fs-body: var(--ay-fs-body); --fs-small: var(--ay-fs-secondary); --fs-label: var(--ay-fs-caption);
   --r-sm: 8px; --r-md: 16px; --r-lg: 24px; --bw: 2px; --shadow: 4px 4px 0 var(--ink);
@@ -392,7 +392,7 @@ body:has(.lv) .site-footer :is(.site-footer__legal) { border-color: rgba(62,39,3
 body:has(.lv) .site-footer :is(a, p, span, li, small, h2, h3, h4) { color: #3e2723; }
 .app-container .lv .lv-search input { background: #ffedac !important; }
 body:has(.lv), body:has(.lv) .app-container, body:has(.lv) .app-container .app-nav, body:has(.lv) .app-container .site-footer {
-  --ay-ink: #3e2723 !important; --ay-paper: #ffedac !important; --ay-butter: #f7badd !important; --ay-shadow: 3px 3px 0 #3e2723 !important; }
+  --legacy-ink: #3e2723 !important; --ay-paper: #ffedac !important; --legacy-butter: #f7badd !important; --ay-shadow: 3px 3px 0 #3e2723 !important; }
 html body:has(.lv) .app-container .ay-footer .ay-footer-col__title { color: rgba(62,39,35,.75) !important; }
 html body:has(.lv) .app-container .site-footer .site-footer__legal { border-color: rgba(62,39,35,.15) !important; }
 .app-container .lv .lv-stamp svg { fill: var(--ink); }
@@ -504,7 +504,7 @@ body:has(.lv), body:has(.lv) .app-container, body:has(.lv) .app-container .site-
 .app-container .lv .lv-pause:hover, .app-container .lv .lv-pause:focus-visible { opacity: 1; }
 .app-container .lv .lv-pause svg { width: 14px; height: 14px; fill: var(--ink); }
 /* the old welcome carousel, back, in the v3 palette and without its colour band */
-.app-container .lv .whc { --ay-ink: #3e2723; --ay-paper: #ffedac; --ay-cream: #ffedac; --ay-tile: #ffedac; --ay-pink: #f7badd; --ay-butter: #f7badd; --ay-mint: #769ebe; --ay-peri: #769ebe; --ay-shadow: 4px 4px 0 #3e2723; --ay-font-display: var(--ay-serif); --ay-font-ui: var(--ay-sans);
+.app-container .lv .whc { --legacy-ink: #3e2723; --ay-paper: #ffedac; --ay-cream: #ffedac; --ay-tile: #ffedac; --legacy-pink: #f7badd; --legacy-butter: #f7badd; --ay-mint: #769ebe; --ay-peri: #769ebe; --ay-shadow: 4px 4px 0 #3e2723; --ay-font-display: var(--ay-serif); --ay-font-ui: var(--ay-sans);
   padding: 0; border-block: 0; background: transparent !important; }
 .app-container .lv .whc :is(h2, .whc-title) { font-family: var(--ay-serif) !important; font-weight: 400 !important; }
 .app-container .lv .whc :is(p, a, button, li, b, span) { font-family: var(--ay-sans) !important; }

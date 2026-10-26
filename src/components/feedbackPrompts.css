@@ -18,7 +18,7 @@
   max-height: calc(100dvh - 32px);
   overflow: auto;
   padding: 0 28px 24px;
-  border: 1.5px solid var(--ay-outline, #3e2723);
+  border: 1.5px solid var(--ay-outline-color, #3e2723);
   border-radius: 24px;
   background: var(--ay-page, #ffedac);
   color: var(--ay-text, #3e2723);
@@ -31,7 +31,7 @@
   height: 64px;
   margin: 0 -28px 20px;
   padding: 0 68px 0 28px;
-  border-bottom: 1.5px solid var(--ay-outline, #3e2723);
+  border-bottom: 1.5px solid var(--ay-outline-color, #3e2723);
   background: var(--ay-alert-bg, #f7badd);
   color: #3e2723;
   font-size: 14px;
@@ -62,13 +62,13 @@
 .v6-survey-card .ay-sheet__status { min-height: 1.2em; margin: 8px 0 0; font-size: 14px; }
 .v6-survey-card .ay-field-label { display: block; margin: 16px 0 6px; font-size: 14px; font-weight: 600; }
 .v6-survey-card .ay-field-label span { font-weight: 400; }
-.v6-survey-card .ay-field { box-sizing: border-box; width: 100%; min-height: 48px; padding: 12px 14px; border: 1.5px solid var(--ay-outline, #3e2723); border-radius: 14px; background: var(--ay-group, #fff8dc); color: var(--ay-text, #3e2723); font: inherit; }
+.v6-survey-card .ay-field { box-sizing: border-box; width: 100%; min-height: 48px; padding: 12px 14px; border: 1.5px solid var(--ay-outline-color, #3e2723); border-radius: 14px; background: var(--ay-group, #fff8dc); color: var(--ay-text, #3e2723); font: inherit; }
 .v6-survey-card .ay-field--area { min-height: 84px; resize: vertical; }
 .v6-survey-card .ay-stars { display: flex; justify-content: center; gap: 6px; margin: 16px 0; }
 .v6-survey-card .ay-stars__star { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; color: var(--ay-text, #3e2723); cursor: pointer; }
 .v6-survey-card .ay-stars__star svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.5; }
 .v6-survey-card .ay-stars__star.is-filled svg { fill: currentColor; }
-.v6-survey-card .ay-btn { padding: 10px 18px; border: 1.5px solid var(--ay-outline, #3e2723); border-radius: 999px; background: var(--ay-group, #fff8dc); color: var(--ay-text, #3e2723); font: 600 15px/1.2 var(--ay-sans-stack, system-ui, sans-serif); cursor: pointer; }
+.v6-survey-card .ay-btn { padding: 10px 18px; border: 1.5px solid var(--ay-outline-color, #3e2723); border-radius: 999px; background: var(--ay-group, #fff8dc); color: var(--ay-text, #3e2723); font: 600 15px/1.2 var(--ay-sans-stack, system-ui, sans-serif); cursor: pointer; }
 .v6-survey-card .ay-btn--primary { background: var(--ay-alert-bg, #f7badd); }
 .v6-survey-card .ay-btn:disabled { opacity: .5; cursor: not-allowed; }
 .v6-survey-card :focus-visible { outline: 3px solid var(--ay-focus, #769ebe); outline-offset: 2px; }

@@ -204,6 +204,8 @@ export function effectChecks(rows, { today, products = [], preferred } = {}) {
       const change = Math.abs(d) < 15 ? 'about the same as' : `${fmtMinutes(d)} ${d > 0 ? 'more than' : 'less than'}`;
       out.push({
         product: p,
+        // Numbers for the before/after bars (same scale, minutes a night).
+        metric, added, before: b, after: a, beforeNights: before.length, afterNights: after.length,
         text: `Added ${fmtDay(added)}. Since then you've slept ${fmtMinutes(a)} a night, ${change} the 2 weeks before (${fmtMinutes(b)}).`,
         caveat: 'A before and after can’t show the product caused it. Sleep also shifts with your cycle, stress and routine.',
         sources: [{ ...EVIDENCE.sleep, label: 'Source' }],

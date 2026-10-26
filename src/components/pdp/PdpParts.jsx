@@ -6,6 +6,8 @@ import { matchText, shownMatchPercent, MATCH_UNAVAILABLE, SAFETY_HOLD } from '..
 import PdpIcon from './PdpIcon.jsx';
 import { splitShow, SHOW_FIRST } from './pdpParts.js';
 import { LEVELS, levelLabel, levelCountWords } from './evidenceLevels.js';
+import { ScallopPlate } from '../ui/ay/ScallopPlate.jsx';
+import EvidenceMark from './EvidenceMark.jsx';
 import './pdp.css';
 
 /**
@@ -94,22 +96,7 @@ export function EvidenceMeter({ meter, onMore = null, moreLabel = 'See the liter
   );
 }
 
-/**
- * One evidence mark (PDP audit 12, signature 4): an 8px circle, 1.5px ink.
- * filled = checked against .gov, half = peer-reviewed, outline = the brand's,
- * dotted = people's experiences. Always paired with its words for screen
- * readers; the visible label shows the first time on a screen.
- */
-export function EvidenceMark({ level }) {
-  const def = LEVELS.find((l) => l.id === level);
-  if (!def) return null;
-  return (
-    <svg className={`ayv-mark8 is-${def.mark}`} viewBox="0 0 10 10" width="10" height="10" aria-hidden="true">
-      {def.mark === 'half' && <path d="M5 1.25a3.75 3.75 0 0 0 0 7.5Z" fill="currentColor" />}
-      <circle cx="5" cy="5" r="3.75" fill={def.mark === 'filled' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeDasharray={def.mark === 'dotted' ? '1.2 1.6' : undefined} />
-    </svg>
-  );
-}
+export { EvidenceMark };
 
 /** "● 1 .gov · ◐ 4 peer-reviewed · ○ 3 from Saalt": the counts per level, from evidenceFor. */
 export function EvidenceCounts({ ev, people = true, className = '' }) {
@@ -270,23 +257,8 @@ export function PriceLine({ main, notes = [] }) {
 // shared by the website page, the app page and the app sheet.
 // ===========================================================================
 
-/** The scalloped plate (signature 2): 12 lobes, lobe depth 8% of the width. */
-const PLATE_PATH = (() => {
-  const pts = [];
-  for (let i = 0; i <= 240; i += 1) {
-    const t = (i / 240) * Math.PI * 2;
-    const r = 41.5 + 4 * (1 + Math.cos(12 * t));
-    pts.push(`${(50 + r * Math.cos(t)).toFixed(2)} ${(50 + r * Math.sin(t)).toFixed(2)}`);
-  }
-  return `M${pts.join('L')}Z`;
-})();
-export function ScallopPlate({ tone = 'white', stroke = false, className = '' }) {
-  return (
-    <svg className={`ayv-plate is-${tone}${stroke ? ' has-stroke' : ''} ${className}`.trim()} viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
-      <path d={PLATE_PATH} vectorEffect="non-scaling-stroke" />
-    </svg>
-  );
-}
+/** The scalloped plate (signature 2) lives in ui/ay so every page uses the same one. */
+export { ScallopPlate };
 
 /**
  * The match lock-up (signature 3): espresso pill "92% match" (32px, 15/700),

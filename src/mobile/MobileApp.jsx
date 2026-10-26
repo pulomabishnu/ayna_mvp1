@@ -28,6 +28,8 @@ import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
 import { usePushNotifications, usePushRoutes } from './hooks/usePushNotifications.js';
+import { PUSH_ASK_EVENT } from '../components/today/rundownPush.js';
+import { noteRoutineAdd, noteRoutineRemove } from '../health/routineFollowUps.js';
 import { useHealthData, DEV_HEALTH_DEMO } from './hooks/useHealthData.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
@@ -61,7 +63,6 @@ import AynaHomeChatScreen from './screens/AynaHomeChatScreen.jsx';
 import { readHomeVariant } from './utils/homeVariant.js';
 import { APP_TABS, APP_TABS_CHAT_FIRST } from '../components/nav/mainTabs.js';
 import ExploreScreen from './screens/ExploreScreen.jsx';
-import LibraryScreen from './screens/LibraryScreen.jsx';
 import ProductSheet from './components/ProductSheet.jsx';
 import { pregnancyFirstFrom } from '../components/pdp/pdpParts.js';
 import { ProductSheetContext } from './productSheetContext.js';
@@ -123,6 +124,8 @@ import { savedHaptic, addedHaptic } from '../utils/feedback.js';
 import { useSheetDrag } from './hooks/useSheetDrag.js';
 import PushLayer from './components/PushLayer.jsx';
 import GlobalToast from '../components/v3/GlobalToast.jsx';
+import HeardAboutPrompt from '../components/HeardAboutPrompt.jsx';
+import { shouldAskHeardAbout } from '../utils/signupConsent.js';
 import { toast } from '../utils/toast.js';
 // Motion moments (sheets, push, tab fade) and app-wide press states; last so it wins.
 import './app-motion.css';
@@ -135,6 +138,8 @@ import './ds-app.css';
 import OfflineBanner from './components/OfflineBanner.jsx';
 import TutorialLayer from './tutorial/TutorialLayer.jsx';
 import { growTransition } from '../utils/viewTransition.js';
+import { localToday } from '../utils/localDate.js';
+import { trackQuizStarted, trackFirstMatchShown, eventSurface } from '../utils/analyticsEvents.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -168,7 +173,8 @@ const SCREENS = {
   ayna: AynaHomeScreen,
   explore: ExploreScreen,
   browse: ExploreScreen,
-  library: LibraryScreen,
+  // The reads are Explore's Reads tab (Explore audit, Oct 25): the old 'library' screen opens it.
+  library: ExploreScreen,
   ecointro: EcosystemIntroScreen,
   quiz: IntakeScreen,
   building: BuildingScreen,
@@ -296,6 +302,7 @@ const AUTH_NO_RETURN = new Set(['landing', 'signin', 'quiz', 'building', 'reveal
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
   const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName, omittedProducts = {} } = session;
+  const [heardDismissed, setHeardDismissed] = useState(false);
   const myProducts = useMemo(() => storedProducts.map(hydrateCatalogProduct), [storedProducts]);
   // The welcome screen is the signed-out entry point. Returning accounts
   // move into their ecosystem once auth finishes restoring their session.
@@ -481,6 +488,12 @@ export default function MobileApp() {
   const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
   const authUser = realAuthUser || (DEV_HEALTH_DEMO ? DEV_DEMO_USER : null);
+  // Time to first value (all-pages brief v3): quiz start -> first match on screen. No health details.
+  useEffect(() => {
+    if (screen === 'quiz' && intakeMode === 'new') trackQuizStarted({ surface: eventSurface(), signed_in: Boolean(authUser) });
+    else if (screen === 'reveal') trackFirstMatchShown({ surface: eventSurface() });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen]);
   const [guideState, setGuideState] = useState({ userId: null, value: null });
   const guide = useMemo(() => guideState.userId === authUser?.id && guideState.value ? guideState.value : readGuide(authUser?.id), [guideState, authUser?.id]);
   const updateGuide = (next) => {
@@ -588,6 +601,12 @@ export default function MobileApp() {
   const [askPush, setAskPush] = useState(() => { try { return localStorage.getItem('ayna_push_asked_v1') === '1'; } catch { return false; } });
   const markPushMoment = () => { if (askPush) return; try { localStorage.setItem('ayna_push_asked_v1', '1'); } catch { /* storage blocked */ } setAskPush(true); };
   usePushNotifications(authUser?.id, askPush);
+  // Today's "Get your Daily Rundown each morning?" (after her first Rundown) is also a push moment.
+  useEffect(() => {
+    const ask = () => markPushMoment();
+    window.addEventListener(PUSH_ASK_EVENT, ask);
+    return () => window.removeEventListener(PUSH_ASK_EVENT, ask);
+  });
   // A tapped notification opens Today, or the product a recall alert is about.
   usePushRoutes((route) => {
     setAskAynaOpen(false);
@@ -831,7 +850,7 @@ export default function MobileApp() {
     if (!authUser?.id || !personalizeWithData) return '';
     const sections = health.insights?.sections || [];
     const ready = sections.filter((section) => section.status === 'ready');
-    const today = new Date().toLocaleDateString('en-CA');
+    const today = localToday();
     const week = buildDashboard(health.insightRows || [], { days: 30, today });
     const estimate = sections.find((section) => section.id === 'cycle')?.estimate || null;
     const explained = explainWeek(health.insightRows || [], { today, cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, hormonalBC: usesHormonalBC(effectiveQuizAnswers), max: 2 });
@@ -971,9 +990,12 @@ export default function MobileApp() {
         }).catch((error) => console.warn('[Ayna] mobile ecosystem remove sync failed:', error));
         delete ecosystemFlagsRef.current.trackedProducts[product.id];
       }
+      noteRoutineRemove(product.id);
       toast(REMOVED_FROM_ROUTINE, { label: 'Undo', onClick: () => addToEcosystemRef.current?.(product) });
       return;
     }
+    // Follow-ups at day 7 and cycle 3, and a review ask after 3 cycles (routineFollowUps.js).
+    noteRoutineAdd(product);
 
     trackApp('product_added', { productId: product.id, category: product.category, type: product.type });
     const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);
@@ -1184,6 +1206,8 @@ export default function MobileApp() {
     onBrowse: (query) => { setBrowseQuery(typeof query === 'string' ? query : ''); setScreen('browse'); },
     onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
     onOpenSaved: () => setScreen('saved'),
+    // Saved > Startups (waitlists), which lives in the You flow.
+    onOpenStartups: () => setOverlay({ type: 'profile', screen: 'startups' }),
     onOpenCompare: openCompare,
     onToggleOmit: handleToggleOmit,
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
@@ -1399,6 +1423,8 @@ export default function MobileApp() {
     authUser,
     onSignUp: signUpWithPassword,
     onSignIn: signInWithPassword,
+    // Her first name from the quiz: sign-up never asks again (onboarding audit #1).
+    firstName: lastQuizAnswers?.firstName || session.pendingQuiz?.firstName || '',
     // Remember where Google/Apple started: the post-quiz save may create an
     // account; a plain sign-in that does gets the "build it first" step.
     onGoogleSignIn: () => { const mode = authMode === 'signup' || lastQuizAnswers || session.pendingQuiz ? 'save' : 'signin'; markOAuthSource(mode); return signInWithGoogle({ mode }); },
@@ -1418,9 +1444,8 @@ export default function MobileApp() {
     hasEcosystem,
   };
 
-  // The chat from Home is full screen (Back returns to Home), so no tab bar there.
-  const chatFullScreen = screen === 'ayna' && !chatFirst && homeView === 'chat' && !askAynaOpen && !overlay;
-  const showTabBar = !chatFullScreen && !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
+  // The chat is the Ask ayna tab (all-pages brief, Oct 25), so the tab bar stays under it.
+  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
   // Deep round 2: the tab bar stays on drilled-in screens (product, read, why
   // this match), as in iOS; tapping a tab pops back to that tab's root.
   // Reads ranked from her app answers (personalReads.js): matching reads
@@ -1430,7 +1455,8 @@ export default function MobileApp() {
     .filter((article) => !readArticleIds.includes(article.id))
     .concat(rankedEcosystemReads.filter((article) => readArticleIds.includes(article.id)))
     .slice(0, 3);
-  const activeTab = navTabFor(screen, overlay?.type);
+  // Ask ayna is a tab (all-pages brief, Oct 25): the chat view of 'ayna', or the drawer when it is open.
+  const activeTab = askAynaOpen && !chatFirst && !overlay ? 'ask' : navTabFor(screen, overlay?.type, { view: homeView, variant: homeVariant });
 
   // "New in Community" for the Daily Rundown: real public posts for her topics and follows.
   const rundownCommunity = useRundownCommunity(authUser?.id || null, effectiveQuizAnswers);
@@ -1569,6 +1595,8 @@ export default function MobileApp() {
         onExplore={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setExploreSection('overview'); setScreen('explore'); }}
         // Home always opens on its root (the dashboard, or the chat in the chat-first variant).
         onHome={() => { setHomeView(homeRoot); setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreenRaw('ayna'); }}
+        // Ask ayna: the full chat as a tab screen (the 'ayna' screen's chat view).
+        onAsk={() => { setAskAynaOpen(false); setOverlay(null); setHomeView('chat'); setScreenRaw('ayna'); }}
         tabList={chatFirst ? APP_TABS_CHAT_FIRST : APP_TABS}
         onCommunity={() => { setAskAynaOpen(false); setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
         // You opens for everyone: signed out it says what an account keeps, and Settings still works.
@@ -1749,7 +1777,8 @@ export default function MobileApp() {
         asTab={screen === 'ayna' && homeView === 'chat' && !askAynaOpen}
         // Home: the chat full screen with Back to Home; chat-first variant: the switch on top.
         renderHomeTop={chatFirst && screen === 'ayna' && !askAynaOpen ? (leading) => <HomeSwitch view={homeView} onChange={(v) => { setAskAynaOpen(false); setHomeView(v); }} leading={leading} /> : null}
-        onBackHome={!chatFirst && screen === 'ayna' && !askAynaOpen ? () => setHomeView('home') : null}
+        // Ask ayna is a root tab now, so no Back button; Today is one tap away in the tab bar.
+        onBackHome={null}
         starters={askStarters}
         onStarter={(st) => nav.onAskAyna(st)}
         draft={askDraft}
@@ -1826,6 +1855,8 @@ export default function MobileApp() {
       <FeedbackPrompts key={realAuthUser?.id || 'guest'} user={realAuthUser} authLoading={authLoading} currentView={overlayType || askAynaOpen ? 'busy' : screen} safeViews={APP_FEEDBACK_SCREENS} />
       <OfflineBanner rootRef={rootRef} />
       <GlobalToast variant="app" />
+      {/* "Where did you hear about us?" once after sign-up, optional (onboarding audit #1). */}
+      {authUser && !heardDismissed && screen !== 'signin' && shouldAskHeardAbout(authUser) && <HeardAboutPrompt variant="app" onDone={() => setHeardDismissed(true)} />}
       {/* First-visit tips (src/mobile/tutorial): one overlay, reads data-tour anchors. */}
       <TutorialLayer userId={authUser?.id || null} />
     </div>

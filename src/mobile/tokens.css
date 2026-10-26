@@ -2,16 +2,16 @@
    ink + paper + four pastels. Older token names used across the app are
    aliased here so every screen draws from the same palette. */
 .ayna-mobile {
-  --ay-ink: #3e2723;
+  --legacy-ink: #3e2723;
   --ay-ink-soft: rgba(62, 39, 35, .78); /* .62 was 3.9:1 on butter; .78 is 6.2:1 (team direction 52) */
   --ay-ink-faint: rgba(62, 39, 35, .16);
   --ay-paper: #ffffff;
   --ay-cream: #ffedac;
   --ay-peri: #769ebe;
   --ay-peri-deep: #769ebe;
-  --ay-butter: #ffedac;
+  --legacy-butter: #ffedac;
   --ay-butter-deep: #ffedac;
-  --ay-pink: #f7badd;
+  --legacy-pink: #f7badd;
   --ay-pink-deep: #f7badd;
   --ay-mint: #769ebe;
   --ay-mint-deep: #769ebe;
@@ -23,25 +23,25 @@
      overshoots: bounce is kept for the two delight moments (--ease-pop). */
   --ay-ease: var(--ease-out);
   --ay-pop: var(--ease-out);
-  --ay-shadow: 3px 3px 0 var(--ay-ink);
-  --ay-shadow-lg: 5px 5px 0 var(--ay-ink);
+  --ay-shadow: 3px 3px 0 var(--legacy-ink);
+  --ay-shadow-lg: none;
 }
 
 .ayna-mobile {
   --ayna-reference-blue: var(--ay-peri);
-  --ayna-reference-yellow: var(--ay-butter);
-  --ayna-reference-ink: var(--ay-ink);
-  --ayna-reference-pink: var(--ay-pink);
+  --ayna-reference-yellow: var(--legacy-butter);
+  --ayna-reference-ink: var(--legacy-ink);
+  --ayna-reference-pink: var(--legacy-pink);
   --ayna-reference-paper: var(--ay-cream);
 }
 .ayna-mobile:not([data-theme='dark']) {
-  --ayna-brown: var(--ay-ink); /* only ever used for text/link colour; pink text failed contrast */
+  --ayna-brown: var(--legacy-ink); /* only ever used for text/link colour; pink text failed contrast */
   --ayna-figma-berry: var(--ay-peri-ink);
-  --ayna-color-ink: var(--ay-ink);
-  --ayna-figma-ink: var(--ay-ink);
-  --ayna-text: var(--ay-ink);
-  --ayna-heading: var(--ay-ink);
-  --ayna-cta-bg: var(--ay-ink);
+  --ayna-color-ink: var(--legacy-ink);
+  --ayna-figma-ink: var(--legacy-ink);
+  --ayna-text: var(--legacy-ink);
+  --ayna-heading: var(--legacy-ink);
+  --ayna-cta-bg: var(--legacy-ink);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -77,8 +77,8 @@
 
 /* Each main tab has a signature colour, used in a few places only:
    the active tab pill, the title highlight, and small accents. */
-.ayna-mobile { --ay-section: var(--ay-butter); }
-.ayna-mobile:is([data-screen='browse'], [data-screen='saved']) { --ay-section: var(--ay-pink); }
+.ayna-mobile { --ay-section: var(--legacy-butter); }
+.ayna-mobile:is([data-screen='browse'], [data-screen='saved']) { --ay-section: var(--legacy-pink); }
 .ayna-mobile[data-screen='community'] { --ay-section: var(--ay-mint); }
 .ayna-mobile { --ay-gutter: 20px; }
 
@@ -87,23 +87,23 @@
 /* Dark mode: black canvas, white type, neon versions of the four accents. */
 .ayna-mobile[data-theme='dark'] {
   color-scheme: dark;
-  --ay-ink: #ffffff;
+  --legacy-ink: #ffffff;
   --ay-ink-soft: rgba(255, 237, 172, .74);
   --ay-ink-faint: rgba(255, 237, 172, .22);
   --ay-paper: #3e2723;
   --ay-cream: #2e1c18;
   --ay-peri: #f7badd;
   --ay-peri-deep: #f7badd;
-  --ay-butter: #ffedac;
+  --legacy-butter: #ffedac;
   --ay-butter-deep: #ffedac;
-  --ay-pink: #769ebe;
+  --legacy-pink: #769ebe;
   --ay-pink-deep: #769ebe;
   --ay-mint: #f7badd;
   --ay-mint-deep: #f7badd;
   --ay-alert: #ff806f;
   --ay-line: rgba(255, 237, 172, .2);
   --ay-shadow: 3px 3px 0 rgba(255, 237, 172, .5);
-  --ay-shadow-lg: 5px 5px 0 rgba(255, 237, 172, .5);
+  --ay-shadow-lg: none;
   --ayna-bg: #2e1c18;
   --ayna-bg-alt: #3e2723;
   --ayna-surface: #3e2723;
@@ -115,12 +115,12 @@
   --ayna-text-muted: #d5d5dc;
   --ayna-text-faint: #b7b7c2;
   --ayna-heading: #ffffff;
-  --ayna-cta-bg: var(--ay-pink);
+  --ayna-cta-bg: var(--legacy-pink);
   --ayna-cta-text: #2e1c18;
-  --ayna-accent: var(--ay-pink);
-  --ayna-accent-dark: var(--ay-pink);
+  --ayna-accent: var(--legacy-pink);
+  --ayna-accent-dark: var(--legacy-pink);
   --ayna-figma-mint: var(--ay-mint);
-  --ayna-figma-berry: var(--ay-pink);
+  --ayna-figma-berry: var(--legacy-pink);
   --ayna-figma-mist: var(--ayna-chip-bg);
   --ayna-figma-paper: var(--ayna-bg);
   --ayna-brown: var(--ayna-text);
@@ -178,8 +178,8 @@
 }
 .ayna-mobile[data-theme='dark'] .ay-set-session.is-out {
   background: transparent !important;
-  border-color: var(--ay-pink) !important;
-  color: var(--ay-pink) !important;
+  border-color: var(--legacy-pink) !important;
+  color: var(--legacy-pink) !important;
 }
 .ayna-mobile[data-theme='dark'] .ay-switch {
   background: var(--ayna-chip-bg) !important;
@@ -210,7 +210,7 @@
 .ayna-mobile[data-theme='dark'] :is(
   .ay-reel, .ay-discover-banner, .ay-startups-hero, .ay-set-signedout
 ) {
-  --ay-ink: #2e1c18;
+  --legacy-ink: #2e1c18;
   --ay-paper: #ffffff;
   color: #2e1c18 !important;
 }
@@ -222,7 +222,7 @@
   color: #2e1c18 !important;
 }
 .ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active {
-  background: var(--ay-butter) !important;
+  background: var(--legacy-butter) !important;
 }
 .ayna-mobile[data-theme='dark'] .ayna-bottom-nav button:not(.is-active) {
   color: var(--ayna-text-muted) !important;
@@ -233,7 +233,7 @@
 
 /* Black full-screen sections; reserve neon for smaller accent surfaces. */
 .ayna-mobile[data-theme='dark'] :is(.ay-cover, .ay-deck, .ayna-fresh-profile-hero) {
-  --ay-ink: #ffffff;
+  --legacy-ink: #ffffff;
   --ay-paper: #3e2723;
   background: var(--ayna-bg) !important;
   color: #ffedac !important;
@@ -267,8 +267,8 @@
   color: #2e1c18 !important;
   border-color: #2e1c18 !important;
 }
-.ayna-mobile[data-theme='dark'] .ay-badge--butter.is-earned { background: var(--ay-butter) !important; }
-.ayna-mobile[data-theme='dark'] .ay-badge--pink.is-earned { background: var(--ay-pink) !important; }
+.ayna-mobile[data-theme='dark'] .ay-badge--butter.is-earned { background: var(--legacy-butter) !important; }
+.ayna-mobile[data-theme='dark'] .ay-badge--pink.is-earned { background: var(--legacy-pink) !important; }
 .ayna-mobile[data-theme='dark'] .ay-badge--mint.is-earned { background: var(--ay-mint) !important; }
 .ayna-mobile[data-theme='dark'] .ay-badge--peri.is-earned { background: var(--ay-peri) !important; }
 .ayna-mobile[data-theme='dark'] .ay-badge.is-earned small { color: #303036 !important; }
@@ -277,15 +277,15 @@
   background: #ffffff !important;
 }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu > button > div:first-child {
-  --ay-ink: #2e1c18;
+  --legacy-ink: #2e1c18;
   color: #2e1c18 !important;
   border-color: #2e1c18 !important;
 }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu > button:nth-of-type(6) > div:first-child {
-  background: var(--ay-pink) !important;
+  background: var(--legacy-pink) !important;
 }
 .ayna-mobile[data-theme='dark'] .ay-hub-badge {
-  background: var(--ay-butter) !important;
+  background: var(--legacy-butter) !important;
   border-color: #2e1c18 !important;
   color: #2e1c18 !important;
 }
@@ -297,12 +297,12 @@
   color: #ffedac !important;
 }
 .ayna-mobile[data-theme='dark'] .ay-cover-widget .ay-reel {
-  --ay-ink: #2e1c18;
+  --legacy-ink: #2e1c18;
   --ay-paper: #ffffff;
   color: #2e1c18 !important;
 }
 .ayna-mobile[data-theme='dark'] .ay-deck-card {
-  --ay-ink: #2e1c18;
+  --legacy-ink: #2e1c18;
   --ay-paper: #ffffff;
   color: #2e1c18 !important;
 }
@@ -338,7 +338,7 @@
   color: #ffedac !important;
 }
 .ayna-mobile[data-theme='dark'] .am-product em {
-  background: var(--ay-butter) !important;
+  background: var(--legacy-butter) !important;
   color: #2e1c18 !important;
 }
 .ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active svg {
@@ -357,7 +357,7 @@
   color: #ffedac !important;
 }
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ay-hub-badge {
-  background: var(--ay-butter) !important;
+  background: var(--legacy-butter) !important;
   border-color: #2e1c18 !important;
   color: #2e1c18 !important;
 }
@@ -373,7 +373,7 @@
 
 /* Bright action cards use dark ink; the auth sheet uses a neon primary action. */
 .ayna-mobile[data-theme='dark'] .ay-discover-cta {
-  --ay-ink: #2e1c18;
+  --legacy-ink: #2e1c18;
   --ay-paper: #ffffff;
   color: #2e1c18 !important;
 }
@@ -381,7 +381,7 @@
   color: #2e1c18 !important;
 }
 .ayna-mobile[data-theme='dark'] .ayna-profile-auth-sheet .ayna-profile-auth-primary {
-  background: var(--ay-pink) !important;
+  background: var(--legacy-pink) !important;
   color: #2e1c18 !important;
 }
 
@@ -398,7 +398,7 @@
   color: var(--ayna-text) !important;
 }
 .ayna-mobile[data-theme='dark'] .ayna-cabinet-section-head h2 small {
-  background: var(--ay-pink) !important;
+  background: var(--legacy-pink) !important;
   color: #2e1c18 !important;
 }
 .ayna-mobile[data-theme='dark'] .ayna-cabinet-section-head > span {
@@ -410,7 +410,7 @@
   color: #2e1c18 !important;
 }
 .ayna-mobile[data-theme='dark'] .ay-eco-play {
-  background: var(--ay-butter) !important;
+  background: var(--legacy-butter) !important;
   color: #2e1c18 !important;
 }
 .ayna-mobile[data-theme='dark'] .ay-eco-play svg {
@@ -424,15 +424,15 @@
 }
 .ayna-mobile[data-theme='dark'] .ayna-shop-category[aria-pressed='true'],
 .ayna-mobile[data-theme='dark'] .ayna-category-expanded button[aria-pressed='true'] {
-  background: var(--ay-pink) !important;
-  border-color: var(--ay-pink) !important;
+  background: var(--legacy-pink) !important;
+  border-color: var(--legacy-pink) !important;
   color: #2e1c18 !important;
 }
 
 /* Keep decorative stars visible on the black canvas. */
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover-stars i:nth-child(2),
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover-stars i:nth-child(5) {
-  background: var(--ay-pink) !important;
+  background: var(--legacy-pink) !important;
 }
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover .ayna-slide-start {
   background: var(--ayna-surface) !important;
@@ -457,7 +457,7 @@
   color: #ffedac !important;
 }
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection .ayna-cabinet-section-head h2 small {
-  background: var(--ay-pink) !important;
+  background: var(--legacy-pink) !important;
   border-color: #2e1c18 !important;
   color: #2e1c18 !important;
 }

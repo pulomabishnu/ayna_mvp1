@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { buildRundown } from './buildRundown.js';
 import { buildWeeklyRecap } from './weeklyRecap.js';
 import RundownStory from './RundownStory.jsx';
-import { markCardSeen, markNotUseful, markPeriodAnswer, markRundownViewed, markWeeklySeen, readRundownMemory, setRundownOwner, finishedRundown } from './rundownStore.js';
+import { markCardSeen, markNotUseful, markPeriodAnswer, markRundownHidden, markRundownViewed, markWeeklySeen, readRundownMemory, setRundownOwner, finishedRundown } from './rundownStore.js';
 import { autoLaunchDecision, listenForExternalOpens, openedExternally, urlIsDeepLink } from './autoLaunch.js';
 import { setTodayAskContext } from '../../utils/askToday.js';
 import { getAskHealthPref } from '../../health/askHealthPref.js';
@@ -19,6 +19,8 @@ import { readRoutinePrefs } from '../../health/routines.js';
 import { onboardingDoneAt, onboardingJustFinished } from '../../health/onboardingSignal.js';
 import './rundown.css';
 import { MarkSticker } from '../personality/DS.jsx';
+import ItemMenu from '../today/ItemMenu.jsx';
+import { rebookIfOn } from '../today/rundownPush.js';
 
 const REMIND_TEXT = {
   scheduled: 'We will send “Your daily rundown is ready.” tomorrow morning, if notifications are on in the ayna app.',
@@ -47,6 +49,11 @@ export default function Rundown({
   onFinish,
   // The app's one-screen Home: the card only (the weekly recap is on the full dashboard).
   compact = false,
+  // Website Today: the weekly recap's entry moves to the right column ("Your
+  // week"); onWeekly(info | null) hands it the recap's real lines and opener.
+  onWeekly = null,
+  // Called when the story closes (Today shows the notification ask after her first Rundown).
+  onClosed = null,
 }) {
   const [memory, setMemory] = useState(() => { setRundownOwner(userId); return readRundownMemory(); });
   const [open, setOpen] = useState(null); // 'daily' | 'weekly' | null
@@ -101,7 +108,7 @@ export default function Rundown({
     const list = kind === 'weekly' ? weekly.cards : daily.cards;
     trackToday('rundown_opened', { kind, count: list.length, categories: [...new Set(list.map((c) => c.category))] });
     if (kind === 'weekly') markWeeklySeen(today);
-    else setMemory(markRundownViewed(today, { auto }));
+    else { setMemory(markRundownViewed(today, { auto })); rebookIfOn(today); }
     setHighlight(false);
     setOpen(kind);
   };
@@ -130,8 +137,21 @@ export default function Rundown({
     });
   }, [today, daily.cards, weekly.cards, t.log, t.tries, t.decision]);
 
+  // The health dashboard's one-line "Today's Rundown · N things · Start" (HealthHome
+  // RundownEntry): say how many cards there are, and start when it asks.
+  const cardCount = daily.cards.filter((c) => c.category !== 'frame').length;
+  useEffect(() => {
+    const say = () => { try { window.dispatchEvent(new CustomEvent('ayna:rundown-state', { detail: { count: cardCount } })); } catch { /* old browser */ } };
+    const go = () => { if (cardCount) start('daily'); };
+    say();
+    window.addEventListener('ayna:rundown-ask', say);
+    window.addEventListener('ayna:rundown-start', go);
+    return () => { window.removeEventListener('ayna:rundown-ask', say); window.removeEventListener('ayna:rundown-start', go); };
+  }, [cardCount]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Auto-launch: the first open of the day at or after 8 (autoLaunch.js).
-  const hasContent = daily.cards.length > 0;
+  // Hidden for today from its "…" menu: no auto-open either (safety and care never hide).
+  const hasContent = daily.cards.length > 0 && !(memory.hiddenDay === today && !daily.cards.some((c) => c.protected));
   useEffect(() => {
     listenForExternalOpens();
     const check = () => {
@@ -152,6 +172,7 @@ export default function Rundown({
       if (decision === 'open') {
         trackToday('rundown_opened', { kind: 'daily', count: daily.cards.length, categories: [...new Set(daily.cards.map((c) => c.category))] });
         setMemory(markRundownViewed(today, { auto: true }));
+        rebookIfOn(today);
         setOpen('daily');
       }
       else if (decision === 'highlight') setHighlight(true);
@@ -183,7 +204,27 @@ export default function Rundown({
     trackToday('rundown_closed', { kind: open, seen, count });
     setOpen(null);
     setMemory(readRundownMemory());
+    onClosed?.();
   };
+
+  // "Your week · 3 changes" (Today audit, issue 6): say what the row opens.
+  const weekChanges = weekly.cards.find((c) => c.key === 'weekly:changes')?.lines || [];
+  const weekStats = weekly.cards.filter((c) => c.kind === 'stat').map((c) => c.title);
+  const weekLabel = weekChanges.length ? `Your week · ${weekChanges.length} ${weekChanges.length === 1 ? 'change' : 'changes'}` : 'Your week · recap';
+  const weekKey = weekly.cards.length ? `${weekLabel}|${weekStats.join('|')}|${weekChanges.join('|')}` : '';
+  const onWeeklyRef = useRef(onWeekly);
+  useEffect(() => { onWeeklyRef.current = onWeekly; });
+  const startRef = useRef(null);
+  useEffect(() => { startRef.current = start; });
+  useEffect(() => {
+    if (!onWeeklyRef.current) return;
+    onWeeklyRef.current(weekKey ? { label: weekLabel, changes: weekChanges, stats: weekStats, open: () => startRef.current?.('weekly') } : null);
+  }, [weekKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const protectedToday = daily.cards.some((c) => c.protected);
+  const hiddenToday = memory.hiddenDay === today && !protectedToday;
+  const hide = (on) => { setMemory(markRundownHidden(today, on)); trackToday('rundown_card_action', { kind: 'daily', category: 'frame', action: on ? 'hide_today' : 'show_today' }); };
+  const things = daily.cards.filter((c) => c.category !== 'frame').length;
 
   if (!daily.cards.length && !weekly.cards.length) {
     if (intake || !onSetUp) return null;
@@ -200,25 +241,33 @@ export default function Rundown({
   }
   return (
     <section className={`ay-rd-hero${compact ? ' is-compact' : ''}`} aria-labelledby="ay-rd-hero-h">
-      {daily.cards.length > 0 && (
+      {daily.cards.length > 0 && hiddenToday && (
+        <p className="ay-rd-hero__hidden">Your Daily Rundown is hidden for today. <button type="button" onClick={() => hide(false)}>Show it</button></p>
+      )}
+      {daily.cards.length > 0 && !hiddenToday && (
         <div className={`ay-rd-hero__card${highlight ? ' is-new' : ''}`} data-tour="rundown-card">
           <MarkSticker name="sparkle" tone="pink" className="ay-rd-hero__sticker" />
           {highlight && <p className="ay-rd-hero__new">Ready for today</p>}
-          <p className="ay-rd-hero__kicker">{daily.cards.some((c) => c.protected) ? 'Something important today' : 'Today'}</p>
+          <p className="ay-rd-hero__kicker">{protectedToday ? 'Something important today' : 'Today'}{!compact && things > 0 ? ` · ${things} ${things === 1 ? 'thing' : 'things'}` : ''}</p>
           <h2 id="ay-rd-hero-h">Your Daily Rundown</h2>
           <p>60 seconds. The things worth knowing about your health today.</p>
           {/* A peek at what is inside: the real card labels, in story order. */}
-          {daily.cards.filter((c) => c.category !== 'frame').length > 0 && (
+          {things > 0 && (
             <ol className="ay-rd-hero__inside" aria-label="Inside today's rundown">
               {daily.cards.filter((c) => c.category !== 'frame').slice(0, 4).map((c) => <li key={c.key} className={`is-${c.category}`}>{c.kicker}</li>)}
             </ol>
           )}
           <button type="button" className="ay-rd-hero__go" onClick={() => start('daily')}>Start rundown</button>
+          {!compact && !protectedToday && (
+            <ItemMenu label="More for your Daily Rundown" className="is-rundown">
+              <button type="button" onClick={() => hide(true)}>Hide today</button>
+            </ItemMenu>
+          )}
         </div>
       )}
-      {weekly.cards.length > 0 && !compact && (
+      {weekly.cards.length > 0 && !compact && !onWeekly && (
         <button type="button" className="ay-rd-hero__week" onClick={() => start('weekly')}>
-          <span><b>Your week on ayna</b><small>Here is what changed.</small></span>
+          <span><b>{weekLabel}</b><small>Here is what changed.</small></span>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
         </button>
       )}
@@ -226,7 +275,7 @@ export default function Rundown({
         <RundownStory
           cards={cards}
           title={open === 'weekly' ? 'Your week on ayna' : 'Your daily rundown'}
-          onClose={(s) => { close(s); finish(finishedRundown(s)); }}
+          onClose={(s) => { close(s); finish(finishedRundown(s)); if (finishedRundown(s)) { try { window.dispatchEvent(new CustomEvent('ayna:rundown-state', { detail: { completed: true, kind: open } })); } catch { /* old browser */ } } }}
           onSeen={onSeen}
           onAction={onAction}
           onCheckIn={(field, value) => t.saveLog(today, { [field]: value })}
