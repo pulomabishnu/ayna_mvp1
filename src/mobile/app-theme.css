@@ -65,7 +65,7 @@
   --ay-tile: #f5ecd2;
   --ay-line: var(--r-line);
   --ay-shadow: var(--r-shadow);
-  --ay-shadow-lg: 4px 4px 0 var(--b-espresso);
+  --ay-shadow-lg: none;
   --ay-font-display: var(--f-display);
   --ay-font-ui: var(--f-ui);
   --ay-radius-sm: var(--r-radius-s);
@@ -139,7 +139,7 @@
   --ay-mint: rgba(247, 186, 221, .22);
   --ay-mint-deep: var(--b-rose);
   --ay-tile: rgba(255, 237, 172, .06);
-  --ay-shadow-lg: 4px 4px 0 rgba(0, 0, 0, .45);
+  --ay-shadow-lg: none;
   --ay-section: var(--b-sky);
   --ayna-accent: var(--b-sky);
   --ayna-chip-border: var(--r-line-strong);
