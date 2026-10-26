@@ -1,3 +1,4 @@
+import { localToday } from '../utils/localDate.js';
 /**
  * DEVELOPMENT ONLY: made-up daily rows so the health screens can be seen and
  * tested in the local preview (?healthdemo=1). Only read behind
@@ -10,7 +11,7 @@ const iso = (t) => new Date(t).toISOString().slice(0, 10);
 // Small deterministic wobble so the charts look like real days.
 const wobble = (i, amp) => Math.round(Math.sin(i * 1.7) * amp + Math.cos(i * 0.6) * amp * 0.6);
 
-export function devDemoRows(today = iso(Date.now())) {
+export function devDemoRows(today = localToday()) {
   const end = Date.parse(`${today}T00:00:00Z`);
   const rows = [];
   const add = (metric, i, value) => rows.push({ metric, day: iso(end - i * DAY), value, source: 'apple_health', origin: 'apple_health', method: 'observed' });

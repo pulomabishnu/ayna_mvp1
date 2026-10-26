@@ -6,6 +6,7 @@ import { tourDecision, tipsToShow, rundownSettled, screensFor, avoidFor } from '
 import { readTour, setTourOwner, setTipsEnabled, markScreenSeen, markWelcomeOffered, markOffNoteShown } from './tourStore.js';
 import { topDialog, usableAnchor, currentScreen, visibleAvoidRects, placeBubble, EDGE } from './tourDom.js';
 import './tutorial.css';
+import { localDayKey } from '../../utils/localDate.js';
 
 /**
  * The one overlay for tips (TUTORIAL_RESEARCH.md). It reads the screen from
@@ -51,7 +52,7 @@ const SURFACES = {
   },
 };
 // Same local day string as the Rundown memory uses.
-const localToday = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const localToday = (d = new Date()) => localDayKey(d);
 const POLL_MS = 450;
 const STABLE_POLLS = 2;
 

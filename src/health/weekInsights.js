@@ -20,6 +20,7 @@
 import { resolveDaily, series } from './dedupe.js';
 import { estimatePhase } from './phase.js';
 import { fmtMinutes, RECENT_DAYS, BASELINE_DAYS } from './insights.js';
+import { localToday } from '../utils/localDate.js';
 
 const DAY = 86400000;
 const MIN_RECENT = 4;
@@ -283,8 +284,14 @@ export function periodInsight(ctx, estimate, cycle) {
  * @param {object} opts  { today, cycle, estimate, hormonalBC, preferred, max }
  * @returns {{ insights: Array, ctx: object }}  insights is [] when data is thin.
  */
+function missingToday(name) {
+  if (import.meta.env?.DEV) console.warn(`${name}: pass { today: localToday() }`);
+  return localToday();
+}
+
 export function explainWeek(rows, opts = {}) {
-  const today = opts.today || isoDay(Date.now());
+  // `today` is her local day (P0 date bug): callers pass localToday(). Never the UTC date.
+  const today = opts.today || missingToday('explainWeek');
   const resolved = resolveDaily(rows || [], opts.preferred);
   const ctx = cycleContext({ cycle: opts.cycle, estimate: opts.estimate, today, hormonalBC: opts.hormonalBC });
   const all = [

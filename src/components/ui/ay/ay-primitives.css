@@ -1,0 +1,129 @@
+/* ayna shared primitives (all-pages brief "Everywhere first"; v2 audits section 10).
+   Uses only --ay-* tokens from src/styles/ay-tokens.css (--ay-espresso and
+   --ay-plate stay fixed in dark mode: product plates and the pink section).
+   Every selector is prefixed with :is(#ayk, .the-class) x4. #ayk never
+   exists, so the rule matches only the class, but carries the weight of 4 ids and
+   wins over the older layered page CSS (.ayna-mobile x12, #pdp-v4, html body ...).
+   Keep this pattern when adding a rule. */
+/* ===== Type: 8 styles (PDP build brief). Classes for every page. ===== */
+:is(#ayk, .ay-t-display):is(#ayk, .ay-t-display):is(#ayk, .ay-t-display):is(#ayk, .ay-t-display) { font: 700 var(--ay-size-display)/1.05 var(--ay-font-display) !important; letter-spacing: -.01em; color: var(--ay-ink); }
+:is(#ayk, .ay-t-h1):is(#ayk, .ay-t-h1):is(#ayk, .ay-t-h1):is(#ayk, .ay-t-h1) { font: 700 var(--ay-size-h1)/1.1 var(--ay-font-display) !important; color: var(--ay-ink); }
+:is(#ayk, .ay-t-h2):is(#ayk, .ay-t-h2):is(#ayk, .ay-t-h2):is(#ayk, .ay-t-h2) { font: 700 var(--ay-size-h2)/1.15 var(--ay-font-display) !important; color: var(--ay-ink); }
+:is(#ayk, .ay-t-h3):is(#ayk, .ay-t-h3):is(#ayk, .ay-t-h3):is(#ayk, .ay-t-h3) { font: 700 var(--ay-size-h3)/1.3 var(--ay-font-ui) !important; color: var(--ay-ink); }
+:is(#ayk, .ay-t-body):is(#ayk, .ay-t-body):is(#ayk, .ay-t-body):is(#ayk, .ay-t-body) { font: 500 var(--ay-size-body)/1.55 var(--ay-font-ui) !important; color: var(--ay-ink); }
+:is(#ayk, .ay-t-ui):is(#ayk, .ay-t-ui):is(#ayk, .ay-t-ui):is(#ayk, .ay-t-ui) { font: 600 var(--ay-size-ui)/1.3 var(--ay-font-ui) !important; }
+:is(#ayk, .ay-t-meta):is(#ayk, .ay-t-meta):is(#ayk, .ay-t-meta):is(#ayk, .ay-t-meta) { font: 500 var(--ay-size-meta)/1.4 var(--ay-font-ui) !important; color: var(--ay-ink-muted); }
+:is(#ayk, .ay-t-caption):is(#ayk, .ay-t-caption):is(#ayk, .ay-t-caption):is(#ayk, .ay-t-caption) { font: 500 var(--ay-size-caption)/1.4 var(--ay-font-ui) !important; color: var(--ay-ink-muted); }
+:is(#ayk, .ay-t-display, .ay-t-h1, .ay-t-h2, .ay-t-h3):is(#ayk, .ay-t-display, .ay-t-h1, .ay-t-h2, .ay-t-h3):is(#ayk, .ay-t-display, .ay-t-h1, .ay-t-h2, .ay-t-h3):is(#ayk, .ay-t-display, .ay-t-h1, .ay-t-h2, .ay-t-h3) { margin: 0; text-transform: none !important; }
+
+/* ===== Chip: butter, 1.5px ink outline, radius 8; selected = espresso ===== */
+:is(#ayk, .ayk-chiprow):is(#ayk, .ayk-chiprow):is(#ayk, .ayk-chiprow):is(#ayk, .ayk-chiprow) { display: flex; flex-wrap: wrap; gap: var(--ay-sp-8); overflow: visible; }
+:is(#ayk, .ayk-chip):is(#ayk, .ayk-chip):is(#ayk, .ayk-chip):is(#ayk, .ayk-chip) { display: inline-flex; align-items: center; gap: 6px; min-height: var(--ay-tap) !important; padding: 0 var(--ay-sp-12) !important; margin: 0 !important; border: var(--ay-outline) !important; border-radius: var(--ay-r-sm) !important; background: var(--ay-chip-bg) !important; color: var(--ay-ink) !important; box-shadow: none !important; font: 600 var(--ay-size-ui)/1.2 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; white-space: nowrap; cursor: pointer; transition: background-color var(--ay-dur-ui) ease, color var(--ay-dur-ui) ease; }
+:is(#ayk, .ayk-chip):is(#ayk, .ayk-chip):is(#ayk, .ayk-chip):is(#ayk, .ayk-chip).is-on { background: var(--ay-fill-ink) !important; color: var(--ay-on-ink) !important; }
+:is(#ayk, .ayk-chip):is(#ayk, .ayk-chip):is(#ayk, .ayk-chip):is(#ayk, .ayk-chip):disabled { opacity: .5; cursor: not-allowed; }
+:is(#ayk, .ayk-chip__icon):is(#ayk, .ayk-chip__icon):is(#ayk, .ayk-chip__icon):is(#ayk, .ayk-chip__icon) { display: inline-flex; width: 18px; height: 18px; }
+:is(#ayk, .ayk-chip__icon):is(#ayk, .ayk-chip__icon):is(#ayk, .ayk-chip__icon):is(#ayk, .ayk-chip__icon) svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.75; }
+
+/* ===== PillTabs: butter-deep track, ink outline, espresso selected, <=5, never scrolls ===== */
+:is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs) { display: grid !important; grid-template-columns: repeat(var(--ayk-tabs-n, 4), minmax(0, 1fr)) !important; gap: 2px !important; width: 100%; max-width: 640px; margin: 0 !important; padding: var(--ay-sp-4) !important; overflow: hidden !important; border: var(--ay-outline) !important; border-radius: var(--ay-r-pill) !important; background: var(--ay-track) !important; box-shadow: none !important; }
+:is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab) { display: inline-flex !important; align-items: center; justify-content: center; gap: 4px; min-width: 0; min-height: var(--ay-tap) !important; margin: 0 !important; padding: var(--ay-sp-4) 6px !important; border: 0 !important; border-radius: var(--ay-r-pill) !important; background: transparent !important; color: var(--ay-ink) !important; box-shadow: none !important; font: 600 var(--ay-size-caption)/1.1 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-align: center; text-decoration: none !important; text-transform: none !important; overflow-wrap: anywhere; cursor: pointer; transition: background-color 160ms cubic-bezier(.65, 0, .35, 1), color 160ms cubic-bezier(.65, 0, .35, 1); }
+:is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab).is-on { background: var(--ay-fill-ink) !important; color: var(--ay-on-ink) !important; }
+:is(#ayk, .ayk-tabs__count):is(#ayk, .ayk-tabs__count):is(#ayk, .ayk-tabs__count):is(#ayk, .ayk-tabs__count) { font-weight: 700; opacity: .8; }
+
+/* ===== Buttons: primary 48 with the one pink sticker; outline 44; text link ===== */
+:is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn) { display: inline-flex; align-items: center; justify-content: center; gap: var(--ay-sp-8); margin: 0; padding: 0 var(--ay-sp-24) !important; border-radius: var(--ay-r-pill) !important; font: 600 var(--ay-size-ui)/1.2 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; text-decoration: none !important; white-space: nowrap; cursor: pointer; transition: transform var(--ay-dur-press) ease, box-shadow var(--ay-dur-press) ease; }
+:is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn).is-primary { min-height: var(--ay-h-primary) !important; border: 0 !important; background: var(--ay-fill-ink) !important; color: var(--ay-on-ink) !important; box-shadow: var(--ay-sticker) !important; }
+:is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn).is-primary:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 0 0 0 transparent !important; }
+:is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn).is-outline { min-height: var(--ay-h-secondary) !important; border: var(--ay-outline) !important; background: transparent !important; color: var(--ay-ink) !important; box-shadow: none !important; }
+:is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn).is-text { min-height: var(--ay-tap) !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--ay-ink) !important; box-shadow: none !important; text-decoration: underline !important; text-underline-offset: 3px; }
+:is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):disabled { opacity: .5; cursor: not-allowed; }
+:is(#ayk, .ayk-btn__icon):is(#ayk, .ayk-btn__icon):is(#ayk, .ayk-btn__icon):is(#ayk, .ayk-btn__icon) { display: inline-flex; width: 18px; height: 18px; }
+
+:is(#ayk, .ayk-stickerhead):is(#ayk, .ayk-stickerhead):is(#ayk, .ayk-stickerhead):is(#ayk, .ayk-stickerhead) { display: inline-flex; align-items: center; min-height: var(--ay-tap); margin: 0; padding: var(--ay-sp-4) var(--ay-sp-24) !important; border: var(--ay-outline) !important; border-radius: var(--ay-r-pill) !important; background: var(--ay-chip-bg) !important; box-shadow: var(--ay-sticker) !important; color: var(--ay-ink) !important; font: 700 var(--ay-size-h2)/1.15 var(--ay-font-display) !important; text-transform: none !important; }
+
+/* ===== Plate: the PDP scalloped plate, product at 70% ===== */
+:is(#ayk, .ayk-plate):is(#ayk, .ayk-plate):is(#ayk, .ayk-plate):is(#ayk, .ayk-plate) { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1 / 1; overflow: visible; background: none !important; border: 0 !important; box-shadow: none !important; }
+:is(#ayk, .ayk-plate):is(#ayk, .ayk-plate):is(#ayk, .ayk-plate):is(#ayk, .ayk-plate).is-portrait { aspect-ratio: 4 / 5; }
+:is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg) { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+:is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg) path { fill: var(--ay-plate); stroke: none; }
+:is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg).has-stroke path { stroke: var(--ay-espresso); stroke-width: 1.5px; }
+:is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg).is-pink path { fill: var(--ay-pink); }
+:is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg).is-butter path { fill: var(--ay-butter-deep); }
+:is(#ayk, .ayk-plate__img):is(#ayk, .ayk-plate__img):is(#ayk, .ayk-plate__img):is(#ayk, .ayk-plate__img) { position: relative; width: 70% !important; height: 70% !important; object-fit: contain !important; border-radius: 0 !important; background: none !important; mix-blend-mode: multiply; }
+:is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name) { position: relative; max-width: 70%; color: var(--ay-espresso) !important; font: 700 var(--ay-size-h3)/1.2 var(--ay-font-display) !important; text-align: center; overflow-wrap: anywhere; }
+:is(#ayk, .ayk-plate__sticker):is(#ayk, .ayk-plate__sticker):is(#ayk, .ayk-plate__sticker):is(#ayk, .ayk-plate__sticker) { position: absolute; top: 6%; left: 6%; }
+
+/* ===== Category sticker + status pill ===== */
+:is(#ayk, .ayk-sticker):is(#ayk, .ayk-sticker):is(#ayk, .ayk-sticker):is(#ayk, .ayk-sticker) { display: inline-flex; align-items: center; min-height: 24px; padding: 2px var(--ay-sp-8) !important; border: var(--ay-outline) !important; border-radius: var(--ay-r-sm) !important; background: var(--ay-chip-bg) !important; color: var(--ay-ink) !important; font: 600 var(--ay-size-caption)/1.2 var(--ay-font-ui) !important; white-space: nowrap; }
+:is(#ayk, .ayk-plate):is(#ayk, .ayk-plate):is(#ayk, .ayk-plate):is(#ayk, .ayk-plate) .ayk-sticker { background: var(--ay-butter) !important; color: var(--ay-espresso) !important; border-color: var(--ay-espresso) !important; }
+:is(#ayk, .ayk-status):is(#ayk, .ayk-status):is(#ayk, .ayk-status):is(#ayk, .ayk-status) { display: inline-flex; align-items: center; min-height: 24px; padding: 2px 10px !important; border-radius: var(--ay-r-pill) !important; font: 600 var(--ay-size-caption)/1.2 var(--ay-font-ui) !important; white-space: nowrap; }
+:is(#ayk, .ayk-status):is(#ayk, .ayk-status):is(#ayk, .ayk-status):is(#ayk, .ayk-status).is-quiet { border: var(--ay-outline) !important; background: transparent !important; color: var(--ay-ink) !important; }
+:is(#ayk, .ayk-status):is(#ayk, .ayk-status):is(#ayk, .ayk-status):is(#ayk, .ayk-status).is-ink { border: 0 !important; background: var(--ay-fill-ink) !important; color: var(--ay-on-ink) !important; }
+
+/* ===== Scallop edge: section edges only ===== */
+:is(#ayk, .ayk-edge):is(#ayk, .ayk-edge):is(#ayk, .ayk-edge):is(#ayk, .ayk-edge) { display: block; width: 100%; height: 12px; }
+:is(#ayk, .ayk-edge):is(#ayk, .ayk-edge):is(#ayk, .ayk-edge):is(#ayk, .ayk-edge).is-top { transform: rotate(180deg); }
+:is(#ayk, .ayk-edge):is(#ayk, .ayk-edge):is(#ayk, .ayk-edge):is(#ayk, .ayk-edge) path { fill: var(--ay-fill-ink); }
+:is(#ayk, .ayk-edge):is(#ayk, .ayk-edge):is(#ayk, .ayk-edge):is(#ayk, .ayk-edge).is-butter path { fill: var(--ay-butter); }
+:is(#ayk, .ayk-edge):is(#ayk, .ayk-edge):is(#ayk, .ayk-edge):is(#ayk, .ayk-edge).is-ink path { fill: var(--ay-espresso); }
+
+/* ===== Big-number fact on a white tile ===== */
+:is(#ayk, .ayk-fact):is(#ayk, .ayk-fact):is(#ayk, .ayk-fact):is(#ayk, .ayk-fact) { display: grid; gap: var(--ay-sp-4); align-content: start; padding: var(--ay-sp-16) !important; border: var(--ay-rule) !important; border-radius: var(--ay-r-md) !important; background: var(--ay-surface) !important; box-shadow: none !important; }
+:is(#ayk, .ayk-fact__label):is(#ayk, .ayk-fact__label):is(#ayk, .ayk-fact__label):is(#ayk, .ayk-fact__label) { font: 600 var(--ay-size-meta)/1.3 var(--ay-font-ui) !important; color: var(--ay-ink); }
+:is(#ayk, .ayk-fact__num):is(#ayk, .ayk-fact__num):is(#ayk, .ayk-fact__num):is(#ayk, .ayk-fact__num) { font: 800 var(--ay-size-display)/1 var(--ay-font-display) !important; color: var(--ay-ink); font-variant-numeric: tabular-nums; }
+:is(#ayk, .ayk-fact__unit):is(#ayk, .ayk-fact__unit):is(#ayk, .ayk-fact__unit):is(#ayk, .ayk-fact__unit) { margin-left: 2px; font-size: .5em; font-weight: 700; }
+:is(#ayk, .ayk-fact):is(#ayk, .ayk-fact):is(#ayk, .ayk-fact):is(#ayk, .ayk-fact).is-inline { grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: var(--ay-sp-12); }
+:is(#ayk, .ayk-fact):is(#ayk, .ayk-fact):is(#ayk, .ayk-fact):is(#ayk, .ayk-fact).is-inline .ayk-fact__label { grid-column: 1 / -1; }
+:is(#ayk, .ayk-fact__cap):is(#ayk, .ayk-fact__cap):is(#ayk, .ayk-fact__cap):is(#ayk, .ayk-fact__cap) { font: 500 var(--ay-size-caption)/1.4 var(--ay-font-ui) !important; color: var(--ay-ink-muted); }
+
+/* ===== Label / value rows with thin rules ===== */
+:is(#ayk, .ayk-rows):is(#ayk, .ayk-rows):is(#ayk, .ayk-rows):is(#ayk, .ayk-rows) { display: grid; margin: 0 !important; padding: 0 !important; }
+:is(#ayk, .ayk-rows__row):is(#ayk, .ayk-rows__row):is(#ayk, .ayk-rows__row):is(#ayk, .ayk-rows__row) { display: grid; grid-template-columns: 1fr; gap: 2px; padding: var(--ay-sp-12) 0 !important; border-top: var(--ay-rule); }
+:is(#ayk, .ayk-rows__row):is(#ayk, .ayk-rows__row):is(#ayk, .ayk-rows__row):is(#ayk, .ayk-rows__row):first-child { border-top: 0; }
+@media (min-width: 768px) {
+  :is(#ayk, .ayk-rows):is(#ayk, .ayk-rows):is(#ayk, .ayk-rows):is(#ayk, .ayk-rows).is-columns .ayk-rows__row { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: var(--ay-sp-12); }
+}
+:is(#ayk, .ayk-rows):is(#ayk, .ayk-rows):is(#ayk, .ayk-rows):is(#ayk, .ayk-rows) dt { margin: 0; font: 500 var(--ay-size-meta)/1.4 var(--ay-font-ui) !important; color: var(--ay-ink-muted); }
+:is(#ayk, .ayk-rows):is(#ayk, .ayk-rows):is(#ayk, .ayk-rows):is(#ayk, .ayk-rows) dd { margin: 0; font: 600 var(--ay-size-body)/1.4 var(--ay-font-ui) !important; color: var(--ay-ink); }
+:is(#ayk, .ayk-rows__note):is(#ayk, .ayk-rows__note):is(#ayk, .ayk-rows__note):is(#ayk, .ayk-rows__note) { display: block; font: 500 var(--ay-size-caption)/1.4 var(--ay-font-ui); color: var(--ay-ink-muted); }
+
+/* ===== Progress as a count ===== */
+:is(#ayk, .ayk-progress):is(#ayk, .ayk-progress):is(#ayk, .ayk-progress):is(#ayk, .ayk-progress) { display: grid; gap: 6px; }
+:is(#ayk, .ayk-progress__text):is(#ayk, .ayk-progress__text):is(#ayk, .ayk-progress__text):is(#ayk, .ayk-progress__text) { font: 600 var(--ay-size-ui)/1.3 var(--ay-font-ui) !important; color: var(--ay-ink); font-variant-numeric: tabular-nums; }
+:is(#ayk, .ayk-progress__bar):is(#ayk, .ayk-progress__bar):is(#ayk, .ayk-progress__bar):is(#ayk, .ayk-progress__bar) { display: block; height: 4px; overflow: hidden; border-radius: var(--ay-r-pill); background: var(--ay-track); }
+:is(#ayk, .ayk-progress__bar):is(#ayk, .ayk-progress__bar):is(#ayk, .ayk-progress__bar):is(#ayk, .ayk-progress__bar) > span { display: block; height: 100%; border-radius: inherit; background: var(--ay-fill-ink); }
+
+/* ===== Count ring: cycle day and routine streak only ===== */
+:is(#ayk, .ayk-ring):is(#ayk, .ayk-ring):is(#ayk, .ayk-ring):is(#ayk, .ayk-ring) { position: relative; display: inline-grid; justify-items: center; gap: var(--ay-sp-4); }
+:is(#ayk, .ayk-ring):is(#ayk, .ayk-ring):is(#ayk, .ayk-ring):is(#ayk, .ayk-ring) svg { width: var(--ayk-ring-size, 72px); height: var(--ayk-ring-size, 72px); }
+:is(#ayk, .ayk-ring__track):is(#ayk, .ayk-ring__track):is(#ayk, .ayk-ring__track):is(#ayk, .ayk-ring__track) { fill: none; stroke: var(--ay-track); stroke-width: 3; }
+:is(#ayk, .ayk-ring__fill):is(#ayk, .ayk-ring__fill):is(#ayk, .ayk-ring__fill):is(#ayk, .ayk-ring__fill) { fill: none; stroke: var(--ay-fill-ink); stroke-width: 3; stroke-linecap: round; }
+:is(#ayk, .ayk-ring__num):is(#ayk, .ayk-ring__num):is(#ayk, .ayk-ring__num):is(#ayk, .ayk-ring__num) { position: absolute; top: calc(var(--ayk-ring-size, 72px) / 2); left: 50%; transform: translate(-50%, -50%); font: 800 var(--ay-size-h2)/1 var(--ay-font-display) !important; color: var(--ay-ink); font-variant-numeric: tabular-nums; }
+:is(#ayk, .ayk-ring__of):is(#ayk, .ayk-ring__of):is(#ayk, .ayk-ring__of):is(#ayk, .ayk-ring__of) { font-size: .6em; font-weight: 700; }
+:is(#ayk, .ayk-ring__cap):is(#ayk, .ayk-ring__cap):is(#ayk, .ayk-ring__cap):is(#ayk, .ayk-ring__cap) { font: 500 var(--ay-size-caption)/1.4 var(--ay-font-ui) !important; color: var(--ay-ink-muted); }
+
+/* ===== Lists: Show all N, Do / Don't ===== */
+:is(#ayk, .ayk-list):is(#ayk, .ayk-list):is(#ayk, .ayk-list):is(#ayk, .ayk-list) { display: grid; gap: var(--ay-sp-8); margin: 0 !important; padding: 0 !important; list-style: none !important; }
+:is(#ayk, .ayk-list):is(#ayk, .ayk-list):is(#ayk, .ayk-list):is(#ayk, .ayk-list) > li { display: flex; gap: var(--ay-sp-8); align-items: flex-start; margin: 0 !important; font: 500 var(--ay-size-body)/1.5 var(--ay-font-ui) !important; color: var(--ay-ink); }
+:is(#ayk, .ayk-list):is(#ayk, .ayk-list):is(#ayk, .ayk-list):is(#ayk, .ayk-list) > li[hidden] { display: none !important; }
+:is(#ayk, .ayk-showall):is(#ayk, .ayk-showall):is(#ayk, .ayk-showall):is(#ayk, .ayk-showall) { display: inline-flex; align-items: center; min-height: var(--ay-tap); margin: var(--ay-sp-4) 0 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--ay-ink) !important; font: 700 var(--ay-size-meta)/1 var(--ay-font-ui) !important; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+:is(#ayk, .ayk-dodont):is(#ayk, .ayk-dodont):is(#ayk, .ayk-dodont):is(#ayk, .ayk-dodont) { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--ay-sp-24); }
+:is(#ayk, .ayk-dodont__col):is(#ayk, .ayk-dodont__col):is(#ayk, .ayk-dodont__col):is(#ayk, .ayk-dodont__col) { display: grid; gap: var(--ay-sp-12); align-content: start; }
+:is(#ayk, .ayk-dodont):is(#ayk, .ayk-dodont):is(#ayk, .ayk-dodont):is(#ayk, .ayk-dodont) svg { flex: none; width: 20px; height: 20px; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ===== Standards band (once per page) ===== */
+:is(#ayk, .ayk-standards):is(#ayk, .ayk-standards):is(#ayk, .ayk-standards):is(#ayk, .ayk-standards) { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--ay-sp-16) var(--ay-sp-24); margin: 0 !important; padding: var(--ay-sp-24) var(--ay-gutter-page) !important; background: var(--ay-track) !important; border: 0 !important; list-style: none !important; }
+:is(#ayk, .ayk-standards):is(#ayk, .ayk-standards):is(#ayk, .ayk-standards):is(#ayk, .ayk-standards) > li { display: grid; gap: var(--ay-sp-4); justify-items: start; margin: 0 !important; font: 500 var(--ay-size-meta)/1.4 var(--ay-font-ui) !important; color: var(--ay-ink); }
+:is(#ayk, .ayk-standards):is(#ayk, .ayk-standards):is(#ayk, .ayk-standards):is(#ayk, .ayk-standards) b { font: 700 var(--ay-size-ui)/1.3 var(--ay-font-ui) !important; }
+:is(#ayk, .ayk-standards__icon):is(#ayk, .ayk-standards__icon):is(#ayk, .ayk-standards__icon):is(#ayk, .ayk-standards__icon) { display: inline-flex; width: 24px; height: 24px; }
+
+/* ===== Calm block (health content) and the one pink section ===== */
+:is(#ayk, .ayk-calm):is(#ayk, .ayk-calm):is(#ayk, .ayk-calm):is(#ayk, .ayk-calm) { display: grid; gap: var(--ay-sp-12); padding: var(--ay-sp-16) var(--ay-sp-16) var(--ay-sp-16) var(--ay-sp-16) !important; border: 0 !important; border-left: 3px solid var(--ay-ink) !important; border-radius: 0 var(--ay-r-md) var(--ay-r-md) 0 !important; background: var(--ay-surface) !important; box-shadow: none !important; color: var(--ay-ink); font: 500 var(--ay-size-body)/1.55 var(--ay-font-ui); }
+:is(#ayk, .ayk-pink):is(#ayk, .ayk-pink):is(#ayk, .ayk-pink):is(#ayk, .ayk-pink) { padding: var(--ay-sp-48) var(--ay-gutter-page) !important; background: var(--ay-pink) !important; color: var(--ay-espresso) !important; --ay-ink: var(--ay-espresso); --ay-ink-muted: var(--ay-espresso-muted); --ay-outline: 1.5px solid var(--ay-espresso); --ay-fill-ink: var(--ay-espresso); --ay-on-ink: var(--ay-butter); --ay-chip-bg: var(--ay-butter); }
+
+/* Focus: visible ring on every interactive primitive. */
+:is(#ayk, .ayk-chip, .ayk-tabs__tab, .ayk-btn, .ayk-showall):is(#ayk, .ayk-chip, .ayk-tabs__tab, .ayk-btn, .ayk-showall):is(#ayk, .ayk-chip, .ayk-tabs__tab, .ayk-btn, .ayk-showall):is(#ayk, .ayk-chip, .ayk-tabs__tab, .ayk-btn, .ayk-showall):focus-visible { outline: 3px solid var(--ay-ink) !important; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  :is(#ayk, .ayk-chip, .ayk-tabs__tab, .ayk-btn):is(#ayk, .ayk-chip, .ayk-tabs__tab, .ayk-btn):is(#ayk, .ayk-chip, .ayk-tabs__tab, .ayk-btn):is(#ayk, .ayk-chip, .ayk-tabs__tab, .ayk-btn) { transition: none !important; }
+  :is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn).is-primary:active:not(:disabled) { transform: none; }
+}

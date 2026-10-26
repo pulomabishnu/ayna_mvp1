@@ -14,7 +14,7 @@
 
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__head h2 { font: 700 calc(22px * var(--x-scale))/1.15 var(--x-serif) !important; letter-spacing: -0.02em !important; color: var(--x-ink) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__head span { color: var(--x-soft); font: 500 12px/1.3 var(--x-sans); white-space: nowrap; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__head span { color: var(--x-soft); font: 500 13px/1.3 var(--x-sans); white-space: nowrap; }
 
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__list { display: grid; gap: 0; min-width: 0; border-radius: 20px; background: var(--x-group); overflow: hidden; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__item { display: grid; gap: 8px; min-width: 0; padding: 18px !important; border-top: 1px solid var(--x-hair); }
@@ -23,7 +23,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__item:is(.is-care, .is-safety) .ay-today__kicker { background: none; opacity: 1; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__item.is-products .ay-today__kicker { background: none; border: 0; color: var(--x-ink) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__title { font: 700 calc(19px * var(--x-scale))/1.2 var(--x-serif) !important; letter-spacing: -0.01em !important; color: var(--x-ink) !important; overflow-wrap: anywhere; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__body { font: 400 calc(15px * var(--x-scale))/1.45 var(--x-sans) !important; color: var(--x-ink) !important; max-width: 68ch; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__body { font: 500 calc(15px * var(--x-scale))/1.45 var(--x-sans) !important; color: var(--x-ink) !important; max-width: 68ch; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) :is(.ay-today__why, .ay-today__src, .ay-today__hint, .ay-today__note) { font: 500 calc(13px * var(--x-scale))/1.45 var(--x-sans) !important; color: var(--x-soft) !important; max-width: 68ch; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__src a { color: var(--x-ink) !important; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__note { color: var(--x-ink) !important; }

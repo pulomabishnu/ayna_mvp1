@@ -31,7 +31,7 @@
 /* App placement and text scale. */
 .ayna-mobile .ay-rvideo { margin: 20px 0 24px; }
 .ayna-mobile .ay-rvideo__title { font-size: calc(19px * var(--ayna-text-scale, 1)); }
-.ayna-mobile .ay-rvideo__cap { font-size: calc(12.5px * var(--ayna-text-scale, 1)); }
+.ayna-mobile .ay-rvideo__cap { font-size: calc(13px * var(--ayna-text-scale, 1)); }
 @media (max-width: 480px) {
   .app-container .ay-rvideo__poster, .ayna-mobile .ay-rvideo__poster { padding: 14px 16px !important; }
   .ay-rvideo__title { font-size: 18px; }

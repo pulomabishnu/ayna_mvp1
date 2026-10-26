@@ -24,7 +24,7 @@
   --ay-ease: var(--ease-out);
   --ay-pop: var(--ease-out);
   --ay-shadow: 3px 3px 0 var(--ay-ink);
-  --ay-shadow-lg: 5px 5px 0 var(--ay-ink);
+  --ay-shadow-lg: none;
 }
 
 .ayna-mobile {
@@ -103,7 +103,7 @@
   --ay-alert: #ff806f;
   --ay-line: rgba(255, 237, 172, .2);
   --ay-shadow: 3px 3px 0 rgba(255, 237, 172, .5);
-  --ay-shadow-lg: 5px 5px 0 rgba(255, 237, 172, .5);
+  --ay-shadow-lg: none;
   --ayna-bg: #2e1c18;
   --ayna-bg-alt: #3e2723;
   --ayna-surface: #3e2723;
