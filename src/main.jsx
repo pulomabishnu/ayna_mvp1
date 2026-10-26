@@ -238,6 +238,8 @@ if (!POSTHOG_KEY) {
       // with one filter: platform = ios_app / android_app / web.
       ph.register({ platform: ANALYTICS_PLATFORM });
       if (Capacitor.isNativePlatform()) registerNativeAppAnalytics(ph);
+      // D1 / D7 / D30: one app_opened per local day (no health details).
+      import('./utils/analyticsEvents.js').then(({ trackAppOpened, eventSurface }) => trackAppOpened({ surface: eventSurface() })).catch(() => {});
     },
   });
 }
