@@ -7,13 +7,21 @@ import { whyLine } from './whyLine.js';
 export const PRODUCT_ASK_TITLE = 'Ask about this product';
 export const PRODUCT_ASK_PLACEHOLDER = 'Ask anything about this product…';
 
-/** Three starters. With a profile, the first asks about her match; without one, who it is for. */
-export function productAskStarters({ hasProfile = false } = {}) {
-  return [
-    hasProfile ? 'Why is this my match?' : 'Who is this good for?',
-    'Anything I should know before using it?',
-    'How does this compare with another option?',
-  ];
+/**
+ * Three starters that change with what ayna knows (PDP audit 7.8): her match
+ * ("Why is my match 92%?"), her IUD for a cup or disc, cup or disc for her
+ * flow, which size when the product comes in sizes; then the general ones.
+ * Called with no options it returns the original three.
+ */
+export function productAskStarters({ hasProfile = false, percent = null, kind = '', hasIud = false, hasSizes = false } = {}) {
+  const out = [];
+  if (hasProfile && Number(percent) >= 50) out.push(`Why is my match ${Math.round(percent)}%?`);
+  else out.push(hasProfile ? 'Why is this my match?' : 'Who is this good for?');
+  if (kind && hasIud) out.push(`Is this OK with my IUD?`);
+  if (kind && hasProfile) out.push('Cup or disc for my flow?');
+  if (hasSizes) out.push('Which size should I get?');
+  out.push('Anything I should know before using it?', 'How does this compare with another option?');
+  return [...new Set(out)].slice(0, 3);
 }
 
 /**

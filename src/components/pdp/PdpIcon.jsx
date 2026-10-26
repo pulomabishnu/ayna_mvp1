@@ -36,6 +36,14 @@ const PATHS = {
   // Remove or empty: an arrow out.
   out: <><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5" /><path d="M5 20h14" /></>,
   chevron: <path d="m6 9 6 6 6-6" />,
+  // PDP audit 8.7: the one SVG set (plus, check, ask, recycle, receipt, calendar, external, alert).
+  plus: <path d="M12 5v14M5 12h14" />,
+  check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
+  ask: <path d="M20 11.5a7.5 7.5 0 0 1-11 6.6L4 19.5l1.4-4.2A7.5 7.5 0 1 1 20 11.5Z" />,
+  recycle: <><path d="M7 19H4.5a1.5 1.5 0 0 1-1.3-2.25L5.5 13" /><path d="M12.5 19H20a1.5 1.5 0 0 0 1.3-2.25L19 13" /><path d="m9 5.6 1.7-2.85a1.5 1.5 0 0 1 2.6 0L17 9" /><path d="m10 16-2.5 3 2.5 3M3 10.5l2.5 2.5 3-1M15 8.5l2 .5.5-3" /></>,
+  receipt: <><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z" /><path d="M9 8h6M9 12h6" /></>,
+  calendar: <><rect x="3.5" y="5" width="17" height="15.5" rx="2" /><path d="M3.5 10h17M8 3v4M16 3v4" /></>,
+  external: <><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" /></>,
   arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
 };
 

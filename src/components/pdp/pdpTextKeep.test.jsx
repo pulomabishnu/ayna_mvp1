@@ -86,6 +86,10 @@ const RENAMED_LABELS = [
   /, Study record, not yet checked by ayna$/, // now "Peer-reviewed · not graded by ayna"
   'Why ayna rated it this way', // "The research in short" when nothing is graded
   'Other pages the team used', /^\d+ links?$/, // peer-reviewed papers get their own list, so the other-pages list and count can shrink
+  'ppd.plannedparenthood.org, App Store', // the Where to buy list: the link is the button, stores without a link are Key facts "Also sold at" (audit 7.9)
+  'Add to my routine', // the app's 3-up outline row says "Routine" under 400px (audit 15 OutlineButton); "In my routine" after
+  '180 tablets · 180-day supply', // the iron's price notes: now the meta line (180-day supply) and Highlights (180 tablets)
+  'App or online', // a fact chip above the name (removed, audit 7.2); Format says "Virtual care service"
   'What’s included and details', 'Works with:', 'Check with a clinician first', 'Possible side effects', 'Also worth knowing', 'Downsides to know', 'Label and regulatory facts', 'Labels on file', 'Privacy',
 ];
 const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r === c : r.test(c)));
