@@ -263,7 +263,7 @@ export default function Rundown({
         <RundownStory
           cards={cards}
           title={open === 'weekly' ? 'Your week on ayna' : 'Your daily rundown'}
-          onClose={(s) => { close(s); finish(finishedRundown(s)); }}
+          onClose={(s) => { close(s); finish(finishedRundown(s)); if (finishedRundown(s)) { try { window.dispatchEvent(new CustomEvent('ayna:rundown-state', { detail: { completed: true, kind: open } })); } catch { /* old browser */ } } }}
           onSeen={onSeen}
           onAction={onAction}
           onCheckIn={(field, value) => t.saveLog(today, { [field]: value })}

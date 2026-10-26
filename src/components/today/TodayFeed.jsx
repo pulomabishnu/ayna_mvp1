@@ -18,6 +18,7 @@ import { Chip, StatusPill } from '../ui/ay';
 import ProfileAskCard from './ProfileAskCard.jsx';
 import { askWhyFor } from '../../utils/askPrompts.js';
 import { todayProgress, triesInProgress } from './todayProgress.js';
+import { LOG_FIELDS } from '../../health/dailyLog.js';
 import '../../styles/today-feed.css';
 
 // The fact first, then "Ask why" (team sync, Oct 25). Not on questions she
@@ -50,7 +51,8 @@ function CompactItem({ item, t, onAsk, onFindCare, onOpenFull, onOutcome }) {
   const kicker = item.type === 'care' ? CARE_KICKER[item.level] || 'Care' : KICKER[item.type] || '';
   const acts = item.actions || [];
   const tel = item.type === 'care' && item.level === 'urgent' && /911/.test(item.title);
-  const why = askWhy(item, onAsk);
+  // On Home a follow-up or check-in already has its answers on the row; "Ask why" stays on the full dashboard.
+  const why = ['follow_up', 'check_in'].includes(item.type) ? null : askWhy(item, onAsk);
   // The 10-second action right on Home (audit v2, section 12): a follow-up's
   // first three answers, a check-in's fields. Anything more opens the dashboard.
   const outcomes = item.type === 'follow_up' ? acts.filter((a) => a.id.startsWith('outcome:') && a.id !== 'outcome:stopped') : [];
@@ -65,7 +67,7 @@ function CompactItem({ item, t, onAsk, onFindCare, onOpenFull, onOutcome }) {
       {item.reason && <p className="ay-today__why">{item.reason}</p>}
       {outcomes.length > 0 && (
         <div className="ay-today__chips is-inline" role="group" aria-label="How did it go?">
-          {outcomes.slice(0, FIRST_CHIPS).map((a) => <button key={a.id} type="button" className="ay-chip" onClick={() => onOutcome(item, a.id.slice(8))}><OutcomeIcon id={a.id.slice(8)} />{a.label}</button>)}
+          {outcomes.slice(0, FIRST_CHIPS).map((a) => <button key={a.id} type="button" className="ay-chip" onClick={() => onOutcome(item, a.id.slice(8))}>{a.label}</button>)}
           {full && <button type="button" className="ay-chip is-more" onClick={() => full()}>More</button>}
         </div>
       )}
@@ -250,6 +252,7 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
     });
   };
   const fields = (checkIn?.fields || []).filter((f) => FIELD_CHIP[f]);
+  const first = fields.length ? LOG_FIELDS.find((f) => f.id === fields[0]) || null : null;
   const shownChips = allChips ? chipActs : chipActs.slice(0, FIRST_CHIPS);
   const menu = !protectedItem && (
     <ItemMenu label={`More for ${item.title}`}>
@@ -283,9 +286,16 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
           {answerActs.map((a) => <Chip key={a.id} aria-pressed={undefined} onClick={() => answer(a)}>{a.label}</Chip>)}
         </div>
       )}
-      {checkIn && fields.length > 0 && (
-        <div className="ay-today__chips" role="group" aria-label="Log today">
-          {fields.map((f) => <Chip key={f} aria-pressed={undefined} aria-controls={checkinId} onClick={(e) => openLogAt(e, f)}>{FIELD_CHIP[f]}</Chip>)}
+      {/* The first question inline (dashboard audit 7.5; #17's tap-to-answer chips), the rest one tap away. */}
+      {checkIn && first && (
+        <div className="ay-today__chips is-first" role="group" aria-label={first.label}>
+          <span className="ay-today__qlabel">{first.label}</span>
+          {first.values.map((v, i) => <Chip key={String(v)} aria-pressed={undefined} onClick={() => { trackCheckin({ surface: eventSurface(), where: 'today_item' }); t.saveLog(t.today, { [first.id]: v }); }}>{first.options[i]}</Chip>)}
+        </div>
+      )}
+      {checkIn && fields.length > 1 && (
+        <div className="ay-today__chips" role="group" aria-label="Log the rest of today">
+          {fields.slice(1).map((f) => <Chip key={f} aria-pressed={undefined} aria-controls={checkinId} onClick={(e) => openLogAt(e, f)}>{FIELD_CHIP[f]}</Chip>)}
         </div>
       )}
       {productsAct && (

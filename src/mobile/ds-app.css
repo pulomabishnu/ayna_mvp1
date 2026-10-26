@@ -70,7 +70,7 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__ring .is-arc { fill: none; stroke: #f7badd; stroke-width: 7; stroke-linecap: round; animation: ds-arc 900ms var(--ease-out, ease-out) both; }
 @keyframes ds-arc { from { stroke-dasharray: 0 239; } }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__num b { position: relative; display: grid; justify-items: center; gap: 2px; font: 700 44px/.9 var(--ay-app-heading); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__num b small { font: 600 11px/1 var(--ay-font-ui, 'Figtree', sans-serif); letter-spacing: .01em; opacity: .85; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__num b small { font: 600 13px/1 var(--ay-font-ui, 'Figtree', sans-serif); letter-spacing: .01em; opacity: .85; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__num.is-small b { font-size: 24px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__shapes .is-flower { right: 6px; top: 6px; width: 26px; height: 26px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__shapes .is-asterisk { right: 132px; top: 22px; width: 18px; height: 18px; }
@@ -359,3 +359,27 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__nextbest .ay-today__actions { display: flex; align-items: center; gap: 12px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__nextbest .ay-today__primary { min-height: 34px; padding: 0 14px !important; border-radius: 999px !important; background: var(--d-ink) !important; color: var(--d-page) !important; font: 600 13px/1 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__nextbest .ay-today__text { min-height: 34px; font: 600 13px/1 var(--ay-font-ui, 'Figtree', sans-serif) !important; color: var(--d-ink) !important; }
+/* one phone screen (Today audit "Keep"): tighter rows with their answers inline */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact { min-height: 48px; padding: 8px 10px 8px 12px !important; row-gap: 6px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact .ay-chip { min-height: 30px; padding: 0 10px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__list.is-compact { gap: 6px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact .ay-rd-hero__card { min-height: 124px; padding-top: 14px !important; padding-bottom: 14px !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__notify p { display: none; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-homewidgets .ay-w--health .ay-homehealth__text p:not(.has-data) { display: none !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact { margin-bottom: 8px; }
+/* My dashboard (the full Today list in the app): the same calm white cards with the ink rule, never butter-deep */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__list:not(.is-compact) { gap: 10px; background: none !important; border-radius: 0; overflow: visible; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__item:not(.is-compact) { gap: 8px; padding: 14px 14px 12px 16px !important; border: 0 !important; border-left: 3px solid var(--d-ink) !important; border-radius: 8px; background: var(--ay-surface, #fff) !important; color: var(--d-ink); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-hd .ay-today__item:not(.is-compact) { background: rgba(255, 237, 172, .08) !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__item:not(.is-compact) .ay-today__title { font: 700 calc(16px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui, 'Figtree', sans-serif) !important; color: var(--d-ink) !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__item:not(.is-compact) .ay-today__kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font: 500 13px/1.35 var(--ay-font-ui, 'Figtree', sans-serif) !important; opacity: 1; color: var(--d-ink-2) !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__item:not(.is-compact) .ay-today__primary { box-shadow: 3px 3px 0 #f7badd !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__qlabel, html body .app-container .ay-wh .ay-today__qlabel { align-self: center; margin-right: 4px; font: 700 15px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--d-ink, #3e2723); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__menu { position: relative; margin-left: auto; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__menu > summary { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--d-ink); cursor: pointer; list-style: none; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__menu > summary::-webkit-details-marker { display: none; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__menu > summary svg { width: 22px; height: 22px; fill: currentColor; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__menulist { position: absolute; z-index: 20; right: 0; top: calc(100% + 4px); display: grid; min-width: 220px; padding: 6px; border: 1.5px solid var(--d-ink); border-radius: 16px; background: var(--d-page); color: var(--d-ink); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__menulist button { display: flex; align-items: center; width: 100%; min-height: 44px; padding: 0 12px !important; border: 0 !important; border-radius: 8px; background: none !important; color: inherit !important; font: 600 15px/1.3 var(--ay-font-ui, 'Figtree', sans-serif) !important; text-align: left; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen { gap: 8px; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today.is-compact { gap: 8px !important; }
