@@ -5,4 +5,5 @@ export { pillPanelProps, PILL_TABS_MAX } from './pillTabs.js';
 export { StickerButton, OutlineButton, TextButton, StickerHeading } from './Buttons.jsx';
 export { default as Plate } from './Plate.jsx';
 export { ScallopPlate, PLATE_PATH } from './ScallopPlate.jsx';
+export { Band, Shout, Bento, Tile, BlendSlider, Marquee } from './Bold.jsx';
 export { ScallopEdge, BigFact, FactRows, CategorySticker, StatusPill, ProgressCount, CountRing, ShowAllList, DoDont, StandardsBand, CalmBlock, PinkSection } from './Signatures.jsx';

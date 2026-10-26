@@ -1,0 +1,67 @@
+/* Signature v2: bands, shout, bento, blend slider, marquee (Bold.jsx).
+   Same specificity pattern as ay-primitives.css: :is(#ayk, .x) x4 beats the old layered CSS.
+   Tones use the fixed *-base colours so a band reads the same in light and dark;
+   inside a band, --ay-fg / --ay-on-ink are re-pointed so primitives (buttons, chips) still read. */
+
+:root {
+  --ayb-shout-xl: clamp(48px, 8.5vw, 120px);
+  --ayb-shout-l: clamp(36px, 5.2vw, 72px);
+}
+.ayna-mobile { --ayb-shout-xl: 52px; --ayb-shout-l: 36px; }
+
+/* ---- Band ---- */
+:is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band) { position: relative; width: 100%; margin: 0; padding: var(--ay-sp-48) var(--ay-gutter-page, 24px); box-sizing: border-box; }
+:is(#ayk, .ayb-band__in):is(#ayk, .ayb-band__in):is(#ayk, .ayb-band__in):is(#ayk, .ayb-band__in) { width: 100%; max-width: 1200px; margin: 0 auto; }
+:is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band).is-ink { background: var(--ay-espresso) !important; --ay-fg: var(--ay-butter-base); --ay-fg-muted: rgba(255, 237, 172, .8); --ay-fill-ink: var(--ay-butter-base); --ay-on-ink: var(--ay-espresso); --ay-chip-bg: transparent; --ay-border-ink: 1.5px solid var(--ay-butter-base); color: var(--ay-butter-base); }
+:is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band).is-pink { background: var(--ay-pink-base) !important; --ay-fg: var(--ay-espresso); --ay-fg-muted: rgba(62, 39, 35, .8); --ay-fill-ink: var(--ay-espresso); --ay-on-ink: var(--ay-butter-base); --ay-chip-bg: var(--ay-pink-base); --ay-border-ink: 1.5px solid var(--ay-espresso); color: var(--ay-espresso); }
+:is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band).is-butter { background: var(--ay-butter-base) !important; --ay-fg: var(--ay-espresso); --ay-fg-muted: rgba(62, 39, 35, .8); --ay-fill-ink: var(--ay-espresso); --ay-on-ink: var(--ay-butter-base); --ay-border-ink: 1.5px solid var(--ay-espresso); color: var(--ay-espresso); }
+:is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band).is-deep { background: var(--ay-surface) !important; color: var(--ay-fg); }
+/* scallop bottom edge in the band's own colour */
+:is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band).has-edge { margin-bottom: 12px; }
+:is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band).has-edge::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 12px; background: inherit; -webkit-mask: radial-gradient(circle at 10px 0, #000 9.5px, transparent 10px) 0 0 / 20px 12px repeat-x; mask: radial-gradient(circle at 10px 0, #000 9.5px, transparent 10px) 0 0 / 20px 12px repeat-x; }
+
+/* ---- Shout ---- */
+:is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout) { margin: 0; font: 800 var(--ayb-shout-xl)/.92 var(--ay-font-display) !important; letter-spacing: -.035em; color: var(--ay-fg); text-transform: none !important; text-wrap: balance; }
+:is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout).is-l { font-size: var(--ayb-shout-l) !important; line-height: .96; letter-spacing: -.025em; }
+
+/* ---- Bento ---- */
+:is(#ayk, .ayb-bento):is(#ayk, .ayb-bento):is(#ayk, .ayb-bento):is(#ayk, .ayb-bento) { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(132px, auto); grid-auto-flow: dense; gap: var(--ay-sp-12); }
+@media (max-width: 720px) { :is(#ayk, .ayb-bento):is(#ayk, .ayb-bento):is(#ayk, .ayb-bento):is(#ayk, .ayb-bento) { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: minmax(120px, auto); gap: var(--ay-sp-8); } }
+.ayna-mobile :is(#ayk, .ayb-bento):is(#ayk, .ayb-bento):is(#ayk, .ayb-bento):is(#ayk, .ayb-bento) { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: minmax(120px, auto); gap: var(--ay-sp-8); }
+:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile) { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: var(--ay-sp-8); min-width: 0; margin: 0; padding: var(--ay-sp-16); border-radius: var(--ay-r-md) !important; box-sizing: border-box; overflow: hidden; text-align: left; text-decoration: none !important; box-shadow: none !important; }
+:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-wide { grid-column: span 2; }
+:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-tall { grid-row: span 2; }
+:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-big { grid-column: span 2; grid-row: span 2; }
+:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-ink { background: var(--ay-espresso) !important; color: var(--ay-butter-base) !important; border: 0 !important; --ay-fg: var(--ay-butter-base); --ay-fg-muted: rgba(255, 237, 172, .8); }
+:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-pink { background: var(--ay-pink-base) !important; color: var(--ay-espresso) !important; border: 0 !important; --ay-fg: var(--ay-espresso); --ay-fg-muted: rgba(62, 39, 35, .8); }
+:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-butter { background: var(--ay-butter-base) !important; color: var(--ay-espresso) !important; border: 1.5px solid var(--ay-espresso) !important; --ay-fg: var(--ay-espresso); --ay-fg-muted: rgba(62, 39, 35, .8); }
+:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-deep { background: var(--ay-surface) !important; color: var(--ay-fg) !important; border: 1px solid var(--ay-rule, rgba(62, 39, 35, .22)) !important; }
+:is(#ayk, .ayb-tile__label):is(#ayk, .ayb-tile__label):is(#ayk, .ayb-tile__label):is(#ayk, .ayb-tile__label) { font: 600 var(--ay-size-caption)/1.3 var(--ay-font-ui) !important; color: inherit; opacity: .85; }
+:is(#ayk, .ayb-tile__big):is(#ayk, .ayb-tile__big):is(#ayk, .ayb-tile__big):is(#ayk, .ayb-tile__big) { font: 800 clamp(40px, 5vw, 64px)/.9 var(--ay-font-display) !important; letter-spacing: -.03em; color: inherit; font-variant-numeric: tabular-nums; }
+:is(#ayk, .ayb-tile__unit):is(#ayk, .ayb-tile__unit):is(#ayk, .ayb-tile__unit):is(#ayk, .ayb-tile__unit) { margin-left: 4px; font: 700 var(--ay-size-h3)/1 var(--ay-font-ui) !important; letter-spacing: 0; }
+:is(#ayk, .ayb-tile__cap):is(#ayk, .ayb-tile__cap):is(#ayk, .ayb-tile__cap):is(#ayk, .ayb-tile__cap) { font: 500 var(--ay-size-meta)/1.4 var(--ay-font-ui) !important; color: inherit; }
+a:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):focus-visible, button:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):focus-visible { outline: 3px solid var(--ay-pink-base); outline-offset: 3px; }
+
+/* ---- BlendSlider ---- */
+:is(#ayk, .ayb-blend):is(#ayk, .ayb-blend):is(#ayk, .ayb-blend):is(#ayk, .ayb-blend) { display: grid; gap: var(--ay-sp-8); }
+:is(#ayk, .ayb-blend__label):is(#ayk, .ayb-blend__label):is(#ayk, .ayb-blend__label):is(#ayk, .ayb-blend__label) { font: 700 var(--ay-size-h3)/1.3 var(--ay-font-ui) !important; color: var(--ay-fg); }
+:is(#ayk, .ayb-blend__row):is(#ayk, .ayb-blend__row):is(#ayk, .ayb-blend__row):is(#ayk, .ayb-blend__row) { display: grid; grid-template-columns: minmax(64px, auto) 1fr minmax(64px, auto); align-items: center; gap: var(--ay-sp-12); }
+:is(#ayk, .ayb-blend__end):is(#ayk, .ayb-blend__end):is(#ayk, .ayb-blend__end):is(#ayk, .ayb-blend__end) { font: 600 var(--ay-size-meta)/1.2 var(--ay-font-ui) !important; color: var(--ay-fg); }
+:is(#ayk, .ayb-blend__end):is(#ayk, .ayb-blend__end):is(#ayk, .ayb-blend__end):is(#ayk, .ayb-blend__end):last-child { text-align: right; }
+:is(#ayk, .ayb-blend__input):is(#ayk, .ayb-blend__input):is(#ayk, .ayb-blend__input):is(#ayk, .ayb-blend__input) { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; margin: 0; background: transparent; cursor: pointer; }
+.ayb-blend__input::-webkit-slider-runnable-track { height: 8px; border-radius: 999px; background: linear-gradient(to right, var(--ay-fill-ink, #3e2723) var(--ayb-fill), transparent var(--ayb-fill)); border: 1.5px solid var(--ay-fg); }
+.ayb-blend__input::-moz-range-track { height: 8px; border-radius: 999px; background: linear-gradient(to right, var(--ay-fill-ink, #3e2723) var(--ayb-fill), transparent var(--ayb-fill)); border: 1.5px solid var(--ay-fg); }
+.ayb-blend__input::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -11.5px; border-radius: 50%; background: var(--ay-pink-base); border: 1.5px solid var(--ay-espresso); }
+.ayb-blend__input::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: var(--ay-pink-base); border: 1.5px solid var(--ay-espresso); }
+.ayb-blend__input:focus-visible { outline: 3px solid var(--ay-pink-base); outline-offset: 2px; border-radius: 999px; }
+
+/* ---- Marquee ---- */
+:is(#ayk, .ayb-marquee):is(#ayk, .ayb-marquee):is(#ayk, .ayb-marquee):is(#ayk, .ayb-marquee) { overflow: hidden; width: 100%; padding: var(--ay-sp-12) 0; }
+:is(#ayk, .ayb-marquee):is(#ayk, .ayb-marquee):is(#ayk, .ayb-marquee):is(#ayk, .ayb-marquee).is-ink { background: var(--ay-espresso); color: var(--ay-butter-base); }
+:is(#ayk, .ayb-marquee):is(#ayk, .ayb-marquee):is(#ayk, .ayb-marquee):is(#ayk, .ayb-marquee).is-pink { background: var(--ay-pink-base); color: var(--ay-espresso); }
+.ayb-marquee__track { display: flex; width: max-content; animation: ayb-marquee 40s linear infinite; }
+.ayb-marquee:hover .ayb-marquee__track { animation-play-state: paused; }
+.ayb-marquee__row { display: flex; gap: 32px; margin: 0; padding: 0 16px; list-style: none; font: 700 var(--ay-size-h3)/1.2 var(--ay-font-display); white-space: nowrap; }
+.ayb-marquee__row li::after { content: '\2733'; margin-left: 32px; }
+@keyframes ayb-marquee { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .ayb-marquee__track { animation: none; } }
