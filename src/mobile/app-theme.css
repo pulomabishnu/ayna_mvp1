@@ -20,8 +20,8 @@
   --b-white: #ffffff;
 
   --r-canvas: var(--b-butter);
-  --r-surface: var(--b-butter);      /* white is only for product photos */
-  --r-surface-2: #ffedac;          /* butter lifted toward white, for grouped rows */
+  --r-surface: #f6e3a1;             /* deeper butter (founder, Oct 26); white is only for product photos */
+  --r-surface-2: #f6e3a1;          /* grouped rows on the same deeper butter */
   --r-ink: var(--b-espresso);
   --r-ink-2: rgba(62, 39, 35, .72);
   --r-ink-3: rgba(62, 39, 35, .72);
