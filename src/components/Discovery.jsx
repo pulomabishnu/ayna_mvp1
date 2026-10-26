@@ -43,6 +43,11 @@ import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
 import { PlateName } from './cards/CardBits.jsx';
 import { matchBreakdownFor } from './pdp/decision.js';
+import { featuredOrder } from '../data/packshots.js';
+import AvoidChips from './explore/AvoidChips.jsx';
+import useCardViews from './explore/useCardViews.js';
+import { trackCardClicked, eventSurface } from '../utils/analyticsEvents.js';
+import { passesAvoid, herAvoidAttrs } from './explore/avoid.js';
 import posthog from 'posthog-js';
 import GlossaryTerm from './GlossaryTerm';
 import { isPlainLeftClick } from '../utils/productRoute';
@@ -557,6 +562,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [aynaFilter, setAynaFilter] = useState(() => memo('aynaFilter', 'all'));
     // No filter turns itself on from her profile (Oct 16): filters are only what she picks.
     const [preferenceFilter, setPreferenceFilter] = useState(() => memo('preferenceFilter', 'all'));
+    // "Leave out" chips (Explore audit v3, #17): only products labeled free of each one.
+    const [avoidAttrs, setAvoidAttrs] = useState([]);
+    const myAvoid = useMemo(() => herAvoidAttrs(quizResults), [quizResults]);
+    const gridViewsRef = useRef(null);
 
     // Signing in mid-visit applies her remembered choice once; nothing flips after that.
     const hadUser = useRef(Boolean(user));
@@ -868,8 +877,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             if (!matchesSustainability(item, sustainabilityFilter)) return false;
             if (!matchesLifeStage(item, lifeStageFilter)) return false;
+            if (!passesAvoid(item, avoidAttrs)) return false;
             return true;
-    }, [omittedProducts, personalizationFilter, eligibilityFilter, personalizedSet, macroGroup, categoryFilter, typeFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, priceFilter, ratingFilter, aynaReviews, aynaFilter, quizResults, healthProfile, myProducts, preferenceFilter, sustainabilityFilter, lifeStageFilter, matchOpts]);
+    }, [avoidAttrs, omittedProducts, personalizationFilter, eligibilityFilter, personalizedSet, macroGroup, categoryFilter, typeFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, priceFilter, ratingFilter, aynaReviews, aynaFilter, quizResults, healthProfile, myProducts, preferenceFilter, sustainabilityFilter, lifeStageFilter, matchOpts]);
 
     const filtered = useMemo(() => {
         const applyFilters = (items, skipCategory = false) => items.filter((item) => passesActiveFilters(item, skipCategory));
@@ -1020,6 +1030,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (!personalizationFilter) {
                 list = applyColdStartFloor(list, PAGE_SIZE);
             }
+            // Featured (plain browsing): buyable products with a packshot first, then the
+            // ones whose photo is not a packshot, then pre-orders (Explore audit issue 6).
+            if (featuredLead) list = featuredOrder(list);
         }
         return list;
     }, [combined, passesActiveFilters, categoryFilter, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, combinedRelevance, aynaReviews, shuffleSeed, hasAnswers, quizResults, healthProfile, matchOpts]);
@@ -1139,6 +1152,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         }
         return [...out.filter((p) => !p.llmGenerated), ...out.filter((p) => p.llmGenerated)];
     }, [filtered, enrichedAiSuggestions, enrichedBrowseAiSuggestions, qTrimForAi, passesActiveFilters]);
+    // Card CTR (all-pages brief v3): each card on screen sends one view.
+    useCardViews(gridViewsRef, inExplore ? 'explore_products' : 'shop', [gridItems.length, visibleCount, gridItems[0]?.id]);
     // The count is the catalog, never the live web suggestions mixed in after it,
     // so it reads the same on every load (it used to move between 243 and 270).
     const catalogShown = useMemo(() => gridItems.filter((p) => !p.llmGenerated).length, [gridItems]);
@@ -1588,6 +1603,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // right next to this button for anyone who actually wants it off.
     const clearBrowseFilters = () => {
         setTypeFilter('all');
+        setAvoidAttrs([]);
         setPadFlowFilter('all');
         setPadPreferenceFilter('all');
         setPadUseCaseFilter('all');
@@ -1621,7 +1637,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     };
     const areaOn = inExplore && macroGroup !== 'all' ? 1 : 0;
     const sheetFilterCount = [typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length + areaOn;
-    const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0) + areaOn;
+    const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0) + areaOn + avoidAttrs.length;
     // Explore's Filters sheet picks the area (the folder tabs did this outside Explore).
     const pickArea = (id) => {
         setMacroGroup(id);
@@ -1789,6 +1805,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </label>
             </div>
             {bestQuizNote}
+            <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ayshop__avoid" />
 
             {(() => {
                 const AREA_LABEL = (v) => { const g = MACRO_GROUPS.find((x) => x.id === v); return g ? sentenceCase(g.label) : v; };
@@ -1871,7 +1888,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {/* Product Grid */}
             {gridReady && (!searchSubmitted || !aiLoading || gridItems.length > 0) && (
             <>
-            <div id="ayshop-grid" role="tabpanel" aria-label={submittedQuery ? `Results for ${submittedQuery}` : (availableMacroGroups.find((g) => g.id === macroGroup)?.label || 'All products')} className={`ay-product-grid ayshop__grid${gridSettled ? ' is-settled' : ''}`}>
+            <div ref={gridViewsRef} id="ayshop-grid" role="tabpanel" aria-label={submittedQuery ? `Results for ${submittedQuery}` : (availableMacroGroups.find((g) => g.id === macroGroup)?.label || 'All products')} className={`ay-product-grid ayshop__grid${gridSettled ? ' is-settled' : ''}`}>
                 {gridItems.slice(0, Math.min(visibleCount, firstPaintCap)).map((item, idx) => {
                     // A defined (even empty-string) resolvedImages[item.id] came back
                     // from the server's type-aware /api/product-image resolution
@@ -1920,9 +1937,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             inEcosystem={isInEcosystem}
                             // No profile yet: "See your match" (no number) opens the same flow as "See my matches".
                             onSeeMatch={!hasAnswers && onRequirePersonalizeAuth ? () => onRequirePersonalizeAuth() : null}
-                            onOpen={(p) => onOpenProduct?.(p, searchSubmitted
+                            onOpen={(p) => (trackCardClicked({ surface: eventSurface(), where: inExplore ? 'explore_products' : 'shop', product_id: p.id, position: idx }), onOpenProduct?.(p, searchSubmitted
                                 ? { source: 'search_results', searchQuery: submittedQuery, position: idx }
-                                : { source: 'browse', position: idx })}
+                                : { source: 'browse', position: idx }))}
                             onToggleSaved={onToggleSaved}
                             tile={cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
                                 <>

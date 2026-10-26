@@ -5,6 +5,11 @@ import SearchBar from '../components/SearchBar.jsx';
 import DiscoverDeck from '../components/DiscoverDeck.jsx';
 import CategoryNav from '../components/CategoryNav.jsx';
 import ProductCard from '../components/ProductCard.jsx';
+import { featuredOrder as orderFeatured } from '../../data/packshots.js';
+import AvoidChips from '../../components/explore/AvoidChips.jsx';
+import useCardViews from '../../components/explore/useCardViews.js';
+import { trackCardClicked, eventSurface } from '../../utils/analyticsEvents.js';
+import { passesAvoid, herAvoidAttrs } from '../../components/explore/avoid.js';
 import LibraryCard from '../components/LibraryCard.jsx';
 import SuggestBox from '../../components/SuggestBox.jsx';
 import { sentenceCase } from '../../utils/sentenceCase.js';
@@ -113,6 +118,9 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef(null);
+  // Card CTR (all-pages brief v3): views of the cards on screen, and taps below.
+  const gridRef = useRef(null);
+  useCardViews(gridRef, 'app_products', [products.length, visibleCount, products[0]?.id]);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -139,6 +147,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
   return (
     <>
       <div
+        ref={gridRef}
         className={`ayna-editorial-product-grid${isList ? ' is-list-layout' : ''}`}
         style={
           isList
@@ -148,7 +157,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
       >
         {visibleProducts.map((p, index) => (
           <Fragment key={p.id}>
-            <ProductCard product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onSeeMatch={quizAnswers ? null : onStartQuiz} isSaved={!!savedProducts[p.id]} onToggleSaved={onToggleSaved} matchOpts={matchOpts} />
+            <ProductCard product={p} variant={layout} onClick={() => { trackCardClicked({ surface: eventSurface(), where: 'app_products', product_id: p.id, position: index }); if (onOpenProduct) onOpenProduct(p); }} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onSeeMatch={quizAnswers ? null : onStartQuiz} isSaved={!!savedProducts[p.id]} onToggleSaved={onToggleSaved} matchOpts={matchOpts} />
             {showOnboarding && index === Math.min(3, visibleProducts.length - 1) && <section className="ayna-figma-discover-cta"><button type="button" onClick={onStartQuiz}>Get matched <span aria-hidden="true">→</span></button></section>}
             {onPickPhrase && index === 7 && <div className="ay-app-ribbon"><Ribbon items={FAMILIAR_PHRASES} label="Searches people make" onPick={onPickPhrase} tab={<span className="ay-ribbon__tab is-label">Does this sound familiar?</span>} className="ay-ribbon--pink" /></div>}
           </Fragment>
@@ -245,6 +254,9 @@ export default function BrowseScreen({
   const [storedFilters, setFilters] = usePersistentState('app-shop:filters', EMPTY_FILTERS);
   const filters = { ...EMPTY_FILTERS, ...(storedFilters || {}) };
   const [sortBy, setSortBy] = usePersistentState('app-shop:sort', 'default');
+  // "Leave out" chips (Explore audit v3, #17), same as the website: only products labeled free of each one.
+  const [avoidAttrs, setAvoidAttrs] = useState([]);
+  const myAvoid = useMemo(() => herAvoidAttrs(quizAnswers), [quizAnswers]);
   const quick = [['Under $25', 'price', 'under-25'], ['FSA/HSA eligible', 'eligibility', 'fsa-hsa'], ['Fragrance free', 'preference', 'fragrance-free'], [CLINICAL_SOURCES_LABEL, 'ayna', 'clinician']];
   const cardLayout = 'grid';
   // AI fallback for a typed search the local catalog scoring found nothing
@@ -321,6 +333,7 @@ export default function BrowseScreen({
   if (activeGroup !== 'all') {
     filtered = filtered.filter((p) => itemMatchesMacroGroup(p, activeGroup));
   }
+  if (avoidAttrs.length) filtered = filtered.filter((p) => passesAvoid(p, avoidAttrs));
   filtered = filtered.filter((item) => {
     // ayna is 18+: products made for teens are not listed (same rule as the website's Shop, so both count the same).
     if (isTeenProduct(item)) return false;
@@ -375,6 +388,8 @@ export default function BrowseScreen({
   // quiz answers).
   if (featuredOrder && !searchTermRaw && !(personalized && hasProfile) && !rankByProfile) {
     filtered = [...filtered].sort((a, b) => (isPartnerBrandItem(b) ? 1 : 0) - (isPartnerBrandItem(a) ? 1 : 0));
+    // Packshots she can buy now first, pre-orders last (Explore audit issue 6), same as the website.
+    filtered = orderFeatured(filtered);
   }
   let moreResults = [];
   if (narrowToMatches) {
@@ -534,6 +549,7 @@ export default function BrowseScreen({
             <>
               {/* TD 16: a search never looks empty because of the switch. Every result is
                   listed; her matches come first and the count is all results. */}
+              <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ay-shop-avoid" />
               {narrowToMatches && searchTermRaw && (
                 <p className="ay-shop-results-note" role="status">
                   {filtered.length > 0 ? 'Showing matches for you' : 'Showing all results'}
