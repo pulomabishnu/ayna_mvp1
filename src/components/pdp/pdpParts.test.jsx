@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { topWarningFor, brandVoice, pregnancyFirstFrom } from './pdpParts.js';
+import { topWarningFor, brandVoice, pregnancyFirstFrom, safetyGroupOf, groupSafety } from './pdpParts.js';
 import { fitChecklist, matchLineState, evidenceMeter, splitShow, shortAnswer, mainCaution, sortSources, clinicianOf, glanceTiles, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause } from './pdpParts.js';
 import { buyModel } from './buyModel.js';
 import ProductEvidence from './ProductEvidence.jsx';
@@ -178,8 +178,14 @@ describe('shopper pass', () => {
   it('dedupes a list and finds the first clause', () => {
     expect(dedupeList('Cramp & pain relief, Cramps')).toBe('Cramp & pain relief');
     expect(dedupeList('Contraception, UTI support, UTI')).toBe('Contraception, UTI support');
-    expect(leadClause('People with period cramps who want heat')).toEqual(['People with period cramps', ' who want heat']);
-    expect(leadClause('Those who like to adjust the heat, since it has 3 settings')).toEqual(['Those who like to adjust the heat', ', since it has 3 settings']);
+    // A clause boundary with a 4+ word lead splits; words and punctuation are all kept.
+    expect(leadClause('Adults with iron deficiency confirmed by bloodwork, which is what Nature Made\'s label says the 65 mg dose is for')).toEqual(['Adults with iron deficiency confirmed by bloodwork,', 'which is what Nature Made\'s label says the 65 mg dose is for']);
+    expect(leadClause('Not for wearing while you sleep: MedlinePlus advises never falling asleep with a heating pad on')).toEqual(['Not for wearing while you sleep:', 'MedlinePlus advises never falling asleep with a heating pad on']);
+    // Never inside an adjective list.
+    expect(leadClause('Anyone who wants an inexpensive, widely available ferrous sulfate tablet their clinician has recommended')).toEqual(['', 'Anyone who wants an inexpensive, widely available ferrous sulfate tablet their clinician has recommended']);
+    // A lead under 4 words does not split.
+    expect(leadClause('Those who like to adjust the heat, since it has 3 settings and an auto-off timer')[0]).toBe('Those who like to adjust the heat,');
+    expect(leadClause('Some people, like those with heavy periods, may need a clinician to check ferritin first')[0]).toBe('');
     expect(leadClause('Short line')).toEqual(['', 'Short line']);
   });
 });
@@ -203,5 +209,45 @@ describe('last round', () => {
   it('a benefit claim from the summary is the brand\'s, never ayna\'s', () => {
     expect(brandVoice('Supports red blood cell formation and energy.', 'Nature Made')).toBe('Nature Made says it supports red blood cell formation and energy.');
     expect(brandVoice('Rechargeable, wearable heating pad.', 'Comfytemp')).toBe('Rechargeable, wearable heating pad.');
+  });
+});
+
+describe('round 3: Safety facts groups and full text', () => {
+  it('maps every safety item to one fixed group (deterministic), unmatched to When using it', () => {
+    expect(safetyGroupOf('Accidental iron overdose is a leading cause of fatal poisoning in children under 6, keep out of reach.')).toBe('children');
+    expect(safetyGroupOf('Never use a heating pad while you are asleep, or on someone who is asleep or unconscious.')).toBe('donot');
+    expect(safetyGroupOf('Confirm iron deficiency with bloodwork before starting, this is a high dose best guided by lab results and a clinician.')).toBe('ask');
+    expect(safetyGroupOf('Pregnancy: Label: consult a physician before use if pregnant.', 'preg-row')).toBe('preg');
+    expect(safetyGroupOf('Take it with food to reduce stomach upset.')).toBe('when');
+    expect(safetyGroupOf('Stop using it and call your doctor if you get a rash.')).toBe('stop');
+    expect(safetyGroupOf('Check current regulator and manufacturer recall notices.', 'recall')).toBe('label');
+    const g = groupSafety([{ group: 'when' }, { group: 'children' }, ...Array.from({ length: 7 }, () => ({ group: 'ask' }))]);
+    expect(g.map((x) => x.id)).toEqual(['children', 'ask', 'when']);
+    expect(g[1].chunks.map((c) => c.length)).toEqual([6, 1]);
+  });
+  it('Who it\'s for, Not for, How to use, Safety and Ingredients show every item, no Show all', () => {
+    for (const id of ['p-portable-heating', 'p-nature-made-iron-65mg', 'd-ppd']) {
+      const p = product(id);
+      const html = renderToStaticMarkup(<ProductEvidence product={p} glance={buildGlance(p, {})} syncHash={false} />);
+      const summary = html.slice(html.indexOf('id="ay-panel-summary"'), html.indexOf('id="ay-panel-reviews"') > 0 ? html.indexOf('id="ay-panel-reviews"') : undefined);
+      for (const sec of ['ay-sum-who', 'ay-sum-how', 'ay-sum-safety', 'ay-sum-details']) {
+        const at = summary.indexOf(`id="${sec}"`);
+        if (at < 0) continue;
+        const body = summary.slice(at, summary.indexOf('</section>', at));
+        expect(body).not.toMatch(/Show all/);
+        expect(body).not.toMatch(/hidden=""/);
+      }
+    }
+  });
+});
+
+describe('round 3 fixes', () => {
+  it('How to use steps are never split', () => {
+    for (const id of ['p-portable-heating', 'p-nature-made-iron-65mg']) {
+      const p = product(id);
+      const html = renderToStaticMarkup(<ProductEvidence product={p} glance={buildGlance(p, {})} syncHash={false} />);
+      const at = html.indexOf('id="ay-sum-how"');
+      expect(html.slice(at, html.indexOf('</section>', at))).not.toMatch(/ayv-lr/);
+    }
   });
 });

@@ -16,7 +16,7 @@ import ProductCommunityReviews from './ProductCommunityReviews.jsx';
 import ProductPeopleSay from './ProductPeopleSay.jsx';
 import { useProductReviews } from './useProductReviews.js';
 import { evidenceLevel, gradeWords } from './evidenceLevel.js';
-import { evidenceMeter, sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause, brandVoice, SEVERE } from './pdpParts.js';
+import { evidenceMeter, sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause, brandVoice, safetyGroupOf, groupSafety } from './pdpParts.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { EvidenceMeter, ShowAll } from './PdpParts.jsx';
 import { FROM_LISTING } from '../../utils/howToSource.js';
@@ -104,6 +104,33 @@ function ReadShelf({ list, label, leadIn = false, min = 3 }) {
       <button type="button" className="ayv-showall" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : `Show all ${list.length} parts`}</button>
     </div>
   );
+}
+
+/**
+ * One item, full text, scannable: the lead phrase bold on its own line, the
+ * rest of the same sentence under it (founder, Oct 26). `lead` names a label
+ * ("Pregnancy:") that leads instead. Short items stay one line.
+ */
+function LR({ text, lead = '' }) {
+  const t = String(text || '');
+  if (lead) {
+    const long = `${lead} ${t}`.trim().split(/\s+/).length >= 12;
+    return long ? <span className="ayv-lr"><b className="ayv-lr__lead">{lead}</b><span className="ayv-lr__rest"><Tx>{t}</Tx></span></span> : <span><b className="ayv-item__lead">{lead} </b><Tx>{t}</Tx></span>;
+  }
+  const [a, b] = leadClause(t);
+  return a ? <span className="ayv-lr"><b className="ayv-lr__lead"><Tx>{a}</Tx></b><span className="ayv-lr__rest"><Tx>{b}</Tx></span></span> : <Tx>{t}</Tx>;
+}
+
+/** Back to the top of the page (phones), from the end of Safety. */
+function BackToTop() {
+  const go = (e) => {
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    let n = e.currentTarget.parentElement;
+    for (; n && n !== document.body; n = n.parentElement) { const oy = window.getComputedStyle(n).overflowY; if ((oy === 'auto' || oy === 'scroll') && n.scrollHeight > n.clientHeight + 1) break; }
+    const target = n && n !== document.body ? n : window;
+    target.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  };
+  return <button type="button" className="ayv-totop" onClick={go}>Back to top</button>;
 }
 
 function Bullets({ items, tone = '' }) {
@@ -663,38 +690,53 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     <>{sf.recall.text ? <Tx>{sf.recall.text}</Tx> : 'No recall check on file.'}{recallAdd && <> <a href={recallAdd.source.url} target="_blank" rel="noopener noreferrer">Search FDA recalls<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></>}</>
   ) : null;
 
-  // ---- Safety: the one place for every caution (founder, Oct 25) -------------
-  // Each item once; the one the hero line echoes goes first; 3 then Show all.
+  // ---- Safety facts: one panel, Drug Facts style (founder, Oct 26) -----------
+  // Each item verbatim, in a fixed group order; the hero line's item leads its group.
   const SAFETY_ROWS = /^(pregnancy|breastfeeding|medicines)/i;
+  const Fw = ({ text }) => { const w = String(text || '').split(/(\s+)/); const head = w.slice(0, 7).join(''); return <><b className="ayv-sf__fw">{head}</b><Tx>{w.slice(7).join('')}</Tx></>; };
   const safetyItems = [
-    sf.alert.length > 0 && { key: 'alert', text: sf.alert.join(' '), node: (
+    sf.alert.length > 0 && { key: 'alert', kind: '', text: sf.alert.join(' '), node: (
       <div className="ayv-alert">
-        <p className="ayv-item__k">Safety note</p>
         <Paras list={sf.alert} />
-        {sf.record && <><p className="ayv-item__k">The record</p><p className="ayq-p"><Tx>{sf.record}</Tx></p></>}
+        {sf.record && <p className="ayq-p">The record: <Tx>{sf.record}</Tx></p>}
         {sf.sources.length > 0 && <ul className="ayq-minilinks is-alert">{sf.sources.map((l) => { const lp = String(l.title).match(/^([^:]{2,40}):\s+(.+)$/); return <li key={l.url}><a href={l.url} target="_blank" rel="noopener noreferrer"><span className="ayq-minilinks__pub">{lp ? lp[1] : l.kind.tier === 'credible' ? l.publisher : l.kind.label}</span> {lp ? lp[2] : l.title}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></li>; })}</ul>}
       </div>
     ) },
-    ...docWarnings.map((w) => ({ key: `d-${w}`, text: w, node: <p className="ayq-p"><b className="ayv-item__lead">Check with a clinician first. </b><Tx>{w}</Tx></p> })),
-    ...restWarnings.map((w) => ({ key: `w-${w}`, text: w, node: <p className="ayq-p"><Tx>{w}</Tx></p> })),
-    ...sf.labelRows.filter((r) => SAFETY_ROWS.test(r.label)).map((r) => ({ key: `l-${r.label}`, text: `${r.label}: ${r.value}`, node: <p className="ayq-p"><b className="ayv-item__lead">{r.label}: </b><Tx>{r.value}</Tx></p> })),
-    sf.allergens && { key: 'allergens', text: sf.allergens, node: <p className="ayq-p"><b className="ayv-item__lead">Allergens: </b><Tx>{sf.allergens}</Tx></p> },
-    sf.avoidIf.length > 0 && { key: 'avoid', text: sf.avoidIf.join(', '), node: <p className="ayq-p"><b className="ayv-item__lead">Skip if you react to: </b>{sf.avoidIf.join(', ')}</p> },
-    sf.sideEffects && { key: 'side', text: sf.sideEffects, node: <p className="ayq-p"><b className="ayv-item__lead">{m.isDigital ? 'Downsides to know: ' : 'Possible side effects: '}</b><Tx>{sf.sideEffects}</Tx></p> },
-    sf.opinionAlerts.length > 0 && { key: 'also', text: sf.opinionAlerts.join(' '), node: <div><p className="ayq-p"><b className="ayv-item__lead">Also worth knowing: </b><Tx>{sf.opinionAlerts[0]}</Tx></p>{sf.opinionAlerts.length > 1 && <Paras list={sf.opinionAlerts.slice(1)} />}</div> },
-    recallValue && { key: 'recall', text: sf.recall.text || '', node: <p className="ayq-p"><b className="ayv-item__lead">Recalls: </b>{recallValue}</p> },
-    ...sf.privacy.map((r) => ({ key: `p-${r.label}`, text: r.value, node: <p className="ayq-p"><b className="ayv-item__lead">{r.label}: </b><Tx>{r.value}</Tx></p> })),
-    ...[...adds('safety'), ...adds('privacy')].map((a) => ({ key: `a-${a.id}`, text: a.title, node: <Addition a={a} /> })),
-  ].filter(Boolean);
-  // Severe warnings (fatal, poisoning, overdose, children, never) come before label lines; the hero's item leads.
-  const sevRank = (x) => (x.key === 'alert' ? 0 : /^[dw]-/.test(x.key) && SEVERE.test(x.text) ? 1 : 2);
-  safetyItems.sort((a, b) => sevRank(a) - sevRank(b));
+    ...docWarnings.map((w) => ({ key: `d-${w}`, kind: '', text: w, node: <Tx>{w}</Tx> })),
+    ...restWarnings.map((w) => ({ key: `w-${w}`, kind: '', text: w, node: <Tx>{w}</Tx> })),
+    ...sf.labelRows.filter((r) => SAFETY_ROWS.test(r.label)).map((r) => ({ key: `l-${r.label}`, kind: /medicines/i.test(r.label) ? 'med-row' : 'preg-row', text: `${r.label}: ${r.value}`, node: /medicines/i.test(r.label) ? <>{r.label}: <Tx>{r.value}</Tx></> : <><b className="ayv-sf__fw">{r.label}:</b> <Tx>{r.value}</Tx></> })),
+    sf.allergens && { key: 'allergens', kind: 'allergens', text: sf.allergens, node: <>Allergens: <Tx>{sf.allergens}</Tx></> },
+    sf.avoidIf.length > 0 && { key: 'avoid', kind: 'avoid', text: sf.avoidIf.join(', '), node: <>You react to: {sf.avoidIf.join(', ')}</> },
+    sf.sideEffects && { key: 'side', kind: 'side', text: sf.sideEffects, node: <>{m.isDigital ? 'Downsides to know: ' : 'Possible side effects: '}<Tx>{sf.sideEffects}</Tx></> },
+    sf.opinionAlerts.length > 0 && { key: 'also', kind: '', text: sf.opinionAlerts.join(' '), node: <>Also worth knowing: <Tx>{sf.opinionAlerts.join(' ')}</Tx></> },
+    recallValue && { key: 'recall', kind: 'recall', text: sf.recall.text || '', node: <>Recalls: {recallValue}</> },
+    ...sf.privacy.map((r) => ({ key: `p-${r.label}`, kind: 'privacy', text: r.value, node: <>{r.label}: <Tx>{r.value}</Tx></> })),
+    ...[...adds('safety'), ...adds('privacy')].map((a) => ({ key: `a-${a.id}`, kind: 'addition', text: a.title, node: <Addition a={a} /> })),
+  ].filter(Boolean).map((x) => ({ ...x, group: safetyGroupOf(x.text, x.kind) }));
+  // Pregnancy items in bold for their first four words (the Drug Facts rule) only when they are pregnancy items.
+  safetyItems.forEach((x) => { if (x.group === 'preg' && !x.kind) x.node = <Fw text={x.text} />; });
   const crit = criticalIndex(safetyItems.map((x) => x.text), safetyLead);
   if (crit > 0) safetyItems.unshift(safetyItems.splice(crit, 1)[0]);
+  const critKey = crit >= 0 || safetyItems[0]?.key === 'alert' ? safetyItems[0]?.key : '';
+  const groups = groupSafety(safetyItems);
   const hasSafety = safetyItems.length > 0 || urgent.length > 0;
   const safetyBody = hasSafety ? (
     <>
-      <ShowAll items={safetyItems} label="safety notes" className="ayv-list ayv-list--safety" itemClass={(x) => (x === safetyItems[0] && (crit >= 0 || x.key === 'alert') ? 'is-critical' : undefined)} render={(x) => x.node} />
+      {groups.length > 0 && (
+        <div className="ayv-panel ayv-sf" role="group" aria-labelledby="ayv-sf-h">
+          <p id="ayv-sf-h" className="ayv-panel__title">Safety facts</p>
+          {groups.map((g) => (
+            <div key={g.id} className={`ayv-panel__group is-${g.id}`}>
+              <p className="ayv-panel__sub">{g.title}</p>
+              {g.chunks.map((chunk, ci) => (
+                <ul key={ci} className="ayv-sf__list">
+                  {chunk.map((x) => <li key={x.key} className={[x.key === critKey && 'is-critical', x.kind === 'addition' && 'is-block'].filter(Boolean).join(' ') || undefined}>{x.kind === 'addition' ? x.node : <span className="ayq-p">{x.node}</span>}</li>)}
+                </ul>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
       <UrgentSigns product={product} flags={urgent} />
       {!sf.alert.length && <SourceGrid items={sf.sources} label="Sources for these notes" id="ayq-safe-src" />}
     </>
@@ -704,7 +746,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const howBody = (m.how || adds('how').length) ? (
     <>
       {m.how?.intro && <p className="ayq-p ayq-intro"><Tx>{m.how.intro}</Tx></p>}
-      {m.how && <ShowAll items={m.how.steps} label="steps" className="ayv-steps" render={(st, i) => <><span className="ayv-steps__n" aria-hidden="true">{i + 1}</span><span className="ayq-p"><Tx>{st}</Tx></span></>} />}
+      {m.how && <ShowAll items={m.how.steps} n={Infinity} label="steps" className="ayv-steps" render={(st, i) => <><span className="ayv-steps__n" aria-hidden="true">{i + 1}</span><span className="ayq-p"><Tx>{st}</Tx></span></>} />}
       {/* The listing footer only when the intro does not already name the source. */}
       {m.how && !m.how.source && m.how.fromListing && !/\b(per|listing|instructions|according)\b/i.test(m.how.intro || '') && <p className="ayq-meta">{FROM_LISTING}.</p>}
       {m.how && (m.how.source || m.how.faq) && (
@@ -755,9 +797,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const insideBody = hasInside ? (
     <>
       {dt.ingredientsText && (chips
-        ? <ShowAll items={chips} n={5} label={m.isDigital ? 'items' : 'ingredients'} className="ayv-chips" render={(c) => c} />
+        ? <><p className="ayv-leadin">{m.isDigital ? 'Included:' : 'On the label:'}</p><ShowAll items={chips} n={Infinity} label={m.isDigital ? 'items' : 'ingredients'} className="ayv-chips" render={(c) => c} /></>
         : <p className="ayq-p ayq-pre">{dt.ingredientsText}</p>)}
-      {dt.materials && !materialsDup && <p className="ayq-p"><b className="ayv-item__lead">Materials: </b><Tx>{dt.materials}</Tx></p>}
+      {dt.materials && !materialsDup && <p className="ayq-p">Materials: <Tx>{dt.materials}</Tx></p>}
     </>
   ) : null;
 
@@ -784,9 +826,10 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
 
   // ---- ayna summary: one reading column, each fact once (founder, Oct 25) -----
   const whoL = whoLists({ details: fit?.hasProfile ? fit.details : null, who: m.who });
-  const sec = (id, title, body, extra = '') => body && (
+  // A section whose panel has its own title ("Safety facts", "Product facts") keeps its heading for screen readers only.
+  const sec = (id, title, body, extra = '', hideTitle = false) => body && (
     <section id={id} className={`ayq-anchor ayv-sec${extra ? ` ${extra}` : ''}`} aria-labelledby={`${id}-h`}>
-      <h3 id={`${id}-h`} className="ayv-sec__h">{title}</h3>
+      <h3 id={`${id}-h`} className={hideTitle ? 'sr-only' : 'ayv-sec__h'}>{title}</h3>
       {body}
     </section>
   );
@@ -800,10 +843,11 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       )}
       {sec('ay-sum-who', 'Who it’s for', (whoL.yes.length > 0 || whoL.no.length > 0) && (
         <>
-          {whoL.yes.length > 0 && <ShowAll items={whoL.yes} label="" className="ayv-list ayv-list--yes" render={(t) => <><span className="ayv-mark is-yes" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span><span className="ayq-p"><span className="sr-only">For: </span>{(() => { const [a, b] = leadClause(t); return a ? <><b className="ayv-clause">{a}</b><Tx>{b}</Tx></> : <Tx>{t}</Tx>; })()}</span></>} />}
+          {whoL.yes.length > 0 && <p className="ayv-leadin">Good for:</p>}
+          {whoL.yes.length > 0 && <ShowAll items={whoL.yes} n={Infinity} label="" className="ayv-list ayv-list--yes" render={(t) => <><span className="ayv-mark is-yes" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span><span className="ayq-p"><span className="sr-only">For: </span><LR text={t} /></span></>} />}
           {whoL.no.length > 0 && <>
-            <p className="ayv-sub">Not for</p>
-            <ShowAll items={whoL.no} n={2} label="" className="ayv-list ayv-list--no" render={(t) => <><span className="ayv-mark is-no" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M7 7l10 10M17 7 7 17" /></svg></span><span className="ayq-p"><span className="sr-only">Not for: </span>{(() => { const [a, b] = leadClause(t); return a ? <><b className="ayv-clause">{a}</b><Tx>{b}</Tx></> : <Tx>{t}</Tx>; })()}</span></>} />
+            <p className="ayv-leadin ayv-sub">Not for:</p>
+            <ShowAll items={whoL.no} n={Infinity} label="" className="ayv-list ayv-list--no" render={(t) => <><span className="ayv-mark is-no" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M7 7l10 10M17 7 7 17" /></svg></span><span className="ayq-p"><span className="sr-only">Not for: </span><LR text={t} /></span></>} />
           </>}
           {fit?.hasProfile && fit?.onShowWhy && <p className="ayv-links"><button type="button" className="ayv-textbtn" onClick={fit.onShowWhy}>See the breakdown</button><a className="ayv-textbtn" href="/how-it-works">How we match</a></p>}
           {fit?.extra}
@@ -811,12 +855,16 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       ))}
       {sec('ay-sum-facts', 'Key facts', keyFacts.length > 0 && (
         <>
-          <ShowAll items={keyFacts} n={6} label="facts" className="ayv-facts" render={(r) => <><span className="ayv-facts__k">{r.label}</span><span className="ayv-facts__v">{r.node || <Tx>{r.value}</Tx>}{r.note && <small>{r.note}</small>}</span></>} />
-          {factsChecked && <p className="ayq-meta ayv-facts__foot">Facts checked {factsChecked}</p>}
+          <div className="ayv-panel ayv-pf" role="group" aria-labelledby="ayv-pf-h">
+            <p id="ayv-pf-h" className="ayv-panel__title">Product facts</p>
+            <ShowAll items={keyFacts} n={8} label="facts" className="ayv-facts" render={(r) => <><span className="ayv-facts__k">{r.label}</span><span className="ayv-facts__v">{r.node || <Tx>{r.value}</Tx>}{r.note && <small>{r.note}</small>}</span></>} />
+            {factsChecked && <p className="ayq-meta ayv-facts__foot">Facts checked {factsChecked}</p>}
+          </div>
         </>
-      ))}
+      ), '', true)}
       {sec('ay-sum-how', 'How to use', howBody)}
-      {sec('ay-sum-safety', 'Safety', safetyBody, 'ayv-sec--safety')}
+      {sec('ay-sum-safety', 'Safety', safetyBody, 'ayv-sec--safety', groups.length > 0)}
+      {safetyBody && <BackToTop />}
       {sec('ay-sum-evidence', 'Evidence', (
         <>
           <div className="ayv-evrow">
@@ -859,7 +907,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       <section className="ayq-evo ayv-evo" aria-labelledby="ayq-evo-h">
         <h3 id="ayq-evo-h" className="ayq-h3">Evidence overview</h3>
         <EvidenceMeter meter={meter} size="lg" />
-        {!level && <p className="ayq-p">ayna checks health claims only against .gov sources such as MedlinePlus, NIH and FDA. None is linked to this product yet, so it has no grade. What is on file is listed below for what it is.</p>}
+        {!level && <><p className="ayq-p">ayna checks health claims only against .gov sources such as MedlinePlus, NIH and FDA.</p><p className="ayq-p">None is linked to this product yet, so it has no grade.</p><p className="ayq-p">What is on file is listed below for what it is.</p></>}
         {negativeBlock}
         {layers.length > 0 && (
           <ul className="ayq-layers" aria-label="What is on file">

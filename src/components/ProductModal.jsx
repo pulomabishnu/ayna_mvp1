@@ -681,8 +681,8 @@ export default function ProductModal({
   // One tiny muted line under the actions (founder, Oct 25): where Buy goes and the commission, together.
   const purchaseNotes = buyUrl && !isPrelaunch ? (
     <>
+      {buy?.checked && <p className="ayp-buy__fine ayv-fine">{buy.checked}</p>}
       <p className="ayp-buy__fine ayv-fine">
-        {buy?.checked && <>{buy.checked}. </>}
         {leavingLine(buyUrl, sellerName && sellerName.length <= 32 ? sellerName : '', verb === 'Buy' ? 'buy' : verb === 'Book' ? 'book' : 'get started')}{' '}
         {isPartner ? 'ayna partner. We may earn a commission.' : isAmazonBuyLink ? 'ayna may earn a commission from Amazon.' : 'ayna may earn a commission.'}
         {' '}{isPartner && <button type="button" className="ayp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'How partnerships work'}</button>}

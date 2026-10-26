@@ -304,10 +304,73 @@ export function dedupeList(text) {
   return items.filter((x) => { const k = x.toLowerCase().split(/[\s&/]+/)[0].replace(/s$/, ''); if (seen.has(k)) return false; seen.add(k); return true; }).join(', ');
 }
 
-/** The first clause of a "who it's for" line, for bold: up to the first comma or " who ", whichever leaves 3+ words. */
-export function leadClause(text) {
+/**
+ * Full text, scannable (founder, Oct 26): a long item splits at its first
+ * natural break (after the first comma or colon, or before "who", "like",
+ * "since", "once" or "("). Returns [lead, rest] with every character kept
+ * (only the space at the break moves), or ['', text] for a short item
+ * (under 12 words) or one with no break that leaves a 3+ word lead.
+ */
+export function leadClause(text, minWords = 12) {
   const t = String(text || '');
-  const cands = [t.search(/,/), t.search(/\swho\s/), t.search(/:/)].filter((i) => i > 0).sort((a, b) => a - b);
-  const at = cands.find((i) => t.slice(0, i).trim().split(/\s+/).length >= 3);
-  return at ? [t.slice(0, at), t.slice(at)] : ['', t];
+  if (t.trim().split(/\s+/).length < minWords) return ['', t];
+  // Only at a clause boundary (", who", ", which", ", like", ", once", ", since", ":" or " ("),
+  // never inside an adjective list, and only when the lead is 4+ words. Unsure: no split.
+  const m = t.match(/^(.*?)(,(?=\s+(?:who|which|like|once|since)\b)|:(?=\s)|\s(?=\())/);
+  if (!m) return ['', t];
+  const lead = m[1] + (m[2].trim() ? m[2] : '');
+  const rest = t.slice(m[0].length).replace(/^\s+/, '');
+  if (lead.trim().split(/\s+/).length < 4 || !rest) return ['', t];
+  return [lead, rest];
+}
+
+// ---------------------------------------------------------------------------
+// Safety facts panel (founder, Oct 26, after the FDA OTC "Drug Facts" label,
+// 21 CFR 201.66): fixed groups in a fixed order, each item verbatim. A
+// deterministic keyword mapper puts every existing safety item in a group;
+// unmatched items go to "When using it".
+// ---------------------------------------------------------------------------
+export const SAFETY_GROUPS = [
+  { id: 'children', title: 'Keep away from children' },
+  { id: 'donot', title: 'Do not use if' },
+  { id: 'ask', title: 'Ask a clinician first if' },
+  { id: 'preg', title: 'Pregnancy and breastfeeding' },
+  { id: 'when', title: 'When using it' },
+  { id: 'stop', title: 'Stop and get help if' },
+  { id: 'label', title: 'Recalls and label notes' },
+];
+const G_CHILD = /\b(child|children|kids?|infants?|toddlers?|out of reach|overdose|poison(ing)?)\b/i;
+const G_PREG = /\b(pregnan\w*|breast-?feed\w*|nursing|lactat\w*)\b/i;
+const G_STOP = /\b(stop (using|use|taking)|seek (medical|immediate|emergency)|get (medical )?help|call (911|your|a)\b|emergency|go to (an?|the) (er|emergency))/i;
+const G_DONOT = /^(do not|don['’]t|never|not for|avoid)\b|\b(should not|must not|do not) (use|take)\b/i;
+const G_ASK = /\b(doctor|provider|clinician|gyn(a)?ecologist|ob\/?gyn|physician|pharmacist|midwife|consult|talk to|ask your|healthcare|if you (have|take|are taking)|medicines?|medications?)\b/i;
+
+/**
+ * @param {string} text the item's words
+ * @param {string} kind where it came from: 'preg-row' (Pregnancy / Breastfeeding label rows), 'med-row',
+ *   'avoid' (skip if you react to), 'side' (side effects), 'allergens', 'recall', 'privacy', 'addition', or '' for a warning / note
+ */
+export function safetyGroupOf(text, kind = '') {
+  if (kind === 'preg-row') return 'preg';
+  if (kind === 'med-row') return 'ask';
+  if (kind === 'avoid') return 'donot';
+  if (kind === 'side') return 'when';
+  if (['allergens', 'recall', 'privacy', 'addition'].includes(kind)) return 'label';
+  const t = String(text || '');
+  if (G_CHILD.test(t)) return 'children';
+  if (G_PREG.test(t)) return 'preg';
+  if (G_STOP.test(t)) return 'stop';
+  if (G_DONOT.test(t)) return 'donot';
+  if (G_ASK.test(t)) return 'ask';
+  return 'when';
+}
+
+/** Items grouped in the fixed order; a group over 6 items is split into visible sub-groups of up to 6 (never cut). */
+export function groupSafety(items) {
+  return SAFETY_GROUPS.map((g) => {
+    const list = items.filter((x) => x.group === g.id);
+    const chunks = [];
+    for (let i = 0; i < list.length; i += 6) chunks.push(list.slice(i, i + 6));
+    return { ...g, items: list, chunks };
+  }).filter((g) => g.items.length);
 }
