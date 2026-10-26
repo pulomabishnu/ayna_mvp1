@@ -29,6 +29,7 @@ import ComparePanel from '../../components/pdp/ComparePanel.jsx';
 import { worksWith } from '../../utils/aynaIntegrations.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
+import { PlateName } from '../../components/cards/CardBits.jsx';
 import { SaveFollowUpInline } from '../../components/save/SaveFollowUp.jsx';
 import { ADD_TO_ROUTINE, IN_ROUTINE } from '../../utils/routineCopy.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
@@ -421,8 +422,8 @@ export default function ProductDetailScreen({
                   thumbs={false}
                   plate={isSaved ? 'pink' : 'white'}
                   frame="portrait"
-                  renderImage={(src) => <ProductImage product={product} src={src} alt={name} allowBrandLogo={product?.type === 'digital'} />}
-                  fallback={<ProductImage product={product} src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />}
+                  renderImage={(src) => <ProductImage product={product} src={src} alt={name} allowBrandLogo={product?.type === 'digital'} fallback={<PlateName product={product} />} />}
+                  fallback={<ProductImage product={product} src={image} alt={name} allowBrandLogo={product?.type === 'digital'} fallback={<PlateName product={product} />} />}
                   zoomOpen={zoomOpen}
                   onZoom={setZoomOpen}
                 />
