@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getSelectedNeeds, useCatalogReady } from '../../data/catalog.js';
 import { moreRemaining } from '../../mobile/data/onboardingFlow.js';
 import { reconstructIntakeFromSnapshot } from '../../mobile/data/intakeModel.js';
@@ -51,6 +51,14 @@ function firstMatches(answers, limit = 3) {
   }
 }
 
+/* The product on its white plate; if the photo is missing or fails, the brand's
+   name sits on the plate instead (never an empty white square). */
+function MatchPlate({ src, product }) {
+  const [failed, setFailed] = useState(false);
+  const word = String(product.brand || product.name || '').split(/\s+/)[0];
+  return <span className="ay-ob-match__plate" aria-hidden="true">{src && !failed ? <img src={src} alt="" loading="lazy" onError={() => setFailed(true)} /> : <i>{word}</i>}</span>;
+}
+
 export default function ReadyReveal({ answers = null, variant = 'app', signedIn = false, onSeeToday, onCreateAccount, onBack, onMorePersonal }) {
   const ready = useCatalogReady();
   const needs = useMemo(() => (ready ? revealNeeds(answers) : []), [answers, ready]);
@@ -67,7 +75,7 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
     <Tag className={`ay-ob-ready is-${variant}`} aria-labelledby="ay-ob-ready-h">
       {onBack && (
         <button type="button" className="ay-ob-back" onClick={onBack} aria-label="Back to health data">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
         </button>
       )}
       {/* The reveal is a stamp moment (INSPO onboarding 4: result as a seal): the
@@ -98,7 +106,7 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
               const src = safeProductImageSrc(product.image || product.imageUrl || product.images?.[0], product.type === 'digital');
               return (
                 <li key={product.id} className="ay-ob-match">
-                  <span className="ay-ob-match__plate" aria-hidden="true">{src ? <img src={src} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <i>{String(product.brand || product.name || '').split(/\s+/)[0]}</i>}</span>
+                  <MatchPlate src={src} product={product} />
                   <span className="ay-ob-match__text">
                     {/* Elure-style (#61): chips above the name. */}
                     <span className="ay-ob-match__chips">

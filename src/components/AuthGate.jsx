@@ -139,7 +139,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     ecosystem: { title: 'Build your health ecosystem', line: 'Sign in to save your health interests, matches and recommendations in one place.' },
     personalize: { title: 'See how well this matches you', line: 'Create your health profile to see your personalized match and why.' },
     feature: { title: feature ? (FEATURE_TITLES[feature] || `Sign in for ${feature}`) : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
-    login: { title: 'Sign in', line: 'Welcome to ayna. New here? Start with the quiz.' },
+    login: { title: 'Sign in', line: '' }, // the "New here? Get my matches" door says it; no line restating it (founder rule #1)
   };
   const ctxCopy = !isSignup ? CONTEXT_COPY[context] : null;
   const cardRef = useRef(null);
@@ -558,11 +558,11 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         <div className="ay-auth-logo" style={styles.logo}>ayna</div>
         {ctxCopy && <h2 className="ay-auth-context-title">{ctxCopy.title}</h2>}
         {isSignup && <h2 className="ay-auth-context-title">{signupTitle}</h2>}
-        <p className="ay-auth-tagline" style={styles.tagline}>{subtitle}</p>
+        {subtitle && <p className="ay-auth-tagline" style={styles.tagline}>{subtitle}</p>}
         {!isSignup && !allowSignup && onStartEcosystem && (
           <div className="ay-auth-doors">
             <button type="button" className="ay-auth-doors__new" onClick={onStartEcosystem}>
-              <b>New here? See my matches</b>
+              <b>New here? Get my matches</b>
               <span>A short quiz, then products matched to you</span>
             </button>
             <p className="ay-auth-doors__or">or sign in</p>

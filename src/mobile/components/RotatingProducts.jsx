@@ -32,7 +32,7 @@ function EcosystemArt() {
     {SHELF_PICKS.map(([name, tone, id], i) => (
       <div key={name} className="ay-reel-track" style={{ '--i': i }}>
         <span className={`ay-reel-cover is-${tone} has-photo`}><Thumb id={id} /></span>
-        <strong>{name}</strong>
+        <span className="ay-reel-tracktext"><strong>{name}</strong>{getProductById(id)?.name && <small>{getProductById(id).name}</small>}</span>
         <span className="ay-reel-eq" aria-hidden="true"><i /><i /><i /></span>
       </div>
     ))}

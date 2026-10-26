@@ -21,3 +21,21 @@
 
 /* Bleeding after menopause: care message above her focus (QA3 M2). */
 .ay-ob-ready__care { margin: 4px 0 16px; text-align: left; }
+
+/* Design loop A (Oct 26): one look for the reveal's controls on web and app.
+   Back is the quiz's round arrow; focus rings are butter (no blue off charts);
+   the focus numerals are all pink (blue is for chart lines only); the actions
+   read primary, then the one text link, then the optional step. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-back { border: 1.5px solid currentColor !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-back svg { width: 17px; height: 17px; stroke-width: 2.4; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready :is(.ay-ob-primary, .ay-ob-quiet, .ay-ob-more, .ay-ob-back):focus-visible { outline: 3px solid #ffedac !important; outline-offset: 3px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__list li:nth-child(n) span { color: #3e2723 !important; background: #f7badd !important; box-shadow: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-primary { order: 1; box-shadow: 3px 3px 0 #f7badd !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-quiet { order: 2; min-height: 44px; padding: 0 4px !important; border: 0 !important; text-decoration: underline; text-underline-offset: 4px; font-weight: 600 !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-more { order: 3; flex-basis: 100%; }
+/* the reveal rows are butter in both themes: the match pill stays espresso in dark too (it went butter-on-butter) */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-ob-ready .ay-ob-match .ay-match-pill.ay-match-pill,
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ob-ready .ay-ob-match .ay-match-pill.ay-match-pill { background: #3e2723 !important; border-color: #3e2723 !important; color: #ffedac !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-ob-ready .ay-ob-match .ay-match-pill.ay-match-pill :is(strong, span),
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ob-ready .ay-ob-match .ay-match-pill.ay-match-pill :is(strong, span) { color: #ffedac !important; }

@@ -16,6 +16,7 @@ import { useLatestAnnouncement } from '../hooks/useLatestAnnouncement';
 import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
 import '../styles/editorial.css';
 import '../styles/home.css';
+import '../styles/loop-a-landing.css';
 import { Seal, Ribbon } from './personality/Bits.jsx';
 import Photo from './ui/Photo.jsx';
 import { Plate, Chip, BigFact, StandardsBand } from './ui/ay';

@@ -232,7 +232,7 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
         </div>
         {(onStart || onExplore) && (
           <div className="ip-closer__cta">
-            {onStart && <StickerButton onClick={() => onStart()}>See my matches</StickerButton>}
+            {onStart && <StickerButton onClick={() => onStart()}>Get my matches</StickerButton>}
             {onExplore && <OutlineButton onClick={() => onExplore()}>Browse products</OutlineButton>}
           </div>
         )}

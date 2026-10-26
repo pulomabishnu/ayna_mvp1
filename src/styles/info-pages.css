@@ -157,3 +157,33 @@ html body .app-container .ip-bars > li:nth-child(3) .ip-bars__fill b { color: va
 /* Radii from the set (8 / 16 / 999 / 50%) on the Contact form group and its fields. */
 html body .app-container .ed.ed-page--info .ay-group { border-radius: 16px !important; }
 html body .app-container .ed.ed-page--info .ed-form :is(input, textarea, select) { border-radius: 8px !important; }
+
+/* =====================================================================
+   Design loop A (Oct 26), round 1: one system across the info pages.
+   ===================================================================== */
+/* How it works: every step number the same (espresso disc, butter numeral);
+   the sample under each step sits on the same baseline. */
+html body .app-container .ed.ed-page--info .ed-hiw li .ed-hiw__n { background: var(--ay-fill-ink, #3e2723) !important; color: var(--ay-on-ink, #ffedac) !important; border: 0 !important; }
+.app-container .ed.ed-page--info .ed-hiw li .ed-hiw__demo { margin-top: auto; }
+/* funnel bars: the three tracks start on one line (captions can wrap) */
+.app-container.app-container .ip-bars { align-items: start; }
+/* About: the four value tiles in one family (white, outlined) */
+.app-container.app-container .ed.ed-page--info .ed-principles li:nth-child(n) { background: var(--ip-tile); color: var(--ip-text); }
+.app-container.app-container .ed.ed-page--info .ed-principles li:nth-child(n) :is(h3, p) { color: inherit !important; }
+.app-container.app-container .ed.ed-page--info .ed-principles li p { color: var(--ip-text-2) !important; }
+/* Partners: rows sit on the page (no white card), so the white plate reads */
+.app-container.app-container .ed .ip-prow { background: transparent; }
+.app-container.app-container .ed .ip-prow:hover { background: var(--ip-deep); }
+.app-container.app-container .ip-disclose { margin: -4px 0 20px; }
+/* Contact: topic chips get the shared 8px gap (they touched) */
+.app-container.app-container .ed .ed-chiprow--wrap { display: flex; gap: 8px; }
+/* Free product: the same page frame as every other info page */
+.app-container.app-container .fp.mockup-page { max-width: 1368px; padding-inline: 64px; margin-inline: auto; box-sizing: border-box; }
+@media (max-width: 1279px) { .app-container.app-container .fp.mockup-page { padding-inline: 40px; } }
+@media (max-width: 1023px) { .app-container.app-container .fp.mockup-page { padding-inline: 24px; } }
+@media (max-width: 767px) { .app-container.app-container .fp.mockup-page { padding-inline: 20px; } }
+/* Founder change (Oct 26 13:38): no white surfaces on info pages; deeper butter + thin espresso rule. */
+.app-container { --ip-tile: #f6e3a1; }
+.app-container.app-container .ip-facts > li { background: #f6e3a1; border: 1px solid rgba(62, 39, 35, .15); }
+.app-container.app-container .ed.ed-page--info .ed-principles li:nth-child(n) { background: #f6e3a1; }
+.app-container.app-container .ip-bars > li:nth-child(3) .ip-bars__fill { background: #ffedac; }

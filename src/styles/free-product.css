@@ -340,3 +340,9 @@ html body .app-container.app-container.app-container[data-theme='brand-dark'] .f
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .fp .fp-rules { border-top-color: rgba(255, 237, 172, .2); }
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .fp .fp-eq .fp-eq__seal.fp-eq__seal { background: #f7badd !important; border-color: #f7badd !important; }
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .fp .fp-eq .fp-eq__seal.fp-eq__seal :is(b, span) { color: #3e2723 !important; }
+
+/* Founder change (Oct 26 13:38): no white surfaces. Calm panels and fields on
+   this page are deeper butter; white stays only behind product photos. */
+.app-container.app-container .fp { --ay-product-tile: #f6e3a1; }
+.app-container.app-container .fp :is(.fp-reel__tile, .fp-result__tile, .fp-landed__tile) { background: #fff; }
+.app-container.app-container .fp-allfb__list li { background: #f6e3a1; }

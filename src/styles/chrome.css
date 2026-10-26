@@ -325,3 +325,7 @@ html body .app-container.app-container.app-container.app-container.app-container
   .app-container.app-container .ay-nav__account.is-landing-guest { display: block !important; }
   .app-container.app-container .ay-nav__account.is-landing-guest .ay-nav__login { min-height: 44px; height: 44px; padding: 0 14px !important; font-size: 14px !important; white-space: nowrap; }
 }
+/* Loop A (Oct 26): on phones a footer link that wraps keeps its ↗ beside the last word (it floated to the column edge). */
+@media (max-width: 767px) { .app-container.app-container .ay-foot__link { display: inline-block; min-height: 0; padding-block: 9px; } }
+/* Loop A: the sign-in doors end on the "or sign in" rule; no second hairline under it. */
+html body .ay-auth-doors:has(.ay-auth-doors__or) { border-bottom: 0 !important; padding-bottom: 0 !important; }

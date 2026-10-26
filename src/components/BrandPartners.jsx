@@ -244,11 +244,11 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
         ? 'Partner products may be featured higher in general Browse. Partnership never changes your personalized match scores or recommendation order.'
         : 'Check back soon. When partnerships go live, they may be featured in general Browse, but partnership will never change personalized match scores or recommendation order.'}
     >
-      <p className="ip-disclose">See <a href="/how-we-make-money">how we make money</a> and <a href="/how-it-works">how matches are made</a>.</p>
       <header className="ed-head">
         <h2 className="ed-h2">Our partners</h2>
         <span className="ed-head__count">{ORDERED.length} brands</span>
       </header>
+      <p className="ip-disclose">See <a href="/how-we-make-money">how we make money</a> and <a href="/how-it-works">how matches are made</a>.</p>
       {/* Stacked rounded rows (#45 Skin Routine): plate · brand · what they make · N products. */}
       <ul className="ip-partners" aria-label="Partner brands">
         {ORDERED.map((p) => {

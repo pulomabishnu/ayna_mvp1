@@ -97,8 +97,9 @@ function Rules({ minChars = FEEDBACK_MIN_CHARS }) {
 
 /** Page header: the shared InfoHero (butter, breadcrumb, H1 36px). No colour bands, no eyebrow labels. */
 function PageHead({ title, lead, center = false, headingRef, children }) {
+  // Same InfoHero as the other info pages, photo on the white scalloped plate included (loop A).
   return (
-    <InfoHero className={`fp-head${center ? ' is-center' : ''}`} title={title} lede={lead} crumb="Free product" headingRef={headingRef}>
+    <InfoHero className={`fp-head${center ? ' is-center' : ''}`} title={title} lede={lead} crumb="Free product" headingRef={headingRef} photo={center ? null : '/landing/bag-tubes.webp'}>
       {children}
     </InfoHero>
   );

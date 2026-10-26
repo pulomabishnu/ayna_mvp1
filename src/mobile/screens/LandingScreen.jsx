@@ -1,6 +1,7 @@
 import RotatingProducts from '../components/RotatingProducts.jsx';
 import { PARTNER_BRANDS } from '../../utils/partnerBrands';
 import '../landing.css';
+import '../loop-a-app.css';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
 import '../../styles/onboarding.css';
 

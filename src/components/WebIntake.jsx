@@ -18,6 +18,7 @@ import { WEB_FOLLOWUP_STEP_IDS } from '../mobile/data/quizDraftProgress.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../utils/search/index.js';
 import { commonNeedOptions } from '../matching/commonNeeds.js';
+import '../styles/loop-a-quiz.css';
 import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../mobile/data/onboardingFlow.js';
 import { CATEGORIES } from '../health/metrics.js';
 import ReadyReveal from './onboarding/ReadyReveal.jsx';
@@ -774,12 +775,12 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
           <span className="qz-count" aria-label={`${phase === 'more' ? 'Optional question' : 'Question'} ${shownIndex} of ${shownTotal}`}>{shownIndex}<i>/{shownTotal}</i></span>
         </>}
         {!initialSnapshot && <p className="qz-saved-note">Answers are saved on this device</p>}
+        {onboarding && index === 0 && onExplore && <button type="button" className="qz-skip qz-explore" onClick={onExplore}>Explore first</button>}
       </header>
 
       {/* No eyebrow label above the question (onboarding audit #4); the row keeps only its tools. */}
-      {((onboarding && index === 0 && onExplore) || phase === 'more' || (step.info && !onboarding)) && <div className="qz-label-row">
+      {(phase === 'more' || (step.info && !onboarding)) && <div className="qz-label-row">
         <span className="qz-label-tools">
-          {onboarding && index === 0 && onExplore && <button type="button" className="qz-skip qz-explore" onClick={onExplore}>Explore first</button>}
           {phase === 'more' && <button type="button" className="qz-skip qz-to-results" onClick={() => finish()} disabled={saving}>See my results</button>}
           {step.info && !onboarding && <button type="button" className="qz-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen} onClick={() => setInfoOpen((v) => !v)}>i</button>}
         </span>
