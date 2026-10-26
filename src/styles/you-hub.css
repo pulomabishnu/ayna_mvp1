@@ -96,6 +96,7 @@ html body .app-container.app-container.app-container.app-container.app-container
   #ayeco .eco3-head .ay-h1 { font-size: 30px !important; }
   #ayeco .ay-shelf__head { border-bottom: 1px solid rgba(62, 39, 35, .15) !important; }
   #ayeco .eco3-empty { transform: none !important; border-radius: 16px !important; box-shadow: none !important; }
+  #ayeco .eco-stack__cost span { background: #f6e3a1 !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; border-radius: 16px !important; box-shadow: none !important; }
   .ay-shelf__menu-list { box-shadow: none !important; border-width: 1.5px !important; border-radius: 16px !important; }
   .ay-shelf .ay-shelf__menu > summary { box-shadow: none !important; border: 1.5px solid var(--ay-text, #3e2723); }
   .ay-shelf__working { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; margin-top: 6px; padding: 0; border: 0; background: none; color: var(--ay-text, #3e2723) !important; font: 600 13px/1.2 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
@@ -149,7 +150,7 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, 
 @media (max-width: 719px) {
   html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview { display: flex; flex-direction: column; gap: 24px; }
   html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview > .wy-col { display: contents; }
-  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview > .wy-col > * { order: 7; }
+  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview > .wy-col > * { order: 7; width: 100%; align-self: stretch; margin-top: 0; margin-bottom: 0; }
   html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview .yh-setup { order: 1; }
   html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview .yh-facts { order: 2; }
   html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview [data-tour='you-sections'] { order: 3; }
@@ -157,3 +158,6 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, 
   html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview [aria-labelledby='wy-safety-h'] { order: 5; }
   html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview [aria-labelledby='yh-knows-h'] { order: 6; }
 }
+
+/* Signed-out You: the page container already has the gutter; the preview adds none of its own. */
+html body .app-container.app-container.app-container.app-container.app-container .yh .ay-ecoprev { padding-left: 0 !important; padding-right: 0 !important; }

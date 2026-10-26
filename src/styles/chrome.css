@@ -365,3 +365,6 @@ html body .app-container .ay-checkin .ay-opt:hover, html body .ay-checkin .ay-op
 html body .app-container .ay-checkin .ay-opt[aria-pressed='true'], html body .ay-checkin .ay-opt[aria-pressed='true'] { background: #3e2723; color: #ffedac; }
 html body .ay-checkin .ay-opt:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; }
 html body .ay-checkin .ay-opt__mark { display: inline-grid; place-items: center; width: 20px; height: 20px; flex: none; border: 1.5px solid currentColor; border-radius: 50%; font-size: 13px; }
+
+/* Auth card: the quiet last line ("Skip for now") follows the theme (it was espresso on espresso in dark). */
+html body .app-container.app-container.app-container .ay-auth-card > button:last-child:not(.ay-auth-new) { color: var(--ay-fg-muted) !important; }
