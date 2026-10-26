@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { haptic } from '../../utils/haptics.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import EvidenceMark from '../pdp/EvidenceMark.jsx';
@@ -136,6 +136,30 @@ export function AskAnswerExtras({ m, onOpenProduct = null, onOpenRead = null }) 
   );
 }
 
+// Glance first (founder Oct 26 16:54): a long answer shows its first paragraph, the rest one tap away
+// ("Read full answer", button + aria-expanded; the rest stays in the DOM, hidden). Safety wording never folds.
+const SAFETY_WORDS = /\b(emergency|urgent|911|988|seek care|call your|see a (doctor|clinician)|talk to a (doctor|clinician)|stop using|recall|warning|safety|bleeding|pregnan|allerg|severe|right away)\b/i;
+export function splitAnswer(text) {
+  const blocks = String(text || '').split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+  if (blocks.length < 2 || String(text).length < 320 || SAFETY_WORDS.test(text)) return null;
+  const n = /^#{1,6}\s/.test(blocks[0]) || blocks[0].length < 80 ? 2 : 1;
+  if (blocks.length <= n) return null;
+  return { short: blocks.slice(0, n).join('\n\n'), rest: blocks.slice(n).join('\n\n') };
+}
+function AskText({ text, keepOpen = false }) {
+  const [open, setOpen] = useState(false);
+  const id = useId();
+  const parts = keepOpen ? null : splitAnswer(text);
+  if (!parts) return <div className="ay-askp-text">{renderMarkdownLite(text)}</div>;
+  return (
+    <div className="ay-askp-text is-folded">
+      {renderMarkdownLite(parts.short)}
+      <div id={id} hidden={!open}>{renderMarkdownLite(parts.rest)}</div>
+      <button type="button" className="ay-askp-more" aria-expanded={open} aria-controls={id} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : 'Read full answer'}</button>
+    </div>
+  );
+}
+
 /** One message: hers on the right (espresso), ayna's on the left (white), then the answer's actions. */
 export function AskMessage({ m, before = null, after = null, onOpenProduct, onOpenRead, className = '' }) {
   if (m.role === 'user') return <div className={`ay-askp-msg is-user ${className}`.trim()}><div className="ay-askp-bubble">{m.text}</div>{after}</div>;
@@ -144,7 +168,7 @@ export function AskMessage({ m, before = null, after = null, onOpenProduct, onOp
     <div className={`ay-askp-msg is-ayna${m.failed ? ' is-failed' : ''} ${className}`.trim()}>
       {before}
       <div className="ay-askp-bubble">
-        <div className="ay-askp-text">{renderMarkdownLite(m.text || '')}</div>
+        <AskText text={m.text || ''} keepOpen={Boolean(m.failed)} />
         {!m.failed && <AskAnswerExtras m={m} onOpenProduct={onOpenProduct} onOpenRead={onOpenRead} />}
       </div>
       {after}

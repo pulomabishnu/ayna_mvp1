@@ -12,6 +12,8 @@ export default function CareNearYouPanel({
   onOpenProduct,
   onEditHealthProfile,
   compact = false,
+  // false where the page already has its own ZIP row (Tracked): no second field, the "Searching near" note stays.
+  zipField = true,
 }) {
   const [zipInput, setZipInput] = useState((userZipCode || '').replace(/\D/g, '').slice(0, 5));
 
@@ -52,7 +54,7 @@ export default function CareNearYouPanel({
         {bundle.intro}
       </p>
 
-      {onZipCodeChange && (
+      {onZipCodeChange && zipField && (
         <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '1.25rem' }}>
           <label style={{ fontSize: 14, fontWeight: '600', color: 'var(--color-text-main)' }}>US zip (for local finders)</label>
           <input
@@ -79,6 +81,12 @@ export default function CareNearYouPanel({
             </span>
           )}
         </div>
+      )}
+
+      {!zipField && userZipCode && (
+        <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
+          Searching near <strong>{String(userZipCode).slice(0, 5)}</strong>. These links share this ZIP with the outside finder you open.
+        </p>
       )}
 
       {(insuranceLabel || onEditHealthProfile) && (

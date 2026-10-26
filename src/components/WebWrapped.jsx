@@ -4,7 +4,8 @@ import { createPortal } from 'react-dom';
 import { getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
 import { whyLine } from '../utils/whyLine';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
-import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import ProductTileImage, { ProductImageFallback, resolveCatalogProductImage } from './ProductTileImage';
+import { Plate } from './ui/ay';
 import { buildPersona } from '../mobile/utils/shopperProfile.js';
 import { shareAynaLink } from '../mobile/utils/shareLink.js';
 import './WebWrapped.css';
@@ -77,7 +78,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
         <button type="button" onClick={back} disabled={index === 0 && !onBack} aria-label={index === 0 && onBack ? 'Back to the quiz' : 'Previous slide'}><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>
         <span>Your ayna summary</span>
         <div>
-          {!last && <button type="button" className="wwr-skip" onClick={() => { progressRef.current = 0; setProgress(0); setIndex(slides.length - 1); }}>Skip to my matches</button>}
+          {!last && <button type="button" className="wwr-skip" onClick={() => { progressRef.current = 0; setProgress(0); setIndex(slides.length - 1); }}>Skip to my products</button>}
           {!last && <button type="button" onClick={() => setPaused((v) => !v)} aria-label={paused ? 'Play story' : 'Pause story'}>{paused ? <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z" /></svg> : <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M8 5v14M16 5v14" /></svg>}</button>}
           <button type="button" onClick={onClose} aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
         </div>
@@ -85,7 +86,8 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
 
       <div className="wwr-stage" key={active} onClick={(e) => { if (!e.target.closest('button')) next(); }}>
         {active === 'intro' && <>
-          <span className="wwr-shapes" aria-hidden="true"><i /><i /><i /></span>
+          {/* Picture first: her real picks on scallop plates fill the top of the slide (was three loose shapes). */}
+          <span className="wwr-plates" aria-hidden="true">{top.slice(0, 3).map((p, i) => <Plate key={p.id || i} src={resolveCatalogProductImage(p) || ''} alt="" fallback={p.brand || p.name} className="wwr-plate" />)}</span>
           <p className="wwr-kicker">Your ecosystem is ready</p>
           <h1>Your ayna,<br /><em>wrapped</em></h1>
           <div className="wwr-stats">
@@ -96,7 +98,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
         </>}
         {active === 'focus' && <>
           <p className="wwr-kicker">Your ecosystem covers</p>
-          <ol className="wwr-ranks">{areas.slice(0, 3).map((a, i) => <li key={a} style={{ '--i': i }}><span>{i + 1}</span><strong>{a}</strong></li>)}</ol>
+          <ol className="wwr-ranks">{areas.slice(0, 3).map((a, i) => { const p = picks.find((x) => resolveEcosystemProductArea(x, ECOSYSTEM_AREAS)?.label === a); return <li key={a} style={{ '--i': i }}><span>{i + 1}</span><strong>{a}</strong>{p && <Plate src={resolveCatalogProductImage(p) || ''} alt="" fallback={p.brand || p.name} className="wwr-rankplate" />}</li>; })}</ol>
         </>}
         {active === 'match' && first && <>
           <p className="wwr-kicker">Your #1 match</p>

@@ -15,6 +15,8 @@ const TONES = ['pink', 'butter', 'deep'];
 export default function TopicBands({ followed = [], scope = 'all', onScope, onEdit, editLabel = null, max = 99, suggest = [], onFollow = null, className = '' }) {
   // Following nothing yet: a few topics to follow in one tap (the same follow as the Topics sheet).
   const offers = !followed.length && onFollow ? suggest.slice(0, 3) : [];
+  // At most five filters at the top (advisor, Oct 26): the rest live in the Topics sheet.
+  max = Math.min(max, followed.length ? 3 : 0);
   const items = [
     ...(followed.length ? [{ key: 'mine', label: 'My topics' }] : []),
     { key: 'all', label: 'All' },

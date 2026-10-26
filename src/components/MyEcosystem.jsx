@@ -28,6 +28,8 @@ import {
 import { behaviorFrom, careNotes, shortNeedLabel } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
 import ProductTileImage, { resolveCatalogProductImage, ProductImageFallback } from './ProductTileImage';
+import { Plate } from './ui/ay';
+import '../styles/unique-b.css';
 import CareNearYouPanel from './CareNearYouPanel';
 import CareNote from './CareNote';
 import { summarizeCareNotes } from '../utils/careSummary';
@@ -996,6 +998,7 @@ export default function MyEcosystem({
     const ecoRootRef = useRef(null);
     const [railShown, setRailShown] = useState(false);
     // Shelves, gaps and tools ease in once, card by card, as they scroll into view.
+    const gapsFoldRef = useRef(null);
     useRevealOnce(ecoRootRef, '.ay-shelf, .eco3-gaps, .eco3-extras__tools, .eco3-extras__saved, .eco3-addrow');
     useEffect(() => {
         const ids = ['eco3-shelves-title', 'eco3-needs-title', 'eco3-tools-title', 'ayna-wishlist'];
@@ -1167,6 +1170,8 @@ export default function MyEcosystem({
         [quizResults, healthProfile, matchOpts]
     );
     const needShelves = useMemo(() => needSeed?.shelves || [], [needSeed]);
+    // The fold's glance: the top pick of each gap, as photos (real catalog images only).
+    const gapPhotos = needShelves.map((sh) => sh.picks?.[0]?.productId).filter(Boolean).map((id) => getProductById(id)).filter(Boolean).slice(0, 3);
     const careFlags = needSeed?.careFlags || null;
     const careFirst = Boolean(careFlags?.careFirst);
     const careNoteLines = careNotes(careFlags);
@@ -2179,7 +2184,7 @@ export default function MyEcosystem({
                         ['eco3-tools-title', 'Tools'],
                         ['ayna-wishlist', 'Saved'],
                     ].filter(Boolean).map(([id, label]) => (
-                        <a key={id} href={`#${id}`} data-ink-on={jumpOn === id ? 'true' : undefined} className={jumpOn === id ? 'is-on' : undefined} aria-current={jumpOn === id ? 'location' : undefined} onClick={(e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{label}</a>
+                        <a key={id} href={`#${id}`} data-ink-on={jumpOn === id ? 'true' : undefined} className={jumpOn === id ? 'is-on' : undefined} aria-current={jumpOn === id ? 'location' : undefined} onClick={(e) => { e.preventDefault(); if (id === 'eco3-needs-title' && gapsFoldRef.current) gapsFoldRef.current.open = true; document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{label}</a>
                     ))}
                 </nav>
                 </div>
@@ -2294,7 +2299,16 @@ export default function MyEcosystem({
 
                 {!ecoQueryTrimmed && needShelves.length > 0 && (
                     <section className="eco3-gaps" aria-labelledby="eco3-needs-title">
-                        <header className="eco3-sechead"><h2 className="eco3-shelves__title ay-h2" id="eco3-needs-title">Fill the gaps</h2></header>
+                        {/* Glance first (founder Oct 26 16:54): the gaps as one line + her best picks' photos; the full strip one tap away. */}
+                        <details className="ub-fold" ref={gapsFoldRef}>
+                        <summary>
+                            <span className="ub-fold__text">
+                                <h2 className="eco3-shelves__title ay-h2" id="eco3-needs-title">Fill the gaps</h2>
+                                <span className="ub-fold__line">{needShelves.length} {needShelves.length === 1 ? 'need' : 'needs'} with nothing on your shelves yet{gapPhotos.length ? ' · best picks for each' : ''}</span>
+                            </span>
+                            {gapPhotos.length > 0 && <span className="ub-fold__plates" aria-hidden="true">{gapPhotos.map((p) => <Plate key={p.id} src={resolveCatalogProductImage(p) || ''} alt="" fallback={p.brand || p.name} className="ub-fold__plate" />)}</span>}
+                            <span className="ub-fold__go"><span className="ub-fold__show">Show picks</span><span className="ub-fold__hide">Hide picks</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></span>
+                        </summary>
                         <HealthShapedNote shaped={needSeed?.healthShaped} userId={user?.id || null} />
                         <NeedsStrip
                             needs={[...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => ({
@@ -2326,6 +2340,7 @@ export default function MyEcosystem({
                                 {typeof onEditHealthProfile === 'function' && <button type="button" className="eco3-related__add" onClick={onEditHealthProfile}>Add any of these to my answers</button>}
                             </aside>
                         )}
+                        </details>
                     </section>
                 )}
 

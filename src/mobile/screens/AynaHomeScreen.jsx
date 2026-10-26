@@ -79,15 +79,15 @@ export default function AynaHomeScreen(props) {
   return (
     <div className="ay-home" data-view={homeView}>
       {homeView === 'products' && (
-        <div role="region" aria-label="Your matches" className="ay-home__view">
+        <div role="region" aria-label="Your products" className="ay-home__view">
           {hasProducts
             ? <EcosystemScreen {...props} onBack={goHome} />
             : <div className="ayna-fresh-ecosystem eco-app">
               <MobileHeader onBack={goHome} />
-              <h1 className="sr-only">Your matches</h1>
+              <h1 className="sr-only">Your products</h1>
               {quizDraft && onResumeQuiz
                 ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />
-                : <EmptyState art="spark" title={lastQuizAnswers ? 'No strong matches yet' : 'Your matches live here'} body={lastQuizAnswers ? 'Nothing passed the bar for your goals yet. Explore has everything, with your match on each product.' : 'Create your health profile and ayna shows the products that fit you, each with the reason why.'} actionLabel={lastQuizAnswers ? 'Explore products' : 'Create your health profile'} onAction={lastQuizAnswers ? () => onBrowse?.() : onStartQuiz} secondaryLabel={lastQuizAnswers ? null : 'Explore products'} onSecondary={() => onBrowse?.()} />}
+                : <EmptyState art="spark" title={lastQuizAnswers ? 'No strong matches yet' : 'Your products live here'} body={lastQuizAnswers ? 'Nothing passed the bar for your goals yet. Explore has everything, with your match on each product.' : 'Create your health profile and ayna shows the products that fit you, each with the reason why.'} actionLabel={lastQuizAnswers ? 'Explore products' : 'Create your health profile'} onAction={lastQuizAnswers ? () => onBrowse?.() : onStartQuiz} secondaryLabel={lastQuizAnswers ? null : 'Explore products'} onSecondary={() => onBrowse?.()} />}
               <LegalFooter />
             </div>}
         </div>
@@ -153,7 +153,7 @@ export default function AynaHomeScreen(props) {
         >
           <nav className="ay-homelinks" data-tour="home-links" aria-label="More on Today">
             <button type="button" onClick={() => openDashboard()}><span><b>My dashboard</b><small>Routine, log and health data</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
-            <button type="button" onClick={() => onHomeView?.('products')}><span><b>Your matches</b><small>{hasProducts ? `${myProducts.length} in your ecosystem` : 'Products that fit you'}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+            <button type="button" onClick={() => onHomeView?.('products')}><span><b>Your products</b><small>{hasProducts ? `${myProducts.length} in your ecosystem` : 'Products that fit you'}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
           </nav>
         </HomeWidgets>
       </div>

@@ -962,7 +962,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     const replies = Number(post.comment_count) || 0;
     const kind = post.kind === 'question' || post.kind === 'review' ? post.kind : 'post';
     const media = post.media || [];
-    const long = !full && String(post.body || '').length > 360;
+    // Glance (advisor + founder 16:54): about two lines in the feed, the full post one tap away.
+    const long = !full && String(post.body || '').length > 140;
     const replyWord = kind === 'question' ? 'Answer' : 'Reply';
     return <article ref={engagement.trackView(post.id)} className={`cm-post cm-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(i, 6) }} data-kind={kind} data-vt-target={full ? 'post' : undefined} key={post.id}>
       {/* What kind of post this is: an outlined label with an icon (Community audit, issue 2). */}

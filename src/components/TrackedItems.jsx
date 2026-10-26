@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import BackLink from './nav/BackLink.jsx';
 import HealthDataImport from './HealthDataImport';
 import CareNearYouPanel from './CareNearYouPanel';
+import '../styles/unique-b.css';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { hasFlaggedRecall } from '../utils/productSafetyAlert';
@@ -164,18 +165,28 @@ export default function TrackedItems({ onBack = null, trackedProducts, joinedWai
                 </ul>
             </section>
             <section className="aytrk__sec" aria-labelledby="aytrk-care-h">
-                <h2 id="aytrk-care-h" className="ay-group__title">Care near you</h2>
-                <div className="aytrk__panel">
-                    <CareNearYouPanel
-                        quizResults={quizResults}
-                        healthProfile={healthProfile}
-                        userZipCode={userZipCode}
-                        onZipCodeChange={onZipCodeChange}
-                        onOpenProduct={onOpenProduct}
-                        onEditHealthProfile={onEditHealthProfile}
-                        compact
-                    />
-                </div>
+                {/* Glance first (founder Oct 26 16:54): one line, the full care list one tap away. ZIP lives in Your details only. */}
+                <details className="ub-fold">
+                    <summary>
+                        <span className="ub-fold__text">
+                            <h2 id="aytrk-care-h" className="ay-group__title">Care near you</h2>
+                            <span className="ub-fold__line">Clinics, Planned Parenthood and virtual care for your answers{userZipCode ? `, near ${String(userZipCode).slice(0, 5)}` : ''}.</span>
+                        </span>
+                        <span className="ub-fold__go"><span className="ub-fold__show">Show</span><span className="ub-fold__hide">Hide</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></span>
+                    </summary>
+                    <div className="aytrk__panel">
+                        <CareNearYouPanel
+                            quizResults={quizResults}
+                            healthProfile={healthProfile}
+                            userZipCode={userZipCode}
+                            onZipCodeChange={onZipCodeChange}
+                            onOpenProduct={onOpenProduct}
+                            onEditHealthProfile={onEditHealthProfile}
+                            compact
+                            zipField={false}
+                        />
+                    </div>
+                </details>
             </section>
             </div>
 

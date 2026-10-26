@@ -81,3 +81,10 @@
 .wwr .wwr-stats { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .wwr .wwr-stats div { min-height: 88px; align-content: space-between; }
 .wwr .wwr-badge { box-shadow: none !important; border-width: 1.5px !important; }
+/* Uniqueness pass (group B): real picks on scallop plates fill the slide top; each area shows one of its products. */
+.wwr-plates { display: flex; justify-content: center; gap: 12px; margin-bottom: 8px; }
+.wwr-plate { width: min(30%, 140px); aspect-ratio: 1; height: auto; }
+.wwr-plate:nth-child(2) { translate: 0 -14px; }
+.wwr-ranks li { position: relative; }
+.wwr-rankplate { width: 64px; height: 64px; margin-left: auto; flex: none; }
+.wwr-stage:has(.wwr-plates) { justify-content: center; }

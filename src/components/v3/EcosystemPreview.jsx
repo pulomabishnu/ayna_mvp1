@@ -36,7 +36,7 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn, mat
     return (
       <section className="ay-ecoprev is-mine" aria-labelledby="ay-ecoprev-title">
         <header className="ay-ecoprev__head">
-          <h1 id="ay-ecoprev-title" className="ay-ecoprev__title">Your matches</h1>
+          <h1 id="ay-ecoprev-title" className="ay-ecoprev__title">Your products</h1>
           <p className="ay-ecoprev__lede">{matches.length} picks from your answers. Tap one to see why it fits.</p>
         </header>
         <div className="ay-ecoprev__save" role="note">

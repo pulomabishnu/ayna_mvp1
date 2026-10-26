@@ -90,3 +90,43 @@ html body .app-container.app-container.app-container.app-container.app-container
 /* Community header on the espresso band */
 html body .app-container .cm .cm-head.ay-pagehead .cm-title { margin: 0 0 8px !important; }
 html body .app-container .cm .cm-head.ay-pagehead .ct-lede { color: inherit !important; max-width: 40ch; }
+
+/* ---------- Glance fold (eco Fill the gaps; reused): one line + photos, the rest one tap away ---------- */
+html body .app-container .ub-fold { margin: 0; border: 1.5px solid var(--ay-fg, #3e2723); border-radius: 16px; background: var(--ay-surface, #f6e3a1); }
+html body .app-container .ub-fold > summary { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; min-height: 44px; padding: 16px; cursor: pointer; list-style: none; }
+html body .app-container .ub-fold > summary::-webkit-details-marker { display: none; }
+html body .app-container .ub-fold > summary:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 16px; }
+html body .app-container .ub-fold .ub-fold__text { display: grid; gap: 4px; flex: 1 1 260px; min-width: 0; }
+html body .app-container .ub-fold .ub-fold__text h2 { margin: 0 !important; }
+html body .app-container .ub-fold .ub-fold__line { font: 500 15px/1.4 var(--ay-font-ui); color: var(--ay-fg-muted, rgba(62, 39, 35, .8)); }
+html body .app-container .ub-fold .ub-fold__plates { display: flex; gap: 8px; }
+html body .app-container .ub-fold .ub-fold__plate { width: 64px; height: 64px; flex: 0 0 64px; }
+html body .app-container .ub-fold .ub-fold__go { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border-radius: 999px; background: var(--ay-fill-ink, #3e2723); color: var(--ay-on-ink, #ffedac); font: 600 15px/1 var(--ay-font-ui); }
+html body .app-container .ub-fold .ub-fold__go svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; transition: transform .15s; }
+html body .app-container .ub-fold[open] .ub-fold__go svg { transform: rotate(180deg); }
+html body .app-container .ub-fold:not([open]) .ub-fold__hide, html body .app-container .ub-fold[open] .ub-fold__show { display: none; }
+html body .app-container .ub-fold[open] > summary { border-bottom: 1px solid var(--ay-rule-color, rgba(62, 39, 35, .22)); }
+html body .app-container .ub-fold > :not(summary) { margin-left: 16px; margin-right: 16px; }
+html body .app-container .ub-fold > :last-child:not(summary) { margin-bottom: 16px; }
+@media (prefers-reduced-motion: reduce) { html body .app-container .ub-fold .ub-fold__go svg { transition: none; } }
+
+/* Ask: "Read full answer" */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-more { display: inline-flex; align-items: center; min-height: 44px; margin: 4px 0 0 !important; padding: 0 16px !important; border: 1.5px solid var(--askp-ink) !important; border-radius: 999px !important; background: transparent !important; color: var(--askp-ink) !important; font: 600 15px/1 var(--ay-font-ui) !important; cursor: pointer; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-more:focus-visible { outline: 2px solid var(--askp-ink); outline-offset: 2px; }
+
+/* ---------- Community round 2 (advisor: simple feed, few filters, glance posts) ---------- */
+/* Topic filters: one compact row of colour-blocked pills (was big blocks) */
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) { display: flex; flex-wrap: wrap; gap: 8px; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic { min-height: 44px; padding: 6px 8px 6px 16px; align-items: center; border-radius: 999px; font: 700 15px/1.1 var(--ay-font-ui); }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic svg { width: 28px; height: 28px; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic.is-edit { padding-right: 8px; }
+.ayna-mobile :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) { margin: 4px 0 16px; }
+.ayna-mobile :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic { min-height: 44px; font-size: 15px; }
+
+/* Posts: 3 lines in the feed, Read more */
+html body .app-container .cm .cm-body.is-clamped { -webkit-line-clamp: 3 !important; line-clamp: 3; }
+.ayna-mobile:is(#ay, .ayna-mobile) .am-screen .am-note-body.is-clamped { -webkit-line-clamp: 3 !important; }
+.ub-readmore { display: inline-flex; align-items: center; min-height: 44px; margin: -4px 0 4px; padding: 0; border: 0; background: none; color: inherit; font: 600 15px/1 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+/* Product mentioned in a feed post: glance only (photo, brand, name, price, match); the facts live on the product page */
+.cm .cm-post:not(.is-full) .cm-mention-card :is(.ay-pcard__facts, .ay-pcard__sizes, .ay-pcard__ev, .ay-pcard__tags, .ay-pcard__peruse, .ay-pcard__amount),
+.am-screen .am-note:not(.is-full) .ay-pcard :is(.ay-pcard__facts, .ay-pcard__sizes, .ay-pcard__ev, .ay-pcard__tags, .ay-pcard__peruse, .ay-pcard__amount) { display: none !important; }

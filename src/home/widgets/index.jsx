@@ -289,7 +289,7 @@ function ShoppingList({ size, ctx }) {
 function MyEcosystem({ size, ctx }) {
   const list = ctx.myProducts || [];
   return (
-    <Card id="my_ecosystem" size={size} title="My ecosystem" empty={list.length ? null : 'No products in your routine yet.'} action={<Act onClick={ctx.on.openEcosystem}>{list.length ? `${list.length} products` : 'Your matches'}</Act>}>
+    <Card id="my_ecosystem" size={size} title="My ecosystem" empty={list.length ? null : 'No products in your routine yet.'} action={<Act onClick={ctx.on.openEcosystem}>{list.length ? `${list.length} products` : 'Your products'}</Act>}>
       <ProductLines products={list} max={size === 'large' ? 3 : 1} ctx={ctx} />
     </Card>
   );

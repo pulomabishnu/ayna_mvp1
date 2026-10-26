@@ -985,7 +985,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     const replies = Number(post.comment_count) || 0;
     const media = post.media || [];
     const full = page?.type === 'post' && details?.id === post.id;
-    const long = !full && String(post.body || '').length > 260;
+    // Glance (advisor + founder 16:54): about two lines in the feed, the full post one tap away.
+    const long = !full && String(post.body || '').length > 120;
     const armed = armedDelete === post.id;
     // One word everywhere (web and app): Helpful, never Like.
     const likeWord = 'Helpful';
