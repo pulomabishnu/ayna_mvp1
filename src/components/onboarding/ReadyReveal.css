@@ -42,3 +42,4 @@ html body .app-container.app-container.app-container.app-container.app-container
 /* the reveal's primary keeps the one sticker shadow on web and app (layered sheets were removing it) */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready .ay-ob-primary.ay-ob-primary,
 html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-ob-ready .ay-ob-primary.ay-ob-primary { box-shadow: 3px 3px 0 #f7badd !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-ob-ready .ay-ob-primary.ay-ob-primary { box-shadow: 3px 3px 0 #f7badd !important; }

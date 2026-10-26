@@ -69,4 +69,4 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container .ay-auth-card.ay-auth-card > div:has(> span + span + span) > span:nth-child(2) { color: var(--ay-text-2) !important; }
 html body .app-container.app-container.app-container.app-container.app-container .ay-auth-card.ay-auth-card > div:has(> span + span + span) > span:not(:nth-child(2)) { background: var(--ay-text-2) !important; opacity: .4; }
 /* Loop A: a pick without a photo shows its brand's name on the white tile (never an empty square). */
-html body .app-container .ay-auth-summary__thumbs span.is-word { padding: 0 3px; overflow: hidden; color: #3e2723; font: 700 13px/1.05 var(--ay-font-ui, 'Figtree', sans-serif); text-align: center; word-break: break-word; }
+html body .app-container .ay-auth-summary__thumbs span.is-word { padding: 0 3px; overflow: hidden; color: #3e2723 !important; font: 700 13px/1.05 var(--ay-font-ui, 'Figtree', sans-serif); text-align: center; word-break: break-word; }
