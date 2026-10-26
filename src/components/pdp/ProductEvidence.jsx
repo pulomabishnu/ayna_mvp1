@@ -861,7 +861,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     <div className="ayq-sum ayv-read">
       {(lead || m.summary.length > 0) && (
         <section id="ay-sum-about" className="ayq-anchor ayv-sec ayv-sec--lead" aria-label="What it is">
-          {lead && <p className="ayv-oneline"><Tx>{brandVoice(lead, m.brand || glance?.brand)}</Tx></p>}
+          {lead && <p className={`ayv-oneline${String(lead).length > 140 ? ' is-long' : ''}`}><Tx>{brandVoice(lead, m.brand || glance?.brand)}</Tx></p>}
           {m.summary.length > 0 && <div className="ayq-prose"><Paras list={m.summary.filter((x) => !(teamShort && x.startsWith(leadParts.used)))} /></div>}
         </section>
       )}

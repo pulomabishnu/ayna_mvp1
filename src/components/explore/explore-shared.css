@@ -13,3 +13,6 @@
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-avoid__label { margin: 0 !important; color: var(--ay-ink); font: 700 15px/1.3 var(--ay-font-ui) !important; }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-avoid__label span { display: block; color: var(--ay-ink-muted); font: 500 13px/1.4 var(--ay-font-ui); }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ayna-mobile .ay-avoid { margin: 12px var(--d-gutter, 16px) 16px; }
+/* Loop C r1: eight needs read as one complete set, never 7 + an orphan (8 across on a laptop, 4 x 2 on a tablet). */
+@media (min-width: 721px) { :is(#wx1, html):is(#wx2, html):is(#wx3, html):is(#wx4, html) body .ay-needtiles:not(.is-row) { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { :is(#wx1, html):is(#wx2, html):is(#wx3, html):is(#wx4, html) body .ay-needtiles:not(.is-row) { grid-template-columns: repeat(8, minmax(0, 1fr)); } }

@@ -72,3 +72,6 @@
    covers, so a rail of reads zig-zagged; it now sits low on all of them, with the drawn mark top right. */
 .rc:not(.rc--thumb) .rc__label { top: auto; bottom: calc(6.5cqi + 13px + 3.6cqi + 4cqi); }
 .rc:not(.rc--thumb) .rc__spot { top: 7cqi; bottom: auto; }
+/* Founder change: no white surfaces. The paper label is butter / deeper butter on every cover. */
+.rc.rc--vaginal { --rc-label: #f6e3a1; }
+.rc.rc--postpartum { --rc-label: #ffedac; }

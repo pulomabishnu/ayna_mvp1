@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { PlateName } from './cards/CardBits.jsx';
 import { useResearchState } from '../data/researchLoader';
-import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
 import { isSafetyHold, isBleedingEvaluation } from '../utils/matchDisplay.js';
@@ -671,7 +671,8 @@ export default function ProductModal({
         product={product}
         alt={(i) => productImageAlt({ ...product, name: displayName }, i, shownImages.length)}
         onImageError={(e, src) => handleImageErrorWithRetry(e, () => setFailedImages((list) => (list.includes(src) ? list : [...list, src])))}
-        fallback={<ProductImageFallback />}
+        // No photo (or it failed): the brand name on the plain plate, as on every card and in the app.
+        fallback={<PlateName product={product} />}
         zoomOpen={zoomOpen}
         onZoom={setZoomOpen}
         plate={isSaved ? 'pink' : 'white'}
