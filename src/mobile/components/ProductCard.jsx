@@ -18,6 +18,7 @@ import { cardKind, cardBadge, cardPrice } from '../../utils/productCardFacts.js'
 import { CompareCheck } from '../../components/compare/CompareControls.jsx';
 import { matchBreakdownFor } from '../../components/pdp/decision.js';
 import { PlateName, PriceExtras, FactChips, EvidenceRow } from '../../components/cards/CardBits.jsx';
+import { Plate } from '../../components/ui/ay';
 
 export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts, needId = null, onSeeMatch = null }) {
   const { name, category, price, priceDisplay, image, imageUrl, images } = product || {};
@@ -71,17 +72,16 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
     const sticker = kind || '';
     const priceLine = facts.main !== 'Price at retailer' ? <b>{facts.main}</b> : <b className="is-muted">{facts.main}</b>;
     return (
-      <article className={`ay-pcard${variant === 'row' ? ' is-row' : ''}${isSaved ? ' is-saved' : ''}`}>
+      <article data-pid={product.id} className={`ay-pcard${variant === 'row' ? ' is-row' : ''}${isSaved ? ' is-saved' : ''}`}>
         {/* 2. Brand · name. The button covers the card (same as the website's link). */}
         <small className="ay-pcard__brand" aria-hidden={showBrand ? undefined : true}>{showBrand ? secondaryLabel : '\u00a0'}</small>
         <strong className="ay-pcard__name">
           <button type="button" className="ay-pc-main ay-pcard__link" onClick={onClick} aria-label={`${name}, ${facts.main}${facts.sub ? ` ${facts.sub}` : ''}${oneBadge ? `, ${oneBadge}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>{brandRepeatsName ? name : displayName(product)}</button>
         </strong>
         {/* 1. The product on its plate, same scale everywhere, with one category sticker (drawn first: CSS order). */}
-        <span className="ay-pcard__plate" aria-hidden="true">
+        <Plate className="ay-pcard__plate" saved={isSaved} sticker={sticker || null}>
           <ProductImage product={product} src={resolvedImage} alt="" allowBrandLogo={isService} fallback={<PlateName product={product} />} />
-          {sticker && <span className="ay-pcard__sticker">{sticker}</span>}
-        </span>
+        </Plate>
         {/* 3. Match + reason (from the one engine's breakdown). */}
         {(showMatch || held) && (
           <span className="ay-pcard__fit">

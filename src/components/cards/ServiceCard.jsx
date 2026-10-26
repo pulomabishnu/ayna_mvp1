@@ -5,6 +5,7 @@ import { serviceFacts } from '../../data/startups.js';
 import { productHref, isPlainLeftClick } from '../../utils/productRoute';
 import { saveFeedback } from '../../utils/feedback.js';
 import { EvidenceRow } from './CardBits.jsx';
+import { Plate } from '../ui/ay';
 
 const HEART = 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z';
 
@@ -32,10 +33,8 @@ export default function ServiceCard({
   };
   const Link = as;
   return (
-    <article className={`ay-pcard ay-scard${isSaved ? ' is-saved' : ''} ${className}`.trim()}>
-      <div className="ay-pcard__plate ay-scard__plate">
-        {logo ? <img src={logo} alt={`${name} logo`} loading="lazy" /> : <span className="ay-plate-name" aria-hidden="true"><span>{name}</span></span>}
-      </div>
+    <article data-pid={service.id} className={`ay-pcard ay-scard${isSaved ? ' is-saved' : ''} ${className}`.trim()}>
+      <Plate className="ay-pcard__plate ay-scard__plate" saved={isSaved} src={logo} alt={logo ? `${name} logo` : ''} fallback={name} />
       <p className="ay-scard__head">
         <strong className="ay-scard__name">
           <Link className="ay-pcard__link" {...(as === 'a' ? { href: productHref(service) } : { type: 'button' })} onClick={open}>{name}</Link>

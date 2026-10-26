@@ -6,6 +6,7 @@ import { sentenceCase } from '../utils/sentenceCase.js';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import ProductTileImage from './ProductTileImage';
 import { PlateName, EvidenceRow, PriceExtras, FactChips } from './cards/CardBits.jsx';
+import { Plate } from './ui/ay';
 import MatchPill from './MatchPill';
 import { matchText } from '../utils/matchDisplay.js';
 import '../styles/card-fit.css';
@@ -80,12 +81,11 @@ export default function ProductCard({
     onOpen?.(product);
   };
   return (
-    <article className={`ay-pcard${inEcosystem ? ' is-in-eco' : ''}${isSaved ? ' is-saved' : ''}${hasMatch ? ' has-fit' : ''} ${className}`.trim()} style={style}>
+    <article data-pid={product.id} className={`ay-pcard${inEcosystem ? ' is-in-eco' : ''}${isSaved ? ' is-saved' : ''}${hasMatch ? ' has-fit' : ''} ${className}`.trim()} style={style}>
       {/* 1. The product on its plate, same scale on every card, with one category sticker. */}
-      <div className="ay-pcard__plate">
+      <Plate className="ay-pcard__plate" saved={isSaved} sticker={sticker || null}>
         {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<PlateName product={product} />} />}
-        {sticker && <span className="ay-pcard__sticker">{sticker}</span>}
-      </div>
+      </Plate>
       {/* 2. Brand · name. The name is the link; it covers the whole card. */}
       <p className="ay-pcard__brand">{isMine ? categoryLabel : (shownBrand || categoryLabel)}</p>
       <h3 className="ay-pcard__name" title={product.name}>

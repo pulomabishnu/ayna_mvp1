@@ -18,9 +18,8 @@
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__plate {
   order: -1;
   position: relative; display: grid; place-items: center; aspect-ratio: 1 / 1; width: 100%; overflow: hidden;
-  margin: 0 0 12px; border-radius: var(--ay-r-md, 16px); background: #fff !important; border: 0; box-shadow: none !important;
+  margin: 0 0 12px; border: 0; box-shadow: none !important;
 }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-saved .ay-pcard__plate { background: var(--ay-pink, #f7badd) !important; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__plate > img,
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__plate img:not(.ay-pcard__evmark) {
   position: absolute !important; inset: 15% !important; width: 70% !important; height: 70% !important; max-width: none !important;
@@ -31,18 +30,12 @@
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__fallback { inset: 0; }
 /* No photo yet: the brand name on the plain plate (Explore audit #7). */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-plate-name {
-  position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; box-sizing: border-box;
-  background: #fff; color: #3e2723; text-align: center;
+  position: absolute; inset: 0; display: grid; place-items: center; padding: 18%; box-sizing: border-box;
+  background: transparent; color: #3e2723; text-align: center;
 }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-plate-name > span {
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; max-width: 100%;
   font: 700 clamp(17px, 2vw, 22px)/1.1 var(--ay-font-display) !important; letter-spacing: -.01em; overflow-wrap: anywhere;
-}
-/* The one category sticker, top-left of the plate: outlined, not coloured (#39, #53). */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__sticker {
-  position: absolute; top: 8px; left: 8px; z-index: 1; max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  padding: 3px 8px; border: 1.5px solid #3e2723; border-radius: 999px; background: #ffedac; color: #3e2723;
-  font: 600 13px/1.2 var(--ay-font-ui) !important; letter-spacing: 0; text-transform: none;
 }
 /* 2. Brand · name */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__brand {
@@ -131,10 +124,10 @@
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 12px; align-items: start; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row > * { grid-column: 2; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row > .ay-pcard__plate { grid-column: 1; grid-row: 1 / span 9; margin: 0; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row .ay-pcard__sticker { display: none; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row .ayk-plate__sticker { display: none; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row .ay-pcard__name { min-height: 0; }
 /* ServiceCard: the same card with a logo plate (a wide plate: logos are wide), name · format, covers, cost. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__plate { aspect-ratio: 16 / 9; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__plate { aspect-ratio: 1 / 1; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__plate img { inset: 20% 15% !important; width: 70% !important; height: 60% !important; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 0 0 4px !important; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__name { color: var(--pc-ink); font: 700 17px/1.3 var(--ay-font-ui) !important; }
