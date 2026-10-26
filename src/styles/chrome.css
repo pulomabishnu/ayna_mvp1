@@ -352,3 +352,16 @@ html body .app-container.app-container.app-container.app-container.app-container
 .app-container.app-container .ay-acct-list__text { display: grid; gap: 2px; min-width: 0; }
 .app-container.app-container .ay-acct-list__text b { color: var(--ay-fg); font: 600 var(--ay-size-h3)/1.3 var(--ay-font-ui); }
 .app-container.app-container .ay-acct-list__text span { color: var(--ay-fg-muted); font: 500 var(--ay-size-meta)/1.35 var(--ay-font-ui); }
+
+/* Account menu (loop E): opaque deeper butter, ink outline, no shadow; espresso in dark so its text reads. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .nav-account-menu { border: var(--ay-border-ink) !important; border-radius: var(--ay-r-md) !important; background: #f6e3a1 !important; box-shadow: none !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .nav-account-menu { background: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .nav-account-menu > :is(a, button) { min-height: 44px; color: var(--ay-fg) !important; border-radius: var(--ay-r-sm) !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .nav-account-menu > :is(a, button):is(:hover, :focus-visible) { background: var(--ay-fill-ink) !important; color: var(--ay-on-ink) !important; }
+
+/* Monthly check-in options (loop E): one option style, selected = espresso fill, no hover shadow. */
+html body .app-container .ay-checkin .ay-opt, html body .ay-checkin .ay-opt { display: flex; align-items: center; gap: 10px; flex-shrink: 0; width: 100%; min-height: 48px; padding: 12px 18px; border: 1.5px solid #3e2723; border-radius: 999px; background: transparent; color: #3e2723; font: 600 16px/1.3 var(--ay-font-ui); text-align: left; cursor: pointer; box-shadow: none; transition: background-color 160ms ease; }
+html body .app-container .ay-checkin .ay-opt:hover, html body .ay-checkin .ay-opt:hover { background: rgba(62, 39, 35, .06); }
+html body .app-container .ay-checkin .ay-opt[aria-pressed='true'], html body .ay-checkin .ay-opt[aria-pressed='true'] { background: #3e2723; color: #ffedac; }
+html body .ay-checkin .ay-opt:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; }
+html body .ay-checkin .ay-opt__mark { display: inline-grid; place-items: center; width: 20px; height: 20px; flex: none; border: 1.5px solid currentColor; border-radius: 50%; font-size: 13px; }

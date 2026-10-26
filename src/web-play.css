@@ -109,9 +109,10 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 
 /* ---------- Fields ---------- */
 .app-container main :is(input[type='text'], input[type='search'], input[type='email'], input[type='number'], input[type='tel'], input[type='password'], input:not([type]), textarea, select):not(.wq-page *):not(.ay-web-lib-search *):not(.wc-search *):not(.ayna-landing-searchbar *):not(.ed *):not(.ct *):not(.cm-sheet *):not(.ay-auth-card *) {
-  border: 2px solid var(--legacy-ink) !important; border-radius: var(--ay-r-sm, 8px) !important; background: var(--ay-paper) !important; color: var(--legacy-ink) !important; font: 500 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important;
+  /* Founder, Oct 26: fields fill with the calm surface (deeper butter; butter 8% in dark), 1.5px outline, text follows the theme. */
+  border: var(--ay-border-ink) !important; border-radius: var(--ay-r-sm, 8px) !important; background: var(--ay-surface) !important; color: var(--ay-fg) !important; font: 500 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important;
 }
-.app-container main :is(input, textarea)::placeholder { color: var(--ay-ink-soft) !important; opacity: 1; }
+.app-container main :is(input, textarea)::placeholder { color: var(--ay-fg-muted) !important; opacity: 1; }
 
 /* Chips: outlined pills, ink when on */
 .app-container :is(.ayna-browse__categories, .ayna-landing-filters, .ayna-landing-chips) button {

@@ -56,4 +56,23 @@
   .ayna-saved-startups b { font: 600 15px/1.2 var(--f-ui, Figtree, sans-serif); }
   .ayna-saved-startups small { font: 500 13px/1.3 var(--f-ui, Figtree, sans-serif); }
   .ayna-saved-startups svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Loop E: Saved count is a pink pill in both themes (it went data-blue in dark); 13px floor on My ecosystem. */
+  .ayna-saved-header h1 small { display: inline-grid !important; place-items: center; min-width: 28px; height: 28px; padding: 0 8px; border: 1.5px solid #3e2723 !important; border-radius: 999px; background: #f7badd !important; color: #3e2723 !important; font: 700 14px/1 var(--f-ui, Figtree, sans-serif) !important; vertical-align: middle; }
+  .eco-app .eco-oval { font-size: 13px !important; }
+  .eco-app small, .eco-app .ay-shelf2-count { font-size: max(13px, 1em) !important; }
+  /* A pink button on the espresso summary card needs no offset (the sticker is pink on pink there). */
+  .eco-app .eco-app-checkin { box-shadow: none !important; }
+  /* Settings rows give every button a 56px min-height, which turned the Tips switch into a circle. */
+  .ay-switch { min-height: 0 !important; width: 51px !important; }
+  /* Section rows breathe: a title and a two-line note never touch the next row. */
+  .ay-you-row { padding: 12px 0 !important; }
+  /* Signed out: the card's first line is its title, the button is the shared 48px primary. */
+  .ay-you-body .ay-set-signedout { padding: 20px !important; border: 1px solid color-mix(in srgb, var(--d-ink, #3e2723) 15%, transparent) !important; }
+  .ay-you-body .ay-set-signedout p { font: 500 15px/1.45 var(--f-ui, Figtree, sans-serif) !important; color: var(--d-ink-2, #3e2723) !important; }
+  .ay-you-body .ay-set-signedout p b { display: block; margin: 0 0 6px; font: 700 22px/1.15 'ayna Display', var(--f-display, sans-serif); color: var(--d-ink, #3e2723); }
+  .ay-you-body .ay-set-signedout p br { display: none; }
+  .ay-you-body .ay-set-signedout .ay-btn { min-height: 48px !important; padding: 0 28px !important; font-size: 15px !important; }
+  /* Auth fields: deeper butter with an ink outline (no white), founder Oct 26. */
+  &:not([data-theme='dark']) :is(.ay-auth, .ayna-fresh-auth) .ayna-fresh-auth-field.ayna-fresh-auth-field { background: #f6e3a1 !important; }
 }

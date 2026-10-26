@@ -144,3 +144,16 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, 
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container) .ay-ecoprev__stage.is-honest { grid-template-columns: minmax(0, 1fr) 340px !important; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container) .ay-ecoprev__stage.is-honest .ay-ecoprev__lock { border-top: 0 !important; border-left: var(--ay-border-ink) !important; align-content: center; }
 }
+
+/* Loop E: on a phone the hub leads with what it is for (set-up, the numbers, the five sections), then safety and what ayna knows. */
+@media (max-width: 719px) {
+  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview { display: flex; flex-direction: column; gap: 24px; }
+  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview > .wy-col { display: contents; }
+  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview > .wy-col > * { order: 7; }
+  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview .yh-setup { order: 1; }
+  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview .yh-facts { order: 2; }
+  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview [data-tour='you-sections'] { order: 3; }
+  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview .yh-quick { order: 4; margin: -8px 0 8px; }
+  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview [aria-labelledby='wy-safety-h'] { order: 5; }
+  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview [aria-labelledby='yh-knows-h'] { order: 6; }
+}

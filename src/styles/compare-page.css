@@ -51,7 +51,7 @@ html body .app-container.app-container.app-container .aytrk__rows > li > .ay-gro
 html body .app-container.app-container.app-container .aytrk__row { grid-template-columns: 56px minmax(0, 1fr) auto !important; align-items: center !important; column-gap: var(--ay-s16) !important; padding: var(--ay-s12) 0; }
 html body .app-container.app-container.app-container .aytrk__thumb { display: block; width: 56px; height: 56px; padding: 6px; border: 1.5px solid #3e2723; border-radius: var(--ay-r-tile); background: #ffffff; box-sizing: border-box; overflow: hidden; }
 html body .app-container.app-container.app-container .aytrk__status { display: inline-flex; align-items: center; gap: 6px; font: 600 14px/1 var(--ay-sans-stack); color: var(--ay-text) !important; }
-html body .app-container.app-container.app-container .aytrk__status i { width: 8px; height: 8px; border-radius: 50%; background: var(--ay-chart); }
+html body .app-container.app-container.app-container .aytrk__status i { width: 8px; height: 8px; border-radius: 50%; background: var(--ay-fg); }
 html body .app-container.app-container.app-container .aytrk__status { white-space: nowrap; font-weight: 500; }
 html body .app-container.app-container.app-container .aytrk__status.is-recall { font-weight: 600; }
 html body .app-container.app-container.app-container .aytrk__status.is-recall i { background: #f7badd; box-shadow: inset 0 0 0 1px #3e2723; }

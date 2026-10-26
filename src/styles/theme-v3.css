@@ -3391,8 +3391,8 @@ html body .app-container .wyou .wyou-shared strong { display: block; margin-bott
 html body .app-container .wyou .wyou-shared p { margin: 0; }
 html body .app-container .wyou .wyou-shared__a { font-weight: 600; text-transform: none; font-size: var(--ay-fs-secondary); letter-spacing: normal; }
 /* Monthly check-in: butter panel (no white), a × to close. */
-html body .app-container .card.ay-checkin.ay-checkin, html body .card.ay-checkin.ay-checkin { background: #ffedac !important; color: #3e2723 !important; border: 2px solid #3e2723 !important; border-radius: 16px !important; box-shadow: none !important; }
-html body .ay-checkin .ay-checkin__close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border: 2px solid #3e2723; border-radius: 50%; background: transparent; color: #3e2723; font-size: var(--ay-fs-section); line-height: 1.1; cursor: pointer; font-family: var(--ay-serif); font-weight: 700; letter-spacing: -0.01em; }
+html body .app-container .card.ay-checkin.ay-checkin, html body .card.ay-checkin.ay-checkin { background: #f6e3a1 !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; border-radius: 16px !important; box-shadow: none !important; }
+html body .ay-checkin .ay-checkin__close { position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; border: 1.5px solid #3e2723; border-radius: 50%; background: transparent; color: #3e2723; font-size: var(--ay-fs-section); line-height: 1.1; cursor: pointer; font-family: var(--ay-serif); font-weight: 700; letter-spacing: -0.01em; }
 html body .card.ay-checkin :is(p, h2, label) { color: #3e2723 !important; }
 /* You: the stat boxes are links (to Ecosystem and Saved), so they look like it. */
 html body .app-container .wyou .wyou-stats > button { position: relative; border-style: solid !important; cursor: pointer; }
