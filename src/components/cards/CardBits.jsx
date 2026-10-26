@@ -90,9 +90,9 @@ export function OneFact({ product, facts = undefined }) {
   return <ul className="ay-pcard__facts is-one" aria-label="Key fact"><li>{list[0]}</li></ul>;
 }
 
-/** The safety note stays on the glance card (safety beats brevity): an icon and two words in the foot. */
+/** The safety note stays on the glance card (safety beats brevity): an icon and two words on their own line. */
 export function SafetyTag({ product, safety = undefined }) {
   const warn = safety === undefined ? cardSafety(product) : safety;
   if (!warn) return null;
-  return <span className="ay-pcard__safe is-tag" title={warn}><SafetyGlyph /><span>Safety note</span><span className="sr-only">: {warn}</span></span>;
+  return <p className="ay-pcard__ev is-safety"><span className="ay-pcard__safe" title={warn}><SafetyGlyph /><span>Safety note</span><span className="sr-only">: {warn}</span></span></p>;
 }

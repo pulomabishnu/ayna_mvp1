@@ -181,6 +181,23 @@ export const BROWSE_GROUPS = [
     { id: 'life-wellness', label: 'Wellness', covers: ['skin', 'hair', 'gut', 'sleep-stress', 'pain-recovery'] },
 ];
 
+/**
+ * Five top-level shopping groups (team meeting, Oct 26: "cut the shopping categories to about 5").
+ * UI only: each covers existing MACRO_GROUPS areas (every area sits in exactly one group), so the
+ * catalog, the filters' own logic and the matcher are unchanged. The areas are one tap deeper.
+ */
+export const SHOP_GROUPS = [
+    { id: 'shop-periods', label: 'Periods and cycle', covers: ['period', 'hormones', 'pain-recovery'] },
+    { id: 'shop-vaginal', label: 'Vaginal and sexual health', covers: ['intimate', 'sexual', 'birth-control'] },
+    { id: 'shop-pelvic', label: 'Pelvic floor and bladder', covers: ['pelvic'] },
+    { id: 'shop-life', label: 'Pregnancy and menopause', covers: ['fertility', 'pregnancy', 'postpartum', 'breast', 'menopause'] },
+    { id: 'shop-body', label: 'Body, skin and sleep', covers: ['skin', 'hair', 'gut', 'sleep-stress', 'tests-devices'], categories: ['supplement', 'vitamin'] },
+];
+/** The shop group that holds a fine area id, or ''. */
+export function shopGroupFor(areaId) {
+    return SHOP_GROUPS.find((g) => g.id === areaId || g.covers.includes(areaId))?.id || '';
+}
+
 /** Maps any group id (a fine MACRO_GROUPS id or a BROWSE_GROUPS id) to the Browse pill that contains it. */
 export function browseGroupIdFor(groupId) {
     if (!groupId || groupId === 'all') return 'all';
@@ -228,7 +245,7 @@ export function productSearchText(item) {
 
 export function itemMatchesMacroGroup(item, groupId) {
     if (!groupId || groupId === 'all') return true;
-    const broad = BROWSE_GROUPS.find((g) => g.id === groupId);
+    const broad = BROWSE_GROUPS.find((g) => g.id === groupId) || SHOP_GROUPS.find((g) => g.id === groupId);
     if (broad) {
         if (broad.covers.some((id) => itemMatchesMacroGroup(item, id))) return true;
         if (Array.isArray(broad.categories) && broad.categories.includes(item?.category)) return true;

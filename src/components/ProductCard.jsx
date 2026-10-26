@@ -71,6 +71,12 @@ export default function ProductCard({
   // Slot 7: one tag (Pre-order, Sponsored or ayna partner) beside the heart.
   const sticker = !isMine ? kind || categoryLabel : '';
   const showSeeMatch = !isMine && !hasMatch && !matchHold && typeof onSeeMatch === 'function';
+  const showWhy = () => {
+    if (onShowWhy) { onShowWhy(product); return; }
+    requestProductTab('why');
+    if (onOpen) onOpen(product);
+    else window.location.assign(productHref(product));
+  };
   const open = (e) => {
     if (!isPlainLeftClick(e)) return;
     e.preventDefault();
@@ -100,13 +106,10 @@ export default function ProductCard({
             size="sm"
             className="ay-pcard__pill"
             label={hasMatch ? `${matchLabel || matchText(matchPercent)}. Why this match for ${product.name}` : `Safety hold, match unavailable for ${product.name}`}
-            onClick={() => {
-              if (onShowWhy) { onShowWhy(product); return; }
-              requestProductTab('why');
-              if (onOpen) onOpen(product);
-              else window.location.assign(productHref(product));
-            }}
+            onClick={showWhy}
           />
+          {/* "What's this?" (team meeting, Oct 26): the match is explained, never a black box. */}
+          {hasMatch && <button type="button" className="ay-pcard__what" onClick={showWhy} aria-label={`What's this? How the ${matchPercent}% match for ${product.name} was worked out`}>What’s this?</button>}
         </div>
       )}
       {showSeeMatch && <button type="button" className="ay-pcard__seematch" onClick={() => onSeeMatch(product)}>See your match <span aria-hidden="true">→</span></button>}
@@ -115,13 +118,13 @@ export default function ProductCard({
       {!isMine && isKnownPrice(price.main) && <div className="ay-pcard__price"><span className="ay-pcard__amount">{price.main}</span></div>}
       {/* 5. One key fact. */}
       {!isMine && <OneFact product={product} />}
+      {!isMine && <SafetyTag product={product} />}
       {/* 7. The one tag and the save heart. Ownership reads as text, never over the photo. */}
       <div className="ay-pcard__foot">
         <span className="ay-pcard__tags">
           {badgeText && <span className={`ay-pcard__tag${badgeText === 'Pre-order' ? ' is-alert' : ''}`}>{badgeText}</span>}
           {inEcosystem && <span className="ay-pcard__tag is-eco"><CheckIcon size={14} />{IN_ROUTINE}</span>}
           {labels}
-          {!isMine && <SafetyTag product={product} />}
         </span>
         {onToggleSaved && (
           <button

@@ -1,4 +1,5 @@
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
+import { MATCH_BASIS } from '../../components/pdp/PdpParts.jsx';
 import MatchFeedback from '../../components/today/MatchFeedback.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE, shownMatchPercent, PARTIAL_FIT, isSafetyHold, SAFETY_HOLD, isBleedingEvaluation, BLEEDING_EVALUATION } from '../../utils/matchDisplay.js';
@@ -69,6 +70,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
               <h2>{needHeadline(percent, best?.phrase)}</h2>
               {whyLine(product, details, { max: 2 }) && <p className="ay-match-why">{whyLine(product, details, { max: 2 })}</p>}
               <p className="ay-match-based">{BASED_ON_LINE}</p>
+          <p className="ay-match-based">{MATCH_BASIS} <a href="/how-it-works">How we match</a></p>
               {access?.label && <p className="ay-match-access"><span aria-hidden="true">●</span> {access.label}</p>}
             </div>
           </section>

@@ -47,12 +47,14 @@ export default function ServiceCard({
         <div className="ay-pcard__fit">
           <MatchPill hold={!hasMatch && matchHold} percent={matchPercent} size="sm" label={hasMatch ? `${matchLabel || matchText(matchPercent)}. Why this match for ${name}` : `Safety hold, match unavailable for ${name}`}
             onClick={() => (onShowWhy ? onShowWhy(service) : onOpen?.(service))} />
+          {hasMatch && <button type="button" className="ay-pcard__what" onClick={() => (onShowWhy ? onShowWhy(service) : onOpen?.(service))} aria-label={`What's this? How the ${matchPercent}% match for ${name} was worked out`}>What’s this?</button>}
         </div>
       )}
       {!hasMatch && !matchHold && typeof onSeeMatch === 'function' && <button type="button" className="ay-pcard__seematch" onClick={() => onSeeMatch(service)}>See your match <span aria-hidden="true">→</span></button>}
+      <SafetyTag product={service} />
       {onToggleSaved && (
         <div className="ay-pcard__foot">
-          <span className="ay-pcard__tags"><SafetyTag product={service} /></span>
+          <span className="ay-pcard__tags" />
           <button type="button" className="ay-pcard__heart" aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved}
             onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(service); }}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART} /></svg>

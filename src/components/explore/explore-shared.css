@@ -48,3 +48,7 @@
 .ay-needticker { margin: -16px 0 32px; }
 .ayna-mobile .ay-needticker { margin: 0 0 16px; }
 @media (max-width: 720px) { .ay-needticker { margin: -8px 0 24px; } }
+/* Five shopping groups on Products (website and app); the areas one tap deeper on a second row. */
+.ay-shopgroups { display: grid; gap: 8px; margin: 0 0 16px; }
+.ay-shopgroups__subs { padding-left: 12px; border-left: 1.5px solid currentColor; }
+.ayna-mobile .ay-shopgroups.ay-shop-groups { margin: 4px var(--d-gutter, 16px) 12px; }

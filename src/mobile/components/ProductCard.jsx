@@ -82,6 +82,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         {(showMatch || held) && (
           <span className="ay-pcard__fit">
             {showMatch && <MatchPill percent={badge.percent} size="sm" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
+            {showMatch && <button type="button" className="ay-pcard__what" onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} aria-label={`What's this? How the ${badge.percent}% match for ${name} was worked out`}>What’s this?</button>}
             {held && <MatchPill hold size="sm" label={`${SAFETY_HOLD}, ${MATCH_UNAVAILABLE.toLowerCase()} for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
           </span>
         )}
@@ -90,9 +91,10 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
             evidence and her data badge are on the product page, one tap away). */}
         {knownPrice && <span className="ay-pcard__price"><span className="ay-pcard__amount"><b>{facts.main}</b></span></span>}
         <OneFact product={product} />
+        <SafetyTag product={product} />
         {/* 7. The one tag and the save heart. */}
         <span className="ay-pcard__foot">
-          <span className="ay-pcard__tags">{oneBadge && <span className={`ay-pcard__tag${oneBadge === 'Pre-order' ? ' is-alert' : ''}`}>{oneBadge}</span>}<SafetyTag product={product} /></span>
+          <span className="ay-pcard__tags">{oneBadge && <span className={`ay-pcard__tag${oneBadge === 'Pre-order' ? ' is-alert' : ''}`}>{oneBadge}</span>}</span>
           {onToggleSaved && <button type="button" className="ay-pcard__heart" aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
         </span>
         <CompareCheck product={product} />
