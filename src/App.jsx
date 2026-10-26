@@ -204,7 +204,7 @@ const SHOP_VIEWS = new Set(['discovery', 'explore', 'explore-topics', 'explore-s
 /** Focused flows: a minimal header (logo · Exit), no tab bar, no footer (P1-28). */
 const FOCUSED_FLOW_VIEWS = ['quiz', 'profile-edit'];
 /** The five tab pages: a slim row of Ask ayna suggestions sits under the top bar on these. */
-const ASK_SUGGEST_VIEWS = new Set(['today', 'explore', 'explore-topics', 'explore-services', 'discovery', 'community', 'articles']);
+const ASK_SUGGEST_VIEWS = new Set(['explore', 'explore-topics', 'explore-services', 'discovery', 'community', 'articles']);
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
 const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about', 'how-it-works'];
 

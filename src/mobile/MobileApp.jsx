@@ -1505,7 +1505,7 @@ export default function MobileApp() {
   }, []);
   // Header: You is the round profile button beside Ask ayna (founder, Oct 26), and
   // on the five tab roots a slim row of Ask suggestions sits under the header.
-  const suggestOn = !overlay && !askAynaOpen && ((screen === 'ayna' && homeView === 'home') || ['explore', 'browse', 'library', 'community'].includes(screen));
+  const suggestOn = !overlay && !askAynaOpen && ['explore', 'browse', 'library', 'community'].includes(screen); // Today has its own Ask bar
   const headerValue = {
     onOpenProfile: () => { setAskAynaOpen(false); authResumeRef.current = null; setOverlay({ type: 'profile' }); },
     initial: String(resolvedName || '').trim().charAt(0).toUpperCase(),

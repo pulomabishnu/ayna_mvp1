@@ -1,3 +1,4 @@
+import '../../components/explore/explore-shared.css';
 import { useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
