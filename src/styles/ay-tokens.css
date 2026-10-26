@@ -1,0 +1,29 @@
+/* ayna design tokens, shared by every page on the website and the app.
+   Source: PDP audit (Oct 25) section 16 + all-pages build brief (Oct 25, 23:03).
+   Colours: butter + espresso, pink is the only accent; blue (data-blue) is for chart lines only.
+   Radii: 8 / 16 / 999 / 50%. One shadow: the 3px pink "sticker" on primary buttons.
+   Type: 8 styles, 13px minimum. */
+:root {
+  --ay-ink: #3e2723;
+  --ay-ink-muted: rgba(62, 39, 35, .78);
+  --ay-butter: #ffedac;
+  --ay-butter-deep: #f6e3a1;
+  --ay-pink: #f7badd;
+  --ay-data-blue: #769ebe;
+  --ay-surface: #ffffff;
+  --ay-r-sm: 8px; --ay-r-md: 16px; --ay-r-pill: 999px; --ay-r-round: 50%;
+  --ay-rule: 1px solid rgba(62, 39, 35, .15);
+  --ay-outline: 1.5px solid #3e2723;
+  --ay-sticker: 3px 3px 0 #f7badd;
+  --ay-dur-press: 120ms; --ay-dur-ui: 180ms; --ay-dur-sheet: 240ms;
+  --ay-font-ui: 'Figtree', system-ui, sans-serif;
+  --ay-font-display: 'ayna Display', 'Bricolage Grotesque', 'Figtree', sans-serif;
+  --ay-text-min: 13px;
+}
+:is([data-theme='brand-dark'], [data-theme='dark']) {
+  --ay-ink: #ffedac;
+  --ay-ink-muted: rgba(255, 237, 172, .8);
+  --ay-surface: rgba(255, 237, 172, .08);
+  --ay-rule: 1px solid rgba(255, 237, 172, .2);
+  --ay-outline: 1.5px solid #ffedac;
+}
