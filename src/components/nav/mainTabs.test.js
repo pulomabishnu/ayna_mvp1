@@ -17,9 +17,9 @@ describe('main tabs (founder, Oct 24 2026)', () => {
     expect(APP_EXPLORE_SECTIONS.map((s) => s.label)).toEqual(['For you', 'Categories', 'Products', 'Services']);
     expect(AYNA_HOME_VIEWS.map((v) => v.label)).toEqual(['Chat', 'Products', 'My dashboard']);
   });
-  it('Explore has the five spec sections and You the seven', () => {
+  it('Explore has the five spec sections and You the five', () => {
     expect(EXPLORE_SECTIONS.map((s) => s.label)).toEqual(['For you', 'Categories', 'Products', 'Services', 'Resources']);
-    expect(YOU_SECTIONS.map((s) => s.label)).toEqual(['My ecosystem', 'Saved', 'My health', 'Tracking', 'Connected data', 'My activity', 'Settings and privacy']);
+    expect(YOU_SECTIONS.map((s) => s.label)).toEqual(['My ecosystem', 'Saved', 'My health', 'Activity', 'Settings & privacy']);
   });
   it('every old address has a permanent server redirect to its new home', () => {
     for (const [from, to] of Object.entries(LEGACY_REDIRECTS)) {
