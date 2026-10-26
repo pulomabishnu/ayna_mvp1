@@ -10,6 +10,7 @@ import { whyLine } from '../../utils/whyLine.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import '../../styles/onboarding.css';
 import './ReadyReveal.css';
+import { eventSurface, trackFirstMatchShown } from '../../utils/analyticsEvents.js';
 
 /**
  * The first personalized reveal (UX spec section 5), app and website.
@@ -46,12 +47,12 @@ function firstMatches(answers, limit = 3) {
   }
 }
 
-export default function ReadyReveal({ answers = null, variant = 'app', signedIn = false, onSeeToday, onCreateAccount, onBack, onMorePersonal, onFirstMatch }) {
+export default function ReadyReveal({ answers = null, variant = 'app', signedIn = false, onSeeToday, onCreateAccount, onBack, onMorePersonal }) {
   const ready = useCatalogReady();
   const needs = useMemo(() => (ready ? revealNeeds(answers) : []), [answers, ready]);
   const matches = useMemo(() => (ready ? firstMatches(answers) : []), [answers, ready]);
   // Analytics: the first match is on screen (quiz start to first match).
-  useEffect(() => { if (matches.length) onFirstMatch?.(matches.length); }, [matches.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (matches.length) trackFirstMatchShown({ surface: eventSurface(), matches_count: matches.length }); }, [matches.length]);
   const goals = (answers?.fullHealthIntake?.goals || []).slice(0, 2);
   const remaining = useMemo(() => (answers?.fullHealthIntake ? moreRemaining(reconstructIntakeFromSnapshot(answers.fullHealthIntake)) : 0), [answers]);
   const Tag = variant === 'web' ? 'section' : 'main';

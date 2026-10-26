@@ -21,6 +21,7 @@ import { commonNeedOptions } from '../matching/commonNeeds.js';
 import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../mobile/data/onboardingFlow.js';
 import { CATEGORIES } from '../health/metrics.js';
 import ReadyReveal from './onboarding/ReadyReveal.jsx';
+import { eventSurface, trackQuizStarted } from '../utils/analyticsEvents.js';
 import '../styles/onboarding.css';
 import './WebIntake.audit.css';
 // Website-only conditions that change what is safe (condition research, Oct 17).
@@ -301,7 +302,7 @@ function webOnboardingSteps(intake) {
   ];
 }
 
-export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = null, initialSnapshot = null, startAtOptional = false, startAtStep = '', signedIn = true, onQuizStart, onFirstMatch }) {
+export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = null, initialSnapshot = null, startAtOptional = false, startAtStep = '', signedIn = true }) {
   const singleStep = Boolean(initialSnapshot && ONBOARDING_ONLY.includes(startAtStep));
   const onboarding = !initialSnapshot || singleStep;
   const [savedDraft] = useState(() => (initialSnapshot ? null : readIntakeDraft()));
@@ -347,7 +348,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const [helpOtherOpen, setHelpOtherOpen] = useState(false);
 
   // Analytics: a fresh first run started (quiz start; first match is on the reveal).
-  useEffect(() => { if (onboarding && !singleStep && !savedDraft) onQuizStart?.(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (onboarding && !singleStep && !savedDraft) trackQuizStarted({ surface: eventSurface(), signed_in: signedIn }); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Same draft the app keeps, so an unfinished quiz resumes on either.
   useEffect(() => {
@@ -706,7 +707,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   if (onboarding && step.type === 'ready') {
     const preview = mapIntakeToLegacyQuizProfile(buildSnapshot(intake));
     return <div className="ct qz-page" data-step="ready">
-      <ReadyReveal variant="web" answers={preview} signedIn={signedIn} onSeeToday={() => finish(intake, { land: 'today' })} onCreateAccount={() => finish(intake, { land: 'save' })} onFirstMatch={onFirstMatch} onBack={back} onMorePersonal={() => { const more = steps.find((s) => s.obPart === 'more'); if (more) go(more.id); }} />
+      <ReadyReveal variant="web" answers={preview} signedIn={signedIn} onSeeToday={() => finish(intake, { land: 'today' })} onCreateAccount={() => finish(intake, { land: 'save' })} onBack={back} onMorePersonal={() => { const more = steps.find((s) => s.obPart === 'more'); if (more) go(more.id); }} />
       {saveError && <p className="qz-alert">{saveError}</p>}
     </div>;
   }
