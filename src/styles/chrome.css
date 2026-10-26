@@ -114,7 +114,7 @@ html body .app-container.app-container .ed .ay-chd ul { margin: 0 0 var(--ay-s16
 html body .app-container.app-container .ed .ay-chd li { margin-bottom: var(--ay-s8); }
 html body .app-container.app-container .ed .ay-chd .updated { margin: 0 0 var(--ay-s16); font: 600 14px/1.4 var(--ay-sans-stack) !important; color: var(--ed-text-2, var(--ay-text-2)) !important; }
 html body .app-container.app-container .ed .ay-chd .callout { margin: var(--ay-s16) 0 0; padding: var(--ay-s20) var(--ay-s24); border: 0 !important; border-radius: 16px; background: var(--ay-group) !important; font: 500 16px/1.55 var(--ay-sans-stack); color: var(--ay-text); }
-html body .app-container.app-container .ed .ay-chd table { display: table; width: 100%; margin: var(--ay-s8) 0 var(--ay-s16); border-collapse: collapse; border-radius: 20px; background: var(--ay-group); overflow: hidden; }
+html body .app-container.app-container .ed .ay-chd table { display: table; width: 100%; margin: var(--ay-s8) 0 var(--ay-s16); border-collapse: collapse; border-radius: 16px; background: var(--ay-group); overflow: hidden; }
 html body .app-container.app-container .ed .ay-chd thead { display: none; }
 html body .app-container.app-container .ed .ay-chd tr + tr :is(td, th) { border-top: 1px solid var(--ay-hairline) !important; }
 html body .app-container.app-container .ed .ay-chd :is(td, th) { border-top: 0 !important; padding: var(--ay-s12) var(--ay-s16) !important; font: 500 15px/1.5 var(--ay-sans-stack) !important; vertical-align: top; }
