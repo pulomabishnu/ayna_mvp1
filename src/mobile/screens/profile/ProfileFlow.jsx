@@ -2166,7 +2166,7 @@ function downloadText(content, filename) {
 }
 
 function buildLicensesText(grouped) {
-  const lines = ['ayna, open-source licences', `Generated ${new Date().toISOString().slice(0, 10)}`, ''];
+  const lines = ['ayna, open-source licences', `Generated ${localToday()}`, ''];
   for (const [license, packages] of grouped) {
     lines.push(`${license} (${packages.length})`, '-'.repeat(40));
     for (const pkg of packages) lines.push(`  ${pkg.name}@${pkg.version}`);
@@ -2493,7 +2493,7 @@ function downloadJson(data, filenamePrefix) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${filenamePrefix}-${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `${filenamePrefix}-${localToday()}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();

@@ -20,7 +20,7 @@
   --ay-font-display: var(--ay-serif);
   --ay-font-ui: var(--ay-sans);
   --ay-shadow: 3px 3px 0 var(--ay-ink);
-  --ay-shadow-lg: 5px 5px 0 var(--ay-ink);
+  --ay-shadow-lg: none;
   --ay-pop: var(--ease-out);
   --ay-radius-sm: 10px; --ay-radius-md: 14px; --ay-radius-lg: 20px;
   --ay-web-gutter: clamp(16px, 4vw, 56px);
@@ -311,7 +311,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 
 /* ---------- My Ecosystem ---------- */
 .app-container .eco-bubbles__ring { border: 2px dashed var(--ay-ink-faint) !important; }
-.app-container .eco-bubbles__centre { border: 2px solid var(--ay-ink) !important; background: var(--ay-ink) !important; box-shadow: 4px 4px 0 var(--ay-peri) !important; }
+.app-container .eco-bubbles__centre { border: 2px solid var(--ay-ink) !important; background: var(--ay-ink) !important; box-shadow: none !important; }
 .app-container .eco-bubbles__centre-name { color: var(--ay-paper) !important; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; font-style: normal !important; }
 .app-container .eco-bubbles__centre-tags { color: var(--ay-paper) !important; opacity: .75; font: 600 var(--ay-fs-caption)/1.3 var(--ay-sans) !important; letter-spacing: 0 !important; text-transform: none !important; }
 .app-container .eco-bubble { border: 2px solid var(--ay-ink) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; box-shadow: none !important; transition: transform .2s var(--ay-pop), box-shadow .2s !important; }
@@ -369,7 +369,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .eco2-sheet { border: 2px solid var(--ay-ink) !important; border-radius: 24px !important; background: var(--ay-paper) !important; }
 
 /* ---------- Sign-in modal ---------- */
-.ay-auth-card { border: 2px solid #1d1a2b !important; border-radius: 28px !important; background: #fffcf5 !important; box-shadow: 6px 6px 0 #1d1a2b !important; font-family: var(--ay-sans); }
+.ay-auth-card { border: 2px solid #1d1a2b !important; border-radius: 28px !important; background: #fffcf5 !important; box-shadow: none !important; font-family: var(--ay-sans); }
 .ay-auth-card :is(input, button, p, a, span) { font-family: var(--ay-sans) !important; }
 .ay-auth-logo { color: #1d1a2b !important; font: 800 34px/1 'Bricolage Grotesque', 'Figtree', sans-serif !important; font-style: normal !important; letter-spacing: -.085em !important; }
 .ay-auth-card input { border: 2px solid #1d1a2b !important; border-radius: 14px !important; background: #fffcf5 !important; color: #1d1a2b !important; }
@@ -471,7 +471,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
   --ay-mint: #1f4a44;
   --ay-butter: #5a4a1a;
   --ay-shadow: 3px 3px 0 rgba(244, 242, 255, .55);
-  --ay-shadow-lg: 5px 5px 0 rgba(244, 242, 255, .55);
+  --ay-shadow-lg: none;
   --color-text-main: var(--ay-ink);
   --color-text-muted: var(--ay-ink-soft);
   --brand-paper: var(--ay-cream);
@@ -617,7 +617,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .mockup-landing .ayna-landing-hero-col .ayna-landing-headline { margin: 0 !important; font-size: var(--ay-fs-display) !important; line-height: 1.1 !important; letter-spacing: -0.01em !important; word-spacing: .04em; font-family: var(--ay-serif) !important; font-weight: 400 !important; }
 .app-container .mockup-landing .ayna-landing-headline span { -webkit-text-stroke: 2.5px var(--ay-ink) !important; }
 .app-container .mockup-landing .ayna-landing-hero-col .ayna-landing-sub { margin-bottom: 0 !important; margin-top: 24px !important; max-width: 30em !important; font: 500 var(--ay-fs-body)/1.55 var(--ay-sans) !important; }
-.app-container .mockup-landing .ayna-landing-hero-col .ayna-landing-searchbar { margin-bottom: 0 !important; width: 100% !important; max-width: 520px !important; height: 56px; box-sizing: border-box; margin-top: 32px !important; padding: 4px 4px 4px 20px !important; box-shadow: 4px 4px 0 var(--ay-ink) !important; }
+.app-container .mockup-landing .ayna-landing-hero-col .ayna-landing-searchbar { margin-bottom: 0 !important; width: 100% !important; max-width: 520px !important; height: 56px; box-sizing: border-box; margin-top: 32px !important; padding: 4px 4px 4px 20px !important; box-shadow: none !important; }
 .app-container .mockup-landing .ayna-landing-searchbar input { height: 100%; font: 500 var(--ay-fs-body)/1 var(--ay-sans) !important; }
 .app-container .mockup-landing .ayna-landing-searchbar button { height: 44px; min-height: 44px; padding: 0 20px !important; }
 .app-container .mockup-landing .ayna-landing-hero-col .ayna-landing-chips { margin-bottom: 0 !important; margin-top: 16px !important; max-width: 520px; gap: 8px !important; }
@@ -787,7 +787,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
    Ask ayna: flat and on-brand (no glossy orb, no glow gradient). Audit A04.
    ========================================================================== */
 .app-container .ayna-ask-launcher { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 18px 0 8px !important; border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-butter) !important; background-image: none !important; color: var(--ay-ink) !important; box-shadow: var(--ay-shadow) !important; }
-.app-container .ayna-ask-launcher:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ay-ink) !important; }
+.app-container .ayna-ask-launcher:hover { transform: translate(-1px, -1px); box-shadow: none !important; }
 .app-container .ayna-ask-launcher__label { color: var(--ay-ink) !important; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important; text-shadow: none !important; }
 .app-container .ayna-ask-orb { width: 32px !important; height: 32px !important; border: 2px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-paper) !important; background-image: none !important; box-shadow: none !important; animation: none !important; position: relative; }
 .app-container .ayna-ask-orb::before, .app-container .ayna-ask-orb::after { content: '' !important; position: absolute; inset: auto; background: none !important; }

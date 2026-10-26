@@ -33,7 +33,7 @@
 :is(.ayna-mobile, .app-container) .ay-ob-ready__art { position: relative; width: 132px; height: 92px; margin: 0 0 8px; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__art i { position: absolute; top: 0; width: 76px; height: 76px; border-radius: 50%; animation: ay-ob-pop 640ms cubic-bezier(.2, .9, .3, 1.2) both; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__art i:nth-child(1) { left: 0; background: var(--o-pink); }
-:is(.ayna-mobile, .app-container) .ay-ob-ready__art i:nth-child(2) { left: 28px; top: 16px; background: var(--o-sky); mix-blend-mode: multiply; animation-delay: 120ms; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__art i:nth-child(2) { left: 28px; top: 16px; background: #f6e3a1; mix-blend-mode: multiply; animation-delay: 120ms; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__art i:nth-child(3) { left: 56px; background: var(--o-ink); opacity: .9; animation-delay: 240ms; }
 :is(.ayna-mobile[data-theme='dark'], .app-container:is([data-theme='dark'], [data-theme='brand-dark'])) .ay-ob-ready__art i:nth-child(2) { mix-blend-mode: normal; opacity: .9; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__title { margin: 0 !important; color: var(--o-ink) !important; font: 400 clamp(38px, 11vw, 56px)/1.02 var(--o-serif) !important; letter-spacing: -.02em !important; }
@@ -45,7 +45,7 @@
   animation: ay-ob-rise 520ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(360ms + var(--i, 0) * 140ms);
 }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__list li span { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--o-pink); color: #3e2723; font: 400 20px/1 var(--o-serif); }
-:is(.ayna-mobile, .app-container) .ay-ob-ready__list li:nth-child(2) span { background: var(--o-sky); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__list li:nth-child(2) span { background: #f6e3a1; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__list li:nth-child(3) span { background: var(--o-butter); box-shadow: inset 0 0 0 1.5px #3e2723; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready :is(.ay-ob-ready__goals, .ay-ob-ready__note) { margin: 0 !important; max-width: 40ch; color: var(--o-soft) !important; font: 500 14px/1.45 var(--o-sans) !important; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__actions { display: grid; gap: 10px; margin-top: 10px; }
@@ -89,7 +89,7 @@
 :is(.ayna-mobile, .app-container) .ay-know.is-app { padding: 8px 16px 40px; }
 :is(.ayna-mobile, .app-container) .ay-know .ay-know__title { margin: 0 !important; color: var(--o-ink) !important; font: 400 28px/1.1 var(--o-serif) !important; letter-spacing: -.01em; }
 :is(.ayna-mobile, .app-container) .ay-know :is(.ay-know__lead, .ay-know__foot) { margin: 0 !important; max-width: 60ch; color: var(--o-soft) !important; font: 500 14.5px/1.45 var(--o-sans) !important; }
-:is(.ayna-mobile, .app-container) .ay-know .ay-know__status { margin: 0 !important; padding: 10px 14px; border-radius: 14px; background: var(--o-sky); color: #3e2723 !important; font: 600 14px/1.4 var(--o-sans) !important; }
+:is(.ayna-mobile, .app-container) .ay-know .ay-know__status { margin: 0 !important; padding: 10px 14px; border-radius: 14px; background: #f6e3a1; color: #3e2723 !important; font: 600 14px/1.4 var(--o-sans) !important; }
 :is(.ayna-mobile, .app-container) .ay-know__group { display: grid; gap: 6px; min-width: 0; scroll-margin-top: 72px; }
 :is(.ayna-mobile, .app-container) .ay-know__group h3 { margin: 6px 0 0 !important; color: var(--o-ink) !important; font: 700 16px/1.3 var(--o-sans) !important; }
 :is(.ayna-mobile, .app-container) .ay-know .ay-know__note { margin: 0 !important; color: var(--o-soft) !important; font: 500 13px/1.4 var(--o-sans) !important; }
@@ -134,7 +134,7 @@
 :is(.ayna-mobile, .app-container) .ay-ob-value__list { display: grid; gap: 10px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
 :is(.ayna-mobile, .app-container) .ay-ob-value__list li { display: grid; grid-template-columns: 36px 1fr; column-gap: 14px; align-items: start; padding: 14px 16px !important; border-radius: 20px; background: var(--o-group); }
 :is(.ayna-mobile, .app-container) .ay-ob-value__list li span { grid-row: span 2; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--o-pink); color: #3e2723; font: 400 20px/1 var(--o-serif); }
-:is(.ayna-mobile, .app-container) .ay-ob-value__list li:nth-child(2) span { background: var(--o-sky); }
+:is(.ayna-mobile, .app-container) .ay-ob-value__list li:nth-child(2) span { background: #f6e3a1; }
 :is(.ayna-mobile, .app-container) .ay-ob-value__list li:nth-child(3) span { background: var(--o-butter); box-shadow: inset 0 0 0 1.5px #3e2723; }
 :is(.ayna-mobile, .app-container) .ay-ob-value__list b { color: var(--o-ink); font: 700 16px/1.3 var(--o-sans); }
 :is(.ayna-mobile, .app-container) .ay-ob-value__list p { margin: 2px 0 0 !important; color: var(--o-ink) !important; font: 500 14.5px/1.45 var(--o-sans) !important; }
@@ -232,7 +232,7 @@ html body :is(#ay-x, .app-container.app-container.app-container) .qz-page .qz-ca
   border: 1.5px solid #3e2723 !important; border-radius: 50% !important; background: #f7badd !important; color: #3e2723 !important;
   font: 700 17px/1 var(--o-serif, 'ayna Display') !important; letter-spacing: 0 !important; box-shadow: 2px 2px 0 #ffedac !important; transform: rotate(-6deg);
 }
-:is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) li:nth-child(2) span { background: #769ebe !important; color: #3e2723 !important; transform: rotate(5deg); }
+:is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) li:nth-child(2) span { background: #f6e3a1 !important; color: #3e2723 !important; transform: rotate(5deg); }
 :is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) li:nth-child(3) span { background: #ffedac !important; color: #3e2723 !important; }
 :is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) .ay-ob-value__list li { grid-template-columns: 44px 1fr !important; align-items: center; }
 :is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) .ay-ob-value__list b { font-size: 17px !important; }

@@ -590,7 +590,7 @@
 .app-container .ay-band { position: relative; --band: var(--ay-page); background: var(--band); color: var(--ay-text); }
 .app-container .ay-band--bleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
 .app-container .ay-band--pink { --band: #f7badd; }
-.app-container .ay-band--sky { --band: #769ebe; }
+.app-container .ay-band--sky { --band: #f6e3a1; }
 .app-container .ay-band--butter { --band: #ffedac; }
 .app-container :is(.ay-band--pink, .ay-band--sky, .ay-band--butter) { --ay-text: #3e2723; --ay-text-2: #3e2723; --ay-outline: #3e2723; --ay-hairline: rgba(62, 39, 35, .3); --ay-hover: rgba(62, 39, 35, .08); --ay-focus: #3e2723; --ay-feature-bg: #3e2723; --ay-feature-fg: #ffedac; --ay-press-shadow: 3px 3px 0 #3e2723; --ay-group: rgba(255, 237, 172, .55); --ay-page-on: #ffedac; --ed-text: #3e2723; --ed-text-2: #3e2723; --ed-outline: #3e2723; --ed-hairline: rgba(62, 39, 35, .3); --ed-page: #ffedac; color: #3e2723; }
 .app-container .ay-band--espresso { --band: #3e2723; --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ay-outline: #ffedac; --ay-hairline: rgba(255, 237, 172, .22); --ay-hover: rgba(255, 237, 172, .1); --ay-focus: #ffedac; --ay-feature-bg: #ffedac; --ay-feature-fg: #3e2723; --ay-press-shadow: 3px 3px 0 #f7badd; --ed-text: #ffedac; --ed-text-2: rgba(255, 237, 172, .86); --ed-outline: #ffedac; --ed-hairline: rgba(255, 237, 172, .22); --ed-page: #3e2723; color: #ffedac; }
@@ -654,7 +654,7 @@
 
 .app-container .ay-tabcard { position: relative; display: flex; flex-direction: column; border: 1.5px solid var(--ay-outline); border-radius: 18px; background: var(--ay-page); color: var(--ay-text); overflow: visible; }
 .app-container .ay-tabcard__strip { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-bottom: 1.5px solid var(--ay-outline); border-radius: 16.5px 16.5px 0 0; background: #f7badd; color: #3e2723; font: 600 14px/1.2 var(--ay-sans-stack); }
-.app-container .ay-tabcard__strip--sky { background: #769ebe; color: #3e2723; }
+.app-container .ay-tabcard__strip--sky { background: #f6e3a1; color: #3e2723; }
 .app-container .ay-tabcard__strip--espresso { background: #3e2723; color: #ffedac; }
 .app-container[data-theme='brand-dark'] .ay-tabcard__strip--espresso { background: #ffedac; color: #3e2723; }
 .app-container .ay-tabcard__strip--butter { background: #ffedac; color: #3e2723; }
@@ -700,7 +700,7 @@ html body .app-container.app-container .ay-pagehead .ay-h1 { font-size: clamp(36
    cream = butter. ---- */
 /* textures: decoration only, never behind body text without a solid card */
 .app-container .ay-band--grid { background-image: linear-gradient(rgba(62, 39, 35, .09) 1px, transparent 1px), linear-gradient(90deg, rgba(62, 39, 35, .09) 1px, transparent 1px); background-size: 56px 56px; background-position: -1px -1px; }
-.app-container .ay-pinstripe { background-image: repeating-linear-gradient(90deg, transparent 0 34px, rgba(118, 158, 190, .55) 34px 37px, transparent 37px 44px, rgba(247, 186, 221, .35) 44px 45px, transparent 45px 72px); }
+.app-container .ay-pinstripe { background-image: repeating-linear-gradient(90deg, transparent 0 34px, #f6e3a1 34px 37px, transparent 37px 44px, rgba(247, 186, 221, .35) 44px 45px, transparent 45px 72px); }
 /* postage stamp: perforated edge (Temani Afif's mask technique) */
 .app-container .ay-stamp { --r: 7px; position: relative; display: block; padding: calc(2 * var(--r)); background: #ffedac; filter: drop-shadow(1.5px 0 0 #3e2723) drop-shadow(-1.5px 0 0 #3e2723) drop-shadow(0 1.5px 0 #3e2723) drop-shadow(0 -1.5px 0 #3e2723); -webkit-mask: radial-gradient(var(--r), #0000 98%, #000) round calc(-1.5 * var(--r)) calc(-1.5 * var(--r)) / calc(3 * var(--r)) calc(3 * var(--r)), linear-gradient(#000 0 0) no-repeat 50% / calc(100% - 3 * var(--r)) calc(100% - 3 * var(--r)); mask: radial-gradient(var(--r), #0000 98%, #000) round calc(-1.5 * var(--r)) calc(-1.5 * var(--r)) / calc(3 * var(--r)) calc(3 * var(--r)), linear-gradient(#000 0 0) no-repeat 50% / calc(100% - 3 * var(--r)) calc(100% - 3 * var(--r)); }
 .app-container .ay-stamp img { display: block; width: 100%; height: 100%; object-fit: cover; border: 1.5px solid #3e2723; border-radius: 0 !important; }
@@ -720,7 +720,7 @@ html body .app-container.app-container .ay-pagehead .ay-h1 { font-size: clamp(36
 .app-container .ay-folder__photo img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 2px !important; }
 .app-container .ay-folder__clip { position: absolute; z-index: 3; top: -18px; left: 50%; width: 46px; height: 40px; margin-left: -23px; pointer-events: none; }
 .app-container .ay-folder__clip svg { width: 100%; height: 100%; fill: none; stroke: #3e2723; stroke-width: 2; stroke-linejoin: round; }
-.app-container .ay-folder__pocket { position: relative; z-index: 2; margin-top: -64px; padding: 54px 24px 22px; background: #769ebe; color: #3e2723; border: 1.5px solid #3e2723; border-radius: 6px 6px 14px 14px; text-align: center; -webkit-mask: radial-gradient(circle 34px at 50% 0, #0000 98%, #000); mask: radial-gradient(circle 34px at 50% 0, #0000 98%, #000); }
+.app-container .ay-folder__pocket { position: relative; z-index: 2; margin-top: -64px; padding: 54px 24px 22px; background: #f6e3a1; color: #3e2723; border: 1.5px solid #3e2723; border-radius: 6px 6px 14px 14px; text-align: center; -webkit-mask: radial-gradient(circle 34px at 50% 0, #0000 98%, #000); mask: radial-gradient(circle 34px at 50% 0, #0000 98%, #000); }
 .app-container .ay-folder__pocket::before { content: ''; position: absolute; left: 50%; top: -1.5px; width: 71px; height: 37px; margin-left: -35.5px; border: 1.5px solid #3e2723; border-top: 0; border-radius: 0 0 36px 36px; }
 .app-container .ay-folder__title { display: block; font: 400 26px/1.1 var(--ay-serif-stack); color: #3e2723; }
 /* founder pills: long rounded rows with a round photo at one end */

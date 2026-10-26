@@ -35,7 +35,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list button { display: flex !important; align-items: center !important; gap: 12px; width: 100%; min-height: 64px; margin: 0 !important; padding: 12px 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--k-ink) !important; text-align: left !important; cursor: pointer; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list .ay-askh-icon { border-color: #3e2723; color: #3e2723; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list .is-pink .ay-askh-icon { background: #f7badd; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list .is-sky .ay-askh-icon { background: #769ebe; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list .is-sky .ay-askh-icon { background: #f6e3a1; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list .is-group .ay-askh-icon { background: #ffedac; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list .is-ink .ay-askh-icon { background: #3e2723; color: #ffedac; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list-text { display: grid; gap: 2px; flex: 1; min-width: 0; }
@@ -56,7 +56,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border: 1.5px solid #3e2723; border-radius: 10px; color: #3e2723; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-pink { background: #f7badd; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-sky { background: #769ebe; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-sky { background: #f6e3a1; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-butter { background: #f6e3a1; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-ink { background: #3e2723; color: #ffedac; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-q { flex: 1; min-width: 0; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.35 var(--k-sans); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }

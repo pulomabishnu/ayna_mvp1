@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { addMemory, appointmentSummary, completeTrial, removeMemory, removeTrial, startTrial, trialResult } from '../utils/aynaGuide.js';
 import './ayna-guide.css';
+import { localToday } from '../../utils/localDate.js';
 
 const scoreOptions = [1, 2, 3, 4, 5];
 
@@ -23,7 +24,7 @@ export default function AynaGuideHub({ page, guide, onChange, recap, recapSource
   const [copied, setCopied] = useState(false);
   const report = appointmentSummary({ guide, recap, profile: includeProfile ? profile : '', productNotes: includeProductNotes ? productNotes : [], includeRecap: recapExportable && includeRecap });
   const title = { recap: 'Your week', memory: 'What ayna remembers', trial: 'Try & check back', report: 'Appointment note' }[page];
-  const today = new Date().toLocaleDateString('en-CA');
+  const today = localToday();
   const weekStart = new Date();
   weekStart.setDate(weekStart.getDate() - 6);
   const periodLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}–${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;

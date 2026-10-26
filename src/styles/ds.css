@@ -19,7 +19,7 @@
   --ds-line: #3e2723;
   --ds-pink: #f7badd;
   --ds-sky: #769ebe;
-  --ds-shadow: 4px 4px 0 var(--ds-line);
+  --ds-shadow: none;
   --ds-shadow-sm: 3px 3px 0 var(--ds-line);
   --ds-r: 20px;
   --ds-display: var(--ay-heading, var(--ay-app-heading, 'ayna Display', 'Bricolage Grotesque', system-ui, sans-serif));
@@ -42,7 +42,7 @@
 /* ---- round sticker with a mark ---- */
 .ds-sticker { position: absolute; z-index: 2; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #ffedac; color: #3e2723; border: 1.5px solid #3e2723; transform: rotate(var(--tilt, 10deg)); pointer-events: none; font-size: 22px; }
 .ds-sticker--pink { background: #f7badd; }
-.ds-sticker--sky { background: #769ebe; }
+.ds-sticker--sky { background: #f6e3a1; }
 .ds-sticker--espresso { background: #3e2723; color: #f7badd; }
 
 /* ---- circle numerals for real sequences ---- */
