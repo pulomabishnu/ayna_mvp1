@@ -352,3 +352,7 @@ html body .app-container.app-container #ayeco .eco3-more__dots { display: none; 
 }
 /* Loop E (Oct 26): the one shadow is the pink sticker on primary buttons, so the summary card loses its offset "stacked" back. */
 html body .app-container.app-container #ayeco .eco-stack__back { display: none !important; }
+/* Loop E round 4: the phone "For you" line never cuts a sentence: label on top, the suggestion under it, wrapping. */
+html body .app-container.app-container #ayeco .eco-rail__line .eco-rail__strip { border-radius: 16px !important; min-height: 56px; padding-top: 8px !important; padding-bottom: 8px !important; text-align: left; }
+html body .app-container.app-container #ayeco .eco-rail__striptext { display: grid !important; gap: 2px; min-width: 0; white-space: normal !important; }
+html body .app-container.app-container #ayeco .eco-rail__striptext > * { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }

@@ -80,3 +80,23 @@ html body .app-container.app-container.app-container .aycmp__sample-head { displ
 html body .app-container.app-container.app-container :is(.aycmp__sample-head, .aycmp__own) > p { margin: 0; max-width: 68ch; font: 400 16px/1.5 var(--ay-sans-stack); color: var(--ay-text-2); }
 html body .app-container.app-container.app-container .aycmp__own { display: grid; gap: 12px; justify-items: start; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--ay-hairline); max-width: 760px; }
 html body .app-container.app-container.app-container .aycmp__own-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+
+/* Loop E round 4: Tracked as two columns of labelled sections (what she tracks | her details),
+   Settings-style rows and fields, the long import form one tap away. */
+html body .app-container.app-container.app-container .aytrk__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--ay-s48); align-items: start; margin-top: var(--ay-s32); }
+html body .app-container.app-container.app-container .aytrk__col { display: grid; gap: var(--ay-s32); min-width: 0; }
+html body .app-container.app-container.app-container .aytrk__col > .aytrk__sec, html body .app-container.app-container.app-container .aytrk__col > .aytrk__panel { margin-top: 0; }
+html body .app-container.app-container.app-container .aytrk__sec { justify-items: stretch; gap: var(--ay-s8); }
+html body .app-container.app-container.app-container .aytrk__sec > .wy-sec__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+html body .app-container.app-container.app-container .aytrk__note { display: block; margin-top: 4px; font: 500 14px/1.45 var(--ay-font-ui) !important; color: var(--ay-fg-muted) !important; }
+html body .app-container.app-container.app-container .aytrk__more > summary { display: flex; align-items: center; justify-content: space-between; min-height: 56px; padding: 0 16px; border-radius: var(--ay-r-md); background: var(--ay-group); color: var(--ay-fg); font: 600 15px/1.3 var(--ay-font-ui); cursor: pointer; list-style: none; }
+html body .app-container.app-container.app-container .aytrk__more > summary::-webkit-details-marker { display: none; }
+html body .app-container.app-container.app-container .aytrk__more > summary::after { content: ''; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); }
+html body .app-container.app-container.app-container .aytrk__more[open] > summary::after { transform: rotate(-135deg); }
+html body .app-container.app-container.app-container .aytrk__more > summary:focus-visible { outline: 3px solid var(--ay-fg); outline-offset: 2px; }
+html body .app-container.app-container.app-container .aytrk__more > .aytrk__panel { margin-top: var(--ay-s16); }
+html body .app-container.app-container.app-container .aytrk .ayk-status { white-space: nowrap; }
+@media (max-width: 899px) {
+  html body .app-container.app-container.app-container .aytrk__grid { grid-template-columns: minmax(0, 1fr); gap: var(--ay-s32); }
+}
+html body .app-container.app-container.app-container .aytrk__sec > .aytrk__panel { margin-top: 0; }

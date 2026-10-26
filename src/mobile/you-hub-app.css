@@ -29,7 +29,11 @@
 
   .ay-you-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 20px; padding: 0; list-style: none; }
   .ay-you-facts button { display: grid; align-content: start; gap: 4px; width: 100%; height: 100%; padding: 12px; border: 1.5px solid var(--d-ink, #3e2723); border-radius: 16px; background: var(--ayna-surface, #fff); color: var(--d-ink, #3e2723); text-align: left; box-shadow: none; cursor: pointer; }
-  .ay-you-facts b { font: 800 26px/1 'ayna Display', var(--f-display, sans-serif); font-variant-numeric: tabular-nums; }
+  .ay-you-facts b { font: 800 30px/1 'ayna Display', var(--f-display, sans-serif); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .ay-you-facts button { min-height: 92px; align-content: space-between !important; }
+  /* Same data strip as the website: one quiet tile, one pink, one solid. */
+  .ay-you-facts li:nth-child(2) button { border-color: #3e2723 !important; background: #f7badd !important; color: #3e2723 !important; }
+  .ay-you-facts li:nth-child(3) button { border-color: var(--d-ink, #3e2723) !important; background: var(--d-ink, #3e2723) !important; color: var(--d-page, #ffedac) !important; }
   .ay-you-facts span { font: 500 13px/1.25 var(--f-ui, Figtree, sans-serif); }
   .ay-you-five { margin-bottom: 20px; }
   .ay-you-quick { display: flex; flex-wrap: wrap; gap: 20px; margin: 0 0 24px; }

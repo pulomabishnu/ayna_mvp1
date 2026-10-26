@@ -28,3 +28,45 @@
    "Start here", not a highlighter swipe (it was unreadable in dark). Labels at the 13px minimum. */
 :is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__track .ay-rx__kicker { display: block; min-height: 0; margin: 0 0 4px !important; padding: 0 !important; border: 0; border-radius: 0; background: none !important; color: inherit !important; opacity: .8 !important; font: 700 13px/1.3 var(--ds-ui) !important; }
 :is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rx__h { font-size: 13px !important; }
+
+/* Loop E round 4: shorter routines. "Why" stays the glance line; When / How long / How you'll know
+   sit together as one plan group (labels above values, three across on wide screens); one source line
+   per step with the rest under "Show sources". Nothing is removed. */
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__facts { gap: 12px !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__facts > .ay-rx__plan { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important; gap: 12px 20px !important; padding: 12px 0 0 !important; border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__plan > div { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 2px !important; align-content: start; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__plan dd { font-size: 14px !important; line-height: 1.45 !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__facts > .is-why { grid-template-columns: minmax(0, 1fr) !important; gap: 2px !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__facts > .is-why dd { font-size: 16px !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__src { margin: 8px 0 0; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__src > p { margin: 0; font: 500 13px/1.45 var(--ds-ui) !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__srcmore > summary { display: inline-flex; align-items: center; min-height: 44px; cursor: pointer; font: 600 13px/1.2 var(--ds-ui); text-decoration: underline; text-underline-offset: 3px; list-style: none; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__srcmore > summary::-webkit-details-marker { display: none; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__srcmore ul { display: grid; gap: 6px; margin: 0 0 8px; padding: 0 0 0 18px; font: 500 13px/1.45 var(--ds-ui); }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__src a { color: inherit !important; }
+
+/* Loop E round 4: each routine is a disclosure (the first open), its head says what is inside;
+   "Other options" opens in place. Same content, a much shorter page. */
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx { display: block !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx + .ay-rx { margin-top: 16px; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx > summary.ay-rx__head { position: relative; display: grid !important; gap: 4px; padding: 16px 48px 16px 0 !important; border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent); cursor: pointer; list-style: none; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx:first-child > summary.ay-rx__head { border-top: 0; padding-top: 0 !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx > summary::-webkit-details-marker { display: none; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx > summary.ay-rx__head::after { content: ''; position: absolute; right: 12px; top: 50%; width: 10px; height: 10px; margin-top: -8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx[open] > summary.ay-rx__head::after { transform: rotate(-135deg); margin-top: -2px; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx > summary:focus-visible { outline: 3px solid currentColor; outline-offset: 4px; border-radius: 8px; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__count { font: 600 14px/1.3 var(--ds-ui) !important; opacity: .8; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__intro:empty { display: none; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__intro { display: grid; gap: 8px; margin: 0 0 12px; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__intro > p { margin: 0; font: 500 14px/1.45 var(--ds-ui) !important; opacity: .85; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__intro .ay-rx__notice { padding: 10px 14px !important; border-radius: 16px; background: var(--ds-group); font: 600 14px/1.45 var(--ds-ui) !important; opacity: 1; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__body { display: grid; gap: 16px; min-width: 0; padding-bottom: 8px; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__side { gap: 8px !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__side:empty { display: none !important; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__others > summary { display: flex; align-items: center; justify-content: space-between; min-height: 48px; cursor: pointer; list-style: none; border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__others > summary::-webkit-details-marker { display: none; }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__others > summary::after { content: ''; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); }
+:is(#ds-r, .ayna-mobile, .app-container):is(#ds-r, .ayna-mobile, .app-container) .ay-rxr .ay-rx__others[open] > summary::after { transform: rotate(-135deg); }
+@media (min-width: 900px) {
+  :is(#ds-r, .app-container):is(#ds-r, .app-container) .ay-rxr.is-web .ay-rx__body { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); column-gap: 32px; align-items: start; }
+}

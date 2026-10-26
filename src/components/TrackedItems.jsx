@@ -5,6 +5,7 @@ import CareNearYouPanel from './CareNearYouPanel';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { hasFlaggedRecall } from '../utils/productSafetyAlert';
+import { StatusPill } from './ui/ay';
 import '../styles/compare-page.css';
 
 function ImgOrInitial({ item, size }) {
@@ -39,6 +40,8 @@ export default function TrackedItems({ onBack = null, trackedProducts, joinedWai
     };
 
     const hiddenCount = Object.keys(omittedProducts).length;
+    const [zipEditing, setZipEditing] = useState(false);
+    const chev = <svg className="wy-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>;
     return (
         <section className="ay-container aytrk">
             <header className="aytrk__head">
@@ -49,48 +52,73 @@ export default function TrackedItems({ onBack = null, trackedProducts, joinedWai
                 </p>
             </header>
 
-            {/* Profile: Zip code for nearby stores */}
-            <section className="aytrk__sec" aria-labelledby="aytrk-profile-h">
-                <h2 id="aytrk-profile-h" className="ay-h2">Profile</h2>
-                <p className="aytrk__line">
-                    Add your zip code to see if nearby stores have these products in stock (in-store and online, when we have that data).
-                </p>
-                <div className="aytrk__zip">
-                    <label className="sr-only" htmlFor="aytrk-zip">ZIP code</label>
-                    <input
-                        id="aytrk-zip"
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={5}
-                        placeholder="ZIP code"
-                        value={zipInput}
-                        onChange={(e) => setZipInput(e.target.value.replace(/\D/g, '').slice(0, 5))}
-                    />
-                    <button type="button" className="ay-btn ay-btn--primary" onClick={handleSaveZip}>
-                        Save
-                    </button>
-                    {userZipCode && <span className="aytrk__saved">Saved: {userZipCode}</span>}
-                </div>
-            </section>
+            <div className="aytrk__grid">
+            <div className="aytrk__col">
+            {totalItems === 0 ? (
+                <section className="aytrk__sec" aria-labelledby="aytrk-empty-h">
+                    <h2 id="aytrk-empty-h" className="ay-group__title">Safety recall monitoring</h2>
+                    <div className="ay-group is-padded aytrk__empty">
+                        <h3 className="ay-h3">Nothing tracked yet.</h3>
+                        <p>Take the quiz to get recommendations you can track, or join startup waitlists to save your spot.</p>
+                    </div>
+                </section>
+            ) : (
+                <>
+                    {/* Safety Tracked Products */}
+                    {trackedList.length > 0 && (
+                        <section className="aytrk__sec" aria-labelledby="aytrk-tracked-h">
+                            <div className="wy-sec__head"><h2 id="aytrk-tracked-h" className="ay-group__title">Safety recall monitoring</h2><span className="wy-count">{trackedList.length} tracked</span></div>
+                            <p className="aytrk__line">
+                                We&apos;ll notify you right away if these products have safety issues or get recalled.
+                            </p>
+                            <ul className="ay-group ay-group__rows aytrk__rows">
+                                {trackedList.map((product) => (
+                                    <li key={product.id} className="ay-group__row aytrk__row">
+                                        <span className="aytrk__thumb"><ImgOrInitial item={product} size={56} /></span>
+                                        <span className="ay-group__text">
+                                            <span className="ay-group__label">Active tracking{product.outOfBusiness && ' · No longer sold'}</span>
+                                            <span className="ay-group__value">{product.name}</span>
+                                            <span className="ay-group__note">{product.type}</span>
+                                        </span>
+                                        {/* Says only what was checked: the recall notes on file for this product. */}
+                                        <span className="ay-group__end">{hasFlaggedRecall(product.safety?.recalls)
+                                            ? <StatusPill tone="ink">Recall on file</StatusPill>
+                                            : <StatusPill>No recall on file</StatusPill>}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    )}
 
-            <div className="aytrk__panel"><HealthDataImport onUpdate={onHealthProfileUpdate} /></div>
-
-            <div className="aytrk__panel">
-                <CareNearYouPanel
-                    quizResults={quizResults}
-                    healthProfile={healthProfile}
-                    userZipCode={userZipCode}
-                    onZipCodeChange={onZipCodeChange}
-                    onOpenProduct={onOpenProduct}
-                    onEditHealthProfile={onEditHealthProfile}
-                    compact
-                />
-            </div>
+                    {/* Joined Waitlists */}
+                    {joinedList.length > 0 && (
+                        <section className="aytrk__sec" aria-labelledby="aytrk-wait-h">
+                            <div className="wy-sec__head"><h2 id="aytrk-wait-h" className="ay-group__title">Waitlists joined</h2><span className="wy-count">{joinedList.length}</span></div>
+                            <p className="aytrk__line">
+                                You&apos;re on the list. We&apos;ll email you when these products launch.
+                            </p>
+                            <ul className="ay-group ay-group__rows aytrk__rows">
+                                {joinedList.map((startup) => (
+                                    <li key={startup.id} className="ay-group__row aytrk__row">
+                                        <span className="aytrk__thumb"><ImgOrInitial item={startup} size={56} /></span>
+                                        <span className="ay-group__text">
+                                            <span className="ay-group__label">Early access</span>
+                                            <span className="ay-group__value">{startup.name}</span>
+                                            <span className="ay-group__note">{startup.tagline}</span>
+                                        </span>
+                                        <button type="button" className="ay-btn ay-btn--secondary aytrk__view" onClick={onViewWaitlist}>View</button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    )}
+                </>
+            )}
 
             {/* Recommendations from your check-in. Always visible under account when check-in was done */}
             {checkinRecs.length > 0 && (
                 <section className="aytrk__sec" aria-labelledby="aytrk-recs-h">
-                    <h2 id="aytrk-recs-h" className="ay-h2">Recommendations from your check-in</h2>
+                    <h2 id="aytrk-recs-h" className="ay-group__title">Recommendations from your check-in</h2>
                     <p className="aytrk__line">
                         These match your latest check-in and tracker data. Not sure if you did a check-in? You can always see your latest recommendations here. Each product links to the same listing in Search.
                     </p>
@@ -119,76 +147,83 @@ export default function TrackedItems({ onBack = null, trackedProducts, joinedWai
                 </section>
             )}
 
-            {/* Hidden (omitted) products */}
+            {/* Hidden (omitted) products: one Settings-style row. */}
             <section className="aytrk__sec" aria-labelledby="aytrk-hidden-h">
-                <h2 id="aytrk-hidden-h" className="ay-h2">Hidden products{hiddenCount > 0 && <span className="aytrk__count"> {hiddenCount}</span>}</h2>
-                <p className="aytrk__line">
-                    Products you chose to hide won&apos;t appear in Search or Recommendations. You can view and restore them anytime.
-                </p>
-                {onViewOmitted && (
-                    <button type="button" className="ay-btn ay-btn--secondary" onClick={onViewOmitted}>
-                        {hiddenCount > 0 ? `View hidden products (${hiddenCount})` : 'View hidden products'}
-                    </button>
-                )}
+                <h2 id="aytrk-hidden-h" className="ay-group__title">Hidden products</h2>
+                <ul className="ay-group wy-rows">
+                    <li>
+                        {onViewOmitted ? (
+                            <button type="button" className="ay-group__row ay-group__row--link wy-row" onClick={onViewOmitted}>
+                                <span className="ay-group__text"><span className="ay-group__value">{hiddenCount > 0 ? `View hidden products (${hiddenCount})` : 'View hidden products'}</span><span className="ay-group__note aytrk__note">Products you chose to hide won&apos;t appear in Search or Recommendations. You can view and restore them anytime.</span></span>
+                                <span className="ay-group__end">{chev}</span>
+                            </button>
+                        ) : (
+                            <div className="ay-group__row wy-row"><span className="ay-group__text"><span className="ay-group__note aytrk__note">Products you chose to hide won&apos;t appear in Search or Recommendations. You can view and restore them anytime.</span></span></div>
+                        )}
+                    </li>
+                </ul>
+            </section>
+            <section className="aytrk__sec" aria-labelledby="aytrk-care-h">
+                <h2 id="aytrk-care-h" className="ay-group__title">Care near you</h2>
+                <div className="aytrk__panel">
+                    <CareNearYouPanel
+                        quizResults={quizResults}
+                        healthProfile={healthProfile}
+                        userZipCode={userZipCode}
+                        onZipCodeChange={onZipCodeChange}
+                        onOpenProduct={onOpenProduct}
+                        onEditHealthProfile={onEditHealthProfile}
+                        compact
+                    />
+                </div>
+            </section>
+            </div>
+
+            <div className="aytrk__col">
+            {/* Your details: the same label / value rows and fields as Settings. */}
+            <section className="aytrk__sec" aria-labelledby="aytrk-profile-h">
+                <h2 id="aytrk-profile-h" className="ay-group__title">Your details</h2>
+                <div className="ay-group wy-rows">
+                    {zipEditing ? (
+                        <form className="ay-group__row wy-row wy-form" onSubmit={(e) => { e.preventDefault(); handleSaveZip(); setZipEditing(false); }}>
+                            <label className="ay-group__text">
+                                <span className="ay-group__label">ZIP code</span>
+                                <input
+                                    id="aytrk-zip"
+                                    type="text"
+                                    inputMode="numeric"
+                                    maxLength={5}
+                                    placeholder="ZIP code"
+                                    autoFocus
+                                    value={zipInput}
+                                    onChange={(e) => setZipInput(e.target.value.replace(/\D/g, '').slice(0, 5))}
+                                />
+                            </label>
+                            <span className="ay-group__end"><button type="submit" className="ct-link">Save</button></span>
+                        </form>
+                    ) : (
+                        <div className="ay-group__row wy-row">
+                            <span className="ay-group__text">
+                                <span className="ay-group__label">ZIP code</span>
+                                <span className="ay-group__value">{userZipCode ? `Saved: ${userZipCode}` : 'Not set'}</span>
+                                <span className="ay-group__note aytrk__note">Add your zip code to see if nearby stores have these products in stock (in-store and online, when we have that data).</span>
+                            </span>
+                            <span className="ay-group__end"><button type="button" className="ct-link" onClick={() => setZipEditing(true)}>{userZipCode ? 'Edit' : 'Add'}</button></span>
+                        </div>
+                    )}
+                </div>
             </section>
 
-            {totalItems === 0 ? (
-                <section className="aytrk__sec ay-group is-padded aytrk__empty">
-                    <h2 className="ay-h3">Nothing tracked yet.</h2>
-                    <p>Take the quiz to get recommendations you can track, or join startup waitlists to save your spot.</p>
-                </section>
-            ) : (
-                <>
-                    {/* Safety Tracked Products */}
-                    {trackedList.length > 0 && (
-                        <section className="aytrk__sec" aria-labelledby="aytrk-tracked-h">
-                            <h2 id="aytrk-tracked-h" className="ay-h2">Safety recall monitoring <span className="aytrk__count">{trackedList.length}</span></h2>
-                            <p className="aytrk__line">
-                                We&apos;ll notify you right away if these products have safety issues or get recalled.
-                            </p>
-                            <ul className="ay-group ay-group__rows aytrk__rows">
-                                {trackedList.map((product) => (
-                                    <li key={product.id} className="ay-group__row aytrk__row">
-                                        <span className="aytrk__thumb"><ImgOrInitial item={product} size={56} /></span>
-                                        <span className="ay-group__text">
-                                            <span className="ay-group__label">Active tracking{product.outOfBusiness && ' · No longer sold'}</span>
-                                            <span className="ay-group__value">{product.name}</span>
-                                            <span className="ay-group__note">{product.type}</span>
-                                        </span>
-                                        {/* Says only what was checked: the recall notes on file for this product. */}
-                                        {hasFlaggedRecall(product.safety?.recalls)
-                                            ? <span className="ay-group__end aytrk__status is-recall"><i aria-hidden="true" />Recall on file</span>
-                                            : <span className="ay-group__end aytrk__status"><i aria-hidden="true" />No recall on file</span>}
-                                    </li>
-                                ))}
-                            </ul>
-                        </section>
-                    )}
+            <section className="aytrk__sec" aria-labelledby="aytrk-import-h">
+                <h2 id="aytrk-import-h" className="ay-group__title">Health data</h2>
+                <details className="aytrk__more">
+                    <summary>Add a file or your own notes</summary>
+                    <div className="aytrk__panel"><HealthDataImport onUpdate={onHealthProfileUpdate} /></div>
+                </details>
+            </section>
 
-                    {/* Joined Waitlists */}
-                    {joinedList.length > 0 && (
-                        <section className="aytrk__sec" aria-labelledby="aytrk-wait-h">
-                            <h2 id="aytrk-wait-h" className="ay-h2">Waitlists joined <span className="aytrk__count">{joinedList.length}</span></h2>
-                            <p className="aytrk__line">
-                                You&apos;re on the list. We&apos;ll email you when these products launch.
-                            </p>
-                            <ul className="ay-group ay-group__rows aytrk__rows">
-                                {joinedList.map((startup) => (
-                                    <li key={startup.id} className="ay-group__row aytrk__row">
-                                        <span className="aytrk__thumb"><ImgOrInitial item={startup} size={56} /></span>
-                                        <span className="ay-group__text">
-                                            <span className="ay-group__label">Early access</span>
-                                            <span className="ay-group__value">{startup.name}</span>
-                                            <span className="ay-group__note">{startup.tagline}</span>
-                                        </span>
-                                        <button type="button" className="ay-btn ay-btn--secondary aytrk__view" onClick={onViewWaitlist}>View</button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </section>
-                    )}
-                </>
-            )}
+            </div>
+            </div>
         </section>
     );
 }

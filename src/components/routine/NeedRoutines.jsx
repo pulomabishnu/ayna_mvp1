@@ -27,10 +27,22 @@ function Thumb({ product }) {
   return <span className="ay-rx__thumb" aria-hidden="true">{src && !broken ? <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} /> : <span>{(product?.brand || product?.name || '?').charAt(0)}</span>}</span>;
 }
 
+/** One source line; every other source one tap away under "Show sources" (nothing is dropped). */
 function Sources({ list = [] }) {
   const s = list.filter((x) => x?.url);
   if (!s.length) return null;
-  return <p className="ay-rx__src">Source{s.length > 1 ? 's' : ''}: {s.map((x, i) => <span key={x.url}>{i ? ', ' : ''}<a href={x.url} target="_blank" rel="noopener noreferrer">{x.label}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</p>;
+  const link = (x) => <a href={x.url} target="_blank" rel="noopener noreferrer">{x.label}<span className="sr-only"> (opens in a new tab)</span></a>;
+  return (
+    <div className="ay-rx__src">
+      <p>Source: {link(s[0])}</p>
+      {s.length > 1 && (
+        <details className="ay-rx__srcmore">
+          <summary>Show sources ({s.length})</summary>
+          <ul>{s.map((x) => <li key={x.url}>{link(x)}</li>)}</ul>
+        </details>
+      )}
+    </div>
+  );
 }
 
 /** Where she is with it: started, due, or what she said. */
@@ -42,13 +54,16 @@ function TryLine({ item }) {
   return <p className="ay-rx__status">{due ? 'Time to say how it went.' : `Trying since ${fmtDay(t.startedDay)}.`}</p>;
 }
 
+/* Glance: why it is here. Scan: when, how long and how she will know, as one compact group. */
 function Facts({ item, onCheckIn }) {
   return (
     <dl className="ay-rx__facts">
-      <div><dt>Why</dt><dd>{item.why}</dd></div>
-      {item.when && <div><dt>When</dt><dd>{item.when}{item.how ? <><br /><span className="ay-rx__how">{item.how}</span>{item.howSource && <small> From {item.howSource}</small>}</> : null}</dd></div>}
-      {item.horizon && <div><dt>How long to try</dt><dd>{item.horizon.label.charAt(0).toUpperCase() + item.horizon.label.slice(1)}</dd></div>}
-      {item.know && <div><dt>How you’ll know</dt><dd>{item.know}{onCheckIn && <> <button type="button" className="ay-rx__link" onClick={onCheckIn}>Check in</button></>}</dd></div>}
+      <div className="is-why"><dt>Why</dt><dd>{item.why}</dd></div>
+      <div className="ay-rx__plan">
+        {item.when && <div><dt>When</dt><dd>{item.when}{item.how ? <><br /><span className="ay-rx__how">{item.how}</span>{item.howSource && <small> From {item.howSource}</small>}</> : null}</dd></div>}
+        {item.horizon && <div><dt>How long to try</dt><dd>{item.horizon.label.charAt(0).toUpperCase() + item.horizon.label.slice(1)}</dd></div>}
+        {item.know && <div><dt>How you’ll know</dt><dd>{item.know}{onCheckIn && <> <button type="button" className="ay-rx__link" onClick={onCheckIn}>Check in</button></>}</dd></div>}
+      </div>
     </dl>
   );
 }
@@ -165,23 +180,27 @@ function ShopTogether({ routine }) {
   );
 }
 
-const OTHER_SHOWN = 4;
+const OTHER_SHOWN = 3;
 
-function OneRoutine({ routine, act, note, onOpenProduct, onCheckIn, headingLevel = 2 }) {
+function OneRoutine({ routine, act, note, onOpenProduct, onCheckIn, headingLevel = 2, first = true }) {
   const [more, setMore] = useState(false);
   const H = `h${headingLevel}`;
   const others = routine.other;
   const shown = more ? others : others.slice(0, OTHER_SHOWN);
   const altFor = (item) => others.filter((o) => o.kind === item.kind && !o.informationOnly).slice(0, 4);
   return (
-    <section className="ay-rx" aria-labelledby={`ay-rx-${routine.need}`}>
-      <header className="ay-rx__head">
+    <details className="ay-rx" open={first || undefined}>
+      <summary className="ay-rx__head">
         <H id={`ay-rx-${routine.need}`}>{routine.title}</H>
-        <p>Start with one or two things. You don’t need everything here.</p>
+        <span className="ay-rx__count">{routine.start.length} in Start here{others.length ? ` · ${others.length} other options` : ''}</span>
+      </summary>
+      <div className="ay-rx__intro">
+        {first && <p>Start with one or two things. You don’t need everything here.</p>}
         {note?.need === routine.need && (
           <p className="ay-rx__notice" role="status">{note.text} {note.undo && <button type="button" className="ay-rx__link" onClick={note.undo}>Undo</button>}</p>
         )}
-      </header>
+      </div>
+      <div className="ay-rx__body">
       <div className="ay-rx__main">
       <h3 className="ay-rx__h">Start here</h3>
       {routine.start.length
@@ -198,17 +217,18 @@ function OneRoutine({ routine, act, note, onOpenProduct, onCheckIn, headingLevel
       </div>
       <div className="ay-rx__side">
       {others.length > 0 && (
-        <div className="ay-rx__others">
-          <h3 className="ay-rx__h">Other options</h3>
+        <details className="ay-rx__others">
+          <summary className="ay-rx__h ay-rx__otherssum">Other options ({others.length})</summary>
           <ul>{shown.map((item) => <OtherItem key={item.key} routine={routine} item={item} act={act} onOpenProduct={onOpenProduct} canAdd={!routine.full} />)}</ul>
           {others.length > OTHER_SHOWN && <button type="button" className="ay-rx__text" aria-expanded={more} onClick={() => setMore((v) => !v)}>{more ? 'Show fewer' : `Show ${others.length - OTHER_SHOWN} more`}</button>}
           {routine.full && <p className="ay-rx__note">Start here holds {START_MAX}. Remove one to add another.</p>}
-        </div>
+        </details>
       )}
         <SetAside routine={routine} act={act} />
         <ShopTogether routine={routine} />
       </div>
-    </section>
+      </div>
+    </details>
   );
 }
 
@@ -222,7 +242,7 @@ export default function NeedRoutines({ state, variant = 'app', onOpenProduct, on
   }
   return (
     <div id={id} className={`ay-rxr is-${variant}`}>
-      {routines.map((r) => <OneRoutine key={r.need} routine={r} act={act} note={note} onOpenProduct={onOpenProduct} onCheckIn={onCheckIn} />)}
+      {routines.map((r, i) => <OneRoutine key={r.need} first={i === 0} routine={r} act={act} note={note} onOpenProduct={onOpenProduct} onCheckIn={onCheckIn} />)}
     </div>
   );
 }
