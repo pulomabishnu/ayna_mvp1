@@ -981,6 +981,7 @@ html body .app-container .ayq-badges.is-web { margin-top: 14px; }
 /* Back and Share sit on the photo and scroll away with it (founder, Oct 21: nothing floats over the page while it scrolls). */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-scroll { position: relative; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-sheet { position: relative; z-index: 2; margin: -32px 0 0 !important; padding: 28px var(--d-gutter, 20px) 8px !important; border-radius: 24px 24px 0 0; background: var(--d-page) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-sheet.ay-pdp-title { margin-top: 0 !important; padding-top: 12px !important; }
 /* No store link (walkthrough P1-6): "Add to ecosystem" becomes the primary, never a dead "No shop link". */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-nolink { margin: 6px 0 10px !important; font: 500 calc(14px * var(--ayna-text-scale, 1))/1.45 var(--f-ui) !important; color: var(--d-ink-2) !important; }
 /* Size / unit next to the price (walkthrough P1-21: blank in dark, butter text on a white chip). One badge look in both themes. */
@@ -2496,3 +2497,18 @@ html body .ayq--tabs .ayq-st__tab:not(.is-on):hover { background: rgba(var(--v-f
   #pdp-v4#pdp-v4#pdp-v4 .ayv-dk__gallery .ayv-hl__row { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
   #pdp-v4#pdp-v4#pdp-v4 .ayv-dk__tabs { grid-column: 3; grid-row: 1 / -1; }
 }
+
+/* Brief "Done when": 8 type sizes, 4 radii (8 / 16 / 999 / 50%), 2 border styles (1px rule at 15%, 1.5px ink), 1 shadow.
+   The last off-scale values measured on the rendered page, mapped onto the tokens. */
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ayv-obtn, .ay-gal__zoom, .ayv-acts__row > *) { border: var(--ay-outline) !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) :is(.ayv-buy, .ayp-buy__main) { border: var(--ay-outline) !important; border-radius: var(--ay-r-pill) !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ayq-step, .ayv-ask, .ayq-indexlist, .ayq-linklist) { border-color: rgba(62, 39, 35, .15) !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ayq-step, .ayv-ask, .ayq-indexlist, .ayq-linklist) { border-color: rgba(255, 237, 172, .2) !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayp-top__share span { font-size: 14px !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-gloss { font-size: inherit !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-compare__name small { font-size: 13px !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayq-subh { font: 700 17px/22px var(--ay-font-ui) !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayp-reads__go { font-size: 15px !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-urgent__h { font: 700 17px/22px var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ay-compare__thumb, .ay-compare th.is-this, .ay-compare td.is-this, .ay-compare__search input) { border-radius: var(--ay-r-sm) !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ay-compare__scroll, .ay-gal.has-plate, .ay-askrow, .ay-urgent, .ayq-prose, .ayp-reads li > a) { border-radius: var(--ay-r-md) !important; }
