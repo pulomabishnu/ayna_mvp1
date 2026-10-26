@@ -73,10 +73,10 @@
   .v6-cabinet-lock { position: relative !important; inset: auto !important; padding: 0 !important; backdrop-filter: none !important; }
   .v6-unlock-card--slim { margin: auto !important; }
   .v6-category-card { overflow: hidden !important; }
-  .v6-category-card strong { font-family: var(--ay-serif) !important; font-size: var(--ay-fs-section) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+  .v6-category-card strong { font-family: var(--ay-serif) !important; font-size: var(--ay-fs-section) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
   .v6-category-card small { font-size: var(--ay-fs-caption) !important; }
   .v6-category-card > div:last-child { padding: 16px !important; }
-  .v6-section-head h2 { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+  .v6-section-head h2 { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
   .v6-footer { background: var(--color-bg) !important; color: var(--color-text-main) !important; }
   .v6-footer * { color: inherit !important; }
   .v6-footer-column__title { color: var(--color-terracotta) !important; }

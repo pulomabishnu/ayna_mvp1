@@ -16,7 +16,7 @@
 @keyframes ay-empty-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 .ay-empty-art { position: relative; width: 96px; height: 96px; margin-bottom: 8px; }
 .ay-empty-card { position: absolute; inset: 8px 14px 14px 8px; border: 2.5px solid var(--ay-ink); border-radius: 28px; background: var(--ay-peri); rotate: -9deg; }
-.ay-empty-card.is-front { inset: 14px 8px 8px 14px; display: grid; place-items: center; background: var(--tone, var(--ay-pink)); rotate: 5deg; box-shadow: 4px 4px 0 var(--ay-ink); }
+.ay-empty-card.is-front { inset: 14px 8px 8px 14px; display: grid; place-items: center; background: var(--tone, var(--ay-pink)); rotate: 5deg; box-shadow: none; }
 @keyframes ay-empty-wiggle { 50% { rotate: -1deg; } }
 .ay-empty-card svg { width: 34px; height: 34px; fill: none; stroke: var(--ay-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .ay-empty-spark { position: absolute; right: -10px; top: -8px; width: 36px; height: 36px; overflow: visible; }
@@ -114,7 +114,7 @@
 .ayna-mobile .ayna-fresh-auth-field:focus-within { border-color: var(--ay-ink) !important; }
 
 /* Partner disclosure: readable label. */
-.ayna-mobile .ayna-figma-partner-disclosure > button span:first-child { padding: 4px 9px; border-radius: 99px; background: var(--ay-peri) !important; color: var(--ay-ink) !important; font-size: 11.5px !important; letter-spacing: 0 !important; font-weight: 500 !important; }
+.ayna-mobile .ayna-figma-partner-disclosure > button span:first-child { padding: 4px 9px; border-radius: 99px; background: var(--ay-peri) !important; color: var(--ay-ink) !important; font-size: 13px !important; letter-spacing: 0 !important; font-weight: 500 !important; }
 .ayna-mobile .ayna-figma-partner-disclosure > button { padding-inline: var(--ay-gutter) !important; }
 .ayna-mobile .ayna-figma-partner-disclosure > button span:nth-child(2) { font-size: 13px !important; font-weight: 500 !important; color: var(--ay-ink-soft) !important; }
 
@@ -188,7 +188,7 @@
 .ay-deck-stage { position: relative; flex: 1; min-height: 0; display: grid; place-items: center; margin: 14px 0; }
 .ay-deck-card {
   position: absolute; inset: 0; margin: auto; width: min(100%, 340px); height: min(100%, 470px); display: flex; flex-direction: column;
-  border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 5px 5px 0 var(--ay-ink); overflow: hidden;
+  border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: none; overflow: hidden;
   touch-action: pan-y; user-select: none; cursor: grab; transition: transform var(--ay-dur-2) var(--ay-ease);
 }
 .ay-deck-card.is-dragging { transition: none; cursor: grabbing; }
@@ -200,7 +200,7 @@
 .ay-deck-copy strong { font: 400 22px/1.15 var(--ay-font-display); letter-spacing: -.025em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .ay-deck-meta { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
 .ay-deck-meta b { font: 500 13px/1 var(--ay-font-ui); }
-.ay-deck-meta em { padding: 5px 9px; border-radius: 99px; background: var(--ay-butter); font: 500 11.5px/1 var(--ay-font-ui); font-style: normal; }
+.ay-deck-meta em { padding: 5px 9px; border-radius: 99px; background: var(--ay-butter); font: 500 13px/1 var(--ay-font-ui); font-style: normal; }
 .ay-deck-stamp { position: absolute; z-index: 2; top: 22px; padding: 6px 14px; border: 3px solid currentColor; border-radius: 10px; background: var(--ay-paper); font: 400 22px/1.15 var(--ay-font-display); text-transform: uppercase; letter-spacing: .04em; }
 .ay-deck-stamp.is-save { left: 22px; color: #2f7a52; rotate: -10deg; }
 .ay-deck-stamp.is-skip { right: 22px; color: var(--ay-alert); rotate: 10deg; }
@@ -226,7 +226,7 @@
 .ay-replay-art i:nth-child(3) { left: 10px; bottom: 0; background: var(--ay-mint); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
 .ay-replay-play { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--ay-butter); }
 .ay-replay-play svg { width: 16px; height: 16px; fill: var(--ay-ink); }
-.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 small { display: inline-grid; place-items: center; width: 30px; height: 30px; margin-right: 10px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--area-tone, var(--ay-butter)); color: var(--ay-ink); font: 500 11.5px/1 var(--ay-font-ui); vertical-align: middle; }
+.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 small { display: inline-grid; place-items: center; width: 30px; height: 30px; margin-right: 10px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--area-tone, var(--ay-butter)); color: var(--ay-ink); font: 500 13px/1 var(--ay-font-ui); vertical-align: middle; }
 
 /* You: colour hero, badges, tinted menu icons */
 .ayna-mobile .ayna-fresh-profile-hero { background: var(--ay-peri) !important; color: var(--ay-ink) !important; }
@@ -250,7 +250,7 @@
 .ay-badges ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
 .ay-badge { display: grid; justify-items: center; align-content:center; min-height:100px; gap: 5px; padding: 12px 8px 10px; border: 1.5px dashed var(--ay-line); border-radius: 16px; text-align: center; color: var(--ay-ink); animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; animation-delay: calc(var(--i) * 60ms); }
 .ay-badge strong { font: 500 13px/1.2 var(--ay-font-ui); }
-.ay-badge small { color:var(--ay-ink-soft); font: 500 11.5px/1.2 var(--ay-font-ui); }
+.ay-badge small { color:var(--ay-ink-soft); font: 500 13px/1.2 var(--ay-font-ui); }
 .ay-badge-mark { width: 34px; height: 34px; display: grid; place-items: center; border: 2px dashed currentColor; border-radius: 50%; font: 500 13px/1 var(--ay-font-ui); }
 .ay-badge.is-earned { border: 2px solid var(--ay-ink); color: var(--ay-ink); }
 .ay-badge.is-earned .ay-badge-mark { border-style: solid; border-color: var(--ay-ink); animation: ayw-stamp .5s var(--ay-pop) both; animation-delay: calc(.2s + var(--i) * 80ms); }
@@ -302,9 +302,9 @@
 @keyframes ay-fan-b { 50% { rotate: -8deg; } }
 .ay-cover-badge { position: absolute; z-index: 2; right: -14px; top: -38px; width: 96px; height: 96px; }
 .ay-cover-badge circle { fill: var(--ay-ink); }
-.ay-cover-badge text { font: 500 11.5px 'Figtree', system-ui, sans-serif; letter-spacing: .05em; fill: var(--ay-paper); }
+.ay-cover-badge text { font: 500 13px 'Figtree', system-ui, sans-serif; letter-spacing: .05em; fill: var(--ay-paper); }
 .ay-cover-badge-star { fill: var(--ay-butter); }
-.ay-cover-card { position: relative; width: 100%; max-width: 360px; padding: 0; overflow: hidden; border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 6px 6px 0 var(--ay-ink); rotate: -1.5deg; }
+.ay-cover-card { position: relative; width: 100%; max-width: 360px; padding: 0; overflow: hidden; border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: none; rotate: -1.5deg; }
 @media (prefers-reduced-motion: reduce) { .ay-cover-badge, .ay-cover-behind { animation: none; } }
 .ayna-mobile .ay-cover-card .ayna-feature-montage { background: transparent !important; }
 .ay-cover-copy { position: relative; }
@@ -362,7 +362,7 @@
 .ay-reel-score strong { font: 400 28px/1.15 var(--ay-font-display); letter-spacing: -.06em; }
 .ay-reel-score span { font: 500 13px/1 var(--ay-font-ui); text-transform: none; letter-spacing: 0; }
 .ay-reel-tags { display: flex; gap: 6px; margin-top: 8px; }
-.ay-reel-tags span { padding: 5px 10px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); font: 500 11.5px/1 var(--ay-font-ui); animation: ay-reel-in .4s var(--ay-pop) both; }
+.ay-reel-tags span { padding: 5px 10px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); font: 500 13px/1 var(--ay-font-ui); animation: ay-reel-in .4s var(--ay-pop) both; }
 .ay-reel-tags span:nth-child(2) { animation-delay: .12s; } .ay-reel-tags span:nth-child(3) { animation-delay: .24s; }
 
 /* Ask: chat bubbles in sequence */
@@ -382,7 +382,7 @@
 .ay-reel-deck span { position: absolute; inset: 0; border: 2.5px solid var(--ay-ink); border-radius: 20px; }
 .ay-reel-deck .c1 { background: var(--ay-butter); rotate: -10deg; }
 .ay-reel-deck .c2 { background: var(--ay-mint); rotate: 6deg; }
-.ay-reel-deck .c3 { display: grid; place-items: center; background: var(--ay-paper); box-shadow: 4px 4px 0 var(--ay-ink); animation: ay-flick 3s var(--ay-ease) 1; }
+.ay-reel-deck .c3 { display: grid; place-items: center; background: var(--ay-paper); box-shadow: none; animation: ay-flick 3s var(--ay-ease) 1; }
 .ay-reel-deck .c3 svg { width: 46px; height: 46px; fill: var(--ay-pink); stroke: var(--ay-ink); stroke-width: 2; stroke-linejoin: round; }
 @keyframes ay-flick { 0%, 35% { transform: none; } 60% { transform: translateX(90px) rotate(16deg); opacity: 0; } 61% { transform: none; opacity: 0; } 80%, 100% { opacity: 1; } }
 
@@ -450,7 +450,7 @@
 .ayna-mobile.ayna-mobile .ayna-fresh-match-badge { right: auto !important; bottom: auto !important; display: inline-flex !important; gap: 3px !important; align-items: baseline !important; padding: 5px 9px !important; border-radius: 99px !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; box-shadow: none !important; border: 0 !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-match-badge { position: absolute !important; top: 8px !important; left: 8px !important; }
 .ayna-mobile .ayna-fresh-match-badge strong { font: 500 13px/1 var(--ay-font-ui) !important; color: inherit !important; }
-.ayna-mobile .ayna-fresh-match-badge span { font: 500 11.5px/1 var(--ay-font-ui) !important; letter-spacing: .04em !important; color: inherit !important; }
+.ayna-mobile .ayna-fresh-match-badge span { font: 500 13px/1 var(--ay-font-ui) !important; letter-spacing: .04em !important; color: inherit !important; }
 
 /* Community: tabs sit inside the gutter, fit the width, line under them only. */
 .ayna-mobile.ayna-mobile .am-tabs { display: flex !important; justify-content: space-between !important; gap: 10px !important; margin: 0 0 var(--ay-space-4) !important; padding: 0 !important; border-bottom: 1px solid var(--ay-line) !important; }
@@ -467,7 +467,7 @@
 .ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head {
   display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px;
   margin: 0 0 var(--ay-space-4) !important; padding: 16px 16px 16px 14px !important; border: 2px solid var(--ay-ink) !important; border-radius: 20px !important;
-  background: var(--area-tone, var(--ay-butter)) !important; box-shadow: 4px 4px 0 var(--ay-ink);
+  background: var(--area-tone, var(--ay-butter)) !important; box-shadow: none;
 }
 .ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { display: flex; align-items: center; margin: 0 !important; font: 400 22px/1.15 var(--ay-font-display) !important; letter-spacing: -.04em !important; color: var(--ay-ink) !important; }
 .ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 small { background: var(--ay-paper) !important; }
@@ -482,7 +482,7 @@
 /* Ecosystem hero, playlist-page style: colour band with the ring as the
    cover, title, meta line, then a round play button for the Wrapped. */
 .ayna-mobile .ayna-cabinet-stage.ay-eco-hero { margin: 0 0 var(--ay-space-2); padding: var(--ay-space-6) var(--ay-gutter) var(--ay-space-6) !important; border-radius: 0 0 32px 32px; background: var(--ay-butter) !important; }
-.ay-eco-cover { padding: var(--ay-space-4); border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 5px 5px 0 var(--ay-ink); margin-bottom: var(--ay-space-5); }
+.ay-eco-cover { padding: var(--ay-space-4); border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: none; margin-bottom: var(--ay-space-5); }
 .ayna-mobile .ay-eco-hero h1 { display: block !important; margin: 0 !important; background: none !important; font-size: calc(28px * var(--ayna-text-scale, 1)) !important; font-weight: 400 !important; line-height: 1.15 !important; }
 .ay-eco-meta { margin: 6px 0 0; font: 500 13px/1.3 var(--ay-font-ui); color: var(--ay-ink-soft); }
 .ay-eco-actions { display: flex; align-items: center; gap: var(--ay-space-3); margin-top: var(--ay-space-4); }
@@ -493,10 +493,10 @@
 .ayna-mobile .ay-eco-actions .ay-text-btn { margin: 0; background: transparent; border-color: var(--ay-ink); }
 
 /* Readable minimum sizes from the lint: nav labels, chips, small labels. */
-.ayna-mobile .ayna-bottom-nav button span { font-size: 11.5px !important; font-weight: 500 !important; }
-.ip-label { font-size: 11.5px; font-weight: 500; }
-.ayna-mobile .ayna-ecosystem-chart-center span { font-size: 11.5px !important; font-weight: 500 !important; }
-.ayna-mobile .ayna-fresh-product-detail [class*='tag'] div, .ayna-mobile .ayna-fresh-product-detail [class*='tags'] > * { font-size: 11.5px !important; font-weight: 500 !important; }
+.ayna-mobile .ayna-bottom-nav button span { font-size: 13px !important; font-weight: 500 !important; }
+.ip-label { font-size: 13px; font-weight: 500; }
+.ayna-mobile .ayna-ecosystem-chart-center span { font-size: 13px !important; font-weight: 500 !important; }
+.ayna-mobile .ayna-fresh-product-detail [class*='tag'] div, .ayna-mobile .ayna-fresh-product-detail [class*='tags'] > * { font-size: 13px !important; font-weight: 500 !important; }
 .ip-dot { width: 40px; height: 40px; }
 
 /* Empty states: centred block, as on the rest of the play surfaces. */
@@ -557,7 +557,7 @@
 .ayna-mobile.ayna-mobile .ayna-fresh-photo-placeholder-shape { display: none; }
 
 /* Ecosystem check-in + reads kicker */
-.ayna-mobile.ayna-mobile .ayna-home-today { margin: 32px var(--ay-gutter) 24px !important; padding: 18px 18px 18px 20px !important; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg, 24px); background: var(--ay-mint); box-shadow: 4px 4px 0 var(--ay-ink); }
+.ayna-mobile.ayna-mobile .ayna-home-today { margin: 32px var(--ay-gutter) 24px !important; padding: 18px 18px 18px 20px !important; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg, 24px); background: var(--ay-mint); box-shadow: none; }
 .ayna-mobile.ayna-mobile .ayna-home-today h2 { margin: 0; font: 400 22px/1.15 var(--ay-font-display); letter-spacing: -.03em; color: var(--ay-ink) !important; }
 .ayna-mobile.ayna-mobile .ayna-home-today button { min-height: 44px; padding: 0 20px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font-size: 13px; font-weight: 500; }
 .ayna-mobile.ayna-mobile .ayna-editorial-read-copy small { font-size: 13px !important; font-weight: 500 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--ay-ink-soft) !important; }
@@ -606,7 +606,7 @@
 .ayna-mobile input[type='checkbox']:focus-visible { outline: 3px solid var(--ay-peri-deep); outline-offset: 2px; }
 
 /* Small all-caps labels set inline across older screens read as sentence case. */
-.ayna-mobile [style*='text-transform: uppercase'] { text-transform: none !important; letter-spacing: 0 !important; font-size: max(12px, 1em) !important; font-weight: 600 !important; }
+.ayna-mobile [style*='text-transform: uppercase'] { text-transform: none !important; letter-spacing: 0 !important; font-size: max(13px, 1em) !important; font-weight: 600 !important; }
 /* Display-font headings set inline were rendering thin; make them bold like the rest. */
 .ayna-mobile [style*='font-family: var(--ayna-font-display)'] { font-weight: 600 !important; letter-spacing: -.03em !important; }
 
@@ -618,7 +618,7 @@
 
 /* Badges: readable sizes. */
 .ay-badge strong { font-size: 13px !important; font-weight: 500 !important; }
-.ay-badge small { font-size: 11.5px !important; font-weight: 500 !important; }
+.ay-badge small { font-size: 13px !important; font-weight: 500 !important; }
 
 .ayna-mobile .ayna-fresh-profile-hero > :not(.ay-hub-shapes) { position: relative; z-index: 1; }
 .ay-hub-shapes { z-index: 0; }
@@ -627,7 +627,7 @@
 .ayna-mobile input[type='checkbox']:not([role='switch']) { width: 22px !important; height: 22px !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-profile-hero > div:nth-child(2) > div:first-child { border-radius: 50% !important; border: 2px solid var(--ay-ink) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 400 22px/1.15 var(--ay-font-display) !important; }
 /* Minimum readable size on the cover slider and About page details. */
-.ayna-mobile .ayna-slide-start-label span { font-size: 11.5px !important; font-weight: 500 !important; letter-spacing: .02em !important; text-transform: none !important; opacity: .7; }
+.ayna-mobile .ayna-slide-start-label span { font-size: 13px !important; font-weight: 500 !important; letter-spacing: .02em !important; text-transform: none !important; opacity: .7; }
 .ayna-mobile :is(.ayna-scrapbook__paper small, .ayna-scrapbook__gate span, .ayna-scrapbook__orbit > span, .ayna-scrapbook__intro-stamp) { font-size: 13px !important; font-weight: 500 !important; text-transform: none !important; letter-spacing: 0 !important; }
 .ay-reel-head { text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; font-weight: 500 !important; }
 /* Landing widget (Ameera's framed preview): give the card its colour and inner padding back. */

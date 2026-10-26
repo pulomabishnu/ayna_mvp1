@@ -16,7 +16,7 @@
 
 /* ---------- Header ---------- */
 .app-container .eco3-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin: 0 0 24px; }
-.app-container .eco3-head h1 { margin: 0 !important; color: var(--ay-ink) !important; font: 400 var(--ay-fs-display)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
+.app-container .eco3-head h1 { margin: 0 !important; color: var(--ay-ink) !important; font: 700 var(--ay-fs-display)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
 .app-container .eco3-head__sub { margin: 16px 0 0 !important; color: var(--ay-ink-soft) !important; font: 600 var(--ay-fs-body)/1.55 var(--ay-sans) !important; }
 .app-container .eco3-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 
@@ -71,7 +71,7 @@
 .app-container .eco3-chart__segment { stroke-linecap: round; animation: eco3-arrive .7s cubic-bezier(.2, .8, .2, 1) backwards; animation-delay: calc(var(--segment-index) * 85ms); }
 @keyframes eco3-arrive { from { stroke-dasharray: 0 999; } }
 .app-container .eco3-chart__centre { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--ay-ink); }
-.app-container .eco3-chart__centre strong { font: 400 var(--ay-fs-display)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; color: var(--ay-ink) !important; }
+.app-container .eco3-chart__centre strong { font: 700 var(--ay-fs-display)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; color: var(--ay-ink) !important; }
 .app-container .eco3-chart__centre span { margin-top: 8px; color: var(--ay-ink-soft) !important; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important; letter-spacing: normal; text-transform: none; }
 .app-container .eco3-chart__legend { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 32px; min-width: 0; }
 .app-container .eco3-chart__legend--two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; }
@@ -84,17 +84,17 @@
 .app-container .eco3-chart__legend a:focus-visible { outline: 2px solid var(--ay-ink); outline-offset: 2px; border-radius: 8px; }
 .app-container .eco3-chart__swatch { width: 16px; height: 16px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--area-color); box-sizing: border-box; }
 .app-container .eco3-chart__name { overflow: hidden; color: var(--ay-ink) !important; font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans) !important; text-overflow: ellipsis; white-space: nowrap; }
-.app-container .eco3-chart__legend strong { color: var(--ay-ink) !important; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
+.app-container .eco3-chart__legend strong { color: var(--ay-ink) !important; font: 700 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
 
 .app-container .eco3-overview__side { display: flex; flex-direction: column; justify-content: center; gap: 16px; padding-left: 32px; border-left: 1px solid var(--ay-line); }
 .app-container .eco3-next { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-md); background: var(--ay-butter); }
 .app-container .eco3-next__eyebrow { margin: 0 !important; color: var(--ay-ink) !important; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important; letter-spacing: normal; text-transform: none; opacity: .72; }
-.app-container .eco3-next__title { margin: 0 0 8px !important; color: var(--ay-ink) !important; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
+.app-container .eco3-next__title { margin: 0 0 8px !important; color: var(--ay-ink) !important; font: 700 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
 .app-container .eco3-overview__cost { margin: 0 !important; color: var(--ay-ink-soft) !important; font: 600 var(--ay-fs-secondary)/1.4 var(--ay-sans) !important; }
 
 /* Empty state */
 .app-container .eco3-empty { margin: 32px 0 0; padding: 40px 32px; border: 2px dashed var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-paper); text-align: center; }
-.app-container .eco3-empty__title { margin: 0 0 8px !important; color: var(--ay-ink) !important; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
+.app-container .eco3-empty__title { margin: 0 0 8px !important; color: var(--ay-ink) !important; font: 700 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
 .app-container .eco3-empty__body { margin: 0 0 24px !important; color: var(--ay-ink-soft) !important; font: 500 var(--ay-fs-body)/1.55 var(--ay-sans) !important; }
 .app-container .eco3-empty__actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
 
@@ -106,7 +106,7 @@
   .app-container .eco3-area.is-arrived, .app-container .eco3-chart__segment { animation: none; }
 }
 .app-container .eco3-area__head { display: flex; align-items: center; gap: 12px; margin: 0 0 24px; padding: 0 0 16px; border-bottom: 2px solid var(--ay-ink); }
-.app-container .eco3-area__head h2 { display: flex; align-items: center; gap: 12px; margin: 0 !important; color: var(--ay-ink) !important; font: 400 var(--ay-fs-title)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
+.app-container .eco3-area__head h2 { display: flex; align-items: center; gap: 12px; margin: 0 !important; color: var(--ay-ink) !important; font: 700 var(--ay-fs-title)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
 .app-container .eco3-area__head h2 small {
   display: inline-grid; place-items: center; width: 40px; height: 40px; border: 2px solid var(--ay-ink); border-radius: 50%;
   background: var(--area-color, var(--ay-pink)); color: var(--ay-ink) !important; font: 500 var(--ay-fs-secondary)/1 var(--ay-sans) !important; letter-spacing: 0;
@@ -144,9 +144,9 @@
 .app-container .eco3-details__card { position: relative; padding: 24px; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-paper); box-sizing: border-box; min-width: 0; }
 .app-container .eco3-details__sms { background: var(--ay-mint); }
 .app-container .eco3-details__item[open] { grid-column: 1 / -1; }
-.app-container .eco3-details__title { display: block; margin: 0 0 8px !important; color: var(--ay-ink) !important; font: 400 var(--ay-fs-section)/1.15 var(--ay-serif) !important; letter-spacing: -0.01em; }
+.app-container .eco3-details__title { display: block; margin: 0 0 8px !important; color: var(--ay-ink) !important; font: 700 var(--ay-fs-section)/1.15 var(--ay-serif) !important; letter-spacing: -0.01em; }
 .app-container .eco3-details__hint { display: block; color: var(--ay-ink-soft) !important; font: 500 var(--ay-fs-secondary)/1.45 var(--ay-sans) !important; }
-.app-container .eco3-details__number { margin: 0 0 16px !important; color: var(--ay-ink) !important; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
+.app-container .eco3-details__number { margin: 0 0 16px !important; color: var(--ay-ink) !important; font: 700 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
 .app-container .eco3-details__row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .app-container .eco3-details__soon { margin: 16px 0 0 !important; color: var(--ay-ink-soft) !important; font: 500 var(--ay-fs-caption)/1.4 var(--ay-sans) !important; }
 .app-container .eco3-details__soon--solo { grid-column: 1 / -1; margin: 0 !important; }
@@ -162,7 +162,7 @@
 /* ---------- Saved (SavedForLater, rendered by App after this page) ---------- */
 .app-container .eco-saved.mockup-page { padding-top: 24px !important; padding-bottom: 56px !important; }
 .app-container .eco-saved .eco3-area__head { display: flex !important; justify-content: flex-start !important; }
-.app-container .eco-saved .eco3-area__head h2 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+.app-container .eco-saved .eco3-area__head h2 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
 .app-container .eco-saved .wishlist-empty { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 24px !important; border: 2px dashed var(--ay-ink-faint) !important; border-radius: var(--ay-radius-lg) !important; background: transparent !important; }
 .app-container .eco-saved .wishlist-empty p { margin: 0 !important; color: var(--ay-ink-soft) !important; font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans) !important; }
 .app-container .eco-saved .wishlist-empty .eco3-pill { text-decoration: none !important; color: var(--ay-ink) !important; }
@@ -180,20 +180,20 @@
 @media (max-width: 720px) {
   .app-container .eco3 { padding-top: 32px !important; }
   .app-container .eco3-head { flex-direction: column; align-items: stretch; gap: 16px; }
-  .app-container .eco3-head h1 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+  .app-container .eco3-head h1 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
   .app-container .eco3-head__sub { margin-top: 8px !important; }
   .app-container .eco3-head > * { min-width: 0; }
   .app-container .eco3-actions .eco3-pill { min-height: 36px; padding: 0 14px !important; font-size: var(--ay-fs-caption) !important; }
   .app-container .eco3-overview { margin-top: 24px; padding: 24px 16px; gap: 24px; }
   .app-container .eco3-chart { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 24px; }
   .app-container .eco3-chart__ring { width: 184px; }
-  .app-container .eco3-chart__centre strong { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+  .app-container .eco3-chart__centre strong { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
   .app-container .eco3-chart__legend { grid-template-columns: minmax(0, 1fr); width: 100%; }
   .app-container .eco3-chart__legend a { min-height: 48px; }
   .app-container .eco3-overview__side { flex-direction: column; align-items: stretch; }
   .app-container .eco3-next { align-items: stretch; }
   .app-container .eco3-area { margin-top: 40px; }
-  .app-container .eco3-area__head h2 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+  .app-container .eco3-area__head h2 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
   .app-container .eco3-area__head h2 small { width: 32px; height: 32px; font-size: var(--ay-fs-caption) !important; }
   .app-container .eco3-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 24px 16px !important; }
   .app-container .eco3-card-actions { grid-template-columns: minmax(0, 1fr) 32px; }

@@ -19,7 +19,7 @@
   --pdp-page-bg: #2e1c18;
   --pdp-compare-bg: #2e1c18;
   --pdp-card-line: rgba(255, 237, 172, .5);
-  --pdp-card-shadow: #769ebe;
+  --pdp-card-shadow: rgba(255, 237, 172, .12);
 }
 
 /* ---------- The purchase pill is in the page flow: no bar to clear ---------- */

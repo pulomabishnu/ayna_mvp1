@@ -70,7 +70,7 @@
 .app-container .wc-prof-counts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
 .app-container .wc-prof-counts > div { display: flex; flex-direction: column-reverse; gap: 4px; min-width: 88px; padding: 10px 16px; border: 2px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); }
 .app-container .wc-prof-counts dt { color: var(--ay-ink-soft); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
-.app-container .wc-prof-counts dd { margin: 0; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
+.app-container .wc-prof-counts dd { margin: 0; font: 700 var(--ay-fs-section)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
 .app-container .wc-prof-edit { max-width: 520px; }
 .app-container .wc-field { display: grid; gap: 6px; font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
 .app-container .wc-field textarea { min-height: 72px; }

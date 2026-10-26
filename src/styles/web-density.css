@@ -7,25 +7,25 @@
 
 /* ---------- Headings: one step smaller ---------- */
 /* Landing H1: cap 60px (was 72) */
-.app-container.app-container .lx .lx-hero__title { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+.app-container.app-container .lx .lx-hero__title { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
 /* Section heads: cap 36px (was 40) */
 .app-container.app-container .lx .lx-h2,
-.app-container.app-container .hs-needs__head h2 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+.app-container.app-container .hs-needs__head h2 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
 .app-container.app-container .lx :is(.lx-values__list, .lx-how__steps) h3,
-.app-container.app-container .hs-need h3 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+.app-container.app-container .hs-need h3 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
 /* Learn carousel on the landing: title 48 -> 40, glossary term 64 -> 52 */
-.app-container.app-container .whc .whc-title { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
-.app-container.app-container .whc .whc-title--term { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
-.app-container.app-container .whc .whc-chapters__label { font-size: var(--ay-fs-section); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
+.app-container.app-container .whc .whc-title { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
+.app-container.app-container .whc .whc-title--term { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
+.app-container.app-container .whc .whc-chapters__label { font-size: var(--ay-fs-section); font-family: var(--ay-serif); font-weight: 700; letter-spacing: -0.01em; }
 /* Page titles: Shop / Library 56 -> 48, Ecosystem 64 -> 52, Community 40 -> 36 */
 .app-container.app-container .ayna-browse__heading h1,
-.app-container.app-container .ay-web-lib-head h1 { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
-.app-container.app-container .eco3-head h1 { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
-.app-container.app-container .wc3 .wc-head h1 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
-.app-container.app-container .ay-web-lib-cat > h2 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
-.app-container.app-container .eco-saved__head h2 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+.app-container.app-container .ay-web-lib-head h1 { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
+.app-container.app-container .eco3-head h1 { font-size: var(--ay-fs-display) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
+.app-container.app-container .wc3 .wc-head h1 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
+.app-container.app-container .ay-web-lib-cat > h2 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
+.app-container.app-container .eco-saved__head h2 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
 /* Product page title 48 -> 40 */
-.app-container.app-container .pdp-head__name { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+.app-container.app-container .pdp-head__name { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
 
 /* ---------- Section padding: 96 -> 80 (desktop/tablet only; mobile already 64) ---------- */
 @media (min-width: 768px) {
