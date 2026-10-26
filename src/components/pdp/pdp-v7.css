@@ -347,3 +347,20 @@
 #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .pdp-head__name, #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-split__left .pdp-head__name { font: 700 var(--t-xl)/1.12 var(--v-display) !important; letter-spacing: -.01em; text-wrap: balance; margin: 0 !important; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-title h1 { font: 700 var(--t-xl)/1.12 var(--v-display) !important; letter-spacing: -.01em; text-wrap: balance; margin: 0 !important; }
 #ay-psheet#ay-psheet#ay-psheet#ay-psheet #ay-psheet-title { font: 700 var(--t-l)/1.2 var(--v-display) !important; text-wrap: balance; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-sf__list > li.is-block { grid-template-columns: minmax(0, 1fr); }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-sf__list > li.is-block::before { content: none !important; display: none !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-panel .ayq-add { margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-panel .ayq-add .ayq-subh { font: 600 var(--t-m)/1.4 var(--v-ui) !important; margin: 0 0 4px !important; }
+/* craft pass 2 (self-critique vs Glossier / Apple / Drug Facts) */
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-actions > :nth-child(2):last-child { grid-column: 1 / -1; justify-self: stretch !important; width: 100% !important; max-width: none !important; }
+#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayp-gallery .ay-gal__stage { border: 0 !important; border-radius: 20px !important; background: #ffffff !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-mark { width: 18px !important; height: 18px !important; margin-top: calc((var(--t-m) * 1.55 - 18px) / 2) !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-mark svg { width: 11px; height: 11px; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-list > li { grid-template-columns: 18px minmax(0, 1fr) !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-sec--safety, #ay-tabs#ay-tabs#ay-tabs#ay-tabs #ay-sum-facts { padding-top: 32px !important; }
+/* panels read denser, like a label (critique 1) */
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-panel .ayq-p, #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-sf__list .ayq-p { line-height: 1.45 !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-sf__list > li { padding: 4px 0 !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-sf__list > li::before { margin-top: calc((var(--t-m) * 1.45 - 6px) / 2); }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-panel__sub { margin-bottom: 6px !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-panel__group { padding: 14px 20px 16px !important; }

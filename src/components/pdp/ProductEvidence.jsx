@@ -704,10 +704,10 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     ) },
     ...docWarnings.map((w) => ({ key: `d-${w}`, kind: '', text: w, node: <Tx>{w}</Tx> })),
     ...restWarnings.map((w) => ({ key: `w-${w}`, kind: '', text: w, node: <Tx>{w}</Tx> })),
-    ...sf.labelRows.filter((r) => SAFETY_ROWS.test(r.label)).map((r) => ({ key: `l-${r.label}`, kind: /medicines/i.test(r.label) ? 'med-row' : 'preg-row', text: `${r.label}: ${r.value}`, node: /medicines/i.test(r.label) ? <>{r.label}: <Tx>{r.value}</Tx></> : <Fw text={`${r.label}: ${r.value}`} /> })),
+    ...sf.labelRows.filter((r) => SAFETY_ROWS.test(r.label)).map((r) => ({ key: `l-${r.label}`, kind: /medicines/i.test(r.label) ? 'med-row' : 'preg-row', text: `${r.label}: ${r.value}`, node: /medicines/i.test(r.label) ? <>{r.label}: <Tx>{r.value}</Tx></> : <><b className="ayv-sf__fw">{r.label}:</b> <Tx>{r.value}</Tx></> })),
     sf.allergens && { key: 'allergens', kind: 'allergens', text: sf.allergens, node: <>Allergens: <Tx>{sf.allergens}</Tx></> },
     sf.avoidIf.length > 0 && { key: 'avoid', kind: 'avoid', text: sf.avoidIf.join(', '), node: <>You react to: {sf.avoidIf.join(', ')}</> },
-    sf.sideEffects && { key: 'side', kind: '', text: sf.sideEffects, node: <>{m.isDigital ? 'Downsides to know: ' : 'Possible side effects: '}<Tx>{sf.sideEffects}</Tx></> },
+    sf.sideEffects && { key: 'side', kind: 'side', text: sf.sideEffects, node: <>{m.isDigital ? 'Downsides to know: ' : 'Possible side effects: '}<Tx>{sf.sideEffects}</Tx></> },
     sf.opinionAlerts.length > 0 && { key: 'also', kind: '', text: sf.opinionAlerts.join(' '), node: <>Also worth knowing: <Tx>{sf.opinionAlerts.join(' ')}</Tx></> },
     recallValue && { key: 'recall', kind: 'recall', text: sf.recall.text || '', node: <>Recalls: {recallValue}</> },
     ...sf.privacy.map((r) => ({ key: `p-${r.label}`, kind: 'privacy', text: r.value, node: <>{r.label}: <Tx>{r.value}</Tx></> })),
@@ -730,7 +730,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
               <p className="ayv-panel__sub">{g.title}</p>
               {g.chunks.map((chunk, ci) => (
                 <ul key={ci} className="ayv-sf__list">
-                  {chunk.map((x) => <li key={x.key} className={x.key === critKey ? 'is-critical' : undefined}><span className="ayq-p">{x.node}</span></li>)}
+                  {chunk.map((x) => <li key={x.key} className={[x.key === critKey && 'is-critical', x.kind === 'addition' && 'is-block'].filter(Boolean).join(' ') || undefined}>{x.kind === 'addition' ? x.node : <span className="ayq-p">{x.node}</span>}</li>)}
                 </ul>
               ))}
             </div>
@@ -826,9 +826,10 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
 
   // ---- ayna summary: one reading column, each fact once (founder, Oct 25) -----
   const whoL = whoLists({ details: fit?.hasProfile ? fit.details : null, who: m.who });
-  const sec = (id, title, body, extra = '') => body && (
+  // A section whose panel has its own title ("Safety facts", "Product facts") keeps its heading for screen readers only.
+  const sec = (id, title, body, extra = '', hideTitle = false) => body && (
     <section id={id} className={`ayq-anchor ayv-sec${extra ? ` ${extra}` : ''}`} aria-labelledby={`${id}-h`}>
-      <h3 id={`${id}-h`} className="ayv-sec__h">{title}</h3>
+      <h3 id={`${id}-h`} className={hideTitle ? 'sr-only' : 'ayv-sec__h'}>{title}</h3>
       {body}
     </section>
   );
@@ -860,9 +861,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
             {factsChecked && <p className="ayq-meta ayv-facts__foot">Facts checked {factsChecked}</p>}
           </div>
         </>
-      ))}
+      ), '', true)}
       {sec('ay-sum-how', 'How to use', howBody)}
-      {sec('ay-sum-safety', 'Safety', safetyBody, 'ayv-sec--safety')}
+      {sec('ay-sum-safety', 'Safety', safetyBody, 'ayv-sec--safety', groups.length > 0)}
       {safetyBody && <BackToTop />}
       {sec('ay-sum-evidence', 'Evidence', (
         <>

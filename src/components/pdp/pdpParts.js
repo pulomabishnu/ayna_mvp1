@@ -344,12 +344,13 @@ const G_ASK = /\b(doctor|provider|clinician|gyn(a)?ecologist|ob\/?gyn|physician|
 /**
  * @param {string} text the item's words
  * @param {string} kind where it came from: 'preg-row' (Pregnancy / Breastfeeding label rows), 'med-row',
- *   'avoid' (skip if you react to), 'allergens', 'recall', 'privacy', 'addition', or '' for a warning / note
+ *   'avoid' (skip if you react to), 'side' (side effects), 'allergens', 'recall', 'privacy', 'addition', or '' for a warning / note
  */
 export function safetyGroupOf(text, kind = '') {
   if (kind === 'preg-row') return 'preg';
   if (kind === 'med-row') return 'ask';
   if (kind === 'avoid') return 'donot';
+  if (kind === 'side') return 'when';
   if (['allergens', 'recall', 'privacy', 'addition'].includes(kind)) return 'label';
   const t = String(text || '');
   if (G_CHILD.test(t)) return 'children';
