@@ -904,9 +904,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       <section className="ayv-sec ayv-pointer" aria-labelledby="ay-sum-other-h">
         <h3 id="ay-sum-other-h" className="ayv-sec__h">In the other tabs</h3>
         <ul className="ayv-pointer__list">
-          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('clinical')}>Clinical</button><span>: {clin ? `${clin.who || 'a clinician'}${clin.credential ? `, ${clin.credential}` : ''}` : 'no clinician has reviewed this yet'}</span></li>
-          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('literature')}>Research</button><span>: {evx.summary.charAt(0).toLowerCase() + evx.summary.slice(1)}</span></li>
-          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('reviews')}>Reviews</button><span>: {ratingCount > 0 ? plural(ratingCount, 'ayna review') : 'no ayna reviews yet'}{rv.online.length ? `, ${plural(rv.online.length, 'link')} to posts online` : ''}</span></li>
+          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('clinical')}>Clinical</button><span>{clin ? `${clin.who || 'a clinician'}${clin.credential ? `, ${clin.credential}` : ''}` : 'no clinician has reviewed this yet'}</span></li>
+          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('literature')}>Research</button><span>{evx.summary.charAt(0).toLowerCase() + evx.summary.slice(1)}</span></li>
+          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('reviews')}>Reviews</button><span>{ratingCount > 0 ? plural(ratingCount, 'ayna review') : 'no ayna reviews yet'}{rv.online.length ? `, ${plural(rv.online.length, 'link')} to posts online` : ''}</span></li>
         </ul>
       </section>
       {/* No pinned buy bar (audit 7.18): a compact sticker button repeats here instead. */}

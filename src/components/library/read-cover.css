@@ -67,3 +67,8 @@
 .rc__band { display: none; }
 .rc--hero { border-radius: 16px; }
 .rc--thumb .rc__label { top: 12cqi; }
+
+/* Design loop C r1: one anatomy on every cover. The label sat high on plain covers and low on photo
+   covers, so a rail of reads zig-zagged; it now sits low on all of them, with the drawn mark top right. */
+.rc:not(.rc--thumb) .rc__label { top: auto; bottom: calc(6.5cqi + 13px + 3.6cqi + 4cqi); }
+.rc:not(.rc--thumb) .rc__spot { top: 7cqi; bottom: auto; }

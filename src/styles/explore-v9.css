@@ -66,3 +66,6 @@
 /* By need panel: pink in the light theme (kept, audit "KEEP"); the dark theme's pink-to-sky swap made it blue,
    and blue is for chart lines only, so in dark it is a quiet butter-tint surface. */
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body [data-theme='brand-dark'] .wx .wx-sec.wx-needs { background: rgba(255, 237, 172, .08) !important; color: var(--ay-ink) !important; }
+/* Loop C r1: tabs under the title, then the search (same tab position on all five sections). */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs + .wx-search { margin: 8px 0 8px; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs:has(+ .wx-search) { margin: 0 0 8px; }

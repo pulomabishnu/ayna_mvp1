@@ -2537,3 +2537,42 @@ html body .ayq--tabs .ayq-st__tab:not(.is-on):hover { background: rgba(var(--v-f
   :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-match .ayv-textbtn { min-height: 28px; }
   :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-story--buy > .ayv-safeline { margin-top: 2px !important; }
 }
+
+/* ---- Design loop C, round 1 ---- */
+/* "In the other tabs": label/value rows with thin rules (#58 The Ordinary). The flex row broke
+   the label onto its own line with the text's colon orphaned underneath. */
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-pointer__list li { display: grid !important; grid-template-columns: 88px minmax(0, 1fr); align-items: center; column-gap: 12px; padding: 0 !important; min-height: 44px; border-top: 1px solid rgba(62, 39, 35, .15); }
+:is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-pointer__list li { border-top-color: rgba(255, 237, 172, .2); }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-pointer__list .ayv-textbtn { justify-self: start; display: inline-flex; align-items: center; min-height: 44px !important; padding: 0 !important; text-align: left; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-pointer__list li > span { padding: 10px 0; }
+/* Section rhythm in the tabs: 24px above and below each thin rule (was 32 + 32 + 32 = 96px of air between sections). */
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-sec { margin-top: 24px !important; padding-top: 24px !important; padding-bottom: 0 !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-sec.ayv-sec--lead { margin-top: 16px !important; padding-top: 16px !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-ask { margin-top: 24px !important; padding-top: 24px !important; }
+/* 1280: the reading column was 330px wide (tabs crammed into two-line labels, long safety text in a
+   narrow strip beside empty space). Gallery 340 · decision 320 · tabs take the rest (~480). */
+@media (min-width: 1280px) {
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk { grid-template-columns: minmax(0, 340px) 320px minmax(0, 1fr); gap: 32px; }
+}
+/* Phone web: the decision block (name → match → price → Buy → disclosure → safety line) must sit on the
+   first screen. The highlight tiles came first and pushed Buy below the fold; they now follow the
+   decision block, as in the app, and the gallery is a little shorter. */
+@media (max-width: 767px) {
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk { display: flex !important; flex-direction: column; gap: 0; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__gallery { display: contents !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayp-gallery { order: 0; margin: 0 0 12px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayp-gallery .ay-gal.is-square { height: 196px; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayv-dk__decide { order: 1; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayv-hl { order: 2; margin: 24px 0 0 !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayv-dk__tabs { order: 3; margin-top: 24px; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-lock { margin-top: 8px !important; }
+}
+/* Sizes on file as information pills (#33 Glossier variant pills), the same 8px rule pill as the card's
+   size pills; they wrapped as a dotted run-on list before. Not buttons: nothing to pick here. */
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-sizes { display: block !important; margin: 16px 0 0 !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-sizes .ayp-options__h { margin: 0 0 8px !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-sizes .ayp-options__list { display: flex !important; flex-wrap: wrap; gap: 6px; margin: 0 !important; padding: 0 !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-sizes .ayp-options__list li { display: inline-flex !important; align-items: center; min-height: 28px; padding: 0 10px !important; border: 1px solid rgba(62, 39, 35, .3) !important; border-radius: 8px !important; font: 500 13px/1.2 var(--v-ui, 'Figtree') !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-sizes .ayp-options__list li { border-color: rgba(255, 237, 172, .35) !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-sizes .ayp-options__list li + li::before { content: none !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-sizes .ayv-textbtn { min-height: 44px !important; margin-top: 2px; }
