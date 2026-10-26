@@ -30,7 +30,7 @@ html body .app-container.app-container.app-container.app-container .lb {
   & .lb-top { position: relative; z-index: 1; background: var(--lb-pink); color: var(--lb-esp); padding: 64px 0 64px; }
   & .lb-top::after, & .lb-rhead::after { content: ''; position: absolute; left: 0; right: 0; top: calc(100% - 1px); height: 17px; background: radial-gradient(circle at 50% 0, var(--band, var(--lb-pink)) 15.4px, transparent 16px) 50% 0 / 32px 17px repeat-x; pointer-events: none; }
   & .lb-top__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 64px; align-items: end; }
-  & .lb-top h1.lb-top__title:not(#lb-id) { margin: 0 0 16px !important; max-width: 12ch; font: 400 clamp(44px, 6.8vw, 96px)/.92 var(--lb-display) !important; letter-spacing: -.035em !important; color: var(--lb-esp) !important; text-wrap: balance; }
+  & .lb-top h1.lb-top__title:not(#lb-id) { margin: 0 0 16px !important; max-width: 20ch; font: 700 36px/1.1 var(--lb-display) !important; letter-spacing: -.01em !important; color: var(--lb-esp) !important; text-wrap: balance; }
   & .lb-top__title .lb-hl { white-space: nowrap; font: inherit !important; letter-spacing: inherit !important; color: inherit !important; padding: 0 .04em; background: linear-gradient(transparent 56%, var(--lb-butter) 56%, var(--lb-butter) 90%, transparent 90%); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
   & .lb-top__lede { margin: 0; max-width: 38ch; font: 400 18px/1.45 var(--lb-sans) !important; color: var(--lb-esp) !important; }
   & .lb-search { display: flex; align-items: center; gap: 12px; max-width: 520px; height: 56px; margin-top: 24px; padding: 0 24px; border: 1.5px solid var(--lb-esp); border-radius: 999px; background: var(--lb-butter); box-sizing: border-box; cursor: text; }
@@ -198,7 +198,7 @@ html body .app-container.app-container.app-container.app-container[data-theme='b
     & .lb-frow__teaser { font-size: 15px !important; }
     & .lb-frow .lb-credits { grid-template-columns: minmax(0, 1fr); gap: 8px; }
     & .lb-more__cover { width: 56px; }
-    & .lb-top h1.lb-top__title:not(#lb-id) { margin: 0 0 12px !important; font-size: clamp(42px, 13vw, 56px) !important; }
+    & .lb-top h1.lb-top__title:not(#lb-id) { margin: 0 0 12px !important; font-size: 26px !important; }
     & .lb-top__lede { font-size: 16px !important; }
     & .lb-search { height: 52px; margin-top: 16px; padding: 0 16px; }
     & .lb-search input { height: 48px; font-size: 16px !important; }

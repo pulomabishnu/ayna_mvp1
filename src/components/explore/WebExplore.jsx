@@ -1,16 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import ProductCard from '../ProductCard.jsx';
-import ReadCover from '../library/ReadCover.jsx';
-import { minutesFor } from '../library/readTime.js';
+import ReadCard from '../library/ReadCard.jsx';
+import ServiceCard from '../cards/ServiceCard.jsx';
+import NeedTiles from './NeedTiles.jsx';
+import CardRail, { CardGrid } from './CardRail.jsx';
+import { needGroups } from './needGroups.js';
+import { Chip, ChipRow, StickerButton, OutlineButton } from '../ui/ay';
+import { featuredOrder } from '../../data/packshots.js';
+import { rankReadsForProfile } from '../../mobile/utils/personalReads.js';
+import { trackCardClicked, eventSurface } from '../../utils/analyticsEvents.js';
 import { ARTICLES } from '../Articles.jsx';
 import { ExploreHeader } from './ExploreNav.jsx';
 import { FOR_YOU_EMPTY } from '../nav/mainTabs.js';
 import { ALL_PRODUCTS, getProductById, getProductMatchDetailsForProduct, filterPrescriptionCareGate, fitsHerProfile } from '../../data/products.js';
-import { RELEASED_STARTUPS } from '../../data/startups.js';
+import { RELEASED_STARTUPS, SERVICE_FORMATS, serviceFacts } from '../../data/startups.js';
 import { matchBadge, isSafetyHold } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { matchBreakdownFor } from '../pdp/decision.js';
-import { HEALTH_TOPICS, searchExplore, matchTopics } from '../../utils/search/exploreSearch.js';
+import { searchExplore, matchTopics } from '../../utils/search/exploreSearch.js';
 import { searchSuggestions } from '../../utils/search/index.js';
 import { readRecentSearches, rememberSearch, clearRecentSearches } from '../../utils/search/recentSearches.js';
 import { searchCommunityTolerant } from '../../utils/search/communitySearch.js';
@@ -18,7 +25,6 @@ import { searchCommunity } from '../../utils/community/communityStore.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { postLine } from '../../hooks/useSavedPosts.js';
 import { FAMILIAR_PHRASES } from '../shop/shopNeeds.js';
-import { NeedStickers } from '../shop/ShopBits.jsx';
 
 const ROW = 8;
 const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0);
@@ -66,6 +72,7 @@ export default function WebExplore({
   onToggleSaved, onOpenProduct, onOpenArticle, onStartQuiz, onOpenCommunityPost, onOpenCommunity, recommendedProductIds = [],
 }) {
   const [query, setQuery] = useState(readQuery);
+  const [serviceFormat, setServiceFormat] = useState('');
   const q = query.trim();
   // As she types: suggestions, matching categories, and her recent searches (team direction 54).
   const [focused, setFocused] = useState(false);
@@ -92,75 +99,82 @@ export default function WebExplore({
   const hasProfile = Boolean(quizResults);
   const forYou = useMemo(() => (hasProfile ? (recommendedProductIds || []).map((id) => getProductById(id)).filter(Boolean).slice(0, ROW) : []), [hasProfile, recommendedProductIds]);
 
+  const detailsOf = (p) => (hasProfile ? getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts) : null);
   const card = (p, i, source) => {
-    const details = hasProfile ? getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts) : null;
+    const details = detailsOf(p);
     const badge = details ? matchBadge(details) : null;
     const pct = badge ? badge.percent : null;
-    return <ProductCard key={p.id} product={p} matchPercent={pct} matchHold={isSafetyHold(details)} matchLabel={badge ? badge.label : ''} why={pct != null ? (matchBreakdownFor(p, details).reason || whyLine(p, details)) : ''}
-      onSeeMatch={!hasProfile && onStartQuiz ? () => onStartQuiz() : null}
-      isSaved={!!savedProducts[p.id]} inEcosystem={!!myProducts[p.id]} onToggleSaved={onToggleSaved}
-      onOpen={(item) => onOpenProduct?.(item, { source, position: i })} />;
+    // The reason line from the one engine's breakdown (src/matching), else the why line.
+    const why = pct != null ? (matchBreakdownFor(p, details).reason || whyLine(p, details)) : '';
+    const common = { key: p.id, isSaved: !!savedProducts[p.id], onToggleSaved, matchPercent: pct, matchHold: isSafetyHold(details), matchLabel: badge ? badge.label : '', why,
+      onSeeMatch: !hasProfile && onStartQuiz ? () => onStartQuiz() : null };
+    const open = (item) => { trackCardClicked({ surface: eventSurface(), where: source, product_id: item.id, position: i }); onOpenProduct?.(item, { source, position: i }); };
+    if (serviceIds.has(String(p.id))) return <ServiceCard {...common} service={p} onOpen={open} />;
+    return <ProductCard {...common} product={p} inEcosystem={!!myProducts[p.id]} onOpen={open} />;
   };
-  const productRow = (items, source) => <div className="wx-row">{items.map((p, i) => card(p, i, source))}</div>;
-  const readRow = (items) => <ul className="wx-reads">{items.map((a) => <li key={a.id}>
-    <a href={`/library/${a.id}`} onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); onOpenArticle?.(a.id); }}>
-      <ReadCover article={a} minutes={minutesFor(a)} />
-      <span>{a.title}</span>
-    </a>
-  </li>)}</ul>;
-  const topicChips = (items) => <div className="wx-topics" role="group" aria-label="Categories">{items.map((t) => <button key={t.key} type="button" className="ay-chip" onClick={() => { commit(t.label); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>{t.label}</button>)}</div>;
+  const productRow = (items, source) => <CardRail items={items} source={source} render={card} />;
+  const grid = (items, source) => <CardGrid items={items} source={source} render={card} />;
+  const readRow = (items) => <ul className="wx-reads">{items.map((a) => <li key={a.id}><ReadCard article={a} layout="rail" href={`/library/${a.id}`} onOpen={() => onOpenArticle?.(a.id)} /></li>)}</ul>;
+  const pickTopic = (label) => { commit(label); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const topicChips = (items, label = 'Needs') => <ChipRow label={label} className="wx-topics">{items.map((t) => <Chip key={t.key} onClick={() => pickTopic(t.label)}>{t.label}</Chip>)}</ChipRow>;
   const head = (id, title, all = null) => <div className="wx-head"><h2 className="ay-h2" id={id}>{title}</h2>{all}</div>;
   const allLink = (key, label, search = '') => {
     const href = { products: '/explore/products', resources: '/explore/resources', topics: '/explore/topics', services: '/explore/services' }[key];
     return <a className="wx-all" href={href} onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); onSection?.(key, search); }}>{label}</a>;
   };
+  // Products for the For you rail: Featured order (packshots she can buy now first, pre-orders last).
+  const firstLook = useMemo(() => featuredOrder(products).slice(0, ROW), [products]);
+  const forYouReads = useMemo(() => (hasProfile ? rankReadsForProfile(ARTICLES, quizResults).slice(0, 6) : []), [hasProfile, quizResults]);
 
   let body;
   if (searching) {
     const r = results;
     body = <div className="wx-results" aria-live="polite">
       {r.total === 0 && posts.length === 0 && <p className="wx-empty">Nothing matches “{q}” yet. Try a symptom, a topic or a product type.</p>}
-      {r.topics.length > 0 && <section className="wx-sec" aria-labelledby="wx-r-topics">{head('wx-r-topics', 'Categories')}{topicChips(r.topics)}</section>}
+      {r.topics.length > 0 && <section className="wx-sec" aria-labelledby="wx-r-topics">{head('wx-r-topics', 'Needs')}{topicChips(r.topics)}</section>}
       {r.products.length > 0 && <section className="wx-sec" aria-labelledby="wx-r-products">{head('wx-r-products', 'Products', allLink('products', `See all ${r.products.length} in Products`, q))}{productRow(r.products.slice(0, ROW), 'explore_search')}</section>}
       {r.services.length > 0 && <section className="wx-sec" aria-labelledby="wx-r-services">{head('wx-r-services', 'Services')}{productRow(r.services.slice(0, ROW), 'explore_search')}</section>}
-      {r.resources.length > 0 && <section className="wx-sec" aria-labelledby="wx-r-res">{head('wx-r-res', 'Resources', allLink('resources', 'All reads'))}{readRow(r.resources.slice(0, 4))}</section>}
+      {r.resources.length > 0 && <section className="wx-sec" aria-labelledby="wx-r-res">{head('wx-r-res', 'Reads', allLink('resources', 'All reads'))}{readRow(r.resources.slice(0, 4))}</section>}
       {posts.length > 0 && <section className="wx-sec" aria-labelledby="wx-r-comm">{head('wx-r-comm', 'Community', onOpenCommunity && <button type="button" className="wx-all" onClick={() => onOpenCommunity(q)}>Search Community</button>)}
         <ul className="wx-posts">{posts.map((p) => { const line = postLine(p, 160); return <li key={p.id}><a href={`/community/p/${p.id}`} onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); onOpenCommunityPost?.(p.id); }}><small>{line.kind}</small><span>{line.text}</span></a></li>; })}</ul>
       </section>}
     </div>;
   } else if (section === 'topics') {
     body = <>
-      {/* The approved "Shop by need" photo stickers (a real product per need) lead the one browse tab. */}
-      <section className="wx-sec wx-needs" aria-labelledby="wx-needs-h">{head('wx-needs-h', 'By need')}<NeedStickers onPick={(text) => { commit(text); window.scrollTo({ top: 0, behavior: 'smooth' }); }} /></section>
-      <section className="wx-sec" aria-labelledby="wx-topics-h">{head('wx-topics-h', 'Categories')}<p className="wx-note">Pick one to see products, services, reads and what the Community says.</p>{topicChips(HEALTH_TOPICS)}</section>
-      {/* The "Does this sound familiar?" phrases, moved here from the product grid (team direction 17). */}
-      <section className="wx-sec" aria-labelledby="wx-phrases-h">{head('wx-phrases-h', 'Searches people make')}<div className="wx-topics" role="group" aria-label="Searches people make">{FAMILIAR_PHRASES.map((t) => <button key={t} type="button" className="ay-chip" onClick={() => { commit(t); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>{t}</button>)}</div></section>
+      {/* By need tiles first (her words, a real product each), then the topics as grouped chips. */}
+      <section className="wx-sec wx-needs" aria-labelledby="wx-needs-h">{head('wx-needs-h', 'By need')}<NeedTiles onPick={pickTopic} /></section>
+      <section className="wx-sec" aria-labelledby="wx-topics-h">{head('wx-topics-h', 'All needs')}
+        <div className="wx-groups">{needGroups().map((g) => <div key={g.id} className="wx-group"><h3 className="wx-group__h" id={`wx-g-${g.id}`}>{g.label}</h3>{topicChips(g.topics, g.label)}</div>)}</div>
+      </section>
+      {/* The "Does this sound familiar?" phrases (team direction 17). */}
+      <section className="wx-sec" aria-labelledby="wx-phrases-h">{head('wx-phrases-h', 'Searches people make')}<ChipRow label="Searches people make" className="wx-topics">{FAMILIAR_PHRASES.map((t) => <Chip key={t} onClick={() => pickTopic(t)}>{t}</Chip>)}</ChipRow></section>
     </>;
   } else if (section === 'services') {
-    body = <section className="wx-sec" aria-labelledby="wx-services-h">{head('wx-services-h', 'Services')}<p className="wx-note">Telehealth, at-home tests, apps and programs from women’s health companies.</p><div className="ay-product-grid wx-grid">{services.map((p, i) => card(p, i, 'explore_services'))}</div></section>;
+    const formats = SERVICE_FORMATS.filter((f) => services.some((x) => serviceFacts(x).format === f));
+    const shown = serviceFormat ? services.filter((x) => serviceFacts(x).format === serviceFormat) : services;
+    body = <section className="wx-sec" aria-labelledby="wx-services-h">{head('wx-services-h', `Services (${services.length})`)}
+      <ChipRow label="Filter services by format" className="wx-formats">
+        <Chip selected={!serviceFormat} onClick={() => setServiceFormat('')}>All</Chip>
+        {formats.map((f) => <Chip key={f} selected={serviceFormat === f} onClick={() => setServiceFormat(serviceFormat === f ? '' : f)}>{f}</Chip>)}
+      </ChipRow>
+      {grid(shown, 'explore_services')}
+    </section>;
   } else {
-    // For you: her picks when she has a profile; otherwise one invite and a
-    // first look at the catalog. Categories, Products, Services and Resources
-    // each have their own tab, so they are not repeated here (direction 17).
+    // For you. Signed out: one "Get your match" strip, needs, a first look at
+    // products and reads. With a profile: her picks and reads for her.
     body = <>
       {hasProfile && forYou.length > 0
         ? <section className="wx-sec" aria-labelledby="wx-foryou-h">{head('wx-foryou-h', 'Picked for you', allLink('products', 'See all'))}{productRow(forYou, 'explore_for_you')}</section>
-        : <section className="wx-sec" aria-labelledby="wx-foryou-h">
+        : <section className="wx-sec wx-sec--strip" aria-labelledby="wx-foryou-h">
           <h2 className="ay-sr" id="wx-foryou-h">For you</h2>
           {hasProfile
             // She answered, nothing fits yet (QA M4): say so, never ask her to make a profile again.
-            ? <div className="wx-invite is-empty">
-              <h3>{FOR_YOU_EMPTY}</h3>
-              <button type="button" className="ay-btn ay-btn--primary" onClick={() => { setQuery(''); onSection?.('products', ''); }}>Browse all products</button>
-            </div>
-            : <div className="wx-invite">
-              <h3>See how well this matches you</h3>
-              <p>Create your health profile to see your personalized match and why.</p>
-              {onStartQuiz && <button type="button" className="ay-btn ay-btn--primary" onClick={onStartQuiz}>Create your health profile</button>}
-            </div>}
+            ? <div className="wx-strip"><p>{FOR_YOU_EMPTY}</p><OutlineButton onClick={() => { setQuery(''); onSection?.('products', ''); }}>Browse all products</OutlineButton></div>
+            : <div className="wx-strip"><p>See how well each product matches you, and why.</p>{onStartQuiz && <StickerButton onClick={onStartQuiz}>Get your match</StickerButton>}</div>}
         </section>}
-      {!(hasProfile && forYou.length > 0) && <section className="wx-sec" aria-labelledby="wx-products-h">{head('wx-products-h', 'Products', allLink('products', 'See all products'))}{productRow((hasProfile ? products.filter((p) => fitsHerProfile(p, quizResults, healthProfile, matchOpts)) : products).slice(0, ROW), 'explore_overview')}</section>}
-      <section className="wx-sec" aria-labelledby="wx-res-h">{head('wx-res-h', 'Resources', allLink('resources', `All ${ARTICLES.length} reads`))}{readRow(ARTICLES.slice(0, 6))}</section>
+      {!hasProfile && <section className="wx-sec" aria-labelledby="wx-needs-h">{head('wx-needs-h', 'By need', allLink('topics', 'All needs'))}<NeedTiles onPick={pickTopic} max={4} className="is-row" /></section>}
+      {!(hasProfile && forYou.length > 0) && <section className="wx-sec" aria-labelledby="wx-products-h">{head('wx-products-h', 'Products', allLink('products', 'See all products'))}{productRow((hasProfile ? products.filter((p) => fitsHerProfile(p, quizResults, healthProfile, matchOpts)) : firstLook).slice(0, ROW), 'explore_overview')}</section>}
+      <section className="wx-sec" aria-labelledby="wx-res-h">{head('wx-res-h', forYouReads.length ? 'Reads for you' : 'Reads', allLink('resources', `All ${ARTICLES.length} reads`))}{readRow(forYouReads.length ? forYouReads : ARTICLES.slice(0, 6))}</section>
     </>;
   }
 
@@ -180,7 +194,7 @@ export default function WebExplore({
               <div className="wx-suggest__head"><span>Recent searches</span><button type="button" onClick={() => setRecent(clearRecentSearches())}>Clear</button></div>
               <ul>{recent.map((r) => <li key={r}><button type="button" onClick={() => commit(r)}>{r}</button></li>)}</ul>
             </> : <>
-              {typedTopics.length > 0 && <><div className="wx-suggest__head"><span>Categories</span></div>
+              {typedTopics.length > 0 && <><div className="wx-suggest__head"><span>Needs</span></div>
                 <ul>{typedTopics.map((t) => <li key={t.key}><button type="button" onClick={() => commit(t.label)}>{t.label}</button></li>)}</ul></>}
               {suggestions.length > 0 && <><div className="wx-suggest__head"><span>Suggestions</span></div>
                 <ul>{suggestions.slice(0, 5).map((x) => <li key={`${x.kind}-${x.label}`}><button type="button" onClick={() => commit(x.query || x.label)}>{x.label}</button></li>)}</ul></>}
