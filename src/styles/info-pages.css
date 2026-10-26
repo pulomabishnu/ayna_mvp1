@@ -202,3 +202,7 @@ html body .app-container .ed.ed-page--info .ed-hiw li .ed-hiw__n { background: v
 @media (min-width: 1024px) {
   .app-container.app-container .ip-partners { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; }
 }
+/* Funnel bars: catalog espresso, matched butter with the ink outline, strong fits pink (the answer gets the accent). */
+.app-container.app-container .ip-bars > li:nth-child(2) .ip-bars__fill { background: #ffedac; box-shadow: inset 0 0 0 1.5px #3e2723; }
+.app-container.app-container .ip-bars > li:nth-child(3) .ip-bars__fill { background: #f7badd; border: 0; box-shadow: inset 0 0 0 1.5px #3e2723; }
+html body .app-container.app-container .ip-bars > li:nth-child(n+2) .ip-bars__fill b { color: #3e2723; }

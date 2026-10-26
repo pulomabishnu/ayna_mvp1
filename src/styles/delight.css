@@ -97,7 +97,7 @@ html[data-ay-vt] .ay-push-in { animation: none !important; }
 
 /* You: daily log card (src/components/you/DailyCheckin.jsx), web and app. */
 :is(.app-container, .ayna-mobile) .ay-checkin { display: grid; gap: 12px; }
-:is(.app-container, .ayna-mobile) .ay-checkin__takeaway { margin: 0 0 4px; font: 600 var(--ay-fs-body, 16px)/1.35 var(--ay-sans); color: var(--ay-text, #3e2723); }
+:is(.app-container, .ayna-mobile) .ay-checkin__takeaway { margin: 0 0 4px; font: 600 var(--ay-fs-body, 16px)/1.35 var(--ay-sans); color: var(--ay-fg, #3e2723); }
 :is(.app-container, .ayna-mobile) .ay-checkin__row { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: 8px 12px; }
 :is(.app-container, .ayna-mobile) .ay-checkin__label { font: 600 var(--ay-fs-secondary, 14px)/1.2 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .ay-checkin__opts { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -111,7 +111,7 @@ html[data-ay-vt] .ay-push-in { animation: none !important; }
 :is(.app-container, .ayna-mobile) .ay-checkin__more { min-height: 40px; padding: 0; border: 0; background: none; color: inherit; font: 600 var(--ay-fs-secondary, 14px)/1.2 var(--ay-sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 :is(.app-container, .ayna-mobile) .ay-checkin__status { font: 500 var(--ay-fs-secondary, 14px)/1.3 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .ay-checkin__weekrow { display: flex; align-items: center; gap: 12px; }
-@media (max-width: 520px) { :is(.app-container, .ayna-mobile) .ay-checkin__row { grid-template-columns: 56px minmax(0, 1fr); } :is(.app-container, .ayna-mobile) .ay-checkin__week { grid-column: 2; } }
+@media (max-width: 520px) { :is(.app-container, .ayna-mobile) .ay-checkin__row { grid-template-columns: minmax(0, 1fr); gap: 6px; } :is(.app-container, .ayna-mobile) .ay-checkin__week { grid-column: 1; } }
 
 .ayna-mobile .ay-checkin { padding: 16px; border: 1.5px solid currentColor; border-radius: 20px; }
 .ayna-mobile .ay-checkin__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }

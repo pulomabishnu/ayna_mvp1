@@ -1293,12 +1293,14 @@ const styles = {
   skipBtn: {
     background: 'none',
     border: 'none',
-    color: 'var(--color-text-muted)',
-    fontSize: 13,
+    color: 'var(--ay-fg-muted, rgba(62, 39, 35, .78))',
+    fontSize: 14,
+    fontWeight: 600,
     cursor: 'pointer',
     textDecoration: 'underline',
     textAlign: 'center',
-    padding: '0.25rem',
+    minHeight: 44,
+    padding: '0 0.5rem',
     fontFamily: 'var(--ay-sans)',
   },
 };

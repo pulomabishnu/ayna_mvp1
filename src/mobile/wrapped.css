@@ -150,3 +150,5 @@
 
 /* Bleeding after menopause: care message leads the story (QA3 M2). */
 .ayw-care { margin-bottom: 16px; text-align: left; }
+/* Loop E (Oct 26): the "matched to you" stamp is pink (data-blue is for chart lines only). */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ayw-stamp.ay-land-stamp { background: #f7badd !important; }

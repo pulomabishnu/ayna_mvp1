@@ -120,7 +120,7 @@
 .app-container .hm .hm-ui__opts { display: flex; flex-wrap: wrap; gap: 4px; }
 .app-container .hm .hm-ui__opts span { padding: 4px 10px; border: 1.5px solid var(--hm-ink); border-radius: 999px; font: 600 13px/1.2 var(--ay-sans-stack); }
 .app-container .hm .hm-ui__opts span.is-on { background: var(--hm-ink); color: var(--hm-butter); }
-.app-container .hm .hm-ui--post { background: #fff; }
+.app-container .hm .hm-ui--post { background: #f6e3a1; border-color: var(--hm-ink); }
 .app-container .hm .hm-ui__body { font: 500 15px/1.4 var(--ay-sans-stack); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .app-container .hm .hm-hero__seal.hm-scatter__seal { top: -24px; left: calc(40% - 56px); right: auto; bottom: auto; z-index: 6; }
 /* the pause control (WCAG 2.2.2), quiet, on the stage edge */
@@ -338,7 +338,7 @@
    Landing audit v2 (Oct 25, 23:20): shared look + inspiration placed.
    Scallops only at the hero/ticker edge and the footer strip; one pink
    section (reads + Community); standards stated once under the hero;
-   big-number facts on white tiles with 13px captions; the Wefunder card
+   big-number facts on deeper-butter tiles with 13px captions; the Wefunder card
    carries one round seal ("community round").
    ===================================================================== */
 .app-container .hm .hm-standards-wrap { margin-top: 40px; }
@@ -347,13 +347,13 @@
 /* the pink section: reads + Community; the Community card turns butter on it */
 .app-container .hm .hm-rc .hm-comm { background: var(--hm-butter); }
 .app-container .hm .hm-rc .hm-readlist__ph { border-color: var(--hm-ink); }
-.app-container .hm .hm-rc .hm-post { background: #fff; }
+.app-container .hm .hm-rc .hm-post { background: #f6e3a1; border: 1px solid rgba(62, 39, 35, .15); }
 /* butter needs section and espresso how section meet with a plain edge */
 .app-container .hm .hm-needsband { border-top: 0; }
-/* big-number facts: the shared BigFact tile (white, 13px caption), four in a row */
+/* big-number facts: the shared BigFact tile (deeper butter + thin espresso rule, 13px caption; founder Oct 26: no white surfaces), four in a row */
 .app-container .hm .hm-stats { list-style: none; padding: 0; gap: 16px; }
 .app-container .hm .hm-stats > li { min-width: 0; display: grid; }
-.app-container .hm .hm-stats .ayk-fact { --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .78); --ay-ink: #3e2723; --legacy-ink: #3e2723; --ay-ink-muted: rgba(62, 39, 35, .78); --ay-surface: #fff; --legacy-surface: #fff; }
+.app-container .hm .hm-stats .ayk-fact { --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .78); --ay-ink: #3e2723; --legacy-ink: #3e2723; --ay-ink-muted: rgba(62, 39, 35, .78); --ay-surface: #f6e3a1; --legacy-surface: #f6e3a1; background: #f6e3a1; border: 1px solid rgba(62, 39, 35, .15); }
 @media (max-width: 767px) { .app-container .hm .hm-stats { gap: 12px; } }
 /* the Wefunder card's one round seal */
 .app-container .hm .hm-invest { position: relative; overflow: visible; }

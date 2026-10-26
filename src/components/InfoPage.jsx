@@ -35,7 +35,7 @@ function useContents(rootRef, enabled) {
   return [items, active];
 }
 
-export function InfoPage({ eyebrow, title, lede, onBack, backLabel = 'Your ecosystem', width = 'default', className = '', aside, toc, photos, children }) {
+export function InfoPage({ eyebrow, title, lede, onBack, backLabel = 'My ecosystem', width = 'default', className = '', aside, toc, photos, children }) {
   const rootRef = useRef(null);
   const showToc = toc ?? width === 'read';
   const [items, active] = useContents(rootRef, showToc);

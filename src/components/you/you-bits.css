@@ -40,16 +40,15 @@
 .ay-blend__rows { display: grid; gap: 18px; margin: 0; padding: 16px; list-style: none; border-radius: 20px; background: var(--yb-group); }
 .ay-blend__ends { display: flex; justify-content: space-between; gap: 12px; font: 600 15px/1.2 var(--yb-font); }
 .ay-blend__row input[type='range'] { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 36px; margin: 2px 0 0; padding: 0; background: transparent; cursor: pointer; --tone: #f7badd; }
-.ay-blend__row.is-sky input { --tone: #769ebe; }
-.ay-blend__row.is-butter input { --tone: #ffedac; }
+/* One accent: every set thumb is pink (data-blue is for chart lines only). */
 .ay-blend__row input[type='range']:disabled { cursor: default; }
 .ay-blend__row input[type='range']::-webkit-slider-runnable-track { height: 2px; border-radius: 0; background: var(--yb-line); }
 .ay-blend__row input[type='range']::-moz-range-track { height: 2px; border-radius: 0; background: var(--yb-line); }
-.ay-blend__row input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -13px; border-radius: 50%; border: 1.5px solid #3e2723; background: var(--tone); box-shadow: 2px 2px 0 #3e2723; transition: transform var(--t-press) var(--ease-pop); }
-.ay-blend__row input[type='range']::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid #3e2723; background: var(--tone); box-shadow: 2px 2px 0 #3e2723; }
+.ay-blend__row input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -13px; border-radius: 50%; border: 1.5px solid var(--ay-fg, #3e2723); background: var(--tone); box-shadow: none; transition: transform var(--t-press) var(--ease-pop); }
+.ay-blend__row input[type='range']::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--ay-fg, #3e2723); background: var(--tone); box-shadow: none; }
 .ay-blend__row input[type='range']:active::-webkit-slider-thumb { transform: scale(.94); }
-.ay-blend__row.is-unset input[type='range']::-webkit-slider-thumb { background: transparent; border-style: dashed; box-shadow: none; }
-.ay-blend__row.is-unset input[type='range']::-moz-range-thumb { background: transparent; border-style: dashed; box-shadow: none; }
+.ay-blend__row.is-unset input[type='range']::-webkit-slider-thumb { background: var(--yb-page); border-style: dashed; box-shadow: none; }
+.ay-blend__row.is-unset input[type='range']::-moz-range-thumb { background: var(--yb-page); border-style: dashed; box-shadow: none; }
 .ay-blend__row input[type='range']:focus-visible { outline: 3px solid var(--yb-ink); outline-offset: 4px; border-radius: 10px; }
 .ay-blend__now { margin: 0; font: 400 14px/1.4 var(--yb-font); }
 .ay-blend__now b { font-weight: 600; }
@@ -76,7 +75,7 @@
 .ayna-mobile .ay-blend__h { font-size: calc(17px * var(--ayna-text-scale, 1)) !important; }
 /* The app's global field styles reach range inputs; pin the slider down. */
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-blend__row input[type='range'], .app-container .ay-blend__row input[type='range'] { height: 36px !important; min-height: 36px !important; margin: 4px 0 2px !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; accent-color: auto; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ay-blend__row input[type='range']::-webkit-slider-thumb { width: 28px; height: 28px; margin-top: -13px; border: 1.5px solid #3e2723; background: var(--tone); box-shadow: 2px 2px 0 #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-blend__row input[type='range']::-webkit-slider-thumb { width: 28px; height: 28px; margin-top: -13px; border: 1.5px solid var(--ay-fg, #3e2723); background: var(--tone); box-shadow: none; }
 .ayna-mobile[data-theme='dark'] .ay-blend__row input[type='range']::-webkit-slider-runnable-track { background: #ffedac; }
 .ayna-mobile[data-theme='dark'] .ay-blend__row input[type='range']::-webkit-slider-thumb { border-color: #ffedac; box-shadow: 2px 2px 0 #ffedac; }
 .ayna-mobile .ay-you-tabs + .ay-you-body { padding-top: 12px; }

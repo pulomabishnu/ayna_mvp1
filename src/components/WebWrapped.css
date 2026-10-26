@@ -62,3 +62,10 @@
 .wwr-card li { border-top-color: rgba(62, 39, 35, .18); }
 .wwr-top .wwr-skip { width: auto !important; padding: 0 14px !important; border-radius: 99px !important; font: 600 var(--ay-fs-caption)/1 var(--ay-sans) !important; white-space: nowrap; }
 .wwr-product .wwr-why { font: 500 var(--ay-fs-secondary, 15px)/1.4 var(--ay-sans); }
+
+/* Loop E (Oct 26): one shadow (the pink sticker on the primary), 1.5px outlines, radii 16/999,
+   no tilted cards, no blue (data-blue is for chart lines only). */
+.wwr { --peri: #f7badd; }
+.wwr :is(.wwr-stats div, .wwr-ranks li, .wwr-card, .wwr-toast span) { border-width: 1.5px !important; border-radius: 16px; box-shadow: none !important; rotate: 0deg !important; }
+.wwr .wwr-toast span { border-radius: 999px; }
+.wwr .wwr-cta { box-shadow: 3px 3px 0 #f7badd !important; }

@@ -257,15 +257,8 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
                   <button
                     key={option}
                     type="button"
-                    className="btn btn-outline"
-                    style={{
-                      justifyContent: 'flex-start',
-                      padding: '0.85rem 1.25rem',
-                      fontSize: 16,
-                      flexShrink: 0,
-                      borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border)',
-                      backgroundColor: isSelected ? 'var(--color-secondary-fade)' : 'transparent',
-                    }}
+                    className="ay-opt"
+                    aria-pressed={isSelected}
                     onClick={() => handleSingle(option)}
                   >
                     {option}
@@ -295,16 +288,11 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
                   <button
                     key={option}
                     type="button"
-                    className="btn btn-outline"
-                    style={{
-                      justifyContent: 'flex-start', padding: '0.85rem 1.25rem', fontSize: 16,
-                      flexShrink: 0,
-                      borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border)',
-                      backgroundColor: isSelected ? 'var(--color-secondary-fade)' : 'transparent',
-                    }}
+                    className="ay-opt"
+                    aria-pressed={isSelected}
                     onClick={() => handleMultiToggle(option)}
                   >
-                    <span style={{ marginRight: '0.5rem' }}>{isSelected ? '✓' : '○'}</span>
+                    <span className="ay-opt__mark" aria-hidden="true">{isSelected ? '✓' : ''}</span>
                     {option}
                   </button>
                 );

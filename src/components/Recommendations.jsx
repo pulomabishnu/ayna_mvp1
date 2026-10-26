@@ -338,7 +338,7 @@ export default function Recommendations({
 
             <AccountHead
                 title="Products picked for you"
-                back={onBack ? { label: 'Your ecosystem', href: '/you/ecosystem', onClick: onBack } : null}
+                back={onBack ? { label: 'My ecosystem', href: '/you/ecosystem', onClick: onBack } : null}
                 actions={<>
                     <button type="button" className="ay-btn ay-btn--secondary" onClick={onRetake}>Edit my answers</button>
                     {onAsk && <button type="button" className="ay-btn ay-btn--text" onClick={() => onAsk('')}>Add something in Ask ayna</button>}
