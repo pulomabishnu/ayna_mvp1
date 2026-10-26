@@ -136,6 +136,7 @@ import OfflineBanner from './components/OfflineBanner.jsx';
 import TutorialLayer from './tutorial/TutorialLayer.jsx';
 import { growTransition } from '../utils/viewTransition.js';
 import { localToday } from '../utils/localDate.js';
+import { trackQuizStarted, trackFirstMatchShown, eventSurface } from '../utils/analyticsEvents.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -482,6 +483,12 @@ export default function MobileApp() {
   const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
   const authUser = realAuthUser || (DEV_HEALTH_DEMO ? DEV_DEMO_USER : null);
+  // Time to first value (all-pages brief v3): quiz start -> first match on screen. No health details.
+  useEffect(() => {
+    if (screen === 'quiz' && intakeMode === 'new') trackQuizStarted({ surface: eventSurface(), signed_in: Boolean(authUser) });
+    else if (screen === 'reveal') trackFirstMatchShown({ surface: eventSurface() });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen]);
   const [guideState, setGuideState] = useState({ userId: null, value: null });
   const guide = useMemo(() => guideState.userId === authUser?.id && guideState.value ? guideState.value : readGuide(authUser?.id), [guideState, authUser?.id]);
   const updateGuide = (next) => {
