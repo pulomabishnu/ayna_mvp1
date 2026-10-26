@@ -114,9 +114,10 @@ export default function ExploreScreen(props) {
   const top = (withSearch) => <header className="ax-top">
     <h1 className="ax-title">Explore</h1>
     <Seal className="ax-seal" />
+    {/* The tabs sit straight under the title on every tab (they jumped below the search on three of five). */}
+    {chips}
     {withSearch && <SearchBar placeholder="Search products, symptoms, topics, services..." ariaLabel="Search Explore" value={query} onChange={(e) => setQuery(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setQuery(s.query)} />}
     {withSearch && q.length < 2 && recent.length > 0 && <div className="ax-recent" role="group" aria-label="Recent searches"><span>Recent</span>{recent.map((r) => <button type="button" key={r} onClick={() => setQuery(r)}>{r}</button>)}<button type="button" className="ax-recent__clear" onClick={() => setRecent(clearRecentSearches())}>Clear</button></div>}
-    {chips}
   </header>;
 
   // Products: the existing Shop, under Explore's header.

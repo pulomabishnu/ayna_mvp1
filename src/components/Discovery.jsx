@@ -771,8 +771,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         // returns (toClientProduct in api/products.js), so no mapping needed
         // just stamp isStartup like the other two sources for consistent shape.
         const discovered = filterPrescriptionCareGate(discoveredProducts).map(p => ({ ...p, isStartup: false }));
+        // Browsing (no search): products only, same as the app's Products tab (QA3 M8), so both
+        // say "252 products"; services have their own tab. A search still reaches services
+        // (e.g. "hormone replacement therapy" finds the telehealth providers that prescribe it).
+        if (!String(submittedQuery || '').trim()) return [...products.filter((p) => p.type !== 'digital'), ...discovered.filter((p) => p.type !== 'digital')];
         return [...products, ...releasedAsProducts, ...discovered];
-    }, [discoveredProducts, gridReady]);
+    }, [discoveredProducts, gridReady, submittedQuery]);
 
     // Behavior signals for the matching engine (saved, Not for me, in her
     // ecosystem). Memoized: the engine caches profiles by this object.

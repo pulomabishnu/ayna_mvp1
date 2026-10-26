@@ -153,7 +153,7 @@ function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct 
     window.addEventListener('resize', read);
     return () => { el.removeEventListener('scroll', read); window.removeEventListener('resize', read); };
   }, [items.length]);
-  if (items.length === 0) return note ? <section className="ct-products"><p className="ay-alert ct-products__note"><span aria-hidden="true">!</span><span>{note}</span></p></section> : null;
+  if (items.length === 0) return note ? <section className="ct-products"><p className="ay-alert ct-products__note"><svg className="ay-alert__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style={{ flex: "none", marginTop: 3 }}><path d="M8 1.6 14.6 13.4H1.4L8 1.6Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /><path d="M8 6.2v3.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="8" cy="11.6" r=".9" fill="currentColor" /></svg><span>{note}</span></p></section> : null;
   const page = (dir) => { const el = rowRef.current; if (el) el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: 'smooth' }); };
   return (
     <section className="ct-products ay-shelf" aria-labelledby="ay-lib-products-h">
@@ -166,7 +166,7 @@ function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct 
         </div>
       </div>
       <p className="ct-products__disc">Products, not medical advice. Some links earn ayna a commission. It never changes what we show.</p>
-      {note && <p className="ay-alert ct-products__note"><span aria-hidden="true">!</span><span>{note}</span></p>}
+      {note && <p className="ay-alert ct-products__note"><svg className="ay-alert__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style={{ flex: "none", marginTop: 3 }}><path d="M8 1.6 14.6 13.4H1.4L8 1.6Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /><path d="M8 6.2v3.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="8" cy="11.6" r=".9" fill="currentColor" /></svg><span>{note}</span></p>}
       <ul className="ay-shelf__row ct-products__row" ref={rowRef}>
         {items.map(({ product, why }) => (
           <li key={product.id}>

@@ -259,3 +259,16 @@ html body .app-container.app-container.app-container.app-container .lb .lb-flist
   html body .app-container.app-container.app-container.app-container .lb .lb-flist > .lb-frow .ay-rcard.is-row { grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
   html body .app-container.app-container.app-container.app-container .lb .lb-flist > .lb-frow .ay-rcard.is-row .ay-rcard__thumb { width: 96px; }
 }
+
+/* Design loop C r1: the read's title on the type scale (display 40 / 32, was up to 76px), and
+   "When to seek care" in the calm health register (deeper butter, 3px ink rule; pink is never behind a
+   warning and the page already has its one pink band). */
+html body .app-container.app-container.app-container.app-container.app-container .lb .lb-rhead h1.lb-rhead__title:not(#lb-id) { font: 700 40px/1.05 var(--ay-font-display, var(--lb-display)) !important; letter-spacing: -.02em !important; }
+html body .app-container.app-container.app-container.app-container.app-container .lb .lb-care { padding: 20px 24px 8px; border: 1px solid rgba(62, 39, 35, .15); border-left: 3px solid var(--lb-esp); border-radius: 16px; background: #f6e3a1; box-shadow: none; }
+html body .app-container.app-container.app-container.app-container.app-container .lb .lb-care .lb-h2 { font: 700 17px/1.3 var(--ay-font-ui, 'Figtree') !important; letter-spacing: 0 !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lb .lb-care { background: rgba(255, 237, 172, .06); border-left-color: #ffedac; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lb .lb-care :is(.lb-h2, p) { color: #ffedac !important; }
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container.app-container.app-container .lb .lb-rhead h1.lb-rhead__title:not(#lb-id) { font-size: 32px !important; }
+  html body .app-container.app-container.app-container.app-container.app-container .lb .lb-care { padding: 16px 16px 4px; }
+}

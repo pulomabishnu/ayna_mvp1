@@ -34,7 +34,8 @@ export default function ServiceCard({
   const Link = as;
   return (
     <article data-pid={service.id} className={`ay-pcard ay-scard${isSaved ? ' is-saved' : ''} ${className}`.trim()}>
-      <Plate className="ay-pcard__plate ay-scard__plate" saved={isSaved} src={logo} alt={logo ? `${name} logo` : ''} fallback={name} />
+      {/* No logo file: a one-letter monogram (the name is printed right under it; long names broke mid-word on the plate). */}
+      <Plate className="ay-pcard__plate ay-scard__plate" saved={isSaved} src={logo} alt={logo ? `${name} logo` : ''}>{!logo && <span className="ay-scard__mono" aria-hidden="true">{name.charAt(0)}</span>}</Plate>
       <p className="ay-scard__head">
         <strong className="ay-scard__name">
           <Link className="ay-pcard__link" {...(as === 'a' ? { href: productHref(service) } : { type: 'button' })} onClick={open}>{name}</Link>

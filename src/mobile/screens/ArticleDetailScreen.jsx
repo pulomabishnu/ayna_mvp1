@@ -124,7 +124,7 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
           <section className="ay-read-products" aria-labelledby="ay-read-products-h">
             <h2 id="ay-read-products-h">Products for this topic</h2>
             <p className="ay-read-products__disc">Products, not medical advice. Some links earn ayna a commission. It never changes what we show.</p>
-            {productsNote && <p className="ay-read-products__note" role="note"><span aria-hidden="true">!</span>{productsNote}</p>}
+            {productsNote && <p className="ay-read-products__note" role="note"><svg className="ay-alert__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style={{ flex: "none", marginTop: 3 }}><path d="M8 1.6 14.6 13.4H1.4L8 1.6Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /><path d="M8 6.2v3.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="8" cy="11.6" r=".9" fill="currentColor" /></svg>{productsNote}</p>}
             <div className="ay-shelf2-row">{products.map(({ product }) => <div key={product.id}>{renderProduct(product)}</div>)}</div>
           </section>
         )}
