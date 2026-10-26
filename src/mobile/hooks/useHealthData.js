@@ -16,6 +16,7 @@ import { usableForInsights, usableForMatching } from '../../health/policy.js';
 import { healthStoreAvailability, nativeSourceForPlatform, readDailyHealth } from '../../health/native.js';
 import { deleteSavedRecords, hasRecords, loadSavedRecords, saveRecords } from '../../health/records.js';
 import { DEV_DEMO_CONNECTIONS, devDemoRows } from '../../health/devDemo.js';
+import { localToday } from '../../utils/localDate.js';
 
 // DEVELOPMENT ONLY (?healthdemo=1 in the local preview): made-up rows so the screens can be checked. Off in production builds.
 export const DEV_HEALTH_DEMO = Boolean(import.meta.env.DEV && typeof window !== 'undefined' && ['1', 'empty'].includes(new URLSearchParams(window.location.search).get('healthdemo')));
@@ -89,8 +90,8 @@ export function resetHealthStore() {
 let inflight = null;
 let loadSeq = 0;
 
-/** Her own calendar day (native rows are written in local days, not UTC). */
-export const localToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+/** Her own calendar day (native rows are written in local days, not UTC). One helper: utils/localDate.js. */
+export { localToday };
 
 /** Days to read from the phone: the gap since the last sync, at least 14, at most 90. */
 const phoneDays = (lastSyncedAt) => {
@@ -108,7 +109,7 @@ export function loadHealthData(userId, { force = false } = {}) {
   set({ status: state.userId === userId && state.loadedAt ? 'refreshing' : 'loading', userId, error: null, records: state.userId === userId ? state.records : loadSavedRecords(userId) });
   const promise = (async () => {
     if (DEV_HEALTH_DEMO) {
-      set({ status: 'ready', connections: DEV_HEALTH_DEMO_EMPTY ? [] : DEV_DEMO_CONNECTIONS, rows: DEV_HEALTH_DEMO_EMPTY ? [] : devDemoRows(), live: {}, loadedAt: Date.now() });
+      set({ status: 'ready', connections: DEV_HEALTH_DEMO_EMPTY ? [] : DEV_DEMO_CONNECTIONS, rows: DEV_HEALTH_DEMO_EMPTY ? [] : devDemoRows(localToday()), live: {}, loadedAt: Date.now() });
       inflight = null;
       return;
     }

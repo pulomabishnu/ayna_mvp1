@@ -18,6 +18,7 @@
  * Nothing here goes to analytics.
  */
 import { bucketOf, DEVICE_OWNER, loadState, putBucket, saveState, switchOwner, trimItems } from './ownedStore.js';
+import { localDayKey } from '../utils/localDate.js';
 
 export const LOG_KEY = 'ayna_daily_log_v1';
 /** The older device-only check-in (dailyCheckin.js). Read once, never changed or removed. */
@@ -49,10 +50,9 @@ export const FLOW_RANK = { none: 0, spotting: 1, light: 2, medium: 3, heavy: 4 }
 const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
 export const isDay = (d) => typeof d === 'string' && DAY_RE.test(d) && !Number.isNaN(Date.parse(`${d}T00:00:00Z`));
 
-/** Local calendar day (her day, not UTC). */
+/** Local calendar day (her day, not UTC). The one helper: utils/localDate.js. */
 export function todayKey(date = new Date()) {
-  const d = new Date(date);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return localDayKey(date);
 }
 
 /** Add n days to a 'YYYY-MM-DD' day (calendar math in UTC so DST never shifts it). */

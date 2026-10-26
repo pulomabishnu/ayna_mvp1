@@ -31,6 +31,7 @@ import { useSavedPosts, postLine } from '../hooks/useSavedPosts.js';
 import { recentQuestions } from '../utils/askRecent.js';
 import usePersistentState from '../hooks/usePersistentState.js';
 import { useCheckinCountStatus } from '../hooks/useCheckinCount.js';
+import { localDayKey } from '../utils/localDate.js';
 
 // The app's "You" tab, built for the website: profile progress, your shelf
 // (charts from real data), badges, routine + safety alerts, and account
@@ -181,7 +182,7 @@ const WEEK_METRICS = ['sleep_minutes', 'steps', 'active_energy_kcal', 'workout_m
 const SIDE_METRICS = ['readiness_score', 'resting_hr_bpm', 'sleep_minutes', 'steps'];
 const METRIC_PER = { sleep_minutes: 'Sleep a night', steps: 'Steps a day', active_energy_kcal: 'Active energy a day', workout_minutes: 'Workouts a day', readiness_score: 'Readiness', resting_hr_bpm: 'Resting heart rate' };
 const showMetric = (c) => (c.metric === 'steps' ? fmtCount(Math.round(c.week)) : formatMetric(c.metric, c.week));
-const isoDay = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const isoDay = (d) => localDayKey(d);
 
 /* "This week": cycle day and one or two real metrics from connected data, or
    the way to connect. Days with no data stay as a stub, never an invented bar. */

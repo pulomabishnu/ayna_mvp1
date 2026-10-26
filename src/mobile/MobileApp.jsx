@@ -135,6 +135,7 @@ import './ds-app.css';
 import OfflineBanner from './components/OfflineBanner.jsx';
 import TutorialLayer from './tutorial/TutorialLayer.jsx';
 import { growTransition } from '../utils/viewTransition.js';
+import { localToday } from '../utils/localDate.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -831,7 +832,7 @@ export default function MobileApp() {
     if (!authUser?.id || !personalizeWithData) return '';
     const sections = health.insights?.sections || [];
     const ready = sections.filter((section) => section.status === 'ready');
-    const today = new Date().toLocaleDateString('en-CA');
+    const today = localToday();
     const week = buildDashboard(health.insightRows || [], { days: 30, today });
     const estimate = sections.find((section) => section.id === 'cycle')?.estimate || null;
     const explained = explainWeek(health.insightRows || [], { today, cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, hormonalBC: usesHormonalBC(effectiveQuizAnswers), max: 2 });

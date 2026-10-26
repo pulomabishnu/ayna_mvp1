@@ -5,7 +5,7 @@
 /* ---------- titles: one serif, everywhere ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(h1, h2, h3) {
   font-family: var(--f-display) !important;
-  font-weight: 400 !important;
+  font-weight: 500 !important;
   letter-spacing: -0.005em !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(button, input, textarea, select, label, p, li, small) {
@@ -44,7 +44,7 @@
   min-height: 52px !important; border-radius: 20px !important; padding: 4px 0 !important;
   display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 3px !important;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font: 500 11.5px/1 var(--f-ui) !important; letter-spacing: 0 !important; color: inherit !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font: 500 13px/1 var(--f-ui) !important; letter-spacing: 0 !important; color: inherit !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-active:not(.is-center) { background: var(--b-rose) !important; color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button svg { animation: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center { background: transparent !important; color: rgba(255, 237, 172, .78) !important; }

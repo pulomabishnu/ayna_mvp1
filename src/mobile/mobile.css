@@ -196,7 +196,7 @@
   padding: 2px 0;
   background: transparent;
   color: #766b78;
-  font: 500 11.5px/1.15 var(--ayna-font-ui);
+  font: 500 13px/1.15 var(--ayna-font-ui);
   cursor: pointer;
 }
 .ayna-mobile .ayna-bottom-nav button.is-active { color: #3e2723; background: rgba(240,168,75,.2); border-radius: 14px; }
@@ -227,8 +227,8 @@
   font-family: var(--ayna-font-ui);
 }
 .ayna-profile-auth-close { position: absolute; top: 14px; right: 18px; border: 0; background: none; color: #3e2723; font-size: 30px; letter-spacing: -0.01em; line-height: 1.15; font-weight: 600; cursor: pointer; }
-.ayna-profile-auth-eyebrow { color: #9a5c36; font-size: 11.5px; font-weight: 500; letter-spacing: .16em; }
-.ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 400 28px/1.15 var(--ayna-font-display); }
+.ayna-profile-auth-eyebrow { color: #9a5c36; font-size: 13px; font-weight: 500; letter-spacing: .16em; }
+.ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 700 28px/1.15 var(--ayna-font-display); }
 .ayna-profile-auth-sheet p { margin: 0 0 24px; line-height: 1.5; color: #56566e; }
 .ayna-profile-auth-primary, .ayna-profile-auth-secondary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 17px var(--ayna-font-ui); cursor: pointer; }
 .ayna-profile-auth-primary { border: 0; background: #F7BADD; color: #231a12; }
