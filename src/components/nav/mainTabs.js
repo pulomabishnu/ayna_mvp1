@@ -39,17 +39,22 @@ export const AYNA_HOME_VIEWS = [
   { key: 'dashboard', label: 'My dashboard' },
 ];
 
-/** Explore's sections, one row of text tabs (UX spec 11; team direction 17, Oct 24). `href` is the website address. */
+/**
+ * Explore's five sections, the same on web and app (Explore audit, Oct 25:
+ * "5 short tabs on both", pill tabs that never scroll on a phone): For you ·
+ * Needs · Products · Services · Reads. Keys and addresses stay the same so
+ * links, analytics and CSS keep working. `href` is the website address.
+ */
 export const EXPLORE_SECTIONS = [
   { key: 'overview', label: 'For you', href: '/explore' },
-  { key: 'topics', label: 'Categories', href: '/explore/topics' },
+  { key: 'topics', label: 'Needs', href: '/explore/topics' },
   { key: 'products', label: 'Products', href: '/explore/products' },
   { key: 'services', label: 'Services', href: '/explore/services' },
-  { key: 'resources', label: 'Resources', href: '/explore/resources' },
+  { key: 'resources', label: 'Reads', href: '/explore/resources' },
 ];
 
-/** In the app the reads have their own tab (Library), so Explore has no Resources section. */
-export const APP_EXPLORE_SECTIONS = EXPLORE_SECTIONS.filter((s) => s.key !== 'resources');
+/** The app has the same five, Reads included (the Library's reads live there now). */
+export const APP_EXPLORE_SECTIONS = EXPLORE_SECTIONS;
 
 /** You's sections, in order (UX spec section 19). `href` is the website address. */
 export const YOU_SECTIONS = [
