@@ -58,7 +58,7 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-note .am-post-stars { margin-top: -2px; }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-note-body { display: block; margin: 0; padding: 0; border: 0; background: none; color: var(--d-ink); font: 400 16px/1.55 var(--ay-font-ui); text-align: left; white-space: pre-wrap; overflow-wrap: anywhere; }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-note.is-question .am-note-body { font-weight: 600; font-size: 17px; line-height: 1.45; }
-.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-note-body.is-clamped { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-note-body.is-clamped { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-readmore { justify-self: start; min-height: 36px; margin-top: -8px; padding: 0; border: 0; background: none; color: var(--d-ink); font: 600 14px/1 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 3px; }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-post-menu button.is-armed { background: #f7badd; color: #3e2723; font-weight: 600; }
 

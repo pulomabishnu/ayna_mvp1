@@ -46,3 +46,6 @@
 :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__sources { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0 !important; color: var(--rk-muted); font: 500 13px/1.4 var(--ay-font-ui) !important; }
 :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__src { display: inline-flex; align-items: center; gap: 4px; }
 @media (max-width: 720px) { :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__title { font-size: 26px !important; } }
+
+/* Glance pass (p14): a one-line summary under a cover in the Reads grid; the full read opens on tap. */
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail .ay-rcard__sum { margin: 0; color: inherit; opacity: .85; font: 400 13px/1.4 var(--ay-font-ui) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

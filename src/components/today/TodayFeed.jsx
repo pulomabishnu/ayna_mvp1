@@ -47,7 +47,19 @@ function statusOf(item, t) {
 }
 
 /** Home's one-screen version of an item: the fact, one way to act, and "Ask why". */
-function CompactItem({ item, t, onAsk, onFindCare, onOpenFull, onOutcome }) {
+// Glance pass (p14): one small mark per kind of thing, so a tile reads at a glance.
+const GLYPH = {
+  care: 'M12 4v16M4 12h16',
+  follow_up: 'M5 12l4 4 10-10',
+  check_in: 'M5 19V9m7 10V5m7 14v-7',
+  routine: 'M12 6v6l4 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z',
+};
+const glyphOf = (type) => GLYPH[type] || 'M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z';
+
+function CompactItem({ item, t, onAsk, onFindCare, onOpenFull, onOutcome, wide = false }) {
+  const [more, setMore] = useState(false);
+  const keep = PROTECTED.has(item.tier);
+  const reasonId = `ay-today-why-${item.id}`;
   const kicker = item.type === 'care' ? CARE_KICKER[item.level] || 'Care' : KICKER[item.type] || '';
   const acts = item.actions || [];
   const tel = item.type === 'care' && item.level === 'urgent' && /911/.test(item.title);
@@ -61,10 +73,17 @@ function CompactItem({ item, t, onAsk, onFindCare, onOpenFull, onOutcome }) {
   const full = onOpenFull ? (opts) => onOpenFull(item, opts) : null;
   const primaryLabel = acts.some((a) => a.id === 'show_options') ? 'Show options' : acts.some((a) => /^(outcome|answer):|open_triage|try_this|open_check_in/.test(a.id)) ? 'Answer' : 'More';
   return (
-    <li className={`ay-today__item is-compact is-${item.tier} is-${item.type}${item.level ? ` is-${item.level}` : ''}`}>
+    <li className={`ay-today__item is-compact is-${item.tier} is-${item.type}${item.level ? ` is-${item.level}` : ''}${wide || keep ? ' is-wide' : ''}`}>
+      <span className="ay-today__glyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d={glyphOf(item.type)} /></svg></span>
       <p className="ay-today__kicker">{kicker}{status && <span className="ay-today__status">{status}</span>}</p>
       <h3 className="ay-today__title">{item.title}</h3>
-      {item.reason && <p className="ay-today__why">{item.reason}</p>}
+      {/* Safety and care keep their reason on screen; the rest show it on "Read more" (text is never dropped). */}
+      {item.reason && (keep
+        ? <p className="ay-today__why">{item.reason}</p>
+        : <>
+          <p id={reasonId} className="ay-today__why" hidden={!more}>{item.reason}</p>
+          <button type="button" className="ay-today__readmore" aria-expanded={more} aria-controls={reasonId} onClick={() => setMore((m) => !m)}>{more ? 'Show less' : 'Read more'}</button>
+        </>)}
       {outcomes.length > 0 && (
         <div className="ay-today__chips is-inline" role="group" aria-label="How did it go?">
           {outcomes.slice(0, FIRST_CHIPS).map((a) => <button key={a.id} type="button" className="ay-chip" onClick={() => onOutcome(item, a.id.slice(8))}>{a.label}</button>)}
@@ -418,7 +437,15 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
       {compact && (items.length > 0
         ? <ul className="ay-today__list is-compact" data-tour="today-things">
           {/* Safety and care always show; the rest stop at three things. */}
-          {items.filter((it, i) => PROTECTED.has(it.tier) || i < 3).map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={onOpenFull} onOutcome={onOutcome} />)}
+          {(() => {
+            const shown = items.filter((it, i) => PROTECTED.has(it.tier) || i < 3);
+            // Bento: safety and care run wide; the rest pair up as halves, and a lone last half goes wide.
+            // Items with answer chips (follow-ups, check-ins) need the full width too.
+            const chipsy = (it) => it.type === 'follow_up' || it.type === 'check_in' || (it.actions || []).some((a) => a.id === 'show_options');
+            const halves = shown.filter((it) => !PROTECTED.has(it.tier) && !chipsy(it));
+            const lone = halves.length % 2 === 1 ? halves[halves.length - 1] : null;
+            return shown.map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={onOpenFull} onOutcome={onOutcome} wide={item === lone || chipsy(item)} />);
+          })()}
           {reviewDue && items.length < 3 && <ReviewAsk compact due={reviewDue} t={t} onOpenProduct={onOpenProduct} onDone={() => setReviewTick((n) => n + 1)} />}
         </ul>
         : <p className="ay-today__empty">{t.decision.empty}</p>)}

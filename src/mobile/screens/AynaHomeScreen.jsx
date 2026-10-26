@@ -135,6 +135,8 @@ export default function AynaHomeScreen(props) {
         </div>
         {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
         <HomeWidgets
+          // The week bento already shows sleep; its default health row would repeat it (unless she chose it in Edit).
+          hideDefault={weekBento ? ['health'] : []}
           surface="app"
           userId={authUser?.id || null}
           data={{

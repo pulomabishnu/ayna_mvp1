@@ -22,7 +22,7 @@ import './home-widgets.css';
  * on:   { ask, openLog, openHealth, connect, openProduct, openSaved, openEcosystem, openRoutine,
  *         openPost, openPlaylist, openCommunity, openArticle, openDoctorPrep }
  */
-export default function HomeWidgets({ surface = 'app', userId = null, data = {}, on = {}, editLabel = 'Edit', children = null }) {
+export default function HomeWidgets({ surface = 'app', userId = null, data = {}, on = {}, editLabel = 'Edit', children = null, hideDefault = [] }) {
   const [owner, setOwner] = useState(userId || 'device');
   const [layout, setLayout] = useState(() => { setHomeLayoutOwner(userId); return effectiveLayout(surface, REGISTRY); });
   if (owner !== (userId || 'device')) { setHomeLayoutOwner(userId); setOwner(userId || 'device'); setLayout(effectiveLayout(surface, REGISTRY)); }
@@ -64,7 +64,7 @@ export default function HomeWidgets({ surface = 'app', userId = null, data = {},
       {layout.widgets.length > 0 && (
         <div className="ay-homewidgets__grid">
           {/* A row-shaped widget alone (today's health row) keeps the full width. */}
-          {layout.widgets.map((w) => <div key={w.id} className={`ay-homewidgets__cell is-${w.size}${layout.widgets.length === 1 && w.id === 'health' ? ' is-wide' : ''}`}><Widget widget={w} ctx={ctx} /></div>)}
+          {layout.widgets.filter((w) => layout.custom || !hideDefault.includes(w.id)).map((w) => <div key={w.id} className={`ay-homewidgets__cell is-${w.size}${layout.widgets.length === 1 && w.id === 'health' ? ' is-wide' : ''}`}><Widget widget={w} ctx={ctx} /></div>)}
         </div>
       )}
       {/* children: the screen's own links (Home's My dashboard / Your matches) share the row with Edit. */}

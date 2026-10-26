@@ -351,13 +351,26 @@ export default function HealthHome({
       />
     );
   };
-  const findings = stories.length > 0 && (
-    <section className="ay-db-card ay-db-findings" aria-labelledby="ay-db-findings-title">
-      <h2 id="ay-db-findings-title" className="ay-db-h2">{stories.length === 1 ? '1 change this week' : `${stories.length} changes this week`}</h2>
-      <ul>
-        {stories.map((x) => findingFor(x))}
-        {backToUsual.map((area) => <li key={area} className="ay-db-finding is-back"><p className="ay-db-h3"><span>{area}: back to your usual</span><StatusPill>Back to usual</StatusPill></p></li>)}
-      </ul>
+  // Highlights first (founder, Oct 26: Apple Health / Oura style): the one most notable change, open with its chart;
+  // every other change stays one tap away under "See all highlights". Same findings, same words, nothing new computed.
+  const highlight = stories.length > 0 && (
+    <section className="ay-db-card ay-db-findings ay-db-highlight" aria-labelledby="ay-db-highlight-title">
+      <p className="ay-db-highlight__kicker">Today&rsquo;s highlight</p>
+      <h2 id="ay-db-highlight-title" className="sr-only">Today&rsquo;s highlight</h2>
+      <ul>{findingFor(stories[0])}</ul>
+      {(() => {
+        const c = chartOf(stories[0].insight.metric);
+        return c && c.points?.length > 1 ? <div className="ay-db-highlight__spark"><Sparkline points={lastDays(c.points, today)} band={bandOf(c.metric)} metric={c.metric} label={c.label} w={320} h={56} /><span>Last 7 days, shaded band is your usual</span></div> : null;
+      })()}
+      {(stories.length > 1 || backToUsual.length > 0) && (
+        <details className="ay-db-fold ay-db-highlight__all">
+          <summary>See all highlights ({stories.length + backToUsual.length})</summary>
+          <ul>
+            {stories.slice(1).map((x) => findingFor(x))}
+            {backToUsual.map((area) => <li key={area} className="ay-db-finding is-back"><p className="ay-db-h3"><span>{area}: back to your usual</span><StatusPill>Back to usual</StatusPill></p></li>)}
+          </ul>
+        </details>
+      )}
     </section>
   );
   const areaFindings = (area) => stories.filter(({ insight }) => AREA_OF_METRIC(insight.metric, groupOf) === area);
@@ -436,10 +449,10 @@ export default function HealthHome({
   const summary = (
     <div className="ay-db-summary">
       {surface === 'web' && todayFeed && <RundownEntry onShown={setRundownShown} />}
+      {highlight}
       {glanceBlock}
       <div className="ay-db-cols">
         <div className="ay-db-main">
-          {findings}
           {/* Right after the findings they come from (dashboard audit 7.12, 7.13). */}
           {suggestBlock}
           {askBlock}

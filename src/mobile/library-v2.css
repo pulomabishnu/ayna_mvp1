@@ -60,3 +60,9 @@
   & .al-topics button[aria-pressed='true'] .al-topics__n { background: #ffedac; color: #3e2723; }
   & .al-topics button[aria-pressed='true'] { border-color: var(--d-pink); }
 }
+
+/* Glance pass (p14): editorial grid, one wide cover then halves (an odd last one goes wide). */
+.al-grid.al-grid--ed > .al-item.is-wide { grid-column: 1 / -1; }
+.al-grid.al-grid--ed > .al-item.is-wide .ay-rcard__cover { aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--ay-r-md, 16px); }
+.al-grid.al-grid--ed > .al-item.is-wide .ay-rcard__cover > * { width: 100%; height: 100%; object-fit: cover; }
+.al-grid.al-grid--ed > .al-item.is-wide .ay-rcard__title { font-size: 19px !important; }

@@ -194,3 +194,19 @@
 
 /* ---- Four tabs (founder, Oct 24 22:12): Home, Explore, Community, You ---- */
 html body .ayna-mobile:is(#ay, .ayna-mobile) .ayna-bottom-nav.is-4-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+
+/* Glance pass (p14): Today's things as a mixed-width bento (wide + halves), a small mark on each, the reason behind "Read more". */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__list.is-compact { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: dense; align-items: stretch; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__list.is-compact > * { min-width: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__list.is-compact > .is-wide,
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__list.is-compact > :not(.ay-today__item) { grid-column: 1 / -1; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact { align-content: start; gap: 6px; padding: 14px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:not(.is-wide) .ay-today__title { font-size: calc(16px * var(--ayna-text-scale, 1)) !important; overflow-wrap: anywhere; }
+.ay-today__glyph { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #f7badd; color: #3e2723; }
+.ay-today__glyph svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-today__item.is-care .ay-today__glyph, .ay-today__item.is-safety .ay-today__glyph { background: #3e2723; color: #ffedac; }
+.ay-today__readmore { justify-self: start; min-height: 44px; padding: 0; border: 0; background: none; color: inherit; font: 700 14px/1.2 var(--ay-font-ui, inherit); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact .ay-today__why[hidden] { display: none !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-today__item.is-care .ay-today__glyph, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-today__item.is-safety .ay-today__glyph { background: #ffedac; color: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:not(.is-wide) { display: flex !important; flex-direction: column; align-items: flex-start; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:not(.is-wide) .ay-today__actions { position: static !important; margin-top: auto !important; }

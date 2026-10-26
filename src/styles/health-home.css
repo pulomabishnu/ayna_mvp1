@@ -274,3 +274,17 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 :is([data-theme='brand-dark'], [data-theme='dark']) .ay-db .ay-db-bars-track { background: rgba(255, 237, 172, .12) !important; }
 /* Founder 13:38: dashboard cards butter-deep with a thin espresso rule (light). */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db :is(.ay-db-card, .ay-db-rundown, .ay-db-row, .ay-db-fold, .ay-wx-picks) { box-shadow: inset 0 0 0 1px rgba(62, 39, 35, .22) !important; }
+
+/* Glance pass (p14): each data tab is a bento. Charts run wide; short text cards pair up as halves when two sit together. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-panel > .ay-db-detail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-panel > .ay-db-detail > * { grid-column: 1 / -1; min-width: 0; margin: 0 !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-panel > .ay-db-detail > .ay-db-card:not(:has(svg, ul, ol, dl, details)):is(:has(+ .ay-db-card:not(:has(svg, ul, ol, dl, details)))) { grid-column: 1; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-panel > .ay-db-detail > .ay-db-card:not(:has(svg, ul, ol, dl, details)):has(+ .ay-db-card:not(:has(svg, ul, ol, dl, details))) + .ay-db-card { grid-column: 2; }
+
+/* Highlights first (p14): one pink-edged card at the top of Summary; the rest under "See all highlights". */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-highlight { border: 2px solid #f7badd !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-highlight__kicker { display: inline-flex; align-self: start; justify-self: start; margin: 0 0 4px; padding: 4px 12px; border-radius: 999px; background: #f7badd; color: #3e2723 !important; font: 700 13px/1.3 var(--ay-font-ui); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-highlight__all > summary { min-height: 44px; display: flex; align-items: center; font: 700 15px/1.3 var(--ay-font-ui); cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-highlight__spark { display: grid; gap: 4px; margin: 4px 0 8px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-highlight__spark svg { width: 100%; height: auto; max-height: 72px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-highlight__spark span { font: 500 13px/1.4 var(--ay-font-ui); opacity: .85; }
