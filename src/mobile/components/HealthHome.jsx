@@ -434,14 +434,15 @@ export default function HealthHome({
       <div className="ay-db-cols">
         <div className="ay-db-main">
           {findings}
+          {/* Right after the findings they come from (dashboard audit 7.12, 7.13). */}
+          {suggestBlock}
+          {askBlock}
           {!hasData && routineBits}
           {onOpenCheckin && <TextButton onClick={onOpenCheckin}>Log how you felt this month</TextButton>}
         </div>
         <div className="ay-db-rail">
           {routineWorking}
           <ComingUp items={coming} today={today} />
-          {suggestBlock}
-          {askBlock}
         </div>
       </div>
       {todayFeed && <div className="ay-db-today">{todayFeed}</div>}
@@ -572,7 +573,7 @@ export default function HealthHome({
       )}
       {(tabs.length > 1 || (!showTitle && sourceLine)) && (
         <div className="ay-db-nav">
-          {tabs.length > 1 && <PillTabs tabs={tabs} active={current} onChange={pickTab} label="Health areas" idBase="ay-db-area" className="ay-db-tabs" />}
+          {tabs.length > 1 && <div className="ay-db-tabwrap"><PillTabs tabs={tabs} active={current} onChange={pickTab} label="Health areas" idBase="ay-db-area" /></div>}
           {!showTitle && sourceLine}
           {helloAside}
         </div>

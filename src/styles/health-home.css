@@ -17,6 +17,8 @@
   --db-surface: var(--ay-surface, #fff); --db-blue: var(--ay-data-blue, #769ebe); --db-rule: rgba(62, 39, 35, .15); --db-on-ink: #ffedac;
   --db-ui: var(--ay-font-ui, 'Figtree', system-ui, sans-serif); --db-display: var(--ay-font-display, 'ayna Display', 'Bricolage Grotesque', sans-serif);
   --db-scale: var(--ayna-text-scale, 1);
+  /* The website's older sheets set --ay-outline to a bare colour on .app-container; the primitives need the border. */
+  --ay-outline: 1.5px solid var(--ay-ink, #3e2723);
   display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; color: var(--db-ink); font: 500 calc(16px * var(--db-scale))/1.55 var(--db-ui);
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is([data-theme='brand-dark'], [data-theme='dark']) .ay-db,
@@ -58,7 +60,12 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 
 /* ---------- area tabs (PillTabs primitive) and the source line beside them ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-nav .ay-db-source { flex: 1 1 240px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-nav .ay-db-source { flex: 1 1 200px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-tabwrap { flex: 1 1 100%; min-width: 0; }
+@media (min-width: 900px) { :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db.is-web .ay-db-tabwrap { flex: 0 1 520px; } }
+
+/* Five labels fit a 390px phone without wrapping ("Summary" stays on one line). */
+:is(#ayk, .ay-db-tabwrap):is(#ayk, .ay-db-tabwrap):is(#ayk, .ay-db-tabwrap):is(#ayk, .ay-db-tabwrap) .ayk-tabs__tab { padding-left: 2px !important; padding-right: 2px !important; white-space: nowrap; }
 
 /* ---------- buttons: the primitives (StickerButton, OutlineButton, TextButton) carry the look ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db :is(.ayk-btn) { justify-self: start; }
@@ -116,7 +123,7 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-track { position: relative; display: flex; gap: 2px; height: 8px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-track i { display: block; border-radius: 999px; background: var(--db-deep); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-track i.is-period { background: var(--db-ink); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-track i.is-now:not(.is-period) { box-shadow: inset 0 0 0 1.5px var(--db-ink); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-track i.is-now:not(.is-period) { background: color-mix(in srgb, var(--db-ink) 40%, transparent); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-track b { position: absolute; top: -4px; width: 3px; height: 16px; margin-left: -1.5px; border-radius: 999px; background: var(--db-ink); box-shadow: 0 0 0 2px var(--db-surface); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-labels { display: flex; gap: 2px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-labels small { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--db-muted); }
@@ -212,7 +219,7 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 
 /* ---------- folds and the bottom ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-fold { display: grid; gap: 8px; padding: 0 16px !important; border-radius: 16px; background: var(--db-surface); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-fold > summary { display: flex; align-items: center; gap: 8px; min-height: 52px; cursor: pointer; list-style: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-fold > summary { color: var(--db-ink); display: flex; align-items: center; gap: 8px; min-height: 52px; cursor: pointer; list-style: none; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-fold > summary::-webkit-details-marker { display: none; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-fold > summary::after { content: ''; width: 8px; height: 8px; margin-left: auto; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-fold[open] > summary::after { transform: rotate(-135deg); }
