@@ -236,7 +236,9 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.is-compac
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead .wx-search { margin-right: 20px !important; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-top.ay-pagehead :is(h1, p).wx-title { margin-bottom: 14px !important; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal { top: 6px; right: 0; width: 58px; height: 58px; }
-  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal b { width: 30px; height: 30px; font-size: 8.5px; letter-spacing: -.02em; overflow: hidden; } /* the word stays inside its ring (QA round 2) */
+  /* QA3 M5: at 58px the ring text and word drew at 6-8px; the phone seal keeps its drawn mark only. */
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal :is(svg, b) { display: none !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal::after { content: ''; width: 30px; height: 30px; border-radius: 50%; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffedac' d='M12 3c.6 4.8 4.2 8.4 9 9-4.8.6-8.4 4.2-9 9-.6-4.8-4.2-8.4-9-9 4.8-.6 8.4-4.2 9-9z'/%3E%3C/svg%3E") center / 18px no-repeat, #3e2723; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-top.ay-pagehead :is(h1, p).wx-title { min-height: 48px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal text { font-size: 15px; }
 }
