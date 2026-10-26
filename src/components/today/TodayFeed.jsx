@@ -8,7 +8,6 @@ import { todayFixtureOn, makeTodayFixture } from '../../health/todayDevFixture.j
 import Rundown from '../rundown/Rundown.jsx';
 import NotUsefulMenu from './NotUsefulMenu.jsx';
 import ItemMenu from './ItemMenu.jsx';
-import RundownNotifyAsk from './RundownNotifyAsk.jsx';
 import { readRundownPush } from './rundownPush.js';
 import { NOT_HELPING, nextBestMatch } from './nextBest.js';
 import { markReviewAsk, reviewsDue } from '../../health/routineFollowUps.js';
@@ -461,7 +460,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
           <ProfileAskCard asList variant={variant} intake={intake} today={t.today} onAnswer={onEditAnswers} />
         </>)}
       {/* After the items, and never on a day with a safety or care item. */}
-      <RundownNotifyAsk today={t.today} show={rundownSeen && !items.some((it) => PROTECTED.has(it.tier))} />
+      {/* Founder Oct 26 19:22: the reminder ask lives in Settings now, not on Today. */}
       {nextBest && <NextBest pick={nextBest} onOpenProduct={onOpenProduct} onClose={() => setNextBest(null)} />}
       {!compact && (t.pendingProfileSaves.length > 0 || t.notes['save:done']) && (
         <div className="ay-today__save" role="group" aria-label="Save to your health profile">

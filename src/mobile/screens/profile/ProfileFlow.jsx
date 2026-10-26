@@ -62,6 +62,8 @@ import '../../../styles/unique-b.css';
 import { recentQuestions } from '../../../utils/askRecent.js';
 import { useCheckinCountStatus } from '../../../hooks/useCheckinCount.js';
 import { isOverLimit } from '../../../utils/charLimit.js';
+import { RundownSetting } from '../../../components/today/RundownNotifyAsk.jsx';
+import { localDayKey as rundownDayKey } from '../../../utils/localDate.js';
 
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
 
@@ -1750,6 +1752,7 @@ function SettingsScreen({ onBack, onOpenTexts, onOpenPreferences, onOpenHowItWor
             : <button type="button" key={row.title} className="ay-set-row" onClick={row.onClick}>{rowInner(row)}</button>)}
         </div>
       </section>)}
+      <RundownSetting today={rundownDayKey()} />
       <TipsSettings renderSwitch={(p) => <Toggle {...p} />} />
       <button type="button" className={`ayna-account-session ay-set-session${authUser ? ' is-out' : ''}`} onClick={authUser ? onSignOut : onSignIn}>{authUser ? 'Sign out' : 'Sign in'}</button>
       <LegalFooter />

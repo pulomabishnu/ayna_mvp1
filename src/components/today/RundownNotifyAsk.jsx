@@ -49,3 +49,40 @@ export default function RundownNotifyAsk({ today, show }) {
     </section>
   );
 }
+
+/**
+ * The same choice as a Settings row (founder Oct 26 19:22: "put that in settings").
+ * Today no longer shows the ask card; she sets it here any time.
+ */
+export function RundownSetting({ today }) {
+  const [pref, setPref] = useState(() => readRundownPush());
+  const [time, setTime] = useState(pref.time || DEFAULT_RUNDOWN_TIME);
+  const [note, setNote] = useState('');
+  const isOn = Boolean(pref.on);
+  const turnOn = async (t = time) => {
+    setPref(writeRundownPush({ answered: true, on: true, time: t }));
+    trackNotificationPrompt({ surface: eventSurface(), granted: true, prompt: 'settings' });
+    try { window.dispatchEvent(new CustomEvent(PUSH_ASK_EVENT)); } catch { /* old browser */ }
+    const status = await bookTomorrow(today, t).catch(() => 'error');
+    setNote((RESULT[status] || RESULT.error)(timeLabel(t)));
+  };
+  const turnOff = () => { setPref(writeRundownPush({ answered: true, on: false })); setNote('Daily Rundown reminders are off.'); };
+  return (
+    <section className="ay-rundown-setting" aria-labelledby="ay-rundown-setting-h">
+      <h3 id="ay-rundown-setting-h">Daily Rundown reminder</h3>
+      <p>One notification a day. Nothing about your health shows on the lock screen.</p>
+      <div className="ay-today__notify-row">
+        <label className="ay-today__notify-time">
+          <span>Time</span>
+          <select value={time} onChange={(e) => { setTime(e.target.value); if (isOn) turnOn(e.target.value); }}>
+            {RUNDOWN_TIMES.map((t) => <option key={t} value={t}>{timeLabel(t)}</option>)}
+          </select>
+        </label>
+        {isOn
+          ? <button type="button" className="ay-today__text" onClick={turnOff}>Turn off</button>
+          : <button type="button" className="ay-today__primary" onClick={() => turnOn()}>Turn on</button>}
+      </div>
+      {note && <p className="ay-today__notify-done" role="status">{note}</p>}
+    </section>
+  );
+}

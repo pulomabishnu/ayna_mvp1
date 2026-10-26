@@ -437,3 +437,8 @@ html body .app-container .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-previ
 html body .app-container .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div:nth-child(4n+2), html body .app-container .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div:nth-child(4n+3) { background: #f7badd; }
 html body .app-container .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div :is(dt, dd) { color: #3e2723 !important; }
 html body .app-container .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
+/* Daily Rundown reminder as a Settings row (founder Oct 26 19:22) */
+.ay-rundown-setting { margin: 16px 0; padding: 16px; border: 1px solid var(--ay-rule, rgba(62,39,35,.22)); border-radius: 16px; background: var(--ay-surface, #f6e3a1); color: var(--ay-fg, #3e2723); }
+.ay-rundown-setting h3 { margin: 0 0 4px; font: 700 17px/1.3 var(--ay-font-ui); }
+.ay-rundown-setting p { margin: 0 0 12px; font: 500 14px/1.45 var(--ay-font-ui); }
+.ayna-mobile .ay-rundown-setting { margin: 16px var(--d-gutter, 16px); }

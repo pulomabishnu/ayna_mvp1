@@ -37,6 +37,7 @@ import { recentQuestions } from '../utils/askRecent.js';
 import usePersistentState from '../hooks/usePersistentState.js';
 import { useCheckinCountStatus } from '../hooks/useCheckinCount.js';
 import { localDayKey } from '../utils/localDate.js';
+import { RundownSetting } from './today/RundownNotifyAsk.jsx';
 
 // The app's "You" tab, built for the website: profile progress, your shelf
 // (charts from real data), badges, routine + safety alerts, and account
@@ -616,6 +617,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
         </section>
       </div>
       <div className="wy-col yh-calm">
+        <RundownSetting today={localDayKey()} />
         <TipsSettings variant="web" />
         <EmailSettings user={user} />
         <InviteCard userId={user.id} />
