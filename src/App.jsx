@@ -176,6 +176,7 @@ import { addedToRoutineText, REMOVED_FROM_ROUTINE } from './utils/routineCopy.js
 import { openTodayLog } from './components/today/openLog.js';
 import HomeWidgets from './home/HomeWidgets.jsx';
 import { markReturnToFreeProduct, takeReturnToFreeProduct } from './utils/freeProductCampaign';
+import { trackQuizStarted, trackFirstMatchShown, eventSurface } from './utils/analyticsEvents.js';
 
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
 const WEB_TAB_VIEWS = {
@@ -847,6 +848,11 @@ function App() {
     setAskOpenSignal((n) => n + 1);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, quizResults]);
+  // Time to first value (all-pages brief v3): quiz start -> first match, signed out or in. No health details.
+  useEffect(() => {
+    if (currentView === 'quiz' && !quizResults) trackQuizStarted({ surface: eventSurface(), signed_in: Boolean(user) });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentView]);
   // Light / dark, shared with the app's own setting on this browser.
   const { theme, mode: themeMode, setThemeMode } = useWebTheme();
   // Dark mode is "brand dark": the light design (same type and components)
@@ -1772,6 +1778,7 @@ function App() {
       setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
       const { mergedProducts: guestSeed } = getEcosystemSeedFromQuiz(completedResults, healthProfile, seedOpts);
       const guestProducts = Object.values(guestSeed || {});
+      trackFirstMatchShown({ surface: eventSurface(), matches_count: guestProducts.length });
       setGuestPreview({ results: completedResults, products: guestProducts, done: toToday });
       if (toToday) {
         // Explore first: her answers work signed out; Save stays one tap away.
@@ -1788,6 +1795,7 @@ function App() {
     // Tagged so a later AI rebuild can tell these generated picks apart from
     // products she added herself (handleBuildEcosystemFromLlm).
     const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
+    trackFirstMatchShown({ surface: eventSurface(), matches_count: Object.keys(instantProducts).length });
     // Her own products stay on her shelves; only ayna's earlier picks are replaced.
     setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([, p]) => p && !isGeneratedPick(p))) }));
     setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && !isGeneratedPick(myProductsRef.current[id]))]);
