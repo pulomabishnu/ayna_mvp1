@@ -7,6 +7,7 @@ import { localToday, useHealthData } from '../hooks/useHealthData.js';
 import { HealthStarter } from './HealthBento.jsx';
 import HealthHome, { HealthEmpty } from './HealthHome.jsx';
 import TodayFeed from '../../components/today/TodayFeed.jsx';
+import { OutlineButton } from '../../components/ui/ay/index.js';
 import '../screens/profile/health-connections.css';
 
 /**
@@ -113,7 +114,7 @@ export default function HealthDashboard({ authUser, selectedNeedIds = [], hormon
           const without = buildContext(false);
           openAsk({ question, context: askHealth.on ? withHealth : without, buildContext, usesHealth: withHealth !== without, stats: extra?.stats || null });
         } : undefined}
-        footer={<button type="button" className="ay-hc-ghost" onClick={onConnect}>Manage connected apps</button>}
+        footer={<OutlineButton onClick={onConnect}>Manage connected apps</OutlineButton>}
         surface="app"
         todayFeed={todayFeed}
       />

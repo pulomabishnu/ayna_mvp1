@@ -18,7 +18,7 @@
   --db-ui: var(--ay-font-ui, 'Figtree', system-ui, sans-serif); --db-display: var(--ay-font-display, 'ayna Display', 'Bricolage Grotesque', sans-serif);
   --db-scale: var(--ayna-text-scale, 1);
   /* The website's older sheets set --ay-outline to a bare colour on .app-container; the primitives need the border. */
-  --ay-outline: 1.5px solid var(--ay-ink, #3e2723);
+  --ay-outline: 1.5px solid var(--ay-ink, #3e2723); --ay-r-pill: 999px;
   display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; color: var(--db-ink); font: 500 calc(16px * var(--db-scale))/1.55 var(--db-ui);
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is([data-theme='brand-dark'], [data-theme='dark']) .ay-db,
@@ -44,9 +44,11 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db :is(.ay-db-source, .ay-db-muted, .ay-db-summary, .ay-db-disclaimer, dt) { font: 500 calc(14px * var(--db-scale))/1.4 var(--db-ui) !important; color: var(--db-muted) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db :is(.ay-db-k, .ay-db-caveat, small, .ay-db-glance-k, .ay-db-readout, .ay-db-chart-title) { font: 500 calc(13px * var(--db-scale))/1.4 var(--db-ui) !important; }
 @media (min-width: 900px) {
-  html body .app-container .ay-wh.ay-wh .ay-db .ay-db-h1 { font-size: 30px !important; }
-  html body .app-container .ay-wh.ay-wh .ay-db .ay-db-h2 { font-size: 22px !important; }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db.is-web .ay-db-h1 { font-size: 30px !important; }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db.is-web :is(.ay-db-h2, .ay-wx-group h3, .ay-wx-picks h3) { font-size: 22px !important; }
 }
+/* One caption weight: status pills at 13/500 like every other caption (8 text styles). */
+:is(#ayk, .ay-db):is(#ayk, .ay-db):is(#ayk, .ay-db):is(#ayk, .ay-db) .ayk-status { font-weight: 500 !important; }
 
 /* ---------- title row (app) and source line ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-title { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0 0 !important; }
@@ -68,7 +70,7 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 @media (min-width: 900px) { :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db.is-web .ay-db-tabwrap { flex: 0 1 520px; } }
 
 /* Five labels fit a 390px phone without wrapping ("Summary" stays on one line). */
-:is(#ayk, .ay-db-tabwrap):is(#ayk, .ay-db-tabwrap):is(#ayk, .ay-db-tabwrap):is(#ayk, .ay-db-tabwrap) .ayk-tabs__tab { padding-left: 2px !important; padding-right: 2px !important; white-space: nowrap; }
+:is(#ayk, .ay-db-tabwrap):is(#ayk, .ay-db-tabwrap):is(#ayk, .ay-db-tabwrap):is(#ayk, .ay-db-tabwrap) .ayk-tabs__tab { padding-left: 2px !important; padding-right: 2px !important; white-space: nowrap; font-size: calc(15px * var(--db-scale, 1)) !important; font-weight: 600 !important; }
 
 /* ---------- buttons: the primitives (StickerButton, OutlineButton, TextButton) carry the look ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db :is(.ayk-btn) { justify-self: start; }
@@ -130,8 +132,8 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-track b { position: absolute; top: -4px; width: 3px; height: 16px; margin-left: -1.5px; border-radius: 999px; background: var(--db-ink); box-shadow: 0 0 0 2px var(--db-surface); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-labels { display: flex; gap: 2px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-labels small { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--db-muted); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-labels small.is-now { color: var(--db-ink); font-weight: 700 !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-k { font: 700 13px/1.4 var(--db-ui) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-labels small.is-now { color: var(--db-ink); text-decoration: underline; text-underline-offset: 3px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-k { font: 500 13px/1.4 var(--db-ui) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-rangebar { display: grid; gap: 4px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-rangebar-track { position: relative; display: block; height: 6px; border-radius: 999px; background: var(--db-rule); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-rangebar-track i { position: absolute; top: 0; bottom: 0; border-radius: 999px; }
@@ -178,7 +180,7 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 /* ---------- label / value facts with thin rules (#58, #17) ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-facts { display: grid; gap: 0; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-facts > div { display: grid; gap: 2px; padding: 8px 0 !important; border-top: 1px solid var(--db-rule); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-facts dd { font-size: 15px !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) 
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-facts.is-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-facts.is-row dd { font-weight: 600 !important; }
 
@@ -192,14 +194,14 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-bars .is-before i { background: #f6e3a1; box-shadow: inset 0 0 0 1px rgba(62, 39, 35, .25); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-bars .is-since i { background: var(--db-blue); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-bars small { position: absolute; left: 0; right: 0; bottom: 8px; display: grid; justify-items: center; color: #3e2723; text-align: center; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-bars small b { font: 700 13px/1.3 var(--db-ui); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-bars small b { font: 500 13px/1.3 var(--db-ui); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-caveat { color: var(--db-muted); }
 
 /* ---------- goals, coming up, ask, suggest, routine row ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-goals li { display: grid; gap: 4px; padding: 8px 0 !important; border-top: 1px solid var(--db-rule); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-goal-k { font: 600 calc(15px * var(--db-scale))/1.3 var(--db-ui); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-goal-v { display: grid; gap: 2px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db :is(.ay-db-goal-v button, .ay-db-match) { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; min-height: 44px; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--db-ink) !important; font: 500 calc(15px * var(--db-scale))/1.3 var(--db-ui) !important; text-align: left; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db :is(.ay-db-goal-v button, .ay-db-match) { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; min-height: 44px; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--db-ink) !important; font: 600 calc(15px * var(--db-scale))/1.3 var(--db-ui) !important; text-align: left; cursor: pointer; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db .ay-wx-meter-word { font: 500 13px/1.3 var(--db-ui) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-coming { display: grid; gap: 0; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-coming li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; padding: 8px 0 !important; border-top: 1px solid var(--db-rule); }
