@@ -95,11 +95,14 @@
 .app-container .hm .hm-slot--main .hm-slot__layer { border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); overflow: hidden; background: var(--hm-butter-2); }
 .app-container .hm .hm-slot--main :is(img, picture) { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; border-radius: 0 !important; }
 /* the die-cut: a real product on its white plate */
-.app-container .hm .hm-slot--prod { top: 6%; left: 4%; width: 28%; aspect-ratio: 1 / 1; rotate: -5deg; z-index: 2; }
-.app-container .hm .hm-slot--prod .hm-slot__layer { padding: 10%; background: #fff; border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); box-sizing: border-box; }
-.app-container .hm .hm-slot--prod img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
+/* the strip: three product plates in a row over the photo's lower edge (#38) */
+.app-container .hm .hm-strip { position: absolute; left: 0; bottom: 4%; z-index: 3; width: 70%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 10px; background: var(--hm-butter); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); box-sizing: border-box; rotate: -1.5deg; }
+.app-container .hm .hm-strip .hm-slot { position: relative; aspect-ratio: 1 / 1; }
+.app-container .hm .hm-slot--plate .hm-slot__layer { padding: 12%; background: #fff; border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r-sm); box-sizing: border-box; }
+.app-container .hm .hm-slot--plate img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
 /* the UI card: real ayna pieces, outlined (no shadow) */
-.app-container .hm .hm-slot--ui { left: 0; bottom: 8%; width: 50%; height: 30%; z-index: 4; rotate: -1.5deg; }
+.app-container .hm .hm-slot--ui { left: 0; top: 10%; width: 48%; height: 30%; z-index: 4; rotate: -2deg; }
+.app-container .hm .hm-slot--ui .hm-ui { inset: 0 0 auto 0; }
 .app-container .hm .hm-ui { position: absolute; inset: auto 0 0 0; display: grid; align-content: start; gap: 6px; padding: 14px 16px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); box-shadow: none; box-sizing: border-box; text-align: left; }
 .app-container .hm .hm-ui__label { font: 600 13px/1.2 var(--ay-sans-stack); }
 .app-container .hm .hm-ui__note { font: 500 13px/1.35 var(--ay-sans-stack); }
@@ -125,7 +128,7 @@
 .app-container .hm .hm-scatter__pause { position: absolute; right: 0; top: calc(100% + 8px); display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 4px; background: none; border: 0; color: var(--ay-text); font: 600 14px/1 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .app-container .hm .hm-scatter__pause svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
 .app-container .hm .hm-scatter__pause:focus-visible { outline: 3px solid var(--ay-outline); outline-offset: 2px; border-radius: var(--hm-r-sm); }
-.app-container[data-theme='brand-dark'] .hm :is(.hm-slot--main, .hm-slot--prod) .hm-slot__layer { border-color: var(--hm-butter); }
+.app-container[data-theme='brand-dark'] .hm .hm-slot--main .hm-slot__layer { border-color: var(--hm-butter); }
 .app-container[data-theme='brand-dark'] .hm .hm-ui--rundown { border-color: var(--hm-butter); }
 /* motion: pop in once, then one slot at a time rains in its next piece */
 @media (prefers-reduced-motion: no-preference) {
@@ -139,11 +142,10 @@
 .app-container .hm .hm-slot__layer.is-out { pointer-events: none; }
 @media (max-width: 1023px) and (min-width: 768px) { .app-container .hm .hm-ui__note { display: none; } .app-container .hm .hm-slot--ui { width: 60%; } }
 @media (max-width: 767px) {
-  .app-container .hm .hm-scatter { aspect-ratio: 1 / .8; min-height: 0; margin-bottom: 40px; }
+  .app-container .hm .hm-scatter { aspect-ratio: 1 / .8; min-height: 0; margin-bottom: 52px; }
   .app-container .hm .hm-slot--main { width: 54%; right: 2%; }
-  .app-container .hm .hm-slot--prod { width: 30%; top: 4%; }
-  .app-container .hm .hm-slot--prod .hm-slot__layer { padding: 8%; }
-  .app-container .hm .hm-slot--ui { width: 62%; height: 36%; bottom: 4%; }
+  .app-container .hm .hm-strip { width: 74%; gap: 6px; padding: 6px; }
+  .app-container .hm .hm-slot--ui { width: 56%; height: 34%; top: 6%; }
   .app-container .hm .hm-ui { padding: 10px 12px; gap: 4px; }
   .app-container .hm .hm-ui__title { font-size: 16px; }
   .app-container .hm .hm-ui--product { grid-template-columns: 40px minmax(0, 1fr); column-gap: 8px; }
@@ -352,7 +354,7 @@
 .app-container .hm .hm-standards > li + li { padding-left: 16px; border-left: 1px solid var(--ay-hairline); }
 .app-container .hm .hm-standards__mark { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
 @media (max-width: 767px) {
-  .app-container .hm .hm-standards { grid-template-columns: 1fr; margin-top: 24px; }
+  .app-container .hm .hm-standards { grid-template-columns: 1fr; margin-top: 0; }
   .app-container .hm .hm-standards > li, .app-container .hm .hm-standards > li + li { padding: 10px 0; border-left: 0; }
   .app-container .hm .hm-standards > li + li { border-top: 1px solid var(--ay-hairline); }
 }

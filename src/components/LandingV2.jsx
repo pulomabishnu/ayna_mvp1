@@ -198,8 +198,8 @@ function Slot({ name, pool, step, index, still }) {
 function HeroScatter({ posts = [], paused = false, onTogglePause }) {
   const ready = useCatalogReady();
   const lineup = useMemo(() => (ready ? weeklyLineup().slice(0, 12) : []), [ready]);
-  // Four objects (landing audit 6): the photo, one product die-cut on its
-  // plate, one ayna UI card and the seal. The die-cut and the UI card swap
+  // Four objects (landing audit 6 and 11): the photo, a strip of three product
+  // plates, one ayna UI card and the seal. The plates and the UI card swap
   // what they hold; the UI card cycles the evidence rating, real product
   // cards, the Daily Rundown, a check-in and real posts when there are any.
   const pools = useMemo(() => {
@@ -220,7 +220,8 @@ function HeroScatter({ posts = [], paused = false, onTogglePause }) {
       ...cards.slice(1, 3),
       ...real.slice(1),
     ];
-    return { prod: prods, ui };
+    // Three plates in a strip (landing audit 11, #38 Rhode): the products dealt out in turn.
+    return { p0: prods.filter((_, i) => i % 3 === 0), p1: prods.filter((_, i) => i % 3 === 1), p2: prods.filter((_, i) => i % 3 === 2), ui };
   }, [lineup, posts]);
 
   // Pause when offscreen or the tab is hidden (WCAG 2.2.2; battery).
@@ -241,15 +242,17 @@ function HeroScatter({ posts = [], paused = false, onTogglePause }) {
     return () => window.clearInterval(t);
   }, [still, visible, lineup.length]);
   // Round robin: one slot changes per tick, so the module drifts, never flickers.
-  const ORDER = ['prod', 'ui'];
+  const ORDER = ['p0', 'ui', 'p1', 'p2'];
   const steps = Object.fromEntries(ORDER.map((k, i) => [k, tick > i ? Math.floor((tick - 1 - i) / ORDER.length) + 1 : 0]));
   return (
     <div ref={ref} className={`hm-hero__art hm-scatter${still ? ' is-still' : ''}`}>
       <p className="ed-sr">Pictured: ayna photography, real products from Explore and real ayna screens (an evidence rating, the Daily Rundown card, a check-in{pools.ui.some((x) => x.kind === 'post') ? ' and posts from the ayna Community' : ''}).</p>
       {/* No pop and no fetch priority: the H1 is the largest paint (LCP); this photo just arrives. */}
       <span className="hm-slot hm-slot--main" aria-hidden="true"><span className="hm-slot__layer"><Photo src="/landing/pink-stripe-floor.webp" alt="" sizes="(max-width: 767px) 60vw, (max-width: 1279px) 32vw, 340px" /></span></span>
-      <Slot name="prod" pool={pools.prod} step={steps.prod} index={1} still={still} />
-      <Slot name="ui" pool={pools.ui} step={steps.ui} index={2} still={still} />
+      <span className="hm-strip" aria-hidden="true">
+        {['p0', 'p1', 'p2'].map((k, i) => <Slot key={k} name="plate" pool={pools[k]} step={steps[k]} index={i + 1} still={still} />)}
+      </span>
+      <Slot name="ui" pool={pools.ui} step={steps.ui} index={4} still={still} />
       <Seal className="hm-hero__seal hm-scatter__seal" />
       {onTogglePause && !reducedMotion() && (
         <button type="button" className="hm-scatter__pause" aria-pressed={paused} onClick={onTogglePause}>
