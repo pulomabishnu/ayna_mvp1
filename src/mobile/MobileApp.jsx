@@ -135,6 +135,7 @@ import './ds-app.css';
 import OfflineBanner from './components/OfflineBanner.jsx';
 import TutorialLayer from './tutorial/TutorialLayer.jsx';
 import { growTransition } from '../utils/viewTransition.js';
+import { localToday } from '../utils/localDate.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -831,7 +832,7 @@ export default function MobileApp() {
     if (!authUser?.id || !personalizeWithData) return '';
     const sections = health.insights?.sections || [];
     const ready = sections.filter((section) => section.status === 'ready');
-    const today = new Date().toLocaleDateString('en-CA');
+    const today = localToday();
     const week = buildDashboard(health.insightRows || [], { days: 30, today });
     const estimate = sections.find((section) => section.id === 'cycle')?.estimate || null;
     const explained = explainWeek(health.insightRows || [], { today, cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, hormonalBC: usesHormonalBC(effectiveQuizAnswers), max: 2 });
@@ -1418,9 +1419,8 @@ export default function MobileApp() {
     hasEcosystem,
   };
 
-  // The chat from Home is full screen (Back returns to Home), so no tab bar there.
-  const chatFullScreen = screen === 'ayna' && !chatFirst && homeView === 'chat' && !askAynaOpen && !overlay;
-  const showTabBar = !chatFullScreen && !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
+  // The chat is the Ask ayna tab (all-pages brief, Oct 25), so the tab bar stays under it.
+  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
   // Deep round 2: the tab bar stays on drilled-in screens (product, read, why
   // this match), as in iOS; tapping a tab pops back to that tab's root.
   // Reads ranked from her app answers (personalReads.js): matching reads
@@ -1430,7 +1430,8 @@ export default function MobileApp() {
     .filter((article) => !readArticleIds.includes(article.id))
     .concat(rankedEcosystemReads.filter((article) => readArticleIds.includes(article.id)))
     .slice(0, 3);
-  const activeTab = navTabFor(screen, overlay?.type);
+  // Ask ayna is a tab (all-pages brief, Oct 25): the chat view of 'ayna', or the drawer when it is open.
+  const activeTab = askAynaOpen && !chatFirst && !overlay ? 'ask' : navTabFor(screen, overlay?.type, { view: homeView, variant: homeVariant });
 
   // "New in Community" for the Daily Rundown: real public posts for her topics and follows.
   const rundownCommunity = useRundownCommunity(authUser?.id || null, effectiveQuizAnswers);
@@ -1569,6 +1570,8 @@ export default function MobileApp() {
         onExplore={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setExploreSection('overview'); setScreen('explore'); }}
         // Home always opens on its root (the dashboard, or the chat in the chat-first variant).
         onHome={() => { setHomeView(homeRoot); setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreenRaw('ayna'); }}
+        // Ask ayna: the full chat as a tab screen (the 'ayna' screen's chat view).
+        onAsk={() => { setAskAynaOpen(false); setOverlay(null); setHomeView('chat'); setScreenRaw('ayna'); }}
         tabList={chatFirst ? APP_TABS_CHAT_FIRST : APP_TABS}
         onCommunity={() => { setAskAynaOpen(false); setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
         // You opens for everyone: signed out it says what an account keeps, and Settings still works.
@@ -1749,7 +1752,8 @@ export default function MobileApp() {
         asTab={screen === 'ayna' && homeView === 'chat' && !askAynaOpen}
         // Home: the chat full screen with Back to Home; chat-first variant: the switch on top.
         renderHomeTop={chatFirst && screen === 'ayna' && !askAynaOpen ? (leading) => <HomeSwitch view={homeView} onChange={(v) => { setAskAynaOpen(false); setHomeView(v); }} leading={leading} /> : null}
-        onBackHome={!chatFirst && screen === 'ayna' && !askAynaOpen ? () => setHomeView('home') : null}
+        // Ask ayna is a root tab now, so no Back button; Today is one tap away in the tab bar.
+        onBackHome={null}
         starters={askStarters}
         onStarter={(st) => nav.onAskAyna(st)}
         draft={askDraft}

@@ -13,7 +13,7 @@
   --q-ink: var(--ay-text, #3e2723);
   --q-ink2: var(--ay-text-2, rgba(62, 39, 35, .78));
   --q-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
-  --q-line: var(--ay-outline, #3e2723);
+  --q-line: var(--ay-outline-color, #3e2723);
   --q-fbg: var(--ay-feature-bg, #3e2723);
   --q-ffg: var(--ay-feature-fg, #ffedac);
   --q-sky-tint: rgba(118, 158, 190, .22);

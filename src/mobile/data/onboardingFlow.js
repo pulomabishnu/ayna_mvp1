@@ -97,12 +97,12 @@ export function topicsFromSupport(support = []) {
 // why ayna is asking each health question"). Short, plain, one line each.
 const WHY = {
   helpTopics: 'This only picks which options we show next. It is not added to your health profile.',
-  support: 'Each one you pick gets its own matches and its own place on Home.',
+  support: 'Each one you pick gets its own matches and its own place on Today.',
   periodFlow: 'We use it to match absorbency for pads, tampons, cups and period underwear.',
   periodPain: 'Stronger pain moves heat, TENS and pain relief options up, and tells us when to suggest care.',
   utiFrequency: 'Symptoms right now point you to testing and care first. Repeat symptoms bring prevention forward.',
   safety: 'ayna does not diagnose. If something is new or getting worse quickly, we show care before products.',
-  goals: 'Goals shape what Home talks about. They never change a match score.',
+  goals: 'Goals shape what Today talks about. They never change a match score.',
   age: 'Some products are not meant for every age, like menopause supplements in your 20s.',
   lifeStage: 'It changes what is safe to show, for example pregnancy-safe picks only.',
   ttcDuration: 'It changes whether we lead with tracking and prenatal basics or with fertility care.',

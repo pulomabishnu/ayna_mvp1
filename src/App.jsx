@@ -854,8 +854,9 @@ function App() {
   // longer apply.
   const themeAttr = theme === 'dark' ? 'brand-dark' : theme;
   useEffect(() => { document.documentElement.dataset.ayTheme = themeAttr; }, [themeAttr]);
-  // Brand dark also swaps the accents: sky blue <-> rose pink (see darkAccentSwap).
-  useEffect(() => { setDarkAccentSwap(themeAttr === 'brand-dark'); }, [themeAttr]);
+  // All-pages brief (Oct 25): blue is for chart lines only, so dark mode no
+  // longer turns pink into sky blue. The swap stays off (and its sheet removed).
+  useEffect(() => { setDarkAccentSwap(false); }, [themeAttr]);
   // Every analytics event says which matching engine served it, so v1 and v2 can be compared.
   useEffect(() => { try { posthog.register?.({ match_engine: matchEngine() }); } catch { /* analytics off */ } }, []);
   // Tab icon follows the site's theme: butter tile in light, espresso tile in dark.
