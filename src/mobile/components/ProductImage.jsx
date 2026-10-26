@@ -33,7 +33,7 @@ function PhotoPlaceholder({ style, product }) {
  * so a prop change to a different src is automatically treated as
  * untried/not-errored during render, with no effect needed to clear it.
  */
-export default function ProductImage({ src, alt, allowBrandLogo = false, style, product }) {
+export default function ProductImage({ src, alt, allowBrandLogo = false, style, product, fallback = null }) {
   // Cleaned white-background studio photo (by catalog id) wins over `src`.
   const directSrc = productImageOverride(product) || safeProductImageSrc(src, allowBrandLogo);
   // Same live photo lookup the website always used (/api/product-image via
@@ -54,7 +54,7 @@ export default function ProductImage({ src, alt, allowBrandLogo = false, style, 
   const [erroredSrc, setErroredSrc] = useState(null);
 
   if (!safeSrc || erroredSrc === safeSrc) {
-    return <PhotoPlaceholder style={style} product={product} />;
+    return fallback || <PhotoPlaceholder style={style} product={product} />;
   }
   return (
     <img

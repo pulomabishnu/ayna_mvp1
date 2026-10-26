@@ -41,6 +41,8 @@ import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscov
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
+import { PlateName } from './cards/CardBits.jsx';
+import { matchBreakdownFor } from './pdp/decision.js';
 import posthog from 'posthog-js';
 import GlossaryTerm from './GlossaryTerm';
 import { isPlainLeftClick } from '../utils/productRoute';
@@ -1889,9 +1891,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const matchHold = isSafetyHold(itemDetails);
                     // No profile, no %: a number needs her answers to be honest.
                     const matchPercent = hasProfile && badge ? badge.percent : null;
-                    const why = matchPercent != null ? whyLine(item, getProductMatchDetailsForProduct(item, quizResults, healthProfile, matchOpts)) : '';
-                    const eligibility = getExplicitEligibility(item);
-                    const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
+                    // The reason line from the one engine's breakdown (src/matching), else the why line.
+                    const why = matchPercent != null ? (matchBreakdownFor(item, itemDetails).reason || whyLine(item, itemDetails)) : '';
                     const isWishlisted = !!savedProducts[item.id];
                     const isInEcosystem = !!myProducts[item.id];
                     return (
@@ -1917,13 +1918,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             rating={(() => { const d = aynaReviews[item.id]; const v = getAynaRating(item, d); const n = getAynaRatingCount(d); return v != null && n > 0 ? { value: Number(v), count: n } : null; })()}
                             isSaved={isWishlisted}
                             inEcosystem={isInEcosystem}
+                            // No profile yet: "See your match" (no number) opens the same flow as "See my matches".
+                            onSeeMatch={!hasAnswers && onRequirePersonalizeAuth ? () => onRequirePersonalizeAuth() : null}
                             onOpen={(p) => onOpenProduct?.(p, searchSubmitted
                                 ? { source: 'search_results', searchQuery: submittedQuery, position: idx }
                                 : { source: 'browse', position: idx })}
                             onToggleSaved={onToggleSaved}
-                            labels={<>
-                                {eligibilityLabel && <span className="ay-product-card__tag">{eligibilityLabel}</span>}
-                            </>}
                             tile={cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
                                 <>
                                     <img
@@ -1939,14 +1939,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                             if (fallback) fallback.style.display = 'flex';
                                         }}
                                     />
-                                    <span className="ay-product-card__fallback" style={{ display: 'none', position: 'absolute', inset: 0 }}>
-                                        <ProductImageFallback product={item} />
+                                    <span className="ay-pcard__fallback" style={{ display: 'none', position: 'absolute', inset: 0 }}>
+                                        <PlateName product={item} />
                                     </span>
                                 </>
                             ) : imageStillLoading ? (
                                 <div className="skeleton-shimmer" style={{ position: 'absolute', inset: 0 }} aria-hidden="true" />
                             ) : (
-                                <ProductImageFallback product={item} />
+                                <PlateName product={item} />
                             )}
                         />
                         </React.Fragment>

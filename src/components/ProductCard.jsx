@@ -4,7 +4,8 @@ import { CATEGORY_LABELS } from '../data/catalogTaxonomy.js';
 import { cardKind, cardBadge, cardPrice } from '../utils/productCardFacts.js';
 import { sentenceCase } from '../utils/sentenceCase.js';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
-import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import ProductTileImage from './ProductTileImage';
+import { PlateName, EvidenceRow, PriceExtras, FactChips } from './cards/CardBits.jsx';
 import MatchPill from './MatchPill';
 import { matchText } from '../utils/matchDisplay.js';
 import '../styles/card-fit.css';
@@ -50,6 +51,8 @@ export default function ProductCard({
   badge = null,
   // false where the page already says every product is a partner's.
   partnerMark = true,
+  // Signed out / no profile: a "See your match" line (no number) that opens the quiz.
+  onSeeMatch = null,
   className = '',
   style,
 }) {
@@ -59,63 +62,45 @@ export default function ProductCard({
   // Something she added herself (not in the catalog yet): no page to open
   // and no facts to show, so the card says whose it is and stays put.
   const isMine = product.userAdded === true;
-  // One anatomy everywhere (src/utils/productCardFacts.js, shared with the app card):
-  // white tile + heart → brand → name (2 lines) → kind + one badge → match → price + unit.
+  // One anatomy everywhere (src/utils/productCardFacts.js, shared with the app card),
+  // fixed slots in the PDP build brief's order: plate + sticker → brand · name →
+  // match + reason → price, per use, sizes → facts → evidence + safety → tag + heart.
   const price = cardPrice(product);
   const badgeText = isMine ? '' : cardBadge(product, { partner: partnerMark });
-  const Link = isMine ? 'div' : 'a';
   const kind = !isMine && shownBrand ? cardKind(product) : '';
   const hasMatch = !isMine && Number.isFinite(matchPercent) && matchPercent > 0;
+  // Slot 7: one tag (Pre-order, Sponsored or ayna partner) beside the heart.
+  const sticker = !isMine ? kind || categoryLabel : '';
+  const showSeeMatch = !isMine && !hasMatch && !matchHold && typeof onSeeMatch === 'function';
+  const open = (e) => {
+    if (!isPlainLeftClick(e)) return;
+    e.preventDefault();
+    // The star line is the way to the reviews: the page opens on Reviews.
+    if (e.target?.closest?.('.ay-pcard__rating')) requestProductTab('reviews');
+    onOpen?.(product);
+  };
   return (
-    <article className={`ay-product-card${inEcosystem ? ' is-in-eco' : ''}${hasMatch ? ' has-fit' : ''} ${className}`.trim()} style={style}>
-      <Link
-        className={`ay-product-card__link${isMine ? ' is-static' : ''}`}
-        {...(isMine ? {} : {
-          href: productHref(product),
-          onClick: (e) => {
-            if (!isPlainLeftClick(e)) return;
-            e.preventDefault();
-            // The star line is the way to the reviews: the page opens on Reviews.
-            if (e.target?.closest?.('.ay-product-card__rating')) requestProductTab('reviews');
-            onOpen?.(product);
-          },
-        })}
-      >
-        <div className="ay-product-card__tile">
-          {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<ProductImageFallback product={product} />} />}
-        </div>
-        <div className="ay-product-card__body">
-          <div className="ay-product-card__top">
-            <span className="ay-product-card__brand">{isMine ? categoryLabel : (shownBrand || categoryLabel)}</span>
-          </div>
-          {/* Brand sits above, so a leading brand is trimmed from the name
-              ("Love Wellness Bye Bye Bloat" → "Bye Bye Bloat"). */}
-          <h3 className="ay-product-card__name" title={product.name}>{shownBrand ? displayName(product) : product.name}</h3>
-          <p className="ay-product-card__kind">
-            {kind ? <span className="ay-product-card__kindtext">{kind}</span> : !badgeText && <span aria-hidden="true">{'\u00a0'}</span>}
-            {/* At most one mark, small text in the same place on every card (same on the app). */}
-            {badgeText && <span className={`ay-product-card__mark${badgeText === 'Pre-order' ? ' is-alert' : ''}`}>{badgeText}</span>}
-            {labels}
-          </p>
-          {badge}
-          <span className={`ay-product-card__price${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
-            ? (() => { const [was, ...rest] = price.sub.replace(/^list\s+/i, '').split(/\s+·\s+/); return <small><span className="sr-only">List price </span><s>{was}</s>{rest.length > 0 && <span> {rest.join(' · ')}</span>}</small>; })()
-            : <small>{price.sub}</small>)}</span>
-          {/* Ownership reads as text, never over the product photo. */}
-          {inEcosystem && <span className="ay-product-card__match"><span className="ay-product-card__eco"><CheckIcon size={14} />{IN_ROUTINE}</span></span>}
-          {rating && Number.isFinite(rating.value) && rating.count > 0 && (
-            <span className="ay-product-card__rating" data-reviews-link="true"><span aria-hidden="true">★</span> <span className="sr-only">Rated </span>{formatAverage(rating.value)}<span className="sr-only"> out of 5</span> · <u>{rating.count} review{rating.count === 1 ? '' : 's'}</u></span>
-          )}
-        </div>
-      </Link>
-      {/* Her match sits outside the open-the-product link: tapping it opens Why this match. */}
+    <article className={`ay-pcard${inEcosystem ? ' is-in-eco' : ''}${isSaved ? ' is-saved' : ''}${hasMatch ? ' has-fit' : ''} ${className}`.trim()} style={style}>
+      {/* 1. The product on its plate, same scale on every card, with one category sticker. */}
+      <div className="ay-pcard__plate">
+        {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<PlateName product={product} />} />}
+        {sticker && <span className="ay-pcard__sticker">{sticker}</span>}
+      </div>
+      {/* 2. Brand · name. The name is the link; it covers the whole card. */}
+      <p className="ay-pcard__brand">{isMine ? categoryLabel : (shownBrand || categoryLabel)}</p>
+      <h3 className="ay-pcard__name" title={product.name}>
+        {isMine
+          ? <span className="ay-pcard__link is-static">{product.name}</span>
+          : <a className="ay-pcard__link" href={productHref(product)} onClick={open}>{shownBrand ? displayName(product) : product.name}</a>}
+      </h3>
+      {/* 3. Her match and why, outside the open-the-product link: tapping it opens Why this match. */}
       {(hasMatch || (matchHold && !isMine)) && (
-        <div className="ay-product-card__fit">
+        <div className="ay-pcard__fit">
           <MatchPill
             hold={!hasMatch && matchHold}
             percent={matchPercent}
             size="sm"
-            className="ay-product-card__pill"
+            className="ay-pcard__pill"
             label={hasMatch ? `${matchLabel || matchText(matchPercent)}. Why this match for ${product.name}` : `Safety hold, match unavailable for ${product.name}`}
             onClick={() => {
               if (onShowWhy) { onShowWhy(product); return; }
@@ -124,22 +109,47 @@ export default function ProductCard({
               else window.location.assign(productHref(product));
             }}
           />
-          {why && <span className="ay-product-card__why">{why}</span>}
+          {why && <span className="ay-pcard__why">{why}</span>}
         </div>
       )}
-      {onToggleSaved && (
-        <button
-          type="button"
-          className="ay-product-card__heart"
-          aria-label={isSaved ? `Remove ${product.name} from Saved` : `Save ${product.name}`}
-          aria-pressed={isSaved}
-          data-tip={isSaved ? 'Saved' : 'Save'}
-          onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART} /></svg>
-        </button>
+      {showSeeMatch && <button type="button" className="ay-pcard__seematch" onClick={() => onSeeMatch(product)}>See your match <span aria-hidden="true">→</span></button>}
+      {badge}
+      {/* 4. Price with its unit, the per-use chip and the real size pills. */}
+      {!isMine && (
+        <div className="ay-pcard__price">
+          <span className={`ay-pcard__amount${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
+            ? (() => { const [was, ...rest] = price.sub.replace(/^list\s+/i, '').split(/\s+·\s+/); return <small><span className="sr-only">List price </span><s>{was}</s>{rest.length > 0 && <span> {rest.join(' · ')}</span>}</small>; })()
+            : <small>{price.sub}</small>)}</span>
+          <PriceExtras product={product} />
+        </div>
       )}
-      {action && <div className="ay-product-card__action">{action}</div>}
+      {rating && Number.isFinite(rating.value) && rating.count > 0 && (
+        <a className="ay-pcard__rating" href={productHref(product)} onClick={open}><span aria-hidden="true">★</span> <span className="sr-only">Rated </span>{formatAverage(rating.value)}<span className="sr-only"> out of 5</span> · <u>{rating.count} review{rating.count === 1 ? '' : 's'}</u></a>
+      )}
+      {/* 5. Facts from the record. 6. Evidence mark and the safety icon. */}
+      {!isMine && <FactChips product={product} />}
+      {!isMine && <EvidenceRow product={product} />}
+      {/* 7. The one tag and the save heart. Ownership reads as text, never over the photo. */}
+      <div className="ay-pcard__foot">
+        <span className="ay-pcard__tags">
+          {badgeText && <span className={`ay-pcard__tag${badgeText === 'Pre-order' ? ' is-alert' : ''}`}>{badgeText}</span>}
+          {inEcosystem && <span className="ay-pcard__tag is-eco"><CheckIcon size={14} />{IN_ROUTINE}</span>}
+          {labels}
+        </span>
+        {onToggleSaved && (
+          <button
+            type="button"
+            className="ay-pcard__heart"
+            aria-label={isSaved ? `Remove ${product.name} from Saved` : `Save ${product.name}`}
+            aria-pressed={isSaved}
+            data-tip={isSaved ? 'Saved' : 'Save'}
+            onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART} /></svg>
+          </button>
+        )}
+      </div>
+      {action && <div className="ay-pcard__action">{action}</div>}
       <CompareCheck product={product} />
     </article>
   );

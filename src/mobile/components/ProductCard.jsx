@@ -16,8 +16,10 @@ import { whyLine } from '../../utils/whyLine.js';
 import HealthBackedBadge from '../../components/health/HealthBackedBadge.jsx';
 import { cardKind, cardBadge, cardPrice } from '../../utils/productCardFacts.js';
 import { CompareCheck } from '../../components/compare/CompareControls.jsx';
+import { matchBreakdownFor } from '../../components/pdp/decision.js';
+import { PlateName, PriceExtras, FactChips, EvidenceRow } from '../../components/cards/CardBits.jsx';
 
-export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts, needId = null }) {
+export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts, needId = null, onSeeMatch = null }) {
   const { name, category, price, priceDisplay, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   // Same price model as the website card: short main line + optional detail line.
@@ -36,7 +38,8 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   // Held back for safety: "Safety hold" in place of a number (never 0%).
   const held = !badge && isSafetyHold(match);
   // The % explained in one plain line from the engine's reasons (src/utils/whyLine.js).
-  const why = showMatch ? whyLine(product, match) : '';
+  // The reason line from the one engine's breakdown (src/matching), else the why line.
+  const why = showMatch ? (matchBreakdownFor(product, match).reason || whyLine(product, match)) : '';
   // "Backed by your sleep data": her connected data supports the need this card is shown for.
   const backedBy = showMatch ? match?.needMatches?.find((m) => m.needId === (needId || match.needId))?.healthData : null;
   const healthBacked = backedBy ? { section: backedBy.section, tracker: ['tracker', 'wearable'].includes(String(category || '').toLowerCase()) } : null;
@@ -59,29 +62,48 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   // app-wide. Its own class names so the older card rules don't reach it.
   if (!isList) {
     const showBrand = secondaryLabel && !brandRepeatsName;
-    // Same anatomy and words as the website card (src/utils/productCardFacts.js):
-    // tile + heart → brand → name (2 lines) → kind + one badge → price + unit → match.
+    // Same fixed slots and words as the website card (src/utils/productCardFacts.js,
+    // components/cards/CardBits.jsx): plate + sticker → brand · name → match + reason →
+    // price, per use, sizes → facts → evidence + safety → tag + heart.
     const kind = cardKind(product);
     const oneBadge = cardBadge(product);
     const facts = cardPrice({ ...product, price: price || priceDisplay });
+    const sticker = kind || '';
+    const priceLine = facts.main !== 'Price at retailer' ? <b>{facts.main}</b> : <b className="is-muted">{facts.main}</b>;
     return (
-      <article className={`ay-pc${variant === 'row' ? ' is-row' : ''}`}>
-        <button type="button" className="ay-pc-main" onClick={onClick} aria-label={`${name}, ${facts.main}${facts.sub ? ` ${facts.sub}` : ''}${oneBadge ? `, ${oneBadge}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>
-          <span className="ay-pc-photo">
-            <ProductImage product={product} src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
+      <article className={`ay-pcard${variant === 'row' ? ' is-row' : ''}${isSaved ? ' is-saved' : ''}`}>
+        {/* 2. Brand · name. The button covers the card (same as the website's link). */}
+        <small className="ay-pcard__brand" aria-hidden={showBrand ? undefined : true}>{showBrand ? secondaryLabel : '\u00a0'}</small>
+        <strong className="ay-pcard__name">
+          <button type="button" className="ay-pc-main ay-pcard__link" onClick={onClick} aria-label={`${name}, ${facts.main}${facts.sub ? ` ${facts.sub}` : ''}${oneBadge ? `, ${oneBadge}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>{brandRepeatsName ? name : displayName(product)}</button>
+        </strong>
+        {/* 1. The product on its plate, same scale everywhere, with one category sticker (drawn first: CSS order). */}
+        <span className="ay-pcard__plate" aria-hidden="true">
+          <ProductImage product={product} src={resolvedImage} alt="" allowBrandLogo={isService} fallback={<PlateName product={product} />} />
+          {sticker && <span className="ay-pcard__sticker">{sticker}</span>}
+        </span>
+        {/* 3. Match + reason (from the one engine's breakdown). */}
+        {(showMatch || held) && (
+          <span className="ay-pcard__fit">
+            {showMatch && <MatchPill percent={badge.percent} size="sm" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
+            {held && <MatchPill hold size="sm" label={`${SAFETY_HOLD}, ${MATCH_UNAVAILABLE.toLowerCase()} for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
+            {why && <small className="ay-pcard__why">{why}</small>}
           </span>
-          <span className="ay-pc-copy">
-            <small className="ay-pc-brand" aria-hidden={showBrand ? undefined : true}>{showBrand ? secondaryLabel : '\u00a0'}</small>
-            <strong className="ay-pc-name">{brandRepeatsName ? name : displayName(product)}</strong>
-            <span className="ay-pc-kind" aria-hidden="true">{kind && <span className="ay-pc-kindtext">{kind}</span>}{oneBadge && <span className={`ay-pc-mark${oneBadge === 'Pre-order' ? ' is-alert' : ''}`}>{oneBadge}</span>}{!kind && !oneBadge && '\u00a0'}</span>
-            <span className="ay-pc-price">{facts.main !== 'Price at retailer' ? <b>{facts.main}</b> : <b className="is-muted">{facts.main}</b>}{facts.sub && <small className="ay-pc-unit">{facts.sub}</small>}</span>
-            {why && <small className="ay-pc-why">{why}</small>}
-            {healthBacked && <HealthBackedBadge backed={healthBacked} className="ay-pc-hbadge" />}
-          </span>
-        </button>
-        {showMatch && <MatchPill percent={badge.percent} size="sm" className="ay-pc-match" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
-        {held && <MatchPill hold size="sm" className="ay-pc-match" label={`${SAFETY_HOLD}, ${MATCH_UNAVAILABLE.toLowerCase()} for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
-        {onToggleSaved && <button type="button" className={`ay-pc-save${isSaved ? ' is-on' : ''}`} aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
+        )}
+        {!showMatch && !held && typeof onSeeMatch === 'function' && <button type="button" className="ay-pcard__seematch" onClick={() => onSeeMatch(product)}>See your match <span aria-hidden="true">→</span></button>}
+        {healthBacked && <HealthBackedBadge backed={healthBacked} className="ay-pc-hbadge" />}
+        {/* 4. Price + unit, per use, sizes. 5. Facts. 6. Evidence + safety. */}
+        <span className="ay-pcard__price">
+          <span className="ay-pcard__amount">{priceLine}{facts.sub && <small>{facts.sub}</small>}</span>
+          <PriceExtras product={product} />
+        </span>
+        <FactChips product={product} />
+        <EvidenceRow product={product} />
+        {/* 7. The one tag and the save heart. */}
+        <span className="ay-pcard__foot">
+          <span className="ay-pcard__tags">{oneBadge && <span className={`ay-pcard__tag${oneBadge === 'Pre-order' ? ' is-alert' : ''}`}>{oneBadge}</span>}</span>
+          {onToggleSaved && <button type="button" className="ay-pcard__heart" aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
+        </span>
         <CompareCheck product={product} />
       </article>
     );
