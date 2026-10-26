@@ -90,7 +90,7 @@ describe('whyFirstLine', () => {
     expect(whyFirstLine([b, a])).toBe('Cup A ranks first for you: holds a heavy flow.');
   });
   it('handles ties, a single scored product, and nothing scored', () => {
-    expect(whyFirstLine([a, { ...b, details: d({ percent: 90 }) }])).toBe('These fit what you told us about the same.');
+    expect(whyFirstLine([a, { ...b, details: d({ percent: 90 }) }])).toBe('Similar fit for you.');
     expect(whyFirstLine([a, { product: { name: 'X' }, details: d({ percent: 0 }) }])).toBe('Cup A is the only one here that matches what you told us.');
     expect(whyFirstLine([{ product: { name: 'X' }, details: null }])).toBe('');
   });

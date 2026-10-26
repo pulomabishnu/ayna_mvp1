@@ -7,14 +7,17 @@ import { buildGlance } from '../../components/pdp/glance.js';
 import { useResearchState } from '../../data/researchLoader.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
-import { SheetMatch, ProductQuickActions } from './ProductQuick.jsx';
-import { MatchLine, SafetyLine, WhereToBuy, StickyBuy, PriceLine } from '../../components/pdp/PdpParts.jsx';
+import { SheetMatch } from './ProductQuick.jsx';
+import { SafetyLine, MatchLockup, PriceRow, Highlights, ActionsRow } from '../../components/pdp/PdpParts.jsx';
+import { costPerUse, highlightsFor, matchBreakdownFor, alsoAt } from '../../components/pdp/decision.js';
+import { trackApp } from '../utils/appAnalytics.js';
+import { IN_ROUTINE } from '../../utils/routineCopy.js';
 import { buyModel } from '../../components/pdp/buyModel.js';
 import { heroPriceView } from '../../components/pdp/heroPrice.js';
 import { perUnitLabel } from '../../components/pdp/glance.js';
 import { priceParts } from '../../data/passport/priceParts.js';
 import { cardKind } from '../../utils/productCardFacts.js';
-import { matchLineState, topWarningFor, heroNotes } from '../../components/pdp/pdpParts.js';
+import { matchLineState, topWarningFor, heroNotes, safetyLineFor } from '../../components/pdp/pdpParts.js';
 import { ProductAsk } from '../../components/passport/ProductSections.jsx';
 import { whyLine } from '../../utils/whyLine.js';
 import '../../components/pdp/pdp-tabs.css';
@@ -40,12 +43,13 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
   // The match engine's details for her (null signed out): the one match line and Is it for you.
   details = null, onShowWhy = null, onFixSafety = null, pregnancyFirst = false,
   // Ask about this product: a starter or her question goes to the chat, anchored to the product.
-  onAsk = null }) {
+  onAsk = null,
+  // Her answers (optional): the safety line names her IUD first when she has one.
+  answers = null }) {
   const { product, loaded } = useResearchState(baseProduct);
   const [full, setFull] = useState(false);
   const rootRef = useRef(null);
   const sheetRef = useRef(null);
-  const actionsRef = useRef(null);
   const closeBtnRef = useRef(null);
   const [opener] = useState(() => (typeof document !== 'undefined' ? document.activeElement : null));
   const finish = () => onClose?.();
@@ -102,6 +106,12 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
   const buy = buyModel(product, { brand, name });
   const priceNotes = heroNotes(heroPriceView(product, { price: priceParts(product), perUnit: perUnitLabel(product), glance, brand }).notes).keep;
   const still = reduceMotion();
+  const perUse = costPerUse(product);
+  const highlights = highlightsFor(product, glance);
+  const others = alsoAt(buy?.rows);
+  // "Why 92%?": raised / lowered / not known yet from the one engine (matching/breakdown.js).
+  const breakdown = details ? matchBreakdownFor(product, details) : null;
+  const buyLink = (extra = '') => (buy?.url ? <a className={`ay-pquick__buy ayv-buy ayv-sticker ${extra}`.trim()} href={buy.url} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: extra ? 'sheet_summary_end' : 'product_sheet' })}>{buy.label || 'Buy'}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens the seller’s site)</span></a> : null);
 
   const node = (
     <div ref={rootRef} className={`ay-psheet-layer${still ? ' is-still' : ''}${full ? ' is-full' : ''}`} data-product-sheet="">
@@ -118,19 +128,26 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
             <div className="ay-psheet__head">
               <span className="ay-psheet__img"><ProductImage product={product} src={product.image || product.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
               <div className="ay-psheet__id">
-                {(brand || cardKind(product)) && <p className="ay-psheet__brand">{brand || cardKind(product)}</p>}
+                {(brand || glance?.brand || cardKind(product)) && <p className="ay-psheet__brand">{brand || glance?.brand || cardKind(product)}</p>}
                 <h2 id="ay-psheet-title">{name}</h2>
-                <PriceLine main={product.price ? price.main : ''} notes={priceNotes} />
               </div>
             </div>
             {details
-              ? <MatchLine state={matchLineState({ details, percent: details.percent, hasProfile: true, why: whyLine(product, details) })} onWhy={onShowWhy} onFix={onFixSafety} />
+              ? <MatchLockup state={matchLineState({ details, percent: details.percent, hasProfile: true, why: whyLine(product, details) })} breakdown={breakdown} onAskWhy={onAsk} onFull={onShowWhy} onFix={onFixSafety} idBase="ay-sheet-why" />
               : <SheetMatch state={matchState} />}
-            <div ref={actionsRef}><ProductQuickActions product={product} saved={saved} onToggleSaved={onToggleSaved} inRoutine={inRoutine} onAddToRoutine={onAddToRoutine} big buy={buy} /></div>
-            <WhereToBuy rows={buy?.rows} />
-            <SafetyLine text={topWarning} />
-            <ProductEvidence key={product.id} product={product} glance={glance} loading={!loaded} swipeTabs syncHash={false} safetyLead={topWarning} fit={{ details, hasProfile: Boolean(details && details.matchStatus !== 'no-profile'), onShowWhy }} askSlot={onAsk ? <ProductAsk productName={name} onAsk={onAsk} hasProfile={Boolean(details && details.matchStatus !== 'no-profile')} /> : null} />
-            <StickyBuy model={buy} watch={actionsRef} mode="scroll" saved={saved} onSave={onToggleSaved ? () => onToggleSaved(product) : null} />
+            <PriceRow main={product.price ? price.main : ''} perUse={perUse} notes={priceNotes} />
+            <div className="ayv-actions" data-tour="quick-actions">{buyLink()}</div>
+            {buy?.url && (
+              <p className="ay-pquick__leave ayv-fine ayv-disclose">
+                <span>{buy.partner ? 'ayna partner. We may earn a commission.' : 'ayna may earn a commission.'}</span>
+                {buy.checked && <span>{buy.checked}</span>}
+                {others.length > 0 && <span>Also at {others.map((r, i) => <span key={r.url}>{i > 0 && ', '}<a href={r.url} target="_blank" rel="noopener noreferrer">{r.name}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</span>}
+              </p>
+            )}
+            <SafetyLine lines={safetyLineFor(product, glance, undefined, { answers: answers || (pregnancyFirst ? { lifeStageSelections: ['pregnant'] } : null) }).lines} />
+            <ActionsRow saved={saved} onSave={onToggleSaved ? () => onToggleSaved(product) : null} inRoutine={inRoutine} onRoutine={onAddToRoutine ? () => onAddToRoutine(product) : null} routineWords={['Routine', IN_ROUTINE]} onAsk={onAsk ? () => onAsk(`About ${name}: Anything I should know before using it?`) : null} />
+            <Highlights items={highlights} note={highlights.length ? 'From the product record. Not tested by ayna.' : ''} />
+            <ProductEvidence key={product.id} product={product} glance={glance} loading={!loaded} swipeTabs syncHash={false} safetyLead={topWarning} fit={{ details, hasProfile: Boolean(details && details.matchStatus !== 'no-profile'), onShowWhy }} askSlot={onAsk ? <ProductAsk productName={name} onAsk={onAsk} hasProfile={Boolean(details && details.matchStatus !== 'no-profile')} /> : null} endCta={buyLink('is-compact')} />
             {renderFull && <button type="button" className="ay-psheet__more" onClick={() => setFull(true)}>Read more <span aria-hidden="true">→</span><span className="sr-only"> about {name} on its full page</span></button>}
           </div>
         </>)}

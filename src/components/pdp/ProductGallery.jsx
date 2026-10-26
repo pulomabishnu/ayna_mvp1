@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import ImageZoomViewer from '../../mobile/components/ImageZoomViewer.jsx';
 import GalleryThumbs from './GalleryThumbs.jsx';
+import { ScallopPlate } from './PdpParts.jsx';
 import './pdp-gallery.css';
 
 const reduceMotion = () => typeof window !== 'undefined' && Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
@@ -29,6 +30,9 @@ export default function ProductGallery({
   onZoom,
   thumbs = true,
   className = '',
+  // PDP audit 7.1: the product on a white scalloped plate (pink when saved), a square (web) or 4:5 (app) frame.
+  plate = null,
+  frame = 'square',
 }) {
   const trackRef = useRef(null);
   const count = images.length;
@@ -55,7 +59,7 @@ export default function ProductGallery({
   };
   useEffect(() => () => window.clearTimeout(settle.current), []);
 
-  if (!count) return <div className={`ay-gal is-empty ${className}`.trim()}>{fallback}</div>;
+  if (!count) return <div className={`ay-gal is-empty${plate ? ` has-plate is-${frame}` : ''} ${className}`.trim()}>{plate && <ScallopPlate tone={plate} stroke className="ay-gal__plate" />}{fallback}</div>;
 
   const go = (d) => onIndex?.((at + d + count) % count);
   const onKeyDown = (e) => {
@@ -64,7 +68,7 @@ export default function ProductGallery({
   };
 
   return (
-    <div className={`ay-gal${count > 1 ? ' is-multi' : ''} ${className}`.trim()}>
+    <div className={`ay-gal${count > 1 ? ' is-multi' : ''}${plate ? ` has-plate is-${frame}` : ''} ${className}`.trim()}>
       <div className="ay-gal__stage">
         <div
           ref={trackRef}
@@ -78,6 +82,7 @@ export default function ProductGallery({
         >
           {images.map((src, i) => (
             <div key={src} className="ay-gal__slide" role={count > 1 ? 'group' : undefined} aria-roledescription={count > 1 ? 'slide' : undefined} aria-label={count > 1 ? `Photo ${i + 1} of ${count}` : undefined} aria-hidden={count > 1 && i !== at ? true : undefined}>
+              {plate && <ScallopPlate tone={plate} stroke className="ay-gal__plate" />}
               <button type="button" className="ay-gal__open" tabIndex={i === at ? 0 : -1} onClick={() => { onIndex?.(i); onZoom?.(true); }} aria-label={`Zoom in on ${count > 1 ? `photo ${i + 1} of ${name}` : `the photo of ${name}`}`}>
                 {renderImage ? renderImage(src, i) : <img src={src} alt={alt(i)} loading={i === 0 ? 'eager' : 'lazy'} draggable={false} onError={onImageError ? (e) => onImageError(e, src) : undefined} />}
               </button>
@@ -95,7 +100,7 @@ export default function ProductGallery({
             <button type="button" className="ay-gal__arrow is-next" onClick={() => go(1)} aria-label="Next photo">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
             </button>
-            <div className="ay-gal__count" aria-live="polite">{at + 1} of {count}</div>
+            <div className="ay-gal__count" aria-live="polite">{plate ? <><span aria-hidden="true">{at + 1}/{count}</span><span className="sr-only">Photo {at + 1} of {count}</span></> : <>{at + 1} of {count}</>}</div>
           </>
         )}
       </div>

@@ -203,7 +203,7 @@ describe('product sheet: opens over what she was looking at, returns to the same
     // The four tabs from the product page, ayna summary first.
     const tabs = [...dlg.querySelectorAll('[role="tab"]')].map((t) => t.textContent);
     if (tabs.length) {
-      expect(tabs).toEqual(['Clinical opinion', 'Scientific literature', 'ayna summary', 'Reviews']);
+      expect(tabs).toEqual(['ayna summary', 'Clinical opinion', 'Scientific literature', 'Reviews']);
       expect(dlg.querySelector('[role="tab"][aria-selected="true"]').textContent).toBe('ayna summary');
     }
     // Behind it is inert while it is open.

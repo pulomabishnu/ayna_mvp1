@@ -144,7 +144,7 @@ export function whyFirstLine(items) {
     return (items || []).length > 1 ? `${name} is the only one here that matches what you told us.` : '';
   }
   const next = ranked[1];
-  if (top.details.percent === next.details.percent) return 'These fit what you told us about the same.';
+  if (top.details.percent === next.details.percent) return 'Similar fit for you.';
   const theirs = new Set(ranked.slice(1).flatMap((it) => whyClauses(it.details)));
   const own = whyClauses(top.details).filter((c) => !theirs.has(c));
   if (own.length) return `${name} ranks first for you: ${own.slice(0, 2).join(', ')}.`;

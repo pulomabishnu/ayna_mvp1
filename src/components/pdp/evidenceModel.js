@@ -12,7 +12,7 @@
  */
 import { brandHowTo } from '../../utils/howToSource.js';
 import { splitSentences } from './sentences.js';
-import { isCredible, isMedicalNonGov } from './credible.js';
+import { isCredible, isMedicalNonGov, isPeerReviewed } from './credible.js';
 import { isPaperLink } from '../../utils/govSources.js';
 import { getVerificationLinks, hostLabel } from '../../utils/verificationLinks.js';
 import { humanPublisher } from './glance.js';
@@ -81,7 +81,8 @@ export function linkKind(url, brand) {
   if (isSearch(url)) return { tier: 'other', label: FORUM.test(host) ? 'Search of community posts' : 'Search page, not a single source' };
   // Founder rule (Oct 24): only .gov health pages count as checked sources.
   if (isCredible(url)) return { tier: 'credible', label: '' };
-  if (isPaperLink(url)) return { tier: 'paper', label: 'Study record, not yet checked by ayna' };
+  // Level 2 (PDP audit 7.6): a peer-reviewed paper is labelled as one, never as "not checked"; it still can't produce a grade.
+  if (isPaperLink(url) || isPeerReviewed(url)) return { tier: 'paper', label: 'Peer-reviewed · not graded by ayna' };
   if (RETAIL.test(host)) return { tier: 'retail', label: 'Retailer listing' };
   if (slug.length >= 3 && host.replace(/[^a-z0-9]/g, '').includes(slug)) return { tier: 'brand', label: 'Brand’s own page, not independent' };
   if (FORUM.test(host)) return { tier: 'community', label: 'Community post' };
@@ -359,7 +360,7 @@ const CLAIM_KIND = {
   gov: 'Independent .gov health source',
   expert: 'Medical society or clinic page, not a .gov source',
   listing: 'A seller’s listing, not evidence',
-  paper: 'Study record, not yet checked by ayna',
+  paper: 'Peer-reviewed · not graded by ayna',
   other: 'Not a .gov source, not checked by ayna',
   community: 'Community experience, not evidence',
 };

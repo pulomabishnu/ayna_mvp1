@@ -16,7 +16,7 @@ export default function UrgentSigns({ product, flags = null }) {
       <ul className="ay-urgent__list">
         {list.map((f) => (
           <li key={f.id}>
-            <p className="ay-urgent__what"><b>{ACTION[f.action] || f.action}</b> for {us(f.condition.charAt(0).toLowerCase() + f.condition.slice(1))}:</p>
+            <p className="ay-urgent__what"><b>{f.action === 'call 911' ? <a href="tel:911">Call 911</a> : (ACTION[f.action] || f.action)}</b> for {us(f.condition.charAt(0).toLowerCase() + f.condition.slice(1))}:</p>
             <ul className="ay-urgent__signs">{f.signs.map((s) => <li key={s}>{us(s)}</li>)}</ul>
             <a className="ay-urgent__src" href={f.source_url} target="_blank" rel="noopener noreferrer">Source: {SOURCE_NAMES[new URL(f.source_url).hostname.replace(/^www\./, '')] || new URL(f.source_url).hostname.replace(/^www\./, '')}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a>
           </li>
