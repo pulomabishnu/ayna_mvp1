@@ -332,3 +332,11 @@ html body .app-container .fp .fp-rules h2 { margin: 0 0 12px !important; font: 4
 html body .app-container.app-container .fp .fp-intro { display: block; }
 html body .app-container.app-container .fp .fp-intro > .fp-eq { width: fit-content; max-width: 100%; margin: 0; }
 html body .app-container.app-container .fp .fp-intro > .fp-intro__actions { margin-top: 32px; }
+/* Dark (brand-dark): butter ink on espresso; the seal stays pink with espresso text. */
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .fp .fp-eq { border-color: #ffedac; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .fp :is(.fp-eq__tile, .fp-eq__op, .fp-rules, .fp-rules h2, .fp-rules li, .fp-rules .fp-muted) { color: #ffedac !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .fp .fp-rules li { border-bottom-color: rgba(255, 237, 172, .2); }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .fp .fp-rules li::before { border-color: #ffedac; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .fp .fp-rules { border-top-color: rgba(255, 237, 172, .2); }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .fp .fp-eq .fp-eq__seal.fp-eq__seal { background: #f7badd !important; border-color: #f7badd !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .fp .fp-eq .fp-eq__seal.fp-eq__seal :is(b, span) { color: #3e2723 !important; }
