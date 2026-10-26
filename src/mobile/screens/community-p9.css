@@ -82,3 +82,5 @@
 /* selected topic chips: pink (state), never blue; focus ring in ink */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-topic-grid button.is-on { background: #f7badd !important; color: #3e2723 !important; border-color: #3e2723 !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-topic-grid button:focus-visible { outline: 3px solid currentColor !important; }
+/* dark: the Post sticker turns butter with espresso text */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .am-screen .am-top-actions .am-post-btn { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }

@@ -620,10 +620,10 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container {
   /* title row: butter, h1 30px, search + Post on the same line */
   .cm-head.cm-titlerow { align-items: center; gap: var(--ay-s16) var(--ay-s24); margin: 0 0 var(--ay-s24); padding: 0 0 var(--ay-s24); border-bottom: var(--ay-rule); background: none; }
-  .cm-head.cm-titlerow h1.cm-title { margin: 0 !important; font: 700 30px/1.1 var(--ay-font-display) !important; letter-spacing: -.01em !important; color: var(--ay-ink) !important; max-width: none; }
-  .cm-head.cm-titlerow .ct-lede { margin: 6px 0 0; max-width: 52ch; font: 400 16px/1.45 var(--ay-font-ui) !important; color: var(--ay-ink-muted) !important; }
+  .cm-head.cm-titlerow h1.cm-title { margin: 0 !important; font: 700 30px/1.1 var(--ay-font-display) !important; letter-spacing: -.01em !important; color: var(--ay-text) !important; max-width: none; }
+  .cm-head.cm-titlerow .ct-lede { margin: 6px 0 0; max-width: 52ch; font: 400 16px/1.45 var(--ay-font-ui) !important; color: var(--ay-text-2) !important; }
   .cm-head.cm-titlerow .cm-head__actions { flex: 0 1 560px; }
-  .cm-head.cm-titlerow .cm-search { border: 1.5px solid var(--ay-ink) !important; background: transparent !important; box-shadow: none !important; }
+  .cm-head.cm-titlerow .cm-search { border: 1.5px solid var(--ay-text) !important; background: transparent !important; box-shadow: none !important; }
   .cm-search > .cm-kbd { font-size: 13px; border-radius: var(--ay-r-sm); }
   .cm-post-btn { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 20px; border-radius: var(--ay-r-pill) !important; box-shadow: var(--ay-sticker) !important; font: 600 16px/1 var(--ay-font-ui) !important; }
   .cm-post-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ay-pink) !important; }
@@ -637,22 +637,22 @@ html body .app-container.app-container.app-container.app-container.app-container
   .cm-post-meta, .cm-post-meta time, .cm-team-tag { font-size: 13px; }
 
   /* kind label: outlined, with an icon; the same colours for every kind */
-  .cm-kind { justify-self: start; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-pill); background: transparent; color: var(--ay-ink); font: 600 13px/1 var(--ay-font-ui); white-space: nowrap; box-sizing: border-box; }
+  .cm-kind { justify-self: start; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border: 1.5px solid var(--ay-text); border-radius: var(--ay-r-pill); background: transparent; color: var(--ay-text); font: 600 13px/1 var(--ay-font-ui); white-space: nowrap; box-sizing: border-box; }
   .cm-kind .cm-type-icon { flex: none; }
   .cm-note > .cm-kind { margin: 0 0 -4px; }
 
   /* pinned announcement (founders only): an outlined row, no fill, no shadow */
-  .cm-pinned-ann { gap: 8px; padding: var(--ay-s16) !important; border: 1.5px solid var(--ay-ink) !important; border-radius: var(--ay-r-md) !important; background: transparent !important; box-shadow: none !important; color: var(--ay-ink) !important; }
+  .cm-pinned-ann { gap: 8px; padding: var(--ay-s16) !important; border: 1.5px solid var(--ay-text) !important; border-radius: var(--ay-r-md) !important; background: transparent !important; box-shadow: none !important; color: var(--ay-text) !important; }
   .cm-pinned-ann:hover { transform: none; background: var(--ay-hover) !important; }
   .cm-pinned-ann strong { font: 600 17px/1.35 var(--ay-font-ui); }
   .cm-pinned-ann__go { font-size: 14px; }
 
   /* product in a post: outlined (1.5px), no shadow; her match or "See your match" */
-  .cm-mention-wrap { display: grid; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-md); }
-  .cm-seematch { position: relative; justify-self: start; display: inline-flex; align-items: center; min-height: 32px; margin: -4px 12px 12px 138px; padding: 0 12px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-pill); background: transparent; color: var(--ay-ink); font: 600 13px/1 var(--ay-font-ui); cursor: pointer; }
+  .cm-mention-wrap { display: grid; border: 1.5px solid var(--ay-text); border-radius: var(--ay-r-md); }
+  .cm-seematch { position: relative; justify-self: start; display: inline-flex; align-items: center; min-height: 32px; margin: -4px 12px 12px 138px; padding: 0 12px; border: 1.5px solid var(--ay-text); border-radius: var(--ay-r-pill); background: transparent; color: var(--ay-text); font: 600 13px/1 var(--ay-font-ui); cursor: pointer; }
   .cm-seematch::after { content: ''; position: absolute; inset: -6px -2px; }
   .cm-seematch:hover { background: var(--ay-hover); }
-  .cm-modnote { margin: 0; font: 500 13px/1.4 var(--ay-font-ui); color: var(--ay-ink-muted); }
+  .cm-modnote { margin: 0; font: 500 13px/1.4 var(--ay-font-ui); color: var(--ay-text-2); }
 
   /* the team pick quote */
   .cm-quote { border-radius: var(--ay-r-md) !important; }
@@ -670,12 +670,12 @@ html body .app-container.app-container.app-container.app-container.app-container
   /* one Post button opens this: four rows, then the two starters */
   .cm-types { display: grid; margin: 0; padding: 0; list-style: none; border-top: var(--ay-rule); }
   .cm-types > li { border-bottom: var(--ay-rule); }
-  .cm-type { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: 14px; width: 100%; min-height: 68px; padding: 10px 4px; border: 0; background: none; color: var(--ay-ink) !important; text-align: left; cursor: pointer; }
+  .cm-type { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: 14px; width: 100%; min-height: 68px; padding: 10px 4px; border: 0; background: none; color: var(--ay-text) !important; text-align: left; cursor: pointer; }
   .cm-type:hover { background: var(--ay-hover); }
-  .cm-type__icon { display: grid; place-items: center; width: 44px; height: 44px; border: 1.5px solid var(--ay-ink); border-radius: 50%; }
+  .cm-type__icon { display: grid; place-items: center; width: 44px; height: 44px; border: 1.5px solid var(--ay-text); border-radius: 50%; }
   .cm-type__copy { display: grid; gap: 2px; min-width: 0; }
   .cm-type__copy strong { font: 600 16px/1.3 var(--ay-font-ui); }
-  .cm-type__copy small { font: 500 14px/1.35 var(--ay-font-ui) !important; color: var(--ay-ink-muted); }
+  .cm-type__copy small { font: 500 14px/1.35 var(--ay-font-ui) !important; color: var(--ay-text-2); }
   .cm-starters .cm-seg button { font-size: 14px !important; }
   .cm-topics-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
 
@@ -694,12 +694,12 @@ html body .app-container.app-container.app-container.app-container.app-container
 
   /* review highlights: rounded label boxes, only from what the reviewer entered */
   .cm-review-facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
-  .cm-factbox { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 12px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-sm); font: 600 13px/1 var(--ay-font-ui); color: var(--ay-ink); }
+  .cm-factbox { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 12px; border: 1.5px solid var(--ay-text); border-radius: var(--ay-r-sm); font: 600 13px/1 var(--ay-font-ui); color: var(--ay-text); }
   .cm-factbox.cm-review-stars { margin: 0; }
 
   /* playlists: stacked rounded rows (cover, name, count and owner) */
   .cm-pl-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 8px !important; }
-  .cm-playlist.cm-pl-rowbtn { grid-template-columns: 64px minmax(0, 1fr) 20px; align-items: center; gap: 14px; min-height: 84px; padding: 10px 14px 10px 10px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-md); }
+  .cm-playlist.cm-pl-rowbtn { grid-template-columns: 64px minmax(0, 1fr) 20px; align-items: center; gap: 14px; min-height: 84px; padding: 10px 14px 10px 10px; border: 1.5px solid var(--ay-text); border-radius: var(--ay-r-md); }
   .cm-playlist.cm-pl-rowbtn:hover { background: var(--ay-hover); }
   .cm-playlist.cm-pl-rowbtn .cm-cover { width: 64px; height: 64px; border-radius: var(--ay-r-sm); box-shadow: none; transform: none !important; }
 
@@ -717,7 +717,7 @@ html body .app-container.app-container.app-container.app-container.app-container
     .cm-navrow .cm-folder > span { overflow: visible; }
     .cm-navrow .cm-folder.is-announcements, .cm-navrow .cm-folder__icon { display: none; }
     .cm-navrow .cm-folder[aria-selected='true'] { background: #3e2723 !important; color: #ffedac !important; }
-    .cm-topics-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-pill); background: transparent; color: var(--ay-ink); font: 600 14px/1 var(--ay-font-ui); cursor: pointer; }
+    .cm-topics-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-text); border-radius: var(--ay-r-pill); background: transparent; color: var(--ay-text); font: 600 14px/1 var(--ay-font-ui); cursor: pointer; }
     .cm-topics-btn__on { padding: 3px 8px; border-radius: var(--ay-r-pill); background: var(--ay-pink); color: #3e2723; font-size: 13px; }
     .cm-topicset.cm-pods, .cm-topicset.is-row { display: none !important; }
   }
@@ -736,15 +736,31 @@ html body .app-container.app-container.app-container.app-container.app-container
     .cm-topics-btn { padding: 0 12px; }
   }
 }
-:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .cm .ay-product-card.cm-mention-card { --pc-shadow: none; box-shadow: none !important; transform: none !important; border: 1.5px solid var(--ay-ink) !important; border-radius: var(--ay-r-md) !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .cm .ay-product-card.cm-mention-card { --pc-shadow: none; box-shadow: none !important; transform: none !important; border: 1.5px solid var(--ay-text) !important; border-radius: var(--ay-r-md) !important; }
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .cm .cm-mention-wrap .ay-product-card.cm-mention-card { border: 0 !important; }
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .cm .ay-product-card.cm-mention-card :is(.ay-product-card__kind, .ay-product-card__price small, .ay-product-card__why, .ay-product-card__brand) { font-size: 13px !important; }
 /* "Ways to post" as four cards in one colour family (inspo #7 Double Take: icon, title, one line). */
 html body .app-container.app-container.app-container.app-container.app-container.app-container {
   .cm-types { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; border-top: 0; }
   .cm-types > li { border-bottom: 0; }
-  .cm-type { grid-template-columns: minmax(0, 1fr); align-content: start; justify-items: start; gap: 10px; min-height: 132px; padding: 16px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-md); background: var(--ay-butter-deep); color: #3e2723 !important; }
+  .cm-type { grid-template-columns: minmax(0, 1fr); align-content: start; justify-items: start; gap: 10px; min-height: 132px; padding: 16px; border: 1.5px solid var(--ay-text); border-radius: var(--ay-r-md); background: var(--ay-butter-deep); color: #3e2723 !important; }
   .cm-type:hover { background: var(--ay-pink); }
   .cm-type__icon { background: #ffffff; border-color: #3e2723; color: #3e2723; }
   .cm-type__copy small { color: rgba(62, 39, 35, .78) !important; }
+}
+/* dark: selected feed is butter with espresso text (espresso on espresso disappears) */
+html body .app-container.app-container.app-container.app-container.app-container.app-container:is([data-theme='brand-dark'], [data-theme='dark']) {
+  .cm-folder[aria-selected='true'], .cm-navrow .cm-folder[aria-selected='true'] { background: #ffedac !important; border-color: #ffedac !important; color: #3e2723 !important; }
+  .cm-type { border-color: #3e2723; }
+}
+/* Written for brand dark on purpose, so the Oct 17 dark accent swap leaves them pink:
+   the all-pages brief keeps blue for chart lines only. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] {
+  .cm-quote { background: #f7badd !important; color: #3e2723 !important; }
+  .cm-post-btn { box-shadow: 3px 3px 0 #f7badd !important; }
+  .cm-status.is-open, .cm-topics-btn__on, .cm-type:hover { background: #f7badd; color: #3e2723; }
+  .cm-avatar.is-pink, .cm-avatar.is-anon, .cm-avatar.is-photo { background: #f7badd; }
+  .ay-liker-avatar { background: #f7badd; }
+  .ay-liker-avatar.is-anon { background: #ffedac; }
+  .cm-topic[aria-pressed='true'] { background: #f7badd !important; color: #3e2723 !important; border-color: #f7badd !important; }
 }
