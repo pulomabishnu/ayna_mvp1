@@ -95,7 +95,7 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__list.is-compact { gap: 8px; background: none; border-radius: 0; overflow: visible; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact {
   position: relative; display: grid !important; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 8px; row-gap: 6px;
-  min-height: 52px; padding: 10px 10px 10px 14px !important; border: 0 !important; border-left: 3px solid var(--d-ink) !important; border-radius: 8px; background: var(--ay-surface, #fff); color: var(--d-ink);
+  min-height: 52px; padding: 10px 10px 10px 14px !important; border: 0 !important; border-radius: 8px; background: var(--ay-surface, #fff); color: var(--d-ink);
 }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-homescreen .ay-today__item.is-compact { background: rgba(255, 237, 172, .08); }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact > * { grid-column: 1; }
@@ -220,6 +220,8 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ax-seal text { font: 600 16px 'Figtree', sans-serif; letter-spacing: .04em; fill: #3e2723; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ax-seal b { position: relative; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #3e2723; color: #ffedac; font: 800 7.5px/1 'ayna Display', sans-serif; letter-spacing: -.02em; overflow: hidden; } /* the word stays inside its ring (QA round 2) */
 @keyframes ay-seal-settle { from { transform: rotate(-50deg); } to { transform: none; } }
+/* QA3 M13: Today items' 3px left rule is a painted bar, so border styles stay at 1px + 1.5px. */
+:is(.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact, .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__item:not(.is-compact))::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 3px; border-radius: 8px 0 0 8px; background: var(--d-ink); pointer-events: none; }
 /* QA3 M5: at 44px the ring text and the "ayna" word drew at 6-8px. The Explore seal keeps
    its drawn mark only (pink disc, espresso core, butter sparkle); no text under 13px. */
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ax-seal :is(svg, b) { display: none !important; }
@@ -374,7 +376,7 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact { margin-bottom: 8px; }
 /* My dashboard (the full Today list in the app): the same calm white cards with the ink rule, never butter-deep */
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__list:not(.is-compact) { gap: 10px; background: none !important; border-radius: 0; overflow: visible; }
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__item:not(.is-compact) { gap: 8px; padding: 14px 14px 12px 16px !important; border: 0 !important; border-left: 3px solid var(--d-ink) !important; border-radius: 8px; background: var(--ay-surface, #fff) !important; color: var(--d-ink); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__item:not(.is-compact) { position: relative; gap: 8px; padding: 14px 14px 12px 16px !important; border: 0 !important; border-radius: 8px; background: var(--ay-surface, #fff) !important; color: var(--d-ink); }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-hd .ay-today__item:not(.is-compact) { background: rgba(255, 237, 172, .08) !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__item:not(.is-compact) .ay-today__title { font: 700 calc(16px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui, 'Figtree', sans-serif) !important; color: var(--d-ink) !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today__item:not(.is-compact) .ay-today__kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font: 500 13px/1.35 var(--ay-font-ui, 'Figtree', sans-serif) !important; opacity: 1; color: var(--d-ink-2) !important; }
