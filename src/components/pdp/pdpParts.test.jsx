@@ -178,10 +178,14 @@ describe('shopper pass', () => {
   it('dedupes a list and finds the first clause', () => {
     expect(dedupeList('Cramp & pain relief, Cramps')).toBe('Cramp & pain relief');
     expect(dedupeList('Contraception, UTI support, UTI')).toBe('Contraception, UTI support');
-    expect(leadClause('People with period cramps who want heat they can wear under clothes at work or school')).toEqual(['People with period cramps', 'who want heat they can wear under clothes at work or school']);
-    expect(leadClause('Those who like to adjust the heat, since it has 3 settings and an auto-off timer')).toEqual(['Those who like to adjust the heat,', 'since it has 3 settings and an auto-off timer']);
-    const t = 'Not for wearing while you sleep: MedlinePlus advises never falling asleep with a heating pad on';
-    expect(leadClause(t).join(' ')).toBe(t);
+    // A clause boundary with a 4+ word lead splits; words and punctuation are all kept.
+    expect(leadClause('Adults with iron deficiency confirmed by bloodwork, which is what Nature Made\'s label says the 65 mg dose is for')).toEqual(['Adults with iron deficiency confirmed by bloodwork,', 'which is what Nature Made\'s label says the 65 mg dose is for']);
+    expect(leadClause('Not for wearing while you sleep: MedlinePlus advises never falling asleep with a heating pad on')).toEqual(['Not for wearing while you sleep:', 'MedlinePlus advises never falling asleep with a heating pad on']);
+    // Never inside an adjective list.
+    expect(leadClause('Anyone who wants an inexpensive, widely available ferrous sulfate tablet their clinician has recommended')).toEqual(['', 'Anyone who wants an inexpensive, widely available ferrous sulfate tablet their clinician has recommended']);
+    // A lead under 4 words does not split.
+    expect(leadClause('Those who like to adjust the heat, since it has 3 settings and an auto-off timer')[0]).toBe('Those who like to adjust the heat,');
+    expect(leadClause('Some people, like those with heavy periods, may need a clinician to check ferritin first')[0]).toBe('');
     expect(leadClause('Short line')).toEqual(['', 'Short line']);
   });
 });
@@ -233,6 +237,17 @@ describe('round 3: Safety facts groups and full text', () => {
         expect(body).not.toMatch(/Show all/);
         expect(body).not.toMatch(/hidden=""/);
       }
+    }
+  });
+});
+
+describe('round 3 fixes', () => {
+  it('How to use steps are never split', () => {
+    for (const id of ['p-portable-heating', 'p-nature-made-iron-65mg']) {
+      const p = product(id);
+      const html = renderToStaticMarkup(<ProductEvidence product={p} glance={buildGlance(p, {})} syncHash={false} />);
+      const at = html.indexOf('id="ay-sum-how"');
+      expect(html.slice(at, html.indexOf('</section>', at))).not.toMatch(/ayv-lr/);
     }
   });
 });

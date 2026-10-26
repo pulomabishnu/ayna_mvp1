@@ -746,7 +746,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const howBody = (m.how || adds('how').length) ? (
     <>
       {m.how?.intro && <p className="ayq-p ayq-intro"><Tx>{m.how.intro}</Tx></p>}
-      {m.how && <ShowAll items={m.how.steps} n={Infinity} label="steps" className="ayv-steps" render={(st, i) => <><span className="ayv-steps__n" aria-hidden="true">{i + 1}</span><span className="ayq-p"><LR text={st} /></span></>} />}
+      {m.how && <ShowAll items={m.how.steps} n={Infinity} label="steps" className="ayv-steps" render={(st, i) => <><span className="ayv-steps__n" aria-hidden="true">{i + 1}</span><span className="ayq-p"><Tx>{st}</Tx></span></>} />}
       {/* The listing footer only when the intro does not already name the source. */}
       {m.how && !m.how.source && m.how.fromListing && !/\b(per|listing|instructions|according)\b/i.test(m.how.intro || '') && <p className="ayq-meta">{FROM_LISTING}.</p>}
       {m.how && (m.how.source || m.how.faq) && (

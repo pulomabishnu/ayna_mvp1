@@ -364,3 +364,5 @@
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-sf__list > li::before { margin-top: calc((var(--t-m) * 1.45 - 6px) / 2); }
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-panel__sub { margin-bottom: 6px !important; }
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-panel__group { padding: 14px 20px 16px !important; }
+/* the rest sits directly under its lead (same item), full espresso, regular weight */
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-lr__rest { margin-top: 3px !important; color: var(--v-ink) !important; font-weight: 500 !important; }

@@ -314,10 +314,14 @@ export function dedupeList(text) {
 export function leadClause(text, minWords = 12) {
   const t = String(text || '');
   if (t.trim().split(/\s+/).length < minWords) return ['', t];
-  const cuts = [];
-  for (const m of t.matchAll(/[,:](?=\s)|\s(?=(?:who|like|since|once)\b)|\s(?=\()/g)) cuts.push(/[,:]/.test(m[0]) ? m.index + 1 : m.index);
-  const at = cuts.find((i) => t.slice(0, i).trim().split(/\s+/).length >= 3 && t.slice(i).trim().length > 0);
-  return at ? [t.slice(0, at), t.slice(at).replace(/^\s+/, '')] : ['', t];
+  // Only at a clause boundary (", who", ", which", ", like", ", once", ", since", ":" or " ("),
+  // never inside an adjective list, and only when the lead is 4+ words. Unsure: no split.
+  const m = t.match(/^(.*?)(,(?=\s+(?:who|which|like|once|since)\b)|:(?=\s)|\s(?=\())/);
+  if (!m) return ['', t];
+  const lead = m[1] + (m[2].trim() ? m[2] : '');
+  const rest = t.slice(m[0].length).replace(/^\s+/, '');
+  if (lead.trim().split(/\s+/).length < 4 || !rest) return ['', t];
+  return [lead, rest];
 }
 
 // ---------------------------------------------------------------------------
