@@ -21,6 +21,11 @@
   --ay-text-min: 13px;
   /* Fixed in both themes: espresso on butter/pink surfaces, the white product plate. */
   --ay-espresso: #3e2723; --ay-espresso-muted: rgba(62, 39, 35, .78); --ay-plate: #ffffff;
+  /* Primitive-safe tokens: older sheets redefine --ay-ink (espresso even in brand dark),
+     --ay-butter (pink in theme-v3) and --ay-outline (a bare colour). New code uses these. */
+  --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .78);
+  --ay-border-ink: 1.5px solid #3e2723;
+  --ay-butter-base: #ffedac; --ay-butter-deep-base: #f6e3a1; --ay-pink-base: #f7badd;
   /* Ink fill and the text that sits on it (selected chips, pill tabs, primary buttons). */
   --ay-fill-ink: #3e2723;
   --ay-on-ink: #ffedac;
@@ -45,6 +50,8 @@
   --ay-surface: rgba(255, 237, 172, .08);
   --ay-rule: 1px solid rgba(255, 237, 172, .2);
   --ay-outline: 1.5px solid #ffedac;
+  --ay-fg: #ffedac; --ay-fg-muted: rgba(255, 237, 172, .8);
+  --ay-border-ink: 1.5px solid #ffedac;
   --ay-fill-ink: #ffedac;
   --ay-on-ink: #3e2723;
   --ay-track: rgba(255, 237, 172, .12);

@@ -9,7 +9,7 @@ import { readToday, writeToday } from '../../health/todayStore.js';
  * question; "Not now" hides it for a while through the Today store.
  * Rendered as one more row in Today's list, styled like Today's own items.
  */
-export default function ProfileAskCard({ intake, today, onAnswer, asList = false, variant = 'app' }) {
+export default function ProfileAskCard({ intake, today, onAnswer, asList = false }) {
   const [dismissed, setDismissed] = useState(() => { try { return readToday().dismissed || {}; } catch { return {}; } });
   const ask = nextProgressiveAsk(intake?.fullHealthIntake || intake, { dismissed, today });
   if (!ask || !onAnswer) return null;
@@ -20,8 +20,7 @@ export default function ProfileAskCard({ intake, today, onAnswer, asList = false
     <li className="ay-today__item is-wellness is-ask is-profile-ask">
       <p className="ay-today__kicker">A quick question</p>
       <h3 className="ay-today__title">{ask.title}</h3>
-      {/* The website's tab is still Today; the app's is Home (QA round 2). */}
-      <p className="ay-today__why">{variant === 'web' ? String(ask.why || '').replace(/\bHome\b/g, 'Today') : ask.why}</p>
+      <p className="ay-today__why">{ask.why}</p>
       <div className="ay-today__actions">
         <button type="button" className="ay-today__primary" onClick={() => onAnswer(ask.stepId)}>Answer</button>
         <button type="button" className="ay-today__text" onClick={later}>Not now</button>
