@@ -15,14 +15,14 @@ import UrgentSigns from './UrgentSigns.jsx';
 import ProductCommunityReviews from './ProductCommunityReviews.jsx';
 import ProductPeopleSay from './ProductPeopleSay.jsx';
 import { useProductReviews } from './useProductReviews.js';
+import { trackPdpViewed, eventSurface } from '../../utils/analyticsEvents.js';
 import { evidenceLevel, gradeWords } from './evidenceLevel.js';
-import { sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause, brandVoice, safetyGroupOf, groupSafety, TAB_ORDER, TAB_LABELS, DEFAULT_TAB } from './pdpParts.js';
+import { sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause, brandVoice, safetyGroupOf, groupSafety, TAB_ORDER, TAB_LABELS, TAB_SHORT_LABELS, DEFAULT_TAB } from './pdpParts.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { ShowAll, EvidenceHeader, EvidenceKey, EvidenceMark } from './PdpParts.jsx';
 import { evidenceFor } from './evidenceLevels.js';
 import { FROM_LISTING } from '../../utils/howToSource.js';
-import './pdp-complete.css';
-import './pdp-sections.css';
+import './pdp.css';
 
 /**
  * The inside of the product page (website and app): everything the team
@@ -339,7 +339,7 @@ function StickyTabs({ tabs, active, onChange, stickTop, swipe = false }) {
           {tabs.map((t) => {
             const on = t.id === active;
             return (
-              <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} data-tab={t.id} aria-selected={on} aria-controls={`ay-panel-${t.id}`} tabIndex={on ? 0 : -1} className={`ayq-st__tab is-${t.id}${on ? ' is-on' : ''}`} onClick={() => choose(t.id)}>
+              <button key={t.id} type="button" role="tab" id={`ay-tab-${t.id}`} data-tab={t.id} aria-selected={on} aria-controls={`ay-panel-${t.id}`} tabIndex={on ? 0 : -1} className={`ayq-st__tab is-${t.id}${on ? ' is-on' : ''}`} onClick={() => choose(t.id)} aria-label={t.short && t.short !== t.label ? t.label : undefined} data-short={t.short && t.short !== t.label ? t.short : undefined}>
                 <span>{t.label}</span>
               </button>
             );
@@ -397,6 +397,17 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const liveStats = reviewRows.length ? summarizeReviewRows(reviewRows)[baseProduct?.id] : null;
   const aynaRating = liveStats ? liveStats.average : aynaRatingProp;
   const ratingCount = liveStats ? liveStats.count : ratingCountProp;
+  // Retention and sales (audit addendum C): one pdp_viewed per product, with its review
+  // count, so PostHog can read retailer CTR per view and products with 5+ reviews.
+  // Ids and counts only, never health details (utils/analyticsEvents.js).
+  const countRef = useRef(ratingCount);
+  countRef.current = ratingCount;
+  const viewedId = baseProduct?.id;
+  useEffect(() => {
+    if (!viewedId) return undefined;
+    const t = setTimeout(() => trackPdpViewed({ surface: eventSurface(), product_id: viewedId, review_count: countRef.current || 0 }), 1500);
+    return () => clearTimeout(t);
+  }, [viewedId]);
 
   const [tab, setTab] = useState(() => {
     if (typeof window === 'undefined' || !syncHash) return DEFAULT_TAB;
@@ -952,13 +963,13 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {ratingsCard}
       {reviewRows.length > 0 && <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onWriteReview={onWriteReview} onOpenPost={onOpenReview} />}
       {/* Under 5 ayna reviews: invite the first five (Spiegel: 5+ reviews is where trust starts). */}
-      {(ratingCount || 0) < 5 && onWriteReview && <p className="ayv-first5"><b>Be one of the first 5 reviewers.</b> <button type="button" className="ayv-textbtn" onClick={onWriteReview}>Write a review</button></p>}
+      {(ratingCount || 0) < 5 && onWriteReview && <p className="ayv-first5"><b>Be one of the first 5 reviewers.</b> {ratingCount > 0 ? `${ratingCount} of 5 so far. ` : ''}<button type="button" className="ayv-textbtn" onClick={onWriteReview}>Write a review</button></p>}
       {reviewsBody}
     </div>
   );
 
   const bodies = { clinical: clinicalBody, literature: literatureBody, summary: summaryBody, reviews: reviewsTab };
-  const tabs = TAB_ORDER.map((id) => ({ id, label: TAB_LABELS[id], body: bodies[id] }));
+  const tabs = TAB_ORDER.map((id) => ({ id, label: TAB_LABELS[id], short: TAB_SHORT_LABELS[id], body: bodies[id] }));
   const activeTab = TAB_ORDER.includes(tab) ? tab : DEFAULT_TAB;
 
   return (

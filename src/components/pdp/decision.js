@@ -11,7 +11,7 @@
  * - matchBreakdownFor: the "Why 92%?" explainer's three lists.
  * - alsoAt: other stores with a live link only ("Also at Target").
  */
-import { isSafetyHold, isBleedingEvaluation } from '../../utils/matchDisplay.js';
+import { isSafetyHold, isBleedingEvaluation, shownMatchPercent, MAX_SHOWN_PERCENT } from '../../utils/matchDisplay.js';
 import { breakdownFromDetails, PARTNER_NOTE } from '../../matching/breakdown.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { sizeCount } from './glance.js';
@@ -41,7 +41,16 @@ export function lifespanYears(product) {
 
 /** A supply stated in the price ("180-day supply" -> 180 days). */
 export function supplyDays(product) {
-  const m = String(product?.price || '').match(/\b(\d{1,4})[- ]day supply\b/i);
+  const p = String(product?.price || '');
+  const m = p.match(/\b(\d{1,4})[- ]day supply\b/i);
+  if (m) return Number(m[1]);
+  const mo = p.match(/\b(\d{1,2})[- ]month supply\b/i);
+  return mo ? Number(mo[1]) * 30 : null;
+}
+
+/** A plain monthly plan ("$39/month", "$25/mo"): one price, nothing else in the string. */
+export function monthlyPrice(product) {
+  const m = String(product?.price || '').trim().match(/^\$\s*(\d+(?:\.\d{1,2})?)\s*\/\s*(?:mo|month)\.?$/i);
   return m ? Number(m[1]) : null;
 }
 
@@ -50,6 +59,11 @@ export function supplyDays(product) {
  * text: "≈ $0.24 a cycle if it lasts 10 years"; math: how ayna got there, for screen readers and the tooltip.
  */
 export function costPerUse(product) {
+  const monthly = monthlyPrice(product);
+  if (monthly) {
+    const each = monthly / 30;
+    return { unit: 'day', value: Number(each.toFixed(2)), text: `≈ ${money(each)} a day`, math: `ayna’s maths: ${money(monthly)} a month ÷ 30 days.` };
+  }
   const price = singlePrice(product);
   if (!price) return null;
   const life = lifespanYears(product);
@@ -66,7 +80,8 @@ export function costPerUse(product) {
   const days = supplyDays(product);
   if (days) {
     const each = price / days;
-    return { unit: 'day', value: Number(each.toFixed(2)), text: `≈ ${money(each)} a day`, math: `ayna’s maths: ${money(price)} ÷ ${days} days (the ${days}-day supply on the listing).` };
+    const months = /month supply/i.test(String(product?.price || '')) ? days / 30 : null;
+    return { unit: 'day', value: Number(each.toFixed(2)), text: `≈ ${money(each)} a day`, math: `ayna’s maths: ${money(price)} ÷ ${days} days (the ${months ? `${months}-month` : `${days}-day`} supply on the listing${months ? ', 30 days a month' : ''}).` };
   }
   return null;
 }
@@ -133,10 +148,45 @@ export function matchBreakdownFor(product, details) {
   const b = breakdownFromDetails(product, details);
   if (!b || b.percent == null) return { ...none, reason: whyLine(product, details) || '' };
   const items = (xs) => (xs || []).filter((x) => x && x.text).map((x) => ({ text: String(x.text), ...(Number.isFinite(x.delta) ? { delta: x.delta } : {}) }));
-  return { percent: b.percent, reason: b.reason || '', note: b.note || PARTNER_NOTE, raised: items(b.raised), lowered: items(b.lowered), unknown: items(b.unknown) };
+  const raised = items(b.raised);
+  const lowered = items(b.lowered);
+  const shown = shownMatchPercent(b.percent);
+  addPoints([...raised, ...lowered], shown);
+  // Over 97 the page prints 97: say so as its own line, so the parts still add up to the number shown.
+  const cap = shown != null && b.percent > MAX_SHOWN_PERCENT ? sumPoints([...raised, ...lowered]) - shown : 0;
+  if (cap > 0) lowered.push({ text: `Capped at ${MAX_SHOWN_PERCENT}: ayna never shows a higher match`, points: -cap, cap: true });
+  return { percent: b.percent, shown, reason: b.reason || '', note: b.note || PARTNER_NOTE, raised, lowered, unknown: items(b.unknown) };
+}
+
+const sumPoints = (xs) => xs.reduce((s, x) => s + (Number.isFinite(x.points) ? x.points : 0), 0);
+
+/**
+ * Whole points for each part (the engine's deltas are fractions of 1), rounded
+ * so they add up exactly: largest remainder, to the engine's rounded total.
+ * With no shown percent (Partial fit) the points are left off.
+ */
+function addPoints(list, shown) {
+  const withDelta = list.filter((x) => Number.isFinite(x.delta));
+  if (shown == null || !withDelta.length) return;
+  const raw = withDelta.map((x) => x.delta * 100);
+  const target = Math.round(raw.reduce((s, v) => s + v, 0));
+  const base = raw.map((v) => Math.trunc(v));
+  let left = target - base.reduce((s, v) => s + v, 0);
+  const order = raw.map((v, i) => ({ i, r: v - base[i] })).sort((a, b) => (left >= 0 ? b.r - a.r : a.r - b.r));
+  for (let k = 0; left !== 0 && k < order.length * 4; k += 1) {
+    const { i } = order[k % order.length];
+    base[i] += left > 0 ? 1 : -1;
+    left += left > 0 ? -1 : 1;
+  }
+  withDelta.forEach((x, i) => { x.points = base[i]; });
 }
 
 /** Other stores with a live link (never "No link yet"): "Also at Target · $29". */
 export function alsoAt(rows = []) {
   return (rows || []).filter((r) => r && !r.primary && r.url).map((r) => ({ name: r.name, url: r.url, price: r.price || '' }));
+}
+
+/** Retailer id for analytics: the link's host ("amazon.com"), never the full URL. */
+export function retailerOf(url) {
+  try { return new URL(String(url)).hostname.replace(/^www\./, '').slice(0, 64) || 'unknown'; } catch { return 'unknown'; }
 }

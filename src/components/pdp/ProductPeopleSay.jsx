@@ -2,7 +2,7 @@ import { RatingStars } from '../community/RatingStars.jsx';
 import { useProductMentions } from './useProductMentions.js';
 import { ratingBreakdown, topReviews, snippet, authorName, shortDate, kindLabel, plural } from './peopleSay.js';
 import '../community/community-shared.css';
-import './pdp-reviews.css';
+import './pdp.css';
 
 /**
  * "What people say": the product page's member reviews where she scrolls,

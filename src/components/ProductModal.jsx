@@ -21,7 +21,8 @@ import { ProductAsk } from './passport/ProductSections';
 import ProductEvidence from './pdp/ProductEvidence';
 import PdpIcon from './pdp/PdpIcon.jsx';
 import { EvidenceMark, SafetyLine, MatchLockup, PriceRow, Highlights, ActionsRow, AskPanel } from './pdp/PdpParts.jsx';
-import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, alsoAt } from './pdp/decision.js';
+import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, alsoAt, retailerOf } from './pdp/decision.js';
+import { trackPdpRetailerClicked, eventSurface } from '../utils/analyticsEvents.js';
 import { productAskStarters } from '../utils/productAsk';
 import { hasIud, cupOrDisc, keyFormat } from './pdp/pdpParts.js';
 import { buyModel } from './pdp/buyModel.js';
@@ -46,13 +47,8 @@ import { getAppSessionId } from '../utils/conversationId';
 import { productHref } from '../utils/productRoute';
 import { hostLabel } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
-import '../styles/audit-pdp.css';
 import '../styles/verify-content.css';
 import './pdp/pdp.css';
-import './pdp/pdp-story.css';
-import './pdp/pdp-page.css';
-import '../styles/pdp-v4.css';
-import './pdp/pdp-tabs.css';
 import { fetchWithTimeout } from '../utils/network.js';
 import { SaveFollowUpInline } from './save/SaveFollowUp.jsx';
 
@@ -584,6 +580,7 @@ export default function ProductModal({
       onClick={() => {
         // Never let the purchase-feedback queue block opening the retailer.
         try { recordRetailerVisit(product, choice.variant); } catch { /* ignore */ }
+        trackPdpRetailerClicked({ surface: eventSurface(), product_id: product.id, retailer: retailerOf(buyUrl) });
         posthog.capture('product_buy_now_clicked', {
           productId: product.id,
           category: product.category,
@@ -656,7 +653,7 @@ export default function ProductModal({
       <p className="ayp-buy__fine ayv-fine ayv-disclose">
         <span>{isPartner ? 'ayna partner. We may earn a commission.' : isAmazonBuyLink ? 'ayna may earn a commission from Amazon.' : 'ayna may earn a commission.'}</span>
         {buy?.checked && <span>{buy.checked}</span>}
-        {others.length > 0 && <span>Also at {others.map((r, i) => <React.Fragment key={r.url}>{i > 0 && ', '}<a className="ayp-textlink" href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => posthog.capture('product_retailer_clicked', { productId: product.id, retailer: r.name })}>{r.name}{r.price ? ` · ${r.price}` : ''}<span className="sr-only"> (opens in a new tab)</span></a></React.Fragment>)}</span>}
+        {others.length > 0 && <span>Also at {others.map((r, i) => <React.Fragment key={r.url}>{i > 0 && ', '}<a className="ayp-textlink" href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => { trackPdpRetailerClicked({ surface: eventSurface(), product_id: product.id, retailer: retailerOf(r.url) }); posthog.capture('product_retailer_clicked', { productId: product.id, retailer: r.name }); }}>{r.name}{r.price ? ` · ${r.price}` : ''}<span className="sr-only"> (opens in a new tab)</span></a></React.Fragment>)}</span>}
         {isAmazonBuyLink && <span><a className="ayp-textlink" href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GKM69DUUYKQWKWX7" target="_blank" rel="noopener noreferrer">Return policy<span className="sr-only">: Amazon’s return policy (opens in a new tab)</span></a></span>}
         {isPartner && <span><button type="button" className="ayp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'How partnerships work'}</button></span>}
       </p>
@@ -815,16 +812,19 @@ export default function ProductModal({
           <div className="ayv-dk__gallery">{galleryTile}<Highlights items={highlights} note={highlights.length ? 'From the product record. Not tested by ayna.' : ''} /></div>
 
           <div className="ayv-dk__decide ayp-buy pdp-head__detail" id="ay-buycard">
-            {(brand || product.brand) && <p className="ayv-brand">{brand || product.brand}</p>}
-            <h1 className="ay-h1 ayp-buy__name pdp-head__name">{displayName}</h1>
-            {metaLine && <p className="ayv-metaline">{metaLine}</p>}
-            {aynaRating != null && ratingCount > 0 && (
-              <button type="button" className="ayp-buy__rating" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'reviews' }))}>
-                <span className="ayp-stars" aria-hidden="true">{[1, 2, 3, 4, 5].map((n) => <span key={n} className={n <= Math.round(aynaRating) ? 'is-on' : undefined}>{n <= Math.round(aynaRating) ? '★' : '☆'}</span>)}</span>
-                <span><b>{aynaRating.toFixed(1)}</b> from {ratingCount} ayna {ratingCount === 1 ? 'review' : 'reviews'}</span>
-                <span className="sr-only">, go to reviews</span>
-              </button>
-            )}
+            {/* Identity (brand, name, meta, rating) in one block: from 1024 to 1279px it sits beside a compact plate. */}
+            <div className="ayv-ident">
+              {(brand || product.brand) && <p className="ayv-brand">{brand || product.brand}</p>}
+              <h1 className="ay-h1 ayp-buy__name pdp-head__name">{displayName}</h1>
+              {metaLine && <p className="ayv-metaline">{metaLine}</p>}
+              {aynaRating != null && ratingCount > 0 && (
+                <button type="button" className="ayp-buy__rating" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'reviews' }))}>
+                  <span className="ayp-stars" aria-hidden="true">{[1, 2, 3, 4, 5].map((n) => <span key={n} className={n <= Math.round(aynaRating) ? 'is-on' : undefined}>{n <= Math.round(aynaRating) ? '★' : '☆'}</span>)}</span>
+                  <span><b>{aynaRating.toFixed(1)}</b> from {ratingCount} ayna {ratingCount === 1 ? 'review' : 'reviews'}</span>
+                  <span className="sr-only">, go to reviews</span>
+                </button>
+              )}
+            </div>
 
             {/* Her match: the pill, a reason about this product, and "Why 92%?" opening in place. */}
             {matchState?.kind !== 'quiz' && matchRow}
