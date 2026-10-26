@@ -94,6 +94,7 @@ export function HealthEmpty({ today, onConnect, onOpenCheckin, goalCount = 0, si
           {PREVIEW.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
         </dl>
         {onConnect && <StickerButton onClick={onConnect}>{signedOut ? 'Sign in to connect health data' : 'Connect Apple Health, Oura or a file'}</StickerButton>}
+        {signedOut && !onConnect && <p className="ay-db-source">Sign in to see your health data here.</p>}
       </section>
       {children}
       {onOpenCheckin && <TextButton onClick={onOpenCheckin}>Log how you felt this month</TextButton>}
