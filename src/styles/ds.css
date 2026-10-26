@@ -89,7 +89,7 @@
 .ds-shape { position: absolute; display: block; }
 .ds-shape.is-flower { width: 30px; height: 30px; color: #ffedac; }
 .ds-shape.is-asterisk { width: 24px; height: 24px; color: #f7badd; }
-.ds-shape.is-slash { width: 22px; height: 22px; color: #769ebe; }
+.ds-shape.is-slash { width: 22px; height: 22px; color: #f7badd; } /* blue is for chart lines only */
 .ds-shape.is-dot { width: 10px; height: 10px; border-radius: 50%; background: #f7badd; }
 
 /* ---- curved text ring ---- */

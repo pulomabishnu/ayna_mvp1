@@ -435,7 +435,7 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-toolbar .ay-discover-cta { display: inline-flex !important; align-items: center !important; gap: 6px !important; flex: none; width: auto !important; min-height: 44px !important; height: 44px !important; margin: -4px 0 !important; padding: 0 2px !important; border: 0 !important; border-radius: 0 !important; background: none !important; color: var(--d-ink) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-toolbar .ay-discover-fan { width: 30px !important; height: 24px !important; flex: none; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-toolbar .ay-discover-fan rect { stroke: var(--d-ink) !important; stroke-width: 2.5 !important; }
-.ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-toolbar .ay-discover-fan .c1 { fill: var(--d-sky) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-toolbar .ay-discover-fan .c1 { fill: var(--d-ink) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-toolbar .ay-discover-fan .c2 { fill: var(--d-page) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-toolbar .ay-discover-fan .c3 { fill: var(--d-pink) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-shop-toolbar .ay-discover-copy strong { font: 600 15px/1 var(--f-ui) !important; color: var(--d-ink) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }

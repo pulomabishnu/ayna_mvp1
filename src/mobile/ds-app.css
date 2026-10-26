@@ -76,7 +76,7 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__shapes .is-asterisk { right: 132px; top: 22px; width: 18px; height: 18px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__shapes .is-slash { right: 124px; bottom: 22px; width: 18px; height: 18px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__shapes .is-dot { right: 14px; bottom: 26px; width: 8px; height: 8px; }
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-home-art__shapes .is-flower { color: #769ebe; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-home-art__shapes .is-flower { color: #f7badd; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art__stickers { position: absolute; right: 30px; top: 50px; width: 54px; height: 54px; }
 /* QA Oct 25: clear of the eyebrow and title; beside her ring when there is a number */
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-home-art:has(.ay-home-art__num) .ay-home-art__stickers { right: 142px; top: 46px; }

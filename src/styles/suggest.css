@@ -36,7 +36,7 @@
 .ay-suggest__intro { display: flex; align-items: center; gap: 16px; }
 .ay-suggest__copy { display: grid; gap: 4px; flex: 1; min-width: 0; }
 .ay-suggest__icon, .ay-suggest__check { display: grid; place-items: center; width: 48px; height: 48px; flex: none; border: 2px solid var(--sg-ink); border-radius: 14px; background: var(--legacy-butter, #ffedac); color: var(--sg-on-pastel); }
-.ay-suggest__icon.is-read { background: var(--ay-peri, #f7badd); }
+.ay-suggest__icon.is-read { background: #f7badd; }
 .ay-suggest__check { border-radius: 50%; background: var(--ay-mint, #f6e3a1); }
 .ay-suggest__icon svg, .ay-suggest__check svg { width: 24px; height: 24px; }
 
