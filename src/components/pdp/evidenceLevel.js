@@ -1,5 +1,5 @@
 import NEED_MAP_RESEARCH from '../../data/matching/needMap.research.js';
-import { needPhrase } from '../../matching/ontology';
+import { needPhrase } from '../../matching/ontology.js';
 import { getPassport } from '../../data/passport/index.js';
 
 /**
