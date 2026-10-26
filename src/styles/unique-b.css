@@ -130,3 +130,6 @@ html body .app-container .cm .cm-body.is-clamped { -webkit-line-clamp: 3 !import
 /* Product mentioned in a feed post: glance only (photo, brand, name, price, match); the facts live on the product page */
 .cm .cm-post:not(.is-full) .cm-mention-card :is(.ay-pcard__facts, .ay-pcard__sizes, .ay-pcard__ev, .ay-pcard__tags, .ay-pcard__peruse, .ay-pcard__amount),
 .am-screen .am-note:not(.is-full) .ay-pcard :is(.ay-pcard__facts, .ay-pcard__sizes, .ay-pcard__ev, .ay-pcard__tags, .ay-pcard__peruse, .ay-pcard__amount) { display: none !important; }
+
+/* App dark: flip the header bands wherever the dark theme attribute sits (the You hub renders under a different root). */
+[data-theme='dark'] :is(#ay, .ay-you-band, .ay-home-hello.is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band) { --ubx: #FFEDAC !important; --ubf: #3E2723 !important; }

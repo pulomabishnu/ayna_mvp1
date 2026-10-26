@@ -65,3 +65,6 @@ a:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile
 .ayb-marquee__row li::after { content: '\2733'; margin-left: 32px; }
 @keyframes ayb-marquee { to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .ayb-marquee__track { animation: none; } }
+
+/* Dark: an espresso tile on the espresso page gets a butter rule so its edge reads (group B, uniqueness pass). */
+:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-ink { border: 1.5px solid rgba(255, 237, 172, .45) !important; }
