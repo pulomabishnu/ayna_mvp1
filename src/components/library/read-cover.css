@@ -77,6 +77,7 @@
 .rc.rc--postpartum { --rc-label: #ffedac; }
 /* Small covers beside a title (list rows, "Top pick"): the title is already next to them, so the cover
    keeps only its topic pill and drawn mark (the word was cut off: "Heavy menstr bleedir"). */
-.rc.rc--thumb .rc__word { display: none; }
-.rc.rc--thumb .rc__label { left: 8cqi; right: auto; padding: 4cqi; border: 0; background: none; }
+.rc.rc--thumb .rc__label { top: auto; bottom: 8cqi; left: 8cqi; right: 8cqi; padding: 6cqi; }
+.rc.rc--thumb .rc__word { font-size: 15px !important; line-height: 1.05; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.rc.rc--thumb .rc__spot { top: 8cqi; right: 8cqi; width: 26cqi; height: 26cqi; }
 .lb-more__cover .rc .rc__label, .lb-more__cover .rc .rc__foot { display: none; }

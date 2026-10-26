@@ -2614,3 +2614,14 @@ html body :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-p
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide > .ayv-pricerow { margin-top: 12px !important; }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide > .ayp-buy__section { margin-top: 12px !important; }
 }
+/* Laptop (1113x683) with a safety hold: the safety line must still clear the fold. The decision column
+   loses its stray row gap and "See why" sits beside the hold's answer button instead of under it. */
+@media (min-width: 900px) {
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide { row-gap: 0 !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide > .ayv-match { margin-top: 12px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide > .ayv-pricerow { margin-top: 12px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-match.is-hold { position: relative; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-match.is-hold > .ayv-textbtn { position: absolute; right: 0; bottom: 8px; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-match.is-hold .ay-hold__fix { max-width: calc(100% - 96px); }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayp-buy__actions .ayp-buy__main { margin-top: 4px !important; }
+}
