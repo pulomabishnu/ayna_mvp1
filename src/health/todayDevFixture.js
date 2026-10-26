@@ -1,3 +1,4 @@
+import { localDayKey } from '../utils/localDate.js';
 // DEV-ONLY sample data for looking at Today without real logs.
 // Open /ecosystem?fixture=today (web) or /mobile-preview?screen=eco&fixture=today
 // on `vite` dev. Variants: fixture=today-care (severe pain today) and
@@ -8,7 +9,7 @@
 
 const FIXTURE_TAG = 'Sample Today fixture';
 
-const dayStr = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const dayStr = (d) => localDayKey(d);
 const plus = (day, n) => { const [y, m, d] = day.split('-').map(Number); return dayStr(new Date(y, m - 1, d + n)); };
 
 /** 'today' | 'today-care' | 'today-pregnant' on `vite` dev with ?fixture=..., else null. Always null in a production build. */

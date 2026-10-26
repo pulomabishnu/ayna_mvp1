@@ -22,6 +22,7 @@ export function TextButton(props) { return <Btn kind="text" {...props} />; }
  * StickerHeading (#52 "TRY THESE OUT"): an outlined pill heading with the pink
  * sticker shadow. Optional, at most ONE per page, never on health content.
  */
-export function StickerHeading({ as: Tag = 'h2', children, className = '', ...rest }) {
+export function StickerHeading({ as = 'h2', children, className = '', ...rest }) {
+  const Tag = as;
   return <Tag className={`ayk-stickerhead ${className}`.trim()} {...rest}>{children}</Tag>;
 }

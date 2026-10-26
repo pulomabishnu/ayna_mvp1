@@ -11,6 +11,7 @@
  *   Matching uses it only for needs she already chose (see matchContext.js).
  */
 import { resolveDaily, series } from './dedupe.js';
+import { localToday } from '../utils/localDate.js';
 
 const DAY = 86400000;
 export const RECENT_DAYS = 7;
@@ -246,8 +247,14 @@ export function periodTiming(resolved, cycle, today) {
  * @param {Array} rows   raw daily rows from any sources (deduped here)
  * @param {object} [opts] { today: 'YYYY-MM-DD', preferred: { category: source } }
  */
+function missingToday(name) {
+  if (import.meta.env?.DEV) console.warn(`${name}: pass { today: localToday() }`);
+  return localToday();
+}
+
 export function buildInsights(rows, opts = {}) {
-  const today = opts.today || isoDay(Date.now());
+  // `today` is her local day (P0 date bug): callers pass localToday(). Never the UTC date.
+  const today = opts.today || missingToday('buildInsights');
   const resolved = resolveDaily(rows, opts.preferred);
   const sections = {
     sleep: sleepSection(resolved, today),
