@@ -2586,6 +2586,7 @@ function App() {
             myProducts={myProducts}
             onOpenProduct={handleOpenProduct}
             onOpenArticle={(a) => { setSelectedArticleId(a.id); setCurrentView('articles'); }}
+            onStartQuiz={handleStartQuiz}
             onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
           />
         )}

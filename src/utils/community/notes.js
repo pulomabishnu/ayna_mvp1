@@ -53,6 +53,22 @@ export function pickMemberQuote(posts = [], { isBlocked = () => false, minHelpfu
 }
 
 /**
+ * The pull quote: only a post the ayna team picked by hand (community_team_picks),
+ * never one chosen automatically. `picks` is newest first ([{ post_id }]).
+ * The post's words are shown as written: split for the highlight, never cut
+ * or changed (a long one is clamped on screen with a link to the full post).
+ */
+export function pickTeamQuote(posts = [], picks = [], { isBlocked = () => false } = {}) {
+  const byId = new Map((posts || []).filter((p) => p?.id).map((p) => [String(p.id), p]));
+  for (const pick of picks || []) {
+    const post = byId.get(String(pick?.post_id));
+    if (!post || isBlocked(post.author_id) || !String(post.body || '').trim()) continue;
+    return { post, ...splitHighlight(post.body) };
+  }
+  return null;
+}
+
+/**
  * Prompt tiles that start a post. `starter` is text placed in the composer
  * (she edits or deletes it); a post that is only the starter counts as empty.
  */

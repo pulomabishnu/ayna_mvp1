@@ -22,6 +22,9 @@ const playlists = () => [
   { id: '00000000-0000-4000-8000-0000000000a1', title: 'Sample playlist: period kit', owner_id: '00000000-0000-4000-8000-000000000110', owner_display_name: 'Sample member 1', item_count: 3, visibility: 'public', preview_product_ids: ['p-saalt-cup', 'p-rael-organic-pad', 'p-honeypot-pad'], cover_url: null, updated_at: ago(90), is_mine: false },
 ];
 
+// One sample team pick, so the "Picked by the ayna team" quote can be looked at.
+const teamPicks = () => [{ post_id: '00000000-0000-4000-8000-000000000001', picked_at: ago(30) }];
+
 const profiles = () => [1, 2, 3, 4].map((n) => ({ user_id: `00000000-0000-4000-8000-0000000001${n}0`, username: `sample_member_${n}`, display_name: `Sample member ${n}`, bio: 'Sample profile for the dev fixture.', avatar_url: null }));
 
 const likers = (postId, n) => Array.from({ length: Math.min(n, 5) }, (_, i) => ({ post_id: postId, user_id: i === 2 ? null : `00000000-0000-4000-8000-0000000001${(i % 4) + 1}0`, username: i === 2 ? null : `sample_member_${(i % 4) + 1}`, display_name: i === 2 ? null : `Sample member ${(i % 4) + 1}`, is_anonymous: i === 2, total_count: n }));
@@ -38,6 +41,7 @@ function tableRows(table, filters) {
   else if (table === 'community_feed_playlists') rows = playlists();
   else if (table === 'community_playlist_items') rows = playlists()[0].preview_product_ids.map((product_id, position) => ({ product_id, position, note: null, added_at: ago(90), added_by: null }));
   else if (table === 'community_profiles') rows = profiles();
+  else if (table === 'community_team_picks') rows = teamPicks();
   for (const [col, val] of filters) rows = rows.filter((r) => !(col in r) || r[col] === val);
   return rows;
 }
