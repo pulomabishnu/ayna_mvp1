@@ -434,7 +434,7 @@
 .ed .ed-tags { display: flex; flex-wrap: wrap; gap: 4px 6px; }
 .ed .ed-tags span { font: 500 13px/1.3 var(--ed-sans); padding: 4px 9px; border-radius: 8px; background: var(--ed-group); }
 .ed .ed-figrow { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font: 500 14px/1.3 var(--ed-sans); color: var(--ed-text-2); }
-.ed .ed-figrow b { font: 600 20px/1 var(--ed-sans); color: var(--ed-text); font-variant-numeric: tabular-nums; }
+.ed .ed-figrow b { font: 600 var(--ay-size-h2, 22px)/1 var(--ed-sans); color: var(--ed-text); font-variant-numeric: tabular-nums; }
 @media (max-width: 1023px) { .ed .ed-hiw { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 767px) { .ed .ed-hiw { grid-template-columns: 1fr; gap: 20px; } }
 .ed .ed-two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }

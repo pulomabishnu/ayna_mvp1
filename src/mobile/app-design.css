@@ -119,7 +119,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-btn, .ayna-empty-state button, .ay-empty button, .ayna-home-today button, .ay-text-btn) { box-shadow: none !important; min-height: 44px !important; }
 /* section titles in the page body */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-section-head:not(.ay-shelf-head) h2,
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-row h2 { font: 500 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-row h2 { font: 500 calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; }
 
 /* ---------- audit pass 1 fixes ---------- */
 /* Wrapped keeps the brand palette in dark mode too */
