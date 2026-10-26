@@ -65,3 +65,6 @@
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs { max-width: min(640px, calc(100vw - 40px)) !important; box-sizing: border-box; }
 /* Rails: each card its own height (no stretched gap above the heart). */
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-row { align-items: start; }
+/* By need panel: pink in the light theme (kept, audit "KEEP"); the dark theme's pink-to-sky swap made it blue,
+   and blue is for chart lines only, so in dark it is a quiet butter-tint surface. */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body [data-theme='brand-dark'] .wx .wx-sec.wx-needs { background: rgba(255, 237, 172, .08) !important; color: var(--ay-ink) !important; }
