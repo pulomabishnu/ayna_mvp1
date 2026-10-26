@@ -3,15 +3,9 @@
  * of the width. One drawing for the product page (ayv-plate, styled in
  * pdp-v7.css) and the shared Plate primitive (ayk-plate__svg).
  */
-export const PLATE_PATH = (() => {
-  const pts = [];
-  for (let i = 0; i <= 240; i += 1) {
-    const t = (i / 240) * Math.PI * 2;
-    const r = 41.5 + 4 * (1 + Math.cos(12 * t));
-    pts.push(`${(50 + r * Math.cos(t)).toFixed(2)} ${(50 + r * Math.sin(t)).toFixed(2)}`);
-  }
-  return `M${pts.join('L')}Z`;
-})();
+// Founder Oct 26 19:48: "no weird flower thing around the pictures, just make a circle or square".
+// The plate is now a plain rounded square (radius 16 of 100), same box, same API.
+export const PLATE_PATH = 'M20 4H80A16 16 0 0 1 96 20V80A16 16 0 0 1 80 96H20A16 16 0 0 1 4 80V20A16 16 0 0 1 20 4Z';
 
 export function ScallopPlate({ tone = 'white', stroke = false, className = '' }) {
   return (
