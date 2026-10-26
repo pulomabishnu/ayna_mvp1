@@ -2418,7 +2418,8 @@ function App() {
             {MAIN_TABS.map((t) => (
               <a key={t.key} href={t.href} className="ay-nav__link" aria-current={WEB_TAB_VIEWS[t.key].includes(currentView) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
                 {t.label}
-                {t.key === 'today' && !user && !authLoading && <span className="ay-nav__start">Start here</span>}
+                {/* Landing audit 5: only on the landing and Today, until the quiz is done. */}
+                {t.key === 'today' && !authLoading && !quizResults && ['welcome', 'hero', 'today'].includes(currentView) && <span className="ay-nav__start">Start here</span>}
               </a>
             ))}
           </div>
