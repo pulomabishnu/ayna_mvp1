@@ -5,6 +5,8 @@ import { matchPercentFor, productMatch } from '../utils/matchScore.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { shownMatchPercent, PARTIAL_FIT } from '../../utils/matchDisplay.js';
 import { ecosystemCounts } from '../../utils/ecosystemCounts.js';
+import { bleedingCareNote, showableAsPick } from '../../utils/bleedingCare.js';
+import BleedingEvaluationNote from '../../components/match/BleedingEvaluationNote.jsx';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import '../wrapped.css';
 import { buildPersona } from '../utils/shopperProfile.js';
@@ -28,8 +30,11 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
   const answers = quizAnswers || lastQuizAnswers;
   // "#1 match" is her highest-scoring product (same scorer as every card), not
   // just the first one saved; ties keep her ecosystem's order.
+  // Bleeding after menopause: picks the engine sends to evaluation (or that do
+  // not fit her) are never shown as a match; the care message leads instead.
+  const bleeding = bleedingCareNote(answers, null, matchOpts || undefined);
   const ranked = answers
-    ? myProducts.map((product, i) => ({ product, i, pct: matchPercentFor(product, answers, matchOpts) ?? -1 })).sort((a, b) => b.pct - a.pct || a.i - b.i).map((x) => x.product)
+    ? myProducts.filter((product) => showableAsPick(product, answers, null, matchOpts || undefined)).map((product, i) => ({ product, i, pct: matchPercentFor(product, answers, matchOpts) ?? -1 })).sort((a, b) => b.pct - a.pct || a.i - b.i).map((x) => x.product)
     : myProducts;
   const products = ranked.slice(0, 4);
   const first = products[0];
@@ -123,6 +128,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
       <div className="ayw-stage" key={active}>
         {active === 'intro' && <>
           <Stamp id="ayw-stamp" className="ayw-stamp" />
+          {bleeding && <BleedingEvaluationNote className="ayw-care" title={bleeding.title} note={bleeding} />}
           <p className="ayw-kicker">Your ecosystem is ready</p>
           <h1 className="ayw-title">Your ayna,<br />at a glance</h1>
           <div className="ayw-stat-row">
@@ -195,6 +201,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         </>}
 
         {active === 'empty' && <>
+          {bleeding && <BleedingEvaluationNote className="ayw-care" title={bleeding.title} note={bleeding} />}
           <h1 className="ayw-title">No strong<br />match yet</h1>
           <p className="ayw-foot">No strong match yet. Your answers didn’t point to one clear pick. The Shop is sorted by need.</p>
           <div className="ayw-actions">

@@ -18,3 +18,6 @@
 /* The row is butter in both themes, so the pill keeps its light-theme ink look. */
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match .ay-match-pill { background: #3e2723 !important; border-color: #3e2723 !important; color: #ffedac !important; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match .ay-match-pill * { color: inherit !important; }
+
+/* Bleeding after menopause: care message above her focus (QA3 M2). */
+.ay-ob-ready__care { margin: 4px 0 16px; text-align: left; }

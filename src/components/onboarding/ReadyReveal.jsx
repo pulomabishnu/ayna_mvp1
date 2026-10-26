@@ -7,6 +7,8 @@ import MatchPill from '../MatchPill.jsx';
 import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct } from '../../data/products.js';
 import { isSafetyHold, isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
+import { bleedingCareNote, showableAsPick } from '../../utils/bleedingCare.js';
+import BleedingEvaluationNote from '../match/BleedingEvaluationNote.jsx';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import '../../styles/onboarding.css';
 import './ReadyReveal.css';
@@ -37,7 +39,9 @@ function firstMatches(answers, limit = 3) {
   if (!answers) return [];
   try {
     const { mergedProducts, seedMeta } = getEcosystemSeedFromQuiz(answers);
-    return Object.values(mergedProducts || {}).slice(0, limit).map((product) => {
+    // Bleeding after menopause: no products for that bleeding and never a
+    // percent (same gate as Today and the product page).
+    return Object.values(mergedProducts || {}).filter((product) => showableAsPick(product, answers)).slice(0, limit).map((product) => {
       const details = getProductMatchDetailsForProduct(product, answers);
       const area = seedMeta?.[product.id]?.frustration || '';
       return { product, details, area, hold: isSafetyHold(details) || isBleedingEvaluation(details), why: whyLine(product, details) };
@@ -51,6 +55,7 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
   const ready = useCatalogReady();
   const needs = useMemo(() => (ready ? revealNeeds(answers) : []), [answers, ready]);
   const matches = useMemo(() => (ready ? firstMatches(answers) : []), [answers, ready]);
+  const bleeding = useMemo(() => (ready ? bleedingCareNote(answers) : null), [answers, ready]);
   // Analytics: the first match is on screen (quiz start to first match).
   useEffect(() => { if (matches.length) trackFirstMatchShown({ surface: eventSurface(), matches_count: matches.length }); }, [matches.length]);
   const goals = (answers?.fullHealthIntake?.goals || []).slice(0, 2);
@@ -69,6 +74,8 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
           "matched to you" seal lands once; still under reduced motion. */}
       <div className="ay-ob-ready__art" aria-hidden="true"><Seal className="ay-ob-ready__seal" /></div>
       <h1 id="ay-ob-ready-h" className="ay-ob-ready__title">Your ayna is ready.</h1>
+      {/* Care first: the prompt-evaluation message sits above her focus and picks. */}
+      {bleeding && <BleedingEvaluationNote className="ay-ob-ready__care" title={bleeding.title} note={bleeding} />}
       {needs.length ? (
         <>
           <p className="ay-ob-ready__lead">Based on what you told us, ayna will initially focus on:</p>
