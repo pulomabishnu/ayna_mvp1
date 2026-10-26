@@ -3,7 +3,9 @@ import '../../styles/free-product.css';
 import ViewSkeleton from '../skeletons/ViewSkeleton';
 import ProductTileImage from '../ProductTileImage';
 import ProductReel from './ProductReel';
+import InfoHero from '../info/InfoHero.jsx';
 import {
+  FEEDBACK_MIN_CHARS,
   FEEDBACK_QUESTIONS,
   FULFILLMENT_LABELS,
   REFERRAL_STATUS_LABELS,
@@ -57,27 +59,48 @@ function useToast() {
 
 /* ------------------------------- Small pieces ------------------------------- */
 
+/* The 3 + 3 = 1 equation inside one card, the result as a round seal (#28 Blush). */
 function Equation({ compact = false }) {
   return (
     <ol className={`fp-eq${compact ? ' is-compact' : ''}`} aria-label="3 thoughtful answers plus 3 friends who join ayna equals 1 free product you pick">
-      <li className="fp-eq__tile tone-sky"><b>3</b><span>thoughtful answers</span></li>
+      <li className="fp-eq__tile"><b>3</b><span>thoughtful answers</span></li>
       <li className="fp-eq__op" aria-hidden="true">+</li>
-      <li className="fp-eq__tile tone-rose"><b>3</b><span>friends who join</span></li>
+      <li className="fp-eq__tile"><b>3</b><span>friends who join</span></li>
       <li className="fp-eq__op" aria-hidden="true">=</li>
-      <li className="fp-eq__tile tone-ink"><b>1</b><span>free product, your pick</span></li>
+      <li className="fp-eq__tile fp-eq__seal"><b>1</b><span>free product, your pick</span></li>
     </ol>
   );
 }
 
-/** Page header: a full-bleed v3 colour band with an edge, like every other ayna page head. */
-function PageHead({ tone = 'rose', kicker, title, lead, center = false, headingRef, children }) {
+/**
+ * The campaign rules, said plainly so nobody feels misled (info-pages audit
+ * issue 4). Written only from what the campaign already enforces: the answer
+ * checks in utils/freeProductCampaign.js, the verified-referral rule, the
+ * limited pool, respins, a final claim, one per person.
+ */
+function Rules({ minChars = FEEDBACK_MIN_CHARS }) {
   return (
-    <header className={`fp-head fp-head--${tone}${center ? ' is-center' : ''}`}>
-      {kicker && <p className="fp-kicker">{kicker}</p>}
-      <h1 className="fp-h1" tabIndex={headingRef ? -1 : undefined} ref={headingRef}>{title}</h1>
-      {lead && <p className="fp-sub">{lead}</p>}
+    <section className="fp-rules" aria-labelledby="fp-rules-h">
+      <h2 id="fp-rules-h">How it works</h2>
+      <ol>
+        <li><b>Substantial feedback.</b> Answer 3 short questions in your own words, at least {minChars} characters each. Repeated, copied or near-identical answers don’t count.</li>
+        <li><b>3 verified friends.</b> A friend counts once they make a new ayna account with your link and verify it. Clicks and invites alone don’t count.</li>
+        <li><b>A limited pool.</b> Products are limited and go to whoever claims them first.</li>
+        <li><b>Respin until you claim.</b> Not for you? Spin again. You can claim anything you landed on.</li>
+        <li><b>Claiming is final.</b> Once you claim a product, it’s yours and can’t be swapped.</li>
+        <li><b>One per person.</b> One free product per person.</li>
+      </ol>
+      <p className="fp-muted">Your free product is a thank-you for your feedback and referrals.</p>
+    </section>
+  );
+}
+
+/** Page header: the shared InfoHero (butter, breadcrumb, H1 36px). No colour bands, no eyebrow labels. */
+function PageHead({ title, lead, center = false, headingRef, children }) {
+  return (
+    <InfoHero className={`fp-head${center ? ' is-center' : ''}`} title={title} lede={lead} crumb="Free product" headingRef={headingRef}>
       {children}
-    </header>
+    </InfoHero>
   );
 }
 
@@ -267,23 +290,23 @@ function ProgressView({ status, user, onUnlock, onRefresh, toast }) {
   return (
     <>
       <ul className="fp-steps" aria-label="What you need to do">
-        <li className={`fp-step tone-sky${status.verified ? ' is-done' : ''}`} ref={accountRef}>
-          <span className="fp-step__n" aria-hidden="true">1</span>
+        <li className={`fp-step${status.verified ? ' is-done' : ''}`} ref={accountRef}>
+          <span className="fp-step__n" aria-hidden="true">{status.verified ? Icon.check : 1}</span>
           <h2>Your account</h2>
           <p className="fp-step__big">{status.verified ? 'Verified' : 'Not verified'}</p>
           <StatusLine done={status.verified}>{status.verified ? 'All set' : 'Confirm your email or phone'}</StatusLine>
           {!status.verified && <p className="fp-muted">Sign out, then sign back in with your email or phone. We'll send a code to confirm it's you.</p>}
         </li>
-        <li className={`fp-step tone-rose${fbDone ? ' is-done' : ''}`}>
-          <span className="fp-step__n" aria-hidden="true">2</span>
+        <li className={`fp-step${fbDone ? ' is-done' : ''}`}>
+          <span className="fp-step__n" aria-hidden="true">{fbDone ? Icon.check : 2}</span>
           <h2>Your feedback</h2>
-          <p className="fp-step__big">{status.feedbackComplete}/{c.feedbackRequired} <small>completed</small></p>
+          <p className="fp-step__big">{status.feedbackComplete} of {c.feedbackRequired} <small>answers saved</small></p>
           <StatusLine done={fbDone} partial={status.feedbackComplete > 0}>{fbDone ? 'Thank you' : `${c.feedbackRequired - status.feedbackComplete} to go`}</StatusLine>
         </li>
-        <li className={`fp-step tone-white${frDone ? ' is-done' : ''}`}>
-          <span className="fp-step__n" aria-hidden="true">3</span>
+        <li className={`fp-step${frDone ? ' is-done' : ''}`}>
+          <span className="fp-step__n" aria-hidden="true">{frDone ? Icon.check : 3}</span>
           <h2>Your referrals</h2>
-          <p className="fp-step__big">{Math.min(status.referralsVerified, c.referralsRequired)}/{c.referralsRequired} <small>verified friends</small></p>
+          <p className="fp-step__big">{Math.min(status.referralsVerified, c.referralsRequired)} of {c.referralsRequired} <small>verified friends</small></p>
           <StatusLine done={frDone} partial={status.referralsVerified > 0}>{frDone ? 'All in' : `${c.referralsRequired - status.referralsVerified} to go`}</StatusLine>
         </li>
       </ul>
@@ -335,7 +358,7 @@ function ProgressView({ status, user, onUnlock, onRefresh, toast }) {
         </div>
       </section>
 
-      <p className="fp-fine">Products are limited and go to whoever claims them first. One free product per person. Claiming a product is final.</p>
+      <Rules minChars={c.feedbackMinChars || FEEDBACK_MIN_CHARS} />
     </>
   );
 }
@@ -480,7 +503,7 @@ function ClaimedView({ claim, user, onUpdated, onBack }) {
 
   return (
     <div className="fp-claimed">
-      <PageHead tone="rose" kicker="Your free product" title="It's yours." headingRef={headingRef} />
+      <PageHead title="It's yours." headingRef={headingRef} />
       <ResultCard product={claim.product} />
       <p className="fp-muted">Claimed {date}. Status: <b>{FULFILLMENT_LABELS[s] || s}</b></p>
       {s !== 'canceled' && (
@@ -641,7 +664,7 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
   if (!status.inventoryAvailable && !current && !landed.some((l) => l.available)) {
     return (
       <div className="fp-reward">
-        <PageHead tone="sky" kicker="Your free product" title="You’ve earned a free product." center />
+        <PageHead title="You’ve earned a free product." center />
         <Notice tone="soft"><b>Every product has been claimed for now.</b> You're still eligible and we've saved your spot. We'll email you as soon as we add more.</Notice>
         <button type="button" className="fp-link" onClick={onBack}>Back to your progress</button>
       </div>
@@ -652,7 +675,7 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
 
   return (
     <div className="fp-reward">
-      <PageHead tone="sky" kicker="Your free product" title="You’ve earned a free product." lead={`You get ${maxSpins} spins. Claim anything you land on. Claiming is final.`} center>
+      <PageHead title="You’ve earned a free product." lead={`You get ${maxSpins} spins. Claim anything you land on. Claiming is final.`} center>
         <ol className="fp-spinpips" aria-label={spinsLabel}>
           {Array.from({ length: maxSpins }, (_, i) => <li key={i} className={i < maxSpins - spinsLeft ? 'is-used' : ''} aria-hidden="true" />)}
           <li className="fp-spinpips__label">{spinsLabel}</li>
@@ -777,13 +800,13 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
   } else if (!user) {
     content = (
       <div className="fp-intro">
-        <PageHead tone="ink" kicker="Free product" title="Give us your thoughts. Get something on us." lead="Tell us what you really think of ayna, bring three friends, and pick a free product." />
+        <PageHead title="Give us your thoughts. Get something on us." lead="Tell us what you really think of ayna, bring three friends, and pick a free product." />
         <Equation />
         <div className="fp-intro__actions">
           <Cta onClick={onSignIn}>Sign in to start</Cta>
           <button type="button" className="fp-link" onClick={onStartQuiz}>New to ayna? Start with a few short questions</button>
         </div>
-        <p className="fp-fine">Products are limited and go to whoever claims them first. One free product per person.</p>
+        <Rules />
       </div>
     );
   } else if (!status) {
@@ -795,7 +818,7 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
   } else if (!status.campaign || (!status.campaign.launched && !status.claim)) {
     content = (
       <div className="fp-intro">
-        <PageHead tone="paper" kicker="Free product" title="Nothing to earn right now." lead="This isn't running at the moment. Keep an eye on your inbox." />
+        <PageHead title="Nothing to earn right now." lead="This isn't running at the moment. Keep an eye on your inbox." />
       </div>
     );
   } else if (status.claim) {
@@ -803,7 +826,7 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
   } else if (status.campaign.ended) {
     content = (
       <div className="fp-intro">
-        <PageHead tone="paper" kicker="Free product" title="This one has wrapped up." lead="Thank you to everyone who sent us feedback and brought friends. Your answers still help us build ayna." />
+        <PageHead title="This one has wrapped up." lead="Thank you to everyone who sent us feedback and brought friends. Your answers still help us build ayna." />
       </div>
     );
   } else if (!status.campaign.live) {
@@ -818,14 +841,14 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
       ? <RewardView status={status} user={user} onRefresh={load} onBack={() => go('free-product')} toast={toastNode} setStatus={setStatus} />
       : (
         <div className="fp-intro">
-          <PageHead tone="paper" kicker="Your free product" title="Not earned yet." lead={remainingLabel(status) || 'Finish every step first.'} />
+          <PageHead title="Not earned yet." lead={remainingLabel(status) || 'Finish every step first.'} />
           <Cta onClick={() => go('free-product')}>See what's left</Cta>
         </div>
       );
   } else {
     content = (
       <>
-        <PageHead tone="rose" kicker="Free product" title="Your free product progress" lead={status.eligible ? 'You’ve earned it. Spin to pick your free product.' : 'Three thoughtful answers and three friends who join ayna. Then you pick something free.'}>
+        <PageHead title="Your free product progress" lead={status.eligible ? 'You’ve earned it. Spin to pick your free product.' : 'Three thoughtful answers and three friends who join ayna. Then you pick something free.'}>
           <Equation compact />
         </PageHead>
         <ProgressView status={status} user={user} onUnlock={() => go('free-product-reward')} onRefresh={load} toast={toast} />

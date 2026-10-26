@@ -1,6 +1,6 @@
 import React from 'react';
 import { EdPage, EdBlock } from './editorial/EdPage';
-import { Clip } from './personality/Bits.jsx';
+import { StickerButton, OutlineButton } from './ui/ay';
 import { TEAM_CAPTION } from '../data/welcomeSlides.js';
 
 /**
@@ -23,11 +23,22 @@ const FOUNDERS = [
 // Advisors in discussion stay off the public page until confirmed.
 const SHOW_ADVISOR_IN_DISCUSSION = false;
 
+// Value cards in one colour family (#7 Double Take): white, pink, butter, white, each with a drawn icon.
 const PRINCIPLES = [
-  { title: 'Matched to you', body: 'Your profile shapes what you see.' },
-  { title: 'Evidence-aware', body: 'Research and guidance add context.' },
-  { title: 'Clinician + community', body: 'Two kinds of experience, side by side.' },
-  { title: 'Never pay\u2011to\u2011match', body: 'Sponsorship is never a match input.' },
+  { title: 'Matched to you', body: 'Your profile shapes what you see.', icon: <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" /><circle cx="16" cy="16" r="5" /><path d="M16 2v5M16 25v5M2 16h5M25 16h5" /></svg> },
+  { title: 'Evidence-aware', body: 'Research and guidance add context.', icon: <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 5h13l5 5v17H7z" /><path d="M20 5v5h5M11 16h10M11 21h7" /></svg> },
+  { title: 'Clinician + community', body: 'Two kinds of experience, side by side.', icon: <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="11" r="4" /><circle cx="22" cy="11" r="4" /><path d="M4 26c0-4 3-7 7-7s7 3 7 7M15 26c0-4 3-7 7-7s7 3 7 7" /></svg> },
+  { title: 'Never pay\u2011to\u2011match', body: 'Sponsorship is never a match input.', icon: <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" /><path d="M8 8l16 16M19 12.5c-.8-1-2-1.5-3.3-1.5-2 0-3.2 1-3.2 2.4 0 3.3 7 1.8 7 5.3 0 1.4-1.4 2.6-3.6 2.6-1.4 0-2.8-.6-3.6-1.6M16 8.5V11M16 21.2v2.3" /></svg> },
+];
+
+/* "Got questions?" (#20 Cadence). Every answer is the site's own wording,
+   taken from How it works, How we make money and the intake; nothing new is claimed. */
+const FAQ = [
+  { q: 'Do brands pay to rank higher in my matches?', a: ['No. Personalized picks are ranked on relevance to you, not on commission rate or partnership status. Sponsorship is never a match input. Partner brands can be shown higher in Browse, always with a label.'], link: ['/how-we-make-money', 'How we make money'] },
+  { q: 'How does ayna make money?', a: ['ayna can earn money in two ways when you buy a product: through a direct brand partnership or through a retailer affiliate program such as Amazon Associates. Neither relationship is used as a signal in your personalized recommendation score.'], link: ['/how-we-make-money', 'How we make money'] },
+  { q: 'Where does the research come from?', a: ['Published research, clinical guidance, product and safety sources, and community experience, where available. Unsupported claims are labeled, not upgraded into facts.'], link: ['/how-it-works', 'How it works'] },
+  { q: 'Is ayna a doctor?', a: ['ayna is not a doctor, and never pretends to be. Summaries may be AI-assisted and are grounded in cited sources where available.'], link: ['/how-it-works', 'How it works'] },
+  { q: 'Do I need a diagnosis?', a: ['You don’t need a diagnosis to use ayna. Skip anything, change anything.'] },
 ];
 
 
@@ -91,8 +102,7 @@ function TeamPhoto() {
   const [failed, setFailed] = React.useState(false);
   if (failed) return null;
   return (
-    <figure className="ay-polaroid ed-story__polaroid" style={{ '--tilt': '-1.5deg' }}>
-      <Clip />
+    <figure className="ed-story__photo">
       <img src={TEAM_PHOTO} alt="The ayna founding team" style={{ objectPosition: '50% 70%' }} loading="lazy" onError={() => setFailed(true)} />
       <figcaption>{TEAM_CAPTION}</figcaption>
     </figure>
@@ -105,18 +115,17 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
       title="We built the place we wished we could turn to."
       lede="Women’s wellness products matched to your needs, with the research and reviews beside them."
       onBack={onBack} backLabel={backLabel}
+      crumb="About"
       photo="robe-pickles"
-      tone="pink"
-      frame="stamp"
     >
       <EdBlock
         title="Find what fits your body, with the research right next to it."
         intro="ayna matches women’s health products to your answers and puts the research and reviews beside each one, so you spend less time searching."
       >
         <ol className="ed-principles">
-          {PRINCIPLES.map((p, i) => (
+          {PRINCIPLES.map((p) => (
             <li key={p.title}>
-              <b aria-hidden="true">{i + 1}</b>
+              {p.icon}
               <h3 className="ed-rowtitle">{p.title}</h3>
               <p>{p.body}</p>
             </li>
@@ -199,18 +208,32 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
         </div>}
       </EdBlock>
 
-      <section className="ed-block ay-band ay-band--espresso ay-band--bleed ay-band--scallop ed-closer ed-closer--band" aria-labelledby="ed-about-closer">
+      <EdBlock title="Got questions?">
+        <div className="ip-faq">
+          {FAQ.map((f) => (
+            <details key={f.q}>
+              <summary>{f.q}</summary>
+              <div>
+                {f.a.map((t) => <p key={t}>{t}</p>)}
+                {f.link && <p><a href={f.link[0]}>{f.link[1]}</a></p>}
+              </div>
+            </details>
+          ))}
+        </div>
+      </EdBlock>
+
+      <section className="ed-block ip-closer" aria-labelledby="ed-about-closer">
         <div>
           <h2 id="ed-about-closer" className="ed-h2">A place to return to as your needs change.</h2>
-          <p className="ed-body">
+          <p className="ed-body" style={{ marginTop: 8 }}>
             The questions you have about your body can change over time. We want ayna to grow with those questions,
             making women’s wellness easier to explore at every stage.
           </p>
         </div>
         {(onStart || onExplore) && (
-          <div className="ed-closer__cta">
-            {onStart && <button type="button" className="ay-btn ay-btn--primary" onClick={() => onStart()}>See my matches</button>}
-            {onExplore && <button type="button" className="ay-btn ay-btn--secondary" onClick={() => onExplore()}>Browse products</button>}
+          <div className="ip-closer__cta">
+            {onStart && <StickerButton onClick={() => onStart()}>See my matches</StickerButton>}
+            {onExplore && <OutlineButton onClick={() => onExplore()}>Browse products</OutlineButton>}
           </div>
         )}
       </section>

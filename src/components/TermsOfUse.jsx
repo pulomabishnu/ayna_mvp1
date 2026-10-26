@@ -3,7 +3,7 @@ import { EdPage } from './editorial/EdPage';
 
 export default function TermsOfUse({ onBack, backLabel }) {
   return (
-    <EdPage title="Terms of use" updated="Last updated October 19, 2026" onBack={onBack} backLabel={backLabel} toc>
+    <EdPage title="Terms of use" crumb="Terms" updated="Last updated October 19, 2026" onBack={onBack} backLabel={backLabel} toc>
         <p>
           These Terms govern your use of www.aynahealth.co and related ayna services (the “Services”). The Services are currently operated by Ayna Health, Inc., doing business as ayna (“ayna,” “we,” “us,” or “our”). By using the Services, you agree to these Terms and our Privacy Policy.
         </p>
