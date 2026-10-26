@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { buildDashboard } from '../health/dashboard.js';
 import { buildInsights } from '../health/insights.js';
 import { healthMatchContext } from '../health/matchContext.js';
@@ -11,6 +11,9 @@ import TodayFeed from './today/TodayFeed.jsx';
 import { OutlineButton } from './ui/ay/index.js';
 import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './personality/DS.jsx';
 import { headline, readHomeLook } from '../mobile/components/homeLook.js';
+import { comingUp } from '../health/comingUp.js';
+import { formatMetric } from '../health/dashboard.js';
+import { CountRing, ProgressCount } from './ui/ay';
 import { syncState } from '../health/dashView.js';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
@@ -82,6 +85,61 @@ function ConnectNote({ signedIn, onSignIn, onOpenConnections }) {
         <a className="ay-wh-btn is-quiet" href={BETA_URL} target="_blank" rel="noopener noreferrer">Join the iPhone beta<span className="sr-only"> (opens in a new tab)</span></a>
       </div>
     </section>
+  );
+}
+
+
+const fmtShortDay = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+/**
+ * Today's right column (Today audit, issue 5): "Your week" glance rows and
+ * "Coming up", then what she is trying now, all from her own data (her log's
+ * weekly recap, synced health rows, her cycle estimate, her tries). Words
+ * first, the number under them. Nothing here when there is nothing real.
+ */
+function TodaySide({ week, tiles, coming, trying, setup }) {
+  const glance = [...(week?.stats || []), ...(week?.changes || [])];
+  const done = setup.filter((x) => x.done).length;
+  return (
+    <>
+      {done > 0 && done < setup.length && (
+        <section className="ay-wh-side" aria-labelledby="ay-wh-setup-h">
+          <h2 id="ay-wh-setup-h" className="ay-wh-side__h">Getting set up</h2>
+          <ProgressCount done={done} total={setup.length} unit="set-up steps done" />
+          <ul className="ay-wh-side__rows">
+            {setup.map((x) => <li key={x.id} className={`is-step${x.done ? ' is-done' : ''}`}><b className="is-line">{x.done ? 'Done: ' : ''}{x.label}</b></li>)}
+          </ul>
+        </section>
+      )}
+      {(glance.length > 0 || tiles.length > 0) && (
+        <section className="ay-wh-side" aria-labelledby="ay-wh-week-h">
+          <h2 id="ay-wh-week-h" className="ay-wh-side__h">Your week</h2>
+          <ul className="ay-wh-side__rows">
+            {tiles.map((x) => (
+              <li key={x.id}><span className="ay-wh-side__label">{x.label}</span><b>{x.word}</b><span className="ay-wh-side__val">{x.value}{x.usual ? ` · usual ${x.usual}` : ''}</span></li>
+            ))}
+            {glance.map((line) => <li key={line}><b className="is-line">{line}</b></li>)}
+          </ul>
+          {week?.open && <button type="button" className="ay-wh-side__more" onClick={week.open}><span>{week.label}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
+        </section>
+      )}
+      {coming.length > 0 && (
+        <section className="ay-wh-side" aria-labelledby="ay-wh-coming-h">
+          <h2 id="ay-wh-coming-h" className="ay-wh-side__h">Coming up</h2>
+          <ul className="ay-wh-side__rows">
+            {coming.map((c) => <li key={`${c.day}-${c.title}`}><span className="ay-wh-side__label">{fmtShortDay(c.day)}</span><b>{c.title}</b></li>)}
+          </ul>
+        </section>
+      )}
+      {trying.length > 0 && (
+        <section className="ay-wh-side" aria-labelledby="ay-wh-trying-h">
+          <h2 id="ay-wh-trying-h" className="ay-wh-side__h">Trying now</h2>
+          <ul className="ay-wh-side__rows">
+            {trying.map((x) => <li key={x.id} className="has-ring"><CountRing value={x.day} total={x.of} size={48} /><span><b>{x.name}</b><span className="ay-wh-side__val">Day {x.day} of {x.of}</span></span></li>)}
+          </ul>
+        </section>
+      )}
+    </>
   );
 }
 
@@ -214,6 +272,26 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   const hasData = rows.length > 0 && !(dash.empty && week.empty && !sections.length);
   const name = demo ? '' : (user?.user_metadata?.first_name || user?.user_metadata?.name || '').split(' ')[0];
 
+  // Today's right column, from TodayFeed (her log's week, what she is trying).
+  const [weekInfo, setWeekInfo] = useState(null);
+  const [trying, setTrying] = useState([]);
+  const [setup, setSetup] = useState([]);
+  // With synced data, Today is still the day (Today audit: items, check-in,
+  // "Your week" and Coming up); "See your data" opens the dashboard view
+  // (/health), and "Back to Today" returns.
+  const onHealthPath = () => typeof window !== 'undefined' && /^\/health\/?$/.test(window.location.pathname);
+  const [dataView, setDataView] = useState(onHealthPath);
+  useEffect(() => {
+    const sync = () => setDataView(onHealthPath());
+    window.addEventListener('popstate', sync);
+    return () => window.removeEventListener('popstate', sync);
+  }, []);
+  const goData = (on) => {
+    setDataView(on);
+    try { window.history.pushState(window.history.state, '', on ? '/health' : '/today'); } catch { /* sandboxed */ }
+    try { window.scrollTo({ top: 0 }); } catch { /* old browser */ }
+  };
+  const dayView = compact && (!(signedIn && hasData) || !dataView);
   // Today with ayna leads every state: it runs on her local log, signed out too.
   const feed = (
     <TodayFeed
@@ -230,6 +308,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
       onSaveToProfile={onSaveToProfile}
       moreHeading={!compact}
       showHead={!compact}
+      {...(dayView ? { onWeekly: setWeekInfo, onTries: setTrying, onSetup: setSetup } : {})}
       {...rundown}
     />
   );
@@ -243,17 +322,25 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   // sentence (UX spec 6), then two columns on desktop: the day on the left
   // (Rundown, the 1 to 3 things, her log) and "More for you" on the right.
   // The right column only exists when it has something in it.
-  // With synced health data, Today stays the full dashboard (HealthHome carries the feed).
-  if (compact && !(signedIn && hasData)) {
+  // With synced health data, "See your data" opens the full dashboard (HealthHome carries the feed there).
+  if (dayView) {
     const connect = !(signedIn && (h.connected || []).length > 0)
       ? <ConnectNote signedIn={signedIn} onSignIn={onSignIn} onOpenConnections={onOpenConnections} />
       : null;
-    const more = [aside, connect].filter(Boolean);
+    // "Your week" from synced health rows, when there are any: words, then the number and her usual.
+    const tiles = (dash.tiles || []).filter((x) => x.id !== 'cycle').map((x) => {
+      const c = dash.groups.flatMap((g) => g.charts).find((ch) => ch.metric === x.metric);
+      return { id: x.id, label: x.label, word: x.word, value: x.value, usual: c?.usual != null ? (x.metric === 'steps' ? Math.round(c.usual).toLocaleString('en-US') : formatMetric(x.metric, c.usual)) : null };
+    });
+    const estimate = sections.find((sec) => sec.id === 'cycle')?.estimate || null;
+    const coming = comingUp(week.cycle?.cycleDay ? week.cycle : null, estimate, today, { hormonalBC, hasProducts: false });
+    const setupLeft = setup.some((x) => x.done) && setup.some((x) => !x.done);
+    const hasSide = (signedIn && hasData) || Boolean(aside) || tiles.length > 0 || coming.length > 0 || trying.length > 0 || Boolean(weekInfo) || setupLeft;
     return (
       <section className="ay-wh ay-wh--today" aria-labelledby="ay-wh-title">
         {band}
         {intro}
-        <div className={`ay-wh-day${more.length ? ' has-more' : ''}`}>
+        <div className={`ay-wh-day${hasSide ? ' has-more' : ''}`}>
           <div className="ay-wh-day__main">
             {todayFeed}
             {signedIn && (h.status === 'loading' || h.status === 'idle') && !rows.length && <div className="ay-wh-loading" role="status"><i /><i /><i /><span>Loading your health data</span></div>}
@@ -264,11 +351,15 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
                 <button type="button" className="ay-wh-btn" onClick={() => h.refresh?.()}>Try again</button>
               </div>
             )}
+            {connect && <div className="ay-wh-day__connect">{connect}</div>}
           </div>
-          {more.length > 0 && (
-            <aside className="ay-wh-day__more" aria-labelledby="ay-wh-more-h">
-              <h2 id="ay-wh-more-h" className="ay-wh-day__moreh">More for you</h2>
-              {more.map((m, i) => <div key={i} className="ay-wh-day__mod">{m}</div>)}
+          {hasSide && (
+            <aside className="ay-wh-day__more" aria-label="Your week and coming up">
+              <div className="ay-wh-day__mod">
+                <TodaySide week={weekInfo} tiles={tiles} coming={coming} trying={trying} setup={setup} />
+                {signedIn && hasData && <button type="button" className="ay-wh-side__more is-data" onClick={() => goData(true)}><span>See your data</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
+              </div>
+              {aside && <div className="ay-wh-day__mod">{aside}</div>}
             </aside>
           )}
         </div>
@@ -331,6 +422,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   return (
     <section className={`ay-wh ay-wh--dash${compact ? ' ay-wh--today has-data' : ''}`} aria-labelledby="ay-wh-title">
       <DashBand title={title} today={today} cycle={week.cycle?.cycleDay ? week.cycle : null} sync={syncState(h.connected)} hormonalBC={hormonalBC} />
+      {compact && <p className="ay-wh-back"><button type="button" className="ay-wh-side__more" onClick={() => goData(false)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg><span>Back to Today</span></button></p>}
       {intro}
       <HealthHome
         hello={false}

@@ -113,7 +113,7 @@ export default function AynaHomeScreen(props) {
           community={rundownCommunity}
           onOpenPost={onOpenCommunityPost}
           onRundownFinish={onRundownFinish}
-          onOpenFull={() => openDashboard()}
+          onOpenFull={(item, o) => openDashboard(Boolean(o?.log))}
           moreHeading={false}
         />
         </div>
