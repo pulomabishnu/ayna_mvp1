@@ -2,7 +2,7 @@
 // engine call every surface uses (getProductMatchDetailsForProduct), so the
 // percent here is always the card's and the product page's percent.
 import { getProductMatchDetailsForProduct } from '../data/products.js';
-import { breakdownFromDetails } from './breakdown.js';
+import { breakdownFromDetails, matchPercentFromDetails } from './breakdown.js';
 
 /**
  * @param {object} product catalog product
@@ -14,4 +14,10 @@ export function matchBreakdown(product, profile, { healthProfile = null, matchOp
   return breakdownFromDetails(product, getProductMatchDetailsForProduct(product, profile, healthProfile, matchOpts));
 }
 
-export { breakdownFromDetails, matchLabel, PARTNER_NOTE } from './breakdown.js';
+/** The match percent for this product and profile: the same number on the website and in the app. */
+export function matchPercent(product, profile, { healthProfile = null, matchOpts } = {}) {
+  if (!product || !profile) return null;
+  return matchPercentFromDetails(getProductMatchDetailsForProduct(product, profile, healthProfile, matchOpts));
+}
+
+export { breakdownFromDetails, matchPercentFromDetails, matchLabel, PARTNER_NOTE } from './breakdown.js';

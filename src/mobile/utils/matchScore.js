@@ -1,4 +1,5 @@
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
+import { matchPercent } from '../../matching/matchBreakdown.js';
 
 // The one match score the app shows for a product (walkthrough P0-4: Swipe
 // said 95% while the Shop card and product page said 97% for the same product).
@@ -18,7 +19,6 @@ export function productMatch(product, quizAnswers, matchOpts) {
 
 /** The percent to show (0..100), or null when there is no scored match to show. */
 export function matchPercentFor(product, quizAnswers, matchOpts) {
-  const d = productMatch(product, quizAnswers, matchOpts);
-  if (!d || d.matchStatus !== 'scored' || d.eligible === false) return null;
-  return Number.isFinite(d.percent) && d.percent > 0 ? Math.round(d.percent) : null;
+  // The one engine call (matching/matchBreakdown.js), the same as the website's getProfileMatchPercentForProduct.
+  return matchPercent(product, quizAnswers, { matchOpts: matchOpts || undefined });
 }

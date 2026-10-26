@@ -17,6 +17,18 @@ export function matchLabel(percent) {
   return fitLabel(n);
 }
 
+/**
+ * The one match percent every surface reads (website: getProfileMatchPercentForProduct,
+ * app: matchPercentFor). Engine percent, rounded, for a scored and eligible match;
+ * null for no profile, a safety hold, bleeding evaluation, an exclusion or no fit.
+ * This is the ranking value: the printed number goes through shownMatchPercent (cap 97).
+ */
+export function matchPercentFromDetails(details) {
+  if (!details || (details.matchStatus || 'scored') !== 'scored' || details.eligible === false) return null;
+  const n = Number(details.percent);
+  return Number.isFinite(n) && n > 0 ? Math.round(n) : null;
+}
+
 const item = (p) => ({ factor: p.factor, text: p.text, ...(Number.isFinite(p.delta) ? { delta: p.delta } : {}) });
 const empty = (extra) => ({ percent: null, label: '', raised: [], lowered: [], unknown: [], reason: '', note: PARTNER_NOTE, ...extra });
 
