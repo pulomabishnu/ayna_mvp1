@@ -1,11 +1,13 @@
 /**
- * Which of the app's four tabs a screen (or overlay) sits under:
- * Home · Explore · Community · You (founder, Oct 24 22:12). Home is the
- * 'ayna' screen; the old Today and Ask ayna screens are its views. The
- * Library is a pushed screen under Explore.
+ * Which of the app's five tabs a screen (or overlay) sits under:
+ * Today · Explore · Ask ayna · Community · You (all-pages brief, Oct 25).
+ * Today (key 'home') is the 'ayna' screen; its 'chat' view is the Ask ayna
+ * tab. In the chat-first variant (?home=chat) the chat is home, so every
+ * 'ayna' view sits under the first tab. The Library is pushed under Explore.
  */
-export function navTabFor(screen, overlayType = null) {
+export function navTabFor(screen, overlayType = null, { view = null, variant = 'dashboard' } = {}) {
   if (['profile', 'profile-auth'].includes(overlayType)) return 'profile';
+  if (variant !== 'chat' && (screen === 'ask' || (screen === 'ayna' && view === 'chat'))) return 'ask';
   if (['ayna', 'today', 'ask'].includes(screen)) return 'home';
   if (['explore', 'browse', 'library'].includes(screen)) return 'explore';
   if (screen === 'community') return 'community';

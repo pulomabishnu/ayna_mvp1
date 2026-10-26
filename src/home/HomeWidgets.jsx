@@ -60,7 +60,7 @@ export default function HomeWidgets({ surface = 'app', userId = null, data = {},
   useEffect(() => { if (!open) before.current = null; }, [open]);
 
   return (
-    <section className={`ay-homewidgets is-${surface}`} aria-label={surface === 'web' ? 'Your widgets' : 'Your widgets on Home'} data-count={layout.widgets.length}>
+    <section className={`ay-homewidgets is-${surface}`} aria-label={surface === 'web' ? 'Your widgets' : 'Your widgets on Today'} data-count={layout.widgets.length}>
       {layout.widgets.length > 0 && (
         <div className="ay-homewidgets__grid">
           {/* A row-shaped widget alone (today's health row) keeps the full width. */}
@@ -73,7 +73,7 @@ export default function HomeWidgets({ surface = 'app', userId = null, data = {},
         <button type="button" className="ay-homewidgets__edit" aria-haspopup="dialog" onClick={openSheet}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10-10-4-4L4 16v4zM14 6l4 4" /></svg>
           <span>{layout.widgets.length ? editLabel : surface === 'web' ? 'Add widgets to Today' : 'Add widgets'}</span>
-          {layout.widgets.length > 0 && <span className="sr-only"> {surface === 'web' ? 'Today' : 'Home'}</span>}
+          {layout.widgets.length > 0 && <span className="sr-only"> Today</span>}
         </button>
       </div>
       {open && <CustomizeHomeSheet surface={surface} widgets={layout.widgets} custom={layout.custom} onChange={change} onReset={reset} onClose={closeSheet} ctx={ctx} />}

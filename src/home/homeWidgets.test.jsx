@@ -72,8 +72,8 @@ describe('the space cap', () => {
     expect(L.fits(w, { id: 'pain_chart', size: 'small' }, 'app')).toBe(true);
     expect(L.fits(w, { id: 'pain_chart', size: 'large' }, 'app')).toBe(false);
     expect(L.fits(w, { id: 'pain_chart', size: 'large' }, 'web')).toBe(true);
-    expect(L.capLine(w, 'app')).toBe('Home fits 4 spaces: a small widget takes 1, a large one takes 2. 3 of 4 used.');
-    expect(L.capLine([...w, { id: 'pain_chart', size: 'small' }], 'app')).toBe('Home is full. Turn one off to add another.');
+    expect(L.capLine(w, 'app')).toBe('Today fits 4 spaces: a small widget takes 1, a large one takes 2. 3 of 4 used.');
+    expect(L.capLine([...w, { id: 'pain_chart', size: 'small' }], 'app')).toBe('Today is full. Turn one off to add another.');
   });
   it('a stored layout over the cap, with unknown or repeated ids, is cleaned', () => {
     const raw = [{ id: 'sleep_chart', size: 'large' }, { id: 'nope', size: 'small' }, { id: 'sleep_chart', size: 'small' }, { id: 'pain_chart', size: 'large' }, { id: 'mood_chart', size: 'large' }, { id: 'doctor_prep', size: 'small' }];
@@ -167,12 +167,12 @@ describe('Home with widgets and the Customize Home sheet', () => {
     mount(<HomeWidgets surface="app" data={{}} on={{ openLog: () => {} }} />);
     expect([...host.querySelectorAll('.ay-homewidgets__cell')]).toHaveLength(1);
     expect(host.querySelector('.ay-homehealth').textContent).toContain('Your log');
-    expect(btn('Edit Home')).toBeTruthy();
+    expect(btn('Edit Today')).toBeTruthy();
   });
 
   it('the sheet stays open, scrolled and on its category while she adds, resizes, reorders and removes; Home updates live', () => {
     mount(<HomeWidgets surface="app" data={{}} on={{}} />);
-    act(() => btn('Edit Home').click());
+    act(() => btn('Edit Today').click());
     const dlg = () => document.querySelector('.ay-chs[role="dialog"]');
     expect(dlg().getAttribute('aria-modal')).toBe('true');
     // Fixed items, not toggleable.
@@ -189,9 +189,9 @@ describe('Home with widgets and the Customize Home sheet', () => {
     act(() => btn('Add Pain').click());
     expect(host.querySelectorAll('.ay-homewidgets__cell')).toHaveLength(3);
     // 2 + 1 + 1 = 4: full.
-    expect(dlg().querySelector('.ay-chs-cap').textContent).toBe('Home is full. Turn one off to add another.');
+    expect(dlg().querySelector('.ay-chs-cap').textContent).toBe('Today is full. Turn one off to add another.');
     expect(btn('Add Mood').disabled).toBe(true);
-    expect(dlg().textContent).toContain('Home is full. Turn one off to add another.');
+    expect(dlg().textContent).toContain('Today is full. Turn one off to add another.');
     // Reorder with buttons, then turn one off.
     act(() => btn('Move Pain up').click());
     expect([...host.querySelectorAll('.ay-homewidgets__cell .ay-w')].map((n) => n.className.match(/ay-w--(\w+)$/)?.[1] || n.className)).toHaveLength(3);
@@ -219,7 +219,7 @@ describe('Home with widgets and the Customize Home sheet', () => {
     L.writeHomeLayout('app', [{ id: 'log_streak', size: 'small' }]);
     mount(<HomeWidgets surface="app" data={{}} on={{}} />);
     expect(host.querySelector('.ay-w--log_streak')).toBeTruthy();
-    act(() => btn('Edit Home').click());
+    act(() => btn('Edit Today').click());
     act(() => btn('Reset to default').click());
     expect(host.querySelector('.ay-homehealth')).toBeTruthy();
     expect(host.querySelector('.ay-w--log_streak')).toBeNull();
