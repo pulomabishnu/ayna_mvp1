@@ -11,7 +11,7 @@ import { SheetMatch } from './ProductQuick.jsx';
 import { SafetyLine, MatchLockup, PriceRow, Highlights, ActionsRow } from '../../components/pdp/PdpParts.jsx';
 import { costPerUse, highlightsFor, matchBreakdownFor, alsoAt } from '../../components/pdp/decision.js';
 import { trackApp } from '../utils/appAnalytics.js';
-import { ADD_TO_ROUTINE, IN_ROUTINE } from '../../utils/routineCopy.js';
+import { IN_ROUTINE } from '../../utils/routineCopy.js';
 import { buyModel } from '../../components/pdp/buyModel.js';
 import { heroPriceView } from '../../components/pdp/heroPrice.js';
 import { perUnitLabel } from '../../components/pdp/glance.js';
@@ -128,7 +128,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
             <div className="ay-psheet__head">
               <span className="ay-psheet__img"><ProductImage product={product} src={product.image || product.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
               <div className="ay-psheet__id">
-                {(brand || cardKind(product)) && <p className="ay-psheet__brand">{brand || cardKind(product)}</p>}
+                {(brand || glance?.brand || cardKind(product)) && <p className="ay-psheet__brand">{brand || glance?.brand || cardKind(product)}</p>}
                 <h2 id="ay-psheet-title">{name}</h2>
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
               </p>
             )}
             <SafetyLine lines={safetyLineFor(product, glance, undefined, { answers: answers || (pregnancyFirst ? { lifeStageSelections: ['pregnant'] } : null) }).lines} />
-            <ActionsRow saved={saved} onSave={onToggleSaved ? () => onToggleSaved(product) : null} inRoutine={inRoutine} onRoutine={onAddToRoutine ? () => onAddToRoutine(product) : null} routineWords={[ADD_TO_ROUTINE, IN_ROUTINE]} onAsk={onAsk ? () => onAsk(`About ${name}: Anything I should know before using it?`) : null} />
+            <ActionsRow saved={saved} onSave={onToggleSaved ? () => onToggleSaved(product) : null} inRoutine={inRoutine} onRoutine={onAddToRoutine ? () => onAddToRoutine(product) : null} routineWords={['Routine', IN_ROUTINE]} onAsk={onAsk ? () => onAsk(`About ${name}: Anything I should know before using it?`) : null} />
             <Highlights items={highlights} note={highlights.length ? 'From the product record. Not tested by ayna.' : ''} />
             <ProductEvidence key={product.id} product={product} glance={glance} loading={!loaded} swipeTabs syncHash={false} safetyLead={topWarning} fit={{ details, hasProfile: Boolean(details && details.matchStatus !== 'no-profile'), onShowWhy }} askSlot={onAsk ? <ProductAsk productName={name} onAsk={onAsk} hasProfile={Boolean(details && details.matchStatus !== 'no-profile')} /> : null} endCta={buyLink('is-compact')} />
             {renderFull && <button type="button" className="ay-psheet__more" onClick={() => setFull(true)}>Read more <span aria-hidden="true">→</span><span className="sr-only"> about {name} on its full page</span></button>}

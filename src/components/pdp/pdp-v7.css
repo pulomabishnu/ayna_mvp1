@@ -361,7 +361,7 @@
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__icon { flex: none; margin-top: 3px; color: var(--ay-ink); }
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__body { flex: 1 1 auto; min-width: 0; display: grid; gap: 2px; }
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__text { margin: 0 !important; font: 600 15px/1.4 var(--v-ui) !important; color: var(--ay-ink) !important; }
-:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__go { display: inline !important; min-height: 0 !important; margin: 0 !important; padding: 12px 0 !important; font: 600 15px/1.4 var(--v-ui) !important; vertical-align: baseline; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__go { display: inline !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; font: 600 15px/1.4 var(--v-ui) !important; vertical-align: baseline; }
 
 /* ---------- PDP audit: evidence marks, header, key, pointer (7.6, 15 EvidenceHeader / EvidenceMark) ---------- */
 :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-mark8 { flex: none; display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: -1px; color: var(--ay-ink); }
@@ -471,7 +471,7 @@
 :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-hl__cap { font: 500 13px/18px var(--v-ui) !important; color: var(--ay-ink-muted) !important; }
 :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-hl__note { margin: 8px 0 0 !important; font: 500 13px/18px var(--v-ui) !important; color: var(--ay-ink-muted) !important; }
 @media (min-width: 1024px) { #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hl__row { grid-template-columns: repeat(4, minmax(0, 200px)); } }
-@media (max-width: 360px) { :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-hl__row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 440px) { :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-hl__row { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
 
 /* ---------- Ask panel (web) and sheet (app) (7.8, 15 AskPanel) ---------- */
 .ayv-ask2 { position: fixed; inset: 0; z-index: 4500; }
@@ -584,3 +584,7 @@ html:has(#pdp-v4) { scroll-padding-top: 140px; }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-pricerow { margin-top: 6px !important; }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk { margin-top: 4px !important; }
 }
+:is([data-theme='brand-dark'], [data-theme='dark']) #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-st__list { background: rgba(255, 237, 172, .12) !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-st__tab:not(.is-on) { color: #ffedac !important; background: transparent !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-st__tab.is-on { background: #ffedac !important; color: #3e2723 !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-sticker { box-shadow: 3px 3px 0 #f7badd !important; }
