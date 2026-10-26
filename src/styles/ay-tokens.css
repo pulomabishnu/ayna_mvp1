@@ -10,7 +10,7 @@
   --ay-butter-deep: #f6e3a1;
   --ay-pink: #f7badd; --legacy-pink: #f7badd;
   --ay-data-blue: #769ebe;
-  --ay-surface: #ffffff; --legacy-surface: #ffffff;
+  --ay-surface: #f6e3a1; --legacy-surface: #f6e3a1; /* founder Oct 26: no white surfaces; white only behind product photos (--ay-plate) */
   --ay-r-sm: 8px; --ay-r-md: 16px; --ay-r-pill: 999px; --ay-r-round: 50%;
   --ay-rule: 1px solid rgba(62, 39, 35, .15);
   --ay-outline: 1.5px solid #3e2723; --legacy-outline: 1.5px solid #3e2723; /* always a full border; the bare colour is --ay-outline-color */
