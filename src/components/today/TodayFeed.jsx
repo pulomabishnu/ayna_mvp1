@@ -66,7 +66,7 @@ function CompactItem({ item, t, onAsk, onFindCare, onOpenFull, onOutcome }) {
       {outcomes.length > 0 && (
         <div className="ay-today__chips is-inline" role="group" aria-label="How did it go?">
           {outcomes.slice(0, FIRST_CHIPS).map((a) => <button key={a.id} type="button" className="ay-chip" onClick={() => onOutcome(item, a.id.slice(8))}><OutcomeIcon id={a.id.slice(8)} />{a.label}</button>)}
-          {full && <button type="button" className="ay-chip is-more" aria-label="More answers" onClick={() => full()}>…</button>}
+          {full && <button type="button" className="ay-chip is-more" onClick={() => full()}>More</button>}
         </div>
       )}
       {fields.length > 0 && (
