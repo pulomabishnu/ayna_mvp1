@@ -2645,3 +2645,16 @@ html body :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-p
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide .ayv-fine { margin-top: 4px !important; }
 }
 @media (min-width: 900px) { #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide > .ayv-match.is-hold + .ayv-pricerow { margin-top: 6px !important; } }
+/* Loop C r5: tabs in the laptop reading column (768px and up). The four full names stay on one line in one
+   row of pills; when the column is narrower than the row (about 440px), the row scrolls sideways with a
+   fade at the edge that has more, and the chosen tab is scrolled into view (StickyTabs). Phones keep the
+   short labels in four equal columns. */
+@media (min-width: 768px) {
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-st__list { display: flex !important; flex-wrap: nowrap; gap: 0 !important; overflow-x: auto !important; overflow-y: hidden !important; scrollbar-width: none; scroll-padding-inline: 32px; overscroll-behavior-x: contain; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-st__list::-webkit-scrollbar { display: none; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-st__tab { flex: 1 0 auto; min-height: 40px !important; padding: 0 9px !important; white-space: nowrap !important; font-size: 14px !important; line-height: 1.2 !important; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-st__tab span { white-space: nowrap !important; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-st[data-more-end] .ayq-st__list { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent); }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-st[data-more-start] .ayq-st__list { -webkit-mask-image: linear-gradient(to right, transparent, #000 24px); mask-image: linear-gradient(to right, transparent, #000 24px); }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-st[data-more-start][data-more-end] .ayq-st__list { -webkit-mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent); }
+}

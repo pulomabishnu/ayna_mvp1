@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEdgeFade } from './useEdgeFade';
 import PLAIN from '../../data/matching/plainRationales.js';
 import { needPhrase } from '../../matching/ontology';
 import { useApprovedResearch } from '../../utils/approvedResearch';
@@ -302,6 +303,24 @@ function scrollsSideways(el, stop) {
 
 function StickyTabs({ tabs, active, onChange, stickTop, swipe = false }) {
   const listRef = useRef(null);
+  // Laptop reading column (380-430px): the four full names sit on one row that scrolls sideways,
+  // with an edge fade where there is more, and the chosen tab kept in view (never two-line labels).
+  useEdgeFade(listRef, [tabs.length]);
+  useEffect(() => {
+    const list = listRef.current;
+    const tab = list?.querySelector(`[data-tab="${active}"]`);
+    if (!list || !tab) return undefined;
+    const id = window.requestAnimationFrame(() => {
+      if (list.scrollWidth <= list.clientWidth + 1) return;
+      const box = list.getBoundingClientRect();
+      const r = tab.getBoundingClientRect();
+      const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      // Past the 24px edge fade on either side: scroll the row (never the page).
+      if (r.left < box.left + 24) list.scrollBy({ left: r.left - box.left - 24, behavior: reduce ? 'auto' : 'smooth' });
+      else if (r.right > box.right - 24) list.scrollBy({ left: r.right - box.right + 24, behavior: reduce ? 'auto' : 'smooth' });
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, [active]);
   // The app's product sheet: swipe left or right on a tab to move to the next one.
   const touch = useRef(null);
   const swipeProps = swipe ? {
