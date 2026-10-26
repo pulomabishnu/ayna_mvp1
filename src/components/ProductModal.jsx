@@ -46,13 +46,8 @@ import { getAppSessionId } from '../utils/conversationId';
 import { productHref } from '../utils/productRoute';
 import { hostLabel } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
-import '../styles/audit-pdp.css';
 import '../styles/verify-content.css';
 import './pdp/pdp.css';
-import './pdp/pdp-story.css';
-import './pdp/pdp-page.css';
-import '../styles/pdp-v4.css';
-import './pdp/pdp-tabs.css';
 import { fetchWithTimeout } from '../utils/network.js';
 import { SaveFollowUpInline } from './save/SaveFollowUp.jsx';
 

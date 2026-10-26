@@ -6,7 +6,7 @@ import { matchText, shownMatchPercent, MATCH_UNAVAILABLE, SAFETY_HOLD } from '..
 import PdpIcon from './PdpIcon.jsx';
 import { splitShow, SHOW_FIRST } from './pdpParts.js';
 import { LEVELS, levelLabel, levelCountWords } from './evidenceLevels.js';
-import './pdp-v7.css';
+import './pdp.css';
 
 /**
  * The product page's shared parts (website page, app page, app sheet):

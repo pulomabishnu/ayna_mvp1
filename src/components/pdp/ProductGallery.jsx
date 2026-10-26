@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import ImageZoomViewer from '../../mobile/components/ImageZoomViewer.jsx';
 import GalleryThumbs from './GalleryThumbs.jsx';
 import { ScallopPlate } from './PdpParts.jsx';
-import './pdp-gallery.css';
+import './pdp.css';
 
 const reduceMotion = () => typeof window !== 'undefined' && Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
 

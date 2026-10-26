@@ -21,8 +21,7 @@ import { formatPrice } from '../../utils/formatPrice.js';
 import { ShowAll, EvidenceHeader, EvidenceKey, EvidenceMark } from './PdpParts.jsx';
 import { evidenceFor } from './evidenceLevels.js';
 import { FROM_LISTING } from '../../utils/howToSource.js';
-import './pdp-complete.css';
-import './pdp-sections.css';
+import './pdp.css';
 
 /**
  * The inside of the product page (website and app): everything the team

@@ -20,8 +20,7 @@ import { cardKind } from '../../utils/productCardFacts.js';
 import { matchLineState, topWarningFor, heroNotes, safetyLineFor } from '../../components/pdp/pdpParts.js';
 import { ProductAsk } from '../../components/passport/ProductSections.jsx';
 import { whyLine } from '../../utils/whyLine.js';
-import '../../components/pdp/pdp-tabs.css';
-import '../pdp.css';
+import '../../components/pdp/pdp.css';
 import '../app-pdp.css';
 import '../ayna-home.css';
 
