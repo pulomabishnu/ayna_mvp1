@@ -28,7 +28,11 @@
   font-family: var(--f-ui, var(--ay-sans, 'Figtree', sans-serif)); outline: none; overscroll-behavior: contain;
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-ink { --rd-bg: #3e2723; --rd-ink: #ffedac; --rd-soft: rgba(255, 237, 172, .8); --rd-hair: rgba(255, 237, 172, .25); --rd-accent: #f7badd; --rd-on-accent: #3e2723; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-sky { --rd-bg: #769ebe; --rd-ink: #3e2723; --rd-soft: rgba(62, 39, 35, .85); --rd-accent: #3e2723; --rd-on-accent: #ffedac; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-sky { --rd-bg: #f6e3a1; --rd-ink: #3e2723; --rd-soft: rgba(62, 39, 35, .8); --rd-accent: #3e2723; --rd-on-accent: #ffedac; }
+/* Loop B: the calm card is butter-deep (blue is for chart lines only; founder 13:38: no white).
+   Dark: each register stays distinct. ink = espresso, butter = butter, pink = pink, and the calm
+   "pattern / change / community / week" card is pink at 18% over espresso with butter type. */
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-rd.is-sky { --rd-bg: #5f4144 !important; --rd-ink: #ffedac !important; --rd-soft: rgba(255, 237, 172, .82) !important; --rd-hair: rgba(255, 237, 172, .25) !important; --rd-accent: #f7badd !important; --rd-on-accent: #3e2723 !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-pink { --rd-bg: #f7badd; --rd-ink: #3e2723; --rd-soft: rgba(62, 39, 35, .82); --rd-accent: #3e2723; --rd-on-accent: #ffedac; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd :is(h2, p, ul, ol, dl, dd) { margin: 0; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd :is(button, a):focus-visible { outline: 3px solid var(--rd-ink); outline-offset: 2px; }
@@ -118,7 +122,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__inside li { counter-increment: rdi; display: inline-flex; align-items: center; gap: 6px; font: 600 13px/1.3 var(--x-sans); color: var(--x-on); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__inside li::before { content: counter(rdi); display: grid; place-items: center; width: 20px; height: 20px; border-radius: 999px; background: var(--x-on); color: var(--x-feature); font: 700 11px/1 var(--x-sans); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__inside li:is(.is-match, .is-saved, .is-win)::before { background: #f7badd; color: #3e2723; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__inside li:is(.is-pattern, .is-change, .is-community)::before { background: #769ebe; color: #3e2723; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__inside li:is(.is-pattern, .is-change, .is-community)::before { background: #ffedac; color: #3e2723; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__inside li.is-safety::before { background: #f7badd; color: #3e2723; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__go { box-shadow: 3px 3px 0 var(--x-on) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-rd-hero__card.is-setup h2 { max-width: 14ch; }
@@ -169,7 +173,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-art__inside { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; counter-reset: rdo; border-top: 1.5px solid var(--rd-hair); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-art__inside li { counter-increment: rdo; display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1.5px solid var(--rd-hair); font: 600 17px/1.2 var(--f-ui, 'Figtree', sans-serif); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-art__inside li::before { content: counter(rdo); display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 999px; background: var(--rd-ink); color: var(--rd-bg); font: 700 14px/1 var(--f-display, 'ayna Display', serif); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-art.is-photo { aspect-ratio: 4 / 3; max-height: 34dvh; border: 1.5px solid var(--rd-ink); border-radius: 24px; overflow: hidden; rotate: -1.5deg; box-shadow: 4px 4px 0 var(--rd-ink); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-art.is-photo { aspect-ratio: 4 / 3; max-height: 34dvh; border: 1.5px solid var(--rd-ink); border-radius: 24px; overflow: hidden; rotate: -1.5deg; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-art.is-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
 /* check-in: big, thumb-sized answers stacked (one tap) */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-checkin .ay-rd-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
@@ -177,13 +181,13 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-checkin .ay-rd-title { font-size: clamp(44px, 13vw, 64px); }
 /* match / saved: the product large on its white shelf tile */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-product { grid-template-columns: 1fr; gap: 16px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-product__img { width: min(62%, 240px); height: auto; aspect-ratio: 1 / 1; border-radius: 24px; border-color: var(--rd-ink); box-shadow: 4px 4px 0 var(--rd-ink); rotate: 2deg; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-product__img { width: min(62%, 240px); height: auto; aspect-ratio: 1 / 1; border-radius: 24px; border-color: var(--rd-ink); rotate: 2deg; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-product__text b { font-size: 22px; line-height: 1.1; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-pill { font-size: 15px; padding: 7px 12px; }
 /* buttons: the one primary gets the hard offset (raised, tappable) */
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-primary { min-height: 52px; padding: 0 24px; box-shadow: 3px 3px 0 var(--rd-ink); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-ink .ay-rd-primary { box-shadow: 3px 3px 0 #ffedac; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-primary:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--rd-ink); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-primary { min-height: 52px; padding: 0 24px; box-shadow: 3px 3px 0 #f7badd; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-ink .ay-rd-primary { box-shadow: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-primary:active { transform: translate(3px, 3px); box-shadow: none; }
 /* closing: follow-up questions as big rows */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-closing .ay-rd-asks button { min-height: 60px; font: 700 19px/1.2 var(--f-display, 'ayna Display', serif); letter-spacing: -.01em; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-closing .ay-rd-asks .ay-rd-basis { opacity: 1; font-weight: 600; }
@@ -201,3 +205,12 @@
 }
 /* a long claim steps down a size so it stays a poster, not a paragraph */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-title.is-long { font-size: clamp(32px, 8.6vw, 40px); line-height: 1; }
+
+/* Loop B: the quiet "…" on story cards (reuses Today's ItemMenu). Opens upward, in the card's own inks. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu { position: relative; margin-left: auto; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu > summary { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; color: var(--rd-ink); cursor: pointer; list-style: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu > summary::-webkit-details-marker { display: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu > summary svg { width: 22px; height: 22px; fill: currentColor; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu > summary:focus-visible { outline: 3px solid var(--rd-ink); outline-offset: 2px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu .ay-today__menulist { position: absolute; right: 0; bottom: calc(100% + 6px); z-index: 5; display: grid; gap: 8px; width: max-content; max-width: min(320px, calc(100vw - 48px)); padding: 12px; border: 1.5px solid var(--rd-ink); border-radius: 16px; background: var(--rd-bg); color: var(--rd-ink); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd .ay-rd-menu .ay-rd-link { min-height: 44px; }

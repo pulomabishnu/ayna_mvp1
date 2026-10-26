@@ -183,6 +183,8 @@ html body .app-container .ay-wh.ay-wh .ay-db-bandhead.ay-pagehead { --ph-top: 0p
 html body .app-container .ay-wh.ay-wh .ay-db-bandhead > div { display: grid; gap: 4px; }
 html body .app-container .ay-wh.ay-wh .ay-db-bandhead__date { margin: 0 !important; font: 500 14px/1.4 var(--ay-font-ui, 'Figtree', sans-serif) !important; opacity: .8; color: inherit !important; }
 html body .app-container .ay-wh.ay-wh .ay-db-bandhead__h { margin: 0 !important; font: 700 30px/1.1 var(--ay-font-display, 'ayna Display', sans-serif) !important; letter-spacing: -.01em !important; color: inherit !important; }
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead__cyc { flex: none; display: inline-flex; align-items: center; gap: 10px; }
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead__cap { font: 600 13px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); opacity: .85; }
 html body .app-container .ay-wh.ay-wh .ay-db-bandhead__ring { flex: none; width: 72px; height: 72px; }
 html body .app-container .ay-wh.ay-wh .ay-db-bandhead__ring .ds-ring { width: 72px; height: 72px; }
 html body .app-container .ay-wh.ay-wh .ay-db-bandhead__ring .ds-ring .is-track { stroke: color-mix(in srgb, currentColor 25%, transparent); stroke-dasharray: none; stroke-width: 7; }

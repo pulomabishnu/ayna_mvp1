@@ -210,7 +210,7 @@ export default function Rundown({
   // "Your week · 3 changes" (Today audit, issue 6): say what the row opens.
   const weekChanges = weekly.cards.find((c) => c.key === 'weekly:changes')?.lines || [];
   const weekStats = weekly.cards.filter((c) => c.kind === 'stat').map((c) => c.title);
-  const weekLabel = weekChanges.length ? `Your week · ${weekChanges.length} ${weekChanges.length === 1 ? 'change' : 'changes'}` : 'Your week · recap';
+  const weekLabel = weekChanges.length ? `Play your week recap · ${weekChanges.length} ${weekChanges.length === 1 ? 'change' : 'changes'}` : 'Play your week recap';
   const weekKey = weekly.cards.length ? `${weekLabel}|${weekStats.join('|')}|${weekChanges.join('|')}` : '';
   const onWeeklyRef = useRef(onWeekly);
   useEffect(() => { onWeeklyRef.current = onWeekly; });
@@ -267,7 +267,7 @@ export default function Rundown({
       )}
       {weekly.cards.length > 0 && !compact && !onWeekly && (
         <button type="button" className="ay-rd-hero__week" onClick={() => start('weekly')}>
-          <span><b>{weekLabel}</b><small>Here is what changed.</small></span>
+          <span><b>{weekLabel}</b></span>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
         </button>
       )}

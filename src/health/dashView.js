@@ -11,7 +11,7 @@
  * - syncState: "synced 8:12 pm", or stale after 2 days ("Last synced Thu").
  * - chartSummary: one sentence under every chart.
  */
-import { formatMetric, isFlat } from './dashboard.js';
+import { buildDashboard, formatMetric, isFlat } from './dashboard.js';
 import { fmtMinutes, RECENT_DAYS, BASELINE_DAYS } from './insights.js';
 import { explainWeek } from './weekInsights.js';
 
@@ -179,4 +179,27 @@ export function glanceWords(chart) {
   if (chart.metric === 'sleep_minutes') return up ? 'More sleep than usual' : 'Less sleep than usual';
   if (chart.metric === 'steps') return up ? 'More active than usual' : 'Less active than usual';
   return up ? 'Higher than usual' : 'Lower than usual';
+}
+
+/**
+ * "Your week at a glance" rows outside the dashboard (website Today's right
+ * column, the app's health row): the same words, number + usual and 7-day
+ * points the dashboard's glance shows, so the same fact reads the same
+ * everywhere (Loop B). Sleep, then resting heart rate (or HRV), then steps.
+ */
+export function glanceRows(rows, today) {
+  if (!rows?.length || !today) return [];
+  const week = buildDashboard(rows, { days: 30, today });
+  const long = buildDashboard(rows, { days: 90, today });
+  const all = week.groups.flatMap((g) => g.charts);
+  const of = (m) => all.find((c) => c.metric === m) || null;
+  const picks = [of('sleep_minutes'), of('resting_hr_bpm') || of('hrv_rmssd_ms') || of('hrv_sdnn_ms'), of('steps')].filter(Boolean);
+  return picks.map((c) => ({
+    metric: c.metric,
+    label: c.metric === 'sleep_minutes' ? 'Sleep' : c.metric === 'steps' ? 'Steps' : c.label,
+    words: glanceWords(c),
+    value: valueWithUsual(c),
+    points: lastDays(c.points, today),
+    band: usualBand(long.groups.flatMap((g) => g.charts).find((x) => x.metric === c.metric)?.points, today),
+  }));
 }

@@ -75,7 +75,7 @@ describe('website first visit', () => {
     expect(dialog().textContent).toContain('Daily Rundown');
     expect(dialog().textContent).toContain('Turn tips off any time in Settings.');
     expect(dialog().textContent).toContain('Turn off tips');
-    expect(document.querySelectorAll('.ay-tour__dots i')).toHaveLength(2);
+    expect(document.querySelector('.ay-tour__count')?.textContent).toBe('Tip 1 of 2');
     expect(document.querySelector('.ay-tour [aria-live="polite"]').textContent).toContain('Tip 1 of 2');
     click('Next');
     expect(dialog().textContent).toContain('A few things for today');
@@ -155,7 +155,7 @@ describe('website first visit', () => {
     mountWeb({ html: '<div data-tour="today"><div data-tour="rundown-card">Rundown</div><ul data-tour="today-things"><li class="ay-today__item is-safety">Get checked</li></ul></div>' });
     wait(1000);
     expect(dialog().textContent).toContain('Daily Rundown');
-    expect(document.querySelectorAll('.ay-tour__dots i')).toHaveLength(0);
+    expect(document.querySelector('.ay-tour__count')).toBeNull();
   });
 
   it('an anchor under the top nav is skipped', () => {
@@ -163,7 +163,7 @@ describe('website first visit', () => {
     mountWeb({ view: 'explore', html: `<div data-tour="explore"><form data-tour="explore-search" data-rect='{"left":40,"top":20,"width":500,"height":40}'><input /></form><nav aria-label="Explore sections">x</nav></div>` });
     wait(1000);
     expect(dialog().textContent).toContain('Switch between');
-    expect(document.querySelectorAll('.ay-tour__dots i')).toHaveLength(0);
+    expect(document.querySelector('.ay-tour__count')).toBeNull();
   });
 });
 

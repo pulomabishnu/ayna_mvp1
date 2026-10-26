@@ -1,4 +1,5 @@
 import { legacyPathFor } from './components/nav/mainTabs.js';
+import { devPreviewOn } from './utils/devPreview.js';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
@@ -23,7 +24,7 @@ import { installNoEmDash } from './utils/noEmDashDom.js'
 installDelight()
 // DEV only: remember ?fixture=community for this tab before the router tidies
 // the URL (src/utils/community/devFixture.js). Removed from production builds.
-if (import.meta.env.DEV) {
+if (devPreviewOn()) {
   // ?fixture=today (and today-care, today-pregnant): src/health/todayDevFixture.js.
   try { const f = new URLSearchParams(window.location.search).get('fixture'); if (/^(community|today(-care|-pregnant)?)$/.test(f || '')) sessionStorage.setItem('ayna_dev_fixture', f) } catch { /* private mode */ }
 }

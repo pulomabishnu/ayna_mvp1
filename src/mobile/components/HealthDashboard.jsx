@@ -105,6 +105,7 @@ export default function HealthDashboard({ authUser, selectedNeedIds = [], hormon
         onOpenProduct={onOpenProduct}
         onAddGoal={onAddGoal}
         onOpenRoutine={onOpenRoutine}
+        onExplore={rundown?.onExplore}
         onOpenCheckin={onOpenCheckin}
         onAsk={openAsk ? (question, extra) => {
           // Health lines only with her opt-in (src/health/askHealthPref.js, off by
