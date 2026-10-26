@@ -28,7 +28,7 @@
 .ay-suggest *, .ay-suggest *::before, .ay-suggest *::after { box-sizing: border-box; }
 
 .ay-suggest.ay-suggest :is(h2, p) { margin: 0; color: var(--sg-ink); letter-spacing: 0; text-transform: none; }
-.ay-suggest.ay-suggest h2 { font: 400 var(--ay-fs-section)/1.15 var(--ay-serif); letter-spacing: -0.01em; }
+.ay-suggest.ay-suggest h2 { font: 700 var(--ay-fs-section)/1.15 var(--ay-serif); letter-spacing: -0.01em; }
 .ay-suggest.ay-suggest p { font: 500 var(--ay-fs-body)/1.55 var(--ay-sans); color: var(--sg-soft); }
 .ay-suggest svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 

@@ -4,7 +4,7 @@
    Elevation: outline + 3px espresso offset on tappable things only. */
 .app-container, .ayna-mobile {
   --sb-ink: var(--ay-text, var(--ayna-heading, #3e2723));
-  --sb-line: var(--ay-outline, #3e2723);
+  --sb-line: var(--ay-outline-color, #3e2723);
   --sb-tab: var(--ay-group, #f6e3a1);
   --sb-page: var(--ay-page, #ffedac);
 }

@@ -51,7 +51,7 @@ describe('health dashboard action flow', () => {
     expect(onOpenCheckin).toHaveBeenCalledOnce();
   });
 
-  it('opens a measured change, keeps its data and next steps together, and returns to the dashboard', () => {
+  it('opens a finding in place (number in the title, the four parts, .gov links) and keeps the routine one tab away', () => {
     const rows = devDemoRows(today);
     const sections = buildInsights(rows, { today }).sections;
     const onOpenRoutine = vi.fn();
@@ -60,23 +60,33 @@ describe('health dashboard action flow', () => {
     root = createRoot(host);
     act(() => root.render(<HealthHome today={today} rows={rows} sections={sections} onOpenRoutine={onOpenRoutine} />));
 
-    // The week's changes keep explainWeek's own order (no hard-coded priority): pick Sleep.
-    const sleepTab = [...host.querySelectorAll('.ay-hh-hero [role="tab"]')].find((b) => b.textContent === 'Sleep');
-    if (sleepTab) act(() => sleepTab.click());
-    const open = [...host.querySelectorAll('button')].find((button) => button.textContent.includes('What you can do and the data'));
-    expect(open).toBeTruthy();
-    act(() => open.click());
-    // What changed -> What it may affect -> What you can do -> See data.
-    expect(host.textContent).toContain('What it may affect');
+    // Your week at a glance comes first, with words and her usual.
+    expect(host.querySelector('.ay-db-glance')).toBeTruthy();
+    expect(host.querySelector('.ay-db-glance').textContent).toContain('usual');
+    // Five areas at most, as pill tabs.
+    const tabs = [...host.querySelectorAll('[aria-label="Health areas"] [role="tab"]')].map((t) => t.textContent);
+    expect(tabs[0]).toBe('Summary');
+    expect(tabs.length).toBeLessThanOrEqual(5);
+
+    // The week's changes are a calm list; each title carries its number.
+    const titles = [...host.querySelectorAll('.ay-db-finding h3 button')];
+    expect(titles.length).toBeGreaterThan(0);
+    const sleep = titles.find((b) => b.textContent.startsWith('Sleep:')) || titles[0];
+    expect(sleep.textContent).toMatch(/\d/);
+    act(() => sleep.click());
+    // What changed -> What it can mean -> What you can do (-> When to talk to a clinician, when relevant).
+    expect(host.textContent).toContain('What changed');
+    expect(host.textContent).toContain('What it can mean');
     expect(host.textContent).toContain('What you can do');
-    expect(host.textContent).toContain('See data');
-    expect(host.querySelector('.ay-hh-action h3').textContent).not.toMatch(/\d/);
     expect(host.textContent).toContain('Your usual');
     expect(host.textContent).toContain('Your data came from');
-    expect(host.querySelector('a[href="https://www.cdc.gov/heart-disease/about/sleep-and-heart-health.html"]')).toBeTruthy();
+    const links = [...host.querySelectorAll('.ay-db-finding-body a')].map((a) => new URL(a.href).hostname);
+    expect(links.length).toBeGreaterThan(0);
+    expect(links.every((h) => h.endsWith('.gov'))).toBe(true);
+    // The old two-destination link is gone (dashboard audit 9.1).
+    expect(host.textContent).not.toContain('What you can do and the data');
 
-    act(() => [...host.querySelectorAll('button')].find((button) => button.textContent.includes('Back to your dashboard')).click());
-    expect(host.textContent).toContain('Your routine and shopping list');
+    act(() => [...host.querySelectorAll('[role="tab"]')].find((t) => t.textContent === 'Routine').click());
     act(() => [...host.querySelectorAll('button')].find((button) => button.textContent.includes('Your routine and shopping list')).click());
     expect(onOpenRoutine).toHaveBeenCalledOnce();
   });

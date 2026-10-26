@@ -3,7 +3,10 @@ import { ALL_PRODUCTS } from '../data/products.js';
 import { EdPage } from './editorial/EdPage';
 import { isPlainLeftClick } from '../utils/productRoute';
 import ProductCard from './ProductCard';
-import ProductTileImage from './ProductTileImage';
+import { Plate } from './ui/ay';
+import { categoryLabel } from './pdp/categoryLabel.js';
+import { safeProductImageSrc } from '../utils/resolveProductImage.js';
+import { productImageOverride } from '../data/productImageOverrides.js';
 import { RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_URL } from '../data/resaPartnership';
 
 /**
@@ -199,6 +202,21 @@ function BrandMark({ partner }) {
 // The team's order exactly as listed in PARTNERS (2026-10-17; was A to Z).
 const ORDERED = PARTNERS;
 
+const imgOf = (x) => productImageOverride(x) || safeProductImageSrc(x?.image || x?.imageUrl || x?.images?.[0]);
+/** The brand's own packshot (a local /products or /brands file), else its local logo, else none (the plate shows the name). */
+function plateImage(partner, products) {
+  const shot = products.map(imgOf).find((u) => /^\/(products|brands)\//.test(String(u || '')));
+  if (shot) return shot;
+  return /^\/brands\//.test(partner.logo || '') ? partner.logo : '';
+}
+/** One category sticker per card (#9 Nectar): the brand's most common product category, from the catalog. */
+function stickerOf(partner, products) {
+  if (partner.prelaunch) return 'Pre-launch';
+  const n = {};
+  products.forEach((x) => { const l = categoryLabel(x); if (l) n[l] = (n[l] || 0) + 1; });
+  return Object.entries(n).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+}
+
 const slug = (b) => `brand-${String(b).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
 /* A grid of brand cards (logo, one line, product count). Picking one opens
@@ -215,35 +233,36 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
   };
   const partner = ORDERED.find((p) => p.brand === open) || null;
   const products = partner ? ALL_PRODUCTS.filter((p) => p.brand === partner.brand) : [];
-  // The partners' own products on white, one per brand (not a stock photo).
-  const heroPicks = ORDERED.filter((pt) => !pt.prelaunch).map((pt) => ALL_PRODUCTS.find((x) => x.brand === pt.brand && /^\/(products|brands)\//.test(String(x.image || x.imageUrl || '')))).filter(Boolean).slice(0, 4);
+  // A partner's own product on the white plate (not a stock photo).
+  const heroPick = ORDERED.filter((pt) => !pt.prelaunch).map((pt) => ALL_PRODUCTS.find((x) => x.brand === pt.brand && /^\/(products|brands)\//.test(String(imgOf(x) || '')))).find(Boolean);
   return (
     <EdPage
-      tone="pink"
-      aside={heroPicks.length === 4 ? (
-        <ul className="ed-tiles4" aria-label="Products from partner brands">
-          {heroPicks.map((x) => <li key={x.id}><ProductTileImage product={x} alt={`${x.brand} ${x.name}`} /></li>)}
-        </ul>
-      ) : null}
+      crumb="Partners"
+      photo={heroPick ? { src: imgOf(heroPick), alt: `${heroPick.brand} ${heroPick.name}`, product: true } : null}
       title={PARTNERS.length > 0 ? 'Brands we work with.' : 'Brand partnerships are coming soon.'}
       lede={PARTNERS.length > 0
         ? 'Partner products may be featured higher in general Browse. Partnership never changes your personalized match scores or recommendation order.'
         : 'Check back soon. When partnerships go live, they may be featured in general Browse, but partnership will never change personalized match scores or recommendation order.'}
     >
+      <p className="ip-disclose">See <a href="/how-we-make-money">how we make money</a> and <a href="/how-it-works">how matches are made</a>.</p>
       <header className="ed-head">
         <h2 className="ed-h2">Our partners</h2>
         <span className="ed-head__count">{ORDERED.length} brands</span>
       </header>
-      <ul className="ed-brandlist" aria-label="Partner brands">
+      {/* Stacked rounded rows (#45 Skin Routine): plate · brand · what they make · N products. */}
+      <ul className="ip-partners" aria-label="Partner brands">
         {ORDERED.map((p) => {
-          const count = ALL_PRODUCTS.filter((x) => x.brand === p.brand).length;
+          const mine = ALL_PRODUCTS.filter((x) => x.brand === p.brand);
+          const count = mine.length;
           const on = open === p.brand;
+          const sticker = stickerOf(p, mine);
           return (
             <li key={p.brand} id={slug(p.brand)}>
-              <button type="button" className="ed-brandbtn" aria-expanded={on} aria-controls="brand-panel" onClick={() => pick(p.brand)}>
-                <span className="ed-brandbtn__name">{p.brand}{p.prelaunch && <small className="ed-badge">Pre-launch</small>}</span>
-                <span className="ed-brandbtn__count">{count ? `${count} product${count === 1 ? '' : 's'}` : 'Waitlist'}<span aria-hidden="true">{on ? ' ↑' : ' →'}</span></span>
-                <span className="ed-brandbtn__blurb">{p.blurb}</span>
+              <button type="button" className="ip-prow" aria-expanded={on} aria-controls="brand-panel" onClick={() => pick(p.brand)}>
+                <span className="ip-prow__plate"><Plate src={plateImage(p, mine)} alt="" fallback={p.brand} /></span>
+                <span className="ip-prow__name">{p.brand}{sticker && <span className="ayk-sticker">{sticker}</span>}</span>
+                <span className="ip-prow__blurb">{p.blurb}</span>
+                <span className="ip-prow__count">{count ? `${count} product${count === 1 ? '' : 's'}` : 'Waitlist'}<span aria-hidden="true">{on ? ' ↑' : ' ›'}</span></span>
               </button>
             </li>
           );

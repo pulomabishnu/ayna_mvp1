@@ -246,7 +246,7 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-row { padding
 /* category chips as stickers: outline + 3px hard shadow, a pop of pink when on */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-topics { gap: 10px 10px; padding: 2px 4px 6px 0; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec:not(.wx-phrases) .wx-topics .ay-chip { border: 1.5px solid var(--ds-line) !important; background: var(--ds-group) !important; color: var(--ds-ink) !important; box-shadow: 3px 3px 0 var(--ds-line) !important; font-weight: 600 !important; transition: transform .15s, box-shadow .15s; }
-@media (hover: hover) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ds-line) !important; } }
+@media (hover: hover) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:hover { transform: translate(-1px, -1px); box-shadow: none !important; } }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ds-line) !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+1) { background: #f7badd !important; color: #3e2723 !important; }
 /* reads: covers get the outline + small shadow */
@@ -289,13 +289,13 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .wx-i
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wy-who h1.ay-h1 { font: 700 var(--ay-type-h1)/1.02 var(--ay-heading) !important; letter-spacing: -.02em !important; }
 /* One highlighter swipe per page (founder map): under the You name and the Ask title, low on the letters so text contrast is untouched. */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wy-who h1.ay-h1, html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__title { display: inline; width: fit-content; max-width: 100%; align-self: flex-start; justify-self: start; padding: 0 .08em; background: linear-gradient(transparent 72%, #f7badd 72%, #f7badd 94%, transparent 94%) no-repeat; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) main .wy-who h1.ay-h1, html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .wx-ask__title { background-image: linear-gradient(transparent 80%, #769ebe 80%, #769ebe 96%, transparent 96%); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) main .wy-who h1.ay-h1, html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .wx-ask__title { background-image: linear-gradient(transparent 80%, rgba(255, 237, 172, .12) 80%, rgba(255, 237, 172, .12) 96%, transparent 96%); }
 @media (min-width: 761px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__title { background-image: linear-gradient(transparent 72%, #ffedac 72%, #ffedac 94%, transparent 94%) !important; } }
 /* Awning stripes only as a thin band (b6387c05): one 8px rule over the You header. */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-head { position: relative; padding-top: 24px; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-head::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 8px; border-radius: 999px; background: repeating-linear-gradient(90deg, #f7badd 0 18px, #769ebe 18px 36px, #ffedac 36px 54px); box-shadow: inset 0 0 0 1.5px #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-head::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 8px; border-radius: 999px; background: repeating-linear-gradient(90deg, #f7badd 0 18px, #f6e3a1 18px 36px, #ffedac 36px 54px); box-shadow: inset 0 0 0 1.5px #3e2723; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li .ay-stat { background: #f7badd !important; color: #3e2723 !important; border-color: #3e2723 !important; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li:nth-child(2) .ay-stat { background: #769ebe !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li:nth-child(2) .ay-stat { background: #f6e3a1 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li:nth-child(3) .ay-stat { background: #ffedac !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li .ay-stat :is(b, span) { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li .ay-stat b { font-family: var(--ay-heading) !important; font-variant-numeric: tabular-nums; }
@@ -339,19 +339,19 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec.wx-needs 
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec.wx-needs .ay-needsticker { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec:not(.wx-phrases) .wx-topics .ay-chip { border-color: transparent !important; box-shadow: none !important; background: var(--ds-group) !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+1) { background: #f7badd !important; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+3) { background: #769ebe !important; color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+3) { background: #f6e3a1 !important; color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:hover { box-shadow: 3px 3px 0 var(--ds-line) !important; }
 /* ASK: what ayna answers from sits on a filled pink block; the starters become filled colour tiles (Oct 22 Ask landing), no outlines */
-@media (min-width: 1024px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__side { padding: 28px 26px; border-radius: 20px; background: #f7badd; color: #3e2723; box-shadow: 6px 6px 0 #3e2723; } }
+@media (min-width: 1024px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__side { padding: 28px 26px; border-radius: 20px; background: #f7badd; color: #3e2723; box-shadow: none; } }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__side :is(p, h1, .wx-ask__title, .wx-ask__basedh, .wx-ask__note) { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based { border-top-color: rgba(62, 39, 35, .3); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based li { border-color: #3e2723; background: #ffedac; color: #3e2723; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based li:first-child { background: #769ebe; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .wx-ask__side { box-shadow: 6px 6px 0 #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based li:first-child { background: #f6e3a1; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .wx-ask__side { box-shadow: none; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 !important; border: 0 !important; background: none !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li { border-top: 0 !important; border-radius: 16px; background: var(--ds-group); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-pink { background: #f7badd; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-sky { background: #769ebe; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-sky { background: #f6e3a1; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-ink { background: #3e2723; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li:is(.is-pink, .is-sky) :is(button, small, .ay-askh-tile-label) { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-ink :is(button, small, .ay-askh-tile-label) { color: #ffedac !important; }
@@ -390,3 +390,7 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-askpage .ay-a
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec[aria-labelledby='wx-phrases-h'] .wx-topics > :nth-child(n+7) { display: none; }
 /* Explore band on phones: the seal never sits over the section tabs (compact band has no room for it) */
 @media (max-width: 767px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.is-compact .wx-seal { display: none; } }
+/* Today with synced data: "See your data" opens the dashboard view; "Back to Today" returns */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-wh-back { margin: -16px 0 16px !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-wh-back .ay-wh-side__more { border-top: 0 !important; justify-content: flex-start; gap: 6px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-wh-side__more.is-data { margin-top: 16px !important; font-weight: 700 !important; }

@@ -1,7 +1,7 @@
 /* Library (health education), 8pt rhythm, same card language as the app */
 .ayna-mobile .ay-lib { flex: 1; min-height: 0; overflow-y: auto; background: var(--ay-cream); color: var(--ay-ink); padding-bottom: calc(var(--ayna-bottom-nav-height, 80px) + 24px); }
 .ay-lib-head { padding: 8px var(--ay-gutter) 16px; }
-.ay-lib-head h1 { margin: 0 0 16px; font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.045em; }
+.ay-lib-head h1 { margin: 0 0 16px; font: 700 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.045em; }
 .ay-lib-ask { display: flex; align-items: center; gap: 12px; width: calc(100% - 2 * var(--ay-gutter)); margin: 0 var(--ay-gutter) 24px; min-height: 64px; padding: 0 16px 0 12px; border: 1.5px solid var(--ay-ink); border-radius: 20px; background: var(--ay-mint); box-shadow: 0 4px 0 var(--ay-ink); color: var(--ay-ink); text-align: left; cursor: pointer; }
 .ay-lib-ask:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--ay-ink); }
 .ay-lib-ask-art { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 12px; background: var(--ay-paper); rotate: -6deg; }
@@ -20,7 +20,7 @@
 .ay-lib-scroll::-webkit-scrollbar { display: none; }
 .ay-lib-item { position: relative; min-width: 0; }
 .ay-lib-item.is-small { flex: none; }
-.ay-lib-read { position: absolute; top: 8px; left: 8px; padding: 4px 8px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 500 11.5px/1 var(--ay-font-ui); pointer-events: none; }
+.ay-lib-read { position: absolute; top: 8px; left: 8px; padding: 4px 8px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 500 13px/1 var(--ay-font-ui); pointer-events: none; }
 .ay-lib-empty { padding: 40px var(--ay-gutter); text-align: center; opacity: .6; }
 .ay-lib-head .ayna-fresh-search-wrap { padding: 0 !important; }
 .ayna-mobile .ay-lib-head .ayna-fresh-search { min-height: 46px; border: 1.5px solid var(--ay-line) !important; border-radius: 14px !important; background: var(--ay-paper) !important; box-shadow: none !important; }
@@ -56,7 +56,7 @@
 .ay-lib-state { display: flex; align-items: center; gap: 8px; }
 .ay-lib-state i { flex: 1; height: 4px; border-radius: 99px; background: var(--ay-tile); overflow: hidden; }
 .ay-lib-state i b { display: block; height: 100%; background: var(--ay-ink); border-radius: inherit; }
-.ay-lib-state small { flex: none; font: 500 11.5px/1 var(--ay-font-ui); opacity: .6; }
+.ay-lib-state small { flex: none; font: 500 13px/1 var(--ay-font-ui); opacity: .6; }
 .ay-lib-state.is-mid small { opacity: 1; }
 .ay-lib-state.is-done i b { background: var(--ay-mint); }
 .ay-lib-state.is-done small { opacity: 1; }

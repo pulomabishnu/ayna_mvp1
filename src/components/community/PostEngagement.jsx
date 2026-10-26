@@ -19,7 +19,7 @@ function EyeIcon({ size = 15 }) {
 export function LikerAvatar({ liker, size = 22 }) {
   const [failed, setFailed] = useState(false);
   const initials = liker.isAnonymous ? 'A' : String(liker.isMe ? 'You' : liker.name || 'A').replace(/^@/, '').split(/\s+/).filter(Boolean).map((p) => p[0]).slice(0, size < 30 ? 1 : 2).join('').toUpperCase();
-  return <span className={`ay-liker-avatar${liker.isAnonymous ? ' is-anon' : ''}`} style={{ width: size, height: size, fontSize: Math.max(9, Math.round(size * 0.4)) }} aria-hidden="true">
+  return <span className={`ay-liker-avatar${liker.isAnonymous ? ' is-anon' : ''}`} style={{ width: size, height: size, fontSize: Math.max(13, Math.round(size * 0.4)) }} aria-hidden="true">
     {liker.avatarPath && !failed ? <img src={publicMediaUrl(liker.avatarPath)} alt="" onError={() => setFailed(true)} /> : initials}
   </span>;
 }
@@ -42,7 +42,7 @@ export function PostStats({ post, engagement, likeNoun = 'found this helpful', o
   const summary = `${names.slice(0, 2).join(', ')}${total > 2 ? ` and ${total - Math.min(2, names.length)} more` : ''} ${likeNoun}`;
   return <div className={`ay-post-stats is-${variant}`}>
     {showLikers && <button type="button" className="ay-likers-stack" onClick={() => onOpenLikers?.(post)} aria-label={`${summary}. See everyone`}>
-      <span className="ay-likers-faces">{shown.map((l) => <LikerAvatar key={l.key} liker={l} />)}</span>
+      <span className="ay-likers-faces">{shown.map((l) => <LikerAvatar key={l.key} liker={l} size={26} />)}</span>
       {moreLabel(total, shown.length) && <span className="ay-likers-more">{moreLabel(total, shown.length)}</span>}
     </button>}
     {showViews && <span className="ay-post-views" title="Views are counted once a day per person. Who viewed is never shown.">

@@ -6,7 +6,7 @@
 
 /* ---------- Header ---------- */
 .app-container .wc3 .wc-head { margin-bottom: 20px; gap: 24px; }
-.app-container .wc3 .wc-head h1 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+.app-container .wc3 .wc-head h1 { font-size: var(--ay-fs-title) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
 .app-container .wc3 .wc-head-actions { width: min(480px, 100%); }
 .app-container .wc3 .wc-search { min-height: 44px; padding: 0 16px; }
 .app-container .wc3 .wc-bell { width: 44px; height: 44px; }
@@ -88,7 +88,7 @@
 .app-container .wc3 .wc-actions .wc-save { margin-left: auto; }
 
 /* Reply thread under an open post */
-.app-container .wc3 .wc-h2 { margin: 8px 0 0; font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+.app-container .wc3 .wc-h2 { margin: 8px 0 0; font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
 .app-container .wc3 .wc-comment { gap: 6px; padding: 12px 14px; border-width: 1.5px; border-radius: 16px; }
 .app-container .wc3 .wc-comment p { font-size: var(--ay-fs-secondary); }
 .app-container .wc3 .wc-comment > .wc-link { justify-self: start; }
@@ -197,7 +197,7 @@
 
 /* Composer dialog: bigger, grouped, 8pt spacing */
 .app-container .wc-sheet.wc-compose { width: min(680px, 100%); gap: 24px; padding: 32px; }
-.app-container .wc-sheet.wc-compose > header h2 { font-size: var(--ay-fs-title); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
+.app-container .wc-sheet.wc-compose > header h2 { font-size: var(--ay-fs-title); font-family: var(--ay-serif); font-weight: 700; letter-spacing: -0.01em; }
 .app-container .wc-compose .wc-kinds { margin-top: -8px; }
 .app-container .wc-compose .wc-group { display: grid; gap: 12px; padding-top: 24px; border-top: 1px solid var(--ay-line); }
 .app-container .wc-compose .wc-kinds + .wc-group, .app-container .wc-compose .wc-join + .wc-group { padding-top: 0; border-top: 0; }
@@ -227,7 +227,7 @@
 @media (max-width: 560px) {
   .app-container .wc-sheet-backdrop:has(.wc-compose) { align-items: end; padding: 0; }
   .app-container .wc-sheet.wc-compose { width: 100%; max-height: 94dvh; padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0px)); border-radius: 28px 28px 0 0; border-bottom: 0; box-shadow: none; }
-  .app-container .wc-sheet.wc-compose > header h2 { font-size: var(--ay-fs-section); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
+  .app-container .wc-sheet.wc-compose > header h2 { font-size: var(--ay-fs-section); font-family: var(--ay-serif); font-weight: 700; letter-spacing: -0.01em; }
   .app-container .wc-cover-pick { gap: 16px; }
   .app-container .wc-cover-preview { width: 88px; height: 88px; font-size: var(--ay-fs-body); }
   .app-container .wc-compose-actions .wc-btn { flex: 1; }
@@ -238,7 +238,7 @@
 .app-container .wc3 .wc-pl-detail { display: grid; gap: 24px; }
 .app-container .wc3 .wc-pl-hero { display: flex; align-items: center; gap: 24px; margin: 0; }
 .app-container .wc3 .wc-pl-hero-copy { display: grid; gap: 8px; justify-items: start; min-width: 0; }
-.app-container .wc3 .wc-pl-hero-copy h1 { margin: 0; font-size: var(--ay-fs-display) !important; line-height: 1.1 !important; overflow-wrap: anywhere; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+.app-container .wc3 .wc-pl-hero-copy h1 { margin: 0; font-size: var(--ay-fs-display) !important; line-height: 1.1 !important; overflow-wrap: anywhere; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
 .app-container .wc3 .wc-pl-hero-copy p { margin: 0; max-width: 56ch; color: var(--ay-ink); font: 500 var(--ay-fs-body)/1.55 var(--ay-sans); }
 .app-container .wc3 .wc-pl-hero-copy small { color: var(--ay-ink-soft); font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans); }
 .app-container .wc3 .wc-pl-list { display: grid; margin: 0; padding: 0; list-style: none; border: 2px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); overflow: hidden; }
@@ -262,7 +262,7 @@
 @media (max-width: 560px) {
   .app-container .wc3 .wc-pl-hero { flex-direction: row; align-items: center; gap: 16px; }
   .app-container .wc3 .wc-cover.is-big { width: 104px; }
-  .app-container .wc3 .wc-pl-hero-copy h1 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+  .app-container .wc3 .wc-pl-hero-copy h1 { font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
   .app-container .wc3 .wc-pl-row { padding: 4px 12px 4px 4px; gap: 8px; }
   .app-container .wc3 .wc-pl-row .wc-mention { grid-template-columns: 44px minmax(0, 1fr) auto; gap: 8px; }
   .app-container .wc3 .wc-pl-row .wc-mention-photo { width: 44px; height: 44px; }

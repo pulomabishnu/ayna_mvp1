@@ -1,17 +1,20 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { buildDashboard } from '../health/dashboard.js';
 import { buildInsights } from '../health/insights.js';
+import { healthMatchContext } from '../health/matchContext.js';
 import { DEV_DEMO_CONNECTIONS, DEV_DEMO_MATCH_IDS, DEV_DEMO_NEEDS, DEV_DEMO_PRODUCT_IDS, devDemoAddedAt, devDemoRows } from '../health/devDemo.js';
 import { getProductById } from '../data/products.js';
 import { DEV_HEALTH_DEMO, DEV_HEALTH_DEMO_EMPTY, localToday } from '../mobile/hooks/useHealthData.js';
 import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
 import TodayFeed from './today/TodayFeed.jsx';
+import { OutlineButton } from './ui/ay/index.js';
 import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './personality/DS.jsx';
 import { headline, readHomeLook } from '../mobile/components/homeLook.js';
 import { comingUp } from '../health/comingUp.js';
 import { formatMetric } from '../health/dashboard.js';
 import { CountRing, ProgressCount } from './ui/ay';
+import { syncState } from '../health/dashView.js';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
 
@@ -71,6 +74,10 @@ function ConnectNote({ signedIn, onSignIn, onOpenConnections }) {
     <section className="ay-wh-connect" aria-labelledby="ay-wh-connect-h">
       <h3 id="ay-wh-connect-h">Want a more personal rundown?</h3>
       <p>Connect health data, or keep using quick check-ins on Today. Either works. Apple Health connects in the ayna iPhone app (beta).</p>
+      {/* What the dashboard will hold, in words only (dashboard audit 9.3): nothing here is anyone's data. */}
+      <dl className="ay-db-facts is-preview">
+        {DASH_PARTS.map((p) => <div key={p.k}><dt>{p.t}</dt><dd>{p.d}</dd></div>)}
+      </dl>
       <div className="ay-wh-lockactions">
         {signedIn
           ? <button type="button" className="ay-wh-btn is-quiet" onClick={onOpenConnections}>Upload a file or connect Oura</button>
@@ -212,6 +219,29 @@ function TodayBand({ title, today, name, cycle, sleepPoints, products }) {
   );
 }
 
+/**
+ * The dashboard's band (dashboard audit 7.1, 14 DashBand): ≈120px espresso
+ * with the scalloped edge kept; the date with the sync time, "Your week"
+ * (h1, 30px) and the cycle ring (72px). No sticker or loose shapes here:
+ * they stay on Today without data and on the landing page.
+ */
+function DashBand({ title, today, cycle, sync, hormonalBC }) {
+  return (
+    <header className="ay-db-bandhead ay-pagehead ay-band--espresso">
+      <span className="sr-only" id="ay-wh-title">{title}</span>
+      <div>
+        <p className="ay-db-bandhead__date">{fmtLongDay(today)}{sync && !sync.stale ? ` · ${sync.label}` : ''}</p>
+        <h1 className="ay-db-bandhead__h">Your week</h1>
+      </div>
+      {cycle?.cycleDay && !hormonalBC && (
+        <span className="ay-db-bandhead__ring" role="img" aria-label={`Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`}>
+          <CycleRing day={cycle.cycleDay} length={cycle.avgLength} />
+        </span>
+      )}
+    </header>
+  );
+}
+
 export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null, compact = false, aside = null, widgets = null }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
@@ -221,8 +251,12 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   const demoData = useMemo(() => {
     if (!demo) return null;
     const rows = DEV_HEALTH_DEMO_EMPTY ? [] : devDemoRows(today);
+    const insights = buildInsights(rows, { today });
+    const signals = [...(insights.signals || []), ...(insights.timing || [])];
     return {
-      status: 'ready', insightRows: rows, connected: DEV_HEALTH_DEMO_EMPTY ? [] : DEV_DEMO_CONNECTIONS, insights: buildInsights(rows, { today }),
+      status: 'ready', insightRows: rows, connected: DEV_HEALTH_DEMO_EMPTY ? [] : DEV_DEMO_CONNECTIONS, insights,
+      // Same as useHealthData: "Something to add?" reads the signals her own rows give.
+      matchContext: signals.length ? healthMatchContext(signals, DEV_DEMO_NEEDS) : null,
       products: DEV_DEMO_PRODUCT_IDS.map(getProductById).filter(Boolean).map((p) => (devDemoAddedAt(today)[p.id] ? { ...p, addedAt: devDemoAddedAt(today)[p.id] } : p)),
       matches: DEV_DEMO_MATCH_IDS.map(getProductById).filter(Boolean),
     };
@@ -242,7 +276,22 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   const [weekInfo, setWeekInfo] = useState(null);
   const [trying, setTrying] = useState([]);
   const [setup, setSetup] = useState([]);
-  const dayView = compact && !(signedIn && hasData);
+  // With synced data, Today is still the day (Today audit: items, check-in,
+  // "Your week" and Coming up); "See your data" opens the dashboard view
+  // (/health), and "Back to Today" returns.
+  const onHealthPath = () => typeof window !== 'undefined' && /^\/health\/?$/.test(window.location.pathname);
+  const [dataView, setDataView] = useState(onHealthPath);
+  useEffect(() => {
+    const sync = () => setDataView(onHealthPath());
+    window.addEventListener('popstate', sync);
+    return () => window.removeEventListener('popstate', sync);
+  }, []);
+  const goData = (on) => {
+    setDataView(on);
+    try { window.history.pushState(window.history.state, '', on ? '/health' : '/today'); } catch { /* sandboxed */ }
+    try { window.scrollTo({ top: 0 }); } catch { /* old browser */ }
+  };
+  const dayView = compact && (!(signedIn && hasData) || !dataView);
   // Today with ayna leads every state: it runs on her local log, signed out too.
   const feed = (
     <TodayFeed
@@ -273,7 +322,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   // sentence (UX spec 6), then two columns on desktop: the day on the left
   // (Rundown, the 1 to 3 things, her log) and "More for you" on the right.
   // The right column only exists when it has something in it.
-  // With synced health data, Today stays the full dashboard (HealthHome carries the feed).
+  // With synced health data, "See your data" opens the full dashboard (HealthHome carries the feed there).
   if (dayView) {
     const connect = !(signedIn && (h.connected || []).length > 0)
       ? <ConnectNote signedIn={signedIn} onSignIn={onSignIn} onOpenConnections={onOpenConnections} />
@@ -286,7 +335,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
     const estimate = sections.find((sec) => sec.id === 'cycle')?.estimate || null;
     const coming = comingUp(week.cycle?.cycleDay ? week.cycle : null, estimate, today, { hormonalBC, hasProducts: false });
     const setupLeft = setup.some((x) => x.done) && setup.some((x) => !x.done);
-    const hasSide = Boolean(aside) || tiles.length > 0 || coming.length > 0 || trying.length > 0 || Boolean(weekInfo) || setupLeft;
+    const hasSide = (signedIn && hasData) || Boolean(aside) || tiles.length > 0 || coming.length > 0 || trying.length > 0 || Boolean(weekInfo) || setupLeft;
     return (
       <section className="ay-wh ay-wh--today" aria-labelledby="ay-wh-title">
         {band}
@@ -306,7 +355,10 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
           </div>
           {hasSide && (
             <aside className="ay-wh-day__more" aria-label="Your week and coming up">
-              <div className="ay-wh-day__mod"><TodaySide week={weekInfo} tiles={tiles} coming={coming} trying={trying} setup={setup} /></div>
+              <div className="ay-wh-day__mod">
+                <TodaySide week={weekInfo} tiles={tiles} coming={coming} trying={trying} setup={setup} />
+                {signedIn && hasData && <button type="button" className="ay-wh-side__more is-data" onClick={() => goData(true)}><span>See your data</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
+              </div>
               {aside && <div className="ay-wh-day__mod">{aside}</div>}
             </aside>
           )}
@@ -368,15 +420,16 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   }
 
   return (
-    <section className={`ay-wh${compact ? ' ay-wh--today has-data' : ''}`} aria-labelledby="ay-wh-title">
-      {compact ? <>
-        {band}
-        {intro}
-      </> : header}
+    <section className={`ay-wh ay-wh--dash${compact ? ' ay-wh--today has-data' : ''}`} aria-labelledby="ay-wh-title">
+      <DashBand title={title} today={today} cycle={week.cycle?.cycleDay ? week.cycle : null} sync={syncState(h.connected)} hormonalBC={hormonalBC} />
+      {compact && <p className="ay-wh-back"><button type="button" className="ay-wh-side__more" onClick={() => goData(false)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg><span>Back to Today</span></button></p>}
+      {intro}
       <HealthHome
-        hello={!compact}
-        helloAside={compact && onOpenConnections ? <button type="button" className="ay-wh-btn is-quiet is-small" onClick={onOpenConnections}>Connected apps</button> : null}
-        name={name}
+        hello={false}
+        helloAside={onOpenConnections ? <OutlineButton onClick={onOpenConnections}>Connected apps</OutlineButton> : null}
+        connections={h.connected || []}
+        onRefresh={h.refresh || null}
+        status={h.status}
         rows={rows}
         sections={sections}
         matchContext={h.matchContext || null}
@@ -387,6 +440,8 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
         matches={demoData?.matches || []}
         onOpenProduct={onOpenProduct}
         onAsk={onAsk}
+        // "Something to add?" on the website too: adding a goal opens her answers (the app adds it in place).
+        onAddGoal={onEditAnswers ? () => { onEditAnswers(); return false; } : undefined}
         surface="web"
         todayFeed={todayFeed}
       />

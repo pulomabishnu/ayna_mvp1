@@ -2,13 +2,11 @@ import React from 'react';
 import { getSampleFunnel } from '../utils/sampleFunnel';
 
 /**
- * The narrowing story, drawn to scale (audit HW03), with live numbers.
- *
- * Bar widths are linear: 212 is 6.8% of 3,140 and 14 is 0.4%, so the small
- * stages are thin slivers on purpose. That IS the story. A minimum width keeps
- * them visible, and every value is printed, centred on the same axis as its
- * bar, so nothing depends on reading the bar length. The numbers are an
- * example run (audit HW02), labelled as such.
+ * The narrowing story with live numbers (audit HW02/HW03), drawn as rounded
+ * vertical bars with the number at the base (info-pages audit v3, #6
+ * Journal app). Heights are linear to the catalog; a minimum height keeps
+ * the small stages readable, and every value is printed, so nothing depends
+ * on reading the bar. The numbers are an example run, labelled as such.
  */
 export default function HowItWorksFunnel() {
   const f = getSampleFunnel();
@@ -17,30 +15,24 @@ export default function HowItWorksFunnel() {
     { label: 'Matched to this profile', value: f.matched },
     { label: 'Strong matches (90+)', value: f.strong },
   ];
-  const max = STAGES[0].value;
+  const max = STAGES[0].value || 1;
   return (
-    <figure className="ed-funnel">
-      <div
-        className="ed-funnel__rows"
+    <figure className="ed-funnel ip-funnel" style={{ margin: 0 }}>
+      <ol
+        className="ip-bars"
         role="img"
         aria-label={`Sample profile: ${STAGES[0].value} products in the catalog, ${STAGES[1].value} matched, ${STAGES[2].value} strong matches`}
       >
-        {STAGES.map((stage) => {
-          const pct = (stage.value / max) * 100;
-          return (
-            <div key={stage.label} className="ed-funnel__row" aria-hidden="true">
-              <div className="ed-funnel__text">
-                <strong>{stage.value.toLocaleString()}</strong>
-                <span>{stage.label}</span>
-              </div>
-              <div className="ed-funnel__track">
-                <div className="ed-funnel__bar" style={{ width: `max(6px, ${pct.toFixed(2)}%)` }} />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <figcaption className="ed-caption">Example: a sample profile, run live on today's catalog. Bars drawn to scale.</figcaption>
+        {STAGES.map((stage) => (
+          <li key={stage.label} aria-hidden="true">
+            <span className="ip-bars__track">
+              <span className="ip-bars__fill" style={{ height: `${((stage.value / max) * 100).toFixed(2)}%` }}><b>{stage.value.toLocaleString()}</b></span>
+            </span>
+            <span className="ip-bars__cap">{stage.label}</span>
+          </li>
+        ))}
+      </ol>
+      <figcaption className="ed-caption" style={{ marginTop: 16 }}>Example: a sample profile, run live on today's catalog. Bar heights to scale, with a minimum so small numbers stay readable.</figcaption>
     </figure>
   );
 }

@@ -1,6 +1,6 @@
 /* You pieces (website .app-container and app .ayna-mobile).
    Radii: 10 small, 16 card, 999 pill. Outline + 3px offset on tappable things. */
-.app-container, .ayna-mobile { --yb-ink: var(--ay-text, #3e2723); --yb-line: var(--ay-outline, #3e2723); --yb-page: var(--ay-page, #ffedac); --yb-group: var(--ay-group, #f6e3a1); --yb-font: var(--ay-sans-stack, 'Figtree', system-ui, sans-serif); --yb-display: var(--ay-heading, 'ayna Display', 'Bricolage Grotesque', sans-serif); }
+.app-container, .ayna-mobile { --yb-ink: var(--ay-text, #3e2723); --yb-line: var(--ay-outline-color, #3e2723); --yb-page: var(--ay-page, #ffedac); --yb-group: var(--ay-group, #f6e3a1); --yb-font: var(--ay-sans-stack, 'Figtree', system-ui, sans-serif); --yb-display: var(--ay-heading, 'ayna Display', 'Bricolage Grotesque', sans-serif); }
 .ayna-mobile { --yb-ink: var(--ayna-heading, #3e2723); --yb-line: var(--ayna-heading, #3e2723); --yb-page: var(--ayna-bg, #ffedac); --yb-group: #f6e3a1; --yb-font: var(--ayna-font-ui, 'Figtree', system-ui, sans-serif); --yb-display: var(--ay-app-heading, 'ayna Display', 'Bricolage Grotesque', sans-serif); }
 .ayna-mobile[data-theme='dark'] { --yb-group: #4a312c; }
 
