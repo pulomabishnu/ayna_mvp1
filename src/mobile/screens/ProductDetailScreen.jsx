@@ -12,7 +12,8 @@ import { isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
 import { SafetyLine, MatchLockup, PriceRow, Highlights, ActionsRow, AskPanel } from '../../components/pdp/PdpParts.jsx';
-import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, alsoAt } from '../../components/pdp/decision.js';
+import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, alsoAt, retailerOf } from '../../components/pdp/decision.js';
+import { trackPdpRetailerClicked, eventSurface } from '../../utils/analyticsEvents.js';
 import { haptic } from '../../utils/haptics.js';
 import { buyModel } from '../../components/pdp/buyModel.js';
 import { heroPriceView } from '../../components/pdp/heroPrice.js';
@@ -392,7 +393,7 @@ export default function ProductDetailScreen({
   const priceNotes = heroNotes(heroV.notes).keep.filter((n) => !said.includes(String(n).toLowerCase().replace(/ eligible$/, '')) && !(perUse && /per (tablet|capsule|softgel|gummy|unit)|a day/i.test(n)));
   const others = alsoAt(buy?.rows);
   const askStarters = productAskStarters({ hasProfile: Boolean(quizAnswers), percent: matchState?.kind === 'pct' ? matchState.percent : null, kind: cupOrDisc(product), hasIud: hasIud(quizAnswers), hasSizes: variantLabels.length > 0 });
-  const buyLink = (extra = '') => (shopAction ? <a className={`ay-pdp-buyrow__buy ayv-buy ayv-sticker ${extra}`.trim()} href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: extra ? 'summary_end' : shopAction.placement })}>{shopAction.label}<span aria-hidden="true"> ↗</span><span className="sr-only"> {shopAction.sr}</span></a> : null);
+  const buyLink = (extra = '') => (shopAction ? <a className={`ay-pdp-buyrow__buy ayv-buy ayv-sticker ${extra}`.trim()} href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => { trackPdpRetailerClicked({ surface: eventSurface(), product_id: product?.id, retailer: retailerOf(shopAction.href) }); trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: extra ? 'summary_end' : shopAction.placement }); }}>{shopAction.label}<span aria-hidden="true"> ↗</span><span className="sr-only"> {shopAction.sr}</span></a> : null);
   const fitData = { details: quizAnswers ? matchDetails : null, hasProfile: Boolean(quizAnswers), onShowWhy: openWhyMatch };
 
   return (
@@ -448,7 +449,7 @@ export default function ProductDetailScreen({
             <p className="ay-pdp-commission ayv-fine ayv-disclose">
               <span>{isPartner ? 'ayna partner. We may earn a commission.' : 'ayna may earn a commission.'}</span>
               {buy.checked && <span>{buy.checked}</span>}
-              {others.length > 0 && <span>Also at {others.map((r, i) => <span key={r.url}>{i > 0 && ', '}<a href={r.url} target="_blank" rel="noopener noreferrer">{r.name}{r.price ? ` · ${r.price}` : ''}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</span>}
+              {others.length > 0 && <span>Also at {others.map((r, i) => <span key={r.url}>{i > 0 && ', '}<a href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => trackPdpRetailerClicked({ surface: eventSurface(), product_id: product?.id, retailer: retailerOf(r.url) })}>{r.name}{r.price ? ` · ${r.price}` : ''}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</span>}
               {isPartner && <span><button type="button" className="ayp-textlink" aria-expanded={partnerOpen} onClick={() => setPartnerOpen((v) => !v)}>{partnerOpen ? 'Less' : 'How partnerships work'}</button></span>}
             </p>
           )}
