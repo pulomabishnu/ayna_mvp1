@@ -52,3 +52,22 @@
 .ay-shopgroups { display: grid; gap: 8px; margin: 0 0 16px; }
 .ay-shopgroups__subs { padding-left: 12px; border-left: 1.5px solid currentColor; }
 .ayna-mobile .ay-shopgroups.ay-shop-groups { margin: 4px var(--d-gutter, 16px) 12px; }
+/* Explore as one shop page (Oct 26): the need chips, then one small Products or Services toggle. */
+.ayshop__chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 0 0 12px; }
+.ayshop__chips .ay-shopgroups { margin: 0; min-width: 0; max-width: 100%; }
+html body .ayshop__type { display: inline-flex; border: 1.5px solid #3e2723; border-radius: 999px; padding: 2px; background: #f6e3a1; flex: none; }
+html body .ayshop__type button { min-height: 44px; min-width: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: #3e2723; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+html body .ayshop__type button[aria-pressed='true'] { background: #3e2723; color: #ffedac; }
+html body .ayshop__type button:focus-visible { outline: 2px solid #f7badd; outline-offset: 2px; }
+html body .ayshop__reads { margin: 24px 0 8px; font-size: 15px; }
+html body .ayshop__reads a { display: inline-flex; align-items: center; min-height: 44px; color: #3e2723; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.ayna-mobile .ayshop__chips { margin: 4px var(--d-gutter, 16px) 12px; }
+.ayna-mobile .ayshop__chips .ay-shopgroups.ay-shop-groups { margin: 0; }
+.ayna-mobile .ayshop__reads { margin: 24px var(--d-gutter, 16px) 8px; }
+/* Phones: the need chips stay ONE row that scrolls sideways, never a stack. */
+@media (max-width: 720px) {
+  html body .ayshop__chips .ay-shopgroups__row { flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y: hidden !important; scrollbar-width: none; margin-inline: calc(-1 * var(--d-gutter, 16px)); padding-inline: var(--d-gutter, 16px); scroll-padding-inline: var(--d-gutter, 16px); }
+  html body .ayshop__chips .ay-shopgroups__row::-webkit-scrollbar { display: none; }
+  html body .ayshop__chips .ay-shopgroups__row > * { flex: none; white-space: nowrap; }
+  html body .ayshop__chips .ay-shopgroups { width: 100%; }
+}

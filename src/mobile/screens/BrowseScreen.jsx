@@ -215,6 +215,8 @@ export default function BrowseScreen({
   initialSearch = '',
   // Mounted inside Explore (Products): Explore owns the header and the page title.
   embedded = false,
+  // Explore's Products or Services toggle, shown on the same row as the need chips.
+  typeToggle = null,
 }) {
   const mode = 'products'; // Reads moved to the Library tab
   const [searchValue, setSearchValue] = useState(initialSearch || '');
@@ -449,7 +451,7 @@ export default function BrowseScreen({
 
   // Applied filters, shown as removable chips under the toolbar.
   const activeFilters = FILTER_FIELDS.filter(([key]) => filters[key] !== 'all').map(([key, , options]) => [key, (options.find(([value]) => value === filters[key]) || [])[1] || CATEGORY_LABELS[filters[key]] || String(filters[key]).replaceAll('-', ' ')]);
-  const activeFilterCount = activeFilters.length + (embedded && activeGroup !== 'all' ? 1 : 0);
+  const activeFilterCount = activeFilters.length + (embedded && activeGroup !== 'all' ? 1 : 0) + (embedded ? avoidAttrs.length : 0);
   const areaLabel = (id) => sentenceCase((SHOP_GROUPS.find((g) => g.id === id) || MACRO_GROUPS.find((g) => g.id === id))?.label || String(id).replaceAll('-', ' '));
   const matchingReads = searchTermRaw.length >= 2 ? searchArticles(searchTermRaw, articles) : [];
   // SearchAssist above already says "No results for 'xyz'" in this case;
@@ -490,7 +492,10 @@ export default function BrowseScreen({
 
       {mode === 'products' && (() => { const toolbar = <>
           {/* Five shopping groups, the areas one tap deeper (team meeting, Oct 26). */}
-          {embedded && !searchTermRaw && <ShopGroups active={activeGroup} onPick={setActiveGroup} className="ay-shop-groups" />}
+          {embedded && <div className="ayshop__chips" data-tour="explore-sections">
+            <ShopGroups active={activeGroup} onPick={setActiveGroup} subs={false} label="Filter by need" className="ay-shop-groups" />
+            {typeToggle}
+          </div>}
           <div className="ay-shop-toolbar">
             <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
@@ -531,6 +536,7 @@ export default function BrowseScreen({
           <div className="ayna-shop-filter-fields">
           {/* P2-15: the same filter control as the website's sheet: chip groups (selected = pink + check), tap again to clear. */}
           <fieldset className="ay-chipgroup"><legend>Sort</legend><div className="ay-chipgroup__chips">{sortChoices.map(([value, text]) => <button key={value} type="button" className="ay-chipgroup__chip" aria-pressed={sortBy === value} onClick={() => setSortBy(value)}>{text}</button>)}</div>{bestNeedsQuiz && bestQuizNote}</fieldset>
+          {embedded && <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ay-shop-avoid" />}
           {embedded && <fieldset className="ay-chipgroup"><legend>Area</legend><div className="ay-chipgroup__chips">{SHOP_GROUPS.map((g) => <button key={g.id} type="button" className="ay-chipgroup__chip" aria-pressed={activeGroup === g.id} onClick={() => setActiveGroup(activeGroup === g.id ? 'all' : g.id)}>{g.label}</button>)}</div></fieldset>}
           {FILTER_FIELDS.map(([key, label, options]) => (
             <fieldset key={key} className="ay-chipgroup"><legend>{label}</legend><div className="ay-chipgroup__chips">
@@ -540,7 +546,7 @@ export default function BrowseScreen({
             </div></fieldset>
           ))}
           </div>
-          <div className="ayna-shop-filter-actions"><button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); setActiveGroup('all'); }}>Clear</button><button type="button" onClick={() => setShowFilters(false)}>Apply</button></div>
+          <div className="ayna-shop-filter-actions"><button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); setActiveGroup('all'); if (embedded) setAvoidAttrs([]); }}>Clear</button><button type="button" onClick={() => setShowFilters(false)}>Apply</button></div>
           </div>
         </div>}
       </>}
@@ -555,7 +561,8 @@ export default function BrowseScreen({
             <>
               {/* TD 16: a search never looks empty because of the switch. Every result is
                   listed; her matches come first and the count is all results. */}
-              <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ay-shop-avoid" />
+              {/* Inside Explore one row of chips stays on the page; Leave out is in the Filters sheet. */}
+              {!embedded && <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ay-shop-avoid" />}
               {narrowToMatches && searchTermRaw && (
                 <p className="ay-shop-results-note" role="status">
                   {filtered.length > 0 ? 'Showing matches for you' : 'Showing all results'}

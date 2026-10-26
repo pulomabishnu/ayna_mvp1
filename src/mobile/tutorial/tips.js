@@ -66,8 +66,8 @@ export const SCREENS = [
     id: 'explore',
     root: '[data-tour="explore"]',
     tips: [
-      { id: 'explore-search', anchor: '[data-tour="explore"] .ax-top input', text: 'Search products, symptoms, topics and services in one place.' },
-      { id: 'explore-sections', anchor: '[data-tour="explore-sections"]', text: 'Switch between For you, categories, products and services.' },
+      { id: 'explore-search', anchor: '[data-tour="explore"] input', text: 'Search products, symptoms, topics and services in one place.' },
+      { id: 'explore-sections', anchor: '[data-tour="explore-sections"]', text: 'Filter by need, or show only products or services.' },
     ],
   },
   {
@@ -130,7 +130,7 @@ export const WEB_SCREENS = [
     root: '[data-tour="explore"]',
     tips: [
       { id: 'explore-search', anchor: '[data-tour="explore"] [data-tour="explore-search"]', text: 'Search products, symptoms, topics and services in one place.' },
-      { id: 'explore-sections', anchor: '[data-tour="explore"] [aria-label="Explore sections"]', text: 'Switch between picks for you, categories, products, services and reads.' },
+      { id: 'explore-sections', anchor: '[data-tour="explore"] [data-tour="explore-sections"]', text: 'Filter by need, or show only products or services.' },
     ],
   },
   {

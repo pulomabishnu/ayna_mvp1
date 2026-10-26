@@ -439,7 +439,7 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
 /** Shop filters as a side sheet (bottom sheet on phones). Rendered into the
  * page shell so it sits above the Ask ayna dock and is never cut off by it.
  * Filters apply live; the footer button just closes and shows the count. */
-function FilterSheet({ groups, personalizedToggle, sort = null, resultCount, activeCount, onClear, onClose }) {
+function FilterSheet({ groups, personalizedToggle, sort = null, extra = null, resultCount, activeCount, onClear, onClose }) {
     const closeRef = useRef(null);
     const onCloseRef = useRef(onClose);
     useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
@@ -476,6 +476,7 @@ function FilterSheet({ groups, personalizedToggle, sort = null, resultCount, act
                             {sort.note}
                         </fieldset>
                     )}
+                    {extra && <div className="ay-shopfilters__group">{extra}</div>}
                     {groups.filter((g) => g[3].length > 0).map(([label, value, set, options]) => (
                         <fieldset key={label} className="ay-shopfilters__group">
                             <legend>{label}</legend>
@@ -499,7 +500,7 @@ function FilterSheet({ groups, personalizedToggle, sort = null, resultCount, act
     );
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null, matchOpts: matchOptsProp = null, inExplore = false }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null, matchOpts: matchOptsProp = null, inExplore = false, initialType = null, onOpenReads = null }) {
     // Arriving with an intent (a category link, a search) starts fresh; plain "Shop" restores her own filters.
     const memoUid = user?.id || '';
     if (shopMemo.uid !== memoUid) { shopMemo.uid = memoUid; shopMemo.v = readShopMemo(memoUid); }
@@ -526,7 +527,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return MACRO_GROUPS.find(g => g.categories.includes(initialCategory))?.id || 'all';
     });
     const [categoryFilter, setCategoryFilter] = useState(() => memo('categoryFilter', initialCategory || 'all'));
-    const [typeFilter, setTypeFilter] = useState(() => memo('typeFilter', 'all'));
+    const [typeFilter, setTypeFilter] = useState(() => initialType || memo('typeFilter', 'all'));
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
     const searchPlaceholder = useRotatingPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
@@ -776,9 +777,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         // Browsing (no search): products only, same as the app's Products tab (QA3 M8), so both
         // say "252 products"; services have their own tab. A search still reaches services
         // (e.g. "hormone replacement therapy" finds the telehealth providers that prescribe it).
-        if (!String(submittedQuery || '').trim()) return [...products.filter((p) => p.type !== 'digital'), ...discovered.filter((p) => p.type !== 'digital')];
+        // Explore's Services toggle (one shop page, Oct 26) lists the services too.
+        const wantsServices = inExplore && typeFilter === 'services';
+        if (!String(submittedQuery || '').trim() && !wantsServices) return [...products.filter((p) => p.type !== 'digital'), ...discovered.filter((p) => p.type !== 'digital')];
         return [...products, ...releasedAsProducts, ...discovered];
-    }, [discoveredProducts, gridReady, submittedQuery]);
+    }, [discoveredProducts, gridReady, submittedQuery, inExplore, typeFilter]);
 
     // Behavior signals for the matching engine (saved, Not for me, in her
     // ecosystem). Memoized: the engine caches profiles by this object.
@@ -1632,7 +1635,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     // Only the values inside the Filters sheet (not search, category or sort).
     const clearSheetFilters = () => {
-        if (inExplore) setMacroGroup('all');
+        if (inExplore) { setMacroGroup('all'); setAvoidAttrs([]); }
         setTypeFilter('all');
         setPriceFilter('all');
         setEligibilityFilter('all');
@@ -1643,7 +1646,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     };
     const areaOn = inExplore && macroGroup !== 'all' ? 1 : 0;
     const sheetFilterCount = [typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length + areaOn;
-    const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0) + areaOn + avoidAttrs.length;
+    const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, inExplore ? 'all' : typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0) + areaOn + avoidAttrs.length;
     // Explore's Filters sheet picks the area (the folder tabs did this outside Explore).
     const pickArea = (id) => {
         setMacroGroup(id);
@@ -1712,7 +1715,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             </div>
 
             <div className="ayshop__find">
-            <form onSubmit={handleSmartSearch} className="ayshop__search" onFocus={() => setSearchFocused(true)} onBlur={() => setSearchFocused(false)}>
+            <form onSubmit={handleSmartSearch} className="ayshop__search" data-tour={inExplore ? 'explore-search' : undefined} onFocus={() => setSearchFocused(true)} onBlur={() => setSearchFocused(false)}>
                 <SmartSearchInput
                     type="search"
                     suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 7 }}
@@ -1788,7 +1791,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 }}
             />}
             {/* Five shopping groups, the areas one tap deeper (team meeting, Oct 26). */}
-            {inExplore && !submittedQuery && <ShopGroups active={macroGroup} onPick={pickArea} available={availableMacroGroups.map((g) => g.id)} className="ayshop__groups" />}
+            {/* Explore is one shop page (founder, Oct 26): ONE row of chips (All and the five
+                groups), then Products or Services, then the grid. Deeper filters stay behind Filters. */}
+            {inExplore && <div className="ayshop__chips" data-tour="explore-sections">
+                <ShopGroups active={macroGroup} onPick={pickArea} available={availableMacroGroups.map((g) => g.id)} subs={false} label="Filter by need" className="ayshop__groups" />
+                <div className="ayshop__type" role="group" aria-label="Show">
+                    {/* Products keeps the Shop's default grid ('all' browses products only); Services lists the services. */}
+                    <button type="button" aria-pressed={typeFilter !== 'services'} onClick={() => setTypeFilter('all')}>Products</button>
+                    <button type="button" aria-pressed={typeFilter === 'services'} onClick={() => setTypeFilter('services')}>Services</button>
+                </div>
+            </div>}
             <div className="ayshop__toolbar">
                 <div className="ayshop__toolbar-left">
                     <button type="button" className={`ay-btn ay-btn--secondary ayshop__filters${activeFilterCount ? ' is-active' : ''}${showFilters ? ' is-open' : ''}`} onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
@@ -1813,12 +1825,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </label>
             </div>
             {bestQuizNote}
-            <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ayshop__avoid" />
+            {/* Explore keeps one row of chips on the page: Leave out sits in the Filters sheet (as in the app). */}
+            {!inExplore && <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ayshop__avoid" />}
 
             {(() => {
                 const AREA_LABEL = (v) => { const g = SHOP_GROUPS.find((x) => x.id === v) || MACRO_GROUPS.find((x) => x.id === v); return g ? sentenceCase(g.label) : v; };
                 const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription or membership', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: CLINICAL_SOURCES_LABEL, community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my routine', fertility: 'Trying to conceive', pregnancy: 'Pregnant', postpartum: 'Postpartum', perimenopause: 'Perimenopause and menopause', menopause: 'Menopause', period: 'Period years', products: 'Products', services: 'Apps & services' };
-                const applied = [...(inExplore && macroGroup !== 'all' ? [[macroGroup, () => setMacroGroup('all')]] : []), [typeFilter, setTypeFilter], [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
+                const applied = [...(inExplore && macroGroup !== 'all' ? [[macroGroup, () => setMacroGroup('all')]] : []), ...(inExplore ? [] : [[typeFilter, setTypeFilter]]), [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayshop__applied" role="status">
                         <span className="ayshop__count">{!gridReady ? '\u00a0' : submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} products` : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
@@ -1848,6 +1861,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     ]}
                     personalizedToggle={hasProfileForSort ? personalizedSwitch : null}
                     sort={{ value: sortValue, choices: sortChoices, set: applySort, note: bestQuizNote }}
+                    extra={inExplore ? <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ayshop__avoid" /> : null}
                     resultCount={gridItems.length}
                     activeCount={sheetFilterCount}
                     onClear={clearSheetFilters}
@@ -2107,6 +2121,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {gridItems.length > 0 && !(searchSubmitted && aiLoading) && (
                 <SuggestBox context="shop" prefill={submittedQuery} className="ayna-browse__suggest ayshop__suggest" />
             )}
+            {/* Reads moved out of Explore; one plain link keeps them a tap away. */}
+            {inExplore && onOpenReads && <p className="ayshop__reads"><a href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpenReads(); }}>Reads: guides and research</a></p>}
             </div>
         </section>
     );
