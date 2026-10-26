@@ -1,6 +1,7 @@
 /**
  * The one main tab set for the app (bottom tab bar) and the website (top nav
- * and the phone tab bar): Today · Shop · Services · Community · Library
+ * and the phone tab bar): Shop · Services · Today · Community · Library (Today in the
+ * middle, founder Oct 26 19:49)
  * (founder, Oct 26 2026: "CAN WE HAVE SHOP services community and library and
  * keep the ask ayna at the top"). Ask ayna is the button at the top of every
  * page; You is the round profile button beside it. Keys stay stable for
@@ -9,9 +10,9 @@
  * /explore/resources. The /ask and /you addresses still work.
  */
 export const MAIN_TABS = [
-  { key: 'today', label: 'Today', href: '/today' },
   { key: 'explore', label: 'Shop', href: '/explore', icon: 'shop' },
   { key: 'services', label: 'Services', href: '/explore/services', icon: 'services' },
+  { key: 'today', label: 'Today', href: '/today' },
   { key: 'community', label: 'Community', href: '/community' },
   { key: 'library', label: 'Library', href: '/explore/resources', icon: 'library' },
 ];
@@ -25,9 +26,9 @@ export const MAIN_TABS = [
  * button. The old `today`, `ask` and `ayna` screens still route (navTab.js aynaRoute).
  */
 export const APP_TABS = [
-  { key: 'home', label: 'Today', icon: 'today' },
   { key: 'explore', label: 'Shop', icon: 'shop' },
   { key: 'services', label: 'Services', icon: 'services' },
+  { key: 'home', label: 'Today', icon: 'today' },
   { key: 'community', label: 'Community' },
   { key: 'library', label: 'Library', icon: 'library' },
 ];
