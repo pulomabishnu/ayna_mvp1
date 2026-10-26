@@ -6,14 +6,16 @@
   --ay-serif: var(--ay-heading);
   --ay-sans: 'Figtree', system-ui, -apple-system, sans-serif;
 
-  /* One type scale, fluid between 390px and 1280px wide. */
-  --ay-fs-display: clamp(40px, 32.989px + 1.7978vw, 56px); /* serif, one per page */
-  --ay-fs-title: clamp(30px, 25.618px + 1.1236vw, 40px);   /* serif page title */
-  --ay-fs-section: clamp(22px, 19.371px + 0.6742vw, 28px); /* serif section heading */
-  --ay-fs-card: clamp(17px, 16.562px + 0.1124vw, 18px);    /* sans 600 card/item title */
+  /* One type scale: the 8 brief styles, phone sizes below 768px. */
+  /* Mapped onto the 8 brief type styles (ay-tokens.css --ay-size-*): display 40/32,
+     h1 30/26, h2 22/20, h3 17, body 16, meta 14, caption 13 (the floor). No fluid sizes. */
+  --ay-fs-display: var(--ay-size-display, 40px); /* serif, one per page */
+  --ay-fs-title: var(--ay-size-h1, 30px);   /* serif page title */
+  --ay-fs-section: var(--ay-size-h2, 22px); /* serif section heading */
+  --ay-fs-card: var(--ay-size-h3, 17px);    /* sans 600 card/item title */
   --ay-fs-body: 16px;      /* sans 400, line-height 1.55 */
   --ay-fs-secondary: 14px; /* sans 500; labels sans 600 */
-  --ay-fs-caption: 12.5px; /* sans 500, the smallest size */
+  --ay-fs-caption: 13px;   /* sans 500, the smallest size (13px floor) */
 
   /* ayna tokens as shipped: paper canvas, ink text and outlines, pastel periwinkle / pink / mint / butter blocks. */
   --color-bg: #ffedac;
@@ -75,6 +77,8 @@
   --welcome-nav-enter-duration: 1.7s;
   --welcome-nav-enter-ease: var(--ease-out);
 }
+/* Campus resources is exempt from the QA3 type pass (founder): it keeps its earlier sizes. */
+.cr-page { --ay-fs-display: clamp(40px, 32.989px + 1.7978vw, 56px); --ay-fs-title: clamp(30px, 25.618px + 1.1236vw, 40px); --ay-fs-section: clamp(22px, 19.371px + 0.6742vw, 28px); --ay-fs-card: clamp(17px, 16.562px + 0.1124vw, 18px); --ay-fs-caption: 12.5px; }
 
 /* Base Reset */
 * {
