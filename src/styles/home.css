@@ -88,7 +88,7 @@
 /* hero visual: four objects on a fixed stage (photo, die-cut, UI card, seal).
    Only transform and opacity animate; every slot is a fixed box. */
 .app-container .hm .hm-scatter { position: relative; aspect-ratio: 1 / .9; min-height: 340px; isolation: isolate; }
-.app-container .hm .hm-slot { position: absolute; display: block; box-sizing: border-box; color: var(--hm-ink); --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline: var(--hm-ink); --legacy-outline: var(--hm-ink); --ay-ink: var(--hm-ink); --legacy-ink: var(--hm-ink); }
+.app-container .hm .hm-slot { position: absolute; display: block; box-sizing: border-box; color: var(--hm-ink); --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline-color: var(--hm-ink); --ay-outline: 1.5px solid var(--hm-ink); --legacy-outline: var(--hm-ink); --ay-ink: var(--hm-ink); --legacy-ink: var(--hm-ink); }
 .app-container .hm .hm-slot__layer { position: absolute; inset: 0; display: block; }
 .app-container .hm .hm-slot.is-skel { background: var(--hm-butter-2); border-radius: var(--hm-r); }
 .app-container .hm .hm-slot--main { top: 0; right: 0; width: 60%; aspect-ratio: 4 / 5; rotate: 1.5deg; z-index: 1; }
@@ -235,7 +235,7 @@
 .app-container .hm .hm-step__text { grid-area: text; display: grid; gap: 6px; padding-top: 2px; align-content: start; }
 .app-container .hm .hm-step__text p { margin: 0; font: 500 16px/1.45 var(--ay-sans-stack); color: var(--ay-text) !important; }
 .app-container .hm .hm-step .hm-h3 { color: var(--ay-text) !important; }
-.app-container .hm .hm-stepui { position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 4px; padding: 8px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); box-sizing: border-box; --ay-text: var(--hm-ink); --ay-outline: var(--hm-ink); --legacy-outline: var(--hm-ink); }
+.app-container .hm .hm-stepui { position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 4px; padding: 8px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); box-sizing: border-box; --ay-text: var(--hm-ink); --ay-outline-color: var(--hm-ink); --ay-outline: 1.5px solid var(--hm-ink); --legacy-outline: var(--hm-ink); }
 .app-container.app-container .hm .hm-stepui .ay-chip { pointer-events: none; min-height: 28px; height: 28px !important; padding: 0 10px; font-size: 13px !important; color: var(--hm-ink) !important; border-color: var(--hm-ink) !important; }
 .app-container.app-container .hm .hm-stepui .ay-chip.is-on { background: var(--hm-ink) !important; color: var(--hm-butter) !important; }
 .app-container .hm .hm-stepui.is-decide { left: auto; flex-direction: column; align-items: stretch; gap: 6px; padding: 0; background: transparent; border: 0; }
@@ -286,7 +286,7 @@
 .app-container .hm .hm-readlist__teaser { max-width: 64ch; font: 500 15px/1.5 var(--ay-sans-stack); }
 .app-container.app-container .hm .hm-readlist__src { font: 500 13px/1.4 var(--ay-sans-stack) !important; opacity: .85; }
 /* the Community card: pink, outlined, its photo on top */
-.app-container .hm .hm-comm { display: grid; background: var(--hm-pink); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); overflow: hidden; --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline: var(--hm-ink); --legacy-outline: var(--hm-ink); --ay-hairline: rgba(62, 39, 35, .3); --ay-feature-bg: var(--hm-ink); --ay-feature-fg: var(--hm-butter); --ay-focus: var(--hm-ink); }
+.app-container .hm .hm-comm { display: grid; background: var(--hm-pink); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); overflow: hidden; --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline-color: var(--hm-ink); --ay-outline: 1.5px solid var(--hm-ink); --legacy-outline: var(--hm-ink); --ay-hairline: rgba(62, 39, 35, .3); --ay-feature-bg: var(--hm-ink); --ay-feature-fg: var(--hm-butter); --ay-focus: var(--hm-ink); }
 .app-container .hm .hm-comm__ph { display: block; aspect-ratio: 16 / 10; border-bottom: 1.5px solid var(--hm-ink); overflow: hidden; background: var(--hm-butter-2); }
 .app-container .hm .hm-comm__ph :is(img, picture) { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; border-radius: 0 !important; }
 .app-container .hm .hm-comm__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; }
@@ -312,7 +312,7 @@
 .app-container .hm .hm-polaroid__ph :is(img, picture) { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; }
 .app-container .hm .hm-polaroid figcaption { padding: 12px 2px 0; font: 600 15px/1.3 var(--ay-sans-stack); }
 .app-container .hm .hm-us__copy { display: grid; gap: 16px; justify-items: start; }
-.app-container .hm .hm-invest { display: grid; grid-template-columns: 200px minmax(0, 1fr); margin-top: 56px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); overflow: hidden; --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline: var(--hm-ink); --legacy-outline: var(--hm-ink); --ay-focus: var(--hm-ink); }
+.app-container .hm .hm-invest { display: grid; grid-template-columns: 200px minmax(0, 1fr); margin-top: 56px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); overflow: hidden; --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline-color: var(--hm-ink); --ay-outline: 1.5px solid var(--hm-ink); --legacy-outline: var(--hm-ink); --ay-focus: var(--hm-ink); }
 .app-container .hm .hm-invest__ph { position: relative; display: block; border-right: 1.5px solid var(--hm-ink); background: var(--hm-butter-2); }
 .app-container .hm .hm-invest__ph :is(img, picture) { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; border-radius: 0 !important; }
 .app-container .hm .hm-invest__copy { display: grid; gap: 12px; justify-items: start; padding: 24px 32px; }
@@ -353,7 +353,7 @@
 /* big-number facts: the shared BigFact tile (white, 13px caption), four in a row */
 .app-container .hm .hm-stats { list-style: none; padding: 0; gap: 16px; }
 .app-container .hm .hm-stats > li { min-width: 0; display: grid; }
-.app-container .hm .hm-stats .ayk-fact { --ay-ink: #3e2723; --legacy-ink: #3e2723; --ay-ink-muted: rgba(62, 39, 35, .78); --ay-surface: #fff; --legacy-surface: #fff; }
+.app-container .hm .hm-stats .ayk-fact { --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .78); --ay-ink: #3e2723; --legacy-ink: #3e2723; --ay-ink-muted: rgba(62, 39, 35, .78); --ay-surface: #fff; --legacy-surface: #fff; }
 @media (max-width: 767px) { .app-container .hm .hm-stats { gap: 12px; } }
 /* the Wefunder card's one round seal */
 .app-container .hm .hm-invest { position: relative; overflow: visible; }
@@ -365,16 +365,12 @@
 .app-container.app-container .hm .ay-meter__bars > i { border-radius: 999px; }
 
 /* ---------- brand dark on the landing ----------
-   1) theme-v3.css sets --ay-ink to espresso on every .app-container that is
-      not data-theme='dark', which includes brand-dark, so the shared
-      primitives (StandardsBand) went espresso on espresso. Restore the
-      ay-tokens dark values here (reported for a global fix).
-   2) darkAccentSwap turns pink into sky in brand dark; the audits make blue a
-      chart colour only, so the landing keeps pink (selectors naming
-      brand-dark are not swapped). */
+   The --ay-* tokens switch on their own (ay-tokens.css). Older rules inside
+   the landing read --legacy-*, so they get the dark values here. Pink stays
+   pink in dark (blue is for chart lines only). */
 .app-container[data-theme='brand-dark'] .hm {
-  --ay-ink: #ffedac; --legacy-ink: #ffedac; --ay-ink-muted: rgba(255, 237, 172, .8); --ay-surface: rgba(255, 237, 172, .08); --legacy-surface: rgba(255, 237, 172, .08);
-  --hm-pink: #f7badd; --ay-pink: #f7badd; --legacy-pink: #f7badd; --ay-sticker: 3px 3px 0 #f7badd; --ay-press-shadow: 3px 3px 0 #f7badd;
+  --legacy-ink: #ffedac; --legacy-surface: rgba(255, 237, 172, .08);
+  --hm-pink: #f7badd; --legacy-pink: #f7badd; --ay-press-shadow: 3px 3px 0 #f7badd;
 }
 .app-container[data-theme='brand-dark'] .hm .hm-rc.ay-band--pink { --band: #f7badd; background: #f7badd; }
 .app-container[data-theme='brand-dark'] .hm .ay-seal { background: #f7badd; }
@@ -383,10 +379,8 @@
 .app-container[data-theme='brand-dark'] .hm .hm-ui--evidence { background: #f7badd; }
 .app-container[data-theme='brand-dark'] .hm .hm-step__n { text-shadow: 3px 3px 0 #f7badd; }
 
-/* Chips: the shared Chip reads --ay-outline as a full border, but the older
-   site sheets set --ay-outline to a bare colour, which drops the outline.
-   Scope the token's own value to the chip row (reported for a global fix). */
-.app-container .hm .hm-chips { --ay-outline: 1.5px solid currentColor; --legacy-outline: 1.5px solid currentColor; }
+/* Chips on the landing take the text colour for their outline. */
+.app-container .hm .hm-chips { --ay-outline: 1.5px solid currentColor; --ay-border-ink: 1.5px solid currentColor; --legacy-outline: 1.5px solid currentColor; }
 /* phones: keep the long page shorter without dropping anything */
 @media (max-width: 767px) {
   .app-container .hm .hm-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }

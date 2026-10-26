@@ -17,16 +17,15 @@
   --db-surface: var(--ay-surface, #fff); --db-blue: var(--ay-data-blue, #769ebe); --db-rule: rgba(62, 39, 35, .15); --db-on-ink: #ffedac;
   --db-ui: var(--ay-font-ui, 'Figtree', system-ui, sans-serif); --db-display: var(--ay-font-display, 'ayna Display', 'Bricolage Grotesque', sans-serif);
   --db-scale: var(--ayna-text-scale, 1);
-  /* The website's older sheets set --ay-outline to a bare colour on .app-container; the primitives need the border. */
-  --ay-outline: 1.5px solid var(--ay-ink, #3e2723); --legacy-outline: 1.5px solid var(--legacy-ink, #3e2723); --ay-r-pill: 999px;
+  --legacy-outline: 1.5px solid var(--legacy-ink, #3e2723); /* older rules inside the dashboard */
   display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; color: var(--db-ink); font: 500 calc(16px * var(--db-scale))/1.55 var(--db-ui);
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is([data-theme='brand-dark'], [data-theme='dark']) .ay-db,
 :is([data-theme='brand-dark'], [data-theme='dark']) :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db,
 html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh.ay-wh .ay-db {
   --db-deep: rgba(255, 237, 172, .16); --db-rule: rgba(255, 237, 172, .2); --db-on-ink: #3e2723;
-  /* theme-v3.css pins --ay-ink to espresso on .app-container:not([data-theme='dark']), which includes brand-dark. */
-  --ay-ink: #ffedac; --legacy-ink: #ffedac; --ay-ink-muted: rgba(255, 237, 172, .8); --ay-surface: rgba(255, 237, 172, .08); --legacy-surface: rgba(255, 237, 172, .08); --ay-outline: 1.5px solid #ffedac; --legacy-outline: 1.5px solid #ffedac;
+  /* older (pre-token) rules inside the dashboard read --legacy-*; the --ay-* tokens switch on their own */
+  --legacy-ink: #ffedac; --legacy-surface: rgba(255, 237, 172, .08); --legacy-outline: 1.5px solid #ffedac;
   --db-ink: #ffedac; --db-muted: rgba(255, 237, 172, .8); --db-surface: rgba(255, 237, 172, .08);
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db * { box-sizing: border-box; }
