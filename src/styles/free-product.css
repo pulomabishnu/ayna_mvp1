@@ -328,3 +328,7 @@ html body .app-container .fp .fp-rules h2 { margin: 0 0 12px !important; font: 4
 .app-container .fp .fp-rules li::before { content: counter(fprule); position: absolute; left: 0; top: 12px; display: grid; place-items: center; width: 26px; height: 26px; border: 1.5px solid var(--ay-ink); border-radius: 50%; font: 700 13px/1 var(--ay-sans); }
 .app-container .fp .fp-rules li b { font-weight: 700; }
 .app-container .fp .fp-intro .fp-rules { margin-top: 40px; }
+/* One column: hero, the equation card, the action, then the rules (the two-column intro squeezed the seal). */
+html body .app-container.app-container .fp .fp-intro { display: block; }
+html body .app-container.app-container .fp .fp-intro > .fp-eq { width: fit-content; max-width: 100%; margin: 0; }
+html body .app-container.app-container .fp .fp-intro > .fp-intro__actions { margin-top: 32px; }

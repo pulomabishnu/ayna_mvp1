@@ -5,12 +5,14 @@ import { NOT_ON_FILE } from '../pdp/glance.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
 import { bestForProfile, compareSetRows, COMPARE_MIN } from './compareSet.js';
+import { Plate } from '../ui/ay';
 import './compare.css';
 
+/* The product on the shared white scalloped plate (signature 1); the brand name on the plain plate if the photo fails. */
 function Thumb({ product }) {
   const src = productImageOverride(product) || safeProductImageSrc(product?.image || product?.imageUrl || product?.images?.[0]);
   const [broken, setBroken] = useState(false);
-  return <span className="ay-cmp2__thumb" aria-hidden="true">{src && !broken ? <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} /> : <span>{(product?.brand || product?.name || '?').charAt(0)}</span>}</span>;
+  return <span className="ay-cmp2__thumb" aria-hidden="true"><Plate src={src && !broken ? src : ''} alt="" fallback={product?.brand || product?.name || ''} imgProps={{ onError: () => setBroken(true) }} /></span>;
 }
 
 /**
