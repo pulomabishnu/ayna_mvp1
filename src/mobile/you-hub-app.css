@@ -61,7 +61,7 @@
   .ayna-saved-header h1 small { display: inline-grid !important; place-items: center; min-width: 28px; height: 28px; padding: 0 8px; border: 1.5px solid #3e2723 !important; border-radius: 999px; background: #f7badd !important; color: #3e2723 !important; font: 700 14px/1 var(--f-ui, Figtree, sans-serif) !important; vertical-align: middle; }
   .eco-app .eco-oval { font-size: 13px !important; }
   .eco-app small, .eco-app .ay-shelf2-count { font-size: max(13px, 1em) !important; }
-  .ay-rt-checkin :is(summary, p, button) { font-size: 13px !important; }
+  :is(.ay-rt-checkin :is(summary, p, button), .ay-rt-why) { font-size: 13px !important; }
   /* A pink button on the espresso summary card needs no offset (the sticker is pink on pink there). */
   .eco-app .eco-app-checkin { box-shadow: none !important; }
   /* Settings rows give every button a 56px min-height, which turned the Tips switch into a circle. */
