@@ -1,0 +1,112 @@
+/* You hub (WebYou.jsx, YouTabs.jsx, the signed-out example shelves).
+   You audit, Oct 25 (v3): one hub, five sections as the product page's pill
+   tabs, no blue surfaces (data-blue is for chart lines only), no 6-7px card
+   shadows, 13px text floor, page title 30 / 26, label/value rows with thin
+   rules, big-number facts with a caption, set-up as a count (Pai #12),
+   profile as a count with one next step (GlowCare #15), avoid chips with a
+   crossed icon (Food-scan #17), calm monochrome settings (Rhode #24). */
+html body .app-container.app-container.app-container.app-container.app-container {
+  .yh { --yh-ink: var(--ay-text, #3e2723); --yh-muted: var(--ay-text-2, rgba(62, 39, 35, .78)); --yh-surface: var(--ay-surface, #fff); --yh-rule: var(--ay-rule, 1px solid rgba(62, 39, 35, .15)); }
+  .yh .ay-h1, .yh-head .ay-h1 { font: 800 30px/1.08 var(--ay-font-display, 'ayna Display', sans-serif) !important; letter-spacing: -.02em; }
+  .yh-head { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(240px, 320px); align-items: center; gap: 24px; padding: 8px 0 24px; border-bottom: var(--yh-rule); }
+  /* The striped strip (pink, blue, butter) over the old header is gone. */
+  .yh-head::before { content: none !important; }
+  .yh-profile { display: grid; gap: 8px; padding: 16px 20px; border: 1.5px solid var(--yh-ink); border-radius: var(--ay-r-md, 16px); background: var(--yh-surface); color: var(--yh-ink) !important; text-align: left; cursor: pointer; box-shadow: none; }
+  .yh-profile__top { display: flex; justify-content: space-between; gap: 12px; font: 600 15px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+  .yh-profile__top b { font-variant-numeric: tabular-nums; }
+  .yh-profile i { display: block; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--yh-ink) 14%, transparent); overflow: hidden; }
+  .yh-profile em { display: block; height: 100%; border-radius: 999px; background: var(--yh-ink); }
+  .yh-profile__go { font: 600 14px/1.2 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* Breadcrumb + five pill tabs (sub-pages). */
+  .yh-tabs { display: grid; gap: 12px; margin-top: 16px; margin-bottom: 8px; }
+  .yh-crumb { display: flex; gap: 8px; align-items: center; font: 500 14px/1.3 var(--ay-font-ui, Figtree, sans-serif); color: var(--yh-muted); }
+  .yh-crumb a { color: var(--ay-text, #3e2723) !important; text-decoration: underline; text-underline-offset: 3px; }
+  .yh-tabs .yh-short { display: none; }
+  @media (max-width: 640px) {
+    .yh-tabs .yh-short { display: inline; }
+    .yh-tabs .yh-long { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  }
+
+  /* Hub cards: white plate, 1.5px ink outline, no drop shadow. */
+  .yh-card { display: grid; gap: 14px; padding: 20px; border: 1.5px solid var(--yh-ink); border-radius: var(--ay-r-md, 16px); background: var(--yh-surface); box-shadow: none; }
+  .yh-setup__bar { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
+  .yh-setup__bar i { display: block; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--yh-ink) 14%, transparent); }
+  .yh-setup__bar i.is-done { background: var(--yh-ink); }
+  .yh-setup__list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .yh-setup__list li { display: flex; align-items: center; gap: 10px; font: 500 15px/1.35 var(--ay-font-ui, Figtree, sans-serif); color: var(--yh-ink); }
+  .yh-setup__list li.is-done { color: var(--yh-muted); }
+  .yh-tick { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border: 1.5px solid var(--yh-ink); border-radius: 50%; }
+  .is-done .yh-tick { background: var(--yh-ink); }
+  .yh-tick svg { width: 14px; height: 14px; fill: none; stroke: var(--ay-page, #ffedac); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .yh-setup__go { justify-self: start; }
+
+  /* Big-number facts with one-line captions (white tile, Bricolage 800). */
+  .yh-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+  .yh-fact { display: grid; gap: 4px; width: 100%; height: 100%; padding: 14px 16px; border: 1.5px solid var(--yh-ink); border-radius: var(--ay-r-md, 16px); background: var(--yh-surface); color: var(--yh-ink) !important; text-align: left; cursor: pointer; box-shadow: none; }
+  .yh-fact:disabled { cursor: default; }
+  .yh-fact b { font: 800 30px/1 var(--ay-font-display, 'ayna Display', sans-serif); font-variant-numeric: tabular-nums; }
+  .yh-fact span { font: 500 13px/1.3 var(--ay-font-ui, Figtree, sans-serif); color: var(--yh-muted); }
+  .yh-quick { display: flex; flex-wrap: wrap; gap: 20px; margin: -12px 0 0; }
+  .yh-quick .ct-link { font-size: 15px !important; }
+
+  /* "You avoid": chips with a crossed icon. */
+  .yh-avoid { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .yh-avoid li { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px 0 10px; border: 1.5px solid var(--yh-ink); border-radius: 999px; background: var(--ay-butter, #ffedac); color: #3e2723; font: 600 14px/1 var(--ay-font-ui, Figtree, sans-serif); }
+  .yh-avoid svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; }
+  .yh-h3 { margin: 20px 0 8px; font: 600 15px/1.3 var(--ay-font-ui, Figtree, sans-serif); color: var(--yh-ink); }
+
+  /* This week: number tiles on white, chart bars in data-blue (a chart), today in ink. */
+  .yh .wy-week { border: 1.5px solid var(--yh-ink); background: var(--yh-surface) !important; box-shadow: none !important; }
+  .yh .wy-week__nums b { font-family: var(--ay-font-display, 'ayna Display', sans-serif) !important; font-weight: 800 !important; }
+  .yh .wy-week__nums small, .yh .wy-bars small { font-size: 13px !important; }
+
+  /* Calm register for settings: no colour fills, no stickers, thin rules. */
+  .yh-calm .ay-group { background: transparent !important; border: 0; border-top: var(--yh-rule); border-bottom: var(--yh-rule); border-radius: 0 !important; box-shadow: none !important; }
+  .yh-calm .ay-group__row { padding-left: 0 !important; padding-right: 0 !important; }
+
+  /* 13px floor for everything on the hub. */
+  .yh :is(small, .wy-count, .ay-group__note, .wy-alert__tier) { font-size: max(13px, 1em); }
+
+  @media (max-width: 900px) {
+    .yh-head { grid-template-columns: auto minmax(0, 1fr); }
+    .yh-profile { grid-column: 1 / -1; }
+  }
+  @media (max-width: 640px) {
+    .yh .ay-h1, .yh-head .ay-h1 { font-size: 26px !important; }
+    .yh-head { gap: 16px; padding-bottom: 16px; }
+    .yh-fact { padding: 12px; }
+    .yh-fact b { font-size: 26px; }
+  }
+
+  /* Example shelves (signed out, /you and /you/ecosystem): 1px rule between
+     shelves instead of the 6px espresso bar, products on white plates at the
+     same scale (Glowie #53), the need label as a small outlined sticker (Nectar #9). */
+  .ay-ecoprev__title { font-size: 30px !important; }
+  .ay-ecoprev__row { border-bottom: 1px solid rgba(62, 39, 35, .15) !important; padding-bottom: 16px; }
+  .ay-ecoprev__tile { border: 1.5px solid #3e2723 !important; border-radius: 16px !important; background: #fff !important; box-shadow: none !important; }
+  .ay-ecoprev__shelfname { display: inline-flex; align-items: center; min-height: 28px; margin: 0 0 10px; padding: 0 12px; border: 1.5px solid #3e2723; border-radius: 999px; background: #ffedac; color: #3e2723; font: 600 13px/1 var(--ay-font-ui, Figtree, sans-serif) !important; }
+  .ay-ecoprev__stage { box-shadow: none !important; }
+  @media (max-width: 640px) { .ay-ecoprev__title { font-size: 26px !important; } }
+
+  /* My ecosystem (web, #ayeco): title 30 / 26, a 1px rule under each shelf
+     head, the empty state flat (no tilt, no shadow), the shelf menu button
+     without its 2px ink shadow, and "Day N · Is it working?" under her own products. */
+  #ayeco .eco3-head .ay-h1 { font-size: 30px !important; }
+  #ayeco .ay-shelf__head { border-bottom: 1px solid rgba(62, 39, 35, .15) !important; }
+  #ayeco .eco3-empty { transform: none !important; border-radius: 16px !important; box-shadow: none !important; }
+  .ay-shelf .ay-shelf__menu > summary { box-shadow: none !important; border: 1.5px solid var(--ay-text, #3e2723); }
+  .ay-shelf__working { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; margin-top: 6px; padding: 0; border: 0; background: none; color: var(--ay-text, #3e2723) !important; font: 600 13px/1.2 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .ay-shelf__working .ayk-status { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border: 1.5px solid currentColor; border-radius: 999px; font: 600 13px/1 var(--ay-font-ui, Figtree, sans-serif); text-decoration: none; }
+  @media (max-width: 640px) { #ayeco .eco3-head .ay-h1 { font-size: 26px !important; } }
+}
+
+/* Header: the arch avatar flat (no 3px ink shadow) and pink in both themes; the
+   name at 30 / 26 with the one pink highlighter swipe (never blue). Three ids
+   to beat the older ds-screens / explore-web rules. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container) .yh .ay-arch { background: #f7badd !important; color: #3e2723 !important; box-shadow: none !important; border: 1.5px solid #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container) main .yh .wy-who h1.ay-h1.ay-h1 { font: 800 30px/1.08 var(--ay-font-display, 'ayna Display', sans-serif) !important; letter-spacing: -.02em !important; background-image: linear-gradient(transparent 72%, #f7badd 72%, #f7badd 94%, transparent 94%) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) main .yh .wy-who h1.ay-h1.ay-h1 { background-image: linear-gradient(transparent 80%, rgba(247, 186, 221, .55) 80%, rgba(247, 186, 221, .55) 96%, transparent 96%) !important; }
+@media (max-width: 640px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container) main .yh .wy-who h1.ay-h1.ay-h1 { font-size: 26px !important; }
+}

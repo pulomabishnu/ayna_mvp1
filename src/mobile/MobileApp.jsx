@@ -1206,6 +1206,8 @@ export default function MobileApp() {
     onBrowse: (query) => { setBrowseQuery(typeof query === 'string' ? query : ''); setScreen('browse'); },
     onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
     onOpenSaved: () => setScreen('saved'),
+    // Saved > Startups (waitlists), which lives in the You flow.
+    onOpenStartups: () => setOverlay({ type: 'profile', screen: 'startups' }),
     onOpenCompare: openCompare,
     onToggleOmit: handleToggleOmit,
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),

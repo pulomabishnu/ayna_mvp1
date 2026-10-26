@@ -61,16 +61,17 @@ export const EXPLORE_SECTIONS = [
 /** The app has the same five, Reads included (the Library's reads live there now). */
 export const APP_EXPLORE_SECTIONS = EXPLORE_SECTIONS;
 
-/** You's sections, in order (UX spec section 19). `href` is the website address. */
+/** You's five sections, in order (You audit, Oct 25: one hub on web and app). `href` is the website address. */
 export const YOU_SECTIONS = [
   { key: 'ecosystem', label: 'My ecosystem', href: '/you/ecosystem' },
   { key: 'saved', label: 'Saved', href: '/you/saved' },
   { key: 'health', label: 'My health', href: '/you/health' },
-  { key: 'tracking', label: 'Tracking', href: '/you/tracking' },
-  { key: 'connected', label: 'Connected data', href: '/you/connected' },
-  { key: 'activity', label: 'My activity', href: '/you/activity' },
-  { key: 'settings', label: 'Settings and privacy', href: '/you/settings' },
+  { key: 'activity', label: 'Activity', href: '/you/activity' },
+  { key: 'settings', label: 'Settings & privacy', href: '/you/settings' },
 ];
+
+/** Old You section addresses (before the You audit merged 8 tabs into 5): Tracking and Connected data are inside My health now. */
+export const YOU_SECTION_ALIASES = { tracking: 'health', connected: 'health' };
 
 /**
  * Old addresses keep working (bookmarks, texts, emails, shared links). The

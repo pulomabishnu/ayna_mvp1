@@ -7,12 +7,14 @@ import { addFeedback } from '../../utils/feedback.js';
 import { CompareToggle } from '../../components/compare/CompareControls.jsx';
 import SavedReminders from '../../components/save/SavedReminders.jsx';
 import { ADD_TO_ROUTINE, IN_ROUTINE } from '../../utils/routineCopy.js';
+import { useSavedPosts, postLine } from '../../hooks/useSavedPosts.js';
+import '../you-hub-app.css';
 
 const Check = () => <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>;
 
 const FILTERS = [['all', 'All'], ['eco', IN_ROUTINE], ['new', 'Not added yet'], ['flag', 'Safety notes']];
 
-export default function SavedScreen({ savedProducts = {}, myProducts = [], onBack, onBrowse, onOpenProduct, onToggleSaved, onGoEco, onAddToEcosystem, quizAnswers = null, onOpenWhyMatch, onOpenCompare }) {
+export default function SavedScreen({ authUser = null, onOpenCommunityPost, onOpenStartups, savedProducts = {}, myProducts = [], onBack, onBrowse, onOpenProduct, onToggleSaved, onGoEco, onAddToEcosystem, quizAnswers = null, onOpenWhyMatch, onOpenCompare }) {
   const [filter, setFilter] = useState('all');
   // Just added on this visit: the button reads "Added" with a check.
   const [justAdded, setJustAdded] = useState({});
@@ -22,6 +24,15 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], onBac
   const flaggedIds = new Set(alerts.map((alert) => alert.product?.id));
   const matchesFilter = (product, key) => key === 'all' || (key === 'eco' ? ecosystemIds.has(product.id) : key === 'flag' ? flaggedIds.has(product.id) : !ecosystemIds.has(product.id));
   const visible = items.filter((product) => matchesFilter(product, filter));
+  // Saved posts and Startups live in Saved too (You audit: one Saved section on web and app).
+  const savedPosts = useSavedPosts(authUser?.id || null, 6);
+  const more = <>
+    {savedPosts.posts.length > 0 && onOpenCommunityPost && <section className="ayna-saved-posts" aria-labelledby="ayna-saved-posts-h">
+      <h2 id="ayna-saved-posts-h">Saved posts</h2>
+      <ul>{savedPosts.posts.map((post) => { const line = postLine(post); return <li key={post.id}><button type="button" onClick={() => onOpenCommunityPost(post.id)}><small>Saved {line.kind.toLowerCase()}</small><span>{line.text}</span></button></li>; })}</ul>
+    </section>}
+    {onOpenStartups && <button type="button" className="ayna-saved-startups" onClick={onOpenStartups}><span><b>Startups</b><small>Waitlists and new companies</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
+  </>;
 
   return <div className="ayna-fresh-saved ayna-saved-collection">
     <header className="ayna-saved-header">
@@ -45,9 +56,10 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], onBac
           {flaggedIds.has(product.id) && <button className="ayna-saved-safety" type="button" onClick={() => onOpenProduct?.(product)}>Safety note</button>}
         </div>)}</div>}
         <button className="ayna-saved-ecosystem" type="button" onClick={onGoEco}>Open my ecosystem</button>
+        {more}
         <LegalFooter />
       </div>
     </>}
-    {items.length === 0 && <EmptyState art="heart" tone="pink" title="Nothing saved yet." body="When something catches your eye, tap Save and it’ll live here." actionLabel="Go to Explore" onAction={onBrowse} />}
+    {items.length === 0 && <><EmptyState art="heart" tone="pink" title="Nothing saved yet." body="When something catches your eye, tap Save and it’ll live here." actionLabel="Go to Explore" onAction={onBrowse} /><div className="ayna-saved-content">{more}</div></>}
   </div>;
 }
