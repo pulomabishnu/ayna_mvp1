@@ -2523,3 +2523,7 @@ html body .ayq--tabs .ayq-st__tab:not(.is-on):hover { background: rgba(var(--v-f
 .ayna-mobile :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ayv-oneline, .ay-askrow h2) { font-size: 20px !important; }
 :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ay-compare__frame, .ay-compare__scroll table, .ay-pdp-askcard, .ay-pdp-ask, .ay-pdp-community-actions, .ayq-srcgrid, .ayq-add) { border-radius: var(--ay-r-md) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-sheet.ay-pdp-title { border-radius: var(--ay-r-md) var(--ay-r-md) 0 0 !important; }
+/* Phones (web under 768px and the app): module titles, price and big numbers use the mobile sizes (h2 20, price 20). */
+@media (max-width: 767px) { :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ay-h2, .ayp-reads__title, .ayv-hl__num, .ayv-pricerow__main, .ay-ps-fold__title, .ayv-ask .ay-askrow h2) { font-size: 20px !important; } }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-ask .ay-askrow h2 { font-size: 20px !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayq-folder__tab { font-size: 17px !important; }
