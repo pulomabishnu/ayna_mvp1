@@ -21,8 +21,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
       <button type="button" className="ay-ob-back" onClick={() => setValueOpen(false)} aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
       <h1 id="ay-ob-value-h">Here’s how ayna helps</h1>
       <ol className="ay-ob-value__list">
-        {/* The app's tab is Home (the website's setup keeps Today). */}
-        {VALUE_POINTS.map(([t0, d], i) => [t0 === 'Today' ? 'Home' : t0, d, i]).map(([t, d, i]) => <li key={t}><span aria-hidden="true">{i + 1}</span><b>{t}</b><p>{d}</p></li>)}
+        {VALUE_POINTS.map(([t0, d], i) => [t0, d, i]).map(([t, d, i]) => <li key={t}><span aria-hidden="true">{i + 1}</span><b>{t}</b><p>{d}</p></li>)}
       </ol>
       <div className="ay-ob-value__actions">
         <button type="button" className="ay-ob-primary" onClick={onStartQuiz}>Set up my ayna</button>
@@ -60,7 +59,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
         ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} className="ay-land-finish" />
         : <>
           <button type="button" className="ay-land-start" onClick={() => setValueOpen(true)}>Get started<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
-          <p className="ay-land-start-note">A few short questions, then your Home.</p>
+          <p className="ay-land-start-note">A few short questions, then your Today.</p>
         </>}
       <div className="ay-land-links"><button type="button" onClick={onBrowse}>Explore first</button><button type="button" onClick={onAboutAyna}>About us</button></div>
     </section>
