@@ -1,8 +1,8 @@
 /* Landing v2: one palette (cream 60 / pink 30 / butter 10, ink for text + lines, one dark band),
    two fonts ('ayna Display' display, Figtree UI), one radius/border/shadow/motion scale. */
 .lv {
-  --ink: #161616; --ink-2: #4a4a4a; --paper: #fffcf5; --white: #fff;
-  --pink: #f7badd; --pink-soft: #fde3ef; --butter: #f7e78e; --sky: #c9ecff;
+  --ink: #161616; --ink-2: #4a4a4a; --paper: #ffedac; --white: #fff;
+  --pink: #f7badd; --pink-soft: #fde3ef; --butter: #ffedac; --sky: #c9ecff;
   --display: var(--ay-serif); --ui: var(--ay-sans);
   --fs-hero: var(--ay-fs-display); --fs-h2: var(--ay-fs-display); --fs-h3: var(--ay-fs-section); --fs-lead: var(--ay-fs-body); --fs-body: var(--ay-fs-body); --fs-small: var(--ay-fs-secondary); --fs-label: var(--ay-fs-caption);
   --r-sm: 8px; --r-md: 16px; --r-lg: 24px; --bw: 2px; --shadow: 4px 4px 0 var(--ink);

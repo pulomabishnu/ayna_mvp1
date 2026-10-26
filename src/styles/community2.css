@@ -168,7 +168,7 @@
 .app-container .wc-results .is-add { font-weight: 600; }
 .app-container .wc-mention.is-custom { cursor: default; }
 .app-container .wc3 .wc-mention.is-custom:hover { border-color: var(--legacy-ink); background: var(--ay-cream); }
-.app-container .wc-mention.is-custom .wc-mention-photo { display: grid; place-items: center; background: #fff; color: #1d1a2b; font: 600 var(--ay-fs-card)/1 var(--ay-sans); }
+.app-container .wc-mention.is-custom .wc-mention-photo { display: grid; place-items: center; background: #fff; color: #3e2723; font: 600 var(--ay-fs-card)/1 var(--ay-sans); }
 .app-container .wc-mention.is-custom small { display: block; color: var(--ay-ink-soft); font-size: var(--ay-fs-caption); }
 
 /* ===== Round 5: rules, announcements, calmer composer, clean playlist page ===== */

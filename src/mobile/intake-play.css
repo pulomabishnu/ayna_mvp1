@@ -99,7 +99,7 @@
   transition: transform .14s var(--ay-ease), background-color .2s, color .2s;
 }
 .ip-next > span { flex: 1; text-align: left; }
-.ip-next b { padding: 4px 10px; border-radius: 99px; background: rgba(255, 252, 245, .16); font-size: 13px; font-weight: 500; }
+.ip-next b { padding: 4px 10px; border-radius: 99px; background: rgba(255, 237, 172, .16); font-size: 13px; font-weight: 500; }
 .ip-next i { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: var(--ip-select); }
 .ip-tone--calm .ip-next i { background: var(--legacy-butter); }
 .ip-next i svg { width: 20px; height: 20px; fill: none; stroke: var(--legacy-ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s var(--ay-ease); }
@@ -429,7 +429,7 @@
 .ip-divider::after { content: ''; flex: 1; height: 1.5px; background: var(--ay-ink-faint); order: 1; }
 .ip-divider small { order: 2; padding: 4px 8px; border-radius: 99px; background: var(--legacy-ink); color: var(--ay-paper); font-size: 11.5px; font-weight: 500; letter-spacing: .04em; text-transform: none; }
 .ip-groups { display: grid; gap: 20px; }
-.ip-onfile { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px 14px; border: 1.5px dashed var(--legacy-ink); border-radius: 16px; background: rgba(255, 252, 245, .6); font: 500 13px/1.35 var(--ay-font-ui); }
+.ip-onfile { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px 14px; border: 1.5px dashed var(--legacy-ink); border-radius: 16px; background: rgba(255, 237, 172, .6); font: 500 13px/1.35 var(--ay-font-ui); }
 .ip-onfile b { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border: 2px solid var(--legacy-ink); border-radius: 12px; background: var(--ay-paper); font: 600 17px/1 'Figtree', system-ui, sans-serif; }
 .ip-onfile small { display: block; margin-bottom: 3px; font: 500 13px/1.2 var(--ay-font-ui); color: var(--ay-ink-soft); }
 .ip-input { width: 100%; box-sizing: border-box; min-height: 52px; margin-top: 4px; padding: 0 16px; border: 1.5px solid var(--legacy-ink); border-radius: 16px; outline: 0; background: var(--ay-paper); color: var(--legacy-ink); font: 500 max(16px, calc(14px * var(--ayna-text-scale, 1))) var(--ay-font-ui); }
@@ -457,7 +457,7 @@
 .ip-tokens { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
 .ip-token { display: inline-flex; align-items: center; gap: 4px; min-height: 40px; padding: 0 4px 0 15px; border-radius: 99px; background: var(--legacy-ink); color: var(--ay-paper); font: 500 13px/1 var(--ay-font-ui); animation: ip-pop .3s var(--ay-pop); }
 .ip-token button { width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: var(--ay-paper); font: 600 17px/1 var(--ay-font-ui); cursor: pointer; }
-.ip-add-row { width: 100%; min-height: 58px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 2px dashed var(--legacy-ink); border-radius: 18px; background: rgba(255, 252, 245, .6); color: var(--legacy-ink); font: 600 17px/1 var(--ay-font-ui); cursor: pointer; transition: background-color .2s, transform .14s var(--ay-ease); }
+.ip-add-row { width: 100%; min-height: 58px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 2px dashed var(--legacy-ink); border-radius: 18px; background: rgba(255, 237, 172, .6); color: var(--legacy-ink); font: 600 17px/1 var(--ay-font-ui); cursor: pointer; transition: background-color .2s, transform .14s var(--ay-ease); }
 .ip-add-row span { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: var(--legacy-ink); color: var(--ay-paper); font-size: 15px; line-height: 1.45; font-weight: 400; }
 .ip-add-row:active { transform: scale(.98); }
 .ip-builder > .ip-custom { margin-top: 20px; }

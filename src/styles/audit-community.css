@@ -145,8 +145,8 @@
 /* composeOnly mode (P07): composer over another page, then a short confirmation */
 .app-container .wc-sheet-backdrop { z-index: 3000; }
 .app-container .wc-sheet .wc-join { gap: 8px; padding: 16px; border-radius: 18px; background: var(--ay-cream); }
-.app-container .wc-done-backdrop { background: rgba(29, 26, 43, .25); }
+.app-container .wc-done-backdrop { background: rgba(62, 39, 35, .25); }
 .app-container .wc-done { display: flex; align-items: center; gap: 12px; padding: 16px 24px 16px 16px; border: 2px solid var(--legacy-ink); border-radius: 99px; background: var(--ay-paper); color: var(--legacy-ink); box-shadow: var(--ay-shadow); font: 600 var(--ay-fs-body)/1 var(--ay-sans); animation: wc-done-in .25s var(--ay-pop, ease-out); }
-.app-container .wc-done-mark { display: grid; place-items: center; width: 36px; height: 36px; border: 2px solid var(--legacy-ink); border-radius: 50%; background: var(--ay-mint); color: #1d1a2b; }
+.app-container .wc-done-mark { display: grid; place-items: center; width: 36px; height: 36px; border: 2px solid var(--legacy-ink); border-radius: 50%; background: var(--ay-mint); color: #3e2723; }
 @keyframes wc-done-in { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .app-container .wc-done { animation: none; } }

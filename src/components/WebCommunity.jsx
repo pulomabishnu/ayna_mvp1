@@ -97,7 +97,7 @@ function KindLabel({ kind, children }) {
 }
 const VERB = { post: 'Post', question: 'Ask', review: 'Review', playlist: 'Playlist', recommend: 'Recommend' };
 const KIND_TITLES = { post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' };
-const COVER_COLORS = ['#1D1A2B', '#B9C2F4', '#F7BADD', '#BDEBD6', '#F7E78E'];
+const COVER_COLORS = ['#3e2723', '#f7badd', '#F7BADD', '#f6e3a1', '#ffedac'];
 const AUDIENCE = [['private', 'Only me'], ['friends', 'Friends'], ['public', 'Public']];
 const POST_MAX = 2000;
 const COMMENT_MAX = 1000;
@@ -1032,7 +1032,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <section className="cm-group">
           <h3 className="cm-label">Cover</h3>
           <div className="cm-cover-pick">
-            <span className="cm-cover-preview" style={coverPreview ? undefined : { background: coverColor, color: coverColor === COVER_COLORS[0] ? '#fffcf5' : '#1d1a2b' }} aria-hidden="true">{coverPreview ? <img src={coverPreview} alt="" /> : <span>{playlistTitle.trim() || 'ayna'}</span>}</span>
+            <span className="cm-cover-preview" style={coverPreview ? undefined : { background: coverColor, color: coverColor === COVER_COLORS[0] ? '#ffedac' : '#3e2723' }} aria-hidden="true">{coverPreview ? <img src={coverPreview} alt="" /> : <span>{playlistTitle.trim() || 'ayna'}</span>}</span>
             <div className="cm-cover-opts">
               <div className="cm-colors">{COVER_COLORS.map((c) => <button type="button" key={c} aria-label={`Cover color ${c}`} aria-pressed={!coverPhoto && coverColor === c} style={{ background: c }} onClick={() => { setCoverColor(c); setCoverPhoto(null); }} />)}</div>
               <label className="ay-btn ay-btn--secondary cm-small cm-upload">{coverPhoto ? 'Change photo' : 'Upload a photo'}<input type="file" accept="image/*" className="cm-file" onChange={(e) => { const f = e.target.files?.[0]; if (f) { try { checkImageFile(f); setCoverPhoto(f); } catch (err) { setError(err.message); } } e.target.value = ''; }} /></label>

@@ -21,18 +21,18 @@
 }
 .ay-gloss:hover,
 .ay-gloss[aria-expanded='true'] { text-decoration-color: currentColor; }
-.ay-gloss:focus-visible { outline: 3px solid var(--ay-peri, #b9c2f4); outline-offset: 2px; border-radius: 4px; }
+.ay-gloss:focus-visible { outline: 3px solid var(--ay-peri, #f7badd); outline-offset: 2px; border-radius: 4px; }
 
 .ay-gloss-card {
   position: fixed;
   z-index: 6000;
   box-sizing: border-box;
   padding: 16px;
-  border: 2px solid var(--legacy-ink, #1d1a2b);
+  border: 2px solid var(--legacy-ink, #3e2723);
   border-radius: 16px;
-  background: var(--ay-paper, #fffcf5);
-  color: var(--legacy-ink, #1d1a2b);
-  box-shadow: var(--ay-shadow, 3px 3px 0 #1d1a2b);
+  background: var(--ay-paper, #ffedac);
+  color: var(--legacy-ink, #3e2723);
+  box-shadow: var(--ay-shadow, 3px 3px 0 #3e2723);
   font-family: var(--ay-sans);
   text-align: left;
   animation: ayGlossIn 150ms ease-out both;
@@ -54,10 +54,10 @@
   cursor: pointer;
 }
 .ay-gloss-card__x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.25; stroke-linecap: round; }
-.ay-gloss-card__x:hover { background: var(--ay-cream, #faf8f1); }
+.ay-gloss-card__x:hover { background: var(--ay-cream, #ffedac); }
 .ay-gloss-card p { margin: 4px 0 0; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); }
 .ay-gloss-card .ay-gloss-card__long { margin-top: 12px; }
-.ay-gloss-card .ay-gloss-card__related { margin-top: 8px; color: var(--ay-ink-soft, rgba(29, 26, 43, .62)); font-size: var(--ay-fs-secondary); }
+.ay-gloss-card .ay-gloss-card__related { margin-top: 8px; color: var(--ay-ink-soft, rgba(62, 39, 35, .62)); font-size: var(--ay-fs-secondary); }
 .ay-gloss-card__more {
   display: inline-flex;
   align-items: center;
@@ -72,7 +72,7 @@
   text-underline-offset: 3px;
   cursor: pointer;
 }
-.ay-gloss-card small { display: block; margin-top: 8px; color: var(--ay-ink-soft, rgba(29, 26, 43, .62)); font: 500 var(--ay-fs-caption)/1.4 var(--ay-sans); }
+.ay-gloss-card small { display: block; margin-top: 8px; color: var(--ay-ink-soft, rgba(62, 39, 35, .62)); font: 500 var(--ay-fs-caption)/1.4 var(--ay-sans); }
 
 /* Phones: a small bottom sheet. */
 .ay-gloss-scrim { position: fixed; inset: 0; z-index: 5999; background: rgba(20, 16, 30, .32); animation: ayGlossFade 150ms ease-out both; }
@@ -87,7 +87,7 @@
   box-shadow: 0 -8px 32px rgba(0, 0, 0, .18);
   animation-name: ayGlossUp;
 }
-.ay-gloss-card.is-sheet::before { content: ''; display: block; width: 40px; height: 4px; margin: 0 auto 8px; border-radius: 99px; background: var(--ay-line, rgba(29, 26, 43, .14)); }
+.ay-gloss-card.is-sheet::before { content: ''; display: block; width: 40px; height: 4px; margin: 0 auto 8px; border-radius: 99px; background: var(--ay-line, rgba(62, 39, 35, .14)); }
 
 @keyframes ayGlossIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @keyframes ayGlossUp { from { transform: translateY(16px); opacity: .6; } to { transform: none; opacity: 1; } }

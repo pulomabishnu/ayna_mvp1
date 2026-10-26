@@ -14,7 +14,7 @@
   position: relative;
   overflow: hidden;
   border-radius: 12px;
-  background: rgba(29, 26, 43, 0.07); /* ink @ 7% */
+  background: rgba(62, 39, 35, 0.07); /* ink @ 7% */
 }
 
 .ay-skel__bar { height: 16px; margin-bottom: 16px; }
@@ -38,7 +38,7 @@
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255, 252, 245, 0.55), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 237, 172, 0.55), transparent);
   animation: ay-skel-sheen 1.6s ease-in-out infinite;
 }
 
@@ -56,14 +56,14 @@
 [data-ay-theme='dark'] .ay-skel__card,
 .theme-dark .ay-skel__bar,
 .theme-dark .ay-skel__card {
-  background: rgba(255, 252, 245, 0.1);
+  background: rgba(255, 237, 172, 0.1);
 }
 
 [data-ay-theme='dark'] .ay-skel__bar::after,
 [data-ay-theme='dark'] .ay-skel__card::after,
 .theme-dark .ay-skel__bar::after,
 .theme-dark .ay-skel__card::after {
-  background: linear-gradient(90deg, transparent, rgba(255, 252, 245, 0.08), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 237, 172, 0.08), transparent);
 }
 
 .ay-skel__status {
@@ -78,9 +78,9 @@
   margin-left: 12px;
   padding: 6px 16px;
   border-radius: 999px;
-  border: 2px solid var(--legacy-ink, #1d1a2b);
+  border: 2px solid var(--legacy-ink, #3e2723);
   background: transparent;
-  color: var(--legacy-ink, #1d1a2b);
+  color: var(--legacy-ink, #3e2723);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -88,6 +88,6 @@
 
 [data-ay-theme='dark'] .ay-skel__status .ay-skel__retry,
 .theme-dark .ay-skel__status .ay-skel__retry {
-  border-color: var(--ay-paper, #fffcf5);
-  color: var(--ay-paper, #fffcf5);
+  border-color: var(--ay-paper, #ffedac);
+  color: var(--ay-paper, #ffedac);
 }

@@ -24,7 +24,7 @@
 .ayna-mobile .ay-auth .ay-auth-eco.ay-auth-eco {
   display: grid !important; grid-template-columns: 1fr; gap: 16px !important; width: auto !important;
   margin: 24px 0 8px !important; padding: 16px !important;
-  border: 2px solid var(--legacy-ink) !important; border-radius: 24px !important; background: var(--ay-paper, #fffcf5) !important;
+  border: 2px solid var(--legacy-ink) !important; border-radius: 24px !important; background: var(--ay-paper, #ffedac) !important;
   box-shadow: 3px 3px 0 var(--legacy-ink); color: var(--legacy-ink) !important;
 }
 .ayna-mobile .ay-auth .ay-auth-eco .ay-auth-eco-copy { display: grid !important; gap: 4px; min-width: 0; order: 0; }
@@ -53,19 +53,19 @@
 .ayna-mobile .ay-header-actions .ay-header-ask-pill:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--legacy-ink) !important; }
 .ayna-mobile .ay-header-ask-pill .ay-header-ask-orb {
   position: relative; width: 22px; height: 22px; border-radius: 50%; flex: none; box-sizing: border-box;
-  border: 1.5px solid #1d1a2b; background: #fffcf5;
+  border: 1.5px solid #3e2723; background: #ffedac;
 }
 .ayna-mobile .ay-header-ask-pill .ay-header-ask-orb::before {
   content: ''; position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; translate: -50% -50%;
-  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); background: #1d1a2b;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); background: #3e2723;
 }
-.ayna-mobile[data-theme='dark'] .ay-header-actions .ay-header-ask-pill.ay-header-ask-pill { border-color: var(--legacy-butter) !important; box-shadow: none !important; color: #1d1a2b !important; }
+.ayna-mobile[data-theme='dark'] .ay-header-actions .ay-header-ask-pill.ay-header-ask-pill { border-color: var(--legacy-butter) !important; box-shadow: none !important; color: #3e2723 !important; }
 /* Dark: paper card on the black canvas, white type (beats the older butter-card overrides). */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth .ay-auth-eco,
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth .ay-auth-eco .ay-auth-eco-copy :is(strong, span) { color: var(--legacy-ink) !important; border-color: var(--ay-line) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth .ay-auth-eco .ay-auth-eco-thumbs > span { border-color: transparent !important; color: #1d1a2b !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth .ay-auth-eco .ay-auth-eco-thumbs > span.is-more { color: #1d1a2b !important; }
-.ayna-mobile[data-theme='dark'] .ay-auth .ay-auth-eco .ay-auth-eco-fallback { color: #1d1a2b; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth .ay-auth-eco .ay-auth-eco-thumbs > span { border-color: transparent !important; color: #3e2723 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth .ay-auth-eco .ay-auth-eco-thumbs > span.is-more { color: #3e2723 !important; }
+.ayna-mobile[data-theme='dark'] .ay-auth .ay-auth-eco .ay-auth-eco-fallback { color: #3e2723; }
 /* The shared "ayna" photo placeholder is hidden in these small tiles; the brand initial shows instead. */
 .ayna-mobile .ay-auth .ay-auth-eco .ay-auth-eco-thumbs .ayna-fresh-photo-placeholder { display: none !important; }
 .ayna-mobile .ay-auth .ay-auth-eco .ay-auth-eco-fallback { font-style: normal; }
@@ -79,11 +79,11 @@
 .app-container .ay-flow-editbar + .wq-page { padding-top: 96px; }
 .ay-flow-back, .ay-flow-auth-back {
   min-height: 40px; display: inline-flex; align-items: center; gap: 8px; padding: 0 16px 0 12px;
-  border: 2px solid #1d1a2b; border-radius: 99px; background: #fffcf5; color: #1d1a2b; box-shadow: 3px 3px 0 #1d1a2b;
+  border: 2px solid #3e2723; border-radius: 99px; background: #ffedac; color: #3e2723; box-shadow: 3px 3px 0 #3e2723;
   font: 700 14px/1 'Figtree', system-ui, sans-serif; cursor: pointer; transition: transform .14s ease, box-shadow .14s ease;
 }
 .ay-flow-back:hover, .ay-flow-auth-back:hover { transform: translate(-1px, -1px); box-shadow: none; }
-.ay-flow-back:active, .ay-flow-auth-back:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #1d1a2b; }
+.ay-flow-back:active, .ay-flow-auth-back:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #3e2723; }
 .ay-flow-back svg, .ay-flow-auth-back svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 @media (max-width: 560px) {
   .app-container .ay-flow-editbar > * { top: 16px; }
@@ -98,12 +98,12 @@
 /* ---- Website: sign up summary after Wrapped (same look as the app card) ---- */
 .app-container .ay-auth-overlay .ay-auth-summary, .ay-auth-overlay .ay-auth-summary {
   display: flex; flex-direction: column; align-items: stretch; gap: 16px; padding: 16px;
-  border: 2px solid var(--legacy-ink, #1d1a2b); border-radius: 20px; background: var(--ay-paper, #fffcf5); box-shadow: 3px 3px 0 var(--legacy-ink, #1d1a2b);
+  border: 2px solid var(--legacy-ink, #3e2723); border-radius: 20px; background: var(--ay-paper, #ffedac); box-shadow: 3px 3px 0 var(--legacy-ink, #3e2723);
 }
 .ay-auth-overlay .ay-auth-summary > div:last-child { order: 0; }
 .ay-auth-overlay .ay-auth-summary .ay-auth-summary__thumbs { order: 1; display: flex; gap: 8px; }
 .app-container .ay-auth-overlay .ay-auth-summary .ay-auth-summary__thumbs span, .ay-auth-overlay .ay-auth-summary .ay-auth-summary__thumbs span {
-  width: 64px; height: 64px; margin: 0; border: 1.5px solid #1d1a2b; border-radius: 16px; background: #fff;
+  width: 64px; height: 64px; margin: 0; border: 1.5px solid #3e2723; border-radius: 16px; background: #fff;
 }
 .ay-auth-overlay .ay-auth-summary .ay-auth-summary__thumbs img { padding: 8px; box-sizing: border-box; }
 .app-container .ay-auth-overlay .ay-auth-summary strong { font: 800 20px/1.1 'Figtree', 'Figtree', sans-serif; letter-spacing: -.02em; }
@@ -111,5 +111,5 @@
 /* ---- App Wrapped in dark mode: the story keeps its own ink/paper palette
    (dark mode flips --ay-ink to white, which left white text on butter). ---- */
 .ayna-mobile[data-theme='dark'] .ayna-wrapped {
-  --legacy-ink: #1d1a2b; --ay-paper: #fffcf5; --legacy-butter: #f7e78e; --legacy-pink: #f7badd; --ay-mint: #bdebd6; --ay-peri: #b9c2f4;
+  --legacy-ink: #3e2723; --ay-paper: #ffedac; --legacy-butter: #ffedac; --legacy-pink: #f7badd; --ay-mint: #f6e3a1; --ay-peri: #f7badd;
 }

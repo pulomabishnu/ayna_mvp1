@@ -2,9 +2,9 @@
    the website (.ay-partners--web) and the app (.ay-partners--app). Uses the
    --ay-* tokens both shells define, so light/dark is a token swap. */
 .ay-partners {
-  --ps-ink: var(--legacy-ink, #1d1a2b);
-  --ps-paper: var(--ay-paper, #fffcf5);
-  --ps-soft: var(--ay-ink-soft, rgba(29, 26, 43, .72));
+  --ps-ink: var(--legacy-ink, #3e2723);
+  --ps-paper: var(--ay-paper, #ffedac);
+  --ps-soft: var(--ay-ink-soft, rgba(62, 39, 35, .72));
   display: grid;
   gap: 12px;
   margin: 0;
@@ -27,7 +27,7 @@
   cursor: pointer;
 }
 .ay-partners-pause svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.ay-partners-pause:hover { background: var(--ay-line, rgba(29, 26, 43, .08)); }
+.ay-partners-pause:hover { background: var(--ay-line, rgba(62, 39, 35, .08)); }
 .ay-partners-pause:focus-visible, .ay-partner-btn:focus-visible { outline: 3px solid var(--ps-ink); outline-offset: 2px; }
 
 .ay-partners-list {

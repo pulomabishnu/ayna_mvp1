@@ -155,14 +155,14 @@
   appearance: none;
   height: 4px;
   border-radius: 2px;
-  background: rgba(26,23,20,.1);
+  background: rgba(62, 39, 35,.1);
 }
 .ayna-mobile input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #1A1714;
+  background: #3e2723;
   border: 3px solid #EEF0FD;
   cursor: pointer;
   margin-top: -8px;
