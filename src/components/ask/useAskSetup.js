@@ -22,12 +22,16 @@ export function useAskSetup({ open = true, profile = null, healthProfile = null,
   // Callers rebuild these objects on every render: read them from a ref and
   // re-run only when the sheet opens, her answers change or her products do.
   const latest = useRef({});
-  useEffect(() => { latest.current = { products, healthProfile, matchOpts }; });
+  useEffect(() => { latest.current = { products, healthProfile, matchOpts, profile }; });
+  // Her answers by value: callers may hand a new object with the same answers on every render.
+  let profileKey = '';
+  try { profileKey = profile ? JSON.stringify(profile) : ''; } catch { profileKey = String(Date.now()); }
   const productKey = (Array.isArray(products) ? products : Object.values(products || {})).map((p) => p?.id).join(',');
   useEffect(() => {
     if (!open) return undefined;
     let live = true;
     const cur = latest.current;
+    const profile = cur.profile; // eslint-disable-line no-shadow
     askSafetyFlags(profile, { products: cur.products, healthProfile: cur.healthProfile, matchOpts: cur.matchOpts }).then((r) => { if (live) setSafety(r); });
     if (profile) {
       import('../../data/products.js').then(({ getTopMatch, getProductMatchDetailsForProduct, getSelectedNeeds }) => {
@@ -43,9 +47,9 @@ export function useAskSetup({ open = true, profile = null, healthProfile = null,
       }).catch(() => {});
     } else setTop({ percent: null, topic: '' });
     return () => { live = false; };
-  }, [open, profile, productKey]);
+  }, [open, profileKey, productKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const groups = useMemo(() => askPromptGroups({
     signedIn, hasProfile: Boolean(profile), signals, safety, focusProduct, topPercent: top.percent, topic: top.topic, hasHealthData,
-  }), [signedIn, profile, signals, safety, focusProduct, top, hasHealthData]);
+  }), [signedIn, profileKey, signals, safety, focusProduct, top, hasHealthData]); // eslint-disable-line react-hooks/exhaustive-deps
   return { safety, groups };
 }
