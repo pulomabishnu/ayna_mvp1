@@ -38,7 +38,7 @@
 .ayna-mobile .ayna-saved-ecosystem-action .ay-added-morph svg { width: 16px; height: 16px; }
 
 /* ---- Landing: one plain start button (replaces slide-to-start) ---- */
-.ayna-mobile:is(#ay, .ayna-mobile) .ay-land-start { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 60px; padding: 0 24px; border: 2px solid #3e2723; border-radius: 999px; background: #3e2723; color: #ffedac; font: 600 18px/1 var(--ay-font-ui); cursor: pointer; box-shadow: 4px 4px 0 #f7badd; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-land-start { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 60px; padding: 0 24px; border: 2px solid #3e2723; border-radius: 999px; background: #3e2723; color: #ffedac; font: 600 18px/1 var(--ay-font-ui); cursor: pointer; box-shadow: none; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-land-start svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-land-start:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #f7badd; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-land-start-note { margin: 10px 0 0; text-align: center; font: 500 14px/1.4 var(--ay-font-ui); color: #3e2723; opacity: .8; }
@@ -74,9 +74,9 @@
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-fresh-photo-placeholder.ay-ph { display: grid !important; place-content: center; justify-items: center; gap: 6px; padding: 10px; border: 0 !important; text-align: center; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-pink { background: #f7badd !important; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-butter { background: #f6e3a1 !important; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-sky { background: #769ebe !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-sky { background: #f6e3a1 !important; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-initial { display: grid; place-items: center; width: 56px; height: 56px; border: 1.5px solid #3e2723; border-radius: 50%; background: #ffedac; color: #3e2723; font: 700 28px/1 var(--ay-font-display, 'ayna Display', sans-serif); box-shadow: 2px 2px 0 #3e2723; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-brand { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 12px/1.2 var(--ay-font-ui); color: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-brand { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 13px/1.2 var(--ay-font-ui); color: #3e2723; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-width: 100%; color: #3e2723; font: 700 18px/1.05 var(--ay-font-display, 'ayna Display', sans-serif); letter-spacing: -.01em; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-rule { width: 28px; height: 1.5px; background: #3e2723; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-soon { color: #3e2723; font: 500 12px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-soon { color: #3e2723; font: 500 13px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); }

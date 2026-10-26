@@ -5,12 +5,14 @@ import { NOT_ON_FILE } from '../pdp/glance.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
 import { bestForProfile, compareSetRows, COMPARE_MIN } from './compareSet.js';
+import { Plate } from '../ui/ay';
 import './compare.css';
 
+/* The product on the shared white scalloped plate (signature 1); the brand name on the plain plate if the photo fails. */
 function Thumb({ product }) {
   const src = productImageOverride(product) || safeProductImageSrc(product?.image || product?.imageUrl || product?.images?.[0]);
   const [broken, setBroken] = useState(false);
-  return <span className="ay-cmp2__thumb" aria-hidden="true">{src && !broken ? <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} /> : <span>{(product?.brand || product?.name || '?').charAt(0)}</span>}</span>;
+  return <span className="ay-cmp2__thumb" aria-hidden="true"><Plate src={src && !broken ? src : ''} alt="" fallback={product?.brand || product?.name || ''} imgProps={{ onError: () => setBroken(true) }} /></span>;
 }
 
 /**
@@ -18,12 +20,15 @@ function Thumb({ product }) {
  * compareSet.js. "Best match for your profile" shows only when the engine
  * has enough to say so, with why.
  */
-export default function CompareTable({ products: picked = [], matchFor = null, detailsFor = null, ratingFor = null, onOpen, onRemove, variant = 'app', headingId }) {
+export const SEE_YOUR_MATCH = 'See your match';
+
+export default function CompareTable({ products: picked = [], matchFor = null, detailsFor = null, ratingFor = null, onOpen, onRemove, variant = 'app', headingId, onSeeMatch = null }) {
   // Label warnings live in the on-demand research file (same as the product page).
   const [research, setResearch] = useState(null);
   useEffect(() => { let live = true; loadResearch().then((r) => { if (live) setResearch(r); }); return () => { live = false; }; }, []);
   const products = useMemo(() => (research ? picked.map((p) => withResearch(p, research)) : picked), [picked, research]);
-  const rows = compareSetRows(products, { matchFor, detailsFor, ratingFor });
+  // Without her answers the match row never shows a number: "See your match" (opens the quiz when onSeeMatch is given).
+  const rows = compareSetRows(products, { matchFor, detailsFor, ratingFor, ...(onSeeMatch ? { noProfileText: SEE_YOUR_MATCH } : {}) });
   const best = bestForProfile(products, detailsFor);
   if (products.length < COMPARE_MIN) return null;
   return (
@@ -51,7 +56,9 @@ export default function CompareTable({ products: picked = [], matchFor = null, d
                 <th scope="row">{r.label}{r.hint && <small>{r.hint}</small>}</th>
                 {r.values.map((v, i) => (
                   <td key={products[i].id} className={v === NOT_ON_FILE ? 'is-unknown' : undefined}>
-                    {v === NOT_ON_FILE ? 'Not on file' : v}
+                    {v === NOT_ON_FILE ? 'Not on file'
+                      : r.noProfile && onSeeMatch ? <button type="button" className="ay-cmp2__see" onClick={onSeeMatch}>{v}</button>
+                        : v}
                     {r.notes?.[i] && <small>{r.notes[i]}</small>}
                   </td>
                 ))}

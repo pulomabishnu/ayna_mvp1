@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { relTime, splitHighlight, pickMemberQuote, isOnlyStarter, applyToggle, avatarTone } from './notes.js';
+import { relTime, splitHighlight, pickMemberQuote, pickTeamQuote, isOnlyStarter, applyToggle, avatarTone } from './notes.js';
 
 const NOW = new Date('2026-10-21T15:00:00').getTime();
 const ago = (ms) => new Date(NOW - ms).toISOString();
@@ -63,5 +63,23 @@ describe('composer helpers', () => {
   it('gives every name a stable avatar tone', () => {
     expect(avatarTone('Maya K')).toBe(avatarTone('Maya K'));
     expect(['pink', 'sky', 'butter']).toContain(avatarTone(''));
+  });
+});
+
+describe('pickTeamQuote (only posts the ayna team picked)', () => {
+  const posts = [
+    { id: 'a', kind: 'post', author_id: 'u1', body: 'A long helpful post that would have been auto-picked before. It has lots of helpful votes.', helpful_count: 40 },
+    { id: 'b', kind: 'review', author_id: 'u2', body: 'Picked review text, shown exactly as written.', helpful_count: 0 },
+  ];
+  it('never picks on its own', () => {
+    expect(pickTeamQuote(posts, [])).toBe(null);
+  });
+  it('uses the newest pick and keeps the words unchanged', () => {
+    const q = pickTeamQuote(posts, [{ post_id: 'b' }, { post_id: 'a' }]);
+    expect(q.post.id).toBe('b');
+    expect(`${q.lead}${q.rest ? ` ${q.rest}` : ''}`).toBe(posts[1].body);
+  });
+  it('skips blocked authors and picks that are not loaded', () => {
+    expect(pickTeamQuote(posts, [{ post_id: 'zz' }, { post_id: 'b' }], { isBlocked: (id) => id === 'u2' })).toBe(null);
   });
 });

@@ -83,7 +83,9 @@ export function insightStory(insight, { safetyCtx = null, hormonalBC = false } =
       changed = hrvOnly ? 'Your heart rate variability is lower than your recent pattern' : 'Your resting heart rate is higher than your recent pattern';
       affects = hrvOnly
         ? 'How recovered you feel is hard to read from this alone. Looking at it next to your sleep and cycle helps.'
-        : 'How you feel day to day. A faster resting pulse can come with things like an infection or not drinking enough.';
+        // Everyday causes first; infection only as "if you also feel unwell" (dashboard audit 7.6, 9.1).
+        // Same MedlinePlus line as before: "A fast pulse may signal an infection or dehydration."
+        : 'How you feel day to day. Not drinking enough can make your resting pulse faster. If you also feel unwell, it can come with an infection.';
       affectsSources = hrvOnly ? [] : [STORY_SOURCES.medlinePulse];
       actions = [
         step('look_together', 'Look at it with your sleep', 'Compare the same days with your sleep and cycle in See data.'),

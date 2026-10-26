@@ -170,7 +170,8 @@ export function StandardsBand({ items = [], className = '' }) {
 }
 
 /** Calm register for health content (#24 Rhode restraint, #3 heart-health apps): white surface, ink left rule, Figtree, no pink, no stickers. */
-export function CalmBlock({ title = '', as: Tag = 'section', children, className = '', ...rest }) {
+export function CalmBlock({ title = '', as = 'section', children, className = '', ...rest }) {
+  const Tag = as;
   return (
     <Tag className={`ayk-calm ${className}`.trim()} {...rest}>
       {title && <h3 className="ay-t-h3">{title}</h3>}
@@ -180,6 +181,7 @@ export function CalmBlock({ title = '', as: Tag = 'section', children, className
 }
 
 /** Pink as a full section background (#27 Tellmi, #39 Glossier home), at most one per page, never behind health findings. */
-export function PinkSection({ as: Tag = 'section', children, className = '', ...rest }) {
+export function PinkSection({ as = 'section', children, className = '', ...rest }) {
+  const Tag = as;
   return <Tag className={`ayk-pink ${className}`.trim()} {...rest}>{children}</Tag>;
 }

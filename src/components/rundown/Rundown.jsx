@@ -130,6 +130,18 @@ export default function Rundown({
     });
   }, [today, daily.cards, weekly.cards, t.log, t.tries, t.decision]);
 
+  // The health dashboard's one-line "Today's Rundown · N things · Start" (HealthHome
+  // RundownEntry): say how many cards there are, and start when it asks.
+  const cardCount = daily.cards.filter((c) => c.category !== 'frame').length;
+  useEffect(() => {
+    const say = () => { try { window.dispatchEvent(new CustomEvent('ayna:rundown-state', { detail: { count: cardCount } })); } catch { /* old browser */ } };
+    const go = () => { if (cardCount) start('daily'); };
+    say();
+    window.addEventListener('ayna:rundown-ask', say);
+    window.addEventListener('ayna:rundown-start', go);
+    return () => { window.removeEventListener('ayna:rundown-ask', say); window.removeEventListener('ayna:rundown-start', go); };
+  }, [cardCount]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Auto-launch: the first open of the day at or after 8 (autoLaunch.js).
   const hasContent = daily.cards.length > 0;
   useEffect(() => {

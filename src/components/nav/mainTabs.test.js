@@ -14,11 +14,11 @@ describe('main tabs (founder, Oct 24 2026)', () => {
     expect(APP_TABS.some((t) => t.key === 'library')).toBe(false);
     // The chat-first Home for the focus group names the first tab "ayna"; the chat is that tab, so no Ask tab.
     expect(APP_TABS_CHAT_FIRST.map((t) => t.label)).toEqual(['ayna', 'Explore', 'Community', 'You']);
-    expect(APP_EXPLORE_SECTIONS.map((s) => s.label)).toEqual(['For you', 'Categories', 'Products', 'Services']);
+    expect(APP_EXPLORE_SECTIONS.map((s) => s.label)).toEqual(['For you', 'Needs', 'Products', 'Services', 'Reads']);
     expect(AYNA_HOME_VIEWS.map((v) => v.label)).toEqual(['Chat', 'Products', 'My dashboard']);
   });
   it('Explore has the five spec sections and You the five', () => {
-    expect(EXPLORE_SECTIONS.map((s) => s.label)).toEqual(['For you', 'Categories', 'Products', 'Services', 'Resources']);
+    expect(EXPLORE_SECTIONS.map((s) => s.label)).toEqual(['For you', 'Needs', 'Products', 'Services', 'Reads']);
     expect(YOU_SECTIONS.map((s) => s.label)).toEqual(['My ecosystem', 'Saved', 'My health', 'Activity', 'Settings & privacy']);
   });
   it('every old address has a permanent server redirect to its new home', () => {

@@ -15,7 +15,7 @@
   --ut-ink-2: var(--ay-text-2, rgba(62, 39, 35, .78));
   --ut-page: var(--ay-page, #ffedac);
   --ut-group: var(--ay-group, #f6e3a1);
-  --ut-line: var(--ay-outline, #3e2723);
+  --ut-line: var(--ay-outline-color, #3e2723);
   --ut-focus: var(--ay-focus, #3e2723);
 }
 .ayna-mobile:is(#ay, .ayna-mobile) {

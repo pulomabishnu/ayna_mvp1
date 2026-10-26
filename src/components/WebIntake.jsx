@@ -11,17 +11,18 @@ import {
   PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS,
   STOP_REASONS, SUPPORT_GROUPS, UTI_FREQUENCY, buildSnapshot,
   getLifeStages, isMinorAge, normalizeSuggestion, readIntakeDraft, reconstructIntakeFromSnapshot,
-  requiredReady, missingAnswerHint, AGE_MIN, AGE_MAX, asksBreastfeedingOnTiming, ttcDurationOptions, resumeStepId, withSavedOption, isValidUsZip, setPerimenopausePeriods, syncPerimenopausePeriods,
+  requiredReady, missingAnswerHint, FIRST_NAME_MAX, AGE_MIN, AGE_MAX, asksBreastfeedingOnTiming, ttcDurationOptions, resumeStepId, withSavedOption, isValidUsZip, setPerimenopausePeriods, syncPerimenopausePeriods,
 } from '../mobile/data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../mobile/data/intakeCatalog.js';
 import { WEB_FOLLOWUP_STEP_IDS } from '../mobile/data/quizDraftProgress.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../utils/search/index.js';
 import { commonNeedOptions } from '../matching/commonNeeds.js';
-import { VALUE_POINTS, GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../mobile/data/onboardingFlow.js';
+import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../mobile/data/onboardingFlow.js';
 import { CATEGORIES } from '../health/metrics.js';
 import ReadyReveal from './onboarding/ReadyReveal.jsx';
 import '../styles/onboarding.css';
+import './WebIntake.audit.css';
 // Website-only conditions that change what is safe (condition research, Oct 17).
 const WEB_EXTRA_CONDITIONS = ['Kidney disease', 'Bleeding or clotting disorder', 'History of blood clots', 'Heart disease', 'Liver disease', 'Stomach ulcer or stomach bleeding', 'Asthma'];
 
@@ -29,7 +30,6 @@ const WEB_EXTRA_CONDITIONS = ['Kidney disease', 'Bleeding or clotting disorder',
 // the app (all of that lives in mobile/data/intakeModel.js); only the layout
 // and controls are built for a browser.
 
-const SECTION_NAMES = { core: 'The basics', support: 'Your needs', safety: 'Safety', history: 'What you tried', preferences: 'Your preferences', trust: 'Last bits' };
 /* ------------------------------ Controls ------------------------------ */
 
 function Chips({ items, selected = [], onToggle, labels = {}, small = false, single = false, label }) {
@@ -283,7 +283,7 @@ function webResumeStep(intake, id) {
   return next === 'lifeStage' ? 'age' : next;
 }
 
-// Website first run: the seven setup screens (onboardingFlow.js) with age and
+// Website first run (no intro card, onboarding audit #5): the seven setup screens (onboardingFlow.js) with age and
 // life stage on one screen, then health data, then the reveal.
 const ONBOARDING_ONLY = ['helpTopics', 'goals'];
 // Minimum questions, health data, the reveal; then, only if she asks for it
@@ -292,8 +292,8 @@ function webOnboardingSteps(intake) {
   const web = (list, obPart) => list.filter((s) => s.id !== 'lifeStage').map((s) => ({ ...(s.id === 'age'
     ? { ...s, title: 'About you', type: 'aboutYou', why: 'Some products are not meant for every age or stage, for example pregnancy-safe picks only, or midlife support. You can be in perimenopause and still have regular periods. Not sure, or rather not say? Those count too.' }
     : s), obPart }));
+  // Starts at question 1: no intro card (onboarding audit #5).
   return [
-    { id: 'welcome', section: 'welcome', type: 'welcome', screen: 0, title: 'Here’s how ayna helps', optional: false, required: false, obPart: 'core' },
     ...web(getOnboardingSteps(intake, { part: 'core', surface: 'web' }), 'core'),
     { id: 'connect', section: 'connect', type: 'connect', screen: 7, title: 'Connect health data', subtitle: 'Optional. Quick check-ins work too.', optional: true, required: false, obPart: 'core' },
     { id: 'ready', section: 'ready', type: 'ready', screen: 7, title: '', optional: false, required: false, obPart: 'core' },
@@ -301,7 +301,7 @@ function webOnboardingSteps(intake) {
   ];
 }
 
-export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = null, initialSnapshot = null, startAtOptional = false, startAtStep = '' }) {
+export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = null, initialSnapshot = null, startAtOptional = false, startAtStep = '', signedIn = true }) {
   const singleStep = Boolean(initialSnapshot && ONBOARDING_ONLY.includes(startAtStep));
   const onboarding = !initialSnapshot || singleStep;
   const [savedDraft] = useState(() => (initialSnapshot ? null : readIntakeDraft()));
@@ -310,7 +310,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
     if (singleStep) return startAtStep;
     if (onboarding) {
       const draftId = savedDraft?.stepId ? webResumeStep({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId) : savedDraft?.stepId;
-      return draftId && webOnboardingSteps({ ...EMPTY, ...(savedDraft?.intake || {}) }).some((s) => s.id === draftId && s.id !== 'ready') ? draftId : 'welcome';
+      return draftId && webOnboardingSteps({ ...EMPTY, ...(savedDraft?.intake || {}) }).some((s) => s.id === draftId && s.id !== 'ready') ? draftId : 'helpTopics';
     }
     if (savedDraft?.stepId) return webResumeStep({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId);
     if (!initialSnapshot) return 'age';
@@ -346,6 +346,8 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const [showAllNeeds, setShowAllNeeds] = useState(false);
   const [helpOtherOpen, setHelpOtherOpen] = useState(false);
 
+  // quiz_started fires from the landing's entry points (landing agent); the
+  // reveal sends first_match_shown (once per device), so nothing fires here.
   // Same draft the app keeps, so an unfinished quiz resumes on either.
   useEffect(() => {
     if (initialSnapshot) return;
@@ -397,7 +399,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
 
   const go = (id) => { setSearch(''); setInfoOpen(false); setZipError(''); setStepId(id); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const back = () => {
-    if (onboarding) { if (index > 1) go(steps[index - 1].id); else go('welcome'); return; }
+    if (onboarding) { if (index > 0) go(steps[index - 1].id); return; }
     if (atCheckpoint) { go(coreSteps[coreSteps.length - 1].id); return; }
     if (index > 0) go(steps[index - 1].id);
     else if (phase === 'more') go(CHECKPOINT);
@@ -493,6 +495,11 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       case 'aboutYou':
       case 'age':
       case 'lifeStage': return <>
+        {/* Her first name, asked here only (sign-up never asks again). */}
+        {step.type === 'aboutYou' && <label className="qz-name">
+          <span>Your first name <small>Optional</small></span>
+          <input className="qz-input" type="text" autoComplete="given-name" maxLength={FIRST_NAME_MAX} value={intake.name || ''} onChange={(e) => set('name', e.target.value)} />
+        </label>}
         <AgeField value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />
         <p className="qz-sub-q" id="qz-stage-q">Your life stage <small>Pick every stage that fits</small></p>
         <Tiles label="Your life stage" items={lifeStageOptions} selected={lifeStages} labels={LIFE_STAGE_LABELS} onToggle={toggleLifeStage} />
@@ -654,7 +661,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
         // First run: two plain questions instead of one with tabs (team direction, section 30).
         if (step.type !== 'avoidIngredients') {
           const isAvoid = step.type === 'avoidOnly';
-          return <div className="qz-avoid">
+          return <div className={`qz-avoid${isAvoid ? ' is-avoid' : ''}`}>
             <Chips label={step.title} items={isAvoid ? [...AVOID_GROUPS.avoid, ...customAvoid] : [...AVOID_GROUPS.want, ...customWant]} selected={isAvoid ? avoidSel : wantSel} onToggle={toggle} labels={AVOID_LABELS} />
             <div className="qz-avoid-foot">
               {isAvoid
@@ -663,7 +670,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
             </div>
           </div>;
         }
-        return <div className="qz-avoid">
+        return <div className={`qz-avoid${onAvoid ? ' is-avoid' : ''}`}>
           <div className="qz-avoid-tabs" role="tablist" aria-label="Leave out or should be">
             <button type="button" role="tab" aria-selected={onAvoid} className={`is-avoid${onAvoid ? ' is-on' : ''}`} onClick={() => setAvoidTab('avoid')}>Leave out{avoidSel.length > 0 && <span>{avoidSel.length}</span>}</button>
             <button type="button" role="tab" aria-selected={!onAvoid} className={`is-want${!onAvoid ? ' is-on' : ''}`} onClick={() => setAvoidTab('want')}>Should be{wantSel.length > 0 && <span>{wantSel.length}</span>}</button>
@@ -694,26 +701,11 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
   const ready = step.id === 'zip' ? String(intake.zipcode || '').length > 0 : requiredReady(answerId, intake) && isStepAnswered(answerId, intake) && !minorBlocked;
 
-  // First run, first screen: what ayna does, then set up or explore first.
-  if (onboarding && step.type === 'welcome') {
-    return <div className="ct qz-page" data-step="welcome">
-      <div className="qz-stage"><div className="qz-card ay-ob-value is-web">
-        <h1 className="qz-title">Here’s how ayna helps</h1>
-        <ol className="ay-ob-value__list">{VALUE_POINTS.map(([t, d], i) => <li key={t}><span aria-hidden="true">{i + 1}</span><b>{t}</b><p>{d}</p></li>)}</ol>
-        <div className="ay-ob-value__actions">
-          <button type="button" className="ay-ob-primary" onClick={() => go('helpTopics')}>Set up my ayna</button>
-          {onExplore && <button type="button" className="ay-ob-quiet" onClick={onExplore}>Explore first</button>}
-          <p>Short questions. Skip anything you like.</p>
-        </div>
-      </div></div>
-    </div>;
-  }
-
   // First run, last screen: the reveal. "See my Today" saves and opens Today.
   if (onboarding && step.type === 'ready') {
     const preview = mapIntakeToLegacyQuizProfile(buildSnapshot(intake));
     return <div className="ct qz-page" data-step="ready">
-      <ReadyReveal variant="web" answers={preview} signedIn onSeeToday={() => finish(intake, { land: 'today' })} onBack={back} onMorePersonal={() => { const more = steps.find((s) => s.obPart === 'more'); if (more) go(more.id); }} />
+      <ReadyReveal variant="web" answers={preview} signedIn={signedIn} onSeeToday={() => finish(intake, { land: 'today' })} onCreateAccount={() => finish(intake, { land: 'save' })} onBack={back} onMorePersonal={() => { const more = steps.find((s) => s.obPart === 'more'); if (more) go(more.id); }} />
       {saveError && <p className="qz-alert">{saveError}</p>}
     </div>;
   }
@@ -755,7 +747,6 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
           <div className="qz-progress" aria-hidden="true">{coreSteps.map((s) => <span key={s.id} className="is-done" />)}</div>
           <span className="qz-count">{coreSteps.filter((st) => !FOLLOWUP_STEP_IDS.has(st.id)).length}<i>/{coreSteps.filter((st) => !FOLLOWUP_STEP_IDS.has(st.id)).length}</i></span>
         </header>
-        <span className="qz-section">Done</span>
         <h1 className="qz-title">Your first matches are ready</h1>
         <p className="qz-subtitle">{intake.safetyConcern === 'Yes' ? 'You said something may be urgent, so care options come first.' : 'That’s enough for your first picks. Add more now for closer ones, or any time later from your profile.'}</p>
         {saveError && <p className="qz-alert">{saveError}</p>}
@@ -785,13 +776,14 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
         {!initialSnapshot && <p className="qz-saved-note">Answers are saved on this device</p>}
       </header>
 
-      <div className="qz-label-row">
-        <span className="qz-section">{onboarding ? `${ONBOARDING_SCREENS[step.screen - 1]?.label}${step.optional ? ', optional' : ''}` : phase === 'more' ? 'Optional' : SECTION_NAMES[step.section]}</span>
+      {/* No eyebrow label above the question (onboarding audit #4); the row keeps only its tools. */}
+      {((onboarding && index === 0 && onExplore) || phase === 'more' || (step.info && !onboarding)) && <div className="qz-label-row">
         <span className="qz-label-tools">
+          {onboarding && index === 0 && onExplore && <button type="button" className="qz-skip qz-explore" onClick={onExplore}>Explore first</button>}
           {phase === 'more' && <button type="button" className="qz-skip qz-to-results" onClick={() => finish()} disabled={saving}>See my results</button>}
           {step.info && !onboarding && <button type="button" className="qz-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen} onClick={() => setInfoOpen((v) => !v)}>i</button>}
         </span>
-      </div>
+      </div>}
       <h1 className="qz-title">{step.title}</h1>
       {step.subtitle && <p className="qz-subtitle">{step.subtitle}</p>}
       {infoOpen && step.info && <p className="qz-info-pop" role="note">{step.info}</p>}
@@ -805,7 +797,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
 
       {saveError && <p className="qz-alert">{saveError}</p>}
       <footer className="qz-foot">
-        {step.optional || step.type === 'topics' ? <button type="button" className="qz-skip" onClick={skip} disabled={saving}>Skip</button> : <span className="qz-required">{step.section === 'safety' ? 'Needed for safety' : 'Needed for your matches'}</span>}
+        {step.optional || step.type === 'topics' ? <button type="button" className="qz-skip" onClick={skip} disabled={saving}>Skip for now</button> : <span className="qz-required">{step.section === 'safety' ? 'Needed for safety' : 'Needed for your matches'}</span>}
         {ready && !saving && <span className="qz-noted" aria-hidden="true">noted</span>}
         {!ready && missingAnswerHint(answerId, intake) && <p className="ip-why" role="status">{missingAnswerHint(answerId, intake)}</p>}
         <button type="button" className="qz-btn" onClick={next} disabled={!ready || saving}>{saving ? 'Saving…' : (isLast && phase === 'more') || singleStep ? (singleStep ? 'Save' : 'See my results') : 'Next'} <span aria-hidden="true">→</span></button>

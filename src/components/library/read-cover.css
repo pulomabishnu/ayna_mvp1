@@ -2,18 +2,18 @@
    (container units), so a 148px app cover and a 300px desktop cover are the
    same drawing. Brand colours only; outlines 1.5px like every ayna card. */
 .rc {
-  --rc-field: #f7badd; --rc-band: #769ebe; --rc-label: #ffedac; --rc-ink: #3e2723; --rc-line: #3e2723;
+  --rc-field: #f7badd; --rc-band: #ffedac; --rc-label: #ffedac; --rc-ink: #3e2723; --rc-line: #3e2723;
   container-type: inline-size;
   position: relative; display: block; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; isolation: isolate;
-  border-radius: 18px;
+  border-radius: 16px;
   background: var(--rc-field); color: var(--rc-ink);
   font-family: 'Figtree', system-ui, sans-serif; text-align: left;
 }
 .rc::after { content: ''; position: absolute; inset: 0; z-index: 3; border-radius: inherit; border: 1.5px solid var(--rc-line); box-sizing: border-box; pointer-events: none; }
-.rc.rc--hormonal { --rc-field: #769ebe; --rc-band: #f7badd; }
+.rc.rc--hormonal { --rc-field: #f6e3a1; --rc-band: #f7badd; }
 .rc.rc--pelvic { --rc-field: #3e2723; --rc-band: #f7badd; --rc-ink: #ffedac; }
-.rc.rc--vaginal { --rc-field: #ffedac; --rc-band: #769ebe; --rc-label: #f7badd; }
-.rc.rc--postpartum { --rc-field: #f7badd; --rc-band: #ffedac; }
+.rc.rc--vaginal { --rc-field: #ffedac; --rc-band: #f7badd; --rc-label: #ffffff; }
+.rc.rc--postpartum { --rc-field: #f7badd; --rc-band: #ffedac; --rc-label: #ffffff; }
 .app-container[data-theme='brand-dark'] .rc, .ayna-mobile[data-theme='dark'] .rc { --rc-line: #ffedac; }
 
 /* Band across the top with an even scalloped edge: 8 whole bumps, each a
@@ -60,3 +60,10 @@
 
 /* Large cover (featured read in the app) */
 .rc--hero { border-radius: 22px; }
+
+/* Explore audit v3 (Oct 25): no blue on surfaces (blue is for chart lines) and
+   no scallops inside cards (#14 Tonic Tox: the topic on a tinted rounded
+   frame). The cover is a flat tint with the paper label; the band is gone. */
+.rc__band { display: none; }
+.rc--hero { border-radius: 16px; }
+.rc--thumb .rc__label { top: 12cqi; }

@@ -1,6 +1,7 @@
+import { localDayKey } from '../../utils/localDate.js';
 export const GUIDE_KEY = 'ayna_guide_v1';
 const EMPTY = { memories: [], trials: [], shareWithAsk: false };
-const day = (date = new Date()) => new Date(date).toLocaleDateString('en-CA');
+const day = (date = new Date()) => localDayKey(date);
 const clean = (value, max = 180) => String(value || '').trim().replace(/\s+/g, ' ').slice(0, max);
 
 export function readGuide(userId, storage = globalThis.localStorage) {

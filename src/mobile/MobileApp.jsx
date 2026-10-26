@@ -61,7 +61,6 @@ import AynaHomeChatScreen from './screens/AynaHomeChatScreen.jsx';
 import { readHomeVariant } from './utils/homeVariant.js';
 import { APP_TABS, APP_TABS_CHAT_FIRST } from '../components/nav/mainTabs.js';
 import ExploreScreen from './screens/ExploreScreen.jsx';
-import LibraryScreen from './screens/LibraryScreen.jsx';
 import ProductSheet from './components/ProductSheet.jsx';
 import { pregnancyFirstFrom } from '../components/pdp/pdpParts.js';
 import { ProductSheetContext } from './productSheetContext.js';
@@ -123,6 +122,8 @@ import { savedHaptic, addedHaptic } from '../utils/feedback.js';
 import { useSheetDrag } from './hooks/useSheetDrag.js';
 import PushLayer from './components/PushLayer.jsx';
 import GlobalToast from '../components/v3/GlobalToast.jsx';
+import HeardAboutPrompt from '../components/HeardAboutPrompt.jsx';
+import { shouldAskHeardAbout } from '../utils/signupConsent.js';
 import { toast } from '../utils/toast.js';
 // Motion moments (sheets, push, tab fade) and app-wide press states; last so it wins.
 import './app-motion.css';
@@ -135,6 +136,8 @@ import './ds-app.css';
 import OfflineBanner from './components/OfflineBanner.jsx';
 import TutorialLayer from './tutorial/TutorialLayer.jsx';
 import { growTransition } from '../utils/viewTransition.js';
+import { localToday } from '../utils/localDate.js';
+import { trackQuizStarted, trackFirstMatchShown, eventSurface } from '../utils/analyticsEvents.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -168,7 +171,8 @@ const SCREENS = {
   ayna: AynaHomeScreen,
   explore: ExploreScreen,
   browse: ExploreScreen,
-  library: LibraryScreen,
+  // The reads are Explore's Reads tab (Explore audit, Oct 25): the old 'library' screen opens it.
+  library: ExploreScreen,
   ecointro: EcosystemIntroScreen,
   quiz: IntakeScreen,
   building: BuildingScreen,
@@ -296,6 +300,7 @@ const AUTH_NO_RETURN = new Set(['landing', 'signin', 'quiz', 'building', 'reveal
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
   const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName, omittedProducts = {} } = session;
+  const [heardDismissed, setHeardDismissed] = useState(false);
   const myProducts = useMemo(() => storedProducts.map(hydrateCatalogProduct), [storedProducts]);
   // The welcome screen is the signed-out entry point. Returning accounts
   // move into their ecosystem once auth finishes restoring their session.
@@ -481,6 +486,12 @@ export default function MobileApp() {
   const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
   const authUser = realAuthUser || (DEV_HEALTH_DEMO ? DEV_DEMO_USER : null);
+  // Time to first value (all-pages brief v3): quiz start -> first match on screen. No health details.
+  useEffect(() => {
+    if (screen === 'quiz' && intakeMode === 'new') trackQuizStarted({ surface: eventSurface(), signed_in: Boolean(authUser) });
+    else if (screen === 'reveal') trackFirstMatchShown({ surface: eventSurface() });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen]);
   const [guideState, setGuideState] = useState({ userId: null, value: null });
   const guide = useMemo(() => guideState.userId === authUser?.id && guideState.value ? guideState.value : readGuide(authUser?.id), [guideState, authUser?.id]);
   const updateGuide = (next) => {
@@ -831,7 +842,7 @@ export default function MobileApp() {
     if (!authUser?.id || !personalizeWithData) return '';
     const sections = health.insights?.sections || [];
     const ready = sections.filter((section) => section.status === 'ready');
-    const today = new Date().toLocaleDateString('en-CA');
+    const today = localToday();
     const week = buildDashboard(health.insightRows || [], { days: 30, today });
     const estimate = sections.find((section) => section.id === 'cycle')?.estimate || null;
     const explained = explainWeek(health.insightRows || [], { today, cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, hormonalBC: usesHormonalBC(effectiveQuizAnswers), max: 2 });
@@ -1401,6 +1412,8 @@ export default function MobileApp() {
     authUser,
     onSignUp: signUpWithPassword,
     onSignIn: signInWithPassword,
+    // Her first name from the quiz: sign-up never asks again (onboarding audit #1).
+    firstName: lastQuizAnswers?.firstName || session.pendingQuiz?.firstName || '',
     // Remember where Google/Apple started: the post-quiz save may create an
     // account; a plain sign-in that does gets the "build it first" step.
     onGoogleSignIn: () => { const mode = authMode === 'signup' || lastQuizAnswers || session.pendingQuiz ? 'save' : 'signin'; markOAuthSource(mode); return signInWithGoogle({ mode }); },
@@ -1831,6 +1844,8 @@ export default function MobileApp() {
       <FeedbackPrompts key={realAuthUser?.id || 'guest'} user={realAuthUser} authLoading={authLoading} currentView={overlayType || askAynaOpen ? 'busy' : screen} safeViews={APP_FEEDBACK_SCREENS} />
       <OfflineBanner rootRef={rootRef} />
       <GlobalToast variant="app" />
+      {/* "Where did you hear about us?" once after sign-up, optional (onboarding audit #1). */}
+      {authUser && !heardDismissed && screen !== 'signin' && shouldAskHeardAbout(authUser) && <HeardAboutPrompt variant="app" onDone={() => setHeardDismissed(true)} />}
       {/* First-visit tips (src/mobile/tutorial): one overlay, reads data-tour anchors. */}
       <TutorialLayer userId={authUser?.id || null} />
     </div>

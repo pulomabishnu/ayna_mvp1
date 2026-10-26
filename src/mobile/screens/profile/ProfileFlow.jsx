@@ -1080,6 +1080,8 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
 // than duplicating its hardcoded partner list in a native screen, so it
 // never drifts out of sync with the actual list.
 const BRAND_PARTNERSHIPS_URL = 'https://www.aynahealth.co/startups';
+// Info-pages audit section 4: the app links Campus resources (web page, with its quick exit) from Settings → About.
+const CAMPUS_RESOURCES_URL = 'https://www.aynahealth.co/campus-resources';
 
 /* ---------------------------- Preferences ---------------------------- */
 
@@ -1715,6 +1717,7 @@ const SET_ICONS = {
   how: <><path d="M4 6h16M7 12h10M10 18h4" /></>,
   about: <><circle cx="12" cy="12" r="8" /><path d="M12 11v5M12 8h.01" /></>,
   brands: <><path d="M5 9h14l-1 11H6L5 9Z" /><path d="M9 9V7a3 3 0 0 1 6 0v2" /></>,
+  campus: <><path d="M12 21s-6-5.6-6-10.5a6 6 0 0 1 12 0C18 15.4 12 21 12 21Z" /><circle cx="12" cy="10.5" r="2.2" /></>,
   account: <><circle cx="12" cy="9" r="3.5" /><path d="M5.5 20a6.5 6.5 0 0 1 13 0" /></>,
   privacy: <><rect x="5" y="10" width="14" height="10" rx="2" /><path d="M8.5 10V8a3.5 3.5 0 0 1 7 0v2" /></>,
   legal: <><path d="M7 3h7l4 4v14H7Z" /><path d="M14 3v4h4M10 12h5M10 16h5" /></>,
@@ -1725,7 +1728,7 @@ const SET_ICONS = {
 function SettingsScreen({ onBack, onOpenTexts, onOpenPreferences, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenLegal, authUser, onSignOut, onSignIn }) {
   const groups = [
     ['Preferences', 'butter', [{ icon: 'appearance', title: 'Appearance & preferences', onClick: onOpenPreferences }, ...(onOpenTexts ? [{ icon: 'texts', title: 'Text messages', onClick: onOpenTexts }] : [])]],
-    ['About', 'pink', [{ icon: 'how', title: 'How it works', onClick: onOpenHowItWorks }, { icon: 'about', title: 'About ayna', onClick: onOpenAboutAyna }, { icon: 'brands', title: 'Brand partnerships', href: BRAND_PARTNERSHIPS_URL }]],
+    ['About', 'pink', [{ icon: 'how', title: 'How it works', onClick: onOpenHowItWorks }, { icon: 'about', title: 'About ayna', onClick: onOpenAboutAyna }, { icon: 'brands', title: 'Brand partnerships', href: BRAND_PARTNERSHIPS_URL }, { icon: 'campus', title: 'Campus resources', href: CAMPUS_RESOURCES_URL }]],
     ['Account', 'mint', [{ icon: 'account', title: 'Account information', onClick: onOpenAccountInfo }, { icon: 'privacy', title: 'Privacy & data', onClick: onOpenPrivacyData }, { icon: 'legal', title: 'Legal', onClick: onOpenLegal }, { icon: 'contact', title: 'Contact', onClick: onOpenContact }]],
   ];
   const rowInner = (row) => <>
@@ -2189,7 +2192,7 @@ function downloadText(content, filename) {
 }
 
 function buildLicensesText(grouped) {
-  const lines = ['ayna, open-source licences', `Generated ${new Date().toISOString().slice(0, 10)}`, ''];
+  const lines = ['ayna, open-source licences', `Generated ${localToday()}`, ''];
   for (const [license, packages] of grouped) {
     lines.push(`${license} (${packages.length})`, '-'.repeat(40));
     for (const pkg of packages) lines.push(`  ${pkg.name}@${pkg.version}`);
@@ -2516,7 +2519,7 @@ function downloadJson(data, filenamePrefix) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${filenamePrefix}-${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `${filenamePrefix}-${localToday()}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();

@@ -9,7 +9,7 @@
   --hs-page: var(--ay-page, #ffedac);
   --hs-group: var(--ay-group, #f6e3a1);
   --hs-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
-  --hs-line: var(--ay-outline, #3e2723);
+  --hs-line: var(--ay-outline-color, #3e2723);
   --hs-sky: #769ebe;
   --hs-head: var(--ay-heading, 'ayna Display', 'Figtree', system-ui, sans-serif);
   --hs-body: var(--ay-sans-stack, 'Figtree', system-ui, -apple-system, sans-serif);

@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react';
+import { PILL_TABS_MAX } from './pillTabs.js';
 import './ay-primitives.css';
 
-export const PILL_TABS_MAX = 5;
 
 /**
  * PillTabs: the product page's pill tab style for every sub-page (all-pages
@@ -10,7 +10,7 @@ export const PILL_TABS_MAX = 5;
  * sideways on a phone. Arrow keys move, Home and End jump.
  *
  *   <PillTabs idBase="you" label="You" tabs={[{ id: 'eco', label: 'Ecosystem' }, ...]} active={tab} onChange={setTab} />
- *   <div {...pillPanelProps('you', 'eco', tab)}>...</div>
+ *   <div {...pillPanelProps('you', 'eco', tab)}>...</div>   (pillTabs.js)
  *
  * `href` on a tab renders a link (website sub-pages); the tab is still a tab.
  */
@@ -62,9 +62,4 @@ export default function PillTabs({ tabs = [], active, onChange, label, labelId, 
       })}
     </div>
   );
-}
-
-/** Props for the panel that goes with a PillTabs tab. */
-export function pillPanelProps(idBase, id, active) {
-  return { role: 'tabpanel', id: `${idBase}-panel-${id}`, 'aria-labelledby': `${idBase}-tab-${id}`, tabIndex: 0, hidden: id !== active };
 }

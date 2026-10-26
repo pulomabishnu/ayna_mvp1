@@ -666,3 +666,30 @@ export async function searchCommunity(supabase, rawQuery, limit = 8) {
   ]);
   return { people: check(people) || [], posts: check(posts) || [], playlists: check(playlists) || [] };
 }
+
+// ── Team picks ("Picked by the ayna team") ──────────────────────────────────
+// The big pull quote shows only a post the ayna team picked by hand
+// (supabase/community_team_picks_2026-10-26.sql). Nothing is ever picked
+// automatically. Before the migration runs there are no picks, so no quote.
+
+/** Latest team picks, newest first: [{ post_id, picked_at }]. [] before the migration. */
+export async function listTeamPicks(supabase, { limit = 5 } = {}) {
+  if (!supabase) return [];
+  const { data, error } = await supabase.from('community_team_picks')
+    .select('post_id, picked_at').order('picked_at', { ascending: false }).limit(limit);
+  if (error) {
+    if (isMissingSchemaError(error)) return [];
+    throw error;
+  }
+  return data || [];
+}
+
+/** ayna team only (RLS checks it on the server). on = pick, off = remove the pick. */
+export async function setTeamPick(supabase, postId, on) {
+  if (on) {
+    const { error } = await supabase.from('community_team_picks').insert({ post_id: postId });
+    if (error && error.code !== '23505') throw error;
+    return;
+  }
+  check(await supabase.from('community_team_picks').delete().eq('post_id', postId));
+}

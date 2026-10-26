@@ -18,16 +18,16 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-widget {
   background: var(--b-butter) !important; color: var(--b-espresso) !important;
   border-radius: 22px !important; padding: 18px 18px 14px !important;
-  box-shadow: 5px 5px 0 var(--b-rose) !important;
+  box-shadow: none !important;
   --ay-ink: #3e2723; --ay-paper: #ffffff;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel { height: 300px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy { padding: 8px 24px 0 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy h1 {
-  font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important;
+  font: 500 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important;
   letter-spacing: -0.01em !important; color: var(--b-butter) !important;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy p { color: var(--b-butter) !important; opacity: .72 !important; font: 400 15px/1.45 var(--f-ui) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy p { color: var(--b-butter) !important; opacity: .72 !important; font: 500 15px/1.45 var(--f-ui) !important; }
 /* actions live on a butter sheet with the site's scalloped edge */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-actions {
   position: relative; margin-top: 28px !important;
@@ -46,7 +46,7 @@
 
 /* ---------- Ecosystem: title first, shelves swipe sideways ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero { display: flex !important; flex-direction: column !important; gap: 14px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero h1 { margin: 6px 0 0 !important; font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero h1 { margin: 6px 0 0 !important; font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 500 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-cover { order: 3; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-play { background: var(--b-espresso) !important; color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid {
@@ -57,7 +57,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid::-webkit-scrollbar { display: none; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid > * { scroll-snap-align: start; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head { border: 2px solid var(--b-espresso) !important; border-radius: var(--r-radius-m) !important; box-shadow: var(--r-shadow) !important; padding: 10px 12px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; color: var(--b-espresso) !important; font-size: calc(22px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; display: flex !important; align-items: center; gap: 10px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; color: var(--b-espresso) !important; font-size: calc(22px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 500 !important; display: flex !important; align-items: center; gap: 10px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 small { margin: 0 !important; font: 500 13px/1 var(--f-ui) !important; background: var(--b-white) !important; color: var(--b-espresso) !important; }
 
 /* ---------- labels: sentence case, no shouting ---------- */
@@ -97,8 +97,8 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-ecosystem-start, .ayna-cabinet-home, .ayna-figma-discover, .ayna-fresh-browse-screen, .ayna-fresh-ecosystem, .ayna-fresh-saved, .ayna-fresh-profile-hub, .ayna-fresh-product-detail, .ayna-fresh-article, .am-screen) { background-image: none !important; background-color: var(--r-canvas) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-cabinet-stage, .ay-eco-cover, .ayna-home-today, .ayna-saved-card, .ayna-saved-feature, .ayna-fresh-profile-menu > button, .am-playlist, .am-product) { box-shadow: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-stage.ay-eco-hero { background: transparent !important; border: 0 !important; box-shadow: none !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection .ayna-cabinet-section-head { background: var(--area-tone, var(--b-sky)) !important; border-color: var(--b-butter) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-header-ask-pill { background: var(--b-sky) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection .ayna-cabinet-section-head { background: var(--area-tone, rgba(255, 237, 172, .12)) !important; border-color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-header-ask-pill { background: rgba(255, 237, 172, .12) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ay-header-ask-pill, .ayna-shared-header-action) { border-color: var(--b-butter) !important; box-shadow: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-eco-play { background: var(--b-butter) !important; color: var(--b-espresso) !important; }
 
@@ -127,10 +127,10 @@
 
 /* ---------- Swipe deck: an espresso stage, the card is the light ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck { background: var(--b-espresso) !important; color: var(--b-butter) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-head strong { font: 400 22px/1.15 var(--f-display) !important; color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-head strong { font: 500 22px/1.15 var(--f-display) !important; color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-head span { color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-close { background: var(--b-butter) !important; color: var(--b-espresso) !important; border-color: var(--b-butter) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-card { background: var(--b-butter) !important; border-color: var(--b-butter) !important; box-shadow: 6px 6px 0 var(--b-rose) !important; color: var(--b-espresso) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-card { background: var(--b-butter) !important; border-color: var(--b-butter) !important; box-shadow: none !important; color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-card.is-behind { box-shadow: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-photo { background: #ffffff !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-photo img { mix-blend-mode: normal !important; }
@@ -138,11 +138,11 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-card :is(p, small, span, strong, h2, h3) { color: var(--b-espresso) !important; }
 
 /* Swipe-to-discover entry: a small window onto the espresso deck */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta { background: var(--b-espresso) !important; color: var(--b-butter) !important; border: 2px solid var(--b-espresso) !important; box-shadow: 4px 4px 0 var(--b-rose) !important; border-radius: var(--r-radius-m) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-copy strong { font: 400 22px/1.15 var(--f-display) !important; color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta { background: var(--b-espresso) !important; color: var(--b-butter) !important; border: 2px solid var(--b-espresso) !important; box-shadow: none !important; border-radius: var(--r-radius-m) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-copy strong { font: 500 22px/1.15 var(--f-display) !important; color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-go { background: var(--b-rose) !important; color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-art i { border-color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--b-rose) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-cta { background: var(--b-butter) !important; color: var(--b-espresso) !important; border-color: var(--b-butter) !important; box-shadow: 4px 4px 0 var(--b-sky) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-cta { background: var(--b-butter) !important; color: var(--b-espresso) !important; border-color: var(--b-butter) !important; box-shadow: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-copy strong { color: var(--b-espresso) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-go { background: var(--b-sky) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-go { background: rgba(255, 237, 172, .12) !important; }
