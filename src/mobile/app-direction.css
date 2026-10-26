@@ -763,7 +763,7 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-you-row-title { flex: 1; min-width: 0; font: 600 calc(16px * var(--ayna-text-scale, 1))/1.3 var(--f-ui) !important; color: var(--d-ink) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-you-row-value { font: 500 14px/1 var(--f-ui) !important; color: var(--d-ink-2) !important; font-variant-numeric: tabular-nums; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-you-row > svg:last-child, .ayna-mobile:is(#ay,.ayna-mobile) .ay-you-posts > svg:last-child, .ayna-mobile:is(#ay,.ayna-mobile) .ay-you-week-foot > svg { flex: none; opacity: .6; }
-.ayna-mobile:is(#ay,.ayna-mobile) .ay-set-signedout { display: grid !important; gap: 10px !important; margin: 16px 0 0 !important; padding: 16px !important; border: 0 !important; border-radius: 20px !important; background: var(--d-group) !important; text-align: left !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-set-signedout { display: grid !important; gap: 10px !important; margin: 16px 0 0 !important; padding: 16px !important; border: 0 !important; border-radius: 16px !important; background: var(--d-group) !important; text-align: left !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-signedout-art { display: none !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-signedout p { margin: 0 !important; font: 500 15px/1.45 var(--f-ui) !important; color: var(--d-ink) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-signedout .ay-btn { justify-self: start; min-height: 44px !important; padding: 0 20px !important; border: 0 !important; border-radius: 99px !important; background: var(--d-ink) !important; color: var(--d-page) !important; font: 600 15px/1 var(--f-ui) !important; box-shadow: var(--d-shadow) !important; }
@@ -778,7 +778,7 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-scroll { padding: 0 var(--d-gutter) 24px !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-group { margin: 24px 0 0 !important; animation: none !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-group h2, .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-label { margin: 32px 0 8px !important; padding: 0 4px !important; font: 600 calc(14px * var(--ayna-text-scale, 1))/1.2 var(--f-ui) !important; color: var(--d-ink-2) !important; letter-spacing: 0 !important; text-transform: none !important; }
-.ayna-mobile:is(#ay,.ayna-mobile) .ay-set-card { padding: 0 16px !important; border: 0 !important; border-radius: 20px !important; background: var(--d-group) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-set-card { padding: 0 16px !important; border: 0 !important; border-radius: 16px !important; background: var(--d-group) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-card .ay-set-row { gap: 12px !important; min-height: 52px !important; padding: 0 !important; border-top: 1px solid var(--d-hair) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-card .ay-set-row:first-child { border-top: 0 !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-set-card .ay-set-row:active { background: transparent !important; opacity: .7; }
@@ -1057,7 +1057,7 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-you-head .ay-you-progress > i { background: rgba(255, 237, 172, .7) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-you-head .ay-you-progress > i > i { background: #3e2723 !important; }
 /* empty states: a paper card, the burst sticker on its corner (no tape strip: founder, no office-supply devices) */
-.ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) { position: relative; margin: 40px var(--d-gutter) 24px !important; padding: 28px 20px 24px !important; background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; border-radius: 6px !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) { position: relative; margin: 40px var(--d-gutter) 24px !important; padding: 28px 20px 24px !important; background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; border-radius: 16px !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) :is(h2, p) { color: #3e2723 !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) .ay-btn:not(.is-ghost) { background: #3e2723 !important; color: #ffedac !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-empty:not(.is-compact) .ay-btn.is-ghost { color: #3e2723 !important; border-color: #3e2723 !important; }

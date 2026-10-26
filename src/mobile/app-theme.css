@@ -38,8 +38,8 @@
   --r-shadow-sm: 2px 2px 0 var(--b-espresso);
 
   --r-radius-s: 8px;
-  --r-radius-m: 14px;
-  --r-radius-l: 22px;
+  --r-radius-m: 16px;
+  --r-radius-l: 16px;
   --r-gutter: 20px;
 
   --f-display: var(--ay-app-heading);

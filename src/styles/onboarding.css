@@ -40,7 +40,7 @@
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__lead { margin: 6px 0 0 !important; max-width: 34ch; color: var(--o-ink) !important; font: 500 17px/1.45 var(--o-sans) !important; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__list { display: grid; gap: 10px; margin: 6px 0 0 !important; padding: 0 !important; list-style: none !important; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__list li {
-  display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 10px 16px !important; border-radius: 20px;
+  display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 10px 16px !important; border-radius: 16px;
   background: var(--o-group); color: var(--o-ink); font: 600 18px/1.25 var(--o-sans);
   animation: ay-ob-rise 520ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(360ms + var(--i, 0) * 140ms);
 }
@@ -89,11 +89,11 @@
 :is(.ayna-mobile, .app-container) .ay-know.is-app { padding: 8px 16px 40px; }
 :is(.ayna-mobile, .app-container) .ay-know .ay-know__title { margin: 0 !important; color: var(--o-ink) !important; font: 500 28px/1.1 var(--o-serif) !important; letter-spacing: -.01em; }
 :is(.ayna-mobile, .app-container) .ay-know :is(.ay-know__lead, .ay-know__foot) { margin: 0 !important; max-width: 60ch; color: var(--o-soft) !important; font: 500 14.5px/1.45 var(--o-sans) !important; }
-:is(.ayna-mobile, .app-container) .ay-know .ay-know__status { margin: 0 !important; padding: 10px 14px; border-radius: 14px; background: #f6e3a1; color: #3e2723 !important; font: 600 14px/1.4 var(--o-sans) !important; }
+:is(.ayna-mobile, .app-container) .ay-know .ay-know__status { margin: 0 !important; padding: 10px 14px; border-radius: 8px; background: #f6e3a1; color: #3e2723 !important; font: 600 14px/1.4 var(--o-sans) !important; }
 :is(.ayna-mobile, .app-container) .ay-know__group { display: grid; gap: 6px; min-width: 0; scroll-margin-top: 72px; }
 :is(.ayna-mobile, .app-container) .ay-know__group h3 { margin: 6px 0 0 !important; color: var(--o-ink) !important; font: 700 16px/1.3 var(--o-sans) !important; }
 :is(.ayna-mobile, .app-container) .ay-know .ay-know__note { margin: 0 !important; color: var(--o-soft) !important; font: 500 13px/1.4 var(--o-sans) !important; }
-:is(.ayna-mobile, .app-container) .ay-know__group ul { display: grid; margin: 0 !important; padding: 0 !important; list-style: none !important; border-radius: 20px; background: var(--o-group); overflow: hidden; }
+:is(.ayna-mobile, .app-container) .ay-know__group ul { display: grid; margin: 0 !important; padding: 0 !important; list-style: none !important; border-radius: 16px; background: var(--o-group); overflow: hidden; }
 :is(.ayna-mobile, .app-container) .ay-know__group li { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 12px 8px 12px 16px !important; border-top: 1px solid var(--o-hair); }
 :is(.ayna-mobile, .app-container) .ay-know__group li:first-child { border-top: 0; }
 :is(.ayna-mobile, .app-container) .ay-know__what { flex: 1; min-width: 0; display: grid; gap: 2px; }
@@ -148,7 +148,7 @@
 /* "Make my matches more personal": a real button, not a tiny link (team direction, section 29). */
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more {
   display: grid; gap: 4px; justify-items: start; width: 100%; min-height: 64px; padding: 12px 20px !important; text-align: left;
-  border: 2px solid var(--o-ink) !important; border-radius: 20px !important; background: var(--o-pink) !important; color: #3e2723 !important; box-shadow: none !important; cursor: pointer;
+  border: 2px solid var(--o-ink) !important; border-radius: 16px !important; background: var(--o-pink) !important; color: #3e2723 !important; box-shadow: none !important; cursor: pointer;
 }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more span { font: 700 16px/1.25 var(--o-sans); }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-more small { font: 500 13px/1.35 var(--o-sans); color: #3e2723; opacity: .85; }
@@ -171,7 +171,7 @@
    apart. Reduced motion: everything static.
    ===================================================================== */
 :is(.ayna-mobile, .app-container) .ay-ob-ready:not(.is-web) { background: #3e2723 !important; --o-ink: #ffedac; --o-soft: rgba(255, 237, 172, .86); }
-:is(.ayna-mobile, .app-container) .ay-ob-ready.is-web { max-width: 720px; margin: 32px auto 64px; padding: 40px 40px 44px !important; border-radius: 32px; background: #3e2723 !important; --o-ink: #ffedac; --o-soft: rgba(255, 237, 172, .86); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.is-web { max-width: 720px; margin: 32px auto 64px; padding: 40px 40px 44px !important; border-radius: 16px; background: #3e2723 !important; --o-ink: #ffedac; --o-soft: rgba(255, 237, 172, .86); }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-back { color: #ffedac !important; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__art { width: auto; height: auto; margin: 0 0 4px; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__seal { position: relative !important; inset: auto !important; display: grid; place-items: center; width: 112px; height: 112px; border-radius: 50%; background: #f7badd; color: #3e2723; border: 1.5px solid #ffedac; rotate: -8deg; animation: ay-ob-stamp 620ms var(--ease-pop, cubic-bezier(.34, 1.2, .64, 1)) 120ms both; }
@@ -226,7 +226,7 @@ html body :is(#ay-x, .app-container.app-container.app-container) .qz-page .qz-ca
 :is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready .ay-ob-ready__title, .ay-ob-value :is(h1, .qz-title)) { font: 700 calc(30px * var(--ayna-text-scale, 1))/1.06 var(--o-serif, 'ayna Display') !important; letter-spacing: -.02em !important; }
 @media (min-width: 768px) { :is(#ds-o, .app-container):is(#ds-o, .app-container) :is(.ay-ob-ready .ay-ob-ready__title, .qz-page .qz-card.ay-ob-value.is-web .qz-title) { font-size: 40px !important; } }
 :is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) { display: grid; gap: 10px; border-top: 0 !important; }
-:is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) li { min-height: 56px; padding: 10px 14px 10px 10px !important; border: 1.5px solid rgba(255, 237, 172, .55) !important; border-radius: 18px !important; }
+:is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) li { min-height: 56px; padding: 10px 14px 10px 10px !important; border: 1.5px solid rgba(255, 237, 172, .55) !important; border-radius: 16px !important; }
 :is(#ds-o, .ayna-mobile, .app-container):is(#ds-o, .ayna-mobile, .app-container) :is(.ay-ob-ready__list, .ay-ob-value__list) li span {
   display: grid !important; place-items: center !important; align-self: center; flex: none; width: 36px !important; min-width: 36px; height: 36px !important; box-sizing: border-box; padding: 0 !important; text-align: center;
   border: 1.5px solid #3e2723 !important; border-radius: 50% !important; background: #f7badd !important; color: #3e2723 !important;

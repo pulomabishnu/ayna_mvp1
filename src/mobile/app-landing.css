@@ -440,7 +440,7 @@
 /* ===== Feature reel, walkthrough P1-18 (Oct 21) =====
    Rows carry a real product on a white tile, and the reel is manual: the
    pager is four dot buttons (44px hit areas), no autoplay, no pause button. */
-.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-cover.has-photo { position: relative; overflow: hidden; width: 40px; height: 40px; background: #fff !important; border-radius: 10px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-cover.has-photo { position: relative; overflow: hidden; width: 40px; height: 40px; background: #fff !important; border-radius: 8px !important; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-cover.has-photo img { position: absolute; inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); object-fit: contain; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-deck .c3 { overflow: hidden; background: #fff !important; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-deck__photo { position: absolute; inset: 12px 12px 40px; }

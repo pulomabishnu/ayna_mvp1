@@ -134,10 +134,10 @@
   --ay-inset: 24px;
   --ay-rowgap: 12px;
 
-  --ay-r-group: 20px;
+  --ay-r-group: 16px;
   --ay-r-card: 16px;
-  --ay-r-feature: 24px;
-  --ay-r-tile: 12px;
+  --ay-r-feature: 16px;
+  --ay-r-tile: 8px;
 
   --ay-container: 1240px;
   --ay-margin: 64px;

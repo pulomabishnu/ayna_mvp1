@@ -21,7 +21,7 @@
   --ds-sky: #769ebe;
   --ds-shadow: none;
   --ds-shadow-sm: 3px 3px 0 var(--ds-line);
-  --ds-r: 20px;
+  --ds-r: 16px;
   --ds-display: var(--ay-heading, var(--ay-app-heading, 'ayna Display', 'Bricolage Grotesque', system-ui, sans-serif));
   --ds-ui: var(--ay-sans-stack, var(--ayna-font-ui, 'Figtree', system-ui, sans-serif));
 }
@@ -34,7 +34,7 @@
 }
 .ayna-mobile[data-theme='dark'] { --ds-page: #2e1c18; }
 @media (max-width: 699px) { .app-container { --ds-shadow: 3px 3px 0 var(--ds-line); --ds-r: 16px; } }
-.ayna-mobile { --ds-shadow: 3px 3px 0 var(--ds-line); --ds-r: 18px; }
+.ayna-mobile { --ds-shadow: 3px 3px 0 var(--ds-line); --ds-r: 16px; }
 
 /* ---- drawn marks ---- */
 .ds-mark { display: block; width: 1em; height: 1em; flex: none; }

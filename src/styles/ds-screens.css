@@ -334,7 +334,7 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-stick
 @media (max-width: 1023px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-stickers { display: none; } html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead:has(.wx-stickers) { padding-right: 140px !important; } }
 @media (max-width: 767px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead:has(.wx-stickers) { padding-right: 0 !important; } }
 /* EXPLORE: fewer outlines; category chips as filled stickers, the "By need" row on a pink block */
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec.wx-needs { padding: 20px 24px 14px; border-radius: 20px; background: #f7badd; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec.wx-needs { padding: 20px 24px 14px; border-radius: 16px; background: #f7badd; color: #3e2723; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec.wx-needs .ay-h2 { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec.wx-needs .ay-needsticker { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec:not(.wx-phrases) .wx-topics .ay-chip { border-color: transparent !important; box-shadow: none !important; background: var(--ds-group) !important; }

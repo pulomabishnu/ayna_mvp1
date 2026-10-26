@@ -42,7 +42,7 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact { margin: 0 0 12px; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact .ay-rd-hero__card {
   position: relative; overflow: visible; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: 'kicker' 'title' 'go'; align-content: start; justify-items: start; row-gap: 8px;
-  min-height: 146px; padding: 16px 150px 18px 18px !important; border-radius: 24px 24px 10px 10px!important;
+  min-height: 146px; padding: 16px 150px 18px 18px !important; border-radius: 16px 16px 8px 8px !important;
 }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact .ay-rd-hero__card::before { content: ''; position: absolute; left: 0; right: 0; bottom: -11px; height: 12px; pointer-events: none; background: radial-gradient(circle at 9px 0, var(--d-feature, #3e2723) 8.5px, transparent 9px) 0 0 / 18px 12px repeat-x; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact :is(.ay-rd-hero__date, .ay-rd-hero__sticker, .ay-rd-hero__inside) { display: none !important; }

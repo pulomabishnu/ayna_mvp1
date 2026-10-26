@@ -416,7 +416,7 @@
   .ed .ed-story figure img { aspect-ratio: 4 / 3; }
   .ed .ed-people { grid-template-columns: 1fr; gap: 0; }
   .ed .ed-person { display: grid; grid-template-columns: 96px 1fr; gap: 2px 14px; align-items: center; padding-block: 12px; border-top: 1px solid var(--ed-hairline); }
-  .ed .ed-person img, .ed .ed-person .ed-initials { grid-row: 1 / 4; width: 96px; aspect-ratio: 1; margin: 0; border-radius: 12px; }
+  .ed .ed-person img, .ed .ed-person .ed-initials { grid-row: 1 / 4; width: 96px; aspect-ratio: 1; margin: 0; border-radius: 16px; }
   .ed .ed-advisors { grid-template-columns: 1fr; }
 }
 .ed .ed-closer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 40px; padding: 32px; }
@@ -508,7 +508,7 @@
 .ed .ed-dash__go > span { display: inline-flex; }
 /* Consumer health data notice (HTML read from public/consumer-health-data.html) */
 .app-container .ed .ay-chd .updated { font: 500 14px/1.4 var(--ed-sans); color: var(--ed-text-2); margin-bottom: 20px; }
-.app-container .ed .ay-chd .callout { background: var(--ed-group); border: 0 !important; border-radius: 20px; padding: 20px 24px; margin: 0 0 40px; font: 500 var(--ed-body)/1.55 var(--ed-sans); }
+.app-container .ed .ay-chd .callout { background: var(--ed-group); border: 0 !important; border-radius: 16px; padding: 20px 24px; margin: 0 0 40px; font: 500 var(--ed-body)/1.55 var(--ed-sans); }
 .app-container .ed .ay-chd h2 { margin-top: 40px; }
 .app-container .ed .ay-chd table { display: block; overflow-x: auto; }
 .app-container .ed .ed-prose > section:first-of-type { margin-top: 40px; }
