@@ -6,7 +6,7 @@
    profile as a count with one next step (GlowCare #15), avoid chips with a
    crossed icon (Food-scan #17), calm monochrome settings (Rhode #24). */
 html body .app-container.app-container.app-container.app-container.app-container {
-  .yh { --yh-ink: var(--ay-ink, #3e2723); --yh-muted: var(--ay-ink-muted, rgba(62, 39, 35, .78)); --yh-surface: var(--ay-surface, #fff); --yh-rule: var(--ay-rule, 1px solid rgba(62, 39, 35, .15)); }
+  .yh { --yh-ink: var(--ay-text, #3e2723); --yh-muted: var(--ay-text-2, rgba(62, 39, 35, .78)); --yh-surface: var(--ay-surface, #fff); --yh-rule: var(--ay-rule, 1px solid rgba(62, 39, 35, .15)); }
   .yh .ay-h1, .yh-head .ay-h1 { font: 800 30px/1.08 var(--ay-font-display, 'ayna Display', sans-serif) !important; letter-spacing: -.02em; }
   .yh-head { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(240px, 320px); align-items: center; gap: 24px; padding: 8px 0 24px; border-bottom: var(--yh-rule); }
   /* The striped strip (pink, blue, butter) over the old header is gone. */
@@ -21,7 +21,7 @@ html body .app-container.app-container.app-container.app-container.app-container
   /* Breadcrumb + five pill tabs (sub-pages). */
   .yh-tabs { display: grid; gap: 12px; margin-top: 16px; margin-bottom: 8px; }
   .yh-crumb { display: flex; gap: 8px; align-items: center; font: 500 14px/1.3 var(--ay-font-ui, Figtree, sans-serif); color: var(--yh-muted); }
-  .yh-crumb a { color: var(--ay-ink, #3e2723) !important; text-decoration: underline; text-underline-offset: 3px; }
+  .yh-crumb a { color: var(--ay-text, #3e2723) !important; text-decoration: underline; text-underline-offset: 3px; }
   .yh-tabs .yh-short { display: none; }
   @media (max-width: 640px) {
     .yh-tabs .yh-short { display: inline; }
@@ -38,7 +38,7 @@ html body .app-container.app-container.app-container.app-container.app-container
   .yh-setup__list li.is-done { color: var(--yh-muted); }
   .yh-tick { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border: 1.5px solid var(--yh-ink); border-radius: 50%; }
   .is-done .yh-tick { background: var(--yh-ink); }
-  .yh-tick svg { width: 14px; height: 14px; fill: none; stroke: var(--ay-butter, #ffedac); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .yh-tick svg { width: 14px; height: 14px; fill: none; stroke: var(--ay-page, #ffedac); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
   .yh-setup__go { justify-self: start; }
 
   /* Big-number facts with one-line captions (white tile, Bricolage 800). */
@@ -95,8 +95,18 @@ html body .app-container.app-container.app-container.app-container.app-container
   #ayeco .eco3-head .ay-h1 { font-size: 30px !important; }
   #ayeco .ay-shelf__head { border-bottom: 1px solid rgba(62, 39, 35, .15) !important; }
   #ayeco .eco3-empty { transform: none !important; border-radius: 16px !important; box-shadow: none !important; }
-  .ay-shelf .ay-shelf__menu > summary { box-shadow: none !important; border: 1.5px solid var(--ay-ink, #3e2723); }
-  .ay-shelf__working { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; margin-top: 6px; padding: 0; border: 0; background: none; color: var(--ay-ink, #3e2723) !important; font: 600 13px/1.2 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-  .ay-shelf__working .ayk-status { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border: 1.5px solid var(--ay-ink, #3e2723); border-radius: 999px; font: 600 13px/1 var(--ay-font-ui, Figtree, sans-serif); text-decoration: none; }
+  .ay-shelf .ay-shelf__menu > summary { box-shadow: none !important; border: 1.5px solid var(--ay-text, #3e2723); }
+  .ay-shelf__working { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; margin-top: 6px; padding: 0; border: 0; background: none; color: var(--ay-text, #3e2723) !important; font: 600 13px/1.2 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .ay-shelf__working .ayk-status { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border: 1.5px solid currentColor; border-radius: 999px; font: 600 13px/1 var(--ay-font-ui, Figtree, sans-serif); text-decoration: none; }
   @media (max-width: 640px) { #ayeco .eco3-head .ay-h1 { font-size: 26px !important; } }
+}
+
+/* Header: the arch avatar flat (no 3px ink shadow) and pink in both themes; the
+   name at 30 / 26 with the one pink highlighter swipe (never blue). Three ids
+   to beat the older ds-screens / explore-web rules. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container) .yh .ay-arch { background: #f7badd !important; color: #3e2723 !important; box-shadow: none !important; border: 1.5px solid #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container) main .yh .wy-who h1.ay-h1.ay-h1 { font: 800 30px/1.08 var(--ay-font-display, 'ayna Display', sans-serif) !important; letter-spacing: -.02em !important; background-image: linear-gradient(transparent 72%, #f7badd 72%, #f7badd 94%, transparent 94%) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) main .yh .wy-who h1.ay-h1.ay-h1 { background-image: linear-gradient(transparent 80%, rgba(247, 186, 221, .55) 80%, rgba(247, 186, 221, .55) 96%, transparent 96%) !important; }
+@media (max-width: 640px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container) main .yh .wy-who h1.ay-h1.ay-h1 { font-size: 26px !important; }
 }
