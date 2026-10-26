@@ -49,7 +49,7 @@ export default function TodayScreen({
   return <div className="ayna-fresh-ecosystem ayna-cabinet-home eco-app ay-today-screen">
     {homeTop || <MobileHeader onOpenSaved={onOpenSaved} />}
     {/* The greeting and date below (HealthHome) are the visible title, as on the website. */}
-    <h1 id="ay-today-title" className="sr-only">{homeTop ? 'Home' : 'Today'}</h1>
+    <h1 id="ay-today-title" className="sr-only">Today</h1>
 
     {/* An unfinished setup stays in view; with no profile at all, the Daily
         Rundown card itself says how to make one (UX spec 3, 34). */}

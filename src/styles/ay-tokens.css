@@ -19,11 +19,34 @@
   --ay-font-ui: 'Figtree', system-ui, sans-serif;
   --ay-font-display: 'ayna Display', 'Bricolage Grotesque', 'Figtree', sans-serif;
   --ay-text-min: 13px;
+  /* Fixed in both themes: espresso on butter/pink surfaces, the white product plate. */
+  --ay-espresso: #3e2723; --ay-espresso-muted: rgba(62, 39, 35, .78); --ay-plate: #ffffff;
+  /* Ink fill and the text that sits on it (selected chips, pill tabs, primary buttons). */
+  --ay-fill-ink: #3e2723;
+  --ay-on-ink: #ffedac;
+  --ay-track: #f6e3a1;
+  --ay-chip-bg: #ffedac;
+  --ay-ask-corner: 30px 30px 30px 8px; /* Ask ayna speech bubble only */
+  /* Type: 8 styles (PDP build brief). Sizes are desktop; phones and the app use the mobile column below. */
+  --ay-size-display: 40px; --ay-size-h1: 30px; --ay-size-h2: 22px; --ay-size-h3: 17px;
+  --ay-size-body: 16px; --ay-size-ui: 15px; --ay-size-meta: 14px; --ay-size-caption: 13px;
+  /* Spacing 4 · 8 · 12 · 16 · 24 · 32 · 48; gutters 16 (phone) / 40 (desktop); heights 48 / 44. */
+  --ay-sp-4: 4px; --ay-sp-8: 8px; --ay-sp-12: 12px; --ay-sp-16: 16px; --ay-sp-24: 24px; --ay-sp-32: 32px; --ay-sp-48: 48px;
+  --ay-gutter-page: 40px;
+  --ay-h-primary: 48px; --ay-h-secondary: 44px; --ay-tap: 44px;
 }
+@media (max-width: 767px) {
+  :root { --ay-size-display: 32px; --ay-size-h1: 26px; --ay-size-h2: 20px; --ay-gutter-page: 16px; }
+}
+.ayna-mobile { --ay-size-display: 32px; --ay-size-h1: 26px; --ay-size-h2: 20px; --ay-gutter-page: 16px; }
 :is([data-theme='brand-dark'], [data-theme='dark']) {
   --ay-ink: #ffedac;
   --ay-ink-muted: rgba(255, 237, 172, .8);
   --ay-surface: rgba(255, 237, 172, .08);
   --ay-rule: 1px solid rgba(255, 237, 172, .2);
   --ay-outline: 1.5px solid #ffedac;
+  --ay-fill-ink: #ffedac;
+  --ay-on-ink: #3e2723;
+  --ay-track: rgba(255, 237, 172, .12);
+  --ay-chip-bg: transparent;
 }

@@ -439,7 +439,7 @@ export default function AskAynaModal({
         {renderHomeTop(!home && !guidePage ? <button type="button" className="ay-home-top__back" aria-label="Back to the chat home" onClick={() => setHome(true)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button> : null)}
       </>) : homeMode ? (
         <div className="ay-chat-top">
-          <button type="button" className="ay-chat-top__back" onClick={onBackHome}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Home</button>
+          <button type="button" className="ay-chat-top__back" onClick={onBackHome}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Today</button>
           <h1>Ask ayna</h1>
           <span className="ay-chat-top__spacer" aria-hidden="true" />
         </div>

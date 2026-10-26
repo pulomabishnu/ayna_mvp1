@@ -26,8 +26,8 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
   const goals = (answers?.fullHealthIntake?.goals || []).slice(0, 2);
   const remaining = useMemo(() => (answers?.fullHealthIntake ? moreRemaining(reconstructIntakeFromSnapshot(answers.fullHealthIntake)) : 0), [answers]);
   const Tag = variant === 'web' ? 'section' : 'main';
-  // The app's tab is Home; the website's is still Today (QA, Oct 25).
-  const tab = variant === 'web' ? 'Today' : 'Home';
+  // Today on the website and the app (all-pages brief, Oct 25).
+  const tab = 'Today';
   return (
     <Tag className={`ay-ob-ready is-${variant}`} aria-labelledby="ay-ob-ready-h">
       {onBack && (
