@@ -89,6 +89,10 @@ const RENAMED_LABELS = [
   'ppd.plannedparenthood.org, App Store', // the Where to buy list: the link is the button, stores without a link are Key facts "Also sold at" (audit 7.9)
   'Add to my routine', // the app's 3-up outline row says "Routine" under 400px (audit 15 OutlineButton); "In my routine" after
   '180 tablets · 180-day supply', // the iron's price notes: now the meta line (180-day supply) and Highlights (180 tablets)
+  // PDP audit 9.1 copy (UI strings only): one "no clinician" sentence, "not evidence" said once, the reads line became a .gov mark per card.
+  'Who wrote this:', 'ayna’s clinical summary, not reviewed by a named clinician.',
+  'Reviews are people’s experiences. They are not evidence that a product works.', 'Online reviews and posts are people’s experiences, not clinical evidence.',
+  'Library reads on the same topic, checked against .gov sources.',
   'App or online', // a fact chip above the name (removed, audit 7.2); Format says "Virtual care service"
   'What’s included and details', 'Works with:', 'Check with a clinician first', 'Possible side effects', 'Also worth knowing', 'Downsides to know', 'Label and regulatory facts', 'Labels on file', 'Privacy',
 ];

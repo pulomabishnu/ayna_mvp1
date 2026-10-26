@@ -509,8 +509,8 @@ export default function ProductDetailScreen({
         </div>
 
         {related.more.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-more">
-          <div className="ay-pdp-sechead"><h2 id="ay-pdp-related-more">You may also like</h2><p>{related.personal ? 'Picks that fit your profile.' : 'For the same needs, from other parts of the shop.'}</p></div>
-          <div className="ay-shelf2-row">{related.more.map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
+          <div className="ay-pdp-sechead"><h2 id="ay-pdp-related-more">More like this for you</h2><p>{related.personal ? 'Picks that fit your profile.' : 'For the same needs, from other parts of the shop.'}</p></div>
+          <div className="ay-shelf2-row">{related.more.slice(0, 3).map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
         </section>}
 
 

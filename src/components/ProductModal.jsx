@@ -19,7 +19,8 @@ import { heroPriceView } from './pdp/heroPrice';
 import HeroPrice from './pdp/HeroPrice.jsx';
 import { ProductAsk } from './passport/ProductSections';
 import ProductEvidence from './pdp/ProductEvidence';
-import { SafetyLine, MatchLockup, PriceRow, Highlights, ActionsRow, AskPanel } from './pdp/PdpParts.jsx';
+import PdpIcon from './pdp/PdpIcon.jsx';
+import { EvidenceMark, SafetyLine, MatchLockup, PriceRow, Highlights, ActionsRow, AskPanel } from './pdp/PdpParts.jsx';
 import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, alsoAt } from './pdp/decision.js';
 import { productAskStarters } from '../utils/productAsk';
 import { hasIud, cupOrDisc, keyFormat } from './pdp/pdpParts.js';
@@ -401,7 +402,7 @@ export default function ProductModal({
   const showToast = (msg) => {
     setToast(msg);
     window.clearTimeout(toastTimer.current);
-    toastTimer.current = window.setTimeout(() => setToast(''), 2200);
+    toastTimer.current = window.setTimeout(() => setToast(''), 3000);
   };
 
   // P11: native share sheet on phones, copy + toast everywhere else.
@@ -865,39 +866,34 @@ export default function ProductModal({
         {onAskAyna && <AskPanel open={askOpen} onClose={() => setAskOpen(false)} title={`Ask about ${displayName}`} starters={askStarters} onAsk={(q) => { setAskOpen(false); onAskAyna(`About ${displayName}: ${q}`); }} />}
 
         {/* Compare, then Ask or share side by side on desktop. */}
-        {settled && <section className="ay-section ayp-compare" aria-label="Compare with similar">
-          <PhoneFold id="pdp-compare" title="Compare with similar" line={suggestions.compare.length ? `Side by side with ${suggestions.compare.slice(0, 2).map((p) => p.name).join(' and ')}.` : 'Pick products to compare side by side.'}>
+        {settled && <section className="ay-section ayp-compare" aria-label="Similar fit for you">
+          <PhoneFold id="pdp-compare" title="Similar fit for you" line={suggestions.compare.length ? `Side by side with ${suggestions.compare.slice(0, 2).map((p) => p.name).join(' and ')}.` : 'Pick products to compare side by side.'}>
             <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} detailsFor={detailsFor} renderThumb={compareThumb} />
           </PhoneFold>
         </section>}
 
-        {/* Ask about this product now sits at the end of ayna summary; sharing stays here. */}
-        {onCommunityAction && (
-          <section className="ay-section ayp-askshare" aria-label="Share">
-            <section className="ay-group is-padded ayp-tried" aria-labelledby="pdp-community-h">
-              <h2 id="pdp-community-h" className="ay-h3">Tried it?</h2>
-              <div className="ayp-tried__actions">
-                <button type="button" className="ay-btn ay-btn--primary" onClick={() => onCommunityAction('review')}>Write a review</button>
-              </div>
-              <ul className="ay-group__rows ayp-tried__more" aria-label="More ways to share">
-                {[['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
-                  <li key={kind}><button type="button" className="ay-group__row ay-group__row--link" onClick={() => onCommunityAction(kind)}><span className="ay-group__value">{label}</span><span className="ay-group__end" aria-hidden="true">›</span></button></li>
-                ))}
-              </ul>
-            </section>
+        {/* Tried it? One compact row of four, only once she saved it or added it to her routine (audit 7.7). */}
+        {onCommunityAction && (isSaved || isInEcosystem) && (
+          <section className="ay-section ayp-askshare ayv-tried" aria-labelledby="pdp-community-h">
+            <h2 id="pdp-community-h" className="ay-h2">Tried it?</h2>
+            <div className="ayv-acts__row ayv-tried__row">
+              {[['review', 'Write a review', 'steps'], ['post', 'Mention in a post', 'community'], ['playlist', 'Add to playlist', 'plus'], ['recommend', 'Recommend to a friend', 'ask']].map(([kind, label, icon]) => (
+                <button key={kind} type="button" className="ayv-obtn" onClick={() => onCommunityAction(kind)}><PdpIcon name={icon} size={16} /><span>{label}</span></button>
+              ))}
+            </div>
           </section>
         )}
 
         {relatedReads.length > 0 && (
           <section className="ay-section ayp-reads" aria-labelledby="pdp-reads-h">
             <h2 id="pdp-reads-h" className="ay-h2">Read about it</h2>
-            <p className="ayp-more__line">Library reads on the same topic, checked against .gov sources.</p>
             <ul className="ayp-reads__list">
               {relatedReads.map((r) => (
                 <li key={r.id}>
                   <a href={`/library/${r.id}`} onClick={(e) => { if (!onOpenRead || e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return; e.preventDefault(); onOpenRead(r.id); }}>
                     <span className="ayp-reads__title">{r.title}</span>
                     {r.teaser && <span className="ayp-reads__teaser">{r.teaser}</span>}
+                    <span className="ayp-reads__mark"><EvidenceMark level="gov" />Checked against .gov</span>
                     <span className="ayp-reads__go" aria-hidden="true">→</span>
                   </a>
                 </li>
@@ -909,10 +905,10 @@ export default function ProductModal({
         {suggestions.more.length > 0 && (
           <section className="ay-section ay-shelf ayp-more" aria-labelledby="pdp-more-h">
             <div className="ay-shelf__head">
-              <h2 id="pdp-more-h" className="ay-h2">You may also like</h2>
+              <h2 id="pdp-more-h" className="ay-h2">More like this for you</h2>
             </div>
             <p className="ayp-more__line">{suggestions.personal ? 'For the same need, ordered by how well each fits you.' : 'For the same need, from other parts of the shop.'}</p>
-            <ul className="ay-shelf__row ayp-more__row">{suggestions.more.map((item) => <li key={item.id}>{suggestionCard(item)}</li>)}</ul>
+            <ul className="ay-shelf__row ayp-more__row">{suggestions.more.slice(0, 3).map((item) => <li key={item.id}>{suggestionCard(item)}</li>)}</ul>
           </section>
         )}
       </div>

@@ -33,7 +33,7 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
   return (
     <section className="ay-compare" id="ay-sec-compare" tabIndex={-1} aria-labelledby="ay-compare-h">
       <div className="ay-pdp-sechead">
-        <h2 id="ay-compare-h">Compare with similar</h2>
+        <h2 id="ay-compare-h">Similar fit for you</h2>
       </div>
       <div className="ay-compare__pick">
         <label className="ay-compare__search">

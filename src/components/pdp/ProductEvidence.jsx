@@ -548,9 +548,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       ) : (
         <>
           {/* No named clinician: say so plainly, then ayna's own clinical summary, labelled. */}
-          <p className="ayv-empty">No named clinician has reviewed this product for ayna yet. Below is ayna’s clinical summary of the guidance.</p>
+          {/* One status sentence, then the content (audit 7.6 / 9.1: it used to say "no clinician" three ways). */}
+          <p className="ayv-empty">No clinician has reviewed this yet. Here’s ayna’s summary of the guidance.</p>
           <section className="ayv-box" aria-label="ayna’s clinical summary">
-            {ex.synthesis && <p className="ayq-byline"><b>Who wrote this:</b> ayna’s clinical summary, not reviewed by a named clinician.</p>}
             {ex.attribution && <p className={ex.synthesis ? 'ayq-meta' : 'ayq-byline'}>{ex.synthesis ? <>Note on file: <Tx>{ex.attribution}</Tx></> : <><b>Who wrote this:</b> <Tx>{ex.attribution}</Tx></>}</p>}
             {ex.opinion.length > 0 && <ReadShelf list={ex.opinion} label="The full expert view" leadIn />}
           </section>
@@ -658,7 +658,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           <>
             <h4 className="ayq-subh">What people say online</h4>
             <ReadShelf list={rv.text} label="What people say online" />{rv.sourceSummary && <p className="ayq-p"><Tx>{rv.sourceSummary}</Tx></p>}
-            <p className="ayq-meta">Online reviews and posts are people’s experiences, not clinical evidence.</p>
           </>
         )}
         {rv.incentivized.length > 0 && <p className="ayq-meta">Reviews on {rv.incentivized.join(', ')} may include incentivized reviews.</p>}
@@ -948,11 +947,13 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // ---- Reviews: community first, then online; never evidence ----------------------
   const reviewsTab = (
     <div className="ayq-rev">
+      {/* Said once, as the tab's first line (audit 7.7). */}
+      <p className="ayv-note">Reviews are people’s experiences, not evidence.</p>
       {ratingsCard}
       {reviewRows.length > 0 && <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onWriteReview={onWriteReview} onOpenPost={onOpenReview} />}
-      <p className="ayv-note">Reviews are people’s experiences. They are not evidence that a product works.</p>
+      {/* Under 5 ayna reviews: invite the first five (Spiegel: 5+ reviews is where trust starts). */}
+      {(ratingCount || 0) < 5 && onWriteReview && <p className="ayv-first5"><b>Be one of the first 5 reviewers.</b> <button type="button" className="ayv-textbtn" onClick={onWriteReview}>Write a review</button></p>}
       {reviewsBody}
-      {!reviewRows.length && onWriteReview && <button type="button" className="ayq-cta" onClick={onWriteReview}>Write a review</button>}
     </div>
   );
 

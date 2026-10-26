@@ -16,6 +16,7 @@ import { recallFacts } from '../../utils/productFacts.js';
 import { categoryLabel, ingredientHeadline, perUnitLabel, sizeCount, NOT_ON_FILE, buildGlance } from './glance.js';
 import { productHref } from '../../utils/productRoute.js';
 import { evidenceFor } from './evidenceLevels.js';
+import { costPerUse, capacityMl } from './decision.js';
 
 // ---------------------------------------------------------------------------
 // Gallery
@@ -205,7 +206,9 @@ function reasonFlag(details, yes, no = null) {
 export function compareRows(products, { matchFor = null, detailsFor = null } = {}) {
   const isDigital = products.every((p) => p?.type === 'digital');
   const rows = [
-    { label: 'Price', get: (p) => { const pr = priceParts(p); return pr.known ? pr.main : 'At the retailer'; } },
+    // Price with ayna's own per-cycle or per-day maths when the record has a lifespan or supply (audit 7.13).
+    { label: 'Price', get: (p) => { const pr = priceParts(p); const per = costPerUse(p); return pr.known ? `${pr.main}${per ? ` (${per.text.replace(/ if it lasts .*$/, '')})` : ''}` : 'At the retailer'; } },
+    { label: 'Capacity', get: (p) => capacityMl(p) || NOT_ON_FILE },
     !isDigital ? { label: 'Size or count', get: (p) => sizeCount(p)?.text || NOT_ON_FILE } : null,
     !isDigital ? { label: 'Price per unit', get: (p) => perUnitLabel(p) || NOT_ON_FILE } : null,
     isDigital ? { label: 'Available on', get: (p) => String(p.platform || '').trim() || NOT_ON_FILE } : null,
