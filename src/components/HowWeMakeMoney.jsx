@@ -43,9 +43,8 @@ export default function HowWeMakeMoney({ onBack, backLabel }) {
             title="How we make money"
             lede="Health-product recommendations and commercial relationships should be easy to tell apart. Here is how ayna handles both."
             onBack={onBack} backLabel={backLabel}
+            crumb="How we make money"
             photo="bag-tubes"
-            tone="espresso"
-            frame="frame"
             toc
         >
             <div className="ay-group is-padded ed-keyline">
@@ -53,6 +52,7 @@ export default function HowWeMakeMoney({ onBack, backLabel }) {
                 <p>
                     Partnerships and affiliate links help support ayna. They can affect visibility in general Browse when clearly labeled, but they do not decide your personalized match score or recommendation order.
                 </p>
+                <p className="ip-disclose">See <a href="/how-it-works">how matches are made</a> and <a href="/partners">the brands we work with</a>.</p>
             </div>
 
             {SECTIONS.map((section) => (

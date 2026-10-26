@@ -18,12 +18,15 @@ function Thumb({ product }) {
  * compareSet.js. "Best match for your profile" shows only when the engine
  * has enough to say so, with why.
  */
-export default function CompareTable({ products: picked = [], matchFor = null, detailsFor = null, ratingFor = null, onOpen, onRemove, variant = 'app', headingId }) {
+export const SEE_YOUR_MATCH = 'See your match';
+
+export default function CompareTable({ products: picked = [], matchFor = null, detailsFor = null, ratingFor = null, onOpen, onRemove, variant = 'app', headingId, onSeeMatch = null }) {
   // Label warnings live in the on-demand research file (same as the product page).
   const [research, setResearch] = useState(null);
   useEffect(() => { let live = true; loadResearch().then((r) => { if (live) setResearch(r); }); return () => { live = false; }; }, []);
   const products = useMemo(() => (research ? picked.map((p) => withResearch(p, research)) : picked), [picked, research]);
-  const rows = compareSetRows(products, { matchFor, detailsFor, ratingFor });
+  // Without her answers the match row never shows a number: "See your match" (opens the quiz when onSeeMatch is given).
+  const rows = compareSetRows(products, { matchFor, detailsFor, ratingFor, ...(onSeeMatch ? { noProfileText: SEE_YOUR_MATCH } : {}) });
   const best = bestForProfile(products, detailsFor);
   if (products.length < COMPARE_MIN) return null;
   return (
@@ -51,7 +54,9 @@ export default function CompareTable({ products: picked = [], matchFor = null, d
                 <th scope="row">{r.label}{r.hint && <small>{r.hint}</small>}</th>
                 {r.values.map((v, i) => (
                   <td key={products[i].id} className={v === NOT_ON_FILE ? 'is-unknown' : undefined}>
-                    {v === NOT_ON_FILE ? 'Not on file' : v}
+                    {v === NOT_ON_FILE ? 'Not on file'
+                      : r.noProfile && onSeeMatch ? <button type="button" className="ay-cmp2__see" onClick={onSeeMatch}>{v}</button>
+                        : v}
                     {r.notes?.[i] && <small>{r.notes[i]}</small>}
                   </td>
                 ))}

@@ -3096,6 +3096,7 @@ function App() {
             matchFor={quizResults ? (p) => getProfileMatchPercentForProduct(p, quizResults, healthProfile, matchOpts) : null}
             detailsFor={quizResults ? (p) => getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts) : null}
             onOpenProduct={(p) => handleOpenProduct(p, { source: 'compare' })}
+            onSeeMatch={handleStartQuiz}
           />
         )}
         {currentView === 'doctor-prep' && (

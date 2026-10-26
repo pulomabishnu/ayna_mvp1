@@ -43,7 +43,7 @@ export default function ConsumerHealthData({ onBack, backLabel }) {
     return () => { live = false; };
   }, []);
   return (
-    <EdPage title="Consumer health data privacy notice" onBack={onBack} backLabel={backLabel} toc tocKey={html ? 'ready' : 'wait'}>
+    <EdPage title="Consumer health data privacy notice" crumb="Consumer health data" onBack={onBack} backLabel={backLabel} toc tocKey={html ? 'ready' : 'wait'}>
       {html ? <div className="ay-chd" dangerouslySetInnerHTML={{ __html: html }} />
         : failed ? <p>This notice didn’t load. <a href="/consumer-health-data.html">Open the notice on its own page</a>.</p>
           : <p aria-busy="true">Getting the notice…</p>}

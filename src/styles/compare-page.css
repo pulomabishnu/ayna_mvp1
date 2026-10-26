@@ -71,3 +71,12 @@ html body .app-container.app-container.app-container .aytrk #health-data-import 
 html body .app-container.app-container.app-container .aytrk #health-data-import .btn-primary { background: var(--ay-feature-bg) !important; color: var(--ay-feature-fg) !important; box-shadow: var(--ay-press-shadow) !important; }
 html body .app-container.app-container.app-container .aytrk .care-near-panel { max-width: none !important; margin: 0 !important; padding: var(--ay-inset) !important; border: 0 !important; border-radius: var(--ay-r-group) !important; background: var(--ay-group) !important; box-shadow: none !important; }
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .aytrk :is(input, textarea)::placeholder { color: rgba(255, 237, 172, .7) !important; opacity: 1 !important; }
+
+/* Compare: InfoHero, the sample comparison and "Add your own" (info-pages audit v3). */
+html body .app-container.app-container.app-container .aycmp .ay-ih { margin-bottom: var(--ay-s32, 32px); }
+html body .app-container.app-container.app-container .aycmp__h2 { margin: 0 !important; font: 400 22px/1.2 var(--ay-heading, 'ayna Display', sans-serif) !important; color: var(--ay-text) !important; }
+html body .app-container.app-container.app-container .aycmp__sample { display: grid; gap: 16px; }
+html body .app-container.app-container.app-container .aycmp__sample-head { display: grid; gap: 6px; }
+html body .app-container.app-container.app-container :is(.aycmp__sample-head, .aycmp__own) > p { margin: 0; max-width: 68ch; font: 400 16px/1.5 var(--ay-sans-stack); color: var(--ay-text-2); }
+html body .app-container.app-container.app-container .aycmp__own { display: grid; gap: 12px; justify-items: start; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--ay-hairline); max-width: 760px; }
+html body .app-container.app-container.app-container .aycmp__own-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }

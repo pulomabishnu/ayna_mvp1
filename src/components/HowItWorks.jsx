@@ -1,10 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import HowItWorksFunnel from './HowItWorksFunnel';
-import { getSampleFunnel, SAMPLE_PROFILE_CHIPS } from '../utils/sampleFunnel';
+import { SAMPLE_PROFILE_CHIPS, getSampleFunnel } from '../utils/sampleFunnel';
+import { evidenceCatalogCounts } from '../utils/evidenceCatalogCounts';
 import { EdPage, EdBlock } from './editorial/EdPage';
+import { StickerButton } from './ui/ay';
 
 // What a personalized match is built from. Sponsorship is never one of them.
 const MATCH_INPUTS = ['Your profile', 'Published research', 'Clinical guidance + clinician input', 'Community experience'];
+
+const ICON = {
+  scale: <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5v22M9 27h14M6 10h20M6 10l-3 8a3 3 0 006 0zM26 10l-3 8a3 3 0 006 0z" /></svg>,
+  check: <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4l10 4v7c0 7-4.5 11-10 13-5.5-2-10-6-10-13V8z" /><path d="M11 16l4 4 7-8" /></svg>,
+  note: <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" /><path d="M16 10v7M16 21v.5" /></svg>,
+};
+
+/* The evidence levels, each with its live catalog count (the product page's own evidenceFor). */
+const LEVEL_TILES = [
+  { id: 'gov', title: 'Checked against .gov', cap: 'MedlinePlus, NIH, FDA, CDC and other .gov health pages. Only these can give an ayna grade.' },
+  { id: 'peer', title: 'Peer-reviewed studies', cap: 'Found on PubMed or PMC. Shown, not graded by ayna.' },
+  { id: 'brand', title: 'From the brand', cap: 'The brand’s own claims, recorded as its word, never as proof.' },
+  { id: 'people', title: 'People’s experiences', cap: 'Posts and reviews, kept in the Reviews tab.' },
+];
+
+function EvidenceLevels() {
+  const [c, setC] = useState(null);
+  useEffect(() => { let live = true; evidenceCatalogCounts().then((r) => { if (live) setC(r); }); return () => { live = false; }; }, []);
+  return (
+    <>
+      <ul className="ip-facts" aria-busy={!c || undefined}>
+        {LEVEL_TILES.map((l) => (
+          <li key={l.id}>
+            <b>{c ? c[l.id] : '…'}</b>
+            <strong>{l.title}</strong>
+            <span>{l.cap}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="ed-caption" style={{ marginTop: 12 }}>{c ? `Products with at least one source at each level, out of ${c.total} products in the catalog today.` : 'Counting the catalog…'}</p>
+    </>
+  );
+}
 
 export default function HowItWorks({ onBack, backLabel, onViewSources }) {
   const funnel = getSampleFunnel();
@@ -16,13 +51,20 @@ export default function HowItWorks({ onBack, backLabel, onViewSources }) {
   return (
     <EdPage
       title="How ayna picks your matches."
+      crumb="How it works"
       lede="ayna compares products with the health profile and preferences you choose to share, then adds cited research, clinical guidance, safety information and community context where available."
       onBack={onBack} backLabel={backLabel}
-      photo="blue-sink"
-      tone="sky"
-      frame="flower"
-      seal
+      photo="marble-counter"
     >
+      {/* Standards, said once on the page (#18 Tower 28). The team's wording, unchanged. */}
+      <section className="ed-block" aria-label="Our standards">
+        <ul className="ip-standards">
+          <li>{ICON.scale}<b>Relevant, not paid-first.</b><span>Personalized picks are ranked on relevance to you, not on commission rate or partnership status. Sponsorship is never a match input. Partner brands can be shown higher in Browse, always with a label.</span></li>
+          <li>{ICON.check}<b>Graded only from .gov sources.</b><span>Unsupported claims are labeled, not upgraded into facts.</span></li>
+          <li>{ICON.note}<b>ayna is not a doctor, and never pretends to be.</b><span>Summaries may be AI-assisted and are grounded in cited sources where available. “Clinical context” can include published guidance, clinician-authored sources or clearly labeled brand-provided clinician claims; it does not mean every product has been independently reviewed by an ayna clinician.</span></li>
+        </ul>
+      </section>
+
       <EdBlock title="Four steps, in order." intro="The numbers below are a sample profile run live on today's catalog, not your results.">
         <ol className="ed-hiw">
           <li>
@@ -49,7 +91,8 @@ export default function HowItWorks({ onBack, backLabel, onViewSources }) {
             <h3 className="ed-rowtitle"><span className="ed-sr">Step 3: </span>We add evidence</h3>
             <p>Published research, clinical guidance, product and safety sources, and community experience, where available.</p>
             <div className="ed-hiw__demo">
-              <div className="ed-tags">{['NIH research', 'ACOG guidance', 'CDC data'].map((t) => <span key={t}>{t}</span>)}</div>
+              {/* .gov sources only (founder rule); was "ACOG guidance", which is not a .gov source. */}
+              <div className="ed-tags">{['MedlinePlus', 'NIH research', 'CDC data'].map((t) => <span key={t}>{t}</span>)}</div>
               <span className="ed-caption">Unsupported claims are labeled, not upgraded into facts.</span>
             </div>
           </li>
@@ -66,36 +109,18 @@ export default function HowItWorks({ onBack, backLabel, onViewSources }) {
       </EdBlock>
 
       <EdBlock title="From the whole catalog to your short list.">
-        <div className="ay-group is-padded"><HowItWorksFunnel /></div>
+        <HowItWorksFunnel />
       </EdBlock>
 
-      <EdBlock title="Relevant, not paid-first.">
-        <div className="ed-two">
-          <div>
-            <h3 className="ed-rowtitle" style={{ marginBottom: 10 }}>Signals we look at</h3>
-            <ul className="ed-rows">
-              {MATCH_INPUTS.map((x) => <li key={x} className="ed-body">{x}</li>)}
-            </ul>
-          </div>
-          <div>
-            <h3 className="ed-rowtitle" style={{ marginBottom: 10 }}>What never counts</h3>
-            <p className="ed-body">
-              Personalized picks are ranked on relevance to you, not on commission rate or partnership status.
-              Sponsorship is never a match input. Partner brands can be shown higher in Browse, always with a label.
-            </p>
-          </div>
-        </div>
+      <EdBlock title="Evidence, by level." intro="Every source on a product is sorted into one of four levels. Only the first can give a grade.">
+        <EvidenceLevels />
       </EdBlock>
 
-      <EdBlock title="ayna is not a doctor, and never pretends to be.">
-        <div className="ed-prose">
-          <p>
-            Summaries may be AI-assisted and are grounded in cited sources where available. “Clinical context” can
-            include published guidance, clinician-authored sources or clearly labeled brand-provided clinician claims;
-            it does not mean every product has been independently reviewed by an ayna clinician.
-          </p>
-          <p style={{ marginTop: 20 }}><button type="button" className="ay-btn ay-btn--primary" onClick={openSources}>Read our sources</button></p>
-        </div>
+      <EdBlock title="Signals we look at.">
+        <ul className="ed-rows">
+          {MATCH_INPUTS.map((x) => <li key={x} className="ed-body">{x}</li>)}
+        </ul>
+        <p style={{ marginTop: 24 }}><StickerButton onClick={openSources}>Read our sources</StickerButton></p>
       </EdBlock>
     </EdPage>
   );
