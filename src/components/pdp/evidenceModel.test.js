@@ -47,7 +47,7 @@ describe('evidence model: nothing the team wrote is lost', () => {
     expect(linkKind('https://www.reddit.com/r/periods/search/?q=x', 'LOLA').label).toBe('Search of community posts');
     expect(linkKind('https://www.law360.com/cases/1', 'LOLA').tier).toBe('legal');
     // Founder rule (Oct 24): only .gov health pages count; an unopened PubMed paper and a medical society are labelled, not dropped.
-    expect(linkKind('https://pubmed.ncbi.nlm.nih.gov/2/', 'LOLA')).toEqual({ tier: 'paper', label: 'Study record, not yet checked by ayna' });
+    expect(linkKind('https://pubmed.ncbi.nlm.nih.gov/2/', 'LOLA')).toEqual({ tier: 'paper', label: 'Peer-reviewed · not graded by ayna' });
     expect(linkKind('https://medlineplus.gov/ency/article/003150.htm', 'LOLA').tier).toBe('credible');
     expect(linkKind('https://www.acog.org/womens-health/faqs/x', 'LOLA')).toEqual({ tier: 'nongov', label: 'Not a .gov source, not checked by ayna' });
     expect(linkKind('https://www.mayoclinic.org/x', 'LOLA').tier).toBe('nongov');

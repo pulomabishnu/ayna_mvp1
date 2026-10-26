@@ -17,6 +17,7 @@
 import { compareRows } from '../pdp/commerce.js';
 import { formatLabel, NOT_ON_FILE } from '../pdp/glance.js';
 import { evidenceLevel, LEVEL_WORDS } from '../pdp/evidenceLevel.js';
+import { evidenceFor, levelCountWords, LEVELS } from '../pdp/evidenceLevels.js';
 import { buildProductProfile } from '../../matching/productProfile.js';
 import { recallFacts } from '../../utils/productFacts.js';
 import { safetyAlertText } from '../../data/passport/content.js';
@@ -55,6 +56,12 @@ export function govEvidence(product) {
   const ev = evidenceLevel(product || {});
   if (!ev.topGrade || !ev.level) return 'Not graded yet';
   return ev.scope === 'type' ? ev.line : `${ev.word}${ev.need ? ` for ${ev.need}` : ''}`;
+}
+
+/** "1 .gov · 4 peer-reviewed · 3 from Saalt": what is on file per level (people's posts stay in Reviews). */
+export function evidenceCountsLine(product) {
+  const ev = evidenceFor(product || {});
+  return LEVELS.filter((l) => l.id !== 'people' && ev.counts[l.id] > 0).map((l) => levelCountWords(l.id, ev.counts[l.id], ev.brand)).join(' · ');
 }
 
 // The physical form, from the product profile (not the shop category).
@@ -144,7 +151,8 @@ export function compareSetRows(products = [], { matchFor = null, detailsFor = nu
   rows.push({ id: 'price', label: 'Price', values: base.Price || list.map(() => NOT_ON_FILE) });
   rows.push({ id: 'use', label: 'Intended use', values: list.map(intendedUse), hint: 'What the brand or ayna’s team says it is for' });
   rows.push({ id: 'format', label: 'Format', values: list.map(formatOf) });
-  rows.push({ id: 'evidence', label: 'Evidence', values: list.map(govEvidence), hint: 'Graded only from .gov health pages' });
+  // The grade (only from .gov) plus the same counts per level as the product page (pdp/evidenceLevels).
+  rows.push({ id: 'evidence', label: 'Evidence', values: list.map(govEvidence), notes: list.map(evidenceCountsLine), hint: 'Graded only from .gov health pages' });
   if (base['Ingredients or materials']) rows.push({ id: 'ingredients', label: 'Ingredients or materials', values: base['Ingredients or materials'] });
   rows.push({ id: 'safety', label: 'Safety considerations', values: list.map(safetyOf), hint: 'From the label and the brand’s warnings' });
   rows.push({ id: 'prefs', label: 'Your preferences', values: list.map((p) => preferences(detailsFor ? detailsFor(p) : null)), keep: true });

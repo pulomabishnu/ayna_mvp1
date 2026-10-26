@@ -1,4 +1,4 @@
-import { isGovHealthSource } from '../../utils/govSources.js';
+import { isGovHealthSource, isPaperLink } from '../../utils/govSources.js';
 
 // Medical societies, journals, academic medical centers and non-US health
 // bodies. Since Oct 24 2026 (founder rule) these are NOT treated as checked
@@ -8,3 +8,14 @@ export const MEDICAL_NON_GOV = /(\.gov|\.gov\.[a-z]{2}|\.mil|\.nhs\.uk|nice\.org
 export const isMedicalNonGov = (url) => { try { const u = new URL(url); return !isGovHealthSource(url) && MEDICAL_NON_GOV.test(u.hostname + u.pathname); } catch { return false; } };
 /** A checked source: a page on an allowed .gov health site (not a PubMed/PMC paper). */
 export const isCredible = (url) => isGovHealthSource(url);
+
+// Journal publishers whose article pages are peer-reviewed papers (PDP audit 7.6, level 2).
+const JOURNAL = /(^|\.)(doi\.org|nejm\.org|jamanetwork\.com|thelancet\.com|bmj\.com|nature\.com|sciencedirect\.com|springer\.com|wiley\.com|tandfonline\.com|sagepub\.com|frontiersin\.org|mdpi\.com|plos\.org|academic\.oup\.com|journals\.lww\.com|ajog\.org|cochranelibrary\.com|cureus\.com|biomedcentral\.com|cmaj\.ca|thieme-connect\.com|thieme-connect\.de|acpjournals\.org|medicaljournals\.se|cambridge\.org|koreamed\.org|jmir\.org|elsevier\.com|karger\.com|liebertpub\.com|annfammed\.org|ahajournals\.org|europepmc\.org)$/i;
+const hostOf = (url) => { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; } };
+/** A PubMed/PMC record or a journal's own article page: peer-reviewed, never graded by ayna. */
+export function isPeerReviewed(url) {
+  if (!url || isGovHealthSource(url)) return false;
+  if (isPaperLink(url)) return true;
+  const h = hostOf(url);
+  return Boolean(h) && JOURNAL.test(h);
+}

@@ -9,16 +9,17 @@ import { summarizeReviewRows, takeProductTab } from '../../utils/community/revie
 import GlossaryTerm from '../GlossaryTerm';
 import { findHardTerms, planGlossaryTerms } from '../../data/glossary';
 import { fmtDate } from './fmtDate';
-import { buildEvidence, noDash, linkKind, publisherOf, cleanTitle, claimRows, evidenceLayers } from './evidenceModel';
+import { buildEvidence, noDash, linkKind, publisherOf, cleanTitle, claimRows } from './evidenceModel';
 import PdpIcon from './PdpIcon.jsx';
 import UrgentSigns from './UrgentSigns.jsx';
 import ProductCommunityReviews from './ProductCommunityReviews.jsx';
 import ProductPeopleSay from './ProductPeopleSay.jsx';
 import { useProductReviews } from './useProductReviews.js';
 import { evidenceLevel, gradeWords } from './evidenceLevel.js';
-import { evidenceMeter, sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause, brandVoice, safetyGroupOf, groupSafety, TAB_ORDER, TAB_LABELS, DEFAULT_TAB } from './pdpParts.js';
+import { sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause, brandVoice, safetyGroupOf, groupSafety, TAB_ORDER, TAB_LABELS, DEFAULT_TAB } from './pdpParts.js';
 import { formatPrice } from '../../utils/formatPrice.js';
-import { EvidenceMeter, ShowAll } from './PdpParts.jsx';
+import { ShowAll, EvidenceHeader, EvidenceKey, EvidenceMark } from './PdpParts.jsx';
+import { evidenceFor } from './evidenceLevels.js';
 import { FROM_LISTING } from '../../utils/howToSource.js';
 import './pdp-complete.css';
 import './pdp-sections.css';
@@ -151,6 +152,15 @@ function Folder({ title, tone = '', children, id, icon = '', className = '' }) {
 // ---------------------------------------------------------------------------
 // Sources: one card style everywhere
 // ---------------------------------------------------------------------------
+/** The level mark for a link's kind (PDP audit 7.6): .gov filled, peer-reviewed half, brand outline, people dotted. */
+const TIER_LEVEL = { credible: 'gov', paper: 'peer', brand: 'brand', community: 'people' };
+function KindTag({ kind }) {
+  const lv = TIER_LEVEL[kind?.tier];
+  const label = kind?.tier === 'credible' ? 'Checked against .gov' : kind?.label;
+  if (!label) return null;
+  return <>{lv && <EvidenceMark level={lv} />}{label}</>;
+}
+
 /** One source card: title, the .gov publisher and year, the one-line finding, what kind of source it is. */
 function SourceBody({ s }) {
   const meta = [s.publisher || hostLabel(s.url), s.type, s.year].filter(Boolean);
@@ -163,7 +173,7 @@ function SourceBody({ s }) {
       {s.summary && <p className="ayq-src__finding"><Tx>{s.summary}</Tx></p>}
       {s.altTitles?.length > 0 && <p className="ayq-src__note">Also listed as: {s.altTitles.join('; ')}</p>}
       {why && <p className="ayq-src__note">ayna’s note: {why}</p>}
-      {s.kind?.label && <p className="ayq-src__tier">{s.kind.label}</p>}
+      {(s.kind?.label || s.kind?.tier === 'credible') && <p className="ayq-src__tier"><KindTag kind={s.kind} /></p>}
       <a className="ayq-src__go" href={s.url} target="_blank" rel="noopener noreferrer">Read the source<span aria-hidden="true"> ↗</span><span className="sr-only">: {s.title} (opens in a new tab)</span></a>
     </>
   );
@@ -197,7 +207,7 @@ function OtherLinks({ items, label = 'Other links', note = '' }) {
                 <span className="ayq-linklist__title">{s.title}</span>
                 {s.summary && <span className="ayq-linklist__sum"><Tx>{s.summary}</Tx></span>}
                 {whyText(s.why) && <span className="ayq-linklist__sum">ayna’s note: {whyText(s.why)}</span>}
-                <span className="ayq-linklist__tag">{[s.publisher, s.kind?.label].filter(Boolean).join(', ')}</span>
+                <span className="ayq-linklist__tag">{s.publisher}{s.publisher && s.kind?.label ? ', ' : ''}<KindTag kind={s.kind} /></span>
               </span>
               <span className="ayq-linklist__go" aria-hidden="true">↗</span>
               <span className="sr-only"> (opens in a new tab)</span>
@@ -372,7 +382,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // The one line already in the safety box near the top, so the summary's caution is a different one.
   safetyLead = '',
   // "Ask about this product" at the end of ayna summary (each surface passes its own).
-  askSlot = null }) {
+  askSlot = null,
+  // A compact sticker buy button repeated at the end of ayna summary (no pinned buy bar, audit 7.18).
+  endCta = null }) {
   const product = useApprovedResearch(baseProduct);
   // The short answer leads with the summary's first sentence (unless the team wrote a short take), so "What it is" starts after it.
   // A spec first sentence ("65 mg elemental iron…") becomes Key facts "Strength"; the next sentence is the one-liner.
@@ -488,8 +500,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
 
   // ---- shared numbers -------------------------------------------------------
   const ev = evidenceLevel({ ...(baseProduct || {}), evidenceStrength: m.research.evidenceStrength });
-  const meter = evidenceMeter(ev);
-  const { graded, level, scope: evScope } = ev;
+  const { graded, scope: evScope } = ev;
+  // The one evidence function (four labelled levels): the same counts here, in Compare and on cards.
+  const evx = evidenceFor(product, { m });
   const allSources = (() => {
     // The index under Details: each page once (same URL, or the same title from the same publisher).
     const seen = new Set();
@@ -520,7 +533,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           <ShowAll items={ex.sources} className="ayq-srcgrid is-compact ayv-srclist" label="sources" render={(s) => <SourceBody s={s} />} itemClass={(s) => `ayq-src${s.negative ? ' is-negative' : ''}`} />
         </div>
       )}
-      <OtherLinks items={ex.other} label="Other pages the team used" note="Not .gov health sources, so ayna has not checked them. Each is labelled by what it is." />
+      <OtherLinks items={ex.other} label="Other pages the team used" note="Not .gov health sources, so ayna has not graded them. Each is labelled by what it is." />
     </div>
   );
   const expertBody = (ex.opinion.length || ex.note.length || ex.sourceSummary || ex.sources.length || ex.other.length) ? (
@@ -863,15 +876,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           </div>
         </>
       ), '', true)}
-      {sec('ay-sum-how', 'How to use', howBody)}
-      {sec('ay-sum-safety', 'Safety', safetyBody, 'ayv-sec--safety', groups.length > 0)}
-      {safetyBody && <BackToTop />}
       {sec('ay-sum-evidence', 'Evidence', (
         <>
-          <div className="ayv-evrow">
-            <EvidenceMeter meter={{ ...meter, note: '' }} />
-            <button type="button" className="ayv-textbtn" onClick={() => goTo('literature')}>See the research</button>
-          </div>
+          <EvidenceHeader ev={evx} compact onMore={() => goTo('literature')} />
           {teamShort && ex.short.length > 0 && <>
             <ul className="ayv-bullets">{ex.short.map((t) => <li key={t}><Tx>{t}</Tx></li>)}</ul>
             {ex.attribution && <p className="ayq-meta">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" className="ayv-textbtn" onClick={() => goTo('clinical')}>Read the clinical opinion</button></p>}
@@ -879,7 +886,21 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         </>
       ))}
       {sec('ay-sum-details', m.isDigital ? 'What’s included' : isDevice ? 'What it’s made of' : 'Ingredients', insideBody)}
+      {sec('ay-sum-how', 'How to use', howBody)}
+      {sec('ay-sum-safety', 'Safety', safetyBody, 'ayv-sec--safety', groups.length > 0)}
+      {safetyBody && <BackToTop />}
       {askSlot && <section className="ayv-ask" aria-label="Ask about this product">{askSlot}</section>}
+      {/* ayna summary stands on its own (audit 7.16): what the other tabs hold, in three lines. */}
+      <section className="ayv-sec ayv-pointer" aria-labelledby="ay-sum-other-h">
+        <h3 id="ay-sum-other-h" className="ayv-sec__h">In the other tabs</h3>
+        <ul className="ayv-pointer__list">
+          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('clinical')}>Clinical</button><span>: {clin ? `${clin.who || 'a clinician'}${clin.credential ? `, ${clin.credential}` : ''}` : 'no clinician has reviewed this yet'}</span></li>
+          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('literature')}>Research</button><span>: {evx.summary.charAt(0).toLowerCase() + evx.summary.slice(1)}</span></li>
+          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('reviews')}>Reviews</button><span>: {ratingCount > 0 ? plural(ratingCount, 'ayna review') : 'no ayna reviews yet'}{rv.online.length ? `, ${plural(rv.online.length, 'link')} to posts online` : ''}</span></li>
+        </ul>
+      </section>
+      {/* No pinned buy bar (audit 7.18): a compact sticker button repeats here instead. */}
+      {endCta && <div className="ayv-endcta">{endCta}</div>}
     </div>
   );
 
@@ -892,42 +913,33 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   );
 
   // ---- Scientific literature: overview, then why, then sources, then deeper ------
-  const reviewCount = (reviewRows.length || 0) + (rv.text.length ? 1 : 0) + rv.online.length + rv.elsewhere.length;
-  const layers = evidenceLayers(product, m, { communityCount: reviewCount });
-  const sourceCount = studyCards.length + rs.other.length + allSources.length;
-  const otherLinksBlock = (adds('research').length || rs.other.length || sourcesBody) ? (
+  // Peer-reviewed papers get their own list; the rest of the team's pages stay under View studies and sources.
+  const peerLinks = rs.other.filter((l) => l.kind.tier === 'paper');
+  const otherResearch = rs.other.filter((l) => l.kind.tier !== 'paper');
+  const sourceCount = studyCards.length + otherResearch.length + allSources.length;
+  const otherLinksBlock = (adds('research').length || otherResearch.length || sourcesBody) ? (
     <>
       {adds('research').map((a) => <Addition key={a.id} a={a} />)}
-      <OtherLinks items={rs.other} label="Other pages the team used" note="Not .gov health sources, so ayna has not checked them. Each is labelled by what it is." />
+      <OtherLinks items={otherResearch} label="Other pages the team used" note="Not .gov health sources, so ayna has not graded them. Each is labelled by what it is." />
       {sourcesBody}
     </>
   ) : null;
   const literatureBody = (
     <div className="ayq-lit">
-      {/* 1. How strong, as a meter (the existing grade), and what is on file. */}
+      {/* 1. The evidence header (audit 7.6): grade or "Not graded yet", why, counts per level; then the key to the four marks. */}
       <section className="ayq-evo ayv-evo" aria-labelledby="ayq-evo-h">
-        <h3 id="ayq-evo-h" className="ayq-h3">Evidence overview</h3>
-        <EvidenceMeter meter={meter} size="lg" />
-        {!level && <><p className="ayq-p">ayna checks health claims only against .gov sources such as MedlinePlus, NIH and FDA.</p><p className="ayq-p">None is linked to this product yet, so it has no grade.</p><p className="ayq-p">What is on file is listed below for what it is.</p></>}
+        <h3 id="ayq-evo-h" className="sr-only">Evidence overview</h3>
+        <EvidenceHeader ev={evx} />
+        <EvidenceKey brand={evx.brand} />
         {negativeBlock}
-        {layers.length > 0 && (
-          <ul className="ayq-layers" aria-label="What is on file">
-            {layers.map((l) => (
-              <li key={l.id} className={`is-${l.id}`}>
-                <span className="ayq-layers__label">{l.label}{l.n ? <span className="ayq-count">{l.n}</span> : null}</span>
-                <span className="ayq-layers__note">{l.note}</span>
-                {l.id === 'community' && <button type="button" className="ayq-textbtn" onClick={() => goTo('reviews')}>Read the reviews</button>}
-              </li>
-            ))}
-          </ul>
-        )}
       </section>
       {/* 2. The sources, strongest first: ayna's grades, then the .gov studies. */}
       {gradeBlock}
       {studyCards.length > 0 && <SourceGrid items={studyCards} label={rs.negative.length ? 'Other .gov health sources' : '.gov health sources'} id="ayq-studies" />}
-      {!graded.length && <p className="ayq-meta">ayna has not graded this product yet, because no .gov source is linked to it.</p>}
+      {/* Level 2: peer-reviewed papers, labelled for what they are (never graded by ayna). */}
+      {peerLinks.length > 0 && <OtherLinks items={peerLinks} label={`Peer-reviewed ${peerLinks.length === 1 ? 'paper' : 'papers'}`} note="ayna grades only from .gov sources, so these are not graded. They are research, not the brand’s word." />}
       {/* 3. Deeper, closed until she asks. */}
-      {whyRated && <Step id="ay-lit-why" title="Why ayna rated it this way">{whyRated}</Step>}
+      {whyRated && <Step id="ay-lit-why" title={graded.length ? 'Why ayna rated it this way' : 'The research in short'}>{whyRated}</Step>}
       {ingredientsBlock && <Step id="ay-lit-ings" title={rs.ingredientsAreTopics ? 'Point by point' : 'Ingredient by ingredient'} meta={plural(rs.ingredients.length, rs.ingredientsAreTopics ? 'topic' : 'ingredient')}>{ingredientsBlock}</Step>}
       {otherLinksBlock && <Step id="ay-lit-sources" title="View studies and sources" meta={sourceCount ? plural(sourceCount, 'link') : ''}>{otherLinksBlock}</Step>}
     </div>

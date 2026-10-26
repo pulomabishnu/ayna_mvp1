@@ -15,6 +15,7 @@ import { brandOf } from '../../mobile/data/brandFallback.js';
 import { recallFacts } from '../../utils/productFacts.js';
 import { categoryLabel, ingredientHeadline, perUnitLabel, sizeCount, NOT_ON_FILE, buildGlance } from './glance.js';
 import { productHref } from '../../utils/productRoute.js';
+import { evidenceFor } from './evidenceLevels.js';
 
 // ---------------------------------------------------------------------------
 // Gallery
@@ -188,20 +189,6 @@ export function researchSourceCount(product) {
   return n;
 }
 
-function evidenceSummary(product) {
-  // Counted exactly like the product page's Evidence card (same sources, same types).
-  const RESEARCH = ['product_study', 'clinical_guideline', 'regulatory', 'ingredient_research', 'expert_guidance'];
-  let srcs = [];
-  try { srcs = (buildGlance(product, {})?.sources || []).filter((s) => RESEARCH.includes(s.type)); } catch { srcs = []; }
-  const pp = getPassport(product);
-  const strength = String(product?.evidenceStrength || '').trim();
-  if (!srcs.length && !strength) return NOT_ON_FILE;
-  const parts = [];
-  if (strength) parts.push(`${strength.charAt(0).toUpperCase()}${strength.slice(1)}`);
-  if (srcs.length) parts.push(`${srcs.length} research source${srcs.length === 1 ? '' : 's'}${pp?.evidence?.product_specific ? ', incl. a product study' : ''}`);
-  return parts.join(' · ');
-}
-
 /**
  * Rows for the compare table. Each row: { label, values: [string per product] }.
  * Rows where every product is "Not on file" are dropped.
@@ -223,7 +210,8 @@ export function compareRows(products, { matchFor = null, detailsFor = null } = {
     !isDigital ? { label: 'Price per unit', get: (p) => perUnitLabel(p) || NOT_ON_FILE } : null,
     isDigital ? { label: 'Available on', get: (p) => String(p.platform || '').trim() || NOT_ON_FILE } : null,
     !isDigital ? { label: 'Ingredients or materials', get: (p) => ingredientHeadline(p, 48) || NOT_ON_FILE } : null,
-    { label: 'Evidence on file', get: evidenceSummary },
+    // The one evidence function (audit 7.6): the same grade and per-level counts as the product page.
+    { label: 'Evidence', get: (p) => evidenceFor(p).summary.replace(/ · \d+ people’s experiences?$/, '') },
     // Finished-product evidence vs ingredient evidence (never collapsed).
     { label: 'Finished product studied', get: (p) => (getPassport(p)?.evidence?.product_specific ? 'Yes' : researchSourceCount(p) > 0 ? 'No product study found' : NOT_ON_FILE) },
     { label: 'Safety notes', get: (p) => {

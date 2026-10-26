@@ -4,6 +4,8 @@ import { ALL_PRODUCTS } from '../../data/products';
 import { compareRows } from './commerce';
 import { NOT_ON_FILE } from './glance';
 import { whyFirstLine } from '../../utils/whyLine';
+import { evidenceFor } from './evidenceLevels';
+import { EvidenceCounts } from './PdpParts.jsx';
 import './pdp.css';
 
 /**
@@ -65,10 +67,10 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
             {rows.map((r) => (
               <tr key={r.label}>
                 <th scope="row">{r.label}</th>
-                {/* Plain text only: source counts are not a grade, so no dots. */}
+                {/* Evidence: the grade (only from .gov) and the per-level marks, from the same function as the product page. */}
                 {r.values.map((v, i) => (
                   <td key={cols[i].id} className={`${i === 0 ? 'is-this' : ''}${v === NOT_ON_FILE ? ' is-unknown' : ''}`.trim() || undefined}>
-                    {v === NOT_ON_FILE ? '' : v}
+                    {r.label === 'Evidence' ? (() => { const ev = evidenceFor(cols[i]); return <><span className="ay-compare__evstatus">{ev.status}</span><EvidenceCounts ev={ev} people={false} /></>; })() : v === NOT_ON_FILE ? '' : v}
                   </td>
                 ))}
               </tr>

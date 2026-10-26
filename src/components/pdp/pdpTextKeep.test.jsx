@@ -77,6 +77,15 @@ const RENAMED_LABELS = [
   'Digital service', // Format says what it is: "Virtual care service"
  // a feature next to the price: Key facts "Listed as"
  // a Key facts row with the same value as an earlier row is shown once
+  // PDP audit Oct 25 (evidence as four labelled levels, 7.6): the old "what is on file" list and its notes
+  // became the evidence header (counts per level) and the key to the four marks; one sentence replaces three.
+  'Independent .gov sources', 'Health pages from MedlinePlus, NIH, FDA, CDC and similar.', 'The brand’s claims', 'What the brand says about its own product. Not checked by ayna.',
+  'Ingredient research', 'Community experience', 'People’s experiences. Not evidence that it works.', 'Read the reviews',
+  'ayna checks health claims only against .gov sources such as MedlinePlus, NIH and FDA. None is linked to this product yet, so it has no grade. What is on file is listed below for what it is.',
+  'Not .gov health sources, so ayna has not checked them. Each is labelled by what it is.', // now "...has not graded them..."
+  /, Study record, not yet checked by ayna$/, // now "Peer-reviewed · not graded by ayna"
+  'Why ayna rated it this way', // "The research in short" when nothing is graded
+  'Other pages the team used', /^\d+ links?$/, // peer-reviewed papers get their own list, so the other-pages list and count can shrink
   'What’s included and details', 'Works with:', 'Check with a clinician first', 'Possible side effects', 'Also worth knowing', 'Downsides to know', 'Label and regulatory facts', 'Labels on file', 'Privacy',
 ];
 const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r === c : r.test(c)));

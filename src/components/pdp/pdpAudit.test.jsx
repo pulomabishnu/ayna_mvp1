@@ -15,6 +15,10 @@ import ProductSheet from '../../mobile/components/ProductSheet.jsx';
 import { TAB_ORDER, DEFAULT_TAB, TAB_LABELS, safetyLineFor, hasIud, wearHours } from './pdpParts.js';
 import { withResearch } from '../../data/products.js';
 import { buildGlance } from './glance.js';
+import { evidenceFor, levelOfLink, levelLabel, isPeerReviewed } from './evidenceLevels.js';
+import { linkKind } from './evidenceModel.js';
+import { compareRows } from './commerce.js';
+import { evidenceCountsLine } from '../compare/compareSet.js';
 
 const byId = (id) => ALL_PRODUCTS.find((p) => p.id === id);
 const SAALT = 'p-saalt-cup';
@@ -97,5 +101,53 @@ describe('safety line: under the button, calm, personalised (audit P0 #3, 7.5)',
       expect(block).toMatch(/Safety details/);
       expect(block).not.toMatch(/ayv-safeline__mark/);
     }
+  });
+});
+
+describe('evidence: four labelled levels, the .gov-only grading rule kept (audit P0 #2, 7.6)', () => {
+  it('maps each kind of link to its level', () => {
+    expect(levelOfLink('https://medlineplus.gov/ency/article/000653.htm')).toBe('gov');
+    expect(levelOfLink('https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups')).toBe('gov');
+    expect(levelOfLink('https://doi.org/10.1016/S2468-2667(19)30111-2')).toBe('peer');
+    expect(levelOfLink('https://pubmed.ncbi.nlm.nih.gov/31324419/')).toBe('peer');
+    expect(levelOfLink('https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(19)30111-2/fulltext')).toBe('peer');
+    expect(levelOfLink('https://saalt.com/pages/faq', 'Saalt')).toBe('brand');
+    expect(levelOfLink('https://www.reddit.com/r/menstrualcups/')).toBe('people');
+    // A medical society, a magazine or a retailer is none of the four: labelled by what it is, never promoted.
+    expect(levelOfLink('https://www.mayoclinic.org/x')).toBe(null);
+    expect(levelOfLink('https://www.nytimes.com/wirecutter/reviews/best-menstrual-cup/')).toBe(null);
+    expect(levelOfLink('https://www.amazon.com/dp/B079DYK334')).toBe(null);
+    expect(isPeerReviewed('https://medlineplus.gov/x')).toBe(false);
+  });
+  it('labels: a Lancet systematic review is "Peer-reviewed · not graded by ayna", never "not checked"', () => {
+    expect(levelLabel('gov')).toBe('Checked against .gov');
+    expect(levelLabel('peer')).toBe('Peer-reviewed · not graded by ayna');
+    expect(levelLabel('brand', 'Saalt')).toBe('From Saalt');
+    expect(levelLabel('people')).toBe('People’s experiences');
+    expect(linkKind('https://doi.org/10.1016/S2468-2667(19)30111-2', 'Saalt').label).toBe('Peer-reviewed · not graded by ayna');
+  });
+  it('only .gov produces a grade: a peer-reviewed paper alone leaves the product "Not graded yet"', () => {
+    const ev = evidenceFor(full(SAALT));
+    expect(ev.counts.peer).toBeGreaterThan(0);
+    expect(ev.graded).toBe(false);
+    expect(ev.status).toBe('Not graded yet');
+    expect(ev.summary.startsWith('Not graded yet')).toBe(true);
+    const team = evidenceFor({ id: 'nope', name: 'X', evidenceStrength: 'strong' });
+    expect(team.graded).toBe(false);
+  });
+  it('the tab header, the summary header and Compare say the same thing (one function)', () => {
+    const p = full(SAALT);
+    const ev = evidenceFor(p);
+    const html = renderToStaticMarkup(<ProductModal product={p} />);
+    const statuses = [...html.matchAll(/class="ayv-evhead__status"[^>]*>([^<]+)</g)].map((x) => x[1]);
+    expect(statuses.length).toBe(2);
+    expect(new Set(statuses)).toEqual(new Set([ev.status]));
+    const row = compareRows([p, full('p-tampontribe-menstrual-cup')]).find((r) => r.label === 'Evidence');
+    expect(row.values[0]).toBe(ev.summary.replace(/ · \d+ people’s experiences?$/, ''));
+    expect(evidenceCountsLine(p)).toContain('peer-reviewed');
+    // The old contradictions are gone.
+    expect(html).not.toMatch(/No checked research yet/);
+    expect(html).not.toMatch(/research sources/);
+    expect(html).not.toMatch(/Not a \.gov source, not checked by ayna[^<]*Lancet|Lancet[^]{0,400}Not a \.gov source, not checked by ayna/);
   });
 });
