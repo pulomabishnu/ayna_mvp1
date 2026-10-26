@@ -167,7 +167,6 @@ import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } fro
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
 import RoutineSummary from './components/routine/RoutineSummary.jsx';
 import TodayRead from './components/today/TodayRead.jsx';
-import AskBasedOn from './components/ask/AskBasedOn.jsx';
 import { SaveFollowUpStrip } from './components/save/SaveFollowUp.jsx';
 import { savePrompt, stashPendingSave, takePendingSave } from './utils/savePrompt.js';
 import { setSavedRemindersOwner } from './utils/savedReminders.js';
@@ -2734,54 +2733,33 @@ function App() {
         {currentView === 'ask' && (
           <div className="ay-container wx-askpage" data-tour="ask">
             <h1 className="ay-sr">Ask ayna</h1>
-            {/* Signed out with quiz answers too: the guided chat, answered on this device where it can (QA M5). */}
-            {quizResults ? (
-              <div className="wx-ask">
-              {/* Desktop: the page title and what ayna answers from on the left, the conversation on the right (team direction 10). */}
-              <aside className="wx-ask__side" aria-label="About Ask ayna">
-                <p className="wx-ask__title" aria-hidden="true">Ask ayna</p>
-                <p className="wx-ask__lead">Ask about your body, a product or your day. ayna answers from your health profile, the products you use and checked sources, and says why.</p>
-                <AskBasedOn quizResults={quizResults} />
-                <p className="wx-ask__note">Not medical advice. For anything urgent, contact a clinician.</p>
-              </aside>
-              <ProfileChatbot
-                asPage
-                onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
-                openSignal={askOpenSignal}
-                prefill={askPrefill}
-                prefillStats={askPrefillStats}
-                profile={quizResults}
-                user={user}
-                onProfileUpdate={setQuizResults}
-                chatHistory={chatHistory}
-                onChatHistoryUpdate={setChatHistory}
-                disabled={false}
-                onNavigateToDiscovery={handleViewDiscovery}
-                onViewRecommendations={() => handleViewEcosystem()}
-                products={myProducts}
-                matchOpts={matchOpts}
-                healthProfile={healthProfile}
-                focusProduct={null}
-                hasHealthData={!!user && health.connected.length > 0}
-                resolveProduct={(id) => myProducts[id] || Object.values(myProducts).find((p) => String(p?.id) === String(id)) || getProductById(id) || null}
-                onOpenProduct={(product) => handleOpenProduct(product, { source: 'ask_followup' })}
-                onOpenDashboard={handleViewEcosystemDashboard}
-                onOpenRead={handleViewArticle}
-              />
-              </div>
-            ) : (
-              <>
-                <p className="ay-h1 wx-title" aria-hidden="true">Ask ayna</p>
-                <section className="wx-invite" aria-labelledby="wx-ask-invite-h">
-                  <h3 id="wx-ask-invite-h">Ask about your health, products and the evidence</h3>
-                  <p>ayna answers from your health profile, the products you use and checked sources, and tells you why. {user ? 'Create your health profile to start asking.' : 'Create your health profile, or log in, to start asking.'}</p>
-                  <div className="wx-invite__acts">
-                    <button type="button" className="ay-btn ay-btn--primary" onClick={handleStartQuiz}>Create your health profile</button>
-                    {!user && <button type="button" className="ay-btn ay-btn--secondary" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}>Log in</button>}
-                  </div>
-                </section>
-              </>
-            )}
+            {/* One Ask for everyone (Ask audit, Oct 25): signed out, product and read
+                questions are answered on this device and personal ones ask her to sign
+                in; the same panel as the right-side one, as a page. */}
+            <ProfileChatbot
+              asPage
+              onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
+              openSignal={askOpenSignal}
+              prefill={askPrefill}
+              prefillStats={askPrefillStats}
+              profile={quizResults}
+              user={user}
+              onProfileUpdate={setQuizResults}
+              chatHistory={chatHistory}
+              onChatHistoryUpdate={setChatHistory}
+              disabled={false}
+              onNavigateToDiscovery={handleViewDiscovery}
+              onViewRecommendations={() => handleViewEcosystem()}
+              products={myProducts}
+              matchOpts={matchOpts}
+              healthProfile={healthProfile}
+              focusProduct={null}
+              hasHealthData={!!user && health.connected.length > 0}
+              resolveProduct={(id) => myProducts[id] || Object.values(myProducts).find((p) => String(p?.id) === String(id)) || getProductById(id) || null}
+              onOpenProduct={(product) => handleOpenProduct(product, { source: 'ask_followup' })}
+              onOpenDashboard={handleViewEcosystemDashboard}
+              onOpenRead={handleViewArticle}
+            />
           </div>
         )}
         {currentView === 'health-data' && user && (

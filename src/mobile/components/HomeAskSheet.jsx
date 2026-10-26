@@ -4,6 +4,7 @@ import { useSheetDrag } from '../hooks/useSheetDrag.js';
 import { useTapToTalk } from '../hooks/useTapToTalk.js';
 import { homePrompts, askFromPrompt } from '../../utils/askPrompts.js';
 import { getTodayAskContext, TODAY_ASK_EVENT } from '../../utils/askToday.js';
+import '../../components/ask/ask-panel.css';
 
 /** Today's context on this device, kept current as Today publishes it. */
 function useTodayContext() {

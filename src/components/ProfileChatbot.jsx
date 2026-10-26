@@ -1,20 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSpeechToText } from '../hooks/useSpeechToText';
-import SearchMicButton from './SearchMicButton';
 import { getSupabaseClient } from '../utils/supabaseClient';
-import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import ShareAnswerButton from './ShareAnswerButton.jsx';
 import { questionForAnswer } from '../utils/sharedAnswer.js';
 import { getAppSessionId } from '../utils/conversationId';
 import AskFollowUps from './AskFollowUps.jsx';
 import { chipsFor, followUpRequestFields } from '../utils/askFollowUps.js';
-import { localMatchAnswer } from '../utils/askMatch.js';
-import { localHistoryAnswer } from '../utils/askHistory.js';
-import { localTodayAnswer, localItemAnswer, getTodayAskContext } from '../utils/askToday.js';
-import { onDeviceStarters } from '../utils/askStarters.js';
-import { guidedTiles } from '../utils/askGuided.js';
+import { localAnswer, aiAnswerExtras } from '../utils/askAnswer.js';
 import { fetchWithTimeout, isNetworkError } from '../utils/network.js';
-import AskHome, { AskStatCard } from './AskHome.jsx';
+import { AskStatCard } from './AskHome.jsx';
+import AskPanel, { AskHeader, AskStart, AskMessage, AskComposer } from './ask/AskPanel.jsx';
+import AskBasedOn from './ask/AskBasedOn.jsx';
+import { useAskSetup } from './ask/useAskSetup.js';
 import { recentQuestions } from '../utils/askRecent.js';
 import { mayAutoFocus } from '../utils/delightRuntime.js';
 
@@ -67,18 +64,6 @@ function getFirstName(user) {
   return raw ? raw.trim().split(/\s+/)[0] : '';
 }
 
-// Ask ayna's first screen: tiles fill the box so she can edit before asking.
-// Starters follow where she is (src/utils/askStarters.js); this list is the fallback.
-function askTiles(hasHealthData) {
-  return [
-    { label: 'Ask about your week', sub: hasHealthData ? 'Read against your cycle' : 'Best with health data connected', question: 'What stands out in my health data this week?', icon: 'week', tone: 'pink', isNew: true },
-    { label: 'What helps with period cramps?', question: 'What helps with period cramps?', icon: 'cramps', tone: 'sky' },
-    { label: 'What fits heavy periods?', question: 'What fits heavy periods?', icon: 'heavy', tone: 'group' },
-    { label: 'Fragrance-free options for sensitive skin', sub: 'Graded Limited, Some or Strong', question: 'Fragrance-free options for sensitive skin', icon: 'leaf', tone: 'ink' },
-    { label: 'What helped last time?', sub: 'From what you recorded', question: 'What helped last time?', icon: 'chat', tone: 'group' },
-    { label: 'Explain my top match', sub: 'The % and why, from your profile', question: 'Explain my top match', icon: 'match', tone: 'ink' },
-  ];
-}
 const WELCOME = 'Ask about a product, an ingredient, or what to try for something you’re dealing with. I can point you to products and, if you say so, save what you tell me to your health profile. I’m not a doctor, so this isn’t medical advice.';
 
 function buildWelcome() {
@@ -122,6 +107,8 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   // Signed out: the last question that needs ayna's AI, named with a Sign in button.
   const [needsAccount, setNeedsAccount] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
+  // Prompts grouped About you · Safety · Products, Safety first when flagged (ask/useAskSetup.js).
+  const { safety, groups } = useAskSetup({ open, profile, healthProfile, matchOpts, products, signedIn: Boolean(session?.access_token || user), focusProduct, hasHealthData });
   const [mode, setMode] = useState('chat');
   const [speaking, setSpeaking] = useState(false);
   const bottomRef = useRef(null);
@@ -358,19 +345,19 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     if (!msg || sending || disabled) return;
     // Her match for a product: ayna's match engine on this device, never the
     // language model, so it is the same % the card shows (works signed out).
+    // Answered on this device first (src/utils/askAnswer.js), signed out too:
+    // her match from the one engine (the same % the card shows), what helped,
+    // today, the Safety questions, product facts and ayna's reads.
     const local = retryOf == null
-      ? (await localMatchAnswer(msg, { quizAnswers: profile, healthProfile, matchOpts, focusProduct }).catch(() => null))
-        || (await localHistoryAnswer(msg).catch(() => null))
-        || (await localTodayAnswer(msg, { intake: profile }).catch(() => null))
-        // Signed out: "Ask why" and the Rundown questions from Today's own items (QA M5, like the app).
-        || (!session?.access_token ? await localItemAnswer(msg).catch(() => null) : null)
+      ? await localAnswer(msg, { profile, healthProfile, matchOpts, focusProduct, signedIn: Boolean(session?.access_token || user), safety }).catch(() => null)
       : null;
     if (local) {
       setInput('');
       setSendError('');
       setNeedsAccount('');
       setHome(false);
-      const next = [...messages, { role: 'user', text: msg }, { role: 'assistant', text: local.answer, followUps: local.followUps }];
+      const { answer, ...extras } = local;
+      const next = [...messages, { role: 'user', text: msg }, { role: 'assistant', text: answer, ...extras, followUps: local.followUps || [] }];
       setMessages(next);
       onChatHistoryUpdate?.(next);
       return;
@@ -413,7 +400,8 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
       if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
 
-      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer, followUps: Array.isArray(data.followUps) ? data.followUps : [], ...(stats ? { stats } : {}) }];
+      const extras = await aiAnswerExtras(data, { msg, profileSent: Boolean(summarizeProfile(profile || {})), resolveProduct, profile, healthProfile, matchOpts }).catch(() => ({ basedOn: ['ayna’s AI'], sources: [] }));
+      const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer, ...extras, followUps: Array.isArray(data.followUps) ? data.followUps : [], ...(stats ? { stats } : {}) }];
 
       // Nothing happens without her tap: a profile change is OFFERED with
       // Add / Not now, and a browse suggestion is a button, never an
@@ -452,6 +440,21 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     }
   };
 
+  const signedOut = session === null && !user;
+  const closeIcon = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>;
+  // "How Ask works": what is answered in this browser, what uses ayna's AI, her goals, reading answers aloud.
+  const how = (<>
+    <p>Questions about your matches, your day, products and ayna’s reads are answered on this device, no account needed. Other questions use ayna’s AI and need a free account.</p>
+    <p>Every answer ends with its sources, marked by evidence level, and what it was based on. If you tell ayna something about you, it asks before saving it to your profile.</p>
+    <p>Not medical advice. For anything urgent, contact a clinician.</p>
+    <AskBasedOn quizResults={profile} variant="plain" />
+    {canTalk && (
+      <button type="button" role="switch" aria-checked={mode === 'talk'} className="ay-ask-health__switch" onClick={() => setMode(mode === 'talk' ? 'chat' : 'talk')}>
+        <span>Read answers aloud</span><b aria-hidden="true">{mode === 'talk' ? 'On' : 'Off'}</b>
+      </button>
+    )}
+  </>);
+
   return (
     <>
       {asPage ? null : tucked && !open ? (
@@ -467,7 +470,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             className="ayna-ask-launcher"
             aria-label="Ask ayna"
             aria-expanded={open}
-            onClick={() => (onRequireAuth && !user ? onRequireAuth('Ask ayna') : setOpen(!open))}
+            onClick={() => setOpen(!open)}
             disabled={disabled}
           >
             <span className="ayna-ask-orb" aria-hidden="true" />
@@ -479,199 +482,116 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       {/* Phones: the panel is a bottom sheet over a flat 40% scrim, like the app's Ask sheet (P1-24). */}
       {open && !asPage && <div className="ayna-ask-scrim" aria-hidden="true" onClick={() => setOpen(false)} />}
       {open && (
-        <section className={`ayna-ask-panel${asPage ? ' is-page' : ''}`} aria-label="Ask ayna">
-          <header className={`ayna-ask-panel__header${messages.length > 1 ? " is-compact" : ""}`}>
-            <div className="ayna-ask-panel__identity">
-              {!home && (
-                <button type="button" className="ay-askh-homebtn" aria-label="Back to Ask ayna home" onClick={() => setHome(true)}>
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
-                </button>
+        <section className={`ayna-ask-panel ay-askp-shell${asPage ? ' is-page' : ''}`} aria-label="Ask ayna">
+          <AskPanel
+            variant={asPage ? 'page' : 'panel'}
+            listRef={messagesRef}
+            header={(
+              <AskHeader
+                level={asPage ? 2 : 1}
+                start={!home ? <button type="button" aria-label="Back to Ask ayna home" onClick={() => setHome(true)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button> : null}
+                end={!asPage ? <button type="button" className="ayna-ask-panel__close" aria-label="Close Ask ayna" onClick={() => setOpen(false)}>{closeIcon}</button> : null}
+              />
+            )}
+            footer={<>
+              {mode === 'talk' && (speech.isRecording || speaking) && (
+                <p className="ay-askp-pinned" role="status">{speech.isRecording ? 'Listening… tap the mic again when you are done.' : 'Reading the answer aloud. Tap the mic to speak again.'}</p>
               )}
-              <h3>Ask ayna</h3>
-            </div>
-
-            {!asPage && <button
-              type="button"
-              className="ayna-ask-panel__close"
-              aria-label="Close Ask ayna"
-              onClick={() => setOpen(false)}
-            >
-              ×
-            </button>}
-          </header>
-
-          <div className="ayna-ask-mode">
-            <button
-              type="button"
-              className={mode === 'chat' ? 'is-active' : ''}
-              onClick={() => setMode('chat')}
-              title="Type your question"
-            >
-              Chat
-            </button>
-
-            <button
-              type="button"
-              className={mode === 'talk' ? 'is-active' : ''}
-              onClick={() => setMode('talk')}
-              disabled={!canTalk}
-              title={canTalk ? 'Speak out loud and hear the answer' : 'Voice isn’t available in this browser'}
-            >
-              Voice
-            </button>
-          </div>
-
-          {mode === 'talk' && (
-            <div className={`ayna-voice-state${
-              speech.isRecording
-                ? ' is-listening'
-                : speaking
-                  ? ' is-speaking'
-                  : ''
-            }`}>
-              <span className="ayna-voice-state__orb" aria-hidden="true" />
-
-              <div>
-                <strong>
-                  {speech.isRecording
-                    ? 'Listening…'
-                    : speaking
-                      ? 'ayna is speaking…'
-                      : 'Talk to ayna'}
-                </strong>
-
-                <span>
-                  {speech.isRecording
-                    ? 'Select the mic again when you are done.'
-                    : speaking
-                      ? 'Select the mic anytime to speak again.'
-                      : 'Select the mic and speak naturally.'}
-                </span>
-              </div>
-            </div>
-          )}
-
-          <div className={`ayna-ask-panel__messages${home && !sending ? ' is-home' : ''}`} ref={messagesRef}>
+              {sendError && <p className="ay-askp-pinned ayna-ask-panel__error">{sendError}</p>}
+            </>}
+            composer={(
+              <AskComposer
+                formRef={formRef}
+                value={input}
+                onChange={setInput}
+                onSubmit={handleSend}
+                inputRef={inputRef}
+                placeholder="Ask anything…"
+                disabled={disabled || sending || speech.isRecording}
+                sendDisabled={!input.trim() || disabled || sending}
+                mic={{ supported: speech.supported, listening: speech.isRecording, disabled: disabled || sending, onToggle: toggleVoice }}
+                below={speech.isRecording ? <p className="ay-askp-foot" role="status">Listening… {speech.liveText || 'speak now'}</p> : null}
+              />
+            )}
+          >
             {home && !sending && (
-              <AskHome
+              <AskStart
                 name={firstName}
-                intro="Ask about a product, an ingredient, or what to try."
-                note={WELCOME}
-                tiles={session === null && !user && !focusProduct
-                  ? onDeviceStarters({ hasProfile: Boolean(profile), signals: getTodayAskContext()?.signals || {}, device: 'device' })
-                  : guidedTiles({ focusProduct, hasHealthData, fallback: askTiles(hasHealthData) })}
-                recent={recentQuestions(messages)}
-                // A starter is sent on tap (founder, Oct 24 22:17).
+                intro={signedOut ? 'Answered on this device, no account needed. Not medical advice.' : 'Uses your profile and checked sources. Not medical advice.'}
+                how={how}
+                groups={groups}
+                // A suggested question is sent on tap (founder, Oct 24 22:17); typing waits for Send.
                 onPick={(q) => sendText(q)}
+                recent={recentQuestions(messages)}
                 onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
               />
             )}
-            {!(home && !sending) && messages.map((m, i) => (
-              m.role === 'system' ? (
-                <div key={i} className="ayna-ask-message ayna-ask-message--system">
-                  {m.text && <span>{m.text}</span>}
-                  <div className="ayna-ask-actions">
-                    {m.pendingProfile && !m.decided && <>
-                      <button type="button" className="is-primary" onClick={() => { onProfileUpdate(m.pendingProfile); updateMessage(i, { decided: 'added', text: 'Added to your profile.' }); }}>Add</button>
-                      <button type="button" onClick={() => updateMessage(i, { decided: 'skipped', text: 'Okay, nothing changed.' })}>Not now</button>
-                    </>}
-                    {m.decided === 'added' && onViewRecommendations && <button type="button" onClick={onViewRecommendations}>See my matches</button>}
-                    {m.browseCategory && <button type="button" onClick={() => onNavigateToDiscovery({ initialCategory: m.browseCategory })}>See {m.browseLabel} →</button>}
-                  </div>
-                </div>
-              ) : (
-                <div
+            {!(home && !sending) && messages.filter((m) => !m.starters).map((m) => {
+              const i = messages.indexOf(m);
+              return (
+                <AskMessage
                   key={i}
-                  className={`ayna-ask-message ${
-                    m.role === 'user'
-                      ? 'ayna-ask-message--user'
-                      : 'ayna-ask-message--ayna'
-                  }`}
-                >
-                  {m.role === 'assistant' && <AskStatCard stats={m.stats} />}
-                  {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
-                  {m.role === 'assistant' && !m.failed && !m.starters && questionForAnswer(messages, i) && (
-                    <ShareAnswerButton
-                      question={questionForAnswer(messages, i)}
-                      answer={m.text}
-                      sources={m.sources || []}
-                      share={m.share || null}
-                      onShareChange={(share) => updateMessage(i, { share })}
-                      session={session}
-                      surface="web"
-                    />
-                  )}
-                  {m.role === 'assistant' && !m.failed && !m.starters && questionForAnswer(messages, i) && (
-                    <AskFollowUps
-                      chips={chipsFor(m.followUps, {
-                        hasDashboard: !!onOpenDashboard,
-                        canOpen: (f) => (f.type === 'open_product' ? !!(onOpenProduct && resolveProduct?.(f.productId)) : !!(onOpenRead && reads.some((r) => r.id === f.articleId))),
-                      })}
-                      disabled={sending}
-                      onAction={runFollowUp}
-                    />
-                  )}
-                  {m.failed && (
-                    <div className="ayna-ask-actions">
-                      <button type="button" className="is-primary" onClick={() => sendText(m.question, i)}>Retry</button>
-                      {onNavigateToDiscovery && <button type="button" onClick={() => onNavigateToDiscovery(m.question)}>Search the shop instead</button>}
-                    </div>
-                  )}
-                </div>
-              )
-            ))}
-
+                  m={m}
+                  className={m.role === 'user' ? 'ayna-ask-message ayna-ask-message--user' : m.role === 'assistant' ? 'ayna-ask-message ayna-ask-message--ayna' : 'ayna-ask-message ayna-ask-message--system'}
+                  before={m.role === 'assistant' ? <AskStatCard stats={m.stats} /> : null}
+                  onOpenProduct={onOpenProduct && resolveProduct ? (p) => { const full = resolveProduct(p.id); if (full) { setOpen(false); onOpenProduct(full); } } : null}
+                  onOpenRead={onOpenRead ? (id) => { setOpen(false); onOpenRead(id); } : null}
+                  after={<>
+                    {m.role === 'system' && (
+                      <div className="ay-askp-acts">
+                        {m.pendingProfile && !m.decided && <>
+                          <button type="button" className="ay-askp-act is-primary" onClick={() => { onProfileUpdate(m.pendingProfile); updateMessage(i, { decided: 'added', text: 'Added to your profile.' }); }}>Add</button>
+                          <button type="button" className="ay-askp-act" onClick={() => updateMessage(i, { decided: 'skipped', text: 'Okay, nothing changed.' })}>Not now</button>
+                        </>}
+                        {m.decided === 'added' && onViewRecommendations && <button type="button" className="ay-askp-act" onClick={onViewRecommendations}>See my matches</button>}
+                        {m.browseCategory && <button type="button" className="ay-askp-act" onClick={() => onNavigateToDiscovery({ initialCategory: m.browseCategory })}>See {m.browseLabel}</button>}
+                      </div>
+                    )}
+                    {m.role === 'assistant' && !m.failed && questionForAnswer(messages, i) && (
+                      <ShareAnswerButton
+                        question={questionForAnswer(messages, i)}
+                        answer={m.text}
+                        sources={m.sources || []}
+                        share={m.share || null}
+                        onShareChange={(share) => updateMessage(i, { share })}
+                        session={session}
+                        surface="web"
+                      />
+                    )}
+                    {m.role === 'assistant' && !m.failed && questionForAnswer(messages, i) && (
+                      <AskFollowUps
+                        chips={chipsFor(m.followUps, {
+                          hasDashboard: !!onOpenDashboard,
+                          canOpen: (f) => (f.type === 'open_product' ? !!(onOpenProduct && resolveProduct?.(f.productId)) : !!(onOpenRead && reads.some((r) => r.id === f.articleId))),
+                        })}
+                        disabled={sending}
+                        onAction={runFollowUp}
+                      />
+                    )}
+                    {m.failed && (
+                      <div className="ay-askp-acts">
+                        <button type="button" className="ay-askp-act is-primary" onClick={() => sendText(m.question, i)}>Retry</button>
+                        {onNavigateToDiscovery && <button type="button" className="ay-askp-act" onClick={() => onNavigateToDiscovery(m.question)}>Search the shop instead</button>}
+                      </div>
+                    )}
+                  </>}
+                />
+              );
+            })}
             {sending && (
-              <div className="ayna-ask-message ayna-ask-message--ayna ayna-ask-message--typing" role="status" aria-label="ayna is typing">
-                <span className="ayna-typing" aria-hidden="true"><i /><i /><i /></span>
-                {slow && <span className="ayna-typing__slow">Still looking into it…</span>}
+              <div className="ay-askp-typing ayna-ask-message--typing" role="status" aria-label="Looking into it">
+                <i /><i /><i />{slow && <small>Still looking into it…</small>}
               </div>
             )}
-
-            <div ref={bottomRef} />
-          </div>
-
-          {sendError && <p className="ayna-ask-panel__error">{sendError}</p>}
-          {needsAccount && !sendError && <p className="ayna-ask-panel__error" role="status">“{needsAccount.length > 90 ? `${needsAccount.slice(0, 88)}…` : needsAccount}” uses ayna’s AI, so it needs a free account. Your question is kept below. {onRequireAuth && <button type="button" onClick={() => onRequireAuth('Ask ayna')}>Sign in</button>}</p>}
-
-          <form ref={formRef} className="ayna-ask-panel__composer" onSubmit={handleSend}>
-            <div className="ayna-ask-panel__inputrow">
-              <input
-                ref={inputRef}
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder={mode === 'talk'
-                  ? 'Or type while in Voice mode…'
-                  : 'Ask ayna anything…'}
-                disabled={disabled || sending || speech.isRecording}
-              />
-
-              {speech.supported && (
-                <SearchMicButton
-                  size="compact"
-                  isRecording={speech.isRecording}
-                  disabled={disabled || sending}
-                  onClick={toggleVoice}
-                />
-              )}
-
-              <button
-                type="submit"
-                className="ayna-ask-send"
-                aria-label="Send"
-                disabled={!input.trim() || disabled || sending}
-              >
-                ↑
-              </button>
-            </div>
-
-            {speech.isRecording && (
-              <p className="ayna-ask-panel__listening">
-                Listening… {speech.liveText || 'speak now'}
-              </p>
+            {/* Signed out and this one needs ayna's AI: named, kept in the box, with Sign in (QA M5). */}
+            {needsAccount && !sendError && (
+              <div className="ay-ask-account" role="status">
+                <p>“{needsAccount.length > 90 ? `${needsAccount.slice(0, 88)}…` : needsAccount}” uses ayna’s AI, so it needs a free account. Your question is kept below.</p>
+                {onRequireAuth && <button type="button" onClick={() => onRequireAuth('Ask ayna')}>Sign in</button>}
+              </div>
             )}
-          </form>
+            <div ref={bottomRef} />
+          </AskPanel>
         </section>
       )}
     </>

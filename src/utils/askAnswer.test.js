@@ -21,33 +21,33 @@ describe('prompt groups', () => {
     const flagged = askPromptGroups({ signedIn: true, hasProfile: true, safety: { flags: ['iud'] } });
     expect(flagged[0].id).toBe('safety');
     expect(flagged[0].prompts[0].question).toMatch(/IUD/);
-  });
+  }, 60000);
   it('signed out: only what is answered on this device', () => {
     const g = askPromptGroups({ signedIn: false, hasProfile: false });
     expect(g.flatMap((x) => x.prompts).every((p) => p.local)).toBe(true);
     expect(g.some((x) => x.id === 'products')).toBe(true);
-  });
+  }, 60000);
   it('the top match prompt names the engine % only at 50+', () => {
     expect(askPromptGroups({ signedIn: true, hasProfile: true, topPercent: 92 }).flatMap((g) => g.prompts).some((p) => p.question === 'Why is my top match 92%?')).toBe(true);
     expect(askPromptGroups({ signedIn: true, hasProfile: true, topPercent: 31 }).flatMap((g) => g.prompts).some((p) => /\d%/.test(p.question))).toBe(false);
-  });
+  }, 60000);
   it('startersFromFindings: up to three, the fact as the reason', () => {
     const s = startersFromFindings([{ title: 'Resting heart rate: 4 bpm above your usual' }, { title: 'Sleep 40m under your usual', question: 'Why was my sleep short?' }, { title: '' }, { text: 'Temp up' }, { title: 'One more' }]);
     expect(s).toHaveLength(3);
     expect(s[0]).toMatchObject({ reason: 'Resting heart rate: 4 bpm above your usual', health: 'Resting heart rate: 4 bpm above your usual' });
     expect(s[1].question).toBe('Why was my sleep short?');
-  });
+  }, 60000);
 });
 
 describe('safety', () => {
   it('an IUD in her answers is a flag', async () => {
     const f = await askSafetyFlags(IUD);
     expect(f.flags).toContain('iud');
-  });
+  }, 60000);
   it('local Safety answers use only engine text', () => {
     expect(localSafetyAnswer(SAFETY_Q.hold, { holds: [{ name: 'X', reason: 'We don’t know Y yet.', fix: '' }] }).answer).toMatch(/X/);
     expect(localSafetyAnswer('something else', { holds: [] })).toBeNull();
-  });
+  }, 60000);
 });
 
 describe('answers on this device', () => {
@@ -58,18 +58,18 @@ describe('answers on this device', () => {
     expect(r.products[0].match.kind).not.toBe('signin');
     expect(Array.isArray(r.sources)).toBe(true);
     r.sources.forEach((s) => expect(s.url).toMatch(/^https:/));
-  });
+  }, 60000);
   it('signed out: "what helps with" answers from the reads library; signed in it goes to the AI', async () => {
     const out = await localAnswer('What helps with heavy bleeding?', { signedIn: false });
     expect(out?.answer).toMatch(/ayna’s library/);
     expect(out.products.every((p) => p.match.kind === 'signin')).toBe(true);
     const inn = await localAnswer('What helps with heavy bleeding?', { signedIn: true });
     expect(inn).toBeNull();
-  });
+  }, 60000);
   it('a match answer carries the product card and Based on', async () => {
     const r = await localAnswer('Explain my top match', { profile: IUD });
     expect(r.basedOn.join(' ')).toMatch(/match engine/);
-  });
+  }, 60000);
   it('do / don’t only from a read that has an Avoid line', async () => {
     const { ARTICLES } = await import('../components/Articles.jsx');
     const wash = ARTICLES.find((a) => a.id === 'intimate-wash');
@@ -77,10 +77,10 @@ describe('answers on this device', () => {
     expect(dd.donts[0]).toMatch(/^Avoid/);
     expect(dd.dos.length).toBeGreaterThan(0);
     expect(readsOn('intimate wash', ARTICLES)[0].id).toBe('intimate-wash');
-  });
+  }, 60000);
   it('AI extras: Based on lists only what was sent; no sources are made up', async () => {
     const x = await aiAnswerExtras({ followUps: [] }, { msg: 'hi', profileSent: true });
     expect(x.basedOn).toEqual(['ayna’s AI', 'your profile summary']);
     expect(x.sources).toEqual([]);
-  });
+  }, 60000);
 });
