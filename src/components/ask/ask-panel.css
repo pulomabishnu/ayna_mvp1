@@ -166,7 +166,9 @@
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer[data-detent='half'] .ayna-ask-drawer-content { margin-top: 50dvh !important; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { border-radius: 16px 16px 0 0 !important; background: #f6e3a1 !important; transition: margin-top var(--ay-dur-sheet, 240ms) ease, transform var(--t-sheet, 240ms) var(--ease-out, ease-out); }
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-tab .ayna-ask-drawer-content { border-radius: 0 !important; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-drawer .ayna-ask-drawer-content { background: #3e2723 !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-drawer .ayna-ask-drawer-content,
+:is([data-theme='dark'], [data-theme='brand-dark']) .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content,
+.ayna-mobile:is(#ay, .ayna-mobile):is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-drawer .ayna-ask-drawer-content { background: #3e2723 !important; } /* outranks the 1-id light rule (a butter strip showed under the composer in dark) */
 @media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { transition: none !important; } }
 
 /* Website: a 400px panel on the right (PDP build brief), a sheet on phones, and the full page at /ask */

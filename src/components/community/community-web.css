@@ -786,5 +786,13 @@ html body .app-container.app-container.app-container.app-container.app-container
   .cm-topic.is-suggest { border-style: solid !important; }
   /* Playlists: the same three-way switch as the app (was a native select). */
   .cm-plswitch button { min-height: 40px; }
+  /* Selected filter chips are espresso like every other selected pill (pink stays for the one accent moments). */
+  .cm-topic[aria-pressed='true'] { background: var(--ay-text) !important; color: var(--ay-page) !important; border-color: var(--ay-text) !important; }
   .cm-plswitch button[aria-pressed='true'] { background: var(--ay-text); border-color: var(--ay-text); color: var(--ay-page) !important; }
+}
+/* Loop D: dark ways-to-post cards are the dark surface with butter ink (were four bright butter tiles). */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container:is([data-theme='brand-dark'], [data-theme='dark']) {
+  .cm-type { background: rgba(255, 237, 172, .08) !important; color: #ffedac !important; border-color: #ffedac !important; }
+  .cm-type__icon { background: transparent !important; border-color: #ffedac !important; color: #ffedac !important; }
+  .cm-type__copy small { color: rgba(255, 237, 172, .8) !important; }
 }

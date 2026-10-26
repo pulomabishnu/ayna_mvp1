@@ -182,9 +182,10 @@ export async function localCatalogAnswer(text, ctx = {}) {
   const { bleedingCareNote } = await import('./bleedingCare.js');
   const care = ctx.profile && allCards.some((c) => c?.match?.kind === 'evaluation') ? bleedingCareNote(ctx.profile, ctx.healthProfile || null, ctx.matchOpts) : null;
   if (!reads.length && !scored.length && !care) return null;
-  const parts = [care ? `**${care.title}.** ${care.text}` : '', `Here’s what ayna’s library has on ${topic}.`].filter(Boolean);
+  // Lead with what is actually below: the library line only when there are reads.
+  const parts = [care ? `**${care.title}.** ${care.text}` : '', reads.length ? `Here’s what ayna’s library has on ${topic}.` : ''].filter(Boolean);
   if (reads.length) parts.push(`**${reads.length === 1 ? 'Read' : 'Reads'}**\n${reads.map((a) => `- **${clean(a.title)}**: ${clean(a.teaser)}`).join('\n')}`);
-  if (scored.length) parts.push('**In ayna’s catalog**, with your match when ayna has your answers:');
+  if (scored.length) parts.push(ctx.profile ? `**In ayna’s catalog for ${topic}**, with your match:` : `**In ayna’s catalog for ${topic}.** Your match shows once ayna has your answers.`);
   if (leftOutLine(leftOut)) parts.push(leftOutLine(leftOut));
   if (!ctx.signedIn) parts.push('For an answer about you, sign in and ask ayna’s AI.');
   const dd = reads.map(dosAndDonts).find(Boolean);

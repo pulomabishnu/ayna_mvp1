@@ -92,3 +92,15 @@
 /* Loop D: playlist switch selected state is the espresso pill used by every other switch (and the website). */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-playlist-switch button { border: 1.5px solid var(--d-ink) !important; background: transparent !important; color: var(--d-ink) !important; font-weight: 600 !important; box-shadow: none !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-playlist-switch button[aria-pressed='true'] { background: var(--d-ink) !important; color: var(--d-page) !important; }
+/* Loop D: selected chips (topic scope, followed topics) are espresso like the website and the feed bar. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-topic-grid button.is-on { background: var(--d-ink) !important; color: var(--d-page) !important; border-color: var(--d-ink) !important; }
+/* Loop D: in dark the four ways-to-post cards are the dark surface (butter 8%) with butter ink, not four bright butter tiles. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .am-type { background: rgba(255, 237, 172, .08) !important; color: #ffedac !important; border-color: #ffedac !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .am-type-icon { background: transparent !important; border-color: #ffedac !important; color: #ffedac !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .am-type small { color: rgba(255, 237, 172, .8) !important; }
+/* Loop D: replies at the 13px floor: name 15/600, time 13, text 15, Reply a 44px target. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-comment .am-author span { font: 600 15px/1.3 var(--ay-font-ui) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-comment .am-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-comment .am-meta > span { font: 500 13px/1.3 var(--ay-font-ui) !important; color: var(--d-ink-2, var(--d-ink)) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-comment p { margin: 8px 0 0 !important; font: 500 15px/1.5 var(--ay-font-ui) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-comment > button { min-height: 44px; padding: 0 !important; font: 600 13px/1 var(--ay-font-ui) !important; color: var(--d-ink) !important; text-decoration: underline; text-underline-offset: 3px; }
