@@ -65,3 +65,6 @@ html body .app-container.app-container.app-container.app-container.app-container
   .ay-auth-badges span { white-space: nowrap; }
   .ay-auth-summary { box-shadow: none !important; }
 }
+/* The "or" between Apple/Google and email stays readable in dark mode. */
+html body .app-container.app-container.app-container.app-container.app-container .ay-auth-card.ay-auth-card > div:has(> span + span + span) > span:nth-child(2) { color: var(--ay-text-2) !important; }
+html body .app-container.app-container.app-container.app-container.app-container .ay-auth-card.ay-auth-card > div:has(> span + span + span) > span:not(:nth-child(2)) { background: var(--ay-text-2) !important; opacity: .4; }

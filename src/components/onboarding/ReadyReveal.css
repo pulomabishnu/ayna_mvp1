@@ -3,7 +3,7 @@
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-matches { display: grid; gap: 10px; margin: 8px 0 0; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-matches__h { margin: 0 !important; color: var(--o-ink, #ffedac) !important; font: 600 17px/1.3 var(--ay-font-ui, 'Figtree'), sans-serif !important; letter-spacing: 0 !important; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-matches__list { display: grid; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
-:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 12px; border: 1.5px solid #3e2723; border-radius: var(--ay-r-md, 16px); background: #ffedac; color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match { display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: center; gap: 12px; padding: 10px 12px; border: 1.5px solid #3e2723; border-radius: var(--ay-r-md, 16px); background: #ffedac; color: #3e2723; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match::before { content: none !important; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__plate { display: grid; place-items: center; width: 56px; height: 56px; overflow: hidden; border-radius: var(--ay-r-sm, 8px); background: #fff; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__plate img { width: 70%; height: 70%; object-fit: contain; }
@@ -14,3 +14,4 @@
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__why { font: 500 13px/1.4 var(--ay-font-ui, 'Figtree'), sans-serif; color: #3e2723; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match .ay-match-pill { align-self: start; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__chip { justify-self: start; padding: 3px 8px; border: 1.5px solid #3e2723; border-radius: var(--ay-r-pill, 999px); font: 600 13px/1.1 var(--ay-font-ui, 'Figtree'), sans-serif; font-style: normal; color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 2px; }

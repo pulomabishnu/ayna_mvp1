@@ -86,18 +86,21 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
           <h2 id="ay-ob-matches-h" className="ay-ob-matches__h">Your first matches</h2>
           <ul className="ay-ob-matches__list">
             {matches.map(({ product, details, area, hold, why }) => {
+              // The need chip only helps when the matches cover more than one need.
+              const showArea = area && new Set(matches.map((m) => m.area)).size > 1;
               const src = safeProductImageSrc(product.image || product.imageUrl || product.images?.[0], product.type === 'digital');
               return (
                 <li key={product.id} className="ay-ob-match">
                   <span className="ay-ob-match__plate" aria-hidden="true">{src ? <img src={src} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <i>{String(product.brand || product.name || '').split(/\s+/)[0]}</i>}</span>
                   <span className="ay-ob-match__text">
-                    {/* Elure-style (#61): the need as a chip above the name. */}
-                    {area && <em className="ay-ob-match__chip">{area}</em>}
+                    {/* Elure-style (#61): chips above the name. */}
+                    <span className="ay-ob-match__chips">
+                      <MatchPill size="sm" percent={details?.percent} hold={hold} />
+                      {showArea && <em className="ay-ob-match__chip">{area}</em>}
+                    </span>
                     <b>{product.name}</b>
-                    <small>{product.brand}</small>
                     {!hold && why && <span className="ay-ob-match__why">{why}</span>}
                   </span>
-                  <MatchPill size="sm" percent={details?.percent} hold={hold} />
                 </li>
               );
             })}
