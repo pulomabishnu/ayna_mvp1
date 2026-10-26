@@ -337,6 +337,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
         helloAside={onOpenConnections ? <OutlineButton onClick={onOpenConnections}>Connected apps</OutlineButton> : null}
         connections={h.connected || []}
         onRefresh={h.refresh || null}
+        status={h.status}
         rows={rows}
         sections={sections}
         matchContext={h.matchContext || null}

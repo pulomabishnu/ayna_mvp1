@@ -90,6 +90,7 @@ export default function HealthDashboard({ authUser, selectedNeedIds = [], hormon
         titleLevel={dataView ? 1 : 2}
         connections={health.connected || []}
         onRefresh={() => health.refresh()}
+        status={health.status}
         rows={health.insightRows || []}
         sections={sections}
         matchContext={health.matchContext}

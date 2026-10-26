@@ -202,6 +202,8 @@ export default function HealthHome({
   titleLevel = 2,
   connections = [],
   onRefresh = null,
+  // 'error' with rows still here: say so and keep the last-known values (dashboard audit 9.3).
+  status = 'ready',
 }) {
   const [tab, setTab] = useState('summary');
   const [range, setRange] = useState('month');
@@ -577,6 +579,9 @@ export default function HealthHome({
           {!showTitle && sourceLine}
           {helloAside}
         </div>
+      )}
+      {status === 'error' && hasData && (
+        <p className="ay-db-source is-stale" role="status">Couldn&rsquo;t load your latest data. These are the last values we have.{onRefresh && <OutlineButton className="is-small" onClick={onRefresh}>Try again</OutlineButton>}</p>
       )}
       <div className="ay-db-panel" role={tabs.length > 1 ? 'tabpanel' : undefined} id={`ay-db-area-panel-${current}`} aria-labelledby={tabs.length > 1 ? `ay-db-area-tab-${current}` : undefined} key={current}>
         {current === 'summary' && summary}
