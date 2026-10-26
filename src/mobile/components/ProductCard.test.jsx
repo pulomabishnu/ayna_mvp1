@@ -37,7 +37,8 @@ describe('product card match display', () => {
 
   it('keeps availability text out of the price row', () => {
     const html = renderToStaticMarkup(<ProductCard product={{ ...pad, price: 'Available in US' }} onClick={() => {}} />);
-    expect(html).toContain('<b class="is-muted">Price at retailer</b>');
+    // QA3 M8: an unknown price is hidden, never "Price at retailer".
+    expect(html).not.toContain('Price at retailer');
     expect(html).not.toContain('Available in US');
   });
 });

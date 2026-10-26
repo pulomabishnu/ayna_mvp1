@@ -4,6 +4,13 @@
 // short, comparable part as the main line and moves the rest to a small
 // second line. Nothing is invented: unknown prices say "Price at retailer".
 
+// The sentinel formatPrice returns when the record has no price. It is never
+// shown to her (QA3 M8, brief: hide unknown prices): cards, sheets and the
+// product page print shownPriceText(main), which is '' for it.
+export const UNKNOWN_PRICE = 'Price at retailer';
+export const isKnownPrice = (main) => Boolean(main) && main !== UNKNOWN_PRICE;
+export const shownPriceText = (main) => (isKnownPrice(main) ? main : '');
+
 const dash = (t) => t.replace(/(\d)\s*-\s*(\$?\d)/g, '$1–$2');
 
 export function formatPrice(item) {

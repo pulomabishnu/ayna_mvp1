@@ -2,6 +2,7 @@ import React from 'react';
 import { CheckIcon } from './icons/UiIcons.jsx';
 import { CATEGORY_LABELS } from '../data/catalogTaxonomy.js';
 import { cardKind, cardBadge, cardPrice } from '../utils/productCardFacts.js';
+import { isKnownPrice } from '../utils/formatPrice.js';
 import { sentenceCase } from '../utils/sentenceCase.js';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import ProductTileImage from './ProductTileImage';
@@ -117,9 +118,9 @@ export default function ProductCard({
       {/* 4. Price with its unit, the per-use chip and the real size pills. */}
       {!isMine && (
         <div className="ay-pcard__price">
-          <span className={`ay-pcard__amount${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
+          {isKnownPrice(price.main) && <span className="ay-pcard__amount">{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
             ? (() => { const [was, ...rest] = price.sub.replace(/^list\s+/i, '').split(/\s+·\s+/); return <small><span className="sr-only">List price </span><s>{was}</s>{rest.length > 0 && <span> {rest.join(' · ')}</span>}</small>; })()
-            : <small>{price.sub}</small>)}</span>
+            : <small>{price.sub}</small>)}</span>}
           <PriceExtras product={product} />
         </div>
       )}

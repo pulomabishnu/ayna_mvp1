@@ -5,7 +5,7 @@ import ProductImage from './ProductImage.jsx';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
 import { buildGlance } from '../../components/pdp/glance.js';
 import { useResearchState } from '../../data/researchLoader.js';
-import { formatPrice } from '../../utils/formatPrice.js';
+import { formatPrice, shownPriceText } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
 import { SheetMatch } from './ProductQuick.jsx';
 import { SafetyLine, MatchLockup, PriceRow, Highlights, ActionsRow } from '../../components/pdp/PdpParts.jsx';
@@ -135,7 +135,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
             {details
               ? <MatchLockup state={matchLineState({ details, percent: details.percent, hasProfile: true, why: whyLine(product, details) })} breakdown={breakdown} onAskWhy={onAsk} onFull={onShowWhy} onFix={onFixSafety} idBase="ay-sheet-why" />
               : <SheetMatch state={matchState} />}
-            <PriceRow main={product.price ? price.main : ''} perUse={perUse} notes={priceNotes} />
+            <PriceRow main={product.price ? shownPriceText(price.main) : ''} perUse={perUse} notes={priceNotes} />
             <div className="ayv-actions" data-tour="quick-actions">{buyLink()}</div>
             {buy?.url && (
               <p className="ay-pquick__leave ayv-fine ayv-disclose">

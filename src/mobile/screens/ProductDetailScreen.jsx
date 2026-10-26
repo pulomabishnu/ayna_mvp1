@@ -37,7 +37,7 @@ import { productImageOverride } from '../../data/productImageOverrides.js';
 import { apiUrl } from '../../utils/apiUrl.js';
 import { productHref } from '../../utils/productRoute.js';
 import { HEART_PATH } from '../utils/heart.js';
-import { formatPrice } from '../../utils/formatPrice.js';
+import { formatPrice, shownPriceText } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
 import { cardKind } from '../../utils/productCardFacts.js';
 import '../eco-needs.css';
@@ -441,7 +441,7 @@ export default function ProductDetailScreen({
           <h1>{shownName}</h1>
           {metaLine && <p className="ayv-metaline">{metaLine}</p>}
           {matchState?.kind !== 'quiz' && <MatchLockup state={matchState} breakdown={breakdown} onAskWhy={() => setAskOpen(true)} onFull={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} idBase="ay-app-why" />}
-          <PriceRow main={price ? shownPrice.main : ''} perUse={perUse} notes={priceNotes} />
+          <PriceRow main={price ? shownPriceText(shownPrice.main) : ''} perUse={perUse} notes={priceNotes} />
           <div className="ayv-actions" data-tour="pdp-actions" ref={actionsRef}>{buyLink()}</div>
           {/* The disclosure, always visible under the button (audit 7.9: the app no longer collapses it). */}
           {shopAction && (

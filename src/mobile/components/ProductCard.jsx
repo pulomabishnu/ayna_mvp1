@@ -7,7 +7,7 @@ import ProductImage from './ProductImage.jsx';
 import '../shop-card.css';
 import { displayName } from '../utils/displayName.js';
 import { brandOf } from '../data/brandFallback.js';
-import { formatPrice } from '../../utils/formatPrice.js';
+import { formatPrice, isKnownPrice, shownPriceText } from '../../utils/formatPrice.js';
 import { HEART_PATH } from '../utils/heart.js';
 import { matchBadge, isSafetyHold, SAFETY_HOLD, MATCH_UNAVAILABLE } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
@@ -25,7 +25,6 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   // Same price model as the website card: short main line + optional detail line.
   const shownPrice = formatPrice({ ...product, price: price || priceDisplay });
-  const hasDisplayPrice = shownPrice.main !== 'Price at retailer';
   const shownBrand = brandOf(product);
   const brandRepeatsName = shownBrand && String(name || '').trim().toLowerCase() === shownBrand.toLowerCase();
   // Brand only, never fall back to the category word ("Pad") in the brand slot.
@@ -70,13 +69,14 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
     const oneBadge = cardBadge(product);
     const facts = cardPrice({ ...product, price: price || priceDisplay });
     const sticker = kind || '';
-    const priceLine = facts.main !== 'Price at retailer' ? <b>{facts.main}</b> : <b className="is-muted">{facts.main}</b>;
+    // Unknown price: nothing printed (QA3 M8), never "Price at retailer".
+    const knownPrice = isKnownPrice(facts.main);
     return (
       <article data-pid={product.id} className={`ay-pcard${variant === 'row' ? ' is-row' : ''}${isSaved ? ' is-saved' : ''}`}>
         {/* 2. Brand · name. The button covers the card (same as the website's link). */}
         <small className="ay-pcard__brand" aria-hidden={showBrand ? undefined : true}>{showBrand ? secondaryLabel : '\u00a0'}</small>
         <strong className="ay-pcard__name">
-          <button type="button" className="ay-pc-main ay-pcard__link" onClick={onClick} aria-label={`${name}, ${facts.main}${facts.sub ? ` ${facts.sub}` : ''}${oneBadge ? `, ${oneBadge}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>{brandRepeatsName ? name : displayName(product)}</button>
+          <button type="button" className="ay-pc-main ay-pcard__link" onClick={onClick} aria-label={`${name}${knownPrice ? `, ${facts.main}${facts.sub ? ` ${facts.sub}` : ''}` : ''}${oneBadge ? `, ${oneBadge}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>{brandRepeatsName ? name : displayName(product)}</button>
         </strong>
         {/* 1. The product on its plate, same scale everywhere, with one category sticker (drawn first: CSS order). */}
         <Plate className="ay-pcard__plate" saved={isSaved} sticker={sticker || null}>
@@ -94,7 +94,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         {healthBacked && <HealthBackedBadge backed={healthBacked} className="ay-pc-hbadge" />}
         {/* 4. Price + unit, per use, sizes. 5. Facts. 6. Evidence + safety. */}
         <span className="ay-pcard__price">
-          <span className="ay-pcard__amount">{priceLine}{facts.sub && <small>{facts.sub}</small>}</span>
+          {knownPrice && <span className="ay-pcard__amount"><b>{facts.main}</b>{facts.sub && <small>{facts.sub}</small>}</span>}
           <PriceExtras product={product} />
         </span>
         <FactChips product={product} />
@@ -111,7 +111,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
 
   return (
     <article className={`ayna-fresh-product-card ${isList ? 'is-list' : ''} tone-${tone}`}>
-      <button type="button" className="ayna-fresh-product-main" onClick={onClick} aria-label={`${name}, ${shownPrice.main}${shownPrice.sub ? ` ${shownPrice.sub}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>
+      <button type="button" className="ayna-fresh-product-main" onClick={onClick} aria-label={`${name}${isKnownPrice(shownPrice.main) ? `, ${shownPrice.main}${shownPrice.sub ? ` ${shownPrice.sub}` : ''}` : ''}${showMatch ? `, ${badge.label}` : ''}. View product details`}>
       <span className="ayna-fresh-product-image">
         <ProductImage product={product} src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
       </span>
@@ -120,7 +120,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         <strong>{brandRepeatsName ? name : displayName(product)}</strong>
         {isList && (why || relevantReason) && <span className="ayna-fresh-product-reason">{why || relevantReason.text}</span>}
         {!isList && <small className="ayna-card-brand" aria-hidden={secondaryLabel && !brandRepeatsName ? undefined : true}>{secondaryLabel && !brandRepeatsName ? secondaryLabel : '\u00a0'}</small>}
-        <span className="ayna-fresh-product-foot">{hasDisplayPrice ? <b>{shownPrice.main}</b> : <b className="is-muted">{shownPrice.main}</b>}</span>
+        <span className="ayna-fresh-product-foot">{shownPriceText(shownPrice.main) && <b>{shownPrice.main}</b>}</span>
         {!isList && <small className="ayna-card-price-sub" aria-hidden={shownPrice.sub ? undefined : true}>{shownPrice.sub || '\u00a0'}</small>}
         {isPartner && !isList && <small className="ay-card-partner">ayna partner</small>}
         {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
