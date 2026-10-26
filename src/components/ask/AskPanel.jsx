@@ -124,7 +124,7 @@ export function AskAnswerExtras({ m, onOpenProduct = null, onOpenRead = null }) 
               ))}
             </ul>
           ) : (
-            <p className="ay-askp-nosrc">{m.local ? 'No outside sources: this comes from your own data on ayna.' : 'No checked sources came with this answer.'}</p>
+            <p className="ay-askp-nosrc">{m.noSources || (m.local ? 'No outside sources: this comes from your own data on ayna.' : 'No checked sources came with this answer.')}</p>
           )}
           {m.related?.length > 0 && <p className="ay-askp-related">Related in ayna’s library: {m.related.map((r, i) => <span key={r.id}>{i > 0 && ', '}{onOpenRead ? <button type="button" onClick={() => onOpenRead(r.id)}>{r.title}</button> : r.title}</span>)}</p>}
           {m.basedOn.length > 0 && <p className="ay-askp-based"><b>Based on:</b> {m.basedOn.join(', ')}</p>}

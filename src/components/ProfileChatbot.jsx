@@ -261,7 +261,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     if (home && !sending) { if (box) box.scrollTop = 0; return; }
     const last = messages[messages.length - 1];
     if (box && last && last.role !== 'user') {
-      const answers = box.querySelectorAll('.ayna-ask-message--ayna:not(.ayna-ask-message--typing)');
+      const answers = box.querySelectorAll('.ay-askp-msg.is-ayna');
       const target = answers[answers.length - 1];
       if (target) { box.scrollTo({ top: target.offsetTop - box.offsetTop - 8, behavior: 'smooth' }); return; }
     }
@@ -532,7 +532,6 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                 <AskMessage
                   key={i}
                   m={m}
-                  className={m.role === 'user' ? 'ayna-ask-message ayna-ask-message--user' : m.role === 'assistant' ? 'ayna-ask-message ayna-ask-message--ayna' : 'ayna-ask-message ayna-ask-message--system'}
                   before={m.role === 'assistant' ? <AskStatCard stats={m.stats} /> : null}
                   onOpenProduct={onOpenProduct && resolveProduct ? (p) => { const full = resolveProduct(p.id); if (full) { setOpen(false); onOpenProduct(full); } } : null}
                   onOpenRead={onOpenRead ? (id) => { setOpen(false); onOpenRead(id); } : null}
@@ -579,7 +578,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
               );
             })}
             {sending && (
-              <div className="ay-askp-typing ayna-ask-message--typing" role="status" aria-label="Looking into it">
+              <div className="ay-askp-typing" role="status" aria-label="Looking into it">
                 <i /><i /><i />{slow && <small>Still looking into it…</small>}
               </div>
             )}

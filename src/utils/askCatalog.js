@@ -124,6 +124,7 @@ async function productAnswer(product, ctx) {
     columns: (who.yes.length || who.no.length) ? { kind: 'fit', yes: who.yes.slice(0, 5), no: who.no.slice(0, 5) } : null,
     products: [await productCard(product, ctx)],
     sources: await markSources(links, { brand, max: 5 }),
+    noSources: 'No sources on file for this product yet.',
     basedOn: ['ayna’s product record', details && details.matchStatus !== 'no-profile' ? 'your health profile' : ''].filter(Boolean),
   };
 }
@@ -174,7 +175,7 @@ export async function localCatalogAnswer(text, ctx = {}) {
   if (!reads.length && !scored.length) return null;
   const parts = [`Here’s what ayna’s library has on ${topic}.`];
   if (reads.length) parts.push(`**${reads.length === 1 ? 'Read' : 'Reads'}**\n${reads.map((a) => `- **${clean(a.title)}**: ${clean(a.teaser)}`).join('\n')}`);
-  if (scored.length) parts.push('**In ayna’s catalog for it**, each with your match when ayna has your answers:');
+  if (scored.length) parts.push('**In ayna’s catalog**, with your match when ayna has your answers:');
   if (!ctx.signedIn) parts.push('For an answer about you, sign in and ask ayna’s AI.');
   const dd = reads.map(dosAndDonts).find(Boolean);
   const links = reads.flatMap((a) => readParts(a).links);
@@ -184,6 +185,7 @@ export async function localCatalogAnswer(text, ctx = {}) {
     columns: dd ? { kind: 'do', yes: dd.dos.slice(0, 4), no: dd.donts.slice(0, 4), from: clean(reads.find((a) => dosAndDonts(a))?.title) } : null,
     products: await Promise.all(scored.map((p) => productCard(p, ctx))),
     sources: await markSources(links, { max: 4 }),
+    noSources: 'No checked sources on file for this yet.',
     basedOn: ['ayna’s reads and their sources', 'ayna’s product records', ctx.profile ? 'your health profile, for the match' : ''].filter(Boolean),
   };
 }
