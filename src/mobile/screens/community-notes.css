@@ -158,8 +158,10 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-pods { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-pods > :last-child { margin-right: 28px; }
 /* playlists: each row is an outlined, tappable card, 12px apart */
-.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-playlist-rows { display: grid; gap: 12px; margin: 0; padding: 0 0 4px; list-style: none; }
-.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-playlist-row { border: 1.5px solid var(--d-ink) !important; border-radius: 20px !important; background: var(--d-page) !important; box-shadow: var(--amn-shadow) !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-playlist-rows { display: grid; gap: 12px; margin: 0; padding: 0 0 4px; list-style: none; border: 0; border-radius: 0; background: none; }
+/* Loop D: the playlist name wraps to two lines instead of cutting off mid-word. */
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-playlist-row-copy strong { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-playlist-row { border: 1.5px solid var(--d-ink) !important; border-radius: 16px !important; background: var(--d-page) !important; box-shadow: var(--amn-shadow) !important; }
 @media (prefers-reduced-motion: reduce) {
   .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-prompt:active { transform: none; }
 }

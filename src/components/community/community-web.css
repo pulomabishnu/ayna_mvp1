@@ -779,3 +779,12 @@ html body .app-container.app-container.app-container.app-container.app-container
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm .cm-mention-wrap .ay-pcard.ay-pcard.is-row.cm-mention-card { padding-bottom: 8px !important; border: 0 !important; }
 /* Loop D: disabled primary (Post reply before she types): outline and muted text, no sticker. */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .cm .ay-btn.ay-btn--primary:disabled { opacity: 1 !important; background: transparent !important; color: var(--ay-text-2) !important; border: 1.5px solid var(--ay-hairline, rgba(62, 39, 35, .3)) !important; box-shadow: none !important; cursor: default; }
+/* Loop D r2: rail lists use the full rail width (they shrank to their text), one link size, no dashed outlines. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container {
+  .cm-rail__more > :is(.cm-topicset.is-rail, .ut-rail) { justify-self: stretch; }
+  .ut-rail__links .ct-link, .cm-rail .cm-rules-btn { font: 600 14px/1.4 var(--ay-font-ui) !important; }
+  .cm-topic.is-suggest { border-style: solid !important; }
+  /* Playlists: the same three-way switch as the app (was a native select). */
+  .cm-plswitch button { min-height: 40px; }
+  .cm-plswitch button[aria-pressed='true'] { background: var(--ay-text); border-color: var(--ay-text); color: var(--ay-page) !important; }
+}

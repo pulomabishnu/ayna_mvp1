@@ -205,3 +205,8 @@ html body .app-container.app-container:is([data-theme='dark'], [data-theme='bran
 .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats b { font: 700 20px/1.05 var(--ay-font-display) !important; color: var(--askp-ink) !important; }
 .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats small { font: 500 13px/1.3 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-goals { margin: 0 !important; font: 500 14px/1.45 var(--ay-font-ui) !important; }
+/* Loop D r2: the Today sheet's mic and input match AskPanel (the older ds-app sheet painted them pink and butter). */
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-mic:not([aria-pressed='true']) { background: var(--askp-bg) !important; color: var(--askp-ink) !important; border-color: var(--askp-ink) !important; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-input { background: var(--askp-bg) !important; }
+/* Loop D r2: the match pill in answer plates is the inverse of the panel in both themes (in dark it vanished: espresso on espresso). */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__match .ay-match-pill:not(.is-hold) { background: var(--askp-ink) !important; color: var(--askp-bg) !important; }

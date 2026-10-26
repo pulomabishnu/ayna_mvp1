@@ -89,3 +89,6 @@
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .am-mention-wrap .ay-pcard.ay-pcard.is-row { padding-bottom: 8px !important; border: 0 !important; }
 /* Loop D: a disabled primary (Post reply before she types) reads as waiting, not as a muddy filled button. */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-primary:disabled { opacity: 1 !important; background: transparent !important; color: var(--d-ink-2) !important; border: 1.5px solid var(--d-hair) !important; border-color: color-mix(in srgb, var(--d-ink) 30%, transparent) !important; box-shadow: none !important; }
+/* Loop D: playlist switch selected state is the espresso pill used by every other switch (and the website). */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-playlist-switch button { border: 1.5px solid var(--d-ink) !important; background: transparent !important; color: var(--d-ink) !important; font-weight: 600 !important; box-shadow: none !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-playlist-switch button[aria-pressed='true'] { background: var(--d-ink) !important; color: var(--d-page) !important; }

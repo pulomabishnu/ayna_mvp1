@@ -22,6 +22,13 @@ const playlists = () => [
   { id: '00000000-0000-4000-8000-0000000000a1', title: 'Sample playlist: period kit', owner_id: '00000000-0000-4000-8000-000000000110', owner_display_name: 'Sample member 1', item_count: 3, visibility: 'public', preview_product_ids: ['p-saalt-cup', 'p-rael-organic-pad', 'p-honeypot-pad'], cover_url: null, updated_at: ago(90), is_mine: false },
 ];
 
+// Sample replies, so a post's reply count matches what its page shows.
+const REPLY_LINES = ['Sample reply: same here, it got easier after the second cycle.', 'Sample reply: thanks for posting this.', 'Sample reply: I had the opposite experience, but good to know.', 'Sample reply: saving this for later.'];
+const comments = () => posts().flatMap((p) => Array.from({ length: p.comment_count || 0 }, (_, i) => {
+  const n = ((i + 1) % 4) + 1;
+  return { id: `${p.id.slice(0, -3)}${p.id.slice(-1)}c${i}`, post_id: p.id, parent_id: null, ...author(n), body: REPLY_LINES[i % REPLY_LINES.length], product_id: null, is_anonymous: false, is_mine: false, created_at: ago(5 + i * 7), edited_at: null };
+}));
+
 // One sample team pick, so the "Picked by the ayna team" quote can be looked at.
 const teamPicks = () => [{ post_id: '00000000-0000-4000-8000-000000000001', picked_at: ago(30) }];
 
@@ -53,6 +60,7 @@ function tableRows(table, filters) {
   else if (table === 'community_playlist_items') rows = playlists()[0].preview_product_ids.map((product_id, position) => ({ product_id, position, note: null, added_at: ago(90), added_by: null }));
   else if (table === 'community_profiles') rows = profiles();
   else if (table === 'community_team_picks') rows = teamPicks();
+  else if (table === 'community_feed_comments') rows = comments();
   for (const [col, val] of filters) rows = rows.filter((r) => !(col in r) || r[col] === val);
   return rows;
 }
