@@ -59,7 +59,7 @@ html body .app-container.app-container.app-container.app-container {
   .ct .ay-lib-cover strong { font: 600 12.5px/1.15 var(--ay-sans-stack) !important; letter-spacing: 0 !important; text-transform: none !important; color: inherit !important; }
   .ct .ay-lib-cover__spot { width: 30px !important; height: 30px !important; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
   .ct .ay-lib-cover.is-pink { background: #f7badd !important; }
-  .ct .ay-lib-cover.is-peri { background: #769ebe !important; }
+  .ct .ay-lib-cover.is-peri { background: #f6e3a1 !important; }
   .ct .ay-lib-cover.is-butter, .ct .ay-lib-cover.is-mint { background: #f6e3a1 !important; }
   .ct .ay-lib-cover.is-ink { background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; }
 
@@ -254,7 +254,7 @@ html body .app-container.app-container.app-container.app-container {
 html body .app-container.app-container.app-container.app-container {
   .wy { padding-top: var(--ay-s40); padding-bottom: var(--ay-s24); }
   .wy-head { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(240px, 320px); align-items: center; gap: var(--ay-s24); padding-bottom: var(--ay-s24); border-bottom: 1px solid var(--ay-hairline); }
-  .wy-avatar { display: grid; place-items: center; width: 88px; height: 88px; border-radius: 50%; overflow: hidden; background: #769ebe; color: #3e2723; border: 1.5px solid var(--ay-outline); font: 400 40px/1 var(--ay-serif-stack); }
+  .wy-avatar { display: grid; place-items: center; width: 88px; height: 88px; border-radius: 50%; overflow: hidden; background: #f6e3a1; color: #3e2723; border: 1.5px solid var(--ay-outline); font: 400 40px/1 var(--ay-serif-stack); }
   .wy-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .wy-who { display: grid; gap: 6px; min-width: 0; }
   .wy-who .ay-h1 { overflow-wrap: anywhere; }
@@ -431,7 +431,7 @@ html body .app-container.app-container.app-container.app-container {
   .qz-progress::before, .qz-progress::after { content: none !important; }
   .qz-progress span { flex: 1; height: 6px !important; border: 0 !important; border-radius: 3px !important; background: var(--ay-hairline) !important; animation: none !important; }
   .qz-progress span.is-done { background: var(--ay-text) !important; }
-  .qz-progress span.is-now { background: #769ebe !important; }
+  .qz-progress span.is-now { background: #f6e3a1 !important; }
   .qz-head .qz-count { font: 600 15px/1 var(--ay-sans-stack) !important; color: var(--ay-text); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .qz-head .qz-count i { font-style: normal; font-weight: 500; color: var(--ay-text-2); }
   .qz-head { row-gap: 6px; }
@@ -706,7 +706,7 @@ html body .app-container.app-container.app-container.app-container {
   .sa__sources .ay-source-card p { margin: 0; }
   .sa__disclaimer { margin: 0; font: 500 13px/1.45 var(--ay-sans-stack); color: var(--ay-text-2); }
   .sa__owner { display: flex; align-items: center; gap: 12px; padding: var(--ay-s12) var(--ay-inset); border-radius: var(--ay-r-group); background: var(--ay-group); }
-  .sa__avatar { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: #769ebe; color: #3e2723; border: 1.5px solid var(--ay-outline); font: 600 17px/1 var(--ay-sans-stack); }
+  .sa__avatar { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: #f6e3a1; color: #3e2723; border: 1.5px solid var(--ay-outline); font: 600 17px/1 var(--ay-sans-stack); }
   .sa__avatar img { width: 100%; height: 100%; object-fit: cover; }
   .sa__who { display: grid; flex: 1; min-width: 0; }
   .sa__who strong { font: 600 16px/1.3 var(--ay-sans-stack); }

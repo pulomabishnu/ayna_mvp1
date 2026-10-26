@@ -105,7 +105,7 @@ html[data-ay-vt] .ay-push-in { animation: none !important; }
 :is(.app-container, .ayna-mobile) .ay-checkin__week { display: inline-flex; gap: 4px; }
 :is(.app-container, .ayna-mobile) .ay-checkin__week i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid currentColor; background: transparent; }
 :is(.app-container, .ayna-mobile) .ay-checkin__week i.is-1 { background: #f7badd; }
-:is(.app-container, .ayna-mobile) .ay-checkin__week i.is-2 { background: #769ebe; }
+:is(.app-container, .ayna-mobile) .ay-checkin__week i.is-2 { background: #f6e3a1; }
 :is(.app-container, .ayna-mobile) .ay-checkin__week i.is-3 { background: currentColor; }
 :is(.app-container, .ayna-mobile) .ay-checkin__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
 :is(.app-container, .ayna-mobile) .ay-checkin__more { min-height: 40px; padding: 0; border: 0; background: none; color: inherit; font: 600 var(--ay-fs-secondary, 14px)/1.2 var(--ay-sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }

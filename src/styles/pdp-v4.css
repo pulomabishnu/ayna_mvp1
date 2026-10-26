@@ -76,7 +76,7 @@ html body .app-container[data-theme='brand-dark'] #pdp-v4 {
 #pdp-v4 .pdp-actions__primary .pdp-btn--buy * { color: var(--v-btn-fg) !important; }
 #pdp-v4 .pdp-actions__primary .pdp-actions__eco { flex: 1 0 140px !important; max-width: 220px; height: auto !important; width: auto !important; min-height: 58px !important; padding: 0 18px !important; border: 2px solid var(--v-fg) !important; border-radius: 99px !important; background: transparent !important; color: var(--v-fg) !important; font: 700 17px/1 'Figtree', sans-serif !important; box-shadow: none !important; }
 #pdp-v4 .pdp-actions__primary .pdp-actions__eco * { color: var(--v-fg) !important; }
-#pdp-v4 .ay-buy__warn { display: grid !important; grid-template-columns: auto 1fr; gap: 14px; align-items: start; margin: 0 !important; padding: 18px 20px !important; border: 0 !important; border-radius: 24px !important; background: var(--v-sky) !important; box-shadow: none !important; }
+#pdp-v4 .ay-buy__warn { display: grid !important; grid-template-columns: auto 1fr; gap: 14px; align-items: start; margin: 0 !important; padding: 18px 20px !important; border: 0 !important; border-radius: 24px !important; background: #f6e3a1 !important; box-shadow: none !important; }
 #pdp-v4 .ay-buy__warn .ay-buy__bang { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--v-deep) !important; color: var(--v-sky) !important; font: 700 16px/1 'Figtree', sans-serif !important; }
 #pdp-v4 .ay-buy__warn .ay-buy__warntext { display: grid; gap: 8px; }
 #pdp-v4 .ay-buy__warn .ay-buy__warntext > span { color: var(--v-deep) !important; font: 600 16px/1.5 'Figtree', sans-serif !important; }
@@ -131,7 +131,7 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-itabs__bar >
 #pdp-v4 .ay-tabs__list > li { counter-increment: who; position: relative; display: block !important; margin: 0 !important; padding: 18px 18px 16px 62px !important; border-radius: 22px; background: rgba(var(--v-fg-rgb), .07) !important; font: 400 17px/1.55 'Figtree', sans-serif !important; list-style: none !important; }
 #pdp-v4 .ay-tabs__list > li::before { content: counter(who); position: absolute !important; left: 18px; top: 16px; display: grid; place-items: center; width: 30px; height: 30px; margin: 0 !important; border-radius: 50%; background: var(--v-num); color: var(--v-ink); font: 700 14px/1 'Figtree', sans-serif; }
 #pdp-v4 .ay-tabs__list > li:nth-child(3n + 2)::before { background: var(--v-pink); }
-#pdp-v4 .ay-tabs__list > li:nth-child(3n)::before { background: var(--v-sky); color: var(--v-deep); }
+#pdp-v4 .ay-tabs__list > li:nth-child(3n)::before { background: #f6e3a1; color: var(--v-deep); }
 
 /* ---------- Boxes used across the tabs ---------- */
 #pdp-v4 .ay-box { display: grid; gap: 12px; padding: 24px 26px; border-radius: 28px; }
@@ -179,7 +179,7 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-itabs__bar >
 #pdp-v4 .ay-ev2__gradehead { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 #pdp-v4 .ay-ev2__need { font: 400 22px/1.2 'ayna Display', Georgia, serif !important; }
 #pdp-v4 .ay-ev2__grade { padding: 6px 11px !important; border: 0 !important; border-radius: 99px !important; background: rgba(62, 39, 35, .15) !important; font: 700 13px/1 'Figtree', sans-serif !important; }
-#pdp-v4 .ay-ev2__grade.is-a { background: var(--v-sky) !important; }
+#pdp-v4 .ay-ev2__grade.is-a { background: #f6e3a1 !important; }
 #pdp-v4 .ay-ev2__grade.is-b { background: var(--v-pink) !important; }
 #pdp-v4 .ay-ev2__bars { display: flex; gap: 6px; }
 #pdp-v4 .ay-ev2__bars i { flex: 1; height: 8px; border-radius: 99px; background: rgba(62, 39, 35, .15); }
@@ -189,11 +189,11 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-itabs__bar >
 
 /* ---------- Safety ---------- */
 #pdp-v4 .ay-safety { display: grid; gap: 24px; }
-#pdp-v4 .ay-safety__alert { padding: 20px 22px !important; border: 0 !important; border-radius: 26px !important; background: var(--v-sky) !important; }
+#pdp-v4 .ay-safety__alert { padding: 20px 22px !important; border: 0 !important; border-radius: 26px !important; background: #f6e3a1 !important; }
 #pdp-v4 .ay-safety__alert * { color: var(--v-deep) !important; }
 #pdp-v4 .ay-safety__alert .ay-ev__body { font-weight: 600 !important; margin: 0 !important; }
 #pdp-v4 .ay-safety__list { display: grid; gap: 10px; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; list-style: none !important; counter-reset: warn; }
-#pdp-v4 .ay-safety__list > li { counter-increment: warn; position: relative; display: block !important; margin: 0 !important; padding: 26px 20px 20px 74px !important; border: 0 !important; border-radius: 26px !important; background: var(--v-sky) !important; color: var(--v-deep) !important; font: 600 17px/1.55 'Figtree', sans-serif !important; list-style: none !important; }
+#pdp-v4 .ay-safety__list > li { counter-increment: warn; position: relative; display: block !important; margin: 0 !important; padding: 26px 20px 20px 74px !important; border: 0 !important; border-radius: 26px !important; background: #f6e3a1 !important; color: var(--v-deep) !important; font: 600 17px/1.55 'Figtree', sans-serif !important; list-style: none !important; }
 #pdp-v4 .ay-safety__list > li::before { content: counter(warn); position: absolute !important; left: 20px; top: 20px; display: grid; place-items: center; width: 38px; height: 38px; margin: 0 !important; border-radius: 50%; background: var(--v-deep); color: #ffedac; font: 400 19px/1 'ayna Display', serif; }
 #pdp-v4 .ay-safety__list > li * { color: var(--v-deep) !important; }
 #pdp-v4 .ay-safety .ay-pd__rows { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 10px; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
@@ -334,14 +334,14 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-itabs__bar >
 }
 #pdp-v4 .ayq .ayq-checks > li { border-radius: 22px !important; background: rgba(var(--v-fg-rgb), .07) !important; }
 #pdp-v4 .ayq .ayq-checks > li:nth-child(3n + 2) .ayq-checks__n { background: var(--v-pink) !important; color: var(--v-ink) !important; }
-#pdp-v4 .ayq .ayq-checks > li:nth-child(3n) .ayq-checks__n { background: var(--v-sky) !important; color: var(--v-deep) !important; }
+#pdp-v4 .ayq .ayq-checks > li:nth-child(3n) .ayq-checks__n { background: #f6e3a1 !important; color: var(--v-deep) !important; }
 
 /* Boxes: folders become the design's rounded cards. */
 #pdp-v4 .ayq .ayq-folder__tab { padding: 0 0 8px !important; border-radius: 0 !important; background: none !important; font: 700 12px/1.2 'Figtree', sans-serif !important; letter-spacing: 0; text-transform: none; color: var(--v-accent-text) !important; }
 #pdp-v4 .ayq .ayq-folder { display: grid; padding: 22px 24px !important; border-radius: 28px !important; background: var(--v-butter) !important; }
 #pdp-v4 .ayq .ayq-folder :is(p, li, b, strong, h4, h5, a, span, dt, dd) { color: var(--v-ink) !important; }
 #pdp-v4 .ayq .ayq-folder__body { padding: 0 !important; border-radius: 0 !important; background: none !important; }
-#pdp-v4 .ayq .ayq-folder.is-alert { background: var(--v-sky) !important; }
+#pdp-v4 .ayq .ayq-folder.is-alert { background: #f6e3a1 !important; }
 #pdp-v4 .ayq .ayq-folder.is-alert .ayq-folder__tab { color: var(--v-deep) !important; }
 #pdp-v4 .ayq .ayq-folder.is-alert :is(p, li, b, a, span) { color: var(--v-deep) !important; }
 #pdp-v4 .ayq .ayq-byline { background: rgba(var(--v-fg-rgb), .07) !important; border-radius: 20px !important; }
@@ -355,10 +355,10 @@ html body .app-container:not([data-theme='brand-dark']) #pdp-v4 .ay-itabs__bar >
 #pdp-v4 .ayq .ayq-grades__need { font: 400 22px/1.2 'ayna Display', Georgia, serif !important; }
 #pdp-v4 .ayq .ayq-ing { padding: 18px 20px !important; border: 1.5px solid rgba(var(--v-fg-rgb), .3) !important; border-radius: 24px !important; background: rgba(var(--v-fg-rgb), .07) !important; }
 /* Safety: the note and the checks in sky. */
-#pdp-v4 .ayq .ayq-alert { padding: 20px 22px !important; border-radius: 26px !important; background: var(--v-sky) !important; }
+#pdp-v4 .ayq .ayq-alert { padding: 20px 22px !important; border-radius: 26px !important; background: #f6e3a1 !important; }
 #pdp-v4 .ayq .ayq-alert :is(p, li, a, b, h4, h5, span) { color: var(--v-deep) !important; }
 #pdp-v4 .ayq .ayq-panel.is-safety .ayq-bullets { gap: 10px !important; counter-reset: warn; max-width: none; }
-#pdp-v4 .ayq .ayq-panel.is-safety .ayq-bullets > li { counter-increment: warn; padding: 22px 20px 20px 70px !important; border-radius: 26px !important; background: var(--v-sky) !important; color: var(--v-deep) !important; font: 600 17px/1.55 'Figtree', sans-serif !important; }
+#pdp-v4 .ayq .ayq-panel.is-safety .ayq-bullets > li { counter-increment: warn; padding: 22px 20px 20px 70px !important; border-radius: 26px !important; background: #f6e3a1 !important; color: var(--v-deep) !important; font: 600 17px/1.55 'Figtree', sans-serif !important; }
 #pdp-v4 .ayq .ayq-panel.is-safety .ayq-bullets > li * { color: var(--v-deep) !important; }
 #pdp-v4 .ayq .ayq-panel.is-safety .ayq-bullets > li::before { content: counter(warn) !important; left: 18px !important; top: 18px !important; display: grid; place-items: center; width: 36px !important; height: 36px !important; border-radius: 50%; background: var(--v-deep) !important; color: #ffedac; font: 400 18px/1 'ayna Display', serif; }
 #pdp-v4 .ayq .ayq-folder.is-alert .ayq-bullets > li { padding: 0 0 0 22px !important; background: none !important; font-weight: 500 !important; }

@@ -115,7 +115,7 @@ html body .app-container.app-container.app-container.app-container .lb {
 
   /* ---------- read page ---------- */
   & .lb-rhead { --band: var(--lb-pink); --band-fg: var(--lb-esp); position: relative; z-index: 1; padding: 16px 0 64px; background: var(--band); color: var(--band-fg); }
-  & .lb-tone--hormonal, & .lb-tone--vaginal { --band: var(--lb-sky); }
+  & .lb-tone--hormonal, & .lb-tone--vaginal { --band: #f6e3a1; }
   & .lb-tone--pelvic { --band: var(--lb-esp); --band-fg: var(--lb-butter); }
   & .lb-crumbs { display: flex; align-items: center; gap: 8px; min-height: 44px; font: 500 15px/1 var(--lb-sans); }
   & .lb-crumbs :is(a, button) { color: var(--band-fg) !important; }
@@ -145,7 +145,7 @@ html body .app-container.app-container.app-container.app-container .lb {
   & .lb-h2--sources { margin-top: 48px !important; padding-top: 24px; border-top: 1.5px solid var(--ay-outline); scroll-margin-top: 24px; }
   & .lb-sources { margin: 0 !important; padding: 0 !important; list-style: none !important; }
   & .lb-src { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--ay-hairline); margin: 0 !important; }
-  & .lb-src__n { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--lb-sky); color: var(--lb-esp); font: 400 15px/1 var(--lb-display); font-variant-numeric: tabular-nums; }
+  & .lb-src__n { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #f6e3a1; color: var(--lb-esp); font: 400 15px/1 var(--lb-display); font-variant-numeric: tabular-nums; }
   & .lb-src__body { display: grid; gap: 4px; min-width: 0; }
   & .lb-src__pub { font: 600 13px/1.3 var(--lb-sans); color: var(--ay-text-2); }
   & .lb-src__title { font: 600 17px/1.35 var(--lb-sans); color: var(--ay-text); }

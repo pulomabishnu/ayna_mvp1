@@ -5,7 +5,7 @@
   background: var(--ay-rose, #f7badd); color: var(--ay-ink, #3e2723);
   border: 2px solid var(--ay-ink, #3e2723);
 }
-.app-container .fpc.is-claimed { background: var(--ay-sky, #769ebe); }
+.app-container .fpc.is-claimed { background: #f6e3a1; }
 .app-container .fpc__body { min-width: 0; }
 .app-container .fpc__tag {
   display: inline-block; margin-bottom: 8px; padding: 3px 10px; border-radius: 999px;

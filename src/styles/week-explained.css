@@ -182,7 +182,7 @@ html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wh-week.ay-hd-fold > s
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal-label { font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li b { font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans) !important; font-variant-numeric: tabular-nums; text-align: right; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li small { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; font: 500 13px/1.35 var(--x-sans) !important; color: var(--x-soft) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li small::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #769ebe; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li small::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #f6e3a1; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li.is-out small { color: var(--x-ink) !important; font-weight: 600 !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li.is-out small::before { background: #f7badd; box-shadow: inset 0 0 0 1px #3e2723; }
 
