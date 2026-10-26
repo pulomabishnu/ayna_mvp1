@@ -1,13 +1,13 @@
 /* Shared Explore pieces for website and app: NeedTiles and the Leave out chips (AvoidChips). Tokens only. */
 /* Needs: tiles (#9, #22), then grouped chips (#16). */
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 24px 16px; }
-:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtiles.is-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtiles.is-row { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 8px; }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtiles > li { margin: 0; }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtile { display: grid; gap: 8px; width: 100%; padding: 0; border: 0; background: none; color: var(--ay-ink); text-align: left; cursor: pointer; }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtile__label { font: 600 15px/1.3 var(--ay-font-ui); }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtile:hover .ay-needtile__label, :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtile[aria-pressed='true'] .ay-needtile__label { text-decoration: underline; text-underline-offset: 3px; }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtile:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 4px; border-radius: var(--ay-r-md); }
-@media (max-width: 720px) { :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtiles, :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtiles.is-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px) { :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-needtiles.is-row .ay-needtile__label { font-size: 13px; } }
 /* Leave out chips (#17), above the Products grid on web and app. */
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-avoid { display: grid; gap: 8px; margin: 16px 0; }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .ay-avoid__label { margin: 0 !important; color: var(--ay-ink); font: 700 15px/1.3 var(--ay-font-ui) !important; }

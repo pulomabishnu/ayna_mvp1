@@ -2,10 +2,7 @@ import { useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
 import ReadCard from '../../components/library/ReadCard.jsx';
-import { Chip, ChipRow } from '../../components/ui/ay';
-import ReadCover from '../../components/library/ReadCover.jsx';
-import { minutesFor } from '../../components/library/readTime.js';
-import { READ_CREDITS } from '../../data/readCovers.js';
+import { Chip, ChipRow, OutlineButton } from '../../components/ui/ay';
 import { READ_SECTIONS } from '../../data/readSections.js';
 import { buildLibrary, hasQuizAnswers } from '../utils/personalReads.js';
 import SuggestBox from '../../components/SuggestBox.jsx';
@@ -16,22 +13,12 @@ import '../library-v2.css';
 import { sentenceCase as sentence } from '../../utils/sentenceCase.js';
 const FEATURED_READ_ID = 'postpartum-stretch-marks';
 
-/** The one featured read: where she left off, else her top pick, else the editors' pick. */
+/** The one featured read (where she left off, else her top pick, else the editors' pick), as the shared ReadCard list row: who wrote and reviewed it, and its sources. */
 function FeaturedRead({ article, label, progress, onOpen }) {
   if (!article) return null;
-  const credit = READ_CREDITS[article.id];
-  return <section className="al-feature" aria-labelledby="al-feature-title">
-    <span className="al-tab">{label}</span>
-    <button type="button" className="al-feature__cover" tabIndex={-1} aria-hidden="true" onClick={() => onOpen?.(article)}>
-      <ReadCover article={article} minutes={minutesFor(article)} />
-    </button>
-    <div className="al-feature__text">
-      <h2 id="al-feature-title" className="al-feature__title">{article.title}</h2>
-      {credit
-        ? <p className="al-feature__by">By {credit.by}<br />Reviewed by {credit.reviewedBy}</p>
-        : article.source && <p className="al-feature__by">Checked against {article.source}</p>}
-      <button type="button" className="al-feature__go" onClick={() => onOpen?.(article)}>{progress > 0 && progress < 1 ? 'Keep reading' : 'Read it'} <span aria-hidden="true">→</span></button>
-    </div>
+  return <section className="al-feature al-feature--v9" aria-labelledby="al-feature-h">
+    <h2 id="al-feature-h" className="al-feature__h">{label}</h2>
+    <ReadCard article={article} layout="row" headingLevel={3} progress={progress} onOpen={() => onOpen?.(article)} />
   </section>;
 }
 
@@ -71,7 +58,7 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
     body = <>
       <FeaturedRead article={featured} label={featuredLabel} progress={featured ? progressOf(featured) : 0} onOpen={onOpenArticle} />
       {row('keep', 'Keep reading', keepReading.filter((a) => a !== featured))}
-      {hasProfile ? row('foryou', 'For you', forYou.filter((a) => a !== featured), null, 'foryou', forYou.length) : canAskForQuiz && onStartQuiz && <button type="button" className="al-match" onClick={onStartQuiz}>Get reads for you <span aria-hidden="true">→</span></button>}
+      {hasProfile ? row('foryou', 'For you', forYou.filter((a) => a !== featured), null, 'foryou', forYou.length) : canAskForQuiz && onStartQuiz && <div className="al-match--v9"><OutlineButton onClick={onStartQuiz}>Get reads for you</OutlineButton></div>}
       {rows.map((r) => row(r.id, r.label, r.items, null, r.id))}
     </>;
   }
@@ -86,7 +73,7 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
       <SearchBar placeholder="Search reads" ariaLabel="Search reads" value={query} onChange={(e) => setQuery(e.target.value)} />
     </header>
     {q.length >= 2 && <SearchAssist variant="app" query={query} resultCount={searchArticles(query, articles).length} onUse={setQuery} />}
-    {q.length < 2 && <ChipRow label="Topics" className="al-topics al-topics--v9">
+    {q.length < 2 && <ChipRow label="Topics" className="al-topics--v9">
       {topics.map(([id, label, n]) => <Chip key={id} selected={topic === id} onClick={() => setTopic(id)}>{label} <span className="al-topics__n">{n}</span></Chip>)}
     </ChipRow>}
     {body}

@@ -72,7 +72,11 @@ export function cardSizes(product) {
     const size = whole || parts.find((x) => SIZE_PART.test(x)) || '';
     if (size && !out.some((x) => x.toLowerCase() === size.toLowerCase())) out.push(size);
   }
-  return out.length >= 2 ? out : [];
+  if (out.length < 2) return [];
+  // Already said on the price line ("14 or 24 count"): no pills repeating it.
+  const priceText = String(product?.price || '').toLowerCase();
+  if (out.every((x) => { const n = x.match(/\d+/); return n && priceText.includes(n[0]); })) return [];
+  return out;
 }
 
 /** "≈ $0.24 a cycle" (reusables) or "≈ $0.33 a day" (supplies), from the PDP's costPerUse; null when unknown. */
@@ -82,17 +86,19 @@ export function cardPerUse(product) {
 }
 
 /** Two or three short facts from the record ("Holds 25–37 mL", "Reusable 10 yrs", "FSA/HSA"). */
-export function cardFacts(product, { max = 3 } = {}) {
+export function cardFacts(product, { max = 2 } = {}) {
   if (!product || product.type === 'digital') return [];
   const out = [];
   const cap = capacityMl(product);
   if (cap) out.push(`Holds ${cap}`);
   const h = wearHours(product);
   if (h && cupOrDisc(product)) out.push(`Up to ${h} hrs`);
+  // Lifespan and supply already show in the per-use chip ("≈ $0.24 a cycle"), so only when there is none.
+  const perUse = Boolean(costPerUse(product));
   const life = lifespanYears(product);
-  if (life) out.push(`Reusable ${life.upTo ? 'up to ' : ''}${life.years} yrs`);
+  if (life && !perUse) out.push(`Reusable ${life.upTo ? 'up to ' : ''}${life.years} yrs`);
   const days = supplyDays(product);
-  if (days) out.push(`${days}-day supply`);
+  if (days && !perUse) out.push(`${days}-day supply`);
   const dose = String(product.name || '').match(/\b(\d+(?:\.\d+)?)\s*(mg|mcg|IU)\b/i);
   if (dose && !cap) out.push(`${dose[1]} ${dose[2].toLowerCase() === 'iu' ? 'IU' : dose[2].toLowerCase()}`);
   // FSA/HSA from structured catalog fields only (same rule as the Shop filter).

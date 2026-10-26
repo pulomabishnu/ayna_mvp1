@@ -59,3 +59,7 @@
 
 /* 13px floor on what Explore owns (web). */
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx :is(.wx-posts small, .wx-suggest__head) { font-size: 13px !important; }
+/* The band's right gutter: the pill track never runs past the search box on a phone. */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs { max-width: min(640px, calc(100vw - 40px)) !important; box-sizing: border-box; }
+/* Rails: each card its own height (no stretched gap above the heart). */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-row { align-items: start; }
