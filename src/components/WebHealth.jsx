@@ -9,6 +9,7 @@ import HealthHome from '../mobile/components/HealthHome.jsx';
 import TodayFeed from './today/TodayFeed.jsx';
 import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './personality/DS.jsx';
 import { headline, readHomeLook } from '../mobile/components/homeLook.js';
+import { syncState } from '../health/dashView.js';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
 
@@ -68,6 +69,10 @@ function ConnectNote({ signedIn, onSignIn, onOpenConnections }) {
     <section className="ay-wh-connect" aria-labelledby="ay-wh-connect-h">
       <h3 id="ay-wh-connect-h">Want a more personal rundown?</h3>
       <p>Connect health data, or keep using quick check-ins on Today. Either works. Apple Health connects in the ayna iPhone app (beta).</p>
+      {/* What the dashboard will hold, in words only (dashboard audit 9.3): nothing here is anyone's data. */}
+      <dl className="ay-db-facts is-preview">
+        {DASH_PARTS.map((p) => <div key={p.k}><dt>{p.t}</dt><dd>{p.d}</dd></div>)}
+      </dl>
       <div className="ay-wh-lockactions">
         {signedIn
           ? <button type="button" className="ay-wh-btn is-quiet" onClick={onOpenConnections}>Upload a file or connect Oura</button>
@@ -150,6 +155,29 @@ function TodayBand({ title, today, name, cycle, sleepPoints, products }) {
         <ProductStickers products={products} max={1} className="ay-wh-hello__stickers" />
         {look === 'b' && <span className="ay-wh-hello__curvebox"><CurvedRing text="your week · your week · your week · " className="ay-wh-hello__curve" /></span>}
       </span>
+    </header>
+  );
+}
+
+/**
+ * The dashboard's band (dashboard audit 7.1, 14 DashBand): ≈120px espresso
+ * with the scalloped edge kept; the date with the sync time, "Your week"
+ * (h1, 30px) and the cycle ring (72px). No sticker or loose shapes here:
+ * they stay on Today without data and on the landing page.
+ */
+function DashBand({ title, today, cycle, sync, hormonalBC }) {
+  return (
+    <header className="ay-db-bandhead ay-pagehead ay-band--espresso">
+      <span className="sr-only" id="ay-wh-title">{title}</span>
+      <div>
+        <p className="ay-db-bandhead__date">{fmtLongDay(today)}{sync && !sync.stale ? ` · ${sync.label}` : ''}</p>
+        <h1 className="ay-db-bandhead__h">Your week</h1>
+      </div>
+      {cycle?.cycleDay && !hormonalBC && (
+        <span className="ay-db-bandhead__ring" role="img" aria-label={`Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`}>
+          <CycleRing day={cycle.cycleDay} length={cycle.avgLength} />
+        </span>
+      )}
     </header>
   );
 }
@@ -295,15 +323,14 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   }
 
   return (
-    <section className={`ay-wh${compact ? ' ay-wh--today has-data' : ''}`} aria-labelledby="ay-wh-title">
-      {compact ? <>
-        {band}
-        {intro}
-      </> : header}
+    <section className={`ay-wh ay-wh--dash${compact ? ' ay-wh--today has-data' : ''}`} aria-labelledby="ay-wh-title">
+      <DashBand title={title} today={today} cycle={week.cycle?.cycleDay ? week.cycle : null} sync={syncState(h.connected)} hormonalBC={hormonalBC} />
+      {intro}
       <HealthHome
-        hello={!compact}
-        helloAside={compact && onOpenConnections ? <button type="button" className="ay-wh-btn is-quiet is-small" onClick={onOpenConnections}>Connected apps</button> : null}
-        name={name}
+        hello={false}
+        helloAside={onOpenConnections ? <button type="button" className="ay-db-outline is-small" onClick={onOpenConnections}>Connected apps</button> : null}
+        connections={h.connected || []}
+        onRefresh={h.refresh || null}
         rows={rows}
         sections={sections}
         matchContext={h.matchContext || null}

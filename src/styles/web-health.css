@@ -347,3 +347,23 @@ html body .app-container.app-container .ay-wh.ay-wh .ay-bn-phases { border: 0 !i
 html body .app-container main .ay-wh.ay-wh .ay-wh-connect h3 { margin: 0; font: 700 20px/1.2 var(--ay-serif) !important; color: inherit !important; }
 .app-container .ay-wh.ay-wh .ay-wh-connect p { margin: 0; max-width: 60ch; font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans); color: inherit; }
 .app-container .ay-wh.ay-wh .ay-wh-connect .ay-wh-lockactions { justify-content: flex-start; }
+
+/* ---------- the dashboard's band (dashboard audit 7.1 + 14 DashBand) ----------
+   ≈120px espresso with the scalloped edge (.ay-pagehead + .ay-band--espresso);
+   date + sync time (meta 14/500 at 80%), "Your week" h1 30px, the cycle ring 72px. */
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead.ay-pagehead { --ph-top: 0px; display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 104px; margin: 0 0 32px !important; padding: 16px 0 16px !important; color: var(--ay-text, #ffedac); }
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead > div { display: grid; gap: 4px; }
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead__date { margin: 0 !important; font: 500 14px/1.4 var(--ay-font-ui, 'Figtree', sans-serif) !important; opacity: .8; color: inherit !important; }
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead__h { margin: 0 !important; font: 700 30px/1.1 var(--ay-font-display, 'ayna Display', sans-serif) !important; letter-spacing: -.01em !important; color: inherit !important; }
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead__ring { flex: none; width: 72px; height: 72px; }
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead__ring .ds-ring { width: 72px; height: 72px; }
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead__ring .ds-ring .is-track { stroke: color-mix(in srgb, currentColor 25%, transparent); stroke-dasharray: none; stroke-width: 7; }
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead__ring .ds-ring .is-arc { stroke: #f7badd; stroke-width: 7; }
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead__ring .ds-ring .is-dot { display: none; }
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead__ring .ds-ring b { width: auto; height: auto; border: 0; box-shadow: none; background: none; color: inherit; font: 800 22px/1 var(--ay-font-display, 'ayna Display', sans-serif); }
+html body .app-container .ay-wh.ay-wh .ay-db-bandhead__ring .ds-ring b small { font: 600 13px/1 var(--ay-font-ui, 'Figtree', sans-serif); margin-bottom: 2px; display: none; }
+@media (max-width: 599px) {
+  html body .app-container .ay-wh.ay-wh .ay-db-bandhead.ay-pagehead { min-height: 88px; margin-bottom: 28px !important; }
+  html body .app-container .ay-wh.ay-wh .ay-db-bandhead__h { font-size: 26px !important; }
+  html body .app-container .ay-wh.ay-wh .ay-db-bandhead__ring, html body .app-container .ay-wh.ay-wh .ay-db-bandhead__ring .ds-ring { width: 56px; height: 56px; }
+}
