@@ -1596,7 +1596,7 @@ html body .app-container[data-theme='brand-dark'] .ay-ps-sec.is-fold { border-co
 /* Compare: names line up with their photos; the search field stays readable in dark. */
 html body .app-container.app-container .pdp-page .ay-compare__name button { justify-self: start; text-align: left; }
 html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay-compare__search input { color: #3e2723 !important; }
-html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay-compare__search input::placeholder { color: var(--ay-ink-muted) !important; opacity: 1; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay-compare__search input::placeholder { color: var(--ay-espresso-muted) !important; opacity: 1; }
 /* No photo (it failed to load): the evidence card takes the full width. */
 
 /* ======================================================================
@@ -2525,3 +2525,5 @@ html body .ayq--tabs .ayq-st__tab:not(.is-on):hover { background: rgba(var(--v-f
 @media (max-width: 767px) { :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ay-h2, .ayp-reads__title, .ayv-hl__num, .ayv-pricerow__main, .ay-ps-fold__title, .ayv-ask .ay-askrow h2) { font-size: 20px !important; } }
 :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-ask .ay-askrow h2 { font-size: 20px !important; }
 :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayq-folder__tab { font-size: 17px !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-compare :is(td, th) { border-color: rgba(255, 237, 172, .2) !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ay-compare__thumb, .ayv-community__main) { border-color: var(--ay-outline-color) !important; }
