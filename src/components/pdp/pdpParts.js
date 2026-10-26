@@ -212,6 +212,67 @@ export function topWarningFor(product, glance, recall = pageRecall(product), { p
   return real[0] ? first(real[0]) : '';
 }
 
+// ---------------------------------------------------------------------------
+// The safety line under the buy button (PDP audit 7.5, P0 #3): calm, always
+// visible, personalised. If her profile lists an IUD and this is a cup or a
+// disc, that comes first. For a product whose own record names toxic shock
+// syndrome, the line says so plainly with the wear limit from the product's
+// own instructions (never a number that is not on file). Otherwise the one
+// critical caution (topWarningFor). A recall always outranks the TSS line.
+// ---------------------------------------------------------------------------
+const IUD = /\b(iuds?|intrauterine device)\b|\b(mirena|kyleena|liletta|skyla|paragard)\b/i;
+/** True when her answers name an IUD (medicines list, birth control, anything she typed). */
+export function hasIud(answers) {
+  if (!answers) return false;
+  const i = answers.fullHealthIntake || answers;
+  const walk = (v, depth = 0) => {
+    if (depth > 4 || v == null) return false;
+    if (typeof v === 'string') return IUD.test(v);
+    if (Array.isArray(v)) return v.some((x) => walk(x, depth + 1));
+    if (typeof v === 'object') return Object.values(v).some((x) => walk(x, depth + 1));
+    return false;
+  };
+  return walk(i);
+}
+
+/** 'cup' | 'disc' | '' from the product's category or name. */
+export function cupOrDisc(product) {
+  const c = String(product?.category || '').toLowerCase();
+  if (c === 'cup' || c === 'disc') return c;
+  const n = String(product?.name || '');
+  if (/menstrual cup\b/i.test(n)) return 'cup';
+  if (/menstrual disc\b/i.test(n)) return 'disc';
+  return '';
+}
+
+const recordText = (product) => [product?.effectiveness, product?.summary, product?.howToUse && (typeof product.howToUse === 'string' ? product.howToUse : JSON.stringify(product.howToUse)), product?.safety?.sideEffects, product?.safety?.opinionAlerts, ...(product?.warnings || [])].filter(Boolean).join(' ');
+/** The longest wear the product's own record states ("Up to 12-hour wear" -> 12), or null. */
+export function wearHours(product) {
+  const t = recordText(product);
+  const hits = [...t.matchAll(/\bup to (\d{1,2})[- ]?(?:hours?|hrs?)\b/gi)].map((m) => Number(m[1])).filter((n) => n > 0 && n <= 24);
+  return hits.length ? Math.max(...hits) : null;
+}
+const TSS = /toxic shock|\bTSS\b/i;
+
+/**
+ * @returns {{ lines: {kind:'iud'|'recall'|'tss'|'warning', text:string}[], personal: boolean }}
+ */
+export function safetyLineFor(product, glance = null, recall = undefined, { answers = null } = {}) {
+  if (!product) return { lines: [], personal: false };
+  const rc = recall === undefined ? pageRecall(product) : recall;
+  const lines = [];
+  const kind = cupOrDisc(product);
+  const personal = Boolean(kind && hasIud(answers));
+  if (personal) lines.push({ kind: 'iud', text: `You have an IUD: check with your clinician before using a ${kind}.` });
+  const top = topWarningFor(product, glance, rc, { pregnancyFirst: pregnancyFirstFrom(answers) });
+  if ((rc?.status === 'past' || rc?.status === 'note') && top) lines.push({ kind: 'recall', text: top });
+  else if (TSS.test(recordText(product)) || TSS.test(String(glance?.alert || ''))) {
+    const h = wearHours(product);
+    lines.push({ kind: 'tss', text: `TSS risk is rare but serious.${h ? ` Never wear it longer than ${h} hours.` : ''}` });
+  } else if (top) lines.push({ kind: 'warning', text: top });
+  return { lines, personal };
+}
+
 /** The most important caution for "The short answer", not the one already in the safety box. */
 export function mainCaution(m, topWarning = '') {
   if (!m) return '';

@@ -93,19 +93,24 @@ export function EvidenceMeter({ meter, onMore = null, moreLabel = 'See the liter
 }
 
 /**
- * The one critical safety line under the action row (founder, Oct 25): a pink
- * mark, the line, and "Safety", which jumps to the Safety section. No box, and
- * the full text lives only in Safety.
+ * The safety line, directly under the buy button (PDP audit 7.5, P0 #3).
+ * Calm register: white surface, 3px ink rule on the left, an SVG alert icon,
+ * ink text, no pink, no shadow, never animated. `lines` comes from
+ * pdpParts.safetyLineFor (her IUD first when she has one; TSS for cups and
+ * discs). "Safety details" jumps to the Safety block inside ayna summary.
  */
-export function SafetyLine({ text, onGo = null }) {
-  if (!text) return null;
+export function SafetyLine({ text = '', lines = null, onGo = null }) {
+  const list = (lines && lines.length ? lines : text ? [{ kind: 'warning', text }] : []).filter((l) => l && l.text);
+  if (!list.length) return null;
   const go = onGo || (() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'safety' })));
   return (
-    <p className="ayv-safeline" role="note">
-      <span className="ayv-safeline__mark" aria-hidden="true">!</span>
-      <span className="ayv-safeline__text"><span className="sr-only">Safety: </span>{text}</span>
-      <button type="button" className="ayv-textbtn ayv-safeline__go" onClick={go}>Safety</button>
-    </p>
+    <div className="ayv-safeline" role="note" aria-label="Safety">
+      <svg className="ayv-safeline__icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M10.3 3.9 2.4 17.6A2 2 0 0 0 4.1 20.6h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /><path d="M12 9v4.5M12 17.2h.01" /></svg>
+      <div className="ayv-safeline__body">
+        {list.map((l, i) => <p key={`${l.kind}-${i}`} className={`ayv-safeline__text is-${l.kind}`}>{i === 0 && <span className="sr-only">Safety: </span>}{l.text}</p>)}
+        <button type="button" className="ayv-textbtn ayv-safeline__go" onClick={go}>Safety details</button>
+      </div>
+    </div>
   );
 }
 

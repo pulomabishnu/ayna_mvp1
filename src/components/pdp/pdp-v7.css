@@ -9,11 +9,16 @@
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet), #ay-tabs#ay-tabs#ay-tabs#ay-tabs {
   --v-ink: #3e2723; --v-mute: rgba(62, 39, 35, .78); --v-bg: #ffedac; --v-tint: #f6e3a1; --v-line: rgba(62, 39, 35, .18); --v-hard: #3e2723;
   --v-body: 17px; --v-small: 15px; --v-h: 20px;
+  /* PDP audit Oct 25, section 16 tokens (the smallest set; colours are the palette only). */
+  --ay-ink: #3e2723; --ay-ink-muted: rgba(62, 39, 35, .78); --ay-butter: #ffedac; --ay-butter-deep: #f6e3a1; --ay-pink: #f7badd; --ay-data-blue: #769ebe; --ay-surface: #ffffff;
+  --ay-r-sm: 8px; --ay-r-md: 16px; --ay-r-pill: 999px; --ay-rule: 1px solid rgba(62, 39, 35, .15); --ay-outline: 1.5px solid #3e2723; --ay-sticker: 3px 3px 0 #f7badd;
+  --ay-dur-press: 120ms; --ay-dur-ui: 180ms; --ay-dur-sheet: 240ms;
   --v-ui: 'Figtree', system-ui, sans-serif; --v-display: 'ayna Display', 'Bricolage Grotesque', 'Figtree', sans-serif;
 }
 .ayna-mobile :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet), .ayna-mobile #ay-tabs#ay-tabs#ay-tabs#ay-tabs { --v-body: 16px; --v-small: 14px; }
 @media (max-width: 767px) { :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet), #ay-tabs#ay-tabs#ay-tabs#ay-tabs { --v-body: 16px; --v-small: 14px; } }
 :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet), :is([data-theme='brand-dark'], [data-theme='dark']) #ay-tabs#ay-tabs#ay-tabs#ay-tabs {
+  --ay-ink: #ffedac; --ay-ink-muted: rgba(255, 237, 172, .8); --ay-surface: rgba(255, 237, 172, .08); --ay-rule: 1px solid rgba(255, 237, 172, .2); --ay-outline: 1.5px solid #ffedac;
   --v-ink: #ffedac; --v-mute: rgba(255, 237, 172, .8); --v-bg: #3e2723; --v-tint: #4a312c; --v-line: rgba(255, 237, 172, .22); --v-hard: #ffedac;
 }
 
@@ -46,11 +51,6 @@
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-fine :is(a, button) { font: inherit !important; color: inherit !important; min-height: 0 !important; }
 
 /* ---------- hero: the one safety line ---------- */
-:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline { display: flex !important; align-items: flex-start; flex-wrap: wrap; gap: 4px 10px; margin: 14px 0 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
-:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__mark { flex: none; display: grid; place-items: center; width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; background: #f7badd; color: #3e2723; font: 800 14px/1 var(--v-ui); }
-:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__text { flex: 1 1 14em; min-width: 0; font: 600 var(--v-small)/1.45 var(--v-ui) !important; color: var(--v-ink) !important; }
-:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__go { min-height: 24px !important; padding: 0 0 0 32px !important; }
-@media (pointer: coarse) { :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__go { min-height: 44px !important; margin-top: -10px !important; } }
 
 /* ---------- website: two columns from 1024 (product left and sticky, tabs right) ---------- */
 @media (min-width: 1024px) {
@@ -366,3 +366,11 @@
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-panel__group { padding: 14px 20px 16px !important; }
 /* the rest sits directly under its lead (same item), full espresso, regular weight */
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayv-lr__rest { margin-top: 3px !important; color: var(--v-ink) !important; font-weight: 500 !important; }
+
+
+/* ---------- PDP audit (Oct 25): safety line, calm register (7.5, 15 SafetyLine) ---------- */
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline { display: flex !important; align-items: flex-start; gap: 10px; margin: 12px 0 0 !important; padding: 10px 12px !important; border: 0 !important; border-left: 3px solid var(--ay-ink) !important; border-radius: 4px !important; background: var(--ay-surface) !important; box-shadow: none !important; color: var(--ay-ink) !important; animation: none !important; transition: none !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__icon { flex: none; margin-top: 3px; color: var(--ay-ink); }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__body { flex: 1 1 auto; min-width: 0; display: grid; gap: 2px; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__text { margin: 0 !important; font: 600 15px/1.4 var(--v-ui) !important; color: var(--ay-ink) !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-safeline__go { justify-self: start; min-height: 44px !important; margin: -8px 0 -12px !important; font: 600 15px/1.2 var(--v-ui) !important; }

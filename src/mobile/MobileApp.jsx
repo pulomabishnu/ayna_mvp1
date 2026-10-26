@@ -1792,6 +1792,7 @@ export default function MobileApp() {
           matchState={productMatchState(sheetProduct, effectiveQuizAnswers, matchOpts)}
           details={effectiveQuizAnswers ? getProductMatchDetailsForProduct(sheetProduct, effectiveQuizAnswers, null, matchOpts) : null}
           pregnancyFirst={pregnancyFirstFrom(effectiveQuizAnswers)}
+          answers={effectiveQuizAnswers}
           onAsk={(q) => { setSheetProduct(null); nav.onAskAyna({ question: q }); }}
           saved={isSaved(sheetProduct.id)}
           onToggleSaved={handleToggleSaved}

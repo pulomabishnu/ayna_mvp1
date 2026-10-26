@@ -22,7 +22,7 @@ import ProductEvidence from './pdp/ProductEvidence';
 import { MatchLine, SafetyLine, WhereToBuy, StickyBuy } from './pdp/PdpParts.jsx';
 import { buyModel } from './pdp/buyModel.js';
 import { heroNotes } from './pdp/pdpParts.js';
-import { matchLineState, topWarningFor, pageRecall, pregnancyFirstFrom } from './pdp/pdpParts.js';
+import { matchLineState, topWarningFor, pageRecall, pregnancyFirstFrom, safetyLineFor } from './pdp/pdpParts.js';
 import { HealthBackedBadge } from './health';
 import { attributeBadges } from './pdp/evidenceModel';
 import { galleryImages, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
@@ -805,8 +805,8 @@ export default function ProductModal({
     : <MatchLine state={matchState} onWhy={() => setShowWhy(true)} onFix={onFixSafety} onQuiz={onStartQuiz} />;
   // Is it for you: the website's right column on wide screens, above the tabs otherwise.
   const fitData = { details: matchDetails, hasProfile: Boolean(quizResults), onShowWhy: () => setShowWhy(true), extra: matchDetails?.healthData ? <HealthBackedBadge backed={{ section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) }} /> : null };
-  // The one critical caution, in the safety box right under Buy.
-  const warningLine = <SafetyLine text={topWarning} />;
+  // The safety line directly under the buy button: her IUD first when she has one, TSS for cups (PDP audit 7.5).
+  const warningLine = <SafetyLine lines={safetyLineFor(product, glance, recall, { answers: quizResults }).lines} />;
   const relatedReads = readsForProduct(product, 3);
 
   return (
@@ -858,9 +858,9 @@ export default function ProductModal({
               <h2 id="ay-buy-h" className="sr-only">Buy</h2>
               {actionButtons}
               {purchaseNotes}
+              {warningLine}
               <WhereToBuy rows={buy?.rows} onOpen={(r) => posthog.capture('product_retailer_clicked', { productId: product.id, retailer: r.name })} />
               {matchState?.kind === 'quiz' && <div className="ayv-quizline">{fitRow}</div>}
-              {warningLine}
               <StickyBuy model={buy} watch={actionsRef} mode="fixed" wideOff saved={isSaved} onSave={onToggleSaved ? () => onToggleSaved(product) : null} onBuy={() => { try { recordRetailerVisit(product, choice.variant); } catch { /* ignore */ } posthog.capture('product_buy_now_clicked', { productId: product.id, category: product.category, destination: buy?.url, placement: 'sticky_bar' }); }} />
             </section>
           </div>

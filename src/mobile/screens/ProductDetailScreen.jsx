@@ -15,7 +15,7 @@ import { MatchLine, SafetyLine, WhereToBuy, StickyBuy, PriceLine } from '../../c
 import { buyModel } from '../../components/pdp/buyModel.js';
 import { heroPriceView } from '../../components/pdp/heroPrice.js';
 import { priceParts } from '../../data/passport/priceParts.js';
-import { matchLineState, topWarningFor, pageRecall, heroNotes, pregnancyFirstFrom } from '../../components/pdp/pdpParts.js';
+import { matchLineState, topWarningFor, pageRecall, heroNotes, pregnancyFirstFrom, safetyLineFor } from '../../components/pdp/pdpParts.js';
 import { useResearchState } from '../../data/researchLoader.js';
 import { attributeBadges } from '../../components/pdp/evidenceModel.js';
 import { matchLine } from '../../data/passport/content.js';
@@ -449,10 +449,11 @@ export default function ProductDetailScreen({
           {/* The price check on its own muted line; the ↗ on Buy already says she leaves ayna (founder, Oct 25). */}
           {shopAction && buy.checked && <p className="ay-pdp-commission ayv-fine">{buy.checked}</p>}
           {shopAction && !isPartner && <p className="ay-pdp-commission ayv-fine">Some links earn ayna a commission. It never changes your matches.</p>}
+          {/* Directly under the button: her IUD first when she has one, TSS for cups (PDP audit 7.5). */}
+          <SafetyLine lines={safetyLineFor(product, glance, recall, { answers: quizAnswers }).lines} />
           <WhereToBuy rows={buy?.rows} />
           <SaveFollowUpInline product={product} onCompare={onCompare} />
           {matchState?.kind === 'quiz' && <div className="ayv-quizline"><MatchLine state={matchState} onWhy={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} /></div>}
-          <SafetyLine text={topWarning} />
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
           {isPartner ? (
             <div className="ayna-figma-partner-disclosure">

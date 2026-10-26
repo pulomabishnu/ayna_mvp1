@@ -14,7 +14,7 @@ import { heroPriceView } from '../../components/pdp/heroPrice.js';
 import { perUnitLabel } from '../../components/pdp/glance.js';
 import { priceParts } from '../../data/passport/priceParts.js';
 import { cardKind } from '../../utils/productCardFacts.js';
-import { matchLineState, topWarningFor, heroNotes } from '../../components/pdp/pdpParts.js';
+import { matchLineState, topWarningFor, heroNotes, safetyLineFor } from '../../components/pdp/pdpParts.js';
 import { ProductAsk } from '../../components/passport/ProductSections.jsx';
 import { whyLine } from '../../utils/whyLine.js';
 import '../../components/pdp/pdp-tabs.css';
@@ -40,7 +40,9 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
   // The match engine's details for her (null signed out): the one match line and Is it for you.
   details = null, onShowWhy = null, onFixSafety = null, pregnancyFirst = false,
   // Ask about this product: a starter or her question goes to the chat, anchored to the product.
-  onAsk = null }) {
+  onAsk = null,
+  // Her answers (optional): the safety line names her IUD first when she has one.
+  answers = null }) {
   const { product, loaded } = useResearchState(baseProduct);
   const [full, setFull] = useState(false);
   const rootRef = useRef(null);
@@ -127,8 +129,8 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
               ? <MatchLine state={matchLineState({ details, percent: details.percent, hasProfile: true, why: whyLine(product, details) })} onWhy={onShowWhy} onFix={onFixSafety} />
               : <SheetMatch state={matchState} />}
             <div ref={actionsRef}><ProductQuickActions product={product} saved={saved} onToggleSaved={onToggleSaved} inRoutine={inRoutine} onAddToRoutine={onAddToRoutine} big buy={buy} /></div>
+            <SafetyLine lines={safetyLineFor(product, glance, undefined, { answers: answers || (pregnancyFirst ? { lifeStageSelections: ['pregnant'] } : null) }).lines} />
             <WhereToBuy rows={buy?.rows} />
-            <SafetyLine text={topWarning} />
             <ProductEvidence key={product.id} product={product} glance={glance} loading={!loaded} swipeTabs syncHash={false} safetyLead={topWarning} fit={{ details, hasProfile: Boolean(details && details.matchStatus !== 'no-profile'), onShowWhy }} askSlot={onAsk ? <ProductAsk productName={name} onAsk={onAsk} hasProfile={Boolean(details && details.matchStatus !== 'no-profile')} /> : null} />
             <StickyBuy model={buy} watch={actionsRef} mode="scroll" saved={saved} onSave={onToggleSaved ? () => onToggleSaved(product) : null} />
             {renderFull && <button type="button" className="ay-psheet__more" onClick={() => setFull(true)}>Read more <span aria-hidden="true">→</span><span className="sr-only"> about {name} on its full page</span></button>}
