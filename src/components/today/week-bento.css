@@ -86,3 +86,9 @@
    (big = full row, wide = full row, singles pair; WeekBento widens an unpaired last single). */
 :is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-auto-flow: row dense; }
 :is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) .is-wide .wb-bars svg { height: 96px; }
+
+/* Founder Oct 26 19:46: halves side by side, never a stack of full rows. */
+:is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) .wb-tile.is-cycle .wb-wheel { width: min(100%, 120px); margin: 0 auto; }
+:is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) .wb-bars svg { height: 64px; width: 100%; }
+:is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) .wb-spark svg { height: 44px; }
+:is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) .wb-tile:not(.is-products):not(.is-coming) { min-height: 180px; }
