@@ -33,27 +33,35 @@
    white with a 1.5px ink outline, radius 8 (WCAG 1.4.11); one consent box with
    two trust badges; the acknowledgement sentence right above the button; the
    primary button carries the one sticker shadow. Scoped past content.css's
-   auth block (which uses four .app-container classes). Borders are written as 1.5px solid var(--ay-ink):
+   auth block (which uses four .app-container classes). Borders are written as 1.5px solid var(--ay-text):
    --ay-outline is a colour in ayna-system.css and a border in ay-tokens.css.
    --------------------------------------------------------------------------- */
 html body .app-container.app-container.app-container.app-container.app-container .ay-auth-card.ay-auth-card {
   .ay-auth-oauth { display: grid !important; grid-template-columns: 1fr !important; gap: 8px !important; }
   .ay-auth-oauth button { width: 100% !important; min-height: 48px !important; font-size: 16px !important; }
   :is(input[type='email'], input[type='password'], input[type='text'], input[type='tel'], input:not([type]), select) {
-    border: 1.5px solid var(--ay-ink) !important;
+    border: 1.5px solid var(--ay-text) !important;
     border-radius: 8px !important;
     background: var(--ay-surface) !important;
-    color: var(--ay-ink) !important;
+    color: var(--ay-text) !important;
   }
   :is(input, select)[aria-invalid='true'] { border-width: 2px !important; }
   .ay-auth-ai { display: grid; gap: 8px; }
   .ay-auth-check { display: grid !important; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start; cursor: pointer; }
-  .ay-auth-check span { font: 500 14px/1.45 'Figtree', system-ui, sans-serif !important; color: var(--ay-ink) !important; }
-  .ay-auth-check input { width: 20px !important; height: 20px !important; min-height: 0 !important; margin: 2px 0 0 !important; accent-color: var(--ay-ink); }
+  .ay-auth-check span { font: 500 14px/1.45 'Figtree', system-ui, sans-serif !important; color: var(--ay-text) !important; }
+  .ay-auth-check input { width: 20px !important; height: 20px !important; min-height: 0 !important; margin: 2px 0 0 !important; accent-color: var(--ay-text); }
   .ay-auth-badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 0 30px !important; }
-  .ay-auth-badges span { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border: 1.5px solid var(--ay-ink); border-radius: 999px; font: 600 13px/1 'Figtree', system-ui, sans-serif !important; color: var(--ay-ink) !important; }
-  .ay-auth-ack { margin: 0 !important; font: 500 13px/1.5 'Figtree', system-ui, sans-serif !important; color: var(--ay-ink-muted) !important; text-align: left !important; }
-  .ay-auth-ack a { color: var(--ay-ink) !important; text-decoration: underline !important; }
+  .ay-auth-badges span { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border: 1.5px solid var(--ay-text); border-radius: 999px; font: 600 13px/1 'Figtree', system-ui, sans-serif !important; color: var(--ay-text) !important; }
+  .ay-auth-ack { margin: 0 !important; font: 500 13px/1.5 'Figtree', system-ui, sans-serif !important; color: var(--ay-text-2) !important; text-align: left !important; }
+  .ay-auth-ack a { color: var(--ay-text) !important; text-decoration: underline !important; }
   .ay-auth-submit:not(:disabled) { box-shadow: var(--ay-sticker) !important; }
   .ay-auth-submit:not(:disabled):active { box-shadow: none !important; transform: translate(3px, 3px); }
+}
+html body .app-container.app-container.app-container.app-container.app-container .ay-auth-card.ay-auth-card .ay-auth-summary :is(strong, span) { color: var(--ay-text) !important; }
+html body .app-container.app-container.app-container.app-container.app-container .ay-auth-card.ay-auth-card {
+  .ay-auth-ai { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 8px !important; }
+  .ay-auth-ai .ay-auth-check input { appearance: auto !important; -webkit-appearance: checkbox !important; border-radius: 4px !important; background: none !important; border: 0 !important; }
+  .ay-auth-ai .ay-auth-check input::after { content: none !important; }
+  .ay-auth-badges span { white-space: nowrap; }
+  .ay-auth-summary { box-shadow: none !important; }
 }
