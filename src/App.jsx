@@ -838,9 +838,10 @@ function App() {
   const [askPrefillStats, setAskPrefillStats] = useState(null);
   const [askPrefill, setAskPrefill] = useState('');
   // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
+  // Opens for everyone (Ask audit, Oct 25): signed out or before the quiz,
+  // product and read questions are answered on this device and a personal
+  // one names itself and offers Sign in inside the panel, never a wall.
   const openAsk = useCallback((text = '', stats = null) => {
-    if (!user) { setAuthFeature('Ask ayna'); setPendingAction('feature'); pendingActionRef.current = 'feature'; setShowAuthModal(true); return; }
-    if (!quizResults) { setCurrentView('quiz'); return; }
     setAskPrefill(text);
     setAskPrefillStats(Array.isArray(stats) ? stats.slice(0, 3) : null);
     setAskOpenSignal((n) => n + 1);
