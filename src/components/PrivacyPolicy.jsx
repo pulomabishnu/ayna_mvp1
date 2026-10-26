@@ -14,7 +14,7 @@ const PROCESSORS = [
 
 export default function PrivacyPolicy({ onBack, backLabel }) {
   return (
-    <EdPage title="Privacy policy" crumb="Privacy" updated="Last updated October 19, 2026" onBack={onBack} backLabel={backLabel} toc>
+    <EdPage title="Privacy policy" crumb="Privacy" updated="Last updated October 19, 2026" onBack={onBack} backLabel={backLabel} toc glance bandLabel="In short" band={<div className="uq-legal-intro">
         <p>
           This policy explains how ayna handles personal information when you use www.aynahealth.co and related ayna services. ayna is a wellness, educational and product-discovery service, not a healthcare provider or emergency service. ayna accounts and account-only health features are for adults age 18 and older.
         </p>
@@ -22,7 +22,7 @@ export default function PrivacyPolicy({ onBack, backLabel }) {
           Consumer health data receives additional disclosures and rights in our{' '}
           <a href="/consumer-health-data">Consumer Health Data Privacy Notice</a>, which supplements this policy.
         </p>
-
+        </div>}>
         <section>
           <h2>1. Information we collect</h2>
           <p>

@@ -98,6 +98,8 @@ export default function Contact({ onBack, backLabel, user = null }) {
       onBack={onBack} backLabel={backLabel}
       photo="curlers-call"
     >
+      {/* Uniqueness pass A: the form sits on the page's pink band. */}
+      <div className="uq-bleed is-pink uq-band uq-contact">
       <form onSubmit={submit} noValidate className="ay-group is-padded ed-form" aria-label="Contact the ayna team" style={{ maxWidth: 760 }}>
         <div className="ed-hp" aria-hidden="true">
           <label>
@@ -149,6 +151,7 @@ export default function Contact({ onBack, backLabel, user = null }) {
           </button>
         </div>
       </form>
+      </div>
     </EdPage>
   );
 }

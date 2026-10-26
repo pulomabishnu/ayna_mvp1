@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import '../../styles/editorial.css';
 import { PHOTOS } from '../v3/photos.js';
 import InfoHero from '../info/InfoHero.jsx';
+import ReadMore from '../info/ReadMore.jsx';
 
 /**
  * Editorial shell for the footer and info pages: the InfoHero (breadcrumb,
@@ -31,11 +32,31 @@ function useContents(rootRef, enabled, refreshKey) {
 
 /* Every info page opens with the one InfoHero (info-pages audit issue 1,
  * section 6): butter, breadcrumb, H1 36px, one sentence, optional photo on
- * the white scalloped plate. No colour bands. `tone`, `frame`, `seal` and
+ * the white scalloped plate (now an espresso band). `band` adds the pink band. `tone`, `frame`, `seal` and
  * `kicker` are accepted for old callers and ignored (no eyebrow labels).
  * `photo`: a /landing name, or { src, alt, product } for a packshot.
  * `crumb`: the short page name for the breadcrumb (defaults to the title). */
-export function EdPage({ title, lede, crumb, updated, onBack, backLabel = 'Home', photo, toc = false, tocKey, className = '', children }) {
+/* Glance first (founder, Oct 26 16:54): on long text pages each <section> shows
+ * its H2 and first paragraph; the rest of that section, verbatim, is one tap
+ * away behind "Read the full section". Nothing is removed (the hidden text
+ * stays in the DOM). */
+function glanceSections(children) {
+  return React.Children.map(children, (child) => {
+    if (!React.isValidElement(child) || child.type !== 'section' || child.props['data-keep'] != null) return child;
+    const parts = React.Children.toArray(child.props.children);
+    const h = parts.findIndex((c) => React.isValidElement(c) && c.type === 'h2');
+    const first = parts.findIndex((c, i) => i > h && React.isValidElement(c) && c.type === 'p');
+    if (h < 0 || first < 0) return child;
+    const rest = parts.slice(first + 1);
+    if (!rest.length) return child;
+    return React.cloneElement(child, { className: `${child.props.className || ''} uq-glance`.trim() }, <>
+      {parts.slice(0, first + 1)}
+      <ReadMore label="Read the full section">{rest}</ReadMore>
+    </>);
+  });
+}
+
+export function EdPage({ title, lede, crumb, updated, onBack, backLabel = 'Home', photo, toc = false, tocKey, band = null, bandLabel, glance = false, className = '', children }) {
   const bodyRef = useRef(null);
   const [items, active] = useContents(bodyRef, toc, tocKey);
   const go = (e, id) => {
@@ -57,6 +78,8 @@ export function EdPage({ title, lede, crumb, updated, onBack, backLabel = 'Home'
     <div className={`ed ed-page ed-page--info${className ? ` ${className}` : ''}`}>
       <div className="ed-wrap">
         <InfoHero title={title} lede={lede} crumb={crumb} updated={updated} onBack={onBack} backLabel={backLabel} photo={ph} />
+        {/* Uniqueness pass A: one pink band per page, right under the espresso hero. */}
+        {band && <section className="uq-band uq-bleed is-pink" aria-label={bandLabel}>{band}</section>}
         <div className="ed-page__body">
           {toc ? (
             <div className="ed-page__layout">
@@ -67,9 +90,9 @@ export function EdPage({ title, lede, crumb, updated, onBack, backLabel = 'Home'
                   <details className="ed-toc__fold"><summary>On this page ({items.length} sections)</summary>{list}</details>
                 </>}
               </nav>
-              <div ref={bodyRef} className="ed-prose">{children}</div>
+              <div ref={bodyRef} className="ed-prose">{glance ? glanceSections(children) : children}</div>
             </div>
-          ) : <div ref={bodyRef}>{children}</div>}
+          ) : <div ref={bodyRef}>{glance ? glanceSections(children) : children}</div>}
         </div>
       </div>
     </div>

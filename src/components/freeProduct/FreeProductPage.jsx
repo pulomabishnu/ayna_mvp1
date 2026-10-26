@@ -4,6 +4,7 @@ import ViewSkeleton from '../skeletons/ViewSkeleton';
 import ProductTileImage from '../ProductTileImage';
 import ProductReel from './ProductReel';
 import InfoHero from '../info/InfoHero.jsx';
+import ReadMore from '../info/ReadMore.jsx';
 import {
   FEEDBACK_MIN_CHARS,
   FEEDBACK_QUESTIONS,
@@ -82,14 +83,20 @@ function Rules({ minChars = FEEDBACK_MIN_CHARS }) {
   return (
     <section className="fp-rules" aria-labelledby="fp-rules-h">
       <h2 id="fp-rules-h">How it works</h2>
-      <ol>
-        <li><b>Substantial feedback.</b> Answer 3 short questions in your own words, at least {minChars} characters each. Repeated, copied or near-identical answers don’t count.</li>
-        <li><b>3 verified friends.</b> A friend counts once they make a new ayna account with your link and verify it. Clicks and invites alone don’t count.</li>
-        <li><b>A limited pool.</b> Products are limited and go to whoever claims them first.</li>
-        <li><b>Respin until you claim.</b> Not for you? Spin again. You can claim anything you landed on.</li>
-        <li><b>Claiming is final.</b> Once you claim a product, it’s yours and can’t be swapped.</li>
-        <li><b>One per person.</b> One free product per person.</li>
-      </ol>
+      {/* Glance first: the six rules by name; the full wording is one tap away. */}
+      <ul className="fp-rules__glance">
+        {['Substantial feedback', '3 verified friends', 'A limited pool', 'Respin until you claim', 'Claiming is final', 'One per person'].map((t) => <li key={t}>{t}</li>)}
+      </ul>
+      <ReadMore label="Read the full rules" as="div">
+        <ol>
+          <li><b>Substantial feedback.</b> Answer 3 short questions in your own words, at least {minChars} characters each. Repeated, copied or near-identical answers don’t count.</li>
+          <li><b>3 verified friends.</b> A friend counts once they make a new ayna account with your link and verify it. Clicks and invites alone don’t count.</li>
+          <li><b>A limited pool.</b> Products are limited and go to whoever claims them first.</li>
+          <li><b>Respin until you claim.</b> Not for you? Spin again. You can claim anything you landed on.</li>
+          <li><b>Claiming is final.</b> Once you claim a product, it’s yours and can’t be swapped.</li>
+          <li><b>One per person.</b> One free product per person.</li>
+        </ol>
+      </ReadMore>
       <p className="fp-muted">Your free product is a thank-you for your feedback and referrals.</p>
     </section>
   );
@@ -802,10 +809,13 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
     content = (
       <div className="fp-intro">
         <PageHead title="Give us your thoughts. Get something on us." lead="Tell us what you really think of ayna, bring three friends, and pick a free product." />
-        <Equation />
-        <div className="fp-intro__actions">
-          <Cta onClick={onSignIn}>Sign in to start</Cta>
-          <button type="button" className="fp-link" onClick={onStartQuiz}>New to ayna? Start with a few short questions</button>
+        {/* Uniqueness pass A: the equation and the start sit on the page's pink band. */}
+        <div className="uq-bleed is-pink uq-band fp-band">
+          <Equation />
+          <div className="fp-intro__actions">
+            <Cta onClick={onSignIn}>Sign in to start</Cta>
+            <button type="button" className="fp-link" onClick={onStartQuiz}>New to ayna? Start with a few short questions</button>
+          </div>
         </div>
         <Rules />
       </div>

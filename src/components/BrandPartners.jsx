@@ -3,7 +3,7 @@ import { ALL_PRODUCTS } from '../data/products.js';
 import { EdPage } from './editorial/EdPage';
 import { isPlainLeftClick } from '../utils/productRoute';
 import ProductCard from './ProductCard';
-import { Plate } from './ui/ay';
+import { Plate, Marquee } from './ui/ay';
 import { categoryLabel } from './pdp/categoryLabel.js';
 import { safeProductImageSrc } from '../utils/resolveProductImage.js';
 import { productImageOverride } from '../data/productImageOverrides.js';
@@ -243,6 +243,8 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
       lede={PARTNERS.length > 0
         ? 'Partner products may be featured higher in general Browse. Partnership never changes your personalized match scores or recommendation order.'
         : 'Check back soon. When partnerships go live, they may be featured in general Browse, but partnership will never change personalized match scores or recommendation order.'}
+      bandLabel="Partner brands"
+      band={PARTNERS.length > 0 ? <div className="uq-pbands"><span className="uq-pbands__n"><b>{ORDERED.length}</b> brands</span><Marquee items={ORDERED.map((p) => p.brand)} tone="pink" /></div> : null}
     >
       <header className="ed-head">
         <h2 className="ed-h2">Our partners</h2>

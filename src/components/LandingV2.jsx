@@ -3,7 +3,7 @@ import { sentenceCase } from '../utils/sentenceCase.js';
 import { TESTING_WATERS_NOTICE } from '../data/investRound';
 import { useRecommendationViews } from '../utils/recommendationAnalytics';
 import { productsForNeed } from './landingNeeds';
-import { isPlainLeftClick } from '../utils/productRoute';
+import { isPlainLeftClick, productHref } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
 import { ALL_PRODUCTS, MACRO_GROUPS, basicsProductIds, filterPrescriptionCareGate, useCatalogReady } from '../data/catalog.js';
@@ -17,9 +17,11 @@ import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
 import '../styles/editorial.css';
 import '../styles/home.css';
 import '../styles/loop-a-landing.css';
-import { Seal, Ribbon } from './personality/Bits.jsx';
+import '../styles/uq-landing.css';
+import { Seal } from './personality/Bits.jsx';
 import Photo from './ui/Photo.jsx';
-import { Plate, Chip, BigFact, StandardsBand } from './ui/ay';
+import ReadMore from './info/ReadMore.jsx';
+import { Plate, Chip, Band, Shout, Bento, Tile, Marquee } from './ui/ay';
 import { HOME_SEARCH_HINTS } from './shop/homeSearchHints.js';
 
 /* The website home (v2, Oct 21). Styles: src/styles/home.css (hm-*).
@@ -33,22 +35,16 @@ import { HOME_SEARCH_HINTS } from './shop/homeSearchHints.js';
  * band), Feel Fits (checkerboard), Glossier (stat callouts beside a photo),
  * "Academy" (colourful read covers with a scalloped edge), Samba (taped photo).
  *
- * Order (landing audit, Oct 25: six sections, each answers one question):
- *   1 hero (what is ayna?): one photo, one product die-cut, one ayna UI card
- *     (evidence, Rundown, check-in or a post, swapping), the pink seal
- *   2 partner ticker (who's in it?)
- *   3 does this sound familiar + needs (is it for me?, pink band)
- *   4 how it works + evidence (why trust it?, espresso; ends in the one CTA)
- *   5 reads + community (is there more than shopping?)
- *   6 founders + invest (who's behind it?, butter, a small Wefunder card)
- * Headings: H1 56/36, section H2 36/26, one 44px statement (founders).
- * Kept from Oct 24 (factual fixes): one filled CTA, new tab names and
- * routes, "a few short questions", readable ink on butter and pink, real
- * products and UI next to the photos.
+ * Uniqueness pass (Oct 26, scratchpad UNIQUE_PASS.md): colour-blocked bands,
+ * adjacent bands never the same colour, styles in src/styles/uq-landing.css.
+ *   1 hero, espresso band: the one Shout, real products big on a pink tile
+ *   2 partner marquee, pink seam (the page's one motion; Pause motion stops it)
+ *   3 does this sound familiar + needs, butter band
+ *   4 how it works as a Bento (steps + catalog numbers), espresso band
+ *   5 reads + community, pink band
+ *   6 founders + invest, butter band
  * Members get the same page with their name, their dashboard row and their picks.
- * Nothing on the page is sticky. Two things move: the hero scatter and the
- * ribbon; both follow one Pause motion setting (hero button and footer),
- * reduced motion, and stop offscreen. */
+ * Nothing on the page is sticky. */
 
 // Plain words first (5-second test, P2-4): what people actually type.
 const SEARCH_HINTS = HOME_SEARCH_HINTS; // tested against the real search (suggestionChips.test.js)
@@ -94,190 +90,83 @@ function Search({ onSearch }) {
   );
 }
 
-const STAR = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>;
-const STANDARDS = ['Matched to your body', 'Evidence beside each one', 'Partnerships never change your match'];
-function Hero({ onStartQuiz, onSearch, personal = null, banner = null, posts = [], paused, onTogglePause }) {
+/* Uniqueness pass (Oct 26): the hero is an espresso band with the page's one
+   Shout (Bricolage 800, 48-120px) and real products shown big on a pink tile
+   beside the founders' photograph. Nothing in the hero moves; the page's one
+   motion is the partner marquee under it. */
+function Hero({ onStartQuiz, onSearch, onOpenProduct, onViewHowItWorks, personal = null, banner = null }) {
   const cta = personal && (personal.ecoCount > 0 || personal.hasQuiz)
     ? <Go className="ay-btn ay-btn--primary" href="/you/ecosystem" onGo={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></Go>
     : banner || <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Get my matches<Arrow /></Go>;
   return (
-    <section className="hm-hero" aria-labelledby="hm-hero-title">
+    <Band tone="ink" className="hm-hero hm-band" aria-labelledby="hm-hero-title">
       <div className="hm-wrap hm-hero__grid">
+        {personal
+          ? <Shout id="hm-hero-title" className="hm-shout">Welcome back, <span className="hm-shout__pink">{personal.name}</span>.</Shout>
+          // One promise on the website and the app (landing audit 4 and 9).
+          : <Shout id="hm-hero-title" className="hm-shout">Find what fits <span className="hm-shout__pink">your body.</span></Shout>}
         <div className="hm-hero__copy">
-          {personal ? <>
-            <h1 id="hm-hero-title" className="ed-display hm-display hm-display--personal">Welcome back, <span className="hm-swipe">{personal.name}</span>.</h1>
-            <p className="hm-lead">{personal.ecoCount > 0 ? `${personal.ecoCount} product${personal.ecoCount === 1 ? '' : 's'} in your ecosystem.` : 'Health products matched to your body.'}</p>
-          </> : <>
-            {/* One promise on the website and the app (landing audit 4 and 9). */}
-            <h1 id="hm-hero-title" className="ed-display hm-display">Find what fits <span className="hm-swipe">your body</span>.</h1>
-            <p className="hm-lead">Health products matched to your body. Search what you need, or answer a few short questions and see what fits, with the evidence beside each one.</p>
-          </>}
-          <div className="hm-hero__actions">{cta}</div>
+          <p className="hm-lead">{personal
+            ? (personal.ecoCount > 0 ? `${personal.ecoCount} product${personal.ecoCount === 1 ? '' : 's'} in your ecosystem.` : 'Health products matched to your body.')
+            // Glance first (founder 16:54): the app's one line, the same promise in fewer words.
+            : 'Women’s health products matched to you, with the evidence beside each one.'}</p>
+          <div className="hm-hero__actions">{cta}<a className="hm-howlink" href="/how-it-works" onClick={(e) => { if (!onViewHowItWorks || !isPlainLeftClick(e)) return; e.preventDefault(); onViewHowItWorks(); }}>How we match<Arrow /></a></div>
           <Search onSearch={onSearch} />
         </div>
-        <HeroScatter posts={posts} paused={paused} onTogglePause={onTogglePause} />
+        <HeroArt onOpenProduct={onOpenProduct} />
       </div>
-      {/* Standards, stated once on the page (landing audit 10 and 11: Tower 28). */}
-      <div className="hm-wrap hm-standards-wrap"><StandardsBand className="hm-standards" items={STANDARDS.map((title) => ({ title, icon: STAR }))} /></div>
-    </section>
+    </Band>
   );
 }
 
-/* ---------- hero visual: an animated scatter of real things from ayna ----------
-   Founder, Oct 24 20:08 (Beauty Independent banner energy) + team direction 51.
-   Research and rules: scratchpad DESIGN_RESEARCH_OCT24.md, section A.
-   Slots hold real things only: two approved ayna photographs, real catalog
-   product cutouts, real ayna UI (evidence meter, a real product card, the
-   Daily Rundown card, the one-tap check-in) and real community posts when
-   there are any. Nothing a visitor has to read moves: the copy sits still.
-   Motion: every slot pops in once (staggered), then one slot at a time swaps
-   what it holds (the old piece drops out, the new one rains in), one swap
-   every SWAP_MS. Fixed slot boxes, transform/opacity only: no layout shift.
-   Off under reduced motion (static scatter), offscreen, in a hidden tab and
-   with Pause motion (the hero button and the footer share one setting). */
-const SWAP_MS = 3800;
-const money = (p) => { const n = Number(p?.price); return Number.isFinite(n) && n > 0 ? `$${n % 1 ? n.toFixed(2) : n}` : (typeof p?.price === 'string' ? p.price : ''); };
-function UiPiece({ item }) {
-  if (item.kind === 'evidence') return (
-    <span className="hm-ui hm-ui--evidence">
-      <span className="hm-ui__label">Evidence</span>
-      <span className="ay-meter" data-level={item.level}><span className="ay-meter__word">{item.word}</span><span className="ay-meter__bars">{[1, 2, 3].map((b) => <i key={b} />)}</span></span>
-      <span className="hm-ui__note">{item.note}</span>
-    </span>
-  );
-  if (item.kind === 'product') return (
-    <span className="hm-ui hm-ui--product">
-      <span className="hm-ui__thumb"><img src={item.p.image} alt="" loading="lazy" decoding="async" /></span>
-      <span className="hm-ui__text"><span className="hm-ui__brand">{brandOf(item.p) || item.p.brand}</span><span className="hm-ui__name">{item.p.name}</span>{money(item.p) && <span className="hm-ui__price">{money(item.p)}</span>}</span>
-      <span className="hm-ui__save">Save</span>
-    </span>
-  );
-  if (item.kind === 'rundown') return (
-    <span className="hm-ui hm-ui--rundown">
-      <span className="hm-ui__title">Your Daily Rundown</span>
-      <span className="hm-ui__note">60 seconds. The things worth knowing about your health today.</span>
-      <span className="hm-ui__pill">Start rundown</span>
-    </span>
-  );
-  if (item.kind === 'checkin') return (
-    <span className="hm-ui hm-ui--checkin">
-      <span className="hm-ui__title">How are your cramps today?</span>
-      <span className="hm-ui__opts">{['None', 'Mild', 'Moderate', 'Severe'].map((o, i) => <span key={o} className={i === 1 ? 'is-on' : undefined}>{o}</span>)}</span>
-    </span>
-  );
-  return (
-    <span className="hm-ui hm-ui--post">
-      <span className="hm-ui__label">{item.label}</span>
-      <span className="hm-ui__body">{item.body}</span>
-    </span>
-  );
-}
-function SlotPiece({ item }) {
-  // #32 Glossier app: every product on the white scalloped plate, at the same scale.
-  if (item.kind === 'prod') return <Plate src={item.p.image} alt="" stroke imgProps={{ loading: 'eager', decoding: 'auto' }} />;
-  return <UiPiece item={item} />;
-}
-/* one slot: fixed box, the current piece plus the outgoing one while it leaves */
-function Slot({ name, pool, step, index, still }) {
-  const item = pool.length ? pool[step % pool.length] : null;
-  const [shown, setShown] = useState(() => (item ? { cur: item, prev: null, n: 0 } : null));
-  // A new piece for this slot: keep the old one for its exit (state adjusted while rendering, not in an effect).
-  if (item && (!shown || shown.cur.id !== item.id)) setShown(!shown ? { cur: item, prev: null, n: 0 } : { cur: item, prev: shown.cur, n: shown.n + 1 });
-  const leaving = shown?.prev ? shown.n : 0;
-  useEffect(() => {
-    if (!leaving) return undefined;
-    const t = window.setTimeout(() => setShown((s) => (s ? { ...s, prev: null } : s)), 420);
-    return () => window.clearTimeout(t);
-  }, [leaving]);
-  if (!shown) return <span className={`hm-slot hm-slot--${name} is-skel`} aria-hidden="true" />;
-  return (
-    <span className={`hm-slot hm-slot--${name}`} aria-hidden="true" style={{ '--i': index }}>
-      {shown.prev && !still && <span key={`o-${shown.prev.id}`} className="hm-slot__layer is-out"><SlotPiece item={shown.prev} /></span>}
-      <span key={`i-${shown.cur.id}`} className={`hm-slot__layer ${shown.n === 0 ? 'is-pop' : 'is-in'}`}><SlotPiece item={shown.cur} /></span>
-    </span>
-  );
-}
-function HeroScatter({ posts = [], paused = false, onTogglePause }) {
+/* Hero visual: the approved ayna photograph and this week's first three real
+   products from Explore, the lead one big on a pink tile (#38 Rhode, #32
+   Glossier: packshots large on a tinted block). The products link to their pages. */
+function HeroArt({ onOpenProduct }) {
   const ready = useCatalogReady();
-  const lineup = useMemo(() => (ready ? weeklyLineup().slice(0, 12) : []), [ready]);
-  // Four objects (landing audit 6 and 11): the photo, a strip of three product
-  // plates, one ayna UI card and the seal. The plates and the UI card swap
-  // what they hold; the UI card cycles the evidence rating, real product
-  // cards, the Daily Rundown, a check-in and real posts when there are any.
-  const pools = useMemo(() => {
-    const prods = lineup.map((p) => ({ id: `p-${p.id}`, kind: 'prod', p }));
-    const cards = lineup.slice(6, 9).map((p) => ({ id: `c-${p.id}`, kind: 'product', p }));
-    const real = posts.filter((x) => String(x?.body || '').trim().length >= 20).slice(0, 3).map((post) => {
-      const who = post.is_anonymous || !post.author_id ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
-      const body = String(post.body).trim();
-      return { id: `post-${post.id}`, kind: 'post', label: `${post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} from ${who}`, body: body.length > 110 ? `${body.slice(0, 107).trim()}…` : body };
-    });
-    const ui = [
-      { id: 'ev3', kind: 'evidence', level: 3, word: 'Strong evidence', note: 'Research on the product itself' },
-      { id: 'rundown', kind: 'rundown' },
-      ...cards.slice(0, 1),
-      { id: 'ev2', kind: 'evidence', level: 2, word: 'Some evidence', note: 'Guidelines, or research on its ingredients' },
-      ...real.slice(0, 1),
-      { id: 'checkin', kind: 'checkin' },
-      ...cards.slice(1, 3),
-      ...real.slice(1),
-    ];
-    // Three plates in a strip (landing audit 11, #38 Rhode): the products dealt out in turn.
-    return { p0: prods.filter((_, i) => i % 3 === 0), p1: prods.filter((_, i) => i % 3 === 1), p2: prods.filter((_, i) => i % 3 === 2), ui };
-  }, [lineup, posts]);
-
-  // Pause when offscreen or the tab is hidden (WCAG 2.2.2; battery).
-  const ref = React.useRef(null);
-  const [visible, setVisible] = useState(true);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
-    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.15 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  const still = paused || reducedMotion();
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    if (still || !visible || !lineup.length) return undefined;
-    const t = window.setInterval(() => { if (!document.hidden) setTick((v) => v + 1); }, SWAP_MS);
-    return () => window.clearInterval(t);
-  }, [still, visible, lineup.length]);
-  // Round robin: one slot changes per tick, so the module drifts, never flickers.
-  const ORDER = ['p0', 'ui', 'p1', 'p2'];
-  const steps = Object.fromEntries(ORDER.map((k, i) => [k, tick > i ? Math.floor((tick - 1 - i) / ORDER.length) + 1 : 0]));
+  const picks = useMemo(() => (ready ? weeklyLineup().slice(0, 3) : []), [ready]);
+  const open = (p) => (e) => { if (!onOpenProduct || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct(p); };
+  const [lead, ...rest] = picks;
   return (
-    <div ref={ref} className={`hm-hero__art hm-scatter${still ? ' is-still' : ''}`}>
-      <p className="ed-sr">Pictured: ayna photography, real products from Explore and real ayna screens (an evidence rating, the Daily Rundown card, a check-in{pools.ui.some((x) => x.kind === 'post') ? ' and posts from the ayna Community' : ''}).</p>
-      {/* No pop and no fetch priority: the H1 is the largest paint (LCP); this photo just arrives. */}
-      <span className="hm-slot hm-slot--main" aria-hidden="true"><span className="hm-slot__layer"><Photo src="/landing/pink-stripe-floor.webp" alt="" sizes="(max-width: 767px) 60vw, (max-width: 1279px) 32vw, 340px" /></span></span>
-      <span className="hm-strip" aria-hidden="true">
-        {['p0', 'p1', 'p2'].map((k, i) => <Slot key={k} name="plate" pool={pools[k]} step={steps[k]} index={i + 1} still={still} />)}
+    <div className="hm-art">
+      <span className="hm-art__photo"><Photo src="/landing/pink-stripe-floor.webp" alt="" sizes="(max-width: 767px) 46vw, 300px" /></span>
+      <Seal className="hm-art__seal" />
+      {lead ? (
+        <a className="hm-art__lead" href={productHref(lead)} onClick={open(lead)}>
+          <Plate src={lead.image} alt="" imgProps={{ loading: 'eager', decoding: 'auto' }} />
+          <span className="hm-art__name"><span className="hm-art__brand">{brandOf(lead) || lead.brand}</span>{lead.name}</span>
+        </a>
+      ) : <span className="hm-art__lead is-skel" aria-hidden="true" />}
+      <span className="hm-art__pair">
+        {rest.length ? rest.map((p) => (
+          <a key={p.id} className="hm-art__small" href={productHref(p)} onClick={open(p)} aria-label={`${brandOf(p) || p.brand || ''} ${p.name}`.trim()}>
+            <Plate src={p.image} alt="" imgProps={{ loading: 'eager', decoding: 'auto' }} />
+          </a>
+        )) : [0, 1].map((i) => <span key={i} className="hm-art__small is-skel" aria-hidden="true" />)}
       </span>
-      <Slot name="ui" pool={pools.ui} step={steps.ui} index={4} still={still} />
-      <Seal className="hm-hero__seal hm-scatter__seal" />
-      {onTogglePause && !reducedMotion() && (
-        <button type="button" className="hm-scatter__pause" aria-pressed={paused} onClick={onTogglePause}>
-          <svg viewBox="0 0 24 24" aria-hidden="true">{paused ? <path d="M8 5l11 7-11 7z" /> : <path d="M8 5v14M16 5v14" />}</svg>
-          {paused ? 'Play motion' : 'Pause motion'}
-        </button>
-      )}
     </div>
   );
 }
 
-/* ---------- partner brands, once, attached under the hero ---------- */
+/* ---------- partner brands: the page's one motion, a pink marquee seam under the hero ----------
+   Real partner names only (utils/partnerBrands). Paused by reduced motion, on
+   hover, and by Pause motion (this button and the footer share one setting). */
 function Brands({ onViewWaitlist }) {
   const names = PARTNER_BRANDS.map((b) => b.name);
+  const paused = useMotionPaused();
+  const toggle = () => {
+    const next = !paused;
+    document.documentElement.classList.toggle('ay-motion-paused', next);
+    try { localStorage.setItem('ayna_motion_paused', next ? '1' : '0'); } catch { /* storage unavailable */ }
+  };
   return (
-    <section className="hm-brands" aria-labelledby="hm-brands-title">
+    <section className="hm-brands hm-marq" aria-labelledby="hm-brands-title">
       <h2 id="hm-brands-title" className="ed-sr">Brands we work with</h2>
-      <Ribbon
-        className="hm-ribbon"
-        items={names}
-        label="Partner brands"
-        tab={<a className="ay-ribbon__tab" href="/partners" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}><span className="hm-ribbon__long">Brands we work with</span><span className="hm-ribbon__short" aria-hidden="true">Our brands</span><span aria-hidden="true">&nbsp;→</span></a>}
-      />
+      <a className="hm-marq__tab" href="/partners" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}><span className="hm-ribbon__long">Brands we work with</span><span className="hm-ribbon__short" aria-hidden="true">Our brands</span><Arrow /></a>
+      <Marquee items={names} tone="pink" className="hm-marq__run" />
+      <button type="button" className="hm-marq__pause" aria-pressed={paused} onClick={toggle} aria-label={paused ? 'Play motion' : 'Pause motion'}>
+        <svg viewBox="0 0 24 24" aria-hidden="true">{paused ? <path d="M8 5l11 7-11 7z" /> : <path d="M8 5v14M16 5v14" />}</svg>
+      </button>
     </section>
   );
 }
@@ -366,7 +255,7 @@ function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, pick
   if (ready && !needs.length && four.length < 2) return null;
   const listName = need ? `${need.label} products` : mine ? 'Top picks for you' : 'This week’s picks';
   return (
-    <section className="hm-sec hm-needsband" aria-labelledby="hm-familiar-title">
+    <Band tone="butter" className="hm-sec hm-needsband hm-band" aria-labelledby="hm-familiar-title">
       <div className="hm-wrap">
         <header className="hm-head">
           <h2 id="hm-familiar-title" className="hm-h2">{signedOut ? 'Does this sound familiar?' : 'Explore by need'}</h2>
@@ -398,7 +287,7 @@ function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, pick
           </div>
         </div>
       </div>
-    </section>
+    </Band>
   );
 }
 
@@ -471,41 +360,57 @@ function Levels({ className, onViewArticles }) {
     </div>
   );
 }
+/* Bento (#455687ac intelly dashboard, #007b85fd "At a Glance"): the three
+   steps and the four catalog numbers as tiles of different sizes and tones on
+   the espresso band, instead of a row of steps and a row of identical stats. */
+function StatTile({ s, tone }) {
+  if (!s) return <Tile tone={tone} as="li" className="hm-bt hm-bt--num is-skel" aria-hidden="true" />;
+  return <Tile tone={tone} as="li" className="hm-bt hm-bt--num" big={s.n.toLocaleString('en-US')} caption={s.label} />;
+}
 function HowEvidence({ onViewHowItWorks, onViewArticles, onStartQuiz, showStart = true }) {
-  const nums = useCatalogNumbers();
+  const nums = useCatalogNumbers() || [null, null, null, null];
+  const [s1, s2, s3] = STEPS;
   return (
-    <section className="hm-sec hm-how ay-band ay-band--espresso" aria-labelledby="hm-how-title">
+    <Band tone="ink" className="hm-sec hm-how hm-band" aria-labelledby="hm-how-title">
       <div className="hm-wrap">
         <header className="hm-head">
           <h2 id="hm-how-title" className="hm-h2">How ayna fits it to you</h2>
           <Go className="ay-btn ay-btn--text hm-head__all" href="/how-it-works" onGo={onViewHowItWorks}><span className="hm-head__long">The full method</span><span className="hm-head__short">See all<span className="ed-sr"> of the method</span></span><Arrow /></Go>
         </header>
         <p className="hm-body hm-how__lead">ayna matches women’s health products to your answers, and shows the research beside each one. Unsupported claims are labeled, not upgraded into facts.</p>
-        <ol className="hm-steps">
-          {STEPS.map((st, i) => (
-            <li key={st.t} className="hm-step">
-              <span className="hm-step__ph"><Photo src={st.src} alt="" sizes="(max-width: 767px) 96px, 380px" style={{ objectPosition: st.pos }} loading="lazy" decoding="auto" /><StepUI kind={st.ui} /></span>
-              <span className="hm-step__n" aria-hidden="true">{i + 1}</span>
-              <div className="hm-step__text">
-                <h3 className="hm-h3"><span className="ed-sr">Step {i + 1}: </span>{st.t}</h3>
-                <p>{st.d}</p>
-                {st.ui === 'evidence' && <Levels className="hm-levels--in" onViewArticles={onViewArticles} />}
-              </div>
-            </li>
-          ))}
-        </ol>
-        {/* Wide screens: the three levels as one ruled row under the steps (no tall column under step 2 only).
-            Phones keep them inside step 2. One of the two is display: none, so it is read once. */}
-        <Levels className="hm-levels--row" onViewArticles={onViewArticles} />
-        <ul className="hm-stats" aria-busy={nums ? undefined : 'true'} aria-label="ayna in numbers">
-          {(nums || [0, 1, 2, 3].map(() => null)).map((s, i) => (
-            <li key={i}>{s ? <BigFact value={s.n.toLocaleString('en-US')} caption={s.label} /> : <span className="hm-stat__skel" aria-hidden="true" />}</li>
-          ))}
-        </ul>
+        <Bento as="ol" className="hm-bento" aria-busy={nums[0] ? undefined : 'true'}>
+          <Tile tone="butter" span="big" as="li" className="hm-bt hm-bt--photo">
+            <span className="hm-bt__ph"><Photo src={s1.src} alt="" sizes="(max-width: 767px) 92vw, 600px" style={{ objectPosition: s1.pos }} loading="lazy" decoding="auto" /></span>
+            <span className="hm-bt__panel">
+              <span className="hm-bt__n" aria-hidden="true">1</span>
+              <h3 className="hm-h3"><span className="ed-sr">Step 1: </span>{s1.t}</h3>
+              <p>{s1.d}</p>
+              <StepUI kind="quiz" />
+            </span>
+          </Tile>
+          <Tile tone="pink" span="tall" as="li" className="hm-bt hm-bt--ev">
+            <span className="hm-bt__n" aria-hidden="true">2</span>
+            <h3 className="hm-h3"><span className="ed-sr">Step 2: </span>{s2.t}</h3>
+            <p>{s2.d}</p>
+            <Levels className="hm-levels--tile" onViewArticles={onViewArticles} />
+          </Tile>
+          <StatTile s={nums[0]} tone="butter" />
+          <StatTile s={nums[1]} tone="ink" />
+          <Tile tone="pink" span="wide" as="li" className="hm-bt hm-bt--decide">
+            <span className="hm-bt__side"><Photo src={s3.src} alt="" sizes="(max-width: 767px) 40vw, 260px" style={{ objectPosition: s3.pos }} loading="lazy" decoding="auto" /><StepUI kind="decide" /></span>
+            <span className="hm-bt__text">
+              <span className="hm-bt__n" aria-hidden="true">3</span>
+              <h3 className="hm-h3"><span className="ed-sr">Step 3: </span>{s3.t}</h3>
+              <p>{s3.d}</p>
+            </span>
+          </Tile>
+          <StatTile s={nums[2]} tone="butter" />
+          <StatTile s={nums[3]} tone="pink" />
+        </Bento>
         {/* The one call to action after the hero: it closes the method. */}
         {showStart && <div className="hm-how__cta"><Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Get my matches<Arrow /></Go></div>}
       </div>
-    </section>
+    </Band>
   );
 }
 
@@ -532,7 +437,6 @@ function Reads({ onViewArticle, onViewArticles }) {
               <span className="hm-readlist__ph"><Photo src={r.src} alt={r.alt} sizes="(max-width: 767px) 96px, 128px" loading="lazy" decoding="auto" /></span>
               <span className="hm-readlist__text">
                 <strong className="hm-readlist__title">{r.title}</strong>
-                <span className="hm-readlist__teaser">{r.teaser}</span>
                 <small className="hm-readlist__src">Sources: {String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
               </span>
             </a>
@@ -560,7 +464,7 @@ function Community({ onViewCommunity, posts = [] }) {
       <span className="hm-comm__ph"><Photo sizes="(max-width: 767px) 92vw, 460px" src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" decoding="auto" /></span>
       <div className="hm-comm__copy">
         <h2 id="hm-comm-title" className="hm-h2">Real talk about what women actually use.</h2>
-        <p className="hm-body">Reviews, questions and routines from women who use these products. Ask a question, review what you use or share a playlist.</p>
+        <ReadMore className="hm-more"><p className="hm-body">Reviews, questions and routines from women who use these products. Ask a question, review what you use or share a playlist.</p></ReadMore>
         <div className="hm-news" aria-labelledby="hm-news-title">
           <span className="hm-tab hm-news__label">ayna news</span>
           <h3 id="hm-news-title" className="hm-h3">{news ? news.title : 'ayna Community is open.'}</h3>
@@ -589,12 +493,12 @@ function Community({ onViewCommunity, posts = [] }) {
 }
 function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts }) {
   return (
-    <section className="hm-sec hm-rc ay-band ay-band--pink" aria-label="Reads and Community">
+    <Band tone="pink" className="hm-sec hm-rc hm-band" aria-label="Reads and Community">
       <div className="hm-wrap hm-rc__grid">
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         <Community onViewCommunity={onViewCommunity} posts={posts} />
       </div>
-    </section>
+    </Band>
   );
 }
 
@@ -604,7 +508,7 @@ function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts 
    legal notice stays with the button at 13px (legally required, readable). */
 function FoundersInvest({ onViewAbout }) {
   return (
-    <section className="hm-sec hm-us" aria-labelledby="hm-us-title">
+    <Band tone="butter" className="hm-sec hm-us hm-band" aria-labelledby="hm-us-title">
       <div className="hm-wrap">
         <div className="hm-us__grid">
           <figure className="hm-polaroid">
@@ -622,7 +526,7 @@ function FoundersInvest({ onViewAbout }) {
           <span className="hm-invest__ph"><Photo sizes="200px" src="/landing/laundry-duo.webp" alt="Two friends in curlers reading magazines together on a laundry room floor" loading="lazy" decoding="auto" width="736" height="981" /></span>
           <div className="hm-invest__copy">
             <h3 id="hm-invest-title" className="hm-h3">Invest in ayna</h3>
-            <p className="hm-body">We&rsquo;re so excited to extend an opportunity for you to invest in ayna, whether you&rsquo;re one of our earliest ayna users or a part of the greater community passionate about ayna&rsquo;s work to expand the future of women&rsquo;s health. Join our community round and learn more on Wefunder.</p>
+            <ReadMore className="hm-more"><p className="hm-body">We&rsquo;re so excited to extend an opportunity for you to invest in ayna, whether you&rsquo;re one of our earliest ayna users or a part of the greater community passionate about ayna&rsquo;s work to expand the future of women&rsquo;s health. Join our community round and learn more on Wefunder.</p></ReadMore>
             <a className="ay-btn ay-btn--secondary" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('landing')}>
               Invest on Wefunder<span className="ed-sr"> (opens in a new tab)</span><Arrow />
             </a>
@@ -630,7 +534,7 @@ function FoundersInvest({ onViewAbout }) {
           </div>
         </article>
       </div>
-    </section>
+    </Band>
   );
 }
 
@@ -639,17 +543,11 @@ function FoundersInvest({ onViewAbout }) {
 // `personalSlot` (her dashboard row) right under it; `communityPosts` are
 // the most helpful Powder Room posts (two are shown, in the Community card).
 export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, personal = null, personalSlot = null, communityPosts = [], heroBanner = null }) {
-  const paused = useMotionPaused();
-  const togglePause = () => {
-    const next = !paused;
-    document.documentElement.classList.toggle('ay-motion-paused', next);
-    try { localStorage.setItem('ayna_motion_paused', next ? '1' : '0'); } catch { /* storage unavailable */ }
-  };
   const rest = useAfterHeroPaint();
   return (
-    <div className={`ed ed-home hm${paused ? ' is-paused' : ''}`}>
+    <div className="ed ed-home hm hm-uq">
       {/* Community posts sit lower down, after how it works, never above the value prop (founder, Oct 24). */}
-      <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} banner={heroBanner} posts={[]} paused={paused} onTogglePause={togglePause} />
+      <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} onOpenProduct={onOpenProduct} onViewHowItWorks={onViewHowItWorks} personal={personal} banner={heroBanner} />
       {personal?.dashboard ? <div className="hm-personal">{personalSlot}</div> : <Brands onViewWaitlist={onViewWaitlist} />}
       {!personal?.dashboard && personalSlot && <div className="hm-personal">{personalSlot}</div>}
       <NeedsBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} onStartQuiz={onStartQuiz} picks={personal?.topPicks || null} signedOut={!personal} />
@@ -672,7 +570,7 @@ function useAfterHeroPaint() {
     let done = false;
     // two frames: the photo's first paint happens before the rest of the page renders
     const go = () => { if (done) return; done = true; requestAnimationFrame(() => requestAnimationFrame(() => window.setTimeout(() => setReady(true), 0))); };
-    const img = document.querySelector('.hm-slot--main img');
+    const img = document.querySelector('.hm-art__photo img');
     if (img?.decode) img.decode().then(go, go); else go();
     const t = window.setTimeout(go, 1200);
     return () => { done = true; window.clearTimeout(t); };

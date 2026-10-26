@@ -65,3 +65,5 @@ a:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile
 .ayb-marquee__row li::after { content: '\2733'; margin-left: 32px; }
 @keyframes ayb-marquee { to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .ayb-marquee__track { animation: none; } }
+/* Pause motion (footer / page button sets html.ay-motion-paused) and keyboard focus also stop the marquee (uniqueness pass A). */
+html.ay-motion-paused .ayb-marquee__track, .ayb-marquee:focus-within .ayb-marquee__track { animation-play-state: paused; }

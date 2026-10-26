@@ -1,12 +1,13 @@
 import React from 'react';
-import { Plate } from '../ui/ay';
+import { Plate, Shout } from '../ui/ay';
+import '../../styles/uq-info.css';
 import '../../styles/info-pages.css';
 
 /**
  * InfoHero: the one header for every info page (info-pages audit, issue 1 and
- * section 6). Butter page, a breadcrumb, the page's only H1 at 36px, one
- * sentence, and an optional photo on the white scalloped plate. No colour
- * band. Used by EdPage (About, How it works, How we make money, Partners,
+ * section 6). Uniqueness pass A (Oct 26): a full-bleed espresso band, the
+ * page's H1 as its one Shout, one sentence, and an optional photo on the
+ * white scalloped plate. Used by EdPage (About, How it works, How we make money, Partners,
  * Contact, Privacy, Terms...), Compare and Free product.
  *
  *   photo: '/landing/x.webp' string or { src, alt, product: true }
@@ -21,7 +22,7 @@ export default function InfoHero({ title, lede, crumb, onBack, backLabel = 'Home
     onBack(e);
   };
   return (
-    <header className={`ay-ih${ph ? ' has-photo' : ''}${className ? ` ${className}` : ''}`}>
+    <header className={`ay-ih uq-bleed is-ink${ph ? ' has-photo' : ''}${className ? ` ${className}` : ''}`}>
       <div className="ay-ih__copy">
         <nav className="ay-ih__crumbs" aria-label="Breadcrumb">
           <ol>
@@ -29,7 +30,7 @@ export default function InfoHero({ title, lede, crumb, onBack, backLabel = 'Home
             <li aria-current="page">{crumb || title}</li>
           </ol>
         </nav>
-        <h1 className="ay-ih__h1" tabIndex={headingRef ? -1 : undefined} ref={headingRef}>{title}</h1>
+        <Shout size="l" className="ay-ih__h1" tabIndex={headingRef ? -1 : undefined} ref={headingRef}>{title}</Shout>
         {lede && <p className="ay-ih__lede">{lede}</p>}
         {updated && <p className="ay-ih__updated">{updated}</p>}
         {children}

@@ -74,7 +74,7 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
   // Today on the website and the app (all-pages brief, Oct 25).
   const tab = 'Today';
   return (
-    <Tag className={`ay-ob-ready is-${variant}`} aria-labelledby="ay-ob-ready-h">
+    <Tag className={`ay-ob-ready uq-reveal is-${variant}`} aria-labelledby="ay-ob-ready-h">
       {onBack && (
         <button type="button" className="ay-ob-back" onClick={onBack} aria-label="Back to health data">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
@@ -100,14 +100,18 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
       )}
       {matches.length > 0 && (
         <section className="ay-ob-matches" aria-labelledby="ay-ob-matches-h">
-          <h2 id="ay-ob-matches-h" className="ay-ob-matches__h">Your first matches</h2>
+          <div className="ay-ob-matches__head">
+            <h2 id="ay-ob-matches-h" className="ay-ob-matches__h">Your first matches</h2>
+            {/* The % explained, one tap away (team meeting Oct 26). New tab on the website so the reveal stays. */}
+            {variant === 'web' && <a className="ay-ob-how" href="/how-it-works" target="_blank" rel="noopener noreferrer">How we match<span className="ay-ob-sr"> (opens in a new tab)</span></a>}
+          </div>
           <ul className="ay-ob-matches__list">
-            {matches.map(({ product, details, area, hold, why }) => {
+            {matches.map(({ product, details, area, hold, why }, i) => {
               // The need chip only helps when the matches cover more than one need.
               const showArea = area && new Set(matches.map((m) => m.area)).size > 1;
               const src = safeProductImageSrc(product.image || product.imageUrl || product.images?.[0], product.type === 'digital');
               return (
-                <li key={product.id} className="ay-ob-match">
+                <li key={product.id} className={`ay-ob-match${i === 0 ? ' is-lead' : ''}`}>
                   <MatchPlate src={src} product={product} />
                   <span className="ay-ob-match__text">
                     {/* Elure-style (#61): chips above the name. */}
