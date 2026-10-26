@@ -109,7 +109,7 @@ export function highlightsFor(product, glance = null) {
   const h = wearHours(product);
   if (h && cupOrDisc(product)) out.push({ id: 'wear', icon: 'clock', value: `${h} hrs`, caption: 'max wear' });
   const life = lifespanYears(product);
-  if (life) out.push({ id: 'life', icon: 'recycle', value: `${life.years} yrs`, caption: life.upTo ? 'reusable, up to' : 'reusable' });
+  if (life) out.push({ id: 'life', icon: 'recycle', value: `${life.years} yrs`, caption: life.upTo ? 'max life, reusable' : 'reusable' });
   const size = sizeCount(product);
   if (!cap && size?.n && size.n > 1 && size.word) out.push({ id: 'count', icon: 'size', value: String(size.n), caption: size.word });
   const days = supplyDays(product);

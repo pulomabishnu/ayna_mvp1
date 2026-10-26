@@ -39,11 +39,12 @@ export function ExploreHeader({ active, onGo, children = null, compact = false, 
       <Seal className="wx-seal" />
       {/* Her picks as die-cut stickers beside the seal (real photos only; nothing without them). */}
       <ProductStickers products={stickers} max={3} className="wx-stickers" />
-      {children}
+      {/* Tabs straight under the title on every section, then the search (they moved between sections). */}
       <nav className="wx-tabs" aria-label="Explore sections">
         <PillTabs idBase="wx" label="Explore sections" active={active} onChange={(key) => onGo?.(key)}
           tabs={EXPLORE_SECTIONS.map((s) => ({ id: s.key, label: s.label, href: s.href }))} />
       </nav>
+      {children}
     </header>
   );
 }

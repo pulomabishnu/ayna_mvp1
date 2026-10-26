@@ -34,3 +34,5 @@
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-feature--v9 { display: block !important; margin: 0 var(--d-gutter, 16px) 32px !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-feature--v9 .al-feature__h { margin: 0 0 4px !important; color: var(--d-ink) !important; font: 700 calc(20px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display) !important; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-match--v9 { margin: 0 var(--d-gutter, 16px) 32px; }
+/* Loop C r1: the count sits on the chip's line in ink 78% (it dropped into a second pill row). */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-topics--v9 .al-topics__n { display: inline !important; min-width: 0 !important; height: auto !important; margin-left: 6px !important; padding: 0 !important; background: none !important; color: inherit !important; font-weight: 500 !important; opacity: .78; }

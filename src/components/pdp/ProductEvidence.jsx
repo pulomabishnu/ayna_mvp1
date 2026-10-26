@@ -207,7 +207,7 @@ function OtherLinks({ items, label = 'Other links', note = '' }) {
                 <span className="ayq-linklist__title">{s.title}</span>
                 {s.summary && <span className="ayq-linklist__sum"><Tx>{s.summary}</Tx></span>}
                 {whyText(s.why) && <span className="ayq-linklist__sum">ayna’s note: {whyText(s.why)}</span>}
-                <span className="ayq-linklist__tag">{s.publisher}{s.publisher && s.kind?.label ? ', ' : ''}<KindTag kind={s.kind} /></span>
+                <span className="ayq-linklist__tag">{s.publisher}{s.publisher && s.kind?.label ? " · " : ''}<KindTag kind={s.kind} /></span>
               </span>
               <span className="ayq-linklist__go" aria-hidden="true">↗</span>
               <span className="sr-only"> (opens in a new tab)</span>
@@ -861,7 +861,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     <div className="ayq-sum ayv-read">
       {(lead || m.summary.length > 0) && (
         <section id="ay-sum-about" className="ayq-anchor ayv-sec ayv-sec--lead" aria-label="What it is">
-          {lead && <p className="ayv-oneline"><Tx>{brandVoice(lead, m.brand || glance?.brand)}</Tx></p>}
+          {lead && <p className={`ayv-oneline${String(lead).length > 140 ? ' is-long' : ''}`}><Tx>{brandVoice(lead, m.brand || glance?.brand)}</Tx></p>}
           {m.summary.length > 0 && <div className="ayq-prose"><Paras list={m.summary.filter((x) => !(teamShort && x.startsWith(leadParts.used)))} /></div>}
         </section>
       )}
@@ -904,9 +904,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       <section className="ayv-sec ayv-pointer" aria-labelledby="ay-sum-other-h">
         <h3 id="ay-sum-other-h" className="ayv-sec__h">In the other tabs</h3>
         <ul className="ayv-pointer__list">
-          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('clinical')}>Clinical</button><span>: {clin ? `${clin.who || 'a clinician'}${clin.credential ? `, ${clin.credential}` : ''}` : 'no clinician has reviewed this yet'}</span></li>
-          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('literature')}>Research</button><span>: {evx.summary.charAt(0).toLowerCase() + evx.summary.slice(1)}</span></li>
-          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('reviews')}>Reviews</button><span>: {ratingCount > 0 ? plural(ratingCount, 'ayna review') : 'no ayna reviews yet'}{rv.online.length ? `, ${plural(rv.online.length, 'link')} to posts online` : ''}</span></li>
+          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('clinical')}>Clinical</button><span>{clin ? `${clin.who || 'a clinician'}${clin.credential ? `, ${clin.credential}` : ''}` : 'no clinician has reviewed this yet'}</span></li>
+          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('literature')}>Research</button><span>{evx.summary.charAt(0).toLowerCase() + evx.summary.slice(1)}</span></li>
+          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('reviews')}>Reviews</button><span>{ratingCount > 0 ? plural(ratingCount, 'ayna review') : 'no ayna reviews yet'}{rv.online.length ? `, ${plural(rv.online.length, 'link')} to posts online` : ''}</span></li>
         </ul>
       </section>
       {/* No pinned buy bar (audit 7.18): a compact sticker button repeats here instead. */}

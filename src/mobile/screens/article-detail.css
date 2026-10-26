@@ -46,3 +46,6 @@
 .ayna-mobile .ay-read-products__note { display: flex; gap: 10px; margin: 0; padding: 12px 14px; border: 1.5px solid currentColor; border-radius: 14px; font: 500 15px/1.5 'Figtree', system-ui, sans-serif; color: var(--ayna-text, #3e2723); }
 .ayna-mobile .ay-read-ask__row { display: flex; flex-wrap: wrap; gap: 8px; }
 .ayna-mobile .ay-read-ask__row button { min-height: 44px; padding: 0 16px; border: 1.5px solid currentColor; border-radius: 99px; background: transparent; color: var(--ayna-text, #3e2723); font: 600 15px/1.2 'Figtree', system-ui, sans-serif; cursor: pointer; }
+/* Founder change (no white surfaces): the next-read button sits on deeper butter with a thin rule. */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ayna-read-next button { background: #f6e3a1; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ayna-read-next button { background: rgba(255, 237, 172, .08); }
