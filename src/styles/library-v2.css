@@ -251,3 +251,11 @@ html body .app-container.app-container.app-container.app-container[data-theme='b
   html body .app-container.app-container.app-container.app-container .lb .lb-chips { flex-wrap: wrap; overflow: visible; }
   html body .app-container.app-container.app-container.app-container .lb .lb-chips .lb-chip { border-radius: 8px; }
 }
+/* Featured reads are the shared ReadCard list row (ReadCard.jsx), so the old row grid steps aside. */
+html body .app-container.app-container.app-container.app-container .lb .lb-flist > .lb-frow { display: block; padding: 0; border: 0; grid-template-columns: none; }
+html body .app-container.app-container.app-container.app-container .lb .lb-flist > .lb-frow .ay-rcard.is-row { grid-template-columns: 160px minmax(0, 1fr); gap: 24px; }
+html body .app-container.app-container.app-container.app-container .lb .lb-flist > .lb-frow .ay-rcard.is-row .ay-rcard__thumb { width: 160px; }
+@media (max-width: 560px) {
+  html body .app-container.app-container.app-container.app-container .lb .lb-flist > .lb-frow .ay-rcard.is-row { grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
+  html body .app-container.app-container.app-container.app-container .lb .lb-flist > .lb-frow .ay-rcard.is-row .ay-rcard__thumb { width: 96px; }
+}
