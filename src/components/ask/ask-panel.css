@@ -187,3 +187,10 @@ html body .app-container.app-container:is([data-theme='dark'], [data-theme='bran
 .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__prompts button::after { content: ''; position: absolute; right: 10px; top: 50%; width: 32px; height: 32px; margin-top: -16px; border-radius: 50%; background: #f7badd url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e2723' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M9 7h8v8'/%3E%3C/svg%3E") center / 16px no-repeat; }
 .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__reason { font: 500 13px/1.35 var(--ay-font-ui); color: var(--ay-ink-muted); }
 .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__q { font: 600 15px/1.3 var(--ay-font-ui); }
+
+/* Her numbers that went with a dashboard question (AskStatCard): calm register, 13px floor. */
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats { align-self: flex-start; max-width: 100%; margin: 0 !important; padding: 12px 16px !important; border: 0 !important; border-left: 3px solid var(--askp-ink) !important; border-radius: 0 8px 8px 0 !important; background: var(--askp-soft) !important; color: var(--askp-ink) !important; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats figcaption { margin: 0 0 8px !important; font: 600 13px/1.3 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats b { font: 700 20px/1.05 var(--ay-font-display) !important; color: var(--askp-ink) !important; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats small { font: 500 13px/1.3 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-goals { margin: 0 !important; font: 500 14px/1.45 var(--ay-font-ui) !important; }
