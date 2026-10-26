@@ -5,7 +5,7 @@ import ServiceCard from '../cards/ServiceCard.jsx';
 import NeedTiles from './NeedTiles.jsx';
 import CardRail, { CardGrid } from './CardRail.jsx';
 import { needGroups } from './needGroups.js';
-import { Chip, ChipRow, StickerButton, OutlineButton } from '../ui/ay';
+import { Chip, ChipRow, StickerButton, OutlineButton, Marquee } from '../ui/ay';
 import { featuredOrder } from '../../data/packshots.js';
 import { rankReadsForProfile } from '../../mobile/utils/personalReads.js';
 import { trackCardClicked, eventSurface } from '../../utils/analyticsEvents.js';
@@ -123,6 +123,7 @@ export default function WebExplore({
   };
   // Products for the For you rail: Featured order (packshots she can buy now first, pre-orders last).
   const firstLook = useMemo(() => featuredOrder(products).slice(0, ROW), [products]);
+  const tickerNeeds = useMemo(() => needGroups().flatMap((g) => g.topics.map((t) => t.label)), []);
   const forYouReads = useMemo(() => (hasProfile ? rankReadsForProfile(ARTICLES, quizResults).slice(0, 6) : []), [hasProfile, quizResults]);
 
   let body;
@@ -141,7 +142,7 @@ export default function WebExplore({
   } else if (section === 'topics') {
     body = <>
       {/* By need tiles first (her words, a real product each), then the topics as grouped chips. */}
-      <section className="wx-sec wx-needs" aria-labelledby="wx-needs-h">{head('wx-needs-h', 'By need')}<NeedTiles onPick={pickTopic} /></section>
+      <section className="wx-sec wx-needbento" aria-labelledby="wx-needs-h">{head('wx-needs-h', 'By need')}<NeedTiles onPick={pickTopic} bento /></section>
       <section className="wx-sec" aria-labelledby="wx-topics-h">{head('wx-topics-h', 'All needs')}
         <div className="wx-groups">{needGroups().map((g) => <div key={g.id} className="wx-group"><h3 className="wx-group__h" id={`wx-g-${g.id}`}>{g.label}</h3>{topicChips(g.topics, g.label)}</div>)}</div>
       </section>
@@ -202,6 +203,8 @@ export default function WebExplore({
         )}
       </form>
     </ExploreHeader>
+    {/* The page's one motion moment: need names ticking by on a pink strip (For you and Needs, not while searching). */}
+    {!searching && (section === 'overview' || section === 'topics') && <Marquee items={tickerNeeds} tone="pink" className="ay-needticker" />}
     <div className="ay-container wx-body">{body}</div>
   </div>;
 }

@@ -225,17 +225,32 @@ describe('round 3: Safety facts groups and full text', () => {
     expect(g.map((x) => x.id)).toEqual(['children', 'ask', 'when']);
     expect(g[1].chunks.map((c) => c.length)).toEqual([6, 1]);
   });
-  it('Who it\'s for, Not for, How to use, Safety and Ingredients show every item, no Show all', () => {
+  // Founder, Oct 26 16:54 ("glance first, read more on tap") replaced "show every item": long lists show
+  // their first items and keep the rest in the page behind one "Show all N" button (aria-expanded).
+  // Safety never collapses.
+  it('Safety shows every item; Who it\'s for, How to use and Ingredients keep every item one tap away', () => {
     for (const id of ['p-portable-heating', 'p-nature-made-iron-65mg', 'd-ppd']) {
       const p = product(id);
       const html = renderToStaticMarkup(<ProductEvidence product={p} glance={buildGlance(p, {})} syncHash={false} />);
       const summary = html.slice(html.indexOf('id="ay-panel-summary"'), html.indexOf('id="ay-panel-reviews"') > 0 ? html.indexOf('id="ay-panel-reviews"') : undefined);
-      for (const sec of ['ay-sum-who', 'ay-sum-how', 'ay-sum-safety', 'ay-sum-details']) {
+      const safeAt = summary.indexOf('id="ay-sum-safety"');
+      if (safeAt >= 0) {
+        const safety = summary.slice(safeAt, summary.indexOf('</section>', safeAt));
+        expect(safety).not.toMatch(/Show all/);
+        expect(safety).not.toMatch(/hidden=""/);
+      }
+      for (const sec of ['ay-sum-who', 'ay-sum-how', 'ay-sum-details']) {
         const at = summary.indexOf(`id="${sec}"`);
         if (at < 0) continue;
         const body = summary.slice(at, summary.indexOf('</section>', at));
-        expect(body).not.toMatch(/Show all/);
-        expect(body).not.toMatch(/hidden=""/);
+        if (/hidden=""/.test(body)) expect(body).toMatch(/aria-expanded="false"[^>]*>Show all \d+/);
+      }
+      // The "Not for" list is never collapsed (it carries IUD and similar cautions).
+      const whoAt = summary.indexOf('id="ay-sum-who"');
+      if (whoAt >= 0) {
+        const who = summary.slice(whoAt, summary.indexOf('</section>', whoAt));
+        const notFor = who.indexOf('ayv-list--no');
+        if (notFor >= 0) expect(who.slice(notFor)).not.toMatch(/hidden=""/);
       }
     }
   });

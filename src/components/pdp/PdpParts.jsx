@@ -8,6 +8,7 @@ import { splitShow, SHOW_FIRST } from './pdpParts.js';
 import { LEVELS, levelLabel, levelCountWords } from './evidenceLevels.js';
 import { ScallopPlate } from '../ui/ay/ScallopPlate.jsx';
 import EvidenceMark from './EvidenceMark.jsx';
+import '../ui/ay/ay-bold.css';
 import './pdp.css';
 
 /**
@@ -313,18 +314,25 @@ export function PriceRow({ main = '', perUse = null, notes = [] }) {
 }
 
 /** Highlights (12, signature 5): 2-4 white tiles, a big number (Bricolage 800 22) and a 13px caption. */
+// Bento tones by position (uniqueness pass, Oct 26; Glossier PDP big-number claims + #455687ac bento):
+// one big pink tile, one espresso, then butter and deeper butter. Sizes come from the count (CSS).
+const HL_TONES = ['pink', 'ink', 'butter', 'deep'];
 export function Highlights({ items = [], note = '' }) {
   if (!items.length) return null;
   return (
     <section className="ayv-hl" aria-label="Highlights">
-      <ul className="ayv-hl__row">
-        {items.map((h) => (
-          <li key={h.id} className="ayv-hl__tile">
-            <PdpIcon name={h.icon} size={20} />
-            <span className="ayv-hl__num">{(() => { const m = String(h.value).match(/^(.*?\d)\s+(mL|hrs|yrs|days|mg|mcg|IU)$/); return m ? <>{m[1]}<span className="ayv-hl__unit"> {m[2]}</span></> : h.value; })()}</span>
-            <span className="ayv-hl__cap">{h.caption}</span>
-          </li>
-        ))}
+      <ul className={`ayv-hl__row ayb-bento ayv-hlb is-n${items.length}`}>
+        {items.map((h, i) => {
+          const m = String(h.value).match(/^(.*?\d)\s+(mL|hrs|yrs|days|mg|mcg|IU)$/);
+          const word = !/\d/.test(String(h.value));
+          return (
+            <li key={h.id} className={`ayv-hl__tile ayb-tile is-${HL_TONES[i % HL_TONES.length]}${word ? ' is-word' : ''}`}>
+              <PdpIcon name={h.icon} size={20} />
+              <span className="ayv-hl__num ayb-tile__big">{m ? <>{m[1]}<span className="ayv-hl__unit ayb-tile__unit">{m[2]}</span></> : h.value}</span>
+              <span className="ayv-hl__cap ayb-tile__cap">{h.caption}</span>
+            </li>
+          );
+        })}
       </ul>
       {note && <p className="ayv-hl__note">{note}</p>}
     </section>

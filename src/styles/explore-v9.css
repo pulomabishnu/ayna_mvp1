@@ -3,7 +3,7 @@
    Sections 32px apart, heading 22/20 then 12px to content. Chips, tabs and plates are the
    shared primitives (components/ui/ay); cards are styles/pcard.css. Tokens only. */
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 { padding-top: 24px !important; padding-bottom: 8px !important; margin-bottom: 32px !important; }
-:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 :is(h1, p).wx-title { margin: 0 0 16px !important; font: 700 30px/1.1 var(--ay-font-display) !important; letter-spacing: -.01em !important; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 :is(h1, p).wx-title { margin: 8px 0 24px !important; font: 800 var(--ayb-shout-xl, 96px)/.88 var(--ay-font-display) !important; letter-spacing: -.045em !important; }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-search { max-width: none; margin: 0 0 16px; }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-search label { max-width: none; }
 :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs { margin: 0 0 8px; }
@@ -18,7 +18,7 @@
 [data-theme='brand-dark'] :is(.wx-body, .ay-pcard, .ay-rcard, .ay-avoid, .ay-needtiles, .lb-body, .lb-featured, .ayshop .ay-avoid) { --legacy-ink: #ffedac; }
 @media (max-width: 720px) {
   :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 { padding-top: 16px !important; margin-bottom: 24px !important; }
-  :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 :is(h1, p).wx-title { font-size: 26px !important; }
+  :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 :is(h1, p).wx-title { margin: 4px 0 16px !important; font-size: 56px !important; }
   :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs__tab { font-size: 13px !important; padding-inline: 2px !important; }
 }
 
