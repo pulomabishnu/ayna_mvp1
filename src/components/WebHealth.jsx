@@ -11,6 +11,7 @@ import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './pers
 import { headline, readHomeLook } from '../mobile/components/homeLook.js';
 import { comingUp } from '../health/comingUp.js';
 import { formatMetric } from '../health/dashboard.js';
+import { CountRing, ProgressCount } from './ui/ay';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
 
@@ -83,28 +84,26 @@ function ConnectNote({ signedIn, onSignIn, onOpenConnections }) {
 
 const fmtShortDay = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
-/** A small progress ring for "Day 7 of 21" (routine streak; rings only for cycle and routine). */
-function DayRing({ day, of }) {
-  const C = 2 * Math.PI * 15;
-  const frac = of ? Math.min(1, day / of) : 0;
-  return (
-    <svg className="ay-wh-side__ring" viewBox="0 0 36 36" aria-hidden="true">
-      <circle cx="18" cy="18" r="15" className="is-track" />
-      <circle cx="18" cy="18" r="15" className="is-arc" strokeDasharray={`${C * frac} ${C}`} transform="rotate(-90 18 18)" />
-    </svg>
-  );
-}
-
 /**
  * Today's right column (Today audit, issue 5): "Your week" glance rows and
  * "Coming up", then what she is trying now, all from her own data (her log's
  * weekly recap, synced health rows, her cycle estimate, her tries). Words
  * first, the number under them. Nothing here when there is nothing real.
  */
-function TodaySide({ week, tiles, coming, trying }) {
+function TodaySide({ week, tiles, coming, trying, setup }) {
   const glance = [...(week?.stats || []), ...(week?.changes || [])];
+  const done = setup.filter((x) => x.done).length;
   return (
     <>
+      {done > 0 && done < setup.length && (
+        <section className="ay-wh-side" aria-labelledby="ay-wh-setup-h">
+          <h2 id="ay-wh-setup-h" className="ay-wh-side__h">Getting set up</h2>
+          <ProgressCount done={done} total={setup.length} unit="set-up steps done" />
+          <ul className="ay-wh-side__rows">
+            {setup.map((x) => <li key={x.id} className={`is-step${x.done ? ' is-done' : ''}`}><b className="is-line">{x.done ? 'Done: ' : ''}{x.label}</b></li>)}
+          </ul>
+        </section>
+      )}
       {(glance.length > 0 || tiles.length > 0) && (
         <section className="ay-wh-side" aria-labelledby="ay-wh-week-h">
           <h2 id="ay-wh-week-h" className="ay-wh-side__h">Your week</h2>
@@ -129,7 +128,7 @@ function TodaySide({ week, tiles, coming, trying }) {
         <section className="ay-wh-side" aria-labelledby="ay-wh-trying-h">
           <h2 id="ay-wh-trying-h" className="ay-wh-side__h">Trying now</h2>
           <ul className="ay-wh-side__rows">
-            {trying.map((x) => <li key={x.id} className="has-ring"><DayRing day={x.day} of={x.of} /><span><b>{x.name}</b><span className="ay-wh-side__val">Day {x.day} of {x.of}</span></span></li>)}
+            {trying.map((x) => <li key={x.id} className="has-ring"><CountRing value={x.day} total={x.of} size={48} /><span><b>{x.name}</b><span className="ay-wh-side__val">Day {x.day} of {x.of}</span></span></li>)}
           </ul>
         </section>
       )}
@@ -242,6 +241,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   // Today's right column, from TodayFeed (her log's week, what she is trying).
   const [weekInfo, setWeekInfo] = useState(null);
   const [trying, setTrying] = useState([]);
+  const [setup, setSetup] = useState([]);
   const dayView = compact && !(signedIn && hasData);
   // Today with ayna leads every state: it runs on her local log, signed out too.
   const feed = (
@@ -259,7 +259,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
       onSaveToProfile={onSaveToProfile}
       moreHeading={!compact}
       showHead={!compact}
-      {...(dayView ? { onWeekly: setWeekInfo, onTries: setTrying } : {})}
+      {...(dayView ? { onWeekly: setWeekInfo, onTries: setTrying, onSetup: setSetup } : {})}
       {...rundown}
     />
   );
@@ -285,7 +285,8 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
     });
     const estimate = sections.find((sec) => sec.id === 'cycle')?.estimate || null;
     const coming = comingUp(week.cycle?.cycleDay ? week.cycle : null, estimate, today, { hormonalBC, hasProducts: false });
-    const hasSide = Boolean(aside) || tiles.length > 0 || coming.length > 0 || trying.length > 0 || Boolean(weekInfo);
+    const setupLeft = setup.some((x) => x.done) && setup.some((x) => !x.done);
+    const hasSide = Boolean(aside) || tiles.length > 0 || coming.length > 0 || trying.length > 0 || Boolean(weekInfo) || setupLeft;
     return (
       <section className="ay-wh ay-wh--today" aria-labelledby="ay-wh-title">
         {band}
@@ -305,7 +306,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
           </div>
           {hasSide && (
             <aside className="ay-wh-day__more" aria-label="Your week and coming up">
-              <div className="ay-wh-day__mod"><TodaySide week={weekInfo} tiles={tiles} coming={coming} trying={trying} /></div>
+              <div className="ay-wh-day__mod"><TodaySide week={weekInfo} tiles={tiles} coming={coming} trying={trying} setup={setup} /></div>
               {aside && <div className="ay-wh-day__mod">{aside}</div>}
             </aside>
           )}

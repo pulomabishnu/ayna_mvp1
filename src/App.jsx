@@ -1,5 +1,6 @@
 import FeedbackPrompts from './components/FeedbackPrompts';
 import { markOnboardingDone } from './health/onboardingSignal.js';
+import { noteRoutineAdd, noteRoutineRemove } from './health/routineFollowUps.js';
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import AynaLanding from './components/AynaLanding';
@@ -1985,6 +1986,8 @@ function App() {
 
     // A toast named after the action; a more specific one (a shelf's Undo) replaces it.
     toast(wasIn ? REMOVED_FROM_ROUTINE : addedToRoutineText(), wasIn ? { label: 'Undo', onClick: () => toggleMyProductRef.current?.(product) } : { label: 'See it', onClick: () => setCurrentView('ecosystem') });
+    // Follow-ups at day 7 and cycle 3, and a review ask after 3 cycles (routineFollowUps.js).
+    if (wasIn) noteRoutineRemove(product.id); else noteRoutineAdd(product);
     if (!wasIn) {
       const origin = lastOpenOrigin?.productId === product.id ? lastOpenOrigin : null;
       posthog.capture('product_added', {

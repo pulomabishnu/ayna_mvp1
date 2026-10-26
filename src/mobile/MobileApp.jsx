@@ -28,6 +28,8 @@ import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
 import { usePushNotifications, usePushRoutes } from './hooks/usePushNotifications.js';
+import { PUSH_ASK_EVENT } from '../components/today/rundownPush.js';
+import { noteRoutineAdd, noteRoutineRemove } from '../health/routineFollowUps.js';
 import { useHealthData, DEV_HEALTH_DEMO } from './hooks/useHealthData.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
@@ -588,6 +590,12 @@ export default function MobileApp() {
   const [askPush, setAskPush] = useState(() => { try { return localStorage.getItem('ayna_push_asked_v1') === '1'; } catch { return false; } });
   const markPushMoment = () => { if (askPush) return; try { localStorage.setItem('ayna_push_asked_v1', '1'); } catch { /* storage blocked */ } setAskPush(true); };
   usePushNotifications(authUser?.id, askPush);
+  // Today's "Get your Daily Rundown each morning?" (after her first Rundown) is also a push moment.
+  useEffect(() => {
+    const ask = () => markPushMoment();
+    window.addEventListener(PUSH_ASK_EVENT, ask);
+    return () => window.removeEventListener(PUSH_ASK_EVENT, ask);
+  });
   // A tapped notification opens Today, or the product a recall alert is about.
   usePushRoutes((route) => {
     setAskAynaOpen(false);
@@ -971,9 +979,12 @@ export default function MobileApp() {
         }).catch((error) => console.warn('[Ayna] mobile ecosystem remove sync failed:', error));
         delete ecosystemFlagsRef.current.trackedProducts[product.id];
       }
+      noteRoutineRemove(product.id);
       toast(REMOVED_FROM_ROUTINE, { label: 'Undo', onClick: () => addToEcosystemRef.current?.(product) });
       return;
     }
+    // Follow-ups at day 7 and cycle 3, and a review ask after 3 cycles (routineFollowUps.js).
+    noteRoutineAdd(product);
 
     trackApp('product_added', { productId: product.id, category: product.category, type: product.type });
     const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);

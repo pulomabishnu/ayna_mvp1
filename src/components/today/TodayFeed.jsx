@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { OPEN_LOG_EVENT } from './openLog.js';
 import { useToday } from '../../health/useToday.js';
 import { STEP_FOR_FIELD } from '../../health/todayProfilePatch.js';
@@ -8,6 +8,13 @@ import { todayFixtureOn, makeTodayFixture } from '../../health/todayDevFixture.j
 import Rundown from '../rundown/Rundown.jsx';
 import NotUsefulMenu from './NotUsefulMenu.jsx';
 import ItemMenu from './ItemMenu.jsx';
+import RundownNotifyAsk from './RundownNotifyAsk.jsx';
+import { readRundownPush } from './rundownPush.js';
+import { NOT_HELPING, nextBestMatch } from './nextBest.js';
+import { markReviewAsk, reviewsDue } from '../../health/routineFollowUps.js';
+import { readRundownMemory, seenFirstRundown } from '../rundown/rundownStore.js';
+import { eventSurface, trackCheckin } from '../../utils/analyticsEvents.js';
+import { Chip, StatusPill } from '../ui/ay';
 import ProfileAskCard from './ProfileAskCard.jsx';
 import { askWhyFor } from '../../utils/askPrompts.js';
 import { todayProgress, triesInProgress } from './todayProgress.js';
@@ -39,7 +46,7 @@ function statusOf(item, t) {
 }
 
 /** Home's one-screen version of an item: the fact, one way to act, and "Ask why". */
-function CompactItem({ item, t, onAsk, onFindCare, onOpenFull }) {
+function CompactItem({ item, t, onAsk, onFindCare, onOpenFull, onOutcome }) {
   const kicker = item.type === 'care' ? CARE_KICKER[item.level] || 'Care' : KICKER[item.type] || '';
   const acts = item.actions || [];
   const tel = item.type === 'care' && item.level === 'urgent' && /911/.test(item.title);
@@ -58,7 +65,7 @@ function CompactItem({ item, t, onAsk, onFindCare, onOpenFull }) {
       {item.reason && <p className="ay-today__why">{item.reason}</p>}
       {outcomes.length > 0 && (
         <div className="ay-today__chips is-inline" role="group" aria-label="How did it go?">
-          {outcomes.slice(0, FIRST_CHIPS).map((a) => <button key={a.id} type="button" className="ay-chip" onClick={() => t.recordOutcome(item, a.id.slice(8))}><OutcomeIcon id={a.id.slice(8)} />{a.label}</button>)}
+          {outcomes.slice(0, FIRST_CHIPS).map((a) => <button key={a.id} type="button" className="ay-chip" onClick={() => onOutcome(item, a.id.slice(8))}><OutcomeIcon id={a.id.slice(8)} />{a.label}</button>)}
           {full && <button type="button" className="ay-chip is-more" aria-label="More answers" onClick={() => full()}>…</button>}
         </div>
       )}
@@ -79,6 +86,44 @@ function CompactItem({ item, t, onAsk, onFindCare, onOpenFull }) {
   );
 }
 
+
+/** "Not helping?": the next best match with its reason, from the one engine (nextBest.js). */
+function NextBest({ pick, onOpenProduct, onClose }) {
+  return (
+    <section className="ay-today__nextbest" aria-labelledby="ay-today-nextbest-h">
+      <p className="ay-today__kicker">Not helping?</p>
+      <h3 id="ay-today-nextbest-h" className="ay-today__title">Your next best match: {pick.product.name}</h3>
+      <p className="ay-today__match"><StatusPill tone="ink">{pick.percent}% match</StatusPill>{pick.reason && <span>{pick.reason}</span>}</p>
+      <div className="ay-today__actions">
+        {onOpenProduct && <button type="button" className="ay-today__primary" onClick={() => onOpenProduct(pick.product)}>See it</button>}
+        <button type="button" className="ay-today__text" onClick={onClose}>Not now</button>
+      </div>
+    </section>
+  );
+}
+
+/** Three cycles after "Add to routine": ask how it is going (retention checklist e). */
+function ReviewAsk({ due, t, onOpenProduct, onDone, compact }) {
+  const p = getProductById(due.productId);
+  if (!p) return null;
+  const answer = (a) => { markReviewAsk(due.productId, a, { today: t.today }); onDone(); };
+  return (
+    <li className={`ay-today__item is-review${compact ? ' is-compact' : ''}`}>
+      <p className="ay-today__kicker">Review<StatusPill>In my routine</StatusPill></p>
+      <h3 className="ay-today__title">{compact ? `How is ${p.name} going?` : `You have used ${p.name} for 3 cycles. How is it going?`}</h3>
+      {!compact && <p className="ay-today__why">A short review helps the next person decide.</p>}
+      <div className="ay-today__actions">
+        {onOpenProduct && <button type="button" className="ay-today__primary" onClick={() => { answer('written'); onOpenProduct(p); }}>{compact ? 'Review' : 'Write a review'}</button>}
+        <button type="button" className="ay-today__text" onClick={() => answer('later')}>Not now</button>
+        {!compact && (
+          <ItemMenu label={`More for ${p.name}`}>
+            <button type="button" onClick={() => answer('no')}>Don’t ask about this</button>
+          </ItemMenu>
+        )}
+      </div>
+    </li>
+  );
+}
 
 function Progress({ items, t }) {
   const { done, total } = todayProgress(items, t);
@@ -166,7 +211,7 @@ function TriageForm({ questions, onDone }) {
 // "My information changed": which part of her profile to open.
 const infoSection = (item) => (['pregnancy', 'breastfeeding'].includes(item.basis?.field) ? 'lifeStage' : item.basis?.field || 'support');
 
-function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checkinId, onOpenLog }) {
+function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checkinId, onOpenLog, onOutcome }) {
   const protectedItem = PROTECTED.has(item.tier);
   const noteText = t.notes[item.id];
   const kicker = item.type === 'care' ? CARE_KICKER[item.level] || 'Care' : KICKER[item.type] || '';
@@ -210,7 +255,7 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
     <ItemMenu label={`More for ${item.title}`}>
       {why && !linkIsWhy && <button type="button" onClick={why}>Ask why</button>}
       {remind && !linkIsRemind && <button type="button" onClick={remind}>Remind me tonight</button>}
-      {stopAct && <button type="button" onClick={() => t.recordOutcome(item, 'stopped')}>Stopped using</button>}
+      {stopAct && <button type="button" onClick={() => onOutcome(item, 'stopped')}>Stopped using</button>}
       {!noteText && <button type="button" onClick={() => t.useful(item)}>Useful</button>}
       <NotUsefulMenu onPick={(reason) => { t.notUseful(item, reason); if (reason === 'info_changed') onEditAnswers?.(infoSection(item)); }} />
       {item.type === 'check_in' && <button type="button" onClick={() => t.notUseful(item, 'dont_show_type')}>Turn off check-ins</button>}
@@ -219,7 +264,7 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
 
   return (
     <li className={`ay-today__item is-${item.tier} is-${item.type}${item.level ? ` is-${item.level}` : ''}`}>
-      <p className="ay-today__kicker">{kicker}{statusOf(item, t) && <span className="ay-today__status">{statusOf(item, t)}</span>}</p>
+      <p className="ay-today__kicker">{kicker}{statusOf(item, t) && <StatusPill>{statusOf(item, t)}</StatusPill>}</p>
       <h3 className="ay-today__title">{item.title}</h3>
       {item.body && <p className="ay-today__body">{item.body}</p>}
       {item.reason && <p className="ay-today__why">{item.reason}</p>}
@@ -229,18 +274,18 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
 
       {chipActs.length > 0 && (
         <div className="ay-today__chips" role="group" aria-label="How did it go?">
-          {shownChips.map((a) => <button key={a.id} type="button" className="ay-chip" onClick={() => t.recordOutcome(item, a.id.slice(8))}><OutcomeIcon id={a.id.slice(8)} />{a.label}</button>)}
-          {!allChips && chipActs.length > FIRST_CHIPS && <button type="button" className="ay-chip is-more" aria-expanded="false" onClick={() => setAllChips(true)}>More</button>}
+          {shownChips.map((a) => <Chip key={a.id} aria-pressed={undefined} icon={OUTCOME_ICON[a.id.slice(8)] ? <OutcomeIcon id={a.id.slice(8)} /> : null} onClick={() => onOutcome(item, a.id.slice(8))}>{a.label}</Chip>)}
+          {!allChips && chipActs.length > FIRST_CHIPS && <Chip className="is-more" aria-pressed={undefined} aria-expanded="false" onClick={() => setAllChips(true)}>More</Chip>}
         </div>
       )}
       {answerActs.length > 0 && (
         <div className="ay-today__chips" role="group" aria-label={item.title}>
-          {answerActs.map((a) => <button key={a.id} type="button" className="ay-chip" onClick={() => answer(a)}>{a.label}</button>)}
+          {answerActs.map((a) => <Chip key={a.id} aria-pressed={undefined} onClick={() => answer(a)}>{a.label}</Chip>)}
         </div>
       )}
       {checkIn && fields.length > 0 && (
         <div className="ay-today__chips" role="group" aria-label="Log today">
-          {fields.map((f) => <a key={f} className="ay-chip" href={`#${checkinId}`} onClick={(e) => openLogAt(e, f)}>{FIELD_CHIP[f]}</a>)}
+          {fields.map((f) => <Chip key={f} aria-pressed={undefined} aria-controls={checkinId} onClick={(e) => openLogAt(e, f)}>{FIELD_CHIP[f]}</Chip>)}
         </div>
       )}
       {productsAct && (
@@ -283,7 +328,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   // everything else (answering, the log, saves) is on the full dashboard.
   compact = false, onOpenFull = null,
   // Website Today's right column: the weekly recap's lines and what she is trying now (WebHealth).
-  onWeekly = null, onTries = null,
+  onWeekly = null, onTries = null, onSetup = null,
 }) {
   // DEV only (?fixture=today): sample logs and tries, dropped from production builds.
   const [fixture] = useState(() => (import.meta.env.DEV && todayFixtureOn() ? makeTodayFixture() : null));
@@ -292,7 +337,31 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   const trying = triesInProgress(t.tries, t.today);
   const tryingKey = trying.map((x) => `${x.id}:${x.day}`).join(',');
   useEffect(() => { onTries?.(trying); }, [tryingKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Set-up as a count that starts with what she already did (endowed progress, checklist c).
+  const logged = Object.values(t.log || {}).some((e) => e && Object.values(e).some((v) => v != null));
+  const setupKey = `${Boolean(intake)}|${logged}|${readRundownPush().on}`;
+  useEffect(() => {
+    onSetup?.([
+      { id: 'profile', label: 'Create your health profile', done: Boolean(intake) },
+      { id: 'checkin', label: 'Log your first check-in', done: logged },
+      { id: 'notify', label: 'Get your Daily Rundown each morning', done: readRundownPush().on },
+    ]);
+  }, [setupKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const checkinId = `ay-today-log-${variant}`;
+  // The notification ask waits for her first Daily Rundown (retention checklist b).
+  const [rundownSeen, setRundownSeen] = useState(() => seenFirstRundown(readRundownMemory()));
+  // A follow-up answered "No change" or "Worse" on a product: the next best match (checklist d).
+  const [nextBest, setNextBest] = useState(null);
+  const onOutcome = (item, outcome) => {
+    const tried = (t.tries || []).find((x) => x.id === item.basis?.tryId);
+    t.recordOutcome(item, outcome);
+    if (!NOT_HELPING.has(outcome) || tried?.kind !== 'product') return;
+    const intakeNow = fixture?.intake || intake;
+    setNextBest(nextBestMatch(tried.ref, intakeNow, { healthProfile, matchOpts }));
+  };
+  // Review asks three cycles after "Add to routine" (routineFollowUps.js).
+  const [reviewTick, setReviewTick] = useState(0);
+  const reviewDue = useMemo(() => reviewsDue({ today: t.today })[0] || null, [t.today, reviewTick]); // eslint-disable-line react-hooks/exhaustive-deps
   // The check-in item and the full log are one action: while the item is on
   // screen, the log opens from its "Check in" instead of also sitting below it.
   const checkInItem = items.some((it) => (it.actions || []).some((a) => a.id === 'open_check_in'));
@@ -330,20 +399,24 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         onOpenPost={onOpenPost}
         onFinish={onRundownFinish}
         onWeekly={onWeekly}
+        onClosed={() => setRundownSeen(seenFirstRundown(readRundownMemory()))}
         variant={variant}
         compact={compact}
         onSeeData={(d) => { try { window.dispatchEvent(new CustomEvent('ayna:health-tab', { detail: { tab: d?.tab } })); } catch { /* old browser */ } }}
       />
+      <RundownNotifyAsk today={t.today} show={rundownSeen} />
       {items.length > 0 && <Progress items={items} t={t} />}
       {compact && (items.length > 0
         ? <ul className="ay-today__list is-compact" data-tour="today-things">
           {/* Safety and care always show; the rest stop at three things. */}
-          {items.filter((it, i) => PROTECTED.has(it.tier) || i < 3).map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={onOpenFull} />)}
+          {items.filter((it, i) => PROTECTED.has(it.tier) || i < 3).map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={onOpenFull} onOutcome={onOutcome} />)}
+          {reviewDue && items.length < 3 && <ReviewAsk compact due={reviewDue} t={t} onOpenProduct={onOpenProduct} onDone={() => setReviewTick((n) => n + 1)} />}
         </ul>
         : <p className="ay-today__empty">{t.decision.empty}</p>)}
       {!compact && (items.length > 0
         ? <ul className="ay-today__list" data-tour="today-things">
-          {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} onOpenLog={() => setLogOpen(true)} />)}
+          {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} onOpenLog={() => setLogOpen(true)} onOutcome={onOutcome} />)}
+          {reviewDue && <ReviewAsk due={reviewDue} t={t} onOpenProduct={onOpenProduct} onDone={() => setReviewTick((n) => n + 1)} />}
           {/* One skipped setup question at a time (profileCompleteness.nextProgressiveAsk). */}
           {items.length < 3 && !items.some((i) => i.type === 'ask' || i.level === 'urgent') && <ProfileAskCard variant={variant} intake={intake} today={t.today} onAnswer={onEditAnswers} />}
         </ul>
@@ -351,6 +424,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
           <p className="ay-today__empty">{t.decision.empty}</p>
           <ProfileAskCard asList variant={variant} intake={intake} today={t.today} onAnswer={onEditAnswers} />
         </>)}
+      {nextBest && <NextBest pick={nextBest} onOpenProduct={onOpenProduct} onClose={() => setNextBest(null)} />}
       {!compact && (t.pendingProfileSaves.length > 0 || t.notes['save:done']) && (
         <div className="ay-today__save" role="group" aria-label="Save to your health profile">
           {t.pendingProfileSaves.map((p) => (
@@ -367,7 +441,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         </div>
       )}
       {showLog && !compact && <div id={checkinId} className="ay-today__log">
-        <DailyCheckinCard variant={variant} log={t.log} save={t.saveLog} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} />
+        <DailyCheckinCard variant={variant} log={t.log} save={(...a) => { trackCheckin({ surface: eventSurface(), where: 'today' }); return t.saveLog(...a); }} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} />
       </div>}
       {/* The top of Today ends here (rundown, 1 to 3 items, her log); the rest is below this line. */}
       {moreHeading && !compact && <h2 className="ay-today__more" id={`ay-today-more-${variant}`}>More for you</h2>}

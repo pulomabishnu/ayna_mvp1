@@ -20,6 +20,7 @@ import { onboardingDoneAt, onboardingJustFinished } from '../../health/onboardin
 import './rundown.css';
 import { MarkSticker } from '../personality/DS.jsx';
 import ItemMenu from '../today/ItemMenu.jsx';
+import { rebookIfOn } from '../today/rundownPush.js';
 
 const REMIND_TEXT = {
   scheduled: 'We will send “Your daily rundown is ready.” tomorrow morning, if notifications are on in the ayna app.',
@@ -51,6 +52,8 @@ export default function Rundown({
   // Website Today: the weekly recap's entry moves to the right column ("Your
   // week"); onWeekly(info | null) hands it the recap's real lines and opener.
   onWeekly = null,
+  // Called when the story closes (Today shows the notification ask after her first Rundown).
+  onClosed = null,
 }) {
   const [memory, setMemory] = useState(() => { setRundownOwner(userId); return readRundownMemory(); });
   const [open, setOpen] = useState(null); // 'daily' | 'weekly' | null
@@ -105,7 +108,7 @@ export default function Rundown({
     const list = kind === 'weekly' ? weekly.cards : daily.cards;
     trackToday('rundown_opened', { kind, count: list.length, categories: [...new Set(list.map((c) => c.category))] });
     if (kind === 'weekly') markWeeklySeen(today);
-    else setMemory(markRundownViewed(today, { auto }));
+    else { setMemory(markRundownViewed(today, { auto })); rebookIfOn(today); }
     setHighlight(false);
     setOpen(kind);
   };
@@ -157,6 +160,7 @@ export default function Rundown({
       if (decision === 'open') {
         trackToday('rundown_opened', { kind: 'daily', count: daily.cards.length, categories: [...new Set(daily.cards.map((c) => c.category))] });
         setMemory(markRundownViewed(today, { auto: true }));
+        rebookIfOn(today);
         setOpen('daily');
       }
       else if (decision === 'highlight') setHighlight(true);
@@ -188,6 +192,7 @@ export default function Rundown({
     trackToday('rundown_closed', { kind: open, seen, count });
     setOpen(null);
     setMemory(readRundownMemory());
+    onClosed?.();
   };
 
   // "Your week · 3 changes" (Today audit, issue 6): say what the row opens.
