@@ -15,7 +15,10 @@
 // having agreed to anything if this were skipped.
 // v2: the consent text now includes the 18+ confirmation and the Consumer
 // Health Data notice. Records written before the change stay on v1.
-export const CONSENT_VERSION = 'v2-18plus';
+// v3: one required AI-processing checkbox; the self-reported, not-medical-
+// advice and 18+ statements are one sentence above the button (onboarding
+// audit, Oct 25). Same meaning; records written before stay on v2.
+export const CONSENT_VERSION = 'v3-one-checkbox';
 const STORAGE_KEY = 'ayna_pending_consent';
 
 const SIGNUP_META_KEY = 'ayna_pending_signup_meta';
