@@ -12,9 +12,13 @@ html body .app-container .qz-page .qz-head .qz-saved-note { grid-column: 1 / -1 
 html body .app-container .qz-page .qz-head .qz-explore { grid-column: -2 / -1 !important; grid-row: 2 !important; justify-self: end !important; align-self: center !important; margin: 0 !important; min-height: 44px !important; }
 html body .app-container .qz-page .qz-head:has(.qz-explore) .qz-saved-note { grid-column: 1 / -2 !important; }
 /* the current step is filled (it was butter-deep on butter: invisible) */
-html body .app-container .qz-page .qz-progress span.is-now { background: var(--ay-text) !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .qz-page .qz-progress span.is-now.is-now { background: var(--ay-text) !important; }
 
 /* chips: the shared Chip look (1.5px ink outline, radius 8, espresso when picked) */
 html body .app-container.app-container.app-container .qz-page .qz-chip.qz-chip.qz-chip { border: 1.5px solid var(--ay-outline-color, #3e2723) !important; border-radius: 8px !important; }
 html body .app-container.app-container.app-container .qz-page .qz-chip.qz-chip.qz-chip.is-on { background: var(--ay-fill-ink, #3e2723) !important; color: var(--ay-on-ink, #ffedac) !important; border-color: var(--ay-fill-ink, #3e2723) !important; }
 html body .app-container.app-container.app-container .qz-page .qz-chip.qz-chip.qz-chip.is-dashed { border-style: dashed !important; }
+
+/* Next before an answer: an outlined, quiet button (it was a muddy tan fill),
+   the same disabled look as the app's Next. */
+html body .app-container.app-container .qz-page .qz-btn:disabled { background: transparent !important; color: color-mix(in srgb, var(--ay-text) 50%, transparent) !important; border: 1.5px solid color-mix(in srgb, var(--ay-text) 30%, transparent) !important; box-shadow: none !important; opacity: 1 !important; }

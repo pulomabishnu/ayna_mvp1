@@ -75,8 +75,6 @@ html body .app-container .ip-standards span { font: 400 15px/1.45 var(--ip-sans)
 
 /* ---------- How it works: steps (numbers in espresso / pink / white, no blue) ---------- */
 .app-container .ed.ed-page--info .ed-hiw__n { display: grid !important; place-items: center; align-self: flex-start; width: 40px !important; height: 40px !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; border-radius: 50% !important; font: 800 18px/1 var(--ip-display) !important; background: var(--ip-tile) !important; color: #3e2723 !important; border: 1.5px solid var(--ip-outline) !important; box-shadow: none !important; }
-.app-container .ed.ed-page--info .ed-hiw li:nth-child(1) .ed-hiw__n { background: #f7badd !important; }
-.app-container .ed.ed-page--info .ed-hiw li:nth-child(3) .ed-hiw__n { background: #3e2723 !important; color: #ffedac !important; }
 .app-container .ed.ed-page--info .ed-hiw :is(.ed-tags span, .ed-caption) { font-size: max(13px, 1em) !important; }
 
 /* Funnel as rounded vertical bars (#6 Journal app): number at the base, caption under. */
@@ -183,7 +181,12 @@ html body .app-container .ed.ed-page--info .ed-hiw li .ed-hiw__n { background: v
 @media (max-width: 1023px) { .app-container.app-container .fp.mockup-page { padding-inline: 24px; } }
 @media (max-width: 767px) { .app-container.app-container .fp.mockup-page { padding-inline: 20px; } }
 /* Founder change (Oct 26 13:38): no white surfaces on info pages; deeper butter + thin espresso rule. */
-.app-container { --ip-tile: #f6e3a1; }
-.app-container.app-container .ip-facts > li { background: #f6e3a1; border: 1px solid rgba(62, 39, 35, .15); }
-.app-container.app-container .ed.ed-page--info .ed-principles li:nth-child(n) { background: #f6e3a1; }
-.app-container.app-container .ip-bars > li:nth-child(3) .ip-bars__fill { background: #ffedac; }
+.app-container:not([data-theme='brand-dark']) { --ip-tile: #f6e3a1; }
+.app-container.app-container:not([data-theme='brand-dark']) .ip-facts > li { background: #f6e3a1; border: 1px solid rgba(62, 39, 35, .15); }
+.app-container.app-container:not([data-theme='brand-dark']) .ed.ed-page--info .ed-principles li:nth-child(n) { background: #f6e3a1; }
+.app-container.app-container:not([data-theme='brand-dark']) .ip-bars > li:nth-child(3) .ip-bars__fill { background: #ffedac; }
+/* Phones: the folded "On this page" sits right under the hero's rule (two hairlines 32px apart read as a glitch). */
+@media (max-width: 1023px) {
+  .app-container.app-container .ed.ed-page--info .ed-page__body:has(.ed-toc) { padding-top: 0; }
+  .app-container.app-container .ed.ed-page--info .ed-toc { border-top: 0; margin-bottom: 24px; }
+}

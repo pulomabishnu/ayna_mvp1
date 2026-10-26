@@ -438,6 +438,8 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
     onComplete(mapIntakeToLegacyQuizProfile(snapshot), opts);
   };
   const next = () => {
+    // Connect health data has nothing to answer on the website: Next goes on, same as Skip.
+    if (step.type === 'connect') { skip(); return; }
     if (step.id === 'age' && isMinorAge(intake.age)) return;
     if (step.id === 'zip') {
       if (!intake.zipcode) return;
@@ -700,7 +702,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   if (minorGate) return <div className="ct qz-page"><MinorGate onChangeAge={() => setMinorGate(false)} onBrowseLibrary={onBrowseLibrary} /></div>;
 
   const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
-  const ready = step.id === 'zip' ? String(intake.zipcode || '').length > 0 : requiredReady(answerId, intake) && isStepAnswered(answerId, intake) && !minorBlocked;
+  const ready = step.type === 'connect' ? true : step.id === 'zip' ? String(intake.zipcode || '').length > 0 : requiredReady(answerId, intake) && isStepAnswered(answerId, intake) && !minorBlocked;
 
   // First run, last screen: the reveal. "See my Today" saves and opens Today.
   if (onboarding && step.type === 'ready') {
