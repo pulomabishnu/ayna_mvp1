@@ -75,3 +75,8 @@
 /* Founder change: no white surfaces. The paper label is butter / deeper butter on every cover. */
 .rc.rc--vaginal { --rc-label: #f6e3a1; }
 .rc.rc--postpartum { --rc-label: #ffedac; }
+/* Small covers beside a title (list rows, "Top pick"): the title is already next to them, so the cover
+   keeps only its topic pill and drawn mark (the word was cut off: "Heavy menstr bleedir"). */
+.rc.rc--thumb .rc__word { display: none; }
+.rc.rc--thumb .rc__label { left: 8cqi; right: auto; padding: 4cqi; border: 0; background: none; }
+.lb-more__cover .rc .rc__label, .lb-more__cover .rc .rc__foot { display: none; }

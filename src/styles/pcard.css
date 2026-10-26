@@ -177,3 +177,7 @@
 /* A service plate carries a logo or just the name: a smaller medallion (#12 Pai badges) keeps 49 services scannable. */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__plate { width: 64%; align-self: center; margin: 4px auto 12px; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__plate .ayk-plate__name { max-width: 76%; font-size: clamp(15px, 1.5vw, 17px) !important; line-height: 1.15 !important; text-align: center; overflow-wrap: anywhere; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__fit .ay-match-pill :is(strong, span) { color: inherit !important; }
+/* Size pills share one wrapping line under the price (they stacked one per row in narrow cards). */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__sizes { flex: 1 1 100%; flex-direction: row; flex-wrap: wrap; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__mono { position: relative; color: #3e2723; font: 700 40px/1 var(--ay-font-display, 'Bricolage Grotesque') !important; letter-spacing: -.02em; }

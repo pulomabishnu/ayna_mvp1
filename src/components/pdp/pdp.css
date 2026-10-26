@@ -2594,4 +2594,23 @@ html body .ayq--tabs .ayq-st__tab:not(.is-on):hover { background: rgba(var(--v-f
 :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ayv-safeline, .ayv-panel, .ayv-hl__tile, .ayq-evhead, .ayv-evhead) { background: rgba(255, 237, 172, .08) !important; }
 :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ayv-panel, .ayv-hl__tile, .ayv-safeline) { border-color: rgba(255, 237, 172, .2) !important; }
 :is([data-theme='brand-dark'], [data-theme='dark']) #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayp-reads__list a { background: rgba(255, 237, 172, .08) !important; }
-:is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-gal__zoom { background: #3e2723 !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-gal__zoom { background: #ffedac !important; color: #3e2723 !important; border-color: #3e2723 !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-gal__zoom svg { color: #3e2723 !important; stroke: #3e2723 !important; }
+/* Evidence header as a calm butter-deep panel needs its own padding and radius. */
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-evhead { padding: 12px 16px !important; border: 1px solid rgba(62, 39, 35, .15) !important; border-radius: 16px !important; }
+:is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-evhead { border-color: rgba(255, 237, 172, .2) !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayq-linklist__tag svg { margin-right: 4px; vertical-align: -1px; }
+/* "When to get help now" (content unchanged): pink is never behind a warning; the calm register with the
+   strongest rule on the page (1.5px outline + 3px left rule) instead. */
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-urgent { background: #f6e3a1 !important; border: 1.5px solid #3e2723 !important; border-left-width: 4px !important; border-radius: 16px !important; box-shadow: none !important; }
+html body :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-urgent { background: rgba(255, 237, 172, .08) !important; border-color: #ffedac !important; }
+/* Compare: thumbnails line up at the top whatever the name length. */
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-compare thead :is(th, td) { vertical-align: top !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-urgent :is(h2, h3, h4, p, li, a, span, strong) { color: #3e2723 !important; }
+html body :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ay-urgent :is(h2, h3, h4, p, li, a, span, strong) { color: #ffedac !important; }
+@media (max-width: 767px) {
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide { row-gap: 0 !important; gap: 0 !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide > .ayv-match { margin-top: 12px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide > .ayv-pricerow { margin-top: 12px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide > .ayp-buy__section { margin-top: 12px !important; }
+}

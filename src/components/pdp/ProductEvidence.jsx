@@ -207,7 +207,7 @@ function OtherLinks({ items, label = 'Other links', note = '' }) {
                 <span className="ayq-linklist__title">{s.title}</span>
                 {s.summary && <span className="ayq-linklist__sum"><Tx>{s.summary}</Tx></span>}
                 {whyText(s.why) && <span className="ayq-linklist__sum">ayna’s note: {whyText(s.why)}</span>}
-                <span className="ayq-linklist__tag">{s.publisher}{s.publisher && s.kind?.label ? ', ' : ''}<KindTag kind={s.kind} /></span>
+                <span className="ayq-linklist__tag">{s.publisher}{s.publisher && s.kind?.label ? " · " : ''}<KindTag kind={s.kind} /></span>
               </span>
               <span className="ayq-linklist__go" aria-hidden="true">↗</span>
               <span className="sr-only"> (opens in a new tab)</span>
