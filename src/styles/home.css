@@ -98,8 +98,7 @@
 /* the strip: three product plates in a row over the photo's lower edge (#38) */
 .app-container .hm .hm-strip { position: absolute; left: 0; bottom: 4%; z-index: 3; width: 70%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 10px; background: var(--hm-butter); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); box-sizing: border-box; rotate: -1.5deg; }
 .app-container .hm .hm-strip .hm-slot { position: relative; aspect-ratio: 1 / 1; }
-.app-container .hm .hm-slot--plate .hm-slot__layer { padding: 12%; background: #fff; border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r-sm); box-sizing: border-box; }
-.app-container .hm .hm-slot--plate img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
+.app-container .hm .hm-slot--plate .ayk-plate { width: 100%; height: 100%; }
 /* the UI card: real ayna pieces, outlined (no shadow) */
 .app-container .hm .hm-slot--ui { left: 0; top: 10%; width: 48%; height: 30%; z-index: 4; rotate: -2deg; }
 .app-container .hm .hm-slot--ui .hm-ui { inset: 0 0 auto 0; }
@@ -190,9 +189,8 @@
 .app-container .hm .hm-needs__row:focus-visible { outline: 3px solid var(--ay-outline, #3e2723); outline-offset: 2px; border-radius: var(--hm-r-sm); }
 /* six needs + All needs: butter chips with a 1.5px ink outline, wrapping (no sideways scroll) */
 .app-container .hm .hm-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
-.app-container.app-container .hm .hm-chips .ay-chip { height: 40px; min-height: 40px; padding: 0 16px; background: var(--hm-butter) !important; color: var(--hm-ink) !important; border: 1.5px solid var(--hm-ink) !important; font: 600 15px/1 var(--ay-sans-stack) !important; white-space: nowrap; }
-.app-container.app-container .hm .hm-chips .ay-chip .ay-chip__count { font-size: 13px; }
-.app-container.app-container .hm .hm-chips .ay-chip[aria-pressed='true'] { background: var(--hm-ink) !important; color: var(--hm-butter) !important; }
+.app-container .hm .hm-chips__count { font-variant-numeric: tabular-nums; opacity: .8; }
+.app-container .hm .hm-chips__all { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
 .app-container.app-container .hm .hm-chips .hm-chips__all { background: transparent !important; }
 .app-container .hm .hm-chips__all svg { width: 16px; height: 16px; }
 .app-container .hm .hm-chips__skel { flex: none; width: 112px; height: 40px; border-radius: 999px; border: 1.5px solid rgba(62, 39, 35, .25); }
@@ -252,9 +250,6 @@
 .app-container .hm .hm-levels__more { justify-self: start; padding: 0; min-height: 40px; font-size: 15px !important; }
 /* the catalog in numbers, beneath the steps */
 .app-container .hm .hm-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 24px; margin: 48px 0 0; }
-.app-container .hm .hm-stat { padding: 16px 0 0; border-top: 1.5px solid var(--ay-outline); min-width: 0; }
-.app-container .hm .hm-stat__n { display: block; font: 800 64px/.9 'Bricolage Grotesque', var(--ay-heading); letter-spacing: -.04em; color: var(--ay-text); font-variant-numeric: tabular-nums; }
-.app-container .hm .hm-stat dd { margin: 10px 0 0; font: 500 15px/1.35 var(--ay-sans-stack); color: var(--ay-text); max-width: 26ch; }
 .app-container .hm .hm-stat__skel { display: inline-block; width: 2.2ch; height: .8em; border-radius: var(--hm-r-sm); background: var(--ay-hairline); }
 .app-container .hm .hm-how__cta { margin-top: 48px; display: flex; }
 @media (max-width: 1023px) and (min-width: 768px) { .app-container .hm .hm-steps { gap: 16px; } .app-container .hm .hm-step__n { font-size: 44px; } .app-container .hm .hm-stepui { display: none; } }
@@ -271,10 +266,7 @@
   .app-container .hm .hm-levels { margin-left: -108px; width: calc(100% + 108px); }
   .app-container .hm .hm-step:has(.hm-levels) { grid-template-areas: 'ph n text' 'ph n text'; }
   .app-container .hm .hm-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; margin-top: 32px; }
-  .app-container .hm .hm-stat { padding: 12px 0 16px; }
-  .app-container .hm .hm-stat__n { font-size: 44px; }
-  .app-container .hm .hm-stat dd { margin-top: 6px; font-size: 13px; }
-  .app-container .hm .hm-how__cta { margin-top: 24px; }
+        .app-container .hm .hm-how__cta { margin-top: 24px; }
   .app-container .hm .hm-how__cta .ay-btn { flex: 1; }
 }
 
@@ -349,27 +341,20 @@
    big-number facts on white tiles with 13px captions; the Wefunder card
    carries one round seal ("community round").
    ===================================================================== */
-.app-container .hm .hm-standards { list-style: none; margin: 40px auto 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
-.app-container .hm .hm-standards > li { display: flex; align-items: center; gap: 10px; padding: 14px 16px 14px 0; border-top: 1.5px solid var(--ay-outline); font: 600 15px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
-.app-container .hm .hm-standards > li + li { padding-left: 16px; border-left: 1px solid var(--ay-hairline); }
-.app-container .hm .hm-standards__mark { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
-@media (max-width: 767px) {
-  .app-container .hm .hm-standards { grid-template-columns: 1fr; margin-top: 0; }
-  .app-container .hm .hm-standards > li, .app-container .hm .hm-standards > li + li { padding: 10px 0; border-left: 0; }
-  .app-container .hm .hm-standards > li + li { border-top: 1px solid var(--ay-hairline); }
-}
+.app-container .hm .hm-standards-wrap { margin-top: 40px; }
+.app-container .hm .hm-standards svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+@media (max-width: 767px) { .app-container .hm .hm-standards-wrap { margin-top: 0; } }
 /* the pink section: reads + Community; the Community card turns butter on it */
 .app-container .hm .hm-rc .hm-comm { background: var(--hm-butter); }
 .app-container .hm .hm-rc .hm-readlist__ph { border-color: var(--hm-ink); }
 .app-container .hm .hm-rc .hm-post { background: #fff; }
 /* butter needs section and espresso how section meet with a plain edge */
 .app-container .hm .hm-needsband { border-top: 0; }
-/* big-number facts: white tiles, Bricolage 800 number, Figtree 13 caption */
-.app-container .hm .hm-stats { gap: 16px; }
-.app-container .hm .hm-stat { padding: 20px; border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); background: #fff; color: var(--hm-ink); }
-.app-container .hm .hm-stat__n { color: var(--hm-ink); }
-.app-container .hm .hm-stat dd { margin-top: 8px; font-size: 13px; color: var(--hm-ink); }
-@media (max-width: 767px) { .app-container .hm .hm-stats { gap: 12px; } .app-container .hm .hm-stat { padding: 14px; } }
+/* big-number facts: the shared BigFact tile (white, 13px caption), four in a row */
+.app-container .hm .hm-stats { list-style: none; padding: 0; gap: 16px; }
+.app-container .hm .hm-stats > li { min-width: 0; display: grid; }
+.app-container .hm .hm-stats .ayk-fact { --ay-ink: #3e2723; --ay-ink-muted: rgba(62, 39, 35, .78); --ay-surface: #fff; }
+@media (max-width: 767px) { .app-container .hm .hm-stats { gap: 12px; } }
 /* the Wefunder card's one round seal */
 .app-container .hm .hm-invest { position: relative; overflow: visible; }
 .app-container .hm .hm-invest__ph { border-radius: calc(var(--hm-r) - 1.5px) 0 0 calc(var(--hm-r) - 1.5px); overflow: hidden; }

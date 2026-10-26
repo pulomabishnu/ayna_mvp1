@@ -18,6 +18,7 @@ import '../styles/editorial.css';
 import '../styles/home.css';
 import { Seal, Ribbon } from './personality/Bits.jsx';
 import Photo from './ui/Photo.jsx';
+import { Plate, Chip, BigFact, StandardsBand } from './ui/ay';
 import { HOME_SEARCH_HINTS } from './shop/homeSearchHints.js';
 
 /* The website home (v2, Oct 21). Styles: src/styles/home.css (hm-*).
@@ -92,6 +93,7 @@ function Search({ onSearch }) {
   );
 }
 
+const STAR = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>;
 const STANDARDS = ['Matched to your body', 'Evidence beside each one', 'Partnerships never change your match'];
 function Hero({ onStartQuiz, onSearch, personal = null, banner = null, posts = [], paused, onTogglePause }) {
   const cta = personal && (personal.ecoCount > 0 || personal.hasQuiz)
@@ -115,9 +117,7 @@ function Hero({ onStartQuiz, onSearch, personal = null, banner = null, posts = [
         <HeroScatter posts={posts} paused={paused} onTogglePause={onTogglePause} />
       </div>
       {/* Standards, stated once on the page (landing audit 10 and 11: Tower 28). */}
-      <ul className="hm-wrap hm-standards" aria-label="How ayna works">
-        {STANDARDS.map((t) => <li key={t}><svg className="hm-standards__mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>{t}</li>)}
-      </ul>
+      <div className="hm-wrap hm-standards-wrap"><StandardsBand className="hm-standards" items={STANDARDS.map((title) => ({ title, icon: STAR }))} /></div>
     </section>
   );
 }
@@ -172,7 +172,8 @@ function UiPiece({ item }) {
   );
 }
 function SlotPiece({ item }) {
-  if (item.kind === 'prod') return <img src={item.p.image} alt="" loading="lazy" decoding="async" />;
+  // #32 Glossier app: every product on the white scalloped plate, at the same scale.
+  if (item.kind === 'prod') return <Plate src={item.p.image} alt="" stroke imgProps={{ loading: 'eager', decoding: 'auto' }} />;
   return <UiPiece item={item} />;
 }
 /* one slot: fixed box, the current piece plus the outgoing one while it leaves */
@@ -375,8 +376,8 @@ function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, pick
           <div className="hm-shop">
             <div className="hm-chips" role="group" aria-label="Choose a need">
               {needs.length ? <>
-                {needs.map((n) => (<button key={n.id} type="button" className="ay-chip" aria-pressed={n.id === need?.id} onClick={() => setId(n.id === id ? null : n.id)}>{n.label}<span className="ay-chip__count"><span className="ed-sr">, </span>{n.pool.length}<span className="ed-sr"> products</span></span></button>))}
-                <Go className="ay-chip hm-chips__all" href="/explore/products" onGo={() => onViewDiscovery?.('')}>All needs<Arrow /></Go>
+                {needs.map((n) => (<Chip key={n.id} selected={n.id === need?.id} onClick={() => setId(n.id === id ? null : n.id)}>{n.label} <span className="hm-chips__count"><span className="ed-sr">, </span>{n.pool.length}<span className="ed-sr"> products</span></span></Chip>))}
+                <Go className="ayk-chip hm-chips__all" href="/explore/products" onGo={() => onViewDiscovery?.('')}>All needs<Arrow /></Go>
               </> : [0, 1, 2, 3, 4, 5].map((i) => <span key={i} className="hm-chips__skel" aria-hidden="true" />)}
             </div>
             <p className="hm-shop__label" aria-live="polite">{listName}</p>
@@ -487,14 +488,11 @@ function HowEvidence({ onViewHowItWorks, onViewArticles, onStartQuiz, showStart 
             </li>
           ))}
         </ol>
-        <dl className="hm-stats" aria-busy={nums ? undefined : 'true'}>
+        <ul className="hm-stats" aria-busy={nums ? undefined : 'true'} aria-label="ayna in numbers">
           {(nums || [0, 1, 2, 3].map(() => null)).map((s, i) => (
-            <div key={i} className="hm-stat">
-              <dt className="hm-stat__n">{s ? s.n.toLocaleString('en-US') : <span className="hm-stat__skel" aria-hidden="true" />}</dt>
-              <dd>{s ? s.label : ' '}</dd>
-            </div>
+            <li key={i}>{s ? <BigFact value={s.n.toLocaleString('en-US')} caption={s.label} /> : <span className="hm-stat__skel" aria-hidden="true" />}</li>
           ))}
-        </dl>
+        </ul>
         {/* The one call to action after the hero: it closes the method. */}
         {showStart && <div className="hm-how__cta"><Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Get my matches<Arrow /></Go></div>}
       </div>
