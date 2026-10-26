@@ -155,7 +155,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold[open] > summary { margin-bo
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold > summary:focus-visible { outline: 2px solid var(--ayna-focus, currentColor); outline-offset: 4px; border-radius: 12px; }
 @media (prefers-reduced-motion: reduce) { html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold__chev { transition: none; } }
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded { display: block !important; padding: 16px !important; border-radius: 20px !important; background: color-mix(in srgb, currentColor 6%, transparent) !important; }
-html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-fold__text > h2 { font-size: calc(22px * var(--ayna-text-scale, 1)) !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-fold__text > h2 { font-size: calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1)) !important; }
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-fold > :not(summary) + :not(summary) { margin-top: 14px; }
 /* Ecosystem on short phones (SE, 667pt): the count and "needs covered" share a
    row so the first shelf product reaches the first screen. */

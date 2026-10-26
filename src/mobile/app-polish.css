@@ -88,7 +88,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ay-shelf-head { border-bottom: 0 !important; padding-bottom: 0 !important; margin-bottom: 14px !important; flex-wrap: nowrap !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ay-shelf-head h2 {
   border: 0 !important; transform: none !important; border-radius: 6px !important; padding: 6px 12px !important;
-  font: 500 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 62vw;
+  font: 500 calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 62vw;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shelf-count { width: auto !important; height: auto !important; clip-path: none !important; background: none !important; color: var(--r-ink-2) !important; font: 500 13px/1 var(--f-ui) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shelf-add { border: 0 !important; padding: 0 4px !important; min-width: 44px; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; }

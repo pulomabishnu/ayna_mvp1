@@ -33,13 +33,13 @@
 .rc__label {
   position: absolute; left: 7cqi; right: 7cqi; top: 33cqi; z-index: 1;
   display: grid; justify-items: start; gap: 4cqi; padding: 6cqi 6cqi 7cqi;
-  border-radius: 6cqi; background: var(--rc-label); color: #3e2723;
+  border-radius: 8px; background: var(--rc-label); color: #3e2723;
   border: 1.5px solid #3e2723; box-sizing: border-box;
 }
 .rc__pill {
   display: inline-block; padding: 1.4cqi 3.4cqi; border-radius: 99px;
   background: var(--rc-band); color: #3e2723;
-  font: 600 clamp(12px, 4.4cqi, 14px)/1.15 'Figtree', system-ui, sans-serif; letter-spacing: 0; white-space: nowrap;
+  font: 600 13px/1.15 'Figtree', system-ui, sans-serif; letter-spacing: 0; white-space: nowrap;
 }
 .rc--vaginal .rc__pill { background: #ffedac; }
 .rc--postpartum .rc__pill, .rc--photo .rc__pill { background: #f7badd; }
@@ -52,14 +52,14 @@
 .rc--w3 .rc__word { font-size: clamp(14px, 10cqi, 31px); }
 .rc__foot {
   position: absolute; left: 7cqi; bottom: 6.5cqi; z-index: 1; display: inline-flex; align-items: center; gap: 2cqi;
-  font: 600 clamp(12px, 4.4cqi, 15px)/1 'Figtree', system-ui, sans-serif; color: var(--rc-ink);
+  font: 600 13px/1 'Figtree', system-ui, sans-serif; color: var(--rc-ink);
 }
 .rc__mark { width: clamp(9px, 3.6cqi, 12px); height: auto; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; }
 .rc--photo .rc__foot { padding: 1.8cqi 3.4cqi; border-radius: 99px; background: #ffedac; color: #3e2723; border: 1.5px solid #3e2723; }
-.rc--photo .rc__label { top: auto; bottom: calc(6.5cqi + clamp(12px, 4.4cqi, 15px) + 3.6cqi + 4cqi); }
+.rc--photo .rc__label { top: auto; bottom: calc(6.5cqi + 13px + 3.6cqi + 4cqi); }
 
 /* Large cover (featured read in the app) */
-.rc--hero { border-radius: 22px; }
+.rc--hero { border-radius: 16px; }
 
 /* Explore audit v3 (Oct 25): no blue on surfaces (blue is for chart lines) and
    no scallops inside cards (#14 Tonic Tox: the topic on a tinted rounded

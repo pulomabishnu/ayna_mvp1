@@ -129,7 +129,7 @@
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__panel { width: 100%; max-width: 560px; max-height: 86vh; overflow-y: auto; overscroll-behavior: contain; box-sizing: border-box; padding: 8px var(--d-gutter) calc(28px + env(safe-area-inset-bottom, 0px)); border-radius: 20px 20px 0 0; background: var(--d-page, #ffedac); color: var(--d-ink); animation: eco-app-up .38s var(--ease-out) both; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__grab { display: block; width: 38px; height: 5px; margin: 0 auto 6px; border-radius: 3px; background: var(--d-hair); }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 8px; }
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__head h2 { margin: 0 !important; font: 700 calc(22px * var(--ayna-text-scale, 1))/1.2 var(--ay-app-heading) !important; color: var(--d-ink) !important; letter-spacing: -.015em; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__head h2 { margin: 0 !important; font: 700 calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1))/1.2 var(--ay-app-heading) !important; color: var(--d-ink) !important; letter-spacing: -.015em; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__done { min-height: 44px !important; padding: 0 4px !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--d-ink) !important; font: 700 calc(16px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-sheet__list { display: grid; gap: 26px; padding-top: 22px; }
 @keyframes eco-app-fade { from { opacity: 0; } to { opacity: 1; } }

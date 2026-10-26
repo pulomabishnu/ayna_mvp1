@@ -42,7 +42,7 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 
 /* Detail */
 .ay-hc-detail-head { display: flex; align-items: center; gap: 14px; margin: 6px 0 18px; }
-.ay-hc-detail-head h2 { margin: 0; color: var(--legacy-ink); font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.01em; }
+.ay-hc-detail-head h2 { margin: 0; color: var(--legacy-ink); font: 400 calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.01em; }
 .ay-hc-detail-head p { margin: 4px 0 0; color: var(--ay-ink-soft); font: 500 13px/1.4 var(--ay-font-ui); }
 
 .ay-hc-note { margin: 0 0 18px; padding: 12px 14px; border: 1.5px solid var(--legacy-ink); border-radius: 14px; background: var(--legacy-butter); color: var(--b-espresso); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.45 var(--ay-font-ui); }
@@ -144,7 +144,7 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 .ay-hi-card.is-cycle { --hi-tone: var(--legacy-pink); }
 .ay-hi-card.is-recovery, .ay-hi-card.is-heart { --hi-tone: var(--legacy-butter); }
 .ay-hi-card.is-activity { --hi-tone: var(--ay-mint); }
-.ay-hi-headline { margin: 8px 0 2px; font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.02em; }
+.ay-hi-headline { margin: 8px 0 2px; font: 400 calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.02em; }
 .ay-hi-change { margin: 0 0 8px; font: 500 13px/1.3 var(--ay-font-ui); }
 .ay-hi-change.is-flat { color: var(--ay-ink-soft); font-weight: 600; }
 .ay-hi-chart { margin: 6px 0 10px; }

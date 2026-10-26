@@ -326,7 +326,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
 .app-container[data-theme='dark'] .ay-info__toc a.is-on { background: var(--ay-tile); font-weight: 600; }
 .app-container[data-theme='dark'] .ay-info__toc a b { color: var(--ay-ink-soft); }
 @media (max-width: 960px) { .app-container[data-theme='dark'] .ay-info--toc .ay-info__layout { grid-template-columns: minmax(0, 1fr); } .app-container[data-theme='dark'] .ay-info__toc { position: static; } }
-.app-container:not([data-theme='dark']) .care-near-panel { background: var(--ay-paper) !important; border: 2px solid var(--legacy-ink) !important; border-radius: 20px !important; box-shadow: none !important; }
+.app-container:not([data-theme='dark']) .care-near-panel { background: var(--ay-paper) !important; border: 2px solid var(--legacy-ink) !important; border-radius: 16px !important; box-shadow: none !important; }
 @media (max-width: 600px) { .app-container .pdp-actions__primary { grid-template-columns: minmax(0, 1fr) auto !important; } .app-container .pdp-actions__primary .pdp-actions__wishlist { width: auto !important; padding-inline: 16px !important; } }
 
 /* =====================================================================
@@ -2866,7 +2866,7 @@ html body .app-container .app-nav.app-nav .app-nav__circle--wishlist:is(:hover, 
 .ay-ecoprev__steps li { counter-increment: s; position: relative; padding-left: 42px; font-size: var(--ay-fs-body); line-height: 1.55; }
 .ay-ecoprev__steps li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 30px; height: 30px; display: grid; place-items: center; border: 2px solid #3e2723; border-radius: 50%; background: #f7badd; font-weight: 600; }
 .ay-ecoprev__steps b { display: block; font-size: var(--ay-fs-body); }
-.ay-ecoprev__stage { position: relative; border: 2px solid #3e2723; border-radius: 18px; overflow: hidden; background: #ffedac; box-shadow: none; }
+.ay-ecoprev__stage { position: relative; border: 2px solid #3e2723; border-radius: 16px; overflow: hidden; background: #ffedac; box-shadow: none; }
 .ay-ecoprev__shelves { padding: 24px; filter: blur(5px) saturate(.9); opacity: .75; user-select: none; }
 .ay-ecoprev__shelf + .ay-ecoprev__shelf { margin-top: 22px; }
 .app-container .ay-ecoprev__shelfname { margin: 0 0 10px; font: 700 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em; }
@@ -4820,7 +4820,8 @@ html body .app-container.app-container.app-container.app-container:not([data-the
    and 2 hard shadows (3px controls, 5px cards and photos). Values the census
    found off-scale are snapped to the nearest step. */
 html body .app-container.app-container.app-container.app-container :is(.ayna-browse-card__link, .ay-web-lib-card, .lv-reads2__img, .ay-lib-cover) { border-radius: 8px !important; }
-html body .app-container.app-container.app-container.app-container :is(.ay3-libside__box, .brand-partner__logo, .lv-tile__img, .lv-purpose__copy, .ays-list, .brand-card, .cr-emergency, .cr-card, .ay-suggest, .ay-info-card, .ay-info-advisor, .ay-info__toc, .ay-info-metric, .lx-dash__card) { border-radius: 14px !important; }
+html body .app-container.app-container.app-container.app-container :is(.ay3-libside__box, .brand-partner__logo, .lv-tile__img, .lv-purpose__copy, .ays-list, .brand-card, .ay-suggest, .ay-info-card, .ay-info-advisor, .ay-info__toc, .ay-info-metric, .lx-dash__card) { border-radius: 16px !important; } /* radii 8 / 16 / 999 / 50% */
+html body .app-container.app-container.app-container.app-container :is(.cr-emergency, .cr-card) { border-radius: 14px !important; } /* Campus resources: exempt, unchanged */
 html body .app-container.app-container.app-container.app-container :is(.lv-cnt, .lst, .lv-start__card, .ay-info__photo, .wc-empty) { border-radius: 22px !important; }
 html body .app-container.app-container.app-container.app-container:not([data-theme='brand-dark']) :is(.lv-cnt, .lst, .ay-info__photo, .lv-start__card, .ays-list, .ay-info__toc, .ayna-browse-card__link, .ay-info-card, .ay-info-team__photo) { box-shadow: none !important; }
 html body .app-container.app-container.app-container.app-container:not([data-theme='brand-dark']) :is(.lst__cta, .lv-cnt__n, .ay-suggest, .ay-lib-personalize, .ay-lib-cover, .ay-info-advisor) { box-shadow: 3px 3px 0 #3e2723 !important; }

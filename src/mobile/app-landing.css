@@ -112,7 +112,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-art { width: auto !important; height: auto !important; display: grid !important; place-items: center !important; margin: 0 auto 18px !important; background: none !important; border: 0 !important; box-shadow: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst { position: relative; width: 104px; height: 104px; display: grid; place-items: center; isolation: isolate; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst::before { content: ''; position: absolute; inset: 0; z-index: -1; background: #f7badd; clip-path: polygon(50.0% 0.0%, 59.1% 10.0%, 71.7% 5.0%, 75.6% 17.9%, 89.1% 18.8%, 86.9% 32.2%, 98.7% 38.9%, 91.0% 50.0%, 98.7% 61.1%, 86.9% 67.8%, 89.1% 81.2%, 75.6% 82.1%, 71.7% 95.0%, 59.1% 90.0%, 50.0% 100.0%, 40.9% 90.0%, 28.3% 95.0%, 24.4% 82.1%, 10.9% 81.2%, 13.1% 67.8%, 1.3% 61.1%, 9.0% 50.0%, 1.3% 38.9%, 13.1% 32.2%, 10.9% 18.8%, 24.4% 17.9%, 28.3% 5.0%, 40.9% 10.0%); }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst.is-sky::before { background: #769ebe; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst.is-sky::before { background: #f7badd; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst svg { width: 38px; height: 38px; fill: none; stroke: #3e2723 !important; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty h2 { font: 400 28px/1.15 var(--ay-app-heading) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty.is-compact .ay-empty-burst { width: 76px; height: 76px; }
@@ -440,7 +440,7 @@
 /* ===== Feature reel, walkthrough P1-18 (Oct 21) =====
    Rows carry a real product on a white tile, and the reel is manual: the
    pager is four dot buttons (44px hit areas), no autoplay, no pause button. */
-.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-cover.has-photo { position: relative; overflow: hidden; width: 40px; height: 40px; background: #fff !important; border-radius: 10px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-cover.has-photo { position: relative; overflow: hidden; width: 40px; height: 40px; background: #fff !important; border-radius: 8px !important; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-cover.has-photo img { position: absolute; inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); object-fit: contain; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-deck .c3 { overflow: hidden; background: #fff !important; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-reel-deck__photo { position: absolute; inset: 12px 12px 40px; }

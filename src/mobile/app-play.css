@@ -530,7 +530,7 @@
 .ayna-mobile .ayna-read-photo { margin: 0 var(--ay-gutter) var(--ay-space-5) !important; border-radius: var(--ay-radius-lg) !important; overflow: hidden !important; background: var(--ay-tile) !important; aspect-ratio: 4 / 3; }
 .ayna-mobile .ayna-read-photo img { width: 100% !important; height: 100% !important; object-fit: cover !important; }
 .ayna-mobile .ayna-read-content { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
-.ayna-mobile .ayna-read-sources h2 { font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; }
+.ayna-mobile .ayna-read-sources h2 { font: 400 calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; }
 
 /* About: let the headlines lead; drop the small caps eyebrows. */
 .ayna-mobile .ayna-scrapbook__eyebrow { display: none !important; }

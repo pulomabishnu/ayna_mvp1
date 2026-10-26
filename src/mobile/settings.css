@@ -9,7 +9,7 @@
 .ayna-mobile .ay-set-head { padding: max(16px, env(safe-area-inset-top)) var(--ay-gutter) 12px !important; gap: 12px !important; }
 .ayna-mobile .ay-set-head > button { width: 42px !important; height: 42px !important; border: 1.5px solid var(--legacy-ink) !important; background: var(--ay-paper) !important; transition: transform var(--ay-dur-1) var(--ay-ease); }
 .ayna-mobile .ay-set-head > button:active { transform: scale(.92); }
-.ayna-mobile .ay-set-head-title { margin: 0; font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display) !important; letter-spacing: -.035em !important; }
+.ayna-mobile .ay-set-head-title { margin: 0; font: 400 calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display) !important; letter-spacing: -.035em !important; }
 
 /* Every subpage's scroll area shares the gutter. */
 .ay-set-page:not([data-page='hub']) [style*='overflow-y: auto'] { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
@@ -93,7 +93,7 @@
 
 /* Startups: palette banner (not a dark slab) + real pill buttons */
 .ay-startups-hero { position: relative; margin-bottom: 16px; padding: 20px 96px 20px 20px; border: 1.5px solid var(--legacy-ink); border-radius: 22px; background: var(--ay-peri); box-shadow: 0 4px 0 var(--legacy-ink); color: var(--legacy-ink); overflow: hidden; }
-.ay-startups-hero h2 { margin: 0; font: 400 calc(22px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.035em; }
+.ay-startups-hero h2 { margin: 0; font: 400 calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display); letter-spacing: -.035em; }
 .ay-startups-hero p { margin: 8px 0 0; font: 400 15px/1.45 var(--ay-font-ui); opacity: .8; }
 .ay-startups-art { position: absolute; right: 16px; top: 16px; width: 72px; height: 72px; }
 .ay-startups-art i { position: absolute; display: block; border: 1.5px solid var(--legacy-ink); }

@@ -31,20 +31,20 @@
 .app-container .hm .hm-sec { padding-block: var(--hm-pad); }
 
 /* ---------- type: eight styles ---------- */
-.app-container.app-container .hm h1.hm-display { margin: 0; font: 700 56px/1.02 var(--ay-heading) !important; letter-spacing: -.025em !important; color: var(--ay-text) !important; text-wrap: balance; max-width: 13ch; }
-.app-container.app-container .hm h1.hm-display--personal { font-size: 56px !important; }
-.app-container .hm .hm-h2 { margin: 0; font: 700 36px/1.08 var(--ay-heading) !important; letter-spacing: -.02em !important; color: var(--ay-text) !important; text-wrap: balance; max-width: 24ch; }
-.app-container .hm .hm-h2.hm-statement { font-size: 44px !important; line-height: 1.04 !important; max-width: 16ch; }
+.app-container.app-container .hm h1.hm-display { margin: 0; font: 700 var(--ay-size-display, 40px)/1.02 var(--ay-heading) !important; letter-spacing: -.025em !important; color: var(--ay-text) !important; text-wrap: balance; max-width: 13ch; }
+.app-container.app-container .hm h1.hm-display--personal { font-size: var(--ay-size-display, 40px) !important; }
+.app-container .hm .hm-h2 { margin: 0; font: 700 var(--ay-size-h1, 30px)/1.08 var(--ay-heading) !important; letter-spacing: -.02em !important; color: var(--ay-text) !important; text-wrap: balance; max-width: 24ch; }
+.app-container .hm .hm-h2.hm-statement { font-size: var(--ay-size-display, 40px) !important; line-height: 1.04 !important; max-width: 16ch; }
 .app-container .hm .hm-h3 { margin: 0; font: 700 22px/1.15 var(--ay-heading) !important; letter-spacing: -.01em !important; color: var(--ay-text) !important; }
-.app-container .hm .hm-lead { margin: 0; font: 500 18px/1.45 var(--ay-sans-stack) !important; color: var(--ay-text) !important; max-width: 38ch; }
+.app-container .hm .hm-lead { margin: 0; font: 500 17px/1.45 var(--ay-sans-stack) !important; color: var(--ay-text) !important; max-width: 38ch; }
 .app-container .hm .hm-body { margin: 0; font: 500 16px/1.55 var(--ay-sans-stack) !important; color: var(--ay-text) !important; max-width: 60ch; }
 @media (max-width: 1023px) {
-  .app-container.app-container .hm :is(h1.hm-display, h1.hm-display--personal) { font-size: 46px !important; }
+  .app-container.app-container .hm :is(h1.hm-display, h1.hm-display--personal) { font-size: var(--ay-size-display, 40px) !important; }
 }
 @media (max-width: 767px) {
-  .app-container.app-container .hm :is(h1.hm-display, h1.hm-display--personal) { font-size: 36px !important; line-height: 1.05 !important; }
-  .app-container .hm .hm-h2 { font-size: 26px !important; line-height: 1.1 !important; }
-  .app-container .hm .hm-h2.hm-statement { font-size: 30px !important; }
+  .app-container.app-container .hm :is(h1.hm-display, h1.hm-display--personal) { font-size: var(--ay-size-display, 32px) !important; line-height: 1.05 !important; }
+  .app-container .hm .hm-h2 { font-size: var(--ay-size-h1, 26px) !important; line-height: 1.1 !important; }
+  .app-container .hm .hm-h2.hm-statement { font-size: var(--ay-size-display, 32px) !important; }
   .app-container .hm .hm-h3 { font-size: 20px !important; }
   .app-container .hm .hm-lead { font-size: 17px !important; }
 }
@@ -105,7 +105,7 @@
 .app-container .hm .hm-ui { position: absolute; inset: auto 0 0 0; display: grid; align-content: start; gap: 6px; padding: 14px 16px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); box-shadow: none; box-sizing: border-box; text-align: left; }
 .app-container .hm .hm-ui__label { font: 600 13px/1.2 var(--ay-sans-stack); }
 .app-container .hm .hm-ui__note { font: 500 13px/1.35 var(--ay-sans-stack); }
-.app-container .hm .hm-ui__title { font: 700 18px/1.1 var(--ay-heading); letter-spacing: -.01em; }
+.app-container .hm .hm-ui__title { font: 700 17px/1.1 var(--ay-heading); letter-spacing: -.01em; }
 .app-container .hm .hm-ui--evidence { background: var(--hm-pink); }
 .app-container .hm .hm-ui--product { grid-template-columns: 52px minmax(0, 1fr); align-items: center; column-gap: 12px; }
 .app-container .hm .hm-ui__thumb { grid-row: span 2; width: 52px; aspect-ratio: 1 / 1; padding: 4px; background: #fff; border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r-sm); box-sizing: border-box; }
@@ -161,7 +161,7 @@
 .app-container .hm .hm-ribbon .ay-ribbon__tab { min-height: 48px; padding: 0 16px; border-right: 1.5px solid var(--hm-ink); border-bottom: 0; font: 600 15px/1.2 var(--ay-sans-stack) !important; white-space: nowrap; text-decoration: none; }
 .app-container .hm .hm-ribbon .ay-ribbon__tab:hover { text-decoration: underline; text-underline-offset: 3px; }
 .app-container .hm .hm-ribbon .ay-ribbon__view { min-height: 48px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 24px); mask-image: linear-gradient(90deg, transparent, #000 24px); }
-.app-container .hm .hm-ribbon .ay-ribbon__track li { gap: 20px; padding-left: 20px; font: 700 18px/1 var(--ay-heading) !important; letter-spacing: -.01em; }
+.app-container .hm .hm-ribbon .ay-ribbon__track li { gap: 20px; padding-left: 20px; font: 700 17px/1 var(--ay-heading) !important; letter-spacing: -.01em; }
 .app-container .hm .hm-ribbon .ay-ribbon__track li::after { width: 11px; height: 11px; }
 .app-container .hm .hm-ribbon__short { display: none; }
 @media (max-width: 479px) {
@@ -179,8 +179,8 @@
 .app-container .hm .hm-needs { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ay-hairline); }
 .app-container .hm .hm-needs > li { min-width: 0; border-bottom: 1px solid var(--ay-hairline); }
 .app-container .hm .hm-needs__row { display: grid; grid-template-columns: 80px minmax(0, 1fr); grid-template-areas: 'ph quote' 'ph go'; align-items: center; gap: 4px 20px; min-height: 44px; padding: 16px 0; color: inherit; text-decoration: none; }
-.app-container .hm .hm-needs__ph { grid-area: ph; position: relative; display: block; width: 80px; aspect-ratio: 1 / 1; border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); }
-.app-container .hm .hm-needs__ph > :is(picture, img), .app-container .hm .hm-needs__ph > picture img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: calc(var(--hm-r) - 1.5px) !important; }
+.app-container .hm .hm-needs__ph { grid-area: ph; position: relative; display: block; width: 80px; aspect-ratio: 1 / 1; overflow: hidden; border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); }
+.app-container .hm .hm-needs__ph > :is(picture, img), .app-container .hm .hm-needs__ph > picture img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; } /* the 16px frame clips it (inner curve = 16 minus the border) */
 .app-container .hm .hm-needs__prod { position: absolute; right: -10px; bottom: -8px; width: 38px; aspect-ratio: 1 / 1; padding: 3px; background: #fff; border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r-sm); box-sizing: border-box; rotate: 6deg; }
 .app-container .hm .hm-needs__prod img { width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
 .app-container .hm .hm-needs__quote { grid-area: quote; align-self: end; font: 700 22px/1.15 var(--ay-heading); letter-spacing: -.01em; text-wrap: balance; }
@@ -357,7 +357,7 @@
 @media (max-width: 767px) { .app-container .hm .hm-stats { gap: 12px; } }
 /* the Wefunder card's one round seal */
 .app-container .hm .hm-invest { position: relative; overflow: visible; }
-.app-container .hm .hm-invest__ph { border-radius: calc(var(--hm-r) - 1.5px) 0 0 calc(var(--hm-r) - 1.5px); overflow: hidden; }
+.app-container .hm .hm-invest__ph { margin: -1.5px 0 -1.5px -1.5px; border: 1.5px solid; border-color: inherit; border-radius: var(--hm-r) 0 0 var(--hm-r); overflow: hidden; } /* sits on the frame edge: 16px radius, the clip gives 16 minus the border inside */
 .app-container .hm .hm-invest__seal { position: absolute; top: -40px; right: 24px; left: auto; bottom: auto; z-index: 2; }
 @media (max-width: 767px) { .app-container .hm .hm-invest__seal { width: 84px; height: 84px; top: -34px; right: 12px; } .app-container .hm .hm-invest__seal b { width: 36px; height: 36px; font-size: 13px; } }
 /* beside the phrases the four cards sit 2 x 2: a wider photo plate keeps the block about as tall as the phrases */

@@ -157,7 +157,7 @@
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-mic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-send { flex: none; height: 48px; min-height: 48px; margin: 0 3px 3px 0 !important; padding: 0 20px !important; border: 0 !important; border-radius: 999px !important; background: var(--askp-ink) !important; color: var(--askp-on-ink) !important; box-shadow: var(--ay-sticker, 3px 3px 0 #f7badd) !important; font: 600 15px/1 var(--ay-font-ui) !important; opacity: 1 !important; cursor: pointer; transition: transform var(--ay-dur-press, 120ms) ease, box-shadow var(--ay-dur-press, 120ms) ease; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-send:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: none !important; }
-.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-send:disabled { background: transparent !important; color: var(--askp-muted) !important; box-shadow: inset 0 0 0 1.5px var(--askp-line) !important; cursor: default; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-send:disabled { background: transparent !important; color: var(--askp-muted) !important; border: 1.5px solid var(--askp-line) !important; box-shadow: none !important; cursor: default; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-foot { margin: 0 !important; font: 500 13px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
 
 /* App: the sheet with two heights (PDP build brief: 50% and 100%) */

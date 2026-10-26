@@ -4,7 +4,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) :is(.ay-cmp2__best, .ay-cmp2__nobest) { margin: 0 !important; padding: 12px 16px !important; border-radius: 16px; background: var(--s-group); font: 400 15px/1.5 var(--s-sans) !important; color: var(--s-ink) !important; max-width: 72ch; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2__best { border-left: 6px solid var(--s-pink); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2__nobest { font-size: 14px !important; color: var(--s-soft) !important; background: transparent; padding: 0 !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2__scroll { overflow-x: auto; min-width: 0; border-radius: 20px; background: var(--s-group); -webkit-overflow-scrolling: touch; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2__scroll { overflow-x: auto; min-width: 0; border-radius: 16px; background: var(--s-group); -webkit-overflow-scrolling: touch; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 table { width: 100%; min-width: 520px; border-collapse: collapse; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 :is(th, td) { padding: 12px 14px !important; border-top: 1px solid var(--s-hair); vertical-align: top; text-align: left; font: 400 14px/1.45 var(--s-sans); color: var(--s-ink); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 thead :is(th, td) { border-top: 0; }

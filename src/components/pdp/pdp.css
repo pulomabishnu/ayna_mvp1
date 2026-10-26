@@ -32,7 +32,7 @@
   --wps-ui: var(--f-ui, 'Figtree', system-ui, sans-serif);
   --wps-btn-bg: #3e2723;
   --wps-btn-fg: #ffedac;
-  --wps-shadow: 3px 3px 0 #3e2723;
+  --wps-shadow: var(--ay-sticker);
   --wps-focus: var(--d-ink, #3e2723);
   --wps-gap: 16px;
 }
@@ -153,7 +153,8 @@
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-match__why { flex: 1 1 12em; min-width: 0; font: 600 var(--v-small)/1.35 var(--v-ui) !important; color: var(--v-ink) !important; }
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-match__go { flex: none; font: 600 14px/1 var(--v-ui) !important; text-decoration: underline; text-underline-offset: 3px; color: var(--v-ink) !important; }
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-match.is-hold { display: grid !important; gap: 2px; cursor: default; }
-:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-match.is-hold .ay-hold { margin: 0 !important; padding: 0 0 0 12px !important; border: 0 !important; border-left: 0 !important; background: none !important; box-shadow: inset 3px 0 0 #f7badd !important; border-radius: 0 !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-match.is-hold .ay-hold { position: relative; margin: 0 !important; padding: 0 0 0 12px !important; border: 0 !important; border-left: 0 !important; background: none !important; box-shadow: none !important; border-radius: 0 !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-match.is-hold .ay-hold::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 3px; background: #f7badd; } /* painted bar, like .ayv-safeline */
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-match.is-hold .ay-hold :is(p, b, a, button) { color: var(--v-ink) !important; font-family: var(--v-ui) !important; }
 
 /* ---------- hero: one action row ---------- */

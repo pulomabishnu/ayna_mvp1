@@ -16,7 +16,7 @@
   margin: 48px 0 0;
   padding: 16px;
   border: 2px solid var(--sg-ink);
-  border-radius: 20px;
+  border-radius: 16px;
   background: var(--sg-paper);
   color: var(--sg-ink);
   box-shadow: var(--ay-shadow, 3px 3px 0 #3e2723);
@@ -35,8 +35,8 @@
 /* Collapsed */
 .ay-suggest__intro { display: flex; align-items: center; gap: 16px; }
 .ay-suggest__copy { display: grid; gap: 4px; flex: 1; min-width: 0; }
-.ay-suggest__icon, .ay-suggest__check { display: grid; place-items: center; width: 48px; height: 48px; flex: none; border: 2px solid var(--sg-ink); border-radius: 14px; background: var(--legacy-butter, #ffedac); color: var(--sg-on-pastel); }
-.ay-suggest__icon.is-read { background: var(--ay-peri, #f7badd); }
+.ay-suggest__icon, .ay-suggest__check { display: grid; place-items: center; width: 48px; height: 48px; flex: none; border: 2px solid var(--sg-ink); border-radius: 8px; background: var(--legacy-butter, #ffedac); color: var(--sg-on-pastel); }
+.ay-suggest__icon.is-read { background: #f7badd; }
 .ay-suggest__check { border-radius: 50%; background: var(--ay-mint, #f6e3a1); }
 .ay-suggest__icon svg, .ay-suggest__check svg { width: 24px; height: 24px; }
 
@@ -81,7 +81,7 @@
 .ay-suggest .ay-suggest__field em { margin-left: 4px; color: var(--sg-soft); font-style: normal; font-weight: 500; }
 .ay-suggest.ay-suggest .ay-suggest__field :is(input, textarea) {
   width: 100%; min-height: 48px; margin: 0; padding: 12px 16px;
-  border: 2px solid var(--sg-faint); border-radius: 14px; background: var(--sg-paper); color: var(--sg-ink);
+  border: 2px solid var(--sg-faint); border-radius: 8px; background: var(--sg-paper); color: var(--sg-ink);
   font: 500 var(--ay-fs-body)/1.55 var(--ay-sans); box-shadow: none; resize: vertical; transition: border-color .15s ease;
 }
 .ay-suggest .ay-suggest__field textarea { min-height: 96px; }

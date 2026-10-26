@@ -21,7 +21,7 @@
   --ds-sky: #769ebe;
   --ds-shadow: none;
   --ds-shadow-sm: 3px 3px 0 var(--ds-line);
-  --ds-r: 20px;
+  --ds-r: 16px;
   --ds-display: var(--ay-heading, var(--ay-app-heading, 'ayna Display', 'Bricolage Grotesque', system-ui, sans-serif));
   --ds-ui: var(--ay-sans-stack, var(--ayna-font-ui, 'Figtree', system-ui, sans-serif));
 }
@@ -34,7 +34,7 @@
 }
 .ayna-mobile[data-theme='dark'] { --ds-page: #2e1c18; }
 @media (max-width: 699px) { .app-container { --ds-shadow: 3px 3px 0 var(--ds-line); --ds-r: 16px; } }
-.ayna-mobile { --ds-shadow: 3px 3px 0 var(--ds-line); --ds-r: 18px; }
+.ayna-mobile { --ds-shadow: 3px 3px 0 var(--ds-line); --ds-r: 16px; }
 
 /* ---- drawn marks ---- */
 .ds-mark { display: block; width: 1em; height: 1em; flex: none; }
@@ -89,7 +89,7 @@
 .ds-shape { position: absolute; display: block; }
 .ds-shape.is-flower { width: 30px; height: 30px; color: #ffedac; }
 .ds-shape.is-asterisk { width: 24px; height: 24px; color: #f7badd; }
-.ds-shape.is-slash { width: 22px; height: 22px; color: #769ebe; }
+.ds-shape.is-slash { width: 22px; height: 22px; color: #f7badd; } /* blue is for chart lines only */
 .ds-shape.is-dot { width: 10px; height: 10px; border-radius: 50%; background: #f7badd; }
 
 /* ---- curved text ring ---- */
