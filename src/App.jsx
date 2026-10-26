@@ -92,6 +92,7 @@ const SharedAnswerPage = React.lazy(() => import('./components/SharedAnswerPage'
 // The catalog (products, research, matching) loads after first paint as its
 // own chunk; App re-renders when it lands (data/catalog.js, catalogReady below).
 import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, getProductMatchDetailsForProduct, getProfileMatchPercentForProduct, hasStatedLifeStage, matchEngine, getSelectedNeeds, useCatalogReady, isCatalogReady, loadCatalog } from './data/catalog.js';
+import { needAreaLabels } from './utils/needAreas.js';
 import { behaviorFrom } from './utils/matchDisplay';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
 import { useHealthMatchPref } from './health/matchPref.js';
@@ -154,7 +155,6 @@ import { readHomeLook } from './mobile/components/homeLook.js';
 readHomeLook();
 import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
-import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
 import EcosystemPreview from './components/v3/EcosystemPreview';
 import EcosystemViewTabs from './components/EcosystemViewTabs';
 import { clearPersonalStorage } from './utils/clearPersonalStorage';
@@ -3408,8 +3408,8 @@ function App() {
             summary={pendingAction === 'quiz-complete' && guestPreview ? {
               count: guestPreview.products.length,
               products: guestPreview.products,
-              // Same area names the Wrapped story just showed.
-              areas: [...new Set(guestPreview.products.map((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label).filter(Boolean))],
+              // Her areas: the needs she picked (QA3 M11), not product categories.
+              areas: needAreaLabels(pendingQuizResults || guestPreview.results || quizResults, getSelectedNeeds),
             } : null}
             // Create account exists only in the save step after the quiz (Wrapped).
             // Everywhere else: sign in, or "Build your ecosystem" to start the quiz.

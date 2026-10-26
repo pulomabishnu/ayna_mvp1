@@ -5,7 +5,7 @@ import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
 import { whyLine } from '../utils/whyLine';
 import { matchText } from '../utils/matchDisplay';
-import { formatPrice } from '../utils/formatPrice';
+import { formatPrice, shownPriceText } from '../utils/formatPrice';
 import './WebDiscoverDeck.css';
 
 // "Swipe to discover" from the app, for the website: one product at a time.
@@ -89,7 +89,7 @@ export default function WebDiscoverDeck({ products = [], quizResults = null, sav
                 <div className="wdeck-copy">
                   {current.product.brand && <span>{current.product.brand}</span>}
                   <strong>{current.product.name}</strong>
-                  <div><b>{formatPrice(current.product).main}</b>{Number.isFinite(current.match) && current.match > 0 && current.reasons.length > 0 && <em>{matchText(current.match)}</em>}</div>
+                  <div>{shownPriceText(formatPrice(current.product).main) && <b>{formatPrice(current.product).main}</b>}{Number.isFinite(current.match) && current.match > 0 && current.reasons.length > 0 && <em>{matchText(current.match)}</em>}</div>
                   {current.why && <small className="wdeck-why">{current.why}</small>}
                   <small className="wdeck-tap">Flip</small>
                 </div>
@@ -106,7 +106,7 @@ export default function WebDiscoverDeck({ products = [], quizResults = null, sav
                   <span className="wdeck-back__label">{quizResults ? 'Not a direct match, but popular' : 'Take the quiz to see why things fit you'}</span>
                 )}
                 {(current.product.summary || current.product.description) && <p className="wdeck-back__summary">{String(current.product.summary || current.product.description).replace(/\s*\u2014\s*/g, ', ').slice(0, 160)}{String(current.product.summary || current.product.description).length > 160 ? '…' : ''}</p>}
-                <div className="wdeck-back__price"><b>{formatPrice(current.product).main}</b>{formatPrice(current.product).sub && <small>{formatPrice(current.product).sub}</small>}</div>
+                <div className="wdeck-back__price">{shownPriceText(formatPrice(current.product).main) && <b>{formatPrice(current.product).main}</b>}{formatPrice(current.product).sub && <small>{formatPrice(current.product).sub}</small>}</div>
               </div>
             </div>
           </article>

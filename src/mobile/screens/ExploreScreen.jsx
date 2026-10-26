@@ -124,7 +124,8 @@ export default function ExploreScreen(props) {
     return <div className="ax ax--embed" data-tour="explore">
       <MobileHeader onOpenSaved={onOpenSaved} />
       {top(false)}
-      <BrowseScreen {...props} embedded />
+      {/* Products only (QA3 M8): services live in the Services tab. */}
+      <BrowseScreen {...props} products={catalog} embedded />
     </div>;
   }
   // Reads: the Library's reads, now a tab of Explore (Explore audit: "Reads" everywhere).

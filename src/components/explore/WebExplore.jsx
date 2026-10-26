@@ -17,7 +17,7 @@ import { RELEASED_STARTUPS, SERVICE_FORMATS, serviceFacts } from '../../data/sta
 import { matchBadge, isSafetyHold } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { matchBreakdownFor } from '../pdp/decision.js';
-import { searchExplore, matchTopics } from '../../utils/search/exploreSearch.js';
+import { searchExplore, matchTopics, splitCatalog, isService } from '../../utils/search/exploreSearch.js';
 import { searchSuggestions } from '../../utils/search/index.js';
 import { readRecentSearches, rememberSearch, clearRecentSearches } from '../../utils/search/recentSearches.js';
 import { searchCommunityTolerant } from '../../utils/search/communitySearch.js';
@@ -90,9 +90,8 @@ export default function WebExplore({
     } catch { /* history unavailable */ }
   }, [q]);
   const catalog = useMemo(() => exploreCatalog(), []);
-  const serviceIds = useMemo(() => new Set(RELEASED_STARTUPS.map((s) => String(s.id))), []);
-  const products = useMemo(() => catalog.filter((p) => !serviceIds.has(String(p.id))), [catalog, serviceIds]);
-  const services = useMemo(() => catalog.filter((p) => serviceIds.has(String(p.id))), [catalog, serviceIds]);
+  // Same split as the app (QA3 M8): services (startups and catalog services like Visana, Midi) apart from products.
+  const { products, services } = useMemo(() => splitCatalog(catalog), [catalog]);
   const searching = q.length >= 2;
   const results = useMemo(() => (searching ? searchExplore(q, { items: catalog, articles: ARTICLES }) : null), [searching, q, catalog]);
   const posts = useCommunityPosts(searching ? q : '');
@@ -109,7 +108,7 @@ export default function WebExplore({
     const common = { key: p.id, isSaved: !!savedProducts[p.id], onToggleSaved, matchPercent: pct, matchHold: isSafetyHold(details), matchLabel: badge ? badge.label : '', why,
       onSeeMatch: !hasProfile && onStartQuiz ? () => onStartQuiz() : null };
     const open = (item) => { trackCardClicked({ surface: eventSurface(), where: source, product_id: item.id, position: i }); onOpenProduct?.(item, { source, position: i }); };
-    if (serviceIds.has(String(p.id))) return <ServiceCard {...common} service={p} onOpen={open} />;
+    if (isService(p)) return <ServiceCard {...common} service={p} onOpen={open} />;
     return <ProductCard {...common} product={p} inEcosystem={!!myProducts[p.id]} onOpen={open} />;
   };
   const productRow = (items, source) => <CardRail items={items} source={source} render={card} />;

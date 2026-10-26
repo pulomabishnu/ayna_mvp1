@@ -1,6 +1,7 @@
 import React from 'react';
 import { LEVELS } from '../pdp/evidenceLevels.js';
 import { cardEvidence, cardSafety, cardSizes, cardFacts, cardPerUse } from '../../utils/productCardFacts.js';
+import { BRAND_FALLBACK } from '../../mobile/data/brandFallback.js';
 import '../../styles/pcard.css';
 
 /*
@@ -11,7 +12,8 @@ import '../../styles/pcard.css';
 
 /** No photo yet: a plain plate with the brand name in the display face (no oval, no tint). */
 export function PlateName({ product, label = '' }) {
-  const name = String(product?.brand || product?.name || '').trim() || 'ayna';
+  // The brand (or the brand already at the start of its name), else the name.
+  const name = String(product?.brand || BRAND_FALLBACK[product?.id] || product?.name || '').trim() || 'ayna';
   return (
     <span className="ay-plate-name" role="img" aria-label={label || `No photo yet for ${product?.name || name}`}>
       <span aria-hidden="true">{name}</span>

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ProductTileImage, { ProductImageFallback } from '../ProductTileImage';
-import { formatPrice } from '../../utils/formatPrice';
+import { formatPrice, shownPriceText } from '../../utils/formatPrice';
 import { brandOf } from '../../mobile/data/brandFallback.js';
 import { displayName } from '../../mobile/utils/displayName.js';
 
@@ -212,7 +212,7 @@ export default function ShelfDrawers({ groups, toneOf, onOpenProduct, onTogglePr
                       <div className="ay-drawer__dtext">
                         {brand && <small>{brand}</small>}
                         <strong>{brand ? displayName(sel) : sel.name}</strong>
-                        <span className="ay-drawer__price">{price.main}{price.sub && <i> {price.sub}</i>}</span>
+                        {shownPriceText(price.main) && <span className="ay-drawer__price">{price.main}{price.sub && <i> {price.sub}</i>}</span>}
                       </div>
                       <div className="ay-drawer__acts">
                         <button type="button" className="is-ink" onClick={() => onOpenProduct?.(sel)}>View product</button>

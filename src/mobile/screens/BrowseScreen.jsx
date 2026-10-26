@@ -20,7 +20,7 @@ import { scoreSearchMatch, correctedSearchQuery, searchArticles, analyzeSearch }
 import SearchAssist from '../../components/search/SearchAssist.jsx';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
 import { trackApp } from '../utils/appAnalytics.js';
-import { stableShopOrder, rankShopForProfile } from '../utils/shopOrder.js';
+import { featuredShopOrder, rankShopForProfile } from '../utils/shopOrder.js';
 import { hasQuizAnswers } from '../utils/personalReads.js';
 import { sortByBestMatch, bestMatchNeedsQuiz, shownMatchPercent } from '../../utils/bestMatchSort.js';
 import { CompareToggle } from '../../components/compare/CompareControls.jsx';
@@ -264,14 +264,16 @@ export default function BrowseScreen({
   // back to (see fetchSearchSuggestions.js), not a separate mechanism.
   const [aiState, setAiState] = useState({ query: '', loading: false, suggestions: [], error: null });
 
-  // Default order (shopOrder.js): one shuffle per app session, so it does
-  // not reshuffle on every visit; with quiz answers, ranked by the matching
+  // Default order (shopOrder.js): the Featured order, fixed across loads;
+  // with quiz answers, ranked by the matching
   // engine so what fits her age, life stage and budget comes first.
   // With a profile the default order is always hers (UX 12): the switch only
   // narrows the set. Partner placement never reorders it (see below).
   const rankByProfile = hasQuizAnswers(quizAnswers);
+  // QA3 M8: one fixed order on every load, the website's Featured order
+  // (packshots she can buy now first, pre-orders last); no session shuffle.
   const shuffled = useMemo(() => {
-    const base = stableShopOrder(products);
+    const base = featuredShopOrder(products);
     return rankByProfile ? rankShopForProfile(base, quizAnswers, matchOpts) : base;
   }, [products, rankByProfile, quizAnswers, matchOpts]);
 

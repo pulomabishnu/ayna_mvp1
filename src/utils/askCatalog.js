@@ -8,7 +8,7 @@
  *   "Check Saalt Cup for me", "What's the evidence for Saalt Cup?"  -> product facts
  *   "What helps with period cramps?", "Reads on heavy periods"      -> ayna's library on it
  */
-import { productCard } from './askProducts.js';
+import { productCard, listableCards, leftOutLine } from './askProducts.js';
 
 const PRODUCT_ASK = /^(?:check|tell me about|what(?:'|’)?s in|what is|ingredients (?:in|of)|(?:what(?:'|’)?s|show me) the evidence (?:for|on)|evidence for|sources for|is there research on)\s+(.+?)(?:\s+for me)?\s*\??$/i;
 const PRODUCT_GENERIC = /^check (?:a|this) product(?: for me)?\??$/i;
@@ -169,13 +169,23 @@ export async function localCatalogAnswer(text, ctx = {}) {
   const topic = tm[1].replace(/^my\s+/i, '');
   const [articles, { ALL_PRODUCTS, CATEGORY_LABELS }, nls] = await Promise.all([loadReads(), import('../data/products.js'), import('./naturalLanguageSearch.js')]);
   const reads = readsOn(topic, articles).slice(0, 2);
-  const scored = ALL_PRODUCTS.filter((p) => p?.id && p.type !== 'digital')
+  // ayna is 18+: teen products are never listed. Every product that fits the
+  // topic is checked, so once the ones that don't fit her are left out
+  // (QA3 M10) up to 3 remain and the count line is the real count.
+  const { isTeenProduct } = await import('../data/products.js');
+  const pool = ALL_PRODUCTS.filter((p) => p?.id && p.type !== 'digital' && !isTeenProduct(p))
     .map((p) => ({ p, s: nls.scoreQueryAgainstProduct(topic, nls.buildSearchTextForItem(p, CATEGORY_LABELS), nls.buildIdentityTextForItem(p, CATEGORY_LABELS)) }))
-    .filter((x) => x.s > 0).sort((a, b) => b.s - a.s).slice(0, 3).map((x) => x.p);
-  if (!reads.length && !scored.length) return null;
-  const parts = [`Here’s what ayna’s library has on ${topic}.`];
+    .filter((x) => x.s > 0).sort((a, b) => b.s - a.s).map((x) => x.p);
+  const allCards = await Promise.all(pool.map((p) => productCard(p, ctx)));
+  const { shown: scored, leftOut } = listableCards(allCards, 3);
+  // Bleeding after menopause: the engine's care message leads, products come second.
+  const { bleedingCareNote } = await import('./bleedingCare.js');
+  const care = ctx.profile && allCards.some((c) => c?.match?.kind === 'evaluation') ? bleedingCareNote(ctx.profile, ctx.healthProfile || null, ctx.matchOpts) : null;
+  if (!reads.length && !scored.length && !care) return null;
+  const parts = [care ? `**${care.title}.** ${care.text}` : '', `Here’s what ayna’s library has on ${topic}.`].filter(Boolean);
   if (reads.length) parts.push(`**${reads.length === 1 ? 'Read' : 'Reads'}**\n${reads.map((a) => `- **${clean(a.title)}**: ${clean(a.teaser)}`).join('\n')}`);
   if (scored.length) parts.push('**In ayna’s catalog**, with your match when ayna has your answers:');
+  if (leftOutLine(leftOut)) parts.push(leftOutLine(leftOut));
   if (!ctx.signedIn) parts.push('For an answer about you, sign in and ask ayna’s AI.');
   const dd = reads.map(dosAndDonts).find(Boolean);
   const links = reads.flatMap((a) => readParts(a).links);
@@ -183,8 +193,8 @@ export async function localCatalogAnswer(text, ctx = {}) {
     answer: parts.join('\n\n'),
     followUps: reads.map((a) => ({ type: 'open_library', articleId: a.id, label: `Read “${clean(a.title)}”` })),
     columns: dd ? { kind: 'do', yes: dd.dos.slice(0, 4), no: dd.donts.slice(0, 4), from: clean(reads.find((a) => dosAndDonts(a))?.title) } : null,
-    products: await Promise.all(scored.map((p) => productCard(p, ctx))),
-    sources: await markSources(links, { max: 4 }),
+    products: scored,
+    sources: await markSources(care?.source?.url ? [{ url: care.source.url, title: care.source.label }, ...links] : links, { max: 4 }),
     noSources: 'No checked sources on file for this yet.',
     basedOn: ['ayna’s reads and their sources', 'ayna’s product records', ctx.profile ? 'your health profile, for the match' : ''].filter(Boolean),
   };

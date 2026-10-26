@@ -1,3 +1,4 @@
+import { formatPrice } from '../utils/formatPrice.js';
 // ============================================================
 // Ayna Startups Database, Real Women's Health Startups
 // ============================================================
@@ -1524,5 +1525,10 @@ export const SERVICE_FORMATS = ['Telehealth', 'At-home test', 'App', 'Clinic', '
 export function serviceFacts(service) {
     const f = SERVICE_FACTS[String(service?.id || '')] || {};
     const covers = String(service?.tagline || '').trim();
-    return { format: f.format || '', cost: f.cost || '', logo: f.logo || '', covers };
+    // A catalog service (Visana, Midi, an app; QA3 M8) states its own price
+    // in the record: its short main line, only when it is a known price.
+    const catalogService = !f.cost && !STARTUPS.some((x) => String(x.id) === String(service?.id || ''));
+    const own = catalogService && service?.price ? formatPrice(service).main : '';
+    const cost = f.cost || (own && own !== 'Price at retailer' ? own : '');
+    return { format: f.format || '', cost, logo: f.logo || '', covers };
 }
