@@ -175,7 +175,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font-size: 13px !important; font-weight: 500 !important; letter-spacing: -.01em !important; }
 @media (max-width: 360px) {
   .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button,
-  .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font-size: 11.5px !important; font-weight: 500 !important; }
+  .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font-size: 13px !important; font-weight: 500 !important; }
 }
 
 /* ===== AP07 You: standard header above the hero (no close button); keep the stickers clear of the name ===== */

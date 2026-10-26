@@ -29,7 +29,7 @@ html body .app-container .wx-search input#wx-q, html body .app-container .wx-sea
 .app-container .wx-reads a:hover span { text-decoration: underline; }
 .app-container .wx-posts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; max-width: 760px; }
 .app-container .wx-posts a { display: grid; gap: 4px; min-height: 44px; padding: 14px 16px; border: 1.5px solid var(--ay-hairline); border-radius: var(--ay-r-card, 16px); color: var(--ay-text); text-decoration: none; font: 400 16px/1.45 var(--ay-sans-stack); }
-.app-container .wx-posts small { font: 600 12px/1 var(--ay-sans-stack); letter-spacing: 0; text-transform: none; opacity: .75; }
+.app-container .wx-posts small { font: 600 13px/1 var(--ay-sans-stack); letter-spacing: 0; text-transform: none; opacity: .75; }
 .app-container .wx-invite { max-width: 640px; padding: 22px 24px; border: 1.5px solid var(--ay-outline); border-radius: var(--ay-r-group, 20px); background: var(--ay-alert-bg); color: #3e2723; }
 .app-container .wx-invite h3 { margin: 0 0 6px; font: 400 24px/1.15 var(--ay-serif-stack); color: #3e2723; }
 .app-container .wx-invite p { margin: 0 0 16px; font: 400 16px/1.5 var(--ay-sans-stack); color: #3e2723; }
@@ -47,7 +47,7 @@ html body .app-container .wx-askpage .ayna-ask-panel.is-page { position: relativ
 /* You: saved posts and recent questions. */
 .app-container .wy-postlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .app-container .wy-postlist a, .app-container .wy-postlist li > span { display: grid; gap: 4px; min-height: 44px; padding: 14px 16px; border: 1.5px solid var(--ay-hairline); border-radius: var(--ay-r-card, 16px); color: var(--ay-text); text-decoration: none; font: 400 16px/1.45 var(--ay-sans-stack); box-sizing: border-box; }
-.app-container .wy-postlist small { font: 600 12px/1 var(--ay-sans-stack); letter-spacing: 0; text-transform: none; opacity: .75; }
+.app-container .wy-postlist small { font: 600 13px/1 var(--ay-sans-stack); letter-spacing: 0; text-transform: none; opacity: .75; }
 .app-container .wy-signedout__h { margin: 4px 0 0; }
 /* Today (website): the no-profile invite sits under the title. */
 .app-container .wx-today { padding-top: 8px; }
@@ -57,7 +57,7 @@ html body .app-container .wx-askpage .ayna-ask-panel.is-page { position: relativ
 .app-container .wx-search { position: relative; max-width: 720px; }
 .app-container .wx-clear { flex: none; min-height: 44px; padding: 0 4px; border: 0; background: none; color: #3e2723; font: 600 14px/1 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .app-container .wx-suggest { position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; right: 0; padding: 8px; border: 1.5px solid var(--ay-outline); border-radius: 20px; background: var(--ay-page); box-shadow: var(--ay-press-shadow); }
-.app-container .wx-suggest__head { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px 2px; font: 600 12px/1 var(--ay-sans-stack); letter-spacing: 0; text-transform: none; color: var(--ay-text); opacity: .8; }
+.app-container .wx-suggest__head { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px 2px; font: 600 13px/1 var(--ay-sans-stack); letter-spacing: 0; text-transform: none; color: var(--ay-text); opacity: .8; }
 .app-container .wx-suggest__head button { min-height: 32px; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; }
 .app-container .wx-suggest ul { list-style: none; margin: 0; padding: 0; }
 .app-container .wx-suggest li button { display: block; width: 100%; min-height: 44px; padding: 0 10px; border: 0; border-radius: 12px; background: none; color: var(--ay-text); text-align: left; font: 400 16px/1.2 var(--ay-sans-stack); cursor: pointer; }

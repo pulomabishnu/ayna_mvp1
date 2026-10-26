@@ -97,7 +97,7 @@ html body .app-container .ayna-ask-dock, html body .app-container .ayna-ask-tab 
   .app-container.app-container .ay-foot__link { min-height: 36px; font-size: 14px !important; line-height: 1.25 !important; }
   .app-container.app-container .ay-foot__base { margin-top: var(--ay-s20); padding-top: var(--ay-s12); gap: var(--ay-s4) var(--ay-s16); font-size: 13px; }
   .app-container.app-container .ay-foot__legal { gap: var(--ay-s8); margin-top: var(--ay-s8); }
-  .app-container.app-container .ay-foot__legaltext { font-size: 12.5px !important; }
+  .app-container.app-container .ay-foot__legaltext { font-size: 13px !important; }
   .app-container.app-container .ay-foot__legallinks { gap: 0 var(--ay-s16); }
   .app-container.app-container .ay-foot__legallinks :is(a, button), .app-container.app-container .ay-foot .ay-footer-legal__link { min-height: 36px; }
 }
@@ -267,7 +267,7 @@ html body .app-container.app-container.app-container.app-container.app-container
 /* P1-4: one small card mark (Pre-order, Sponsored, ayna partner) as text at the
    end of the kind line, never a sticker on the photo. A small pink dot leads it,
    so it reads as a disclosure, not as part of the kind. Same on the app (.ay-pc-mark). */
-.app-container.app-container .ay-product-card__mark { flex: none !important; display: inline-flex; align-items: center; gap: 5px; font: 600 12.5px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container.app-container .ay-product-card__mark { flex: none !important; display: inline-flex; align-items: center; gap: 5px; font: 600 13px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
 .app-container.app-container .ay-product-card__mark::before { content: ''; width: 9px; height: 9px; box-sizing: border-box; border-radius: 50%; background: #f7badd; border: 1.5px solid var(--ay-text); }
 .app-container.app-container .ay-product-card__kindtext + .ay-product-card__mark { margin-left: 2px; }
 

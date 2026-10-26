@@ -47,7 +47,7 @@
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button,
 .ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button {
   color: var(--ayna-text-muted);
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 500;
   gap: 3px;
 }

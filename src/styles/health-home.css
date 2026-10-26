@@ -57,7 +57,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring { position: relative; width: 104px; height: 104px; flex: none; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring svg { width: 100%; height: 100%; display: block; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring > span { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; line-height: 1; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring small { font: 600 11.5px/1 var(--x-sans); color: var(--x-on-2); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring small { font: 600 13px/1 var(--x-sans); color: var(--x-on-2); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring b { font: 700 38px/0.95 var(--x-serif); letter-spacing: -0.03em; color: var(--x-on); font-variant-numeric: tabular-nums; }
 /* the cycle ring on the dark Feature: butter track, pink period, sky window, butter today */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ring :is(.ay-hd-ring-track) { fill: none; stroke: var(--x-on-hair); stroke-width: 15; }
@@ -84,9 +84,9 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-k { font: 600 13px/1.3 var(--x-sans) !important; color: var(--x-on-2) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight > p { font: 400 calc(16px * var(--x-scale))/1.5 var(--x-sans) !important; color: var(--x-on) !important; max-width: 62ch; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight-pick { display: grid; gap: 4px; justify-items: start; margin: 10px 0; padding: 12px 14px; border: 1px solid var(--x-on-hair); border-radius: 14px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight-pick > span { font: 600 12px/1.3 var(--x-sans); color: var(--x-on-2); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight-pick > span { font: 600 13px/1.3 var(--x-sans); color: var(--x-on-2); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight-pick button { min-height: 44px; padding: 0; border: 0; background: none; color: var(--x-on); text-align: left; text-decoration: underline; text-underline-offset: 3px; font: 600 15px/1.3 var(--x-sans); cursor: pointer; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight-pick small { font: 400 12px/1.4 var(--x-sans); color: var(--x-on-2); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight-pick small { font: 400 13px/1.4 var(--x-sans); color: var(--x-on-2); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight-actions { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 0 16px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight-actions details { flex: 1 1 auto; min-width: 0; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-insight-actions summary, :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-ask { display: inline-flex !important; align-items: center !important; gap: 6px; min-height: 44px; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; list-style: none; cursor: pointer; font: 600 14px/1 var(--x-sans) !important; color: var(--x-on) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
@@ -99,7 +99,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-why p { font: 500 13px/1.45 var(--x-sans) !important; color: var(--x-on-2) !important; max-width: 68ch; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero a { color: var(--x-on) !important; font-weight: 600; text-decoration: underline; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero :is(a, summary, button):focus-visible { outline-color: var(--x-on) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-foot { padding: 10px 0 0 !important; border-top: 1px solid var(--x-on-hair); font: 500 12.5px/1.4 var(--x-sans) !important; color: var(--x-on-2) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-hero-foot { padding: 10px 0 0 !important; border-top: 1px solid var(--x-on-hair); font: 500 13px/1.4 var(--x-sans) !important; color: var(--x-on-2) !important; }
 
 /* ---------- what ayna adds (a compact strip, ticket-like with a dashed edge) ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-adds { display: grid; gap: 10px; padding: 14px 16px !important; border: 1.5px dashed var(--x-ink); border-radius: 16px !important; background: transparent !important; }
@@ -108,8 +108,8 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-adds-head p { font: 400 calc(14px * var(--x-scale))/1.45 var(--x-sans) !important; color: var(--x-ink) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-adds ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; padding: 10px 0 0 !important; border-top: 1px solid var(--x-hair); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-adds li { display: grid; gap: 1px; min-width: 0; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-adds li b { font: 600 12.5px/1.3 var(--x-sans) !important; color: var(--x-ink) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-adds li span { font: 400 12.5px/1.4 var(--x-sans) !important; color: var(--x-soft) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-adds li b { font: 600 13px/1.3 var(--x-sans) !important; color: var(--x-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-adds li span { font: 400 13px/1.4 var(--x-sans) !important; color: var(--x-soft) !important; }
 
 /* ---------- tiles ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
@@ -127,7 +127,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile-label { display: flex; align-items: center; justify-content: space-between; width: 100%; font: 600 13px/1.2 var(--x-sans); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile-label svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile-big { margin-top: 6px; font: 700 calc(26px * var(--x-scale))/1.05 var(--x-serif); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile-sub { font: 500 12.5px/1.35 var(--x-sans); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile-sub { font: 500 13px/1.35 var(--x-sans); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile .ay-bn-line { width: 100%; height: 30px; margin-top: auto; padding-top: 6px; overflow: visible; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile .ay-bn-line path { fill: none; stroke: currentColor; stroke-width: 1.8; vector-effect: non-scaling-stroke; stroke-linecap: round; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-tile .ay-bn-line .ay-bn-usual { stroke: currentColor; stroke-dasharray: 3 3; stroke-width: 1; opacity: .55; vector-effect: non-scaling-stroke; }
@@ -154,7 +154,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-rings svg { width: 100%; height: 100%; display: block; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-rings > span { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; line-height: 1; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-rings b { font: 700 19px/1 var(--x-serif); letter-spacing: -0.02em; color: var(--x-ink); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-rings small { font: 600 10.5px/1.2 var(--x-sans); color: var(--x-soft); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-rings small { font: 600 13px/1.2 var(--x-sans); color: var(--x-soft); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-ring-track { fill: none; stroke: var(--x-hair); stroke-width: 6; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-ring-arc { fill: none; stroke-width: 6; stroke-linecap: round; animation: ay-hh-draw var(--t-delight) var(--ease-out) 120ms both; }
 @keyframes ay-hh-draw { from { stroke-dashoffset: var(--c); } to { stroke-dashoffset: 0; } }
@@ -171,7 +171,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-goal-legend li.is-butter > i { background: #c9a94a; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-goal-name { font: 600 calc(14px * var(--x-scale))/1.3 var(--x-sans); color: var(--x-ink); min-width: 0; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-goal-legend li > :is(.ay-wx-meter, small) { grid-column: 2; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-goal-legend small { font: 500 12.5px/1.3 var(--x-sans); color: var(--x-soft); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-goal-legend small { font: 500 13px/1.3 var(--x-sans); color: var(--x-soft); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-goals > .ay-hh-note { margin-top: 12px !important; padding-top: 10px; border-top: 1px solid var(--x-hair); }
 
 /* ---------- coming up: list with status pills ---------- */
@@ -180,7 +180,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-coming li:first-child { border-top: 0; padding-top: 0; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-date { display: grid; place-content: center; width: 48px; height: 52px; border: 1.5px solid var(--hh-espresso); border-radius: 12px; text-align: center; color: var(--hh-espresso); line-height: 1; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-date b { font: 700 20px/1 var(--x-serif); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-date small { font: 600 11px/1.2 var(--x-sans); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-date small { font: 600 13px/1.2 var(--x-sans); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .is-pink > .ay-hh-date { background: var(--hh-pink); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .is-sky > .ay-hh-date { background: #f6e3a1; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .is-butter > .ay-hh-date { background: #f6e3a1; }
@@ -188,7 +188,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-coming-text { display: grid; gap: 3px; min-width: 0; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-coming-title { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-coming-title b { font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans); color: var(--x-ink); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-pill { display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border: 1.5px solid var(--x-ink); border-radius: 999px; font: 600 11.5px/1 var(--x-sans); color: var(--x-ink); white-space: nowrap; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-pill { display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border: 1.5px solid var(--x-ink); border-radius: 999px; font: 600 13px/1 var(--x-sans); color: var(--x-ink); white-space: nowrap; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-coming-text small { font: 500 calc(13px * var(--x-scale))/1.4 var(--x-sans); color: var(--x-soft); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-coming-text small.is-expect { color: var(--x-ink); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-coming-text a { color: var(--x-ink) !important; font-weight: 600; text-decoration: underline; }
@@ -236,27 +236,27 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-stats { display: flex; gap: 16px; margin-top: 6px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-stats > span { display: grid; gap: 1px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-stats b { font: 600 14px/1.2 var(--x-sans); font-variant-numeric: tabular-nums; color: var(--x-ink); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-stats small { font: 500 12px/1.2 var(--x-sans); color: var(--x-soft); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-stats small { font: 500 13px/1.2 var(--x-sans); color: var(--x-soft); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-avg { padding-top: 8px !important; border-top: 1px solid var(--x-hair); font: 500 13px/1.4 var(--x-sans) !important; color: var(--x-soft) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-avg b { font-weight: 600; color: var(--x-ink); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-from { font: 500 12.5px/1.4 var(--x-sans) !important; color: var(--x-soft) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-from { font: 500 13px/1.4 var(--x-sans) !important; color: var(--x-soft) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-chart .ay-hd-chart { margin: 0 !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-chart .ay-hd-readout { display: flex !important; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; margin: 0 0 4px !important; font: 500 13px/1.35 var(--x-sans) !important; color: var(--x-soft) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-chart .ay-hd-readout b { color: var(--x-ink); font-weight: 600; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-chart .ay-hd-readout small { flex-basis: 100%; font-size: 12px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-chart .ay-hd-readout small { flex-basis: 100%; font-size: 13px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-group { padding: 16px !important; border-radius: 20px; background: var(--x-group); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-group .ay-bn-phases { margin: 0 !important; padding: 0 !important; background: none !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-cyclehero { display: grid; grid-template-columns: 148px minmax(0, 1fr); gap: 16px; align-items: center; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-cyclehero-ring { position: relative; width: 148px; height: 148px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-cyclehero-ring svg { width: 100%; height: 100%; display: block; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-cyclehero-ring > span { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; line-height: 1.1; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-cyclehero-ring small { font: 500 12px/1.2 var(--x-sans); color: var(--x-soft); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-cyclehero-ring small { font: 500 13px/1.2 var(--x-sans); color: var(--x-soft); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-cyclehero-ring b { font: 700 40px/1 var(--x-serif); letter-spacing: -0.03em; color: var(--x-ink); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-cyclehero-text { display: grid; gap: 8px; min-width: 0; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-phase-name { font: 700 calc(19px * var(--x-scale))/1.2 var(--x-serif) !important; letter-spacing: -0.01em; color: var(--x-ink) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-next { font: 500 14px/1.4 var(--x-sans) !important; color: var(--x-ink) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-next b { font-weight: 600; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-ringkey { display: flex; flex-wrap: wrap; gap: 4px 12px; font: 500 12.5px/1.3 var(--x-sans); color: var(--x-soft); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-ringkey { display: flex; flex-wrap: wrap; gap: 4px 12px; font: 500 13px/1.3 var(--x-sans); color: var(--x-soft); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-ringkey li { display: inline-flex; align-items: center; gap: 6px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-ringkey i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--x-ink); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-ringkey i.is-period { background: var(--hh-pink); }
@@ -273,7 +273,7 @@
 
 /* ---------- footer ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-foot { display: grid; gap: 8px; justify-items: start; margin-top: 24px !important; padding-top: 12px !important; border-top: 1px solid var(--x-hair); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-foot p { font: 500 12.5px/1.45 var(--x-sans) !important; color: var(--x-soft) !important; max-width: 68ch; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-foot p { font: 500 13px/1.45 var(--x-sans) !important; color: var(--x-soft) !important; max-width: 68ch; }
 
 /* ---------- loading skeleton ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-skeleton { display: grid; gap: 16px; padding: 8px 0; }
@@ -352,7 +352,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-source { color: var(--x-soft) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid ol { display: grid; gap: 9px; counter-reset: steps; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid li { display: grid; grid-template-columns: 24px 1fr; gap: 9px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid li::before { counter-increment: steps; content: counter(steps); display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--hh-pink); font: 700 12px/1 var(--x-sans); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid li::before { counter-increment: steps; content: counter(steps); display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--hh-pink); font: 700 13px/1 var(--x-sans); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-link { justify-self: start; min-height: 44px; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-ink) !important; text-align: left; text-decoration: underline; text-underline-offset: 3px; font: 700 14px/1.3 var(--x-sans) !important; cursor: pointer; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-product { display: grid; gap: 5px; padding: 12px !important; border-radius: 12px; background: var(--hh-pink); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-product small { font: 700 13px/1.3 var(--x-sans); text-transform: none; letter-spacing: 0; }
@@ -364,7 +364,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-effects { display: grid; gap: 8px; padding: 16px !important; border-radius: 20px; background: var(--x-group); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-effects > div { display: grid; gap: 3px; padding-top: 10px; border-top: 1px solid var(--x-hair); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-effects p { font: 400 14px/1.45 var(--x-sans) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-effects small { color: var(--x-soft); font: 400 12px/1.4 var(--x-sans); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-effects small { color: var(--x-soft); font: 400 13px/1.4 var(--x-sans); }
 @media (min-width: 700px) { :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-action-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-hh-empty-cta { justify-self: start; display: inline-flex; align-items: center; min-height: 48px; margin: 4px 0 0; padding: 0 20px; border: 1.5px solid var(--x-on); border-radius: 999px; background: var(--x-on); color: var(--x-feature); font: 600 15px/1 var(--x-sans); cursor: pointer; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-hh-empty-cta:focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }
@@ -386,11 +386,11 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-health-link { justify-self: start; min-height: 44px; margin: -6px 0 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-ink) !important; font: 700 14px/1.3 var(--x-sans) !important; text-align: left; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried { padding: 0 18px; border: 1px solid var(--x-hair); border-radius: 18px; background: var(--x-group); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 54px; color: var(--x-ink); font: 700 16px/1.25 var(--x-serif); cursor: pointer; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried > summary span { color: var(--x-soft); font: 500 12px/1.3 var(--x-sans); white-space: nowrap; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried > summary span { color: var(--x-soft); font: 500 13px/1.3 var(--x-sans); white-space: nowrap; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried ul { display: grid; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried li { display: grid; gap: 3px; padding: 11px 0; border-top: 1px solid var(--x-hair); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried li b { font: 600 14px/1.3 var(--x-sans); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried li span, :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried > p { color: var(--x-soft) !important; font: 400 12px/1.4 var(--x-sans) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried li span, :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried > p { color: var(--x-soft) !important; font: 400 13px/1.4 var(--x-sans) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh .ay-hh-tried > p { padding: 8px 0 !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh :is(.ay-hh-tried > button, .ay-hh-checkin-link) { justify-self: start; min-height: 44px; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-ink) !important; font: 700 14px/1.3 var(--x-sans) !important; text-align: left; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 

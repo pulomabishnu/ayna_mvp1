@@ -133,7 +133,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero :is(h1, h2, h3, strong, span, p, small) { color: var(--b-espresso) !important; }
 
 /* ---------- audit pass 2 fixes ---------- */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-partner-sticker { font-size: 11.5px !important; font-weight: 500 !important; width: 62px !important; height: 62px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-partner-sticker { font-size: 13px !important; font-weight: 500 !important; width: 62px !important; height: 62px !important; }
 /* 44px targets */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-glance__nav button { min-height: 44px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-figma-partner-disclosure > button, .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp a[href*='amazon'], .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-also a { min-height: 44px !important; display: inline-flex !important; align-items: center !important; }

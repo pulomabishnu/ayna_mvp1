@@ -52,7 +52,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-why-body p { margin: 0 !important; max-width: 68ch; font: 500 13px/1.45 var(--x-sans) !important; color: var(--x-on-2) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain a { color: var(--x-on) !important; text-decoration: underline !important; text-underline-offset: 2px; font-weight: 600 !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain a:focus-visible { outline: 2px solid var(--x-on) !important; outline-offset: 2px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-foot { margin: 8px 0 0 !important; padding: 8px 0 0 !important; border-top: 1px solid var(--x-on-hair) !important; font: 500 12.5px/1.4 var(--x-sans) !important; color: var(--x-on-2) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-foot { margin: 8px 0 0 !important; padding: 8px 0 0 !important; border-top: 1px solid var(--x-on-hair) !important; font: 500 13px/1.4 var(--x-sans) !important; color: var(--x-on-2) !important; }
 
 /* ---------- What might help this week (shelf of product cards) ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-picks { margin: 8px 0 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
@@ -76,7 +76,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter[data-level='1'] .ay-wx-meter-bars i:nth-child(-n+1),
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter[data-level='2'] .ay-wx-meter-bars i:nth-child(-n+2),
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter[data-level='3'] .ay-wx-meter-bars i:nth-child(-n+3) { background: var(--x-ink); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter-word { font: 500 12.5px/1.3 var(--x-sans) !important; color: var(--x-soft) !important; white-space: nowrap; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter-word { font: 500 13px/1.3 var(--x-sans) !important; color: var(--x-soft) !important; white-space: nowrap; }
 
 /* ---------- cycle: a Group now (card + phase strip together) ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-bn-cyclegroup { display: grid; gap: 0; margin: 0; padding: 0; border-radius: 20px; background: var(--x-group); color: var(--x-ink); overflow: hidden; }
@@ -171,9 +171,9 @@ html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wh-week.ay-hd-fold > s
 /* This phase vs your last 3: a small table */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare :is(th, td) { padding: 8px 0 !important; border: 0 !important; border-top: 1px solid var(--x-hair) !important; background: none !important; color: var(--x-ink) !important; text-align: right; vertical-align: baseline; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare thead th { padding: 0 0 6px !important; border-top: 0 !important; font: 500 12.5px/1.2 var(--x-sans) !important; color: var(--x-soft) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare thead th { padding: 0 0 6px !important; border-top: 0 !important; font: 500 13px/1.2 var(--x-sans) !important; color: var(--x-soft) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare tbody th { text-align: left; font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare tbody th small { display: block; font: 500 12.5px/1.3 var(--x-sans) !important; color: var(--x-soft) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare tbody th small { display: block; font: 500 13px/1.3 var(--x-sans) !important; color: var(--x-soft) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare td { padding-left: 12px !important; font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans) !important; white-space: nowrap; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare td:last-child { font-weight: 500 !important; color: var(--x-soft) !important; }
 

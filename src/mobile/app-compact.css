@@ -37,7 +37,7 @@
   .ay-pc-photo img { position: absolute; inset: 8%; width: 84% !important; height: 84% !important; object-fit: contain; mix-blend-mode: multiply; }
   .ay-pc-partner {
     position: absolute; left: 6px; bottom: 6px; padding: 1px 7px; border-radius: 99px;
-    background: rgba(255, 237, 172, .9); color: #3e2723; font: 500 11.5px/16px var(--cx-ui);
+    background: rgba(255, 237, 172, .9); color: #3e2723; font: 500 13px/16px var(--cx-ui);
   }
   .ay-pc-copy { display: grid; gap: 2px; padding: 8px 6px 4px; min-width: 0; }
   .ay-pc-brand {
@@ -201,8 +201,8 @@
   .ay-bn-stats { gap: 4px 12px !important; margin-top: 12px !important; }
   .ay-bn-stats > span { padding-top: 4px !important; border-top-width: 1.5px !important; }
   .ay-bn-stats b { font: 600 calc(13px * var(--ayna-text-scale, 1))/1.25 var(--cx-ui) !important; }
-  .ay-bn-stats small { font: 500 calc(11.5px * var(--ayna-text-scale, 1))/1.25 var(--cx-ui) !important; }
-  .ay-bn-card:not(.is-wide) .ay-bn-stats b { font-size: calc(11.5px * var(--ayna-text-scale, 1)) !important; font-weight: 600 !important; }
+  .ay-bn-stats small { font: 500 calc(13px * var(--ayna-text-scale, 1))/1.25 var(--cx-ui) !important; }
+  .ay-bn-card:not(.is-wide) .ay-bn-stats b { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; font-weight: 600 !important; }
   .ay-bn-card > button { min-height: 0 !important; }
   .ay-bn-card .ay-bn-label { min-height: 0 !important; }
   .ay-bn-bars, .ay-bn-line { height: 36px !important; padding-top: 12px !important; }

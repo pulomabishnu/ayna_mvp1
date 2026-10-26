@@ -70,7 +70,7 @@ html body .app-container.app-container #ayeco .eco-more-redo { display: none !im
   html body .app-container.app-container #ayeco .ayeco__stats { gap: 22px !important; }
   html body .app-container.app-container #ayeco .ayeco__stats b { font-size: 22px !important; }
   html body .app-container.app-container #ayeco .ayeco__stats span { font-size: 13px !important; margin-top: 2px !important; }
-  html body .app-container.app-container #ayeco .eco-oval { padding: 7px 13px; font-size: 12.5px; }
+  html body .app-container.app-container #ayeco .eco-oval { padding: 7px 13px; font-size: 13px; }
 }
 
 /* ---------- Body: shelves + "For you" ---------- */
@@ -97,7 +97,7 @@ html body .app-container.app-container #ayeco .eco-rail.is-open .eco-rail__list 
 /* cards in the rail / strip: small, a folder tab on top */
 html body .app-container.app-container #ayeco .eco-rail__item { position: relative; min-width: 0; }
 html body .app-container.app-container #ayeco .eco-rail__card { position: relative; margin: 0; padding: 16px 16px 14px; border: 1.5px solid var(--ay-outline); border-radius: 0 16px 16px 16px; background: var(--ay-page); color: var(--ay-text); }
-html body .app-container.app-container #ayeco .eco-rail__tab { position: absolute; left: -1.5px; top: -25px; height: 25px; margin: 0; padding: 5px 12px 0; box-sizing: border-box; border: 1.5px solid var(--ay-outline); border-bottom: 0; border-radius: 10px 10px 0 0; font: 600 12.5px/1.2 var(--ay-sans-stack); white-space: nowrap; }
+html body .app-container.app-container #ayeco .eco-rail__tab { position: absolute; left: -1.5px; top: -25px; height: 25px; margin: 0; padding: 5px 12px 0; box-sizing: border-box; border: 1.5px solid var(--ay-outline); border-bottom: 0; border-radius: 10px 10px 0 0; font: 600 13px/1.2 var(--ay-sans-stack); white-space: nowrap; }
 html body .app-container.app-container #ayeco .eco-rail__card.is-stages { background: #f7badd; color: #3e2723; border-color: #3e2723; }
 html body .app-container.app-container #ayeco .eco-rail__card.is-stages .eco-rail__tab { background: #3e2723; color: #ffedac; border-color: #3e2723; }
 html body .app-container.app-container #ayeco .eco-rail__card.is-news .eco-rail__tab { background: #f6e3a1; color: #3e2723; border-color: var(--ay-outline); }
