@@ -363,3 +363,22 @@
 /* beside the phrases the four cards sit 2 x 2: a wider photo plate keeps the block about as tall as the phrases */
 @media (min-width: 1024px) { :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .hm .hm-needsband__grid:not(.is-single) .ay-product-card__tile { aspect-ratio: 16 / 10; } }
 .app-container.app-container .hm .ay-meter__bars > i { border-radius: 999px; }
+
+/* ---------- brand dark on the landing ----------
+   1) theme-v3.css sets --ay-ink to espresso on every .app-container that is
+      not data-theme='dark', which includes brand-dark, so the shared
+      primitives (StandardsBand) went espresso on espresso. Restore the
+      ay-tokens dark values here (reported for a global fix).
+   2) darkAccentSwap turns pink into sky in brand dark; the audits make blue a
+      chart colour only, so the landing keeps pink (selectors naming
+      brand-dark are not swapped). */
+.app-container[data-theme='brand-dark'] .hm {
+  --ay-ink: #ffedac; --ay-ink-muted: rgba(255, 237, 172, .8); --ay-surface: rgba(255, 237, 172, .08);
+  --hm-pink: #f7badd; --ay-pink: #f7badd; --ay-sticker: 3px 3px 0 #f7badd; --ay-press-shadow: 3px 3px 0 #f7badd;
+}
+.app-container[data-theme='brand-dark'] .hm .hm-rc.ay-band--pink { --band: #f7badd; background: #f7badd; }
+.app-container[data-theme='brand-dark'] .hm .ay-seal { background: #f7badd; }
+.app-container.app-container[data-theme='brand-dark'] .hm .ay-btn--primary { box-shadow: 3px 3px 0 #f7badd !important; }
+.app-container[data-theme='brand-dark'] .hm .hm-ui--evidence, .app-container[data-theme='brand-dark'] .hm .hm-ui__pill, .app-container[data-theme='brand-dark'] .hm .hm-ui__save, .app-container[data-theme='brand-dark'] .hm .hm-stepui__btn:not(.is-quiet), .app-container[data-theme='brand-dark'] .hm .hm-swipe { --hm-pink: #f7badd; }
+.app-container[data-theme='brand-dark'] .hm .hm-ui--evidence { background: #f7badd; }
+.app-container[data-theme='brand-dark'] .hm .hm-step__n { text-shadow: 3px 3px 0 #f7badd; }
