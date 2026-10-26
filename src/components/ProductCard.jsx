@@ -123,7 +123,8 @@ export default function ProductCard({
           <PriceExtras product={product} />
         </div>
       )}
-      {rating && Number.isFinite(rating.value) && rating.count > 0 && (
+      {/* Stars once there are 3 or more reviews (Explore audit v3, section 12). */}
+      {rating && Number.isFinite(rating.value) && rating.count >= 3 && (
         <a className="ay-pcard__rating" href={productHref(product)} onClick={open}><span aria-hidden="true">★</span> <span className="sr-only">Rated </span>{formatAverage(rating.value)}<span className="sr-only"> out of 5</span> · <u>{rating.count} review{rating.count === 1 ? '' : 's'}</u></a>
       )}
       {/* 5. Facts from the record. 6. Evidence mark and the safety icon. */}
