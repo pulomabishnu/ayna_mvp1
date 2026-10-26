@@ -56,7 +56,6 @@ import CharRing from '../../../components/ui/CharRing.jsx';
 import { PillTabs, ArchAvatar, HouseBlend } from '../../../components/you/YouBits.jsx';
 import { setupSteps, knowsLine, countAnswers, connectedNames } from '../../../components/you/setupSteps.js';
 import '../../you-hub-app.css';
-import { useSavedPosts, postLine } from '../../../hooks/useSavedPosts.js';
 import { recentQuestions } from '../../../utils/askRecent.js';
 import { useCheckinCountStatus } from '../../../hooks/useCheckinCount.js';
 import { isOverLimit } from '../../../utils/charLimit.js';

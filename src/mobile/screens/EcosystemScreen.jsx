@@ -369,7 +369,7 @@ export default function EcosystemScreen({
               {/* A living routine (You audit 12): "Day 12 · Is it working?" from the date she added it, to her daily log. */}
               {routineDay(product.addedAt) && openCheckIn && <button type="button" className="eco-app-working" onClick={openCheckIn}><span className="ayk-status is-quiet">Day {routineDay(product.addedAt)}</span>Is it working?</button>}</div>
             : <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={quizAnswers} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />{ADD_TO_ROUTINE}</button></div>)}
-            <button type="button" className="ay-shelf2-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add a product to ${section.label}`}><PlusIcon size={20} />Add</button>
+            <button type="button" className="ay-shelf2-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Find a product for ${section.label}`}><PlusIcon size={20} />Find one</button>
           </div>}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
         </section>;

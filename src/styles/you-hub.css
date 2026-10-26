@@ -88,4 +88,15 @@ html body .app-container.app-container.app-container.app-container.app-container
   .ay-ecoprev__shelfname { display: inline-flex; align-items: center; min-height: 28px; margin: 0 0 10px; padding: 0 12px; border: 1.5px solid #3e2723; border-radius: 999px; background: #ffedac; color: #3e2723; font: 600 13px/1 var(--ay-font-ui, Figtree, sans-serif) !important; }
   .ay-ecoprev__stage { box-shadow: none !important; }
   @media (max-width: 640px) { .ay-ecoprev__title { font-size: 26px !important; } }
+
+  /* My ecosystem (web, #ayeco): title 30 / 26, a 1px rule under each shelf
+     head, the empty state flat (no tilt, no shadow), the shelf menu button
+     without its 2px ink shadow, and "Day N · Is it working?" under her own products. */
+  #ayeco .eco3-head .ay-h1 { font-size: 30px !important; }
+  #ayeco .ay-shelf__head { border-bottom: 1px solid rgba(62, 39, 35, .15) !important; }
+  #ayeco .eco3-empty { transform: none !important; border-radius: 16px !important; box-shadow: none !important; }
+  .ay-shelf .ay-shelf__menu > summary { box-shadow: none !important; border: 1.5px solid var(--ay-ink, #3e2723); }
+  .ay-shelf__working { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; margin-top: 6px; padding: 0; border: 0; background: none; color: var(--ay-ink, #3e2723) !important; font: 600 13px/1.2 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .ay-shelf__working .ayk-status { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border: 1.5px solid var(--ay-ink, #3e2723); border-radius: 999px; font: 600 13px/1 var(--ay-font-ui, Figtree, sans-serif); text-decoration: none; }
+  @media (max-width: 640px) { #ayeco .eco3-head .ay-h1 { font-size: 26px !important; } }
 }
