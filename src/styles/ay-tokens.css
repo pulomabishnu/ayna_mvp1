@@ -59,3 +59,7 @@
   --ay-track: rgba(255, 237, 172, .12);
   --ay-chip-bg: transparent;
 }
+
+/* Founder Oct 26 19:39: "take off that ugly star shape". The scattered decorative doodles
+   (asterisk/star, flower, slash, dot, product stickers) are gone everywhere. Decorative only. */
+html body :is(.ds-shape, .ds-mark.ds-shape, .ay-rd-hero__sticker, .ay-home-art__stickers, .ds-pstickers) { display: none !important; }
