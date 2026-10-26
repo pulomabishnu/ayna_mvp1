@@ -186,7 +186,7 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 
 /* Announcement formatting (Oct 16) */
 .cr-fmt { display: flex; gap: 6px; margin: 4px 0 6px; }
-.cr-fmt__btn { min-width: 36px; height: 34px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 10px; background: #fff; color: #3e2723; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
+.cr-fmt__btn { min-width: 36px; height: 34px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 10px; background: #f6e3a1; color: #3e2723; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
 .cr-fmt__btn.is-underline { text-decoration: underline; }
 .cr-fmt__btn.is-italic { font-style: italic; font-family: var(--ay-serif); font-weight: 400; }
 .cr-fmt__btn:hover { background: #f7badd; }

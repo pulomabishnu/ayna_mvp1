@@ -1,13 +1,13 @@
 /* Ask ayna, one component (AskPanel.jsx) on the app sheet, the website panel and /ask.
    Ask audit (Oct 25) sections 6, 7, 10, 11 + PDP build brief type/shape tables:
-   butter + espresso, pink the one accent (prompt arrows, the send sticker), white surface,
+   butter + espresso, pink the one accent (prompt arrows, the send sticker), butter-deep surface (#F6E3A1),
    type: hello 22 display · title 20 display · ui 15/600 · body 16/500 · meta 14/500 · caption 13/500.
    Radii 8 / 16 / 999 / 50%, the 30/30/30/8 corner on Ask's bubbles only. One shadow: the 3px pink sticker on Send.
    Every rule is prefixed with an id-weight :is() so the older sheet and app cascades (12-class chains with
    !important) cannot restyle the new parts. */
 
 .ay-askp:is(#ay-askp, .ay-askp) {
-  --askp-bg: #ffffff;
+  --askp-bg: #f6e3a1; /* founder Oct 26: no white surfaces; butter-deep with espresso rules (white only behind product photos) */
   --askp-page: #ffedac;
   --askp-ink: #3e2723;
   --askp-muted: rgba(62, 39, 35, .74);
@@ -66,7 +66,7 @@
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill.is-quiet svg { background: transparent; stroke: var(--askp-ink); }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-group.is-safety:first-child h3 { color: var(--askp-ink) !important; }
 
-/* Messages: hers right (espresso), ayna's left (white, outlined); 30/30/30/8 is Ask's corner */
+/* Messages: hers right (espresso), ayna's left (butter-deep, outlined); 30/30/30/8 is Ask's corner */
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-user { align-items: flex-end; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-bubble { max-width: 100%; padding: 16px !important; border-radius: 30px 30px 30px 8px !important; border: 1.5px solid var(--askp-ink) !important; background: var(--askp-bg) !important; color: var(--askp-ink) !important; box-shadow: none !important; font: 500 16px/1.55 var(--ay-font-ui) !important; white-space: normal; }
@@ -105,7 +105,7 @@
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plates { display: grid; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate { width: 100%; display: flex !important; gap: 12px; align-items: center; margin: 0 !important; padding: 8px !important; border: 1px solid var(--askp-line) !important; border-radius: 16px !important; background: transparent !important; color: var(--askp-ink) !important; box-shadow: none !important; text-align: left !important; font: inherit !important; cursor: pointer; }
 .ay-askp:is(#ay-askp, .ay-askp) div.ay-askp-plate { cursor: default; }
-.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__img { flex: none; width: 64px; height: 64px; display: grid; place-items: center; overflow: hidden; border-radius: 16px; background: var(--askp-soft); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__img { flex: none; width: 64px; height: 64px; display: grid; place-items: center; overflow: hidden; border-radius: 16px; background: #fff; } /* white only behind the product photo */
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__img :is(img, div) { width: 100% !important; height: 100% !important; object-fit: contain !important; transform: scale(.82); }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__text { min-width: 0; display: grid; gap: 4px; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__name { font: 600 15px/1.3 var(--ay-font-ui) !important; }
@@ -164,13 +164,13 @@
 
 /* App: the sheet with two heights (PDP build brief: 50% and 100%) */
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer[data-detent='half'] .ayna-ask-drawer-content { margin-top: 50dvh !important; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { border-radius: 16px 16px 0 0 !important; background: #fff !important; transition: margin-top var(--ay-dur-sheet, 240ms) ease, transform var(--t-sheet, 240ms) var(--ease-out, ease-out); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { border-radius: 16px 16px 0 0 !important; background: #f6e3a1 !important; transition: margin-top var(--ay-dur-sheet, 240ms) ease, transform var(--t-sheet, 240ms) var(--ease-out, ease-out); }
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-tab .ayna-ask-drawer-content { border-radius: 0 !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-drawer .ayna-ask-drawer-content { background: #3e2723 !important; }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { transition: none !important; } }
 
 /* Website: a 400px panel on the right (PDP build brief), a sheet on phones, and the full page at /ask */
-html body .app-container.app-container .ayna-ask-panel.ay-askp-shell { position: fixed !important; top: 0 !important; right: 0 !important; bottom: 0 !important; left: auto !important; width: 400px !important; max-width: 100vw !important; height: auto !important; max-height: none !important; z-index: 2100 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-left: 1.5px solid #3e2723 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; overflow: hidden !important; animation: ay-askp-in var(--ay-dur-sheet, 240ms) ease-out both; }
+html body .app-container.app-container .ayna-ask-panel.ay-askp-shell { position: fixed !important; top: 0 !important; right: 0 !important; bottom: 0 !important; left: auto !important; width: 400px !important; max-width: 100vw !important; height: auto !important; max-height: none !important; z-index: 2100 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-left: 1.5px solid #3e2723 !important; border-radius: 0 !important; background: #f6e3a1 !important; box-shadow: none !important; overflow: hidden !important; animation: ay-askp-in var(--ay-dur-sheet, 240ms) ease-out both; }
 html body .app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-panel.ay-askp-shell { background: #3e2723 !important; border-left-color: #ffedac !important; }
 @keyframes ay-askp-in { from { transform: translateX(24px); opacity: .6; } to { transform: none; opacity: 1; } }
 @media (max-width: 899px) {
@@ -182,9 +182,9 @@ html body .app-container.app-container:is([data-theme='dark'], [data-theme='bran
 @media (max-width: 760px) { html body .app-container.app-container .wx-askpage .ayna-ask-panel.ay-askp-shell.is-page { height: calc(100dvh - 160px) !important; min-height: 460px; } }
 
 /* Today's "Ask ayna" sheet (HomeAskSheet), drawn with AskPanel's own parts (Ask audit issue 4: one Ask on every surface):
-   white surface with a 1.5px top edge (no scallop inside a sheet), title + one sparkle, outline pills with the pink arrow
+   butter-deep surface with a 1.5px top edge (no scallop inside a sheet), title + one sparkle, outline pills with the pink arrow
    and the fact each prompt comes from, the same composer. Three ids outrank the older ds-app sheet chain. */
-.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet { display: flex; flex-direction: column; gap: 0; padding: 24px 0 0 !important; border: 0; border-top: 1.5px solid #3e2723; border-radius: 16px 16px 0 0; background: #fff; overflow: hidden; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet { display: flex; flex-direction: column; gap: 0; padding: 24px 0 0 !important; border: 0; border-top: 1.5px solid #3e2723; border-radius: 16px 16px 0 0; background: #f6e3a1; overflow: hidden; }
 :is([data-theme='dark'], [data-theme='brand-dark']).ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet, .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is([data-theme='dark'], [data-theme='brand-dark']) .ay-asksheet { background: #3e2723; border-top-color: #ffedac; }
 .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet::before, .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet::after { content: none; }
 .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp { flex: 1 1 auto; height: auto; min-height: 0; }

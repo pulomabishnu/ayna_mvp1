@@ -668,8 +668,8 @@ html body .app-container.app-container.app-container.app-container.app-container
   .ay-ring b { font-size: 13px; }
   .ay-ring { width: 36px; height: 36px; }
 
-  /* no blue: default faces are pink, butter or white */
-  .cm-avatar.is-sky { background: #ffffff; }
+  /* no blue: default faces are pink, butter or butter-deep */
+  .cm-avatar.is-sky { background: #f6e3a1; }
 
   /* one Post button opens this: four rows, then the two starters */
   .cm-types { display: grid; margin: 0; padding: 0; list-style: none; border-top: var(--ay-rule); }
@@ -753,7 +753,7 @@ html body .app-container.app-container.app-container.app-container.app-container
   .cm-types > li { border-bottom: 0; }
   .cm-type { grid-template-columns: minmax(0, 1fr); align-content: start; justify-items: start; gap: 10px; min-height: 132px; padding: 16px; border: 1.5px solid var(--ay-text); border-radius: var(--ay-r-md); background: var(--ay-butter-deep); color: #3e2723 !important; }
   .cm-type:hover { background: var(--ay-pink); }
-  .cm-type__icon { background: #ffffff; border-color: #3e2723; color: #3e2723; }
+  .cm-type__icon { background: #ffedac; border-color: #3e2723; color: #3e2723; }
   .cm-type__copy small { color: rgba(62, 39, 35, .78) !important; }
 }
 /* dark: selected feed is butter with espresso text (espresso on espresso disappears) */

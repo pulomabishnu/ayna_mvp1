@@ -11,7 +11,7 @@
   .am-top-actions .am-post-btn { display: inline-flex !important; align-items: center; gap: 6px; width: auto !important; min-width: 0 !important; height: 40px !important; min-height: 40px; padding: 0 16px !important; border: 1.5px solid #3e2723 !important; border-radius: 999px !important; background: #3e2723 !important; color: #ffedac !important; box-shadow: 3px 3px 0 #f7badd !important; font: 600 15px/1 var(--ay-font-ui) !important; white-space: nowrap; }
   .am-top-actions .am-post-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #f7badd; }
   .am-face, .am-face .ay-face-ini { font-size: 13px !important; }
-  .am-face.is-sky { background: #ffffff !important; }
+  .am-face.is-sky { background: #f6e3a1 !important; }
 
   /* five feeds, one pill track, espresso selected */
   .am-segs { display: flex; gap: 2px; margin: 4px 0 10px; padding: 3px; border-radius: 999px; background: var(--d-group); }
@@ -76,7 +76,7 @@
   .am-types { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; border-top: 0; }
   .am-types > li { border-bottom: 0; }
   .am-type { grid-template-columns: minmax(0, 1fr); align-content: start; justify-items: start; gap: 10px; height: 100%; min-height: 128px; padding: 14px; border: 1.5px solid #3e2723; border-radius: 16px; background: #f6e3a1; color: #3e2723; }
-  .am-type-icon { background: #ffffff; border-color: #3e2723; }
+  .am-type-icon { background: #ffedac; border-color: #3e2723; }
   .am-type small { color: rgba(62, 39, 35, .78); }
 }
 /* selected topic chips: pink (state), never blue; focus ring in ink */
