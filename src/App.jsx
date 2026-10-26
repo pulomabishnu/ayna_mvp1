@@ -51,7 +51,6 @@ const WebCommunity = lazyView(() => import('./components/WebCommunity'), <ViewSk
 const WebWrapped = lazyView(() => import('./components/WebWrapped'), null);
 const DeleteAccountPage = lazyView(() => import('./components/DeleteAccountPage'));
 const WebHealth = lazyView(() => import('./components/WebHealth'));
-const WebExplore = lazyView(() => import('./components/explore/WebExplore'));
 const AdminReviewsPage = lazyView(() => import('./components/AdminReviewsPage'));
 const AdminResearchPage = lazyView(() => import('./components/AdminResearchPage'));
 const AdminTopicsPage = lazyView(() => import('./components/AdminTopicsPage'));
@@ -194,7 +193,10 @@ const WEB_TAB_VIEWS = {
 };
 /** Explore's sections as views (Products is the Shop, Resources the Library). */
 const EXPLORE_VIEW = { overview: 'explore', topics: 'explore-topics', services: 'explore-services', products: 'discovery', resources: 'articles' };
-const EXPLORE_SECTION_OF = Object.fromEntries(Object.entries(EXPLORE_VIEW).map(([k, v]) => [v, k]));
+// Explore is one shop page (founder, Oct 26): /explore, /explore/products and the
+// old /explore/topics and /explore/services addresses all show the Shop grid.
+// Services opens with the Services type picked.
+const SHOP_VIEWS = new Set(['discovery', 'explore', 'explore-topics', 'explore-services']);
 /** Focused flows: a minimal header (logo · Exit), no tab bar, no footer (P1-28). */
 const FOCUSED_FLOW_VIEWS = ['quiz', 'profile-edit'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
@@ -420,7 +422,7 @@ function getInitialProductId() {
  * itself already does via VIEW_TO_PATH.
  */
 function getInitialDiscoverySearch() {
-  if (getInitialView() !== 'discovery') return '';
+  if (!SHOP_VIEWS.has(getInitialView())) return '';
   try {
     return new URLSearchParams(window.location.search).get('q') || '';
   } catch {
@@ -580,7 +582,7 @@ function App() {
     // of remounting a fresh one. A product-to-product hop (e.g. a "related
     // products" link) leaves this alone, so the chain still traces back to
     // the original Browse session rather than clearing it.
-    if (currentViewRef.current === 'discovery') {
+    if (SHOP_VIEWS.has(currentViewRef.current)) {
       discoveryKeepAliveRef.current = true;
       discoveryScrollYRef.current = window.scrollY;
     }
@@ -662,7 +664,7 @@ function App() {
       // replaceState as the user searches, so that history entry's URL still
       // has it; this just needs to be re-read on the way back in, the same
       // way getInitialDiscoverySearch reads it on the very first page load.
-      if (view === 'discovery') {
+      if (SHOP_VIEWS.has(view)) {
         try {
           setDiscoverySearch(new URLSearchParams(window.location.search).get('q') || '');
         } catch {
@@ -688,7 +690,7 @@ function App() {
     if (isRestoringScroll()) return;
     // Returning to a kept-alive Shop (product card -> back) restores the
     // exact scroll spot instead of jumping to top.
-    if (currentView === 'discovery' && discoveryKeepAliveRef.current) {
+    if (SHOP_VIEWS.has(currentView) && discoveryKeepAliveRef.current) {
       window.scrollTo({ top: discoveryScrollYRef.current, left: 0, behavior: 'auto' });
     } else {
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
@@ -2767,28 +2769,6 @@ function App() {
             })}
           </div>
         )}
-        {(currentView === 'explore' || currentView === 'explore-topics' || currentView === 'explore-services') && (
-          <WebExplore
-            section={EXPLORE_SECTION_OF[currentView] || 'overview'}
-            onSection={openExplore}
-            quizResults={quizResults}
-            healthProfile={healthProfile}
-            matchOpts={matchOpts}
-            savedProducts={savedProducts}
-            myProducts={myProducts}
-            onToggleSaved={toggleSavedProduct}
-            onOpenProduct={handleOpenProduct}
-            onOpenArticle={handleViewArticle}
-            onStartQuiz={handleStartQuiz}
-            recommendedProductIds={recommendedProductIds}
-            onOpenCommunityPost={(postId) => { setCommunitySeed({ postId, token: Date.now() }); setCurrentView('community'); }}
-            onOpenCommunity={(q) => {
-              setCurrentView('community');
-              // Community reads its search from ?q= when it mounts.
-              if (q) window.history.replaceState({ view: 'community' }, '', `/community?q=${encodeURIComponent(q)}`);
-            }}
-          />
-        )}
         {/* Ask ayna as a page: the same conversation as the floating panel. */}
         {currentView === 'ask' && (
           <div className="ay-container wx-askpage" data-tour="ask">
@@ -2911,7 +2891,6 @@ function App() {
             />
           </Suspense>
         )}
-        {currentView === 'articles' && !selectedArticleId && <ExploreHeader compact titleAs="p" active="resources" onGo={(key) => openExplore(key)} />}
         {currentView === 'articles' && (
           <Suspense fallback={<ViewLoadingFallback />}>
             <Articles
@@ -3071,9 +3050,9 @@ function App() {
         )}
           </EcosystemViewTabs>
         )}
-        {(currentView === 'discovery' || (currentView === 'product' && discoveryKeepAliveRef.current)) && (
-          <div style={currentView === 'discovery' ? undefined : { display: 'none' }}>
-          <ExploreHeader compact active="products" onGo={(key) => openExplore(key)} />
+        {(SHOP_VIEWS.has(currentView) || (currentView === 'product' && discoveryKeepAliveRef.current)) && (
+          <div data-tour="explore" style={SHOP_VIEWS.has(currentView) ? undefined : { display: 'none' }}>
+          <ExploreHeader compact />
           <Suspense fallback={<ViewLoadingFallback />}>
           <Discovery
             matchOpts={matchOpts}
@@ -3106,6 +3085,8 @@ function App() {
             user={user}
             onRequirePersonalizeAuth={handleRequirePersonalizeAuth}
             onAsk={(q) => openAsk(`Help me find ${q}`)}
+            initialType={currentView === 'explore-services' ? 'services' : null}
+            onOpenReads={() => openExplore('resources')}
             inExplore
           />
           </Suspense>

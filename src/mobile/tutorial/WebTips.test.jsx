@@ -26,7 +26,7 @@ function fakeLayout() {
 
 const NAV = `<div class="app-nav-wrap" data-rect='{"left":0,"top":0,"width":1024,"height":68}'><nav class="ay-nav">nav</nav></div>`;
 const TODAY = `<div data-tour="today"><div data-tour="rundown-card">Rundown</div><ul data-tour="today-things"><li>Check in</li><li>Answer</li></ul></div>`;
-const EXPLORE = `<div data-tour="explore"><form data-tour="explore-search"><input aria-label="Search" /></form><nav aria-label="Explore sections">x</nav></div>`;
+const EXPLORE = `<div data-tour="explore"><form data-tour="explore-search"><input aria-label="Search" /></form><div data-tour="explore-sections">x</div></div>`;
 
 function mountWeb({ view = 'today', html, ready = true }) {
   page = document.createElement('div');
@@ -160,9 +160,9 @@ describe('website first visit', () => {
 
   it('an anchor under the top nav is skipped', () => {
     setTipsEnabled(true);
-    mountWeb({ view: 'explore', html: `<div data-tour="explore"><form data-tour="explore-search" data-rect='{"left":40,"top":20,"width":500,"height":40}'><input /></form><nav aria-label="Explore sections">x</nav></div>` });
+    mountWeb({ view: 'explore', html: `<div data-tour="explore"><form data-tour="explore-search" data-rect='{"left":40,"top":20,"width":500,"height":40}'><input /></form><div data-tour="explore-sections">x</div></div>` });
     wait(1000);
-    expect(dialog().textContent).toContain('Switch between');
+    expect(dialog().textContent).toContain('Filter by need');
     expect(document.querySelector('.ay-tour__count')).toBeNull();
   });
 });

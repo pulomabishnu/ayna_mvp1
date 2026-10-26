@@ -1,8 +1,8 @@
-import { EXPLORE_SECTIONS, YOU_SECTIONS } from '../nav/mainTabs.js';
+import { YOU_SECTIONS } from '../nav/mainTabs.js';
 import '../../styles/explore-web.css';
 import { Seal } from '../personality/Bits.jsx';
 import { ProductStickers } from '../personality/DS.jsx';
-import { PillTabs, Shout } from '../ui/ay';
+import { Shout } from '../ui/ay';
 import '../../styles/explore-v9.css';
 
 const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0);
@@ -23,13 +23,12 @@ function SectionNav({ label, sections, active, onGo, className = '' }) {
 }
 
 /**
- * Explore's header (Explore audit, Oct 25, section 6): the slim espresso band
- * with "Explore" (30 / 26), the one search, and the five sections as pill
- * tabs (For you · Needs · Products · Services · Reads) that never scroll on a
- * phone. Tabs are real links (open in a new tab); a plain click stays in the app.
- * `titleAs="p"` when the section below has its own H1 (Reads), so the page has one H1.
+ * Explore's header: the slim espresso band with "Explore". Explore is one shop
+ * page now (founder, Oct 26: "isn't that all just shop, just add the filters"),
+ * so there are no section tabs; the filters sit on the page under the search.
+ * `titleAs="p"` when the page below has its own H1, so the page has one H1.
  */
-export function ExploreHeader({ active, onGo, children = null, compact = false, titleAs = 'h1', stickers = [] }) {
+export function ExploreHeader({ children = null, compact = false, titleAs = 'h1', stickers = [] }) {
   return (
     // The approved Shop header, kept for all of Explore: a full-bleed espresso band with a scalloped edge (signature 3: scallops at section edges only).
     <header className={`wx-top ay-container ay-pagehead ay-band ay-band--espresso wx-top--v9${compact ? ' is-compact' : ''}`}>
@@ -39,11 +38,6 @@ export function ExploreHeader({ active, onGo, children = null, compact = false, 
       <Seal className="wx-seal" />
       {/* Her picks as die-cut stickers beside the seal (real photos only; nothing without them). */}
       <ProductStickers products={stickers} max={3} className="wx-stickers" />
-      {/* Tabs straight under the title on every section, then the search (they moved between sections). */}
-      <nav className="wx-tabs" aria-label="Explore sections">
-        <PillTabs idBase="wx" label="Explore sections" active={active} onChange={(key) => onGo?.(key)}
-          tabs={EXPLORE_SECTIONS.map((s) => ({ id: s.key, label: s.label, href: s.href }))} />
-      </nav>
       {children}
     </header>
   );
