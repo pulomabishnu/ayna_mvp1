@@ -4,8 +4,9 @@
 // Ask can never make up a different percent. Anything else goes to Ask ayna.
 
 import { findConfidentProductMatch } from './naturalLanguageSearch.js';
-import { whyMatch, exclusionLines, confidenceNotes, needBreakdown, tierWord, shownMatchPercent, SAFETY_HOLD, MATCH_UNAVAILABLE, SAFETY_HOLD_LINE, SAFETY_HOLD_PRODUCT_LINE } from './matchDisplay.js';
+import { whyMatch, exclusionLines, confidenceNotes, needBreakdown, shownMatchPercent, SAFETY_HOLD, MATCH_UNAVAILABLE, SAFETY_HOLD_LINE, SAFETY_HOLD_PRODUCT_LINE } from './matchDisplay.js';
 import { whyLine } from './whyLine.js';
+import { breakdownFromDetails } from '../matching/breakdown.js';
 
 // Questions about her fit for one product. Kept narrow on purpose: "does this
 // match my skin tone" style questions still go to Ask.
@@ -117,15 +118,21 @@ export function answerMatchQuestion(text, ctx) {
   // Same rule as the cards: under 50 there is no number, just "a partial fit".
   const shown = shownMatchPercent(percent);
   const line = whyLine(product, details);
+  // "Why NN%?" from the same engine numbers as the card and product page
+  // (src/matching/breakdown.js): what raised it, what lowered it, what ayna
+  // does not know yet. Label: Strong fit 80+, Good fit 60 to 79.
+  const bd = breakdownFromDetails(product, details);
+  const label = bd?.label && bd.label !== 'Partial fit' ? ` (${bd.label.toLowerCase()})` : '';
   const head = shown == null
     ? `**${name}** is a **partial fit** for you${best?.phrase ? `, for ${best.phrase}` : ''}.${line ? ` ${line}.` : ''}`
-    : best?.phrase
-      ? `**${name}** is ${/^(8|11|18)/.test(String(shown)) ? 'an' : 'a'} **${shown}% match** for you, for ${best.phrase}${tierWord(details.tier, percent) ? ` (${tierWord(details.tier, percent).toLowerCase()})` : ''}.`
-      : `**${name}** is ${/^(8|11|18)/.test(String(shown)) ? 'an' : 'a'} **${shown}% match** for you${tierWord(details.tier, percent) ? ` (${tierWord(details.tier, percent).toLowerCase()})` : ''}.`;
+    : `**${name}** is ${/^(8|11|18)/.test(String(shown)) ? 'an' : 'a'} **${shown}% match** for you${best?.phrase ? `, for ${best.phrase}` : ''}${label}.${line ? ` ${line}.` : ''}`;
   const notes = confidenceNotes(details, product);
+  const raised = bd?.raised?.length ? bd.raised.map((r) => r.text) : why.reasons;
   const parts = [
     head,
-    why.reasons.length ? `**Why**\n${why.reasons.slice(0, 4).map((r) => `- ✓ ${r}`).join('\n')}` : '',
+    raised.length ? `**What raised it**\n${raised.slice(0, 4).map((r) => `- ✓ ${r}`).join('\n')}` : '',
+    bd?.lowered?.length ? `**What lowered it**\n${bd.lowered.slice(0, 3).map((r) => `- ${r.text}`).join('\n')}` : '',
+    bd?.unknown?.length ? `**What ayna doesn’t know yet**\n${bd.unknown.slice(0, 3).map((r) => `- ${r.text}`).join('\n')}` : '',
     notes.length ? `**Worth checking**\n${notes.slice(0, 3).map((n) => `- △ ${n}`).join('\n')}` : '',
     why.basedOn.length ? `**What ayna used:** ${why.basedOn.slice(0, 5).join(', ')}.` : '',
     why.hint ? `${why.hint}.` : '',
