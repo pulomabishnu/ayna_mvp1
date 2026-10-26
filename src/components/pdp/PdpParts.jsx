@@ -6,6 +6,7 @@ import { matchText, shownMatchPercent, MATCH_UNAVAILABLE, SAFETY_HOLD } from '..
 import PdpIcon from './PdpIcon.jsx';
 import { splitShow, SHOW_FIRST } from './pdpParts.js';
 import { LEVELS, levelLabel, levelCountWords } from './evidenceLevels.js';
+import { ScallopPlate } from '../ui/ay/ScallopPlate.jsx';
 import './pdp-v7.css';
 
 /**
@@ -270,23 +271,8 @@ export function PriceLine({ main, notes = [] }) {
 // shared by the website page, the app page and the app sheet.
 // ===========================================================================
 
-/** The scalloped plate (signature 2): 12 lobes, lobe depth 8% of the width. */
-const PLATE_PATH = (() => {
-  const pts = [];
-  for (let i = 0; i <= 240; i += 1) {
-    const t = (i / 240) * Math.PI * 2;
-    const r = 41.5 + 4 * (1 + Math.cos(12 * t));
-    pts.push(`${(50 + r * Math.cos(t)).toFixed(2)} ${(50 + r * Math.sin(t)).toFixed(2)}`);
-  }
-  return `M${pts.join('L')}Z`;
-})();
-export function ScallopPlate({ tone = 'white', stroke = false, className = '' }) {
-  return (
-    <svg className={`ayv-plate is-${tone}${stroke ? ' has-stroke' : ''} ${className}`.trim()} viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
-      <path d={PLATE_PATH} vectorEffect="non-scaling-stroke" />
-    </svg>
-  );
-}
+/** The scalloped plate (signature 2) lives in ui/ay so every page uses the same one. */
+export { ScallopPlate };
 
 /**
  * The match lock-up (signature 3): espresso pill "92% match" (32px, 15/700),

@@ -1,3 +1,4 @@
+import { localDayKey } from '../utils/localDate.js';
 // LEGACY (2026-10-24): replaced by dailyLog.js. Nothing writes this key any
 // more; dailyLog.js reads it once to bring sleep/mood/skin answers into the
 // new log and leaves it untouched. Kept so old data and tests stay readable.
@@ -14,8 +15,7 @@ export const CHECKIN_ITEMS = [
 ];
 
 export function dayKey(date = new Date()) {
-  const d = new Date(date);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return localDayKey(date);
 }
 
 export function readCheckins(storage = globalThis.localStorage) {

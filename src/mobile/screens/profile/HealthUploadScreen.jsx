@@ -4,6 +4,7 @@ import { CATEGORIES, METRICS } from '../../../health/metrics.js';
 import { categoriesFor, fileKind, foundSummary, originFor, parseHealthFile } from '../../../health/manualImport.js';
 import { confirmImport, extractFromImage, extractionStatus } from '../../../health/healthApi.js';
 import { formatValue, parseEdited } from '../../../health/format.js';
+import { localToday } from '../../../utils/localDate.js';
 
 /**
  * "Upload health data". The file is read on her device; nothing is saved until
@@ -16,7 +17,7 @@ const fmtDay = (day) => new Date(`${day}T12:00:00Z`).toLocaleDateString('en-US',
 const TYPEABLE = ['sleep_minutes', 'steps', 'resting_hr_bpm', 'hrv_rmssd_ms', 'basal_temp_c', 'menstrual_flow', 'workout_minutes', 'active_energy_kcal', 'readiness_score'];
 
 function ManualEntry({ onAdd, declaredOrigin }) {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localToday();
   const [day, setDay] = useState(today);
   const [metric, setMetric] = useState('sleep_minutes');
   const [text, setText] = useState('');
