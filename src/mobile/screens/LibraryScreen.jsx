@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
-import LibraryCard from '../components/LibraryCard.jsx';
+import ReadCard from '../../components/library/ReadCard.jsx';
+import { Chip, ChipRow } from '../../components/ui/ay';
 import ReadCover from '../../components/library/ReadCover.jsx';
 import { minutesFor } from '../../components/library/readTime.js';
 import { READ_CREDITS } from '../../data/readCovers.js';
@@ -14,15 +15,6 @@ import '../library.css';
 import '../library-v2.css';
 import { sentenceCase as sentence } from '../../utils/sentenceCase.js';
 const FEATURED_READ_ID = 'postpartum-stretch-marks';
-
-function ReadState({ value = 0 }) {
-  if (!(value > 0)) return null;
-  const done = value >= 1;
-  return <span className={`al-state${done ? ' is-done' : ''}`}>
-    <i aria-hidden="true"><b style={{ width: `${Math.round(value * 100)}%` }} /></i>
-    <small>{done ? 'Finished' : `${Math.round(value * 100)}%`}</small>
-  </span>;
-}
 
 /** The one featured read: where she left off, else her top pick, else the editors' pick. */
 function FeaturedRead({ article, label, progress, onOpen }) {
@@ -61,8 +53,7 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   const featuredLabel = keepReading[0] ? 'Pick up where you left off' : hasProfile && forYou[0] ? 'Top pick for you' : 'Featured read';
 
   const tile = (a, small = false) => <div className={`al-item${small ? ' is-small' : ''}`} key={a.id}>
-    <LibraryCard article={a} fullWidth={!small} onClick={() => onOpenArticle?.(a)} />
-    <ReadState value={progressOf(a)} />
+    <ReadCard article={a} layout="rail" onOpen={() => onOpenArticle?.(a)} progress={progressOf(a)} />
   </div>;
   const row = (id, label, items, extra = null, topicId = null, total = items.length) => items.length > 0 && <section className="al-shelf" key={id} aria-labelledby={`al-${id}-h`}>
     <div className="al-shelf__head"><h2 id={`al-${id}-h`}>{sentence(label)}</h2>{extra || (topicId && <button type="button" className="al-seeall" onClick={() => setTopic(topicId)}>See all {total}</button>)}</div>
@@ -87,17 +78,17 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
 
   return <main className="ay-lib al">
     {/* In the app the Library is pushed from Explore: Back returns there. */}
-    {!embedded && <MobileHeader onOpenSaved={onOpenSaved} onBack={onBack} title="Library" titleFor="ay-lib-title" />}
+    {!embedded && <MobileHeader onOpenSaved={onOpenSaved} onBack={onBack} title="Reads" titleFor="ay-lib-title" />}
     <header className="al-top ay-lib-head">
-      {/* Inside Explore the Library is the Resources section; Explore owns the page title. */}
-      {embedded ? <h2 id="ay-lib-title" className="al-top__title">Resources</h2> : <h1 id="ay-lib-title" className="al-top__title">Library</h1>}
+      {/* Inside Explore the reads are the Reads section; Explore owns the page title. */}
+      {embedded ? <h2 id="ay-lib-title" className="al-top__title">Reads</h2> : <h1 id="ay-lib-title" className="al-top__title">Reads</h1>}
       <p className="al-top__lede">Plain-language reads written by the ayna team. Each read lists the sources it uses.</p>
       <SearchBar placeholder="Search reads" ariaLabel="Search reads" value={query} onChange={(e) => setQuery(e.target.value)} />
     </header>
     {q.length >= 2 && <SearchAssist variant="app" query={query} resultCount={searchArticles(query, articles).length} onUse={setQuery} />}
-    {q.length < 2 && <div className="al-topics" role="group" aria-label="Topics">
-      {topics.map(([id, label, n]) => <button type="button" key={id} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label} <span className="al-topics__n">{n}</span></button>)}
-    </div>}
+    {q.length < 2 && <ChipRow label="Topics" className="al-topics al-topics--v9">
+      {topics.map(([id, label, n]) => <Chip key={id} selected={topic === id} onClick={() => setTopic(id)}>{label} <span className="al-topics__n">{n}</span></Chip>)}
+    </ChipRow>}
     {body}
     <div className="ay-app-suggest-wrap">
       <SuggestBox variant="app" mode="read" context="app-library" />

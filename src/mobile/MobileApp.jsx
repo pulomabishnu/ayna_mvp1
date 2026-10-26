@@ -61,7 +61,6 @@ import AynaHomeChatScreen from './screens/AynaHomeChatScreen.jsx';
 import { readHomeVariant } from './utils/homeVariant.js';
 import { APP_TABS, APP_TABS_CHAT_FIRST } from '../components/nav/mainTabs.js';
 import ExploreScreen from './screens/ExploreScreen.jsx';
-import LibraryScreen from './screens/LibraryScreen.jsx';
 import ProductSheet from './components/ProductSheet.jsx';
 import { pregnancyFirstFrom } from '../components/pdp/pdpParts.js';
 import { ProductSheetContext } from './productSheetContext.js';
@@ -169,7 +168,8 @@ const SCREENS = {
   ayna: AynaHomeScreen,
   explore: ExploreScreen,
   browse: ExploreScreen,
-  library: LibraryScreen,
+  // The reads are Explore's Reads tab (Explore audit, Oct 25): the old 'library' screen opens it.
+  library: ExploreScreen,
   ecointro: EcosystemIntroScreen,
   quiz: IntakeScreen,
   building: BuildingScreen,
