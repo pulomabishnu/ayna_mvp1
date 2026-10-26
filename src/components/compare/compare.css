@@ -63,3 +63,6 @@
 /* Product images sit on the shared white scalloped plate (signature 1); no tilted shadowed tiles. */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2 .ay-cmp2__thumb, :is(.ayna-mobile:is(#ay, .ayna-mobile)) .ay-cmp2 .ay-cmp2__thumb { padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; transform: none !important; overflow: visible !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2__thumb :is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name) { font-size: 13px !important; line-height: 1.1 !important; overflow-wrap: normal !important; }
+/* 13px floor for the row hints and notes; radii from the set (8 / 16 / 999). */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2 :is(th, td) small, :is(.ayna-mobile:is(#ay, .ayna-mobile)) .ay-cmp2 :is(th, td) small { font-size: 13px !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2__scroll { border-radius: 16px; }

@@ -154,3 +154,6 @@ html body .app-container .ip-faq details p { margin: 0 0 8px !important; font: 4
 .app-container .ip-disclose a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 html body .app-container .ip-bars > li:nth-child(3) .ip-bars__fill b { color: var(--ip-text); }
 .app-container .ip-bars > li:nth-child(3) .ip-bars__fill { border-color: var(--ip-outline); }
+/* Radii from the set (8 / 16 / 999 / 50%) on the Contact form group and its fields. */
+html body .app-container .ed.ed-page--info .ay-group { border-radius: 16px !important; }
+html body .app-container .ed.ed-page--info .ed-form :is(input, textarea, select) { border-radius: 8px !important; }
