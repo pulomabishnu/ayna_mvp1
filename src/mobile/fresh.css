@@ -65,7 +65,7 @@
 .ayna-fresh-product-copy > strong { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; color: #3e2723; font: 600 17px/1.25 var(--ayna-font-ui); }
 .ayna-fresh-product-reason { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 6px; color: #525252; font: 500 13px/1.35 var(--ayna-font-ui); }
 .ayna-fresh-product-foot { display: flex; justify-content: space-between; align-items: center; gap: 5px; margin-top: auto; padding-top: 10px; }
-.ayna-fresh-product-foot span { display: grid; place-items: center; width: 27px; height: 27px; flex: none; border-radius: 50%; background: #3e2723; color: #fff; font-size: 15px; line-height: 1.45; font-weight: 400; }
+.ayna-fresh-product-foot span { display: grid; place-items: center; width: 27px; height: 27px; flex: none; border-radius: 50%; background: #3e2723; color: #fff; font-size: 15px; line-height: 1.45; font-weight: 500; }
 .ayna-fresh-product-context { margin-top: 8px; padding-top: 7px; border-top: 1px solid #e8e8e5; color: #545454; font: 500 13px/1.2 var(--ayna-font-ui); }
 .ayna-fresh-product-card.is-list { flex-direction: row; min-height: 112px; }
 .ayna-fresh-product-card.is-list .ayna-fresh-product-image { width: 104px; aspect-ratio: auto; flex: none; }
@@ -124,11 +124,11 @@
 .ayna-fresh-detail-image > div { aspect-ratio: 1 / 1.06 !important; border-radius: 20px !important; background: #dedfff !important; }
 .ayna-fresh-detail-image img { padding: 22px; box-sizing: border-box; }
 .ayna-fresh-detail-title { position: relative; z-index: 1; margin: -10px 20px 0; padding: 20px 18px 19px !important; border-radius: 19px; background: #fff; box-shadow: 0 8px 28px rgba(20,20,20,.08); }
-.ayna-fresh-detail-title h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; }
+.ayna-fresh-detail-title h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 500 !important; }
 .ayna-fresh-detail-title button { border-radius: 11px !important; }
 .ayna-fresh-detail-title > div:first-child { color: #3e2723 !important; }
 
-@media (max-height: 700px) { .ayna-fresh-welcome-copy { padding-top: 24px; } .ayna-fresh-welcome h1 { font-size: calc(28px * var(--ayna-text-scale, 1)); line-height: 1.15; font-weight: 400; } .ayna-fresh-playground { min-height: 175px; } }
+@media (max-height: 700px) { .ayna-fresh-welcome-copy { padding-top: 24px; } .ayna-fresh-welcome h1 { font-size: calc(28px * var(--ayna-text-scale, 1)); line-height: 1.15; font-weight: 500; } .ayna-fresh-playground { min-height: 175px; } }
 @media (min-width: 700px) {
   .ayna-mobile[data-preview='true'] .ayna-fresh-profile-overlay,
   .ayna-mobile[data-preview='true'] .ayna-fresh-detail-overlay { position: absolute !important; }
@@ -145,7 +145,7 @@
 
 /* Opening: real founder photography in an overlapping editorial card stack. */
 .ayna-fresh-welcome { background:#3e2723; }
-.ayna-fresh-welcome h1 { margin-top:12px; font-size:calc(28px * var(--ayna-text-scale, 1)); font-weight: 400; line-height:1.15; }
+.ayna-fresh-welcome h1 { margin-top:12px; font-size:calc(28px * var(--ayna-text-scale, 1)); font-weight: 500; line-height:1.15; }
 .ayna-fresh-start,.ayna-fresh-browse { border-radius:15px; min-height:55px; }
 
 /* The introduction uses the orbit motif from the community reference. */
@@ -165,14 +165,14 @@
 .ayna-fresh-product-category { font-size:13px; font-weight: 500; }
 .ayna-fresh-product-copy > strong { min-height:0; margin-top:7px; font-size:17px; font-weight: 600; line-height:1.15; }
 .ayna-fresh-product-reason { font-size:13px; font-weight: 500; }
-.ayna-fresh-product-foot { font-size:15px; line-height: 1.45; font-weight: 400; }
+.ayna-fresh-product-foot { font-size:15px; line-height: 1.45; font-weight: 500; }
 .ayna-fresh-product-context { font-size:13px; font-weight: 500; line-height:1.35; }
 .ayna-fresh-match-badge { top:8px; left:8px; font-size:13px; font-weight: 500; }
 
 /* Browse is a lavender discovery canvas, not the former category grid. */
 .ayna-fresh-browse-screen { background:#FCFBFB; }
 .ayna-fresh-browse-heading { min-height:215px; padding:27px 23px; background:#EEF0FD; }
-.ayna-fresh-browse-heading h1 { max-width:290px; font-size:calc(28px * var(--ayna-text-scale, 1)); font-weight: 400; line-height:1.15; }
+.ayna-fresh-browse-heading h1 { max-width:290px; font-size:calc(28px * var(--ayna-text-scale, 1)); font-weight: 500; line-height:1.15; }
 .ayna-fresh-browse-heading i { right:-18px; top:31px; width:125px; height:125px; opacity:.75; }
 .ayna-fresh-search-wrap { padding-top:16px; padding-bottom:16px; }
 .ayna-fresh-browse-screen .ayna-fresh-mode-tab { border-radius:13px!important; }
@@ -180,11 +180,11 @@
 /* A lighter intake with a blue progress rail and spacious choices. */
 
 @media (max-height:740px) {
-  .ayna-fresh-welcome h1 { font-size:calc(28px * var(--ayna-text-scale, 1)); line-height: 1.15; font-weight: 400; }
+  .ayna-fresh-welcome h1 { font-size:calc(28px * var(--ayna-text-scale, 1)); line-height: 1.15; font-weight: 500; }
 }
 
 /* Keep the orbit labels clear of the headline on narrow phones. */
-@media (max-width:375px) { .ayna-fresh-intro-stage { min-height:420px; } .ayna-fresh-intro-stage h1 { font-size:28px; line-height: 1.15; font-weight: 400; } }
+@media (max-width:375px) { .ayna-fresh-intro-stage { min-height:420px; } .ayna-fresh-intro-stage h1 { font-size:28px; line-height: 1.15; font-weight: 500; } }
 
 /* Profile is a light personal dashboard instead of the former dark account sheet. */
 .ayna-fresh-profile-hub { background:#FCFBFB; }

@@ -83,7 +83,7 @@
 .ayna-editorial-read-copy > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 6px; color: var(--ayna-text-muted); font: 500 13px/1.35 var(--ayna-font-ui); }
 .ayna-editorial-read-image { height: 106px; overflow: hidden; background: #e9ded0; display: grid; place-items: center; }
 .ayna-editorial-read-image img { width: 100%; height: 100%; object-fit: cover; }
-.ayna-editorial-read-image > span { color: #3e2723; font: italic 400 22px/1.15 var(--ayna-font-display); }
+.ayna-editorial-read-image > span { color: #3e2723; font: italic 700 22px/1.15 var(--ayna-font-display); }
 @media (max-height: 680px) { .ayna-editorial-welcome-photo { min-height: 30vh; } .ayna-editorial-welcome-content { padding-top: 18px; } }
 
 /* Rebrand entry points: art-directed type and real Ayna photography. */

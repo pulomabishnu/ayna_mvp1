@@ -14,7 +14,7 @@ html body .app-container #ayeco .ayeco__head { display: grid !important; grid-te
 html body .app-container #ayeco .ayeco__head::before, html body .app-container #ayeco .ayeco__head::after { content: none !important; display: none !important; }
 html body .app-container #ayeco .ayeco__head .eco3-head__text { grid-area: text; display: grid; gap: var(--ay-s8); }
 html body .app-container #ayeco .ayeco__head h1 { color: var(--ay-text) !important; }
-html body .app-container #ayeco .ayeco__head .eco3-head__sub { margin: 0; font: 400 16px/1.5 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
+html body .app-container #ayeco .ayeco__head .eco3-head__sub { margin: 0; font: 500 16px/1.5 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
 html body .app-container #ayeco .ayeco__head .eco3-cost summary { display: inline; cursor: pointer; color: var(--ay-text) !important; font-weight: 600; text-decoration: underline dotted; text-underline-offset: 4px; list-style: none; }
 html body .app-container #ayeco .ayeco__head .eco3-cost summary::-webkit-details-marker { display: none; }
 html body .app-container #ayeco .ayeco__head .eco3-cost span { display: block; max-width: 60ch; margin-top: var(--ay-s8); font-size: 14px; color: var(--ay-text-2); }
@@ -38,8 +38,8 @@ html body .app-container #ayeco .eco3-more__menu button:hover { background: var(
 
 /* "Make my matches more personal" (FinishQuizCard): a Group, not a pink box */
 html body .app-container #ayeco .fq { margin: var(--ay-s24) 0 0 !important; padding: var(--ay-s20) var(--ay-s24) !important; border: 0 !important; border-radius: var(--ay-r-group) !important; background: var(--ay-group) !important; box-shadow: none !important; color: var(--ay-text) !important; display: flex !important; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ay-s16); }
-html body .app-container #ayeco .fq :is(h2, h3) { margin: 0 0 4px !important; font: 400 var(--ay-type-h3)/1.2 var(--ay-serif-stack) !important; color: var(--ay-text) !important; }
-html body .app-container #ayeco .fq p { margin: 0 !important; font: 400 15px/1.5 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
+html body .app-container #ayeco .fq :is(h2, h3) { margin: 0 0 4px !important; font: 700 var(--ay-type-h3)/1.2 var(--ay-serif-stack) !important; color: var(--ay-text) !important; }
+html body .app-container #ayeco .fq p { margin: 0 !important; font: 500 15px/1.5 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
 html body .app-container #ayeco .fq__go { min-height: 48px !important; box-shadow: var(--ay-press-shadow) !important; }
 
 /* search + jump links */
@@ -56,7 +56,7 @@ html body .app-container #ayeco .eco3-searchbar-row button { min-height: 44px; p
 html body .app-container #ayeco .eco3-notice { margin: 0 0 var(--ay-s16); padding: var(--ay-s12) var(--ay-s16); border: 0 !important; border-radius: var(--ay-r-card); background: var(--ay-group) !important; color: var(--ay-text) !important; font: 500 15px/1.45 var(--ay-sans-stack); box-shadow: none !important; }
 html body .app-container #ayeco .eco3-notice button { padding: 0; border: 0; background: none; color: var(--ay-text); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
 html body .app-container #ayeco .eco3-empty { display: grid; gap: var(--ay-s12); padding: var(--ay-s32) 0; }
-html body .app-container #ayeco .eco3-empty__title { margin: 0; font: 400 var(--ay-type-h2)/1.15 var(--ay-serif-stack); }
+html body .app-container #ayeco .eco3-empty__title { margin: 0; font: 700 var(--ay-type-h2)/1.15 var(--ay-serif-stack); }
 html body .app-container #ayeco .eco3-empty__body { margin: 0; color: var(--ay-text-2); }
 html body .app-container #ayeco .eco3-empty__actions { display: flex; flex-wrap: wrap; gap: var(--ay-s12); }
 
@@ -69,7 +69,7 @@ html body .app-container #ayeco .ay-shelves__hint { display: flex; align-items: 
 html body .app-container #ayeco .ay-shelves__hintx, html body .app-container #ayeco .ay-shelves__reset { min-height: 40px; padding: 0 8px; border: 0; background: none; color: var(--ay-text); font: 600 14px/1 var(--ay-sans-stack); text-decoration: underline; cursor: pointer; }
 html body .app-container #ayeco .ay-shelf { margin: 0 !important; padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; }
 html body .app-container #ayeco .ay-shelf__head { display: flex; align-items: center; gap: var(--ay-s12); margin: 0 0 var(--ay-s12) !important; padding: 0 !important; border: 0 !important; }
-html body .app-container #ayeco .ay-shelf__name { position: relative; display: block !important; margin: 0 !important; padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; transform: none !important; border-radius: 0 !important; font: 400 var(--ay-type-h2)/1.15 var(--ay-serif-stack) !important; letter-spacing: -.005em !important; color: var(--ay-text) !important; }
+html body .app-container #ayeco .ay-shelf__name { position: relative; display: block !important; margin: 0 !important; padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; transform: none !important; border-radius: 0 !important; font: 700 var(--ay-type-h2)/1.15 var(--ay-serif-stack) !important; letter-spacing: -.005em !important; color: var(--ay-text) !important; }
 /* her chosen shelf colour shows as a small swatch before the name */
 html body .app-container #ayeco .ay-shelf[style*='--shelf-tab'] .ay-shelf__name { padding-left: 22px !important; }
 html body .app-container #ayeco .ay-shelf[style*='--shelf-tab'] .ay-shelf__name::before { content: ''; position: absolute; left: 0; top: 50%; width: 12px; height: 12px; margin-top: -6px; border-radius: 50%; background: var(--shelf-tab); border: 1.5px solid var(--ay-outline); }
@@ -120,7 +120,7 @@ html body .app-container #ayeco .ay-needs__noneacts { display: flex; flex-wrap: 
 html body .app-container #ayeco .ay-card-add { min-height: 40px !important; padding: 0 14px !important; font-size: 14px !important; margin-top: var(--ay-s8); }
 html body .app-container #ayeco .eco3-related { margin: var(--ay-s24) 0 0 !important; padding: var(--ay-s20) 0 0 !important; border: 0 !important; border-top: 1px solid var(--ay-hairline) !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
 html body .app-container #ayeco .eco3-related__h { margin: 0 0 var(--ay-s8) !important; font: 600 var(--ay-type-row)/1.3 var(--ay-sans-stack) !important; color: var(--ay-text) !important; }
-html body .app-container #ayeco .eco3-related ul { margin: 0 0 var(--ay-s12); padding: 0; list-style: none; display: grid; gap: var(--ay-s8); font: 400 15px/1.5 var(--ay-sans-stack); }
+html body .app-container #ayeco .eco3-related ul { margin: 0 0 var(--ay-s12); padding: 0; list-style: none; display: grid; gap: var(--ay-s8); font: 500 15px/1.5 var(--ay-sans-stack); }
 html body .app-container #ayeco .eco3-related a { color: var(--ay-text); font-weight: 600; }
 html body .app-container #ayeco .eco3-related__add { min-height: 44px; padding: 0; border: 0 !important; background: none !important; color: var(--ay-text) !important; font: 600 15px/1 var(--ay-sans-stack) !important; text-decoration: underline; text-underline-offset: 3px; box-shadow: none !important; cursor: pointer; }
 
@@ -134,11 +134,11 @@ html body .app-container #ayeco .eco3-details__card > summary { list-style: none
 html body .app-container #ayeco .eco3-details__card > summary::-webkit-details-marker { display: none; }
 html body .app-container #ayeco .eco3-tool-ic { width: 24px !important; height: 24px !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--ay-text) !important; }
 html body .app-container #ayeco .eco3-details__title { font: 600 var(--ay-type-row)/1.3 var(--ay-sans-stack) !important; color: var(--ay-text) !important; }
-html body .app-container #ayeco .eco3-details__hint { font: 400 14px/1.45 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
-html body .app-container #ayeco .eco3-details__body p { font: 400 15px/1.55 var(--ay-sans-stack); color: var(--ay-text); }
+html body .app-container #ayeco .eco3-details__hint { font: 500 14px/1.45 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
+html body .app-container #ayeco .eco3-details__body p { font: 500 15px/1.55 var(--ay-sans-stack); color: var(--ay-text); }
 html body .app-container #ayeco .ay-saved2 .ay-shelf__row { --ay-shelf-n: 3.2; }
 html body .app-container.app-container.app-container .ay-saved2__empty { display: grid; justify-items: start; gap: var(--ay-s12); }
-html body .app-container.app-container.app-container .ay-saved2__empty p { margin: 0; font: 400 15px/1.5 var(--ay-sans-stack); color: var(--ay-text); }
+html body .app-container.app-container.app-container .ay-saved2__empty p { margin: 0; font: 500 15px/1.5 var(--ay-sans-stack); color: var(--ay-text); }
 html body .app-container.app-container.app-container .ay-saved2__add { min-height: 40px !important; padding: 0 14px !important; font-size: 14px !important; margin-top: var(--ay-s8); }
 
 @media (max-width: 1023px) {

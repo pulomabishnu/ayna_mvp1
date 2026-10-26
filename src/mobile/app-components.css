@@ -5,7 +5,7 @@
 /* ---------- titles: one serif, everywhere ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(h1, h2, h3) {
   font-family: var(--f-display) !important;
-  font-weight: 400 !important;
+  font-weight: 500 !important;
   letter-spacing: -0.005em !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(button, input, textarea, select, label, p, li, small) {

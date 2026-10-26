@@ -24,10 +24,10 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel { height: 300px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy { padding: 8px 24px 0 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy h1 {
-  font: 400 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important;
+  font: 500 calc(28px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important;
   letter-spacing: -0.01em !important; color: var(--b-butter) !important;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy p { color: var(--b-butter) !important; opacity: .72 !important; font: 400 15px/1.45 var(--f-ui) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy p { color: var(--b-butter) !important; opacity: .72 !important; font: 500 15px/1.45 var(--f-ui) !important; }
 /* actions live on a butter sheet with the site's scalloped edge */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-actions {
   position: relative; margin-top: 28px !important;
@@ -46,7 +46,7 @@
 
 /* ---------- Ecosystem: title first, shelves swipe sideways ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero { display: flex !important; flex-direction: column !important; gap: 14px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero h1 { margin: 6px 0 0 !important; font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero h1 { margin: 6px 0 0 !important; font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 500 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-cover { order: 3; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-play { background: var(--b-espresso) !important; color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid {
@@ -57,7 +57,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid::-webkit-scrollbar { display: none; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) .ayna-editorial-product-grid > * { scroll-snap-align: start; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head { border: 2px solid var(--b-espresso) !important; border-radius: var(--r-radius-m) !important; box-shadow: var(--r-shadow) !important; padding: 10px 12px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; color: var(--b-espresso) !important; font-size: calc(22px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; display: flex !important; align-items: center; gap: 10px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; color: var(--b-espresso) !important; font-size: calc(22px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 500 !important; display: flex !important; align-items: center; gap: 10px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 small { margin: 0 !important; font: 500 13px/1 var(--f-ui) !important; background: var(--b-white) !important; color: var(--b-espresso) !important; }
 
 /* ---------- labels: sentence case, no shouting ---------- */
@@ -127,7 +127,7 @@
 
 /* ---------- Swipe deck: an espresso stage, the card is the light ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck { background: var(--b-espresso) !important; color: var(--b-butter) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-head strong { font: 400 22px/1.15 var(--f-display) !important; color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-head strong { font: 500 22px/1.15 var(--f-display) !important; color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-head span { color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-close { background: var(--b-butter) !important; color: var(--b-espresso) !important; border-color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-deck-card { background: var(--b-butter) !important; border-color: var(--b-butter) !important; box-shadow: 6px 6px 0 var(--b-rose) !important; color: var(--b-espresso) !important; }
@@ -139,7 +139,7 @@
 
 /* Swipe-to-discover entry: a small window onto the espresso deck */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta { background: var(--b-espresso) !important; color: var(--b-butter) !important; border: 2px solid var(--b-espresso) !important; box-shadow: 4px 4px 0 var(--b-rose) !important; border-radius: var(--r-radius-m) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-copy strong { font: 400 22px/1.15 var(--f-display) !important; color: var(--b-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-copy strong { font: 500 22px/1.15 var(--f-display) !important; color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-go { background: var(--b-rose) !important; color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-art i { border-color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-discover-cta:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--b-rose) !important; }

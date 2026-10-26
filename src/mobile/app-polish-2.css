@@ -168,4 +168,4 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-fold > :not(sum
 /* Inside the folded routine card the time-of-day groups are plain sections (no card in a card). */
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-rt-slot { background: none !important; box-shadow: none !important; border: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
 /* Ask ayna signed out: what works on this phone, and what needs an account. */
-html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-ask-local { margin: 0 0 6px; color: var(--ayna-text-muted); font: 400 calc(14px * var(--ayna-text-scale, 1))/1.45 var(--ayna-font-ui); }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-ask-local { margin: 0 0 6px; color: var(--ayna-text-muted); font: 500 calc(14px * var(--ayna-text-scale, 1))/1.45 var(--ayna-font-ui); }

@@ -230,7 +230,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads { margin-top: 48px !important; padding-bottom: 32px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-shelf-care { margin-bottom: 8px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head { margin-bottom: 8px !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head h2 { font-size: 22px !important; line-height: 1.15 !important; font-weight: 400 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head h2 { font-size: 22px !important; line-height: 1.15 !important; font-weight: 500 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact {
   display: grid !important; grid-template-columns: minmax(0, 1fr) 32px; align-items: center; gap: 16px;
   min-height: 72px; padding: 16px 0 !important; justify-items: stretch; text-align: left !important; border: 0 !important; border-bottom: 1px solid var(--ay-line, rgba(62, 39, 35, .1)) !important;

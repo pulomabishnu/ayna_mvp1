@@ -26,7 +26,7 @@
 
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-hello { display: grid; gap: 6px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) :is(.ay-askh-hello h2, main .ay-askh-hello h2) { font: 700 calc(30px * var(--ayna-text-scale, 1))/1.05 var(--k-display) !important; letter-spacing: -0.02em !important; color: var(--k-ink) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-hello p { font: 400 calc(14px * var(--ayna-text-scale, 1))/1.45 var(--k-sans) !important; color: var(--k-soft) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-hello p { font: 500 calc(14px * var(--ayna-text-scale, 1))/1.45 var(--k-sans) !important; color: var(--k-soft) !important; }
 
 /* starter questions: one Group of rows, icon, label and line, chevron */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list { display: grid !important; padding: 0 16px !important; border-radius: 20px; background: var(--k-group); }
