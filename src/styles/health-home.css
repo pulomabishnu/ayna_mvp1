@@ -25,6 +25,9 @@
 :is([data-theme='brand-dark'], [data-theme='dark']) :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db,
 html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh.ay-wh .ay-db {
   --db-deep: rgba(255, 237, 172, .16); --db-rule: rgba(255, 237, 172, .2); --db-on-ink: #3e2723;
+  /* theme-v3.css pins --ay-ink to espresso on .app-container:not([data-theme='dark']), which includes brand-dark. */
+  --ay-ink: #ffedac; --ay-ink-muted: rgba(255, 237, 172, .8); --ay-surface: rgba(255, 237, 172, .08); --ay-outline: 1.5px solid #ffedac;
+  --db-ink: #ffedac; --db-muted: rgba(255, 237, 172, .8); --db-surface: rgba(255, 237, 172, .08);
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db * { box-sizing: border-box; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db :is(h1, h2, h3, h4, p, ul, ol, dl, dd, figure) { margin: 0 !important; }

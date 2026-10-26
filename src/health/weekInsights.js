@@ -270,7 +270,7 @@ export function periodInsight(ctx, estimate, cycle) {
     id: 'period',
     metric: 'menstrual_flow',
     text: `Your period is due ${inDays(ctx.daysToPeriod)}${n >= 2 ? `, going by your last ${plural(n, 'cycle')}` : ''}. Cramps can start a day or two before.`,
-    basis: `${estimate?.basis || 'From your period logs.'} Estimates can be off by several days.`,
+    basis: /off by several days/.test(estimate?.basis || '') ? estimate.basis : `${estimate?.basis || 'From your period logs.'} Estimates can be off by several days.`,
     sources: [EVIDENCE.cramps],
     from: cycle?.sources || [],
     question: 'How can I get ready for my next period?',
