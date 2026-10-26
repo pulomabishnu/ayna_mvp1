@@ -739,3 +739,12 @@ html body .app-container.app-container.app-container.app-container.app-container
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .cm .ay-product-card.cm-mention-card { --pc-shadow: none; box-shadow: none !important; transform: none !important; border: 1.5px solid var(--ay-ink) !important; border-radius: var(--ay-r-md) !important; }
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .cm .cm-mention-wrap .ay-product-card.cm-mention-card { border: 0 !important; }
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .cm .ay-product-card.cm-mention-card :is(.ay-product-card__kind, .ay-product-card__price small, .ay-product-card__why, .ay-product-card__brand) { font-size: 13px !important; }
+/* "Ways to post" as four cards in one colour family (inspo #7 Double Take: icon, title, one line). */
+html body .app-container.app-container.app-container.app-container.app-container.app-container {
+  .cm-types { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; border-top: 0; }
+  .cm-types > li { border-bottom: 0; }
+  .cm-type { grid-template-columns: minmax(0, 1fr); align-content: start; justify-items: start; gap: 10px; min-height: 132px; padding: 16px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-md); background: var(--ay-butter-deep); color: #3e2723 !important; }
+  .cm-type:hover { background: var(--ay-pink); }
+  .cm-type__icon { background: #ffffff; border-color: #3e2723; color: #3e2723; }
+  .cm-type__copy small { color: rgba(62, 39, 35, .78) !important; }
+}
