@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import TutorialLayer from './TutorialLayer.jsx';
 import TipsSettings from './TipsSettings.jsx';
 import { readTour, setTipsEnabled, markScreenSeen, TOUR_KEY } from './tourStore.js';
+import { markRundownViewed } from '../../components/rundown/rundownStore.js';
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 let root;
@@ -53,6 +54,17 @@ afterEach(() => {
 });
 
 describe('tips overlay', () => {
+  it('app: the tour offer waits for her first Daily Rundown, then shows as a small non-modal banner', () => {
+    mountApp({ html: '<div data-tour="home"><button data-tour="home-ask">Ask ayna</button><div class="ay-rd-hero__card" data-tour="rundown-card">Rundown</div><nav data-tour="home-links">Links</nav></div>' });
+    wait(3000);
+    expect(dialog()).toBeNull();
+    markRundownViewed('2026-10-25');
+    wait(1000);
+    expect(dialog()?.textContent).toContain('Want a quick tour?');
+    expect(dialog().getAttribute('aria-modal')).toBe('false');
+    expect(document.querySelector('.ay-tour.is-banner .ay-tour__dim')).toBeNull();
+  });
+
   it('offers the welcome on Home, then runs Home’s tips with the off note first', () => {
     mountApp({ html: HOME });
     wait(1000);
