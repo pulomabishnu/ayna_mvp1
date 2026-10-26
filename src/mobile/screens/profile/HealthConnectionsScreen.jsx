@@ -50,7 +50,7 @@ const ERRORS = {
 const errorText = (e) => ERRORS[e?.code] || 'We couldn’t reach your health data. Check your connection and try again.';
 
 /* --------------------------------- List ---------------------------------- */
-function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights, signedIn, onSignIn, onRefresh, compact = false, userId = null, tabName = 'Home' }) {
+function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights, signedIn, onSignIn, onRefresh, compact = false, userId = null, tabName = 'Today' }) {
   const [now] = useState(() => Date.now());
   const [query, setQuery] = useState('');
   const byId = Object.fromEntries(connections.map((c) => [c.source, c]));
@@ -470,8 +470,8 @@ function RequestSource({ signedIn, onSignIn, presetName = '' }) {
 }
 
 /* --------------------------------- Screen -------------------------------- */
-// tabName: the app's tab is Home; the website passes Today (QA, Oct 25).
-export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, authUser, onSignIn, onOpenInsights, compact = false, tabName = 'Home' }) {
+// tabName: Today on the website and the app (all-pages brief, Oct 25).
+export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, authUser, onSignIn, onOpenInsights, compact = false, tabName = 'Today' }) {
   const health = useHealthData(authUser?.id || null);
   const [flash] = useState(takeHealthFlash);
   const [notice, setNotice] = useState(null); // { sourceId, text }: survives SourceDetail remounts

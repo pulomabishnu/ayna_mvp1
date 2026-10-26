@@ -376,9 +376,9 @@ describe('Rundown to chat hand-off', () => {
     expect(document.body.textContent).toContain('From your Daily Rundown today');
     act(() => btn('Why was my sleep flagged?').click());
     expect(onStarter).toHaveBeenCalledWith(starters[0]);
-    // Full screen from Home: Back returns to Home.
+    // Full screen with a Back (Today) when a caller asks for one; the Ask ayna tab itself has none.
     expect(document.querySelector('.ayna-ask-drawer.is-full')).toBeTruthy();
-    act(() => btn('Home').click());
+    act(() => btn('Today').click());
     expect(onBackHome).toHaveBeenCalled();
   });
 });

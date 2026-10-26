@@ -8,10 +8,11 @@ describe('main tabs (founder, Oct 24 2026)', () => {
   it('are Today, Explore, Ask ayna, Community, You, in that order', () => {
     expect(MAIN_TABS.map((t) => t.label)).toEqual(['Today', 'Explore', 'Ask ayna', 'Community', 'You']);
   });
-  it('the app has four tabs, Home first: Home, Explore, Community, You; no Library tab (founder, Oct 24 22:12)', () => {
-    expect(APP_TABS.map((t) => t.label)).toEqual(['Home', 'Explore', 'Community', 'You']);
+  it('the app has the same five tabs as the website; no Library tab (all-pages brief, Oct 25)', () => {
+    expect(APP_TABS.map((t) => t.label)).toEqual(MAIN_TABS.map((t) => t.label));
+    expect(APP_TABS.find((t) => t.key === 'ask').center).toBe(true);
     expect(APP_TABS.some((t) => t.key === 'library')).toBe(false);
-    // The chat-first Home for the focus group names the same tab "ayna".
+    // The chat-first Home for the focus group names the first tab "ayna"; the chat is that tab, so no Ask tab.
     expect(APP_TABS_CHAT_FIRST.map((t) => t.label)).toEqual(['ayna', 'Explore', 'Community', 'You']);
     expect(APP_EXPLORE_SECTIONS.map((s) => s.label)).toEqual(['For you', 'Categories', 'Products', 'Services']);
     expect(AYNA_HOME_VIEWS.map((v) => v.label)).toEqual(['Chat', 'Products', 'My dashboard']);
