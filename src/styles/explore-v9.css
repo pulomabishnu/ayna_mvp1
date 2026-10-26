@@ -1,0 +1,70 @@
+/* Explore, website (Explore audit v3, Oct 25 + all-pages brief). Loaded by ExploreNav.
+   Header: slim espresso band, "Explore" 30/26, full-width search, 5 pill tabs (#55 Minds).
+   Sections 32px apart, heading 22/20 then 12px to content. Chips, tabs and plates are the
+   shared primitives (components/ui/ay); cards are styles/pcard.css. Tokens only. */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 { padding-top: 24px !important; padding-bottom: 8px !important; margin-bottom: 32px !important; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 :is(h1, p).wx-title { margin: 0 0 16px !important; font: 700 30px/1.1 var(--ay-font-display) !important; letter-spacing: -.01em !important; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-search { max-width: none; margin: 0 0 16px; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-search label { max-width: none; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs { margin: 0 0 8px; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs { max-width: 640px; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs__tab { font-size: 15px !important; }
+/* On the espresso band the pill tabs take band colours through their own tokens (set on the
+   element, so the primitive's rules apply as written): butter track line and text, butter selected
+   pill with espresso text. In the dark theme the band is butter, so it flips. */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs { --ay-ink: #ffedac; --ay-outline: 1.5px solid #ffedac; --ay-track: rgba(255, 237, 172, .14); --ay-fill-ink: #ffedac; --ay-on-ink: #3e2723; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body [data-theme='brand-dark'] main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs { --ay-ink: #3e2723; --ay-outline: 1.5px solid #3e2723; --ay-track: rgba(62, 39, 35, .08); --ay-fill-ink: #3e2723; --ay-on-ink: #ffedac; }
+/* Website dark theme: older sheets pin --ay-ink to espresso on .app-container, so Explore's own
+   content (cards, chips, tiles, strips) gets the dark-theme ink on itself. The header band keeps its own. */
+[data-theme='brand-dark'] :is(.wx-body, .ay-pcard, .ay-rcard, .ay-avoid, .ay-needtiles, .lb-body, .lb-featured, .ayshop .ay-avoid) { --ay-ink: #ffedac; --ay-ink-muted: rgba(255, 237, 172, .8); --ay-rule: 1px solid rgba(255, 237, 172, .2); }
+[data-theme='brand-dark'] :is(.wx-body, .ay-avoid, .ay-needtiles) :is(.ayk-chip, .ayk-btn) { --ay-ink: #ffedac; --ay-fill-ink: #ffedac; --ay-on-ink: #3e2723; }
+@media (max-width: 720px) {
+  :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 { padding-top: 16px !important; margin-bottom: 24px !important; }
+  :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 :is(h1, p).wx-title { font-size: 26px !important; }
+  :is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs__tab { font-size: 13px !important; padding-inline: 2px !important; }
+}
+
+/* Sections */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-sec { margin-top: 32px; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-sec:first-child { margin-top: 0; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-head { margin-bottom: 12px; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-head .ay-h2 { margin: 0 !important; font: 700 22px/1.15 var(--ay-font-display) !important; letter-spacing: 0 !important; color: var(--ay-ink) !important; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-all { font: 600 15px/1.3 var(--ay-font-ui) !important; color: var(--ay-ink) !important; }
+@media (max-width: 720px) { :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-head .ay-h2 { font-size: 20px !important; } }
+
+/* "Get your match" strip: one line and one button (audit section 6). */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 16px 0; border-top: var(--ay-rule); border-bottom: var(--ay-rule); }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-strip p { margin: 0; color: var(--ay-ink); font: 600 17px/1.3 var(--ay-font-ui); }
+
+/* Rails (#26 Rhode): cards in a row, small round arrows under it on a pointer device. */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-rail { position: relative; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(200px, 232px); gap: 24px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; scrollbar-width: none; align-items: stretch; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-row::-webkit-scrollbar { display: none; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-row > * { scroll-snap-align: start; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-rail__arrows { display: none; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+@media (hover: hover) and (pointer: fine) { :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-rail__arrows { display: flex; } }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-rail__arrow { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: var(--ay-outline); border-radius: 50%; background: transparent; color: var(--ay-ink); cursor: pointer; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-rail__arrow:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px 24px; margin-top: 12px; }
+@media (max-width: 720px) {
+  :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-row { grid-auto-columns: minmax(160px, 46%); gap: 16px; }
+  :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 16px; }
+}
+/* Reads rail: the one ReadCard, rail layout. */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-reads { list-style: none; margin: 0; padding: 0 0 8px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(180px, 220px); gap: 24px; overflow-x: auto; scrollbar-width: none; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-reads > li { margin: 0; }
+@media (max-width: 720px) { :is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-reads { grid-auto-columns: minmax(150px, 44%); gap: 16px; } }
+
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-groups { display: grid; gap: 24px; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-group__h { margin: 0 0 12px !important; color: var(--ay-ink) !important; font: 700 17px/1.3 var(--ay-font-ui) !important; letter-spacing: 0 !important; }
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-formats { margin-bottom: 24px; }
+
+/* 13px floor on what Explore owns (web). */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx :is(.wx-posts small, .wx-suggest__head) { font-size: 13px !important; }
+/* The band's right gutter: the pill track never runs past the search box on a phone. */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body main .wx-top.wx-top--v9 .wx-tabs .ayk-tabs { max-width: min(640px, calc(100vw - 40px)) !important; box-sizing: border-box; }
+/* Rails: each card its own height (no stretched gap above the heart). */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body .wx .wx-row { align-items: start; }
+/* By need panel: pink in the light theme (kept, audit "KEEP"); the dark theme's pink-to-sky swap made it blue,
+   and blue is for chart lines only, so in dark it is a quiet butter-tint surface. */
+:is(#wx1, html):is(#wx2, html):is(#wx3, html) body [data-theme='brand-dark'] .wx .wx-sec.wx-needs { background: rgba(255, 237, 172, .08) !important; color: var(--ay-ink) !important; }

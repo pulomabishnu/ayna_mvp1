@@ -39,7 +39,7 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__sti
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__stickers .ds-psticker.is-2 { right: 64px; top: 52px; width: 64px; height: 64px; }
 /* last night's sleep in the ring ("7h 12m"): smaller than a day numeral */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring.is-text b { font-size: 19px; letter-spacing: -.01em; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b small { font: 700 13px/1.1 var(--ay-sans-stack); letter-spacing: 0; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh-hello__ring b small { font: 700 12px/1.1 var(--ay-sans-stack); letter-spacing: 0; }
 /* with health data: the band stays; under it, the source line and Connected apps on one quiet row */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.has-data .ay-hh-hello.is-quiet { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin: 0 0 16px !important; padding: 0 !important; min-height: 0; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.has-data .ay-hh-hello.is-quiet p { margin: 0 !important; font: 600 14px/1.35 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
@@ -137,7 +137,7 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.is-compac
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top.ay-pagehead .wx-search { margin-right: 20px !important; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-top.ay-pagehead :is(h1, p).wx-title { margin-bottom: 14px !important; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal { top: 6px; right: 0; width: 58px; height: 58px; }
-  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal b { width: 30px; height: 30px; font-size: 13px; letter-spacing: -.02em; overflow: hidden; } /* the word stays inside its ring (QA round 2) */
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal b { width: 30px; height: 30px; font-size: 8.5px; letter-spacing: -.02em; overflow: hidden; } /* the word stays inside its ring (QA round 2) */
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) main .wx-top.ay-pagehead :is(h1, p).wx-title { min-height: 48px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-top .wx-seal text { font-size: 15px; }
 }

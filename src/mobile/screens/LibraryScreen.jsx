@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
-import LibraryCard from '../components/LibraryCard.jsx';
-import ReadCover from '../../components/library/ReadCover.jsx';
-import { minutesFor } from '../../components/library/readTime.js';
-import { READ_CREDITS } from '../../data/readCovers.js';
+import ReadCard from '../../components/library/ReadCard.jsx';
+import { Chip, ChipRow, OutlineButton } from '../../components/ui/ay';
 import { READ_SECTIONS } from '../../data/readSections.js';
 import { buildLibrary, hasQuizAnswers } from '../utils/personalReads.js';
 import SuggestBox from '../../components/SuggestBox.jsx';
@@ -15,31 +13,12 @@ import '../library-v2.css';
 import { sentenceCase as sentence } from '../../utils/sentenceCase.js';
 const FEATURED_READ_ID = 'postpartum-stretch-marks';
 
-function ReadState({ value = 0 }) {
-  if (!(value > 0)) return null;
-  const done = value >= 1;
-  return <span className={`al-state${done ? ' is-done' : ''}`}>
-    <i aria-hidden="true"><b style={{ width: `${Math.round(value * 100)}%` }} /></i>
-    <small>{done ? 'Finished' : `${Math.round(value * 100)}%`}</small>
-  </span>;
-}
-
-/** The one featured read: where she left off, else her top pick, else the editors' pick. */
+/** The one featured read (where she left off, else her top pick, else the editors' pick), as the shared ReadCard list row: who wrote and reviewed it, and its sources. */
 function FeaturedRead({ article, label, progress, onOpen }) {
   if (!article) return null;
-  const credit = READ_CREDITS[article.id];
-  return <section className="al-feature" aria-labelledby="al-feature-title">
-    <span className="al-tab">{label}</span>
-    <button type="button" className="al-feature__cover" tabIndex={-1} aria-hidden="true" onClick={() => onOpen?.(article)}>
-      <ReadCover article={article} minutes={minutesFor(article)} />
-    </button>
-    <div className="al-feature__text">
-      <h2 id="al-feature-title" className="al-feature__title">{article.title}</h2>
-      {credit
-        ? <p className="al-feature__by">By {credit.by}<br />Reviewed by {credit.reviewedBy}</p>
-        : article.source && <p className="al-feature__by">Checked against {article.source}</p>}
-      <button type="button" className="al-feature__go" onClick={() => onOpen?.(article)}>{progress > 0 && progress < 1 ? 'Keep reading' : 'Read it'} <span aria-hidden="true">→</span></button>
-    </div>
+  return <section className="al-feature al-feature--v9" aria-labelledby="al-feature-h">
+    <h2 id="al-feature-h" className="al-feature__h">{label}</h2>
+    <ReadCard article={article} layout="row" headingLevel={3} progress={progress} onOpen={() => onOpen?.(article)} />
   </section>;
 }
 
@@ -61,8 +40,7 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   const featuredLabel = keepReading[0] ? 'Pick up where you left off' : hasProfile && forYou[0] ? 'Top pick for you' : 'Featured read';
 
   const tile = (a, small = false) => <div className={`al-item${small ? ' is-small' : ''}`} key={a.id}>
-    <LibraryCard article={a} fullWidth={!small} onClick={() => onOpenArticle?.(a)} />
-    <ReadState value={progressOf(a)} />
+    <ReadCard article={a} layout="rail" onOpen={() => onOpenArticle?.(a)} progress={progressOf(a)} />
   </div>;
   const row = (id, label, items, extra = null, topicId = null, total = items.length) => items.length > 0 && <section className="al-shelf" key={id} aria-labelledby={`al-${id}-h`}>
     <div className="al-shelf__head"><h2 id={`al-${id}-h`}>{sentence(label)}</h2>{extra || (topicId && <button type="button" className="al-seeall" onClick={() => setTopic(topicId)}>See all {total}</button>)}</div>
@@ -80,24 +58,24 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
     body = <>
       <FeaturedRead article={featured} label={featuredLabel} progress={featured ? progressOf(featured) : 0} onOpen={onOpenArticle} />
       {row('keep', 'Keep reading', keepReading.filter((a) => a !== featured))}
-      {hasProfile ? row('foryou', 'For you', forYou.filter((a) => a !== featured), null, 'foryou', forYou.length) : canAskForQuiz && onStartQuiz && <button type="button" className="al-match" onClick={onStartQuiz}>Get reads for you <span aria-hidden="true">→</span></button>}
+      {hasProfile ? row('foryou', 'For you', forYou.filter((a) => a !== featured), null, 'foryou', forYou.length) : canAskForQuiz && onStartQuiz && <div className="al-match--v9"><OutlineButton onClick={onStartQuiz}>Get reads for you</OutlineButton></div>}
       {rows.map((r) => row(r.id, r.label, r.items, null, r.id))}
     </>;
   }
 
   return <main className="ay-lib al">
     {/* In the app the Library is pushed from Explore: Back returns there. */}
-    {!embedded && <MobileHeader onOpenSaved={onOpenSaved} onBack={onBack} title="Library" titleFor="ay-lib-title" />}
+    {!embedded && <MobileHeader onOpenSaved={onOpenSaved} onBack={onBack} title="Reads" titleFor="ay-lib-title" />}
     <header className="al-top ay-lib-head">
-      {/* Inside Explore the Library is the Resources section; Explore owns the page title. */}
-      {embedded ? <h2 id="ay-lib-title" className="al-top__title">Resources</h2> : <h1 id="ay-lib-title" className="al-top__title">Library</h1>}
+      {/* Inside Explore the reads are the Reads section; Explore owns the page title. */}
+      {embedded ? <h2 id="ay-lib-title" className="al-top__title">Reads</h2> : <h1 id="ay-lib-title" className="al-top__title">Reads</h1>}
       <p className="al-top__lede">Plain-language reads written by the ayna team. Each read lists the sources it uses.</p>
       <SearchBar placeholder="Search reads" ariaLabel="Search reads" value={query} onChange={(e) => setQuery(e.target.value)} />
     </header>
     {q.length >= 2 && <SearchAssist variant="app" query={query} resultCount={searchArticles(query, articles).length} onUse={setQuery} />}
-    {q.length < 2 && <div className="al-topics" role="group" aria-label="Topics">
-      {topics.map(([id, label, n]) => <button type="button" key={id} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label} <span className="al-topics__n">{n}</span></button>)}
-    </div>}
+    {q.length < 2 && <ChipRow label="Topics" className="al-topics--v9">
+      {topics.map(([id, label, n]) => <Chip key={id} selected={topic === id} onClick={() => setTopic(id)}>{label} <span className="al-topics__n">{n}</span></Chip>)}
+    </ChipRow>}
     {body}
     <div className="ay-app-suggest-wrap">
       <SuggestBox variant="app" mode="read" context="app-library" />

@@ -123,15 +123,16 @@ const NO_PROFILE = 'Needs your health profile';
 
 /**
  * @param {Array} products 2 to 4 products
- * @param {{ matchFor?: (p) => number|null, detailsFor?: (p) => object|null, ratingFor?: (p) => { value, count }|null }} opts
+ * @param {{ matchFor?: (p) => number|null, detailsFor?: (p) => object|null, ratingFor?: (p) => { value, count }|null, noProfileText?: string }} opts
+ *   noProfileText: what the match row says without her answers (signed out: "See your match"; never a number)
  * @returns {Array<{ id, label, values: string[], notes?: string[] }>}
  */
-export function compareSetRows(products = [], { matchFor = null, detailsFor = null, ratingFor = null } = {}) {
+export function compareSetRows(products = [], { matchFor = null, detailsFor = null, ratingFor = null, noProfileText = NO_PROFILE } = {}) {
   const list = products.filter(Boolean).slice(0, COMPARE_MAX);
   const base = Object.fromEntries(compareRows(list).map((r) => [r.label, r.values]));
   const rows = [];
   if (!matchFor && !detailsFor) {
-    rows.push({ id: 'match', label: 'Your match', values: list.map(() => NO_PROFILE), keep: true });
+    rows.push({ id: 'match', label: 'Your match', values: list.map(() => noProfileText), keep: true, noProfile: true });
   } else {
     rows.push({
       id: 'match', label: 'Your match',

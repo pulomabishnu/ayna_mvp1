@@ -30,7 +30,7 @@ html body .app-container.app-container.app-container.app-container .lb {
   & .lb-top { position: relative; z-index: 1; background: var(--lb-pink); color: var(--lb-esp); padding: 64px 0 64px; }
   & .lb-top::after, & .lb-rhead::after { content: ''; position: absolute; left: 0; right: 0; top: calc(100% - 1px); height: 17px; background: radial-gradient(circle at 50% 0, var(--band, var(--lb-pink)) 15.4px, transparent 16px) 50% 0 / 32px 17px repeat-x; pointer-events: none; }
   & .lb-top__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 64px; align-items: end; }
-  & .lb-top h1.lb-top__title:not(#lb-id) { margin: 0 0 16px !important; max-width: 12ch; font: 500 clamp(44px, 6.8vw, 96px)/.92 var(--lb-display) !important; letter-spacing: -.035em !important; color: var(--lb-esp) !important; text-wrap: balance; }
+  & .lb-top h1.lb-top__title:not(#lb-id) { margin: 0 0 16px !important; max-width: 20ch; font: 700 36px/1.1 var(--lb-display) !important; letter-spacing: -.01em !important; color: var(--lb-esp) !important; text-wrap: balance; }
   & .lb-top__title .lb-hl { white-space: nowrap; font: inherit !important; letter-spacing: inherit !important; color: inherit !important; padding: 0 .04em; background: linear-gradient(transparent 56%, var(--lb-butter) 56%, var(--lb-butter) 90%, transparent 90%); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
   & .lb-top__lede { margin: 0; max-width: 38ch; font: 500 18px/1.45 var(--lb-sans) !important; color: var(--lb-esp) !important; }
   & .lb-search { display: flex; align-items: center; gap: 12px; max-width: 520px; height: 56px; margin-top: 24px; padding: 0 24px; border: 1.5px solid var(--lb-esp); border-radius: 999px; background: var(--lb-butter); box-sizing: border-box; cursor: text; }
@@ -93,7 +93,7 @@ html body .app-container.app-container.app-container.app-container .lb {
   & .lb-shelf { margin-top: 48px; scroll-margin-top: 24px; }
   & .lb-shelf__head { display: flex; align-items: center; gap: 12px; margin: 0 0 12px; }
   & .lb-shelf__head > h2 { flex: 0 1 auto; min-width: 0; }
-  & .lb-shelf__n { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border: 1.5px solid var(--ay-outline); border-radius: 50%; box-sizing: border-box; font: 500 14px/1 var(--lb-display); font-variant-numeric: tabular-nums; color: var(--ay-text); }
+  & .lb-shelf__n { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border: 1.5px solid var(--ay-outline-color); border-radius: 50%; box-sizing: border-box; font: 500 14px/1 var(--lb-display); font-variant-numeric: tabular-nums; color: var(--ay-text); }
   & .lb-shelf__title { margin: 0 !important; font: 500 clamp(26px, 2.4vw, 32px)/1.1 var(--lb-display) !important; letter-spacing: -.015em !important; color: var(--ay-text) !important; }
   & .lb-shelf__sub { font: 500 15px/1.3 var(--lb-sans); color: var(--ay-text-2); }
   & .lb-seeall { margin-left: auto; flex: none; white-space: nowrap; display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; border: 0; background: none; color: var(--ay-text) !important; font: 600 15px/1 var(--lb-sans) !important; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; cursor: pointer; }
@@ -109,7 +109,7 @@ html body .app-container.app-container.app-container.app-container .lb {
   & .lb-state { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
   & .lb-state small { font: 500 13px/1 var(--lb-sans); color: var(--ay-text-2); }
 
-  & .lb-zero { margin-top: 48px; padding: 32px; border: 1.5px solid var(--ay-outline); border-radius: 24px; }
+  & .lb-zero { margin-top: 48px; padding: 32px; border: 1.5px solid var(--ay-outline-color); border-radius: 24px; }
   & .lb-zero__h { margin: 0 0 8px; font: 500 28px/1.15 var(--lb-display); }
   & .lb-zero__topics, & .lb-zero__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 
@@ -142,7 +142,7 @@ html body .app-container.app-container.app-container.app-container .lb {
   & .lb-care { position: relative; margin: 48px 0; padding: 24px 24px 8px; border: 1.5px solid var(--lb-esp); border-radius: 24px; background: var(--lb-pink); box-shadow: var(--lb-shadow); }
   & .lb-care .lb-h2 { margin: 0 0 8px !important; font-size: 26px !important; color: var(--lb-esp) !important; }
   & .lb-care p { color: var(--lb-esp) !important; }
-  & .lb-h2--sources { margin-top: 48px !important; padding-top: 24px; border-top: 1.5px solid var(--ay-outline); scroll-margin-top: 24px; }
+  & .lb-h2--sources { margin-top: 48px !important; padding-top: 24px; border-top: 1.5px solid var(--ay-outline-color); scroll-margin-top: 24px; }
   & .lb-sources { margin: 0 !important; padding: 0 !important; list-style: none !important; }
   & .lb-src { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--ay-hairline); margin: 0 !important; }
   & .lb-src__n { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #f6e3a1; color: var(--lb-esp); font: 500 15px/1 var(--lb-display); font-variant-numeric: tabular-nums; }
@@ -198,7 +198,7 @@ html body .app-container.app-container.app-container.app-container[data-theme='b
     & .lb-frow__teaser { font-size: 15px !important; }
     & .lb-frow .lb-credits { grid-template-columns: minmax(0, 1fr); gap: 8px; }
     & .lb-more__cover { width: 56px; }
-    & .lb-top h1.lb-top__title:not(#lb-id) { margin: 0 0 12px !important; font-size: clamp(42px, 13vw, 56px) !important; }
+    & .lb-top h1.lb-top__title:not(#lb-id) { margin: 0 0 12px !important; font-size: 26px !important; }
     & .lb-top__lede { font-size: 16px !important; }
     & .lb-search { height: 52px; margin-top: 16px; padding: 0 16px; }
     & .lb-search input { height: 48px; font-size: 16px !important; }
@@ -240,3 +240,22 @@ html body .app-container.app-container.app-container.app-container[data-theme='b
 /* /explore/resources at 390 (review, Oct 24): on phones the sideways read shelves
    widened the page to 635px. Paint containment keeps each row's overflow inside it. */
 .lb .lb-shelf__row, .lb .lb-chips { contain: paint; }
+
+/* Explore audit v3 (Oct 25): Reads uses the shared shapes. The contents box is a
+   16px outlined surface with a plain heading (no folder tab: the founder ruled out
+   "office supplies" devices), and the phone topic chips wrap instead of scrolling. */
+html body .app-container.app-container.app-container.app-container .lb .lb-toc { border-radius: 16px; margin-top: 0; padding-top: 16px; }
+html body .app-container.app-container.app-container.app-container .lb .lb-toc__h.lb-tab { position: static; transform: none; height: auto; padding: 0 0 8px; border: 0; border-radius: 0; background: none; color: var(--lb-esp) !important; font: 700 17px/1.3 var(--lb-sans) !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lb .lb-toc__h.lb-tab { color: var(--lb-butter) !important; }
+@media (max-width: 720px) {
+  html body .app-container.app-container.app-container.app-container .lb .lb-chips { flex-wrap: wrap; overflow: visible; }
+  html body .app-container.app-container.app-container.app-container .lb .lb-chips .lb-chip { border-radius: 8px; }
+}
+/* Featured reads are the shared ReadCard list row (ReadCard.jsx), so the old row grid steps aside. */
+html body .app-container.app-container.app-container.app-container .lb .lb-flist > .lb-frow { display: block; padding: 0; border: 0; grid-template-columns: none; }
+html body .app-container.app-container.app-container.app-container .lb .lb-flist > .lb-frow .ay-rcard.is-row { grid-template-columns: 160px minmax(0, 1fr); gap: 24px; }
+html body .app-container.app-container.app-container.app-container .lb .lb-flist > .lb-frow .ay-rcard.is-row .ay-rcard__thumb { width: 160px; }
+@media (max-width: 560px) {
+  html body .app-container.app-container.app-container.app-container .lb .lb-flist > .lb-frow .ay-rcard.is-row { grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
+  html body .app-container.app-container.app-container.app-container .lb .lb-flist > .lb-frow .ay-rcard.is-row .ay-rcard__thumb { width: 96px; }
+}

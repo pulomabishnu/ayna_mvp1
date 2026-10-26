@@ -61,7 +61,6 @@ import AynaHomeChatScreen from './screens/AynaHomeChatScreen.jsx';
 import { readHomeVariant } from './utils/homeVariant.js';
 import { APP_TABS, APP_TABS_CHAT_FIRST } from '../components/nav/mainTabs.js';
 import ExploreScreen from './screens/ExploreScreen.jsx';
-import LibraryScreen from './screens/LibraryScreen.jsx';
 import ProductSheet from './components/ProductSheet.jsx';
 import { pregnancyFirstFrom } from '../components/pdp/pdpParts.js';
 import { ProductSheetContext } from './productSheetContext.js';
@@ -138,6 +137,7 @@ import OfflineBanner from './components/OfflineBanner.jsx';
 import TutorialLayer from './tutorial/TutorialLayer.jsx';
 import { growTransition } from '../utils/viewTransition.js';
 import { localToday } from '../utils/localDate.js';
+import { trackQuizStarted, trackFirstMatchShown, eventSurface } from '../utils/analyticsEvents.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -171,7 +171,8 @@ const SCREENS = {
   ayna: AynaHomeScreen,
   explore: ExploreScreen,
   browse: ExploreScreen,
-  library: LibraryScreen,
+  // The reads are Explore's Reads tab (Explore audit, Oct 25): the old 'library' screen opens it.
+  library: ExploreScreen,
   ecointro: EcosystemIntroScreen,
   quiz: IntakeScreen,
   building: BuildingScreen,
@@ -485,6 +486,12 @@ export default function MobileApp() {
   const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
   const authUser = realAuthUser || (DEV_HEALTH_DEMO ? DEV_DEMO_USER : null);
+  // Time to first value (all-pages brief v3): quiz start -> first match on screen. No health details.
+  useEffect(() => {
+    if (screen === 'quiz' && intakeMode === 'new') trackQuizStarted({ surface: eventSurface(), signed_in: Boolean(authUser) });
+    else if (screen === 'reveal') trackFirstMatchShown({ surface: eventSurface() });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen]);
   const [guideState, setGuideState] = useState({ userId: null, value: null });
   const guide = useMemo(() => guideState.userId === authUser?.id && guideState.value ? guideState.value : readGuide(authUser?.id), [guideState, authUser?.id]);
   const updateGuide = (next) => {

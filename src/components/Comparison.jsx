@@ -1,64 +1,74 @@
 import React from 'react';
-import BackLink from './nav/BackLink.jsx';
+import InfoHero from './info/InfoHero.jsx';
+import { ALL_PRODUCTS } from '../data/products.js';
+import { StickerButton, OutlineButton } from './ui/ay';
 import GlossaryTerm from './GlossaryTerm';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import '../styles/compare-page.css';
 import CompareTable from './compare/CompareTable.jsx';
 import { COMPARE_MAX } from '../utils/compareStore.js';
 
-export default function Comparison({ onBack = null, compareList, onRemove, onClear, CATEGORY_LABELS, myProducts = {}, onBrowseProducts, onAddToCompare, savedProducts = {}, matchFor = null, detailsFor = null, onOpenProduct = null }) {
+/* The sample comparison for an empty Compare (info-pages audit issue 3, #58 The
+   Ordinary label/value rows): three real menstrual cups from the catalog, the
+   same CompareTable as the product page, clearly labelled as a sample. */
+const SAMPLE_IDS = ['p-saalt-cup', 'p-diva-cup', 'p-lunette-cup'];
+const sampleProducts = () => SAMPLE_IDS.map((id) => ALL_PRODUCTS.find((p) => p.id === id)).filter(Boolean);
+
+export default function Comparison({ onBack = null, compareList, onRemove, onClear, CATEGORY_LABELS, myProducts = {}, onBrowseProducts, onAddToCompare, savedProducts = {}, matchFor = null, detailsFor = null, onOpenProduct = null, onSeeMatch = null }) {
     // Her Saved first (saving often means she is still deciding), then her routine.
     const savedList = Object.values(savedProducts || {}).filter((p) => p?.id);
     const ecosystemList = [...savedList, ...Object.values(myProducts || {}).filter((p) => p?.id && !savedProducts?.[p.id])];
 
     if (compareList.length === 0) {
+        const sample = sampleProducts();
         return (
             <div className="ay-container aycmp">
-                <header className="aycmp__head">
-                    {onBack && <BackLink label="Your ecosystem" href="/you/ecosystem" onClick={onBack} />}
-                    <h1 className="ay-h1">Side by side</h1>
-                    <p className="aycmp__lede">
-                        Compare 2 to {COMPARE_MAX} products on your match, price, evidence, ingredients and safety.
+                <InfoHero
+                    title="Side by side"
+                    crumb="Compare"
+                    lede={`Compare 2 to ${COMPARE_MAX} products on your match, price, evidence, ingredients and safety.`}
+                    onBack={onBack} backLabel="Your ecosystem" backHref="/you/ecosystem"
+                />
+
+                {sample.length >= 2 && (
+                    <section className="aycmp__sample" aria-labelledby="aycmp-sample-h">
+                        <div className="aycmp__sample-head">
+                            <h2 id="aycmp-sample-h" className="aycmp__h2">Sample comparison</h2>
+                            <p>Three menstrual cups from the catalog, to show how it works.{matchFor ? '' : ' Your match shows once you answer a few questions.'}</p>
+                        </div>
+                        <CompareTable products={sample} matchFor={matchFor} detailsFor={detailsFor} onOpen={onOpenProduct} variant="web" headingId="aycmp-sample-h" onSeeMatch={matchFor ? null : onSeeMatch} />
+                    </section>
+                )}
+
+                <section className="aycmp__own" aria-labelledby="aycmp-own-h">
+                    <h2 id="aycmp-own-h" className="aycmp__h2">Add your own</h2>
+                    <p>
+                        {ecosystemList.length > 0
+                            ? `Pick up to ${COMPARE_MAX} from your ${ecosystemList.length} saved or routine ${ecosystemList.length === 1 ? 'product' : 'products'}, or add any product from Explore.`
+                            : 'Add products from Explore, or save products first and compare them here.'}
                     </p>
-                </header>
-
-                <div className="aycmp__start">
-                    <section className="ay-group is-padded aycmp__opt" aria-labelledby="aycmp-shop-h">
-                        <h2 id="aycmp-shop-h" className="ay-h3">Go to Explore</h2>
-                        <p>Search Explore and add products from the full catalog.</p>
-                        <button type="button" className="ay-btn ay-btn--primary" onClick={onBrowseProducts}>Go to Explore</button>
-                    </section>
-
-                    <section className="ay-group is-padded aycmp__opt" aria-labelledby="aycmp-eco-h">
-                        <h2 id="aycmp-eco-h" className="ay-h3">{savedList.length ? 'Compare from your Saved and routine' : 'Compare from your routine'}</h2>
-                        <p>
-                            {ecosystemList.length > 0
-                                ? `Pick up to ${COMPARE_MAX} from your ${ecosystemList.length} saved or routine ${ecosystemList.length === 1 ? 'product' : 'products'}.`
-                                : 'Save products or add them to your routine first, then compare them here.'}
-                        </p>
-                        {ecosystemList.length > 0 ? (
-                            <>
-                                <ul className="ay-group__rows aycmp__picks">
-                                    {ecosystemList.slice(0, 5).map((p) => (
-                                        <li key={p.id}>
-                                            <button type="button" className="ay-group__row ay-group__row--link" onClick={() => onAddToCompare(p)}>
-                                                <span className="ay-group__value">Add {p.name} to comparison</span>
-                                                <span className="ay-group__end" aria-hidden="true">+</span>
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                                {ecosystemList.length > 5 && (
-                                    <span className="aycmp__more">+{ecosystemList.length - 5} more</span>
-                                )}
-                            </>
-                        ) : (
-                            <button type="button" className="ay-btn ay-btn--secondary" onClick={onBrowseProducts}>
-                                Go to Discovery
-                            </button>
-                        )}
-                    </section>
-                </div>
+                    {ecosystemList.length > 0 && (
+                        <>
+                            <ul className="ay-group__rows aycmp__picks">
+                                {ecosystemList.slice(0, 5).map((p) => (
+                                    <li key={p.id}>
+                                        <button type="button" className="ay-group__row ay-group__row--link" onClick={() => onAddToCompare(p)}>
+                                            <span className="ay-group__value">Add {p.name} to comparison</span>
+                                            <span className="ay-group__end" aria-hidden="true">+</span>
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                            {ecosystemList.length > 5 && (
+                                <span className="aycmp__more">+{ecosystemList.length - 5} more</span>
+                            )}
+                        </>
+                    )}
+                    <div className="aycmp__own-cta">
+                        <StickerButton onClick={onBrowseProducts}>Go to Explore</StickerButton>
+                        {!matchFor && onSeeMatch && <OutlineButton onClick={onSeeMatch}>See your match</OutlineButton>}
+                    </div>
+                </section>
             </div>
         );
     }
@@ -92,14 +102,14 @@ export default function Comparison({ onBack = null, compareList, onRemove, onCle
 
     return (
         <div className="ay-container aycmp">
-            <header className="aycmp__head is-row">
-                <div>
-                    {onBack && <BackLink label="Your ecosystem" href="/you/ecosystem" onClick={onBack} />}
-                    <h1 className="ay-h1">Side by side</h1>
-                    <p className="aycmp__lede">{compareList.length < 2 ? 'Add one more product to see them side by side.' : 'Side by side, from what is on file. ayna never calls one product the best for everyone.'}</p>
-                </div>
+            <InfoHero
+                title="Side by side"
+                crumb="Compare"
+                lede={compareList.length < 2 ? 'Add one more product to see them side by side.' : 'Side by side, from what is on file. ayna never calls one product the best for everyone.'}
+                onBack={onBack} backLabel="Your ecosystem" backHref="/you/ecosystem"
+            >
                 <button type="button" className="ay-btn ay-btn--text" onClick={onClear}>Clear all</button>
-            </header>
+            </InfoHero>
             {canAddMore && (onBrowseProducts || onAddToCompare) && (
                 <div className="aycmp__add">
                     <span>Add product:</span>
@@ -131,7 +141,7 @@ export default function Comparison({ onBack = null, compareList, onRemove, onCle
             )}
 
             <h2 id="aycmp-table-h" className="sr-only">Comparison</h2>
-            <CompareTable products={compareList} matchFor={matchFor} detailsFor={detailsFor} onOpen={onOpenProduct} onRemove={onRemove} variant="web" headingId="aycmp-table-h" />
+            <CompareTable products={compareList} matchFor={matchFor} detailsFor={detailsFor} onOpen={onOpenProduct} onRemove={onRemove} variant="web" headingId="aycmp-table-h" onSeeMatch={onSeeMatch} />
             {/* The earlier table's fields (FDA status, doctor's opinion, badges...) stay one tap away. */}
             <details className="aycmp__more-details">
             <summary className="ay-btn ay-btn--text">More details</summary>

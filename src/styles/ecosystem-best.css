@@ -80,7 +80,7 @@ html body .app-container.app-container #ayeco .eco-rail { margin: 0 0 4px; }
 html body .app-container.app-container #ayeco .eco-rail__h { display: none; }
 html body .app-container.app-container #ayeco .eco-rail__strip {
   display: flex; align-items: center; gap: 12px; width: 100%; max-width: 640px; min-height: 56px; margin: 0; padding: 8px 14px 8px 10px;
-  border: 1.5px solid var(--ay-outline); border-radius: 16px; background: var(--ay-group); color: var(--ay-text); text-align: left; cursor: pointer;
+  border: 1.5px solid var(--ay-outline-color); border-radius: 16px; background: var(--ay-group); color: var(--ay-text); text-align: left; cursor: pointer;
   font: inherit; box-shadow: none; transition: transform .15s ease, background-color .15s;
 }
 html body .app-container.app-container #ayeco .eco-rail__strip:active { transform: scale(.985); }
@@ -96,11 +96,11 @@ html body .app-container.app-container #ayeco .eco-rail.is-open .eco-rail__list 
 
 /* cards in the rail / strip: small, a folder tab on top */
 html body .app-container.app-container #ayeco .eco-rail__item { position: relative; min-width: 0; }
-html body .app-container.app-container #ayeco .eco-rail__card { position: relative; margin: 0; padding: 16px 16px 14px; border: 1.5px solid var(--ay-outline); border-radius: 0 16px 16px 16px; background: var(--ay-page); color: var(--ay-text); }
-html body .app-container.app-container #ayeco .eco-rail__tab { position: absolute; left: -1.5px; top: -25px; height: 25px; margin: 0; padding: 5px 12px 0; box-sizing: border-box; border: 1.5px solid var(--ay-outline); border-bottom: 0; border-radius: 10px 10px 0 0; font: 600 13px/1.2 var(--ay-sans-stack); white-space: nowrap; }
+html body .app-container.app-container #ayeco .eco-rail__card { position: relative; margin: 0; padding: 16px 16px 14px; border: 1.5px solid var(--ay-outline-color); border-radius: 0 16px 16px 16px; background: var(--ay-page); color: var(--ay-text); }
+html body .app-container.app-container #ayeco .eco-rail__tab { position: absolute; left: -1.5px; top: -25px; height: 25px; margin: 0; padding: 5px 12px 0; box-sizing: border-box; border: 1.5px solid var(--ay-outline-color); border-bottom: 0; border-radius: 10px 10px 0 0; font: 600 13px/1.2 var(--ay-sans-stack); white-space: nowrap; }
 html body .app-container.app-container #ayeco .eco-rail__card.is-stages { background: #f7badd; color: #3e2723; border-color: #3e2723; }
 html body .app-container.app-container #ayeco .eco-rail__card.is-stages .eco-rail__tab { background: #3e2723; color: #ffedac; border-color: #3e2723; }
-html body .app-container.app-container #ayeco .eco-rail__card.is-news .eco-rail__tab { background: #f6e3a1; color: #3e2723; border-color: var(--ay-outline); }
+html body .app-container.app-container #ayeco .eco-rail__card.is-news .eco-rail__tab { background: #f6e3a1; color: #3e2723; border-color: var(--ay-outline-color); }
 html body .app-container.app-container #ayeco .eco-rail__title { margin: 0 0 6px !important; padding-right: 28px; font: 600 17px/1.3 var(--ay-sans-stack) !important; color: inherit !important; letter-spacing: 0 !important; }
 html body .app-container.app-container #ayeco .eco-rail__card.is-stages .eco-rail__title { padding-right: 0; }
 html body .app-container.app-container #ayeco .eco-rail__title--sm { font-size: 15.5px !important; }
@@ -115,7 +115,7 @@ html body .app-container.app-container #ayeco .eco-rail__x { position: absolute;
 html body .app-container.app-container #ayeco .eco-rail__x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 html body .app-container.app-container #ayeco .eco-rail__x:hover { background: var(--ay-group) !important; }
 /* The optional-questions card (FinishQuizCard / MorePersonalCard), made small. */
-html body .app-container.app-container #ayeco .eco-rail__slot .fq { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; gap: 10px !important; margin: 0 !important; padding: 16px 16px 14px !important; border: 1.5px solid var(--ay-outline) !important; border-radius: 16px !important; background: var(--ay-group) !important; }
+html body .app-container.app-container #ayeco .eco-rail__slot .fq { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; gap: 10px !important; margin: 0 !important; padding: 16px 16px 14px !important; border: 1.5px solid var(--ay-outline-color) !important; border-radius: 16px !important; background: var(--ay-group) !important; }
 html body .app-container.app-container #ayeco .eco-rail__slot .fq :is(h2, h3) { margin: 0 0 4px !important; padding-right: 30px; font: 600 17px/1.3 var(--ay-sans-stack) !important; letter-spacing: 0 !important; }
 html body .app-container.app-container #ayeco .eco-rail__slot .fq p { font-size: 14px !important; line-height: 1.45 !important; }
 html body .app-container.app-container #ayeco .eco-rail__slot .fq__go { min-width: 0 !important; width: auto !important; min-height: 44px !important; padding: 0 16px !important; font-size: 14.5px !important; }
@@ -147,12 +147,12 @@ html body .app-container.app-container #ayeco .ay-shelf[data-tone='ink'] { --tab
 html body .app-container.app-container #ayeco .ay-shelf[data-tone='paint-butter'] { --tab: #ffedac; --tab-ink: #3e2723; }
 html body .app-container.app-container[data-theme='brand-dark'] #ayeco .ay-shelf[data-tone='ink'] { --tab: #ffedac; --tab-ink: #3e2723; }
 html body .app-container.app-container #ayeco .ay-shelves, html body .app-container.app-container #ayeco .ay-shelves__big { gap: 36px !important; }
-html body .app-container.app-container #ayeco .ay-shelf__head { align-items: flex-end !important; gap: 10px !important; margin: 0 0 14px !important; border-bottom: 1.5px solid var(--ay-outline) !important; }
+html body .app-container.app-container #ayeco .ay-shelf__head { align-items: flex-end !important; gap: 10px !important; margin: 0 0 14px !important; border-bottom: 1.5px solid var(--ay-outline-color) !important; }
 html body .app-container.app-container #ayeco .ay-shelf__head > :not(.ay-shelf__name):not(.ay-shelf__rename):not(.ay-shelf__grip) { margin-bottom: 6px !important; }
 html body .app-container.app-container #ayeco .ay-shelf__name {
   margin: 0 0 -1.5px !important; padding: 9px 16px 8px !important; max-width: calc(100% - 120px) !important;
   background: var(--tab) !important; color: var(--tab-ink) !important;
-  border: 1.5px solid var(--ay-outline) !important; border-bottom-color: var(--tab) !important; border-radius: 16px 16px 0 0 !important;
+  border: 1.5px solid var(--ay-outline-color) !important; border-bottom-color: var(--tab) !important; border-radius: 16px 16px 0 0 !important;
   font: 700 22px/1.1 var(--ay-heading, var(--ay-serif-stack)) !important; letter-spacing: -.015em !important;
   transform-origin: 50% 100%;
 }
@@ -183,7 +183,7 @@ html body .app-container.app-container #ayeco .ay-shelf__row > li { transition: 
 html body .app-container.app-container #ayeco .ay-shelf__row > li:active { transform: scale(.98); }
 html body .app-container.app-container #ayeco .ay-shelf__addtile { transition: background-color .15s, transform .2s; }
 html body .app-container.app-container #ayeco .ay-shelf__addtile:hover { background: var(--ay-group) !important; }
-html body .app-container.app-container #ayeco .ay-shelf__addtile span { display: grid; place-items: center; width: 40px; height: 40px; border: 1.5px solid var(--ay-outline); border-radius: 50%; transition: transform .3s cubic-bezier(.3, 1.5, .5, 1); }
+html body .app-container.app-container #ayeco .ay-shelf__addtile span { display: grid; place-items: center; width: 40px; height: 40px; border: 1.5px solid var(--ay-outline-color); border-radius: 50%; transition: transform .3s cubic-bezier(.3, 1.5, .5, 1); }
 html body .app-container.app-container #ayeco .ay-shelf__addtile:hover span { transform: rotate(90deg); }
 
 /* hearts pop when saved */
@@ -191,8 +191,8 @@ html body .app-container.app-container #ayeco .ay-product-card__heart[aria-press
 @keyframes eco-pop { 0% { transform: scale(1); } 40% { transform: scale(1.3); } 100% { transform: scale(1); } }
 
 /* empty states: a paper note, slightly tilted (polaroid from the deck) */
-html body .app-container.app-container #ayeco .eco3-empty { max-width: 460px; margin: 8px 0 0; padding: 22px 22px 20px !important; border: 1.5px solid var(--ay-outline); border-radius: 10px; background: var(--ay-group); transform: rotate(-1.2deg); }
-html body .app-container.app-container .ay-saved2__empty { padding: 18px 18px 16px; border: 1.5px solid var(--ay-outline); border-radius: 10px; background: var(--ay-group); transform: rotate(1deg); max-width: 420px; }
+html body .app-container.app-container #ayeco .eco3-empty { max-width: 460px; margin: 8px 0 0; padding: 22px 22px 20px !important; border: 1.5px solid var(--ay-outline-color); border-radius: 10px; background: var(--ay-group); transform: rotate(-1.2deg); }
+html body .app-container.app-container .ay-saved2__empty { padding: 18px 18px 16px; border: 1.5px solid var(--ay-outline-color); border-radius: 10px; background: var(--ay-group); transform: rotate(1deg); max-width: 420px; }
 
 /* ---------- Reveal once (useRevealOnce) ---------- */
 html body .app-container.app-container #ayeco[data-eco-anim='1'] .ay-shelf[data-eco-in='0'] :is(.ay-shelf__row > li, .ay-shelf__name) { opacity: 0; }
@@ -221,9 +221,9 @@ html.ay-motion-paused body .app-container.app-container :is(.eco-inklist, #ayeco
 
 /* rail: keep the quiz card in one column whatever the page-wide card rules say */
 html body .app-container.app-container #ayeco .eco-rail__slot .fq > *, html body .app-container.app-container #ayeco .eco-rail__slot .fq .fq__actions { grid-column: 1 / -1 !important; grid-row: auto !important; }
-html body .app-container.app-container #ayeco .eco-rail__slot .fq__go { box-shadow: 3px 3px 0 var(--ay-outline) !important; }
+html body .app-container.app-container #ayeco .eco-rail__slot .fq__go { box-shadow: 3px 3px 0 var(--ay-outline-color) !important; }
 html body .app-container.app-container #ayeco .ay-shelf:not([style*='--shelf-tab']) .ay-shelf__name, html body .app-container.app-container #ayeco .ay-shelf .ay-shelf__name { padding-left: 16px !important; }
-html body .app-container.app-container #ayeco .ay-shelf__count { align-self: flex-end; margin-bottom: 9px !important; padding: 3px 9px !important; border: 1.5px solid var(--ay-outline) !important; border-radius: 999px !important; font-size: 13px !important; line-height: 1.2 !important; color: var(--ay-text) !important; }
+html body .app-container.app-container #ayeco .ay-shelf__count { align-self: flex-end; margin-bottom: 9px !important; padding: 3px 9px !important; border: 1.5px solid var(--ay-outline-color) !important; border-radius: 999px !important; font-size: 13px !important; line-height: 1.2 !important; color: var(--ay-text) !important; }
 @media (max-width: 767px) { html body .app-container.app-container #ayeco .ay-shelf .ay-shelf__name { padding-left: 13px !important; } }
 /* phone: the first card lines up with the page edge, the row still runs to the screen edge */
 @media (max-width: 767px) {
@@ -304,7 +304,7 @@ html body .app-container.app-container #ayeco .eco-stack__card > .eco-oval { gri
 
 /* ---------- Skeleton shelves (matches being built) ---------- */
 html body .app-container.app-container #ayeco .eco-skel { display: grid; gap: 36px; margin: 8px 0 0; }
-html body .app-container.app-container #ayeco .eco-skel__tab { display: block; width: 160px; height: 40px; border-radius: 16px 16px 0 0; background: var(--ay-group); border-bottom: 1.5px solid var(--ay-outline); }
+html body .app-container.app-container #ayeco .eco-skel__tab { display: block; width: 160px; height: 40px; border-radius: 16px 16px 0 0; background: var(--ay-group); border-bottom: 1.5px solid var(--ay-outline-color); }
 html body .app-container.app-container #ayeco .eco-skel__shelf { border-top: 0; }
 html body .app-container.app-container #ayeco .eco-skel__row { display: flex; gap: 16px; margin-top: 14px; overflow: hidden; }
 html body .app-container.app-container #ayeco .eco-skel__row span { flex: 0 0 calc((100% - 3.6 * 16px) / 4.6); aspect-ratio: 1 / 1.35; border-radius: 16px; background: var(--ay-group); animation: eco-pulse 1.4s ease-in-out infinite alternate; }

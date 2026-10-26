@@ -12,7 +12,7 @@ import { ALL_PRODUCTS, getPersonalizedProductIds, useCatalogReady } from '../dat
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { buildLibrary } from '../mobile/utils/personalReads.js';
-import { READ_SECTION, READ_CREDITS, readPhoto } from '../data/readCovers.js';
+import { READ_SECTION, READ_CREDITS } from '../data/readCovers.js';
 import { READ_SECTIONS } from '../data/readSections.js';
 
 /** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort), only tags that match the article heading. */
@@ -898,6 +898,7 @@ const DESIGNED_READS = {
 /* The reads featured at the top of the Library: Geena's and Shruti's designed reads (team, Oct 21). */
 const FEATURED_READS = ['postpartum-stretch-marks', 'genitourinary-syndrome-of-menopause'].map((id) => ({ id, ...READ_CREDITS[id] }));
 import ReadCover from './library/ReadCover.jsx';
+import ReadCard from './library/ReadCard.jsx';
 import ReadVideo from './library/ReadVideo.jsx';
 import { textOf, minutesFor } from './library/readTime.js';
 import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
@@ -915,25 +916,8 @@ const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || 
 function FeatureRow({ feature, onOpen, first = false }) {
   const art = ARTICLES.find((a) => a.id === feature.id);
   if (!art) return null;
-  const go = (id) => (e) => { if (!plainClick(e)) return; e.preventDefault(); onOpen(id); };
-  return (
-    <li className="lb-frow" id={first ? 'lib-featured' : `lib-featured-${feature.id}`}>
-      <a href={`/library/${art.id}`} className="lb-frow__media" tabIndex={-1} aria-hidden="true" onClick={go(art.id)}>
-        <img src={readPhoto(art.id) || art.image} alt="" width="794" height="798" loading={first ? undefined : 'lazy'} />
-      </a>
-      <div className="lb-frow__text">
-        <p className="lb-frow__sec">{sectionOf(art.id)?.label} <span aria-hidden="true">·</span> {minutesFor(art)} min read</p>
-        <h3 id={`lb-feature-h-${feature.id}`} className="lb-frow__title">
-          <a href={`/library/${art.id}`} onClick={go(art.id)}>{art.title}</a>
-        </h3>
-        <p className="lb-frow__teaser">{art.teaser}</p>
-        <dl className="lb-credits">
-          <div><dt>Written by</dt><dd>{feature.by}</dd></div>
-          <div><dt>Reviewed by</dt><dd>{feature.reviewedBy}</dd></div>
-        </dl>
-      </div>
-    </li>
-  );
+  // The one ReadCard, list-row layout: cover, topic and time, title, one line, who wrote and reviewed it, sources.
+  return <li className="lb-frow" id={first ? 'lib-featured' : `lib-featured-${feature.id}`}><ReadCard article={art} layout="row" href={`/library/${art.id}`} onOpen={(a) => onOpen(a.id)} /></li>;
 }
 
 function LibraryFeatured({ onOpen, pick = null, onAsk = null }) {
@@ -1045,18 +1029,6 @@ function withHeadings(body) {
     out.push(el);
   });
   return <>{out}</>;
-}
-
-function ReadCard({ art, onOpen, progress = 0 }) {
-  // A real link: open in a new tab, copy the address, see where it goes.
-  return (
-    <a href={`/library/${art.id}`} className="lb-card" onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); onOpen(art.id); }}>
-      <ReadCover article={art} minutes={minutesFor(art)} />
-      <span className="lb-card__title">{art.title}</span>
-      <span className="lb-card__src"><span className="sr-only">Sources: </span>{art.source}</span>
-      <ReadState value={progress} />
-    </a>
-  );
 }
 
 const titleOf = (id) => ARTICLES.find((a) => a.id === id)?.title || id;
@@ -1221,7 +1193,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   }, [selected, record]);
 
   const open = (id) => setSelectedId(id);
-  const cards = (items) => items.map((a) => <li key={a.id}><ReadCard art={a} onOpen={open} progress={progressOf(a)} /></li>);
+  const cards = (items) => items.map((a) => <li key={a.id}><ReadCard article={a} layout="rail" href={`/library/${a.id}`} onOpen={(art) => open(art.id)} progress={progressOf(a)} /></li>);
 
   if (selected && DESIGNED_READS[selected.id]) {
     const Designed = DESIGNED_READS[selected.id].Component;
