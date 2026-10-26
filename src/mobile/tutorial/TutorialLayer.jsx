@@ -122,6 +122,8 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
         // App (Today audit, issue 8): the tour offer waits until she has seen
         // her first Daily Rundown, so it never covers the Rundown card.
         if (surface === 'app' && document.querySelector('.ay-rd-hero__card:not(.is-setup)') && !seenFirstRundown(readRundownMemory())) return;
+        // One ask at a time: the Daily Rundown notification question goes first (Loop B).
+        if (document.querySelector('.ay-today__notify')) return;
         markWelcomeOffered(today);
         openerRef.current = document.activeElement;
         setRun({ kind: 'welcome' });
@@ -237,7 +239,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
         role="dialog" aria-modal="true" aria-labelledby={`ay-tour-${tip.id}-h`} aria-describedby={tip.offNote ? `ay-tour-${tip.id}-p` : undefined}
         data-tip={tip.id}
       >
-        {total > 1 && <p className="ay-tour__dots" aria-label={`Tip ${run.index + 1} of ${total}`}>{run.tips.map((t, i) => <i key={t.id} className={i === run.index ? 'is-on' : ''} aria-hidden="true" />)}</p>}
+        {total > 1 && <p className="ay-tour__count">{`Tip ${run.index + 1} of ${total}`}</p>}
         <p id={`ay-tour-${tip.id}-h`} className="ay-tour__text">{tip.text}</p>
         {tip.offNote && <p id={`ay-tour-${tip.id}-p`} className="ay-tour__off-note">{tip.offNote}</p>}
         <div className="ay-tour__actions">

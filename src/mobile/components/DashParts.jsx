@@ -96,7 +96,7 @@ export function AreaChart({ chart, band = null, today, title = null, small = fal
         {bar
           ? points.map((p, i) => {
             const top = y(p.value);
-            const bw = Math.max(1.5, step * 0.62);
+            const bw = Math.max(1.5, Math.min(step * 0.62, points.length <= 8 ? 36 : Infinity));
             return <rect key={p.day} className={`ay-db-bar${isRecent(p) ? ' is-recent' : ''}${i === active ? ' is-on' : ''}`} x={x(i) - bw / 2} y={top} width={bw} height={Math.max(1.5, P.t + ih - top)} rx={Math.min(2, bw / 2)} onClick={() => setActive(i)} />;
           })
           : <>
@@ -104,6 +104,12 @@ export function AreaChart({ chart, band = null, today, title = null, small = fal
             {points.length > 1 && <polyline className="ay-db-line is-recent" points={points.map((p, i) => (isRecent(p) || (points[i + 1] && isRecent(points[i + 1])) ? `${x(i)},${y(p.value)}` : null)).filter(Boolean).join(' ')} vectorEffect="non-scaling-stroke" />}
           </>}
       </svg>
+      {/* A few bars (cycle lengths): each one captioned with its value and start date (every number captioned). */}
+      {bar && points.length <= 8 && (
+        <ol className="ay-db-chart-ticks" aria-hidden="true">
+          {points.map((p) => <li key={p.day}><b>{chart.metric === 'cycle_length' ? `${p.value} days` : short(chart.metric, p.value)}</b><small>{fmtDay(p.day)}</small></li>)}
+        </ol>
+      )}
       <p className="ay-db-readout" aria-live="polite">{shown ? <>{fmtDay(shown.day)}: <b>{short(chart.metric, shown.value)}</b></> : null}</p>
       <p className="ay-db-summary">{text}</p>
       <TextButton aria-expanded={table} aria-controls={`${id}-table`} onClick={() => setTable((v) => !v)}>{table ? 'Hide table' : 'Show as table'}</TextButton>
@@ -147,7 +153,7 @@ export function PhaseLine({ cycle, hormonalBC = false, compact = false }) {
     seg = [
       { id: 'period', label: 'Period', n: p },
       { id: 'follicular', label: 'Follicular', n: phase.windowStart - 1 - p },
-      { id: 'ovulation', label: 'Ovulation', n: phase.windowEnd - phase.windowStart + 1 },
+      { id: 'ovulation', label: 'Possible ovulation', n: phase.windowEnd - phase.windowStart + 1 },
       { id: 'luteal', label: 'Luteal', n: L - phase.windowEnd },
     ].filter((s) => s.n > 0);
   } else {
@@ -248,8 +254,9 @@ export function RoutineEffect({ effect, today }) {
       </div>
       <p className="ay-db-muted">Added {fmtDay(effect.added)} · sleep a night</p>
       <div className="ay-db-bars" role="img" aria-label={`Sleep a night: ${fmt(effect.before)} in the 2 weeks before, ${fmt(effect.after)} since.`}>
-        <span className="is-before"><i style={{ height: `${(effect.before / top) * 100}%` }} /><small>Before<b>{fmt(effect.before)}</b></small></span>
-        <span className="is-since"><i style={{ height: `${(effect.after / top) * 100}%` }} /><small>Since<b>{fmt(effect.after)}</b></small></span>
+        {/* Label · bar · value rows on one scale (inspo #17 nutrient bars, #6 values beside the bar). */}
+        <span className="is-before"><small>Before</small><span className="ay-db-bars-track"><i style={{ width: `${(effect.before / top) * 100}%` }} /></span><b>{fmt(effect.before)}</b></span>
+        <span className="is-since"><small>Since</small><span className="ay-db-bars-track"><i style={{ width: `${(effect.after / top) * 100}%` }} /></span><b>{fmt(effect.after)}</b></span>
       </div>
       <p className="ay-db-caveat">{effect.caveat} {effect.sources?.[0] && <SourceLink source={effect.sources[0]} />}</p>
     </article>

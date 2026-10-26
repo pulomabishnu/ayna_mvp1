@@ -164,16 +164,19 @@ export function RangeTrack({ range }) {
   const label = `${what}: ${lastLabel}. Your usual range: ${lowLabel} to ${highLabel}. ${inside ? 'Inside' : 'Outside'} your usual range.`;
   return (
     <figure className="ay-rdd-viz ay-rdd-range" role="img" aria-label={label}>
-      <svg viewBox="0 0 320 78" aria-hidden="true" focusable="false">
+      <svg viewBox="0 0 320 56" aria-hidden="true" focusable="false">
         <line className="ay-rdd-axisline" x1="12" x2="308" y1="40" y2="40" />
         <rect className="ay-rdd-band ay-rdd-anim" x={x(low)} y="30" width={Math.max(4, x(high) - x(low))} height="20" rx="10" style={stagger(0)} />
-        <text className="ay-rdd-axis" x={x(low)} y="70" textAnchor={x(high) - x(low) < 70 ? 'end' : 'middle'}>{lowLabel}</text>
-        <text className="ay-rdd-axis" x={x(high)} y="70" textAnchor={x(high) - x(low) < 70 ? 'start' : 'middle'}>{highLabel}</text>
         <g className="ay-rdd-dot ay-rdd-anim ay-rdd-pop" style={stagger(0, 450)}>
           <circle cx={x(last)} cy="40" r="9" />
           <text className="ay-rdd-tag" x={Math.min(296, Math.max(24, x(last)))} y="18" textAnchor="middle">{lastLabel}</text>
         </g>
       </svg>
+      {/* Every number captioned: which mark is her usual, which is the latest reading. */}
+      <figcaption className="ay-rdd-key is-row" aria-hidden="true">
+        <span><i className="is-band" />Your usual {lowLabel} to {highLabel}</span>
+        <span><i className="is-dot" />Latest {lastLabel}</span>
+      </figcaption>
     </figure>
   );
 }

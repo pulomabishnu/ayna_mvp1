@@ -183,7 +183,7 @@ export function AskStart({ name = '', intro = '', how = null, top = null, groups
   const [howOpen, setHowOpen] = useState(false);
   return (
     <div className="ay-askp-start">
-      <h2 className="ay-askp-hello">{name ? `Hi ${name}` : 'Hi'}</h2>
+      <h2 className="ay-askp-hello">{name ? `Hi ${name}` : 'Hi there'}</h2>
       <p className="ay-askp-intro">
         {intro}
         {how && <> <button type="button" className="ay-askp-howlink" aria-expanded={howOpen} aria-controls="ay-askp-how" onClick={() => setHowOpen((v) => !v)}>How Ask works</button></>}

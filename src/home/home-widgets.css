@@ -138,8 +138,8 @@
 .ay-chs-row__name { grid-area: name; font: 600 15px/1.3 var(--x-sans); min-width: 0; }
 .ay-chs-row .ay-chs-size { grid-area: size; }
 .ay-chs-row .ay-chs-config { grid-area: config; }
-.ay-chs-row__moves { grid-area: moves; display: flex; flex-wrap: wrap; gap: 4px 14px; }
-.ay-chs-row__moves button, .ay-chs-reset { min-height: 36px; padding: 0; border: 0; background: none; color: var(--x-ink); font: 600 13px/1 var(--x-sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ay-chs-row__moves { grid-area: moves; display: flex; flex-wrap: wrap; gap: 0 18px; }
+.ay-chs-row__moves button, .ay-chs-reset { min-height: 44px; padding: 0; border: 0; background: none; color: var(--x-ink); font: 600 13px/1 var(--x-sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .ay-chs-row__moves button:disabled, .ay-chs-reset:disabled { opacity: .45; cursor: default; }
 .ay-chs-size { display: inline-flex; padding: 2px; border: 1.5px solid var(--x-ink); border-radius: 999px; }
 .ay-chs-size button { min-height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: var(--x-ink); font: 600 13px/1 var(--x-sans); cursor: pointer; }

@@ -16,6 +16,7 @@ import {
   metricText, sinceYesterday, snippet, weekVsWeek,
 } from './widgetData.js';
 import { findCyclePatterns } from '../../health/cyclePatterns.js';
+import { glanceRows } from '../../health/dashView.js';
 import { fmtMinutes } from '../../health/insights.js';
 import { getBuyUrl } from '../../mobile/data/buyUrl.js';
 import { getProductById } from '../../data/catalog.js';
@@ -140,14 +141,18 @@ function SinceYesterday({ size, ctx }) {
 function Health({ size, ctx }) {
   const summary = ctx.healthSummary;
   const connected = ctx.healthConnectedCount || 0;
+  // Words first, then the number and her usual: the dashboard's own glance row (Loop B).
+  const g = glanceRows(ctx.healthRows, ctx.today).find((x) => x.points.length > 1 && x.words !== 'Still learning your usual') || null;
   return (
     <section className={`ay-homehealth ay-w ay-w--${size} ay-w--health`} aria-labelledby={`ay-homehealth-h-${ctx.surface}`}>
       <div className="ay-homehealth__text">
-        <h2 id={`ay-homehealth-h-${ctx.surface}`}>{summary ? summary.title : 'Your log'}</h2>
-        <p className={summary?.headline ? 'has-data' : undefined}>{summary?.headline || (connected ? 'Your health data is still coming in.' : 'Log how you feel today; it shapes tomorrow.')}</p>
+        <h2 id={`ay-homehealth-h-${ctx.surface}`}>{g ? g.label : summary ? summary.title : 'Your log'}</h2>
+        {g
+          ? <p className="has-data"><b className="ay-homehealth__words">{g.words}</b><span className="ay-homehealth__val">{g.value}</span></p>
+          : <p className={summary?.headline ? 'has-data' : undefined}>{summary?.headline || (connected ? 'Your health data is still coming in.' : 'Log how you feel today; it shapes tomorrow.')}</p>}
       </div>
       <div className="ay-homehealth__actions">
-        {summary?.headline && ctx.on.ask && <button type="button" className="ay-today__text" onClick={() => ctx.on.ask({ question: 'What stands out in my health data this week?' })}>Ask why</button>}
+        {(g || summary?.headline) && ctx.on.ask && <button type="button" className="ay-today__text" onClick={() => ctx.on.ask({ question: 'What stands out in my health data this week?' })}>Ask why</button>}
         {ctx.on.openLog && <button type="button" className="ay-today__text" onClick={ctx.on.openLog}>Log today</button>}
         {!connected && ctx.on.connect && size === 'large' && <button type="button" className="ay-today__text" onClick={ctx.on.connect}>Connect</button>}
       </div>

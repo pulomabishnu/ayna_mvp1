@@ -1,13 +1,13 @@
 /* Ask ayna, one component (AskPanel.jsx) on the app sheet, the website panel and /ask.
    Ask audit (Oct 25) sections 6, 7, 10, 11 + PDP build brief type/shape tables:
-   butter + espresso, pink the one accent (prompt arrows, the send sticker), white surface,
+   butter + espresso, pink the one accent (prompt arrows, the send sticker), butter-deep surface (#F6E3A1),
    type: hello 22 display · title 20 display · ui 15/600 · body 16/500 · meta 14/500 · caption 13/500.
    Radii 8 / 16 / 999 / 50%, the 30/30/30/8 corner on Ask's bubbles only. One shadow: the 3px pink sticker on Send.
    Every rule is prefixed with an id-weight :is() so the older sheet and app cascades (12-class chains with
    !important) cannot restyle the new parts. */
 
 .ay-askp:is(#ay-askp, .ay-askp) {
-  --askp-bg: #ffffff;
+  --askp-bg: #f6e3a1; /* founder Oct 26: no white surfaces; butter-deep with espresso rules (white only behind product photos) */
   --askp-page: #ffedac;
   --askp-ink: #3e2723;
   --askp-muted: rgba(62, 39, 35, .74);
@@ -66,7 +66,7 @@
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill.is-quiet svg { background: transparent; stroke: var(--askp-ink); }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-group.is-safety:first-child h3 { color: var(--askp-ink) !important; }
 
-/* Messages: hers right (espresso), ayna's left (white, outlined); 30/30/30/8 is Ask's corner */
+/* Messages: hers right (espresso), ayna's left (butter-deep, outlined); 30/30/30/8 is Ask's corner */
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-user { align-items: flex-end; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-bubble { max-width: 100%; padding: 16px !important; border-radius: 30px 30px 30px 8px !important; border: 1.5px solid var(--askp-ink) !important; background: var(--askp-bg) !important; color: var(--askp-ink) !important; box-shadow: none !important; font: 500 16px/1.55 var(--ay-font-ui) !important; white-space: normal; }
@@ -76,6 +76,8 @@
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text :is(p, ul, ol) { margin: 0 !important; font: inherit !important; color: inherit !important; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text :is(ul, ol) { padding-left: 20px !important; display: grid; gap: 4px; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text > :first-child { font-weight: 600 !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text ul.md-marked { padding-left: 0 !important; list-style: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text ul.md-marked > li { padding-left: 1.25em; text-indent: -1.25em; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-system p { margin: 0 !important; font: 500 14px/1.45 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-failed .ay-askp-bubble { border-style: dashed !important; }
 
@@ -103,7 +105,7 @@
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plates { display: grid; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate { width: 100%; display: flex !important; gap: 12px; align-items: center; margin: 0 !important; padding: 8px !important; border: 1px solid var(--askp-line) !important; border-radius: 16px !important; background: transparent !important; color: var(--askp-ink) !important; box-shadow: none !important; text-align: left !important; font: inherit !important; cursor: pointer; }
 .ay-askp:is(#ay-askp, .ay-askp) div.ay-askp-plate { cursor: default; }
-.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__img { flex: none; width: 64px; height: 64px; display: grid; place-items: center; overflow: hidden; border-radius: 16px; background: var(--askp-soft); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__img { flex: none; width: 64px; height: 64px; display: grid; place-items: center; overflow: hidden; border-radius: 16px; background: #fff; } /* white only behind the product photo */
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__img :is(img, div) { width: 100% !important; height: 100% !important; object-fit: contain !important; transform: scale(.82); }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__text { min-width: 0; display: grid; gap: 4px; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__name { font: 600 15px/1.3 var(--ay-font-ui) !important; }
@@ -150,7 +152,7 @@
 /* Composer: mic · input · Send (sticker) */
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-composer { flex: none; display: grid; gap: 8px; margin: 0 !important; padding: 12px 16px max(12px, env(safe-area-inset-bottom)) !important; border: 0 !important; border-top: 1px solid var(--askp-line) !important; background: var(--askp-bg) !important; box-shadow: none !important; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-composer__row { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-input { flex: 1 1 0; width: 0 !important; min-width: 0 !important; height: 48px; margin: 0 !important; padding: 0 16px !important; border: 1.5px solid var(--askp-ink) !important; border-radius: 8px !important; background: var(--askp-bg) !important; color: var(--askp-ink) !important; box-shadow: none !important; font: 500 16px/1.2 var(--ay-font-ui) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-input { flex: 1 1 0; width: 0 !important; min-width: 0 !important; height: 48px; margin: 0 !important; padding: 0 20px !important; border: 1.5px solid var(--askp-ink) !important; border-radius: 999px !important; background: var(--askp-bg) !important; color: var(--askp-ink) !important; box-shadow: none !important; font: 500 16px/1.2 var(--ay-font-ui) !important; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-input::placeholder { color: var(--askp-muted) !important; opacity: 1; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-mic { flex: none; width: 48px; height: 48px; min-height: 48px; display: grid !important; place-items: center; margin: 0 !important; padding: 0 !important; border: 1.5px solid var(--askp-ink) !important; border-radius: 50% !important; background: var(--askp-bg) !important; color: var(--askp-ink) !important; box-shadow: none !important; cursor: pointer; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-mic[aria-pressed='true'] { background: var(--askp-pink) !important; color: #3e2723 !important; }
@@ -162,13 +164,15 @@
 
 /* App: the sheet with two heights (PDP build brief: 50% and 100%) */
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer[data-detent='half'] .ayna-ask-drawer-content { margin-top: 50dvh !important; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { border-radius: 16px 16px 0 0 !important; background: #fff !important; transition: margin-top var(--ay-dur-sheet, 240ms) ease, transform var(--t-sheet, 240ms) var(--ease-out, ease-out); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { border-radius: 16px 16px 0 0 !important; background: #f6e3a1 !important; transition: margin-top var(--ay-dur-sheet, 240ms) ease, transform var(--t-sheet, 240ms) var(--ease-out, ease-out); }
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-tab .ayna-ask-drawer-content { border-radius: 0 !important; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-drawer .ayna-ask-drawer-content { background: #3e2723 !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-drawer .ayna-ask-drawer-content,
+:is([data-theme='dark'], [data-theme='brand-dark']) .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content,
+.ayna-mobile:is(#ay, .ayna-mobile):is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-drawer .ayna-ask-drawer-content { background: #3e2723 !important; } /* outranks the 1-id light rule (a butter strip showed under the composer in dark) */
 @media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { transition: none !important; } }
 
 /* Website: a 400px panel on the right (PDP build brief), a sheet on phones, and the full page at /ask */
-html body .app-container.app-container .ayna-ask-panel.ay-askp-shell { position: fixed !important; top: 0 !important; right: 0 !important; bottom: 0 !important; left: auto !important; width: 400px !important; max-width: 100vw !important; height: auto !important; max-height: none !important; z-index: 2100 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-left: 1.5px solid #3e2723 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; overflow: hidden !important; animation: ay-askp-in var(--ay-dur-sheet, 240ms) ease-out both; }
+html body .app-container.app-container .ayna-ask-panel.ay-askp-shell { position: fixed !important; top: 0 !important; right: 0 !important; bottom: 0 !important; left: auto !important; width: 400px !important; max-width: 100vw !important; height: auto !important; max-height: none !important; z-index: 2100 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-left: 1.5px solid #3e2723 !important; border-radius: 0 !important; background: #f6e3a1 !important; box-shadow: none !important; overflow: hidden !important; animation: ay-askp-in var(--ay-dur-sheet, 240ms) ease-out both; }
 html body .app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-panel.ay-askp-shell { background: #3e2723 !important; border-left-color: #ffedac !important; }
 @keyframes ay-askp-in { from { transform: translateX(24px); opacity: .6; } to { transform: none; opacity: 1; } }
 @media (max-width: 899px) {
@@ -179,14 +183,23 @@ html body .app-container.app-container .wx-askpage .ayna-ask-panel.ay-askp-shell
 html body .app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .wx-askpage .ayna-ask-panel.ay-askp-shell.is-page { border-color: #ffedac !important; }
 @media (max-width: 760px) { html body .app-container.app-container .wx-askpage .ayna-ask-panel.ay-askp-shell.is-page { height: calc(100dvh - 160px) !important; min-height: 460px; } }
 
-/* Today's "Ask ayna" sheet (HomeAskSheet): the same single prompt pills, each with its one-line fact; no tinted circles. */
+/* Today's "Ask ayna" sheet (HomeAskSheet), drawn with AskPanel's own parts (Ask audit issue 4: one Ask on every surface):
+   butter-deep surface with a 1.5px top edge (no scallop inside a sheet), title + one sparkle, outline pills with the pink arrow
+   and the fact each prompt comes from, the same composer. Three ids outrank the older ds-app sheet chain. */
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet { display: flex; flex-direction: column; gap: 0; padding: 24px 0 0 !important; border: 0; border-top: 1.5px solid #3e2723; border-radius: 16px 16px 0 0; background: #f6e3a1; overflow: hidden; }
+:is([data-theme='dark'], [data-theme='brand-dark']).ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet, .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is([data-theme='dark'], [data-theme='brand-dark']) .ay-asksheet { background: #3e2723; border-top-color: #ffedac; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet::before, .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet::after { content: none; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp { flex: 1 1 auto; height: auto; min-height: 0; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-head { min-height: 48px; padding-top: 0 !important; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-title::before { content: none; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-scroll { padding: 16px !important; }
 .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__prompts { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; border-radius: 0; background: none; list-style: none; }
 .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__prompts li + li { border-top: 0; }
-.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__prompts button { position: relative; display: grid; gap: 2px; width: 100%; min-height: 56px; padding: 8px 52px 8px 20px; border: 1.5px solid var(--ay-ink); border-radius: 999px; background: transparent; color: var(--ay-ink); text-align: left; }
-.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__prompts button::before { content: none; }
-.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__prompts button::after { content: ''; position: absolute; right: 10px; top: 50%; width: 32px; height: 32px; margin-top: -16px; border-radius: 50%; background: #f7badd url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e2723' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M9 7h8v8'/%3E%3C/svg%3E") center / 16px no-repeat; }
-.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__reason { font: 500 13px/1.35 var(--ay-font-ui); color: var(--ay-ink-muted); }
-.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__q { font: 600 15px/1.3 var(--ay-font-ui); }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__prompts button::before, .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__prompts button::after { content: none; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill.has-reason { min-height: 60px; border-radius: 30px !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill.has-reason > span { display: grid; gap: 2px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill__reason { font: 500 13px/1.35 var(--ay-font-ui); color: var(--askp-muted); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill__q { font: 600 15px/1.3 var(--ay-font-ui); }
 
 /* Her numbers that went with a dashboard question (AskStatCard): calm register, 13px floor. */
 .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats { align-self: flex-start; max-width: 100%; margin: 0 !important; padding: 12px 16px !important; border: 0 !important; border-left: 3px solid var(--askp-ink) !important; border-radius: 0 8px 8px 0 !important; background: var(--askp-soft) !important; color: var(--askp-ink) !important; }
@@ -194,3 +207,8 @@ html body .app-container.app-container:is([data-theme='dark'], [data-theme='bran
 .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats b { font: 700 20px/1.05 var(--ay-font-display) !important; color: var(--askp-ink) !important; }
 .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats small { font: 500 13px/1.3 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-goals { margin: 0 !important; font: 500 14px/1.45 var(--ay-font-ui) !important; }
+/* Loop D r2: the Today sheet's mic and input match AskPanel (the older ds-app sheet painted them pink and butter). */
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-mic:not([aria-pressed='true']) { background: var(--askp-bg) !important; color: var(--askp-ink) !important; border-color: var(--askp-ink) !important; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-input { background: var(--askp-bg) !important; }
+/* Loop D r2: the match pill in answer plates is the inverse of the panel in both themes (in dark it vanished: espresso on espresso). */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__match .ay-match-pill:not(.is-hold) { background: var(--askp-ink) !important; color: var(--askp-bg) !important; }

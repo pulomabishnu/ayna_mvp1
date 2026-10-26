@@ -75,7 +75,7 @@ describe('tips overlay', () => {
     expect(dialog().textContent).toContain('Ask about your health');
     expect(dialog().textContent).toContain('Turn tips off any time in Settings.');
     expect(dialog().getAttribute('aria-modal')).toBe('true');
-    expect(document.querySelectorAll('.ay-tour__dots i')).toHaveLength(2);
+    expect(document.querySelector('.ay-tour__count')?.textContent).toBe('Tip 1 of 2');
     click('Next');
     expect(dialog().textContent).toContain('Daily Rundown');
     expect(dialog().textContent).not.toContain('Turn tips off any time');
@@ -118,7 +118,7 @@ describe('tips overlay', () => {
     mountApp({ html: '<div data-tour="home"><button data-tour="home-ask" data-offscreen="1">Ask</button><nav data-tour="home-links">Links</nav></div>' });
     wait(1000);
     expect(dialog().textContent).toContain('My dashboard');
-    expect(document.querySelectorAll('.ay-tour__dots i')).toHaveLength(0);
+    expect(document.querySelector('.ay-tour__count')).toBeNull();
   });
 
   it('Escape closes and counts the screen as seen; Turn off tips turns them off', () => {

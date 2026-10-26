@@ -10,8 +10,11 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd {
   --rdd-block: #ffedac; --rdd-line: #3e2723; --rdd-ease: cubic-bezier(.2, .8, .2, 1); --rdd-ms: 700ms;
 }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd:not(.is-sky):not(.is-pink):not(.is-ink) { --rdd-block: #769ebe; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-ink { --rdd-block: #769ebe; --rdd-line: #ffedac; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd:not(.is-sky):not(.is-pink):not(.is-ink) { --rdd-block: #f6e3a1; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-ink { --rdd-block: #ffedac; --rdd-line: #ffedac; }
+/* Loop B (Oct 26): blue is for chart lines only, never a block. The calm butter-deep card gets a butter block; in dark it is pink-tinted espresso, so its block is butter (founder 13:38: no white surfaces). */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd.is-sky { --rdd-block: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-rd.is-sky { --rdd-block: #ffedac !important; --rdd-line: #ffedac !important; }
 
 /* Moderate titles on data cards (design system 1a: 28 phone, 34 stage). */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rd-card.is-data .ay-rd-title { font-size: 28px; line-height: 1.1; }
@@ -42,7 +45,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-sleep { justify-items: center; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-ring { max-width: 156px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-track { fill: none; stroke: currentColor; stroke-opacity: .2; stroke-width: 12; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-arc { fill: none; stroke: #ffedac; stroke-width: 12; stroke-linecap: round; stroke-dasharray: 100; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-arc { fill: none; stroke: #769ebe; stroke-width: 12; stroke-linecap: round; stroke-dasharray: 100; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-arc.is-over { stroke: #f7badd; stroke-width: 5; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-sleep .ay-rdd-seal { fill: #f7badd; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-sleep .ay-rdd-seal ~ text { fill: #3e2723; }
@@ -84,11 +87,15 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key i.is-period { background: #f7badd; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key i.is-window { background: #769ebe; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key i.is-today { background: #3e2723; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key.is-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; font: 600 13px/1.3 var(--f-ui, 'Figtree', sans-serif); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key.is-row span { display: inline-flex; align-items: center; gap: 6px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key i.is-band { width: 18px; height: 10px; border-radius: 999px; border: 2px solid #769ebe; background: rgba(118, 158, 190, .22); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-key i.is-dot { background: #f7badd; border-width: 2px; }
 
 /* Heart (inspo 0936322f progress rows): her usual range as a band, last night a dot. */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-range svg { max-width: 460px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-axisline { stroke: #3e2723; stroke-width: 1.5; stroke-opacity: .35; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-band { fill: #769ebe; stroke: #3e2723; stroke-width: 1.5; transform-box: fill-box; transform-origin: center; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-band { fill: rgba(118, 158, 190, .22); stroke: #769ebe; stroke-width: 2; transform-box: fill-box; transform-origin: center; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dot circle { fill: #f7badd; stroke: #3e2723; stroke-width: 2; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-dot { transform-box: fill-box; transform-origin: center; }
 
@@ -97,7 +104,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li { min-width: 0; padding: 10px !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li { display: grid; gap: 4px; padding: 12px; border: 1.5px solid #3e2723; border-radius: 16px; background: #ffedac; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li:nth-child(2) { background: #f7badd; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li:nth-child(3) { background: #769ebe; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas li:nth-child(3) { background: #f6e3a1; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-delta-label { font: 600 13px/1.2 var(--f-ui, 'Figtree', sans-serif); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-deltas b { font: 700 18px/1.1 var(--f-display, var(--ay-heading, 'ayna Display', sans-serif)); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-rdd-delta { display: inline-flex; align-items: center; gap: 4px; font: 700 13px/1.2 var(--f-ui, 'Figtree', sans-serif); }

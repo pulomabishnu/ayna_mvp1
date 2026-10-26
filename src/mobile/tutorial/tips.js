@@ -163,7 +163,7 @@ export const screenById = (id, surface = 'app') => screensFor(surface).find((s) 
 export const AVOID = [
   '.ay-today__item.is-safety', '.ay-today__item.is-care', '.ay-pdp-safetyflag', '.ay-psheet__hold',
   '[data-tour-avoid]', '[role="alert"]',
-  '.ay-asksheet__form', '.ay-ask-input',
+  '.ay-asksheet__form', '.ay-asksheet .ay-askp-composer', '.ay-ask-input',
 ];
 /** The website adds its own: the product page's safety hold and cautions, and the Ask composer. */
 export const WEB_AVOID = [
