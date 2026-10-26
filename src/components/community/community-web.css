@@ -605,3 +605,137 @@ html body .app-container.app-container.app-container.app-container.app-container
   html body .app-container.app-container.app-container.app-container.app-container .cm-head.ay-pagehead h1.ay-h1:not(#cm-id) { font-size: var(--ay-type-h1) !important; }
 }
 html body .app-container.app-container.app-container.app-container.app-container:is([data-theme='brand-dark'], [data-theme='dark']) .cm-folder[aria-selected='true'] { border-color: #f7badd !important; color: #3e2723 !important; }
+
+/* =====================================================================
+   Oct 26: Community audit (Oct 25) + all-pages brief.
+   Butter title row with one sticker "Post" button (issue 2); flat posts
+   with 1px rules and outlined kind labels with icons (issues 2, 4);
+   13px floor for times, counts and labels (issue 3); embedded products
+   outlined, with her match or "See your match" (issue 1); the pull quote
+   only when the ayna team picked it (issue 5); a segmented feed bar plus
+   one Topics sheet on narrow screens (issue 6). No blue surfaces, and no
+   card shadows: the only shadow is the pink sticker on the Post button.
+   ===================================================================== */
+.app-container.app-container, .app-container.app-container[data-theme='brand-dark'] { --cm-shadow: none; --cm-shadow-sm: none; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container {
+  /* title row: butter, h1 30px, search + Post on the same line */
+  .cm-head.cm-titlerow { align-items: center; gap: var(--ay-s16) var(--ay-s24); margin: 0 0 var(--ay-s24); padding: 0 0 var(--ay-s24); border-bottom: var(--ay-rule); background: none; }
+  .cm-head.cm-titlerow h1.cm-title { margin: 0 !important; font: 700 30px/1.1 var(--ay-font-display) !important; letter-spacing: -.01em !important; color: var(--ay-ink) !important; max-width: none; }
+  .cm-head.cm-titlerow .ct-lede { margin: 6px 0 0; max-width: 52ch; font: 400 16px/1.45 var(--ay-font-ui) !important; color: var(--ay-ink-muted) !important; }
+  .cm-head.cm-titlerow .cm-head__actions { flex: 0 1 560px; }
+  .cm-head.cm-titlerow .cm-search { border: 1.5px solid var(--ay-ink) !important; background: transparent !important; box-shadow: none !important; }
+  .cm-search > .cm-kbd { font-size: 13px; border-radius: var(--ay-r-sm); }
+  .cm-post-btn { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 20px; border-radius: var(--ay-r-pill) !important; box-shadow: var(--ay-sticker) !important; font: 600 16px/1 var(--ay-font-ui) !important; }
+  .cm-post-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ay-pink) !important; }
+  .cm-iconbtn { background: transparent; }
+
+  /* posts: flat, a 1px rule between them */
+  .cm-note { gap: var(--ay-s12); padding: var(--ay-s20) 0 var(--ay-s8); border: 0 !important; border-bottom: var(--ay-rule) !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
+  .cm-main > .cm-note + .cm-note { margin-top: calc(-1 * var(--ay-s12)); }
+  .cm-note.is-full { padding-top: 0; }
+  .cm-actions { border-top: 0; margin-top: -4px; }
+  .cm-post-meta, .cm-post-meta time, .cm-team-tag { font-size: 13px; }
+
+  /* kind label: outlined, with an icon; the same colours for every kind */
+  .cm-kind { justify-self: start; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-pill); background: transparent; color: var(--ay-ink); font: 600 13px/1 var(--ay-font-ui); white-space: nowrap; box-sizing: border-box; }
+  .cm-kind .cm-type-icon { flex: none; }
+  .cm-note > .cm-kind { margin: 0 0 -4px; }
+
+  /* pinned announcement (founders only): an outlined row, no fill, no shadow */
+  .cm-pinned-ann { gap: 8px; padding: var(--ay-s16) !important; border: 1.5px solid var(--ay-ink) !important; border-radius: var(--ay-r-md) !important; background: transparent !important; box-shadow: none !important; color: var(--ay-ink) !important; }
+  .cm-pinned-ann:hover { transform: none; background: var(--ay-hover) !important; }
+  .cm-pinned-ann strong { font: 600 17px/1.35 var(--ay-font-ui); }
+  .cm-pinned-ann__go { font-size: 14px; }
+
+  /* product in a post: outlined (1.5px), no shadow; her match or "See your match" */
+  .cm-mention-wrap { display: grid; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-md); }
+  .cm-seematch { position: relative; justify-self: start; display: inline-flex; align-items: center; min-height: 32px; margin: -4px 12px 12px 138px; padding: 0 12px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-pill); background: transparent; color: var(--ay-ink); font: 600 13px/1 var(--ay-font-ui); cursor: pointer; }
+  .cm-seematch::after { content: ''; position: absolute; inset: -6px -2px; }
+  .cm-seematch:hover { background: var(--ay-hover); }
+  .cm-modnote { margin: 0; font: 500 13px/1.4 var(--ay-font-ui); color: var(--ay-ink-muted); }
+
+  /* the team pick quote */
+  .cm-quote { border-radius: var(--ay-r-md) !important; }
+  .cm-quote__label { border: 1.5px solid currentColor !important; background: transparent !important; color: inherit !important; }
+  .cm-quote figcaption { font-size: 13px; }
+
+  /* 13px floor: times, counts, small labels */
+  :is(.cm, .cm-sheet) :is(small, time, .ay-post-stats, .ay-likers-more, .ay-post-views, .ay-post-views-today) { font-size: 13px !important; }
+  .ay-ring b { font-size: 13px; }
+  .ay-ring { width: 36px; height: 36px; }
+
+  /* no blue: default faces are pink, butter or white */
+  .cm-avatar.is-sky { background: #ffffff; }
+
+  /* one Post button opens this: four rows, then the two starters */
+  .cm-types { display: grid; margin: 0; padding: 0; list-style: none; border-top: var(--ay-rule); }
+  .cm-types > li { border-bottom: var(--ay-rule); }
+  .cm-type { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: 14px; width: 100%; min-height: 68px; padding: 10px 4px; border: 0; background: none; color: var(--ay-ink) !important; text-align: left; cursor: pointer; }
+  .cm-type:hover { background: var(--ay-hover); }
+  .cm-type__icon { display: grid; place-items: center; width: 44px; height: 44px; border: 1.5px solid var(--ay-ink); border-radius: 50%; }
+  .cm-type__copy { display: grid; gap: 2px; min-width: 0; }
+  .cm-type__copy strong { font: 600 16px/1.3 var(--ay-font-ui); }
+  .cm-type__copy small { font: 500 14px/1.35 var(--ay-font-ui) !important; color: var(--ay-ink-muted); }
+  .cm-starters .cm-seg button { font-size: 14px !important; }
+  .cm-topics-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+
+  /* feeds: the left rail on wide screens; a segmented bar + Topics below 1200 */
+  .cm-navrow { display: grid; gap: 8px; }
+  .cm-topics-btn { display: none; }
+  .cm-folder { font-size: 15px !important; }
+  .cm-folder__new { font-size: 13px; }
+  .cm-folder[aria-selected='true'] { background: #3e2723 !important; border-color: #3e2723 !important; color: #ffedac !important; }
+  .cm-folder[aria-selected='true'] .cm-folder__new { background: #ffedac; color: #3e2723; }
+
+  /* questions: a status pill from the real answer count */
+  .cm-kindrow { display: flex; align-items: center; gap: 8px; margin: 0 0 -4px; }
+  .cm-status { display: inline-flex; align-items: center; height: 28px; padding: 0 10px; border-radius: var(--ay-r-pill); background: var(--ay-butter-deep); color: #3e2723; font: 600 13px/1 var(--ay-font-ui); }
+  .cm-status.is-open { background: var(--ay-pink); }
+
+  /* review highlights: rounded label boxes, only from what the reviewer entered */
+  .cm-review-facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
+  .cm-factbox { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 12px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-sm); font: 600 13px/1 var(--ay-font-ui); color: var(--ay-ink); }
+  .cm-factbox.cm-review-stars { margin: 0; }
+
+  /* playlists: stacked rounded rows (cover, name, count and owner) */
+  .cm-pl-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 8px !important; }
+  .cm-playlist.cm-pl-rowbtn { grid-template-columns: 64px minmax(0, 1fr) 20px; align-items: center; gap: 14px; min-height: 84px; padding: 10px 14px 10px 10px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-md); }
+  .cm-playlist.cm-pl-rowbtn:hover { background: var(--ay-hover); }
+  .cm-playlist.cm-pl-rowbtn .cm-cover { width: 64px; height: 64px; border-radius: var(--ay-r-sm); box-shadow: none; transform: none !important; }
+
+  /* the team-picked quote is the page's one pink section */
+  .cm-quote { border: 0 !important; background: var(--ay-pink) !important; color: #3e2723 !important; }
+  .cm-quote mark { background: none; padding: 0; color: inherit; }
+}
+@media (max-width: 1199px) {
+  html body .app-container.app-container.app-container.app-container.app-container.app-container {
+    /* five feeds in one pill track that never scrolls; Announcements sits in the Topics sheet and the pinned card */
+    .cm-navrow { display: grid; justify-items: start; gap: 10px; }
+    .cm-navrow > .cm-folders { display: flex; width: 100%; gap: 2px; padding: 3px; margin: 0; border: 0; border-radius: var(--ay-r-pill); background: var(--ay-butter-deep); overflow: visible; -webkit-mask-image: none; mask-image: none; box-sizing: border-box; }
+    .cm-navrow > .cm-folders > :last-child { margin-right: 0; }
+    .cm-navrow .cm-folder { flex: 1 1 auto; justify-content: center; min-width: 0; min-height: 40px; padding: 0 8px; border: 0 !important; border-radius: var(--ay-r-pill); background: transparent; color: #3e2723 !important; font-size: 14px !important; }
+    .cm-navrow .cm-folder > span { overflow: visible; }
+    .cm-navrow .cm-folder.is-announcements, .cm-navrow .cm-folder__icon { display: none; }
+    .cm-navrow .cm-folder[aria-selected='true'] { background: #3e2723 !important; color: #ffedac !important; }
+    .cm-topics-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: var(--ay-r-pill); background: transparent; color: var(--ay-ink); font: 600 14px/1 var(--ay-font-ui); cursor: pointer; }
+    .cm-topics-btn__on { padding: 3px 8px; border-radius: var(--ay-r-pill); background: var(--ay-pink); color: #3e2723; font-size: 13px; }
+    .cm-topicset.cm-pods, .cm-topicset.is-row { display: none !important; }
+  }
+}
+@media (max-width: 400px) {
+  html body .app-container.app-container.app-container.app-container.app-container.app-container .cm-navrow .cm-folder { padding: 0 5px; font-size: 13px !important; }
+}
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container.app-container.app-container.app-container {
+    .cm-head.cm-titlerow { padding-bottom: var(--ay-s16); margin-bottom: var(--ay-s16); }
+    .cm-head.cm-titlerow h1.cm-title { font-size: 26px !important; }
+    .cm-head.cm-titlerow .cm-head__actions { flex-wrap: nowrap; }
+    .cm-post-btn { padding: 0 16px; }
+    .cm-seematch { margin-left: 118px; }
+    .cm-note { padding: var(--ay-s16) 0 var(--ay-s4); }
+    .cm-topics-btn { padding: 0 12px; }
+  }
+}
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .cm .ay-product-card.cm-mention-card { --pc-shadow: none; box-shadow: none !important; transform: none !important; border: 1.5px solid var(--ay-ink) !important; border-radius: var(--ay-r-md) !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .cm .cm-mention-wrap .ay-product-card.cm-mention-card { border: 0 !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .cm .ay-product-card.cm-mention-card :is(.ay-product-card__kind, .ay-product-card__price small, .ay-product-card__why, .ay-product-card__brand) { font-size: 13px !important; }

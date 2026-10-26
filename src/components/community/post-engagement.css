@@ -2,7 +2,7 @@
    the website (.app-container) and the app (.ayna-mobile). Uses the shared
    --ay-* tokens, which both shells define for light and dark. */
 
-:is(.app-container, .ayna-mobile) .ay-post-stats { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; min-height: 28px; margin: 4px 0 0; color: inherit; font: 500 var(--ay-fs-caption, 12.5px)/1.3 var(--ay-sans, 'Figtree', system-ui, sans-serif); }
+:is(.app-container, .ayna-mobile) .ay-post-stats { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; min-height: 28px; margin: 4px 0 0; color: inherit; font: 500 13px/1.3 var(--ay-sans, 'Figtree', system-ui, sans-serif); }
 :is(.app-container, .ayna-mobile) .ay-post-stats > :only-child.ay-post-views { margin-left: auto; }
 
 /* Avatar stack: overlapped 22px faces, the whole row is one 44px target. */
@@ -14,7 +14,7 @@
 :is(.app-container, .ayna-mobile) .ay-likers-more { font-weight: 600; white-space: nowrap; opacity: .8; }
 
 :is(.app-container, .ayna-mobile) .ay-liker-avatar { position: relative; display: inline-grid; place-items: center; flex: none; overflow: hidden; border: 1.5px solid var(--ay-ink); border-radius: 50%; background: #f7badd; color: #3e2723; font-family: var(--ay-sans, 'Figtree', system-ui, sans-serif); font-weight: 700; line-height: 1; }
-:is(.app-container, .ayna-mobile) .ay-liker-avatar.is-anon { background: #769ebe; color: #3e2723; }
+:is(.app-container, .ayna-mobile) .ay-liker-avatar.is-anon { background: #ffedac; color: #3e2723; }
 :is(.app-container, .ayna-mobile) .ay-liker-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
 :is(.app-container, .ayna-mobile) .ay-post-views { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
@@ -33,13 +33,13 @@
 :is(.app-container, .ayna-mobile) button.ay-likers-open:hover strong { text-decoration: underline; text-underline-offset: 3px; }
 :is(.app-container, .ayna-mobile) .ay-likers-who { display: grid; gap: 2px; min-width: 0; }
 :is(.app-container, .ayna-mobile) .ay-likers-who strong { overflow: hidden; color: inherit; font: 600 var(--ay-fs-body, 16px)/1.25 var(--ay-sans, 'Figtree', system-ui, sans-serif); text-overflow: ellipsis; white-space: nowrap; }
-:is(.app-container, .ayna-mobile) .ay-likers-who small { overflow: hidden; color: inherit; opacity: .78; font: 500 var(--ay-fs-caption, 12.5px)/1.3 var(--ay-sans, 'Figtree', system-ui, sans-serif); text-overflow: ellipsis; white-space: nowrap; }
+:is(.app-container, .ayna-mobile) .ay-likers-who small { overflow: hidden; color: inherit; opacity: .78; font: 500 13px/1.3 var(--ay-sans, 'Figtree', system-ui, sans-serif); text-overflow: ellipsis; white-space: nowrap; }
 :is(.app-container, .ayna-mobile) .ay-likers-btn { flex: none; min-height: 44px; padding: 0 16px; border: 1.5px solid currentColor; border-radius: 99px; background: transparent; color: inherit; font: 600 var(--ay-fs-secondary, 14px)/1 var(--ay-sans, 'Figtree', system-ui, sans-serif); cursor: pointer; }
 :is(.app-container, .ayna-mobile) .ay-likers-btn:hover:not(:disabled) { text-decoration: underline; text-underline-offset: 3px; }
 :is(.app-container, .ayna-mobile) .ay-likers-btn:disabled { opacity: .5; cursor: wait; }
 :is(.app-container, .ayna-mobile) .ay-likers-state { flex: none; color: inherit; opacity: .78; font: 600 var(--ay-fs-secondary, 14px)/1 var(--ay-sans, 'Figtree', system-ui, sans-serif); }
 :is(.app-container, .ayna-mobile) .ay-likers-empty { margin: 8px 0; color: inherit; opacity: .78; font: 500 var(--ay-fs-secondary, 14px)/1.4 var(--ay-sans, 'Figtree', system-ui, sans-serif); }
-:is(.app-container, .ayna-mobile) .ay-likers-note { margin: 12px 0 0; color: inherit; opacity: .78; font: 500 var(--ay-fs-caption, 12.5px)/1.4 var(--ay-sans, 'Figtree', system-ui, sans-serif); }
+:is(.app-container, .ayna-mobile) .ay-likers-note { margin: 12px 0 0; color: inherit; opacity: .78; font: 500 13px/1.4 var(--ay-sans, 'Figtree', system-ui, sans-serif); }
 
 /* Inside a sheet the list follows the sheet's own text colour (light or dark). */
 :is(.app-container, .ayna-mobile) :is(.cm-sheet, .am-sheet) :is(.ay-likers-list li .ay-liker-avatar) { border-color: currentColor; }
