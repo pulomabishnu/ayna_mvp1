@@ -140,7 +140,7 @@
    way here on purpose: rule 8 puts the hard shadow on tappable cards. Likes and who-liked
    stay visible; views stay private to the author. Header stays the shared
    app tab header so every tab keeps the same top. */
-.ayna-mobile:is(#ay,.ayna-mobile) .am-screen { --amn-shadow: var(--d-shadow, 3px 3px 0 #3e2723); }
+.ayna-mobile:is(#ay,.ayna-mobile) .am-screen { --amn-shadow: none; /* cards carry no shadow */ }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-note-slot { gap: 12px; margin-bottom: 12px; }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-note { margin-bottom: 12px; padding: 14px 16px 4px; border-radius: 20px; box-shadow: var(--amn-shadow) !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) .am-screen .am-note:is(.is-question, .is-review),

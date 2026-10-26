@@ -32,7 +32,7 @@
   --wps-ui: var(--f-ui, 'Figtree', system-ui, sans-serif);
   --wps-btn-bg: #3e2723;
   --wps-btn-fg: #ffedac;
-  --wps-shadow: 3px 3px 0 #3e2723;
+  --wps-shadow: var(--ay-sticker);
   --wps-focus: var(--d-ink, #3e2723);
   --wps-gap: 16px;
 }

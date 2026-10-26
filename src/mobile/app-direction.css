@@ -23,7 +23,7 @@
   --d-pink: #f7badd;
   --d-sky: #769ebe;
   --d-gutter: 20px;
-  --d-shadow: 3px 3px 0 #3e2723;
+  --d-shadow: var(--ay-sticker); /* the one shadow: pink sticker on primary buttons */
   --d-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
   --d-chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E");
   /* the older layers read these; one colour for every title band now */
@@ -41,7 +41,7 @@
   --d-on-feature: #3e2723;
   --d-on-feature-2: rgba(62, 39, 35, .78);
   --d-feature-hair: rgba(62, 39, 35, .2);
-  --d-shadow: 3px 3px 0 rgba(0, 0, 0, .5);
+  --d-shadow: var(--ay-sticker);
   --band: var(--d-page);
   --band-ink: var(--d-ink);
   --ayna-bg: var(--d-page);
