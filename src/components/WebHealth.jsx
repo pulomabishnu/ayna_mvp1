@@ -1,12 +1,14 @@
 import { useMemo } from 'react';
 import { buildDashboard } from '../health/dashboard.js';
 import { buildInsights } from '../health/insights.js';
+import { healthMatchContext } from '../health/matchContext.js';
 import { DEV_DEMO_CONNECTIONS, DEV_DEMO_MATCH_IDS, DEV_DEMO_NEEDS, DEV_DEMO_PRODUCT_IDS, devDemoAddedAt, devDemoRows } from '../health/devDemo.js';
 import { getProductById } from '../data/products.js';
 import { DEV_HEALTH_DEMO, DEV_HEALTH_DEMO_EMPTY, localToday } from '../mobile/hooks/useHealthData.js';
 import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
 import TodayFeed from './today/TodayFeed.jsx';
+import { OutlineButton } from './ui/ay/index.js';
 import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './personality/DS.jsx';
 import { headline, readHomeLook } from '../mobile/components/homeLook.js';
 import { syncState } from '../health/dashView.js';
@@ -191,8 +193,12 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   const demoData = useMemo(() => {
     if (!demo) return null;
     const rows = DEV_HEALTH_DEMO_EMPTY ? [] : devDemoRows(today);
+    const insights = buildInsights(rows, { today });
+    const signals = [...(insights.signals || []), ...(insights.timing || [])];
     return {
-      status: 'ready', insightRows: rows, connected: DEV_HEALTH_DEMO_EMPTY ? [] : DEV_DEMO_CONNECTIONS, insights: buildInsights(rows, { today }),
+      status: 'ready', insightRows: rows, connected: DEV_HEALTH_DEMO_EMPTY ? [] : DEV_DEMO_CONNECTIONS, insights,
+      // Same as useHealthData: "Something to add?" reads the signals her own rows give.
+      matchContext: signals.length ? healthMatchContext(signals, DEV_DEMO_NEEDS) : null,
       products: DEV_DEMO_PRODUCT_IDS.map(getProductById).filter(Boolean).map((p) => (devDemoAddedAt(today)[p.id] ? { ...p, addedAt: devDemoAddedAt(today)[p.id] } : p)),
       matches: DEV_DEMO_MATCH_IDS.map(getProductById).filter(Boolean),
     };
@@ -328,7 +334,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
       {intro}
       <HealthHome
         hello={false}
-        helloAside={onOpenConnections ? <button type="button" className="ay-db-outline is-small" onClick={onOpenConnections}>Connected apps</button> : null}
+        helloAside={onOpenConnections ? <OutlineButton onClick={onOpenConnections}>Connected apps</OutlineButton> : null}
         connections={h.connected || []}
         onRefresh={h.refresh || null}
         rows={rows}
@@ -341,6 +347,8 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
         matches={demoData?.matches || []}
         onOpenProduct={onOpenProduct}
         onAsk={onAsk}
+        // "Something to add?" on the website too: adding a goal opens her answers (the app adds it in place).
+        onAddGoal={onEditAnswers ? () => { onEditAnswers(); return false; } : undefined}
         surface="web"
         todayFeed={todayFeed}
       />

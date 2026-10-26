@@ -14,7 +14,8 @@ import { reasonForProduct } from '../../health/plan.js';
 import { OUTCOME_LABELS } from '../../health/routineOutcome.js';
 import { CycleRing as DsRing } from '../../components/personality/DS.jsx';
 import { SourceLink, PhaseCompare, NormalRanges, WeekPicks, Meter } from './HealthBento.jsx';
-import { AreaChart, FindingItem, GoalList, PhaseLine, PillTabs, RangeBar, RangePills, RoutineEffect, Sparkline } from './DashParts.jsx';
+import { AreaChart, FindingItem, GoalList, PhaseLine, RangeBar, RangePills, RoutineEffect, Sparkline } from './DashParts.jsx';
+import { OutlineButton, PillTabs, StatusPill, StickerButton, TextButton } from '../../components/ui/ay/index.js';
 import { insightStories } from '../../health/insightStory.js';
 import { displayName } from '../utils/displayName.js';
 import '../../styles/week-explained.css';
@@ -92,10 +93,10 @@ export function HealthEmpty({ today, onConnect, onOpenCheckin, goalCount = 0, si
         <dl className="ay-db-facts is-preview">
           {PREVIEW.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
         </dl>
-        {onConnect && <button type="button" className="ay-db-primary" onClick={onConnect}>{signedOut ? 'Sign in to connect health data' : 'Connect Apple Health, Oura or a file'}</button>}
+        {onConnect && <StickerButton onClick={onConnect}>{signedOut ? 'Sign in to connect health data' : 'Connect Apple Health, Oura or a file'}</StickerButton>}
       </section>
       {children}
-      {onOpenCheckin && <button type="button" className="ay-db-textbtn" onClick={onOpenCheckin}>Log how you felt this month</button>}
+      {onOpenCheckin && <TextButton onClick={onOpenCheckin}>Log how you felt this month</TextButton>}
       <p className="ay-db-disclaimer">Compared only with your own usual. Patterns, not a diagnosis.</p>
     </div>
   );
@@ -106,7 +107,7 @@ function TodayPlan({ products, needIds, onOpenRoutine }) {
   return <section className="ay-db-card" aria-labelledby="ay-db-plan-title">
     <h3 id="ay-db-plan-title" className="ay-db-h3">What fits in your routine</h3>
     <dl className="ay-db-facts">{products.slice(0, 2).map((product) => <div key={product.id}><dt>{product.name}</dt><dd>{reasonForProduct(product, needIds) || 'In your selected routine'}</dd></div>)}</dl>
-    <button type="button" className="ay-db-textbtn" onClick={onOpenRoutine}>View and edit your routine</button>
+    <TextButton onClick={onOpenRoutine}>View and edit your routine</TextButton>
   </section>;
 }
 
@@ -121,7 +122,7 @@ function RecentCheckin({ products, outcomes, onOpenRoutine }) {
   return <section className="ay-db-card" aria-labelledby="ay-db-recent-title">
     <h3 id="ay-db-recent-title" className="ay-db-h3">{latest.product.name}</h3>
     <p>You marked this product “{OUTCOME_LABELS[latest.rating].toLowerCase()}” on {fmtDay(latest.day)}. This is your report, not a measure of medical effectiveness.</p>
-    <button type="button" className="ay-db-textbtn" onClick={onOpenRoutine}>See your product check-ins</button>
+    <TextButton onClick={onOpenRoutine}>See your product check-ins</TextButton>
   </section>;
 }
 
@@ -132,13 +133,13 @@ function TriedSoFar({ products, outcomes, onOpenRoutine }) {
   }).filter((item) => item.history.length);
   if (!tried.length) return null;
   return <details className="ay-db-fold">
-    <summary>What you’ve tried <span className="ay-db-pill">{tried.length} {tried.length === 1 ? 'product' : 'products'}</span></summary>
+    <summary>What you’ve tried <StatusPill>{tried.length} {tried.length === 1 ? 'product' : 'products'}</StatusPill></summary>
     <dl className="ay-db-facts">{tried.map(({ product, history, helping }) => <div key={product.id}>
       <dt>{product.name}</dt>
       <dd>{history.length >= 3 ? `Marked helping on ${helping} of ${history.length} check-ins` : `${history.length} dated ${history.length === 1 ? 'check-in' : 'check-ins'} so far`}</dd>
     </div>)}</dl>
     <p className="ay-db-muted">These are your impressions. They do not show that a product caused a health change.</p>
-    {onOpenRoutine && <button type="button" className="ay-db-textbtn" onClick={onOpenRoutine}>Review product check-ins</button>}
+    {onOpenRoutine && <TextButton onClick={onOpenRoutine}>Review product check-ins</TextButton>}
   </details>;
 }
 
@@ -154,7 +155,7 @@ function ComingUp({ items, today }) {
             <li key={e.title + e.day}>
               <span className="ay-db-date" aria-hidden="true"><b>{fmtDay(e.day).split(' ')[1]}</b><small>{fmtWeekday(e.day)}</small></span>
               <span>
-                <span className="ay-db-coming-t"><b>{e.title}</b><span className="ay-db-pill">{n <= 0 ? 'Today' : n === 1 ? 'Tomorrow' : `In ${n} days`}</span></span>
+                <span className="ay-db-coming-t"><b>{e.title}</b><StatusPill>{n <= 0 ? 'Today' : n === 1 ? 'Tomorrow' : `In ${n} days`}</StatusPill></span>
                 <span className="sr-only">{fmtDay(e.day)}.</span>
                 {e.sub && <small>{e.sub}</small>}
                 {e.expect && <small>{e.expect}{e.source && <> <SourceLink source={{ ...e.source, label: 'Source' }} /></>}</small>}
@@ -185,7 +186,7 @@ function RundownEntry({ onShown }) {
   return (
     <div className="ay-db-rundown">
       <p><b>Today&rsquo;s Rundown</b> <span>{count} {count === 1 ? 'thing' : 'things'}</span></p>
-      <button type="button" className="ay-db-sticker" onClick={() => { try { window.dispatchEvent(new CustomEvent('ayna:rundown-start')); } catch { /* old browser */ } }}>Start <span aria-hidden="true">›</span></button>
+      <StickerButton onClick={() => { try { window.dispatchEvent(new CustomEvent('ayna:rundown-start')); } catch { /* old browser */ } }}>Start</StickerButton>
     </div>
   );
 }
@@ -234,8 +235,11 @@ export default function HealthHome({
   const adds = aynaAdds({ insights, picks, products, needIds, phaseName: ctx.phase ? ctx.phase.name.toLowerCase() : null });
   const suggestions = (onAddGoal && matchContext?.suggestions) || [];
   // Three starters built from her findings (dashboard audit 7.13); the same on both platforms.
-  const questions = weekQuestions({ insights, ctx, picks });
-  if (ranges && !ranges.allOk && questions.length < 3) questions.push('Is my cycle length something to ask a clinician about?');
+  // Each from a finding shows that finding as its reason (same shape as p9/ask's startersFromFindings).
+  const starters = [];
+  for (const i of insights) if (i.question && !starters.some((x) => x.question === i.question) && starters.length < 3) starters.push({ question: i.question, reason: findingTitle(i) });
+  for (const q of weekQuestions({ insights: [], ctx, picks })) if (starters.length < 3 && !starters.some((x) => x.question === q)) starters.push({ question: q, reason: '' });
+  if (ranges && !ranges.allOk && starters.length < 3) starters.push({ question: 'Is my cycle length something to ask a clinician about?', reason: '' });
   const ask = onAsk ? (q) => onAsk(q, { insights, stats: askStats(week, estimate) }) : undefined;
   const sync = syncState(connections);
 
@@ -346,7 +350,7 @@ export default function HealthHome({
       <h2 id="ay-db-findings-title" className="ay-db-h2">{stories.length === 1 ? '1 change this week' : `${stories.length} changes this week`}</h2>
       <ul>
         {stories.map((x) => findingFor(x))}
-        {backToUsual.map((area) => <li key={area} className="ay-db-finding is-back"><p className="ay-db-h3"><span>{area}: back to your usual</span><span className="ay-db-pill">Back to usual</span></p></li>)}
+        {backToUsual.map((area) => <li key={area} className="ay-db-finding is-back"><p className="ay-db-h3"><span>{area}: back to your usual</span><StatusPill>Back to usual</StatusPill></p></li>)}
       </ul>
     </section>
   );
@@ -358,8 +362,8 @@ export default function HealthHome({
       <h2 id={`ay-db-effect-title-${current}`} className="ay-db-h2">Is your routine working?</h2>
       {(current === 'summary' ? effects.slice(0, 1) : effects).map((e) => <RoutineEffect key={e.product.id} effect={e} today={today} />)}
       {current === 'summary' && tabs.some((t) => t.id === 'routine')
-        ? <button type="button" className="ay-db-textbtn" onClick={() => open('routine')}>Keep or swap: see your routine</button>
-        : onOpenRoutine && <button type="button" className="ay-db-textbtn" onClick={onOpenRoutine}>Keep or swap in your routine</button>}
+        ? <TextButton onClick={() => open('routine')}>Keep or swap: see your routine</TextButton>
+        : onOpenRoutine && <TextButton onClick={onOpenRoutine}>Keep or swap in your routine</TextButton>}
     </section>
   );
   const suggestBlock = suggestions.length > 0 && (
@@ -373,17 +377,17 @@ export default function HealthHome({
             {m && onOpenProduct && <button type="button" className="ay-db-match" onClick={() => onOpenProduct(m.p)}><span>{displayName(m.p)}</span><Meter level={m.fit.level} short /></button>}
             {added[s.needId]
               ? <p className="ay-db-muted" role="status">Added. Your matches now include {SUGGEST_LABEL[s.needId] || 'it'}.</p>
-              : <button type="button" className="ay-db-outline" onClick={() => add(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'} to my goals</button>}
+              : <OutlineButton onClick={() => add(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'} to my goals</OutlineButton>}
           </div>
         );
       })}
     </section>
   );
-  const askBlock = ask && questions.length > 0 && (
+  const askBlock = ask && starters.length > 0 && (
     <section className="ay-db-card" aria-labelledby="ay-db-ask-title">
       <h2 id="ay-db-ask-title" className="ay-db-h2">Ask ayna about your week</h2>
       <ul className="ay-db-ask">
-        {questions.slice(0, 3).map((q) => <li key={q}><button type="button" onClick={() => ask(q)}><span>{q}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg></button></li>)}
+        {starters.map((st) => <li key={st.question}><button type="button" onClick={() => ask(st.question)}><span>{st.question}{st.reason && <small>{st.reason}</small>}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg></button></li>)}
       </ul>
     </section>
   );
@@ -401,7 +405,7 @@ export default function HealthHome({
               return <div key={s.id}><dt>{s.title}</dt><dd>{s.plain || s.explanation || s.headline}{boosted && <small> Because {SUGGEST_LABEL[s.signal.needId] || 'this'} is one of your goals, those picks rank a little higher for you right now.</small>}</dd></div>;
             })}
           </dl>
-          {typeof navigator !== 'undefined' && navigator.clipboard && <button type="button" className="ay-db-textbtn" onClick={copyWeek}>{copied ? 'Copied' : 'Copy my week'}</button>}
+          {typeof navigator !== 'undefined' && navigator.clipboard && <TextButton onClick={copyWeek}>{copied ? 'Copied' : 'Copy my week'}</TextButton>}
         </details>
       )}
       {hasData && (
@@ -431,7 +435,7 @@ export default function HealthHome({
         <div className="ay-db-main">
           {findings}
           {!hasData && routineBits}
-          {onOpenCheckin && <button type="button" className="ay-db-textbtn" onClick={onOpenCheckin}>Log how you felt this month</button>}
+          {onOpenCheckin && <TextButton onClick={onOpenCheckin}>Log how you felt this month</TextButton>}
         </div>
         <div className="ay-db-rail">
           {routineWorking}
@@ -551,7 +555,7 @@ export default function HealthHome({
       {/* The website's band already says when it synced; the stale state shows here on both. */}
       {sync && (showTitle || sync.stale) && <> · {sync.label}</>}
       {' · compared with your usual'}
-      {sync?.stale && onRefresh && <button type="button" className="ay-db-outline is-small" onClick={onRefresh}>Refresh</button>}
+      {sync?.stale && onRefresh && <OutlineButton className="is-small" onClick={onRefresh}>Refresh</OutlineButton>}
     </p>
   );
 
@@ -568,12 +572,12 @@ export default function HealthHome({
       )}
       {(tabs.length > 1 || (!showTitle && sourceLine)) && (
         <div className="ay-db-nav">
-          {tabs.length > 1 && <PillTabs tabs={tabs} value={current} onChange={pickTab} label="Health areas" idBase="ay-db-area" />}
+          {tabs.length > 1 && <PillTabs tabs={tabs} active={current} onChange={pickTab} label="Health areas" idBase="ay-db-area" className="ay-db-tabs" />}
           {!showTitle && sourceLine}
           {helloAside}
         </div>
       )}
-      <div className="ay-db-panel" role={tabs.length > 1 ? 'tabpanel' : undefined} id="ay-db-area-panel" aria-labelledby={tabs.length > 1 ? `ay-db-area-tab-${current}` : undefined} key={current}>
+      <div className="ay-db-panel" role={tabs.length > 1 ? 'tabpanel' : undefined} id={`ay-db-area-panel-${current}`} aria-labelledby={tabs.length > 1 ? `ay-db-area-tab-${current}` : undefined} key={current}>
         {current === 'summary' && summary}
         {current === 'cycle' && cycleTab}
         {current === 'sleep' && sleepTab}

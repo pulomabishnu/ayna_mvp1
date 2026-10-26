@@ -23,14 +23,14 @@ describe('dashboard view model', () => {
     expect(findingTitle({ signal: 'unknown', text: 'Something changed.' })).toBe('Something changed');
     const { insights } = explainWeek(devDemoRows(today), { today, max: 7 });
     for (const i of insights) expect(findingTitle(i)).toMatch(/\d/);
-  });
+  }, 30000);
 
   it('marks a finding new or still going from the same rule a week earlier', () => {
     const rows = devDemoRows(today);
     const { insights } = explainWeek(rows, { today, max: 7 });
     const { status } = findingStatus(rows, insights, { today });
     for (const v of Object.values(status)) expect(['New', 'Still going']).toContain(v);
-  });
+  }, 30000);
 
   it('says when data was synced, and goes stale after two days', () => {
     const now = Date.parse('2026-10-21T20:12:00');

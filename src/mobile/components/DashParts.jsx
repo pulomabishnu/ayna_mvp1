@@ -1,8 +1,9 @@
-import { useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 import { estimatePhase } from '../../health/phase.js';
 import { chartSummary, lastDays, short } from '../../health/dashView.js';
 import { Meter, SourceLink } from './HealthBento.jsx';
 import { displayName } from '../utils/displayName.js';
+import { StatusPill, TextButton } from '../../components/ui/ay/index.js';
 
 /**
  * The dashboard's parts (dashboard audit Oct 25, section 14), app and website.
@@ -16,37 +17,6 @@ const DAY = 86400000;
 const toTime = (day) => Date.parse(`${day}T00:00:00Z`);
 const fmtDay = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 const uniq = (list) => (list || []).filter((s, i, all) => s?.url && all.findIndex((x) => x.url === s.url) === i);
-
-/** Pill tabs (PDP style): roles, arrow keys, Home and End. Full-width segmented on phones (CSS). */
-export function PillTabs({ tabs, value, onChange, label, idBase, className = '' }) {
-  const refs = useRef({});
-  const key = (e, i) => {
-    const n = tabs.length;
-    const to = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : null;
-    if (to == null) return;
-    e.preventDefault();
-    onChange(tabs[to].id);
-    refs.current[tabs[to].id]?.focus();
-  };
-  return (
-    <div className={`ay-db-tabs ${className}`.trim()} role="tablist" aria-label={label} style={{ '--n': tabs.length }}>
-      {tabs.map((t, i) => (
-        <button
-          key={t.id}
-          ref={(el) => { refs.current[t.id] = el; }}
-          type="button"
-          role="tab"
-          id={`${idBase}-tab-${t.id}`}
-          aria-controls={`${idBase}-panel`}
-          aria-selected={value === t.id}
-          tabIndex={value === t.id ? 0 : -1}
-          onClick={() => onChange(t.id)}
-          onKeyDown={(e) => key(e, i)}
-        >{t.label}</button>
-      ))}
-    </div>
-  );
-}
 
 /** A range switch (7 / 30 / 90 days) in the same pill style, as toggle buttons. */
 export function RangePills({ ranges, value, onChange }) {
@@ -136,7 +106,7 @@ export function AreaChart({ chart, band = null, today, title = null, small = fal
       </svg>
       <p className="ay-db-readout" aria-live="polite">{shown ? <>{fmtDay(shown.day)}: <b>{short(chart.metric, shown.value)}</b></> : null}</p>
       <p className="ay-db-summary">{text}</p>
-      <button type="button" className="ay-db-textbtn" aria-expanded={table} aria-controls={`${id}-table`} onClick={() => setTable((v) => !v)}>{table ? 'Hide table' : 'Show as table'}</button>
+      <TextButton aria-expanded={table} aria-controls={`${id}-table`} onClick={() => setTable((v) => !v)}>{table ? 'Hide table' : 'Show as table'}</TextButton>
       {table && (
         <div className="ay-db-tablewrap" id={`${id}-table`}>
           <table className="ay-db-table">
@@ -224,7 +194,7 @@ export function FindingItem({ title, status = null, story, insight, chart = null
       <h3 className="ay-db-h3">
         <button type="button" aria-expanded={open} aria-controls={body} onClick={() => setOpen((v) => !v)}>
           <span>{title}</span>
-          {status && <span className="ay-db-pill">{status}</span>}
+          {status && <StatusPill>{status}</StatusPill>}
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
         </button>
       </h3>
@@ -257,7 +227,7 @@ export function FindingItem({ title, status = null, story, insight, chart = null
               <p>{story.flag.text} <Links list={story.flag.sources} /></p>
             </section>
           )}
-          {onSeeChart && <button type="button" className="ay-db-textbtn" onClick={onSeeChart}>See the chart</button>}
+          {onSeeChart && <TextButton onClick={onSeeChart}>See the chart</TextButton>}
         </div>
       )}
     </li>
@@ -274,7 +244,7 @@ export function RoutineEffect({ effect, today }) {
     <article className="ay-db-effect">
       <div className="ay-db-effect-head">
         <b>{displayName(effect.product)}</b>
-        {days != null && days >= 0 && <span className="ay-db-pill">Day {days + 1}</span>}
+        {days != null && days >= 0 && <StatusPill>Day {days + 1}</StatusPill>}
       </div>
       <p className="ay-db-muted">Added {fmtDay(effect.added)} · sleep a night</p>
       <div className="ay-db-bars" role="img" aria-label={`Sleep a night: ${fmt(effect.before)} in the 2 weeks before, ${fmt(effect.after)} since.`}>
