@@ -176,7 +176,7 @@
 :is(.ayna-mobile, .app-container) .ay-ob-ready__art { width: auto; height: auto; margin: 0 0 4px; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__seal { position: relative !important; inset: auto !important; display: grid; place-items: center; width: 112px; height: 112px; border-radius: 50%; background: #f7badd; color: #3e2723; border: 1.5px solid #ffedac; rotate: -8deg; animation: ay-ob-stamp 620ms var(--ease-pop, cubic-bezier(.34, 1.2, .64, 1)) 120ms both; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__seal svg { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); overflow: visible; }
-:is(.ayna-mobile, .app-container) .ay-ob-ready__seal text { font: 600 13px 'Figtree', sans-serif; letter-spacing: .06em; fill: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready__seal text { font: 600 12.5px 'Figtree', sans-serif; letter-spacing: .06em; fill: #3e2723; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready__seal b { position: relative; display: grid; place-items: center; width: 50px; height: 50px; border-radius: 50%; background: #3e2723; color: #ffedac; font: 800 17px/1 'ayna Display', sans-serif; }
 @keyframes ay-ob-stamp { from { opacity: 0; transform: scale(1.35); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__title { font: 700 clamp(44px, 12.5vw, 64px)/.92 var(--o-serif) !important; letter-spacing: -.035em !important; color: #ffedac !important; }
