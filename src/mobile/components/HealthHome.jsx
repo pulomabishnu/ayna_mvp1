@@ -1,44 +1,46 @@
 import { useEffect, useRef, useState } from 'react';
-import { buildDashboard, formatMetric, isFlat, RANGES } from '../../health/dashboard.js';
+import { buildDashboard, RANGES } from '../../health/dashboard.js';
 import { estimatePhase, PHASE_SOURCES } from '../../health/phase.js';
-import { explainWeek, cycleLine } from '../../health/weekInsights.js';
-import { pickForInsight, weekPicks } from '../../health/weekPicks.js';
+import { explainWeek } from '../../health/weekInsights.js';
+import { weekPicks } from '../../health/weekPicks.js';
+import { fitFor } from '../../health/weekPicks.js';
 import { comingUp } from '../../health/comingUp.js';
 import { phaseCompare, normalRanges, goalsCovered, effectChecks, aynaAdds } from '../../health/beyondNumbers.js';
+import { chartFacts, findingStatus, findingTitle, glanceWords, lastDays, short, syncState, usualBand, valueWithUsual } from '../../health/dashView.js';
 import { SOURCE_NAMES } from '../data/healthConnections.js';
-import { askStats, weekQuestions, weekSummary } from '../utils/dashboardAsk.js';
-import ProductImage from './ProductImage.jsx';
+import { askStats, weekQuestions } from '../utils/dashboardAsk.js';
 import { haptic } from '../../utils/haptics.js';
 import { reasonForProduct } from '../../health/plan.js';
 import { OUTCOME_LABELS } from '../../health/routineOutcome.js';
-import HealthChart, { CycleRing } from './HealthChart.jsx';
-import { PhaseStrip, SourceLink, PhaseCompare, NormalRanges, GoalsCovered, WeekPicks, Meter } from './HealthBento.jsx';
-import InsightStory, { StoryFlag } from './InsightStory.jsx';
-import { insightStories, metricHeadline } from '../../health/insightStory.js';
+import { CycleRing as DsRing } from '../../components/personality/DS.jsx';
+import { SourceLink, PhaseCompare, NormalRanges, WeekPicks, Meter } from './HealthBento.jsx';
+import { AreaChart, FindingItem, GoalList, PhaseLine, RangeBar, RangePills, RoutineEffect, Sparkline } from './DashParts.jsx';
+import { OutlineButton, PillTabs, StatusPill, StickerButton, TextButton } from '../../components/ui/ay/index.js';
+import { insightStories } from '../../health/insightStory.js';
+import { displayName } from '../utils/displayName.js';
 import '../../styles/week-explained.css';
 import '../../styles/health-home.css';
 
 /**
- * Your health, app and website (one component, two surfaces).
+ * Your data: the health dashboard, app and website (one component).
+ * Dashboard audit + build brief (Oct 25): read in five seconds.
  *
- * Home order from the founder's dashboard references (6 of 8 agree):
- * greeting -> one hero -> coloured tiles -> a ring -> a list with status
- * pills. In ayna's terms:
- *   Hello line with today's date
- *   Area tabs (Summary, Cycle, Sleep, Heart, ..., Products) so detail sits
- *     one tap away instead of one long scroll (Oura's Today/Vitals split,
- *     Apple Health's Summary vs category pages)
+ *   Title (app: "Your data" with the cycle ring; website: the slim band in WebHealth)
+ *   Area tabs: Summary · Cycle · Sleep · Body · Routine (pill tabs; only areas with data)
+ *     + source line with the sync time (stale after 2 days: "Last synced Thu" + Refresh)
  *   Summary:
- *     Hero (the one Feature): "This week, explained", the cycle day as the
- *       one big number, each insight one tap apart (Heart / Sleep / ...)
- *     What ayna adds to Apple Health, as one compact strip
- *     Tiles: Cycle, her pinned metrics (Sleep, Heart by default), Picks;
- *       each opens its tab. Edit chooses which metrics show.
- *     Goals covered as concentric rings
- *     Coming up as a list with status pills
- *     Something to add, Ask ayna about your week, Your week in short
- * Each number shows once per view. Every number comes from her own rows;
- * a block only shows when its data exists. Never a diagnosis.
+ *     Today's Rundown, one line (website only; the app's Home has it)
+ *     Your week at a glance: one row per area, words, number + usual, 7-day sparkline
+ *     N changes this week (calm findings list)  |  Is your routine working? · Coming up
+ *                                               |  Something to add? · Ask ayna about your week
+ *     Today's things and the log (website only), then Your week in short,
+ *     How ayna puts this together and the disclaimer, once.
+ *   Each area tab leads with its chart (7/30/90 days, her usual band, last 7 days in espresso).
+ *
+ * Do not change: words first, number underneath; compared only with her own
+ * usual; a block only when its data exists; .gov-only sources; "Is your
+ * routine working?" and its caveat; the cycle ring; Ask uses health data
+ * only with her opt-in (HealthDashboard builds the context).
  */
 
 const fmtDay = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
@@ -48,74 +50,13 @@ const sourceNames = (sources) => sources.map((s) => SOURCE_NAMES[s] || s).join('
 const DAY = 86400000;
 const daysFrom = (a, b) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / DAY);
 
-// Her layout (which tiles show): a display preference on this device, never health data.
-const LAYOUT_KEY = 'ayna_health_layout_v1';
-const DEFAULT_PINS = ['cycle', 'sleep_minutes', 'resting_hr_bpm'];
-function loadLayout() {
-  try { const v = JSON.parse(localStorage.getItem(LAYOUT_KEY) || 'null'); return v && Array.isArray(v.pins) ? v : { pins: null }; } catch { return { pins: null }; }
-}
-function saveLayout(v) { try { localStorage.setItem(LAYOUT_KEY, JSON.stringify(v)); } catch { /* storage blocked: lasts this visit */ } }
-
 const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'low energy' };
-const INSIGHT_KEY = { heart: 'Heart', sleep: 'Sleep', activity: 'Activity', temperature: 'Temperature', period: 'Cycle', cycle_length: 'Cycle' };
-const INSIGHT_TAB_LABEL = { cycle_length: 'Cycle length', period: 'Period' };
-const TILE_TONES = ['sky', 'butter', 'group', 'group', 'group'];
-const RING_TONES = ['pink', 'sky', 'ink', 'butter'];
+const BODY_GROUPS = ['heart', 'temperature', 'activity', 'recovery'];
+const AREA_OF_METRIC = (metric, groupOf) => (metric === 'cycle_length' || metric === 'menstrual_flow' ? 'cycle' : groupOf[metric] === 'sleep' ? 'sleep' : 'body');
+// Old area ids (the Rundown's "See data", older links) to the five areas.
+const LEGACY_TAB = { heart: 'body', temperature: 'body', activity: 'body', recovery: 'body', products: 'routine' };
 
-const shortMetric = (c, v) => (c.metric === 'steps' ? Math.round(v).toLocaleString('en-US') : formatMetric(c.metric, v));
-
-function vsUsual(c) {
-  if (c.delta == null || c.usual == null) return 'Building your usual, about two weeks of data';
-  if (isFlat(c.metric, c.delta)) return 'Right around your usual';
-  const amt = c.metric === 'steps' ? Math.abs(Math.round(c.delta)).toLocaleString('en-US') : formatMetric(c.metric, Math.abs(c.delta));
-  const more = c.metric === 'sleep_minutes' ? (c.delta > 0 ? 'more' : 'less') : c.metric === 'steps' ? (c.delta > 0 ? 'more' : 'fewer') : (c.delta > 0 ? 'higher' : 'lower');
-  return `${amt} ${more} than your usual`;
-}
-
-function weekStats(c) {
-  const vals = c.points.slice(-7).map((p) => p.value).filter((v) => v != null);
-  if (!vals.length) return [];
-  return [
-    { k: 'Usual', v: c.usual != null ? shortMetric(c, c.usual) : 'Building' },
-    { k: 'Low', v: shortMetric(c, Math.min(...vals)) },
-    { k: 'High', v: shortMetric(c, Math.max(...vals)) },
-  ];
-}
-
-/** Underline tabs with arrow keys, Home and End (WAI-ARIA APG, automatic activation). */
-function Tabs({ tabs, value, onChange, label, idBase, className = '' }) {
-  const refs = useRef({});
-  const key = (e, i) => {
-    const n = tabs.length;
-    const to = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : null;
-    if (to == null) return;
-    e.preventDefault();
-    onChange(tabs[to].id);
-    refs.current[tabs[to].id]?.focus();
-  };
-  return (
-    <div className={`ay-hh-tabs ${className}`} role="tablist" aria-label={label}>
-      {tabs.map((t, i) => (
-        <button
-          key={t.id}
-          ref={(el) => { refs.current[t.id] = el; }}
-          type="button"
-          role="tab"
-          id={`${idBase}-tab-${t.id}`}
-          aria-controls={`${idBase}-panel`}
-          aria-selected={value === t.id}
-          tabIndex={value === t.id ? 0 : -1}
-          className={value === t.id ? 'is-on' : ''}
-          onClick={() => onChange(t.id)}
-          onKeyDown={(e) => key(e, i)}
-        >{t.label}</button>
-      ))}
-    </div>
-  );
-}
-
-// Further reading under See data. .gov pages only (founder rule, Oct 24 2026);
-// the American Heart Association links were removed (not .gov).
+// Further reading under a finding. .gov pages only (founder rule, Oct 24 2026).
 const INSIGHT_READING = {
   'sleep-short': { label: 'CDC: Sleep and heart health', url: 'https://www.cdc.gov/heart-disease/about/sleep-and-heart-health.html' },
   'sleep-long': { label: 'CDC: Sleep and heart health', url: 'https://www.cdc.gov/heart-disease/about/sleep-and-heart-health.html' },
@@ -124,132 +65,49 @@ const INSIGHT_READING = {
   'steps-lower': { label: 'CDC: Benefits of physical activity', url: 'https://www.cdc.gov/physical-activity-basics/health-benefits/adults.html' },
 };
 
-/**
- * This week in her connected data. Not the top of Today any more: what leads
- * is decide()'s output (TodayFeed). Insights keep explainWeek's own order.
- */
-function Hero({ cycle, ctx, stories, fallback, onOpenInsight }) {
-  const [at, setAt] = useState(0);
-  const phase = cycle ? estimatePhase(cycle) : null;
-  const line = cycleLine(cycle, ctx);
-  const rest = line ? line.replace(/^Cycle day \d+,?\s*/, '') : '';
-  const sub = rest ? rest.charAt(0).toUpperCase() + rest.slice(1) : '';
-  const cur = stories[Math.min(at, stories.length - 1)];
-  const it = cur?.insight;
-  const story = cur?.story;
-  return (
-    <section className={`ay-hh-hero${story?.flag ? ' is-flagged' : ''}`} aria-labelledby="ay-hh-hero-title">
-      <div className="ay-hh-hero-top">
-        <div className="ay-hh-hero-head">
-          <p className="ay-hh-hero-eyebrow">This week, explained</p>
-          {story?.flag && <StoryFlag flag={story.flag} />}
-          <h3 id="ay-hh-hero-title">{story ? story.changed : 'Your week at a glance'}</h3>
-          {!it && sub && <p className="ay-hh-hero-sub">{sub}</p>}
-          {!cycle && !stories.length && fallback && <p className="ay-hh-hero-sub">{fallback}</p>}
-        </div>
-        {!it && cycle?.cycleDay && (
-          <div className="ay-hh-hero-ring" role="img" aria-label={`Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`}>
-            <CycleRing cycleDay={cycle.cycleDay} avgLength={cycle.avgLength} periodLength={cycle.periodLength} windowStart={phase?.windowStart} windowEnd={phase?.windowEnd} />
-            <span aria-hidden="true"><small>Day</small><b>{cycle.cycleDay}</b></span>
-          </div>
-        )}
-      </div>
-      {stories.length > 0 && (
-        <>
-          {stories.length > 1 && (
-            <Tabs tabs={stories.map(({ insight: x }, i) => ({ id: String(i), label: INSIGHT_TAB_LABEL[x.id] || INSIGHT_KEY[x.id] || x.id }))} value={String(Math.min(at, stories.length - 1))} onChange={(v) => setAt(Number(v))} label="This week's changes" idBase="ay-hh-ins" className="is-chips" />
-          )}
-          <div className="ay-hh-insight" role={stories.length > 1 ? 'tabpanel' : undefined} id="ay-hh-ins-panel" aria-labelledby={stories.length > 1 ? `ay-hh-ins-tab-${Math.min(at, stories.length - 1)}` : undefined} key={it.id}>
-            {stories.length === 1 && <b className="ay-hh-k">{INSIGHT_KEY[it.id] || it.id}</b>}
-            <InsightStory story={story} mode="hero" hideChanged hideFlag onMore={() => onOpenInsight(it)} idBase="ay-hh-hero-story" />
-          </div>
-        </>
-      )}
-      <p className="ay-hh-hero-foot">Compared only with your own last 4 weeks. Patterns, not a diagnosis.</p>
-    </section>
-  );
-}
-
-function InsightDetail({ insight, story, chart, pick, onBack, onOpenMetric, onOpenProduct, onOpenRoutine, onAsk }) {
-  const reading = [...(INSIGHT_READING[insight.signal] ? [INSIGHT_READING[insight.signal]] : [])].filter((source) => !(insight.sources || []).some((s) => s.url === source.url));
-  const data = (
-    <>
-      {chart && <p className="ay-hh-action-comparison">This week: <b>{shortMetric(chart, chart.week ?? chart.avg)}</b> <span>·</span> Your usual: <b>{chart.usual == null ? 'Still building' : shortMetric(chart, chart.usual)}</b></p>}
-      {insight.from?.length > 0 && <p className="ay-hh-action-source">Your data came from {sourceNames(insight.from)}.</p>}
-      {chart && <button type="button" className="ay-hh-action-link" onClick={onOpenMetric}>See the full {INSIGHT_KEY[insight.id]?.toLowerCase() || 'health'} trend →</button>}
-      {reading.length > 0 && <p className="ay-is-basis">Read more: {reading.map((src) => <SourceLink key={src.url} source={src} />)}</p>}
-    </>
-  );
-  return (
-    <article className="ay-hh-action" aria-labelledby="ay-hh-action-changed">
-      <button type="button" className="ay-hh-action-back" onClick={onBack}>← Back to your dashboard</button>
-      <p className="ay-hh-action-kicker">Your data · {INSIGHT_KEY[insight.id] || insight.id}</p>
-      <InsightStory story={story} mode="full" data={data} idBase="ay-hh-action" />
-      {((pick && onOpenProduct) || onOpenRoutine || (onAsk && insight.question)) && (
-        <div className="ay-hh-action-more">
-          {pick && onOpenProduct && <div className="ay-hh-action-product"><small>{pick.owned ? 'Already in your routine' : 'Matched to your goal'}</small><button type="button" onClick={() => onOpenProduct(pick.product)}>{pick.product.name} →</button><p>{pick.reason}</p></div>}
-          {onOpenRoutine && <button type="button" className="ay-hh-action-link" onClick={onOpenRoutine}>See your routine and shopping list →</button>}
-          {onAsk && insight.question && <button type="button" className="ay-hh-action-ask" onClick={() => onAsk(insight.question)}>Ask ayna about this</button>}
-        </div>
-      )}
-      <p className="ay-hh-note">This is a pattern in your data, not a diagnosis. If a change concerns you, talk to a clinician.</p>
-    </article>
-  );
-}
+const PHASE_WORDS = { period: 'On your period', ovulation: 'Ovulation possible', luteal: 'Probably after ovulation', follicular: 'Probably before ovulation' };
 
 /**
- * No health data yet (app): the same greeting and the same Feature as the
- * full screen, so connecting data fills this page in rather than swapping it
- * for another design. The ring is a blank cycle (no day), never fake data.
+ * No health data yet (app): the same title and a words-only preview of what
+ * the dashboard will hold (dashboard audit 9.3). Never a number, never fake data.
  */
-export function HealthEmpty({ name = '', today, onConnect, onOpenCheckin, goalCount = 0, signedOut = false, todayFeed = null, children }) {
-  const hour = new Date().getHours();
-  const hello = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+const PREVIEW = [
+  ['Cycle', 'Where you are, and what usually comes next'],
+  ['Sleep', 'Your nights next to your own usual'],
+  ['Body', 'Resting heart rate, heart rate variability, temperature and steps'],
+  ['Routine', 'Whether the products you added line up with a change'],
+];
+export function HealthEmpty({ today, onConnect, onOpenCheckin, goalCount = 0, signedOut = false, todayFeed = null, children, title = 'Your data' }) {
   return (
-    <div className="ay-hh is-app is-empty">
-      <header className="ay-hh-hello">
-        <p>{fmtLongDay(today)}</p>
-        <h2>{hello}{name ? `, ${name}` : ''}</h2>
+    <div className="ay-db is-app is-empty">
+      <header className="ay-db-title">
+        <div>
+          <h2 className="ay-db-h1">{title}</h2>
+          <p className="ay-db-source">{fmtLongDay(today)}</p>
+        </div>
       </header>
       {todayFeed}
-      <section className="ay-hh-hero" aria-labelledby="ay-hh-empty-title">
-        <div className="ay-hh-hero-top">
-          <div className="ay-hh-hero-head">
-            <h3 id="ay-hh-empty-title">{goalCount ? "We're starting with your goals" : 'Want a more personalized rundown?'}</h3>
-            <p className="ay-hh-hero-sub">{goalCount ? `You chose ${goalCount} ${goalCount === 1 ? 'goal' : 'goals'}. Your matches are below. ${signedOut ? 'Sign in to connect health data' : 'Connect health data'} or keep using quick check-ins. Either works.` : `${signedOut ? 'Sign in to connect health data' : 'Connect health data'} or keep using quick check-ins. Either works. Your cycle, sleep, heart and activity can appear here once there is enough data.`}</p>
-          </div>
-        </div>
-        {onConnect && <button type="button" className="ay-hh-empty-cta" onClick={onConnect}>{signedOut ? 'Sign in to connect health data' : 'Connect health data'}</button>}
-        <p className="ay-hh-hero-foot">Compared only with your own usual. Patterns, not a diagnosis.</p>
+      <section className="ay-db-card ay-db-empty" aria-labelledby="ay-db-empty-title">
+        <h3 id="ay-db-empty-title" className="ay-db-h3">{goalCount ? "We're starting with your goals" : 'Your dashboard fills in once data is connected'}</h3>
+        <p>{goalCount ? `You chose ${goalCount} ${goalCount === 1 ? 'goal' : 'goals'}. Your matches are below. ` : ''}Connect Apple Health or Oura, upload a file, or keep using quick check-ins. Either works.</p>
+        <dl className="ay-db-facts is-preview">
+          {PREVIEW.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
+        </dl>
+        {onConnect && <StickerButton onClick={onConnect}>{signedOut ? 'Sign in to connect health data' : 'Connect Apple Health, Oura or a file'}</StickerButton>}
       </section>
       {children}
-      {onOpenCheckin && <button type="button" className="ay-hh-checkin-link" onClick={onOpenCheckin}>Log how you felt this month →</button>}
+      {onOpenCheckin && <TextButton onClick={onOpenCheckin}>Log how you felt this month</TextButton>}
+      <p className="ay-db-disclaimer">Compared only with your own usual. Patterns, not a diagnosis.</p>
     </div>
-  );
-}
-
-/** What ayna adds to Apple Health: one line, then four short facts with her own counts. */
-function Adds({ items }) {
-  return (
-    <section className="ay-hh-adds" aria-labelledby="ay-hh-adds-title">
-      <div className="ay-hh-adds-head">
-        <h3 id="ay-hh-adds-title">What ayna adds to your data</h3>
-        <p>Your connected apps provide the numbers. ayna reads them against your cycle and shows which products fit this week.</p>
-      </div>
-      <ul>
-        {items.map((x) => <li key={x.id}><b>{x.label}</b><span>{x.text}</span></li>)}
-      </ul>
-    </section>
   );
 }
 
 function TodayPlan({ products, needIds, onOpenRoutine }) {
   if (!onOpenRoutine || !products.length) return null;
-  const shown = products.slice(0, 2);
-  return <section className="ay-hh-today-plan" aria-labelledby="ay-hh-today-plan-title">
-    <div><p className="ay-hh-today-kicker">Your plan</p><h3 id="ay-hh-today-plan-title">What fits in your routine</h3></div>
-    <ul>{shown.map((product) => <li key={product.id}><b>{product.name}</b><span>{reasonForProduct(product, needIds) || 'In your selected routine'}</span></li>)}</ul>
-    <button type="button" onClick={onOpenRoutine}>View and edit your routine →</button>
+  return <section className="ay-db-card" aria-labelledby="ay-db-plan-title">
+    <h3 id="ay-db-plan-title" className="ay-db-h3">What fits in your routine</h3>
+    <dl className="ay-db-facts">{products.slice(0, 2).map((product) => <div key={product.id}><dt>{product.name}</dt><dd>{reasonForProduct(product, needIds) || 'In your selected routine'}</dd></div>)}</dl>
+    <TextButton onClick={onOpenRoutine}>View and edit your routine</TextButton>
   </section>;
 }
 
@@ -261,10 +119,10 @@ function RecentCheckin({ products, outcomes, onOpenRoutine }) {
     return entry && OUTCOME_LABELS[entry.rating] ? [{ product, ...entry }] : [];
   }).sort((a, b) => b.day.localeCompare(a.day))[0];
   if (!latest) return null;
-  return <section className="ay-hh-recent-checkin" aria-labelledby="ay-hh-recent-checkin-title">
-    <div><p className="ay-hh-today-kicker">What you reported</p><h3 id="ay-hh-recent-checkin-title">{latest.product.name}</h3></div>
+  return <section className="ay-db-card" aria-labelledby="ay-db-recent-title">
+    <h3 id="ay-db-recent-title" className="ay-db-h3">{latest.product.name}</h3>
     <p>You marked this product “{OUTCOME_LABELS[latest.rating].toLowerCase()}” on {fmtDay(latest.day)}. This is your report, not a measure of medical effectiveness.</p>
-    <button type="button" onClick={onOpenRoutine}>See your product check-ins →</button>
+    <TextButton onClick={onOpenRoutine}>See your product check-ins</TextButton>
   </section>;
 }
 
@@ -274,96 +132,33 @@ function TriedSoFar({ products, outcomes, onOpenRoutine }) {
     return { product, history, helping: history.filter((entry) => entry.rating === 'helping').length };
   }).filter((item) => item.history.length);
   if (!tried.length) return null;
-  return <details className="ay-hh-tried">
-    <summary>What you’ve tried <span>{tried.length} {tried.length === 1 ? 'product' : 'products'}</span></summary>
-    <ul>{tried.map(({ product, history, helping }) => <li key={product.id}>
-      <b>{product.name}</b>
-      <span>{history.length >= 3 ? `Marked helping on ${helping} of ${history.length} check-ins` : `${history.length} dated ${history.length === 1 ? 'check-in' : 'check-ins'} so far`}</span>
-    </li>)}</ul>
-    <p>These are your impressions. They do not show that a product caused a health change.</p>
-    {onOpenRoutine && <button type="button" onClick={onOpenRoutine}>Review product check-ins →</button>}
+  return <details className="ay-db-fold">
+    <summary>What you’ve tried <StatusPill>{tried.length} {tried.length === 1 ? 'product' : 'products'}</StatusPill></summary>
+    <dl className="ay-db-facts">{tried.map(({ product, history, helping }) => <div key={product.id}>
+      <dt>{product.name}</dt>
+      <dd>{history.length >= 3 ? `Marked helping on ${helping} of ${history.length} check-ins` : `${history.length} dated ${history.length === 1 ? 'check-in' : 'check-ins'} so far`}</dd>
+    </div>)}</dl>
+    <p className="ay-db-muted">These are your impressions. They do not show that a product caused a health change.</p>
+    {onOpenRoutine && <TextButton onClick={onOpenRoutine}>Review product check-ins</TextButton>}
   </details>;
 }
-
-/** Mini phase bar for the Cycle tile: the four phases, today marked. */
-function MiniPhases({ cycle }) {
-  const phase = estimatePhase(cycle);
-  if (!phase?.windowStart || !cycle.avgLength) return null;
-  const L = Math.max(cycle.avgLength, cycle.cycleDay);
-  const p = Math.max(1, cycle.periodLength || 5);
-  const seg = [['period', p], ['follicular', phase.windowStart - 1 - p], ['ovulation', phase.windowEnd - phase.windowStart + 1], ['luteal', L - phase.windowEnd]].filter((s) => s[1] > 0);
-  return (
-    <span className="ay-hh-mini" aria-hidden="true">
-      {seg.map(([id, n]) => <i key={id} className={`is-${id}`} style={{ flex: n }} />)}
-      <em style={{ left: `${((cycle.cycleDay - 0.5) / L) * 100}%` }} />
-    </span>
-  );
-}
-
-/** Concentric rings: one per goal, filled to the strongest evidence among her products for it. */
-function GoalRings({ goals, onOpen }) {
-  if (!goals.length) return null;
-  const covered = goals.filter((g) => g.owned.length).length;
-  const rings = goals.slice(0, 4).map((g, i) => {
-    const level = g.owned.length ? Math.max(...g.owned.map((o) => o.level)) : 0;
-    return { ...g, level, r: 47 - i * 9, tone: RING_TONES[i] };
-  });
-  return (
-    <section className="ay-hh-goals" aria-labelledby="ay-hh-goals-title">
-      <div className="ay-hh-sechead">
-        <h3 id="ay-hh-goals-title">Your goals, covered</h3>
-        {onOpen && <button type="button" className="ay-hh-link" onClick={onOpen}>See products</button>}
-      </div>
-      <div className="ay-hh-goals-body">
-        <div className="ay-hh-rings" role="img" aria-label={`${covered} of ${goals.length} goals covered by products in your ecosystem`}>
-          <svg viewBox="0 0 104 104" aria-hidden="true">
-            {rings.map((g) => {
-              const C = 2 * Math.PI * g.r;
-              return (
-                <g key={g.needId} className={`is-${g.tone}`}>
-                  <circle className="ay-hh-ring-track" cx="52" cy="52" r={g.r} />
-                  {g.level > 0 && <circle className="ay-hh-ring-arc" cx="52" cy="52" r={g.r} strokeDasharray={`${(g.level / 3) * C} ${C}`} style={{ '--c': C }} transform="rotate(-90 52 52)" />}
-                </g>
-              );
-            })}
-          </svg>
-          <span aria-hidden="true"><b>{covered}/{goals.length}</b></span>
-        </div>
-        <ul className="ay-hh-goal-legend">
-          {rings.map((g) => (
-            <li key={g.needId} className={`is-${g.tone}`}>
-              <i aria-hidden="true" />
-              <span className="ay-hh-goal-name">{g.label}</span>
-              {g.level > 0
-                ? <Meter level={g.level} short />
-                : <small>{g.match ? 'Matched, not added yet' : 'Not covered yet'}</small>}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <p className="ay-hh-note">Each ring fills with the strongest evidence among your products for that goal.</p>
-    </section>
-  );
-}
-
-const STATUS = { sky: 'Estimate', ink: 'Estimate', butter: 'Reminder', pink: 'Estimate' };
 
 function ComingUp({ items, today }) {
   if (!items.length) return null;
   return (
-    <section className="ay-hh-coming" aria-labelledby="ay-hh-coming-title">
-      <h3 id="ay-hh-coming-title" className="ay-hh-h3">Coming up</h3>
-      <ol>
+    <section className="ay-db-card" aria-labelledby="ay-db-coming-title">
+      <h3 id="ay-db-coming-title" className="ay-db-h3">Coming up</h3>
+      <ol className="ay-db-coming">
         {items.map((e) => {
           const n = daysFrom(today, e.day);
           return (
-            <li key={e.title + e.day} className={`is-${e.tone}`}>
-              <span className="ay-hh-date" aria-hidden="true"><b>{fmtDay(e.day).split(' ')[1]}</b><small>{fmtWeekday(e.day)}</small></span>
-              <span className="ay-hh-coming-text">
-                <span className="ay-hh-coming-title"><b>{e.title}</b><span className="ay-hh-pill">{n <= 0 ? 'Today' : n === 1 ? 'Tomorrow' : `In ${n} days`}</span></span>
-                <span className="sr-only">{fmtDay(e.day)}. {STATUS[e.tone] || ''}.</span>
+            <li key={e.title + e.day}>
+              <span className="ay-db-date" aria-hidden="true"><b>{fmtDay(e.day).split(' ')[1]}</b><small>{fmtWeekday(e.day)}</small></span>
+              <span>
+                <span className="ay-db-coming-t"><b>{e.title}</b><StatusPill>{n <= 0 ? 'Today' : n === 1 ? 'Tomorrow' : `In ${n} days`}</StatusPill></span>
+                <span className="sr-only">{fmtDay(e.day)}.</span>
                 {e.sub && <small>{e.sub}</small>}
-                {e.expect && <small className="is-expect">{e.expect}{e.source && <> <SourceLink source={{ ...e.source, label: 'Source' }} /></>}</small>}
+                {e.expect && <small>{e.expect}{e.source && <> <SourceLink source={{ ...e.source, label: 'Source' }} /></>}</small>}
               </span>
             </li>
           );
@@ -373,343 +168,432 @@ function ComingUp({ items, today }) {
   );
 }
 
-function Tile({ tone, label, big, sub, onOpen, aria, children, i }) {
+/**
+ * Today's Rundown as one line (website dashboard): the Rundown itself still
+ * lives in Today's feed; this line starts it (src/components/rundown/Rundown.jsx
+ * listens for ayna:rundown-start and says how many cards it has).
+ */
+function RundownEntry({ onShown }) {
+  const [count, setCount] = useState(null);
+  useEffect(() => {
+    const on = (e) => { const n = e?.detail?.count; setCount(Number.isFinite(n) ? n : null); };
+    window.addEventListener('ayna:rundown-state', on);
+    try { window.dispatchEvent(new CustomEvent('ayna:rundown-ask')); } catch { /* old browser */ }
+    return () => window.removeEventListener('ayna:rundown-state', on);
+  }, []);
+  useEffect(() => { onShown?.(Boolean(count)); }, [count, onShown]);
+  if (!count) return null;
   return (
-    <li className={`ay-hh-tile is-${tone}`} style={{ '--i': i }}>
-      <button type="button" onClick={onOpen} aria-label={aria}>
-        <span className="ay-hh-tile-label">{label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg></span>
-        <span className="ay-hh-tile-big">{big}</span>
-        {sub && <span className="ay-hh-tile-sub">{sub}</span>}
-        {children}
-      </button>
-    </li>
+    <div className="ay-db-rundown">
+      <p><b>Today&rsquo;s Rundown</b> <span>{count} {count === 1 ? 'thing' : 'things'}</span></p>
+      <StickerButton onClick={() => { try { window.dispatchEvent(new CustomEvent('ayna:rundown-start')); } catch { /* old browser */ } }}>Start</StickerButton>
+    </div>
   );
 }
 
 export default function HealthHome({
-  name = '', rows = [], sections = [], matchContext = null, today, needIds = [], hormonalBC = false,
+  rows = [], sections = [], matchContext = null, today, needIds = [], hormonalBC = false,
   products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, onAsk, onAddGoal, onOpenRoutine, onOpenCheckin, footer = null, surface = 'app',
   todayFeed = null,
-  // false where the page already greets her (web Today's band): only the data-source line stays.
-  hello: showHello = true,
+  // The app shows its title row ("Your data" + ring); the website's band carries it (hello=false).
+  hello: showTitle = true,
   helloAside = null,
+  title = 'Your data',
+  titleLevel = 2,
+  connections = [],
+  onRefresh = null,
+  // 'error' with rows still here: say so and keep the last-known values (dashboard audit 9.3).
+  status = 'ready',
 }) {
   const [tab, setTab] = useState('summary');
   const [range, setRange] = useState('month');
-  const [editing, setEditing] = useState(false);
-  const [layout, setLayout] = useState(loadLayout);
   const [added, setAdded] = useState({});
-  const [activeInsight, setActiveInsight] = useState(null);
+  const [rundownShown, setRundownShown] = useState(false);
+  const [copied, setCopied] = useState(false);
   const topRef = useRef(null);
 
   const days = RANGES.find((r) => r.id === range).days;
   const dash = buildDashboard(rows, { days, today });
   const week = buildDashboard(rows, { days: 30, today });
+  const long = buildDashboard(rows, { days: 90, today });
   const cycle = week.cycle?.cycleDay ? week.cycle : null;
   const ready = sections.filter((s) => s.status === 'ready');
   const estimate = sections.find((s) => s.id === 'cycle')?.estimate || null;
   const sources = [...new Set(sections.flatMap((s) => s.sources || []))];
-  const phase = cycle ? estimatePhase(cycle) : null;
+  const phase = cycle && !hormonalBC ? estimatePhase(cycle) : null;
+  const hasData = rows.length > 0 && !week.empty;
 
   const explained = explainWeek(rows, { today, cycle, estimate, hormonalBC, max: 7 });
   const insights = explained.insights;
-  // Anything worth checking first, then explainWeek's own order (team direction 46).
   const stories = insightStories(insights, { hormonalBC });
-  const storyFor = (id) => stories.find((x) => x.insight.id === id)?.story || null;
   const ctx = explained.ctx;
+  const { status: findingStatusBy, backToUsual } = findingStatus(rows, insights, { today, hormonalBC });
   const picks = weekPicks({ ctx, insights, needIds, products, matches });
   const coming = comingUp(cycle, estimate, today, { hormonalBC, hasProducts: products.length > 0 && Boolean(onOpenRoutine) });
   const compare = phaseCompare(rows, { today, cycle, hormonalBC });
   const ranges = normalRanges(rows, { today, hormonalBC });
   const goals = goalsCovered({ needIds, products, matches });
-  const effects = effectChecks(rows, { today, products });
+  const effects = effectChecks(rows, { today, products: [...products, ...routineProducts.filter((p) => !products.some((x) => x.id === p.id))] });
   const adds = aynaAdds({ insights, picks, products, needIds, phaseName: ctx.phase ? ctx.phase.name.toLowerCase() : null });
   const suggestions = (onAddGoal && matchContext?.suggestions) || [];
-  const asked = new Set(insights.map((i) => i.question));
-  const questions = weekQuestions({ insights: [], ctx, picks }).filter((q) => !asked.has(q));
-  if (ranges && !ranges.allOk) questions.push('Is my cycle length something to ask a clinician about?');
+  // Three starters built from her findings (dashboard audit 7.13); the same on both platforms.
+  // Each from a finding shows that finding as its reason (same shape as p9/ask's startersFromFindings).
+  const starters = [];
+  for (const i of insights) if (i.question && !starters.some((x) => x.question === i.question) && starters.length < 3) starters.push({ question: i.question, reason: findingTitle(i) });
+  for (const q of weekQuestions({ insights: [], ctx, picks })) if (starters.length < 3 && !starters.some((x) => x.question === q)) starters.push({ question: q, reason: '' });
+  if (ranges && !ranges.allOk && starters.length < 3) starters.push({ question: 'Is my cycle length something to ask a clinician about?', reason: '' });
   const ask = onAsk ? (q) => onAsk(q, { insights, stats: askStats(week, estimate) }) : undefined;
+  const sync = syncState(connections);
 
-  const hour = new Date().getHours();
-  const hello = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-
-  // Tiles: what she pinned (cycle + metrics with data).
   const allCharts = week.groups.flatMap((g) => g.charts.map((c) => ({ ...c, group: g.id })));
-  const items = [
-    ...(cycle ? [{ id: 'cycle', label: 'Cycle' }] : []),
-    ...allCharts.map((c) => ({ id: c.metric, label: c.label, chart: c })),
-  ];
-  const itemIds = items.map((i) => i.id);
-  const pinned = (layout.pins || DEFAULT_PINS).filter((id) => itemIds.includes(id));
-  const togglePin = (id) => { const next = { ...layout, pins: pinned.includes(id) ? pinned.filter((x) => x !== id) : [...pinned, id] }; setLayout(next); saveLayout(next); };
-  const byId = Object.fromEntries(items.map((i) => [i.id, i]));
+  const groupOf = Object.fromEntries(allCharts.map((c) => [c.metric, c.group]));
+  const chartOf = (m) => allCharts.find((c) => c.metric === m) || null;
+  const rangeChartOf = (m) => dash.groups.flatMap((g) => g.charts).find((c) => c.metric === m) || null;
+  const bandOf = (m) => usualBand(long.groups.flatMap((g) => g.charts).find((c) => c.metric === m)?.points, today);
 
-  const groupTabs = week.groups.map((g) => ({ id: g.id, label: g.label }));
-  const hasProductsTab = picks.length > 0 || goals.length > 0 || effects.length > 0;
-  const tabs = [
+  const sleepCharts = week.groups.find((g) => g.id === 'sleep')?.charts || [];
+  const bodyCharts = week.groups.filter((g) => BODY_GROUPS.includes(g.id)).flatMap((g) => g.charts);
+  const hasRoutine = picks.length > 0 || goals.length > 0 || effects.length > 0 || routineProducts.length > 0 || Boolean(onOpenRoutine);
+  const tabs = hasData ? [
     { id: 'summary', label: 'Summary' },
     ...(week.cycle ? [{ id: 'cycle', label: 'Cycle' }] : []),
-    ...groupTabs,
-    ...(hasProductsTab ? [{ id: 'products', label: 'Products' }] : []),
-  ];
+    ...(sleepCharts.length ? [{ id: 'sleep', label: 'Sleep' }] : []),
+    ...(bodyCharts.length ? [{ id: 'body', label: 'Body' }] : []),
+    ...(hasRoutine ? [{ id: 'routine', label: 'Routine' }] : []),
+  ] : [];
   const current = tabs.some((t) => t.id === tab) ? tab : 'summary';
-  const pickTab = (id) => { if (id !== current) haptic('selection'); setTab(id); };
   const open = (id) => {
+    const to = LEGACY_TAB[id] || id;
+    if (!tabs.some((t) => t.id === to)) return;
     haptic('selection');
-    setActiveInsight(null);
-    setTab(id);
-    window.requestAnimationFrame(() => topRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }));
+    setTab(to);
+    window.requestAnimationFrame(() => topRef.current?.scrollIntoView?.({ block: 'start', behavior: 'smooth' }));
   };
-  const showInsight = (insight) => {
-    haptic('selection');
-    setActiveInsight(insight.id);
-    window.requestAnimationFrame(() => topRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }));
-  };
+  const pickTab = (id) => { if (id !== current) haptic('selection'); setTab(id); };
   // "See data" from the Daily Rundown (src/components/rundown): open that area's tab.
   useEffect(() => {
-    const onTab = (e) => { const id = e?.detail?.tab; if (id && tabs.some((x) => x.id === id)) open(id); };
+    const onTab = (e) => { const id = e?.detail?.tab; if (id) open(id); };
     window.addEventListener('ayna:health-tab', onTab);
     return () => window.removeEventListener('ayna:health-tab', onTab);
   });
   const add = (needId) => { if (onAddGoal?.(needId)) { haptic('success'); setAdded((a) => ({ ...a, [needId]: true })); } };
 
-  let ti = 0;
-  const tiles = [];
-  if (pinned.includes('cycle') && cycle) {
-    tiles.push(
-      <Tile key="cycle" i={ti} tone="pink" label="Cycle" big={phase ? (phase.id === 'period' ? 'On your period' : phase.id === 'ovulation' ? 'Ovulation possible' : phase.id === 'luteal' ? 'Probably after ovulation' : 'Probably before ovulation') : 'Where you are'} sub={`Day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`} onOpen={() => open('cycle')} aria={`Cycle: usual length ${cycle.avgLength || 'not known yet'} days${phase ? `, now ${phase.name.toLowerCase()}` : ''}. Open cycle details.`}>
-        <MiniPhases cycle={cycle} />
-      </Tile>,
-    );
-    ti += 1;
+  /* ------------------------------ Week at a glance ------------------------------ */
+  const heart = chartOf('resting_hr_bpm') || chartOf('hrv_rmssd_ms') || chartOf('hrv_sdnn_ms');
+  const steps = chartOf('steps');
+  const glanceMetrics = [chartOf('sleep_minutes'), heart, steps].filter(Boolean);
+  if (glanceMetrics.length + (cycle ? 1 : 0) < 4) {
+    const temp = chartOf('temp_deviation_c') || chartOf('basal_temp_c') || chartOf('skin_temp_night_c');
+    if (temp) glanceMetrics.push(temp);
   }
-  pinned.filter((id) => id !== 'cycle').forEach((id, k) => {
-    const c = byId[id]?.chart;
-    if (!c) return;
-    // Words first (how it compares with her usual); the number sits underneath (team direction 45).
-    const num = shortMetric(c, c.week ?? c.avg);
-    const per = c.metric === 'sleep_minutes' ? 'a night' : 'a day';
-    const head = metricHeadline(c, isFlat);
-    tiles.push(
-      <Tile key={id} i={ti} tone={TILE_TONES[k] || 'group'} label={c.label} big={head} sub={`${num} ${per}, last 7 days`} onOpen={() => open(c.group)} aria={`${c.label}: ${head}. ${num} ${per}, last 7 days. ${vsUsual(c)}. See the data.`} />,
+  const glance = [
+    ...(cycle ? [{
+      id: 'cycle', area: 'cycle', label: 'Cycle',
+      words: hormonalBC ? 'Bleeding pattern' : phase ? PHASE_WORDS[phase.id] || 'Where you are' : 'Where you are',
+      value: hormonalBC ? `Day ${cycle.cycleDay} since your last bleed` : `Day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`,
+      visual: <PhaseLine cycle={cycle} hormonalBC={hormonalBC} compact />,
+    }] : []),
+    ...glanceMetrics.map((c) => ({
+      id: c.metric, area: AREA_OF_METRIC(c.metric, groupOf),
+      label: c.metric === 'sleep_minutes' ? 'Sleep' : c.metric === 'steps' ? 'Steps' : c.label,
+      words: glanceWords(c),
+      value: valueWithUsual(c),
+      visual: <Sparkline points={lastDays(c.points, today)} band={bandOf(c.metric)} metric={c.metric} label={`${c.label}, last 7 days`} />,
+    })),
+  ];
+  const missing = [
+    ...(!chartOf('sleep_minutes') ? ['Sleep'] : []),
+    ...(!heart ? ['Heart'] : []),
+    ...(!steps ? ['Activity'] : []),
+  ];
+  const glanceBlock = glance.length > 0 && (
+    <section className="ay-db-card ay-db-glance" aria-labelledby="ay-db-glance-title">
+      <h2 id="ay-db-glance-title" className="ay-db-h2">Your week at a glance</h2>
+      <ul>
+        {glance.map((g) => (
+          <li key={g.id}>
+            <button type="button" onClick={() => open(g.area)} aria-label={`${g.label}: ${g.words}. ${g.value}. Open ${g.area}.`}>
+              <span className="ay-db-glance-k">{g.label}</span>
+              <span className="ay-db-glance-w">{g.words}</span>
+              <span className="ay-db-glance-v">{g.value}</span>
+              <span className="ay-db-glance-viz" aria-hidden="true">{g.visual}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      {missing.length > 0 && missing.length < 3 && <p className="ay-db-muted">{missing.join(' and ')}: connect a watch or ring to see {missing.length > 1 ? 'these' : 'this'}.</p>}
+    </section>
+  );
+
+  /* ---------------------------------- Findings --------------------------------- */
+  const findingFor = ({ insight, story }, { openFirst = false } = {}) => {
+    const chart = chartOf(insight.metric);
+    const reading = INSIGHT_READING[insight.signal] ? [INSIGHT_READING[insight.signal]] : [];
+    return (
+      <FindingItem
+        key={insight.id}
+        idBase={`ay-db-f-${current}-${insight.id}`}
+        title={findingTitle(insight)}
+        status={findingStatusBy[insight.signal] || null}
+        insight={insight}
+        story={story}
+        chart={chart}
+        band={chart ? bandOf(chart.metric) : null}
+        today={today}
+        reading={reading.filter((r) => !(insight.sources || []).some((s) => s.url === r.url))}
+        from={insight.from?.length ? sourceNames(insight.from) : ''}
+        onSeeChart={current === 'summary' ? () => open(AREA_OF_METRIC(insight.metric, groupOf)) : null}
+        open={openFirst}
+      />
     );
-    ti += 1;
-  });
-  if (hasProductsTab) {
-    const shown = (picks.length ? picks.map((p) => p.product) : products).slice(0, 3);
-    tiles.push(
-      <Tile key="picks" i={ti} tone="paper" label="Picks" big={picks.length ? `${picks.length} ${picks.length === 1 ? 'pick' : 'picks'}` : `${products.length} products`} sub={picks.length ? 'For this week, each with a reason' : 'Graded for your goals'} onOpen={() => open('products')} aria={`Picks: ${picks.length ? `${picks.length} for this week` : `${products.length} products`}. Open products.`}>
-        {shown.length > 0 && (
-          <span className="ay-hh-stack" aria-hidden="true">
-            {shown.map((p) => <span key={p.id}><ProductImage product={p} src={p.image || p.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>)}
-          </span>
-        )}
-      </Tile>,
-    );
-  }
-
-  const summary = (
-    <div className="ay-hh-summary">
-      <div className="ay-hh-main">
-        <Hero cycle={cycle} ctx={ctx} stories={stories.slice(0, 3)} fallback={weekSummary(ready)} onOpenInsight={showInsight} />
-        <RecentCheckin products={routineProducts} outcomes={routineOutcomes} onOpenRoutine={onOpenRoutine} />
-        <TriedSoFar products={routineProducts} outcomes={routineOutcomes} onOpenRoutine={onOpenRoutine} />
-        {onOpenCheckin && <button type="button" className="ay-hh-checkin-link" onClick={onOpenCheckin}>Log how you felt this month →</button>}
-        {surface === 'app' && tabs.length > 1 && <button type="button" className="ay-hh-health-link" onClick={() => open(tabs[1].id)}>Explore all health data →</button>}
-        <section className="ay-hh-tiles-sec" aria-labelledby="ay-hh-tiles-title">
-          <div className="ay-hh-sechead">
-            <h3 id="ay-hh-tiles-title" className="ay-hh-h3">{editing ? 'Choose your tiles' : 'Your areas, last 7 days'}</h3>
-            {items.length > 0 && <button type="button" className="ay-hh-link" aria-expanded={editing} onClick={() => setEditing((v) => !v)}>{editing ? 'Done' : 'Edit'}</button>}
-          </div>
-          {editing ? (
-            <ul className="ay-hh-editlist" aria-label="Choose which tiles show">
-              {items.map((it) => (
-                <li key={it.id}>
-                  <span>{it.label}</span>
-                  <button type="button" role="switch" aria-checked={pinned.includes(it.id)} aria-label={`Show ${it.label}`} className="ay-hc-switch" onClick={() => togglePin(it.id)}><span /></button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <ul className="ay-hh-tiles" data-count={tiles.length}>{tiles}</ul>
-          )}
-        </section>
-        <details className="ay-hh-personalized"><summary>How ayna puts this together</summary><Adds items={adds} /></details>
-      </div>
-      <div className="ay-hh-rail">
-        <GoalRings goals={goals} onOpen={hasProductsTab ? () => open('products') : null} />
-        <ComingUp items={coming} today={today} />
-        {suggestions.length > 0 && (
-          <section className="ay-hh-suggest" aria-labelledby="ay-hh-suggest-title">
-            <h3 id="ay-hh-suggest-title" className="ay-hh-h3">Something to add?</h3>
-            {suggestions.map((s) => (
-              <div key={s.needId} className="ay-hh-suggest-item">
-                <p>{s.summary}. Want ayna to match you for {SUGGEST_LABEL[s.needId] || 'it'} too?</p>
-                {added[s.needId]
-                  ? <p className="ay-hh-added" role="status">Added. Your matches now include {SUGGEST_LABEL[s.needId] || 'it'}.</p>
-                  : <button type="button" className="ay-hh-btn" onClick={() => add(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'} to my goals</button>}
-              </div>
-            ))}
-          </section>
-        )}
-        {ask && questions.length > 0 && (
-          <section className="ay-hh-askweek" aria-labelledby="ay-hh-askweek-title">
-            <h3 id="ay-hh-askweek-title" className="ay-hh-h3">Ask ayna about your week</h3>
-            <ul>
-              {questions.slice(0, 3).map((q) => (
-                <li key={q}><button type="button" onClick={() => ask(q)}><span>{q}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg></button></li>
-              ))}
-            </ul>
-          </section>
-        )}
-        {ready.length > 0 && (
-          <details className="ay-hh-fold">
-            {/* Folded: the hero carries the changes that matter; this is every area, one line each. */}
-            <summary><span className="ay-hh-h3">Your week, in short</span><small>Every area, one line each</small></summary>
-            <ul>
-              {ready.map((s) => {
-                const boosted = s.signal && matchContext?.byNeed?.[s.signal.needId];
-                return (
-                  <li key={s.id}>
-                    <b>{s.title}</b>
-                    <span>{s.plain || s.explanation || s.headline}</span>
-                    {boosted && <small>Because {SUGGEST_LABEL[s.signal.needId] || 'this'} is one of your goals, those picks rank a little higher for you right now.</small>}
-                  </li>
-                );
-              })}
-            </ul>
-            {sources.length > 0 && <p className="ay-hh-note">From {sourceNames(sources)}. Trends, not diagnoses.</p>}
-          </details>
-        )}
-        <TodayPlan products={routineProducts} needIds={needIds} onOpenRoutine={onOpenRoutine} />
-        {onOpenRoutine && <button type="button" className="ay-hh-routine" onClick={onOpenRoutine}><span><b>Your routine and shopping list</b><small>Choose products, track what you have, shop your routine</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
-        {effects.length > 0 && <section className="ay-hh-effects" aria-labelledby="ay-hh-effects-title"><h3 id="ay-hh-effects-title" className="ay-hh-h3">Is your routine working?</h3><p>Changes since you added a product, using the data you connected.</p>{effects.slice(0, 2).map((effect) => <div key={effect.product.id}><b>{effect.product.name}</b><p>{effect.text}</p><small>{effect.caveat}</small></div>)}</section>}
-      </div>
-    </div>
+  };
+  const findings = stories.length > 0 && (
+    <section className="ay-db-card ay-db-findings" aria-labelledby="ay-db-findings-title">
+      <h2 id="ay-db-findings-title" className="ay-db-h2">{stories.length === 1 ? '1 change this week' : `${stories.length} changes this week`}</h2>
+      <ul>
+        {stories.map((x) => findingFor(x))}
+        {backToUsual.map((area) => <li key={area} className="ay-db-finding is-back"><p className="ay-db-h3"><span>{area}: back to your usual</span><StatusPill>Back to usual</StatusPill></p></li>)}
+      </ul>
+    </section>
   );
+  const areaFindings = (area) => stories.filter(({ insight }) => AREA_OF_METRIC(insight.metric, groupOf) === area);
 
-  const rangeTabs = (
-    <div className="ay-hh-range" role="group" aria-label="Time range">
-      {RANGES.map((r) => <button key={r.id} type="button" aria-pressed={range === r.id} className={range === r.id ? 'is-on' : ''} onClick={() => setRange(r.id)}>{r.label}</button>)}
-    </div>
+  /* --------------------------------- Right column -------------------------------- */
+  const routineWorking = effects.length > 0 && (
+    <section className="ay-db-card" aria-labelledby={`ay-db-effect-title-${current}`}>
+      <h2 id={`ay-db-effect-title-${current}`} className="ay-db-h2">Is your routine working?</h2>
+      {(current === 'summary' ? effects.slice(0, 1) : effects).map((e) => <RoutineEffect key={e.product.id} effect={e} today={today} />)}
+      {current === 'summary' && tabs.some((t) => t.id === 'routine')
+        ? <TextButton onClick={() => open('routine')}>Keep or swap: see your routine</TextButton>
+        : onOpenRoutine && <TextButton onClick={onOpenRoutine}>Keep or swap in your routine</TextButton>}
+    </section>
   );
-
-  const cycleTab = (
-    <div className="ay-hh-detail">
-      {cycle && (
-        <section className="ay-hh-cyclehero" aria-labelledby="ay-hh-cycle-title">
-          <div className="ay-hh-cyclehero-ring">
-            <CycleRing cycleDay={cycle.cycleDay} avgLength={cycle.avgLength} periodLength={cycle.periodLength} windowStart={phase?.windowStart} windowEnd={phase?.windowEnd} />
-            <span><small>Cycle day</small><b id="ay-hh-cycle-title">{cycle.cycleDay}</b>{cycle.avgLength && <small>of about {cycle.avgLength}</small>}</span>
-          </div>
-          <div className="ay-hh-cyclehero-text">
-            {phase && <p className="ay-hh-phase-name">{phase.id === 'period' ? 'You are on your period' : phase.id === 'ovulation' ? 'Ovulation could happen in these days' : phase.id === 'luteal' ? 'Ovulation has probably happened' : 'Ovulation probably has not happened yet'}</p>}
-            <p className="ay-hh-next">{estimate ? <b>Next period around {fmtDay(estimate.day)}</b> : 'Log a few more periods and ayna can estimate your next one.'}</p>
-            <ul className="ay-hh-ringkey" aria-hidden="true"><li><i className="is-period" />Period</li>{phase?.windowStart && <li><i className="is-window" />Possible ovulation days</li>}<li><i className="is-today" />Today</li></ul>
-          </div>
-        </section>
-      )}
-      {cycle && <div className="ay-hh-group"><PhaseStrip cycle={cycle} /></div>}
-      <PhaseCompare data={compare} />
-      <NormalRanges data={ranges} />
-      {dash.cycle && dash.cycle.lengths.length >= 2 && (
-        <article className="ay-hh-chart">
-          <header>
-            <h3>Cycle length</h3>
-            <p className="ay-hh-avg"><b>{dash.cycle.avgLength} days</b> average of your last {dash.cycle.lengths.length}</p>
-          </header>
-          <HealthChart chart={{ metric: 'cycle_length', label: 'Cycle length', type: 'bar', usual: null, points: dash.cycle.lengths.map((c) => ({ day: c.start, value: c.days })) }} />
-          {dash.cycle.sources.length > 0 && <p className="ay-hh-from">From {sourceNames(dash.cycle.sources)}</p>}
-        </article>
-      )}
-      {phase && (
-        <details className="ay-hh-fold is-quiet">
-          <summary><span className="ay-hh-h3">How we estimate this</span></summary>
-          <p>{phase.basis}</p>
-          {estimate && <p>{estimate.basis}</p>}
-          <p className="ay-hh-note">Sources: {PHASE_SOURCES.map((src, i) => <span key={src.url}>{i ? ', ' : ''}<a href={src.url} target="_blank" rel="noopener noreferrer">{src.label}</a></span>)}</p>
-        </details>
-      )}
-      {!cycle && !(dash.cycle && dash.cycle.lengths.length >= 2) && <p className="ay-hh-note">Log a few more periods and ayna can chart your cycle length.</p>}
-    </div>
-  );
-
-  const group = groupTabs.find((g) => g.id === current);
-  const groupTab = group && (
-    <div className="ay-hh-detail">
-      <div className="ay-hh-detailhead">
-        <p className="ay-hh-note">This week next to your usual, then the last {days} days.</p>
-        {rangeTabs}
-      </div>
-      {(week.groups.find((g) => g.id === current)?.charts || []).map((wc) => {
-        const c = dash.groups.find((g) => g.id === current)?.charts.find((x) => x.metric === wc.metric);
-        const story = stories.find((x) => x.insight.metric === wc.metric)?.story || null;
+  const suggestBlock = suggestions.length > 0 && (
+    <section className="ay-db-card" aria-labelledby="ay-db-suggest-title">
+      <h2 id="ay-db-suggest-title" className="ay-db-h2">Something to add?</h2>
+      {suggestions.map((s) => {
+        const m = [...matches].map((p) => ({ p, fit: fitFor(p, s.needId) })).filter((x) => x.fit?.graded).sort((a, b) => b.fit.level - a.fit.level)[0];
         return (
-          <article key={wc.metric} className="ay-hh-chart">
-            <header className="ay-hh-chart-head">
-              <h3>{wc.label}</h3>
-              {!story && <p className="ay-hh-chart-status">{metricHeadline(wc, isFlat)}</p>}
-              {!story && <p className="ay-hh-vs">{vsUsual(wc)}</p>}
-            </header>
-            {story && <InsightStory story={story} mode="full" idBase={`ay-hh-story-${wc.metric}`} headingLevel={4} />}
-            {/* The numbers and the chart sit behind See data (team direction 45). */}
-            <details className="ay-hh-seedata">
-              <summary>{story ? 'See the chart' : 'See data'}</summary>
-              <p className="ay-hh-big">{shortMetric(wc, wc.week ?? wc.avg)}<small>{wc.metric === 'sleep_minutes' ? ' a night' : ''}, last 7 days</small></p>
-              <span className="ay-hh-stats">{weekStats(wc).map((s) => <span key={s.k}><b>{s.v}</b><small>{s.k}</small></span>)}</span>
-              {c ? (
-                <>
-                  <p className="ay-hh-avg"><b>{formatMetric(c.metric, c.avg)}</b> average, last {days} days</p>
-                  <HealthChart chart={c} />
-                </>
-              ) : <p className="ay-hh-note">No readings in the last {days} days. Try a longer range.</p>}
-              {wc.sources.length > 0 && <p className="ay-hh-from">From {sourceNames(wc.sources)}</p>}
-            </details>
-          </article>
+          <div key={s.needId} className="ay-db-suggest">
+            <p>{s.summary}. Want ayna to match you for {SUGGEST_LABEL[s.needId] || 'it'} too?</p>
+            {m && onOpenProduct && <button type="button" className="ay-db-match" onClick={() => onOpenProduct(m.p)}><span>{displayName(m.p)}</span><Meter level={m.fit.level} short /></button>}
+            {added[s.needId]
+              ? <p className="ay-db-muted" role="status">Added. Your matches now include {SUGGEST_LABEL[s.needId] || 'it'}.</p>
+              : <OutlineButton onClick={() => add(s.needId)}>Add {SUGGEST_LABEL[s.needId] || 'it'} to my goals</OutlineButton>}
+          </div>
         );
       })}
+    </section>
+  );
+  const askBlock = ask && starters.length > 0 && (
+    <section className="ay-db-card" aria-labelledby="ay-db-ask-title">
+      <h2 id="ay-db-ask-title" className="ay-db-h2">Ask ayna about your week</h2>
+      <ul className="ay-db-ask">
+        {starters.map((st) => <li key={st.question}><button type="button" onClick={() => ask(st.question)}><span>{st.question}{st.reason && <small>{st.reason}</small>}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg></button></li>)}
+      </ul>
+    </section>
+  );
+
+  const weekShortText = ready.map((s) => `${s.title}: ${s.plain || s.explanation || s.headline}`).join('\n');
+  const copyWeek = async () => { try { await navigator.clipboard.writeText(weekShortText); setCopied(true); } catch { setCopied(false); } };
+  const bottom = (
+    <div className="ay-db-bottom">
+      {ready.length > 0 && (
+        <details className="ay-db-fold">
+          <summary>Your week, in short</summary>
+          <dl className="ay-db-facts">
+            {ready.map((s) => {
+              const boosted = s.signal && matchContext?.byNeed?.[s.signal.needId];
+              return <div key={s.id}><dt>{s.title}</dt><dd>{s.plain || s.explanation || s.headline}{boosted && <small> Because {SUGGEST_LABEL[s.signal.needId] || 'this'} is one of your goals, those picks rank a little higher for you right now.</small>}</dd></div>;
+            })}
+          </dl>
+          {typeof navigator !== 'undefined' && navigator.clipboard && <TextButton onClick={copyWeek}>{copied ? 'Copied' : 'Copy my week'}</TextButton>}
+        </details>
+      )}
+      {hasData && (
+        <details className="ay-db-fold">
+          <summary>How ayna puts this together</summary>
+          <dl className="ay-db-facts">{adds.map((x) => <div key={x.id}><dt>{x.label}</dt><dd>{x.text}</dd></div>)}</dl>
+        </details>
+      )}
     </div>
   );
 
-  const productsTab = (
-    <div className="ay-hh-detail">
+  /* ---------------------------------- Routine ---------------------------------- */
+  const routineBits = (
+    <>
+      <RecentCheckin products={routineProducts} outcomes={routineOutcomes} onOpenRoutine={onOpenRoutine} />
+      <TriedSoFar products={routineProducts} outcomes={routineOutcomes} onOpenRoutine={onOpenRoutine} />
+      <TodayPlan products={routineProducts} needIds={needIds} onOpenRoutine={onOpenRoutine} />
+      {onOpenRoutine && <button type="button" className="ay-db-row" onClick={onOpenRoutine}><span><b>Your routine and shopping list</b><small>Choose products, track what you have, shop your routine</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
+    </>
+  );
+
+  const summary = (
+    <div className="ay-db-summary">
+      {surface === 'web' && todayFeed && <RundownEntry onShown={setRundownShown} />}
+      {glanceBlock}
+      <div className="ay-db-cols">
+        <div className="ay-db-main">
+          {findings}
+          {/* Right after the findings they come from (dashboard audit 7.12, 7.13). */}
+          {suggestBlock}
+          {askBlock}
+          {!hasData && routineBits}
+          {onOpenCheckin && <TextButton onClick={onOpenCheckin}>Log how you felt this month</TextButton>}
+        </div>
+        <div className="ay-db-rail">
+          {routineWorking}
+          <ComingUp items={coming} today={today} />
+        </div>
+      </div>
+      {todayFeed && <div className="ay-db-today">{todayFeed}</div>}
+      {bottom}
+    </div>
+  );
+
+  const rangeRow = <RangePills ranges={RANGES} value={range} onChange={setRange} />;
+
+  const cycleLen = dash.cycle && dash.cycle.lengths.length >= 2 ? { metric: 'cycle_length', label: 'Cycle length', type: 'bar', usual: null, points: dash.cycle.lengths.map((c) => ({ day: c.start, value: c.days })) } : null;
+  const cycleTab = (
+    <div className="ay-db-detail">
+      {cycle && (
+        <section className="ay-db-card" aria-labelledby="ay-db-cycle-title">
+          <h2 id="ay-db-cycle-title" className="ay-db-h2">{hormonalBC ? 'Bleeding pattern' : phase ? PHASE_WORDS[phase.id] : `Cycle day ${cycle.cycleDay}`}</h2>
+          <PhaseLine cycle={cycle} hormonalBC={hormonalBC} />
+          <p>{estimate ? <b>Next {hormonalBC ? 'bleed' : 'period'} around {fmtDay(estimate.day)}, estimated</b> : 'Log a few more periods and ayna can estimate your next one.'}</p>
+        </section>
+      )}
+      {areaFindings('cycle').length > 0 && <section className="ay-db-card ay-db-findings" aria-label="Changes in your cycle"><ul>{areaFindings('cycle').map((x, i) => findingFor(x, { openFirst: i === 0 }))}</ul></section>}
+      <PhaseCompare data={compare} />
+      <NormalRanges data={ranges} />
+      {cycleLen && <section className="ay-db-card"><h2 className="ay-db-h2">Cycle length</h2><AreaChart chart={cycleLen} today={today} />{dash.cycle.sources.length > 0 && <p className="ay-db-muted">From {sourceNames(dash.cycle.sources)}</p>}</section>}
+      {phase && (
+        <details className="ay-db-fold">
+          <summary>How we estimate this</summary>
+          <p>{phase.basis}</p>
+          {estimate && <p>{estimate.basis}</p>}
+          <p className="ay-db-muted">Sources: {PHASE_SOURCES.map((src, i) => <span key={src.url}>{i ? ', ' : ''}<SourceLink source={src} /></span>)}</p>
+        </details>
+      )}
+      {!cycle && !cycleLen && <p className="ay-db-muted">Log a few more periods and ayna can chart your cycle length.</p>}
+    </div>
+  );
+
+  const sleepMain = sleepCharts[0];
+  const sleepRange = sleepMain && rangeChartOf(sleepMain.metric);
+  const sleepTab = sleepMain && (
+    <div className="ay-db-detail">
+      <section className="ay-db-card" aria-labelledby="ay-db-sleep-title">
+        <div className="ay-db-cardhead">
+          <h2 id="ay-db-sleep-title" className="ay-db-h2">{glanceWords(sleepMain)}</h2>
+          {rangeRow}
+        </div>
+        <p className="ay-db-value">{valueWithUsual(sleepMain)}</p>
+        {sleepRange ? <AreaChart chart={sleepRange} band={bandOf(sleepMain.metric)} today={today} /> : <p className="ay-db-muted">No readings in the last {days} days. Try a longer range.</p>}
+        <dl className="ay-db-facts is-row">{chartFacts(sleepRange).map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>
+        {sleepMain.sources.length > 0 && <p className="ay-db-muted">From {sourceNames(sleepMain.sources)}</p>}
+      </section>
+      {areaFindings('sleep').length > 0 && <section className="ay-db-card ay-db-findings" aria-label="Changes in your sleep"><ul>{areaFindings('sleep').map((x, i) => findingFor(x, { openFirst: i === 0 }))}</ul></section>}
+      {sleepCharts.length > 1 && (
+        <div className="ay-db-multiples">
+          {sleepCharts.slice(1).map((c) => {
+            const rc = rangeChartOf(c.metric);
+            return (
+              <section key={c.metric} className="ay-db-card ay-db-tile">
+                <h3 className="ay-db-k">{c.label}</h3>
+                <p className="ay-db-h3">{glanceWords(c)}</p>
+                <p className="ay-db-value">{valueWithUsual(c)}</p>
+                {rc && <AreaChart chart={rc} band={bandOf(c.metric)} today={today} small />}
+              </section>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+
+  const bodyTab = bodyCharts.length > 0 && (
+    <div className="ay-db-detail">
+      <div className="ay-db-cardhead is-bare"><h2 className="ay-db-h2">Your body, last {days} days</h2>{rangeRow}</div>
+      {areaFindings('body').length > 0 && <section className="ay-db-card ay-db-findings" aria-label="Changes in your body data"><ul>{areaFindings('body').map((x) => findingFor(x))}</ul></section>}
+      <div className="ay-db-multiples">
+        {bodyCharts.map((c) => {
+          const rc = rangeChartOf(c.metric);
+          const band = bandOf(c.metric);
+          const vals = rc?.points.map((p) => p.value) || [];
+          return (
+            <section key={c.metric} className="ay-db-card ay-db-tile" aria-labelledby={`ay-db-b-${c.metric}`}>
+              <h3 id={`ay-db-b-${c.metric}`} className="ay-db-k">{c.label}</h3>
+              <p className="ay-db-h3">{glanceWords(c)}</p>
+              <p className="ay-db-big">{short(c.metric, c.week ?? c.avg)}<small>{c.usual != null ? `last 7 days · usual ${short(c.metric, c.usual)}` : 'last 7 days'}</small></p>
+              {vals.length > 1 && <RangeBar value={c.week} band={band} min={Math.min(...vals, band?.lo ?? Infinity)} max={Math.max(...vals, band?.hi ?? -Infinity)} metric={c.metric} label={c.label} />}
+              {rc ? <AreaChart chart={rc} band={band} today={today} small /> : <p className="ay-db-muted">No readings in the last {days} days.</p>}
+            </section>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  const routineTab = (
+    <div className="ay-db-detail">
+      {routineWorking}
+      {goals.length > 0 && (
+        <section className="ay-db-card" aria-labelledby="ay-db-goals-title">
+          <h2 id="ay-db-goals-title" className="ay-db-h2">Your goals</h2>
+          <GoalList goals={goals} onOpenProduct={onOpenProduct} />
+          <p className="ay-db-muted">Marks show ayna&rsquo;s reading of the research for that goal. Open a product for the studies.</p>
+        </section>
+      )}
       <WeekPicks picks={picks} onOpenProduct={onOpenProduct} />
-      <GoalsCovered goals={goals} effects={effects} onOpenProduct={onOpenProduct} title="Each goal, with your products" />
+      {routineBits}
     </div>
   );
 
-  const selectedInsight = insights.find((insight) => insight.id === activeInsight);
-  const selectedChart = selectedInsight && (allCharts.find((chart) => chart.metric === selectedInsight.metric)
-    || (selectedInsight.metric === 'cycle_length' && cycle?.lengths?.length >= 4 ? {
-      metric: 'cycle_length', week: cycle.lengths.at(-1).days,
-      usual: cycle.lengths.slice(-4, -1).reduce((total, item) => total + item.days, 0) / 3,
-      group: 'cycle',
-    } : null));
-  const selectedPick = selectedInsight && pickForInsight(selectedInsight, picks);
+  const H = `h${titleLevel}`;
+  const sourceLine = (sources.length > 0 || sync) && (
+    <p className={`ay-db-source${sync?.stale ? ' is-stale' : ''}`}>
+      {sources.length > 0 ? `From ${sourceNames(sources)}` : 'Your data'}
+      {/* The website's band already says when it synced; the stale state shows here on both. */}
+      {sync && (showTitle || sync.stale) && <> · {sync.label}</>}
+      {' · compared with your usual'}
+      {sync?.stale && onRefresh && <OutlineButton className="is-small" onClick={onRefresh}>Refresh</OutlineButton>}
+    </p>
+  );
 
   return (
-    <div className={`ay-hh is-${surface}`}>
-      <header className={`ay-hh-hello${showHello ? '' : ' is-quiet'}`} ref={topRef}>
-        {showHello && <p>{fmtLongDay(today)}</p>}
-        {showHello && <h2>{hello}{name ? `, ${name}` : ''}</h2>}
-        {sources.length > 0 && <p>Health data from {sourceNames(sources)} · compared with your own history</p>}
-        {helloAside}
-      </header>
-      {(surface !== 'app' || current !== 'summary') && <div className="ay-hh-areas"><Tabs tabs={tabs} value={current} onChange={pickTab} label="Health areas" idBase="ay-hh-area" className="is-areas" /></div>}
-      <div className="ay-hh-panel" role={surface === 'app' && current === 'summary' ? 'region' : 'tabpanel'} id="ay-hh-area-panel" aria-label={surface === 'app' && current === 'summary' ? 'Today' : undefined} aria-labelledby={surface === 'app' && current === 'summary' ? undefined : `ay-hh-area-tab-${current}`} key={current}>
-        {current === 'summary' && !selectedInsight && todayFeed}
-        {current === 'summary' && (selectedInsight
-          ? <InsightDetail insight={selectedInsight} story={storyFor(selectedInsight.id)} chart={selectedChart} pick={selectedPick} onBack={() => setActiveInsight(null)} onOpenMetric={() => open(selectedChart?.group || 'cycle')} onOpenProduct={onOpenProduct} onOpenRoutine={onOpenRoutine} onAsk={ask} />
-          : summary)}
+    <div className={`ay-db is-${surface}${rundownShown ? ' has-rundown-entry' : ''}`} ref={topRef}>
+      {showTitle && (
+        <header className="ay-db-title">
+          <div>
+            <H className="ay-db-h1">{title}</H>
+            {sourceLine}
+          </div>
+          {cycle && !hormonalBC && <span className="ay-db-ring" role="img" aria-label={`Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`}><DsRing day={cycle.cycleDay} length={cycle.avgLength} /></span>}
+        </header>
+      )}
+      {(tabs.length > 1 || (!showTitle && sourceLine)) && (
+        <div className="ay-db-nav">
+          {tabs.length > 1 && <div className="ay-db-tabwrap"><PillTabs tabs={tabs} active={current} onChange={pickTab} label="Health areas" idBase="ay-db-area" /></div>}
+          {!showTitle && sourceLine}
+          {helloAside}
+        </div>
+      )}
+      {status === 'error' && hasData && (
+        <p className="ay-db-source is-stale" role="status">Couldn&rsquo;t load your latest data. These are the last values we have.{onRefresh && <OutlineButton className="is-small" onClick={onRefresh}>Try again</OutlineButton>}</p>
+      )}
+      <div className="ay-db-panel" role={tabs.length > 1 ? 'tabpanel' : undefined} id={`ay-db-area-panel-${current}`} aria-labelledby={tabs.length > 1 ? `ay-db-area-tab-${current}` : undefined} key={current}>
+        {current === 'summary' && summary}
         {current === 'cycle' && cycleTab}
-        {group && groupTab}
-        {current === 'products' && productsTab}
+        {current === 'sleep' && sleepTab}
+        {current === 'body' && bodyTab}
+        {current === 'routine' && routineTab}
       </div>
-      <footer className="ay-hh-foot">
-        <p>These describe your data. They aren&rsquo;t medical advice. If something worries you, talk to a clinician.</p>
+      <footer className="ay-db-foot">
+        <p className="ay-db-disclaimer">These describe your data, compared only with your own usual. Patterns, not a diagnosis. If something worries you, talk to a clinician.</p>
         {footer}
       </footer>
     </div>
   );
 }
-

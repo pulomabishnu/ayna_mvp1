@@ -27,32 +27,8 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-bn > * { min-width: 0; }
 
 /* ---------- why ayna (first visit, dismissible) ---------- */
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-why { display: flex !important; align-items: center !important; gap: 12px !important; margin: 0 !important; padding: 10px 8px 10px 16px !important; border: 0 !important; border-radius: 20px !important; background: var(--x-group) !important; color: var(--x-ink) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-why p { flex: 1; min-width: 0; margin: 0 !important; font: 500 calc(14px * var(--x-scale))/1.45 var(--x-sans) !important; color: var(--x-ink) !important; max-width: 68ch; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-why p b { font-weight: 600 !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-why button { flex: none; min-width: 44px; min-height: 44px; padding: 0 12px !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-ink) !important; font: 600 14px/1 var(--x-sans) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
 
 /* ---------- This week, explained (the Feature) ---------- */
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain { margin: 0 !important; padding: 20px 20px 16px !important; border: 0 !important; border-radius: 24px !important; background: var(--x-feature) !important; color: var(--x-on) !important; box-shadow: none !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain header { display: grid; gap: 4px; margin: 0 0 4px !important; padding: 0 !important; border: 0 !important; background: none !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container main .ay-wh.ay-wh, html body .app-container .ay-wh.ay-wh) .ay-wx-explain h3 { margin: 0 !important; font: 500 calc(22px * var(--x-scale))/1.15 var(--x-serif) !important; letter-spacing: 0 !important; color: var(--x-on) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-cycle { margin: 0 !important; font: 500 calc(14px * var(--x-scale))/1.35 var(--x-sans) !important; color: var(--x-on-2) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain ul { margin: 0 !important; padding: 0 !important; list-style: none !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain li { display: grid !important; gap: 2px !important; margin: 0 !important; padding: 12px 0 4px !important; border: 0 !important; border-top: 1px solid var(--x-on-hair) !important; background: none !important; color: var(--x-on) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain header + ul > li:first-child { border-top: 0 !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-k { font: 600 13px/1.3 var(--x-sans) !important; color: var(--x-on-2) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain li > p { margin: 0 !important; max-width: 68ch; font: 500 calc(16px * var(--x-scale))/1.5 var(--x-sans) !important; color: var(--x-on) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain details { margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain summary { display: inline-flex !important; align-items: center !important; gap: 6px; min-height: 44px; padding: 0 !important; list-style: none; cursor: pointer; font: 600 14px/1 var(--x-sans) !important; color: var(--x-on) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain summary::-webkit-details-marker { display: none; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain summary::after { content: ''; width: 7px; height: 7px; margin: -3px 0 0 2px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain details[open] summary::after { margin-top: 3px; transform: rotate(-135deg); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain summary:focus-visible { outline: 3px solid var(--x-on) !important; outline-offset: 2px; border-radius: 4px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-why-body { display: grid; gap: 6px; padding: 0 0 8px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-why-body p { margin: 0 !important; max-width: 68ch; font: 500 13px/1.45 var(--x-sans) !important; color: var(--x-on-2) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain a { color: var(--x-on) !important; text-decoration: underline !important; text-underline-offset: 2px; font-weight: 600 !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-explain a:focus-visible { outline: 2px solid var(--x-on) !important; outline-offset: 2px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-foot { margin: 8px 0 0 !important; padding: 8px 0 0 !important; border-top: 1px solid var(--x-on-hair) !important; font: 500 13px/1.4 var(--x-sans) !important; color: var(--x-on-2) !important; }
 
 /* ---------- What might help this week (shelf of product cards) ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-picks { margin: 8px 0 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
@@ -79,17 +55,8 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter-word { font: 500 13px/1.3 var(--x-sans) !important; color: var(--x-soft) !important; white-space: nowrap; }
 
 /* ---------- cycle: a Group now (card + phase strip together) ---------- */
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-bn-cyclegroup { display: grid; gap: 0; margin: 0; padding: 0; border-radius: 20px; background: var(--x-group); color: var(--x-ink); overflow: hidden; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-bn-cyclegroup .ay-bn-cycle { min-height: 0 !important; padding: 16px 16px 8px !important; border: 0 !important; border-radius: 0 !important; background: none !important; color: var(--x-ink) !important; box-shadow: none !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-bn-cyclegroup .ay-bn-cycle :is(.ay-bn-big, .ay-bn-phase, b, span) { color: var(--x-ink) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-bn-cyclegroup .ay-bn-cycle .ay-bn-stats small { color: var(--x-soft) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-bn-cyclegroup .ay-bn-cycle .ay-bn-stats > span { border-top: 1px solid var(--x-hair) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-bn-cyclegroup .ay-bn-phases { margin: 0 !important; padding: 8px 16px 16px !important; border: 0 !important; border-radius: 0 !important; background: none !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-bn-cyclegroup .ay-bn-cycle:focus-visible { outline: 3px solid var(--x-ink) !important; outline-offset: -3px; }
 
 /* ---------- Coming up: what to expect ---------- */
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-bn-tl-card small.ay-bn-tl-expect { color: var(--x-ink) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-bn-tl-expect a { display: inline-block; padding: 2px 0; color: var(--x-ink) !important; font-weight: 600 !important; text-decoration: underline !important; text-underline-offset: 2px; white-space: nowrap; }
 
 /* ---------- website: wider layouts ----------
    (:is(#ay, .ay-wh) matches .ay-wh but carries id weight, to beat the shared rules above.) */
@@ -102,53 +69,18 @@
   html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn > * { grid-column: 1 / -1 !important; grid-row: auto !important; }
   html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-picks-row { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: 24px; }
   /* The Feature runs full width with its sentences side by side. */
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-explain > ul { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); column-gap: 32px; }
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-explain > ul > li { align-content: start; border-top: 1px solid var(--x-on-hair) !important; }
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-explain header { margin-bottom: 8px !important; }
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn:has(.ay-bn-timeline) > .ay-bn-cyclegroup { grid-column: 1 / 6 !important; }
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn:has(.ay-bn-cyclegroup) > .ay-bn-timeline { grid-column: 6 / -1 !important; }
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn-cyclegroup .ay-bn-cycle { grid-template-columns: minmax(0, 1fr) 112px !important; }
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn-cyclegroup .ay-bn-ring { width: 112px !important; height: 112px !important; }
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn-cyclegroup .ay-bn-legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   /* Ask: the three questions side by side. */
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-askweek ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 24px; }
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-askweek li { border-top: 1px solid var(--x-hair); }
 }
 
 /* ---------- website: Ask ayna about your week (Group of question rows, like the app) ---------- */
-html body .app-container .ay-wh.ay-wh .ay-askweek { margin: 0; padding: 16px 20px 4px; border-radius: 20px; background: var(--x-group); color: var(--x-ink); }
-html body .app-container main .ay-wh.ay-wh .ay-askweek h3, html body .app-container .ay-wh.ay-wh .ay-askweek h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 4px !important; font: 500 22px/1.2 var(--x-serif) !important; color: var(--x-ink) !important; }
-html body .app-container .ay-wh.ay-wh .ay-askweek h3 svg { width: 20px; height: 20px; flex: none; fill: var(--x-ink); }
-html body .app-container .ay-wh.ay-wh .ay-askweek ul { margin: 0; padding: 0; list-style: none; }
-html body .app-container .ay-wh.ay-wh .ay-askweek li { margin: 0; border-top: 1px solid var(--x-hair); }
-html body .app-container .ay-wh.ay-wh .ay-askweek li:first-child { border-top: 0; }
-html body .app-container .ay-wh.ay-wh .ay-askweek li button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 52px; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-ink) !important; font: 600 16px/1.3 var(--x-sans) !important; text-align: left; }
-html body .app-container .ay-wh.ay-wh .ay-askweek li button:hover span { text-decoration: underline; text-underline-offset: 3px; }
-html body .app-container .ay-wh.ay-wh .ay-askweek li button svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; }
 
 /* ---------- "Your week, in short", folded (app and website) ---------- */
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hd-fold { margin: 0 0 24px !important; padding: 0 !important; border: 0 !important; border-top: 1px solid var(--x-hair) !important; border-bottom: 1px solid var(--x-hair) !important; background: none !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hd-fold > summary { position: relative; display: grid !important; gap: 2px; min-height: 56px; align-content: center; margin: 0 !important; padding: 10px 32px 10px 0 !important; list-style: none; cursor: pointer; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hd-fold > summary::-webkit-details-marker { display: none; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hd-fold > summary::after { content: ''; position: absolute; right: 8px; top: 50%; width: 9px; height: 9px; margin-top: -7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); color: var(--x-ink); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hd-fold[open] > summary::after { margin-top: -2px; transform: rotate(-135deg); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hd-fold > summary:focus-visible { outline: 3px solid var(--x-ink) !important; outline-offset: 2px; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ay-hd-fold > summary small { font: 500 13px/1.3 var(--f-ui) !important; color: var(--d-ink-2) !important; }
-html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wh-week.ay-hd-fold { margin-top: 32px !important; }
-html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wh-week.ay-hd-fold > summary { display: flex !important; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 0 !important; }
 
 /* =====================================================================
    Round 2: what Apple Health doesn't do, near the top.
    ===================================================================== */
-.ayna-mobile :is(.ay-wx-empty) { --x-ink: var(--d-ink, #3e2723); --x-soft: var(--d-ink-2, rgba(62, 39, 35, .75)); --x-group: var(--d-group, #f6e3a1); --x-hair: var(--d-hair, rgba(62, 39, 35, .15)); --x-serif: var(--f-display, 'ayna Display', serif); --x-sans: var(--f-ui, 'Figtree', sans-serif); --x-scale: var(--ayna-text-scale, 1); }
 
 /* Feature: Why we say this + Ask ayna on one line */
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-actions { display: flex; flex-wrap: wrap; align-items: flex-start; column-gap: 20px; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-actions > details { flex: 1 1 auto; min-width: 0; order: 0; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-actions > details[open] { flex-basis: 100%; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-ask { display: inline-flex !important; align-items: center !important; gap: 6px; min-height: 44px; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-on) !important; font: 600 14px/1 var(--x-sans) !important; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; cursor: pointer; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-ask::before { content: ''; width: 14px; height: 14px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z'/%3E%3C/svg%3E") center / contain no-repeat; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-ask:focus-visible { outline: 3px solid var(--x-on) !important; outline-offset: 2px; }
 
 /* Groups: deeper butter, radius 20, hairline rows */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) :is(.ay-wx-adds, .ay-wx-group) { margin: 0 !important; padding: 16px 16px 12px !important; border: 0 !important; border-radius: 20px !important; background: var(--x-group) !important; color: var(--x-ink) !important; box-shadow: none !important; }
@@ -199,21 +131,15 @@ html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wh-week.ay-hd-fold > s
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-starter { display: grid !important; gap: 16px !important; margin: 16px 0 0 !important; text-align: left !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-connect { display: grid; gap: 12px; justify-items: start; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-connect p { margin: 0 !important; font: 500 calc(15px * var(--x-scale))/1.5 var(--x-sans) !important; color: var(--x-ink) !important; max-width: 60ch; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ay-wx-empty { display: block; padding: 4px 0 24px; text-align: left; color: var(--d-ink); }
-.ayna-mobile:is(#ay, .ayna-mobile) .ay-wx-empty > h2 { margin: 0 0 8px !important; font: 500 calc(24px * var(--ayna-text-scale, 1))/1.15 var(--f-display) !important; color: var(--d-ink) !important; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ay-wx-empty > p { margin: 0 !important; max-width: 60ch; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.5 var(--f-ui) !important; color: var(--d-ink) !important; }
 html body .app-container .ay-wh.ay-wh .ay-wh-starter { margin-top: 32px; }
 
 /* Website, 1024 and up: pairs side by side */
 @media (min-width: 1024px) {
   html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-adds ul { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 24px; }
   /* Pairs of similar height: compare | coming up, cycle | is this normal; goals full width. */
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn:has(.ay-wx-compare) > :is(.ay-wx-compare, .ay-bn-cyclegroup) { grid-column: 1 / 7 !important; }
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn:has(.ay-wx-compare) > :is(.ay-bn-timeline, .ay-wx-normal) { grid-column: 7 / -1 !important; }
   html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn > .ay-wx-goals { grid-column: 1 / -1 !important; }
   html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-goals > ul { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; }
   html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-goals > ul > li:nth-child(2) { border-top: 0 !important; padding-top: 2px !important; }
-  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn:has(.ay-bn-timeline) > .ay-askweek, html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn > .ay-askweek { grid-column: 1 / -1 !important; }
   html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-starter { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; column-gap: 24px; }
   html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-starter > .ay-wx-connect { grid-column: 1 / -1; }
 }
