@@ -97,7 +97,7 @@ html[data-ay-vt] .ay-push-in { animation: none !important; }
 
 /* You: daily log card (src/components/you/DailyCheckin.jsx), web and app. */
 :is(.app-container, .ayna-mobile) .ay-checkin { display: grid; gap: 12px; }
-:is(.app-container, .ayna-mobile) .ay-checkin__takeaway { margin: 0 0 4px; font: 600 var(--ay-fs-body, 16px)/1.35 var(--ay-sans); color: var(--ay-text, #3e2723); }
+:is(.app-container, .ayna-mobile) .ay-checkin__takeaway { margin: 0 0 4px; font: 600 var(--ay-fs-body, 16px)/1.35 var(--ay-sans); color: var(--ay-fg, #3e2723); }
 :is(.app-container, .ayna-mobile) .ay-checkin__row { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: 8px 12px; }
 :is(.app-container, .ayna-mobile) .ay-checkin__label { font: 600 var(--ay-fs-secondary, 14px)/1.2 var(--ay-sans); }
 :is(.app-container, .ayna-mobile) .ay-checkin__opts { display: flex; flex-wrap: wrap; gap: 8px; }

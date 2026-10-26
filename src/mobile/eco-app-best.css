@@ -229,7 +229,7 @@ html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app :is(.eco-app-f
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__needs { margin: 2px 0 0 !important; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--f-ui) !important; color: #ffedac !important; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__needs b { font-weight: 700; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar { display: block; height: 10px; border: 1.5px solid #ffedac; border-radius: 99px; overflow: hidden; }
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar i { display: block; height: 100%; background: repeating-linear-gradient(90deg, #f7badd 0 8px, #769ebe 8px 16px); transform-origin: 0 50%; animation: eco-app-fill .9s var(--ease-out) .35s both; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar i { display: block; height: 100%; background: #f7badd; transform-origin: 0 50%; animation: eco-app-fill .9s var(--ease-out) .35s both; }
 @keyframes eco-app-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack .eco-app-replay { justify-self: start; margin: -4px 0 -6px !important; color: #ffedac !important; }
 .ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card { background: #ffedac; border-color: #ffedac; }
@@ -263,3 +263,5 @@ html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack
 .ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card .eco-app-foryou { color: #3e2723; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-foryou__count { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #f7badd; color: #3e2723; font: 700 14px/1 var(--f-ui); }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-foryou:focus-visible, .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-checkin:focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }
+/* Loop E (Oct 26): no offset card behind the summary (one shadow: the pink sticker on primary buttons). */
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__back { display: none !important; }

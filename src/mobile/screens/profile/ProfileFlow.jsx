@@ -630,7 +630,7 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
 
         {signedIn && <ul className="ay-you-facts" aria-label="At a glance">
           {[
-            { key: 'picks', value: fmtCount(ecosystemCount), caption: ecosystemCount === 1 ? 'Product in your ecosystem' : 'Products in your ecosystem', onClick: onOpenEcosystem },
+            { key: 'picks', value: fmtCount(ecosystemCount), caption: 'In your ecosystem', onClick: onOpenEcosystem },
             { key: 'saved', value: fmtCount(savedCount), caption: savedCount === 1 ? 'Saved product' : 'Saved products', onClick: onOpenSaved },
             { key: 'checkins', value: checkinCount != null ? fmtCount(checkinCount) : checkins.settled ? '–' : '…', caption: checkinCount === 1 ? 'Monthly check-in' : 'Monthly check-ins', onClick: onOpenMonthlyCheckin },
           ].map((f) => <li key={f.key}><button type="button" onClick={f.onClick} disabled={!f.onClick}><b>{f.value}</b><span>{f.caption}</span></button></li>)}

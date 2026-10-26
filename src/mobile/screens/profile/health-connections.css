@@ -8,7 +8,7 @@
 .ay-hc-group { margin: 0 0 22px; --hc-tone: var(--legacy-butter); }
 .ay-hc-group.is-butter { --hc-tone: var(--legacy-butter); }
 .ay-hc-group.is-pink { --hc-tone: var(--legacy-pink); }
-.ay-hc-group.is-peri { --hc-tone: var(--ay-peri); }
+.ay-hc-group.is-peri { --hc-tone: var(--legacy-butter); /* data-blue is for chart lines only */ }
 .ay-hc-group > h2 { margin: 0 0 10px; color: var(--ay-ink-soft); font: 500 13px/1 var(--ay-font-ui); letter-spacing: 0; }
 
 .ay-hc-card { overflow: hidden; border: 1.5px solid var(--legacy-ink); border-radius: 20px; background: var(--ay-paper); box-shadow: var(--ay-shadow); }
@@ -201,6 +201,10 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 .wyou-health-manage { justify-self: start; min-height: 44px; margin-top: -12px; padding: 0 4px; border: 0; background: none; color: var(--legacy-ink); font: 500 13px/1.2 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .ay-hc-web .ay-sl-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 /* Data connection UX (team direction 42-43): what each source can provide, and what it is used for. */
-.ay-hc-row-provides { display: block; margin-top: 2px; color: var(--ay-ink-soft); font: 500 calc(12px * var(--ayna-text-scale, 1))/1.4 var(--ay-font-ui); }
+.ay-hc-row-provides { display: block; margin-top: 2px; color: var(--ay-ink-soft); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.4 var(--ay-font-ui); }
 .ay-hc-usedfor { margin: -4px 0 10px; color: var(--legacy-ink); font: 500 calc(13px * var(--ayna-text-scale, 1))/1.5 var(--ay-font-ui); }
 .ay-hc-catgroup { display: block; margin: 0 0 4px; color: var(--legacy-ink); font: 700 13px/1.3 var(--ay-font-ui); letter-spacing: 0; text-transform: none; }
+/* Loop E (Oct 26): website Health data. Cards flat (one shadow: the pink sticker on primary buttons), 16px radius,
+   the large icon in butter (data-blue is for chart lines only). */
+html body .app-container .ay-hc-web .ay-hc-card { border-radius: 16px; box-shadow: none !important; }
+html body .app-container .ay-hc-web .ay-hc-icon.is-lg { background: var(--legacy-pink); box-shadow: none; }

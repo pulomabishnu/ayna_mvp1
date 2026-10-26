@@ -7,7 +7,8 @@
   .ay-you-head { --d-ink: inherit; --d-ink-2: inherit; --d-hair: inherit; --d-group: inherit; --d-feature: inherit; --d-on-feature: inherit; --band: transparent; margin: 0 0 8px !important; padding: 8px var(--d-gutter, 16px) 8px !important; background: transparent !important; background-image: none !important; color: var(--d-ink, #3e2723) !important; }
   .ay-you-head::after, .ay-you-head::before { content: none !important; display: none !important; }
   .ay-you-head :is(p, span, b, a, button, h1) { color: var(--d-ink, #3e2723); }
-  .ay-you-head h1 { font-size: 26px !important; }
+  .ay-you-head h1, .ay-you-head h1 .ay-you-hello { font-size: 26px !important; color: var(--d-ink, #3e2723) !important; }
+  .ay-you-head h1 .ay-you-hello:not(.is-solo) { font-size: 15px !important; }
   .ay-you-head .ay-you-progress { border: 1.5px solid var(--d-ink, #3e2723) !important; background: var(--ayna-surface, #fff) !important; box-shadow: none !important; }
   .ay-you-head .ay-you-progress > span { display: flex !important; gap: 6px; align-items: baseline; flex-wrap: wrap; }
   .ay-you-head .ay-you-progress u { margin-left: auto; font-weight: 600; text-underline-offset: 3px; }
