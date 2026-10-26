@@ -22,8 +22,8 @@
 /* Source counts as three tinted tiles */
 
 /* Tabs as a segmented pill row */
-.ayna-mobile .ay-pdp-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: visible !important; }
-.ayna-mobile .ay-pdp-tabs button { transition: background var(--ay-dur-1) var(--ay-ease); }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: visible !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button { transition: background var(--ay-dur-1) var(--ay-ease); }
 
 /* Who it's for */
 
@@ -37,24 +37,24 @@
 /* Purchase bar */
 
 /* Website-style tabs: scrollable pill row (labels are long) */
-.ayna-mobile .ay-pdp-tabs { display: flex !important; gap: 8px !important; margin: 22px 0 0 !important; padding: 0 var(--ay-gutter) 4px !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; overflow-x: auto !important; scrollbar-width: none; scroll-padding-inline: var(--ay-gutter); }
-.ayna-mobile .ay-pdp-tabs::-webkit-scrollbar { display: none; }
-.ayna-mobile .ay-pdp-tabs button { flex: none !important; min-height: 40px !important; padding: 0 15px !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font-size: 13px !important; font-weight: 500 !important; white-space: nowrap; }
-.ayna-mobile .ay-pdp-tabs button[aria-selected='true'] { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs { display: flex !important; gap: 8px !important; margin: 22px 0 0 !important; padding: 0 var(--ay-gutter) 4px !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; overflow-x: auto !important; scrollbar-width: none; scroll-padding-inline: var(--ay-gutter); }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs::-webkit-scrollbar { display: none; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button { flex: none !important; min-height: 40px !important; padding: 0 15px !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font-size: 13px !important; font-weight: 500 !important; white-space: nowrap; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button[aria-selected='true'] { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
 
 .ay-pdp-panel { padding: 14px var(--ay-gutter) 0; display: grid; gap: 12px; }
 .ay-pdp-panel .ay-pdp-ask { margin-top: 0; }
-.ayna-mobile .ay-pdp .ayna-figma-partner-copy { padding: 4px 0 0 !important; font-size: 13px; font-weight: 500; line-height: 1.5; }
+.ayna-mobile.ayna-mobile .ay-pdp .ayna-figma-partner-copy { padding: 4px 0 0 !important; font-size: 13px; font-weight: 500; line-height: 1.5; }
 
 /* ===== Evidence tabs as game cards ===== */
 /* Tabs: each carries its tone + icon; the selected one fills with its tone */
-.ayna-mobile .ay-pdp-tabs button { display: inline-flex !important; align-items: center; gap: 6px; }
-.ayna-mobile .ay-pdp-tabs button svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-.ayna-mobile .ay-pdp-tabs button[aria-selected='true'][data-tone='butter'] { background: var(--ay-butter) !important; color: var(--ay-ink) !important; }
-.ayna-mobile .ay-pdp-tabs button[aria-selected='true'][data-tone='mint'] { background: var(--ay-mint) !important; color: var(--ay-ink) !important; }
-.ayna-mobile .ay-pdp-tabs button[aria-selected='true'][data-tone='peri'] { background: var(--ay-peri) !important; color: var(--ay-ink) !important; }
-.ayna-mobile .ay-pdp-tabs button[aria-selected='true'][data-tone='pink'] { background: var(--ay-pink) !important; color: var(--ay-ink) !important; }
-.ayna-mobile .ay-pdp-tabs button[aria-selected='true'] { box-shadow: 0 3px 0 var(--ay-ink); }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button { display: inline-flex !important; align-items: center; gap: 6px; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button[aria-selected='true'][data-tone='butter'] { background: var(--ay-butter) !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button[aria-selected='true'][data-tone='mint'] { background: var(--ay-mint) !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button[aria-selected='true'][data-tone='peri'] { background: var(--ay-peri) !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button[aria-selected='true'][data-tone='pink'] { background: var(--ay-pink) !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button[aria-selected='true'] { box-shadow: 0 3px 0 var(--ay-ink); }
 
 /* Card */
 .ay-src-head { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--tone); border-bottom: 1.5px solid var(--ay-ink); }
@@ -140,7 +140,7 @@
    carries rules for the older class names. Imported by ProductDetailScreen. */
 
 /* ---------- shared bits ---------- */
-.ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .sr-only { position: absolute !important; width: 1px !important; height: 1px !important; margin: -1px !important; padding: 0 !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; border: 0 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .sr-only { position: absolute !important; width: 1px !important; height: 1px !important; margin: -1px !important; padding: 0 !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; border: 0 !important; }
 
 /* section sub-heads inside a panel: row type (16/600 sans), serif stays at 20+ */
 
