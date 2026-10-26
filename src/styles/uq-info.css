@@ -152,3 +152,8 @@ html body .app-container.app-container .uq-contact .ed-form :is(input, textarea)
 html body .app-container.app-container .uq-contact .ed-form .ay-chip { background: transparent !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; }
 html body .app-container.app-container .uq-contact .ed-form .ay-chip[aria-checked='true'] { background: #3e2723 !important; color: #ffedac !important; }
 html body .app-container.app-container .uq-contact .ed-form .ay-btn--primary { background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; }
+/* compare: the sample's title and line on the pink band; the table sits below on the page */
+.app-container .aycmp__sample-head.uq-band { margin-bottom: 24px; }
+.app-container .aycmp__sample-head.uq-band :is(h2, p) { color: #3e2723 !important; }
+html body :is(#uq, .app-container):is(#uq, .app-container):is(#uq, .app-container) .uq-contact .ed-form :is(input, textarea) { background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; }
+html body :is(#uq, .app-container):is(#uq, .app-container):is(#uq, .app-container) .uq-contact .ed-form :is(input, textarea)::placeholder { color: rgba(62, 39, 35, .7) !important; }

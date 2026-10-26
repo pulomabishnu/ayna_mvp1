@@ -31,8 +31,8 @@ export default function Comparison({ onBack = null, compareList, onRemove, onCle
                 />
 
                 {sample.length >= 2 && (
-                    <section className="aycmp__sample uq-bleed is-pink uq-band" aria-labelledby="aycmp-sample-h">
-                        <div className="aycmp__sample-head">
+                    <section className="aycmp__sample" aria-labelledby="aycmp-sample-h">
+                        <div className="aycmp__sample-head uq-bleed is-pink uq-band">
                             <h2 id="aycmp-sample-h" className="aycmp__h2">Sample comparison</h2>
                             <p>Three menstrual cups from the catalog, to show how it works.{matchFor ? '' : ' Your match shows once you answer a few questions.'}</p>
                         </div>

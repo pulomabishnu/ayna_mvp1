@@ -22,3 +22,9 @@
 .uq-blend :is(#ayk, .ayb-blend__row):is(#ayk, .ayb-blend__row):is(#ayk, .ayb-blend__row):is(#ayk, .ayb-blend__row) { grid-template-columns: minmax(0, 1fr); }
 .uq-blend .uq-blend__stops { margin-inline: calc(14px - (100% - 28px) / (2 * (var(--n) - 1))); }
 .uq-blend.is-web { padding-inline: 14px; box-sizing: border-box; }
+/* the app's global range styles (mobile.css) must not shrink the House Blend thumb or track */
+.uq-blend { padding-inline: 14px; box-sizing: border-box; }
+.ayna-mobile .uq-blend input.ayb-blend__input { height: 44px !important; background: transparent !important; }
+.ayna-mobile .uq-blend input.ayb-blend__input::-webkit-slider-runnable-track { height: 8px !important; border-radius: 999px !important; background: linear-gradient(to right, var(--ay-fill-ink, #3e2723) var(--ayb-fill), transparent var(--ayb-fill)) !important; border: 1.5px solid var(--ay-fg, #3e2723) !important; }
+.ayna-mobile .uq-blend input.ayb-blend__input::-webkit-slider-thumb { -webkit-appearance: none !important; width: 28px !important; height: 28px !important; margin-top: -11.5px !important; border-radius: 50% !important; background: var(--ay-pink-base, #f7badd) !important; border: 1.5px solid #3e2723 !important; box-shadow: none !important; }
+.ayna-mobile .uq-blend.is-unset input.ayb-blend__input::-webkit-slider-thumb { background: transparent !important; border-style: dashed !important; border-color: var(--ay-fg, #3e2723) !important; }
