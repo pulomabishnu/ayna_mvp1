@@ -492,18 +492,23 @@ export default function BrowseScreen({
 
       {mode === 'products' && (() => { const toolbar = <>
           {/* Five shopping groups, the areas one tap deeper (team meeting, Oct 26). */}
+          {/* Founder Oct 26 18:46: one tidy shop header in the app. Row 1: the five groups in ONE
+              sideways-scrolling line. Row 2: Products/Services + Filters. Row 3: My matches, Compare,
+              Swipe as small pills on one line. */}
           {embedded && <div className="ayshop__chips" data-tour="explore-sections">
             <ShopGroups active={activeGroup} onPick={setActiveGroup} subs={false} label="Filter by need" className="ay-shop-groups" />
-            {typeToggle}
           </div>}
-          <div className="ay-shop-toolbar">
+          {embedded && <div className="ay-shop-bar">
+            {typeToggle}
             <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
               Filters
               {activeFilterCount > 0 && <span aria-label={`${activeFilterCount} on`}>{activeFilterCount}</span>}
             </button>
-            {embedded && <CompareToggle className="ay-shop-compare" />}
-            {!embedded && <p className="ay-shop-count" role="status">{shownTotal} {shownTotal === 1 ? 'product' : 'products'}</p>}
+          </div>}
+          {embedded && <div className="ay-shop-extras">
+            {hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}
+            <CompareToggle className="ay-shop-compare" />
             {!searchValue.trim() && <button type="button" className="ay-discover-cta" aria-label="Swipe through products: right to save, left to skip" onClick={() => setShowDeck(true)}>
               <svg className="ay-discover-fan" viewBox="0 0 56 44" aria-hidden="true">
                 <rect className="c1" x="6" y="6" width="22" height="30" rx="5" transform="rotate(-12 17 21)" />
@@ -512,8 +517,23 @@ export default function BrowseScreen({
               </svg>
               <span className="ay-discover-copy"><strong>Swipe</strong></span>
             </button>}
-          </div>
-          {embedded && hasProfile && <div className="ay-shop-matchrow"><PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} /></div>}
+          </div>}
+          {!embedded && <div className="ay-shop-toolbar">
+            <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
+              Filters
+              {activeFilterCount > 0 && <span aria-label={`${activeFilterCount} on`}>{activeFilterCount}</span>}
+            </button>
+            <p className="ay-shop-count" role="status">{shownTotal} {shownTotal === 1 ? 'product' : 'products'}</p>
+            {!searchValue.trim() && <button type="button" className="ay-discover-cta" aria-label="Swipe through products: right to save, left to skip" onClick={() => setShowDeck(true)}>
+              <svg className="ay-discover-fan" viewBox="0 0 56 44" aria-hidden="true">
+                <rect className="c1" x="6" y="6" width="22" height="30" rx="5" transform="rotate(-12 17 21)" />
+                <rect className="c2" x="17" y="5" width="22" height="30" rx="5" />
+                <rect className="c3" x="28" y="6" width="22" height="30" rx="5" transform="rotate(12 39 21)" />
+              </svg>
+              <span className="ay-discover-copy"><strong>Swipe</strong></span>
+            </button>}
+          </div>}
           {(activeFilters.length > 0 || sortBy !== 'default' || (embedded && activeGroup !== 'all')) && <div className="ay-shop-applied" role="group" aria-label="Filters on">
             {embedded && activeGroup !== 'all' && <button type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setActiveGroup('all')} aria-label={`Remove area: ${areaLabel(activeGroup)}`}>{areaLabel(activeGroup)}<span aria-hidden="true">×</span></button>}
             {sortBy !== 'default' && SORT_LABELS[sortBy] && <button type="button" className="ayna-shop-category" aria-pressed="true" onClick={() => setSortBy('default')} aria-label={`Remove sort: ${SORT_LABELS[sortBy]}`}>{SORT_LABELS[sortBy]}<span aria-hidden="true">×</span></button>}
@@ -521,7 +541,7 @@ export default function BrowseScreen({
           </div>}
           {bestNeedsQuiz && !showFilters && bestQuizNote}
           {!embedded && <div className="ay-shop-comparerow"><CompareToggle /></div>}
-          {embedded && <p className="ay-shop-note is-embedded"><b role="status">{shownTotal} {shownTotal === 1 ? 'product' : 'products'}</b>. Some links earn ayna a commission. It never changes your matches.</p>}
+          {embedded && <p className="ay-shop-note is-embedded"><b role="status">{shownTotal} {shownTotal === 1 ? 'result' : 'results'}</b> · Some links earn ayna a commission. It never changes your matches.</p>}
         </>;
         return embedded
           ? <div className="ayna-category-index is-embedded">{toolbar}</div>
