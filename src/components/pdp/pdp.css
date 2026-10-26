@@ -2779,3 +2779,91 @@ html body :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-p
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero > .ayp-top { margin-right: 480px !important; }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero .ayv-dk > .ayv-dk__decide { margin-top: calc(-1 * var(--ayv-top-h, 52px)) !important; }
 }
+
+/* ==== Glance first (founder, Oct 26 "like wtf who can even read this") ======
+   Reviews: a wide rating tile next to a star-bars tile, two short cards, then
+   "Read all". Summary / Clinical / Research: each section is a tile in a mixed
+   bento (wide and half tiles) on wider screens. Brand colours only; blue never. */
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-bento.is-one { grid-template-columns: 1fr; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-tile { box-sizing: border-box; min-width: 0; margin: 0; padding: 16px; border-radius: 16px; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-tile.is-wide { grid-column: span 2; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-bento.is-one .ayg-tile.is-wide { grid-column: 1 / -1; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-tile.is-ink { background: #3E2723; color: #FFEDAC; border: 0; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-tile.is-deep { background: #F6E3A1; color: #3E2723; border: 1px solid rgba(62, 39, 35, .22); }
+:is([data-theme='dark'], [data-theme='brand-dark']) #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-tile.is-ink { border: 1.5px solid rgba(255, 237, 172, .45); }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rate { flex-direction: row; align-items: center; gap: 16px; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rate__big { font: 800 64px/.9 var(--ay-font-display, inherit); letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: #FFEDAC; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rate__right { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rate__stars { color: #F7BADD; line-height: 1; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rate__stars * { color: #F7BADD; fill: currentColor; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rate__count { font: 700 17px/1.2 var(--ay-font-ui, inherit); color: #FFEDAC; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-src { font: 500 13px/1.3 var(--ay-font-ui, inherit); opacity: .85; color: inherit; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-bars__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-bars__list li { display: grid; grid-template-columns: 30px 1fr 24px; align-items: center; gap: 6px; font: 600 13px/1.2 var(--ay-font-ui, inherit); color: #3E2723; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-bars__list i { display: block; height: 8px; border-radius: 999px; background: rgba(62, 39, 35, .14); overflow: hidden; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-bars__list s { display: block; height: 100%; border-radius: 999px; background: #3E2723; text-decoration: none; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-bars__v { text-align: right; font-variant-numeric: tabular-nums; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-cards > li:only-child { grid-column: 1 / -1; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rc { box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 16px; background: #F7BADD; color: #3E2723; min-width: 0; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rc__stars { color: #3E2723; line-height: 1; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rc__body { margin: 0; font: 500 15px/1.45 var(--ay-font-ui, inherit); color: #3E2723; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rc__body.is-open { display: block; -webkit-line-clamp: unset; overflow: visible; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rc__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: auto; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rc__meta { font: 500 13px/1.3 var(--ay-font-ui, inherit); color: rgba(62, 39, 35, .85); flex: 1 1 auto; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-more { min-height: 44px; padding: 0 4px; border: 0; background: none; color: #3E2723; font: 700 14px/1 var(--ay-font-ui, inherit); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; display: inline-flex; align-items: center; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-all { min-height: 48px; width: 100%; border-radius: 999px; border: 1.5px solid currentColor; background: #3E2723; color: #FFEDAC; font: 700 15px/1 var(--ay-font-ui, inherit); cursor: pointer; }
+:is([data-theme='dark'], [data-theme='brand-dark']) #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-all { background: #FFEDAC; color: #3E2723; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-all:focus-visible, #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-more:focus-visible { outline: 3px solid #F7BADD; outline-offset: 2px; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rev-all:not([hidden]) { display: grid; gap: 24px; }
+@media (max-width: 560px) {
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-bento { grid-template-columns: 1fr; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-tile.is-wide { grid-column: 1 / -1; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-cards { grid-template-columns: 1fr; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-rate__big { font-size: 56px; }
+}
+
+/* Summary, Clinical, Research: sections as tiles in a mixed bento. */
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec,
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-lit > section,
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-clin > * { box-sizing: border-box !important; padding: 16px !important; border-radius: 16px !important; background: var(--ay-surface, #F6E3A1) !important; border: 1px solid var(--ay-rule, rgba(62, 39, 35, .22)) !important; margin-top: 0 !important; min-width: 0 !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec--lead { background: #3E2723 !important; color: #FFEDAC !important; border: 0 !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec--lead :is(p, span, b, .ayv-oneline) { color: #FFEDAC !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec--lead :is(.ayv-showall, button) { color: #FFEDAC !important; border-color: #FFEDAC !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec--lead { border: 1.5px solid rgba(255, 237, 172, .45) !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > #ay-sum-evidence { background: #F7BADD !important; color: #3E2723 !important; border: 0 !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > #ay-sum-evidence * { color: #3E2723 !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum, #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-lit, #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-clin { gap: 12px !important; }
+@media (min-width: 900px) {
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; align-items: start !important; grid-auto-flow: row dense !important; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > :is(#ay-sum-who, #ay-sum-evidence, #ay-sum-details, #ay-sum-how) { grid-column: span 1 !important; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > :is(#ay-sum-who, #ay-sum-evidence, #ay-sum-details, #ay-sum-how) { align-self: start !important; }
+}
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec { display: grid !important; align-content: start !important; gap: 12px !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+/* Research glance: level + bar of sources per level, and the source count. */
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-lit > .ayg-bento { padding: 0 !important; background: none !important; border: 0 !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-lit > .ayq-evo { background: none !important; border: 0 !important; padding: 0 !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-tile__k { font: 600 13px/1.3 var(--ay-font-ui, inherit); color: inherit; opacity: .9; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lit__status { font: 800 24px/1.15 var(--ay-font-display, inherit); color: #FFEDAC; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lvl { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 6px; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lvl li { display: grid; grid-template-columns: minmax(0, 9.5em) 1fr 24px; align-items: center; gap: 8px; font: 600 13px/1.2 var(--ay-font-ui, inherit); color: #FFEDAC; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lvl__k { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lvl__k * { color: #FFEDAC; border-color: #FFEDAC; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lvl i { display: block; height: 8px; border-radius: 999px; background: rgba(255, 237, 172, .2); overflow: hidden; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lvl s { display: block; height: 100%; border-radius: 999px; background: #F7BADD; text-decoration: none; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lvl__v { text-align: right; font-variant-numeric: tabular-nums; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-tile.is-pink { background: #F7BADD; color: #3E2723; border: 0; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-count { align-items: flex-start; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-count__big { font: 800 64px/.9 var(--ay-font-display, inherit); letter-spacing: -.03em; color: #3E2723; font-variant-numeric: tabular-nums; }
+@media (max-width: 560px) {
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lit { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lit .ayg-tile.is-wide { grid-column: span 2; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lit .ayg-lvl li { grid-template-columns: 1fr 20px; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lit .ayg-lvl li i { grid-column: 1 / -1; grid-row: 2; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-lit .ayg-lit__status { font-size: 20px; }
+  #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayg-count__big { font-size: 48px; }
+}
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > #ay-sum-evidence .ayv-evhead { background: none !important; border: 0 !important; padding: 0 !important; box-shadow: none !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > #ay-sum-evidence .ayv-evhead__status { font: 800 24px/1.15 var(--ay-font-display, inherit) !important; }

@@ -21,6 +21,8 @@ import { evidenceLevel, gradeWords } from './evidenceLevel.js';
 import { sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause, brandVoice, safetyGroupOf, groupSafety, TAB_ORDER, TAB_LABELS, TAB_SHORT_LABELS, DEFAULT_TAB } from './pdpParts.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { ShowAll, EvidenceHeader, EvidenceKey, EvidenceMark } from './PdpParts.jsx';
+import { RatingStars } from '../community/RatingStars.jsx';
+import { topReviews, authorName, shortDate } from './peopleSay.js';
 import { evidenceFor } from './evidenceLevels.js';
 import { FROM_LISTING } from '../../utils/howToSource.js';
 import './pdp.css';
@@ -112,6 +114,38 @@ function ReadShelf({ list, label, leadIn = false, min = 3 }) {
  * Glance first, read more on tap (founder, Oct 26 16:54): the full text stays in the page (hidden until
  * opened) behind one obvious button with aria-expanded. Never used for safety text.
  */
+/** One short review card: stars, the words clamped to 3 lines, Read more opens the rest in place. */
+function GlanceReview({ stars = null, text, meta = '', href = '', onOpen = null }) {
+  const [open, setOpen] = useState(false);
+  // Read more only when the 3-line clamp actually cuts the words (measured after layout).
+  const bodyRef = useRef(null);
+  const [long, setLong] = useState(String(text || '').length > 140);
+  useEffect(() => {
+    const el = bodyRef.current;
+    if (!el || open) return undefined;
+    // The tab may be hidden at mount (0 height): only judge once it has a size.
+    const check = () => { if (el.clientHeight > 0) setLong(el.scrollHeight > el.clientHeight + 2); };
+    check();
+    if (typeof ResizeObserver === 'undefined') return undefined;
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [text, open]);
+  return (
+    <li className="ayg-rc">
+      {stars != null && <span className="ayg-rc__stars"><RatingStars value={stars} size={15} /></span>}
+      {text && <p ref={bodyRef} className={`ayg-rc__body${open ? ' is-open' : ''}`}>{text}</p>}
+      {(long || meta || href) && (
+        <span className="ayg-rc__foot">
+          {meta && <span className="ayg-rc__meta">{meta}</span>}
+          {long && <button type="button" className="ayg-more" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : 'Read more'}</button>}
+          {href && <a className="ayg-more" href={href} onClick={onOpen ? (e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return; e.preventDefault(); onOpen(); } : undefined}>In Community<span aria-hidden="true"> ›</span></a>}
+        </span>
+      )}
+    </li>
+  );
+}
+
 function ReadMore({ children, label = 'Read more', className = '' }) {
   const [open, setOpen] = useState(false);
   return (
@@ -448,6 +482,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   });
   // The tab row sticks just under the website's header (the app has none above it).
   const [stickTop, setStickTop] = useState(0);
+  const [revAll, setRevAll] = useState(false);
   useEffect(() => {
     // The website header hides while she scrolls down: follow its visible
     // bottom edge so the tabs sit right under it, or at the very top once it is gone.
@@ -968,13 +1003,32 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {sourcesBody}
     </>
   ) : null;
+  const EV_LABEL = { gov: '.gov', peer: 'Peer-reviewed', brand: 'From the brand', people: 'People' };
+  const evBars = ['gov', 'peer', 'brand', 'people'].map((id) => ({ id, label: EV_LABEL[id], n: Number(evx.counts?.[id]) || 0 })).filter((b) => b.n > 0);
+  const evTotal = evBars.reduce((a, b) => a + b.n, 0);
+  const evMax = Math.max(1, ...evBars.map((b) => b.n));
   const literatureBody = (
     <div className="ayq-lit">
       {/* 1. The evidence header (audit 7.6): grade or "Not graded yet", why, counts per level; then the key to the four marks. */}
+      {/* Glance first (founder, Oct 26): the level and a bar of sources per level, counted from the file. */}
+      {evTotal > 0 && (
+        <div className="ayg-bento ayg-lit">
+          <div className="ayg-tile is-ink is-wide" role="group" aria-label="Evidence level">
+            <span className="ayg-tile__k">Evidence level</span>
+            <span className="ayg-lit__status">{evx.status}</span>
+            <ul className="ayg-lvl" aria-label="Sources on file by level">
+              {evBars.map((b) => <li key={b.id}><span className="ayg-lvl__k"><EvidenceMark level={b.id} /> {b.label}</span><i aria-hidden="true"><s style={{ width: `${Math.round((b.n / evMax) * 100)}%` }} /></i><span className="ayg-lvl__v">{b.n}</span></li>)}
+            </ul>
+          </div>
+          <div className="ayg-tile is-pink ayg-count" role="group" aria-label="Sources on file">
+            <span className="ayg-count__big">{evTotal}</span>
+            <span className="ayg-tile__k">{evTotal === 1 ? 'source on file' : 'sources on file'}</span>
+          </div>
+        </div>
+      )}
       <section className="ayq-evo ayv-evo" aria-labelledby="ayq-evo-h">
         <h3 id="ayq-evo-h" className="sr-only">Evidence overview</h3>
-        <EvidenceHeader ev={evx} />
-        <EvidenceKey brand={evx.brand} />
+        {evTotal > 0 ? <ReadMore label="How ayna checked this"><EvidenceHeader ev={evx} /><EvidenceKey brand={evx.brand} /></ReadMore> : <><EvidenceHeader ev={evx} /><EvidenceKey brand={evx.brand} /></>}
         {negativeBlock}
       </section>
       {/* 2. The sources, strongest first: ayna's grades, then the .gov studies. */}
@@ -990,15 +1044,54 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   );
 
   // ---- Reviews: community first, then online; never evidence ----------------------
+  // Glance first (founder, Oct 26: "like wtf who can even read this"): the big rating, the star
+  // bars and two short cards; everything else is one tap away under "Read all". Real data only.
+  const bigRating = hasMemberRating
+    ? { value: aynaRating.toFixed(1), stars: aynaRating, count: ratingCount, src: 'ayna members' }
+    : rv.brandRating ? { value: String(rv.brandRating.value), stars: Number(rv.brandRating.value), count: Number(rv.brandRating.count) || null, src: 'Brand or retailer, not verified by ayna' }
+      : rv.userRating ? { value: String(rv.userRating.value), stars: Number(rv.userRating.value), count: null, src: 'Online rating, not verified by ayna' } : null;
+  const glanceCards = reviewRows.length
+    ? topReviews(reviewRows, 2).filter((r) => String(r.body || '').trim()).map((r) => ({ key: r.id, stars: Number(r.rating) || null, text: String(r.body).replace(/\*+|__/g, '').trim(), meta: [authorName(r), shortDate(r.created_at)].filter(Boolean).join(', '), href: `/community/p/${r.id}`, onOpen: onOpenReview ? () => onOpenReview(r.id) : null }))
+    : memberReviews.length ? memberReviews.slice(0, 2).map((t) => ({ key: t.slice(0, 40), text: t, meta: 'ayna member' }))
+      : rv.text.slice(0, 2).map((t) => ({ key: t.slice(0, 40), text: noDash(t), meta: 'Summary of reviews online' }));
+  const allCount = Math.max(ratingCount || 0, reviewRows.length);
   const reviewsTab = (
     <div className="ayq-rev">
       {/* Said once, as the tab's first line (audit 7.7). */}
       <p className="ayv-note">Reviews are people’s experiences, not evidence.</p>
-      {ratingsCard}
-      {reviewRows.length > 0 && <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onWriteReview={onWriteReview} onOpenPost={onOpenReview} />}
+      {(bigRating || breakdown) && (
+        <div className={`ayg-bento ayg-rev${bigRating && breakdown ? '' : ' is-one'}`}>
+          {bigRating && (
+            <div className="ayg-tile is-ink is-wide ayg-rate" role="group" aria-label="Average rating">
+              <span className="ayg-rate__big">{bigRating.value}<span className="sr-only"> out of 5</span></span>
+              <span className="ayg-rate__right">
+                <span className="ayg-rate__stars" aria-hidden="true"><RatingStars value={bigRating.stars} size={20} /></span>
+                {bigRating.count ? <span className="ayg-rate__count">{plural(bigRating.count, 'review')}</span> : null}
+                <span className="ayg-src">{bigRating.src}</span>
+              </span>
+            </div>
+          )}
+          {breakdown && (
+            <div className="ayg-tile is-deep ayg-bars" role="group" aria-label="Ratings from ayna members">
+              <ul className="ayg-bars__list">
+                {breakdown.map((b) => <li key={b.n}><span className="ayg-bars__k">{b.n}<span aria-hidden="true">★</span><span className="sr-only"> stars</span></span><i aria-hidden="true"><s style={{ width: `${Math.round((b.c / memberRatingCount) * 100)}%` }} /></i><span className="ayg-bars__v">{b.c}</span></li>)}
+              </ul>
+              <span className="ayg-src">ayna members</span>
+            </div>
+          )}
+        </div>
+      )}
+      {glanceCards.length > 0 && <ul className="ayg-cards" aria-label="Top reviews">{glanceCards.map(({ key, ...c }) => <GlanceReview key={key} {...c} />)}</ul>}
       {/* Under 5 ayna reviews: invite the first five (Spiegel: 5+ reviews is where trust starts). */}
       {(ratingCount || 0) < 5 && onWriteReview && <p className="ayv-first5"><b>Be one of the first 5 reviewers.</b> {ratingCount > 0 ? `${ratingCount} of 5 so far. ` : ''}<button type="button" className="ayv-textbtn" onClick={onWriteReview}>Write a review</button></p>}
-      {reviewsBody}
+      <button type="button" className="ayg-all" aria-expanded={revAll} aria-controls="ayg-rev-all" onClick={() => setRevAll((v) => !v)}>
+        {revAll ? 'Show less' : allCount > 0 ? `Read all ${plural(allCount, 'review')}` : 'Read all reviews and ratings'}
+      </button>
+      <div id="ayg-rev-all" className="ayg-rev-all" hidden={!revAll || undefined}>
+        {ratingsCard}
+        {reviewRows.length > 0 && <ProductPeopleSay productId={baseProduct?.id} reviews={reviewRows} onWriteReview={onWriteReview} onOpenPost={onOpenReview} />}
+        {reviewsBody}
+      </div>
     </div>
   );
 
