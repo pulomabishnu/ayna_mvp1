@@ -2574,8 +2574,6 @@ function App() {
             onViewWaitlist={() => setCurrentView('waitlist')}
             onViewHowItWorks={handleViewHowItWorks}
             onViewToday={() => setCurrentView('today')}
-            onViewServices={() => setCurrentView('explore-services')}
-            onAsk={() => openAsk()}
             user={user}
             loading={authLoading || (!!user && dataLoading)}
             hasProfile={!!quizResults}

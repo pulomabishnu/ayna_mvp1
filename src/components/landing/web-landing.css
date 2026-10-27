@@ -1,0 +1,60 @@
+/* WebLanding.jsx: the parts that are new on the v2 website home (Oct 27):
+   the split hero with the raining cut-outs, ayna Pro and the closing medical
+   note. The rest of the page keeps home.css + uq-landing.css.
+   Brand colours only; 13px minimum; 44px targets. */
+
+/* ---- 1. hero: espresso copy | butter field with the rain ---- */
+.app-container .hm.wl .wl-hero {
+  --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ed-text: #ffedac;
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr); background: #3e2723; color: #ffedac; overflow: hidden;
+}
+.app-container .hm.wl .wl-hero__copy { display: flex; align-items: center; padding: 32px var(--ay-margin, 16px) 36px; }
+.app-container .hm.wl .wl-hero__in { display: grid; justify-items: start; gap: 20px; width: 100%; max-width: 600px; }
+.app-container.app-container .hm.hm-uq.wl .wl-shout { grid-area: auto; margin: 0; max-width: 12ch; font-size: clamp(48px, 13vw, 64px) !important; line-height: .95 !important; letter-spacing: -.035em !important; color: #ffedac !important; text-wrap: balance; }
+.app-container.app-container .hm.hm-uq.wl .wl-shout .hm-shout__pink { color: #f7badd; }
+.app-container.app-container .hm.hm-uq.wl .wl-lead { margin: 0; max-width: 34ch; font-size: 17px !important; line-height: 1.5 !important; color: rgba(255, 237, 172, .9) !important; }
+.app-container .hm.wl .wl-search { max-width: 520px; }
+.app-container .hm.wl .wl-sts { max-width: 520px; justify-items: start; color: #ffedac; }
+.app-container .hm.wl .wl-sts .ay-sts__hint { font-size: 14px; padding-left: 22px; }
+.app-container .hm.wl .wl-how { margin-top: -8px; }
+.app-container .hm.wl .wl-banner { width: 100%; max-width: 520px; }
+
+.app-container .hm.wl .wl-hero__field { position: relative; height: 340px; background: #ffedac; }
+.app-container .hm.wl .wl-rain { position: absolute; inset: 0; padding: 0 16px; --lk-gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.app-container .hm.wl .wl-rain .lk-rain__col:nth-child(4) { display: none; }
+
+@media (min-width: 900px) {
+  .app-container .hm.wl .wl-hero { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); min-height: clamp(600px, calc(100svh - 76px), 780px); }
+  .app-container .hm.wl .wl-hero__copy { justify-content: flex-end; padding: 64px clamp(32px, 4vw, 72px) 64px max(var(--ay-margin, 64px), calc((100vw - var(--ay-container, 1240px)) / 2)); }
+  .app-container .hm.wl .wl-hero__in { gap: 24px; }
+  .app-container.app-container .hm.hm-uq.wl .wl-shout { max-width: 14ch; font-size: clamp(56px, 4.9vw, 84px) !important; }
+  .app-container.app-container .hm.hm-uq.wl .wl-lead { font-size: 20px !important; }
+  .app-container .hm.wl .wl-hero__field { height: auto; }
+  .app-container .hm.wl .wl-rain { padding: 0 clamp(20px, 2.4vw, 40px); --lk-gap: 26px; }
+  .app-container .hm.wl .wl-rain .lk-prod.is-l { width: 100%; }
+  .app-container .hm.wl .wl-rain .lk-w b { font-size: 17px; }
+}
+@media (min-width: 1360px) {
+  .app-container .hm.wl .wl-rain { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(4) { display: block; }
+}
+/* brand dark: one espresso hero, no panel; the cut-outs sit on soft butter circles (kit) */
+.app-container[data-theme='brand-dark'] .hm.wl .wl-hero__field { background: transparent; }
+
+/* ---- 6. ayna Pro ---- */
+.app-container .hm.wl .wl-pro__grid { display: grid; gap: 28px; align-items: center; }
+.app-container .hm.wl .wl-pro__copy { display: grid; justify-items: start; gap: 14px; }
+.app-container .hm.wl .wl-pro__tag { display: inline-flex; align-items: center; min-height: 32px; padding: 0 14px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 14px/1 var(--ay-sans-stack, sans-serif); }
+.app-container.app-container .hm.wl .wl-pro .hm-body { color: rgba(255, 237, 172, .9) !important; max-width: 46ch; font-size: 17px !important; }
+.app-container .hm.wl .wl-pro__prices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
+.app-container .hm.wl .wl-pro__prices li { display: grid; gap: 6px; padding: 20px; border-radius: 16px; border: 1.5px solid rgba(255, 237, 172, .55); color: #ffedac; }
+.app-container .hm.wl .wl-pro__prices small { font: 700 14px/1 var(--ay-sans-stack, sans-serif); }
+.app-container .hm.wl .wl-pro__prices b { font: 800 clamp(36px, 4vw, 52px)/1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.02em; }
+.app-container .hm.wl .wl-pro__prices s { font: 500 14px/1.2 var(--ay-sans-stack, sans-serif); opacity: .85; }
+.app-container .hm.wl .wl-pro__prices s::before { content: 'Regularly '; text-decoration: none; display: inline-block; margin-right: 4px; }
+@media (min-width: 900px) { .app-container .hm.wl .wl-pro__grid { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 64px; } }
+
+/* ---- the medical note, last thing before the footer ---- */
+.app-container .hm.wl .wl-note { padding: 18px var(--ay-margin, 16px); background: #3e2723; color: #ffedac; }
+.app-container.app-container .hm.wl .wl-note__p { max-width: 1240px; margin: 0 auto; font: 500 14px/1.45 var(--ay-sans-stack, sans-serif) !important; color: rgba(255, 237, 172, .9) !important; text-align: center; }
+.app-container .hm.wl .wl-note__p a { color: inherit !important; text-decoration: underline; text-underline-offset: 3px; }

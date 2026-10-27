@@ -130,7 +130,7 @@ html.ay-motion main[data-view] > :not(#ay-content):not(.ay-asksug):not([role='di
 html.ay-motion .ayna-mobile > :first-child { animation: ay-page-in var(--ay-dur-page) var(--ay-ease) backwards; }
 
 /* Buttons press down. */
-html.ay-motion :is(.ay-btn, .lsx button, .lsx a.lsx-btn, .ayk-chip, .ay-sts__track):not(:disabled):active { transform: scale(.97); }
+html.ay-motion :is(.ay-btn, .alx button, .ayk-chip, .ay-sts__track):not(:disabled):active { transform: scale(.97); }
 html.ay-motion :is(.ay-btn, .ayk-chip) { transition: transform var(--t-press) var(--ay-ease), background-color var(--t-fast) var(--ay-ease-io), color var(--t-fast) var(--ay-ease-io); }
 
 /* Carousels snap smoothly. */

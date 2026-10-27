@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import * as communityStore from '../utils/community/communityStore.js';
-import LandingShowcase from './landing/LandingShowcase.jsx';
+import WebLanding from './landing/WebLanding.jsx';
 // Styles other pages still borrow from the old home (the 404 search, editorial type).
 import '../styles/eco-redesign.css';
 import '../styles/landing.css';
@@ -11,11 +11,12 @@ import '../styles/loop-a-landing.css';
 import '../styles/uq-landing.css';
 
 /**
- * The website's / (founder, Oct 27 01:10-01:18): one landing for everyone,
- * the same page as the app's signed-out Home (LandingShowcase). The ayna logo
- * opens it signed in or out; signed in with a profile, its main action is
- * "Go to your Home" instead of the quiz. Real community posts (the public
- * feed guests can read) appear in the Real talk block once loaded.
+ * The website's / : one landing for everyone (WebLanding, the v2 website home
+ * with the raining cut-outs in its hero; founder, Oct 27 10:40: "optimize it
+ * for web", not the app's page). The ayna logo opens it signed in or out;
+ * signed in with a profile, its main action is "Go to your Home" instead of
+ * the quiz. Real community posts (the public feed guests can read) appear in
+ * the Community card once loaded.
  */
 
 /**
@@ -77,40 +78,28 @@ function usePosts() {
 
 export default function AynaLanding({
   onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewCommunity,
-  onViewWaitlist, onViewHowItWorks, onViewToday, onAsk, onViewServices, user, hasProfile = false, loading = false, heroBanner = null,
+  onViewWaitlist, onViewHowItWorks, onViewToday, user, hasProfile = false, loading = false, heroBanner = null,
 }) {
   const posts = usePosts();
   // HI01: hold a skeleton until the session and profile resolve, so the main action never flips.
   if (loading) return <HomeSkeleton />;
-  const toHomeOrQuiz = () => (user && hasProfile ? onViewToday?.() : onStartQuiz?.());
-  const FEATURE = {
-    data: toHomeOrQuiz,
-    rundown: toHomeOrQuiz,
-    routine: toHomeOrQuiz,
-    matches: () => onViewDiscovery?.(''),
-    compare: () => onViewDiscovery?.(''),
-    ask: () => onAsk?.(),
-    community: () => onViewCommunity?.(),
-    library: () => onViewArticles?.(),
-    services: () => onViewServices?.(),
-  };
   return (
-    <LandingShowcase
-      variant="web"
+    <WebLanding
       signedIn={Boolean(user)}
       hasProfile={hasProfile}
       onStartQuiz={onStartQuiz}
       onGoHome={onViewToday}
       onSearch={(q) => onViewDiscovery?.(discoveryTargetFor(q))}
-      onHowItWorks={onViewHowItWorks}
+      onViewDiscovery={onViewDiscovery}
       onOpenProduct={onOpenProduct}
-      onFeature={(k) => FEATURE[k]?.()}
+      onViewArticles={onViewArticles}
       onViewArticle={onViewArticle}
-      onViewCommunity={onViewCommunity}
       onViewAbout={onViewAbout}
-      onViewPartners={onViewWaitlist}
+      onViewCommunity={onViewCommunity}
+      onViewWaitlist={onViewWaitlist}
+      onViewHowItWorks={onViewHowItWorks}
       communityPosts={posts}
-      banner={hasProfile ? null : heroBanner}
+      heroBanner={hasProfile ? null : heroBanner}
     />
   );
 }

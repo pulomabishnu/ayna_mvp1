@@ -1,0 +1,82 @@
+/* kit.jsx: the raining collage and the hero search (website / and the app landing).
+   Brand colours only: butter #FFEDAC / #F6E3A1, espresso #3E2723, pink #F7BADD,
+   blue #769EBE for the chart line only. 13px minimum. Only transform animates.
+
+   The rain sits on a butter field in light mode: each falling column carries
+   the same butter as its own background, so the packshots (white backgrounds)
+   multiply onto butter and read as cut-outs. A moving column is its own
+   compositing group, which is why the butter is on the column and not only
+   on the field behind it. Dark mode: each packshot gets a soft butter circle
+   and multiplies onto that instead. */
+
+.lk-rain {
+  --lk-field: #ffedac; --lk-fg: #3e2723; --lk-accent: #f7badd; --lk-line: rgba(62, 39, 35, .22);
+  position: relative; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--lk-gap, 20px);
+  overflow: hidden; color: var(--lk-fg); pointer-events: none; user-select: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%);
+}
+.lk-rain__col { position: relative; min-width: 0; }
+.lk-rain__run { position: absolute; inset: 0 0 auto; display: flex; flex-direction: column; background: var(--lk-field); animation: lk-fall var(--dur, 48s) linear var(--delay, 0s) infinite; will-change: transform; }
+.lk-rain__set { display: flex; flex-direction: column; align-items: center; gap: var(--lk-gap, 20px); padding-bottom: var(--lk-gap, 20px); }
+@keyframes lk-fall { from { transform: translate3d(0, -50%, 0); } to { transform: translate3d(0, 0, 0); } }
+html.ay-motion-paused .lk-rain__run { animation-play-state: paused; }
+/* Reduced motion: the rain stands still, a little way in so the top is not empty. */
+@media (prefers-reduced-motion: reduce) { .lk-rain__run { animation: none; transform: translate3d(0, -12%, 0); } }
+
+/* ---- cut-outs ---- */
+.lk-prod { display: block; width: 100%; }
+.lk-prod.is-l { width: 100%; }
+.lk-prod.is-m { width: 82%; }
+.lk-prod.is-s { width: 64%; }
+.lk-rain__set > :nth-child(4n + 1) { align-self: flex-start; }
+.lk-rain__set > :nth-child(4n + 3) { align-self: flex-end; }
+.lk-prod__in { display: block; aspect-ratio: 1; }
+.lk-prod img { display: block; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+
+/* ---- widgets: their own small shapes, no frames ---- */
+.lk-w { display: grid; justify-items: center; gap: 6px; max-width: 100%; text-align: center; font: 600 13px/1.2 var(--ay-font-ui, 'Figtree', system-ui, sans-serif); color: var(--lk-fg); }
+.lk-w b { font: 800 15px/1.15 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.01em; }
+.lk-w small { font: 700 13px/1.2 var(--ay-font-ui, inherit); opacity: .85; }
+.lk-sample { display: inline-flex; align-items: center; min-height: 20px; padding: 0 8px; border-radius: 999px; border: 1.5px solid currentColor; font: 700 13px/1 var(--ay-font-ui, inherit); opacity: .85; white-space: nowrap; }
+.lk-ring { width: 64px; height: 64px; }
+.lk-ring__track { fill: none; stroke: var(--lk-line); stroke-width: 6; }
+.lk-ring__arc { fill: none; stroke: var(--lk-accent); stroke-width: 6; stroke-linecap: round; }
+.lk-ring text { fill: var(--lk-fg); font: 800 18px var(--ay-font-display, sans-serif); }
+.lk-pill { display: inline-flex; align-items: center; min-height: 36px; padding: 0 16px; border-radius: 999px; background: var(--lk-accent); color: #3e2723; font: 800 17px/1 var(--ay-font-display, inherit); white-space: nowrap; }
+.lk-dots { display: grid; grid-template-columns: repeat(7, 12px); gap: 5px; }
+.lk-dots i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--lk-fg); box-sizing: border-box; }
+.lk-dots i.is-on { background: var(--lk-accent); border-color: var(--lk-accent); }
+.lk-spark { width: 112px; height: 40px; overflow: visible; }
+.lk-spark polyline { fill: none; stroke: #769ebe; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.lk-spark circle { fill: var(--lk-accent); }
+.lk-bars { display: flex; align-items: flex-end; gap: 5px; height: 36px; }
+.lk-bars i { width: 9px; height: 100%; border-radius: 999px; background: var(--lk-fg); transform: scaleY(var(--h)); transform-origin: bottom; }
+.lk-bars i:last-child { background: var(--lk-accent); }
+.lk-month { display: grid; grid-template-columns: repeat(7, 10px); gap: 5px; }
+.lk-month i { width: 10px; height: 10px; border-radius: 50%; background: var(--lk-line); }
+.lk-month i.is-p { background: var(--lk-accent); }
+.lk-month i.is-o { background: transparent; box-shadow: inset 0 0 0 2px var(--lk-fg); }
+.lk-bubble { display: block; max-width: 168px; padding: 10px 14px; border-radius: 18px 18px 18px 4px; background: var(--lk-accent); color: #3e2723; font: 700 14px/1.3 var(--ay-font-ui, inherit); text-align: left; }
+.lk-w--ask { justify-items: start; }
+.lk-count { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--lk-fg); color: var(--lk-field); font: 800 22px/1 var(--ay-font-display, inherit); }
+
+/* ---- dark: espresso field, every cut-out on a soft butter circle ---- */
+:is([data-theme='dark'], [data-theme='brand-dark']) .lk-rain { --lk-field: transparent; --lk-fg: #ffedac; --lk-line: rgba(255, 237, 172, .26); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .lk-prod__in { border-radius: 50%; background: #f6e3a1; overflow: hidden; isolation: isolate; padding: 13%; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .lk-count { color: #3e2723; }
+
+/* ---- the hero search: wide, butter, espresso outline ---- */
+.lsx-search { position: relative; display: flex; align-items: center; width: 100%; max-width: 560px; }
+.lsx-search label { position: relative; flex: 1; display: flex; align-items: center; min-width: 0; margin: 0; }
+.lsx-search label > svg { position: absolute; left: 16px; width: 20px; height: 20px; fill: none; stroke: #3e2723; stroke-width: 2; stroke-linecap: round; pointer-events: none; z-index: 1; }
+.lsx-search.lsx-search input { all: unset; box-sizing: border-box; width: 100%; height: var(--lk-search-h, 56px); padding: 0 60px 0 46px !important; border-radius: 999px !important; border: 1.5px solid #3e2723 !important; background: #ffedac !important; color: #3e2723 !important; font: 500 16px/1 var(--ay-font-ui, 'Figtree', sans-serif) !important; box-shadow: none !important; }
+.lsx-search.lsx-search input:focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }
+.lsx-search__hint { position: absolute; left: 46px; right: 60px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left; color: rgba(62, 39, 35, .78); font: 500 16px/1 var(--ay-font-ui, 'Figtree', sans-serif); pointer-events: none; }
+.lsx-search__hint b { font-weight: 700; color: #3e2723; }
+html.ay-motion .lsx-search__hint b { display: inline-block; animation: lk-hint 280ms var(--ay-ease, ease-out) both; }
+@keyframes lk-hint { from { opacity: 0; transform: translate3d(0, 6px, 0); } }
+.lsx-search.lsx-search button { all: unset; box-sizing: border-box; cursor: pointer; position: absolute; right: 6px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #3e2723; color: #ffedac; }
+.lsx-search.lsx-search button:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
+.lsx-search button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lk-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
