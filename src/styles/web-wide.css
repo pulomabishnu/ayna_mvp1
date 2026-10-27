@@ -1,0 +1,158 @@
+/* Web, wide screens only (founder, Oct 27 10:41): "it doesnt need to be exactly like the app,
+   optimize it for web". Layout only: content, data and behaviour are unchanged, and every rule sits
+   inside a min-width query and under the website's .app-container (the app, .ayna-mobile, never
+   matches). The phone website below 1024px keeps its layout. The selectors repeat ids so they
+   outrank the page sheets that load later in lazy chunks. */
+
+/* ---- Shared: pill tabs size to their labels on a desktop instead of stretching to 640px. ---- */
+@media (min-width: 1024px) {
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) :is(.yh-tabs, .ay-wh-views, .ay-askp-groups) .ayk-tabs {
+    grid-template-columns: repeat(var(--ayk-tabs-n, 4), auto) !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+  }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) :is(.yh-tabs, .ay-wh-views, .ay-askp-groups) .ayk-tabs__tab {
+    padding: 4px 22px !important;
+    font-size: 15px !important;
+  }
+}
+@media (min-width: 1024px) and (hover: hover) {
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) :is(.yh-tabs, .ay-wh-views, .ay-askp-groups) .ayk-tabs__tab:not(.is-on):hover {
+    text-decoration: underline !important;
+    text-underline-offset: 4px;
+  }
+}
+
+/* ---- Home: the week's highlights as one full-width row of cards (no carousel, no dots), then
+   the two columns under it. The act column starts beside Your week instead of the highlights. ---- */
+@media (min-width: 1100px) {
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-wh.ay-wh--today .ay-wh-day.is-single .ay-wh-day__main:has(> .ay-hhl) > .ay-hhl {
+    grid-column: 1 / -1 !important;
+    grid-row: 1;
+  }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-wh.ay-wh--today .ay-wh-day.is-single .ay-wh-day__main:has(> .ay-hhl) > .ay-wh-day__act {
+    grid-row: 2 / span 6 !important;
+  }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-wh.ay-wh--today .ay-hhl .ayk-snap.is-card .ayk-snap__list {
+    display: grid !important;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 16px;
+    overflow: visible !important;
+    scroll-snap-type: none;
+  }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-wh.ay-wh--today .ay-hhl .ayk-snap.is-card .ayk-snap__item {
+    width: auto !important;
+    max-width: none !important;
+  }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-wh.ay-wh--today .ay-hhl .ayk-snap__dots { display: none !important; }
+}
+
+/* ---- Services: three columns of service cards on a desktop (two was the phone row stretched). ---- */
+@media (min-width: 1100px) {
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container .ayshop .ayshop__grid.is-services {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---- Compare: a real table on a desktop. The row label sits in its own left column (the phone
+   puts it above the values), the table uses the full width, and the row under the pointer tints. ---- */
+@media (min-width: 1024px) {
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-cmp2.is-web .ay-cmp2__scroll { width: 100% !important; max-width: none !important; }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-cmp2.is-web table { width: 100% !important; }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-cmp2.is-web tr {
+    grid-template-columns: 220px repeat(var(--cmp-n, 2), minmax(0, 1fr)) !important;
+    column-gap: 24px !important;
+    padding: 0 20px !important;
+  }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-cmp2.is-web thead td:first-child { display: block !important; }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-cmp2.is-web :is(tbody th, tbody td) { padding: 14px 0 !important; }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-cmp2.is-web tbody th { grid-column: auto !important; }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-cmp2.is-web .ay-cmp2__label {
+    position: static !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 4px !important;
+    max-width: none !important;
+  }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-cmp2.is-web .ay-cmp2__rowbtn { position: static !important; align-items: flex-start !important; text-align: left; }
+}
+@media (min-width: 1024px) and (hover: hover) {
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-cmp2.is-web tbody tr:hover { background: rgba(62, 39, 35, .05); }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5):is([data-theme='dark'], [data-theme='brand-dark']) .ay-cmp2.is-web tbody tr:hover { background: rgba(255, 237, 172, .06); }
+}
+
+/* ---- Product page: the reading area under the highlights uses the width. The tabs stay a short
+   bar; in the ayna summary the details read on the left and Safety ("When to get help now", always
+   open) sits in its own column on the right; the other tabs keep a readable measure. Read about it
+   becomes a three-up grid instead of a peeking carousel with dots. ---- */
+@media (min-width: 1100px) {
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body { max-width: none; margin: 0 0 48px; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body .ayq-st { max-width: 760px; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body .ayq-tp:not(.is-summary) { max-width: 860px; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body .ayq-tp.is-summary .ayv-sum2:has(> .ayv-sec--safety2) {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 440px) !important;
+    grid-template-rows: auto auto auto auto 1fr !important;
+    grid-auto-flow: row !important;
+    gap: 12px 48px !important;
+    align-items: start !important;
+  }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body .ayv-sum2:has(> .ayv-sec--safety2) > * { grid-column: 1 !important; grid-row: auto !important; min-width: 0; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body .ayv-sum2:has(> .ayv-sec--safety2) > .ayv-sec--safety2 { grid-column: 2 !important; grid-row: 1 / -1 !important; margin-top: 0 !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body .ayv-sum2 > .ayv-ask .ay-askrow > ul {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+    gap: 8px !important;
+  }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body .ayv-sum2 > .ayv-ask .ay-askrow > ul > li { margin: 0 !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body .ayv-sum2 > .ayv-ask .ay-askrow > ul > li > button { height: 100%; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayp-reads__snap .ayk-snap__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayp-reads__snap .ayk-snap__item { width: auto; max-width: none; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayp-reads__snap .ayk-snap__dots { display: none; }
+}
+
+/* ---- You: the Settings & privacy bar is a slim row under the bento on a desktop, not a 140px
+   tile with nothing in it. ---- */
+@media (min-width: 1024px) {
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .wy-bento .yb:has(> .yb-tile.is-settings.is-full) {
+    grid-template-rows: minmax(140px, auto) minmax(140px, auto) auto !important;
+  }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .wy-bento .yb > .yb-tile.is-settings.is-full {
+    min-height: 72px !important;
+    height: auto !important;
+    justify-content: center !important;
+  }
+}
+
+/* ---- Home, Routine: the day's sections side by side in two columns, not a stack of boxes. ---- */
+@media (min-width: 1100px) {
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-wh.ay-wh--today .ay-rtl .ay-rtl__line {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px !important;
+    align-items: stretch;
+  }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-wh.ay-wh--today .ay-rtl .ay-rtl__line > li { margin: 0 !important; min-width: 0; }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-wh.ay-wh--today .ay-rtl .ay-rtl__line > li.is-track { grid-column: 1 / -1; }
+  /* The narrower column gets one more line of the why before "How and when". */
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-wh.ay-wh--today .ay-rtl .ay-rtl__why { -webkit-line-clamp: 4; }
+}
+
+/* ---- My ecosystem, each routine: the Start here steps sit side by side across the page (they were
+   a phone column with an empty column beside it); Other options follows under them. ---- */
+@media (min-width: 1100px) {
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-rxr.is-web .ay-rx__body { grid-template-columns: minmax(0, 1fr) !important; }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-rxr.is-web .ay-rx__list:has(> li + li) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-items: stretch;
+  }
+  html body .app-container:is(.app-container, #ww1):is(.app-container, #ww2):is(.app-container, #ww3):is(.app-container, #ww4):is(.app-container, #ww5) .ay-rxr.is-web .ay-rx__side { max-width: 760px; }
+}
