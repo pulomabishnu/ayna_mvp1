@@ -6,6 +6,8 @@ describe('navTabFor', () => {
   it('puts each screen under its main tab', () => {
     expect(navTabFor('ayna')).toBe('home');
     expect(navTabFor('today')).toBe('home');
+    // Signed out, the landing is the Home tab (founder, Oct 27 01:10).
+    expect(navTabFor('landing')).toBe('home');
     // Ask ayna is its own tab again (all-pages brief, Oct 25): the chat view, or the old 'ask' key.
     expect(navTabFor('ask')).toBe('ask');
     expect(navTabFor('ayna', null, { view: 'chat' })).toBe('ask');

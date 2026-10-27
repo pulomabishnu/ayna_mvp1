@@ -23,3 +23,7 @@
 .ayna-mobile .ayna-shared-header.is-collapsed .ayna-shared-wordmark { opacity: 0; }
 .ayna-mobile .ayna-shared-header.is-collapsed .ay-header-inline-title { opacity: 1; }
 .ayna-mobile .ayna-shared-header-leading:has(> button) .ay-header-inline-title { left: 52px; }
+
+/* The wordmark is a button that opens the landing (founder, Oct 27 01:13): it looks exactly like the wordmark. */
+.ayna-mobile .ayna-shared-header button.ay-logo-btn { -webkit-appearance: none; appearance: none; margin: 0; padding: 0 4px 0 0; border: 0; background: none; min-height: 44px; display: inline-flex; align-items: center; cursor: pointer; line-height: 1; }
+.ayna-mobile .ayna-shared-header button.ay-logo-btn:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; border-radius: 8px; }

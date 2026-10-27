@@ -11,6 +11,7 @@ import './styles/motion.css'
 import './styles/finish.css'
 import './styles/delight.css'
 import { installDelight } from './utils/delightRuntime.js'
+import { installMotion } from './utils/motion.js'
 import { markPerf } from './utils/perfTimings.js'
 
 // The whole mobile app (src/mobile/**, ~1.6MB of source) was bundled into the
@@ -22,6 +23,7 @@ const MobileApp = React.lazy(() => import('./mobile/MobileApp.jsx'))
 import './styles/search-focus.css'
 import { installNoEmDash } from './utils/noEmDashDom.js'
 installDelight()
+installMotion()
 // DEV and local production builds on localhost only (never real hosts, never the native app):
 // remember ?fixture=community|today for this tab before the router tidies the URL.
 if (devPreviewOn()) {

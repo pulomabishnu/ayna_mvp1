@@ -127,3 +127,12 @@
   :is(#ayk, .ayk-chip, .ayk-tabs__tab, .ayk-btn):is(#ayk, .ayk-chip, .ayk-tabs__tab, .ayk-btn):is(#ayk, .ayk-chip, .ayk-tabs__tab, .ayk-btn):is(#ayk, .ayk-chip, .ayk-tabs__tab, .ayk-btn) { transition: none !important; }
   :is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn):is(#ayk, .ayk-btn).is-primary:active:not(:disabled) { transform: none; }
 }
+
+/* PillTabs: the selected pill slides between tabs (motion pass, Oct 27). The ink sits
+   behind the tabs and glides to the new one; the selected tab keeps its own fill (so
+   contrast never depends on the ink) and fills in just after the ink arrives. */
+:is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs) { position: relative; isolation: isolate; }
+.ayk-tabs__ink { position: absolute; z-index: -1; top: var(--ay-sp-4, 4px); bottom: var(--ay-sp-4, 4px); left: 0; border-radius: var(--ay-r-pill, 999px); background: var(--ay-fill-ink); pointer-events: none; }
+html.ay-motion .ayk-tabs__ink { transition: transform var(--ay-dur-toggle, 220ms) var(--ay-ease, ease-out); }
+html.ay-motion :is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(.has-ink > *) { transition: background-color 60ms linear, color 60ms linear !important; }
+html.ay-motion :is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(.has-ink > *).is-on { transition: background-color 80ms linear 160ms, color 80ms linear 120ms !important; }
