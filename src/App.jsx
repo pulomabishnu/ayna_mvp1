@@ -2442,7 +2442,7 @@ function App() {
 
   return (
     <div className="app-container" data-theme={themeAttr} data-view={currentView} data-scroll-end={headerScroll.atEnd ? '1' : undefined}>
-      <ProPaywallHost />
+      <ProPaywallHost onRequireAuth={() => { setAuthFeature('ayna Pro'); setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }} />
       {/* Shared fixed stacking wrapper for top-of-viewport status rows, so the
           save-error banner and the ecosystem-generation bar stack instead of
           overlapping if both are showing at once, neither sets its own

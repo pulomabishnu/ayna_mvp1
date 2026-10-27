@@ -1,8 +1,8 @@
 function dailyLimitAnswer(limit) {
   if (Number(limit) >= 50) {
-    return 'You’ve reached today’s 50-chat ayna Pro limit. It resets tomorrow.';
+    return 'You’ve used this month’s 50 ayna Pro chats. They reset on the 1st.';
   }
-  return 'You’ve reached today’s 5 free Ask ayna chats. Free chats reset tomorrow. ayna Pro Early Access includes up to 50 Ask ayna chats a day.';
+  return 'You’ve used this month’s 5 free Ask ayna chats. They reset on the 1st. ayna Pro includes up to 50 Ask ayna chats a month.';
 }
 
 /**

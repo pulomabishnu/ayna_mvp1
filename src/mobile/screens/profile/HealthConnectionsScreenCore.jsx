@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import SuggestBox from '../../../components/SuggestBox.jsx';
 import { Capacitor } from '@capacitor/core';
 import { CATEGORIES } from '../../../health/metrics.js';
 import {
@@ -57,6 +58,8 @@ function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights,
   const q = query.trim().toLowerCase();
   const matches = (source) => !q || [source.name, source.kind, source.note, source.reads].some((t) => String(t || '').toLowerCase().includes(q));
   const anyMatch = HEALTH_SOURCES.some((src) => src.id !== 'request' && matches(src));
+  // Founder Oct 27: anonymous "Suggest an app or wearable" box right under the list.
+  const onApp = typeof window !== 'undefined' && (window.location.pathname.startsWith('/mobile-preview') || Boolean(window.Capacitor?.isNativePlatform?.()));
   return (
     <>
       {!compact && <p className="ay-hc-intro">Optional. Connect an app or wearable if you want ayna to personalize your insights and routine with it. Quick check-ins on {tabName} work without it. You choose what to share, and brands never see it.</p>}
@@ -77,12 +80,11 @@ function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights,
       </div>
       {q && !anyMatch && (
         <div className="ay-hc-nomatch" role="status">
-          <p><b>We don't connect to “{query.trim()}” yet.</b> Tell us you use it and the team will hear about it.</p>
-          <button type="button" className="ay-hc-primary" onClick={() => onOpen(`request:${encodeURIComponent(query.trim().slice(0, 60))}`)}>Request {query.trim().slice(0, 30)}</button>
+          <p><b>We don't connect to “{query.trim()}” yet.</b> Suggest it below and the team will hear about it.</p>
         </div>
       )}
       {SOURCE_GROUPS.map((group) => {
-        const list = HEALTH_SOURCES.filter((s) => s.group === group.id && (matches(s) || (s.id === 'request' && q)));
+        const list = HEALTH_SOURCES.filter((s) => s.group === group.id && s.id !== 'request' && matches(s));
         if (!list.length || (q && !anyMatch)) return null;
         return (
         <section key={group.id} className={`ay-hc-group is-${group.tone}`} aria-label={group.title}>
@@ -115,6 +117,7 @@ function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights,
         </section>
         );
       })}
+      {!compact && <SuggestBox key={q && !anyMatch ? `ask-${query.trim()}` : 'ask'} mode="integration" variant={onApp ? 'app' : 'web'} context={onApp ? 'app-health-connections' : 'health-connections'} prefill={q && !anyMatch ? query.trim().slice(0, 60) : ''} className="ay-hc-suggest" />}
       <ul className="ay-hc-promises">
         <li>Used only for your own matches and insights.</li>
         <li>Never shared with or sold to brands, and never changes what partners pay for or where they show up.</li>

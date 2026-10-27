@@ -433,7 +433,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       if (err?.code === 'not_signed_in') {
         setSendError('Sign in to ask ayna anything. Free accounts get a few chats each week.');
       } else if (err?.code === 'weekly_limit_reached') {
-        setSendError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
+        setSendError("You've used this month's free Ask ayna chats. They reset on the 1st, or get ayna Pro for up to 50 a month.");
       } else {
         // The failure lives in the conversation, next to the question, with a way forward.
         const failed = [...messagesWithUser, { role: 'assistant', failed: true, question: msg, text: isNetworkError(err) ? err.message : 'I couldn’t answer that just now.' }];

@@ -132,6 +132,7 @@
     statusBox.classList.remove('error', 'done');
     const a = el('a', 'Sign in to ayna', 'pro-signin');
     a.href = '/you';
+    a.addEventListener('click', saveResume);
     statusBox.replaceChildren(el('p', 'Sign in to ayna first, then come back here to choose your Early Access plan.'), a);
     setBusy(false);
     syncEnd();
@@ -238,7 +239,7 @@
 
   async function checkout(plan) {
     if (busy) return;
-    if (!canBuy) { window.location.assign('/you'); return; }
+    if (!canBuy) { goSignIn(); return; }
     setBusy(true);
     setStatus('Opening secure Stripe checkout…');
     continueButton.textContent = 'Opening secure checkout…';
@@ -315,12 +316,69 @@
     }
   }
 
+  // The plan card's checker ring: one rounded rect, pink dashes one square long on an espresso stroke,
+  // the dash offset running a full lap every 16s so the squares travel round the corners. The dash
+  // count is rounded so the loop has no seam; redrawn when the card resizes.
+  function drawRing(frame) {
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'pro-ring');
+    svg.setAttribute('aria-hidden', 'true');
+    const base = document.createElementNS(NS, 'rect');
+    const dash = document.createElementNS(NS, 'rect');
+    base.setAttribute('class', 'pro-ring-base');
+    dash.setAttribute('class', 'pro-ring-dash');
+    svg.append(base, dash);
+    frame.prepend(svg);
+    const draw = () => {
+      const w = frame.clientWidth, h = frame.clientHeight;
+      const style = getComputedStyle(frame);
+      const sq = parseFloat(style.paddingTop) || 14;
+      const outer = parseFloat(style.borderTopLeftRadius) || 26;
+      const rw = w - sq, rh = h - sq, r = Math.max(0, Math.min(outer - 1.5 - sq / 2, rw / 2, rh / 2));
+      const perimeter = 2 * (rw + rh) - (8 - 2 * Math.PI) * r;
+      const length = Math.max(2, Math.round(perimeter / (2 * sq))) * 2 * sq;
+      svg.setAttribute('width', w); svg.setAttribute('height', h);
+      for (const rect of [base, dash]) {
+        rect.setAttribute('x', sq / 2); rect.setAttribute('y', sq / 2);
+        rect.setAttribute('width', Math.max(0, rw)); rect.setAttribute('height', Math.max(0, rh));
+        rect.setAttribute('rx', r); rect.setAttribute('stroke-width', sq);
+      }
+      dash.setAttribute('pathLength', length);
+      dash.setAttribute('stroke-dasharray', `${sq} ${sq}`);
+      dash.style.setProperty('--pro-lap', `${length}px`);
+    };
+    draw();
+    if ('ResizeObserver' in window) new ResizeObserver(draw).observe(frame);
+  }
+  document.querySelectorAll('.pro-frame').forEach(drawRing);
+
+  // Sign in, then straight back here with the same plan (founder, Oct 27 17:15). The app reads the
+  // same key after sign-in (src/pro/paywall.js) and sends her back to /pro; anything older than
+  // 30 minutes is ignored.
+  const RESUME = 'ayna.returnTo';
+  function saveResume() {
+    try { window.sessionStorage.setItem(RESUME, JSON.stringify({ path: '/pro', proFeature: params.get('feature') || '', plan: selectedPlan, at: Date.now(), tries: 0 })); } catch { /* storage blocked */ }
+  }
+  function goSignIn() { saveResume(); window.location.assign('/you'); }
+  function takeResume() {
+    try {
+      const saved = JSON.parse(window.sessionStorage.getItem(RESUME) || 'null');
+      window.sessionStorage.removeItem(RESUME);
+      if (!saved || !/^\/pro(\.html)?$/.test(String(saved.path).split(/[?#]/)[0])) return null;
+      if (!(Date.now() - Number(saved.at) >= 0 && Date.now() - Number(saved.at) < 30 * 60 * 1000)) return null;
+      return saved;
+    } catch { return null; }
+  }
+
   async function init() {
     token = accessTokenFromBrowser();
     if (!token) {
       showSignedOut();
       return;
     }
+    const resumed = takeResume();
+    if (resumed && (resumed.plan === 'month' || resumed.plan === 'year')) selectPlan(resumed.plan);
     const data = await loadStatus();
     // Back from Stripe: the webhook can land a few seconds after her. Keep checking, then say so plainly.
     if (checkoutResult === 'success' && data && !data.active) {

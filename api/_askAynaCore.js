@@ -16,7 +16,7 @@
  * disconnected system guessing at the same message.
  *
  * Ask ayna and product chat share one chat allowance. During the Pro rollout
- * Free gets 5/day and Pro gets up to 50/day; before the feature flag is
+ * Free gets 5/month and Pro gets up to 50/month; before the feature flag is
  * enabled the legacy quota behavior remains unchanged.
  */
 /* global process */

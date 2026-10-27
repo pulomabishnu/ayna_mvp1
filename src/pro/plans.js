@@ -9,40 +9,48 @@ const ANNUAL_REGULAR = '$90';
 const ANNUAL_PER_MONTH = '$3.75'; // $45 / 12
 export const PAID_TERM_STARTS = 'Jan 1, 2027';
 
+// Founder (Oct 27, 17:00): subscribe now, unlock Pro immediately, use it through Dec 31, 2026;
+// the purchased term begins in January 2027.
+export const EARLY_ACCESS_LINE = 'Subscribe now and Pro unlocks immediately. Use it through December 31, 2026, and your purchased subscription term begins in January 2027, so Early Access does not use up the month or year you bought.';
+
 // Yearly is chosen first and marked: $45 today vs $4.99 + 11 x $8.99 = $103.88 for a
 // first year paid monthly, and $90/year regular vs 12 x $8.99 = $107.88. 50% off is $45 of $90.
 export const PLANS = [
   { id: 'year', label: 'Yearly', price: ANNUAL_PRICE, regular: ANNUAL_REGULAR, per: 'year', best: true,
     badge: '50% off', sub: `${ANNUAL_PER_MONTH}/month`,
     renew: `Renews at ${ANNUAL_REGULAR}/year. Cancel anytime.`,
-    terms: `Your first paid year begins at launch, then renews at ${ANNUAL_REGULAR}/year unless canceled.` },
+    terms: `Your purchased year begins in January 2027, then renews at ${ANNUAL_REGULAR}/year unless canceled.` },
   { id: 'month', label: 'Monthly', price: MONTHLY_PRICE, regular: MONTHLY_REGULAR, per: 'month',
     sub: 'first month',
     renew: `Renews at ${MONTHLY_REGULAR}/month. Cancel anytime.`,
-    terms: `Your first paid month begins at launch, then renews at ${MONTHLY_REGULAR}/month unless canceled.` },
+    terms: `Your purchased month begins in January 2027, then renews at ${MONTHLY_REGULAR}/month unless canceled.` },
 ];
 
-// The short "what changes" line under each benefit, from the Pro features list.
-export const PRO_VALUE = {
-  ask: 'Up to 50 chats a day instead of 5',
-  quiz: 'Retake the quiz whenever you want, not once a month',
-  reads: 'Every Read in the Library, not one a week',
-  playlists: 'As many playlists as you want, not one',
-  wearables: 'Bring in the health data you choose to share',
-  history: 'Detailed cycle, sleep and body history',
-  recap: 'Look back at your recent observations',
-  tracking: 'Try a change, then check back in 7 or 14 days',
-  appointment: 'Symptoms and questions, organized for your visit',
-  early: 'Try new Pro features as they arrive',
+/** Short chip words for each Pro feature, in the founder's wording. */
+export const PRO_SHORT = {
+  wearables: 'Apple Health and Health Connect',
+  health: 'Health-data personalization',
+  insights: 'Deeper personalized insights',
+  tracking: 'Advanced tracking + trends',
+  quiz: 'Quiz retakes anytime',
+  ask: 'Up to 50 Ask chats a month',
+  reads: 'Unlimited Reads',
+  playlists: 'Unlimited playlists',
 };
-const DEFAULT_ROWS = ['ask', 'reads', 'quiz', 'playlists'];
 
-/** Four benefit rows from the Pro features list: the feature she tapped first (when it
- *  is available today), then the everyday ones. Nothing still in development. */
-export function benefitRows(feature) {
-  const available = PRO_FEATURES.filter((f) => f.stage === 'available');
-  const first = available.find((f) => f.id === (FEATURE_ALIAS[feature] || feature));
-  const rest = DEFAULT_ROWS.map((id) => available.find((f) => f.id === id)).filter((f) => f && f !== first);
-  return [first, ...rest].filter(Boolean).slice(0, 4);
+/** Pro, grouped (founder: "don't just stack the features ... categorize it"). */
+export const PRO_GROUPS = [
+  { id: 'connect', name: 'Connect your health data', promise: 'ayna learns from the cycle, sleep, activity and other signals you choose to share.', items: ['wearables', 'health'] },
+  { id: 'deeper', name: 'Go deeper', promise: 'Patterns and context over time, not single data points.', items: ['insights', 'tracking'] },
+  { id: 'limits', name: 'Fewer limits', promise: 'Use ayna as much as your needs change.', items: ['quiz', 'ask', 'reads', 'playlists'] },
+];
+
+/** The groups with their features; `on` marks the feature she tapped. Evolving ones say so. */
+export function proGroups(feature = '') {
+  const tapped = FEATURE_ALIAS[feature] || feature;
+  return PRO_GROUPS.map((g) => ({
+    ...g,
+    features: g.items.map((id) => PRO_FEATURES.find((f) => f.id === id)).filter(Boolean)
+      .map((f) => ({ ...f, short: PRO_SHORT[f.id] || f.label, on: f.id === tapped, growing: f.stage !== 'available' })),
+  }));
 }
-

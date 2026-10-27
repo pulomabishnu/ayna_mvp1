@@ -57,9 +57,8 @@ export default function WebHealthData({ user, quizResults, onBack, onSignIn, onE
       </div>
       <div className="ay-hc-web-body" key={top}>
         {top === 'insights' ? (
-          <ProFeatureGate feature="insights" title="Deeper health insights" onBack={back}>
-            <HealthInsightsScreen authUser={user} selectedNeedIds={selectedNeedIds} onConnect={() => setStack(['list'])} onEditProfile={onEditProfile} />
-          </ProFeatureGate>
+          // The basic health dashboard stays free, the same as in the app (founder's Free vs Pro, Oct 27).
+          <HealthInsightsScreen authUser={user} selectedNeedIds={selectedNeedIds} onConnect={() => setStack(['list'])} onEditProfile={onEditProfile} />
         ) : gatedSourceId ? (
           <ProFeatureGate feature="wearables" title={`Connect ${sourceTitle || 'health data'}`} onBack={back}>
             {connectionScreen(gatedSourceId)}
