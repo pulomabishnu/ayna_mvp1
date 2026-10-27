@@ -69,3 +69,14 @@
 .ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-today__actions .ay-today__primary::after { content: ''; position: absolute; inset: -4px -3px; }
 .ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-today__actions .ay-today__text { position: relative; min-height: 32px !important; font: 600 14px/1.2 var(--ay-font-ui, inherit) !important; }
 .ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-today__actions .ay-today__text::after { content: ''; position: absolute; inset: -6px -4px; }
+
+/* Founder 00:16 "does the colour clash?" + research (cards need a clear 3:1 boundary; colour only for the one
+   thing that matters). Pink #F7BADD and butter-deep on butter have no visible edge, so the stack read as one slab.
+   Now: every card is butter with the 1.5px espresso outline (like the approved product cards); title strips are
+   separate outlined tabs with a small gap; the front card gets a pink left edge for "now". Pink chips only when chosen. */
+.ay-fdeck__strip { background: #ffedac !important; box-shadow: none !important; border: 1.5px solid #3e2723; border-bottom: 0; margin-top: 6px; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-fdeck__strip { background: #3e2723 !important; color: #ffedac; border-color: rgba(255, 237, 172, .55); }
+.ay-fdeck .ay-fdeck__top.has-strips > li { box-shadow: none !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top:is(.is-pink, .is-butter) > .ay-today__item { background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; box-shadow: inset 6px 0 0 #f7badd !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is([data-theme='dark'], [data-theme='brand-dark']) .ay-homescreen .ay-fdeck .ay-fdeck__top:is(.is-pink, .is-butter) > .ay-today__item { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
+.ayna-mobile .ay-homescreen .ay-fdeck .ay-today__item .ay-chip:is([aria-pressed='true'], .is-on) { background: #f7badd !important; }
