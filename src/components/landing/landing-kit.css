@@ -9,62 +9,59 @@
    on the field behind it. Dark mode: each packshot gets a soft butter circle
    and multiplies onto that instead. */
 
+.lk-rainbox {
+  --lk-field: #ffedac; --lk-fg: #3e2723; --lk-accent: #f7badd; --lk-line: rgba(62, 39, 35, .25);
+  position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; user-select: none;
+}
 .lk-rain {
-  --lk-field: #ffedac; --lk-fg: #3e2723; --lk-accent: #f7badd; --lk-line: rgba(62, 39, 35, .22);
-  position: relative; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--lk-gap, 20px);
-  overflow: hidden; color: var(--lk-fg); pointer-events: none; user-select: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%);
+  position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--lk-colgap, 32px);
+  padding: 0 var(--lk-pad, 16px); overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
 }
 .lk-rain__col { position: relative; min-width: 0; }
-.lk-rain__run { position: absolute; inset: 0 0 auto; display: flex; flex-direction: column; background: var(--lk-field); animation: lk-fall var(--dur, 48s) linear var(--delay, 0s) infinite; will-change: transform; }
-.lk-rain__set { display: flex; flex-direction: column; align-items: center; gap: var(--lk-gap, 20px); padding-bottom: var(--lk-gap, 20px); }
-@keyframes lk-fall { from { transform: translate3d(0, -50%, 0); } to { transform: translate3d(0, 0, 0); } }
+.lk-rain__run { position: absolute; inset: 0 0 auto; display: flex; flex-direction: column; background: var(--lk-field); animation: lk-fall var(--dur, 50s) linear var(--delay, 0s) infinite; will-change: transform; }
+.lk-rain__set { display: flex; flex-direction: column; align-items: center; gap: var(--lk-gap, 72px); padding-bottom: var(--lk-gap, 72px); }
+@keyframes lk-fall { from { transform: translate3d(0, -16.6667%, 0); } to { transform: translate3d(0, 0, 0); } }
 html.ay-motion-paused .lk-rain__run { animation-play-state: paused; }
-/* Reduced motion: the rain stands still, a little way in so the top is not empty. */
-@media (prefers-reduced-motion: reduce) { .lk-rain__run { animation: none; transform: translate3d(0, -12%, 0); } }
+/* Reduced motion: the rain stands still. */
+@media (prefers-reduced-motion: reduce) { .lk-rain__run { animation: none; transform: translate3d(0, -8%, 0); } }
 
 /* ---- cut-outs ---- */
 .lk-prod { display: block; width: 100%; }
 .lk-prod.is-l { width: 100%; }
 .lk-prod.is-m { width: 82%; }
 .lk-prod.is-s { width: 64%; }
-.lk-rain__set > :nth-child(4n + 1) { align-self: flex-start; }
-.lk-rain__set > :nth-child(4n + 3) { align-self: flex-end; }
+.lk-rain__set > :nth-child(odd) { align-self: flex-start; }
+.lk-rain__set > :nth-child(even) { align-self: flex-end; }
+.lk-rain__col:nth-child(even) .lk-rain__set > :nth-child(odd) { align-self: flex-end; }
+.lk-rain__col:nth-child(even) .lk-rain__set > :nth-child(even) { align-self: flex-start; }
 .lk-prod__in { display: block; aspect-ratio: 1; }
 .lk-prod img { display: block; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
 
-/* ---- widgets: their own small shapes, no frames ---- */
-.lk-w { display: grid; justify-items: center; gap: 6px; max-width: 100%; text-align: center; font: 600 13px/1.2 var(--ay-font-ui, 'Figtree', system-ui, sans-serif); color: var(--lk-fg); }
-.lk-w b { font: 800 15px/1.15 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.01em; }
-.lk-w small { font: 700 13px/1.2 var(--ay-font-ui, inherit); opacity: .85; }
-.lk-sample { display: inline-flex; align-items: center; min-height: 20px; padding: 0 8px; border-radius: 999px; border: 1.5px solid currentColor; font: 700 13px/1 var(--ay-font-ui, inherit); opacity: .85; white-space: nowrap; }
-.lk-ring { width: 64px; height: 64px; }
-.lk-ring__track { fill: none; stroke: var(--lk-line); stroke-width: 6; }
-.lk-ring__arc { fill: none; stroke: var(--lk-accent); stroke-width: 6; stroke-linecap: round; }
-.lk-ring text { fill: var(--lk-fg); font: 800 18px var(--ay-font-display, sans-serif); }
-.lk-pill { display: inline-flex; align-items: center; min-height: 36px; padding: 0 16px; border-radius: 999px; background: var(--lk-accent); color: #3e2723; font: 800 17px/1 var(--ay-font-display, inherit); white-space: nowrap; }
-.lk-dots { display: grid; grid-template-columns: repeat(7, 12px); gap: 5px; }
-.lk-dots i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--lk-fg); box-sizing: border-box; }
+/* ---- the app's shapes: outlines only, no numbers ---- */
+.lk-w { display: grid; justify-items: center; }
+.lk-ring { width: 60px; height: 60px; }
+.lk-ring__track { fill: none; stroke: var(--lk-line); stroke-width: 5; }
+.lk-ring__arc { fill: none; stroke: var(--lk-accent); stroke-width: 5; stroke-linecap: round; }
+.lk-dots { display: grid; grid-template-columns: repeat(7, 11px); gap: 6px; }
+.lk-dots i { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid var(--lk-line); box-sizing: border-box; }
 .lk-dots i.is-on { background: var(--lk-accent); border-color: var(--lk-accent); }
-.lk-spark { width: 112px; height: 40px; overflow: visible; }
-.lk-spark polyline { fill: none; stroke: #769ebe; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.lk-spark circle { fill: var(--lk-accent); }
-.lk-bars { display: flex; align-items: flex-end; gap: 5px; height: 36px; }
-.lk-bars i { width: 9px; height: 100%; border-radius: 999px; background: var(--lk-fg); transform: scaleY(var(--h)); transform-origin: bottom; }
-.lk-bars i:last-child { background: var(--lk-accent); }
-.lk-month { display: grid; grid-template-columns: repeat(7, 10px); gap: 5px; }
-.lk-month i { width: 10px; height: 10px; border-radius: 50%; background: var(--lk-line); }
-.lk-month i.is-p { background: var(--lk-accent); }
-.lk-month i.is-o { background: transparent; box-shadow: inset 0 0 0 2px var(--lk-fg); }
-.lk-bubble { display: block; max-width: 168px; padding: 10px 14px; border-radius: 18px 18px 18px 4px; background: var(--lk-accent); color: #3e2723; font: 700 14px/1.3 var(--ay-font-ui, inherit); text-align: left; }
-.lk-w--ask { justify-items: start; }
-.lk-count { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--lk-fg); color: var(--lk-field); font: 800 22px/1 var(--ay-font-display, inherit); }
+.lk-line { width: 96px; height: 40px; overflow: visible; }
+.lk-line polyline { fill: none; stroke: #769ebe; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.lk-line circle { fill: var(--lk-accent); }
+.lk-pill { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--lk-accent); }
+.lk-pill svg { width: 16px; height: 16px; fill: var(--lk-accent); }
+.lk-pill i { width: 22px; height: 6px; border-radius: 999px; background: var(--lk-accent); opacity: .7; }
+.lk-pill i + i { width: 12px; }
 
-/* ---- dark: espresso field, every cut-out on a soft butter circle ---- */
-:is([data-theme='dark'], [data-theme='brand-dark']) .lk-rain { --lk-field: transparent; --lk-fg: #ffedac; --lk-line: rgba(255, 237, 172, .26); }
-:is([data-theme='dark'], [data-theme='brand-dark']) .lk-prod__in { border-radius: 50%; background: #f6e3a1; overflow: hidden; isolation: isolate; padding: 13%; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .lk-count { color: #3e2723; }
+/* ---- on espresso (an espresso band, or dark mode): a soft see-through layer.
+   Each packshot on a small rounded butter tile (its white would show on
+   espresso); the shapes in pink and butter outlines. ---- */
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) { --lk-field: transparent; --lk-line: rgba(255, 237, 172, .7); }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod__in { border-radius: 18px; background: #ffedac; overflow: hidden; isolation: isolate; padding: 8%; }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod { opacity: .5; }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-w { opacity: .62; }
 
 /* ---- the hero search: wide, butter, espresso outline ---- */
 .lsx-search { position: relative; display: flex; align-items: center; width: 100%; max-width: 560px; }
@@ -80,3 +77,20 @@ html.ay-motion .lsx-search__hint b { display: inline-block; animation: lk-hint 2
 .lsx-search.lsx-search button:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
 .lsx-search button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .lk-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---- the brown and pink bar: espresso tab | partner names on pink | pause ---- */
+.lk-bar { display: flex; align-items: stretch; width: 100%; margin: 0; background: #f7badd; color: #3e2723; }
+.lk-bar .lk-bar__tab { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: var(--lk-bar-h, 52px); padding: 0 20px; background: #3e2723; color: #ffedac !important; font: 700 15px/1.2 var(--ay-font-ui, 'Figtree', sans-serif) !important; text-decoration: none !important; white-space: nowrap; }
+.lk-bar .lk-bar__tab svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lk-bar .lk-bar__tab:hover .lk-bar__long, .lk-bar .lk-bar__tab:hover .lk-bar__short { text-decoration: underline; text-underline-offset: 3px; }
+.lk-bar .lk-bar__short { display: none; }
+.lk-bar :is(.lk-bar__tab, .lk-bar__pause):focus-visible { outline: 3px solid #3e2723; outline-offset: -5px; }
+.lk-bar .lk-bar__run { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; padding: 0 !important; background: transparent !important;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); }
+.lk-bar .lk-bar__run .ayb-marquee__track { animation-duration: 90s; }
+.lk-bar .lk-bar__run .ayb-marquee__row { gap: 24px; padding: 0 12px; font: 700 17px/1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.01em; color: #3e2723; }
+.lk-bar .lk-bar__run .ayb-marquee__row li { flex: none; white-space: nowrap; }
+.lk-bar .lk-bar__pause { all: unset; box-sizing: border-box; cursor: pointer; flex: none; display: grid; place-items: center; width: 48px; min-height: var(--lk-bar-h, 52px); border-left: 1.5px solid #3e2723; background: #f7badd; color: #3e2723; }
+.lk-bar .lk-bar__pause svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+@media (max-width: 640px) { .lk-bar .lk-bar__long { display: none; } .lk-bar .lk-bar__short { display: inline; } .lk-bar .lk-bar__tab { padding: 0 14px; } }
+@media (prefers-reduced-motion: reduce) { .lk-bar .lk-bar__pause { display: none; } }

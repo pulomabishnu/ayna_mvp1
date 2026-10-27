@@ -2,112 +2,92 @@ import { useEffect, useState } from 'react';
 import SmartSearchInput from '../search/SmartSearchInput.jsx';
 import { HOME_SEARCH_HINTS } from '../shop/homeSearchHints.js';
 import { motionOff } from '../../utils/motion.js';
+import { isPlainLeftClick } from '../../utils/productRoute.js';
+import { PARTNER_BRANDS } from '../../utils/partnerBrands.js';
+import { Marquee } from '../ui/ay/index.js';
+import useMotionPaused from './useMotionPaused.js';
 import { RAIN_COLS } from './rainData.js';
 import './landing-kit.css';
 
 /*
  * The landing kit, shared by the website's / (WebLanding) and the app's
- * one-screen landing (AppLanding): the raining collage and the hero search.
+ * one-screen landing (AppLanding): the raining background, the hero search
+ * and the brown and pink bar.
  *
- * Rain (founder, Oct 27 10:40: "pictures and stuff sliding down without a
- * background"): real catalog packshots falling as cut-outs, with small
- * frameless widgets of the app between them. Packshots are on white, so in
- * light mode they multiply onto the butter field and the white disappears.
- * In dark mode each packshot sits on a soft butter circle instead (multiply
- * would turn them dark on espresso). Widgets are their own small shapes
- * (a ring, a pill, a row of dots), never cards, and every one that looks like
- * health data says Sample. All decoration: aria-hidden, still under reduced
- * motion and Pause motion.
+ * Rain (founder, Oct 27 10:40-11:36: "pictures and stuff sliding down", "put
+ * it in the back, make it kinda transparent", "i liked the fun aspect"):
+ * real catalog packshots and a few of the app's shapes (a cycle ring, streak
+ * dots, a chart line, a match pill), drifting down around the edges behind the
+ * centred hero, in a soft see-through layer. No numbers, so nothing reads as
+ * data. Packshots are on white: on butter they multiply and the white
+ * disappears (cut-outs); on espresso (`onInk`, and in dark mode) each sits on
+ * a small rounded butter tile. Decoration only: aria-hidden, no pointer
+ * events, still under reduced motion and Pause motion.
  */
 
 const src = (id) => `/products/catalog/${id}.webp`;
 
-const Sample = () => <span className="lk-sample">Sample</span>;
-
-function Ring({ value = 24, of = 28 }) {
+function Ring() {
   const r = 22; const c = 2 * Math.PI * r;
   return (
     <svg className="lk-ring" viewBox="0 0 56 56">
       <circle cx="28" cy="28" r={r} className="lk-ring__track" />
-      <circle cx="28" cy="28" r={r} className="lk-ring__arc" strokeDasharray={`${(c * value / of).toFixed(1)} ${c.toFixed(1)}`} transform="rotate(-90 28 28)" />
-      <text x="28" y="34" textAnchor="middle">{value}</text>
+      <circle cx="28" cy="28" r={r} className="lk-ring__arc" strokeDasharray={`${(c * 0.7).toFixed(1)} ${c.toFixed(1)}`} transform="rotate(-90 28 28)" />
     </svg>
   );
 }
-const SPARK = [6, 9, 7, 8, 11, 10, 13];
-function Spark({ w = 112, h = 40 }) {
-  const lo = Math.min(...SPARK); const hi = Math.max(...SPARK);
-  const pts = SPARK.map((v, i) => `${(i / (SPARK.length - 1)) * (w - 10) + 5},${h - 5 - ((v - lo) / (hi - lo)) * (h - 12)}`);
+const LINE = [6, 9, 7, 8, 11, 10, 13];
+function Line({ w = 96, h = 40 }) {
+  const lo = Math.min(...LINE); const hi = Math.max(...LINE);
+  const pts = LINE.map((v, i) => `${(i / (LINE.length - 1)) * (w - 10) + 5},${h - 6 - ((v - lo) / (hi - lo)) * (h - 14)}`);
   const [lx, ly] = pts[pts.length - 1].split(',');
-  return <svg className="lk-spark" viewBox={`0 0 ${w} ${h}`}><polyline points={pts.join(' ')} /><circle cx={lx} cy={ly} r="4" /></svg>;
+  return <svg className="lk-line" viewBox={`0 0 ${w} ${h}`}><polyline points={pts.join(' ')} /><circle cx={lx} cy={ly} r="4" /></svg>;
 }
-// A month of dots, a few period days filled pink (Your month, the calendar sheet on Home).
-const MONTH = Array.from({ length: 28 }, (_, i) => (i >= 3 && i <= 7 ? 'p' : i === 17 ? 'o' : ''));
 
 function Drop({ t, eager }) {
   switch (t.k) {
     case 'p':
       return (
         <span className={`lk-d lk-prod is-${t.s || 'm'}`}>
-          <span className="lk-prod__in"><img src={src(t.id)} alt="" width="160" height="160" loading={eager ? 'eager' : 'lazy'} decoding="async" fetchPriority={eager ? 'auto' : 'low'} /></span>
+          <span className="lk-prod__in"><img src={src(t.id)} alt="" width="160" height="160" loading="eager" decoding="async" fetchPriority={eager ? 'auto' : 'low'} /></span>
         </span>
       );
     case 'ring':
-      return <span className="lk-d lk-w lk-w--ring"><Ring /><b>Cycle day</b><Sample /></span>;
+      return <span className="lk-d lk-w"><Ring /></span>;
+    case 'dots':
+      return <span className="lk-d lk-w"><span className="lk-dots">{[1, 1, 1, 1, 0, 0, 0].map((on, i) => <i key={i} className={on ? 'is-on' : ''} />)}</span></span>;
+    case 'line':
+      return <span className="lk-d lk-w"><Line /></span>;
     case 'match':
-      return <span className="lk-d lk-w lk-w--match"><span className="lk-pill">87% match</span><Sample /></span>;
-    case 'streak':
-      return (
-        <span className="lk-d lk-w lk-w--streak">
-          <b>4-day streak</b>
-          <span className="lk-dots">{[1, 1, 1, 1, 0, 0, 0].map((on, i) => <i key={i} className={on ? 'is-on' : ''} />)}</span>
-          <Sample />
-        </span>
-      );
-    case 'spark':
-      return <span className="lk-d lk-w lk-w--spark"><Spark /><b>Resting heart rate</b><Sample /></span>;
-    case 'sleep':
-      return (
-        <span className="lk-d lk-w lk-w--sleep">
-          <span className="lk-bars">{[7, 5, 8, 6, 9, 4, 6].map((v, i) => <i key={i} style={{ '--h': v / 9 }} />)}</span>
-          <b>Sleep 6h 40m</b><Sample />
-        </span>
-      );
-    case 'month':
-      return (
-        <span className="lk-d lk-w lk-w--month">
-          <b>Your month</b>
-          <span className="lk-month">{MONTH.map((m, i) => <i key={i} className={m ? `is-${m}` : ''} />)}</span>
-          <Sample />
-        </span>
-      );
-    case 'ask':
-      return <span className="lk-d lk-w lk-w--ask"><span className="lk-bubble">What helps with cramps at night?</span><small>Ask ayna</small></span>;
-    case 'rundown':
-      return <span className="lk-d lk-w lk-w--rundown"><span className="lk-count">3</span><b>Rundown</b><Sample /></span>;
+      return <span className="lk-d lk-w"><span className="lk-pill"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg><i /><i /></span></span>;
     default:
       return null;
   }
 }
 
-const SPEEDS = [46, 54, 42, 50, 44, 56];
+// Slow but visible: one fall takes 40 to 60 seconds, each column at its own pace.
+const SPEEDS = [48, 58, 44, 54];
+// Six copies of each column, one copy's height per loop (lk-fall in landing-kit.css).
+const COPIES = [0, 1, 2, 3, 4, 5];
 
-/** The raining collage. cols columns starting at column `from`. Decoration only. */
-export function Rain({ cols = 3, from = 0, className = '' }) {
-  const list = RAIN_COLS.slice(from, from + cols);
+/** The raining background: `cols` columns (the CSS may show fewer). Decoration only. */
+export function Rain({ cols = 4, onInk = false, className = '' }) {
+  const list = RAIN_COLS.slice(0, cols);
   return (
-    <div className={`lk-rain ${className}`.trim()} aria-hidden="true" style={{ '--cols': list.length }}>
-      {list.map((col, c) => (
-        <div key={c} className="lk-rain__col" style={{ '--dur': `${SPEEDS[(from + c) % SPEEDS.length]}s`, '--delay': `${-((from + c) * 9 % 23)}s` }}>
-          <div className="lk-rain__run">
-            {[0, 1].map((copy) => (
-              <div key={copy} className="lk-rain__set">
-                {col.map((t, i) => <Drop key={`${copy}-${i}`} t={t} eager={!copy && i < 2} />)}
-              </div>
-            ))}
+    <div className={`lk-rainbox${onInk ? ' lk-rainbox--ink' : ''} ${className}`.trim()} aria-hidden="true">
+      <div className="lk-rain" style={{ '--cols': list.length }}>
+        {list.map((col, c) => (
+          <div key={c} className="lk-rain__col" style={{ '--dur': `${SPEEDS[c % SPEEDS.length]}s`, '--delay': `${-(c * 37 % 61)}s` }}>
+            <div className="lk-rain__run">
+              {COPIES.map((copy) => (
+                <div key={copy} className="lk-rain__set">
+                  {col.map((t, i) => <Drop key={`${copy}-${i}`} t={t} eager={!copy} />)}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -139,5 +119,24 @@ export function HeroSearch({ onSearch, className = '' }) {
       </label>
       <button type="submit" aria-label="Search"><Arrow /></button>
     </form>
+  );
+}
+
+/* The brown and pink bar (founder, Oct 27 11:36: "i liked also the brown and
+   pink bar we used to have that was cute"): an espresso tab, then the real
+   partner names running on pink. Paused by reduced motion, on hover, and by
+   Pause motion (this button and the footer share one setting; it also stops
+   the rain). */
+export function BrandBar({ onOpen, href = '/partners', className = '' }) {
+  const [paused, toggle] = useMotionPaused();
+  return (
+    <section className={`lk-bar ${className}`.trim()} aria-labelledby="lk-bar-title">
+      <h2 id="lk-bar-title" className="lk-sr">Brands we work with</h2>
+      <a className="lk-bar__tab" href={href} onClick={(e) => { if (!onOpen || !isPlainLeftClick(e)) return; e.preventDefault(); onOpen(); }}><span className="lk-bar__long">Brands we work with</span><span className="lk-bar__short" aria-hidden="true">Our brands</span><Arrow /></a>
+      <Marquee items={PARTNER_BRANDS.map((b) => b.name)} tone="pink" className="lk-bar__run" />
+      <button type="button" className="lk-bar__pause" aria-pressed={paused} onClick={toggle} aria-label={paused ? 'Play motion' : 'Pause motion'}>
+        <svg viewBox="0 0 24 24" aria-hidden="true">{paused ? <path d="M8 5l11 7-11 7z" /> : <path d="M8 5v14M16 5v14" />}</svg>
+      </button>
+    </section>
   );
 }
