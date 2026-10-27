@@ -4,8 +4,8 @@
   const monthButton = document.getElementById('pro-month');
   const yearButton = document.getElementById('pro-year');
   const continueButton = document.getElementById('pro-continue');
-  const dock = document.getElementById('pro-dock');
-  const dockButton = document.getElementById('pro-dock-cta');
+  const endBox = document.getElementById('pro-end');
+  const endButton = document.getElementById('pro-end-cta');
   const renewLine = document.getElementById('pro-renew');
   const whenToday = document.getElementById('pro-when-today');
   const whenStart = document.getElementById('pro-when-start');
@@ -88,9 +88,9 @@
     monthButton.disabled = value;
     yearButton.disabled = value;
     continueButton.disabled = value;
-    dockButton.disabled = value;
+    endButton.disabled = value;
     continueButton.setAttribute('aria-busy', value ? 'true' : 'false');
-    if (!value) { continueButton.textContent = ctaText(); dockButton.textContent = ctaText(); }
+    if (!value) { continueButton.textContent = ctaText(); endButton.textContent = ctaText(); }
     adminForm?.querySelectorAll('button').forEach(button => { button.disabled = value; });
   }
 
@@ -134,7 +134,7 @@
     a.href = '/you';
     statusBox.replaceChildren(el('p', 'Sign in to ayna first, then come back here to choose your Early Access plan.'), a);
     setBusy(false);
-    syncDock();
+    syncEnd();
   }
 
   // Bought and confirmed: say so, then take her back to where she was.
@@ -155,7 +155,7 @@
     }
     statusBox.replaceChildren(...children);
     plansBox.hidden = true;
-    syncDock();
+    syncEnd();
   }
 
   function renderStatus(data) {
@@ -221,7 +221,7 @@
       if (node) node.textContent = price;
     }
     selectPlan(selectedPlan);
-    syncDock();
+    syncEnd();
   }
 
   async function loadStatus() {
@@ -242,7 +242,7 @@
     setBusy(true);
     setStatus('Opening secure Stripe checkout…');
     continueButton.textContent = 'Opening secure checkout…';
-    dockButton.textContent = 'Opening secure checkout…';
+    endButton.textContent = 'Opening secure checkout…';
     const storageKey = `ayna_pro_checkout_request_${plan}`;
     let requestId = window.sessionStorage.getItem(storageKey);
     if (!requestId) {
@@ -269,30 +269,19 @@
       button.classList.toggle('is-on', on);
       button.setAttribute('aria-checked', on ? 'true' : 'false');
     }
-    if (!busy) { continueButton.textContent = ctaText(); dockButton.textContent = ctaText(); }
+    if (!busy) { continueButton.textContent = ctaText(); endButton.textContent = ctaText(); }
     if (renewLine) renewLine.textContent = renewLine.dataset[plan] || '';
     if (whenToday) whenToday.textContent = `Pay ${planPrice[plan]}. Pro unlocks right away.`;
     if (whenStart) whenStart.textContent = `Your paid ${planPer[plan]} starts. The beta before it is included.`;
   }
 
-  // Phones: the Get ayna Pro bar shows while the plan card is scrolled away.
-  let plansVisible = true;
-  function syncDock() {
-    const narrow = window.matchMedia('(max-width: 900px)').matches;
-    dock.hidden = !(narrow && !plansBox.hidden && !plansVisible);
-  }
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver((entries) => {
-      plansVisible = entries.some((entry) => entry.isIntersecting);
-      syncDock();
-    }, { threshold: 0.15 }).observe(plansBox);
-  }
-  window.addEventListener('resize', syncDock);
+  // The repeat CTA at the end shows only while the plans do.
+  function syncEnd() { endBox.hidden = plansBox.hidden; }
 
   monthButton.addEventListener('click', () => selectPlan('month'));
   yearButton.addEventListener('click', () => selectPlan('year'));
   continueButton.addEventListener('click', () => checkout(selectedPlan));
-  dockButton.addEventListener('click', () => checkout(selectedPlan));
+  endButton.addEventListener('click', () => checkout(selectedPlan));
 
   adminForm?.addEventListener('submit', async event => {
     event.preventDefault();
