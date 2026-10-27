@@ -133,7 +133,6 @@ export default async function handler(req, res) {
             currency: 'usd',
             product: config.product,
             unit_amount: offer.standardAmount,
-            metadata: { flow: PRO_FLOW, role: 'prepaid_first_term', plan: body.plan },
           },
           quantity: 1,
         },
