@@ -6,6 +6,7 @@ import { CATEGORIES } from '../../health/metrics.js';
 import { SOURCE_POLICY } from '../../health/policy.js';
 import { formatValue, parseEdited } from '../../health/format.js';
 import HealthConnectionsScreen from '../screens/profile/HealthConnectionsScreen.jsx';
+import HealthConnectionsScreenCore from '../screens/profile/HealthConnectionsScreenCore.jsx';
 import HealthInsightsScreen from '../screens/profile/HealthInsightsScreen.jsx';
 
 describe('health source catalog', () => {
@@ -74,7 +75,7 @@ describe('screens render honestly when signed out', () => {
     expect(html).not.toContain('>On<');
   });
   it('Apple Health detail in a browser explains it needs the app', () => {
-    const html = renderToStaticMarkup(createElement(HealthConnectionsScreen, { selectedId: 'apple_health', onSelect: () => {}, authUser: { id: 'u1' } }));
+    const html = renderToStaticMarkup(createElement(HealthConnectionsScreenCore, { selectedId: 'apple_health', onSelect: () => {}, authUser: { id: 'u1' } }));
     expect(html).toContain("can&#x27;t be connected from a browser");
     expect(html).toContain('aria-checked="false"');
     expect(html).not.toContain('aria-checked="true"');
@@ -84,7 +85,7 @@ describe('screens render honestly when signed out', () => {
     expect(html).toContain('developer terms');
     expect(html).not.toContain('Connect Strava');
   });
-  it('insights screen asks to sign in rather than showing anything', () => {
-    expect(renderToStaticMarkup(createElement(HealthInsightsScreen, { authUser: null }))).toContain('Sign in');
+  it('insights screen checks Pro access before showing anything', () => {
+    expect(renderToStaticMarkup(createElement(HealthInsightsScreen, { authUser: null }))).toContain('Checking access…');
   });
 });

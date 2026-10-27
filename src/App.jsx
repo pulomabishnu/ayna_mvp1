@@ -2338,6 +2338,7 @@ function App() {
         )}
         {currentView === 'health' && (
           <WebHealth
+            onEcosystem={() => setCurrentView('ecosystem')}
             user={user}
             health={health}
             onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}

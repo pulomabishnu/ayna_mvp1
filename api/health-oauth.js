@@ -14,6 +14,7 @@
  * reused or expired state is refused.
  */
 import { verifyUser } from './_usageLimit.js';
+import { hasHealthAccess } from './_healthAccess.js';
 import { rateLimit } from './_rateLimit.js';
 import { isTokenKeyConfigured, logHealthError, sanitizeCategories } from './_healthStore.js';
 import { authorizeUrl, isLiveOnly, isOAuthProvider, liveRows, newNonce, providerConfigured, syncProvider, PROVIDERS } from './_healthProviders.js';
@@ -44,6 +45,9 @@ export default async function handler(req, res) {
   if (!providerConfigured(provider) || !isTokenKeyConfigured()) return res.status(503).json({ error: 'provider_not_configured' });
 
   try {
+    if (['start', 'live', 'sync'].includes(body.action) && !await hasHealthAccess(user, admin)) {
+      return res.status(403).json({ error: 'pro_required' });
+    }
     if (body.action === 'start') {
       const limited = await rateLimit(`health-oauth-start:${user.id}`, { max: 10, windowSec: 3600 });
       if (!limited.ok) return res.status(429).json({ error: 'rate_limited' });

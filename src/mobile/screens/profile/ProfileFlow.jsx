@@ -3684,6 +3684,7 @@ export default function ProfileFlow({
         <BackHeader title="Your health" onBack={goBack} />
         <div className="ay-hc-scroll">
           <HealthInsightsScreen
+            onEcosystem={onClose}
             authUser={authUser}
             selectedNeedIds={selectedNeedIds}
             onConnect={() => pushScreen('healthData')}
