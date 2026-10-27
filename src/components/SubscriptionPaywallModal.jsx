@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Capacitor } from '@capacitor/core';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { useFocusTrap } from '../utils/useFocusTrap';
 import { requestPro } from '../utils/proApi.js';
@@ -59,6 +60,10 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
   const chosen = PLANS.find((p) => p.id === plan) || PLANS[0];
   const rows = benefitRows(feature);
   const unlocking = featureName && featureName !== 'ayna Pro' ? featureName : '';
+  // The iPhone app does not sell Pro (founder, Oct 27 16:43): same benefits and prices,
+  // and the button opens /pro on the website (main.jsx opens external links in the in-app browser).
+  const native = Capacitor.isNativePlatform();
+  const webUrl = `https://www.aynahealth.co/pro${feature ? `?feature=${encodeURIComponent(feature)}` : ''}`;
 
   const checkout = async () => {
     if (busy) return;
@@ -140,6 +145,10 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
 
           {error && <p className="pro-sheet__error" role="alert">{error}</p>}
 
+          {native ? <>
+            <p className="pro-sheet__webnote">ayna Pro is available on the web for now.</p>
+            <a className="pro-sheet__cta" href={webUrl} target="_blank" rel="noopener noreferrer">Get ayna Pro on the web</a>
+          </> : <>
           <button type="button" className="pro-sheet__cta" disabled={Boolean(busy)} aria-busy={busy ? 'true' : undefined} onClick={checkout}>
             {busy ? 'Opening secure checkout…' : `Get ayna Pro · ${chosen.price}`}
           </button>
@@ -147,6 +156,7 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6ZM9 12l2 2 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             Secure checkout with Stripe. Cancel anytime.
           </p>
+          </>}
 
           <ol className="pro-sheet__when" aria-label="How Early Access works">
             <li><b>Today</b><span>Pay {chosen.price}. Pro unlocks right away.</span></li>

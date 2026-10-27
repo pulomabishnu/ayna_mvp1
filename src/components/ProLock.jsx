@@ -46,7 +46,7 @@ export default function ProLock({
     return <div className={`pro-lock-fold pro-lock-fold--${variant}`}>
       <span className="pro-lock-fold__icon"><LockIcon size={18} /></span>
       <span className="pro-lock-fold__text">{name} is part of ayna Pro</span>
-      {!native && <button type="button" className="pro-lock-fold__go" onClick={unlock}>Get ayna Pro</button>}
+      <button type="button" className="pro-lock-fold__go" onClick={unlock}>Get ayna Pro</button>
       {sheet}
     </div>;
   }
@@ -64,12 +64,11 @@ export default function ProLock({
           {error && <p className="pro-lock__error" role="status">{error}{onRetry && <> <button type="button" className="pro-lock__retry" onClick={onRetry}>Check again</button></>}</p>}
         </div>
         <div className="pro-lock__actions">
-          {native
-            ? <p className="pro-lock__fine">Already a Pro member? Sign in with the ayna account that has your membership.</p>
-            : <button type="button" className="pro-lock__cta" onClick={unlock}>
-                <LockIcon size={18} />Get ayna Pro
-              </button>}
+          <button type="button" className="pro-lock__cta" onClick={unlock}>
+            <LockIcon size={18} />Get ayna Pro
+          </button>
           <button type="button" className="pro-lock__quiet" onClick={() => (onNotNow ? onNotNow() : setFolded(true))}>Not now</button>
+          {native && <p className="pro-lock__fine">Already a Pro member? Sign in with the ayna account that has your membership.</p>}
         </div>
       </div>
     </CheckerFrame>

@@ -171,3 +171,4 @@ em { color: var(--pink); font-style: normal; -webkit-text-stroke: var(--em-strok
 .pro-end[hidden] { display: none; }
 .pro-end h2 { font: 700 clamp(28px, 4vw, 40px)/1.05 var(--display); letter-spacing: -.015em; }
 .pro-end .pro-cta { width: min(420px, 100%); }
+a.pro-cta { text-decoration: none; }

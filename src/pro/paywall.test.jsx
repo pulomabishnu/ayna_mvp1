@@ -18,10 +18,14 @@ describe('the one locked state', () => {
     expect(html.match(/class="pro-lock__cta"/g)).toHaveLength(1);
     expect(html).toContain('Not now');
   });
-  it('never offers a purchase inside the native app', () => {
+  it('in the native app still shows the lock and opens the sheet, whose button goes to the website', () => {
     const html = renderToStaticMarkup(<ProLock feature="wearables" native />);
-    expect(html).not.toContain('pro-lock__cta');
+    expect(html).toContain('pro-lock__cta');
     expect(html).toContain('Already a Pro member?');
+    const sheet = readFileSync(new URL('../components/SubscriptionPaywallModal.jsx', import.meta.url), 'utf8');
+    expect(sheet).toContain('Capacitor.isNativePlatform()');
+    expect(sheet).toContain('ayna Pro is available on the web for now.');
+    expect(sheet).toContain('https://www.aynahealth.co/pro');
   });
   it('names gates from the Pro features list', () => {
     expect(proFeatureName('trial')).toBe('More advanced tracking');

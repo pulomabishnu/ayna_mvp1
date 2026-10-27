@@ -226,3 +226,5 @@
 @keyframes pro-up { from { transform: translateY(100%); } to { transform: none; } }
 @keyframes pro-down { from { transform: none; } to { transform: translateY(100%); } }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ay-ask-prolock { padding: 6px 16px 12px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body a.pro-sheet__cta { text-decoration: none; box-sizing: border-box; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__webnote { color: var(--pro-fg); font: 600 15px/1.4 var(--ay-font-ui, Figtree, sans-serif); text-align: center; }

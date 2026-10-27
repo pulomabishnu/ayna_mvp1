@@ -301,6 +301,20 @@
     }
   });
 
+  // Inside the iPhone app Pro is not sold: keep the plans and prices, and send the buttons to the website.
+  const native = Boolean(window.Capacitor?.isNativePlatform?.());
+  if (native) {
+    document.querySelectorAll('.pro-trust').forEach((node) => node.remove());
+    const feature = params.get('feature') || '';
+    const href = `https://www.aynahealth.co/pro${feature ? `?feature=${encodeURIComponent(feature)}` : ''}`;
+    for (const button of [continueButton, endButton]) {
+      const link = el('a', 'Get ayna Pro on the web', 'pro-cta');
+      link.href = href; link.target = '_blank'; link.rel = 'noopener noreferrer';
+      const note = el('p', 'ayna Pro is available on the web for now.', 'pro-trust');
+      button.replaceWith(note, link);
+    }
+  }
+
   async function init() {
     token = accessTokenFromBrowser();
     if (!token) {
