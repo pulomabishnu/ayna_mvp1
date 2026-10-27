@@ -452,7 +452,7 @@ export default function BrowseScreen({
 
   // Applied filters, shown as removable chips under the toolbar.
   const activeFilters = FILTER_FIELDS.filter(([key]) => filters[key] !== 'all').map(([key, , options]) => [key, (options.find(([value]) => value === filters[key]) || [])[1] || CATEGORY_LABELS[filters[key]] || String(filters[key]).replaceAll('-', ' ')]);
-  const commissionNote = <p className="ay-shop-note is-commission">Some links earn ayna a commission. It never changes your matches.</p>;
+  // The commission note left the shop list (founder, Oct 27): it stays beside every Buy button and in the footer.
   const activeFilterCount = activeFilters.length + (embedded && activeGroup !== 'all' ? 1 : 0) + (embedded ? avoidAttrs.length : 0);
   const areaLabel = (id) => sentenceCase((SHOP_GROUPS.find((g) => g.id === id) || MACRO_GROUPS.find((g) => g.id === id))?.label || String(id).replaceAll('-', ' '));
   const matchingReads = searchTermRaw.length >= 2 ? searchArticles(searchTermRaw, articles) : [];
@@ -483,7 +483,6 @@ export default function BrowseScreen({
           "Searches people make" phrases moved to the Categories tab. */}
       <div className={`ayna-fresh-browse-heading ayna-shop-heading${embedded ? ' is-embedded' : ''}`}>
         <div className="ay-shop-titlebar">{embedded ? <h2 id="ay-shop-title" className="sr-only">Products</h2> : <h1 id="ay-shop-title">Products</h1>}{!embedded && hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
-        {!embedded && <p className="ay-shop-note">Some links earn ayna a commission. It never changes your matches.</p>}
         {!embedded && <NeedStickers className="ay-app-needs" active={searchValue} onPick={(q) => setSearchValue(q)} />}
         <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
         {!embedded && <div className="ay-app-quick" role="group" aria-label="Quick filters">
@@ -542,8 +541,8 @@ export default function BrowseScreen({
           </div>}
           {bestNeedsQuiz && !showFilters && bestQuizNote}
           {!embedded && <div className="ay-shop-comparerow"><CompareToggle /></div>}
-          {/* Founder Oct 26: "too much overcrowded writing". The count stays on one short line here;
-              the commission note moves below the first row of cards (ay-grid-note). */}
+          {/* Founder Oct 26: "too much overcrowded writing". The count stays on one short line here.
+              Oct 27: no commission note in the shop list; it sits beside every Buy button and in the footer. */}
           {embedded && <p className="ay-shop-note is-embedded"><b role="status">{shownTotal} {shownTotal === 1 ? 'result' : 'results'}</b></p>}
         </>;
         return embedded
@@ -594,10 +593,10 @@ export default function BrowseScreen({
                 </p>
               )}
               {filtered.length > 0 && moreResults.length > 0 && <h2 className="ay-shop-results-label">Your matches</h2>}
-              {filtered.length > 0 && <ProductGrid afterFirstRow={embedded ? commissionNote : null} onPickPhrase={!embedded && !searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
+              {filtered.length > 0 && <ProductGrid onPickPhrase={!embedded && !searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
               {moreResults.length > 0 && <>
                 {filtered.length > 0 && <h2 className="ay-shop-results-label">More results</h2>}
-                <ProductGrid afterFirstRow={embedded && filtered.length === 0 ? commissionNote : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+                <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
               </>}
             </>
           ) : searchTermRaw.length >= 2 && aiState.loading ? (

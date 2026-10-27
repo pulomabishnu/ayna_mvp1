@@ -1,33 +1,131 @@
-/* The one product card (website + app) and its shared bits (components/cards/CardBits.jsx).
-   PDP build brief "Product cards" + Explore audit v3 sections 10-12:
-   - #53 Glowie: every product on the same plate at the same scale (70%), small category tag on the plate.
-   - #32 Glossier app: name, then price, compact; #33 Glossier concept: size pills under the price.
-   - #56 Huel: a small outlined "per use" chip; #17 food-scan: fact chips.
-   Tokens only (styles/ay-tokens.css): ink, butter, pink, white surface. No card shadow, no blue.
-   Type: ui 15/600, meta 14/500, caption 13/500 (floor). Radii 8 / 16 / 999. */
+/* The one product card (website + app + ServiceCard).
+   Founder's reference (Oct 27, "these product cards were perfect"; the production Shop grid):
+   a butter card, 1.5px espresso outline, 8px corners, one solid espresso offset shadow;
+   a big SQUARE photo panel (light ground, thin rule); then a meta line (Pre-order pill,
+   brand · ayna partner · FSA/HSA), the name (17/500), the category (muted), the price (bold)
+   and a round double-ring heart at the bottom right. Her match sits small beside the price.
+   Dark: an espresso surface with butter text and outline; the photo panel stays light. */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard {
-  --pc-ink: var(--ay-ink, #3e2723);
-  --pc-muted: var(--ay-ink-muted, rgba(62, 39, 35, .78));
-  --pc-rule: var(--ay-rule, 1px solid rgba(62, 39, 35, .15));
+  --pc-ink: #3e2723;
+  --pc-muted: rgba(62, 39, 35, .72);
+  --pc-bg: #ffedac;
+  --pc-line: #3e2723;
+  --pc-shadow: #3e2723;
+  --pc-photo: #f6f5f2;
+  --pc-photo-rule: rgba(62, 39, 35, .14);
+  --pc-dot: #f7badd;
   position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 0;
-  min-width: 0; margin: 0; padding: 0; border: 0 !important; border-radius: 0 !important; background: transparent !important;
-  box-shadow: none !important; color: var(--pc-ink); text-align: left; font-family: var(--ay-font-ui);
-  transform: none !important;
+  box-sizing: border-box; height: 100%; min-width: 0; margin: 0 6px 6px 0; padding: 12px;
+  border: 1.5px solid var(--pc-line) !important; border-radius: 8px !important; background: var(--pc-bg) !important;
+  box-shadow: 6px 6px 0 var(--pc-shadow) !important; color: var(--pc-ink); text-align: left; font-family: var(--ay-font-ui);
+  transform: none !important; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease;
 }
-/* 1. Plate: white, 16px corners, the product contained at 70% so every card is the same scale. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__plate {
-  order: -1;
-  position: relative; display: grid; place-items: center; aspect-ratio: 1 / 1; width: 100%; overflow: hidden;
-  margin: 0 0 12px; border: 0; box-shadow: none !important;
+@media (hover: hover) {
+  :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard:hover { transform: translate(-2px, -2px) !important; box-shadow: 8px 8px 0 var(--pc-shadow) !important; }
 }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__plate > img,
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__plate img:not(.ay-pcard__evmark) {
-  position: absolute !important; inset: 15% !important; width: 70% !important; height: 70% !important; max-width: none !important;
+@media (prefers-reduced-motion: reduce) { :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard { transition: none; } :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard:hover { transform: none !important; } }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard {
+  --pc-ink: #ffedac; --pc-muted: rgba(255, 237, 172, .78); --pc-bg: #2b1a16; --pc-line: #ffedac; --pc-shadow: rgba(255, 237, 172, .9);
+  --pc-photo-rule: rgba(255, 237, 172, .3);
+}
+/* The square photo panel */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__photo {
+  order: -1; position: relative; display: grid; place-items: center; aspect-ratio: 1 / 1; width: 100%; overflow: hidden; flex: none;
+  margin: 0; border: 1px solid var(--pc-photo-rule); border-radius: 2px; background: var(--pc-photo); box-shadow: none !important;
+}
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__photo img:not(.ay-pcard__evmark) {
+  position: absolute !important; inset: 6% !important; width: 88% !important; height: 88% !important; max-width: none !important;
   object-fit: contain !important; padding: 0 !important; margin: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important;
   mix-blend-mode: multiply; transform: none !important; box-shadow: none !important;
 }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__plate .skeleton-shimmer { position: absolute; inset: 0; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__fallback { inset: 0; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__photo > :not(img) { position: absolute; inset: 0; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__photo .ay-nophoto { border-radius: 0; }
+/* Text */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__body { display: flex; flex-direction: column; align-items: flex-start; flex: 1 1 auto; min-width: 0; padding: 14px 4px 4px; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.has-heart .ay-pcard__body { padding-bottom: 6px; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0 0 6px !important; padding: 0; min-width: 0; max-width: 100%;
+  color: var(--pc-ink); font: 500 14px/1.35 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important;
+}
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__brand { min-width: 0; overflow-wrap: anywhere; color: var(--pc-ink); font: inherit !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__mark { display: inline-flex; align-items: center; gap: 5px; color: var(--pc-ink); font: inherit !important; white-space: nowrap; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__mark:not(.is-eco)::before { content: ''; flex: none; width: 7px; height: 7px; border: 1.5px solid var(--pc-ink); border-radius: 50%; background: var(--pc-dot); }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__pre {
+  display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 999px;
+  background: #f7badd; color: #3e2723; font: 500 14px/1.2 var(--ay-font-ui) !important; white-space: nowrap;
+}
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__name {
+  margin: 0 0 10px !important; padding: 0 !important; min-height: 0; max-width: 100%;
+  color: var(--pc-ink) !important; font: 500 17px/1.3 var(--ay-font-ui) !important; letter-spacing: 0 !important;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__link { display: inline; padding: 0; border: 0; color: inherit !important; text-align: left; text-decoration: none !important; font: inherit !important; background: none !important; cursor: pointer; }
+/* The name's link covers the whole card; the controls sit above it. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__link::after { content: ''; position: absolute; inset: -1.5px; z-index: 0; border-radius: 8px; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__link.is-static::after { content: none; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__link:focus-visible { outline: none; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__link:focus-visible::after { outline: 2px solid var(--pc-ink); outline-offset: 4px; }
+@media (hover: hover) { html body .ay-pcard.ay-pcard:hover .ay-pcard__link { text-decoration: underline !important; text-underline-offset: 3px; } }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard :is(.ay-pcard__pill, .ay-pcard__seematch, .ay-pcard__action, .ay-pcard__safe, .ay-compare-check, .ay-pcard__meta a, .ay-pcard__meta button) { position: relative; z-index: 1; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__cat { margin: 0 0 2px !important; color: var(--pc-muted) !important; font: 500 14px/1.35 var(--ay-font-ui) !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__price { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 0; min-height: 28px; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__amount { color: var(--pc-ink); font: 700 16px/1.3 var(--ay-font-ui) !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.has-heart :is(.ay-pcard__cat, .ay-pcard__price, .ay-pcard__seematch, .ay-pcard__ev) { max-width: calc(100% - 48px); }
+/* Her match: a small pill beside the price */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__pill.ay-match-pill { position: relative !important; inset: auto !important; display: inline-flex; align-items: center; height: 26px; min-height: 26px; padding: 0 9px; line-height: 1 !important; font-size: 13px !important; box-shadow: none !important; transform: none !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__pill.ay-match-pill :is(strong, span) { font-size: 13px !important; color: inherit !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__pill.ay-match-pill:not(.is-partial):not(.is-hold) { background: #3e2723 !important; color: #ffedac !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard .ay-pcard__pill.ay-match-pill:not(.is-partial):not(.is-hold) { background: #ffedac !important; color: #3e2723 !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard .ay-pcard__pill.ay-match-pill:is(.is-partial, .is-hold) { color: #ffedac !important; box-shadow: inset 0 0 0 1.5px #ffedac !important; background: transparent !important; }
+/* Signed out: "See your match", a small link */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__seematch {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; min-height: 32px; margin: 2px 0 0; padding: 0;
+  border: 0; background: none; color: var(--pc-ink); font: 500 13px/1.3 var(--ay-font-ui) !important; white-space: nowrap; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__ev.is-safety { margin: 6px 0 0 !important; }
+/* The heart: 44px, a 1.5px ring with a second ring inside, bottom right */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart {
+  position: absolute; z-index: 1; right: 12px; bottom: 12px; display: grid; place-items: center; width: 44px; height: 44px; margin: 0; padding: 0;
+  border: 1.5px solid var(--pc-ink) !important; border-radius: 50%; background: transparent !important; color: var(--pc-ink); cursor: pointer; box-shadow: none !important; transform: none;
+}
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart::before { content: ''; position: absolute; inset: 3px; border: 1.5px solid var(--pc-ink); border-radius: 50%; pointer-events: none; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart[aria-pressed='true'] svg { fill: #f7badd; stroke: #3e2723; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard .ay-pcard__heart[aria-pressed='true'] svg { stroke: #ffedac; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart:focus-visible { outline: 2px solid var(--pc-ink); outline-offset: 2px; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__action { margin-top: 8px; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-compare-check { margin-top: 4px; }
+/* Grids and rails stretch their items so cards in a row are the same height. */
+.ayna-mobile .ax-row > .ax-item, .ayna-mobile .ax-grid > .ax-item { display: flex; flex-direction: column; }
+.ayna-mobile .ax-row > .ax-item > .ay-pcard, .ayna-mobile .ax-grid > .ax-item > .ay-pcard { flex: 1 1 auto; }
+/* Phones: the same card, a little tighter */
+@media (max-width: 520px) {
+  :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard { padding: 8px; margin: 0 4px 4px 0; box-shadow: 4px 4px 0 var(--pc-shadow) !important; }
+  :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__body { padding: 10px 2px 2px; }
+  :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__meta { gap: 2px 8px; font-size: 13px !important; }
+  :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__pre { min-height: 22px; padding: 0 8px; font-size: 13px !important; }
+  :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__name { font-size: 15px !important; margin-bottom: 8px !important; }
+  :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__cat { font-size: 13px !important; }
+  :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__amount { font-size: 15px !important; }
+  :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart { right: 8px; bottom: 8px; }
+  /* Narrow cards: the heart gets its own bottom row, so the lines above keep their full width. */
+  :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.has-heart:not(.is-row) .ay-pcard__body { padding-bottom: 50px; }
+  :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.has-heart:not(.is-row) :is(.ay-pcard__cat, .ay-pcard__price, .ay-pcard__seematch, .ay-pcard__ev) { max-width: 100%; }
+}
+/* Row variant (a product inside a post, a note or a story): photo left, the same text right. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row { display: grid; grid-template-columns: 88px minmax(0, 1fr); column-gap: 12px; align-items: center; height: auto; box-shadow: 4px 4px 0 var(--pc-shadow) !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row > .ay-pcard__photo { grid-column: 1; grid-row: 1 / span 3; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row > :not(.ay-pcard__photo) { grid-column: 2; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row .ay-pcard__body { padding: 0; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row .ay-pcard__name { margin-bottom: 4px !important; font-size: 15px !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row .ay-pcard__cat { margin-top: 0 !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row .ay-pcard__heart { position: static; grid-column: 3; grid-row: 1 / span 3; }
+/* ServiceCard: same card; a logo or a monogram in the photo panel. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__photo img { inset: 22% 16% !important; width: 68% !important; height: 56% !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__mono { position: absolute; inset: 0; display: grid; place-items: center; color: #3e2723; font: 700 56px/1 var(--ay-font-display, 'Bricolage Grotesque') !important; letter-spacing: -.02em; }
+
+/* Note: the shared bits below are used by the card, the landing stickers and Library cards. */
+/* ---- Shared bits (components/cards/CardBits.jsx): no-photo name, facts, evidence, safety, sizes ---- */
 /* No photo yet: the brand name on the plain plate (Explore audit #7). */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-plate-name {
   position: absolute; inset: 0; display: grid; place-items: center; padding: 18%; box-sizing: border-box;
@@ -38,43 +136,6 @@
   font: 700 clamp(17px, 2vw, 22px)/1.1 var(--ay-font-display) !important; letter-spacing: -.01em; overflow-wrap: anywhere;
 }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-plate-name.is-mono > span { font-size: clamp(40px, 5vw, 56px) !important; line-height: 1 !important; letter-spacing: .02em; }
-/* 2. Brand · name */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__brand {
-  margin: 0 0 2px !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  color: var(--pc-muted) !important; font: 500 14px/1.4 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important;
-}
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__name {
-  margin: 0 0 8px !important; padding: 0 !important; min-height: calc(2 * 1.3em);
-  color: var(--pc-ink) !important; font: 600 15px/1.3 var(--ay-font-ui) !important; letter-spacing: 0 !important;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__link { color: inherit !important; text-decoration: none !important; font: inherit !important; background: none !important; }
-/* The name's link covers the whole card; the controls sit above it. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__link::after { content: ''; position: absolute; inset: 0; z-index: 0; border-radius: var(--ay-r-md, 16px); }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__link.is-static::after { content: none; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__link:focus-visible { outline: none; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__link:focus-visible::after { outline: 2px solid var(--pc-ink); outline-offset: 4px; }
-@media (hover: hover) { html body .ay-pcard.ay-pcard:hover .ay-pcard__link { text-decoration: underline !important; text-underline-offset: 3px; } }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard :is(.ay-pcard__fit, .ay-pcard__seematch, .ay-pcard__heart, .ay-pcard__rating, .ay-pcard__action, .ay-pcard__sizes, .ay-pcard__peruse, .ay-pcard__safe, .ay-pcard__evtext, .ay-compare-check, .ay-pcard__tags) { position: relative; z-index: 1; }
-/* 3. Match pill (15/700 in a 32px pill) + the engine's reason, 2 lines. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__fit { display: grid; justify-items: start; gap: 4px; margin: 0 0 8px; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__fit .ay-match-pill { position: static !important; min-height: 32px; padding: 0 12px; font-size: 15px !important; box-shadow: none !important; transform: none !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__fit .ay-match-pill strong { font-size: 15px !important; font-weight: 700 !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__fit .ay-match-pill span { font-size: 15px !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__why {
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  color: var(--pc-ink); font: 500 13px/1.4 var(--ay-font-ui) !important;
-}
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__seematch {
-  justify-self: start; align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; min-height: 32px; margin: 0 0 8px; padding: 0;
-  border: 0; background: none; color: var(--pc-ink); font: 600 15px/1.3 var(--ay-font-ui) !important; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
-}
-/* 4. Price + unit, per-use chip, size pills */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__price { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 0 0 8px; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__amount { display: grid; flex: 1 0 100%; color: var(--pc-ink); font: 700 15px/1.3 var(--ay-font-ui) !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__amount.is-unknown { font-weight: 600 !important; color: var(--pc-muted); }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__amount small { color: var(--pc-muted); font: 500 13px/1.4 var(--ay-font-ui) !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__amount s { opacity: .78; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__peruse {
   display: inline-flex; align-items: center; min-height: 24px; padding: 0 8px; border: 1.5px solid var(--pc-ink); border-radius: var(--ay-r-sm, 8px);
   color: var(--pc-ink); font: 600 13px/1.2 var(--ay-font-ui) !important; white-space: nowrap;
@@ -100,92 +161,13 @@
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__evmark { flex: none; color: var(--pc-ink); }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__safe { display: inline-flex; align-items: center; gap: 4px; color: var(--pc-ink); }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__safeicon { flex: none; }
-/* 7. Tag + heart */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 4px; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__tags { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; min-width: 0; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__tag {
-  display: inline-flex; align-items: center; gap: 4px; min-height: 24px; padding: 0 8px; border: var(--pc-rule); border-radius: 999px;
-  color: var(--pc-ink); font: 500 13px/1.2 var(--ay-font-ui) !important; white-space: nowrap;
-}
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__tag.is-alert { border: 1.5px solid var(--pc-ink); font-weight: 600 !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart {
-  position: relative; flex: none; display: grid; place-items: center; width: 44px; height: 44px; margin: 0 -6px 0 auto; padding: 0;
-  border: 0 !important; border-radius: 50%; background: transparent !important; color: var(--pc-ink); cursor: pointer; box-shadow: none !important; transform: none;
-}
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart[aria-pressed='true'] svg { fill: var(--ay-pink, #f7badd); stroke: #3e2723; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart:focus-visible { outline: 2px solid var(--pc-ink); outline-offset: 0; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__action { margin-top: 8px; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-compare-check { margin-top: 4px; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard .sr-only { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-/* Dark themes: ink flips to butter through the tokens; the plate stays white so photos read the same. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard .ay-pcard__heart[aria-pressed='true'] svg { stroke: #ffedac; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard .ay-pcard__facts li { background: rgba(255, 237, 172, .14); color: var(--pc-ink); }
-/* Row variant (a product inside a post or a note): plate left, the same slots right. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 12px; align-items: start; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row > * { grid-column: 2; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row > .ay-pcard__plate { grid-column: 1; grid-row: 1 / span 9; margin: 0; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row .ayk-plate__sticker { display: none !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row .ay-pcard__name { min-height: 0; }
-/* ServiceCard: the same card with a logo plate (a wide plate: logos are wide), name · format, covers, cost. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__plate { aspect-ratio: 1 / 1; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__plate img { inset: 20% 15% !important; width: 70% !important; height: 60% !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 0 0 4px !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__name { color: var(--pc-ink); font: 700 17px/1.3 var(--ay-font-ui) !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__name button { padding: 0; border: 0; text-align: left; cursor: pointer; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__format {
-  position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 24px; padding: 0 8px; border: 1.5px solid var(--pc-ink); border-radius: 999px;
-  color: var(--pc-ink); font: 600 13px/1.2 var(--ay-font-ui) !important; white-space: nowrap;
-}
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__covers { margin: 0 0 8px !important; color: var(--pc-ink); font: 500 15px/1.4 var(--ay-font-ui) !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__cost { margin: 0 0 8px !important; color: var(--pc-ink); font: 700 15px/1.3 var(--ay-font-ui) !important; }
-/* ---- Design loop C, round 1 (Oct 26) ----
-   The founder's card (her reference image): an outlined card, the photo in a light inset
-   panel (here the scalloped white plate), the facts in fixed slots, a double-ring heart.
-   Explore audit v3: 1.5px ink outline instead of any card shadow. Every card in a row or a
-   grid is the same height, so the heart always sits on the card's bottom edge. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard {
-  box-sizing: border-box; height: 100%; padding: 12px 12px 8px;
-  border: 1.5px solid var(--pc-ink) !important; border-radius: var(--ay-r-md, 16px) !important;
-}
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard.is-row { height: auto; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__link::after { inset: -1.5px; }
-/* Match pill: 32px, label centred (it sat on the top edge: baseline alignment in a min-height box). */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-match-pill.ay-match-pill { align-items: center; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__fit .ay-match-pill { height: 32px; min-height: 32px; line-height: 1 !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__fit .ay-match-pill:not(.is-partial):not(.is-hold) { background: #3e2723 !important; color: #ffedac !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard .ay-pcard__fit .ay-match-pill:not(.is-partial):not(.is-hold) { background: #ffedac !important; color: #3e2723 !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard .ay-pcard__fit .ay-match-pill.is-partial { color: #ffedac !important; box-shadow: inset 0 0 0 1.5px #ffedac !important; background: transparent !important; }
-/* Price detail (variant lists can run to six lines): two lines on the card, all of it on the product page. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__amount small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+/* Fact chips: always a visible butter-deep chip (the app's light theme painted none). */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__facts li { background: #f6e3a1 !important; color: #3e2723 !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard .ay-pcard__facts li { background: rgba(255, 237, 172, .14) !important; color: #ffedac !important; }
 /* Evidence words wrap instead of "Supported for this ty…". */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__evtext { align-items: flex-start; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__evtext > svg { margin-top: 4px; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__evtext > span:not(.sr-only) { white-space: normal; overflow: visible; }
-/* Fact chips: always a visible butter-deep chip (the app's light theme painted none). */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__facts li { background: #f6e3a1 !important; color: #3e2723 !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard .ay-pcard__facts li { background: rgba(255, 237, 172, .14) !important; color: #ffedac !important; }
-/* Double-ring heart (her reference): a 1.5px ring with a second ring inside it. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart { margin: 0 -2px 0 auto; border: 1.5px solid var(--pc-ink) !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart::before { content: ''; position: absolute; inset: 3px; border: 1.5px solid var(--pc-ink); border-radius: 50%; pointer-events: none; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__heart svg { width: 20px; height: 20px; }
-/* Grids and rails stretch their items so outlined cards line up. */
-.ayna-mobile .ax-row > .ax-item, .ayna-mobile .ax-grid > .ax-item { display: flex; flex-direction: column; }
-.ayna-mobile .ax-row > .ax-item > .ay-pcard, .ayna-mobile .ax-grid > .ax-item > .ay-pcard { flex: 1 1 auto; }
-/* ServiceCard: what it covers in two lines (the full line is on its page), cost as the one big fact (#1). */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__covers { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font: 500 14px/1.4 var(--ay-font-ui) !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__name { font: 600 15px/1.3 var(--ay-font-ui) !important; }
-/* A service plate carries a logo or just the name: a smaller medallion (#12 Pai badges) keeps 49 services scannable. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__plate { width: 64%; align-self: center; margin: 4px auto 12px; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__plate .ayk-plate__name { max-width: 76%; font-size: clamp(15px, 1.5vw, 17px) !important; line-height: 1.15 !important; text-align: center; overflow-wrap: anywhere; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__fit .ay-match-pill :is(strong, span) { color: inherit !important; }
-/* Size pills share one wrapping line under the price (they stacked one per row in narrow cards). */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__sizes { flex: 1 1 100%; flex-direction: row; flex-wrap: wrap; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-scard .ay-scard__mono { position: relative; color: #3e2723; font: 700 40px/1 var(--ay-font-display, 'Bricolage Grotesque') !important; letter-spacing: -.02em; }
-/* The name no longer reserves a second line (Group A: a one-line name left a visible gap before the price). */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__name { min-height: 0 !important; margin-bottom: 8px !important; }
-/* "What's this?" beside the match pill (team meeting, Oct 26): a 44px-tall text button, above the card link. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ay-pcard.ay-pcard .ay-pcard__fit { display: flex !important; flex-wrap: wrap; align-items: center; column-gap: 8px; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ay-pcard.ay-pcard .ay-pcard__what { position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 44px; margin: -6px 0; padding: 0; border: 0; background: none; color: var(--pc-ink, currentColor); font: 600 13px/1.2 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ay-pcard.ay-pcard .ay-pcard__what:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 4px; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard { cursor: pointer; }

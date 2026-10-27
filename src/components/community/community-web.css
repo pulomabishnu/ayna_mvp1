@@ -775,8 +775,8 @@ html body .app-container.app-container.app-container.app-container.app-container
 }
 /* Loop D: a product inside a post is one framed row (plate left, slots right), 12px inside the frame,
    and "See your match" sits in the text column, not under the plate. Category sticker off in rows. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm .ay-pcard.ay-pcard.is-row.cm-mention-card { padding: 12px !important; border: 1.5px solid var(--ay-text) !important; border-radius: 16px !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm .cm-mention-wrap .ay-pcard.ay-pcard.is-row.cm-mention-card { padding-bottom: 8px !important; border: 0 !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm .ay-pcard.ay-pcard.is-row.cm-mention-card { padding: 12px !important; border: 1.5px solid var(--ay-text) !important; border-radius: 8px !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm .cm-mention-wrap .ay-pcard.ay-pcard.is-row.cm-mention-card { padding-bottom: 8px !important; border: 0 !important; box-shadow: none !important; }
 /* Loop D: disabled primary (Post reply before she types): outline and muted text, no sticker. */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .cm .ay-btn.ay-btn--primary:disabled { opacity: 1 !important; background: transparent !important; color: var(--ay-text-2) !important; border: 1.5px solid var(--ay-hairline, rgba(62, 39, 35, .3)) !important; box-shadow: none !important; cursor: default; }
 /* Loop D r2: rail lists use the full rail width (they shrank to their text), one link size, no dashed outlines. */
@@ -802,4 +802,4 @@ html body .app-container.app-container.app-container.app-container.app-container
 /* p15 clean: the product inside a post hugs its content (empty grid rows left a gap above "See your match"). */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm-mention-wrap .ay-pcard.ay-pcard.is-row { grid-template-rows: none !important; grid-auto-rows: auto !important; align-content: center !important; min-height: 0 !important; row-gap: 6px !important; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm-mention-wrap .ay-pcard.ay-pcard.is-row > .ay-pcard__price:empty { display: none !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm-mention-wrap .ay-pcard.ay-pcard.is-row > .ayk-plate { grid-row: 1 / span 3 !important; align-self: center; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm-mention-wrap .ay-pcard.ay-pcard.is-row > :is(.ayk-plate, .ay-pcard__photo) { grid-row: 1 / span 3 !important; align-self: center; }

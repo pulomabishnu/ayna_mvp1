@@ -14,6 +14,8 @@ import './shop-page.css';
 // utils/search/lazy.js): the page head renders at once and the grid shows
 // placeholder cards until both have arrived (`ready` below).
 import ShopGroups from './shop/ShopGroups.jsx';
+import ScrollRow from './shop/ScrollRow.jsx';
+import '../styles/shop-hero.css';
 import { SHOP_GROUPS } from '../data/catalogTaxonomy.js';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct, isTeenProduct, useCatalogReady } from '../data/catalog.js';
 import { hasMatchAnswers } from '../utils/hasMatchAnswers.js';
@@ -1690,32 +1692,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         </p>
     ) : null;
 
-    return (
-        <section className="ayshop">
-            <div className="ay-container">
-            <div className="ayshop__top">
-            {/* Inside Explore (Products) the page title and the Categories tab already
-                exist, so the need stickers and title would be a second browse system
-                (team direction 17): only the commission note stays. */}
-            {inExplore ? (
-                <p className="ayshop__note ayshop__note--explore">
-                    Some links earn ayna a commission. It never changes your matches.{' '}
-                    <a href="/how-we-make-money" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setCurrentView?.('how-we-make-money'); }}>How we make money</a>
-                </p>
-            ) : (
-            <header className="ayshop__head ay-pagehead ay-band ay-band--espresso">
-                    <h1 className="ay-h1">Explore by need</h1>
-                    <Seal className="ayshop__seal" />
-                    {/* One disclosure for the whole page instead of a pill on every card (S09). */}
-                    <p className="ayshop__note">
-                        Some links earn ayna a commission. It never changes your matches.{' '}
-                        <a href="/how-we-make-money" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setCurrentView?.('how-we-make-money'); }}>How we make money</a>
-                    </p>
-                    <NeedStickers className="ayshop__needs" active={submittedQuery} onPick={(q) => { setSearchQuery(q); runSearch(q); }} />
-            </header>
-            )}
-            </div>
-
+    const findBlock = (
             <div className="ayshop__find">
             <form onSubmit={handleSmartSearch} className="ayshop__search" data-tour={inExplore ? 'explore-search' : undefined} onFocus={() => setSearchFocused(true)} onBlur={() => setSearchFocused(false)}>
                 <SmartSearchInput
@@ -1766,6 +1743,46 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 ))}
             </div>}
             </div>
+    );
+
+    return (
+        <section className="ayshop">
+            <div className="ay-container">
+            <div className="ayshop__top">
+            {/* Inside Explore the page header is the pink "Shop by need." band below (founder, Oct 27). */}
+            {inExplore ? null : (
+            <header className="ayshop__head ay-pagehead ay-band ay-band--espresso">
+                    <h1 className="ay-h1">Explore by need</h1>
+                    <Seal className="ayshop__seal" />
+                    {/* One disclosure for the whole page instead of a pill on every card (S09). */}
+                    <p className="ayshop__note">
+                        Some links earn ayna a commission. It never changes your matches.{' '}
+                        <a href="/how-we-make-money" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setCurrentView?.('how-we-make-money'); }}>How we make money</a>
+                    </p>
+                    <NeedStickers className="ayshop__needs" active={submittedQuery} onPick={(q) => { setSearchQuery(q); runSearch(q); }} />
+            </header>
+            )}
+            </div>
+
+            {!inExplore && findBlock}
+            {/* The founder's Shop page (Oct 27, "good and simple", the production version): one pink band
+                with a wavy edge, a single serif headline, the wide search and one row of need chips. */}
+            {inExplore && (
+                <header className="ayshop-hero">
+                    <h1 className="ayshop-hero__title">{typeFilter === 'services' ? 'Services.' : 'Shop by need.'}</h1>
+                    {findBlock}
+                    <div className="ayshop-hero__chips" data-tour="explore-sections">
+                        <ScrollRow label="need chips">
+                            <ShopGroups active={macroGroup} onPick={pickArea} available={availableMacroGroups.map((g) => g.id)} subs={false} label="Filter by need" className="ayshop__groups" />
+                        </ScrollRow>
+                        {!lockType && <div className="ayshop__type" role="group" aria-label="Show">
+                            {/* Products keeps the Shop's default grid ('all' browses products only); Services lists the services. */}
+                            <button type="button" aria-pressed={typeFilter !== 'services'} onClick={() => setTypeFilter('all')}>Products</button>
+                            <button type="button" aria-pressed={typeFilter === 'services'} onClick={() => setTypeFilter('services')}>Services</button>
+                        </div>}
+                    </div>
+                </header>
+            )}
             {submittedQuery && filtered.length > 0 && <SearchAssist query={submittedQuery} resultCount={filtered.length} showTries={false} onUse={(text) => runSearch(text)} />}
             {submittedQuery && categoryFilter !== 'all' && (
                 <div className="ayshop__inferred">
@@ -1792,17 +1809,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     setAiRelatedSearches([]);
                 }}
             />}
-            {/* Five shopping groups, the areas one tap deeper (team meeting, Oct 26). */}
-            {/* Explore is one shop page (founder, Oct 26): ONE row of chips (All and the five
-                groups), then Products or Services, then the grid. Deeper filters stay behind Filters. */}
-            {inExplore && <div className="ayshop__chips" data-tour="explore-sections">
-                <ShopGroups active={macroGroup} onPick={pickArea} available={availableMacroGroups.map((g) => g.id)} subs={false} label="Filter by need" className="ayshop__groups" />
-                {!lockType && <div className="ayshop__type" role="group" aria-label="Show">
-                    {/* Products keeps the Shop's default grid ('all' browses products only); Services lists the services. */}
-                    <button type="button" aria-pressed={typeFilter !== 'services'} onClick={() => setTypeFilter('all')}>Products</button>
-                    <button type="button" aria-pressed={typeFilter === 'services'} onClick={() => setTypeFilter('services')}>Services</button>
-                </div>}
-            </div>}
             <div className="ayshop__toolbar">
                 <div className="ayshop__toolbar-left">
                     <button type="button" className={`ay-btn ay-btn--secondary ayshop__filters${activeFilterCount ? ' is-active' : ''}${showFilters ? ' is-open' : ''}`} onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>

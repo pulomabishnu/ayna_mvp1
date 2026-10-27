@@ -101,12 +101,31 @@ export function cardFacts(product, { max = 2 } = {}) {
   if (days && !perUse) out.push(`${days}-day supply`);
   const dose = String(product.name || '').match(/\b(\d+(?:\.\d+)?)\s*(mg|mcg|IU)\b/i);
   if (dose && !cap) out.push(`${dose[1]} ${dose[2].toLowerCase() === 'iu' ? 'IU' : dose[2].toLowerCase()}`);
-  // FSA/HSA from structured catalog fields only (same rule as the Shop filter).
+  const tax = cardTax(product);
+  if (tax) out.push(tax);
+  return out.slice(0, max);
+}
+
+/** "FSA/HSA", "FSA" or "HSA" from structured catalog fields only (same rule as the Shop filter), else ''. */
+export function cardTax(product) {
+  if (!product || product.type === 'digital') return '';
   const both = ['pad', 'tampon', 'cup', 'disc'].includes(product.category) || product.fsaHsaEligible === true || product.fsa_hsa_eligible === true;
   const fsa = both || product.fsaEligible === true || product.fsa_eligible === true;
   const hsa = both || product.hsaEligible === true || product.hsa_eligible === true;
-  if (fsa || hsa) out.push(fsa && hsa ? 'FSA/HSA' : fsa ? 'FSA' : 'HSA');
-  return out.slice(0, max);
+  return fsa || hsa ? (fsa && hsa ? 'FSA/HSA' : fsa ? 'FSA' : 'HSA') : '';
+}
+
+/**
+ * The card's meta line (founder's reference card, Oct 27): Pre-order pill, then
+ * brand · ayna partner · FSA/HSA. Sponsored is said where it applies.
+ */
+export function cardMeta(product, { partner = true } = {}) {
+  return {
+    preorder: /deposit/i.test(String(product?.price || '')),
+    sponsored: isSponsoredProduct(product),
+    partner: partner && !isSponsoredProduct(product) && isPartnerBrandItem(product),
+    tax: cardTax(product),
+  };
 }
 
 const evCache = new WeakMap();

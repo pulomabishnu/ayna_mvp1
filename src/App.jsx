@@ -167,7 +167,6 @@ import GlobalToast from './components/v3/GlobalToast';
 import { MAIN_TABS, TabIcon, AskMark, ProfileMark } from './components/nav/tabs.jsx';
 import AskSuggestRow from './components/nav/AskSuggestRow.jsx';
 import { YOU_SECTIONS, YOU_SECTION_ALIASES } from './components/nav/mainTabs.js';
-import { ExploreHeader } from './components/explore/ExploreNav.jsx';
 import YouTabs from './components/you/YouTabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
@@ -3073,7 +3072,7 @@ function App() {
         )}
         {(SHOP_VIEWS.has(currentView) || (currentView === 'product' && discoveryKeepAliveRef.current)) && (
           <div data-tour="explore" style={SHOP_VIEWS.has(currentView) ? undefined : { display: 'none' }}>
-          <ExploreHeader compact title={currentView === 'explore-services' ? 'Services' : 'Shop'} />
+          {/* The Shop page header (pink "Shop by need." band) lives in Discovery (founder, Oct 27). */}
           <Suspense fallback={<ViewLoadingFallback />}>
           <Discovery
             matchOpts={matchOpts}

@@ -85,8 +85,8 @@
 /* dark: the Post sticker turns butter with espresso text */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .am-screen .am-top-actions .am-post-btn { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
 /* Loop D: same framed row as the website: 12px inside, "See your match" in the text column. */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .ay-pcard.ay-pcard.is-row { padding: 12px !important; border: 1.5px solid var(--d-ink) !important; border-radius: 16px !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .am-mention-wrap .ay-pcard.ay-pcard.is-row { padding-bottom: 8px !important; border: 0 !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .ay-pcard.ay-pcard.is-row { padding: 12px !important; border: 1.5px solid var(--d-ink) !important; border-radius: 8px !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .am-mention-wrap .ay-pcard.ay-pcard.is-row { padding-bottom: 8px !important; border: 0 !important; box-shadow: none !important; }
 /* Loop D: a disabled primary (Post reply before she types) reads as waiting, not as a muddy filled button. */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .am-primary:disabled { opacity: 1 !important; background: transparent !important; color: var(--d-ink-2) !important; border: 1.5px solid var(--d-hair) !important; border-color: color-mix(in srgb, var(--d-ink) 30%, transparent) !important; box-shadow: none !important; }
 /* Loop D: playlist switch selected state is the espresso pill used by every other switch (and the website). */
@@ -111,6 +111,6 @@
 /* p15 clean: the product inside a post hugs its content (it had ~30px of empty rows under the match). */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .ay-pcard.ay-pcard.is-row { grid-template-rows: none !important; grid-auto-rows: auto !important; align-content: center !important; min-height: 0 !important; row-gap: 4px !important; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .ay-pcard.ay-pcard.is-row > :is(.ay-pcard__price, .ay-pcard__foot):empty { display: none !important; }
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .ay-pcard.ay-pcard.is-row > .ayk-plate { grid-row: 1 / span 3 !important; align-self: center; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .ay-pcard.ay-pcard.is-row > :is(.ayk-plate, .ay-pcard__photo) { grid-row: 1 / span 3 !important; align-self: center; }
 /* Price and tags are already hidden in feed posts; their empty wrappers went with them. */
 .am-screen .am-note:not(.is-full) .ay-pcard.is-row > :is(.ay-pcard__price, .ay-pcard__foot) { display: none !important; }
