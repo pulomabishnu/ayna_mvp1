@@ -62,13 +62,13 @@ describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
 });
 
 describe('the raining cut-outs (a faded layer behind the hero)', () => {
-  it('calm: a few products and two small shapes, no numbers or labels that read as data; products are bare cut-outs', () => {
+  it('fun but in the back: products and a few app shapes, no numbers or labels that read as data; products are bare cut-outs', () => {
     const html = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} />);
     const rain = html.slice(html.indexOf('lk-rainbox'), html.indexOf('class="alx__top"'));
     expect(rain.length).toBeGreaterThan(100);
     expect(rain.replace(/<[^>]*>/g, '').replace(/^[^>]*>/, '').replace(/<[^>]*$/, '').trim()).toBe('');
     expect((rain.match(/<img /g) || []).length).toBeLessThanOrEqual(6 * 6); // 6 copies of each column, 3 products a column at most
-    expect(RAIN_COLS.flat().filter((t) => t.k !== 'p').length).toBeLessThanOrEqual(3);
+    expect(new Set(RAIN_COLS.flat().filter((t) => t.k !== 'p').map((t) => t.k)).size).toBeLessThanOrEqual(4); // ring, dots, line, match
     expect(html).toMatch(/<span class="lk-d lk-prod is-[lms]"><span class="lk-prod__in"><img src="\/products\/catalog\/p-[a-z0-9-]+\.webp" alt=""/);
     expect(html).not.toMatch(/ayk-plate|lsx-t /);
   });

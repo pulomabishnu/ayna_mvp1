@@ -30,8 +30,10 @@ export default function AppLanding({ signedIn = false, hasProfile = false, onSta
           {!signedIn && onSignIn && <button type="button" className="alx__btn" onClick={onSignIn}>Sign in</button>}
         </div>
         <div className="alx__head">
-          <h1 id="alx-title" className="alx__title">Find what fits <span><mark>your body.</mark></span></h1>
-          <p className="alx__lead">Women&rsquo;s health products matched to you, with the evidence beside each one.</p>
+          <div className="alx__copy">
+            <h1 id="alx-title" className="alx__title">Find what fits <span><mark>your body.</mark></span></h1>
+            <p className="alx__lead">Women&rsquo;s health products matched to you, with the evidence beside each one.</p>
+          </div>
         </div>
       </section>
       <ScallopEdge shape="wave" tone="ink" className="alx__edge" />

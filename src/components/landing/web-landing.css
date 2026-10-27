@@ -13,21 +13,19 @@
 }
 .app-container .hm.wl .wl-edge { display: block; width: 100%; height: 14px; margin-top: -1px; }
 .app-container .hm.wl .wl-edge path { fill: #3e2723 !important; }
-/* the rain: faded, and washed out behind the centre so the words always read */
-.app-container .hm.wl .wl-rain { z-index: -2; opacity: .28; --lk-gap: 88px; --lk-colgap: 48px; --lk-pad: clamp(16px, 4vw, 72px); }
-.app-container .hm.wl .wl-hero__band::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: radial-gradient(ellipse 44% 56% at 50% 50%, #3e2723 40%, rgba(62, 39, 35, 0) 100%); }
-/* phones: two columns behind */
-.app-container .hm.wl .wl-rain .lk-rain { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* the rain: a soft see-through layer around the edges (each item carries its
+   own opacity, kit), with a wash only directly behind the copy */
+.app-container .hm.wl .wl-rain { z-index: -2; --lk-gap: 44px; --lk-colgap: 28px; --lk-pad: clamp(16px, 3vw, 48px); }
+.app-container .hm.wl .wl-hero__in::before { content: ''; position: absolute; inset: -40px -72px; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, #3e2723 78%, rgba(62, 39, 35, 0) 100%); }
+/* phones: one column a side, the middle clear */
+.app-container .hm.wl .wl-rain .lk-rain { grid-template-columns: minmax(0, 96px) minmax(0, 1fr) minmax(0, 96px); }
+.app-container .hm.wl .wl-rain .lk-rain__col:nth-child(2) { grid-column: 3; }
 .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(n + 3) { display: none; }
-/* desktop: one column a side at laptop widths, two a side on wide screens; the centre left clear */
+/* desktop: two columns a side, the centre clear */
 @media (min-width: 900px) {
-  .app-container .hm.wl .wl-rain .lk-rain { grid-template-columns: minmax(0, 1fr) minmax(0, 600px) minmax(0, 1fr); }
-  .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(2) { grid-column: 3; }
-}
-@media (min-width: 1500px) {
   .app-container .hm.wl .wl-rain .lk-rain { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 620px) minmax(0, 1fr) minmax(0, 1fr); }
-  .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(n + 3) { display: block; }
+  .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(n + 2) { display: block; }
   .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(2) { grid-column: 2; }
   .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(3) { grid-column: 4; }
   .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(4) { grid-column: 5; }

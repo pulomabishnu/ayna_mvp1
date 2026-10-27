@@ -11,16 +11,18 @@ import './landing-kit.css';
 
 /*
  * The landing kit, shared by the website's / (WebLanding) and the app's
- * one-screen landing (AppLanding): the raining background and the hero search.
+ * one-screen landing (AppLanding): the raining background, the hero search
+ * and the brown and pink bar.
  *
- * Rain (founder, Oct 27 10:40, 11:29, 11:32: "put it in the back, make it
- * kinda transparent in the background"): a few real catalog packshots drifting
- * down slowly, wide apart, faded behind the centred hero, with two small
- * frameless shapes from the app (a cycle ring and a row of streak dots, no
- * numbers, so nothing reads as data). Packshots are on white: on butter they
- * multiply and the white disappears (cut-outs); on espresso (`onInk`, and in
- * dark mode) only one packshot per column shows, on a soft butter circle. Decoration only:
- * aria-hidden, no pointer events, still under reduced motion and Pause motion.
+ * Rain (founder, Oct 27 10:40-11:36: "pictures and stuff sliding down", "put
+ * it in the back, make it kinda transparent", "i liked the fun aspect"):
+ * real catalog packshots and a few of the app's shapes (a cycle ring, streak
+ * dots, a chart line, a match pill), drifting down around the edges behind the
+ * centred hero, in a soft see-through layer. No numbers, so nothing reads as
+ * data. Packshots are on white: on butter they multiply and the white
+ * disappears (cut-outs); on espresso (`onInk`, and in dark mode) each sits on
+ * a small rounded butter tile. Decoration only: aria-hidden, no pointer
+ * events, still under reduced motion and Pause motion.
  */
 
 const src = (id) => `/products/catalog/${id}.webp`;
@@ -34,26 +36,37 @@ function Ring() {
     </svg>
   );
 }
+const LINE = [6, 9, 7, 8, 11, 10, 13];
+function Line({ w = 96, h = 40 }) {
+  const lo = Math.min(...LINE); const hi = Math.max(...LINE);
+  const pts = LINE.map((v, i) => `${(i / (LINE.length - 1)) * (w - 10) + 5},${h - 6 - ((v - lo) / (hi - lo)) * (h - 14)}`);
+  const [lx, ly] = pts[pts.length - 1].split(',');
+  return <svg className="lk-line" viewBox={`0 0 ${w} ${h}`}><polyline points={pts.join(' ')} /><circle cx={lx} cy={ly} r="4" /></svg>;
+}
 
 function Drop({ t, eager }) {
   switch (t.k) {
     case 'p':
       return (
-        <span className={`lk-d lk-prod is-${t.s || 'm'}${t.dark === false ? ' is-light-only' : ''}`}>
-          <span className="lk-prod__in"><img src={src(t.id)} alt="" width="160" height="160" loading={eager ? 'eager' : 'lazy'} decoding="async" fetchPriority="low" /></span>
+        <span className={`lk-d lk-prod is-${t.s || 'm'}`}>
+          <span className="lk-prod__in"><img src={src(t.id)} alt="" width="160" height="160" loading="eager" decoding="async" fetchPriority={eager ? 'auto' : 'low'} /></span>
         </span>
       );
     case 'ring':
       return <span className="lk-d lk-w"><Ring /></span>;
     case 'dots':
       return <span className="lk-d lk-w"><span className="lk-dots">{[1, 1, 1, 1, 0, 0, 0].map((on, i) => <i key={i} className={on ? 'is-on' : ''} />)}</span></span>;
+    case 'line':
+      return <span className="lk-d lk-w"><Line /></span>;
+    case 'match':
+      return <span className="lk-d lk-w"><span className="lk-pill"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg><i /><i /></span></span>;
     default:
       return null;
   }
 }
 
-// Slow: a full fall takes well over a minute, each column at its own pace.
-const SPEEDS = [120, 140, 128, 150];
+// Slow but visible: one fall takes 40 to 60 seconds, each column at its own pace.
+const SPEEDS = [48, 58, 44, 54];
 // Six copies of each column, one copy's height per loop (lk-fall in landing-kit.css).
 const COPIES = [0, 1, 2, 3, 4, 5];
 
