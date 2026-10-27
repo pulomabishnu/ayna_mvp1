@@ -18,7 +18,7 @@ const saveView = (v) => { try { sessionStorage.setItem(KEY, v); } catch { /* pri
 export default function TodayViews({ today, todayCount = 0, week, routine, initial = 'today' }) {
   const tabs = [
     ...(week ? [{ id: 'week', label: 'Your week' }] : []),
-    { id: 'today', label: 'Today', count: todayCount },
+    { id: 'today', label: 'For today' },
     { id: 'routine', label: 'Routine' },
   ];
   const [view, setView] = useState(() => readView(initial));
