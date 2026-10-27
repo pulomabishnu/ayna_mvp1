@@ -5,7 +5,7 @@ import { evidenceCatalogCounts } from '../utils/evidenceCatalogCounts';
 import { DIMENSION_WEIGHTS, PREFERENCE_SPAN } from '../matching/score.js';
 import { MAX_SHOWN_PERCENT } from '../utils/matchDisplay.js';
 import { EdPage, EdBlock } from './editorial/EdPage';
-import { StickerButton, Bento, Tile } from './ui/ay';
+import { StickerButton, Bento, Tile, SnapCarousel } from './ui/ay';
 import ReadMore from './info/ReadMore.jsx';
 
 // What a personalized match is built from. Sponsorship is never one of them.
@@ -110,42 +110,52 @@ export default function HowItWorks({ onBack, backLabel, onViewSources }) {
       band={<Standards />}
     >
       <EdBlock title="Four steps, in order." intro="The numbers below are a sample profile run live on today's catalog, not your results.">
-        <Bento as="ol" className="ip-bento ip-steps">
-          <Tile as="li" tone="ink" span="big" className="ip-bt ip-step">
-            <span className="ip-step__n" aria-hidden="true">1</span>
-            <h3 className="ed-rowtitle"><span className="ed-sr">Step 1: </span>You tell us</h3>
-            <p>Stage of life, goals, sensitivities and the details you choose to share.</p>
-            <div className="ed-hiw__demo">
+        {/* Founder Oct 26 20:17: a sequence is a step-through, not a stack. The four steps are a
+            snap carousel: one step per swipe, the next peeking, dots under it. */}
+        <SnapCarousel label="Four steps" size="card" className="ip-steps-snap" items={[
+          { key: 'step-1', node: (
+            <Tile as="div" tone="ink" className="ip-bt ip-step">
+              <span className="ip-step__n" aria-hidden="true">1</span>
+              <h3 className="ed-rowtitle"><span className="ed-sr">Step 1: </span>You tell us</h3>
+              <p>Stage of life, goals, sensitivities and the details you choose to share.</p>
+              <div className="ed-hiw__demo">
+                <span className="ed-caption">Sample profile</span>
+                <div className="ed-tags">{SAMPLE_PROFILE_CHIPS.map((t) => <span key={t}>{t}</span>)}</div>
+              </div>
+            </Tile>
+          ) },
+          { key: 'step-2', node: (
+            <Tile as="div" tone="pink" className="ip-bt ip-step">
+              <span className="ip-step__n" aria-hidden="true">2</span>
+              <h3 className="ed-rowtitle"><span className="ed-sr">Step 2: </span>We narrow the market</h3>
+              <p>Products across the open market are filtered for category fit, known safety conflicts and relevance.</p>
+              <div className="ip-step__nums">
+                <span><b>{funnel.catalog.toLocaleString()}</b><span>In the catalog</span></span>
+                <span aria-hidden="true" className="ip-step__arrow">→</span>
+                <span><b>{funnel.matched}</b><span>Matched to this profile</span></span>
+              </div>
               <span className="ed-caption">Sample profile</span>
-              <div className="ed-tags">{SAMPLE_PROFILE_CHIPS.map((t) => <span key={t}>{t}</span>)}</div>
-            </div>
-          </Tile>
-          <Tile as="li" tone="pink" span="wide" className="ip-bt ip-step">
-            <span className="ip-step__n" aria-hidden="true">2</span>
-            <h3 className="ed-rowtitle"><span className="ed-sr">Step 2: </span>We narrow the market</h3>
-            <p>Products across the open market are filtered for category fit, known safety conflicts and relevance.</p>
-            <div className="ip-step__nums">
-              <span><b>{funnel.catalog.toLocaleString()}</b><span>In the catalog</span></span>
-              <span aria-hidden="true" className="ip-step__arrow">→</span>
-              <span><b>{funnel.matched}</b><span>Matched to this profile</span></span>
-            </div>
-            <span className="ed-caption">Sample profile</span>
-          </Tile>
-          <Tile as="li" tone="butter" className="ip-bt ip-step">
-            <span className="ip-step__n" aria-hidden="true">3</span>
-            <h3 className="ed-rowtitle"><span className="ed-sr">Step 3: </span>We add evidence</h3>
-            {/* .gov sources only (founder rule); was "ACOG guidance", which is not a .gov source. */}
-            <div className="ed-tags">{['MedlinePlus', 'NIH research', 'CDC data'].map((t) => <span key={t}>{t}</span>)}</div>
-            <ReadMore label="More"><p>Published research, clinical guidance, product and safety sources, and community experience, where available.</p><span className="ed-caption">Unsupported claims are labeled, not upgraded into facts.</span></ReadMore>
-          </Tile>
-          <Tile as="li" tone="deep" className="ip-bt ip-step">
-            <span className="ip-step__n" aria-hidden="true">4</span>
-            <h3 className="ed-rowtitle"><span className="ed-sr">Step 4: </span>Your ecosystem</h3>
-            <div className="ip-step__nums"><span><b>{funnel.strong}</b><span>strong fits (80+), each with its match reason</span></span></div>
-            <span className="ed-caption">Sample profile</span>
-            <ReadMore label="More"><p>Your strongest fits, each shown with its match reason and source context.</p></ReadMore>
-          </Tile>
-        </Bento>
+            </Tile>
+          ) },
+          { key: 'step-3', node: (
+            <Tile as="div" tone="butter" className="ip-bt ip-step">
+              <span className="ip-step__n" aria-hidden="true">3</span>
+              <h3 className="ed-rowtitle"><span className="ed-sr">Step 3: </span>We add evidence</h3>
+              {/* .gov sources only (founder rule); was "ACOG guidance", which is not a .gov source. */}
+              <div className="ed-tags">{['MedlinePlus', 'NIH research', 'CDC data'].map((t) => <span key={t}>{t}</span>)}</div>
+              <ReadMore label="More"><p>Published research, clinical guidance, product and safety sources, and community experience, where available.</p><span className="ed-caption">Unsupported claims are labeled, not upgraded into facts.</span></ReadMore>
+            </Tile>
+          ) },
+          { key: 'step-4', node: (
+            <Tile as="div" tone="deep" className="ip-bt ip-step">
+              <span className="ip-step__n" aria-hidden="true">4</span>
+              <h3 className="ed-rowtitle"><span className="ed-sr">Step 4: </span>Your ecosystem</h3>
+              <div className="ip-step__nums"><span><b>{funnel.strong}</b><span>strong fits (80+), each with its match reason</span></span></div>
+              <span className="ed-caption">Sample profile</span>
+              <ReadMore label="More"><p>Your strongest fits, each shown with its match reason and source context.</p></ReadMore>
+            </Tile>
+          ) },
+        ]} />
       </EdBlock>
 
       <EdBlock title="How the % is built." intro="One engine for every match. Your need sets it; your preferences fine-tune it.">

@@ -899,6 +899,7 @@ const DESIGNED_READS = {
 const FEATURED_READS = ['postpartum-stretch-marks', 'genitourinary-syndrome-of-menopause'].map((id) => ({ id, ...READ_CREDITS[id] }));
 import ReadCover from './library/ReadCover.jsx';
 import ReadCard from './library/ReadCard.jsx';
+import { SnapCarousel } from './ui/ay/index.js';
 import ReadVideo from './library/ReadVideo.jsx';
 import { textOf, minutesFor } from './library/readTime.js';
 import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
@@ -922,9 +923,12 @@ function LibraryFeatured({ onOpen, pick = null, onAsk = null }) {
   return (
     <section className="lb-featured lb-ed" aria-labelledby="lib-featured-h">
       <header className="lb-shelf__head"><h2 id="lib-featured-h" className="lb-shelf__title">Featured reads</h2></header>
-      <div className="lb-ed__grid">
-        {lead && <div className="lb-ed__big" id="lib-featured"><ReadCard article={lead} layout="feature" href={`/library/${lead.id}`} onOpen={(a) => onOpen(a.id)} /></div>}
-        {second && <div className="lb-ed__tall" id={`lib-featured-${second.id}`}><ReadCard article={second} layout="rail" href={`/library/${second.id}`} onOpen={(a) => onOpen(a.id)} /></div>}
+      {/* Founder Oct 26 20:17: featured reads are a peeking snap carousel (one card per swipe,
+          dots under it), the same pattern as Community highlights and product reviews. */}
+      <SnapCarousel label="Featured reads" size="card" className="lb-ed__snap" items={[
+        lead && { key: lead.id, node: <div className="lb-ed__big" id="lib-featured"><ReadCard article={lead} layout="feature" href={`/library/${lead.id}`} onOpen={(a) => onOpen(a.id)} /></div> },
+        second && { key: second.id, node: <div className="lb-ed__big" id={`lib-featured-${second.id}`}><ReadCard article={second} layout="feature" href={`/library/${second.id}`} onOpen={(a) => onOpen(a.id)} /></div> },
+        { key: 'pick', node: (
         <div className="lb-ed__tile is-pink">
           {pick ? (
             <a href={`/library/${pick.id}`} className="lb-ed__pick" onClick={go(pick.id)}>
@@ -940,7 +944,8 @@ function LibraryFeatured({ onOpen, pick = null, onAsk = null }) {
               <a className="lb-btn lb-btn--small" href="/quiz">See my matches <span aria-hidden="true">→</span></a>
             </>
           )}
-        </div>
+        </div>) },
+        { key: 'ask', node: (
         <div className="lb-ed__tile is-ink">
           <span className="lb-more__label">Can’t find it?</span>
           <strong className="lb-ed__title">Ask about anything, or tell us what to write next.</strong>
@@ -948,8 +953,8 @@ function LibraryFeatured({ onOpen, pick = null, onAsk = null }) {
             {onAsk && <button type="button" className="lb-btn lb-btn--small" onClick={() => onAsk('')}>Ask ayna</button>}
             <button type="button" className="lb-link" onClick={() => document.querySelector('.ct-suggest')?.scrollIntoView({ behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' })}>Suggest a read</button>
           </span>
-        </div>
-      </div>
+        </div>) },
+      ].filter(Boolean)} />
     </section>
   );
 }

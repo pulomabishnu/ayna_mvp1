@@ -168,6 +168,21 @@ html body :is(#uq, .app-container):is(#uq, .app-container):is(#uq, .app-containe
   html body .app-container .ay-ih.uq-bleed.has-photo .ay-ih__copy > .ay-ih__h1 { grid-column: 1; grid-row: 2; }
   html body .app-container .ay-ih.uq-bleed.has-photo .ay-ih__plate { grid-column: 2; grid-row: 2; width: 96px; align-self: center; margin-top: 0 !important; }
 }
-/* p15 clean (founder: "too much overcrowded writing"): a long-page section opens as its heading and
-   three lines; "Read the full section" reveals the whole first paragraph and the rest, verbatim. */
-html body .app-container .uq-glance:not(:has(.uq-rm.is-open)) > p:first-of-type { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+
+/* p15 clean: one-open accordion on long text pages (Money, Privacy, Terms; EdPage AccordionSections).
+   Each row is the H2 as a 56px button with a chevron; the panel is the section, verbatim. */
+html body .app-container .ed .ed-prose > section.ed-acc { margin: 0 !important; padding: 0 !important; border-top: 1px solid var(--ip-rule, rgba(62, 39, 35, .18)); }
+html body .app-container .ed .ed-prose > section.ed-acc:last-of-type { border-bottom: 1px solid var(--ip-rule, rgba(62, 39, 35, .18)); }
+html body .app-container .ed .ed-prose > section.ed-acc + section:not(.ed-acc) { margin-top: 32px; }
+html body .app-container .ed .ed-prose > section:not(.ed-acc) + section.ed-acc { margin-top: 32px; }
+html body .app-container .ed .ed-prose .ed-acc__h { margin: 0 !important; }
+html body .app-container .ed .ed-acc__btn { all: unset; box-sizing: border-box; width: 100%; min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; cursor: pointer; color: inherit; font: inherit; text-align: left; }
+html body .app-container .ed .ed-acc__btn svg { flex: none; width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 180ms ease; }
+html body .app-container .ed .ed-acc__btn[aria-expanded='true'] svg { transform: rotate(180deg); }
+html body .app-container .ed .ed-acc__btn:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 8px; }
+html body .app-container .ed .ed-acc__panel { padding: 0 0 24px; }
+html body .app-container .ed .ed-acc__panel > * + * { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) { html body .app-container .ed .ed-acc__btn svg { transition: none; } }
+/* How we match: the four steps as a snap carousel (ip-steps-snap). */
+html body .app-container .ip-steps-snap .ip-step { min-height: 300px; height: 100%; box-sizing: border-box; }
+html body .app-container .ip-steps-snap { margin-top: 8px; }

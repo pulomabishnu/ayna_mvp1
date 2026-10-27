@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { PlateName } from './cards/CardBits.jsx';
+import { SnapCarousel } from './ui/ay/index.js';
 import { useResearchState } from '../data/researchLoader';
 import ProductCard from './ProductCard';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
@@ -895,18 +896,15 @@ export default function ProductModal({
         {relatedReads.length > 0 && (
           <section className="ay-section ayp-reads" aria-labelledby="pdp-reads-h">
             <h2 id="pdp-reads-h" className="ay-h2">Read about it</h2>
-            <ul className="ayp-reads__list">
-              {relatedReads.map((r) => (
-                <li key={r.id}>
-                  <a href={`/library/${r.id}`} onClick={(e) => { if (!onOpenRead || e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return; e.preventDefault(); onOpenRead(r.id); }}>
-                    <span className="ayp-reads__title">{r.title}</span>
-                    {r.teaser && <span className="ayp-reads__teaser">{r.teaser}</span>}
-                    <span className="ayp-reads__mark"><EvidenceMark level="gov" />Checked against .gov</span>
-                    <span className="ayp-reads__go" aria-hidden="true">→</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+            {/* Reads are a peeking snap carousel everywhere (Library featured, here). */}
+            <SnapCarousel label="Reads about this" size="card" className="ayp-reads__list ayp-reads__snap" items={relatedReads.map((r) => ({ key: r.id, node: (
+              <a href={`/library/${r.id}`} onClick={(e) => { if (!onOpenRead || e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return; e.preventDefault(); onOpenRead(r.id); }}>
+                <span className="ayp-reads__title">{r.title}</span>
+                {r.teaser && <span className="ayp-reads__teaser">{r.teaser}</span>}
+                <span className="ayp-reads__mark"><EvidenceMark level="gov" />Checked against .gov</span>
+                <span className="ayp-reads__go" aria-hidden="true">→</span>
+              </a>
+            ) }))} />
           </section>
         )}
 

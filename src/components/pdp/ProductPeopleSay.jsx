@@ -1,4 +1,5 @@
 import { RatingStars } from '../community/RatingStars.jsx';
+import { SnapCarousel } from '../ui/ay/index.js';
 import { useProductMentions } from './useProductMentions.js';
 import { ratingBreakdown, topReviews, snippet, authorName, shortDate, kindLabel, plural } from './peopleSay.js';
 import '../community/community-shared.css';
@@ -67,25 +68,23 @@ export default function ProductPeopleSay({
             {write && <div className="ayp-wps__cta">{write}</div>}
           </div>
 
-          <ul className="ayp-wps__cards" aria-label="Most helpful member reviews">
-            {top.map((r) => {
-              const helpful = Number(r.helpful_count) || 0;
-              const date = shortDate(r.created_at);
-              return (
-                <li key={r.id}>
-                  <a className="ayp-wps__card" href={`/community/p/${r.id}`} onClick={(e) => open(e, r.id)}>
-                    <span className="ayp-wps__cardtop">
-                      <RatingStars value={r.rating} size={15} />
-                      {helpful > 0 && <span className="ayp-wps__helpful">{helpful} found this helpful</span>}
-                    </span>
-                    {r.body && <span className="ayp-wps__body">{snippet(r.body, 260)}</span>}
-                    <span className="ayp-wps__meta">{authorName(r)}{date ? `, ${date}` : ''}{r.edited_at ? ' (edited)' : ''}</span>
-                    <span className="ayp-wps__go">Read in Community<span aria-hidden="true"> ›</span></span>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+          {/* Founder Oct 26 20:17: reviews are a peeking snap carousel, one review card per swipe
+              with dots, the same pattern as Library featured reads and Community highlights. */}
+          <SnapCarousel label="Most helpful member reviews" size="card" className="ayp-wps__snap" items={top.map((r) => {
+            const helpful = Number(r.helpful_count) || 0;
+            const date = shortDate(r.created_at);
+            return { key: r.id, node: (
+              <a className="ayp-wps__card" href={`/community/p/${r.id}`} onClick={(e) => open(e, r.id)}>
+                <span className="ayp-wps__cardtop">
+                  <RatingStars value={r.rating} size={15} />
+                  {helpful > 0 && <span className="ayp-wps__helpful">{helpful} found this helpful</span>}
+                </span>
+                {r.body && <span className="ayp-wps__body">{snippet(r.body, 260)}</span>}
+                <span className="ayp-wps__meta">{authorName(r)}{date ? `, ${date}` : ''}{r.edited_at ? ' (edited)' : ''}</span>
+                <span className="ayp-wps__go">Read in Community<span aria-hidden="true"> ›</span></span>
+              </a>
+            ) };
+          })} />
         </div>
       ) : (
         <div className="ayp-wps__empty">

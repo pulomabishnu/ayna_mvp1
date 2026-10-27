@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import '../../styles/editorial.css';
 import { PHOTOS } from '../v3/photos.js';
 import InfoHero from '../info/InfoHero.jsx';
-import ReadMore from '../info/ReadMore.jsx';
 
 /**
  * Editorial shell for the footer and info pages: the InfoHero (breadcrumb,
@@ -36,22 +35,39 @@ function useContents(rootRef, enabled, refreshKey) {
  * `kicker` are accepted for old callers and ignored (no eyebrow labels).
  * `photo`: a /landing name, or { src, alt, product } for a packshot.
  * `crumb`: the short page name for the breadcrumb (defaults to the title). */
-/* Glance first (founder, Oct 26 16:54): on long text pages each <section> shows
- * its H2 and first paragraph; the rest of that section, verbatim, is one tap
- * away behind "Read the full section". Nothing is removed (the hidden text
- * stays in the DOM). */
-function glanceSections(children) {
-  return React.Children.map(children, (child) => {
-    if (!React.isValidElement(child) || child.type !== 'section' || child.props['data-keep'] != null) return child;
+/* One open at a time (founder, Oct 26 20:17: "think of different unique ways",
+ * accordion for policies and FAQ-like pages). On long text pages each <section>
+ * with an H2 becomes an accordion row: the H2 holds a 44px button with a
+ * chevron (aria-expanded, aria-controls) and the rest of the section, verbatim,
+ * is its panel. Opening one closes the others. Closed panels use
+ * hidden="until-found", so find-in-page still reaches every word and opens the
+ * row. A section marked data-keep (e.g. the Amazon Associates disclosure) stays
+ * a plain open section. The first row starts open. */
+function AccordionSections({ children }) {
+  const rows = [];
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child) || child.type !== 'section' || child.props['data-keep'] != null) return;
+    const parts = React.Children.toArray(child.props.children);
+    if (parts.some((c) => React.isValidElement(c) && c.type === 'h2')) rows.push(child);
+  });
+  const [open, setOpen] = useState(rows[0]?.key ?? null);
+  const uid = useId().replace(/:/g, '');
+  return React.Children.map(children, (child, index) => {
+    if (!rows.includes(child)) return child;
     const parts = React.Children.toArray(child.props.children);
     const h = parts.findIndex((c) => React.isValidElement(c) && c.type === 'h2');
-    const first = parts.findIndex((c, i) => i > h && React.isValidElement(c) && c.type === 'p');
-    if (h < 0 || first < 0) return child;
-    const rest = parts.slice(first + 1);
-    if (!rest.length) return child;
-    return React.cloneElement(child, { className: `${child.props.className || ''} uq-glance`.trim() }, <>
-      {parts.slice(0, first + 1)}
-      <ReadMore label="Read the full section">{rest}</ReadMore>
+    const head = parts[h];
+    const rest = [...parts.slice(0, h), ...parts.slice(h + 1)];
+    const key = child.key ?? index;
+    const isOpen = open === key;
+    const panelId = `ed-acc-${uid}-${index}`;
+    return React.cloneElement(child, { className: `${child.props.className || ''} ed-acc${isOpen ? ' is-open' : ''}`.trim() }, <>
+      {React.cloneElement(head, { className: `${head.props.className || ''} ed-acc__h`.trim() },
+        <button type="button" className="ed-acc__btn" aria-expanded={isOpen} aria-controls={panelId} onClick={() => setOpen(isOpen ? null : key)}>
+          <span>{head.props.children}</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+        </button>)}
+      <div id={panelId} className="ed-acc__panel" hidden={isOpen ? undefined : 'until-found'} ref={(el) => { if (el && !el.dataset.bm) { el.dataset.bm = '1'; el.addEventListener('beforematch', () => setOpen(key)); } }}>{rest}</div>
     </>);
   });
 }
@@ -63,6 +79,8 @@ export function EdPage({ title, lede, crumb, updated, onBack, backLabel = 'Home'
     const el = document.getElementById(id);
     if (!el) return;
     e.preventDefault();
+    const btn = el.querySelector('.ed-acc__btn');
+    if (btn && btn.getAttribute('aria-expanded') !== 'true') btn.click();
     el.scrollIntoView({ behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
     try { window.history.replaceState(window.history.state, '', `#${id}`); } catch { /* ignore */ }
   };
@@ -90,9 +108,9 @@ export function EdPage({ title, lede, crumb, updated, onBack, backLabel = 'Home'
                   <details className="ed-toc__fold"><summary>On this page ({items.length} sections)</summary>{list}</details>
                 </>}
               </nav>
-              <div ref={bodyRef} className="ed-prose">{glance ? glanceSections(children) : children}</div>
+              <div ref={bodyRef} className="ed-prose">{glance ? <AccordionSections>{children}</AccordionSections> : children}</div>
             </div>
-          ) : <div ref={bodyRef}>{glance ? glanceSections(children) : children}</div>}
+          ) : <div ref={bodyRef}>{glance ? <AccordionSections>{children}</AccordionSections> : children}</div>}
         </div>
       </div>
     </div>

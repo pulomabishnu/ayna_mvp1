@@ -43,7 +43,7 @@ export default function CompareTable({ products: picked = [], matchFor = null, d
         ? <p className="ay-cmp2__best"><b>Best match for your profile: {best.product.name}.</b> {best.why}</p>
         : detailsFor && <p className="ay-cmp2__nobest">Too close to call from what you’ve shared, so ayna doesn’t pick one.</p>}
       <div className="ay-cmp2__scroll" role="region" aria-labelledby={headingId} tabIndex={0}>
-        <table>
+        <table style={{ '--cmp-n': products.length }}>
           <thead>
             <tr>
               <td />

@@ -11,7 +11,7 @@ import '../../styles/pcard.css';
  */
 
 /** Up to three initials for a name too long to sit on a tile (over 14 characters), else ''. */
-export function plateMonogram(name) {
+function plateMonogram(name) {
   const text = String(name || '').trim();
   if (text.length <= 14) return '';
   const words = text.split(/[\s/-]+/).filter((w) => /^[A-Za-z0-9]/.test(w) && !/^(the|and|of|for|by|&)$/i.test(w));

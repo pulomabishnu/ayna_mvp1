@@ -243,12 +243,15 @@ html body .app-container.app-container.app-container.app-container[data-theme='b
 
 /* Explore audit v3 (Oct 25): Reads uses the shared shapes. The contents box is a
    16px outlined surface with a plain heading (no folder tab: the founder ruled out
-   "office supplies" devices), and the phone topic chips wrap instead of scrolling. */
+   "office supplies" devices), and the phone topic chips scroll sideways in one row (founder 19:41, "don't stack"). */
 html body .app-container.app-container.app-container.app-container .lb .lb-toc { border-radius: 16px; margin-top: 0; padding-top: 16px; }
 html body .app-container.app-container.app-container.app-container .lb .lb-toc__h.lb-tab { position: static; transform: none; height: auto; padding: 0 0 8px; border: 0; border-radius: 0; background: none; color: var(--lb-esp) !important; font: 700 17px/1.3 var(--lb-sans) !important; }
 html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lb .lb-toc__h.lb-tab { color: var(--lb-butter) !important; }
 @media (max-width: 720px) {
-  html body .app-container.app-container.app-container.app-container .lb .lb-chips { flex-wrap: wrap; overflow: visible; }
+  /* Founder Oct 26 19:41 "don't stack" overrides the earlier wrap: the phone topic chips are one
+     sideways-scrolling row (the same filter-chip row as Shop and Community). */
+  html body .app-container.app-container.app-container.app-container .lb .lb-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  html body .app-container.app-container.app-container.app-container .lb .lb-chips > * { flex: none; }
   html body .app-container.app-container.app-container.app-container .lb .lb-chips .lb-chip { border-radius: 8px; }
 }
 /* Featured reads are the shared ReadCard list row (ReadCard.jsx), so the old row grid steps aside. */
@@ -306,3 +309,7 @@ html body .app-container.app-container.app-container.app-container .lb .lb-ed__t
   html body .app-container.app-container.app-container.app-container .lb .lb-ed__tile { padding: 16px; }
   html body .app-container.app-container.app-container.app-container .lb .lb-ed__title { font-size: 20px; }
 }
+
+/* p15 clean: featured reads as a SnapCarousel (Articles.jsx LibraryFeatured). */
+html body .app-container.app-container.app-container.app-container .lb .lb-ed__snap :is(.lb-ed__big, .lb-ed__tile) { grid-column: auto; grid-row: auto; height: 100%; box-sizing: border-box; }
+html body .app-container.app-container.app-container.app-container .lb .lb-ed__snap .lb-ed__tile { min-height: 280px; }

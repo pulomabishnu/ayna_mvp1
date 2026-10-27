@@ -21,7 +21,7 @@ import '../styles/uq-landing.css';
 import { Seal } from './personality/Bits.jsx';
 import Photo from './ui/Photo.jsx';
 import ReadMore from './info/ReadMore.jsx';
-import { Plate, Chip, Band, Shout, Bento, Tile, Marquee } from './ui/ay';
+import { Plate, Chip, Band, Shout, Bento, Tile, Marquee, SnapCarousel } from './ui/ay';
 import { HOME_SEARCH_HINTS } from './shop/homeSearchHints.js';
 
 /* The website home (v2, Oct 21). Styles: src/styles/home.css (hm-*).
@@ -211,17 +211,14 @@ function Phrases({ onSearch }) {
     return FAMILIAR.map((t) => { const p = ready ? productFor(t, taken) : null; if (p) taken.add(p.id); return { ...t, product: p }; });
   }, [ready]);
   return (
-    <ul className="hm-needs">
-      {rows.map((t) => (
-        <li key={t.q}>
-          <a className="hm-needs__row" href={`/explore/products?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
-            <span className="hm-needs__ph"><Photo src={t.photo} alt="" sizes="96px" loading="lazy" decoding="auto" /><DieCut product={t.product} className="hm-needs__prod" /></span>
-            <span className="hm-needs__quote">“{t.q}”</span>
-            <span className="hm-needs__go">See what helps <Arrow /></span>
-          </a>
-        </li>
-      ))}
-    </ul>
+    // Founder Oct 26 20:17: a peeking snap carousel of photo-led cards instead of stacked rows.
+    <SnapCarousel label="Does this sound familiar?" size="card" className="hm-needs-snap" items={rows.map((t) => ({ key: t.q, node: (
+      <a className="hm-needs__row" href={`/explore/products?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
+        <span className="hm-needs__ph"><Photo src={t.photo} alt="" sizes="(max-width: 640px) 90vw, 420px" loading="lazy" decoding="auto" /><DieCut product={t.product} className="hm-needs__prod" /></span>
+        <span className="hm-needs__quote">“{t.q}”</span>
+        <span className="hm-needs__go">See what helps <Arrow /></span>
+      </a>
+    ) }))} />
   );
 }
 function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, picks = null, signedOut = true }) {

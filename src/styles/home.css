@@ -396,3 +396,8 @@
   .app-container.app-container .hm .hm-chips::-webkit-scrollbar { display: none; }
   .app-container.app-container .hm .hm-chips > * { flex: none; }
 }
+/* p15 clean: "Does this sound familiar?" as a peeking snap carousel of photo-led cards. */
+.app-container.app-container .hm .hm-needs-snap .hm-needs__row { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: 'ph' 'quote' 'go'; align-content: start; gap: 10px; height: 100%; box-sizing: border-box; padding: 12px; border: 1.5px solid var(--hm-ink, #3e2723); border-radius: 16px; text-decoration: none; }
+.app-container.app-container .hm .hm-needs-snap .hm-needs__ph { width: 100%; aspect-ratio: 4 / 3; border-radius: 8px; }
+.app-container.app-container .hm .hm-needs-snap .hm-needs__quote { font-size: 20px; line-height: 1.2; }
+.app-container.app-container .hm .hm-needs-snap .ayk-snap__item { max-width: 340px; }

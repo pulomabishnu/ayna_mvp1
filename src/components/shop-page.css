@@ -120,3 +120,12 @@ html body .app-container.app-container.app-container[data-theme='brand-dark'] .a
 @media (prefers-reduced-motion: reduce) { .app-container.app-container .ayshop__grid .ay-product-card__tile { transition: none; } }
 .app-container[data-theme='brand-dark'] .ayshop__grid .ay-product-card__tile,
 .app-container[data-theme='dark'] .ayshop__grid .ay-product-card__tile { border-color: #ffedac; box-shadow: 4px 4px 0 #ffedac; }
+
+/* p15 clean: on phones the toolbar was hidden whole, which also hid Compare (no way to start a
+   comparison on the phone website). Filters and Sort stay in the search-bar sheet; the toolbar row
+   comes back with just Compare (and the match switch when she has a profile). */
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container.app-container .ayshop__toolbar { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 8px; margin: 8px 0 4px; }
+  html body .app-container.app-container.app-container.app-container .ayshop__toolbar :is(.ayshop__filters, .ayshop__sort, .ayshop__matches:not(.is-phone)) { display: none !important; }
+  html body .app-container.app-container.app-container.app-container .ayshop__toolbar .ay-cmpt { min-height: 44px; }
+}

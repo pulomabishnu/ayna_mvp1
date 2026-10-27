@@ -69,3 +69,18 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2 :is(th, 
 /* "Show more" in a shortened cell: a quiet text button, full text expands in place (loop A, Oct 26). */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__more { display: inline; min-height: 0; margin: 0; padding: 0; border: 0; background: none; color: inherit; font: 600 13px/1.4 var(--ay-font-ui, 'Figtree', sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__more:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 4px; }
+
+/* p15 clean (Compare on phones): the label column took a third of the screen, so two products were
+   not side by side (the second was cut off). On phones each row's label sits above its values and the
+   products share the width: two products fit exactly; three or four scroll sideways at 150px each. */
+@media (max-width: 640px) {
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 table { display: block; min-width: 0; width: max(100%, calc(var(--cmp-n, 2) * 150px)); }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 :is(thead, tbody) { display: block; }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 tr { display: grid; grid-template-columns: repeat(var(--cmp-n, 2), minmax(0, 1fr)); border-top: 1px solid var(--s-hair); }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 thead tr { border-top: 0; }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 thead td:first-child { display: none; }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 :is(th, td) { display: block; min-width: 0 !important; width: auto !important; border-top: 0; }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 tbody th { grid-column: 1 / -1; padding-bottom: 0 !important; }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 tbody th small { display: inline; margin: 0 0 0 6px; }
+  :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 thead th { min-width: 0 !important; }
+}

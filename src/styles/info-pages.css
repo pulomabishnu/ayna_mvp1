@@ -213,3 +213,14 @@ html body .app-container.app-container[data-theme='brand-dark'] .ip-bars > li:nt
 html body .app-container.app-container[data-theme='brand-dark'] .ip-bars > li:nth-child(1) .ip-bars__fill b { color: #ffedac !important; }
 html body .app-container.app-container[data-theme='brand-dark'] .ip-bars > li:nth-child(3) .ip-bars__fill { background: #ffedac; box-shadow: none; }
 html body .app-container.app-container[data-theme='brand-dark'] .ip-bars > li:nth-child(3) .ip-bars__fill b { color: #3e2723 !important; }
+/* p15 clean (founder 20:17: "compact grid" for brand tiles): partners are a 2-up grid on phones and
+   4-up on wide screens, photo first, the name, a 2-line blurb and the count. Tapping a tile opens the
+   brand panel, which carries the full blurb. */
+html body .app-container .ed .ip-partners { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (min-width: 900px) { html body .app-container .ed .ip-partners { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; } }
+html body .app-container .ed .ip-partners > li { min-width: 0; }
+html body .app-container .ed .ip-prow { grid-template-columns: minmax(0, 1fr) !important; grid-template-rows: none; align-content: start; align-items: start; gap: 6px !important; height: 100%; min-height: 0; padding: 10px 10px 14px !important; box-sizing: border-box; text-align: left; }
+html body .app-container .ed .ip-prow__plate { grid-row: auto !important; grid-column: auto !important; width: 100% !important; }
+html body .app-container .ed .ip-prow__name { font-size: 18px; margin-top: 4px; }
+html body .app-container .ed .ip-prow__blurb { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; font-size: 14px; }
+html body .app-container .ed .ip-prow__count { grid-row: auto !important; grid-column: auto !important; font-size: 14px; }

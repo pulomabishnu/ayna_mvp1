@@ -2875,3 +2875,9 @@ html body :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-p
 :is(.ayp-buy__fine .ayp-textlink, .ayv-safeline__go, .ay-gloss, .ay-urgent__what a) { position: relative; }
 :is(.ayp-buy__fine .ayp-textlink, .ayv-safeline__go, .ay-gloss, .ay-urgent__what a)::after { content: ''; position: absolute; left: -4px; right: -4px; top: 50%; height: 44px; transform: translateY(-50%); }
 :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs, .ayq, main) a.ay-urgent__src { display: inline-flex !important; align-items: center; min-height: 44px; }
+
+/* p15 clean: member reviews as a SnapCarousel (ProductPeopleSay). Cards fill their slide. */
+.ayp-wps .ayp-wps__snap { margin-top: 16px; }
+.ayp-wps .ayp-wps__snap .ayp-wps__card { height: 100%; box-sizing: border-box; }
+#pdp-v4 .ayp-reads__snap.ayp-reads__list { display: grid; grid-template-columns: minmax(0, 1fr) !important; gap: 4px; }
+#pdp-v4 .ayp-reads__snap .ayk-snap__item > a { width: 100%; }
