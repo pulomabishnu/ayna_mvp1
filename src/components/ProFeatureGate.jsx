@@ -4,6 +4,17 @@ import { Capacitor } from '@capacitor/core';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { loadProFeatureRules, requestPro } from '../utils/proApi.js';
 
+const LOCKED_COPY = {
+  reads: 'Free ayna includes one premium Read each week. Pro members can open unlimited premium Reads.',
+  wearables: 'Connecting supported health apps and wearables is included with ayna Pro.',
+  insights: 'Deeper personalized health insights are included with ayna Pro.',
+  history: 'Detailed health trends and history are included with ayna Pro. Your basic health view stays free.',
+  recap: 'Personalized recaps are included with ayna Pro.',
+  trial: 'Personal try-and-check-back tracking is included with ayna Pro.',
+  appointment: 'Appointment prep is included with ayna Pro.',
+  quiz: 'Free ayna includes one personalization quiz retake each week. Pro members can retake it anytime.',
+};
+
 /** UI boundary for existing tools; billing and usage are authoritative on the server. */
 function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }) {
   const [revision, setRevision] = useState(0);
@@ -46,10 +57,10 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }
     {onBack && <button type="button" className="ay-btn ay-btn--secondary" onClick={onBack}>Back</button>}
     <p className="pro-access__eyebrow">ayna Pro</p><h2>{title}</h2>
     {result?.key !== key ? <p role="status">Checking access…</p> : <>
-      <p>{feature === 'reads' ? 'Free ayna includes one premium Read each week. Pro members can open unlimited premium Reads.' : 'This deeper tool is included with ayna Pro.'}</p>
+      <p>{LOCKED_COPY[feature] || 'This feature is included with ayna Pro.'}</p>
       {result.error && <p role="status">{result.error}</p>}
       <p>Your basic health view, matching, safety information and privacy controls remain available.</p>
-      {!Capacitor.isNativePlatform() ? <a className="ay-btn ay-btn--primary" href="/you/pro">View ayna Pro</a> : <p>Already a Pro member? Use the ayna account with your membership.</p>}
+      {!Capacitor.isNativePlatform() ? <a className="ay-btn ay-btn--primary" href="/you/pro">See ayna Pro Early Access</a> : <p>Already a Pro member? Use the ayna account with your membership.</p>}
       <button type="button" className="ay-btn ay-btn--secondary" onClick={() => setRefresh(n => n + 1)}>Check access again</button>
     </>}
   </section>;
