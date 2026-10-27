@@ -13,3 +13,16 @@ Returns one row per local day with the heaviest flow logged:
 Installed into the app as `"capacitor-ayna-cycle": "file:native/capacitor-ayna-cycle"`, so
 `npx cap sync` wires it into the iOS SPM package and the Android Gradle settings like any
 other plugin. **Not yet compiled**: it needs a first build in Xcode and Android Studio.
+
+## One permission sheet (Oct 27)
+
+`requestAuthorization({ readTypes, includeFlow })` asks HealthKit for menstrual
+flow AND the @capgo read types (`sleep`, `basalBodyTemperature`,
+`appleSleepingWristTemperature`, `restingHeartRate`, `heartRate`,
+`heartRateVariability`, `steps`, `calories`, `workouts`) in ONE sheet.
+`getRequestStatus({ readTypes, includeFlow })` returns `shouldRequest`,
+`unnecessary` or `unknown` (HealthKit's `getRequestStatusForAuthorization`);
+`src/health/native.js` skips the sheet when it is `unnecessary`. Neither call
+says whether reading was allowed: Apple hides that for read types.
+Cervical mucus and sexual activity are not requested (ayna reads neither).
+With no options, `requestAuthorization()` behaves as before (period data only).
