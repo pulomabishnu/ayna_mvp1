@@ -2848,9 +2848,10 @@ html body :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-p
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec,
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-lit > section,
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-clin > * { box-sizing: border-box !important; padding: 16px !important; border-radius: 16px !important; background: var(--ay-surface, #F6E3A1) !important; border: 1px solid var(--ay-rule, rgba(62, 39, 35, .22)) !important; margin-top: 0 !important; min-width: 0 !important; }
-#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec--lead { background: var(--ay-calm-box) !important; color: var(--ay-calm-fg) !important; border: var(--ay-calm-border) !important; } /* calm (Oct 27): not an espresso block */
-#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec--lead :is(p, span, b, .ayv-oneline) { color: var(--ay-calm-fg) !important; }
-#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec--lead :is(.ayv-showall, button) { color: var(--ay-calm-fg) !important; border-color: var(--ay-calm-line) !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec--lead { background: #3E2723 !important; color: #FFEDAC !important; border: 0 !important; } /* the page's one espresso feature box (Oct 27 13:45) */
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec--lead :is(p, span, b, .ayv-oneline) { color: #FFEDAC !important; }
+#ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec--lead :is(.ayv-showall, button) { color: #FFEDAC !important; border-color: #FFEDAC !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > .ayv-sec--lead { border: 1.5px solid rgba(255, 237, 172, .45) !important; }
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > #ay-sum-evidence { background: #F7BADD !important; color: #3E2723 !important; border: 0 !important; }
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > #ay-sum-evidence * { color: #3E2723 !important; }
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum, #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-lit, #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-clin { gap: 12px !important; }

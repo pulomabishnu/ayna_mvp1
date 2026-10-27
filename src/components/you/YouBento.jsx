@@ -81,7 +81,7 @@ export default function YouBento({ tiles = {}, products = [], intake = null, onO
     return (
       <div className={`yb yb--list ${className}`.trim()}>
         {eco && (
-          <Tile tone="calm" className="yb-tile is-eco" {...tileProps(eco, `${eco.caption}: ${eco.value}. ${eco.sub || ''}${shown.length ? ` Including ${shown.map((p) => p.name).join(', ')}.` : ''}`)}>
+          <Tile tone="ink" className="yb-tile is-eco" {...tileProps(eco, `${eco.caption}: ${eco.value}. ${eco.sub || ''}${shown.length ? ` Including ${shown.map((p) => p.name).join(', ')}.` : ''}`)}>
             <span className="yb-top"><span className="ayb-tile__label">{eco.caption}</span>{eco.onClick && ARROW}</span>
             {shown.length > 0 && (
               <span className="yb-plates" aria-hidden="true">
@@ -112,7 +112,7 @@ export default function YouBento({ tiles = {}, products = [], intake = null, onO
   return (
     <Bento className={`yb ${className}`.trim()}>
       {eco && (
-        <Tile tone="calm" span="big" className="yb-tile is-eco" {...tileProps(eco, `${eco.caption}: ${eco.value}. ${eco.sub || ''}${shown.length ? ` Including ${shown.map((p) => p.name).join(', ')}.` : ''}`)}>
+        <Tile tone="ink" span="big" className="yb-tile is-eco" {...tileProps(eco, `${eco.caption}: ${eco.value}. ${eco.sub || ''}${shown.length ? ` Including ${shown.map((p) => p.name).join(', ')}.` : ''}`)}>
           <span className="yb-top"><span className="ayb-tile__label">{eco.caption}</span>{eco.onClick && ARROW}</span>
           {shown.length > 0 && (
             <span className="yb-plates" aria-hidden="true">
