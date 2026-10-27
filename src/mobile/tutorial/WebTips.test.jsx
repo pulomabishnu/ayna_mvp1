@@ -102,6 +102,40 @@ describe('website first visit', () => {
     expect(dialog()).toBeNull();
   });
 
+  it('signed out on the landing: one welcome tip on Slide to start, after the nudge, no opt-in asked', () => {
+    const LANDING = `<form class="lsx-search" data-rect='{"left":40,"top":300,"width":500,"height":56}'><input /></form><div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track" data-rect='{"left":40,"top":380,"width":500,"height":68}'>Slide</button></div>`;
+    mountWeb({ view: 'welcome', html: LANDING, ready: false });
+    wait(1500);
+    expect(dialog()).toBeNull(); // the slider's one-time nudge plays first
+    wait(2500);
+    expect(dialog().textContent).toContain('Welcome to ayna: start here to build your ecosystem.');
+    // Below the slide, clear of the search above it.
+    const top = parseFloat(dialog().style.top);
+    expect(top).toBeGreaterThanOrEqual(448);
+    click('Got it');
+    expect(readTour().seen.landing).toBeTruthy();
+    expect(readTour().enabled).toBe(true);
+    wait(3000);
+    expect(dialog()).toBeNull(); // once
+  });
+
+  it('signed out: browsing tips show, tips about her own data wait for a profile', () => {
+    setTipsEnabled(true);
+    mountWeb({ view: 'today', html: TODAY, ready: false });
+    wait(3000);
+    expect(dialog()).toBeNull();
+    swap('explore', EXPLORE);
+    wait(1000);
+    expect(dialog().textContent).toContain('Search products');
+  });
+
+  it('Turn off tips on the landing tip turns them off', () => {
+    mountWeb({ view: 'welcome', html: '<div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track">Slide</button></div>', ready: false });
+    wait(4000);
+    click('Turn off tips');
+    expect(readTour().enabled).toBe(false);
+  });
+
   it('nothing before setup is done, and never on setup screens', () => {
     mountWeb({ html: TODAY, ready: false });
     wait(3000);
@@ -238,11 +272,12 @@ describe('website registry and placement', () => {
   it('Today offers the welcome; other screens never do', () => {
     const fresh = { enabled: null, seen: {}, welcomeDay: null, offNoteShown: false };
     expect(tourDecision({ screen: screenById('today', 'web'), prefs: fresh, today: '2026-10-25' }).kind).toBe('welcome');
-    for (const s of WEB_SCREENS.filter((x) => x.id !== 'today')) expect(tourDecision({ screen: s, prefs: fresh, today: '2026-10-25' }).kind).toBe('none');
+    // The landing's welcome tip is the one tip that needs no opt-in.
+    for (const s of WEB_SCREENS.filter((x) => x.id !== 'today' && !x.landing)) expect(tourDecision({ screen: s, prefs: fresh, today: '2026-10-25' }).kind).toBe('none');
   });
   it('covers the six screens, at most 2 tips each, one short sentence', () => {
     // The page screens, plus parts (within) for long pages and the top bar.
-    expect(WEB_SCREENS.filter((s) => !s.within).map((s) => s.id).sort()).toEqual(['ask', 'community', 'compare', 'explore', 'library', 'metric-sheet', 'product-page', 'services', 'today', 'you']);
+    expect(WEB_SCREENS.filter((s) => !s.within).map((s) => s.id).sort()).toEqual(['ask', 'community', 'compare', 'explore', 'landing', 'library', 'metric-sheet', 'product-page', 'services', 'today', 'you']);
     for (const s of WEB_SCREENS) {
       expect(tipsToShow(s, () => true).length).toBeLessThanOrEqual(2);
       for (const t of s.tips) {
@@ -252,6 +287,13 @@ describe('website registry and placement', () => {
         expect(t.text.match(/[.!?]/g)).toHaveLength(1);
       }
     }
+  });
+  it('phone landing: no room below, the search right above: the bubble goes above the search', () => {
+    const anchor = { left: 16, top: 380, width: 343, height: 56, right: 359, bottom: 436 };
+    const search = { left: 16, top: 300, width: 343, height: 52, right: 359, bottom: 352 };
+    const p = placeBubble(anchor, { w: 320, h: 150 }, { vw: 375, vh: 667, avoid: [search], bottomInset: 140 });
+    expect(p.side).toBe('above');
+    expect(p.top + 150).toBeLessThanOrEqual(search.top);
   });
   it('desktop: beside the anchor, never under the top nav', () => {
     const anchor = { left: 64, top: 166, width: 720, height: 52, right: 784, bottom: 218 };

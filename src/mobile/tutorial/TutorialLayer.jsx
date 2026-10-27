@@ -23,7 +23,10 @@ import { localDayKey } from '../../utils/localDate.js';
  * `surface`: 'app' (src/mobile, the default) or 'web' (src/App.jsx). The web
  * reads its own screens (tips.js WEB_SCREENS) off `.app-container`, keeps
  * bubbles clear of the top nav, and on desktop puts them beside the anchor.
- * `ready` (web): setup is done; before that nothing shows.
+ * `ready`: she has a health profile. Without one, tips about her own data
+ * (tips.js `profile: true`: Home rings, streak, For today...) wait; the
+ * landing's welcome tip and the browsing tips (Shop, Services, Library...)
+ * show signed out too (founder Oct 27 03:59).
  */
 const ONBOARDING = new Set(['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready']);
 // Website views that are setup or the landing pages, never a tip.
@@ -48,7 +51,7 @@ const SURFACES = {
   web: {
     host: '.app-container',
     themeOf: (host) => (/dark/.test(host?.dataset.theme || '') ? 'dark' : host ? 'light' : null),
-    onboarding: (host, ready) => !ready || WEB_SETUP.has(host?.dataset.view || ''),
+    onboarding: (host) => WEB_SETUP.has(host?.dataset.view || ''),
     // The header slides away on scroll down; while it shows, nothing goes under it.
     topInset: () => { const nav = document.querySelector('.app-nav-wrap'); return nav && !nav.classList.contains('is-away') ? visibleBottomOf(nav) : 0; },
     bottomInset: () => { const bar = document.querySelector('.app-container nav.ay-tabbar--main'); if (!bar || !bar.getClientRects().length) return 0; const top = bar.getBoundingClientRect().top; return top > 0 && top < window.innerHeight ? window.innerHeight - top : 0; },
@@ -77,6 +80,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
   const openerRef = useRef(null);
   const pendingRef = useRef({ key: '', count: 0 });
   const homeSinceRef = useRef(0);
+  const sinceRef = useRef({ id: '', at: 0 });
   const runRef = useRef(null);
   useLayoutEffect(() => { runRef.current = run; }, [run]);
 
@@ -91,6 +95,8 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
       markTipsSeen(r.tips.map((t) => t.id), r.screenId);
       if (r.tips.some((t) => t.offNote)) markOffNoteShown();
       if (how === 'off') setTipsEnabled(false);
+      // The landing's welcome tip is her first tip: unless she turned them off, tips are on.
+      else if (r.landing && readTour().enabled === null) setTipsEnabled(true);
     } else if (how === 'yes') setTipsEnabled(true);
     else if (how === 'no') setTipsEnabled(false);
     setRun(null);
@@ -119,22 +125,29 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
         onboarding: cfg.onboarding(host, readyRef.current),
         rundownOpen: Boolean(document.querySelector('.ay-rd')),
         foreignDialog: Boolean(dialog && !screen) || cfg.busy(),
+        hasProfile: readyRef.current,
         settled: rundownSettled({ memory: readRundownMemory(), today, now, justOnboarded: onboardingJustFinished({ hours: 12 }), settledMs: homeSinceRef.current ? Date.now() - homeSinceRef.current : 0 }),
       };
       const insets = { topInset: cfg.topInset(), bottomInset: cfg.bottomInset() };
       const usable = (sel) => Boolean(usableAnchor(sel, { dialog, avoid, ...insets }));
       const fresh = { seen: p.seen };
+      // How long this screen has been up (the landing waits out the slider's one-time nudge;
+      // a page's own first tips get a moment to come on screen before its parts go first).
+      const sid = screen?.id || '';
+      if (sinceRef.current.id !== sid) sinceRef.current = { id: sid, at: Date.now() };
+      const upFor = Date.now() - sinceRef.current.at;
       let decision = tourDecision({ screen, ...base });
       // After the page's own first tips: its parts (tips.js `within`) once their root is on the page,
       // then any tip of the page or its parts she hasn't been shown yet that has come on screen
       // (each tip shows once, tracked by id). One group at a time, at most 2 tips.
-      if (decision.kind !== 'welcome' && screen && !(decision.kind === 'tips' && tipsToShow(screen, usable, fresh).length)) {
+      if (decision.kind !== 'welcome' && screen && !(decision.kind === 'tips' && tipsToShow(screen, usable, fresh).length) && (p.seen[screen.id] || upFor > 3000)) {
         const open = (s) => tourDecision({ screen: s, ...base, settled: !screen.rundown || base.settled, prefs: { ...p, seen: {} } }).kind === 'tips';
         // A group seen before tips were tracked one by one (no `v2:` mark) counts as fully seen.
         const groups = [screen, ...partsOf(screen, screens).filter((s) => partPresent(s.root, dialog))].filter((s) => open(s) && (!p.seen[s.id] || p.seen[`v2:${s.id}`]));
         const next = groups.find((s) => !p.seen[s.id] && tipsToShow(s, usable, fresh).length) || groups.find((s) => tipsToShow(s, usable, fresh).length);
         if (next) decision = { kind: 'tips', screen: next };
       }
+      if (decision.kind === 'tips' && decision.screen.waitMs && upFor < decision.screen.waitMs) return;
       const key = decision.kind === 'none' ? '' : `${decision.kind}:${decision.screen?.id || ''}`;
       const pending = pendingRef.current;
       pendingRef.current = key === pending.key ? { key, count: pending.count + 1 } : { key, count: 1 };
@@ -153,7 +166,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
       const tips = tipsToShow(decision.screen, usable, { offNoteShown: p.offNoteShown, seen: p.seen });
       if (!tips.length) return; // try again on a later visit
       openerRef.current = document.activeElement;
-      setRun({ kind: 'tips', screenId: decision.screen.id, tips, index: 0 });
+      setRun({ kind: 'tips', screenId: decision.screen.id, landing: Boolean(decision.screen.landing), tips, index: 0 });
     };
     const id = window.setInterval(tick, POLL_MS);
     return () => window.clearInterval(id);

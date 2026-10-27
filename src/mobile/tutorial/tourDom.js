@@ -78,6 +78,13 @@ export const overlap = (a, b) => Math.max(0, Math.min(a.right, b.right) - Math.m
  * first (`beside`, website desktop). Never over a safety item or an Ask
  * input, never under a fixed header (`topInset`) or tab bar (`bottomInset`).
  */
+function stackAbove(anchor, avoid, { left, w, h }) {
+  const over = (a) => a.right > left && a.left < left + w && a.bottom <= anchor.top + 1 && a.bottom > anchor.top - GAP - h;
+  const blockers = avoid.filter(over);
+  if (!blockers.length) return [];
+  return [{ side: 'above', left, top: Math.min(...blockers.map((a) => a.top)) - GAP - h }];
+}
+
 export function placeBubble(anchor, size, { vw, vh, avoid = [], bottomInset = 0, topInset = 0, beside = false }) {
   const w = size.w;
   const h = size.h;
@@ -92,6 +99,9 @@ export function placeBubble(anchor, size, { vw, vh, avoid = [], bottomInset = 0,
     ] : []),
     { side: 'below', left: centered, top: anchor.bottom + GAP },
     { side: 'above', left: centered, top: anchor.top - GAP - h },
+    // Something to keep clear sits right above the anchor (the landing's search over Slide to start):
+    // go above that too, still pointing down at the anchor, before pinning to an edge.
+    ...stackAbove(anchor, avoid, { left: centered, w, h }),
     { side: 'pin-bottom', left: centered, top: floor - h },
     { side: 'pin-top', left: centered, top: Math.max(EDGE + 40, ceil) },
   ];

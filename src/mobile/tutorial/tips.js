@@ -42,6 +42,17 @@ const pdpParts = (buyText) => [
 
 export const SCREENS = [
   {
+    // Signed out, the first thing on the landing (founder Oct 27 03:59): one welcome tip on
+    // Slide to start. No opt-in needed; it waits out the slider's one-time nudge (waitMs).
+    id: 'landing',
+    root: '[data-tour="landing-start"]',
+    landing: true,
+    waitMs: 2400,
+    tips: [
+      { id: 'landing-start', anchor: '[data-tour="landing-start"] .ay-sts__track', text: 'Welcome to ayna: start here to build your ecosystem.' },
+    ],
+  },
+  {
     id: 'product-page',
     root: '[data-tour="pdp"]',
     tips: [
@@ -61,6 +72,7 @@ export const SCREENS = [
   },
   {
     id: 'metric-sheet',
+    profile: true,
     root: '[data-tour="metric-sheet"]',
     tips: [
       { id: 'metric-range', anchor: '[data-tour="metric-sheet"] .ay-db-range', text: 'Switch between 7, 30 and 90 days.' },
@@ -94,6 +106,7 @@ export const SCREENS = [
   },
   {
     id: 'home',
+    profile: true,
     root: '[data-tour="home"]',
     rundown: true,
     welcome: true,
@@ -104,6 +117,7 @@ export const SCREENS = [
   },
   {
     id: 'home-streak',
+    profile: true,
     within: 'home',
     root: '[data-tour="home"] [data-tour="streak"]',
     tips: [
@@ -116,11 +130,12 @@ export const SCREENS = [
     root: '[data-tour="home"] [data-tour="saved-heart"]',
     tips: [
       { id: 'saved-heart', anchor: '[data-tour="home"] [data-tour="saved-heart"]', text: 'Everything you save is under the heart.' },
-      { id: 'profile-button', anchor: '[data-tour="home"] [data-tour="profile-button"]', text: 'Your photo opens your profile and Settings.' },
+      { id: 'profile-button', anchor: '[data-tour="home"] [data-tour="profile-button"]', text: 'Tap here for your profile and Settings.' },
     ],
   },
   {
     id: 'home-links',
+    profile: true,
     within: 'home',
     root: '[data-tour="home"] [data-tour="home-links"]',
     tips: [
@@ -129,6 +144,7 @@ export const SCREENS = [
   },
   {
     id: 'home-views',
+    profile: true,
     within: 'home',
     root: '[data-tour="home"] [data-tour="home-views"]',
     tips: [
@@ -137,6 +153,7 @@ export const SCREENS = [
   },
   {
     id: 'home-today',
+    profile: true,
     within: 'home',
     root: '[data-tour="home"] [data-tour="deck"]',
     tips: [
@@ -146,6 +163,7 @@ export const SCREENS = [
   {
     // Only when she has more than one thing for today (the titles of the cards behind).
     id: 'home-deck-titles',
+    profile: true,
     within: 'home',
     root: '[data-tour="home"] [data-tour="deck-titles"]',
     tips: [
@@ -154,6 +172,7 @@ export const SCREENS = [
   },
   {
     id: 'home-routine',
+    profile: true,
     within: 'home',
     root: '[data-tour="home"] [data-tour="routine"]',
     tips: [
@@ -163,6 +182,7 @@ export const SCREENS = [
   },
   {
     id: 'health-data',
+    profile: true,
     root: '[data-tour="health-data"]',
     tips: [
       { id: 'data-rings', anchor: '[data-tour="health-data"] [data-tour="score-rings"]', text: 'Tap a ring to open its detail.' },
@@ -243,6 +263,17 @@ export const SCREENS = [
  */
 export const WEB_SCREENS = [
   {
+    // Signed out, the first thing on the landing (founder Oct 27 03:59): one welcome tip on
+    // Slide to start. No opt-in needed; it waits out the slider's one-time nudge (waitMs).
+    id: 'landing',
+    root: '[data-tour="landing-start"]',
+    landing: true,
+    waitMs: 2400,
+    tips: [
+      { id: 'landing-start', anchor: '[data-tour="landing-start"] .ay-sts__track', text: 'Welcome to ayna: start here to build your ecosystem.' },
+    ],
+  },
+  {
     id: 'product-page',
     root: '[data-tour="pdp"]',
     tips: [
@@ -253,6 +284,7 @@ export const WEB_SCREENS = [
   ...pdpParts('Buy it, or save it for later.'),
   {
     id: 'metric-sheet',
+    profile: true,
     root: '[data-tour="metric-sheet"]',
     tips: [
       { id: 'metric-range', anchor: '[data-tour="metric-sheet"] .ay-db-range', text: 'Switch between 7, 30 and 90 days.' },
@@ -269,6 +301,7 @@ export const WEB_SCREENS = [
   },
   {
     id: 'today',
+    profile: true,
     root: '[data-tour="today"]',
     rundown: true,
     welcome: true,
@@ -280,6 +313,7 @@ export const WEB_SCREENS = [
   {
     // With health data the rings lead and the Rundown card can sit lower: its tip then comes on scroll.
     id: 'today-rundown',
+    profile: true,
     within: 'today',
     root: '[data-tour="today"] [data-tour="rundown-card"]',
     tips: [
@@ -288,6 +322,7 @@ export const WEB_SCREENS = [
   },
   {
     id: 'today-more',
+    profile: true,
     within: 'today',
     root: '[data-tour="today"] [data-tour="today-things"]',
     tips: [
@@ -302,7 +337,7 @@ export const WEB_SCREENS = [
     root: '.app-nav-wrap .ay-nav__heart',
     tips: [
       { id: 'saved-heart', anchor: '.app-nav-wrap .ay-nav__heart', text: 'Everything you save is under the heart.' },
-      { id: 'profile-button', anchor: '.app-nav-wrap .ay-avatar', text: 'Your photo opens your profile and Settings.' },
+      { id: 'profile-button', anchor: '.app-nav-wrap .ay-avatar', text: 'Tap here for your profile and Settings.' },
     ],
   },
   {
@@ -390,6 +425,7 @@ export const AVOID = [
   '.ay-today__item.is-safety', '.ay-today__item.is-care', '.ay-pdp-safetyflag', '.ay-psheet__hold',
   '[data-tour-avoid]', '[role="alert"]',
   '.ay-asksheet__form', '.ay-asksheet .ay-askp-composer', '.ay-ask-input',
+  '.lsx-search',
 ];
 /** The website adds its own: the product page's safety hold and cautions, and the Ask composer. */
 export const WEB_AVOID = [
@@ -416,8 +452,13 @@ export function rundownSettled({ memory = {}, today, now = new Date(), justOnboa
  * What the overlay should do for the screen she's on.
  * @returns {{ kind: 'none' } | { kind: 'welcome' } | { kind: 'tips', screen }}
  */
-export function tourDecision({ screen, prefs, today, onboarding = false, rundownOpen = false, foreignDialog = false, settled = true } = {}) {
-  if (!screen || !prefs || onboarding || rundownOpen || foreignDialog) return { kind: 'none' };
+export function tourDecision({ screen, prefs, today, onboarding = false, rundownOpen = false, foreignDialog = false, settled = true, hasProfile = true } = {}) {
+  if (!screen || !prefs || rundownOpen || foreignDialog) return { kind: 'none' };
+  // The landing's welcome tip: before setup, no opt-in asked; Turn off tips still wins.
+  if (screen.landing) return prefs.enabled === false || prefs.seen[screen.id] ? { kind: 'none' } : { kind: 'tips', screen };
+  if (onboarding) return { kind: 'none' };
+  // Tips about her own data (Home rings, streak, For today...) wait until she has a profile.
+  if (screen.profile && !hasProfile) return { kind: 'none' };
   if (screen.rundown && !settled) return { kind: 'none' };
   if (prefs.enabled === null) {
     if (!screen.welcome || prefs.welcomeDay === today) return { kind: 'none' };

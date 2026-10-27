@@ -18,7 +18,7 @@ const THUMB = 56;
 const PAD = 6;
 const DONE_AT = 0.7;
 
-export default function SlideToStart({ label = 'Slide to get your matches', actionLabel = 'Get my matches', hint = 'or tap to start', onComplete, tone = 'butter', className = '', id }) {
+export default function SlideToStart({ label = 'Slide to get your matches', actionLabel = 'Get my matches', hint = 'or tap to start', onComplete, tone = 'butter', className = '', id, tour }) {
   const trackRef = useRef(null);
   const drag = useRef({ on: false, x0: 0, moved: false, done: false });
   const [pos, setPos] = useState({ x: 0, p: 0 });
@@ -68,7 +68,7 @@ export default function SlideToStart({ label = 'Slide to get your matches', acti
   };
 
   return (
-    <div className={`ay-sts is-${tone}${className ? ` ${className}` : ''}`} id={id}>
+    <div className={`ay-sts is-${tone}${className ? ` ${className}` : ''}`} id={id} data-tour={tour}>
       <button
         ref={trackRef}
         type="button"
