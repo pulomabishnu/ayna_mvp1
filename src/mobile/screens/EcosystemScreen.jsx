@@ -419,7 +419,7 @@ export default function EcosystemScreen({
         </button></li>
       </ul>
     </section>
-    <LegalFooter />
+    <LegalFooter strip />
 
     {sheet && forYou.length > 0 && <div className="eco-app-sheet" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) setSheet(false); }}>
       <div className="eco-app-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="eco-app-sheet-title">

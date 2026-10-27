@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import BrandStrip from './ui/ay/BrandStrip.jsx';
 import BackLink from './nav/BackLink.jsx';
 import ProductCard from './ProductCard';
 import SuggestBox from './SuggestBox';
@@ -1373,8 +1372,6 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           </nav>
         </div>
       </header>
-      {/* The signature divider under the Library head (founder, Oct 27 13:20). */}
-      <BrandStrip className="lb-strip" />
       {results && <div className="lb-wrap"><SearchAssist query={query} resultCount={results.length} onUse={setQuery} /></div>}
       <div className="lb-wrap lb-body">{body}</div>
       <div className="lb-wrap"><SuggestBox mode="read" context="library" className="ct-suggest" /></div>

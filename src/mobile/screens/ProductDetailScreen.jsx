@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import BrandStrip from '../../components/ui/ay/BrandStrip.jsx';
 import { trackApp } from '../utils/appAnalytics.js';
 import { PANEL_ICONS } from '../components/pdpIcons.jsx';
 import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../../data/products.js';
@@ -518,6 +519,8 @@ export default function ProductDetailScreen({
 
         </div>
 
+        {/* The signature divider between the product and More like this (founder, Oct 27 13:44). */}
+        {related.more.length > 0 && <BrandStrip className="ay-pdp-strip" />}
         {related.more.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-more">
           <div className="ay-pdp-sechead"><h2 id="ay-pdp-related-more">More like this for you</h2><p>{related.personal ? 'Picks that fit your profile.' : 'For the same needs, from other parts of the shop.'}</p></div>
           <div className="ay-shelf2-row">{related.more.slice(0, 3).map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>

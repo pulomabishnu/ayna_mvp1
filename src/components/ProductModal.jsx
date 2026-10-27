@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import BrandStrip from './ui/ay/BrandStrip.jsx';
 import { PlateName } from './cards/CardBits.jsx';
 import { SnapCarousel } from './ui/ay/index.js';
 import { useResearchState } from '../data/researchLoader';
@@ -907,6 +908,8 @@ export default function ProductModal({
           </section>
         )}
 
+        {/* The signature divider between the product and More like this (founder, Oct 27 13:44). */}
+        {suggestions.more.length > 0 && <BrandStrip size="lg" className="ayp-strip" />}
         {suggestions.more.length > 0 && (
           <section className="ay-section ay-shelf ayp-more" aria-labelledby="pdp-more-h">
             <div className="ay-shelf__head">
