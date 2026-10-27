@@ -1,0 +1,154 @@
+/* The Daily Rundown and weekly recap cards (RundownStory.jsx, DataCharts.jsx), on the shared story shell (../story/story.css). */
+
+/* the old variables, for the app's product quick actions inside the story (ayna-home.css) */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) { --rd-bg: var(--s-bg); --rd-ink: var(--s-fg); --rd-soft: var(--s-muted); --rd-hair: var(--s-track); --rd-accent: var(--s-btn); --rd-on-accent: var(--s-on-btn); }
+
+/* buttons */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-primary { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; margin: 0; padding: 0 24px; box-sizing: border-box; border: 0; border-radius: 999px; background: var(--s-btn); color: var(--s-on-btn); box-shadow: 3px 3px 0 var(--s-pink); font: 600 16px/1.2 var(--s-ui); letter-spacing: 0; text-transform: none; text-decoration: none; cursor: pointer; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-primary:active { transform: translate(3px, 3px); box-shadow: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-link { display: inline-flex; align-items: center; min-height: 44px; margin: 0; padding: 0 2px; border: 0; background: none; box-shadow: none; color: var(--s-fg); font: 600 15px/1.2 var(--s-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-basis { margin: 0; max-width: 40ch; font: 500 14px/1.45 var(--s-ui); color: var(--s-muted); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-basis a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-note { margin: 0; font: 600 14px/1.4 var(--s-ui); color: var(--s-fg); }
+
+/* answers: big, thumb-sized, one tap */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-choices > p { grid-column: 1 / -1; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-chip { min-height: 56px; margin: 0; padding: 0 12px; border: 1.5px solid var(--s-line); border-radius: 16px; background: transparent; color: var(--s-fg); box-shadow: none; font: 600 16px/1.2 var(--s-ui); cursor: pointer; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-chip[aria-pressed='true'] { background: var(--s-btn); color: var(--s-on-btn); }
+
+/* the working, one tap away */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-more { display: grid; gap: 10px; margin: 0; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-more > summary { display: inline-flex; align-items: center; min-height: 44px; width: max-content; cursor: pointer; list-style: none; font: 600 15px/1.2 var(--s-ui); color: var(--s-fg); text-decoration: underline; text-underline-offset: 3px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-more > summary::-webkit-details-marker { display: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-more[open] { padding: 4px 16px 16px; border: 1.5px solid var(--s-line); border-radius: 16px; background: var(--s-panel); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ay-rd-facts, .ay-rd-steps) { display: grid; gap: 8px; margin: 0; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ay-rd-facts, .ay-rd-steps) div { display: grid; gap: 2px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ay-rd-facts, .ay-rd-steps) dt { font: 600 13px/1.3 var(--s-ui); color: var(--s-muted); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ay-rd-facts, .ay-rd-steps) dd { margin: 0; font: 500 15px/1.4 var(--s-ui); color: var(--s-fg); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-nu { display: grid; gap: 8px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-nu__list { display: flex; flex-wrap: wrap; gap: 8px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-nu__list .ay-rd-chip { min-height: 44px; border-radius: 999px; font-size: 15px; }
+
+/* the foot: Ask why + the quiet "…" */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-foot { display: flex; align-items: center; gap: 12px; min-height: 44px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-menu { position: relative; margin-left: auto; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-menu > summary { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--s-fg); cursor: pointer; list-style: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-menu > summary::-webkit-details-marker { display: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-menu > summary svg { width: 22px; height: 22px; fill: currentColor; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-menu .ay-today__menulist { position: absolute; right: 0; bottom: calc(100% + 6px); z-index: 5; display: grid; gap: 8px; width: max-content; max-width: min(300px, calc(100vw - 48px)); padding: 12px; border: 1.5px solid var(--s-line); border-radius: 16px; background: var(--s-bg); color: var(--s-fg); }
+
+/* opening: today's date, huge */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-date { justify-items: start; width: 100%; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-date b { font-size: clamp(150px, 48vw, 200px); line-height: .8; }
+/* a stat: the number, and the week as day dots when it is about days */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-stat { display: grid; gap: 20px; width: 100%; justify-items: start; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-week { display: flex; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-week li { display: grid; justify-items: center; gap: 6px; font: 600 13px/1 var(--s-ui); color: var(--s-muted); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-week i { width: 28px; height: 28px; box-sizing: border-box; border: 1.5px solid var(--s-line); border-radius: 50%; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-week .is-on i { background: var(--s-pink); }
+/* a read: its real photo */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-photo { width: 100%; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-photo img { display: block; width: 100%; aspect-ratio: 4 / 3; max-height: 34vh; object-fit: cover; border-radius: 16px; }
+/* community: the post's own words, in a panel */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-quote { width: 100%; margin: 0; padding: 20px; box-sizing: border-box; border: 1.5px solid var(--s-line); border-radius: 16px; background: var(--s-panel); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-quote p { margin: 0; font: 700 22px/1.25 var(--s-display); letter-spacing: -.01em; color: var(--s-fg); }
+/* a list of changes */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-lines { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-lines li { padding: 12px 0; border-top: 1px solid var(--s-track); font: 600 16px/1.35 var(--s-ui); }
+
+/* match and saved: the founder's product card, big, then its actions */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-product { display: grid; gap: 12px; justify-items: stretch; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-product > :is(.ay-pcard, .product-card, article):first-child { width: min(100%, 260px); justify-self: center; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-meter { display: inline-flex; align-items: center; gap: 4px; justify-self: center; font: 600 13px/1 var(--s-ui); color: var(--s-fg); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-meter i { width: 6px; height: 14px; border-radius: 999px; border: 1.5px solid var(--s-line); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-meter[data-level='1'] i:nth-child(-n+1), .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-meter[data-level='2'] i:nth-child(-n+2), .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-meter[data-level='3'] i:nth-child(-n+3) { background: var(--s-fg); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-meter b { margin-left: 4px; font-weight: 600; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-holdline { margin: 0; font: 500 14px/1.4 var(--s-ui); color: var(--s-fg); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-hold { display: block; font-weight: 700; }
+
+/* the Ask card: her questions as big rows */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-asks ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-asks button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 64px; margin: 0; padding: 12px 16px; box-sizing: border-box; border: 1.5px solid var(--s-line); border-radius: 16px; background: transparent; color: var(--s-fg); box-shadow: none; text-align: left; font: 600 17px/1.3 var(--s-ui); cursor: pointer; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-asks button:active { background: var(--s-panel); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-asks svg { flex: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-ask .ays-card { justify-content: center; }
+
+/* ---------- data graphics (DataCharts.jsx) ---------- */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-viz { display: grid; gap: 14px; justify-items: start; width: 100%; margin: 0; padding: 0; list-style: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-viz svg { display: block; width: 100%; height: auto; overflow: visible; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-viz text { font-family: var(--s-ui); fill: var(--s-muted); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; font: 600 13px/1.3 var(--s-ui); color: var(--s-muted); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key.is-row { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key :is(li, span) { display: inline-flex; align-items: center; gap: 6px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i { flex: none; width: 12px; height: 12px; box-sizing: border-box; border-radius: 50%; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-period, .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-dot { background: var(--s-pink); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-window { height: 4px; width: 16px; border-radius: 999px; background: var(--s-blue); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-today { background: var(--s-fg); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-band { width: 18px; height: 10px; border-radius: 999px; background: var(--s-track); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-usual { width: 18px; height: 0; border-radius: 0; border-top: 2px dashed var(--s-blue); }
+
+/* steps */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-axis { font-size: 13px; font-weight: 600; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-axis.is-today { font-weight: 800; fill: var(--s-fg); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-bar { fill: var(--s-fg); opacity: .9; transform-box: fill-box; transform-origin: 50% 100%; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-bar.is-today { fill: var(--s-pink); opacity: 1; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-miss { fill: none; stroke: var(--s-muted); stroke-width: 1.5; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-usual { stroke: var(--s-blue); stroke-width: 2; stroke-dasharray: 6 5; }
+
+/* rings (the Your data dials) */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-ringwrap { justify-items: center; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-ringbox { position: relative; display: block; width: min(220px, 56vw); aspect-ratio: 1; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-ring { position: absolute; inset: 0; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-track { fill: none; stroke: var(--s-track); stroke-width: 10; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-arc { fill: none; stroke: var(--s-pink); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 100; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-arc.is-over { stroke: var(--s-fg); stroke-width: 5; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-seg { fill: none; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 1; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-seg.is-period { stroke: var(--s-pink); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-seg.is-window { stroke: var(--s-blue); stroke-width: 4; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-today { fill: var(--s-fg); stroke: var(--s-bg); stroke-width: 3; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-center { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 2px; text-align: center; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-center b { font: 700 40px/1 var(--s-display); letter-spacing: -.02em; color: var(--s-fg); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-center small { font: 600 14px/1.2 var(--s-ui); color: var(--s-muted); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-dots { display: flex; gap: 8px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-dots i { width: 14px; height: 14px; box-sizing: border-box; border-radius: 50%; border: 1.5px solid var(--s-line); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-dots i.is-on { background: var(--s-pink); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-done { justify-items: center; }
+
+/* period: the days as dots */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-days { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-tile { display: grid; place-items: center; width: 40px; height: 40px; box-sizing: border-box; border: 1.5px solid var(--s-line); border-radius: 50%; font: 700 15px/1 var(--s-ui); color: var(--s-fg); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-tile.is-done { background: var(--s-pink); border-color: var(--s-pink); color: #3e2723; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-tile.is-today { background: var(--s-fg); color: var(--s-bg); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-tile:is(.is-ahead, .is-gap) { border-style: dashed; color: var(--s-muted); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-tile.is-maybe { border-style: dashed; border-color: var(--s-pink); }
+
+/* heart and other signals: her range as a band, the latest a dot */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-axisline { stroke: var(--s-track); stroke-width: 1.5; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-band { fill: var(--s-track); transform-box: fill-box; transform-origin: center; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-dot { fill: var(--s-pink); stroke: var(--s-fg); stroke-width: 2; }
+
+/* since yesterday: three numbers */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-deltas { grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); justify-items: stretch; gap: 8px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-deltas li { display: grid; gap: 6px; padding: 14px 12px; border: 1.5px solid var(--s-line); border-radius: 16px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-delta-label { font: 600 13px/1.2 var(--s-ui); color: var(--s-muted); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-deltas b { font: 700 26px/1 var(--s-display); color: var(--s-fg); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-delta { display: inline-flex; align-items: center; gap: 4px; font: 600 13px/1.2 var(--s-ui); color: var(--s-fg); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-delta svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* period check: answers in one row */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-check { grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); }
+
+/* the one chart motion (off in still mode and reduced motion) */
+@keyframes ay-rdd-grow { from { transform: scaleY(0); } }
+@keyframes ay-rdd-draw { from { stroke-dashoffset: 100; } }
+@keyframes ay-rdd-draw1 { from { stroke-dashoffset: 1; } }
+@keyframes ay-rdd-wipe { from { transform: scaleX(0); } }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-bar.ay-rdd-anim { animation: ay-rdd-grow 600ms cubic-bezier(.2, .8, .2, 1) both; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-arc.ay-rdd-anim { animation: ay-rdd-draw 800ms cubic-bezier(.2, .8, .2, 1) both; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-seg.ay-rdd-anim { animation: ay-rdd-draw1 700ms cubic-bezier(.2, .8, .2, 1) both; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-band.ay-rdd-anim { animation: ay-rdd-wipe 600ms cubic-bezier(.2, .8, .2, 1) both; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-still .ay-rdd-anim { animation: none; }
+@media (prefers-reduced-motion: reduce) { .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-anim { animation: none; } }
+@media (max-height: 700px) { .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-ringbox { width: min(170px, 46vw); } .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-date b { font-size: 132px; } .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-photo img { max-height: 26vh; } }
