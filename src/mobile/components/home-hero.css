@@ -107,3 +107,8 @@
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-today.is-compact > :is(.ay-hhl, [data-tour='home-links'], .ay-tv) { margin: 0 !important; }
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-today.is-compact > :empty { display: none !important; }
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-tv__panel { gap: 16px !important; }
+
+/* Founder 01:09 (her iPhone): butter "borders" showed either side of the hero. Another layer gave .ay-hh a
+   20px side margin; the band is full-bleed, edge to edge, with the wavy foot. */
+.ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-hh { margin-left: 0 !important; margin-right: 0 !important; width: 100% !important; max-width: none !important; border-radius: 0 !important; }
+.ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-hh__band { padding-left: var(--d-gutter, 20px) !important; padding-right: var(--d-gutter, 20px) !important; border-radius: 0 !important; }
