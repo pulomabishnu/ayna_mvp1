@@ -76,8 +76,4 @@
   :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop .ayshop__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; padding: 0 4px 4px 0; }
 }
 
-/* Calm (founder Oct 27 11:40): Services uses this header's layout on the page colour (butter in light,
-   espresso in dark) with a 1.5px wavy rule. Shop alone keeps the approved pink band. */
-:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container[data-view='explore-services'] .ayshop-hero { --sh-pink: var(--ay-calm-page); --sh-ink: var(--ay-calm-fg); --sh-butter: var(--ay-calm-box); border-top: 0; }
-:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container[data-view='explore-services'] .ayshop-hero::after { top: calc(100% - 6px); height: 12px; background: var(--ay-calm-line); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6Q10 0 20 6T40 6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") 0 0 / 40px 12px repeat-x; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6Q10 0 20 6T40 6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") 0 0 / 40px 12px repeat-x; }
-:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container[data-view='explore-services'] .ayshop-hero .ayshop__search input[type='search']::placeholder { color: var(--ay-calm-fg-muted) !important; }
+/* Services shares the Shop's pink band (founder Oct 27 18:35: Library and Services match the Shop). */

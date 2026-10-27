@@ -53,3 +53,11 @@ button.ay-rtl__row:focus-visible { outline: 2px solid currentColor; outline-offs
 /* Dark: the --ay-calm-* tokens invert the sections (espresso, butter text and outline). */
 /* The pink "Now" chip keeps espresso ink (a page rule made em inherit butter in dark, 1.4:1). */
 html body :is(#rtl1, .app-container, .ayna-mobile):is(#rtl2, .app-container, .ayna-mobile) .ay-rtl .ay-rtl__when em { color: #3e2723 !important; background: #f7badd !important; }
+
+/* "Now" chip, tidy (founder Oct 27 18:36 "wtf is this"): UI font, not the heading font; even padding,
+   thin outline, centred, a small gap before the section name. */
+html body :is(#rtl1, .app-container, .ayna-mobile):is(#rtl2, .app-container, .ayna-mobile):is(#rtl3, .app-container, .ayna-mobile) .ay-rtl .ay-rtl__when em {
+  display: inline-flex !important; align-items: center !important; height: 24px !important; box-sizing: border-box !important; padding: 0 10px !important; margin: 0 8px 0 0 !important;
+  border: 1px solid #3e2723 !important; border-radius: 999px !important; vertical-align: 2px !important;
+  font-family: var(--ay-font-ui, 'Figtree', sans-serif) !important; font-size: 13px !important; font-weight: 600 !important; font-style: normal !important; line-height: 1 !important; letter-spacing: 0 !important; text-transform: none !important;
+}

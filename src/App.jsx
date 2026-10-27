@@ -158,8 +158,10 @@ import './styles/web-wide.css';
 // The nav's profile-button rules live here (the suggestions row itself is app only).
 import './components/nav/ask-suggest.css';
 import './styles/page-heads.css';
+import './styles/library-head.css';
 import './styles/no-vibe.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
+import ProLock from './components/ProLock.jsx';
 import { readHomeLook } from './mobile/components/homeLook.js';
 import { webHomeView } from './mobile/utils/navTab.js';
 // Keep the ?homestyle=a|b preview pick before the router rewrites the address (Today loads lazily).
@@ -195,7 +197,8 @@ import { trackQuizStarted, trackFirstMatchShown, eventSurface } from './utils/an
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
 // Today · Shop · Services · Community · Library (founder, Oct 26). Shop keeps the 'explore' key.
 const WEB_TAB_VIEWS = {
-  today: ['today'],
+  // Website Home = My ecosystem (founder, Oct 27 18:34).
+  today: ['today', 'ecosystem'],
   explore: ['explore', 'explore-topics', 'discovery', 'product'],
   services: ['explore-services'],
   library: ['articles'],
@@ -2413,7 +2416,8 @@ function App() {
     if (currentView !== 'welcome' && currentView !== 'hero') { landingPinnedRef.current = false; return; }
     if (landingPinnedRef.current) return;
     if (!user || !quizResults || authLoading || dataLoading || showWrapped) return;
-    setCurrentView('today', { replace: true });
+    // The website's Home is My ecosystem (founder, Oct 27 18:34); the health dashboard is in the app.
+    setCurrentView('ecosystem', { replace: true });
   }, [currentView, user, quizResults, authLoading, dataLoading, showWrapped, setCurrentView]);
 
   // Signed out, Today is never shown from a cold load, reload, Back or a link,
@@ -2755,7 +2759,22 @@ function App() {
           <DeleteAccountPage onBack={() => setCurrentView('you')} />
         )}
         {/* Today: the first main tab and the home for signed-in accounts. Same page /health showed. */}
-        {currentView === 'today' && (
+        {/* Website, signed in: the health dashboard lives in the ayna app with ayna Pro (founder, Oct 27 18:34).
+            Home here is My ecosystem; this page explains where the dashboard is. Guests keep Today. */}
+        {currentView === 'today' && user && (
+          <div className="ay-container wx-dashlock">
+            <ProLock
+              feature="wearables"
+              title="Your health dashboard"
+              context="On the ayna app, with ayna Pro"
+              line="Your cycle, sleep and activity dashboard lives in the ayna app on your phone. Connect Apple Health, Health Connect or Oura there with ayna Pro."
+              onNotNow={handleViewEcosystem}
+            >
+              <p className="wx-dashlock__alt"><button type="button" className="ct-link" onClick={handleViewEcosystem}>Go to My ecosystem</button></p>
+            </ProLock>
+          </div>
+        )}
+        {currentView === 'today' && !user && (
           <div className="wx-today" data-tour="today">
             {React.cloneElement(webHealth, {
               title: 'Home',

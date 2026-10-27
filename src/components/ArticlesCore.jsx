@@ -1344,8 +1344,16 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         sub: said.length > 0 ? `Based on what you told us: ${said.map((x) => x.toLowerCase()).join(', ')}` : null,
         extra: forYou.length > 3 ? <button type="button" className="lb-seeall" onClick={() => setTopic('foryou')}>See all {forYou.length}</button> : null,
       })}
-      {/* The featured read isn't repeated in its topic shelf (P1-25). */}
-      {rows.map((r) => shelf(r.id, r.label, shelfItems(r), { seeAll: () => { setTopic(r.id); window.scrollTo({ top: 0 }); } }))}
+      {/* Every read in one even grid, like the Shop (founder Oct 27 18:34: "i still hate the library").
+          Topic shelves left lone cards on half-empty rows; the topic chips above filter instead.
+          Ordered by topic, each card says its topic. The featured reads aren't repeated (P1-25). */}
+      {(() => {
+        const all = rows.flatMap((r) => shelfItems(r)).filter((a, i, arr) => arr.findIndex((x) => x.id === a.id) === i && !FEATURED_READS.some((f) => f.id === a.id));
+        return all.length > 0 && <section id="lib-all" className="lb-shelf lb-shelf--grid lb-allgrid" aria-labelledby="lib-all-h">
+          <header className="lb-shelf__head"><h2 id="lib-all-h" className="lb-shelf__title">All reads</h2><span className="lb-shelf__sub">{all.length} reads</span></header>
+          <ul className="lb-shelf__row">{cards(all)}</ul>
+        </section>;
+      })()}
     </>;
   }
 
@@ -1361,28 +1369,23 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           <a href="/explore/resources" className="ay-btn ay-btn--primary" onClick={(e) => { e.preventDefault(); onArticleChange?.(null); }}>See all reads</a>
         </div></div>
       )}
-      <header className="lb-top">
-        <div className="lb-wrap lb-top__grid">
-          <div className="lb-top__main">
-            <h1 className="lb-top__title">Quick reads about <span className="lb-hl">your body</span></h1>
-            <p className="lb-top__lede">Plain-language reads on women&apos;s health, written by the ayna team. Each read lists the sources it uses.</p>
-            <label className="lb-search">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-              <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={libPlaceholder} aria-label="Search reads" />
-            </label>
-          </div>
+      {/* Library head = the Shop's head (founder Oct 27 18:35: "make library and services match the
+          aesthetic of the shop"): pink band, wavy edge, centred title, the wide search, one row of topics. */}
+      <header className="lb-top lb-shophead">
+        <h1 className="lb-top__title">Quick reads about your body.</h1>
+        <label className="lb-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+          <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={libPlaceholder} aria-label="Search reads" />
+          {/* The round arrow, as on the Shop search: jumps to the results. */}
+          <button type="button" className="lb-search-go" aria-label="Show results" onClick={() => document.querySelector('.lb-lib .lb-body')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button>
+        </label>
+        <div className="lb-topics" role="group" aria-label="Filter reads by topic">
+          <button type="button" className="lb-topic" aria-pressed={!results && topic === 'all'} onClick={() => pickTopic('all')}>All</button>
+          {hasProfile && forYou.length > 0 && <button type="button" className="lb-topic" aria-pressed={!results && topic === 'foryou'} onClick={() => pickTopic('foryou')}>For you</button>}
+          {rows.map((r) => <button key={r.id} type="button" className="lb-topic" aria-pressed={!results && topic === r.id} onClick={() => pickTopic(r.id)}>{r.label}</button>)}
         </div>
       </header>
       {results && <div className="lb-wrap"><SearchAssist query={query} resultCount={results.length} onUse={setQuery} /></div>}
-      {/* Topics: one row of chips that filters the reads (founder, Oct 27: "library needs to be easier to nav").
-          It scrolls sideways on a phone and moves with the page (no sticky). */}
-      <div className="lb-wrap lb-topicwrap">
-        <div className="lb-topics" role="group" aria-label="Filter reads by topic">
-          <button type="button" className="lb-topic" aria-pressed={!results && topic === 'all'} onClick={() => pickTopic('all')}>All <span className="lb-topic__n">{ARTICLES.length}</span></button>
-          {hasProfile && forYou.length > 0 && <button type="button" className="lb-topic" aria-pressed={!results && topic === 'foryou'} onClick={() => pickTopic('foryou')}>For you <span className="lb-topic__n">{forYou.length}</span></button>}
-          {rows.map((r) => <button key={r.id} type="button" className="lb-topic" aria-pressed={!results && topic === r.id} onClick={() => pickTopic(r.id)}>{r.label} <span className="lb-topic__n">{r.items.length}</span></button>)}
-        </div>
-      </div>
       <div className="lb-wrap lb-body">{body}</div>
       <div className="lb-wrap"><SuggestBox mode="read" context="library" className="ct-suggest" /></div>
     </section>

@@ -69,3 +69,8 @@
   .ay-med-wrap .ay-med-note__full { display: none; }
   .ay-med-wrap .ay-med-note__short { display: inline; }
 }
+
+/* Saved heart gets the same outline as Ask ayna (founder Oct 27 18:34: "the saves needs a border around it"). */
+.ay-header-heart, .app-container.app-container .ay-nav__actions .ay-nav__heart, .ay-nav__heart { box-sizing: border-box; border: 1.5px solid currentColor !important; }
+.ay-header-heart .ay-heart-count, .ay-nav__heart .ay-heart-count { top: -6px; right: -6px; }
+.app-container .wx-dashlock { max-width: 720px; margin: 48px auto 80px; } .app-container .wx-dashlock__alt { margin: 12px 0 0; }

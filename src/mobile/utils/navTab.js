@@ -78,5 +78,6 @@ export function showsEmptyHome({ screen, view = null, variant = 'dashboard', sig
  * hands over to the landing if she turns out to be signed out).
  */
 export function webHomeView({ signedIn = false, authLoading = false } = {}) {
-  return signedIn || authLoading ? 'today' : 'welcome';
+  // Signed in, the website's Home is My ecosystem (founder, Oct 27 18:34).
+  return signedIn || authLoading ? 'ecosystem' : 'welcome';
 }

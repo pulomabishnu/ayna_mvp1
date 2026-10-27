@@ -104,3 +104,26 @@
 @media (prefers-reduced-motion: reduce) {
   .ay-postcard { animation: none !important; }
 }
+
+/* Community, tidier feed (founder Oct 27 18:34: "some posts are taking up the entire screen and there's a
+   lot of white space"). In the feed, photos are small square thumbnails in one row (the full photos
+   open with the post); on a wide screen with no right column the feed uses the width as two columns. */
+html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ayna-mobile):is(#cmf3, .app-container, .ayna-mobile) :is(.cm-main > .ay-postcard, .am-feed .ay-postcard, .ay-postcard) :is(.cm-photos, .am-polaroids):not(:has(span.cm-polaroid)) {
+  display: flex !important; flex-wrap: nowrap !important; gap: 8px !important; padding: 0 !important; overflow: hidden;
+}
+html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ayna-mobile):is(#cmf3, .app-container, .ayna-mobile) :is(.cm-photos, .am-polaroids) > button:is(.cm-polaroid, .am-polaroid) {
+  flex: none !important; width: 120px !important; height: 120px !important; max-width: none !important; padding: 0 !important; margin: 0 !important; transform: none !important;
+  border: 1.5px solid #3e2723 !important; border-radius: 12px !important; overflow: hidden; box-shadow: none !important; background: #f6e3a1 !important;
+}
+html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ayna-mobile):is(#cmf3, .app-container, .ayna-mobile) :is(.cm-photos, .am-polaroids) > button:is(.cm-polaroid, .am-polaroid) img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block; }
+@media (max-width: 480px) {
+  html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ayna-mobile):is(#cmf3, .app-container, .ayna-mobile) :is(.cm-photos, .am-polaroids) > button:is(.cm-polaroid, .am-polaroid) { width: 96px !important; height: 96px !important; }
+}
+/* A lighter card: a 3px offset instead of 4, less padding. */
+html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container):is(#cmf4, .app-container) .cm-main > .ay-postcard { box-shadow: 3px 3px 0 #3e2723 !important; padding: 18px 20px !important; }
+@media (min-width: 1100px) {
+  html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container) .cm-layout:has(> .cm-side:empty) { grid-template-columns: 188px minmax(0, 1fr) !important; }
+  html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container) .cm-layout:has(> .cm-side:empty) > .cm-side { display: none !important; }
+  html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container) .cm-layout:has(> .cm-side:empty) > .cm-main { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; column-gap: 20px !important; align-items: start !important; }
+  html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container) .cm-layout:has(> .cm-side:empty) > .cm-main > :not(.ay-postcard) { grid-column: 1 / -1 !important; }
+}
