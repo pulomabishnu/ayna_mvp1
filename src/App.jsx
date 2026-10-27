@@ -4,9 +4,7 @@ import { markOnboardingDone } from './health/onboardingSignal.js';
 import { noteRoutineAdd, noteRoutineRemove } from './health/routineFollowUps.js';
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import './components/AynaLanding';
-// The website's original landing, restored (founder, Oct 27 19:00: "the original website one").
-import AynaLandingClassic from './components/AynaLandingClassic';
+import AynaLanding from './components/AynaLanding';
 import SiteFooter from './components/SiteFooter';
 import ConsentBanner from './components/ConsentBanner';
 // Tips: the app's overlay and store, on the website's screens (src/mobile/tutorial).
@@ -2589,7 +2587,8 @@ function App() {
         <div id="ay-content" tabIndex={-1} />
 
         {(currentView === 'welcome' || currentView === 'hero') && (
-          <AynaLandingClassic
+          <AynaLanding
+            onViewToday={handleViewEcosystem}
             onLogIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
             onViewEcosystem={handleViewEcosystem}
             myProducts={myProducts}

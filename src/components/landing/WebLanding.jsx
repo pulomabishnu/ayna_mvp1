@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import LandingV2 from '../LandingV2.jsx';
 import MedicalNote from '../MedicalNote.jsx';
 import { sentenceCase } from '../../utils/sentenceCase.js';
 import { useRecommendationViews } from '../../utils/recommendationAnalytics';
@@ -432,17 +433,13 @@ export default function WebLanding({ signedIn = false, hasProfile = false, onSta
     <div id="ay-landing" className="ed ed-home hm hm-uq wl">
       <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />
       <BrandBar onOpen={onViewWaitlist} />
-      <Band tone="butter" as="div" className="hm-band wlx-butter">
-        {!home && <Familiar onSearch={onSearch} />}
-        <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
-      </Band>
+      {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the
+          raining pictures and widgets, and use the original website for the rest). */}
+      <div className="wl-classic">
+        <LandingV2 bodyOnly onStartQuiz={home ? onGoHome : onStartQuiz} onViewDiscovery={onViewDiscovery} onOpenProduct={onOpenProduct} onViewArticles={onViewArticles} onViewArticle={onViewArticle} onViewAbout={onViewAbout} onViewWaitlist={onViewWaitlist} onViewCommunity={onViewCommunity} onViewHowItWorks={onViewHowItWorks} onSearch={onSearch} communityPosts={communityPosts} />
+      </div>
       {rest && <>
-      <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} />
-      <BrandStrip className="wlx-strip" />
-      <ReadsCommunity onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
       <Pro />
-      <BrandStrip className="wlx-strip" />
-      <Founders onViewAbout={onViewAbout} />
       <FinalCta cta={cta} />
       </>}
       <div className="wl-note"><MedicalNote className="wl-note__p" /></div>

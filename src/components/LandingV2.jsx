@@ -524,13 +524,14 @@ function Founders({ onViewAbout }) {
 // `personal` (signed in): the same page with a welcome-back hero, and
 // `personalSlot` (her dashboard row) right under it; `communityPosts` are
 // the most helpful Powder Room posts (two are shown, in the Community card).
-export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, personal = null, personalSlot = null, communityPosts = [], heroBanner = null }) {
+export default function LandingV2({ bodyOnly = false, onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, personal = null, personalSlot = null, communityPosts = [], heroBanner = null }) {
   const rest = useAfterHeroPaint();
   return (
     <div className="ed ed-home hm hm-uq">
       {/* Community posts sit lower down, after how it works, never above the value prop (founder, Oct 24). */}
-      <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} onOpenProduct={onOpenProduct} onViewHowItWorks={onViewHowItWorks} personal={personal} banner={heroBanner} />
-      {personal?.dashboard ? <div className="hm-personal">{personalSlot}</div> : <Brands onViewWaitlist={onViewWaitlist} />}
+      {/* bodyOnly: the website keeps its own hero (the falling pictures) and brand bar above these. */}
+      {!bodyOnly && <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} onOpenProduct={onOpenProduct} onViewHowItWorks={onViewHowItWorks} personal={personal} banner={heroBanner} />}
+      {bodyOnly ? null : personal?.dashboard ? <div className="hm-personal">{personalSlot}</div> : <Brands onViewWaitlist={onViewWaitlist} />}
       {!personal?.dashboard && personalSlot && <div className="hm-personal">{personalSlot}</div>}
       <NeedsBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} onStartQuiz={onStartQuiz} picks={personal?.topPicks || null} signedOut={!personal} />
       {rest && <>
