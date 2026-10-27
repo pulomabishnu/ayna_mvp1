@@ -1,0 +1,62 @@
+/* Focus group fixes, Oct 26 2026 (shared by the website and the app). */
+
+/* 7. iOS Safari zooms the page when a field under 16px gets focus ("the screen
+   occasionally enlarged and required manual scaling"). Every text field in the
+   app, and on the website at phone width, is at least 16px. Display fields
+   that are already bigger (age, ZIP ticket, big search bars) keep their size.
+   Desktop web is unchanged. CSS only; pinch zoom stays allowed on the web.
+   The id boosts match the specificity some page sheets use (shop-hero.css). */
+:is(#fg1, html):is(#fg2, html):is(#fg3, html):is(#fg4, html):is(#fg5, html):is(#fg6, html):is(#fg7, html):is(#fg8, html) body .ayna-mobile :is(input:not([type=checkbox], [type=radio], [type=range], [type=button], [type=submit], [type=reset], [type=file], [type=color], [type=hidden], [type=image]), select, textarea):not(.ip-age-number, .ip-ticket-digits input, .lb-search input, #ay-sl-pl-title, .am-cover-picker input, .ay-hc-search input, .ay-fs-keep) {
+  font-size: 16px !important;
+}
+@media (max-width: 767px) {
+  :is(#fg1, html):is(#fg2, html):is(#fg3, html):is(#fg4, html):is(#fg5, html):is(#fg6, html):is(#fg7, html):is(#fg8, html) body .app-container :is(input:not([type=checkbox], [type=radio], [type=range], [type=button], [type=submit], [type=reset], [type=file], [type=color], [type=hidden], [type=image]), select, textarea):not(.qz-age-field input, .lb-search input, .lx-search__field input, .ay-fs-keep) {
+    font-size: 16px !important;
+  }
+}
+
+/* 2. Multi-select questions say so, right under the question. */
+.ayna-mobile .ip-multi,
+.app-container .qz-page .qz-multi:not(small) {
+  display: inline-flex; align-items: center; gap: 6px; margin: 8px 0 0; padding: 0;
+  font: 600 14px/1.3 var(--ay-font-ui, 'Figtree', sans-serif) !important; color: inherit; opacity: .9;
+}
+
+
+/* 5. Medical note on the opening pages and at the start of the quiz. Calm, not a modal. */
+.ay-med-note { margin: 12px 0 0; font: 500 14px/1.45 var(--ay-font-ui, 'Figtree', sans-serif); color: inherit; opacity: .92; max-width: 46ch; }
+.ay-med-note a { color: inherit !important; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; font-weight: 700; padding-block: 6px; }
+.ay-med-note a:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 4px; }
+
+/* 6. Saved heart with a count, in the app top bar and the website header. */
+.ay-header-heart, .ay-nav__heart {
+  position: relative; display: inline-grid; place-items: center; flex: none; width: 44px; height: 44px; min-width: 44px; padding: 0 !important;
+  border-radius: 50% !important; background: transparent !important; color: inherit; cursor: pointer; text-decoration: none;
+}
+.ay-header-heart svg, .ay-nav__heart svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linejoin: round; }
+.ay-header-heart.has-saved svg, .ay-nav__heart.has-saved svg { fill: #f7badd; }
+.ay-heart-count {
+  position: absolute; top: 2px; right: 0; min-width: 20px; height: 20px; padding: 0 5px; box-sizing: border-box; display: grid; place-items: center;
+  border-radius: 999px; background: #3e2723; color: #ffedac; border: 1.5px solid #ffedac; font: 700 13px/1 var(--ay-font-ui, 'Figtree', sans-serif); pointer-events: none;
+}
+.ayna-mobile[data-theme='dark'] .ay-heart-count, .app-container[data-theme='brand-dark'] .ay-heart-count { background: #ffedac; color: #3e2723; border-color: #3e2723; }
+.ay-header-heart:focus-visible, .ay-nav__heart:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
+
+/* 8. Her photo in the round profile button: cover, in the circle. */
+.ay-pfp-img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.ay-header-profile:has(.ay-pfp-img), .ay-avatar:has(.ay-pfp-img) { overflow: hidden; padding: 0 !important; }
+
+/* Life stage tiles without the line-icon doodles (critique, Oct 27): one even row height, label centred. */
+.ayna-mobile .ayna-play-intake .ip-stickers.is-plain .ip-sticker.ip-sticker { min-height: 60px !important; justify-content: center !important; align-content: center !important; }
+/* The app's generic header-button fill must not turn the heart into a square tile. */
+.ayna-mobile.ayna-mobile .ay-header-actions .ay-header-heart.ay-header-heart {
+  border-radius: 50% !important; background: transparent !important; border: 1.5px solid currentColor !important; box-shadow: none !important;
+  color: var(--ayna-heading, #3e2723) !important; overflow: visible;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-header-actions .ay-header-heart.ay-header-heart { color: #ffedac !important; }
+.ayna-mobile .ay-header-actions .ay-header-heart .ay-heart-count { top: -4px; right: -6px; }
+/* The app's link reset must not hide that "medical advice" is a link. */
+.ayna-mobile.ayna-mobile .ay-med-note.ay-med-note a { text-decoration: underline !important; text-decoration-thickness: 1.5px !important; text-underline-offset: 3px !important; color: inherit !important; }
+/* Website header heart: the same ink as Ask ayna beside it, so it reads on butter and espresso headers. */
+.app-container.app-container .ay-nav__actions .ay-nav__heart { color: var(--ay-text) !important; }
+.app-container.app-container .ay-nav__actions .ay-nav__heart:hover { background: var(--ay-hover) !important; }

@@ -219,7 +219,11 @@ describe('pick lists (quiz medication search, products you used)', () => {
   });
   it('keeps plain prefix behaviour', () => {
     expect(rankSearchOptions('Lex', MEDICATION_SUGGESTIONS, 3)[0]).toBe('Lexapro');
-    expect(rankSearchOptions('vit', MEDICATION_SUGGESTIONS, 5)).toEqual(expect.arrayContaining(['Vitamin D', 'Vitamin B12']));
+    // The list grew (focus group, Oct 26): every top hit is still a "Vitamin" prefix match.
+    const vit = rankSearchOptions('vit', MEDICATION_SUGGESTIONS, 5);
+    expect(vit).toEqual(expect.arrayContaining(['Vitamin D']));
+    expect(vit.every((v) => /^vitamin/i.test(v))).toBe(true);
+    expect(rankSearchOptions('vitamin b1', MEDICATION_SUGGESTIONS, 3)).toContain('Vitamin B12');
   });
   it('filters short option lists typo-tolerantly', () => {
     expect(matchesSearchOption('crmps', 'Cramps or period pain')).toBe(true);

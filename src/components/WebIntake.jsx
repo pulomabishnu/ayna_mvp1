@@ -9,7 +9,7 @@ import {
   CONDITIONS, EMPTY, FOLLOWUP_QUESTIONS, FREE_TEXT_PROMPTS, FSA_HSA, INTAKE_DRAFT_KEY, LARGE_PURCHASE_FREQUENCY, LIFE_STAGES,
   LIFE_STAGE_LABELS, LIFE_STAGE_VALUE_BY_LABEL, MEDICATION_SUGGESTIONS, MIDLIFE_LIFE_STAGES, PERIMENOPAUSE_LAST_PERIOD,
   PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS,
-  STOP_REASONS, SUPPORT_GROUPS, UTI_FREQUENCY, buildSnapshot,
+  STOP_REASONS, SUPPORT_GROUPS, UTI_FREQUENCY, buildSnapshot, isMultiSelectStep,
   getLifeStages, isMinorAge, normalizeSuggestion, readIntakeDraft, reconstructIntakeFromSnapshot,
   requiredReady, missingAnswerHint, FIRST_NAME_MAX, AGE_MIN, AGE_MAX, asksBreastfeedingOnTiming, ttcDurationOptions, resumeStepId, withSavedOption, isValidUsZip, setPerimenopausePeriods, syncPerimenopausePeriods,
 } from '../mobile/data/intakeModel.js';
@@ -23,6 +23,7 @@ import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, SOMETHING_ELSE, getOnboardingStep
 import { CATEGORIES } from '../health/metrics.js';
 import ReadyReveal from './onboarding/ReadyReveal.jsx';
 import BlendScale from './quiz/BlendScale.jsx';
+import MedicalNote from './MedicalNote.jsx';
 import { BRAND_SHORT } from './quiz/blendLabels.js';
 import '../styles/onboarding.css';
 import './WebIntake.audit.css';
@@ -483,16 +484,21 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
         </dl>
         <p className="qz-note">Connecting is never required. Apple Health and Health Connect connect in the ayna app. On the website you can upload a file or connect Oura from You, Health data, once you have an account. Brands never see it.</p>
       </>;
+      // First run: her name is its own screen (critique, Oct 27).
+      case 'name': return <label className="qz-name">
+        <span>Your first name <small>Optional</small></span>
+        <input className="qz-input" type="text" autoComplete="given-name" maxLength={FIRST_NAME_MAX} value={intake.name || ''} onChange={(e) => set('name', e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); next(); } }} />
+      </label>;
       case 'aboutYou':
       case 'age':
       case 'lifeStage': return <>
         {/* Her first name, asked here only (sign-up never asks again). */}
-        {step.type === 'aboutYou' && <label className="qz-name">
+        {step.type === 'aboutYou' && !onboarding && <label className="qz-name">
           <span>Your first name <small>Optional</small></span>
           <input className="qz-input" type="text" autoComplete="given-name" maxLength={FIRST_NAME_MAX} value={intake.name || ''} onChange={(e) => set('name', e.target.value)} />
         </label>}
         <AgeField value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />
-        <p className="qz-sub-q" id="qz-stage-q">Your life stage <small>Pick every stage that fits</small></p>
+        <p className="qz-sub-q" id="qz-stage-q">Your life stage <small className="qz-multi">Pick all that apply</small></p>
         <Tiles label="Your life stage" items={lifeStageOptions} selected={lifeStages} labels={LIFE_STAGE_LABELS} onToggle={toggleLifeStage} />
         <Chips small label="Other answers" items={LIFE_STAGE_EXCLUSIVE} selected={lifeStages} onToggle={toggleLifeStage} />
         {/* Each stage's follow-up sits right under the tiles (asked once, never again later). */}
@@ -744,15 +750,15 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
         {saveError && <p className="qz-alert">{saveError}</p>}
         <div className="qz-checkpoint-actions">
           <button type="button" className="qz-btn" onClick={() => finish()} disabled={saving}>{saving ? 'Saving…' : 'See my results'} <span aria-hidden="true">→</span></button>
-          <button type="button" className="qz-btn is-ghost" onClick={() => go(moreSteps[0].id)} disabled={saving || !moreSteps.length}>Make my matches more personal</button>
+          <button type="button" className="qz-btn is-ghost qz-more-btn" onClick={() => go(moreSteps[0].id)} disabled={saving || !moreSteps.length}>Make my matches more personal</button>
         </div>
-        <p className="qz-note">{moreSteps.length} more quick questions, all optional. Skip any of them.</p>
+        <p className="qz-note">Make my matches more personal adds your budget, formats and ingredient preferences. {moreSteps.length} optional questions, skip any of them.</p>
       </div>
       </div>
     </div>;
   }
 
-  const obProgress = onboarding ? onboardingProgress(step, step.obPart === 'more' ? 'more' : 'core', steps.filter((s) => s.obPart === 'more')) : null;
+  const obProgress = onboarding ? onboardingProgress(step, step.obPart === 'more' ? 'more' : 'core', steps.filter((s) => s.obPart === (step.obPart === 'more' ? 'more' : 'core'))) : null;
   return <div className="ct qz-page" data-step={step.id} data-phase={phase}>
     <div className="qz-stage">
     <div className="qz-card" key={step.id}>
@@ -778,8 +784,11 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       </div>}
       <h1 className="qz-title">{step.title}</h1>
       {step.subtitle && <p className="qz-subtitle">{step.subtitle}</p>}
+      {/* Focus group, Oct 26: say plainly when more than one answer is allowed. */}
+      {isMultiSelectStep(step) && <p className="qz-multi">Pick all that apply</p>}
       {infoOpen && step.info && <p className="qz-info-pop" role="note">{step.info}</p>}
       {onboarding && step.why && <p className="ip-why"><b>Why we ask:</b> {step.why}</p>}
+      {onboarding && index === 0 && <MedicalNote className="qz-med-note" />}
 
       <div className="qz-answer" onPointerDown={startHold} onPointerUp={endHold} onPointerLeave={endHold} onPointerCancel={endHold}
         onPointerMove={(e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }} onClickCapture={swallow}
@@ -789,7 +798,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
 
       {saveError && <p className="qz-alert">{saveError}</p>}
       <footer className="qz-foot">
-        {step.optional || step.type === 'topics' ? <button type="button" className="qz-skip" onClick={skip} disabled={saving}>Skip for now</button> : <span className="qz-required">{step.section === 'safety' ? 'Needed for safety' : 'Needed for your matches'}</span>}
+        {step.type === 'name' ? <span className="qz-required">Optional</span> : step.optional || step.type === 'topics' ? <button type="button" className="qz-skip" onClick={skip} disabled={saving}>Skip for now</button> : <span className="qz-required">{step.section === 'safety' ? 'Needed for safety' : 'Needed for your matches'}</span>}
         {ready && !saving && <span className="qz-noted" aria-hidden="true">noted</span>}
         {!ready && missingAnswerHint(answerId, intake) && <p className="ip-why" role="status">{missingAnswerHint(answerId, intake)}</p>}
         <button type="button" className="qz-btn" onClick={next} disabled={!ready || saving}>{saving ? 'Saving…' : (isLast && phase === 'more') || singleStep ? (singleStep ? 'Save' : 'See my results') : 'Next'} <span aria-hidden="true">→</span></button>

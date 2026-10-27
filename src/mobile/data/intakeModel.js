@@ -178,6 +178,28 @@ export const MEDICATION_SUGGESTIONS = [
   'Omega-3', 'Probiotic', 'Multivitamin', 'Biotin', 'Inositol', 'Myo-inositol',
   'Birth control pill', 'Yaz', 'Drospirenone/ethinyl estradiol', 'Hormonal IUD', 'Copper IUD',
   'Nexplanon', 'Depo-Provera', 'NuvaRing', 'Xulane patch',
+  // Focus group, Oct 26: more common names for the autocomplete. Display only:
+  // typing anything else still works, and no interaction rule reads this list.
+  // Generic names, no doses.
+  'Combined oral contraceptive', 'Progestin-only pill', 'Norethindrone', 'Levonorgestrel', 'Emergency contraception',
+  'Estradiol', 'Progesterone', 'Medroxyprogesterone', 'Hormone therapy (HRT)', 'Vaginal estrogen', 'Testosterone',
+  'Venlafaxine', 'Desvenlafaxine', 'Mirtazapine', 'Trazodone', 'Amitriptyline', 'Nortriptyline', 'Vortioxetine',
+  'Lamotrigine', 'Lithium', 'Quetiapine', 'Aripiprazole', 'Hydroxyzine', 'Propranolol',
+  'Methylphenidate', 'Atomoxetine', 'Gabapentin', 'Pregabalin', 'Topiramate', 'Sumatriptan', 'Rizatriptan',
+  'Liothyronine', 'Methimazole', 'Tirzepatide', 'Liraglutide', 'Insulin',
+  'Lisinopril', 'Losartan', 'Amlodipine', 'Hydrochlorothiazide', 'Atorvastatin', 'Rosuvastatin',
+  'Albuterol', 'Fluticasone', 'Montelukast', 'Cetirizine', 'Loratadine', 'Fexofenadine', 'Diphenhydramine',
+  'Omeprazole', 'Pantoprazole', 'Famotidine', 'Ondansetron', 'Docusate', 'Polyethylene glycol',
+  'Prednisone', 'Hydroxychloroquine', 'Methotrexate', 'Warfarin', 'Apixaban', 'Clopidogrel',
+  'Nitrofurantoin', 'Fluconazole', 'Metronidazole', 'Valacyclovir', 'Acyclovir', 'Minocycline', 'Clindamycin',
+  'Tranexamic acid', 'Mefenamic acid', 'Cabergoline', 'Alendronate', 'Raloxifene', 'Tamoxifen', 'Anastrozole',
+  'Finasteride', 'Minoxidil', 'Oxybutynin', 'Mirabegron', 'Aspirin',
+  'Calcium', 'Vitamin C', 'Vitamin E', 'Vitamin B6', 'B complex', 'Zinc', 'Selenium', 'Potassium',
+  'Fish oil', 'Collagen', 'Fiber supplement', 'Psyllium', 'Creatine', 'Protein powder', 'Electrolytes',
+  'Ashwagandha', 'Turmeric', 'Ginger', 'Evening primrose oil', 'Black cohosh', 'Chasteberry (vitex)', 'Maca',
+  'Red clover', 'St. John’s wort', 'Valerian', 'Chamomile', 'Saw palmetto', 'Spearmint tea', 'Berberine',
+  'Cranberry', 'D-mannose', 'Coenzyme Q10', 'L-theanine', 'Rhodiola', 'NAC (N-acetylcysteine)', 'DIM',
+  'Vitamin K2', 'Methylfolate', 'Choline', 'Lactoferrin',
 ];
 
 export const COMMON_BRAND_SUGGESTIONS = [
@@ -499,6 +521,25 @@ export function isPostpartumRelevant(intake) {
 export function isPerimenopauseRelevant(intake) {
   return hasLifeStage(intake, 'I am in perimenopause');
 }
+// Period flow and period pain are not asked when every stage she picked means
+// no periods right now (pregnant, menopause, post-menopause). Focus group,
+// Oct 26: older members felt the quiz was written for younger people. This
+// only hides the questions; buildSnapshot and the matcher are unchanged, so a
+// hidden question is simply left unset (the matcher treats it as skipped).
+export const NO_PERIOD_LIFE_STAGES = ['I am pregnant', 'I am in menopause', 'I am post-menopause'];
+export function periodQuestionsApply(intake) {
+  const stages = getLifeStages(intake).filter((s) => !LIFE_STAGE_EXCLUSIVE.includes(s));
+  return !(stages.length > 0 && stages.every((s) => NO_PERIOD_LIFE_STAGES.includes(s)));
+}
+
+// Questions where she can pick more than one answer. They show "Pick all
+// that apply" under the question (focus group, Oct 26); single-choice
+// questions say nothing extra.
+export const MULTI_SELECT_STEP_TYPES = new Set(['topics', 'goals', 'support', 'lifeStage', 'conditions', 'formats', 'price', 'avoidIngredients', 'avoidOnly', 'wantOnly']);
+export function isMultiSelectStep(step) {
+  return Boolean(step && MULTI_SELECT_STEP_TYPES.has(step.type));
+}
+
 /** "Not trying yet" only makes sense when she has not said she is trying. */
 export function ttcDurationOptions(intake) {
   return ttcRequired(intake) ? TTC_DURATION.filter((x) => x !== 'Not trying yet') : TTC_DURATION;
@@ -944,10 +985,10 @@ export function getIntakeSteps(intake) {
   return [
     // Required minimum
     req({ id: 'age', section: 'core', title: 'Your age', type: 'age', info: 'We use your age to skip products that are not meant for you, like menopause supplements in your 20s. Type it, tap plus or minus, or slide the ruler.' }),
-    req({ id: 'lifeStage', section: 'core', title: 'Your life stage', subtitle: 'Pick all that fit', type: 'lifeStage', info: 'Pick every stage that fits right now. You can be in perimenopause and still have regular periods. It changes what we show, for example pregnancy-safe picks only, or midlife support. Not sure, or rather not say? Those count too.' }),
+    req({ id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', info: 'Pick every stage that fits right now. You can be in perimenopause and still have regular periods. It changes what we show, for example pregnancy-safe picks only, or midlife support. Not sure, or rather not say? Those count too.' }),
     req({ id: 'support', section: 'support', title: 'What needs support?', type: 'support', info: 'Pick everything you want help with. Each one becomes its own shelf of products in your ecosystem. Use the tabs or search to find more. "Nothing right now" counts too.' }),
-    ...(flowRequired(intake) ? [req(flowStep)] : []),
-    ...(painRequired(intake) ? [req({ id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list.' })] : []),
+    ...(flowRequired(intake) && periodQuestionsApply(intake) ? [req(flowStep)] : []),
+    ...(painRequired(intake) && periodQuestionsApply(intake) ? [req({ id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list.' })] : []),
     ...(ttcStepOwn ? [req(ttcStep)] : []),
     ...(utiRequired(intake) ? [req({ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', info: 'How often UTI-type symptoms come back. Symptoms right now point you to testing and care first; repeat symptoms bring prevention forward.' })] : []),
     ...(postpartumStepOwn ? [req({ id: 'postpartumTiming', section: 'support', title: FOLLOWUP_QUESTIONS.postpartumTiming, type: 'postpartumTiming', info: 'How long since you gave birth. Recovery, nursing and hair needs change a lot over the first year.' })] : []),
@@ -957,7 +998,7 @@ export function getIntakeSteps(intake) {
     req({ id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', info: 'ayna does not diagnose. If you have new or quickly worsening symptoms, we point you to care before products.' }),
     // Optional refinements ("Make my matches more personal")
     opt({ id: 'zip', section: 'core', title: 'ZIP code', type: 'zip', info: 'Only used to find clinics, telehealth and stores that serve your area. It never changes your match. We never sell it or show it to anyone.' }),
-    ...(flowOptional(intake) ? [opt(flowStep)] : []),
+    ...(flowOptional(intake) && periodQuestionsApply(intake) ? [opt(flowStep)] : []),
     ...(ttcOptional(intake) ? [opt(ttcStep)] : []),
     ...(trimesterOptional(intake) ? [opt(trimesterStep)] : []),
     opt({ id: 'products', section: 'history', title: 'What have you tried?', type: 'products', info: 'Products you have used before. We use what worked and what did not to avoid repeats and find better fits.' }),

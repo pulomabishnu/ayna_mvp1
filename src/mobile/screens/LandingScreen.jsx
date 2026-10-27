@@ -5,6 +5,7 @@ import '../landing.css';
 import '../loop-a-app.css';
 import '../uq-app-landing.css';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
+import MedicalNote, { MEDICAL_TERMS_URL } from '../../components/MedicalNote.jsx';
 import '../../styles/onboarding.css';
 
 // First run: Get my matches goes straight to question 1 and her first matches
@@ -27,6 +28,8 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
       </header>
       <Shout id="ay-land-title" className="ay-uql-shout">Find what fits <span>your body.</span></Shout>
       <p className="ay-uql-lead">Women’s health products matched to you, with the evidence beside each one.</p>
+      {/* Focus group, Oct 26: the safety line on the first screen. */}
+      <MedicalNote href={MEDICAL_TERMS_URL} className="ay-land-med" />
       {/* Founder Oct 26 19:01: bring back the feature reel (what the app does) on first landing. */}
       <div className="ay-land-reel ay-uql-reel">
         <div className="ay-cover-widget"><RotatingProducts /></div>

@@ -35,7 +35,7 @@ const STICKER_TILTS = [-2.2, 1.6, 1.1, -1.4, -0.8, 2, 1.4, -1.8];
 
 export function StickerGrid({ items, selected = [], onToggle, labels = {}, glyphs = {}, icons }) {
   return (
-    <div className={`ip-stickers${icons ? ' has-icons' : ''}`}>
+    <div className={`ip-stickers${icons ? ' has-icons' : ''}${!icons && !Object.keys(glyphs || {}).length ? ' is-plain' : ''}`}>
       {items.map((item, index) => {
         const on = selected.includes(item);
         const icon = icons?.[item];

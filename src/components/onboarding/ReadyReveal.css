@@ -70,3 +70,40 @@ html body .app-container.app-container.app-container.app-container.app-container
 :is(#uq, .app-container) .uq-reveal .ay-ob-how { display: inline-flex; align-items: center; min-height: 44px; color: #ffedac !important; font: 700 15px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
 :is(#uq, .app-container) .uq-reveal .ay-ob-how:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 8px; }
 .ay-ob-sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---- Focus group + critique (Oct 26/27) ----
+   1. Her top matches sit in one peeking row (scroll sideways), lead tile pink.
+   2. "Make my matches more personal" is the clear second button, full width,
+      right under "See my Today", with one line on what it adds.
+   3. "Save these matches" stays a text link under them. */
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-matches__list.ay-ob-peek {
+  display: flex; gap: 10px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: 20px;
+  margin: 0 -20px !important; padding: 2px 20px 10px !important; scrollbar-width: none;
+}
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-peek::-webkit-scrollbar { display: none; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-peek > .ay-ob-match {
+  flex: 0 0 72%; grid-column: auto; grid-template-columns: minmax(0, 1fr); align-content: start; scroll-snap-align: start; gap: 8px; padding: 12px;
+}
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-peek > .ay-ob-match .ay-ob-match__plate.is-plate { width: 62%; justify-self: center; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-peek > .ay-ob-match .ay-ob-match__text b { font: 700 17px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); letter-spacing: 0; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-peek > .ay-ob-match .ay-ob-match__why { font-size: 13px; }
+@media (min-width: 640px) {
+  :is(#uq, .app-container):is(#uq, .app-container):is(#uq, .app-container):is(#uq, .app-container) .uq-reveal.is-web .ay-ob-matches__list.ay-ob-peek { margin: 0 -40px !important; padding: 2px 40px 10px !important; scroll-padding-inline: 40px; }
+  :is(#uq, .app-container):is(#uq, .app-container):is(#uq, .app-container):is(#uq, .app-container) .uq-reveal.is-web .ay-ob-peek > .ay-ob-match { flex-basis: 38%; }
+}
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-ready__actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; justify-items: stretch; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-primary { order: 1; width: 100%; min-height: 52px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-more.ay-ob-more--clear {
+  order: 2; display: grid; gap: 4px; width: 100%; min-height: 64px; padding: 12px 18px !important; text-align: left;
+  background: transparent !important; border: 2px solid #ffedac !important; border-radius: 16px !important; box-shadow: none !important; color: #ffedac !important;
+}
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-more--clear span { display: flex; align-items: center; justify-content: space-between; gap: 10px; font: 700 17px/1.25 var(--ay-font-ui, 'Figtree', sans-serif); color: #ffedac; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-more--clear span svg { flex: none; width: 20px; height: 20px; fill: none; stroke: #f7badd; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-more--clear small { font: 500 14px/1.4 var(--ay-font-ui, 'Figtree', sans-serif); color: #ffedac !important; opacity: 1; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-more--clear:hover { background: rgba(255, 237, 172, .08) !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-quiet { order: 3; justify-self: center; }
+.app-container .ay-ob-ready.is-web.is-web .ay-ob-ready__actions { max-width: 480px; }
+/* With the stamp gone, the title clears the round back button. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-back ~ .ay-ob-ready__title { margin-top: 52px !important; }
+/* The reveal grew (3 to 5 matches): start at the top, never centre and clip the title. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready.is-app { justify-content: flex-start !important; }

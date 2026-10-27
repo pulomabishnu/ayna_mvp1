@@ -23,16 +23,19 @@ describe('first-run setup (seven screens)', () => {
       expect([...screens].sort((a, b) => a - b)).toEqual(screens);
       expect(ob.every((s) => s.why)).toBe(true);
     }
-    expect(ids({}).slice(0, 3)).toEqual(['helpTopics', 'support', 'safety']);
+    // Life stage early (focus group, Oct 26), her name on its own screen (critique, Oct 27).
+    expect(ids({}).slice(0, 6)).toEqual(['helpTopics', 'name', 'age', 'lifeStage', 'support', 'safety']);
   });
 
   it('minimum questions first, the optional ones only after the reveal', () => {
     const i = intake({ supportSelections: ['Cramps or period pain'] });
     const core = getOnboardingSteps(i, { part: 'core' });
     const more = getOnboardingSteps(i, { part: 'more' });
-    expect(core.map((s) => s.id)).toEqual(['helpTopics', 'support', 'periodPain', 'safety', 'age', 'lifeStage', 'conditions', 'allergies', 'medications']);
+    expect(core.map((s) => s.id)).toEqual(['helpTopics', 'name', 'age', 'lifeStage', 'support', 'periodPain', 'safety', 'conditions', 'allergies', 'medications']);
     expect(more.map((s) => s.id)).toEqual(['goals', 'formats', 'priceRange', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'trust', 'periodFlow']);
     expect(onboardingProgress(core[4], 'core').label).toBe('Step 3 of 5');
+    // Given the list she sees, every screen counts (critique, Oct 27).
+    expect(onboardingProgress(core[4], 'core', core).label).toBe(`Step 5 of ${core.length}`);
     expect(more.find((s) => s.id === 'priceRange').title).toBe('What would you usually spend on one product?');
     expect(more.find((s) => s.id === 'avoidIngredients').title).toBe('Anything you want your products to avoid?');
     expect(more.find((s) => s.id === 'preferIngredients').title).toBe('Anything you prefer your products to have or be?');
@@ -132,3 +135,49 @@ describe('What ayna knows', () => {
   });
 });
 
+
+describe('life stage first, period questions skipped where they do not apply (focus group, Oct 26)', () => {
+  const pain = { supportSelections: ['Cramps or period pain', 'Period product support'] };
+  it('asks flow and pain for regular periods', () => {
+    const got = ids({ ...pain, lifeStageSelections: ['I get periods regularly'] });
+    expect(got).toContain('periodPain');
+    expect(got).toContain('periodFlow');
+  });
+  it('skips flow and pain when every stage means no periods now', () => {
+    for (const stage of [['I am post-menopause'], ['I am pregnant'], ['I am in menopause', 'I am post-menopause']]) {
+      const got = ids({ ...pain, lifeStageSelections: stage });
+      expect(got).not.toContain('periodPain');
+      expect(got).not.toContain('periodFlow');
+    }
+  });
+  it('still asks when a period stage is picked too, or the stage is unknown', () => {
+    expect(ids({ ...pain, lifeStageSelections: ['I am in perimenopause', 'I am post-menopause'] })).toContain('periodPain');
+    expect(ids({ ...pain, lifeStageSelections: ['None of these / not sure'] })).toContain('periodPain');
+    expect(ids({ ...pain })).toContain('periodPain');
+  });
+  it('life stage is asked before the needs and their follow-ups', () => {
+    const got = ids({ ...pain, lifeStageSelections: ['I get periods regularly'] });
+    expect(got.indexOf('lifeStage')).toBeLessThan(got.indexOf('support'));
+    expect(got.indexOf('lifeStage')).toBeLessThan(got.indexOf('periodPain'));
+  });
+  it('hiding the questions leaves the snapshot format unchanged (answers unset)', () => {
+    const snap = buildSnapshot(intake({ ...pain, age: '62', lifeStageSelections: ['I am post-menopause'] }));
+    expect(snap.periodFlow).toBe('');
+    expect(snap.periodPain).toBe('');
+    expect(Object.keys(snap)).toEqual(Object.keys(buildSnapshot(intake({ ...pain, age: '30', lifeStageSelections: ['I get periods regularly'], periodFlow: 'Heavy', periodPain: 'Severe' }))));
+  });
+});
+
+describe('multi-select questions say so (focus group, Oct 26)', async () => {
+  const { isMultiSelectStep, MEDICATION_SUGGESTIONS } = await import('./intakeModel.js');
+  it('flags the chip questions, not the single-choice ones', () => {
+    const steps = getOnboardingSteps(intake({ supportSelections: ['Cramps or period pain'] }));
+    const multi = steps.filter(isMultiSelectStep).map((s) => s.id);
+    expect(multi).toEqual(expect.arrayContaining(['helpTopics', 'support', 'lifeStage', 'conditions', 'goals', 'formats']));
+    for (const id of ['name', 'age', 'periodPain', 'safety', 'allergies', 'medications', 'fsaHsa']) expect(multi).not.toContain(id);
+  });
+  it('the medication list has common generic names, no doses', () => {
+    for (const n of ['Levothyroxine', 'Metformin', 'Sertraline', 'Combined oral contraceptive', 'Magnesium', 'Vitamin D', 'Iron', 'Folic acid', 'Omega-3', 'Melatonin', 'Ashwagandha']) expect(MEDICATION_SUGGESTIONS).toContain(n);
+    expect(MEDICATION_SUGGESTIONS.some((n) => /\d+\s*(mg|mcg|iu)\b/i.test(n))).toBe(false);
+  });
+});

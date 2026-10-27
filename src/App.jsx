@@ -151,6 +151,8 @@ import './styles/chrome.css';
 import './styles/ds.css';
 import './styles/ds-screens.css';
 import './styles/product-card-ds.css';
+import './styles/focus-group-oct26.css';
+import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
 import { readHomeLook } from './mobile/components/homeLook.js';
 // Keep the ?homestyle=a|b preview pick before the router rewrites the address (Today loads lazily).
 readHomeLook();
@@ -659,6 +661,8 @@ function App() {
       : currentView === 'waitlist' && /^#brand-[a-z0-9-]+$/.test(window.location.hash) ? `${path}${window.location.hash}`
       // A product link can open one of its tabs (#reviews, #literature, #safety).
       : currentView === 'product' && /^#[a-z-]{2,20}$/.test(window.location.hash) ? `${path}${window.location.hash}`
+      // The medical note on the opening pages links to Terms, section 2 (#medical).
+      : currentView === 'terms-of-use' && window.location.hash === '#medical' ? `${path}#medical`
       : communityQ ? `${path}?q=${encodeURIComponent(communityQ)}`
       // Explore keeps its search (?q=) so a shared search opens with it.
       : exploreQ ? `${path}?q=${encodeURIComponent(exploreQ)}` : path;
@@ -1533,6 +1537,8 @@ function App() {
   const isScrolled = scrollY > 20;
   const navOnGradient = GRADIENT_NAV_VIEWS.includes(currentView);
   const accountInitials = avatarInitials(user);
+  const myAvatarUrl = useMyAvatarUrl(user?.id);
+  const [avatarFailedUrl, setAvatarFailedUrl] = useState('');
 
 
   useEffect(() => {
@@ -2512,7 +2518,13 @@ function App() {
                 <span className="ay-nav__ask-orb" aria-hidden="true"><AskMark /></span>Ask ayna
               </button>
             )}
-            {/* No unlabeled heart in the header (team direction 25): Saved lives in You (You > Saved, or the account menu). */}
+            {/* Focus group, Oct 26: Saved was hard to find. A labelled heart with the count opens Saved (You > Saved). */}
+            {!FOCUSED_FLOW_VIEWS.includes(currentView) && (
+              <a href="/you/saved" className={`ay-nav__heart${savedCount ? ' has-saved' : ''}`} aria-label={savedCount ? `Saved, ${savedCount} ${savedCount === 1 ? 'product' : 'products'}` : 'Saved'} aria-current={currentView === 'you' && youSection === 'saved' ? 'page' : undefined} {...linkProps(() => { setShowAccountMenu(false); handleViewWishlist(); })}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2Z" /></svg>
+                {savedCount > 0 && <span className="ay-heart-count" aria-hidden="true">{savedCount > 99 ? '99+' : savedCount}</span>}
+              </a>
+            )}
             {/* Signed out on the landing: Log in stays in the header on phones too (QA, Oct 25). */}
             <div ref={accountMenuRef} className={`ay-nav__account${!user && ['welcome', 'hero'].includes(currentView) ? ' is-landing-guest' : ''}`}>
               {user ? (
@@ -2526,7 +2538,10 @@ function App() {
                   aria-current={currentView === 'you' ? 'page' : undefined}
                   onClick={() => setShowAccountMenu((v) => !v)}
                 >
-                  <span className="ay-avatar__text">{accountInitials}</span>
+                  {/* Her photo (founder, Oct 26 23:38), else her initials. */}
+                  {myAvatarUrl && avatarFailedUrl !== myAvatarUrl
+                    ? <img className="ay-pfp-img" src={myAvatarUrl} alt="" onError={() => setAvatarFailedUrl(myAvatarUrl)} />
+                    : <span className="ay-avatar__text">{accountInitials}</span>}
                   {checkinDue && <span className="ay-nav__dot" aria-hidden />}
                 </button>
               ) : (

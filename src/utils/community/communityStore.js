@@ -107,7 +107,10 @@ export async function upsertCommunityProfile(supabase, userId, { username, displ
 }
 
 export async function setAvatarPath(supabase, userId, path) {
-  return check(await supabase.from('community_profiles').update({ avatar_url: path || null }).eq('user_id', userId).select('*').single());
+  const row = check(await supabase.from('community_profiles').update({ avatar_url: path || null }).eq('user_id', userId).select('*').single());
+  // The header's profile button shows this photo (hooks/useMyAvatarUrl.js).
+  try { window.dispatchEvent(new Event('ayna:avatar-changed')); } catch { /* no window */ }
+  return row;
 }
 
 export async function isUsernameTaken(supabase, username, exceptUserId) {

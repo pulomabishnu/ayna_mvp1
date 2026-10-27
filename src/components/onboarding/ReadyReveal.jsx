@@ -2,10 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { getSelectedNeeds, useCatalogReady } from '../../data/catalog.js';
 import { moreRemaining } from '../../mobile/data/onboardingFlow.js';
 import { reconstructIntakeFromSnapshot } from '../../mobile/data/intakeModel.js';
-import { Seal } from '../personality/Bits.jsx';
 import { Plate } from '../ui/ay';
 import MatchPill from '../MatchPill.jsx';
-import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct } from '../../data/products.js';
+import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct, getRecommendationMatchesAndRest } from '../../data/products.js';
 import { isSafetyHold, isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { bleedingCareNote, showableAsPick } from '../../utils/bleedingCare.js';
@@ -42,7 +41,18 @@ function firstMatches(answers, limit = 3) {
     const { mergedProducts, seedMeta } = getEcosystemSeedFromQuiz(answers);
     // Bleeding after menopause: no products for that bleeding and never a
     // percent (same gate as Today and the product page).
-    return Object.values(mergedProducts || {}).filter((product) => showableAsPick(product, answers)).slice(0, limit).map((product) => {
+    const seeded = Object.values(mergedProducts || {}).filter((product) => showableAsPick(product, answers));
+    // Fewer than three on her shelves: top up from the same engine's ranked
+    // matches (never the unranked rest of the catalog), so the reveal shows
+    // her top 3 to 5 (critique, Oct 27).
+    let extra = [];
+    if (seeded.length < 3) {
+      try {
+        const have = new Set(seeded.map((p) => p.id));
+        extra = (getRecommendationMatchesAndRest(answers).matches || []).filter((p) => p && !have.has(p.id) && showableAsPick(p, answers));
+      } catch { extra = []; }
+    }
+    return [...seeded, ...extra].slice(0, limit).map((product) => {
       const details = getProductMatchDetailsForProduct(product, answers);
       const area = seedMeta?.[product.id]?.frustration || '';
       return { product, details, area, hold: isSafetyHold(details) || isBleedingEvaluation(details), why: whyLine(product, details) };
@@ -64,7 +74,7 @@ function MatchPlate({ src, product }) {
 export default function ReadyReveal({ answers = null, variant = 'app', signedIn = false, onSeeToday, onCreateAccount, onBack, onMorePersonal }) {
   const ready = useCatalogReady();
   const needs = useMemo(() => (ready ? revealNeeds(answers) : []), [answers, ready]);
-  const matches = useMemo(() => (ready ? firstMatches(answers) : []), [answers, ready]);
+  const matches = useMemo(() => (ready ? firstMatches(answers, 5) : []), [answers, ready]);
   const bleeding = useMemo(() => (ready ? bleedingCareNote(answers) : null), [answers, ready]);
   // Analytics: the first match is on screen (quiz start to first match).
   useEffect(() => { if (matches.length) trackFirstMatchShown({ surface: eventSurface(), matches_count: matches.length }); }, [matches.length]);
@@ -80,9 +90,7 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
         </button>
       )}
-      {/* The reveal is a stamp moment (INSPO onboarding 4: result as a seal): the
-          "matched to you" seal lands once; still under reduced motion. */}
-      <div className="ay-ob-ready__art" aria-hidden="true"><Seal className="ay-ob-ready__seal" /></div>
+      {/* No "matched to you" stamp here any more: it covered the back button (critique, Oct 27). */}
       <h1 id="ay-ob-ready-h" className="ay-ob-ready__title">Your ayna is ready.</h1>
       {/* Care first: the prompt-evaluation message sits above her focus and picks. */}
       {bleeding && <BleedingEvaluationNote className="ay-ob-ready__care" title={bleeding.title} note={bleeding} />}
@@ -105,10 +113,11 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
             {/* The % explained, one tap away (team meeting Oct 26). New tab on the website so the reveal stays. */}
             {variant === 'web' && <a className="ay-ob-how" href="/how-it-works" target="_blank" rel="noopener noreferrer">How we match<span className="ay-ob-sr"> (opens in a new tab)</span></a>}
           </div>
-          <ul className="ay-ob-matches__list">
+          {/* Her top 3 to 5 matches in a peeking row (critique, Oct 27: the reveal showed one). */}
+          <ul className="ay-ob-matches__list ay-ob-peek" aria-label={`${matches.length} matches, scroll sideways for more`}>
             {matches.map(({ product, details, area, hold, why }, i) => {
               // The need chip only helps when the matches cover more than one need.
-              const showArea = area && new Set(matches.map((m) => m.area)).size > 1;
+              const showArea = area && new Set(matches.map((m) => m.area).filter(Boolean)).size > 1;
               const src = safeProductImageSrc(product.image || product.imageUrl || product.images?.[0], product.type === 'digital');
               return (
                 <li key={product.id} className={`ay-ob-match${i === 0 ? ' is-lead' : ''}`}>
@@ -129,13 +138,15 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
         </section>
       )}
       {goals.length > 0 && <p className="ay-ob-ready__goals">With your goals in mind: {goals.map((g) => g.charAt(0).toLowerCase() + g.slice(1)).join(' and ')}.</p>}
-      <p className="ay-ob-ready__note">{tab} is where your daily rundown lives. You can see and change everything ayna uses in You, My health.</p>
+      <p className="ay-ob-ready__note">Change anything ayna uses any time in You, My health.</p>
       <div className="ay-ob-ready__actions">
         <button type="button" className="ay-ob-primary" onClick={onSeeToday}>See my {tab}</button>
+        {/* Focus group, Oct 26: two people missed this, so it is the clear second
+            button, right under the main one, with what it adds. */}
         {onMorePersonal && remaining > 0 && (
-          <button type="button" className="ay-ob-more" onClick={onMorePersonal}>
-            <span>Make my matches more personal</span>
-            <small>{remaining} quick optional {remaining === 1 ? 'question' : 'questions'}: goals, budget, ingredients</small>
+          <button type="button" className="ay-ob-more ay-ob-more--clear" onClick={onMorePersonal}>
+            <span>Make my matches more personal<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
+            <small>Adds your goals, budget and ingredient preferences to your matches. {remaining} optional {remaining === 1 ? 'question' : 'questions'}.</small>
           </button>
         )}
         {!signedIn && onCreateAccount && <button type="button" className="ay-ob-quiet" onClick={onCreateAccount}>{matches.length ? 'Save these matches' : 'Create an account to keep it'}</button>}
