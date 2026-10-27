@@ -1,17 +1,16 @@
 import React from 'react';
 import GlossaryTerm from './GlossaryTerm';
+import ProFeatureGate from './ProFeatureGate.jsx';
 import { getCareProfile } from '../utils/careProfile';
 import { findSharedActives, isService } from '../utils/sharedActives';
 
-export default function DoctorPrep({ checkinData = null, myProducts = {}, quizResults = {}, chatHistory = [], onBack, onOpenCheckin = null }) {
+function DoctorPrepContent({ checkinData = null, myProducts = {}, quizResults = {}, chatHistory = [], onBack, onOpenCheckin = null }) {
     const products = Object.values(myProducts || {}).filter(Boolean);
     const ecosystemStats = products.length;
     const care = getCareProfile(quizResults);
     const age = care.age || 'Not given';
     const list = (xs, none = 'None reported') => (xs.length ? xs.join(', ') : none);
-    // Two or more products sharing an active ingredient (e.g. two with chasteberry).
     const shared = findSharedActives(products);
-    // Questions drawn from what she told us, not generic.
     const questions = [
         ...care.symptoms.slice(0, 2).map((s) => `What could be behind my ${s.toLowerCase()}, and is anything worth checking?`),
         care.diagnoses[0] ? `Is my current plan for ${care.diagnoses[0]} still the right one, or should we look at other options?` : null,
@@ -26,7 +25,6 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
             ? `Routine check-in: ${routineNote}.`
             : null);
 
-    // User messages from chatbot (for suggested questions)
     const userChatMessages = (chatHistory || []).filter(m => m.role === 'user').map(m => (m.text || '').trim()).filter(Boolean);
 
     return (
@@ -139,4 +137,10 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
             </div>
         </div>
     );
+}
+
+export default function DoctorPrep(props) {
+    return <ProFeatureGate feature="appointment" title="Appointment prep" onBack={props.onBack}>
+        <DoctorPrepContent {...props} />
+    </ProFeatureGate>;
 }
