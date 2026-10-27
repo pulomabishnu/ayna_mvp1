@@ -45,6 +45,8 @@ export default async function handler(req, res) {
       return res.status(200).json({
         ...status,
         active,
+        // Staff grants do not expire with a separate paid purchase.
+        accessExpiresAt: legacyPremium ? null : (Math.max(Date.parse(status.termEndsAt) || 0, Date.parse(status.temporaryUntil) || 0) || null),
         offerOpen,
         isAdmin,
         plans: Object.entries(PRO_PLANS).map(([id, plan]) => ({

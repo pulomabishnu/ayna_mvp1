@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { SOURCE_NAMES } from '../data/healthConnections.js';
 import { buildDashboard, formatMetric, isFlat, RANGES } from '../../health/dashboard.js';
 import { localToday, useHealthData } from '../hooks/useHealthData.js';
@@ -73,7 +74,11 @@ function CycleHero({ cycle, estimate }) {
 }
 
 
-export default function HealthDashboard({ authUser, userName = '', selectedNeedIds = [], onConnect, onAddGoal, onOpenRoutine, onSignIn }) {
+export default function HealthDashboard(props) {
+  return <ProFeatureGate feature="dashboard" onEcosystem={props.onEcosystem}><HealthDashboardContent {...props} /></ProFeatureGate>;
+}
+
+export function HealthDashboardContent({ authUser, userName = '', selectedNeedIds = [], onConnect, onAddGoal, onOpenRoutine, onSignIn }) {
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
   const [range, setRange] = useState('month');
   const [added, setAdded] = useState({});

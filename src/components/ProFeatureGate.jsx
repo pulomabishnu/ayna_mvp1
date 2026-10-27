@@ -7,6 +7,7 @@ import SubscriptionPaywallModal from './SubscriptionPaywallModal.jsx';
 import '../styles/pro-v4.css';
 
 const LOCKED_COPY = {
+  dashboard: ['Your health dashboard', 'Unlock your health dashboard and connect supported health apps and wearables with ayna Pro. Your ecosystem stays available.'],
   reads: ['Unlimited Reads', 'Free ayna includes one Read each week. Pro members can open unlimited Reads.'],
   wearables: ['Connect health apps and wearables', 'Connecting supported health apps and wearables is included with ayna Pro.'],
   insights: ['Deeper personalized insights', 'Deeper personalized health insights are included with ayna Pro.'],
@@ -17,7 +18,7 @@ const LOCKED_COPY = {
   quiz: ['Unlimited quiz retakes', 'Free ayna includes one personalization quiz retake each week. Pro members can retake it anytime.'],
 };
 
-function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }) {
+function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosystem, children }) {
   const owner = useRef(null);
   const [revision, setRevision] = useState(0);
   const [refresh, setRefresh] = useState(0);
@@ -36,7 +37,14 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }
         setRevision(n => n + 1);
       }
     });
-    return () => listener?.data?.subscription.unsubscribe();
+    const recheck = () => { setResult(null); setRefresh(n => n + 1); };
+    window.addEventListener('focus', recheck);
+    document.addEventListener('visibilitychange', recheck);
+    return () => {
+      listener?.data?.subscription.unsubscribe();
+      window.removeEventListener('focus', recheck);
+      document.removeEventListener('visibilitychange', recheck);
+    };
   }, []);
 
   useEffect(() => {
@@ -47,15 +55,19 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }
         const rules = await loadProFeatureRules(controller.signal);
         if (typeof rules.enabled !== 'boolean') throw new Error('We couldn’t check Pro access.');
         let allowed = !rules.enabled || (feature === 'reads' && !rules.premiumReadIds.includes(readId));
+        let expiresAt = null;
         if (!allowed) {
           const status = feature === 'reads'
             ? await requestPro({ action: 'read', readId, signal: controller.signal })
             : await requestPro({ signal: controller.signal });
           allowed = feature === 'reads' ? status.allowed : status.active;
+          // The server accounts for overlapping paid, temporary and staff grants.
+          expiresAt = status.accessExpiresAt || null;
         }
         if (!controller.signal.aborted) {
           setResult({ key, allowed });
-          timer = setTimeout(() => setRefresh(n => n + 1), 60000);
+          const delay = expiresAt && allowed ? Math.min(60000, Math.max(0, expiresAt - Date.now())) : 60000;
+          timer = setTimeout(() => { setResult(null); setRefresh(n => n + 1); }, delay);
         }
       } catch (error) {
         if (!controller.signal.aborted) setResult({ key, allowed: false, error: error.message });
@@ -86,7 +98,7 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }
         </ul>
         {!Capacitor.isNativePlatform() ? (
           <div className="pro-access__actions">
-            <button type="button" className="pro-access__primary" onClick={() => setShowPaywall(true)}>Unlock ayna Pro · from $4.99</button>
+            <button type="button" className="pro-access__primary" onClick={() => setShowPaywall(true)}>{feature === 'dashboard' ? 'Get ayna Pro' : 'Unlock ayna Pro · from $4.99'}</button>
             <button type="button" className="pro-access__secondary" onClick={() => setRefresh(n => n + 1)}>Check access again</button>
           </div>
         ) : (
@@ -97,6 +109,7 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }
             </div>
           </>
         )}
+        {onEcosystem && <div className="pro-access__actions"><button type="button" className="pro-access__secondary" onClick={onEcosystem}>See my ecosystem</button></div>}
         {!Capacitor.isNativePlatform() && <p className="pro-access__fine">Early Access unlocks Pro now. Your paid month or year starts January 1, 2027.</p>}
       </>}
     </div>

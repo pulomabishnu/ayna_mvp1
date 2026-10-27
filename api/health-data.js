@@ -20,6 +20,7 @@
  */
 import { sendSuggestionEmail, TEAM_EMAILS } from './suggestions.js';
 import { verifyUser } from './_usageLimit.js';
+import { hasHealthAccess } from './_healthAccess.js';
 import { rateLimit } from './_rateLimit.js';
 import {
   deleteSourceData, getConnection, listConnections, logHealthError, readMetrics, recordEvent,
@@ -56,13 +57,17 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      const [connections, rows] = await Promise.all([listConnections(admin, userId), readMetrics(admin, userId)]);
+      const allowed = await hasHealthAccess(user, admin);
+      const [connections, rows] = await Promise.all([listConnections(admin, userId), allowed ? readMetrics(admin, userId) : []]);
       return res.status(200).json({ connections, rows });
     }
 
     const body = req.body && typeof req.body === 'object' ? req.body : {};
     const action = String(body.action || '');
     const source = String(body.source || '');
+    if (['connect', 'sync', 'resume'].includes(action) && !await hasHealthAccess(user, admin)) {
+      return res.status(403).json({ error: 'pro_required' });
+    }
 
     if (action === 'records_saved' || action === 'records_deleted') {
       const types = [...new Set((Array.isArray(body.types) ? body.types : []).filter((t) => RECORD_TYPES.has(t)))];

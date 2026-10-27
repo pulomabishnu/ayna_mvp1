@@ -14,7 +14,8 @@ import { careNotes, shortNeedLabel } from '../../utils/matchDisplay.js';
 import { summarizeCareNotes, firstCareLink } from '../../utils/careSummary.js';
 import CareNote from '../../components/CareNote.jsx';
 import { Routine, ShoppingList } from '../components/RoutinePlan.jsx';
-import HealthDashboard from '../components/HealthDashboard.jsx';
+import { HealthDashboardContent as HealthDashboard } from '../components/HealthDashboard.jsx';
+import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { budgetMax } from '../../health/plan.js';
 import { optionalProgress, reconstructIntakeFromSnapshot } from '../data/intakeModel.js';
 import '../eco-needs.css';
@@ -200,9 +201,11 @@ export default function EcosystemScreen({
 
 
     {ecoTab === 'dashboard' && myProducts.length > 0 ? <div className="ay-eco-routine">
-      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} onConnect={onConnectHealth} onAddGoal={onAddGoal} onSignIn={() => onRequireAuth?.('health data')} />
+      <ProFeatureGate feature="dashboard" onEcosystem={() => onEcoTab?.('products')}>
+      <HealthDashboard onEcosystem={() => onEcoTab?.('products')} authUser={authUser} selectedNeedIds={goalIds} onConnect={onConnectHealth} onAddGoal={onAddGoal} onSignIn={() => onRequireAuth?.('health data')} />
       <Routine products={myProducts} insights={healthInsights} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} />
       {checkin}
+      </ProFeatureGate>
     </div> : <>
     {ringGroups.length > 0 && <div className="ay-eco-cover ay-eco-mix"><EcosystemChart groups={ringGroups} /></div>}
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}

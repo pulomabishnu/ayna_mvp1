@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import ProFeatureGate from './ProFeatureGate.jsx';
 import { SOURCE_NAMES } from '../mobile/data/healthConnections.js';
 import { buildDashboard, formatMetric, isFlat, RANGES } from '../health/dashboard.js';
 import { buildInsights } from '../health/insights.js';
@@ -86,9 +87,9 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
         ) : (
           <>
             <span className="ay-wh-pro">ayna Pro</span>
-            <h2 id="ay-wh-lock-title">Your health dashboard lives in the app</h2>
+            <h2 id="ay-wh-lock-title">Bring your health data together</h2>
             <p>Your cycle day and phase, sleep, resting heart rate and steps, each next to your own usual.</p>
-            <p>It joins ayna Pro when the app launches. Beta testers use it free now.</p>
+            <p>Connect your supported apps and wearables to bring your data together here.</p>
             <div className="ay-wh-lockjoin">
               <figure className="ay-wh-qr">
                 <img src="/ayna-beta-qr.svg" width="132" height="132" alt={`QR code for the ayna beta on TestFlight: ${BETA_URL}`} />
@@ -115,7 +116,11 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
   );
 }
 
-export default function WebHealth({ user, health, onSignIn, onOpenConnections }) {
+export default function WebHealth(props) {
+  return <ProFeatureGate feature="dashboard" onEcosystem={props.onEcosystem}><WebHealthContent {...props} /></ProFeatureGate>;
+}
+
+function WebHealthContent({ user, health, onSignIn, onOpenConnections }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
   // checked without an account. import.meta.env.DEV is false in production builds.

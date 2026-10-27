@@ -41,6 +41,7 @@ function Switch({ on, onClick, label, disabled }) {
 }
 
 const ERRORS = {
+  pro_required: 'Get ayna Pro to connect or sync health apps and wearables.',
   not_signed_in: 'Sign in to connect health data.',
   network: "Couldn't reach ayna. Check your connection and try again.",
   provider_not_configured: "This connection isn't switched on yet. We're finishing setup with the provider.",
