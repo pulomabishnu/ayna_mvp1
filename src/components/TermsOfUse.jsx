@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { EdPage } from './editorial/EdPage';
 
 export default function TermsOfUse({ onBack, backLabel }) {
+  // /terms-of-use#medical (the medical note on the opening pages) lands on section 2.
+  useEffect(() => {
+    if (typeof window === 'undefined' || window.location.hash !== '#medical') return undefined;
+    const t = setTimeout(() => document.getElementById('medical')?.scrollIntoView({ block: 'start' }), 350);
+    return () => clearTimeout(t);
+  }, []);
   return (
     <EdPage title="Terms of use" crumb="Terms" updated="Last updated October 19, 2026" onBack={onBack} backLabel={backLabel} toc glance bandLabel="In short" band={<div className="uq-legal-intro">
         <p>
@@ -16,7 +22,7 @@ export default function TermsOfUse({ onBack, backLabel }) {
         </section>
 
         {/* Safety beats brevity: this section stays fully open. */}
-        <section data-keep="">
+        <section data-keep="" id="medical">
           <h2>2. Wellness information, not medical care</h2>
           <p>
             ayna is a wellness, educational, and product-discovery service. ayna is not a healthcare provider, pharmacy, emergency service, medical device, diagnosis service, or substitute for a qualified healthcare professional. Information, match scores, AI responses, summaries, product comparisons, safety notes, and recommendations may be incomplete or incorrect and should not be used as medical instructions.

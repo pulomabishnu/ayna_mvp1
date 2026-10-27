@@ -6,8 +6,8 @@
 // Two answers are new and neither one changes a match:
 //   helpTopics  what she wants help with (screen 1). An interest, never a
 //               symptom or a condition (master prompt section 39). It only
-//               narrows the list shown on screen 2.
-//   goals       what she wants out of ayna (screen 3), stated in her words.
+//               narrows the list shown on screen 3.
+//   goals       what she wants out of ayna (screen 4), stated in her words.
 //
 // Questions the spec calls rarely needed (ZIP, products tried, brands, picks
 // per need, anything else) are not in the first run. They stay in the full
@@ -16,9 +16,12 @@ import { SUPPORT_GROUPS, getIntakeSteps, isStepAnswered } from './intakeModel.js
 
 export const ONBOARDING_SCREENS = [
   { n: 1, id: 'help', label: 'What you want help with' },
-  { n: 2, id: 'experience', label: 'What you are experiencing' },
-  { n: 3, id: 'goals', label: 'Your goals' },
-  { n: 4, id: 'stage', label: 'Your life stage' },
+  // Life stage comes second (focus group, Oct 26: older and post-menopause
+  // members felt the quiz was written for younger people), so the questions
+  // after it can skip what does not apply to her stage.
+  { n: 2, id: 'stage', label: 'Your life stage' },
+  { n: 3, id: 'experience', label: 'What you are experiencing' },
+  { n: 4, id: 'goals', label: 'Your goals' },
   { n: 5, id: 'prefs', label: 'Your preferences' },
   { n: 6, id: 'deeper', label: 'For your safety' },
   { n: 7, id: 'connect', label: 'Health data' },
@@ -34,7 +37,7 @@ export const VALUE_POINTS = [
 
 const group = (label) => SUPPORT_GROUPS.find((g) => g.label === label)?.items || [];
 
-// Screen 1 chips (spec section 3 list). Each opens the screen 2 options that
+// Screen 1 chips (spec section 3 list). Each opens the screen 3 options that
 // belong to it. Picking a topic never selects a symptom for her.
 export const HELP_TOPIC_ITEMS = {
   'Periods & cramps': group('Period + cycle'),
@@ -65,12 +68,12 @@ export const GOALS = [
   'Improve sexual wellness', 'Find safer products', 'Find evidence-backed options', 'Understand menopause changes', 'Improve energy',
 ];
 
-// Shown on screen 2 under every topic set: getting care, and "nothing specific".
+// Shown on screen 3 under every topic set: getting care, and "nothing specific".
 const ALWAYS_ITEMS = [...group('Care access')];
 export const NOTHING_SPECIFIC = 'Nothing right now';
 
 /**
- * Screen 2 groups for her topics: [{ label, items }], one group per topic,
+ * Screen 3 groups for her topics: [{ label, items }], one group per topic,
  * no item twice. No topic picked (or only "Something else") shows every group.
  */
 export function supportGroupsForTopics(topics = []) {
@@ -96,6 +99,7 @@ export function topicsFromSupport(support = []) {
 // Why each first-run question is asked (spec: "The user should understand
 // why ayna is asking each health question"). Short, plain, one line each.
 const WHY = {
+  name: 'Only to greet you. Optional, and you can leave it blank.',
   helpTopics: 'This only picks which options we show next. It is not added to your health profile.',
   support: 'Each one you pick gets its own matches and its own place on Today.',
   periodFlow: 'We use it to match absorbency for pads, tampons, cups and period underwear.',
@@ -128,10 +132,10 @@ const WHY_WEB = {
 // New first-run titles (sentence case, plain words). Step types and saved
 // fields stay those of intakeModel.js.
 const TITLES = {
-  support: { title: 'What are you experiencing?', subtitle: 'Pick anything that fits. You don’t need a diagnosis to use ayna.' },
+  support: { title: 'What are you experiencing?', subtitle: 'You don’t need a diagnosis to use ayna.' },
   safety: { title: 'Is anything new or getting worse quickly?', subtitle: 'Symptoms that are new, severe or changing fast' },
   age: { title: 'How old are you?' },
-  lifeStage: { title: 'Where are you right now?', subtitle: 'Pick all that fit. You can be in perimenopause and still have regular periods. Not sure is a fine answer.' },
+  lifeStage: { title: 'Where are you right now?', subtitle: 'You can be in perimenopause and still have regular periods. Not sure is a fine answer.' },
   formats: { title: 'Which kinds of products do you like using?' },
   priceRange: { title: 'What would you usually spend on one product?' },
   avoidIngredients: { title: 'Anything you want your products to avoid?', type: 'avoidOnly' },
@@ -143,14 +147,14 @@ const TITLES = {
 };
 
 const SCREEN_OF = {
-  support: 2, periodFlow: 2, periodPain: 2, utiFrequency: 2, safety: 2,
-  age: 4, lifeStage: 4, ttcDuration: 4, postpartumTiming: 4, pregnancyTrimester: 4,
+  support: 3, periodFlow: 3, periodPain: 3, utiFrequency: 3, safety: 3,
+  age: 2, lifeStage: 2, ttcDuration: 2, postpartumTiming: 2, pregnancyTrimester: 2,
   formats: 5, priceRange: 5, avoidIngredients: 5, preferIngredients: 5, fsaHsa: 5, trust: 5,
   conditions: 6, allergies: 6, medications: 6,
 };
 const SCREEN_ORDER = {
-  2: ['support', 'periodFlow', 'periodPain', 'utiFrequency', 'safety'],
-  4: ['age', 'lifeStage', 'ttcDuration', 'postpartumTiming', 'pregnancyTrimester'],
+  2: ['age', 'lifeStage', 'ttcDuration', 'postpartumTiming', 'pregnancyTrimester'],
+  3: ['support', 'periodFlow', 'periodPain', 'utiFrequency', 'safety'],
   5: ['formats', 'priceRange', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'trust'],
   6: ['conditions', 'allergies', 'medications'],
 };
@@ -173,10 +177,13 @@ export function getOnboardingSteps(intake, { part = 'all', surface = 'app' } = {
   if (avoid) byId.set('preferIngredients', { ...avoid, id: 'preferIngredients', type: 'wantOnly', title: 'Anything you prefer your products to have or be?' });
   const decorate = (s, screen, extra = {}) => ({ ...s, ...(TITLES[s.id] || {}), screen, why: WHY_FOR[s.id] || s.info, ...extra });
   const out = [];
-  out.push({ id: 'helpTopics', section: 'help', type: 'topics', title: 'What would you like ayna to help you with?', subtitle: 'Pick as many as you like. You don’t need a diagnosis to use ayna.', screen: 1, why: WHY_FOR.helpTopics, required: false, optional: false, phase: 'required' });
+  out.push({ id: 'helpTopics', section: 'help', type: 'topics', title: 'What would you like ayna to help you with?', subtitle: 'You don’t need a diagnosis to use ayna.', screen: 1, why: WHY_FOR.helpTopics, required: false, optional: false, phase: 'required' });
+  // Her first name is its own optional screen, before her age (critique, Oct 27:
+  // name and age were two questions in one card). Saved in the same field.
+  out.push({ id: 'name', section: 'core', type: 'name', title: 'What should we call you?', screen: 2, why: WHY_FOR.name, required: false, optional: false, phase: 'required' });
   for (const n of [2, 3, 4, 5, 6]) {
-    if (n === 3) {
-      out.push({ id: 'goals', section: 'goals', type: 'goals', title: 'What are your goals?', subtitle: 'Pick any that matter to you', screen: 3, why: WHY_FOR.goals, required: false, optional: true, phase: 'optional' });
+    if (n === 4) {
+      out.push({ id: 'goals', section: 'goals', type: 'goals', title: 'What are your goals?', screen: 4, why: WHY_FOR.goals, required: false, optional: true, phase: 'optional' });
       continue;
     }
     for (const id of SCREEN_ORDER[n]) {
@@ -203,13 +210,18 @@ export function getOnboardingSteps(intake, { part = 'all', surface = 'app' } = {
 }
 
 /** Screens in the first part, health data (7) last. */
-export const CORE_SCREENS = [1, 2, 4, 6, 7];
+export const CORE_SCREENS = [1, 2, 3, 6, 7];
 /** Progress words and numbers for a first-run step: { label, now, total }. */
 export function onboardingProgress(step, part, list = []) {
   if (part === 'more') {
     const now = Math.max(1, list.findIndex((s) => s.id === step.id) + 1);
     return { label: `More about you, ${now} of ${list.length}`, now, total: list.length };
   }
+  // Every screen she sees counts (critique, Oct 27: four sub-screens all said
+  // "Step 2 of 5"). The total can grow when an answer adds a follow-up.
+  const core = (list || []).filter((s) => s.id !== 'ready');
+  const at = core.findIndex((s) => s.id === step.id);
+  if (at >= 0) return { label: `Step ${at + 1} of ${core.length}`, now: at + 1, total: core.length };
   const now = Math.max(1, CORE_SCREENS.indexOf(step.screen) + 1);
   return { label: `Step ${now} of ${CORE_SCREENS.length}`, now, total: CORE_SCREENS.length };
 }

@@ -27,6 +27,7 @@ import { ARTICLES } from '../components/Articles.jsx';
 import { rankReadsForProfile, readFitsStage } from './utils/personalReads.js';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
+import useMyAvatarUrl from '../hooks/useMyAvatarUrl.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
 import { usePushNotifications, usePushRoutes } from './hooks/usePushNotifications.js';
@@ -137,6 +138,7 @@ import './app-polish-2.css';
 // Oct 21-22 design language kit + the app pass (DESIGN_SYSTEM_OCT25); last so it wins.
 import '../styles/ds.css';
 import './ds-app.css';
+import '../styles/focus-group-oct26.css';
 import OfflineBanner from './components/OfflineBanner.jsx';
 import TutorialLayer from './tutorial/TutorialLayer.jsx';
 import { growTransition } from '../utils/viewTransition.js';
@@ -707,6 +709,7 @@ export default function MobileApp() {
   // captured a name (e.g. signed in with Google before this fallback
   // chain existed), without needing a one-time migration.
   const resolvedName = userName || displayNameFromUser(authUser);
+  const myAvatarUrl = useMyAvatarUrl(authUser?.id);
 
   // Load the signed-in user's existing website ecosystem into mobile.
   // Mobile still keeps its local session cache for instant rendering, but
@@ -1509,6 +1512,11 @@ export default function MobileApp() {
   const headerValue = {
     onOpenProfile: () => { setAskAynaOpen(false); authResumeRef.current = null; setOverlay({ type: 'profile' }); },
     initial: String(resolvedName || '').trim().charAt(0).toUpperCase(),
+    // Her photo in the round profile button (founder, Oct 26 23:38), else her initial, else the person icon.
+    avatarUrl: myAvatarUrl,
+    // Focus group, Oct 26: Saved was hard to find. A heart with the count, beside Ask ayna and You.
+    savedCount: Object.keys(savedMap || {}).length,
+    onOpenSaved: () => { setAskAynaOpen(false); setOverlay(null); setScreen('saved'); },
     suggest: suggestOn ? { signedIn: Boolean(authUser?.id), hasProfile: Boolean(effectiveQuizAnswers) } : null,
   };
   const sheetValue = {

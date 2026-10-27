@@ -4,6 +4,7 @@ import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { ChipList, StickerGrid, SearchField, ChoiceRows, AgeDial, ZipTicket, TrackLine, PriceStacks, AccountCards, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import BlendScale from '../../components/quiz/BlendScale.jsx';
+import MedicalNote, { MEDICAL_TERMS_URL } from '../../components/MedicalNote.jsx';
 import { BRAND_SHORT } from '../../components/quiz/blendLabels.js';
 import { haptic } from '../../utils/haptics.js';
 import { INTAKE_SCENES, SECTION_TONES, SECTION_LABELS } from '../components/intake/intakeScenes.js';
@@ -47,7 +48,6 @@ import {
   isValidUsZip,
   LARGE_PURCHASE_FREQUENCY,
   LIFE_STAGES,
-  LIFE_STAGE_GLYPHS,
   LIFE_STAGE_LABELS,
   LIFE_STAGE_VALUE_BY_LABEL,
   MEDICATION_SUGGESTIONS,
@@ -78,6 +78,7 @@ import {
   ttcDurationOptions,
   withSavedOption,
   FIRST_NAME_MAX,
+  isMultiSelectStep,
 } from '../data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../data/intakeCatalog.js';
 import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../data/onboardingFlow.js';
@@ -715,6 +716,14 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     : LIFE_STAGES;
 
   const renderBody = () => {
+    // First run: her name is its own screen (critique, Oct 27: two questions in one card).
+    if (step.type === 'name') return (
+      <label className="ip-name ip-name--solo">
+        <span>Your first name <small>Optional</small></span>
+        <input type="text" autoComplete="given-name" maxLength={FIRST_NAME_MAX} value={intake.name || ''} onChange={(e) => set('name', e.target.value)} />
+      </label>
+    );
+    if (step.type === 'age' && onboarding) return <AgeDial value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />;
     if (step.type === 'age') return (
       <>
         {/* Her first name, asked here only (sign-up never asks again). */}
@@ -729,7 +738,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     if (step.type === 'lifeStage') return (
       <>
         {showMidlifeFirst && <p className="ip-hint">Midlife stages moved up. You can pick Perimenopause and Regular periods together.</p>}
-        <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" labels={LIFE_STAGE_LABELS} glyphs={LIFE_STAGE_GLYPHS} searchable={false} />
+        <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" labels={LIFE_STAGE_LABELS} searchable={false} />
         <div className="ip-gap"><ChipList items={LIFE_STAGE_EXCLUSIVE} selected={selectedLifeStages} onToggle={toggleLifeStage} muted={LIFE_STAGE_EXCLUSIVE} compact /></div>
         {/* Each stage's follow-up sits right under the tiles (asked once, never again later). */}
         {selectedLifeStages.includes('I am trying to conceive') && (
@@ -1017,7 +1026,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             {careFirst && <div className="ip-care-now" role="note"><b>If this is an emergency, call 911.</b> <span>If you're thinking about harming yourself, call or text 988.</span> <span>Your results open with clinician and urgent care options.</span></div>}
             {remainingOptional > 0 && <div className="ip-checkpoint-more">
               <strong>Want closer matches?</strong>
-              <p>Answer {remainingOptional} more quick question{remainingOptional === 1 ? '' : 's'} anytime. They are optional, and you can start them later from your ecosystem.</p>
+              <p>Make my matches more personal adds your budget, formats and ingredient preferences. {remainingOptional} optional question{remainingOptional === 1 ? '' : 's'}, now or later.</p>
             </div>}
           </div>
         </div>
@@ -1026,7 +1035,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             <span>See my results</span>
             <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></i>
           </button>
-          {remainingOptional > 0 && <button type="button" className="ip-more" onClick={() => goTo(firstOptionalResumeStepId(intake), 'forward')}>Answer {remainingOptional} more now</button>}
+          {remainingOptional > 0 && <button type="button" className="ip-more" onClick={() => goTo(firstOptionalResumeStepId(intake), 'forward')}>Make my matches more personal</button>}
         </footer>
       </div>
     );
@@ -1071,8 +1080,11 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
           </div>}
           <h1 className="ip-title">{step.title}</h1>
           {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
+          {/* Focus group, Oct 26: say plainly when more than one answer is allowed. */}
+          {isMultiSelectStep(step) && <p className="ip-multi">Pick all that apply</p>}
           {onboarding && step.why && <p className="ip-why"><b>Why we ask:</b> {step.why}</p>}
           {step.info && infoOpen === step.id && <p className="ip-info-pop" role="note">{step.info}</p>}
+          {onboarding && obPart === 'core' && currentIndex === 0 && <MedicalNote href={MEDICAL_TERMS_URL} className="ip-med-note" />}
           <span className="ip-spacer is-top" aria-hidden="true" />
           <div className="ip-answer" onPointerDown={startHold} onPointerUp={endHold} onPointerLeave={endHold} onPointerCancel={endHold} onPointerMove={(e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }} onClickCapture={swallowClickAfterHold} onContextMenu={(e) => { if (holdRef.current.fired) e.preventDefault(); }}>{renderBody()}</div>
           <span className="ip-spacer is-bottom" aria-hidden="true" />

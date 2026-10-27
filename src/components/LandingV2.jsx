@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import MedicalNote from './MedicalNote.jsx';
 import { sentenceCase } from '../utils/sentenceCase.js';
 import { TESTING_WATERS_NOTICE } from '../data/investRound';
 import { useRecommendationViews } from '../utils/recommendationAnalytics';
@@ -112,6 +113,7 @@ function Hero({ onStartQuiz, onSearch, onOpenProduct, onViewHowItWorks, personal
             : 'Women’s health products matched to you, with the evidence beside each one.'}</p>
           <div className="hm-hero__actions">{cta}<a className="hm-howlink" href="/how-it-works" onClick={(e) => { if (!onViewHowItWorks || !isPlainLeftClick(e)) return; e.preventDefault(); onViewHowItWorks(); }}>How we match<Arrow /></a></div>
           <Search onSearch={onSearch} />
+          <MedicalNote className="hm-med-note" />
         </div>
         <HeroArt onOpenProduct={onOpenProduct} />
       </div>
