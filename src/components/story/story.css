@@ -72,7 +72,8 @@
   animation: ays-in 240ms cubic-bezier(.2, .8, .2, 1) both;
 }
 @keyframes ays-in { from { opacity: 0; transform: translateX(14px); } }
-.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-visual { flex: 1 1 auto; display: grid; place-items: center; min-height: 0; }
+.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-visual { flex: 1 1 auto; display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; min-height: 0; min-width: 0; }
+.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-visual > * { max-width: 100%; }
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-words { display: grid; gap: 10px; }
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-act { display: grid; gap: 12px; }
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-act:empty { display: none; }

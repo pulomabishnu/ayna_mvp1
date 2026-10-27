@@ -49,7 +49,7 @@ function statNumber(card) {
 /* One big visual per card, only from real data: today's date, the read's
    real photo, her own count, the cards she just saw. Nothing drawn for show. */
 function CardArt({ card, count }) {
-  if (card.kind === 'opening') {
+  if (card.kind === 'opening' && String(card.key || '').startsWith('opening:')) {
     const day = String(card.key || '').split(':').pop() || '';
     const d = /^\d{4}-\d{2}-\d{2}$/.test(day) ? new Date(`${day}T12:00:00`) : null;
     return d ? <p className="ays-big ay-rd-art is-date" aria-hidden="true"><b>{d.getDate()}</b><small>{`${d.toLocaleDateString('en-US', { weekday: 'long' })}, ${d.toLocaleDateString('en-US', { month: 'long' })}`}</small></p> : null;
@@ -343,7 +343,8 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
           <article className={`ay-rd-card ays-card${isData ? ' is-data' : ''}${art ? ' has-art' : ''}`} key={`${card.key}:${card.title}`} aria-labelledby={`ay-rd-t-${i}`}>
             {art && <div className="ays-visual">{art}</div>}
             <div className="ays-words">
-              {card.kicker && <p className="ay-rd-kicker ays-kicker">{card.kicker}</p>}
+              {/* The frame cards' labels ("Your daily rundown", "Done") repeat the bar: not shown. */}
+              {card.kicker && card.category !== 'frame' && <p className="ay-rd-kicker ays-kicker">{card.kicker}</p>}
               <h2 id={`ay-rd-t-${i}`} className={`ay-rd-title ays-title${String(card.title || '').length > 56 ? ' is-long' : ''}`}>{card.title}</h2>
               {card.body && card.kind !== 'community' && <p className="ay-rd-body ays-body">{card.body}</p>}
               {/* Safety stays on the glance: the reason and the sources, never folded. */}

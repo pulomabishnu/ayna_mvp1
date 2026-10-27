@@ -86,7 +86,7 @@
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-period, .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-dot { background: var(--s-pink); }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-window { height: 4px; width: 16px; border-radius: 999px; background: var(--s-blue); }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-today { background: var(--s-fg); }
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-band { width: 18px; height: 10px; border-radius: 999px; background: var(--s-track); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-band { width: 18px; height: 10px; border-radius: 999px; background: var(--s-fg); opacity: .32; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-key i.is-usual { width: 18px; height: 0; border-radius: 0; border-top: 2px dashed var(--s-blue); }
 
 /* steps */
@@ -109,7 +109,7 @@
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-seg.is-window { stroke: var(--s-blue); stroke-width: 4; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-today { fill: var(--s-fg); stroke: var(--s-bg); stroke-width: 3; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-center { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 2px; text-align: center; }
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-center b { font: 700 40px/1 var(--s-display); letter-spacing: -.02em; color: var(--s-fg); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-center b { font: 700 clamp(28px, 9vw, 38px)/1 var(--s-display); letter-spacing: -.02em; color: var(--s-fg); }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-center small { font: 600 14px/1.2 var(--s-ui); color: var(--s-muted); }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-dots { display: flex; gap: 8px; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-dots i { width: 14px; height: 14px; box-sizing: border-box; border-radius: 50%; border: 1.5px solid var(--s-line); }
@@ -126,7 +126,7 @@
 
 /* heart and other signals: her range as a band, the latest a dot */
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-axisline { stroke: var(--s-track); stroke-width: 1.5; }
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-band { fill: var(--s-track); transform-box: fill-box; transform-origin: center; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-band { fill: var(--s-fg); fill-opacity: .32; transform-box: fill-box; transform-origin: center; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-dot { fill: var(--s-pink); stroke: var(--s-fg); stroke-width: 2; }
 
 /* since yesterday: three numbers */
@@ -151,4 +151,4 @@
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-band.ay-rdd-anim { animation: ay-rdd-wipe 600ms cubic-bezier(.2, .8, .2, 1) both; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-still .ay-rdd-anim { animation: none; }
 @media (prefers-reduced-motion: reduce) { .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-anim { animation: none; } }
-@media (max-height: 700px) { .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-ringbox { width: min(170px, 46vw); } .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-date b { font-size: 132px; } .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-photo img { max-height: 26vh; } }
+@media (max-height: 700px) { .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-product > :is(.ay-pcard, .product-card, article):first-child { width: min(100%, 180px); } .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-center b { font-size: 28px; } .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-ringbox { width: min(170px, 46vw); } .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-date b { font-size: 132px; } .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-photo img { max-height: 26vh; } }

@@ -43,7 +43,8 @@
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-facts dd { margin: 0; font: 700 20px/1.2 var(--s-display); color: var(--s-fg); text-align: right; }
 
 /* lineup: her picks, 2 by 2, each on its plate */
-.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: min(100%, 300px); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; width: 100%; max-width: 300px; align-self: center; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-grid > * { width: 100%; }
 
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-cell { display: block; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-nav > .ay-wr-skip { justify-self: center; }
@@ -69,7 +70,7 @@
   .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-ring { width: min(180px, 48vw); }
   .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-center strong { font-size: 56px; }
   .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-hero { width: min(58%, 210px); }
-  .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-grid { width: min(78%, 240px); }
+  .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-grid { max-width: 230px; }
   .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card { padding: 16px; }
   .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card-title { font-size: 26px; }
 }

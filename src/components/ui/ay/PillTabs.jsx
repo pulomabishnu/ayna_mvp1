@@ -19,7 +19,8 @@ export default function PillTabs({ tabs = [], active, onChange, label, labelId, 
   const listRef = useRef(null);
   const list = tabs.slice(0, PILL_TABS_MAX);
   // The selected pill slides to the new tab (motion pass, Oct 27): one ink behind the tabs.
-  const ink = useSlidingInk(listRef, active);
+  // Re-measure when the tabs themselves change, not only the selection (Ask sheet bug, Oct 27).
+  const ink = useSlidingInk(listRef, `${active}|${list.map((t) => `${t.id}:${t.label}:${t.count || 0}`).join(',')}`);
   const hasInk = ink.opacity === 1;
   if (import.meta.env?.DEV && tabs.length > PILL_TABS_MAX) console.warn(`PillTabs: ${tabs.length} tabs; the brief allows ${PILL_TABS_MAX}.`);
   const choose = useCallback((id, focus = false) => {
