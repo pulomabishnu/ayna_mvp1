@@ -6,7 +6,8 @@
 /* global process */
 import { loadGroundingCatalog, buildCatalogIndex, resolveCatalogProduct } from './_catalogGrounding.js';
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
-import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
+import { hasPremiumAccess, hasLegacyClientPremiumFlag } from './_entitlement.js';
+import { proFeatureRules, consumeProChat } from './_proFeatures.js';
 import { callWithFallback, parseProviderOrder, stripDiagnosticLanguage } from './_llm.js';
 import { traceSessionId, traceMessages } from './_prismTrace.js';
 import { fetchOfficialSiteText } from './_officialSiteFetch.js';
@@ -29,8 +30,6 @@ function buildEcosystemSummary(ecosystemProducts) {
   if (!Array.isArray(ecosystemProducts) || ecosystemProducts.length === 0) return '';
   const lines = ecosystemProducts
     .slice(0, 20)
-    // Guarded: a body of {"ecosystemProducts":[null]} previously threw a
-    // TypeError outside any try/catch and surfaced as an unhandled 500.
     .filter(p => p && typeof p === 'object')
     .map(p => {
       const brand = p.brand ? ` by ${clamp(p.brand, 80)}` : '';
@@ -56,25 +55,12 @@ function buildPrompt(question, product, aiInsights, userContext, ecosystemProduc
   };
   const effectiveness = clamp(product?.effectiveness, 600);
 
-  // aiInsights is client-supplied and lands BELOW the RULES block, i.e. in the
-  // stronger position, so an unbounded value here was the cleanest way to
-  // override the medical-safety rules above. Capped hard.
   const clinicalCtx = clamp(aiInsights?.clinicalNarrative, 1500);
   const scienceCtx = clamp(aiInsights?.scienceSummary, 1000);
   const communityCtx = clamp(aiInsights?.communitySummary, 1000);
 
   const ecoSummary = buildEcosystemSummary(ecosystemProducts);
-  // Fetched HTML text, not client-typed input, but still external and
-  // untrusted, clamp it the same as every other interpolated field, and the
-  // RULES below explicitly tell the model to treat it as reference material
-  // only, never as instructions (indirect prompt injection: a page could
-  // contain text aimed at the model, not the reader).
   const siteText = clamp(officialSiteText, 3000);
-  // Same treatment as siteText: fetched, untrusted, reference-only. This is the brand's own
-  // FAQ page, deliberately NOT the product's "how to use" instructions (that content lives in
-  // src/data/productHowToUse.js for the product detail page's own tab, and is intentionally never
-  // read here). FAQs answer the kind of open-ended questions this chatbot actually gets asked
-  // ("is this safe during pregnancy", "what's the return policy"), usage steps don't.
   const faqText = clamp(brandFaqText, 3000);
 
   return `You are Ayna, a knowledgeable women's health assistant. The user is viewing "${name}" and has asked a question. Answer using the product information, research context, user health profile, and their personal product ecosystem provided below.
@@ -116,17 +102,9 @@ USER QUESTION: ${question}
 Answer:`.trim();
 }
 
-// The local callAnthropic/callOpenAI pair that lived here was replaced by
-// _llm.js: both swallowed the provider status (`if (!res.ok) return null`), so a
-// revoked key, a 429 and an overload were indistinguishable from "the model had
-// nothing to say", and this route turned that into a HTTP 200 apology.
-
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method === 'OPTIONS') {
-    // Was '*'. These are same-origin, bearer-authenticated routes: a wildcard
-    // preflight let a hostile origin's request run server-side (spending the
-    // user's quota) before the browser discarded the response.
     const allowList = (process.env.ALLOWED_ORIGINS || '')
       .split(',').map((o) => o.trim()).filter(Boolean);
     if (req.headers.origin && allowList.includes(req.headers.origin)) {
@@ -142,7 +120,9 @@ export default async function handler(req, res) {
   const { user, error, admin } = await verifyUser(req);
   if (!user) return res.status(401).json({ error });
 
-  const isPremium = isPremiumUser(user);
+  let isPremium;
+  try { isPremium = await hasPremiumAccess(user, admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
   if (hasLegacyClientPremiumFlag(user)) {
     console.warn(`[product-chat] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
   }
@@ -161,9 +141,7 @@ export default async function handler(req, res) {
   if (!clientProduct || typeof clientProduct !== 'object') {
     return res.status(400).json({ error: 'product is required' });
   }
-  // PRODUCT INTEGRITY: the product the model is grounded on (and whose URL
-  // gets fetched) is the reviewed catalog record, never the client's copy —
-  // a stale saved snapshot or tampered body could carry invented facts/URLs.
+
   const catalogIndex = buildCatalogIndex(await loadGroundingCatalog());
   const product = resolveCatalogProduct(clientProduct, catalogIndex);
   if (!product) {
@@ -173,9 +151,6 @@ export default async function handler(req, res) {
     });
   }
 
-  // Free (no LLM cost), so this runs before quota reservation, same
-  // reasoning as validating input first: nothing that can't fail should sit
-  // between "reserve the quota" and "make the billable call."
   const officialSiteText = typeof product?.url === 'string' && /^https?:\/\//i.test(product.url)
     ? await fetchOfficialSiteText(product.url)
     : null;
@@ -183,19 +158,20 @@ export default async function handler(req, res) {
     ? await fetchOfficialSiteText(product.faqUrl)
     : null;
 
-  // Reserve the slot BEFORE spending money, and refund on failure.
-  //
-  // The old order was check -> call providers -> increment only on success.
-  // Since every input that decides "success" comes from the request body, a
-  // client could force the failure branch (e.g. an aiInsights value telling the
-  // model to reply with a single space, so the trimmed answer is falsy) and get
-  // unlimited *billed* Anthropic + OpenAI calls that never touched the counter.
-  // It was also a check-then-act race: N concurrent requests all read the same
-  // pre-increment value and all passed.
+  let rules;
+  try { rules = await proFeatureRules(admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
+
   let usagePeriod = null;
   let usageUsed = 0;
   let usageLimit = null;
-  if (!isPremium) {
+  if (rules.enabled) {
+    const { allowed, used, limit, period, degraded } = await consumeProChat(admin, user.id, isPremium, rules);
+    if (!allowed) return res.status(429).json({ error: 'daily_limit_reached', used, limit, action: 'chat' });
+    usagePeriod = degraded ? null : period;
+    usageUsed = used;
+    usageLimit = limit;
+  } else if (!isPremium) {
     const { allowed, used, limit, period, degraded } = await consumeUsage(admin, user.id, 'chat');
     if (!allowed) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'chat' });
     usagePeriod = degraded ? null : period;
@@ -210,7 +186,6 @@ export default async function handler(req, res) {
     question.trim().slice(0, 500),
     product,
     aiInsights || {},
-    // Had no cap at all here, unlike product-insights which caps it at 4000.
     typeof userContext === 'string' ? userContext.slice(0, 4000) : '',
     ecosystemProducts,
     officialSiteText,
@@ -238,20 +213,14 @@ export default async function handler(req, res) {
 
   if (!answer) {
     await refund();
-    // 502, not 200. Returning a friendly apology with a success status made
-    // generation failures invisible to the client, to monitoring, and to the
-    // user's own retry logic.
     return res.status(502).json({
       error: 'generation_failed',
       answer: "I'm sorry, I wasn't able to answer that right now. Please try again or consult the product details tabs above.",
     });
   }
 
-  // Report the authoritative count back. The client used to query user_ai_usage
-  // directly and swallow the error, so the counter read 0 whenever the read
-  // failed and the user was surprised by a 429.
   return res.status(200).json({
     answer,
-    usage: isPremium ? { unlimited: true } : { used: usageUsed, limit: usageLimit },
+    usage: rules.enabled ? { used: usageUsed, limit: usageLimit } : (isPremium ? { unlimited: true } : { used: usageUsed, limit: usageLimit }),
   });
 }
