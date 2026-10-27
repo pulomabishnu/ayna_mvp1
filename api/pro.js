@@ -1,7 +1,8 @@
 /* global process */
 import { createHash } from 'node:crypto';
-import { verifyUser } from './_usageLimit.js';
+import { verifyUser, getServiceClient } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
+import { proFeatureRules } from './_proFeatures.js';
 import { PRO_FLOW, PRO_PLANS, proConfig, proStatus, proStripe, validateProPrices, renewalDate, syncProSubscription } from './_pro.js';
 
 function isAdminUser(user) {
@@ -20,6 +21,12 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(204).end();
+
+  if (req.method === 'GET' && req.query?.action === 'features') {
+    try { return res.status(200).json(await proFeatureRules(getServiceClient())); }
+    catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
+  }
+
   if (!['GET', 'POST'].includes(req.method)) return res.status(405).json({ error: 'method_not_allowed' });
 
   const { user, admin, error } = await verifyUser(req);
@@ -52,6 +59,18 @@ export default async function handler(req, res) {
     let body;
     try { body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); }
     catch { return res.status(400).json({ error: 'invalid_request' }); }
+
+    if (body.action === 'read') {
+      const rules = await proFeatureRules(admin);
+      if (!rules.enabled || !rules.premiumReadIds.includes(body.readId)) return res.status(200).json({ allowed: true });
+      const { data, error: readError } = await admin.rpc('pro_claim_read', {
+        p_user_id: user.id,
+        p_read_id: body.readId,
+        p_unlimited: active,
+      });
+      if (readError) throw new Error('Read allowance unavailable');
+      return res.status(200).json({ allowed: data === true, active });
+    }
 
     if (body.action === 'focus_grant' || body.action === 'focus_revoke') {
       if (!isAdmin) return res.status(403).json({ error: 'forbidden' });
