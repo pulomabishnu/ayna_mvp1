@@ -44,7 +44,7 @@
 
 /* Same rhythm as the Shop head: room above the title, the round arrow in the search, and the reads
    start right after the wave (no empty band). */
-:is(#lh1, html):is(#lh2, html):is(#lh3, html):is(#lh4, html):is(#lh5, html):is(#lh6, html):is(#lh7, html):is(#lh8, html) body .app-container .lb-top.lb-shophead { padding-top: 64px !important; margin-bottom: 48px !important; }
+:is(#lh1, html):is(#lh2, html):is(#lh3, html):is(#lh4, html):is(#lh5, html):is(#lh6, html):is(#lh7, html):is(#lh8, html) body .app-container .lb-top.lb-shophead { padding-top: 76px !important; margin-bottom: 48px !important; }
 :is(#lh1, html):is(#lh2, html):is(#lh3, html):is(#lh4, html):is(#lh5, html):is(#lh6, html):is(#lh7, html):is(#lh8, html) body .app-container .lb-top.lb-shophead .lb-search { padding-right: 6px !important; }
 :is(#lh1, html):is(#lh2, html):is(#lh3, html):is(#lh4, html):is(#lh5, html):is(#lh6, html):is(#lh7, html):is(#lh8, html) body .app-container .lb-top.lb-shophead .lb-search-go {
   flex: none; display: grid; place-items: center; width: 44px; height: 44px; margin: 0; padding: 0; border: 0; border-radius: 50%; background: #3e2723; color: #ffedac; cursor: pointer;
@@ -74,3 +74,9 @@
 :is(#lb1, html):is(#lb2, html):is(#lb3, html):is(#lb4, html):is(#lb5, html):is(#lb6, html):is(#lb7, html) body .app-container .lb-lib .lb-shelf--grid .ay-rcard__title { font-size: 17px !important; line-height: 1.3 !important; }
 :is(#lb1, html):is(#lb2, html):is(#lb3, html):is(#lb4, html):is(#lb5, html):is(#lb6, html):is(#lb7, html) body .app-container[data-theme='brand-dark'] .lb-lib .rc:not(.rc--photo), :is([data-theme='dark']) .app-container .lb-lib .rc:not(.rc--photo) { background: #4a332e !important; }
 :is(#lb1, html):is(#lb2, html):is(#lb3, html):is(#lb4, html):is(#lb5, html):is(#lb6, html):is(#lb7, html) body .app-container[data-theme='brand-dark'] .lb-lib .rc:not(.rc--photo) .rc__word, :is([data-theme='dark']) .app-container .lb-lib .rc:not(.rc--photo) .rc__word { color: #ffedac !important; }
+/* Topic chips as one fading row with the arrows under it, like the Shop (founder Oct 27 18:53). */
+:is(#lh1, html):is(#lh2, html):is(#lh3, html):is(#lh4, html):is(#lh5, html):is(#lh6, html):is(#lh7, html):is(#lh8, html):is(#lh9, html) body .app-container .lb-top.lb-shophead { grid-template-columns: minmax(0, 1fr) !important; }
+:is(#lh1, html):is(#lh2, html):is(#lh3, html):is(#lh4, html):is(#lh5, html):is(#lh6, html):is(#lh7, html):is(#lh8, html):is(#lh9, html) body .app-container .lb-top.lb-shophead > * { min-width: 0 !important; }
+:is(#lh1, html):is(#lh2, html):is(#lh3, html):is(#lh4, html):is(#lh5, html):is(#lh6, html):is(#lh7, html):is(#lh8, html):is(#lh9, html) body .app-container .lb-top.lb-shophead .ay-scrollrow .lb-topics {
+  display: flex !important; flex-wrap: nowrap !important; justify-content: flex-start !important; overflow-x: auto !important; padding: 2px 40px 4px 2px !important; scrollbar-width: none;
+}

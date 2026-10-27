@@ -158,6 +158,7 @@ import './styles/web-wide.css';
 // The nav's profile-button rules live here (the suggestions row itself is app only).
 import './components/nav/ask-suggest.css';
 import './styles/page-heads.css';
+import './styles/shop-hero.css';
 import './styles/library-head.css';
 import './styles/no-vibe.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';

@@ -29,7 +29,7 @@ export default function ScrollRow({ label = 'items', children, className = '' })
   }, []);
   const go = (dir) => scroller()?.scrollBy({ left: dir * 320, behavior: 'smooth' });
   return (
-    <div className={`ay-scrollrow${edges.over ? ' is-over' : ''} ${className}`.trim()}>
+    <div className={`ay-scrollrow${edges.over ? ' is-over' : ''}${edges.start ? ' at-start' : ''}${edges.end ? ' at-end' : ''} ${className}`.trim()}>
       {edges.over && <button type="button" className="ay-scrollrow__arrow is-back" aria-label={`Scroll ${label} back`} disabled={edges.start} onClick={() => go(-1)}><span aria-hidden="true">←</span></button>}
       <div className="ay-scrollrow__track" ref={ref}>{children}</div>
       {edges.over && <button type="button" className="ay-scrollrow__arrow is-next" aria-label={`Scroll ${label} forward`} disabled={edges.end} onClick={() => go(1)}><span aria-hidden="true">→</span></button>}

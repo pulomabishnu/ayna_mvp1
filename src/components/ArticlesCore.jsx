@@ -907,6 +907,7 @@ import { coverPhotoFor } from '../data/readCovers.js';
 import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
 import VaginalAtrophyGsmArticle from './library/VaginalAtrophyGsmArticle.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
+import ScrollRow from './shop/ScrollRow.jsx';
 import '../styles/library-v2.css';
 const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PMOS', 'period pain', 'when to see a doctor', 'UTI', 'perimenopause', 'fibroids', 'endometriosis', 'yeast vs BV', 'pelvic floor', 'night sweats', 'missed period'];
 
@@ -1379,11 +1380,13 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           {/* The round arrow, as on the Shop search: jumps to the results. */}
           <button type="button" className="lb-search-go" aria-label="Show results" onClick={() => document.querySelector('.lb-lib .lb-body')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button>
         </label>
-        <div className="lb-topics" role="group" aria-label="Filter reads by topic">
+<ScrollRow label="topics" className="lb-topicrow">
+                  <div className="lb-topics" role="group" aria-label="Filter reads by topic">
           <button type="button" className="lb-topic" aria-pressed={!results && topic === 'all'} onClick={() => pickTopic('all')}>All</button>
           {hasProfile && forYou.length > 0 && <button type="button" className="lb-topic" aria-pressed={!results && topic === 'foryou'} onClick={() => pickTopic('foryou')}>For you</button>}
           {rows.map((r) => <button key={r.id} type="button" className="lb-topic" aria-pressed={!results && topic === r.id} onClick={() => pickTopic(r.id)}>{r.label}</button>)}
         </div>
+        </ScrollRow>
       </header>
       {results && <div className="lb-wrap"><SearchAssist query={query} resultCount={results.length} onUse={setQuery} /></div>}
       <div className="lb-wrap lb-body">{body}</div>

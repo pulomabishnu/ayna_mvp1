@@ -77,3 +77,29 @@
 }
 
 /* Services shares the Shop's pink band (founder Oct 27 18:35: Library and Services match the Shop). */
+
+/* Topic chips (Shop, Services, Library): one row the width of the search that fades into the band at
+   its edges, with the round arrows under it to see the other topics (founder Oct 27 18:53). */
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow {
+  display: grid !important; grid-template-columns: 1fr 1fr; grid-template-areas: 'track track' 'back next'; justify-items: center; row-gap: 12px; column-gap: 12px;
+  width: 100%; max-width: 680px; margin: 0 auto;
+}
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow:not(.is-over) { grid-template-areas: 'track track'; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow__track { grid-area: track; width: 100%; min-width: 0; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow.is-over .ay-scrollrow__track {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+}
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow .ayk-chiprow,
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container .lb-shophead .ay-scrollrow .lb-topics { padding: 2px 40px 4px !important; justify-content: flex-start !important; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container .lb-shophead .ay-scrollrow .lb-topics { display: flex !important; flex-wrap: nowrap !important; overflow-x: auto !important; scrollbar-width: none; scroll-snap-type: x proximity; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container .lb-shophead .ay-scrollrow .lb-topics::-webkit-scrollbar { display: none; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container .lb-shophead .ay-scrollrow .lb-topic { flex: none; white-space: nowrap; scroll-snap-align: start; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow__arrow { display: grid !important; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow__arrow.is-back { grid-area: back; justify-self: end; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow__arrow.is-next { grid-area: next; justify-self: start; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow { min-width: 0 !important; width: min(100%, 680px) !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; justify-self: center; }
+/* Fade only the side that has more topics (the first chip is never faded at the start). */
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow.is-over.at-start .ay-scrollrow__track { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent 100%); mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent 100%); }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow.is-over.at-end .ay-scrollrow__track { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 48px); mask-image: linear-gradient(to right, transparent 0, #000 48px); }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow .ayk-chiprow,
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container .lb-shophead .ay-scrollrow .lb-topics { padding-left: 2px !important; }
