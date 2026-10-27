@@ -1,46 +1,43 @@
 -- Ecosystem-build quota ledger.
 --
--- The free tier allows one ecosystem build per lifetime, but a single build is
--- generated across SEVERAL HTTP requests (the client splits concerns into
--- batches). Counting requests is therefore wrong in both directions:
---   * gating only the first batch lets a client skip the quota by sending
---     batchIndex >= 1;
---   * charging every batch bills one build several times.
+-- The first personalization build is free. After that, a Free account may
+-- create one new build per UTC Monday-Sunday week by default (the API passes
+-- ECOSYSTEM_BUILD_LIMIT, default 1). Pro bypasses this quota entirely.
 --
--- So the unit of account is the BUILD, identified by a client-supplied
--- build_id derived from the intake fingerprint. Every batch of the same build
--- presents the same id: the first claims the quota, the rest are idempotent
--- no-ops. Retrying a failed build reuses the id and is therefore free.
+-- A single build is generated across several HTTP requests, so the unit of
+-- account remains the BUILD, identified by a client-supplied build_id derived
+-- from the intake fingerprint. Re-presenting the same build_id is always free.
 create table if not exists public.user_ecosystem_builds (
   user_id uuid not null references auth.users(id) on delete cascade,
   build_id text not null,
   created_at timestamptz not null default now(),
+  is_initial boolean not null default false,
   primary key (user_id, build_id)
 );
 
 alter table public.user_ecosystem_builds enable row level security;
 
--- GRANTs are separate from RLS: RLS decides WHICH rows a role may see, GRANT
--- decides whether it may touch the table at all. Explicit here so the schema
--- does not depend on a project's default-privilege configuration.
 grant select on public.user_ecosystem_builds to authenticated;
 grant all on public.user_ecosystem_builds to service_role;
 
--- Written server-side with the service-role key only. A read-own policy lets a
--- user see her own history; nothing is writable from the browser.
 drop policy if exists "user_ecosystem_builds_select_own" on public.user_ecosystem_builds;
 create policy "user_ecosystem_builds_select_own"
 on public.user_ecosystem_builds for select
 to authenticated using (auth.uid() = user_id);
 
+create index if not exists user_ecosystem_builds_weekly_retakes_idx
+  on public.user_ecosystem_builds(user_id, created_at)
+  where is_initial = false;
+
 drop function if exists public.claim_ecosystem_build(uuid, text, integer);
 drop function if exists public.release_ecosystem_build(uuid, text);
 
--- Atomically claim one build against the limit.
---   * Re-presenting an already-claimed build_id always succeeds and costs
---     nothing, which is what makes multi-batch generation and retries safe.
---   * A transaction-scoped advisory lock on the user serializes concurrent
---     claims, so two different build_ids racing cannot both pass the check.
+-- Atomically claim one personalization build.
+--   * The first unique build for an account is the initial build and does not
+--     consume the weekly retake allowance.
+--   * Later unique build IDs are retakes and are capped per UTC week.
+--   * The same build ID always succeeds, preserving multi-batch generation and
+--     retry-after-failure behavior.
 create or replace function public.claim_ecosystem_build(
   p_user_id uuid,
   p_build_id text,
@@ -53,41 +50,59 @@ set search_path = public, pg_temp
 as $$
 declare
   v_used integer;
+  v_has_build boolean;
+  v_week_start timestamptz := date_trunc('week', now() at time zone 'UTC') at time zone 'UTC';
 begin
   if p_build_id is null or length(trim(p_build_id)) = 0 then
     raise exception 'build_id is required';
   end if;
 
-  -- Released at transaction end; serializes claims for this user only.
   perform pg_advisory_xact_lock(hashtextextended(p_user_id::text, 0));
 
   if exists (
     select 1 from public.user_ecosystem_builds b
     where b.user_id = p_user_id and b.build_id = p_build_id
   ) then
-    select count(*) into v_used
-    from public.user_ecosystem_builds b where b.user_id = p_user_id;
-    return query select true, v_used::integer;
+    select count(*)::integer into v_used
+    from public.user_ecosystem_builds b
+    where b.user_id = p_user_id
+      and b.is_initial = false
+      and b.created_at >= v_week_start;
+    return query select true, coalesce(v_used, 0);
     return;
   end if;
 
-  select count(*) into v_used
-  from public.user_ecosystem_builds b where b.user_id = p_user_id;
+  select exists(
+    select 1 from public.user_ecosystem_builds b where b.user_id = p_user_id
+  ) into v_has_build;
 
-  if p_limit is null or v_used >= p_limit then
-    return query select false, v_used::integer;
+  if not v_has_build then
+    insert into public.user_ecosystem_builds (user_id, build_id, is_initial)
+    values (p_user_id, p_build_id, true);
+    return query select true, 0;
     return;
   end if;
 
-  insert into public.user_ecosystem_builds (user_id, build_id)
-  values (p_user_id, p_build_id);
+  select count(*)::integer into v_used
+  from public.user_ecosystem_builds b
+  where b.user_id = p_user_id
+    and b.is_initial = false
+    and b.created_at >= v_week_start;
 
-  return query select true, (v_used + 1)::integer;
+  if p_limit is null or coalesce(v_used, 0) >= p_limit then
+    return query select false, coalesce(v_used, 0);
+    return;
+  end if;
+
+  insert into public.user_ecosystem_builds (user_id, build_id, is_initial)
+  values (p_user_id, p_build_id, false);
+
+  return query select true, (coalesce(v_used, 0) + 1)::integer;
 end;
 $$;
 
--- Hand a build back when it produced nothing usable, so a failed generation
--- does not permanently consume the user's only build.
+-- Give back a build when generation produced nothing usable. If the initial
+-- build is released, the next successful build becomes the initial build.
 create or replace function public.release_ecosystem_build(
   p_user_id uuid,
   p_build_id text
