@@ -41,7 +41,7 @@ export const SEO_PAGES = {
  * the noindex (Google: "Block search indexing with noindex").
  */
 export const NOINDEX_SECTIONS = [
-  'today', 'ask', 'you', 'recommendations', 'comparison', 'omitted', 'recalls', 'tracked', 'screenings',
+  'today', 'ask', 'you', 'recommendations', 'compare', 'comparison', 'omitted', 'recalls', 'tracked', 'screenings',
   'appointment-prep', 'profile', 'text-ayna', 'delete-account', 'health-data', 'auth', 'confirmed',
   'admin', 'internal', 'free-product', 'mobile-preview', 'wrapped', 'join', 'a',
 ];

@@ -1,0 +1,50 @@
+/* The services card (critique Oct 27): the product card's family (butter card, 1.5px espresso
+   outline, 8px corners, one offset shadow) laid out as a logo row. Logo or monogram tile, the name,
+   one line, then format and cost chips. Dark: espresso card with butter text. */
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc {
+  --sv-ink: #3e2723; --sv-muted: rgba(62, 39, 35, .76); --sv-bg: #ffedac; --sv-tile: #f6e3a1; --sv-shadow: #3e2723;
+  position: relative; display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: start; gap: 14px;
+  box-sizing: border-box; min-width: 0; height: 100%; margin: 0 4px 4px 0; padding: 14px 14px 14px 14px;
+  border: 1.5px solid var(--sv-ink); border-radius: 8px; background: var(--sv-bg); color: var(--sv-ink);
+  box-shadow: 4px 4px 0 var(--sv-shadow); text-align: left; font-family: var(--ay-font-ui, 'Figtree', sans-serif); cursor: pointer;
+}
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc.has-heart { padding-right: 64px; }
+:is(#sv1, html):is(#sv2, html) body :is([data-theme='dark'], [data-theme='brand-dark']) .ay-svc.ay-svc { --sv-ink: #ffedac; --sv-muted: rgba(255, 237, 172, .8); --sv-bg: #2b1a16; --sv-tile: #3e2723; --sv-shadow: rgba(255, 237, 172, .9); }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__logo { display: grid; place-items: center; width: 56px; height: 56px; overflow: hidden; border-radius: 14px; background: var(--sv-tile); box-shadow: inset 0 0 0 1.5px var(--sv-ink); }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__logo img { width: 76%; height: 76%; object-fit: contain; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__mono { font: 700 20px/1 var(--ay-font-display, 'Bricolage Grotesque', serif); letter-spacing: -.02em; color: var(--sv-ink); }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__body { display: grid; gap: 6px; min-width: 0; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__name { margin: 0 !important; padding: 0; font: 700 17px/1.25 var(--ay-font-ui, 'Figtree', sans-serif) !important; color: var(--sv-ink) !important; letter-spacing: 0; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__link { display: inline; margin: 0; padding: 0; border: 0; background: none; color: inherit !important; font: inherit !important; text-align: left; text-decoration: none; cursor: pointer; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__link::after { content: ''; position: absolute; inset: 0; border-radius: 8px; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__link:focus-visible { outline: none; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc:has(.ay-svc__link:focus-visible) { outline: 3px solid var(--sv-ink); outline-offset: 3px; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__line { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0 !important; font: 400 15px/1.4 var(--ay-font-ui, 'Figtree', sans-serif) !important; color: var(--sv-muted) !important; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 2px; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__chip { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 999px; border: 1.5px solid var(--sv-ink); font: 600 13px/1 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--sv-ink); white-space: nowrap; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__chip.is-cost { border-color: transparent; background: var(--sv-tile); font-weight: 700; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__pill { position: relative; z-index: 1; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__seematch { position: relative; z-index: 1; justify-self: start; min-height: 44px; margin: 0; padding: 0; border: 0; background: none; color: var(--sv-ink); font: 700 14px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-pcard__ev.is-safety { position: relative; z-index: 1; margin: 0 !important; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__heart { position: absolute; z-index: 1; top: 50%; right: 12px; translate: 0 -50%; display: grid; place-items: center; width: 44px; height: 44px; margin: 0; padding: 0; border: 1.5px solid var(--sv-ink); border-radius: 50%; background: transparent; color: var(--sv-ink); box-shadow: none; cursor: pointer; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__heart::before { content: ''; position: absolute; inset: 3px; border: 1.5px solid var(--sv-ink); border-radius: 50%; pointer-events: none; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__heart svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__heart[aria-pressed='true'] svg { fill: #f7badd; stroke: var(--sv-ink); }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__heart:focus-visible { outline: 2px solid var(--sv-ink); outline-offset: 2px; }
+@media (hover: hover) { :is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc:hover { box-shadow: 6px 6px 0 var(--sv-shadow); } }
+
+/* Lists of services: one column on phones, two from 720px (critique: a 2-column list, not a 4-up photo grid). */
+.ay-svc-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin: 0; padding: 0; list-style: none; }
+@media (min-width: 720px) { .ay-svc-list.is-2up { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; } }
+/* Her few matches: a peeking carousel of the same cards. */
+.ay-svc-rail { display: grid; grid-auto-flow: column; grid-auto-columns: 86%; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 2px 4px 8px 0; margin: 0; list-style: none; }
+.ay-svc-rail::-webkit-scrollbar { display: none; }
+.ay-svc-rail > li { scroll-snap-align: start; display: flex; }
+.ay-svc-rail > li > .ay-svc { flex: 1; }
+@media (min-width: 720px) { .ay-svc-rail { grid-auto-columns: calc(50% - 6px); } }
+.ay-svc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+.ay-svc-head h2 { margin: 0 !important; font: 700 19px/1.2 var(--ay-font-ui, 'Figtree', sans-serif) !important; color: inherit; }
+.ay-svc-head small { font: 500 14px/1.3 var(--ay-font-ui, "Figtree", sans-serif); }
+/* Website Services (Explore > Services): the Shop grid becomes a 2-column list of logo cards; one column on phones. */
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container .ayshop .ayshop__grid.is-services { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 22px; }
+@media (max-width: 720px) { :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container .ayshop .ayshop__grid.is-services { grid-template-columns: minmax(0, 1fr); gap: 14px; } }

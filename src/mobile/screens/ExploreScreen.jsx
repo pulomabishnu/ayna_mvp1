@@ -37,7 +37,7 @@ export default function ExploreScreen(props) {
 
   return <div className="ax ax--embed" data-tour="explore" data-kind={kind}>
     <MobileHeader onOpenSaved={onOpenSaved} />
-    <BrowseScreen key={kind} {...props} products={shown} embedded typeToggle={null} bandTitle={kind === 'services' ? 'Services' : 'Shop'} />
+    <BrowseScreen key={kind} {...props} products={shown} embedded servicesMode={kind === 'services'} typeToggle={null} bandTitle={kind === 'services' ? 'Services' : 'Shop'} />
     <p className="ayshop__reads"><a href="/library" onClick={(e) => { e.preventDefault(); onExploreSection?.('resources'); }}>Library: guides and research</a></p>
     <LegalFooter />
   </div>;

@@ -238,7 +238,7 @@ const VIEW_TO_PATH = {
   today: '/today', explore: '/explore', 'explore-topics': '/explore/topics', 'explore-services': '/explore/services', ask: '/ask',
   discovery: '/explore/products', waitlist: '/partners', recommendations: '/recommendations',
   articles: '/explore/resources', screenings: '/screenings', omitted: '/omitted',
-  comparison: '/comparison', recalls: '/recalls',
+  comparison: '/compare', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
   'delete-account': '/delete-account', 'health-data': '/health-data',
   'privacy-policy': '/privacy-policy',
@@ -360,6 +360,7 @@ PATH_TO_VIEW['/terms'] = 'terms-of-use';
 PATH_TO_VIEW['/privacy'] = 'privacy-policy';
 PATH_TO_VIEW['/startups'] = 'waitlist'; // old address keeps working
 PATH_TO_VIEW['/partner-brands'] = 'waitlist';
+PATH_TO_VIEW['/comparison'] = 'comparison'; // old Compare address; /compare?ids=a,b is the shareable one
 
 PATH_TO_VIEW['/'] = 'welcome';
 // Old Shop URL keeps working (bookmarks, shared links); it is replaced on load.
@@ -368,6 +369,17 @@ PATH_TO_VIEW['/discovery'] = 'discovery';
 // (badges.js) before the URL is tidied to '/', then the visitor lands on home.
 PATH_TO_VIEW['/join'] = 'welcome';
 if (typeof window !== 'undefined') captureReferralFromUrl();
+// A shared or bookmarked compare link (/compare?ids=a,b): those products become the compare list.
+function captureCompareFromUrl() {
+  try {
+    if (!/^\/compare(?:ison)?\/?$/.test(window.location.pathname)) return;
+    const raw = new URLSearchParams(window.location.search).get('ids');
+    if (!raw) return;
+    const ids = [...new Set(raw.split(',').map((x) => x.trim()).filter((x) => /^[\w-]{1,80}$/.test(x)))];
+    if (ids.length) compareStore.replaceAll(ids.map((id) => ({ id })));
+  } catch { /* no URL */ }
+}
+if (typeof window !== 'undefined') captureCompareFromUrl();
 
 // Deep links inside a view: /library/:articleId and /community/@handle.
 function articleIdFromPath(path) {
@@ -725,7 +737,8 @@ function App() {
   }, [currentView, communitySeed]);
   // Compare 2 to 4 (src/utils/compareStore.js): the same list from Saved, cards and the save prompt.
   const compare = useCompare((id) => (isCatalogReady() ? getProductById(id) : null));
-  const compareList = compare.products;
+  // Only products the catalog knows (a shared /compare?ids= link may name an old id).
+  const compareList = compare.products.filter((p) => p?.name);
   // Signed out, Save first explains the account (team direction 22).
   const [saveSheet, setSaveSheet] = useState(null);
   const [showCheckin, setShowCheckin] = useState(false);
@@ -753,6 +766,12 @@ function App() {
   // Saved products are checked against the catalog, which loads after first
   // paint: until it has, start empty and restore them the moment it lands.
   const catalogReady = useCatalogReady();
+  // Compare has a shareable address: /compare?ids=a,b mirrors the list while the page is open.
+  useEffect(() => {
+    if (currentView !== 'comparison') return;
+    const want = `/compare${compare.ids.length ? `?ids=${compare.ids.join(',')}` : ''}`;
+    if (`${window.location.pathname}${window.location.search}` !== want) window.history.replaceState({ view: 'comparison' }, '', want);
+  }, [currentView, compare.ids]);
   const [savedProducts, setSavedProducts] = useState(() => (isCatalogReady() ? loadSavedProducts() : {}));
   const savedRestoredRef = useRef(isCatalogReady());
   useEffect(() => {
@@ -1000,6 +1019,8 @@ function App() {
       'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'waitlist', 'not-found', 'ecosystem',
       'free-product', 'free-product-reward', 'health', 'shared-answer',
       'today', 'explore', 'explore-topics', 'explore-services', 'ask',
+      // Compare works signed out (a shared /compare?ids= link must open, not bounce to the landing).
+      'comparison',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       // A different account (or none) must never reuse the previous account's cached intake.
@@ -2467,7 +2488,7 @@ function App() {
             <span className="ay-nav__beta">beta</span>
           </a>
 
-          {/* The five main tabs, same names and order as the app (Shop, Services, Home, Community, Library). Home is the filled pill. Real links (G02). */}
+          {/* The five main tabs, same names and order as the app (Shop, Services, Home, Community, Library). The current page is the filled pill (Home only when current). Real links (G02). */}
           <div className="ay-nav__links">
             {MAIN_TABS.map((t) => (
               <a key={t.key} href={t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={WEB_TAB_VIEWS[t.key].includes(currentView) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
@@ -3134,7 +3155,9 @@ function App() {
         )}
         {currentView === 'comparison' && (
           <Comparison
-            onBack={() => handleViewEcosystem()}
+            onBack={() => { const from = viewOriginRef.current.comparison; if (SHOP_VIEWS.has(from) || from === 'product') handleViewDiscovery(''); else handleViewEcosystem(); }}
+            backTo={SHOP_VIEWS.has(viewOriginRef.current.comparison) || viewOriginRef.current.comparison === 'product' ? { label: 'Shop', href: '/explore' } : { label: 'Your ecosystem', href: '/you/ecosystem' }}
+            loading={!catalogReady && compare.count > 0}
             compareList={compareList}
             onRemove={toggleCompare}
             onClear={() => compareStore.clear()}

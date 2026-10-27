@@ -45,6 +45,7 @@ import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscov
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
+import ServiceCard from './cards/ServiceCard.jsx';
 import { PlateName } from './cards/CardBits.jsx';
 import { matchBreakdownFor } from './pdp/decision.js';
 import { featuredOrder } from '../data/packshots.js';
@@ -1103,6 +1104,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         [browseAiSuggestions]
     );
 
+    // Services get their own logo row cards in a 2-column list (critique Oct 27).
+    const servicesGrid = inExplore && typeFilter === 'services';
     const gridItems = useMemo(() => {
         // Union real catalog matches for the submitted query with AI suggestions,
         // in both browsing and search modes. This used to show ONLY AI results
@@ -1842,7 +1845,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 const applied = [...(inExplore && macroGroup !== 'all' ? [[macroGroup, () => setMacroGroup('all')]] : []), ...(inExplore ? [] : [[typeFilter, setTypeFilter]]), [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayshop__applied" role="status">
-                        <span className="ayshop__count">{!gridReady ? '\u00a0' : submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} products` : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
+                        <span className="ayshop__count">{!gridReady ? '\u00a0' : submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} ${servicesGrid ? 'services' : 'products'}` : (shownCount === 1 ? `1 ${servicesGrid ? 'service' : 'product'}` : `${shownCount} ${servicesGrid ? 'services' : 'products'}`)}</span>
                         {/* Partner placement is disclosed by each card's 'ayna partner' label and the header line (Oct 16: no extra note). */}
                         {applied.map(([v, set]) => (
                             <button key={v} type="button" className="ay-chip is-on" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || AREA_LABEL(v)}`}>{LABELS[v] || AREA_LABEL(v)} <span aria-hidden="true">×</span></button>
@@ -1918,7 +1921,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {/* Product Grid */}
             {gridReady && (!searchSubmitted || !aiLoading || gridItems.length > 0) && (
             <>
-            <div ref={gridViewsRef} id="ayshop-grid" role="tabpanel" aria-label={submittedQuery ? `Results for ${submittedQuery}` : (availableMacroGroups.find((g) => g.id === macroGroup)?.label || 'All products')} className={`ay-product-grid ayshop__grid${gridSettled ? ' is-settled' : ''}`}>
+            <div ref={gridViewsRef} id="ayshop-grid" role="tabpanel" aria-label={submittedQuery ? `Results for ${submittedQuery}` : (availableMacroGroups.find((g) => g.id === macroGroup)?.label || 'All products')} className={`ay-product-grid ayshop__grid${gridSettled ? ' is-settled' : ''}${servicesGrid ? ' is-services' : ''}`}>
                 {gridItems.slice(0, Math.min(visibleCount, firstPaintCap)).map((item, idx) => {
                     // A defined (even empty-string) resolvedImages[item.id] came back
                     // from the server's type-aware /api/product-image resolution
@@ -1955,6 +1958,20 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 <span>Found live by ayna. Prices and details are checked less often.</span>
                             </div>
                         )}
+                        {servicesGrid ? (
+                        <ServiceCard
+                            service={item}
+                            matchPercent={matchPercent}
+                            matchHold={matchHold}
+                            matchLabel={badge ? badge.label : ''}
+                            isSaved={isWishlisted}
+                            onSeeMatch={!hasAnswers && onRequirePersonalizeAuth ? () => onRequirePersonalizeAuth() : null}
+                            onOpen={(p) => (trackCardClicked({ surface: eventSurface(), where: 'explore_services', product_id: p.id, position: idx }), onOpenProduct?.(p, searchSubmitted
+                                ? { source: 'search_results', searchQuery: submittedQuery, position: idx }
+                                : { source: 'browse', position: idx }))}
+                            onToggleSaved={onToggleSaved}
+                        />
+                        ) : (
                         <ProductCard
                             product={item}
                             style={undefined}
@@ -1996,6 +2013,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 <PlateName product={item} />
                             )}
                         />
+                        )}
                         </React.Fragment>
                     );
                 })}

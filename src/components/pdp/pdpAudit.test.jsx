@@ -226,7 +226,9 @@ describe('decision block contents (audit 13.1, 14)', () => {
   });
   it('app page: the same block, and the partner disclosure is never collapsed', () => {
     const html = renderToStaticMarkup(<ProductDetailScreen product={byId('p-tampontribe-menstrual-cup')} quizAnswers={IUD_PROFILE} />);
-    const order = ['<h1', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ayv-safeline"', 'class="ayv-acts"', 'class="ayv-hl"', 'role="tablist"'];
+    // Critique Oct 27: one action row (Buy, Save, Ask) with the disclosure under it, the safety line, then the
+    // tabs; the highlights are the 2x2 stat grid at the top of ayna summary.
+    const order = ['<h1', 'class="ayv-pricerow"', 'ayv-sticker', 'class="ay-pdp2-act"', 'ayv-disclose', 'class="ayv-safeline"', 'role="tablist"', 'class="ayv-stats"'];
     const pos = order.map((n) => html.indexOf(n));
     pos.forEach((x, i) => { expect(x, order[i]).toBeGreaterThan(-1); if (i) expect(x, order[i]).toBeGreaterThan(pos[i - 1]); });
     expect(html).not.toMatch(/We may earn a commission<\/span><span aria-hidden="true">\+/);

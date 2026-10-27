@@ -172,7 +172,8 @@ export function PhaseLine({ cycle, hormonalBC = false, compact = false }) {
       </span>
       {!compact && seg.some((s) => s.label) && (
         <span className="ay-db-phaseline-labels" aria-hidden="true">
-          {seg.map((s) => <small key={s.id} className={s.id === now ? 'is-now' : ''} style={{ flex: s.n }}>{s.label}</small>)}
+          {/* A small legend under the line (not sized to each segment): a short phase never cuts "Follicular" to "Fol…". */}
+          {seg.filter((s) => s.label).map((s) => <small key={s.id} className={`is-${s.id}${s.id === now ? ' is-now' : ''}`}>{s.label}</small>)}
         </span>
       )}
       {!compact && <small className="ay-db-phaseline-cap" aria-hidden="true">{caption}</small>}

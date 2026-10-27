@@ -171,18 +171,6 @@ function LR({ text, lead = '' }) {
   return a ? <span className="ayv-lr"><b className="ayv-lr__lead"><Tx>{a}</Tx></b><span className="ayv-lr__rest"><Tx>{b}</Tx></span></span> : <Tx>{t}</Tx>;
 }
 
-/** Back to the top of the page (phones), from the end of Safety. */
-function BackToTop() {
-  const go = (e) => {
-    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    let n = e.currentTarget.parentElement;
-    for (; n && n !== document.body; n = n.parentElement) { const oy = window.getComputedStyle(n).overflowY; if ((oy === 'auto' || oy === 'scroll') && n.scrollHeight > n.clientHeight + 1) break; }
-    const target = n && n !== document.body ? n : window;
-    target.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
-  };
-  return <button type="button" className="ayv-totop" onClick={go}>Back to top</button>;
-}
-
 function Bullets({ items, tone = '' }) {
   if (!items?.length) return null;
   return <ul className={`ayq-bullets${tone ? ` is-${tone}` : ''}`}>{items.map((t, i) => <li key={`${i}-${String(t).slice(0, 20)}`}><Tx>{t}</Tx></li>)}</ul>;
@@ -423,9 +411,9 @@ function StickyTabs({ tabs, active, onChange, stickTop, swipe = false }) {
 }
 
 /** A progressive-disclosure step inside a tab (closed until she asks for it). */
-function Step({ id, title, meta = '', children, open = false }) {
+function Step({ id, title, meta = '', children, open = false, className = '' }) {
   return (
-    <details id={id} className="ayq-step ayq-anchor" open={open || undefined}>
+    <details id={id} className={`ayq-step ayq-anchor${className ? ` ${className}` : ''}`} open={open || undefined}>
       <summary className="ayq-step__sum">
         <span className="ayq-step__text"><span className="ayq-step__h">{title}</span>{meta && <span className="ayq-step__meta">{meta}</span>}</span>
         <PdpIcon name="chevron" size={20} className="ayq-step__chev" />
@@ -451,7 +439,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // "Ask about this product" at the end of ayna summary (each surface passes its own).
   askSlot = null,
   // A compact sticker buy button repeated at the end of ayna summary (no pinned buy bar, audit 7.18).
-  endCta = null }) {
+  endCta = null,
+  // The app's 2x2 stat grid at the top of ayna summary ({ id, value, caption }, real fields only), and its note.
+  stats = null, statsNote = '' }) {
   const product = useApprovedResearch(baseProduct);
   // The short answer leads with the summary's first sentence (unless the team wrote a short take), so "What it is" starts after it.
   // A spec first sentence ("65 mg elemental iron…") becomes Key facts "Strength"; the next sentence is the one-liner.
@@ -811,29 +801,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   if (crit > 0) safetyItems.unshift(safetyItems.splice(crit, 1)[0]);
   const critKey = crit >= 0 || safetyItems[0]?.key === 'alert' ? safetyItems[0]?.key : '';
   const groups = groupSafety(safetyItems);
-  const hasSafety = safetyItems.length > 0 || urgent.length > 0;
-  const safetyBody = hasSafety ? (
-    <>
-      {groups.length > 0 && (
-        <div className="ayv-panel ayv-sf" role="group" aria-labelledby="ayv-sf-h">
-          <p id="ayv-sf-h" className="ayv-panel__title">Safety facts</p>
-          {groups.map((g) => (
-            <div key={g.id} className={`ayv-panel__group is-${g.id}`}>
-              <p className="ayv-panel__sub">{g.title}</p>
-              {g.chunks.map((chunk, ci) => (
-                <ul key={ci} className="ayv-sf__list">
-                  {chunk.map((x) => <li key={x.key} className={[x.key === critKey && 'is-critical', x.kind === 'addition' && 'is-block'].filter(Boolean).join(' ') || undefined}>{x.kind === 'addition' ? x.node : <span className="ayq-p">{x.node}</span>}</li>)}
-                </ul>
-              ))}
-            </div>
-          ))}
-        </div>
-      )}
-      <UrgentSigns product={product} flags={urgent} />
-      {!sf.alert.length && <SourceGrid items={sf.sources} label="Sources for these notes" id="ayq-safe-src" />}
-    </>
-  ) : null;
-
   // ---- How to use: numbered, 3 then Show all ---------------------------------
   const howBody = (m.how || adds('how').length) ? (
     <>
@@ -918,15 +885,59 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
 
   // ---- ayna summary: one reading column, each fact once (founder, Oct 25) -----
   const whoL = whoLists({ details: fit?.hasProfile ? fit.details : null, who: m.who });
-  // A section whose panel has its own title ("Safety facts", "Product facts") keeps its heading for screen readers only.
-  const sec = (id, title, body, extra = '', hideTitle = false) => body && (
-    <section id={id} className={`ayq-anchor ayv-sec${extra ? ` ${extra}` : ''}`} aria-labelledby={`${id}-h`}>
-      <h3 id={`${id}-h`} className={hideTitle ? 'sr-only' : 'ayv-sec__h'}>{title}</h3>
-      {body}
-    </section>
+  // Critique Oct 27 (app product page 5/10: 7 stacked cards of prose): ayna summary is the one
+  // line, a 2x2 stat grid (app), then tap-to-expand rows. Who it's for, What's in it and How to use
+  // first; Product facts and Evidence after; Safety facts open on tap while "When to get help now"
+  // stays visible. Every line is still on the page (closed rows keep their text in the DOM).
+  const insideTitle = m.isDigital ? 'What’s included' : isDevice ? 'What it’s made of' : 'What’s in it';
+  const count = (n, one, many) => (n ? plural(n, one, many) : '');
+  const whoBody = (whoL.yes.length > 0 || whoL.no.length > 0) && (
+    <>
+      {whoL.yes.length > 0 && <p className="ayv-leadin">Good for:</p>}
+      {whoL.yes.length > 0 && <ShowAll items={whoL.yes} n={Infinity} label="" className="ayv-list ayv-list--yes" render={(t) => <><span className="ayv-mark is-yes" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span><span className="ayq-p"><span className="sr-only">For: </span><LR text={t} /></span></>} />}
+      {whoL.no.length > 0 && <>
+        <p className="ayv-leadin ayv-sub">Not for:</p>
+        <ShowAll items={whoL.no} n={Infinity} label="" className="ayv-list ayv-list--no" render={(t) => <><span className="ayv-mark is-no" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M7 7l10 10M17 7 7 17" /></svg></span><span className="ayq-p"><span className="sr-only">Not for: </span><LR text={t} /></span></>} />
+      </>}
+      {/* "See the breakdown / How we match" moved to the Why N%? explainer under the match pill (audit 7.3). */}
+      {fit?.extra}
+    </>
   );
+  const factsBody = keyFacts.length > 0 && (
+    <div className="ayv-pf" role="group" aria-label="Product facts">
+      <ShowAll items={keyFacts} n={Infinity} label="facts" className="ayv-facts" render={(r) => <><span className="ayv-facts__k">{r.label}</span><span className="ayv-facts__v">{r.node || <Tx>{r.value}</Tx>}{r.note && <small>{r.note}</small>}</span></>} />
+      {factsChecked && <p className="ayq-meta ayv-facts__foot">Facts checked {factsChecked}</p>}
+    </div>
+  );
+  const evidenceBody = (
+    <>
+      <EvidenceHeader ev={evx} compact onMore={() => goTo('literature')} />
+      {teamShort && ex.short.length > 0 && <>
+        <ShowAll items={ex.short} n={Infinity} label="points" className="ayv-bullets" render={(t) => <Tx>{t}</Tx>} />
+        {ex.attribution && <p className="ayq-meta">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" className="ayv-textbtn" onClick={() => goTo('clinical')}>Read the clinical opinion</button></p>}
+      </>}
+    </>
+  );
+  const safetyFactsBody = groups.length > 0 && (
+    <>
+      <div className="ayv-panel ayv-sf" role="group" aria-label="Safety facts">
+        {groups.map((g) => (
+          <div key={g.id} className={`ayv-panel__group is-${g.id}`}>
+            <p className="ayv-panel__sub">{g.title}</p>
+            {g.chunks.map((chunk, ci) => (
+              <ul key={ci} className="ayv-sf__list">
+                {chunk.map((x) => <li key={x.key} className={[x.key === critKey && 'is-critical', x.kind === 'addition' && 'is-block'].filter(Boolean).join(' ') || undefined}>{x.kind === 'addition' ? x.node : <span className="ayq-p">{x.node}</span>}</li>)}
+              </ul>
+            ))}
+          </div>
+        ))}
+      </div>
+      {!sf.alert.length && <SourceGrid items={sf.sources} label="Sources for these notes" id="ayq-safe-src" />}
+    </>
+  );
+  const statItems = (stats || []).filter((x) => x && x.value).slice(0, 4);
   const summaryBody = (
-    <div className="ayq-sum ayv-read">
+    <div className="ayq-sum ayv-read ayv-sum2">
       {(lead || m.summary.length > 0) && (
         <section id="ay-sum-about" className="ayq-anchor ayv-sec ayv-sec--lead" aria-label="What it is">
           {lead && <p className={`ayv-oneline${String(lead).length > 140 ? ' is-long' : ''}`}><Tx>{brandVoice(lead, m.brand || glance?.brand)}</Tx></p>}
@@ -934,50 +945,29 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           {m.summary.length > 0 && <ReadMore label="Read more" className="ayq-prose"><Paras list={m.summary.filter((x) => !(teamShort && x.startsWith(leadParts.used)))} /></ReadMore>}
         </section>
       )}
-      {sec('ay-sum-who', 'Who it’s for', (whoL.yes.length > 0 || whoL.no.length > 0) && (
-        <>
-          {whoL.yes.length > 0 && <p className="ayv-leadin">Good for:</p>}
-          {whoL.yes.length > 0 && <ShowAll items={whoL.yes} n={2} label="" className="ayv-list ayv-list--yes" render={(t) => <><span className="ayv-mark is-yes" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></span><span className="ayq-p"><span className="sr-only">For: </span><LR text={t} /></span></>} />}
-          {whoL.no.length > 0 && <>
-            <p className="ayv-leadin ayv-sub">Not for:</p>
-            <ShowAll items={whoL.no} n={Infinity} label="" className="ayv-list ayv-list--no" render={(t) => <><span className="ayv-mark is-no" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M7 7l10 10M17 7 7 17" /></svg></span><span className="ayq-p"><span className="sr-only">Not for: </span><LR text={t} /></span></>} />
-          </>}
-          {/* "See the breakdown / How we match" moved to the Why N%? explainer under the match pill (audit 7.3). */}
-          {fit?.extra}
-        </>
-      ))}
-      {sec('ay-sum-facts', 'Key facts', keyFacts.length > 0 && (
-        <>
-          <div className="ayv-panel ayv-pf" role="group" aria-labelledby="ayv-pf-h">
-            <p id="ayv-pf-h" className="ayv-panel__title">Product facts</p>
-            <ShowAll items={keyFacts} n={4} label="facts" className="ayv-facts" render={(r) => <><span className="ayv-facts__k">{r.label}</span><span className="ayv-facts__v">{r.node || <Tx>{r.value}</Tx>}{r.note && <small>{r.note}</small>}</span></>} />
-            {factsChecked && <p className="ayq-meta ayv-facts__foot">Facts checked {factsChecked}</p>}
-          </div>
-        </>
-      ), '', true)}
-      {sec('ay-sum-evidence', 'Evidence', (
-        <>
-          <EvidenceHeader ev={evx} compact onMore={() => goTo('literature')} />
-          {teamShort && ex.short.length > 0 && <>
-            <ShowAll items={ex.short} n={2} label="points" className="ayv-bullets" render={(t) => <Tx>{t}</Tx>} />
-            {ex.attribution && <p className="ayq-meta">{m.independent ? 'ayna’s summary of the research' : 'Summary of the research, with claims credited to the brand'}. <button type="button" className="ayv-textbtn" onClick={() => goTo('clinical')}>Read the clinical opinion</button></p>}
-          </>}
-        </>
-      ))}
-      {sec('ay-sum-details', m.isDigital ? 'What’s included' : isDevice ? 'What it’s made of' : 'Ingredients', insideBody)}
-      {sec('ay-sum-how', 'How to use', howBody)}
-      {sec('ay-sum-safety', 'Safety', safetyBody, 'ayv-sec--safety', groups.length > 0)}
-      {safetyBody && <BackToTop />}
+      {statItems.length >= 2 && (
+        <section className="ayv-stats" aria-label="Facts at a glance">
+          <ul className={`ayv-stats__grid is-n${statItems.length}`}>
+            {statItems.map((x) => <li key={x.id}><span className="ayv-stats__v">{x.value}</span><span className="ayv-stats__k">{x.caption}</span></li>)}
+          </ul>
+          {statsNote && <p className="ayv-stats__note">{statsNote}</p>}
+        </section>
+      )}
+      <div className="ayv-xrows">
+        {whoBody && <Step id="ay-sum-who" title="Who it’s for" meta={count(whoL.yes.length + whoL.no.length, 'point')} className="ayv-xrow"><section className="ayv-xbody">{whoBody}</section></Step>}
+        {insideBody && <Step id="ay-sum-details" title={insideTitle} meta={chips ? count(chips.length, m.isDigital ? 'item' : 'ingredient') : ''} className="ayv-xrow"><section className="ayv-xbody">{insideBody}</section></Step>}
+        {howBody && <Step id="ay-sum-how" title="How to use" meta={m.how ? count(m.how.steps.length, 'step') : ''} className="ayv-xrow"><section className="ayv-xbody">{howBody}</section></Step>}
+        {factsBody && <Step id="ay-sum-facts" title="Product facts" meta={count(keyFacts.length, 'fact')} className="ayv-xrow"><section className="ayv-xbody">{factsBody}</section></Step>}
+        <Step id="ay-sum-evidence" title="Evidence" meta={evx.status} className="ayv-xrow"><section className="ayv-xbody">{evidenceBody}</section></Step>
+      </div>
+      {/* Safety: "When to get help now" always visible, never behind a tap; the safety facts one tap away. */}
+      {(urgent.length > 0 || safetyFactsBody) && (
+        <section className="ayv-sec ayv-sec--safety2" aria-label="Safety">
+          {urgent.length > 0 && <UrgentSigns product={product} flags={urgent} />}
+          {safetyFactsBody && <Step id="ay-sum-safety" title="Safety facts" meta={count(safetyItems.length, 'note')} className="ayv-xrow is-safety"><section className="ayv-xbody">{safetyFactsBody}</section></Step>}
+        </section>
+      )}
       {askSlot && <section className="ayv-ask" aria-label="Ask about this product">{askSlot}</section>}
-      {/* ayna summary stands on its own (audit 7.16): what the other tabs hold, in three lines. */}
-      <section className="ayv-sec ayv-pointer" aria-labelledby="ay-sum-other-h">
-        <h3 id="ay-sum-other-h" className="ayv-sec__h">In the other tabs</h3>
-        <ul className="ayv-pointer__list">
-          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('clinical')}>Clinical</button><span>{clin ? `${clin.who || 'a clinician'}${clin.credential ? `, ${clin.credential}` : ''}` : 'no clinician has reviewed this yet'}</span></li>
-          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('literature')}>Research</button><span>{evx.summary.charAt(0).toLowerCase() + evx.summary.slice(1)}</span></li>
-          <li><button type="button" className="ayv-textbtn" onClick={() => goTo('reviews')}>Reviews</button><span>{ratingCount > 0 ? plural(ratingCount, 'ayna review') : 'no ayna reviews yet'}{rv.online.length ? `, ${plural(rv.online.length, 'link')} to posts online` : ''}</span></li>
-        </ul>
-      </section>
       {/* No pinned buy bar (audit 7.18): a compact sticker button repeats here instead. */}
       {endCta && <div className="ayv-endcta">{endCta}</div>}
     </div>

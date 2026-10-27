@@ -15,6 +15,8 @@
  *   Never "best" on its own.
  */
 import { compareRows } from '../pdp/commerce.js';
+import { costPerUse, lifespanYears } from '../pdp/decision.js';
+import { priceParts } from '../../data/passport/content.js';
 import { formatLabel, NOT_ON_FILE } from '../pdp/glance.js';
 import { evidenceLevel, LEVEL_WORDS } from '../pdp/evidenceLevel.js';
 import { evidenceFor, levelCountWords, LEVELS } from '../pdp/evidenceLevels.js';
@@ -141,6 +143,48 @@ function reviews(product, ratingFor) {
 const NO_PROFILE = 'Needs your health profile';
 
 /**
+ * The only rows where one value is objectively better (critique Oct 27: no
+ * invented "better" judgements): ayna's cost per use (same unit only, lower is
+ * better), a stated reusable lifespan (longer is better) and FSA/HSA (eligible
+ * is better). `better[i]` is true only when at least two products have the
+ * fact on file and one strictly wins; for FSA/HSA, only when they differ.
+ */
+export function objectiveRows(list = [], base = null) {
+  const rows = [];
+  const per = list.map((p) => costPerUse(p));
+  const units = new Set(per.filter(Boolean).map((c) => c.unit));
+  if (per.some(Boolean)) {
+    const known = per.filter(Boolean);
+    const min = units.size === 1 && known.length >= 2 ? Math.min(...known.map((c) => c.value)) : null;
+    const winners = min == null ? 0 : known.filter((c) => c.value === min).length;
+    rows.push({
+      id: 'perUse', label: 'Cost per use', hint: 'ayna’s maths from the price and the lifespan or supply on file',
+      values: per.map((c) => (c ? c.text.replace(/ if it lasts .*$/, '') : NOT_ON_FILE)),
+      better: per.map((c) => Boolean(c && min != null && winners < known.length && c.value === min)),
+      objective: true,
+    });
+  }
+  const life = list.map((p) => lifespanYears(p));
+  if (life.some(Boolean)) {
+    const known = life.filter(Boolean);
+    const max = known.length >= 2 ? Math.max(...known.map((l) => l.years)) : null;
+    const winners = max == null ? 0 : known.filter((l) => l.years === max).length;
+    rows.push({
+      id: 'life', label: 'Lifespan', hint: 'As stated on the listing',
+      values: life.map((l) => (l ? `${l.upTo ? 'Up to ' : ''}${l.years} years` : NOT_ON_FILE)),
+      better: life.map((l) => Boolean(l && max != null && winners < known.length && l.years === max)),
+      objective: true,
+    });
+  }
+  const fsa = base?.['FSA/HSA'];
+  if (fsa && fsa.some((v) => v !== NOT_ON_FILE)) {
+    const differ = new Set(fsa).size > 1;
+    rows.push({ id: 'fsa', label: 'FSA/HSA', values: fsa, better: fsa.map((v) => differ && v === 'Eligible'), objective: true });
+  }
+  return rows;
+}
+
+/**
  * @param {Array} products 2 to 4 products
  * @param {{ matchFor?: (p) => number|null, detailsFor?: (p) => object|null, ratingFor?: (p) => { value, count }|null, noProfileText?: string }} opts
  *   noProfileText: what the match row says without her answers (signed out: "See your match"; never a number)
@@ -168,7 +212,8 @@ export function compareSetRows(products = [], { matchFor = null, detailsFor = nu
       keep: true,
     });
   }
-  rows.push({ id: 'price', label: 'Price', values: base.Price || list.map(() => NOT_ON_FILE) });
+  rows.push({ id: 'price', label: 'Price', values: list.map((p) => { const pr = priceParts(p); return pr.known ? pr.main : NOT_ON_FILE; }) });
+  rows.push(...objectiveRows(list, base));
   rows.push({ id: 'use', label: 'Intended use', values: list.map(intendedUse), full: list.map(intendedUseFull), hint: 'What the brand or ayna’s team says it is for' });
   rows.push({ id: 'format', label: 'Format', values: list.map(formatOf) });
   // The grade (only from .gov) plus the same counts per level as the product page (pdp/evidenceLevels).

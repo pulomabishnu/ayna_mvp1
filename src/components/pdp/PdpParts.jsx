@@ -398,7 +398,7 @@ export function ActionsRow({ saved = false, onSave = null, inRoutine = false, on
  * Not medical advice.", three starters that change with what ayna knows, and
  * the box. Esc or the close button returns focus to the Ask button.
  */
-export function AskPanel({ open, onClose, title, starters = [], onAsk, variant = 'panel', children = null }) {
+export function AskPanel({ open, onClose, title, starters = [], onAsk, variant = 'panel', children = null, className = '', sub = 'Uses your profile. Not medical advice.' }) {
   const ref = React.useRef(null);
   const [text, setText] = useState('');
   useEffect(() => {
@@ -412,7 +412,7 @@ export function AskPanel({ open, onClose, title, starters = [], onAsk, variant =
   if (!open) return null;
   const send = (q) => { const t = String(q || '').trim(); if (t) { onAsk?.(t); setText(''); } };
   return (
-    <div className={`ayv-ask2 is-${variant}`} data-ask-panel="">
+    <div className={`ayv-ask2 is-${variant}${className ? ` ${className}` : ''}`} data-ask-panel="">
       <div className="ayv-ask2__dim" aria-hidden="true" onClick={onClose} />
       <section ref={ref} className="ayv-ask2__box" role="dialog" aria-modal="true" aria-labelledby="ayv-ask2-h">
         {variant === 'sheet' && <span className="ayv-ask2__grab" aria-hidden="true" />}
@@ -420,7 +420,7 @@ export function AskPanel({ open, onClose, title, starters = [], onAsk, variant =
           <h2 id="ayv-ask2-h" className="ayv-ask2__title">{title}</h2>
           <button type="button" className="ayv-ask2__close" onClick={onClose} aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
         </div>
-        <p className="ayv-ask2__sub">Uses your profile. Not medical advice.</p>
+        {sub && <p className="ayv-ask2__sub">{sub}</p>}
         {children || (
           <>
             <ul className="ayv-ask2__starters">{starters.map((q) => <li key={q}><button type="button" className="ayv-obtn is-left" onClick={() => send(q)}>{q}</button></li>)}</ul>

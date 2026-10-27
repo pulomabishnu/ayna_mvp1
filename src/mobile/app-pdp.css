@@ -301,3 +301,45 @@
 
 /* The app's legal footer under the product page: caption size (13px floor). */
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal :is(p, a, button, span) { font-size: 13px !important; }
+
+/* p18 app product page (critique Oct 27): full-width square photo with dots; name, price, size chips;
+   ONE action row (Buy, Save, Ask) with the disclosure under it; the safety line; then the tabs. */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-top { position: absolute; left: 0; right: 0; top: 0; z-index: 4; display: flex; align-items: center; justify-content: space-between; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-top__end { display: flex; align-items: center; gap: 8px; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-more { position: relative; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-more > summary { list-style: none; display: grid; place-items: center; width: 44px; height: 44px; cursor: pointer; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-more > summary::-webkit-details-marker { display: none; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-more > summary:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-more__menu { position: absolute; right: 0; top: calc(100% + 8px); z-index: 5; display: grid; min-width: 220px; padding: 6px; border: 1.5px solid var(--d-ink, #3e2723); border-radius: 16px; background: var(--d-page, #ffedac); }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-more__menu > button { display: grid; gap: 2px; min-height: 48px; margin: 0; padding: 8px 12px; border: 0; border-radius: 10px; background: transparent; color: var(--d-ink, #3e2723); font: 600 15px/1.3 var(--f-ui, 'Figtree', sans-serif); text-align: left; cursor: pointer; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-more__menu > button small { font: 500 13px/1.3 var(--f-ui, 'Figtree', sans-serif); color: var(--d-ink-2, rgba(62, 39, 35, .78)); }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-more__menu > button + button { border-top: 1px solid var(--d-hair, rgba(62, 39, 35, .15)); border-radius: 0; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-more__menu > button:focus-visible { outline: 2px solid var(--d-ink, #3e2723); outline-offset: -2px; }
+/* The photo: full width, square, on the light photo panel the cards use; dots under it when there are several. */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero { margin: 0; padding: 0; background: #f6f5f2; border-bottom: 1.5px solid var(--d-ink, #3e2723); }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero .ayq-apphero__tile { position: relative; aspect-ratio: auto !important; width: 100%; max-width: 520px; margin: 0 auto; border: 0 !important; border-radius: 0 !important; background: transparent !important; overflow: visible !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero .ay-gal { gap: 0; padding-bottom: 0; --gal-ink: #3e2723; --gal-soft: rgba(62, 39, 35, .28); }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero :is(.ay-gal__track, .ay-gal__open) { background: transparent !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero .ay-gal__slide { aspect-ratio: 1 / 1; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero .ay-gal__open :is(img, picture) { position: static !important; width: 100% !important; height: 100% !important; padding: 10% 7% 6% !important; object-fit: contain !important; mix-blend-mode: multiply; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero .ay-gal__dots { display: flex !important; padding: 0 0 14px; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero .ay-gal__count { display: none; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero .ay-gal__zoom { right: 16px; bottom: 16px; background: #ffedac; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero .ay-gal.is-empty { aspect-ratio: 1 / 1; }
+/* Name, price, chips, the action row */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2 { margin-top: 0 !important; padding-top: 18px !important; border-radius: 0 !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-sizes { display: grid; gap: 6px; margin: 10px 0 0; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-chips > li { display: inline-flex; align-items: center; min-height: 32px; margin: 0 !important; padding: 4px 12px !important; border: 1.5px solid var(--d-ink, #3e2723); border-radius: 999px; font: 600 14px/1.25 var(--f-ui, 'Figtree', sans-serif); color: var(--d-ink, #3e2723); }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-sizes .ayv-textbtn { justify-self: start; min-height: 44px; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-acts { display: flex; align-items: stretch; gap: 8px; margin: 16px 0 0; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-acts > .ayv-sticker { flex: 1 1 auto; min-width: 0; width: auto !important; height: auto !important; min-height: 52px !important; margin: 0 !important; padding: 6px 16px !important; text-align: center; line-height: 1.25 !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-act { flex: none; display: grid; justify-items: center; align-content: center; gap: 2px; width: 60px; min-height: 52px; margin: 0; padding: 4px 0; border: 1.5px solid var(--d-ink, #3e2723); border-radius: 16px; background: transparent; color: var(--d-ink, #3e2723); font: 600 13px/1.1 var(--f-ui, 'Figtree', sans-serif); cursor: pointer; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-act.is-on { background: #f7badd; border-color: #3e2723; color: #3e2723; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-act:focus-visible { outline: 3px solid var(--d-ink, #3e2723); outline-offset: 2px; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2 .ay-pdp-commission { margin-top: 8px !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-cmpbtn { display: flex; align-items: center; justify-content: space-between; width: calc(100% - 2 * var(--d-gutter, 20px)); min-height: 56px; margin: 16px var(--d-gutter, 20px) 0; padding: 0 18px; border: 1.5px solid var(--d-ink, #3e2723); border-radius: 16px; background: transparent; color: var(--d-ink, #3e2723); font: 700 16px/1.2 var(--f-ui, 'Figtree', sans-serif); cursor: pointer; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-cmpbtn:focus-visible { outline: 3px solid var(--d-ink, #3e2723); outline-offset: 2px; }
+/* The compare sheet holds the Compare layout: let it be wide enough and scroll. */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ayv-ask2 .ay-compare { margin: 0; padding: 0; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ayv-ask2 .ay-compare .ay-pdp-sechead { display: none; }
