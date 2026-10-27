@@ -122,6 +122,16 @@ describe('tips overlay', () => {
     expect(dialog()).toBeNull();
   });
 
+  it('signed out on the app landing: the welcome tip on Slide to start, no opt-in asked', () => {
+    mountApp({ screen: 'landing', html: '<div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track">Slide</button></div>' });
+    wait(4000);
+    expect(dialog().textContent).toContain('Welcome to ayna');
+    // Starting the slide counts as seen: the tap reaches the page and the tip closes.
+    act(() => { app.querySelector('.ay-sts__track').dispatchEvent(new Event('pointerdown', { bubbles: true })); });
+    expect(dialog()).toBeNull();
+    expect(readTour().seen.landing).toBeTruthy();
+  });
+
   it('No thanks turns tips off and nothing shows again', () => {
     mountApp({ html: HOME });
     wait(1000);
@@ -153,6 +163,8 @@ describe('tips overlay', () => {
     setTipsEnabled(true);
     mountApp({ html: '<div data-tour="home"><section data-tour="score-rings" data-offscreen="1">Rings</section><nav data-tour="home-links">Links</nav></div>' });
     wait(1000);
+    expect(dialog()).toBeNull(); // Home's own tips get a moment to come on screen first
+    wait(4000);
     expect(dialog().textContent).toContain('Your data and Your products');
     expect(document.querySelector('.ay-tour__count')).toBeNull();
   });

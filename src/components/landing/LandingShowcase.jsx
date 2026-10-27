@@ -181,7 +181,7 @@ function Hero({ variant, cta, onSearch, onSignIn, onBrowse, onHowItWorks, signed
           <h1 id="lsx-title" className="lsx-shout">Find what fits <span>your body.</span></h1>
           <p className="lsx-lead">Women&rsquo;s health products matched to you, with the evidence beside each one.</p>
           <Search onSearch={onSearch} />
-          <SlideToStart className="lsx-hero__sts" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
+          <SlideToStart className="lsx-hero__sts" tour="landing-start" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
           <div className="lsx-hero__links">
             {app && !signedIn && onBrowse && <button type="button" onClick={() => onBrowse()}>Explore first</button>}
             {!app && onHowItWorks && <a href="/how-it-works" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onHowItWorks(); }}>How we match<Arrow /></a>}

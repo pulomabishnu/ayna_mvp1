@@ -1892,7 +1892,7 @@ export default function MobileApp() {
       {/* "Where did you hear about us?" once after sign-up, optional (onboarding audit #1). */}
       {authUser && !heardDismissed && screen !== 'signin' && shouldAskHeardAbout(authUser) && <HeardAboutPrompt variant="app" onDone={() => setHeardDismissed(true)} />}
       {/* First-visit tips (src/mobile/tutorial): one overlay, reads data-tour anchors. */}
-      <TutorialLayer userId={authUser?.id || null} />
+      <TutorialLayer userId={authUser?.id || null} ready={Boolean(lastQuizAnswers || hasEcosystem)} />
     </div>
   );
 }

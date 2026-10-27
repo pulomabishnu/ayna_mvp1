@@ -17,6 +17,7 @@ import CardDeck from '../../components/today/CardDeck.jsx';
 import TodayViews from '../components/TodayViews.jsx';
 import ServiceCard from '../../components/cards/ServiceCard.jsx';
 import { CompareToggle } from '../../components/compare/CompareControls.jsx';
+import SlideToStart from '../../components/ui/SlideToStart.jsx';
 import { splitPostTitle } from '../../components/community/postCard.js';
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
@@ -33,7 +34,7 @@ const files = [];
 const code = files.filter((f) => /\.jsx?$/.test(f) && !f.endsWith('tips.js')).map((f) => readFileSync(f, 'utf8')).join('\n');
 
 // A data-tour written literally, as a prop default (tour = 'chat-input'), or as a template (`you-${r.key}` with key: 'beliefs').
-const hasTour = (v) => code.includes(`data-tour="${v}"`) || new RegExp(`tour = '${v}'`).test(code)
+const hasTour = (v) => code.includes(`data-tour="${v}"`) || new RegExp(`tour(?: = |=)['"]${v}['"]`).test(code)
   || (code.includes('data-tour={`you-${r.key}`}') && v.startsWith('you-') && code.includes(`key: '${v.slice(4)}'`));
 const all = [...SCREENS.map((s) => ['app', s]), ...WEB_SCREENS.map((s) => ['web', s])];
 const selectorsOf = (s) => [s.root, ...s.tips.map((t) => t.anchor)];
@@ -122,6 +123,11 @@ describe('rendered parts carry their tips’ anchors', () => {
   it('Services: a service card', () => {
     mount(<div data-tour="explore" data-kind="services"><ServiceCard service={{ id: 's1', name: 'Telehealth visit', brand: 'Clinic', category: 'services' }} as="button" onOpen={() => {}} /></div>);
     expect(document.querySelector(tip(SCREENS, 'services', 'services-card').anchor)).not.toBeNull();
+  });
+  it('Landing: Slide to start carries the welcome tip (app and web)', () => {
+    mount(<SlideToStart tour="landing-start" onComplete={() => {}} />);
+    expectFound(SCREENS, 'landing', ['landing-start']);
+    expectFound(WEB_SCREENS, 'landing', ['landing-start']);
   });
   it('Shop: the Compare button', () => {
     mount(<div data-tour="explore"><CompareToggle /></div>);
