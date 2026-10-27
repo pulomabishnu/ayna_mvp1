@@ -1,6 +1,6 @@
 /* global process */
 import { PREMIUM_READ_IDS } from '../src/pro/premiumReads.js';
-export const DEFAULT_PRO_RULES = { enabled: false, freeAskPerDay: 5, proAskPerDay: 50, freePlaylists: 1, freeQuizRetakesPerWeek: 1, premiumReadIds: [] };
+export const DEFAULT_PRO_RULES = { enabled: false, freeAskPerDay: 5, proAskPerDay: 50, freePlaylists: 1, premiumReadIds: [] };
 export async function proFeatureRules(admin) {
   if (process.env.PRO_FEATURE_GATES_ENABLED !== '1') return DEFAULT_PRO_RULES;
   const { data, error } = await admin.rpc('pro_feature_config');
