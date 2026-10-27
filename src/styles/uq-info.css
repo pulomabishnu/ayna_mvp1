@@ -157,3 +157,17 @@ html body .app-container.app-container .uq-contact .ed-form .ay-btn--primary { b
 .app-container .aycmp__sample-head.uq-band :is(h2, p) { color: #3e2723 !important; }
 html body :is(#uq, .app-container):is(#uq, .app-container):is(#uq, .app-container) .uq-contact .ed-form :is(input, textarea) { background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; }
 html body :is(#uq, .app-container):is(#uq, .app-container):is(#uq, .app-container) .uq-contact .ed-form :is(input, textarea)::placeholder { color: rgba(62, 39, 35, .7) !important; }
+/* p15 clean (founder: "too much overcrowded writing"): on phones the photo sat beside the whole
+   intro, squeezing the lede into a 9-line column. The photo now sits beside the title only and the
+   lede runs the full width under both. */
+@media (max-width: 640px) {
+  html body .app-container .ay-ih.uq-bleed.has-photo { grid-template-columns: minmax(0, 1fr) 96px; row-gap: 14px; align-items: center; }
+  html body .app-container .ay-ih.uq-bleed.has-photo .ay-ih__copy { display: contents; }
+  html body .app-container .ay-ih.uq-bleed.has-photo .ay-ih__copy > * { grid-column: 1 / -1; }
+  html body .app-container .ay-ih.uq-bleed.has-photo .ay-ih__crumbs { grid-row: 1; }
+  html body .app-container .ay-ih.uq-bleed.has-photo .ay-ih__copy > .ay-ih__h1 { grid-column: 1; grid-row: 2; }
+  html body .app-container .ay-ih.uq-bleed.has-photo .ay-ih__plate { grid-column: 2; grid-row: 2; width: 96px; align-self: center; margin-top: 0 !important; }
+}
+/* p15 clean (founder: "too much overcrowded writing"): a long-page section opens as its heading and
+   three lines; "Read the full section" reveals the whole first paragraph and the rest, verbatim. */
+html body .app-container .uq-glance:not(:has(.uq-rm.is-open)) > p:first-of-type { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }

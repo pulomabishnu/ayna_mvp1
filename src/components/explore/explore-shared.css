@@ -60,7 +60,7 @@ html body .ayshop__type button { min-height: 44px; min-width: 44px; padding: 0 1
 html body .ayshop__type button[aria-pressed='true'] { background: #3e2723; color: #ffedac; }
 html body .ayshop__type button:focus-visible { outline: 2px solid #f7badd; outline-offset: 2px; }
 html body .ayshop__reads { margin: 24px 0 8px; font-size: 15px; }
-html body .ayshop__reads a { display: inline-flex; align-items: center; min-height: 44px; color: #3e2723; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+html body .ayshop__reads a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ay-fg, #3e2723); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .ayna-mobile .ayshop__chips { margin: 4px var(--d-gutter, 16px) 12px; }
 .ayna-mobile .ayshop__chips .ay-shopgroups.ay-shop-groups { margin: 0; }
 .ayna-mobile .ayshop__reads { margin: 24px var(--d-gutter, 16px) 8px; }
@@ -111,3 +111,7 @@ html body .ayna-mobile .al-topics--v9 > * { flex: none !important; white-space: 
 /* p15 clean: one tools row (Filters, Compare, Swipe), 44px tap targets. */
 html body .ayna-mobile.ayna-mobile .ay-shop-extras.ay-shop-tools { gap: 10px; margin: 0 0 14px; }
 html body .ayna-mobile.ayna-mobile .ay-shop-extras.ay-shop-tools :is(.ayna-shop-filter-toggle, .ay-for-me, .ay-shop-compare, .ay-discover-cta) { min-height: 44px !important; height: 44px !important; padding: 0 16px !important; font: 600 15px/1 var(--ay-font-ui) !important; white-space: nowrap; }
+html body .ayna-mobile.ayna-mobile .ay-grid-note .ay-shop-note.is-commission { margin: 8px 0 12px !important; }
+/* p15 clean: "How we make money" in the Shop note gets a 44px tap area without changing the line. */
+html body .ayshop__note a { position: relative; }
+html body .ayshop__note a::after { content: ''; position: absolute; left: -4px; right: -4px; top: 50%; height: 44px; transform: translateY(-50%); }

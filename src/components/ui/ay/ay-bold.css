@@ -70,3 +70,5 @@ a:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile
 :is([data-theme='dark'], [data-theme='brand-dark']) :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-ink { border: 1.5px solid rgba(255, 237, 172, .45) !important; }
 /* Pause motion (footer / page button sets html.ay-motion-paused) and keyboard focus also stop the marquee (uniqueness pass A). */
 html.ay-motion-paused .ayb-marquee__track, .ayb-marquee:focus-within .ayb-marquee__track { animation-play-state: paused; }
+/* p15 clean (founder: "no ugly sticks/stars"): marquee separators are a small dot, not a star glyph. */
+html body .ayb-marquee__row li::after { content: '' !important; display: inline-block; width: 8px; height: 8px; margin-left: 28px; border-radius: 50%; background: currentColor; vertical-align: middle !important; font-size: 0 !important; }

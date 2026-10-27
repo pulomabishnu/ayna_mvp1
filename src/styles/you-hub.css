@@ -178,3 +178,17 @@ html body .app-container.app-container.app-container.app-container.app-container
 @media (prefers-reduced-motion: reduce) { html body .app-container.app-container.app-container.app-container.app-container .yh .yh-fact:hover { transform: none; } }
 /* Signed out: the one sticker heading on the page (PRIMITIVES #2) carries the promise. */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container) .yh.is-signedout .ay-ecoprev__title { display: inline-flex; align-items: center; padding: 6px 22px 8px !important; border: var(--ay-border-ink); border-radius: var(--ay-r-pill); background: var(--ay-chip-bg); box-shadow: var(--ay-sticker); }
+/* p15 clean: the signed-out title was drawn as an outlined pill with the button sticker, so it read
+   as a button. It is a plain heading; only buttons carry the sticker. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, #ay-x, .app-container):is(#ds-w, #ay-x, .app-container) .yh.is-signedout .ay-ecoprev__title { display: block; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; border-radius: 0; }
+/* p15 clean (Settings): the Daily Rundown reminder row was cramped ("Time[8:00 am]Turn on" with a
+   15px-tall button). Label, picker and button now sit in one spaced row of 44px controls. */
+html body .app-container .ay-rundown-setting .ay-today__notify-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 12px; }
+html body .app-container .ay-rundown-setting .ay-today__notify-time { display: inline-flex; align-items: center; gap: 10px; font: 600 15px/1.2 var(--ay-font-ui, inherit); }
+html body .app-container .ay-rundown-setting .ay-today__notify-time select { min-height: 44px; padding: 0 14px; border: 1.5px solid var(--ay-fg, #3e2723); border-radius: 999px; background: transparent; color: inherit; font: 600 15px/1 var(--ay-font-ui, inherit); }
+html body .app-container .ay-rundown-setting :is(.ay-today__primary, .ay-today__text) { min-height: 44px; padding: 0 20px; border-radius: 999px; font: 600 15px/1 var(--ay-font-ui, inherit); }
+html body .app-container .ay-rundown-setting .ay-today__primary { border: 0; background: var(--ay-fill-ink, #3e2723); color: var(--ay-on-ink, #ffedac); box-shadow: 3px 3px 0 #f7badd; }
+html body .app-container .ay-rundown-setting .ay-today__text { border: 1.5px solid var(--ay-fg, #3e2723); background: transparent; color: inherit; }
+/* Email settings: the two frequency choices share one line instead of stacking. */
+html body .wy-email.wy-email .wy-seg.wy-seg { flex-wrap: nowrap !important; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+html body .wy-email.wy-email .wy-seg.wy-seg > .ay-chip { flex: none; min-height: 44px; padding-inline: 10px !important; gap: 4px; }

@@ -37,6 +37,7 @@
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; max-width: 100%;
   font: 700 clamp(17px, 2vw, 22px)/1.1 var(--ay-font-display) !important; letter-spacing: -.01em; overflow-wrap: anywhere;
 }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-plate-name.is-mono > span { font-size: clamp(40px, 5vw, 56px) !important; line-height: 1 !important; letter-spacing: .02em; }
 /* 2. Brand · name */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__brand {
   margin: 0 0 2px !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
