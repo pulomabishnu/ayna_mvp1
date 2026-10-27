@@ -2,9 +2,9 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { createPortal } from 'react-dom';
 import { onboardingJustFinished } from '../../health/onboardingSignal.js';
 import { readRundownMemory, seenFirstRundown } from '../../components/rundown/rundownStore.js';
-import { tourDecision, tipsToShow, rundownSettled, screensFor, avoidFor } from './tips.js';
-import { readTour, setTourOwner, setTipsEnabled, markScreenSeen, markWelcomeOffered, markOffNoteShown } from './tourStore.js';
-import { topDialog, usableAnchor, currentScreen, visibleAvoidRects, placeBubble, EDGE } from './tourDom.js';
+import { tourDecision, tipsToShow, rundownSettled, screensFor, avoidFor, partsOf } from './tips.js';
+import { readTour, setTourOwner, setTipsEnabled, markScreenSeen, markTipsSeen, markWelcomeOffered, markOffNoteShown } from './tourStore.js';
+import { topDialog, usableAnchor, currentScreen, partPresent, visibleAvoidRects, placeBubble, EDGE } from './tourDom.js';
 import './tutorial.css';
 import { localDayKey } from '../../utils/localDate.js';
 
@@ -35,7 +35,13 @@ const SURFACES = {
     themeOf: (host) => (host?.dataset.theme === 'dark' ? 'dark' : host?.dataset.theme ? 'light' : null),
     onboarding: (host) => ONBOARDING.has(host?.dataset.screen || ''),
     topInset: () => 0,
-    bottomInset: () => { const bar = document.querySelector('.ayna-mobile .ayna-bottom-nav'); return bar ? Math.max(0, window.innerHeight - bar.getBoundingClientRect().top) : 0; },
+    // The raised Home button sits above the bar's top edge: its top counts too.
+    bottomInset: () => {
+      const bar = document.querySelector('.ayna-mobile .ayna-bottom-nav');
+      if (!bar) return 0;
+      const top = Math.min(...[bar, ...bar.querySelectorAll('button, a')].map((el) => el.getBoundingClientRect()).filter((r) => r.height > 0).map((r) => r.top));
+      return Number.isFinite(top) ? Math.max(0, window.innerHeight - top) : 0;
+    },
     beside: () => false,
     busy: () => false,
   },
@@ -82,6 +88,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
     if (!r) return;
     if (r.kind === 'tips') {
       markScreenSeen(r.screenId);
+      markTipsSeen(r.tips.map((t) => t.id), r.screenId);
       if (r.tips.some((t) => t.offNote)) markOffNoteShown();
       if (how === 'off') setTipsEnabled(false);
     } else if (how === 'yes') setTipsEnabled(true);
@@ -107,13 +114,27 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
       const now = new Date();
       if (screen?.welcome) { if (!homeSinceRef.current) homeSinceRef.current = Date.now(); } else homeSinceRef.current = 0;
       const p = readTour();
-      const decision = tourDecision({
-        screen, prefs: p, today,
+      const base = {
+        prefs: p, today,
         onboarding: cfg.onboarding(host, readyRef.current),
         rundownOpen: Boolean(document.querySelector('.ay-rd')),
         foreignDialog: Boolean(dialog && !screen) || cfg.busy(),
         settled: rundownSettled({ memory: readRundownMemory(), today, now, justOnboarded: onboardingJustFinished({ hours: 12 }), settledMs: homeSinceRef.current ? Date.now() - homeSinceRef.current : 0 }),
-      });
+      };
+      const insets = { topInset: cfg.topInset(), bottomInset: cfg.bottomInset() };
+      const usable = (sel) => Boolean(usableAnchor(sel, { dialog, avoid, ...insets }));
+      const fresh = { seen: p.seen };
+      let decision = tourDecision({ screen, ...base });
+      // After the page's own first tips: its parts (tips.js `within`) once their root is on the page,
+      // then any tip of the page or its parts she hasn't been shown yet that has come on screen
+      // (each tip shows once, tracked by id). One group at a time, at most 2 tips.
+      if (decision.kind !== 'welcome' && screen && !(decision.kind === 'tips' && tipsToShow(screen, usable, fresh).length)) {
+        const open = (s) => tourDecision({ screen: s, ...base, settled: !screen.rundown || base.settled, prefs: { ...p, seen: {} } }).kind === 'tips';
+        // A group seen before tips were tracked one by one (no `v2:` mark) counts as fully seen.
+        const groups = [screen, ...partsOf(screen, screens).filter((s) => partPresent(s.root, dialog))].filter((s) => open(s) && (!p.seen[s.id] || p.seen[`v2:${s.id}`]));
+        const next = groups.find((s) => !p.seen[s.id] && tipsToShow(s, usable, fresh).length) || groups.find((s) => tipsToShow(s, usable, fresh).length);
+        if (next) decision = { kind: 'tips', screen: next };
+      }
       const key = decision.kind === 'none' ? '' : `${decision.kind}:${decision.screen?.id || ''}`;
       const pending = pendingRef.current;
       pendingRef.current = key === pending.key ? { key, count: pending.count + 1 } : { key, count: 1 };
@@ -129,8 +150,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
         setRun({ kind: 'welcome' });
         return;
       }
-      const insets = { topInset: cfg.topInset(), bottomInset: cfg.bottomInset() };
-      const tips = tipsToShow(decision.screen, (sel) => Boolean(usableAnchor(sel, { dialog, avoid, ...insets })), { offNoteShown: p.offNoteShown });
+      const tips = tipsToShow(decision.screen, usable, { offNoteShown: p.offNoteShown, seen: p.seen });
       if (!tips.length) return; // try again on a later visit
       openerRef.current = document.activeElement;
       setRun({ kind: 'tips', screenId: decision.screen.id, tips, index: 0 });

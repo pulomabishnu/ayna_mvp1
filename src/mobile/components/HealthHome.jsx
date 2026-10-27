@@ -609,7 +609,7 @@ export default function HealthHome({
   );
 
   return (
-    <div className={`ay-db is-${surface}${rundownShown ? ' has-rundown-entry' : ''}`} ref={topRef}>
+    <div className={`ay-db is-${surface}${rundownShown ? ' has-rundown-entry' : ''}`} ref={topRef} data-tour="health-data">
       {showTitle && (
         <header className="ay-db-title">
           <div>

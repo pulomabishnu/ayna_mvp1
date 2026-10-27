@@ -40,7 +40,7 @@ export default function MobileHeader({ onOpenSettings, onBack, hideAsk = false }
       Ask ayna
     </button>}
     {/* Focus group, Oct 26: Saved was hard to find, so a labelled heart with the count opens Saved. */}
-    {head?.onOpenSaved && <button type="button" onClick={head.onOpenSaved} aria-label={head.savedCount ? `Saved, ${head.savedCount} ${head.savedCount === 1 ? 'product' : 'products'}` : 'Saved'} className={`ay-header-heart${head.savedCount ? ' has-saved' : ''}`} data-tab-target="saved">
+    {head?.onOpenSaved && <button type="button" onClick={head.onOpenSaved} aria-label={head.savedCount ? `Saved, ${head.savedCount} ${head.savedCount === 1 ? 'product' : 'products'}` : 'Saved'} className={`ay-header-heart${head.savedCount ? ' has-saved' : ''}`} data-tab-target="saved" data-tour="saved-heart">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2Z" /></svg>
       {head.savedCount > 0 && <span className="ay-heart-count" aria-hidden="true">{head.savedCount > 99 ? '99+' : head.savedCount}</span>}
     </button>}
@@ -48,7 +48,7 @@ export default function MobileHeader({ onOpenSettings, onBack, hideAsk = false }
       <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" /></svg>
     </button>}
     {/* You (founder, Oct 26): out of the tab bar, a round profile button beside Ask ayna. */}
-    {head?.onOpenProfile && <button type="button" onClick={head.onOpenProfile} aria-label="You: your profile and settings" className="ay-header-profile" data-tab-target="profile">
+    {head?.onOpenProfile && <button type="button" onClick={head.onOpenProfile} aria-label="You: your profile and settings" className="ay-header-profile" data-tab-target="profile" data-tour="profile-button">
       <ProfileFace url={head.avatarUrl} initial={head.initial} />
     </button>}
     </div>

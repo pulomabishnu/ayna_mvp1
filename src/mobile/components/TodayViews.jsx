@@ -25,7 +25,7 @@ export default function TodayViews({ today, todayCount = 0, week, routine, initi
   const current = tabs.some((t) => t.id === view) ? view : tabs[0].id;
   const pick = (v) => { setView(v); saveView(v); };
   return (
-    <section className="ay-tv" aria-label="Your day">
+    <section className="ay-tv" aria-label="Your day" data-tour="home-views">
       <PillTabs tabs={tabs} active={current} onChange={pick} label="Your day" idBase="ay-tv" />
       {week && <div {...pillPanelProps('ay-tv', 'week', current)} className="ay-tv__panel">{week}</div>}
       <div {...pillPanelProps('ay-tv', 'today', current)} className="ay-tv__panel">{today}</div>

@@ -33,7 +33,7 @@ function mountApp({ screen = 'ayna', html }) {
   root = createRoot(host);
   act(() => root.render(<TutorialLayer userId={null} />));
 }
-const HOME = '<div data-tour="home"><button data-tour="home-ask">Ask ayna</button><div data-tour="rundown-card">Rundown</div><nav data-tour="home-links">Links</nav></div>';
+const HOME = '<div data-tour="home"><section data-tour="score-rings">Rings</section><button data-tour="rundown-bubble">Rundown</button><div data-tour="rundown-card">Rundown</div><nav data-tour="home-links">Links</nav></div>';
 const wait = (ms) => act(() => { vi.advanceTimersByTime(ms); });
 const dialog = () => document.querySelector('.ay-tour [role="dialog"]');
 const click = (text) => act(() => { [...document.querySelectorAll('.ay-tour button')].find((b) => b.textContent === text).click(); });
@@ -55,7 +55,7 @@ afterEach(() => {
 
 describe('tips overlay', () => {
   it('app: the tour offer waits for her first Daily Rundown, then shows as a small non-modal banner', () => {
-    mountApp({ html: '<div data-tour="home"><button data-tour="home-ask">Ask ayna</button><div class="ay-rd-hero__card" data-tour="rundown-card">Rundown</div><nav data-tour="home-links">Links</nav></div>' });
+    mountApp({ html: '<div data-tour="home"><section data-tour="score-rings">Rings</section><div class="ay-rd-hero__card" data-tour="rundown-card">Rundown</div><nav data-tour="home-links">Links</nav></div>' });
     wait(3000);
     expect(dialog()).toBeNull();
     markRundownViewed('2026-10-25');
@@ -72,7 +72,7 @@ describe('tips overlay', () => {
     click('Show me tips');
     expect(readTour().enabled).toBe(true);
     wait(1000);
-    expect(dialog().textContent).toContain('Ask about your health');
+    expect(dialog().textContent).toContain('tap a ring for more');
     expect(dialog().textContent).toContain('Turn tips off any time in Settings.');
     expect(dialog().getAttribute('aria-modal')).toBe('true');
     expect(document.querySelector('.ay-tour__count')?.textContent).toBe('Tip 1 of 2');
@@ -82,8 +82,44 @@ describe('tips overlay', () => {
     click('Got it');
     expect(dialog()).toBeNull();
     expect(readTour().seen.home).toBeTruthy();
+    // Then Home's parts, one group at a time (here: Your data and Your products).
+    wait(1500);
+    expect(dialog().textContent).toContain('Your data and Your products');
+    click('Got it');
+    expect(readTour().seen['home-links']).toBeTruthy();
     wait(2000);
     expect(dialog()).toBeNull(); // first visit only
+  });
+
+  it('a tip that was off screen on the first visit shows once it scrolls into view', () => {
+    setTipsEnabled(true);
+    mountApp({ html: '<div data-tour="explore"><div class="ayna-shop-heading"><input aria-label="Search" /></div><nav data-tour="explore-sections" data-offscreen="1">x</nav></div>' });
+    wait(1000);
+    expect(dialog().textContent).toContain('Search products');
+    click('Got it');
+    expect(readTour().seen['tip:explore-search']).toBeTruthy();
+    wait(2000);
+    expect(dialog()).toBeNull();
+    act(() => { delete app.querySelector('[data-tour="explore-sections"]').dataset.offscreen; });
+    wait(1500);
+    expect(dialog().textContent).toContain('Tap a group to shop by need');
+    click('Got it');
+    wait(2000);
+    expect(dialog()).toBeNull();
+  });
+
+  it('a part waits until its root is on the page, then shows once', () => {
+    setTipsEnabled(true);
+    markScreenSeen('home');
+    mountApp({ html: '<div data-tour="home"><section data-tour="score-rings">Rings</section></div>' });
+    wait(2000);
+    expect(dialog()).toBeNull();
+    act(() => { app.querySelector('[data-tour="home"]').insertAdjacentHTML('beforeend', '<div class="ay-tv" data-tour="home-views"><div role="tablist">Your week</div></div>'); });
+    wait(1500);
+    expect(dialog().textContent).toContain('Switch between Your week');
+    click('Got it');
+    wait(2000);
+    expect(dialog()).toBeNull();
   });
 
   it('No thanks turns tips off and nothing shows again', () => {
@@ -115,15 +151,15 @@ describe('tips overlay', () => {
 
   it('skips a tip whose anchor is off screen or missing', () => {
     setTipsEnabled(true);
-    mountApp({ html: '<div data-tour="home"><button data-tour="home-ask" data-offscreen="1">Ask</button><nav data-tour="home-links">Links</nav></div>' });
+    mountApp({ html: '<div data-tour="home"><section data-tour="score-rings" data-offscreen="1">Rings</section><nav data-tour="home-links">Links</nav></div>' });
     wait(1000);
-    expect(dialog().textContent).toContain('My dashboard');
+    expect(dialog().textContent).toContain('Your data and Your products');
     expect(document.querySelector('.ay-tour__count')).toBeNull();
   });
 
   it('Escape closes and counts the screen as seen; Turn off tips turns them off', () => {
     setTipsEnabled(true);
-    mountApp({ html: '<div data-tour="explore"><div class="ax-top"><input aria-label="Search" /></div><nav data-tour="explore-sections">x</nav></div>' });
+    mountApp({ html: '<div data-tour="explore"><div class="ayna-shop-heading"><input aria-label="Search" /></div><nav data-tour="explore-sections">x</nav></div>' });
     wait(1000);
     expect(dialog().textContent).toContain('Search products');
     act(() => { window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); });

@@ -18,6 +18,8 @@ import { searchCommunityTolerant } from '../utils/search/communitySearch.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard.jsx';
+import { splitPostTitle, postTopic } from './community/postCard.js';
+import './community/post-card.css';
 import { customProductId, customProductName } from '../utils/customProductTag.js';
 import { RuleField, CommunityRulesList } from './community/RuleField.jsx';
 import { useSheetViewport, backdropTap } from './community/useSheetViewport.js';
@@ -962,13 +964,12 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     const replies = Number(post.comment_count) || 0;
     const kind = post.kind === 'question' || post.kind === 'review' ? post.kind : 'post';
     const media = post.media || [];
-    // Glance (advisor + founder 16:54): about two lines in the feed, the full post one tap away.
-    const long = !full && String(post.body || '').length > 220;
+    // One card per post (founder Oct 27 01:11): her first sentence is the bold title, the rest is 3 lines in the feed.
+    const { title, rest } = splitPostTitle(post.body);
+    const topic = postTopic(post);
+    const long = !full && rest.length > 260;
     const replyWord = kind === 'question' ? 'Answer' : 'Reply';
-    return <article ref={engagement.trackView(post.id)} className={`cm-post cm-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(i, 6) }} data-kind={kind} data-vt-target={full ? 'post' : undefined} key={post.id}>
-      {/* What kind of post this is: an outlined label with an icon (Community audit, issue 2). */}
-      {kind === 'review' && <KindLabel kind="review">Review</KindLabel>}
-      {kind === 'question' && <span className="cm-kindrow"><KindLabel kind="question">Question</KindLabel><span className={`cm-status${replies ? '' : ' is-open'}`}>{replies ? 'Answered' : 'Needs answers'}</span></span>}
+    return <article ref={engagement.trackView(post.id)} className={`cm-post cm-note ay-postcard is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(i, 6) }} data-kind={kind} data-vt-target={full ? 'post' : undefined} key={post.id}>
       <header className="cm-post-head">
         <Avatar size={40} name={name} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
         <div className="cm-post-who">
@@ -986,13 +987,18 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           </div>}
         </div>
       </header>
-      {/* Review highlights in rounded label boxes, only from what she entered (stars, would recommend). */}
-      {kind === 'review' && <div className="cm-review-facts">
-        <span className="cm-factbox cm-review-stars"><Stars value={post.rating} size={18} /><span aria-hidden="true">{normalizeRating(post.rating) ? `${normalizeRating(post.rating)} of 5` : ''}</span></span>
-        {post.would_recommend === true && <span className="cm-factbox">Would recommend</span>}
-        {post.would_recommend === false && <span className="cm-factbox">Wouldn’t recommend</span>}
+      {/* The topic chip, and what kind of post this is (a small Question or Review pill). */}
+      {(topic || kind !== 'post') && <div className="ay-postcard__tags">
+        {kind === 'question' && <span className="ay-postcard__pill is-question"><TypeIcon kind="question" size={14} />Question</span>}
+        {kind === 'review' && <span className="ay-postcard__pill is-review"><TypeIcon kind="review" size={14} />Review</span>}
+        {kind === 'review' && normalizeRating(post.rating) > 0 && <span className="ay-postcard__stars"><Stars value={post.rating} size={16} /><span aria-hidden="true">{`${normalizeRating(post.rating)} of 5`}</span></span>}
+        {topic && <span className="ay-postcard__topic">{topic.label}</span>}
+        {kind === 'review' && post.would_recommend === true && <span className="ay-postcard__status">Would recommend</span>}
+        {kind === 'review' && post.would_recommend === false && <span className="ay-postcard__status">Wouldn’t recommend</span>}
+        {kind === 'question' && <span className={`ay-postcard__status${replies ? '' : ' is-open'}`}>{replies ? 'Answered' : 'Needs answers'}</span>}
       </div>}
-      {full ? <p className="cm-body">{post.body}</p> : <button type="button" className={`cm-body${long ? ' is-clamped' : ''}`} onClick={() => openPost(post)}>{post.body}</button>}
+      {title && (full ? <h2 className="ay-postcard__title">{title}</h2> : <h3 className="ay-postcard__title"><button type="button" onClick={() => openPost(post)}>{title}</button></h3>)}
+      {rest && (full ? <p className="cm-body">{rest}</p> : <button type="button" className={`cm-body${long ? ' is-clamped' : ''}`} onClick={() => openPost(post)}>{rest}</button>)}
       {long && <button type="button" className="cm-readmore" onClick={() => openPost(post)}>Read the rest</button>}
       {media.length > 0 && <div className={`cm-photos n-${Math.min(media.length, 4)}`}>{media.slice(0, 4).map((m, k) => (full
         ? <span key={m.path} className="cm-polaroid"><img src={publicMediaUrl(m.path)} alt="" loading="lazy" /></span>

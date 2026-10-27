@@ -22,7 +22,7 @@ export default function Comparison({ onBack = null, backTo = { label: 'Your ecos
     // A shared /compare?ids= link while the catalog loads: say so instead of flashing the sample.
     if (compareList.length === 0 && loading) {
         return (
-            <div className="ay-container aycmp">
+            <div className="ay-container aycmp" data-tour="compare">
                 <InfoHero title="Side by side" crumb="Compare" lede="Loading the products to compare." onBack={onBack} backLabel={backTo.label} backHref={backTo.href} />
             </div>
         );
@@ -31,7 +31,7 @@ export default function Comparison({ onBack = null, backTo = { label: 'Your ecos
     if (compareList.length === 0) {
         const sample = sampleProducts();
         return (
-            <div className="ay-container aycmp">
+            <div className="ay-container aycmp" data-tour="compare">
                 <InfoHero
                     title="Side by side"
                     crumb="Compare"
@@ -110,7 +110,7 @@ export default function Comparison({ onBack = null, backTo = { label: 'Your ecos
     const canAddMore = compareList.length < COMPARE_MAX;
 
     return (
-        <div className="ay-container aycmp">
+        <div className="ay-container aycmp" data-tour="compare">
             <InfoHero
                 title="Side by side"
                 crumb="Compare"

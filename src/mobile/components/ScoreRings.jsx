@@ -63,7 +63,7 @@ export default function ScoreRings({ cycle = null, hormonalBC = false, sleep = n
   const missing = [!s && 'sleep', !a && 'activity'].filter(Boolean);
   const open = (area) => (onOpen ? () => onOpen(area) : undefined);
   return (
-    <section className={`ay-dials${bare ? ' is-bare' : ''}${animate ? ' is-animate' : ''}`} aria-label={label}>
+    <section className={`ay-dials${bare ? ' is-bare' : ''}${animate ? ' is-animate' : ''}`} aria-label={label} data-tour="score-rings">
       <div className="ay-dial__row">
         {cycle?.cycleDay
           ? <Dial

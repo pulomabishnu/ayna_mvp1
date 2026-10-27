@@ -42,7 +42,7 @@ function useRundownCount() {
 function RundownBubble({ count, done }) {
   const start = () => { try { window.dispatchEvent(new CustomEvent('ayna:rundown-start')); } catch { /* old browser */ } };
   return (
-    <button type="button" className={`ay-hh-bubble${done ? ' is-done' : ''}`} onClick={start} aria-label={`Your Daily Rundown: ${count} ${count === 1 ? 'thing' : 'things'}${done ? ', seen today' : ''}. Start.`}>
+    <button type="button" className={`ay-hh-bubble${done ? ' is-done' : ''}`} data-tour="rundown-bubble" onClick={start} aria-label={`Your Daily Rundown: ${count} ${count === 1 ? 'thing' : 'things'}${done ? ', seen today' : ''}. Start.`}>
       <span className="ay-hh-bubble__ring" aria-hidden="true">
         <b>{count}</b>
         {done && <i className="ay-hh-bubble__check"><svg viewBox="0 0 24 24"><path d={CHECK} /></svg></i>}
@@ -61,7 +61,7 @@ function Streak({ streak, onLog, onMonth = null }) {
   const title = count > 0 ? `${count}-day streak` : 'Start your streak';
   const sub = loggedToday ? 'Logged today' : count > 0 ? 'Log today to keep it' : 'Log today, about 30 seconds';
   return (
-    <button type="button" className="ay-hh-streak" onClick={onMonth || onLog} aria-haspopup={onMonth ? 'dialog' : undefined}
+    <button type="button" className="ay-hh-streak" data-tour="streak" onClick={onMonth || onLog} aria-haspopup={onMonth ? 'dialog' : undefined}
       aria-label={`${title}. ${said ? `Logged ${said}.` : 'Nothing logged this week yet.'} ${sub}.${onMonth ? ' Open your month.' : ''}`}>
       <span className="ay-hh-streak__top" aria-hidden="true"><b>{title}</b><small>{sub}</small>{onMonth && <svg className="ay-hh-streak__cal" viewBox="0 0 24 24"><path d={CAL} /></svg>}</span>
       <span className="ay-hh-streak__days" aria-hidden="true">

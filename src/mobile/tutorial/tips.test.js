@@ -96,11 +96,11 @@ describe('no collision with the Daily Rundown', () => {
 
 describe('tips to show', () => {
   it('skips a tip whose anchor is missing and keeps the rest in order', () => {
-    const list = tipsToShow(home, (sel) => !sel.includes('rundown-card'));
-    expect(list.map((t) => t.id)).toEqual(['home-ask', 'home-links']);
+    const list = tipsToShow(home, (sel) => !sel.includes('score-rings'));
+    expect(list.map((t) => t.id)).toEqual(['home-rundown']);
   });
   it('never more than 2 on a screen', () => {
-    expect(tipsToShow(home, () => true).map((t) => t.id)).toEqual(['home-ask', 'home-rundown']);
+    expect(tipsToShow(home, () => true).map((t) => t.id)).toEqual(['home-rings', 'home-rundown']);
   });
   it('nothing usable means nothing to show', () => {
     expect(tipsToShow(home, () => false)).toEqual([]);

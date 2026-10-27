@@ -85,13 +85,13 @@ export default function CardDeck({ items = [], storageKey = 'ayna_deck_v1', labe
   }
 
   return (
-    <div className="ay-fdeck">
+    <div className="ay-fdeck" data-tour="deck">
       <p className="sr-only" aria-live="polite">{say}</p>
       {front ? (
         <div className="ay-fdeck__stack">
           {/* The passes behind: one line each, tap to bring it to the front. */}
           {behind.length > 0 && (
-            <ul className="ay-fdeck__strips" aria-label={`Also for today (${behind.length})`}>
+            <ul className="ay-fdeck__strips" data-tour="deck-titles" aria-label={`Also for today (${behind.length})`}>
               {/* One colour rule (review, Oct 26): the passes are the butter surface; only the front card, the one for now, is pink. */}
               {behind.map((it) => (
                 <li key={it.key}>
@@ -127,7 +127,7 @@ export default function CardDeck({ items = [], storageKey = 'ayna_deck_v1', labe
       )}
       {front && (
         <div className="ay-fdeck__bar">
-          <button type="button" className="ay-fdeck__btn" onClick={() => dismiss(front.key)} aria-label={behind.length ? `Later. Next: ${behind[0].title}` : 'Later'}>Later<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg></button>
+          <button type="button" className="ay-fdeck__btn" data-tour="deck-later" onClick={() => dismiss(front.key)} aria-label={behind.length ? `Later. Next: ${behind[0].title}` : 'Later'}>Later<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg></button>
           <button type="button" className="ay-fdeck__text" onClick={() => setAll(true)} aria-expanded="false">Show all</button>
         </div>
       )}

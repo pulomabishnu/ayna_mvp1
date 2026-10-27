@@ -11,10 +11,10 @@ export function CompareToggle({ onOpenCompare, className = '', dock = false }) {
   // the Compare button live in CompareDock at the bottom, so the sideways row never has to
   // scroll Filters off screen to reach them (critique Oct 27).
   if (dock) {
-    return <button type="button" className={`ay-cmpt ${className}`.trim()} aria-pressed={c.selecting} onClick={() => compareStore.setSelecting(!c.selecting)}>{c.count ? `Compare (${c.count})` : 'Compare'}</button>;
+    return <button type="button" className={`ay-cmpt ${className}`.trim()} data-tour="compare-toggle" aria-pressed={c.selecting} onClick={() => compareStore.setSelecting(!c.selecting)}>{c.count ? `Compare (${c.count})` : 'Compare'}</button>;
   }
   if (!c.selecting) {
-    return <button type="button" className={`ay-cmpt ${className}`.trim()} onClick={() => compareStore.setSelecting(true)}>{c.count ? `Compare (${c.count})` : 'Compare'}</button>;
+    return <button type="button" className={`ay-cmpt ${className}`.trim()} data-tour="compare-toggle" onClick={() => compareStore.setSelecting(true)}>{c.count ? `Compare (${c.count})` : 'Compare'}</button>;
   }
   return (
     <span className={`ay-cmpt-on ${className}`.trim()} role="group" aria-label="Compare products">
