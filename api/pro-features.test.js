@@ -5,7 +5,7 @@ import { consumeProChat, proFeatureRules } from './_proFeatures.js';
 let restore;
 beforeEach(() => { restore = withEnv({ PRO_FEATURE_GATES_ENABLED: '1' }); });
 afterEach(() => { restore(); vi.useRealTimers(); });
-const rules = { enabled: true, freeAskPerDay: 5, proAskPerDay: 50, freePlaylists: 1, freeQuizRetakesPerWeek: 1 };
+const rules = { enabled: true, freeAskPerDay: 5, proAskPerDay: 50, freePlaylists: 1 };
 describe('Pro feature usage', () => {
   it('retains existing behavior until explicitly enabled', async () => {
     process.env.PRO_FEATURE_GATES_ENABLED = '';
