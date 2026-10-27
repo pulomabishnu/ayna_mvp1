@@ -34,6 +34,7 @@ declare
   v_has_build boolean;
   v_week_start timestamptz := date_trunc('week', now() at time zone 'UTC') at time zone 'UTC';
   v_pro boolean := false;
+  v_rules_enabled boolean := false;
 begin
   if p_build_id is null or length(trim(p_build_id)) = 0 then
     raise exception 'build_id is required';
@@ -41,8 +42,43 @@ begin
 
   perform pg_advisory_xact_lock(hashtextextended(p_user_id::text, 0));
 
-  -- Paid Early Access, regular Pro and timed focus-group grants all use the
-  -- server-managed entitlement ledger. Pro may rebuild without a weekly cap.
+  select coalesce(enabled, false) into v_rules_enabled
+  from public.pro_feature_rules
+  where id;
+
+  -- Until the Pro rollout switch is enabled, preserve the existing lifetime
+  -- build quota exactly. Applying the migration alone must not change product
+  -- behavior for Free users.
+  if not coalesce(v_rules_enabled, false) then
+    if exists (
+      select 1 from public.user_ecosystem_builds b
+      where b.user_id = p_user_id and b.build_id = p_build_id
+    ) then
+      select count(*)::integer into v_used
+      from public.user_ecosystem_builds b
+      where b.user_id = p_user_id;
+      return query select true, coalesce(v_used, 0);
+      return;
+    end if;
+
+    select count(*)::integer into v_used
+    from public.user_ecosystem_builds b
+    where b.user_id = p_user_id;
+
+    if p_limit is null or coalesce(v_used, 0) >= p_limit then
+      return query select false, coalesce(v_used, 0);
+      return;
+    end if;
+
+    insert into public.user_ecosystem_builds(user_id, build_id, is_initial)
+    values(p_user_id, p_build_id, coalesce(v_used, 0) = 0);
+    return query select true, (coalesce(v_used, 0) + 1)::integer;
+    return;
+  end if;
+
+  -- Once rollout is enabled, paid Early Access, regular Pro and timed focus
+  -- grants all use the server-managed entitlement ledger and may retake without
+  -- a weekly cap.
   select coalesce((public.pro_access_status(p_user_id)->>'active')::boolean, false) into v_pro;
   if v_pro then
     if not exists (
