@@ -199,6 +199,8 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-hc-link { display: inline-flex !important; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; margin: -13px -4px !important; padding: 0 4px !important; vertical-align: middle; }
 
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-legal :is(a, button) { display: inline-block !important; padding: 11px 0 !important; margin: -11px 0 !important; vertical-align: baseline; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-legal .ay-legal__links { display: flex; flex-wrap: wrap; justify-content: center; column-gap: 16px; margin: 4px 0 0; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-legal .ay-legal__links :is(a, button) { display: inline-flex !important; align-items: center; min-height: 44px; padding: 0 !important; margin: 0 !important; }
 
 /* Shop search clear button: brand espresso instead of the browser's blue
    (the field stays butter in both themes). */
@@ -633,3 +635,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-more { display: grid; gap: 12px; margin: 8px 0 0; padding: 16px var(--d-gutter, 20px); }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-more:empty { display: none; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-category-index.is-embedded .ay-shop-toolbar :is(.ayna-shop-filter-toggle, .ay-cmpt, .ay-cmpt-on) { margin-left: 0 !important; margin-right: 0 !important; }
+
+/* QA (Oct 27): the brand eyebrow and the Ask note stacked an element opacity on an
+   already-faded colour (2.7:1 and 3.0:1). The colour alone is enough: AA on butter. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-pdp-eyebrow, .ay-pdp-ask-note) { opacity: 1 !important; }

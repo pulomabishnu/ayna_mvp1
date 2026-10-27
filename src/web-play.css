@@ -517,7 +517,8 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
   & :is(.btn, .btn-primary, .btn-secondary, .btn-outline) { min-height: 44px; border: 2px solid var(--legacy-ink) !important; border-radius: 99px !important; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important; box-shadow: none !important; }
   & :is(.btn-primary, .btn-navy) { background: var(--legacy-ink) !important; color: var(--ay-paper) !important; }
   & :is(.btn-secondary, .btn-outline) { background: var(--ay-paper) !important; color: var(--legacy-ink) !important; }
-  & :is(input:not([type='checkbox']):not([type='radio']), textarea, select) { border: 2px solid var(--legacy-ink) !important; border-radius: 14px !important; background: var(--ay-paper) !important; }
+  /* QA (Oct 27): not the 404 pill search, which draws its own outline (this boxed it twice, solid butter in dark). */
+  & :is(input:not([type='checkbox']):not([type='radio']):not(.ed-search input), textarea, select) { border: 2px solid var(--legacy-ink) !important; border-radius: 14px !important; background: var(--ay-paper) !important; }
   & [style*='border: 1px solid'] { border-color: var(--legacy-ink) !important; }
 }
 

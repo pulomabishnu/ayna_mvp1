@@ -2692,7 +2692,10 @@ html body :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-p
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero { margin-bottom: 24px; padding: 0; }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero > .ayp-top { margin: 0 0 2px !important; }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero::after { content: none; }
-  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero .ayp-gallery { margin: 0 0 8px !important; }
+  /* QA (Oct 27): the plate sat left with empty pink beside it, and its bottom edge was cropped. */
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero .ayp-gallery { align-self: center; width: 176px; margin: 0 auto 16px !important; }
+  /* the square plate was 230 wide inside a 176px-tall stage, so its bottom edge was cropped: keep it square */
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero .ayp-gallery .ay-gal { width: 176px; }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero .ayp-gallery .ay-gal.is-square { height: 176px; }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero .ayv-dk__decide { position: relative; padding-top: 14px !important; background: var(--ayv-pg) !important; }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero .ayv-dk__decide::after { content: ''; position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; margin-left: -50vw; background: var(--ayv-pg); pointer-events: none; }
@@ -2881,3 +2884,5 @@ html body :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-p
 .ayp-wps .ayp-wps__snap .ayp-wps__card { height: 100%; box-sizing: border-box; }
 #pdp-v4 .ayp-reads__snap.ayp-reads__list { display: grid; grid-template-columns: minmax(0, 1fr) !important; gap: 4px; }
 #pdp-v4 .ayp-reads__snap .ayk-snap__item > a { width: 100%; }
+/* QA (Oct 27): the product name links in the compare table header were 20px tall. */
+:is(#pdp-v4, #ay-pdp, main) .ay-compare__name > button { display: inline-flex; align-items: center; min-height: 44px; text-align: left; }

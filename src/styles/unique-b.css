@@ -30,6 +30,8 @@ html body .app-container.app-container.app-container.app-container.app-container
   -webkit-mask: radial-gradient(circle at 10px 0, #000 9.5px, transparent 10px) 0 0 / 20px 12px repeat-x; mask: radial-gradient(circle at 10px 0, #000 9.5px, transparent 10px) 0 0 / 20px 12px repeat-x;
 }
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-head.ay-you-band :is(p, span, b, a, button, h1, u, small) { color: var(--ubf) !important; }
+/* QA (Oct 27): the pink avatar arch keeps espresso ink (butter on pink read 1.4:1). */
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-head.ay-you-band .ay-arch :is(span, b) { color: #3e2723 !important; }
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-head.ay-you-band h1 { display: grid; gap: 2px; }
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-head.ay-you-band .ay-you-shout { font-size: 48px !important; line-height: .92 !important; color: var(--ubf) !important; }
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-head.ay-you-band .ay-you-progress { background: transparent !important; border-color: var(--ubf) !important; }
