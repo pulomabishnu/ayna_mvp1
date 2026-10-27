@@ -48,22 +48,35 @@ export function initialAppRoute({ devScreen = null, pendingQuiz = false, quizSte
 }
 
 /**
- * Where Home goes (founder, Oct 27 11:38: "it should stay on the landing page
- * when ur signed out on the app, not glitch and go to an empty dashboard").
- * Signed out with nothing on this phone (no profile, no ecosystem, no quiz
- * waiting), Home is the landing; otherwise the Home dashboard.
+ * Where Home goes. Signed out, Home is always the landing, whatever this phone
+ * or browser kept from earlier visits (answers, an ecosystem, a quiz waiting,
+ * fixtures). Founder, Oct 27 11:38 ("it should stay on the landing page when ur
+ * signed out on the app, not glitch and go to an empty dashboard") and 13:46
+ * ("if im signed out its not taking me to the landing page its taking me to an
+ * empty dashboard"). Signed-out visitors reach Shop, Services, Community and
+ * Library from the tabs; a finished quiz shows her matches in My ecosystem.
+ * `hasProfile` and `pendingQuiz` are still accepted and no longer change it.
  */
-export function homeScreenFor({ signedIn = false, hasProfile = false, pendingQuiz = false } = {}) {
-  return signedIn || hasProfile || pendingQuiz ? 'ayna' : 'landing';
+export function homeScreenFor({ signedIn = false } = {}) {
+  return signedIn ? 'ayna' : 'landing';
 }
 
 /**
- * True when the app is showing the Home dashboard to someone it should not:
- * signed out (or her session still loading) with nothing on this phone. The
- * chat view of Home (the Ask tab) is fine signed out; the dashboard is not.
+ * True when the app is showing the Home dashboard to someone signed out (or
+ * whose session is still loading). The chat view of Home (the Ask tab) is fine
+ * signed out; the dashboard is not.
  */
-export function showsEmptyHome({ screen, view = null, variant = 'dashboard', signedIn = false, hasProfile = false, pendingQuiz = false } = {}) {
+export function showsEmptyHome({ screen, view = null, variant = 'dashboard', signedIn = false } = {}) {
   if (screen !== 'ayna' && screen !== 'today') return false;
   if (screen === 'ayna' && view === 'chat' && variant !== 'chat') return false;
-  return homeScreenFor({ signedIn, hasProfile, pendingQuiz }) === 'landing';
+  return homeScreenFor({ signedIn }) === 'landing';
+}
+
+/**
+ * The website's Home: Today signed in, the landing ('welcome') signed out, the
+ * same rule as the app. While her session is still being restored, Today (it
+ * hands over to the landing if she turns out to be signed out).
+ */
+export function webHomeView({ signedIn = false, authLoading = false } = {}) {
+  return signedIn || authLoading ? 'today' : 'welcome';
 }

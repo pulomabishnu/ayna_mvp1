@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { navTabFor, aynaRoute, homeScreenFor, showsEmptyHome } from './navTab.js';
+import { navTabFor, aynaRoute, homeScreenFor, showsEmptyHome, webHomeView } from './navTab.js';
 import { routeForPush } from '../hooks/usePushNotifications.js';
 
 describe('navTabFor', () => {
@@ -49,24 +49,37 @@ describe('routeForPush', () => {
   });
 });
 
-// Founder, Oct 27 11:38: signed out, the app stays on the landing, never an empty dashboard.
+// Founder, Oct 27 11:38 and 13:46: signed out, Home is the landing on the app and
+// the website, whatever this phone or browser kept from earlier visits.
 describe('Home signed out', () => {
-  it('Home is the landing signed out with nothing on this phone, and the dashboard otherwise', () => {
+  it('Home is the landing whenever she is signed out, the dashboard when signed in', () => {
     expect(homeScreenFor({})).toBe('landing');
-    expect(homeScreenFor({ signedIn: false, hasProfile: false, pendingQuiz: false })).toBe('landing');
+    expect(homeScreenFor({ signedIn: false })).toBe('landing');
     expect(homeScreenFor({ signedIn: true })).toBe('ayna');
-    expect(homeScreenFor({ hasProfile: true })).toBe('ayna');
-    expect(homeScreenFor({ pendingQuiz: true })).toBe('ayna');
+    // Leftover answers, an ecosystem or a waiting quiz on the device no longer open the dashboard.
+    expect(homeScreenFor({ hasProfile: true })).toBe('landing');
+    expect(homeScreenFor({ pendingQuiz: true })).toBe('landing');
+    expect(homeScreenFor({ signedIn: false, hasProfile: true, pendingQuiz: true })).toBe('landing');
   });
-  it('the dashboard shown signed out (a late auth answer, a swipe, Back, a stale session) is caught', () => {
+  it('the dashboard shown signed out (cold load, reload, a swipe, Back, after signing out) is caught', () => {
     expect(showsEmptyHome({ screen: 'ayna', view: 'home' })).toBe(true);
     expect(showsEmptyHome({ screen: 'ayna', view: 'dashboard' })).toBe(true);
     expect(showsEmptyHome({ screen: 'today' })).toBe(true);
+    expect(showsEmptyHome({ screen: 'ayna', view: 'home', hasProfile: true })).toBe(true);
+    expect(showsEmptyHome({ screen: 'ayna', view: 'home', hasProfile: true, pendingQuiz: true })).toBe(true);
     // the Ask tab (Home's chat view) is fine signed out
     expect(showsEmptyHome({ screen: 'ayna', view: 'chat' })).toBe(false);
     expect(showsEmptyHome({ screen: 'landing' })).toBe(false);
     expect(showsEmptyHome({ screen: 'explore' })).toBe(false);
+    // her matches after the quiz (My ecosystem) are not Home
+    expect(showsEmptyHome({ screen: 'eco' })).toBe(false);
+    expect(showsEmptyHome({ screen: 'ecointro' })).toBe(false);
     expect(showsEmptyHome({ screen: 'ayna', view: 'home', signedIn: true })).toBe(false);
-    expect(showsEmptyHome({ screen: 'ayna', view: 'home', hasProfile: true })).toBe(false);
+  });
+  it('the website Home tab: the landing signed out, Today signed in or while her session loads', () => {
+    expect(webHomeView({})).toBe('welcome');
+    expect(webHomeView({ signedIn: false })).toBe('welcome');
+    expect(webHomeView({ signedIn: true })).toBe('today');
+    expect(webHomeView({ signedIn: false, authLoading: true })).toBe('today');
   });
 });

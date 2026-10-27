@@ -156,6 +156,7 @@ import './styles/focus-group-oct26.css';
 import './styles/web-wide.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
 import { readHomeLook } from './mobile/components/homeLook.js';
+import { webHomeView } from './mobile/utils/navTab.js';
 // Keep the ?homestyle=a|b preview pick before the router rewrites the address (Today loads lazily).
 readHomeLook();
 import NewAccountStart from './components/NewAccountStart';
@@ -170,7 +171,6 @@ import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
 import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
 import { MAIN_TABS, TabIcon, AskMark, ProfileMark } from './components/nav/tabs.jsx';
-import AskSuggestRow from './components/nav/AskSuggestRow.jsx';
 import { YOU_SECTIONS, YOU_SECTION_ALIASES } from './components/nav/mainTabs.js';
 import YouTabs from './components/you/YouTabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
@@ -207,8 +207,7 @@ const EXPLORE_VIEW = { overview: 'explore', topics: 'explore-topics', services: 
 const SHOP_VIEWS = new Set(['discovery', 'explore', 'explore-topics', 'explore-services']);
 /** Focused flows: a minimal header (logo · Exit), no tab bar, no footer (P1-28). */
 const FOCUSED_FLOW_VIEWS = ['quiz', 'profile-edit'];
-/** The five tab pages: a slim row of Ask ayna suggestions sits under the top bar on these. */
-const ASK_SUGGEST_VIEWS = new Set(['explore', 'explore-topics', 'explore-services', 'discovery', 'community', 'articles']);
+// The Ask ayna suggestions row is app only: "the website doesn't need this" (founder, Oct 27 13:46).
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
 const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about', 'how-it-works'];
 
@@ -1780,6 +1779,9 @@ function App() {
   const savedCount = Object.keys(savedProducts || {}).length;
 
   const landingPinnedRef = useRef(false);
+  // Signed out, Home is always the landing (founder, Oct 27 13:46). The one way
+  // to Today signed out is the quiz's own ending ("See my Today"), which sets this.
+  const guestTodayRef = useRef(false);
   // The logo always opens the landing, signed in or out (founder, Oct 27 01:13).
   // A landing she opened on purpose is never redirected to Today.
   const navigateHome = () => {
@@ -1812,6 +1814,7 @@ function App() {
         // screen; the account is only for keeping them (onboarding audit).
         markOnboardingDone();
         setQuizResults(completedResults);
+        guestTodayRef.current = true;
         setCurrentView('today');
         setShowAuthModal(true);
         return;
@@ -1821,6 +1824,7 @@ function App() {
         markOnboardingDone();
         setQuizResults(completedResults);
         setPendingAction(null); pendingActionRef.current = null;
+        guestTodayRef.current = true;
         setCurrentView('today');
       }
       return;
@@ -2407,12 +2411,22 @@ function App() {
     setCurrentView('today', { replace: true });
   }, [currentView, user, quizResults, authLoading, dataLoading, showWrapped, setCurrentView]);
 
+  // Signed out, Today is never shown from a cold load, reload, Back or a link,
+  // whatever answers or fixtures this browser kept (founder, Oct 27 13:46: "if im
+  // signed out ... its taking me to an empty dashboard"). Only the quiz's ending
+  // opens it (guestTodayRef). Nothing in storage is touched.
+  useEffect(() => {
+    if (currentView !== 'today') { guestTodayRef.current = false; return; }
+    if (user || authLoading || guestTodayRef.current) return;
+    setCurrentView(webHomeView({ signedIn: false }), { replace: true });
+  }, [currentView, user, authLoading, setCurrentView]);
+
   // Which main tab is current. Signed out, the landing is Home.
-  const webTabOn = (key) => WEB_TAB_VIEWS[key].includes(currentView) || (key === 'today' && !user && !quizResults && ['welcome', 'hero'].includes(currentView));
+  const webTabOn = (key) => WEB_TAB_VIEWS[key].includes(currentView) || (key === 'today' && !user && ['welcome', 'hero'].includes(currentView));
   // Where each main tab goes (top nav and phone tab bar).
   const mainTabGo = {
-    // Signed out with no answers, Home is the landing (founder, Oct 27 01:10).
-    today: () => setCurrentView(!user && !quizResults ? 'welcome' : 'today'),
+    // Signed out, Home is the landing, answers on this browser or not (founder, Oct 27 13:46).
+    today: () => setCurrentView(webHomeView({ signedIn: Boolean(user), authLoading })),
     // Shop is the old Explore page (/explore); Services the same page with Services picked; Library the reads.
     explore: () => openExplore('overview'),
     services: () => setCurrentView('explore-services'),
@@ -2559,10 +2573,6 @@ function App() {
         </div>
       <main data-view={currentView}>
         <div id="ay-content" tabIndex={-1} />
-        {/* Ask ayna suggestions under the top bar (founder, Oct 26): tap sends the question, Hide collapses it for the session. */}
-        {ASK_SUGGEST_VIEWS.has(currentView) && (
-          <AskSuggestRow className="ay-asksug--web" signedIn={Boolean(user)} hasProfile={Boolean(quizResults)} onAsk={(q) => openAsk(q)} />
-        )}
 
         {(currentView === 'welcome' || currentView === 'hero') && (
           <AynaLanding
