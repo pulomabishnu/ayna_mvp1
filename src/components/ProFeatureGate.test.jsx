@@ -16,7 +16,7 @@ afterEach(async()=>{await act(async()=>root.unmount());host.remove();vi.useRealT
 const mount=async props=>{await act(async()=>root.render(<ProFeatureGate feature="appointment" title="Appointment prep" {...props}><input aria-label="Symptom notes" defaultValue="" /></ProFeatureGate>));};
 describe('Pro UI boundaries',()=>{
   it('shows the tool only after access is verified',async()=>{
-    edge.status.mockResolvedValue({ active:false });await mount();expect(host.querySelector('input')).toBeNull();expect(host.textContent).toContain('View ayna Pro');
+    edge.status.mockResolvedValue({ active:false });await mount();expect(host.querySelector('input')).toBeNull();expect(host.textContent).toContain('See ayna Pro Early Access');
   });
   it('does not expose premium children after an API error',async()=>{
     edge.status.mockRejectedValue(new Error('Offline'));await mount();expect(host.querySelector('input')).toBeNull();expect(host.textContent).toContain('Offline');
