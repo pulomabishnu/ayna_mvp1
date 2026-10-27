@@ -65,5 +65,12 @@ export function markScreenSeen(id, now = new Date(), storage = globalThis.localS
   return write({ seen: { ...p.seen, [id]: now.toISOString() } }, storage);
 }
 
+/** Tips she was shown, by tip id (`tip:<id>` in seen): a tip a later part repeats is skipped. */
+export function markTipsSeen(ids, screenId = null, now = new Date(), storage = globalThis.localStorage) {
+  const p = readTour(storage);
+  const add = Object.fromEntries([...ids.map((id) => `tip:${id}`), ...(screenId ? [`v2:${screenId}`] : [])].map((k) => [k, now.toISOString()]));
+  return write({ seen: { ...p.seen, ...add } }, storage);
+}
+
 /** Settings > Replay the tour: tips on again, every screen shows its tips once more. */
 export const replayTour = (storage = globalThis.localStorage) => write({ enabled: true, seen: {}, offNoteShown: false }, storage);

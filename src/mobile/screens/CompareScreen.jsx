@@ -21,7 +21,7 @@ export default function CompareScreen({ onBack, onOpenProduct, savedProducts = {
   const similar = products[0] ? similarProducts(products[0], { limit: 4, exclude: c.ids }) : [];
   const suggestions = [...savedList, ...similar.filter((s) => !savedList.some((x) => x.id === s.id))].slice(0, 8);
   return (
-    <div className="ay-cmpv" style={{ minHeight: '100%', background: 'var(--ayna-bg)' }}>
+    <div className="ay-cmpv" data-tour="compare" style={{ minHeight: '100%', background: 'var(--ayna-bg)' }}>
       <div className="ay-cmpv__top">
         <button type="button" className="ay-cmpv__back" onClick={onBack} aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>
       </div>

@@ -75,15 +75,18 @@ describe('website first visit', () => {
     expect(dialog().textContent).toContain('Daily Rundown');
     expect(dialog().textContent).toContain('Turn tips off any time in Settings.');
     expect(dialog().textContent).toContain('Turn off tips');
-    expect(document.querySelector('.ay-tour__count')?.textContent).toBe('Tip 1 of 2');
-    expect(document.querySelector('.ay-tour [aria-live="polite"]').textContent).toContain('Tip 1 of 2');
-    click('Next');
+    // No rings without health data: the Rundown is Home's one tip, then Home's next part.
+    expect(document.querySelector('.ay-tour__count')).toBeNull();
+    click('Got it');
+    expect(readTour().seen.today).toBeTruthy();
+    wait(1500);
     expect(dialog().textContent).toContain('A few things for today');
     expect(dialog().textContent).not.toContain('Turn tips off any time');
     expect(dialog().textContent).toContain('Turn off tips');
     click('Got it');
-    expect(readTour().seen.today).toBeTruthy();
-    wait(2000);
+    expect(readTour().seen['today-more']).toBeTruthy();
+    wait(1500);
+    // The top bar part: the Saved heart (the fixture's nav has none, so nothing more).
     expect(dialog()).toBeNull();
 
     swap('explore', EXPLORE);
@@ -162,7 +165,7 @@ describe('website first visit', () => {
     setTipsEnabled(true);
     mountWeb({ view: 'explore', html: `<div data-tour="explore"><form data-tour="explore-search" data-rect='{"left":40,"top":20,"width":500,"height":40}'><input /></form><div data-tour="explore-sections">x</div></div>` });
     wait(1000);
-    expect(dialog().textContent).toContain('Filter by need');
+    expect(dialog().textContent).toContain('Tap a group to shop by need');
     expect(document.querySelector('.ay-tour__count')).toBeNull();
   });
 });
@@ -238,7 +241,8 @@ describe('website registry and placement', () => {
     for (const s of WEB_SCREENS.filter((x) => x.id !== 'today')) expect(tourDecision({ screen: s, prefs: fresh, today: '2026-10-25' }).kind).toBe('none');
   });
   it('covers the six screens, at most 2 tips each, one short sentence', () => {
-    expect(WEB_SCREENS.map((s) => s.id).sort()).toEqual(['ask', 'community', 'explore', 'product-page', 'today', 'you']);
+    // The page screens, plus parts (within) for long pages and the top bar.
+    expect(WEB_SCREENS.filter((s) => !s.within).map((s) => s.id).sort()).toEqual(['ask', 'community', 'compare', 'explore', 'library', 'metric-sheet', 'product-page', 'services', 'today', 'you']);
     for (const s of WEB_SCREENS) {
       expect(tipsToShow(s, () => true).length).toBeLessThanOrEqual(2);
       for (const t of s.tips) {

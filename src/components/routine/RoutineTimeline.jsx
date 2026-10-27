@@ -66,7 +66,7 @@ export default function RoutineTimeline({ cycle = null, onOpenRoutine, onOpenPro
   const list = routines.slice(0, max);
   if (!list.length) {
     return (
-      <div className="ay-rtl is-empty">
+      <div className="ay-rtl is-empty" data-tour="routine">
         <p>Your routine shows here once you add products.</p>
         {emptyAction}
       </div>
@@ -89,7 +89,7 @@ export default function RoutineTimeline({ cycle = null, onOpenRoutine, onOpenPro
   }
   const tracks = list.map((r) => r.track).filter(Boolean);
   return (
-    <div className="ay-rtl">
+    <div className="ay-rtl" data-tour="routine">
       <ol className="ay-rtl__line">
         {groups.map((g) => (
           <li key={g.when} className={`ay-rtl__sec is-${g.now ? 'now' : 'surface'}`}>

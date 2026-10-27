@@ -9,6 +9,8 @@ import EmptyState from '../components/EmptyState.jsx';
 import MobileHeader from '../components/MobileHeader.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import ProductCard from '../components/ProductCard.jsx';
+import { splitPostTitle, postTopic } from '../../components/community/postCard.js';
+import '../../components/community/post-card.css';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { getGuestClient, getGuestId, ensureGuestSession } from '../../utils/community/guestClient.js';
 import * as community from '../../utils/community/communityStore.js';
@@ -992,15 +994,14 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     const replies = Number(post.comment_count) || 0;
     const media = post.media || [];
     const full = page?.type === 'post' && details?.id === post.id;
-    // Glance (advisor + founder 16:54): about two lines in the feed, the full post one tap away.
-    const long = !full && String(post.body || '').length > 110;
+    // One card per post (founder Oct 27 01:11): her first sentence is the bold title, the rest is 3 lines in the feed.
+    const { title, rest } = splitPostTitle(post.body);
+    const topic = postTopic(post);
+    const long = !full && rest.length > 120;
     const armed = armedDelete === post.id;
     // One word everywhere (web and app): Helpful, never Like.
     const likeWord = 'Helpful';
-    return <article ref={engagement.trackView(post.id)} className={`am-note is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(typeof i === 'number' ? i : 0, 6) }} data-vt-target={full ? 'post' : undefined} key={post.id}>
-      {/* What kind of post this is: an outlined label with an icon; questions add a status from the real answer count. */}
-      {kind === 'review' && <span className="am-kind"><TypeIcon kind="review" size={14} />Review</span>}
-      {kind === 'question' && <span className="am-kindrow"><span className="am-kind"><TypeIcon kind="question" size={14} />Question</span><span className={`am-status${replies ? '' : ' is-open'}`}>{replies ? 'Answered' : 'Needs answers'}</span></span>}
+    return <article ref={engagement.trackView(post.id)} className={`am-note ay-postcard is-${kind}${full ? ' is-full' : ''}`} style={{ '--i': Math.min(typeof i === 'number' ? i : 0, 6) }} data-vt-target={full ? 'post' : undefined} data-kind={kind} key={post.id}>
       <div className="am-note-head">
         <CommunityAvatar name={authorName} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
         <div className="am-note-who">
@@ -1018,9 +1019,18 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
           </div>}
         </div>
       </div>
-      {/* Review highlights in rounded label boxes, only from what she entered. */}
-      {kind === 'review' && <div className="am-review-facts"><span className="am-factbox"><RatingStars value={post.rating} className="am-post-stars" /></span>{post.would_recommend === true && <span className="am-factbox">Would recommend</span>}{post.would_recommend === false && <span className="am-factbox">Wouldn’t recommend</span>}</div>}
-      <button type="button" className={`am-note-body${long ? ' is-clamped' : ''}`} onClick={() => openPost(post)}>{post.body}</button>
+      {/* The topic chip, and what kind of post this is (a small Question or Review pill). */}
+      {(topic || kind !== 'post') && <div className="ay-postcard__tags">
+        {kind === 'question' && <span className="ay-postcard__pill is-question"><TypeIcon kind="question" size={14} />Question</span>}
+        {kind === 'review' && <span className="ay-postcard__pill is-review"><TypeIcon kind="review" size={14} />Review</span>}
+        {kind === 'review' && normalizeRating(post.rating) > 0 && <span className="ay-postcard__stars"><RatingStars value={post.rating} className="am-post-stars" /></span>}
+        {topic && <span className="ay-postcard__topic">{topic.label}</span>}
+        {kind === 'review' && post.would_recommend === true && <span className="ay-postcard__status">Would recommend</span>}
+        {kind === 'review' && post.would_recommend === false && <span className="ay-postcard__status">Wouldn’t recommend</span>}
+        {kind === 'question' && <span className={`ay-postcard__status${replies ? '' : ' is-open'}`}>{replies ? 'Answered' : 'Needs answers'}</span>}
+      </div>}
+      {title && (full ? <h2 className="ay-postcard__title">{title}</h2> : <h3 className="ay-postcard__title"><button type="button" onClick={() => openPost(post)}>{title}</button></h3>)}
+      {rest && (full ? <p className="am-note-body">{rest}</p> : <button type="button" className={`am-note-body${long ? ' is-clamped' : ''}`} onClick={() => openPost(post)}>{rest}</button>)}
       {long && <button type="button" className="am-readmore" onClick={() => openPost(post)}>Read the rest</button>}
       {media.length > 0 && <div className={`am-polaroids n-${Math.min(media.length, 4)}`}>{media.slice(0, 4).map((photo, k) => <button type="button" key={photo.path} className="am-polaroid" onClick={() => openPost(post)} aria-label={`Open ${authorName}'s post, photo ${k + 1}`}><img src={publicMediaUrl(photo.path)} alt="" loading="lazy" /></button>)}</div>}
       {full && postProductIds(post).length > 0 && <p className="am-modnote">Experiences, not medical advice.</p>}

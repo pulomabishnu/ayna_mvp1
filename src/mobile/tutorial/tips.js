@@ -15,16 +15,41 @@ export const OFF_NOTE = 'Turn tips off any time in Settings.';
 // earlier anchor isn't on screen.
 export const MAX_TIPS = 2;
 
+/*
+ * A screen can also have parts (`within: 'home'` or a list of ids): more groups
+ * of at most 2 tips on the same page, offered one group at a time after the
+ * page's own tips, only once their root is on screen (a long page like Home,
+ * a view she has to open like Routine). Each part is seen once, like a screen.
+ * Tip copy uses tonight's names (Oct 27): Shop, Services, Home, Community,
+ * Library, the Rundown bubble, For today, Your data.
+ */
+// The product page is long (restructured Oct 26): the buy row and the evidence tabs get their
+// own parts, offered when she scrolls to them if they weren't on screen with her match.
+const pdpParts = (buyText) => [
+  {
+    id: 'pdp-buy',
+    within: 'product-page',
+    root: '[data-tour="pdp"] [data-tour="pdp-actions"]',
+    tips: [{ id: 'pdp-buy', anchor: '[data-tour="pdp"] [data-tour="pdp-actions"]', text: buyText }],
+  },
+  {
+    id: 'pdp-tabs',
+    within: 'product-page',
+    root: '[data-tour="pdp"] [data-tour="evidence-tabs"]',
+    tips: [{ id: 'pdp-tabs', anchor: '[data-tour="pdp"] [data-tour="evidence-tabs"]', text: 'Summary, clinical opinion, research and reviews each have a tab.' }],
+  },
+];
+
 export const SCREENS = [
   {
     id: 'product-page',
     root: '[data-tour="pdp"]',
     tips: [
-      { id: 'pdp-why', anchor: '[data-tour="pdp-why"]', text: 'Tap your match to see why it fits you.' },
-      { id: 'pdp-tabs', anchor: '[data-tour="pdp"] [data-tour="evidence-tabs"]', text: 'Summary, clinical opinion, research and reviews each have a tab.' },
-      { id: 'pdp-buy', anchor: '[data-tour="pdp-actions"]', text: 'Buy it, or add it to your routine.' },
+      { id: 'pdp-why', anchor: '[data-tour="pdp"] [data-tour="pdp-why"]', text: 'Tap your match to see why it fits you.' },
+      { id: 'pdp-buy', anchor: '[data-tour="pdp"] [data-tour="pdp-actions"]', text: 'Buy it here, or tap the heart to save it.' },
     ],
   },
+  ...pdpParts('Buy it here, or tap the heart to save it.'),
   {
     id: 'product-sheet',
     root: '[data-tour="psheet"]',
@@ -35,10 +60,18 @@ export const SCREENS = [
     ],
   },
   {
+    id: 'metric-sheet',
+    root: '[data-tour="metric-sheet"]',
+    tips: [
+      { id: 'metric-range', anchor: '[data-tour="metric-sheet"] .ay-db-range', text: 'Switch between 7, 30 and 90 days.' },
+      { id: 'metric-more', anchor: '[data-tour="metric-sheet"] .ay-msheet__more', text: 'Tap here for every chart in Your data.' },
+    ],
+  },
+  {
     id: 'ask-sheet',
     root: '[data-tour="ask-sheet"]',
     tips: [
-      { id: 'ask-prompts', anchor: '[data-tour="ask-prompts"]', text: 'Tap a question from your data to ask it.' },
+      { id: 'ask-prompts', anchor: '[data-tour="ask-prompts"]', text: 'Tap a suggestion to ask it right away.' },
       { id: 'ask-mic', anchor: '[data-tour="ask-sheet"] .ay-mic', text: 'Tap the mic to ask out loud.' },
     ],
   },
@@ -47,8 +80,16 @@ export const SCREENS = [
     root: '[data-tour="chat"][data-open="true"]',
     tips: [
       { id: 'chat-starters', anchor: '[data-tour="ask-starters"] [data-tab="rundown"]', text: 'Tap a question about today’s Rundown to ask it.' },
-      { id: 'chat-input', anchor: '[data-tour="chat-input"]', text: 'Type or tap the mic to ask anything.' },
+      { id: 'chat-input', anchor: '[data-tour="chat"] [data-tour="chat-input"]', text: 'Type or tap the mic to ask anything.' },
       { id: 'chat-guide', anchor: '[data-tour="ask-starters"] [data-tab="guide"]', text: 'Your week, memory and appointment notes live here.' },
+    ],
+  },
+  {
+    id: 'compare',
+    root: '[data-tour="compare"]',
+    tips: [
+      { id: 'compare-table', anchor: '[data-tour="compare"] h1', text: 'Pick 2 to 4 products to see them side by side.' },
+      { id: 'compare-pick', anchor: '[data-tour="compare"] .ay-cmpv__pick', text: 'Tap a product here to add it to the comparison.' },
     ],
   },
   {
@@ -57,17 +98,98 @@ export const SCREENS = [
     rundown: true,
     welcome: true,
     tips: [
-      { id: 'home-ask', anchor: '[data-tour="home-ask"]', text: 'Ask about your health, a product or your day.' },
-      { id: 'home-rundown', anchor: '[data-tour="rundown-card"]', text: 'Your Daily Rundown opens each morning, 60 seconds long.' },
-      { id: 'home-links', anchor: '[data-tour="home-links"]', text: 'Your routine, log and health data live in My dashboard.' },
+      { id: 'home-rings', anchor: '[data-tour="home"] [data-tour="score-rings"]', text: 'Your cycle, sleep and activity; tap a ring for more.' },
+      { id: 'home-rundown', anchor: '[data-tour="home"] [data-tour="rundown-bubble"]', text: 'Tap Rundown for your 60-second Daily Rundown.' },
+    ],
+  },
+  {
+    id: 'home-streak',
+    within: 'home',
+    root: '[data-tour="home"] [data-tour="streak"]',
+    tips: [
+      { id: 'home-streak', anchor: '[data-tour="home"] [data-tour="streak"]', text: 'Log once a day to keep your streak going.' },
+    ],
+  },
+  {
+    id: 'home-header',
+    within: 'home',
+    root: '[data-tour="home"] [data-tour="saved-heart"]',
+    tips: [
+      { id: 'saved-heart', anchor: '[data-tour="home"] [data-tour="saved-heart"]', text: 'Everything you save is under the heart.' },
+      { id: 'profile-button', anchor: '[data-tour="home"] [data-tour="profile-button"]', text: 'Your photo opens your profile and Settings.' },
+    ],
+  },
+  {
+    id: 'home-links',
+    within: 'home',
+    root: '[data-tour="home"] [data-tour="home-links"]',
+    tips: [
+      { id: 'home-links', anchor: '[data-tour="home"] [data-tour="home-links"]', text: 'Your data and Your products each open in one tap.' },
+    ],
+  },
+  {
+    id: 'home-views',
+    within: 'home',
+    root: '[data-tour="home"] [data-tour="home-views"]',
+    tips: [
+      { id: 'home-views', anchor: '[data-tour="home"] [data-tour="home-views"] [role="tablist"]', text: 'Switch between Your week, For today and Routine.' },
+    ],
+  },
+  {
+    id: 'home-today',
+    within: 'home',
+    root: '[data-tour="home"] [data-tour="deck"]',
+    tips: [
+      { id: 'deck-later', anchor: '[data-tour="home"] [data-tour="deck-later"]', text: 'Tap Later to move a card to the back for now.' },
+    ],
+  },
+  {
+    // Only when she has more than one thing for today (the titles of the cards behind).
+    id: 'home-deck-titles',
+    within: 'home',
+    root: '[data-tour="home"] [data-tour="deck-titles"]',
+    tips: [
+      { id: 'deck-titles', anchor: '[data-tour="home"] [data-tour="deck-titles"]', text: 'Tap a title to bring that card to the front.' },
+    ],
+  },
+  {
+    id: 'home-routine',
+    within: 'home',
+    root: '[data-tour="home"] [data-tour="routine"]',
+    tips: [
+      // The timeline can be taller than the screen: the first step (or the empty line) is the anchor.
+      { id: 'home-routine', anchor: '[data-tour="home"] [data-tour="routine"] :is(.ay-rtl__line > li:first-child, p:first-child)', text: 'Your routine for the day, in order.' },
+    ],
+  },
+  {
+    id: 'health-data',
+    root: '[data-tour="health-data"]',
+    tips: [
+      { id: 'data-rings', anchor: '[data-tour="health-data"] [data-tour="score-rings"]', text: 'Tap a ring to open its detail.' },
+    ],
+  },
+  {
+    id: 'services',
+    root: '[data-tour="explore"][data-kind="services"]',
+    tips: [
+      { id: 'services-search', anchor: '[data-tour="explore"][data-kind="services"] .ayna-shop-heading input', text: 'Search care, apps and clinics by need.' },
+      { id: 'services-card', anchor: '[data-tour="explore"][data-kind="services"] [data-tour="service-card"]', text: 'Tap a service to see its cost and how to start.' },
     ],
   },
   {
     id: 'explore',
     root: '[data-tour="explore"]',
     tips: [
-      { id: 'explore-search', anchor: '[data-tour="explore"] input', text: 'Search products, symptoms, topics and services in one place.' },
-      { id: 'explore-sections', anchor: '[data-tour="explore-sections"]', text: 'Filter by need, or show only products or services.' },
+      { id: 'explore-search', anchor: '[data-tour="explore"] .ayna-shop-heading input', text: 'Search products and brands in one place.' },
+      { id: 'explore-sections', anchor: '[data-tour="explore"] [data-tour="explore-sections"]', text: 'Tap a group to shop by need.' },
+    ],
+  },
+  {
+    id: 'shop-compare',
+    within: 'explore',
+    root: '[data-tour="explore"] [data-tour="compare-toggle"]',
+    tips: [
+      { id: 'compare-toggle', anchor: '[data-tour="explore"] [data-tour="compare-toggle"]', text: 'Tap Compare, then pick products to see side by side.' },
     ],
   },
   {
@@ -79,11 +201,35 @@ export const SCREENS = [
     ],
   },
   {
+    id: 'library',
+    root: '[data-tour="reads"]',
+    tips: [
+      { id: 'library-search', anchor: '[data-tour="reads"] .ay-lib-head input', text: 'Search reads by symptom, product or topic.' },
+      { id: 'library-topics', anchor: '[data-tour="reads"] .al-topics--v9 :is(button, a)', text: 'Tap a topic to see only those reads.' },
+    ],
+  },
+  {
+    id: 'ask-row',
+    within: ['explore', 'services', 'community', 'library'],
+    root: '[data-tour="ask-suggest"]',
+    tips: [
+      { id: 'ask-suggest', anchor: '[data-tour="ask-suggest"] .ay-asksug__pill', text: 'Tap a question to ask ayna right away.' },
+    ],
+  },
+  {
     id: 'you',
     root: '[data-tour="you"]',
     tips: [
-      { id: 'you-beliefs', anchor: '[data-tour="you-beliefs"]', text: 'See or change anything ayna uses to match you.' },
+      { id: 'you-sections', anchor: '[data-tour="you"] [data-tour="you-sections"] :is(button, a)', text: 'Your ecosystem, saved products and health live here.' },
       { id: 'you-settings', anchor: '[data-tour="you"] .ay-header-settings', text: 'Turn tips off or replay them in Settings.' },
+    ],
+  },
+  {
+    id: 'you-beliefs',
+    within: 'you',
+    root: '[data-tour="you"] [data-tour="you-beliefs"]',
+    tips: [
+      { id: 'you-beliefs', anchor: '[data-tour="you"] [data-tour="you-beliefs"]', text: 'See or change anything ayna uses to match you.' },
     ],
   },
 ];
@@ -101,9 +247,24 @@ export const WEB_SCREENS = [
     root: '[data-tour="pdp"]',
     tips: [
       { id: 'pdp-why', anchor: '[data-tour="pdp"] [data-tour="pdp-why"]', text: 'Tap your match to see why it fits you.' },
-      { id: 'pdp-fit', anchor: '[data-tour="pdp"] [data-tour="pdp-fit"]', text: 'Your match, with the reasons it fits you.' },
-      { id: 'pdp-tabs', anchor: '[data-tour="pdp"] [data-tour="evidence-tabs"]', text: 'Summary, clinical opinion, research and reviews each have a tab.' },
       { id: 'pdp-buy', anchor: '[data-tour="pdp"] [data-tour="pdp-actions"]', text: 'Buy it, or save it for later.' },
+    ],
+  },
+  ...pdpParts('Buy it, or save it for later.'),
+  {
+    id: 'metric-sheet',
+    root: '[data-tour="metric-sheet"]',
+    tips: [
+      { id: 'metric-range', anchor: '[data-tour="metric-sheet"] .ay-db-range', text: 'Switch between 7, 30 and 90 days.' },
+      { id: 'metric-more', anchor: '[data-tour="metric-sheet"] .ay-msheet__more', text: 'Tap here for every chart in Your data.' },
+    ],
+  },
+  {
+    id: 'compare',
+    root: '[data-tour="compare"]',
+    tips: [
+      { id: 'compare-sample', anchor: '[data-tour="compare"] .aycmp__sample-head', text: 'A sample comparison; add your own products below it.' },
+      { id: 'compare-add', anchor: '[data-tour="compare"] :is(.aycmp__add, .aycmp__own-cta)', text: 'Add products to compare 2 to 4 side by side.' },
     ],
   },
   {
@@ -113,8 +274,35 @@ export const WEB_SCREENS = [
     welcome: true,
     tips: [
       { id: 'today-rundown', anchor: '[data-tour="today"] [data-tour="rundown-card"]', text: 'Your Daily Rundown is new each morning, 60 seconds long.' },
+      { id: 'home-rings', anchor: '[data-tour="today"] [data-tour="score-rings"]', text: 'Your cycle, sleep and activity; tap a ring for more.' },
+    ],
+  },
+  {
+    // With health data the rings lead and the Rundown card can sit lower: its tip then comes on scroll.
+    id: 'today-rundown',
+    within: 'today',
+    root: '[data-tour="today"] [data-tour="rundown-card"]',
+    tips: [
+      { id: 'today-rundown', anchor: '[data-tour="today"] [data-tour="rundown-card"]', text: 'Your Daily Rundown is new each morning, 60 seconds long.' },
+    ],
+  },
+  {
+    id: 'today-more',
+    within: 'today',
+    root: '[data-tour="today"] [data-tour="today-things"]',
+    tips: [
       // The first of today's things (a safety or care item is never a tip's anchor, so then it's skipped).
       { id: 'today-things', anchor: '[data-tour="today"] [data-tour="today-things"] > li:first-child', text: 'A few things for today, picked from your answers.' },
+      { id: 'home-views', anchor: '[data-tour="today"] [role="tablist"]', text: 'Switch between Your week and Routine.' },
+    ],
+  },
+  {
+    id: 'web-header',
+    within: ['today', 'explore', 'services', 'community', 'library'],
+    root: '.app-nav-wrap .ay-nav__heart',
+    tips: [
+      { id: 'saved-heart', anchor: '.app-nav-wrap .ay-nav__heart', text: 'Everything you save is under the heart.' },
+      { id: 'profile-button', anchor: '.app-nav-wrap .ay-avatar', text: 'Your photo opens your profile and Settings.' },
     ],
   },
   {
@@ -126,11 +314,27 @@ export const WEB_SCREENS = [
     ],
   },
   {
+    id: 'services',
+    root: '.app-container[data-view="explore-services"] [data-tour="explore"]',
+    tips: [
+      { id: 'services-search', anchor: '.app-container[data-view="explore-services"] [data-tour="explore-search"]', text: 'Search care, apps and clinics by need.' },
+      { id: 'services-card', anchor: '.app-container[data-view="explore-services"] [data-tour="service-card"]', text: 'Tap a service to see its cost and how to start.' },
+    ],
+  },
+  {
     id: 'explore',
     root: '[data-tour="explore"]',
     tips: [
       { id: 'explore-search', anchor: '[data-tour="explore"] [data-tour="explore-search"]', text: 'Search products, symptoms, topics and services in one place.' },
-      { id: 'explore-sections', anchor: '[data-tour="explore"] [data-tour="explore-sections"]', text: 'Filter by need, or show only products or services.' },
+      { id: 'explore-sections', anchor: '[data-tour="explore"] [data-tour="explore-sections"]', text: 'Tap a group to shop by need.' },
+    ],
+  },
+  {
+    id: 'shop-compare',
+    within: 'explore',
+    root: '[data-tour="explore"] [data-tour="compare-toggle"]',
+    tips: [
+      { id: 'compare-toggle', anchor: '[data-tour="explore"] [data-tour="compare-toggle"]', text: 'Tap Compare, then pick products to see side by side.' },
     ],
   },
   {
@@ -142,18 +346,40 @@ export const WEB_SCREENS = [
     ],
   },
   {
+    id: 'library',
+    // The Library page (Articles.jsx) carries no data-tour of its own: its header classes are the anchors.
+    root: '.app-container[data-view="articles"] .lb-lib',
+    tips: [
+      { id: 'library-search', anchor: '.app-container[data-view="articles"] .lb-search', text: 'Search reads by symptom, product or topic.' },
+      { id: 'library-topics', anchor: '.app-container[data-view="articles"] :is(.lb-chips > :first-child, .lb-toc__list > li:first-child)', text: 'Tap a topic to go to its reads.' },
+    ],
+  },
+  {
+    id: 'ask-row',
+    within: ['explore', 'services', 'community', 'library'],
+    root: '[data-tour="ask-suggest"]',
+    tips: [
+      { id: 'ask-suggest', anchor: '[data-tour="ask-suggest"] .ay-asksug__pill', text: 'Tap a question to ask ayna right away.' },
+    ],
+  },
+  {
     id: 'you',
     root: '[data-tour="you"]',
     tips: [
       // Big blocks point at their heading, so the anchor fits on screen.
       { id: 'you-know', anchor: '[data-tour="you"] [data-tour="you-know"] h2', text: 'See or change anything ayna uses to match you.' },
-      { id: 'you-sections', anchor: '[data-tour="you"] [data-tour="you-sections"]', text: 'Your ecosystem, saved products and health live here.' },
-      { id: 'you-settings', anchor: '[aria-label="You sections"] a[href="/you/settings"]', text: 'Turn tips off or replay them in Settings and privacy.' },
+      { id: 'you-sections', anchor: '[data-tour="you"] [data-tour="you-sections"] :is(button, a)', text: 'Your ecosystem, saved products and health live here.' },
+      { id: 'you-settings', anchor: '[data-tour="you"] [aria-label^="Settings & privacy"]', text: 'Turn tips off or replay them in Settings and privacy.' },
     ],
   },
 ];
 
 export const screensFor = (surface = 'app') => (surface === 'web' ? WEB_SCREENS : SCREENS);
+/** The page-level screens (no parts): the ones that can be the screen she's on. */
+export const topScreens = (screens) => screens.filter((s) => !s.within);
+const withinIds = (s) => (Array.isArray(s.within) ? s.within : s.within ? [s.within] : []);
+/** The parts of a page, in order. */
+export const partsOf = (screen, screens) => (screen ? screens.filter((s) => withinIds(s).includes(screen.id)) : []);
 export const screenById = (id, surface = 'app') => screensFor(surface).find((s) => s.id === id) || null;
 
 /**
@@ -206,7 +432,7 @@ export function tourDecision({ screen, prefs, today, onboarding = false, rundown
  * safety or care item. `isUsable(selector)` is the DOM check (TutorialLayer).
  * The first tip she ever sees carries the line on turning tips off.
  */
-export function tipsToShow(screen, isUsable, { offNoteShown = false } = {}) {
-  const list = (screen?.tips || []).filter((t) => isUsable(t.anchor)).slice(0, MAX_TIPS);
+export function tipsToShow(screen, isUsable, { offNoteShown = false, seen = {} } = {}) {
+  const list = (screen?.tips || []).filter((t) => !seen[`tip:${t.id}`] && isUsable(t.anchor)).slice(0, MAX_TIPS);
   return list.map((t, i) => (i === 0 && !offNoteShown ? { ...t, offNote: OFF_NOTE } : t));
 }

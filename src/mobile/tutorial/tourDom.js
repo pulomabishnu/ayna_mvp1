@@ -38,19 +38,23 @@ const avoids = (el, list = AVOID) => list.some((sel) => { try { return el.matche
 /** The element, if it's really on screen right now and allowed to carry a tip. */
 export function usableAnchor(selector, { dialog = topDialog(), vh = window.innerHeight, vw = window.innerWidth, avoid = AVOID, topInset = 0, bottomInset = 0 } = {}) {
   let el = null;
-  try { el = [...document.querySelectorAll(selector)].find((n) => !inLayer(n) && !hiddenUp(n)) || null; } catch { el = null; }
+  // The first match that is rendered (a selector list can name a phone and a desktop variant).
+  try { el = [...document.querySelectorAll(selector)].find((n) => !inLayer(n) && !hiddenUp(n) && n.getClientRects().length > 0) || null; } catch { el = null; }
   if (!el || avoids(el, avoid)) return null;
   if (dialog && !dialog.contains(el)) return null;
   const r = el.getBoundingClientRect();
   if (r.width < 4 || r.height < 4) return null;
   // Fully clear of a fixed header and tab bar (the website's top nav, the app's has none).
-  if (r.top < topInset || r.bottom > vh - bottomInset - 4 || r.left < -2 || r.right > vw + 2) return null;
+  // An anchor that is itself in the top bar (the Saved heart, the profile photo) is fine there.
+  const top = el.closest('.app-nav-wrap') ? 0 : topInset;
+  if (r.top < top || r.bottom > vh - bottomInset - 4 || r.left < -2 || r.right > vw + 2) return null;
   return onTop(el, vw, vh) ? el : null;
 }
 
-/** The registered screen she's looking at (the topmost one when a sheet is open). */
+/** The registered screen she's looking at (the topmost one when a sheet is open). Parts (`within`) never are. */
 export function currentScreen(dialog, screens = SCREENS) {
   for (const s of screens) {
+    if (s.within) continue;
     const roots = [...document.querySelectorAll(s.root)].filter((n) => !inLayer(n) && !hiddenUp(n));
     const root = roots.find((n) => (dialog ? dialog.contains(n) || n.contains(dialog) : true) && n.getClientRects().length > 0 && onTop(n));
     if (root) return s;
@@ -105,4 +109,11 @@ export function placeBubble(anchor, size, { vw, vh, avoid = [], bottomInset = 0,
   const arrow = Math.min(Math.max(20, anchor.left + anchor.width / 2 - best.left), w - 20);
   const arrowY = Math.min(Math.max(20, anchor.top + anchor.height / 2 - best.top), h - 20);
   return { left: best.left, top: best.top, side: best.side, arrow, arrowY };
+}
+
+/** Is this part's root on the page she's on (shown, inside the open sheet if there is one)? */
+export function partPresent(selector, dialog = null) {
+  let nodes = [];
+  try { nodes = [...document.querySelectorAll(selector)]; } catch { return false; }
+  return nodes.some((n) => !inLayer(n) && !hiddenUp(n) && n.getClientRects().length > 0 && (!dialog || dialog.contains(n)));
 }

@@ -7,7 +7,6 @@
   --t-ink: #3e2723;
   --t-line: #3e2723;
   --t-pop: #f7badd;
-  --t-sky: #769ebe;
   --t-shade: rgba(62, 39, 35, 0.55);
   position: fixed;
   inset: 0;
@@ -102,7 +101,7 @@
   text-underline-offset: 3px;
   cursor: pointer;
 }
-.ay-tour button:focus-visible { outline: 2px solid var(--t-sky); outline-offset: 2px; }
+.ay-tour button:focus-visible { outline: 2px solid var(--t-line); outline-offset: 2px; }
 
 /* Welcome: a small card above the tab bar. */
 .ay-tour__welcome {

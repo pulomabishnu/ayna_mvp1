@@ -62,7 +62,7 @@ export default function ServiceCard({
   };
   const Link = as;
   return (
-    <article onClick={openFromCard} data-pid={service.id} className={`ay-svc${isSaved ? ' is-saved' : ''}${onToggleSaved ? ' has-heart' : ''} ${className}`.trim()}>
+    <article onClick={openFromCard} data-pid={service.id} data-tour="service-card" className={`ay-svc${isSaved ? ' is-saved' : ''}${onToggleSaved ? ' has-heart' : ''} ${className}`.trim()}>
       <div className="ay-svc__logo">
         {logo ? <img src={logo} alt={`${title} logo`} loading="lazy" decoding="async" /> : <span className="ay-svc__mono" aria-hidden="true">{monogram(service.brand || title)}</span>}
       </div>

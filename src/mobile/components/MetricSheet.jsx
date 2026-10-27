@@ -46,7 +46,7 @@ export default function MetricSheet({ metric, chartFor, bandOf, today, cycle = n
   const body = () => (
     <div className={`ay-msheet-layer is-${surface}`} style={frame || undefined}>
       <div className="ay-msheet-dim" aria-hidden="true" onClick={close} />
-      <section ref={sheetRef} className="ay-msheet" role="dialog" aria-modal="true" aria-labelledby="ay-msheet-h">
+      <section ref={sheetRef} className="ay-msheet" role="dialog" aria-modal="true" aria-labelledby="ay-msheet-h" data-tour="metric-sheet">
         <span className="ay-msheet__grab" aria-hidden="true" />
         <header className="ay-msheet__head">
           <h2 id="ay-msheet-h">{label}</h2>
