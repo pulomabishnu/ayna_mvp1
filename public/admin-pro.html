@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>ayna Pro controls</title>
+  <style>
+    :root { color-scheme: light; --ink:#152536; --berry:#873d59; --mint:#e9f8f1; --line:#dce7e2; --paper:#fffdf9; --muted:#63706e; --danger:#a22d42; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { width:min(760px, calc(100% - 32px)); margin:48px auto 72px; }
+    a { color:var(--berry); font-weight:700; }
+    .eyebrow { margin:28px 0 8px; color:var(--berry); font-size:.78rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+    h1 { margin:0; font-size:clamp(2rem, 6vw, 3.7rem); line-height:.98; letter-spacing:-.045em; }
+    .lede { max-width:620px; color:var(--muted); font-size:1.05rem; line-height:1.6; }
+    .card { margin-top:28px; border:1px solid var(--line); border-radius:24px; background:white; padding:24px; box-shadow:0 14px 40px rgba(21,37,54,.06); }
+    .status-row { display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+    .state-label { margin:0 0 6px; font-size:.78rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+    .state { margin:0; font-size:2rem; font-weight:850; letter-spacing:-.04em; }
+    .state.on { color:var(--berry); }
+    .switch { min-width:160px; border:0; border-radius:999px; padding:14px 22px; background:#e8ecea; color:var(--ink); font:inherit; font-weight:850; cursor:pointer; transition:transform .15s ease, background .15s ease, color .15s ease; }
+    .switch[aria-checked="true"] { background:var(--berry); color:white; }
+    .switch:hover { transform:translateY(-1px); }
+    .switch:disabled { opacity:.55; cursor:not-allowed; transform:none; }
+    .note { margin:18px 0 0; padding:14px 16px; border-radius:14px; background:var(--mint); line-height:1.5; }
+    .warning { background:#fff2f1; color:#762135; }
+    .grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin-top:18px; }
+    .metric { border:1px solid var(--line); border-radius:16px; padding:14px; }
+    .metric strong { display:block; font-size:1.45rem; }
+    .metric span { color:var(--muted); font-size:.86rem; }
+    .actions { display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+    .secondary { border:1px solid var(--line); border-radius:999px; padding:10px 16px; background:white; color:var(--ink); font:inherit; font-weight:750; cursor:pointer; }
+    #message { min-height:1.5em; margin:16px 0 0; color:var(--muted); }
+    #message.error { color:var(--danger); }
+    .hidden { display:none !important; }
+    @media (max-width:620px) { main { margin-top:28px; } .grid { grid-template-columns:1fr; } .switch { width:100%; } }
+  </style>
+</head>
+<body>
+  <main>
+    <a href="/you">← Back to ayna</a>
+    <p class="eyebrow">Internal admin</p>
+    <h1>ayna Pro controls</h1>
+    <p class="lede">Turn the Free vs. Pro feature gates on or off for everyone. Changes apply immediately and do not require a Vercel redeploy.</p>
+
+    <section id="auth-card" class="card" aria-live="polite">
+      <strong id="auth-status">Checking admin access…</strong>
+      <p id="auth-detail" class="lede">You must be signed in with an approved ayna admin account.</p>
+    </section>
+
+    <section id="controls" class="card hidden" aria-labelledby="gate-heading">
+      <div class="status-row">
+        <div>
+          <p class="state-label">Production feature gates</p>
+          <h2 id="gate-heading" class="state">Checking…</h2>
+        </div>
+        <button id="gate-toggle" class="switch" type="button" role="switch" aria-checked="false" disabled>Loading…</button>
+      </div>
+      <p id="gate-note" class="note">Loading the live rollout setting…</p>
+
+      <div class="grid" aria-label="Current limits">
+        <div class="metric"><strong id="free-ask">—</strong><span>Free Ask ayna / day</span></div>
+        <div class="metric"><strong id="pro-ask">—</strong><span>Pro Ask ayna / day</span></div>
+        <div class="metric"><strong id="free-playlists">—</strong><span>Free playlists</span></div>
+      </div>
+
+      <div class="actions">
+        <button id="refresh" class="secondary" type="button">Refresh status</button>
+        <a href="/pro">Open Pro purchase page</a>
+      </div>
+      <p id="message" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+  <script src="/admin-pro.js" defer></script>
+</body>
+</html>
