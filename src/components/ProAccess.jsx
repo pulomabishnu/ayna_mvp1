@@ -47,27 +47,27 @@ export default function ProAccess({ user, onSignIn }) {
   return <section className="pro-access" aria-labelledby="pro-title">
     <p className="pro-access__eyebrow">ayna Early Access</p>
     <h1 id="pro-title">ayna Pro</h1>
-    <p>Free ayna helps you discover and get started. Pro helps you understand your health more deeply over time.</p>
+    <p>Free ayna gives you the essentials. Pro gives you more ways to personalize, track and understand your health.</p>
     <details className="pro-access__features" open><summary>What Early Access unlocks</summary>
-      <p>Tools vary across the website, app and available health data. Early Access includes new Pro additions as they are released.</p>
+      <p>Early Access members can use available Pro features now and get new Pro additions as they roll out.</p>
       <ul>{PRO_FEATURES.filter(f => f.stage === 'available').map(f => <li key={f.id}><strong>{f.label}</strong><p>{f.description}</p></li>)}</ul>
     </details>
     <details className="pro-access__features"><summary>Growing during Early Access</summary><p>These capabilities are being expanded or finalized. Availability can vary across the website, app and connected data sources.</p>
       <ul>{PRO_FEATURES.filter(f => f.stage === 'evolving').map(f => <li key={f.id}><strong>{f.label}</strong><p>{f.description}</p></li>)}</ul>
     </details>
     <details className="pro-access__features"><summary>What stays free</summary><ul>{FREE_FEATURES.map(label => <li key={label}>{label}</li>)}</ul></details>
-    {!user ? <><p>Sign in to see your Pro access or choose an early-access plan.</p><button className="ay-btn ay-btn--primary" onClick={onSignIn}>Sign in</button></> : <>
+    {!user ? <><p>Sign in to see your Pro access or choose an Early Access plan.</p><button className="ay-btn ay-btn--primary" onClick={onSignIn}>Sign in</button></> : <>
       {current?.active ? <>
         <h2>Your Pro access is active.</h2>
         {current.temporaryUntil && <p>Temporary focus-group access ends {new Date(current.temporaryUntil).toLocaleString()}.</p>}
-        {current.plan ? <p>{current.launchAt ? `Your prepaid ${current.plan} starts ${date(current.termStartsAt)} and ends ${date(current.termEndsAt)}.` : `Your first ${current.plan} starts at public launch. Until then, enjoy early access at no extra cost.`}</p> : <p>You have Pro access on your account.</p>}
+        {current.plan ? <p>{current.launchAt ? `Your prepaid ${current.plan} starts ${date(current.termStartsAt)} and ends ${date(current.termEndsAt)}.` : `Your first ${current.plan} starts at public launch. Until then, enjoy Early Access at no extra cost.`}</p> : <p>You have Pro access on your account.</p>}
       </> : <>
-        <p>Buy your first month or year at the Early Access price today and unlock ayna Pro right away. We won’t start counting your purchased month or year until the January 2027 launch.</p>
+        <p>Pay today for your first month or year at the Early Access price and start using ayna Pro now. The month or year you pay for starts at our January 2027 public launch, so your Early Access before launch is included at no extra cost.</p>
         {current?.launchAt && <p>Public launch: {date(current.launchAt)}.</p>}
         {returning === 'success' && <p role="status">We’re waiting for payment confirmation. Pro unlocks as soon as your payment is confirmed.</p>}
         {returning === 'canceled' && <p>Checkout was canceled. You can choose a plan when you’re ready.</p>}
-        {current && !current.offerOpen && <p>The early-access offer is currently closed.</p>}
-        <p className="pro-access__note">Beta access is included at no extra cost. After your purchased period ends, your plan renews at $8.99/month or $90/year unless canceled. Cancel renewal anytime from this page.</p>
+        {current && !current.offerOpen && <p>The Early Access offer is currently closed.</p>}
+        <p className="pro-access__note">After your discounted first month or year ends, your plan renews at $8.99/month or $90/year unless canceled. Cancel renewal anytime from this page.</p>
       </>}
         {current?.offerOpen && !current.hasPurchase && (!current.active || current.temporaryUntil) && <div className="pro-access__plans">{current.plans.map(plan => <button className="pro-access__plan" key={plan.id} disabled={busy} onClick={() => checkout(plan.id)}>
           <span>{plan.label}</span><del>{money(plan.regularAmount)}</del><strong>{money(plan.amount)} now</strong><span>{plan.id === 'year' ? '50% off your first year' : 'Save $4 on your first month'}</span><span>Then {money(plan.regularAmount)}/{plan.id}, unless canceled</span>
