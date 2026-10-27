@@ -1,7 +1,7 @@
 // Product contract: capabilities in development are never presented as ready.
 export const PRO_FEATURES = [
   { id: 'ask', label: 'More Ask ayna', description: 'Up to 50 Ask ayna chats per day. Free accounts get 5 per day.', stage: 'available' },
-  { id: 'quiz', label: 'Retake your personalization quiz anytime', description: 'Update your answers whenever you want. Free accounts can retake the quiz once per week.', stage: 'available' },
+  { id: 'quiz', label: 'Update your ecosystem anytime', description: 'Retake the quiz and rebuild your ecosystem whenever you want. Free accounts can update it once a month.', stage: 'available' },
   { id: 'reads', label: 'Unlimited Reads', description: 'Open unlimited Reads. Free accounts get one Read per week.', stage: 'available' },
   { id: 'playlists', label: 'Unlimited playlist creation', description: 'Create as many playlists as you want. Free accounts can create one playlist.', stage: 'available' },
   { id: 'wearables', label: 'Connect health apps and wearables', description: 'Connect supported health sources so ayna can use the data you choose to share.', stage: 'available' },
@@ -26,5 +26,5 @@ export const FREE_FEATURES = [
   '5 Ask ayna chats per day',
   '1 Read per week',
   '1 playlist',
-  '1 personalization quiz retake per week',
+  '1 ecosystem update per month',
 ];

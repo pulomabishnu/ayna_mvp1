@@ -48,7 +48,11 @@ describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
     const html = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} onSignIn={() => {}} onBrowse={() => {}} />);
     expect(html).toContain('data-tour="landing-start"');
     expect(html).toContain('class="lsx-search');
-    expect(html).toMatch(/class="lk-rain alx__rain" aria-hidden="true"/);
+    expect(html).toMatch(/class="lk-rainbox lk-rainbox--ink alx__rain" aria-hidden="true"/);
+    // The brown and pink brand bar is on the website only (founder, Oct 27 12:08).
+    expect(html).not.toMatch(/class="lk-bar[ "]/);
+    // "your body." is pink text, nothing boxed behind it.
+    expect(html).not.toContain('<mark');
     expect(text(html)).toContain('In an emergency, call 911.');
     expect(text(html)).toContain('Explore first');
     // Nothing below the first screen: no feature sections, no Pro, no founders.
@@ -58,10 +62,19 @@ describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
   });
 });
 
-describe('the raining cut-outs', () => {
-  it('every widget that looks like health data says Sample; products are bare cut-outs (no card, no plate)', () => {
+describe('the raining cut-outs (a faded layer behind the hero)', () => {
+  it('products and the app features taking turns, one-word labels, no numbers or labels that read as data; products are bare cut-outs', () => {
     const html = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} />);
-    expect((html.match(/>Sample</g) || []).length).toBeGreaterThan(8);
+    const rain = html.slice(html.indexOf('lk-rainbox'), html.indexOf('class="alx__top"'));
+    expect(rain.length).toBeGreaterThan(100);
+    const words = rain.replace(/<[^>]*>/g, ' ').replace(/^[^>]*>/, '').replace(/<[^>]*$/, '').split(/\s+/).filter(Boolean);
+    // Words only (each feature's one-word label), never a number that could read as her data.
+    expect(words.join(' ')).not.toMatch(/\d/);
+    expect(new Set(words)).toEqual(new Set(['Cycle', 'Ask', 'ayna', 'Sleep', 'Match']));
+    expect((rain.match(/<img /g) || []).length).toBeLessThanOrEqual(6 * 6); // 6 copies of each column, 3 products a column at most
+    expect(new Set(RAIN_COLS.flat().filter((t) => t.k !== 'p').map((t) => t.k))).toEqual(new Set(['ring', 'sleep', 'streak', 'match', 'ask', 'month']));
+    // products and the app's features take turns down every column
+    RAIN_COLS.forEach((col) => col.forEach((t, i) => i && expect((t.k === 'p') !== (col[i - 1].k === 'p')).toBe(true)));
     expect(html).toMatch(/<span class="lk-d lk-prod is-[lms]"><span class="lk-prod__in"><img src="\/products\/catalog\/p-[a-z0-9-]+\.webp" alt=""/);
     expect(html).not.toMatch(/ayk-plate|lsx-t /);
   });
@@ -69,19 +82,23 @@ describe('the raining cut-outs', () => {
   it('uses only packshots that are in the repo', async () => {
     const { existsSync } = await import('node:fs');
     const ids = RAIN_COLS.flat().filter((t) => t.k === 'p').map((t) => t.id);
-    expect(ids.length).toBeGreaterThan(10);
+    expect(ids.length).toBeGreaterThanOrEqual(6);
     ids.forEach((id) => expect(existsSync(`public/products/catalog/${id}.webp`), id).toBe(true));
   });
 });
 
 describe('the website landing: the v2 home, optimized for desktop', () => {
-  it('hero: the Shout, search, Slide to start (welcome tip anchor) and the rain beside it', () => {
+  it('hero: a centred title, search, Slide to start (welcome tip anchor) and the rain beside it', () => {
     const html = renderToStaticMarkup(<WebLanding onStartQuiz={() => {}} onViewHowItWorks={() => {}} />);
     expect(html).toContain('aria-label="Get my matches. Slide or tap to start."');
     expect(html).toContain('data-tour="landing-start"');
     expect(html).toContain('class="lsx-search wl-search"');
-    expect(html).toMatch(/class="lk-rain wl-rain" aria-hidden="true"/);
+    expect(html).toMatch(/class="lk-rainbox lk-rainbox--ink wl-rain" aria-hidden="true"/);
     expect(text(html)).toContain('How we match');
+    // The website keeps the brown and pink bar, with its pause button; no box behind "your body.".
+    expect(html).toContain('class="lk-bar"');
+    expect(html).toContain('aria-label="Pause motion"');
+    expect(html).not.toContain('<mark');
     const home = renderToStaticMarkup(<WebLanding signedIn hasProfile onGoHome={() => {}} onStartQuiz={() => {}} />);
     expect(home).toContain('aria-label="Go to your Home. Slide or tap to start."');
   });

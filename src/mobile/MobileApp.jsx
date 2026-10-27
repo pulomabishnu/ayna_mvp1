@@ -3,7 +3,7 @@ import { devPreviewOn } from '../utils/devPreview.js';
 import { needAreaLabels } from '../utils/needAreas.js';
 import { markOnboardingDone } from '../health/onboardingSignal.js';
 import { trackApp, appScreenName } from './utils/appAnalytics.js';
-import { navTabFor, aynaRoute, initialAppRoute } from './utils/navTab.js';
+import { navTabFor, aynaRoute, initialAppRoute, homeScreenFor, showsEmptyHome } from './utils/navTab.js';
 import { useRecommendationViews } from '../utils/recommendationAnalytics.js';
 import './mobile.css';
 import './editorial.css';
@@ -487,7 +487,7 @@ export default function MobileApp() {
     if (Math.abs(dx) < 85 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
     // Swipe between the first two tabs, Home and Explore.
     if (screen === 'ayna' && dx < 0) { setExploreSection('overview'); setScreen('explore'); }
-    if ((screen === 'explore' || screen === 'browse') && dx > 0) { setHomeView(homeRoot); setScreenRaw('ayna'); }
+    if ((screen === 'explore' || screen === 'browse') && dx > 0) { setHomeView(homeRoot); setScreenRaw(homeTarget); }
   };
   const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
@@ -514,6 +514,15 @@ export default function MobileApp() {
     if (authLoading || !authUser || landingPinnedRef.current) return;
     Promise.resolve().then(() => setScreen('ayna'));
   }, [authLoading, authUser, hasEcosystem, screen]);
+  // Signed out with nothing on this phone, Home is the landing: never an empty
+  // dashboard, whatever sent her there (a late auth answer, a swipe, Back, a
+  // stale session that turned out signed out). Founder, Oct 27 11:38.
+  const homeTarget = homeScreenFor({ signedIn: Boolean(authUser), hasProfile: Boolean(hasEcosystem || lastQuizAnswers), pendingQuiz: Boolean(session.pendingQuiz) });
+  useEffect(() => {
+    if (!showsEmptyHome({ screen, view: homeView, variant: homeVariant, signedIn: Boolean(authUser), hasProfile: Boolean(hasEcosystem || lastQuizAnswers), pendingQuiz: Boolean(session.pendingQuiz) })) return;
+    // (the render below already shows the landing in the meantime)
+    Promise.resolve().then(() => setScreenRaw('landing'));
+  }, [screen, homeView, homeVariant, authUser, hasEcosystem, lastQuizAnswers, session.pendingQuiz]);
   const openLanding = () => { landingPinnedRef.current = true; setAskAynaOpen(false); setOverlay(null); setScreenRaw('landing'); };
   const requestAuth = (feature, resume = null) => {
     authResumeRef.current = resume || (() => setScreen(screen));
@@ -829,7 +838,10 @@ export default function MobileApp() {
   }, []);
   const browseProducts = buildBrowseProducts(discoveredProducts);
 
-  const Screen = screen === 'ayna' && chatFirst ? AynaHomeChatScreen : SCREENS[screen] || LandingScreen;
+  // Never paint an empty dashboard for a signed-out visitor, not even for the
+  // one frame before the effect above moves her back to the landing.
+  const emptyHome = showsEmptyHome({ screen, view: homeView, variant: homeVariant, signedIn: Boolean(authUser), hasProfile: Boolean(hasEcosystem || lastQuizAnswers), pendingQuiz: Boolean(session.pendingQuiz) });
+  const Screen = emptyHome ? LandingScreen : screen === 'ayna' && chatFirst ? AynaHomeChatScreen : SCREENS[screen] || LandingScreen;
 
   // BrowseScreen/EcosystemScreen/EcosystemIntroScreen all default this to
   // the literal letter 'A' when it's not passed, that default was always
@@ -1303,7 +1315,7 @@ export default function MobileApp() {
       if (screen === 'plan') { setScreen(session.pendingQuiz?.fromCheckin ? 'today' : 'connect'); return; }
       // My ecosystem sits under You: its back goes to You.
       if (screen === 'eco' || screen === 'saved' || (screen === 'ecointro' && authUser)) { openProfile(); return; }
-      setScreen(screen === 'quiz' ? (authUser || hasEcosystem ? 'ayna' : 'landing') : screen === 'ecointro' ? 'landing' : authUser || hasEcosystem ? 'ayna' : 'landing');
+      setScreen(screen === 'ecointro' ? 'landing' : homeTarget);
     },
     onRetake: () => { setIntakeMode('add'); setIntakeAtOptional(false); setEditingHealthProfile(true); setScreen('quiz'); },
     onPersonalize: () => { setIntakeMode('add'); setIntakeAtOptional(true); setEditingHealthProfile(true); setScreen('quiz'); },
@@ -1628,7 +1640,7 @@ export default function MobileApp() {
         onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setExploreSection('resources'); setScreen('library'); }}
         // Home always opens on its root (the dashboard, or the chat in the chat-first variant).
         // Signed out with nothing on this phone, Home is the landing (founder, Oct 27 01:10).
-        onHome={() => { setHomeView(homeRoot); setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreenRaw(!authUser && !hasEcosystem && !lastQuizAnswers ? 'landing' : 'ayna'); }}
+        onHome={() => { setHomeView(homeRoot); setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreenRaw(homeTarget); }}
         // Ask ayna: the full chat as a tab screen (the 'ayna' screen's chat view).
         onAsk={() => { setAskAynaOpen(false); setOverlay(null); setHomeView('chat'); setScreenRaw('ayna'); }}
         tabList={chatFirst ? APP_TABS_CHAT_FIRST : APP_TABS}

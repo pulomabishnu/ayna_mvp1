@@ -14,7 +14,7 @@ const LOCKED_COPY = {
   recap: ['Personalized recaps', 'Personalized recaps are included with ayna Pro.'],
   trial: ['Advanced tracking', 'Personal try-and-check-back tracking is included with ayna Pro.'],
   appointment: ['Appointment prep', 'Appointment prep is included with ayna Pro.'],
-  quiz: ['Unlimited quiz retakes', 'Free ayna includes one personalization quiz retake each week. Pro members can retake it anytime.'],
+  quiz: ['Update your ecosystem anytime', 'Free ayna includes one ecosystem update each month. Pro members can update it anytime.'],
 };
 
 function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }) {

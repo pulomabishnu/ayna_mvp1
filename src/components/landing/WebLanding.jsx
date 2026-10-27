@@ -4,11 +4,10 @@ import { sentenceCase } from '../../utils/sentenceCase.js';
 import { useRecommendationViews } from '../../utils/recommendationAnalytics';
 import { productsForNeed } from '../landingNeeds';
 import { isPlainLeftClick } from '../../utils/productRoute';
-import { isPartnerBrandItem, PARTNER_BRANDS } from '../../utils/partnerBrands';
+import { isPartnerBrandItem } from '../../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../../utils/trendingLineup';
 import { ALL_PRODUCTS, MACRO_GROUPS, basicsProductIds, useCatalogReady } from '../../data/catalog.js';
 import { shopCatalogCounts } from '../../data/catalogCounts.js';
-import { getDailyFact } from '../../data/welcomeSlides.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
 import ProductCard from '../ProductCard';
 import { useLatestAnnouncement } from '../../hooks/useLatestAnnouncement';
@@ -17,10 +16,9 @@ import '../../styles/home.css';
 import '../../styles/loop-a-landing.css';
 import '../../styles/uq-landing.css';
 import Photo from '../ui/Photo.jsx';
-import ReadMore from '../info/ReadMore.jsx';
-import { Chip, Band, Shout, Bento, Tile, Marquee, SnapCarousel } from '../ui/ay';
+import { Chip, Band, Bento, Tile, SnapCarousel, ScallopEdge } from '../ui/ay';
 import SlideToStart from '../ui/SlideToStart.jsx';
-import { Rain, HeroSearch } from './kit.jsx';
+import { Rain, HeroSearch, BrandBar } from './kit.jsx';
 import './web-landing.css';
 
 /* The website's / (founder, Oct 27 10:40: "i liked how we had the website
@@ -30,9 +28,8 @@ import './web-landing.css';
  * hero, Pro and the closing note).
  *
  * Colour-blocked bands, adjacent bands never the same colour:
- *   1 hero, split: espresso copy (the one Shout, search, Slide to start) |
- *     a butter field where real products fall as cut-outs between small
- *     Sample widgets (./kit.jsx)
+ *   1 hero: everything centred (a moderate title, search, Slide to start)
+ *     over a faded layer of real products falling as cut-outs (./kit.jsx)
  *   2 partner marquee, pink seam (Pause motion stops it and the rain)
  *   3 does this sound familiar + needs, butter band
  *   4 how it works as a Bento (steps + catalog numbers), espresso band
@@ -52,51 +49,30 @@ function Go({ href, onGo, className, children }) {
 }
 
 /* ---------- 1. hero ----------
-   Left: the espresso band she liked (the Shout, one line, search, then the
-   one main action as Slide to start, with the welcome tip's anchor). Right:
-   a butter field, edge to edge, where the products fall as cut-outs (light:
-   multiplied onto butter; dark: on soft butter circles). The field is
-   decoration (aria-hidden) and stands still under reduced motion. */
+   Founder, Oct 27 11:32-11:36: the rain in the back, faded; the title in the
+   middle, not huge; clean, but keep the fun and the brown and pink bar.
+   The espresso band she liked, ending in the wavy edge, with the falling
+   cut-outs as a faded layer on both sides (soft butter circles on espresso)
+   and everything centred on top: a two-line title with "your body." in
+   pink (no box behind it, founder 12:08), one line, the search, Slide to start (the welcome
+   tip's anchor) and How we match. The brown and pink bar runs under it. */
 function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
   return (
     <section className="wl-hero" aria-labelledby="hm-hero-title">
-      <div className="wl-hero__copy">
+      <div className="wl-hero__band">
+        <Rain cols={4} onInk className="wl-rain" />
         <div className="wl-hero__in">
-          <Shout id="hm-hero-title" className="hm-shout wl-shout">Find what fits <span className="hm-shout__pink">your body.</span></Shout>
           {/* One promise on the website and the app (landing audit 4 and 9). */}
-          <p className="hm-lead wl-lead">Women’s health products matched to you, with the evidence beside each one.</p>
+          <h1 id="hm-hero-title" className="wl-title">Find what fits <span>your body.</span></h1>
+          <p className="wl-one">Your products, routine and health data, finally in one place.</p>
+          <p className="wl-lead">Women’s health products matched to you, with the evidence beside each one.</p>
+          <SlideToStart className="wl-sts" tour="landing-start" size="lg" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
           <HeroSearch onSearch={onSearch} className="wl-search" />
-          <SlideToStart className="wl-sts" tour="landing-start" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
-          <a className="hm-howlink wl-how" href="/how-it-works" onClick={(e) => { if (!onViewHowItWorks || !isPlainLeftClick(e)) return; e.preventDefault(); onViewHowItWorks(); }}>How we match<Arrow /></a>
+          <a className="wl-how" href="/how-it-works" onClick={(e) => { if (!onViewHowItWorks || !isPlainLeftClick(e)) return; e.preventDefault(); onViewHowItWorks(); }}>How we match<Arrow /></a>
           {banner && <div className="wl-banner">{banner}</div>}
         </div>
       </div>
-      <div className="wl-hero__field">
-        <Rain cols={4} className="wl-rain" />
-      </div>
-    </section>
-  );
-}
-
-/* ---------- partner brands: the page's one motion, a pink marquee seam under the hero ----------
-   Real partner names only (utils/partnerBrands). Paused by reduced motion, on
-   hover, and by Pause motion (this button and the footer share one setting). */
-function Brands({ onViewWaitlist }) {
-  const names = PARTNER_BRANDS.map((b) => b.name);
-  const paused = useMotionPaused();
-  const toggle = () => {
-    const next = !paused;
-    document.documentElement.classList.toggle('ay-motion-paused', next);
-    try { localStorage.setItem('ayna_motion_paused', next ? '1' : '0'); } catch { /* storage unavailable */ }
-  };
-  return (
-    <section className="hm-brands hm-marq" aria-labelledby="hm-brands-title">
-      <h2 id="hm-brands-title" className="ed-sr">Brands we work with</h2>
-      <a className="hm-marq__tab" href="/partners" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}><span className="hm-ribbon__long">Brands we work with</span><span className="hm-ribbon__short" aria-hidden="true">Our brands</span><Arrow /></a>
-      <Marquee items={names} tone="pink" className="hm-marq__run" />
-      <button type="button" className="hm-marq__pause" aria-pressed={paused} onClick={toggle} aria-label={paused ? 'Play motion' : 'Pause motion'}>
-        <svg viewBox="0 0 24 24" aria-hidden="true">{paused ? <path d="M8 5l11 7-11 7z" /> : <path d="M8 5v14M16 5v14" />}</svg>
-      </button>
+      <ScallopEdge shape="wave" tone="ink" className="wl-edge" />
     </section>
   );
 }
@@ -136,7 +112,7 @@ function Phrases({ onSearch }) {
     ) }))} />
   );
 }
-function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, picks = null, signedOut = true }) {
+function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, picks = null, signedOut = true }) {
   const ready = useCatalogReady();
   const weekly = useMemo(() => (ready ? weeklyLineup().slice(0, 4) : []), [ready]);
   // Member picks: only products with a real photo, drugstore basics last.
@@ -187,7 +163,6 @@ function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, pick
               {!loading ? four.map((p) => (
                 <li key={p.id}>
                   <ProductCard product={p} onOpen={onOpenProduct} className="hm-sticker" />
-                  {signedOut && <Go className="hm-sticker__match" href="/quiz" onGo={onStartQuiz}>See your match<Arrow /></Go>}
                 </li>
               )) : [0, 1, 2, 3].map((i) => <li key={i} aria-hidden="true"><div className="hm-sticker__skel" /></li>)}
             </ul>
@@ -332,7 +307,6 @@ const LEAD_READS = [
   { id: 'pcos-basics', title: 'PMOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror', tone: 'butter' },
 ];
 function Reads({ onViewArticle, onViewArticles }) {
-  const fact = useMemo(() => { try { return getDailyFact(); } catch { return null; } }, []);
   const open = (id) => { if (onViewArticle) onViewArticle(id); else onViewArticles?.(); };
   return (
     <div className="hm-reads">
@@ -353,16 +327,6 @@ function Reads({ onViewArticle, onViewArticles }) {
             </a>
           </li>
         ))}
-        {fact && (
-          <li>
-            <aside className="hm-readlist__word" aria-label="Word of the day">
-              <span className="hm-readlist__label">Word of the day</span>
-              <strong className="hm-readlist__title">{fact.term}</strong>
-              <span className="hm-readlist__teaser">{fact.text}</span>
-              <small className="hm-readlist__src">From the ayna glossary. General information, not medical advice.</small>
-            </aside>
-          </li>
-        )}
       </ul>
     </div>
   );
@@ -374,8 +338,7 @@ function Community({ onViewCommunity, posts = [] }) {
     <article className="hm-comm" aria-labelledby="hm-comm-title">
       <span className="hm-comm__ph"><Photo sizes="(max-width: 767px) 92vw, 460px" src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" decoding="auto" /></span>
       <div className="hm-comm__copy">
-        <h2 id="hm-comm-title" className="hm-h2">Real talk about what women actually use.</h2>
-        <ReadMore className="hm-more"><p className="hm-body">Reviews, questions and routines from women who use these products. Ask a question, review what you use or share a playlist.</p></ReadMore>
+        <h3 id="hm-comm-title" className="hm-h3">Real talk about what women actually use.</h3>
         <div className="hm-news" aria-labelledby="hm-news-title">
           <span className="hm-tab hm-news__label">ayna news</span>
           <h3 id="hm-news-title" className="hm-h3">{news ? news.title : 'ayna Community is open.'}</h3>
@@ -427,7 +390,7 @@ function Founders({ onViewAbout }) {
             <figcaption>Puloma, Eliz &amp; Ameera</figcaption>
           </figure>
           <div className="hm-us__copy">
-            <h2 id="hm-us-title" className="hm-h2 hm-statement">Built by three women who wanted better answers.</h2>
+            <h2 id="hm-us-title" className="hm-h2">Built by three women who wanted better answers.</h2>
             <p className="hm-body">We met at Cornell, bringing different experiences to the same question: why does understanding our options require so much searching?</p>
             <Go className="ay-btn ay-btn--secondary" href="/about" onGo={onViewAbout}>Meet us</Go>
           </div>
@@ -469,12 +432,12 @@ export default function WebLanding({ signedIn = false, hasProfile = false, onSta
   const home = Boolean(signedIn && hasProfile && onGoHome);
   const cta = home
     ? { label: 'Go to your Home', slide: 'Slide to go to your Home', go: onGoHome }
-    : { label: 'Get my matches', slide: 'Slide to get your matches', go: onStartQuiz };
+    : { label: 'Get my matches', slide: 'Slide to find your matches', go: onStartQuiz };
   return (
     <div id="ay-landing" className="ed ed-home hm hm-uq wl">
       <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />
-      <Brands onViewWaitlist={onViewWaitlist} />
-      <NeedsBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} onStartQuiz={onStartQuiz} signedOut={!home} />
+      <BrandBar onOpen={onViewWaitlist} />
+      <NeedsBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} signedOut={!home} />
       {rest && <>
       <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!home} />
       <ReadsCommunity onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
@@ -502,14 +465,4 @@ function useAfterHeroPaint() {
     return () => { done = true; window.clearTimeout(t); };
   }, [ready]);
   return ready;
-}
-function useMotionPaused() {
-  const read = () => { try { return document.documentElement.classList.contains('ay-motion-paused') || localStorage.getItem('ayna_motion_paused') === '1'; } catch { return false; } };
-  const [paused, setPaused] = useState(read);
-  useEffect(() => {
-    const mo = new MutationObserver(() => setPaused(document.documentElement.classList.contains('ay-motion-paused')));
-    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    return () => mo.disconnect();
-  }, []);
-  return paused;
 }

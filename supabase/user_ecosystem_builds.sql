@@ -1,7 +1,7 @@
 -- Ecosystem-build quota ledger.
 --
 -- The first personalization build is free. After that, a Free account may
--- create one new build per UTC Monday-Sunday week by default (the API passes
+-- create one new build per UTC calendar month by default (the API passes
 -- ECOSYSTEM_BUILD_LIMIT, default 1).
 --
 -- A single build is generated across several HTTP requests, so the unit of
@@ -34,8 +34,8 @@ drop function if exists public.release_ecosystem_build(uuid, text);
 
 -- Atomically claim one personalization build.
 --   * The first unique build is the initial personalization and never consumes
---     the weekly retake allowance.
---   * Later unique build IDs are retakes and are capped per UTC week.
+--     the monthly retake allowance.
+--   * Later unique build IDs are retakes and are capped per UTC calendar month.
 --   * The same build ID always succeeds, preserving multi-batch generation and
 --     retry-after-failure behavior.
 create or replace function public.claim_ecosystem_build(
@@ -51,7 +51,7 @@ as $$
 declare
   v_used integer;
   v_has_build boolean;
-  v_week_start timestamptz := date_trunc('week', now() at time zone 'UTC') at time zone 'UTC';
+  v_month_start timestamptz := date_trunc('month', now() at time zone 'UTC') at time zone 'UTC';
 begin
   if p_build_id is null or length(trim(p_build_id)) = 0 then
     raise exception 'build_id is required';
@@ -67,7 +67,7 @@ begin
     from public.user_ecosystem_builds b
     where b.user_id = p_user_id
       and b.is_initial = false
-      and b.created_at >= v_week_start;
+      and b.created_at >= v_month_start;
     return query select true, coalesce(v_used, 0);
     return;
   end if;
@@ -87,7 +87,7 @@ begin
   from public.user_ecosystem_builds b
   where b.user_id = p_user_id
     and b.is_initial = false
-    and b.created_at >= v_week_start;
+    and b.created_at >= v_month_start;
 
   if p_limit is null or coalesce(v_used, 0) >= p_limit then
     return query select false, coalesce(v_used, 0);

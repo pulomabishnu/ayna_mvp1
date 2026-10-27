@@ -40,3 +40,26 @@ html.ay-motion .ay-sts__knob { animation: ay-sts-nudge 1100ms 900ms var(--ay-eas
 @media (prefers-reduced-motion: reduce) {
   .ay-sts__thumb, .ay-sts__knob, .ay-sts__fill, .ay-sts__label { transition: none !important; animation: none !important; }
 }
+
+/* lg: the landing's hero action (founder, Oct 27 12:10: "CTA is underwhelming").
+   64px tall, a 56px knob, an 18px label, the pink sticker shadow (the one
+   allowed shadow) and one shimmer across the pill before the nudge. */
+.ay-sts.is-lg { max-width: none; }
+.ay-sts.is-lg .ay-sts__track { height: 66px; padding: 5px; box-shadow: 4px 4px 0 #f7badd; }
+.ay-sts.is-lg .ay-sts__thumb, .ay-sts.is-lg .ay-sts__knob { width: 56px; height: 56px; }
+.ay-sts.is-lg .ay-sts__knob { border-width: 2px; }
+.ay-sts.is-lg .ay-sts__knob svg { width: 26px; height: 26px; stroke-width: 2.4; }
+.ay-sts.is-lg .ay-sts__label { inset: 0 14px 0 68px; font-size: clamp(16px, 4.4vw, 18px); font-weight: 800; letter-spacing: -.01em; white-space: nowrap; }
+.ay-sts.is-lg .ay-sts__label svg { width: 20px; height: 20px; stroke-width: 2.4; }
+.ay-sts.is-lg.is-butter .ay-sts__track { border-color: #ffedac; }
+.ay-sts.is-lg.is-ink .ay-sts__track { box-shadow: 4px 4px 0 #f7badd; }
+/* the one-time shimmer: a soft light band sweeps across once (transform only) */
+.ay-sts.is-lg .ay-sts__track::after { content: ''; position: absolute; top: 0; bottom: 0; left: -40%; width: 40%; pointer-events: none;
+  background: linear-gradient(100deg, rgba(247, 186, 221, 0) 0%, rgba(247, 186, 221, .55) 50%, rgba(247, 186, 221, 0) 100%); opacity: 0; transform: translate3d(0, 0, 0); }
+.ay-sts.is-lg.is-ink .ay-sts__track::after { background: linear-gradient(100deg, rgba(247, 186, 221, 0) 0%, rgba(247, 186, 221, .35) 50%, rgba(247, 186, 221, 0) 100%); }
+@keyframes ay-sts-shimmer { 0% { opacity: 1; transform: translate3d(0, 0, 0); } 100% { opacity: 1; transform: translate3d(360%, 0, 0); } }
+html.ay-motion .ay-sts.is-lg .ay-sts__track::after { animation: ay-sts-shimmer 900ms 250ms var(--ay-ease-io, ease-in-out) 1 both; }
+html.ay-motion .ay-sts.is-lg .ay-sts__knob { animation-delay: 1250ms; }
+@media (hover: hover) { html.ay-motion .ay-sts.is-lg .ay-sts__track:hover { box-shadow: 5px 5px 0 #f7badd; } }
+@media (prefers-reduced-motion: reduce) { .ay-sts.is-lg .ay-sts__track::after { animation: none !important; opacity: 0; } }
+html.ay-motion-paused .ay-sts.is-lg .ay-sts__track::after { animation: none; opacity: 0; }

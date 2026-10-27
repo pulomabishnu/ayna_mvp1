@@ -12,21 +12,30 @@ import './slide-to-start.css';
  *   <SlideToStart label="Slide to get your matches" onComplete={start} />
  *
  * tone: 'butter' (a butter pill, for espresso bands) | 'ink' (an espresso
- * pill, for butter pages).
+ * pill, for butter pages). size: 'md' | 'lg' (the landing's hero action:
+ * taller, a bigger knob and label, the pink sticker shadow and a one-time
+ * shimmer before the nudge).
  */
 const THUMB = 56;
 const PAD = 6;
 const DONE_AT = 0.7;
 
-export default function SlideToStart({ label = 'Slide to get your matches', actionLabel = 'Get my matches', hint = 'or tap to start', onComplete, tone = 'butter', className = '', id, tour }) {
+export default function SlideToStart({ label = 'Slide to get your matches', actionLabel = 'Get my matches', hint = 'or tap to start', onComplete, tone = 'butter', size = 'md', className = '', id, tour }) {
   const trackRef = useRef(null);
+  const thumbRef = useRef(null);
   const drag = useRef({ on: false, x0: 0, moved: false, done: false });
   const [pos, setPos] = useState({ x: 0, p: 0 });
   const setX = (x) => { const t = travel(); setPos({ x, p: t ? Math.min(1, x / t) : 0 }); };
   const [dragging, setDragging] = useState(false);
   const [finished, setFinished] = useState(false);
 
-  const travel = () => Math.max(0, (trackRef.current?.clientWidth || 0) - THUMB - PAD * 2);
+  // How far the thumb can go: the track's inner width less the thumb (sizes come from the CSS).
+  const travel = () => {
+    const track = trackRef.current; const thumb = thumbRef.current;
+    if (!track) return 0;
+    const w = thumb?.offsetWidth || THUMB; const pad = thumb ? thumb.offsetLeft : PAD;
+    return Math.max(0, track.clientWidth - w - pad * 2);
+  };
   const finish = () => {
     if (drag.current.done) return;
     drag.current.done = true;
@@ -68,7 +77,7 @@ export default function SlideToStart({ label = 'Slide to get your matches', acti
   };
 
   return (
-    <div className={`ay-sts is-${tone}${className ? ` ${className}` : ''}`} id={id} data-tour={tour}>
+    <div className={`ay-sts is-${tone}${size === 'lg' ? ' is-lg' : ''}${className ? ` ${className}` : ''}`} id={id} data-tour={tour}>
       <button
         ref={trackRef}
         type="button"
@@ -83,7 +92,7 @@ export default function SlideToStart({ label = 'Slide to get your matches', acti
       >
         <span className="ay-sts__fill" aria-hidden="true" />
         <span className="ay-sts__label" aria-hidden="true">{label}<svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" /></svg></span>
-        <span className="ay-sts__thumb" aria-hidden="true">
+        <span className="ay-sts__thumb" aria-hidden="true" ref={thumbRef}>
           <span className="ay-sts__knob"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" /></svg></span>
         </span>
       </button>

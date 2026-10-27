@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { navTabFor, aynaRoute } from './navTab.js';
+import { navTabFor, aynaRoute, homeScreenFor, showsEmptyHome } from './navTab.js';
 import { routeForPush } from '../hooks/usePushNotifications.js';
 
 describe('navTabFor', () => {
@@ -46,5 +46,27 @@ describe('routeForPush', () => {
     expect(routeForPush({ type: 'recall', productId: 42 })).toEqual({ screen: 'product', productId: '42' });
     expect(routeForPush({ type: 'broadcast' })).toBe(null);
     expect(routeForPush(null)).toBe(null);
+  });
+});
+
+// Founder, Oct 27 11:38: signed out, the app stays on the landing, never an empty dashboard.
+describe('Home signed out', () => {
+  it('Home is the landing signed out with nothing on this phone, and the dashboard otherwise', () => {
+    expect(homeScreenFor({})).toBe('landing');
+    expect(homeScreenFor({ signedIn: false, hasProfile: false, pendingQuiz: false })).toBe('landing');
+    expect(homeScreenFor({ signedIn: true })).toBe('ayna');
+    expect(homeScreenFor({ hasProfile: true })).toBe('ayna');
+    expect(homeScreenFor({ pendingQuiz: true })).toBe('ayna');
+  });
+  it('the dashboard shown signed out (a late auth answer, a swipe, Back, a stale session) is caught', () => {
+    expect(showsEmptyHome({ screen: 'ayna', view: 'home' })).toBe(true);
+    expect(showsEmptyHome({ screen: 'ayna', view: 'dashboard' })).toBe(true);
+    expect(showsEmptyHome({ screen: 'today' })).toBe(true);
+    // the Ask tab (Home's chat view) is fine signed out
+    expect(showsEmptyHome({ screen: 'ayna', view: 'chat' })).toBe(false);
+    expect(showsEmptyHome({ screen: 'landing' })).toBe(false);
+    expect(showsEmptyHome({ screen: 'explore' })).toBe(false);
+    expect(showsEmptyHome({ screen: 'ayna', view: 'home', signedIn: true })).toBe(false);
+    expect(showsEmptyHome({ screen: 'ayna', view: 'home', hasProfile: true })).toBe(false);
   });
 });

@@ -1,18 +1,23 @@
-// The raining collage's contents (kit.jsx Rain). Real catalog packshots only.
+// The raining background's contents (kit.jsx Rain). Real catalog packshots only.
 // Checked one by one on butter (multiply): each drops its white cleanly, no box left.
-// Left out: kits and bundles shot on a boxed backdrop, and sexual wellness items.
+// Founder, Oct 27 12:11: spread evenly, products and the app's features taking
+// turns ("your products + your data together"), each feature recognisable with
+// a one-word label (no numbers).
 export const RAIN_PRODUCTS = [
-  'p-saalt-cup', 'p-thermacare', 'p-rael-organic-pad', 'p-lola-tampon', 'p-winx-uti-test-treat', 'p-flo-gummies',
-  'p-lena-cup', 'p-evening-primrose', 'p-natracare-pad', 'p-elvie-trainer', 'p-neycher-botanical-vulva-balm', 'p-vitex',
-  'p-cora-disc', 'p-honeypot-pad', 'p-magnumsolace-nighttime-magnesium-cream', 'p-thinx', 'p-tampax-pure', 'p-buni-transform-scar-body-oil',
+  'p-saalt-cup', 'p-thermacare', 'p-lena-cup', 'p-natracare-pad', 'p-evening-primrose', 'p-flo-gummies',
+  'p-cora-disc', 'p-rael-organic-pad', 'p-lola-tampon', 'p-winx-uti-test-treat', 'p-honeypot-pad', 'p-vitex',
 ];
-const P = (i, s) => ({ k: 'p', id: RAIN_PRODUCTS[i], s });
-// Columns: cut-outs and widgets interleaved, every column a different mix, size and speed.
+const P = (i, s = 'm') => ({ k: 'p', id: RAIN_PRODUCTS[i], s });
+const W = (k) => ({ k });
 export const RAIN_COLS = [
-  [P(0, 'l'), { k: 'ring' }, P(1), { k: 'ask' }, P(2, 's'), { k: 'streak' }],
-  [{ k: 'spark' }, P(3, 'l'), { k: 'match' }, P(4), { k: 'month' }, P(5, 's')],
-  [P(6), { k: 'sleep' }, P(7, 'l'), { k: 'rundown' }, P(8), { k: 'streak' }],
-  [{ k: 'month' }, P(9, 'l'), { k: 'ring' }, P(10, 's'), { k: 'spark' }, P(11)],
-  [P(12), { k: 'match' }, P(13, 'l'), { k: 'sleep' }, P(14, 's'), { k: 'streak' }],
-  [{ k: 'rundown' }, P(15), { k: 'ask' }, P(16, 'l'), { k: 'ring' }, P(17)],
+  [P(0, 'l'), W('ring'), P(1), W('ask'), P(2, 'l'), W('streak')],
+  [W('sleep'), P(3, 'l'), W('match'), P(4), W('month'), P(5, 'l')],
+  [P(6), W('streak'), P(7, 'l'), W('sleep'), P(8), W('match')],
+  [W('month'), P(9), W('ask'), P(10, 'l'), W('ring'), P(11)],
+];
+// The app's two narrow edge columns: the compact features only (ring, sleep,
+// match, Ask), so nothing reaches in towards the words.
+export const RAIN_COLS_APP = [
+  [P(0, 'l'), W('ring'), P(1), W('ask'), P(2, 'l'), W('sleep')],
+  [W('match'), P(3, 'l'), W('sleep'), P(4), W('ring'), P(5, 'l')],
 ];
