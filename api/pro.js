@@ -159,7 +159,14 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ url: session.url });
   } catch (e) {
-    console.error('[pro] request failed:', e?.type || e?.name);
+    console.error('[pro] request failed', {
+      type: e?.type || e?.name,
+      code: e?.code || e?.raw?.code || null,
+      statusCode: e?.statusCode || e?.raw?.statusCode || null,
+      param: e?.param || e?.raw?.param || null,
+      requestId: e?.requestId || e?.raw?.requestId || null,
+      message: e?.message || e?.raw?.message || null,
+    });
     return res.status(503).json({ error: 'pro_temporarily_unavailable' });
   }
 }
