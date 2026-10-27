@@ -49,9 +49,13 @@
  * list is the single source of truth for BOTH "is this a partner" and what
  * order partners sort in, so the two can't drift out of sync.
  *
- * The team's order also has GoodCycle (DailyBasis, 10th) and Cool Comforts
- * (VPod, 17th, hidden). They aren't on the site yet, so they're left out
- * until their products are added; slot them back in at those positions then.
+ * The team's order also has Cool Comforts (VPod, 17th, hidden). It isn't on
+ * the site yet, so it's left out until its products go live; slot it back in
+ * at that position then.
+ *
+ * Added 2026-10-27: GoodCycle (DailyBasis), confirmed brand partner, at its
+ * 10th place in the team's order.
+
  */
 export const PARTNER_BRAND_ORDER = [
   // Rèsa (2026-10-05), pre-launch; see PRELAUNCH_PARTNER_PATTERNS below.
@@ -66,6 +70,7 @@ export const PARTNER_BRAND_ORDER = [
   /\balubri\b/, // Alubri (partner from 2026-10-17)
   /\bconnect pelvic floor fitness\b/, // Connect Pelvic Floor Fitness
   /\belitone\b/, // Elitone (includes Elitone URGE)
+  /\bgoodcycle\b/, // GoodCycle, DailyBasis (partner from 2026-10-27)
   /\blola\b/, // LOLA
   /\bproov\b/, // Proov
   /\bgina\b/, // gina
@@ -85,7 +90,7 @@ export const PARTNER_BRAND_PATTERNS = PARTNER_BRAND_ORDER;
  */
 export const PARTNER_BRANDS = [
   'Rèsa', 'BUNI', 'LiM Method', 'Winx Health', 'Momotaro Apotheca', 'Neycher', 'SootheHer', 'Alubri',
-  'Connect Pelvic Floor Fitness', 'Elitone', 'LOLA', 'Proov', 'gina', 'Tampon Tribe',
+  'Connect Pelvic Floor Fitness', 'Elitone', 'GoodCycle', 'LOLA', 'Proov', 'gina', 'Tampon Tribe',
   'My Pelvic Bra', 'VIO2',
 ].map((name, i) => ({ name, pattern: PARTNER_BRAND_ORDER[i] }));
 

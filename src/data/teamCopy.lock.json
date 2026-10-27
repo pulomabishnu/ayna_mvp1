@@ -6742,5 +6742,29 @@
   "safety.allergens": "2be88ca4242c",
   "safety.sideEffects": "555e848c91db",
   "safety.opinionAlerts": "600740309ce7"
+ },
+ "p-goodcycle-dailybasis": {
+  "name": "45706768d12c",
+  "brand": "73fd1239a97c",
+  "price": "54e1b16002d3",
+  "summary": "73e74b767223",
+  "description": "2be88ca4242c",
+  "doctorOpinion": "fa8902653e05",
+  "communityReview": "be178bd29184",
+  "effectiveness": "bec60c0a2ae9",
+  "ingredients": "53ce4e398186",
+  "category": "d19e34e376f0",
+  "url": "ab4bfcc87d20",
+  "image": "3afa4add7c2d",
+  "whoItsFor": "d6467ed4f83d",
+  "howToUse": "65990d86e770",
+  "warnings": "fb914ded2d50",
+  "badges": "97d170e1550e",
+  "safety.fdaStatus": "c2f51bf940ec",
+  "safety.materials": "8f9841d4a3ca",
+  "safety.recalls": "c3491ac49a0d",
+  "safety.allergens": "145aab4cad55",
+  "safety.sideEffects": "8ec7f18cf476",
+  "safety.opinionAlerts": "deabeb7af24c"
  }
 }

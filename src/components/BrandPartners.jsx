@@ -37,8 +37,8 @@ import { RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_URL } from '../data/res
 const PARTNERS = [
   // Display order set by the team 2026-10-17 (same order as the partner pin
   // in Shop/Discovery, see PARTNER_BRAND_ORDER in src/utils/partnerBrands.js).
-  // GoodCycle (DailyBasis) and Cool Comforts (VPod, hidden) are in that order
-  // too but have no card yet: they're not on the site.
+  // Cool Comforts (VPod, hidden) is in that order too but has no card yet:
+  // it's not on the site.
   {
     // First "for now" at Eliz's request (2026-10-17); pre-launch, so it keeps
     // its highlighted waitlist card.
@@ -124,6 +124,15 @@ const PARTNERS = [
     url: 'https://elitone.com/?af=aynahealth',
     blurb:
       'FDA-cleared external device for bladder leaks: a wearable gel pad, no insertion needed.',
+  },
+  {
+    // Confirmed partner since 2026-10-27 (see src/utils/partnerBrands.js).
+    // Affiliate link pending: the brand site stands in until it arrives.
+    brand: 'GoodCycle',
+    logo: '/products/goodcycle/daily-basis-both.webp',
+    url: 'https://takegoodcycle.com',
+    blurb:
+      'DailyBasis: a daily multi powder with two cycle-aligned formulas, Replenish and Balance.',
   },
   {
     // Confirmed partner since 2026-09-23 (see src/utils/partnerBrands.js).

@@ -1,5 +1,6 @@
 // Added on the live site after the packshot passes ran; photos pending.
 const PACKSHOT_PENDING = new Set([
+  'p-goodcycle-dailybasis', // GoodCycle (2026-10-27): brand photos from takegoodcycle.com, no studio packshot yet
   'p-heraure-hermag-magnesium',
   'p-tampontribe-organic-tampons',
   'p-tampontribe-organic-pads',
