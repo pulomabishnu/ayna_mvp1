@@ -390,3 +390,9 @@
   .app-container .hm .hm-comm__ph { aspect-ratio: 16 / 8; }
   .app-container .hm .hm-polaroid__ph { aspect-ratio: 16 / 9; }
 }
+/* p15 clean: the need chips are one sideways-scrolling row on phones instead of four wrapped rows. */
+@media (max-width: 640px) {
+  .app-container.app-container .hm .hm-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * var(--ay-margin, 16px)); padding-inline: var(--ay-margin, 16px); scroll-padding-inline: var(--ay-margin, 16px); }
+  .app-container.app-container .hm .hm-chips::-webkit-scrollbar { display: none; }
+  .app-container.app-container .hm .hm-chips > * { flex: none; }
+}

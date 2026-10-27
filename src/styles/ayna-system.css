@@ -756,3 +756,5 @@ html body .app-container.app-container .ay-pagehead .ay-h1 { font-size: clamp(36
 .app-container.app-container .ay-product-card__tile .ay-product-card__badge.is-tile { position: absolute; left: 8px; bottom: 8px; z-index: 1; display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border: 1.5px solid #3e2723; border-radius: 999px; background: #ffedac; color: #3e2723; font: 600 13px/1 var(--ay-sans-stack); max-width: calc(100% - 16px); white-space: nowrap; }
 .app-container.app-container .ay-product-card__tile .ay-product-card__badge.is-tile::before { content: none; }
 .app-container.app-container .ay-product-card__tile .ay-product-card__badge.is-alert { background: #f7badd; }
+/* p15 clean (founder: "no ugly sticks/stars"): ribbon separators are a plain dot, not a star. */
+html body .app-container .ay-ribbon__track li::after, html body .app-container .hm .hm-ribbon .ay-ribbon__track li::after { width: 8px !important; height: 8px !important; border-radius: 50%; -webkit-mask: none !important; mask: none !important; }

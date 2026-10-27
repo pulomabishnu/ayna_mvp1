@@ -796,3 +796,10 @@ html body .app-container.app-container.app-container.app-container.app-container
   .cm-type__icon { background: transparent !important; border-color: #ffedac !important; color: #ffedac !important; }
   .cm-type__copy small { color: rgba(255, 237, 172, .8) !important; }
 }
+
+/* p15 clean: the "Ctrl K" hint read as an empty butter blob on the dark band. The shortcut still works. */
+html body .app-container.app-container.app-container.app-container.app-container .cm-search > .cm-kbd { display: none !important; }
+/* p15 clean: the product inside a post hugs its content (empty grid rows left a gap above "See your match"). */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm-mention-wrap .ay-pcard.ay-pcard.is-row { grid-template-rows: none !important; grid-auto-rows: auto !important; align-content: center !important; min-height: 0 !important; row-gap: 6px !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm-mention-wrap .ay-pcard.ay-pcard.is-row > .ay-pcard__price:empty { display: none !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .cm-mention-wrap .ay-pcard.ay-pcard.is-row > .ayk-plate { grid-row: 1 / span 3 !important; align-self: center; }

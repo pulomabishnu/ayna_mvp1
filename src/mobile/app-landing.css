@@ -468,3 +468,7 @@
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-land-copy h1 { font-size: calc(34px * var(--ayna-text-scale, 1)) !important; line-height: 1.05 !important; max-width: none; padding-right: 88px; box-sizing: border-box; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-land-stamp.is-rose { background: #f7badd; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-land .ay-land-start { box-shadow: 3px 3px 0 #f7badd; }
+/* p15 clean (founder: "no ugly stickers"): the empty-state badge is a plain circle, not a starburst, and smaller. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst { width: 72px; height: 72px; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst::before { clip-path: none !important; border-radius: 999px; animation: none !important; transform: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty-burst svg { width: 30px; height: 30px; }
