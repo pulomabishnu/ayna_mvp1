@@ -121,4 +121,32 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(last.textContent).toContain('In an emergency, call 911.');
     expect(host.innerHTML).not.toContain('—');
   });
+
+  it('below the hero (founder, Oct 27 13:44-13:58): one idea a section, the brown and pink strip as two dividers, no pink fills, and a last Slide to start', () => {
+    vi.useFakeTimers();
+    mount(<WebLanding onStartQuiz={() => {}} />);
+    act(() => { vi.advanceTimersByTime(1500); });
+    act(() => { vi.runOnlyPendingTimers(); });
+    vi.useRealTimers();
+    const page = host.querySelector('#ay-landing');
+    // the phrases are four links, each a phrase tile beside its photo
+    const pairs = page.querySelectorAll('.wlx-check__link');
+    expect(pairs.length).toBe(4);
+    pairs.forEach((a) => { expect(a.getAttribute('href')).toMatch(/^\/explore\/products\?q=/); expect(a.querySelector('.wlx-check__ph img, .wlx-check__ph picture')).not.toBeNull(); });
+    // the three steps keep their numbers, the proof is counted from the catalog (never typed in)
+    expect(page.querySelectorAll('.wlx-steps > li').length).toBe(3);
+    // the brown and pink strip marks two turns of the page, decorative only
+    const strips = page.querySelectorAll('.ayk-strip');
+    expect(strips.length).toBe(2);
+    strips.forEach((s) => expect(s.getAttribute('aria-hidden')).toBe('true'));
+    // pink is an accent only below the hero: no full pink band
+    expect(page.querySelectorAll('.ayb-band.is-pink').length).toBe(0);
+    // the last ask before the note repeats Slide to start, without a second welcome-tip anchor
+    const end = page.querySelector('.wlx-end');
+    expect(end.querySelector('.ay-sts__track').getAttribute('aria-label')).toBe('Get my matches. Slide or tap to start.');
+    expect(page.querySelectorAll('[data-tour="landing-start"]').length).toBe(1);
+    expect(end.nextElementSibling).toBe(page.lastElementChild);
+    // the founders photo stays
+    expect(page.querySelector('.wlx-us img, .wlx-us source')).not.toBeNull();
+  });
 });

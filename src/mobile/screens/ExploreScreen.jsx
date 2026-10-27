@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import LibraryScreen from './LibraryScreen.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
-import BrandStrip from '../../components/ui/ay/BrandStrip.jsx';
 import BrowseScreen from './BrowseScreen.jsx';
 import { splitCatalog } from '../../utils/search/exploreSearch.js';
 import '../explore.css';
@@ -33,9 +32,8 @@ export default function ExploreScreen(props) {
     return <div className="ax ax--embed" data-tour="reads">
       <MobileHeader onOpenSaved={onOpenSaved} />
       <LibraryScreen {...props} embedded bandTitle="Library" />
-      {/* The signature divider at the end of the Library (founder, Oct 27 13:20). */}
-      <BrandStrip className="ax-brandstrip" />
-      <LegalFooter />
+      {/* The signature strip marks the end of the Library (founder, Oct 27 13:20). */}
+      <LegalFooter strip />
     </div>;
   }
 

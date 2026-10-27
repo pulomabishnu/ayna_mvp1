@@ -58,6 +58,7 @@ import { joinTopicByCode, parseTopicInviteCode } from '../utils/community/userTo
 import './community/topics/user-topics.css';
 import TopicBands from './community/TopicBands.jsx';
 import { Shout } from './ui/ay';
+import { openProPaywall, proLimitFeature } from '../pro/paywall.js';
 
 // The app's Community, built for the website. Same data and rules (shared
 // community store, ranking, topics, guest posting). Three columns on wide
@@ -405,7 +406,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const engagement = usePostEngagement({ supabase, posts: shownPosts, userId: user?.id || null, refreshKey: `${refresh}:${engageTick}` });
   const [likersPost, setLikersPost] = useState(null);
 
-  const notifyError = (e) => setError(community.friendlyError(e));
+  // A Free account's second playlist: the words, and the Pro sheet that lifts the limit.
+  const notifyError = (e) => { setError(community.friendlyError(e)); if (proLimitFeature(e) === 'playlists') openProPaywall({ feature: 'playlists' }); };
   const requireAccount = (feature = 'this feature') => onRequireAuth?.(feature);
   // "See your match" on a product in a post: the quiz gives her the match (signed out works too).
   const seeMatch = () => (onStartQuiz ? onStartQuiz() : requireAccount('your match'));

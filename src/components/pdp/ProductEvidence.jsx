@@ -13,6 +13,7 @@ import { fmtDate } from './fmtDate';
 import { buildEvidence, noDash, linkKind, publisherOf, cleanTitle, claimRows } from './evidenceModel';
 import PdpIcon from './PdpIcon.jsx';
 import UrgentSigns from './UrgentSigns.jsx';
+import SourcesButton from './SourcesButton.jsx';
 import ProductCommunityReviews from './ProductCommunityReviews.jsx';
 import ProductPeopleSay from './ProductPeopleSay.jsx';
 import { useProductReviews } from './useProductReviews.js';
@@ -20,6 +21,9 @@ import { trackPdpViewed, eventSurface } from '../../utils/analyticsEvents.js';
 import { evidenceLevel, gradeWords } from './evidenceLevel.js';
 import { sortSources, clinicianOf, DOC, whoLists, keyFormat, criticalIndex, splitLead, heroNotes, dedupeList, leadClause, brandVoice, safetyGroupOf, groupSafety, TAB_ORDER, TAB_LABELS, TAB_SHORT_LABELS, DEFAULT_TAB } from './pdpParts.js';
 import { formatPrice } from '../../utils/formatPrice.js';
+import { heroPriceView, MAX_PRICE_CHIPS } from './heroPrice.js';
+import { perUnitLabel } from './glance.js';
+import { priceParts } from '../../data/passport/priceParts.js';
 import { ShowAll, EvidenceHeader, EvidenceKey, EvidenceMark } from './PdpParts.jsx';
 import { RatingStars } from '../community/RatingStars.jsx';
 import { topReviews, authorName, shortDate } from './peopleSay.js';
@@ -558,8 +562,10 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   if (!m) return null;
   // While the research file loads (first product page of a visit), a quiet outline of the page holds its place.
   if (loading) {
+    const loadingUrgent = urgentSignsFor(baseProduct);
     return (
       <div id="ay-tabs" className="ayq is-loading" aria-busy="true">
+        {loadingUrgent.length > 0 && <UrgentSigns product={baseProduct} flags={loadingUrgent} compact />}
         <p className="sr-only" role="status">Loading the research for this product…</p>
         <div className="ayq-over" aria-hidden="true"><div className="ayq-skel ayq-skel--bottom" /><div className="ayq-skel ayq-skel--glance" /><div className="ayq-skel ayq-skel--row" /></div>
         <div className="ayq-tabsec" aria-hidden="true"><div className="ayq-skel ayq-skel--tabs" /><div className="ayq-skel ayq-skel--panel" /></div>
@@ -781,7 +787,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       <div className="ayv-alert">
         <Paras list={sf.alert} />
         {sf.record && <p className="ayq-p">The record: <Tx>{sf.record}</Tx></p>}
-        {sf.sources.length > 0 && <ul className="ayq-minilinks is-alert">{sf.sources.map((l) => { const lp = String(l.title).match(/^([^:]{2,40}):\s+(.+)$/); return <li key={l.url}><a href={l.url} target="_blank" rel="noopener noreferrer"><span className="ayq-minilinks__pub">{lp ? lp[1] : l.kind.tier === 'credible' ? l.publisher : l.kind.label}</span> {lp ? lp[2] : l.title}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></li>; })}</ul>}
+        {sf.sources.length > 0 && <p className="ayq-meta ayv-srcline"><SourcesButton title="Sources for this alert" items={sf.sources.map((l) => { const lp = String(l.title).match(/^([^:]{2,40}):\s+(.+)$/); return { url: l.url, publisher: lp ? lp[1] : l.kind?.tier === 'credible' ? l.publisher : l.kind?.label, title: lp ? lp[2] : l.title }; })} /></p>}
       </div>
     ) },
     ...docWarnings.map((w) => ({ key: `d-${w}`, kind: '', text: w, node: <Tx>{w}</Tx> })),
@@ -809,7 +815,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {/* The listing footer only when the intro does not already name the source. */}
       {m.how && !m.how.source && m.how.fromListing && !/\b(per|listing|instructions|according)\b/i.test(m.how.intro || '') && <p className="ayq-meta">{FROM_LISTING}.</p>}
       {m.how && (m.how.source || m.how.faq) && (
-        <p className="ayq-meta">Source: {[m.how.source, m.how.faq].filter(Boolean).map((l, i) => <React.Fragment key={l.url}>{i > 0 && ', '}<a href={l.url} target="_blank" rel="noopener noreferrer">{l.publisher && !l.title.toLowerCase().includes(String(l.publisher).toLowerCase()) ? `${l.publisher}: ` : ''}{l.title}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></React.Fragment>)}</p>
+        <p className="ayq-meta ayv-srcline"><SourcesButton title="Sources for these steps" items={[m.how.source, m.how.faq].filter(Boolean).map((l) => ({ url: l.url, title: l.title, publisher: l.publisher && !l.title.toLowerCase().includes(String(l.publisher).toLowerCase()) ? l.publisher : '' }))} /></p>
       )}
       {adds('how').map((a) => <Addition key={a.id} a={a} />)}
     </>
@@ -823,6 +829,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // Dates behind single facts collapse into one footer ("Facts checked Oct 13, 2026").
   const checkedDates = ['size', 'perunit', 'fsa'].map((id) => factOf(id)?.note).filter((n) => /verified|checked/i.test(String(n || ''))).map((n) => String(n).replace(/^(verified|checked)\s*/i, ''));
   const factsChecked = checkedDates.length ? fmtDate(checkedDates.sort().slice(-1)[0]) : '';
+  const priceMore = heroNotes(heroPriceView(product, { price: priceParts(product), perUnit: perUnitLabel(product), glance }).notes).keep.slice(MAX_PRICE_CHIPS).filter((t) => !/^FSA\/HSA eligible$/.test(t));
   const listedAs = heroNotes(formatPrice(product).sub ? String(formatPrice(product).sub).split(/\s+·\s+/) : []).moved;
   const keyFacts = [
     { label: 'Format', value: keyFormat(product, m.brand || glance?.brand) },
@@ -841,6 +848,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     ...(glance?.facts || []).filter((f) => !f.unknown && !['format', 'size', 'perunit', 'fsa', 'inside', 'fda', 'hipaa', 'data', 'where'].includes(f.id) && f.value).map((f) => ({ label: f.label, value: noDash(f.value), note: f.note && !/verified|checked/i.test(f.note) ? fmtDate(f.note) : '' })),
     ...extraRows.filter((r) => r && (r.value || r.node)).map((r) => ({ ...r, value: r.value || 'x' })),
     listedAs.length > 0 && { label: 'Listed as', value: cap(listedAs.join(', ')) },
+    // The price notes past the two shown by the price (nothing dropped, founder Oct 27).
+    priceMore.length > 0 && { label: 'Price details', value: priceMore.join(' · ') },
     { label: 'Price note', value: dt.priceNote },
   ].filter((r, i, arr) => r && r.value && arr.findIndex((x) => x && x.label === r.label) === i)
     // Two rows that say the same thing ("Where to buy" and "Sold at", "Works with" and "Available on"): keep the first.
@@ -932,12 +941,13 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           </div>
         ))}
       </div>
-      {!sf.alert.length && <SourceGrid items={sf.sources} label="Sources for these notes" id="ayq-safe-src" />}
+      {!sf.alert.length && sf.sources.length > 0 && <p className="ayq-meta ayv-srcline"><SourcesButton title="Sources for these notes" items={sortSources(sf.sources).map((x) => ({ url: x.url, title: x.title, publisher: x.publisher || hostLabel(x.url), meta: [x.type, x.year, x.negative ? 'Found no clear benefit' : '', x.kind?.tier === 'credible' ? 'Checked against .gov' : x.kind?.label].filter(Boolean).join(', '), summary: [x.summary, whyText(x.why) ? `ayna’s note: ${whyText(x.why)}` : ''].filter(Boolean).join(' ') }))} /></p>}
     </>
   );
   const statItems = (stats || []).filter((x) => x && x.value).slice(0, 4);
   const summaryBody = (
-    <div className="ayq-sum ayv-read ayv-sum2">
+    <div className={`ayq-sum ayv-read ayv-sum2${askSlot || endCta ? ' has-side' : ''}`}>
+      <div className="ayv-sum2__main">
       {(lead || m.summary.length > 0) && (
         <section id="ay-sum-about" className="ayq-anchor ayv-sec ayv-sec--lead" aria-label="What it is">
           {lead && <p className={`ayv-oneline${String(lead).length > 140 ? ' is-long' : ''}`}><Tx>{brandVoice(lead, m.brand || glance?.brand)}</Tx></p>}
@@ -959,17 +969,19 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         {howBody && <Step id="ay-sum-how" title="How to use" meta={m.how ? count(m.how.steps.length, 'step') : ''} className="ayv-xrow"><section className="ayv-xbody">{howBody}</section></Step>}
         {factsBody && <Step id="ay-sum-facts" title="Product facts" meta={count(keyFacts.length, 'fact')} className="ayv-xrow"><section className="ayv-xbody">{factsBody}</section></Step>}
         <Step id="ay-sum-evidence" title="Evidence" meta={evx.status} className="ayv-xrow"><section className="ayv-xbody">{evidenceBody}</section></Step>
+        {/* Safety facts is one more row (founder, Oct 27 15:54: "why is the safety thing in the middle of it").
+            "When to get help now" sits before the tabs, always open (UrgentSigns below). */}
+        {safetyFactsBody && <Step id="ay-sum-safety" title="Safety facts" meta={count(safetyItems.length, 'note')} className="ayv-xrow is-safety"><section className="ayv-xbody">{safetyFactsBody}</section></Step>}
       </div>
-      {/* Safety: "When to get help now" always visible, never behind a tap; the safety facts one tap away. */}
-      {(urgent.length > 0 || safetyFactsBody) && (
-        <section className="ayv-sec ayv-sec--safety2" aria-label="Safety">
-          {urgent.length > 0 && <UrgentSigns product={product} flags={urgent} />}
-          {safetyFactsBody && <Step id="ay-sum-safety" title="Safety facts" meta={count(safetyItems.length, 'note')} className="ayv-xrow is-safety"><section className="ayv-xbody">{safetyFactsBody}</section></Step>}
-        </section>
+      </div>
+      {/* Side by side on the website (details left, Ask and Buy right); one column in the app. */}
+      {(askSlot || endCta) && (
+        <div className="ayv-sum2__side">
+          {askSlot && <section className="ayv-ask" aria-label="Ask about this product">{askSlot}</section>}
+          {/* No pinned buy bar (audit 7.18): a compact sticker button repeats here instead. */}
+          {endCta && <div className="ayv-endcta">{endCta}</div>}
+        </div>
       )}
-      {askSlot && <section className="ayv-ask" aria-label="Ask about this product">{askSlot}</section>}
-      {/* No pinned buy bar (audit 7.18): a compact sticker button repeats here instead. */}
-      {endCta && <div className="ayv-endcta">{endCta}</div>}
     </div>
   );
 
@@ -1092,6 +1104,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   return (
     <TermsCtx.Provider value={plan}>
       <div id="ay-tabs" className="ayq ayq--tabs ayv">
+        {/* Binding safety rule: "When to get help now" is never collapsed and never behind a tab.
+            Its own spot, the first thing in the details (founder, Oct 27 15:54). */}
+        {urgent.length > 0 && <UrgentSigns product={product} flags={urgent} compact />}
         <section id="ay-pt" className="ayq-tabsec" aria-label="ayna summary, clinical opinion, scientific literature and reviews">
           <StickyTabs tabs={tabs} active={activeTab} onChange={chooseTab} stickTop={stickTop} swipe={swipeTabs} />
         </section>

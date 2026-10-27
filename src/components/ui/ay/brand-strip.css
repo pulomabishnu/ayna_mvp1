@@ -8,3 +8,4 @@
   background: repeating-conic-gradient(#3e2723 0 25%, #f7badd 0 50%) 0 0 / 28px 28px;
 }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ayk-strip { border-color: #ffedac; }
+.ayk-strip.is-lg { height: 18px !important; max-height: 18px; background-size: 36px 36px; }

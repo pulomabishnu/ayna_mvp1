@@ -5,7 +5,7 @@
 // Every value comes from the same helpers ProductModal uses, so the two match.
 import { galleryImages, breadcrumbs } from './commerce.js';
 import { buildGlance, categoryLabel, perUnitLabel } from './glance.js';
-import { heroPriceView } from './heroPrice.js';
+import { heroPriceView, MAX_PRICE_CHIPS } from './heroPrice.js';
 import { firstSentence } from './sentences.js';
 import { attributeBadges, noDash } from './evidenceModel.js';
 import { priceParts } from '../../data/passport/priceParts.js';
@@ -41,7 +41,7 @@ export function buildHeroSeed(product) {
     thumbs: images.length > 1 ? images.map((src, i) => ({ src, alt: productImageAlt(product, i, images.length) })) : [],
     badges: attributeBadges(product, glance).map((b) => ({ id: b.id, label: b.label, note: b.note || '' })),
     lead: firstSentence(noDash(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '')), { min: 20, max: 420 }),
-    price: heroPriceView(product, { price, perUnit, glance, brand }),
+    price: (() => { const v = heroPriceView(product, { price, perUnit, glance, brand }); return { ...v, notes: v.notes.slice(0, MAX_PRICE_CHIPS) }; })(),
     crumbs: breadcrumbs(product).map((c) => ({ label: c.label, href: c.href || '', kind: c.kind })),
   };
 }

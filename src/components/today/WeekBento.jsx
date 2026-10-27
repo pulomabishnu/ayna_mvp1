@@ -121,8 +121,9 @@ export function glanceCharts(dash) {
   return list.map((c) => ({ ...c, area: c.group === 'sleep' ? 'sleep' : 'body' }));
 }
 
-// Founder Oct 27 11:40: no alternating tile colours. Every tile is the one calm surface (butter in light,
-// espresso in dark, outlined); pink stays for the accents inside (today's bar, the period arc).
+// Founder Oct 27: no pink tiles, no alternating colours, keep it sparse. Every tile is the one calm surface
+// (butter in light, espresso in dark, outlined); espresso is kept for each page's one summary box (on Home,
+// the hero and the Your data shortcut). Pink stays for the accents inside (today's bar, the period arc).
 const TONE = 'calm';
 const LABEL = (c) => (c.metric === 'sleep_minutes' ? 'Sleep' : c.metric === 'steps' ? 'Steps' : c.label);
 

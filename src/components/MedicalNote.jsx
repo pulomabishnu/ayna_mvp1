@@ -12,9 +12,14 @@ export default function MedicalNote({ href = MEDICAL_TERMS_HREF, onOpen = null, 
     e.preventDefault();
     onOpen();
   } : undefined;
+  // Founder Oct 27: always one line. The full sentence shows where it fits;
+  // narrow phones get the short form (same meaning) instead of wrapping.
   return (
-    <p className={`ay-med-note${className ? ` ${className}` : ''}`}>
-      ayna shares information, not <a href={href} onClick={click}>medical advice</a>. In an emergency, call 911.
-    </p>
+    <div className="ay-med-wrap">
+      <p className={`ay-med-note${className ? ` ${className}` : ''}`}>
+        <span className="ay-med-note__full">ayna shares information, not <a href={href} onClick={click}>medical advice</a>. In an emergency, call 911.</span>
+        <span className="ay-med-note__short">Not <a href={href} onClick={click}>medical advice</a>. In an emergency, call 911.</span>
+      </p>
+    </div>
   );
 }

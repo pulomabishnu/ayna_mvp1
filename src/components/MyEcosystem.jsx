@@ -71,6 +71,7 @@ const SHOW_SMS_ON_ECOSYSTEM = false;
 import posthog from 'posthog-js';
 import { useRecommendationViews } from '../utils/recommendationAnalytics';
 import ConfirmButton from './ui/ConfirmButton.jsx';
+import ProLock from './ProLock.jsx';
 import { PlusIcon, CheckIcon, CloseIcon } from './icons/UiIcons.jsx';
 
 // Ecosystem products are stored as a full snapshot of the product object at
@@ -1019,6 +1020,7 @@ export default function MyEcosystem({
     const [llmError, setLlmError] = useState('');
     // Quiet, neutral status (e.g. a refresh when nothing new can be built).
     const [llmNotice, setLlmNotice] = useState('');
+    const [llmProLimit, setLlmProLimit] = useState(false);
     // Distinct from llmError: some concerns didn't generate but others DID
     // the ecosystem is functionally built, just missing a couple of sections.
     // Kept separate so this never renders under the "We couldn't build your
@@ -1336,6 +1338,7 @@ export default function MyEcosystem({
             setLlmLoading(rec.loading);
             setLlmError(rec.error);
             setLlmNotice(rec.notice || '');
+            setLlmProLimit(rec.proLimit === 'quiz');
             setLlmPartialConcerns(rec.partialConcerns || []);
             setLlmLoadStartedAt(rec.startedAt);
             if (recommendationRefreshNonce > 0 && !rec.loading && !rec.error && rec.tiered.length > 0) {
@@ -1352,6 +1355,7 @@ export default function MyEcosystem({
             rec.loading = true;
             rec.error = '';
             rec.notice = '';
+            rec.proLimit = '';
             rec.partialConcerns = [];
             rec.tiered = [];
             notifyGeneration(rec);
@@ -1479,6 +1483,8 @@ export default function MyEcosystem({
                         // The app already has a vetted local recommendation engine;
                         // use it as an immediate fallback for network/5xx/404/timeouts.
                         if (limitReached) {
+                            // Free ecosystem update used: build on the device and offer Pro.
+                            rec.proLimit = 'quiz';
                             // Quota used: keep the instant local ecosystem quietly and
                             // cache it, so later visits make no requests at all.
                             const prior = previousLlmTieredRef.current;
@@ -2204,7 +2210,10 @@ export default function MyEcosystem({
                         Couldn&apos;t refresh your matches. <button type="button" onClick={handleRefreshRecommendations}>Try again</button>
                     </div>
                 )}
-                {llmNotice && !llmError && !llmLoading && (
+                {llmProLimit && !llmError && !llmLoading && (
+                    <ProLock variant="inline" feature="quiz" onNotNow={() => setLlmProLimit(false)} line="You’ve used your free ecosystem update for now, so ayna built this one on your device. Pro lets you update it anytime." />
+                )}
+                {llmNotice && !llmProLimit && !llmError && !llmLoading && (
                     <div className="eco3-notice eco3-notice--soft" role="status">{llmNotice}</div>
                 )}
                 {llmPartialConcerns.length > 0 && !llmError && !llmLoading && (
