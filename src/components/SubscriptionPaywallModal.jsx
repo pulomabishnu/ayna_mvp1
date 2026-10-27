@@ -5,25 +5,9 @@ import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { useFocusTrap } from '../utils/useFocusTrap';
 import { requestPro } from '../utils/proApi.js';
 import { announceProChanged, rememberProReturn } from '../pro/paywall.js';
-import { PAID_TERM_STARTS, PLANS, PRO_VALUE as VALUE, benefitRows } from '../pro/plans.js';
+import { PRO_TAGLINE } from '../pro/features.js';
+import { EARLY_ACCESS_LINE, PAID_TERM_STARTS, PLANS, proGroups } from '../pro/plans.js';
 import '../styles/pro-v4.css';
-
-const ICON_PATHS = {
-  ask: <path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />,
-  reads: <path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5ZM12 6v13.5" />,
-  playlists: <path d="M4 7h11M4 12h11M4 17h7M18 14v6M15 17h6" />,
-  quiz: <path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4.5h-4.5" />,
-  wearables: <><rect x="7" y="7" width="10" height="10" rx="3" /><path d="M9 7l1-4h4l1 4M9 17l1 4h4l1-4M12 10v2l1.5 1" /></>,
-  history: <path d="M4 19h16M6 16l4-5 3 3 5-7" />,
-  recap: <><rect x="4" y="5" width="16" height="15" rx="2" /><path d="M4 9h16M9 3v4M15 3v4M8 13h3M8 16h6" /></>,
-  tracking: <><circle cx="12" cy="12" r="8" /><path d="M12 8v4l3 2" /></>,
-  appointment: <path d="M9 4h6v3H9zM7 5.5H6a2 2 0 0 0-2 2V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5a2 2 0 0 0-2-2h-1M8 12h8M8 16h5" />,
-  early: <path d="M12 3l2.5 5.5L20 9.5l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1Z" />,
-};
-
-export function FeatureIcon({ id }) {
-  return <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{ICON_PATHS[id] || ICON_PATHS.early}</svg>;
-}
 
 const reducedMotion = () => {
   try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return true; }
@@ -58,7 +42,7 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
   const [billingOpen, setBillingOpen] = useState(false);
   const attempts = useRef({});
   const chosen = PLANS.find((p) => p.id === plan) || PLANS[0];
-  const rows = benefitRows(feature);
+  const groups = proGroups(feature);
   const unlocking = featureName && featureName !== 'ayna Pro' ? featureName : '';
   // The iPhone app does not sell Pro (founder, Oct 27 16:43): same benefits and prices,
   // and the button opens /pro on the website (main.jsx opens external links in the in-app browser).
@@ -110,16 +94,19 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
           </button>
           <span className="pro-sheet__sticker">Early Access · up to 50% off</span>
           <h2 id={titleId} className="pro-sheet__title">Get ayna <em>Pro</em></h2>
-          <p className="pro-sheet__lede">{unlocking ? <>Unlock <b>{unlocking}</b>, plus everything else in Pro.</> : 'More Ask ayna, every Read, and an ecosystem you can update anytime.'}</p>
+          <p className="pro-sheet__lede">{unlocking && <>Unlock <b>{unlocking}</b>. </>}{PRO_TAGLINE}</p>
         </header>
 
         <div className="pro-sheet__body">
-          <ul className="pro-sheet__rows" aria-label="Included with ayna Pro">
-            {rows.map((f) => <li key={f.id}>
-              <span className="pro-sheet__icon"><FeatureIcon id={f.id} /></span>
-              <span className="pro-sheet__rowtext"><b>{f.label}</b><span>{VALUE[f.id] || f.description}</span></span>
+          <ol className="pro-groups" aria-label="Included with ayna Pro">
+            {groups.map((g) => <li key={g.id} className="pro-groups__item">
+              <b className="pro-groups__name">{g.name}</b>
+              <span className="pro-groups__promise">{g.promise}</span>
+              <ul className="pro-groups__chips">
+                {g.features.map((f) => <li key={f.id} className={`pro-chip${f.on ? ' is-on' : ''}`}>{f.short}{f.growing && <span className="pro-chip__tag">{'\u00a0· growing'}</span>}</li>)}
+              </ul>
             </li>)}
-          </ul>
+          </ol>
 
           <div className="pro-sheet__plans" role="radiogroup" aria-label="Choose a plan">
             {PLANS.map((p) => (
@@ -169,7 +156,7 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
           <div id={billingId} className="pro-sheet__billing" hidden={!billingOpen}>
-            <p>Pay the Early Access price today and use Pro immediately. Your purchased month or year starts January 1, 2027, so the beta period before launch is included.</p>
+            <p>{EARLY_ACCESS_LINE}</p>
             <p>Early Access pricing is applied now. Save up to 50% on your first paid term.</p>
             <p><b>Monthly.</b> {PLANS[1].terms}</p>
             <p><b>Yearly.</b> {PLANS[0].terms}</p>

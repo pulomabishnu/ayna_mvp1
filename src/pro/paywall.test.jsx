@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { FREE_FEATURES, PRO_FEATURES } from './features.js';
 import { proFeatureName, proLimitFeature, registerProPaywallHost } from './paywall.js';
 import ProLock from '../components/ProLock.jsx';
-import { PLANS, benefitRows } from './plans.js';
+import { PLANS, PRO_GROUPS, proGroups } from './plans.js';
 
 const proPage = readFileSync(new URL('../../public/pro.html', import.meta.url), 'utf8');
 const proApi = readFileSync(new URL('../../api/pro.js', import.meta.url), 'utf8');
@@ -14,7 +14,7 @@ describe('the one locked state', () => {
     const html = renderToStaticMarkup(<ProLock feature="reads" />);
     expect(html).toContain('pro-frame__edge is-top');
     expect(html).toContain('Get ayna Pro to unlock');
-    expect(html).toContain('Unlimited Reads');
+    expect(html).toContain('More ayna Reads');
     expect(html.match(/class="pro-lock__cta"/g)).toHaveLength(1);
     expect(html).toContain('Not now');
   });
@@ -28,7 +28,8 @@ describe('the one locked state', () => {
     expect(sheet).toContain('https://www.aynahealth.co/pro');
   });
   it('names gates from the Pro features list', () => {
-    expect(proFeatureName('trial')).toBe('More advanced tracking');
+    expect(proFeatureName('trial')).toBe('Advanced tracking');
+    expect(proFeatureName('recap')).toBe('Deeper personalized insights');
     expect(proFeatureName('appointment')).toBe('Appointment prep');
   });
 });
@@ -55,23 +56,23 @@ describe('the sheet and /pro only promise what is real', () => {
     expect(PLANS[0]).toMatchObject({ id: 'year', price: '$45', regular: '$90' });
     expect(PLANS[1]).toMatchObject({ id: 'month', price: '$4.99', regular: '$8.99' });
   });
-  it('lists only available features as included, the tapped one first', () => {
-    const rows = benefitRows('appointment');
-    expect(rows[0].id).toBe('appointment');
-    expect(rows.every((f) => f.stage === 'available')).toBe(true);
-    expect(benefitRows('insights').some((f) => f.id === 'insights')).toBe(false);
+  it('groups every Pro feature once, marks the tapped one, and tags evolving ones as growing', () => {
+    const ids = PRO_GROUPS.flatMap((g) => g.items).sort();
+    expect(ids).toEqual(PRO_FEATURES.map((f) => f.id).sort());
+    const groups = proGroups('trial');
+    expect(groups.flatMap((g) => g.features).find((f) => f.on).id).toBe('tracking');
+    for (const f of groups.flatMap((g) => g.features)) expect(f.growing).toBe(f.stage !== 'available');
   });
-  it('shows /pro included rows from available features and coming ones from evolving features', () => {
-    for (const f of PRO_FEATURES.filter((x) => x.stage === 'evolving')) expect(proPage).toContain(f.label);
-    const included = proPage.slice(proPage.indexOf('class="pro-rows"'), proPage.indexOf('</ul>', proPage.indexOf('class="pro-rows"')));
-    const labels = [...included.matchAll(/<b>([^<]+)<\/b>/g)].map((m) => m[1]);
-    const available = PRO_FEATURES.filter((x) => x.stage === 'available').map((x) => x.label);
-    expect(labels.length).toBeGreaterThan(3);
-    for (const label of labels) expect(available).toContain(label);
+  it('uses the founder\'s Free vs Pro breakdown on /pro', () => {
+    for (const row of ['Personalization quiz', '1 retake per month', 'Unlimited retakes', '5 chats a day', 'Up to 50 chats a day', '1 Read per week',
+      'Expanded / unlimited access', 'Expanded / unlimited playlists', 'Wearable + health app connections', 'Basic insights',
+      'Deeper, more detailed personalized insights', 'Advanced tracking + trend insights', 'No connected health data', 'Recommendation explanations']) expect(proPage).toContain(row);
+    for (const free of FREE_FEATURES) expect(proPage).toContain(free);
+    expect(proPage).toContain('Free helps you find what fits. Pro learns with you.');
+    expect(proPage).toContain('December 31, 2026');
     expect(proPage).toContain('$45');
     expect(proPage).toContain('$4.99');
-    expect(FREE_FEATURES).toContain('1 ecosystem update per month');
-    expect(proPage).not.toMatch(/—/);
+    expect(proPage).not.toMatch(/\u2014/);
   });
   it('returns checkout to /pro, which confirms and takes her back', () => {
     expect(proApi).toContain('/pro?checkout=success');

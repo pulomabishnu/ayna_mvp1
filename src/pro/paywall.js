@@ -33,25 +33,25 @@ export function announceProChanged() {
 }
 
 // Gate ids that differ from the Pro features list ids.
-export const FEATURE_ALIAS = { trial: 'tracking' };
+export const FEATURE_ALIAS = { trial: 'tracking', recap: 'insights', history: 'insights' };
 
 /** The locked card's words, per gate id. Names come from the Pro features list. */
 const LOCK_LINES = {
-  ask: 'Free ayna includes 5 Ask ayna chats a day. Pro includes up to 50 a day.',
-  reads: 'Free ayna includes one Read each week. Pro opens every Read in the Library.',
-  playlists: 'Free ayna includes one playlist. Pro lets you make as many as you want.',
-  quiz: 'Free ayna includes one ecosystem update a month. Pro lets you update it anytime.',
-  wearables: 'Connect supported health apps and wearables so ayna can use the data you choose to share.',
-  history: 'Detailed cycle, sleep and body history. Your basic health view stays free.',
-  recap: 'A look back at your recent observations, where enough connected data is available.',
-  trial: 'Try one small change, then check back in 7 or 14 days. Basic health logging stays free.',
+  ask: 'Free ayna includes 5 Ask ayna chats a day. Pro includes up to 50 chats a day.',
+  reads: 'Free ayna includes 1 Read per week. Pro gives you expanded, unlimited access to Reads.',
+  playlists: 'Free ayna includes 1 playlist. Pro gives you expanded, unlimited playlists.',
+  quiz: 'Free ayna includes 1 quiz retake per month. Pro lets you retake it whenever your needs change.',
+  wearables: 'Connect Apple Health or Android Health Connect in the ayna app, plus Oura and WHOOP, so ayna can use the signals you choose to share.',
+  insights: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
+  history: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
+  recap: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
+  trial: 'More detailed tracking over time, with trend insights. Basic tracking stays free.',
   appointment: 'Organize symptoms, observations and questions before you see a clinician.',
-  insights: 'Deeper personalized health insights, as Pro expands.',
 };
 
 export function proFeatureName(feature) {
   const id = FEATURE_ALIAS[feature] || feature;
-  if (feature === 'insights') return 'Deeper health insights';
+  if (feature === 'appointment') return 'Appointment prep';
   return PRO_FEATURES.find((f) => f.id === id)?.label || 'ayna Pro';
 }
 

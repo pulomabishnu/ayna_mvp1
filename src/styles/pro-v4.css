@@ -126,12 +126,6 @@
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__lede { color: var(--pro-fg); font: 500 16px/1.45 var(--ay-font-ui, Figtree, sans-serif); }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__lede b { font-weight: 700; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body { display: grid; gap: 16px; padding: 14px 24px 18px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rows { display: grid; gap: 12px; padding: 0; list-style: none; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rows li { display: grid; grid-template-columns: 40px 1fr; align-items: center; gap: 12px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__icon { display: grid; place-items: center; width: 40px; height: 40px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 12px; background: #f7badd; color: #3e2723; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rowtext { display: grid; gap: 1px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rowtext b { color: var(--pro-fg); font: 700 15px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rowtext span { color: var(--pro-fg-muted); font: 400 14px/1.35 var(--ay-font-ui, Figtree, sans-serif); }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__plans { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 10px 5px 5px 0; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan {
   position: relative; display: grid; justify-items: start; align-content: start; gap: 6px; min-height: 124px; margin: 0; padding: 16px 14px 14px;
@@ -228,3 +222,20 @@
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ay-ask-prolock { padding: 6px 16px 12px; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body a.pro-sheet__cta { text-decoration: none; box-sizing: border-box; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__webnote { color: var(--pro-fg); font: 600 15px/1.4 var(--ay-font-ui, Figtree, sans-serif); text-align: center; }
+
+/* Pro, grouped (founder Oct 27, 17:00: categorize, in the timeline's language): a pink dot on a thin rule,
+   the group's name and one-line promise, then its features as small chips. The tapped one gets a pink dot. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups { display: grid; margin: 0; padding: 0; list-style: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item { position: relative; display: grid; gap: 2px; padding: 0 0 16px 26px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item::before { content: ''; position: absolute; left: 0; top: 4px; width: 12px; height: 12px; box-sizing: border-box; border: 1.5px solid var(--pro-line); border-radius: 50%; background: #f7badd; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item:not(:last-child)::after { content: ''; position: absolute; left: 5.25px; top: 18px; bottom: 2px; width: 1.5px; background: var(--pro-rule); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__name { color: var(--pro-fg); font: 700 16px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__promise { color: var(--pro-fg-muted); font: 400 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; padding: 0; list-style: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip { display: inline-flex; align-items: center; min-height: 26px; padding: 2px 9px; box-sizing: border-box; border: 1px solid var(--pro-line); border-radius: 999px; color: var(--pro-fg); font: 600 13px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip.is-on { border-width: 1.5px; font-weight: 700; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip.is-on::before { content: ''; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: #f7badd; box-shadow: 0 0 0 1px #3e2723; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip__tag { color: var(--pro-fg-muted); font-weight: 500; }
+@media (max-width: 640px) { :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__promise { display: none; } :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item { padding-bottom: 12px; } }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-groups__promise { display: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-groups__item { padding-bottom: 12px; }
