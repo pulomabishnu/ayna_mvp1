@@ -347,6 +347,7 @@
       dash.setAttribute('pathLength', length);
       dash.setAttribute('stroke-dasharray', `${sq} ${sq}`);
       dash.style.setProperty('--pro-lap', `${length}px`);
+      dash.style.setProperty('--pro-dur', `${Math.max(40, Math.round(length / 10))}s`);
     };
     draw();
     if ('ResizeObserver' in window) new ResizeObserver(draw).observe(frame);

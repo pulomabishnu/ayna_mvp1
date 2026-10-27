@@ -34,7 +34,7 @@ export function CheckerFrame({ className = '', square = 12, radius = 22, childre
     const rect = { x: square / 2, y: square / 2, width: w, height: h, rx: r, ry: r, fill: 'none', strokeWidth: square };
     svg = <svg className="pro-frame__ring" width={box.w} height={box.h} aria-hidden="true" focusable="false">
       <rect {...rect} className="pro-frame__base" />
-      <rect {...rect} className="pro-frame__dash" pathLength={length} strokeDasharray={`${square} ${square}`} style={{ '--pro-lap': `${length}px` }} />
+      <rect {...rect} className="pro-frame__dash" pathLength={length} strokeDasharray={`${square} ${square}`} style={{ '--pro-lap': `${length}px`, '--pro-dur': `${Math.max(40, Math.round(length / 10))}s` }} />
     </svg>;
   }
   return <div ref={ref} className={`pro-frame ${className}`.trim()} style={{ '--pro-sq': `${square}px`, '--pro-r': `${radius}px` }}>

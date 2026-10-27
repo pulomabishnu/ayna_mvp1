@@ -144,7 +144,7 @@ em { color: var(--pink); font-style: normal; -webkit-text-stroke: var(--em-strok
   .pro-admin-actions { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .pro-ring-dash { animation: pro-lap 16s linear infinite; }
+  .pro-ring-dash { animation: pro-lap var(--pro-dur, 60s) linear infinite; }
   .pro-hero > * { animation: pro-rise 420ms cubic-bezier(.2, .8, .2, 1) both; }
   .pro-hero > .pro-buy { animation-delay: 80ms; }
 }

@@ -224,6 +224,6 @@
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__base { stroke: #3e2723; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__dash { stroke: #f7badd; stroke-dashoffset: 0; }
 @media (prefers-reduced-motion: no-preference) {
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__dash { animation: pro-lap 16s linear infinite; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__dash { animation: pro-lap var(--pro-dur, 60s) linear infinite; }
 }
 @keyframes pro-lap { from { stroke-dashoffset: 0; } to { stroke-dashoffset: calc(var(--pro-lap) * -1); } }
