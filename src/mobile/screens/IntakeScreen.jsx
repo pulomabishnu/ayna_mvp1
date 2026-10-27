@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { defineOption } from '../data/glossary.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
-import { ChipList, StickerGrid, SearchField, ChoiceRows, AgeDial, ZipTicket, TrackLine, PriceStacks, AccountCards, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
-import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
-import BlendScale from '../../components/quiz/BlendScale.jsx';
+import { ChipList, SearchField, AgeDial, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
+import { QuizFrame, QuizBlock, Chips, Rows, SubQuestion, GlossaryCard } from '../../components/quiz/QuizKit.jsx';
+import { isShortHelper } from '../../components/quiz/quizText.js';
+import { conditionDisplayName } from '../../utils/conditionRename.js';
 import MedicalNote, { MEDICAL_TERMS_URL } from '../../components/MedicalNote.jsx';
-import { BRAND_SHORT } from '../../components/quiz/blendLabels.js';
 import { haptic } from '../../utils/haptics.js';
-import { INTAKE_SCENES, SECTION_TONES, SECTION_LABELS } from '../components/intake/intakeScenes.js';
 import '../intake-play.css';
 import '../../styles/onboarding.css';
 import RecommendationCountPicker from '../components/RecommendationCountPicker.jsx';
@@ -188,14 +187,14 @@ const BODY_TEXT = 'var(--ayna-text-muted)';
 // `icons` map to render a small rounded-square badge above the label;
 // callers without one (life stages, which have no matching icon set) get the
 // plain label-only tile exactly as before.
-function ChoiceGrid({ items, selected = [], onToggle, icons, labels, glyphs }) {
-  return <StickerGrid items={items} selected={selected} onToggle={onToggle} icons={icons} labels={labels} glyphs={glyphs} />;
+function ChoiceGrid({ items, selected = [], onToggle, icons, labels }) {
+  return <Chips items={items} selected={selected} onToggle={onToggle} icons={icons} labels={labels} display={conditionDisplayName} />;
 }
 
 // Chip spec (design pattern C1/G1), flex-wrapped pills, not vertical rows.
 // Used both flat (conditions) and grouped under a label (SearchableGroups).
 function RowChoiceList({ items, selected = [], onToggle, labels }) {
-  return <ChipList items={items} selected={selected} onToggle={onToggle} labels={labels} />;
+  return <Chips items={items} selected={selected} onToggle={onToggle} labels={labels} display={conditionDisplayName} />;
 }
 
 // Shared search-bar chrome (design rule: "search on every list over ~12
@@ -212,14 +211,14 @@ function AddCustomChoice({ query, options, onAdd }) {
   return <button type="button" className="ip-chip is-dashed ip-add" onClick={() => onAdd(value)}>+ Add “{value}”</button>;
 }
 
-function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd, placeholder, layout = 'chips', icons, labels, glyphs, searchable = true }) {
+function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd, placeholder, layout = 'chips', icons, labels, searchable = true }) {
   const query = search.trim().toLowerCase();
   const filtered = query ? items.filter((item) => matchesSearchOption(query, item) || matchesSearchOption(query, labels?.[item])) : items;
   const custom = selected.filter((item) => !items.includes(item));
   return <div className="ip-picker">
     {searchable && <SearchBar value={search} onChange={onSearch} placeholder={placeholder} />}
     <AddCustomChoice query={search} options={[...items, ...selected]} onAdd={onAdd} />
-    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} labels={labels} glyphs={glyphs} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} labels={labels} /> : <p className="ip-empty">No matches</p>}
+    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} labels={labels} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} labels={labels} /> : <p className="ip-empty">No matches</p>}
     {custom.length > 0 && <div className="ip-custom"><small>Added by you</small><RowChoiceList items={custom} selected={selected} onToggle={onToggle} /></div>}
   </div>;
 }
@@ -229,15 +228,12 @@ function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd,
 // single-select via toggleExclusive, some genuinely multi), and the
 // `compact`/`left` nested-context variants (inside ProductHistoryBuilder)
 // need a smaller size without becoming a third visual language.
-function Pills({ options, selected, onToggle, compact, exclusiveValues = [] }) {
-  return <ChipList items={options} selected={selected} onToggle={onToggle} compact={compact} muted={exclusiveValues} />;
-}
 
 // Vertical single-select radio list (design pattern F1), the workhorse
 // pattern for every Yes/No/Not-sure-style question, replacing the old
 // horizontal segmented-button bar.
 function Segmented({ options, value, onChange, labels }) {
-  return <ChoiceRows options={options} value={value} onChange={onChange} labels={labels} />;
+  return <Rows options={options} value={value} onChange={onChange} labels={labels} />;
 }
 
 // Pattern K1: price bands as a vertical row list rather than chips, a
@@ -495,18 +491,18 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD }}>About you</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: LABEL_GOLD }}>About you</div>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', color: MUTED, marginTop: 2 }}>Quiz paused</div>
           </div>
         </div>
       </div>
 
       <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto' }}>
-        <div style={{ padding: '38px 24px 30px', background: `linear-gradient(170deg, ${WARNING_BG}, ${CARD_BG})` }}>
+        <div style={{ padding: '38px 24px 30px', background: WARNING_BG }}>
           <div style={{ width: 54, height: 54, borderRadius: 99, background: CARD_BG, border: '1.5px solid ' + WARNING_BORDER_SOFT, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 20px -10px rgba(180,64,42,.3)' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l8 4v5c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V7l8-4z" /><path d="M12 10v3.5" /><path d="M12 16.5h.01" /></svg>
           </div>
-          <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD, marginTop: 20 }}>Age requirement</div>
+          <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: LABEL_GOLD, marginTop: 20 }}>Age requirement</div>
           <div style={{ fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.15, color: INK, marginTop: 9 }}>We can't take you through the quiz</div>
           <p style={{ fontFamily: 'var(--ayna-font-ui)', fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: BODY_TEXT, margin: '12px 0 0' }}>
             ayna is built for people 18 and over. Because the quiz leads to supplement and product guidance, we don't create profiles for minors. That's a conversation for a parent, guardian or clinician who knows your history.
@@ -518,7 +514,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 13 }}>
             {whatYouCanDo.map(([num, title, body]) => (
               <div key={num} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '15px 16px', borderRadius: 18, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-                <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: LABEL_GOLD, flex: 'none', lineHeight: 1.45 }}>{num}</div>
+                <div aria-hidden="true" data-n={num} style={{ width: 8, height: 8, marginTop: 6, borderRadius: 99, background: LABEL_GOLD, flex: 'none' }} />
                 <div>
                   <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>{title}</div>
                   <div style={{ fontFamily: 'var(--ayna-font-ui)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 3 }}>{body}</div>
@@ -592,7 +588,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   // ZIP: Next is live from the first digit; a bad ZIP is caught on Next, not before.
   const [zipError, setZipError] = useState('');
   const [direction, setDirection] = useState('forward');
-  const [infoOpen, setInfoOpen] = useState(null);
+  // A colour-block break between first-run sections ("Next" + the section name). UI only: not a step, not saved.
+  const [sectionBreak, setSectionBreak] = useState(null);
   // Hold a word (e.g. "Perimenopause", "PMDD") for a plain-language definition.
   const [glossary, setGlossary] = useState(null);
   const holdRef = useRef({ timer: null, fired: false });
@@ -627,7 +624,6 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   // one "About you" number, so the count and bar stood still between them).
   const countedSteps = visibleSteps;
   const countedIndex = Math.max(0, countedSteps.findIndex((s) => s.id === step.id));
-  const countedRequiredTotal = requiredSteps.length;
 
   const set = (key, value) => setIntake((prev) => ({ ...prev, [key]: value }));
   const toggleExclusive = (key, value, exclusiveValues = []) => setIntake((prev) => {
@@ -668,7 +664,14 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     });
   };
 
-  const goTo = (id, dir) => { setSearch(''); setZipError(''); setDirection(dir); setStepId(id); };
+  const goTo = (id, dir) => { setSearch(''); setZipError(''); setSectionBreak(null); setDirection(dir); setStepId(id); };
+  // At most three breaks per quiz, named after the real first-run sections.
+  const BREAK_SCREENS = obPart === 'core' ? [3, 6] : obPart === 'more' ? [5] : [];
+  const breakBefore = (from, to, list) => {
+    if (!to || to.screen === from.screen || !BREAK_SCREENS.includes(to.screen)) return null;
+    const label = ONBOARDING_SCREENS.find((sc) => sc.n === to.screen)?.label;
+    return label ? { label, count: list.filter((st) => st.screen === to.screen).length, nextId: to.id } : null;
+  };
   const finish = (answers = intake) => {
     try { localStorage.removeItem(INTAKE_DRAFT_KEY); } catch { /* storage unavailable */ }
     onDraftChange?.(false);
@@ -687,7 +690,13 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     const list = onboarding ? getOnboardingSteps(answers, { part: obPart }) : visibleSteps;
     const at = list.findIndex((s) => s.id === step.id);
     if (singleStep) { finish(answers); return; }
-    if (onboarding) { if (at >= 0 && at < list.length - 1) goTo(list[at + 1].id, 'forward'); else finish(answers); return; }
+    if (onboarding) {
+      if (at < 0 || at >= list.length - 1) { finish(answers); return; }
+      const brk = breakBefore(step, list[at + 1], list);
+      if (brk) { setDirection('forward'); setSectionBreak(brk); return; }
+      goTo(list[at + 1].id, 'forward');
+      return;
+    }
     if (!isLast) { goTo(visibleSteps[currentIndex + 1].id, 'forward'); return; }
     if (phase === 'required') goTo(CHECKPOINT_STEP, 'forward');
     else finish(answers);
@@ -735,69 +744,45 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       </>
     );
 
-    if (step.type === 'lifeStage') return (
-      <>
-        {showMidlifeFirst && <p className="ip-hint">Midlife stages moved up. You can pick Perimenopause and Regular periods together.</p>}
-        <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" labels={LIFE_STAGE_LABELS} searchable={false} />
-        <div className="ip-gap"><ChipList items={LIFE_STAGE_EXCLUSIVE} selected={selectedLifeStages} onToggle={toggleLifeStage} muted={LIFE_STAGE_EXCLUSIVE} compact /></div>
-        {/* Each stage's follow-up sits right under the tiles (asked once, never again later). */}
-        {selectedLifeStages.includes('I am trying to conceive') && (
-          <div className="ip-followup">
-            <strong>{FOLLOWUP_QUESTIONS.ttcDuration}</strong>
-            <ChipList items={withSavedOption(ttcDurationOptions(intake), intake.ttcDuration)} selected={intake.ttcDuration ? [intake.ttcDuration] : []} onToggle={(v) => set('ttcDuration', v)} compact />
-          </div>
-        )}
-        {selectedLifeStages.includes('I am pregnant') && (
-          <div className="ip-followup">
-            <strong>{FOLLOWUP_QUESTIONS.pregnancyTrimester}</strong>
-            <ChipList items={withSavedOption(PREGNANCY_TRIMESTER, intake.pregnancyTrimester)} selected={intake.pregnancyTrimester ? [intake.pregnancyTrimester] : []} onToggle={(v) => set('pregnancyTrimester', v)} compact />
-          </div>
-        )}
-        {selectedLifeStages.includes('I am postpartum') && (
-          <div className="ip-followup">
-            <strong>{FOLLOWUP_QUESTIONS.postpartumTiming}</strong>
-            <ChipList items={withSavedOption(POSTPARTUM_TIMING, intake.postpartumTiming)} selected={intake.postpartumTiming ? [intake.postpartumTiming] : []} onToggle={(v) => set('postpartumTiming', v)} compact />
-          </div>
-        )}
-        {selectedLifeStages.includes('I am postpartum') && (
-          <div className="ip-followup">
-            <strong>{FOLLOWUP_QUESTIONS.breastfeedingStatus}</strong>
-            <ChipList items={BREASTFEEDING_STATUS} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} compact />
-          </div>
-        )}
-        {selectedLifeStages.includes('I am in perimenopause') && (
-          <div className="ip-followup">
-            <strong>{FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}</strong>
-            <ChipList items={withSavedOption(PERIMENOPAUSE_LAST_PERIOD, intake.perimenopauseLastPeriod)} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => setIntake((prev) => setPerimenopausePeriods(prev, v))} compact />
-          </div>
-        )}
-      </>
-    );
+    if (step.type === 'lifeStage') {
+      // Each stage's follow-up opens inline right under its chip (asked once, never again later).
+      const one = (v) => (v ? [v] : []);
+      const expand = {
+        'I am trying to conceive': <SubQuestion title={FOLLOWUP_QUESTIONS.ttcDuration}><Chips single compact items={withSavedOption(ttcDurationOptions(intake), intake.ttcDuration)} selected={one(intake.ttcDuration)} onToggle={(v) => set('ttcDuration', v)} /></SubQuestion>,
+        'I am pregnant': <SubQuestion title={FOLLOWUP_QUESTIONS.pregnancyTrimester}><Chips single compact items={withSavedOption(PREGNANCY_TRIMESTER, intake.pregnancyTrimester)} selected={one(intake.pregnancyTrimester)} onToggle={(v) => set('pregnancyTrimester', v)} /></SubQuestion>,
+        'I am postpartum': <>
+          <SubQuestion title={FOLLOWUP_QUESTIONS.postpartumTiming}><Chips single compact items={withSavedOption(POSTPARTUM_TIMING, intake.postpartumTiming)} selected={one(intake.postpartumTiming)} onToggle={(v) => set('postpartumTiming', v)} /></SubQuestion>
+          <SubQuestion title={FOLLOWUP_QUESTIONS.breastfeedingStatus}><Chips single compact items={BREASTFEEDING_STATUS} selected={one(intake.breastfeedingStatus)} onToggle={(v) => set('breastfeedingStatus', v)} /></SubQuestion>
+        </>,
+        'I am in perimenopause': <SubQuestion title={FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}><Chips single compact items={withSavedOption(PERIMENOPAUSE_LAST_PERIOD, intake.perimenopauseLastPeriod)} selected={one(intake.perimenopauseLastPeriod)} onToggle={(v) => setIntake((prev) => setPerimenopausePeriods(prev, v))} /></SubQuestion>,
+      };
+      const custom = selectedLifeStages.filter((v) => !LIFE_STAGES.includes(v) && !LIFE_STAGE_EXCLUSIVE.includes(v));
+      return <Chips label={step.title} items={[...lifeStageOptions, ...custom, ...LIFE_STAGE_EXCLUSIVE]} selected={selectedLifeStages} onToggle={toggleLifeStage} labels={LIFE_STAGE_LABELS} muted={LIFE_STAGE_EXCLUSIVE} expand={expand} />;
+    }
 
-    if (step.type === 'zip') return <div className="ip-zip">
-      <ZipTicket value={intake.zipcode} onChange={(v) => { setZipError(''); set('zipcode', v.replace(/\D/g, '').slice(0, 5)); }} />
-      {zipError && <div className="ip-zip-err" role="alert">{zipError}</div>}
+    if (step.type === 'zip') return <div>
+      <input className="aq-input aq-input--big" type="text" inputMode="numeric" autoComplete="postal-code" maxLength={5} placeholder="10027" aria-label="ZIP code"
+        aria-invalid={zipError ? true : undefined} value={intake.zipcode || ''} onChange={(e) => { setZipError(''); set('zipcode', e.target.value.replace(/\D/g, '').slice(0, 5)); }} />
+      {zipError && <p className="aq-err" role="alert">{zipError}</p>}
     </div>;
 
     if (step.type === 'topics') return (
       <>
-        <ChipList items={HELP_TOPICS} selected={[...(intake.helpTopics || []), ...(String(intake.supportOtherText || '').trim() || helpOtherOpen ? [SOMETHING_ELSE] : [])]} onToggle={toggleHelpTopic} />
-        {(helpOtherOpen || String(intake.supportOtherText || '').trim()) && (
-          <label className="ip-other-text">
-            <span>Tell us in your own words</span>
-            <input value={intake.supportOtherText} maxLength={80} placeholder="For example, migraines" onChange={(e) => set('supportOtherText', e.target.value)} />
-          </label>
-        )}
-        {/* Own spacing below the chips so it never overlaps "Something else" (audit #3). */}
-        <p className="ip-hint ip-hint--after">Not sure? Tap Next and we will show everything.</p>
+        <Chips label={step.title} items={HELP_TOPICS} selected={[...(intake.helpTopics || []), ...(String(intake.supportOtherText || '').trim() || helpOtherOpen ? [SOMETHING_ELSE] : [])]} onToggle={toggleHelpTopic}
+          expand={{ [SOMETHING_ELSE]: (
+            <label className="ip-other-text">
+              <span>Tell us in your own words</span>
+              <input value={intake.supportOtherText} maxLength={80} placeholder="For example, migraines" onChange={(e) => set('supportOtherText', e.target.value)} />
+            </label>
+          ) }} />
       </>
     );
-    if (step.type === 'goals') return <ChipList items={GOALS} selected={intake.goals || []} onToggle={(v) => setIntake((prev) => ({ ...prev, goals: (prev.goals || []).includes(v) ? prev.goals.filter((x) => x !== v) : [...(prev.goals || []), v] }))} />;
+    if (step.type === 'goals') return <Chips label={step.title} items={GOALS} selected={intake.goals || []} onToggle={(v) => setIntake((prev) => ({ ...prev, goals: (prev.goals || []).includes(v) ? prev.goals.filter((x) => x !== v) : [...(prev.goals || []), v] }))} />;
 
     if (step.type === 'support' && onboarding) return (
       <>
         <TopicPicker key={(intake.helpTopics || []).join('|')} groups={supportGroupsForTopics(intake.helpTopics)} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} onAdd={(value) => addCustomSelection('supportSelections', value, [NOTHING_SPECIFIC])} />
-        <div className="ip-gap"><ChipList items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} muted={[NOTHING_SPECIFIC]} compact /></div>
+        <div className="ip-gap"><Chips items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} muted={[NOTHING_SPECIFIC]} /></div>
       </>
     );
     if (step.type === 'support') return (
@@ -810,22 +795,21 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     if (step.type === 'flow' || step.type === 'pain') {
       const key = step.type === 'flow' ? 'periodFlow' : 'periodPain';
       const opts = step.type === 'flow' ? PERIOD_FLOW : PERIOD_PAIN;
-      return <BlendScale variant="app" label={step.title} levels={opts.slice(0, 5)} extras={opts.slice(5)} value={intake[key]} onChange={(v) => set(key, v)} />;
+      return <Rows label={step.title} options={opts} value={intake[key]} onChange={(v) => set(key, v)} />;
     }
-    if (step.type === 'utiFrequency') return <TrackLine options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
-    if (step.type === 'ttcDuration') return <TrackLine options={ttcDurationOptions(intake)} value={intake.ttcDuration} onChange={(v) => set('ttcDuration', v)} />;
+    if (step.type === 'utiFrequency') return <Rows label={step.title} options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
+    if (step.type === 'ttcDuration') return <Rows label={step.title} options={ttcDurationOptions(intake)} value={intake.ttcDuration} onChange={(v) => set('ttcDuration', v)} />;
     if (step.type === 'postpartumTiming') return (
       <>
-        <TrackLine options={POSTPARTUM_TIMING} value={intake.postpartumTiming} onChange={(v) => set('postpartumTiming', v)} />
+        <Rows label={step.title} options={POSTPARTUM_TIMING} value={intake.postpartumTiming} onChange={(v) => set('postpartumTiming', v)} />
         {asksBreastfeedingOnTiming(intake) && (
-          <div className="ip-followup">
-            <strong>{FOLLOWUP_QUESTIONS.breastfeedingStatus}</strong>
-            <ChipList items={BREASTFEEDING_STATUS} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} compact />
-          </div>
+          <div className="aq-subq--under"><SubQuestion title={FOLLOWUP_QUESTIONS.breastfeedingStatus}>
+            <Chips single items={BREASTFEEDING_STATUS} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} />
+          </SubQuestion></div>
         )}
       </>
     );
-    if (step.type === 'pregnancyTrimester') return <TrackLine options={PREGNANCY_TRIMESTER} value={intake.pregnancyTrimester} onChange={(v) => set('pregnancyTrimester', v)} />;
+    if (step.type === 'pregnancyTrimester') return <Rows label={step.title} options={PREGNANCY_TRIMESTER} value={intake.pregnancyTrimester} onChange={(v) => set('pregnancyTrimester', v)} />;
 
     if (step.type === 'conditions') {
       return (
@@ -859,7 +843,6 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             {intake.currentMedicationItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick None.</p>}
           </div>
         )}
-        <p className="ip-callout">Check with a clinician before starting anything new.</p>
       </>
     );
 
@@ -880,7 +863,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         <Segmented options={URGENT_STATUS} value={intake.safetyConcern} onChange={(v) => set('safetyConcern', v)} />
         {['Yes', 'Not sure'].includes(intake.safetyConcern) && (
           <div className="ip-alert" role="note">
-            <strong><span aria-hidden="true">!</span>Worth a closer look</strong>
+            <strong>Worth a closer look</strong>
             <p>Some new or worsening symptoms need a clinician. ayna helps you find products and doesn’t diagnose. If it feels urgent or severe, get care promptly.{intake.safetyConcern === 'Yes' ? ' We’ll show care options first.' : ''}</p>
           </div>
         )}
@@ -899,13 +882,12 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       const notAFactor = 'Price is not a major factor for me';
       return (
         <>
-          <PriceStacks options={PRICE_RANGES.filter((opt) => opt !== notAFactor)} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
-          <ChipList items={[notAFactor]} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} compact />
-          <div className="ip-followup"><strong>{FOLLOWUP_QUESTIONS.largePurchaseFrequency}</strong><BlendScale variant="app" label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} levels={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} /></div>
+          <Chips label={step.title} items={[...PRICE_RANGES.filter((opt) => opt !== notAFactor), notAFactor]} muted={[notAFactor]} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
+          <div className="aq-subq--under"><SubQuestion title={FOLLOWUP_QUESTIONS.largePurchaseFrequency}><Rows label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} /></SubQuestion></div>
         </>
       );
     }
-    if (step.type === 'brand') return <BlendScale variant="app" label={step.title} levels={BRAND_OPENNESS.slice(0, 4)} extras={BRAND_OPENNESS.slice(4)} short={BRAND_SHORT} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
+    if (step.type === 'brand') return <Rows label={step.title} options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
     if (step.type === 'avoidIngredients' || step.type === 'avoidOnly' || step.type === 'wantOnly') {
       // "Leave out: Fragrance" also stores "Fragrance-free", the value the match engine already scores, so logic is unchanged.
       const selected = intake.avoidIngredients || [];
@@ -946,7 +928,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         />
       );
     }
-    if (step.type === 'fsa') return <AccountCards options={FSA_HSA} value={intake.fsaHsaAnswer} onChange={(v) => set('fsaHsaAnswer', v)} />;
+    if (step.type === 'fsa') return <Rows label={step.title} options={FSA_HSA} value={intake.fsaHsaAnswer} onChange={(v) => set('fsaHsaAnswer', v)} />;
     if (step.type === 'recommendationCount') return <RecommendationCountPicker value={intake.recommendedProductsPerArea} onChange={(count) => setIntake((prev) => ({ ...prev, recommendedProductsPerArea: count, recommendationCountTouched: true }))} />;
     if (step.type === 'trust') return <TrustPodium order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
     if (step.type === 'textarea') return <StickyNote value={intake.anythingElse} onChange={(v) => set('anythingElse', v)} placeholder="A goal, a worry, something that didn’t work…" prompts={FREE_TEXT_PROMPTS} />;
@@ -980,14 +962,14 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     const deltaX = start.x - event.changedTouches[0]?.clientX;
     const delta = start.y - event.changedTouches[0]?.clientY;
     if (Math.abs(deltaX) > 75 && Math.abs(deltaX) > Math.abs(delta) * 1.3) { storyAdvance(Math.sign(deltaX)); return; }
-    const body = event.currentTarget.querySelector('.ip-body');
+    const body = event.currentTarget.querySelector('.aq-scroll');
     if (!body || Math.abs(delta) < 100) return;
     if (delta > 0 && body.scrollTop + body.clientHeight >= body.scrollHeight - 8) storyAdvance(1);
     if (delta < 0 && body.scrollTop <= 8) storyAdvance(-1);
   };
   const onStoryWheel = (event) => {
     if (event.target.closest('input, textarea, select, [role="listbox"], .qi')) return;
-    const body = event.currentTarget.querySelector('.ip-body');
+    const body = event.currentTarget.querySelector('.aq-scroll');
     if (!body) return;
     const atEnd = event.deltaY > 0 && body.scrollTop + body.clientHeight >= body.scrollHeight - 8;
     const atStart = event.deltaY < 0 && body.scrollTop <= 8;
@@ -1003,113 +985,60 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     return <MinorGateScreen onChangeAge={() => setMinorGate(false)} onBrowseLibrary={onBack} />;
   }
 
+  if (sectionBreak) {
+    return <QuizBlock surface="app" kicker="Next" title={sectionBreak.label} body={`${sectionBreak.count} question${sectionBreak.count === 1 ? '' : 's'}`}
+      onBack={() => { setDirection('back'); setSectionBreak(null); }}
+      cta={{ label: 'Continue', onClick: () => goTo(sectionBreak.nextId, 'forward') }} />;
+  }
+
   if (atCheckpoint) {
     const remainingOptional = optionalProgress(intake).remaining;
     const careFirst = intake.safetyConcern === 'Yes';
     return (
-      <div className="ayna-play-intake ip-tone--mint ip-checkpoint" data-section="checkpoint" data-step={CHECKPOINT_STEP} data-direction={direction}>
-        <IntakeSceneArt art="bloom" key="art-checkpoint" />
-        <header className="ip-head">
-          <div className="ip-head-row">
-            <button type="button" className="ip-round" aria-label="Go back" onClick={goBack}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
-            </button>
-            <span className="ip-count ip-count--plain" aria-label={`All ${countedRequiredTotal} required questions done`}>All done</span>
-            <span className="ip-skip-spacer" />
-          </div>
-          <div className="ip-progress" aria-hidden="true">{requiredSteps.map((s) => <span key={s.id} className="is-done" />)}</div>
-        </header>
-        <div className="ip-body">
-          <div className="ip-question" key="q-checkpoint">
-            <h1 className="ip-title">Your first matches are ready</h1>
-            <p className="ip-subtitle">{careFirst ? 'You said something may be urgent, so your results start with ways to reach care.' : 'That’s enough for safe, personal picks.'}</p>
-            {careFirst && <div className="ip-care-now" role="note"><b>If this is an emergency, call 911.</b> <span>If you're thinking about harming yourself, call or text 988.</span> <span>Your results open with clinician and urgent care options.</span></div>}
-            {remainingOptional > 0 && <div className="ip-checkpoint-more">
-              <strong>Want closer matches?</strong>
-              <p>Make my matches more personal adds your budget, formats and ingredient preferences. {remainingOptional} optional question{remainingOptional === 1 ? '' : 's'}, now or later.</p>
-            </div>}
-          </div>
-        </div>
-        <footer className="ip-foot ip-foot--checkpoint">
-          <button type="button" className="ip-next" onClick={() => finish()}>
-            <span>See my results</span>
-            <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></i>
-          </button>
-          {remainingOptional > 0 && <button type="button" className="ip-more" onClick={() => goTo(firstOptionalResumeStepId(intake), 'forward')}>Make my matches more personal</button>}
-        </footer>
-      </div>
+      <QuizBlock surface="app" stepKey={CHECKPOINT_STEP} title="Your first matches are ready" onBack={goBack}
+        body={careFirst ? 'You said something may be urgent, so your results start with ways to reach care.' : 'That’s enough for safe, personal picks.'}
+        cta={{ label: 'See my results', onClick: () => finish() }}
+        secondary={remainingOptional > 0 && <button type="button" className="aq-ghost" onClick={() => goTo(firstOptionalResumeStepId(intake), 'forward')}>Make my matches more personal</button>}>
+        {careFirst && <div className="aq-note-card" role="note"><b>If this is an emergency, call 911.</b><p>If you're thinking about harming yourself, call or text 988. Your results open with clinician and urgent care options.</p></div>}
+        {remainingOptional > 0 && <div className="aq-note-card"><b>Want closer matches?</b><p>Make my matches more personal adds your budget, formats and ingredient preferences. {remainingOptional} optional question{remainingOptional === 1 ? '' : 's'}, now or later.</p></div>}
+      </QuizBlock>
     );
   }
 
   const obProgress = onboarding ? onboardingProgress(step, obPart, visibleSteps) : null;
-  const scene = { tone: SECTION_TONES[step.section] || 'peri', art: INTAKE_SCENES[step.id]?.art || null, label: SECTION_LABELS[step.section] };
+  const multi = isMultiSelectStep(step);
+  const helperShort = isShortHelper(step.subtitle) ? step.subtitle : '';
+  // Everything longer than one short line moves behind "Why we ask" (nothing is deleted).
+  const why = [
+    step.subtitle && !helperShort ? step.subtitle : '',
+    step.why || '',
+    step.info && step.info !== step.why ? step.info : '',
+    step.type === 'lifeStage' && showMidlifeFirst ? 'Midlife stages moved up. You can pick Perimenopause and Regular periods together.' : '',
+    { helpTopics: 'Not sure? Tap Continue and we will show everything.', medications: 'Check with a clinician before starting anything new.', zip: 'Only used to find care near you.' }[step.id] || '',
+  ];
+  const progress = onboarding
+    ? { now: obProgress.now, total: obProgress.total, label: obProgress.label }
+    : { now: countedIndex + 1, total: countedSteps.length, label: phase === 'optional' ? `Optional ${countedIndex + 1} of ${countedSteps.length}` : `Question ${countedIndex + 1} of ${countedSteps.length}` };
 
   return (
-    <div className={`ayna-play-intake ip-tone--${scene.tone}`} data-section={step.section} data-step={step.id} data-direction={direction}
-      onTouchStart={onStoryTouchStart} onTouchEnd={onStoryTouchEnd} onWheel={onStoryWheel}>
-      <IntakeSceneArt art={scene.art} key={`art-${step.id}`} />
-      <header className="ip-head">
-        <div className="ip-head-row">
-          <button type="button" className="ip-round" aria-label="Go back" onClick={goBack}>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
-          </button>
-          {/* Later questions depend on earlier answers, so the total can grow mid-quiz.
-              Show a fill bar for progress instead of a "02/08" total that shifts. */}
-          <span className="ip-count ip-count--plain">{onboarding ? obProgress.label : phase === 'optional' ? `Optional ${countedIndex + 1} of ${countedSteps.length}` : `Question ${countedIndex + 1}`}</span>
-          <span className="ip-skip-spacer" />
-        </div>
-        {onboarding ? (
-          <div className="ip-progress ip-progress--fill" role="progressbar" aria-label="Setup progress" aria-valuemin={1} aria-valuemax={obProgress.total} aria-valuenow={obProgress.now}>
-            <span style={{ width: `${(obProgress.now / Math.max(1, obProgress.total)) * 100}%` }} />
-          </div>
-        ) : (
-          <div className="ip-progress ip-progress--fill" role="progressbar" aria-label="Quiz progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100)}>
-            <span style={{ width: `${((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100}%` }} />
-          </div>
-        )}
-      </header>
-
-      <div className="ip-body">
-        <div className="ip-question" key={`q-${step.id}`}>
-          {/* No eyebrow label above the question (onboarding audit #4): the row keeps only status and info. */}
-          {((phase === 'optional' || (onboarding && step.optional)) || (!onboarding && flaggedStepIds.has(step.id)) || (step.info && !onboarding)) && <div className="ip-label-row">
-            {(phase === 'optional' || (onboarding && step.optional)) && <span className="ip-tag-optional">Optional</span>}
-            {/* The screen label already says "For your safety": no second pill (QA, Oct 25). */}
-            {!onboarding && flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
-            {step.info && !onboarding && <button type="button" className="ip-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen === step.id} onClick={() => setInfoOpen((v) => v === step.id ? null : step.id)}>i</button>}
-          </div>}
-          <h1 className="ip-title">{step.title}</h1>
-          {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
-          {/* Focus group, Oct 26: say plainly when more than one answer is allowed. */}
-          {isMultiSelectStep(step) && <p className="ip-multi">Pick all that apply</p>}
-          {onboarding && step.why && <p className="ip-why"><b>Why we ask:</b> {step.why}</p>}
-          {step.info && infoOpen === step.id && <p className="ip-info-pop" role="note">{step.info}</p>}
-          {onboarding && obPart === 'core' && currentIndex === 0 && <MedicalNote href={MEDICAL_TERMS_URL} className="ip-med-note" />}
-          <span className="ip-spacer is-top" aria-hidden="true" />
-          <div className="ip-answer" onPointerDown={startHold} onPointerUp={endHold} onPointerLeave={endHold} onPointerCancel={endHold} onPointerMove={(e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }} onClickCapture={swallowClickAfterHold} onContextMenu={(e) => { if (holdRef.current.fired) e.preventDefault(); }}>{renderBody()}</div>
-          <span className="ip-spacer is-bottom" aria-hidden="true" />
-        </div>
-      </div>
-
-      <QuizIntro variant="app" enabled={introEnabled && !onboarding} />
-      {glossary && <div className="ip-glossary" role="dialog" aria-label={glossary.term} onClick={() => setGlossary(null)}>
-        <div className="ip-glossary-card" onClick={(e) => e.stopPropagation()}>
-          <strong>{glossary.term}</strong>
-          <p>{glossary.definition}</p>
-          <button type="button" onClick={() => setGlossary(null)}>Got it</button>
-        </div>
-      </div>}
-      <footer className={`ip-foot${phase === 'optional' ? ' ip-foot--optional' : ''}`}>
-        {!ready && missingAnswerHint(step.id, intake) && <p className="ip-why" role="status">{missingAnswerHint(step.id, intake)}</p>}
-        <button type="button" className="ip-next" onClick={goNext} disabled={!ready}>
-          <span>{isLast && phase === 'optional' ? 'See my results' : 'Next'}</span>
-          {countForStep > 0 && <b>{countForStep}</b>}
-          <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></i>
-        </button>
-        {/* #16 The Ordinary: "Skip for now" under the main button. */}
-        {(step.optional || step.type === 'topics') && <button type="button" className="ip-skip ip-skip--foot" onClick={skipStep}>Skip for now</button>}
-        {phase === 'optional' && !isLast && <button type="button" className="ip-results-link" onClick={() => finish()}>See my results now</button>}
-      </footer>
-    </div>
+    <QuizFrame
+      surface="app" stepKey={step.id} direction={direction} progress={progress}
+      onBack={goBack} onSkip={step.optional || step.type === 'topics' ? skipStep : null}
+      title={step.title} helper={helperShort || (multi ? 'Pick all that apply' : '')} why={why}
+      flag={!onboarding && flaggedStepIds.has(step.id) ? 'Not answered yet' : null}
+      lead={onboarding && obPart === 'core' && currentIndex === 0 ? <MedicalNote href={MEDICAL_TERMS_URL} className="ip-med-note" /> : null}
+      hint={!ready ? missingAnswerHint(step.id, intake) : null}
+      cta={{ label: isLast && phase === 'optional' ? 'See my results' : 'Continue', onClick: goNext, disabled: !ready, count: countForStep }}
+      below={phase === 'optional' && !isLast ? <button type="button" className="aq-link" onClick={() => finish()}>See my results now</button> : null}
+      rootProps={{ onTouchStart: onStoryTouchStart, onTouchEnd: onStoryTouchEnd, onWheel: onStoryWheel }}
+      answerProps={{ onPointerDown: startHold, onPointerUp: endHold, onPointerLeave: endHold, onPointerCancel: endHold, onPointerMove: (e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }, onClickCapture: swallowClickAfterHold, onContextMenu: (e) => { if (holdRef.current.fired) e.preventDefault(); } }}
+      overlay={<>
+        <QuizIntro variant="app" enabled={introEnabled && !onboarding} />
+        {glossary && <GlossaryCard term={glossary.term} definition={glossary.definition} onClose={() => setGlossary(null)} />}
+      </>}
+    >
+      {multi && helperShort && <p className="aq-caption">Pick all that apply</p>}
+      {renderBody()}
+    </QuizFrame>
   );
 }
