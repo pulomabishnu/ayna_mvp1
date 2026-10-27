@@ -1,0 +1,46 @@
+/* CardDeck.jsx: the stacked "For today" cards. The top card in full; the next one or two peek below it,
+   offset and scaled, each its own colour. Fixed brand colours so light and dark both read. */
+.ay-fdeck { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; }
+.ay-fdeck__bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ay-fdeck__count { font: 700 14px/1.2 var(--ay-font-ui, inherit); color: var(--ay-fg, #3e2723); font-variant-numeric: tabular-nums; }
+.ay-fdeck__text { all: unset; box-sizing: border-box; cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; font: 700 14px/1 var(--ay-font-ui, inherit); color: var(--ay-fg, #3e2723); text-decoration: underline; text-underline-offset: 3px; }
+.ay-fdeck__text:focus-visible, .ay-fdeck__btn:focus-visible { outline: 2px solid var(--ay-fg, #3e2723); outline-offset: 2px; border-radius: 999px; }
+
+/* The stack: room underneath for the peeking edges (10px each). */
+.ay-fdeck__stack { position: relative; padding-bottom: calc(var(--ay-fdeck-peek, 0) * 10px); isolation: isolate; }
+.ay-fdeck .ay-fdeck__list.ay-fdeck__top { position: relative; z-index: 3; display: block !important; margin: 0 !important; padding: 0 !important; list-style: none; transition: transform 280ms cubic-bezier(.2, .8, .2, 1), opacity 280ms ease; touch-action: pan-x; }
+.ay-fdeck .ay-fdeck__top.is-leaving { transform: translateY(-110%) rotate(-2deg); opacity: 0; }
+.ay-fdeck .ay-fdeck__top > li { box-shadow: 0 1px 0 rgba(62, 39, 35, .08) !important; }
+.ay-fdeck__peek { position: absolute; left: 0; right: 0; bottom: 0; height: 40px; border-radius: 16px; transform-origin: 50% 100%; }
+.ay-fdeck__peek.is-1 { z-index: 2; transform: scale(.96); bottom: calc((var(--ay-fdeck-peek, 1) - 1) * 10px); }
+.ay-fdeck__peek.is-2 { z-index: 1; transform: scale(.92); bottom: 0; }
+.ay-fdeck__peek.is-pink { background: #f7badd; }
+.ay-fdeck__peek.is-butter { background: #f6e3a1; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .18); }
+.ay-fdeck__peek.is-ink { background: #3e2723; }
+/* Coming forward: the new top card rises into place. */
+@keyframes ay-fdeck-in { from { transform: translateY(10px) scale(.96); opacity: .6; } }
+.ay-fdeck .ay-fdeck__top:not(.is-leaving) { animation: ay-fdeck-in 260ms cubic-bezier(.2, .8, .2, 1) both; }
+
+/* The top card's colour (pink or butter-deep), over the older compact-item rules. */
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top.is-pink > .ay-today__item { background: #f7badd !important; color: #3e2723 !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top.is-butter > .ay-today__item { background: #f6e3a1 !important; color: #3e2723 !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top > .ay-today__item :is(.ay-today__title, .ay-today__why, .ay-today__readmore, .ay-today__text, .ay-today__kicker) { color: #3e2723 !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top > .ay-today__item .ay-chip { background: transparent !important; color: #3e2723 !important; border-color: #3e2723 !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top > .ay-today__item .ay-today__primary { background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top > .ay-today__item { min-height: 168px; }
+
+.ay-fdeck__nav { display: flex; justify-content: center; margin-top: 4px; }
+.ay-fdeck__btn { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1.5px solid var(--ay-fg, #3e2723); color: var(--ay-fg, #3e2723); font: 700 15px/1 var(--ay-font-ui, inherit); }
+.ay-fdeck__btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+.ay-fdeck__done { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 16px; background: var(--ay-surface, #f6e3a1); color: var(--ay-fg, #3e2723); }
+.ay-fdeck__done b { flex: 1 1 auto; font: 800 17px/1.25 var(--ay-font-display, inherit); }
+.ay-fdeck__tick { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; background: #f7badd; }
+.ay-fdeck__tick svg { width: 20px; height: 20px; fill: none; stroke: #3e2723; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.ay-fdeck.is-all .ay-fdeck__list { display: grid; gap: 12px; margin: 0; padding: 0; }
+
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-fdeck__peek.is-ink { background: rgba(255, 237, 172, .2); }
+@media (prefers-reduced-motion: reduce) {
+  .ay-fdeck .ay-fdeck__list.ay-fdeck__top { transition: none; animation: none !important; }
+  .ay-fdeck .ay-fdeck__top.is-leaving { transform: none; }
+}

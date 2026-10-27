@@ -15,6 +15,7 @@ import { readRundownMemory, seenFirstRundown } from '../rundown/rundownStore.js'
 import { eventSurface, trackCheckin } from '../../utils/analyticsEvents.js';
 import { Chip, StatusPill } from '../ui/ay';
 import ProfileAskCard from './ProfileAskCard.jsx';
+import CardDeck from './CardDeck.jsx';
 import { askWhyFor } from '../../utils/askPrompts.js';
 import { todayProgress, triesInProgress } from './todayProgress.js';
 import { LOG_FIELDS } from '../../health/dailyLog.js';
@@ -466,8 +467,15 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
           {renderViews({
             count: Math.max(0, total - done),
             hasCheckIn: checkInItem,
+            // A stacked deck (founder Oct 26 22:52): the top card in full, the next ones peeking; answering sends it up.
             things: rest.length > 0 || review
-              ? <ul className="ay-today__list is-compact" data-tour="today-things">{tile(rest)}{review}</ul>
+              ? <div data-tour="today-things"><CardDeck
+                storageKey={`ayna_deck_${userId || 'device'}_${t.today}`}
+                items={[
+                  ...tile(rest).map((node, i) => ({ key: rest[i].id, title: rest[i].title, tone: i % 2 ? 'butter' : 'pink', node })),
+                  ...(review ? [{ key: 'review', title: 'How is it going?', tone: rest.length % 2 ? 'butter' : 'pink', node: review }] : []),
+                ]}
+              /></div>
               : <p className="ay-today__empty">{top.length ? 'Nothing else for today.' : t.decision.empty}</p>,
           })}
         </>;
