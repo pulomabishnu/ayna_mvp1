@@ -94,6 +94,10 @@
   ],
   "rewrites": [
     {
+      "source": "/pro",
+      "destination": "/pro.html"
+    },
+    {
       "source": "/a/:slug([A-Za-z0-9]{10})",
       "destination": "/api/share-answer?slug=:slug&format=html"
     },
