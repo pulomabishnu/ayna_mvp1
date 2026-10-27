@@ -23,6 +23,9 @@ export async function requestPro({ plan, requestId, action, userId, minutes, rea
   return result;
 }
 
+export const checkQuizRetake = signal => requestPro({ action: 'quiz_retake_check', signal });
+export const claimQuizRetake = signal => requestPro({ action: 'quiz_retake_claim', signal });
+
 export async function loadProFeatureRules(signal) {
   const response = await fetch(apiUrl('/api/pro?action=features'), { signal });
   if (!response.ok) throw new Error('We couldn’t check Pro access. Please try again.');
