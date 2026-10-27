@@ -4,7 +4,7 @@ import { verifyUser, claimEcosystemBuild, releaseEcosystemBuild } from './_usage
 import { rateLimit } from './_rateLimit.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, providerConfigured } from './_llm.js';
 import { traceSessionId } from './_prismTrace.js';
-import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
+import { hasPremiumAccess, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { routeHealthQuery } from './_healthKnowledge.js';
 import {
   loadGroundingCatalog,
@@ -845,7 +845,9 @@ async function handleRequest(req, res) {
     res.setHeader('Retry-After', String(burst.retryAfterSec || 3600));
     return res.status(429).json({ error: 'rate_limited' });
   }
-  const isPremium = isPremiumUser(user);
+  let isPremium;
+  try { isPremium = await hasPremiumAccess(user, admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
   if (hasLegacyClientPremiumFlag(user)) {
     console.warn(`[llm-recs] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
   }

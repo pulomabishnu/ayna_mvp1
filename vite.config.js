@@ -56,6 +56,8 @@ const LOCAL_API_ROUTES = [
   'notification-preferences',
   'export-data',
   'ask-ayna',
+  'pro',
+  'pro-webhook',
 ]
 
 function apiDevProxy(routes, env) {
@@ -87,7 +89,7 @@ function apiDevProxy(routes, env) {
                 res.end(JSON.stringify(payload))
               },
             }
-            await handler(Object.assign(req, { body }), vercelRes)
+            await handler(Object.assign(req, { body, rawBody: Buffer.from(raw) }), vercelRes)
           } catch (err) {
             console.error(`[dev] /api/${route} proxy failed:`, err)
             res.statusCode = 500

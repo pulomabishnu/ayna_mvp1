@@ -21,7 +21,7 @@
 /* global process */
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
-import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
+import { hasPremiumAccess, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, stripDiagnosticLanguage } from './_llm.js';
 import { traceSessionId, traceMessages } from './_prismTrace.js';
 import { stripLinks } from './_catalogGrounding.js';
@@ -102,7 +102,9 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: 'rate_limited' });
   }
 
-  const isPremium = isPremiumUser(user);
+  let isPremium;
+  try { isPremium = await hasPremiumAccess(user, admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
   if (hasLegacyClientPremiumFlag(user)) {
     console.warn(`[ask-ayna] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
   }

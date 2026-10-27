@@ -1,3 +1,4 @@
+/* global process */
 /**
  * Single source of truth for paid entitlement.
  *
@@ -32,4 +33,14 @@ export function isPremiumUser(user) {
  */
 export function hasLegacyClientPremiumFlag(user) {
   return user?.user_metadata?.is_premium === true && user?.app_metadata?.is_premium !== true;
+}
+
+/** Live purchase ledger, in addition to existing staff/admin grants. */
+export async function hasPremiumAccess(user, admin) {
+  if (isPremiumUser(user)) return true;
+  // Older deployments without billing configured retain their existing quotas.
+  if (process.env.PRO_BILLING_ENABLED !== '1') return false;
+  const { data, error } = await admin.rpc('pro_access_status', { p_user_id: user.id });
+  if (error || typeof data?.active !== 'boolean') throw new Error('Pro entitlement unavailable');
+  return data.active;
 }
