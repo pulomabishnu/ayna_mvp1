@@ -25,7 +25,7 @@ function Dial({ fill = 0, tone = 'pink', center, unit = '', label, sub, dir = 0,
         {f > 0 && <circle className={`ay-dial__arc is-${tone}`} cx="50" cy="50" r={R} strokeDasharray={`${(C * f).toFixed(1)} ${C.toFixed(1)}`} style={{ '--ay-dial-len': `${(C * f).toFixed(1)}`, '--ay-dial-c': `${C.toFixed(1)}` }} transform="rotate(-90 50 50)" />}
         {f > 0 && todayDot && <circle className="ay-dial__today" cx={dot.cx} cy={dot.cy} r="6" />}
       </svg>
-      <span className="ay-dial__center" aria-hidden="true"><b className={center.length > 5 ? 'is-long' : ''}>{center}</b>{unit && <small>{unit}</small>}</span>
+      <span className="ay-dial__center" aria-hidden="true"><b className={center.length > 5 ? 'is-long' : center.length > 3 ? 'is-mid' : ''}>{center}</b>{unit && <small>{unit}</small>}</span>
       <span className="ay-dial__label" aria-hidden="true">{label}</span>
       <span className="ay-dial__sub" aria-hidden="true">
         {dir !== 0 && <svg viewBox="0 0 24 24"><path d={dir > 0 ? 'M12 19V5M6 11l6-6 6 6' : 'M12 5v14M6 13l6 6 6-6'} /></svg>}

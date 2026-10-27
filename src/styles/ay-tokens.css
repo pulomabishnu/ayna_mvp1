@@ -63,3 +63,15 @@
 /* Founder Oct 26 19:39: "take off that ugly star shape". The scattered decorative doodles
    (asterisk/star, flower, slash, dot, product stickers) are gone everywhere. Decorative only. */
 html body :is(.ds-shape, .ds-mark.ds-shape, .ay-rd-hero__sticker, .ay-home-art__stickers, .ds-pstickers) { display: none !important; }
+
+/* Founder 22:50: a strip showed between the app and the brown page in the desktop preview.
+   It was the frame's blue-grey ring shadow and, with "always show scrollbars" on a Mac, the
+   inner scrollbar. The app now meets the page edge cleanly; scrolling still works. */
+body .ayna-mobile.ayna-mobile { box-shadow: none !important; }
+body .ayna-mobile, body .ayna-mobile * { scrollbar-width: none; }
+body .ayna-mobile ::-webkit-scrollbar, body .ayna-mobile::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+/* Founder 22:50: the 7 / 30 / 90 days switch bunched left with a dead strip on the right.
+   Options now share the whole bar equally (sheet and Your data). */
+html body .ayna-mobile .ay-db-range, html body .ay-msheet .ay-db-range, html body .ay-wh .ay-db-range { display: grid !important; grid-auto-flow: column !important; grid-auto-columns: minmax(0, 1fr) !important; width: 100% !important; box-sizing: border-box; }
+html body .ayna-mobile .ay-db-range > *, html body .ay-msheet .ay-db-range > *, html body .ay-wh .ay-db-range > * { width: 100% !important; justify-content: center !important; text-align: center !important; margin: 0 !important; }

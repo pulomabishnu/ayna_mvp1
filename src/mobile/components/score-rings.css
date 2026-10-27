@@ -33,3 +33,7 @@
 .ay-dials.is-animate .ay-dial__arc { animation: ay-dial-fill 900ms cubic-bezier(.2, .8, .2, 1) both; }
 .ay-dials.is-animate .ay-dial__today { transform-box: fill-box; transform-origin: center; animation: ay-dial-pop 300ms 800ms ease-out both; }
 @media (prefers-reduced-motion: reduce) { .ay-dials.is-animate :is(.ay-dial__arc, .ay-dial__today) { animation: none; } }
+/* Founder 22:45: numbers touched the ring. Size by length so every value sits inside with air. */
+.ay-dials .ay-dial__center b.is-mid { font-size: 20px; }
+.ay-dials .ay-dial__center b.is-long { font-size: 15px; }
+.ay-dials .ay-dial__center { padding: 0 14%; box-sizing: border-box; }

@@ -27,3 +27,14 @@
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__facts div { background: rgba(255, 237, 172, .08); }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__grab { background: rgba(255, 237, 172, .3); }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__more { background: #ffedac; color: #3e2723; }
+
+/* Founder 22:45: the chart in the sheet looked broken. Calm it down:
+   the usual range is a soft band behind the bars (not a grey strip on top),
+   ticks show the date only, and the long sentence (same as the facts below) is screen-reader only. */
+.ay-msheet .ay-db-band { display: none; } /* the usual is stated in words right above the chart */
+.ay-msheet .ay-db-chart-ticks li b, .ay-msheet .ay-db-chart-ticks li strong { display: none !important; }
+.ay-msheet .ay-db-summary { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ay-msheet .ay-db-bar { fill: #3e2723; }
+.ay-msheet .ay-db-bar.is-recent, .ay-msheet .ay-db-bar.is-on { fill: #f7badd; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet .ay-db-bar { fill: rgba(255, 237, 172, .75); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet .ay-db-bar.is-recent, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet .ay-db-bar.is-on { fill: #f7badd; }

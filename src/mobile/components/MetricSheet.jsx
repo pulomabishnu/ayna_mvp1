@@ -42,8 +42,9 @@ export default function MetricSheet({ metric, chartFor, bandOf, today, cycle = n
   const week = isCycle ? null : chartFor(metric, 30);
   const chart = isCycle ? null : chartFor(metric, days);
   const label = isCycle ? (hormonalBC ? 'Bleeding pattern' : 'Cycle') : metric === 'sleep_minutes' ? 'Sleep' : metric === 'steps' ? 'Steps' : week?.label || 'Detail';
-  const body = (
-    <div className={`ay-msheet-layer is-${surface}`}>
+  let frame = null;
+  const body = () => (
+    <div className={`ay-msheet-layer is-${surface}`} style={frame || undefined}>
       <div className="ay-msheet-dim" aria-hidden="true" onClick={close} />
       <section ref={sheetRef} className="ay-msheet" role="dialog" aria-modal="true" aria-labelledby="ay-msheet-h">
         <span className="ay-msheet__grab" aria-hidden="true" />
@@ -72,8 +73,14 @@ export default function MetricSheet({ metric, chartFor, bandOf, today, cycle = n
       </section>
     </div>
   );
-  if (typeof document === 'undefined') return body;
+  if (typeof document === 'undefined') return body();
   // Inside the app shell (or the website's), so the dashboard's chart styles apply.
   const host = (surface === 'web' ? document.querySelector('.app-container') : document.querySelector('.ayna-mobile')) || document.body;
-  return createPortal(surface === 'web' ? <div className="ay-wh">{body}</div> : body, host);
+  // In the app preview on a computer the app is a phone-sized frame: keep the sheet inside it
+  // (founder 22:45: the sheet spilled past the phone). On a phone the frame is the screen.
+  if (surface !== 'web' && host !== document.body) {
+    const r = host.getBoundingClientRect();
+    if (r.width && r.width < window.innerWidth - 1) frame = { left: `${r.left}px`, width: `${r.width}px`, right: 'auto' };
+  }
+  return createPortal(surface === 'web' ? <div className="ay-wh">{body()}</div> : body(), host);
 }
