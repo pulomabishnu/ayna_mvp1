@@ -107,13 +107,25 @@ export default async function handler(req, res) {
     if (!/^[0-9a-f-]{36}$/i.test(body.requestId || '')) return res.status(400).json({ error: 'invalid_request_id' });
 
     const stripe = proStripe();
-    const { price, renewal, coupon } = await validateProPrices(stripe, body.plan);
+    const offer = PRO_PLANS[body.plan];
+    const { renewal, coupon } = await validateProPrices(stripe, body.plan);
     const renewAt = renewalDate(status.launchAt, body.plan);
     if (renewAt < Date.now() / 1000 + 172800 || renewAt > Date.now() / 1000 + 730 * 86400) throw new Error('Unsupported launch date');
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
-      line_items: [{ price, quantity: 1 }, { price: renewal, quantity: 1 }],
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product: config.product,
+            unit_amount: offer.standardAmount,
+            metadata: { flow: PRO_FLOW, role: 'prepaid_first_term', plan: body.plan },
+          },
+          quantity: 1,
+        },
+        { price: renewal, quantity: 1 },
+      ],
       discounts: [{ coupon }],
       client_reference_id: user.id,
       metadata: { flow: PRO_FLOW, user_id: user.id, plan: body.plan, launch_at: status.launchAt, renew_at: String(renewAt) },
