@@ -138,8 +138,8 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
         </>}
         {active === 'empty' && <>
           <h1>No strong<br /><em>match</em> yet</h1>
-          <p>Your answers didn’t point to one clear pick. Explore is sorted by need.</p>
-          <div className="wwr-actions"><button type="button" className="wwr-cta" onClick={onBrowse}>Go to Explore</button></div>
+          <p>Your answers didn’t point to one clear pick. The Shop is sorted by need.</p>
+          <div className="wwr-actions"><button type="button" className="wwr-cta" onClick={onBrowse}>Go to Shop</button></div>
         </>}
       </div>
       {!last && <p className="wwr-hint">Click to continue</p>}

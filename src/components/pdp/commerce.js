@@ -98,7 +98,7 @@ export function breadcrumbs(product) {
   if (!product) return [];
   const cat = categoryLabel(product);
   return [
-    { label: 'Explore', href: '/explore/products', kind: 'shop' },
+    { label: 'Shop', href: '/explore/products', kind: 'shop' },
     ...(cat ? [{ label: cat, href: '/explore/products', kind: 'category', category: product.category }] : []),
     { label: product.name, kind: 'current' },
   ];

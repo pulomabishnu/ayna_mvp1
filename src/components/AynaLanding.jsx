@@ -490,7 +490,7 @@ function ShopSection({ title, chips, filter, setFilter, filters, setFilters, pro
               {item.label}
             </button>
           ))}
-          <button type="button" className="lx-chips__more" onClick={() => onViewDiscovery?.('')}>More in Explore</button>
+          <button type="button" className="lx-chips__more" onClick={() => onViewDiscovery?.('')}>More in the Shop</button>
         </div>
         {open && !minimal && (
           <FilterPanel
@@ -503,7 +503,7 @@ function ShopSection({ title, chips, filter, setFilter, filters, setFilters, pro
         )}
         {children}
         <div className="lx-shop__foot">
-          <button type="button" className="lx-ghost" onClick={() => onViewDiscovery?.('')}>See all in Explore</button>
+          <button type="button" className="lx-ghost" onClick={() => onViewDiscovery?.('')}>See all in the Shop</button>
         </div>
       </div>
     </section>
@@ -647,8 +647,8 @@ function WelcomeBack({ heroBanner = null, user, myProducts, recommendedProductId
           ) : (
             <>
               <strong className="ed-dash__title">Nothing saved yet</strong>
-              <span className="ed-dash__body">Tap the heart on anything in Explore to keep it here.</span>
-              <button type="button" className="ed-dash__go" onClick={() => onViewDiscovery?.('')}>Go to Explore <Arrow /></button>
+              <span className="ed-dash__body">Tap the heart on anything in the Shop to keep it here.</span>
+              <button type="button" className="ed-dash__go" onClick={() => onViewDiscovery?.('')}>Go to Shop <Arrow /></button>
             </>
           )}
         </div>

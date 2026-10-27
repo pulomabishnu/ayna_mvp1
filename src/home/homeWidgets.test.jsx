@@ -229,7 +229,7 @@ describe('Home with widgets and the Customize Home sheet', () => {
   it('web Today: nothing extra by default, room for 8 spaces', () => {
     mount(<HomeWidgets surface="web" data={{}} on={{}} />);
     expect(host.querySelector('.ay-homewidgets__cell')).toBeNull();
-    act(() => btn('Add widgets to Today').click());
+    act(() => btn('Add widgets to Home').click());
     expect(document.querySelector('.ay-chs-cap').textContent).toBe('Today fits 8 spaces: a small widget takes 1, a large one takes 2. 0 of 8 used.');
   });
 

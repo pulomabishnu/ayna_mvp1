@@ -2,7 +2,7 @@ import React from 'react';
 import { breadcrumbs } from './commerce';
 import './pdp.css';
 
-/** Explore > Category (the product name is the H1, so the last crumb is dropped: PDP audit 13.1). Links open the Shop (filtered to the category when the page can). */
+/** Shop > Category (the product name is the H1, so the last crumb is dropped: PDP audit 13.1). Links open the Shop (filtered to the category when the page can). */
 export default function Breadcrumbs({ product, onNavigate }) {
   const crumbs = breadcrumbs(product);
   if (!crumbs.length) return null;

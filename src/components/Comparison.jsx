@@ -45,7 +45,7 @@ export default function Comparison({ onBack = null, compareList, onRemove, onCle
                     <p>
                         {ecosystemList.length > 0
                             ? `Pick up to ${COMPARE_MAX} from your ${ecosystemList.length} saved or routine ${ecosystemList.length === 1 ? 'product' : 'products'}, or add any product from Explore.`
-                            : 'Add products from Explore, or save products first and compare them here.'}
+                            : 'Add products from the Shop, or save products first and compare them here.'}
                     </p>
                     {ecosystemList.length > 0 && (
                         <>
@@ -65,7 +65,7 @@ export default function Comparison({ onBack = null, compareList, onRemove, onCle
                         </>
                     )}
                     <div className="aycmp__own-cta">
-                        <StickerButton onClick={onBrowseProducts}>Go to Explore</StickerButton>
+                        <StickerButton onClick={onBrowseProducts}>Go to Shop</StickerButton>
                         {!matchFor && onSeeMatch && <OutlineButton onClick={onSeeMatch}>See your match</OutlineButton>}
                     </div>
                 </section>

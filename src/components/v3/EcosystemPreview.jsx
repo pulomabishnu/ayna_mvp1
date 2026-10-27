@@ -75,7 +75,7 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn, mat
 
       <div className="ay-ecoprev__stage is-honest">
         <div className="ay-ecoprev__shelves">
-          <p className="ay-ecoprev__note">An example from Explore, not your matches.</p>
+          <p className="ay-ecoprev__note">An example from the Shop, not your matches.</p>
           {shelves.map((s) => (
             <div key={s.key} className="ay-ecoprev__shelf">
               <p className="ay-ecoprev__shelfname">{s.label}</p>
