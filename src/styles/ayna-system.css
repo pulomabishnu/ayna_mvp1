@@ -735,10 +735,10 @@ html body .app-container.app-container .ay-pagehead .ay-h1 { font-size: clamp(36
 @media (max-width: 767px) { .app-container .ayshop__seal { width: 76px; height: 76px; margin-top: -42px; right: -4px; } .app-container .ayshop__seal b { width: 34px; height: 34px; font-size: 12px; } .app-container .ayshop__seal text { font-size: 15px; } }
 .app-container .ayshop__head.ay-pagehead { padding-right: 140px !important; }
 @media (max-width: 767px) { .app-container .ayshop__head.ay-pagehead { padding-right: 84px !important; } }
-/* footer: a plain 1.5px rule on top and a big wordmark. The checker strip is gone (critique, Oct 27:
-   one edge motif sitewide, the scallop). */
-.app-container.app-container footer.ay-foot { position: relative; border-top: 1.5px solid #3e2723 !important; }
-.app-container.app-container[data-theme='brand-dark'] footer.ay-foot { border-top-color: #ffedac !important; }
+/* footer: the BrandStrip (espresso bar, pink squares) on top and a big wordmark.
+   Founder, Oct 27 13:20: "i liked that brown bar with the pink inside that we had before on the footer". */
+.app-container.app-container footer.ay-foot { position: relative; border-top: 0 !important; }
+.app-container.app-container footer.ay-foot > .ay-foot__strip { position: absolute; left: 0; right: 0; top: 0; }
 .app-container.app-container .ay-foot__logo { font-size: clamp(44px, 3vw + 30px, 72px) !important; }
 .app-container.app-container:has(.ed-home > .ed-final.ay-band:last-child, .ed-closer--band:last-child) footer.ay-foot { margin-top: 0; }
 

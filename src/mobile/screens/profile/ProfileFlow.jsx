@@ -27,6 +27,7 @@ import { fetchSmsStatus, startSmsVerify, checkSmsVerify, saveSmsPrefs, removeSms
 import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportApi.js';
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 import LegalFooter from '../../components/LegalFooter.jsx';
+import BrandStrip from '../../../components/ui/ay/BrandStrip.jsx';
 import InlineError from '../../../components/InlineError.jsx';
 import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../../../utils/formErrors.js';
 import HealthConnectionsScreen from './HealthConnectionsScreen.jsx';
@@ -654,6 +655,8 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
 
         {/* Monthly check-in is a row above, and "Update answers" is the health profile bar in the header: no duplicate links. */}
       </div>
+      {/* The signature divider at the end of You (founder, Oct 27 13:20). */}
+      <BrandStrip className="ay-you-strip" />
       <LegalFooter />
     </div>
   );

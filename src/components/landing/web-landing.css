@@ -5,7 +5,9 @@
 
 /* ---- 1. hero: the espresso band (fixed colours, light and dark), a faded rain
    behind, everything centred on top, ending in the wavy edge over the pink bar ---- */
-.app-container .hm.wl .wl-hero { position: relative; background: transparent; }
+.app-container .hm.wl .wl-hero { position: relative; background: #f7badd; }
+/* one clean transition: the espresso wave runs straight into the pink strip (no butter sliver, no second rule) */
+.app-container .hm.wl .wl-hero + .lk-bar { border-top: 0; }
 .app-container .hm.wl .wl-hero__band {
   position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center;
   min-height: clamp(520px, calc(100svh - 200px), 640px); padding: 56px var(--ay-margin, 16px) 64px;

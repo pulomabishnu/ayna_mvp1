@@ -4,6 +4,7 @@ import { getStoredConsent, denyConsent, grantConsent } from '../utils/analyticsC
 import '../styles/audit-info.css';
 import '../styles/verify-people.css';
 import '../styles/site-footer.css';
+import BrandStrip from './ui/ay/BrandStrip.jsx';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { installReferralCapture } from '../utils/badges';
 import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
@@ -115,6 +116,8 @@ export default function SiteFooter({
 
   return (
     <footer className="ay-foot">
+      {/* The brown bar with pink inside (founder, Oct 27 13:20): back on top of the footer. */}
+      <BrandStrip className="ay-foot__strip" />
       <div className="ay-foot__inner">
       <div className="ay-foot__grid">
         <div className="ay-foot__brand">

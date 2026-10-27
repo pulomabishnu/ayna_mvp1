@@ -41,16 +41,16 @@ html.ay-motion .ay-sts__knob { animation: ay-sts-nudge 1100ms 900ms var(--ay-eas
   .ay-sts__thumb, .ay-sts__knob, .ay-sts__fill, .ay-sts__label { transition: none !important; animation: none !important; }
 }
 
-/* lg: the landing's hero action (founder, Oct 27 12:10: "CTA is underwhelming").
-   66px tall, a 56px knob, an 18px label, a crisp 1.5px outline and the pink
-   sticker shadow (the one allowed shadow); the one-time knob nudge invites the slide. */
+/* lg: the landing's hero action (founder, Oct 27 12:10 and 13:24). A 68px
+   pill with a 1.5px outline and the pink offset shadow (the only shadow); the
+   knob sits fully inside, 6px from the top, bottom and left, with no shadow of
+   its own; the label is centred in the space right of the knob, no second
+   arrow. The one-time knob nudge invites the slide. */
 .ay-sts.is-lg { max-width: none; }
-.ay-sts.is-lg .ay-sts__track { height: 66px; padding: 5px; box-shadow: 4px 4px 0 #f7badd; }
-.ay-sts.is-lg .ay-sts__thumb, .ay-sts.is-lg .ay-sts__knob { width: 56px; height: 56px; }
-.ay-sts.is-lg .ay-sts__knob { border-width: 2px; }
-.ay-sts.is-lg .ay-sts__knob svg { width: 26px; height: 26px; stroke-width: 2.4; }
-.ay-sts.is-lg .ay-sts__label { inset: 0 14px 0 68px; font-size: clamp(16px, 4.4vw, 18px); font-weight: 800; letter-spacing: -.01em; white-space: nowrap; }
-.ay-sts.is-lg .ay-sts__label svg { width: 20px; height: 20px; stroke-width: 2.4; }
-.ay-sts.is-lg .ay-sts__track { border: 1.5px solid #3e2723; }
-.ay-sts.is-lg.is-ink .ay-sts__track { box-shadow: 4px 4px 0 #f7badd; }
-@media (hover: hover) { html.ay-motion .ay-sts.is-lg .ay-sts__track:hover { box-shadow: 5px 5px 0 #f7badd; } }
+.ay-sts.is-lg .ay-sts__track { height: 68px; padding: 0; border: 1.5px solid #3e2723; box-shadow: 4px 4px 0 #f7badd; }
+.ay-sts.is-lg .ay-sts__thumb { position: absolute; top: 6px; left: 6px; width: 53px; height: 53px; }
+.ay-sts.is-lg .ay-sts__knob { width: 53px; height: 53px; border-width: 1.5px; box-shadow: none; }
+.ay-sts.is-lg .ay-sts__knob svg { width: 24px; height: 24px; stroke-width: 2.4; }
+.ay-sts.is-lg .ay-sts__label { inset: 0 16px 0 71px; font-size: clamp(16px, 4.4vw, 18px); font-weight: 800; letter-spacing: -.01em; white-space: nowrap; }
+.ay-sts.is-lg .ay-sts__label svg { display: none; }
+@media (hover: hover) { html.ay-motion .ay-sts.is-lg .ay-sts__track:hover { box-shadow: 5px 5px 0 #f7badd; } html.ay-motion .ay-sts.is-lg .ay-sts__track:hover .ay-sts__knob { box-shadow: none; } }
