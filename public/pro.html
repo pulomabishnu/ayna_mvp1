@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>ayna Pro Early Access</title>
+  <link rel="stylesheet" href="/pro-pay.css" />
+</head>
+<body>
+  <main class="pro-page">
+    <a class="pro-back" href="/you">← Back to ayna</a>
+    <section class="pro-hero" aria-labelledby="pro-title">
+      <p class="pro-eyebrow">ayna Pro Early Access</p>
+      <h1 id="pro-title">Unlock Pro now. Your paid time starts at launch.</h1>
+      <p class="pro-lede">Pay the Early Access price today and get Pro immediately during beta. Your purchased month or year does not start counting until January 1, 2027.</p>
+      <div class="pro-badge">Up to 50% off Early Access</div>
+    </section>
+
+    <section id="pro-status" class="pro-status" aria-live="polite">
+      <p>Checking your ayna Pro access…</p>
+    </section>
+
+    <section id="pro-plans" class="pro-plans" hidden>
+      <article class="pro-plan">
+        <p class="pro-plan-label">First month</p>
+        <div class="pro-price-row"><del>$8.99</del><strong>$4.99</strong><span>today</span></div>
+        <p>Unlock Pro now. Your first paid month runs from launch, then renews at $8.99/month unless canceled.</p>
+        <button id="pro-month" type="button">Choose monthly</button>
+      </article>
+      <article class="pro-plan pro-plan-featured">
+        <p class="pro-plan-label">First year</p>
+        <div class="pro-price-row"><del>$90</del><strong>$45</strong><span>today</span></div>
+        <p>Unlock Pro now. Your first paid year runs from launch, then renews at $90/year unless canceled.</p>
+        <button id="pro-year" type="button">Choose yearly</button>
+      </article>
+    </section>
+
+    <section class="pro-explainer">
+      <h2>What you’re paying for</h2>
+      <p>Early Access unlocks the Pro experience now while the paid membership clock stays paused until public launch. Pro is designed for deeper Ask ayna access, unlimited Reads and playlists, richer personalized health insights, history and trends, recaps, adaptive routines, advanced tracking, appointment prep, deeper match intelligence, and new member features as they roll out.</p>
+      <p class="pro-fine">You can cancel automatic renewal anytime. If you cancel, any access you already paid for remains through the end of that purchased period.</p>
+    </section>
+
+    <section id="pro-admin" class="pro-admin" hidden>
+      <h2>Focus-group access</h2>
+      <p>Admin only. Grant temporary Pro access without payment.</p>
+      <form id="pro-focus-form">
+        <label>Participant account ID<input id="pro-focus-user" required pattern="[0-9a-fA-F-]{36}" /></label>
+        <label>Minutes<input id="pro-focus-minutes" type="number" min="1" max="240" value="60" /></label>
+        <div class="pro-admin-actions">
+          <button type="submit" value="focus_grant">Grant temporary Pro</button>
+          <button type="submit" value="focus_revoke" class="secondary">End temporary Pro</button>
+        </div>
+      </form>
+    </section>
+  </main>
+  <script src="/pro-pay.js" defer></script>
+</body>
+</html>
