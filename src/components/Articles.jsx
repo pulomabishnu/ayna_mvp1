@@ -1,3 +1,4 @@
+import ProFeatureGate from './ProFeatureGate.jsx';
 import React, { useMemo, useState } from 'react';
 import BackLink from './nav/BackLink.jsx';
 import ProductCard from './ProductCard';
@@ -1186,7 +1187,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   if (selected && DESIGNED_READS[selected.id]) {
     const Designed = DESIGNED_READS[selected.id].Component;
     const nextArticle = ARTICLES.find((a) => a.id === DESIGNED_READS[selected.id].next) || null;
-    return <Designed key={selected.id} onBack={(e) => { if (!plainClick(e)) return; e.preventDefault(); closeRead(); }} nextArticle={nextArticle} onOpenNext={open} onOpenProduct={onOpenProduct} fallback={<article><h1>{selected.title}</h1>{withHeadings(selected.body)}</article>} />;
+    return <ProFeatureGate feature="reads" readId={selected.id} title={selected.title} onBack={closeRead}><Designed key={selected.id} onBack={(e) => { if (!plainClick(e)) return; e.preventDefault(); closeRead(); }} nextArticle={nextArticle} onOpenNext={open} onOpenProduct={onOpenProduct} fallback={<article><h1>{selected.title}</h1>{withHeadings(selected.body)}</article>} /></ProFeatureGate>;
   }
 
   if (selected) {
@@ -1200,6 +1201,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     ].filter((a, i, arr) => arr.findIndex((x) => x.id === a.id) === i).slice(0, 4);
     const tone = READ_SECTION[selected.id] || 'hormonal';
     return (
+      <ProFeatureGate feature="reads" readId={selected.id} title={selected.title} onBack={closeRead}>
       <section className="ct lb lb-read">
         <header className={`lb-rhead lb-tone--${tone}`}>
           <div className="lb-wrap lb-rhead__in">
@@ -1252,6 +1254,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           )}
         </div>
       </section>
+      </ProFeatureGate>
     );
   }
 

@@ -1,3 +1,4 @@
+import { askLimitError } from '../utils/askLimitError.js';
 import React, { useState, useRef, useEffect } from 'react';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import { getSupabaseClient } from '../utils/supabaseClient';
@@ -397,7 +398,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       });
       const data = await res.json().catch(() => ({}));
       if (res.status === 401) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
+      if (res.status === 429) throw askLimitError(data?.error);
       if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
 
       const extras = await aiAnswerExtras(data, { msg, profileSent: Boolean(summarizeProfile(profile || {})), resolveProduct, profile, healthProfile, matchOpts }).catch(() => ({ basedOn: ['ayna’s AI'], sources: [] }));
@@ -427,9 +428,9 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       onChatHistoryUpdate?.(newMessages);
     } catch (err) {
       if (err?.code === 'not_signed_in') {
-        setSendError('Sign in to ask ayna anything. Free accounts get a few chats each week.');
-      } else if (err?.code === 'weekly_limit_reached') {
-        setSendError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
+        setSendError('Sign in to ask ayna anything. Free accounts include limited Ask ayna usage.');
+      } else if (err?.code === 'ask_limit_reached') {
+        setSendError(err.message);
       } else {
         // The failure lives in the conversation, next to the question, with a way forward.
         const failed = [...messagesWithUser, { role: 'assistant', failed: true, question: msg, text: isNetworkError(err) ? err.message : 'I couldn’t answer that just now.' }];

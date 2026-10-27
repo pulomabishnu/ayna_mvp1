@@ -7,7 +7,7 @@
 import { deriveBrandSearchContext } from '../src/utils/productBrandContext.js';
 import { retrieveKnowledgeForProduct, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
-import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
+import { hasPremiumAccess, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 import { callAnthropic, callOpenAI, callGemini, providerConfigured, parseProviderOrder, tryParseJsonCandidate } from './_llm.js';
 import { traceSessionId } from './_prismTrace.js';
@@ -413,7 +413,9 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: 'rate_limited', retryAfterSeconds: rl.retryAfterSec || 60 });
   }
 
-  const isPremium = isPremiumUser(user);
+  let isPremium;
+  try { isPremium = await hasPremiumAccess(user, admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
   if (hasLegacyClientPremiumFlag(user)) {
     console.warn(`[product-insights] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
   }

@@ -428,6 +428,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
     <header className="yh-head ay-pagehead ay-band--espresso">
       <ArchAvatar className="wy-arch" src={cp?.avatar_url && !avatarFailed ? publicMediaUrl(cp.avatar_url) : ''} initial={initial} onError={() => setAvatarFailed(true)} />
       <div className="wy-who">
+        <a className="ay-btn ay-btn--secondary" href="/you/pro">ayna Pro</a>
         {/* The page's one shout (uniqueness pass): her name, oversized, on the espresso band. */}
         <Shout as="h1" size="l" className="wy-shout">{name || 'You'}</Shout>
         <p className="wy-who__meta">{[cp?.username ? `@${cp.username}` : null, memberSince(user.created_at)].filter(Boolean).join(' · ')}</p>

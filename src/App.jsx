@@ -1,3 +1,5 @@
+import ProFeatureGate from './components/ProFeatureGate.jsx';
+import ProAccess from './components/ProAccess.jsx';
 import FeedbackPrompts from './components/FeedbackPrompts';
 import { devPreviewOn } from './utils/devPreview.js';
 import { markOnboardingDone } from './health/onboardingSignal.js';
@@ -193,7 +195,7 @@ const WEB_TAB_VIEWS = {
   ask: ['ask'],
   community: ['community'],
   // My ecosystem and everything reached from it live under You.
-  profile: ['you', 'ecosystem', 'comparison', 'omitted', 'recalls', 'health-data', 'delete-account', 'phone-verify', 'tracked', 'doctor-prep', 'recommendations', 'screenings'],
+  profile: ['you', 'pro', 'ecosystem', 'comparison', 'omitted', 'recalls', 'health-data', 'delete-account', 'phone-verify', 'tracked', 'doctor-prep', 'recommendations', 'screenings'],
 };
 /** Explore's sections as views (Products is the Shop, Resources the Library). */
 const EXPLORE_VIEW = { overview: 'explore', topics: 'explore-topics', services: 'explore-services', products: 'discovery', resources: 'articles' };
@@ -234,7 +236,7 @@ function clearPendingEcosystemReset(userId) {
 // You > My ecosystem. The old addresses still work (PATH_TO_VIEW below and
 // the permanent redirects in vercel.json).
 const VIEW_TO_PATH = {
-  welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/you/ecosystem', you: '/you', community: '/community',
+  pro: '/you/pro', welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/you/ecosystem', you: '/you', community: '/community',
   today: '/today', explore: '/explore', 'explore-topics': '/explore/topics', 'explore-services': '/explore/services', ask: '/ask',
   discovery: '/explore/products', waitlist: '/partners', recommendations: '/recommendations',
   articles: '/explore/resources', screenings: '/screenings', omitted: '/omitted',
@@ -272,7 +274,7 @@ const VIEW_TITLES = {
   today: 'Today', explore: 'Shop', 'explore-topics': 'Health topics', 'explore-services': 'Services', ask: 'Ask ayna',
   waitlist: 'Partner brands', recommendations: 'Your recommendations', articles: 'Resources', screenings: 'Screenings',
   omitted: 'Omitted products', comparison: 'Compare products', recalls: 'Recalls',
-  'doctor-prep': 'Appointment prep', 'profile-edit': 'Edit my answers',
+  pro: 'ayna Pro', 'doctor-prep': 'Appointment prep', 'profile-edit': 'Edit my answers',
   'phone-verify': 'Verify phone', tracked: 'Tracked products', 'delete-account': 'Delete account', 'health-data': 'Health data',
   'privacy-policy': 'Privacy policy', 'consumer-health-data': 'Consumer health data privacy notice', 'terms-of-use': 'Terms of use',
   'how-we-make-money': 'How we make money', 'how-it-works': 'How it works',
@@ -641,7 +643,7 @@ function App() {
     const communityQ = currentView === 'community' ? new URLSearchParams(window.location.search).get('q') : null;
     const exploreQ = ['explore', 'explore-topics', 'explore-services'].includes(currentView) ? new URLSearchParams(window.location.search).get('q') : null;
     // Partners keeps its #brand-… hash so a link can open one brand's card.
-    const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources' || currentView === 'free-product' || currentView === 'free-product-reward')
+    const initialUrl = (currentView === 'pro' || currentView === 'auth-callback' || currentView === 'campus-resources' || currentView === 'free-product' || currentView === 'free-product-reward')
       ? `${path}${window.location.search}${window.location.hash}`
       : currentView === 'waitlist' && /^#brand-[a-z0-9-]+$/.test(window.location.hash) ? `${path}${window.location.hash}`
       // A product link can open one of its tabs (#reviews, #literature, #safety).
@@ -995,7 +997,7 @@ function App() {
     // production. (PROTECTED_VIEWS below is what actually guards private ones.)
     const STATIC_VIEWS = [
       'privacy-policy', 'consumer-health-data', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
-      'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'community',
+      'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'pro', 'community',
       'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'waitlist', 'not-found', 'ecosystem',
       'free-product', 'free-product-reward', 'health', 'shared-answer',
       'today', 'explore', 'explore-topics', 'explore-services', 'ask',
@@ -2646,6 +2648,7 @@ function App() {
             onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
           />
         )}
+        {currentView === 'pro' && <ProAccess user={user} onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }} />}
         {currentView === 'you' && (
           <WebYou
             section={youSection}
@@ -3149,6 +3152,7 @@ function App() {
           />
         )}
         {currentView === 'doctor-prep' && !gatedPreview && (
+          <ProFeatureGate feature="appointment" title="Appointment prep" onBack={() => setCurrentView('ecosystem')}>
           <DoctorPrep
             checkinData={checkinData}
             myProducts={myProducts}
@@ -3157,6 +3161,7 @@ function App() {
             onOpenCheckin={() => setShowCheckin(true)}
             onBack={() => setCurrentView('ecosystem')}
           />
+          </ProFeatureGate>
         )}
 
         {showCheckin && (

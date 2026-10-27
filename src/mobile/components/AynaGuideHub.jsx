@@ -1,3 +1,4 @@
+import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { useState } from 'react';
 import { addMemory, appointmentSummary, completeTrial, removeMemory, removeTrial, startTrial, trialResult } from '../utils/aynaGuide.js';
 import './ayna-guide.css';
@@ -11,7 +12,7 @@ function Score({ value, onChange, label }) {
   </select></label>;
 }
 
-export default function AynaGuideHub({ page, guide, onChange, recap, recapSources = '', recapExportable = true, productNotes = [], profile, onAsk, onBack }) {
+function AynaGuideContent({ page, guide, onChange, recap, recapSources = '', recapExportable = true, productNotes = [], profile, onAsk, onBack }) {
   const [memory, setMemory] = useState('');
   const [action, setAction] = useState('');
   const [goal, setGoal] = useState('');
@@ -89,4 +90,10 @@ export default function AynaGuideHub({ page, guide, onChange, recap, recapSource
       <div className="ay-guide-actions"><button type="button" onClick={copyReport}>{copied ? 'Copied' : 'Copy note'}</button><button type="button" onClick={downloadReport}>Download note</button></div>
     </>}
   </section>;
+}
+
+export default function AynaGuideHub(props) {
+  const premium = ['recap', 'report', 'trial'].includes(props.page);
+  const content = <AynaGuideContent {...props} />;
+  return premium ? <ProFeatureGate feature={props.page === 'report' ? 'appointment' : props.page} title={{ recap: 'Personalized recaps', report: 'Appointment prep', trial: 'Personal check-backs' }[props.page]} onBack={props.onBack}>{content}</ProFeatureGate> : content;
 }

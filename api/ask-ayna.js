@@ -1,3 +1,4 @@
+import { proFeatureRules, consumeProChat } from './_proFeatures.js';
 /**
  * /api/ask-ayna, the GLOBAL "Ask Ayna" widget's real backend.
  *
@@ -21,7 +22,7 @@
 /* global process */
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
-import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
+import { hasPremiumAccess, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, stripDiagnosticLanguage } from './_llm.js';
 import { traceSessionId, traceMessages } from './_prismTrace.js';
 import { stripLinks } from './_catalogGrounding.js';
@@ -102,7 +103,9 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: 'rate_limited' });
   }
 
-  const isPremium = isPremiumUser(user);
+  let isPremium;
+  try { isPremium = await hasPremiumAccess(user, admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
   if (hasLegacyClientPremiumFlag(user)) {
     console.warn(`[ask-ayna] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
   }
@@ -126,9 +129,15 @@ export default async function handler(req, res) {
   let usagePeriod = null;
   let usageUsed = 0;
   let usageLimit = null;
-  if (!isPremium) {
-    const { allowed, used, limit, period, degraded } = await consumeUsage(admin, user.id, 'chat');
-    if (!allowed) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'chat' });
+  let rules;
+  try { rules = await proFeatureRules(admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
+  if (!isPremium || rules.enabled) {
+    let usage;
+    try { usage = rules.enabled ? await consumeProChat(admin, user.id, isPremium, rules) : await consumeUsage(admin, user.id, 'chat'); }
+    catch { return res.status(503).json({ error: 'usage_temporarily_unavailable' }); }
+    const { allowed, used, limit, period, degraded } = usage;
+    if (!allowed) return res.status(429).json({ error: rules.enabled ? 'daily_limit_reached' : 'weekly_limit_reached', used, limit, action: 'chat' });
     usagePeriod = degraded ? null : period;
     usageUsed = used;
     usageLimit = limit;
@@ -196,6 +205,6 @@ export default async function handler(req, res) {
     profileUpdate,
     browseIntent,
     followUps,
-    usage: isPremium ? { unlimited: true } : { used: usageUsed, limit: usageLimit },
+    usage: isPremium && !rules.enabled ? { unlimited: true } : { used: usageUsed, limit: usageLimit },
   });
 }
