@@ -155,6 +155,9 @@ import './styles/product-card-ds.css';
 import './styles/focus-group-oct26.css';
 // Wide screens only: the website laid out for a desktop, not the app stretched (founder, Oct 27).
 import './styles/web-wide.css';
+// The nav's profile-button rules live here (the suggestions row itself is app only).
+import './components/nav/ask-suggest.css';
+import './styles/page-heads.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
 import { readHomeLook } from './mobile/components/homeLook.js';
 import { webHomeView } from './mobile/utils/navTab.js';
