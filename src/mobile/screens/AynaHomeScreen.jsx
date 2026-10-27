@@ -17,6 +17,9 @@ import { takeaway } from '../../health/takeaway.js';
 import { logStreak } from '../../health/streak.js';
 import { HomeHero, HomeHighlights, HomeShortcuts, WeekLine, weekSentence } from '../components/HomeHero.jsx';
 import MetricSheet from '../components/MetricSheet.jsx';
+import MonthSheet from '../components/MonthSheet.jsx';
+import { buildInsights } from '../../health/insights.js';
+import { comingUp } from '../../health/comingUp.js';
 import '../../styles/week-explained.css';
 import TodayViews from '../components/TodayViews.jsx';
 import RoutineTimeline from '../../components/routine/RoutineTimeline.jsx';
@@ -72,7 +75,16 @@ export default function AynaHomeScreen(props) {
   }, [data, today, cycle, hbc, chartOf, bandOf]);
   // Her logging streak, from the days her log has entries (TodayFeed reports them).
   const [loggedDays, setLoggedDays] = useState([]);
+  const [dayLog, setDayLog] = useState({});
+  const onLogged = (days, log) => { setLoggedDays(days); setDayLog(log || {}); };
   const streak = logStreak(loggedDays, today);
+  // "Your month" (the streak row opens it): the existing cycle estimate and coming-up dates, nothing new.
+  const [monthOpen, setMonthOpen] = useState(false);
+  const monthData = useMemo(() => {
+    if (!monthOpen) return null;
+    const estimate = data.rows.length ? buildInsights(data.rows, { today }).sections.find((s) => s.id === 'cycle')?.estimate || null : null;
+    return { estimate, coming: comingUp(cycle, estimate, today, { hormonalBC: hbc, hasProducts: myProducts.length > 0 }) };
+  }, [monthOpen, data, today, cycle, hbc, myProducts.length]);
   // One metric's detail as a bottom sheet (the dials, the highlights and the week tiles all open it).
   const [sheet, setSheet] = useState(null);
   const openMetric = (m) => { if (m === 'cycle' ? cycle : m && chartOf(m)) setSheet(m); else openDashboard(); };
@@ -159,7 +171,7 @@ export default function AynaHomeScreen(props) {
         {!hasProfile && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
         {/* The data is the hero (founder Oct 26 21:46): greeting, three dials, the Rundown bubble and her streak. */}
         <HomeHero name={firstName} today={today} cycle={cycle} hormonalBC={hbc} sleep={chartOf('sleep_minutes')} activity={chartOf('steps')}
-          onOpenMetric={openMetric} onConnect={authUser ? onOpenHealthData || onConnectHealth : onConnectHealth} streak={streak} onLog={() => openDashboard(true)} />
+          onOpenMetric={openMetric} onConnect={authUser ? onOpenHealthData || onConnectHealth : onConnectHealth} streak={streak} onLog={() => openDashboard(true)} onMonth={() => setMonthOpen(true)} />
         {/* .ay-hd: the dashboard's own tokens and card styles, as on the full dashboard. */}
         <div className="ay-hd ay-homefeed">
         {/* Picture first (founder Oct 26 16:43): with health data, her week as a bento of real charts; else the hero art. */}
@@ -189,10 +201,14 @@ export default function AynaHomeScreen(props) {
           onOpenFull={(item, o) => openDashboard(Boolean(o?.log))}
           moreHeading={false}
           renderViews={renderViews}
-          onLogged={setLoggedDays}
+          onLogged={onLogged}
         />
         </div>
       </div>
+      {monthOpen && monthData && (
+        <MonthSheet today={today} rows={data.rows} log={dayLog} cycle={cycle} estimate={monthData.estimate} coming={monthData.coming} hormonalBC={hbc}
+          onLog={() => openDashboard(true)} onClose={() => setMonthOpen(false)} />
+      )}
       {sheet && (
         <MetricSheet metric={sheet} today={today} cycle={cycle} hormonalBC={hbc} bandOf={bandOf}
           chartFor={(m, n) => buildDashboard(data.rows, { days: n, today }).groups.flatMap((g) => g.charts).find((c) => c.metric === m) || null}

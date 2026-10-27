@@ -21,6 +21,8 @@ import { displayName } from '../utils/displayName.js';
 import WeekBento from '../../components/today/WeekBento.jsx';
 import ScoreRings from './ScoreRings.jsx';
 import MetricSheet from './MetricSheet.jsx';
+import MonthSheet from './MonthSheet.jsx';
+import { readLog } from '../../health/dailyLog.js';
 import '../../styles/week-explained.css';
 import '../../styles/health-home.css';
 
@@ -221,6 +223,8 @@ export default function HealthHome({
   const [copied, setCopied] = useState(false);
   // One metric's detail as a bottom sheet (MetricSheet): 'cycle' or a metric id.
   const [sheet, setSheet] = useState(null);
+  // "Your month" from the Cycle tab (app only); her own log is read when it opens.
+  const [monthLog, setMonthLog] = useState(null);
   const topRef = useRef(null);
 
   const days = RANGES.find((r) => r.id === range).days;
@@ -496,6 +500,7 @@ export default function HealthHome({
           <h2 id="ay-db-cycle-title" className="ay-db-h2">{hormonalBC ? 'Bleeding pattern' : phase ? PHASE_WORDS[phase.id] : `Cycle day ${cycle.cycleDay}`}</h2>
           <PhaseLine cycle={cycle} hormonalBC={hormonalBC} />
           <p>{estimate ? <b>Next {hormonalBC ? 'bleed' : 'period'} around {fmtDay(estimate.day)}, estimated</b> : 'Log a few more periods and ayna can estimate your next one.'}</p>
+          {surface === 'app' && <TextButton aria-haspopup="dialog" onClick={() => { let l = {}; try { l = readLog() || {}; } catch { /* no storage */ } setMonthLog(l); }}>See month</TextButton>}
         </section>
       )}
       {areaFindings('cycle').length > 0 && <section className="ay-db-card ay-db-findings" aria-label="Changes in your cycle"><ul>{areaFindings('cycle').map((x, i) => findingFor(x, { openFirst: i === 0 }))}</ul></section>}
@@ -631,6 +636,10 @@ export default function HealthHome({
         {current === 'body' && bodyTab}
         {current === 'routine' && routineTab}
       </div>
+      {monthLog && (
+        <MonthSheet today={today} rows={rows} log={monthLog} cycle={cycle} estimate={estimate} coming={coming} hormonalBC={hormonalBC}
+          onLog={onOpenCheckin || null} onClose={() => setMonthLog(null)} />
+      )}
       {sheet && (
         <MetricSheet
           metric={sheet}

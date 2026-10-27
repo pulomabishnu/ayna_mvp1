@@ -359,7 +359,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   renderViews = null,
   // Website Today's right column: the weekly recap's lines and what she is trying now (WebHealth).
   onWeekly = null, onTries = null, onSetup = null,
-  // Home's streak: the days she logged (her log, as on "Your log"), sorted YYYY-MM-DD keys.
+  // Home's streak and "Your month": the days she logged (sorted YYYY-MM-DD keys), then the log by day.
   onLogged = null,
 }) {
   // DEV only (?fixture=today): sample logs and tries, dropped from production builds.
@@ -374,7 +374,8 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   const setupKey = `${Boolean(intake)}|${logged}|${readRundownPush().on}`;
   const loggedDays = Object.entries(t.log || {}).filter(([, e]) => e && Object.values(e).some((v) => v != null)).map(([d]) => d).sort();
   const loggedKey = loggedDays.join(',');
-  useEffect(() => { onLogged?.(loggedDays); }, [loggedKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  // The log itself rides along for Home's "Your month" (what she logged on a tapped day).
+  useEffect(() => { onLogged?.(loggedDays, t.log || {}); }, [loggedKey, t.log]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     onSetup?.([
       { id: 'profile', label: 'Create your health profile', done: Boolean(intake) },

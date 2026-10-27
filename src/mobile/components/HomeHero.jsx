@@ -52,14 +52,18 @@ function RundownBubble({ count, done }) {
   );
 }
 
-function Streak({ streak, onLog }) {
+// A small calendar: the streak row opens "Your month" (MonthSheet.jsx).
+const CAL = 'M7 3.5v3M17 3.5v3M4.5 9.5h15M6 5.5h12a1.5 1.5 0 0 1 1.5 1.5v11A1.5 1.5 0 0 1 18 19.5H6A1.5 1.5 0 0 1 4.5 18V7A1.5 1.5 0 0 1 6 5.5z';
+
+function Streak({ streak, onLog, onMonth = null }) {
   const { count, loggedToday, week } = streak;
   const said = week.filter((d) => d.on).map((d) => weekdayLong(d.day)).join(', ');
   const title = count > 0 ? `${count}-day streak` : 'Start your streak';
   const sub = loggedToday ? 'Logged today' : count > 0 ? 'Log today to keep it' : 'Log today, about 30 seconds';
   return (
-    <button type="button" className="ay-hh-streak" onClick={onLog} aria-label={`${title}. ${said ? `Logged ${said}.` : 'Nothing logged this week yet.'} ${sub}.`}>
-      <span className="ay-hh-streak__top" aria-hidden="true"><b>{title}</b><small>{sub}</small></span>
+    <button type="button" className="ay-hh-streak" onClick={onMonth || onLog} aria-haspopup={onMonth ? 'dialog' : undefined}
+      aria-label={`${title}. ${said ? `Logged ${said}.` : 'Nothing logged this week yet.'} ${sub}.${onMonth ? ' Open your month.' : ''}`}>
+      <span className="ay-hh-streak__top" aria-hidden="true"><b>{title}</b><small>{sub}</small>{onMonth && <svg className="ay-hh-streak__cal" viewBox="0 0 24 24"><path d={CAL} /></svg>}</span>
       <span className="ay-hh-streak__days" aria-hidden="true">
         {week.map((d) => (
           <span key={d.day} className={`${d.on ? 'is-on' : ''}${d.today ? ' is-today' : ''}`}>
@@ -78,7 +82,7 @@ export function RundownStory() {
   return count > 0 ? <RundownBubble count={count} done={done} /> : null;
 }
 
-export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, sleep = null, activity = null, onOpenMetric = null, onConnect = null, streak = null, onLog = null }) {
+export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, sleep = null, activity = null, onOpenMetric = null, onConnect = null, streak = null, onLog = null, onMonth = null }) {
   const { count, done } = useRundownCount();
   return (
     <section className="ay-hh" aria-labelledby="ay-hh-hi">
@@ -91,7 +95,7 @@ export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, s
         {(count > 0 || streak) && (
           <div className="ay-hh__row">
             {count > 0 && <RundownBubble count={count} done={done} />}
-            {streak && <Streak streak={streak} onLog={onLog} />}
+            {streak && <Streak streak={streak} onLog={onLog} onMonth={onMonth} />}
           </div>
         )}
       </div>
