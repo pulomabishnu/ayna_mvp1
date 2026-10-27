@@ -3,6 +3,8 @@
   const plansBox = document.getElementById('pro-plans');
   const monthButton = document.getElementById('pro-month');
   const yearButton = document.getElementById('pro-year');
+  const continueButton = document.getElementById('pro-continue');
+  const renewLine = document.getElementById('pro-renew');
   const adminBox = document.getElementById('pro-admin');
   const adminForm = document.getElementById('pro-focus-form');
   const params = new URLSearchParams(window.location.search);
@@ -10,6 +12,8 @@
   let token = null;
   let busy = false;
   let latestStatus = null;
+  let selectedPlan = 'year';
+  const planPrice = { month: '$4.99', year: '$45' };
 
   function accessTokenFromBrowser() {
     for (const storage of [window.localStorage, window.sessionStorage]) {
@@ -51,6 +55,9 @@
     busy = value;
     monthButton.disabled = value;
     yearButton.disabled = value;
+    continueButton.disabled = value;
+    continueButton.setAttribute('aria-busy', value ? 'true' : 'false');
+    if (!value) continueButton.textContent = `Continue · ${planPrice[selectedPlan]}`;
     adminForm?.querySelectorAll('button').forEach(button => { button.disabled = value; });
   }
 
@@ -95,7 +102,7 @@
     a.href = '/you';
     a.textContent = 'Sign in to ayna';
     a.style.fontWeight = '800';
-    a.style.color = '#873d59';
+    a.className = 'pro-signin';
     statusBox.append(p, a);
   }
 
@@ -127,7 +134,7 @@
       const cancel = document.createElement('button');
       cancel.type = 'button';
       cancel.textContent = 'Cancel automatic renewal';
-      cancel.style.marginTop = '8px';
+      cancel.className = 'pro-cancel';
       cancel.addEventListener('click', async () => {
         if (busy) return;
         setBusy(true);
@@ -152,8 +159,13 @@
     const plans = new Map((data.plans || []).map(plan => [plan.id, plan]));
     const month = plans.get('month');
     const year = plans.get('year');
-    if (month) monthButton.textContent = `Choose monthly · ${money(month.amount)} now`;
-    if (year) yearButton.textContent = `Choose yearly · ${money(year.amount)} now`;
+    if (month) planPrice.month = money(month.amount).replace(/\.00$/, '');
+    if (year) planPrice.year = money(year.amount).replace(/\.00$/, '');
+    for (const [id, price] of Object.entries(planPrice)) {
+      const el = plansBox.querySelector(`[data-price="${id}"]`);
+      if (el) el.textContent = price;
+    }
+    selectPlan(selectedPlan);
   }
 
   async function loadStatus() {
@@ -172,6 +184,7 @@
     if (busy) return;
     setBusy(true);
     setStatus('Opening secure Stripe checkout…');
+    continueButton.textContent = 'Opening checkout…';
     const storageKey = `ayna_pro_checkout_request_${plan}`;
     let requestId = window.sessionStorage.getItem(storageKey);
     if (!requestId) {
@@ -189,8 +202,21 @@
     }
   }
 
-  monthButton.addEventListener('click', () => checkout('month'));
-  yearButton.addEventListener('click', () => checkout('year'));
+  // Tap a card to choose it; one Continue button opens checkout for the chosen plan.
+  function selectPlan(plan) {
+    selectedPlan = plan;
+    for (const button of [monthButton, yearButton]) {
+      const on = button.dataset.plan === plan;
+      button.classList.toggle('is-on', on);
+      button.setAttribute('aria-checked', on ? 'true' : 'false');
+    }
+    if (!busy) continueButton.textContent = `Continue · ${planPrice[plan]}`;
+    if (renewLine) renewLine.textContent = renewLine.dataset[plan] || '';
+  }
+
+  monthButton.addEventListener('click', () => selectPlan('month'));
+  yearButton.addEventListener('click', () => selectPlan('year'));
+  continueButton.addEventListener('click', () => checkout(selectedPlan));
 
   adminForm?.addEventListener('submit', async event => {
     event.preventDefault();

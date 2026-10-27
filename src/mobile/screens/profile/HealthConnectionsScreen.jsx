@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import HealthConnectionsScreenCore from './HealthConnectionsScreenCore.jsx';
 import ProFeatureGate from '../../../components/ProFeatureGate.jsx';
-import { apiSourceFor, sourceById } from '../../data/healthConnections.js';
+import { Capacitor } from '@capacitor/core';
+import { apiSourceFor, availabilityFor, sourceById } from '../../data/healthConnections.js';
 import { useHealthData } from '../../hooks/useHealthData.js';
 
 /**
@@ -24,6 +25,9 @@ export default function HealthConnectionsScreen(props) {
     const sourceId = String(id || '').split(':')[0];
     const source = sourceById(sourceId);
     if (!source || !['oauth', 'device'].includes(source.availability)) return false;
+    // A source this device can't connect at all (e.g. Apple Health in a browser) shows its own
+    // honest explanation instead of a paywall for something she could not use.
+    if (!availabilityFor(source, { isNative: Capacitor.isNativePlatform(), nativePlatform: Capacitor.getPlatform() }).ok) return false;
     return !connectedSources.has(apiSourceFor(sourceId));
   };
 

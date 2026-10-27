@@ -3,7 +3,8 @@ import BackLink from './nav/BackLink.jsx';
 import { getSelectedNeeds } from '../data/products';
 import HealthConnectionsScreen from '../mobile/screens/profile/HealthConnectionsScreen.jsx';
 import HealthInsightsScreen from '../mobile/screens/profile/HealthInsightsScreen.jsx';
-import { apiSourceFor, sourceById } from '../mobile/data/healthConnections.js';
+import { Capacitor } from '@capacitor/core';
+import { apiSourceFor, availabilityFor, sourceById } from '../mobile/data/healthConnections.js';
 import { useHealthData } from '../mobile/hooks/useHealthData.js';
 import ProFeatureGate from './ProFeatureGate.jsx';
 import '../mobile/screens/profile/health-connections.css';
@@ -30,7 +31,9 @@ export default function WebHealthData({ user, quizResults, onBack, onSignIn, onE
     const sourceId = String(id || '').split(':')[0];
     const source = sourceById(sourceId);
     const connected = health.connections.some((connection) => connection.source === apiSourceFor(sourceId) && connection.status !== 'disconnected');
-    const newSupportedConnection = !connected && ['oauth', 'device'].includes(source?.availability);
+    // Only a connection this device can actually make is sold as Pro; the rest explain themselves.
+    const canConnectHere = availabilityFor(source, { isNative: Capacitor.isNativePlatform(), nativePlatform: Capacitor.getPlatform() }).ok;
+    const newSupportedConnection = !connected && canConnectHere && ['oauth', 'device'].includes(source?.availability);
     push(newSupportedConnection ? `${PRO_CONNECT_PREFIX}${id}` : id);
   };
 
