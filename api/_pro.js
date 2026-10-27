@@ -8,7 +8,6 @@ export const PRO_PLANS = {
     amount: 499,
     standardAmount: 899,
     regularAmount: 899,
-    env: 'STRIPE_PRO_MONTH_PRICE_ID',
     couponEnv: 'STRIPE_PRO_MONTH_COUPON_ID',
     recurringEnv: 'STRIPE_PRO_MONTH_RENEWAL_PRICE_ID',
     label: 'First month',
@@ -17,7 +16,6 @@ export const PRO_PLANS = {
     amount: 4500,
     standardAmount: 9000,
     regularAmount: 9000,
-    env: 'STRIPE_PRO_YEAR_PRICE_ID',
     couponEnv: 'STRIPE_PRO_YEAR_COUPON_ID',
     recurringEnv: 'STRIPE_PRO_YEAR_RENEWAL_PRICE_ID',
     label: 'First year',
@@ -33,7 +31,7 @@ export function proConfig() {
   if (!['http:', 'https:'].includes(origin.protocol) || (origin.protocol !== 'https:' && origin.hostname !== 'localhost')) throw new Error('Invalid SITE_URL');
   const enabled = process.env.PRO_BILLING_ENABLED === '1' && process.env.PRO_CHECKOUT_ENABLED === '1';
   if (!key || !process.env.STRIPE_PRO_WEBHOOK_SECRET || !process.env.STRIPE_PRO_PRODUCT_ID ||
-      !Object.values(PRO_PLANS).every(p => process.env[p.env] && process.env[p.couponEnv] && process.env[p.recurringEnv]) ||
+      !Object.values(PRO_PLANS).every(p => process.env[p.couponEnv] && process.env[p.recurringEnv]) ||
       !['true', 'false'].includes(mode)) throw new Error('Pro billing is not configured');
   return { enabled, livemode: mode === 'true', key, origin: origin.origin,
     product: process.env.STRIPE_PRO_PRODUCT_ID, webhookSecret: process.env.STRIPE_PRO_WEBHOOK_SECRET };
@@ -60,19 +58,17 @@ export function renewalDate(launchAt, plan) {
 }
 export async function validateProPrices(stripe, plan) {
   const offer = PRO_PLANS[plan], config = proConfig();
-  const [price, renewal, coupon] = await Promise.all([
-    stripe.prices.retrieve(process.env[offer.env]),
+  const [renewal, coupon] = await Promise.all([
     stripe.prices.retrieve(process.env[offer.recurringEnv]),
     stripe.coupons.retrieve(process.env[offer.couponEnv]),
   ]);
   const common = p => p.active && p.currency === 'usd' && p.product === config.product && p.livemode === config.livemode;
   const discountAmount = offer.standardAmount - offer.amount;
-  if (!common(price) || price.type !== 'one_time' || price.unit_amount !== offer.standardAmount ||
-      !common(renewal) || renewal.type !== 'recurring' || renewal.unit_amount !== offer.regularAmount ||
+  if (!common(renewal) || renewal.type !== 'recurring' || renewal.unit_amount !== offer.regularAmount ||
       renewal.recurring?.interval !== plan || renewal.recurring?.interval_count !== 1 || renewal.recurring?.usage_type !== 'licensed' ||
       !coupon.valid || coupon.livemode !== config.livemode || coupon.duration !== 'once' || coupon.currency !== 'usd' ||
       coupon.amount_off !== discountAmount || coupon.percent_off !== null) throw new Error('Pro price configuration mismatch');
-  return { price: price.id, renewal: renewal.id, coupon: coupon.id };
+  return { renewal: renewal.id, coupon: coupon.id };
 }
 export async function revokeProPayment(admin, paymentIntent, reason, at) {
   if (!paymentIntent) return;
@@ -120,7 +116,8 @@ export async function fulfillProSession(stripe, admin, sessionId, paidAt) {
       session.metadata.user_id !== userId || !Object.hasOwn(PRO_PLANS, plan)) throw new Error('Invalid Pro session');
   if (session.payment_status !== 'paid' || session.status !== 'complete') return;
   const offer = PRO_PLANS[plan], items = session.line_items;
-  const upfront = items?.data?.find(i => i.price?.id === process.env[offer.env]);
+  const upfront = items?.data?.find(i => i.price?.type === 'one_time' && i.price?.product === config.product &&
+    i.price?.currency === 'usd' && i.price?.unit_amount === offer.standardAmount);
   const recurring = items?.data?.find(i => i.price?.id === process.env[offer.recurringEnv]);
   const expectedDiscount = offer.standardAmount - offer.amount;
   if (!items || items.has_more || items.data.length !== 2 || !upfront || !recurring ||
