@@ -386,7 +386,7 @@ export const WEB_SCREENS = [
     root: '.app-container[data-view="articles"] .lb-lib',
     tips: [
       { id: 'library-search', anchor: '.app-container[data-view="articles"] .lb-search', text: 'Search reads by symptom, product or topic.' },
-      { id: 'library-topics', anchor: '.app-container[data-view="articles"] :is(.lb-chips > :first-child, .lb-toc__list > li:first-child)', text: 'Tap a topic to go to its reads.' },
+      { id: 'library-topics', anchor: '.app-container[data-view="articles"] .lb-topics > :first-child', text: 'Tap a topic to see only those reads.' },
     ],
   },
   {
