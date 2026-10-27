@@ -27,3 +27,8 @@
 /* The wordmark is a button that opens the landing (founder, Oct 27 01:13): it looks exactly like the wordmark. */
 .ayna-mobile .ayna-shared-header button.ay-logo-btn { -webkit-appearance: none; appearance: none; margin: 0; padding: 0 4px 0 0; border: 0; background: none; min-height: 44px; display: inline-flex; align-items: center; cursor: pointer; line-height: 1; }
 .ayna-mobile .ayna-shared-header button.ay-logo-btn:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; border-radius: 8px; }
+/* The wordmark sits straight on the header (founder, Oct 27 13:46: "on the app the logo has a white
+   background?"). An old `.ayna-figma-header button` rule painted every header button white (#302a3e in
+   dark); the logo is text, so no tile: butter page in light, espresso in dark. */
+.ayna-mobile .ayna-figma-header.ayna-shared-header button.ay-logo-btn,
+.ayna-mobile[data-theme='dark'] .ayna-figma-header.ayna-shared-header button.ay-logo-btn { background: transparent !important; border-radius: 8px !important; box-shadow: none !important; }

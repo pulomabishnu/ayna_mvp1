@@ -42,10 +42,10 @@ export default function Rundown({
   onSetUp,
   // A Community card's "Read the post".
   onOpenPost,
-  // The app (founder, Oct 24 20:12): when the daily rundown ends or she exits,
-  // onFinish({ starters, toChat }) hands the end-of-rundown questions to the
-  // ayna chat as its starters; toChat is false when she left for something
-  // else (a read, a post), so only the starters carry over.
+  // The app: when the daily rundown ends or she exits, onFinish({ starters, toChat })
+  // hands the end-of-rundown questions to the ayna chat as its starters. toChat is
+  // always false now (founder, Oct 27 13:51: finishing stays where she was; the
+  // questions are the story's last card instead).
   onFinish,
   // The app's one-screen Home: the card only (the weekly recap is on the full dashboard).
   compact = false,
@@ -277,7 +277,9 @@ export default function Rundown({
         <RundownStory
           cards={cards}
           title={open === 'weekly' ? 'Your week on ayna' : 'Your daily rundown'}
-          onClose={(s) => { close(s); finish(finishedRundown(s)); if (finishedRundown(s)) { try { window.dispatchEvent(new CustomEvent('ayna:rundown-state', { detail: { completed: true, kind: open } })); } catch { /* old browser */ } } }}
+          // Finishing or closing returns her to where she was (founder, Oct 27 13:51): Ask opens only
+          // from a question on the story's last card. The questions still carry over as Ask's starters.
+          onClose={(s) => { close(s); finish(false); if (finishedRundown(s)) { try { window.dispatchEvent(new CustomEvent('ayna:rundown-state', { detail: { completed: true, kind: open } })); } catch { /* old browser */ } } }}
           onSeen={onSeen}
           onAction={onAction}
           onCheckIn={(field, value) => t.saveLog(today, { [field]: value })}

@@ -81,11 +81,15 @@ describe('Today shows the rundown hero only with real content', () => {
 });
 
 describe('End of the rundown', () => {
-  it('Ask follow-ups about the cards she saw open Ask with that question', () => {
-    const onAskFollowUp = vi.fn();
+  it('the questions about the cards she saw are their own last card; a tap opens Ask with that question', () => {
+    const onAskFollowUp = vi.fn(); const onClose = vi.fn();
     const cards = [CARDS[0], { ...CARDS[4], followUps: [{ question: 'Why was my sleep flagged?', cardKey: 'change:sleep' }] }];
-    mount(<RundownStory cards={cards} onClose={() => {}} onAskFollowUp={onAskFollowUp} />);
+    mount(<RundownStory cards={cards} onClose={onClose} onAskFollowUp={onAskFollowUp} />);
     act(() => btn('Next card').click());
+    expect(document.querySelector('.ay-rd-asks')).toBeNull(); // the closing card only says goodbye
+    act(() => btn('Next card').click());
+    expect(document.querySelector('[aria-live]').textContent).toBe('Card 3 of 3: Ask ayna about today');
+    expect(btn('Finish')).toBeTruthy();
     act(() => [...document.querySelectorAll('.ay-rd-asks button')][0].click());
     expect(onAskFollowUp).toHaveBeenCalledWith({ question: 'Why was my sleep flagged?', cardKey: 'change:sleep' });
   });

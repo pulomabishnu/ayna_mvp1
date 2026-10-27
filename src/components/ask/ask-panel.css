@@ -235,3 +235,12 @@ html body .app-container.app-container:is([data-theme='dark'], [data-theme='bran
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip:focus-visible { outline: 3px solid var(--askp-ink) !important; outline-offset: 2px; }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip.is-quiet { border-color: var(--askp-line) !important; font-weight: 500 !important; }
 @media (hover: hover) { .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip:hover { background: var(--askp-soft) !important; } }
+
+/* The suggested-question tabs (Rundown, About you, Safety, Products, Guide): never clip or overlap a
+   label; on a narrow phone the row scrolls sideways instead (founder, Oct 27 13:51). The selected
+   pill is measured per tab in PillTabs/useSlidingInk. */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-filter.ayk-tabs:is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs) {
+  grid-template-columns: repeat(var(--ayk-tabs-n, 4), minmax(max-content, 1fr)) !important;
+  overflow-x: auto !important; overflow-y: hidden !important; scrollbar-width: none; overscroll-behavior-x: contain;
+}
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-filter.ayk-tabs::-webkit-scrollbar { display: none; }

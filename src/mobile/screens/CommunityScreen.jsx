@@ -54,6 +54,7 @@ import TopicEditor from '../../components/community/topics/TopicEditor.jsx';
 import { PostInPicker } from '../../components/community/topics/TopicBits.jsx';
 import { useUserTopics } from '../../components/community/topics/useUserTopics.js';
 import '../../components/community/topics/user-topics.css';
+import { openProPaywall, proLimitFeature } from '../../pro/paywall.js';
 
 const TABS = [ ['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'], ['announcements', 'Announcements'] ];
 // Five feeds in the pill bar (never scrolls on phones); Announcements opens from the pinned card and the Topics sheet.
@@ -858,6 +859,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     if (!saved.ok) {
       // Errors thrown before the network (a missing cover photo) carry their own words.
       setError(saved.error?.message === 'Choose a cover photo first.' ? saved.error.message : community.friendlyError(saved.error));
+      if (proLimitFeature(saved.error) === 'playlists') openProPaywall({ feature: 'playlists' });
       return;
     }
     // Step 2: it's saved. Close, confirm, refresh. Nothing here can turn a

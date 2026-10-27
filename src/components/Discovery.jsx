@@ -1732,7 +1732,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     aria-label="Search products"
                 />
                 <svg className="ayshop__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
-                <KbdHint hidden={searchFocused || Boolean(searchQuery)} />
+                {/* The Shop search with the round arrow (founder, Oct 27 13:46: "i liked ... how the search bar was with the arrows"). */}
+                {inExplore
+                    ? <button type="submit" className="ayshop__search-go" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button>
+                    : <KbdHint hidden={searchFocused || Boolean(searchQuery)} />}
             </form>
             {/* Phones (P1-3): Filters sits beside the search, so the search row is the
                 one sticky toolbar; quick chips, sort and Personalized live in the sheet. */}

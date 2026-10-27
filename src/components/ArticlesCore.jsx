@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import BrandStrip from './ui/ay/BrandStrip.jsx';
 import BackLink from './nav/BackLink.jsx';
 import ProductCard from './ProductCard';
 import SuggestBox from './SuggestBox';
@@ -1374,8 +1373,6 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           </div>
         </div>
       </header>
-      {/* The signature divider under the Library head (founder, Oct 27 13:20). */}
-      <BrandStrip className="lb-strip" />
       {results && <div className="lb-wrap"><SearchAssist query={query} resultCount={results.length} onUse={setQuery} /></div>}
       {/* Topics: one row of chips that filters the reads (founder, Oct 27: "library needs to be easier to nav").
           It scrolls sideways on a phone and moves with the page (no sticky). */}

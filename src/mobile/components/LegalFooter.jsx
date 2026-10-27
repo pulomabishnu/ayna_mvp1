@@ -1,4 +1,5 @@
 import PrivacyPreferencesLink from '../../components/PrivacyPreferencesLink.jsx';
+import BrandStrip from '../../components/ui/ay/BrandStrip.jsx';
 
 // Same absolute URLs already used by the Legal screen in ProfileFlow.jsx
 // (PRIVACY_POLICY_URL/TERMS_URL) and by desktop's SiteFooter, kept here
@@ -32,9 +33,12 @@ const LINK_STYLE = {
  * surface and would be low-contrast against those, so this uses the same
  * translucent-white treatment those screens already use for secondary text.
  */
-export default function LegalFooter({ variant = 'default' }) {
+export default function LegalFooter({ variant = 'default', strip = false }) {
   const light = variant === 'light';
   return (
+    <>
+    {/* The signature divider above the legal note on a few screens (founder, Oct 27 13:44). */}
+    {strip && <BrandStrip className="ay-legal-strip" />}
     <div
       className="ay-legal"
       style={{
@@ -56,5 +60,6 @@ export default function LegalFooter({ variant = 'default' }) {
         <PrivacyPreferencesLink style={LINK_STYLE} separator="" />
       </p>
     </div>
+    </>
   );
 }

@@ -8,64 +8,157 @@
   <title>ayna Pro Early Access</title>
   <link rel="preload" href="/fonts/ayna-display-700.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/pro-pay.css" />
+  <script>
+    // Follow the website's own light/dark choice when she has made one.
+    try { var t = localStorage.getItem('ayna_web_theme_v2'); if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t); } catch (e) { /* storage blocked */ }
+  </script>
 </head>
 <body>
-  <header class="pro-band">
-    <div class="pro-wrap">
-      <a class="pro-back" href="/you"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to ayna</a>
-      <h1 id="pro-title">Unlock ayna Pro</h1>
-      <p class="pro-lede">More Ask ayna, unlimited Reads and playlists, now. Your paid time starts at launch.</p>
-    </div>
+  <div class="pro-march" aria-hidden="true"></div>
+  <header class="pro-top pro-wrap">
+    <a id="pro-back" class="pro-back" href="/you"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="pro-back-label">Back to ayna</span></a>
+    <span class="pro-logo" aria-hidden="true">ayna</span>
   </header>
 
   <main class="pro-page pro-wrap" aria-labelledby="pro-title">
-    <section id="pro-status" class="pro-status" aria-live="polite">
-      <p>Checking your ayna Pro access…</p>
+    <section class="pro-hero">
+      <div class="pro-pitch">
+        <span class="pro-sticker">Early Access · up to 50% off</span>
+        <h1 id="pro-title">Get ayna <em>Pro</em></h1>
+        <p class="pro-tagline">Free helps you find what fits. Pro learns with you.</p>
+        <p class="pro-lede">Deeper personalization, connected health data, advanced insights and tracking, with fewer limits.</p>
+        <p class="pro-early">Subscribe now and Pro unlocks immediately. Use it through December 31, 2026, and your purchased subscription term begins in January 2027.</p>
+      </div>
+
+      <aside class="pro-buy" aria-label="Choose your plan">
+        <div class="pro-frame">
+          <div class="pro-frame-inner">
+            <section id="pro-status" class="pro-status" aria-live="polite">
+              <p>Checking your ayna Pro access…</p>
+            </section>
+
+            <section id="pro-plans" class="pro-plans">
+              <div class="pro-plan-grid" role="radiogroup" aria-label="Choose a plan">
+                <button id="pro-year" class="pro-plan is-on" type="button" role="radio" aria-checked="true" data-plan="year">
+                  <span class="pro-best">50% off</span>
+                  <span class="pro-plan-top"><span class="pro-dot" aria-hidden="true"></span><span class="pro-plan-label">Yearly</span></span>
+                  <span class="pro-amount"><strong data-price="year">$45</strong><del><span class="pro-sr">Regular price </span>$90</del></span>
+                  <span class="pro-plan-sub">$3.75/month</span>
+                </button>
+                <button id="pro-month" class="pro-plan" type="button" role="radio" aria-checked="false" data-plan="month">
+                  <span class="pro-plan-top"><span class="pro-dot" aria-hidden="true"></span><span class="pro-plan-label">Monthly</span></span>
+                  <span class="pro-amount"><strong data-price="month">$4.99</strong><del><span class="pro-sr">Regular price </span>$8.99</del></span>
+                  <span class="pro-plan-sub">first month</span>
+                </button>
+              </div>
+              <button id="pro-continue" class="pro-cta" type="button">Get ayna Pro · $45</button>
+              <p class="pro-trust"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6ZM9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Secure checkout with Stripe. Cancel anytime.</p>
+              <ol class="pro-when" aria-label="How Early Access works">
+                <li><b>Today</b><span id="pro-when-today">Pay $45. Pro unlocks right away.</span></li>
+                <li><b>Jan 1, 2027</b><span id="pro-when-start">Your paid year starts. The beta before it is included.</span></li>
+                <li><b>After that</b><span id="pro-renew" data-month="Renews at $8.99/month. Cancel anytime." data-year="Renews at $90/year. Cancel anytime.">Renews at $90/year. Cancel anytime.</span></li>
+              </ol>
+            </section>
+          </div>
+        </div>
+      </aside>
     </section>
 
-    <ul class="pro-rows" aria-label="Included with ayna Pro">
-      <li>More Ask ayna</li>
-      <li>Unlimited Reads</li>
-      <li>Unlimited playlist creation</li>
-      <li>Connect health apps and wearables</li>
-    </ul>
-
-    <section id="pro-plans" class="pro-plans" hidden>
-      <div class="pro-plan-grid" role="radiogroup" aria-label="Choose a plan">
-        <button id="pro-month" class="pro-plan" type="button" role="radio" aria-checked="false" data-plan="month">
-          <span class="pro-plan-top"><span class="pro-plan-label">Monthly</span></span>
-          <del><span class="pro-sr">Regular price </span>$8.99/month</del>
-          <strong data-price="month">$4.99</strong>
-          <span class="pro-today">today</span>
-        </button>
-        <button id="pro-year" class="pro-plan is-on" type="button" role="radio" aria-checked="true" data-plan="year">
-          <span class="pro-plan-top"><span class="pro-plan-label">Yearly</span><span class="pro-best">Best value</span></span>
-          <del><span class="pro-sr">Regular price </span>$90/year</del>
-          <strong data-price="year">$45</strong>
-          <span class="pro-today">today</span>
-        </button>
-      </div>
-      <button id="pro-continue" class="pro-cta" type="button">Continue · $45</button>
-      <p id="pro-renew" class="pro-renew" data-month="Renews at $8.99/month after your first month. Cancel anytime." data-year="Renews at $90/year after your first year. Cancel anytime.">Renews at $90/year after your first year. Cancel anytime.</p>
+    <section class="pro-adds" aria-labelledby="pro-adds-title">
+      <h2 id="pro-adds-title">What <em>Pro</em> adds</h2>
+      <ol class="pro-cats">
+        <li class="pro-cat">
+          <h3>Connect your health data</h3>
+          <p class="pro-cat-promise">ayna learns from the cycle, sleep, activity and other signals you choose to share.</p>
+          <ul>
+            <li><b>Wearable + health app connections</b><span>Apple Health, Health Connect, Oura, and manual health data or screenshot uploads. More wearables over time.</span></li>
+            <li><b>Health-data personalization</b><span>Connected health and app signals can improve your personalization.</span></li>
+          </ul>
+        </li>
+        <li class="pro-cat">
+          <h3>Go deeper</h3>
+          <p class="pro-cat-promise">Patterns and context over time, not single data points.</p>
+          <ul>
+            <li><b>Deeper personalized insights</b><span>Context around patterns, symptoms, goals, preferences, life stage and health signals.</span></li>
+            <li><b>Advanced tracking</b><span>Detailed tracking over time with trend insights.</span></li>
+          </ul>
+        </li>
+        <li class="pro-cat">
+          <h3>Fewer limits</h3>
+          <p class="pro-cat-promise">Use ayna as much as your needs change.</p>
+          <ul>
+            <li><b>Unlimited personalization</b><span>Retake the quiz whenever your needs change, not once a month.</span></li>
+            <li><b>More Ask ayna</b><span>Up to 50 chats a month, not 5.</span></li>
+            <li><b>More ayna Reads</b><span>Unlimited Reads, not 1 per week.</span></li>
+            <li><b>More playlists</b><span>Unlimited playlists, not 1.</span></li>
+          </ul>
+        </li>
+      </ol>
     </section>
 
-    <details class="pro-more">
-      <summary>How billing works</summary>
-      <div class="pro-more-body">
-        <p>Pay the Early Access price today and get Pro immediately during beta. Your purchased month or year does not start counting until January 1, 2027.</p>
-        <p>Up to 50% off Early Access.</p>
-        <p><b>First month.</b> Unlock Pro now. Your first paid month runs from launch, then renews at $8.99/month unless canceled.</p>
-        <p><b>First year.</b> Unlock Pro now. Your first paid year runs from launch, then renews at $90/year unless canceled.</p>
-        <p>You can cancel automatic renewal anytime. If you cancel, any access you already paid for remains through the end of that purchased period.</p>
+    <section class="pro-compare" aria-labelledby="pro-compare-title">
+      <h2 id="pro-compare-title">Free and <em>Pro</em>, side by side</h2>
+      <div class="pro-table" role="table" aria-label="Free compared with ayna Pro">
+        <div class="pro-tr pro-th" role="row"><span role="columnheader">Feature</span><span role="columnheader">Free</span><span role="columnheader" class="is-pro">ayna Pro</span></div>
+        <div class="pro-tr pro-tg" role="row"><span role="rowheader" aria-colspan="3">Connect your health data</span></div>
+        <div class="pro-tr" role="row"><span role="rowheader">Wearable + health app connections</span><span role="cell"><span class="pro-no">No</span></span><span role="cell" class="is-pro"><span class="pro-yes">Yes</span></span></div>
+        <div class="pro-tr" role="row"><span role="rowheader">Health-data personalization</span><span role="cell">No connected health data</span><span role="cell" class="is-pro">Can use connected health and app signals to improve personalization</span></div>
+        <div class="pro-tr pro-tg" role="row"><span role="rowheader" aria-colspan="3">Go deeper</span></div>
+        <div class="pro-tr" role="row"><span role="rowheader">Deeper personalized insights</span><span role="cell">Basic insights</span><span role="cell" class="is-pro">Deeper, more detailed personalized insights</span></div>
+        <div class="pro-tr" role="row"><span role="rowheader">Advanced tracking</span><span role="cell">Limited / basic</span><span role="cell" class="is-pro">Advanced tracking + trend insights</span></div>
+        <div class="pro-tr" role="row"><span role="rowheader">Recommendation explanations <span class="pro-growing">Growing</span></span><span role="cell">Standard</span><span role="cell" class="is-pro">Deeper context around why products, resources, or insights are relevant</span></div>
+        <div class="pro-tr pro-tg" role="row"><span role="rowheader" aria-colspan="3">Fewer limits</span></div>
+        <div class="pro-tr" role="row"><span role="rowheader">Personalization quiz</span><span role="cell">1 retake per month</span><span role="cell" class="is-pro">Unlimited retakes</span></div>
+        <div class="pro-tr" role="row"><span role="rowheader">Ask ayna</span><span role="cell">5 chats a month</span><span role="cell" class="is-pro">Up to 50 chats a month</span></div>
+        <div class="pro-tr" role="row"><span role="rowheader">ayna Reads</span><span role="cell">1 Read per week</span><span role="cell" class="is-pro">Unlimited</span></div>
+        <div class="pro-tr" role="row"><span role="rowheader">Playlists</span><span role="cell">1 playlist</span><span role="cell" class="is-pro">Unlimited playlists</span></div>
       </div>
-    </details>
+    </section>
 
-    <details class="pro-more">
-      <summary>What you’re paying for</summary>
-      <div class="pro-more-body">
-        <p>Early Access unlocks the Pro experience now while the paid membership clock stays paused until public launch. Pro is designed for deeper Ask ayna access, unlimited Reads and playlists, richer personalized health insights, history and trends, recaps, adaptive routines, advanced tracking, appointment prep, deeper match intelligence, and new member features as they roll out.</p>
-      </div>
-    </details>
+    <section class="pro-free" aria-labelledby="pro-free-title">
+      <h2 id="pro-free-title">What stays free</h2>
+      <p>ayna is never useless without Pro. On the free plan you can:</p>
+      <ul>
+        <li>Complete your personalization profile</li>
+        <li>Receive personalized product and resource recommendations</li>
+        <li>Browse the marketplace</li>
+        <li>See your health match and recommendation results</li>
+        <li>Use basic Ask ayna</li>
+        <li>Access limited Reads</li>
+        <li>Create one playlist</li>
+        <li>Update your quiz monthly</li>
+      </ul>
+    </section>
+
+    <section class="pro-faq" aria-label="Questions">
+      <details class="pro-more">
+        <summary>How billing works</summary>
+        <div class="pro-more-body">
+          <p>Subscribe now and Pro unlocks immediately. Use it through December 31, 2026. Your purchased subscription term begins in January 2027, so the Early Access period does not use up the month or year you bought.</p>
+          <p>Early Access is up to 50% off: $4.99 for your first month instead of $8.99, or $45 for your first year instead of $90.</p>
+          <p><b>Monthly.</b> Your purchased month begins in January 2027, then renews at $8.99/month unless canceled.</p>
+          <p><b>Yearly.</b> Your purchased year begins in January 2027, then renews at $90/year unless canceled.</p>
+        </div>
+      </details>
+      <details class="pro-more">
+        <summary>Can I cancel?</summary>
+        <div class="pro-more-body">
+          <p>Yes. You can cancel automatic renewal anytime on this page. If you cancel, any access you already paid for remains through the end of that purchased period.</p>
+        </div>
+      </details>
+      <details class="pro-more">
+        <summary>What stays free?</summary>
+        <div class="pro-more-body">
+          <p>Your personalization profile, personalized product and resource recommendations, the marketplace, your health match and recommendation results, basic Ask ayna (5 chats a month), limited Reads (1 per week), one playlist and a monthly quiz update.</p>
+        </div>
+      </details>
+    </section>
+
+    <section id="pro-end" class="pro-end" aria-labelledby="pro-end-title">
+      <h2 id="pro-end-title">Ready for more of <em>ayna</em>?</h2>
+      <p class="pro-trust">Early Access price today. Cancel anytime.</p>
+      <button id="pro-end-cta" class="pro-cta" type="button">Get ayna Pro · $45</button>
+    </section>
 
     <section id="pro-admin" class="pro-admin" hidden>
       <h2>Focus-group access</h2>
@@ -81,6 +174,8 @@
       </form>
     </section>
   </main>
+
+  <div class="pro-march" aria-hidden="true"></div>
   <script src="/pro-pay.js" defer></script>
 </body>
 </html>

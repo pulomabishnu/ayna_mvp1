@@ -343,18 +343,32 @@ describe('Rundown to chat hand-off', () => {
     expect(onFinish.mock.calls[0][0].toChat).toBe(false);
   });
 
-  it('finishing the daily rundown lands in the chat with questions about the cards she saw', () => {
-    const onFinish = vi.fn();
-    mount(<Rundown t={t} onFinish={onFinish} onAsk={() => {}} />);
+  it('finishing the daily rundown stays where she was (founder, Oct 27 13:51); its questions are the last card and still carry over', () => {
+    const onFinish = vi.fn(); const onAsk = vi.fn();
+    mount(<Rundown t={t} onFinish={onFinish} onAsk={onAsk} />);
     act(() => btn('Start rundown').click());
     for (let i = 0; i < 20 && !btn('Finish'); i += 1) act(() => btn('Next card').click());
+    // The last card is Ask ayna, with questions from the cards she saw.
+    const asks = [...document.querySelectorAll('.ay-rd-asks button')].map((b) => b.textContent);
+    expect(asks).toContain('Why was my sleep shorter last night?'); // from the sleep data card she saw
     act(() => btn('Finish').click());
     expect(onFinish).toHaveBeenCalledTimes(1);
     const { starters, toChat } = onFinish.mock.calls[0][0];
-    expect(toChat).toBe(true);
-    expect(starters.map((s) => s.question)).toContain('Why was my sleep shorter last night?'); // from the sleep data card she saw
+    expect(toChat).toBe(false);
+    expect(onAsk).not.toHaveBeenCalled();
+    expect(starters.map((s) => s.question)).toContain('Why was my sleep shorter last night?');
     expect(starters[0].usesHealth).toBe(true);
     expect(typeof starters[0].buildContext).toBe('function');
+  });
+
+  it('a question on the last card opens Ask with it', () => {
+    const onFinish = vi.fn(); const onAsk = vi.fn();
+    mount(<Rundown t={t} onFinish={onFinish} onAsk={onAsk} />);
+    act(() => btn('Start rundown').click());
+    for (let i = 0; i < 20 && !btn('Finish'); i += 1) act(() => btn('Next card').click());
+    act(() => [...document.querySelectorAll('.ay-rd-asks button')].find((b) => b.textContent === 'Why was my sleep shorter last night?').click());
+    expect(onAsk).toHaveBeenCalledWith('Why was my sleep shorter last night?', expect.objectContaining({ usesHealth: true }));
+    expect(onFinish.mock.calls[0][0].toChat).toBe(false);
   });
 
   it('leaving for something else carries the starters over without switching to the chat', () => {

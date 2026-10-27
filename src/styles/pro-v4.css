@@ -1,105 +1,148 @@
-/* ayna Pro: the locked card on gated features and the Unlock sheet (app: bottom sheet, web: centred card).
-   Founder vibe (Oct 27): minimal but unique, easy to read, colour only where it clarifies, tap to learn more.
-   One pink band with a wavy edge and the title in the ayna title font; plan cards in the product-card style
-   (butter, 1.5px espresso outline, hard espresso offset shadow); the one pink sticker on the primary button.
-   Brand colours only, no white. 13px minimum, 44px targets. Fixed colours inside the band, so dark reads. */
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access, :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet {
-  --pro-fg: #3e2723; --pro-fg-muted: rgba(62, 39, 35, .78); --pro-bg: #ffedac; --pro-deep: #f6e3a1;
-  --pro-line: #3e2723; --pro-shadow: #3e2723; --pro-rule: rgba(62, 39, 35, .15);
-  --pro-fill: #3e2723; --pro-on-fill: #ffedac;
+/* ayna Pro: the one locked state (ProLock), the gate around it (ProFeatureGate) and the Get ayna Pro
+   sheet (app: bottom sheet that slides up; web: centred card that fades and scales in).
+   Founder (Oct 27, 15:52): "more obvious paywalls ... that brown and pink stripe around it with a lock
+   saying get ayna pro to unlock ... maybe it can be animated and show it moving so its compelling".
+   The checker frame is the BrandStrip's espresso and pink squares, its four edges marching clockwise
+   slowly (static with reduced motion). Brand colours only, no white. 13px minimum, 44px targets. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-gate, .pro-lock, .pro-lock-fold, .pro-sheet) {
+  --pro-fg: #3e2723; --pro-fg-muted: rgba(62, 39, 35, .8); --pro-bg: #ffedac; --pro-deep: #f6e3a1;
+  --pro-line: #3e2723; --pro-shadow: #3e2723; --pro-rule: rgba(62, 39, 35, .16);
+  --pro-fill: #3e2723; --pro-on-fill: #ffedac; --pro-hl: #f7badd;
   color: var(--pro-fg); font-family: var(--ay-font-ui, 'Figtree', system-ui, sans-serif);
 }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) :is(.pro-access, .pro-sheet) {
-  --pro-fg: #ffedac; --pro-fg-muted: rgba(255, 237, 172, .82); --pro-bg: #3e2723; --pro-deep: rgba(255, 237, 172, .08);
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) :is(.pro-gate, .pro-lock, .pro-lock-fold, .pro-sheet) {
+  --pro-fg: #ffedac; --pro-fg-muted: rgba(255, 237, 172, .82); --pro-bg: #3e2723; --pro-deep: #4a312c;
   --pro-line: #ffedac; --pro-shadow: #ffedac; --pro-rule: rgba(255, 237, 172, .2);
-  --pro-fill: #ffedac; --pro-on-fill: #3e2723;
+  --pro-fill: #ffedac; --pro-on-fill: #3e2723; --pro-hl: rgba(247, 186, 221, .45);
 }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-access, .pro-sheet) :is(h2, p) { margin: 0; text-transform: none; letter-spacing: normal; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-access, .pro-sheet) button { font-family: inherit; -webkit-tap-highlight-color: transparent; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-access, .pro-sheet) :focus-visible { outline: 3px solid var(--pro-fg); outline-offset: 2px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-gate, .pro-lock, .pro-lock-fold, .pro-sheet) :is(h2, p, ol, ul) { margin: 0; text-transform: none; letter-spacing: normal; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-gate, .pro-lock, .pro-lock-fold, .pro-sheet) button { font-family: inherit; -webkit-tap-highlight-color: transparent; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-gate, .pro-lock, .pro-lock-fold, .pro-sheet) :focus-visible { outline: 3px solid var(--pro-fg); outline-offset: 2px; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* ---------- Locked card on a gated feature ---------- */
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access { box-sizing: border-box; width: min(560px, calc(100% - 32px)); margin: clamp(20px, 6vw, 64px) auto; padding: 0; background: transparent; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__back {
-  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin: 0 0 12px; padding: 0 4px 0 0;
+/* ---------- The gate around a locked screen ---------- */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-gate { box-sizing: border-box; width: min(580px, calc(100% - 32px)); margin: clamp(16px, 5vw, 56px) auto; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-gate--checking { display: grid; place-items: center; min-height: 160px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-gate__checking { color: var(--pro-fg-muted); font: 500 15px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-gate__back {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin: 0 0 10px; padding: 0 4px 0 0;
   border: 0; background: transparent; color: var(--pro-fg); font: 600 15px/1 var(--ay-font-ui, Figtree, sans-serif); cursor: pointer;
 }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__card {
-  display: grid; gap: 12px; padding: 24px; border: 1.5px solid var(--pro-line); border-radius: 16px;
-  background: var(--pro-deep); box-shadow: 5px 5px 0 var(--pro-shadow);
-}
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__head { display: flex; align-items: center; gap: 10px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__lock { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #f7badd; color: #3e2723; flex: none; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__tag { font: 600 14px/1.2 var(--ay-font-ui, Figtree, sans-serif); color: var(--pro-fg-muted); }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__title { color: var(--pro-fg); font: 700 clamp(24px, 3.4vw, 30px)/1.1 var(--ay-font-display, 'ayna Display', serif); }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__context { color: var(--pro-fg); font: 600 16px/1.35 var(--ay-font-ui, Figtree, sans-serif); }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__copy { color: var(--pro-fg); font: 400 16px/1.5 var(--ay-font-ui, Figtree, sans-serif); }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__error { padding: 10px 12px; border: 1.5px solid #3e2723; border-radius: 8px; background: #f7badd; color: #3e2723; font: 600 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 4px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-access__primary, .pro-sheet__cta) {
-  display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 24px;
-  border: 0; border-radius: 999px; background: var(--pro-fill); color: var(--pro-on-fill);
-  box-shadow: 3px 3px 0 #f7badd; font: 700 16px/1.1 var(--ay-font-ui, Figtree, sans-serif); cursor: pointer;
-  transition: transform 120ms ease, box-shadow 120ms ease;
-}
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-access__primary, .pro-sheet__cta):active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #f7badd; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-access__primary, .pro-sheet__cta):disabled { opacity: .7; cursor: progress; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__secondary {
-  min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: var(--pro-fg);
-  font: 600 15px/1.2 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 4px; cursor: pointer;
-}
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__fine { color: var(--pro-fg-muted); font: 400 13px/1.45 var(--ay-font-ui, Figtree, sans-serif); }
 
-/* ---------- The Unlock sheet ---------- */
+/* ---------- The checker frame ---------- */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame { position: relative; box-sizing: border-box; padding: 12px; border: 1.5px solid #3e2723; border-radius: 22px; background: #3e2723; overflow: hidden; isolation: isolate; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) .pro-frame { border-color: #ffedac; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__inner { position: relative; z-index: 1; border: 1.5px solid #3e2723; border-radius: 12px; background: var(--pro-bg); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) .pro-frame__inner { border-color: #ffedac; }
+
+/* ---------- The locked card ---------- */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock { width: 100%; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__card { display: grid; justify-items: start; gap: 14px; padding: 28px 24px 22px; text-align: left; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__seal {
+  display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%;
+  background: var(--pro-fill); color: #f7badd;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__text { display: grid; gap: 6px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__kicker { color: var(--pro-fg); font: 700 15px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__kicker::before { content: ''; display: inline-block; width: 8px; height: 8px; margin: 0 8px 1px 0; border-radius: 50%; background: #f7badd; box-shadow: 0 0 0 1.5px var(--pro-line); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__title { color: var(--pro-fg); font: 700 clamp(28px, 4vw, 36px)/1.05 var(--ay-font-display, 'ayna Display', serif); letter-spacing: -.01em; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__context { color: var(--pro-fg); font: 600 16px/1.35 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__line { max-width: 44ch; color: var(--pro-fg-muted); font: 400 16px/1.5 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__error { padding: 10px 12px; border: 1.5px solid #3e2723; border-radius: 10px; background: #f7badd; color: #3e2723; font: 600 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__retry { min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #3e2723; font: 700 14px/1 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; width: 100%; margin-top: 4px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-lock__cta, .pro-sheet__cta) {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 26px;
+  border: 0; border-radius: 999px; background: var(--pro-fill); color: var(--pro-on-fill);
+  box-shadow: 4px 4px 0 #f7badd; font: 700 17px/1.1 var(--ay-font-ui, Figtree, sans-serif); cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-lock__cta, .pro-sheet__cta):hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 #f7badd; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-lock__cta, .pro-sheet__cta):active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #f7badd; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-lock__cta, .pro-sheet__cta):disabled { opacity: .75; cursor: progress; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-lock__quiet, .pro-sheet__notnow) {
+  min-height: 44px; padding: 0 6px; border: 0; background: transparent; color: var(--pro-fg-muted);
+  font: 600 15px/1.2 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; cursor: pointer;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__fine { flex-basis: 100%; color: var(--pro-fg-muted); font: 400 14px/1.45 var(--ay-font-ui, Figtree, sans-serif); }
+
+/* Inline: a limit she just hit (Ask ayna, playlists, ecosystem update). Smaller squares, seal beside the words. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame { padding: 8px; border-radius: 18px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame__inner { border-radius: 10px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__card { grid-template-columns: auto 1fr; align-items: start; gap: 10px 14px; padding: 16px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__seal { width: 44px; height: 44px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__title { font-size: 22px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__line { font-size: 14px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__actions { grid-column: 1 / -1; margin-top: 0; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__cta { min-height: 48px; padding: 0 20px; font-size: 16px; }
+
+/* Folded after "Not now": one line that keeps the way back to Pro. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock-fold {
+  display: flex; align-items: center; gap: 10px; box-sizing: border-box; width: 100%; padding: 4px 4px 4px 12px;
+  border: 1.5px solid var(--pro-line); border-radius: 999px; background: var(--pro-deep);
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock-fold__icon { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: #f7badd; color: #3e2723; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock-fold__text { flex: 1; min-width: 0; color: var(--pro-fg); font: 600 14px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock-fold__go { flex: none; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--pro-fill); color: var(--pro-on-fill); font: 700 14px/1 var(--ay-font-ui, Figtree, sans-serif); cursor: pointer; }
+
+/* ---------- The Get ayna Pro sheet ---------- */
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet {
   position: fixed; inset: 0; z-index: 10050; display: flex; align-items: center; justify-content: center; padding: 24px;
-  background: rgba(62, 39, 35, .55);
+  background: rgba(62, 39, 35, .58);
 }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel {
-  position: relative; box-sizing: border-box; width: min(480px, 100%); max-height: calc(100dvh - 48px); overflow: hidden auto;
-  border: 1.5px solid var(--pro-line); border-radius: 16px; background: var(--pro-bg); color: var(--pro-fg);
-  overscroll-behavior: contain; outline: none;
+  position: relative; box-sizing: border-box; width: min(468px, 100%); max-height: calc(100dvh - 48px); overflow: hidden auto;
+  border: 1.5px solid #3e2723; border-radius: 22px; background: var(--pro-bg); color: var(--pro-fg);
+  box-shadow: 6px 6px 0 #f7badd; overscroll-behavior: contain; outline: none;
 }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__band {
-  position: relative; padding: 28px 56px 22px 24px; background: #f7badd; color: #3e2723; margin-bottom: 14px;
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) .pro-sheet__panel { border-color: #ffedac; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-march {
+  display: block; height: 14px; border-bottom: 1.5px solid #3e2723;
+  background: repeating-conic-gradient(#3e2723 0 25%, #f7badd 0 50%) 0 0 / 28px 28px;
 }
-/* The wavy edge from the Shop band, hanging into the butter. */
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__band::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: -13px; height: 14px; pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='16' viewBox='0 0 48 16'%3E%3Cpath d='M0 0h48v4C38 4 36 15 24 15S10 4 0 4Z' fill='%23f7badd'/%3E%3C/svg%3E") repeat-x 0 0 / 40px 14px;
-}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__head { position: relative; display: grid; justify-items: start; gap: 10px; padding: 22px 60px 6px 24px; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__grab { display: none; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__close {
   position: absolute; top: 12px; right: 12px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0;
-  border: 0; border-radius: 50%; background: transparent; color: #3e2723; cursor: pointer;
+  border: 0; border-radius: 50%; background: transparent; color: var(--pro-fg); cursor: pointer;
 }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__close:focus-visible { outline: 3px solid #3e2723; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__title { color: #3e2723; font: 700 30px/1.05 var(--ay-font-display, 'ayna Display', serif); }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__lede { margin-top: 8px; color: #3e2723; font: 500 15px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body { display: grid; gap: 16px; padding: 18px 24px 24px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rows { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rows li { display: flex; align-items: center; gap: 10px; color: var(--pro-fg); font: 500 15px/1.35 var(--ay-font-ui, Figtree, sans-serif); }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__tick { flex: none; width: 22px; height: 22px; padding: 3px; box-sizing: border-box; border-radius: 50%; background: #f7badd; color: #3e2723; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__plans { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 0 5px 5px 0; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__sticker {
+  display: inline-block; padding: 5px 12px; border: 1.5px solid #3e2723; border-radius: 999px; background: #f7badd; color: #3e2723;
+  font: 700 13px/1.1 var(--ay-font-ui, Figtree, sans-serif); transform: rotate(-2deg);
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__title { color: var(--pro-fg); font: 700 38px/1 var(--ay-font-display, 'ayna Display', serif); letter-spacing: -.015em; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__title em { color: #f7badd !important; font-style: normal; -webkit-text-stroke: 1.5px #3e2723; paint-order: stroke fill; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) .pro-sheet__title em { -webkit-text-stroke: 0 !important; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__lede { color: var(--pro-fg); font: 500 16px/1.45 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__lede b { font-weight: 700; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body { display: grid; gap: 16px; padding: 14px 24px 18px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__plans { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 10px 5px 5px 0; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan {
-  display: grid; justify-items: start; align-content: start; gap: 2px; min-height: 132px; margin: 0; padding: 14px 14px 12px;
+  position: relative; display: grid; justify-items: start; align-content: start; gap: 6px; min-height: 124px; margin: 0; padding: 16px 14px 14px;
   border: 1.5px solid var(--pro-line); border-radius: 16px; background: var(--pro-deep); color: var(--pro-fg);
-  box-shadow: 4px 4px 0 var(--pro-shadow); text-align: left; cursor: pointer; transition: transform 120ms ease, box-shadow 120ms ease;
+  box-shadow: 4px 4px 0 var(--pro-shadow); text-align: left; cursor: pointer; transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
 }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan.is-on { background: #f7badd; color: #3e2723; border-color: #3e2723; outline: 2.5px solid var(--pro-line); outline-offset: 2px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan.is-on { background: var(--pro-fill); color: var(--pro-on-fill); border-color: var(--pro-fill); box-shadow: 4px 4px 0 #f7badd; outline: 2px solid #f7badd; outline-offset: 2px; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--pro-shadow); }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan:disabled { cursor: progress; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__top { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; min-height: 30px; margin-bottom: 4px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__best { position: absolute; top: -12px; right: 10px; padding: 3px 10px; border: 1.5px solid #3e2723; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 13px/1.1 var(--ay-font-ui, Figtree, sans-serif); white-space: nowrap; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__top { display: flex; align-items: center; gap: 8px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__dot { flex: none; width: 18px; height: 18px; box-sizing: border-box; border: 2px solid currentColor; border-radius: 50%; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan.is-on .pro-plan__dot { border-color: #f7badd; background: #f7badd; box-shadow: inset 0 0 0 3px var(--pro-fill); }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__label { font: 700 16px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__best { padding: 3px 8px; border: 1.5px solid #3e2723; border-radius: 999px; background: #f7badd; color: #3e2723; font: 600 13px/1.1 var(--ay-font-ui, Figtree, sans-serif); white-space: nowrap; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan.is-on .pro-plan__best { background: #ffedac; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__was { color: inherit; opacity: .85; font: 400 14px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__amount { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__price { font: 700 34px/1 var(--ay-font-display, 'ayna Display', serif); letter-spacing: -.01em; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__today { font: 500 14px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__cta { width: 100%; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__renew { margin-top: -6px; color: var(--pro-fg); font: 500 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); text-align: center; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__error { padding: 10px 12px; border: 1.5px solid #3e2723; border-radius: 8px; background: #f7badd; color: #3e2723; font: 600 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__was { color: inherit; opacity: .8; font: 500 14px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__sub { font: 600 14px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__cta { width: 100%; min-height: 56px; font-size: 18px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__trust { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: -6px; color: var(--pro-fg); font: 600 14px/1.3 var(--ay-font-ui, Figtree, sans-serif); text-align: center; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__error { padding: 10px 12px; border: 1.5px solid #3e2723; border-radius: 10px; background: #f7badd; color: #3e2723; font: 600 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__when { display: grid; padding: 14px 16px 2px; border-radius: 14px; background: var(--pro-deep); list-style: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__when li { position: relative; display: grid; gap: 1px; padding: 0 0 12px 26px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__when li::before { content: ''; position: absolute; left: 0; top: 3px; width: 12px; height: 12px; box-sizing: border-box; border: 1.5px solid var(--pro-line); border-radius: 50%; background: #f7badd; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__when li:not(:last-child)::after { content: ''; position: absolute; left: 5.25px; top: 17px; bottom: 2px; width: 1.5px; background: var(--pro-rule); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__when b { color: var(--pro-fg); font: 700 14px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__when span { color: var(--pro-fg-muted); font: 400 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__more {
   display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44px; margin: 0; padding: 0;
   border: 0; border-top: 1px solid var(--pro-rule); background: transparent; color: var(--pro-fg);
@@ -111,29 +154,76 @@
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__billing[hidden] { display: none; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__billing p { color: var(--pro-fg-muted); font: 400 14px/1.5 var(--ay-font-ui, Figtree, sans-serif); }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__billing b { color: var(--pro-fg); font-weight: 700; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__notnow { justify-self: center; margin-top: -8px; }
 
-/* App and phones: a bottom sheet with a grab bar. */
+/* App and phones: a bottom sheet with a grab bar under the marching strip. */
 @media (max-width: 640px) {
   :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet { align-items: flex-end; padding: 0; }
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel { width: 100%; max-height: 92dvh; border-width: 1.5px 0 0; border-radius: 16px 16px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); }
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__band { padding: 22px 56px 20px 16px; }
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body { padding: 16px 16px 20px; }
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__title { font-size: 28px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel { width: 100%; max-height: 94dvh; border-width: 1.5px 0 0; border-radius: 20px 20px 0 0; box-shadow: none; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__grab { display: block; position: absolute; top: 8px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 999px; background: var(--pro-rule); }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__head { padding: 22px 56px 4px 16px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body { padding: 12px 16px 18px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__title { font-size: 34px; }
   :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__price { font-size: 30px; }
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access { width: calc(100% - 32px); }
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__card { padding: 20px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-gate { width: calc(100% - 32px); }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__card { padding: 24px 18px 18px; }
 }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet { align-items: flex-end; padding: 0; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet__panel { width: 100%; max-height: 92dvh; border-width: 1.5px 0 0; border-radius: 16px 16px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); }
-@media (max-width: 640px) { :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__grab { display: block; position: absolute; top: 8px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 999px; background: rgba(62, 39, 35, .4); } }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet__grab { display: block; position: absolute; top: 8px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 999px; background: rgba(62, 39, 35, .4); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet__panel { width: 100%; max-height: 94dvh; border-width: 1.5px 0 0; border-radius: 20px 20px 0 0; box-shadow: none; padding-bottom: env(safe-area-inset-bottom, 0px); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet__grab { display: block; position: absolute; top: 8px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 999px; background: var(--pro-rule); }
 
+/* Motion: the checker marches slowly, the sheet fades and scales in on the web and slides up in the app.
+   With reduced motion nothing moves and the sheet just appears. */
 @media (prefers-reduced-motion: no-preference) {
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet { animation: pro-fade 180ms ease-out; }
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel { animation: pro-rise 240ms cubic-bezier(.2, .8, .2, 1); }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet { animation: pro-fade 200ms ease-out both; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel { animation: pro-pop 260ms cubic-bezier(.2, .9, .25, 1) both; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet.is-closing { animation: pro-fade-out 200ms ease-in both; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet.is-closing .pro-sheet__panel { animation: pro-pop-out 200ms ease-in both; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock { animation: pro-fade 220ms ease-out both; }
+}
+@media (prefers-reduced-motion: no-preference) and (max-width: 640px) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel { animation-name: pro-up; animation-duration: 320ms; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet.is-closing .pro-sheet__panel { animation-name: pro-down; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet__panel { animation-name: pro-up; animation-duration: 320ms; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet.is-closing .pro-sheet__panel { animation-name: pro-down; animation-duration: 200ms; }
 }
 @media (prefers-reduced-motion: reduce) {
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-plan, .pro-access__primary, .pro-sheet__cta, .pro-sheet__more svg) { transition: none; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-plan, .pro-lock__cta, .pro-sheet__cta, .pro-sheet__more svg) { transition: none; }
 }
 @keyframes pro-fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes pro-rise { from { transform: translateY(24px); opacity: .6; } to { transform: none; opacity: 1; } }
+@keyframes pro-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes pro-pop { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes pro-pop-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(6px) scale(.97); } }
+@keyframes pro-up { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes pro-down { from { transform: none; } to { transform: translateY(100%); } }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ay-ask-prolock { padding: 6px 16px 12px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body a.pro-sheet__cta { text-decoration: none; box-sizing: border-box; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__webnote { color: var(--pro-fg); font: 600 15px/1.4 var(--ay-font-ui, Figtree, sans-serif); text-align: center; }
+
+/* Pro, grouped (founder Oct 27, 17:00: categorize, in the timeline's language): a pink dot on a thin rule,
+   the group's name and one-line promise, then its features as small chips. The tapped one gets a pink dot. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups { display: grid; margin: 0; padding: 0; list-style: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item { position: relative; display: grid; gap: 2px; padding: 0 0 16px 26px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item::before { content: ''; position: absolute; left: 0; top: 4px; width: 12px; height: 12px; box-sizing: border-box; border: 1.5px solid var(--pro-line); border-radius: 50%; background: #f7badd; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item:not(:last-child)::after { content: ''; position: absolute; left: 5.25px; top: 18px; bottom: 2px; width: 1.5px; background: var(--pro-rule); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__name { color: var(--pro-fg); font: 700 16px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__promise { color: var(--pro-fg-muted); font: 400 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; padding: 0; list-style: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip { display: inline-flex; align-items: center; min-height: 26px; padding: 2px 9px; box-sizing: border-box; border: 1px solid var(--pro-line); border-radius: 999px; color: var(--pro-fg); font: 600 13px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip.is-on { border-width: 1.5px; font-weight: 700; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip.is-on::before { content: ''; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: #f7badd; box-shadow: 0 0 0 1px #3e2723; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip__tag { color: var(--pro-fg-muted); font-weight: 500; }
+@media (max-width: 640px) { :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__promise { display: none; } :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item { padding-bottom: 12px; } }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-groups__promise { display: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-groups__item { padding-bottom: 12px; }
+
+/* The marquee ring (CheckerFrame): espresso base, pink squares travelling round the whole shape. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__ring { position: absolute; inset: 0; z-index: 0; overflow: visible; pointer-events: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__base { stroke: #3e2723; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__dash { stroke: #f7badd; stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__dash { animation: pro-lap 16s linear infinite; }
+}
+@keyframes pro-lap { from { stroke-dashoffset: 0; } to { stroke-dashoffset: calc(var(--pro-lap) * -1); } }

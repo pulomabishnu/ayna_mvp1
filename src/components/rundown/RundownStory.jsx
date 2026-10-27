@@ -8,16 +8,20 @@ import { matchText } from '../../utils/matchDisplay.js';
 import { READ_PHOTOS } from '../../data/readCovers.js';
 import { ProductSheetContext } from '../../mobile/productSheetContext.js';
 import { ProductQuickActions } from '../../mobile/components/ProductQuick.jsx';
-import { Mark, Shapes } from '../personality/DS.jsx';
 import { holdLine } from '../../utils/matchState.js';
-import { Seal } from '../personality/Bits.jsx';
-import './rundown-ds.css';
 import { DataViz, DATA_KINDS } from './DataCharts.jsx';
-import './rundown-data.css';
+import { StoryTop } from '../story/StoryShell.jsx';
+import { storyTheme, useStoryGestures } from '../story/storyKit.js';
+import '../story/story.css';
+import './rundown-story.css';
 
 /**
- * The rundown as a full-screen story (UX spec 8): progress at the top, tap
- * right for next and left for previous, swipe, pause, exit, save, ask ayna.
+ * The rundown as a full-screen story (UX spec 8; story pass Oct 27, research
+ * in the hand-off): segmented progress at the top, tap right for next and
+ * left for previous, hold to pause, swipe down or the 44px X to close.
+ * One idea per card: one big visual (a ring, bars, day dots, the product on
+ * its plate, a big number with its unit), the claim set big, at most one
+ * action. The working ("How ayna got this") folds away; safety never does.
  * Reduced motion: no auto-advance and no slide; she moves on by tapping.
  * Screen readers: a modal dialog with "Card 2 of 6" announced, every control
  * a real button, Arrow keys and Escape work.
@@ -26,44 +30,57 @@ const AUTO_MS = 8000;
 const HRSA_FIND_CARE = 'https://findahealthcenter.hrsa.gov/';
 const OUTCOME_LABELS = { helpful: 'Helpful', no_change: 'No change', worse: 'Worse', side_effect: 'Side effect', unsure: 'Not sure', stopped: 'Stopped' };
 const LEVEL_WORDS = ['', 'Limited evidence', 'Some evidence', 'Strong evidence'];
-const STILL = new Set(['checkin', 'care', 'followup']); // never auto-advance past these
+const STILL = new Set(['checkin', 'care', 'followup', 'ask']); // never auto-advance past these
 
 const reducedMotion = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
-const isControl = (el) => Boolean(el?.closest?.('button, a, input, select, textarea, summary, details[open], [role="group"]'));
 
 function Evidence({ level }) {
   if (!level) return null;
   return <span className="ay-rd-meter" role="img" aria-label={LEVEL_WORDS[level]} data-level={level}><i /><i /><i /><b>{LEVEL_WORDS[level]}</b></span>;
 }
 
-/* One drawn mark per kind of card, in a disc beside its label (decoration only). */
-const KICKER_MARK = { pattern: 'wave', change: 'star', match: 'heart', saved: 'heart', education: 'asterisk', symptom: 'flower', goal: 'star', community: 'flower', win: 'sparkle', week: 'moon', safety: 'asterisk', frame: 'sparkle' };
+/** The number a stat card is about, with its real unit from the same sentence ("5 days", "2 patterns"). */
+function statNumber(card) {
+  if (card.figure?.of) return { n: card.figure.n, unit: `of ${card.figure.of} days` };
+  const m = String(card.title || '').match(/(\d+)\s+(?:of\s+\d+\s+)?([a-z]+)/i);
+  return m ? { n: m[1], unit: m[2] } : null;
+}
 
-/* Type as form (Wrapped 2024): one big visual per card, only from real data:
-   today's date, the story's own contents, the read's real photo, her own count. */
-function CardArt({ card }) {
-  if (card.kind === 'opening') {
-    const day = String(card.key || '').split(':')[1] || '';
-    const d = day ? new Date(`${day}T12:00:00`) : null;
-    // Today's date as a big Bricolage numeral on a colour disc, with drawn shapes around it.
-    return d ? <div className="ay-rd-art is-opening" aria-hidden="true"><span className="ay-rd-art__date"><b>{d.getDate()}</b><small>{d.toLocaleDateString('en-US', { weekday: 'long' })}</small></span><Shapes className="ay-rd-art__shapes" /></div> : null;
+/* One big visual per card, only from real data: today's date, the read's
+   real photo, her own count, the cards she just saw. Nothing drawn for show. */
+function CardArt({ card, count }) {
+  if (card.kind === 'opening' && String(card.key || '').startsWith('opening:')) {
+    const day = String(card.key || '').split(':').pop() || '';
+    const d = /^\d{4}-\d{2}-\d{2}$/.test(day) ? new Date(`${day}T12:00:00`) : null;
+    return d ? <p className="ays-big ay-rd-art is-date" aria-hidden="true"><b>{d.getDate()}</b><small>{`${d.toLocaleDateString('en-US', { weekday: 'long' })}, ${d.toLocaleDateString('en-US', { month: 'long' })}`}</small></p> : null;
   }
-  if (card.kind === 'closing') return <div className="ay-rd-art is-closing" aria-hidden="true"><Seal className="ay-rd-art__seal" text="your rundown · see you tomorrow · " /></div>;
+  if (card.kind === 'closing') {
+    // The cards she just went through, as one closed ring.
+    return count > 0 ? (
+      <figure className="ay-rdd-viz ay-rdd-ringwrap ay-rd-art is-done" aria-hidden="true">
+        <span className="ay-rdd-ringbox">
+          <svg viewBox="0 0 120 120" className="ay-rdd-ring"><circle className="ay-rdd-track" cx="60" cy="60" r="52" /><circle className="ay-rdd-arc" cx="60" cy="60" r="52" pathLength="100" style={{ strokeDashoffset: 0 }} transform="rotate(-90 60 60)" /></svg>
+          <span className="ay-rdd-center"><b>{count}</b><small>{count === 1 ? 'thing' : 'things'}</small></span>
+        </span>
+      </figure>
+    ) : null;
+  }
   if (card.kind === 'read' && READ_PHOTOS[card.readId]) return <div className="ay-rd-art is-photo" aria-hidden="true"><img src={READ_PHOTOS[card.readId]} alt="" /></div>;
   if (card.kind === 'stat') {
-    const m = String(card.title || '').match(/\d+/);
-    return m ? <div className="ay-rd-art is-stat" aria-hidden="true"><span className="ay-rd-art__num">{m[0]}</span></div> : null;
+    const s = statNumber(card);
+    if (!s) return null;
+    return (
+      <div className="ay-rd-art is-stat" aria-hidden="true">
+        <p className="ays-big is-huge"><b>{s.n}</b><small>{s.unit}</small></p>
+        {card.figure?.days && <ol className="ay-rd-week">{card.figure.days.map((d) => <li key={d.day} className={d.on ? 'is-on' : ''}><i /><span>{new Date(`${d.day}T12:00:00`).toLocaleDateString('en-US', { weekday: 'narrow' })}</span></li>)}</ol>}
+      </div>
+    );
   }
-  // Cards that are only words get a small drawn composition from their own kind (Wrapped's layered shapes, ayna's marks).
-  if (!card.facts && !card.steps && (['text', 'checkin', 'followup', 'safety'].includes(card.kind) || card.category === 'symptom' || card.category === 'safety')) {
-    const mark = KICKER_MARK[card.category] || 'sparkle';
-    return <div className="ay-rd-art is-marks" aria-hidden="true"><span className="ay-rd-art__disc"><Mark name={mark} /></span><Mark name="sparkle" className="ay-rd-art__s1" /><Mark name={mark === 'flower' ? 'star' : 'flower'} className="ay-rd-art__s2" /></div>;
-  }
+  if (card.kind === 'community' && card.body) return <blockquote className="ay-rd-art is-quote"><p>{card.body}</p></blockquote>;
   return null;
 }
 
 function Body({ card, h, done }) {
-  const it = card.item;
   switch (card.kind) {
     case 'checkin':
       return (
@@ -83,13 +100,13 @@ function Body({ card, h, done }) {
       );
     case 'match': {
       const m = card.match;
-      // The founder's product card (the one in Explore), as a row. The app
-      // (product sheet available): tap it for the sheet over this card, and
-      // Buy, Save, Add to my routine are one tap each under it.
+      // The founder's product card (Explore's), big: the photo on its white
+      // plate is the card's one visual. The app (product sheet available):
+      // tap it for the sheet over this card; Buy, Save, Add are one tap each.
       if (h.sheet) {
         return (
           <div className="ay-rd-product has-open">
-            <AppProductCard product={m.product} variant="row" quizAnswers={h.sheet.quizAnswers || null} matchOpts={h.sheet.matchOpts} onClick={() => h.openSheet(m.product)} onOpenWhyMatch={() => h.openSheet(m.product)} />
+            <AppProductCard product={m.product} quizAnswers={h.sheet.quizAnswers || null} matchOpts={h.sheet.matchOpts} onClick={() => h.openSheet(m.product)} onOpenWhyMatch={() => h.openSheet(m.product)} />
             <Evidence level={m.evidence} />
             <ProductQuickActions product={m.product} saved={h.sheet.isSaved(m.product.id)} onToggleSaved={h.sheetSave} inRoutine={h.sheet.inRoutine(m.product.id)} onAddToRoutine={h.sheetAdd} placement="rundown" />
           </div>
@@ -97,7 +114,7 @@ function Body({ card, h, done }) {
       }
       return (
         <div className="ay-rd-product">
-          <ProductCard product={m.product} className="is-row" matchPercent={m.percent} matchLabel={matchText(m.percent)} why={m.why} onOpen={h.whyMatch || undefined} onShowWhy={h.whyMatch || null} />
+          <ProductCard product={m.product} matchPercent={m.percent} matchLabel={matchText(m.percent)} why={m.why} onOpen={h.whyMatch || undefined} onShowWhy={h.whyMatch || null} />
           <Evidence level={m.evidence} />
           {h.whyMatch && <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => h.whyMatch(m.product)}>Why this match?</button></span>}
         </div>
@@ -110,8 +127,8 @@ function Body({ card, h, done }) {
       return (
         <div className={`ay-rd-product${h.sheet ? ' has-open' : ''}`}>
           {h.sheet
-            ? <AppProductCard product={card.product} variant="row" quizAnswers={h.sheet.quizAnswers || null} matchOpts={h.sheet.matchOpts} onClick={() => h.openSheet(card.product)} onOpenWhyMatch={() => h.openSheet(card.product)} />
-            : <ProductCard product={card.product} className="is-row" onOpen={h.whyMatch || undefined} />}
+            ? <AppProductCard product={card.product} quizAnswers={h.sheet.quizAnswers || null} matchOpts={h.sheet.matchOpts} onClick={() => h.openSheet(card.product)} onOpenWhyMatch={() => h.openSheet(card.product)} />
+            : <ProductCard product={card.product} onOpen={h.whyMatch || undefined} />}
           {st?.kind === 'held' && <p className="ay-rd-holdline"><span className="ay-rd-hold">{st.label}</span>{holdLine(st)}</p>}
           <span className="ay-rd-actions">
             {h.compare && <button type="button" className="ay-rd-primary" onClick={() => h.compare(card.product)}>Compare</button>}
@@ -127,6 +144,7 @@ function Body({ card, h, done }) {
     case 'read':
       return h.openRead ? <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => h.openRead(card.readId)}>Learn more</button></span> : null;
     case 'care': {
+      const it = card.item;
       const tel = it?.level === 'urgent' && /911/.test(it?.title || '');
       return (
         <span className="ay-rd-actions">
@@ -135,11 +153,6 @@ function Body({ card, h, done }) {
               : <a className="ay-rd-primary" href={HRSA_FIND_CARE} target="_blank" rel="noopener noreferrer">Find care<span className="sr-only"> (opens in a new tab)</span></a>}
         </span>
       );
-    }
-    case 'opening': {
-      // What is inside, in story order (the real card labels).
-      const inside = (h.list || []).filter((c) => c.category !== 'frame');
-      return inside.length ? <ol className="ay-rd-art__inside" aria-label="In this rundown">{inside.map((c) => <li key={c.key}>{c.kicker}</li>)}</ol> : null;
     }
     case 'period':
     case 'cycle':
@@ -162,25 +175,54 @@ function Body({ card, h, done }) {
     case 'list':
       return <ul className="ay-rd-lines">{card.lines.map((l) => <li key={l}>{l}</li>)}</ul>;
     case 'closing':
-      return (<>
-        {h.askFollowUp && card.followUps?.length > 0 && (
-          <div className="ay-rd-asks">
-            <p className="ay-rd-basis">Ask ayna about today</p>
-            <ul>
-              {card.followUps.map((f) => <li key={f.question}><button type="button" onClick={() => h.askFollowUp(f)}><span>{f.question}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>)}
-            </ul>
-          </div>
-        )}
+      // The questions live on their own last card now (founder, Oct 27 13:51): this one only says goodbye.
+      return (
         <span className="ay-rd-actions">
-          {h.ask && <button type="button" className="ay-rd-primary" onClick={() => h.ask('')}>Ask ayna</button>}
+          {h.remindTomorrow && <button type="button" className="ay-rd-primary" onClick={h.remindTomorrow}>Remind me tomorrow</button>}
           {h.explore && <button type="button" className="ay-rd-link" onClick={h.explore}>Explore for you</button>}
-          <button type="button" className="ay-rd-link" onClick={h.close}>Done</button>
-          {h.remindTomorrow && <button type="button" className="ay-rd-link" onClick={h.remindTomorrow}>Remind me tomorrow</button>}
+          {!h.hasAsk && <button type="button" className="ay-rd-link" onClick={h.close}>Done</button>}
         </span>
+      );
+    case 'ask':
+      // Ask ayna as the last card: 2 or 3 questions from the cards she just saw.
+      // A tap opens Ask with that question; that is the way into Ask from here.
+      return (<>
+        <div className="ay-rd-asks">
+          <ul>
+            {card.followUps.map((f) => <li key={f.question}><button type="button" onClick={() => h.askFollowUp(f)}><span>{f.question}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>)}
+          </ul>
+        </div>
+        <span className="ay-rd-actions"><button type="button" className="ay-rd-link" onClick={h.close}>Done</button></span>
       </>);
     default:
       return null;
   }
+}
+
+/** The working behind a card: what it is based on, sources, Not useful. One tap away, never on the glance. */
+function More({ card, h, onSeeData, onNotUseful, hide, dataAsk }) {
+  const has = card.facts || card.changed || card.mayAffect || card.canDo || card.more || card.basisLine || card.reason || (card.footnote && card.kind !== 'community') || card.sources?.length || (DATA_KINDS.has(card.kind) && !card.protected && onNotUseful);
+  if (!has || card.protected) return null;
+  return (
+    <details className="ay-rdd-more">
+      <summary>How ayna got this</summary>
+      {card.facts && <dl className="ay-rd-facts">{card.facts.map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}
+      {(card.changed || card.mayAffect || card.canDo) && (
+        <dl className="ay-rd-steps">
+          {card.changed && <div><dt>What changed</dt><dd>{card.changed}</dd></div>}
+          {card.mayAffect && <div><dt>What it may affect</dt><dd>{card.mayAffect}</dd></div>}
+          {card.canDo && <div><dt>What you can do</dt><dd>{card.canDo}</dd></div>}
+        </dl>
+      )}
+      {card.more && <p className="ay-rd-basis">{card.more}</p>}
+      {card.reason && <p className="ay-rd-basis">{card.reason}</p>}
+      {card.basisLine && <p className="ay-rd-basis">{card.basisLine}</p>}
+      {card.footnote && card.kind !== 'community' && <p className="ay-rd-basis">{card.footnote}</p>}
+      {(card.sources || []).length > 0 && <p className="ay-rd-basis">Source: {card.sources.map((s, k) => <span key={s.url}>{k ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></span>)}</p>}
+      {dataAsk && card.seeData && onSeeData && <button type="button" className="ay-rd-link" onClick={() => h.seeData(card.seeData)}>See data</button>}
+      {DATA_KINDS.has(card.kind) && onNotUseful && <NotUsefulMenu onPick={(reason) => hide(card, reason)} />}
+    </details>
+  );
 }
 
 /**
@@ -197,10 +239,15 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   const [hidden, setHidden] = useState({});
   const [msg, setMsg] = useState('');
   const [rm] = useState(reducedMotion);
+  const [theme] = useState(storyTheme);
   const rootRef = useRef(null);
   const [backTo] = useState(() => (typeof document !== 'undefined' ? document.activeElement : null));
-  const startX = useRef(null);
-  const list = cards.filter((c) => !hidden[c.key]);
+  const shown = cards.filter((c) => !hidden[c.key]);
+  // The end-of-rundown questions become their own last card (founder, Oct 27 13:51):
+  // finishing no longer opens Ask; a tap on a question does.
+  const closingCard = shown.find((c) => c.kind === 'closing');
+  const askCard = onAskFollowUp && closingCard?.followUps?.length ? { key: `ask:${closingCard.key}`, category: 'frame', kind: 'ask', kicker: '', title: 'Ask ayna about today', followUps: closingCard.followUps.slice(0, 3) } : null;
+  const list = askCard ? [...shown, askCard] : shown;
   const n = list.length;
   const card = list[Math.min(i, n - 1)];
   // The cards can be rebuilt while she is on one (her period answer adjusts
@@ -216,12 +263,14 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     }
     curKey.current = sig.split('|')[Math.min(i, n - 1)];
   }, [sig, i, n]);
-  // In the app the product card has one-tap Buy, Save and Add: it waits for her.
-  const auto = !rm && !paused && !suspended && card && !STILL.has(card.kind) && !card.check && !card.flowAsk && card.kind !== 'closing' && !(sheet && card.kind === 'match');
 
   const close = useCallback(() => { onClose?.({ seen: i + 1, count: n }); try { backTo?.focus?.(); } catch { /* gone */ } }, [onClose, i, n, backTo]);
   const go = useCallback((d) => setI((x) => Math.max(0, Math.min(n - 1, x + d))), [n]);
-  useEffect(() => { if (card) onSeen?.(card); }, [card, onSeen]);
+  const gest = useStoryGestures({ onPrev: () => go(-1), onNext: () => go(1), onClose: close });
+  // In the app the product card has one-tap Buy, Save and Add: it waits for her.
+  const auto = !rm && !paused && !gest.held && !suspended && card && !STILL.has(card.kind) && !card.check && !card.flowAsk && card.kind !== 'closing' && !(sheet && card.kind === 'match');
+
+  useEffect(() => { if (card && card.kind !== 'ask') onSeen?.(card); }, [card, onSeen]);
   useEffect(() => { rootRef.current?.focus(); }, []);
   useEffect(() => {
     if (!auto) return undefined;
@@ -240,8 +289,10 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   }, [go, close, suspended]);
   if (!card) return null;
 
+  const hide = (c, reason) => { onNotUseful(c, reason); setHidden((s) => ({ ...s, [c.key]: true })); setMsg('Thanks. You will see less like this.'); };
   const h = {
     list,
+    hasAsk: Boolean(askCard),
     next: () => go(1),
     close,
     checkIn: (c, v) => { onCheckIn?.(c.field, v); setDone((s) => ({ ...s, [c.key]: { value: v } })); onAction?.(c, 'answer'); },
@@ -253,115 +304,80 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     unsave: onUnsave ? (p) => { onUnsave(p); setMsg('Removed from your saved items.'); onAction?.(card, 'not_relevant'); go(1); } : null,
     openRead: onOpenRead ? (id) => { onAction?.(card, 'open'); onOpenRead(id); } : null,
     openPost: onOpenPost ? (id) => { onAction?.(card, 'open'); onOpenPost(id); } : null,
+    seeData: (d) => { onAction?.(card, 'open'); onSeeData?.(d); },
     sheet,
     openSheet: sheet ? (p) => { onAction?.(card, 'open'); sheet.open(p); } : null,
     sheetSave: sheet ? (p) => { const was = sheet.isSaved(p.id); sheet.toggleSaved(p); if (!was) onAction?.(card, 'save'); } : null,
     sheetAdd: sheet ? (p) => { sheet.addToRoutine(p); onAction?.(card, 'add'); } : null,
     ask: onAsk ? (q) => { onAction?.(card, 'ask'); onAsk(q); } : null,
     explore: onExplore ? () => { onAction?.(card, 'open'); onExplore(); } : null,
-    askFollowUp: onAskFollowUp ? (f) => { onAction?.(card, 'ask'); onAskFollowUp(f); } : null,
+    askFollowUp: onAskFollowUp ? (f) => { onAction?.(closingCard || card, 'ask'); onAskFollowUp(f); } : null,
     findCare: onFindCare,
     remindTomorrow: onRemindTomorrow ? async () => { setMsg(await onRemindTomorrow()); onAction?.(card, 'remind'); } : null,
   };
   const isData = DATA_KINDS.has(card.kind);
   const dataAsk = isData && onAsk ? (card.ask || card.followUps?.[0] || null) : null;
-  const hasMore = isData && Boolean(card.facts || card.changed || card.mayAffect || card.canDo || card.more || card.basisLine || card.sources?.length || (!card.protected && onNotUseful));
-  const savable = card.kind === 'match' ? card.match.product : card.kind === 'read' ? null : null;
-  const tap = (e) => {
-    if (isControl(e.target)) return;
-    const r = e.currentTarget.getBoundingClientRect();
-    go(e.clientX - r.left < r.width * 0.3 ? -1 : 1);
-  };
-  const tone = card.tone && card.category !== 'safety' ? `is-${card.tone}` : card.category === 'safety' ? 'is-ink' : card.kind === 'opening' || card.kind === 'closing' ? 'is-ink' : ({ pattern: 'is-sky', change: 'is-sky', match: 'is-pink', saved: 'is-pink', education: 'is-butter', symptom: 'is-butter', goal: 'is-butter', community: 'is-sky', win: 'is-pink', week: 'is-sky' })[card.category] || 'is-butter';
+  const savable = card.kind === 'match' && !sheet ? card.match.product : null;
+  // Two surfaces only (founder, Oct 27: calm, one theme): espresso for the frame,
+  // data and safety cards (the Your data band), butter for the rest. Dark mode: both espresso.
+  const surface = isData || card.category === 'safety' || ['opening', 'closing', 'ask'].includes(card.kind) ? 'is-espresso' : 'is-butter';
+  const content = list.filter((c) => c.category !== 'frame').length;
+  // One action on the glance: the card's own (Body), else Ask why / See data.
+  const oneAction = isData && !card.check && !card.flowAsk
+    ? (dataAsk ? <button type="button" className="ay-rd-primary" onClick={() => h.ask(dataAsk)}>Ask why</button>
+      : card.seeData && onSeeData ? <button type="button" className="ay-rd-primary" onClick={() => h.seeData(card.seeData)}>See data</button> : null)
+    : !isData && card.seeData && onSeeData ? <button type="button" className="ay-rd-primary" onClick={() => h.seeData(card.seeData)}>See data</button> : null;
+  const art = isData ? <DataViz card={card} /> : <CardArt card={card} count={content} />;
+  const safety = card.category === 'safety' || card.kind === 'care';
 
   const node = (
-    <div ref={rootRef} className={`ay-rd ${tone} is-${card.kind}${rm ? ' is-still' : ''}`} role="dialog" aria-modal="true" aria-roledescription="story" aria-label={title} tabIndex={-1}>
-      {/* Phone: the frame is the screen. Desktop: a 9:16 poster on a dark scrim (DESIGN_RESEARCH_OCT24 B5). */}
-      <div className="ay-rd-frame">
-      <div className="ay-rd-top">
-        <ol className="ay-rd-progress" aria-hidden="true">
-          {list.map((c, k) => <li key={c.key} className={k < i ? 'is-done' : k === i ? `is-now${auto ? ' is-running' : ''}` : ''} style={k === i ? { '--ay-rd-ms': `${AUTO_MS}ms` } : undefined}><i /></li>)}
-        </ol>
-        <div className="ay-rd-bar">
-          <span className="ay-rd-count">{title}</span>
-          {!rm && <button type="button" className="ay-rd-icon" aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={() => setPaused((v) => !v)}>{paused ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg> : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5h3v14H8zM13 5h3v14h-3z" /></svg>}</button>}
-          <button type="button" className="ay-rd-icon" aria-label="Close rundown" onClick={close}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>
+    <div ref={rootRef} className={`ay-rd ays ${surface} is-${card.kind}${rm ? ' is-still' : ''}`} data-theme={theme} role="dialog" aria-modal="true" aria-roledescription="story" aria-label={title} tabIndex={-1}>
+      <div className="ay-rd-frame ays-frame">
+        <StoryTop
+          count={n} index={i} running={auto} ms={AUTO_MS} title={title}
+          paused={paused} onPause={rm ? null : () => setPaused((v) => !v)} pauseLabels={['Pause', 'Play']}
+          onClose={close} closeLabel="Close rundown"
+        />
+        <p className="sr-only" aria-live="polite">{`Card ${i + 1} of ${n}: ${card.title}`}</p>
+        <div className="ay-rd-stage ays-stage" {...gest.bind}>
+          <article className={`ay-rd-card ays-card${isData ? ' is-data' : ''}${art ? ' has-art' : ''}`} key={`${card.key}:${card.title}`} aria-labelledby={`ay-rd-t-${i}`}>
+            {art && <div className="ays-visual">{art}</div>}
+            <div className="ays-words">
+              {/* The frame cards' labels ("Your daily rundown", "Done") repeat the bar: not shown. */}
+              {card.kicker && card.category !== 'frame' && <p className="ay-rd-kicker ays-kicker">{card.kicker}</p>}
+              <h2 id={`ay-rd-t-${i}`} className={`ay-rd-title ays-title${String(card.title || '').length > 56 ? ' is-long' : ''}`}>{card.title}</h2>
+              {card.body && card.kind !== 'community' && <p className="ay-rd-body ays-body">{card.body}</p>}
+              {/* Safety stays on the glance: the reason and the sources, never folded. */}
+              {safety && card.reason && <p className="ay-rd-basis">{card.reason}</p>}
+              {safety && (card.sources || []).length > 0 && <p className="ay-rd-basis">Source: {card.sources.map((s, k) => <span key={s.url}>{k ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></span>)}</p>}
+              {card.kind === 'community' && card.footnote && <p className="ay-rd-basis">{card.footnote}</p>}
+            </div>
+            <div className="ays-act">
+              <Body card={card} h={h} done={done[card.key]} />
+              {oneAction && <span className="ay-rd-actions">{oneAction}</span>}
+              {!safety && <More card={card} h={h} onSeeData={onSeeData} onNotUseful={onNotUseful} hide={hide} dataAsk={dataAsk} />}
+              {!isData && !['opening', 'closing', 'ask'].includes(card.kind) && ((savable && onSave) || (onAsk && card.ask) || (!card.protected && onNotUseful)) && (
+                <div className="ay-rd-foot">
+                  {savable && onSave && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
+                  {/* A fact from her data: "Ask why" under it (team sync, Oct 25). */}
+                  {onAsk && card.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>{['change', 'pattern', 'data'].includes(card.category) ? 'Ask why' : 'Ask ayna about this'}</button>}
+                  {/* One action + a quiet "…" (Today audit, issue 2): Not useful and its reasons live in the menu. */}
+                  {!card.protected && onNotUseful && (
+                    <ItemMenu label="More for this card" className="ay-rd-menu">
+                      <NotUsefulMenu onPick={(reason) => hide(card, reason)} />
+                    </ItemMenu>
+                  )}
+                </div>
+              )}
+              {msg && <p className="ay-rd-note" role="status">{msg}</p>}
+            </div>
+          </article>
         </div>
-      </div>
-      <p className="sr-only" aria-live="polite">{`Card ${i + 1} of ${n}: ${card.title}`}</p>
-      <div
-        className="ay-rd-stage"
-        onClick={tap}
-        onPointerDown={(e) => { startX.current = e.clientX; }}
-        onPointerUp={(e) => { if (startX.current == null) return; const dx = e.clientX - startX.current; startX.current = null; if (Math.abs(dx) > 50 && !isControl(e.target)) { e.preventDefault(); go(dx < 0 ? 1 : -1); } }}
-      >
-        <article className={`ay-rd-card${isData ? ' is-data' : ''}`} key={`${card.key}:${card.title}`} aria-labelledby={`ay-rd-t-${i}`}>
-          {!isData && <CardArt card={card} />}
-          <p className="ay-rd-kicker"><span className="ay-rd-kicker__disc" aria-hidden="true"><Mark name={KICKER_MARK[card.category] || 'sparkle'} /></span>{card.kicker}</p>
-          <h2 id={`ay-rd-t-${i}`} className={`ay-rd-title${String(card.title || '').length > 64 ? ' is-long' : ''}`}>{card.title}</h2>
-          {card.body && <p className="ay-rd-body">{card.body}</p>}
-          {isData && <DataViz card={card} />}
-          {isData ? (<>
-            <Body card={card} h={h} done={done[card.key]} />
-            {/* One action (founder, Oct 24 23:53): Ask why, else See data. The
-                working (how ayna got this, sources, Not useful) folds away. */}
-            {!card.check && !card.flowAsk && (dataAsk ? <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => h.ask(dataAsk)}>Ask why</button></span>
-              : card.seeData && onSeeData ? <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => { onAction?.(card, 'open'); onSeeData(card.seeData); }}>See data</button></span> : null)}
-            {hasMore && (
-              <details className="ay-rdd-more">
-                <summary>How ayna got this</summary>
-                {card.facts && <dl className="ay-rd-facts">{card.facts.map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}
-                {(card.changed || card.mayAffect || card.canDo) && (
-                  <dl className="ay-rd-steps">
-                    {card.changed && <div><dt>What changed</dt><dd>{card.changed}</dd></div>}
-                    {card.mayAffect && <div><dt>What it may affect</dt><dd>{card.mayAffect}</dd></div>}
-                    {card.canDo && <div><dt>What you can do</dt><dd>{card.canDo}</dd></div>}
-                  </dl>
-                )}
-                {card.more && <p className="ay-rd-basis">{card.more}</p>}
-                {card.basisLine && <p className="ay-rd-basis">{card.basisLine}</p>}
-                {(card.sources || []).length > 0 && <p className="ay-rd-basis">Source: {card.sources.map((s, k) => <span key={s.url}>{k ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></span>)}</p>}
-                {dataAsk && card.seeData && onSeeData && <button type="button" className="ay-rd-link" onClick={() => { onAction?.(card, 'open'); onSeeData(card.seeData); }}>See data</button>}
-                {!card.protected && onNotUseful && <NotUsefulMenu onPick={(reason) => { onNotUseful(card, reason); setHidden((s) => ({ ...s, [card.key]: true })); setMsg('Thanks. You will see less like this.'); }} />}
-              </details>
-            )}
-          </>) : (<>
-            {card.facts && <dl className="ay-rd-facts">{card.facts.map((f) => <div key={f.k}><dt>{f.k}</dt><dd>{f.v}</dd></div>)}</dl>}
-            {(card.changed || card.mayAffect || card.canDo) && (
-              <dl className="ay-rd-steps">
-                {card.changed && <div><dt>What changed</dt><dd>{card.changed}</dd></div>}
-                {card.mayAffect && <div><dt>What it may affect</dt><dd>{card.mayAffect}</dd></div>}
-                {card.canDo && <div><dt>What you can do</dt><dd>{card.canDo}</dd></div>}
-              </dl>
-            )}
-            {card.seeData && onSeeData && <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => { onAction?.(card, 'open'); onSeeData(card.seeData); }}>See data</button></span>}
-            {card.reason && <p className="ay-rd-basis">{card.reason}</p>}
-            {card.basisLine && <p className="ay-rd-basis">{card.basisLine}</p>}
-            {card.footnote && <p className="ay-rd-basis">{card.footnote}</p>}
-            {(card.sources || []).length > 0 && <p className="ay-rd-basis">Source: {card.sources.map((s, k) => <span key={s.url}>{k ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></span>)}</p>}
-            <Body card={card} h={h} done={done[card.key]} />
-            {card.kind !== 'opening' && card.kind !== 'closing' && (
-              <div className="ay-rd-foot">
-                {savable && onSave && !sheet && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
-                {/* A fact from her data: "Ask why" under it (team sync, Oct 25). */}
-                {onAsk && card.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>{['change', 'pattern', 'data'].includes(card.category) ? 'Ask why' : 'Ask ayna about this'}</button>}
-                {/* One action + a quiet "…" (Today audit, issue 2): Not useful and its reasons live in the menu. */}
-                {!card.protected && onNotUseful && (
-                  <ItemMenu label="More for this card" className="ay-rd-menu">
-                    <NotUsefulMenu onPick={(reason) => { onNotUseful(card, reason); setHidden((s) => ({ ...s, [card.key]: true })); setMsg('Thanks. You will see less like this.'); }} />
-                  </ItemMenu>
-                )}
-              </div>
-            )}
-          </>)}
-          {msg && <p className="ay-rd-note" role="status">{msg}</p>}
-        </article>
-      </div>
-      <div className="ay-rd-nav">
-        <button type="button" className="ay-rd-icon" onClick={() => go(-1)} disabled={i === 0} aria-label="Previous card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
-        <span aria-hidden="true">{i + 1} / {n}</span>
-        <button type="button" className="ay-rd-icon" onClick={() => (i === n - 1 ? close() : go(1))} aria-label={i === n - 1 ? 'Finish' : 'Next card'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
-      </div>
+        <div className="ay-rd-nav ays-nav">
+          <button type="button" className="ays-icon" onClick={() => go(-1)} disabled={i === 0} aria-label="Previous card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
+          <span aria-hidden="true">{i + 1} of {n}</span>
+          <button type="button" className="ays-icon" onClick={() => (i === n - 1 ? close() : go(1))} aria-label={i === n - 1 ? 'Finish' : 'Next card'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+        </div>
       </div>
     </div>
   );

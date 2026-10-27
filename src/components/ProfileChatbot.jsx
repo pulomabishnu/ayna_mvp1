@@ -14,6 +14,7 @@ import AskBasedOn from './ask/AskBasedOn.jsx';
 import { useAskSetup } from './ask/useAskSetup.js';
 import { recentQuestions } from '../utils/askRecent.js';
 import { mayAutoFocus } from '../utils/delightRuntime.js';
+import ProLock from './ProLock.jsx';
 
 /** Merges a profileUpdate the backend returned into the current profile, deduping against what's already there. */
 function mergeProfileUpdate(currentProfile, update) {
@@ -104,6 +105,8 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     return () => window.clearTimeout(t);
   }, [sending]);
   const [sendError, setSendError] = useState('');
+  // Today's free Ask ayna chats are used: the locked card sits above the composer.
+  const [askLock, setAskLock] = useState(false);
   // Signed out: the last question that needs ayna's AI, named with a Sign in button.
   const [needsAccount, setNeedsAccount] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
@@ -425,11 +428,12 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
 
       setMessages(newMessages);
       onChatHistoryUpdate?.(newMessages);
+      if (data.limitReached && Number(data.usage?.limit) < 50) setAskLock(true);
     } catch (err) {
       if (err?.code === 'not_signed_in') {
         setSendError('Sign in to ask ayna anything. Free accounts get a few chats each week.');
       } else if (err?.code === 'weekly_limit_reached') {
-        setSendError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
+        setSendError("You've used this month's free Ask ayna chats. They reset on the 1st, or get ayna Pro for up to 50 a month.");
       } else {
         // The failure lives in the conversation, next to the question, with a way forward.
         const failed = [...messagesWithUser, { role: 'assistant', failed: true, question: msg, text: isNetworkError(err) ? err.message : 'I couldn’t answer that just now.' }];
@@ -497,6 +501,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
               {mode === 'talk' && (speech.isRecording || speaking) && (
                 <p className="ay-askp-pinned" role="status">{speech.isRecording ? 'Listening… tap the mic again when you are done.' : 'Reading the answer aloud. Tap the mic to speak again.'}</p>
               )}
+              {askLock && <div className="ay-ask-prolock"><ProLock variant="inline" feature="ask" onNotNow={() => setAskLock(false)} /></div>}
               {sendError && <p className="ay-askp-pinned ayna-ask-panel__error">{sendError}</p>}
             </>}
             composer={(

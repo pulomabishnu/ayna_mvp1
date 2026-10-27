@@ -80,8 +80,11 @@ export function useSlidingInk(listRef, activeKey) {
     };
     read();
     window.addEventListener('resize', read);
+    // Watch every tab too, not only the row: a tab added or relabelled after the first
+    // measure (the Ask sheet's Rundown and Guide tabs arrive late) changes the columns
+    // without changing the row's size, and the pill kept its old width (founder, Oct 27).
     let ro;
-    if (typeof ResizeObserver !== 'undefined') { ro = new ResizeObserver(read); ro.observe(list); }
+    if (typeof ResizeObserver !== 'undefined') { ro = new ResizeObserver(read); ro.observe(list); [...list.children].forEach((c) => ro.observe(c)); }
     document.fonts?.ready?.then(read).catch(() => {});
     return () => { window.removeEventListener('resize', read); ro?.disconnect(); };
   }, [listRef, activeKey]);

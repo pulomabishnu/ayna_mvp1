@@ -48,7 +48,12 @@ const UNIT_WORDS = {
   tampon: ['tampon', 'tampons'],
   incontinence: ['piece', 'pieces'],
 };
-const COUNT_RE = /\b(\d+)\s*(capsules?|softgels?|tablets?|gummies|gummy|caps|sachets?|packets?|stick packs?|servings?|pads?|tampons?|liners?|wipes?|patches|patch|suppositories|suppository|count|ct|pack)\b/i;
+const COUNT_RE = /\b(\d+)\s*(capsules?|caplets?|softgels?|tablets?|gummies|gummy|caps|sachets?|packets?|stick packs?|servings?|pads?|tampons?|liners?|wipes?|patches|patch|suppositories|suppository|count|ct|pack)\b/i;
+
+// "for 18" is a count; "for 50 g", "for 4 fl oz", "for 48.2 oz" are weights or volumes.
+const MEASURE = '(?:g|mg|mcg|ml|l|oz|fl|lb|lbs|kg|%)\\b';
+const MEASURE_RE = new RegExp(`^\\d+(?:[.,]\\d+)?\\s*${MEASURE}`, 'i');
+const FOR_N_RE = new RegExp(`\\bfor\\s+(\\d+)\\b(?![.,]\\d)(?!\\s*${MEASURE})`, 'i');
 
 /** "60 capsules", "32 pads", or null. Read from the catalog price text only. */
 export function sizeCount(product) {
@@ -58,8 +63,11 @@ export function sizeCount(product) {
     // "1.7 oz (page also says 2 oz)" is a note for the team, not for the page.
     const text = noDash(String(verified.value)).replace(/\s*\([^()]*\b(?:also says|also lists|conflict|unconfirmed)\b[^()]*\)/i, '').trim();
     const m = text.match(COUNT_RE);
-    const word = m && !/^(count|ct|pack)$/i.test(m[2]) ? m[2].toLowerCase().replace(/^caps$/, 'capsules') : null;
-    return { text, n: Number.parseInt(text, 10) || null, word, fact: verified };
+    // A weight or volume ("250 ml", "5.51 fl oz") is not a count of units; and the word has to
+    // belong to the leading number ("50 caplets = 25 servings" is 50 caplets, not 50 servings).
+    const n = MEASURE_RE.test(text) ? null : (Number.parseInt(text, 10) || null);
+    const word = n && m && Number(m[1]) === n && !/^(count|ct|pack)$/i.test(m[2]) ? m[2].toLowerCase().replace(/^caps$/, 'capsules') : null;
+    return { text, n, word, fact: verified };
   }
   const p = String(product?.price || '');
   const m = p.match(COUNT_RE);
@@ -70,7 +78,7 @@ export function sizeCount(product) {
     if (word === 'caps') word = 'capsules';
     return { text: `${n} ${word}`, n, word, fact: verified };
   }
-  const f = p.match(/\bfor\s+(\d+)\b/i) || p.match(/\bpack of\s+(\d+)\b/i);
+  const f = p.match(FOR_N_RE) || p.match(/\bpack of\s+(\d+)\b/i);
   if (f) {
     const n = Number(f[1]);
     const [one, many] = UNIT_WORDS[product?.category] || ['unit', 'units'];
@@ -79,10 +87,29 @@ export function sizeCount(product) {
   return null;
 }
 
+/** The count written in the catalog price ("$10 for 18", "$8 / 16", "32 pads"), or null. */
+export function priceCount(product) {
+  const p = String(product?.price || '');
+  const m = p.match(FOR_N_RE) || p.match(/\/\s*(\d+)\b(?![.,]\d)/) || p.match(COUNT_RE) || p.match(/\bpack of\s+(\d+)\b/i);
+  return m ? Number(m[1]) : null;
+}
+
+/** True when a reviewed (non-catalog) pack count disagrees with the count in the catalog price. */
+export function priceCountConflict(product) {
+  const size = sizeCount(product);
+  if (!size?.n || !size.fact?.known || size.fact.source_type === 'ayna_catalog') return false;
+  const n = priceCount(product);
+  return Boolean(n && n !== size.n);
+}
+
 /** "$0.30 per capsule" from a single catalog price and a count. Never from ranges. */
 export function perUnitLabel(product) {
   // Only when the units are the same thing: never on a bundle, kit or set of different products.
   if (/\b(bundle|kit|set|starter)\b/i.test(String(product?.name || ''))) return '';
+  // The maths needs the price and the count of the same pack. When the reviewed record's count
+  // differs from the count in the catalog price ("$10 for 18", reviewed: 16), the price is for
+  // another pack, so there is no honest per-unit number (founder, Oct 27: "$0.56 per tampon").
+  if (priceCountConflict(product)) return '';
   const fromUtil = priceParts(product).perUnit;
   if (fromUtil) return fromUtil.replace(' / ', ' per ');
   const p = String(product?.price || '');
