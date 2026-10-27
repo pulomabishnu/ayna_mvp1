@@ -68,7 +68,9 @@ describe('value editing on the review screen', () => {
 describe('screens render honestly when signed out', () => {
   it('list shows every source and never claims a connection', () => {
     const html = renderToStaticMarkup(createElement(HealthConnectionsScreen, { selectedId: null, onSelect: () => {}, authUser: null }));
-    for (const s of HEALTH_SOURCES) expect(html).toContain(s.name.replace('&', '&amp;'));
+    // The "Request another" row became the anonymous Suggest an app or wearable box (founder Oct 27).
+    for (const s of HEALTH_SOURCES.filter((x) => x.id !== 'request')) expect(html).toContain(s.name.replace('&', '&amp;'));
+    expect(html).toContain('Suggest an app or wearable');
     expect(html).toContain('Not available');
     expect(html).toContain('Sign in');
     expect(html).not.toContain('>On<');
