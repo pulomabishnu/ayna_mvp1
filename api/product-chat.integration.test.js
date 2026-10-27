@@ -378,7 +378,7 @@ describe('POST /api/product-chat — ayna Pro daily allowance', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body).toMatchObject({ limitReached: true, usage: { used: 5, limit: 5 } });
     const consume = supa.rpcCalls.find((c) => c.name === 'consume_ai_usage');
-    expect(consume.args.p_period).toMatch(/^day:/);
+    expect(consume.args.p_period).toMatch(/^month:\d{4}-\d{2}$/);
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
