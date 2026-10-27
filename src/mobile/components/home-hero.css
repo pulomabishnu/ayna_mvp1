@@ -26,6 +26,8 @@
 .ay-hh-streak__top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .ay-hh-streak__top b { font: 800 17px/1.2 var(--ay-font-display, inherit); letter-spacing: -.01em; white-space: nowrap; }
 .ay-hh-streak__top small { font: 500 13px/1.2 var(--ay-font-ui, inherit); color: rgba(255, 237, 172, .82); text-align: right; }
+.ay-hh-streak__top small { margin-left: auto; }
+.ay-hh-streak__cal { flex: none; align-self: center; width: 20px; height: 20px; fill: none; stroke: #ffedac; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .ay-hh-streak__days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
 .ay-hh-streak__days > span { display: grid; justify-items: center; gap: 2px; }
 .ay-hh-streak__days i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255, 237, 172, .45); }
