@@ -31,6 +31,13 @@ export const FOR_YOU = {
   // Generic drugstore items in the first `commodityWindow` spots.
   maxCommodityTop: 2,
   commodityWindow: 8,
+  // Category variety (Oct 26 focus group: "everything for cramps was a
+  // heating pad", "pads, pads, pads"). In the first `window` spots, at most
+  // this many products of one category for one need before a strong match
+  // (>= strongScore, v2's Strong band) of another category for that need gets
+  // the next spot. Order only; no percent changes, nothing below the bar added.
+  maxSameCategoryTop: 2,
+  strongScore: 75,
 };
 
 const EXPLICIT_SOURCES = new Set(['selected', 'legacy']);
@@ -122,10 +129,38 @@ export const ALREADY_HAS = new Set(['owned', 'saved']);
 
 // ─── For you order ─────────────────────────────────────────────────────────
 /**
+ * Step 1b of the For you order: inside the top window, once a need already
+ * shows FOR_YOU.maxSameCategoryTop products of one category, the next spot
+ * goes to the best strong match (score >= FOR_YOU.strongScore) of a
+ * different category for the same need, if there is one. When there is none
+ * the list keeps its order: variety never pulls in a weaker match ahead of a
+ * strong one, and never adds or drops a row.
+ */
+export function varyCategories(rows, profileOf = () => null) {
+  const keyOf = (x) => `${x.r.needId || ''}|${String(profileOf(x.r.productId)?.category || 'other').toLowerCase()}`;
+  const rest = [...rows];
+  const out = [];
+  const counts = new Map();
+  const add = (x) => { out.push(x); const k = keyOf(x); counts.set(k, (counts.get(k) || 0) + 1); };
+  while (rest.length) {
+    const head = rest[0];
+    if (out.length < FOR_YOU.window && (counts.get(keyOf(head)) || 0) >= FOR_YOU.maxSameCategoryTop) {
+      const j = rest.findIndex((y) => y.r.needId === head.r.needId && keyOf(y) !== keyOf(head)
+        && y.score >= FOR_YOU.strongScore && (counts.get(keyOf(y)) || 0) < FOR_YOU.maxSameCategoryTop);
+      if (j > 0) { add(rest.splice(j, 1)[0]); continue; }
+    }
+    add(rest.shift());
+  }
+  return out;
+}
+
+/**
  * Re-orders engine results for For you. `rows` are already sorted by the
  * engine (shown percent first). Step 1 only reorders rows with the same
- * shown percent; step 2 demotes a row past the top window (a weak need over
- * its share, a third generic drugstore item), never promotes one.
+ * shown percent; step 1b (varyCategories) lets a strong match of another
+ * category ahead of a need's third same-category product in the top window;
+ * step 2 demotes a row past the top window (a weak need over its share, a
+ * third generic drugstore item), never promotes one.
  * @param {object[]} rows [{ productId, score, needId }]
  * @param {object} up buildUserProfile() result
  * @param {{ profileOf?: (id) => object, commodityIds?: Set }} ctx
@@ -144,7 +179,8 @@ export function orderForYou(rows, up, ctx = {}) {
   //    need first, then curated discovery, then the engine's own order.
   const groups = new Map();
   for (const x of info) { const g = groups.get(x.score) || []; g.push(x); groups.set(x.score, g); }
-  const ordered = [...groups.keys()].sort((a, b) => b - a).flatMap((s) => groups.get(s).sort((a, b) => (a.has - b.has) || (tierRank[a.tier] - tierRank[b.tier]) || (b.disc - a.disc) || (a.i - b.i)));
+  const byPercent = [...groups.keys()].sort((a, b) => b - a).flatMap((s) => groups.get(s).sort((a, b) => (a.has - b.has) || (tierRank[a.tier] - tierRank[b.tier]) || (b.disc - a.disc) || (a.i - b.i)));
+  const ordered = varyCategories(byPercent, profileOf);
   // 2. Caps on the top window: a weak need takes at most weakShare of it and
   //    generic drugstore items at most maxCommodityTop of the first spots.
   //    Over the cap, the row waits until the window is filled.

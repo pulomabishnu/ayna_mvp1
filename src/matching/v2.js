@@ -13,7 +13,8 @@
 //   2. Preferences re-order products but never lower the shown fit, so telling
 //      ayna more never makes matches look worse.
 //   3. The ecosystem is chosen as a set: each pick is the one that adds the most
-//      new coverage of her needs, one product per type per need, at most two
+//      new coverage of her needs, one product per type per need (a second of
+//      a type only when no other type is left, strong fits only), at most two
 //      per brand, one "universal" care service, and it stops when the next pick
 //      adds little (short shelves beat padded ones).
 //   4. Bands (Strong / Good / Partial) instead of a bare percent.
@@ -54,6 +55,11 @@ export const V2 = {
   // Added to a chosen need's weight when her connected health data shows a trend supporting it.
   corroborationBoost: 0.15,
   fallbackPerNeed: 2,
+  // Repeat fill (Oct 26 focus group: "only one heating pad although I chose
+  // the most picks"). Once no new TYPE of product qualifies for a need, the
+  // need may take a second product of a type it already has, never a third,
+  // and only a strong fit. List composition only: no percent changes.
+  maxPerTypePerNeed: 2,
   // A need she did not pick herself (or one her life stage contradicts) while
   // she picked others: its fit counts for this much (team direction 15). It
   // can never read as a Strong match, and it gets one ecosystem pick.
@@ -521,7 +527,12 @@ export function buildEcosystemV2(up, products, options = {}) {
   const typesByNeed = new Map();
   const brandCount = new Map();
   let universal = 0;
-  const slots = options.slots ?? Math.min(V2.slots, Math.max(3, needs.length * perNeed));
+  // She chose more picks per need than the default: honour it for every need
+  // (12 slots cut a 5-per-need choice short at three needs). The stop rules
+  // below still keep shelves short when nothing else fits.
+  const slots = options.slots ?? (perNeed > V2.perNeed
+    ? Math.max(3, needs.length * perNeed)
+    : Math.min(V2.slots, Math.max(3, needs.length * perNeed)));
   // One option beats another: more value, and within V2.nearTie the curated
   // discovery value (forYou.js) and then the stable per-user rankKey.
   const beats = (a, b) => {
@@ -561,13 +572,49 @@ export function buildEcosystemV2(up, products, options = {}) {
     }
     if (best && best.value < V2.stopGain) best = wide;
     if (!best) break;
-    chosen.push({ pp: best.c.pp, home: best.home, results: best.c.results });
-    for (const [needId, x] of best.c.results) cover.set(needId, 1 - (1 - (cover.get(needId) || 0)) * (1 - x.v2.fit));
-    const set = typesByNeed.get(best.home.needId) || new Set();
-    set.add(typeKey(best.c.pp, best.home.needId));
-    typesByNeed.set(best.home.needId, set);
-    if (best.c.pp.brand?.key) brandCount.set(best.c.pp.brand.key, (brandCount.get(best.c.pp.brand.key) || 0) + 1);
-    if (best.isUniversal) universal += 1;
+    take(best);
+  }
+  // Repeat fill: a need still under her picks, with no new type left, may
+  // take a second product of a type it has (V2.maxPerTypePerNeed), strong
+  // fits only (fit >= strongFloor, never partial, never a weak need). A
+  // different format, then a different brand, from what the shelf already
+  // holds goes first, then the higher fit. Never lowers a bar and never
+  // changes a percent.
+  while (chosen.length < slots) {
+    let best = null;
+    for (const c of candidates) {
+      if (chosen.some((x) => x.pp.product_id === c.pp.product_id)) continue;
+      const brand = c.pp.brand?.key;
+      const trusted = brand && up.shopping?.trustedBrands?.some((t) => t.key === brand);
+      if (brand && !trusted && (brandCount.get(brand) || 0) >= V2.maxPerBrand) continue;
+      const isUniversal = UNIVERSAL_CATEGORIES.has(String(c.pp.category || '').toLowerCase())
+        && Object.keys(c.pp.health_need_relevance || {}).length >= V2.universalNeedCount;
+      if (isUniversal && universal >= V2.maxUniversal) continue;
+      let home = null;
+      for (const [needId, x] of c.results) if (!home || x.v2.fit > home.v2.fit) home = { needId, ...x };
+      if (home.partial || home.v2.fit < V2.strongFloor || isWeak(home.needId)) continue;
+      if (chosen.filter((x) => x.home.needId === home.needId).length >= needCap(home.needId)) continue;
+      const tk = typeKey(c.pp, home.needId);
+      const same = chosen.filter((x) => x.home.needId === home.needId && typeKey(x.pp, home.needId) === tk);
+      if (same.length >= V2.maxPerTypePerNeed) continue;
+      const fmt = (c.pp.formats || []).join();
+      const varied = (same.every((x) => (x.pp.formats || []).join() !== fmt) ? 2 : 0) + (same.every((x) => x.pp.brand?.key !== brand) ? 1 : 0);
+      const option = { c, home, isUniversal, varied };
+      const better = !best || varied > best.varied || (varied === best.varied
+        && (home.v2.fit > best.home.v2.fit + 1e-9 || (Math.abs(home.v2.fit - best.home.v2.fit) <= 1e-9 && home.v2.rankKey > best.home.v2.rankKey)));
+      if (better) best = option;
+    }
+    if (!best) break;
+    take(best);
+  }
+  function take(pick) {
+    chosen.push({ pp: pick.c.pp, home: pick.home, results: pick.c.results });
+    for (const [needId, x] of pick.c.results) cover.set(needId, 1 - (1 - (cover.get(needId) || 0)) * (1 - x.v2.fit));
+    const set = typesByNeed.get(pick.home.needId) || new Set();
+    set.add(typeKey(pick.c.pp, pick.home.needId));
+    typesByNeed.set(pick.home.needId, set);
+    if (pick.c.pp.brand?.key) brandCount.set(pick.c.pp.brand.key, (brandCount.get(pick.c.pp.brand.key) || 0) + 1);
+    if (pick.isUniversal) universal += 1;
   }
 
   const shelves = scaffold.shelves.map((shelf) => {

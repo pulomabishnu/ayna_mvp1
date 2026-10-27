@@ -8,7 +8,15 @@ export interface FlowDay {
 }
 export interface AynaCyclePlugin {
   isAvailable(): Promise<{ available: boolean; reason?: string }>;
-  requestAuthorization(): Promise<{ asked: boolean; granted: boolean | null }>;
+  /**
+   * iOS: one HealthKit sheet for menstrual flow (unless includeFlow is false)
+   * plus `readTypes` (@capgo/capacitor-health names: sleep, basalBodyTemperature,
+   * appleSleepingWristTemperature, restingHeartRate, heartRate,
+   * heartRateVariability, steps, calories, workouts). Android ignores the options.
+   */
+  requestAuthorization(options?: { readTypes?: string[]; includeFlow?: boolean }): Promise<{ asked: boolean; granted: boolean | null }>;
+  /** iOS only: would a permission sheet appear for these types? Never says whether reads are allowed. */
+  getRequestStatus(options?: { readTypes?: string[]; includeFlow?: boolean }): Promise<{ status: 'shouldRequest' | 'unnecessary' | 'unknown' }>;
   readFlowDays(options: { days: number }): Promise<{ days: FlowDay[] }>;
 }
 export declare const AynaCycle: AynaCyclePlugin;
