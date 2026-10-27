@@ -19,15 +19,14 @@ html body .app-container.app-container.app-container.app-container.app-container
   html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview .yh-setup { order: 1; }
 }
 
-/* ---------- App: espresso header band with a Shout (You hub, Today). Brand dark flips it to butter, as on the web. ---------- */
+/* ---------- App: header with a Shout (You hub, Today). Calm (Oct 27): the page colour in both themes, closed by a 1.5px wavy rule. ---------- */
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) :is(.ay-you-head.ay-you-band, .ay-home-hello.is-band) {
-  --ubx: #3E2723; --ubf: #FFEDAC;
+  --ubx: var(--ay-calm-page); --ubf: var(--ay-calm-fg);
   position: relative; margin: 0 0 28px !important; padding: 20px var(--d-gutter, 16px) 24px !important; background: var(--ubx) !important; color: var(--ubf) !important;
 }
-.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile)[data-theme='dark'] :is(.ay-you-head.ay-you-band, .ay-home-hello.is-band) { --ubx: #FFEDAC; --ubf: #3E2723; }
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) :is(.ay-you-head.ay-you-band, .ay-home-hello.is-band)::after {
-  content: '' !important; display: block !important; position: absolute; left: 0; right: 0; top: 100%; height: 12px; background: var(--ubx);
-  -webkit-mask: radial-gradient(circle at 10px 0, #000 9.5px, transparent 10px) 0 0 / 20px 12px repeat-x; mask: radial-gradient(circle at 10px 0, #000 9.5px, transparent 10px) 0 0 / 20px 12px repeat-x;
+  content: '' !important; display: block !important; position: absolute; left: 0; right: 0; top: calc(100% - 6px); height: 12px; background: var(--ay-calm-line);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6Q10 0 20 6T40 6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") 0 0 / 40px 12px repeat-x; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6Q10 0 20 6T40 6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") 0 0 / 40px 12px repeat-x;
 }
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-head.ay-you-band :is(p, span, b, a, button, h1, u, small) { color: var(--ubf) !important; }
 /* QA (Oct 27): the pink avatar arch keeps espresso ink (butter on pink read 1.4:1). */
@@ -134,7 +133,7 @@ html body .app-container .cm .cm-body.is-clamped { -webkit-line-clamp: 3 !import
 .am-screen .am-note:not(.is-full) .ay-pcard :is(.ay-pcard__facts, .ay-pcard__sizes, .ay-pcard__ev, .ay-pcard__tags, .ay-pcard__peruse, .ay-pcard__amount) { display: none !important; }
 
 /* App dark: flip the header bands wherever the dark theme attribute sits (the You hub renders under a different root). */
-[data-theme='dark'] :is(#ay, .ay-you-band, .ay-home-hello.is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band) { --ubx: #FFEDAC !important; --ubf: #3E2723 !important; }
+[data-theme='dark'] :is(#ay, .ay-you-band, .ay-home-hello.is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band) { --ubx: var(--ay-calm-page) !important; --ubf: var(--ay-calm-fg) !important; } /* calm (Oct 27): no butter flip in dark */
 
 /* Glance pass (p14): one row of topic pills on the feeds; the rest scroll sideways, the Topics sheet keeps all. */
 :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics).is-onerow { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; }

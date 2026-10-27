@@ -425,7 +425,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
   ];
 
   return <section className="ct wy yh ay-container" data-tour="you">
-    <header className="yh-head ay-pagehead ay-band--espresso">
+    <header className="yh-head ay-pagehead ay-band--calm">
       <ArchAvatar className="wy-arch" src={cp?.avatar_url && !avatarFailed ? publicMediaUrl(cp.avatar_url) : ''} initial={initial} onError={() => setAvatarFailed(true)} />
       <div className="wy-who">
         {/* The page's one shout (uniqueness pass): her name, oversized, on the espresso band. */}

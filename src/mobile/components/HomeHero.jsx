@@ -1,18 +1,21 @@
 import { useEffect, useState } from 'react';
 import ScoreRings from './ScoreRings.jsx';
 import { Sparkline } from './DashParts.jsx';
-import { ScallopEdge, Plate, SnapCarousel } from '../../components/ui/ay/index.js';
+import { Plate, SnapCarousel } from '../../components/ui/ay/index.js';
 import { resolveCatalogProductImage } from '../../components/ProductTileImage.jsx';
 import { short, lastDays } from '../../health/dashView.js';
 import './home-hero.css';
 
 /**
  * Home's hero (founder Oct 26 21:45: "really really cute", "the data is the
- * hero"): one espresso band with a wavy edge holding the greeting, her three
+ * hero"): the greeting on the page colour, closed by a wavy rule (calm, Oct 27), her three
  * dials (the same ScoreRings as Your data, filling once on load), then one
  * small row: the Daily Rundown as a story bubble and her logging streak.
  * Real data only; without data the dials say so with one Connect button.
  */
+
+// The hero's foot: an open wave drawn as a 1.5px line (calm rule, Oct 27), six waves across.
+const WAVE_LINE = `M0 6${Array.from({ length: 6 }, (_, i) => `Q${10 + i * 40} 0 ${20 + i * 40} 6Q${30 + i * 40} 12 ${40 + i * 40} 6`).join('')}`;
 
 const hello = () => {
   const h = new Date().getHours();
@@ -99,29 +102,28 @@ export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, s
           </div>
         )}
       </div>
-      <ScallopEdge shape="wave" tone="ink" className="ay-hh__edge" />
+      <svg className="ay-hh__edge" viewBox="0 0 240 12" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d={WAVE_LINE} /></svg>
     </section>
   );
 }
 
 /**
  * Highlights (Oura's top stories, the Your data carousel taken further): one
- * colour-blocked card per change in her week (pink, butter, espresso in turn),
+ * card per change in her week (one calm surface, founder Oct 27 11:40),
  * its last 7 days against her usual band with today's dot, and one plain
  * sentence. A tap opens that metric's detail (MetricSheet) to see why.
  */
 export function HomeHighlights({ items = [], today, onOpen }) {
   if (!items.length) return null;
-  const tones = ['pink', 'butter', 'ink'];
   return (
     <section className="ay-hhl" aria-labelledby="ay-hhl-h">
       <h2 id="ay-hhl-h" className="ay-hhl__h">This week&rsquo;s highlights</h2>
       <SnapCarousel
         label="This week's highlights"
-        items={items.map((it, i) => ({
+        items={items.map((it) => ({
           key: it.id,
           node: (
-            <button type="button" className={`ay-hhl__card is-${tones[i % 3]}`} onClick={() => onOpen?.(it.metric)} aria-label={`${it.title}. See why.`} aria-haspopup={it.chart ? 'dialog' : undefined}>
+            <button type="button" className="ay-hhl__card" onClick={() => onOpen?.(it.metric)} aria-label={`${it.title}. See why.`} aria-haspopup={it.chart ? 'dialog' : undefined}>
               <span className="ay-hhl__kicker" aria-hidden="true">{it.label}{it.isNew && <em>New</em>}</span>
               {it.chart && it.chart.points?.length > 1 && (
                 <span className="ay-hhl__chart" aria-hidden="true">
@@ -139,7 +141,7 @@ export function HomeHighlights({ items = [], today, onOpen }) {
   );
 }
 
-/** Two big shortcuts right under the highlights: Your data (espresso) and Your products (pink). */
+/** Two big shortcuts right under the highlights: Your data and Your products, on the one calm surface. */
 export function HomeShortcuts({ cycle = null, sleep = null, products = [], onData, onProducts }) {
   const shown = products.filter((p) => p?.id).slice(0, 3);
   const R = 22;
@@ -195,13 +197,13 @@ export function weekSentence(charts = [], takeawayOf) {
   return `${s.charAt(0).toUpperCase()}${s.slice(1)}.`;
 }
 
-/** The pink band with a wavy edge that leads Your week. */
+/** The line that leads Your week, on the page with a pink highlight underline (no band, Oct 27). */
 export function WeekLine({ text }) {
   if (!text) return null;
   return (
     <div className="ay-hwl">
       <p className="ay-hwl__k">This week, against your usual</p>
-      <p className="ay-hwl__t">{text}</p>
+      <p className="ay-hwl__t"><span>{text}</span></p>
       <svg className="ay-hwl__edge" viewBox="0 0 240 12" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d={`M0 0H240V6${Array.from({ length: 6 }, (_, i) => `Q${230 - i * 40} 12 ${220 - i * 40} 6Q${210 - i * 40} 0 ${200 - i * 40} 6`).join('')}Z`} /></svg>
     </div>
   );

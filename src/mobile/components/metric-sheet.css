@@ -17,14 +17,13 @@
 .ay-msheet .ay-msheet__big small { margin-left: 8px; font: 600 15px/1.2 var(--ay-font-ui, inherit) !important; letter-spacing: 0; color: rgba(62, 39, 35, .78) !important; }
 .ay-msheet .ay-msheet__line { margin: 0; font: 600 17px/1.35 var(--ay-font-ui, inherit) !important; color: #3e2723 !important; }
 .ay-msheet__facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; }
-.ay-msheet__facts div { display: grid; gap: 2px; padding: 12px; border-radius: 16px; background: #f6e3a1; }
+.ay-msheet__facts div { display: grid; gap: 2px; padding: 12px; border-radius: 16px; background: var(--ay-calm-box); border: var(--ay-calm-border); } /* calm boxes, Oct 27 */
 .ay-msheet__facts dt { font: 500 13px/1.3 var(--ay-font-ui, inherit) !important; color: rgba(62, 39, 35, .78) !important; }
 .ay-msheet__facts dd { margin: 0; font: 700 15px/1.25 var(--ay-font-ui, inherit); color: #3e2723; }
-.ay-msheet__more { all: unset; box-sizing: border-box; cursor: pointer; justify-self: start; min-height: 44px; display: inline-flex; align-items: center; padding: 0 20px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 15px/1 var(--ay-font-ui, inherit); }
+.ay-msheet__more { all: unset; box-sizing: border-box; cursor: pointer; justify-self: start; min-height: 44px; display: inline-flex; align-items: center; padding: 0 20px; border-radius: 999px; background: #3e2723; color: #ffedac; box-shadow: 3px 3px 0 #f7badd; font: 700 15px/1 var(--ay-font-ui, inherit); }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet { background: #3e2723; color: #ffedac; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet .ay-msheet__big, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet .ay-msheet__line, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__facts dd { color: #ffedac !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet .ay-msheet__big small, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__facts dt { color: rgba(255, 237, 172, .8) !important; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__facts div { background: rgba(255, 237, 172, .08); }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__grab { background: rgba(255, 237, 172, .3); }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__more { background: #ffedac; color: #3e2723; }
 

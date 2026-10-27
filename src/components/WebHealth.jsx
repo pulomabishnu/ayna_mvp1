@@ -206,7 +206,7 @@ function TodayBand({ title, today, name, cycle, sleepPoints, products, ring = tr
   // The cycle wheel in the week bento carries the number when there is health data (no repeat up here).
   const num = ring ? headline({ cycle, sleepPoints }) : null;
   return (
-    <header className={`ay-wh-hello ay-pagehead ay-band--espresso is-look-${look}`}>
+    <header className={`ay-wh-hello ay-pagehead ay-band--calm is-look-${look}`}>
       <h1 id="ay-wh-title" className="sr-only">{title}</h1>
       <p className="ay-wh-hello__date">{fmtLongDay(today)}</p>
       {/* The page's one shout (uniqueness pass): the greeting, oversized. */}
@@ -236,7 +236,7 @@ function TodayBand({ title, today, name, cycle, sleepPoints, products, ring = tr
  */
 function DashBand({ title, today, cycle, sync, hormonalBC }) {
   return (
-    <header className="ay-db-bandhead ay-pagehead ay-band--espresso">
+    <header className="ay-db-bandhead ay-pagehead ay-band--calm">
       <span className="sr-only" id="ay-wh-title">{title}</span>
       <div>
         <p className="ay-db-bandhead__date">{fmtLongDay(today)}{sync && !sync.stale ? ` · ${sync.label}` : ''}</p>

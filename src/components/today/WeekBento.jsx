@@ -121,9 +121,9 @@ export function glanceCharts(dash) {
   return list.map((c) => ({ ...c, area: c.group === 'sleep' ? 'sleep' : 'body' }));
 }
 
-// Home's variant gives each metric one colour role (founder Oct 26): sleep espresso, heart pink, steps butter.
-const HOME_TONE = { sleep_minutes: 'ink', resting_hr_bpm: 'pink', hrv_rmssd_ms: 'pink', hrv_sdnn_ms: 'pink', steps: 'butter' };
-const TONE = { sleep_minutes: 'deep', resting_hr_bpm: 'pink', hrv_rmssd_ms: 'pink', hrv_sdnn_ms: 'pink', steps: 'butter' };
+// Founder Oct 27 11:40: no alternating tile colours. Every tile is the one calm surface (butter in light,
+// espresso in dark, outlined); pink stays for the accents inside (today's bar, the period arc).
+const TONE = 'calm';
 const LABEL = (c) => (c.metric === 'sleep_minutes' ? 'Sleep' : c.metric === 'steps' ? 'Steps' : c.label);
 
 export default function WeekBento({ coming = [], cycle = null, cycleWords = '', hormonalBC = false, charts = [], bandOf = () => null, today, products = [], productsLabel = 'Your routine', onOpenProducts = null, logged = null, onOpen = null, className = '', variant = 'default' }) {
@@ -134,7 +134,7 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
   if (cycle?.cycleDay) {
     const value = hormonalBC ? `Day ${cycle.cycleDay} since your last bleed` : `Day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`;
     tiles.push(
-      <Tile key="cycle" tone="ink" className="wb-tile is-cycle" {...btn('cycle', `Cycle: ${cycleWords || 'where you are'}. ${value}.${onOpen ? ' Open cycle.' : ''}`)}>
+      <Tile key="cycle" tone={TONE} className="wb-tile is-cycle" {...btn('cycle', `Cycle: ${cycleWords || 'where you are'}. ${value}.${onOpen ? ' Open cycle.' : ''}`)}>
         <span className="ayb-tile__label">Cycle</span>
         <CycleWheel cycle={cycle} hormonalBC={hormonalBC} />
         <span className="wb-take"><b>{cycleWords || 'Where you are'}</b><span>{value}{hormonalBC ? '' : ' · estimated'}</span></span>
@@ -155,7 +155,7 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
     // Fewer than 3 days of data: the number and "vs usual" only, no near-empty chart (founder Oct 26 19:46).
     const enough = lastDays(c.points, today).filter((p) => p?.value != null).length >= 3;
     const bars = c.metric === 'sleep_minutes' || c.metric === 'steps';
-    const tone = (home ? HOME_TONE : TONE)[c.metric] || (i % 2 ? 'butter' : 'deep');
+    const tone = TONE;
     // Home: the first metric leads, full width; the rest pair up.
     const span = home && i === 0 ? 'wide' : '';
     const area = c.area || c.metric;
@@ -173,7 +173,7 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
 
   if (logged?.n > 0) {
     tiles.push(
-      <Tile key="logged" tone="pink" className="wb-tile is-logged" role="group" aria-label={`You logged ${logged.n} of ${logged.of || 7} days this week.`}>
+      <Tile key="logged" tone={TONE} className="wb-tile is-logged" role="group" aria-label={`You logged ${logged.n} of ${logged.of || 7} days this week.`}>
         <span className="ayb-tile__label">Check-ins</span>
         <WeekDots n={logged.n} of={logged.of || 7} days={logged.days} />
         <span className="wb-num"><span className="ayb-tile__big">{logged.n}</span><span className="ayb-tile__unit">of {logged.of || 7}</span></span>
@@ -193,7 +193,7 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
     const full = !half;
     const props = onOpenProducts ? { as: 'button', type: 'button', onClick: onOpenProducts, 'aria-label': aria } : { role: 'group', 'aria-label': aria };
     tiles.push(
-      <Tile key="products" tone="ink" span={half ? '' : 'wide'} className={`wb-tile is-products${full ? ' is-full' : ' is-half'}`} {...props}>
+      <Tile key="products" tone={TONE} span={half ? '' : 'wide'} className={`wb-tile is-products${full ? ' is-full' : ' is-half'}`} {...props}>
         <span className="ayb-tile__label">{productsLabel}</span>
         <span className="wb-plates" aria-hidden="true">
           {shown.map((p) => <Plate key={p.id} src={resolveCatalogProductImage(p) || ''} alt="" fallback={p.brand || p.name} className="wb-plate" />)}
@@ -207,7 +207,7 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
   if (coming.length) {
     const fmt = (iso) => new Date(`${iso}T12:00:00`);
     tiles.push(
-      <Tile key="coming" tone="butter" span="wide" className="wb-tile is-coming" role="group" aria-label={`Coming up: ${coming.map((c) => `${c.day === today ? 'today' : fmt(c.day).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}, ${c.title}`).join('; ')}.`}>
+      <Tile key="coming" tone={TONE} span="wide" className="wb-tile is-coming" role="group" aria-label={`Coming up: ${coming.map((c) => `${c.day === today ? 'today' : fmt(c.day).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}, ${c.title}`).join('; ')}.`}>
         <span className="ayb-tile__label">Coming up</span>
         <ul className="wb-coming" aria-hidden="true">
           {coming.slice(0, 3).map((c) => (

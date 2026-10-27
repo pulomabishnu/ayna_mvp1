@@ -10,9 +10,8 @@ import '../../styles/you-hub.css';
    card used in the Shop, scrolling sideways with an Add tile at the end.
    Shelves can be renamed, recoloured, reordered and products moved; that
    layout is kept in this browser only and never touches her products. */
-// Folder-tab colours the shelves take in turn (until she paints one herself).
-// Pink and espresso only: data-blue is for chart lines (all-pages brief). A shelf painted Sky before keeps its default tone.
-const TONES = ['pink', 'ink'];
+// Founder Oct 27 11:40: no alternating shelf colours; tabs are the one calm surface (a shelf she paints keeps its paint).
+const TONES = ['calm'];
 const PAINTS = [
   { id: 'butter', label: 'Butter', bg: '#ffedac' },
   { id: 'rose', label: 'Rose', bg: '#f7badd' },

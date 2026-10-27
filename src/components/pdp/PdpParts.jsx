@@ -348,7 +348,8 @@ export function PriceRow({ main = '', perUse = null, notes = [] }) {
 /** Highlights (12, signature 5): 2-4 white tiles, a big number (Bricolage 800 22) and a 13px caption. */
 // Bento tones by position (uniqueness pass, Oct 26; Glossier PDP big-number claims + #455687ac bento):
 // one big pink tile, one espresso, then butter and deeper butter. Sizes come from the count (CSS).
-const HL_TONES = ['pink', 'ink', 'butter', 'deep'];
+// Founder Oct 27 11:40: no alternating tile colours; every highlight is the one calm surface.
+const HL_TONES = ['calm'];
 export function Highlights({ items = [], note = '' }) {
   if (!items.length) return null;
   return (

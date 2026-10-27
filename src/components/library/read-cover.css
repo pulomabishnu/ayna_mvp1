@@ -1,10 +1,10 @@
 /* Library cover (ReadCover.jsx). Sizes come from the cover's own width
    (container units), so a 148px app cover and a 300px desktop cover are the
-   same drawing. A photo, or one flat brand colour with the title set large.
-   Colour names the section: menstrual pink, hormonal deep butter, chronic and
-   pelvic espresso, vaginal butter, postpartum pink. No icons, no label box. */
+   same drawing. A photo, or the one calm surface with the title set large
+   (founder Oct 27 11:40: no alternating colours; butter in light, espresso in dark,
+   outlined). No icons, no label box. */
 .rc {
-  --rc-field: #f7badd; --rc-ink: #3e2723; --rc-line: rgba(62, 39, 35, .9);
+  --rc-field: var(--ay-calm-box); --rc-ink: var(--ay-calm-fg); --rc-line: var(--ay-calm-line);
   container-type: inline-size;
   position: relative; display: block; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; isolation: isolate;
   border-radius: 16px;
@@ -12,11 +12,7 @@
   font-family: 'Figtree', system-ui, sans-serif; text-align: left;
 }
 .rc::after { content: ''; position: absolute; inset: 0; z-index: 3; border-radius: inherit; border: 1.5px solid var(--rc-line); box-sizing: border-box; pointer-events: none; }
-.rc.rc--hormonal { --rc-field: #f6e3a1; }
-.rc.rc--pelvic { --rc-field: #3e2723; --rc-ink: #ffedac; }
-.rc.rc--vaginal { --rc-field: #ffedac; }
-.rc.rc--postpartum { --rc-field: #f7badd; }
-.app-container[data-theme='brand-dark'] .rc, .ayna-mobile[data-theme='dark'] .rc, [data-ay-theme='brand-dark'] .rc { --rc-line: rgba(255, 237, 172, .9); }
+
 
 .rc__photo { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .rc__word {

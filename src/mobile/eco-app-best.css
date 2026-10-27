@@ -221,21 +221,18 @@ html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app :is(.eco-app-f
 /* ---------- Stacked summary card (espresso, a pink card peeking behind) ---------- */
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack { position: relative; margin: 18px 10px 14px 0; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__back { position: absolute; inset: 0; transform: translate(9px, 9px) rotate(2deg); border: 1.5px solid #3e2723; border-radius: 20px; background: #f7badd; }
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card { position: relative; display: grid; gap: 10px; padding: 18px 18px 12px; border: 1.5px solid #3e2723; border-radius: 20px; background: #3e2723; color: #ffedac; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card { position: relative; display: grid; gap: 10px; padding: 18px 18px 12px; border: var(--ay-calm-border); border-radius: 20px; background: var(--ay-calm-box); color: var(--ay-calm-fg); }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack .eco-oval { position: absolute; top: -16px; right: 14px; z-index: 2; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__nums { display: flex; gap: 22px; margin: 0 !important; }
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__nums span { display: grid; gap: 2px; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.2 var(--f-ui); color: #ffedac !important; }
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__nums b { font: 700 calc(28px * var(--ayna-text-scale, 1))/1 var(--ay-app-heading); letter-spacing: -.02em; color: #ffedac; }
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__needs { margin: 2px 0 0 !important; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--f-ui) !important; color: #ffedac !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__nums span { display: grid; gap: 2px; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.2 var(--f-ui); color: var(--ay-calm-fg) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__nums b { font: 700 calc(28px * var(--ayna-text-scale, 1))/1 var(--ay-app-heading); letter-spacing: -.02em; color: var(--ay-calm-fg); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__needs { margin: 2px 0 0 !important; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--f-ui) !important; color: var(--ay-calm-fg) !important; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__needs b { font-weight: 700; }
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar { display: block; height: 10px; border: 1.5px solid #ffedac; border-radius: 99px; overflow: hidden; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar { display: block; height: 10px; border: var(--ay-calm-border); border-radius: 99px; overflow: hidden; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar i { display: block; height: 100%; background: #f7badd; transform-origin: 0 50%; animation: eco-app-fill .9s var(--ease-out) .35s both; }
 @keyframes eco-app-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack .eco-app-replay { justify-self: start; margin: -4px 0 -6px !important; color: #ffedac !important; }
-.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card { background: #ffedac; border-color: #ffedac; }
-.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card :is(.eco-app-stack__nums span, .eco-app-stack__nums b, .eco-app-stack__needs, .eco-app-replay) { color: #3e2723 !important; }
-.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar { border-color: #3e2723; }
-.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__back { border-color: #ffedac; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack .eco-app-replay { justify-self: start; margin: -4px 0 -6px !important; color: var(--ay-calm-fg) !important; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__back { border-color: var(--ay-calm-fg); }
 html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar i { animation: none !important; }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__bar i { animation: none !important; } }
 /* Pass 2: icon + label buttons (the text "+" glyphs became the shared PlusIcon). */
@@ -252,15 +249,13 @@ html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack
 
 /* Check-in and "For you" in the summary card (walkthrough P1-15): nothing
    floats over the shelves. One pink primary, then a quiet row of two links. */
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-checkin { justify-self: stretch; min-height: 48px; margin: 4px 0 0 !important; padding: 0 18px !important; border: 1.5px solid #f7badd !important; border-radius: 999px !important; background: #f7badd !important; color: #3e2723 !important; box-shadow: 3px 3px 0 #ffedac !important; font: 700 calc(16px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; cursor: pointer; transition: transform var(--t-press) var(--ease-pop), box-shadow var(--t-press) var(--ease-out); }
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-checkin:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #ffedac !important; }
-.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-checkin { box-shadow: 3px 3px 0 #3e2723 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-checkin { justify-self: stretch; min-height: 48px; margin: 4px 0 0 !important; padding: 0 18px !important; border: 1.5px solid var(--ay-calm-fg) !important; border-radius: 999px !important; background: var(--ay-calm-fg) !important; color: var(--ay-calm-page) !important; box-shadow: 3px 3px 0 #f7badd !important; /* calm: the primary button, pink only as its sticker */ font: 700 calc(16px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; cursor: pointer; transition: transform var(--t-press) var(--ease-pop), box-shadow var(--t-press) var(--ease-out); }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-checkin:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #f7badd !important; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__row .eco-app-replay { margin: 0 !important; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__row.is-loose { margin: 4px var(--d-gutter, 20px) 0; justify-content: center; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-foryou { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin: 0; padding: 0 14px 0 6px; border: 1.5px solid currentColor; border-radius: 999px; background: transparent; color: inherit; font: 600 calc(15px * var(--ayna-text-scale, 1))/1 var(--f-ui); cursor: pointer; }
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card .eco-app-foryou { color: #ffedac; }
-.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card .eco-app-foryou { color: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__card .eco-app-foryou { color: var(--ay-calm-fg); }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-foryou__count { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #f7badd; color: #3e2723; font: 700 14px/1 var(--f-ui); }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-foryou:focus-visible, .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-checkin:focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }
 /* Loop E (Oct 26): no offset card behind the summary (one shadow: the pink sticker on primary buttons). */

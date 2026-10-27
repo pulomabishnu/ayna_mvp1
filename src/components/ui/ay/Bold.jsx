@@ -31,7 +31,7 @@ export function Bento({ as: Tag = 'div', className = '', children, ...rest }) {
 }
 
 /**
- * Tile. tone: 'ink' | 'pink' | 'butter' | 'deep'. span: 'wide' (2 cols) | 'tall' (2 rows) | 'big' (2x2) | ''.
+ * Tile. tone: 'calm' (the signed-in surface, both themes) | 'ink' | 'pink' | 'butter' | 'deep'. span: 'wide' (2 cols) | 'tall' (2 rows) | 'big' (2x2) | ''.
  * Pass big={value} + caption for a big-number tile; children for anything else.
  */
 export function Tile({ tone = 'deep', span = '', label, big, unit, caption, as: Tag = 'div', className = '', children, ...rest }) {

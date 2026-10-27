@@ -1395,7 +1395,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
 
   return <section className="ct cm ay-container" data-tour="community">
     {/* Butter title row (Community audit, issue 2): title, search, one Post button. */}
-    <header className={`cm-head${page ? ' is-page' : ' cm-titlerow ay-pagehead ay-band--espresso'}`}>
+    <header className={`cm-head${page ? ' is-page' : ' cm-titlerow ay-pagehead ay-band--calm'}`}>
       {page ? <BackLink className="cm-back" label="Community" href="/community" onClick={closePage} />
         : <div className="cm-head__title"><Shout as="h1" size="l" className="cm-title">Community</Shout><p className="ct-lede">Ask, review, share. Real talk between women, about the products we actually use.</p></div>}
       <div className="cm-head__actions">

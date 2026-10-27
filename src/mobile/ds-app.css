@@ -245,7 +245,7 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today:not(.is-compact) .ay-today__list { gap: 10px; overflow: visible; border-radius: 0; background: none; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today:not(.is-compact) .ay-today__item { border: 0 !important; border-radius: 20px; background: #f6e3a1; color: #3e2723; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today:not(.is-compact) .ay-today__item:nth-child(even) { background: var(--d-group); color: var(--d-ink); }
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today:not(.is-compact) .ay-today__item:is(.is-care, .is-safety) { background: #f7badd; color: #3e2723; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today:not(.is-compact) .ay-today__item:is(.is-care, .is-safety) { background: var(--ay-calm-box); color: var(--ay-calm-fg); border: var(--ay-calm-border); box-shadow: inset 6px 0 0 #f7badd; } /* calm (Oct 27): pink edge, not a pink card */
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today:not(.is-compact) .ay-today__item:not(:nth-child(even)) :is(.ay-today__title, .ay-today__why, .ay-today__body, .ay-today__text, small, p) { color: #3e2723 !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-hd .ay-today:not(.is-compact) .ay-today__item .ay-today__kicker { justify-self: start; display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px !important; border-radius: 999px; background: rgba(62, 39, 35, .12) !important; color: inherit !important; opacity: 1; font: 600 13px/1 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
 

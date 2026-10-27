@@ -81,7 +81,7 @@ export default function YouBento({ tiles = {}, products = [], intake = null, onO
     return (
       <div className={`yb yb--list ${className}`.trim()}>
         {eco && (
-          <Tile tone="ink" className="yb-tile is-eco" {...tileProps(eco, `${eco.caption}: ${eco.value}. ${eco.sub || ''}${shown.length ? ` Including ${shown.map((p) => p.name).join(', ')}.` : ''}`)}>
+          <Tile tone="calm" className="yb-tile is-eco" {...tileProps(eco, `${eco.caption}: ${eco.value}. ${eco.sub || ''}${shown.length ? ` Including ${shown.map((p) => p.name).join(', ')}.` : ''}`)}>
             <span className="yb-top"><span className="ayb-tile__label">{eco.caption}</span>{eco.onClick && ARROW}</span>
             {shown.length > 0 && (
               <span className="yb-plates" aria-hidden="true">
@@ -112,7 +112,7 @@ export default function YouBento({ tiles = {}, products = [], intake = null, onO
   return (
     <Bento className={`yb ${className}`.trim()}>
       {eco && (
-        <Tile tone="ink" span="big" className="yb-tile is-eco" {...tileProps(eco, `${eco.caption}: ${eco.value}. ${eco.sub || ''}${shown.length ? ` Including ${shown.map((p) => p.name).join(', ')}.` : ''}`)}>
+        <Tile tone="calm" span="big" className="yb-tile is-eco" {...tileProps(eco, `${eco.caption}: ${eco.value}. ${eco.sub || ''}${shown.length ? ` Including ${shown.map((p) => p.name).join(', ')}.` : ''}`)}>
           <span className="yb-top"><span className="ayb-tile__label">{eco.caption}</span>{eco.onClick && ARROW}</span>
           {shown.length > 0 && (
             <span className="yb-plates" aria-hidden="true">
@@ -123,26 +123,26 @@ export default function YouBento({ tiles = {}, products = [], intake = null, onO
         </Tile>
       )}
       {saved && (
-        <Tile tone="pink" className="yb-tile is-saved" {...tileProps(saved, `${saved.caption}: ${saved.value}. ${saved.sub || ''}`)}>
+        <Tile tone="calm" className="yb-tile is-saved" {...tileProps(saved, `${saved.caption}: ${saved.value}. ${saved.sub || ''}`)}>
           <span className="yb-top"><span className="ayb-tile__label">{saved.caption}</span>{saved.onClick && ARROW}</span>
           <span className="yb-num"><span className="ayb-tile__big">{saved.value}</span><span className="ayb-tile__cap">{saved.sub}</span></span>
         </Tile>
       )}
       {checkins && (
-        <Tile tone="butter" className="yb-tile is-checkins" {...tileProps(checkins, `${checkins.caption}: ${checkins.value}.`)}>
+        <Tile tone="calm" className="yb-tile is-checkins" {...tileProps(checkins, `${checkins.caption}: ${checkins.value}.`)}>
           <span className="yb-top"><span className="ayb-tile__label">{checkins.caption}</span>{checkins.onClick && ARROW}</span>
           <span className="yb-num"><span className="ayb-tile__big">{checkins.value}</span><span className="ayb-tile__cap">{checkins.sub}</span></span>
         </Tile>
       )}
-      {section('health', health, 'deep')}
-      {section('activity', activity, 'ink')}
+      {section('health', health, 'calm')}
+      {section('activity', activity, 'calm')}
       {said && (
-        <Tile tone="pink" span="wide" className="yb-tile is-blend" {...tileProps({ onClick: onOpenBlend }, `Your blend: ${said}.${onOpenBlend ? ' Open to change.' : ''}`)}>
+        <Tile tone="calm" span="wide" className="yb-tile is-blend" {...tileProps({ onClick: onOpenBlend }, `Your blend: ${said}.${onOpenBlend ? ' Open to change.' : ''}`)}>
           <span className="yb-top"><span className="ayb-tile__label">Your blend</span>{onOpenBlend && ARROW}</span>
           <BlendPreview intake={intake} />
         </Tile>
       )}
-      {section('settings', settings, 'butter', said ? 'wide' : 'full')}
+      {section('settings', settings, 'calm', said ? 'wide' : 'full')}
     </Bento>
   );
 }

@@ -36,6 +36,9 @@
 :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-pink { background: var(--ay-pink-base) !important; color: var(--ay-espresso) !important; border: 0 !important; --ay-fg: var(--ay-espresso); --ay-fg-muted: rgba(62, 39, 35, .8); }
 :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-butter { background: var(--ay-butter-base) !important; color: var(--ay-espresso) !important; border: 1.5px solid var(--ay-espresso) !important; --ay-fg: var(--ay-espresso); --ay-fg-muted: rgba(62, 39, 35, .8); }
 :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-deep { background: var(--ay-surface) !important; color: var(--ay-fg) !important; border: 1px solid var(--ay-rule, rgba(62, 39, 35, .22)) !important; }
+/* calm (founder Oct 27 11:40): the one signed-in surface. Butter-deep with an espresso outline in light,
+   espresso with a butter outline in dark (--ay-calm-* in ay-tokens.css). Tiles are told apart by outline and spacing. */
+:is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-calm { background: var(--ay-calm-box) !important; color: var(--ay-calm-fg) !important; border: var(--ay-calm-border) !important; --ay-fg: var(--ay-calm-fg); --ay-fg-muted: var(--ay-calm-fg-muted); }
 :is(#ayk, .ayb-tile__label):is(#ayk, .ayb-tile__label):is(#ayk, .ayb-tile__label):is(#ayk, .ayb-tile__label) { font: 600 var(--ay-size-caption)/1.3 var(--ay-font-ui) !important; color: inherit; opacity: .85; }
 :is(#ayk, .ayb-tile__big):is(#ayk, .ayb-tile__big):is(#ayk, .ayb-tile__big):is(#ayk, .ayb-tile__big) { font: 800 clamp(40px, 5vw, 64px)/.9 var(--ay-font-display) !important; letter-spacing: -.03em; color: inherit; font-variant-numeric: tabular-nums; }
 :is(#ayk, .ayb-tile__unit):is(#ayk, .ayb-tile__unit):is(#ayk, .ayb-tile__unit):is(#ayk, .ayb-tile__unit) { margin-left: 4px; font: 700 var(--ay-size-h3)/1 var(--ay-font-ui) !important; letter-spacing: 0; }

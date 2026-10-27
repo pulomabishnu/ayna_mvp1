@@ -1,7 +1,6 @@
 /* MonthSheet.jsx: "Your month", inside the MetricSheet bottom sheet (metric-sheet.css).
    Butter surface, espresso text; pink only for period markers. 44px day cells, 13px minimum. */
-.ay-mcal { --mc-fg: #3e2723; --mc-soft: rgba(62, 39, 35, .78); --mc-tint: rgba(62, 39, 35, .07); --mc-block: #f6e3a1; --mc-pink: #f7badd; gap: 16px; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-mcal { --mc-fg: #ffedac; --mc-soft: rgba(255, 237, 172, .8); --mc-tint: rgba(255, 237, 172, .1); --mc-block: rgba(255, 237, 172, .08); }
+.ay-mcal { --mc-fg: var(--ay-calm-fg); --mc-soft: var(--ay-calm-fg-muted); --mc-tint: var(--ay-calm-soft); --mc-block: var(--ay-calm-box); --mc-pink: #f7badd; gap: 16px; } /* calm tokens, Oct 27 */
 
 .ay-mcal :is(p, h3, ol, ul) { margin: 0; padding: 0; }
 .ay-mcal .ay-mcal__nav { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; margin-top: -8px; }
@@ -35,7 +34,7 @@
 .ay-mcal__legend .is-checkin i { width: 6px; height: 6px; margin: 0 3px; background: var(--mc-fg); }
 
 /* The tapped day: one compact block. */
-.ay-mcal__picked { display: grid; gap: 4px; padding: 14px 16px; border-radius: 16px; background: var(--mc-block); }
+.ay-mcal__picked { display: grid; gap: 4px; padding: 14px 16px; border-radius: 16px; background: var(--mc-block); border: var(--ay-calm-border); }
 .ay-mcal .ay-mcal__pday { font: 700 15px/1.3 var(--ay-font-ui, inherit) !important; color: var(--mc-fg) !important; }
 .ay-mcal .ay-mcal__pline { font: 500 15px/1.35 var(--ay-font-ui, inherit) !important; color: var(--mc-soft) !important; }
 .ay-mcal .ay-mcal__empty { font: 600 15px/1.35 var(--ay-font-ui, inherit) !important; color: var(--mc-fg) !important; text-align: center; }
@@ -45,7 +44,7 @@
 .ay-mcal .ay-mcal__soon h3 { font: 700 17px/1.2 var(--ay-font-display, var(--ay-app-heading, inherit)) !important; letter-spacing: -.01em; color: var(--mc-fg) !important; }
 .ay-mcal__soon ol { list-style: none; display: grid; gap: 10px; }
 .ay-mcal__soon li { display: flex; align-items: center; gap: 14px; }
-.ay-mcal__date { flex: none; display: grid; justify-items: center; align-content: center; width: 48px; height: 48px; border-radius: 12px; background: var(--mc-block); color: var(--mc-fg); }
+.ay-mcal__date { flex: none; display: grid; justify-items: center; align-content: center; width: 48px; height: 48px; border-radius: 12px; background: var(--mc-block); color: var(--mc-fg); border: var(--ay-calm-border); box-sizing: border-box; }
 .ay-mcal__date b { font: 800 17px/1 var(--ay-font-display, inherit); }
 .ay-mcal__date small { margin-top: 2px; font: 600 13px/1 var(--ay-font-ui, inherit); color: var(--mc-soft); }
 .ay-mcal__stext { font: 600 15px/1.3 var(--ay-font-ui, inherit); color: var(--mc-fg); }

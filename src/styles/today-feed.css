@@ -29,7 +29,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__note { color: var(--x-ink) !important; }
 
 /* Urgent: the one feature block. */
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__item.is-urgent { background: var(--x-feature); color: var(--x-on); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__item.is-urgent { background: var(--ay-calm-box); color: var(--ay-calm-fg); border: var(--ay-calm-border); box-shadow: inset 6px 0 0 #f7badd; } /* calm (Oct 27): no espresso card in light; pink edge for urgent */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__item.is-urgent :is(.ay-today__title, .ay-today__body) { color: var(--x-on) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__item.is-urgent :is(.ay-today__why, .ay-today__src, .ay-today__src a) { color: var(--x-on-2) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-today__item.is-urgent .ay-today__primary { background: var(--t-pink) !important; border-color: var(--t-pink) !important; color: var(--t-espresso) !important; }

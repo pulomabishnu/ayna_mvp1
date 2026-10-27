@@ -60,6 +60,34 @@
   --ay-chip-bg: transparent;
 }
 
+/* Calm colour rule (founder Oct 27 11:40: "cut down on the alternating colors"). Signed-in pages:
+   every box, tile, card, band and sheet is one surface. Light: butter page, butter-deep boxes, espresso
+   text and 1.5px espresso outlines. Dark: the same inverted (espresso boxes, butter text and outlines).
+   Pink is an accent only (sticker shadow, small "for you / now" chips, ring and progress fills, active tab,
+   highlight underline, small icons); blue is for chart lines only. The landing and Shop's pink header keep their bands. */
+:root {
+  --ay-calm-page: #ffedac;
+  --ay-calm-box: #f6e3a1;
+  --ay-calm-fg: #3e2723;
+  --ay-calm-fg-muted: rgba(62, 39, 35, .8);
+  --ay-calm-line: #3e2723;
+  --ay-calm-border: 1.5px solid #3e2723;
+  --ay-calm-track: rgba(62, 39, 35, .16);
+  --ay-calm-soft: rgba(62, 39, 35, .1);
+  --ay-calm-ring2: #769ebe; /* the second ring fill (sleep, steps): blue in light, butter in dark */
+}
+:is([data-theme='brand-dark'], [data-theme='dark']) {
+  --ay-calm-page: #3e2723;
+  --ay-calm-box: #3e2723;
+  --ay-calm-fg: #ffedac;
+  --ay-calm-fg-muted: rgba(255, 237, 172, .82);
+  --ay-calm-line: #ffedac;
+  --ay-calm-border: 1.5px solid #ffedac;
+  --ay-calm-track: rgba(255, 237, 172, .2);
+  --ay-calm-soft: rgba(255, 237, 172, .1);
+  --ay-calm-ring2: #ffedac;
+}
+
 /* Founder Oct 26 19:39: "take off that ugly star shape". The scattered decorative doodles
    (asterisk/star, flower, slash, dot, product stickers) are gone everywhere. Decorative only. */
 html body :is(.ds-shape, .ds-mark.ds-shape, .ay-rd-hero__sticker, .ay-home-art__stickers, .ds-pstickers) { display: none !important; }

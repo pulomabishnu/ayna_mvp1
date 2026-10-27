@@ -35,3 +35,9 @@
 .ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ay-asksug--app .ay-asksug__row { min-height: 0; padding: 0 16px 10px; gap: 6px; }
 .ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ay-asksug--app :is(.ay-asksug__pill, .ay-asksug__hide) { height: 34px; min-height: 34px; padding: 0 12px; font-size: 13px; }
 .ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ay-asksug--app :is(.ay-asksug__pill, .ay-asksug__hide)::after { inset: -5px 0; }
+
+/* Calm (founder Oct 27 11:40): Services and Library keep this header's layout but on the page colour
+   (butter in light, espresso in dark), closed by a 1.5px wavy rule. Shop alone keeps the pink band. */
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band.is-calm { --ah-pink: var(--ay-calm-page); --ah-ink: var(--ay-calm-fg); --ah-butter: var(--ay-calm-box); border-top: 0 !important; }
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band.is-calm::after { top: calc(100% - 6px); background: var(--ay-calm-line) !important; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6Q10 0 20 6T40 6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") 0 0 / 40px 12px repeat-x; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6Q10 0 20 6T40 6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") 0 0 / 40px 12px repeat-x; }
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band.is-calm .ayna-fresh-search input::placeholder { color: var(--ay-calm-fg-muted) !important; }
