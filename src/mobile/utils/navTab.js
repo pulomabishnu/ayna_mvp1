@@ -9,7 +9,8 @@
 export function navTabFor(screen, overlayType = null, { view = null, variant = 'dashboard', section = null } = {}) {
   if (['profile', 'profile-auth'].includes(overlayType)) return 'profile';
   if (variant !== 'chat' && (screen === 'ask' || (screen === 'ayna' && view === 'chat'))) return 'ask';
-  if (['ayna', 'today', 'ask'].includes(screen)) return 'home';
+  // The landing is Home when signed out (founder, Oct 27 01:10).
+  if (['ayna', 'today', 'ask', 'landing'].includes(screen)) return 'home';
   if (screen === 'library' || (screen === 'explore' && section === 'resources')) return 'library';
   if (screen === 'explore' && section === 'services') return 'services';
   if (['explore', 'browse'].includes(screen)) return 'explore';

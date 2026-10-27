@@ -1,5 +1,6 @@
 import { short } from '../../health/dashView.js';
 import { takeaway } from '../../health/takeaway.js';
+import { useCountUp } from '../../utils/motion.js';
 import './score-rings.css';
 
 /**
@@ -11,9 +12,18 @@ import './score-rings.css';
  * her usual); the cycle arc is today's day of her average length.
  */
 const R = 40;
+
+/* A whole number in the dial counts up once with the arc (motion pass, Oct 27); anything else ("6h 40m") is shown as is. */
+function CountText({ text, run }) {
+  const plain = /^\d[\d,]*$/.test(text);
+  const target = plain ? Number(text.replace(/,/g, '')) : 0;
+  const v = useCountUp(target, run && plain);
+  if (!plain || !run) return text;
+  return Math.round(v).toLocaleString('en-US');
+}
 const C = 2 * Math.PI * R;
 
-function Dial({ fill = 0, tone = 'pink', center, unit = '', label, sub, dir = 0, onClick, aria, todayDot = false }) {
+function Dial({ fill = 0, tone = 'pink', center, unit = '', label, sub, dir = 0, onClick, aria, todayDot = false, count = false }) {
   const f = Math.max(0, Math.min(1, fill));
   // The end of the arc, where today is (a small dot on the cycle dial).
   const a = 2 * Math.PI * f - Math.PI / 2;
@@ -25,7 +35,7 @@ function Dial({ fill = 0, tone = 'pink', center, unit = '', label, sub, dir = 0,
         {f > 0 && <circle className={`ay-dial__arc is-${tone}`} cx="50" cy="50" r={R} strokeDasharray={`${(C * f).toFixed(1)} ${C.toFixed(1)}`} style={{ '--ay-dial-len': `${(C * f).toFixed(1)}`, '--ay-dial-c': `${C.toFixed(1)}` }} transform="rotate(-90 50 50)" />}
         {f > 0 && todayDot && <circle className="ay-dial__today" cx={dot.cx} cy={dot.cy} r="6" />}
       </svg>
-      <span className="ay-dial__center" aria-hidden="true"><b className={center.length > 5 ? 'is-long' : center.length > 3 ? 'is-mid' : ''}>{center}</b>{unit && <small>{unit}</small>}</span>
+      <span className="ay-dial__center" aria-hidden="true"><b className={center.length > 5 ? 'is-long' : center.length > 3 ? 'is-mid' : ''}><CountText text={center} run={count && fill > 0} /></b>{unit && <small>{unit}</small>}</span>
       <span className="ay-dial__label" aria-hidden="true">{label}</span>
       <span className="ay-dial__sub" aria-hidden="true">
         {dir !== 0 && <svg viewBox="0 0 24 24"><path d={dir > 0 ? 'M12 19V5M6 11l6-6 6 6' : 'M12 5v14M6 13l6 6 6-6'} /></svg>}
@@ -57,6 +67,7 @@ export default function ScoreRings({ cycle = null, hormonalBC = false, sleep = n
       <div className="ay-dial__row">
         {cycle?.cycleDay
           ? <Dial
+            count={animate}
             fill={!hormonalBC && cycle.avgLength ? cycle.cycleDay / cycle.avgLength : 0}
             center={String(cycle.cycleDay)}
             unit={!hormonalBC && cycle.avgLength ? `of ${cycle.avgLength}` : ''}
@@ -68,11 +79,11 @@ export default function ScoreRings({ cycle = null, hormonalBC = false, sleep = n
           />
           : <Dial center="No data" label="Cycle day" sub="Log a period" aria="Cycle day: no data yet." />}
         {s
-          ? <Dial tone="ink" fill={s.fill} dir={s.dir} center={short('sleep_minutes', s.now)} label="Sleep" sub={s.sub} onClick={open('sleep')}
+          ? <Dial count={animate} tone="ink" fill={s.fill} dir={s.dir} center={short('sleep_minutes', s.now)} label="Sleep" sub={s.sub} onClick={open('sleep')}
             aria={`Sleep: ${short('sleep_minutes', s.now)} a night this week${sleep.usual ? `, usual ${short('sleep_minutes', sleep.usual)}` : ''}. ${s.sub}.${onOpen ? ' Open sleep.' : ''}`} />
           : <Dial center="No data" label="Sleep" sub="Not connected" aria="Sleep: no data yet." />}
         {a
-          ? <Dial tone="ink" fill={a.fill} dir={a.dir} center={short(activity.metric, a.now)} label={activity.metric === 'steps' ? 'Steps' : 'Activity'} sub={a.sub} onClick={open('body')}
+          ? <Dial count={animate} tone="ink" fill={a.fill} dir={a.dir} center={short(activity.metric, a.now)} label={activity.metric === 'steps' ? 'Steps' : 'Activity'} sub={a.sub} onClick={open('body')}
             aria={`${activity.metric === 'steps' ? 'Steps' : 'Activity'}: ${short(activity.metric, a.now)} a day this week${activity.usual ? `, usual ${short(activity.metric, activity.usual)}` : ''}. ${a.sub}.${onOpen ? ' Open body.' : ''}`} />
           : <Dial center="No data" label="Activity" sub="Not connected" aria="Activity: no data yet." />}
       </div>

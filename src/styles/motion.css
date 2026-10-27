@@ -99,3 +99,45 @@ html.ay-motion-paused .ay-reveal { opacity: 1; translate: none; transition: none
 /* Keyboard hint (⌘K in the search field). Only where there's a keyboard and a mouse. */
 .ay-kbd { position: absolute; right: 64px; top: 50%; translate: 0 -50%; padding: 3px 7px; border: 1.5px solid currentColor; border-radius: 6px; font: 600 13px/1 'Figtree', system-ui, sans-serif; opacity: .7; pointer-events: none; }
 @media (hover: none), (pointer: coarse), (max-width: 767px) { .ay-kbd { display: none; } }
+
+/* ======================================================================
+   Shared motion pass (founder, Oct 27 01:10: "add animations to the app
+   and the website all over"). One set of tokens, used by src/utils/motion.js
+   and everything below. Only transform and opacity animate; everything runs
+   once; large type never moves; all of it is off under reduced motion and
+   the site's Pause motion (html.ay-motion is set only when motion is on).
+   ====================================================================== */
+:root {
+  --ay-ease: var(--ease-out);
+  --ay-ease-io: var(--ease-in-out);
+  --ay-dur-page: 200ms;   /* page and tab transitions (160-220ms) */
+  --ay-dur-rise: 360ms;   /* cards and sections rising in */
+  --ay-dur-toggle: 220ms; /* selected pill sliding */
+  --ay-rise: 10px;        /* small rise, no bounce */
+}
+
+/* Cards and sections rise in once as they enter the viewport (installMotion). */
+html.ay-motion [data-rise-state='wait'] { opacity: 0; transform: translate3d(0, var(--ay-rise), 0); }
+html.ay-motion [data-rise-state='in'] { opacity: 1; transform: none; transition: opacity var(--ay-dur-rise) var(--ay-ease), transform var(--ay-dur-rise) var(--ay-ease); }
+/* A score ring waiting below the fold holds its fill until it is seen. */
+html.ay-motion [data-rise-state='wait'] .ay-dials.is-animate :is(.ay-dial__arc, .ay-dial__today) { animation-play-state: paused; }
+
+/* Page and tab transitions: the new page fades and slides 8px in (200ms).
+   Fill mode backwards: once done, no transform is left on the page. */
+@keyframes ay-page-in { from { opacity: 0; transform: translate3d(0, 8px, 0); } }
+html.ay-motion main[data-view] > :not(#ay-content):not(.ay-asksug):not([role='dialog']) { animation: ay-page-in var(--ay-dur-page) var(--ay-ease) backwards; }
+/* App: the screen is the shell's first child (figma.css had a 250ms 'both' rise that left a transform behind). */
+html.ay-motion .ayna-mobile > :first-child { animation: ay-page-in var(--ay-dur-page) var(--ay-ease) backwards; }
+
+/* Buttons press down. */
+html.ay-motion :is(.ay-btn, .lsx button, .lsx a.lsx-btn, .ayk-chip, .ay-sts__track):not(:disabled):active { transform: scale(.97); }
+html.ay-motion :is(.ay-btn, .ayk-chip) { transition: transform var(--t-press) var(--ay-ease), background-color var(--t-fast) var(--ay-ease-io), color var(--t-fast) var(--ay-ease-io); }
+
+/* Carousels snap smoothly. */
+html.ay-motion .ayk-snap__list { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html [data-rise-state] { opacity: 1 !important; transform: none !important; transition: none !important; }
+  main[data-view] > *, .ayna-mobile > :first-child { animation: none !important; }
+}
+html.ay-motion-paused [data-rise-state] { opacity: 1 !important; transform: none !important; transition: none !important; }

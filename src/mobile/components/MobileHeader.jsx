@@ -29,7 +29,10 @@ export default function MobileHeader({ onOpenSettings, onBack, hideAsk = false }
       {onBack && <button type="button" onClick={onBack} aria-label="Back" className="ayna-shared-header-action">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m14 5-7 7 7 7" /></svg>
       </button>}
-      <span className="ayna-shared-wordmark">ayna</span>
+      {/* The wordmark opens the landing, signed in or out (founder, Oct 27 01:13). */}
+      {head?.onOpenLanding
+        ? <button type="button" className="ayna-shared-wordmark ay-logo-btn" onClick={head.onOpenLanding} aria-label="ayna, open the welcome page">ayna</button>
+        : <span className="ayna-shared-wordmark">ayna</span>}
     </div>
     <div className="ay-header-actions">
     {openAsk && !hideAsk && <button type="button" onClick={openAsk} aria-label="Ask ayna" className="ay-header-ask ay-header-ask-pill">

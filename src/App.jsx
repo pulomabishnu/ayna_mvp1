@@ -91,7 +91,7 @@ const CampusResources = React.lazy(() => import('./components/CampusResources'))
 const SharedAnswerPage = React.lazy(() => import('./components/SharedAnswerPage'));
 // The catalog (products, research, matching) loads after first paint as its
 // own chunk; App re-renders when it lands (data/catalog.js, catalogReady below).
-import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, getProductMatchDetailsForProduct, getProfileMatchPercentForProduct, hasStatedLifeStage, matchEngine, getSelectedNeeds, useCatalogReady, isCatalogReady, loadCatalog } from './data/catalog.js';
+import { ALL_PRODUCTS, CATEGORY_LABELS, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, getProductMatchDetailsForProduct, getProfileMatchPercentForProduct, hasStatedLifeStage, matchEngine, getSelectedNeeds, useCatalogReady, isCatalogReady, loadCatalog } from './data/catalog.js';
 import { needAreaLabels } from './utils/needAreas.js';
 import { behaviorFrom } from './utils/matchDisplay';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
@@ -451,23 +451,6 @@ function getInitialDiscoverySearch() {
   }
 }
 
-/**
- * Same problem as getInitialDiscoverySearch, one level up: the homepage's
- * "Shop" category pill (All/Period/Intimate Care/...) was pure local state
- * in AynaLanding, with no URL round-trip, clicking a product from a
- * filtered Shop view and hitting Back always landed on "All", the filter
- * silently lost. Flagged live 2026-08-25: "when we go back from the product
- * page, it must go back to the previous query."
- */
-function getInitialHomeCategory() {
-  const view = getInitialView();
-  if (view !== 'welcome' && view !== 'hero') return null;
-  try {
-    return new URLSearchParams(window.location.search).get('category') || null;
-  } catch {
-    return null;
-  }
-}
 
 function ViewLoadingFallback() {
   return <ViewSkeleton label="Loading" cards={3} lines={2} />;
@@ -694,14 +677,6 @@ function App() {
           setDiscoverySearch('');
         }
       }
-      // Same fix, for the homepage Shop category pill, see getInitialHomeCategory.
-      if (view === 'welcome' || view === 'hero') {
-        try {
-          setHomeCategory(new URLSearchParams(window.location.search).get('category') || null);
-        } catch {
-          setHomeCategory(null);
-        }
-      }
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -750,7 +725,6 @@ function App() {
   const [checkinUpdatedProfile, setCheckinUpdatedProfile] = useState(false);
   const [checkinCompletedAt, setCheckinCompletedAt] = useState(null);
   const [discoverySearch, setDiscoverySearch] = useState(getInitialDiscoverySearch);
-  const [homeCategory, setHomeCategory] = useState(getInitialHomeCategory);
   const [discoveryInitial, setDiscoveryInitial] = useState(null); // { initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase }
   const [userZipCode, setUserZipCode] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
@@ -1485,17 +1459,6 @@ function App() {
     return getPersonalizedProductIds(quizResults || null, healthProfile, matchOpts);
   }, [quizResults, healthProfile, hasCompletedPersonalization, matchOpts, catalogReady]);
 
-  // Categories this person actually matches on, in match order, the landing
-  // Shop's Personalize toggle sorts by these.
-  const landingProfileCategories = useMemo(() => {
-    if (!hasCompletedPersonalization) return [];
-    const seen = [];
-    getRecommendations(quizResults || null, healthProfile).forEach((p) => {
-      if (p.category && !seen.includes(p.category)) seen.push(p.category);
-    });
-    return seen;
-  }, [quizResults, healthProfile, hasCompletedPersonalization, catalogReady]);
-
   React.useEffect(() => {
     try {
       if (typeof window !== 'undefined' && localStorage.getItem('ayna_zip')) setUserZipCode(localStorage.getItem('ayna_zip') || '');
@@ -1814,10 +1777,13 @@ function App() {
   });
   const savedCount = Object.keys(savedProducts || {}).length;
 
-  // The logo: Today for a signed-in account with a profile, the welcome page otherwise.
+  const landingPinnedRef = useRef(false);
+  // The logo always opens the landing, signed in or out (founder, Oct 27 01:13).
+  // A landing she opened on purpose is never redirected to Today.
   const navigateHome = () => {
     setDiscoverySearch('');
-    setCurrentView(user && quizResults ? 'today' : 'welcome');
+    landingPinnedRef.current = true;
+    setCurrentView('welcome');
   };
 
   const handleQuizComplete = async (results, opts = {}) => {
@@ -2431,15 +2397,20 @@ function App() {
 
   // Today is home for a signed-in account with a profile (founder, Oct 24 2026):
   // the welcome page hands over to Today once her account and answers are in.
+  // Only a cold visit to / hands over; the logo (navigateHome) pins the landing.
   useEffect(() => {
-    if (currentView !== 'welcome' && currentView !== 'hero') return;
+    if (currentView !== 'welcome' && currentView !== 'hero') { landingPinnedRef.current = false; return; }
+    if (landingPinnedRef.current) return;
     if (!user || !quizResults || authLoading || dataLoading || showWrapped) return;
     setCurrentView('today', { replace: true });
   }, [currentView, user, quizResults, authLoading, dataLoading, showWrapped, setCurrentView]);
 
+  // Which main tab is current. Signed out, the landing is Home.
+  const webTabOn = (key) => WEB_TAB_VIEWS[key].includes(currentView) || (key === 'today' && !user && !quizResults && ['welcome', 'hero'].includes(currentView));
   // Where each main tab goes (top nav and phone tab bar).
   const mainTabGo = {
-    today: () => setCurrentView('today'),
+    // Signed out with no answers, Home is the landing (founder, Oct 27 01:10).
+    today: () => setCurrentView(!user && !quizResults ? 'welcome' : 'today'),
     // Shop is the old Explore page (/explore); Services the same page with Services picked; Library the reads.
     explore: () => openExplore('overview'),
     services: () => setCurrentView('explore-services'),
@@ -2497,7 +2468,7 @@ function App() {
           {/* The five main tabs, same names and order as the app (Shop, Services, Home, Community, Library). The current page is the filled pill (Home only when current). Real links (G02). */}
           <div className="ay-nav__links">
             {MAIN_TABS.map((t) => (
-              <a key={t.key} href={t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={WEB_TAB_VIEWS[t.key].includes(currentView) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
+              <a key={t.key} href={t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
                 {t.label}
                 {/* Landing audit 5: only on the landing and Today, until the quiz is done. */}
                 {t.key === 'today' && !authLoading && !quizResults && ['welcome', 'hero', 'today'].includes(currentView) && <span className="ay-nav__start">Start here</span>}
@@ -2593,30 +2564,21 @@ function App() {
 
         {(currentView === 'welcome' || currentView === 'hero') && (
           <AynaLanding
-            onLogIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
             onStartQuiz={handleStartQuiz}
             onViewDiscovery={handleViewDiscovery}
             onOpenProduct={handleOpenProduct}
-            onViewEcosystem={handleViewEcosystem}
             onViewArticles={handleViewArticles}
             onViewArticle={handleViewArticle}
             onViewAbout={handleViewAbout}
             onViewCommunity={() => setCurrentView('community')}
             onViewWaitlist={() => setCurrentView('waitlist')}
             onViewHowItWorks={handleViewHowItWorks}
+            onViewToday={() => setCurrentView('today')}
+            onViewServices={() => setCurrentView('explore-services')}
+            onAsk={() => openAsk()}
             user={user}
-            myProducts={myProducts}
-            savedProducts={savedProducts}
-            onToggleSaved={toggleSavedProduct}
             loading={authLoading || (!!user && dataLoading)}
             hasProfile={!!quizResults}
-            healthIntake={quizResults?.fullHealthIntake || quizResults}
-            profileCategories={landingProfileCategories}
-            recommendedProductIds={recommendedProductIds}
-            initialCategory={homeCategory}
-            quizResults={quizResults}
-            healthProfile={healthProfile}
-            matchOpts={matchOpts}
             heroBanner={finishQuizCard(true)}
           />
         )}
@@ -3249,7 +3211,7 @@ function App() {
           <nav className="ay-tabbar ay-tabbar--main" aria-label="Main navigation">
             {/* The app's tab bar, same order, names and icons (src/components/nav/tabs.jsx). */}
             {MAIN_TABS.map((t) => {
-              const on = WEB_TAB_VIEWS[t.key].includes(currentView);
+              const on = webTabOn(t.key);
               const go = mainTabGo[t.key];
               return (
                 <a key={t.key} href={t.href} className={`${on ? 'is-on' : ''}${t.center ? ' is-center' : ''}`} aria-current={on ? 'page' : undefined} {...linkProps(go)}>

@@ -506,10 +506,15 @@ export default function MobileApp() {
     saveGuide(authUser.id, next);
   };
   const [loadedAccountId, setLoadedAccountId] = useState(null);
+  // The landing opened on purpose (the ayna wordmark, founder Oct 27 01:13)
+  // stays up for a signed-in account; only the cold-start landing hands over to Home.
+  const landingPinnedRef = useRef(false);
   useEffect(() => {
-    if (authLoading || !authUser || screen !== 'landing') return;
+    if (screen !== 'landing') { landingPinnedRef.current = false; return; }
+    if (authLoading || !authUser || landingPinnedRef.current) return;
     Promise.resolve().then(() => setScreen('ayna'));
   }, [authLoading, authUser, hasEcosystem, screen]);
+  const openLanding = () => { landingPinnedRef.current = true; setAskAynaOpen(false); setOverlay(null); setScreenRaw('landing'); };
   const requestAuth = (feature, resume = null) => {
     authResumeRef.current = resume || (() => setScreen(screen));
     setAuthPrompt({ feature });
@@ -1228,7 +1233,7 @@ export default function MobileApp() {
     },
     onOpenCommunityPost: (postId) => { setOverlay(null); setCommunitySeed({ postId, token: Date.now() }); setScreen('community'); },
     onOpenCommunitySeed: (seed) => { setOverlay(null); setCommunitySeed({ ...(seed || {}), token: Date.now() }); setScreen('community'); },
-    onGoLanding: () => setScreen('landing'),
+    onGoLanding: openLanding,
     onOpenProduct: (p) => growTransition(() => setOverlay({ type: 'product', item: p }), { target: 'product', from: 'img' }),
     onOpenArticle: (a) => {
       setReadArticleIds((ids) => ids.includes(a.id) ? ids : [...ids, a.id]);
@@ -1452,7 +1457,7 @@ export default function MobileApp() {
   };
 
   // The chat is the Ask ayna tab (all-pages brief, Oct 25), so the tab bar stays under it.
-  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
+  const showTabBar = !['quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
   // Deep round 2: the tab bar stays on drilled-in screens (product, read, why
   // this match), as in iOS; tapping a tab pops back to that tab's root.
   // Reads ranked from her app answers (personalReads.js): matching reads
@@ -1518,6 +1523,8 @@ export default function MobileApp() {
     savedCount: Object.keys(savedMap || {}).length,
     onOpenSaved: () => { setAskAynaOpen(false); setOverlay(null); setScreen('saved'); },
     suggest: suggestOn ? { signedIn: Boolean(authUser?.id), hasProfile: Boolean(effectiveQuizAnswers) } : null,
+    // The ayna wordmark opens the landing, signed in or out (founder, Oct 27 01:13).
+    onOpenLanding: openLanding,
   };
   const sheetValue = {
     open: (product) => { if (product?.id) setSheetProduct(product); },
@@ -1620,7 +1627,8 @@ export default function MobileApp() {
         onServices={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setExploreSection('services'); setScreen('explore'); }}
         onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setExploreSection('resources'); setScreen('library'); }}
         // Home always opens on its root (the dashboard, or the chat in the chat-first variant).
-        onHome={() => { setHomeView(homeRoot); setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreenRaw('ayna'); }}
+        // Signed out with nothing on this phone, Home is the landing (founder, Oct 27 01:10).
+        onHome={() => { setHomeView(homeRoot); setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreenRaw(!authUser && !hasEcosystem && !lastQuizAnswers ? 'landing' : 'ayna'); }}
         // Ask ayna: the full chat as a tab screen (the 'ayna' screen's chat view).
         onAsk={() => { setAskAynaOpen(false); setOverlay(null); setHomeView('chat'); setScreenRaw('ayna'); }}
         tabList={chatFirst ? APP_TABS_CHAT_FIRST : APP_TABS}

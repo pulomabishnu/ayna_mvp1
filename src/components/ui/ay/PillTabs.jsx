@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react';
 import { PILL_TABS_MAX } from './pillTabs.js';
+import { useSlidingInk } from '../../eco/ecoMotion.js';
 import './ay-primitives.css';
 
 
@@ -17,6 +18,9 @@ import './ay-primitives.css';
 export default function PillTabs({ tabs = [], active, onChange, label, labelId, idBase = 'ayk', className = '' }) {
   const listRef = useRef(null);
   const list = tabs.slice(0, PILL_TABS_MAX);
+  // The selected pill slides to the new tab (motion pass, Oct 27): one ink behind the tabs.
+  const ink = useSlidingInk(listRef, active);
+  const hasInk = ink.opacity === 1;
   if (import.meta.env?.DEV && tabs.length > PILL_TABS_MAX) console.warn(`PillTabs: ${tabs.length} tabs; the brief allows ${PILL_TABS_MAX}.`);
   const choose = useCallback((id, focus = false) => {
     onChange?.(id);
@@ -36,13 +40,14 @@ export default function PillTabs({ tabs = [], active, onChange, label, labelId, 
   return (
     <div
       ref={listRef}
-      className={`ayk-tabs ${className}`.trim()}
+      className={`ayk-tabs${hasInk ? ' has-ink' : ''} ${className}`.trim()}
       role="tablist"
       aria-label={labelId ? undefined : label}
       aria-labelledby={labelId}
       style={{ '--ayk-tabs-n': list.length }}
       onKeyDown={onKeyDown}
     >
+      <span className="ayk-tabs__ink" aria-hidden="true" style={ink} />
       {list.map((t) => {
         const on = t.id === active;
         const props = {
@@ -51,6 +56,7 @@ export default function PillTabs({ tabs = [], active, onChange, label, labelId, 
           id: `${idBase}-tab-${t.id}`,
           'data-tab': t.id,
           'aria-selected': on,
+          'data-ink-on': on,
           'aria-controls': t.href ? undefined : `${idBase}-panel-${t.id}`,
           tabIndex: on ? 0 : -1,
           className: `ayk-tabs__tab${on ? ' is-on' : ''}`,
