@@ -248,3 +248,19 @@ html body .app-container #ay-landing.wl.hm .wlx-end__h.wlx-end__h { margin: 0; f
 .app-container .hm.wl .wl-note { padding: 18px var(--ay-margin, 16px) 24px; background: #3e2723; color: #ffedac; border-top: 1px solid rgba(255, 237, 172, .2); }
 .app-container.app-container .hm.wl .wl-note__p { max-width: 1240px; margin: 0 auto; font: 500 14px/1.45 var(--ay-sans-stack, sans-serif) !important; color: rgba(255, 237, 172, .9) !important; text-align: center; }
 .app-container .hm.wl .wl-note__p a { color: inherit !important; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Clean-up under the falling pictures (founder, Oct 27 19:22-19:26: "clean it up ... don't make it too
+   overstimulating, section things off, unique and easy to read"). One idea per section, even rhythm:
+   - the method is three steps side by side (the four number tiles are gone; the catalog numbers live on How it works);
+   - every section gets the same generous top and bottom space and one heading style. */
+html body .app-container #ay-landing.wl .wl-classic .hm-bento { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; grid-auto-rows: auto !important; gap: 20px !important; }
+html body .app-container #ay-landing.wl .wl-classic .hm-bento > .hm-bt { grid-column: auto !important; grid-row: auto !important; min-height: 0 !important; }
+html body .app-container #ay-landing.wl .wl-classic .hm-bento > .hm-bt--num { display: none !important; }
+html body .app-container #ay-landing.wl .wl-classic .hm-bento > .hm-bt--photo .hm-bt__ph { aspect-ratio: 4 / 3; }
+html body .app-container #ay-landing.wl .wl-classic .hm-bento > .hm-bt--decide { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; }
+html body .app-container #ay-landing.wl .wl-classic .hm-sec { padding-top: 96px !important; padding-bottom: 96px !important; }
+html body .app-container #ay-landing.wl .wl-classic .hm-how__lead { max-width: 60ch; margin-bottom: 40px !important; }
+@media (max-width: 900px) {
+  html body .app-container #ay-landing.wl .wl-classic .hm-bento { grid-template-columns: minmax(0, 1fr) !important; }
+  html body .app-container #ay-landing.wl .wl-classic .hm-sec { padding-top: 56px !important; padding-bottom: 56px !important; }
+}

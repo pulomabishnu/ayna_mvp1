@@ -8,7 +8,7 @@ import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
 import { ALL_PRODUCTS, MACRO_GROUPS, basicsProductIds, useCatalogReady } from '../data/catalog.js';
 import { shopCatalogCounts } from '../data/catalogCounts.js';
-import { getDailyFact } from '../data/welcomeSlides.js';
+
 import { brandOf } from '../mobile/data/brandFallback.js';
 import ProductCard from './ProductCard';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
@@ -382,7 +382,7 @@ function HowEvidence({ onViewHowItWorks, onViewArticles, onStartQuiz, showStart 
               <StepUI kind="quiz" />
             </span>
           </Tile>
-          <Tile tone="pink" span="tall" as="li" className="hm-bt hm-bt--ev">
+          <Tile tone="butter" span="tall" as="li" className="hm-bt hm-bt--ev">
             <span className="hm-bt__n" aria-hidden="true">2</span>
             <h3 className="hm-h3"><span className="ed-sr">Step 2: </span>{s2.t}</h3>
             <p>{s2.d}</p>
@@ -390,7 +390,7 @@ function HowEvidence({ onViewHowItWorks, onViewArticles, onStartQuiz, showStart 
           </Tile>
           <StatTile s={nums[0]} tone="butter" />
           <StatTile s={nums[1]} tone="ink" />
-          <Tile tone="pink" span="wide" as="li" className="hm-bt hm-bt--decide">
+          <Tile tone="butter" span="wide" as="li" className="hm-bt hm-bt--decide">
             <span className="hm-bt__side"><Photo src={s3.src} alt="" sizes="(max-width: 767px) 40vw, 260px" style={{ objectPosition: s3.pos }} loading="lazy" decoding="auto" /><StepUI kind="decide" /></span>
             <span className="hm-bt__text">
               <span className="hm-bt__n" aria-hidden="true">3</span>
@@ -399,7 +399,7 @@ function HowEvidence({ onViewHowItWorks, onViewArticles, onStartQuiz, showStart 
             </span>
           </Tile>
           <StatTile s={nums[2]} tone="butter" />
-          <StatTile s={nums[3]} tone="pink" />
+          <StatTile s={nums[3]} tone="ink" />
         </Bento>
         {/* The one call to action after the hero: it closes the method. */}
         {showStart && <div className="hm-how__cta"><Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Get my matches<Arrow /></Go></div>}
@@ -415,7 +415,7 @@ const LEAD_READS = [
   { id: 'pcos-basics', title: 'PMOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror', tone: 'butter' },
 ];
 function Reads({ onViewArticle, onViewArticles }) {
-  const fact = useMemo(() => { try { return getDailyFact(); } catch { return null; } }, []);
+  // Word of the day removed in the landing clean-up (founder, Oct 27 19:22).
   const open = (id) => { if (onViewArticle) onViewArticle(id); else onViewArticles?.(); };
   return (
     <div className="hm-reads">
@@ -436,16 +436,6 @@ function Reads({ onViewArticle, onViewArticles }) {
             </a>
           </li>
         ))}
-        {fact && (
-          <li>
-            <aside className="hm-readlist__word" aria-label="Word of the day">
-              <span className="hm-readlist__label">Word of the day</span>
-              <strong className="hm-readlist__title">{fact.term}</strong>
-              <span className="hm-readlist__teaser">{fact.text}</span>
-              <small className="hm-readlist__src">From the ayna glossary. General information, not medical advice.</small>
-            </aside>
-          </li>
-        )}
       </ul>
     </div>
   );
@@ -487,7 +477,7 @@ function Community({ onViewCommunity, posts = [] }) {
 }
 function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts }) {
   return (
-    <Band tone="pink" className="hm-sec hm-rc hm-band" aria-label="Reads and Community">
+    <Band tone="deep" className="hm-sec hm-rc hm-band" aria-label="Reads and Community">
       <div className="hm-wrap hm-rc__grid">
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         <Community onViewCommunity={onViewCommunity} posts={posts} />
@@ -535,7 +525,7 @@ export default function LandingV2({ bodyOnly = false, onStartQuiz, onViewDiscove
       {!personal?.dashboard && personalSlot && <div className="hm-personal">{personalSlot}</div>}
       <NeedsBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} onStartQuiz={onStartQuiz} picks={personal?.topPicks || null} signedOut={!personal} />
       {rest && <>
-      <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!(personal && personal.hasQuiz)} />
+      <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!bodyOnly && !(personal && personal.hasQuiz)} />
       <ReadsCommunity onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
       <Founders onViewAbout={onViewAbout} />
       </>}
