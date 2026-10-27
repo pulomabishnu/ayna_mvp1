@@ -139,3 +139,8 @@ html body .app-container .cm .cm-body.is-clamped { -webkit-line-clamp: 3 !import
 :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics).is-onerow::-webkit-scrollbar { display: none; }
 :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics).is-onerow .ub-topic { flex: none; min-height: 44px; align-items: center; padding: 8px 10px 8px 14px; border-radius: 999px; font-size: 15px; white-space: nowrap; }
 :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics).is-onerow .ub-topic svg { width: 24px; height: 24px; padding: 5px; }
+/* p15 clean (founder: "too much overcrowded"): in the app's Ask sheet the greeting card is compact so
+   the first question group (About you) shows above the composer. */
+.ay-askp--sheet.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-hero, .ay-asksheet .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-hero { gap: 6px; padding: 16px 18px 16px; }
+.ay-askp--sheet .ay-askp-hero :is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout), .ay-asksheet .ay-askp-hero :is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout) { font-size: 32px !important; line-height: 1 !important; }
+.ay-askp--sheet.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-hero .ay-askp-sparkle, .ay-asksheet .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-hero .ay-askp-sparkle { top: 14px; right: 14px; width: 26px; height: 26px; }

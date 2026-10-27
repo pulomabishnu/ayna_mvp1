@@ -10,13 +10,24 @@ import '../../styles/pcard.css';
  * every card puts the same fact in the same place on both platforms.
  */
 
+/** Up to three initials for a name too long to sit on a tile (over 14 characters), else ''. */
+export function plateMonogram(name) {
+  const text = String(name || '').trim();
+  if (text.length <= 14) return '';
+  const words = text.split(/[\s/-]+/).filter((w) => /^[A-Za-z0-9]/.test(w) && !/^(the|and|of|for|by|&)$/i.test(w));
+  return words.slice(0, 3).map((w) => w[0].toUpperCase()).join('') || '';
+}
+
 /** No photo yet: a plain plate with the brand name in the display face (no oval, no tint). */
 export function PlateName({ product, label = '' }) {
   // The brand (or the brand already at the start of its name), else the name.
   const name = String(product?.brand || BRAND_FALLBACK[product?.id] || product?.name || '').trim() || 'ayna';
+  // A long name was cut off on the tile ("Connect Pelvic Floor..."). It shows a short monogram
+  // instead; the full name is right under the tile and in the label.
+  const mono = plateMonogram(name);
   return (
-    <span className="ay-plate-name" role="img" aria-label={label || `No photo yet for ${product?.name || name}`}>
-      <span aria-hidden="true">{name}</span>
+    <span className={`ay-plate-name${mono ? ' is-mono' : ''}`} role="img" aria-label={label || `No photo yet for ${product?.name || name}`}>
+      <span aria-hidden="true">{mono || name}</span>
     </span>
   );
 }

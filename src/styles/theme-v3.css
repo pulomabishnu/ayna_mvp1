@@ -5602,3 +5602,7 @@ html body .app-container:not([data-theme='dark']) .ayna-browse-card .ayna-discov
 html body .app-container.app-container.app-container.app-container.app-container .ay-askrow__form { display: flex; gap: 8px; margin-top: 10px; }
 html body .app-container.app-container.app-container.app-container.app-container .ay-askrow__form input { flex: 1; min-width: 0; min-height: 44px; padding: 0 14px; border: 1.5px solid #3e2723; border-radius: 999px; background: transparent; color: inherit; font: 500 16px/1.2 var(--ay-sans); }
 html body .app-container.app-container.app-container.app-container.app-container .ay-askrow__form button { padding: 10px 6px; }
+
+/* p15 clean (founder: "no ugly sticks/stars"): the curved-text seals on the website set their
+   words at under 13px. They are aria-hidden decoration, so they are dropped. */
+:is(.wx-seal, .hm-art__seal, .hm-invest__seal).ay-seal { display: none !important; }

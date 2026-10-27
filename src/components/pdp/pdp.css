@@ -2867,3 +2867,11 @@ html body :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-p
 }
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > #ay-sum-evidence .ayv-evhead { background: none !important; border: 0 !important; padding: 0 !important; box-shadow: none !important; }
 #ay-tabs#ay-tabs#ay-tabs#ay-tabs .ayq-sum > #ay-sum-evidence .ayv-evhead__status { font: 800 24px/1.15 var(--ay-font-display, inherit) !important; }
+
+/* p15 clean: 44px tap areas for the small text links on the product page (Return policy,
+   Safety details, glossary terms such as toxic shock syndrome, Call 911, Source links).
+   Inline links keep their look and line height; an invisible ::after grows the hit area.
+   Source links sit on their own line, so they simply get a 44px row. */
+:is(.ayp-buy__fine .ayp-textlink, .ayv-safeline__go, .ay-gloss, .ay-urgent__what a) { position: relative; }
+:is(.ayp-buy__fine .ayp-textlink, .ayv-safeline__go, .ay-gloss, .ay-urgent__what a)::after { content: ''; position: absolute; left: -4px; right: -4px; top: 50%; height: 44px; transform: translateY(-50%); }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs, .ayq, main) a.ay-urgent__src { display: inline-flex !important; align-items: center; min-height: 44px; }

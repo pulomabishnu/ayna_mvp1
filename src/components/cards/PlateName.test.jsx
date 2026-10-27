@@ -21,3 +21,15 @@ describe('no-photo plate', () => {
     expect(src.match(/fallback=\{<PlateName product=\{product\} \/>\}/g)?.length).toBe(2);
   });
 });
+
+describe('long names on the plate', () => {
+  it('a name too long for the tile shows a short monogram, the label keeps the full name', () => {
+    const html = renderToStaticMarkup(<PlateName product={{ id: 'x', name: 'Connect Pelvic Floor Fitness', brand: 'Connect Pelvic Floor' }} />);
+    expect(html).toContain('>CPF<');
+    expect(html).toContain('is-mono');
+    expect(html).toContain('No photo yet for Connect Pelvic Floor Fitness');
+  });
+  it('short names stay whole', () => {
+    expect(renderToStaticMarkup(<PlateName product={{ id: 'x', brand: 'Clue', name: 'Period Tracker' }} />)).toContain('>Clue<');
+  });
+});

@@ -116,7 +116,7 @@ function PixelateGrid({ count = 6 }) {
 // visibleCount naturally, instead of needing a manual reset that either
 // calls setState in an effect body or reads/writes a ref during render
 // (both flagged by this project's react-hooks lint rules).
-function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz, showOnboarding = false, savedProducts = {}, onToggleSaved, matchOpts, onPickPhrase = null }) {
+function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz, showOnboarding = false, savedProducts = {}, onToggleSaved, matchOpts, onPickPhrase = null, afterFirstRow = null }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef(null);
@@ -161,6 +161,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
           <Fragment key={p.id}>
             <ProductCard product={p} variant={layout} onClick={() => { trackCardClicked({ surface: eventSurface(), where: 'app_products', product_id: p.id, position: index }); if (onOpenProduct) onOpenProduct(p); }} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onSeeMatch={quizAnswers ? null : onStartQuiz} isSaved={!!savedProducts[p.id]} onToggleSaved={onToggleSaved} matchOpts={matchOpts} />
             {showOnboarding && index === Math.min(3, visibleProducts.length - 1) && <section className="ayna-figma-discover-cta"><button type="button" onClick={onStartQuiz}>Get matched <span aria-hidden="true">→</span></button></section>}
+            {afterFirstRow && index === Math.min(isList ? 0 : 1, visibleProducts.length - 1) && <div className="ay-grid-note" style={{ gridColumn: '1 / -1' }}>{afterFirstRow}</div>}
             {onPickPhrase && index === 7 && <div className="ay-app-ribbon"><Ribbon items={FAMILIAR_PHRASES} label="Searches people make" onPick={onPickPhrase} tab={<span className="ay-ribbon__tab is-label">Does this sound familiar?</span>} className="ay-ribbon--pink" /></div>}
           </Fragment>
         ))}
@@ -451,6 +452,7 @@ export default function BrowseScreen({
 
   // Applied filters, shown as removable chips under the toolbar.
   const activeFilters = FILTER_FIELDS.filter(([key]) => filters[key] !== 'all').map(([key, , options]) => [key, (options.find(([value]) => value === filters[key]) || [])[1] || CATEGORY_LABELS[filters[key]] || String(filters[key]).replaceAll('-', ' ')]);
+  const commissionNote = <p className="ay-shop-note is-commission">Some links earn ayna a commission. It never changes your matches.</p>;
   const activeFilterCount = activeFilters.length + (embedded && activeGroup !== 'all' ? 1 : 0) + (embedded ? avoidAttrs.length : 0);
   const areaLabel = (id) => sentenceCase((SHOP_GROUPS.find((g) => g.id === id) || MACRO_GROUPS.find((g) => g.id === id))?.label || String(id).replaceAll('-', ' '));
   const matchingReads = searchTermRaw.length >= 2 ? searchArticles(searchTermRaw, articles) : [];
@@ -540,7 +542,9 @@ export default function BrowseScreen({
           </div>}
           {bestNeedsQuiz && !showFilters && bestQuizNote}
           {!embedded && <div className="ay-shop-comparerow"><CompareToggle /></div>}
-          {embedded && <p className="ay-shop-note is-embedded"><b role="status">{shownTotal} {shownTotal === 1 ? 'result' : 'results'}</b> · Some links earn ayna a commission. It never changes your matches.</p>}
+          {/* Founder Oct 26: "too much overcrowded writing". The count stays on one short line here;
+              the commission note moves below the first row of cards (ay-grid-note). */}
+          {embedded && <p className="ay-shop-note is-embedded"><b role="status">{shownTotal} {shownTotal === 1 ? 'result' : 'results'}</b></p>}
         </>;
         return embedded
           ? <div className="ayna-category-index is-embedded">{toolbar}</div>
@@ -590,10 +594,10 @@ export default function BrowseScreen({
                 </p>
               )}
               {filtered.length > 0 && moreResults.length > 0 && <h2 className="ay-shop-results-label">Your matches</h2>}
-              {filtered.length > 0 && <ProductGrid onPickPhrase={!embedded && !searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
+              {filtered.length > 0 && <ProductGrid afterFirstRow={embedded ? commissionNote : null} onPickPhrase={!embedded && !searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
               {moreResults.length > 0 && <>
                 {filtered.length > 0 && <h2 className="ay-shop-results-label">More results</h2>}
-                <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+                <ProductGrid afterFirstRow={embedded && filtered.length === 0 ? commissionNote : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
               </>}
             </>
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
