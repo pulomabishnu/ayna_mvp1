@@ -565,13 +565,13 @@
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-answer { color: #ffedac; }
 
 /* Repeat pink, mint, butter and periwinkle across answer sets. */
-.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 1),
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row):nth-child(4n + 1),
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ayna-count-choices button:nth-child(4n + 1) { background: var(--legacy-pink) !important; color: #3e2723 !important; }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 2),
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row):nth-child(4n + 2),
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ayna-count-choices button:nth-child(4n + 2) { background: var(--ay-mint) !important; color: #3e2723 !important; }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 3),
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row):nth-child(4n + 3),
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ayna-count-choices button:nth-child(4n + 3) { background: var(--legacy-butter) !important; color: #3e2723 !important; }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n),
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row):nth-child(4n),
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ayna-count-choices button:nth-child(4n) { background: var(--ay-butter) !important; color: #3e2723 !important; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab)[aria-pressed='true'],
 .ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-card, .ip-tab)[aria-checked='true'],
@@ -585,6 +585,10 @@
 /* Phase marks keep their own shapes on the light stickers (they were all flattened to plain white circles). */
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-sticker-glyph { --legacy-ink: #3e2723; --ay-paper: #fff; border-color: #3e2723; }
 
+/* QA (Oct 27): the group tabs are navigation, not answers: no rotating fills
+   (Care read 1.5:1, and periwinkle is chart-only). Butter outline, butter fill when on. */
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-tab { background: transparent !important; color: #ffedac !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-tab[aria-selected='true'] { background: #ffedac !important; color: #3e2723 !important; }
 /* Keep text legible on the quiz's dark fields and light accent surfaces. */
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-answer input:not(.ip-note),
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-answer textarea:not(.ip-note) {

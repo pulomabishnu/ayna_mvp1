@@ -1,7 +1,9 @@
 /* App landing, uniqueness pass A (Oct 26): espresso Shout band with real
    products big, pink marquee band, butter action band. Fixed colours in both
    themes (the screen is one composed poster). */
-.ayna-mobile .ay-land.ay-uql { overflow-y: auto; overflow-x: hidden; }
+/* QA (Oct 27): app-landing.css's 3x .ayna-mobile overflow:hidden won and clipped
+   Get my matches / Explore first / About us below the fold. The poster scrolls. */
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-land.ay-uql { overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; }
 .ay-uql :is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band).ay-uql-hero { flex: 1 0 auto; display: flex; padding: 0 20px 24px; }
 .ay-uql .ay-uql-hero > .ayb-band__in { display: flex; flex-direction: column; gap: 16px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-uql .ay-land-top { position: static; padding: max(14px, env(safe-area-inset-top)) 0 0; }

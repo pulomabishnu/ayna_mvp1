@@ -45,15 +45,16 @@ export default function LegalFooter({ variant = 'default' }) {
         padding: '22px 24px max(22px, env(safe-area-inset-bottom))',
       }}
     >
-      18+ only. ayna provides wellness information only, not medical advice. We do not sell your personal health information.{' '}
-      <a href={PRIVACY_POLICY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Privacy policy</a>
-      {' · '}
-      <a href={CONSUMER_HEALTH_DATA_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Consumer health data notice</a>
-      {' · '}
-      <a href={TERMS_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Terms of use</a>
-      {' · '}
-      <a href={HOW_WE_MAKE_MONEY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>How we make money</a>
-      <PrivacyPreferencesLink style={LINK_STYLE} />
+      <p className="ay-legal__note" style={{ margin: 0 }}>18+ only. ayna provides wellness information only, not medical advice. We do not sell your personal health information.</p>
+      {/* QA (Oct 27): the links sit in their own wrapping row, each a full 44px
+          target. Inline, their padded hit areas overlapped across wrapped lines. */}
+      <p className="ay-legal__links">
+        <a href={PRIVACY_POLICY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Privacy policy</a>
+        <a href={CONSUMER_HEALTH_DATA_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Consumer health data notice</a>
+        <a href={TERMS_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Terms of use</a>
+        <a href={HOW_WE_MAKE_MONEY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>How we make money</a>
+        <PrivacyPreferencesLink style={LINK_STYLE} separator="" />
+      </p>
     </div>
   );
 }

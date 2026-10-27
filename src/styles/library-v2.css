@@ -149,7 +149,7 @@ html body .app-container.app-container.app-container.app-container .lb {
   & .lb-src__body { display: grid; gap: 4px; min-width: 0; }
   & .lb-src__pub { font: 600 13px/1.3 var(--lb-sans); color: var(--ay-text-2); }
   & .lb-src__title { font: 600 17px/1.35 var(--lb-sans); color: var(--ay-text); }
-  & .lb-src__go { justify-self: start; font: 500 15px/1.35 var(--lb-sans); color: var(--ay-text) !important; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; overflow-wrap: anywhere; }
+  & .lb-src__go { display: inline-flex; align-items: center; min-height: 44px; justify-self: start; font: 500 15px/1.35 var(--lb-sans); color: var(--ay-text) !important; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; overflow-wrap: anywhere; }
   & .lb-article .ct-care { margin: 0 !important; }
   /* Read next on its own espresso band, scalloped at the top (rule 1) */
   & .lb-band { --band: var(--lb-esp); position: relative; margin-top: 80px; padding: 48px 0 64px; background: var(--band); color: var(--lb-butter); }
