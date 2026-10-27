@@ -1,130 +1,79 @@
-import React from 'react';
-import { CloseIcon } from './icons/UiIcons.jsx';
+import React, { useRef, useState } from 'react';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
+import { requestPro } from '../utils/proApi.js';
+import '../styles/pro-v4.css';
 
-const MONTHLY_PRICE = '$18';
-const ANNUAL_PRICE = '$162';
-const ANNUAL_SAVINGS = '3 months free';
-const CONTACT_EMAIL = 'puloma@aynahealth.co';
+const MONTHLY_PRICE = '$4.99';
+const MONTHLY_REGULAR = '$8.99';
+const ANNUAL_PRICE = '$45';
+const ANNUAL_REGULAR = '$90';
 
-export default function SubscriptionPaywallModal({ onClose, featureName = 'this feature', featureDescription = 'syncing and summarizing health data from wearables and EHRs' }) {
+export default function SubscriptionPaywallModal({ onClose, featureName = 'this feature', featureDescription = 'deeper personalized health tools and insights' }) {
   useEscapeToClose(true, onClose);
-  const monthlyHref = `mailto:${CONTACT_EMAIL}?subject=ayna%20Early%20Access%20Subscription%20(Monthly)&body=Hi%2C%20I%27d%20like%20to%20subscribe%20to%20ayna%20Premium%20at%20%2418%2Fmonth.`;
-  const annualHref = `mailto:${CONTACT_EMAIL}?subject=ayna%20Early%20Access%20Subscription%20(Annual)&body=Hi%2C%20I%27d%20like%20to%20subscribe%20to%20ayna%20Premium%20at%20%24162%2Fyear.`;
+  const [busy, setBusy] = useState('');
+  const [error, setError] = useState('');
+  const attempts = useRef({});
+
+  const checkout = async (plan) => {
+    if (busy) return;
+    setBusy(plan);
+    setError('');
+    attempts.current[plan] ||= crypto.randomUUID();
+    try {
+      const result = await requestPro({ plan, requestId: attempts.current[plan] });
+      const url = new URL(result.url);
+      if (url.protocol !== 'https:' || url.hostname !== 'checkout.stripe.com') throw new Error('Checkout is unavailable. Please try again.');
+      window.location.assign(url.href);
+    } catch (e) {
+      setError(e.message);
+      setBusy('');
+    }
+  };
 
   return (
-    <div
-      onClick={onClose}
-      style={{
-        position: 'fixed', inset: 0, zIndex: 3000,
-        background: 'rgba(28,25,23,0.65)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '1.5rem',
-      }}
-    >
-      <div
+    <div className="pro-paywall-v4" onClick={onClose}>
+      <section
+        className="pro-paywall-v4__sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pro-paywall-title"
         onClick={(e) => e.stopPropagation()}
-        style={{
-          background: 'var(--color-surface)',
-          borderRadius: 'var(--radius-lg)',
-          boxShadow: 'var(--shadow-lg)',
-          padding: '2rem',
-          maxWidth: '480px',
-          width: '100%',
-          position: 'relative',
-        }}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close"
-          style={{
-            position: 'absolute', top: '1rem', right: '1rem',
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontSize: 'var(--ay-fs-section)', color: 'var(--color-text-muted)',
-            lineHeight: 1, padding: '0.25rem',
-          }}
-        >
-          <CloseIcon size={20} />
-        </button>
+        <button type="button" className="pro-paywall-v4__close" onClick={onClose} aria-label="Close">×</button>
 
-        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <div style={{
-            display: 'inline-block',
-            background: 'var(--color-secondary-fade)',
-            color: 'var(--color-primary)',
-            padding: '0.4rem 1rem',
-            borderRadius: 'var(--radius-pill)',
-            fontSize: 12.5, fontWeight: 600,
-            textTransform: 'none', letterSpacing: 'normal',
-            marginBottom: '1rem',
-          }}>
-            Early access
-          </div>
-          <h2 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.75rem', color: 'var(--color-text-main)' }}>
-            Get ayna Premium
-          </h2>
-          <p style={{ fontSize: 16, color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-            ayna can only afford to offer {featureName} to paying users. {featureDescription} is
-            costly to build and maintain.
-          </p>
-          <p style={{ fontSize: 16, color: 'var(--color-text-muted)', lineHeight: 1.6, marginTop: '0.75rem' }}>
-            As an early user, we&apos;re offering a <strong>lifetime discount</strong>. {' '}
-            <strong>subscribe now to lock in this price forever.</strong>
-          </p>
+        <div className="pro-paywall-v4__head">
+          <p className="pro-paywall-v4__eyebrow">ayna Pro Early Access</p>
+          <h2 id="pro-paywall-title" className="pro-paywall-v4__title">Unlock Pro now</h2>
+          <p>Get {featureName} plus {featureDescription}.</p>
+          <p>Pay the Early Access price today and use Pro immediately. Your purchased month or year starts January 1, 2027, so the beta period before launch is included.</p>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-          <a
-            href={monthlyHref}
-            style={{
-              flex: 1, textAlign: 'center', textDecoration: 'none',
-              padding: '1.25rem 1rem',
-              border: '2px solid var(--color-border)',
-              borderRadius: 'var(--radius-lg)',
-              background: 'var(--color-surface-soft)',
-              color: 'var(--color-text-main)',
-              display: 'block',
-              transition: 'border-color 0.2s',
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--color-primary)'}
-            onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}
-          >
-            <div style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, color: 'var(--color-text-main)' }}>{MONTHLY_PRICE}</div>
-            <div style={{ fontSize: 14, color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>per month</div>
-          </a>
+        <div className="pro-paywall-v4__offer">Early Access pricing is applied now. Save up to 50% on your first paid term.</div>
 
-          <a
-            href={annualHref}
-            style={{
-              flex: 1, textAlign: 'center', textDecoration: 'none',
-              padding: '1.25rem 1rem',
-              border: '2px solid var(--color-primary)',
-              borderRadius: 'var(--radius-lg)',
-              background: 'var(--color-secondary-fade)',
-              color: 'var(--color-text-main)',
-              display: 'block',
-              position: 'relative',
-            }}
-          >
-            <div style={{
-              position: 'absolute', top: '-0.6rem', left: '50%', transform: 'translateX(-50%)',
-              background: 'var(--color-primary)', color: 'white',
-              padding: '0.15rem 0.6rem', borderRadius: 'var(--radius-pill)',
-              fontSize: 12.5, fontWeight: 600, whiteSpace: 'nowrap',
-            }}>
-              {ANNUAL_SAVINGS}
-            </div>
-            <div style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, color: 'var(--color-text-main)' }}>{ANNUAL_PRICE}</div>
-            <div style={{ fontSize: 14, color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>per year</div>
-          </a>
+        <div className="pro-paywall-v4__plans">
+          <article className="pro-paywall-v4__plan">
+            <p className="pro-paywall-v4__plan-label">Monthly</p>
+            <div className="pro-paywall-v4__price"><del>{MONTHLY_REGULAR}</del><strong>{MONTHLY_PRICE}</strong><span>today</span></div>
+            <p>Your first paid month begins at launch, then renews at {MONTHLY_REGULAR}/month unless canceled.</p>
+            <button type="button" className="pro-paywall-v4__buy" disabled={Boolean(busy)} onClick={() => checkout('month')}>
+              {busy === 'month' ? 'Opening checkout…' : `Choose monthly · ${MONTHLY_PRICE}`}
+            </button>
+          </article>
+
+          <article className="pro-paywall-v4__plan pro-paywall-v4__plan--best">
+            <div className="pro-paywall-v4__badge">Best value · 50% off</div>
+            <p className="pro-paywall-v4__plan-label">Yearly</p>
+            <div className="pro-paywall-v4__price"><del>{ANNUAL_REGULAR}</del><strong>{ANNUAL_PRICE}</strong><span>today</span></div>
+            <p>Your first paid year begins at launch, then renews at {ANNUAL_REGULAR}/year unless canceled.</p>
+            <button type="button" className="pro-paywall-v4__buy" disabled={Boolean(busy)} onClick={() => checkout('year')}>
+              {busy === 'year' ? 'Opening checkout…' : `Choose yearly · ${ANNUAL_PRICE}`}
+            </button>
+          </article>
         </div>
 
-        <p style={{ textAlign: 'center', fontSize: 12.5, color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
-          Click a plan to email us and get started. Feature is currently in development. Your
-          early-user price is locked in forever once you subscribe.
-        </p>
-      </div>
+        {error && <p className="pro-paywall-v4__error" role="alert">{error}</p>}
+        <p className="pro-paywall-v4__renewal">Cancel automatic renewal anytime. Access already paid for stays active through the end of that purchased period.</p>
+      </section>
     </div>
   );
 }

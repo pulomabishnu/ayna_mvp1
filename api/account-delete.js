@@ -1,3 +1,5 @@
+/* global process */
+import { proStripe } from './_pro.js';
 import { verifyUser } from './_usageLimit.js';
 import { revokeStoredAppleAuthorization } from './_appleSignIn.js';
 import { revokeProvider, PROVIDERS } from './_healthProviders.js';
@@ -55,6 +57,19 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Stop future Pro billing before deleting the account and its ledger rows.
+    if (process.env.PRO_BILLING_ENABLED === '1') {
+      const { data, error: proError } = await admin.from('pro_subscriptions').select('subscription_id').eq('user_id', user.id);
+      if (proError && !missingTable(proError)) throw new Error('Unable to check Pro billing');
+      if (data?.length) {
+        const stripe = proStripe();
+        for (const row of data) {
+          const sub = await stripe.subscriptions.retrieve(row.subscription_id);
+          if (!['canceled', 'incomplete_expired'].includes(sub.status)) await stripe.subscriptions.cancel(sub.id);
+        }
+      }
+    }
+
     // feedback uses ON DELETE SET NULL rather than CASCADE, so remove it
     // explicitly to avoid retaining a deleted user's message/email.
     const feedbackDeletes = [admin.from('feedback').delete().eq('user_id', user.id)];
