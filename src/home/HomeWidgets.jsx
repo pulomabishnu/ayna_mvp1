@@ -72,7 +72,7 @@ export default function HomeWidgets({ surface = 'app', userId = null, data = {},
         {children}
         <button type="button" className="ay-homewidgets__edit" aria-haspopup="dialog" onClick={openSheet}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10-10-4-4L4 16v4zM14 6l4 4" /></svg>
-          <span>{layout.widgets.length ? editLabel : surface === 'web' ? 'Add widgets to Today' : 'Add widgets'}</span>
+          <span>{layout.widgets.length ? editLabel : surface === 'web' ? 'Add widgets to Home' : 'Add widgets'}</span>
           {layout.widgets.length > 0 && <span className="sr-only"> Today</span>}
         </button>
       </div>

@@ -86,6 +86,7 @@ function MotionToggle() {
 }
 
 function footerGo(e, fn) {
+  if (!fn) return; // no handler: let the link navigate
   if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
   fn?.();
@@ -104,6 +105,7 @@ export default function SiteFooter({
   onViewHowWeMakeMoney,
   onViewEcosystem,
   onViewCommunity,
+  onMainTab = {},
 }) {
   // The footer is on every website page: capture ?ref invite codes here
   // (idempotent, a no-op without Supabase).
@@ -122,12 +124,15 @@ export default function SiteFooter({
           </p>
         </div>
 
-        <FooterColumn title="Explore">
-          <a className="ay-foot__link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How it works</a>
-          <a className="ay-foot__link" href="/explore/products" onClick={(e) => footerGo(e, () => onViewDiscovery?.(''))}>Products</a>
-          <a className="ay-foot__link" href="/explore/resources" onClick={(e) => footerGo(e, onViewArticles)}>Resources</a>
-          <a className="ay-foot__link" href="/you/ecosystem" onClick={(e) => footerGo(e, onViewEcosystem)}>My ecosystem</a>
+        <FooterColumn title="Browse">
+          {/* The site's tab names (Home, Shop, Services, Library), not the old Explore / Products / Resources. */}
+          <a className="ay-foot__link" href="/today" onClick={(e) => footerGo(e, onMainTab.today)}>Home</a>
+          <a className="ay-foot__link" href="/explore" onClick={(e) => footerGo(e, onMainTab.explore || (() => onViewDiscovery?.('')))}>Shop</a>
+          <a className="ay-foot__link" href="/explore/services" onClick={(e) => footerGo(e, onMainTab.services)}>Services</a>
+          <a className="ay-foot__link" href="/explore/resources" onClick={(e) => footerGo(e, onMainTab.library || onViewArticles)}>Library</a>
           <a className="ay-foot__link" href="/community" onClick={(e) => footerGo(e, onViewCommunity)}>Community</a>
+          <a className="ay-foot__link" href="/you/ecosystem" onClick={(e) => footerGo(e, onViewEcosystem)}>My ecosystem</a>
+          <a className="ay-foot__link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How it works</a>
           <a className="ay-foot__link" href="/campus-resources">Campus resources</a>
         </FooterColumn>
 
@@ -139,7 +144,7 @@ export default function SiteFooter({
 
         <FooterColumn title="Get in touch">
           <a className="ay-foot__link" href="/contact" onClick={(e) => footerGo(e, onViewContact)}>Contact</a>
-          <a className="ay-foot__link" href="https://form.typeform.com/to/Jt7rx3BS?typeform-source=aynahealth.co" target="_blank" rel="noreferrer">Give us feedback <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+          <a className="ay-foot__link" href="https://form.typeform.com/to/Jt7rx3BS?typeform-source=aynahealth.co" target="_blank" rel="noreferrer">Give us <span className="ay-foot__nowrap" style={{ whiteSpace: 'nowrap' }}>feedback <span aria-hidden="true">↗</span></span><span className="sr-only"> (opens in a new tab)</span></a>
           <a className="ay-foot__link" href="https://www.instagram.com/ayna.health/" target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
           <a className="ay-foot__link" href="https://www.tiktok.com/@aynahealth" target="_blank" rel="noreferrer">TikTok <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
         </FooterColumn>

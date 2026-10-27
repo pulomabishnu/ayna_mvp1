@@ -283,7 +283,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
                   if (!onBrowseBrand || !isPlainLeftClick(e)) return;
                   e.preventDefault();
                   onBrowseBrand(partner.brand);
-                }}>See {partner.brand} in Explore →</a>
+                }}>See {partner.brand} in the Shop →</a>
                 <button type="button" className="ay-btn ay-btn--text" onClick={() => { setOpen(null); document.getElementById(slug(partner.brand))?.querySelector('button')?.focus(); }}>Back to brands ↑</button>
               </p>
             </div>

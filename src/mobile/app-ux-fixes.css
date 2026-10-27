@@ -639,3 +639,11 @@
 /* QA (Oct 27): the brand eyebrow and the Ask note stacked an element opacity on an
    already-faded colour (2.7:1 and 3.0:1). The colour alone is enough: AA on butter. */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-pdp-eyebrow, .ay-pdp-ask-note) { opacity: 1 !important; }
+
+/* QA (Oct 27): Community's empty card sits in a slot that already has the 20px gutter,
+   so the card's own gutter margins pushed it 20px off the right edge (clipped). */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .am-community-empty-slot > .ay-empty { margin-left: 0 !important; margin-right: 0 !important; }
+
+/* QA (Oct 27): the in-grid "Get matched" banner (legacy figma.css) had a 13px label pinned left in a
+   full-width bar. One centred primary pill, like every other main action. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-figma-discover-cta button { justify-content: center !important; gap: 8px; min-height: 48px !important; border-radius: 999px !important; font: 600 16px/1 var(--ay-font-ui, 'Figtree', sans-serif) !important; }

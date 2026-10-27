@@ -27,7 +27,9 @@ html body .app-container.app-container.app-container .ay-nav__link.is-home { ali
 html body .app-container.app-container.app-container .ay-nav__link.is-home::after { display: none !important; }
 html body .app-container.app-container.app-container .ay-nav__link.is-home[aria-current='page'] { box-shadow: 0 0 0 3px #f7badd !important; }
 html body .app-container.app-container.app-container .ay-nav__link.is-home:focus-visible { outline: 2px solid #3e2723; outline-offset: 3px; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .app-container.app-container.app-container .ay-nav__link.is-home { background: #ffedac !important; color: #3e2723 !important; }
+/* QA (Oct 27): data-theme is on .app-container itself, so the old ancestor selector never matched and the
+   pill stayed espresso on the espresso dark nav (invisible). */
+html body .app-container.app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ay-nav__link.is-home { background: #ffedac !important; color: #3e2723 !important; }
 html body .app-container.app-container.app-container .ay-tabbar--main a.is-center .ay-tabbar__icon { display: grid; place-items: center; width: 56px; height: 56px; margin-top: -28px; border-radius: 50%; background: #3e2723; color: #ffedac; border: 4px solid #ffedac; }
 html body .app-container.app-container.app-container .ay-tabbar--main a.is-center .ay-tabbar__icon svg { width: 26px; height: 26px; color: #ffedac; }
 html body .app-container.app-container.app-container .ay-tabbar--main a.is-center.is-on .ay-tabbar__icon { box-shadow: 0 0 0 3px #f7badd; background: #3e2723; }

@@ -2239,12 +2239,12 @@ export default function MyEcosystem({
                     areaGroups.length > 0 ? null : !llmLoading && (
                         <div className="eco3-empty">
                             <p className="eco3-empty__title">Nothing here yet</p>
-                            <p className="eco3-empty__body">Answer a few questions or pick things in Explore.</p>
+                            <p className="eco3-empty__body">Answer a few questions or pick things in the Shop.</p>
                             <div className="eco3-empty__actions">
                                 {typeof onBuildEcosystem === 'function' && (
                                     <button type="button" className="ay-btn ay-btn--primary" onClick={onBuildEcosystem}>See my matches</button>
                                 )}
-                                <button type="button" className="ay-btn ay-btn--secondary" onClick={() => searchShop('')}>Go to Explore</button>
+                                <button type="button" className="ay-btn ay-btn--secondary" onClick={() => searchShop('')}>Go to Shop</button>
                             </div>
                         </div>
                     )

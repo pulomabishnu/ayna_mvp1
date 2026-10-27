@@ -6,8 +6,8 @@ import { productsForNeed } from './landingNeeds';
 import { isPlainLeftClick, productHref } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
-import { ALL_PRODUCTS, MACRO_GROUPS, basicsProductIds, filterPrescriptionCareGate, useCatalogReady } from '../data/catalog.js';
-import { RELEASED_STARTUPS } from '../data/startups.js';
+import { ALL_PRODUCTS, MACRO_GROUPS, basicsProductIds, useCatalogReady } from '../data/catalog.js';
+import { shopCatalogCounts } from '../data/catalogCounts.js';
 import { getDailyFact } from '../data/welcomeSlides.js';
 import { brandOf } from '../mobile/data/brandFallback.js';
 import ProductCard from './ProductCard';
@@ -328,11 +328,10 @@ function useCatalogNumbers() {
       }
     }
     const needs = MACRO_GROUPS.filter((g) => g.id !== 'all').length;
-    // The same count Explore shows: its products (prescription gate applied) plus released services.
-    const products = filterPrescriptionCareGate(ALL_PRODUCTS).length;
-    const services = RELEASED_STARTUPS.length;
+    // The same counts the Shop and Services pages show (one source: data/catalogCounts.js).
+    const { products, services } = shopCatalogCounts();
     return [
-      { n: products + services, label: `${products} products and ${services} services in Explore` },
+      { n: products + services, label: `${products} products in the Shop and ${services} services` },
       { n: brands.size, label: 'brands, big and small' },
       { n: sources.size, label: 'sources linked on product pages' },
       { n: needs, label: 'areas of care, from periods to menopause' },

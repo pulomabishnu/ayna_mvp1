@@ -45,7 +45,7 @@ export function ExploreByNeed({ onExplore, onOpenProduct, onViewAll, limit = 6, 
         </div>
         {onViewAll && (
           <div className="hs-needs__foot">
-            <button type="button" className="hs-needs__all" onClick={onViewAll}>See everything in Explore</button>
+            <button type="button" className="hs-needs__all" onClick={onViewAll}>See everything in the Shop</button>
           </div>
         )}
       </div>

@@ -38,7 +38,7 @@ export default function SavedScreen({ authUser = null, onOpenCommunityPost, onOp
     <header className="ayna-saved-header">
       <button type="button" onClick={onBack} aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6" /></svg></button>
       <h1>Saved <small>{items.length}</small></h1>
-      <button type="button" onClick={onBrowse}>Explore</button>
+      <button type="button" onClick={onBrowse}>Shop</button>
     </header>
     {items.length > 0 && <>
       <nav className="ayna-saved-filters" aria-label="Saved product filters">{FILTERS.map(([key, label]) => <button type="button" key={key} aria-pressed={filter === key} onClick={() => setFilter(key)}>{label}<small>{items.filter((product) => matchesFilter(product, key)).length}</small></button>)}</nav>
@@ -60,6 +60,6 @@ export default function SavedScreen({ authUser = null, onOpenCommunityPost, onOp
         <LegalFooter />
       </div>
     </>}
-    {items.length === 0 && <><EmptyState art="heart" tone="pink" title="Nothing saved yet." body="When something catches your eye, tap Save and it’ll live here." actionLabel="Go to Explore" onAction={onBrowse} /><div className="ayna-saved-content">{more}</div></>}
+    {items.length === 0 && <><EmptyState art="heart" tone="pink" title="Nothing saved yet." body="When something catches your eye, tap Save and it’ll live here." actionLabel="Go to Shop" onAction={onBrowse} /><div className="ayna-saved-content">{more}</div></>}
   </div>;
 }

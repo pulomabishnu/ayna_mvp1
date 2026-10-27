@@ -488,7 +488,7 @@ export default function BrowseScreen({
       <div className={`ayna-fresh-browse-heading ayna-shop-heading${embedded ? ' is-embedded' : ''}${embedded && bandTitle ? ' ax-band' : ''}`}>
         <div className="ay-shop-titlebar">{embedded ? (bandTitle ? <h1 id="ay-shop-title" className="ax-band__title">{bandTitle}</h1> : <h2 id="ay-shop-title" className="sr-only">Products</h2>) : <h1 id="ay-shop-title">Products</h1>}{!embedded && hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
         {!embedded && <NeedStickers className="ay-app-needs" active={searchValue} onPick={(q) => setSearchValue(q)} />}
-        <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
+        <SearchBar placeholder={bandTitle === 'Services' ? 'Search services' : 'Search products or brands'} value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
         {!embedded && <div className="ay-app-quick" role="group" aria-label="Quick filters">
           {quick.map(([label, key, value]) => <button key={key} type="button" className="ayna-shop-category" aria-pressed={filters[key] === value} onClick={() => setFilters((cur) => ({ ...EMPTY_FILTERS, ...(cur || {}), [key]: (cur || {})[key] === value ? 'all' : value }))}>{label}</button>)}
         </div>}

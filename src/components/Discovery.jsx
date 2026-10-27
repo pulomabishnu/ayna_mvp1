@@ -38,6 +38,7 @@ import { SHOP_SEARCH_EXAMPLES } from './shop/searchExamples.js';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { hasFlaggedRecall } from '../utils/productSafetyAlert';
 import { RELEASED_STARTUPS } from '../data/startups';
+import { isServiceListing } from '../data/catalogCounts.js';
 import { getAynaRating, getAynaRatingCount } from '../data/aynaReviews';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { fetchDsldProducts } from '../utils/fetchDsldProducts';
@@ -855,7 +856,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (!skipCategory && categoryFilter !== 'all' && item.category !== categoryFilter) return false;
             // Products vs apps and services (telehealth is care, whatever its record says).
             if (typeFilter !== 'all') {
-                const service = item.type === 'digital' || ['telehealth', 'tracker', 'mental-health'].includes(item.category) || /\bapp\b|telehealth|online (visit|program)|membership/i.test(`${item.name} ${item.price || ''}`);
+                const service = isServiceListing(item); // shared with the home page counts (data/catalogCounts.js)
                 if (typeFilter === 'services' ? !service : service) return false;
             }
             if (!skipCategory && categoryFilter === 'pad' && !padMatchesSubFilters(item, padFlowFilter, padPreferenceFilter, padUseCaseFilter)) return false;
@@ -1842,7 +1843,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 const applied = [...(inExplore && macroGroup !== 'all' ? [[macroGroup, () => setMacroGroup('all')]] : []), ...(inExplore ? [] : [[typeFilter, setTypeFilter]]), [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayshop__applied" role="status">
-                        <span className="ayshop__count">{!gridReady ? '\u00a0' : submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} products` : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
+                        <span className="ayshop__count">{!gridReady ? '\u00a0' : submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} ${typeFilter === 'services' ? 'services' : 'products'}` : (shownCount === 1 ? (typeFilter === 'services' ? '1 service' : '1 product') : `${shownCount} ${typeFilter === 'services' ? 'services' : 'products'}`)}</span>
                         {/* Partner placement is disclosed by each card's 'ayna partner' label and the header line (Oct 16: no extra note). */}
                         {applied.map(([v, set]) => (
                             <button key={v} type="button" className="ay-chip is-on" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || AREA_LABEL(v)}`}>{LABELS[v] || AREA_LABEL(v)} <span aria-hidden="true">×</span></button>

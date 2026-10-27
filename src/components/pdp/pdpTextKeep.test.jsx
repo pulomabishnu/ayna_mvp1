@@ -95,6 +95,7 @@ const RENAMED_LABELS = [
   'Library reads on the same topic, checked against .gov sources.',
   'Some links earn ayna a commission. It never changes your matches.', // app disclosure is the website's one line now; "Partnerships never change this score." sits in Why N%?
   'App or online', // a fact chip above the name (removed, audit 7.2); Format says "Virtual care service"
+  'Explore', // the breadcrumb's first crumb is the Shop tab now (tab renames, Oct 26)
   'What’s included and details', 'Works with:', 'Check with a clinician first', 'Possible side effects', 'Also worth knowing', 'Downsides to know', 'Label and regulatory facts', 'Labels on file', 'Privacy',
 ];
 const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r === c : r.test(c)));

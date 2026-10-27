@@ -3343,9 +3343,9 @@ function App() {
             onCta={() => setCurrentView('welcome')}
             onSearch={(q) => handleViewDiscovery(q)}
             links={[
-              { href: '/explore/products', label: 'Explore', go: () => handleViewDiscovery('') },
+              { href: '/explore', label: 'Shop', go: () => mainTabGo.explore() },
               { href: '/quiz', label: 'See my matches', go: () => setCurrentView('quiz') },
-              { href: '/explore/resources', label: 'Resources', go: () => { setSelectedArticleId(null); setCurrentView('articles'); } },
+              { href: '/explore/resources', label: 'Library', go: () => { setSelectedArticleId(null); mainTabGo.library(); } },
             ]}
           />
         )}
@@ -3475,6 +3475,7 @@ function App() {
         onViewHowWeMakeMoney={handleViewHowWeMakeMoney}
         onViewEcosystem={() => handleViewEcosystem()}
         onViewCommunity={() => setCurrentView('community')}
+        onMainTab={mainTabGo}
       />}
       {/* Floating Ask pill comes after the page and footer in the DOM, so it is the last stop when tabbing, not the first. */}
       {!FOCUSED_FLOW_VIEWS.includes(currentView) && currentView !== 'campus-resources' && currentView !== 'ask' && (
