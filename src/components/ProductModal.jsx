@@ -38,7 +38,6 @@ import { useProductReviews } from './pdp/useProductReviews';
 import { summarizeReviewRows } from '../utils/community/reviewRatings.js';
 import { productImageAlt } from '../utils/seoMeta';
 import ComparePanel from './pdp/ComparePanel';
-import PhoneFold from './pdp/PhoneFold';
 import Breadcrumbs from './pdp/Breadcrumbs';
 import useJsonLd from './pdp/useJsonLd';
 import { resolveBuyUrl, isAmazonUrl, buyGoesToAmazonListing } from '../utils/buyLink';
@@ -392,6 +391,7 @@ export default function ProductModal({
   const [showWhy, setShowWhy] = useState(() => takeProductTabIf('why'));
   const [showDisclosure, setShowDisclosure] = useState(false);
   const [askOpen, setAskOpen] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
   const [photo, setPhoto] = useState(0);
   const [toast, setToast] = useState('');
   const toastTimer = useRef(0);
@@ -699,10 +699,7 @@ export default function ProductModal({
 
   const matchFor = quizResults ? (p) => getProfileMatchPercentForProduct(p, quizResults, healthProfile, matchOpts) : null;
   const detailsFor = quizResults ? (p) => getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts) : null;
-  const compareThumb = (p) => {
-    const src = galleryImages(p)[0];
-    return src ? <img src={src} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : null;
-  };
+
 
   const rateControls = isInEcosystem && onRate ? (
     <div className="ayp-rate">
@@ -875,11 +872,13 @@ export default function ProductModal({
         {onAskAyna && <AskPanel open={askOpen} onClose={() => setAskOpen(false)} title={`Ask about ${displayName}`} starters={askStarters} onAsk={(q) => { setAskOpen(false); onAskAyna(`About ${displayName}: ${q}`); }} />}
 
         {/* Compare, then Ask or share side by side on desktop. */}
-        {settled && <section className="ay-section ayp-compare" aria-label="Similar fit for you">
-          <PhoneFold id="pdp-compare" title="Similar fit for you" line={suggestions.compare.length ? `Side by side with ${suggestions.compare.slice(0, 2).map((p) => p.name).join(' and ')}.` : 'Pick products to compare side by side.'}>
-            <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} detailsFor={detailsFor} renderThumb={compareThumb} />
-          </PhoneFold>
+        {/* Compare with similar opens in a panel (critique Oct 27): the Compare layout, not a squeezed table in the page. */}
+        {settled && suggestions.compare.length > 0 && <section className="ay-section ayp-compare is-button" aria-label="Compare with similar">
+          <button type="button" className="ayp-cmpbtn" onClick={() => setCompareOpen(true)}><span><b>Compare with similar</b><small>Side by side with {suggestions.compare.slice(0, 2).map((p) => p.name).join(' and ')}.</small></span><span aria-hidden="true">›</span></button>
         </section>}
+        <AskPanel open={compareOpen} onClose={() => setCompareOpen(false)} variant="panel" className="is-compare" sub="" title="Compare with similar">
+          <div className="ayp-compare"><ComparePanel product={product} others={suggestions.compare} onOpen={(p) => { setCompareOpen(false); if (onOpenProduct) onOpenProduct(p); }} matchFor={matchFor} detailsFor={detailsFor} /></div>
+        </AskPanel>
 
         {/* Tried it? One compact row of four, only once she saved it or added it to her routine (audit 7.7). */}
         {onCommunityAction && (isSaved || isInEcosystem) && (

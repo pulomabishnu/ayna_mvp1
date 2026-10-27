@@ -5,8 +5,14 @@ import './compare.css';
  * Select mode for comparing (team direction 21): a "Compare" switch in a
  * toolbar, and a pick button on each product card while it is on.
  */
-export function CompareToggle({ onOpenCompare, className = '' }) {
+export function CompareToggle({ onOpenCompare, className = '', dock = false }) {
   const c = useCompare();
+  // Docked (app Shop): the toolbar keeps one short pill, pressed while picking; the count and
+  // the Compare button live in CompareDock at the bottom, so the sideways row never has to
+  // scroll Filters off screen to reach them (critique Oct 27).
+  if (dock) {
+    return <button type="button" className={`ay-cmpt ${className}`.trim()} aria-pressed={c.selecting} onClick={() => compareStore.setSelecting(!c.selecting)}>{c.count ? `Compare (${c.count})` : 'Compare'}</button>;
+  }
   if (!c.selecting) {
     return <button type="button" className={`ay-cmpt ${className}`.trim()} onClick={() => compareStore.setSelecting(true)}>{c.count ? `Compare (${c.count})` : 'Compare'}</button>;
   }
@@ -16,6 +22,19 @@ export function CompareToggle({ onOpenCompare, className = '' }) {
       <button type="button" className="ay-cmpt is-primary" disabled={c.count < COMPARE_MIN} onClick={() => { compareStore.setSelecting(false); (onOpenCompare || (() => compareStore.open()))(); }}>Compare{c.count >= COMPARE_MIN ? ` ${c.count}` : ''}</button>
       <button type="button" className="ay-cmpt is-text" onClick={() => compareStore.setSelecting(false)}>Done</button>
     </span>
+  );
+}
+
+/** The bottom bar while picking (with CompareToggle dock): "2 of 4 picked", Done, Compare 2. */
+export function CompareDock({ onOpenCompare }) {
+  const c = useCompare();
+  if (!c.selecting) return null;
+  return (
+    <div className="ay-cmpdock" role="group" aria-label="Compare products">
+      <span className="ay-cmpdock__count" role="status">{c.count ? `${c.count} of ${COMPARE_MAX} picked` : `Pick ${COMPARE_MIN} to ${COMPARE_MAX}`}</span>
+      <button type="button" className="ay-cmpdock__done" onClick={() => compareStore.setSelecting(false)}>Done</button>
+      <button type="button" className="ay-cmpdock__go" disabled={c.count < COMPARE_MIN} onClick={() => { compareStore.setSelecting(false); (onOpenCompare || (() => compareStore.open()))(); }}>Compare{c.count >= COMPARE_MIN ? ` ${c.count}` : ''}</button>
+    </div>
   );
 }
 

@@ -77,3 +77,22 @@ describe('sample comparison, signed out (info-pages audit issue 3)', () => {
     expect(match.values.join(' ')).not.toMatch(/%/);
   });
 });
+
+describe('objective rows (critique Oct 27: only objective marks, only with data)', () => {
+  const cup = (id, price, years) => ({ id, name: id, category: 'cup', price: `$${price} (reusable up to ${years} years)` });
+  it('marks the lower cost per use and the longer life, never a tie or a lone value', () => {
+    const rows = compareSetRows([cup('a', 29, 10), cup('b', 30, 5)]);
+    const per = rows.find((r) => r.id === 'perUse');
+    const life = rows.find((r) => r.id === 'life');
+    expect(per.better).toEqual([true, false]);
+    expect(life.better).toEqual([true, false]);
+    const tie = compareSetRows([cup('a', 24, 10), cup('b', 24, 10)]);
+    expect(tie.find((r) => r.id === 'life').better).toEqual([false, false]);
+    const lone = compareSetRows([cup('a', 29, 10), { id: 'c', name: 'c', category: 'pad', price: '$8' }]);
+    expect(lone.find((r) => r.id === 'life').better).toEqual([false, false]);
+  });
+  it('FSA/HSA is marked only when the products differ', () => {
+    const fsa = compareSetRows([cup('a', 29, 10), cup('b', 30, 5)]).find((r) => r.id === 'fsa');
+    expect(fsa.better).toEqual([false, false]);
+  });
+});

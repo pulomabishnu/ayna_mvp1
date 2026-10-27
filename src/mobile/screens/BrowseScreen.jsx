@@ -7,6 +7,8 @@ import SearchBar from '../components/SearchBar.jsx';
 import DiscoverDeck from '../components/DiscoverDeck.jsx';
 import CategoryNav from '../components/CategoryNav.jsx';
 import ProductCard from '../components/ProductCard.jsx';
+import ServiceCard from '../../components/cards/ServiceCard.jsx';
+import { matchBadge, isSafetyHold } from '../../utils/matchDisplay.js';
 import { featuredOrder as orderFeatured } from '../../data/packshots.js';
 import AvoidChips from '../../components/explore/AvoidChips.jsx';
 import useCardViews from '../../components/explore/useCardViews.js';
@@ -25,7 +27,7 @@ import { trackApp } from '../utils/appAnalytics.js';
 import { featuredShopOrder, rankShopForProfile } from '../utils/shopOrder.js';
 import { hasQuizAnswers } from '../utils/personalReads.js';
 import { sortByBestMatch, bestMatchNeedsQuiz, shownMatchPercent } from '../../utils/bestMatchSort.js';
-import { CompareToggle } from '../../components/compare/CompareControls.jsx';
+import { CompareToggle, CompareDock } from '../../components/compare/CompareControls.jsx';
 import { useSheetDrag } from '../hooks/useSheetDrag.js';
 import usePersistentState from '../../hooks/usePersistentState.js';
 import { NeedStickers } from '../../components/shop/ShopBits.jsx';
@@ -116,7 +118,27 @@ function PixelateGrid({ count = 6 }) {
 // visibleCount naturally, instead of needing a manual reset that either
 // calls setState in an effect body or reads/writes a ref during render
 // (both flagged by this project's react-hooks lint rules).
-function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz, showOnboarding = false, savedProducts = {}, onToggleSaved, matchOpts, onPickPhrase = null, afterFirstRow = null }) {
+/** One service card in the app (critique Oct 27): the logo row card with her match from the one engine. */
+function AppServiceCard({ service, index = 0, where = 'app_services', onOpenProduct, quizAnswers, matchOpts, savedProducts = {}, onToggleSaved, onOpenWhyMatch, onStartQuiz }) {
+  const details = quizAnswers ? getProductMatchDetailsForProduct(service, quizAnswers, null, matchOpts) : null;
+  const badge = details ? matchBadge(details) : null;
+  return (
+    <ServiceCard
+      as="button"
+      service={service}
+      onOpen={(s) => { trackCardClicked({ surface: eventSurface(), where, product_id: s.id, position: index }); onOpenProduct?.(s); }}
+      isSaved={!!savedProducts[service.id]}
+      onToggleSaved={onToggleSaved}
+      matchPercent={badge ? badge.percent : null}
+      matchHold={isSafetyHold(details)}
+      matchLabel={badge ? badge.label : ''}
+      onShowWhy={onOpenWhyMatch ? () => onOpenWhyMatch(service) : null}
+      onSeeMatch={quizAnswers ? null : onStartQuiz}
+    />
+  );
+}
+
+function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz, showOnboarding = false, savedProducts = {}, onToggleSaved, matchOpts, onPickPhrase = null, afterFirstRow = null, services = false }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef(null);
@@ -145,6 +167,17 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
 
   const visibleProducts = products.slice(0, visibleCount);
   const isList = layout === 'list';
+
+  if (services) {
+    return (
+      <>
+        <ul ref={gridRef} className="ay-svc-list" style={{ padding: '0 20px' }}>
+          {visibleProducts.map((p, index) => <li key={p.id}><AppServiceCard service={p} index={index} onOpenProduct={onOpenProduct} quizAnswers={quizAnswers} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} /></li>)}
+        </ul>
+        {visibleCount < products.length && <div ref={sentinelRef} style={{ height: 1 }} />}
+      </>
+    );
+  }
 
   return (
     <>
@@ -220,6 +253,8 @@ export default function BrowseScreen({
   bandTitle = '',
   // Explore's Products or Services toggle, shown on the same row as the need chips.
   typeToggle = null,
+  // Explore's Services tab: the services logo cards, and her few matches as a carousel above all services.
+  servicesMode = false,
 }) {
   const mode = 'products'; // Reads moved to the Library tab
   const [searchValue, setSearchValue] = useState(initialSearch || '');
@@ -401,11 +436,16 @@ export default function BrowseScreen({
     filtered = orderFeatured(filtered);
   }
   let moreResults = [];
+  // Services with "My matches only" on and under 6 matches (critique Oct 27: 2 cards over an empty
+  // screen read as broken): her matches as a peeking carousel, then every other service below.
+  const allServices = filtered;
   if (narrowToMatches) {
     if (searchTermRaw) moreResults = filtered.filter((p) => !personalizedIds.has(p.id));
     filtered = filtered.filter((p) => personalizedIds.has(p.id));
   }
-  const shownTotal = filtered.length + moreResults.length;
+  const serviceSplit = servicesMode && narrowToMatches && !searchTermRaw && filtered.length < 6;
+  const otherServices = serviceSplit ? allServices.filter((p) => !personalizedIds.has(p.id)) : [];
+  const shownTotal = filtered.length + moreResults.length + otherServices.length;
   // Best match is always listed: first once she has a profile, last before.
   const sortChoices = canSortByMatch
     ? [['best', 'Best match'], ['default', 'Featured'], ['rating', 'Highest rated'], ['price-asc', 'Price: low to high'], ['price-desc', 'Price: high to low']]
@@ -512,7 +552,7 @@ export default function BrowseScreen({
               {activeFilterCount > 0 && <span aria-label={`${activeFilterCount} on`}>{activeFilterCount}</span>}
             </button>
             {hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}
-            <CompareToggle className="ay-shop-compare" />
+            <CompareToggle className="ay-shop-compare" dock />
             {!searchValue.trim() && <button type="button" className="ay-discover-cta" aria-label="Swipe through products: right to save, left to skip" onClick={() => setShowDeck(true)}>
               <svg className="ay-discover-fan" viewBox="0 0 56 44" aria-hidden="true">
                 <rect className="c1" x="6" y="6" width="22" height="30" rx="5" transform="rotate(-12 17 21)" />
@@ -583,7 +623,22 @@ export default function BrowseScreen({
           after its Reads section. */}
       {mode === 'products' ? (
         <>
-          {filtered.length > 0 || moreResults.length > 0 ? (
+          {serviceSplit ? (
+            <div className="ay-svc-split" style={{ padding: '0 20px' }}>
+              {filtered.length > 0 && <>
+                <div className="ay-svc-head"><h2>Your matches</h2><small>{filtered.length} for you</small></div>
+                <ul className="ay-svc-rail" aria-label="Your matches">
+                  {filtered.map((p, index) => <li key={p.id}><AppServiceCard service={p} index={index} where="app_services_matches" onOpenProduct={onOpenProduct} quizAnswers={quizAnswers} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} /></li>)}
+                </ul>
+              </>}
+              {otherServices.length > 0 && <>
+                <div className="ay-svc-head"><h2>{filtered.length > 0 ? 'More services' : 'All services'}</h2><small>{otherServices.length}</small></div>
+                <div style={{ margin: '0 -20px' }}>
+                  <ProductGrid services matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`svc-${filterKey}`} products={otherServices} onOpenProduct={onOpenProduct} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+                </div>
+              </>}
+            </div>
+          ) : filtered.length > 0 || moreResults.length > 0 ? (
             <>
               {/* TD 16: a search never looks empty because of the switch. Every result is
                   listed; her matches come first and the count is all results. */}
@@ -597,10 +652,10 @@ export default function BrowseScreen({
                 </p>
               )}
               {filtered.length > 0 && moreResults.length > 0 && <h2 className="ay-shop-results-label">Your matches</h2>}
-              {filtered.length > 0 && <ProductGrid onPickPhrase={!embedded && !searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
+              {filtered.length > 0 && <ProductGrid onPickPhrase={!embedded && !searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} services={servicesMode} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
               {moreResults.length > 0 && <>
                 {filtered.length > 0 && <h2 className="ay-shop-results-label">More results</h2>}
-                <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+                <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} services={servicesMode} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
               </>}
             </>
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
@@ -625,7 +680,7 @@ export default function BrowseScreen({
           {/* "Can't find it?" only when the typed search found nothing in the catalog. */}
           {!(searchTermRaw.length >= 2 && aiState.loading) && !(searchTermRaw && searchScored.length > 0) && (
             <div className="ay-app-suggest-wrap">
-              <SuggestBox variant="app" context="app-shop" prefill={searchTermRaw} />
+              <SuggestBox variant="app" context={servicesMode ? 'app-services' : 'app-shop'} noun={servicesMode ? 'service' : 'product'} prefill={searchTermRaw} />
             </div>
           )}
           <div
@@ -650,6 +705,8 @@ export default function BrowseScreen({
           </section>}
         </>
       ) : null}
+      {/* Picking products to compare: the count and Compare live in one bottom bar (critique Oct 27). */}
+      {embedded && <CompareDock />}
     </div>
   );
 }

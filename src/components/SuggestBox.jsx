@@ -66,7 +66,7 @@ const Icon = ({ kind }) => (kind === 'read' ? (
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6z" /><path d="M9 8V6.5a3 3 0 0 1 6 0V8" /></svg>
 ));
 
-export default function SuggestBox({ mode = 'product', variant = 'web', context = 'shop', prefill = '', className = '' }) {
+export default function SuggestBox({ mode = 'product', variant = 'web', context = 'shop', prefill = '', className = '', noun = 'product' }) {
   const uid = useId();
   const [kind, setKind] = useState(mode === 'read' ? 'read' : 'product');
   const [open, setOpen] = useState(false);
@@ -86,7 +86,8 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
   useEffect(() => { if (open && status === 'idle') firstField.current?.focus({ preventScroll: true }); }, [open, kind, status]);
   useEffect(() => { if (status === 'sent') thanksRef.current?.focus({ preventScroll: true }); }, [status]);
 
-  const copy = COPY[kind];
+  // On Services it says "Suggest a service" (critique Oct 27); the form is the same.
+  const copy = kind === 'product' && noun !== 'product' ? { ...COPY.product, open: `Suggest a ${noun}` } : COPY[kind];
   const canSend = (kind === 'product' ? productName.trim().length >= 2 && !isOverLimit(reason, 500) : topic.trim().length >= 3 && !isOverLimit(topic, 300)) && productName.length <= 120 && link.length <= 300;
 
   const forgetDrafts = () => { forgetName(); forgetLink(); forgetReason(); forgetTopic(); };
@@ -158,7 +159,7 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
     <section className={rootClass} aria-labelledby={`${uid}-t`}>
       <form className="ay-suggest__form" onSubmit={submit} noValidate>
         <div className="ay-suggest__head">
-          <h2 id={`${uid}-t`}>{kind === 'product' ? 'Suggest a product' : 'Suggest a read'}</h2>
+          <h2 id={`${uid}-t`}>{kind === 'product' ? `Suggest a ${noun}` : 'Suggest a read'}</h2>
           <button type="button" className="ay-suggest__close" aria-label="Close" onClick={() => { setOpen(false); setError(''); }}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
           </button>

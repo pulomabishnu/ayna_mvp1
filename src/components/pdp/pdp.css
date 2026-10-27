@@ -2886,3 +2886,37 @@ html body :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-p
 #pdp-v4 .ayp-reads__snap .ayk-snap__item > a { width: 100%; }
 /* QA (Oct 27): the product name links in the compare table header were 20px tall. */
 :is(#pdp-v4, #ay-pdp, main) .ay-compare__name > button { display: inline-flex; align-items: center; min-height: 44px; text-align: left; }
+
+/* p18 ayna summary (critique Oct 27): the one line, a 2x2 stat grid (app), then tap-to-expand rows. */
+#ay-tabs#ay-tabs#ay-tabs .ayv-sum2 { display: grid; gap: 16px; }
+#ay-tabs#ay-tabs#ay-tabs .ayv-xrows { display: grid; margin: 0; }
+#ay-tabs#ay-tabs#ay-tabs .ayv-xrow > .ayq-step__sum { min-height: 60px; padding-top: 10px !important; padding-bottom: 10px !important; }
+#ay-tabs#ay-tabs#ay-tabs .ayv-xrow .ayq-step__text { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px; }
+#ay-tabs#ay-tabs#ay-tabs .ayv-xrow .ayq-step__h { font: 700 17px/1.3 var(--q-sans, 'Figtree', sans-serif) !important; color: var(--q-ink) !important; }
+#ay-tabs#ay-tabs#ay-tabs .ayv-xrow .ayq-step__meta { font: 500 14px/1.3 var(--q-sans, 'Figtree', sans-serif) !important; color: var(--q-ink2) !important; }
+#ay-tabs#ay-tabs#ay-tabs .ayv-xrow > .ayq-step__body { padding-bottom: 16px !important; }
+#ay-tabs#ay-tabs#ay-tabs .ayv-xrow .ayv-sf, #ay-tabs#ay-tabs#ay-tabs .ayv-xrow .ayv-pf { margin: 0 !important; }
+#ay-tabs#ay-tabs#ay-tabs .ayv-stats { margin: 0; }
+#ay-tabs#ay-tabs#ay-tabs .ayv-stats__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+#ay-tabs#ay-tabs#ay-tabs .ayv-stats__grid.is-n3 > li:last-child { grid-column: 1 / -1; }
+#ay-tabs#ay-tabs#ay-tabs .ayv-stats__grid > li { display: grid; align-content: start; gap: 4px; min-width: 0; margin: 0 !important; padding: 14px 16px !important; border-radius: 16px; background: var(--q-group, #f6e3a1); }
+#ay-tabs#ay-tabs#ay-tabs .ayv-stats__v { font: 800 24px/1.1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.01em; color: var(--q-ink); overflow-wrap: anywhere; }
+#ay-tabs#ay-tabs#ay-tabs .ayv-stats__k { font: 500 14px/1.3 var(--q-sans, 'Figtree', sans-serif); color: var(--q-ink2); }
+#ay-tabs#ay-tabs#ay-tabs .ayv-stats__note { margin: 8px 0 0 !important; font: 500 13px/1.4 var(--q-sans, 'Figtree', sans-serif) !important; color: var(--q-ink2) !important; }
+
+/* p18 Compare with similar: a sheet (app) or a wide side panel (website) holding the Compare layout. */
+:is(#ayc, .ayv-ask2):is(#ayc2, .ayv-ask2).is-compare .ayv-ask2__box { background: var(--d-page, var(--ay-page, #ffedac)) !important; color: var(--d-ink, var(--ay-text, #3e2723)) !important; }
+:is(#ayc, .ayv-ask2):is(#ayc2, .ayv-ask2).is-compare :is(.ayv-ask2__title, .ayv-ask2__close, .ay-compare__sugg, .ay-compare__sugg button, .ay-compare__first) { color: var(--d-ink, var(--ay-text, #3e2723)) !important; }
+.ayv-ask2.is-sheet.is-compare .ayv-ask2__box { height: 88%; }
+.ayv-ask2.is-panel.is-compare .ayv-ask2__box { width: min(860px, 100%); }
+:is(#ayc, .ayv-ask2).is-compare .ay-compare .ay-pdp-sechead { display: none !important; }
+html body .app-container .ayp-compare.is-button { margin-top: 24px; }
+html body .app-container .ayp-cmpbtn { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; max-width: 720px; min-height: 64px; margin: 0; padding: 12px 20px; border: 1.5px solid var(--ay-text, #3e2723); border-radius: 16px; background: transparent; color: var(--ay-text, #3e2723); text-align: left; cursor: pointer; font-family: var(--ay-sans-stack, 'Figtree', sans-serif); }
+html body .app-container .ayp-cmpbtn > span:first-child { display: grid; gap: 2px; }
+html body .app-container .ayp-cmpbtn b { font: 700 17px/1.3 var(--ay-sans-stack, 'Figtree', sans-serif); }
+html body .app-container .ayp-cmpbtn small { font: 500 14px/1.4 var(--ay-sans-stack, 'Figtree', sans-serif); color: var(--ay-text-2, rgba(62, 39, 35, .78)); }
+html body .app-container .ayp-cmpbtn > span:last-child { font-size: 24px; }
+html body .app-container .ayp-cmpbtn:focus-visible { outline: 3px solid var(--ay-text, #3e2723); outline-offset: 2px; }
+:is(#ayc, .ayv-ask2):is(#ayc2, .ayv-ask2).is-compare .ay-cmp2 :is(th, td) { border-bottom: 0 !important; border-top: 0 !important; }
+:is(#ayc, .ayv-ask2):is(#ayc2, .ayv-ask2).is-compare .ay-compare__search input { background: transparent !important; color: inherit !important; border: 1.5px solid currentColor !important; }
+:is(#ayc, .ayv-ask2):is(#ayc2, .ayv-ask2).is-compare .ay-compare__search input::placeholder { color: inherit; opacity: .78; }

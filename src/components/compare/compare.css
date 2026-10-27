@@ -84,3 +84,61 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-cmp2 :is(th, 
   :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 tbody th small { display: inline; margin: 0 0 0 6px; }
   :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 thead th { min-width: 0 !important; }
 }
+
+/* p18 Compare (critique Oct 27, graded 2 web / 5 app): one product per column, photo and name on
+   top, then rows of short values at every width. The row label sits above its values and stays put
+   while 3 or 4 products scroll sideways. Prose rows are a two-line preview that opens on tap. Only
+   objective rows (cost per use, lifespan, FSA/HSA) can mark a value: a butter chip with an espresso
+   ring, explained by the legend. Never "best". */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 table { display: block; min-width: 0; width: max(100%, calc(var(--cmp-n, 2) * 156px)); border-collapse: separate; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 :is(thead, tbody) { display: block; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 tr { display: grid; grid-template-columns: repeat(var(--cmp-n, 2), minmax(0, 1fr)); column-gap: 14px; padding: 0 16px; border-top: 1px solid var(--s-hair); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 thead tr { border-top: 0; padding-top: 16px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 thead td:first-child { display: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 :is(th, td) { display: block; min-width: 0 !important; width: auto !important; border-top: 0; padding: 4px 0 12px !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 thead th { padding: 0 0 14px !important; vertical-align: top; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 tbody th { grid-column: 1 / -1; padding: 8px 0 2px !important; font: 700 14px/1.3 var(--s-sans); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__thumb { display: block; width: 100% !important; max-width: 176px; height: auto !important; aspect-ratio: 1 / 1; margin: 0 0 10px !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__thumb .ayk-plate { width: 100%; height: 100%; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__name { font: 700 15px/1.3 var(--s-sans) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__x { min-height: 44px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__label { position: sticky; left: 16px; display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; max-width: calc(100vw - 96px); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__label small { display: inline !important; margin: 0 !important; font: 500 13px/1.35 var(--s-sans) !important; color: var(--s-soft); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__rowbtn { position: sticky; left: 16px; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--s-ink) !important; font: inherit !important; text-align: left; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__rowbtn .ay-cmp2__label { position: static; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__chev { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 999px; border: 1.5px solid var(--s-ink); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__chev svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s ease; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 tr.is-open .ay-cmp2__chev svg { transform: rotate(180deg); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__rowbtn:focus-visible { outline: 3px solid var(--s-ink) !important; outline-offset: 2px; border-radius: 8px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__val { font: 500 15px/1.4 var(--s-sans); color: var(--s-ink); overflow-wrap: anywhere; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 td.is-unknown .ay-cmp2__val { color: var(--s-soft); font-weight: 400; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 tr.is-long:not(.is-open) td .ay-cmp2__val { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 tr.is-long:not(.is-open) td small { display: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 td.is-better .ay-cmp2__val { display: inline-block; padding: 4px 10px; border-radius: 999px; background: #ffedac !important; color: #3e2723 !important; box-shadow: inset 0 0 0 1.5px #3e2723; font-weight: 700; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__legend { display: flex; align-items: center; gap: 8px; margin: 0 !important; font: 500 13px/1.4 var(--s-sans) !important; color: var(--s-soft) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__legend i { flex: none; width: 22px; height: 14px; border-radius: 999px; background: #ffedac; box-shadow: inset 0 0 0 1.5px #3e2723; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__getmatched { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin: 0 !important; padding: 12px 12px 12px 16px !important; border-radius: 16px; border: 1.5px solid var(--s-ink); font: 600 15px/1.4 var(--s-sans) !important; color: var(--s-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__getmatched button { min-height: 44px; margin: 0 !important; padding: 0 18px !important; border: 0 !important; border-radius: 999px !important; background: var(--s-ink) !important; color: var(--s-page) !important; box-shadow: none !important; font: 700 15px/1 var(--s-sans) !important; cursor: pointer; }
+:is(#ay-x, html body .app-container.app-container):is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web .ay-cmp2__name { font: 700 18px/1.2 var(--ay-heading, var(--ay-serif)) !important; }
+@media (min-width: 721px) {
+  :is(#ay-x, html body .app-container.app-container):is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web .ay-cmp2__scroll { max-width: calc(var(--cmp-n, 2) * 300px + 48px); }
+  :is(#ay-x, html body .app-container.app-container):is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web tr { padding: 0 24px; column-gap: 28px; }
+  :is(#ay-x, html body .app-container.app-container):is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web thead tr { padding-top: 24px; }
+  :is(#ay-x, html body .app-container.app-container):is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web .ay-cmp2__thumb { max-width: 200px; }
+  :is(#ay-x, html body .app-container.app-container) .ay-cmp2.is-web :is(.ay-cmp2__label, .ay-cmp2__rowbtn) { left: 24px; }
+}
+
+/* App Shop picking: one bottom bar (count, Done, Compare N) instead of controls in the sideways toolbar. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmpdock { position: sticky; bottom: 12px; z-index: 30; display: flex; align-items: center; gap: 8px; margin: 16px 16px 0; padding: 6px 6px 6px 18px; border-radius: 999px; background: #3e2723; color: #ffedac; font-family: var(--f-ui, var(--ay-sans, 'Figtree', sans-serif)); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmpdock__count { flex: 1; min-width: 0; font: 600 15px/1.2 var(--f-ui, var(--ay-sans, 'Figtree', sans-serif)); color: #ffedac; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) :is(.ay-cmpdock__done, .ay-cmpdock__go) { min-height: 44px; margin: 0 !important; padding: 0 16px !important; border: 0 !important; border-radius: 999px !important; box-shadow: none !important; font: 700 15px/1 var(--f-ui, var(--ay-sans, 'Figtree', sans-serif)) !important; cursor: pointer; white-space: nowrap; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmpdock__done { background: transparent !important; color: #ffedac !important; text-decoration: underline; text-underline-offset: 3px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmpdock__go { background: #ffedac !important; color: #3e2723 !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmpdock__go:disabled { opacity: .55; cursor: default; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmpdock :is(button):focus-visible { outline: 3px solid #f7badd !important; outline-offset: 2px; }
+html body :is([data-theme='dark'], [data-theme='brand-dark']) :is(#ayd, .ay-cmpdock):is(#ayd2, .ay-cmpdock) { background: #ffedac; color: #3e2723; }
+html body :is([data-theme='dark'], [data-theme='brand-dark']) :is(#ayd, .ay-cmpdock):is(#ayd2, .ay-cmpdock) :is(.ay-cmpdock__count, .ay-cmpdock__done) { color: #3e2723 !important; }
+html body :is([data-theme='dark'], [data-theme='brand-dark']) :is(#ayd, .ay-cmpdock):is(#ayd2, .ay-cmpdock) .ay-cmpdock__go { background: #3e2723 !important; color: #ffedac !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmpt[aria-pressed='true'] { background: var(--s-ink) !important; color: var(--s-page) !important; }
+:is(#ayk, .ayna-mobile):is(#ayk, .ayna-mobile):is(#ayk, .ayna-mobile):is(#ayk, .ayna-mobile):is(#ayk, .ayna-mobile) .ay-shop-extras .ay-shop-compare[aria-pressed='true'] { background: var(--ay-fg, #3e2723) !important; color: var(--d-page, #ffedac) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__this { display: block; margin-top: 4px; font: 600 13px/1.3 var(--s-sans); color: var(--s-soft); }

@@ -14,10 +14,19 @@ import { COMPARE_MAX } from '../utils/compareStore.js';
 const SAMPLE_IDS = ['p-saalt-cup', 'p-diva-cup', 'p-lunette-cup'];
 const sampleProducts = () => SAMPLE_IDS.map((id) => ALL_PRODUCTS.find((p) => p.id === id)).filter(Boolean);
 
-export default function Comparison({ onBack = null, compareList, onRemove, onClear, CATEGORY_LABELS, myProducts = {}, onBrowseProducts, onAddToCompare, savedProducts = {}, matchFor = null, detailsFor = null, onOpenProduct = null, onSeeMatch = null }) {
+export default function Comparison({ onBack = null, backTo = { label: 'Your ecosystem', href: '/you/ecosystem' }, loading = false, compareList, onRemove, onClear, CATEGORY_LABELS, myProducts = {}, onBrowseProducts, onAddToCompare, savedProducts = {}, matchFor = null, detailsFor = null, onOpenProduct = null, onSeeMatch = null }) {
     // Her Saved first (saving often means she is still deciding), then her routine.
     const savedList = Object.values(savedProducts || {}).filter((p) => p?.id);
     const ecosystemList = [...savedList, ...Object.values(myProducts || {}).filter((p) => p?.id && !savedProducts?.[p.id])];
+
+    // A shared /compare?ids= link while the catalog loads: say so instead of flashing the sample.
+    if (compareList.length === 0 && loading) {
+        return (
+            <div className="ay-container aycmp">
+                <InfoHero title="Side by side" crumb="Compare" lede="Loading the products to compare." onBack={onBack} backLabel={backTo.label} backHref={backTo.href} />
+            </div>
+        );
+    }
 
     if (compareList.length === 0) {
         const sample = sampleProducts();
@@ -27,7 +36,7 @@ export default function Comparison({ onBack = null, compareList, onRemove, onCle
                     title="Side by side"
                     crumb="Compare"
                     lede={`Compare 2 to ${COMPARE_MAX} products on your match, price, evidence, ingredients and safety.`}
-                    onBack={onBack} backLabel="Your ecosystem" backHref="/you/ecosystem"
+                    onBack={onBack} backLabel={backTo.label} backHref={backTo.href}
                 />
 
                 {sample.length >= 2 && (
@@ -106,7 +115,7 @@ export default function Comparison({ onBack = null, compareList, onRemove, onCle
                 title="Side by side"
                 crumb="Compare"
                 lede={compareList.length < 2 ? 'Add one more product to see them side by side.' : 'Side by side, from what is on file. ayna never calls one product the best for everyone.'}
-                onBack={onBack} backLabel="Your ecosystem" backHref="/you/ecosystem"
+                onBack={onBack} backLabel={backTo.label} backHref={backTo.href}
             >
                 <button type="button" className="ay-btn ay-btn--text" onClick={onClear}>Clear all</button>
             </InfoHero>
@@ -190,13 +199,6 @@ export default function Comparison({ onBack = null, compareList, onRemove, onCle
             </div>
             </details>
 
-            <aside className="ay-group is-padded aycmp__tip" aria-labelledby="aycmp-tip-h">
-                <h2 id="aycmp-tip-h" className="aycmp__tip-h">ayna’s tip</h2>
-                <p>
-                    When choosing between products, look closely at <strong>Materials and ingredients</strong> and the <strong>Doctor’s opinion</strong>.
-                    A higher price often means more marketing, not better ingredients. Look for &quot;B-Corp&quot; or &quot;Sustainable&quot; badges. They can mean higher ethical standards.
-                </p>
-            </aside>
         </div>
     );
 }
