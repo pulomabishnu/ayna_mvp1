@@ -474,6 +474,7 @@ function Pro() {
           <span className="lsx-pro__tag">ayna Pro · Early Access</span>
           <h2 id="lsx-pro-h" className="lsx-h2">More of ayna, when you want it.</h2>
           <p className="lsx-body">More Ask ayna, unlimited Reads and detailed health history. Basic matches, safety flags and evidence stay free.</p>
+          <a className="lsx-link" href="/pro">Learn more<Arrow /></a>
         </div>
         <ul className="lsx-pro__prices">
           <li><small>Monthly</small><b>$4.99</b><s>$8.99</s></li>
