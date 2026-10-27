@@ -58,9 +58,13 @@ async function flushQueue() {
 const COPY = {
   product: { title: "Can't find it?", sub: 'Tell us what to add to the shop.', open: 'Suggest a product' },
   read: { title: 'Want a read on something?', sub: 'Tell us what to write about next.', open: 'Suggest a read' },
+  // Under the health integrations list (founder Oct 27): anonymous, like product and read ideas.
+  integration: { title: 'Suggest an app or wearable', sub: 'Tell us what to connect next.', open: 'Suggest one' },
 };
 
-const Icon = ({ kind }) => (kind === 'read' ? (
+const Icon = ({ kind }) => (kind === 'integration' ? (
+  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="3" /><path d="M12 9v6M9 12h6" /></svg>
+) : kind === 'read' ? (
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z" /><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5-.7 1.5-1.5z" /></svg>
 ) : (
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6z" /><path d="M9 8V6.5a3 3 0 0 1 6 0V8" /></svg>
@@ -68,7 +72,8 @@ const Icon = ({ kind }) => (kind === 'read' ? (
 
 export default function SuggestBox({ mode = 'product', variant = 'web', context = 'shop', prefill = '', className = '', noun = 'product' }) {
   const uid = useId();
-  const [kind, setKind] = useState(mode === 'read' ? 'read' : 'product');
+  const [kind, setKind] = useState(mode === 'read' ? 'read' : mode === 'integration' ? 'integration' : 'product');
+  const isIntegration = kind === 'integration';
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState('idle'); // idle | sending | sent
   const [error, setError] = useState('');
@@ -88,7 +93,7 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
 
   // On Services it says "Suggest a service" (critique Oct 27); the form is the same.
   const copy = kind === 'product' && noun !== 'product' ? { ...COPY.product, open: `Suggest a ${noun}` } : COPY[kind];
-  const canSend = (kind === 'product' ? productName.trim().length >= 2 && !isOverLimit(reason, 500) : topic.trim().length >= 3 && !isOverLimit(topic, 300)) && productName.length <= 120 && link.length <= 300;
+  const canSend = (kind === 'product' || isIntegration ? productName.trim().length >= 2 && !isOverLimit(reason, 500) : topic.trim().length >= 3 && !isOverLimit(topic, 300)) && productName.length <= 120 && link.length <= 300;
 
   const forgetDrafts = () => { forgetName(); forgetLink(); forgetReason(); forgetTopic(); };
   const reset = () => {
@@ -100,10 +105,12 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
     if (!canSend || status === 'sending') return;
     setError('');
     setStatus('sending');
-    const rules = kind === 'product' ? checkWithRules(productName, reason) : checkWithRules(topic);
+    const rules = kind === 'product' || isIntegration ? checkWithRules(productName, reason) : checkWithRules(topic);
     if (rules.message) { setError(rules.message); setStatus('idle'); return; }
     setCrisis(rules.crisis);
-    const payload = kind === 'product'
+    const payload = isIntegration
+      ? { kind, productName: productName.trim(), reason: reason.trim(), context, platform: variant === 'app' ? 'app' : 'web', website: trap }
+      : kind === 'product'
       ? { kind, productName: productName.trim(), link: link.trim(), reason: reason.trim(), context, platform: variant === 'app' ? 'app' : 'web', website: trap }
       : { kind, topic: topic.trim(), context, platform: variant === 'app' ? 'app' : 'web', website: trap };
     try {
@@ -142,8 +149,8 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
         <div className="ay-suggest__thanks" ref={thanksRef} tabIndex={-1} role="status">
           <span className="ay-suggest__check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span>
           <div className="ay-suggest__copy">
-            <h2 id={`${uid}-t`}>Thanks, we got it.</h2>
-            <p>{kind === 'product' ? 'We look at every product idea.' : 'It goes on our reading list.'}</p>
+            <h2 id={`${uid}-t`}>{isIntegration ? 'Thanks.' : 'Thanks, we got it.'}</h2>
+            <p>{isIntegration ? 'We\u2019ll use requests like yours to decide what to integrate next.' : kind === 'product' ? 'We look at every product idea.' : 'It goes on our reading list.'}</p>
             {crisis && <p className="ay-suggest__crisis">{CRISIS_LINE}</p>}
           </div>
           <div className="ay-suggest__thanks-actions">
@@ -159,20 +166,31 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
     <section className={rootClass} aria-labelledby={`${uid}-t`}>
       <form className="ay-suggest__form" onSubmit={submit} noValidate>
         <div className="ay-suggest__head">
-          <h2 id={`${uid}-t`}>{kind === 'product' ? `Suggest a ${noun}` : 'Suggest a read'}</h2>
+          <h2 id={`${uid}-t`}>{isIntegration ? COPY.integration.title : kind === 'product' ? `Suggest a ${noun}` : 'Suggest a read'}</h2>
           <button type="button" className="ay-suggest__close" aria-label="Close" onClick={() => { setOpen(false); setError(''); }}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
           </button>
         </div>
-        <div className="ay-suggest__seg" role="radiogroup" aria-label="What are you suggesting?">
+        {!isIntegration && <div className="ay-suggest__seg" role="radiogroup" aria-label="What are you suggesting?">
           {[['product', 'Product'], ['read', 'Read']].map(([id, label]) => (
             <button key={id} type="button" role="radio" aria-checked={kind === id} className={kind === id ? 'is-on' : ''} onClick={() => { setKind(id); setError(''); }}>
               <Icon kind={id} />{label}
             </button>
           ))}
-        </div>
+        </div>}
 
-        {kind === 'product' ? (
+        {isIntegration ? (
+          <div className="ay-suggest__fields">
+            <label className="ay-suggest__field">
+              <span>App or wearable</span>
+              <input ref={firstField} value={productName} onChange={(e) => setProductName(e.target.value)} maxLength={120} placeholder="e.g. Garmin, Natural Cycles" autoComplete="off" required />
+            </label>
+            <label className="ay-suggest__field">
+              <span>Why you want to connect it <em>optional</em></span>
+              <span className="ay-charfield"><textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} placeholder="What you'd want ayna to use from it" aria-invalid={isOverLimit(reason, 500) || undefined} /><CharRing value={reason} max={500} /></span>
+            </label>
+          </div>
+        ) : kind === 'product' ? (
           <div className="ay-suggest__fields">
             <label className="ay-suggest__field">
               <span>Product or brand</span>
@@ -205,7 +223,7 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
             Anonymous. No name, email or account attached.
           </p>
           <button type="submit" className="ay-suggest__btn" disabled={!canSend || status === 'sending'}>
-            {status === 'sending' ? 'Sending…' : 'Send'}
+            {status === 'sending' ? 'Sending…' : isIntegration ? 'Submit request' : 'Send'}
           </button>
         </div>
       </form>

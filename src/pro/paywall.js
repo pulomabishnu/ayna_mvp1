@@ -41,7 +41,7 @@ const LOCK_LINES = {
   reads: 'Free ayna includes 1 Read per week. Pro gives you unlimited Reads.',
   playlists: 'Free ayna includes 1 playlist. Pro gives you unlimited playlists.',
   quiz: 'Free ayna includes 1 quiz retake per month. Pro lets you retake it whenever your needs change.',
-  wearables: 'Connect Apple Health or Android Health Connect in the ayna app, plus Oura and WHOOP, so ayna can use the signals you choose to share.',
+  wearables: 'Connect Apple Health, Health Connect or Oura, or upload your health data or screenshots, so ayna can use the signals you choose to share.',
   insights: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
   history: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
   recap: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',

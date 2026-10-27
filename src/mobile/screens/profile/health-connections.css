@@ -208,3 +208,4 @@ button.ay-hc-row:active { background: var(--ay-cream); }
    the large icon in butter (data-blue is for chart lines only). */
 html body .app-container .ay-hc-web .ay-hc-card { border-radius: 16px; box-shadow: none !important; }
 html body .app-container .ay-hc-web .ay-hc-icon.is-lg { background: var(--legacy-pink); box-shadow: none; }
+.ay-hc-suggest { margin: 24px 0 12px; }

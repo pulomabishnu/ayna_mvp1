@@ -2,7 +2,7 @@
 // The founder's official Free vs Pro breakdown (Oct 27, 17:00; Ask per month from 17:02).
 // The server enforces Ask per calendar month: 5 free, 50 Pro (api/_proFeatures.js).
 export const PRO_FEATURES = [
-  { id: 'wearables', label: 'Wearable + health app connections', description: 'Connect Apple Health or Android Health Connect in the ayna app, plus Oura and WHOOP, so ayna can understand cycle signals, sleep, activity, temperature, HRV/stress and other relevant trends. More wearables over time.', stage: 'available' },
+  { id: 'wearables', label: 'Wearable + health app connections', description: 'Connect Apple Health, Health Connect, Oura, or upload your health data or screenshots, so ayna can understand cycle signals, sleep, activity, temperature, HRV/stress and other relevant trends. More wearables over time.', stage: 'available' },
   { id: 'health', label: 'Health-data personalization', description: 'Can use connected health and app signals to improve personalization.', stage: 'available' },
   { id: 'insights', label: 'Deeper personalized insights', description: 'More context around patterns, symptoms, goals, preferences, life stage and connected health signals.', stage: 'available' },
   { id: 'tracking', label: 'Advanced tracking', description: 'More detailed tracking over time, with trend insights, so you can understand changes and patterns instead of single data points.', stage: 'available' },
