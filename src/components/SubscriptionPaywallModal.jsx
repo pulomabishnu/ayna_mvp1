@@ -1,46 +1,46 @@
-import React, { useId, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Capacitor } from '@capacitor/core';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { useFocusTrap } from '../utils/useFocusTrap';
 import { requestPro } from '../utils/proApi.js';
-import { PRO_FEATURES } from '../pro/features.js';
+import { announceProChanged, rememberProReturn } from '../pro/paywall.js';
+import { PAID_TERM_STARTS, PLANS, PRO_VALUE as VALUE, benefitRows } from '../pro/plans.js';
 import '../styles/pro-v4.css';
 
-const MONTHLY_PRICE = '$4.99';
-const MONTHLY_REGULAR = '$8.99';
-const ANNUAL_PRICE = '$45';
-const ANNUAL_REGULAR = '$90';
+const ICON_PATHS = {
+  ask: <path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />,
+  reads: <path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5ZM12 6v13.5" />,
+  playlists: <path d="M4 7h11M4 12h11M4 17h7M18 14v6M15 17h6" />,
+  quiz: <path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4.5h-4.5" />,
+  wearables: <><rect x="7" y="7" width="10" height="10" rx="3" /><path d="M9 7l1-4h4l1 4M9 17l1 4h4l1-4M12 10v2l1.5 1" /></>,
+  history: <path d="M4 19h16M6 16l4-5 3 3 5-7" />,
+  recap: <><rect x="4" y="5" width="16" height="15" rx="2" /><path d="M4 9h16M9 3v4M15 3v4M8 13h3M8 16h6" /></>,
+  tracking: <><circle cx="12" cy="12" r="8" /><path d="M12 8v4l3 2" /></>,
+  appointment: <path d="M9 4h6v3H9zM7 5.5H6a2 2 0 0 0-2 2V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5a2 2 0 0 0-2-2h-1M8 12h8M8 16h5" />,
+  early: <path d="M12 3l2.5 5.5L20 9.5l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1Z" />,
+};
 
-// "Best value" on Yearly holds on every count: $45 today vs $4.99 + 11 x $8.99 = $103.88
-// for a first year paid monthly, and $90/year regular vs 12 x $8.99 = $107.88.
-const PLANS = [
-  { id: 'month', label: 'Monthly', price: MONTHLY_PRICE, regular: MONTHLY_REGULAR, per: 'month',
-    renew: `Renews at ${MONTHLY_REGULAR}/month after your first month. Cancel anytime.`,
-    terms: `Your first paid month begins at launch, then renews at ${MONTHLY_REGULAR}/month unless canceled.` },
-  { id: 'year', label: 'Yearly', price: ANNUAL_PRICE, regular: ANNUAL_REGULAR, per: 'year', best: true,
-    renew: `Renews at ${ANNUAL_REGULAR}/year after your first year. Cancel anytime.`,
-    terms: `Your first paid year begins at launch, then renews at ${ANNUAL_REGULAR}/year unless canceled.` },
-];
-
-// Gate feature ids that differ from the Pro features list ids.
-const FEATURE_ALIAS = { trial: 'tracking' };
-const DEFAULT_ROWS = ['ask', 'reads', 'playlists'];
-
-/** 3-4 short benefit rows from the Pro features list: the feature she tapped first
- *  (when it is available today), then the everyday ones. Nothing still in development. */
-function benefitRows(feature) {
-  const available = PRO_FEATURES.filter((f) => f.stage === 'available');
-  const first = available.find((f) => f.id === (FEATURE_ALIAS[feature] || feature));
-  const rest = DEFAULT_ROWS.map((id) => available.find((f) => f.id === id)).filter((f) => f && f !== first);
-  return [first, ...rest].filter(Boolean).slice(0, 4);
+export function FeatureIcon({ id }) {
+  return <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{ICON_PATHS[id] || ICON_PATHS.early}</svg>;
 }
 
-function Check() {
-  return <svg className="pro-sheet__tick" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
+const reducedMotion = () => {
+  try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return true; }
+};
 
-export default function SubscriptionPaywallModal({ onClose, feature = '', featureName = 'this feature', featureDescription = 'deeper personalized health tools and insights' }) {
-  useEscapeToClose(true, onClose);
+export default function SubscriptionPaywallModal({ onClose, feature = '', featureName = '' }) {
+  // Close with the exit animation, then unmount. Reduced motion closes at once.
+  const [closing, setClosing] = useState(false);
+  const closeTimer = useRef(0);
+  const close = useCallback(() => {
+    if (closeTimer.current) return;
+    if (reducedMotion()) { onClose?.(); return; }
+    setClosing(true);
+    closeTimer.current = window.setTimeout(() => onClose?.(), 200);
+  }, [onClose]);
+  useEffect(() => () => window.clearTimeout(closeTimer.current), []);
+  useEscapeToClose(true, close);
   // Portal to the themed app root (the app's .ayna-mobile or the website's .app-container), so the
   // sheet sits above the tab bar and screen stacking contexts but keeps light/dark.
   const anchorRef = useRef(null);
@@ -57,8 +57,13 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
   const [error, setError] = useState('');
   const [billingOpen, setBillingOpen] = useState(false);
   const attempts = useRef({});
-  const chosen = PLANS.find((p) => p.id === plan) || PLANS[1];
+  const chosen = PLANS.find((p) => p.id === plan) || PLANS[0];
   const rows = benefitRows(feature);
+  const unlocking = featureName && featureName !== 'ayna Pro' ? featureName : '';
+  // The iPhone app does not sell Pro (founder, Oct 27 16:43): same benefits and prices,
+  // and the button opens /pro on the website (main.jsx opens external links in the in-app browser).
+  const native = Capacitor.isNativePlatform();
+  const webUrl = `https://www.aynahealth.co/pro${feature ? `?feature=${encodeURIComponent(feature)}` : ''}`;
 
   const checkout = async () => {
     if (busy) return;
@@ -70,8 +75,15 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
       const result = await requestPro({ plan: target, requestId: attempts.current[target] });
       const url = new URL(result.url);
       if (url.protocol !== 'https:' || url.hostname !== 'checkout.stripe.com') throw new Error('Checkout is unavailable. Please try again.');
+      rememberProReturn(feature);
       window.location.assign(url.href);
     } catch (e) {
+      if (e?.code === 'already_pro') {
+        // She already has it: unlock what is on screen instead of showing an error.
+        announceProChanged();
+        close();
+        return;
+      }
       setError(e.message);
       setBusy('');
     }
@@ -80,7 +92,7 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
   if (!host) return <span ref={anchorRef} hidden />;
 
   return createPortal(
-    <div className="pro-sheet" onClick={onClose}>
+    <div className={`pro-sheet${closing ? ' is-closing' : ''}`} onClick={close}>
       <section
         ref={trapRef}
         tabIndex={-1}
@@ -90,18 +102,23 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
         aria-labelledby={titleId}
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="pro-sheet__band">
+        <span className="pro-march" aria-hidden="true" />
+        <header className="pro-sheet__head">
           <span className="pro-sheet__grab" aria-hidden="true" />
-          <button type="button" className="pro-sheet__close" onClick={onClose} aria-label="Close">
+          <button type="button" className="pro-sheet__close" onClick={close} aria-label="Close">
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
           </button>
-          <h2 id={titleId} className="pro-sheet__title">Unlock ayna Pro</h2>
-          <p className="pro-sheet__lede">Get {featureName} plus {featureDescription}.</p>
+          <span className="pro-sheet__sticker">Early Access · up to 50% off</span>
+          <h2 id={titleId} className="pro-sheet__title">Get ayna <em>Pro</em></h2>
+          <p className="pro-sheet__lede">{unlocking ? <>Unlock <b>{unlocking}</b>, plus everything else in Pro.</> : 'More Ask ayna, every Read, and an ecosystem you can update anytime.'}</p>
         </header>
 
         <div className="pro-sheet__body">
           <ul className="pro-sheet__rows" aria-label="Included with ayna Pro">
-            {rows.map((f) => <li key={f.id}><Check />{f.label}</li>)}
+            {rows.map((f) => <li key={f.id}>
+              <span className="pro-sheet__icon"><FeatureIcon id={f.id} /></span>
+              <span className="pro-sheet__rowtext"><b>{f.label}</b><span>{VALUE[f.id] || f.description}</span></span>
+            </li>)}
           </ul>
 
           <div className="pro-sheet__plans" role="radiogroup" aria-label="Choose a plan">
@@ -115,23 +132,37 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
                 disabled={Boolean(busy)}
                 onClick={() => setPlan(p.id)}
               >
-                <span className="pro-plan__top">
-                  <span className="pro-plan__label">{p.label}</span>
-                  {p.best && <span className="pro-plan__best">Best value</span>}
+                {p.badge && <span className="pro-plan__best">{p.badge}</span>}
+                <span className="pro-plan__top"><span className="pro-plan__dot" aria-hidden="true" /><span className="pro-plan__label">{p.label}</span></span>
+                <span className="pro-plan__amount">
+                  <strong className="pro-plan__price">{p.price}</strong>
+                  <del className="pro-plan__was"><span className="pro-sr">Regular price </span>{p.regular}</del>
                 </span>
-                <del className="pro-plan__was"><span className="pro-sr">Regular price </span>{p.regular}/{p.per}</del>
-                <strong className="pro-plan__price">{p.price}</strong>
-                <span className="pro-plan__today">today</span>
+                <span className="pro-plan__sub">{p.sub}</span>
               </button>
             ))}
           </div>
 
           {error && <p className="pro-sheet__error" role="alert">{error}</p>}
 
+          {native ? <>
+            <p className="pro-sheet__webnote">ayna Pro is available on the web for now.</p>
+            <a className="pro-sheet__cta" href={webUrl} target="_blank" rel="noopener noreferrer">Get ayna Pro on the web</a>
+          </> : <>
           <button type="button" className="pro-sheet__cta" disabled={Boolean(busy)} aria-busy={busy ? 'true' : undefined} onClick={checkout}>
-            {busy ? 'Opening checkout…' : `Continue · ${chosen.price}`}
+            {busy ? 'Opening secure checkout…' : `Get ayna Pro · ${chosen.price}`}
           </button>
-          <p className="pro-sheet__renew">{chosen.renew}</p>
+          <p className="pro-sheet__trust">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6ZM9 12l2 2 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            Secure checkout with Stripe. Cancel anytime.
+          </p>
+          </>}
+
+          <ol className="pro-sheet__when" aria-label="How Early Access works">
+            <li><b>Today</b><span>Pay {chosen.price}. Pro unlocks right away.</span></li>
+            <li><b>{PAID_TERM_STARTS}</b><span>Your paid {chosen.per} starts. The beta before it is included.</span></li>
+            <li><b>After that</b><span>{chosen.renew}</span></li>
+          </ol>
 
           <button type="button" className="pro-sheet__more" aria-expanded={billingOpen} aria-controls={billingId} onClick={() => setBillingOpen((v) => !v)}>
             How billing works
@@ -140,10 +171,11 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
           <div id={billingId} className="pro-sheet__billing" hidden={!billingOpen}>
             <p>Pay the Early Access price today and use Pro immediately. Your purchased month or year starts January 1, 2027, so the beta period before launch is included.</p>
             <p>Early Access pricing is applied now. Save up to 50% on your first paid term.</p>
-            <p><b>Monthly.</b> {PLANS[0].terms}</p>
-            <p><b>Yearly.</b> {PLANS[1].terms}</p>
+            <p><b>Monthly.</b> {PLANS[1].terms}</p>
+            <p><b>Yearly.</b> {PLANS[0].terms}</p>
             <p>Cancel automatic renewal anytime. Access already paid for stays active through the end of that purchased period.</p>
           </div>
+          <button type="button" className="pro-sheet__notnow" onClick={close}>Not now</button>
         </div>
       </section>
     </div>,
