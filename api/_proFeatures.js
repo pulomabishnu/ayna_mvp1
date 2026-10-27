@@ -1,4 +1,3 @@
-/* global process */
 import { PREMIUM_READ_IDS } from '../src/pro/premiumReads.js';
 
 export const DEFAULT_PRO_RULES = {
@@ -10,10 +9,13 @@ export const DEFAULT_PRO_RULES = {
 };
 
 export async function proFeatureRules(admin) {
-  if (process.env.PRO_FEATURE_GATES_ENABLED !== '1') return DEFAULT_PRO_RULES;
   const { data, error } = await admin.rpc('pro_feature_config');
   if (error || typeof data?.enabled !== 'boolean') throw new Error('Pro feature rules unavailable');
-  return { ...data, premiumReadIds: PREMIUM_READ_IDS };
+  return {
+    ...DEFAULT_PRO_RULES,
+    ...data,
+    premiumReadIds: data.enabled ? PREMIUM_READ_IDS : [],
+  };
 }
 
 export async function consumeProChat(admin, userId, premium, rules) {
