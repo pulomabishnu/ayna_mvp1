@@ -40,7 +40,7 @@
 .ay-hsn__srcs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .ay-hsn__src {
   display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 7px;
-  border: 1px solid var(--hs-line); border-radius: 999px; font: 600 12.5px/1.3 var(--hs-body);
+  border: 1px solid var(--hs-line); border-radius: 999px; font: 600 13px/1.3 var(--hs-body);
 }
 .ay-hsn__src svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .ay-hsn__changes { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
@@ -68,7 +68,7 @@
 .ay-hbadge {
   display: inline-flex; align-items: center; gap: 4px; max-width: 100%;
   margin-top: 4px; padding: 2px 8px 2px 5px; border: 1px solid var(--hs-line); border-radius: 999px;
-  background: transparent; color: var(--hs-ink); font: 600 11.5px/1.35 var(--hs-body);
+  background: transparent; color: var(--hs-ink); font: 600 13px/1.35 var(--hs-body);
   box-sizing: border-box; text-align: left;
 }
 /* Narrow cards: the badge wraps instead of cutting words off. */
@@ -84,7 +84,7 @@
 .ay-hmt__switch {
   flex: none; display: inline-flex; align-items: center; gap: 8px; height: 36px; margin-top: 2px; padding: 0 4px 0 12px;
   border: 1.5px solid var(--hs-line); border-radius: 999px; background: transparent; color: var(--hs-ink); cursor: pointer;
-  font: 700 12.5px/1 var(--hs-body); letter-spacing: .06em;
+  font: 700 13px/1 var(--hs-body); letter-spacing: .02em;
 }
 .ay-hmt__word { min-width: 26px; text-align: center; }
 .ay-hmt__knob { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--hs-line); background: var(--hs-page); box-sizing: border-box; }

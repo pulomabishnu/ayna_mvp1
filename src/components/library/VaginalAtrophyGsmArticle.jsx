@@ -64,7 +64,7 @@ export default function VaginalAtrophyGsmArticle({ minutes = 4, onBack, nextArti
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,240px),1fr))", gap: "56px", alignItems: "start" }}>
       
-            <aside style={{ position: "sticky", top: "28px", display: "grid", gap: "14px", maxWidth: "260px" }}>
+            <aside style={{ display: "grid", gap: "14px", maxWidth: "260px" }}>
               <span style={{ font: "700 12px/1 'Figtree'", letterSpacing: ".08em", textTransform: "uppercase", color: "var(--g-pink)" }}>In this article</span>
               <nav style={{ display: "grid", gap: "4px" }}>
                 <a href="#what" onClick={jump} style={{ display: "grid", gridTemplateColumns: "24px 1fr", gap: "8px", padding: "8px 0", font: "500 15px/1.35 'Figtree'", textDecoration: "none", borderBottom: "1px solid rgba(var(--g-fg-rgb), .25)" }}><span style={{ color: "var(--g-pink)", fontWeight: "700" }}>01</span>What GSM is</a>

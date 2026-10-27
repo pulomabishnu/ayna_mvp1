@@ -400,7 +400,7 @@ html body .app-container.app-container.app-container.app-container {
      scroll the page behind, and keep the Post button in reach. */
   .cm-sheet-backdrop { top: var(--ay-vv-top, 0px); bottom: auto; height: var(--ay-vv-h, 100%); overscroll-behavior: contain; }
   .cm-sheet { max-height: calc(var(--ay-vv-h, 100dvh) - 48px); overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
-  .cm-compose .cm-compose-foot { position: sticky; bottom: calc(-1 * var(--ay-s24)); z-index: 2; margin: 0 calc(-1 * var(--ay-s24)) calc(-1 * var(--ay-s24)); padding: var(--ay-s12) var(--ay-s24) var(--ay-s24); background: var(--ay-page); }
+  .cm-compose .cm-compose-foot { position: relative; bottom: auto; z-index: 2; margin: 0 calc(-1 * var(--ay-s24)) calc(-1 * var(--ay-s24)); padding: var(--ay-s12) var(--ay-s24) var(--ay-s24); background: var(--ay-page); }
   .cm-discard-layer { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; padding: var(--ay-s20); background: rgba(62, 39, 35, .35); }
   .cm-discard { display: grid; gap: 10px; width: min(360px, 100%); padding: var(--ay-s24); border: 1.5px solid var(--ay-outline-color); border-radius: var(--ay-r-feature); background: var(--ay-page); color: var(--ay-text); box-sizing: border-box; font-family: var(--ay-sans-stack); }
   .cm-discard h3 { margin: 0; font: 400 var(--ay-type-h3)/1.2 var(--ay-serif-stack) !important; color: var(--ay-text) !important; }

@@ -51,5 +51,5 @@
 /* One colour rule (review, Oct 26): the For today cards are the butter surface; pink marks only what is for now. */
 
 /* The toggle stays in reach while its content scrolls (review #15). */
-.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-tv > .ayk-tabs { position: sticky; top: 8px; z-index: 20; background-color: #f6e3a1 !important; box-shadow: 0 0 0 8px var(--r-canvas, #ffedac); }
+.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-tv > .ayk-tabs { position: relative; top: auto; z-index: 20; background-color: #f6e3a1 !important; box-shadow: 0 0 0 8px var(--r-canvas, #ffedac); }
 .ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile)[data-theme='dark'] .ay-homescreen .ay-tv > .ayk-tabs { background-color: #45302b !important; box-shadow: 0 0 0 8px var(--r-canvas, #2e1c18); }

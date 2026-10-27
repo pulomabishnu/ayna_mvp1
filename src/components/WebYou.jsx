@@ -448,23 +448,30 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
 
     {nav}
 
-    <div className={`wy-grid is-${section || 'overview'}`}>
+    <div className={`wy-grid is-${section || 'ov2'}`}>
       {!section && <>
-      {/* Uniqueness pass: the three numbers and the five sections as one bento (web + app share it). */}
-      <div className="wy-bento" data-tour="you-sections">
-        <YouBento
-          products={products}
-          intake={intake}
-          onOpenBlend={() => goSection('health')}
-          tiles={{
-            eco: onOpenEcosystem || products.length ? { caption: 'My ecosystem', value: fmtCount(products.length), sub: products.length === 1 ? 'product, grouped by need' : 'products, grouped by need', onClick: onOpenEcosystem } : null,
-            saved: { caption: 'Saved', value: fmtCount(savedCount), sub: 'Products and posts', onClick: onOpenSaved || (() => goSection('saved')) },
-            checkins: { caption: checkinCount === 1 ? 'Monthly check-in' : 'Monthly check-ins', value: facts[2].value, sub: 'Done so far', onClick: onOpenCheckin },
-            health: { caption: 'My health', sub: 'Dashboard, tracking, apps', onClick: () => goSection('health') },
-            activity: { caption: 'Activity', sub: 'Questions, posts, reviews', onClick: () => goSection('activity') },
-            settings: { caption: 'Settings & privacy', sub: 'Account and your data', onClick: () => goSection('settings') },
-          }}
-        />
+      {/* You overview, cleaned up (founder, Oct 27: "fix the profile page too"). Left: her things as one
+          feature card and one grouped list (same rows as the app), Settings and Log out last. Right: her
+          set-up, what ayna knows and safety alerts. Every row has the same style and weight; each
+          link appears once (the health profile bar sits in the header). */}
+      <div className="wy-col">
+        <div className="wy-bento" data-tour="you-sections">
+          <YouBento
+            layout="list"
+            products={products}
+            intake={intake}
+            onOpenBlend={() => goSection('health')}
+            tiles={{
+              eco: onOpenEcosystem || products.length ? { caption: 'My ecosystem', value: fmtCount(products.length), sub: products.length === 1 ? 'product, grouped by need' : 'products, grouped by need', onClick: onOpenEcosystem } : null,
+              saved: { caption: 'Saved', value: fmtCount(savedCount), sub: 'Products and posts', onClick: onOpenSaved || (() => goSection('saved')) },
+              checkins: { caption: checkinCount === 1 ? 'Monthly check-in' : 'Monthly check-ins', value: facts[2].value, sub: 'Done so far', onClick: onOpenCheckin },
+              health: { caption: 'My health', sub: 'Dashboard, tracking, apps', onClick: () => goSection('health') },
+              activity: { caption: 'Activity', sub: 'Questions, posts, reviews', onClick: () => goSection('activity') },
+              settings: { caption: 'Settings & privacy', sub: 'Account and your data', onClick: () => goSection('settings') },
+              logout: onSignOut ? { caption: 'Log out', onClick: onSignOut } : null,
+            }}
+          />
+        </div>
       </div>
       <div className="wy-col">
         {/* Pai #12: her set-up as "2 of 4" with a tick per step and one next step. Gone once all are done. */}
@@ -477,16 +484,10 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
           </div>
         </section>}
         <section className="wy-sec" aria-labelledby="yh-knows-h">
-          <h2 className="ay-group__title" id="yh-knows-h">What ayna knows</h2>
-          <ul className="ay-group wy-rows">{linkRow('knows', knows || 'Nothing yet', null, () => goSection('health'), 'See, change or remove anything ayna uses')}</ul>
+          <h2 className="ay-group__title" id="yh-knows-h">Your data</h2>
+          <ul className="ay-group wy-rows">{linkRow('knows', knows || 'Nothing yet', null, () => goSection('health'), 'What ayna knows. See, change or remove anything ayna uses')}</ul>
         </section>
-      </div>
-      <div className="wy-col">
         {safetySection}
-        <p className="yh-quick">
-          {onOpenCheckin && <button type="button" className="ct-link" onClick={onOpenCheckin}>Monthly check-in</button>}
-          {onEditProfile && <button type="button" className="ct-link" onClick={onEditProfile}>Update answers</button>}
-        </p>
         {onOpenFreeProduct && <FreeProductAccountCard onOpen={onOpenFreeProduct} />}
       </div>
       </>}

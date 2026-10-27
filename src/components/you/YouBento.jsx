@@ -12,7 +12,7 @@ import './you-bento.css';
  * same fields the matcher reads); it shows where each slider sits and opens
  * the editor. Same tiles on web and app.
  *
- * tiles: { eco, saved, checkins, health, activity, settings } each
+ * tiles: { eco, saved, checkins, health, activity, settings, logout (list layout only) } each
  *   { value?, caption, sub?, onClick? }; products: her ecosystem;
  *   intake: fullHealthIntake (for the blend); onOpenBlend.
  */
@@ -23,6 +23,7 @@ const ICON = {
   blend: <path d="M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4" />,
   health: <path d="M3 12h4l2-5 4 10 2-5h6" />,
   activity: <path d="M5 6h14M5 12h14M5 18h9" />,
+  logout: <path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M10 16l-4-4 4-4M6 12h10" />,
   settings: <><circle cx="12" cy="12" r="3" /><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8" /></>,
 };
 const ARROW = <svg className="yb-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>;
@@ -66,13 +67,13 @@ function Row({ k, t }) {
     <svg className="yb-row__icon" viewBox="0 0 24 24" aria-hidden="true">{ICON[k]}</svg>
     <span className="yb-row__text"><b>{t.caption}</b>{t.sub && <small>{t.sub}</small>}</span>
     <span className="yb-row__n">{t.value || ''}</span>
-    {t.onClick && CHEVRON}
+    {t.onClick && k !== 'logout' && CHEVRON}
   </>;
   return <li>{t.onClick ? <button type="button" className="yb-row" onClick={t.onClick}>{inner}</button> : <div className="yb-row">{inner}</div>}</li>;
 }
 
 export default function YouBento({ tiles = {}, products = [], intake = null, onOpenBlend = null, className = '', layout = 'bento' }) {
-  const { eco, saved, checkins, health, activity, settings } = tiles;
+  const { eco, saved, checkins, health, activity, settings, logout } = tiles;
   const shown = products.filter((p) => p?.id).slice(0, 3);
   const said = blendSaid(intake);
   // App You (critique, Oct 27): one colour rule. Espresso is the one feature card (My ecosystem),
@@ -98,7 +99,7 @@ export default function YouBento({ tiles = {}, products = [], intake = null, onO
           <Row k="activity" t={activity} />
           {said && <Row k="blend" t={{ caption: 'Your blend', sub: said, onClick: onOpenBlend }} />}
         </ul>
-        {settings && <ul className="yb-list" aria-label="Settings"><Row k="settings" t={settings} /></ul>}
+        {(settings || logout) && <ul className="yb-list" aria-label="Settings"><Row k="settings" t={settings} /><Row k="logout" t={logout} /></ul>}
       </div>
     );
   }

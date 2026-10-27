@@ -10,7 +10,7 @@
 .wc-search button { border: 0; background: none; font-size: var(--ay-fs-section); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
 .wc-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px; align-items: start; }
 .wc-main { display: grid; gap: 16px; }
-.wc-side { position: sticky; top: 96px; display: grid; gap: 16px; }
+.wc-side { position: relative; top: auto; display: grid; gap: 16px; }
 .wc-card { display: grid; gap: 12px; padding: 18px; border: 2px solid var(--legacy-ink); border-radius: 22px; background: var(--ay-paper); }
 .wc-card h3 { margin: 0; font: 600 var(--ay-fs-card)/1 var(--ay-sans) !important; letter-spacing: -.02em !important; }
 .wc-me { grid-template-columns: auto 1fr; align-items: center; }

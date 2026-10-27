@@ -23,7 +23,7 @@ function sourceList(text) {
  * The one read card (Explore audit, Oct 25, issue 4), website and app.
  * - layout "row": 120px cover · topic · title · one line · Written by /
  *   Reviewed by (when the team recorded them) · sources with evidence marks.
- * - layout "rail": the 4:5 cover (topic and read time on it) and the title.
+ * - layout "rail": a 4:3 cover, then topic · read time, then the title.
  * - layout "feature": the row's anatomy with the photo or cover big on top
  *   (the one big feature of the Reads editorial grid, #4dfb3fbd FEEL FITS).
  * A real link on the website (`href`), a button in the app (no `href`).
@@ -63,7 +63,9 @@ export default function ReadCard({ article, layout = 'rail', href = null, onOpen
   }
   return (
     <article className={`ay-rcard is-rail ${className}`.trim()}>
-      <span className="ay-rcard__cover" aria-hidden="true"><ReadCover article={article} minutes={minutes} /></span>
+      <span className="ay-rcard__cover" aria-hidden="true"><ReadCover article={article} /></span>
+      {/* Topic and read time at a glance, then the title (Library nav pass, Oct 27). */}
+      <p className="ay-rcard__topic">{sectionLabel(id)}{sectionLabel(id) ? <span aria-hidden="true"> · </span> : null}{minutes} min read</p>
       <H className="ay-rcard__title"><Link className="ay-rcard__link" {...linkProps} onClick={click} aria-label={`${title}, ${minutes} min read`}>{title}</Link></H>
       {summary && teaser && <p className="ay-rcard__sum">{teaser}</p>}
       {state}

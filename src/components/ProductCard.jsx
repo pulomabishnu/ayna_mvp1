@@ -73,6 +73,9 @@ export default function ProductCard({
   const price = cardPrice(product);
   const meta = isMine ? { preorder: false, sponsored: false, partner: false, tax: '' } : cardMeta(product, { partner: partnerMark });
   const kind = !isMine ? (shownBrand ? cardKind(product) : categoryLabel) : '';
+  // A few retailer photos carry a "BULK BUY" rosette; the photo is cropped to the product
+  // and the card says it in a plain chip instead (no-vibe pass, Oct 27).
+  const bulk = !isMine && /-bulk-buy$/.test(String(product.id || ''));
   const hasMatch = !isMine && Number.isFinite(matchPercent) && matchPercent > 0;
   const held = !isMine && !hasMatch && matchHold;
   // Pre-order: the pill already says it, so no "Coming soon · Waitlist" line (founder, Oct 27).
@@ -94,12 +97,13 @@ export default function ProductCard({
   return (
     <article onClick={openFromCard} data-pid={product.id} className={`ay-pcard${inEcosystem ? ' is-in-eco' : ''}${isSaved ? ' is-saved' : ''}${hasMatch ? ' has-fit' : ''}${onToggleSaved ? ' has-heart' : ''} ${className}`.trim()} style={style}>
       {/* The square photo panel: the product on a light ground, a thin rule around it. */}
-      <div className="ay-pcard__photo">
+      <div className={`ay-pcard__photo${bulk ? ' is-seal-crop' : ''}`}>
         {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<PlateName product={product} />} />}
       </div>
       <div className="ay-pcard__body">
         <p className="ay-pcard__meta">
           {meta.preorder && <span className="ay-pcard__pre">Pre-order</span>}
+          {bulk && <span className="ay-pcard__chip">Bulk buy</span>}
           <span className="ay-pcard__brand">{isMine ? categoryLabel : (shownBrand || categoryLabel)}</span>
           {meta.sponsored && <span className="ay-pcard__mark">Sponsored</span>}
           {meta.partner && <span className="ay-pcard__mark">ayna partner</span>}

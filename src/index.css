@@ -78,7 +78,7 @@
   --welcome-nav-enter-ease: var(--ease-out);
 }
 /* Campus resources is exempt from the QA3 type pass (founder): it keeps its earlier sizes. */
-.cr-page { --ay-fs-display: clamp(40px, 32.989px + 1.7978vw, 56px); --ay-fs-title: clamp(30px, 25.618px + 1.1236vw, 40px); --ay-fs-section: clamp(22px, 19.371px + 0.6742vw, 28px); --ay-fs-card: clamp(17px, 16.562px + 0.1124vw, 18px); --ay-fs-caption: 12.5px; }
+.cr-page { --ay-fs-display: clamp(40px, 32.989px + 1.7978vw, 56px); --ay-fs-title: clamp(30px, 25.618px + 1.1236vw, 40px); --ay-fs-section: clamp(22px, 19.371px + 0.6742vw, 28px); --ay-fs-card: clamp(17px, 16.562px + 0.1124vw, 18px); --ay-fs-caption: 13px; }
 
 /* Base Reset */
 * {

@@ -131,7 +131,7 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-co
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day.is-single { max-width: 1160px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day.is-single .ay-wh-day__main { grid-template-columns: minmax(0, 1fr) 380px; column-gap: 32px; align-items: start; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day.is-single .ay-wh-day__main > * { grid-column: 1; }
-  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day.is-single .ay-wh-day__main > .ay-wh-day__act { grid-column: 2; grid-row: 1 / span 6; position: sticky; top: 96px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day.is-single .ay-wh-day__main > .ay-wh-day__act { grid-column: 2; grid-row: 1 / span 6; position: relative; top: auto; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__act .ay-today.is-web .ay-today__list { display: grid; grid-template-columns: minmax(0, 1fr) !important; gap: 12px; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__act .ay-today.is-web .ay-today__list > * { grid-column: 1 !important; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-hhl .ayk-snap.is-card .ayk-snap__item { width: calc(50% - 6px); }

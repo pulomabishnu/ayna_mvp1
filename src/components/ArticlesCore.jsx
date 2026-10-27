@@ -1044,6 +1044,15 @@ function nextInSection(id) {
   return ARTICLES.find((x) => x.id === nextId) || null;
 }
 
+// Previous read in the same section (no looping), for the pager under a read.
+function stepInSection(id, dir) {
+  const sec = sectionOf(id);
+  if (!sec) return null;
+  const i = sec.articleIds.indexOf(id) + dir;
+  if (i < 0 || i >= sec.articleIds.length) return null;
+  return ARTICLES.find((x) => x.id === sec.articleIds[i]) || null;
+}
+
 const READ_PROGRESS_KEY = 'ayna_read_progress_v1';
 // Reading history is kept per account, so after logout (or on a shared
 // computer) nobody sees which topics the last person read about. The old
@@ -1242,6 +1251,22 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
             </div>
             <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
           </article>
+          {/* Previous / next read in this topic, and the way back to the list (founder, Oct 27). */}
+          {sec && (() => {
+            const prev = stepInSection(selected.id, -1);
+            const after = stepInSection(selected.id, 1);
+            const pos = sec.articleIds.indexOf(selected.id) + 1;
+            return (
+              <nav className="lb-pager" aria-label={`More in ${sec.label}`}>
+                <p className="lb-pager__where">{sec.label} <span aria-hidden="true">·</span> read {pos} of {sec.articleIds.length}</p>
+                <div className="lb-pager__row">
+                  {prev ? <a className="lb-pager__link is-prev" href={`/library/${prev.id}`} onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); open(prev.id); }}><span className="lb-pager__dir">Previous</span><span className="lb-pager__t">{prev.title}</span></a> : <span className="lb-pager__gap" />}
+                  {after ? <a className="lb-pager__link is-next" href={`/library/${after.id}`} onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); open(after.id); }}><span className="lb-pager__dir">Next</span><span className="lb-pager__t">{after.title}</span></a> : <span className="lb-pager__gap" />}
+                </div>
+                <a className="lb-pager__back" href="/explore/resources" onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); setTopic(sec.id); closeRead(); }}>All {sec.label.toLowerCase()} reads</a>
+              </nav>
+            );
+          })()}
         </div>
         {related.length > 0 && (
           <div className="lb-band"><section className="lb-wrap lb-shelf lb-shelf--related" aria-labelledby="lb-related-h">
@@ -1325,7 +1350,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     </>;
   }
 
-  const jump = (e, target) => { e.preventDefault(); setQuery(''); setTopic('all'); setJumpTo(target); };
+  const pickTopic = (id) => { setQuery(''); setTopic(id); };
 
   return (
     <section className="ct lb lb-lib">
@@ -1346,36 +1371,21 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
               <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={libPlaceholder} aria-label="Search reads" />
             </label>
-            {/* Phones: the contents as one scrolling line of chips, count inside each chip (rule 6). */}
-            <div className="lb-chips" role="group" aria-label="Topics">
-              {rows.map((r) => {
-                const target = `lib-${r.id}`;
-                return <a key={r.id} className="lb-chip" href={`#${target}`} onClick={(e) => jump(e, target)}>{r.label} <span className="lb-chip__n">{r.items.length}</span></a>;
-              })}
-            </div>
           </div>
-          <nav className="lb-toc" aria-labelledby="lb-toc-h">
-            <h2 id="lb-toc-h" className="lb-tab lb-toc__h">Contents <span className="lb-toc__total">{ARTICLES.length} reads</span></h2>
-            <ol className="lb-toc__list">
-              {rows.map((r) => {
-                const target = `lib-${r.id}`;
-                return (
-                  <li key={r.id}>
-                    <a href={`#${target}`} onClick={(e) => jump(e, target)}>
-                      <span className="lb-toc__t">{r.label}</span>
-                      <span className="lb-toc__dots" aria-hidden="true" />
-                      <span className="lb-toc__c">{r.items.length} read{r.items.length === 1 ? '' : 's'}</span>
-                    </a>
-                  </li>
-                );
-              })}
-            </ol>
-          </nav>
         </div>
       </header>
       {/* The signature divider under the Library head (founder, Oct 27 13:20). */}
       <BrandStrip className="lb-strip" />
       {results && <div className="lb-wrap"><SearchAssist query={query} resultCount={results.length} onUse={setQuery} /></div>}
+      {/* Topics: one row of chips that filters the reads (founder, Oct 27: "library needs to be easier to nav").
+          It scrolls sideways on a phone and moves with the page (no sticky). */}
+      <div className="lb-wrap lb-topicwrap">
+        <div className="lb-topics" role="group" aria-label="Filter reads by topic">
+          <button type="button" className="lb-topic" aria-pressed={!results && topic === 'all'} onClick={() => pickTopic('all')}>All <span className="lb-topic__n">{ARTICLES.length}</span></button>
+          {hasProfile && forYou.length > 0 && <button type="button" className="lb-topic" aria-pressed={!results && topic === 'foryou'} onClick={() => pickTopic('foryou')}>For you <span className="lb-topic__n">{forYou.length}</span></button>}
+          {rows.map((r) => <button key={r.id} type="button" className="lb-topic" aria-pressed={!results && topic === r.id} onClick={() => pickTopic(r.id)}>{r.label} <span className="lb-topic__n">{r.items.length}</span></button>)}
+        </div>
+      </div>
       <div className="lb-wrap lb-body">{body}</div>
       <div className="lb-wrap"><SuggestBox mode="read" context="library" className="ct-suggest" /></div>
     </section>

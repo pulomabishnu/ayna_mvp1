@@ -254,7 +254,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card { padding: 0 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-category-row { padding-right: var(--r-gutter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-category-index { padding-right: 0 !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-filter-toggle { position: sticky !important; right: 20px !important; z-index: 2; flex: none !important; background: var(--r-canvas) !important; box-shadow: -10px 0 0 var(--r-canvas) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-filter-toggle { position: relative !important; right: auto; z-index: 2; flex: none !important; background: var(--r-canvas) !important; box-shadow: -10px 0 0 var(--r-canvas) !important; }
 
 /* ===================== review round 3 fixes, part 2 ===================== */
 .ayna-mobile { --r-fill: rgba(62, 39, 35, .08); }

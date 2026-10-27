@@ -17,7 +17,7 @@
 /* ---------- Layout ---------- */
 .app-container .wc3 .wc-layout { display: grid; grid-template-columns: 208px minmax(0, 680px) minmax(260px, 300px); justify-content: center; gap: 32px; align-items: start; }
 .app-container .wc3 .wc-main { display: grid; gap: 12px; min-width: 0; }
-.app-container .wc3 :is(.wc-nav, .wc-side) { position: sticky; top: 96px; display: grid; gap: 16px; align-content: start; }
+.app-container .wc3 :is(.wc-nav, .wc-side) { position: relative; top: auto; display: grid; gap: 16px; align-content: start; }
 .app-container .wc3 .wc-side { order: 0; }
 
 /* Left nav: feeds as a vertical list */

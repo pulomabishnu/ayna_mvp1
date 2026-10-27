@@ -96,11 +96,10 @@ html body .app-container.app-container #ayeco .eco-rail.is-open .eco-rail__list 
 
 /* cards in the rail / strip: small, a folder tab on top */
 html body .app-container.app-container #ayeco .eco-rail__item { position: relative; min-width: 0; }
-html body .app-container.app-container #ayeco .eco-rail__card { position: relative; margin: 0; padding: 16px 16px 14px; border: 1.5px solid var(--ay-outline-color); border-radius: 0 16px 16px 16px; background: var(--ay-page); color: var(--ay-text); }
-html body .app-container.app-container #ayeco .eco-rail__tab { position: absolute; left: -1.5px; top: -25px; height: 25px; margin: 0; padding: 5px 12px 0; box-sizing: border-box; border: 1.5px solid var(--ay-outline-color); border-bottom: 0; border-radius: 10px 10px 0 0; font: 600 13px/1.2 var(--ay-sans-stack); white-space: nowrap; }
+html body .app-container.app-container #ayeco .eco-rail__card { position: relative; margin: 0; padding: 16px 16px 14px; border: 1.5px solid var(--ay-outline-color); border-radius: 16px; background: var(--ay-page); color: var(--ay-text); }
+/* The label is a plain small line inside the card, not a folder tab (founder Oct 27). */
+html body .app-container.app-container #ayeco .eco-rail__tab { position: static; height: auto; margin: 0 0 4px; padding: 0; border: 0; border-radius: 0; background: none !important; color: inherit !important; font: 600 13px/1.3 var(--ay-sans-stack); opacity: .8; white-space: normal; }
 html body .app-container.app-container #ayeco .eco-rail__card.is-stages { background: #f7badd; color: #3e2723; border-color: #3e2723; }
-html body .app-container.app-container #ayeco .eco-rail__card.is-stages .eco-rail__tab { background: #3e2723; color: #ffedac; border-color: #3e2723; }
-html body .app-container.app-container #ayeco .eco-rail__card.is-news .eco-rail__tab { background: #f6e3a1; color: #3e2723; border-color: var(--ay-outline-color); }
 html body .app-container.app-container #ayeco .eco-rail__title { margin: 0 0 6px !important; padding-right: 28px; font: 600 17px/1.3 var(--ay-sans-stack) !important; color: inherit !important; letter-spacing: 0 !important; }
 html body .app-container.app-container #ayeco .eco-rail__card.is-stages .eco-rail__title { padding-right: 0; }
 html body .app-container.app-container #ayeco .eco-rail__title--sm { font-size: 15.5px !important; }
@@ -147,16 +146,18 @@ html body .app-container.app-container #ayeco .ay-shelf[data-tone='ink'] { --tab
 html body .app-container.app-container #ayeco .ay-shelf[data-tone='paint-butter'] { --tab: #ffedac; --tab-ink: #3e2723; }
 html body .app-container.app-container[data-theme='brand-dark'] #ayeco .ay-shelf[data-tone='ink'] { --tab: #ffedac; --tab-ink: #3e2723; }
 html body .app-container.app-container #ayeco .ay-shelves, html body .app-container.app-container #ayeco .ay-shelves__big { gap: 36px !important; }
-html body .app-container.app-container #ayeco .ay-shelf__head { align-items: flex-end !important; gap: 10px !important; margin: 0 0 14px !important; border-bottom: 1.5px solid var(--ay-outline-color) !important; }
-html body .app-container.app-container #ayeco .ay-shelf__head > :not(.ay-shelf__name):not(.ay-shelf__rename):not(.ay-shelf__grip) { margin-bottom: 6px !important; }
-html body .app-container.app-container #ayeco .ay-shelf__name {
-  margin: 0 0 -1.5px !important; padding: 9px 16px 8px !important; max-width: calc(100% - 120px) !important;
-  background: var(--tab) !important; color: var(--tab-ink) !important;
-  border: 1.5px solid var(--ay-outline-color) !important; border-bottom-color: var(--tab) !important; border-radius: 16px 16px 0 0 !important;
+html body .app-container.app-container #ayeco .ay-shelf__head { align-items: center !important; gap: 10px !important; margin: 0 0 14px !important; padding-bottom: 8px !important; border-bottom: 1.5px solid var(--ay-outline-color) !important; }
+html body .app-container.app-container #ayeco .ay-shelf__head > :not(.ay-shelf__name):not(.ay-shelf__rename):not(.ay-shelf__grip) { margin-bottom: 0 !important; }
+/* Shelf names are plain headings (no folder tabs, founder Oct 27). The shelf's colour stays as a small swatch. */
+html body .app-container.app-container #ayeco .ay-shelf .ay-shelf__name.ay-shelf__name {
+  display: inline-flex !important; align-items: center; gap: 10px;
+  margin: 0 !important; padding: 0 !important; max-width: calc(100% - 120px) !important;
+  background: none !important; color: var(--ay-text) !important;
+  border: 0 !important; border-radius: 0 !important;
   font: 700 22px/1.1 var(--ay-heading, var(--ay-serif-stack)) !important; letter-spacing: -.015em !important;
-  transform-origin: 50% 100%;
 }
-html body .app-container.app-container #ayeco .ay-shelf[style*='--shelf-tab'] .ay-shelf__name { padding-left: 16px !important; }
+html body .app-container.app-container #ayeco .ay-shelf[style*='--shelf-tab'] .ay-shelf__name::after { content: ''; flex: none; width: 12px; height: 12px; border: 1.5px solid var(--ay-outline-color); border-radius: 50%; background: var(--tab); }
+html body .app-container.app-container #ayeco .ay-shelf[style*='--shelf-tab'] .ay-shelf__name { padding-left: 0 !important; }
 html body .app-container.app-container #ayeco .ay-shelf[style*='--shelf-tab'] .ay-shelf__name::before { display: none !important; content: none !important; }
 html body .app-container.app-container #ayeco .ay-shelf__rename input { min-height: 44px; }
 html body .app-container.app-container #ayeco .ay-shelf__count { font: 600 14px/1 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; font-variant-numeric: tabular-nums; }
@@ -206,7 +207,6 @@ html body .app-container.app-container #ayeco[data-eco-anim='1'] :is(.eco3-gaps,
 /* ---------- Dark ---------- */
 html body .app-container.app-container[data-theme='brand-dark'] #ayeco .eco-rail__go { background: #ffedac; color: #3e2723; box-shadow: 3px 3px 0 #f7badd; }
 html body .app-container.app-container[data-theme='brand-dark'] #ayeco .eco-rail__card.is-stages .eco-rail__go { background: #3e2723; color: #ffedac; box-shadow: 3px 3px 0 #ffedac, 3px 3px 0 1.5px #3e2723; }
-html body .app-container.app-container[data-theme='brand-dark'] #ayeco .eco-rail__card.is-stages .eco-rail__tab { background: #ffedac; color: #3e2723; }
 
 /* ---------- No motion ---------- */
 html.ay-motion-paused body .app-container .eco-awning,
@@ -222,9 +222,7 @@ html.ay-motion-paused body .app-container.app-container :is(.eco-inklist, #ayeco
 /* rail: keep the quiz card in one column whatever the page-wide card rules say */
 html body .app-container.app-container #ayeco .eco-rail__slot .fq > *, html body .app-container.app-container #ayeco .eco-rail__slot .fq .fq__actions { grid-column: 1 / -1 !important; grid-row: auto !important; }
 html body .app-container.app-container #ayeco .eco-rail__slot .fq__go { box-shadow: var(--ay-sticker) !important; }
-html body .app-container.app-container #ayeco .ay-shelf:not([style*='--shelf-tab']) .ay-shelf__name, html body .app-container.app-container #ayeco .ay-shelf .ay-shelf__name { padding-left: 16px !important; }
-html body .app-container.app-container #ayeco .ay-shelf__count { align-self: flex-end; margin-bottom: 9px !important; padding: 3px 9px !important; border: 1.5px solid var(--ay-outline-color) !important; border-radius: 999px !important; font-size: 13px !important; line-height: 1.2 !important; color: var(--ay-text) !important; }
-@media (max-width: 767px) { html body .app-container.app-container #ayeco .ay-shelf .ay-shelf__name { padding-left: 13px !important; } }
+html body .app-container.app-container #ayeco .ay-shelf__count { align-self: center; margin-bottom: 0 !important; padding: 3px 9px !important; border: 1.5px solid var(--ay-outline-color) !important; border-radius: 999px !important; font-size: 13px !important; line-height: 1.2 !important; color: var(--ay-text) !important; }
 /* phone: the first card lines up with the page edge, the row still runs to the screen edge */
 @media (max-width: 767px) {
   html body .app-container.app-container #ayeco .ay-shelf__row { padding-left: var(--ay-margin, 20px) !important; padding-right: var(--ay-margin, 20px) !important; scroll-padding-inline: var(--ay-margin, 20px) !important; }
@@ -267,10 +265,10 @@ html body .app-container.app-container #ayeco .eco-toc { display: none; }
   html body .app-container.app-container #ayeco .eco-toc { display: block; margin: 0 0 40px; }
   html body .app-container.app-container #ayeco .eco-toc__h { margin: 0 0 8px !important; font: 600 15px/1.2 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; letter-spacing: 0 !important; }
   html body .app-container.app-container #ayeco .eco-toc ol { margin: 0; padding: 0; list-style: none; }
-  html body .app-container.app-container #ayeco .eco-toc a { display: flex; align-items: baseline; gap: 6px; min-height: 40px; padding: 8px 0 0; color: var(--ay-text) !important; text-decoration: none !important; font: 600 15.5px/1.3 var(--ay-sans-stack); }
+  html body .app-container.app-container #ayeco .eco-toc a { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0; color: var(--ay-text) !important; text-decoration: none !important; font: 600 15.5px/1.3 var(--ay-sans-stack); }
   html body .app-container.app-container #ayeco .eco-toc__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  html body .app-container.app-container #ayeco .eco-toc__dots { flex: 1; min-width: 16px; border-bottom: 2px dotted var(--ay-text); opacity: .45; transform: translateY(-4px); }
-  html body .app-container.app-container #ayeco .eco-toc__n { font-variant-numeric: tabular-nums; }
+  html body .app-container.app-container #ayeco .eco-toc__name { flex: 1 1 auto; }
+  html body .app-container.app-container #ayeco .eco-toc__n { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 22px; padding: 0 8px; border: 1.5px solid var(--ay-outline-color); border-radius: 999px; font: 600 13px/1 var(--ay-sans-stack); font-variant-numeric: tabular-nums; }
   html body .app-container.app-container #ayeco .eco-toc a:hover .eco-toc__name { text-decoration: underline; text-underline-offset: 3px; }
   html body .app-container.app-container #ayeco .eco-rail.is-toc-only .eco-rail__h { display: none; }
 }
@@ -292,10 +290,10 @@ html body .app-container.app-container #ayeco .eco-stack__card > .eco-oval { gri
   html body .app-container.app-container #ayeco .eco-stack__cost summary { font-size: 14px !important; }
 }
 @media (min-width: 1180px) {
-  html body .app-container.app-container #ayeco .eco-body.has-rail > .eco-rail { display: flex; flex-direction: column; max-height: calc(100vh - 124px); overflow-y: auto; scrollbar-width: thin; padding-right: 4px; padding-bottom: 12px; }
+  html body .app-container.app-container #ayeco .eco-body.has-rail > .eco-rail { display: flex; flex-direction: column; padding-bottom: 12px; }
   html body .app-container.app-container #ayeco .eco-rail .eco-toc { order: 3; margin: 40px 0 0; }
   html body .app-container.app-container #ayeco .eco-rail.is-toc-only .eco-toc { margin-top: 0; }
-  html body .app-container.app-container #ayeco .eco-toc a { min-height: 36px; padding-top: 6px; }
+  html body .app-container.app-container #ayeco .eco-toc a { min-height: 44px; padding-top: 0; }
 }
 
 /* ---------- Skeleton shelves (matches being built) ---------- */

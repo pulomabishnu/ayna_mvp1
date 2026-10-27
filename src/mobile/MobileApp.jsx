@@ -24,6 +24,7 @@ import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHe
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake.js';
 import { behaviorFrom } from '../utils/matchDisplay.js';
 import { ARTICLES } from '../components/Articles.jsx';
+import { topicNeighbors } from '../data/readSections.js';
 import { rankReadsForProfile, readFitsStage } from './utils/personalReads.js';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
@@ -1731,6 +1732,7 @@ export default function MobileApp() {
             onBack={() => setOverlay(null)}
             savedProgress={readProgress[overlay.item.id] || 0}
             onProgress={(value) => recordReadProgress(overlay.item.id, value)}
+            topic={topicNeighbors(overlay.item.id, ARTICLES)}
             nextRead={getNextArticle(overlay.item, ARTICLES, readArticleIds, rankReadsForProfile(ARTICLES, effectiveQuizAnswers), (article) => readFitsStage(article, effectiveQuizAnswers))}
             onNext={(article) => {
               setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]);

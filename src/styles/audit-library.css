@@ -73,7 +73,7 @@
 /* ---- AR01: full-width sticky read bar ------------------------------------ */
 .app-container .ay-web-library.ay-lib-reading { padding-top: 0 !important; }
 .app-container .ay-lib-status {
-  position: sticky; top: var(--ay-lib-sticky-top, 0px); z-index: 900; margin: 0 0 32px; padding: 12px 0;
+  position: relative; top: auto; z-index: 900; margin: 0 0 32px; padding: 12px 0;
   /* paper band that bleeds to both screen edges without causing horizontal scroll */
   border-image: linear-gradient(to top, var(--legacy-ink) 0 2px, var(--ay-paper) 2px) fill 0 // 0 100vw;
 }

@@ -9,10 +9,11 @@
 @media (hover: hover) { :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard:hover .ay-rcard__link { text-decoration: underline; text-underline-offset: 3px; } }
 :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard .ay-rcard__title { margin: 0 !important; color: var(--rk-ink) !important; letter-spacing: 0 !important; }
 :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard .ay-rcard__state { display: block; margin-top: 4px; color: var(--rk-muted); font: 500 13px/1.4 var(--ay-font-ui); }
-/* Rail card: 4:5 cover, then the title (15/600, two lines). */
+/* Rail card: 4:3 cover, then topic · read time, then the title (15/600, two lines). */
 :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail { display: grid; align-content: start; gap: 8px; }
 :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail .ay-rcard__cover { display: block; }
-:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail .ay-rcard__cover .rc { border-radius: var(--ay-r-md, 16px); }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail .ay-rcard__cover .rc { border-radius: var(--ay-r-md, 16px); aspect-ratio: 4 / 3; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail .ay-rcard__topic { margin: 4px 0 0 !important; color: var(--rk-muted); font: 500 13px/1.35 var(--ay-font-ui) !important; }
 :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail .ay-rcard__title { font: 600 15px/1.3 var(--ay-font-ui) !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 /* List row: 120px cover, then topic · title · one line · credits · sources, divided by 1px rules. */
 :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 16px; align-items: start; padding: 16px 0; border-top: var(--ay-rule, 1px solid rgba(62, 39, 35, .15)); }

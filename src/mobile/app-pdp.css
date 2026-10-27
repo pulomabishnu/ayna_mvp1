@@ -295,7 +295,7 @@
 #ay-pdp .ay-compare table { min-width: 0 !important; width: max-content !important; border-collapse: separate !important; border-spacing: 0; }
 #ay-pdp .ay-compare :is(th, td) { min-width: 0 !important; width: 140px; max-width: 160px; padding: 12px !important; }
 #ay-pdp .ay-compare tbody th[scope='row'],
-#ay-pdp .ay-compare thead tr > td:first-child { position: sticky; left: 0; z-index: 2; width: 96px; max-width: 96px; background: var(--pdp-compare-bg, var(--ay-paper)) !important; box-shadow: 1px 0 0 var(--ay-line); }
+#ay-pdp .ay-compare thead tr > td:first-child { position: relative; left: auto; z-index: 2; width: 96px; max-width: 96px; background: var(--pdp-compare-bg, var(--ay-paper)) !important; box-shadow: 1px 0 0 var(--ay-line); }
 #ay-pdp .ay-compare tbody :is(th, td) { border-top: 1px solid var(--ay-line) !important; }
 
 

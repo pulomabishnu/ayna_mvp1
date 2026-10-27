@@ -322,7 +322,7 @@
 
 /* the sticky Buy bar (phones) */
 :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-stickybuy { display: flex !important; align-items: center; gap: 10px; z-index: 60; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)) !important; box-sizing: border-box; background: var(--v-bg) !important; border-top: 1.5px solid var(--v-ink) !important; animation: ayv-up 200ms cubic-bezier(.16, 1, .3, 1) both; }
-:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-stickybuy.is-scroll { position: sticky; bottom: 0; width: 100%; margin: 0 !important; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-stickybuy.is-scroll { position: relative; bottom: auto; width: 100%; margin: 0 !important; }
 :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-stickybuy.is-fixed { position: fixed; left: 0; right: 0; }
 @keyframes ayv-up { from { transform: translateY(100%); } to { transform: none; } }
 :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-stickybuy__price { flex: none; font: 700 18px/1 var(--v-ui) !important; color: var(--v-ink) !important; font-variant-numeric: tabular-nums; }
@@ -1693,7 +1693,7 @@ html body .app-container .ay-pt { display: grid; grid-template-columns: minmax(0
 /* Desktop: the photo column stays in view while the buy column scrolls past,
    so there is never an empty block under the gallery. */
 @media (min-width: 900px) {
-  html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-head--story > .pdp-head__media.pdp-head__media { position: sticky !important; top: 104px !important; align-self: start !important; }
+  html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .pdp-head--story > .pdp-head__media.pdp-head__media { position: relative !important; top: auto; align-self: start !important; }
 }
 /* Dark, Safety tab: the label checks are butter text on the page, not a pink box (an id outranks the older pink rules). */
 
@@ -2295,7 +2295,7 @@ html body .app-container[data-theme='brand-dark'] #pdp-v4 .ayq .ayq-folder:not(.
 /* ---------- the tab row ---------- */
 .ayq--tabs .ayq-tabsec { margin: 0; padding: 0; border: 0; background: none; }
 .ayq--tabs .ayq-st {
-  position: sticky; top: var(--ayq-stick-top, 0px); z-index: 40;
+  position: relative; top: auto; z-index: 40;
   margin: 0 calc(-1 * var(--pt-gutter, 16px)); padding: 10px var(--pt-gutter, 16px);
   background: var(--pt-bg); border-bottom: 1.5px solid var(--pt-line);
 }

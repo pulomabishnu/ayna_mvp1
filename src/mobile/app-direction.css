@@ -116,7 +116,7 @@
 
 /* ===== 9. Status bar strip: content scrolls under it, never under the clock ===== */
 .ayna-mobile:is(#ay,.ayna-mobile)::before { content: ''; position: fixed; top: 0; left: 0; right: 0; z-index: 70; height: env(safe-area-inset-top, 0px); background: var(--d-statusbar, var(--d-page)); pointer-events: none; }
-.ayna-mobile:is(#ay,.ayna-mobile) .ay-hd-areas { position: sticky !important; top: env(safe-area-inset-top, 0px) !important; z-index: 4 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile) .ay-hd-areas { position: relative !important; top: auto; z-index: 4 !important; }
 .ayna-mobile:is(#ay,.ayna-mobile) :is(.ayna-shop-heading, .ay-lib-head, .am-search) svg { color: var(--d-ink) !important; stroke: var(--d-ink) !important; }
 /* Search icons follow the ink in both themes (an older dark rule painted them espresso on espresso). */
 .ayna-mobile:is(#ay,.ayna-mobile)[data-theme='dark'] .ayna-fresh-search > svg :is(circle, path) { color: var(--d-ink) !important; stroke: var(--d-ink) !important; }
@@ -545,7 +545,7 @@
 
 /* underline tabs over the panel */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pt { margin: 32px calc(var(--d-gutter) * -1) 0 !important; padding: 0 !important; }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pt__bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 3; margin: 0 !important; padding: 0 !important; background: var(--d-page) !important; border: 0 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pt__bar { position: relative; top: auto; z-index: 3; margin: 0 !important; padding: 0 !important; background: var(--d-page) !important; border: 0 !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pt__list { display: flex !important; gap: 20px !important; margin: 0 !important; padding: 0 var(--d-gutter) !important; overflow-x: auto !important; scrollbar-width: none; border: 0 !important; border-bottom: 1px solid var(--d-hair) !important; background: none !important; -webkit-mask: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask: linear-gradient(90deg, #000 calc(100% - 28px), transparent); }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pt__list::-webkit-scrollbar { display: none; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ay-pt__tab { flex: none !important; display: inline-flex !important; align-items: center !important; gap: 6px !important; min-height: 44px !important; height: auto !important; margin: 0 0 -1px !important; padding: 0 !important; border: 0 !important; border-bottom: 3px solid transparent !important; border-radius: 0 !important; background: none !important; color: var(--d-ink-2) !important; font: 500 calc(15px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; white-space: nowrap; }

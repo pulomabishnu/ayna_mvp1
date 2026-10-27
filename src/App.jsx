@@ -154,6 +154,7 @@ import './styles/product-card-ds.css';
 import './styles/focus-group-oct26.css';
 // Wide screens only: the website laid out for a desktop, not the app stretched (founder, Oct 27).
 import './styles/web-wide.css';
+import './styles/no-vibe.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
 import { readHomeLook } from './mobile/components/homeLook.js';
 // Keep the ?homestyle=a|b preview pick before the router rewrites the address (Today loads lazily).

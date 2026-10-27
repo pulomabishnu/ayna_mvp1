@@ -20,7 +20,7 @@ function sourceLinks(items) {
   }).filter((x) => x.text);
 }
 
-function ArticleDetailContent({ article, onBack, nextRead, onNext, onProgress, savedProgress = 0, products = [], productsNote = '', onOpenProduct = null, onAsk = null, renderProduct = null }) {
+function ArticleDetailContent({ article, onBack, topic = null, nextRead, onNext, onProgress, savedProgress = 0, products = [], productsNote = '', onOpenProduct = null, onAsk = null, renderProduct = null }) {
   const scrollRef = useRef(null);
   const [progress, setProgress] = useState(0);
   if (!article) {
@@ -104,7 +104,16 @@ function ArticleDetailContent({ article, onBack, nextRead, onNext, onProgress, s
             </div>
           </section>
         )}
-        {nextRead?.article && <section className="ayna-read-next" aria-label="Next article"><span>{nextRead.label}</span><button type="button" onClick={openNext}>{nextRead.article.title}<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6 6 6-6 6" /></svg></button></section>}
+        {/* Previous / next in this topic and the way back to all reads (Library nav pass, Oct 27). */}
+        {topic && (topic.prev || topic.next) && (
+          <nav className="ay-read-pager" aria-label={`More in ${topic.label}`}>
+            <p className="ay-read-pager__where">{topic.label} <span aria-hidden="true">·</span> read {topic.pos} of {topic.total}</p>
+            {topic.prev && <button type="button" className="ay-read-pager__link" onClick={() => { if (scrollRef.current) scrollRef.current.scrollTop = 0; setProgress(0); onNext?.(topic.prev); }}><small>Previous</small><span>{topic.prev.title}</span></button>}
+            {topic.next && <button type="button" className="ay-read-pager__link" onClick={() => { if (scrollRef.current) scrollRef.current.scrollTop = 0; setProgress(0); onNext?.(topic.next); }}><small>Next</small><span>{topic.next.title}</span></button>}
+            <button type="button" className="ay-read-pager__back" onClick={onBack}>All reads</button>
+          </nav>
+        )}
+        {nextRead?.article && !(topic && [topic.next?.id, topic.prev?.id].includes(nextRead.article.id)) && <section className="ayna-read-next" aria-label="Next article"><span>{nextRead.label}</span><button type="button" onClick={openNext}>{nextRead.article.title}<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6 6 6-6 6" /></svg></button></section>}
       </div>
       <LegalFooter />
     </div>

@@ -343,3 +343,50 @@ html body .app-container.app-container.app-container.app-container .lb.lb-read {
 /* The BrandStrip replaces the wavy rule under the Library head (founder, Oct 27 13:20). */
 .ct.lb .lb-top::after { content: none !important; }
 .ct.lb .lb-strip { position: relative; z-index: 1; }
+
+/* Library nav pass (founder, Oct 27: "library needs to be easier to nav").
+   One row of topic chips under the head: it filters the reads, scrolls sideways on a phone,
+   and moves with the page. Under each read: previous / next in the topic and the way back. */
+html body .app-container.app-container.app-container.app-container .lb .lb-topics {
+  display: flex; flex-wrap: nowrap; gap: 8px; margin: 24px 0 0; padding: 2px 2px 8px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; -webkit-overflow-scrolling: touch;
+}
+html body .app-container.app-container.app-container.app-container .lb .lb-topic {
+  flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; margin: 0;
+  border: 1.5px solid var(--ay-outline-color, #3e2723); border-radius: 999px; background: transparent; color: var(--ay-text, #3e2723);
+  font: 500 15px/1 var(--ay-font-ui, inherit); white-space: nowrap; cursor: pointer; box-shadow: none;
+}
+@media (min-width: 900px) { html body .app-container.app-container.app-container.app-container .lb .lb-topics { flex-wrap: wrap; overflow: visible; } }
+html body .app-container.app-container.app-container.app-container .lb .lb-topicwrap + .lb-body { padding-top: 32px; }
+html body .app-container.app-container.app-container.app-container .lb .lb-topicwrap + .lb-body > .lb-featured:first-child { padding-top: 0; }
+html body .app-container.app-container.app-container.app-container .lb .lb-topic:hover { background: var(--ay-group, rgba(62, 39, 35, .06)); }
+html body .app-container.app-container.app-container.app-container .lb .lb-topic[aria-pressed='true'] { background: var(--ay-text, #3e2723); color: var(--ay-page, #ffedac); border-color: var(--ay-text, #3e2723); }
+html body .app-container.app-container.app-container.app-container .lb .lb-topic__n { font-size: 13px; font-variant-numeric: tabular-nums; opacity: .75; }
+html body .app-container.app-container.app-container.app-container .lb .lb-topic:focus-visible { outline: 2px solid var(--ay-text, #3e2723); outline-offset: 2px; }
+
+html body .app-container.app-container.app-container.app-container .lb .lb-pager { display: grid; gap: 12px; max-width: 680px; margin: 40px 0 8px; padding-top: 24px; border-top: 1.5px solid var(--ay-outline-color, #3e2723); }
+html body .app-container.app-container.app-container.app-container .lb .lb-pager__where { margin: 0; color: var(--ay-text-2, rgba(62, 39, 35, .78)); font: 500 14px/1.4 var(--ay-font-ui, inherit); }
+html body .app-container.app-container.app-container.app-container .lb .lb-pager__row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+html body .app-container.app-container.app-container.app-container .lb .lb-pager__link {
+  display: grid; gap: 4px; min-height: 44px; padding: 14px 16px; border: 1.5px solid var(--ay-outline-color, #3e2723); border-radius: 16px;
+  color: var(--ay-text, #3e2723) !important; text-decoration: none !important; background: transparent;
+}
+html body .app-container.app-container.app-container.app-container .lb .lb-pager__link.is-next { text-align: right; }
+html body .app-container.app-container.app-container.app-container .lb .lb-pager__link:hover .lb-pager__t { text-decoration: underline; text-underline-offset: 3px; }
+html body .app-container.app-container.app-container.app-container .lb .lb-pager__dir { color: var(--ay-text-2, rgba(62, 39, 35, .78)); font: 500 13px/1.3 var(--ay-font-ui, inherit); }
+html body .app-container.app-container.app-container.app-container .lb .lb-pager__t { font: 600 16px/1.3 var(--ay-font-ui, inherit); }
+html body .app-container.app-container.app-container.app-container .lb .lb-pager__back { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; color: var(--ay-text, #3e2723) !important; font: 600 15px/1.3 var(--ay-font-ui, inherit); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 600px) {
+  html body .app-container.app-container.app-container.app-container .lb .lb-pager__row { grid-template-columns: 1fr; }
+  html body .app-container.app-container.app-container.app-container .lb .lb-pager__link.is-next { text-align: left; }
+  html body .app-container.app-container.app-container.app-container .lb .lb-pager__gap { display: none; }
+}
+/* "Questions about this?" had no room under the product row and its buttons touched (no-vibe pass). */
+html body .app-container.app-container.app-container.app-container .lb .lb-ask { margin-top: 48px; }
+html body .app-container.app-container.app-container.app-container .lb .lb-ask .lb-shelf__title { margin: 0 0 12px; }
+html body .app-container.app-container.app-container.app-container .lb .lb-ask__row { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Phones: a long "Based on what you told us…" line goes under the shelf title instead of squeezing it into three lines. */
+@media (max-width: 600px) {
+  html body .app-container.app-container.app-container.app-container .lb .lb-shelf__head { flex-wrap: wrap; }
+  html body .app-container.app-container.app-container.app-container .lb .lb-shelf__head > h2 { flex: 1 1 auto; }
+  html body .app-container.app-container.app-container.app-container .lb .lb-shelf__head > .lb-shelf__sub { order: 3; flex: 1 1 100%; font-size: 14px; }
+}

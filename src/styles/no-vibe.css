@@ -1,0 +1,19 @@
+/*
+ * No-vibe pass (p25, Oct 27). The founder: "no sticky scroll", "make sure nothing looks vibe coded".
+ * Checklist: scratchpad/vibe/CHECKLIST.md. This file only evens things out (weights, counts,
+ * labels, clipping); colours stay with the colour pass. Loaded last from App.jsx.
+ */
+
+/* 1. Profile menu: every row the same weight; the Saved count is a small pill, not "Saved2". */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .nav-account-menu > :is(a, button) {
+  justify-content: space-between; gap: 12px; font-family: var(--ay-font-ui, inherit) !important; font-size: 15px !important; font-weight: 500 !important; letter-spacing: 0 !important; text-align: left;
+}
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .nav-account-menu__count {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 22px; margin-left: auto; padding: 0 8px; border: 1.5px solid currentColor; border-radius: 999px;
+  font: 600 13px/1 var(--ay-font-ui, inherit) !important; font-variant-numeric: tabular-nums;
+}
+
+/* 2. My ecosystem: the shelf cards keep the approved product card, with a lighter offset on the
+   narrow shelf columns (founder flagged them as heavy). */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body #ayeco .ay-pcard.ay-pcard { box-shadow: 4px 4px 0 var(--pc-shadow) !important; margin: 0 4px 4px 0; }
+@media (hover: hover) { :is(#pc1, html):is(#pc2, html):is(#pc3, html) body #ayeco .ay-pcard.ay-pcard:hover { box-shadow: 5px 5px 0 var(--pc-shadow) !important; transform: translate(-1px, -1px) !important; } }

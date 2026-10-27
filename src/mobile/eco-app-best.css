@@ -10,7 +10,7 @@
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app { position: relative; }
 
 /* ---------- Small title bar ---------- */
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-nav { position: sticky; top: 0; z-index: 60; height: 0; overflow: visible; pointer-events: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-nav { position: relative; top: auto; z-index: 60; height: 0; overflow: visible; pointer-events: none; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-nav__bar {
   position: absolute; left: 0; right: 0; top: 0; display: grid; place-items: center;
   height: calc(48px + env(safe-area-inset-top, 0px)); padding-top: env(safe-area-inset-top, 0px); box-sizing: border-box;
@@ -205,7 +205,7 @@ html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app :is(.eco-seg__
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-shelf.is-grid .ay-shelf2-row > .ay-shelf2-slot { height: auto !important; min-height: 120px; }
 
 /* ---------- Floating "things for you" pill ---------- */
-.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-float { position: sticky; bottom: var(--eco-float-bottom, -80px); z-index: 55; display: flex; justify-content: center; height: 0; overflow: visible; pointer-events: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-float { position: relative; bottom: auto; z-index: 55; display: flex; justify-content: center; height: 0; overflow: visible; pointer-events: none; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-float button { display: inline-flex !important; align-items: center; gap: 10px; min-height: 48px !important; margin: 0 !important; padding: 0 18px 0 8px !important; transform: translateY(-100%); border: 1.5px solid #3e2723 !important; border-radius: 999px !important; background: #3e2723 !important; color: #ffedac !important; box-shadow: 3px 3px 0 #f7badd !important; font: 600 calc(15px * var(--ayna-text-scale, 1))/1 var(--f-ui) !important; pointer-events: auto; animation: eco-app-float-in .5s var(--ease-pop) .6s both; transition: transform .12s; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-float button:active { transform: translateY(-100%) scale(.96); }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-float__count { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #f7badd; color: #3e2723; font: 700 14px/1 var(--f-ui); }

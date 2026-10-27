@@ -4,7 +4,7 @@ import { useDismissed } from './ecoMotion';
 
 /* "For you" on the website Ecosystem: the small things that are not her
    shelves (a life-stage check, the optional questions, ayna news). On a wide
-   screen they sit in a slim sticky side rail; on smaller screens they fold
+   screen they sit in a slim side rail that scrolls with the page; on smaller screens they fold
    into one strip ("3 things for you") that opens on tap. Each can be closed
    and stays closed in this browser. The shelves stay the hero. */
 const X = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>;
@@ -71,13 +71,13 @@ export default function EcoRail({ clash, onFixStages, quizSlot, quizKey = 'quiz'
   const count = items.length;
   return (
     <aside className={`eco-rail${open ? ' is-open' : ''}${count ? '' : ' is-toc-only'}`} aria-label="For you">
-      {/* Wide screens: a table of contents for her shelves (dotted leaders to the count). */}
+      {/* Wide screens: a plain list of her shelves with a count pill (no dotted leaders, Oct 27). */}
       {shelves.length > 1 && (
         <nav className="eco-toc" aria-label="Your shelves">
           <h2 className="eco-toc__h">Your shelves</h2>
           <ol>
             {shelves.map((sh) => (
-              <li key={sh.key}><a href={`#eco-area-${sh.key}`} onClick={(e) => goShelf(e, sh.key)}><span className="eco-toc__name">{sh.label}</span><span className="eco-toc__dots" aria-hidden="true" /><span className="eco-toc__n">{sh.count}</span></a></li>
+              <li key={sh.key}><a href={`#eco-area-${sh.key}`} onClick={(e) => goShelf(e, sh.key)}><span className="eco-toc__name">{sh.label}</span><span className="eco-toc__n">{sh.count}</span></a></li>
             ))}
           </ol>
         </nav>
