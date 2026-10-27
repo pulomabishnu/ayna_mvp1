@@ -100,13 +100,13 @@ export default function AdminReviewsPage({ onBack }) {
       {status === 'ok' && results.map((row) => (
         <div key={row.id} className="card" style={cardStyle}>
           <p style={{ margin: '0 0 0.2rem', fontWeight: 600 }}>
-            {row.kind === 'purchase' ? `${row.answer === 'yes' ? 'Purchased' : 'Did not purchase'}: ${row.productName}` : `Ayna review${row.rating != null ? ` — ${row.rating}★` : ''}`}
-            {row.variant ? ` — ${row.variant}` : ''}
+            {row.kind === 'purchase' ? `${row.answer === 'yes' ? 'Purchased' : 'Did not purchase'}: ${row.productName}` : `Ayna review${row.rating != null ? `, ${row.rating}★` : ''}`}
+            {row.variant ? ` · ${row.variant}` : ''}
           </p>
           {row.feedback && <p style={{ margin: '0 0 0.3rem', fontSize: 14 }}>{row.feedback}</p>}
           <p style={{ margin: 0, fontSize: 12.5, color: 'var(--color-text-muted)' }}>
             {row.kind === 'survey' ? (row.heardAboutUs ? `Heard about us: ${row.heardAboutUs}` : 'Referral not provided') : 'Self-reported retailer visit'}
-            {row.submittedAt ? ` — ${new Date(`${row.submittedAt.slice(0, 10)}T12:00:00`).toLocaleDateString()}` : ''}
+            {row.submittedAt ? ` · ${new Date(`${row.submittedAt.slice(0, 10)}T12:00:00`).toLocaleDateString()}` : ''}
           </p>
         </div>
       ))}

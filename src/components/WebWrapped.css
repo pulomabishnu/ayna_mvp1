@@ -1,16 +1,16 @@
-.wwr-backdrop { position: fixed; inset: 0; z-index: 3500; display: grid; place-items: center; padding: 16px; background: rgba(29, 26, 43, .6); }
-.wwr { --ink: #1d1a2b; --paper: #fffcf5; --peri: #b9c2f4; --pink: #f7badd; --mint: #bdebd6; --butter: #f7e78e; --tone: var(--peri);
+.wwr-backdrop { position: fixed; inset: 0; z-index: 3500; display: grid; place-items: center; padding: 16px; background: rgba(62, 39, 35, .6); }
+.wwr { --ink: #3e2723; --paper: #ffedac; --peri: #f7badd; --pink: #f7badd; --mint: #f6e3a1; --butter: #ffedac; --tone: var(--peri);
   position: relative; display: flex; flex-direction: column; width: min(460px, 100%); height: min(780px, calc(100dvh - 32px)); padding: 16px 20px 18px; border: 2px solid var(--ink); border-radius: 30px; background: var(--tone); box-shadow: 8px 8px 0 var(--ink); color: var(--ink); font-family: var(--ay-sans); overflow: hidden; transition: background .4s ease; }
 .wwr.is-focus { --tone: var(--pink); } .wwr.is-match { --tone: var(--butter); } .wwr.is-persona { --tone: var(--mint); } .wwr.is-lineup { --tone: var(--pink); } .wwr.is-finish { --tone: var(--peri); }
 .wwr button { font-family: inherit; cursor: pointer; }
 .wwr-progress { display: flex; gap: 4px; }
-.wwr-progress span { flex: 1; height: 5px; border-radius: 99px; background: rgba(29, 26, 43, .2); overflow: hidden; }
+.wwr-progress span { flex: 1; height: 5px; border-radius: 99px; background: rgba(62, 39, 35, .2); overflow: hidden; }
 .wwr-progress i { display: block; height: 100%; background: var(--ink); }
 .wwr-top { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); }
 .wwr-top > div { display: flex; gap: 6px; }
-.wwr-top button { width: 38px; height: 38px; border: 2px solid var(--ink); border-radius: 50%; background: var(--paper); color: var(--ink); font-size: var(--ay-fs-body); line-height: 1; }
+.wwr-top button { display: inline-grid; place-items: center; width: 44px; height: 44px; border: 2px solid var(--ink); border-radius: 50%; background: var(--paper); color: var(--ink); font-size: var(--ay-fs-body); line-height: 1; }
 .wwr-top button:disabled { opacity: .35; cursor: default; }
-.wwr-stage { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 18px; cursor: pointer; animation: wwr-in .45s cubic-bezier(.3,1.4,.5,1) both; }
+.wwr-stage { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 18px; cursor: pointer; animation: wwr-in .45s var(--ease-out) both; }
 @keyframes wwr-in { from { opacity: 0; transform: translateY(18px); } }
 .wwr-kicker { margin: 0; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); }
 .wwr h1 { margin: 0; font: 400 var(--ay-fs-display)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
@@ -41,7 +41,7 @@
 .wwr-card-mark { font: 400 var(--ay-fs-section)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
 .wwr-card strong { font: 400 var(--ay-fs-title)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
 .wwr-card ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.wwr-card li { display: flex; justify-content: space-between; gap: 12px; padding-top: 8px; border-top: 1px solid rgba(29, 26, 43, .12); font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans); }
+.wwr-card li { display: flex; justify-content: space-between; gap: 12px; padding-top: 8px; border-top: 1px solid rgba(62, 39, 35, .12); font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans); }
 .wwr-card li b { text-align: right; }
 .wwr-actions { display: grid; gap: 16px; }
 .wwr-cta { width: 100%; min-height: 54px; border: 2px solid var(--ink); border-radius: 99px; background: var(--ink); color: var(--paper); font: 600 var(--ay-fs-body)/1 var(--ay-sans); }
@@ -61,3 +61,30 @@
 .wwr h1 em { color: var(--ink); -webkit-text-stroke: 0; font-style: italic; }
 .wwr-card li { border-top-color: rgba(62, 39, 35, .18); }
 .wwr-top .wwr-skip { width: auto !important; padding: 0 14px !important; border-radius: 99px !important; font: 600 var(--ay-fs-caption)/1 var(--ay-sans) !important; white-space: nowrap; }
+.wwr-product .wwr-why { font: 500 var(--ay-fs-secondary, 15px)/1.4 var(--ay-sans); }
+
+/* Loop E (Oct 26): one shadow (the pink sticker on the primary), 1.5px outlines, radii 16/999,
+   no tilted cards, no blue (data-blue is for chart lines only). */
+.wwr { --peri: #f7badd; }
+.wwr :is(.wwr-stats div, .wwr-ranks li, .wwr-card, .wwr-toast span) { border-width: 1.5px !important; border-radius: 16px; box-shadow: none !important; rotate: 0deg !important; }
+.wwr .wwr-toast span { border-radius: 999px; }
+.wwr .wwr-cta { box-shadow: 3px 3px 0 #f7badd !important; }
+.wwr.wwr { box-shadow: none !important; border-width: 1.5px !important; border-radius: 16px !important; }
+/* Loop E round 4: the top row never squeezes the 44px buttons; on a phone the title steps aside
+   (still the dialog's name for screen readers). One drawn shape, not three. Stats as an even data strip. */
+.wwr .wwr-top { gap: 8px; }
+.wwr .wwr-top > button, .wwr .wwr-top > div > button { flex: none; border-width: 1.5px; }
+.wwr .wwr-top > span { flex: 1; min-width: 0; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 480px) { .wwr .wwr-top > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+.wwr .wwr-shapes i:nth-child(n+2) { display: none; }
+.wwr .wwr-shapes i { border-width: 1.5px; }
+.wwr .wwr-stats { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.wwr .wwr-stats div { min-height: 88px; align-content: space-between; }
+.wwr .wwr-badge { box-shadow: none !important; border-width: 1.5px !important; }
+/* Uniqueness pass (group B): real picks on scallop plates fill the slide top; each area shows one of its products. */
+.wwr-plates { display: flex; justify-content: center; gap: 12px; margin-bottom: 8px; }
+.wwr-plate { width: min(30%, 140px); aspect-ratio: 1; height: auto; }
+.wwr-plate:nth-child(2) { translate: 0 -14px; }
+.wwr-ranks li { position: relative; }
+.wwr-rankplate { width: 64px; height: 64px; margin-left: auto; flex: none; }
+.wwr-stage:has(.wwr-plates) { justify-content: center; }

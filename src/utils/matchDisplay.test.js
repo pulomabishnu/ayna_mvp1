@@ -15,7 +15,8 @@ describe('matchDisplay', () => {
   it('uses the engine tiers and words', () => {
     expect([80, 65, 50, 49].map(tierOf)).toEqual(['excellent', 'strong', 'exploratory', 'browse']);
     expect(tierWord('exploratory')).toBe('Worth a look');
-    expect(tierWord(undefined, 66)).toBe('Strong');
+    // Fit labels by score (founder, Oct 24): 80+ Strong fit, 60 to 79 Good fit, under 60 none.
+    expect([85, 80, 79, 60, 59, 40].map((n) => tierWord(undefined, n))).toEqual(['Strong fit', 'Strong fit', 'Good fit', 'Good fit', '', '']);
   });
 
   it('leads with the need and lists every selected need', () => {
@@ -26,7 +27,7 @@ describe('matchDisplay', () => {
 
   it('card badge only at 50+ with a profile', () => {
     expect(matchBadge(details())).toMatchObject({ percent: 82, phrase: 'period cramps', label: '82% for period cramps', basedOn: 'Based on what you\u2019ve shared', restricted: false });
-    expect(matchBadge(details({ percent: 49 }))).toBe(null);
+    expect(matchBadge(details({ percent: 49 }))).toMatchObject({ partial: true, label: 'Partial fit' });
     expect(matchBadge(details({ matchStatus: 'no-profile', percent: null }))).toBe(null);
     expect(matchBadge(details({ matchStatus: 'excluded', eligible: false, percent: 0 }))).toBe(null);
   });
@@ -48,11 +49,14 @@ describe('matchDisplay', () => {
 });
 
 describe('matchDisplay ASK2', () => {
-  it('a shelf badge names the shelf need and its score', () => {
+  it('a shelf badge shows the product\u2019s one score and names the shelf need only when that score is the shelf need\u2019s', () => {
     const d = details();
-    expect(matchBadge(d, { needId: 'vaginal.dryness' })).toBe(null); // 41 is below the badge bar
+    // Dryness shelf, but the 82 comes from cramps: same 82, no other need named, no shelf-only number.
+    expect(matchBadge(d, { needId: 'vaginal.dryness' })).toMatchObject({ percent: 82, phrase: '', label: '82% match' });
+    // Cramps shelf: the 82 is the cramps score, so the label can say so.
+    expect(matchBadge(d, { needId: 'pain.menstrual_cramp' })).toMatchObject({ percent: 82, needId: 'pain.menstrual_cramp', label: '82% for period cramps' });
     const d2 = details({ needMatches: [...d.needMatches.slice(0, 1), { ...d.needMatches[1], score: 64, tier: 'exploratory' }] });
-    expect(matchBadge(d2, { needId: 'vaginal.dryness' })).toMatchObject({ percent: 64, needId: 'vaginal.dryness', label: '64% for vaginal dryness' });
+    expect(matchBadge(d2, { needId: 'vaginal.dryness' }).percent).toBe(82);
   });
 
   it('why view lists actual inputs and a soft profile hint only when confidence is limited', () => {
@@ -69,5 +73,13 @@ describe('matchDisplay ASK2', () => {
     expect(w.restricted).toBe(true);
     expect(w.missing).toEqual(['what medicines or supplements you take']);
     expect(matchBadge(details({ eligibility: 'restricted' })).restricted).toBe(true);
+  });
+});
+
+describe('worth checking is severity-based', () => {
+  it('shows important actionable cautions, hides non-actionable uncertainty', async () => {
+    const { confidenceNotes } = await import('./matchDisplay.js');
+    const d = { needId: 'x', needMatches: [{ needId: 'x', confidenceReasons: [{ code: 'medication_caution' }, { code: 'low_metadata' }, { code: 'pain_varies' }, { code: 'stale_answers' }] }] };
+    expect(confidenceNotes(d, { evidenceStrength: 'limited' })).toEqual(['Check with your medicines']);
   });
 });

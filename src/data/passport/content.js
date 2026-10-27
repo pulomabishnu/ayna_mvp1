@@ -9,11 +9,10 @@
  */
 import { normalizeFdaStatus } from '../../utils/fdaStatus.js';
 import { recallFacts } from '../../utils/productFacts.js';
-import { HEALTH_FUNCTIONS, CATEGORY_LABELS } from '../products.js';
+import { HEALTH_FUNCTIONS, CATEGORY_LABELS } from '../catalogTaxonomy.js';
 import { getPassport } from './index.js';
-import { formatPrice } from '../../utils/formatPrice.js';
-import { getPricePerUnitLabel } from '../../utils/pricePerUnit.js';
-import { whyMatch, confidenceNotes, exclusionLines, isClaimBlocked, MIN_BADGE_SCORE } from '../../utils/matchDisplay.js';
+import { priceParts } from './priceParts.js';
+import { whyMatch, confidenceNotes, exclusionLines, isClaimBlocked, MIN_BADGE_SCORE, matchText } from '../../utils/matchDisplay.js';
 import { planGlossaryTerms } from '../glossary.js';
 import { getAynaRatingCount } from '../aynaReviews.js';
 
@@ -139,10 +138,7 @@ export function headerFacts(product, { blockedClaims = [], max = 3 } = {}) {
 }
 
 /** Price line: main + per-unit (only when computable) + small detail. */
-export function priceParts(product) {
-  const p = formatPrice(product);
-  return { main: p.main, sub: p.sub, perUnit: getPricePerUnitLabel(product), known: p.main !== 'Price at retailer' };
-}
+export { priceParts };
 
 /** The flagged concern on file (⚠️ convention), shown regardless of section. */
 export function safetyAlertText(product) {
@@ -225,7 +221,7 @@ export function buildProductSections(product, ctx = {}) {
   const sciSummary = clean(product.verificationLinks?.scientific?.aiSummary);
   const typeCounts = {};
   evidenceSources.forEach((s) => { typeCounts[s.evidence_label] = (typeCounts[s.evidence_label] || 0) + 1; });
-  push('evidence', 'What the evidence says', [
+  push('evidence', 'Evidence', [
     clean(product.evidenceStrength) ? { type: 'facts', rows: [{ label: 'Evidence on file', value: `${clean(product.evidenceStrength).charAt(0).toUpperCase()}${clean(product.evidenceStrength).slice(1)}` }] } : null,
     { type: 'text', label: 'ayna summary', text: clean(product.effectiveness) },
     !brandVoice ? { type: 'text', label: 'Clinician opinion', text: clean(product.doctorOpinion), note: clean(product.clinicianAttribution) } : null,
@@ -316,7 +312,7 @@ export function buildProductSections(product, ctx = {}) {
       strongNeeds.length ? { type: 'chips', label: 'Also fits', items: strongNeeds } : null,
       notes.length ? { type: 'chips', label: 'Good to know', items: notes } : null,
       details.matchStatus === 'excluded' ? { type: 'list', items: exclusionLines(details) } : null,
-    ], details.matchStatus === 'scored' && Number.isFinite(details.percent) ? `${details.percent}% match` : '');
+    ], details.matchStatus === 'scored' && Number.isFinite(details.percent) ? matchText(details.percent) : '');
   }
 
   // 13. Sources

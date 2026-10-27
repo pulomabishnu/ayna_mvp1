@@ -12,13 +12,16 @@
  * - sources are numbered once and cited inline like footnotes.
  */
 import { normalizeFdaStatus } from '../../utils/fdaStatus.js';
-import { HEALTH_FUNCTIONS, CATEGORY_LABELS } from '../../data/products.js';
+import { HEALTH_FUNCTIONS } from '../../data/catalogTaxonomy.js';
+import { categoryLabel } from './categoryLabel.js';
 import { getPassport, EVIDENCE_TYPES } from '../../data/passport/index.js';
 import { priceParts, safetyAlertText, humanizeTag, noDash, matchLine, buildTypedTags } from '../../data/passport/content.js';
 import { whyMatch, confidenceNotes, exclusionLines, isClaimBlocked, MIN_BADGE_SCORE } from '../../utils/matchDisplay.js';
 import { planGlossaryTerms } from '../../data/glossary.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
 import { getAynaRatingCount } from '../../data/aynaReviews.js';
+import { HOST_ACRONYMS } from '../../utils/verificationLinks.js';
+import { isGovHealthSource } from '../../utils/govSources.js';
 
 export const NOT_ON_FILE = 'Not on file';
 const GENERIC_USES = new Set(['supplement', 'telehealth']);
@@ -35,12 +38,7 @@ const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 const sentences = (text) => String(text || '').split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
 
 /** Category label without the emoji some labels carry. */
-export function categoryLabel(product) {
-  return String(CATEGORY_LABELS[product?.category] || product?.category || '')
-    .replace(/^[^\w]+\s*/, '')
-    .replace(/-/g, ' ')
-    .replace(/^\w/, (c) => c.toUpperCase());
-}
+export { categoryLabel };
 
 // ---------------------------------------------------------------------------
 // Size, count, per unit
@@ -147,18 +145,28 @@ function numberSources(passport) {
   const list = [...all, ...extra]
     .map((s, i) => ({ ...s, _i: i }))
     .sort((a, b) => (SOURCE_ORDER.indexOf(a.evidence_type) - SOURCE_ORDER.indexOf(b.evidence_type)) || (a._i - b._i))
-    .map((s, i) => ({
-      n: i + 1,
-      url: s.url,
-      title: noDash(s.title || s.publisher || 'Source'),
-      publisher: humanPublisher(s.publisher) || hostOf(s.url),
-      // A store listing or a forum thread must never look like the FDA.
-      type: RETAIL_RE.test(String(s.url || '')) ? 'retailer' : FORUM_RE.test(String(s.url || '')) ? 'community' : s.evidence_type,
-      label: RETAIL_RE.test(String(s.url || '')) ? 'Retailer listing' : FORUM_RE.test(String(s.url || '')) ? 'Community post' : (s.evidence_label || EVIDENCE_TYPES[s.evidence_type] || EXTRA_LABELS[s.evidence_type] || 'Source'),
-      tier: RETAIL_RE.test(String(s.url || '')) || FORUM_RE.test(String(s.url || '')) || ['community', 'manufacturer'].includes(s.evidence_type) ? 'low' : ['regulatory', 'clinical_guideline', 'product_study'].includes(s.evidence_type) ? 'high' : 'mid',
-      summary: clean(s.summary),
-      year: s.year || null,
-    }));
+    .map((s, i) => {
+      const url = String(s.url || '');
+      const retail = RETAIL_RE.test(url);
+      const forum = FORUM_RE.test(url);
+      const lowType = retail || forum || ['community', 'manufacturer'].includes(s.evidence_type);
+      // Founder rule (Oct 24): a health claim's source counts only when it is a
+      // .gov health page. Anything else is shown, labelled, and never "backs" a product.
+      const unchecked = !lowType && !isGovHealthSource(url);
+      const baseLabel = retail ? 'Retailer listing' : forum ? 'Community post' : (s.evidence_label || EVIDENCE_TYPES[s.evidence_type] || EXTRA_LABELS[s.evidence_type] || 'Source');
+      return {
+        n: i + 1,
+        url: s.url,
+        title: noDash(s.title || s.publisher || 'Source'),
+        publisher: humanPublisher(s.publisher) || hostOf(s.url),
+        // A store listing or a forum thread must never look like the FDA.
+        type: retail ? 'retailer' : forum ? 'community' : s.evidence_type,
+        label: unchecked ? `${baseLabel}, not a .gov source` : baseLabel,
+        tier: lowType ? 'low' : unchecked ? 'unchecked' : ['regulatory', 'clinical_guideline', 'product_study'].includes(s.evidence_type) ? 'high' : 'mid',
+        summary: clean(s.summary),
+        year: s.year || null,
+      };
+    });
   return list;
 }
 const RETAIL_RE = /\/\/(www\.)?(walmart|amazon|target|cvs|walgreens|ulta|sephora|costco|iherb|ebay)\./i;
@@ -192,6 +200,8 @@ export function humanPublisher(raw) {
   if (/^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(t)) {
     const parts = t.split('.');
     const core = parts.length > 2 ? parts[parts.length - 2] : parts[0];
+    // Organisations known by their initials keep them ("doaj.org" is DOAJ, not Doaj).
+    if (HOST_ACRONYMS.has(core.toLowerCase())) return core.toUpperCase();
     return core.charAt(0).toUpperCase() + core.slice(1);
   }
   return t;
@@ -337,12 +347,13 @@ export function buildGlance(product, ctx = {}) {
   };
 
   // Evidence
-  const publishers = [...new Set(evidenceSources.filter((x) => x.tier !== 'low').map((x) => x.publisher).filter(Boolean))];
+  // Only .gov health sources can back a product (founder rule, Oct 24).
+  const publishers = [...new Set(evidenceSources.filter((x) => x.tier === 'high' || x.tier === 'mid').map((x) => x.publisher).filter(Boolean))];
   const backedBy = publishers.length ? `${publishers.slice(0, 3).join(', ')}${publishers.length > 3 ? ` and ${publishers.length - 3} more` : ''}` : '';
   const strength = clean(product.evidenceStrength);
   const doctorSummary = clean(product.verificationLinks?.doctor?.aiSummary);
   const sciSummary = clean(product.verificationLinks?.scientific?.aiSummary);
-  push('evidence', 'What the evidence says', 'evidence', [
+  push('evidence', 'Evidence', 'evidence', [
     (strength || evidenceSources.length) ? { type: 'tags', items: [
       ...(strength ? [{ text: `Evidence on file: ${strength.toLowerCase()}`, tone: 'strong' }] : []),
     ] } : null,

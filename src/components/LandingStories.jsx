@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { getDailyFact } from '../data/welcomeSlides.js';
-import { getSupabaseClient } from '../utils/supabaseClient';
-import { listAnnouncements } from '../utils/community/announcementsStore';
+import { useLatestAnnouncement } from '../hooks/useLatestAnnouncement';
 import { ALL_PRODUCTS } from '../data/products';
 
 /**
@@ -21,36 +20,6 @@ const SHELF = (() => {
   return want.map((c) => ALL_PRODUCTS.find((p) => p.category === c && p.image && /^https?:|^\//.test(p.image))).filter(Boolean);
 })();
 
-const stripMd = (t) => String(t || '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/(\*\*|__|\*|_|`|~~)/g, '').replace(/^#+\s*/gm, '').replace(/\s+/g, ' ').trim();
-const plainTitle = (t) => stripMd(t).slice(0, 120);
-function shortSummary(body, max = 170) {
-  const t = stripMd(body).replace(/^(hi|hey|hello)[^.!?]*[.!?]\s*/i, '').replace(/(^|\s)\d{1,2}[.)]\s+/g, '$1').replace(/\s+/g, ' ').trim();
-  if (t.length <= max) return t;
-  const cut = t.slice(0, max);
-  const stop = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
-  return stop > 60 ? cut.slice(0, stop + 1) : `${cut.replace(/\s+\S*$/, '')}…`;
-}
-
-function useLatestAnnouncement() {
-  const [item, setItem] = useState(null);
-  useEffect(() => {
-    let live = true;
-    const supabase = getSupabaseClient();
-    if (!supabase) return undefined;
-    // The slide shows a short summary of the latest post (written by AI from
-    // the post itself, /api/news-summary), never the raw post with its markdown.
-    const fromList = () => listAnnouncements(supabase, { limit: 1 })
-      .then(({ rows }) => { const a = rows?.[0]; if (live && a?.title) setItem({ title: plainTitle(a.title), body: shortSummary(a.body) }); })
-      .catch(() => {});
-    fetch('/api/news-summary')
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (!live) return; if (d?.item?.title && d.item.summary) setItem({ title: plainTitle(d.item.title), body: d.item.summary }); else fromList(); })
-      .catch(() => { if (live) fromList(); });
-    return () => { live = false; };
-  }, []);
-  return item;
-}
-
 export default function LandingStories({ paused = false, onStartQuiz, onViewArticles, onViewCommunity }) {
   const fact = useMemo(() => getDailyFact(), []);
   const news = useLatestAnnouncement();
@@ -59,8 +28,8 @@ export default function LandingStories({ paused = false, onStartQuiz, onViewArti
       ? { key: 'news', tab: 'ayna news', tone: 'rose', kicker: 'ayna news', title: news.title, body: news.body, cta: 'Read it in Community', go: onViewCommunity, img: '/landing/curlers-call.webp', alt: 'A woman in hair curlers laughing on the phone in her bathroom' }
       : { key: 'news', tab: 'ayna news', tone: 'rose', kicker: 'ayna news', title: 'ayna Community is open.', body: 'Ask questions, review what you use and share playlists with women who get it.', cta: 'See Community', go: onViewCommunity, img: '/landing/stalls-trio.webp', alt: 'Three friends chatting from neighboring bathroom stalls' },
     ...(fact ? [{ key: 'fact', tab: 'Word of the day', tone: 'butter', kicker: 'Word of the day', title: 'One health word, in plain English.', body: 'A new term from the ayna glossary every day.', cta: 'Read more in the Library', go: onViewArticles, visual: 'glossary', term: fact.term, def: fact.text }] : []),
-    { key: 'about', tab: 'What ayna does', tone: 'sky', kicker: 'What ayna does', title: 'Health, matched to you.', body: 'Answer six questions. See the products that fit your body, with the research and real reviews beside each one.', cta: 'See my matches', go: onStartQuiz, visual: 'shelf' },
-    { key: 'community', tab: 'Real reviews', tone: 'ink', kicker: 'Community', title: 'Real talk about what women actually use.', body: 'Reviews, questions and routines from the ayna community, in one place.', cta: 'Read reviews', go: onViewCommunity, img: '/landing/story-reviews-phones.webp', alt: 'Friends in a circle looking down at their phones, blue sky above' },
+    { key: 'about', tab: 'What ayna does', tone: 'sky', kicker: 'What ayna does', title: 'Health, matched to you.', body: 'Answer a few short questions. See the products that fit your body, with the research and real reviews beside each one.', cta: 'See my matches', go: onStartQuiz, visual: 'shelf' },
+    { key: 'community', tab: 'Real reviews', tone: 'ink', kicker: 'Community', title: 'Real talk about what women actually use.', body: 'Reviews, questions and routines from women who use these products.', cta: 'Read reviews', go: onViewCommunity, img: '/landing/story-reviews-phones.webp', alt: 'Friends in a circle looking down at their phones, blue sky above' },
   ], [fact, news, onStartQuiz, onViewArticles, onViewCommunity]);
 
   const [i, setI] = useState(0);

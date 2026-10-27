@@ -1,0 +1,163 @@
+/* =====================================================================
+   Landing, uniqueness pass A (Oct 26, scratchpad UNIQUE_PASS.md).
+   Loaded after home.css + loop-a-landing.css by LandingV2 (.hm.hm-uq).
+   Colour-blocked bands (Band from ui/ay): espresso hero with the one Shout,
+   pink marquee seam, butter needs band, espresso Bento band, pink reads +
+   community band, butter founders band. Adjacent bands never share a colour.
+   Bands keep their fixed colours in brand dark too, except butter bands,
+   which become the dark page's lifted surface (no glaring butter blocks).
+   The band primitive selectors carry 4 ids (ay-bold.css); the overrides here
+   repeat that weight under .hm-uq so they win without !important wars.
+   ===================================================================== */
+
+/* ---- band chrome: the landing's own padding and width (hm-wrap) ---- */
+.hm-uq :is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band).hm-band { padding: var(--hm-pad) 0; border: 0; }
+.hm-uq :is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band).hm-band > .ayb-band__in { max-width: none; }
+.hm-uq :is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band).hm-hero { padding: 48px 0 40px; }
+@media (max-width: 767px) { .hm-uq :is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band).hm-hero { padding: 24px 0 32px; } }
+
+/* ---- the older landing rules read --ay-text / --ed-* / --hm-ink: re-point them per band ---- */
+.app-container .hm-uq :is(.ayb-band.is-ink, .ayb-tile.is-ink) {
+  --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ay-ink: #ffedac; --legacy-ink: #ffedac;
+  --ay-outline-color: #ffedac; --ay-outline: 1.5px solid #ffedac; --legacy-outline: 1.5px solid #ffedac;
+  --ay-hairline: rgba(255, 237, 172, .24); --ay-hover: rgba(255, 237, 172, .1); --ay-focus: #ffedac;
+  --ay-feature-bg: #ffedac; --ay-feature-fg: #3e2723;
+  --ed-text: #ffedac; --ed-text-2: rgba(255, 237, 172, .86); --ed-outline: #ffedac; --ed-hairline: rgba(255, 237, 172, .24);
+  --ed-page: #3e2723; --ed-feature-bg: #ffedac; --ed-feature-fg: #3e2723;
+  color: #ffedac;
+}
+.app-container .hm-uq :is(.ayb-band.is-pink, .ayb-tile.is-pink, .ayb-tile.is-butter, .hm-marq) {
+  --ay-text: #3e2723; --ay-text-2: rgba(62, 39, 35, .82); --ay-ink: #3e2723; --legacy-ink: #3e2723;
+  --ay-outline-color: #3e2723; --ay-outline: 1.5px solid #3e2723; --legacy-outline: 1.5px solid #3e2723;
+  --ay-hairline: rgba(62, 39, 35, .28); --ay-hover: rgba(62, 39, 35, .08); --ay-focus: #3e2723;
+  --ay-feature-bg: #3e2723; --ay-feature-fg: #ffedac; --ay-surface: #f6e3a1; --legacy-surface: #f6e3a1;
+  --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .8); --ay-fill-ink: #3e2723; --ay-on-ink: #ffedac; --ay-border-ink: 1.5px solid #3e2723;
+  --ed-text: #3e2723; --ed-text-2: rgba(62, 39, 35, .82); --ed-outline: #3e2723; --ed-hairline: rgba(62, 39, 35, .28);
+  --ed-page: #ffedac; --ed-feature-bg: #3e2723; --ed-feature-fg: #ffedac;
+  color: #3e2723;
+}
+/* brand dark: a butter band becomes the dark page's lifted surface and its text follows the theme */
+.app-container[data-theme='brand-dark'] .hm-uq :is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band):is(#ayk, .ayb-band).is-butter.hm-band {
+  background: rgba(255, 237, 172, .07) !important; color: #ffedac;
+  --ay-fg: #ffedac; --ay-fg-muted: rgba(255, 237, 172, .8); --ay-fill-ink: #ffedac; --ay-on-ink: #3e2723; --ay-border-ink: 1.5px solid #ffedac;
+}
+.app-container .hm-uq .hm-us { border-top: 0; }
+
+/* ---- 1. hero: the Shout across the top, then copy | products + photo ---- */
+.app-container.app-container .hm.hm-uq .hm-hero__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); grid-template-areas: 'shout shout' 'copy art'; gap: 40px 56px; align-items: start; }
+.app-container.app-container .hm.hm-uq .hm-shout { grid-area: shout; max-width: 13ch; font-size: clamp(48px, 9vw, 124px) !important; color: #ffedac; }
+.app-container.app-container .hm.hm-uq .hm-shout__pink { color: #f7badd; }
+.app-container.app-container .hm.hm-uq .hm-hero__copy { grid-area: copy; gap: 24px; padding-top: 8px; }
+.app-container.app-container .hm.hm-uq .hm-hero .hm-lead { max-width: 40ch; font-size: 19px !important; line-height: 1.5 !important; }
+.app-container.app-container .hm.hm-uq .hm-hero .ay-btn--primary { min-height: 52px; padding-inline: 28px; font-size: 17px !important; }
+@media (max-width: 1023px) {
+  .app-container.app-container .hm.hm-uq .hm-hero__grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'shout' 'copy' 'art'; gap: 24px; }
+}
+@media (max-width: 767px) {
+  .app-container.app-container .hm.hm-uq .hm-shout { font-size: clamp(48px, 14vw, 64px) !important; }
+  .app-container.app-container .hm.hm-uq .hm-hero .hm-lead { font-size: 17px !important; }
+  .app-container.app-container .hm.hm-uq .hm-hero__copy { gap: 16px; padding-top: 0; }
+}
+
+/* the art: one big product on a pink tile, two more on butter, the photograph tall beside them */
+.app-container .hm-uq .hm-art { grid-area: art; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); grid-template-rows: auto auto; gap: 12px; min-width: 0; }
+.app-container .hm-uq .hm-art__photo { grid-column: 2; grid-row: 1 / 3; position: relative; display: block; min-height: 100%; border-radius: var(--ay-r-md, 16px); overflow: hidden; background: #f6e3a1; }
+.app-container .hm-uq .hm-art__photo :is(picture, img) { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; border-radius: 0 !important; }
+.app-container .hm-uq .hm-art__lead { grid-column: 1; grid-row: 1; display: grid; gap: 8px; padding: 16px 16px 14px; border-radius: var(--ay-r-md, 16px); background: #f7badd; color: #3e2723 !important; text-decoration: none !important; min-width: 0; }
+.app-container .hm-uq .hm-art__lead .ayk-plate { width: 100%; }
+.app-container .hm-uq .hm-art__name { display: grid; gap: 2px; font: 700 15px/1.3 var(--ay-sans-stack) !important; color: #3e2723; overflow-wrap: anywhere; }
+.app-container .hm-uq .hm-art__brand { font: 600 13px/1.3 var(--ay-sans-stack) !important; color: rgba(62, 39, 35, .82); }
+.app-container .hm-uq .hm-art__pair { grid-column: 1; grid-row: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px; border-radius: var(--ay-r-md, 16px); background: #ffedac; }
+.app-container .hm-uq .hm-art__small { display: block; border-radius: var(--ay-r-md, 16px); }
+.app-container .hm-uq .hm-art__small .ayk-plate { width: 100%; }
+.app-container .hm-uq :is(.hm-art__lead, .hm-art__small):hover .ayk-plate__img { transform: scale(1.04); }
+.app-container .hm-uq .ayk-plate__img { transition: transform var(--t-fast, 160ms) var(--ease-out, ease-out); }
+.app-container .hm-uq :is(.hm-art__lead, .hm-art__small):focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }
+.app-container .hm-uq .hm-art__lead.is-skel { min-height: 280px; }
+.app-container .hm-uq .hm-art__small.is-skel { aspect-ratio: 1; background: #f6e3a1; }
+.app-container .hm-uq .hm-art__seal { position: absolute; top: -28px; right: -12px; left: auto; bottom: auto; z-index: 2; }
+@media (max-width: 767px) {
+  .app-container .hm-uq .hm-art { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+  .app-container .hm-uq .hm-art__lead { padding: 12px; }
+  .app-container .hm-uq .hm-art__pair { padding: 8px; gap: 6px; }
+  .app-container .hm-uq .hm-art__name { font-size: 14px !important; }
+  .app-container .hm-uq .hm-art__seal { width: 84px; height: 84px; top: -20px; right: -6px; }
+  .app-container .hm-uq .hm-art__seal b { width: 36px; height: 36px; font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) { .app-container .hm-uq .ayk-plate__img { transition: none; } }
+
+/* ---- 2. the partner marquee: a pink seam under the hero ---- */
+.app-container .hm-uq .hm-marq { display: flex; align-items: stretch; margin: 0; background: #f7badd; color: #3e2723; border-bottom: 1.5px solid #3e2723; }
+.app-container .hm-uq .hm-marq__tab { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 56px; padding: 0 20px; background: #3e2723; color: #ffedac !important; font: 600 15px/1.2 var(--ay-sans-stack) !important; text-decoration: none; white-space: nowrap; }
+.app-container .hm-uq .hm-marq__tab svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .hm-uq .hm-marq__tab:hover { text-decoration: underline; text-underline-offset: 3px; }
+.app-container .hm-uq .hm-marq__tab:focus-visible, .app-container .hm-uq .hm-marq__pause:focus-visible { outline: 3px solid #3e2723; outline-offset: -5px; }
+.app-container .hm-uq .hm-marq__run { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; padding: 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 32px), transparent); }
+.app-container .hm-uq .hm-marq__run .ayb-marquee__row { gap: 28px; padding: 0 14px; font: 800 22px/1 var(--ay-heading) !important; letter-spacing: -.02em; }
+.app-container .hm-uq .hm-marq__run .ayb-marquee__row li::after { margin-left: 28px; font-size: 15px; vertical-align: 3px; }
+.app-container .hm-uq .hm-marq__pause { flex: none; display: grid; place-items: center; width: 56px; min-height: 56px; padding: 0; border: 0; border-left: 1.5px solid #3e2723; background: #f7badd; color: #3e2723; cursor: pointer; }
+.app-container .hm-uq .hm-marq__pause svg { width: 18px; height: 18px; fill: currentColor; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+@media (max-width: 767px) {
+  .app-container .hm-uq .hm-marq__tab { padding: 0 14px; }
+  .app-container .hm-uq .hm-marq__run .ayb-marquee__row { font-size: 19px !important; }
+  .app-container .hm-uq .hm-marq__pause { width: 48px; }
+}
+@media (prefers-reduced-motion: reduce) { .app-container .hm-uq .hm-marq__pause { display: none; } }
+
+/* ---- 4. how it works as a Bento on the espresso band ---- */
+.app-container .hm-uq .hm-bento { margin: 0; padding: 0; list-style: none; }
+.app-container .hm-uq .hm-bento > li { margin: 0; }
+.app-container .hm-uq .hm-bt .hm-h3 { color: inherit !important; font-size: 24px !important; line-height: 1.12 !important; }
+.app-container .hm-uq .hm-bt p { margin: 0; font: 500 16px/1.45 var(--ay-sans-stack); color: inherit !important; max-width: 40ch; }
+.app-container .hm-uq .hm-bt__n { display: block; font: 800 56px/.82 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.04em; color: inherit; }
+.app-container .hm-uq .hm-bt:is(.is-pink, .is-butter) .hm-bt__n { color: #3e2723; }
+/* step 1: the photo fills the big tile, the words sit on a butter panel */
+.hm-uq :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).hm-bt--photo { justify-content: flex-end; min-height: 440px; padding: 12px; border: 0 !important; }
+.app-container .hm-uq .hm-bt__ph { position: absolute; inset: 0; display: block; }
+.app-container .hm-uq .hm-bt__ph :is(picture, img) { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; }
+.app-container .hm-uq .hm-bt__panel { position: relative; display: grid; gap: 8px; padding: 16px; border-radius: var(--ay-r-md, 16px); background: #ffedac; color: #3e2723; border: 1.5px solid #3e2723; }
+.app-container .hm-uq .hm-bt__panel .hm-bt__n { font-size: 44px; }
+.app-container.app-container .hm.hm-uq .hm-bt__panel .hm-stepui { position: static; display: flex; padding: 4px 0 0; background: transparent; border: 0; }
+/* step 2: the three evidence levels on the tall pink tile */
+.hm-uq :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).hm-bt--ev { justify-content: flex-start; gap: 10px; padding: 20px; }
+.app-container.app-container .hm.hm-uq .hm-bt--ev .hm-levels--tile { display: grid; }
+.app-container.app-container .hm.hm-uq .hm-bt--ev .hm-levels { display: block; margin-top: 4px; }
+.app-container.app-container .hm.hm-uq .hm-bt--ev .hm-levels > li { display: grid; grid-template-columns: minmax(0, 1fr); padding: 10px 0; border-top: 1px solid rgba(62, 39, 35, .28); border-bottom: 0; }
+.app-container.app-container .hm.hm-uq .hm-bt--ev .hm-levels > li:last-child { border-bottom: 1px solid rgba(62, 39, 35, .28); }
+.app-container.app-container .hm.hm-uq .hm-bt--ev .hm-levels .ay-meter__word { font-size: 15px; }
+.app-container.app-container .hm.hm-uq .hm-bt--ev .hm-levels__note { font-size: 14px; }
+.app-container.app-container .hm.hm-uq .hm-levels--row { display: none; }
+/* step 3: photo left, words right, on the wide pink tile */
+.hm-uq :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).hm-bt--decide { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr); align-items: stretch; gap: 0; padding: 0; min-height: 240px; }
+.app-container .hm-uq .hm-bt__side { position: relative; display: block; min-height: 100%; overflow: hidden; }
+.app-container .hm-uq .hm-bt__side :is(picture, img) { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; }
+.app-container .hm-uq .hm-bt__text { display: grid; align-content: end; gap: 8px; padding: 20px; }
+/* the catalog numbers: an espresso number tile gets a butter outline so it reads on the band */
+.hm-uq :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).hm-bt--num.is-ink { border: 1.5px solid rgba(255, 237, 172, .7) !important; }
+.hm-uq :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).hm-bt--num { justify-content: space-between; padding: 20px; }
+.app-container .hm-uq .hm-bt--num .ayb-tile__big { font-size: clamp(48px, 5.4vw, 76px) !important; }
+.app-container .hm-uq .hm-bt--num .ayb-tile__cap { font-size: 14px !important; }
+.app-container .hm-uq .hm-bt--num.is-skel { opacity: .5; }
+.app-container.app-container .hm.hm-uq .hm-how__lead { margin-bottom: 32px !important; }
+.app-container.app-container .hm.hm-uq .hm-how__cta { margin-top: 32px; }
+@media (max-width: 720px) {
+  .hm-uq :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).hm-bt--ev { grid-column: span 2; grid-row: auto; }
+  .hm-uq :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).hm-bt--photo { min-height: 400px; }
+  .hm-uq :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).hm-bt--decide { grid-template-columns: minmax(0, .8fr) minmax(0, 1fr); min-height: 200px; }
+  .app-container .hm-uq .hm-bt .hm-h3 { font-size: 21px !important; }
+  .app-container .hm-uq .hm-bt p { font-size: 15px; }
+  .app-container .hm-uq .hm-bt__n { font-size: 44px; }
+  .app-container .hm-uq .hm-bt__text { padding: 16px; }
+  .hm-uq :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).hm-bt--num { padding: 16px; }
+  .app-container .hm-uq .hm-bt--num .ayb-tile__big { font-size: 48px !important; }
+  .app-container .hm-uq .hm-bt--num .ayb-tile__cap { font-size: 13px !important; }
+}
+/* r1 fixes: marquee names never wrap; the phone rule that pulls levels left under a 96px photo does not apply in the tile */
+.app-container .hm-uq .hm-marq__run .ayb-marquee__row li { flex: none; white-space: nowrap; }
+.app-container.app-container .hm.hm-uq .hm-bt--ev .hm-levels { margin-left: 0; width: 100%; }
+/* "How we match" beside the hero CTA (team meeting Oct 26: the % explained one tap away) */
+.app-container .hm-uq .hm-hero__actions { align-items: center; gap: 12px 20px; }
+.app-container .hm-uq .hm-howlink { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: #ffedac !important; font: 700 16px/1.2 var(--ay-sans-stack) !important; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+.app-container .hm-uq .hm-howlink svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .hm-uq .hm-howlink:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 8px; }
+@media (max-width: 767px) { .app-container.app-container .hm.hm-uq .hm-hero__actions > .ay-btn { flex: 1 1 100%; } }

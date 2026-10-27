@@ -21,11 +21,21 @@ import {
 } from '../matching/index.js';
 import { getListingStatus as passportListingStatus } from './passport/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
-import { buildEcosystemV2 } from '../matching/v2.js';
+import { buildEcosystemV2, scoreProductV2, withV2Score, userKeyOf } from '../matching/v2.js';
+import { isRecommendable, recommendationEligibility } from '../matching/eligibility.js';
+import { matchPercentFromDetails } from '../matching/breakdown.js';
+import { needSignals, orderForYou, historyState, NOT_RECOMMENDED_AGAIN } from '../matching/forYou.js';
+import { shapeEcosystemWithHealth } from '../matching/healthShaping.js';
 import { getCareResourceBundle } from './careResources.js';
 import { withImageOverride } from './productImageOverrides.js';
 import { applyCatalogEvidence } from './catalogEvidence.js';
 import { productRouteKey, productSlug } from '../utils/productRoute.js';
+import { provideCatalog } from './catalogRegistry.js';
+import { HEALTH_FUNCTIONS, CATEGORY_LABELS, MACRO_GROUPS, BROWSE_GROUPS, browseGroupIdFor, productSearchText, itemMatchesMacroGroup } from './catalogTaxonomy.js';
+export { HEALTH_FUNCTIONS, CATEGORY_LABELS, MACRO_GROUPS, BROWSE_GROUPS, browseGroupIdFor, productSearchText, itemMatchesMacroGroup };
+import { rawIntakeFromProfile, asStringArray, hasStatedLifeStage, matchEngine } from './profileSignals.js';
+import { withOutcomeHistory } from '../health/outcomes.js';
+export { hasStatedLifeStage, matchEngine };
 
 // Tags used for quiz → product matching
 // frustrations: heavy-flow, cramps, bloating, irregular, leaks, discomfort, safety-concern, uti, pcos, pelvic-floor
@@ -35,35 +45,6 @@ import { productRouteKey, productSlug } from '../utils/productRoute.js';
 // internalOk: true = internal product, false = external only
 // healthFunctions: used for ecosystem grouping + duplicate detection
 
-// Health function categories for ecosystem tracking
-export const HEALTH_FUNCTIONS = {
-    // ── Core period care ─────────────────────────────────────────────────────
-    'menstrual-collection': { label: 'Period Care', desc: 'Products that collect or absorb menstrual flow' },
-    'cycle-tracking': { label: 'Cycle Tracking', desc: 'Apps or devices that track your menstrual cycle' },
-    'cramp-relief': { label: 'Cramp & Pain Relief', desc: 'Products that help manage period cramps and pain' },
-    'leak-protection': { label: 'Leak Protection', desc: 'Backup products to prevent leaks and staining' },
-    // ── Hormonal & reproductive health ───────────────────────────────────────
-    'pcos-management': { label: 'PMOS Management', desc: 'Supplements, apps and telehealth for PMOS' },
-    'endometriosis': { label: 'Endometriosis Support', desc: 'Products and services for endometriosis management' },
-    'hormone-balance': { label: 'Hormone Balance', desc: 'Products for hormonal bloating and regulation' },
-    'fertility': { label: 'Fertility & Conception', desc: 'Products and services for fertility and TTC' },
-    'perimenopause': { label: 'Perimenopause & Menopause', desc: 'Support for perimenopause and menopause symptoms' },
-    'contraception': { label: 'Contraception', desc: 'Birth control and reproductive health' },
-    // ── Vaginal & intimate health ─────────────────────────────────────────────
-    'vaginal-health': { label: 'Gut & Vaginal Health', desc: 'Probiotics, pH balance and intimate wellness' },
-    'uti-prevention': { label: 'UTI Support', desc: 'Products for preventing or treating UTIs' },
-    'sexual-health': { label: 'Sexual Health & Comfort', desc: 'Lubricants, pelvic floor and intimate comfort' },
-    // ── Whole-body wellness ───────────────────────────────────────────────────
-    'mental-health': { label: 'Mental Health & Mood', desc: 'Mental wellness, therapy and mood support' },
-    'sleep-energy': { label: 'Sleep & Energy', desc: 'Products to improve sleep and energy levels' },
-    'skin-hair': { label: 'Skin & Hair', desc: 'Products for hormone-related skin and hair concerns' },
-    'fitness-cycle': { label: 'Cycle-Synced Fitness', desc: 'Workouts and nutrition synced to your cycle' },
-    // ── Access & safety ───────────────────────────────────────────────────────
-    'telehealth': { label: 'Telehealth & Providers', desc: 'Online doctor consultations and specialist access' },
-    'routine-building': { label: 'Health Routine Apps', desc: 'Apps and platforms to build your health routine' },
-    // ── Kept for existing database products ──────────────────────────────────
-    'supplement': { label: 'Supplements', desc: 'Vitamins and supplements for women\'s health' },
-};
 
 export const PHYSICAL_PRODUCTS = [
     // ─── PADS ────────────────────────────────────────────
@@ -264,7 +245,7 @@ export const PHYSICAL_PRODUCTS = [
         image: 'https://mylola.com/cdn/shop/files/four-lola-plastic-applicator-tampon-boxes.img.jpg?v=1753220344&width=1946',
         summary: '100% organic cotton tampon with a BPA-free compact applicator, from LOLA: founded in 2014 by Jordana Kier and Alex Friedman after one asked the other "have you ever wondered what\'s in a tampon?" and neither could find a real answer. LOLA was built around ingredient transparency: no synthetic fibers, fragrance, dyes, or chlorine-bleaching byproducts. Customizable subscription box.',
         safety: {
-            fdaStatus: 'FDA-registered',
+            fdaStatus: 'FDA-regulated Class II medical device (unscented menstrual tampon, product code HEB). LOLA says its tampons are FDA 510(k) cleared. FDA records list LOLA\'s company, ALYK, Inc., with tampon 510(k) clearances held by its manufacturers, such as K151170 (Tosama 100% organic cotton tampon), but ayna could not match a clearance number to this exact product.',
             materials: '100% organic cotton (tampon and string), BPA-free compact plastic applicator',
             recalls: '⚠️ 2021 lawsuit, later dropped: a proposed federal class action (Manson v. ALYK Inc., S.D.N.Y., No. 7:21-cv-05688) alleged LOLA tampons lack a protective outer coating and can unravel or shed cotton fibers inside the body during removal. The plaintiff voluntarily dismissed the case without prejudice on February 22, 2022, before any ruling or settlement, so the allegations were never proven or disproven in court. No recall has been issued.',
             allergens: 'Hypoallergenic, fragrance-free, dye-free',
@@ -934,6 +915,9 @@ export const CATALOG_PRODUCTS = [
 
 export const ALL_PRODUCTS = CATALOG_PRODUCTS.filter((p) => !p.hidden);
 
+/** Drugstore basics (basicsProducts.js), listed after other picks on Home. */
+export const BASICS_PRODUCT_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
+
 /**
  * Look up a catalog product by id. Returns null for ids that don't exist in
  * the static catalog, callers also need to check the user's own ecosystem/
@@ -1027,231 +1011,6 @@ export function createCustomEcosystemProducts(quizResults) {
     });
 
     return out;
-}
-
-// Helper to look up category labels (MVP categories included)
-export const CATEGORY_LABELS = {
-    'pad': 'Pads',
-    'tampon': 'Tampons',
-    'cup': 'Menstrual Cups',
-    'disc': 'Menstrual Discs',
-    'period-underwear': 'Period Underwear',
-    'period-care': 'Period Care',
-    'supplement': 'Supplements',
-    'supplements': 'Supplements',
-    'tracker': 'Trackers & Wearables',
-    'telehealth': 'Virtual care',
-    'mental-health': 'Mental Wellness',
-    'fitness': 'Fitness',
-    'fitness-cycle': 'Cycle Fitness',
-    'pelvic-floor': 'Pelvic Floor',
-    // Split 2026-09-16 per Ayna's clinical correction: "Trainer" devices are
-    // biofeedback-only (Elvie, Perifit, Kegel balls), not FDA-cleared to
-    // activate anything, they just help you do Kegels yourself. "Exerciser"
-    // devices are FDA-cleared Class II stimulation devices that contract the
-    // pelvic floor FOR you (Emsella, Yarlap, Elitone, not Elitone URGE,
-    // which calms rather than exercises). Generic 'pelvic-floor' remains for
-    // items that are neither (garments, wands, dilators, apps, programs).
-    'pelvic-floor-trainer': 'Pelvic Floor Trainer',
-    'pelvic-floor-exerciser': 'Pelvic Floor Exerciser',
-    'pelvic-health': 'Pelvic Health',
-    'cramp-relief': 'Cramp Relief',
-    'intimate-care': 'Intimate Care',
-    'menopause': 'Menopause Support',
-    'sex-tech': 'Sexual Wellness',
-    'postpartum': 'Postpartum Recovery',
-    'pregnancy': 'Pregnancy Support',
-    'fertility': 'Fertility',
-    'diagnostics': 'Diagnostics',
-    'hormone-monitoring': 'Hormone Monitoring',
-    'custom-brand': 'Your brands',
-    'medication': 'Medications',
-    // Real catalog category values that had no label here at all, so the
-    // Product Type filter dropdown fell back to raw lowercase text for them
-    // (found live, 2026-08-24 bug bash: "cup steamer", "incontinence",
-    // "sleep" sitting inconsistently alongside Title Case labels elsewhere
-    // in the same list).
-    'cup-steamer': 'Cup Steamer',
-    'incontinence': 'Incontinence',
-    'sleep': 'Sleep',
-    'contraception': 'Birth Control',
-    'breast-care': 'Breast Care',
-    'lactation': 'Lactation',
-    'skin': 'Skin',
-    'skincare': 'Skin',
-    'body-care': 'Skin',
-    'hair': 'Hair',
-    'haircare': 'Hair',
-    'gut-health': 'Gut',
-    'pain-relief': 'Pain + Recovery',
-    'recovery': 'Pain + Recovery',
-};
-
-// The site's one taxonomy of user-facing care areas, each rolling up one or more
-// raw catalog `category` values. Originally lived only in Discovery.jsx (as its
-// category-filter chips); moved here so it can also be the single source of
-// truth for EcosystemBubbles' area grouping, it used to keep its own smaller,
-// separately-hand-maintained category list that had drifted out of sync
-// (missing birth-control, breast care, menopause, skin, hair, gut, pain-relief,
-// tests-devices...), so any product in one of those categories silently landed
-// in a generic "Other" bubble instead of a properly named one (found live,
-// Aditi 2026-08-24: a sleep product added to an ecosystem should get its own
-// "Sleep" bubble, not fall into "Other").
-export const MACRO_GROUPS = [
-    { id: 'all', label: 'All', categories: [], keywords: [] },
-    // Virtual care clinics mention periods in their copy but aren't period products;
-    // they have their own home under Virtual care.
-    { id: 'period', label: 'Period', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief', 'cup-steamer'], keywords: ['period', 'menstrual'], excludeCategories: ['telehealth'] },
-    // 'ph' used to be a bare keyword here and matched any product whose copy happened to
-    // contain the substring "ph", e.g. Nature Made Iron ("#1 pharmacist recommended"), Wisp
-    // ("pharmacy pickup"), and Apple Health ("built into iPhone") all satisfied it despite
-    // having nothing to do with intimate care. Scoped to the actual phrasing real vaginal-pH
-    // products use (see e.g. p-honeypot-wash, p-good-clean-love, p-v-wash) instead.
-    { id: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'vulva', 'intimate', 'moisturizer', 'ph balance', 'ph-balanced', 'ph balanced', 'ph level', 'ph support'] },
-    { id: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['lubricant', 'lube', 'condom', 'sexual wellness', 'intimacy'] },
-    // A bare 'barrier' keyword matched "skin barrier" and "moisture barrier" copy (kieró skincare,
-    // Joylux vaginal gel) and never a real contraceptive, so only explicit barrier-contraception
-    // phrasing counts (2026-10-07). 'condom' is deliberately absent: lubricant copy says
-    // "condom-compatible". Skin and hair categories stay opted out of the keyword scan.
-    { id: 'birth-control', label: 'Birth Control', categories: ['contraception'], keywords: ['contraception', 'contraceptive', 'emergency contraception', 'barrier method', 'barrier contraception'], excludeCategories: ['skin', 'skincare', 'body-care', 'hair', 'haircare'] },
-    { id: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation', 'conceive', 'conception'] },
-    { id: 'pregnancy', label: 'Pregnancy', categories: ['pregnancy'], keywords: ['pregnancy', 'prenatal'] },
-    { id: 'postpartum', label: 'Postpartum', categories: ['postpartum'], keywords: ['postpartum', 'lactation', 'breastfeeding', 'perineal'] },
-    { id: 'breast', label: 'Breast Care', categories: ['breast-care', 'lactation'], keywords: ['breast', 'breastfeeding', 'nipple', 'pump', 'lactation'] },
-    { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel', 'bladder', 'incontinence', 'bladder leak'] },
-    { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
-    // 'supplement' is a product-TYPE category shared by dozens of unrelated items (iron for
-    // anemia, plain vitamin D, omega-3 for cramps, etc.), it used to be listed here directly,
-    // which meant EVERY supplement in the catalog satisfied the Hormones chip regardless of what
-    // it actually treats. Matching is now scoped to the real concern taxonomy instead: the
-    // 'hormone-monitoring' category, the 'hormone-balance' healthFunction (checked exactly via
-    // healthFunctions below, not folded into the general keyword text blob, a substring scan
-    // would otherwise let something like the unrelated 'fitness-cycle' healthFunction slug
-    // falsely satisfy the 'cycle' keyword), and the keywords below.
-    { id: 'hormones', label: 'Hormones', categories: ['hormone-monitoring'], healthFunctions: ['hormone-balance'], keywords: ['pms', 'pcos', 'pmos', 'cycle', 'hormone', 'hormonal'] },
-    // Bare 'skin'/'moisturizer' catch vulvar/vulva-balm copy ("vulvar skin", "arousal
-    // moisturizers") and an incontinence liner's "skin comfort formula" claim, all real
-    // catalog phrasing, just not about the facial/body skincare this chip means. Those
-    // product types are excluded from the keyword scan below (see excludeCategories in
-    // itemMatchesMacroGroup) rather than trying to enumerate every mismatched phrase.
-    { id: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'cleanser', 'moisturizer', 'spf', 'acne', 'hyperpigmentation'], excludeCategories: ['intimate-care', 'sex-tech', 'incontinence'] },
-    // Same class of bug as Skin above: 'thinning' and 'hair' were catching "vaginal dryness
-    // and thinning" (a menopause GSM symptom, not hair thinning) and "ingrown hairs...on the
-    // bikini line" (intimate-area exfoliation, not hair care). excludeCategories keeps those
-    // out of the keyword scan.
-    { id: 'hair', label: 'Hair', categories: ['hair', 'haircare'], keywords: ['hair', 'scalp', 'shampoo', 'conditioner', 'thinning'], excludeCategories: ['intimate-care', 'menopause'] },
-    { id: 'gut', label: 'Gut', categories: ['gut-health'], keywords: ['gut', 'bloating', 'fiber', 'probiotic'] },
-    // 'stress' alone matched incontinence products' clinical term "stress incontinence"/
-    // "stress or urge bladder leaks" (a bladder-control classification, unrelated to mental
-    // stress), stripped via NEGATED_CONCERN_PHRASES in Discovery.jsx rather than dropping the
-    // keyword, since "stress" genuinely belongs here for its real (psychological) sense.
-    // 'sleep' is a real distinct category value in the live catalog (e.g. Eight Sleep Pod)
-    // alongside 'mental-health', both belong under this chip.
-    { id: 'sleep-stress', label: 'Sleep + Stress', categories: ['mental-health', 'sleep'], keywords: ['sleep', 'stress', 'relaxation'] },
-    { id: 'pain-recovery', label: 'Pain + Recovery', categories: ['pain-relief', 'cramp-relief', 'recovery'], keywords: ['pain', 'cramp', 'heat therapy', 'recovery', 'muscle'] },
-    // 'test' used to be a bare keyword and matched "clinically tested" (Honey Pot wash),
-    // "gynecologist-tested" (Luna wash), and even "testosterone" (spearmint PCOS tea), none
-    // of which are diagnostic tests/devices. Scoped to the phrasing real test products use
-    // (p-azo-test's "test strips", p-winx-uti-test-treat's "rapid test").
-    { id: 'tests-devices', label: 'Tests + Devices', categories: ['tracker', 'diagnostics', 'hormone-monitoring'], keywords: ['test strip', 'test kit', 'rapid test', 'diagnostic test', 'lab test', 'tracker', 'wearable', 'monitor'] },
-];
-
-// The Browse pills: a few BROAD groups that run in order through life, from
-// first period to post-menopause. They are a layer over MACRO_GROUPS (which stays
-// fine-grained because EcosystemBubbles, deep links and search nudges all key off
-// those ids), each pill simply covers several MACRO_GROUPS ids.
-export const BROWSE_GROUPS = [
-    { id: 'all', label: 'All', covers: [] },
-    { id: 'life-periods', label: 'Cycle', covers: ['period', 'hormones'] },
-    { id: 'life-intimate', label: 'Vaginal & Sexual', covers: ['intimate', 'sexual'] },
-    { id: 'life-pregnancy', label: 'Pregnancy', covers: ['pregnancy'] },
-    { id: 'life-postpartum', label: 'Postpartum', covers: ['postpartum', 'breast'] },
-    { id: 'life-pelvic', label: 'Pelvic Health', covers: ['pelvic'] },
-    // The catalog has no per-stage field: products are tagged/categorized 'menopause' as a
-    // whole. So Perimenopause and Postmenopause match on their own tag/wording, and Menopause
-    // stays the broad pill (it also covers everything general to all three stages).
-    { id: 'life-perimenopause', label: 'Perimenopause', covers: [], tags: ['perimenopause'], keywords: ['perimenopause', 'perimenopausal'] },
-    { id: 'life-menopause', label: 'Menopause', covers: ['menopause'] },
-    { id: 'life-postmenopause', label: 'Postmenopause', covers: [], tags: ['postmenopause'], keywords: ['postmenopause', 'post-menopause', 'postmenopausal', 'post-menopausal', 'after menopause', 'osteoporosis', 'bone density', 'vaginal atrophy', 'genitourinary syndrome'] },
-    { id: 'life-tests-telehealth', label: 'Tests & Telehealth', covers: ['tests-devices'], categories: ['telehealth'] },
-    { id: 'life-wellness', label: 'Wellness', covers: ['skin', 'hair', 'gut', 'sleep-stress', 'pain-recovery'] },
-];
-
-/** Maps any group id (a fine MACRO_GROUPS id or a BROWSE_GROUPS id) to the Browse pill that contains it. */
-export function browseGroupIdFor(groupId) {
-    if (!groupId || groupId === 'all') return 'all';
-    if (BROWSE_GROUPS.some((g) => g.id === groupId)) return groupId;
-    return BROWSE_GROUPS.find((g) => g.covers.includes(groupId))?.id || groupId;
-}
-
-// Some product copy legitimately advertises the ABSENCE of a property, e.g. Neycher's
-// intimate-care line describing itself as "hormone-free" / "non-hormonal", rather than the
-// presence of it. A naive substring match on a concern keyword like "hormone" can't tell "this
-// product is about hormones" apart from "this product explicitly contains none," so it was
-// mis-filing hormone-free vulva balm/moisturizing gel under the Hormones chip. Strip these
-// negated phrases out before keyword matching so a chip only surfaces products that are
-// actually about the concern, not ones that merely deny it.
-//
-// Broadened beyond pure negation to the same underlying problem in a different shape: a
-// keyword's word/phrase appearing in copy for an unrelated reason.
-//   - "outside your period" (Neycher: usage timing, not a period product), "not menstrual
-//     flow", "distinct from a menstrual panty liner", and "rather than menstrual blood"
-//     (incontinence pads explicitly contrasting themselves with period products) were all
-//     satisfying the Period chip's 'period'/'menstrual' keywords despite each one denying
-//     the very thing the keyword is meant to detect.
-//   - "stress incontinence" / "stress or urge bladder leaks" / "stress and urge incontinence"
-//     are a clinical bladder-control term, not the Sleep + Stress chip's intended
-//     (psychological) sense of "stress", was surfacing incontinence pads under that chip.
-const NEGATED_CONCERN_PHRASES = [
-    /non-?\s?hormonal/g,
-    /hormone-?\s?free/g,
-    /outside your period/g,
-    /not\s+(?:for\s+)?menstrual/g,
-    /distinct from a\s+menstrual/g,
-    /rather than menstrual/g,
-    /stress\s+(?:(?:or|and)\s+urge\s+)?(?:bladder\s+)?(?:incontinence|leaks?)/g,
-];
-
-export function productSearchText(item) {
-    const raw = [
-        item?.category, item?.name, item?.brand, item?.summary, item?.description, item?.tagline,
-        ...(Array.isArray(item?.badges) ? item.badges : []),
-        ...(Array.isArray(item?.tags) ? item.tags : []),
-        item?.eligibility, item?.sustainability, item?.lifeStage,
-    ].filter(Boolean).join(' ').toLowerCase();
-    return NEGATED_CONCERN_PHRASES.reduce((t, re) => t.replace(re, ' '), raw);
-}
-
-export function itemMatchesMacroGroup(item, groupId) {
-    if (!groupId || groupId === 'all') return true;
-    const broad = BROWSE_GROUPS.find((g) => g.id === groupId);
-    if (broad) {
-        if (broad.covers.some((id) => itemMatchesMacroGroup(item, id))) return true;
-        if (Array.isArray(broad.categories) && broad.categories.includes(item?.category)) return true;
-        if (Array.isArray(broad.tags) && Array.isArray(item?.tags) && item.tags.some((t) => broad.tags.includes(t))) return true;
-        if (Array.isArray(broad.keywords) && broad.keywords.length) {
-            const text = productSearchText(item);
-            return broad.keywords.some((keyword) => text.includes(keyword));
-        }
-        return false;
-    }
-    const group = MACRO_GROUPS.find((g) => g.id === groupId);
-    if (!group) return true;
-    if (group.categories.includes(item?.category)) return true;
-    // Structured concern tags (e.g. 'hormone-balance') are checked as an exact membership test,
-    // not folded into the free-text keyword scan below, that keeps a slug like the unrelated
-    // 'fitness-cycle' healthFunction from accidentally satisfying a keyword such as 'cycle'.
-    if (Array.isArray(group.healthFunctions) && Array.isArray(item?.healthFunctions) &&
-        item.healthFunctions.some((hf) => group.healthFunctions.includes(hf))) return true;
-    // Some chips' keywords are inherently ambiguous outside their own product domain (e.g.
-    // "skin"/"moisturizer" legitimately describe vulvar-care copy; "thinning" legitimately
-    // describes vaginal-tissue thinning), excludeCategories lets a chip opt specific
-    // product-type categories out of the free-text keyword scan below (they can still match
-    // via an explicit categories/healthFunctions hit above) so e.g. a vulva balm doesn't
-    // surface under "Skin" just because its copy happens to say "skin."
-    if (Array.isArray(group.excludeCategories) && group.excludeCategories.includes(item?.category)) return false;
-    const text = productSearchText(item);
-    return group.keywords.some((keyword) => text.includes(keyword));
 }
 
 // ─── CLINICAL WORKFLOW (e.g. Recurrent UTIs: prevent → test → treat → get care) ───
@@ -1605,32 +1364,6 @@ export function isOffShelfProduct(product) {
     return getListingStatus(product).offShelf;
 }
 
-function rawIntakeFromProfile(quizAnswers) {
-    if (!quizAnswers || typeof quizAnswers !== 'object') return {};
-    if (quizAnswers.fullHealthIntake && typeof quizAnswers.fullHealthIntake === 'object') {
-        return quizAnswers.fullHealthIntake;
-    }
-    return quizAnswers;
-}
-
-function asStringArray(value) {
-    if (Array.isArray(value)) return value.filter(Boolean).map(String);
-    if (value == null || value === '') return [];
-    return [String(value)];
-}
-
-/**
- * Whether the user has explicitly stated a life stage (e.g. "I am
- * post-menopause"), a strong, standalone personalization signal. Callers use
- * it to decide whether Discovery should default to personalized results even
- * when no separate concerns were flagged.
- */
-export function hasStatedLifeStage(quizAnswers) {
-    const intake = rawIntakeFromProfile(quizAnswers);
-    return asStringArray(intake?.lifeStageSelections).length > 0
-        || asStringArray(intake?.lifeStage).length > 0;
-}
-
 /** Accepts id arrays, Sets, product arrays, or { id: truthy } maps. */
 function asIdList(value) {
     if (!value) return [];
@@ -1642,7 +1375,10 @@ function asIdList(value) {
 
 /**
  * Map caller behavior signals to the engine's behavior layer.
- * @param {{ saved?, omitted?, hidden?, notForMe?, inEcosystem?, tracked?, owned?, purchased?, reordered?, viewed?, purchasedPrices? }} [behavior]
+ * @param {{ saved?, omitted?, hidden?, notForMe?, inEcosystem?, tracked?, owned?, purchased?, reordered?, viewed?, purchasedPrices?, dismissed?, notRelevant?, routine?, inRoutine? }} [behavior]
+ *   dismissed / notRelevant: "Not relevant" (ids, { id: needId | true }, or [{ id, needId }]);
+ *   kept out of her recommendations (that need, or all), still in Shop with its match.
+ *   routine / inRoutine: in her routine (treated like owned: not recommended as new).
  */
 export function normalizeBehaviorSignals(behavior) {
     if (!behavior || typeof behavior !== 'object') return null;
@@ -1655,7 +1391,26 @@ export function normalizeBehaviorSignals(behavior) {
         viewed: behavior.viewed && typeof behavior.viewed === 'object' && !Array.isArray(behavior.viewed) ? behavior.viewed : {},
         purchasedPrices: Array.isArray(behavior.purchasedPrices) ? behavior.purchasedPrices : [],
         owned,
+        dismissed: mergeDismissed(behavior.dismissed, behavior.notRelevant),
+        routine: [...asIdList(behavior.routine), ...asIdList(behavior.inRoutine)],
     };
+}
+// "Not relevant" keeps its per-need shape (userProfile.js dismissedMap reads it).
+function mergeDismissed(a, b) {
+    const list = [];
+    for (const v of [a, b]) {
+        if (!v) continue;
+        if (v instanceof Set) v.forEach((id) => list.push(String(id)));
+        else if (Array.isArray(v)) list.push(...v);
+        else if (typeof v === 'object') for (const [id, val] of Object.entries(v)) {
+            if (!val) continue;
+            if (Array.isArray(val)) { if (val.length) val.forEach((needId) => list.push({ id, needId })); else list.push(id); }
+            else if (typeof val === 'string') list.push({ id, needId: val });
+            else if (typeof val === 'object' && val.needId) list.push({ id, needId: val.needId });
+            else list.push(id);
+        }
+    }
+    return list;
 }
 
 // Imported health data (healthProfile) joins the intake as conditions,
@@ -1708,28 +1463,41 @@ function userProfileFor(quizAnswers, healthProfile = null, opts = {}) {
     // Browse ranking and partner placement never pass it.
     const healthContext = opts?.healthContext || null;
     const healthRecords = opts?.healthRecords || null;
+    // Her recorded outcomes (src/health/outcomes.js outcomesToProductHistory):
+    // join intake.productHistory, so "Worse" or "Side effect" moves that product
+    // down the same way an intake answer would.
+    const outcomeHistory = Array.isArray(opts?.outcomeHistory) && opts.outcomeHistory.length ? opts.outcomeHistory : null;
     let entries = USER_PROFILE_CACHE.get(key);
     if (!entries) { entries = []; USER_PROFILE_CACHE.set(key, entries); }
-    const hit = entries.find((e) => e.healthProfile === healthProfile && e.behaviorRaw === behaviorRaw && e.healthContext === healthContext && e.healthRecords === healthRecords);
+    const hit = entries.find((e) => e.healthProfile === healthProfile && e.behaviorRaw === behaviorRaw && e.healthContext === healthContext && e.healthRecords === healthRecords && e.outcomeHistory === outcomeHistory);
     if (hit) return hit.up;
-    const up = buildUserProfile(engineIntake(key, withHealthRecords(healthProfile, healthRecords)), {
+    const intake = engineIntake(key, withHealthRecords(healthProfile, healthRecords));
+    const up = buildUserProfile(outcomeHistory ? withOutcomeHistory(intake.fullHealthIntake && typeof intake.fullHealthIntake === 'object' ? { ...intake, ...intake.fullHealthIntake, fullHealthIntake: undefined } : intake, outcomeHistory) : intake, {
         catalog: ALL_PRODUCTS,
         behavior: normalizeBehaviorSignals(behaviorRaw) || undefined,
         healthContext: healthContext || undefined,
     });
-    entries.push({ healthProfile, behaviorRaw, healthContext, healthRecords, up });
+    entries.push({ healthProfile, behaviorRaw, healthContext, healthRecords, outcomeHistory, up });
     if (entries.length > 6) entries.shift();
     return up;
 }
 
+// The one engine call behind every match percent (card badge, product page,
+// Why this matches, Compare, Swipe, Browse, community, Best match sort).
+// v2 (src/matching/v2.js scoreProductV2) everywhere since Oct 24; opts.engine
+// or ?match=v1 picks v1 for comparison. The ecosystem shelves use the same
+// v2 per-need numbers (buildEcosystemV2 -> withV2Score).
+function engineFor(opts) {
+    return (opts && opts.engine) || matchEngine();
+}
 const SCORE_CACHE = new WeakMap();
-function engineResultFor(product, up) {
+function engineResultFor(product, up, engine = matchEngine()) {
     let byProduct = SCORE_CACHE.get(up);
     if (!byProduct) { byProduct = new Map(); SCORE_CACHE.set(up, byProduct); }
-    const key = product?.id ? `${product.id}|${product.name || ''}` : null;
+    const key = product?.id ? `${engine}|${product.id}|${product.name || ''}` : null;
     if (key && byProduct.has(key)) return byProduct.get(key);
     const pp = buildProductProfile(product);
-    const result = engineScoreProduct(pp, up);
+    const result = engine === 'v1' ? engineScoreProduct(pp, up) : scoreProductV2(pp, up);
     const entry = { pp, result, details: null };
     if (key) byProduct.set(key, entry);
     return entry;
@@ -1855,6 +1623,8 @@ function toNeedMatch(r, up) {
         contextUsed: r.contextUsed,
         explainable: r.explainable,
         outputs: r.outputs,
+        v2: r.v2 || null,
+        v1Score: r.v1Score ?? r.score,
     };
 }
 
@@ -1891,17 +1661,48 @@ export function isTeenProduct(p) {
     return Boolean(p) && (TEEN_RE.test(String(p.name || '')) || (Array.isArray(p.tags) && p.tags.some((t) => /^(teen|tween)s?$/i.test(String(t)))));
 }
 const TEEN_EXCLUDED = {
+    matchKind: 'ayna_match', matchMeaning: 'fit_to_what_she_told_ayna_not_a_probability_it_works',
     percent: 0, eligible: false, matchStatus: 'excluded', reasonDetails: [], needMatches: [], unknowns: [], unmetNeeds: [], labels: [], reasons: [],
     excludedBecause: ['it is made for teens, and ayna is for adults 18 and over'],
     considerations: [{ text: 'Made for teens. ayna is for adults 18 and over, so we don’t match it to anyone.' }],
     exclusionReasons: ['Made for teens. ayna is for adults 18 and over, so we don’t match it to anyone.'],
 };
 
+// Which setup question resolves a missing safety answer (the intake step id).
+const SAFETY_FIELD_STEP = { medications: 'medications', pregnancy_status: 'lifeStage', breastfeeding_status: 'lifeStage' };
+const SAFETY_FIELD_QUESTION = { medications: 'Taking any medicines or supplements?', pregnancy_status: 'Your life stage (pregnancy)', breastfeeding_status: 'Your life stage (breastfeeding)' };
+
+/**
+ * A safety hold, said plainly: why the match is unavailable and what would
+ * resolve it. `fix.step` opens that setup question; product-side gaps have
+ * no step (ayna has to find the label facts first).
+ */
+export function safetyHoldFor(safety) {
+    const fields = (safety?.missingFields || []).filter((f) => REQUIRED_FIELD_TEXT[f]);
+    const info = (safety?.missingProductInfo || []).filter((f) => PRODUCT_INFO_TEXT[f]);
+    if (fields.length) {
+        const f = fields[0];
+        return {
+            kind: 'profile',
+            reason: `We don’t know ${fields.map((x) => REQUIRED_FIELD_TEXT[x]).join(' or ')} yet, and that decides whether this product is safe for you.`,
+            fix: { label: `Answer: ${SAFETY_FIELD_QUESTION[f] || 'one safety question'}`, step: SAFETY_FIELD_STEP[f] || null },
+        };
+    }
+    return {
+        kind: 'product',
+        reason: `We don’t have ${info.map((x) => PRODUCT_INFO_TEXT[x]).join(' or ') || 'all the safety facts for this product'} yet, and your answers make that matter.`,
+        fix: { label: 'ayna is checking the label. Nothing for you to do.', step: null },
+    };
+}
+
+const BLEEDING_EVALUATION_TEXT = 'Bleeding or spotting 12 months or more after your last period should be checked promptly by an ob-gyn or your clinician. ayna does not suggest products for it.';
+
 function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
     if (isTeenProduct(savedProduct)) return { ...TEEN_EXCLUDED };
     const product = hydrateCatalogProduct(savedProduct);
     const up = userProfileFor(quizAnswers, healthProfile, opts);
-    const entry = engineResultFor(product, up);
+    const engine = engineFor(opts);
+    const entry = engineResultFor(product, up, engine);
     if (entry.details && !opts?.needId) return entry.details;
     const { pp, result } = entry;
     const safety = result.safety;
@@ -1949,6 +1750,25 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
         profileCompleteness: up.completeness,
         contradictions: up.contradictions.map((c) => c.text),
         focusNeedId: focus ? focus.needId : null,
+        // Catalog eligibility (src/matching/eligibility.js): false for an
+        // accessory or a listing that failed validation. Its match still shows
+        // here; it is just never put forward as a recommendation.
+        recommendable: recommendationEligibility(product, pp).eligible,
+        notRecommendedBecause: recommendationEligibility(product, pp).reason,
+        // What she already did with it (src/matching/forYou.js historyState).
+        history: pp.product_id ? historyState(up, pp.product_id, best?.needId) : null,
+        // How strongly she told ayna about the need this match is for.
+        needSignal: best ? (needSignals(up).get(best.needId)?.tier || null) : null,
+        // Which engine produced the percent, v2's numbers for the best need
+        // (health fit, evidence grade, band) and the v1 percent for comparison.
+        engine: result.engine || 'v1',
+        // What the percent is: an ayna match, how well the product fits what
+        // she told ayna (needs, life stage, safety, history). It is NOT a
+        // probability that the product will work for her.
+        matchKind: 'ayna_match',
+        matchMeaning: 'fit_to_what_she_told_ayna_not_a_probability_it_works',
+        v2: best?.v2 || null,
+        v1Percent: best ? (best.v1Score ?? best.score) : null,
     };
 
     let details;
@@ -2014,10 +1834,10 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
             percent: best ? best.score : 0,
             matchStatus: best ? 'scored' : 'no-relevance',
             score: best ? best.score : 0,
-            goalMatch: best ? Math.round(best.components.health * 100) : 0,
+            goalMatch: best ? Math.round((best.v2 ? best.v2.health : best.components.health) * 100) : 0,
             // null = not known for her (never a 0 that reads as a bad fit).
             profileFit: best && best.components.context != null ? Math.round(best.components.context * 100) : null,
-            healthMatch: best ? Math.round(best.components.health * 100) : 0,
+            healthMatch: best ? Math.round((best.v2 ? best.v2.health : best.components.health) * 100) : 0,
             preferenceMatch: best && best.components.preference != null ? Math.round(best.components.preference * 100) : null,
             confidence: confidenceLevel,
             confidenceScore: confidence,
@@ -2034,6 +1854,19 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
             basedOn: inputsFor(best, up),
             profileHint: confidenceLevel === 'high' ? null : PROFILE_HINT,
         };
+        // Held back for safety (founder, Oct 24): no percent anywhere, ever.
+        // The card, product page, Compare, Rundown, Ask and Why show the hold,
+        // its exact reason and what resolves it. 0 is only for sorting.
+        if (details.eligibility === 'restricted' && details.matchStatus === 'scored') {
+            details = { ...details, percent: null, score: 0, sortScore: 0, matchStatus: 'safety-hold', tier: 'browse', goalMatch: null, healthMatch: null, needMatches: details.needMatches.map((m) => ({ ...m, score: null, held: true })), safetyHold: safetyHoldFor(safety) };
+        }
+        // Bleeding after menopause (founder, Oct 24): a period or bleeding
+        // product gets no match for it, only the prompt-evaluation message
+        // (the same one Home shows; ontology.js bleedingAfterMenopause).
+        if (!best && needMatches.some((m) => m.filtered === 'postmenopausal_bleeding')) {
+            const note = up.contradictions.find((c) => c.code === 'period_need_vs_stage');
+            details = { ...details, percent: null, score: 0, sortScore: 0, matchStatus: 'bleeding-evaluation', tier: 'browse', bleedingEvaluation: { text: note?.text || BLEEDING_EVALUATION_TEXT, source: note?.source || null } };
+        }
     }
     if (!focusId) entry.details = details;
     return details;
@@ -2063,11 +1896,11 @@ function careFlagsFor(up) {
     if (up.safety.pregnant) notes.push({ code: 'pregnancy_unknown', text: 'Pregnancy safety is not confirmed for most products. Check new products with your clinician.' });
     if (up.safety.breastfeeding === 'yes') notes.push({ code: 'breastfeeding_unknown', text: 'Breastfeeding safety is not confirmed for most products. Check new products with your clinician.' });
     if (up.physiology.confidenceFlags.includes('needs_clarification')) notes.push({ code: 'stage_needs_clarification', text: 'Some life stages you chose do not usually go together. Update your profile so we can match better.' });
-    for (const c of up.contradictions.filter((x) => x.code === 'period_need_vs_stage')) notes.push({ code: c.code, text: c.text });
+    for (const c of up.contradictions.filter((x) => x.code === 'period_need_vs_stage')) notes.push({ code: c.code, text: c.text, source: c.source || null, prominent: Boolean(c.prominent) });
     return {
         urgent: up.safety.urgent,
         careFirst: up.safety.careFirst,
-        careProminent: Boolean(up.safety.careProminent || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length),
+        careProminent: Boolean(up.safety.careProminent || up.contradictions.some((x) => x.code === 'period_need_vs_stage') || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length),
         utiRightNow,
         utiFirstTime,
         severePain,
@@ -2108,8 +1941,25 @@ export function getProductMatchDetailsForProduct(product, quizAnswers, healthPro
     return buildMatchDetails(product, quizAnswers, healthProfile, opts);
 }
 
+/**
+ * Can this product sit in a list that implies it fits her (a For you
+ * fallback, a "Products" row under her profile)? No for "Not for me", an
+ * exclusion, or bleeding after menopause (B1). True without a profile.
+ */
+export function fitsHerProfile(product, quizAnswers, healthProfile = null, opts = {}) {
+    if (!product || !quizAnswers) return true;
+    const d = buildMatchDetails(product, quizAnswers, healthProfile, opts);
+    if (d.eligible === false || d.matchStatus === 'excluded' || d.matchStatus === 'bleeding-evaluation') return false;
+    // Bleeding after menopause: no period product or accessory (a cup steamer) either.
+    if (d.careFlags?.contradictions?.some((c) => c.code === 'period_need_vs_stage') && PERIOD_PRODUCT_CATEGORIES.has(String(product.category || '').toLowerCase())) return false;
+    return true;
+}
+const PERIOD_PRODUCT_CATEGORIES = new Set(['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cup-steamer', 'liner', 'pantyliner']);
+
 export function getProductRelevanceScore(product, quizAnswers, healthProfile = null, opts = {}) {
-    return buildMatchDetails(product, quizAnswers, healthProfile, opts).percent;
+    const d = buildMatchDetails(product, quizAnswers, healthProfile, opts);
+    // A safety hold has no percent to show; 0 keeps it last when sorting.
+    return d.matchStatus === 'safety-hold' || d.matchStatus === 'bleeding-evaluation' ? 0 : d.percent;
 }
 
 /**
@@ -2126,8 +1976,9 @@ function rankCatalog(quizAnswers, healthProfile, opts) {
     const weaker = [];
     const unrelated = [];
     const offShelf = [];
+    const engine = engineFor(opts);
     for (const product of candidates) {
-        const { pp, result } = engineResultFor(product, up);
+        const { pp, result } = engineResultFor(product, up, engine);
         if (['recalled', 'discontinued', 'unavailable', 'removed'].includes(pp.status?.state)) {
             offShelf.push(product);
             continue;
@@ -2136,11 +1987,19 @@ function rankCatalog(quizAnswers, healthProfile, opts) {
         if (pp.product_id && up.behavior.hidden.has(pp.product_id)) continue;
         profilesById.set(pp.product_id, pp);
         const best = result.best;
-        if (best && !best.filtered && !best.restricted && best.explainable && best.score >= MIN_RECOMMEND_SCORE) matched.push({ product, best });
+        // Catalog eligibility (accessories, failed validation) and her history
+        // ("Not relevant", tried without help) keep a product out of her
+        // matches; it stays in Shop with its percent (src/matching/forYou.js).
+        const recommendable = isRecommendable(product, pp) && !NOT_RECOMMENDED_AGAIN.has(historyState(up, pp.product_id, best?.needId));
+        if (recommendable && best && !best.filtered && !best.restricted && best.explainable && best.score >= MIN_RECOMMEND_SCORE) matched.push({ product, best });
         else if (best && best.score > 0) weaker.push({ product, best });
         else unrelated.push(product);
     }
-    const order = new Map(sortResults(matched.map((m) => m.best), up, profilesById).map((r, i) => [r.productId, i]));
+    // Engine order, then the For you rules (forYou.js): strongest needs first
+    // within a percent, weak needs capped, curated discovery, fresh before
+    // what she already has.
+    const sorted = orderForYou(sortResults(matched.map((m) => m.best), up, profilesById), up, { profileOf: (id) => profilesById.get(id), commodityIds: BASICS_PRODUCT_IDS });
+    const order = new Map(sorted.map((r, i) => [r.productId, i]));
     matched.sort((a, b) => order.get(a.best.productId) - order.get(b.best.productId));
     weaker.sort((a, b) => b.best.score - a.best.score);
     return { up, matches: matched.map((m) => m.product), others: [...weaker.map((w) => w.product), ...unrelated], offShelf };
@@ -2172,30 +2031,33 @@ export function getPersonalizedProductIds(quizAnswers, healthProfile = null, opt
     return matches.map((p) => p.id);
 }
 
-// Algorithm v2 (src/matching/v2.js) is off for everyone until it passes its
-// release gates and clinical review. To compare on one browser: ?match=v2
-// (remembered), ?match=v1 to go back.
-export function matchEngine() {
-    try {
-        if (typeof window === 'undefined') return 'v1';
-        // The native app keeps its own engine (app changes ship separately).
-        if (window.Capacitor?.isNativePlatform?.() || /^\/mobile-preview/.test(window.location.pathname)) return 'v1';
-        const q = new URLSearchParams(window.location.search).get('match');
-        if (q === 'v2' || q === 'v1') { try { localStorage.setItem('ayna_match_engine', q); } catch { /* private mode */ } return q; }
-        // v2 (evidence-graded, research-backed) is the default on the website
-        // since Oct 17; ?match=v1 switches a browser back to the old engine.
-        return localStorage.getItem('ayna_match_engine') === 'v1' ? 'v1' : 'v2';
-    } catch { return 'v2'; }
+/**
+ * Her single top match (Ask's "explain my top match", the Rundown): the
+ * first product of her For you order, skipping what she already has when a
+ * fresh match exists. null without a profile or a match.
+ */
+export function getTopMatch(quizAnswers, healthProfile = null, opts = {}) {
+    const { up, matches } = rankCatalog(quizAnswers, healthProfile, opts);
+    if (!hasProfileSignals(up) || !up.healthIntent.needs.length || !matches.length) return null;
+    return matches.find((p) => !['owned', 'saved'].includes(historyState(up, p.id))) || matches[0];
 }
+
+const categoryForId = (id) => { const p = getProductById(id); return p ? buildProductProfile(p)?.category : null; };
 
 function ecosystemFor(quizAnswers, healthProfile, opts = {}) {
     const up = userProfileFor(quizAnswers, healthProfile, opts);
-    const engine = opts.engine || matchEngine();
-    const eco = (engine === 'v2' ? buildEcosystemV2 : buildEcosystem)(up, filterPrescriptionCareGate(ALL_PRODUCTS), {
+    const engine = engineFor(opts);
+    // Catalog eligibility (src/matching/eligibility.js) before matching:
+    // accessories and listings that failed validation never reach a shelf.
+    const built = (engine === 'v1' ? buildEcosystem : buildEcosystemV2)(up, filterPrescriptionCareGate(ALL_PRODUCTS).filter((p) => isRecommendable(p)), {
         getCareResourceBundle,
+        commodityIds: BASICS_PRODUCT_IDS,
         ...(opts.picksPerNeed ? { picksPerNeed: opts.picksPerNeed } : {}),
         ...(opts.minTier ? { minTier: opts.minTier } : {}),
     });
+    // Connected health data re-orders within what the engine chose (both
+    // engines, website and app): src/matching/healthShaping.js.
+    const eco = shapeEcosystemWithHealth(built, up, { categoryFor: categoryForId });
     return { up, eco };
 }
 
@@ -2234,6 +2096,7 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
             productId: r.productId, score: r.score, tier: r.tier, explanations: r.explanations, access: r.access,
             confidence: r.confidence, confidenceLevel: r.confidenceLevel, roles: r.roles || [], aboveNext: r.aboveNext || [],
             ...(r.v2 ? { v2: r.v2, alsoCovers: r.alsoCovers || [] } : {}),
+            ...(r.healthBacked ? { healthBacked: r.healthBacked } : {}),
         }));
         for (const r of shelf.picks) {
             const product = getProductById(r.productId);
@@ -2252,6 +2115,7 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
                 score: r.score,
                 tier: r.tier,
                 careProminent: shelf.careProminent,
+                ...(r.healthBacked ? { healthBacked: r.healthBacked } : {}),
             };
         }
         return {
@@ -2270,10 +2134,14 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
             careFirst: shelf.careFirst,
             careProminent: shelf.careProminent,
             care: shelf.care,
+            healthData: shelf.healthData || null,
         };
     });
     Object.defineProperty(seedMeta, 'shelves', { value: shelves, enumerable: false });
-    return { mergedProducts, seedMeta, shelves, careFirst: eco.careFirst, careProminent: eco.careProminent, care: eco.care, careFlags, picksPerNeed: eco.picksPerNeed, minScore: eco.minScore };
+    // What her connected health data changed (null when nothing): for the
+    // "Shaped by your health data" note (src/components/health/HealthShapedNote.jsx).
+    Object.defineProperty(seedMeta, 'healthShaped', { value: eco.healthShaped || null, enumerable: false });
+    return { mergedProducts, seedMeta, shelves, careFirst: eco.careFirst, careProminent: eco.careProminent, care: eco.care, careFlags, picksPerNeed: eco.picksPerNeed, minScore: eco.minScore, healthShaped: eco.healthShaped || null };
 }
 
 /**
@@ -2283,10 +2151,11 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
  */
 export function getEcosystemAlternatives(productId, tag, quizAnswers, healthProfile = null, limit = 3, opts = {}) {
     const up = userProfileFor(quizAnswers || {}, healthProfile, opts);
+    const engine = engineFor(opts);
     let needId = tag && NEED_BY_ID[canonicalNeedId(tag)] ? canonicalNeedId(tag) : null;
     if (!needId && productId) {
         const current = getProductById(productId);
-        const best = current ? engineResultFor(hydrateCatalogProduct(current), up).result.best : null;
+        const best = current ? engineResultFor(hydrateCatalogProduct(current), up, engine).result.best : null;
         if (best && best.score > 0) needId = best.needId;
     }
     if (needId) {
@@ -2297,9 +2166,14 @@ export function getEcosystemAlternatives(productId, tag, quizAnswers, healthProf
             const pp = buildProductProfile(product);
             if (!pp.health_need_relevance[needId]) continue;
             if (up.behavior.hidden.has(pp.product_id)) continue;
-            const { result } = engineResultFor(product, up);
+            if (!isRecommendable(product, pp) || NOT_RECOMMENDED_AGAIN.has(historyState(up, pp.product_id, needId))) continue;
+            const { result } = engineResultFor(product, up, engine);
             if (!result.safety.eligible) continue;
-            const r = result.needs.find((n) => n.needId === needId) || scoreProductForNeed(pp, up, needId, { safety: result.safety });
+            let r = result.needs.find((n) => n.needId === needId);
+            if (!r) {
+                r = scoreProductForNeed(pp, up, needId, { safety: result.safety });
+                if (engine !== 'v1') r = withV2Score(pp, r, new Set(up.healthIntent.needs.map((n) => n.id)), userKeyOf(up), needSignals(up));
+            }
             if (r.filtered || r.restricted || !r.explainable || r.score < MIN_RECOMMEND_SCORE) continue;
             profilesById.set(pp.product_id, pp);
             rows.push(r);
@@ -2329,10 +2203,13 @@ export function getProfileMatchLabelsForProduct(product, quizAnswers, healthProf
 /**
  * Personalized match shown across the app and the website: the product's
  * best per-need score (0..100). A relevance score, not a diagnosis or a
- * probability. null when there is no profile; 0 when excluded or unrelated.
+ * probability. The app's matchPercentFor reads the same function
+ * (matching/breakdown.js matchPercentFromDetails), so both platforms print the
+ * same number. null when there is no profile, a hold, an exclusion or no fit.
  */
 export function getProfileMatchPercentForProduct(product, quizAnswers, healthProfile = null, opts = {}) {
-    return getProfileMatchStatsForProduct(product, quizAnswers, healthProfile, opts).percent;
+    if (!product || !quizAnswers) return null;
+    return matchPercentFromDetails(buildMatchDetails(product, quizAnswers, healthProfile, opts));
 }
 
 /**
@@ -2532,3 +2409,24 @@ export function detectDuplicates(productIds, productMap = {}) {
 
     return { functionMap };
 }
+
+// Tell the site shell the catalog is here (data/catalog.js), whichever chunk
+// loaded this file: the parts of this API the shell reads through it.
+provideCatalog({
+    ALL_PRODUCTS,
+    BASICS_PRODUCT_IDS,
+    getProductById,
+    getRecommendations,
+    getPersonalizedProductIds,
+    getTopMatch,
+    getSelectedNeeds,
+    getProductMatchDetailsForProduct,
+    getProfileMatchLabelsForProduct,
+    getEcosystemSeedFromQuiz,
+    SYMPTOM_TO_SUPPLEMENTS,
+    filterPrescriptionCareGate,
+    getProfileMatchPercentForProduct,
+    getProductRelevanceScore,
+    fitsHerProfile,
+    isTeenProduct,
+});

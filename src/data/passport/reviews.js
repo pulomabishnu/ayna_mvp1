@@ -20,5 +20,11 @@ import batch2 from './reviews/batch-2.js';
 import batch3 from './reviews/batch-3.js';
 import batch4 from './reviews/batch-4.js';
 import batch5 from './reviews/batch-5.js';
+import batch6 from './reviews/batch-6.js';
 
-export const PASSPORT_REVIEWS = { ...batch1, ...batch2, ...batch3, ...batch4, ...batch5 };
+const EARLIER = { ...batch1, ...batch2, ...batch3, ...batch4, ...batch5 };
+// Batch 6 adds facts to a product; it never replaces an earlier review of it.
+for (const [id, entry] of Object.entries(batch6)) {
+  EARLIER[id] = EARLIER[id] ? { ...EARLIER[id], facts: { ...(EARLIER[id].facts || {}), ...entry.facts } } : entry;
+}
+export const PASSPORT_REVIEWS = EARLIER;

@@ -1,0 +1,22 @@
+/* Signed-out preview of an account page (GatedFeaturePreview.jsx): butter
+   band with the title, the feature as label / value rows on white, and the
+   sign-in panel beside it (stacked on phones). */
+.app-container .ay-gate { --g-ink: #3e2723; --g-ink-2: rgba(62, 39, 35, .78); --g-card: #ffffff; --g-band: #ffedac; --g-rule: rgba(62, 39, 35, .15);
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 32px; align-items: start; max-width: 1120px; margin: 0 auto; padding: 40px 24px 64px; box-sizing: border-box; }
+.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ay-gate { --g-ink: #ffedac; --g-ink-2: rgba(255, 237, 172, .82); --g-card: rgba(255, 237, 172, .06); --g-band: transparent; --g-rule: rgba(255, 237, 172, .2); }
+.app-container .ay-gate__preview { display: grid; gap: 16px; padding: 32px; border: 1.5px solid var(--g-ink); border-radius: 16px; background: var(--g-band); color: var(--g-ink); }
+.app-container .ay-gate__title { margin: 0; font: 400 36px/1.1 var(--ay-font-display, 'ayna Display'), 'Bricolage Grotesque', sans-serif; letter-spacing: -.02em; color: var(--g-ink); }
+.app-container .ay-gate__lede { margin: 0; max-width: 46ch; font: 500 16px/1.5 'Figtree', system-ui, sans-serif; color: var(--g-ink); }
+.app-container .ay-gate__rows { display: grid; margin: 8px 0 0; padding: 0 16px; border: 1.5px solid var(--g-ink); border-radius: 16px; background: var(--g-card); }
+.app-container .ay-gate__row { display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 12px; row-gap: 2px; padding: 14px 0; border-top: 1px solid var(--g-rule); }
+.app-container .ay-gate__row:first-child { border-top: 0; }
+.app-container .ay-gate__n { grid-row: span 2; display: grid; place-items: center; width: 28px; height: 28px; border: 1.5px solid var(--g-ink); border-radius: 50%; font: 600 13px/1 'Figtree', system-ui, sans-serif; color: var(--g-ink); }
+.app-container .ay-gate__row dt { font: 600 15px/1.3 'Figtree', system-ui, sans-serif; color: var(--g-ink); }
+.app-container .ay-gate__row dd { margin: 0; font: 500 14px/1.45 'Figtree', system-ui, sans-serif; color: var(--g-ink-2); }
+.app-container .ay-gate__fine { margin: 0; font: 500 13px/1.45 'Figtree', system-ui, sans-serif; color: var(--g-ink-2); }
+.app-container .ay-gate__panel .ay-auth-card { max-width: none !important; width: 100% !important; max-height: none !important; }
+@media (max-width: 860px) {
+  .app-container .ay-gate { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 24px 16px 48px; }
+  .app-container .ay-gate__preview { padding: 24px 16px; }
+  .app-container .ay-gate__title { font-size: 26px; }
+}

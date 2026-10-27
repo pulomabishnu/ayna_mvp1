@@ -89,6 +89,10 @@ describe('persona sweep (release gates)', () => {
     expect(v1.violationsList).toEqual([]);
     expect(v2.violationsList).toEqual([]);
   });
+  it('HARD GATE: no cycle tracker or ovulation test for anyone without a cycle; no accessory or failed listing on a shelf', () => {
+    expect(v2.lifeStageList).toEqual([]);
+    expect(v2.gatedShown).toBe(0);
+  });
   it('HARD GATE: no product in more than 40% of ecosystems', () => {
     expect(v2.topShare).toBeLessThanOrEqual(0.4);
   });
@@ -96,8 +100,16 @@ describe('persona sweep (release gates)', () => {
     // Targets from the audit: coverage >= 0.6, Gini <= 0.6, empty <= 0.1, strong <= 0.25.
     // Coverage and empty shelves are limited by the catalog and by draft
     // evidence grades until clinical review; see ENGINE notes in v2.js.
+    // Oct 24 (p2/match-quality): coverage 0.29 -> 0.30, avg picks 2.7 -> 2.8
+    // (breadth rule); empty 0.27 -> 0.28 only because no-cycle profiles no
+    // longer get trackers on cycle shelves (other shelves unchanged at 0.27).
+    // With medicines answered "No" (the quiz asks): empty 0.23, coverage 0.35.
     console.log('[v2 gates]', JSON.stringify({ v1, v2 }));
     expect(v2.gini).toBeLessThanOrEqual(0.6);
     expect(v2.strongShare).toBeLessThanOrEqual(0.3);
+    // Floors so variety and coverage do not slip back.
+    expect(v2.catalogCoverage).toBeGreaterThanOrEqual(0.29);
+    expect(v2.avgPicks).toBeGreaterThanOrEqual(2.7);
+    expect(v2.emptyShelfShare).toBeLessThanOrEqual(0.3);
   });
 });

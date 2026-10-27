@@ -220,7 +220,9 @@ describe('GET /api/fda-recall?sweep=1 — real run (RECALL_SWEEP_ENABLED=1)', ()
     expect(res.body.notified).toBe(1);
     expect(twilioCreate).toHaveBeenCalledTimes(1);
     expect(twilioCreate.mock.calls[0][0].to).toBe('+15551234567');
-    expect(twilioCreate.mock.calls[0][0].body).toContain('Iron Supplement');
+    // SMS previews show on the lock screen too: no product name.
+    expect(twilioCreate.mock.calls[0][0].body).not.toContain('Iron Supplement');
+    expect(twilioCreate.mock.calls[0][0].body).toContain('An update about a product you saved');
 
     const sentRow = globalThis.__mockAdmin.inserted.find((r) => r.table === 'recall_notifications');
     expect(sentRow.payload.status).toBe('sent');

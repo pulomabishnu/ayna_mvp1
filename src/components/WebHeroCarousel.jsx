@@ -19,7 +19,7 @@ function AboutSlide({ onStartQuiz }) {
       <button type="button" className="whc-cta" onClick={onStartQuiz}>Take the quiz</button>
     </div>
     <ul className="whc-art whc-tiles">
-      <li className="tone-pink"><span className="whc-glyph is-eco" aria-hidden="true"><i /><i /><i /></span><b>Your Ecosystem</b></li>
+      <li className="tone-pink"><span className="whc-glyph is-eco" aria-hidden="true"><i /><i /><i /></span><b>Your ecosystem</b></li>
       <li className="tone-butter"><span className="whc-glyph is-ring" aria-hidden="true" /><b>Your match</b></li>
       <li className="tone-peri"><span className="whc-glyph is-chat" aria-hidden="true" /><b>Ask ayna</b></li>
       <li className="tone-paper"><span className="whc-glyph is-deck" aria-hidden="true"><i /><i /></span><b>Discover</b></li>

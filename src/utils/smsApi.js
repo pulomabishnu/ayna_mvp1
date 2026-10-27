@@ -8,33 +8,27 @@
  *     prefsSaved, textNumber, consentVersion }
  * (start resolves { ok, sent }). Errors throw SmsApiError(code, status).
  */
-import { getSupabaseClient } from './supabaseClient.js';
+import { withAuthRetry } from './authToken.js';
 import { apiUrl } from './apiUrl.js';
+import { fetchWithTimeout } from './network.js';
 
 export class SmsApiError extends Error {
   constructor(code, status) { super(code); this.code = code; this.status = status; }
 }
 
-async function token() {
-  const supabase = getSupabaseClient();
-  if (!supabase) return null;
-  const { data } = await supabase.auth.getSession();
-  return data?.session?.access_token || null;
-}
-
 async function call(method, body) {
-  const t = await token();
-  if (!t) throw new SmsApiError('not_signed_in', 401);
   let res;
   try {
-    res = await fetch(apiUrl(method === 'GET' ? '/api/sms?action=status' : '/api/sms'), {
+    // Fresh token, one refresh-and-retry on 401 (src/utils/authToken.js).
+    res = await withAuthRetry((t) => fetchWithTimeout(apiUrl(method === 'GET' ? '/api/sms?action=status' : '/api/sms'), {
       method,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
       ...(body ? { body: JSON.stringify(body) } : {}),
-    });
+    }));
   } catch {
     throw new SmsApiError('network', 0);
   }
+  if (!res) throw new SmsApiError('not_signed_in', 401);
   let data = {};
   try { data = await res.json(); } catch { /* empty */ }
   if (!res.ok) throw new SmsApiError(data?.error || `http_${res.status}`, res.status);

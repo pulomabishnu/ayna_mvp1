@@ -82,7 +82,7 @@ describe('/api/sms-reminders', () => {
     expect(sent).toHaveLength(1);
     expect(sent[0].To).toBe('+15550000001');
     expect(sent[0].MessagingServiceSid).toBe('MG_test');
-    expect(sent[0].Body).toBe('ayna: your next period may start in about 3 days. Restock your period products? https://www.aynahealth.co/shop');
+    expect(sent[0].Body).toBe('ayna: your next period may start in about 3 days. Restock your period products? https://www.aynahealth.co/explore/products');
   });
 
   it('at most one reminder per person per day', async () => {
@@ -98,5 +98,21 @@ describe('/api/sms-reminders', () => {
     const priv = textsTo().find((t) => t.To === '+15550000002');
     expect(priv.Body).toBe('ayna: your monthly check-in is ready. https://www.aynahealth.co/you');
     expect(textsTo().some((t) => /period/.test(t.Body))).toBe(false);
+  });
+});
+
+describe('claimReminderDay (double-send guard)', () => {
+  it('returns false when the unique index rejects a second claim for the same day', async () => {
+    const { claimReminderDay } = await import('./_smsStore.js');
+    const inserts = [];
+    const admin = { from: () => ({ insert: async (row) => {
+      const dup = inserts.some((r) => r.user_id === row.user_id && r.detail.day === row.detail.day);
+      inserts.push(row);
+      return { error: dup ? { code: '23505', message: 'duplicate key' } : null };
+    } }) };
+    expect(await claimReminderDay(admin, 'u1', '2026-10-20', 'period')).toBe(true);
+    expect(await claimReminderDay(admin, 'u1', '2026-10-20', 'period')).toBe(false);
+    expect(await claimReminderDay(admin, 'u1', '2026-10-21', 'period')).toBe(true);
+    expect(inserts[0]).toMatchObject({ kind: 'reminder', detail: { type: 'period', day: '2026-10-20' } });
   });
 });

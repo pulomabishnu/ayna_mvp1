@@ -25,34 +25,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.always.co.uk/en-gb/tips-and-advice-for-women/your-first-period/how-to-use-sanitary-pads",
       "sourceLabel": "Always: How to use sanitary pads"
     },
-    "ingredientScience": [
-      {
-        "name": "Fragrance (parfum, scented versions)",
-        "text": "Fragrance adds scent only and does nothing for absorption. A systematic review of pads and women's health found fragrance in scented pads has been linked to dermatitis (skin inflammation) in some studies, so the unscented version is the safer pick if your skin reacts easily.",
-        "citations": [
-          {
-            "url": "https://synapse.koreamed.org/articles/1130139",
-            "label": "Ewha Medical Journal 2019 (Woo et al.), doi:10.12771/emj.2019.42.3.25: Systematic Review on Sanitary Pads and Female Health"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "Pads like this one are regulated by the FDA as medical devices. FDA advises changing pads every few hours, even on light days, because wearing one too long can irritate your skin, and notes that some people react to scents or other added materials. A Harvard Health article by an OB-GYN suggests choosing unscented cotton pads without a mesh covering and changing them every 2 to 6 hours. A 2019 systematic review of pad safety found evidence on longer-term health effects of pad chemicals is limited, with small studies that neither clearly show harm nor guarantee safety.",
+    "clinicalNote": "Pads like this one are regulated by the FDA as medical devices. FDA advises changing pads every few hours, even on light days, because wearing one too long can irritate your skin, and notes that some people react to scents or other added materials.",
     "clinicalNoteSources": [
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual Pads and Liners",
         "summary": "Explains how FDA regulates pads and gives safe-use tips, including changing them every few hours."
-      },
-      {
-        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
-        "label": "Harvard Health Blog (Huma Farid, MD, 2019): Vulvar health",
-        "summary": "Advises unscented cotton pads without a mesh covering, changed every 2 to 6 hours, and avoiding scented feminine products."
-      },
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Ewha Medical Journal 2019 (Woo et al.): Systematic Review on Sanitary Pads and Female Health",
-        "summary": "Reviews chemicals found in pads and finds the evidence on health effects limited and inconclusive."
       }
     ],
     "warnings": [
@@ -91,25 +69,6 @@ export const PRODUCT_RESEARCH = {
         "summary": "FDA advises changing pads every few hours, notes some people react to scents or added materials, and says to stop use and call a provider if itching, rash or swelling appears."
       }
     ],
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
-        "summary": "A review of 71 studies found case reports of pad-related genital dermatitis but concluded a clear cause-and-effect link between pads and health effects has not been established."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Organic cotton top sheet",
-        "text": "Clinicians often suggest unscented cotton pads without a mesh covering to keep vulvar skin comfortable. This is expert advice, not evidence from trials comparing cotton or organic pads with conventional ones.",
-        "citations": [
-          {
-            "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
-            "label": "Harvard Health Blog (Huma Farid, MD, 2019): Vulvar health"
-          }
-        ]
-      }
-    ],
     "warnings": [
       "Change your pad every few hours, even if your flow is light, and more often on heavy days.",
       "Some people react to scents or other added materials in pads.",
@@ -141,28 +100,8 @@ export const PRODUCT_RESEARCH = {
     },
     "ingredientScience": [
       {
-        "name": "Lavender oil",
-        "text": "Lavender oil is part of the pad's herbal infusion and does not help it absorb. It is a known skin allergen once it oxidizes (breaks down in air): in one dermatology clinic study, 2.8% of patients tested had an allergic reaction to oxidized lavender oil.",
-        "citations": [
-          {
-            "url": "https://www.medicaljournals.se/acta/content/abstract/10.2340/00015555-2319",
-            "label": "Acta Dermato-Venereologica (Hagvall and Bråred Christensson): Contact allergy to oxidized lavender oil"
-          }
-        ]
-      },
-      {
-        "name": "Peppermint oil",
-        "text": "Mint oils give the cooling, tingling feel. Allergy is uncommon but real: in a large North American study, 161 of 28,128 people patch tested (0.6%) reacted to peppermint oil, nearly a third of those reactions were strong, and most also reacted to other fragrance or plant allergens. The current label lists corn mint oil and menthol rather than peppermint oil.",
-        "citations": [
-          {
-            "url": "https://hsrc.himmelfarb.gwu.edu/gwhpubs/5450",
-            "label": "Dermatitis 2024 (Warshaw et al., North American Contact Dermatitis Group), doi:10.1089/derm.2024.0118: Patch testing to peppermint oil"
-          }
-        ]
-      },
-      {
         "name": "Aloe extract",
-        "text": "Aloe is part of the herbal infusion. Evidence for putting it on skin is weak and comes mostly from small studies (the best is for burns), and topical aloe is generally well tolerated, though there are occasional reports of burning, itching, and rash.",
+        "text": "Aloe is part of the herbal infusion.",
         "citations": [
           {
             "url": "https://www.nccih.nih.gov/health/aloe-vera",
@@ -201,24 +140,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://saalt.com/pages/instructions",
       "sourceLabel": "Saalt Cup Instructions"
     },
-    "clinicalNote": "The biggest review of menstrual cups so far, published in The Lancet Public Health in 2019, pooled 43 studies with 3,319 people and concluded that cups are a safe way to manage your period, while noting that few of the studies were high quality. Use of a cup showed no harmful effect on the vaginal flora (the normal mix of bacteria in the vagina). The review did find rare problems: five reported cases of toxic shock syndrome (TSS, a rare but serious bacterial illness), and 13 cases where an IUD (intrauterine device, a type of birth control) was pulled out of place in people using a cup. If you have an IUD, that is a reason to talk to your clinician and break the cup's seal fully before removing it.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
-        "label": "van Eijk et al., The Lancet Public Health 2019 (doi:10.1016/s2468-2667(19)30111-2): Menstrual cup use, leakage, acceptability, safety, and availability",
-        "summary": "Systematic review and meta-analysis of 43 studies finding menstrual cups safe overall, with rare reports of TSS and IUD dislodgement."
-      }
-    ],
     "warnings": [
       "Menstrual cups have been linked to toxic shock syndrome (TSS), a rare but serious illness that can cause death.",
       "Never wear the cup for more than 12 hours at a time without washing it properly.",
       "If you have an IUD, check with your doctor first and break the seal before removing the cup so you don't dislodge the IUD.",
       "If you feel pain, burning, irritation, or inflammation in the genital area, remove the cup and contact a doctor."
-    ],
-    "warningsSource": {
-      "url": "https://cdn.shopify.com/s/files/1/2705/9430/files/files_instructions_saalt_instructions_in_english.pdf",
-      "label": "Saalt Cup instructions leaflet (Saalt)"
-    }
+    ]
   },
   "p-nature-made-iron-65mg": {
     "whoItsFor": [
@@ -245,11 +172,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://ods.od.nih.gov/factsheets/iron-Consumer/",
         "label": "NIH Office of Dietary Supplements: Iron fact sheet",
         "summary": "Women with heavy periods are at higher risk of low iron, the adult upper limit is 45 mg a day unless a doctor prescribes more short term, and iron is a leading cause of fatal poisoning in children under 6."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/iron-deficiency-anemia/diagnosis-treatment/drc-20355040.html",
-        "label": "Mayo Clinic: Iron deficiency anemia, diagnosis and treatment",
-        "summary": "Iron deficiency is diagnosed with blood tests including ferritin, supplements are often needed for several months, and constipation and black stools are common side effects."
       }
     ],
     "communityReview": "Most reviewers are happy with it. People often say the small tablets are easy to swallow, the big bottle is good value, and some report their iron levels and energy improved. The most common complaints are stomach upset, nausea, constipation and dark stools, and some Target reviewers say a newer formula added MCT oil from coconut and the sugar alcohol isomalt, which they did not want.",
@@ -309,13 +231,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://api.ods.od.nih.gov/dsld/s3/pdf/83209.pdf",
       "sourceLabel": "Nature's Bounty Vitamin D3 5,000 IU label (NIH Dietary Supplement Label Database)"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/healthy-lifestyle/nutrition-and-healthy-eating/expert-answers/vitamin-d-toxicity/faq-20058108",
-        "label": "Mayo Clinic: What is vitamin D toxicity?",
-        "summary": "Mayo Clinic says adults should not take more than 4,000 IU of vitamin D a day unless a healthcare professional advises it, that too much can raise blood calcium, and that care teams check calcium and vitamin D levels when they prescribe higher doses for a set period."
-      }
-    ],
     "clinicalNote": "Most adults aged 19 to 70 need 600 IU of vitamin D a day, and the upper limit for adults is 4,000 IU a day from all sources combined, so one 5,000 IU softgel is above it on its own. Too much vitamin D can raise blood calcium (hypercalcemia), which can cause nausea, vomiting, muscle weakness, excess thirst, and kidney stones, and NIH notes that vitamin D toxicity almost always comes from supplements, not food or sun. Clear toxicity is unlikely below 10,000 IU a day, but NIH says harms may build up over time at lower doses. Vitamin D can also interact with some medicines, including orlistat (a weight-loss drug) and certain statins.",
     "clinicalNoteSources": [
       {
@@ -352,14 +267,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://saalt.com/blogs/news/different-ways-to-sanitize-your-period-cup-or-menstrual-disc",
       "sourceLabel": "Saalt: Different ways to sanitize your period cup or menstrual disc"
     },
-    "clinicalNote": "Menstrual cups and discs are reused, so the aim of cleaning between periods is to get rid of bacteria such as Staphylococcus aureus, the germ linked to toxic shock syndrome. A 2022 lab study found that washing a cup with soap and cold water and then steeping it in just-boiled water for 5 minutes removed all the S. aureus the researchers added, and steeping after a plain water rinse came close. The authors noted soap can irritate the vagina, so if you use it, rinse it off fully. Steam devices like this one were not tested.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://mdpi-res.com/d_attachment/ijerph/ijerph-19-01450/article_deploy/ijerph-19-01450.pdf",
-        "label": "Int J Environ Res Public Health (2022): In vitro study of cleaning techniques for removing Staphylococcus aureus from menstrual cups",
-        "summary": "In a lab test on silicone cups, soap and water followed by a 5-minute steep in boiled water left no recoverable S. aureus, while rinsing or soap alone did not significantly reduce bacteria."
-      }
-    ],
     "effectiveness": "No independent study of the Saalt Steamer or other cup steamers was found. Saalt says it tested the steamer and that it sanitizes as well as a pot of boiling water, but that is the brand's own claim. The best outside evidence is for the product type's alternative: a 2022 lab study found steeping a washed cup in boiled water for 5 minutes cleared S. aureus, and that study did not test steam.",
     "effectivenessSources": [
       {
@@ -404,20 +311,7 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://flexfits.com/pages/how-flex-works",
       "sourceLabel": "Flex: How Flex works"
-    },
-    "clinicalNote": "A menstrual disc is a flat, flexible ring that sits high in the vagina, tucked up against the cervix (the opening of the uterus), instead of lower down like a cup. Research on discs is thin: a 2026 study of reusable disc users in Kenya noted that no studies had yet specifically evaluated the menstrual disc, though most of its users reported no leaks, pain or worries by their third month. Most safety data comes from menstrual cups, where a 2019 review of 43 studies found leakage similar to or lower than pads and tampons, 5 reported cases of toxic shock syndrome (a rare, serious bacterial illness), and 13 women whose IUD (intrauterine device, a form of birth control) moved out of place. If you have an IUD, it's worth asking your clinician before using a cup or disc.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://public-pages-files-2025.frontiersin.org/journals/reproductive-health/articles/10.3389/frph.2025.1740096/pdf",
-        "label": "Frontiers in Reproductive Health (2026): Female sex workers' experiences using a menstrual disc in Western Kenya",
-        "summary": "Qualitative study of 38 disc users; most reported no leakage, pain or concerns by month three, and the authors note no prior studies had specifically evaluated menstrual discs."
-      },
-      {
-        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
-        "label": "Lancet Public Health (2019): Menstrual cup use, leakage, acceptability, safety and availability, systematic review and meta-analysis",
-        "summary": "Across 43 studies and 3,319 people, cup leakage was similar to or lower than pads and tampons; 5 TSS cases and 13 IUD dislodgements were reported with cup use."
-      }
-    ]
+    }
   },
   "p-thinx": {
     "clinicalSources": [
@@ -446,30 +340,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.walmart.com/cp/thinx/1546255",
       "sourceLabel": "Thinx brand shop and FAQ (Walmart)"
     },
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health: Red blood cell capacity of modern menstrual products",
-        "summary": "In a lab test of 21 menstrual products, period underwear held the least blood (about 2 mL on average) and absorbed slowly, so the authors say it suits backup or lighter days more than heavy bleeding."
-      }
-    ],
-    "clinicalNote": "Period underwear has an absorbent layer that traps blood, plus a moisture barrier and a leak-proof layer. A Cleveland Clinic ob/gyn says most pairs typically hold about 1 to 2 tampons' worth of flow, so it's worth trying a pair on your lightest day first, and some people find it gentler than pads if pads irritate their skin. It stays hygienic as long as you wash it properly.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-        "label": "Cleveland Clinic (2022): What is period underwear and does it work?",
-        "summary": "An ob/gyn explains how period underwear is built, that it typically holds 1 to 2 tampons' worth of flow, and how to wear and wash it."
-      }
-    ],
     "warnings": [
       "Don't wear the same pair for more than 12 hours, and change sooner on heavier days.",
       "Wash with a mild, unscented, dye-free detergent and add an extra rinse.",
       "Skip fabric softener and let them air-dry."
-    ],
-    "warningsSource": {
-      "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-      "label": "Cleveland Clinic: What is period underwear and does it work?"
-    }
+    ]
   },
   "p-cora-organic-tampons": {
     "whoItsFor": [
@@ -495,20 +370,10 @@ export const PRODUCT_RESEARCH = {
         "url": "https://factor.niehs.nih.gov/2024/8/feature/3-feature-metals-in-tampons",
         "label": "NIEHS: Metals detected in tampons (Environment International, 2024)",
         "summary": "Testing of 30 tampons from 14 brands found lead higher in non-organic tampons and arsenic higher in organic ones; whether these metals are absorbed by the body is unknown."
-      },
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1240689",
-        "label": "DeVito and Schecter, Environmental Health Perspectives (2002)",
-        "summary": "Trace dioxins were found in both cotton and pulp tampons, but estimated exposure was thousands of times lower than from diet."
       }
     ],
-    "clinicalNote": "Toxic shock syndrome (TSS) is a rare but serious infection caused by toxins from certain Staph bacteria, and it has been linked to tampon use. Health Canada says the tampon material, cotton or rayon, has not been found to be a TSS risk factor, while higher absorbency appears to be one, so organic cotton tampons need the same precautions as any other. FDA testing found trace metals released from tampons during use are too small to cause harm.",
+    "clinicalNote": "Toxic shock syndrome (TSS) is a rare but serious infection caused by toxins from certain Staph bacteria, and it has been linked to tampon use. FDA testing found trace metals released from tampons during use are too small to cause harm.",
     "clinicalNoteSources": [
-      {
-        "url": "https://www.canada.ca/en/health-canada/services/drugs-medical-devices/menstrual-tampons.html",
-        "label": "Health Canada: Menstrual tampons",
-        "summary": "Explains TSS, states that cotton vs rayon material has not been found to be a risk factor, and that higher absorbency appears to be one."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
         "label": "FDA: Tampons",
@@ -543,45 +408,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.vitacost.com/products/wholesome-story-myo-d-chiro-inositol-120-vegetarian-capsules-114887",
       "sourceLabel": "Wholesome Story label directions (Vitacost listing)"
     },
-    "clinicalSources": [
-      {
-        "url": "https://academic.oup.com/humrep/article/38/9/1655/7241786",
-        "label": "Recommendations from the 2023 International PCOS Guideline, Human Reproduction",
-        "summary": "Inositol could be considered for metabolic measures based on personal preference, but it is experimental for fertility, no specific type, dose or ratio can be recommended, and its side effects and safety are not known."
-      }
-    ],
-    "clinicalNote": "The 2023 international guideline notes that inositol products can have limited regulation, with variable dose, quality and consistency, and that side effects and safety are not yet known. If you take it, tell your healthcare professional.",
-    "ingredientScience": [
-      {
-        "name": "Myo-inositol",
-        "text": "Myo-inositol is the main ingredient here (2,000 mg per 4-capsule serving). A 2024 review done for the international guideline found it may help some metabolic measures, but called the overall evidence for inositol in PMOS limited and inconclusive. It likely causes fewer stomach side effects than metformin, and those tend to be mild and pass on their own.",
-        "citations": [
-          {
-            "url": "https://digital.library.adelaide.edu.au/dspace/bitstream/2440/140526/2/hdl_140526.pdf",
-            "label": "Journal of Clinical Endocrinology & Metabolism, 2024: Inositol for PCOS, systematic review and meta-analysis for the 2023 international PCOS guideline (University of Adelaide copy)"
-          }
-        ]
-      },
-      {
-        "name": "D-chiro-inositol",
-        "text": "D-chiro-inositol (DCI) is a close cousin of myo-inositol (50 mg per serving here). The same guideline review found DCI may help with ovulation, but this rests on a small number of trials and the overall evidence was rated limited and inconclusive.",
-        "citations": [
-          {
-            "url": "https://digital.library.adelaide.edu.au/dspace/bitstream/2440/140526/2/hdl_140526.pdf",
-            "label": "Journal of Clinical Endocrinology & Metabolism, 2024: Inositol for PCOS, systematic review and meta-analysis for the 2023 international PCOS guideline (University of Adelaide copy)"
-          }
-        ]
-      }
-    ],
     "warnings": [
       "Check with your healthcare provider before use if you are trying to get pregnant, are pregnant or nursing, have any medical condition, or take any medications.",
       "For adult use only. Keep out of reach of children.",
       "Do not use if the tamper-evident seal is broken or missing."
-    ],
-    "warningsSource": {
-      "url": "https://www.vitacost.com/products/wholesome-story-myo-d-chiro-inositol-120-vegetarian-capsules-114887",
-      "label": "Wholesome Story Myo & D-Chiro Inositol label, via Vitacost"
-    }
+    ]
   },
   "p-spearmint-pcos": {
     "whoItsFor": [
@@ -600,22 +431,7 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://fullscript.com/catalog/products/organic-spearmint-tea",
       "sourceLabel": "Traditional Medicinals Organic Spearmint label directions (Fullscript listing)"
-    },
-    "clinicalSources": [
-      {
-        "url": "https://academic.oup.com/humrep/article/38/9/1655/7241786",
-        "label": "Recommendations from the 2023 International PCOS Guideline, Human Reproduction",
-        "summary": "Lifestyle care is recommended for everyone with PMOS, and people using complementary therapies are encouraged to tell their healthcare professional so choices can be discussed together."
-      }
-    ],
-    "clinicalNote": "The main study behind spearmint tea for PMOS is a small randomized trial lasting just 30 days, where women drank spearmint tea or a placebo tea. Androgen levels (male-type hormones like testosterone) dropped in the spearmint group and women said they felt better about their hair growth, but the objective score for unwanted hair (the Ferriman-Gallwey score) did not change significantly. So it is an early signal on hormone levels, not proof that symptoms improve.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.endocrine-abstracts.org/ea/0015/ea0015p282",
-        "label": "Endocrine Abstracts (Society for Endocrinology BES 2008): Randomised trial of spearmint herbal tea on hirsutism in PCOS",
-        "summary": "30-day randomized trial: spearmint tea lowered androgen levels and improved quality-of-life scores, but the objective hair-growth score change was not significant."
-      }
-    ]
+    }
   },
   "p-love-wellness-bloat": {
     "whoItsFor": [
@@ -637,28 +453,12 @@ export const PRODUCT_RESEARCH = {
     },
     "clinicalSources": [
       {
-        "url": "https://my.clevelandclinic.org/health/symptoms/21740-bloated-stomach",
-        "label": "Cleveland Clinic: Bloated stomach",
-        "summary": "Lists probiotics among over-the-counter options and diet steps like less salt and carbonation, and says to see a provider if bloating lasts over a week, is very painful, or comes with fever, vomiting, bleeding or weight loss."
-      },
-      {
         "url": "https://www.nccih.nih.gov/health/ginger",
         "label": "NIH NCCIH: Ginger",
         "summary": "Ginger has the best evidence for pregnancy nausea, can cause abdominal discomfort, heartburn and diarrhea, and may interact with medicines."
       }
     ],
-    "clinicalNote": "See a clinician if bloating lasts more than a week, is very painful, or comes with fever, vomiting, bleeding or weight loss. Ginger can cause heartburn, diarrhea or stomach discomfort in some people and may interact with medicines.",
     "ingredientScience": [
-      {
-        "name": "Digestive enzymes (amylase, protease, lipase, plus pepsin, bromelain and papain)",
-        "text": "These enzymes break down starch, protein and fat. Harvard Health says that for most people there is little evidence over-the-counter enzyme pills do any good for bloating; the clearer exceptions are single enzymes for a specific problem, like lactase for lactose intolerance. Enzyme supplements are not FDA regulated, so you can't be sure how much enzyme a pill contains.",
-        "citations": [
-          {
-            "url": "https://www.health.harvard.edu/staying-healthy/can-taking-enzyme-supplements-help-soothe-my-bloating",
-            "label": "Harvard Health Publishing: Can taking enzyme supplements help soothe my bloating?"
-          }
-        ]
-      },
       {
         "name": "Ginger root",
         "text": "Ginger has research support for nausea and vomiting in pregnancy, but NCCIH's fact sheet does not list bloating or gas as an evidence-backed use. By mouth it can cause stomach discomfort, heartburn and diarrhea in some people.",
@@ -694,11 +494,7 @@ export const PRODUCT_RESEARCH = {
       "Check with your healthcare provider before starting, especially if you are pregnant, nursing or taking medication.",
       "For adult use only. Keep out of reach of children.",
       "The label carries a California Prop 65 warning about exposure to chemicals the state lists as causing cancer."
-    ],
-    "warningsSource": {
-      "url": "https://target.com/p/love-wellness-bye-bye-bloat-for-fast-bloating-relief-60ct/-/A-80209808",
-      "label": "Love Wellness Bye Bye Bloat label, via Target"
-    }
+    ]
   },
   "p-intimina-kegel": {
     "whoItsFor": [
@@ -718,33 +514,7 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.lookfantastic.com/p/intimina-laselle-kegel-routine/13034095/",
       "sourceLabel": "Intimina Laselle how-to-use instructions (Lookfantastic listing)"
-    },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/art-20045283",
-        "label": "Mayo Clinic: Kegel exercises, a how-to guide for women",
-        "summary": "Kegels can help with stress and urge leakage, are less helpful for heavy leakage or overflow leaking, and a provider may suggest a weighted vaginal cone you hold in place while standing or walking."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2",
-        "label": "Cochrane review: Weighted vaginal cones for urinary incontinence",
-        "summary": "Cones were better than no active treatment and may be about as effective as standard pelvic floor training, but trials were small, the conclusion is tentative, and about 1 in 5 women dropped out."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Weighted vaginal cones (the device type)",
-        "text": "Laselle is a set of weighted vaginal exercisers (often called cones) in medical-grade silicone. A 2013 Cochrane review found some evidence that weighted cones help women with stress urinary incontinence (leaking when you cough, sneeze or exercise) more than no treatment, and may work about as well as regular pelvic floor exercises, but the trials were small and the authors called the conclusions tentative. Some women find vaginal weights unpleasant or hard to use.",
-        "citations": [
-          {
-            "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/pdf/CDSR/CD002114/CD002114_abstract.pdf",
-            "label": "Cochrane Review, 2013: Weighted vaginal cones for urinary incontinence"
-          }
-        ]
-      }
-    ]
+    }
   },
   "p-pelvic-wand": {
     "whoItsFor": [
@@ -765,19 +535,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.intimaterose.com/pages/pelvic-wand-guide-page",
       "sourceLabel": "Intimate Rose: How to use your Pelvic Wand"
     },
-    "clinicalNote": "ACOG's updated guidance on chronic pelvic pain, summarized by AAFP, notes that muscle-related pain is common in chronic pelvic pain and suggests considering pelvic floor physical therapy, alone or alongside other treatments. Research on internal trigger-point wands specifically is thin. The main study followed 374 people (about 80% men) who used a wand together with a relaxation training program for 6 months; their use of pain and other medications dropped, but there was no comparison group.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.aafp.org/pubs/afp/issues/2021/0201/p186.html",
-        "label": "American Family Physician (AAFP), 2021: Chronic Pelvic Pain in Women, ACOG Updates Recommendations",
-        "summary": "Summary of ACOG's chronic pelvic pain recommendations, including considering pelvic floor physical therapy."
-      },
-      {
-        "url": "https://link.springer.com/article/10.1007%2Fs10484-015-9273-1",
-        "label": "Applied Psychophysiology and Biofeedback (Springer), 2015: Chronic pelvic pain syndrome, medication use after pelvic floor PT with an internal trigger point wand",
-        "summary": "Uncontrolled 6-month study of an internal trigger point wand plus relaxation therapy in 374 patients, mostly men, showing reduced medication use."
-      }
-    ],
     "warnings": [
       "Do not use the wand if you have an active pelvic infection.",
       "Use only gentle force with the wand."
@@ -810,19 +567,9 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.nccih.nih.gov/health/black-cohosh",
         "label": "NIH National Center for Complementary and Integrative Health: Black Cohosh",
         "summary": "Black cohosh may help hot flashes but not anxiety or low mood, may not be safe in pregnancy or with hormone-sensitive cancers, and rare liver injury has been reported, so watch for dark urine or fatigue and talk to your provider first."
-      },
-      {
-        "url": "https://www.emas-online.org/wp-content/uploads/2021/04/nonhormonal.pdf",
-        "label": "European Menopause and Andropause Society position statement (Maturitas, 2015): Non-hormonal management of menopausal vasomotor symptoms",
-        "summary": "EMAS says evidence for phytoestrogen supplements like soy isoflavones is insufficient or conflicting, and that a Cochrane review did not show black cohosh beats placebo for menopause symptoms."
       }
     ],
     "scienceSources": [
-      {
-        "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD007244.pub2/pdf/CDSR/CD007244/CD007244_abstract.pdf",
-        "label": "Leach and Moore, Cochrane review (2012): Black cohosh for menopausal symptoms",
-        "summary": "Across 16 trials with 2,027 women, black cohosh did not reduce hot flashes or overall menopause scores more than placebo, and the authors found insufficient evidence to support its use."
-      },
       {
         "url": "https://www.ncbi.nlm.nih.gov/books/NBK547990/",
         "label": "NIH LiverTox: Black cohosh",
@@ -849,39 +596,14 @@ export const PRODUCT_RESEARCH = {
             "label": "NCCIH (NIH) Clinical Digest, 2021: Menopausal Symptoms and Complementary Health Practices"
           }
         ]
-      },
-      {
-        "name": "Ginkgo biloba leaf extract",
-        "text": "Ginkgo is often sold for memory, but Mayo Clinic says most studies show it does not improve memory, attention or brain function, and it does not prevent or slow dementia. It might raise bleeding risk, especially with blood thinners or ibuprofen, and in large amounts may raise seizure risk in people with epilepsy.",
-        "citations": [
-          {
-            "url": "https://www.mayoclinic.org/drugs-supplements/ginkgo/art-20362032",
-            "label": "Mayo Clinic: Ginkgo"
-          }
-        ]
-      },
-      {
-        "name": "Magnolia bark extract",
-        "text": "Evidence here is weak. The one trial we found gave 89 menopausal women a combination tablet with magnolia, soy isoflavones and other ingredients for 24 weeks, and sleep and mood improved more than with calcium and vitamin D, but because it was a mix, the study can't show what magnolia did on its own.",
-        "citations": [
-          {
-            "url": "https://iris.uniroma1.it/handle/11573/241452",
-            "label": "Minerva Ginecologica, 2006: Soy isoflavones, lactobacilli, Magnolia bark extract, vitamin D3 and calcium, controlled clinical study in menopause"
-          }
-        ]
       }
     ],
-    "clinicalNote": "Estroven mixes several plant ingredients rather than hormones. NCCIH says soy isoflavones may reduce hot flashes a little and that evidence for black cohosh is inconsistent. In its 2023 position statement, The Menopause Society did not recommend soy products or supplements and herbal remedies for hot flashes, and listed options such as CBT, certain antidepressants, gabapentin and fezolinetant as recommended non-hormone treatments.",
+    "clinicalNote": "Estroven mixes several plant ingredients rather than hormones. NCCIH says soy isoflavones may reduce hot flashes a little and that evidence for black cohosh is inconsistent.",
     "clinicalNoteSources": [
       {
         "url": "https://nccih.nih.gov/health/providers/digest/menopausal-symptoms-and-complementary-health-practices-science",
         "label": "NCCIH (NIH) Clinical Digest, 2021: Menopausal Symptoms and Complementary Health Practices",
         "summary": "Summarizes evidence on soy isoflavones (small possible benefit) and black cohosh (inconsistent) for menopause symptoms."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
-        "label": "The Menopause Society (NAMS), 2023: Nonhormone therapy position statement release",
-        "summary": "Lists which non-hormone hot flash treatments the society recommends and which, including soy products and herbal supplements, it does not."
       }
     ],
     "warnings": [
@@ -889,11 +611,7 @@ export const PRODUCT_RESEARCH = {
       "Do not take if you are pregnant, breastfeeding or trying to get pregnant.",
       "Keep out of reach of children.",
       "Do not use if any part of the blister pack is torn, open or damaged."
-    ],
-    "warningsSource": {
-      "url": "https://www.vitacost.com/products/estroven-menopause-relief-mood-boost-30-caplets-63596",
-      "label": "Estroven Menopause Relief + Mood Boost label, via Vitacost"
-    }
+    ]
   },
   "p-remifemin": {
     "whoItsFor": [
@@ -912,22 +630,10 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://superpharmacyplus.com.au/remifemin-menopause-symptom-relief-100-tablets/",
       "sourceLabel": "Remifemin Menopause Symptom Relief label (Super Pharmacy Plus listing, Australia)"
     },
-    "scienceSources": [
-      {
-        "url": "https://pubmed.ncbi.nlm.nih.gov/17587516/",
-        "label": "Maturitas (2007): Isopropanolic black cohosh extract (Remifemin) vs tibolone in Chinese women with menopausal symptoms",
-        "summary": "In a 3-month double-blind trial of 244 women, the Remifemin extract reduced menopause symptom scores about as much as the hormone drug tibolone, with fewer side effects."
-      },
-      {
-        "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD007244.pub2/pdf/CDSR/CD007244/CD007244_abstract.pdf",
-        "label": "Leach and Moore, Cochrane review (2012): Black cohosh for menopausal symptoms",
-        "summary": "Across 16 trials with 2,027 women, black cohosh in general did not reduce hot flashes or overall menopause scores more than placebo, and the authors found insufficient evidence to support its use."
-      }
-    ],
     "ingredientScience": [
       {
         "name": "Black cohosh extract",
-        "text": "Black cohosh is the most researched herb for hot flashes, but the results don't line up neatly. NCCIH cites a 2023 review of 22 studies that found it potentially helpful for overall menopause symptoms and hot flashes, but not for anxiety or depression. It is generally well tolerated in studies up to a year, though rare and sometimes serious liver damage has been reported with black cohosh products.",
+        "text": "Black cohosh is the most researched herb for hot flashes, but the results don't line up neatly. NCCIH cites a 2023 review of 22 studies that found it potentially helpful for overall menopause symptoms and hot flashes, but not for anxiety or depression.",
         "citations": [
           {
             "url": "https://www.nccih.nih.gov/health/black-cohosh",
@@ -936,17 +642,12 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "Black cohosh is one of the few herbs with a sizable research base for hot flashes, but that research is mixed. NCCIH notes that black cohosh extracts approved in Europe seem to reduce menopause symptoms in one review, while overall evidence is inconsistent. In its 2023 position statement, The Menopause Society did not recommend supplements and herbal remedies for hot flashes. NCCIH also says it is not clear whether black cohosh is safe for women who have had hormone-sensitive conditions such as breast cancer.",
+    "clinicalNote": "Black cohosh is one of the few herbs with a sizable research base for hot flashes, but that research is mixed. NCCIH notes that black cohosh extracts approved in Europe seem to reduce menopause symptoms in one review, while overall evidence is inconsistent. NCCIH also says it is not clear whether black cohosh is safe for women who have had hormone-sensitive conditions such as breast cancer.",
     "clinicalNoteSources": [
       {
         "url": "https://nccih.nih.gov/health/providers/digest/menopausal-symptoms-and-complementary-health-practices-science",
         "label": "NCCIH (NIH) Clinical Digest, 2021: Menopausal Symptoms and Complementary Health Practices",
         "summary": "Reviews black cohosh evidence (inconsistent overall, possible benefit for European-approved extracts) and liver and breast cancer safety questions."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
-        "label": "The Menopause Society (NAMS), 2023: Nonhormone therapy position statement release",
-        "summary": "Says supplements and herbal remedies are not recommended for hot flashes and lists recommended non-hormone options."
       }
     ],
     "warnings": [
@@ -985,47 +686,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.professionalsupplementcenter.com/products/creatine-powder-by-thorne-research",
       "sourceLabel": "Thorne Creatine label directions (Professional Supplement Center listing)"
     },
-    "scienceSources": [
-      {
-        "url": "https://ro.ecu.edu.au/ecuworks2022-2026/8225",
-        "label": "Naddafha et al., Journal of the International Society of Sports Nutrition (2026): Creatine monohydrate for lean mass, strength and bone density in postmenopausal women",
-        "summary": "Across 7 trials with 608 postmenopausal women, 5 g a day or more of creatine plus resistance training led to small gains in lean mass and leg strength with no sign of harm, while lower doses without training showed no effect and bone density did not change."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Creatine monohydrate (5 g per scoop)",
-        "text": "Creatine tops up the quick energy stores your muscles use for short, hard efforts. In postmenopausal women the evidence for muscle (and, in some trials, bone) is best when creatine is paired with resistance training, but a 2025 review found no studies yet in perimenopausal women, so benefits for brain fog, mood or sleep in menopause are still unproven ideas.",
-        "citations": [
-          {
-            "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12086928/",
-            "label": "NIH (PMC): J Int Soc Sports Nutr 2025 (Smith-Ryan et al.), doi:10.1080/15502783.2025.2502094: Creatine in women's health, menstruation to menopause"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "Creatine is one of the most studied sports supplements. A 2017 position stand from the International Society of Sports Nutrition found it consistently improves exercise performance and that doses studied, up to 30 g a day for 5 years, were safe and well tolerated. For women in midlife, the best evidence comes from postmenopausal women, where creatine plus strength training helped muscle and, in some trials, bone; a 2025 review found no studies yet in perimenopausal women and called benefits for brain fog, mood and sleep areas that still need research. Several authors of both papers have advisory or funding ties to creatine makers, which they disclose.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://doaj.org/article/4a276c2d31944beaab82cdc923c69c83",
-        "label": "J Int Soc Sports Nutr 2017 (Kreider et al.), doi:10.1186/s12970-017-0173-z: ISSN position stand on creatine safety and efficacy",
-        "summary": "Expert position stand concluding creatine improves exercise performance and is safe and well tolerated at studied doses, up to 30 g a day for 5 years."
-      },
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12086928/",
-        "label": "NIH (PMC): J Int Soc Sports Nutr 2025 (Smith-Ryan et al.), doi:10.1080/15502783.2025.2502094: Creatine in women's health, menstruation to menopause",
-        "summary": "Narrative review finding the strongest midlife evidence in postmenopausal women using resistance training, with no studies yet in perimenopausal women."
-      }
-    ],
     "warnings": [
       "If you are pregnant, check with your healthcare practitioner before using it.",
       "Use only if the bottle's seal is intact.",
       "Store tightly sealed in a cool, dry place."
-    ],
-    "warningsSource": {
-      "url": "https://www.vitacost.com/products/thorne-creatine-16-oz-450-g-70006",
-      "label": "Thorne Creatine 16 oz label text (Vitacost listing)"
-    }
+    ]
   },
   "d-nurx-bc": {
     "whoItsFor": [
@@ -1050,26 +715,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://cdc.gov/contraception/hcp/usspr/tests-before-contraception.html",
         "label": "CDC U.S. Selected Practice Recommendations for Contraceptive Use: Exams and tests needed before starting contraception",
         "summary": "A blood pressure reading is the only essential check before starting the combined pill, patch or ring, a pelvic exam isn't needed, and if a provider can't measure it, patients can report a blood pressure taken elsewhere."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://ibisreproductivehealth.org/node/1010",
-        "label": "Zuniga et al., Journal of Telemedicine and Telecare (2019): An assessment of online platforms prescribing birth control in the USA",
-        "summary": "Comparing nine US online birth control platforms against CDC eligibility criteria, the authors found they appear to screen adequately for contraindications and prescribe safely, though their health questionnaires could be more rigorous."
-      }
-    ],
-    "clinicalNote": "With Nurx, a licensed clinician reviews your answers to an online health questionnaire and decides whether a birth control method is safe for you, a screening similar to the one at an in-person visit. A 2019 study of nine US online birth control platforms found they generally did a good job screening for health conditions that make some methods unsafe, judged against CDC guidelines, though the authors said the health questionnaires could be more thorough. A federal evidence review from AHRQ (the Agency for Healthcare Research and Quality) found that telehealth birth control care led to similar results as usual care, such as similar pregnancy rates, but the strength of that evidence is low and no studies looked at harms. Your clinician's decision is based on what you report, so answer the health questions fully and honestly.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.ibisreproductivehealth.org/node/1010",
-        "label": "J Telemed Telecare 2019 (Zuniga et al.), doi:10.1177/1357633X18824828: Assessment of online platforms prescribing birth control in the USA (Ibis Reproductive Health summary)",
-        "summary": "Found US online birth control platforms adequately screened for contraindications under CDC guidelines, with room to make questionnaires more rigorous."
-      },
-      {
-        "url": "https://www.aafp.org/afp/2023/0500/ahrq-telehealth-womens-preventive-services.pdf",
-        "label": "American Family Physician 2023 (AAFP), summarizing AHRQ Comparative Effectiveness Review No. 256: Effectiveness of Telehealth for Women's Preventive Services",
-        "summary": "Telehealth contraception care had similar outcomes to usual care with low strength of evidence; harms were not studied."
       }
     ],
     "warnings": [
@@ -1108,26 +753,6 @@ export const PRODUCT_RESEARCH = {
         "summary": "A blood pressure reading is the only essential check before starting the combined pill, patch or ring, a pelvic exam isn't needed, and if a provider can't measure it, patients can report a blood pressure taken elsewhere."
       }
     ],
-    "scienceSources": [
-      {
-        "url": "https://ibisreproductivehealth.org/node/1010",
-        "label": "Zuniga et al., Journal of Telemedicine and Telecare (2019): An assessment of online platforms prescribing birth control in the USA",
-        "summary": "Comparing nine US online birth control platforms against CDC eligibility criteria, the authors found they appear to screen adequately for contraindications and prescribe safely, though their health questionnaires could be more rigorous."
-      }
-    ],
-    "clinicalNote": "Wisp visits are asynchronous, which means you fill out a health form and a licensed clinician reviews it later, with no live appointment. A 2019 study of nine US online birth control platforms found they generally did a good job screening for health conditions that make some methods unsafe, judged against CDC guidelines, though the authors said the health questionnaires could be more thorough. A federal evidence review from AHRQ (the Agency for Healthcare Research and Quality) found that telehealth birth control care led to similar results as usual care, such as similar pregnancy rates, but the strength of that evidence is low and no studies looked at harms. The same review found STI rates were similar between telehealth and in-person care, again with low-strength evidence. Your clinician's decision is based on what you report, so answer the health questions fully and honestly.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.ibisreproductivehealth.org/node/1010",
-        "label": "J Telemed Telecare 2019 (Zuniga et al.), doi:10.1177/1357633X18824828: Assessment of online platforms prescribing birth control in the USA (Ibis Reproductive Health summary)",
-        "summary": "Found US online birth control platforms adequately screened for contraindications under CDC guidelines, with room to make questionnaires more rigorous."
-      },
-      {
-        "url": "https://www.aafp.org/afp/2023/0500/ahrq-telehealth-womens-preventive-services.pdf",
-        "label": "American Family Physician 2023 (AAFP), summarizing AHRQ Comparative Effectiveness Review No. 256: Effectiveness of Telehealth for Women's Preventive Services",
-        "summary": "Telehealth contraception and STI care had similar outcomes to in-person or usual care, with low strength of evidence; harms were not studied."
-      }
-    ],
     "warnings": [
       "Do not use Wisp for emergencies: call 911 or go to the nearest emergency room.",
       "Not every condition is suitable for telehealth, and your provider may decide it is not right for your case.",
@@ -1157,21 +782,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.forhers.com/blog/getting-weight-loss-medication-through-hers",
       "sourceLabel": "Hers: Getting weight loss medication through Hers"
     },
-    "scienceSources": [
-      {
-        "url": "https://www.deepdyve.com/lp/sage/breaking-down-barriers-to-birth-control-access-an-assessment-of-online-GJ0gOzB3r8?key=sage",
-        "label": "Zuniga, Grossman et al., Journal of Telemedicine and Telecare (2019): online platforms prescribing birth control in the USA",
-        "summary": "A review of nine US online birth control services found their health questionnaires screened for contraindications well enough to prescribe safely, though the authors said the questionnaires could be more thorough."
-      }
-    ],
-    "clinicalNote": "Telehealth can work well for some women's health needs, but the research is still thin. A federal evidence review from AHRQ (the Agency for Healthcare Research and Quality) found telehealth gave similar results to usual care for birth control and STI care, and was at least as good as usual care for depression scores in women affected by partner violence, but rated all of this evidence as low strength and found little data on harms. That fits the existing advice here: some concerns are fine online, and some need an in-person exam.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.aafp.org/afp/2023/0500/ahrq-telehealth-womens-preventive-services.pdf",
-        "label": "American Family Physician 2023 (AAFP), summarizing AHRQ Comparative Effectiveness Review No. 256: Effectiveness of Telehealth for Women's Preventive Services",
-        "summary": "Telehealth for contraception, STI care, and depression in women affected by partner violence had similar or better outcomes than usual care, all with low strength of evidence."
-      }
-    ],
     "warnings": [
       "If it is an emergency, call 911; for thoughts of suicide, call 911 or the 988 Suicide and Crisis Lifeline.",
       "Telehealth is not right for every situation, and some conditions may need emergency, in-person, or specialist care.",
@@ -1201,33 +811,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.joinmidi.com/premenopause",
       "sourceLabel": "Midi Health: How Midi works"
     },
-    "clinicalSources": [
-      {
-        "url": "https://menopause.org/wp-content/uploads/press-release/ht-position-statement-release.pdf",
-        "label": "The Menopause Society: 2022 Hormone Therapy Position Statement (press release)",
-        "summary": "For most healthy women with symptoms who are under 60 or within 10 years of menopause, the benefits of hormone therapy generally outweigh the risks, and dose, route and duration should be personalized through shared decision-making."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8785511",
-        "label": "Wright et al., Menopause (2022): patient satisfaction with telephone menopause visits",
-        "summary": "At a Toronto menopause clinic, patients rated remote visits highly (4.23 out of 5), and about 80% of those who had been seen in person before preferred the remote visits."
-      },
-      {
-        "url": "https://research.monash.edu/en/publications/the-impact-of-covid-19-on-a-specialised-menopause-clinic-changes-/",
-        "label": "Kozica-Olenski et al., Australian and New Zealand Journal of Obstetrics and Gynaecology (2023)",
-        "summary": "When a specialist menopause clinic moved to telehealth, 70% of surveyed women were satisfied, and most preferred an in-person first visit with telehealth for follow-ups, so the authors recommended a hybrid model."
-      }
-    ],
-    "clinicalNote": "Midi's clinicians can prescribe hormone therapy when it is appropriate. The Menopause Society's 2022 position statement says its benefits outweigh its risks for most healthy women with symptoms who are under 60 or within 10 years of their last period. It also says the dose, form and length of treatment should be chosen with you, that hormones taken through the skin (such as patches) and lower doses may lower the risk of blood clots and stroke, and that the balance of benefits and risks should be rechecked over time, which makes regular follow-up visits important whether they are virtual or in person.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://menopause.org/wp-content/uploads/press-release/ht-position-statement-release.pdf",
-        "label": "The Menopause Society: 2022 Hormone Therapy Position Statement (press release)",
-        "summary": "Says hormone therapy benefits outweigh risks for most healthy symptomatic women under 60 or within 10 years of menopause, with personalized dosing and periodic reevaluation."
-      }
-    ],
     "warnings": [
       "If you have a medical emergency, get in-person emergency care right away or call 911.",
       "The service is not right for every medical condition or concern.",
@@ -1257,19 +840,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.pomelocare.com/getstarted",
       "sourceLabel": "Pomelo Care: Get started"
     },
-    "clinicalNote": "Evidence on virtual pregnancy and women's health care is promising but still early. A 2020 systematic review in Obstetrics and Gynecology found text messaging may help with things like quitting smoking in pregnancy, breastfeeding and taking birth control consistently, and that remote monitoring and virtual visits helped where getting to a clinic was hard, while its lead author noted we still know very little about how well these tools work. In a large Kaiser Permanente study of about 151,000 pregnancies, swapping some routine prenatal visits for virtual ones was not linked to meaningful changes in outcomes like preeclampsia, preterm birth, or cesarean birth, apart from a slight rise in newborn intensive care (NICU) admissions in one period.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://smhs.gwu.edu/news/telehealth-interventions-associated-improved-obstetric-outcomes",
-        "label": "George Washington University School of Medicine: summary of DeNicola et al., Obstet Gynecol 2020, doi:10.1097/AOG.0000000000003646, systematic review of telehealth in OB-GYN",
-        "summary": "Systematic review finding text messaging and remote monitoring may support some pregnancy and contraception outcomes, with much still unknown."
-      },
-      {
-        "url": "https://www.cidrap.umn.edu/covid-19/hybrid-prenatal-care-not-tied-worse-maternal-newborn-health-amid-covid-19",
-        "label": "University of Minnesota CIDRAP: summary of Kaiser Permanente study in JAMA Network Open on hybrid virtual prenatal care",
-        "summary": "Converting several routine prenatal visits to virtual care in 151,464 pregnancies showed no clinically relevant changes in most outcomes, with a slight rise in NICU admissions in one period."
-      }
-    ],
     "warnings": [
       "Do not use Pomelo Care if you may be having a medical emergency: call 911 or go to the nearest emergency room.",
       "Some services are only available in certain states.",
@@ -1329,31 +899,6 @@ export const PRODUCT_RESEARCH = {
         "summary": "All menstrual products sold in the U.S. are regulated as medical devices, and wearing any product too long can let harmful bacteria grow."
       }
     ],
-    "clinicalNote": "The FDA notes that some people react to scents, deodorants or other materials added to pads, and that wearing a pad too long can irritate skin. Changing every few hours, even on light days, matters as much as what the pad is made of.",
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
-        "summary": "Found no clear cause-and-effect link between pads and skin or vaginal health effects and said the evidence is too thin to prove harm or confirm safety."
-      },
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7958867/",
-        "label": "Lin, Batterman et al., Environment International (2020): volatile organic compounds in feminine hygiene products",
-        "summary": "Testing of US feminine hygiene products, including pads, found that 'organic' or 'natural' labels did not reliably mean lower levels of volatile organic compounds, and scented pads had more aromatic compounds than unscented ones."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Organic cotton",
-        "text": "Cotton is the part that touches your skin. One small Italian study in women with irritated vulvar skin (vulvitis) reported fewer itching and irritation complaints with organic cotton pads than with their usual synthetic pads, but the abstract does not say how many women took part and there was no clear control group, so treat this as weak evidence.",
-        "citations": [
-          {
-            "url": "https://iris.unipv.it/handle/11571/1258246",
-            "label": "Minerva Ginecologica 2018 (Mori et al.), doi:10.23736/S0026-4784.18.04338-1: Safety and skin tolerability of organic cotton pads in irritative vulvitis"
-          }
-        ]
-      }
-    ],
     "warnings": [
       "Change your pad every few hours, even if your flow is light, and more often on heavy days.",
       "Wearing a pad too long may irritate your skin.",
@@ -1382,51 +927,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual pads and liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
-        "summary": "Found no clear cause-and-effect link between pads and skin or vaginal health effects and said the evidence is too thin to prove harm or confirm safety."
-      },
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7958867/",
-        "label": "Lin, Batterman et al., Environment International (2020): volatile organic compounds in feminine hygiene products",
-        "summary": "Testing of US feminine hygiene products, including pads, found that 'organic' or 'natural' labels did not reliably mean lower levels of volatile organic compounds, and scented pads had more aromatic compounds than unscented ones."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Organic cotton",
-        "text": "Cotton is the part that touches your skin. One small Italian study in women with irritated vulvar skin (vulvitis) reported fewer itching and irritation complaints with organic cotton pads than with their usual synthetic pads, but the abstract does not say how many women took part and there was no clear control group, so treat this as weak evidence.",
-        "citations": [
-          {
-            "url": "https://iris.unipv.it/handle/11571/1258246",
-            "label": "Minerva Ginecologica 2018 (Mori et al.), doi:10.23736/S0026-4784.18.04338-1: Safety and skin tolerability of organic cotton pads in irritative vulvitis"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "Pads are regulated by the FDA as medical devices, and FDA advises changing them every few hours, even on light days, because wearing one too long can irritate your skin. Clinicians who treat vulvar irritation often suggest 100% cotton pads for people with sensitive skin, and one small study found fewer irritation complaints with organic cotton pads, though the evidence is limited. A 2019 systematic review of pad safety found too few studies to say for sure whether pad chemicals affect long-term health.",
+    "clinicalNote": "Pads are regulated by the FDA as medical devices, and FDA advises changing them every few hours, even on light days, because wearing one too long can irritate your skin.",
     "clinicalNoteSources": [
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual Pads and Liners",
         "summary": "Explains how FDA regulates pads and gives safe-use tips, including changing them every few hours."
-      },
-      {
-        "url": "https://www.med.umich.edu/1libr/Gyn/ObgynClinic/ComfortMeasuresVulvarIrritationItchingPain.pdf",
-        "label": "University of Michigan Health, OB/GYN Clinic: Comfort measures for vulvar irritation, itching and pain",
-        "summary": "Lists pads and liners as possible vulvar irritants and suggests 100% cotton menstrual pads for people prone to irritation."
-      },
-      {
-        "url": "https://iris.unipv.it/handle/11571/1258246",
-        "label": "Minerva Ginecologica 2018 (Mori et al.), doi:10.23736/S0026-4784.18.04338-1: Safety and skin tolerability of organic cotton pads in irritative vulvitis",
-        "summary": "Small study reporting fewer itching and irritation complaints with organic cotton pads than with synthetic pads, without a clear control group."
-      },
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Ewha Medical Journal 2019 (Woo et al.), doi:10.12771/emj.2019.42.3.25: Systematic Review on Sanitary Pads and Female Health",
-        "summary": "Reviews chemicals found in pads and finds evidence on health effects limited and no clear causal link."
       }
     ],
     "warnings": [
@@ -1457,46 +963,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual pads and liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
-        "summary": "Found no clear cause-and-effect link between pads and skin or vaginal health effects and said the evidence is too thin to prove harm or confirm safety."
-      },
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7958867/",
-        "label": "Lin, Batterman et al., Environment International (2020): volatile organic compounds in feminine hygiene products",
-        "summary": "Testing of US feminine hygiene products, including pads, found that 'organic' or 'natural' labels did not reliably mean lower levels of volatile organic compounds, and scented pads had more aromatic compounds than unscented ones."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Natural cotton",
-        "text": "Cotton is the layer against your skin. An OB-GYN writing for Harvard Health suggests unscented cotton pads without a mesh covering, changed every 2 to 6 hours, to keep vulvar skin comfortable. That is expert advice, not proof from trials that cotton pads cause less irritation.",
-        "citations": [
-          {
-            "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
-            "label": "Harvard Health Blog (Huma Farid, MD, 2019): Vulvar health"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "Pads are regulated by the FDA as medical devices, and FDA advises changing them every few hours, even on light days, because wearing one too long can irritate your skin. Unscented cotton pads are a sensible choice if your skin is sensitive, but a 2019 systematic review found no clear link between pad materials and health problems, and it noted the backing is usually a polyethylene (plastic) film with adhesive, as in this pad.",
+    "clinicalNote": "Pads are regulated by the FDA as medical devices, and FDA advises changing them every few hours, even on light days, because wearing one too long can irritate your skin.",
     "clinicalNoteSources": [
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual Pads and Liners",
         "summary": "Explains how FDA regulates pads and gives safe-use tips, including changing them every few hours."
-      },
-      {
-        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
-        "label": "Harvard Health Blog (Huma Farid, MD, 2019): Vulvar health",
-        "summary": "Advises unscented cotton pads without a mesh covering, changed every 2 to 6 hours, and avoiding scented feminine products."
-      },
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Ewha Medical Journal 2019 (Woo et al.), doi:10.12771/emj.2019.42.3.25: Systematic Review on Sanitary Pads and Female Health",
-        "summary": "Describes how pads are built and finds evidence on health effects of pad chemicals limited, with no clear causal link."
       }
     ],
     "warnings": [
@@ -1529,37 +1001,8 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual Pads and Liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7958867/",
-        "label": "Lin, Batterman et al., Environment International 2020",
-        "summary": "Tested 79 US feminine hygiene products including 22 pads and found that 'organic' or 'natural' labels did not reliably mean lower volatile organic compound levels, though calculated risks were low for most products."
-      },
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6998054",
-        "label": "Journal of Women's Health 2020 (NHANES analysis)",
-        "summary": "In 2,432 US women, using tampons or menstrual pads was not linked to higher blood levels of volatile organic compounds, while douching and feminine powders were."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Organic cotton",
-        "text": "There's no good evidence yet that organic cotton pads are better for your skin or health than regular ones. A 2019 review of pad safety found no studies comparing the two, and found dioxin levels in US pads were lower than what people take in from food.",
-        "citations": [
-          {
-            "url": "https://synapse.koreamed.org/upload/synapsedata/pdfdata/0201emj/emj-42-25.pdf",
-            "label": "Ewha Medical Journal (2019): Systematic Review on Sanitary Pads and Female Health"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "Research on pads and vaginal or skin health is thin: a 2019 review found the evidence limited, with small studies and no clear cause and effect for any harm. The FDA says to change pads every few hours, even on light days, because wearing one too long can irritate your skin. The FDA also notes that some people react to scents, deodorants, or other added materials in pads.",
+    "clinicalNote": "The FDA says to change pads every few hours, even on light days, because wearing one too long can irritate your skin. The FDA also notes that some people react to scents, deodorants, or other added materials in pads.",
     "clinicalNoteSources": [
-      {
-        "url": "https://synapse.koreamed.org/upload/synapsedata/pdfdata/0201emj/emj-42-25.pdf",
-        "label": "Ewha Medical Journal (2019): Systematic Review on Sanitary Pads and Female Health",
-        "summary": "Review of pad safety studies; found limited evidence and low dioxin levels in US products."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual Pads and Liners (includes period underwear)",
@@ -1764,13 +1207,8 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "A 2019 review in The Lancet Public Health pooled 43 studies with 3,319 people and found menstrual cups leaked about the same as or less than pads and tampons, and about 73% of people wanted to keep using one. Most people needed a few periods to get comfortable with it. The review counted 5 cases of toxic shock syndrome (TSS, a rare but serious bacterial illness) after cup use, and 13 cases where a cup pulled an IUD (intrauterine device, a type of birth control) out of place. The FDA says to talk with your gynecologist before using a cup if you have an IUD.",
+    "clinicalNote": "The FDA says to talk with your gynecologist before using a cup if you have an IUD.",
     "clinicalNoteSources": [
-      {
-        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
-        "label": "The Lancet Public Health (2019): Menstrual cup use, leakage, acceptability, safety, and availability, a systematic review and meta-analysis",
-        "summary": "Pooled 43 studies on cup leakage, acceptability, and safety, including TSS and IUD dislodgement cases."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
         "label": "FDA: Menstrual Cups (also called menstrual discs)",
@@ -1820,13 +1258,8 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "A 2019 review in The Lancet Public Health pooled 43 studies with 3,319 people and found menstrual cups leaked about the same as or less than pads and tampons, and about 73% of people wanted to keep using one. Most people needed a few periods to get comfortable with it. The review counted 5 cases of toxic shock syndrome (TSS, a rare but serious bacterial illness) after cup use, and 13 cases where a cup pulled an IUD (intrauterine device, a type of birth control) out of place. The FDA says to talk with your gynecologist before using a cup if you have an IUD.",
+    "clinicalNote": "The FDA says to talk with your gynecologist before using a cup if you have an IUD.",
     "clinicalNoteSources": [
-      {
-        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
-        "label": "The Lancet Public Health (2019): Menstrual cup use, leakage, acceptability, safety, and availability, a systematic review and meta-analysis",
-        "summary": "Pooled 43 studies on cup leakage, acceptability, and safety, including TSS and IUD dislodgement cases."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
         "label": "FDA: Menstrual Cups (also called menstrual discs)",
@@ -1869,14 +1302,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
         "label": "FDA: Menstrual Cups",
         "summary": "FDA regulates menstrual cups, which it says are also called menstrual discs, and advises washing before first use, emptying every 8 to 12 hours, boiling at the end of your cycle and checking with a gynecologist if you have an IUD."
-      }
-    ],
-    "clinicalNote": "The FDA regulates menstrual cups and discs as medical devices and says insertion and removal can take practice. Check with your gynecologist before using one with an IUD, since it could interfere with the strings or placement.",
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing of 21 period products, menstrual discs held the most blood of any category (about 61 mL on average), though the authors note real-world capacity may be lower because products bend during wear."
       }
     ],
     "ingredientScience": [
@@ -1929,14 +1354,6 @@ export const PRODUCT_RESEARCH = {
         "summary": "FDA regulates menstrual cups, which it says are also called menstrual discs, and advises washing before first use, emptying every 8 to 12 hours, boiling at the end of your cycle and checking with a gynecologist if you have an IUD."
       }
     ],
-    "clinicalNote": "The FDA regulates menstrual cups and discs as medical devices and says insertion and removal can take practice. Check with your gynecologist before using one with an IUD, since it could interfere with the strings or placement.",
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing of 21 period products, menstrual discs held the most blood of any category (about 61 mL on average), though the authors note real-world capacity may be lower because products bend during wear."
-      }
-    ],
     "ingredientScience": [
       {
         "name": "Medical-grade silicone",
@@ -1954,11 +1371,7 @@ export const PRODUCT_RESEARCH = {
       "If you have an IUD, a history of prolapse, a pre-existing condition, or gynecological concerns, check with your doctor before use.",
       "Wear it for up to 12 hours.",
       "If you have side effects, stop using it and contact your doctor."
-    ],
-    "warningsSource": {
-      "url": "https://www.target.com/p/cora-reusable-menstrual-disc-1ct/-/A-82433921",
-      "label": "Cora Reusable Menstrual Disc label text (Target product listing)"
-    }
+    ]
   },
   "p-modibodi": {
     "whoItsFor": [
@@ -1978,18 +1391,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual Pads and Liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing with real blood cells, period underwear held the least of any product type, about 2 mL on average, compared with roughly 20 to 50 mL for heavy pads, tampons and cups."
-      },
-      {
-        "url": "https://axial.acs.org/environmental-and-sustainable-chemistry/forever-chemicals-in-feminine-hygiene-products-expanded-findings-raise-new-pfas-concerns",
-        "label": "American Chemical Society summary of Wicks, Peaslee et al., Environmental Science & Technology Letters (2025): PFAS in reusable feminine hygiene products",
-        "summary": "Researchers tested 59 reusable period products, including period underwear, and found PFAS in all 19 products they screened in detail, which is why independent PFAS-free claims matter for this category."
-      }
-    ],
     "clinicalNote": "The FDA groups period underwear with pads and liners: it works like a built-in pad, but you wash and reuse it. The FDA says to follow the label's cleaning instructions, not to reuse it longer than the maker recommends, and to change it regularly, since wearing a menstrual product too long lets bacteria grow. We didn't find clinical studies of period underwear for leaks or skin health, so there's little research on this product type.",
     "clinicalNoteSources": [
       {
@@ -2027,18 +1428,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual Pads and Liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing with real blood cells, period underwear held the least of any product type, about 2 mL on average, compared with roughly 20 to 50 mL for heavy pads, tampons and cups."
-      },
-      {
-        "url": "https://axial.acs.org/environmental-and-sustainable-chemistry/forever-chemicals-in-feminine-hygiene-products-expanded-findings-raise-new-pfas-concerns",
-        "label": "American Chemical Society summary of Wicks, Peaslee et al., Environmental Science & Technology Letters (2025): PFAS in reusable feminine hygiene products",
-        "summary": "Researchers tested 59 reusable period products, including period underwear, and found PFAS in all 19 products they screened in detail, which shows why it helps to check a brand's PFAS testing."
-      }
-    ],
     "clinicalNote": "The FDA groups period underwear with pads and liners: it works like a built-in pad, but you wash and reuse it. The FDA says to follow the label's cleaning instructions, not to reuse it longer than the maker recommends, and to change it regularly, since wearing a menstrual product too long lets bacteria grow. We didn't find clinical studies of period underwear for leaks or skin health, so there's little research on this product type.",
     "clinicalNoteSources": [
       {
@@ -2078,40 +1467,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://ca.iherb.com/pr/azo-test-strips-urinary-tract-infection-test-3-self-testing-strips/14562",
       "sourceLabel": "AZO Test Strips label directions (iHerb listing)"
     },
-    "scienceSources": [
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC434513",
-        "label": "Devillé et al., BMC Urology (2004): meta-analysis of urine dipstick accuracy",
-        "summary": "Found the dipstick is most useful for ruling out infection when both nitrite and leukocyte esterase are negative, while positive results still need confirmation."
-      },
-      {
-        "url": "https://www.aafp.org/pubs/afp/issues/2013/0515/od2.html",
-        "label": "American Family Physician (2013): Dipstick urinalysis for the diagnosis of acute UTI",
-        "summary": "Dipstick testing moderately improves the accuracy of symptoms in women, and a positive nitrite result is more informative than a positive leukocyte esterase result."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Nitrite test pad",
-        "text": "Many UTI bacteria turn nitrate in urine into nitrite, so a positive nitrite pad points fairly strongly to infection. A negative one doesn't rule it out: bacteria need about four hours in the bladder to make nitrite, some germs like Enterococcus don't make it, and vitamin C can cause a false negative. The pain reliever phenazopyridine can cause a false positive.",
-        "citations": [
-          {
-            "url": "https://www.aafp.org/pubs/afp/issues/2022/0700/office-based-urinalysis.html",
-            "label": "American Family Physician (AAFP), 2022: Office-Based Urinalysis: A Comprehensive Review"
-          }
-        ]
-      },
-      {
-        "name": "Leukocyte esterase test pad",
-        "text": "Leukocyte esterase is an enzyme from white blood cells, so it flags inflammation or infection, not bacteria directly. In low-risk people, both pads being negative helps rule out a UTI, but in women with vague symptoms a positive or negative strip may still need a urine culture (a lab test that grows the bacteria).",
-        "citations": [
-          {
-            "url": "https://www.aafp.org/pubs/afp/issues/2006/0101/p129.html",
-            "label": "American Family Physician (AAFP), 2006: Urine Dipstick for Diagnosing Urinary Tract Infection"
-          }
-        ]
-      }
-    ],
     "warnings": [
       "This test can give false results; check with your doctor before making medical decisions, and right away if you have symptoms.",
       "Taking more than 500 mg of vitamin C in 24 hours, or taking antibiotics, can cause a false negative nitrite result.",
@@ -2141,13 +1496,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://goodcleanlove.com/products/restore%C2%AE-moisturizing-vaginal-gel-products",
       "sourceLabel": "Good Clean Love: Restore Moisturizing Vaginal Gel product page"
     },
-    "scienceSources": [
-      {
-        "url": "https://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0048328",
-        "label": "Dezzutti et al., PLoS ONE (2012): Is Wetter Better? An evaluation of over-the-counter personal lubricants",
-        "summary": "In lab and tissue testing, Good Clean Love was nearly iso-osmolar and was not toxic to epithelial cells or tissue, while several hyperosmolar gels caused epithelial damage."
-      }
-    ],
     "ingredientScience": [
       {
         "name": "Organic aloe vera (aloe barbadensis leaf juice)",
@@ -2158,24 +1506,6 @@ export const PRODUCT_RESEARCH = {
             "label": "NIH NCCIH: Aloe Vera"
           }
         ]
-      },
-      {
-        "name": "Lactic acid blend",
-        "text": "Lactic acid keeps the gel acidic, close to a healthy vaginal pH. In a 2022 lab study of 11 store-bought vaginal gels, Restore (Good Clean Love) had about 1% lactic acid, a pH near 3.7, and was iso-osmolar (osmolality is how concentrated a gel is; this one was not more concentrated than body fluids). It was one of only two gels found non-toxic to vaginal tissue, though it still raised some inflammation markers. This was tissue in a lab dish, not women.",
-        "citations": [
-          {
-            "url": "https://www.frontiersin.org/journals/reproductive-health/articles/10.3389/frph.2022.915948/pdf",
-            "label": "Frontiers in Reproductive Health (2022): Impact of OTC lactic acid vaginal gels on the vaginal epithelium in vitro"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "How concentrated a gel is (its osmolality) matters for vaginal tissue. In a 2022 lab study, 10 of 11 over-the-counter vaginal gels were more concentrated than vaginal fluid, and the very concentrated ones damaged the tissue barrier. Iso-osmolar gels like Restore largely kept the barrier intact, but most gels, Restore included, still triggered some inflammation, so the authors called for formulas closer to the body's natural environment. This was lab tissue, not a clinical trial in women.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.frontiersin.org/journals/reproductive-health/articles/10.3389/frph.2022.915948/pdf",
-        "label": "Frontiers in Reproductive Health (2022): OTC lactic acid vaginal gels in vitro",
-        "summary": "Hyperosmolar gels harmed vaginal tissue barriers; Restore was iso-osmolar and non-toxic but still raised inflammation markers."
       }
     ],
     "warnings": [
@@ -2183,11 +1513,7 @@ export const PRODUCT_RESEARCH = {
       "Contact your healthcare provider if you have an abnormal vaginal odor that won't go away or comes with itching, burning, irritation, or discharge.",
       "It is not a contraceptive and has no spermicide.",
       "If pregnant or breastfeeding, ask your healthcare provider before use."
-    ],
-    "warningsSource": {
-      "url": "https://uk.iherb.com/pr/good-clean-love-restore-moisturizing-vaginal-gel-15-applications-2-fl-oz-59-ml/143638",
-      "label": "Good Clean Love Restore Moisturizing Vaginal Gel label as listed on iHerb"
-    }
+    ]
   },
   "p-flo-gummies": {
     "whoItsFor": [
@@ -2219,16 +1545,6 @@ export const PRODUCT_RESEARCH = {
         ]
       },
       {
-        "name": "Dong quai",
-        "text": "Dong quai is a root used in traditional Chinese medicine for menstrual cramps and PMS. Memorial Sloan Kettering lists these only as traditional uses that haven't been studied to see if they work, and notes it may raise bleeding risk.",
-        "citations": [
-          {
-            "url": "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/dong-quai",
-            "label": "Memorial Sloan Kettering: Dong Quai"
-          }
-        ]
-      },
-      {
         "name": "Vitamin B6",
         "text": "Some studies show vitamin B6 supplements could reduce PMS symptoms, but NIH says scientists aren't yet certain it helps. The adult upper limit is 100 mg a day, and high doses taken for a year or longer can cause severe nerve damage.",
         "citations": [
@@ -2237,19 +1553,9 @@ export const PRODUCT_RESEARCH = {
             "label": "NIH Office of Dietary Supplements: Vitamin B6 (consumer fact sheet)"
           }
         ]
-      },
-      {
-        "name": "Lemon balm",
-        "text": "Lemon balm (Melissa officinalis) is a calming herb in the mint family. Two placebo-controlled trials in Iranian high school girls (100 and 200 students) found lemon balm capsules lowered PMS symptom scores over three cycles, but these are small studies in one population, so treat the evidence as early.",
-        "citations": [
-          {
-            "url": "https://ijwhr.net/text.php?id=227",
-            "label": "International Journal of Women's Health and Reproduction Sciences (2018): Melissa officinalis capsules and PMS in high school students"
-          }
-        ]
       }
     ],
-    "clinicalNote": "Of the four herbs and vitamins here, chasteberry has the most research for PMS, and NIH still calls that evidence limited and of low to moderate quality. NIH says it isn't yet clear whether vitamin B6 helps PMS, and Memorial Sloan Kettering notes dong quai's use for cramps and PMS hasn't been studied.",
+    "clinicalNote": "Of the four herbs and vitamins here, chasteberry has the most research for PMS, and NIH still calls that evidence limited and of low to moderate quality.",
     "clinicalNoteSources": [
       {
         "url": "https://www.nccih.nih.gov/health/chasteberry",
@@ -2260,11 +1566,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://ods.od.nih.gov/Pdf/Factsheets/Vitaminb6-Consumer.Pdf",
         "label": "NIH Office of Dietary Supplements: Vitamin B6",
         "summary": "Scientists aren't yet certain about the benefits of vitamin B6 for PMS, though some studies show it could reduce symptoms."
-      },
-      {
-        "url": "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/dong-quai",
-        "label": "Memorial Sloan Kettering: Dong Quai",
-        "summary": "Lists PMS and menstrual cramps as purported uses that haven't been studied by doctors."
       }
     ],
     "warnings": [
@@ -2295,47 +1596,7 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://glamglobal.co.uk/fr/products/flatter-me-supplement-for-daily-bloating-18-full-spectrum-digestive-enzymes-to-support-food-breakdown-ginger-fennel-seed-peppermint-for-nutrient-absorption-30-day-supply",
       "sourceLabel": "HUM Flatter Me product listing (brand directions)"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.hopkinsmedicine.org/health/wellness-and-prevention/digestive-enzymes-and-digestive-enzyme-supplements?amp=true",
-        "label": "Johns Hopkins Medicine: Digestive Enzymes and Digestive Enzyme Supplements",
-        "summary": "Over-the-counter enzyme supplements are not FDA regulated, claims like a flatter stomach lack evidence, and persistent bloating or belly pain should be checked by a doctor."
-      },
-      {
-        "url": "https://my.clevelandclinic.org/health/drugs/enzyme-supplements",
-        "label": "Cleveland Clinic: Enzyme Supplements",
-        "summary": "Lists possible side effects such as gas, nausea and stomach pain, and advises telling your care team if you are pregnant, breastfeeding or take other medicines."
-      }
-    ],
-    "clinicalNote": "Over-the-counter enzyme blends are not regulated by the FDA, so the dose on the label may not be exact, and healthy people usually do not need them. Bloating that keeps coming back, or comes with pain, diarrhea or weight loss, is worth getting checked.",
-    "scienceSources": [
-      {
-        "url": "https://pubmed.ncbi.nlm.nih.gov/30156436/",
-        "label": "Journal of Medicinal Food (2018): multienzyme complex in functional dyspepsia, randomized placebo-controlled trial",
-        "summary": "In 40 adults with functional dyspepsia, a different multienzyme blend (DigeZyme) improved symptom scores versus placebo over 60 days with no product-related side effects; this was not a study of Flatter Me."
-      }
-    ],
     "ingredientScience": [
-      {
-        "name": "Protease, papain, and lipase (enzyme blend)",
-        "text": "These enzymes break down protein (protease, papain) and fat (lipase). Harvard Health says over-the-counter enzyme supplements are promoted for bloating, but for most people there's little evidence they do any good; prescription enzymes are for people whose bodies make too little, like with chronic pancreatitis.",
-        "citations": [
-          {
-            "url": "https://www.health.harvard.edu/staying-healthy/can-taking-enzyme-supplements-help-soothe-my-bloating",
-            "label": "Harvard Health: Can taking enzyme supplements help soothe my bloating?"
-          }
-        ]
-      },
-      {
-        "name": "Alpha-galactosidase and lactase",
-        "text": "The label also lists these two enzymes. Harvard Health says lactase can help people manage lactose intolerance, and alpha-galactosidase (the enzyme in Beano) may reduce gas and bloating if you have trouble digesting beans. They only help with those specific foods.",
-        "citations": [
-          {
-            "url": "https://www.health.harvard.edu/staying-healthy/can-taking-enzyme-supplements-help-soothe-my-bloating",
-            "label": "Harvard Health: Can taking enzyme supplements help soothe my bloating?"
-          }
-        ]
-      },
       {
         "name": "Ginger root",
         "text": "Research shows ginger may help with nausea and vomiting in pregnancy, but NIH doesn't list good evidence for bloating. Ginger itself can cause stomach discomfort, heartburn, or diarrhea in some people.",
@@ -2348,7 +1609,7 @@ export const PRODUCT_RESEARCH = {
       },
       {
         "name": "Peppermint leaf",
-        "text": "Enteric-coated peppermint oil capsules have some evidence for IBS (irritable bowel syndrome) symptoms. This product uses peppermint leaf powder instead, and NIH says there isn't enough evidence to say whether peppermint leaf helps any health condition.",
+        "text": "This product uses peppermint leaf powder instead, and NIH says there isn't enough evidence to say whether peppermint leaf helps any health condition.",
         "citations": [
           {
             "url": "https://www.nccih.nih.gov/health/peppermintoil",
@@ -2361,11 +1622,7 @@ export const PRODUCT_RESEARCH = {
       "Ask your healthcare professional before use if you have or suspect a medical condition, take prescription drugs, or are pregnant or breastfeeding.",
       "Keep out of reach of children.",
       "Store in a cool, dry place."
-    ],
-    "warningsSource": {
-      "url": "https://www.vitacost.com/products/hum-nutrition-flatter-me-60-vegan-capsules-136402",
-      "label": "Vitacost: HUM Nutrition Flatter Me product label"
-    }
+    ]
   },
   "p-thermacare": {
     "whoItsFor": [
@@ -2388,28 +1645,13 @@ export const PRODUCT_RESEARCH = {
     },
     "clinicalSources": [
       {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menstrual-cramps/diagnosis-treatment/drc-20374944",
-        "label": "Mayo Clinic: Menstrual cramps, diagnosis and treatment",
-        "summary": "Lists a heating pad, hot water bottle, heat patch or hot bath as self-care that might ease menstrual cramps."
-      },
-      {
         "url": "https://medlineplus.gov/ency/article/003150.htm",
         "label": "MedlinePlus (NIH): Painful menstrual periods",
         "summary": "Recommends heat on the lower belly as home care and lists signs, like fever with pelvic pain or pain that does not improve after 3 months of treatment, that mean you should call a provider."
       }
     ],
-    "clinicalNote": "Heat is a standard home remedy for period cramps, and MedlinePlus suggests putting heat on your lower belly, below the belly button. A 2026 review of 57 trials (5,359 women) found heat likely lowers period pain compared with no treatment, though the certainty of the evidence was rated low because many trials had design problems. Most of those trials used heat in general, not this wrap. If cramps still aren't better after 3 months of treatment, or the pain comes outside your period, MedlinePlus says to check in with a provider.",
+    "clinicalNote": "Heat is a standard home remedy for period cramps, and MedlinePlus suggests putting heat on your lower belly, below the belly button. If cramps still aren't better after 3 months of treatment, or the pain comes outside your period, MedlinePlus says to check in with a provider.",
     "clinicalNoteSources": [
-      {
-        "url": "https://www.frontiersin.org/journals/medicine/articles/10.3389/fmed.2025.1730505/full",
-        "label": "Frontiers in Medicine (2026): Heat therapy for primary dysmenorrhea, systematic review and meta-analysis",
-        "summary": "57 randomized trials found heat likely reduces period pain versus no treatment, with low certainty evidence."
-      },
-      {
-        "url": "https://www.nature.com/articles/s41598-018-34303-z",
-        "label": "Scientific Reports (2018): Heat therapy for primary dysmenorrhea, systematic review and meta-analysis",
-        "summary": "Six small trials gave suggestive evidence that heat eases period pain, and the authors called for higher quality trials."
-      },
       {
         "url": "https://medlineplus.gov/ency/article/003150.htm",
         "label": "MedlinePlus: Painful menstrual periods",
@@ -2423,8 +1665,8 @@ export const PRODUCT_RESEARCH = {
       "Each heat cell contains iron and can be harmful if swallowed; keep away from children and pets."
     ],
     "warningsSource": {
-      "url": "https://www.orderroombox.com/product/thermacare-heatwraps-menstrual-pain-therapy/",
-      "label": "Retailer listing reproducing the ThermaCare Menstrual HeatWraps label"
+      "url": "https://www.thermacare.com/product-labels/LBL-00000248-WEB-READY-THERMACARE-MENSTRUAL.PDF",
+      "label": "ThermaCare Menstrual label (thermacare.com)"
     }
   },
   "p-portable-heating": {
@@ -2435,11 +1677,6 @@ export const PRODUCT_RESEARCH = {
       "Not for wearing while you sleep: MedlinePlus advises never falling asleep with a heating pad on"
     ],
     "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menstrual-cramps/diagnosis-treatment/drc-20374944",
-        "label": "Mayo Clinic: Menstrual cramps, diagnosis and treatment",
-        "summary": "Lists a heating pad, hot water bottle, heat patch or hot bath as self-care that might ease menstrual cramps."
-      },
       {
         "url": "https://medlineplus.gov/ency/article/003150.htm",
         "label": "MedlinePlus (NIH): Painful menstrual periods",
@@ -2458,13 +1695,8 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.walmart.com/ip/17564207615",
       "sourceLabel": "Comfytemp Cordless Heating Pad for Period Cramps (Walmart listing) and Mayo Clinic: Menstrual cramps"
     },
-    "clinicalNote": "Heat is a standard home remedy for period cramps, and MedlinePlus suggests a heating pad on your lower belly, below the belly button, with one firm rule: never fall asleep with it on. A 2026 review of 57 trials (5,359 women) found heat likely lowers period pain compared with no treatment, though the certainty of the evidence was rated low because many trials had design problems. Those trials tested heat in general, not this pad. If cramps still aren't better after 3 months of treatment, MedlinePlus says to check in with a provider.",
+    "clinicalNote": "Heat is a standard home remedy for period cramps, and MedlinePlus suggests a heating pad on your lower belly, below the belly button, with one firm rule: never fall asleep with it on. If cramps still aren't better after 3 months of treatment, MedlinePlus says to check in with a provider.",
     "clinicalNoteSources": [
-      {
-        "url": "https://www.frontiersin.org/journals/medicine/articles/10.3389/fmed.2025.1730505/full",
-        "label": "Frontiers in Medicine (2026): Heat therapy for primary dysmenorrhea, systematic review and meta-analysis",
-        "summary": "57 randomized trials found heat likely reduces period pain versus no treatment, with low certainty evidence."
-      },
       {
         "url": "https://medlineplus.gov/ency/article/003150.htm",
         "label": "MedlinePlus: Painful menstrual periods",
@@ -2476,11 +1708,7 @@ export const PRODUCT_RESEARCH = {
       "Don't use it on skin that can't feel temperature changes, and never use it on an infant.",
       "Don't crush or fold the pad during use or storage.",
       "Read and follow all of the manufacturer's instructions before use."
-    ],
-    "warningsSource": {
-      "url": "https://webarchive.library.unt.edu/web/20081205084122/http:/www.fda.gov/cdrh/heatpad.pdf",
-      "label": "FDA/CPSC Public Health Advisory: Hazards Associated with the Use of Electric Heating Pads (1995, archived)"
-    }
+    ]
   },
   "p-viboos-heating-pad": {
     "whoItsFor": [
@@ -2490,11 +1718,6 @@ export const PRODUCT_RESEARCH = {
       "Not the pick for use while sleeping or on the go: it plugs in, and MedlinePlus advises never falling asleep with a heating pad on"
     ],
     "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menstrual-cramps/diagnosis-treatment/drc-20374944",
-        "label": "Mayo Clinic: Menstrual cramps, diagnosis and treatment",
-        "summary": "Lists a heating pad, hot water bottle, heat patch or hot bath as self-care that might ease menstrual cramps."
-      },
       {
         "url": "https://medlineplus.gov/ency/article/003150.htm",
         "label": "MedlinePlus (NIH): Painful menstrual periods",
@@ -2513,13 +1736,8 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://kateminimalist.com/products/viboos-heating-electric-pad-for-back-shoulders-abdomen-legs-arms-electric-fast-heat-pad-with-heat-settings-auto-shut-off-dark-gray-24-12",
       "sourceLabel": "VIBOOS Electric Heating Pad product listing (retailer page)"
     },
-    "clinicalNote": "Heat is a standard home remedy for period cramps, and MedlinePlus suggests a heating pad on your lower belly, below the belly button, with one firm rule: never fall asleep with it on. A 2026 review of 57 trials (5,359 women) found heat likely lowers period pain compared with no treatment, though the certainty of the evidence was rated low because many trials had design problems. Those trials tested heat in general, not this pad. If cramps still aren't better after 3 months of treatment, MedlinePlus says to check in with a provider.",
+    "clinicalNote": "Heat is a standard home remedy for period cramps, and MedlinePlus suggests a heating pad on your lower belly, below the belly button, with one firm rule: never fall asleep with it on. If cramps still aren't better after 3 months of treatment, MedlinePlus says to check in with a provider.",
     "clinicalNoteSources": [
-      {
-        "url": "https://www.frontiersin.org/journals/medicine/articles/10.3389/fmed.2025.1730505/full",
-        "label": "Frontiers in Medicine (2026): Heat therapy for primary dysmenorrhea, systematic review and meta-analysis",
-        "summary": "57 randomized trials found heat likely reduces period pain versus no treatment, with low certainty evidence."
-      },
       {
         "url": "https://medlineplus.gov/ency/article/003150.htm",
         "label": "MedlinePlus: Painful menstrual periods",
@@ -2531,11 +1749,7 @@ export const PRODUCT_RESEARCH = {
       "Don't sit or lie on the pad, and don't crush or fold it.",
       "Don't use it on skin that can't feel temperature changes, and never use it on an infant.",
       "Check it before each use, throw it out if it looks worn or the cord is frayed, and unplug it when you're done."
-    ],
-    "warningsSource": {
-      "url": "https://webarchive.library.unt.edu/web/20081205084122/http:/www.fda.gov/cdrh/heatpad.pdf",
-      "label": "FDA/CPSC Public Health Advisory: Hazards Associated with the Use of Electric Heating Pads (1995, archived)"
-    }
+    ]
   },
   "d-betterhelp": {
     "whoItsFor": [
@@ -2556,19 +1770,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://betterhelp.com:443/faq",
       "sourceLabel": "BetterHelp FAQ"
     },
-    "clinicalNote": "Therapy by live video seems to work about as well as therapy in person. A 2021 meta-analysis in Clinical Psychology & Psychotherapy (47 comparison studies, 3,564 people) found the difference between video and in-person therapy was negligible. That evidence is about live video sessions; it does not tell you how well text messaging with a therapist works on its own. Separately, in 2023 the FTC (the US consumer protection agency) finalized an order banning BetterHelp from sharing health data for advertising after alleging it had passed users' emails, IP addresses and health questionnaire answers to companies like Facebook and Snapchat.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://stanfordhealthcare.org/publications/809/809484.html",
-        "label": "Clinical Psychology & Psychotherapy (2021): Live psychotherapy by video versus in-person, a meta-analysis (via Stanford Health Care)",
-        "summary": "Across 47 between-group studies (3,564 people), video therapy's results were negligibly different from in-person therapy."
-      },
-      {
-        "url": "https://www.ftc.gov/news-events/news/press-releases/2023/07/ftc-gives-final-approval-order-banning-betterhelp-sharing-sensitive-health-data-advertising?",
-        "label": "FTC (July 2023): FTC gives final approval to order banning BetterHelp from sharing sensitive health data for advertising",
-        "summary": "BetterHelp must pay $7.8 million and is banned from sharing health data for ads, with new consent and data retention requirements."
-      }
-    ],
     "warnings": [
       "Not suitable if you are in an urgent crisis or emergency.",
       "Not for minors or people under the care of a legal guardian.",
@@ -2604,26 +1805,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.nccih.nih.gov/health/tips/8-things-to-know-about-meditation-and-mindfulness",
         "label": "NCCIH (NIH): 8 things to know about meditation and mindfulness",
         "summary": "Mindfulness practices may help anxiety, depression and insomnia and are usually low-risk, though about 8 percent of study participants reported negative effects."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://link.springer.com/article/10.1007/s12671-018-0905-4",
-        "label": "Economides et al., Mindfulness (2018): RCT of Headspace",
-        "summary": "In healthy adults, 10 introductory Headspace sessions reduced stress from external pressure and irritability and improved positive mood versus an audiobook control."
-      },
-      {
-        "url": "https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0209482",
-        "label": "Champion et al., PLOS ONE (2018): pilot RCT of Headspace",
-        "summary": "Adults using Headspace reported lower stress and higher life satisfaction and resilience at day 10 and day 30 versus a wait-list, in a small Headspace-funded pilot."
-      }
-    ],
-    "clinicalNote": "Headspace has more randomized trials behind it than most meditation apps. A 2022 systematic review in JMIR Mental Health found 14 of them: Headspace improved depression in 3 of 4 trials that measured it, anxiety in 2 of 4, and stress in 2 of 5 (one more was mixed). Most trials were small, and half reported a conflict of interest with the company, often free premium access for participants. The authors called the research promising but not conclusive.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://mental.jmir.org/2022/9/e40924",
-        "label": "JMIR Mental Health (2022): Efficacy and Conflicts of Interest in Randomized Controlled Trials Evaluating Headspace and Calm Apps, systematic review",
-        "summary": "Across 14 Headspace trials, results were positive for depression in 75%, anxiety in 50% and stress in 40% of trials that measured them; most were underpowered and half had company-related conflicts of interest."
       }
     ],
     "warnings": [
@@ -2663,31 +1844,6 @@ export const PRODUCT_RESEARCH = {
         "summary": "Mindfulness meditation may reduce insomnia and improve sleep quality, with effects comparable to CBT or exercise, and is usually low-risk."
       }
     ],
-    "scienceSources": [
-      {
-        "url": "https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0244717",
-        "label": "Huberty et al., PLOS ONE (2021): RCT of Calm in adults with sleep disturbance",
-        "summary": "Eight weeks of at least 10 minutes a day on Calm reduced fatigue, daytime sleepiness and pre-sleep arousal versus a wait-list; several authors advise Calm."
-      },
-      {
-        "url": "https://formative.jmir.org/2025/1/e66131",
-        "label": "JMIR Formative Research (2025): pilot RCT of Calm in undergraduates",
-        "summary": "A 30-day pilot in 80 students found greater improvement in sleep quality, stress and anxiety with Calm than control, but no difference in depression."
-      }
-    ],
-    "clinicalNote": "The best sleep study of Calm is a 2021 randomized trial in PLoS ONE of 263 adults with trouble sleeping. People asked to meditate with Calm at least 10 minutes a day for 8 weeks had less daytime fatigue, less daytime sleepiness and less pre-sleep arousal (a racing mind or tense body at bedtime) than a wait-list group. Their sleep quality also improved, but that was only measured in the Calm group, so it wasn't compared with people who didn't use the app. A 2022 review (searching up to May 2021) counted only one Calm trial meeting its criteria, so overall the evidence for Calm is much thinner than for Headspace.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://doaj.org/article/f9ab9b3c201440168171b987e610d744",
-        "label": "PLoS ONE (2021): Testing a mindfulness meditation mobile app for the treatment of sleep-related symptoms in adults with sleep disturbance, randomized controlled trial",
-        "summary": "Compared with a wait-list, 8 weeks of Calm meditation reduced daytime fatigue, daytime sleepiness and pre-sleep arousal in 263 adults with sleep problems."
-      },
-      {
-        "url": "https://mental.jmir.org/2022/9/e40924",
-        "label": "JMIR Mental Health (2022): Efficacy and Conflicts of Interest in RCTs Evaluating Headspace and Calm Apps, systematic review",
-        "summary": "Found just one Calm randomized trial (88 people), which showed better stress and mindfulness than a wait-list."
-      }
-    ],
     "warnings": [
       "Calm does not provide medical advice, diagnosis or treatment, and is not a healthcare or mental health provider.",
       "In an emergency, including a mental health crisis, call 911 or your local emergency number right away. Don't rely on Calm instead.",
@@ -2725,13 +1881,8 @@ export const PRODUCT_RESEARCH = {
         "summary": "Home urine tests detect the LH surge about 1 to 1.5 days before ovulation, are reliable about 9 times out of 10 when used correctly, and should not be used as birth control."
       }
     ],
-    "clinicalNote": "Most home ovulation tests look for a surge in LH (luteinizing hormone, the hormone that triggers the ovary to release an egg), which tells you ovulation is likely coming soon, not that it happened. PdG (pregnanediol glucuronide, a breakdown product of progesterone) rises in urine after ovulation, which is why measuring it can help confirm ovulation. In a small 2018 study in Scientific Reports (14 women, 20 cycles, checked against ultrasound), a single urine PdG reading identified ovulation well (AUC 0.95, where 1.0 is perfect). That study used lab analyzers, not Inito's strips, and we could not open a peer-reviewed accuracy study of Inito itself.",
+    "clinicalNote": "Most home ovulation tests look for a surge in LH (luteinizing hormone, the hormone that triggers the ovary to release an egg), which tells you ovulation is likely coming soon, not that it happened. PdG (pregnanediol glucuronide, a breakdown product of progesterone) rises in urine after ovulation, which is why measuring it can help confirm ovulation.",
     "clinicalNoteSources": [
-      {
-        "url": "https://link.springer.com/10.1038/s41598-018-36051-6",
-        "label": "Scientific Reports (2018): Confirmation of ovulation from urinary progesterone analysis, assessment of two automated assay platforms",
-        "summary": "Using transvaginal ultrasound as the reference in 14 women (20 cycles), a urinary PdG threshold confirmed ovulation with an AUC of 0.951."
-      },
       {
         "url": "https://medlineplus.gov/ency/article/007062.htm",
         "label": "MedlinePlus (NIH): Ovulation home test",
@@ -2767,38 +1918,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://support.ouraring.com/hc/en-us/articles/4410663885331-Cycle-Insights",
       "sourceLabel": "Oura Help: Cycle Insights"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/tests-procedures/basal-body-temperature/about/pac-20393026",
-        "label": "Mayo Clinic: Basal body temperature for natural family planning",
-        "summary": "Resting temperature rises slightly after ovulation, but illness, medications, postpartum, breastfeeding, irregular cycles and PMOS can make readings unreliable, and about 1 in 4 typical users of fertility awareness methods get pregnant within a year."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/c13fc1b658874f0abfe65595566d828a",
-        "label": "Maijala et al., BMC Women's Health (2019): Oura ring pilot study",
-        "summary": "In 22 women, nightly finger temperature from the Oura ring was 0.30 C higher in the luteal phase and detected menstruation and ovulation with moderate to good sensitivity."
-      }
-    ],
-    "clinicalNote": "After you ovulate, your body temperature rises slightly and stays up until your period. The Oura ring reads skin temperature at your finger while you sleep and looks for that shift. In a 2019 pilot study of 22 women, nighttime finger temperature from the ring rose about 0.3 °C in the second half of the cycle, tracked oral temperature reasonably well, and estimated periods and ovulation to within a few days. The ring is not a medical device, and Oura's own analysis says its ovulation feature is not meant for people on hormonal birth control or people who often skip ovulation.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://doaj.org/article/c13fc1b658874f0abfe65595566d828a",
-        "label": "BMC Women's Health (2019): Nocturnal finger skin temperature in menstrual cycle tracking, pilot study using a wearable Oura ring",
-        "summary": "In 22 women, nightly finger temperature was 0.30 °C higher after ovulation, correlated with oral temperature, and found ovulation with 83.3% sensitivity within a 6-day window."
-      },
-      {
-        "url": "https://jmir.org/2025/1/e60667/PDF",
-        "label": "Journal of Medical Internet Research (2025): Oura Ring as a Tool for Ovulation Detection, Validation Analysis",
-        "summary": "Retrospective analysis of 1,155 cycles by Oura employees; notes the method was not tested in anovulatory cycles or people on hormonal contraception."
-      },
-      {
-        "url": "https://support.ouraring.com/hc/en-us/articles/360025428394",
-        "label": "Oura Support: Safety and warnings",
-        "summary": "States the ring is not a medical device."
-      }
-    ],
     "effectiveness": "There is a study of this product. A 2025 analysis of 1,155 ovulatory cycles found the ring picked up 96.4% of ovulations and was off by about 1.3 days on average, compared with about 3.4 days for counting calendar days, and it held up better in irregular cycles. Keep in mind the authors work for Oura, the check was against users' own logged home LH (ovulation) tests, and only cycles where ovulation happened were included, so it could not measure false alarms.",
     "effectivenessSources": [
       {
@@ -2842,21 +1961,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://support.apple.com/en-us/120356",
       "sourceLabel": "Apple Support: Track your period with Cycle Tracking"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menstrual-disorders/in-depth/menstrual-cycle/art-20047186",
-        "label": "Mayo Clinic: Menstrual cycle, what's typical and what's not",
-        "summary": "Recommends logging period start dates for several months, plus flow, pain and bleeding between periods, and lists cycle changes that warrant a visit to a clinician."
-      }
-    ],
-    "clinicalNote": "Mayo Clinic suggests logging your period start dates for several months, along with flow, pain and any bleeding between periods. Cycles shorter than 24 or longer than 38 days, bleeding that lasts more than 8 days, or periods that stop for more than 90 days are worth raising with a clinician.",
-    "scienceSources": [
-      {
-        "url": "https://www.nature.com/articles/s41746-023-00848-1",
-        "label": "Li et al., npj Digital Medicine (2023): Apple Women's Health Study",
-        "summary": "Using over 165,000 cycles logged in Apple Health Cycle Tracking, researchers found cycle length varies by age, with smaller differences by ethnicity and BMI."
-      }
-    ],
     "warnings": [
       "Cycle Tracking should not be used as a form of birth control.",
       "Don't use Cycle Tracking data to diagnose a health condition.",
@@ -2875,18 +1979,6 @@ export const PRODUCT_RESEARCH = {
       "Anyone looking for a low-cost, self-guided way to practice CBT skills before or alongside therapy",
       "Not the pick as your only support for severe or worsening symptoms: research shows mental health apps have small effects on average"
     ],
-    "scienceSources": [
-      {
-        "url": "https://research.vu.nl/en/publications/current-evidence-on-the-efficacy-of-mental-health-smartphoneapps-/",
-        "label": "Linardon et al., World Psychiatry 2024: meta-analysis of 176 RCTs of mental health apps",
-        "summary": "Apps had small but significant effects on depression and generalized anxiety, and apps with CBT features produced larger effects."
-      },
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6732686",
-        "label": "Linardon et al., World Psychiatry 2019: meta-analysis of 66 RCTs of app-supported interventions",
-        "summary": "Smartphone apps beat control conditions for depression, generalized anxiety and stress, with stronger effects when apps included engagement reminders or professional guidance."
-      }
-    ],
     "howToUse": {
       "intro": "Per the Bloom app's setup, as described by Suicide&Co's support listing:",
       "steps": [
@@ -2899,13 +1991,8 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.suicideandco.org/support-links/bloom-app",
       "sourceLabel": "Suicide&Co: Bloom app overview"
     },
-    "clinicalNote": "Internet-delivered CBT (cognitive behavioral therapy, a talk therapy that works on unhelpful thoughts and habits) works for anxiety and depression in studies, but programs with a therapist guiding you tend to show bigger effects than fully self-guided ones. Sticking with it is the hard part: in one trial of an unguided program, 73% of users didn't finish. Online CBT isn't recommended as the main treatment for severe illness. We found no published trials of Bloom itself.",
+    "clinicalNote": "Online CBT isn't recommended as the main treatment for severe illness. We found no published trials of Bloom itself.",
     "clinicalNoteSources": [
-      {
-        "url": "https://www.cmaj.ca/content/188/4/263",
-        "label": "CMAJ (2016): Internet-delivered cognitive behavioural therapy in the treatment of psychiatric illness",
-        "summary": "Review finding internet CBT effective for anxiety and depression, with larger effects when guided and low completion when unguided."
-      },
       {
         "url": "https://nimh.nih.gov/health/topics/technology-and-the-future-of-mental-health-treatment",
         "label": "NIMH: Technology and the Future of Mental Health Treatment",
@@ -2941,21 +2028,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.aruplab.com/files/resources/benefits/Visana-Member-Flyer.pdf",
       "sourceLabel": "Visana member flyer (hosted by ARUP Laboratories benefits)"
     },
-    "scienceSources": [
-      {
-        "url": "https://pubmed.ncbi.nlm.nih.gov/37753632/",
-        "label": "Systematic review of multidisciplinary team care for pelvic pain and endometriosis, ANZJOG 2024",
-        "summary": "Team care for endometriosis is growing and patients value reliable information and emotional support, but the authors found evidence for outcomes is still limited."
-      }
-    ],
-    "clinicalNote": "Endometriosis care often involves a team: a 2024 review of 19 studies found gynecologists, pain specialists, nurses, physiotherapists, psychologists, sex therapists, nutritionists, and social workers were the members most often involved. Patients said they valued reliable information, feeling respected and believed, talking through long-term plans, and emotional support. The authors also noted that the data behind team-based care is thin and much of it is anecdotal, so it's still unclear how much it improves quality of life.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://pubmed.ncbi.nlm.nih.gov/37753632/",
-        "label": "Aust N Z J Obstet Gynaecol (2024): Evidence for the role of multidisciplinary team care in people with pelvic pain and endometriosis, a systematic review",
-        "summary": "Reviewed 19 studies on team-based endometriosis care, describing who is on the team and what patients value, and found the evidence limited."
-      }
-    ],
     "warnings": [
       "See a healthcare provider if you need to change a pad or tampon in less than 2 hours, pass clots the size of a quarter or larger, or have periods lasting more than 7 days.",
       "Heavy bleeding can leave you tired, low on energy, or short of breath, which are also signs to get checked.",
@@ -2984,29 +2056,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual Pads and Liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
-        "summary": "Chemicals such as VOCs and dioxins were found in pads mostly below safety margins, and evidence linking pad adhesives or fragrances to skin irritation was limited and mixed, with no clear cause and effect shown."
-      }
-    ],
-    "clinicalNote": "Pads are regulated by the FDA as medical devices, and makers have to register them and report problems. The FDA's main safety advice is to change your pad every few hours, even on light days, because wearing one too long can irritate your skin. A Harvard Health article by an OB-GYN suggests unscented pads, changed about every 2 to 6 hours. A 2019 review of pad safety research found the evidence on longer-term health effects of pad chemicals limited, with small studies that neither clearly show harm nor rule it out.",
+    "clinicalNote": "Pads are regulated by the FDA as medical devices, and makers have to register them and report problems. The FDA's main safety advice is to change your pad every few hours, even on light days, because wearing one too long can irritate your skin.",
     "clinicalNoteSources": [
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual Pads and Liners",
         "summary": "Explains how FDA regulates pads and gives safe-use tips, including changing them every few hours."
-      },
-      {
-        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
-        "label": "Harvard Health Blog (Huma Farid, MD, 2019): Vulvar health",
-        "summary": "Suggests unscented cotton pads without a mesh covering, changed about every 2 to 6 hours, and avoiding scented feminine products."
-      },
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Ewha Medical Journal 2019 (Woo et al.), doi:10.12771/emj.2019.42.3.25: Systematic Review on Sanitary Pads and Female Health",
-        "summary": "Reviews studies on chemicals in pads and finds the evidence on health effects limited and inconclusive."
       }
     ],
     "warnings": [
@@ -3038,29 +2093,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual Pads and Liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
-        "summary": "Chemicals such as VOCs and dioxins were found in pads mostly below safety margins, and evidence linking pad adhesives or fragrances to skin irritation was limited and mixed, with no clear cause and effect shown."
-      }
-    ],
-    "clinicalNote": "Pads are regulated by the FDA as medical devices, and makers have to register them and report problems. The FDA's main safety advice is to change your pad every few hours, even on light days, because wearing one too long can irritate your skin. A Harvard Health article by an OB-GYN suggests unscented pads, changed about every 2 to 6 hours. A 2019 review of pad safety research found the evidence on longer-term health effects of pad chemicals limited, with small studies that neither clearly show harm nor rule it out.",
+    "clinicalNote": "Pads are regulated by the FDA as medical devices, and makers have to register them and report problems. The FDA's main safety advice is to change your pad every few hours, even on light days, because wearing one too long can irritate your skin.",
     "clinicalNoteSources": [
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual Pads and Liners",
         "summary": "Explains how FDA regulates pads and gives safe-use tips, including changing them every few hours."
-      },
-      {
-        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
-        "label": "Harvard Health Blog (Huma Farid, MD, 2019): Vulvar health",
-        "summary": "Suggests unscented cotton pads without a mesh covering, changed about every 2 to 6 hours, and avoiding scented feminine products."
-      },
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Ewha Medical Journal 2019 (Woo et al.), doi:10.12771/emj.2019.42.3.25: Systematic Review on Sanitary Pads and Female Health",
-        "summary": "Reviews studies on chemicals in pads and finds the evidence on health effects limited and inconclusive."
       }
     ],
     "warnings": [
@@ -3092,41 +2130,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual Pads and Liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
-        "summary": "Chemicals such as VOCs and dioxins were found in pads mostly below safety margins, and evidence linking pad adhesives or fragrances to skin irritation was limited and mixed, with no clear cause and effect shown."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Chlorine-free pulp",
-        "text": "A 2019 review of pad safety found that a US investigation measured dioxin (a pollutant) levels in pads lower than what people take in from food. It found no studies comparing chlorine-free or organic pads with regular ones, so there's no direct evidence either way that chlorine-free pulp is better for your health.",
-        "citations": [
-          {
-            "url": "https://synapse.koreamed.org/articles/1130139",
-            "label": "Ewha Medical Journal 2019 (Woo et al.), doi:10.12771/emj.2019.42.3.25: Systematic Review on Sanitary Pads and Female Health"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "Pads are regulated by the FDA as medical devices, and makers have to register them and report problems. The FDA's main safety advice is to change your pad every few hours, even on light days, because wearing one too long can irritate your skin. A Harvard Health article by an OB-GYN suggests unscented pads, changed about every 2 to 6 hours. A 2019 review of pad safety research found the evidence on longer-term health effects of pad chemicals limited, with small studies that neither clearly show harm nor rule it out. Being fragrance-free fits the advice to avoid scented feminine products.",
+    "clinicalNote": "Pads are regulated by the FDA as medical devices, and makers have to register them and report problems. The FDA's main safety advice is to change your pad every few hours, even on light days, because wearing one too long can irritate your skin. Being fragrance-free fits the advice to avoid scented feminine products.",
     "clinicalNoteSources": [
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual Pads and Liners",
         "summary": "Explains how FDA regulates pads and gives safe-use tips, including changing them every few hours."
-      },
-      {
-        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
-        "label": "Harvard Health Blog (Huma Farid, MD, 2019): Vulvar health",
-        "summary": "Suggests unscented cotton pads without a mesh covering, changed about every 2 to 6 hours, and avoiding scented feminine products."
-      },
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Ewha Medical Journal 2019 (Woo et al.), doi:10.12771/emj.2019.42.3.25: Systematic Review on Sanitary Pads and Female Health",
-        "summary": "Reviews studies on chemicals in pads and finds the evidence on health effects limited and inconclusive."
       }
     ],
     "warnings": [
@@ -3170,7 +2179,6 @@ export const PRODUCT_RESEARCH = {
         "summary": "Pads absorb flow after it leaves the body and can also be used for other discharge, unlike tampons and cups, and wearing any product too long lets bacteria grow."
       }
     ],
-    "clinicalNote": "The FDA regulates menstrual pads as medical devices. It advises changing pads every few hours, even on light days, and stopping use if you notice itching, rash or swelling.",
     "communityReview": "Reviews are mostly positive. People often say the pads feel light and comfortable, don't cause irritation, and that the wings help keep them in place. The complaints that come up are pads that feel bulkier than the \"ultra thin\" name suggests and wing adhesive that is inconsistent, in one case sticking so hard to underwear it wouldn't come off.",
     "communityReviewSources": [
       {
@@ -3211,13 +2219,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual Pads and Liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
-        "summary": "Chemicals such as VOCs and dioxins were found in pads mostly below safety margins, and evidence linking pad adhesives or fragrances to skin irritation was limited and mixed, with no clear cause and effect shown."
-      }
-    ],
     "clinicalNote": "In the US, pads and liners are regulated by the FDA as medical devices. Makers have to register them, follow good manufacturing practices, and report problems and bad reactions. The FDA's main advice is simple: change your pad every few hours, even on light days, because wearing one too long can irritate your skin. Some people react to added scents or deodorants, so stop using a pad if you get itching, a rash or swelling.",
     "clinicalNoteSources": [
       {
@@ -3267,7 +2268,6 @@ export const PRODUCT_RESEARCH = {
         "summary": "Pads absorb flow after it leaves the body and can also be used for other discharge, unlike tampons and cups, and wearing any product too long lets bacteria grow."
       }
     ],
-    "clinicalNote": "The FDA regulates menstrual pads as medical devices and notes some people react to scents or other materials added to pads. If you get itching, rash or swelling, stop using the pad and check in with your provider.",
     "communityReview": "Reviewers mostly like these. Common praise is for strong absorbency, comfort, no chemical smell, and extra length that covers more than other overnight pads. Complaints are that wings can come unstuck or shift, the pads feel bulky to some, they cost more than supermarket brands, and some people are put off that only the top layer is cotton while the backing is plastic.",
     "communityReviewSources": [
       {
@@ -3312,29 +2312,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual Pads and Liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
-        "summary": "Chemicals such as VOCs and dioxins were found in pads mostly below safety margins, and evidence linking pad adhesives or fragrances to skin irritation was limited and mixed, with no clear cause and effect shown."
-      }
-    ],
-    "clinicalNote": "In the US, pads and liners are regulated by the FDA as medical devices. Makers have to register them, follow good manufacturing practices, and report problems and bad reactions. The FDA's main advice is simple: change your pad every few hours, even on light days, because wearing one too long can irritate your skin. Some people react to added scents or deodorants, so stop using a pad if you get itching, a rash or swelling. On organic cotton: one 2018 study in women with irritated vulvar skin found organic cotton pads caused fewer irritation effects than conventional synthetic pads. Keep in mind only Cora's topsheet (the layer against your skin) is organic cotton; its absorbent core is wood pulp with a superabsorbent polymer (sodium polyacrylate).",
+    "clinicalNote": "In the US, pads and liners are regulated by the FDA as medical devices. Makers have to register them, follow good manufacturing practices, and report problems and bad reactions. The FDA's main advice is simple: change your pad every few hours, even on light days, because wearing one too long can irritate your skin. Some people react to added scents or deodorants, so stop using a pad if you get itching, a rash or swelling. Keep in mind only Cora's topsheet (the layer against your skin) is organic cotton; its absorbent core is wood pulp with a superabsorbent polymer (sodium polyacrylate).",
     "clinicalNoteSources": [
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual Pads and Liners",
         "summary": "FDA regulates pads and liners as medical devices and advises changing them every few hours, since wearing one too long can irritate skin."
-      },
-      {
-        "url": "https://iris.unipv.it/handle/11571/1258246",
-        "label": "Minerva Ginecologica (2018): Evaluation of safety and skin tolerability of organic cotton pads in case of irritative vulvitis (doi:10.23736/S0026-4784.18.04338-1), University of Pavia repository",
-        "summary": "Clinical and lab tests in which organic cotton pads caused fewer irritation effects than conventional synthetic pads in women with irritated vulvar skin."
-      },
-      {
-        "url": "https://cora.com/products/overnight-maxi-pads",
-        "label": "Cora: The Peace-of-Mind Maxi Overnight Pad (brand page, ingredient list)",
-        "summary": "Lists an organic cotton topsheet, a wood pulp and sodium polyacrylate core, and a polyethylene backsheet."
       }
     ],
     "warnings": [
@@ -3365,24 +2348,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual Pads and Liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
-        "summary": "Found limited, mixed evidence on pads and skin irritation, and the one included study on daily panty liner use found no significant change in vaginal flora."
-      }
-    ],
-    "clinicalNote": "Liners are regulated by the FDA the same way as pads, and the FDA advises changing them every few hours even on light days, since wearing one too long can irritate skin. In a small study of 12 women, a liner with a non-breathable backing made vulva skin warmer, damper and less acidic than wearing no liner, while a breathable liner left skin close to normal. That study measured skin conditions, not infections, so it does not show liners cause problems.",
+    "clinicalNote": "Liners are regulated by the FDA the same way as pads, and the FDA advises changing them every few hours even on light days, since wearing one too long can irritate skin.",
     "clinicalNoteSources": [
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual Pads and Liners",
         "summary": "FDA regulates pads and liners as medical devices and advises changing them every few hours, since wearing one too long can irritate skin."
-      },
-      {
-        "url": "https://medicaljournalssweden.se/actadv/article/view/11250",
-        "label": "Acta Dermato-Venereologica: The vulva skin microclimate: influence of panty liners on temperature, humidity and pH (doi:10.1080/00015550310007409)",
-        "summary": "In 12 healthy women, a liner with a non-breathable backsheet made vulva skin warmer, damper and less acidic than no liner, while a breathable liner largely left it unchanged."
       }
     ],
     "warnings": [
@@ -3413,24 +2384,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual Pads and Liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
-        "summary": "Found limited, mixed evidence on pads and skin irritation, and the one included study on daily panty liner use found no significant change in vaginal flora."
-      }
-    ],
-    "clinicalNote": "Liners are regulated by the FDA the same way as pads, and the FDA advises changing them every few hours even on light days, since wearing one too long can irritate skin. In a small study of 12 women, a liner with a non-breathable backing made vulva skin warmer, damper and less acidic than wearing no liner, while a breathable liner left skin close to normal. That study measured skin conditions, not infections, so it does not show liners cause problems.",
+    "clinicalNote": "Liners are regulated by the FDA the same way as pads, and the FDA advises changing them every few hours even on light days, since wearing one too long can irritate skin.",
     "clinicalNoteSources": [
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual Pads and Liners",
         "summary": "FDA regulates pads and liners as medical devices and advises changing them every few hours, since wearing one too long can irritate skin."
-      },
-      {
-        "url": "https://medicaljournalssweden.se/actadv/article/view/11250",
-        "label": "Acta Dermato-Venereologica: The vulva skin microclimate: influence of panty liners on temperature, humidity and pH (doi:10.1080/00015550310007409)",
-        "summary": "In 12 healthy women, a liner with a non-breathable backsheet made vulva skin warmer, damper and less acidic than no liner, while a breathable liner largely left it unchanged."
       }
     ],
     "warnings": [
@@ -3461,24 +2420,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
       "sourceLabel": "FDA: Menstrual Pads and Liners"
     },
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., Systematic Review on Sanitary Pads and Female Health, Ewha Medical Journal (2019)",
-        "summary": "Found limited, mixed evidence on pads and skin irritation, and the one included study on daily panty liner use found no significant change in vaginal flora."
-      }
-    ],
-    "clinicalNote": "Liners are regulated by the FDA the same way as pads, and the FDA advises changing them every few hours even on light days, since wearing one too long can irritate skin. In a small study of 12 women, a liner with a non-breathable backing made vulva skin warmer, damper and less acidic than wearing no liner, while a breathable liner left skin close to normal. That study measured skin conditions, not infections, so it does not show liners cause problems.",
+    "clinicalNote": "Liners are regulated by the FDA the same way as pads, and the FDA advises changing them every few hours even on light days, since wearing one too long can irritate skin.",
     "clinicalNoteSources": [
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual Pads and Liners",
         "summary": "FDA regulates pads and liners as medical devices and advises changing them every few hours, since wearing one too long can irritate skin."
-      },
-      {
-        "url": "https://medicaljournalssweden.se/actadv/article/view/11250",
-        "label": "Acta Dermato-Venereologica: The vulva skin microclimate: influence of panty liners on temperature, humidity and pH (doi:10.1080/00015550310007409)",
-        "summary": "In 12 healthy women, a liner with a non-breathable backsheet made vulva skin warmer, damper and less acidic than no liner, while a breathable liner largely left it unchanged."
       }
     ],
     "warnings": [
@@ -3516,11 +2463,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://stacks.cdc.gov/view/cdc/3270/cdc_3270_DS1.pdf",
         "label": "Hajjeh et al., Toxic Shock Syndrome in the United States: Surveillance Update, 1979 to 1996, Emerging Infectious Diseases (CDC, 1999)",
         "summary": "Menstrual TSS cases fell after tampon absorbency dropped and FDA labeling was required, and using only tampons carried higher risk than mixing tampons with pads."
-      },
-      {
-        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
-        "label": "Schlievert and Davis, Device-Associated Menstrual Toxic Shock Syndrome, Clinical Microbiology Reviews (2020)",
-        "summary": "Explains that menstrual TSS is driven by the TSST-1 toxin, that tampon warning labels and absorbency standards came from this research, and that cases still occur."
       }
     ],
     "clinicalNote": "Tampons are medical devices in the US, and the FDA has to review and authorize each one before it can be sold, including checks on its materials and absorbency. The main safety concern is toxic shock syndrome (TSS), a rare but serious illness linked to leaving a tampon in too long, and reported cases have dropped a lot over the past 20 years. In 2026 the FDA studied trace metals in tampons and concluded the amount released during use is too small to cause harm.",
@@ -3565,11 +2507,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://stacks.cdc.gov/view/cdc/3270/cdc_3270_DS1.pdf",
         "label": "Hajjeh et al., Toxic Shock Syndrome in the United States: Surveillance Update, 1979 to 1996, Emerging Infectious Diseases (CDC, 1999)",
         "summary": "Menstrual TSS cases fell after tampon absorbency dropped and FDA labeling was required, and using only tampons carried higher risk than mixing tampons with pads."
-      },
-      {
-        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
-        "label": "Schlievert and Davis, Device-Associated Menstrual Toxic Shock Syndrome, Clinical Microbiology Reviews (2020)",
-        "summary": "Explains that menstrual TSS is driven by the TSST-1 toxin, that tampon warning labels and absorbency standards came from this research, and that cases still occur."
       }
     ],
     "clinicalNote": "Tampons are medical devices in the US, and the FDA has to review and authorize each one before it can be sold, including checks on its materials and absorbency. The main safety concern is toxic shock syndrome (TSS), a rare but serious illness linked to leaving a tampon in too long, and reported cases have dropped a lot over the past 20 years. In 2026 the FDA studied trace metals in tampons and concluded the amount released during use is too small to cause harm.",
@@ -3615,11 +2552,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://stacks.cdc.gov/view/cdc/3270/cdc_3270_DS1.pdf",
         "label": "Hajjeh et al., Toxic Shock Syndrome in the United States: Surveillance Update, 1979 to 1996, Emerging Infectious Diseases (CDC, 1999)",
         "summary": "Menstrual TSS cases fell after tampon absorbency dropped and FDA labeling was required, and using only tampons carried higher risk than mixing tampons with pads."
-      },
-      {
-        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
-        "label": "Schlievert and Davis, Device-Associated Menstrual Toxic Shock Syndrome, Clinical Microbiology Reviews (2020)",
-        "summary": "Explains that menstrual TSS is driven by the TSST-1 toxin, that tampon warning labels and absorbency standards came from this research, and that cases still occur."
       }
     ],
     "clinicalNote": "Tampons are medical devices in the US, and the FDA has to review and authorize each one before it can be sold, including checks on its materials and absorbency. The main safety concern is toxic shock syndrome (TSS), a rare but serious illness linked to leaving a tampon in too long, and reported cases have dropped a lot over the past 20 years. In 2026 the FDA studied trace metals in tampons and concluded the amount released during use is too small to cause harm.",
@@ -3664,11 +2596,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://stacks.cdc.gov/view/cdc/3270/cdc_3270_DS1.pdf",
         "label": "Hajjeh et al., Toxic Shock Syndrome in the United States: Surveillance Update, 1979 to 1996, Emerging Infectious Diseases (CDC, 1999)",
         "summary": "Menstrual TSS cases fell after tampon absorbency dropped and FDA labeling was required, and using only tampons carried higher risk than mixing tampons with pads."
-      },
-      {
-        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
-        "label": "Schlievert and Davis, Device-Associated Menstrual Toxic Shock Syndrome, Clinical Microbiology Reviews (2020)",
-        "summary": "Explains that menstrual TSS is driven by the TSST-1 toxin, that tampon warning labels and absorbency standards came from this research, and that cases still occur."
       }
     ],
     "clinicalNote": "Tampons are medical devices in the US, and the FDA has to review and authorize each one before it can be sold, including checks on its materials and absorbency. The main safety concern is toxic shock syndrome (TSS), a rare but serious illness linked to leaving a tampon in too long, and reported cases have dropped a lot over the past 20 years. In 2026 the FDA studied trace metals in tampons and concluded the amount released during use is too small to cause harm.",
@@ -3837,7 +2764,7 @@ export const PRODUCT_RESEARCH = {
     "ingredientScience": [
       {
         "name": "Medical-grade silicone",
-        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy.",
         "citations": [
           {
             "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
@@ -3846,13 +2773,8 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "A 2019 review in The Lancet Public Health pooled 43 studies with 3,319 people and found cups leaked about the same as or less than pads and tampons in the four studies that compared them directly, and about 73% of people wanted to keep using one. Four studies found no harm to vaginal flora (the normal bacteria that keep the vagina healthy), but the review did log rare problems, including 5 cases of toxic shock syndrome and 13 IUDs that got pulled out of place. Most of the studies were low quality, so the authors called cups a safe option while asking for better research. If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
+    "clinicalNote": "If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
     "clinicalNoteSources": [
-      {
-        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
-        "label": "The Lancet Public Health (2019), van Eijk et al.: Menstrual cup use, leakage, acceptability, safety, and availability (DOAJ record)",
-        "summary": "Systematic review of 43 studies finding cups leak about the same as or less than disposables, with rare harms including TSS and IUD displacement."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
         "label": "FDA: Menstrual Cups",
@@ -3892,7 +2814,7 @@ export const PRODUCT_RESEARCH = {
     "ingredientScience": [
       {
         "name": "Medical-grade silicone",
-        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy.",
         "citations": [
           {
             "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
@@ -3901,13 +2823,8 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "A 2019 review in The Lancet Public Health pooled 43 studies with 3,319 people and found cups leaked about the same as or less than pads and tampons in the four studies that compared them directly, and about 73% of people wanted to keep using one. Four studies found no harm to vaginal flora (the normal bacteria that keep the vagina healthy), but the review did log rare problems, including 5 cases of toxic shock syndrome and 13 IUDs that got pulled out of place. Most of the studies were low quality, so the authors called cups a safe option while asking for better research. If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
+    "clinicalNote": "If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
     "clinicalNoteSources": [
-      {
-        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
-        "label": "The Lancet Public Health (2019), van Eijk et al.: Menstrual cup use, leakage, acceptability, safety, and availability (DOAJ record)",
-        "summary": "Systematic review of 43 studies finding cups leak about the same as or less than disposables, with rare harms including TSS and IUD displacement."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
         "label": "FDA: Menstrual Cups",
@@ -3947,7 +2864,7 @@ export const PRODUCT_RESEARCH = {
     "ingredientScience": [
       {
         "name": "Medical-grade silicone",
-        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy.",
         "citations": [
           {
             "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
@@ -3956,13 +2873,8 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "A 2019 review in The Lancet Public Health pooled 43 studies with 3,319 people and found cups leaked about the same as or less than pads and tampons in the four studies that compared them directly, and about 73% of people wanted to keep using one. Four studies found no harm to vaginal flora (the normal bacteria that keep the vagina healthy), but the review did log rare problems, including 5 cases of toxic shock syndrome and 13 IUDs that got pulled out of place. Most of the studies were low quality, so the authors called cups a safe option while asking for better research. If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
+    "clinicalNote": "If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
     "clinicalNoteSources": [
-      {
-        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
-        "label": "The Lancet Public Health (2019), van Eijk et al.: Menstrual cup use, leakage, acceptability, safety, and availability (DOAJ record)",
-        "summary": "Systematic review of 43 studies finding cups leak about the same as or less than disposables, with rare harms including TSS and IUD displacement."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
         "label": "FDA: Menstrual Cups",
@@ -4002,7 +2914,7 @@ export const PRODUCT_RESEARCH = {
     "ingredientScience": [
       {
         "name": "Medical-grade silicone",
-        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy.",
         "citations": [
           {
             "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
@@ -4011,13 +2923,8 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "A 2019 review in The Lancet Public Health pooled 43 studies with 3,319 people and found cups leaked about the same as or less than pads and tampons in the four studies that compared them directly, and about 73% of people wanted to keep using one. Four studies found no harm to vaginal flora (the normal bacteria that keep the vagina healthy), but the review did log rare problems, including 5 cases of toxic shock syndrome and 13 IUDs that got pulled out of place. Most of the studies were low quality, so the authors called cups a safe option while asking for better research. If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
+    "clinicalNote": "If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
     "clinicalNoteSources": [
-      {
-        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
-        "label": "The Lancet Public Health (2019), van Eijk et al.: Menstrual cup use, leakage, acceptability, safety, and availability (DOAJ record)",
-        "summary": "Systematic review of 43 studies finding cups leak about the same as or less than disposables, with rare harms including TSS and IUD displacement."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
         "label": "FDA: Menstrual Cups",
@@ -4075,7 +2982,7 @@ export const PRODUCT_RESEARCH = {
     "ingredientScience": [
       {
         "name": "Medical-grade silicone",
-        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy.",
         "citations": [
           {
             "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
@@ -4084,13 +2991,8 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "A 2019 review in The Lancet Public Health pooled 43 studies with 3,319 people and found cups leaked about the same as or less than pads and tampons in the four studies that compared them directly, and about 73% of people wanted to keep using one. Four studies found no harm to vaginal flora (the normal bacteria that keep the vagina healthy), but the review did log rare problems, including 5 cases of toxic shock syndrome and 13 IUDs that got pulled out of place. Most of the studies were low quality, so the authors called cups a safe option while asking for better research. If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
+    "clinicalNote": "If you have an IUD, FDA advises talking to your gynecologist before you start using a cup.",
     "clinicalNoteSources": [
-      {
-        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
-        "label": "The Lancet Public Health (2019), van Eijk et al.: Menstrual cup use, leakage, acceptability, safety, and availability (DOAJ record)",
-        "summary": "Systematic review of 43 studies finding cups leak about the same as or less than disposables, with rare harms including TSS and IUD displacement."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
         "label": "FDA: Menstrual Cups",
@@ -4113,13 +3015,6 @@ export const PRODUCT_RESEARCH = {
       "People with heavy flow: in a 2023 lab study using red blood cells, the Ziggy disc held about 80 mL, the most of any product tested",
       "Those who want a reusable disc that can be worn during intimacy",
       "People who would rather skip sizing decisions, since it comes in one size"
-    ],
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing with red blood cells, discs held the most of any product type (about 61 mL on average), and the Ziggy disc held the most of all products tested, about 80 mL."
-      }
     ],
     "howToUse": {
       "intro": "Per Intimina's Ziggy Cup directions as published by retailers:",
@@ -4144,7 +3039,7 @@ export const PRODUCT_RESEARCH = {
     "ingredientScience": [
       {
         "name": "Medical-grade silicone",
-        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy.",
         "citations": [
           {
             "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
@@ -4153,13 +3048,8 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "A 2024 lab study in BMJ Sexual & Reproductive Health tested real red blood cells and found discs held the most of any product type, about 61 mL on average, compared with 20 to 34 mL for Tampax tampons and 22 to 35 mL for DivaCup cups. Intimina's Ziggy was one of the discs tested and held 80 mL, the most of any single product in the study. The authors note products may hold less in your body than in the lab, and that doctors checking for heavy periods should ask which products you use, since older bleeding measures were built around older products. FDA groups discs with cups and advises talking to your gynecologist first if you have an IUD.",
+    "clinicalNote": "FDA groups discs with cups and advises talking to your gynecologist first if you have an IUD.",
     "clinicalNoteSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21.full.pdf",
-        "label": "BMJ Sexual & Reproductive Health (2024), DeLoughery et al.: Red blood cell capacity of modern menstrual products",
-        "summary": "Lab study using red blood cells found menstrual discs held the most blood of the products tested."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
         "label": "FDA: Menstrual Cups",
@@ -4182,13 +3072,6 @@ export const PRODUCT_RESEARCH = {
       "People who want to choose a disc size (S, M or L) for a better fit",
       "Those who find disc removal tricky and want a string option",
       "People with heavier flow: in a 2023 lab study, menstrual discs held the most of any product type, about 61 mL on average"
-    ],
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing with red blood cells, menstrual discs held the most of any product type, about 61 mL on average, versus roughly 20 to 50 mL for tampons, cups and heavy pads."
-      }
     ],
     "howToUse": {
       "intro": "Per Lumma's directions on Period Nirvana's shop page:",
@@ -4213,7 +3096,7 @@ export const PRODUCT_RESEARCH = {
     "ingredientScience": [
       {
         "name": "Medical-grade silicone",
-        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy. That's the main evidence-backed point about the material itself; there's little research comparing silicone grades.",
+        "text": "FDA says cups are usually made of silicone or rubber, and that silicone is the one to pick if you're sensitive to latex, since rubber cups can set off a latex allergy.",
         "citations": [
           {
             "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
@@ -4222,13 +3105,8 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "A 2024 lab study in BMJ Sexual & Reproductive Health tested real red blood cells and found discs held the most of any product type, about 61 mL on average, compared with 20 to 34 mL for Tampax tampons and 22 to 35 mL for DivaCup cups. Lumma was one of the discs tested, though the paper doesn't say which result was Lumma's. The authors note products may hold less in your body than in the lab, and that doctors checking for heavy periods should ask which products you use, since older bleeding measures were built around older products. FDA groups discs with cups and advises talking to your gynecologist first if you have an IUD.",
+    "clinicalNote": "FDA groups discs with cups and advises talking to your gynecologist first if you have an IUD.",
     "clinicalNoteSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21.full.pdf",
-        "label": "BMJ Sexual & Reproductive Health (2024), DeLoughery et al.: Red blood cell capacity of modern menstrual products",
-        "summary": "Lab study using red blood cells found menstrual discs held the most blood of the products tested."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
         "label": "FDA: Menstrual Cups",
@@ -4272,14 +3150,8 @@ export const PRODUCT_RESEARCH = {
         "summary": "FDA, which groups menstrual discs with cups, says to wash your hands before handling one, follow the label for wear time, use it only for period bleeding, and stop and call your provider if you have itching, rash, pain or swelling."
       }
     ],
-    "ingredientScience": [],
-    "clinicalNote": "A 2024 lab study in BMJ Sexual & Reproductive Health tested real red blood cells and found discs held the most of any product type, about 61 mL on average, compared with 20 to 34 mL for Tampax tampons and 22 to 35 mL for DivaCup cups. Softdisc itself was not one of the products tested. The authors note products may hold less in your body than in the lab, and that doctors checking for heavy periods should ask which products you use, since older bleeding measures were built around older products. FDA groups discs with cups and advises talking to your gynecologist first if you have an IUD.",
+    "clinicalNote": "FDA groups discs with cups and advises talking to your gynecologist first if you have an IUD.",
     "clinicalNoteSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21.full.pdf",
-        "label": "BMJ Sexual & Reproductive Health (2024), DeLoughery et al.: Red blood cell capacity of modern menstrual products",
-        "summary": "Lab study using red blood cells found menstrual discs held the most blood of the products tested."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
         "label": "FDA: Menstrual Cups",
@@ -4302,43 +3174,11 @@ export const PRODUCT_RESEARCH = {
       "Those who want two sizes to choose from and a notch for removal",
       "People with heavier flow: in a 2023 lab study, menstrual discs held the most of any product type, about 61 mL on average"
     ],
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing with red blood cells, menstrual discs held the most of any product type, about 61 mL on average, versus roughly 20 to 50 mL for tampons, cups and heavy pads."
-      }
-    ],
     "clinicalSources": [
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
         "label": "FDA: Menstrual Cups",
         "summary": "FDA, which groups menstrual discs with cups, says to wash your hands and the device before use, empty it every 8 to 12 hours, boil reusable ones for 1 to 2 minutes at the end of each cycle, and check with your gynecologist first if you have an IUD."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Medical-grade silicone",
-        "text": "Most reusable discs and cups are made of medical-grade silicone, a soft, flexible material made for use inside the body. With proper care, these products can last years before you need to replace them.",
-        "citations": [
-          {
-            "url": "https://www.nyp.org/healthmatters/your-guide-to-period-products",
-            "label": "NewYork-Presbyterian Health Matters: Your Guide to Period Products"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "A menstrual disc is a shallow, round cup that sits higher in the vagina than a tampon, right at the base of the cervix (the opening of the uterus), and it can be worn for up to 12 hours or until full. A NewYork-Presbyterian gynecologist says discs are generally fine with an IUD (a birth control device placed in the uterus) if you know where your IUD strings are, but a large 2019 review of menstrual cups did record 13 cases of IUDs being pulled out of place, so break the seal gently when removing. Like tampons, discs carry a small but serious risk of toxic shock syndrome (TSS), a rare bacterial infection; that same review counted 5 TSS cases in cup users. In studies of cups, leaks were similar to or lower than with pads or tampons.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.nyp.org/healthmatters/your-guide-to-period-products",
-        "label": "NewYork-Presbyterian Health Matters: Your Guide to Period Products",
-        "summary": "A gynecologist explains how discs sit at the base of the cervix, can be worn up to 12 hours, are generally safe with an IUD, and carry a small TSS risk."
-      },
-      {
-        "url": "https://doaj.org/article/e1d5fe32203c4f238d4c324f7d815608",
-        "label": "The Lancet Public Health 2019: Menstrual cup use, leakage, acceptability, safety, and availability (systematic review, via DOAJ)",
-        "summary": "A review of 43 studies found cup leakage similar to or lower than pads and tampons, and recorded 5 TSS cases and 13 IUD dislodgements in cup users."
       }
     ],
     "warnings": [
@@ -4387,52 +3227,28 @@ export const PRODUCT_RESEARCH = {
     "ingredientScience": [
       {
         "name": "Organic cotton",
-        "text": "Cotton lets air flow and cuts down on moisture buildup, which is why MedlinePlus recommends cotton underwear (or a cotton-lined crotch) over synthetic fabric to help prevent vaginitis, meaning irritation or infection of the vagina. That's standard self-care advice rather than something tested head to head in trials.",
+        "text": "Cotton lets air flow and cuts down on moisture buildup, which is why MedlinePlus recommends cotton underwear (or a cotton-lined crotch) over synthetic fabric to help prevent vaginitis, meaning irritation or infection of the vagina.",
         "citations": [
           {
             "url": "https://medlineplus.gov/ency/patientinstructions/000566.htm",
             "label": "MedlinePlus (NIH): Vaginitis, self-care"
           }
         ]
-      },
-      {
-        "name": "PFAS-free absorbent layer",
-        "text": "PFAS are \"forever chemicals\" that some makers use to help fabric repel liquid. The EPA says exposure to certain PFAS may be linked to lower fertility, higher cholesterol, weaker vaccine response and some cancers, though research on how different exposure levels affect health is still ongoing. Going PFAS-free avoids that question; the PFAS-free status here is the brand's own claim.",
-        "citations": [
-          {
-            "url": "https://www.epa.gov/pfas/our-current-understanding-human-health-and-environmental-risks-pfas",
-            "label": "US EPA: Our Current Understanding of the Human Health and Environmental Risks of PFAS"
-          }
-        ]
       }
     ],
-    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. A 2025 study of reusable period products found PFAS (\"forever chemicals\") in all 19 products picked for closer testing, and the researchers think some period underwear has PFAS added to stop leaks, so a PFAS-free claim is worth looking for.",
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products.",
     "clinicalNoteSources": [
-      {
-        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
-        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
         "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
         "summary": "FDA regulates menstrual products, including period underwear, as medical devices and advises changing them regularly."
-      },
-      {
-        "url": "https://axial.acs.org/environmental-and-sustainable-chemistry/forever-chemicals-in-feminine-hygiene-products-expanded-findings-raise-new-pfas-concerns",
-        "label": "American Chemical Society: summary of Wicks et al., Environ Sci Technol Lett 2025 (doi:10.1021/acs.estlett.5c00553)",
-        "summary": "A 2025 study of 59 reusable period products found PFAS in all 19 chosen for closer testing; researchers called the PFAS use unnecessary."
       }
     ],
     "warnings": [
       "Rinse in cold water right after use to remove excess blood.",
       "Skip fabric softener and bleach, which can stop the absorbent layers from working.",
       "Switch to a fresh pair if you start to feel damp or uncomfortable."
-    ],
-    "warningsSource": {
-      "url": "https://periodaisle.com/blogs/all/how-often-should-you-change-period-underwear-best-practices-for-maximum-comfort",
-      "label": "Aisle: How Often Should You Change Period Underwear?"
-    }
+    ]
   },
   "p-period-co-underwear": {
     "whoItsFor": [
@@ -4440,13 +3256,6 @@ export const PRODUCT_RESEARCH = {
       "Those new to period underwear who want to try it without spending much",
       "People with heavy flows who want backup alongside a tampon, cup or disc",
       "Not the pick as your only protection on your heaviest days: in a 2023 lab study using red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups or discs"
-    ],
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing with red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups, discs or heavy pads, so it works best as backup or for lighter flow."
-      }
     ],
     "howToUse": {
       "intro": "Per The Period Company's product page:",
@@ -4460,22 +3269,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.period.co/products/the-bikini",
       "sourceLabel": "The Period Company: The Bikini Period. in Organic Cotton For Heavy Flows"
     },
-    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. This pair is sold for heavy flow, and its higher absorbency claim comes from the brand's own testing. The brand itself says most people get about 8 hours on a heavy day, and some need to change after 3 to 4.",
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. The brand itself says most people get about 8 hours on a heavy day, and some need to change after 3 to 4.",
     "clinicalNoteSources": [
-      {
-        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
-        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
         "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
         "summary": "FDA regulates menstrual products, including period underwear, as medical devices and advises changing them regularly."
-      },
-      {
-        "url": "https://period.co/products/the-bikini",
-        "label": "Period.: The Bikini product page",
-        "summary": "Brand page listing materials (organic cotton body, polyester absorbent and leak layers), its absorbency claim, and typical wear times."
       }
     ],
     "warnings": [
@@ -4495,13 +3294,6 @@ export const PRODUCT_RESEARCH = {
       "Shoppers who care about a carbon neutral brand",
       "Not the pick as your only protection on your heaviest days: in a 2023 lab study using red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups or discs"
     ],
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing with red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups, discs or heavy pads, so it works best as backup or for lighter flow."
-      }
-    ],
     "howToUse": {
       "intro": "Per WUKA's own product page:",
       "steps": [
@@ -4517,41 +3309,21 @@ export const PRODUCT_RESEARCH = {
     "ingredientScience": [
       {
         "name": "Organic cotton",
-        "text": "Cotton lets air flow and cuts down on moisture buildup, which is why MedlinePlus recommends cotton underwear (or a cotton-lined crotch) over synthetic fabric to help prevent vaginitis, meaning irritation or infection of the vagina. That's standard self-care advice rather than something tested head to head in trials.",
+        "text": "Cotton lets air flow and cuts down on moisture buildup, which is why MedlinePlus recommends cotton underwear (or a cotton-lined crotch) over synthetic fabric to help prevent vaginitis, meaning irritation or infection of the vagina.",
         "citations": [
           {
             "url": "https://medlineplus.gov/ency/patientinstructions/000566.htm",
             "label": "MedlinePlus (NIH): Vaginitis, self-care"
           }
         ]
-      },
-      {
-        "name": "PFAS-free absorbent layer",
-        "text": "PFAS are \"forever chemicals\" that some makers use to help fabric repel liquid. The EPA says exposure to certain PFAS may be linked to lower fertility, higher cholesterol, weaker vaccine response and some cancers, though research on how different exposure levels affect health is still ongoing. Going PFAS-free avoids that question; the PFAS-free status here is the brand's own claim.",
-        "citations": [
-          {
-            "url": "https://www.epa.gov/pfas/our-current-understanding-human-health-and-environmental-risks-pfas",
-            "label": "US EPA: Our Current Understanding of the Human Health and Environmental Risks of PFAS"
-          }
-        ]
       }
     ],
-    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. A 2025 study of reusable period products found PFAS (\"forever chemicals\") in all 19 products picked for closer testing, and the researchers think some period underwear has PFAS added to stop leaks, so a PFAS-free claim is worth looking for.",
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products.",
     "clinicalNoteSources": [
-      {
-        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
-        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
         "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
         "summary": "FDA regulates menstrual products, including period underwear, as medical devices and advises changing them regularly."
-      },
-      {
-        "url": "https://axial.acs.org/environmental-and-sustainable-chemistry/forever-chemicals-in-feminine-hygiene-products-expanded-findings-raise-new-pfas-concerns",
-        "label": "American Chemical Society: summary of Wicks et al., Environ Sci Technol Lett 2025 (doi:10.1021/acs.estlett.5c00553)",
-        "summary": "A 2025 study of 59 reusable period products found PFAS in all 19 chosen for closer testing; researchers called the PFAS use unnecessary."
       }
     ],
     "warnings": [
@@ -4570,13 +3342,6 @@ export const PRODUCT_RESEARCH = {
       "Those who want a cotton pair with an absorbent gusset for lighter days or backup",
       "Not the pick as your only protection on your heaviest days: in a 2023 lab study using red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups or discs"
     ],
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing with red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups, discs or heavy pads, so it works best as backup or for lighter flow."
-      }
-    ],
     "howToUse": {
       "intro": "Per TomboyX's instructions for its First Line Period styles:",
       "steps": [
@@ -4589,13 +3354,8 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://tomboyx.com/products/first-line-period-bikini-x-black",
       "sourceLabel": "TomboyX First Line Period Bikini product page"
     },
-    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. Cleveland Clinic suggests trying a new pair on your lightest day, at home, to check fit and leaks before relying on it.",
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products.",
     "clinicalNoteSources": [
-      {
-        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
-        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
         "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
@@ -4619,13 +3379,6 @@ export const PRODUCT_RESEARCH = {
       "Shoppers looking for PFAS-free absorbent layers",
       "Not the pick as your only protection on your heaviest days: in a 2023 lab study using red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups or discs"
     ],
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing with red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups, discs or heavy pads, so it works best as backup or for lighter flow."
-      }
-    ],
     "howToUse": {
       "intro": "Per Dear Kate's care guide:",
       "steps": [
@@ -4637,22 +3390,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://dearkate.com/blogs/blog/how-to-properly-care-for-your-dear-kate-period-undies",
       "sourceLabel": "Dear Kate: How to Properly Care for Your Period Undies"
     },
-    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. A 2025 study of reusable period products found PFAS (\"forever chemicals\") in all 19 products picked for closer testing, and the researchers think some period underwear has PFAS added to stop leaks, so a PFAS-free claim is worth looking for.",
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products.",
     "clinicalNoteSources": [
-      {
-        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
-        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
         "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
         "summary": "FDA regulates menstrual products, including period underwear, as medical devices and advises changing them regularly."
-      },
-      {
-        "url": "https://axial.acs.org/environmental-and-sustainable-chemistry/forever-chemicals-in-feminine-hygiene-products-expanded-findings-raise-new-pfas-concerns",
-        "label": "American Chemical Society: summary of Wicks et al., Environ Sci Technol Lett 2025 (doi:10.1021/acs.estlett.5c00553)",
-        "summary": "A 2025 study of 59 reusable period products found PFAS in all 19 chosen for closer testing; researchers called the PFAS use unnecessary."
       }
     ],
     "warnings": [
@@ -4672,13 +3415,6 @@ export const PRODUCT_RESEARCH = {
       "Shoppers looking for PFAS-free absorbent layers",
       "Not the pick as your only protection on your heaviest days: in a 2023 lab study using red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups or discs"
     ],
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing with red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups, discs or heavy pads, so it works best as backup or for lighter flow."
-      }
-    ],
     "howToUse": {
       "intro": "Per Proof's FAQ:",
       "steps": [
@@ -4690,22 +3426,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://shopproof.com/pages/faq",
       "sourceLabel": "Proof Leak Proof Underwear FAQs"
     },
-    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. Cleveland Clinic notes period underwear can also be used for urine leaks, discharge and bleeding after birth, but if you mainly need it for urine leaks, it suggests a product designed for that. A 2025 study of reusable period products found PFAS (\"forever chemicals\") in all 19 products picked for closer testing, and the researchers think some period underwear has PFAS added to stop leaks, so a PFAS-free claim is worth looking for.",
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products.",
     "clinicalNoteSources": [
-      {
-        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
-        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
         "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
         "summary": "FDA regulates menstrual products, including period underwear, as medical devices and advises changing them regularly."
-      },
-      {
-        "url": "https://axial.acs.org/environmental-and-sustainable-chemistry/forever-chemicals-in-feminine-hygiene-products-expanded-findings-raise-new-pfas-concerns",
-        "label": "American Chemical Society: summary of Wicks et al., Environ Sci Technol Lett 2025 (doi:10.1021/acs.estlett.5c00553)",
-        "summary": "A 2025 study of 59 reusable period products found PFAS in all 19 chosen for closer testing; researchers called the PFAS use unnecessary."
       }
     ],
     "warnings": [
@@ -4724,13 +3450,6 @@ export const PRODUCT_RESEARCH = {
       "Those with light to moderate flow, or who want backup for a tampon or cup",
       "Not the pick as your only protection on your heaviest days: in a 2023 lab study using red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups or discs"
     ],
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
-        "summary": "In lab testing with red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups, discs or heavy pads, so it works best as backup or for lighter flow."
-      }
-    ],
     "howToUse": {
       "intro": "Per Hanes' Comfort, Period. collection page:",
       "steps": [
@@ -4741,13 +3460,8 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.hanes.com/women/collections/period-underwear",
       "sourceLabel": "Hanes Comfort, Period. Underwear collection"
     },
-    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A Cleveland Clinic ob/gyn says a typical pair holds about one to two tampons' worth of flow, so on heavy days you may need to change more often, and you shouldn't wear one pair for more than 12 hours. A light to moderate pair like this may need changing sooner on your heaviest days. Cleveland Clinic suggests testing a new pair on a light day at home first.",
+    "clinicalNote": "Period underwear has absorbent layers plus a leak barrier and catches flow outside the body, and the FDA regulates it as a medical device like other menstrual products. A light to moderate pair like this may need changing sooner on your heaviest days.",
     "clinicalNoteSources": [
-      {
-        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-        "label": "Cleveland Clinic: What Is Period Underwear and Does It Work?",
-        "summary": "An ob/gyn explains that period underwear typically holds one to two tampons' worth of flow and should not be worn more than 12 hours."
-      },
       {
         "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
         "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
@@ -4764,20 +3478,7 @@ export const PRODUCT_RESEARCH = {
       "label": "FDA: Menstrual Product Options, Facts, and Safe Use"
     }
   },
-  "p-neycher-vaginal-moisturizer": {
-    "clinicalSources": [
-      {
-        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
-        "label": "The 2020 genitourinary syndrome of menopause position statement of The North American Menopause Society (Menopause, 2020)",
-        "summary": "Names nonhormone lubricants and regularly used vaginal moisturizers as first-line therapy for menopausal dryness, and finds no evidence yet that hyaluronic acid products work better than other moisturizers."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "The Menopause Society's patient handout says vaginal moisturizers are used regularly, often several times a week, and that oil-based products may damage condoms and raise infection risk."
-      }
-    ]
-  },
+  "p-neycher-vaginal-moisturizer": {},
   "p-neycher-odor-be-gone": {
     "clinicalSources": [
       {
@@ -4797,33 +3498,7 @@ export const PRODUCT_RESEARCH = {
       }
     ]
   },
-  "p-neycher-hydrobloom-gel": {
-    "clinicalSources": [
-      {
-        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
-        "label": "The 2020 genitourinary syndrome of menopause position statement of The North American Menopause Society (Menopause, 2020)",
-        "summary": "Recommends lubricants and regular moisturizers as first-line care for menopausal dryness, suggests a 24-hour skin patch test before using a new product internally, and notes many water-based products are hyperosmolar, which can irritate."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "The Menopause Society's patient handout says moisturizers are used regularly, often several times a week, and that warming agents and some solvents and preservatives may irritate."
-      }
-    ],
-    "clinicalNote": "The North American Menopause Society lists over-the-counter, hormone-free vaginal moisturizers and lubricants as first-line care for dryness from menopause, while noting that few clinical studies have tested these products. It also says there's no evidence yet that hyaluronic acid products work better than other moisturizers. That said, a randomized trial of 144 women found a hyaluronic acid vaginal gel was not inferior to estriol (a low-dose estrogen) cream for relieving dryness. Because this gel contains several plant extracts, the Society's tip applies: try a product on a small patch of skin for 24 hours before using it inside the vagina.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
-        "label": "Menopause (journal), 2020: The North American Menopause Society position statement on genitourinary syndrome of menopause",
-        "summary": "Professional position statement naming nonhormone moisturizers and lubricants as first-line for genitourinary syndrome of menopause, with limited trial data and no proven extra benefit from hyaluronic acid."
-      },
-      {
-        "url": "https://boris.unibe.ch/54089",
-        "label": "Archives of Gynecology and Obstetrics (Springer), 2013: Is vaginal hyaluronic acid as effective as vaginal estriol for vaginal dryness relief?",
-        "summary": "Summary of a randomized trial in which hyaluronic acid vaginal gel was non-inferior to estriol cream for vaginal dryness."
-      }
-    ]
-  },
+  "p-neycher-hydrobloom-gel": {},
   "p-good-kitty-uti-biome-shield": {
     "whoItsFor": [
       "People who get recurrent UTIs and want to try a cranberry and D-mannose supplement, knowing the evidence is mixed",
@@ -4843,41 +3518,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://goodkittyco.com/products/uti-biome-shield",
       "sourceLabel": "Good Kitty Co: UTI Biome Shield product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/urinary-tract-infection/symptoms-causes/syc-20353447",
-        "label": "Mayo Clinic: Urinary tract infection, symptoms and causes",
-        "summary": "Mayo Clinic suggests cranberry products for UTI prevention only if your healthcare team says it's OK, along with drinking plenty of water, and notes falling estrogen in perimenopause and menopause raises UTI risk."
-      },
-      {
-        "url": "https://swiss.cochrane.org/news/can-cranberries-help-prevent-urinary-tract-infections",
-        "label": "Cochrane: Can cranberries help prevent urinary tract infections?",
-        "summary": "An updated Cochrane review of 50 studies (8,857 people) found cranberry products reduce UTIs in women with recurrent UTIs, while evidence in pregnant women and older nursing home residents was inconclusive."
-      },
-      {
-        "url": "https://urology.wisc.edu/wp-content/uploads/2024/05/D-Mannose-for-Prevention-of-Recurrent-Urinary-Tract-Infection-Among-Women.pdf",
-        "label": "Hayward et al., D-Mannose for Prevention of Recurrent UTI Among Women, JAMA Internal Medicine, 2024",
-        "summary": "In a trial of 598 women with recurrent UTIs, 2 g of D-mannose daily did not reduce repeat UTIs compared with placebo, and the authors advise against recommending it for prevention."
-      }
-    ],
     "communityReview": "Reviews on Good Kitty's own site are overwhelmingly positive. Reviewers most often say they've had fewer or no UTIs since starting, and praise the easy daily routine, the packaging and the customer service. We couldn't find independent reviews or critical feedback outside the brand's site, so this is a one-sided picture.",
     "communityReviewSources": [
       {
         "url": "https://goodkittyco.com/products/uti-biome-shield",
         "label": "Good Kitty Co: customer reviews on the UTI Biome Shield product page"
-      }
-    ],
-    "clinicalNote": "The two main ingredients here have very different evidence. A 2023 Cochrane review of 50 trials found cranberry products probably lower UTI risk, including in women with recurrent UTIs, though not in pregnant women or older adults in care homes. D-mannose has a weaker record: a 2024 randomized trial of 598 women with recurrent UTIs found daily D-mannose did no better than placebo. No published trial of this finished product was found, so its combined effect is unknown.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.cochrane.org/CD001321/UTI_cranberry-for-preventing-urinary-tract-infections",
-        "label": "Cochrane Review, 2023: Cranberries for preventing urinary tract infections",
-        "summary": "Cranberry products probably reduce symptomatic UTIs (RR 0.70 overall, 0.74 in women with recurrent UTIs), with little or no benefit in pregnant women or institutionalized elderly."
-      },
-      {
-        "url": "https://urology.wisc.edu/wp-content/uploads/2024/05/D-Mannose-for-Prevention-of-Recurrent-Urinary-Tract-Infection-Among-Women.pdf",
-        "label": "JAMA Internal Medicine, 2024: D-Mannose for Prevention of Recurrent UTI Among Women, RCT (copy hosted by UW Urology)",
-        "summary": "Daily D-mannose did not reduce recurrent UTIs versus placebo in 598 women in UK primary care."
       }
     ],
     "warnings": [
@@ -4909,20 +3554,7 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://oboo.love/products/woosh",
       "sourceLabel": "Oboo: Woosh Warming Wand product page"
-    },
-    "clinicalNote": "The International Society for Sexual Medicine says there are only a limited number of studies on vibrators, but early findings suggest they may improve genital blood flow, arousal, satisfaction, and orgasm, and possibly pelvic floor muscle tone. A Cedars-Sinai urogynecologist describes vibration as a way to boost blood flow to the genitals as estrogen drops in menopause, though the article notes the research comes from a handful of small studies. None of this tested the warming feature or this device.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine (ISSM): What are the benefits of vibrators for sexual health?",
-        "summary": "Medical society Q&A: limited studies suggest vibrators may improve genital blood flow, arousal, satisfaction, orgasm and pelvic floor tone; more research needed."
-      },
-      {
-        "url": "https://www.cedars-sinai.org/stories-and-insights/healthy-living/sexual-healing-vibrators-as-medicine",
-        "label": "Cedars-Sinai, 2025: Sexual Healing, Vibrators as Medicine",
-        "summary": "Academic medical center article quoting a urogynecologist on vibrators for blood flow, pelvic floor relaxation and menopause changes; notes evidence comes from a handful of small studies."
-      }
-    ]
+    }
   },
   "p-oboo-nook": {
     "whoItsFor": [
@@ -4942,37 +3574,7 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://oboo.love/products/nook",
       "sourceLabel": "Oboo: Nook Massager product page"
-    },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/female-sexual-dysfunction/diagnosis-treatment/drc-20372556",
-        "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
-        "summary": "Mayo Clinic lists devices such as vibrators as a nonmedical option that can help with orgasm by increasing blood flow to the clitoris."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "ISSM says early research links vibrator use with better desire, arousal, satisfaction and pelvic floor tone, but notes the number of studies is still limited."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
-      }
-    ],
-    "clinicalNote": "The International Society for Sexual Medicine says there are only a limited number of studies on vibrators, but early findings suggest they may improve genital blood flow, arousal, satisfaction, and orgasm, and possibly pelvic floor muscle tone. Cedars-Sinai's urogynecologist notes that vibrators make orgasm easier for many women and can be used externally, without insertion. The evidence is small and early, and none of it tested this device.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine (ISSM): What are the benefits of vibrators for sexual health?",
-        "summary": "Medical society Q&A: limited studies suggest vibrators may improve genital blood flow, arousal, satisfaction, orgasm and pelvic floor tone; more research needed."
-      },
-      {
-        "url": "https://www.cedars-sinai.org/stories-and-insights/healthy-living/sexual-healing-vibrators-as-medicine",
-        "label": "Cedars-Sinai, 2025: Sexual Healing, Vibrators as Medicine",
-        "summary": "Academic medical center article quoting a urogynecologist on vibrators for blood flow, pelvic floor relaxation and menopause changes; notes evidence comes from a handful of small studies."
-      }
-    ]
+    }
   },
   "p-oboo-smooch": {
     "whoItsFor": [
@@ -4993,50 +3595,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/smooch",
       "sourceLabel": "Oboo: Smooch Sonic Stimulator product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/female-sexual-dysfunction/diagnosis-treatment/drc-20372556",
-        "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
-        "summary": "Mayo Clinic lists devices such as vibrators as a nonmedical option that can help with orgasm by increasing blood flow to the clitoris."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "ISSM says early research links vibrator use with better desire, arousal, satisfaction and pelvic floor tone, but notes the number of studies is still limited."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
-      }
-    ],
-    "clinicalNote": "Research on vibrators is still small. A 2023 review found 17 studies linking vibrator use to better arousal, desire, satisfaction and orgasm, with early signs of benefit for pelvic floor muscles and vulvar pain, but the authors say more research is needed. In a large 2009 U.S. survey, about 7 in 10 women who used vibrators had no side effects; the most common one was temporary numbness, and most side effects were mild and short-lived. None of these studies tested Oboo devices. Smooch is for external use only, so it can be an option when penetration is uncomfortable. Oboo's own FAQ says it is compact and powerful rather than especially mild, so starting on the lowest setting makes sense.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.issm.info/sexual-health-headlines/vibrators-may-have-health-benefits",
-        "label": "International Society for Sexual Medicine: Vibrators may have health benefits (on Dubinskaya et al., Sexual Medicine Reviews, 2023)",
-        "summary": "Summarizes a 2023 systematic review of 17 studies that found positive results for sexual function and early signs for pelvic floor and vulvar pain, with more research needed."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "Says early research suggests vibrators may improve genital blood flow, arousal, satisfaction and orgasm, but that the number of studies is limited."
-      },
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
-        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
-        "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
-      }
-    ],
     "warnings": [
       "Wash it with warm water and soap after each use.",
       "If you share it, put a new condom on it each time, especially between different partners.",
       "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions."
-    ],
-    "warningsSource": {
-      "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-      "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
-    }
+    ]
   },
   "p-oboo-woo": {
     "whoItsFor": [
@@ -5057,50 +3620,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/woo",
       "sourceLabel": "Oboo: Woo Bullet product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/female-sexual-dysfunction/diagnosis-treatment/drc-20372556",
-        "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
-        "summary": "Mayo Clinic lists devices such as vibrators as a nonmedical option that can help with orgasm by increasing blood flow to the clitoris."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "ISSM says early research links vibrator use with better desire, arousal, satisfaction and pelvic floor tone, but notes the number of studies is still limited."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
-      }
-    ],
-    "clinicalNote": "Research on vibrators is still small. A 2023 review found 17 studies linking vibrator use to better arousal, desire, satisfaction and orgasm, with early signs of benefit for pelvic floor muscles and vulvar pain, but the authors say more research is needed. In a large 2009 U.S. survey, about 7 in 10 women who used vibrators had no side effects; the most common one was temporary numbness, and most side effects were mild and short-lived. None of these studies tested Oboo devices. Woo is for external use only, which keeps things simple if penetration is not something you want right now.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.issm.info/sexual-health-headlines/vibrators-may-have-health-benefits",
-        "label": "International Society for Sexual Medicine: Vibrators may have health benefits (on Dubinskaya et al., Sexual Medicine Reviews, 2023)",
-        "summary": "Summarizes a 2023 systematic review of 17 studies that found positive results for sexual function and early signs for pelvic floor and vulvar pain, with more research needed."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "Says early research suggests vibrators may improve genital blood flow, arousal, satisfaction and orgasm, but that the number of studies is limited."
-      },
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
-        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
-        "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
-      }
-    ],
     "warnings": [
       "Wash it with warm water and soap after each use.",
       "If you share it, put a new condom on it each time, especially between different partners.",
       "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions."
-    ],
-    "warningsSource": {
-      "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-      "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
-    }
+    ]
   },
   "p-oboo-shoop": {
     "whoItsFor": [
@@ -5121,51 +3645,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/shoop",
       "sourceLabel": "Oboo: Shoop Gentle Dual Massager product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/female-sexual-dysfunction/diagnosis-treatment/drc-20372556",
-        "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
-        "summary": "Mayo Clinic lists devices such as vibrators as a nonmedical option that can help with orgasm by increasing blood flow to the clitoris."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "ISSM says early research links vibrator use with better desire, arousal, satisfaction and pelvic floor tone, but notes the number of studies is still limited."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
-      }
-    ],
-    "clinicalNote": "Research on vibrators is still small. A 2023 review found 17 studies linking vibrator use to better arousal, desire, satisfaction and orgasm, with early signs of benefit for pelvic floor muscles and vulvar pain, but the authors say more research is needed. In a large 2009 U.S. survey, about 7 in 10 women who used vibrators had no side effects; the most common one was temporary numbness, and most side effects were mild and short-lived. None of these studies tested Oboo devices. Oboo says Shoop is meant for gentle, shallow internal use or external use; if dryness is part of the picture, a water-based lubricant can make internal use more comfortable.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.issm.info/sexual-health-headlines/vibrators-may-have-health-benefits",
-        "label": "International Society for Sexual Medicine: Vibrators may have health benefits (on Dubinskaya et al., Sexual Medicine Reviews, 2023)",
-        "summary": "Summarizes a 2023 systematic review of 17 studies that found positive results for sexual function and early signs for pelvic floor and vulvar pain, with more research needed."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "Says early research suggests vibrators may improve genital blood flow, arousal, satisfaction and orgasm, but that the number of studies is limited."
-      },
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
-        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
-        "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
-      }
-    ],
     "warnings": [
       "Wash it with warm water and soap after each use.",
       "If you share it, put a new condom on it each time, especially between different partners.",
       "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions.",
       "Wash it, or change the condom, when you switch between vaginal and anal use."
-    ],
-    "warningsSource": {
-      "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-      "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
-    }
+    ]
   },
   "p-oboo-moon": {
     "whoItsFor": [
@@ -5186,26 +3671,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/moon",
       "sourceLabel": "Oboo: Moon Anal Training Kit product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://health.clevelandclinic.org/anal-sex-safety",
-        "label": "Cleveland Clinic: Is Anal Sex Safe?",
-        "summary": "A Cleveland Clinic gastroenterologist explains that the anus makes no natural lubrication and its lining tears easily, so you need ample lube, a slow gradual pace, clean toys between uses, and to stop with sharp pain or seek care for heavy or lasting bleeding."
-      }
-    ],
-    "clinicalNote": "The anus does not make its own lubricant, so plenty of lube matters for any anal toy. In one hospital series of 25 people with an object stuck in the rectum, sex toys were the most common object, two people had tears in the rectal lining (the inner skin of the rectum), and half had used the same object before without trouble. That is why a flared base (a wide end that stops the toy going all the way in), going slowly and stopping with pain or bleeding matter. No study has tested this kit.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-        "label": "NHS Sefton Sexual Health: Safer sex",
-        "summary": "NHS sexual health advice that the anus does not make its own lubricant, so plenty of lube is important, and that toys should be washed and covered with a new condom when shared."
-      },
-      {
-        "url": "https://www.wjgnet.com/1948-9366/full/v8/i10/679.htm",
-        "label": "World Journal of Gastrointestinal Surgery (2016): Increasing trend in retained rectal foreign bodies",
-        "summary": "In 25 hospital cases, sex toys were the most common objects stuck in the rectum, two people had tears in the rectal lining, and half had used the same object before without problems."
-      }
-    ],
     "warnings": [
       "Lubrication is essential: use a generous amount of water-based lube every time.",
       "Start with short sessions of 10 to 15 minutes and only move up a size when you're ready.",
@@ -5236,50 +3701,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/oooh",
       "sourceLabel": "Oboo: Oooh Palm Massager product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/female-sexual-dysfunction/diagnosis-treatment/drc-20372556",
-        "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
-        "summary": "Mayo Clinic lists devices such as vibrators as a nonmedical option that can help with orgasm by increasing blood flow to the clitoris."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "ISSM says early research links vibrator use with better desire, arousal, satisfaction and pelvic floor tone, but notes the number of studies is still limited."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
-      }
-    ],
-    "clinicalNote": "Research on vibrators is still small. A 2023 review found 17 studies linking vibrator use to better arousal, desire, satisfaction and orgasm, with early signs of benefit for pelvic floor muscles and vulvar pain, but the authors say more research is needed. In a large 2009 U.S. survey, about 7 in 10 women who used vibrators had no side effects; the most common one was temporary numbness, and most side effects were mild and short-lived. None of these studies tested Oboo devices. Oooh is an external-only, palm-sized design, and the brand suggests a water-based lubricant if you want more glide.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.issm.info/sexual-health-headlines/vibrators-may-have-health-benefits",
-        "label": "International Society for Sexual Medicine: Vibrators may have health benefits (on Dubinskaya et al., Sexual Medicine Reviews, 2023)",
-        "summary": "Summarizes a 2023 systematic review of 17 studies that found positive results for sexual function and early signs for pelvic floor and vulvar pain, with more research needed."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "Says early research suggests vibrators may improve genital blood flow, arousal, satisfaction and orgasm, but that the number of studies is limited."
-      },
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
-        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
-        "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
-      }
-    ],
     "warnings": [
       "Wash it with warm water and soap after each use.",
       "If you share it, put a new condom on it each time, especially between different partners.",
       "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions."
-    ],
-    "warningsSource": {
-      "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-      "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
-    }
+    ]
   },
   "p-oboo-groove": {
     "whoItsFor": [
@@ -5300,51 +3726,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/groove",
       "sourceLabel": "Oboo: Groove Dual-Action Massager product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/female-sexual-dysfunction/diagnosis-treatment/drc-20372556",
-        "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
-        "summary": "Mayo Clinic lists devices such as vibrators as a nonmedical option that can help with orgasm by increasing blood flow to the clitoris."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "ISSM says early research links vibrator use with better desire, arousal, satisfaction and pelvic floor tone, but notes the number of studies is still limited."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
-      }
-    ],
-    "clinicalNote": "Research on vibrators is still small. A 2023 review found 17 studies linking vibrator use to better arousal, desire, satisfaction and orgasm, with early signs of benefit for pelvic floor muscles and vulvar pain, but the authors say more research is needed. In a large 2009 U.S. survey, about 7 in 10 women who used vibrators had no side effects; the most common one was temporary numbness, and most side effects were mild and short-lived. None of these studies tested Oboo devices. Groove's two motors are controlled separately, so you can keep one part low or off while you find what feels comfortable.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.issm.info/sexual-health-headlines/vibrators-may-have-health-benefits",
-        "label": "International Society for Sexual Medicine: Vibrators may have health benefits (on Dubinskaya et al., Sexual Medicine Reviews, 2023)",
-        "summary": "Summarizes a 2023 systematic review of 17 studies that found positive results for sexual function and early signs for pelvic floor and vulvar pain, with more research needed."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "Says early research suggests vibrators may improve genital blood flow, arousal, satisfaction and orgasm, but that the number of studies is limited."
-      },
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
-        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
-        "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
-      }
-    ],
     "warnings": [
       "Wash it with warm water and soap after each use.",
       "If you share it, put a new condom on it each time, especially between different partners.",
       "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions.",
       "Wash it, or change the condom, when you switch between vaginal and anal use."
-    ],
-    "warningsSource": {
-      "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-      "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
-    }
+    ]
   },
   "p-oboo-boom": {
     "whoItsFor": [
@@ -5365,51 +3752,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/boom",
       "sourceLabel": "Oboo: Boom Dual-End Wand product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/female-sexual-dysfunction/diagnosis-treatment/drc-20372556",
-        "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
-        "summary": "Mayo Clinic lists devices such as vibrators as a nonmedical option that can help with orgasm by increasing blood flow to the clitoris."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "ISSM says early research links vibrator use with better desire, arousal, satisfaction and pelvic floor tone, but notes the number of studies is still limited."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "The Menopause Society notes that sexual stimulation, alone, with a partner or with a device such as a vibrator, may support vaginal blood flow and natural moisture after menopause."
-      }
-    ],
-    "clinicalNote": "Research on vibrators is still small. A 2023 review found 17 studies linking vibrator use to better arousal, desire, satisfaction and orgasm, with early signs of benefit for pelvic floor muscles and vulvar pain, but the authors say more research is needed. In a large 2009 U.S. survey, about 7 in 10 women who used vibrators had no side effects; the most common one was temporary numbness, and most side effects were mild and short-lived. None of these studies tested Oboo devices. Oboo says the warming tail increases blood flow, but no published study of this warming feature was found, so treat that as a brand claim.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.issm.info/sexual-health-headlines/vibrators-may-have-health-benefits",
-        "label": "International Society for Sexual Medicine: Vibrators may have health benefits (on Dubinskaya et al., Sexual Medicine Reviews, 2023)",
-        "summary": "Summarizes a 2023 systematic review of 17 studies that found positive results for sexual function and early signs for pelvic floor and vulvar pain, with more research needed."
-      },
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine: What are the benefits of vibrators for sexual health?",
-        "summary": "Says early research suggests vibrators may improve genital blood flow, arousal, satisfaction and orgasm, but that the number of studies is limited."
-      },
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
-        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: vibrator use by U.S. women (Kinsey Institute PDF)",
-        "summary": "National survey of 2,056 women; 71.5% of vibrator users reported no side effects, and most reported side effects such as numbness were mild and short-lived."
-      }
-    ],
     "warnings": [
       "Wash it with warm water and soap after each use.",
       "If you share it, put a new condom on it each time, especially between different partners.",
       "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions.",
       "Wash it, or change the condom, when you switch between vaginal and anal use."
-    ],
-    "warningsSource": {
-      "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-      "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
-    }
+    ]
   },
   "p-oboo-smooth-daily": {
     "whoItsFor": [
@@ -5430,25 +3778,8 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/smooth-daily-vulva-balm",
       "sourceLabel": "Oboo: Smooth Daily Vulva Balm product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
-        "label": "The 2020 genitourinary syndrome of menopause position statement of The North American Menopause Society (Menopause, 2020)",
-        "summary": "Suggests a 24-hour skin patch test before using a new product, links oils to more yeast colonization, and notes oil-based lubricants can erode condoms."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/female-sexual-dysfunction/diagnosis-treatment/drc-20372556",
-        "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
-        "summary": "Mayo Clinic says herbal and topical oil products sold for sexual wellness haven't been studied well, warns one estrogen-like product may fuel estrogen-sensitive breast tumors, and advises asking your clinician first."
-      }
-    ],
     "clinicalNote": "Dermatologists advise caring for vulvar skin with a plain, unscented emollient (a moisturizing cream or ointment that soothes and protects) and avoiding perfumed products and those with long ingredient lists. This balm has a long botanical list that includes sweet orange oil, so a patch test first is sensible if your skin reacts easily. It also contains black cohosh, chaste tree, dong quai and red clover; NIH's summary of black cohosh and red clover for menopause describes mixed or inconsistent results for extract products and does not cover use on vulvar skin. It is oil-based, so it is not condom-safe with latex.",
     "clinicalNoteSources": [
-      {
-        "url": "https://www.skinhealthinfo.org.uk/wp-content/uploads/2018/11/Vulval-skincare-PIL-May-2023.pdf",
-        "label": "British Association of Dermatologists: Vulval skincare patient leaflet (2023)",
-        "summary": "Recommends a regular unscented emollient for vulval skin and advises avoiding perfumed products and those with long ingredient lists."
-      },
       {
         "url": "https://nccih.nih.gov/health/providers/digest/menopausal-symptoms-and-complementary-health-practices-science",
         "label": "NIH NCCIH: Menopausal symptoms and complementary health practices",
@@ -5485,34 +3816,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/smooth-arousal-vulva-balm",
       "sourceLabel": "Oboo: Smooth Arousal Vulva Balm product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
-        "label": "The 2020 genitourinary syndrome of menopause position statement of The North American Menopause Society (Menopause, 2020)",
-        "summary": "Suggests a 24-hour skin patch test before using a new product, links oils to more yeast colonization, and notes oil-based lubricants can erode condoms."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/female-sexual-dysfunction/diagnosis-treatment/drc-20372556",
-        "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
-        "summary": "Mayo Clinic says herbal and topical oil products sold for sexual wellness haven't been studied well, warns one estrogen-like product may fuel estrogen-sensitive breast tumors, and advises asking your clinician first."
-      }
-    ],
-    "clinicalNote": "Dermatologists advise caring for vulvar skin with a plain, unscented emollient (a moisturizing cream or ointment that soothes and protects) and avoiding perfumed products and those with long ingredient lists. This balm has a long botanical list that includes peppermint oil, which gives the cooling tingle, so a patch test first is sensible if your skin reacts easily. It also contains black cohosh, chaste tree, dong quai and red clover; NIH's summary of black cohosh and red clover for menopause describes mixed or inconsistent results for extract products and does not cover use on vulvar skin. It is oil-based, so it is not condom-safe with latex. The Menopause Society also notes that oil-based products may raise the risk of vaginal infections, so the brand's advice to keep it external and add a water-based lube for penetration fits.",
+    "clinicalNote": "Dermatologists advise caring for vulvar skin with a plain, unscented emollient (a moisturizing cream or ointment that soothes and protects) and avoiding perfumed products and those with long ingredient lists. This balm has a long botanical list that includes peppermint oil, which gives the cooling tingle, so a patch test first is sensible if your skin reacts easily. It also contains black cohosh, chaste tree, dong quai and red clover; NIH's summary of black cohosh and red clover for menopause describes mixed or inconsistent results for extract products and does not cover use on vulvar skin. It is oil-based, so it is not condom-safe with latex.",
     "clinicalNoteSources": [
-      {
-        "url": "https://www.skinhealthinfo.org.uk/wp-content/uploads/2018/11/Vulval-skincare-PIL-May-2023.pdf",
-        "label": "British Association of Dermatologists: Vulval skincare patient leaflet (2023)",
-        "summary": "Recommends a regular unscented emollient for vulval skin and advises avoiding perfumed products and those with long ingredient lists."
-      },
       {
         "url": "https://nccih.nih.gov/health/providers/digest/menopausal-symptoms-and-complementary-health-practices-science",
         "label": "NIH NCCIH: Menopausal symptoms and complementary health practices",
         "summary": "Reviews black cohosh and red clover extracts for menopause symptoms, describing mixed or inconsistent results and not addressing use on the skin."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "Explains that moisturizers are used several times a week, lubricants as needed, and that oil-based products may damage condoms and may raise the risk of vaginal infections."
       }
     ],
     "warnings": [
@@ -5545,31 +3854,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/loob-daily",
       "sourceLabel": "Oboo: Loob Daily Moisturizer product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
-        "label": "The 2020 genitourinary syndrome of menopause position statement of The North American Menopause Society (Menopause, 2020)",
-        "summary": "Names nonhormone lubricants and regularly used moisturizers as first-line care for menopausal dryness, and suggests a 24-hour skin patch test before using a new product internally."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "The Menopause Society's patient handout says vaginal moisturizers are used regularly, often several times a week, to maintain moisture."
-      }
-    ],
-    "clinicalNote": "For genitourinary syndrome of menopause (the dryness, irritation and painful sex that come with lower estrogen), The North American Menopause Society lists nonhormone lubricants and regular long-acting vaginal moisturizers as first-line options, though few studies have tested them. Moisturizers are usually used several times a week to keep tissue moist, not just before sex. Loob contains sodium hyaluronate (hyaluronic acid), but the society says there is no evidence hyaluronic acid products work better than others. Some water-based products are hyperosmolar (more concentrated than body fluids, which can irritate), so if one stings, try a patch of skin for 24 hours or switch products; for more severe symptoms, these can be combined with prescription treatment.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
-        "label": "Menopause (2020): The North American Menopause Society GSM position statement",
-        "summary": "Names nonhormone lubricants and regular long-acting vaginal moisturizers as first-line options, while noting few studies and no evidence that hyaluronic acid products work better."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "Explains that moisturizers are used several times a week, lubricants as needed, and that oil-based products may damage condoms and may raise the risk of vaginal infections."
-      }
-    ],
     "warnings": [
       "Always do a patch test before use.",
       "Stop using it if irritation occurs.",
@@ -5599,26 +3883,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/loob-arousal",
       "sourceLabel": "Oboo: Loob Arousal Moisturizer product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
-        "label": "The 2020 genitourinary syndrome of menopause position statement of The North American Menopause Society (Menopause, 2020)",
-        "summary": "Recommends lubricants for menopausal dryness but notes very few data on products with warming or sensation additives, and suggests a 24-hour skin patch test first."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "The Menopause Society advises that lubricants with warming agents, flavors or certain preservatives may irritate some women."
-      }
-    ],
-    "clinicalNote": "The Menopause Society lists lubricants during sex and regular use of long-acting vaginal moisturizers as first-line treatments for vaginal dryness after menopause, though it also notes that few clinical studies have tested these products directly. It says there are very few safety data on lubricants with flavors or warming properties, and suggests testing a new product on your skin for 24 hours before using it inside the vagina. Loob adds a peppermint oil tingle and several herbal extracts, which go beyond what those studies looked at.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
-        "label": "The Menopause Society (NAMS): 2020 Genitourinary Syndrome of Menopause Position Statement (hosted by ISSWSH)",
-        "summary": "Names nonhormone lubricants and long-acting moisturizers as first-line options for menopausal vaginal dryness, notes limited trial data and limited safety data for flavored or warming products, and advises a 24-hour skin patch test."
-      }
-    ],
     "warnings": [
       "Always do a patch test before use.",
       "Stop using it if irritation occurs.",
@@ -5650,13 +3914,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/in-the-mood-libido-drops",
       "sourceLabel": "Oboo: In the Mood Drops product page"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/female-sexual-dysfunction/diagnosis-treatment/drc-20372556",
-        "label": "Mayo Clinic: Female sexual dysfunction, diagnosis and treatment",
-        "summary": "Mayo Clinic says herbal supplements sold to raise sex drive haven't been studied well and advises talking to your healthcare professional before trying them."
-      }
-    ],
     "clinicalNote": "For lavender, one of the herbs in this tincture, NCCIH (part of the NIH) says an oral lavender oil product might help with anxiety, but the studies are small and preliminary, and lavender may interact with sedative drugs or herbs. That research used a specific lavender oil product, not a lavender flower extract like this one. More broadly, NCCIH notes that supplement makers don't have to prove to the FDA that a product is safe or effective before selling it, that some supplements interact with prescription or over-the-counter medicines, and that \"natural\" does not necessarily mean safe. The drops are made with water and ethanol (alcohol).",
     "clinicalNoteSources": [
       {
@@ -5686,18 +3943,6 @@ export const PRODUCT_RESEARCH = {
       "Those who already use simple cooling habits like layers, fans, or a cold drink and want something portable for a bag or desk",
       "Not the pick if you want to reduce how often hot flashes happen: The Menopause Society does not recommend cooling techniques or herbal remedies as treatment, so talk to a doctor about options that do"
     ],
-    "clinicalSources": [
-      {
-        "url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
-        "label": "The Menopause Society: 2023 Nonhormone Therapy Position Statement (press release)",
-        "summary": "Lists cooling techniques and supplements or herbal remedies among therapies not recommended for hot flashes, and names CBT, hypnosis, SSRIs/SNRIs, gabapentin, oxybutynin and fezolinetant as recommended options."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/hot-flashes/diagnosis-treatment/drc-20352795",
-        "label": "Mayo Clinic: Hot flashes, diagnosis and treatment",
-        "summary": "Suggests staying cool with layers, fans and a cold drink for mild hot flashes, and covers hormone and nonhormone treatments for more bothersome ones."
-      }
-    ],
     "howToUse": {
       "intro": "Per Oboo's product page:",
       "steps": [
@@ -5710,14 +3955,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://oboo.love/products/cool-spray-for-hot-flashes",
       "sourceLabel": "Oboo Cool Spray for Hot Flashes product page"
     },
-    "clinicalNote": "The Menopause Society's 2023 position statement on non-hormone treatments for hot flashes does not recommend cooling techniques, and it also does not recommend supplements and herbal remedies. Options it does recommend include cognitive behavioral therapy, clinical hypnosis, weight loss, stellate ganglion block (a nerve injection in the neck), certain antidepressants (SSRIs and SNRIs), gabapentin, oxybutynin, and fezolinetant, a newer FDA-approved non-hormone medication. A cooling mist may still feel nice in the moment, but if hot flashes are disrupting your life, those are the options worth raising with a clinician.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
-        "label": "The Menopause Society (NAMS): 2023 Nonhormone Therapy Position Statement press release",
-        "summary": "Lists recommended non-hormone treatments for hot flashes and lists cooling techniques and supplements/herbal remedies as not recommended."
-      }
-    ],
     "warnings": [
       "If your skin is extra reactive, start with a small amount first."
     ],
@@ -5726,54 +3963,14 @@ export const PRODUCT_RESEARCH = {
       "label": "Oboo: Cool Spray for Hot Flashes product page"
     }
   },
-  "p-proov-empower": {
-    "clinicalSources": [
-      {
-        "url": "https://www.nice.org.uk/guidance/QS143/chapter/quality-statement-1-diagnosing-perimenopause-and-menopause",
-        "label": "NICE Quality Standard QS143: Diagnosing perimenopause and menopause",
-        "summary": "Says women 45 and over can be diagnosed with perimenopause from symptoms alone, and that lab tests, particularly FSH, don't help with diagnosis because hormone levels fluctuate during perimenopause."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/perimenopause/symptoms-causes/syc-20354666",
-        "label": "Mayo Clinic: Perimenopause, symptoms and causes",
-        "summary": "Explains that estrogen and progesterone rise and fall during perimenopause, lists common symptoms, and names bleeding patterns that need prompt medical care."
-      }
-    ]
-  },
-  "p-proov-path-to-pregnancy": {
-    "clinicalSources": [
-      {
-        "url": "https://www.reproductivefacts.org/news-and-publications/fact-sheets-and-infographics/defining-infertility/",
-        "label": "ASRM ReproductiveFacts: Defining infertility",
-        "summary": "Advises an infertility evaluation after 12 months of trying if you're under 35, or after 6 months if you're 35 or older, and sooner with irregular cycles or other risk factors."
-      },
-      {
-        "url": "https://list.essentialmeds.org/recommendations/1397",
-        "label": "WHO Essential Medicines List: Letrozole recommendation",
-        "summary": "Added letrozole for anovulatory infertility linked to PMOS or unexplained infertility, noting more live births than clomifene in PMOS and that this use is off-label in the US and EU."
-      }
-    ]
-  },
+  "p-proov-empower": {},
+  "p-proov-path-to-pregnancy": {},
   "p-buni-bundle": {
     "whoItsFor": [
       "New parents who want BUNI's vulva balm, nipple and lip balm, and scar and body oil in one set instead of buying them separately",
       "Gift buyers putting together a postpartum care package",
       "People who like an external moisturizing routine for dry, healing skin after birth",
       "Not the pick if nipple pain is your main problem: the NHS points to latch and positioning as the usual cause, and a Cochrane review found no clear benefit from nipple ointments, so get help with feeding first"
-    ],
-    "clinicalSources": [
-      {
-        "url": "https://www.nhs.uk/conditions/baby/breastfeeding-and-bottle-feeding/breastfeeding-problems/sore-nipples/",
-        "label": "NHS: Sore nipples while breastfeeding",
-        "summary": "Says sore nipples usually come from poor positioning and attachment, and advises getting help early if nipples hurt at every feed, crack, or bleed."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://www.cochrane.org/evidence/CD007366_interventions-treating-painful-nipples-among-breastfeeding-women",
-        "label": "Cochrane Review: Interventions for treating painful nipples among breastfeeding women",
-        "summary": "Found no clear benefit from lanolin or other ointments for nipple pain and noted most women's pain eased to mild levels 7 to 10 days after birth, based on low-quality evidence."
-      }
     ],
     "howToUse": {
       "intro": "Per BUNI's bundle and product pages:",
@@ -5788,14 +3985,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.bunibody.com/products/buni-bundle",
       "sourceLabel": "BUNI Bundle page, with directions from the REJUVENATE, SOOTHE and TRANSFORM product pages on bunibody.com"
     },
-    "clinicalNote": "For sore nipples in the first weeks of breastfeeding, a 2014 Cochrane review of four small, low-quality trials found not enough evidence to recommend any specific treatment, and suggested that applying nothing or expressed breast milk may work as well as or better than lanolin. For most women in those trials, nipple pain dropped to mild levels about 7 to 10 days after birth, whatever they used. That doesn't mean a plant-based balm like SOOTHE is harmful, just that comfort is the realistic goal.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.cochrane.org/evidence/CD007366_interventions-treating-painful-nipples-among-breastfeeding-women",
-        "label": "Cochrane: Interventions for treating painful nipples among breastfeeding women (2014)",
-        "summary": "Found too little evidence to recommend any nipple-pain treatment, with breast milk or nothing doing as well as lanolin, and pain easing to mild in about 7 to 10 days for most women."
-      }
-    ],
     "warnings": [
       "Get your doctor's approval before using TRANSFORM on new scars.",
       "Check with your medical professional before using TRANSFORM on a C-section scar."
@@ -5815,18 +4004,6 @@ export const PRODUCT_RESEARCH = {
       {
         "url": "https://au.trustpilot.com/review/joylux.com?page=3",
         "label": "Trustpilot: Joylux reviews (page 3)"
-      }
-    ],
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/stress-incontinence/diagnosis-treatment/drc-20355732",
-        "label": "Mayo Clinic: Stress incontinence, diagnosis and treatment",
-        "summary": "Lists regular pelvic floor (Kegel) exercises, taught by a clinician or physical therapist and sometimes paired with biofeedback, plus over-the-counter vaginal inserts and pessaries as non-drug options for bladder leaks."
-      },
-      {
-        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
-        "label": "The 2020 genitourinary syndrome of menopause position statement of The North American Menopause Society (Menopause, 2020)",
-        "summary": "Names lubricants and regularly used vaginal moisturizers as first-line for mild menopausal dryness, and says energy-based vaginal devices are still under investigation, none are FDA-approved for this use, and larger sham-controlled trials are needed."
       }
     ],
     "effectiveness": "There is one published study of this type of therapy, and it was a case series with no comparison group. In the 2017 Joylux-funded study of 55 women aged 30 to 59 with stress urinary incontinence (leaking when you cough, sneeze, or exercise) after vaginal birth, 84% of those with measurable leakage at the start had their leakage cut by more than half after 50 days, and bladder, quality-of-life, and sexual function scores also improved. Without a control group, it's unclear how much of that came from the device itself, and ayna didn't find a controlled trial of vFit for dryness, sensation, or menopause symptoms.",
@@ -5856,13 +4033,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://shop.equinox.com/products/respin-x-joylux-vfit%C2%AE-plus-red-light-intimate-wellness-device",
       "sourceLabel": "Equinox: Respin x Joylux vFit PLUS listing"
     },
-    "scienceSources": [
-      {
-        "url": "https://link.springer.com/article/10.1007/s00192-016-3248-5",
-        "label": "de la Torre and Miller, Multimodal vaginal toning for bladder symptoms and quality of life in stress urinary incontinence, International Urogynecology Journal (2017)",
-        "summary": "An uncontrolled case series of 55 women using the original device (then called vSculpt) at home found less leakage and better symptom scores after about 24 sessions; Joylux funded it and both authors were Joylux consultants, and it did not test the PLUS version."
-      }
-    ],
     "communityReview": "No reviews that clearly name vFit PLUS could be opened, so this reflects Joylux's Trustpilot reviews of its vFit devices in general. Longtime users often say it helped with tone, lubrication and comfort during sex. Common complaints are devices or lights that stopped working after a few weeks or months, a size some people with vaginal atrophy found painful, app and subscription requirements that weren't clear up front, and trouble getting refunds.",
     "communityReviewSources": [
       {
@@ -5888,40 +4058,6 @@ export const PRODUCT_RESEARCH = {
       "People in menopause who want a hormone-free gel for vaginal dryness and pain during sex",
       "Those who prefer a short, simple ingredient list with a vaginal-range pH (3.8, per Joylux)",
       "Not the pick if you use natural rubber latex or polyurethane condoms, which Joylux says it isn't compatible with"
-    ],
-    "scienceSources": [
-      {
-        "url": "https://thieme-connect.de/products/ejournals/html/10.1055/s-0042-1756148",
-        "label": "Sarmento et al., Efficacy of Hormonal and Nonhormonal Approaches to Vaginal Atrophy and Sexual Dysfunctions in Postmenopausal Women: A Systematic Review, Revista Brasileira de Ginecologia e Obstetrícia (2022)",
-        "summary": "Across 55 randomized trials, lubricants and moisturizers helped most with dryness and pain during sex but had a smaller effect than vaginal estrogen, with mild side effects and low to moderate certainty evidence."
-      },
-      {
-        "url": "https://www.informahealthcare.com/doi/abs/10.1080/13697137.2020.1820478",
-        "label": "Potter and Panay, review of vaginal lubricants and moisturizers, Climacteric",
-        "summary": "Advises choosing over-the-counter products whose pH and osmolality are close to natural vaginal fluid and that avoid potentially harmful additives, using moisturizers for ongoing symptoms."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Hypromellose",
-        "text": "Hypromellose (HPMC) is a cellulose-based thickener that turns water into a clear gel and is known for clinging to moist tissue, like the lining of the mouth and gut. A 2025 review describes it as a widely used, low-toxicity ingredient in medicines and cosmetics; it's what gives the gel its body, not a treatment on its own.",
-        "citations": [
-          {
-            "url": "https://www.mdpi.com/1999-4923/17/6/784",
-            "label": "Pharmaceutics (MDPI, 2025): Hydroxypropyl Methylcellulose, A Key Excipient in Pharmaceutical Drug Delivery Systems"
-          }
-        ]
-      },
-      {
-        "name": "Lactic acid",
-        "text": "Lactic acid is a mild acid that keeps the gel acidic. It's also been tested as a gel for bacterial vaginosis (an overgrowth of certain vaginal bacteria), with mixed results in small trials; a 2022 review, funded by a company that sells such gels, called the evidence limited.",
-        "citations": [
-          {
-            "url": "https://www2.mdpi.com/2673-9879/2/3/14",
-            "label": "Future Pharmacology (MDPI, 2022): The Role of Lactic Acid in the Management of Bacterial Vaginosis, A Systematic Literature Review"
-          }
-        ]
-      }
     ],
     "effectiveness": "ayna didn't find a published study of this gel, so this is about vaginal moisturizers as a group. In a 2018 trial of 302 postmenopausal women with moderate to severe dryness, itching, or pain with sex, an over-the-counter vaginal moisturizer, a low-dose vaginal estrogen tablet, and a plain placebo gel all eased symptoms about equally over 12 weeks, with about half of women in every group improving meaningfully. The Menopause Society still lists moisturizers as a first-line option, while noting that few studies have tested these products.",
     "effectivenessSources": [
@@ -5954,48 +4090,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.ulta.com/p/p-pimprod2052232",
       "sourceLabel": "Ulta: Joylux LET'S SPIN Intimacy Gel"
     },
-    "scienceSources": [
-      {
-        "url": "https://www.informahealthcare.com/doi/abs/10.1080/13697137.2020.1820478",
-        "label": "Potter and Panay, review of vaginal lubricants and moisturizers, Climacteric",
-        "summary": "Recommends lubricants for sex and moisturizers for ongoing dryness, choosing products whose pH and osmolality are close to natural vaginal fluid and that avoid potentially harmful additives."
-      },
-      {
-        "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
-        "label": "Albalawi et al., Comparison of the Efficacy of Vaginal Hyaluronic Acid to Estrogen for the Treatment of Vaginal Atrophy in Postmenopausal Women: A Systematic Review, Cureus (2023)",
-        "summary": "Six small trials suggest vaginal hyaluronic acid works about as well as estrogen for menopausal vaginal symptoms, though not better, and the studies had real limitations; it did not test this gel."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Sodium hyaluronate (hyaluronic acid)",
-        "text": "Hyaluronic acid holds onto water and is the main active idea behind this gel. A 2023 review of six small trials found vaginal hyaluronic acid worked about as well as vaginal estrogen for dryness after menopause, but the studies had real flaws, and The Menopause Society says there's no evidence yet that hyaluronic acid products beat moisturizers or lubricants without it.",
-        "citations": [
-          {
-            "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
-            "label": "Cureus (2023): Comparison of the Efficacy of Vaginal Hyaluronic Acid to Estrogen for the Treatment of Vaginal Atrophy in Postmenopausal Women, A Systematic Review"
-          }
-        ]
-      },
-      {
-        "name": "Hydroxyethylcellulose",
-        "text": "Hydroxyethylcellulose is a cellulose thickener that gives the gel its slip. A gel made from it has been used as the placebo in large vaginal gel trials, and in one trial of more than 1,500 women it caused no more genital side effects than using no gel at all.",
-        "citations": [
-          {
-            "url": "https://rti.org/publication/appropriateness-hydroxyethylcellulose-gel-placebo-control-vaginal-microbicide-trials-comparison-two",
-            "label": "Journal of Acquired Immune Deficiency Syndromes (2013): Appropriateness of hydroxyethylcellulose gel as a placebo control in vaginal microbicide trials (abstract via RTI International)"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "As a water-based lubricant, Let's Spin is the kind of product The Menopause Society lists as a first-line option for dryness during sex, and most water-based lubricants are safe with latex condoms. The society also notes that some water-based products are hyperosmolar (much more concentrated than your body's own fluids), which damaged vaginal cells in lab studies, and that the World Health Organization recommends an osmolality under 1,200 mOsm/kg. If you're trying a new lubricant, the society suggests testing it on a small patch of skin for 24 hours first.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
-        "label": "The Menopause Society (NAMS): 2020 Genitourinary Syndrome of Menopause Position Statement (hosted by ISSWSH)",
-        "summary": "Covers lubricants as first-line care, latex compatibility, osmolality concerns with the WHO threshold, and a 24-hour skin patch test."
-      }
-    ],
     "effectiveness": "ayna didn't find a published study of this gel, so this is about the product type. In a 2018 trial of 302 postmenopausal women, a nonprescription vaginal moisturizer, low-dose vaginal estrogen, and a plain placebo gel all eased dryness and pain with sex about equally over 12 weeks. Small trials of hyaluronic acid vaginal gels found them roughly as helpful as estrogen for dryness, though those trials had real limitations.",
     "effectivenessSources": [
       {
@@ -6015,58 +4109,6 @@ export const PRODUCT_RESEARCH = {
       "People who want a non-hormonal vaginal moisturizer used at bedtime every 2 to 3 days rather than daily",
       "Those who prefer an oil-based melt with hyaluronic acid over a water-based gel",
       "Not the pick if you rely on condoms: it contains oils, and the CDC warns oil-based products can cause condoms to break"
-    ],
-    "scienceSources": [
-      {
-        "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
-        "label": "Albalawi et al., Comparison of the Efficacy of Vaginal Hyaluronic Acid to Estrogen for the Treatment of Vaginal Atrophy in Postmenopausal Women: A Systematic Review, Cureus (2023)",
-        "summary": "Six small trials suggest vaginal hyaluronic acid works about as well as estrogen for menopausal vaginal symptoms, though not better, and the authors flag limitations in the studies."
-      },
-      {
-        "url": "https://thieme-connect.de/products/ejournals/html/10.1055/s-0042-1756148",
-        "label": "Sarmento et al., Efficacy of Hormonal and Nonhormonal Approaches to Vaginal Atrophy and Sexual Dysfunctions in Postmenopausal Women: A Systematic Review, Revista Brasileira de Ginecologia e Obstetrícia (2022)",
-        "summary": "Found hyaluronic acid effective and well tolerated for vaginal atrophy symptoms compared with vaginal estrogen, while noting low to moderate certainty evidence."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Hyaluronic acid",
-        "text": "Hyaluronic acid holds onto water. A 2023 review of six small trials found vaginal hyaluronic acid worked about as well as vaginal estrogen for dryness after menopause, though the studies had real flaws and none tested this product.",
-        "citations": [
-          {
-            "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
-            "label": "Cureus (2023): Comparison of the Efficacy of Vaginal Hyaluronic Acid to Estrogen for the Treatment of Vaginal Atrophy in Postmenopausal Women, A Systematic Review"
-          }
-        ]
-      },
-      {
-        "name": "Vitamin E",
-        "text": "In a small 2023 trial of 72 postmenopausal women, a vaginal vitamin E cream (100 IU) eased dryness and related symptoms about as much as a vaginal estrogen cream over 8 weeks. That's encouraging but early, since the trial was small and short.",
-        "citations": [
-          {
-            "url": "https://afju.springeropen.com/articles/10.1186/s12301-023-00363-5",
-            "label": "African Journal of Urology (Springer, 2023): Vaginal vitamin E cream vs conjugated estrogen vaginal cream, a randomized controlled trial"
-          }
-        ]
-      },
-      {
-        "name": "Coconut oil",
-        "text": "Virgin coconut oil works as a skin moisturizer: a review notes it was as effective and safe as mineral oil for mild to moderate dry skin. Those studies were on regular skin, not inside the vagina.",
-        "citations": [
-          {
-            "url": "https://www.mdpi.com/1422-0067/19/1/70",
-            "label": "International Journal of Molecular Sciences (MDPI, 2018): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "These melts are oil-based, with coconut oil and cocoa butter. The Menopause Society notes that oil-based lubricants can erode latex condoms, and that one study found more yeast (Candida) in women who used oils vaginally than in those who didn't. It also says there's no evidence yet that hyaluronic acid products work better than moisturizers or lubricants without it.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
-        "label": "The Menopause Society (NAMS): 2020 Genitourinary Syndrome of Menopause Position Statement (hosted by ISSWSH)",
-        "summary": "Notes oil-based lubricants can erode condoms, links vaginal oil use to more Candida colonization, and finds no added benefit shown for hyaluronic acid products."
-      }
     ],
     "effectiveness": "ayna didn't find a study of these melts, so this is about their main ingredients. Small trials suggest vaginal hyaluronic acid and vaginal vitamin E can each ease menopausal dryness about as well as vaginal estrogen, but the trials were small and short, and none tested this combination.",
     "effectivenessSources": [
@@ -6099,21 +4141,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://shop.equinox.com/products/revitalizher%E2%84%A2-hydrating-serum",
       "sourceLabel": "Equinox: Joylux revitalizHER Hydrating Serum"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.stgeorges.nhs.uk/wp-content/uploads/2023/02/DER_VSC.pdf",
-        "label": "St George's University Hospitals NHS dermatology: Vulval skin care leaflet",
-        "summary": "Says emollients can be used on vulval skin as often as needed for soothing relief and as a barrier, and lists fragranced or perfumed products among irritants to avoid."
-      }
-    ],
-    "clinicalNote": "NHS dermatology advice supports using a moisturizer on vulval skin as often as you need it, including as a barrier before sex or peeing. The same advice lists perfumed products as common irritants, so stop if this serum stings.",
-    "scienceSources": [
-      {
-        "url": "https://www.mdpi.com/1422-0067/19/1/70",
-        "label": "Lin et al., Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils, International Journal of Molecular Sciences (2018)",
-        "summary": "Reviews evidence that coconut oil works about as well as mineral oil for dry skin and that jojoba oil's wax esters may help repair a damaged skin barrier; it did not study vulvar skin or this serum."
-      }
-    ],
     "communityReview": "Retail reviews are mostly positive but few. Reviewers often say it feels silky, hydrating and gentle on sensitive skin, and some postmenopausal buyers say it eased external dryness quickly. Complaints include the price, a smell one buyer disliked, irritation for at least one reviewer, and no noticeable change after a couple of weeks for another.",
     "communityReviewSources": [
       {
@@ -6123,48 +4150,6 @@ export const PRODUCT_RESEARCH = {
       {
         "url": "https://www.lovelyskin.com/o/reviews/joylux-revitalizher-hydrating-serum",
         "label": "LovelySkin: revitalizHER Hydrating Serum reviews"
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Coconut oil",
-        "text": "Virgin coconut oil is a decent skin moisturizer: a review notes it was as effective and safe as mineral oil for mild to moderate dry skin, and it helped skin barrier measures in children with eczema. Those studies weren't on the vulva.",
-        "citations": [
-          {
-            "url": "https://www.mdpi.com/1422-0067/19/1/70",
-            "label": "International Journal of Molecular Sciences (MDPI, 2018): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils"
-          }
-        ]
-      },
-      {
-        "name": "Jojoba oil",
-        "text": "Jojoba oil is rich in waxy compounds similar to the skin's own oils, and a review suggests it may help repair a damaged skin barrier. The human evidence behind that is thin.",
-        "citations": [
-          {
-            "url": "https://www.mdpi.com/1422-0067/19/1/70",
-            "label": "International Journal of Molecular Sciences (MDPI, 2018): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils"
-          }
-        ]
-      },
-      {
-        "name": "Vitamin E (tocopherol)",
-        "text": "Vitamin E is an antioxidant that may support the skin barrier and healing, but the evidence the review describes comes mostly from lab and mouse studies, not people.",
-        "citations": [
-          {
-            "url": "https://www.mdpi.com/1422-0067/19/1/70",
-            "label": "International Journal of Molecular Sciences (MDPI, 2018): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils"
-          }
-        ]
-      },
-      {
-        "name": "Mandarin orange peel oil",
-        "text": "Citrus peel oils contain limonene, which forms skin-allergy-causing compounds as it oxidizes during storage. In a study of 2,273 people patch-tested at European dermatology clinics, up to 6.5% per clinic reacted to oxidized limonene, so it's worth patch testing if your skin is sensitive.",
-        "citations": [
-          {
-            "url": "https://www.em-consulte.com/en/article/542328",
-            "label": "Journal of the American Academy of Dermatology (2002): Oxidized citrus oil (R-limonene), a frequent skin sensitizer in Europe"
-          }
-        ]
       }
     ],
     "effectiveness": "ayna didn't find a study of this serum or of oil-based vulvar serums in general. The closest evidence is for plant oils on ordinary dry skin, where virgin coconut oil moisturized about as well as mineral oil; whether that carries over to vulvar dryness hasn't been tested.",
@@ -6193,13 +4178,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.ulta.com/p/shebar-intimate-cleansing-bar-pimprod2048012",
       "sourceLabel": "Ulta: Joylux SHEbar Intimate Cleansing Bar"
     },
-    "scienceSources": [
-      {
-        "url": "https://www.nigjdermatology.com/index.php/NJD/article/download/243/228/1301",
-        "label": "Cole-Adeife et al., The pH of Common Soaps and Cleansers in Nigeria and Implications for Skin Health and Inflammatory Dermatoses, Nigerian Journal of Dermatology (2024)",
-        "summary": "Testing 60 cleansers, every alkaline product was a soap and every acidic one a syndet, and the authors explain why alkaline soaps can strip skin lipids and raise skin pH while syndets are designed to keep skin's natural acidity."
-      }
-    ],
     "communityReview": "Retail reviews are very positive. Reviewers often say it cleans without drying or irritating, feels gentle and leaves skin soft, and many like the scent and reorder. The main complaint, from a small number of buyers, is that the fragrance is too strong.",
     "communityReviewSources": [
       {
@@ -6209,56 +4187,6 @@ export const PRODUCT_RESEARCH = {
       {
         "url": "https://www.lovelyskin.com/o/reviews/joylux-shebar-intimate-soap",
         "label": "LovelySkin: SHEbar Intimate Soap reviews"
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Sodium cocoyl isethionate",
-        "text": "This is the main cleansing agent in syndet bars (bars made with synthetic detergents instead of soap). A small 28-day study in 50 people with mild eczema found syndet bar use was linked to less eczema and kept skin hydration steady, but it had no soap comparison group and several authors worked for the bar makers, so the evidence is modest.",
-        "citations": [
-          {
-            "url": "https://cdn.mdedge.com/files/s3fs-public/Document/September-2017/077050317.pdf",
-            "label": "Cutis (2006): Benefits of mild cleansing: syndet bars for patients with atopic dermatitis"
-          }
-        ]
-      },
-      {
-        "name": "Coconut oil",
-        "text": "Coconut oil is a plant oil that can soften dry skin. In a randomized trial of 148 older adults with dry legs, virgin coconut oil applied twice a day for 2 weeks improved dryness and hydration more than mineral oil, though the trial was small and short. In this bar it is a minor ingredient in a rinse-off product, so it may do less than a leave-on oil.",
-        "citations": [
-          {
-            "url": "https://actamedicaphilippina.upm.edu.ph/index.php/acta/article/download/31/19",
-            "label": "Acta Medica Philippina (2019): Virgin coconut oil vs mineral oil for senile xerosis"
-          }
-        ]
-      },
-      {
-        "name": "Argan oil",
-        "text": "Argan oil is a plant oil used as an emollient (a skin softener that helps hold in moisture). One 60-day study of 60 postmenopausal women found argan oil on the forearm lowered water loss from the skin and raised skin water content, but the study was small and was not done on vulvar skin.",
-        "citations": [
-          {
-            "url": "https://www.termedia.pl/Skin-hydration-in-postmenopausal-women-argan-oil-benefit-with-oral-r-nand-or-topical-use,4,23837,0,1.html",
-            "label": "Menopause Review (2014): Skin hydration in postmenopausal women, argan oil oral and/or topical use"
-          }
-        ]
-      },
-      {
-        "name": "Fragrance",
-        "text": "Fragrance has no skin benefit and is here for scent. NHS vulval care advice says to avoid all fragrances on vulval skin, so if your skin is sensitive this is the ingredient to watch.",
-        "citations": [
-          {
-            "url": "https://www.bradfordhospitals.nhs.uk/wp-content/uploads/2026/03/25070706-Vulva-Care-Advice-Sheet.pdf",
-            "label": "NHS (Bradford Teaching Hospitals): Vulval Care Advice Sheet"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "Your vulva doesn't need a special cleanser. NHS vulval care advice says water alone is enough to clean the area, that you don't need soap, and that a soap substitute can help stop water from drying the skin. The same advice says to avoid all fragrances on vulval skin. A soap-free bar like this is closer to a soap substitute than to regular soap, but it does contain fragrance.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.bradfordhospitals.nhs.uk/wp-content/uploads/2026/03/25070706-Vulva-Care-Advice-Sheet.pdf",
-        "label": "NHS (Bradford Teaching Hospitals): Vulval Care Advice Sheet",
-        "summary": "Says water alone is enough to clean the vulva, soap isn't needed, soap substitutes can limit drying, and all fragrances should be avoided."
       }
     ],
     "effectiveness": "No study of SHEbar itself was found. For the product type, syndet bars built on sodium cocoyl isethionate are described as milder than soap, but the supporting study was small, industry-linked, done in people with eczema rather than on vulvar skin, and had no soap comparison group. NHS advice says water alone is enough to keep the vulva clean.",
@@ -6281,25 +4209,6 @@ export const PRODUCT_RESEARCH = {
       "People who already like heat for stiffness and want a cordless wrap with red light and vibration added",
       "Not the pick if you take light-sensitizing medications, have reduced feeling in the area, or have active skin cancer or suspicious lesions, per Joylux"
     ],
-    "clinicalSources": [
-      {
-        "url": "https://www.mdanderson.org/cancerwise/what-is-red-light-therapy.h00-159701490.html",
-        "label": "MD Anderson Cancer Center: What is red light therapy?",
-        "summary": "MD Anderson pain specialists say red light therapy may ease muscle pain but is still investigational for pain management with no trials defining how often or how long to use it, and that at-home devices are less intense than clinic ones and low risk when used safely."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://www.lni.wa.gov/patient-care/_docs/HTAupdateLLLT_011818.pdf",
-        "label": "Washington State Department of Labor and Industries: Low-level laser therapy for musculoskeletal conditions, technology assessment update (2018)",
-        "summary": "Reviewing systematic reviews of randomized trials, it rated the evidence for low-level light therapy on muscle and joint pain as low or very low quality, with small, short-term and inconsistent benefits; it covered clinic lasers, not wearable LED wraps like this one."
-      },
-      {
-        "url": "https://journals.sbmu.ac.ir/jlms/article/view/48441",
-        "label": "High- and Low-Level Laser Therapy for the Treatment of Orthopedic Pain: A Systematic Review, Journal of Lasers in Medical Sciences (2025)",
-        "summary": "Eight randomized trials suggest laser therapy is a safe, helpful add-on for orthopedic pain, but differences in devices and settings ruled out pooling the results."
-      }
-    ],
     "effectiveness": "No study of ILYEO body itself was found, and none was found for this mix of red light, heat and vibration together. Looking at the parts on their own: a Cochrane review found moderate evidence that heat wraps give a small, short-term drop in pain and disability for recent low back pain. A 2009 Lancet review found low-level laser therapy eased neck pain, but those studies used lasers, not the LED red light in wearables like this, so they don't show this device works.",
     "effectivenessSources": [
       {
@@ -6321,38 +4230,11 @@ export const PRODUCT_RESEARCH = {
       "Anyone who wants to cool off after a workout without ice packs",
       "Not the pick if you want fewer hot flashes: The Menopause Society does not recommend cooling techniques as treatment, so ask a doctor about options that reduce them"
     ],
-    "clinicalSources": [
-      {
-        "url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
-        "label": "The Menopause Society: 2023 Nonhormone Therapy Position Statement (press release)",
-        "summary": "Lists cooling techniques among therapies not recommended for treating hot flashes, and names CBT, hypnosis, SSRIs/SNRIs, gabapentin, oxybutynin and fezolinetant as recommended options."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/hot-flashes/diagnosis-treatment/drc-20352795",
-        "label": "Mayo Clinic: Hot flashes, diagnosis and treatment",
-        "summary": "Suggests staying cool with layers, fans and a cold drink for mild hot flashes, and covers hormone and nonhormone treatments for more bothersome ones."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://www.bumc.bu.edu/camed/news-events/articles/2025/study-finds-wrist-cooling-represents-a-promising-approach-for-managing-hot-flashes/",
-        "label": "Boston University Chobanian & Avedisian School of Medicine: Study finds wrist cooling represents a promising approach for managing hot flashes (2025)",
-        "summary": "Describes a small randomized, double-blind crossover trial of 27 people, including 5 postmenopausal women, in which a wrist cooling device cut severe hot flashes by 46% versus baseline; it tested a different cooling device, not bra inserts."
-      }
-    ],
     "communityReview": "Retail reviews are mostly positive. Reviewers like that the pads cool quickly during a hot flash, are discreet enough to keep in a bra or handbag, and also soothe sore breasts. Complaints are that the cold doesn't last long, the pads don't sit well in some bras, and for some buyers they stopped firming up after about 10 uses or stayed soft for hours in a warm room until refrigerated.",
     "communityReviewSources": [
       {
         "url": "https://www.ulta.com/p/coldher-cooling-bra-inserts-pimprod2048010",
         "label": "Ulta: coldHER Cooling Bra Inserts reviews"
-      }
-    ],
-    "clinicalNote": "Cooling can make a hot flash feel more bearable, but it doesn't reduce how often hot flashes happen. The Menopause Society's 2023 statement on non-hormone treatments does not recommend cooling techniques as a treatment, because the studies so far are small or found no objective change. Treatments with stronger evidence include hormone therapy, which the statement calls the most effective option for those who can take it, plus cognitive behavioral therapy (a structured talk therapy), clinical hypnosis, and some prescription medicines.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://depts.washington.edu/mbwc/content/page-files/NAMS_2023-nonhormone-therapy-position-statement_(1)22.pdf",
-        "label": "The Menopause Society (2023): Nonhormone therapy position statement, Menopause journal",
-        "summary": "Does not recommend cooling techniques for hot flashes due to limited evidence, recommends CBT, hypnosis and several medicines, and notes hormone therapy is the most effective treatment."
       }
     ],
     "effectiveness": "No study of coldHER was found. For cooling products in general, The Menopause Society says the evidence is weak: studies were small and uncontrolled, and one device trial found no objective change in nighttime hot flashes. Treat it as a comfort tool, not a hot flash treatment. No study on cooling pads for breast soreness was found.",
@@ -6386,50 +4268,13 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.nhs.uk/conditions/transcutaneous-electrical-nerve-stimulation-tens/",
       "sourceLabel": "NHS: TENS (transcutaneous electrical nerve stimulation)"
-    },
-    "clinicalSources": [
-      {
-        "url": "https://www.nhs.uk/conditions/transcutaneous-electrical-nerve-stimulation-tens/",
-        "label": "NHS: TENS (transcutaneous electrical nerve stimulation)",
-        "summary": "Says to place TENS pads on clean skin, never on irritated, broken, infected or numb areas, and to stop and remove them if the skin becomes itchy, irritated or red."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/pdf/CDSR/CD013331/CD013331_abstract.pdf",
-        "label": "Han et al., Transcutaneous electrical nerve stimulation (TENS) for pain control in women with primary dysmenorrhoea, Cochrane Database of Systematic Reviews (2024)",
-        "summary": "Across 20 small trials, TENS may reduce period pain compared with placebo or no treatment (low certainty evidence), and mild skin redness or irritation at the pad sites is the main possible side effect."
-      }
-    ],
-    "clinicalNote": "These pads are the part of the Elaris Pod that touches your skin, so they don't do anything on their own. We couldn't open the SootheHer site to confirm exactly how the Pod works. For electrical stimulation devices for period pain in general, called TENS (transcutaneous electrical nerve stimulation, a mild current sent through pads on the skin), a Cochrane review of 7 small trials found high-frequency TENS eased period pain better than a placebo device, while low-frequency TENS did not. The reviewers noted the number of trials was small.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.cochrane.org/CD002123/MENSTR_transcutaneous-electrical-nerve-stimulation-for-primary-dysmenorrhoea",
-        "label": "Cochrane: Transcutaneous electrical nerve stimulation for primary dysmenorrhoea",
-        "summary": "Across 7 randomized trials, high-frequency TENS relieved period pain better than placebo TENS; low-frequency TENS did not, and the trials were few and small."
-      }
-    ]
+    }
   },
   "p-gina-insertion-applicator-refills": {
     "whoItsFor": [
       "gina Vaginal Moisturizing Glides users who lost or wore out their applicator",
       "People who find it easier to place a Glide deeper and more precisely with an applicator than with fingers",
       "Not the pick if you don't use gina Glides: it's designed only for them"
-    ],
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menopause/expert-answers/vaginal-dryness/faq-20115086",
-        "label": "Mayo Clinic: Vaginal dryness after menopause, how to treat it?",
-        "summary": "Says vaginal moisturizers are put into the vagina or around the vulva every day or every few days to keep tissues healthy, which is the kind of product this applicator is used to place."
-      }
-    ],
-    "clinicalNote": "This applicator is only a tool for placing gina's Vaginal Moisturizing Glides, so the real question is whether a vaginal moisturizer suits you. Mayo Clinic describes vaginal moisturizers as something you use every few days to keep vaginal tissue moisturized, which is different from a lubricant you use at the time of sex. If dryness keeps bothering you, a doctor may suggest low-dose vaginal estrogen as a cream, tablet or ring, and if you've had breast cancer, Mayo Clinic says to talk with your doctor about the risks of vaginal estrogen first.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://newsnetwork.mayoclinic.org/discussion/womens-wellness-how-to-treat-vaginal-dryness-after-menopause/",
-        "label": "Mayo Clinic News Network: How to treat vaginal dryness after menopause",
-        "summary": "Explains that vaginal moisturizers are applied every few days while lubricants are for sex, and lists low-dose vaginal estrogen and other options for ongoing dryness."
-      }
     ]
   },
   "p-livlabs-pippa-fit-kit": {
@@ -6440,189 +4285,34 @@ export const PRODUCT_RESEARCH = {
       "If you haven't had children, Liv Labs points you to the Starter Kit instead"
     ]
   },
-  "p-alubri-vaginal-moisturizing-gel": {
-    "clinicalSources": [
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "Lists nonprescription vaginal moisturizers, used several times a week, as a first-line option for milder menopause-related dryness, and says to see a clinician if symptoms don't improve."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menopause/expert-answers/vaginal-dryness/faq-20115086",
-        "label": "Mayo Clinic: Vaginal dryness after menopause, how to treat it?",
-        "summary": "Says vaginal moisturizers used every day or every few days help keep vaginal tissues healthy, can be paired with a lubricant for sex, and that a clinician can offer prescription options if they aren't enough."
-      }
-    ]
-  },
-  "p-alubri-intimate-serum": {
-    "clinicalSources": [
-      {
-        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html",
-        "label": "East Kent Hospitals (NHS): General care of vulval skin",
-        "summary": "NHS patient guidance recommends a daily emollient on vulval skin, washing with a soap substitute, and avoiding soaps, wipes, douches and scented products that can irritate."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "Notes that vulvar burning, itching and irritation are common around menopause but can also come from yeast infections, allergic reactions or skin conditions, so see a clinician if treatment doesn't help."
-      }
-    ]
-  },
+  "p-alubri-vaginal-moisturizing-gel": {},
+  "p-alubri-intimate-serum": {},
   "p-alubri-calming-cream": {
     "clinicalSources": [
       {
         "url": "https://medlineplus.gov/druginfo/meds/a682793.html",
         "label": "MedlinePlus: Hydrocortisone topical",
         "summary": "Explains that topical hydrocortisone relieves redness, swelling and itching, should be applied as a thin film, and that you should stop and call your doctor if an over-the-counter product hasn't helped after 7 days."
-      },
-      {
-        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html",
-        "label": "East Kent Hospitals (NHS): General care of vulval skin",
-        "summary": "NHS patient guidance recommends a daily emollient on vulval skin, washing with a soap substitute, and avoiding soaps, wipes, douches and scented products that can irritate."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "Notes that vulvar burning, itching and irritation are common around menopause but can also come from yeast infections, allergic reactions or skin conditions, so see a clinician if treatment doesn't help."
       }
     ]
   },
-  "p-alubri-vulva-balm": {
-    "clinicalSources": [
-      {
-        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html",
-        "label": "East Kent Hospitals (NHS): General care of vulval skin",
-        "summary": "NHS patient guidance recommends a daily emollient on vulval skin, washing with a soap substitute, and avoiding soaps, wipes, douches and scented products that can irritate."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "Notes that vulvar burning, itching and irritation are common around menopause but can also come from yeast infections, allergic reactions or skin conditions, so see a clinician if treatment doesn't help."
-      }
-    ]
-  },
-  "p-alubri-vaginal-wellness-kit": {
-    "clinicalSources": [
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "Lists nonprescription vaginal moisturizers, used several times a week, as a first-line option for milder menopause-related dryness, and says to see a clinician if symptoms don't improve."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menopause/expert-answers/vaginal-dryness/faq-20115086",
-        "label": "Mayo Clinic: Vaginal dryness after menopause, how to treat it?",
-        "summary": "Says vaginal moisturizers used every day or every few days help keep vaginal tissues healthy, can be paired with a lubricant for sex, and that a clinician can offer prescription options if they aren't enough."
-      },
-      {
-        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html",
-        "label": "East Kent Hospitals (NHS): General care of vulval skin",
-        "summary": "NHS patient guidance recommends a daily emollient on vulval skin, washing with a soap substitute, and avoiding soaps, wipes, douches and scented products that can irritate."
-      }
-    ]
-  },
+  "p-alubri-vulva-balm": {},
+  "p-alubri-vaginal-wellness-kit": {},
   "p-alubri-rejuvenate-restore-kit": {
     "clinicalSources": [
-      {
-        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html",
-        "label": "East Kent Hospitals (NHS): General care of vulval skin",
-        "summary": "NHS patient guidance recommends a daily emollient on vulval skin, washing with a soap substitute, and avoiding soaps, wipes, douches and scented products that can irritate."
-      },
       {
         "url": "https://medlineplus.gov/druginfo/meds/a682793.html",
         "label": "MedlinePlus: Hydrocortisone topical",
         "summary": "Explains that topical hydrocortisone relieves redness, swelling and itching, should be applied as a thin film, and that you should stop and call your doctor if an over-the-counter product hasn't helped after 7 days."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "Notes that vulvar burning, itching and irritation are common around menopause but can also come from yeast infections, allergic reactions or skin conditions, so see a clinician if treatment doesn't help."
       }
     ]
   },
-  "p-vpod-everyday-comfort-single": {
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/vaginitis/symptoms-causes/syc-20354707",
-        "label": "Mayo Clinic: Vaginitis, symptoms and causes",
-        "summary": "Explains that itching, irritation and discharge changes are often from yeast, BV or trichomoniasis, and lists when to see a provider, including symptoms that don't clear with over-the-counter treatment or come with fever or pelvic pain."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "Notes that vulvar burning, itching and irritation are common around menopause but can also come from yeast infections, allergic reactions or skin conditions, so see a clinician if treatment doesn't help."
-      }
-    ]
-  },
-  "p-vpod-everyday-comfort-3-pack": {
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/vaginitis/symptoms-causes/syc-20354707",
-        "label": "Mayo Clinic: Vaginitis, symptoms and causes",
-        "summary": "Explains that itching, irritation and discharge changes are often from yeast, BV or trichomoniasis, and lists when to see a provider, including symptoms that don't clear with over-the-counter treatment or come with fever or pelvic pain."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "Notes that vulvar burning, itching and irritation are common around menopause but can also come from yeast infections, allergic reactions or skin conditions, so see a clinician if treatment doesn't help."
-      }
-    ]
-  },
-  "p-vpod-elite-single": {
-    "clinicalSources": [
-      {
-        "url": "https://rapm.bmj.com/content/50/6/503",
-        "label": "PROSPECT/ESRA guideline: Acute pain management after vaginal delivery with perineal tears or episiotomy (Regional Anesthesia & Pain Medicine)",
-        "summary": "This European pain-society guideline recommends ice or cold packs as a simple first-line option for perineal pain after birth, alongside acetaminophen and NSAIDs."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "Notes that vulvar burning, itching and irritation are common around menopause but can also come from yeast infections, allergic reactions or skin conditions, so see a clinician if treatment doesn't help."
-      }
-    ]
-  },
-  "p-vpod-elite-3-pack": {
-    "clinicalSources": [
-      {
-        "url": "https://rapm.bmj.com/content/50/6/503",
-        "label": "PROSPECT/ESRA guideline: Acute pain management after vaginal delivery with perineal tears or episiotomy (Regional Anesthesia & Pain Medicine)",
-        "summary": "This European pain-society guideline recommends ice or cold packs as a simple first-line option for perineal pain after birth, alongside acetaminophen and NSAIDs."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-        "label": "The Menopause Society: MenoNote on genitourinary syndrome of menopause",
-        "summary": "Notes that vulvar burning, itching and irritation are common around menopause but can also come from yeast infections, allergic reactions or skin conditions, so see a clinician if treatment doesn't help."
-      }
-    ]
-  },
-  "d-soonr": {
-    "clinicalSources": [
-      {
-        "url": "https://prod.asrm.org/globalassets/_asrm/practice-guidance/practice-guidelines/pdf/prepregnancy_counseling.pdf",
-        "label": "ACOG and ASRM: Prepregnancy counseling (ACOG Committee Opinion No. 762)",
-        "summary": "Recommends folic acid before pregnancy, reaching a healthy weight, at least 150 minutes of moderate exercise a week, stopping alcohol, tobacco and marijuana, and screening both partners, which are the habits Soonr has couples log together."
-      },
-      {
-        "url": "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021",
-        "label": "ASRM: Optimizing natural fertility, a committee opinion (2021)",
-        "summary": "Defines the fertile window as the 6 days ending on ovulation, notes calendar-based apps predicted the exact ovulation day only up to 21% of the time while LH kits shortened time to pregnancy in a trial, and advises evaluation after 12 months of trying (6 months at 35 or older)."
-      }
-    ]
-  },
-  "p-surearly-smart-ovulation-test": {
-    "clinicalSources": [
-      {
-        "url": "https://www.asrm.org/practice-guidance/practice-committee-documents/optimizing-natural-fertility-a-committee-opinion-2021",
-        "label": "ASRM: Optimizing natural fertility, a committee opinion (2021)",
-        "summary": "Explains that ovulation usually follows the urine LH surge within 2 days, that LH kits give false positives in about 7% of cycles, that ovulation detection shortened time to pregnancy in a trial, and that you should seek evaluation after 12 months of trying (6 months at 35 or older)."
-      },
-      {
-        "url": "https://myadlm.org/Science-and-Research/Academy-Guidance/Use-of-Point-of-Care-Testing-in-Fertility-and-Reproduction",
-        "label": "ADLM Academy guidance: Use of point-of-care testing in fertility and reproduction (2022)",
-        "summary": "Lab-medicine guidance stating that urine LH tests are accurate, reliable predictors of ovulation, while cautioning that the LH peak alone shouldn't be used to determine whether ovulation happened."
-      }
-    ]
-  },
+  "p-vpod-everyday-comfort-single": {},
+  "p-vpod-everyday-comfort-3-pack": {},
+  "p-vpod-elite-single": {},
+  "p-vpod-elite-3-pack": {},
+  "d-soonr": {},
+  "p-surearly-smart-ovulation-test": {},
   "p-tampontribe-organic-tampons": {
     "clinicalSources": [
       {
@@ -6647,60 +4337,12 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual pads and liners",
         "summary": "Says pads are FDA-regulated medical devices, should be changed every few hours even on light days, and that you should stop using one and contact a provider if you get itching, rash, swelling or pain, since some people react to scents or added materials."
-      },
-      {
-        "url": "https://leaflets.ekhuft.nhs.uk/general-care-of-vulval-skin/html",
-        "label": "East Kent Hospitals (NHS): General care of vulval skin",
-        "summary": "For people with sensitive or irritated vulval skin, this NHS guidance advises against wearing panty liners every day and recommends loose cotton underwear and avoiding scented products."
       }
     ]
   },
-  "p-tampontribe-reusable-pads": {
-    "clinicalSources": [
-      {
-        "url": "https://www.gosh.nhs.uk/conditions-and-treatments/general-health-advice/period-products",
-        "label": "Great Ormond Street Hospital (NHS): Period products",
-        "summary": "NHS hospital patient guide that describes reusable pads as a cheaper alternative you use like a disposable pad, then rinse, wash and reuse, and notes plastic in many disposable pads."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menorrhagia/symptoms-causes/syc-20352829",
-        "label": "Mayo Clinic: Heavy menstrual bleeding",
-        "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
-      }
-    ]
-  },
-  "p-tampontribe-teen-pads": {
-    "clinicalSources": [
-      {
-        "url": "https://pubmed.ncbi.nlm.nih.gov/26595586/",
-        "label": "ACOG Committee Opinion No. 651: Menstruation in Girls and Adolescents (PubMed)",
-        "summary": "ACOG advises that girls and parents be taught what to expect from a first period and that the menstrual cycle be treated as a vital sign, since abnormal patterns can flag health concerns."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menorrhagia/symptoms-causes/syc-20352829",
-        "label": "Mayo Clinic: Heavy menstrual bleeding",
-        "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
-      },
-      {
-        "url": "https://www.gosh.nhs.uk/conditions-and-treatments/general-health-advice/period-products",
-        "label": "Great Ormond Street Hospital (NHS): Period products",
-        "summary": "NHS hospital patient guide that describes reusable pads as a cheaper alternative you use like a disposable pad, then rinse, wash and reuse, and notes plastic in many disposable pads."
-      }
-    ]
-  },
+  "p-tampontribe-reusable-pads": {},
+  "p-tampontribe-teen-pads": {},
   "p-resa-rhythm-bracelet": {
-    "clinicalSources": [
-      {
-        "url": "https://my.clevelandclinic.org/health/symptoms/21773-heart-rate-variability-hrv",
-        "label": "Cleveland Clinic: Heart rate variability (HRV)",
-        "summary": "Explains that HRV reflects how your nervous system adapts, that sleep and stress affect it, that wrist trackers estimate it less precisely than an EKG or chest strap, and that comparing your own readings over time matters more than any single number."
-      },
-      {
-        "url": "https://www.mayoclinic.org/tests-procedures/basal-body-temperature/about/pac-20393026",
-        "label": "Mayo Clinic: Basal body temperature for natural family planning",
-        "summary": "Describes the small temperature rise after ovulation, notes illness and some medicines can skew it, and says temperature tracking alone is less effective than other birth control."
-      }
-    ],
     "effectiveness": "No study of Rèsa exists yet because it hasn't launched, so this is evidence for wrist wearables in general. In a 2019 study of a different bracelet (Ava) in 193 women, wrist skin temperature, heart rate, and breathing rate all shifted with cycle phase, and the company's algorithm picked out the fertile window with about 90% accuracy in women who wore it consistently; several authors worked for the company. A 2021 study of the same bracelet in 57 women found wrist temperature caught ovulation more often than a morning oral thermometer (62% vs 23%) but gave many more false alarms.",
     "effectivenessSources": [
       {
@@ -6740,23 +4382,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.fda.gov/ForConsumers/ConsumerUpdates/ucm612029.htm",
         "label": "FDA: The Facts on Tampons, and How to Use Them Safely",
         "summary": "FDA advises using the lowest absorbency you need, changing every 4 to 8 hours, never wearing one tampon longer than 8 hours, and stopping use and getting care for TSS warning signs."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menorrhagia/symptoms-causes/syc-20352829",
-        "label": "Mayo Clinic: Heavy menstrual bleeding",
-        "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
-        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
-        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
-      },
-      {
-        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
-        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
-        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
       }
     ],
     "communityReview": "Reviewers often praise how comfortable these feel once inserted, the lack of applicator waste, and how compact they are to carry. Common complaints are finger insertion, which some people just don't like, a dry or scratchy feel for some users, and a minority who find absorbency lacking. Some recent reviewers also dislike a newer twist-off wrapper that is hard to open, especially with arthritic hands.",
@@ -6823,23 +4448,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.fda.gov/ForConsumers/ConsumerUpdates/ucm612029.htm",
         "label": "FDA: The Facts on Tampons, and How to Use Them Safely",
         "summary": "FDA advises using the lowest absorbency you need, changing every 4 to 8 hours, never wearing one tampon longer than 8 hours, and stopping use and getting care for TSS warning signs."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menorrhagia/symptoms-causes/syc-20352829",
-        "label": "Mayo Clinic: Heavy menstrual bleeding",
-        "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
-        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
-        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
-      },
-      {
-        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
-        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
-        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
       }
     ],
     "communityReview": "Reviewers often praise how comfortable these feel once inserted, the lack of applicator waste, and how compact they are to carry. Common complaints are finger insertion, which some people just don't like, a dry or scratchy feel for some users, and a minority who find absorbency lacking. Some recent reviewers also dislike a newer twist-off wrapper that is hard to open, especially with arthritic hands.",
@@ -6907,18 +4515,6 @@ export const PRODUCT_RESEARCH = {
         "summary": "FDA advises using the lowest absorbency you need, changing every 4 to 8 hours, never wearing one tampon longer than 8 hours, and stopping use and getting care for TSS warning signs."
       }
     ],
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
-        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
-        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
-      },
-      {
-        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
-        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
-        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
-      }
-    ],
     "communityReview": "Reviewers often praise how comfortable these feel once inserted, the lack of applicator waste, and how compact they are to carry. Common complaints are finger insertion, which some people just don't like, a dry or scratchy feel for some users, and a minority who find absorbency lacking. Some recent reviewers also dislike a newer twist-off wrapper that is hard to open, especially with arthritic hands.",
     "communityReviewSources": [
       {
@@ -6983,23 +4579,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.fda.gov/ForConsumers/ConsumerUpdates/ucm612029.htm",
         "label": "FDA: The Facts on Tampons, and How to Use Them Safely",
         "summary": "FDA advises using the lowest absorbency you need, changing every 4 to 8 hours, never wearing one tampon longer than 8 hours, and stopping use and getting care for TSS warning signs."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menorrhagia/symptoms-causes/syc-20352829",
-        "label": "Mayo Clinic: Heavy menstrual bleeding",
-        "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
-        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
-        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
-      },
-      {
-        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
-        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
-        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
       }
     ],
     "communityReview": "Reviewers often praise how comfortable these feel once inserted, the lack of applicator waste, and how compact they are to carry. Common complaints are finger insertion, which some people just don't like, a dry or scratchy feel for some users, and a minority who find absorbency lacking. Some recent reviewers also dislike a newer twist-off wrapper that is hard to open, especially with arthritic hands.",
@@ -7066,23 +4645,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.fda.gov/ForConsumers/ConsumerUpdates/ucm612029.htm",
         "label": "FDA: The Facts on Tampons, and How to Use Them Safely",
         "summary": "FDA advises using the lowest absorbency you need, changing every 4 to 8 hours, never wearing one tampon longer than 8 hours, and stopping use and getting care for TSS warning signs."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menorrhagia/symptoms-causes/syc-20352829",
-        "label": "Mayo Clinic: Heavy menstrual bleeding",
-        "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
-        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
-        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
-      },
-      {
-        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
-        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
-        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
       }
     ],
     "communityReview": "Reviewers often praise how comfortable these feel once inserted, the lack of applicator waste, and how compact they are to carry. Common complaints are finger insertion, which some people just don't like, a dry or scratchy feel for some users, and a minority who find absorbency lacking. Some recent reviewers also dislike a newer twist-off wrapper that is hard to open, especially with arthritic hands.",
@@ -7149,23 +4711,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.fda.gov/ForConsumers/ConsumerUpdates/ucm612029.htm",
         "label": "FDA: The Facts on Tampons, and How to Use Them Safely",
         "summary": "FDA advises using the lowest absorbency you need, changing every 4 to 8 hours, never wearing one tampon longer than 8 hours, and stopping use and getting care for TSS warning signs."
-      },
-      {
-        "url": "https://www.mayoclinic.org/diseases-conditions/menorrhagia/symptoms-causes/syc-20352829",
-        "label": "Mayo Clinic: Heavy menstrual bleeding",
-        "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
-        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
-        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
-      },
-      {
-        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
-        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
-        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
       }
     ],
     "communityReview": "Reviewers often praise how comfortable these feel once inserted, the lack of applicator waste, and how compact they are to carry. Common complaints are finger insertion, which some people just don't like, a dry or scratchy feel for some users, and a minority who find absorbency lacking. Some recent reviewers also dislike a newer twist-off wrapper that is hard to open, especially with arthritic hands. A few longtime Ultra users say the redesigned version feels stiffer and less absorbent than before.",
@@ -7233,19 +4778,6 @@ export const PRODUCT_RESEARCH = {
         "summary": "FDA advises using the lowest absorbency you need, changing every 4 to 8 hours, never wearing one tampon longer than 8 hours, and stopping use and getting care for TSS warning signs."
       }
     ],
-    "clinicalNote": "The FDA says to change a tampon every 4 to 8 hours and never wear one longer than 8. If a tampon lasts a full 8 hours without filling, the absorbency may be more than you need.",
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
-        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
-        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
-      },
-      {
-        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
-        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
-        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
-      }
-    ],
     "communityReview": "Reviewers on a German pharmacy site often say they barely feel the tampon once it's in and find the smooth surface easy to insert, including first-time users. Most treat Mini as a light-day or start-and-end-of-period size, and the main complaint is that it doesn't last on heavier days. One reviewer noticed loose fibers on the surface. Many of these reviews were posted during a promotion, and the site says it doesn't verify them.",
     "communityReviewSources": [
       {
@@ -7288,19 +4820,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.fda.gov/ForConsumers/ConsumerUpdates/ucm612029.htm",
         "label": "FDA: The Facts on Tampons, and How to Use Them Safely",
         "summary": "FDA advises using the lowest absorbency you need, changing every 4 to 8 hours, never wearing one tampon longer than 8 hours, and stopping use and getting care for TSS warning signs."
-      }
-    ],
-    "clinicalNote": "The FDA says to change a tampon every 4 to 8 hours and never wear one longer than 8. If a tampon lasts a full 8 hours without filling, the absorbency may be more than you need.",
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
-        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
-        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
-      },
-      {
-        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
-        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
-        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
       }
     ],
     "communityReview": "Reviewers on a German pharmacy site often say they barely feel the tampon once it's in and find the smooth surface easy to insert, including first-time users. Most treat Mini as a light-day or start-and-end-of-period size, and the main complaint is that it doesn't last on heavier days. One reviewer noticed loose fibers on the surface. Many of these reviews were posted during a promotion, and the site says it doesn't verify them.",
@@ -7440,16 +4959,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://medlineplus.gov/ency/article/003973.htm",
         "label": "MedlinePlus (NIH): Urinary incontinence products",
         "summary": "Describes pads, pull-on and reusable underwear for leaks, advises a snug fit for disposables, and says to remove soaked products right away and clean and dry the skin to prevent breakdown."
-      },
-      {
-        "url": "https://www.yourpelvicfloor.org/media/Continence_Pads_and_Perineal_Care-new-1.pdf",
-        "label": "IUGA: Continence Pads and Perineal Care, A Guide for Women",
-        "summary": "Explains that menstrual pads are made for blood, not urine, and recommends dedicated continence products chosen by leak volume, worn snugly, changed by wetness, with gentle pH-balanced skin cleansing."
-      },
-      {
-        "url": "https://www.cochrane.org/zh-hant/about-us/news/featured-review-pelvic-floor-muscle-training-versus-no-treatment-or-inactive-control-treatmen-0",
-        "label": "Cochrane featured review (2018): Pelvic floor muscle training for urinary incontinence in women",
-        "summary": "Concludes with confidence that pelvic floor muscle training can cure or improve stress and other types of urinary incontinence and could be part of first-line care."
       }
     ],
     "communityReview": "Reviewers often say these hold up overnight and during activity, feel close to regular underwear, and are hard to spot under clothes, especially the black version. Common complaints are a pad area that feels too short or narrow, waistbands that dig in or irritate skin, and reports that newer packs leak more than older ones. Fit for larger bodies is another recurring sticking point.",
@@ -7463,17 +4972,12 @@ export const PRODUCT_RESEARCH = {
         "label": "Walmart: Depend Silhouette for Women reviews"
       }
     ],
-    "clinicalNote": "Absorbent products catch leaks but don't treat what causes them. NIH says pelvic floor muscle exercises (squeezing the muscles that hold in urine) lead to fewer leaks per day, and bladder training (peeing on a set schedule) and losing weight can also help. UK guidance from NICE says pads and absorbent underwear are best used as a short-term way to cope, or long term only if treatment hasn't worked. If your skin gets irritated, NIH notes that special skin cleaners and creams can help protect it.",
+    "clinicalNote": "Absorbent products catch leaks but don't treat what causes them. NIH says pelvic floor muscle exercises (squeezing the muscles that hold in urine) lead to fewer leaks per day, and bladder training (peeing on a set schedule) and losing weight can also help. If your skin gets irritated, NIH notes that special skin cleaners and creams can help protect it.",
     "clinicalNoteSources": [
       {
         "url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems/treatment",
         "label": "NIDDK (NIH): Treatments for Bladder Control Problems (Urinary Incontinence)",
         "summary": "NIH overview of bladder control treatments, including pelvic floor exercises, bladder training, weight loss, absorbent products, and skin care."
-      },
-      {
-        "url": "https://www.nice.org.uk/guidance/QS77/chapter/quality-statement-3-containment-products",
-        "label": "NICE Quality Standard QS77: Containment products",
-        "summary": "UK national guidance that containment products should be a temporary coping strategy, or long-term management only if treatment is unsuccessful."
       }
     ],
     "warnings": [
@@ -7481,11 +4985,7 @@ export const PRODUCT_RESEARCH = {
       "Keep the plastic bag away from babies and children to avoid the risk of suffocation.",
       "Like most clothing, this underwear can burn if exposed to a flame.",
       "Do not flush."
-    ],
-    "warningsSource": {
-      "url": "https://stopandshop.com/groceries/product/depend-womens-silhouette-incontinence-underwear-maximum-l-20-ct-pkg/329225",
-      "label": "Depend Silhouette Maximum label text (as listed on Stop & Shop product page)"
-    }
+    ]
   },
   "p-tena-intimates-very-light-liner": {
     "whoItsFor": [
@@ -7507,19 +5007,9 @@ export const PRODUCT_RESEARCH = {
     },
     "clinicalSources": [
       {
-        "url": "https://www.yourpelvicfloor.org/media/Continence_Pads_and_Perineal_Care-new-1.pdf",
-        "label": "IUGA: Continence Pads and Perineal Care, A Guide for Women",
-        "summary": "Explains that menstrual pads are made for blood, not urine, and recommends dedicated continence products chosen by leak volume, worn snugly, changed by wetness, with gentle pH-balanced skin cleansing."
-      },
-      {
         "url": "https://medlineplus.gov/ency/article/003973.htm",
         "label": "MedlinePlus (NIH): Urinary incontinence products",
         "summary": "Describes pads, pull-on and reusable underwear for leaks, advises a snug fit for disposables, and says to remove soaked products right away and clean and dry the skin to prevent breakdown."
-      },
-      {
-        "url": "https://www.cochrane.org/zh-hant/about-us/news/featured-review-pelvic-floor-muscle-training-versus-no-treatment-or-inactive-control-treatmen-0",
-        "label": "Cochrane featured review (2018): Pelvic floor muscle training for urinary incontinence in women",
-        "summary": "Concludes with confidence that pelvic floor muscle training can cure or improve stress and other types of urinary incontinence and could be part of first-line care."
       }
     ],
     "communityReview": "Reviewers often say this liner handles light drips without noticeable urine smell, stays in place, and feels gentle on sensitive skin. The main limit people mention is capacity: it works for small leaks but not bigger ones. A real share of ratings are negative, though the visible reviews don't point to one common complaint.",
@@ -7529,17 +5019,12 @@ export const PRODUCT_RESEARCH = {
         "label": "Walmart: TENA Sensitive Care Extra Coverage Very Light Liner reviews"
       }
     ],
-    "clinicalNote": "Absorbent products catch leaks but don't treat what causes them. NIH says pelvic floor muscle exercises (squeezing the muscles that hold in urine) lead to fewer leaks per day, and bladder training (peeing on a set schedule) and losing weight can also help. UK guidance from NICE says pads and absorbent underwear are best used as a short-term way to cope, or long term only if treatment hasn't worked. If your skin gets irritated, NIH notes that special skin cleaners and creams can help protect it.",
+    "clinicalNote": "Absorbent products catch leaks but don't treat what causes them. NIH says pelvic floor muscle exercises (squeezing the muscles that hold in urine) lead to fewer leaks per day, and bladder training (peeing on a set schedule) and losing weight can also help. If your skin gets irritated, NIH notes that special skin cleaners and creams can help protect it.",
     "clinicalNoteSources": [
       {
         "url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems/treatment",
         "label": "NIDDK (NIH): Treatments for Bladder Control Problems (Urinary Incontinence)",
         "summary": "NIH overview of bladder control treatments, including pelvic floor exercises, bladder training, weight loss, absorbent products, and skin care."
-      },
-      {
-        "url": "https://www.nice.org.uk/guidance/QS77/chapter/quality-statement-3-containment-products",
-        "label": "NICE Quality Standard QS77: Containment products",
-        "summary": "UK national guidance that containment products should be a temporary coping strategy, or long-term management only if treatment is unsuccessful."
       }
     ]
   },
@@ -7548,19 +5033,6 @@ export const PRODUCT_RESEARCH = {
       "People already doing LiM Method sessions with the LiM Sliding Board",
       "Anyone who needs their feet to glide on the board during LiM movements",
       "Not the pick as a pelvic floor treatment on its own: it's an accessory for the LiM exercise system"
-    ],
-    "clinicalNote": "These shoe covers are an add-on for LiM Method exercise sessions, not a treatment by themselves. The bigger clinical picture is pelvic floor muscle training: a Cochrane review found it can cure or improve symptoms of stress incontinence (leaking when you cough, sneeze or lift) and other types of bladder leakage, with rare side effects. That evidence is for supervised pelvic floor training in general, not for this product or the LiM program specifically. Cleveland Clinic notes pelvic floor muscles can become weak, but also tight or spastic, which is why pelvic floor physical therapists often use relaxation and breathing work, not only strengthening.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.cochrane.org/ja/about-us/news/featured-review-pelvic-floor-muscle-training-versus-no-treatment-or-inactive-control-treatmen-0",
-        "label": "Cochrane: Pelvic floor muscle training versus no treatment for urinary incontinence in women",
-        "summary": "Cochrane review concluding pelvic floor muscle training can cure or improve stress and other types of urinary incontinence in women, with rare side effects."
-      },
-      {
-        "url": "https://my.clevelandclinic.org/departments/rehabilitation/services/pelvic-health",
-        "label": "Cleveland Clinic: Pelvic Health Physical Therapy",
-        "summary": "Explains that pelvic floor muscles may become weak, tight or spastic, and that therapy can include strengthening, relaxation techniques, diaphragmatic breathing and a home exercise program."
-      }
     ]
   },
   "p-lim-method-kneeling-pad": {
@@ -7568,19 +5040,6 @@ export const PRODUCT_RESEARCH = {
       "People doing LiM Method sessions who want extra cushioning in low-to-the-ground positions",
       "Anyone whose knees get sore kneeling on a hard floor during exercise",
       "Not the pick as a pelvic floor treatment on its own: it's a cushioning accessory"
-    ],
-    "clinicalNote": "This kneeling pad is a comfort accessory for LiM Method exercise sessions, not a treatment by itself. The bigger clinical picture is pelvic floor muscle training: a Cochrane review found it can cure or improve symptoms of stress incontinence (leaking when you cough, sneeze or lift) and other types of bladder leakage, with rare side effects. That evidence is for supervised pelvic floor training in general, not for this product or the LiM program specifically. Cleveland Clinic notes pelvic floor muscles can become weak, but also tight or spastic, which is why pelvic floor physical therapists often use relaxation and breathing work, not only strengthening.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.cochrane.org/ja/about-us/news/featured-review-pelvic-floor-muscle-training-versus-no-treatment-or-inactive-control-treatmen-0",
-        "label": "Cochrane: Pelvic floor muscle training versus no treatment for urinary incontinence in women",
-        "summary": "Cochrane review concluding pelvic floor muscle training can cure or improve stress and other types of urinary incontinence in women, with rare side effects."
-      },
-      {
-        "url": "https://my.clevelandclinic.org/departments/rehabilitation/services/pelvic-health",
-        "label": "Cleveland Clinic: Pelvic Health Physical Therapy",
-        "summary": "Explains that pelvic floor muscles may become weak, tight or spastic, and that therapy can include strengthening, relaxation techniques, diaphragmatic breathing and a home exercise program."
-      }
     ]
   },
   "p-magnesium-glycinate": {
@@ -7597,22 +5056,10 @@ export const PRODUCT_RESEARCH = {
         "summary": "Sets the adult upper limit for supplemental magnesium at 350 mg a day, notes diarrhea and cramping as common side effects at high doses, and lists interactions with bisphosphonates, some antibiotics, diuretics and long-term proton pump inhibitors, plus higher risk with kidney disease."
       }
     ],
-    "scienceSources": [
-      {
-        "url": "https://air.unimi.it/handle/2434/517458",
-        "label": "Parazzini et al., Magnesium Research (2017): Magnesium in the gynaecological practice, a literature review",
-        "summary": "This review concludes oral magnesium may help prevent period cramps, PMS and menstrual migraine, while noting how it works has not been studied much."
-      },
-      {
-        "url": "https://iris.unimore.it/retrieve/f22de9a4-66ff-4696-bca0-6f13505f8a02/06.pdf",
-        "label": "Diamanti and Facchinetti, Journal of Gynaecology and Obstetrics (2020): Magnesium supplementation in obstetrics and gynaecology",
-        "summary": "This brief review says magnesium may improve PMS symptoms and may be an option for period cramps, but bases that on a handful of small placebo-controlled trials."
-      }
-    ],
     "ingredientScience": [
       {
         "name": "Magnesium (as magnesium bisglycinate)",
-        "text": "Magnesium is a mineral your body uses in more than 300 enzyme systems, including the ones behind nerve signals, muscle contraction and a normal heart rhythm. Supplement evidence is mixed and condition-specific: small trials found modest drops in migraine frequency, while evidence for blood pressure and blood sugar is weak or inconclusive. The NIH fact sheet does not cover period cramps or the glycinate form specifically, though it notes forms that dissolve well tend to be absorbed better than magnesium oxide.",
+        "text": "Magnesium is a mineral your body uses in more than 300 enzyme systems, including the ones behind nerve signals, muscle contraction and a normal heart rhythm. The NIH fact sheet does not cover period cramps or the glycinate form specifically, though it notes forms that dissolve well tend to be absorbed better than magnesium oxide.",
         "citations": [
           {
             "url": "https://ods.od.nih.gov/factsheets/Magnesium-healthProfessional/",
@@ -7665,36 +5112,12 @@ export const PRODUCT_RESEARCH = {
         "summary": "No serious side effects of CoQ10 have been reported, mild stomach upset or sleep problems can happen, and it may interact with warfarin and insulin."
       }
     ],
-    "scienceSources": [
-      {
-        "url": "https://rbej.biomedcentral.com/track/pdf/10.1186/s12958-018-0343-0",
-        "label": "Xu et al., Reproductive Biology and Endocrinology (2018): CoQ10 pretreatment in young women with low ovarian reserve",
-        "summary": "In an open-label trial of women under 35 with low ovarian reserve, 600 mg a day of CoQ10 for 60 days before IVF led to more eggs retrieved and more good-quality embryos, but the rise in live births was not statistically significant."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Ubiquinol (CoQ10)",
-        "text": "Ubiquinol is the reduced form of coenzyme Q10, a compound your cells use to make energy. A 2020 review of 5 small trials in 449 women going through IVF or similar treatment found CoQ10 was linked to more clinical pregnancies (a pregnancy confirmed on ultrasound), about 29% versus 14%, but it did not change live birth or miscarriage rates. That's a small evidence base, and the trials did not test this product.",
-        "citations": [
-          {
-            "url": "https://link.springer.com/10.1007/s10815-020-01906-3",
-            "label": "J Assist Reprod Genet (2020): CoQ10 supplementation and fertility outcomes in women undergoing ART, systematic review and meta-analysis"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "CoQ10 has been tested for many conditions, and for most of them the NIH's complementary health center calls the research inconclusive or too limited to draw conclusions. For fertility, the clearest data come from women having IVF or similar treatment, where a 2020 review of 5 trials found a higher clinical pregnancy rate but no difference in live births. No serious side effects have been reported, though mild sleep trouble or stomach upset can happen.",
+    "clinicalNote": "CoQ10 has been tested for many conditions, and for most of them the NIH's complementary health center calls the research inconclusive or too limited to draw conclusions. No serious side effects have been reported, though mild sleep trouble or stomach upset can happen.",
     "clinicalNoteSources": [
       {
         "url": "https://www.nccih.nih.gov/health/coenzyme-q10?nav=govd",
         "label": "NCCIH (NIH): Coenzyme Q10",
         "summary": "Summarizes CoQ10 research as mostly inconclusive or limited, notes no serious side effects reported, and flags interactions with warfarin and insulin."
-      },
-      {
-        "url": "https://link.springer.com/10.1007/s10815-020-01906-3",
-        "label": "J Assist Reprod Genet (2020): CoQ10 and fertility outcomes in ART, meta-analysis of 5 RCTs",
-        "summary": "In 449 infertile women, oral CoQ10 was linked to higher clinical pregnancy rates but no change in live birth or miscarriage."
       }
     ],
     "warnings": [
@@ -7728,21 +5151,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://support.helloclue.com/hc/en-us/articles/215935063-How-do-I-track-my-period",
       "sourceLabel": "Clue Help Center: How do I track my period?"
     },
-    "clinicalSources": [
-      {
-        "url": "https://pubmed.ncbi.nlm.nih.gov/26595586/",
-        "label": "ACOG Committee Opinion No. 651: Menstruation in Girls and Adolescents, Using the Menstrual Cycle as a Vital Sign",
-        "summary": "ACOG calls the menstrual cycle a vital sign and asks clinicians to teach patients what a normal cycle looks like, since spotting abnormal patterns early can flag health problems."
-      }
-    ],
-    "clinicalNote": "Period apps like Clue predict your next period from the cycles you've logged, so predictions get better the more cycles you track and are less reliable if your cycles vary a lot. Clue's data has been used in peer-reviewed research: a 2020 study of more than 378,000 users and 4.9 million cycles found links between how much a person's cycle varies and the symptoms they log. A tracker is a log, not a diagnosis, so it's useful to bring your history to a clinician if something seems off.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://doaj.org/article/6dbf3df4478a4eda941ff103364754ab",
-        "label": "npj Digital Medicine (2020): Characterizing physiological and symptomatic variation in menstrual cycles using self-tracked mobile-health data",
-        "summary": "Used Clue app data from over 378,000 users and 4.9 million cycles to link cycle variability with tracked symptoms."
-      }
-    ],
     "effectiveness": "No independent study measuring how accurately Clue itself predicts periods was found. For the product type, a 2016 Obstetrics and Gynecology study found most free menstrual tracking apps were inaccurate: only 20 of 108 met basic accuracy criteria, such as basing predictions on at least 3 past cycles. Clue was not named in that study, and apps have changed a lot since 2016.",
     "effectivenessSources": [
       {
@@ -7781,26 +5189,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://apps.apple.com/ci/app/stardust-cycle-tracker/id1495829322",
       "sourceLabel": "Stardust Cycle Tracker on the App Store"
     },
-    "clinicalSources": [
-      {
-        "url": "https://pubmed.ncbi.nlm.nih.gov/26595586/",
-        "label": "ACOG Committee Opinion No. 651: Menstruation in Girls and Adolescents, Using the Menstrual Cycle as a Vital Sign",
-        "summary": "ACOG calls the menstrual cycle a vital sign and asks clinicians to teach patients what a normal cycle looks like, since spotting abnormal patterns early can flag health problems."
-      }
-    ],
-    "clinicalNote": "Stardust predicts periods from the cycles you log, like other trackers, and adds moon-phase features. The science on moon and menstrual cycles is unsettled: a 2021 Science Advances study of long-term records found some women's cycles lined up with the moon only now and then, and that this faded with age and exposure to artificial light at night. Because period data is sensitive, the FTC suggests comparing apps' privacy notices and picking the more protective settings, since defaults often lean toward sharing.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://ri.conicet.gov.ar/handle/11336/163998",
-        "label": "Science Advances (2021): Women temporarily synchronize their menstrual cycles with the luminance and gravimetric cycles of the Moon",
-        "summary": "Long-term records showed cycles over 27 days were only intermittently in sync with lunar cycles, and lost this with age and night-time artificial light."
-      },
-      {
-        "url": "https://consumer.ftc.gov/consumer-alerts/2021/01/does-your-health-app-protect-your-sensitive-info",
-        "label": "FTC Consumer Alert (2021): Does your health app protect your sensitive info?",
-        "summary": "After a settlement with period app Flo over sharing health data, the FTC gives tips for choosing and setting up health apps."
-      }
-    ],
     "effectiveness": "No independent study of Stardust's predictions was found. For the product type, a 2016 Obstetrics and Gynecology study found only 20 of 108 free period-tracking apps met basic accuracy criteria. Stardust was not named, and apps have changed since then.",
     "effectivenessSources": [
       {
@@ -7813,11 +5201,7 @@ export const PRODUCT_RESEARCH = {
       "Compare privacy notices and look for one that plainly says what health data is collected, how it's used and who it's shared with.",
       "Review the app's settings, since defaults often lean toward sharing.",
       "Keep the app and your phone's operating system updated to fix privacy and security problems."
-    ],
-    "warningsSource": {
-      "url": "https://consumer.ftc.gov/consumer-alerts/2021/01/does-your-health-app-protect-your-sensitive-info",
-      "label": "FTC Consumer Alert: Does your health app protect your sensitive info?"
-    }
+    ]
   },
   "d-balance-menopause": {
     "whoItsFor": [
@@ -7839,14 +5223,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://healthify.nz/apps/b/balance-app",
       "sourceLabel": "Healthify NZ: Balance, Menopause Support app review"
     },
-    "clinicalNote": "Balance lets you log symptoms like periods, sleep and mood, fill in a symptom questionnaire every 3 months, and share a health report with your clinician. A 2023 clinician review for New Zealand's Healthify found the free content easy to use and largely evidence-based. The reviewer flagged that community posts can share medical information that may be harmful, and that profiles show your symptoms to other users. The app is built around UK NHS practice, so medicine advice may not match where you live.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://healthify.nz/apps/b/balance-app",
-        "label": "Healthify NZ (2023): Balance, Menopause Support app review",
-        "summary": "Clinician review covering features, pros and cons, including privacy of community profiles and low-level evidence behind the app's suggested Experiments."
-      }
-    ],
     "effectiveness": "No published study testing whether using Balance improves menopause symptoms or care was found. A 2023 clinician review for Healthify NZ found the free education content largely evidence-based, but said the app's suggested Experiments, including some supplements, rest on low-level evidence and may cost money for little benefit.",
     "effectivenessSources": [
       {
@@ -7865,42 +5241,7 @@ export const PRODUCT_RESEARCH = {
       "label": "HHS: Protecting the privacy and security of your health information when using your personal cell phone or tablet"
     }
   },
-  "p-uqora-control": {
-    "scienceSources": [
-      {
-        "url": "https://www.cochrane.org/evidence/CD013608_d-mannose-sugar-tablets-preventing-or-treating-urinary-tract-infections-adults-and-children",
-        "label": "Cochrane review (2022): D-mannose for preventing and treating urinary tract infections",
-        "summary": "Across 7 small trials with 719 people, the evidence was very low certainty and not enough to know whether D-mannose prevents or treats UTIs; side effects were few, mainly diarrhea."
-      },
-      {
-        "url": "https://urology.wisc.edu/wp-content/uploads/2024/05/D-Mannose-for-Prevention-of-Recurrent-Urinary-Tract-Infection-Among-Women.pdf",
-        "label": "Hayward et al., JAMA Internal Medicine (2024): D-mannose for prevention of recurrent UTI among women",
-        "summary": "In a double-blind trial of 598 women with recurrent UTIs, about 2 g of D-mannose a day for 6 months did not significantly reduce UTIs compared with placebo (51% vs 56%), and the authors advised against recommending it for prevention."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "D-mannose",
-        "text": "D-mannose is a simple sugar that is thought to stop E. coli bacteria from sticking to the bladder wall. The biggest trial so far, published in JAMA Internal Medicine in 2024, gave 598 women with recurrent UTIs 2 g a day or a placebo for 6 months, and found no meaningful difference: about 51% versus 56% needed care for a suspected UTI. So the evidence that it prevents UTIs is weak.",
-        "citations": [
-          {
-            "url": "https://urology.wisc.edu/wp-content/uploads/2024/05/D-Mannose-for-Prevention-of-Recurrent-Urinary-Tract-Infection-Among-Women.pdf",
-            "label": "JAMA Internal Medicine (2024): D-mannose for prevention of recurrent urinary tract infection among women, randomized clinical trial"
-          }
-        ]
-      },
-      {
-        "name": "Hibiscus extract",
-        "text": "Hibiscus (Hibiscus sabdariffa) is a plant extract added to some urinary health blends. The only human study found was a small 2019 study of 100 women who took a mix of D-mannose, hibiscus and a probiotic after a bladder test, and 13 got a urinary infection; there was no comparison group and hibiscus was never tested on its own, so the evidence for it is very weak.",
-        "citations": [
-          {
-            "url": "https://air.unimi.it/handle/2434/876598",
-            "label": "Urologia (2019): D-mannose, Hibiscus sabdariffa and Lactobacillus plantarum to prevent infection after urodynamic study"
-          }
-        ]
-      }
-    ]
-  },
+  "p-uqora-control": {},
   "p-d-mannose-now": {
     "whoItsFor": [
       "Adults who want an inexpensive, single-ingredient D-mannose capsule for urinary tract support",
@@ -7920,27 +5261,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://nowfoods.com/supplements/d-mannose-500-mg-veg-capsules",
       "sourceLabel": "NOW Foods: D-Mannose 500 mg Veg Capsules"
     },
-    "scienceSources": [
-      {
-        "url": "https://www.cochrane.org/evidence/CD013608_d-mannose-sugar-tablets-preventing-or-treating-urinary-tract-infections-adults-and-children",
-        "label": "Cochrane review (2022): D-mannose for preventing and treating urinary tract infections",
-        "summary": "Across 7 small trials with 719 people, the evidence was very low certainty and not enough to know whether D-mannose prevents or treats UTIs; side effects were few, mainly diarrhea."
-      },
-      {
-        "url": "https://urology.wisc.edu/wp-content/uploads/2024/05/D-Mannose-for-Prevention-of-Recurrent-Urinary-Tract-Infection-Among-Women.pdf",
-        "label": "Hayward et al., JAMA Internal Medicine (2024): D-mannose for prevention of recurrent UTI among women",
-        "summary": "In a double-blind trial of 598 women with recurrent UTIs, about 2 g of D-mannose a day for 6 months did not significantly reduce UTIs compared with placebo (51% vs 56%), and the authors advised against recommending it for prevention."
-      }
-    ],
     "warnings": [
       "For adults only.",
       "Ask a doctor before use if you are pregnant or nursing, take medication, or have a medical condition.",
       "Keep out of reach of children."
-    ],
-    "warningsSource": {
-      "url": "https://www.vitacost.com/now-foods-d-mannose-500-mg-240-veg-capsules",
-      "label": "NOW Foods D-Mannose 500 mg capsules, label copy on Vitacost"
-    }
+    ]
   },
   "p-cystex": {
     "whoItsFor": [
@@ -7961,24 +5286,7 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://otclabels.com/lib/otc/otc-meds/cystex-1/",
       "sourceLabel": "Cystex Drug Facts label (OTC Labels)"
     },
-    "scienceSources": [
-      {
-        "url": "https://apps-eprint4-l.ncl.ac.uk/281984",
-        "label": "Harding et al., Health Technology Assessment (2022): The ALTAR trial, methenamine hippurate vs antibiotic prophylaxis for recurrent UTIs in women",
-        "summary": "In 240 women with recurrent UTIs, daily prescription methenamine hippurate (1 g twice a day) prevented UTIs nearly as well as low-dose antibiotics over 12 months; note this is a different form and much higher dose of methenamine than Cystex, which is meant for short-term symptom relief."
-      }
-    ],
     "ingredientScience": [
-      {
-        "name": "Methenamine",
-        "text": "Methenamine only works once it turns into formaldehyde, and that happens in acidic urine that stays in the bladder long enough. Most of the research is on a related form, methenamine hippurate, taken daily for months to prevent repeat UTIs, not on a few days of use for symptoms. A New Zealand government review called the overall evidence weak, though a 2022 UK trial found it held up about as well as low-dose antibiotics for prevention.",
-        "citations": [
-          {
-            "url": "https://www.Medsafe.govt.nz/committees/MARC/reports/190-Methenamine-benefit-risk-review.pdf",
-            "label": "Medsafe (New Zealand Ministry of Health), 2022: Methenamine benefit-risk review"
-          }
-        ]
-      },
       {
         "name": "Sodium salicylate",
         "text": "Sodium salicylate is an NSAID (the same drug family as aspirin) that eases pain. The NIH's medical dictionary notes it is less effective than the same dose of aspirin for pain and fever, and has the same kinds of side effects, with less hidden stomach bleeding.",
@@ -7990,30 +5298,13 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "Cystex pairs a pain reliever with methenamine, an antibacterial that only becomes active in acidic urine. Methenamine has mainly been studied for long-term prevention of repeat UTIs, and a government review notes that if you need antibiotics for an active infection, methenamine prevention is paused until the infection clears. The label says to ask a doctor first if this is your first time having frequent, burning urination, and to stop and ask a doctor after 3 days.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.Medsafe.govt.nz/committees/MARC/reports/190-Methenamine-benefit-risk-review.pdf",
-        "label": "Medsafe (New Zealand Ministry of Health), 2022: Methenamine benefit-risk review",
-        "summary": "Explains how methenamine converts to formaldehyde in acidic urine, that it is meant for long-term prevention, and rates the overall efficacy evidence as weak."
-      },
-      {
-        "url": "https://otclabels.com/lib/otc/otc-meds/cystex-1/",
-        "label": "Cystex Drug Facts label (Clarion Brands), via OTClabels.com",
-        "summary": "The product's Drug Facts label, including the 3-day limit and the advice to see a doctor for first-time symptoms."
-      }
-    ],
     "warnings": [
       "Children and teens who have or are recovering from chickenpox or flu-like symptoms should not use it, because of the risk of Reye's syndrome (a rare but serious illness).",
       "It contains an NSAID that may cause stomach bleeding, especially if you are 60 or older, have ulcers, take blood thinners, steroids or other NSAIDs, or drink 3 or more alcoholic drinks a day.",
       "Do not use if you are allergic to salicylates, including aspirin.",
       "Stop and ask a doctor if you have used it for 3 days, get ringing in your ears, or notice signs of stomach bleeding.",
       "Pregnancy: Cleveland Clinic says taking it between weeks 20 and 30 of pregnancy may harm the baby and not to take it after week 30, so ask your clinician first."
-    ],
-    "warningsSource": {
-      "url": "https://otclabels.com/lib/otc/otc-meds/cystex-1/",
-      "label": "Cystex Drug Facts label (Clarion Brands), via OTClabels.com"
-    }
+    ]
   },
   "p-cora-organic-pads": {
     "whoItsFor": [
@@ -8033,24 +5324,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://cora.com/blogs/blood-milk/what-are-the-best-organic-pads",
       "sourceLabel": "Cora: What are the best organic pads?"
     },
-    "scienceSources": [
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Woo et al., The Ewha Medical Journal (2019): Systematic review on sanitary pads and female health",
-        "summary": "This review of 71 studies found no clear cause-and-effect link between pads and skin irritation or vaginal microbiome changes, and says more research on chemical exposure from everyday pad use is needed."
-      }
-    ],
-    "clinicalNote": "Pads sit outside the body and absorb flow after it leaves, and FDA regulates them as medical devices and calls them generally safe. FDA says the main skin problems come from wearing a pad too long or from scents, deodorants or other materials added to pads. A 2019 systematic review found the research on pads and health is limited overall and did not report any study comparing organic and conventional pads head to head.",
+    "clinicalNote": "Pads sit outside the body and absorb flow after it leaves, and FDA regulates them as medical devices and calls them generally safe. FDA says the main skin problems come from wearing a pad too long or from scents, deodorants or other materials added to pads.",
     "clinicalNoteSources": [
       {
         "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
         "label": "FDA: Menstrual Pads and Liners",
         "summary": "FDA safe-use guidance for pads, including that long wear and added scents or materials can irritate skin."
-      },
-      {
-        "url": "https://synapse.koreamed.org/articles/1130139",
-        "label": "Ewha Medical Journal, 2019: Systematic Review on Sanitary Pads and Female Health",
-        "summary": "Reviewed studies on pads and women's health and found the evidence weak, with no organic vs conventional comparisons reported."
       }
     ],
     "warnings": [
@@ -8082,24 +5361,7 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.vitacost.com/garden-of-life-dr-formulated-probiotics-once-daily-womens-50-billion-30-vegetarian-capsules",
       "sourceLabel": "Garden of Life label (via Vitacost product page)"
     },
-    "scienceSources": [
-      {
-        "url": "https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2022.938838/full",
-        "label": "Chieng et al., Frontiers in Nutrition (2022): probiotics and bacterial vaginosis recurrence, meta-analysis of 10 RCTs",
-        "summary": "Across 10 trials with 1,234 women, probiotics were linked to a 45% lower risk of BV coming back, by oral or vaginal route, though follow-up was short and the authors called for larger trials."
-      }
-    ],
     "ingredientScience": [
-      {
-        "name": "Lactobacillus strains (40 billion CFU of the 50 billion)",
-        "text": "Most of the blend is Lactobacillus, the type of bacteria that normally dominates a healthy vagina. A 2022 review of 10 trials (1,234 women) found probiotics cut the chance of bacterial vaginosis (BV, an overgrowth of the wrong bacteria) coming back by about 45% compared with placebo or antibiotics alone, and oral and vaginal products did about the same. The evidence was rated moderate quality, and the trials used other products, not this one.",
-        "citations": [
-          {
-            "url": "https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2022.938838/full",
-            "label": "Frontiers in Nutrition (2022): Probiotics to reduce the recurrence of bacterial vaginosis, systematic review and meta-analysis"
-          }
-        ]
-      },
       {
         "name": "50 billion CFU, 16 strains",
         "text": "CFU (colony-forming units) counts how many live bacteria are in a dose. NIH notes that a higher CFU count does not make a product more effective, and that benefits depend on the specific strain, so a big number or a long strain list is not proof on its own.",
@@ -8111,13 +5373,8 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "Probiotics have been studied mostly as an add-on for women who keep getting BV, not as a cure for an active infection. A 2022 meta-analysis found fewer BV recurrences with probiotics, but the trials were small, mixed, and mostly short, and none tested this exact product. NIH notes side effects are usually minor, like gas, and that serious infections from probiotics have mostly happened in people who were severely ill or had weakened immune systems.",
+    "clinicalNote": "Probiotics have been studied mostly as an add-on for women who keep getting BV, not as a cure for an active infection. NIH notes side effects are usually minor, like gas, and that serious infections from probiotics have mostly happened in people who were severely ill or had weakened immune systems.",
     "clinicalNoteSources": [
-      {
-        "url": "https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2022.938838/full",
-        "label": "Frontiers in Nutrition (2022): Probiotics and BV recurrence meta-analysis",
-        "summary": "Across 10 randomized trials, probiotics lowered BV recurrence (14.8% vs 25.5%), with moderate-quality evidence and a call for better trials."
-      },
       {
         "url": "https://ods.od.nih.gov/factsheets/Probiotics-HealthProfessional",
         "label": "NIH Office of Dietary Supplements: Probiotics",
@@ -8129,11 +5386,7 @@ export const PRODUCT_RESEARCH = {
       "Stop using it and get medical advice if you have a bad reaction.",
       "Not intended for children; keep out of reach of children.",
       "Do not use if the safety seal is broken or missing."
-    ],
-    "warningsSource": {
-      "url": "https://www.vitacost.com/products/garden-of-life-dr-formulated-probiotics-once-daily-women-s-50-billion-30-vegetarian-capsules-64442",
-      "label": "Product label (Supplement Facts and warnings) as listed on Vitacost"
-    }
+    ]
   },
   "p-evening-primrose": {
     "whoItsFor": [
@@ -8153,13 +5406,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.nowfoods.com/products/supplements/evening-primrose-oil-1000-mg-vegan-formula-veggie-softgels?SKU=1542",
       "sourceLabel": "NOW Foods: Evening Primrose Oil 1000 mg"
     },
-    "scienceSources": [
-      {
-        "url": "https://www.mdpi.com/1660-4601/18/12/6295/html",
-        "label": "Ahmad Adni et al., International Journal of Environmental Research and Public Health (2021): evening primrose oil for breast pain, systematic review and meta-analysis",
-        "summary": "Pooling 13 trials, the authors found evening primrose oil did not reduce breast pain significantly more than placebo, and it did not cause more side effects than placebo either."
-      }
-    ],
     "ingredientScience": [
       {
         "name": "Evening primrose oil (1000 mg)",
@@ -8170,16 +5416,6 @@ export const PRODUCT_RESEARCH = {
             "label": "NIH NCCIH: Evening Primrose Oil"
           }
         ]
-      },
-      {
-        "name": "GLA (gamma-linolenic acid, 100 mg)",
-        "text": "GLA is an omega-6 fatty acid and the main reason people take evening primrose oil. Even so, Mayo Clinic says most research shows little to no help for PMS or breast pain, and research hasn't found that the supplement treats any condition.",
-        "citations": [
-          {
-            "url": "https://www.mayoclinic.org/drugs-supplements-evening-primrose/art-20364500",
-            "label": "Mayo Clinic: Evening primrose"
-          }
-        ]
       }
     ],
     "clinicalNote": "Evening primrose oil has been studied a fair amount for breast pain and other women's health uses, but the results have not held up well. NCCIH says the evidence is insufficient for PMS and menopause symptoms, and that it is probably no better than placebo for breast pain. It is probably safe for most adults by mouth, and the most common side effects are stomach pain, nausea, or diarrhea.",
@@ -8188,11 +5424,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.nccih.nih.gov/health/evening-primrose-oil?nav=govd",
         "label": "NIH NCCIH: Evening Primrose Oil",
         "summary": "Insufficient evidence for PMS and menopause symptoms; probably no better than placebo for breast pain; generally safe for adults."
-      },
-      {
-        "url": "https://www.mayoclinic.org/drugs-supplements-evening-primrose/art-20364500",
-        "label": "Mayo Clinic: Evening primrose",
-        "summary": "Most research shows little to no help for PMS or breast pain, and lists who should avoid it."
       }
     ],
     "warnings": [
@@ -8200,11 +5431,7 @@ export const PRODUCT_RESEARCH = {
       "Don't take it if you have a bleeding condition, and be careful with blood thinners or anti-platelet medicines.",
       "Stop taking it two weeks before surgery.",
       "It might raise the risk of pregnancy complications."
-    ],
-    "warningsSource": {
-      "url": "https://www.mayoclinic.org/drugs-supplements-evening-primrose/art-20364500",
-      "label": "Mayo Clinic: Evening primrose"
-    }
+    ]
   },
   "p-vitex": {
     "whoItsFor": [
@@ -8237,17 +5464,12 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "Chasteberry is one of the more studied herbs for PMS, and some trials found less breast pain and other premenstrual symptoms, but study quality is mixed and more research is needed. It is generally well tolerated in the short term and has been used safely in studies for up to 3 months. Side effects are usually mild, like nausea, stomach upset, headache, or itching. Because it has hormone-like effects, NCCIH says it may not be safe for women with hormone-sensitive conditions such as breast, uterine, or ovarian cancer.",
+    "clinicalNote": "Side effects are usually mild, like nausea, stomach upset, headache, or itching. Because it has hormone-like effects, NCCIH says it may not be safe for women with hormone-sensitive conditions such as breast, uterine, or ovarian cancer.",
     "clinicalNoteSources": [
       {
         "url": "https://www.nccih.nih.gov/health/chasteberry",
         "label": "NIH NCCIH: Chasteberry",
         "summary": "Low to moderate quality studies suggest some PMS benefit; generally well tolerated for up to 3 months; caution with hormone-sensitive conditions."
-      },
-      {
-        "url": "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/chasteberry",
-        "label": "Memorial Sloan Kettering Cancer Center: Chasteberry",
-        "summary": "Some evidence for PMS and cycle-related breast pain, with more studies needed; lists side effects and possible drug interactions."
       }
     ],
     "warnings": [
@@ -8255,11 +5477,7 @@ export const PRODUCT_RESEARCH = {
       "If you have a hormone-sensitive cancer, talk to your doctor before using it.",
       "Lab studies suggest it may weaken birth control pills and hormone therapy, though this hasn't been confirmed in people.",
       "It may interfere with dopamine-related drugs, such as some Parkinson's medicines and antipsychotics."
-    ],
-    "warningsSource": {
-      "url": "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/chasteberry",
-      "label": "Memorial Sloan Kettering Cancer Center: Chasteberry (About Herbs)"
-    }
+    ]
   },
   "p-fish-oil": {
     "whoItsFor": [
@@ -8281,16 +5499,6 @@ export const PRODUCT_RESEARCH = {
     },
     "ingredientScience": [
       {
-        "name": "Fish oil omega-3s (EPA and DHA)",
-        "text": "EPA and DHA are omega-3 fats from fish oil. A 2023 review of 12 studies (881 women) found omega-3s reduced period pain and the need for painkillers at 300 to 1800 mg a day over 2 to 3 months, but the authors said the studies had quality problems and it's still unclear how it works.",
-        "citations": [
-          {
-            "url": "https://library.fabresearch.org/viewItem.php?id=15977",
-            "label": "Nutrition & Dietetics (2023, DOI 10.1111/1747-0080.12835): Omega-3s for dysmenorrhoea pain, systematic review and meta-analysis (abstract via Food and Behaviour Research)"
-          }
-        ]
-      },
-      {
         "name": "Evening primrose oil (source of GLA)",
         "text": "Evening primrose oil adds GLA, an omega-6 fat. NIH's NCCIH says there isn't enough evidence that it helps PMS or menopause symptoms, and it is probably no better than a placebo (a dummy pill) for breast pain.",
         "citations": [
@@ -8301,28 +5509,11 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "Omega-3s have been tested in several small trials for painful periods (dysmenorrhea). A 2023 meta-analysis found a large drop in period pain with omega-3s, but the studies were small and had design flaws, so it isn't a sure thing. Omega-3s can raise bleeding risk, so Memorial Sloan Kettering advises against combining them with blood thinners. The evening primrose oil in this formula has weak evidence on its own.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://library.fabresearch.org/viewItem.php?id=15977",
-        "label": "Nutrition & Dietetics (2023): Omega-3s and dysmenorrhoea meta-analysis",
-        "summary": "Across 8 pooled studies, omega-3s had a large effect on period pain, though study quality was limited."
-      },
-      {
-        "url": "https://www.mskcc.org/cancer-care/patient-education/herbs/omega-3",
-        "label": "Memorial Sloan Kettering Cancer Center: Omega-3",
-        "summary": "Lists side effects like fishy taste, nausea, and diarrhea, and warns omega-3 can increase bleeding risk with blood thinners."
-      }
-    ],
     "warnings": [
       "Ask a doctor before use if you are pregnant or breastfeeding, have a medical condition, or take medicines, including blood thinners.",
       "Do not take if the tamper-evident seal is broken or missing.",
       "Keep out of reach of children."
-    ],
-    "warningsSource": {
-      "url": "https://www.vitacost.com/products/nordic-naturals-omega-woman-with-evening-primrose-oil-120-soft-gels-4298",
-      "label": "Nordic Naturals Omega Woman product label as listed on Vitacost"
-    }
+    ]
   },
   "p-b-complex": {
     "whoItsFor": [
@@ -8349,25 +5540,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "Adult women need 1.3 to 1.5 mg of B6 a day, the upper limit is 100 mg a day, and high supplement doses taken for a year or longer can cause severe nerve damage."
       }
     ],
-    "clinicalNote": "NIH sets the adult upper limit for vitamin B6 at 100 mg a day and notes that high supplement doses taken for a year or longer can cause nerve damage, so add up the B6 from everything you take.",
-    "scienceSources": [
-      {
-        "url": "https://www.cmaj.ca/content/126/3/244",
-        "label": "Shojania, Canadian Medical Association Journal (1982): oral contraceptives and folate and vitamin B12 metabolism",
-        "summary": "Women using oral contraceptives had slightly but significantly lower folate and serum B12 levels than controls, and the author advised making sure folate stores are adequate before trying to conceive."
-      }
-    ],
     "ingredientScience": [
-      {
-        "name": "Vitamin B6 (23.4 mg as pyridoxine and pyridoxal 5'-phosphate)",
-        "text": "B6 helps your body run many chemical reactions, including making brain messengers (neurotransmitters). Singapore's health regulator notes that nerve damage (peripheral neuropathy) has been reported with long-term B6 intake above 100 mg a day, so it's worth adding up the B6 from all your supplements.",
-        "citations": [
-          {
-            "url": "https://www.hsa.gov.sg/announcements/high-dose-vitamin-b6-and-risk-of-peripheral-neuropathy/",
-            "label": "Health Sciences Authority Singapore (2023): High-dose vitamin B6 and risk of peripheral neuropathy"
-          }
-        ]
-      },
       {
         "name": "Folate (400 mcg as L-5-methyltetrahydrofolate, also called methylfolate)",
         "text": "Folate is needed to make DNA. Methylfolate is the active form your body uses. US guidance says women who could become pregnant should get 400 mcg of folic acid a day to help prevent neural tube defects (serious birth defects of the brain and spine); NIH notes there is no official formula yet for converting methylfolate to the same units.",
@@ -8377,27 +5550,13 @@ export const PRODUCT_RESEARCH = {
             "label": "NIH Office of Dietary Supplements: Folate, Fact Sheet for Health Professionals"
           }
         ]
-      },
-      {
-        "name": "B vitamins and the birth control pill (B2, B6, B12, folate)",
-        "text": "A 2013 review reported that the pill can lower levels of folate and vitamins B2 (riboflavin), B6, and B12, along with some other nutrients, and suggested doctors consider supplements to prevent deficiencies. This is a review, not a trial showing that a B-complex improves energy or mood in pill users.",
-        "citations": [
-          {
-            "url": "https://europeanreview.org/article/4579",
-            "label": "European Review for Medical and Pharmacological Sciences (2013): Oral contraceptives and changes in nutritional requirements"
-          }
-        ]
       }
     ],
     "warnings": [
       "If you are pregnant, ask your healthcare practitioner before using this product.",
       "Use only if the bottle is sealed.",
       "Long-term B6 intake above 100 mg a day has been linked to nerve damage; at the label's top dose (3 capsules) this product alone gives about 70 mg."
-    ],
-    "warningsSource": {
-      "url": "https://www.vitacost.com/products/thorne-b-complex-12-60-capsules-18126",
-      "label": "Thorne B-Complex #12 label as listed on Vitacost (B6 limit from HSA Singapore, linked above)"
-    }
+    ]
   },
   "p-cranberry-supplement": {
     "whoItsFor": [
@@ -8417,36 +5576,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.carewell.com/product/azo-urinary-tract-health-cranberry-supplement-50-tablets/",
       "sourceLabel": "AZO Cranberry label (via Carewell product page) and Mayo Clinic: Urinary tract infection"
     },
-    "scienceSources": [
-      {
-        "url": "https://swiss.cochrane.org/news/can-cranberries-help-prevent-urinary-tract-infections",
-        "label": "Cochrane: Can cranberries help prevent urinary tract infections? (2023 review update)",
-        "summary": "An updated Cochrane review of 50 studies with 8,857 people found cranberry products lower the risk of UTIs in women with recurring UTIs, while evidence for pregnant women and older nursing home residents was inconclusive."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Cranberry whole fruit powder (Pacran, 500 mg)",
-        "text": "A 2023 Cochrane review of 50 trials (8,857 people) found cranberry products lowered the risk of UTIs by about 30% overall, with moderate certainty, and probably helped women with repeat UTIs. They showed little or no benefit in pregnant women or older adults in care homes. The review covered many cranberry products, not this brand specifically.",
-        "citations": [
-          {
-            "url": "https://www.cochrane.org/CD001321/RENAL_cranberries-prevent-urinary-tract-infections",
-            "label": "Cochrane Review (2023): Cranberries for preventing urinary tract infections"
-          }
-        ]
-      }
-    ],
     "clinicalNote": "Cranberry is a prevention tool, not a treatment. NIH's NCCIH says it may lower the risk of repeat UTIs in women by about 25%, but findings are inconsistent, and it is not recommended for treating a UTI you already have. If you think you have a UTI, NCCIH says to see a provider for diagnosis and treatment. Cranberry by mouth is generally considered safe.",
     "clinicalNoteSources": [
       {
         "url": "https://www.nccih.nih.gov/health/cranberry?nav=tw",
         "label": "NIH NCCIH: Cranberry (updated November 2024)",
         "summary": "May reduce recurrent UTIs in women by about 25% but is not a treatment for an existing UTI."
-      },
-      {
-        "url": "https://www.cochrane.org/CD001321/RENAL_cranberries-prevent-urinary-tract-infections",
-        "label": "Cochrane Review (2023): Cranberries for preventing UTIs",
-        "summary": "50 trials found cranberry reduced UTI risk overall with moderate certainty, with no clear gut side-effect difference from placebo."
       }
     ],
     "warnings": [
@@ -8485,14 +5620,6 @@ export const PRODUCT_RESEARCH = {
         "summary": "Adult women need 8 mg of zinc a day, the upper limit is 40 mg a day from all sources, and long-term excess can lower copper levels, immunity and HDL cholesterol."
       }
     ],
-    "clinicalNote": "Adult women need about 8 mg of zinc a day, and NIH sets the upper limit at 40 mg a day from all sources, so a 30 mg supplement plus food can get close. Too much zinc over time can lower copper levels and immunity.",
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/03414eafa1304f57a0f963b2f3174fff",
-        "label": "ElObeid et al., Metabolites (2022): The Impact of Mineral Supplementation on Polycystic Ovarian Syndrome",
-        "summary": "A review of trials on zinc, magnesium, selenium and chromium in PMOS reports some benefit for clinical and metabolic symptoms but says more studies are needed to set safe, effective doses."
-      }
-    ],
     "ingredientScience": [
       {
         "name": "Zinc (30 mg, from brown rice chelate)",
@@ -8510,11 +5637,7 @@ export const PRODUCT_RESEARCH = {
       "Not intended for children; keep out of reach of children.",
       "Don't go over 40 mg of zinc a day from all sources; 50 mg or more for weeks can lower copper and weaken immune function.",
       "Zinc can block absorption of quinolone and tetracycline antibiotics, so take the antibiotic at least 2 hours before or 4 to 6 hours after zinc."
-    ],
-    "warningsSource": {
-      "url": "https://www.vitacost.com/products/garden-of-life-vitamin-code-raw-zinc-with-vitamin-c-60-vegan-capsules-46033",
-      "label": "Garden of Life Vitamin Code Raw Zinc label as listed on Vitacost (limits and antibiotic timing from NIH ODS Zinc fact sheet, linked above)"
-    }
+    ]
   },
   "p-boric-acid": {
     "whoItsFor": [
@@ -8545,16 +5668,6 @@ export const PRODUCT_RESEARCH = {
             "label": "CDC STI Treatment Guidelines: Candidiasis, Vulvovaginal"
           }
         ]
-      },
-      {
-        "name": "Tea tree oil (Melaleuca alternifolia leaf oil)",
-        "text": "The current label also lists tea tree oil. Mayo Clinic notes it can cause skin irritation, burning, and allergic rashes (dermatitis), advises against it if you have very sensitive skin, and warns it can make you very sick if swallowed. It does not list vaginal infections as an evidence-backed use.",
-        "citations": [
-          {
-            "url": "https://mayoclinic.org/drugs-supplements-tea-tree-oil/art-20364246",
-            "label": "Mayo Clinic: Tea tree oil"
-          }
-        ]
       }
     ],
     "clinicalNote": "Boric acid has a real but narrow role. CDC guidelines use it for repeat yeast infections caused by less common yeast species, and a review in Clinical Infectious Diseases reported that most of these non-albicans infections can be treated with fluconazole or boric acid. On CDC's yeast infection page, boric acid appears only for that situation, and the review notes women who carry these yeasts without symptoms should skip treatment.",
@@ -8563,11 +5676,6 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.cdc.gov/stiapp/candidiasis.html",
         "label": "CDC STI Treatment Guidelines: Candidiasis, Vulvovaginal",
         "summary": "Recommends 600 mg vaginal boric acid daily for 3 weeks when non-albicans yeast infection recurs."
-      },
-      {
-        "url": "https://academic.oup.com/cid/article/74/Supplement_2/S162/6567950",
-        "label": "Clinical Infectious Diseases (2022), vol 74, Supplement 2: vulvovaginal candidiasis review",
-        "summary": "Reports high cure rates with a 21 to 30 day boric acid course for non-albicans yeast and says symptom-free carriers should not be treated."
       }
     ],
     "warnings": [
@@ -8575,11 +5683,7 @@ export const PRODUCT_RESEARCH = {
       "Do not use if you are pregnant or nursing.",
       "Do not use on broken or irritated skin, and stop and contact a doctor if symptoms persist or worsen, or you have irritation or burning.",
       "Avoid sex while using the suppositories, and keep out of reach of children."
-    ],
-    "warningsSource": {
-      "url": "https://www.heb.com/product-detail/the-honey-pot-boric-acid-and-herbs-suppositories/5689050",
-      "label": "The Honey Pot Boric Acid and Herbs Suppositories label as listed on H-E-B"
-    }
+    ]
   },
   "p-love-wellness-intimate-skin-support": {
     "whoItsFor": [
@@ -8600,28 +5704,12 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.ulta.com/p/p-pimprod2050204",
       "sourceLabel": "Ulta Beauty product page (Love Wellness directions)"
     },
-    "ingredientScience": [
-      {
-        "name": "Hypochlorous acid (0.018%)",
-        "text": "Hypochlorous acid is a chlorine-based germ killer used in wound and skin care, valued for its antimicrobial and anti-inflammatory effects. A 2025 review says it's well tolerated with no serious side effects reported, but that results across studies are not entirely consistent.",
-        "citations": [
-          {
-            "url": "https://www.mdpi.com/2227-9059/13/12/2921",
-            "label": "Biomedicines (MDPI, 2025): Hypochlorous Acid, clinical insights across dermatology and other specialties"
-          }
-        ]
-      }
-    ],
     "warnings": [
       "For external use only; spray on the vulva and perineum, never inside the vagina.",
       "A mild stinging feeling may happen in rare cases.",
       "This is not a treatment for UTIs; see your doctor for UTI symptoms.",
       "Don't use it if you're sensitive to any ingredient, and seek medical advice if your symptoms persist."
-    ],
-    "warningsSource": {
-      "url": "https://www.ulta.com/p/p-pimprod2050204",
-      "label": "Ulta Beauty: Love Wellness Intimate Skin Support product label"
-    }
+    ]
   },
   "p-elvie-trainer": {
     "whoItsFor": [
@@ -8642,20 +5730,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://support.elvie.com/elvie-trainer/using-elvie-trainer",
       "sourceLabel": "Elvie Support: How to use Elvie Trainer"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/art-20045283",
-        "label": "Mayo Clinic: Kegel exercises, a how-to guide for women",
-        "summary": "Explains who Kegels help (stress, urge and fecal incontinence), how to find the right muscles, daily sets to aim for, and that a vaginal pressure-sensor biofeedback device can help you learn the right movement."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://www.cochrane.org/evidence/CD009252_exercise-pelvic-floor-muscles-more-effective-treating-unintentional-passing-urine-incontinence-women",
-        "label": "Cochrane Review (2025): Feedback or biofeedback to augment pelvic floor muscle training for urinary incontinence in women",
-        "summary": "Across 41 studies and 3,483 women, adding biofeedback to pelvic floor training made little to no difference to quality of life or self-reported cure, with slightly fewer leaks and possibly slightly higher satisfaction."
-      }
-    ],
     "warnings": [
       "Don't use it if you gave birth within the last six weeks, or if you have an active urinary infection until symptoms have stopped.",
       "If you're pregnant, check with a licensed healthcare professional before using it.",
@@ -8687,26 +5761,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://my.clevelandclinic.org/health/treatments/24971-vaginal-dilators",
       "sourceLabel": "Cleveland Clinic: Vaginal Dilators"
     },
-    "clinicalSources": [
-      {
-        "url": "https://my.clevelandclinic.org/health/treatments/24971-vaginal-dilators",
-        "label": "Cleveland Clinic: Vaginal Dilators",
-        "summary": "Lists the conditions dilators are used for (vaginismus, dyspareunia, menopause, radiation, vaginal stenosis), how to use them with water-based lube, and to talk to a provider before starting even though they are sold over the counter."
-      }
-    ],
-    "clinicalNote": "Dilators are smooth, graduated tubes you insert yourself, starting small and moving up in size, to gently stretch and relax the vaginal muscles. Cleveland Clinic says most people with pain during sex feel some relief with regular, consistent use, and suggests follow-ups with a provider or pelvic floor physical therapist while you work through the sizes. Sessions are usually about 10 to 15 minutes with a water-based lubricant, and you shouldn't rush through sizes or keep going if it hurts. After pelvic radiation, a Cochrane review found no reliable trial evidence that routine dilation prevents narrowing, only observational links, so that use is less settled.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://my.clevelandclinic.org/health/treatments/24971-vaginal-dilators",
-        "label": "Cleveland Clinic: Vaginal Dilators",
-        "summary": "Explains who uses dilators, how to use them, and that most people with painful sex feel some relief with consistent use."
-      },
-      {
-        "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD007291.pub3",
-        "label": "Cochrane Review: Vaginal dilator therapy for women receiving pelvic radiotherapy",
-        "summary": "Found no reliable randomized evidence that routine dilation during radiotherapy prevents stenosis; observational data link frequent dilation with less self-reported stenosis."
-      }
-    ],
     "warnings": [
       "Don't use vaginal dilators if you are pregnant or have an active pelvic infection.",
       "Use a water-based lubricant only; oil or silicone-based lubricants will damage the silicone."
@@ -8745,49 +5799,12 @@ export const PRODUCT_RESEARCH = {
             "label": "NIH NCCIH: Aloe Vera"
           }
         ]
-      },
-      {
-        "name": "Lactic acid",
-        "text": "Lactic acid makes a wash more acidic, closer to the natural acidity of the vagina. In one small study of 36 women (funded by a wash maker, with no comparison group), a lactic acid wash used daily for 28 days was well tolerated and didn't change vulvar skin pH or bacteria, so it seems gentle, but there's no proof it improves vaginal health.",
-        "citations": [
-          {
-            "url": "https://www.mdpi.com/2079-6382/9/2/55/htm",
-            "label": "Antibiotics (MDPI, 2020): 28 day assessment of a lactic acid intimate gel wash on skin tolerance and the vulvar microbiome"
-          }
-        ]
-      },
-      {
-        "name": "Fragrance (natural fragrance, linalool, hydroxycitronellal)",
-        "text": "This version's label lists fragrance plus linalool and hydroxycitronellal (fragrance compounds). The British Association of Dermatologists lists perfumes among everyday products that can irritate the vulva, so if your skin is sensitive, a fragrance-free option may suit you better.",
-        "citations": [
-          {
-            "url": "https://www.skinhealthinfo.org.uk/wp-content/uploads/2018/11/Vulval-skincare-PIL-May-2023.pdf",
-            "label": "British Association of Dermatologists: Vulval skin care patient leaflet (2023)"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "The vagina cleans itself and doesn't need washes or perfume; Harvard Health suggests avoiding products marketed to cleanse the vagina and scented feminine products. For the vulva (the outer skin), dermatologists advise washing gently with your hands, and the British Association of Dermatologists says an emollient (a plain moisturizing cream) is the preferred soap substitute. If you like using a wash, keep it on the outside and rinse it off thoroughly, as the label directs.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
-        "label": "Harvard Health: Vulvar health, navigating the nether regions",
-        "summary": "Says the vagina doesn't need cleansing or perfume, and advises avoiding vagina-cleansing and scented feminine products."
-      },
-      {
-        "url": "https://www.skinhealthinfo.org.uk/wp-content/uploads/2018/11/Vulval-skincare-PIL-May-2023.pdf",
-        "label": "British Association of Dermatologists: Vulval skin care patient leaflet (2023)",
-        "summary": "Advises washing the vulva gently by hand, using an emollient instead of soap, and avoiding perfumed products."
       }
     ],
     "warnings": [
       "For external use only.",
       "Avoid contact with eyes."
-    ],
-    "warningsSource": {
-      "url": "https://www.heb.com/product-detail/the-honey-pot-intimate-foaming-wash-sensitive-with-cucumber-aloe/12430512",
-      "label": "H-E-B: The Honey Pot Intimate Foaming Wash, Sensitive with Cucumber Aloe (label text)"
-    }
+    ]
   },
   "p-luna-wash": {
     "whoItsFor": [
@@ -8816,16 +5833,6 @@ export const PRODUCT_RESEARCH = {
     ],
     "ingredientScience": [
       {
-        "name": "Lactic acid",
-        "text": "Lactic acid makes a wash more acidic, closer to the natural acidity of the vagina. In one small study of 36 women (funded by a wash maker, with no comparison group), a lactic acid wash used daily for 28 days was well tolerated and didn't change vulvar skin pH or bacteria, so it seems gentle, but there's no proof it improves vaginal health.",
-        "citations": [
-          {
-            "url": "https://www.mdpi.com/2079-6382/9/2/55/htm",
-            "label": "Antibiotics (MDPI, 2020): 28 day assessment of a lactic acid intimate gel wash on skin tolerance and the vulvar microbiome"
-          }
-        ]
-      },
-      {
         "name": "Chamomile flower extract",
         "text": "Chamomile is a calming plant extract, and NIH says using it on the skin is possibly safe short term. You're more likely to react to it if you're allergic to related plants like ragweed, chrysanthemums, marigolds, or daisies.",
         "citations": [
@@ -8844,39 +5851,12 @@ export const PRODUCT_RESEARCH = {
             "label": "NIH NCCIH: Aloe Vera"
           }
         ]
-      },
-      {
-        "name": "Fragrance (Original version)",
-        "text": "Retail listings show the Original wash contains fragrance, and a Fragrance Free version is also sold. The British Association of Dermatologists lists perfumes among products that can irritate the vulva, so the fragrance-free one is the safer pick for sensitive skin.",
-        "citations": [
-          {
-            "url": "https://www.skinhealthinfo.org.uk/wp-content/uploads/2018/11/Vulval-skincare-PIL-May-2023.pdf",
-            "label": "British Association of Dermatologists: Vulval skin care patient leaflet (2023)"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "The vagina cleans itself and doesn't need washes or perfume, so any wash belongs on the outside only. For the vulva, the British Association of Dermatologists advises washing gently with your hands, using an emollient (a plain moisturizing cream) instead of soap, and avoiding perfumed products. Harvard Health also suggests skipping scented feminine products, which fits this page's advice to avoid fragrance if you're sensitive.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.health.harvard.edu/blog/vulvar-health-navigating-the-nether-regions-2019040116322",
-        "label": "Harvard Health: Vulvar health, navigating the nether regions",
-        "summary": "Says the vagina doesn't need cleansing or perfume, and advises avoiding vagina-cleansing and scented feminine products."
-      },
-      {
-        "url": "https://www.skinhealthinfo.org.uk/wp-content/uploads/2018/11/Vulval-skincare-PIL-May-2023.pdf",
-        "label": "British Association of Dermatologists: Vulval skin care patient leaflet (2023)",
-        "summary": "Advises washing the vulva gently by hand, using an emollient instead of soap, and avoiding perfumed products."
       }
     ],
     "warnings": [
       "For external use only; don't use it inside the vagina, which cleans itself.",
       "Patch test on the inside of your arm 24 hours before first use."
-    ],
-    "warningsSource": {
-      "url": "https://boots.com/lunadaily-the-everywhere-wash-250ml-10336536",
-      "label": "Boots: Luna Daily The Everywhere Wash (product label text)"
-    }
+    ]
   },
   "d-natural-cycles": {
     "whoItsFor": [
@@ -8904,29 +5884,12 @@ export const PRODUCT_RESEARCH = {
         "summary": "Authorizes Natural Cycles for premenopausal women 18 and older, reports 1.8% perfect-use and 6.5% typical-use pregnancy rates from 15,570 women, and says it should not be used with hormonal birth control or when pregnancy would be high risk."
       }
     ],
-    "scienceSources": [
-      {
-        "url": "https://bmjopen.bmj.com/content/9/3/e026474",
-        "label": "BMJ Open: Natural Cycles typical-use effectiveness in 16,331 Swedish women",
-        "summary": "Found an overall typical-use Pearl Index of about 6.1, lower in former condom users and higher in women who recently stopped the pill; the study was funded by Natural Cycles."
-      },
-      {
-        "url": "https://www.nice.org.uk/advice/mib244/chapter/Clinical-and-technical-evidence",
-        "label": "NICE Medtech Innovation Briefing (MIB244): Natural Cycles clinical evidence",
-        "summary": "Reviews 5 observational, company-funded studies showing a typical-use pregnancy rate of about 7% a year, and notes there are no head-to-head comparisons with other contraceptives."
-      }
-    ],
-    "clinicalNote": "Natural Cycles is a fertility awareness method run by an app. You take your temperature each morning with a basal body thermometer (one sensitive enough to catch the small rise of about half a degree Fahrenheit that comes with ovulation), and the app tells you which days you need to abstain or use a condom. How well it works depends a lot on how you use it: in a Swedish study of over 16,000 users, people who switched from the pill got pregnant more often than people who switched from condoms, partly because of unprotected sex on fertile days.",
+    "clinicalNote": "Natural Cycles is a fertility awareness method run by an app. You take your temperature each morning with a basal body thermometer (one sensitive enough to catch the small rise of about half a degree Fahrenheit that comes with ovulation), and the app tells you which days you need to abstain or use a condom.",
     "clinicalNoteSources": [
       {
         "url": "https://www.fda.gov/NewsEvents/Newsroom/PressAnnouncements/ucm616511.htm",
         "label": "FDA (2018): FDA allows marketing of first direct-to-consumer app for contraceptive use",
         "summary": "Explains how the app uses daily basal body temperature to flag fertile days and who should not use it."
-      },
-      {
-        "url": "https://doaj.org/article/095a324a0b27478da90484d8a6063548",
-        "label": "BMJ Open (2019): Typical use effectiveness of Natural Cycles, postmarket surveillance study",
-        "summary": "Among 16,331 Swedish users, typical-use pregnancy rates ranged from 3.5 (former condom users) to 8.1 (former pill users) per 100 woman-years."
       }
     ],
     "effectiveness": "For this app specifically: in the studies FDA reviewed (15,570 women), about 1.8 in 100 got pregnant in a year with perfect use and 6.5 in 100 with typical use. A 2021 study of 5,879 US users found similar numbers: a typical-use rate of 6.2 and a perfect-use rate of 2.0 pregnancies per 100 women per year.",
@@ -8979,15 +5942,10 @@ export const PRODUCT_RESEARCH = {
         "summary": "Recommends a pre-pregnancy visit with a provider and at least 400 mcg of folic acid daily starting before conception, along with managing existing conditions and updating vaccines."
       }
     ],
-    "clinicalNote": "Tracking apps are a helpful tool, but NIH guidance still recommends a pre-pregnancy visit with your provider and starting at least 400 mcg of folic acid daily before you conceive.",
     "warnings": [
       "Ovia's own App Store privacy label says your location, identifiers, usage data and diagnostics may be used to track you across other companies' apps and sites.",
       "The same label says data linked to your identity can include health and fitness data, financial info and sensitive info, so review your privacy settings."
-    ],
-    "warningsSource": {
-      "url": "https://apps.apple.com/app/570244389",
-      "label": "Ovia Cycle & Pregnancy Tracker (Ovuline, Inc.), Apple App Store listing, App Privacy label"
-    }
+    ]
   },
   "d-glow": {
     "whoItsFor": [
@@ -9015,23 +5973,11 @@ export const PRODUCT_RESEARCH = {
         "summary": "Explains that fertility-sign methods are less reliable with irregular bleeding, after childbirth, around perimenopause and with fevers, and that they offer no STI protection."
       }
     ],
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/0563b418834e4303aa94e4550e410ba1",
-        "label": "Women's Health (2021): Period tracker applications: What menstrual cycle information are they giving women?",
-        "summary": "Ten tracker apps gave conflicting dates and only 8% of ovulation predictions were exactly right, and the authors note the fertile window is best predicted with markers like basal temperature, ovulation tests or cervical mucus."
-      }
-    ],
-    "clinicalNote": "The CDC notes that fertility signs are harder to read with irregular bleeding, after childbirth and around perimenopause, so app predictions are less reliable in those times.",
     "warnings": [
       "Glow is meant to help you predict ovulation to get pregnant. It is not meant to be used as birth control.",
       "The app's information does not replace professional medical advice, so check medical questions with a healthcare provider.",
       "Glow's App Store privacy label says some data, including purchases, location and identifiers, may be used to track you across other companies' apps and sites, so review your privacy settings."
-    ],
-    "warningsSource": {
-      "url": "https://apps.apple.com/app/id638021335",
-      "label": "Glow Ovulation & Period App, Apple App Store listing (description and App Privacy label)"
-    }
+    ]
   },
   "d-maven": {
     "whoItsFor": [
@@ -9059,35 +6005,11 @@ export const PRODUCT_RESEARCH = {
         "summary": "Explains what telehealth can do, like visits without travel and secure messaging for questions and refills, that you should check your insurance coverage first, and that it isn't for medical emergencies."
       }
     ],
-    "scienceSources": [
-      {
-        "url": "https://jmir.org/2023/1/e43180/authors",
-        "label": "JMIR (2023): Association Between the Use of a Digital Health Platform During Pregnancy and Helping Users Avoid Emergency and In-Person Care",
-        "summary": "In a retrospective study of 5,263 pregnant Maven users, written mostly by Maven staff, heavier use of virtual provider visits was linked to self-reported avoidance of ER or office visits, though the design can't show cause and effect."
-      }
-    ],
-    "clinicalNote": "Maven is a virtual clinic, so the evidence that matters is about telehealth in women's health in general, not about Maven itself. A 2020 review of 47 studies (31,967 people) in Obstetrics & Gynecology found telehealth helped with quitting smoking during pregnancy and with breastfeeding, and cut the number of office visits needed for high-risk pregnancy monitoring without worse outcomes for parent or baby. The review's lead author also noted that we still know very little about how well many of these tools work.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://scholar.usuhs.edu/en/publications/telehealth-interventions-to-improve-obstetric-and-gynecologic-hea/",
-        "label": "Obstetrics & Gynecology (2020): Telehealth Interventions to Improve Obstetric and Gynecologic Health Outcomes, systematic review",
-        "summary": "Across 47 studies, telehealth improved smoking cessation and breastfeeding and reduced high-risk monitoring visits while keeping outcomes the same."
-      },
-      {
-        "url": "https://smhs.gwu.edu/news/telehealth-interventions-associated-improved-obstetric-outcomes",
-        "label": "George Washington University School of Medicine: Telehealth interventions associated with improved obstetric outcomes",
-        "summary": "The lead author says more evidence is needed on how clinicians can fit telehealth into care."
-      }
-    ],
     "warnings": [
       "Not for emergency or urgent care needs. In a true emergency, call 911 or go to the nearest emergency room.",
       "Not a substitute for your own doctor's care.",
       "Program nurses and other representatives cannot diagnose problems or suggest treatment."
-    ],
-    "warningsSource": {
-      "url": "https://plexusbenefits.uhc.com/wp-content/uploads/2025/07/maven-maternity-member-flier.pdf",
-      "label": "UnitedHealthcare: Maven Maternity member flier"
-    }
+    ]
   },
   "d-tia": {
     "whoItsFor": [
@@ -9115,7 +6037,7 @@ export const PRODUCT_RESEARCH = {
         "summary": "Explains what virtual visits can and can't do, that you should check whether your insurance covers telehealth, and that it isn't for medical emergencies."
       }
     ],
-    "clinicalNote": "Tia pairs regular OB-GYN care with add-ons like acupuncture, so it helps to know where acupuncture has evidence. NIH's complementary health center (NCCIH) says acupuncture may help some pain conditions, like back, neck and knee pain. For women's health uses the picture is weaker: in a 2021 review it did no better than sham (fake) acupuncture for pregnancy or live birth rates with fertility treatment, and for hot flashes it beat no treatment but not sham acupuncture. NCCIH also says not to use acupuncture to put off seeing a health care provider, and to tell all your providers about complementary treatments you use.",
+    "clinicalNote": "NIH's complementary health center (NCCIH) says acupuncture may help some pain conditions, like back, neck and knee pain. NCCIH also says not to use acupuncture to put off seeing a health care provider, and to tell all your providers about complementary treatments you use.",
     "clinicalNoteSources": [
       {
         "url": "https://nccih.nih.gov/health/acupuncture",
@@ -9167,22 +6089,12 @@ export const PRODUCT_RESEARCH = {
         "summary": "Across 16 studies, telehealth for contraceptive care led to similar rates of contraceptive use, STIs and pregnancy as comparison care, though the strength of evidence was low."
       }
     ],
-    "clinicalNote": "Getting birth control through an app is backed by CDC guidance: you do not need a pelvic exam (an internal exam) or a breast exam to start the pill, patch or ring, and you do not need lab tests first. The one check CDC calls essential for the pill, patch and ring (methods that contain estrogen) is a blood pressure reading, and you can report one taken somewhere else. A large 2020 review of telehealth in obstetrics and gynecology found benefits, but its authors said there is still a lot we don't know about how well these tools work.",
+    "clinicalNote": "Getting birth control through an app is backed by CDC guidance: you do not need a pelvic exam (an internal exam) or a breast exam to start the pill, patch or ring, and you do not need lab tests first. The one check CDC calls essential for the pill, patch and ring (methods that contain estrogen) is a blood pressure reading, and you can report one taken somewhere else.",
     "clinicalNoteSources": [
       {
         "url": "https://cdc.gov/contraception/hcp/usspr/tests-before-contraception.html",
         "label": "CDC, U.S. Selected Practice Recommendations: Examinations and Tests Needed Before Initiation of Contraceptive Methods",
         "summary": "Pelvic and breast exams and lab tests are not needed before starting the pill, patch, ring, shot or progestin-only pill; blood pressure is essential for combined methods and can be self-reported."
-      },
-      {
-        "url": "https://scholar.usuhs.edu/en/publications/telehealth-interventions-to-improve-obstetric-and-gynecologic-hea/",
-        "label": "Obstetrics & Gynecology (2020): Telehealth Interventions to Improve Obstetric and Gynecologic Health Outcomes, systematic review",
-        "summary": "Across 47 studies (31,967 people), telehealth helped with smoking cessation and breastfeeding and cut high-risk monitoring visits without worse outcomes."
-      },
-      {
-        "url": "https://smhs.gwu.edu/news/telehealth-interventions-associated-improved-obstetric-outcomes",
-        "label": "George Washington University School of Medicine: Telehealth interventions associated with improved obstetric outcomes",
-        "summary": "The review's lead author notes that we still know very little about how effective many telehealth tools are."
       }
     ],
     "warnings": [
@@ -9215,33 +6127,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.eightsleep.com/blog/answering-your-questions-about-the-pod",
       "sourceLabel": "Eight Sleep: Answering Your Questions About The Pod"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.mymlc.com/health-information/faqs/h/hot-flashes-manage-without-medication/",
-        "label": "Mayo Clinic (Care Network content): Hot flashes, manage without medication?",
-        "summary": "Recommends keeping cool with cool rooms, fans and breathable layers, and avoiding triggers like alcohol, caffeine and spicy food, as non-drug ways to ease hot flashes."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/7e71c8bd13f84f11b94aceb0fb27866d",
-        "label": "Journal of Physiological Anthropology (2012): Effects of thermal environment on sleep and circadian rhythm",
-        "summary": "This review finds that in real-life conditions with bedding, heat increases wakefulness and cuts deep and REM sleep, which supports keeping your sleep environment cool."
-      }
-    ],
-    "clinicalNote": "Your body needs to cool down a little to fall and stay asleep, and a warm room makes hot flashes (sudden waves of heat, often with sweating) more likely. That is why common advice for night sweats is a cool room, a fan, and fewer blankets. A bed that cools itself is a high-tech take on the same idea. The one published study of the Pod was run by Eight Sleep and did not focus on perimenopause or night sweats, so its benefit for those symptoms specifically hasn't been tested.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://uofmhealth.org/health-library/hw228097",
-        "label": "University of Michigan Health (Healthwise): Hot Flashes and Menopause",
-        "summary": "Hot flashes are more likely in a warm environment; suggests keeping the room cool, using a fan, and sleeping with fewer blankets."
-      },
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11048088/",
-        "label": "Bioengineering (2024): Sleeping for One Week on a Temperature-Controlled Mattress Cover Improves Sleep and Cardiovascular Recovery",
-        "summary": "Single-group study of 54 healthy adults by mostly Eight Sleep-affiliated authors; did not study menopause symptoms."
-      }
-    ],
     "effectiveness": "There is one study of this product. In 54 healthy adults sleeping at home, a week with the Pod turned on lowered sleeping heart rate slightly (about 1 beat per minute) and raised heart rate variability (HRV, a sign of recovery) by about 2 ms, and people rated their sleep better. Men who slept cooler gained about 14 minutes of deep sleep, but women's deep sleep did not change significantly (they gained some REM sleep instead). Most authors work for Eight Sleep, there was no comparison group, and it lasted only one week.",
     "effectivenessSources": [
       {
@@ -9271,33 +6156,9 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://boots.ie/fridamom-postpartum-recovery-essentials-kit--10295379",
       "sourceLabel": "Boots: Frida Mom Postpartum Recovery Essentials Kit"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.bmc.org/bump-beyond/postpartum-experience/physical-health/perineal-care.md",
-        "label": "Boston Medical Center: Perineal care after birth",
-        "summary": "Recommends a peri bottle rinse after using the toilet, cold packs on the first day, frozen Tucks pads on top of your pad, sitz baths, pad changes every 2 to 4 hours, and calling your doctor for fever, worsening pain or foul discharge."
-      }
-    ],
-    "clinicalNote": "After a vaginal birth, the perineum (the skin and muscle between the vagina and anus) is often sore, swollen, or stitched. Hospitals commonly suggest a cold pack or \"ice diaper\" on the first day, chilled pads on top of a regular pad, and spraying warm water on the area after you pee instead of wiping. A 2020 Cochrane review of 10 trials found only limited, very low certainty evidence that ice packs or cold gel pads ease perineal pain in the first two days, so think of cold therapy as a low-risk comfort measure rather than a proven treatment.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.cochrane.org/evidence/CD006304_local-cooling-relieving-pain-perineal-trauma-sustained-during-childbirth",
-        "label": "Cochrane (2020): Local cooling for relieving pain from perineal trauma sustained during childbirth",
-        "summary": "10 trials; limited very low certainty evidence that ice packs or cold gel pads may relieve perineal pain in the first two days after birth."
-      },
-      {
-        "url": "https://www.bmc.org/bump-beyond/postpartum-experience/physical-health/perineal-care.md",
-        "label": "Boston Medical Center, Bump & Beyond: Perineal care",
-        "summary": "Suggests a cold pack or ice diaper on day one, frozen pads on top of a menstrual pad, and a warm water spray bottle after peeing."
-      }
-    ],
     "warnings": [
       "Call your OB/GYN right away if you have a fever of 100.4 °F or higher, more pain, or foul-smelling discharge."
-    ],
-    "warningsSource": {
-      "url": "https://www.bmc.org/bump-beyond/postpartum-experience/physical-health/perineal-care.md",
-      "label": "Boston Medical Center, Bump & Beyond: Perineal care (official guidance for postpartum perineal care)"
-    }
+    ]
   },
   "p-lansinoh-pads": {
     "whoItsFor": [
@@ -9318,21 +6179,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://lansinoh.helpjuice.com/en_US/stay-dry-disposable-nursing-pads/instructions-for-use-stay-dry-disposable-nursing-pads",
       "sourceLabel": "Lansinoh: Instructions for use, Stay Dry Disposable Nursing Pads"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.nhs.uk/start-for-life/baby/feeding-your-baby/breastfeeding/breastfeeding-challenges/sore-nipples/",
-        "label": "NHS Start for Life: Sore nipples",
-        "summary": "Advises changing breast pads after every feed and letting nipples air-dry, and notes that most nipple pain comes from a poor latch."
-      }
-    ],
-    "clinicalNote": "Nursing pads catch leaking milk, which is common in the early weeks of breastfeeding. The NHS advises changing breast pads after every feed if you use them. Sore nipples are most often caused by a shallow latch, and cracked nipples can let in thrush (a yeast infection), so if your nipples hurt, crack, or bleed, get help from a midwife, health visitor, or breastfeeding specialist early rather than relying on pads alone.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.nhs.uk/best-start-in-life/baby/feeding-your-baby/breastfeeding/breastfeeding-challenges/sore-nipples/",
-        "label": "NHS Best Start in Life: Sore nipples",
-        "summary": "Change breast pads after every feed; poor latch is the most common cause of nipple pain; thrush can follow cracked nipples."
-      }
-    ],
     "warnings": [
       "Change pads often to keep your skin healthy, generally after each feeding.",
       "Change pads during the night if they get soaked.",
@@ -9361,13 +6207,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.ritual.com/products/essential-prenatal-multivitamin",
       "sourceLabel": "Ritual: Essential for Women Prenatal Multivitamin"
     },
-    "scienceSources": [
-      {
-        "url": "https://russia.cochrane.org/news/new-research-finds-omega-3-fatty-acids-reduce-risk-premature-birth",
-        "label": "Cochrane Review (2018): Omega-3 fatty acid addition during pregnancy",
-        "summary": "Across 70 randomized trials, omega-3 during pregnancy lowered the risk of preterm birth by 11% and of early preterm birth before 34 weeks by 42%, which supports including DHA in a prenatal."
-      }
-    ],
     "ingredientScience": [
       {
         "name": "Methylfolate (6S-5-methyltetrahydrofolate, \"MTHF folate\")",
@@ -9381,7 +6220,7 @@ export const PRODUCT_RESEARCH = {
       },
       {
         "name": "Iron (ferrous bisglycinate)",
-        "text": "You need more iron in pregnancy (27 mg a day vs 18 mg for most adult women), and most pregnant women in the US get less than they need from food. A 2024 Cochrane review found iron supplements cut iron deficiency anemia at term by 59% (moderate certainty), though NIH notes that routine iron in women who already have enough may have downsides.",
+        "text": "You need more iron in pregnancy (27 mg a day vs 18 mg for most adult women), and most pregnant women in the US get less than they need from food.",
         "citations": [
           {
             "url": "https://ods.od.nih.gov/factsheets/Pregnancy-HealthProfessional/",
@@ -9417,11 +6256,7 @@ export const PRODUCT_RESEARCH = {
       "Accidental overdose of iron-containing products is a leading cause of fatal poisoning in children under 6.",
       "Keep this product out of reach of children, and call a doctor or poison control center right away in case of accidental overdose.",
       "Check with your health care practitioner before using it if you are pregnant or nursing."
-    ],
-    "warningsSource": {
-      "url": "https://www.vitacost.com/products/ritual-essential-for-women-prenatal-multivitamin-citrus-60-vegan-capsules-153103",
-      "label": "Ritual Essential for Women Prenatal Multivitamin label, as reproduced on Vitacost"
-    }
+    ]
   },
   "p-belly-bandit": {
     "whoItsFor": [
@@ -9441,39 +6276,7 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://thepogp.co.uk/_userfiles/pages/files/gps_msb_pgp_06.pdf",
       "sourceLabel": "POGP Good Practice Statement: Maternity/pelvic support belts for perinatal pelvic girdle pain"
-    },
-    "clinicalSources": [
-      {
-        "url": "https://thepogp.co.uk/_userfiles/pages/files/gps_msb_pgp_06.pdf",
-        "label": "Pelvic, Obstetric and Gynaecological Physiotherapy: The use of maternity/pelvic support belts for perinatal pelvic girdle pain",
-        "summary": "Says belts work best alongside exercise and education, should be worn as little as possible and mainly when moving, and should be stopped if they increase pain."
-      },
-      {
-        "url": "https://www.med.umich.edu/1libr/Gyn/BirthCenterTriage/BackPain.pdf",
-        "label": "University of Michigan Health: Back Pain in Pregnancy",
-        "summary": "Suggests asking your provider about a maternity support belt and calling for care if back pain worsens or comes with contractions, bleeding, fluid leakage or reduced fetal movement."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/6ae426c37a5c41ada97278b2e1fa3fc7",
-        "label": "Iranian Rehabilitation Journal (2024): The Role of Non-rigid Pelvic Belts in Managing Pregnancy-related Pelvic Girdle Pain and Low Back Pain, A Systematic Review",
-        "summary": "Across nine trials, flexible pelvic belts looked like a practical way to reduce pregnancy pelvic and low back pain, though any benefit beyond usual care or physical therapy was unclear."
-      },
-      {
-        "url": "https://research.polyu.edu.hk/en/publications/effectiveness-of-maternity-support-belts-in-reducing-low-back-pai/",
-        "label": "Journal of Clinical Nursing (2009): Effectiveness of maternity support belts in reducing low back pain during pregnancy, a review",
-        "summary": "Found insufficient evidence that maternity belts reduce pregnancy back or pelvic pain and noted reported side effects such as increased pain and skin irritation."
-      }
-    ],
-    "clinicalNote": "Low back and pelvic pain are common in pregnancy, especially later on. A Cochrane review (2013, summarized by WONCA's PEARLS) found that adding a rigid pelvic belt to exercise relieved pelvic or back pain more than usual care alone, and found no clear difference between types of support belts. Overall the evidence was low quality because the studies were small and at high risk of bias, and a soft stretchy band like this one is not the same as the rigid belts studied.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.globalfamilydoctor.com/member/Resources/PEARLS/419Interventionseffectiveforpreventingandtreatingpelvicandb.aspx",
-        "label": "WONCA Global Family Doctor, PEARLS 419: Interventions for preventing and treating pelvic and back pain in pregnancy (Cochrane 2013)",
-        "summary": "A rigid pelvic belt plus exercise relieved pain more than usual care; no difference between belt types; overall low-quality evidence."
-      }
-    ]
+    }
   },
   "p-maude-vibe": {
     "whoItsFor": [
@@ -9494,15 +6297,7 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://www.cultbeauty.com/p/maude-vibe-grey/17796764/",
       "sourceLabel": "Cult Beauty: Maude Vibe (brand usage and care details)"
-    },
-    "clinicalNote": "Vibrator use is common: in a 2009 national survey of 2,056 US women, about half (52.5%) had used one. Women who had used one in the past month tended to report better desire, arousal, lubrication, and orgasm, though the survey can't show that the vibrator caused this. Most users (71.5%) never had side effects, and the ones reported, like brief numbness or irritation, were usually mild and rarely lasted a day or more. The study was funded by a condom maker, Church & Dwight.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
-        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: Prevalence and characteristics of vibrator use by women in the United States",
-        "summary": "52.5% of 2,056 women had used a vibrator; recent use was linked with better sexual function scores; side effects were uncommon and mostly short-lived."
-      }
-    ]
+    }
   },
   "p-uberlube": {
     "whoItsFor": [
@@ -9523,38 +6318,9 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.superdrug.com/health/sexual-health/lube-gel-jelly-oils/uberlube-silicone-lubricant-112ml/p/mp-00057217",
       "sourceLabel": "Superdrug: Uberlube Silicone Lubricant 112ml"
     },
-    "ingredientScience": [
-      {
-        "name": "Dimethicone, dimethiconol, cyclomethicone (silicones)",
-        "text": "These silicone fluids make up the slippery base. A WHO advisory note calls silicone fluids inert and safe, with little effect on latex condoms, but also says there are no published clinical studies backing their use as condom lubricants, so the safety case rests on lab properties more than trials.",
-        "citations": [
-          {
-            "url": "https://www.e-lactancia.org/media/papers/Lubricants-WHO2012.pdf",
-            "label": "WHO/UNFPA/FHI360 Advisory Note (2012): Use and procurement of additional lubricants for male and female condoms"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "Lubricant can make sex more comfortable and help prevent condoms from tearing. The WHO notes that many water-based lubes are very concentrated (high osmolality), which may damage the lining of the vagina or rectum, a concern that applies to water-based products rather than silicone ones like this. Silicone lubes are compatible with latex and polyurethane condoms and last longer, which also makes them a common pick for anal sex.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.e-lactancia.org/media/papers/Lubricants-WHO2012.pdf",
-        "label": "WHO/UNFPA/FHI360 Advisory Note (2012): Use and procurement of additional lubricants",
-        "summary": "Silicone fluids are inert and compatible with latex; high-osmolality water-based lubes may damage vaginal and anal tissue."
-      },
-      {
-        "url": "https://health.cornell.edu/sites/health/files/pdf-library/Condoms_Lube.pdf",
-        "label": "Cornell Health: Condoms and Lube",
-        "summary": "Silicone-based lube is safe with latex and polyurethane condoms and is longer-lasting."
-      }
-    ],
     "warnings": [
       "Some people get slight irritation from silicone-based lube if it isn't washed off soon after vaginal sex."
-    ],
-    "warningsSource": {
-      "url": "https://health.cornell.edu/sites/health/files/pdf-library/Condoms_Lube.pdf",
-      "label": "Cornell Health: Condoms and Lube (guidance for silicone-based lubricants)"
-    }
+    ]
   },
   "p-v-wash": {
     "whoItsFor": [
@@ -9573,19 +6339,7 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://perfmedicine.apollopharmacy.in/otc/v-wash-plus-intimate-wash-200ml",
       "sourceLabel": "Apollo Pharmacy: VWash Plus Intimate Wash 200ml"
-    },
-    "ingredientScience": [
-      {
-        "name": "Tea tree oil",
-        "text": "Tea tree oil is mainly used for its antifungal and antibacterial properties, but its evidence is mixed even on regular skin (it may ease athlete's foot but works less well than antifungal medicine). It is a known cause of skin irritation and allergic rash, and Mayo Clinic advises against it if you have eczema or very sensitive skin.",
-        "citations": [
-          {
-            "url": "https://mayoclinic.org/drugs-supplements-tea-tree-oil/art-20364246",
-            "label": "Mayo Clinic: Tea tree oil"
-          }
-        ]
-      }
-    ]
+    }
   },
   "p-sweet-spot-wipes": {
     "whoItsFor": [
@@ -9616,7 +6370,7 @@ export const PRODUCT_RESEARCH = {
     "ingredientScience": [
       {
         "name": "Aloe (aloe barbadensis leaf juice)",
-        "text": "Aloe gel on the skin is generally well tolerated, though there are occasional reports of burning, itching, and rash. Clinical research suggests it may help burns heal, but there isn't reliable evidence that it soothes irritation or eczema, so its role in a wipe is mostly as a gentle, low-risk ingredient.",
+        "text": "Aloe gel on the skin is generally well tolerated, though there are occasional reports of burning, itching, and rash.",
         "citations": [
           {
             "url": "https://www.nccih.nih.gov/health/aloe-vera",
@@ -9630,11 +6384,7 @@ export const PRODUCT_RESEARCH = {
       "If you use it on your vulva, always wipe front to back.",
       "Stop using it if a rash or discomfort develops.",
       "Keep out of the reach and sight of children."
-    ],
-    "warningsSource": {
-      "url": "https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177",
-      "label": "SweetSpot Labs Unscented Gentle Soothing Wipes label text (Ulta product listing)"
-    }
+    ]
   },
   "p-kindra-lotion": {
     "whoItsFor": [
@@ -9656,54 +6406,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://mysteryvibe.com/products/daily-v-lotion",
       "sourceLabel": "Kindra Daily V Lotion product page"
     },
-    "scienceSources": [
-      {
-        "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
-        "label": "Albalawi et al., Cureus 2023: vaginal hyaluronic acid vs estrogen for vaginal atrophy (systematic review)",
-        "summary": "Across six trials, topical hyaluronic acid (an ingredient in this lotion) relieved vaginal atrophy symptoms and painful sex, and the authors called it a reasonable non-hormonal alternative, though estrogen came out ahead in most comparisons."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Sodium hyaluronate (hyaluronic acid)",
-        "text": "Hyaluronic acid holds water in tissue, which is why it's used for vaginal dryness. A 2023 review of six small trials in postmenopausal women found it seemed to work about as well as vaginal estrogen for vaginal atrophy (thinning and drying of vaginal tissue), but the authors rated the evidence as weak, and estrogen may still work better for moderate to severe cases.",
-        "citations": [
-          {
-            "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
-            "label": "Cureus (2023): Vaginal hyaluronic acid vs estrogen for vaginal atrophy in postmenopausal women, a systematic review (doi:10.7759/cureus.44191)"
-          }
-        ]
-      },
-      {
-        "name": "Coconut oil",
-        "text": "A Cleveland Clinic ob/gyn lists coconut oil as a natural option to ease dryness during sex and says these oils typically don't cause irritation or infection. Oils break down latex, so they shouldn't be used with latex condoms. We found no trials of coconut oil as a daily vaginal moisturizer.",
-        "citations": [
-          {
-            "url": "https://health.clevelandclinic.org/what-can-i-use-instead-of-lube",
-            "label": "Cleveland Clinic: What can I use instead of lube?"
-          }
-        ]
-      },
-      {
-        "name": "Sunflower seed oil",
-        "text": "Sunflower oil is another plant oil a Cleveland Clinic ob/gyn lists as a natural lubricant option that typically doesn't cause irritation or infection. Like other oils, it can break down latex condoms. We found no trials of it as a vaginal moisturizer.",
-        "citations": [
-          {
-            "url": "https://health.clevelandclinic.org/what-can-i-use-instead-of-lube",
-            "label": "Cleveland Clinic: What can I use instead of lube?"
-          }
-        ]
-      }
-    ],
     "warnings": [
       "For external use only, and keep it out of your eyes.",
       "Stop use and ask a doctor if your symptoms get worse, last more than 7 days, or clear up and then come back within a few days.",
       "Keep out of reach of children. If swallowed, get medical help or call Poison Control right away."
-    ],
-    "warningsSource": {
-      "url": "https://otclabels.com/lib/otc/otc-meds/daily-vlotion/",
-      "label": "Kindra Daily V Lotion product label (OTC Labels)"
-    }
+    ]
   },
   "p-citracal-bone-health": {
     "whoItsFor": [
@@ -9753,7 +6460,7 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "Getting enough calcium and vitamin D matters for bone health, and trials suggest the two together may raise bone density a little in some postmenopausal women. Whether supplements prevent fractures is less clear. One meta-analysis of adults over 50 linked calcium plus vitamin D to fewer total and hip fractures, while other reviews found no effect, and the U.S. Preventive Services Task Force found that daily doses of 1,000 mg calcium or less and 400 IU vitamin D or less don't prevent fractures in postmenopausal women. For women over 50, the upper limit for calcium from food and supplements combined is 2,000 mg a day, so it helps to count what you already get from your diet.",
+    "clinicalNote": "Whether supplements prevent fractures is less clear. For women over 50, the upper limit for calcium from food and supplements combined is 2,000 mg a day, so it helps to count what you already get from your diet.",
     "clinicalNoteSources": [
       {
         "url": "https://ods.od.nih.gov/factsheets/Calcium-HealthProfessional/%23h3",
@@ -9771,11 +6478,7 @@ export const PRODUCT_RESEARCH = {
       "If you're pregnant, breastfeeding, taking medicine, or have any medical condition, ask a health professional before use.",
       "Older adults, teens, and anyone who has trouble swallowing should check with a health professional before use.",
       "Not for children under 12, and do not take more than the recommended amount."
-    ],
-    "warningsSource": {
-      "url": "https://nz.iherb.com/pr/citracal-maximum-plus-d3-180-coated-caplets/31720",
-      "label": "Citracal Maximum Plus + D3 label text (iHerb product listing, 180-caplet size)"
-    }
+    ]
   },
   "d-peanut": {
     "whoItsFor": [
@@ -9796,30 +6499,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://apps.apple.com/au/app/peanut-find-mum-friends/id1178656034",
       "sourceLabel": "Peanut on the Apple App Store"
     },
-    "scienceSources": [
-      {
-        "url": "https://knowledge.lancashire.ac.uk/id/eprint/59049/1/59049%20Vasquez%20et%20al.%20VOR.pdf",
-        "label": "Vasquez et al., BMC Psychiatry 2026: perinatal mental health interventions and loneliness (systematic review)",
-        "summary": "Across 26 studies, some interventions improved loneliness or feeling supported, but app-based peer support showed mixed results, improving perceived support in some trials without clear mental health gains."
-      }
-    ],
-    "clinicalNote": "Peer support has some research behind it for new moms, especially those at higher risk of postnatal depression (depression after giving birth). A review of seven randomized trials found that telephone peer support lowered depression scores in high-risk women, and peer-led women's groups reduced moderate depression in poorer communities, but other support models showed no clear effect and no single model could be strongly recommended. We found no published studies of Peanut itself, so think of it as a way to find connection, not a treatment.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.cambridge.org/core/journals/european-psychiatry/article/systematic-literature-review-of-the-use-of-lay-support-models-in-postnatal-depression/F9873CF2B959245EDA3FB44D4CE98C7E",
-        "label": "European Psychiatry (2011): Systematic literature review of the use of lay support models in postnatal depression (conference abstract)",
-        "summary": "Reviewed seven randomized trials of peer and lay support for postnatal depression and found benefit for some targeted programs but mixed results overall."
-      }
-    ],
     "warnings": [
       "The app is rated 18+.",
       "Posts come from other users, and health and wellness topics are part of the community.",
       "The developer says some data, including purchases and sensitive info, may be used to track you across other companies' apps and websites, so check the privacy settings before sharing."
-    ],
-    "warningsSource": {
-      "url": "https://apps.apple.com/app/id1178656034",
-      "label": "Peanut on the Apple App Store (developer's listing and privacy label)"
-    }
+    ]
   },
   "p-intimina-lily": {
     "whoItsFor": [
@@ -9841,14 +6525,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.superdrug.com/natural-pain-relief/health/womens-intimate-health-care/periods/menstrual-cups/intimina-menstrual-lily-cup-compact-a/p/mp-00440408",
       "sourceLabel": "Intimina Lily Cup Compact product directions (Superdrug)"
     },
-    "clinicalSources": [
-      {
-        "url": "https://health.clevelandclinic.org/menstrual-cup",
-        "label": "Cleveland Clinic: What to know about menstrual cups",
-        "summary": "Most new users need about three cycles to get comfortable, cups can be worn up to 12 hours, prolapse can affect fit, and cup use may raise the chance of dislodging an IUD."
-      }
-    ],
-    "clinicalNote": "Cleveland Clinic says most people need about three cycles to get the hang of a cup, and a little leaking early on usually improves with practice. If you have an IUD, talk to your provider first, since cup use may make it more likely to shift.",
     "ingredientScience": [
       {
         "name": "Medical-grade silicone",
@@ -9866,11 +6542,7 @@ export const PRODUCT_RESEARCH = {
       "Don't wear it for more than 8 hours at a time.",
       "It is not a contraceptive and won't protect against pregnancy or STIs, so remove it before sex.",
       "Stop using it and contact a medical practitioner if you have any pain or discomfort."
-    ],
-    "warningsSource": {
-      "url": "https://www.superdrug.com/natural-pain-relief/health/womens-intimate-health-care/periods/menstrual-cups/intimina-menstrual-lily-cup-compact-a/p/mp-00440408",
-      "label": "Intimina Lily Cup Compact label text (Superdrug product listing)"
-    }
+    ]
   },
   "p-hello-disc": {
     "whoItsFor": [
@@ -9892,26 +6564,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://shop.periodnirvana.com/blogs/articles/hello-disc-quick-start",
       "sourceLabel": "Period Nirvana: Hello Disc quick start"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.nj.gov/health/womenshealth/reproductive-health/periods-menstruation/period-products/menstrual-discs.shtml",
-        "label": "New Jersey Department of Health: Menstrual discs",
-        "summary": "Discs sit behind the cervix, can be worn up to 12 hours, should be boiled before first use and between cycles, and may not suit everyone because of vaginal shape or cervix position."
-      }
-    ],
-    "clinicalNote": "The New Jersey Department of Health says discs can be worn up to 12 hours and expects a learning curve to get a secure fit. Wash your hands before inserting or removing, and replace the disc if it tears or cracks.",
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health: Red blood cell capacity of modern menstrual products",
-        "summary": "In lab testing with real blood, menstrual discs held the most of any product type, about 61 mL on average, versus roughly 20 to 50 mL for tampons, pads and cups."
-      },
-      {
-        "url": "https://public-pages-files-2025.frontiersin.org/journals/reproductive-health/articles/10.3389/frph.2025.1740096/pdf",
-        "label": "Mason et al., Frontiers in Reproductive Health 2026: experiences using a menstrual disc (qualitative study)",
-        "summary": "Women given a disc in a Kenyan trial often needed several tries at first, but by month three most used it without leakage or pain and wanted to keep using it."
-      }
-    ],
     "ingredientScience": [
       {
         "name": "Medical-grade silicone",
@@ -9929,11 +6581,7 @@ export const PRODUCT_RESEARCH = {
       "Do not leave the disc in for more than 12 hours.",
       "It is not birth control and won't prevent pregnancy.",
       "If condoms are your only birth control, remove the disc before sex, since friction could cause a tiny tear in the condom."
-    ],
-    "warningsSource": {
-      "url": "https://www.chemistwarehouse.co.nz/buy/122640/hello-period-menstrual-disc",
-      "label": "Hello Disc label text (Chemist Warehouse NZ product listing)"
-    }
+    ]
   },
   "p-saalt-disc": {
     "whoItsFor": [
@@ -9955,21 +6603,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://saalt.com/pages/disc-instructions",
       "sourceLabel": "Saalt Disc instructions"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.nj.gov/health/womenshealth/reproductive-health/periods-menstruation/period-products/menstrual-discs.shtml",
-        "label": "New Jersey Department of Health: Menstrual discs",
-        "summary": "Discs sit behind the cervix, can be worn up to 12 hours, should be boiled before first use and between cycles, and may not suit everyone because of vaginal shape or cervix position."
-      }
-    ],
-    "clinicalNote": "The New Jersey Department of Health says to expect a learning curve with a disc, to wash your hands before inserting or removing it, and to store it in a breathable pouch, never an airtight container.",
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health: Red blood cell capacity of modern menstrual products",
-        "summary": "In lab testing with real blood, menstrual discs held the most of any product type, about 61 mL on average, versus roughly 20 to 50 mL for tampons, pads and cups."
-      }
-    ],
     "ingredientScience": [
       {
         "name": "Medical-grade silicone",
@@ -10011,21 +6644,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://knix.ca/blogs/knix-blog/washing-period-underwear",
       "sourceLabel": "Knix: How to wash period underwear"
     },
-    "clinicalSources": [
-      {
-        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-        "label": "Cleveland Clinic: Does period underwear work?",
-        "summary": "Period underwear usually holds about one to two tampons' worth of flow, shouldn't be worn more than 12 hours, and can be a good option if pads irritate your skin."
-      }
-    ],
-    "clinicalNote": "Cleveland Clinic says most pairs hold about one to two tampons' worth of flow, so plan on five to seven pairs per cycle and change more often on heavy days. Don't wear the same pair longer than 12 hours.",
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health: Red blood cell capacity of modern menstrual products",
-        "summary": "In lab testing with real blood, period underwear held only a few mL, far less than other products, and the authors say it is unlikely to work on its own for heavy bleeding."
-      }
-    ],
     "warnings": [
       "Wash your period underwear after every single use.",
       "Machine wash on cold with a mild, ideally unscented detergent, and don't use bleach.",
@@ -10056,42 +6674,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://health.clevelandclinic.org/does-period-underwear-work",
       "sourceLabel": "Cleveland Clinic: Does period underwear work?"
     },
-    "scienceSources": [
-      {
-        "url": "https://srh.bmj.com/content/50/1/21",
-        "label": "DeLoughery et al., BMJ Sexual & Reproductive Health: Red blood cell capacity of modern menstrual products",
-        "summary": "In lab testing with real blood, period underwear held only a few mL, far less than other products, and the authors say it is unlikely to work on its own for heavy bleeding."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Bamboo viscose",
-        "text": "Bamboo viscose is a kind of rayon: plant cellulose (here from bamboo) dissolved with chemicals and spun into a soft fiber. The US Federal Trade Commission says rayon made from bamboo does not keep the bamboo plant's natural antimicrobial properties, so any benefit comes from how the fabric feels and breathes, not from the bamboo itself. We found no studies on bamboo viscose and vaginal or vulvar irritation.",
-        "citations": [
-          {
-            "url": "https://www.ftc.gov/node/44492",
-            "label": "US Federal Trade Commission (2009): FTC Charges Companies with 'Bamboo-zling' Consumers with False Product Claims"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "Period underwear is underwear with built-in absorbent layers that you wear instead of, or as backup to, a pad or tampon. A Cleveland Clinic ob/gyn says most pairs hold about 1 to 2 tampons' worth of flow, and that they can help people whose skin gets irritated by pads. She advises wearing one pair no more than 12 hours, changing sooner on heavy days, and washing them gently with a mild, unscented detergent and no fabric softener, since leftover detergent can irritate skin. Trying a pair at home on a light day first is a low-stress way to check fit and leaks.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-        "label": "Cleveland Clinic Health Essentials: Does period underwear work?",
-        "summary": "Ob/gyn Karmon James, MD, on capacity (1 to 2 tampons), a 12-hour wear limit, washing, and who period underwear suits."
-      }
-    ],
     "warnings": [
       "Do not wear the same pair for more than 12 hours, and change sooner on your heaviest days.",
       "Wash with a mild, unscented, dye-free detergent and skip fabric softener; leftover detergent can irritate your skin.",
       "If you mainly need protection from urine leaks, choose a product designed for that."
-    ],
-    "warningsSource": {
-      "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-      "label": "Cleveland Clinic Health Essentials: Does period underwear work? (no brand page or label found for Bambody)"
-    }
+    ]
   },
   "p-bodily-kit": {
     "whoItsFor": [
@@ -10112,28 +6699,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://itsbodily.com/products/postpartum-recovery-kit-save-11",
       "sourceLabel": "Bodily Postpartum Recovery Kit product page"
     },
-    "clinicalNote": "The kit's items match common hospital advice for the first weeks after a vaginal birth, when the perineum (the skin and muscle between the vagina and anus) is often sore or stitched. Boston Medical Center advises spraying warm water on the area after you pee or poop and patting it dry, and changing your pad every 2 to 4 hours. NHS guidance says pouring water over the area as you pee helps stop stinging and keeps it clean, and suggests breathable cotton or disposable briefs with loose clothing. Neither source mentions sitting cushions, so we could not find guidance for or against the inflatable cushion.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.bmc.org/bump-beyond/postpartum-experience/physical-health/perineal-care",
-        "label": "Boston Medical Center, Bump & Beyond: Perineal care",
-        "summary": "Recommends a warm-water spray bottle after toileting, frequent pad changes, cold packs, sitz baths, and calling OB/GYN for fever, more pain or smelly discharge."
-      },
-      {
-        "url": "https://www.therotherhamft.nhs.uk/node/691/printable/print",
-        "label": "The Rotherham NHS Foundation Trust: Caring for your perineum after giving birth",
-        "summary": "NHS leaflet on keeping stitches clean, pouring water while peeing, breathable underwear, and signs of infection."
-      }
-    ],
     "warnings": [
       "Call your OB/GYN right away if you have a fever of 100.4 F or higher, more pain, or a foul-smelling discharge.",
       "Signs your stitches may be infected include redness, a smelly discharge, new or growing swelling or pain, or feeling feverish and unwell.",
       "Change your pad often and wash your hands before changing it, to lower the risk of infection."
-    ],
-    "warningsSource": {
-      "url": "https://www.bmc.org/bump-beyond/postpartum-experience/physical-health/perineal-care",
-      "label": "Boston Medical Center: Perineal care (first warning); The Rotherham NHS Foundation Trust: Caring for your perineum after giving birth (second and third). Bodily's product page lists no safety warnings."
-    }
+    ]
   },
   "p-haakaa-pump": {
     "whoItsFor": [
@@ -10165,7 +6735,6 @@ export const PRODUCT_RESEARCH = {
         "summary": "Clean pump parts after every use and sanitize at least daily, especially if your baby is under 2 months old, premature or has a weakened immune system."
       }
     ],
-    "clinicalNote": "The FDA says manual pumps are single-user devices, so don't share one or buy it secondhand. The CDC recommends cleaning milk-contact parts after every use and sanitizing daily if your baby is young, premature or immunocompromised.",
     "warnings": [
       "Clean after every use and sterilise by steam or by boiling for 2 to 3 minutes; do not use bleach, sterilising tablets or UV sterilisers.",
       "Check it regularly and replace it if you see any signs of damage.",
@@ -10196,30 +6765,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.naturalresources-sf.com/collections/breast-care/products/silverette-silver-nursing-cups",
       "sourceLabel": "Silverette Nursing Cups directions (Natural Resources)"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.nhs.uk/conditions/baby/breastfeeding-and-bottle-feeding/breastfeeding-problems/sore-nipples/",
-        "label": "NHS: Sore or cracked nipples when breastfeeding",
-        "summary": "Sore nipples are usually caused by poor attachment; for cracked nipples the NHS suggests dabbing on breast milk after feeds or using silver nipple cups between feeds."
-      }
-    ],
-    "clinicalNote": "The NHS lists silver nipple cups as one option for cracked nipples between feeds, but says soreness usually comes from how baby is attached. Get help early from a midwife or breastfeeding supporter if feeds hurt every time or nipples crack or bleed, since that raises infection risk.",
-    "scienceSources": [
-      {
-        "url": "https://journals.sagepub.com/doi/abs/10.1089/bfm.2014.0177",
-        "label": "Marrazzu et al., Breastfeeding Medicine 2015: silver cap for nipple fissures (randomized trial)",
-        "summary": "In 40 breastfeeding women with nipple fissures, those using a silver cap had pain resolve faster by day 7 and 15 than those on standard care, with no reactions reported."
-      }
-    ],
     "warnings": [
       "Take the cups off before you breastfeed.",
       "Do not use other nipple treatments, like creams, together with the cups; the brand says this may make them work less well.",
       "Wash them every day with warm water to remove milk residue."
-    ],
-    "warningsSource": {
-      "url": "https://jilliansdrawers.com/products/silverette-silver-nursing-cups",
-      "label": "Jillian's Drawers: Silverette Silver Nursing Cups (brand how-to-use instructions, retailer copy)"
-    }
+    ]
   },
   "p-hatch-oil": {
     "whoItsFor": [
@@ -10238,44 +6788,7 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://bluemercury.com/products/hatch-mama-belly-oil",
       "sourceLabel": "Hatch Mama Belly Oil product page (Bluemercury)"
-    },
-    "scienceSources": [
-      {
-        "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD000066.pub2/pdf/CDSR/CD000066/CD000066_abstract.pdf",
-        "label": "Brennan et al., Cochrane 2012: Topical preparations for preventing stretch marks in pregnancy",
-        "summary": "Across six trials with 800 women, there was no high-quality evidence that any topical cream or oil prevents stretch marks in pregnancy."
-      }
-    ],
-    "ingredientScience": [
-      {
-        "name": "Calendula flower extract",
-        "text": "Calendula (pot marigold) is used to soothe dry, irritated skin. A 2019 systematic review of 14 studies found some support for it in wound healing, but the human trials were few and mixed, and none looked at stretch marks, so the evidence for this use is weak.",
-        "citations": [
-          {
-            "url": "https://ecite.utas.edu.au/133286",
-            "label": "Wound Repair and Regeneration (2019): A systematic review of Calendula officinalis extract for wound healing (Givol et al.)"
-          }
-        ]
-      },
-      {
-        "name": "Tocopherol (vitamin E) and olive oil",
-        "text": "These help keep skin soft. A Cochrane review of 6 trials (800 women) tested creams and oils that all contained vitamin E, including olive oil, and found they did not prevent stretch marks in pregnancy compared with placebo or nothing.",
-        "citations": [
-          {
-            "url": "https://www.cochrane.org/CD000066",
-            "label": "Cochrane: Topical preparations for preventing stretch marks in pregnancy (Brennan, Young, Devane)"
-          }
-        ]
-      }
-    ],
-    "clinicalNote": "Stretch marks are very common in pregnancy, and moisturizing oils can make tight, itchy skin feel more comfortable. But a Cochrane review of 6 trials with 800 women found no high-quality evidence that any cream or oil prevents stretch marks or makes them less severe. So think of a belly oil as comfort for dry skin rather than a way to stop stretch marks.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.cochrane.org/CD000066",
-        "label": "Cochrane: Topical preparations for preventing stretch marks in pregnancy",
-        "summary": "Six trials, 800 women: no significant difference in stretch marks with topical products versus placebo or no treatment, and no high-quality evidence for any product."
-      }
-    ]
+    }
   },
   "p-willow-pump": {
     "whoItsFor": [
@@ -10309,7 +6822,6 @@ export const PRODUCT_RESEARCH = {
         "summary": "Clean pump parts after every use, sanitize at least daily for babies under 2 months, premature or immunocompromised, and air-dry parts without towel-rubbing."
       }
     ],
-    "clinicalNote": "The FDA notes battery-powered pumps suit pumping at work or on the go, and that single-user pumps shouldn't be shared or bought used. The CDC recommends washing milk-contact parts after every use and sanitizing daily for young or premature babies.",
     "warnings": [
       "Do not share, rent or buy a used single-user pump; a contaminated pump can give you and your baby an infection.",
       "Clean the parts that touch milk after every use: rinse in cool water, wash in warm soapy water, rinse in hot water and air dry.",
@@ -10341,14 +6853,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://boppy.com/pages/original-nursing-support-safe-use-and-product-care",
       "sourceLabel": "Boppy Original Nursing Support: safe use and product care"
     },
-    "clinicalNote": "A nursing pillow is meant for one job: holding your baby at a comfortable height while you feed, sitting up and awake. The US Consumer Product Safety Commission (CPSC) knows of 154 infant deaths and 64 injuries from 2010 to 2022 linked to nursing pillows, mostly from suffocation or a baby being left in one. That led to a federal safety standard for nursing pillows approved in 2024. CPSC's advice is simple: use it only for feeding, never for sleep or lounging, and if your baby dozes off while feeding, move them to a flat, bare crib, bassinet or play yard.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://www.cpsc.gov/Newsroom/News-Releases/2024/CPSC-Approves-New-Federal-Safety-Standard-for-Nursing-Pillows-to-Prevent-Infant-Deaths-and-Serious-Injuries",
-        "label": "US Consumer Product Safety Commission (2024): New federal safety standard for nursing pillows",
-        "summary": "Reports 154 infant deaths and 64 injuries tied to nursing pillows from 2010 to 2022 and gives safe-use advice for parents."
-      }
-    ],
     "warnings": [
       "Never let your baby sleep on the pillow or lie face down on it.",
       "Never leave your baby unattended; use it only while you are sitting up and your baby is awake.",
@@ -10379,30 +6883,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.walmart.com/ip/Snoogle/1133546673",
       "sourceLabel": "Leachco Snoogle Total Body Pillow listing (Walmart)"
     },
-    "clinicalSources": [
-      {
-        "url": "https://coch.nhs.uk/all-services/maternity-services/your-pregnancy/safe-sleep-during-pregnancy.aspx",
-        "label": "Countess of Chester Hospital NHS Foundation Trust: Safe sleep during pregnancy",
-        "summary": "From 28 weeks, go to sleep on your side, since going to sleep on your back is linked to a higher risk of stillbirth; this applies to naps and night waking too."
-      }
-    ],
-    "clinicalNote": "NHS guidance says that from 28 weeks you should go to sleep on your side, because going to sleep on your back is linked to a higher risk of stillbirth. That applies to naps and to falling back asleep after waking in the night.",
-    "scienceSources": [
-      {
-        "url": "https://doaj.org/article/0c53c20258c84459ae89873336c588b2",
-        "label": "Cronin et al., EClinicalMedicine 2019: going-to-sleep position and late stillbirth (individual participant data meta-analysis)",
-        "summary": "Across five studies and over 3,000 women, going to sleep on your back after 28 weeks was linked to about 2.6 times the odds of late stillbirth, while left and right side sleeping were similarly safe."
-      }
-    ],
     "warnings": [
       "For adult use only; do not let children under 2 use this pillow.",
       "To prevent suffocation, never put it in a crib, play pen or bassinet, or near anywhere a baby may sleep.",
       "Keep it away from heat and open flame."
-    ],
-    "warningsSource": {
-      "url": "https://well.ca/products/leachco-snoogle-chic-total-body-pillow_129572.html",
-      "label": "Well.ca: Leachco Snoogle Chic Total Body Pillow (label safety precautions, retailer copy)"
-    }
+    ]
   },
   "p-dame-arc": {
     "whoItsFor": [
@@ -10424,35 +6909,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://cdn.shopify.com/s/files/1/1027/2873/files/Arc_Manual.pdf",
       "sourceLabel": "Dame Arc user manual"
     },
-    "scienceSources": [
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
-        "label": "Herbenick et al., Journal of Sexual Medicine 2009: vibrator use by women in the US (national survey)",
-        "summary": "In a national survey of 2,056 women, about half had used a vibrator, users scored higher on most sexual function measures, and side effects like numbness or irritation were uncommon and usually brief (the survey was industry-funded and can't show cause and effect)."
-      }
-    ],
-    "clinicalNote": "Vibrators are common: in a US national survey of 2,056 women, 52.5% had used one. Recent users scored higher on most measures of sexual function, like desire, arousal, lubrication and orgasm, though the survey can't show the vibrator caused that, and it was funded by a condom maker. Most users (71.5%) never had genital side effects; when they did, they were usually mild and short, like brief numbness or irritation. A hospital patient guide suggests starting on the lowest setting, using a water-based lube, and stopping if anything hurts.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
-        "label": "Journal of Sexual Medicine (2009): Prevalence and characteristics of vibrator use by women in the United States (Herbenick et al.)",
-        "summary": "Nationally representative survey: 52.5% of women had used a vibrator, use was linked to better sexual function scores, and side effects were uncommon and mostly mild."
-      },
-      {
-        "url": "https://www.lakeridgehealth.on.ca/en/ourservices/resources/Cancer/What-you-need-to-know-about-vibrators.pdf",
-        "label": "Lakeridge Health (Durham Regional Cancer Centre): What you need to know about vibrators",
-        "summary": "Hospital patient guide: start on the lowest setting, use water-based lube, wash after each use, and stop if you have pain."
-      }
-    ],
     "warnings": [
       "Do not use silicone-based lube with Arc; use water-based.",
       "Do not insert anally; the base is not flared enough.",
       "Clean after every use with soap and water or a water-based toy cleaner; never use alcohol, petroleum or acetone, and do not boil it or put it in the dishwasher."
-    ],
-    "warningsSource": {
-      "url": "https://cdn.shopify.com/s/files/1/1027/2873/files/Arc_Manual.pdf",
-      "label": "Dame Arc user manual (PDF)"
-    }
+    ]
   },
   "p-lelo-sona": {
     "whoItsFor": [
@@ -10474,35 +6935,11 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.superdrug.com/health/sexual-health/vibrators-adult-toys/vibrators/lelo-sona-cruise-clitoral-massager-cerise/p/mp-00120986",
       "sourceLabel": "LELO SONA Cruise product directions (Superdrug)"
     },
-    "scienceSources": [
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
-        "label": "Herbenick et al., Journal of Sexual Medicine 2009: vibrator use by women in the US (national survey)",
-        "summary": "In a national survey of 2,056 women, about half had used a vibrator, users scored higher on most sexual function measures, and side effects like numbness or irritation were uncommon and usually brief (the survey was industry-funded and can't show cause and effect)."
-      }
-    ],
-    "clinicalNote": "Vibrators are common: in a US national survey of 2,056 women, 52.5% had used one. Recent users scored higher on most measures of sexual function, like desire, arousal, lubrication and orgasm, though the survey can't show the vibrator caused that, and it was funded by a condom maker. Most users (71.5%) never had genital side effects; when they did, they were usually mild and short, like brief numbness or irritation. We found no studies on sonic or air-pulse devices specifically. A hospital patient guide suggests starting on the lowest setting, using a water-based lube, and stopping if anything hurts.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick%20et%20al%20JSM%202009%20Women%20Vibe%20Final%20in%20Print.pdf",
-        "label": "Journal of Sexual Medicine (2009): Prevalence and characteristics of vibrator use by women in the United States (Herbenick et al.)",
-        "summary": "Nationally representative survey: 52.5% of women had used a vibrator, use was linked to better sexual function scores, and side effects were uncommon and mostly mild."
-      },
-      {
-        "url": "https://www.lakeridgehealth.on.ca/en/ourservices/resources/Cancer/What-you-need-to-know-about-vibrators.pdf",
-        "label": "Lakeridge Health (Durham Regional Cancer Centre): What you need to know about vibrators",
-        "summary": "Hospital patient guide: start on the lowest setting, use water-based lube, wash after each use, and stop if you have pain."
-      }
-    ],
     "warnings": [
       "Use only water-based lube, not silicone lube.",
       "Clean it with toy cleaner.",
       "Do not leave it in heat or direct sunlight."
-    ],
-    "warningsSource": {
-      "url": "https://www.superdrug.com/health/sexual-health/vibrators-adult-toys/vibrators/lelo-sona-cruise-clitoral-massager-cerise/p/mp-00120986",
-      "label": "Superdrug: LELO SONA Cruise Clitoral Massager (product copy; lelo.com page could not be opened)"
-    }
+    ]
   },
   "p-mystery-vibe": {
     "whoItsFor": [
@@ -10524,26 +6961,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://mysteryvibe.com/cdn/shop/files/Crescendo-2-User-Guide-Booklet-1.0-Digital.pdf",
       "sourceLabel": "MysteryVibe Crescendo 2 user guide"
     },
-    "scienceSources": [
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
-        "label": "Herbenick et al., Journal of Sexual Medicine 2009: vibrator use by women in the US (national survey)",
-        "summary": "In a national survey of 2,056 women, about half had used a vibrator, users scored higher on most sexual function measures, and side effects like numbness or irritation were uncommon and usually brief (the survey was industry-funded and can't show cause and effect)."
-      }
-    ],
-    "clinicalNote": "Research on vibrators for health is still small. The International Society for Sexual Medicine says vibrators may improve genital blood flow, arousal, satisfaction and orgasm, and may also help pelvic floor muscle strength and vulvodynia pain (long-lasting pain at the opening of the vagina), but that there are only a limited number of studies and more research is needed. In a 2009 survey of 2,056 US women, about half had used a vibrator, and 71.5% of users had never had a side effect. The side effects that did happen, like brief numbness or irritation, were mostly mild and short-lived. That survey was funded by a condom maker, Church & Dwight.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://issm.info/sexual-health-qa/what-are-the-benefits-of-vibrators-for-sexual-health",
-        "label": "International Society for Sexual Medicine (ISSM): What are the benefits of vibrators for sexual health?",
-        "summary": "Says vibrators may help arousal, orgasm, pelvic muscle strength and vulvodynia pain, but studies are limited and more research is needed."
-      },
-      {
-        "url": "https://KINSEYINSTITUTE.ORG/pdf/Herbenick et al JSM 2009 Women Vibe Final in Print.pdf",
-        "label": "Journal of Sexual Medicine (2009), Herbenick et al.: Prevalence and characteristics of vibrator use by women in the United States",
-        "summary": "52.5% of 2,056 women had used a vibrator; 71.5% of users never had side effects, and those reported were mostly mild and brief."
-      }
-    ],
     "warnings": [
       "Use water-based lubricants to protect the silicone surface.",
       "Don't fully submerge it for long periods.",
@@ -10573,36 +6990,10 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://phdfemininehealth.com/products/ph-d-boric-acid-honey-lavender-foam-wash",
       "sourceLabel": "pH-D Boric Acid Foam Wash product page"
     },
-    "ingredientScience": [
-      {
-        "name": "Boric acid",
-        "text": "Boric acid is a mild acid. A federal pesticide information fact sheet says it is low in toxicity on skin and is poorly absorbed unless the skin is damaged. We found no studies testing whether boric acid in an external wash changes vaginal pH; the clinical research on boric acid is about capsules placed inside the vagina for hard-to-treat yeast infections.",
-        "citations": [
-          {
-            "url": "https://www.npic.orst.edu/factsheets/boricgen.html",
-            "label": "National Pesticide Information Center (Oregon State University and US EPA): Boric Acid General Fact Sheet"
-          }
-        ]
-      },
-      {
-        "name": "Lavender oil",
-        "text": "Lavender oil adds scent and is a known skin allergen once it oxidizes (breaks down in air). In one dermatology clinic study, 2.8% of patients tested had an allergic reaction to oxidized lavender oil, so this matters if your skin is sensitive.",
-        "citations": [
-          {
-            "url": "https://www.medicaljournals.se/acta/content/abstract/10.2340/00015555-2319",
-            "label": "Acta Dermato-Venereologica (Hagvall and Bråred Christensson): Contact allergy to oxidized lavender oil"
-          }
-        ]
-      }
-    ],
     "warnings": [
       "For external use only.",
       "Avoid contact with your eyes and mouth."
-    ],
-    "warningsSource": {
-      "url": "https://www.vitacost.com/products/ph-d-feminine-health-boric-acid-foam-wash-sensitive-6-fl-oz-177-ml-152146",
-      "label": "Vitacost: pH-D Feminine Health Boric Acid Foam Wash, Sensitive (label copy)"
-    }
+    ]
   },
   "p-sweetspot-buff-brighten": {
     "whoItsFor": [
@@ -10624,20 +7015,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.ulta.com/p/p-xlsImpprod18651011",
       "sourceLabel": "Ulta: SweetSpot Labs Buff & Brighten AHA/BHA Body Exfoliating Pads"
     },
-    "clinicalSources": [
-      {
-        "url": "https://www.aad.org/public/everyday-care/skin-care-basics/hair/razor-bump-prevention",
-        "label": "American Academy of Dermatology: 6 razor bump prevention tips from dermatologists",
-        "summary": "The AAD's prevention basics are shaving with the grain, softening hair first, using a cleanser, shave cream and an aftershave made to reduce bumps, and seeing a dermatologist if bumps keep coming back."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://cdn.mdedge.com/files/s3fs-public/issues/articles/CT115004135.pdf",
-        "label": "Cutis (2025): Beyond the Razor: Managing Pseudofolliculitis Barbae in Skin of Color",
-        "summary": "This dermatology review says alpha hydroxy acids such as glycolic acid can reduce the curvature of the hair and that hydroxy acids help by loosening the buildup of skin around hair follicles, though it cites no trial results of its own."
-      }
-    ],
     "ingredientScience": [
       {
         "name": "Lactic acid",
@@ -10646,16 +7023,6 @@ export const PRODUCT_RESEARCH = {
           {
             "url": "https://www.fda.gov/cosmetics/cosmetic-ingredients/alpha-hydroxy-acids",
             "label": "FDA: Alpha Hydroxy Acids"
-          }
-        ]
-      },
-      {
-        "name": "Glycolic acid",
-        "text": "Glycolic acid is another AHA. A 2025 dermatology review on razor bumps (pseudofolliculitis, where shaved hairs curl back into the skin) says AHAs like glycolic acid can reduce how much the hair curls and that hydroxy acids help as add-on treatments. The review gives no study sizes, so treat the evidence as supportive but not strong.",
-        "citations": [
-          {
-            "url": "https://cdn.mdedge.com/files/s3fs-public/issues/articles/CT115004135.pdf",
-            "label": "Cutis 2025;115(4):135-136 (Usatine, Heath, Welch): Beyond the Razor: Managing Pseudofolliculitis Barbae in Skin of Color"
           }
         ]
       },
@@ -10670,13 +7037,8 @@ export const PRODUCT_RESEARCH = {
         ]
       }
     ],
-    "clinicalNote": "Ingrown hairs and razor bumps happen when a cut hair curls back and grows into the skin. A 2025 dermatology review says hydroxy acids, the same family as the lactic, glycolic and salicylic acids here, can help as an add-on by loosening dead skin around the hair. The FDA advises that AHA products raise your sun sensitivity, so use sunscreen on treated areas while using them and for a week after.",
+    "clinicalNote": "Ingrown hairs and razor bumps happen when a cut hair curls back and grows into the skin. The FDA advises that AHA products raise your sun sensitivity, so use sunscreen on treated areas while using them and for a week after.",
     "clinicalNoteSources": [
-      {
-        "url": "https://cdn.mdedge.com/files/s3fs-public/issues/articles/CT115004135.pdf",
-        "label": "Cutis 2025 (Usatine, Heath, Welch): Beyond the Razor: Managing Pseudofolliculitis Barbae in Skin of Color",
-        "summary": "Reviews razor bump care and lists hydroxy acids, including glycolic acid, as helpful add-on treatments."
-      },
       {
         "url": "https://www.fda.gov/cosmetics/cosmetic-ingredients/alpha-hydroxy-acids",
         "label": "FDA: Alpha Hydroxy Acids",
@@ -10688,11 +7050,7 @@ export const PRODUCT_RESEARCH = {
       "This product has AHAs that can make your skin more sensitive to the sun, so use sunscreen and limit sun exposure while using it and for a week after.",
       "Avoid your eyes; if it gets in them, rinse well with water.",
       "Stop using it if you get a rash or discomfort, and if you're pregnant, check with your doctor before using AHA or BHA products."
-    ],
-    "warningsSource": {
-      "url": "https://www.ulta.com/p/p-xlsImpprod18651011",
-      "label": "Ulta: SweetSpot Labs Buff & Brighten AHA/BHA Body Exfoliating Pads (brand product listing)"
-    }
+    ]
   },
   "p-gennev-care": {
     "whoItsFor": [
@@ -10713,33 +7071,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.gennev.com/how-gennev-works",
       "sourceLabel": "Gennev: How Gennev Works"
     },
-    "clinicalSources": [
-      {
-        "url": "https://newsnetwork.mayoclinic.org/discussion/menopause-symptoms-mayo-clinic-expert-outlines-hormone-and-nonhormonal-therapies/",
-        "label": "Mayo Clinic News Network: Menopause symptoms, hormone and nonhormonal therapies",
-        "summary": "A Mayo Clinic women's health specialist explains that hormone therapy's benefits generally outweigh risks for healthy people under 60 or within 10 years of their last period, that it's usually not an option after breast cancer or blood clots, and that nonhormonal options include low-dose paroxetine, CBT and clinical hypnosis."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8785511",
-        "label": "Menopause (2021): Delivery of menopause care during a pandemic, patient satisfaction with telephone visits",
-        "summary": "In 246 visits at a Toronto menopause clinic in 2020, patients rated remote visits highly (4.23 out of 5) and about 80% of those who had tried both preferred them, though this was one clinic and not a study of Gennev."
-      }
-    ],
-    "clinicalNote": "Two position statements from The Menopause Society give useful context for any menopause care service. The Menopause Society's 2022 statement says hormone therapy's benefits outweigh its risks for most healthy women with symptoms who are under 60 or within 10 years of menopause, with the dose and form chosen with you and rechecked over time. For people who can't or don't want to use hormones, its 2023 statement recommends options like cognitive behavioral therapy, clinical hypnosis, certain antidepressants, gabapentin and the newer drug fezolinetant for hot flashes, and does not recommend supplements or herbal remedies.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://menopause.org/wp-content/uploads/press-release/ht-position-statement-release.pdf",
-        "label": "The Menopause Society: 2022 Hormone Therapy Position Statement (press release, July 2022)",
-        "summary": "Says hormone therapy benefits outweigh risks for most healthy women with symptoms who are under 60 or within 10 years of menopause, with personalized dosing and regular rechecks."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
-        "label": "The Menopause Society: 2023 Nonhormone Therapy Position Statement (press release, June 2023)",
-        "summary": "Lists recommended nonhormone treatments for hot flashes and says supplements and herbal remedies are not recommended."
-      }
-    ],
     "warnings": [
       "Your practitioner may decide you need to be seen in person by a doctor."
     ],
@@ -10767,34 +7098,7 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://womaness.com/products/me-no-pause",
       "sourceLabel": "Womaness: Me.No.Pause. product page"
     },
-    "scienceSources": [
-      {
-        "url": "https://www.frontiersin.org/articles/10.3389/frph.2025.1647721/full",
-        "label": "Frontiers in Reproductive Health (2025): Ashwagandha root extract for menopausal symptoms, randomized placebo-controlled trial",
-        "summary": "In 60 women aged 45 to 55, 300 mg of one branded ashwagandha extract twice daily for 8 weeks lowered Menopause Rating Scale scores more than placebo, but the trial was small and short and did not test Me.No.Pause. or its dose."
-      }
-    ],
     "ingredientScience": [
-      {
-        "name": "Pycnogenol (French maritime pine bark extract)",
-        "text": "A Cochrane review of 27 small trials across 10 long-term conditions found the evidence too weak to draw firm conclusions about whether pine bark extract works or is safe. That review did not look at hot flashes or other menopause symptoms.",
-        "citations": [
-          {
-            "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD008294.pub5",
-            "label": "Cochrane Database of Systematic Reviews (2020): Pine bark (Pinus spp.) extract for treating chronic disorders"
-          }
-        ]
-      },
-      {
-        "name": "Bacopa (Bacognize)",
-        "text": "Bacopa is an herb studied for memory. A 2012 review of six 12-week trials found it improved memory recall on 9 of 17 tests, with little evidence of benefit for other thinking skills. These trials were not in menopausal women.",
-        "citations": [
-          {
-            "url": "https://research.monash.edu/en/publications/the-cognitive-enhancing-effects-of-bacopa-monnieri-a-systematic-r/",
-            "label": "Journal of Alternative and Complementary Medicine 2012 (Pase et al.), doi:10.1089/acm.2011.0367: The cognitive-enhancing effects of Bacopa monnieri"
-          }
-        ]
-      },
       {
         "name": "Ashwagandha",
         "text": "Small trials suggest ashwagandha may lower stress and slightly improve sleep, according to the NIH Office of Dietary Supplements, which does not mention menopause. Safety data beyond about 3 months is lacking, and there are case reports of liver injury and thyroid changes; some experts advise against it in pregnancy.",
@@ -10804,14 +7108,6 @@ export const PRODUCT_RESEARCH = {
             "label": "NIH Office of Dietary Supplements: Ashwagandha fact sheet for health professionals"
           }
         ]
-      }
-    ],
-    "clinicalNote": "The Menopause Society's 2023 statement on nonhormone treatments does not recommend supplements or herbal remedies for hot flashes. It does recommend cognitive behavioral therapy, clinical hypnosis, weight loss, certain antidepressants, gabapentin, oxybutynin and the newer drug fezolinetant. The label doesn't list how much of each ingredient is in a capsule, which makes it hard to compare with the doses used in studies.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
-        "label": "The Menopause Society: 2023 Nonhormone Therapy Position Statement (press release, June 2023)",
-        "summary": "Lists recommended nonhormone treatments for hot flashes and says supplements and herbal remedies are not recommended."
       }
     ],
     "warnings": [
@@ -10843,31 +7139,6 @@ export const PRODUCT_RESEARCH = {
       "sourceUrl": "https://www.evernow.com/faq",
       "sourceLabel": "Evernow: FAQ"
     },
-    "scienceSources": [
-      {
-        "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002978.pub2/pdf/CDSR/CD002978/CD002978_abstract.pdf",
-        "label": "Cochrane Review: Oral oestrogen and combined oestrogen/progestogen therapy versus placebo for hot flushes",
-        "summary": "Across 24 trials with 3,329 women, oral hormone therapy cut weekly hot flushes by about 75% compared with placebo and also lowered their severity."
-      },
-      {
-        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8785511",
-        "label": "Menopause (2021): Delivery of menopause care during a pandemic, patient satisfaction with telephone visits",
-        "summary": "At one Toronto menopause clinic, patients rated remote visits highly and most who had tried both preferred them, which supports virtual menopause care in general, though this was not a study of Evernow."
-      }
-    ],
-    "clinicalNote": "Evernow's clinicians may suggest hormonal or non-hormonal treatment. The Menopause Society's 2022 statement says hormone therapy's benefits outweigh its risks for most healthy women with symptoms who are under 60 or within 10 years of menopause, that patches and lower doses may lower the risk of blood clots, and that the plan should be rechecked over time. Its 2023 statement lists recommended non-hormonal options for hot flashes, including cognitive behavioral therapy, clinical hypnosis, certain antidepressants, gabapentin and fezolinetant, and does not recommend supplements or herbal remedies.",
-    "clinicalNoteSources": [
-      {
-        "url": "https://menopause.org/wp-content/uploads/press-release/ht-position-statement-release.pdf",
-        "label": "The Menopause Society: 2022 Hormone Therapy Position Statement (press release, July 2022)",
-        "summary": "Says hormone therapy benefits outweigh risks for most healthy women with symptoms who are under 60 or within 10 years of menopause, with personalized dosing and regular rechecks."
-      },
-      {
-        "url": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
-        "label": "The Menopause Society: 2023 Nonhormone Therapy Position Statement (press release, June 2023)",
-        "summary": "Lists recommended nonhormone treatments for hot flashes and says supplements and herbal remedies are not recommended."
-      }
-    ],
     "warnings": [
       "Evernow providers don't handle medical emergencies; call 911 or go to the nearest emergency room.",
       "Some health needs aren't right for a telehealth visit, and your provider will decide that.",
@@ -10879,22 +7150,7 @@ export const PRODUCT_RESEARCH = {
       "label": "Evernow: Informed Consent"
     }
   },
-  "p-mypelvicbra-sports": {
-    "clinicalSources": [
-      {
-        "url": "https://mayoclinic.org/diseases-conditions/pelvic-organ-prolapse/diagnosis-treatment/drc-20562951?p=1",
-        "label": "Mayo Clinic: Pelvic organ prolapse, diagnosis and treatment",
-        "summary": "Lists pelvic floor exercises with biofeedback and a fitted pessary as the main nonsurgical treatments for prolapse, plus steps like avoiding heavy lifting and straining; it does not mention support garments."
-      }
-    ],
-    "scienceSources": [
-      {
-        "url": "https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2025.1691794/full",
-        "label": "Donnelly et al., Pelvic compression garments alter running biomechanics, perceived support, and fear of symptoms in postpartum women with pelvic floor dysfunction, Frontiers in Sports and Active Living (2026)",
-        "summary": "In 13 postpartum runners, compression shorts (a different brand, not a Pelvic Bra) smoothed pelvic motion, raised perceived support and lowered fear of symptoms, but did not change reported symptoms over a 7-minute run."
-      }
-    ]
-  },
+  "p-mypelvicbra-sports": {},
   "p-sootheher-elaris-pod": {
     "howToUse": {
       "intro": "SootheHer's own instructions couldn't be opened, so these steps follow NHS guidance on using a TENS device:",
@@ -10909,44 +7165,8 @@ export const PRODUCT_RESEARCH = {
       "sourceLabel": "NHS: TENS (transcutaneous electrical nerve stimulation)"
     }
   },
-  "p-winx-uti-test-treat": {
-    "ingredientScience": [
-      {
-        "name": "Nitrite test pad",
-        "text": "Nitrite is made by bacteria that turn nitrate in urine into nitrite, so a positive result points fairly strongly to a UTI if you have symptoms. A negative result does not rule one out: bacteria need about four hours in the bladder to make nitrite, some germs (like Enterococcus) don't make it at all, and vitamin C in your urine can cause a false negative. The pain reliever phenazopyridine can cause a false positive.",
-        "citations": [
-          {
-            "url": "https://www.aafp.org/pubs/afp/issues/2022/0700/office-based-urinalysis.html",
-            "label": "American Family Physician (AAFP), 2022: Office-Based Urinalysis: A Comprehensive Review"
-          }
-        ]
-      },
-      {
-        "name": "Leukocyte esterase test pad",
-        "text": "Leukocyte esterase is an enzyme released by white blood cells, so it signals inflammation or infection in the urinary tract, not only bacteria. On standard dipsticks, a negative nitrite plus negative leukocyte esterase result lowers the odds of a UTI, but in women with vague symptoms a negative strip still left about a 1 in 4 chance of infection, so a urine culture (a lab test that grows the bacteria) may still be needed.",
-        "citations": [
-          {
-            "url": "https://aafp.org/afp/2006/0101/p129.html",
-            "label": "American Family Physician (AAFP), 2006: Urine Dipstick for Diagnosing Urinary Tract Infection"
-          }
-        ]
-      }
-    ]
-  },
-  "p-winx-vaginal-health-test-treat": {
-    "ingredientScience": [
-      {
-        "name": "Vaginal pH indicator strip",
-        "text": "A healthy vaginal pH is usually 3.8 to 4.5, kept acidic mostly by lactic acid from Lactobacillus bacteria. Bacterial vaginosis (BV) and trichomoniasis (a common STI) are linked to a pH above 4.5, while a yeast infection barely changes pH, so a normal reading can't rule out yeast. Symptoms alone can't reliably tell these apart, so lab testing is still the way to confirm.",
-        "citations": [
-          {
-            "url": "https://www.doi.org/10.1155/2021/4948954",
-            "label": "Peer-reviewed study (2021, DOI 10.1155/2021/4948954): vaginal infection self-test kit vs clinical diagnosis"
-          }
-        ]
-      }
-    ]
-  },
+  "p-winx-uti-test-treat": {},
+  "p-winx-vaginal-health-test-treat": {},
   "p-winx-pregnancy-tests": {
     "ingredientScience": [
       {
@@ -10971,53 +7191,8 @@ export const PRODUCT_RESEARCH = {
       "label": "FDA: Home Use Tests, Pregnancy"
     }
   },
-  "p-winx-uti-pain-relief": {
-    "ingredientScience": [
-      {
-        "name": "Phenazopyridine hydrochloride",
-        "text": "A urinary pain reliever thought to numb the lining of the urinary tract; it eases burning, urgency, and frequency but is not an antibiotic and does not treat the infection. The recommended course is 2 days alongside an antibiotic. It was marketed before modern efficacy rules, so the trial evidence is limited and older, though it has a generally favorable safety record when used short-term. It's not recommended with severe kidney disease or G6PD deficiency (an inherited condition that makes red blood cells break down more easily).",
-        "citations": [
-          {
-            "url": "https://www.statpearls.com/point-of-care/143874",
-            "label": "StatPearls (NIH Bookshelf reference): Phenazopyridine"
-          }
-        ]
-      }
-    ]
-  },
+  "p-winx-uti-pain-relief": {},
   "p-winx-vaginal-probiotic": {
-    "ingredientScience": [
-      {
-        "name": "Lactobacillus rhamnosus",
-        "text": "A 2022 review of 10 randomized trials found that Lactobacillus probiotics, taken after antibiotic treatment for BV, lowered the chance of BV coming back (about 15% vs 26%). The evidence was rated moderate, most trials only followed women for about a month, and having L. rhamnosus in the product was not itself linked to better results.",
-        "citations": [
-          {
-            "url": "https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2022.938838/full",
-            "label": "Frontiers in Nutrition, 2022: Probiotics to reduce BV recurrence, systematic review and meta-analysis of RCTs"
-          }
-        ]
-      },
-      {
-        "name": "Lactobacillus reuteri",
-        "text": "Usually studied paired with L. rhamnosus. In a UK randomized trial of 238 pregnant women, a daily oral capsule of L. rhamnosus GR-1 and L. reuteri RC-14 did not change the vaginal microbiome or BV rates compared with placebo. Results depend on the exact strain, and this label doesn't say which L. reuteri strain it uses.",
-        "citations": [
-          {
-            "url": "https://openaccess.city.ac.uk/22010",
-            "label": "BJOG, 2020: Oral probiotics (L. rhamnosus GR-1 + L. reuteri RC-14) and vaginal microbiota in pregnancy, RCT"
-          }
-        ]
-      },
-      {
-        "name": "Inulin",
-        "text": "A plant fiber that acts as a prebiotic (food for helpful bacteria). Human studies show it mainly boosts Bifidobacterium in the colon, with a smaller effect on lactobacilli; that research is about gut health, not vaginal health.",
-        "citations": [
-          {
-            "url": "https://core-cms.cambridgecore.org/core/services/aop-cambridge-core/content/view/4C8D01FE5AF4A6A81965344B26FAB14D/S0007114502000958a.pdf/prebiotic-effects-of-inulin-and-oligofructose.pdf",
-            "label": "British Journal of Nutrition, 2002: Prebiotic effects of inulin and oligofructose"
-          }
-        ]
-      }
-    ],
     "warnings": [
       "The risk of harm from probiotics is higher in people with severe illnesses or a weakened immune system.",
       "Some probiotic products have been found to contain microbes not listed on the label.",
@@ -11031,42 +7206,12 @@ export const PRODUCT_RESEARCH = {
   "p-winx-uti-daily-defense": {
     "ingredientScience": [
       {
-        "name": "Cranberry extract (proanthocyanidins)",
-        "text": "A 2023 Cochrane review of 50 trials (8,857 people) found cranberry products probably lower the risk of UTIs; in women with recurrent UTIs, risk dropped by about a quarter. It showed little or no benefit for pregnant women, elderly people in care homes, or people whose bladder doesn't empty fully.",
-        "citations": [
-          {
-            "url": "https://www.cochrane.org/CD001321/UTI_cranberry-for-preventing-urinary-tract-infections",
-            "label": "Cochrane Review, 2023: Cranberries for preventing urinary tract infections"
-          }
-        ]
-      },
-      {
-        "name": "D-mannose",
-        "text": "A sugar meant to stop E. coli from sticking to the bladder wall. In a 2024 randomized trial of 598 women with recurrent UTIs in UK primary care, daily D-mannose did not reduce UTIs compared with placebo (51% vs 56%, not a significant difference), and the authors said it shouldn't be recommended for prevention in this group.",
-        "citations": [
-          {
-            "url": "https://urology.wisc.edu/wp-content/uploads/2024/05/D-Mannose-for-Prevention-of-Recurrent-Urinary-Tract-Infection-Among-Women.pdf",
-            "label": "JAMA Internal Medicine, 2024: D-Mannose for Prevention of Recurrent UTI Among Women, RCT (copy hosted by UW Urology)"
-          }
-        ]
-      },
-      {
         "name": "Turmeric",
         "text": "NIH's integrative health center says there isn't enough evidence to conclude turmeric or curcumin helps any health condition, and it doesn't list UTIs among the uses studied. Highly absorbable curcumin products have been linked to liver injury in some people, and turmeric supplements may be unsafe in pregnancy.",
         "citations": [
           {
             "url": "https://www.nccih.nih.gov/health/turmeric",
             "label": "NCCIH (NIH): Turmeric"
-          }
-        ]
-      },
-      {
-        "name": "Vitamin C",
-        "text": "Adults should keep total vitamin C under 2,000 mg a day; large supplement doses can cause stomach upset or diarrhea and, in some people, kidney stones. Vitamin C in urine can also make the nitrite pad on a home UTI test read falsely negative.",
-        "citations": [
-          {
-            "url": "https://mayoclinic.org/healthy-lifestyle/adult-health/expert-answers/shaving/faq-20058030",
-            "label": "Mayo Clinic: Too much vitamin C, is it harmful?"
           }
         ]
       }

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 /* Short confirmations ("Saved", "You're signed out") in one place, read out by screen readers. */
-export default function GlobalToast() {
+export default function GlobalToast({ variant = 'web' }) {
   const [msg, setMsg] = useState(null);
   const timer = useRef(0);
   useEffect(() => {
@@ -14,7 +14,7 @@ export default function GlobalToast() {
     return () => { window.removeEventListener('ay-toast', on); window.clearTimeout(timer.current); };
   }, []);
   return (
-    <div className="ay-gtoast" role="status" aria-live="polite">
+    <div className={`ay-gtoast${variant === 'app' ? ' is-app' : ''}`} role="status" aria-live="polite">
       {msg && (
         <div className="ay-gtoast__card">
           <span>{msg.text}</span>

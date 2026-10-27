@@ -11,6 +11,7 @@
  *   Matching uses it only for needs she already chose (see matchContext.js).
  */
 import { resolveDaily, series } from './dedupe.js';
+import { localToday } from '../utils/localDate.js';
 
 const DAY = 86400000;
 export const RECENT_DAYS = 7;
@@ -203,12 +204,57 @@ function activitySection(resolved, today) {
 
 export const SECTION_ORDER = ['sleep', 'cycle', 'recovery', 'activity', 'heart'];
 
+/* ------------------------------- Period timing ------------------------------ */
+// Needs whose products she uses in the days before or during a period. Timing
+// only ever re-orders picks inside one of these when she CHOSE it
+// (src/health/matchContext.js, src/matching/healthShaping.js).
+export const PERIOD_SOON_NEEDS = ['period.heavy', 'period.light', 'period.product_support', 'pain.menstrual_cramp', 'cycle.pms', 'mood.pmdd', 'bloating.cycle_related', 'mood.cycle_related', 'pain.cycle_headache', 'cycle.breast_tenderness'];
+export const PERIOD_NOW_NEEDS = ['period.heavy', 'period.light', 'period.product_support', 'pain.menstrual_cramp'];
+export const PERIOD_SOON_DAYS = 5;
+// Pain relievers for period pain work best started 1 to 2 days before bleeding
+// and kept up for the first 2 to 3 days (Royal Children's Hospital Melbourne
+// clinical guideline, Dysmenorrhoea). That is why a period due within a few
+// days moves things used around the period ahead of things that take weeks.
+// MedlinePlus 003150 (checked Oct 24 2026, GOV_SOURCES.md): start an NSAID the day before your
+// period is expected. Replaces the Royal Children's Hospital guideline (not .gov).
+export const PERIOD_TIMING_SOURCE = 'https://medlineplus.gov/ency/article/003150.htm';
+
+/**
+ * "Your period is due in about 3 days" / "You're on your period": a timing
+ * fact from her own logs, used to order picks within needs she chose.
+ * Never a new need, never a suggestion.
+ */
+export function periodTiming(resolved, cycle, today) {
+  if (!cycle || cycle.status !== 'ready') return [];
+  const flow = series(resolved, 'menstrual_flow');
+  const end = toTime(today);
+  const onNow = flow.some((p) => p.value >= 1 && end - toTime(p.day) <= DAY && toTime(p.day) <= end);
+  let timing = null;
+  if (onNow) {
+    timing = { timing: 'period_now', daysUntil: 0, summary: "You're on your period", needIds: PERIOD_NOW_NEEDS };
+  } else if (cycle.estimate?.day) {
+    const days = Math.round((toTime(cycle.estimate.day) - end) / DAY);
+    if (days >= 0 && days <= PERIOD_SOON_DAYS) {
+      timing = { timing: 'period_soon', daysUntil: days, summary: days === 0 ? 'Your period is due about now' : `Your period is due in about ${days} day${days === 1 ? '' : 's'}`, needIds: PERIOD_SOON_NEEDS };
+    }
+  }
+  if (!timing) return [];
+  const { needIds, ...rest } = timing;
+  return needIds.map((needId) => ({ needId, kind: 'timing', ...rest, metric: 'menstrual_flow', sources: cycle.sources, section: 'cycle', cite: PERIOD_TIMING_SOURCE }));
+}
+
 /**
  * @param {Array} rows   raw daily rows from any sources (deduped here)
  * @param {object} [opts] { today: 'YYYY-MM-DD', preferred: { category: source } }
  */
+function missingToday(name) {
+  if (import.meta.env?.DEV) console.warn(`${name}: pass { today: localToday() }`);
+  return localToday();
+}
+
 export function buildInsights(rows, opts = {}) {
-  const today = opts.today || isoDay(Date.now());
+  // `today` is her local day (P0 date bug): callers pass localToday(). Never the UTC date.
+  const today = opts.today || missingToday('buildInsights');
   const resolved = resolveDaily(rows, opts.preferred);
   const sections = {
     sleep: sleepSection(resolved, today),
@@ -221,5 +267,8 @@ export function buildInsights(rows, opts = {}) {
     today,
     sections: SECTION_ORDER.map((id) => sections[id]).filter((s) => s.status !== 'empty'),
     signals: SECTION_ORDER.map((id) => sections[id].signal && { ...sections[id].signal, sources: sections[id].sources, section: id }).filter(Boolean),
+    // Timing facts (period due soon / on now). Matching reads these next to
+    // `signals`; they never become a suggested goal.
+    timing: periodTiming(resolved, sections.cycle, today),
   };
 }

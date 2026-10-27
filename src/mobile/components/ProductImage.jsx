@@ -2,11 +2,21 @@ import { useEffect, useState } from 'react';
 import { safeProductImageSrc, resolveProductImage } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
 
-function PhotoPlaceholder({ style }) {
+// No photo yet: the same designed tile as the website (ProductTileImage.jsx):
+// the brand in the display face on a tint picked from its name, a hairline,
+// then "Photo coming soon". Not a letter avatar (review, Oct 24).
+const TINTS = ['pink', 'butter', 'sky'];
+function PhotoPlaceholder({ style, product }) {
+  const name = String(product?.name || '').trim();
+  const brand = String(product?.brand || '').trim();
+  const key = brand || name || 'ayna';
+  const tint = TINTS[[...key].reduce((n, c) => n + c.charCodeAt(0), 0) % TINTS.length];
   return (
-    <div className="ayna-fresh-photo-placeholder" role="img" aria-label="Product photo unavailable" style={{ position: 'absolute', inset: 0, ...style }}>
-      <span aria-hidden="true" className="ayna-fresh-photo-placeholder-shape" />
-      <span aria-hidden="true" className="ayna-fresh-photo-placeholder-mark">ayna</span>
+    <div className={`ayna-fresh-photo-placeholder ay-ph is-${tint}`} role="img" aria-label={name ? `No photo yet for ${name}` : 'Product photo unavailable'} style={{ position: 'absolute', inset: 0, ...style }}>
+      <span aria-hidden="true" className="ay-ph-name">{key}</span>
+      <span aria-hidden="true" className="ay-ph-rule" />
+      {/* Services (apps, telehealth, programs) have no product photo to come: say what they are. */}
+      <span aria-hidden="true" className="ay-ph-soon">{product?.type === 'digital' ? String(product.category || 'Service').replace(/[-_]/g, ' ').replace(/^./, (c) => c.toUpperCase()) : 'Photo coming soon'}</span>
     </div>
   );
 }
@@ -23,7 +33,7 @@ function PhotoPlaceholder({ style }) {
  * so a prop change to a different src is automatically treated as
  * untried/not-errored during render, with no effect needed to clear it.
  */
-export default function ProductImage({ src, alt, allowBrandLogo = false, style, product }) {
+export default function ProductImage({ src, alt, allowBrandLogo = false, style, product, fallback = null }) {
   // Cleaned white-background studio photo (by catalog id) wins over `src`.
   const directSrc = productImageOverride(product) || safeProductImageSrc(src, allowBrandLogo);
   // Same live photo lookup the website always used (/api/product-image via
@@ -44,7 +54,7 @@ export default function ProductImage({ src, alt, allowBrandLogo = false, style, 
   const [erroredSrc, setErroredSrc] = useState(null);
 
   if (!safeSrc || erroredSrc === safeSrc) {
-    return <PhotoPlaceholder style={style} />;
+    return fallback || <PhotoPlaceholder style={style} product={product} />;
   }
   return (
     <img

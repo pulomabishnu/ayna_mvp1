@@ -1,7 +1,11 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
+import usePersistentState from '../hooks/usePersistentState.js';
+import CharRing from './ui/CharRing.jsx';
+import { isOverLimit } from '../utils/charLimit.js';
 import { apiUrl } from '../utils/apiUrl';
 import { checkCommunityText, CRISIS_LINE } from '../utils/communityRules';
 import '../styles/suggest.css';
+import { fetchWithTimeout } from '../utils/network.js';
 
 // Anonymous "Suggest a product" / "Suggest a read" box, shared by the website
 // (Shop, Library) and the app (Browse, Library). Sends only the suggestion text
@@ -20,7 +24,7 @@ const readQueue = () => { try { const q = JSON.parse(localStorage.getItem(QUEUE_
 const writeQueue = (q) => { try { localStorage.setItem(QUEUE_KEY, JSON.stringify(q.slice(-5))); } catch { /* private mode */ } };
 
 async function postSuggestion(payload) {
-  const res = await fetch(apiUrl('/api/suggestions'), {
+  const res = await fetchWithTimeout(apiUrl('/api/suggestions'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'omit',
@@ -52,7 +56,7 @@ async function flushQueue() {
 }
 
 const COPY = {
-  product: { title: "Can't find it?", sub: 'Tell us what to add to Shop.', open: 'Suggest a product' },
+  product: { title: "Can't find it?", sub: 'Tell us what to add to Explore.', open: 'Suggest a product' },
   read: { title: 'Want a read on something?', sub: 'Tell us what to write about next.', open: 'Suggest a read' },
 };
 
@@ -68,10 +72,11 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState('idle'); // idle | sending | sent
   const [error, setError] = useState('');
-  const [productName, setProductName] = useState('');
-  const [link, setLink] = useState('');
-  const [reason, setReason] = useState('');
-  const [topic, setTopic] = useState('');
+  // Drafts survive a refresh, per place the box sits.
+  const [productName, setProductName, forgetName] = usePersistentState(`suggest:${context}:name`, '');
+  const [link, setLink, forgetLink] = usePersistentState(`suggest:${context}:link`, '');
+  const [reason, setReason, forgetReason] = usePersistentState(`suggest:${context}:reason`, '');
+  const [topic, setTopic, forgetTopic] = usePersistentState(`suggest:${context}:topic`, '');
   const [trap, setTrap] = useState('');
   const [crisis, setCrisis] = useState(false);
   const firstField = useRef(null);
@@ -82,8 +87,9 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
   useEffect(() => { if (status === 'sent') thanksRef.current?.focus({ preventScroll: true }); }, [status]);
 
   const copy = COPY[kind];
-  const canSend = kind === 'product' ? productName.trim().length >= 2 : topic.trim().length >= 3;
+  const canSend = (kind === 'product' ? productName.trim().length >= 2 && !isOverLimit(reason, 500) : topic.trim().length >= 3 && !isOverLimit(topic, 300)) && productName.length <= 120 && link.length <= 300;
 
+  const forgetDrafts = () => { forgetName(); forgetLink(); forgetReason(); forgetTopic(); };
   const reset = () => {
     setProductName(''); setLink(''); setReason(''); setTopic(''); setError(''); setStatus('idle'); setCrisis(false);
   };
@@ -101,12 +107,13 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
       : { kind, topic: topic.trim(), context, platform: variant === 'app' ? 'app' : 'web', website: trap };
     try {
       const r = await postSuggestion(payload);
-      if (r.ok) { setStatus('sent'); return; }
-      if (r.status >= 500) { writeQueue([...readQueue(), payload]); setStatus('sent'); return; }
+      if (r.ok) { forgetDrafts(); setStatus('sent'); return; }
+      if (r.status >= 500) { writeQueue([...readQueue(), payload]); forgetDrafts(); setStatus('sent'); return; }
       setError(r.error || 'That did not send. Try again?');
       setStatus('idle');
     } catch {
       writeQueue([...readQueue(), payload]);
+      forgetDrafts();
       setStatus('sent');
     }
   };
@@ -135,7 +142,7 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
           <span className="ay-suggest__check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span>
           <div className="ay-suggest__copy">
             <h2 id={`${uid}-t`}>Thanks, we got it.</h2>
-            <p>{kind === 'product' ? 'Got it. We look at every product idea.' : 'Got it. It goes on our reading list.'}</p>
+            <p>{kind === 'product' ? 'We look at every product idea.' : 'It goes on our reading list.'}</p>
             {crisis && <p className="ay-suggest__crisis">{CRISIS_LINE}</p>}
           </div>
           <div className="ay-suggest__thanks-actions">
@@ -176,14 +183,14 @@ export default function SuggestBox({ mode = 'product', variant = 'web', context 
             </label>
             <label className="ay-suggest__field">
               <span>Why it should be here <em>optional</em></span>
-              <textarea value={reason} onChange={(e) => setReason(e.target.value)} maxLength={500} rows={3} placeholder="What it helps with, why you like it" />
+              <span className="ay-charfield"><textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} placeholder="What it helps with, why you like it" aria-invalid={isOverLimit(reason, 500) || undefined} /><CharRing value={reason} max={500} /></span>
             </label>
           </div>
         ) : (
           <div className="ay-suggest__fields">
             <label className="ay-suggest__field">
               <span>Topic or question</span>
-              <textarea ref={firstField} value={topic} onChange={(e) => setTopic(e.target.value)} maxLength={300} rows={3} placeholder="e.g. Is it normal for my cycle to change after 35?" required />
+              <span className="ay-charfield"><textarea ref={firstField} value={topic} onChange={(e) => setTopic(e.target.value)} rows={3} placeholder="e.g. Is it normal for my cycle to change after 35?" required aria-invalid={isOverLimit(topic, 300) || undefined} /><CharRing value={topic} max={300} /></span>
             </label>
           </div>
         )}

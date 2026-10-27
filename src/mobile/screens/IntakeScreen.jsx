@@ -1,10 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { defineOption } from '../data/glossary.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
-import { ChipList, StickerGrid, SearchField, ChoiceRows, AgeDial, ZipTicket, LevelMeter, TrackLine, PriceStacks, DotScale, BrandSpectrum, AccountCards, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
+import { ChipList, StickerGrid, SearchField, ChoiceRows, AgeDial, ZipTicket, TrackLine, PriceStacks, AccountCards, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
+import BlendScale from '../../components/quiz/BlendScale.jsx';
+import { BRAND_SHORT } from '../../components/quiz/blendLabels.js';
+import { haptic } from '../../utils/haptics.js';
 import { INTAKE_SCENES, SECTION_TONES, SECTION_LABELS } from '../components/intake/intakeScenes.js';
 import '../intake-play.css';
+import '../../styles/onboarding.css';
 import RecommendationCountPicker from '../components/RecommendationCountPicker.jsx';
 import QuizIntro from './intake/QuizIntro.jsx';
 import SmartSearchInput from '../../components/search/SmartSearchInput.jsx';
@@ -18,6 +22,8 @@ import {
   CHECKPOINT_STEP,
   LIFE_STAGE_EXCLUSIVE,
   MEDICATION_STATUS,
+  SAFETY_ANSWER_LABELS,
+  CONDITION_EXCLUSIVE,
   URGENT_STATUS,
   firstUnansweredStepId,
   firstOptionalResumeStepId,
@@ -32,8 +38,6 @@ import {
   AVOID_PAIRS,
   BRAND_OPENNESS,
   BREASTFEEDING_STATUS,
-  BRAND_SUGGESTIONS,
-  CATALOG_PRODUCT_NAMES,
   CONDITIONS,
   EMPTY,
   FOLLOWUP_QUESTIONS,
@@ -55,7 +59,6 @@ import {
   PREGNANCY_TRIMESTER,
   PRICE_RANGES,
   PRODUCT_FORMATS,
-  PRODUCT_OR_BRAND_SUGGESTIONS,
   STOP_REASONS,
   SUPPORT_GROUPS,
   UTI_FREQUENCY,
@@ -70,8 +73,14 @@ import {
   readIntakeDraft,
   reconstructIntakeFromSnapshot,
   requiredReady,
+  missingAnswerHint,
+  resumeStepId,
   ttcDurationOptions,
+  withSavedOption,
+  FIRST_NAME_MAX,
 } from '../data/intakeModel.js';
+import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../data/intakeCatalog.js';
+import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../data/onboardingFlow.js';
 
 // The app's quiz. Questions, order, required/optional rules, branching and
 // saved answers all live in mobile/data/intakeModel.js (shared with the
@@ -86,34 +95,34 @@ import {
 // each tile's badge can recolor with the tile's own selected/unselected ink.
 const FORMAT_ICONS = {
   'Pills or capsules': (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="10.5" width="18" height="7" rx="3.5" transform="rotate(-35 12 14)" stroke="currentColor" strokeWidth="1.8" /><path d="M9.5 8.2l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="10.5" width="18" height="7" rx="3.5" transform="rotate(-35 12 14)" stroke="currentColor" strokeWidth="1.75" /><path d="M9.5 8.2l5 5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /></svg>
   ),
   Gummies: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4c3 0 5 2.2 5 5 0 1-.3 1.7-.8 2.4.9.5 1.6 1.5 1.6 3 0 2.5-2.1 4.6-4.7 4.6-1 0-1.9-.3-2.6-.8-.7.5-1.6.8-2.6.8-2.6 0-4.7-2-4.7-4.6 0-1.5.7-2.5 1.6-3-.5-.7-.8-1.4-.8-2.4 0-2.8 2-5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4c3 0 5 2.2 5 5 0 1-.3 1.7-.8 2.4.9.5 1.6 1.5 1.6 3 0 2.5-2.1 4.6-4.7 4.6-1 0-1.9-.3-2.6-.8-.7.5-1.6.8-2.6.8-2.6 0-4.7-2-4.7-4.6 0-1.5.7-2.5 1.6-3-.5-.7-.8-1.4-.8-2.4 0-2.8 2-5 5-5" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /></svg>
   ),
   Powders: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 3h8l1 4H7l1-4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M6 8h12l1.2 10.4a2 2 0 0 1-2 2.6H6.8a2 2 0 0 1-2-2.6L6 8Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M9 12h6M8.5 15.5h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 3h8l1 4H7l1-4Z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /><path d="M6 8h12l1.2 10.4a2 2 0 0 1-2 2.6H6.8a2 2 0 0 1-2-2.6L6 8Z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /><path d="M9 12h6M8.5 15.5h7" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /></svg>
   ),
   'Drinks or teas': (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 8h11l-1 9.5A2 2 0 0 1 13 19.3H8a2 2 0 0 1-2-1.8L5 8Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M16 9.5h1.5a2.5 2.5 0 0 1 0 5H16" stroke="currentColor" strokeWidth="1.8" /><path d="M8 5.2c.4-.7 0-1-.3-1.5M12 5.2c.4-.7 0-1-.3-1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 8h11l-1 9.5A2 2 0 0 1 13 19.3H8a2 2 0 0 1-2-1.8L5 8Z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /><path d="M16 9.5h1.5a2.5 2.5 0 0 1 0 5H16" stroke="currentColor" strokeWidth="1.75" /><path d="M8 5.2c.4-.7 0-1-.3-1.5M12 5.2c.4-.7 0-1-.3-1.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /></svg>
   ),
   'Creams, lotions, or gels': (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 10c0-3 1.8-6 4-6.8C14.2 4 16 7 16 10v8a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-8Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M8 10h8" stroke="currentColor" strokeWidth="1.8" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 10c0-3 1.8-6 4-6.8C14.2 4 16 7 16 10v8a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-8Z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /><path d="M8 10h8" stroke="currentColor" strokeWidth="1.75" /></svg>
   ),
   Patches: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="5" stroke="currentColor" strokeWidth="1.8" /><circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6" /><path d="M7 7l1.6 1.6M17 7l-1.6 1.6M7 17l1.6-1.6M17 17l-1.6-1.6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="5" stroke="currentColor" strokeWidth="1.75" /><circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.75" /><path d="M7 7l1.6 1.6M17 7l-1.6 1.6M7 17l1.6-1.6M17 17l-1.6-1.6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /></svg>
   ),
   Suppositories: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3c2 2 3 5 3 8.5 0 4-1.3 7-3 9.5-1.7-2.5-3-5.5-3-9.5C9 8 10 5 12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3c2 2 3 5 3 8.5 0 4-1.3 7-3 9.5-1.7-2.5-3-5.5-3-9.5C9 8 10 5 12 3Z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /></svg>
   ),
   'Devices or wearables': (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="7" y="2.5" width="10" height="19" rx="2.5" stroke="currentColor" strokeWidth="1.8" /><path d="M10.5 18.5h3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="7" y="2.5" width="10" height="19" rx="2.5" stroke="currentColor" strokeWidth="1.75" /><path d="M10.5 18.5h3" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /></svg>
   ),
   'Period-care products': (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3.5c3 4 6 8 6 11.5a6 6 0 1 1-12 0c0-3.5 3-7.5 6-11.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3.5c3 4 6 8 6 11.5a6 6 0 1 1-12 0c0-3.5 3-7.5 6-11.5Z" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round" /></svg>
   ),
   'No preference': (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.8" /><path d="M6.5 17.5l11-11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.75" /><path d="M6.5 17.5l11-11" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" /></svg>
   ),
 };
 /** Small "type your own" field: shows as a + chip, opens to an input. */
@@ -129,7 +138,7 @@ function AvoidMustHave({ avoidItems, avoidSelected, wantItems, wantSelected, onT
         <button type="button" role="tab" aria-selected={isAvoid} className={`is-avoid${isAvoid ? ' is-on' : ''}`} onClick={() => setTab('avoid')}>Leave out{avoidSelected.length > 0 && <span>{avoidSelected.length}</span>}</button>
         <button type="button" role="tab" aria-selected={!isAvoid} className={`is-want${!isAvoid ? ' is-on' : ''}`} onClick={() => setTab('want')}>Should be{wantSelected.length > 0 && <span>{wantSelected.length}</span>}</button>
       </div>
-      <div className="ip-avoid-panel" role="tabpanel" key={tab}>
+      <div className={`ip-avoid-panel${isAvoid ? ' is-avoid' : ''}`} role="tabpanel" key={tab}>
         <ChipList items={(isAvoid ? avoidItems : wantItems).map(label)} selected={(isAvoid ? avoidSelected : wantSelected).map(label)} onToggle={(text) => onToggle(AVOID_VALUE_BY_LABEL[text] || text)} />
       </div>
       <div className="ip-avoid-foot">
@@ -184,8 +193,8 @@ function ChoiceGrid({ items, selected = [], onToggle, icons, labels, glyphs }) {
 
 // Chip spec (design pattern C1/G1), flex-wrapped pills, not vertical rows.
 // Used both flat (conditions) and grouped under a label (SearchableGroups).
-function RowChoiceList({ items, selected = [], onToggle }) {
-  return <ChipList items={items} selected={selected} onToggle={onToggle} />;
+function RowChoiceList({ items, selected = [], onToggle, labels }) {
+  return <ChipList items={items} selected={selected} onToggle={onToggle} labels={labels} />;
 }
 
 // Shared search-bar chrome (design rule: "search on every list over ~12
@@ -209,7 +218,7 @@ function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd,
   return <div className="ip-picker">
     {searchable && <SearchBar value={search} onChange={onSearch} placeholder={placeholder} />}
     <AddCustomChoice query={search} options={[...items, ...selected]} onAdd={onAdd} />
-    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} labels={labels} glyphs={glyphs} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} /> : <p className="ip-empty">No matches</p>}
+    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} labels={labels} glyphs={glyphs} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} labels={labels} /> : <p className="ip-empty">No matches</p>}
     {custom.length > 0 && <div className="ip-custom"><small>Added by you</small><RowChoiceList items={custom} selected={selected} onToggle={onToggle} /></div>}
   </div>;
 }
@@ -226,8 +235,8 @@ function Pills({ options, selected, onToggle, compact, exclusiveValues = [] }) {
 // Vertical single-select radio list (design pattern F1), the workhorse
 // pattern for every Yes/No/Not-sure-style question, replacing the old
 // horizontal segmented-button bar.
-function Segmented({ options, value, onChange }) {
-  return <ChoiceRows options={options} value={value} onChange={onChange} />;
+function Segmented({ options, value, onChange, labels }) {
+  return <ChoiceRows options={options} value={value} onChange={onChange} labels={labels} />;
 }
 
 // Pattern K1: price bands as a vertical row list rather than chips, a
@@ -482,7 +491,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
       <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', borderBottom: '1px solid ' + ROW_BORDER, background: CARD_BG }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <button type="button" className="ayna-intake-control" aria-label="Change age" onClick={onChangeAge} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD }}>About you</div>
@@ -494,7 +503,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
       <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto' }}>
         <div style={{ padding: '38px 24px 30px', background: `linear-gradient(170deg, ${WARNING_BG}, ${CARD_BG})` }}>
           <div style={{ width: 54, height: 54, borderRadius: 99, background: CARD_BG, border: '1.5px solid ' + WARNING_BORDER_SOFT, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 20px -10px rgba(180,64,42,.3)' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l8 4v5c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V7l8-4z" /><path d="M12 10v3.5" /><path d="M12 16.5h.01" /></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l8 4v5c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V7l8-4z" /><path d="M12 10v3.5" /><path d="M12 16.5h.01" /></svg>
           </div>
           <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD, marginTop: 20 }}>Age requirement</div>
           <div style={{ fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.15, color: INK, marginTop: 9 }}>We can't take you through the quiz</div>
@@ -543,12 +552,22 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
 /* --------------------------------- Main screen --------------------------------- */
 
 
-export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, startAtOptional = false, introEnabled = true }) {
+export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, startAtOptional = false, startAtStep = '', introEnabled = true, flow = 'auto' }) {
+  // First run (no saved profile): the seven short setup screens
+  // (onboardingFlow.js). Editing a saved profile keeps the full quiz.
+  // Editing just her topics or goals (only the setup screens ask them): that one screen, then save.
+  const singleStep = Boolean(initialSnapshot && ['helpTopics', 'goals'].includes(startAtStep));
+  // flow 'more': the optional setup questions, opened from the reveal's
+  // "Make my matches more personal" (team direction, section 29).
+  const onboarding = flow === 'onboarding' || flow === 'more' || singleStep || (flow === 'auto' && !initialSnapshot && !startAtBeginning);
+  const obPart = singleStep ? 'all' : flow === 'more' ? 'more' : 'core';
   const [savedDraft] = useState(() => !initialSnapshot && !startAtBeginning ? readIntakeDraft() : null);
   // Opened from "Make my matches more personal" (Ecosystem): straight into the optional questions.
   const [enteredAtOptional] = useState(() => Boolean(startAtOptional && initialSnapshot && !savedDraft));
   const [intake, setIntake] = useState(() => savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot));
-  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || savedDraft?.stepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
+  // A draft or deep link on a follow-up that moved under the life stage opens the life stage.
+  const [draftStepId] = useState(() => (savedDraft?.stepId ? resumeStepId({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId) : ''));
+  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtStep && initialSnapshot ? resumeStepId(reconstructIntakeFromSnapshot(initialSnapshot), startAtStep) : null) || (flow === 'more' ? getOnboardingSteps(reconstructIntakeFromSnapshot(initialSnapshot), { part: 'more' })[0]?.id : null) || (onboarding ? (savedDraft && getOnboardingSteps({ ...EMPTY, ...savedDraft.intake }, { part: 'core' }).some((st) => st.id === draftStepId) ? draftStepId : 'helpTopics') : null) || draftStepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started (not
   // re-derived as answers change), so a step's flag clears only by actually
@@ -561,7 +580,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   });
   useEffect(() => {
     if (initialSnapshot || startAtBeginning) return;
-    const hasProgress = stepId !== 'age' || JSON.stringify(intake) !== JSON.stringify(EMPTY);
+    const hasProgress = (stepId !== 'age' && stepId !== 'helpTopics') || JSON.stringify(intake) !== JSON.stringify(EMPTY);
     try {
       if (hasProgress) localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ version: 1, intake, stepId }));
       else localStorage.removeItem(INTAKE_DRAFT_KEY);
@@ -584,19 +603,22 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     clearTimeout(holdRef.current.timer);
     holdRef.current.fired = false;
     if (!hit) return;
-    holdRef.current.timer = setTimeout(() => { holdRef.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); navigator.vibrate?.(8); }, 450);
+    holdRef.current.timer = setTimeout(() => { holdRef.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); haptic('selection'); }, 450);
   };
   const endHold = () => clearTimeout(holdRef.current.timer);
   const swallowClickAfterHold = (event) => {
-    if (holdRef.current.fired) { event.preventDefault(); event.stopPropagation(); holdRef.current.fired = false; }
+    if (holdRef.current.fired) { event.preventDefault(); event.stopPropagation(); holdRef.current.fired = false; return; }
+    // A picked answer gets a selection tick on the phone (no-op on the web).
+    if (event.target.closest('button, [role="radio"], [role="checkbox"], label')) haptic('selection');
   };
 
   // Part 1: the required minimum (with the follow-ups that apply). Then a
   // checkpoint. Part 2: optional refinements, each one skippable.
   const { required: requiredSteps, optional: optionalSteps } = useMemo(() => splitIntakeSteps(intake), [intake]);
-  const atCheckpoint = stepId === CHECKPOINT_STEP;
-  const phase = optionalSteps.some((s) => s.id === stepId) ? 'optional' : 'required';
-  const visibleSteps = phase === 'optional' ? optionalSteps : requiredSteps;
+  const onboardingSteps = useMemo(() => (onboarding ? getOnboardingSteps(intake, { part: obPart }) : []), [onboarding, obPart, intake]);
+  const atCheckpoint = !onboarding && stepId === CHECKPOINT_STEP;
+  const phase = onboarding ? 'onboarding' : optionalSteps.some((s) => s.id === stepId) ? 'optional' : 'required';
+  const visibleSteps = onboarding ? onboardingSteps : phase === 'optional' ? optionalSteps : requiredSteps;
   const currentIndex = Math.max(0, visibleSteps.findIndex((s) => s.id === stepId));
   const step = atCheckpoint ? { id: CHECKPOINT_STEP, section: 'checkpoint', title: '', type: 'checkpoint' } : (visibleSteps[currentIndex] || visibleSteps[0]);
   const isLast = currentIndex === visibleSteps.length - 1;
@@ -631,6 +653,20 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     setSearch('');
   };
 
+  const [helpOtherOpen, setHelpOtherOpen] = useState(false);
+  const toggleHelpTopic = (value) => {
+    if (value === SOMETHING_ELSE) {
+      const open = helpOtherOpen || String(intake.supportOtherText || '').trim();
+      setHelpOtherOpen(!open);
+      if (open) set('supportOtherText', '');
+      return;
+    }
+    setIntake((prev) => {
+      const cur = prev.helpTopics || [];
+      return { ...prev, helpTopics: cur.includes(value) ? cur.filter((x) => x !== value) : [...cur, value] };
+    });
+  };
+
   const goTo = (id, dir) => { setSearch(''); setZipError(''); setDirection(dir); setStepId(id); };
   const finish = (answers = intake) => {
     try { localStorage.removeItem(INTAKE_DRAFT_KEY); } catch { /* storage unavailable */ }
@@ -639,12 +675,18 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   };
   const goBack = () => {
     if (atCheckpoint) { goTo(requiredSteps[requiredSteps.length - 1].id, 'back'); return; }
+    if (onboarding) { if (currentIndex > 0) goTo(visibleSteps[currentIndex - 1].id, 'back'); else if (onBack) onBack(); return; }
     if (currentIndex > 0) goTo(visibleSteps[currentIndex - 1].id, 'back');
     else if (phase === 'optional' && enteredAtOptional && onBack) onBack();
     else if (phase === 'optional') goTo(CHECKPOINT_STEP, 'back');
     else if (onBack) onBack();
   };
   const advance = (answers = intake) => {
+    // Recompute: an answer on this step can add or remove follow-ups after it.
+    const list = onboarding ? getOnboardingSteps(answers, { part: obPart }) : visibleSteps;
+    const at = list.findIndex((s) => s.id === step.id);
+    if (singleStep) { finish(answers); return; }
+    if (onboarding) { if (at >= 0 && at < list.length - 1) goTo(list[at + 1].id, 'forward'); else finish(answers); return; }
     if (!isLast) { goTo(visibleSteps[currentIndex + 1].id, 'forward'); return; }
     if (phase === 'required') goTo(CHECKPOINT_STEP, 'forward');
     else finish(answers);
@@ -674,7 +716,14 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
   const renderBody = () => {
     if (step.type === 'age') return (
-      <AgeDial value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />
+      <>
+        {/* Her first name, asked here only (sign-up never asks again). */}
+        <label className="ip-name">
+          <span>Your first name <small>Optional</small></span>
+          <input type="text" autoComplete="given-name" maxLength={FIRST_NAME_MAX} value={intake.name || ''} onChange={(e) => set('name', e.target.value)} />
+        </label>
+        <AgeDial value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />
+      </>
     );
 
     if (step.type === 'lifeStage') return (
@@ -682,6 +731,25 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         {showMidlifeFirst && <p className="ip-hint">Midlife stages moved up. You can pick Perimenopause and Regular periods together.</p>}
         <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" labels={LIFE_STAGE_LABELS} glyphs={LIFE_STAGE_GLYPHS} searchable={false} />
         <div className="ip-gap"><ChipList items={LIFE_STAGE_EXCLUSIVE} selected={selectedLifeStages} onToggle={toggleLifeStage} muted={LIFE_STAGE_EXCLUSIVE} compact /></div>
+        {/* Each stage's follow-up sits right under the tiles (asked once, never again later). */}
+        {selectedLifeStages.includes('I am trying to conceive') && (
+          <div className="ip-followup">
+            <strong>{FOLLOWUP_QUESTIONS.ttcDuration}</strong>
+            <ChipList items={withSavedOption(ttcDurationOptions(intake), intake.ttcDuration)} selected={intake.ttcDuration ? [intake.ttcDuration] : []} onToggle={(v) => set('ttcDuration', v)} compact />
+          </div>
+        )}
+        {selectedLifeStages.includes('I am pregnant') && (
+          <div className="ip-followup">
+            <strong>{FOLLOWUP_QUESTIONS.pregnancyTrimester}</strong>
+            <ChipList items={withSavedOption(PREGNANCY_TRIMESTER, intake.pregnancyTrimester)} selected={intake.pregnancyTrimester ? [intake.pregnancyTrimester] : []} onToggle={(v) => set('pregnancyTrimester', v)} compact />
+          </div>
+        )}
+        {selectedLifeStages.includes('I am postpartum') && (
+          <div className="ip-followup">
+            <strong>{FOLLOWUP_QUESTIONS.postpartumTiming}</strong>
+            <ChipList items={withSavedOption(POSTPARTUM_TIMING, intake.postpartumTiming)} selected={intake.postpartumTiming ? [intake.postpartumTiming] : []} onToggle={(v) => set('postpartumTiming', v)} compact />
+          </div>
+        )}
         {selectedLifeStages.includes('I am postpartum') && (
           <div className="ip-followup">
             <strong>{FOLLOWUP_QUESTIONS.breastfeedingStatus}</strong>
@@ -691,7 +759,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         {selectedLifeStages.includes('I am in perimenopause') && (
           <div className="ip-followup">
             <strong>{FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}</strong>
-            <ChipList items={intake.perimenopauseLastPeriod && !PERIMENOPAUSE_LAST_PERIOD.includes(intake.perimenopauseLastPeriod) ? [...PERIMENOPAUSE_LAST_PERIOD, intake.perimenopauseLastPeriod] : PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => setIntake((prev) => setPerimenopausePeriods(prev, v))} compact />
+            <ChipList items={withSavedOption(PERIMENOPAUSE_LAST_PERIOD, intake.perimenopauseLastPeriod)} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => setIntake((prev) => setPerimenopausePeriods(prev, v))} compact />
           </div>
         )}
       </>
@@ -702,12 +770,39 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       {zipError && <div className="ip-zip-err" role="alert">{zipError}</div>}
     </div>;
 
+    if (step.type === 'topics') return (
+      <>
+        <ChipList items={HELP_TOPICS} selected={[...(intake.helpTopics || []), ...(String(intake.supportOtherText || '').trim() || helpOtherOpen ? [SOMETHING_ELSE] : [])]} onToggle={toggleHelpTopic} />
+        {(helpOtherOpen || String(intake.supportOtherText || '').trim()) && (
+          <label className="ip-other-text">
+            <span>Tell us in your own words</span>
+            <input value={intake.supportOtherText} maxLength={80} placeholder="For example, migraines" onChange={(e) => set('supportOtherText', e.target.value)} />
+          </label>
+        )}
+        {/* Own spacing below the chips so it never overlaps "Something else" (audit #3). */}
+        <p className="ip-hint ip-hint--after">Not sure? Tap Next and we will show everything.</p>
+      </>
+    );
+    if (step.type === 'goals') return <ChipList items={GOALS} selected={intake.goals || []} onToggle={(v) => setIntake((prev) => ({ ...prev, goals: (prev.goals || []).includes(v) ? prev.goals.filter((x) => x !== v) : [...(prev.goals || []), v] }))} />;
+
+    if (step.type === 'support' && onboarding) return (
+      <>
+        <TopicPicker key={(intake.helpTopics || []).join('|')} groups={supportGroupsForTopics(intake.helpTopics)} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} onAdd={(value) => addCustomSelection('supportSelections', value, [NOTHING_SPECIFIC])} />
+        <div className="ip-gap"><ChipList items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} muted={[NOTHING_SPECIFIC]} compact /></div>
+      </>
+    );
     if (step.type === 'support') return (
       <TopicPicker groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} onAdd={(value) => addCustomSelection('supportSelections', value, ['Nothing right now'])} />
     );
 
-    if (step.type === 'flow') return <LevelMeter options={PERIOD_FLOW} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} shape="drop" />;
-    if (step.type === 'pain') return <LevelMeter options={PERIOD_PAIN} value={intake.periodPain} onChange={(v) => set('periodPain', v)} shape="bar" />;
+    // First run: named answers instead of an unlabeled level meter (team direction, section 33).
+    // Uniqueness pass A: the House Blend slider, with every level named and tappable (so the
+    // named answers stay, section 33); the same options are saved verbatim.
+    if (step.type === 'flow' || step.type === 'pain') {
+      const key = step.type === 'flow' ? 'periodFlow' : 'periodPain';
+      const opts = step.type === 'flow' ? PERIOD_FLOW : PERIOD_PAIN;
+      return <BlendScale variant="app" label={step.title} levels={opts.slice(0, 5)} extras={opts.slice(5)} value={intake[key]} onChange={(v) => set(key, v)} />;
+    }
     if (step.type === 'utiFrequency') return <TrackLine options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
     if (step.type === 'ttcDuration') return <TrackLine options={ttcDurationOptions(intake)} value={intake.ttcDuration} onChange={(v) => set('ttcDuration', v)} />;
     if (step.type === 'postpartumTiming') return (
@@ -725,7 +820,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
     if (step.type === 'conditions') {
       return (
-        <SearchableChoices items={['None that I know of', 'Prefer not to say', ...CONDITIONS.filter((item) => !['None that I know of', 'Prefer not to say'].includes(item))]} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('diagnosisSelections', value, ['None that I know of', 'Prefer not to say'])} placeholder="Search conditions" />
+        <SearchableChoices items={[...CONDITION_EXCLUSIVE, ...CONDITIONS.filter((item) => !CONDITION_EXCLUSIVE.includes(item))]} labels={SAFETY_ANSWER_LABELS} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, CONDITION_EXCLUSIVE)} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('diagnosisSelections', value, CONDITION_EXCLUSIVE)} placeholder="Search conditions" />
       );
     }
 
@@ -733,13 +828,14 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       <>
         <Segmented
           options={ALLERGY_STATUS}
+          labels={SAFETY_ANSWER_LABELS}
           value={intake.allergyStatus}
           onChange={(value) => setIntake((prev) => ({ ...prev, allergyStatus: value, allergyItems: value === 'Yes' ? prev.allergyItems : [] }))}
         />
         {intake.allergyStatus === 'Yes' && (
           <div className="ip-gap">
             <TokenInput values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Allergy or sensitivity" suggestions={ALLERGIES} suggestionLimit={8} />
-            {intake.allergyItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick No.</p>}
+            {intake.allergyItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick None.</p>}
           </div>
         )}
       </>
@@ -747,11 +843,11 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
     if (step.type === 'medications') return (
       <>
-        <Segmented options={MEDICATION_STATUS} value={intake.takesCurrent} onChange={(value) => setIntake((prev) => ({ ...prev, takesCurrent: value, currentMedicationItems: value === 'Yes' ? prev.currentMedicationItems : [] }))} />
+        <Segmented options={MEDICATION_STATUS} labels={SAFETY_ANSWER_LABELS} value={intake.takesCurrent} onChange={(value) => setIntake((prev) => ({ ...prev, takesCurrent: value, currentMedicationItems: value === 'Yes' ? prev.currentMedicationItems : [] }))} />
         {intake.takesCurrent === 'Yes' && (
           <div className="ip-gap">
             <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medicine or supplement" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} />
-            {intake.currentMedicationItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick No.</p>}
+            {intake.currentMedicationItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick None.</p>}
           </div>
         )}
         <p className="ip-callout">Check with a clinician before starting anything new.</p>
@@ -776,7 +872,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         {['Yes', 'Not sure'].includes(intake.safetyConcern) && (
           <div className="ip-alert" role="note">
             <strong><span aria-hidden="true">!</span>Worth a closer look</strong>
-            <p>Some new or worsening symptoms need a clinician. ayna helps you discover products and doesn’t diagnose. If it feels urgent or severe, get care promptly.{intake.safetyConcern === 'Yes' ? ' We’ll show care options first.' : ''}</p>
+            <p>Some new or worsening symptoms need a clinician. ayna helps you find products and doesn’t diagnose. If it feels urgent or severe, get care promptly.{intake.safetyConcern === 'Yes' ? ' We’ll show care options first.' : ''}</p>
           </div>
         )}
       </>
@@ -796,12 +892,12 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         <>
           <PriceStacks options={PRICE_RANGES.filter((opt) => opt !== notAFactor)} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
           <ChipList items={[notAFactor]} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} compact />
-          <DotScale label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />
+          <div className="ip-followup"><strong>{FOLLOWUP_QUESTIONS.largePurchaseFrequency}</strong><BlendScale variant="app" label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} levels={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} /></div>
         </>
       );
     }
-    if (step.type === 'brand') return <BrandSpectrum options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
-    if (step.type === 'avoidIngredients') {
+    if (step.type === 'brand') return <BlendScale variant="app" label={step.title} levels={BRAND_OPENNESS.slice(0, 4)} extras={BRAND_OPENNESS.slice(4)} short={BRAND_SHORT} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
+    if (step.type === 'avoidIngredients' || step.type === 'avoidOnly' || step.type === 'wantOnly') {
       // "Leave out: Fragrance" also stores "Fragrance-free", the value the match engine already scores, so logic is unchanged.
       const selected = intake.avoidIngredients || [];
       const isOn = (v) => selected.includes(v) || (AVOID_PAIRS[v] && selected.includes(AVOID_PAIRS[v]));
@@ -817,6 +913,16 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         const next = on ? cur.filter((x) => x !== v && x !== pair) : [...cur, v, ...(pair ? [pair] : [])];
         return { ...prev, avoidIngredients: next };
       });
+      if (step.type === 'avoidOnly' || step.type === 'wantOnly') {
+        const isAvoid = step.type === 'avoidOnly';
+        const items = isAvoid ? [...AVOID_GROUPS.avoid, ...customAvoid] : [...AVOID_GROUPS.want, ...customWant];
+        return (
+          <>
+            <div className={isAvoid ? 'ip-avoid-list is-avoid' : 'ip-avoid-list'}><ChipList items={items.map((v) => AVOID_LABELS[v] || v)} selected={items.filter(isOn).concat(isAvoid ? customAvoid : customWant).map((v) => AVOID_LABELS[v] || v)} onToggle={(text) => toggleAvoid(AVOID_VALUE_BY_LABEL[text] || text)} /></div>
+            <div className="ip-gap"><AddOwn placeholder={isAvoid ? 'Add something to avoid' : 'Add something you prefer'} onAdd={(v) => (isAvoid ? addCustomSelection('avoidIngredients', `No ${v.replace(/^no\s+/i, '')}`, ['No preference']) : addCustomSelection('avoidIngredients', v, ['No preference']))} /></div>
+          </>
+        );
+      }
       return (
         <AvoidMustHave
           avoidItems={[...AVOID_GROUPS.avoid, ...customAvoid]}
@@ -840,6 +946,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   };
 
   const countForStep =
+    step.id === 'helpTopics' ? (intake.helpTopics || []).length :
+    step.id === 'goals' ? (intake.goals || []).length :
     step.id === 'support' ? intake.supportSelections.length :
     step.id === 'conditions' ? intake.diagnosisSelections.length :
     step.id === 'allergies' ? intake.allergyItems.length :
@@ -891,7 +999,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     const careFirst = intake.safetyConcern === 'Yes';
     return (
       <div className="ayna-play-intake ip-tone--mint ip-checkpoint" data-section="checkpoint" data-step={CHECKPOINT_STEP} data-direction={direction}>
-        <IntakeSceneArt art="sparkle" key="art-checkpoint" />
+        <IntakeSceneArt art="bloom" key="art-checkpoint" />
         <header className="ip-head">
           <div className="ip-head-row">
             <button type="button" className="ip-round" aria-label="Go back" onClick={goBack}>
@@ -904,13 +1012,12 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         </header>
         <div className="ip-body">
           <div className="ip-question" key="q-checkpoint">
-            <div className="ip-label-row"><span className="ip-label ip-label--done">Done</span></div>
             <h1 className="ip-title">Your first matches are ready</h1>
             <p className="ip-subtitle">{careFirst ? 'You said something may be urgent, so your results start with ways to reach care.' : 'That’s enough for safe, personal picks.'}</p>
             {careFirst && <div className="ip-care-now" role="note"><b>If this is an emergency, call 911.</b> <span>If you're thinking about harming yourself, call or text 988.</span> <span>Your results open with clinician and urgent care options.</span></div>}
             {remainingOptional > 0 && <div className="ip-checkpoint-more">
               <strong>Want closer matches?</strong>
-              <p>Answer {remainingOptional} more quick question{remainingOptional === 1 ? '' : 's'} anytime. They are optional, and you can start them later from your Ecosystem.</p>
+              <p>Answer {remainingOptional} more quick question{remainingOptional === 1 ? '' : 's'} anytime. They are optional, and you can start them later from your ecosystem.</p>
             </div>}
           </div>
         </div>
@@ -925,6 +1032,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     );
   }
 
+  const obProgress = onboarding ? onboardingProgress(step, obPart, visibleSteps) : null;
   const scene = { tone: SECTION_TONES[step.section] || 'peri', art: INTAKE_SCENES[step.id]?.art || null, label: SECTION_LABELS[step.section] };
 
   return (
@@ -938,24 +1046,32 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
           </button>
           {/* Later questions depend on earlier answers, so the total can grow mid-quiz.
               Show a fill bar for progress instead of a "02/08" total that shifts. */}
-          <span className="ip-count ip-count--plain">{phase === 'optional' ? `Optional ${countedIndex + 1} of ${countedSteps.length}` : `Question ${countedIndex + 1}`}</span>
-          {step.optional ? <button type="button" className="ip-skip" onClick={skipStep}>Skip</button> : <span className="ip-skip-spacer" />}
+          <span className="ip-count ip-count--plain">{onboarding ? obProgress.label : phase === 'optional' ? `Optional ${countedIndex + 1} of ${countedSteps.length}` : `Question ${countedIndex + 1}`}</span>
+          <span className="ip-skip-spacer" />
         </div>
-        <div className="ip-progress ip-progress--fill" role="progressbar" aria-label="Quiz progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100)}>
-          <span style={{ width: `${((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100}%` }} />
-        </div>
+        {onboarding ? (
+          <div className="ip-progress ip-progress--fill" role="progressbar" aria-label="Setup progress" aria-valuemin={1} aria-valuemax={obProgress.total} aria-valuenow={obProgress.now}>
+            <span style={{ width: `${(obProgress.now / Math.max(1, obProgress.total)) * 100}%` }} />
+          </div>
+        ) : (
+          <div className="ip-progress ip-progress--fill" role="progressbar" aria-label="Quiz progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100)}>
+            <span style={{ width: `${((countedIndex + 1) / Math.max(1, countedSteps.length)) * 100}%` }} />
+          </div>
+        )}
       </header>
 
       <div className="ip-body">
         <div className="ip-question" key={`q-${step.id}`}>
-          <div className="ip-label-row">
-            {scene.label && <span className={`ip-label ip-label--${step.section}`}>{scene.label}</span>}
-            {phase === 'optional' && <span className="ip-tag-optional">Optional</span>}
-            {flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
-            {step.info && <button type="button" className="ip-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen === step.id} onClick={() => setInfoOpen((v) => v === step.id ? null : step.id)}>i</button>}
-          </div>
+          {/* No eyebrow label above the question (onboarding audit #4): the row keeps only status and info. */}
+          {((phase === 'optional' || (onboarding && step.optional)) || (!onboarding && flaggedStepIds.has(step.id)) || (step.info && !onboarding)) && <div className="ip-label-row">
+            {(phase === 'optional' || (onboarding && step.optional)) && <span className="ip-tag-optional">Optional</span>}
+            {/* The screen label already says "For your safety": no second pill (QA, Oct 25). */}
+            {!onboarding && flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
+            {step.info && !onboarding && <button type="button" className="ip-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen === step.id} onClick={() => setInfoOpen((v) => v === step.id ? null : step.id)}>i</button>}
+          </div>}
           <h1 className="ip-title">{step.title}</h1>
           {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
+          {onboarding && step.why && <p className="ip-why"><b>Why we ask:</b> {step.why}</p>}
           {step.info && infoOpen === step.id && <p className="ip-info-pop" role="note">{step.info}</p>}
           <span className="ip-spacer is-top" aria-hidden="true" />
           <div className="ip-answer" onPointerDown={startHold} onPointerUp={endHold} onPointerLeave={endHold} onPointerCancel={endHold} onPointerMove={(e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }} onClickCapture={swallowClickAfterHold} onContextMenu={(e) => { if (holdRef.current.fired) e.preventDefault(); }}>{renderBody()}</div>
@@ -963,7 +1079,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         </div>
       </div>
 
-      <QuizIntro variant="app" enabled={introEnabled} />
+      <QuizIntro variant="app" enabled={introEnabled && !onboarding} />
       {glossary && <div className="ip-glossary" role="dialog" aria-label={glossary.term} onClick={() => setGlossary(null)}>
         <div className="ip-glossary-card" onClick={(e) => e.stopPropagation()}>
           <strong>{glossary.term}</strong>
@@ -972,11 +1088,14 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         </div>
       </div>}
       <footer className={`ip-foot${phase === 'optional' ? ' ip-foot--optional' : ''}`}>
+        {!ready && missingAnswerHint(step.id, intake) && <p className="ip-why" role="status">{missingAnswerHint(step.id, intake)}</p>}
         <button type="button" className="ip-next" onClick={goNext} disabled={!ready}>
           <span>{isLast && phase === 'optional' ? 'See my results' : 'Next'}</span>
           {countForStep > 0 && <b>{countForStep}</b>}
           <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></i>
         </button>
+        {/* #16 The Ordinary: "Skip for now" under the main button. */}
+        {(step.optional || step.type === 'topics') && <button type="button" className="ip-skip ip-skip--foot" onClick={skipStep}>Skip for now</button>}
         {phase === 'optional' && !isLast && <button type="button" className="ip-results-link" onClick={() => finish()}>See my results now</button>}
       </footer>
     </div>

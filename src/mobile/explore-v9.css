@@ -1,0 +1,52 @@
+/* Explore in the app (Explore audit v3, Oct 25). Title 26, search, five pill tabs that never
+   scroll (PillTabs), sections 32 apart, heading 20 then 12 to content. Cards: styles/pcard.css,
+   read cards: components/library/read-card.css. Tokens only; 13px floor. */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-top { padding: 4px var(--d-gutter, 16px) 8px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-title { margin: 0 0 12px !important; font: 700 calc(26px * var(--ayna-text-scale, 1))/1.1 var(--ay-font-display) !important; letter-spacing: -.01em !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-sections { display: block !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; border: 0 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-sections .ayk-tabs { max-width: none; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-sections .ayk-tabs__tab { border: 0 !important; margin: 0 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-sec { margin: 32px 0 0; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-head { padding: 0 var(--d-gutter, 16px) 12px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-head h2 { font: 700 calc(20px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display) !important; letter-spacing: 0 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-all { font: 600 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui); }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-pad { padding: 0 var(--d-gutter, 16px); }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-row { gap: 16px; padding: 0 var(--d-gutter, 16px) 8px; align-items: stretch; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-item { width: 160px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-item.is-read { width: 150px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-grid { gap: 24px 16px; padding: 0 var(--d-gutter, 16px); }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-topics { padding: 0 var(--d-gutter, 16px); }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-formats { margin-bottom: 24px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-groups { display: grid; gap: 24px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-group__h { margin: 0 0 12px !important; padding: 0 var(--d-gutter, 16px); color: var(--d-ink) !important; font: 700 calc(17px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui) !important; }
+/* "Get your match" strip: one line, one button. */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-strip { display: grid; gap: 12px; justify-items: start; margin: 0 var(--d-gutter, 16px); padding: 16px 0; border-top: var(--ay-rule); border-bottom: var(--ay-rule); }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-strip p { margin: 0; color: var(--d-ink); font: 600 calc(17px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui); }
+/* 13px floor on what Explore owns. */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-posts small,
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-recent > span { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; }
+/* Reads inside Explore: its title is a section title; the topic chips wrap (never scroll sideways). */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax--embed .ay-lib-head h2.al-top__title { font: 700 calc(20px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-topics--v9 { display: flex !important; flex-wrap: wrap !important; overflow: visible !important; gap: 8px; padding: 0 var(--d-gutter, 16px) !important; margin: 0 0 24px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-topics--v9 .al-topics__n { margin-left: 4px; font-weight: 700; opacity: .8; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax .al-row { gap: 16px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax .al-item.is-small { width: 150px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-feature--v9 { display: block !important; margin: 0 var(--d-gutter, 16px) 32px !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-feature--v9 .al-feature__h { margin: 0 0 4px !important; color: var(--d-ink) !important; font: 700 calc(20px * var(--ayna-text-scale, 1))/1.15 var(--ay-font-display) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-match--v9 { margin: 0 var(--d-gutter, 16px) 32px; }
+/* Loop C r1: the count sits on the chip's line in ink 78% (it dropped into a second pill row). */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-topics--v9 .al-topics__n { display: inline !important; min-width: 0 !important; height: auto !important; margin-left: 6px !important; padding: 0 !important; background: none !important; color: inherit !important; font-weight: 500 !important; opacity: .78; }
+/* Uniqueness pass (Oct 26): Explore's header is a full-bleed espresso band with a scalloped edge and
+   the page's one shout, as on the website. Inside the band the tabs, search and recent searches read
+   in butter; in dark mode the band flips to butter with espresso, like the website's header band. */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-top.ax-top--band { position: relative; z-index: 1; margin: 0 0 28px; padding: 12px var(--d-gutter, 16px) 20px; background: #3e2723; color: #ffedac; --d-ink: #ffedac; --d-ink-2: rgba(255, 237, 172, .8); --ay-fg: #ffedac; --ay-fg-muted: rgba(255, 237, 172, .8); --ay-border-ink: 1.5px solid #ffedac; --ay-track: rgba(255, 237, 172, .14); --ay-fill-ink: #ffedac; --ay-on-ink: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-top.ax-top--band::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 12px; background: inherit; -webkit-mask: radial-gradient(circle at 10px 0, #000 9.5px, transparent 10px) 0 0 / 20px 12px repeat-x; mask: radial-gradient(circle at 10px 0, #000 9.5px, transparent 10px) 0 0 / 20px 12px repeat-x; }
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-top.ax-top--band { background: #ffedac; color: #3e2723; --d-ink: #3e2723; --d-ink-2: rgba(62, 39, 35, .8); --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .8); --ay-border-ink: 1.5px solid #3e2723; --ay-track: rgba(62, 39, 35, .08); --ay-fill-ink: #3e2723; --ay-on-ink: #ffedac; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-top.ax-top--band .ax-title { margin: 4px 0 16px !important; color: var(--d-ink) !important; font: 800 calc(52px * var(--ayna-text-scale, 1))/.9 var(--ay-font-display) !important; letter-spacing: -.045em !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-top.ax-top--band :is(.ax-recent, .ax-recent button, .ax-recent span) { color: var(--d-ink) !important; border-color: var(--d-ink) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-top.ax-top--band + .ay-needticker { margin-top: -28px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ax-top.ax-top--band + .ay-needticker + * { margin-top: 24px; }
+/* Reads: the featured read big (ReadCard "feature"), the next two as covers side by side (editorial grid). */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-ed .al-feature__h { margin: 0 0 12px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-ed__pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-ed .ay-rcard.is-feature .ay-rcard__title { font-size: calc(24px * var(--ayna-text-scale, 1)) !important; }

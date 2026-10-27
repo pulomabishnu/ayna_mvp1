@@ -339,6 +339,21 @@ export const URINARY_UTI_NEEDS = new Set(['urinary.burning', 'urinary.frequency'
 // Needs whose products are menstrual products, where flow characteristics apply.
 export const MENSTRUAL_PRODUCT_NEEDS = new Set(['period.product_support', 'period.heavy', 'period.light', 'cycle.spotting']);
 
+// Bleeding after menopause (founder, Oct 24): ONE predicate, read by the
+// profile warning (userProfile.js period_need_vs_stage) and by the product
+// gate (eligibility.js postmenopausalBleedingBlock), so whenever the warning
+// shows, period / bleeding products get no match. A flow answer ("Heavy")
+// never overrides the stage: bleeding 12+ months after the last period is
+// the very thing to get checked. Perimenopause is not in this set.
+export const AFTER_MENOPAUSE_STAGES = new Set(['menopause', 'postmenopause']);
+export const isAfterMenopauseStage = (lifeStages) => (lifeStages || []).some((st) => AFTER_MENOPAUSE_STAGES.has(st));
+// Needs whose pick, with an after-menopause stage, means bleeding after menopause.
+export const isBleedingAfterMenopauseNeed = (needId) => MENSTRUAL_PRODUCT_NEEDS.has(needId) || needId === 'pain.menstrual_cramp';
+/** True when this profile gets the prompt-evaluation message (and no products for that bleeding). */
+export function bleedingAfterMenopause(lifeStages, needIds) {
+  return isAfterMenopauseStage(lifeStages) && [...(needIds || [])].some(isBleedingAfterMenopauseNeed);
+}
+
 // Needs whose meaning presumes a menstrual cycle (periods, the cycle itself,
 // ovulation and conception). Selecting one is how someone who does not
 // currently menstruate still asks for period or cycle products on purpose.
@@ -377,7 +392,7 @@ export const CONDITIONS = [
   { id: 'stomach_ulcer', option: 'Stomach ulcer or stomach bleeding' },
   { id: 'asthma', option: 'Asthma' },
 ];
-export const NON_CONDITION_OPTIONS = new Set(['None that I know of', 'Prefer not to say', 'Other / not listed']);
+export const NON_CONDITION_OPTIONS = new Set(['None that I know of', 'Not sure', 'Prefer not to say', 'Other / not listed']);
 export const CONDITION_ID_BY_OPTION = Object.fromEntries(CONDITIONS.map((c) => [c.option, c.id]));
 // Legacy snapshot `conditions` slugs (buildSnapshot lowercases most options).
 export const CONDITION_ID_BY_LEGACY = {
@@ -626,6 +641,9 @@ export const SYNONYM_RULES = [
   { re: /\banemi(a|c)\b|\banaemi|\biron deficien|\blow iron\b|\blow ferritin\b/, kind: 'condition', id: 'anemia', confidence: 0.95 },
   { re: /\bibs\b|irritable bowel|\bcrohn|\bcolitis\b|\bceliac\b/, kind: 'condition', id: 'ibs_digestive', confidence: 0.93 },
   { re: /\blupus\b|\bautoimmune\b|\brheumatoid\b/, kind: 'condition', id: 'autoimmune', confidence: 0.9 },
+  // Free text only (no intake option): the ThermaCare label says ask a doctor
+  // before use with poor circulation. Read in src/health/interventions.js.
+  { re: /\bpoor (blood )?circulation\b|\bbad circulation\b|\bcirculation (problems?|issues?|disorder)\b|\braynaud|\bperipheral (arter(y|ial)|vascular) disease\b/, kind: 'condition', id: 'poor_circulation', confidence: 0.9 },
   // Health needs (sub-need level)
   { re: /\bhair (is )?(falling out|shedding|coming out)\b|\blosing (my )?hair\b|\bhair loss\b|\bthinning hair\b|\bhair thinning\b|\bbald(ing)? spots?\b/, kind: 'need', id: 'hair.loss', confidence: 0.96 },
   { re: /\bchin hair|facial hair|\bhirsut|\bexcess (body )?hair\b/, kind: 'need', id: 'hair.excess', confidence: 0.95 },

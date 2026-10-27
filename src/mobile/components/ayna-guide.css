@@ -1,0 +1,34 @@
+.ay-guide { display: grid; gap: 14px; color: var(--ayna-text); padding-bottom: 30px; }
+.ay-guide h2 { margin: 0; color: var(--ayna-heading); font: 700 26px/1.1 var(--ayna-font-display, sans-serif); }
+.ay-guide p { margin: 0; line-height: 1.5; }
+.ay-guide-muted { color: var(--ayna-muted, #685c59); font-size: 13px; }
+.ay-guide-back { width: fit-content; border: 0; background: none; color: var(--ayna-heading); padding: 0; text-decoration: underline; font-weight: 700; cursor: pointer; }
+.ay-guide-card { border: 1px solid var(--ayna-border); border-radius: 18px; background: var(--d-group, #fff9ef); padding: 16px; }
+.ay-guide-form { display: grid; gap: 12px; padding: 15px; border: 1px solid var(--ayna-border); border-radius: 18px; }
+.ay-guide-field { display: grid; gap: 6px; font-size: 13px; font-weight: 700; }
+.ay-guide-field input, .ay-guide-field select { width: 100%; min-width: 0; box-sizing: border-box; border: 1px solid var(--ayna-border); border-radius: 10px; padding: 11px 12px; background: var(--ayna-bg); color: var(--ayna-heading); font: inherit; }
+.ay-guide button:not(.ay-guide-back) { cursor: pointer; }
+.ay-guide-form button, .ay-guide-primary, .ay-guide-trials button:not(.ay-guide-trialhead button), .ay-guide-actions button { border: 0; border-radius: 12px; padding: 11px 14px; background: var(--ayna-heading); color: var(--ayna-bg); font-weight: 700; }
+.ay-guide-form button:disabled { opacity: .5; cursor: default; }
+.ay-guide-list, .ay-guide-trials { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.ay-guide-list li { display: flex; justify-content: space-between; align-items: start; gap: 12px; border-bottom: 1px solid var(--ayna-border); padding: 9px 0; }
+.ay-guide-list small { display: block; color: var(--ayna-muted, #685c59); margin-top: 4px; }
+.ay-guide-list button, .ay-guide-trialhead button { border: 0; background: none; color: var(--ayna-heading); text-decoration: underline; font-size: 12px; }
+.ay-guide-toggle { display: flex; align-items: start; gap: 10px; padding: 12px; border-radius: 12px; background: var(--d-group, #fff9ef); font-size: 13px; font-weight: 700; }
+.ay-guide-toggle input { margin-top: 2px; accent-color: var(--ayna-heading); }
+.ay-guide-trials li { display: grid; gap: 10px; }
+.ay-guide-trialhead, .ay-guide-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.ay-guide-trials p { font-size: 13px; }
+.ay-guide-report { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--d-group, #fff9ef); border: 1px solid var(--ayna-border); border-radius: 14px; padding: 15px; font: 13px/1.5 var(--ayna-font-ui, sans-serif); }
+.ay-guide-actions { justify-content: flex-start; flex-wrap: wrap; }
+.ayna-ask-drawer .ay-guide-actions button { border: 1px solid var(--ayna-border); border-radius: 10px; background: var(--d-group, #fff9ef); color: var(--ayna-heading); padding: 9px 12px; font-size: 12px; font-weight: 700; }
+.ay-guide-empty { font-size: 13px; font-style: italic; }
+.ay-guide-launches { display: grid; margin: 4px 0 12px; padding: 0 16px; list-style: none; border-radius: 20px; background: var(--d-group, #f6e3a1); }
+.ay-guide-launches > li { margin: 0; padding: 0; }
+.ay-guide-launches > li + li { border-top: 1px solid var(--d-hair, rgba(62, 39, 35, .15)); }
+.ay-guide-launches button { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; margin: 0; padding: 10px 0; border: 0; border-radius: 0; background: none; color: var(--d-ink, #3e2723); text-align: left; cursor: pointer; }
+.ay-guide-launches button:focus-visible { outline: 3px solid var(--d-ink, #3e2723); outline-offset: 2px; border-radius: 10px; }
+.ay-guide-launch__text { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.ay-guide-launch__text b { font: 600 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--f-ui, 'Figtree', sans-serif); }
+.ay-guide-launch__text span { font: 500 13px/1.35 var(--f-ui, 'Figtree', sans-serif); color: var(--d-ink-2, rgba(62, 39, 35, .78)); }
+.ay-guide-launches svg { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .7; }

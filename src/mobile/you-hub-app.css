@@ -1,0 +1,83 @@
+/* App You hub (ProfileFlow ProfileHub) and My ecosystem header, You audit
+   (Oct 25, v3): no blue band or awning (data-blue is for chart lines only),
+   no scallop inside the page, no 6-7px shadows (1.5px ink outline or none),
+   13px minimum, set-up as a count (Pai #12), big-number facts with a caption,
+   five section rows. Three id-level :is() so it wins over the older layers. */
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) {
+  .ay-you-head { --d-ink: inherit; --d-ink-2: inherit; --d-hair: inherit; --d-group: inherit; --d-feature: inherit; --d-on-feature: inherit; --band: transparent; margin: 0 0 8px !important; padding: 8px var(--d-gutter, 16px) 8px !important; background: transparent !important; background-image: none !important; color: var(--d-ink, #3e2723) !important; }
+  .ay-you-head::after, .ay-you-head::before { content: none !important; display: none !important; }
+  .ay-you-head :is(p, span, b, a, button, h1) { color: var(--d-ink, #3e2723); }
+  .ay-you-head h1, .ay-you-head h1 .ay-you-hello { font-size: 26px !important; color: var(--d-ink, #3e2723) !important; }
+  .ay-you-head h1 .ay-you-hello:not(.is-solo) { font-size: 15px !important; }
+  .ay-you-head .ay-you-progress { border: 1.5px solid var(--d-ink, #3e2723) !important; background: var(--ayna-surface, #fff) !important; box-shadow: none !important; }
+  .ay-you-head .ay-you-progress > span { display: flex !important; gap: 6px; align-items: baseline; flex-wrap: wrap; }
+  .ay-you-head .ay-you-progress u { margin-left: auto; font-weight: 600; text-underline-offset: 3px; }
+  .ay-you-head .ay-you-progress > i { background: color-mix(in srgb, var(--d-ink, #3e2723) 14%, transparent) !important; }
+  .ay-you-head .ay-you-progress > i > i { background: var(--d-ink, #3e2723) !important; }
+  .ay-you-head .ay-you-arch { box-shadow: none !important; }
+  .ay-you-knows { margin: 0; font: 500 14px/1.4 var(--f-ui, Figtree, sans-serif); color: var(--d-ink, #3e2723); }
+  .ay-you-knows b { font-weight: 700; }
+
+  .ay-you-setup { display: grid; gap: 10px; margin: 0 0 20px; padding: 16px; border: 1.5px solid var(--d-ink, #3e2723); border-radius: 16px; background: var(--ayna-surface, #fff); box-shadow: none; }
+  .ay-you-setup-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .ay-you-setup-top .ay-you-h2 { margin: 0 !important; }
+  .ay-you-setup-top > span { font: 600 14px/1.2 var(--f-ui, Figtree, sans-serif); color: var(--d-ink, #3e2723); font-variant-numeric: tabular-nums; }
+  .ay-you-setup-bar { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
+  .ay-you-setup-bar i { display: block; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--d-ink, #3e2723) 14%, transparent); }
+  .ay-you-setup-bar i.is-done { background: var(--d-ink, #3e2723); }
+  .ay-you-setup-go { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; padding: 0; border: 0; background: none; color: var(--d-ink, #3e2723); font: 600 15px/1.3 var(--f-ui, Figtree, sans-serif); text-align: left; cursor: pointer; }
+
+  .ay-you-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 20px; padding: 0; list-style: none; }
+  .ay-you-facts button { display: grid; align-content: start; gap: 4px; width: 100%; height: 100%; padding: 12px; border: 1.5px solid var(--d-ink, #3e2723); border-radius: 16px; background: var(--ayna-surface, #fff); color: var(--d-ink, #3e2723); text-align: left; box-shadow: none; cursor: pointer; }
+  .ay-you-facts b { font: 800 30px/1 'ayna Display', var(--f-display, sans-serif); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .ay-you-facts button { min-height: 92px; align-content: space-between !important; }
+  /* Same data strip as the website: one quiet tile, one pink, one solid. */
+  .ay-you-facts li:nth-child(2) button { border-color: #3e2723 !important; background: #f7badd !important; color: #3e2723 !important; }
+  .ay-you-facts li:nth-child(3) button { border-color: var(--d-ink, #3e2723) !important; background: var(--d-ink, #3e2723) !important; color: var(--d-page, #ffedac) !important; }
+  .ay-you-facts span { font: 500 13px/1.25 var(--f-ui, Figtree, sans-serif); }
+  .ay-you-five { margin-bottom: 20px; }
+  .ay-you-quick { display: flex; flex-wrap: wrap; gap: 20px; margin: 0 0 24px; }
+  .ay-you-quick button { min-height: 44px; padding: 0; border: 0; background: none; color: var(--d-ink, #3e2723); font: 600 15px/1.2 var(--f-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .ay-you :is(small, .ay-you-row-sub) { font-size: max(13px, 1em) !important; }
+
+  /* My ecosystem: no awning, a 26px title, the empty-state starburst in pink. */
+  .eco-app .eco-awning--app { display: none !important; }
+  .eco-app .ay-empty-art, .eco-app .ay-empty-state svg { color: #3e2723; }
+  .eco-app-mine { display: grid; gap: 6px; align-content: start; }
+  .eco-app-working { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0; border: 0; background: none; color: var(--d-ink, #3e2723); font: 600 13px/1.2 var(--f-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; text-align: left; cursor: pointer; }
+  .eco-app-working .ayk-status { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border: 1.5px solid var(--d-ink, #3e2723); border-radius: 999px; background: transparent; font: 600 13px/1 var(--f-ui, Figtree, sans-serif); text-decoration: none; }
+
+  /* Saved: saved posts and the Startups row under the products. */
+  .ayna-saved-posts { display: grid; gap: 8px; margin: 24px 0 0; }
+  .ayna-saved-posts h2 { margin: 0; font: 700 18px/1.2 'ayna Display', var(--f-display, sans-serif); color: var(--d-ink, #3e2723); }
+  .ayna-saved-posts ul { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid color-mix(in srgb, var(--d-ink, #3e2723) 15%, transparent); }
+  .ayna-saved-posts li { border-bottom: 1px solid color-mix(in srgb, var(--d-ink, #3e2723) 15%, transparent); }
+  .ayna-saved-posts button { display: grid; gap: 2px; width: 100%; min-height: 48px; padding: 10px 0; border: 0; background: none; color: var(--d-ink, #3e2723); text-align: left; cursor: pointer; }
+  .ayna-saved-posts small { font: 600 13px/1.2 var(--f-ui, Figtree, sans-serif); }
+  .ayna-saved-posts span { font: 500 15px/1.35 var(--f-ui, Figtree, sans-serif); }
+  .ayna-saved-startups { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 56px; margin: 16px 0; padding: 12px 16px; border: 1.5px solid var(--d-ink, #3e2723); border-radius: 16px; background: var(--ayna-surface, #fff); color: var(--d-ink, #3e2723); text-align: left; box-shadow: none; cursor: pointer; }
+  .ayna-saved-startups span { display: grid; gap: 2px; }
+  .ayna-saved-startups b { font: 600 15px/1.2 var(--f-ui, Figtree, sans-serif); }
+  .ayna-saved-startups small { font: 500 13px/1.3 var(--f-ui, Figtree, sans-serif); }
+  .ayna-saved-startups svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Loop E: Saved count is a pink pill in both themes (it went data-blue in dark); 13px floor on My ecosystem. */
+  .ayna-saved-header h1 small { display: inline-grid !important; place-items: center; min-width: 28px; height: 28px; padding: 0 8px; border: 1.5px solid #3e2723 !important; border-radius: 999px; background: #f7badd !important; color: #3e2723 !important; font: 700 14px/1 var(--f-ui, Figtree, sans-serif) !important; vertical-align: middle; }
+  .eco-app .eco-oval { font-size: 13px !important; }
+  .eco-app small, .eco-app .ay-shelf2-count { font-size: max(13px, 1em) !important; }
+  :is(.ay-rt-checkin :is(summary, p, button), .ay-rt-why) { font-size: 13px !important; }
+  /* A pink button on the espresso summary card needs no offset (the sticker is pink on pink there). */
+  .eco-app .eco-app-checkin { box-shadow: none !important; }
+  /* Settings rows give every button a 56px min-height, which turned the Tips switch into a circle. */
+  .ay-switch { min-height: 0 !important; width: 51px !important; }
+  /* Section rows breathe: a title and a two-line note never touch the next row. */
+  .ay-you-row { padding: 12px 0 !important; }
+  /* Signed out: the card's first line is its title, the button is the shared 48px primary. */
+  .ay-you-body .ay-set-signedout { padding: 20px !important; border: 1px solid color-mix(in srgb, var(--d-ink, #3e2723) 15%, transparent) !important; }
+  .ay-you-body .ay-set-signedout p { font: 500 15px/1.45 var(--f-ui, Figtree, sans-serif) !important; color: var(--d-ink-2, #3e2723) !important; }
+  .ay-you-body .ay-set-signedout p b { display: block; margin: 0 0 6px; font: 700 22px/1.15 'ayna Display', var(--f-display, sans-serif); color: var(--d-ink, #3e2723); }
+  .ay-you-body .ay-set-signedout p br { display: none; }
+  .ay-you-body .ay-set-signedout .ay-btn { min-height: 48px !important; padding: 0 28px !important; font-size: 15px !important; }
+  /* Auth fields: deeper butter with an ink outline (no white), founder Oct 26. */
+  &:not([data-theme='dark']) :is(.ay-auth, .ayna-fresh-auth) .ayna-fresh-auth-field.ayna-fresh-auth-field { background: #f6e3a1 !important; }
+}

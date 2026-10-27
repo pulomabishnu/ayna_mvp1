@@ -1,0 +1,392 @@
+/* =====================================================================
+   The website landing: src/components/LandingV2.jsx, every class hm-*.
+   Landing audit (Oct 25): keep the personality, quiet the volume.
+   Six sections: hero → partner ticker → sound familiar + needs (pink) →
+   how it works + evidence (espresso) → reads + community → founders +
+   invest (butter) → footer.
+   Tokens (src/styles/ay-tokens.css): butter + espresso, pink the one
+   accent, no blue surfaces. Radii 8 / 16 / 999 / 50%. One shadow: the 3px
+   pink sticker on primary buttons; cards get a 1.5px ink outline instead.
+   Type: H1 56 / 36, section H2 36 / 26, one 44px statement (founders),
+   step numerals 56 / 40, stats 64 / 44, nothing under 13px.
+   Nothing here is sticky or fixed.
+   ===================================================================== */
+
+.app-container .hm {
+  --hm-ink: #3e2723;
+  --hm-butter: #ffedac;
+  --hm-butter-2: #f6e3a1;
+  --hm-pink: #f7badd;
+  --hm-pad: 72px;
+  --hm-headgap: 24px;
+  --hm-gut: 16px;
+  --hm-r: var(--ay-r-md, 16px);
+  --hm-r-sm: var(--ay-r-sm, 8px);
+  overflow-x: clip;
+  padding-bottom: 0;
+}
+@media (max-width: 767px) { .app-container .hm { --hm-pad: 48px; --hm-headgap: 16px; --hm-gut: 12px; } }
+
+.app-container .hm .hm-wrap { width: 100%; max-width: calc(var(--ay-container, 1240px) + 2 * var(--ay-margin, 64px)); margin-inline: auto; padding-inline: var(--ay-margin, 64px); box-sizing: border-box; }
+.app-container .hm .hm-sec { padding-block: var(--hm-pad); }
+
+/* ---------- type: eight styles ---------- */
+.app-container.app-container .hm h1.hm-display { margin: 0; font: 700 var(--ay-size-display, 40px)/1.02 var(--ay-heading) !important; letter-spacing: -.025em !important; color: var(--ay-text) !important; text-wrap: balance; max-width: 13ch; }
+.app-container.app-container .hm h1.hm-display--personal { font-size: var(--ay-size-display, 40px) !important; }
+.app-container .hm .hm-h2 { margin: 0; font: 700 var(--ay-size-h1, 30px)/1.08 var(--ay-heading) !important; letter-spacing: -.02em !important; color: var(--ay-text) !important; text-wrap: balance; max-width: 24ch; }
+.app-container .hm .hm-h2.hm-statement { font-size: var(--ay-size-display, 40px) !important; line-height: 1.04 !important; max-width: 16ch; }
+.app-container .hm .hm-h3 { margin: 0; font: 700 22px/1.15 var(--ay-heading) !important; letter-spacing: -.01em !important; color: var(--ay-text) !important; }
+.app-container .hm .hm-lead { margin: 0; font: 500 17px/1.45 var(--ay-sans-stack) !important; color: var(--ay-text) !important; max-width: 38ch; }
+.app-container .hm .hm-body { margin: 0; font: 500 16px/1.55 var(--ay-sans-stack) !important; color: var(--ay-text) !important; max-width: 60ch; }
+@media (max-width: 1023px) {
+  .app-container.app-container .hm :is(h1.hm-display, h1.hm-display--personal) { font-size: var(--ay-size-display, 40px) !important; }
+}
+@media (max-width: 767px) {
+  .app-container.app-container .hm :is(h1.hm-display, h1.hm-display--personal) { font-size: var(--ay-size-display, 32px) !important; line-height: 1.05 !important; }
+  .app-container .hm .hm-h2 { font-size: var(--ay-size-h1, 26px) !important; line-height: 1.1 !important; }
+  .app-container .hm .hm-h2.hm-statement { font-size: var(--ay-size-display, 32px) !important; }
+  .app-container .hm .hm-h3 { font-size: 20px !important; }
+  .app-container .hm .hm-lead { font-size: 17px !important; }
+}
+/* the one accent: a pink highlighter swipe under the end of the hero line */
+.app-container .hm .hm-swipe { background: linear-gradient(transparent 56%, var(--hm-pink) 56%, var(--hm-pink) 88%, transparent 88%); padding-inline: .05em; margin-inline: -.05em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.app-container[data-theme='brand-dark'] .hm .hm-swipe { background: linear-gradient(transparent 56%, rgba(247, 186, 221, .42) 56%, rgba(247, 186, 221, .42) 90%, transparent 90%); }
+
+/* section head: title left, one text link right, bottoms aligned */
+.app-container .hm .hm-head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; margin: 0 0 var(--hm-headgap); }
+.app-container .hm .hm-head__all { margin-left: auto; padding: 0; min-height: 44px; font-size: 15px !important; }
+.app-container .hm .hm-head__short { display: none; }
+.app-container .hm .hm-head > .hm-h2 { min-width: 0; }
+@media (max-width: 767px) {
+  .app-container .hm .hm-head { flex-wrap: nowrap; gap: 16px; }
+  .app-container .hm .hm-head__all { flex: none; min-height: 32px; }
+  .app-container .hm .hm-head__long { display: none; }
+  .app-container .hm .hm-head__short { display: inline; }
+}
+.app-container .hm .ay-btn svg, .app-container .hm .hm-needs__go svg, .app-container .hm .hm-sticker__match svg, .app-container .hm .hm-chips__all svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: translate var(--t-fast, 160ms) var(--ease-out, ease-out); }
+/* one shadow on the page: the 3px pink sticker on primary buttons */
+.app-container .hm { --ay-press-shadow: var(--ay-sticker, 3px 3px 0 #f7badd); }
+.app-container.app-container .hm .ay-btn--primary { box-shadow: var(--ay-sticker, 3px 3px 0 #f7badd) !important; }
+
+/* ---------- 1. hero ---------- */
+.app-container .hm .hm-hero { padding-block: 56px 72px; }
+.app-container .hm .hm-hero__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center; }
+.app-container .hm .hm-hero__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; min-width: 0; }
+.app-container .hm .hm-hero__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.app-container .hm .hm-search { max-width: 480px; }
+.app-container .hm .hm-search .ay-kbd { font-size: 13px; border-radius: var(--hm-r-sm); }
+@media (max-width: 1099px) { .app-container .hm .hm-search .ay-kbd { display: none; } }
+@media (max-width: 767px) {
+  .app-container .hm .hm-hero { padding-block: 24px 48px; }
+  .app-container .hm .hm-hero__grid { grid-template-columns: 1fr; gap: 32px; }
+  .app-container .hm .hm-hero__copy { gap: 16px; }
+  .app-container .hm .hm-hero__actions { width: 100%; }
+  .app-container .hm .hm-hero__actions > .ay-btn { flex: 1 1 auto; }
+  .app-container .hm .hm-search { max-width: none; }
+}
+
+/* hero visual: four objects on a fixed stage (photo, die-cut, UI card, seal).
+   Only transform and opacity animate; every slot is a fixed box. */
+.app-container .hm .hm-scatter { position: relative; aspect-ratio: 1 / .9; min-height: 340px; isolation: isolate; }
+.app-container .hm .hm-slot { position: absolute; display: block; box-sizing: border-box; color: var(--hm-ink); --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline-color: var(--hm-ink); --ay-outline: 1.5px solid var(--hm-ink); --legacy-outline: var(--hm-ink); --ay-ink: var(--hm-ink); --legacy-ink: var(--hm-ink); }
+.app-container .hm .hm-slot__layer { position: absolute; inset: 0; display: block; }
+.app-container .hm .hm-slot.is-skel { background: var(--hm-butter-2); border-radius: var(--hm-r); }
+.app-container .hm .hm-slot--main { top: 0; right: 0; width: 60%; aspect-ratio: 4 / 5; rotate: 1.5deg; z-index: 1; }
+.app-container .hm .hm-slot--main .hm-slot__layer { border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); overflow: hidden; background: var(--hm-butter-2); }
+.app-container .hm .hm-slot--main :is(img, picture) { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; border-radius: 0 !important; }
+/* the die-cut: a real product on its white plate */
+/* the strip: three product plates in a row over the photo's lower edge (#38) */
+.app-container .hm .hm-strip { position: absolute; left: 0; bottom: 4%; z-index: 3; width: 70%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 10px; background: var(--hm-butter); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); box-sizing: border-box; rotate: -1.5deg; }
+.app-container .hm .hm-strip .hm-slot { position: relative; aspect-ratio: 1 / 1; }
+.app-container .hm .hm-slot--plate .ayk-plate { width: 100%; height: 100%; }
+/* the UI card: real ayna pieces, outlined (no shadow) */
+.app-container .hm .hm-slot--ui { left: 0; top: 10%; width: 48%; height: 30%; z-index: 4; rotate: -2deg; }
+.app-container .hm .hm-slot--ui .hm-ui { inset: 0 0 auto 0; }
+.app-container .hm .hm-ui { position: absolute; inset: auto 0 0 0; display: grid; align-content: start; gap: 6px; padding: 14px 16px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); box-shadow: none; box-sizing: border-box; text-align: left; }
+.app-container .hm .hm-ui__label { font: 600 13px/1.2 var(--ay-sans-stack); }
+.app-container .hm .hm-ui__note { font: 500 13px/1.35 var(--ay-sans-stack); }
+.app-container .hm .hm-ui__title { font: 700 17px/1.1 var(--ay-heading); letter-spacing: -.01em; }
+.app-container .hm .hm-ui--evidence { background: var(--hm-pink); }
+.app-container .hm .hm-ui--product { grid-template-columns: 52px minmax(0, 1fr); align-items: center; column-gap: 12px; }
+.app-container .hm .hm-ui__thumb { grid-row: span 2; width: 52px; aspect-ratio: 1 / 1; padding: 4px; background: #fff; border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r-sm); box-sizing: border-box; }
+.app-container .hm .hm-ui__thumb img { width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
+.app-container .hm .hm-ui__text { display: grid; gap: 2px; min-width: 0; }
+.app-container .hm .hm-ui__brand { font: 500 13px/1.2 var(--ay-sans-stack); }
+.app-container .hm .hm-ui__name { font: 600 15px/1.2 var(--ay-sans-stack); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container .hm .hm-ui__price { font: 600 13px/1.2 var(--ay-sans-stack); font-variant-numeric: tabular-nums; }
+.app-container .hm .hm-ui__save { justify-self: start; grid-column: 2; padding: 3px 12px; border: 1.5px solid var(--hm-ink); border-radius: 999px; background: var(--hm-pink); font: 600 13px/1.3 var(--ay-sans-stack); }
+.app-container .hm .hm-ui--rundown { background: var(--hm-ink); color: var(--hm-butter); }
+.app-container .hm .hm-ui__pill { justify-self: start; margin-top: 2px; padding: 5px 12px; border-radius: 999px; background: var(--hm-pink); color: var(--hm-ink); font: 600 13px/1.2 var(--ay-sans-stack); }
+.app-container .hm .hm-ui__opts { display: flex; flex-wrap: wrap; gap: 4px; }
+.app-container .hm .hm-ui__opts span { padding: 4px 10px; border: 1.5px solid var(--hm-ink); border-radius: 999px; font: 600 13px/1.2 var(--ay-sans-stack); }
+.app-container .hm .hm-ui__opts span.is-on { background: var(--hm-ink); color: var(--hm-butter); }
+.app-container .hm .hm-ui--post { background: #f6e3a1; border-color: var(--hm-ink); }
+.app-container .hm .hm-ui__body { font: 500 15px/1.4 var(--ay-sans-stack); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container .hm .hm-hero__seal.hm-scatter__seal { top: -24px; left: calc(40% - 56px); right: auto; bottom: auto; z-index: 6; }
+/* the pause control (WCAG 2.2.2), quiet, on the stage edge */
+.app-container .hm .hm-scatter__pause { position: absolute; right: 0; top: calc(100% + 8px); display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 4px; background: none; border: 0; color: var(--ay-text); font: 600 14px/1 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.app-container .hm .hm-scatter__pause svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.app-container .hm .hm-scatter__pause:focus-visible { outline: 3px solid var(--ay-outline-color); outline-offset: 2px; border-radius: var(--hm-r-sm); }
+.app-container[data-theme='brand-dark'] .hm .hm-slot--main .hm-slot__layer { border-color: var(--hm-butter); }
+.app-container[data-theme='brand-dark'] .hm .hm-ui--rundown { border-color: var(--hm-butter); }
+/* motion: pop in once, then one slot at a time rains in its next piece */
+@media (prefers-reduced-motion: no-preference) {
+  .app-container .hm .hm-scatter:not(.is-still) .hm-slot__layer.is-pop { animation: hm-pop 560ms var(--ease-pop) both; animation-delay: calc(var(--i, 0) * 90ms + 120ms); }
+  .app-container .hm .hm-scatter:not(.is-still) .hm-slot__layer.is-in { animation: hm-rain 640ms var(--ease-pop) both; }
+  .app-container .hm .hm-scatter:not(.is-still) .hm-slot__layer.is-out { animation: hm-leave 360ms var(--ease-exit) both; }
+}
+@keyframes hm-pop { from { opacity: 0; transform: translateY(14px) scale(.92); } to { opacity: 1; transform: none; } }
+@keyframes hm-rain { from { opacity: 0; transform: translateY(-36px) rotate(5deg); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
+@keyframes hm-leave { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(18px) rotate(-3deg); } }
+.app-container .hm .hm-slot__layer.is-out { pointer-events: none; }
+@media (max-width: 1023px) and (min-width: 768px) { .app-container .hm .hm-ui__note { display: none; } .app-container .hm .hm-slot--ui { width: 60%; } }
+@media (max-width: 767px) {
+  .app-container .hm .hm-scatter { aspect-ratio: 1 / .8; min-height: 0; margin-bottom: 52px; }
+  .app-container .hm .hm-slot--main { width: 54%; right: 2%; }
+  .app-container .hm .hm-strip { width: 74%; gap: 6px; padding: 6px; }
+  .app-container .hm .hm-slot--ui { width: 56%; height: 34%; top: 6%; }
+  .app-container .hm .hm-ui { padding: 10px 12px; gap: 4px; }
+  .app-container .hm .hm-ui__title { font-size: 16px; }
+  .app-container .hm .hm-ui--product { grid-template-columns: 40px minmax(0, 1fr); column-gap: 8px; }
+  .app-container .hm .hm-ui__thumb { width: 40px; }
+  .app-container .hm .hm-ui__name, .app-container .hm .hm-ui__body { font-size: 13px; }
+  .app-container .hm .hm-ui--evidence .hm-ui__note { display: none; }
+  .app-container .hm .hm-hero__seal.hm-scatter__seal { top: -16px; left: calc(46% - 50px); width: 84px; height: 84px; }
+  .app-container .hm .hm-hero__seal.hm-scatter__seal b { width: 36px; height: 36px; font-size: 13px; }
+}
+
+/* ---------- 2. partner ticker: one line at every width, attached to the hero ---------- */
+.app-container .hm .hm-brands { margin: 0; }
+.app-container .hm .hm-ribbon { flex-direction: row; min-height: 48px; border-block: 0; }
+.app-container .hm .hm-ribbon .ay-ribbon__tab { min-height: 48px; padding: 0 16px; border-right: 1.5px solid var(--hm-ink); border-bottom: 0; font: 600 15px/1.2 var(--ay-sans-stack) !important; white-space: nowrap; text-decoration: none; }
+.app-container .hm .hm-ribbon .ay-ribbon__tab:hover { text-decoration: underline; text-underline-offset: 3px; }
+.app-container .hm .hm-ribbon .ay-ribbon__view { min-height: 48px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 24px); mask-image: linear-gradient(90deg, transparent, #000 24px); }
+.app-container .hm .hm-ribbon .ay-ribbon__track li { gap: 20px; padding-left: 20px; font: 700 17px/1 var(--ay-heading) !important; letter-spacing: -.01em; }
+.app-container .hm .hm-ribbon .ay-ribbon__track li::after { width: 11px; height: 11px; }
+.app-container .hm .hm-ribbon__short { display: none; }
+@media (max-width: 479px) {
+  .app-container .hm .hm-ribbon .ay-ribbon__tab { padding: 0 12px; }
+  .app-container .hm .hm-ribbon__long { display: none; }
+  .app-container .hm .hm-ribbon__short { display: inline; }
+  .app-container .hm .hm-ribbon .ay-ribbon__track li { gap: 16px; padding-left: 16px; }
+}
+.app-container .hm .hm-personal { padding-top: 24px; }
+
+/* ---------- 3. sound familiar + needs: pink band ---------- */
+.app-container .hm .hm-needsband__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: start; }
+.app-container .hm .hm-needsband__grid.is-single { grid-template-columns: minmax(0, 1fr); }
+/* the four phrases: one row each, the approved photo with a real product on its corner */
+.app-container .hm .hm-needs { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ay-hairline); }
+.app-container .hm .hm-needs > li { min-width: 0; border-bottom: 1px solid var(--ay-hairline); }
+.app-container .hm .hm-needs__row { display: grid; grid-template-columns: 80px minmax(0, 1fr); grid-template-areas: 'ph quote' 'ph go'; align-items: center; gap: 4px 20px; min-height: 44px; padding: 16px 0; color: inherit; text-decoration: none; }
+.app-container .hm .hm-needs__ph { grid-area: ph; position: relative; display: block; width: 80px; aspect-ratio: 1 / 1; overflow: hidden; border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); }
+.app-container .hm .hm-needs__ph > :is(picture, img), .app-container .hm .hm-needs__ph > picture img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; } /* the 16px frame clips it (inner curve = 16 minus the border) */
+.app-container .hm .hm-needs__prod { position: absolute; right: -10px; bottom: -8px; width: 38px; aspect-ratio: 1 / 1; padding: 3px; background: #fff; border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r-sm); box-sizing: border-box; rotate: 6deg; }
+.app-container .hm .hm-needs__prod img { width: 100%; height: 100%; object-fit: contain; border-radius: 0 !important; }
+.app-container .hm .hm-needs__quote { grid-area: quote; align-self: end; font: 700 22px/1.15 var(--ay-heading); letter-spacing: -.01em; text-wrap: balance; }
+.app-container .hm .hm-needs__go { grid-area: go; align-self: start; display: inline-flex; align-items: center; gap: 6px; font: 600 15px/1.3 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; }
+@media (hover: hover) { .app-container .hm .hm-needs__row:hover .hm-needs__go svg { translate: 4px 0; } }
+.app-container .hm .hm-needs__row:focus-visible { outline: 3px solid var(--ay-outline, #3e2723); outline-offset: 2px; border-radius: var(--hm-r-sm); }
+/* six needs + All needs: butter chips with a 1.5px ink outline, wrapping (no sideways scroll) */
+.app-container .hm .hm-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+.app-container .hm .hm-chips__count { font-variant-numeric: tabular-nums; opacity: .8; }
+.app-container .hm .hm-chips__all { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.app-container.app-container .hm .hm-chips .hm-chips__all { background: transparent !important; }
+.app-container .hm .hm-chips__all svg { width: 16px; height: 16px; }
+.app-container .hm .hm-chips__skel { flex: none; width: 112px; height: 40px; border-radius: 999px; border: 1.5px solid rgba(62, 39, 35, .25); }
+.app-container .hm .hm-shop__label { margin: 0 0 12px; font: 600 15px/1.3 var(--ay-sans-stack); color: var(--ay-text); }
+/* four products, 2 x 2 beside the phrases */
+.app-container .hm .hm-stickers { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px var(--hm-gut); }
+.app-container .hm .is-single .hm-stickers { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.app-container .hm .hm-stickers > li { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+/* the product card here: 1.5px ink outline, white photo plate, no hard shadow (audit 8) */
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .hm .ay-product-card { --pc-panel: #fff; --pc-shadow: none; border-width: 1.5px !important; box-shadow: none !important; }
+@media (hover: hover) { :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .hm .ay-product-card:has(.ay-product-card__link:hover) { transform: none; box-shadow: none !important; } :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .hm .ay-product-card__link:hover .ay-product-card__name { text-decoration: underline; text-underline-offset: 3px; } }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .hm .ay-product-card:has(.ay-product-card__link:active) { transform: none; box-shadow: none !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .hm .ay-product-card__tile { border-radius: var(--hm-r-sm) !important; }
+.app-container.app-container .hm .hm-sticker .ay-product-card__price small { display: none; }
+.app-container .hm .hm-sticker__match { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; min-height: 32px; font: 600 15px/1.3 var(--ay-sans-stack); color: var(--ay-text); text-decoration: underline; text-underline-offset: 3px; }
+.app-container .hm .hm-sticker__match svg { width: 16px; height: 16px; }
+.app-container .hm .hm-sticker__skel { aspect-ratio: 3 / 4; border-radius: var(--hm-r); background: rgba(255, 255, 255, .55); border: 1.5px solid rgba(62, 39, 35, .25); }
+.app-container .hm .hm-shop__foot { margin-top: 24px; }
+@media (max-width: 1023px) {
+  .app-container .hm .hm-needsband__grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .app-container .hm .is-single .hm-stickers, .app-container .hm .hm-stickers { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .app-container .hm .hm-needs__row { grid-template-columns: 72px minmax(0, 1fr); gap: 4px 16px; padding: 12px 0; }
+  .app-container .hm .hm-needs__ph { width: 72px; }
+  .app-container .hm .hm-needs__prod { width: 32px; right: -8px; }
+  .app-container .hm .hm-needs__quote { font-size: 20px; }
+  .app-container .hm .hm-chips { margin-bottom: 16px; }
+  .app-container .hm .is-single .hm-stickers, .app-container .hm .hm-stickers { display: flex; gap: var(--hm-gut); margin-inline: calc(-1 * var(--ay-margin)); padding: 0 var(--ay-margin) 8px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--ay-margin); scrollbar-width: none; }
+  .app-container .hm .hm-stickers::-webkit-scrollbar { display: none; }
+  .app-container .hm .hm-stickers > li { flex: 0 0 calc((100% - 1.3 * var(--hm-gut)) / 2.3); scroll-snap-align: start; }
+}
+
+/* ---------- 4. how it works + evidence: espresso band ---------- */
+.app-container .hm .hm-how__lead { margin: calc(-1 * var(--hm-headgap) + 8px) 0 32px !important; color: var(--ay-text) !important; }
+.app-container .hm .hm-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.app-container .hm .hm-step { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'ph ph' 'n text'; column-gap: 12px; align-items: start; align-content: start; }
+.app-container .hm .hm-step__ph { grid-area: ph; position: relative; display: block; aspect-ratio: 4 / 3; border: 1.5px solid var(--ay-outline-color); border-radius: var(--hm-r); overflow: hidden; margin-bottom: 16px; }
+.app-container .hm .hm-step__ph :is(img, picture) { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; }
+/* numerals: Bricolage 800, the band's ink with the pink sticker shadow (no blue) */
+.app-container .hm .hm-step__n { grid-area: n; font: 800 56px/.8 'Bricolage Grotesque', var(--ay-heading); letter-spacing: -.04em; color: var(--ay-text); text-shadow: 3px 3px 0 var(--hm-pink); margin-top: 2px; }
+.app-container .hm .hm-step__text { grid-area: text; display: grid; gap: 6px; padding-top: 2px; align-content: start; }
+.app-container .hm .hm-step__text p { margin: 0; font: 500 16px/1.45 var(--ay-sans-stack); color: var(--ay-text) !important; }
+.app-container .hm .hm-step .hm-h3 { color: var(--ay-text) !important; }
+.app-container .hm .hm-stepui { position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 4px; padding: 8px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); box-sizing: border-box; --ay-text: var(--hm-ink); --ay-outline-color: var(--hm-ink); --ay-outline: 1.5px solid var(--hm-ink); --legacy-outline: var(--hm-ink); }
+.app-container.app-container .hm .hm-stepui .ay-chip { pointer-events: none; min-height: 28px; height: 28px !important; padding: 0 10px; font-size: 13px !important; color: var(--hm-ink) !important; border-color: var(--hm-ink) !important; }
+.app-container.app-container .hm .hm-stepui .ay-chip.is-on { background: var(--hm-ink) !important; color: var(--hm-butter) !important; }
+.app-container .hm .hm-stepui.is-decide { left: auto; flex-direction: column; align-items: stretch; gap: 6px; padding: 0; background: transparent; border: 0; }
+.app-container .hm .hm-stepui__btn { display: inline-flex; align-items: center; justify-content: center; min-height: 34px; padding: 0 16px; border: 1.5px solid var(--hm-ink); border-radius: 999px; background: var(--hm-pink); font: 600 14px/1 var(--ay-sans-stack); }
+.app-container .hm .hm-stepui__btn.is-quiet { background: var(--hm-butter); }
+/* the three-level meter inside step 2 */
+.app-container .hm .hm-levels { list-style: none; margin: 8px 0 0; padding: 0; width: 100%; }
+.app-container .hm .hm-levels > li { display: grid; gap: 6px; padding: 10px 0; border-top: 1px solid var(--ay-hairline); }
+.app-container .hm .hm-levels > li:last-child { border-bottom: 1px solid var(--ay-hairline); }
+.app-container .hm .hm-levels .ay-meter__word { font-size: 15px; }
+.app-container .hm .hm-levels__note { font: 500 14px/1.4 var(--ay-sans-stack); color: var(--ay-text); }
+.app-container .hm .hm-levels__more { justify-self: start; padding: 0; min-height: 40px; font-size: 15px !important; }
+/* the catalog in numbers, beneath the steps */
+.app-container .hm .hm-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 24px; margin: 48px 0 0; }
+.app-container .hm .hm-stat__skel { display: inline-block; width: 2.2ch; height: .8em; border-radius: var(--hm-r-sm); background: var(--ay-hairline); }
+.app-container .hm .hm-how__cta { margin-top: 48px; display: flex; }
+@media (max-width: 1023px) and (min-width: 768px) { .app-container .hm .hm-steps { gap: 16px; } .app-container .hm .hm-step__n { font-size: 44px; } .app-container .hm .hm-stepui { display: none; } }
+@media (max-width: 767px) {
+  .app-container .hm .hm-how__lead { margin-bottom: 24px !important; }
+  .app-container .hm .hm-steps { grid-template-columns: 1fr; gap: 0; }
+  .app-container .hm .hm-step { grid-template-columns: 96px auto minmax(0, 1fr); grid-template-areas: 'ph n text'; column-gap: 12px; padding: 16px 0; border-top: 1px solid var(--ay-hairline); }
+  .app-container .hm .hm-step:last-child { border-bottom: 1px solid var(--ay-hairline); }
+  .app-container .hm .hm-step__ph { width: 96px; aspect-ratio: 1 / 1; margin: 0; }
+  .app-container .hm .hm-stepui { display: none; }
+  .app-container .hm .hm-step__n { font-size: 40px; }
+  .app-container .hm .hm-step__text { padding-top: 0; }
+  .app-container .hm .hm-step__text p { font-size: 15px; }
+  .app-container .hm .hm-levels { margin-left: -108px; width: calc(100% + 108px); }
+  .app-container .hm .hm-step:has(.hm-levels) { grid-template-areas: 'ph n text' 'ph n text'; }
+  .app-container .hm .hm-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; margin-top: 32px; }
+        .app-container .hm .hm-how__cta { margin-top: 24px; }
+  .app-container .hm .hm-how__cta .ay-btn { flex: 1; }
+}
+
+/* ---------- 5. reads + community: two columns ---------- */
+.app-container .hm .hm-rc__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: start; }
+.app-container .hm .hm-readlist { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ay-hairline); }
+.app-container .hm .hm-readlist > li { border-bottom: 1px solid var(--ay-hairline); }
+.app-container .hm .hm-readlist__row { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 20px; align-items: center; padding: 16px 0; color: inherit; text-decoration: none; }
+.app-container .hm .hm-readlist__row:focus-visible { outline: 3px solid var(--ay-outline, #3e2723); outline-offset: 2px; border-radius: var(--hm-r-sm); }
+.app-container .hm .hm-readlist__ph { display: block; aspect-ratio: 4 / 3; overflow: hidden; border: 1.5px solid var(--ay-outline-color); border-radius: var(--hm-r); background: var(--hm-butter-2); }
+.app-container .hm .hm-readlist__ph :is(img, picture) { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; }
+.app-container .hm .hm-readlist__text, .app-container .hm .hm-readlist__word { display: grid; gap: 6px; min-width: 0; }
+.app-container .hm .hm-readlist__word { padding: 16px 0; }
+.app-container .hm .hm-readlist__label { font: 600 13px/1.3 var(--ay-sans-stack); text-transform: none; }
+.app-container .hm .hm-readlist__title { font: 700 22px/1.15 var(--ay-heading); letter-spacing: -.01em; text-wrap: balance; }
+@media (hover: hover) { .app-container .hm .hm-readlist__row:hover .hm-readlist__title { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; } }
+.app-container .hm .hm-readlist__teaser { max-width: 64ch; font: 500 15px/1.5 var(--ay-sans-stack); }
+.app-container.app-container .hm .hm-readlist__src { font: 500 13px/1.4 var(--ay-sans-stack) !important; opacity: .85; }
+/* the Community card: pink, outlined, its photo on top */
+.app-container .hm .hm-comm { display: grid; background: var(--hm-pink); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); overflow: hidden; --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline-color: var(--hm-ink); --ay-outline: 1.5px solid var(--hm-ink); --legacy-outline: var(--hm-ink); --ay-hairline: rgba(62, 39, 35, .3); --ay-feature-bg: var(--hm-ink); --ay-feature-fg: var(--hm-butter); --ay-focus: var(--hm-ink); }
+.app-container .hm .hm-comm__ph { display: block; aspect-ratio: 16 / 10; border-bottom: 1.5px solid var(--hm-ink); overflow: hidden; background: var(--hm-butter-2); }
+.app-container .hm .hm-comm__ph :is(img, picture) { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; border-radius: 0 !important; }
+.app-container .hm .hm-comm__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; }
+.app-container .hm .hm-news { width: 100%; display: grid; gap: 6px; justify-items: start; padding-top: 16px; border-top: 1px solid rgba(62, 39, 35, .3); color: var(--hm-ink); }
+.app-container .hm .hm-tab { display: inline-flex; align-items: center; height: 26px; padding: 0 12px; border-radius: 999px; background: var(--hm-ink); color: var(--hm-butter); font: 600 13px/1 var(--ay-sans-stack); white-space: nowrap; }
+.app-container .hm .hm-news p { margin: 0; font: 500 15px/1.5 var(--ay-sans-stack); color: var(--hm-ink); }
+.app-container .hm .hm-posts { list-style: none; margin: 0; padding: 0; width: 100%; display: grid; gap: 8px; }
+.app-container .hm .hm-post { width: 100%; display: grid; gap: 6px; align-content: start; padding: 12px 16px; text-align: left; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); cursor: pointer; font: inherit; }
+.app-container .hm .hm-post__meta { font: 600 13px/1.3 var(--ay-sans-stack); }
+.app-container .hm .hm-post__body { font: 500 15px/1.45 var(--ay-sans-stack); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+@media (max-width: 1023px) { .app-container .hm .hm-rc__grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } }
+@media (max-width: 767px) {
+  .app-container .hm .hm-readlist__row { grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: start; }
+  .app-container .hm .hm-readlist__title { font-size: 20px; }
+  .app-container .hm .hm-comm__copy { padding: 20px 16px; }
+}
+
+/* ---------- 6. founders + invest: butter, a small Wefunder card ---------- */
+.app-container .hm .hm-us { border-top: 1px solid var(--ay-hairline); }
+.app-container .hm .hm-us__grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 56px; align-items: center; }
+.app-container .hm .hm-polaroid { margin: 0; color: var(--ay-text); }
+.app-container .hm .hm-polaroid__ph { display: block; aspect-ratio: 3 / 2; border: 1.5px solid var(--ay-outline-color); border-radius: var(--hm-r); overflow: hidden; background: var(--hm-butter-2); }
+.app-container .hm .hm-polaroid__ph :is(img, picture) { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; }
+.app-container .hm .hm-polaroid figcaption { padding: 12px 2px 0; font: 600 15px/1.3 var(--ay-sans-stack); }
+.app-container .hm .hm-us__copy { display: grid; gap: 16px; justify-items: start; }
+.app-container .hm .hm-invest { display: grid; grid-template-columns: 200px minmax(0, 1fr); margin-top: 56px; background: var(--hm-butter); color: var(--hm-ink); border: 1.5px solid var(--hm-ink); border-radius: var(--hm-r); overflow: hidden; --ay-text: var(--hm-ink); --ay-text-2: var(--hm-ink); --ay-outline-color: var(--hm-ink); --ay-outline: 1.5px solid var(--hm-ink); --legacy-outline: var(--hm-ink); --ay-focus: var(--hm-ink); }
+.app-container .hm .hm-invest__ph { position: relative; display: block; border-right: 1.5px solid var(--hm-ink); background: var(--hm-butter-2); }
+.app-container .hm .hm-invest__ph :is(img, picture) { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; border-radius: 0 !important; }
+.app-container .hm .hm-invest__copy { display: grid; gap: 12px; justify-items: start; padding: 24px 32px; }
+.app-container .hm .hm-invest__copy .hm-body { color: var(--hm-ink) !important; }
+.app-container.app-container .hm .hm-invest__legal { margin: 4px 0 0; padding-top: 12px; border-top: 1px solid rgba(62, 39, 35, .3); font: 500 13px/1.5 var(--ay-sans-stack) !important; color: var(--hm-ink); max-width: 80ch; }
+@media (max-width: 767px) {
+  .app-container .hm .hm-us__grid { grid-template-columns: 1fr; gap: 24px; }
+  .app-container .hm .hm-us__copy { gap: 12px; }
+  .app-container .hm .hm-invest { grid-template-columns: 1fr; margin-top: 40px; }
+  .app-container .hm .hm-invest__ph { display: none; }
+  .app-container .hm .hm-invest__copy { padding: 20px 16px; }
+}
+.app-container[data-theme='brand-dark'] .hm :is(.hm-invest, .hm-comm) { border-color: var(--hm-butter); }
+
+/* ---------- motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .app-container .hm svg { transition: none !important; }
+}
+/* shaped edges sit above the neighbouring section */
+.app-container .hm .ay-band--scallop, .app-container .hm .ay-band--scallop-bottom { z-index: 1; }
+
+/* =====================================================================
+   Landing audit v2 (Oct 25, 23:20): shared look + inspiration placed.
+   Scallops only at the hero/ticker edge and the footer strip; one pink
+   section (reads + Community); standards stated once under the hero;
+   big-number facts on deeper-butter tiles with 13px captions; the Wefunder card
+   carries one round seal ("community round").
+   ===================================================================== */
+.app-container .hm .hm-standards-wrap { margin-top: 40px; }
+.app-container .hm .hm-standards svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+@media (max-width: 767px) { .app-container .hm .hm-standards-wrap { margin-top: 0; } }
+/* the pink section: reads + Community; the Community card turns butter on it */
+.app-container .hm .hm-rc .hm-comm { background: var(--hm-butter); }
+.app-container .hm .hm-rc .hm-readlist__ph { border-color: var(--hm-ink); }
+.app-container .hm .hm-rc .hm-post { background: #f6e3a1; border: 1px solid rgba(62, 39, 35, .15); }
+/* butter needs section and espresso how section meet with a plain edge */
+.app-container .hm .hm-needsband { border-top: 0; }
+/* big-number facts: the shared BigFact tile (deeper butter + thin espresso rule, 13px caption; founder Oct 26: no white surfaces), four in a row */
+.app-container .hm .hm-stats { list-style: none; padding: 0; gap: 16px; }
+.app-container .hm .hm-stats > li { min-width: 0; display: grid; }
+.app-container .hm .hm-stats .ayk-fact { --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .78); --ay-ink: #3e2723; --legacy-ink: #3e2723; --ay-ink-muted: rgba(62, 39, 35, .78); --ay-surface: #f6e3a1; --legacy-surface: #f6e3a1; background: #f6e3a1; border: 1px solid rgba(62, 39, 35, .15); }
+@media (max-width: 767px) { .app-container .hm .hm-stats { gap: 12px; } }
+/* the Wefunder card's one round seal */
+.app-container .hm .hm-invest { position: relative; overflow: visible; }
+.app-container .hm .hm-invest__ph { margin: -1.5px 0 -1.5px -1.5px; border: 1.5px solid; border-color: inherit; border-radius: var(--hm-r) 0 0 var(--hm-r); overflow: hidden; } /* sits on the frame edge: 16px radius, the clip gives 16 minus the border inside */
+.app-container .hm .hm-invest__seal { position: absolute; top: -40px; right: 24px; left: auto; bottom: auto; z-index: 2; }
+@media (max-width: 767px) { .app-container .hm .hm-invest__seal { width: 84px; height: 84px; top: -34px; right: 12px; } .app-container .hm .hm-invest__seal b { width: 36px; height: 36px; font-size: 13px; } }
+/* beside the phrases the four cards sit 2 x 2: a wider photo plate keeps the block about as tall as the phrases */
+@media (min-width: 1024px) { :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .hm .hm-needsband__grid:not(.is-single) .ay-product-card__tile { aspect-ratio: 16 / 10; } }
+.app-container.app-container .hm .ay-meter__bars > i { border-radius: 999px; }
+
+/* ---------- brand dark on the landing ----------
+   The --ay-* tokens switch on their own (ay-tokens.css). Older rules inside
+   the landing read --legacy-*, so they get the dark values here. Pink stays
+   pink in dark (blue is for chart lines only). */
+.app-container[data-theme='brand-dark'] .hm {
+  --legacy-ink: #ffedac; --legacy-surface: rgba(255, 237, 172, .08);
+  --hm-pink: #f7badd; --legacy-pink: #f7badd; --ay-press-shadow: 3px 3px 0 #f7badd;
+}
+.app-container[data-theme='brand-dark'] .hm .hm-rc.ay-band--pink { --band: #f7badd; background: #f7badd; }
+.app-container[data-theme='brand-dark'] .hm .ay-seal { background: #f7badd; }
+.app-container.app-container[data-theme='brand-dark'] .hm .ay-btn--primary { box-shadow: 3px 3px 0 #f7badd !important; }
+.app-container[data-theme='brand-dark'] .hm .hm-ui--evidence, .app-container[data-theme='brand-dark'] .hm .hm-ui__pill, .app-container[data-theme='brand-dark'] .hm .hm-ui__save, .app-container[data-theme='brand-dark'] .hm .hm-stepui__btn:not(.is-quiet), .app-container[data-theme='brand-dark'] .hm .hm-swipe { --hm-pink: #f7badd; }
+.app-container[data-theme='brand-dark'] .hm .hm-ui--evidence { background: #f7badd; }
+.app-container[data-theme='brand-dark'] .hm .hm-step__n { text-shadow: 3px 3px 0 #f7badd; }
+
+/* Chips on the landing take the text colour for their outline. */
+.app-container .hm .hm-chips { --ay-outline: 1.5px solid currentColor; --ay-border-ink: 1.5px solid currentColor; --legacy-outline: 1.5px solid currentColor; }
+/* phones: keep the long page shorter without dropping anything */
+@media (max-width: 767px) {
+  .app-container .hm .hm-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .app-container .hm .hm-levels > li, .app-container .hm .hm-levels > li:last-child { align-content: start; padding: 10px 0 0; border-bottom: 0; }
+  .app-container .hm .hm-levels .ay-meter__word { font-size: 13px; }
+  .app-container .hm .hm-levels__note { font-size: 13px; line-height: 1.35; }
+  .app-container .hm .hm-comm__ph { aspect-ratio: 16 / 8; }
+  .app-container .hm .hm-polaroid__ph { aspect-ratio: 16 / 9; }
+}

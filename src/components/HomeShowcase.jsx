@@ -4,7 +4,7 @@ import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import './HomeShowcase.css';
 
 /* Explore by need: one card per health need with a real product. */
-export function ExploreByNeed({ onExplore, onOpenProduct, onViewAll, limit = 6, title = 'Shop by need' }) {
+export function ExploreByNeed({ onExplore, onOpenProduct, onViewAll, limit = 6, title = 'Explore by need' }) {
   const needs = useMemo(() => NEEDS.map((n) => ({ ...n, pool: productsForNeed(n) })).filter((n) => n.pool.length > 0).slice(0, limit), [limit]);
   const [turn, setTurn] = useState(0);
   if (!needs.length) return null;
@@ -45,7 +45,7 @@ export function ExploreByNeed({ onExplore, onOpenProduct, onViewAll, limit = 6, 
         </div>
         {onViewAll && (
           <div className="hs-needs__foot">
-            <button type="button" className="hs-needs__all" onClick={onViewAll}>See everything in the Shop</button>
+            <button type="button" className="hs-needs__all" onClick={onViewAll}>See everything in Explore</button>
           </div>
         )}
       </div>

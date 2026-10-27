@@ -1,49 +1,44 @@
 import React from 'react';
+import AccountHead from './nav/AccountHead.jsx';
+import { sentenceCase } from '../utils/sentenceCase.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
-export default function OmittedProducts({ omittedProducts, toggleOmitProduct }) {
+export default function OmittedProducts({ omittedProducts, toggleOmitProduct, onBack = null, onBrowse = null }) {
     const omittedList = Object.values(omittedProducts);
 
     return (
-        <div className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-            <div className="ay3-pagehead ay3-band ay3-band--paper ay3-edge-bottom" style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
-                <p className="ay3-kicker">Hidden</p>
-                <h2 style={{ fontSize: 'var(--ay-fs-title)', marginBottom: '0.5rem' }}>Not for <em>me.</em></h2>
-                <p style={{ color: 'var(--color-text-muted)' }}>These products will no longer appear in your Discovery or Recommendations.</p>
-            </div>
+        <div className="container ay-acct-page animate-fade-in-up">
+            <AccountHead title="Not for me" back={onBack ? { label: 'My ecosystem', href: '/you/ecosystem', onClick: onBack } : null}>
+                <p>Products you hid. They won&rsquo;t appear in Explore or your matches. Restore one any time.</p>
+            </AccountHead>
 
             {omittedList.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '4rem', background: 'var(--color-bg)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: 16 }}>You haven't omitted any products yet.</p>
+                <div className="ay-acct-empty">
+                    <p>Nothing hidden. When a product isn&rsquo;t for you, choose &ldquo;Not for me&rdquo; on it and it lands here.</p>
+                    {onBrowse && <button type="button" className="ay-btn ay-btn--secondary" onClick={onBrowse}>Browse products</button>}
                 </div>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', maxWidth: '1000px', margin: '0 auto' }}>
+                <ul className="ay-acct-list" aria-label="Hidden products">
                     {omittedList.map((product) => (
-                        <div key={product.id} className="card" style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <ProductTileImage
-                                product={product}
-                                alt={product.name}
-                                imgStyle={{ width: '60px', height: '60px', borderRadius: 'var(--radius-md)', objectFit: 'cover' }}
-                                letterNode={(
-                                    <div style={{ width: '60px', height: '60px', borderRadius: 'var(--radius-md)', flexShrink: 0, overflow: 'hidden' }}>
-                                        <ProductImageFallback compact />
-                                    </div>
-                                )}
-                            />
-                            <div style={{ flexGrow: 1 }}>
-                                <h3 style={{ fontSize: 16, marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: 12.5, fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h3>
-                                <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>{product.category}</p>
-                            </div>
-                            <button
-                                className="btn btn-outline"
-                                style={{ fontSize: 12.5, padding: '0.4rem 0.75rem' }}
-                                onClick={() => toggleOmitProduct(product)}
-                            >
+                        <li key={product.id} className="ay-acct-list__row">
+                            <span className="ay-acct-list__plate">
+                                <ProductTileImage
+                                    product={product}
+                                    alt=""
+                                    imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                    letterNode={<ProductImageFallback compact />}
+                                />
+                            </span>
+                            <span className="ay-acct-list__text">
+                                <b>{product.name}</b>
+                                <span>{sentenceCase(product.category)}{product.outOfBusiness ? ' · No longer sold' : ''}</span>
+                            </span>
+                            <button type="button" className="ay-btn ay-btn--secondary" onClick={() => toggleOmitProduct(product)} aria-label={`Restore ${product.name}`}>
                                 Restore
                             </button>
-                        </div>
+                        </li>
                     ))}
-                </div>
+                </ul>
             )}
         </div>
     );

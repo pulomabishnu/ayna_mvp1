@@ -1,8 +1,16 @@
+import { legacyPathFor } from './components/nav/mainTabs.js';
+import { devPreviewOn } from './utils/devPreview.js';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { Capacitor } from '@capacitor/core'
+import './styles/fonts.css'
+import './styles/ay-tokens.css'
 import './index.css'
+import './styles/motion.css'
+import './styles/finish.css'
+import './styles/delight.css'
+import { installDelight } from './utils/delightRuntime.js'
 import { markPerf } from './utils/perfTimings.js'
 
 // The whole mobile app (src/mobile/**, ~1.6MB of source) was bundled into the
@@ -13,11 +21,19 @@ import { markPerf } from './utils/perfTimings.js'
 const MobileApp = React.lazy(() => import('./mobile/MobileApp.jsx'))
 import './styles/search-focus.css'
 import { installNoEmDash } from './utils/noEmDashDom.js'
+installDelight()
+// DEV and local production builds on localhost only (never real hosts, never the native app):
+// remember ?fixture=community|today for this tab before the router tidies the URL.
+if (devPreviewOn()) {
+  // ?fixture=today (and today-care, today-pregnant): src/health/todayDevFixture.js.
+  try { const f = new URLSearchParams(window.location.search).get('fixture'); if (/^(community|today(-care|-pregnant)?)$/.test(f || '')) sessionStorage.setItem('ayna_dev_fixture', f) } catch { /* private mode */ }
+}
 import posthog from 'posthog-js'
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal'
 import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics'
 import { applyStoredConsent, getStoredConsent, isMandatoryGpcVisitor } from './utils/analyticsConsent'
 import { appErrorProperties } from './utils/errorAnalytics'
+import { sanitizeEventPayload } from './utils/analyticsSanitize'
 import { analyticsPlatform, resolvePosthogKey } from './utils/analyticsPlatform'
 
 // One origin only. Sign-in keeps its session (and the PKCE code verifier) per
@@ -129,33 +145,6 @@ if (originalIdentify) {
   };
 }
 
-// Health-related free text and direct account identifiers should never become
-// analytics payload. Exact keys only so useful non-sensitive counters such as
-// queryLength/concernsCount and product/category analytics remain available.
-const SENSITIVE_ANALYTICS_KEYS = new Set([
-  'query', 'searchquery', 'search_query', 'email', 'useremail', 'prompt', 'message', 'notes',
-  'healthprofile', 'health_profile', 'fullhealthintake', 'full_health_intake',
-  'conditions', 'medications', 'allergies', 'symptoms', 'diagnosis', 'diagnoses',
-  'concerns', 'intake', 'fhirsummary', 'fhir_summary', 'wearablesummary',
-  'wearable_summary', 'freetext', 'free_text', 'supportothertext',
-  'support_other_text', 'customconcerns', 'custom_concerns',
-  'userid', 'user_id', 'authuserid', 'auth_user_id', 'phone', 'phonenumber',
-  'phone_number', 'zipcode', 'zip', 'full_name', 'first_name', 'last_name',
-]);
-
-function sanitizeAnalyticsObject(value) {
-  if (Array.isArray(value)) return value.map(sanitizeAnalyticsObject);
-  if (!value || typeof value !== 'object') return value;
-
-  const clean = {};
-  for (const [key, nestedValue] of Object.entries(value)) {
-    const normalized = String(key).toLowerCase();
-    if (SENSITIVE_ANALYTICS_KEYS.has(normalized)) continue;
-    clean[key] = sanitizeAnalyticsObject(nestedValue);
-  }
-  return clean;
-}
-
 function sanitizePosthogEvent(event) {
   // Once this browser has been recognized as one of the three founders, do not
   // send further analytics at all. The PostHog person is also tagged internal
@@ -166,10 +155,13 @@ function sanitizePosthogEvent(event) {
   // from this page. A pageview or click there would reveal that a specific
   // visitor looked for these resources.
   if (typeof window !== 'undefined' && /^\/campus-resources(\/|$)/.test(window.location.pathname)) return null;
-  if (!event?.properties) return event;
   // platform on every event, including the first pageview (which can be sent
-  // before the `loaded` register below takes effect).
-  return { ...event, properties: { platform: ANALYTICS_PLATFORM, ...sanitizeAnalyticsObject(event.properties) } };
+  // before the `loaded` register below takes effect). Free text typed into
+  // Shop/Community search (?q=) is stripped from every URL property.
+  // Pageviews on a moved page also carry the old address (legacy_path: /shop,
+  // /library, /ecosystem, /health), so dashboards built on those keep counting.
+  const legacy = event?.event === '$pageview' && typeof window !== 'undefined' ? legacyPathFor(window.location.pathname) : null;
+  return sanitizeEventPayload(event, legacy ? { platform: ANALYTICS_PLATFORM, legacy_path: legacy } : { platform: ANALYTICS_PLATFORM });
 }
 
 if (!POSTHOG_KEY) {
@@ -247,6 +239,8 @@ if (!POSTHOG_KEY) {
       // with one filter: platform = ios_app / android_app / web.
       ph.register({ platform: ANALYTICS_PLATFORM });
       if (Capacitor.isNativePlatform()) registerNativeAppAnalytics(ph);
+      // D1 / D7 / D30: one app_opened per local day (no health details).
+      import('./utils/analyticsEvents.js').then(({ trackAppOpened, eventSurface }) => trackAppOpened({ surface: eventSurface() })).catch(() => {});
     },
   });
 }
@@ -328,17 +322,19 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.recovering) {
-      return <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: 600, margin: '2rem auto', color: '#666' }}>Updating…</div>;
+      return <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '48px 20px', background: '#ffedac', color: '#3e2723', font: "500 16px/1.5 'Figtree', system-ui, sans-serif", textAlign: 'center' }}>Updating…</div>;
     }
 
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: 600, margin: '2rem auto' }}>
-          <h1>This page didn’t load</h1>
-          <p style={{ color: '#666' }}>ayna hit an error. Reload the page to try again.</p>
-          <button type="button" onClick={() => window.location.reload()} style={{ padding: '0.5rem 1rem', marginTop: '1rem' }}>
+        <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '64px 20px', background: '#ffedac', color: '#3e2723', font: "400 16px/1.5 'Figtree', system-ui, sans-serif" }}>
+          <div style={{ maxWidth: 560, margin: '0 auto' }}>
+          <h1 style={{ margin: '0 0 12px', font: "400 36px/1.1 var(--ay-heading, 'ayna Display', 'Figtree', system-ui, sans-serif)", letterSpacing: '-.01em' }}>This page didn’t load</h1>
+          <p style={{ margin: 0, color: 'rgba(62,39,35,.8)' }}>ayna hit an error. Reload the page to try again.</p>
+          <button type="button" onClick={() => window.location.reload()} style={{ marginTop: 24, minHeight: 52, padding: '0 28px', border: '1.5px solid #3e2723', borderRadius: 999, background: '#3e2723', color: '#ffedac', boxShadow: '3px 3px 0 #3e2723', font: "600 16px/1 'Figtree', system-ui, sans-serif", cursor: 'pointer' }}>
             Reload
           </button>
+          </div>
         </div>
       );
     }
@@ -351,15 +347,7 @@ class ErrorBoundary extends React.Component {
 // check, they always show the mobile UI. The web build still gates it
 // behind the path, so the live website's normal routing is unaffected.
 const isMobilePreview = window.location.pathname === '/mobile-preview' || Capacitor.isNativePlatform();
-// The app's typefaces load only for the app; the website keeps to its two.
-if (isMobilePreview) {
-  try {
-    const l = document.createElement('link');
-    l.rel = 'stylesheet';
-    l.href = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Poppins:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,700&family=Archivo+Black&family=DM+Mono:wght@400;500&display=swap';
-    document.head.appendChild(l);
-  } catch { /* fonts are progressive */ }
-}
+// The app's typefaces are self-hosted (styles/fonts.css): nothing loads from Google at runtime, so the app works offline.
 
 // Native app: shop and article links open in an in-app browser sheet
 // (SFSafariViewController / Custom Tabs) instead of leaving ayna, so people
@@ -398,7 +386,11 @@ if (Capacitor.isNativePlatform()) {
 // While the app code loads: the page colour of the theme she picked (espresso in dark,
 // butter in light), so there is no off-white flash before the first screen.
 function mobileLoadingBackground() {
-  try { return localStorage.getItem('ayna_mobile_theme_v1') === 'dark' ? '#3e2723' : '#ffedac'; } catch { return '#ffedac'; }
+  try {
+    const pick = localStorage.getItem('ayna_mobile_theme_pick_v2') || (localStorage.getItem('ayna_mobile_theme_v1') === 'dark' ? 'dark' : null);
+    const dark = pick ? pick === 'dark' : window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+    return dark ? '#3e2723' : '#ffedac';
+  } catch { return '#ffedac'; }
 }
 
 installNoEmDash(document.body)

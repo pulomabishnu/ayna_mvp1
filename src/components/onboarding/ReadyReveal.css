@@ -1,0 +1,72 @@
+/* "Your first matches" on the reveal (ReadyReveal.jsx). The reveal sits on
+   espresso; each match is a butter row with the product on a white plate. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-matches { display: grid; gap: 10px; margin: 8px 0 0; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-matches__h { margin: 0 !important; color: var(--o-ink, #ffedac) !important; font: 600 17px/1.3 var(--ay-font-ui, 'Figtree'), sans-serif !important; letter-spacing: 0 !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-matches__list { display: grid; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match { display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: center; gap: 12px; padding: 10px 12px; border: 1.5px solid #3e2723; border-radius: var(--ay-r-md, 16px); background: #ffedac; color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match::before { content: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__plate { display: grid; place-items: center; width: 56px; height: 56px; overflow: hidden; border-radius: var(--ay-r-sm, 8px); background: #fff; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__plate img { width: 70%; height: 70%; object-fit: contain; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__plate i { font: 600 13px/1.1 var(--ay-font-ui, 'Figtree'), sans-serif; font-style: normal; color: #3e2723; text-align: center; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__text { display: grid; gap: 2px; min-width: 0; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__text small { font: 500 13px/1.3 var(--ay-font-ui, 'Figtree'), sans-serif; color: rgba(62, 39, 35, .78); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__text b { font: 600 15px/1.3 var(--ay-font-ui, 'Figtree'), sans-serif; color: #3e2723; overflow-wrap: anywhere; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__why { font: 500 13px/1.4 var(--ay-font-ui, 'Figtree'), sans-serif; color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match .ay-match-pill { align-self: start; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__chip { justify-self: start; padding: 3px 8px; border: 1.5px solid #3e2723; border-radius: var(--ay-r-pill, 999px); font: 600 13px/1.1 var(--ay-font-ui, 'Figtree'), sans-serif; font-style: normal; color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match__chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 2px; }
+/* The row is butter in both themes, so the pill keeps its light-theme ink look. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match .ay-match-pill { background: #3e2723 !important; border-color: #3e2723 !important; color: #ffedac !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-match .ay-match-pill * { color: inherit !important; }
+
+/* Bleeding after menopause: care message above her focus (QA3 M2). */
+.ay-ob-ready__care { margin: 4px 0 16px; text-align: left; }
+
+/* Design loop A (Oct 26): one look for the reveal's controls on web and app.
+   Back is the quiz's round arrow; focus rings are butter (no blue off charts);
+   the focus numerals are all pink (blue is for chart lines only); the actions
+   read primary, then the one text link, then the optional step. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-back { border: 1.5px solid currentColor !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-back svg { width: 17px; height: 17px; stroke-width: 2.4; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready :is(.ay-ob-primary, .ay-ob-quiet, .ay-ob-more, .ay-ob-back):focus-visible { outline: 3px solid #ffedac !important; outline-offset: 3px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__list li:nth-child(n) span { color: #3e2723 !important; background: #f7badd !important; box-shadow: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-primary { order: 1; box-shadow: 3px 3px 0 #f7badd !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-quiet { order: 2; min-height: 44px; padding: 0 4px !important; border: 0 !important; text-decoration: underline; text-underline-offset: 4px; font-weight: 600 !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-more { order: 3; flex-basis: 100%; }
+/* the reveal rows are butter in both themes: the match pill stays espresso in dark too (it went butter-on-butter) */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-ob-ready .ay-ob-match .ay-match-pill.ay-match-pill,
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ob-ready .ay-ob-match .ay-match-pill.ay-match-pill { background: #3e2723 !important; border-color: #3e2723 !important; color: #ffedac !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-ob-ready .ay-ob-match .ay-match-pill.ay-match-pill :is(strong, span),
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ob-ready .ay-ob-match .ay-match-pill.ay-match-pill :is(strong, span) { color: #ffedac !important; }
+/* the reveal's primary keeps the one sticker shadow on web and app (layered sheets were removing it) */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready .ay-ob-primary.ay-ob-primary,
+html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-ob-ready .ay-ob-primary.ay-ob-primary { box-shadow: 3px 3px 0 #f7badd !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-ob-ready .ay-ob-primary.ay-ob-primary { box-shadow: 3px 3px 0 #f7badd !important; }
+/* the match plate is the shared scalloped Plate (no square tile behind it) */
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-match__plate.is-plate { width: 64px; height: 64px; background: transparent; border-radius: 0; overflow: visible; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-match__plate.is-plate .ayk-plate { width: 100%; height: 100%; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-match { grid-template-columns: 64px minmax(0, 1fr); }
+
+/* Reveal + any small plate: a brand-name fallback never breaks mid-word */
+:is(.ayna-mobile, .app-container) .ay-ob-match__plate :is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name) { font-size: 13px !important; line-height: 1.1 !important; overflow-wrap: normal !important; word-break: normal !important; }
+
+/* ---- Uniqueness pass A (Oct 26): the reveal is a Shout and three products shown big.
+   The lead match sits on a pink tile with a large plate; the next two on butter tiles
+   (#38 Rhode / #32 Glossier packshots on tinted blocks). Nothing removed. ---- */
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-ready__title { font: 800 clamp(48px, 13vw, 76px)/.92 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.035em !important; color: #ffedac !important; text-wrap: balance; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-matches__list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-match { grid-template-columns: minmax(0, 1fr); align-items: start; align-content: start; gap: 8px; padding: 10px; border: 0; border-radius: 16px; background: #ffedac; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-match.is-lead { grid-column: 1 / -1; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr); align-items: center; gap: 14px; padding: 14px; background: #f7badd; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-match__plate.is-plate { width: 100%; height: auto; aspect-ratio: 1; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-match:not(.is-lead) .ay-ob-match__plate.is-plate { width: 72%; justify-self: center; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-match.is-lead .ay-ob-match__text b { font: 800 22px/1.1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.01em; }
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal .ay-ob-match.is-lead .ay-ob-match__why { font-size: 14px; }
+@media (min-width: 640px) {
+  :is(#uq, .app-container):is(#uq, .app-container) .uq-reveal.is-web .ay-ob-matches__list { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); }
+  :is(#uq, .app-container):is(#uq, .app-container) .uq-reveal.is-web .ay-ob-match.is-lead { grid-column: auto; grid-template-columns: minmax(0, 1fr); }
+}
+:is(#uq, .app-container) .uq-reveal .ay-ob-matches__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+:is(#uq, .app-container) .uq-reveal .ay-ob-how { display: inline-flex; align-items: center; min-height: 44px; color: #ffedac !important; font: 700 15px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+:is(#uq, .app-container) .uq-reveal .ay-ob-how:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 8px; }
+.ay-ob-sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

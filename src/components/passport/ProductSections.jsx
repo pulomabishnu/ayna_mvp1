@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { shownMatchPercent, matchText, PARTIAL_FIT } from '../../utils/matchDisplay.js';
+import HealthBackedBadge from '../health/HealthBackedBadge.jsx';
 import { GlossaryText } from '../GlossaryTerm';
 import { LONG_TEXT, NOT_ON_FILE } from '../pdp/glance';
 import { jumpTo } from '../pdp/jump';
@@ -8,6 +10,9 @@ import { useEdgeFade } from '../pdp/useEdgeFade';
 const openSection = (id) => { try { window.dispatchEvent(new CustomEvent('ay-open-section', { detail: id })); } catch { /* ignore */ } };
 const jumpOpen = (id, domId) => { openSection(id); setTimeout(() => jumpTo(domId), 30); };
 import './ProductSections.css';
+import SafetyHoldNote from '../match/SafetyHoldNote.jsx';
+import BleedingEvaluationNote from '../match/BleedingEvaluationNote.jsx';
+import { productAskStarters, PRODUCT_ASK_TITLE, PRODUCT_ASK_PLACEHOLDER } from '../../utils/productAsk.js';
 
 /**
  * "ayna at a glance": the product page's consolidated information, open by
@@ -286,7 +291,7 @@ function Section({ section, plan, sources, extra, onXref, bare = false }) {
 // the research and safety say, what people say, and where it all comes from.
 const TAB_GROUPS = [
   { id: 'match', label: 'Your match', ids: ['match'], tone: 'pink' },
-  { id: 'evidence', label: 'Research & safety', ids: ['clinician', 'evidence', 'unknown', 'safety'], tone: 'peri' },
+  { id: 'evidence', label: 'Evidence & safety', ids: ['clinician', 'evidence', 'unknown', 'safety'], tone: 'peri' },
   { id: 'reviews', label: 'Reviews', ids: ['people', 'brand'], tone: 'pink' },
 ];
 // Ingredients and how to use sit under Overview.
@@ -526,8 +531,24 @@ function MatchSeal({ children }) {
   );
 }
 
-export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, onFindFit = null, hasProfile = false, exclusions = [] }) {
+export function ProductMatch({ glance, matchPercent, why = '', fallback = '', onShowWhy, onFindFit = null, hasProfile = false, exclusions = [], health = null, hold = null, onFixHold = null, evaluation = null }) {
   if (!glance) return null;
+  // Bleeding after menopause: the prompt-evaluation message, no match (founder, Oct 24).
+  if (evaluation && hasProfile) {
+    return (
+      <section className="ay-story ay-story--match is-none" aria-label="Your match">
+        <BleedingEvaluationNote note={evaluation} />
+      </section>
+    );
+  }
+  // Held back for safety: no number, the reason and what resolves it (founder, Oct 24).
+  if (hold && hasProfile) {
+    return (
+      <section className="ay-story ay-story--match is-none" aria-label="Your match">
+        <SafetyHoldNote hold={hold} onFix={onFixHold} />
+      </section>
+    );
+  }
   // Signed in with a profile but no score (a partner bundle, an excluded item):
   // the block still shows, worded honestly, instead of disappearing.
   if (!(matchPercent > 0) && hasProfile) {
@@ -537,7 +558,7 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, o
           <span className="ay-match__big is-none">No match</span>
         </button>
         <div className="ay-match__body">
-          <h2 id="ay-match-h">How it compares to <em>your needs.</em></h2>
+          <h2 id="ay-match-h">How it compares to your needs</h2>
           <ul className="ay-match__reasons">{(exclusions.length ? exclusions.slice(0, 3) : ['Not one of the needs you told us about.']).map((r) => <li key={r} className="is-miss"><span className="sr-only">Counts against: </span>{r}</li>)}</ul>
           <div className="ay-match__links"><button type="button" onClick={onShowWhy}>See the breakdown</button><a href="/how-it-works">How we match</a></div>
         </div>
@@ -560,16 +581,21 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, o
   const lines = reasons.length ? reasons : (fallback ? [fallback] : []);
   // The heading follows the score: a 7% match is never "Why it fits you".
   const band = matchPercent >= 70 ? 'strong' : matchPercent >= 50 ? 'some' : 'weak';
-  const heading = band === 'strong' ? <>Why it fits <em>you.</em></> : band === 'some' ? <>How it fits <em>you.</em></> : <>How it compares to <em>your needs.</em></>;
+  const heading = band === 'strong' ? <>Why it fits you</> : band === 'some' ? <>How it fits you</> : <>How it compares to your needs</>;
   // A reason that counts against the product gets a –, never a ✓.
   const isMiss = (t) => /\b(above|over|outside|not|no|doesn.t|does not|isn.t|missing|lower|less|unknown|can.t|cannot|without)\b/i.test(t);
   return (
     <section className={`ay-story ay-story--match is-${band}`} aria-labelledby="ay-match-h">
-      <button type="button" className="ay-match__score" onClick={onShowWhy} aria-label={`${matchPercent}% match. See why`}>
-        <span className="ay-match__big"><b>{matchPercent}%</b> match</span>
+      <button type="button" className="ay-match__score" onClick={onShowWhy} aria-label={`${matchText(matchPercent)}. See why`}>
+        {shownMatchPercent(matchPercent) != null
+          ? <span className="ay-match__big"><b>{shownMatchPercent(matchPercent)}%</b> match</span>
+          : <span className="ay-match__big is-partial">{PARTIAL_FIT}</span>}
       </button>
       <div className="ay-match__body">
         <h2 id="ay-match-h">{heading}</h2>
+        {/* The % explained in one plain line from the engine's reasons. */}
+        {why && <p className="ay-match__lede">{why}</p>}
+        {health && <HealthBackedBadge backed={health} />}
         {lines.length > 0 && <ul className="ay-match__reasons">{lines.map((r) => <li key={r} className={isMiss(r) ? 'is-miss' : 'is-hit'}><span className="sr-only">{isMiss(r) ? 'Counts against: ' : 'Fits: '}</span>{r}</li>)}</ul>}
         <div className="ay-match__links">
           <button type="button" onClick={onShowWhy}>See the breakdown</button>
@@ -580,11 +606,14 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, o
   );
 }
 
-// Questions the page can't answer on its own: they're about her (product page audit).
-const ASK_SITUATION = ['Is this right for me?', 'Is it safe with what I already use?', 'How does it compare with what I have now?'];
-export function ProductAsk({ productName, onAsk }) {
+// Ask about this product (founder, Oct 24): one heading, three starters that
+// fit her (src/utils/productAsk.js), one box. Every question goes to Ask
+// anchored to this product ("About <name>: ..."); her match is answered by
+// the engine on her device, never by the model.
+export function ProductAsk({ productName, onAsk, hasProfile = false }) {
   // While this strip is on screen the floating "Ask ayna" button steps aside (it covered the compare table).
   const ref = React.useRef(null);
+  const [text, setText] = React.useState('');
   React.useEffect(() => {
     const el = ref.current;
     if (!el || typeof IntersectionObserver === 'undefined') return undefined;
@@ -593,13 +622,18 @@ export function ProductAsk({ productName, onAsk }) {
     return () => { io.disconnect(); document.body.classList.remove('ay-ask-inline-on'); };
   }, []);
   if (!onAsk) return null;
+  const send = (q) => { const t = String(q || '').trim(); if (t) { onAsk(`About ${productName}: ${t}`); setText(''); } };
   return (
     <section ref={ref} className="ay-askrow" aria-labelledby="ay-ask-h">
-      <h2 id="ay-ask-h">Ask about your situation</h2>
+      <h2 id="ay-ask-h">{PRODUCT_ASK_TITLE}</h2>
       <ul>
-        {ASK_SITUATION.map((q) => <li key={q}><button type="button" onClick={() => onAsk(`About ${productName}: ${q}`)}>{q}</button></li>)}
-        <li><button type="button" onClick={() => onAsk(`About ${productName}: `)}>Ask your own question</button></li>
+        {productAskStarters({ hasProfile }).map((q) => <li key={q}><button type="button" onClick={() => send(q)}>{q}</button></li>)}
       </ul>
+      <form className="ay-askrow__form" onSubmit={(e) => { e.preventDefault(); send(text); }}>
+        <label className="sr-only" htmlFor="ay-askrow-input">{PRODUCT_ASK_PLACEHOLDER}</label>
+        <input id="ay-askrow-input" type="text" value={text} onChange={(e) => setText(e.target.value)} placeholder={PRODUCT_ASK_PLACEHOLDER} maxLength={300} />
+        <button type="submit" disabled={!text.trim()}>Ask</button>
+      </form>
     </section>
   );
 }
@@ -622,7 +656,7 @@ export function ProductTrust({ glance, aynaRating = null, ratingCount = 0, extra
   const totalSources = glance.sources.length;
   return (
     <section className="ay-story ay-story--trust" aria-labelledby="ay-trust-h">
-      <h2 id="ay-trust-h">Can you <em>trust it?</em></h2>
+      <h2 id="ay-trust-h">Can you trust it?</h2>
       <div className="ay-trust">
         <article className="ay-trust__card is-reviews">
           <header><h3>Reviews</h3>{aynaRating != null && ratingCount > 0 && <span className="ay-trust__rating"><b>★ {aynaRating.toFixed(1)}</b> · {ratingCount} ayna member review{ratingCount === 1 ? '' : 's'}</span>}</header>

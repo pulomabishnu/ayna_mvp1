@@ -1,0 +1,141 @@
+/* Uniqueness pass, group B (Today, Ask, Community, You): page-level overrides for the bold moves.
+   Heavy selectors on purpose: the page layers use html body .app-container x5. */
+
+/* ---------- Shout inside the espresso page band (light: butter text; brand dark flips the band to butter) ---------- */
+.ay-band--espresso :is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout) { color: inherit; }
+
+/* ---------- You hub (web) ---------- */
+html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview > .wy-bento { grid-column: 1 / -1; order: 0; width: 100%; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-head.ay-pagehead { border-bottom: 0 !important; align-items: center; padding-top: 32px !important; padding-bottom: 36px !important; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-head.ay-pagehead::before { content: '' !important; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-head .wy-shout { margin: 0 0 6px; line-height: .9; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-head :is(.wy-who__meta, .wy-counts, .wy-counts b, .wy-counts span) { color: inherit !important; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-head .yh-profile { background: transparent !important; border: 1.5px solid currentColor !important; color: inherit !important; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-head .yh-profile :is(span, b) { color: inherit !important; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-head .yh-profile i { background: color-mix(in srgb, currentColor 25%, transparent) !important; }
+html body .app-container.app-container.app-container.app-container.app-container .yh .yh-head .yh-profile i em { background: #F7BADD !important; }
+@media (max-width: 767px) {
+  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview > .wy-bento { order: 0; }
+  html body .app-container.app-container.app-container.app-container.app-container .yh .wy-grid.is-overview .yh-setup { order: 1; }
+}
+
+/* ---------- App: espresso header band with a Shout (You hub, Today). Brand dark flips it to butter, as on the web. ---------- */
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) :is(.ay-you-head.ay-you-band, .ay-home-hello.is-band) {
+  --ubx: #3E2723; --ubf: #FFEDAC;
+  position: relative; margin: 0 0 28px !important; padding: 20px var(--d-gutter, 16px) 24px !important; background: var(--ubx) !important; color: var(--ubf) !important;
+}
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile)[data-theme='dark'] :is(.ay-you-head.ay-you-band, .ay-home-hello.is-band) { --ubx: #FFEDAC; --ubf: #3E2723; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) :is(.ay-you-head.ay-you-band, .ay-home-hello.is-band)::after {
+  content: '' !important; display: block !important; position: absolute; left: 0; right: 0; top: 100%; height: 12px; background: var(--ubx);
+  -webkit-mask: radial-gradient(circle at 10px 0, #000 9.5px, transparent 10px) 0 0 / 20px 12px repeat-x; mask: radial-gradient(circle at 10px 0, #000 9.5px, transparent 10px) 0 0 / 20px 12px repeat-x;
+}
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-head.ay-you-band :is(p, span, b, a, button, h1, u, small) { color: var(--ubf) !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-head.ay-you-band h1 { display: grid; gap: 2px; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-head.ay-you-band .ay-you-shout { font-size: 48px !important; line-height: .92 !important; color: var(--ubf) !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-head.ay-you-band .ay-you-progress { background: transparent !important; border-color: var(--ubf) !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-head.ay-you-band .ay-you-progress > i { background: color-mix(in srgb, var(--ubf) 25%, transparent) !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-head.ay-you-band .ay-you-progress > i > i { background: #F7BADD !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-bento { margin: 0 0 20px; }
+
+/* App Today greeting band */
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-home-hello.is-band { margin-left: 0 !important; margin-right: 0 !important; padding: 20px 16px 24px !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-home-hello.is-band .ay-home-hello__days { display: flex; justify-content: space-between; gap: 4px; margin: 0; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-home-hello.is-band .ay-home-hello__days li { flex: 1 1 0; min-width: 0; max-width: 46px; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-home-hello.is-band .ay-home-hello__date { margin: 0 0 4px; font: 600 14px/1.2 var(--f-ui, Figtree, sans-serif); color: var(--ubf) !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-home-hello.is-band .ay-home-hello__hi { margin: 0 0 16px; font-size: 48px !important; line-height: .92 !important; color: var(--ubf) !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-home-hello.is-band .ay-home-hello__days { color: var(--ubf) !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-home-hello.is-band .ay-home-hello__days li { border-color: color-mix(in srgb, var(--ubf) 40%, transparent) !important; color: var(--ubf) !important; background: transparent !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-home-hello.is-band .ay-home-hello__days li.is-today { background: #F7BADD !important; color: #3E2723 !important; border-color: #F7BADD !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-home-hello.is-band .ay-home-hello__days li :is(small, b) { color: inherit !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-homeweek { margin: 16px 0 8px; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-homeweek > h2 { margin: 0 0 10px; font: 700 20px/1.2 var(--f-display, 'ayna Display', sans-serif); color: var(--d-ink, #3e2723); }
+
+/* ---------- Ask: bold espresso start (AskStart), colour-blocked question groups ---------- */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold { gap: 12px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-hero { --askp-ink: #ffedac; --askp-muted: rgba(255, 237, 172, .86); position: relative; display: grid; gap: 10px; padding: 24px 20px 22px; border-radius: 16px; background: #3e2723; color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-hero { --askp-ink: #3e2723; --askp-muted: rgba(62, 39, 35, .86); background: #f7badd; color: #3e2723; }
+.ay-askp-hero :is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout) { color: var(--askp-ink) !important; font-size: clamp(44px, 9vw, 76px) !important; line-height: .9 !important; padding-right: 36px; }
+.ay-askp--panel .ay-askp-hero :is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout), .ay-askp--sheet .ay-askp-hero :is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout):is(#ayk, .ayb-shout) { font-size: 48px !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-hero .ay-askp-sparkle { position: absolute; top: 18px; right: 18px; width: 36px; height: 36px; fill: #f7badd; stroke: currentColor; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-hero .ay-askp-sparkle { fill: #ffedac; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-intro { margin: 0 !important; font-size: 14px !important; max-width: 46ch; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-how { color: inherit; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-groups { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 12px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-group:not(.is-recent) { --askp-ink: #3e2723; --askp-muted: rgba(62, 39, 35, .82); align-content: start; gap: 10px; padding: 16px; border-radius: 16px; color: #3e2723; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-group:not(.is-recent) h3 { font: 700 17px/1.2 var(--ay-font-display) !important; color: #3e2723 !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-group:not(.is-recent):nth-child(3n+1) { background: #f7badd; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-group:not(.is-recent):nth-child(3n+2) { background: #ffedac; border: 1.5px solid #3e2723; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-group:not(.is-recent):nth-child(3n) { background: #ffedac; border: 1.5px solid #3e2723; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-group:not(.is-recent) .ay-askp-pill { background: transparent !important; color: #3e2723 !important; border-color: #3e2723 !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-group.is-safety:not(.is-recent) { background: #ffedac; border: 1.5px solid #3e2723; border-left-width: 4px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-bold .ay-askp-group:not(.is-recent) .ay-askp-pill svg { background: #3e2723; stroke: #ffedac; }
+
+/* ---------- Community: colour-blocked topic bands (TopicBands.jsx) ---------- */
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin: 0 0 20px; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; min-height: 72px; margin: 0; padding: 12px 12px 12px 16px; border: 0; border-radius: 16px; box-shadow: none; font: 700 17px/1.1 var(--ay-font-display); letter-spacing: -.01em; text-align: left; cursor: pointer; color: #3e2723; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic svg { flex: none; width: 28px; height: 28px; padding: 6px; border-radius: 50%; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; box-sizing: border-box; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic.is-pink { background: #f7badd; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic.is-butter { background: #ffedac; box-shadow: inset 0 0 0 1.5px #3e2723; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic.is-deep { background: #f6e3a1; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .35); }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic.is-on { background: #3e2723; color: #ffedac; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic.is-on svg { background: #f7badd; stroke: #3e2723; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic.is-edit { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; color: var(--ay-fg, #3e2723); font: 600 15px/1.2 var(--ay-font-ui); }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
+:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic.is-on { background: #ffedac; color: #3e2723; box-shadow: inset 0 0 0 3px #f7badd; }
+:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic.is-edit { color: #ffedac; }
+@media (max-width: 520px) { :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ayna-mobile :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 4px 16px 16px; }
+.ayna-mobile :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic { min-height: 60px; font-size: 16px; }
+
+/* Community header on the espresso band */
+html body .app-container .cm .cm-head.ay-pagehead .cm-title { margin: 0 0 8px !important; }
+html body .app-container .cm .cm-head.ay-pagehead .ct-lede { color: inherit !important; max-width: 40ch; }
+
+/* ---------- Glance fold (eco Fill the gaps; reused): one line + photos, the rest one tap away ---------- */
+html body .app-container .ub-fold { margin: 0; border: 1.5px solid var(--ay-fg, #3e2723); border-radius: 16px; background: var(--ay-surface, #f6e3a1); }
+html body .app-container .ub-fold > summary { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; min-height: 44px; padding: 16px; cursor: pointer; list-style: none; }
+html body .app-container .ub-fold > summary::-webkit-details-marker { display: none; }
+html body .app-container .ub-fold > summary:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 16px; }
+html body .app-container .ub-fold .ub-fold__text { display: grid; gap: 4px; flex: 1 1 260px; min-width: 0; }
+html body .app-container .ub-fold .ub-fold__text h2 { margin: 0 !important; }
+html body .app-container .ub-fold .ub-fold__line { font: 500 15px/1.4 var(--ay-font-ui); color: var(--ay-fg-muted, rgba(62, 39, 35, .8)); }
+html body .app-container .ub-fold .ub-fold__plates { display: flex; gap: 8px; }
+html body .app-container .ub-fold .ub-fold__plate { width: 64px; height: 64px; flex: 0 0 64px; }
+html body .app-container .ub-fold .ub-fold__go { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border-radius: 999px; background: var(--ay-fill-ink, #3e2723); color: var(--ay-on-ink, #ffedac); font: 600 15px/1 var(--ay-font-ui); }
+html body .app-container .ub-fold .ub-fold__go svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; transition: transform .15s; }
+html body .app-container .ub-fold[open] .ub-fold__go svg { transform: rotate(180deg); }
+html body .app-container .ub-fold:not([open]) .ub-fold__hide, html body .app-container .ub-fold[open] .ub-fold__show { display: none; }
+html body .app-container .ub-fold[open] > summary { border-bottom: 1px solid var(--ay-rule-color, rgba(62, 39, 35, .22)); }
+html body .app-container .ub-fold > :not(summary) { margin-left: 16px; margin-right: 16px; }
+html body .app-container .ub-fold > :last-child:not(summary) { margin-bottom: 16px; }
+@media (prefers-reduced-motion: reduce) { html body .app-container .ub-fold .ub-fold__go svg { transition: none; } }
+
+/* Ask: "Read full answer" */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-more { display: inline-flex; align-items: center; min-height: 44px; margin: 4px 0 0 !important; padding: 0 16px !important; border: 1.5px solid var(--askp-ink) !important; border-radius: 999px !important; background: transparent !important; color: var(--askp-ink) !important; font: 600 15px/1 var(--ay-font-ui) !important; cursor: pointer; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-more:focus-visible { outline: 2px solid var(--askp-ink); outline-offset: 2px; }
+
+/* ---------- Community round 2 (advisor: simple feed, few filters, glance posts) ---------- */
+/* Topic filters: one compact row of colour-blocked pills (was big blocks) */
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) { display: flex; flex-wrap: wrap; gap: 8px; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic { min-height: 44px; padding: 6px 8px 6px 16px; align-items: center; border-radius: 999px; font: 700 15px/1.1 var(--ay-font-ui); }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic svg { width: 28px; height: 28px; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic.is-edit { padding-right: 8px; }
+.ayna-mobile :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) { margin: 4px 0 16px; }
+.ayna-mobile :is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics) .ub-topic { min-height: 44px; font-size: 15px; }
+
+/* Posts: 3 lines in the feed, Read more */
+html body .app-container .cm .cm-body.is-clamped { -webkit-line-clamp: 3 !important; line-clamp: 3; }
+.ayna-mobile:is(#ay, .ayna-mobile) .am-screen .am-note-body.is-clamped { -webkit-line-clamp: 3 !important; }
+.ub-readmore { display: inline-flex; align-items: center; min-height: 44px; margin: -4px 0 4px; padding: 0; border: 0; background: none; color: inherit; font: 600 15px/1 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+/* Product mentioned in a feed post: glance only (photo, brand, name, price, match); the facts live on the product page */
+.cm .cm-post:not(.is-full) .cm-mention-card :is(.ay-pcard__facts, .ay-pcard__sizes, .ay-pcard__ev, .ay-pcard__tags, .ay-pcard__peruse, .ay-pcard__amount),
+.am-screen .am-note:not(.is-full) .ay-pcard :is(.ay-pcard__facts, .ay-pcard__sizes, .ay-pcard__ev, .ay-pcard__tags, .ay-pcard__peruse, .ay-pcard__amount) { display: none !important; }
+
+/* App dark: flip the header bands wherever the dark theme attribute sits (the You hub renders under a different root). */
+[data-theme='dark'] :is(#ay, .ay-you-band, .ay-home-hello.is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band):is(#ay, .ay-you-band, .is-band) { --ubx: #FFEDAC !important; --ubf: #3E2723 !important; }
+
+/* Glance pass (p14): one row of topic pills on the feeds; the rest scroll sideways, the Topics sheet keeps all. */
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics).is-onerow { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics).is-onerow::-webkit-scrollbar { display: none; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics).is-onerow .ub-topic { flex: none; min-height: 44px; align-items: center; padding: 8px 10px 8px 14px; border-radius: 999px; font-size: 15px; white-space: nowrap; }
+:is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics):is(#ayk, .ub-topics).is-onerow .ub-topic svg { width: 24px; height: 24px; padding: 5px; }

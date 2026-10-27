@@ -5,7 +5,9 @@
  * "Not on file", and nothing here makes up ratings, stock or shipping.
  */
 import { ALL_PRODUCTS, HEALTH_FUNCTIONS } from '../../data/products.js';
-import { PRODUCT_IMAGE_OVERRIDES } from '../../data/productImageOverrides.js';
+import { matchText, isSafetyHold, isBleedingEvaluation, BLEEDING_EVALUATION, SAFETY_HOLD, MATCH_UNAVAILABLE, SAFETY_HOLD_LINE } from '../../utils/matchDisplay.js';
+import { whyLine } from '../../utils/whyLine.js';
+import { PRODUCT_IMAGE_OVERRIDES, productImageOverride } from '../../data/productImageOverrides.js';
 import { getPassport } from '../../data/passport/index.js';
 import { priceParts, safetyAlertText } from '../../data/passport/content.js';
 import { isPlaceholderProductImage } from '../../utils/resolveProductImage.js';
@@ -13,6 +15,8 @@ import { brandOf } from '../../mobile/data/brandFallback.js';
 import { recallFacts } from '../../utils/productFacts.js';
 import { categoryLabel, ingredientHeadline, perUnitLabel, sizeCount, NOT_ON_FILE, buildGlance } from './glance.js';
 import { productHref } from '../../utils/productRoute.js';
+import { evidenceFor } from './evidenceLevels.js';
+import { costPerUse, capacityMl } from './decision.js';
 
 // ---------------------------------------------------------------------------
 // Gallery
@@ -36,7 +40,11 @@ export function galleryImages(product) {
     add(override.cover);
     (override.gallery || []).forEach(add);
   } else if (override) add(override);
-  add(product.image);
+  // An official replacement image (data/imageOverrides.js) stands in for the
+  // stored one, which was broken, low-res or the wrong product.
+  const official = override ? '' : productImageOverride(product);
+  if (official) add(official);
+  else add(product.image);
   (Array.isArray(product.gallery) ? product.gallery : []).forEach(add);
   (Array.isArray(product.images) ? product.images : []).forEach(add);
   return list;
@@ -90,8 +98,8 @@ export function breadcrumbs(product) {
   if (!product) return [];
   const cat = categoryLabel(product);
   return [
-    { label: 'Shop', href: '/shop', kind: 'shop' },
-    ...(cat ? [{ label: cat, href: '/shop', kind: 'category', category: product.category }] : []),
+    { label: 'Explore', href: '/explore/products', kind: 'shop' },
+    ...(cat ? [{ label: cat, href: '/explore/products', kind: 'category', category: product.category }] : []),
     { label: product.name, kind: 'current' },
   ];
 }
@@ -113,8 +121,13 @@ export function similarProducts(product, { pool = ALL_PRODUCTS, limit = 3, exclu
   if (!product) return [];
   const skip = new Set([product.id, ...exclude]);
   const brand = brandOf(product).toLowerCase();
+  // A sunscreen is compared with sunscreens, not acne washes from the same "skincare" category:
+  // when the product has a specific tag, a candidate must share one.
+  const GENERIC = new Set(['skin', 'hair', 'vegan', 'organic', 'comfort', 'cost', 'privacy', 'safety-concern', 'cruelty-free', 'natural', 'budget', 'fsa', 'hsa', 'clean', 'sensitive']);
+  const specific = (product.tags || []).filter((t) => !GENERIC.has(String(t).toLowerCase()));
   const scored = pool
     .filter((p) => p && p.id && p.name && !skip.has(p.id) && p.category === product.category && p.type === product.type)
+    .filter((p) => !specific.length || (p.tags || []).some((t) => specific.includes(t)))
     .map((p) => {
       let s = overlap(p.healthFunctions, product.healthFunctions) * 3 + overlap(p.tags, product.tags) * 2;
       if (brandOf(p).toLowerCase() !== brand) s += 2;
@@ -177,33 +190,33 @@ export function researchSourceCount(product) {
   return n;
 }
 
-function evidenceSummary(product) {
-  // Counted exactly like the product page's Evidence card (same sources, same types).
-  const RESEARCH = ['product_study', 'clinical_guideline', 'regulatory', 'ingredient_research', 'expert_guidance'];
-  let srcs = [];
-  try { srcs = (buildGlance(product, {})?.sources || []).filter((s) => RESEARCH.includes(s.type)); } catch { srcs = []; }
-  const pp = getPassport(product);
-  const strength = String(product?.evidenceStrength || '').trim();
-  if (!srcs.length && !strength) return NOT_ON_FILE;
-  const parts = [];
-  if (strength) parts.push(`${strength.charAt(0).toUpperCase()}${strength.slice(1)}`);
-  if (srcs.length) parts.push(`${srcs.length} research source${srcs.length === 1 ? '' : 's'}${pp?.evidence?.product_specific ? ', incl. a product study' : ''}`);
-  return parts.join(' · ');
-}
-
 /**
  * Rows for the compare table. Each row: { label, values: [string per product] }.
  * Rows where every product is "Not on file" are dropped.
  */
-export function compareRows(products, { matchFor = null } = {}) {
+// Engine reasons -> a Yes/No for one comparison row; null when the engine
+// did not say (shown as "Not on file", never guessed).
+function reasonFlag(details, yes, no = null) {
+  const texts = (details?.reasonDetails || []).map((r) => String(r?.text || ''));
+  if (texts.some((t) => yes.test(t))) return 'Yes';
+  if (no && texts.some((t) => no.test(t))) return 'No';
+  return NOT_ON_FILE;
+}
+
+export function compareRows(products, { matchFor = null, detailsFor = null } = {}) {
   const isDigital = products.every((p) => p?.type === 'digital');
   const rows = [
-    { label: 'Price', get: (p) => { const pr = priceParts(p); return pr.known ? pr.main : 'At the retailer'; } },
+    // Price with ayna's own per-cycle or per-day maths when the record has a lifespan or supply (audit 7.13).
+    { label: 'Price', get: (p) => { const pr = priceParts(p); const per = costPerUse(p); return pr.known ? `${pr.main}${per ? ` (${per.text.replace(/ if it lasts .*$/, '')})` : ''}` : NOT_ON_FILE; } },
+    { label: 'Capacity', get: (p) => capacityMl(p) || NOT_ON_FILE },
     !isDigital ? { label: 'Size or count', get: (p) => sizeCount(p)?.text || NOT_ON_FILE } : null,
     !isDigital ? { label: 'Price per unit', get: (p) => perUnitLabel(p) || NOT_ON_FILE } : null,
     isDigital ? { label: 'Available on', get: (p) => String(p.platform || '').trim() || NOT_ON_FILE } : null,
-    !isDigital ? { label: 'Ingredients or materials', get: (p) => ingredientHeadline(p, 48) || NOT_ON_FILE } : null,
-    { label: 'Evidence on file', get: evidenceSummary },
+    !isDigital ? { label: 'Ingredients or materials', get: (p) => ingredientHeadline(p, 160) || NOT_ON_FILE } : null,
+    // The one evidence function (audit 7.6): the same grade and per-level counts as the product page.
+    { label: 'Evidence', get: (p) => evidenceFor(p).summary.replace(/ · \d+ people’s experiences?$/, '') },
+    // Finished-product evidence vs ingredient evidence (never collapsed).
+    { label: 'Finished product studied', get: (p) => (getPassport(p)?.evidence?.product_specific ? 'Yes' : researchSourceCount(p) > 0 ? 'No product study found' : NOT_ON_FILE) },
     { label: 'Safety notes', get: (p) => {
       const notes = [];
       if (recallFacts(p).status === 'past') notes.push('Past recall');
@@ -211,10 +224,16 @@ export function compareRows(products, { matchFor = null } = {}) {
       const preg = getPassport(p)?.safety?.pregnancy;
       const pv = preg?.known && !preg.notApplicable ? String(Array.isArray(preg.value) ? preg.value.join(' ') : preg.value || '') : '';
       if (pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv)) notes.push('Pregnancy caution');
-      return notes.length ? `${notes.join(', ')}, see its page` : 'None flagged';
+      return notes.length ? `${notes.join(', ')}. See its page.` : 'None flagged';
     } },
     { label: 'FSA/HSA', get: (p) => { if (['pad', 'tampon', 'cup', 'disc'].includes(p?.category)) return 'Eligible'; const f = getPassport(p)?.pricing?.fsa_hsa; return f?.known ? (f.value === 'eligible' ? 'Eligible' : 'Not eligible') : NOT_ON_FILE; } },
-    matchFor ? { label: 'Your match', get: (p) => { const m = matchFor(p); return Number.isFinite(m) && m > 0 ? `${Math.round(m)}%` : 'No clear match'; } } : null,
+    // Same rule as the cards: under 50 no number, just "Partial fit".
+    // A safety hold never shows a number: its reason and what resolves it instead.
+    matchFor ? { label: 'Your match', get: (p) => { const d = detailsFor ? detailsFor(p) : null; if (isSafetyHold(d)) return `${SAFETY_HOLD}. ${MATCH_UNAVAILABLE}. ${d.safetyHold?.reason || SAFETY_HOLD_LINE} ${d.safetyHold?.fix?.label || ''}`.trim(); if (isBleedingEvaluation(d)) return BLEEDING_EVALUATION; const m = matchFor(p); return Number.isFinite(m) && m > 0 ? matchText(m) : 'No clear match'; } } : null,
+    // Plain reasons behind the %, from the engine (src/utils/whyLine.js).
+    detailsFor ? { label: 'Why it fits you', get: (p) => (isSafetyHold(detailsFor(p)) ? MATCH_UNAVAILABLE : whyLine(p, detailsFor(p), { max: 2 }) || 'Not one of your needs') } : null,
+    detailsFor ? { label: 'Fits your budget', get: (p) => reasonFlag(detailsFor(p), /^Within your budget$/i, /^Above your usual budget$/i) } : null,
+    detailsFor ? { label: 'Format you prefer', get: (p) => reasonFlag(detailsFor(p), /^In a format you prefer$/i) } : null,
   ].filter(Boolean);
   return rows
     .map((r) => ({ label: r.label, values: products.map((p) => r.get(p)) }))
@@ -268,6 +287,10 @@ export function breadcrumbJsonLd(product, { origin = 'https://www.aynahealth.co'
   const crumbs = breadcrumbs(product);
   if (!crumbs.length) return null;
   const base = origin.replace(/\/$/, '');
+  // The page's crumbs both lead to Explore > Products; in search results each
+  // level gets its own address: Explore (the hub), the category (Products,
+  // which the category crumb opens filtered), then the product.
+  const href = (c) => (c.kind === 'shop' && crumbs.some((x) => x.kind === 'category') ? '/explore' : c.href);
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -275,7 +298,7 @@ export function breadcrumbJsonLd(product, { origin = 'https://www.aynahealth.co'
       '@type': 'ListItem',
       position: i + 1,
       name: c.label,
-      ...(c.kind === 'current' ? {} : { item: `${base}${c.href}` }),
+      ...(c.kind === 'current' ? {} : { item: `${base}${href(c)}` }),
     })),
   };
 }

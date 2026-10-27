@@ -1,0 +1,159 @@
+/* Uniqueness pass A: ReadMore disclosure (components/info/ReadMore.jsx). */
+.uq-rm { display: grid; gap: 12px; justify-items: start; }
+.uq-rm__body[hidden] { display: none !important; }
+.uq-rm__body { width: 100%; }
+.app-container .uq-rm__btn, .uq-rm__btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 2px; border: 0 !important; background: none !important; box-shadow: none !important; color: inherit !important; font: 700 15px/1.2 var(--ay-font-ui, 'Figtree', system-ui, sans-serif) !important; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; cursor: pointer; }
+.uq-rm__btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: rotate 160ms ease-out; }
+.uq-rm.is-open > .uq-rm__btn svg { rotate: 180deg; }
+.uq-rm__btn:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; border-radius: 8px; }
+.uq-rm.is-open { gap: 8px; }
+@media (prefers-reduced-motion: reduce) { .uq-rm__btn svg { transition: none; } }
+
+/* ---- Full-bleed colour bands inside the info pages' centred column ----
+   border-image paints the band edge to edge without adding layout width or
+   page scroll (it is ink overflow, like a shadow, but not a shadow).
+   Tones use fixed colours in both themes; text tokens are re-pointed. */
+.app-container .uq-bleed { --uq-bleed: #3e2723; border-image: conic-gradient(var(--uq-bleed) 0 0) fill 0 / / 0 100vmax; }
+.app-container .uq-bleed.is-pink { --uq-bleed: #f7badd; }
+.app-container .uq-bleed.is-butter { --uq-bleed: #ffedac; }
+.app-container :is(.uq-bleed.is-ink, .ed .ayb-tile.is-ink) {
+  --ip-text: #ffedac; --ip-text-2: rgba(255, 237, 172, .86); --ip-rule: rgba(255, 237, 172, .24); --ip-outline: #ffedac;
+  --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ay-fg: #ffedac; --ay-fg-muted: rgba(255, 237, 172, .86);
+  --ay-hairline: rgba(255, 237, 172, .24); --ay-outline-color: #ffedac; --ay-outline: 1.5px solid #ffedac; --ay-border-ink: 1.5px solid #ffedac;
+  --ay-fill-ink: #ffedac; --ay-on-ink: #3e2723; --ed-text: #ffedac; --ed-text-2: rgba(255, 237, 172, .86); --ed-outline: #ffedac; --ed-hairline: rgba(255, 237, 172, .24);
+  color: #ffedac;
+}
+.app-container :is(.uq-bleed:is(.is-pink, .is-butter), .ed .ayb-tile:is(.is-pink, .is-butter)) {
+  --ip-text: #3e2723; --ip-text-2: rgba(62, 39, 35, .82); --ip-rule: rgba(62, 39, 35, .28); --ip-outline: #3e2723; --ip-tile: #ffedac; --ip-deep: #f6e3a1;
+  --ay-text: #3e2723; --ay-text-2: rgba(62, 39, 35, .82); --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .82); --ay-ink: #3e2723; --legacy-ink: #3e2723;
+  --ay-hairline: rgba(62, 39, 35, .28); --ay-outline-color: #3e2723; --ay-outline: 1.5px solid #3e2723; --ay-border-ink: 1.5px solid #3e2723;
+  --ay-fill-ink: #3e2723; --ay-on-ink: #ffedac; --ay-surface: #f6e3a1; --legacy-surface: #f6e3a1; --ay-chip-bg: transparent;
+  --ed-text: #3e2723; --ed-text-2: rgba(62, 39, 35, .82); --ed-outline: #3e2723; --ed-hairline: rgba(62, 39, 35, .28); --ed-page: #ffedac;
+  color: #3e2723;
+}
+.app-container .uq-bleed.is-pink a:not([class]) { color: #3e2723; }
+
+/* ---- InfoHero as the espresso band: the H1 is the page's Shout ---- */
+.app-container .ed.ed-page--info { padding-top: 0; }
+.app-container.app-container .ay-ih.uq-bleed { padding: 32px 0 48px; border-bottom: 0; margin-bottom: 0; }
+html body .app-container .ay-ih :is(#ay-ih, .ay-ih__h1):is(#ay-ih, .ay-ih__h1):is(#ay-ih, .ay-ih__h1) { color: #ffedac !important; max-width: 16ch; }
+.app-container .ay-ih.uq-bleed .ay-ih__crumbs a { color: #ffedac !important; }
+.app-container .ay-ih.uq-bleed .ay-ih__copy { max-width: 760px; gap: 16px; }
+.app-container .ay-ih.uq-bleed .ay-ih__plate { width: 280px; }
+@media (max-width: 767px) {
+  .app-container.app-container .ay-ih.uq-bleed { padding: 16px 0 32px; }
+  .app-container .ay-ih.uq-bleed .ay-ih__plate { width: 112px; }
+}
+
+/* ---- the pink band slot on info pages (EdPage `band`) ---- */
+.app-container .uq-band { padding: 40px 0; }
+.app-container .uq-band + .ed-page__body { padding-top: 40px; }
+@media (max-width: 767px) { .app-container .uq-band { padding: 28px 0; } }
+
+/* ---- free product: the six rules by name as chips (glance) ---- */
+.app-container .fp-rules__glance { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; padding: 0; list-style: none; }
+.app-container .fp-rules__glance li { display: inline-flex; align-items: center; min-height: 36px; margin: 0; padding: 0 14px; border: 1.5px solid currentColor; border-radius: 999px; font: 600 14px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); }
+.app-container .fp-band .fp-intro__actions { margin-top: 24px; }
+
+/* ---- legal and money pages: the pink "in short" band and glance sections ---- */
+.app-container .uq-legal-intro, .app-container .uq-keyline { max-width: 68ch; display: grid; gap: 12px; }
+.app-container .uq-legal-intro p, .app-container .uq-keyline p { margin: 0; font: 500 18px/1.5 var(--ay-font-ui, 'Figtree', sans-serif); color: #3e2723; }
+.app-container .uq-keyline .uq-keyline__h { margin: 0; font: 800 clamp(30px, 4vw, 44px)/1 var(--ay-font-display) !important; letter-spacing: -.025em; color: #3e2723 !important; max-width: 18ch; }
+.app-container .uq-keyline .ip-disclose { font-size: 15px; }
+.app-container .uq-glance .uq-rm { margin-top: 4px; }
+.app-container .uq-glance .uq-rm__body > * + * { margin-top: 12px; }
+
+/* ---- How it works: standards band, step Bento, evidence Bento ---- */
+.app-container .ip-stdband { display: grid; gap: 8px; }
+.app-container .ip-stdband .ip-standards:not(.is-full) > li { grid-template-columns: 32px 1fr; align-items: center; }
+.app-container .ip-stdband .ip-standards:not(.is-full) b { font: 800 clamp(19px, 2vw, 24px)/1.15 var(--ay-font-display) !important; letter-spacing: -.01em; }
+.app-container .ip-stdband .ip-standards.is-full { margin-top: 4px; }
+.app-container .ip-bento { margin: 0; padding: 0; list-style: none; }
+.app-container .ip-bento > li { margin: 0; }
+.app-container .ip-bt :is(h3, .ed-rowtitle) { margin: 0; color: inherit !important; font: 800 22px/1.15 var(--ay-font-display) !important; letter-spacing: -.01em; }
+.app-container .ip-bt p { margin: 0; font: 500 15px/1.45 var(--ay-font-ui, 'Figtree', sans-serif); color: inherit !important; max-width: 46ch; }
+.app-container .ip-bt .ed-caption { color: inherit !important; opacity: .85; }
+.app-container .ip-step { justify-content: flex-start !important; gap: 10px !important; }
+.app-container .ip-step__n { display: block; font: 800 64px/.8 var(--ay-font-display); letter-spacing: -.04em; }
+.app-container .ip-step.is-big .ip-step__n { font-size: clamp(96px, 12vw, 160px); }
+.app-container .ip-step.is-big { justify-content: space-between !important; }
+.app-container .ip-step .ed-hiw__demo { display: grid; gap: 8px; margin-top: auto; }
+.app-container .ip-step .ed-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.app-container .ip-step .ed-tags span { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border: 1.5px solid currentColor; border-radius: 999px; font: 600 14px/1 var(--ay-font-ui, 'Figtree', sans-serif); background: transparent; color: inherit; }
+.app-container .ip-step__nums { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 8px 16px; margin-top: auto; }
+.app-container .ip-step__nums > span:not(.ip-step__arrow) { display: grid; gap: 4px; }
+.app-container .ip-step__nums b { font: 800 clamp(44px, 5vw, 64px)/.9 var(--ay-font-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.app-container .ip-step__nums b + span { font: 600 14px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); max-width: 22ch; }
+.app-container .ip-step__arrow { font: 800 32px/1 var(--ay-font-display); padding-bottom: 24px; }
+.app-container .ip-bt .uq-rm__btn { min-height: 40px; font-size: 14px !important; }
+.app-container .ip-bt .ip-bt__t { font: 800 20px/1.15 var(--ay-font-display); letter-spacing: -.01em; }
+.app-container .ip-bt .ip-bt__cap { font: 500 14px/1.4 var(--ay-font-ui, 'Figtree', sans-serif); }
+.app-container .ip-bt.is-big .ip-bt__t { font-size: 26px; }
+.app-container .ip-bt.is-big .ayb-tile__big { font-size: clamp(80px, 11vw, 140px) !important; }
+/* the old flat step list / fact tiles are gone from How it works; keep phones at 2 columns */
+@media (max-width: 720px) {
+  .app-container .ip-step.is-big .ip-step__n { font-size: 88px; }
+  .app-container .ip-step.is-wide, .app-container .ip-bt.is-wide { grid-column: span 2; }
+}
+
+/* ---- How we match: the % as a picture (matching/score.js) ---- */
+.app-container .ip-pct { display: grid; gap: 12px; margin-bottom: 8px; }
+.app-container .ip-pct__bar { display: flex; gap: 4px; min-height: 96px; }
+.app-container .ip-pct__bar > span { display: grid; align-content: end; gap: 2px; min-width: 0; padding: 14px 16px; border-radius: 16px; }
+.app-container .ip-pct__need { background: #3e2723; color: #ffedac; }
+.app-container .ip-pct__pref { background: #f7badd; color: #3e2723; min-width: 120px !important; }
+.app-container .ip-pct__bar b { font: 800 clamp(20px, 2.4vw, 28px)/1.05 var(--ay-font-display); letter-spacing: -.01em; }
+.app-container .ip-pct__bar span span { font: 600 14px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
+.app-container .ip-pct__dims { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.app-container .ip-pct__dims li { display: grid; gap: 6px; min-width: 0; margin: 0; }
+.app-container .ip-pct__dims i { display: block; height: 14px; border-radius: 999px; background: #f7badd; border: 1.5px solid var(--ip-text, #3e2723); }
+.app-container .ip-pct__dims span { font: 600 13px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--ip-text, #3e2723); overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .app-container .ip-pct__dims { flex-wrap: wrap; row-gap: 10px; }
+  .app-container .ip-pct__dims li { flex-basis: calc(25% - 4px); }
+}
+
+/* ---- Partners: the count and the brand marquee on the pink band ---- */
+.app-container .uq-pbands { display: flex; align-items: center; gap: 24px; min-width: 0; }
+.app-container .uq-pbands__n { flex: none; display: grid; font: 600 15px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); color: #3e2723; }
+.app-container .uq-pbands__n b { font: 800 clamp(56px, 7vw, 88px)/.85 var(--ay-font-display); letter-spacing: -.04em; }
+.app-container .uq-pbands .ayb-marquee { flex: 1; min-width: 0; padding: 8px 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 32px), transparent); }
+.app-container .uq-pbands .ayb-marquee__row { font: 800 clamp(22px, 2.6vw, 30px)/1 var(--ay-font-display); letter-spacing: -.02em; }
+.app-container .uq-pbands .ayb-marquee__row li { flex: none; white-space: nowrap; }
+
+/* ---- About: the principle tiles and the mirror tile ---- */
+.app-container .ip-principle svg { width: 36px; height: 36px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .ip-principle { justify-content: flex-start !important; gap: 8px !important; }
+.app-container .ip-principle.is-wide :is(h3, .ed-rowtitle) { font-size: 28px !important; }
+.app-container .ip-mirror { display: grid !important; grid-template-columns: minmax(0, .8fr) minmax(0, 1fr); padding: 0 !important; gap: 0 !important; }
+.app-container .ip-mirror__ph { position: relative; min-height: 220px; }
+.app-container .ip-mirror__ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+.app-container .ip-mirror__q { display: grid; align-content: center; gap: 8px; padding: 20px; }
+.app-container .ip-mirror__q strong { font: 800 clamp(26px, 3vw, 36px)/1 var(--ay-font-display); letter-spacing: -.02em; }
+.app-container .ip-mirror__q span { font: 500 15px/1.45 var(--ay-font-ui, 'Figtree', sans-serif); }
+.app-container .ip-closer.uq-bleed { border-top: 0 !important; }
+@media (max-width: 720px) {
+  .app-container .ip-mirror { grid-column: span 2; grid-template-columns: minmax(0, 1fr); }
+  .app-container .ip-mirror__ph { min-height: 200px; }
+  .app-container .uq-pbands { gap: 12px; }
+}
+/* brand dark: espresso tiles and the need bar sit on the espresso page, so they get a butter outline */
+.app-container[data-theme='brand-dark'] .ed :is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile):is(#ayk, .ayb-tile).is-ink { border: 1.5px solid rgba(255, 237, 172, .6) !important; }
+.app-container[data-theme='brand-dark'] .ip-pct__need { border: 1.5px solid rgba(255, 237, 172, .6); }
+.app-container[data-theme='brand-dark'] .ay-ih.uq-bleed { border-bottom: 1px solid rgba(255, 237, 172, .16); }
+.app-container.app-container .fp .fp-rules .fp-rules__glance li { padding: 0 14px; border: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; counter-increment: none; }
+.app-container.app-container .fp .fp-rules .fp-rules__glance li::before { content: none; }
+
+/* contact: the form on the pink band reads the same in light and dark */
+html body .app-container.app-container .uq-contact .ed-form { background: #f6e3a1 !important; color: #3e2723 !important; border: 1px solid rgba(62, 39, 35, .2) !important; }
+html body .app-container.app-container .uq-contact .ed-form :is(label, legend, .ed-field > span, p) { color: #3e2723 !important; }
+html body .app-container.app-container .uq-contact .ed-form :is(input, textarea) { background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; }
+html body .app-container.app-container .uq-contact .ed-form :is(input, textarea)::placeholder { color: rgba(62, 39, 35, .7) !important; }
+html body .app-container.app-container .uq-contact .ed-form .ay-chip { background: transparent !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; }
+html body .app-container.app-container .uq-contact .ed-form .ay-chip[aria-checked='true'] { background: #3e2723 !important; color: #ffedac !important; }
+html body .app-container.app-container .uq-contact .ed-form .ay-btn--primary { background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; }
+/* compare: the sample's title and line on the pink band; the table sits below on the page */
+.app-container .aycmp__sample-head.uq-band { margin-bottom: 24px; }
+.app-container .aycmp__sample-head.uq-band :is(h2, p) { color: #3e2723 !important; }
+html body :is(#uq, .app-container):is(#uq, .app-container):is(#uq, .app-container) .uq-contact .ed-form :is(input, textarea) { background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; }
+html body :is(#uq, .app-container):is(#uq, .app-container):is(#uq, .app-container) .uq-contact .ed-form :is(input, textarea)::placeholder { color: rgba(62, 39, 35, .7) !important; }

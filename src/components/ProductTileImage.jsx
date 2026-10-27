@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ALL_PRODUCTS, getProductById } from '../data/products.js';
+import { ALL_PRODUCTS, getProductById } from '../data/catalog.js';
 import { applyCatalogCorrections } from '../data/catalogCorrections';
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
@@ -16,7 +16,28 @@ import { productImageOverride } from '../data/productImageOverrides';
  * quiet and on-brand instead of alarming. The literal "not found" wording
  * still reaches screen readers and hover users via aria-label/title.
  */
-export function ProductImageFallback({ compact = false, style, className }) {
+const FALLBACK_TINTS = ['#f7badd', '#f6e3a1', '#769ebe'];
+export function ProductImageFallback({ compact = false, style, className, product = null }) {
+  // With a product: a designed tile (its initial in the logo face on a tint
+  // picked from its name, brand under it) instead of a faint wordmark.
+  if (product && !compact) {
+    // P1-4: a designed no-photo tile, not a letter avatar. It reads like the
+    // label on a plain pharmacy box: the brand in the logo face on a tint
+    // picked from its name, a hairline rule, then "Photo coming soon".
+    const name = String(product.name || '').trim();
+    const brand = String(product.brand || '').trim();
+    const key = brand || name;
+    const tint = FALLBACK_TINTS[[...key].reduce((n, c) => n + c.charCodeAt(0), 0) % FALLBACK_TINTS.length];
+    return (
+      <div role="img" aria-label={name ? `No photo yet for ${name}` : 'Product image not found'} className={`ay-nophoto ${className || ''}`.trim()}
+        style={{ width: '100%', height: '100%', display: 'grid', alignContent: 'center', justifyItems: 'center', gap: 8, padding: 14, boxSizing: 'border-box', background: tint, color: '#3e2723', textAlign: 'center', ...style }}>
+        <span aria-hidden="true" style={{ font: "700 19px/1.05 'ayna Display', var(--ay-font-logo), sans-serif", letterSpacing: '-0.01em', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', maxWidth: '100%' }}>{key || 'ayna'}</span>
+        <span aria-hidden="true" style={{ width: 28, height: 1.5, background: '#3e2723' }} />
+        {/* Services (apps, telehealth, programs) have no product photo to come: say what they are. */}
+        <span aria-hidden="true" style={{ font: "500 12.5px/1.2 'Figtree', system-ui, sans-serif" }}>{product.type === 'digital' ? (String(product.category || 'Service').replace(/[-_]/g, ' ').replace(/^./, (c) => c.toUpperCase())) : 'Photo coming soon'}</span>
+      </div>
+    );
+  }
   return (
     <div
       role="img"
@@ -63,9 +84,16 @@ export function ProductImageFallback({ compact = false, style, className }) {
 // class of bug turned up in the Wishlist (SavedForLater.jsx) showing a
 // letter avatar for a product whose real photo was already resolved and
 // correctly displayed one section above it on the same page.
-const CATALOG_BY_NORMALIZED_NAME = new Map(
-  ALL_PRODUCTS.map((p) => [String(p.name || '').trim().toLowerCase(), p]).filter(([name]) => name)
-);
+// Built on first use from whichever catalog is loaded (data/catalog.js loads it after first paint).
+let catalogByName = null;
+let catalogByNameSource = null;
+const catalogProductByName = (name) => {
+  if (catalogByNameSource !== ALL_PRODUCTS) {
+    catalogByName = new Map(ALL_PRODUCTS.map((p) => [String(p.name || '').trim().toLowerCase(), p]).filter(([n]) => n));
+    catalogByNameSource = ALL_PRODUCTS;
+  }
+  return catalogByName.get(name);
+};
 
 /**
  * Synchronous best-effort lookup against the curated static catalog, by id
@@ -84,7 +112,7 @@ export function resolveCatalogProductImage(product) {
   if (byId) return applyCatalogCorrections(byId).image || '';
   const corrected = applyCatalogCorrections(product);
   if (corrected !== product) return corrected.image || '';
-  const byName = CATALOG_BY_NORMALIZED_NAME.get(String(product?.name || '').trim().toLowerCase());
+  const byName = catalogProductByName(String(product?.name || '').trim().toLowerCase());
   if (byName && productImageOverride(byName)) return productImageOverride(byName);
   if (byName && !isPlaceholderProductImage(byName.image, byName.type === 'digital' || allowBrandLogo)) return byName.image;
   return product?.image;

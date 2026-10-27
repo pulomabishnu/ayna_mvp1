@@ -1,0 +1,145 @@
+/* "This week, explained", "What might help this week", the why-ayna line and
+   the cycle Group on the dashboard (HealthBento), in the app (.ayna-mobile)
+   and on the website (.ay-wh). docs/design-direction.md:
+   - This week, explained is the screen's one Feature (espresso, butter text,
+     radius 24). The cycle card moved from Feature to a Group so there is
+     still only one Feature per screen.
+   - Groups: deeper butter, radius 20, no border, hairline rows.
+   - Product cards: white tile with thin espresso outline, brand 13/500,
+     name 16/600 two lines, price 14/600 tabular.
+   - Evidence meter: three bars + word.
+   Selectors start with a :is() holding #ay so they outrank the app's
+   older global sheets without piling on more !important than needed. */
+
+.ayna-mobile :is(.ay-hd, .ay-bn) {
+  --x-ink: var(--d-ink, #3e2723); --x-soft: var(--d-ink-2, rgba(62, 39, 35, .75)); --x-group: var(--d-group, #f6e3a1); --x-hair: var(--d-hair, rgba(62, 39, 35, .15));
+  --x-feature: var(--d-feature, #3e2723); --x-on: var(--d-on-feature, #ffedac); --x-on-2: var(--d-on-feature-2, rgba(255, 237, 172, .78)); --x-on-hair: var(--d-feature-hair, rgba(255, 237, 172, .2));
+  --x-serif: var(--f-display, 'ayna Display', serif); --x-sans: var(--f-ui, 'Figtree', sans-serif); --x-scale: var(--ayna-text-scale, 1); --x-gutter: var(--d-gutter, 20px);
+}
+.app-container .ay-wh {
+  --x-ink: var(--wh-ink, #3e2723); --x-soft: var(--wh-soft, rgba(62, 39, 35, .74)); --x-group: var(--ay-group, #f6e3a1); --x-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
+  --x-feature: var(--ay-feature-bg, #3e2723); --x-on: var(--ay-feature-fg, #ffedac); --x-on-2: color-mix(in srgb, var(--ay-feature-fg, #ffedac) 80%, transparent); --x-on-hair: color-mix(in srgb, var(--ay-feature-fg, #ffedac) 22%, transparent);
+  --x-serif: var(--ay-serif, 'ayna Display', serif); --x-sans: var(--ay-sans, 'Figtree', sans-serif); --x-scale: 1; --x-gutter: clamp(16px, 4vw, 48px);
+}
+
+/* The bento is one column on phones; children may shrink (long sentences, the scrolling shelf). */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-bn { grid-template-columns: minmax(0, 1fr) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-bn > * { min-width: 0; }
+
+/* ---------- why ayna (first visit, dismissible) ---------- */
+
+/* ---------- This week, explained (the Feature) ---------- */
+
+/* ---------- What might help this week (shelf of product cards) ---------- */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-picks { margin: 8px 0 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container main .ay-wh.ay-wh, html body .app-container .ay-wh.ay-wh) .ay-wx-picks h3 { margin: 0 0 12px !important; font: 500 calc(22px * var(--x-scale))/1.15 var(--x-serif) !important; letter-spacing: 0 !important; color: var(--x-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-picks-row { display: flex !important; gap: 16px !important; margin: 0 calc(var(--x-gutter) * -1) !important; padding: 0 var(--x-gutter) 4px !important; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--x-gutter); scrollbar-width: none; list-style: none !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-picks-row::-webkit-scrollbar { display: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-pick { flex: 0 0 clamp(132px, 37vw, 168px); display: flex !important; flex-direction: column !important; gap: 6px !important; min-width: 0; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; scroll-snap-align: start; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-card { display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 2px !important; width: 100% !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-ink) !important; text-align: left !important; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-card:focus-visible { outline: 3px solid var(--x-ink) !important; outline-offset: 3px; border-radius: 16px !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-tile { display: grid !important; place-items: center; aspect-ratio: 1; margin: 0 0 8px !important; padding: 14px !important; border: 1px solid #3e2723 !important; border-radius: 16px !important; background: #ffffff !important; overflow: hidden; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-tile { position: relative !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-tile > * { position: absolute !important; inset: 14px !important; width: calc(100% - 28px) !important; height: calc(100% - 28px) !important; object-fit: contain !important; border-radius: 0 !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-brand { font: 500 13px/1.3 var(--x-sans) !important; color: var(--x-soft) !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-name { display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans) !important; color: var(--x-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-price { font: 600 14px/1.3 var(--x-sans) !important; font-variant-numeric: tabular-nums; color: var(--x-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-reason { margin: 4px 0 0 !important; padding: 8px 0 0 !important; border-top: 1px solid var(--x-hair) !important; font: 500 calc(13px * var(--x-scale))/1.4 var(--x-sans) !important; color: var(--x-ink) !important; }
+/* Evidence meter: three bars + word (the PDP's .ay-meter, sized for a card). */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter { display: flex; align-items: center; gap: 8px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter-bars { display: grid; grid-template-columns: repeat(3, 10px); gap: 3px; flex: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter-bars i { display: block; height: 6px; border: 1.5px solid var(--x-ink); border-radius: 3px; background: transparent; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter[data-level='1'] .ay-wx-meter-bars i:nth-child(-n+1),
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter[data-level='2'] .ay-wx-meter-bars i:nth-child(-n+2),
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter[data-level='3'] .ay-wx-meter-bars i:nth-child(-n+3) { background: var(--x-ink); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-meter-word { font: 500 13px/1.3 var(--x-sans) !important; color: var(--x-soft) !important; white-space: nowrap; }
+
+/* ---------- cycle: a Group now (card + phase strip together) ---------- */
+
+/* ---------- Coming up: what to expect ---------- */
+
+/* ---------- website: wider layouts ----------
+   (:is(#ay, .ay-wh) matches .ay-wh but carries id weight, to beat the shared rules above.) */
+@media (min-width: 640px) {
+  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-picks-row { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: visible; margin: 0 !important; padding: 0 !important; }
+  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-pick { flex: none; }
+}
+@media (min-width: 1024px) {
+  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn { grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-flow: row dense; align-items: start; column-gap: 24px; row-gap: 16px; }
+  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn > * { grid-column: 1 / -1 !important; grid-row: auto !important; }
+  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-picks-row { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: 24px; }
+  /* The Feature runs full width with its sentences side by side. */
+  /* Ask: the three questions side by side. */
+}
+
+/* ---------- website: Ask ayna about your week (Group of question rows, like the app) ---------- */
+
+/* ---------- "Your week, in short", folded (app and website) ---------- */
+
+/* =====================================================================
+   Round 2: what Apple Health doesn't do, near the top.
+   ===================================================================== */
+
+/* Feature: Why we say this + Ask ayna on one line */
+
+/* Groups: deeper butter, radius 20, hairline rows */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) :is(.ay-wx-adds, .ay-wx-group) { margin: 0 !important; padding: 16px 16px 12px !important; border: 0 !important; border-radius: 20px !important; background: var(--x-group) !important; color: var(--x-ink) !important; box-shadow: none !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container main .ay-wh.ay-wh, html body .app-container .ay-wh.ay-wh) :is(.ay-wx-adds, .ay-wx-group) h3 { margin: 0 0 8px !important; font: 500 calc(20px * var(--x-scale))/1.2 var(--x-serif) !important; letter-spacing: 0 !important; color: var(--x-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) :is(.ay-wx-adds, .ay-wx-group) ul { margin: 0 !important; padding: 0 !important; list-style: none !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) :is(.ay-wx-adds, .ay-wx-group) li { margin: 0 !important; padding: 10px 0 !important; border: 0 !important; border-top: 1px solid var(--x-hair) !important; background: none !important; color: var(--x-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) :is(.ay-wx-adds, .ay-wx-group) li:first-child { border-top: 0 !important; padding-top: 2px !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-note { margin: 8px 0 0 !important; font: 500 calc(13px * var(--x-scale))/1.45 var(--x-sans) !important; color: var(--x-soft) !important; max-width: 68ch; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) :is(.ay-wx-group, .ay-wx-adds) a { color: var(--x-ink) !important; font-weight: 600 !important; text-decoration: underline !important; text-underline-offset: 2px; }
+
+/* What ayna adds: label column + one sentence */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-adds-lead { margin: 0 0 8px !important; font: 500 calc(15px * var(--x-scale))/1.45 var(--x-sans) !important; color: var(--x-ink) !important; max-width: 68ch; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-adds ul { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-adds li { display: grid !important; align-content: start; gap: 2px; padding: 10px 0 !important; border-top: 1px solid var(--x-hair) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-adds li:first-child { padding-top: 10px !important; border-top: 1px solid var(--x-hair) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-adds li b { font: 600 13px/1.35 var(--x-sans) !important; color: var(--x-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-adds li span { font: 500 calc(14px * var(--x-scale))/1.4 var(--x-sans) !important; color: var(--x-ink) !important; }
+@media (max-width: 340px) { :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-adds ul { grid-template-columns: minmax(0, 1fr); } }
+
+/* This phase vs your last 3: a small table */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare :is(th, td) { padding: 8px 0 !important; border: 0 !important; border-top: 1px solid var(--x-hair) !important; background: none !important; color: var(--x-ink) !important; text-align: right; vertical-align: baseline; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare thead th { padding: 0 0 6px !important; border-top: 0 !important; font: 500 13px/1.2 var(--x-sans) !important; color: var(--x-soft) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare tbody th { text-align: left; font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare tbody th small { display: block; font: 500 13px/1.3 var(--x-sans) !important; color: var(--x-soft) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare td { padding-left: 12px !important; font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans) !important; white-space: nowrap; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-compare td:last-child { font-weight: 500 !important; color: var(--x-soft) !important; }
+
+/* Is this normal? */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li { display: grid !important; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 2px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal-label { font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li b { font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans) !important; font-variant-numeric: tabular-nums; text-align: right; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li small { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; font: 500 13px/1.35 var(--x-sans) !important; color: var(--x-soft) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li small::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #f6e3a1; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li.is-out small { color: var(--x-ink) !important; font-weight: 600 !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li.is-out small::before { background: #f7badd; box-shadow: inset 0 0 0 1px #3e2723; }
+
+/* Your goals, covered */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-goal-label { display: block; margin: 0 0 2px; font: 600 13px/1.35 var(--x-sans) !important; color: var(--x-soft) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-goal-product { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px; width: 100%; min-height: 44px; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--x-ink) !important; text-align: left !important; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-goal-product > span:first-child { min-width: 0; font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans) !important; color: var(--x-ink) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-goal-product:hover > span:first-child { text-decoration: underline; text-underline-offset: 3px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-goal-product:focus-visible { outline: 3px solid var(--x-ink) !important; outline-offset: 2px; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-goal-product .ay-wx-meter { flex: none; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-goals li.is-effect p:not(.ay-wx-note) { margin: 0 !important; font: 500 calc(15px * var(--x-scale))/1.45 var(--x-sans) !important; color: var(--x-ink) !important; }
+
+/* Starter (no health data yet) */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-starter { display: grid !important; gap: 16px !important; margin: 16px 0 0 !important; text-align: left !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-connect { display: grid; gap: 12px; justify-items: start; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-connect p { margin: 0 !important; font: 500 calc(15px * var(--x-scale))/1.5 var(--x-sans) !important; color: var(--x-ink) !important; max-width: 60ch; }
+html body .app-container .ay-wh.ay-wh .ay-wh-starter { margin-top: 32px; }
+
+/* Website, 1024 and up: pairs side by side */
+@media (min-width: 1024px) {
+  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-adds ul { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 24px; }
+  /* Pairs of similar height: compare | coming up, cycle | is this normal; goals full width. */
+  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-bn > .ay-wx-goals { grid-column: 1 / -1 !important; }
+  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-goals > ul { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; }
+  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-goals > ul > li:nth-child(2) { border-top: 0 !important; padding-top: 2px !important; }
+  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-starter { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; column-gap: 24px; }
+  html body .app-container .ay-wh.ay-wh:is(#ay, .ay-wh) .ay-wx-starter > .ay-wx-connect { grid-column: 1 / -1; }
+}

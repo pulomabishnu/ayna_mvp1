@@ -1,16 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { picksAreasLine } from '../utils/needAreas.js';
 import { getSupabaseClient, setRememberMe } from '../utils/supabaseClient';
+import { devPreviewOn } from '../utils/devPreview.js';
+import { CODE_COPY, EMAIL_CODE_LENGTH, SMS_CODE_LENGTH, cleanCode, codeErrorText, isEmailNotConfirmed, verifyEmailCode } from '../utils/authCodes.js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
-import { CONSENT_VERSION, stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
+import { stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
 import { pendingReferralMeta } from '../utils/freeProductCampaign.js';
-import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../utils/heardAbout.js';
+import { AI_CONSENT_ERROR, AI_CONSENT_TEXT, acknowledgementLead, LEGAL_LINKS, consentMetadata, markAskHeardAbout } from '../utils/signupConsent.js';
+import { cleanFirstName } from '../mobile/data/intakeModel.js';
 import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../utils/formErrors.js';
 import InlineError from './InlineError.jsx';
 import '../styles/audit-qya.css';
 import './AuthGate.css';
+import { maskedChange, formatUsPhone } from '../utils/inputMask.js';
 
 // One short line per tab (audit AU01).
-const SUBTITLES = { signup: 'Make your shop yours.', signin: 'Sign in to your ayna account.' };
+const SUBTITLES = { signup: 'Free. We never sell your health information.', signin: 'Sign in to your ayna account.' };
 
 /** Visible label above an input, with its error underneath (audit AU03). */
 function Field({ id, label, error, children }) {
@@ -23,34 +28,11 @@ function Field({ id, label, error, children }) {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Three statements, one checkbox each. The AI statement's wording and the
-// 18+ confirmation come from the 2026-09 legal hardening on main (ayna
-// accounts are 18+ only); the 18+ confirmation is its own sentence on the
-// third statement so the form keeps three boxes.
-const CONSENT_ITEMS = [
-  'The health information I share with ayna is self-reported wellness information, not a clinical record.',
-  'When I intentionally use an AI-powered feature, limited relevant wellness context may be processed by an external AI provider to generate my requested response. ayna minimizes the context sent, protects it in transit, and does not sell it.',
-  'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider. I confirm that I am at least 18 years old.',
-];
-
-// What to do when each box above is left unticked, one plain line per box
-// (the legal wording above is unchanged).
-const CONSENT_ERRORS = [
-  'Tick this box to confirm what you share is self-reported, not a clinical record.',
-  'Tick this box to agree to how AI features may process your wellness context.',
-  'Tick this box to confirm ayna isn’t medical advice and that you’re 18 or older.',
-];
-const CONSENT_KEYS = CONSENT_ITEMS.map((_, i) => `consent${i}`);
-// Screen order, so the first miss is the one scrolled to and focused.
-const ERROR_ORDER = ['firstName', 'email', 'password', 'heardAbout', ...CONSENT_KEYS];
-const FIELD_IDS = { firstName: 'auth-firstName', email: 'auth-email', password: 'auth-password', heardAbout: 'auth-heard', ...Object.fromEntries(CONSENT_KEYS.map((k, i) => [k, `auth-consent-${i}`])) };
-
-/** Missing consent boxes as field errors keyed consent0..2. */
-function consentErrors(checked) {
-  const out = {};
-  CONSENT_KEYS.forEach((k, i) => { if (!checked[i]) out[k] = CONSENT_ERRORS[i]; });
-  return out;
-}
+// Onboarding audit (Oct 25): email + password only (her name comes from the
+// quiz), one required AI-processing box; the acknowledgements and 18+ are
+// one sentence above the button (src/utils/signupConsent.js).
+const ERROR_ORDER = ['email', 'password', 'aiConsent'];
+const FIELD_IDS = { email: 'auth-email', password: 'auth-password', aiConsent: 'auth-consent-ai' };
 
 /** Scrolls to and focuses the first field in `errors` (inside `root`). */
 function revealFirstError(errors, root) {
@@ -60,45 +42,38 @@ function revealFirstError(errors, root) {
   window.requestAnimationFrame(() => revealField((root || document).querySelector(`#${FIELD_IDS[first]}`)));
 }
 
-const AGE_REQUIREMENT_VERSION = '18plus-v1';
-
-/** "Where did you hear about us?" is REQUIRED on account creation (founder
- * spec, 2026-10): true only for a real listed choice. The app's
- * SigninScreen.jsx keeps its own identical copy (importing a desktop
- * component from the mobile bundle would drag AuthGate.css along). */
-function isHeardAboutAnswered(value) {
-  return HEARD_ABOUT_OPTIONS.some((o) => o.value === value);
+/** The required AI-processing checkbox, with the trust badges beside it (audit section 11). */
+export function AiConsentBox({ id, checked, onChange, error }) {
+  return <div className="ay-auth-check-item ay-auth-ai">
+    <label className={`ay-auth-check${error ? ' ay-check-invalid' : ''}`}>
+      <input id={id} type="checkbox" name="consent-ai" checked={checked} onChange={onChange}
+        aria-invalid={error ? true : undefined} aria-describedby={error ? `${id}-err` : undefined} />
+      <span>{AI_CONSENT_TEXT}</span>
+    </label>
+    <p className="ay-auth-badges" aria-label="How we treat your data"><span>Never sold</span><span>Encrypted in transit</span></p>
+    <InlineError id={`${id}-err`}>{error}</InlineError>
+  </div>;
 }
 
-/** "Where did you hear about us?" as the label string main's admin reviews
- * (api/reviews-admin.js) read from `heard_about_us`, written next to our
- * structured `heard_about` / `heard_about_other` fields. */
-function heardAboutUsLabel(value, otherText) {
-  const option = HEARD_ABOUT_OPTIONS.find((o) => o.value === value);
-  if (!option) return '';
-  const other = String(otherText || '').trim().replace(/\s+/g, ' ').slice(0, HEARD_ABOUT_OTHER_MAX);
-  return value === 'other' && other ? `Other: ${other}` : option.label;
+/** The acknowledgements + legal links as one sentence (above the button). */
+export function AcknowledgementLine({ action = 'creating an account', className = 'ay-auth-ack' }) {
+  return <p className={className}>
+    {acknowledgementLead(action)}{' '}
+    {LEGAL_LINKS.map((l, i) => <React.Fragment key={l.href}>
+      {i > 0 && (i === LEGAL_LINKS.length - 1 ? ' and ' : ', ')}
+      <a href={l.href} target="_blank" rel="noopener noreferrer">{l.label}</a>
+    </React.Fragment>)}.
+  </p>;
 }
 
-/** Consent + 18+ fields recorded on every new account (all signup paths and ConsentGate). */
-function consentMetadata() {
-  const now = new Date().toISOString();
-  return {
-    consent_given_at: now,
-    consent_version: CONSENT_VERSION,
-    age_18_confirmed: true,
-    age_18_confirmed_at: now,
-    age_requirement_version: AGE_REQUIREMENT_VERSION,
-  };
-}
-
-export default function AuthGate({ isModal = false, embedded = false, onSkip, context, feature = '', onBeforeOAuthRedirect, onStartEcosystem, initialMode, summary = null, allowSignup = false, onAuthenticated }) {
+export default function AuthGate({ isModal = false, embedded = false, onSkip, context, feature = '', onBeforeOAuthRedirect, onStartEcosystem, initialMode, summary = null, allowSignup = false, onAuthenticated, firstName: intakeName = '', title = '' }) {
   useEscapeToClose(isModal, onSkip);
   // 'signup' | 'signin'. An account can only be created in the save step after
   // the quiz (allowSignup). Every other entry point is sign-in only, with
   // "Don't have an account? Build your ecosystem" starting the quiz instead.
   const [mode, setMode] = useState(() => (allowSignup && initialMode !== 'signin' ? 'signup' : 'signin'));
-  const [firstName, setFirstName] = useState('');
+  // Her first name from the quiz (asked there only, never again here).
+  const firstName = cleanFirstName(intakeName);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -109,17 +84,14 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const [summaryAction, setSummaryAction] = useState('create your account');
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [checked, setChecked] = useState([false, false, false]);
+  const [aiConsent, setAiConsent] = useState(false);
   // Remember me (sign-in): controls ONLY where the Supabase session token is
   // stored (localStorage vs sessionStorage, src/utils/supabaseClient.js).
   // Defaults on. Never deletes any account data.
   // Off by default: on a shared or library computer a health app should not stay signed in.
   const [rememberMe, setRememberMeChecked] = useState(false);
-  // Required "Where did you hear about us?" (saved in user metadata).
-  const [heardAbout, setHeardAbout] = useState('');
-  const [heardOther, setHeardOther] = useState('');
-  const heardLabel = heardAboutUsLabel(heardAbout, heardOther);
-  const heardMeta = { ...heardAboutMetadata(heardAbout, heardOther), ...(heardLabel ? { heard_about_us: heardLabel } : {}) };
+  // Name fields only when the quiz gave one.
+  const nameMeta = firstName ? { first_name: firstName, full_name: firstName } : {};
   // Two real signups reported never getting a confirmation email
   // (2026-08-25), Supabase's built-in email sender has a very low rate
   // limit and no delivery guarantee, so a signup silently succeeding with
@@ -149,13 +121,29 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const [phoneCode, setPhoneCode] = useState('');
 
   const supabase = getSupabaseClient();
+  // Design QA only: a local production build on http://localhost:<port> has no sign-in service, so it
+  // shows the normal sign-in/sign-up state instead of the outage notice (never on a real host, never native).
+  const designPreview = !supabase && devPreviewOn();
   const isSignup = allowSignup && mode === 'signup';
-  // Why we are asking, when the user came from a specific door (Saved heart, My Ecosystem).
+  // Per-feature sign-in titles that name the action (walkthrough P1-23,
+  // docs/terminology.md), not "Sign in to use posting".
+  const FEATURE_TITLES = {
+    posting: 'Sign in to post', reactions: 'Sign in to mark posts helpful', 'saved posts': 'Sign in to save posts',
+    reviews: 'Sign in to write a review', playlists: 'Sign in to make a playlist', 'friend recommendations': 'Sign in to recommend to a friend',
+    questions: 'Sign in to ask a question', Community: 'Sign in to join Community', 'Ask ayna': 'Sign in to ask ayna',
+    'appointment prep': 'Sign in to prepare for an appointment', 'recall alerts': 'Sign in to get recall alerts', comparisons: 'Sign in to compare products',
+    'your hidden products': 'Sign in to see your hidden products', 'your health profile': 'Sign in to edit your answers', 'ayna by text': 'Sign in to text ayna',
+    'screening reminders': 'Sign in to see screening reminders', 'account settings': 'Sign in to manage your account', 'health data': 'Sign in to connect health data',
+  };
+  // Why we are asking, when the user came from a specific door (Saved heart, My ecosystem).
   const CONTEXT_COPY = {
-    saved: { title: 'Looking for your favorites?', line: 'Sign in to see the products you saved, all in one place.' },
-    ecosystem: { title: 'Your ecosystem lives here', line: 'Sign in to see your shelves, or build one with a short quiz.' },
-    feature: { title: feature ? `Sign in to use ${feature}` : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
-    login: { title: 'Sign in', line: 'Welcome to ayna. New here? Start with the quiz.' },
+    saved: { title: 'Looking for what you saved?', line: 'Sign in to see what you saved.' },
+    'save-item': { title: 'Save this to your ayna', line: 'Sign in to keep products, resources and recommendations in one place. New here? Start with the quiz, then save.' },
+    // Logged-out copy from the UX spec (24): say what she gets, not "Sign in required".
+    ecosystem: { title: 'Build your health ecosystem', line: 'Sign in to save your health interests, matches and recommendations in one place.' },
+    personalize: { title: 'See how well this matches you', line: 'Create your health profile to see your personalized match and why.' },
+    feature: { title: feature ? (FEATURE_TITLES[feature] || `Sign in for ${feature}`) : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
+    login: { title: 'Sign in', line: '' }, // the "New here? Get my matches" door says it; no line restating it (founder rule #1)
   };
   const ctxCopy = !isSignup ? CONTEXT_COPY[context] : null;
   const cardRef = useRef(null);
@@ -165,7 +153,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     const t = window.setTimeout(() => cardRef.current?.querySelector('input, button')?.focus(), 30);
     return () => { window.clearTimeout(t); try { prev?.focus?.(); } catch { /* element gone */ } };
   }, [isModal]);
-  const subtitle = isSignup && summary ? 'Save your matches. Create an account to keep them.' : (ctxCopy ? ctxCopy.line : SUBTITLES[mode]);
+  const subtitle = ctxCopy ? ctxCopy.line : SUBTITLES[mode];
+  // Sign-up is offered as "save these" (onboarding audit section 6).
+  const signupTitle = title || 'Save your matches';
 
   // Password reset (2026-09-22 audit): the emailed link lands on
   // /auth/callback, which handles type=recovery with a new-password form.
@@ -193,10 +183,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     }
   };
 
-  // Health-data consent stays explicit: one checkbox per statement.
-  const toggleCheck = (i) => {
-    setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
-    setFieldErrors((prev) => clearError(prev, CONSENT_KEYS[i]));
+  // The AI-processing consent stays an explicit, unticked-by-default choice.
+  const toggleAiConsent = () => {
+    setAiConsent((v) => !v);
+    setFieldErrors((prev) => clearError(prev, 'aiConsent'));
   };
   const clearFieldError = (key) => setFieldErrors((prev) => (prev[key] ? { ...prev, [key]: '' } : prev));
   const fieldProps = (key) => ({
@@ -205,13 +195,11 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   });
   const validate = () => {
     const next = {};
-    if (isSignup && !firstName.trim()) next.firstName = 'Add your first name.';
     if (!email.trim()) next.email = 'Add your email.';
     else if (!EMAIL_RE.test(email.trim())) next.email = 'Check your email. It needs an @ and a domain, like you@email.com.';
     if (!password) next.password = isSignup ? 'Add a password.' : 'Add your password.';
     else if (isSignup && password.length < 8) next.password = 'Use at least 8 characters for your password.';
-    if (isSignup && !isHeardAboutAnswered(heardAbout)) next.heardAbout = 'Choose where you heard about ayna.';
-    if (isSignup) Object.assign(next, consentErrors(checked));
+    if (isSignup && !aiConsent) next.aiConsent = AI_CONSENT_ERROR;
     setFieldErrors(next);
     setSummaryAction(isSignup ? 'create your account' : 'sign in');
     revealFirstError(next, cardRef.current);
@@ -219,13 +207,12 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   };
 
   // Shared signup gate for the paths that skip validate(): Google, Apple and
-  // phone. Returns true when signup prerequisites (consent + heard-about,
-  // both required) are satisfied, setting the field errors otherwise.
+  // phone. Returns true when the one required consent is ticked, setting
+  // the field error otherwise.
   const signupPrereqsOk = () => {
     if (!isSignup) return true;
     const next = {};
-    if (!isHeardAboutAnswered(heardAbout)) next.heardAbout = 'Choose where you heard about ayna.';
-    Object.assign(next, consentErrors(checked));
+    if (!aiConsent) next.aiConsent = AI_CONSENT_ERROR;
     // Only what this path needs, so stale email/password messages don't linger.
     setFieldErrors(next);
     setSummaryAction('continue');
@@ -239,6 +226,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+    if (!supabase) { setError('Sign-in is unavailable right now. Please try again later.'); return; }
     setError('');
     setSuccessMsg('');
     setResendMsg('');
@@ -250,22 +238,21 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     try {
       const cleanEmail = email.trim().toLowerCase();
       if (isSignup) {
-        const cleanFirstName = firstName.trim();
         const { data, error } = await supabase.auth.signUp({
           email: cleanEmail,
           password,
           options: {
             emailRedirectTo: 'https://www.aynahealth.co/confirmed',
             data: {
-              ...heardMeta,
               ...pendingReferralMeta(),
-              first_name: cleanFirstName,
-              full_name: cleanFirstName,
+              ...nameMeta,
               ...consentMetadata(),
             },
           },
         });
         if (error) throw error;
+        // "Where did you hear about us?" comes after sign-up, optional.
+        if (data.user?.identities?.length !== 0) markAskHeardAbout();
         if (data.user?.identities?.length === 0) {
           setError('An account with this email already exists. Sign in instead.');
           setMode('signin');
@@ -282,7 +269,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         } else {
           setEmailSignupStep('code');
           setEmailCode('');
-          setSuccessMsg(`We sent a verification code to ${cleanEmail}. Enter it below to finish creating your account.`);
+          setSuccessMsg(CODE_COPY.emailSent(cleanEmail));
           setNeedsConfirmation(true);
         }
       } else {
@@ -291,11 +278,11 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           // Real, known failure mode (found live 2026-08-25): a user whose
           // email was never verified tries to sign in anyway. Offer the
           // verification code step right here instead of a dead-end error.
-          if (error.code === 'email_not_confirmed' || /email[_ ]not[_ ]confirmed|confirm your email|not verified/i.test(error.message || '')) {
+          if (isEmailNotConfirmed(error)) {
             setNeedsConfirmation(true);
             setEmailSignupStep('code');
             setEmailCode('');
-            setSuccessMsg('Your email still needs verification. Enter the code from your email below.');
+            setSuccessMsg(CODE_COPY.emailNotConfirmed);
           }
           throw error;
         }
@@ -321,7 +308,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         options: { emailRedirectTo: 'https://www.aynahealth.co/confirmed' },
       });
       if (error) throw error;
-      setResendMsg('New code sent. Check your inbox and spam folder.');
+      setResendMsg(CODE_COPY.resent);
     } catch (err) {
       setResendMsg(err.message || 'Could not resend right now. Try again in a moment.');
     } finally {
@@ -332,34 +319,22 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const handleVerifyEmailOtp = async (e) => {
     e.preventDefault();
     if (!supabase || !email) return;
-    const token = emailCode.replace(/\D/g, '').slice(0, 8);
-    if (!/^\d{8}$/.test(token)) {
-      setError('Enter the 8-digit verification code from your email.');
+    if (cleanCode(emailCode, EMAIL_CODE_LENGTH).length !== EMAIL_CODE_LENGTH) {
+      setError(CODE_COPY.emailPrompt);
       return;
     }
     setError('');
     setSuccessMsg('');
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        email: email.trim().toLowerCase(),
-        token,
-        type: 'email',
-      });
-      if (error) throw error;
-      if (!data?.session) {
-        throw new Error('Your email was verified, but we could not start your session. Please sign in.');
-      }
+      // Same check, length and words as the app (src/utils/authCodes.js).
+      const data = await verifyEmailCode(supabase, email, emailCode);
       setNeedsConfirmation(false);
       setResendMsg('');
-      setSuccessMsg('Email verified. Signing you in...');
+      setSuccessMsg(CODE_COPY.verified);
       onAuthenticated?.(data.user || data.session.user, data.session);
     } catch (err) {
-      setError(
-        /expired|invalid|token/i.test(err?.message || '')
-          ? 'That code is invalid or expired. Request a new code and try again.'
-          : (err.message || 'Could not verify that code. Please try again.')
-      );
+      setError(err.message || CODE_COPY.wrongOrExpired);
     } finally {
       setLoading(false);
     }
@@ -390,20 +365,18 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     try {
       const e164 = normalizePhoneE164(phoneNumber);
       if (!e164) throw new Error('Please enter a valid 10-digit phone number.');
-      const cleanFirstName = firstName.trim();
       const { error } = await supabase.auth.signInWithOtp({
         phone: e164,
         options: {
           data: {
-            ...heardMeta,
             ...pendingReferralMeta(),
-            first_name: cleanFirstName,
-            full_name: cleanFirstName,
+            ...nameMeta,
             ...consentMetadata(),
           },
         },
       });
       if (error) throw error;
+      markAskHeardAbout();
       setPhoneNumber(e164);
       setPhoneStep('code');
     } catch (err) {
@@ -420,7 +393,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     try {
       const { data, error } = await supabase.auth.verifyOtp({
         phone: phoneNumber,
-        token: phoneCode.trim(),
+        token: cleanCode(phoneCode, SMS_CODE_LENGTH),
         type: 'sms',
       });
       if (error) throw error;
@@ -428,7 +401,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       // only on onAuthStateChange could hang), the SIGNED_IN handler still runs.
       if (data?.session?.user) onAuthenticated?.(data.user || data.session.user, data.session);
     } catch (err) {
-      setError(err.message || 'That code is wrong or expired. Please try again.');
+      setError(codeErrorText(err));
     } finally {
       setLoading(false);
     }
@@ -454,8 +427,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       // gave. App shows ConsentGate (below) to any OAuth account with no
       // consent on record instead (main, 2026-09).
       if (isSignup) {
-        stashPendingSignupMeta({ ...heardMeta, ...consentMetadata() });
+        stashPendingSignupMeta({ ...nameMeta, ...consentMetadata() });
         stashPendingConsent();
+        markAskHeardAbout();
       } else {
         stashPendingSignupMeta(null);
       }
@@ -489,8 +463,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       // Same reasoning as handleGoogle just above: Apple's provider also
       // auto-provisions an account for any unseen Apple ID.
       if (isSignup) {
-        stashPendingSignupMeta({ ...heardMeta, ...consentMetadata() });
+        stashPendingSignupMeta({ ...nameMeta, ...consentMetadata() });
         stashPendingConsent();
+        markAskHeardAbout();
       } else {
         stashPendingSignupMeta(null);
       }
@@ -515,7 +490,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     setSuccessMsg('');
     setAuthMethod('email');
     setPhoneStep('number');
-    setChecked([false, false, false]);
+    setAiConsent(false);
     setEmailSignupStep('details');
     setEmailCode('');
     setNeedsConfirmation(false);
@@ -587,18 +562,19 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
 
         <div className="ay-auth-logo" style={styles.logo}>ayna</div>
         {ctxCopy && <h2 className="ay-auth-context-title">{ctxCopy.title}</h2>}
-        <p className="ay-auth-tagline" style={styles.tagline}>{subtitle}</p>
+        {isSignup && <h2 className="ay-auth-context-title">{signupTitle}</h2>}
+        {subtitle && <p className="ay-auth-tagline" style={styles.tagline}>{subtitle}</p>}
         {!isSignup && !allowSignup && onStartEcosystem && (
           <div className="ay-auth-doors">
             <button type="button" className="ay-auth-doors__new" onClick={onStartEcosystem}>
-              <b>New here? See my matches</b>
+              <b>New here? Get my matches</b>
               <span>A short quiz, then products matched to you</span>
             </button>
-            <p className="ay-auth-doors__or">Have an account? Sign in below</p>
+            <p className="ay-auth-doors__or">or sign in</p>
           </div>
         )}
 
-        {!supabase && (
+        {!supabase && !designPreview && (
           // Without this, a missing/blank .env.local silently disabled the
           // email/password submit button with zero feedback, clicking it
           // did nothing, no error, no console output, nothing to search for.
@@ -615,11 +591,11 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           <div className="ay-auth-summary">
             <div className="ay-auth-summary__thumbs" aria-hidden="true">
               {(summary.products || []).slice(0, 4).map((p) => (
-                <span key={p.id}>{p.image ? <img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : null}</span>
+                <SummaryThumb key={p.id} product={p} />
               ))}
             </div>
             <div>
-              <strong>{summary.count} pick{summary.count === 1 ? '' : 's'}{summary.areas?.length ? ` · ${summary.areas.length} area${summary.areas.length === 1 ? '' : 's'}` : ''}</strong>
+              <strong>{picksAreasLine(summary.count, summary.areas?.length)}</strong>
               <span>{(summary.areas || []).slice(0, 3).join(', ')}</span>
             </div>
           </div>
@@ -656,17 +632,17 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
               onClick={(e) => e.stopPropagation()}
               style={{ width: '100%', maxWidth: '420px', background: '#fff', borderRadius: '20px', padding: '2rem', boxShadow: '0 18px 50px rgba(28, 25, 23, 0.18)', textAlign: 'center' }}
             >
-              <div style={{ color: '#f97316', fontWeight: 600, fontSize: 14, letterSpacing: '0.04em', marginBottom: '0.75rem' }}>ayna</div>
-              <h2 id="phone-coming-soon-title" style={{ margin: '0 0 0.75rem', fontSize: 'var(--ay-fs-section)', color: '#1c1917' }}>
+              <div style={{ color: '#3e2723', fontWeight: 600, fontSize: 14, letterSpacing: '0.04em', marginBottom: '0.75rem' }}>ayna</div>
+              <h2 id="phone-coming-soon-title" style={{ margin: '0 0 0.75rem', fontSize: 'var(--ay-fs-section)', color: '#3e2723' }}>
                 Phone sign-up is coming soon
               </h2>
-              <p style={{ margin: '0 0 1.5rem', color: '#57534e', lineHeight: 1.6 }}>
-                We’re still putting the finishing touches on phone verification. For now, please create your ayna account with email or Google.
+              <p style={{ margin: '0 0 1.5rem', color: '#3e2723', lineHeight: 1.6 }}>
+                We’re still putting the finishing touches on phone verification. For now, please create your ayna account with Apple, Google or email.
               </p>
               <button
                 type="button"
                 onClick={() => setShowPhoneNotice(false)}
-                style={{ width: '100%', border: 'none', borderRadius: '12px', padding: '0.9rem 1rem', background: '#f97316', color: '#fff', fontWeight: 600, fontSize: 16, cursor: 'pointer' }}
+                style={{ width: '100%', border: 'none', borderRadius: '12px', padding: '0.9rem 1rem', background: '#3e2723', color: '#ffedac', fontWeight: 600, fontSize: 16, cursor: 'pointer' }}
               >
                 Continue with email
               </button>
@@ -674,21 +650,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           </div>
         )}
 
-        {/* Fastest way in first: Google and Apple, then "or", then email. */}
+        {/* Fastest way in first: Apple, then Google, then "or", then email (onboarding audit #1). */}
         {!resetView && <>
           <div className="ay-auth-oauth" style={styles.oauthRow}>
-            <button
-              type="button"
-              onClick={handleGoogle}
-              disabled={googleLoading}
-              style={{
-                ...styles.googleBtn,
-              }}
-            >
-              <GoogleIcon />
-              {googleLoading ? 'Redirecting…' : 'Continue with Google'}
-            </button>
-
             <button
               type="button"
               onClick={handleApple}
@@ -699,6 +663,18 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             >
               <AppleIcon />
               {appleLoading ? 'Redirecting…' : 'Continue with Apple'}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleGoogle}
+              disabled={googleLoading}
+              style={{
+                ...styles.googleBtn,
+              }}
+            >
+              <GoogleIcon />
+              {googleLoading ? 'Redirecting…' : 'Continue with Google'}
             </button>
           </div>
           <div style={styles.divider}>
@@ -734,19 +710,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           style={styles.form}
           noValidate
         >
-          {isSignup && authMethod === 'phone' && (
-            <input
-              type="text"
-              placeholder="First name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-              disabled={phoneStep === 'code'}
-              style={{ ...styles.input, ...(phoneStep === 'code' ? styles.inputDisabled : {}) }}
-              autoComplete="given-name"
-              maxLength={50}
-            />
-          )}
 
           {isSignup && authMethod === 'phone' ? (
             phoneStep === 'number' ? (
@@ -754,7 +717,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                 type="tel"
                 placeholder="Phone number"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={(e) => setPhoneNumber(maskedChange(e, formatUsPhone))}
                 required
                 style={styles.input}
                 autoComplete="tel"
@@ -767,13 +730,14 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                 <input
                   type="text"
                   inputMode="numeric"
-                  placeholder="6-digit code"
+                  placeholder={CODE_COPY.smsPlaceholder}
+                  aria-label={CODE_COPY.smsPrompt}
                   value={phoneCode}
-                  onChange={(e) => setPhoneCode(e.target.value)}
+                  onChange={(e) => setPhoneCode(cleanCode(e.target.value, SMS_CODE_LENGTH))}
                   required
                   style={styles.input}
                   autoComplete="one-time-code"
-                  maxLength={6}
+                  maxLength={SMS_CODE_LENGTH}
                 />
                 <button
                   type="button"
@@ -795,12 +759,12 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                   name="emailCode"
                   type="text"
                   inputMode="numeric"
-                  placeholder="8-digit code"
+                  placeholder={CODE_COPY.emailPlaceholder}
                   value={emailCode}
-                  onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                  onChange={(e) => setEmailCode(cleanCode(e.target.value, EMAIL_CODE_LENGTH))}
                   style={styles.input}
                   autoComplete="one-time-code"
-                  maxLength={8}
+                  maxLength={EMAIL_CODE_LENGTH}
                   autoFocus
                 />
               </Field>
@@ -826,21 +790,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             </>
           ) : (
             <>
-          {isSignup && (
-            <Field id="auth-firstName" label="First name" error={fieldErrors.firstName}>
-              <input
-                id="auth-firstName"
-                name="firstName"
-                type="text"
-                value={firstName}
-                onChange={(e) => { setFirstName(e.target.value); clearFieldError('firstName'); }}
-                style={styles.input}
-                autoComplete="given-name"
-                maxLength={50}
-                {...fieldProps('firstName')}
-              />
-            </Field>
-          )}
           <Field id="auth-email" label="Email" error={fieldErrors.email}>
             <input
               id="auth-email"
@@ -902,57 +851,13 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             </div>
           )}
           {isSignup && (
-            <div className="ay-auth-field ay-auth-heard">
-              <label htmlFor="auth-heard">Where did you hear about us?</label>
-              <select
-                id="auth-heard"
-                name="heardAbout"
-                value={heardAbout}
-                onChange={(e) => { setHeardAbout(e.target.value); clearFieldError('heardAbout'); }}
-                className={`${heardAbout ? '' : 'is-empty'}${fieldErrors.heardAbout ? ' is-invalid' : ''}`}
-                aria-invalid={fieldErrors.heardAbout ? true : undefined}
-                aria-describedby={fieldErrors.heardAbout ? 'auth-heard-err' : undefined}
-              >
-                <option value="">Choose one</option>
-                {HEARD_ABOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-              {heardAbout === 'other' && (
-                <input id="auth-heard-other" name="heardAboutOther" type="text" aria-label="Where you heard about us" placeholder="Tell us where" maxLength={HEARD_ABOUT_OTHER_MAX}
-                  value={heardOther} onChange={(e) => setHeardOther(e.target.value)} style={styles.input} autoComplete="off" />
-              )}
-              <InlineError id="auth-heard-err">{fieldErrors.heardAbout}</InlineError>
-            </div>
-          )}
-          {isSignup && (
-            <fieldset className="ay-auth-consent">
-              <legend>How we handle your data</legend>
-              {CONSENT_ITEMS.map((text, i) => {
-                const key = CONSENT_KEYS[i];
-                return (
-                  <div key={text} className="ay-auth-check-item">
-                    <label className={`ay-auth-check${fieldErrors[key] ? ' ay-check-invalid' : ''}`}>
-                      <input
-                        id={FIELD_IDS[key]}
-                        type="checkbox"
-                        name={`consent-${i + 1}`}
-                        checked={checked[i]}
-                        onChange={() => toggleCheck(i)}
-                        aria-invalid={fieldErrors[key] ? true : undefined}
-                        aria-describedby={fieldErrors[key] ? `${FIELD_IDS[key]}-err` : undefined}
-                      />
-                      <span>{text}</span>
-                    </label>
-                    <InlineError id={`${FIELD_IDS[key]}-err`}>{fieldErrors[key]}</InlineError>
-                  </div>
-                );
-              })}
-            </fieldset>
+            <AiConsentBox id={FIELD_IDS.aiConsent} checked={aiConsent} onChange={toggleAiConsent} error={fieldErrors.aiConsent} />
           )}
             </>
           )}
 
           {error && <p style={styles.error}>{error}</p>}
-          <InlineError className="ay-inline-err--summary">{errorSummary(fieldErrors, CONSENT_KEYS, summaryAction)}</InlineError>
+          <InlineError className="ay-inline-err--summary">{errorSummary(fieldErrors, ['aiConsent'], summaryAction)}</InlineError>
           {successMsg && <p style={styles.success}>{successMsg}</p>}
           {needsConfirmation && authMethod === 'email' && emailSignupStep !== 'code' && (
             <p style={{ ...styles.error, color: 'var(--color-text-muted)' }}>
@@ -978,10 +883,11 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             </p>
           )}
 
+          {isSignup && !(authMethod === 'email' && emailSignupStep === 'code') && !(authMethod === 'phone' && phoneStep === 'code') && <AcknowledgementLine />}
           <button
             type="submit"
             className="ay-auth-submit"
-            disabled={loading || !supabase}
+            disabled={loading || (!supabase && !designPreview)}
             style={{
               ...styles.primaryBtn,
             }}
@@ -996,13 +902,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           </button>
           {isSignup && (
             <p className="ay-auth-legal">
-              ayna accounts are for adults 18+. By creating an account you agree to our{' '}
-              <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
-              {', '}
-              <a href="/consumer-health-data.html" target="_blank" rel="noopener noreferrer">Consumer Health Data Privacy Notice</a>
-              {' '}and{' '}
-              <a href="/terms-of-use" target="_blank" rel="noopener noreferrer">Terms of Use</a>.
-              {' '}
               {authMethod === 'email' ? (
                 <button type="button" className="ay-auth-linkbtn" onClick={() => setShowPhoneNotice(true)}>Use my phone number instead</button>
               ) : (
@@ -1039,45 +938,35 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
 /**
  * Shown to a signed-in Google/Apple user whose account has no recorded
  * consent, i.e. one auto-created by "Continue with Google/Apple" in sign-in
- * mode, which skips the create-account form where the three statements
- * (incl. 18+) and "Where did you hear about us?" are collected. She can
- * agree, or sign out. Rendered by App.jsx (main, 2026-09).
+ * mode, which skips the create-account form. Same one AI-processing box and
+ * acknowledgement sentence as sign-up (incl. 18+). "Where did you hear about
+ * us?" follows, optional (HeardAboutPrompt). She can agree, or sign out.
+ * Rendered by App.jsx (main, 2026-09).
  */
 export function ConsentGate({ onAgreed, onDecline }) {
-  const [checked, setChecked] = useState([false, false, false]);
-  const [heardAbout, setHeardAbout] = useState('');
-  const [heardOther, setHeardOther] = useState('');
+  const [aiConsent, setAiConsent] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [fieldErrors, setFieldErrors] = useState({});
+  const [fieldError, setFieldError] = useState('');
   const gateRef = useRef(null);
-  const gateId = (key) => `consent-gate-${key}`;
+  const boxId = 'consent-gate-ai';
 
   const submit = async () => {
-    const next = consentErrors(checked);
-    if (!isHeardAboutAnswered(heardAbout)) next.heardAbout = 'Choose where you heard about ayna.';
-    setFieldErrors(next);
-    const first = firstErrorKey(next, ['heardAbout', ...CONSENT_KEYS]);
-    if (first) {
+    if (!aiConsent) {
+      setFieldError(AI_CONSENT_ERROR);
       setError('');
       warnHaptic();
-      window.requestAnimationFrame(() => revealField(gateRef.current?.querySelector(`#${gateId(first)}`)));
+      window.requestAnimationFrame(() => revealField(gateRef.current?.querySelector(`#${boxId}`)));
       return;
     }
     const supabase = getSupabaseClient();
     if (!supabase) { setError('Sign-in is unavailable right now. Please try again later.'); return; }
     setSaving(true);
     setError('');
-    const label = heardAboutUsLabel(heardAbout, heardOther);
     try {
-      const { data, error: updateError } = await supabase.auth.updateUser({
-        data: {
-          ...heardAboutMetadata(heardAbout, heardOther),
-          ...(label ? { heard_about_us: label } : {}),
-          ...consentMetadata(),
-        },
-      });
+      const { data, error: updateError } = await supabase.auth.updateUser({ data: consentMetadata() });
       if (updateError) throw updateError;
+      markAskHeardAbout();
       onAgreed?.(data?.user || null);
     } catch (err) {
       setError(err?.message || 'Could not save that. Please try again.');
@@ -1098,49 +987,12 @@ export function ConsentGate({ onAgreed, onDecline }) {
     >
       <div className="ay-auth-card" style={styles.card} ref={gateRef}>
         <div className="ay-auth-logo" style={styles.logo}>ayna</div>
-        <p id="ay-consent-gate-title" className="ay-auth-tagline" style={styles.tagline}>One more step. Please confirm the following to finish setting up your account.</p>
+        <p id="ay-consent-gate-title" className="ay-auth-tagline" style={styles.tagline}>One more step to finish setting up your account.</p>
         <div style={styles.form}>
-          <div className="ay-auth-field ay-auth-heard">
-            <label htmlFor="consent-gate-heardAbout">Where did you hear about us?</label>
-            <select id="consent-gate-heardAbout" name="heardAbout" value={heardAbout}
-              onChange={(e) => { setHeardAbout(e.target.value); setError(''); setFieldErrors((prev) => clearError(prev, 'heardAbout')); }}
-              className={`${heardAbout ? '' : 'is-empty'}${fieldErrors.heardAbout ? ' is-invalid' : ''}`}
-              aria-invalid={fieldErrors.heardAbout ? true : undefined}
-              aria-describedby={fieldErrors.heardAbout ? 'consent-gate-heardAbout-err' : undefined}>
-              <option value="">Choose one</option>
-              {HEARD_ABOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-            {heardAbout === 'other' && (
-              <input name="heardAboutOther" type="text" aria-label="Where you heard about us" placeholder="Tell us where" maxLength={HEARD_ABOUT_OTHER_MAX}
-                value={heardOther} onChange={(e) => setHeardOther(e.target.value)} style={styles.input} autoComplete="off" />
-            )}
-            <InlineError id="consent-gate-heardAbout-err">{fieldErrors.heardAbout}</InlineError>
-          </div>
-          <fieldset className="ay-auth-consent">
-            <legend>How we handle your data</legend>
-            {CONSENT_ITEMS.map((text, i) => {
-              const key = CONSENT_KEYS[i];
-              return (
-                <div key={text} className="ay-auth-check-item">
-                  <label className={`ay-auth-check${fieldErrors[key] ? ' ay-check-invalid' : ''}`}>
-                    <input
-                      id={gateId(key)}
-                      type="checkbox"
-                      name={`consent-gate-${i + 1}`}
-                      checked={checked[i]}
-                      aria-invalid={fieldErrors[key] ? true : undefined}
-                      aria-describedby={fieldErrors[key] ? `${gateId(key)}-err` : undefined}
-                      onChange={() => { setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v))); setError(''); setFieldErrors((prev) => clearError(prev, key)); }}
-                    />
-                    <span>{text}</span>
-                  </label>
-                  <InlineError id={`${gateId(key)}-err`}>{fieldErrors[key]}</InlineError>
-                </div>
-              );
-            })}
-          </fieldset>
+          <AiConsentBox id={boxId} checked={aiConsent} error={fieldError}
+            onChange={() => { setAiConsent((v) => !v); setFieldError(''); setError(''); }} />
           {error && <p className="ay-auth-err" role="alert">{error}</p>}
-          <InlineError className="ay-inline-err--summary">{errorSummary(fieldErrors, CONSENT_KEYS, 'finish setting up your account')}</InlineError>
+          <AcknowledgementLine action="continuing" />
           <button
             type="button"
             className="ay-auth-submit"
@@ -1150,14 +1002,6 @@ export function ConsentGate({ onAgreed, onDecline }) {
           >
             {saving ? 'Saving…' : 'Agree and continue'}
           </button>
-          <p className="ay-auth-legal">
-            ayna accounts are for adults 18+. By continuing you agree to our{' '}
-            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
-            {', '}
-            <a href="/consumer-health-data.html" target="_blank" rel="noopener noreferrer">Consumer Health Data Privacy Notice</a>
-            {' '}and{' '}
-            <a href="/terms-of-use" target="_blank" rel="noopener noreferrer">Terms of Use</a>.
-          </p>
         </div>
         <button type="button" onClick={onDecline} style={styles.skipBtn}>No thanks, sign me out</button>
       </div>
@@ -1176,11 +1020,18 @@ function GoogleIcon() {
   );
 }
 
+/* A pick on its white tile; with no photo (or a failed one) the brand's name sits there instead of an empty square. */
+function SummaryThumb({ product }) {
+  const [failed, setFailed] = useState(false);
+  const word = String(product.brand || product.name || '').split(/\s+/)[0];
+  return <span className={product.image && !failed ? undefined : 'is-word'}>{product.image && !failed ? <img src={product.image} alt="" loading="lazy" onError={() => setFailed(true)} /> : word}</span>;
+}
+
 function AppleIcon() {
   return (
     <svg width="16" height="18" viewBox="0 0 16 18" aria-hidden="true" style={{ flexShrink: 0 }}>
-      <path fill="#000000" d="M13.06 9.53c-.02-1.96 1.6-2.9 1.67-2.94-.91-1.33-2.33-1.51-2.84-1.53-1.21-.12-2.36.71-2.97.71-.62 0-1.55-.7-2.55-.68-1.31.02-2.53.76-3.2 1.93-1.37 2.37-.35 5.87.98 7.79.65.94 1.42 1.99 2.44 1.96 0.98-.04 1.35-.63 2.53-.63 1.18 0 1.51.63 2.55.6 1.05-.02 1.72-.95 2.36-1.89.75-1.08 1.05-2.13 1.06-2.18-.02-.01-2.03-.78-2.03-3.13z"/>
-      <path fill="#000000" d="M11.1 3.68c.54-.65.9-1.56.8-2.46-.77.03-1.71.51-2.27 1.15-.5.57-.94 1.5-.82 2.38.86.06 1.75-.44 2.29-1.07z"/>
+      <path fill="currentColor" d="M13.06 9.53c-.02-1.96 1.6-2.9 1.67-2.94-.91-1.33-2.33-1.51-2.84-1.53-1.21-.12-2.36.71-2.97.71-.62 0-1.55-.7-2.55-.68-1.31.02-2.53.76-3.2 1.93-1.37 2.37-.35 5.87.98 7.79.65.94 1.42 1.99 2.44 1.96 0.98-.04 1.35-.63 2.53-.63 1.18 0 1.51.63 2.55.6 1.05-.02 1.72-.95 2.36-1.89.75-1.08 1.05-2.13 1.06-2.18-.02-.01-2.03-.78-2.03-3.13z"/>
+      <path fill="currentColor" d="M11.1 3.68c.54-.65.9-1.56.8-2.46-.77.03-1.71.51-2.27 1.15-.5.57-.94 1.5-.82 2.38.86.06 1.75-.44 2.29-1.07z"/>
     </svg>
   );
 }
@@ -1238,7 +1089,7 @@ const styles = {
     lineHeight: 1.45,
   },
   configWarning: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: '#3e2723',
     background: 'rgba(247, 186, 221, 0.45)',
     border: '1px solid #f7badd',
@@ -1314,7 +1165,7 @@ const styles = {
     border: 'none',
     padding: '0.15rem 0',
     color: '#281B3D',
-    fontSize: 12.5,
+    fontSize: 13,
     fontWeight: '600',
     cursor: 'pointer',
     fontFamily: 'var(--ay-sans)',
@@ -1342,12 +1193,12 @@ const styles = {
     cursor: 'pointer',
   },
   consentText: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: 'var(--color-text-muted)',
     lineHeight: 1.4,
   },
   legalNotice: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: 'var(--color-text-muted)',
     lineHeight: 1.45,
     margin: '-0.1rem 0 0',
@@ -1375,13 +1226,13 @@ const styles = {
     cursor: 'not-allowed',
   },
   error: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: '#B91C1C',
     margin: 0,
     lineHeight: 1.4,
   },
   success: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: '#15803D',
     margin: 0,
     lineHeight: 1.4,
@@ -1398,7 +1249,7 @@ const styles = {
     display: 'block',
   },
   dividerText: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: 'var(--color-text-muted)',
   },
   oauthRow: {
@@ -1411,7 +1262,7 @@ const styles = {
     justifyContent: 'center',
     gap: '0.4rem',
     padding: '0.7rem 0.35rem',
-    fontSize: 12.5,
+    fontSize: 13,
     fontWeight: '500',
     background: '#FFFFFF',
     color: '#2C2333',
@@ -1433,7 +1284,7 @@ const styles = {
     cursor: 'not-allowed',
   },
   fine: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: 'var(--color-text-muted)',
     textAlign: 'center',
     lineHeight: 1.45,
@@ -1442,12 +1293,14 @@ const styles = {
   skipBtn: {
     background: 'none',
     border: 'none',
-    color: 'var(--color-text-muted)',
-    fontSize: 12.5,
+    color: 'var(--ay-fg-muted, rgba(62, 39, 35, .78))',
+    fontSize: 14,
+    fontWeight: 600,
     cursor: 'pointer',
     textDecoration: 'underline',
     textAlign: 'center',
-    padding: '0.25rem',
+    minHeight: 44,
+    padding: '0 0.5rem',
     fontFamily: 'var(--ay-sans)',
   },
 };

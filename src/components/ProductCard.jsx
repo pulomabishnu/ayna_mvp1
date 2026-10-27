@@ -1,15 +1,25 @@
 import React from 'react';
-import { CATEGORY_LABELS } from '../data/products.js';
+import { CheckIcon } from './icons/UiIcons.jsx';
+import { CATEGORY_LABELS } from '../data/catalogTaxonomy.js';
+import { cardKind, cardBadge, cardPrice } from '../utils/productCardFacts.js';
+import { isKnownPrice } from '../utils/formatPrice.js';
+import { sentenceCase } from '../utils/sentenceCase.js';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
-import { formatPrice } from '../utils/formatPrice';
-import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import ProductTileImage from './ProductTileImage';
+import { PlateName, OneFact, SafetyTag } from './cards/CardBits.jsx';
+import { Plate } from './ui/ay';
 import MatchPill from './MatchPill';
+import { matchText } from '../utils/matchDisplay.js';
+import '../styles/card-fit.css';
 import { displayName } from '../mobile/utils/displayName.js';
-import { requestProductTab, formatAverage } from '../utils/community/reviewRatings.js';
+import { requestProductTab } from '../utils/community/reviewRatings.js';
 import { brandOf } from '../mobile/data/brandFallback.js';
+import { saveFeedback } from '../utils/feedback.js';
 import '../styles/match-ui.css';
 import '../styles/verify-content.css';
 import { productImageAlt } from '../utils/seoMeta';
+import { CompareCheck } from './compare/CompareControls.jsx';
+import { IN_ROUTINE } from '../utils/routineCopy.js';
 
 const HEART = 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z';
 
@@ -19,97 +29,128 @@ const HEART = 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7
  * `tile` lets Shop pass its own image node (it resolves images live);
  * everyone else gets ProductTileImage.
  */
+// Whole card opens the product: a click anywhere that isn't its own button or link
+// forwards to the card's one link (keyboard users still reach that link directly).
+function openFromCard(e) {
+  if (e.defaultPrevented || e.target?.closest?.('a, button, input, select, textarea, label, [role="button"]')) return;
+  const link = e.currentTarget.querySelector('.ay-pcard__link:not(.is-static)');
+  if (link) link.click();
+}
+
 export default function ProductCard({
   product,
   matchPercent = null,
+  // Held back for safety: "Safety hold" instead of any number (founder, Oct 24).
+  matchHold = false,
   // "82% for period cramps": accessible name for the match pill (no tooltip).
   matchLabel = '',
+  // (The reason line `why` and review `rating` are no longer read: glance cards leave them to the product page, founder Oct 26 16:54.)
   isSaved = false,
   inEcosystem = false,
   labels = null,
-  rating = null,
   tile = null,
   onOpen,
   onToggleSaved,
+  // Opens Why this match for the card's product (else the product page opens on it).
+  onShowWhy = null,
   action = null,
+  // Small line under the match, e.g. "Backed by your sleep data" (src/components/health).
+  badge = null,
+  // false where the page already says every product is a partner's.
+  partnerMark = true,
+  // Signed out / no profile: a "See your match" line (no number) that opens the quiz.
+  onSeeMatch = null,
   className = '',
   style,
 }) {
   if (!product) return null;
-  const categoryLabel = CATEGORY_LABELS[product.category] || (product.category ? String(product.category).replace(/-/g, ' ') : 'Product');
+  const categoryLabel = sentenceCase(CATEGORY_LABELS[product.category] || (product.category ? String(product.category).replace(/-/g, ' ') : 'Product'));
   const shownBrand = brandOf(product) || product.brand || '';
   // Something she added herself (not in the catalog yet): no page to open
   // and no facts to show, so the card says whose it is and stays put.
   const isMine = product.userAdded === true;
-  // A waitlist deposit is not a price: say what it is, same as the product page.
-  const isDeposit = /deposit/i.test(String(product.price || ''));
-  const rawPrice = isMine ? { main: 'Added by you', sub: '' } : isDeposit ? { main: 'Coming soon', sub: 'Waitlist' } : formatPrice(product);
-  // Long "check the retailer" notes ran past the card edge; say it short.
-  const price = /check (the )?retailer|varies by retailer/i.test(String(rawPrice.main || '')) ? { main: 'Price at retailer', sub: '' } : rawPrice;
-  const Link = isMine ? 'div' : 'a';
+  // One anatomy everywhere (src/utils/productCardFacts.js, shared with the app card),
+  // fixed slots in the PDP build brief's order: plate + sticker → brand · name →
+  // match + reason → price, per use, sizes → facts → evidence + safety → tag + heart.
+  const price = cardPrice(product);
+  const badgeText = isMine ? '' : cardBadge(product, { partner: partnerMark });
+  const kind = !isMine && shownBrand ? cardKind(product) : '';
+  const hasMatch = !isMine && Number.isFinite(matchPercent) && matchPercent > 0;
+  // Slot 7: one tag (Pre-order, Sponsored or ayna partner) beside the heart.
+  const sticker = !isMine ? kind || categoryLabel : '';
+  const showSeeMatch = !isMine && !hasMatch && !matchHold && typeof onSeeMatch === 'function';
+  const showWhy = () => {
+    if (onShowWhy) { onShowWhy(product); return; }
+    requestProductTab('why');
+    if (onOpen) onOpen(product);
+    else window.location.assign(productHref(product));
+  };
+  const open = (e) => {
+    if (!isPlainLeftClick(e)) return;
+    // The star line is the way to the reviews: the page opens on Reviews.
+    if (e.target?.closest?.('.ay-pcard__rating')) requestProductTab('reviews');
+    // No in-app opener: let the link navigate to the product page.
+    if (typeof onOpen !== 'function') return;
+    e.preventDefault();
+    onOpen(product);
+  };
   return (
-    <article className={`ayna-discover-card ayna-browse-card${inEcosystem ? ' is-in-eco' : ''} ${className}`.trim()} style={style}>
-      <Link
-        className={`ayna-browse-card__link${isMine ? ' is-static' : ''}`}
-        {...(isMine ? {} : {
-          href: productHref(product),
-          onClick: (e) => {
-            if (!isPlainLeftClick(e)) return;
-            e.preventDefault();
-            // The star line is the way to the reviews: the page opens on Reviews.
-            if (e.target?.closest?.('.ay-card-trust__rating')) requestProductTab('reviews');
-            onOpen?.(product);
-          },
-        })}
-      >
-        <div className="ayna-discover-card__tile">
-          {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<ProductImageFallback />} />}
+    <article onClick={openFromCard} data-pid={product.id} className={`ay-pcard${inEcosystem ? ' is-in-eco' : ''}${isSaved ? ' is-saved' : ''}${hasMatch ? ' has-fit' : ''} ${className}`.trim()} style={style}>
+      {/* 1. The product on its plate, same scale on every card, with one category sticker. */}
+      <Plate className="ay-pcard__plate" saved={isSaved} sticker={sticker || null}>
+        {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<PlateName product={product} />} />}
+      </Plate>
+      {/* 2. Brand · name. The name is the link; it covers the whole card. */}
+      <p className="ay-pcard__brand">{isMine ? categoryLabel : (shownBrand || categoryLabel)}</p>
+      <h3 className="ay-pcard__name" title={product.name}>
+        {isMine
+          ? <span className="ay-pcard__link is-static">{product.name}</span>
+          : <a className="ay-pcard__link" href={productHref(product)} onClick={open}>{shownBrand ? displayName(product) : product.name}</a>}
+      </h3>
+      {/* 3. Her match and why, outside the open-the-product link: tapping it opens Why this match. */}
+      {(hasMatch || (matchHold && !isMine)) && (
+        <div className="ay-pcard__fit">
+          <MatchPill
+            hold={!hasMatch && matchHold}
+            percent={matchPercent}
+            size="sm"
+            className="ay-pcard__pill"
+            label={hasMatch ? `${matchLabel || matchText(matchPercent)}. Why this match for ${product.name}` : `Safety hold, match unavailable for ${product.name}`}
+            onClick={showWhy}
+          />
+          {/* "What's this?" (team meeting, Oct 26): the match is explained, never a black box. */}
+          {hasMatch && <button type="button" className="ay-pcard__what" onClick={showWhy} aria-label={`What's this? How the ${matchPercent}% match for ${product.name} was worked out`}>What’s this?</button>}
         </div>
-        <div className="ayna-discover-card__body">
-          <div className="ayna-browse-card__labels">
-            {isDeposit && <span className="ay-card-preorder">Pre-order</span>}
-            <span className="ayna-discover-card__category">{isMine ? categoryLabel : (shownBrand || categoryLabel)}</span>
-            {labels}
-          </div>
-          {/* Brand sits in the eyebrow, so a leading brand is trimmed from
-              the name ("Love Wellness Bye Bye Bloat" → "Bye Bye Bloat"). */}
-          {/* Match and ownership read as text, never over the product photo. */}
-          {((matchPercent != null && matchPercent > 0) || inEcosystem) && (
-            <span className="ay-card-match">
-              {matchPercent != null && matchPercent > 0 && <MatchPill percent={matchPercent} size="sm" className="ayna-browse-card__pill" label={matchLabel || `${Math.round(matchPercent)}% match`} />}
-              {inEcosystem && <span className="ay-card-match__eco">✓ In your ecosystem</span>}
-            </span>
-          )}
-          <h3 className="ayna-discover-card__name">{shownBrand ? displayName(product) : product.name}</h3>
-          {/* What it is, in a few words, when the brand took the eyebrow slot. */}
-          {!isMine && shownBrand && <span className="ay-card-kind">{String(categoryLabel).replace(/^[^\w]+\s*/, '')}</span>}
-          <span className={`ayna-discover-card__price${price.main === 'Price at retailer' ? ' is-unknown' : ''}`}>{price.main}{price.sub && (/^list\s+\$/i.test(price.sub)
-            ? (() => { const [was, ...rest] = price.sub.replace(/^list\s+/i, '').split(/\s+·\s+/); return <small><span className="sr-only">List price </span><s>{was}</s>{rest.length > 0 && <span className="ay-card-unit">{rest.join(' · ')}</span>}</small>; })()
-            : <small>{price.sub}</small>)}</span>
-          {(() => {
-            // Cards stay simple: the research count lives on the product page.
-            const hasRating = rating && Number.isFinite(rating.value) && rating.count > 0;
-            if (!hasRating) return null;
-            return (
-              <span className="ay-card-trust">
-                {hasRating && <span className="ay-card-trust__rating is-link" data-reviews-link="true"><span aria-hidden="true">★</span> <span className="sr-only">Rated </span>{formatAverage(rating.value)}<span className="sr-only"> out of 5</span> · <u>{rating.count} review{rating.count === 1 ? '' : 's'}</u></span>}
-              </span>
-            );
-          })()}
-        </div>
-      </Link>
-      {onToggleSaved && (
-        <button
-          type="button"
-          className={`ayna-browse-card__wishlist ${isSaved ? 'is-saved' : ''}`}
-          aria-label={isSaved ? `Remove ${product.name} from Saved` : `Save ${product.name}`}
-          aria-pressed={isSaved}
-          onClick={() => onToggleSaved(product)}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART} /></svg>
-        </button>
       )}
-      {action && <div className="ayna-browse-card__action">{action}</div>}
+      {showSeeMatch && <button type="button" className="ay-pcard__seematch" onClick={() => onSeeMatch(product)}>See your match <span aria-hidden="true">→</span></button>}
+      {badge}
+      {/* 4. Price (glance only: the detail lines, per-use maths, sizes, reviews and evidence live on the product page). */}
+      {!isMine && isKnownPrice(price.main) && <div className="ay-pcard__price"><span className="ay-pcard__amount">{price.main}</span></div>}
+      {/* 5. One key fact. */}
+      {!isMine && <OneFact product={product} />}
+      {!isMine && <SafetyTag product={product} />}
+      {/* 7. The one tag and the save heart. Ownership reads as text, never over the photo. */}
+      <div className="ay-pcard__foot">
+        <span className="ay-pcard__tags">
+          {badgeText && <span className={`ay-pcard__tag${badgeText === 'Pre-order' ? ' is-alert' : ''}`}>{badgeText}</span>}
+          {inEcosystem && <span className="ay-pcard__tag is-eco"><CheckIcon size={14} />{IN_ROUTINE}</span>}
+          {labels}
+        </span>
+        {onToggleSaved && (
+          <button
+            type="button"
+            className="ay-pcard__heart"
+            aria-label={isSaved ? `Remove ${product.name} from Saved` : `Save ${product.name}`}
+            aria-pressed={isSaved}
+            data-tip={isSaved ? 'Saved' : 'Save'}
+            onClick={(e) => { saveFeedback(e, !isSaved); onToggleSaved(product); }}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART} /></svg>
+          </button>
+        )}
+      </div>
+      {action && <div className="ay-pcard__action">{action}</div>}
+      <CompareCheck product={product} />
     </article>
   );
 }

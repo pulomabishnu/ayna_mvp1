@@ -12,7 +12,7 @@
 /* ===== AP02 Product card (grid): 2px ink border, white image tile, left-aligned text ===== */
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) {
   padding: 8px 8px 12px !important;
-  border: 2px solid var(--ay-ink) !important;
+  border: 2px solid var(--legacy-ink) !important;
   border-radius: 20px !important;
   background: var(--ay-paper) !important;
   box-shadow: none !important;
@@ -73,7 +73,7 @@
   overflow: hidden !important;
   font: 600 17px/1.25 var(--ay-font-ui) !important;
   text-align: left !important;
-  color: var(--ay-ink) !important;
+  color: var(--legacy-ink) !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot {
   order: 2 !important;
@@ -85,7 +85,7 @@
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot b {
   font: 600 17px/1.2 var(--ay-font-ui) !important;
-  color: var(--ay-ink) !important;
+  color: var(--legacy-ink) !important;
   opacity: 1;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot b.is-muted { font-weight: 500 !important; font-size: 13px !important; color: var(--ay-ink-soft) !important; }
@@ -136,11 +136,11 @@
   transition: fill .18s var(--ay-ease);
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-card-save[aria-pressed='true'] { background: var(--ay-img-tile) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-card-save[aria-pressed='true'] svg { fill: var(--ay-pink) !important; animation: ip-pop .32s var(--ay-pop); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-card-save[aria-pressed='true'] svg { fill: var(--legacy-pink) !important; }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile.ayna-mobile.ayna-mobile .ayna-card-save svg { animation: none !important; transition: none; } }
 
 /* Discover deck save button and landing reel: heart, not bookmark */
-.ayna-mobile .ay-deck-btn.is-save svg { fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 2; stroke-linejoin: round; }
+.ayna-mobile .ay-deck-btn.is-save svg { fill: var(--ay-paper); stroke: var(--legacy-ink); stroke-width: 2; stroke-linejoin: round; }
 
 /* ===== AP06 Ecosystem: rows under "More" open/close, so they get a chevron ===== */
 .ayna-mobile.ayna-mobile .ayna-cabinet-more summary { list-style: none; gap: 12px; }
@@ -148,7 +148,7 @@
 .ayna-mobile.ayna-mobile .ayna-cabinet-more summary span { margin-left: auto; font: 500 13px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
 .ayna-mobile.ayna-mobile .ayna-cabinet-more summary::after {
   content: ''; flex: none; width: 8px; height: 8px; margin: 0 4px 4px 0;
-  border-right: 2px solid var(--ay-ink); border-bottom: 2px solid var(--ay-ink);
+  border-right: 2px solid var(--legacy-ink); border-bottom: 2px solid var(--legacy-ink);
   transform: rotate(45deg); transition: transform .2s var(--ay-ease);
 }
 .ayna-mobile.ayna-mobile .ayna-cabinet-more details[open] > summary::after { transform: translateY(4px) rotate(225deg); }
@@ -157,25 +157,25 @@
 /* ===== Bottom nav: center Ecosystem bubble keeps one style; active state is the pill only ===== */
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center .ay-nav-center,
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active .ay-nav-center {
-  background: var(--ay-pink) !important;
-  border-color: var(--ay-ink) !important;
-  color: var(--ay-ink) !important;
-  box-shadow: 0 4px 0 var(--ay-ink) !important;
+  background: var(--legacy-pink) !important;
+  border-color: var(--legacy-ink) !important;
+  color: var(--legacy-ink) !important;
+  box-shadow: 0 4px 0 var(--legacy-ink) !important;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-center .ay-nav-center,
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-center.is-active .ay-nav-center {
-  border-color: var(--ay-pink) !important;
+  border-color: var(--legacy-pink) !important;
   color: var(--ay-img-ink) !important;
   box-shadow: 0 0 18px rgba(118, 158, 190, .4) !important;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active { background: var(--ay-butter) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active { background: var(--legacy-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center:active .ay-nav-center { transform: translateY(2px); }
 /* Labels: 12px (11px only on very narrow phones) */
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button,
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font-size: 13px !important; font-weight: 500 !important; letter-spacing: -.01em !important; }
 @media (max-width: 360px) {
   .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button,
-  .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font-size: 11.5px !important; font-weight: 500 !important; }
+  .ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button span { font-size: 13px !important; font-weight: 500 !important; }
 }
 
 /* ===== AP07 You: standard header above the hero (no close button); keep the stickers clear of the name ===== */
@@ -190,7 +190,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-hero img { mix-blend-mode: normal !important; }
 
 /* Shop "Get matched" pill: ink button with paper text in both themes (was white on white in dark) */
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-figma-discover-cta button { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-figma-discover-cta button { background: var(--legacy-ink) !important; color: var(--ay-paper) !important; }
 
 /* ===== Verify (asks): dark product page, dark ink on the pastel surfaces (white on butter was unreadable) ===== */
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-warn,
@@ -202,12 +202,12 @@
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-src-more { color: var(--ay-img-ink) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-warn { border-color: var(--ay-img-ink) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-warn > button { background: var(--ay-img-ink) !important; border-color: var(--ay-img-ink) !important; color: #ffedac !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-card h2 { color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp-card h2 { color: var(--legacy-ink) !important; }
 /* Product page suggestions sit on the page gutter like the Ecosystem rows */
 .ayna-mobile.ayna-mobile .ay-pdp-related { margin-top: var(--ay-space-6, 24px) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-related > .ayna-cabinet-section-head { border: 0 !important; box-shadow: none !important; background: none !important; padding: 0 !important; }
 /* Sign in (dark): the "Build your Ecosystem" link and the legal line were ink on black */
-.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth :is(.ay-auth-link, .ay-auth-link b, .ay-legal, .ay-legal a) { color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth :is(.ay-auth-link, .ay-auth-link b, .ay-legal, .ay-legal a) { color: var(--legacy-ink) !important; }
 /* Save your Ecosystem summary (dark): dark ink on the butter card */
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth .ay-auth-eco,
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-auth .ay-auth-eco :is(strong, span) { color: var(--ay-img-ink) !important; }
@@ -230,7 +230,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads { margin-top: 48px !important; padding-bottom: 32px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ay-shelf-care { margin-bottom: 8px; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head { margin-bottom: 8px !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head h2 { font-size: 22px !important; line-height: 1.15 !important; font-weight: 400 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head h2 { font-size: 22px !important; line-height: 1.15 !important; font-weight: 500 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact {
   display: grid !important; grid-template-columns: minmax(0, 1fr) 32px; align-items: center; gap: 16px;
   min-height: 72px; padding: 16px 0 !important; justify-items: stretch; text-align: left !important; border: 0 !important; border-bottom: 1px solid var(--ay-line, rgba(62, 39, 35, .1)) !important;
@@ -238,7 +238,7 @@
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact:last-child { border-bottom: 0 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact::after {
-  content: ''; width: 32px; height: 32px; border: 2px solid var(--ay-ink); border-radius: 50%;
+  content: ''; width: 32px; height: 32px; border: 2px solid var(--legacy-ink); border-radius: 50%;
   background: var(--ay-paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d1a2b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E") center / 16px no-repeat;
 }
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-reads .ayna-editorial-read.is-compact::after {
@@ -246,10 +246,10 @@
 }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact .ayna-editorial-read-copy { display: grid !important; justify-content: stretch !important; justify-items: start; gap: 4px; width: 100%; padding: 0 !important; text-align: left !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact small { margin: 0 !important; font: 500 13px/1.2 var(--ay-font-ui) !important; color: var(--ay-ink-soft) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact strong { max-width: none !important; margin: 0 !important; font: 600 17px/1.25 var(--ay-font-ui) !important; letter-spacing: -.01em !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact strong { max-width: none !important; margin: 0 !important; font: 600 17px/1.25 var(--ay-font-ui) !important; letter-spacing: -.01em !important; color: var(--legacy-ink) !important; }
 
 /* App swipe deck percent: the one ink match pill. */
-.ayna-mobile .ay-deck-meta em { display: inline-flex; align-items: baseline; padding: 5px 10px; border-radius: 99px; background: var(--ay-ink, #3e2723); color: var(--ay-paper, #ffffff); font-style: normal; font-weight: 500; font-size: 13px; line-height: 1; }
+.ayna-mobile .ay-deck-meta em { display: inline-flex; align-items: baseline; padding: 5px 10px; border-radius: 99px; background: var(--legacy-ink, #3e2723); color: var(--ay-paper, #ffffff); font-style: normal; font-weight: 500; font-size: 13px; line-height: 1; }
 
 /* Shop deck "Get matched" CTA: centered pill, not a floating left button. */
 .ayna-mobile .ayna-figma-discover-cta { display: flex; justify-content: center; padding: 16px 20px; }

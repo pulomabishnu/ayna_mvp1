@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { loadCatalog } from '../data/catalog.js';
 import {
   toCatalogProduct,
   filterProductMapToCatalog,
@@ -7,6 +8,9 @@ import {
 } from './catalogIntegrity.js';
 
 describe('catalogIntegrity — nothing invented reaches the UI', () => {
+  // The catalog loads after first paint (data/catalog.js); these checks need it.
+  beforeAll(() => loadCatalog());
+
   it('drops a free-form model product saved by an older build', () => {
     expect(toCatalogProduct({ id: 'sleep-slug-tier0', name: 'Luna Sleep Gummies', brand: 'Nightfall', llmGenerated: true })).toBeNull();
   });

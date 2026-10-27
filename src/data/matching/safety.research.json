@@ -39,10 +39,12 @@
   "product": "p-womens-rogaine-foam",
   "pregnancy": "avoid",
   "breastfeeding": "avoid",
-  "pregnancy_source": "https://www.aad.org/public/diseases/hair-loss/types/female-pattern",
-  "breastfeeding_source": "https://www.aad.org/public/diseases/hair-loss/types/female-pattern",
-  "source_url": "https://www.aad.org/public/diseases/hair-loss/types/female-pattern",
-  "reviewed": "2026-10-17"
+  "pregnancy_source": "https://www.rogaine.com/products/womens-rogaine-minoxidil-unscented-foam",
+  "breastfeeding_source": "https://www.rogaine.com/products/womens-rogaine-minoxidil-unscented-foam",
+  "source_url": "https://www.rogaine.com/products/womens-rogaine-minoxidil-unscented-foam",
+  "reviewed": "2026-10-24",
+  "source_kind": "brand_label",
+  "source_label": "Women's Rogaine label (rogaine.com): \"May be harmful if used when pregnant or breast-feeding.\""
  },
  {
   "product": "p-differin-adapalene-gel",
@@ -93,19 +95,23 @@
   "product": "p-inositol-wholesome",
   "pregnancy": "ask_clinician",
   "breastfeeding": "unknown",
-  "pregnancy_source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6617769/",
+  "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6617769/",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "source_label": "ayna policy (no .gov source found, kept because it is the cautious answer)"
  },
  {
   "product": "p-spearmint-pcos",
   "pregnancy": "ask_clinician",
   "breastfeeding": "unknown",
-  "pregnancy_source": "https://health.clevelandclinic.org/spearmint-tea-benefits",
+  "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://health.clevelandclinic.org/spearmint-tea-benefits",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "source_label": "ayna policy (no .gov source found, kept because it is the cautious answer)"
  },
  {
   "product": "p-citracal-bone-health",
@@ -165,10 +171,12 @@
   "product": "p-creatine-womens",
   "pregnancy": "ask_clinician",
   "breastfeeding": "avoid",
-  "pregnancy_source": "https://my.clevelandclinic.org/health/treatments/17674-creatine",
+  "pregnancy_source": null,
   "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501853/",
   "source_url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK501853/",
-  "reviewed": "2026-10-17"
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "source_label": "LactMed (NLM): creatine supplementation should probably be avoided while breastfeeding unless prescribed"
  },
  {
   "product": "p-goodbug-gut-balance",
@@ -237,10 +245,11 @@
   "product": "p-ubiquinol-thorne",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
-  "pregnancy_source": "https://www.mayoclinic.org/drugs-supplements/coenzyme-q10/art-20362602",
+  "pregnancy_source": null,
   "breastfeeding_source": "https://www.ncbi.nlm.nih.gov/books/NBK501788/",
   "source_url": "https://www.ncbi.nlm.nih.gov/books/NBK501788/",
-  "reviewed": "2026-10-17"
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy"
  },
  {
   "product": "p-proov-balance-bundle",
@@ -284,8 +293,8 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://www.cochrane.org/CD013608/RENAL_d-mannose-preventing-and-treating-urinary-tract-infections",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-d-mannose-now",
@@ -293,8 +302,8 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://www.cochrane.org/CD013608/RENAL_d-mannose-preventing-and-treating-urinary-tract-infections",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-estroven-mood",
@@ -416,47 +425,59 @@
  {
   "product": "p-buni-transform-scar-body-oil",
   "pregnancy": "avoid",
-  "breastfeeding": "ok",
-  "pregnancy_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
-  "breastfeeding_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
-  "source_url": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
-  "reviewed": "2026-10-17"
+  "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
+  "source_url": null,
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "source_label": "ayna policy (no .gov source found, kept because it is the cautious answer)"
  },
  {
   "product": "p-buni-bundle",
   "pregnancy": "avoid",
-  "breastfeeding": "ok",
-  "pregnancy_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
-  "breastfeeding_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
-  "source_url": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
-  "reviewed": "2026-10-17"
+  "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
+  "source_url": null,
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "source_label": "ayna policy (no .gov source found, kept because it is the cautious answer)"
  },
  {
   "product": "p-kiero-pure-radiant-eye-cream",
   "pregnancy": "avoid",
-  "breastfeeding": "ok",
-  "pregnancy_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
-  "breastfeeding_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
-  "source_url": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
-  "reviewed": "2026-10-17"
+  "breastfeeding": "unknown",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
+  "source_url": null,
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "source_label": "ayna policy (no .gov source found, kept because it is the cautious answer)"
  },
  {
   "product": "p-neycher-vaginal-moisturizer",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
-  "pregnancy_source": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "breastfeeding_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
+  "source_url": null,
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "breastfeeding_basis": "ayna_policy",
+  "source_label": "ayna policy (no .gov source found, kept because it is the cautious answer)"
  },
  {
   "product": "p-neycher-hydrobloom-gel",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
-  "pregnancy_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
-  "breastfeeding_source": "https://www.mayoclinic.org/healthy-lifestyle/pregnancy-week-by-week/expert-answers/pregnancy-acne/faq-20058045",
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
+  "source_url": null,
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "breastfeeding_basis": "ayna_policy",
+  "source_label": "ayna policy (no .gov source found, kept because it is the cautious answer)"
  },
  {
   "product": "p-good-clean-love",
@@ -464,8 +485,8 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-kindra-lotion",
@@ -473,8 +494,8 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-alubri-vaginal-moisturizing-gel",
@@ -482,8 +503,8 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-alubri-vaginal-wellness-kit",
@@ -491,8 +512,8 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-gina-starter-kit",
@@ -500,8 +521,8 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-gina-vaginal-moisturizing-glides",
@@ -509,8 +530,8 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-joylux-juicy-like-a-peach",
@@ -518,8 +539,8 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-joylux-lets-spin",
@@ -527,8 +548,8 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-oboo-loob-arousal",
@@ -536,8 +557,8 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-oboo-loob-daily",
@@ -545,44 +566,53 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-sootheher-elaris-pod",
   "pregnancy": "avoid",
   "breastfeeding": "unknown",
-  "pregnancy_source": "https://www.nhs.uk/tests-and-treatments/transcutaneous-electrical-nerve-stimulation-tens/",
+  "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://www.nhs.uk/tests-and-treatments/transcutaneous-electrical-nerve-stimulation-tens/",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "source_label": "ayna policy (no .gov source found, kept because it is the cautious answer)"
  },
  {
   "product": "p-sootheher-gel-pad-refills",
   "pregnancy": "avoid",
   "breastfeeding": "unknown",
-  "pregnancy_source": "https://www.nhs.uk/tests-and-treatments/transcutaneous-electrical-nerve-stimulation-tens/",
+  "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://www.nhs.uk/tests-and-treatments/transcutaneous-electrical-nerve-stimulation-tens/",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "source_label": "ayna policy (no .gov source found, kept because it is the cautious answer)"
  },
  {
   "product": "p-intimate-rose",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
-  "pregnancy_source": "https://my.clevelandclinic.org/health/treatments/24971-vaginal-dilators",
-  "breastfeeding_source": "https://my.clevelandclinic.org/health/treatments/24971-vaginal-dilators",
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
   "source_url": "https://medlineplus.gov/pelvicfloordisorders.html",
-  "reviewed": "2026-10-17"
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "breastfeeding_basis": "ayna_policy"
  },
  {
   "product": "p-pelvic-wand",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
-  "pregnancy_source": "https://www.nhs.uk/pregnancy/common-symptoms/pelvic-pain/",
-  "breastfeeding_source": "https://www.nhs.uk/pregnancy/common-symptoms/pelvic-pain/",
-  "source_url": "https://www.nhs.uk/pregnancy/common-symptoms/pelvic-pain/",
-  "reviewed": "2026-10-17"
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
+  "source_url": null,
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "breastfeeding_basis": "ayna_policy",
+  "source_label": "ayna policy (no .gov source found, kept because it is the cautious answer)"
  },
  {
   "product": "p-uberlube",
@@ -590,8 +620,8 @@
   "breastfeeding": "unknown",
   "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24"
  },
  {
   "product": "p-cora-disc",
@@ -939,36 +969,43 @@
   "product": "p-boric-acid",
   "pregnancy": "avoid",
   "breastfeeding": "unknown",
-  "pregnancy_source": "https://www.mayoclinic.org/diseases-conditions/yeast-infection/diagnosis-treatment/drc-20379004",
+  "pregnancy_source": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
   "breastfeeding_source": null,
-  "source_url": "https://www.mayoclinic.org/diseases-conditions/yeast-infection/diagnosis-treatment/drc-20379004",
-  "reviewed": "2026-10-17"
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+  "reviewed": "2026-10-24",
+  "source_label": "CDC STI treatment guidelines: only topical azole therapies are recommended for yeast infections in pregnancy"
  },
  {
   "product": "p-neycher-odor-be-gone",
   "pregnancy": "avoid",
   "breastfeeding": "unknown",
-  "pregnancy_source": "https://www.mayoclinic.org/diseases-conditions/yeast-infection/diagnosis-treatment/drc-20379004",
+  "pregnancy_source": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
   "breastfeeding_source": null,
-  "source_url": "https://www.mayoclinic.org/diseases-conditions/yeast-infection/diagnosis-treatment/drc-20379004",
-  "reviewed": "2026-10-17"
+  "source_url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm",
+  "reviewed": "2026-10-24",
+  "source_label": "CDC STI treatment guidelines: only topical azole therapies are recommended for yeast infections in pregnancy (boric acid suppository)"
  },
  {
   "product": "p-phd-wash",
   "pregnancy": "ask_clinician",
   "breastfeeding": "unknown",
-  "pregnancy_source": "https://my.clevelandclinic.org/health/drugs/19641-boric-acid-vaginal-suppository",
+  "pregnancy_source": null,
   "breastfeeding_source": null,
-  "source_url": "https://my.clevelandclinic.org/health/drugs/19641-boric-acid-vaginal-suppository",
-  "reviewed": "2026-10-17"
+  "source_url": null,
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "source_label": "ayna policy (no .gov source found, kept because it is the cautious answer)"
  },
  {
   "product": "p-oboo-mood-drops",
   "pregnancy": "ask_clinician",
   "breastfeeding": "ask_clinician",
-  "pregnancy_source": "https://www.mayoclinic.org/diseases-conditions/low-sex-drive-in-women/diagnosis-treatment/drc-20374561",
-  "breastfeeding_source": "https://www.mayoclinic.org/diseases-conditions/low-sex-drive-in-women/diagnosis-treatment/drc-20374561",
-  "source_url": "https://www.mayoclinic.org/diseases-conditions/low-sex-drive-in-women/diagnosis-treatment/drc-20374561",
-  "reviewed": "2026-10-17"
+  "pregnancy_source": null,
+  "breastfeeding_source": null,
+  "source_url": null,
+  "reviewed": "2026-10-24",
+  "pregnancy_basis": "ayna_policy",
+  "breastfeeding_basis": "ayna_policy",
+  "source_label": "ayna policy (no .gov source found, kept because it is the cautious answer)"
  }
 ]

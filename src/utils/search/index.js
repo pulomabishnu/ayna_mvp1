@@ -12,6 +12,7 @@ import { NEEDS, CONDITIONS, LIFE_STAGES, FORMATS, VALUES, ALLERGENS, LEAVE_OUT, 
 import { MEDICATIONS } from '../../matching/medications.js';
 import { buildProductProfile } from '../../matching/productProfile.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../naturalLanguageSearch.js';
+import { provideSearch } from './searchRegistry.js';
 
 export { createSearchEngine } from './engine.js';
 export { tokenize, normalizeText, damerauDistance } from './text.js';
@@ -118,14 +119,62 @@ export function matchesSearchOption(query, text) {
 }
 
 let warmed = false;
-/** Build the engine (and product need profiles) during idle time. Returns a cancel function. */
+let warmIndex = 0;
+const WARM_SLICE_MS = 10;
+/**
+ * Build the engine and every product's need profile during idle time, a few
+ * products per idle slice. It used to do all ~300 profiles in ONE callback:
+ * a 1s main-thread block on a laptop and 4-5s on a mid-range Android (CPU
+ * throttled 6x in Playwright), during which taps on Home and Shop did
+ * nothing. Progress survives an unmount, so a remount picks up where it
+ * stopped. Returns a cancel function.
+ */
 export function warmSearchEngine() {
   if (warmed || typeof window === 'undefined') return () => {};
-  const run = () => { if (warmed) return; warmed = true; try { getSearchEngine().scoreProduct('pms', ALL_PRODUCTS[0]); searchProducts('pms'); } catch { /* best effort */ } };
-  if (typeof window.requestIdleCallback === 'function') {
-    const id = window.requestIdleCallback(run, { timeout: 3000 });
-    return () => window.cancelIdleCallback?.(id);
+  const idle = typeof window.requestIdleCallback === 'function';
+  let handle = null;
+  let cancelled = false;
+  let engine = null;
+  const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  const schedule = (first = false) => {
+    handle = idle ? window.requestIdleCallback(step, { timeout: 3000 }) : setTimeout(() => step(null), first ? 1200 : 16);
+  };
+  function step(deadline) {
+    handle = null;
+    if (cancelled || warmed) return;
+    try {
+      // Building the engine is one slice on its own.
+      if (!engine) { engine = getSearchEngine(); schedule(); return; }
+      const budget = deadline && !deadline.didTimeout ? Math.min(deadline.timeRemaining(), WARM_SLICE_MS) : WARM_SLICE_MS;
+      const until = now() + budget;
+      do {
+        const p = ALL_PRODUCTS[warmIndex];
+        if (p) engine.scoreProduct('pms', p);
+        warmIndex += 1;
+      } while (warmIndex < ALL_PRODUCTS.length && now() < until);
+    } catch {
+      warmed = true; // best effort: search still works, just colder
+      return;
+    }
+    if (warmIndex >= ALL_PRODUCTS.length) { warmed = true; return; }
+    schedule();
   }
-  const t = setTimeout(run, 1200);
-  return () => clearTimeout(t);
+  // Wait for the page to finish loading (plus a beat) before the first slice:
+  // building the engine is one ~300ms task on a throttled phone, and it used
+  // to land right after first paint, while hero and product photos decode.
+  let startTimer = null;
+  const begin = () => { startTimer = setTimeout(() => { startTimer = null; if (!cancelled) schedule(true); }, 2000); };
+  if (typeof document === 'undefined') schedule(true);
+  else if (document.readyState === 'complete') begin();
+  else window.addEventListener('load', begin, { once: true });
+  return () => {
+    cancelled = true;
+    if (startTimer != null) clearTimeout(startTimer);
+    window.removeEventListener?.('load', begin);
+    if (handle == null) return;
+    if (idle) window.cancelIdleCallback?.(handle); else clearTimeout(handle);
+  };
 }
+
+// Tell the lazy wrappers (lazy.js) the engine is here, whichever chunk loaded this file.
+provideSearch({ analyzeSearch, searchSuggestions, registerSearchVocabulary, warmSearchEngine, scoreSearchMatch, correctedSearchQuery, searchFallbacks, searchArticles });

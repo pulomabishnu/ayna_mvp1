@@ -1,0 +1,10 @@
+/* Safety hold note: pink care tab on the page's own group colour. Matte, no shadow. */
+.ay-hold { position: relative; display: grid; gap: 6px; margin: 0; padding: 14px 16px 14px 19px; border: 0; border-radius: 16px; overflow: hidden; background: rgba(247, 186, 221, 0.22); color: inherit; font-family: var(--ay-sans, 'Figtree', sans-serif); }
+.ay-hold::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 3px; background: #f7badd; } /* painted bar: border styles stay 1px + 1.5px */
+.ay-hold p { margin: 0; }
+.ay-hold__k { font-size: 13px; letter-spacing: .02em; }
+.ay-hold__k b { font-weight: 700; }
+.ay-hold__line { font-size: 15px; font-weight: 600; line-height: 1.4; }
+.ay-hold__why { font-size: 14px; line-height: 1.45; opacity: .9; }
+.ay-hold__fix { justify-self: start; min-height: 44px; margin-top: 4px; padding: 0 18px; border: 1.5px solid currentColor; border-radius: 999px; background: transparent; color: inherit; font: 600 14px/1 var(--ay-sans, 'Figtree', sans-serif); cursor: pointer; }
+.ay-hold.is-compact { padding: 10px 12px; }

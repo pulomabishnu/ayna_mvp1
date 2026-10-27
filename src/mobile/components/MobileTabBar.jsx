@@ -1,26 +1,48 @@
-// Order agreed Oct 11: Library · Shop · Ecosystem (centre, raised) · Community · You
-const tabs = [
-  ['library', 'Library'],
-  ['browse', 'Shop'],
-  ['home', 'Ecosystem'],
-  ['community', 'Community'],
-  ['profile', 'You'],
-];
+import { useEffect, useRef } from 'react';
+import { APP_TABS, TabIcon } from '../../components/nav/tabs.jsx';
 
-function TabIcon({ kind }) {
-  const common = { width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true };
-  if (kind === 'library') return <svg {...common}><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13ZM13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" /><path d="M7 8h1.5M16 8h1.5" /></svg>;
-  if (kind === 'home') return <svg {...common}><circle cx="12" cy="13" r="3" /><circle cx="12" cy="4.5" r="1.8" /><circle cx="5" cy="18" r="1.8" /><circle cx="19" cy="18" r="1.8" /><path d="M12 10V6.3M9.5 14.6l-3 2.2M14.5 14.6l3 2.2" /></svg>;
-  if (kind === 'browse') return <svg {...common}><path d="M4 8h16l-1 12H5L4 8Z" /><path d="M9 9V6a3 3 0 0 1 6 0v3" /></svg>;
-  if (kind === 'community') return <svg {...common}><path d="M4 5h16v11H9l-5 4V5Z" /><path d="M8 10h8m-8 3h5" /></svg>;
-  return <svg {...common}><circle cx="12" cy="8" r="3.3" /><path d="M5 20c0-3.3 2.8-5.5 7-5.5s7 2.2 7 5.5" /></svg>;
-}
+// The app's tabs, the same five as the website (founder, Oct 26):
+// Today · Shop · Services · Community · Library. Ask ayna and You are in the header.
+const toRows = (list) => list.map((t) => [t.key, t.label, !!t.center, t.icon || t.key]);
 
-export default function MobileTabBar({ active, onHome, onBrowse, onCommunity, onLibrary, onProfile }) {
-  const actions = { library: onLibrary, home: onHome, browse: onBrowse, community: onCommunity, profile: onProfile };
-  return <nav className="ayna-bottom-nav" aria-label="Main navigation">
-    {tabs.map(([key, label]) => <button type="button" key={key} className={`${active === key ? 'is-active' : ''}${key === 'home' ? ' is-center' : ''}`} onClick={actions[key]} aria-label={label} aria-current={active === key ? 'page' : undefined}>
-      {key === 'home' ? <span className="ay-nav-center" aria-hidden="true"><TabIcon kind={key} /></span> : <TabIcon kind={key} />}
+// `tabList`: the chat-first Home (focus group) names the centre tab "ayna".
+export default function MobileTabBar({ active, onExplore, onHome, onAsk, onCommunity, onProfile, onServices, onLibrary, tabList = APP_TABS }) {
+  const tabs = toRows(tabList);
+  const actions = { explore: onExplore, home: onHome, ask: onAsk, community: onCommunity, profile: onProfile, services: onServices, library: onLibrary };
+  // No seam (founder, Oct 21): the bar is the page colour and shows its hairline
+  // only while the screen's content runs on under it (iOS scroll-edge behaviour).
+  const navRef = useRef(null);
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav || typeof document.elementFromPoint !== 'function') return undefined;
+    let frame = 0;
+    const read = () => {
+      frame = 0;
+      const r = nav.getBoundingClientRect();
+      let el = document.elementFromPoint(r.left + r.width / 2, r.top - 2);
+      let over = false;
+      while (el && el !== document.body) {
+        const oy = getComputedStyle(el).overflowY;
+        if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 1) { over = el.scrollTop + el.clientHeight < el.scrollHeight - 2; break; }
+        el = el.parentElement;
+      }
+      nav.classList.toggle('is-over', over);
+    };
+    const schedule = () => { if (!frame) frame = window.requestAnimationFrame(read); };
+    schedule();
+    const t = window.setTimeout(schedule, 600);
+    document.addEventListener('scroll', schedule, { capture: true, passive: true });
+    window.addEventListener('resize', schedule);
+    return () => {
+      document.removeEventListener('scroll', schedule, { capture: true });
+      window.removeEventListener('resize', schedule);
+      window.clearTimeout(t);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [active]);
+  return <nav ref={navRef} className={`ayna-bottom-nav is-${tabs.length}-tabs`} aria-label="Main navigation">
+    {tabs.map(([key, label, center, icon]) => <button type="button" key={key} className={`${active === key ? 'is-active' : ''}${center ? ' is-center' : ''}`} onClick={actions[key]} aria-current={active === key ? 'page' : undefined} data-tab-target={key}>
+      {center ? <span className="ay-nav-center" aria-hidden="true"><TabIcon kind={icon} on={active === key} /></span> : <TabIcon kind={icon} on={active === key} />}
       <span>{label}</span>
     </button>)}
   </nav>;

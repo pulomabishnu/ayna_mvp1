@@ -1,4 +1,5 @@
 import React from 'react';
+import { CloseIcon } from './icons/UiIcons.jsx';
 import posthog from 'posthog-js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import {
@@ -11,7 +12,7 @@ import {
 } from '../data/resaPartnership';
 
 /**
- * Opened from the Rèsa chip in My Ecosystem's "Sync wearable & app data"
+ * Opened from the Rèsa chip in My ecosystem's "Sync wearable & app data"
  * panel. Rèsa is pre-launch, so there is nothing to sync yet; this explains
  * the partnership and links to the tracked waitlist. Same overlay shell as
  * SubscriptionPaywallModal.
@@ -37,7 +38,7 @@ export default function ResaPartnershipModal({ onClose }) {
         className="resa-modal"
       >
         <button type="button" onClick={onClose} aria-label="Close" className="resa-modal__close">
-          ✕
+          <CloseIcon size={20} />
         </button>
 
         <div className="resa-modal__tag">ayna Partner · Pre-launch · Coming soon</div>

@@ -1,18 +1,24 @@
+import ProFeatureGate from './ProFeatureGate.jsx';
 import React, { useMemo, useState } from 'react';
+import BackLink from './nav/BackLink.jsx';
 import ProductCard from './ProductCard';
 import SuggestBox from './SuggestBox';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import SearchAssist from './search/SearchAssist.jsx';
-import { searchArticles } from '../utils/search/index.js';
+// Lazy: the search engine and the catalog load after first paint, the reads list doesn't need them.
+import { searchArticles, useSearchReady } from '../utils/search/lazy.js';
 import '../styles/audit-library.css';
 import '../styles/verify-content.css';
-import { ALL_PRODUCTS, getPersonalizedProductIds } from '../data/products.js';
+import { ALL_PRODUCTS, getPersonalizedProductIds, useCatalogReady } from '../data/catalog.js';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { buildLibrary } from '../mobile/utils/personalReads.js';
+import { READ_SECTION, READ_CREDITS } from '../data/readCovers.js';
+import { READ_SECTIONS } from '../data/readSections.js';
 
 /** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort), only tags that match the article heading. */
 import { ARTICLE_TOPIC_TAGS, FRUSTRATION_TO_TAG } from '../data/readPicks.js';
+import { ARTICLE_PRODUCTS, TAG_REASON, ROW_NOTES } from '../data/readLinks.js';
 export { ARTICLE_TOPIC_TAGS };
 
 /** Optional: article id → filter fn. Further narrows products to match article heading (e.g. intimate wash = only wash/cleanser products). */
@@ -81,55 +87,6 @@ function getRelevantTelehealth(articleId) {
  * Capped at MAX_ARTICLE_PRODUCTS.
  */
 const MAX_ARTICLE_PRODUCTS = 6;
-const TAG_REASON = {
-  'vaginal-health': 'Vaginal health',
-  'heavy-flow': 'Heavy flow',
-  anemia: 'Iron',
-  menopause: 'Menopause',
-  perimenopause: 'Perimenopause',
-  uti: 'UTI',
-  'uti-prevention': 'UTI',
-  'cramp-relief': 'Cramp relief',
-  cramps: 'Cramps',
-  pcos: 'PMOS',
-  irregular: 'Cycle tracking',
-  'pelvic-floor': 'Pelvic floor',
-  incontinence: 'Bladder leaks',
-  endometriosis: 'Endometriosis',
-  pms: 'PMS',
-  'mental-health': 'Mood support',
-  fibroids: 'Fibroids',
-  contraception: 'Contraception',
-};
-const ARTICLE_PRODUCTS = {
-  'intimate-wash': { tags: ['vaginal-health'], categories: ['intimate-care'], reason: 'External wash' },
-  'heavy-bleeding': { tags: ['heavy-flow', 'anemia'] },
-  'menopause-basics': { tags: ['menopause', 'perimenopause'], categories: ['menopause', 'telehealth', 'supplement', 'tracker', 'intimate-care', 'sleep'] },
-  'uti-prevention': { tags: ['uti', 'uti-prevention'], exclude: ['p-boric-acid'] },
-  'yeast-infection-basics': {
-    ids: { 'p-winx-vaginal-health-test-treat': 'pH test', 'p-probiotics-women': 'Vaginal flora', 'p-winx-vaginal-probiotic': 'Vaginal flora' },
-  },
-  'period-pain-when-to-seek-care': { tags: ['cramp-relief', 'cramps'] },
-  'pcos-basics': { tags: ['pcos', 'irregular'] },
-  'pelvic-floor-dysfunction': { ids: { 'p-intimate-rose': 'Dilators' }, tags: ['pelvic-floor', 'incontinence'] },
-  'endometriosis-basics': { tags: ['endometriosis', 'cramp-relief'] },
-  'bacterial-vaginosis': {
-    ids: {
-      'p-winx-vaginal-health-test-treat': 'pH test',
-      'p-boric-acid': 'Boric acid',
-      'p-neycher-odor-be-gone': 'Boric acid',
-      'p-queen-v-pop': 'Boric acid',
-      'p-probiotics-women': 'Probiotic',
-      'p-winx-vaginal-probiotic': 'Probiotic',
-    },
-  },
-  pmdd: { tags: ['pms', 'mental-health'] },
-  fibroids: { tags: ['fibroids', 'anemia', 'heavy-flow'] },
-  'iron-deficiency-anemia': { tags: ['anemia', 'heavy-flow'] },
-  'ovarian-cysts': { tags: ['cramp-relief'], reason: 'Pain relief' },
-  'hormonal-birth-control': { tags: ['contraception'] },
-};
-
 /** Up to 6 products for this article, each with a short "why". Profile matches go first within the same rank. */
 function getArticleProducts(articleId, quizResults = null, healthProfile = null) {
   const spec = ARTICLE_PRODUCTS[articleId];
@@ -161,24 +118,12 @@ function getArticleProducts(articleId, quizResults = null, healthProfile = null)
   return ranked.slice(0, MAX_ARTICLE_PRODUCTS);
 }
 
-// What to know before the product row, so it never contradicts the read above it.
-const ROW_NOTES = {
-  'intimate-wash': 'Most people don’t need a wash. If you use one, choose fragrance-free and outside use only.',
-  'yeast-infection-basics': 'The usual first step is an over-the-counter antifungal from a pharmacy. The products below are tests and support, not treatment.',
-  'bacterial-vaginosis': 'BV is treated with a prescription. The products below are tests and support, not treatment.',
-  'iron-deficiency-anemia': 'Check your iron levels with a blood test before you start a supplement.',
-  'uti-prevention': 'Evidence for these is mixed. Each card shows what research is linked.',
-  'ovarian-cysts': 'Most cysts need no treatment. Sudden, severe pain needs care right away.',
-  fibroids: 'Fibroids are diagnosed and treated by a clinician. These help with heavy bleeding in the meantime.',
-  'heavy-bleeding': 'Products can make heavy periods easier to manage. They don’t treat the cause, so check in with a clinician too.',
-  'pcos-basics': 'PMOS care is led by a clinician. These are tracking and support tools, not treatment.',
-  'menopause-basics': 'Talk to a clinician first about treatment options. The rest is support for common symptoms.',
-};
 const CARE_FIRST = new Set(['menopause-basics', 'pmdd', 'endometriosis-basics', 'fibroids', 'pcos-basics']);
 // Menopause rows keep to products made for it (no $2,000 mattress or gym creatine next to it).
 const MENOPAUSE_RE = /menopaus|perimenopaus|hot[- ]?flash|night sweat|vaginal dryness/i;
 
 function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct }) {
+  const catalogReady = useCatalogReady();
   const items = useMemo(() => {
     let list = getArticleProducts(articleId, quizResults, healthProfile);
     const care = (x) => x.product.category === 'telehealth' || x.product.type === 'digital';
@@ -196,7 +141,7 @@ function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct 
       if (articleId === 'pcos-basics' && /proov/i.test(x.product.name)) return { ...x, why: 'For PMOS when trying to conceive' };
       return x;
     });
-  }, [articleId, quizResults, healthProfile]);
+  }, [articleId, quizResults, healthProfile, catalogReady]);
   const note = ROW_NOTES[articleId];
   const rowRef = React.useRef(null);
   const [edge, setEdge] = React.useState({ start: true, end: true });
@@ -209,29 +154,31 @@ function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct 
     window.addEventListener('resize', read);
     return () => { el.removeEventListener('scroll', read); window.removeEventListener('resize', read); };
   }, [items.length]);
-  if (items.length === 0) return note ? <section className="ay-lib-products"><p className="ay-lib-products__note">{note}</p></section> : null;
+  if (items.length === 0) return note ? <section className="ct-products"><p className="ay-alert ct-products__note"><svg className="ay-alert__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style={{ flex: "none", marginTop: 3 }}><path d="M8 1.6 14.6 13.4H1.4L8 1.6Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /><path d="M8 6.2v3.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="8" cy="11.6" r=".9" fill="currentColor" /></svg><span>{note}</span></p></section> : null;
   const page = (dir) => { const el = rowRef.current; if (el) el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: 'smooth' }); };
   return (
-    <section className="ay-lib-products" aria-labelledby="ay-lib-products-h">
-      <div className="ay-lib-products__head">
-        <h3 id="ay-lib-products-h">Products for this topic</h3>
-        <p className="ay-lib-products__disc">Products, not medical advice. Some links earn ayna a commission. It never changes what we show.</p>
-        <div className="ay-lib-products__nav">
+    <section className="ct-products ay-shelf" aria-labelledby="ay-lib-products-h">
+      <div className="ct-shelf__head">
+        <h2 id="ay-lib-products-h">Products for this topic</h2>
+        <span className="ct-shelf__count">{items.length}</span>
+        <div className="ct-shelf__nav">
           <button type="button" onClick={() => page(-1)} disabled={edge.start} aria-label="Previous products">←</button>
           <button type="button" onClick={() => page(1)} disabled={edge.end} aria-label="More products">→</button>
         </div>
       </div>
-      {note && <p className="ay-lib-products__note">{note}</p>}
-      <div className="ay-lib-products__grid" ref={rowRef}>
+      <p className="ct-products__disc">Products, not medical advice. Some links earn ayna a commission. It never changes what we show.</p>
+      {note && <p className="ay-alert ct-products__note"><svg className="ay-alert__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style={{ flex: "none", marginTop: 3 }}><path d="M8 1.6 14.6 13.4H1.4L8 1.6Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /><path d="M8 6.2v3.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="8" cy="11.6" r=".9" fill="currentColor" /></svg><span>{note}</span></p>}
+      <ul className="ay-shelf__row ct-products__row" ref={rowRef}>
         {items.map(({ product, why }) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onOpen={onOpenProduct}
-            labels={why ? <span className="ay-lib-why">{why}</span> : null}
-          />
+          <li key={product.id}>
+            <ProductCard
+              product={product}
+              onOpen={onOpenProduct}
+              labels={why ? <span className="ay-lib-why">{why}</span> : null}
+            />
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
@@ -242,9 +189,9 @@ const Chevron = () => (
 
 function CareRow({ title, children, open = false }) {
   return (
-    <details className="ay-lib-row" open={open}>
+    <details className="ct-care__row" open={open}>
       <summary><span>{title}</span><Chevron /></summary>
-      <div className="ay-lib-row__body">{children}</div>
+      <div className="ct-care__body">{children}</div>
     </details>
   );
 }
@@ -255,11 +202,13 @@ const ExtLink = ({ href, children }) => (
 
 function TelehealthSuggestions({ articleId, onOpenProduct }) {
   // Planned Parenthood already has its own row; don't list it twice.
-  const platforms = useMemo(() => getRelevantTelehealth(articleId).filter((t) => !/planned parenthood/i.test(t.name || '')), [articleId]);
+  const catalogReady = useCatalogReady();
+  const platforms = useMemo(() => getRelevantTelehealth(articleId).filter((t) => !/planned parenthood/i.test(t.name || '')), [articleId, catalogReady]);
 
   return (
-    <section className="ay-lib-care" aria-labelledby="ay-lib-care-h">
-      <h2 id="ay-lib-care-h" className="ay-lib-care__h">Can&apos;t reach your doctor?</h2>
+    <section className="ct-care" aria-labelledby="ay-lib-care-h">
+      <h2 id="ay-lib-care-h" className="ay-h3">Can&apos;t reach your doctor?</h2>
+      <div className="ay-group">
 
       <CareRow title="Nurse line (insurer)" open>
         <p>Many plans offer a 24/7 nurse line for symptom guidance and when to seek care. Check your insurance card or member portal for the number.</p>
@@ -299,15 +248,19 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
           </ul>
         </CareRow>
       )}
+      </div>
     </section>
   );
 }
 
+// Each read may also carry an optional `video` ({ provider: 'youtube' | 'vimeo',
+// id, title, credit, poster? }), see src/utils/readVideo.js. None are set yet:
+// add one only for a real video from a source you've checked.
 const ARTICLES = [
   {
     id: 'intimate-wash',
     image: '/articles/intimate-wash.webp',
-    title: 'Intimate Washes',
+    title: 'Intimate washes',
     source: 'UpToDate, ACOG, CDC',
     tags: ['Gynecology', 'Vulvovaginal health'],
     teaser: 'Why the vagina is self-cleaning, when to use (or skip) cleansers, and what OB-GYNs recommend for external care.',
@@ -334,7 +287,7 @@ const ARTICLES = [
   {
     id: 'heavy-bleeding',
     image: '/landing/articles-heavy-bleeding-satin.webp',
-    title: 'Heavy Menstrual Bleeding',
+    title: 'Heavy menstrual bleeding',
     source: 'UpToDate, ACOG, CDC',
     tags: ['Menstrual health', 'Clinical guidance'],
     teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated and treated.',
@@ -628,7 +581,7 @@ const ARTICLES = [
   {
     id: 'postpartum-stretch-marks',
     image: '/articles/postpartum-stretch-marks/glitter.webp',
-    title: 'Can You Actually Improve Postpartum Stretch Marks and Scars? I Looked at the Research Behind 5 MOST Popular Treatments',
+    title: 'Can you improve postpartum stretch marks? What the research says about 5 popular treatments',
     source: 'Geena Yousry, MS1 · Cochrane, Dermatologic Surgery, Actas Dermo-Sifiliográficas',
     tags: ['Postpartum', 'Skin'],
     teaser: 'From viral belly oils to prescription retinoids, here’s what actually works, what’s mostly marketing, and what the research says.',
@@ -716,7 +669,7 @@ const ARTICLES = [
         </ul>
         <p>These are product examples, not independently tested rankings.</p>
         <blockquote style={{ margin: '1rem 0', paddingLeft: '1rem', borderLeft: '3px solid var(--color-primary)' }}>
-          <p><strong>✦ From our clinical experts</strong></p>
+          <p><strong>From our clinical experts</strong></p>
           <p>The combination of tissue massage along, above, and below the c-section scar with a good product - whether prescription or not - and regular application of silicone scar tape is the best defense against not only stretch marks but also painful or lumpy scars.</p>
         </blockquote>
 
@@ -934,14 +887,6 @@ export function getArticlesByProfileRelevance(quizAnswers, healthProfile = null)
 
 export { ARTICLES };
 
-/**
- * Website covers: every read gets a typographic cover (short topic word on a
- * token pastel) so the shelves stay in one palette. Website-only: the app
- * keeps its own art via ARTICLES.image. Add an id here only for art drawn in
- * the ayna palette and style.
- */
-import { TEAM_COVER_READS } from '../data/readCovers.js';
-const KEEP_ILLUSTRATION = TEAM_COVER_READS;
 
 /* Reads a writer designed as a full page (her own layout, colours and image
    placement). The website shows that page; ARTICLES keeps the plain text for
@@ -951,46 +896,90 @@ const DESIGNED_READS = {
   'genitourinary-syndrome-of-menopause': { Component: VaginalAtrophyGsmArticle, next: 'postpartum-stretch-marks' },
 };
 
-/* The reads featured at the top of the Library, each with a "New" sticker.
-   width/height are the cover image's own size; a cover that isn't square is
-   shown whole instead of cropped. */
-const FEATURED_READS = [
-  { id: 'postpartum-stretch-marks', by: 'Geena Yousry, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN', width: 794, height: 798 },
-  { id: 'genitourinary-syndrome-of-menopause', by: 'Shruti Gajjar, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN', width: 1400, height: 933 },
-];
-
-function FeaturedRead({ feature, onOpen }) {
-  const art = ARTICLES.find((a) => a.id === feature.id);
-  if (!art) return null;
-  const cut = art.title.indexOf('? ');
-  const [lead, rest] = cut > 0 ? [art.title.slice(0, cut + 1), art.title.slice(cut + 2)] : [art.title, ''];
-  const square = Math.abs(feature.width - feature.height) < 20;
-  return (
-    <a href={`/library/${art.id}`} className="ay-lib-feature" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); onOpen(art.id); }}>
-      <span className="ay-lib-feature__new" aria-hidden="true">New</span>
-      <img className="ay-lib-feature__img" src={art.image} alt="" width={feature.width} height={feature.height} style={square ? undefined : { aspectRatio: 'auto' }} />
-      <span className="ay-lib-feature__text">
-        <small className="ay-lib-feature__kicker"><span className="sr-only">New. </span>Featured read · {sectionOf(art.id)?.label}</small>
-        <strong className="ay-lib-feature__title">{lead}{rest && <> <em>{rest}</em></>}</strong>
-        <span className="ay-lib-feature__teaser">{art.teaser}</span>
-        <span className="ay-lib-feature__by">By {feature.by} · {minutesFor(art)} min read<span style={{ display: 'block', marginTop: 4 }}>Reviewed by {feature.reviewedBy}</span></span>
-        <span className="ay-lib-feature__cta">Read it <span aria-hidden="true">→</span></span>
-      </span>
-    </a>
-  );
-}
-import TopicCover from './v3/TopicCover.jsx';
+/* The reads featured at the top of the Library: Geena's and Shruti's designed reads (team, Oct 21). */
+const FEATURED_READS = ['postpartum-stretch-marks', 'genitourinary-syndrome-of-menopause'].map((id) => ({ id, ...READ_CREDITS[id] }));
+import ReadCover from './library/ReadCover.jsx';
+import ReadCard from './library/ReadCard.jsx';
+import ReadVideo from './library/ReadVideo.jsx';
+import { textOf, minutesFor } from './library/readTime.js';
 import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
 import VaginalAtrophyGsmArticle from './library/VaginalAtrophyGsmArticle.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
+import '../styles/library-v2.css';
 const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PMOS', 'period pain', 'when to see a doctor', 'UTI', 'perimenopause', 'fibroids', 'endometriosis', 'yeast vs BV', 'pelvic floor', 'night sweats', 'missed period'];
 
-function ArticleCover({ art, large = false }) {
-  if (art.image && KEEP_ILLUSTRATION.has(art.id)) {
-    return <img className={large ? 'ay-web-lib-article__img' : 'ay-web-lib-card__img'} src={art.image} alt="" loading={large ? undefined : 'lazy'} />;
-  }
-  if (large) return null;
-  return <TopicCover id={art.id} title={art.title} />;
+const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0);
+
+/* Top of the Library as plain rows (master prompt 154: no bento): the
+   featured reads, each with its photo, section, time, title, one line and who
+   wrote and reviewed it; then one row for her pick (or getting matched) and
+   one for asking or suggesting a read. */
+function LibraryFeatured({ onOpen, pick = null, onAsk = null }) {
+  const go = (id) => (e) => { if (!plainClick(e)) return; e.preventDefault(); onOpen(id); };
+  const [lead, second] = FEATURED_READS.map((f) => ARTICLES.find((a) => a.id === f.id)).filter(Boolean);
+  // Uniqueness pass (Oct 26): an editorial grid with one big feature (#4dfb3fbd FEEL FITS grid), not a list.
+  // Same reads, same words: the lead read big with its photo, the second as a tall cover, her pick on
+  // pink and "Can't find it?" on espresso.
+  return (
+    <section className="lb-featured lb-ed" aria-labelledby="lib-featured-h">
+      <header className="lb-shelf__head"><h2 id="lib-featured-h" className="lb-shelf__title">Featured reads</h2></header>
+      <div className="lb-ed__grid">
+        {lead && <div className="lb-ed__big" id="lib-featured"><ReadCard article={lead} layout="feature" href={`/library/${lead.id}`} onOpen={(a) => onOpen(a.id)} /></div>}
+        {second && <div className="lb-ed__tall" id={`lib-featured-${second.id}`}><ReadCard article={second} layout="rail" href={`/library/${second.id}`} onOpen={(a) => onOpen(a.id)} /></div>}
+        <div className="lb-ed__tile is-pink">
+          {pick ? (
+            <a href={`/library/${pick.id}`} className="lb-ed__pick" onClick={go(pick.id)}>
+              <span className="lb-more__label">Top pick for you</span>
+              <strong className="lb-ed__title">{pick.title}</strong>
+              <span className="lb-more__meta">{minutesFor(pick)} min read</span>
+              <span className="lb-ed__cover"><ReadCover article={pick} /></span>
+            </a>
+          ) : (
+            <>
+              <span className="lb-more__label">For you</span>
+              <strong className="lb-ed__title">Get reads picked for what you told us.</strong>
+              <a className="lb-btn lb-btn--small" href="/quiz">See my matches <span aria-hidden="true">→</span></a>
+            </>
+          )}
+        </div>
+        <div className="lb-ed__tile is-ink">
+          <span className="lb-more__label">Can’t find it?</span>
+          <strong className="lb-ed__title">Ask about anything, or tell us what to write next.</strong>
+          <span className="lb-more__actions">
+            {onAsk && <button type="button" className="lb-btn lb-btn--small" onClick={() => onAsk('')}>Ask ayna</button>}
+            <button type="button" className="lb-link" onClick={() => document.querySelector('.ct-suggest')?.scrollIntoView({ behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' })}>Suggest a read</button>
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* Sources as a numbered list at the end of the read: publisher, the page's
+   title, and where it opens. Text comes straight from the read. */
+function SourceList({ items }) {
+  const rows = items.filter(React.isValidElement).map((li, i) => {
+    const parts = React.Children.toArray(li.props.children);
+    const link = parts.find((x) => React.isValidElement(x) && x.type === 'a');
+    const label = link ? textOf(link.props.children).replace(/\s+/g, ' ').trim() : textOf(parts).replace(/\s+/g, ' ').trim();
+    const lead = parts.filter((x) => x !== link).map((x) => textOf(x)).join('').replace(/\s+/g, ' ').trim();
+    const m = /^(.+?)\s+[–-]\s+(.+)$/.exec(label);
+    const pub = m && m[1].length <= 24 ? m[1] : null;
+    const title = pub ? m[2] : (lead || label);
+    let host = '';
+    try { host = link ? new URL(link.props.href).hostname.replace(/^www\./, '') : ''; } catch { /* not a URL */ }
+    return (
+      <li key={i} className="lb-src">
+        <span className="lb-src__n" aria-hidden="true">{i + 1}</span>
+        <span className="lb-src__body">
+          {(pub || host) && <span className="lb-src__pub">{pub || host}</span>}
+          <span className="lb-src__title">{title}</span>
+          {link && <a className="lb-src__go" href={link.props.href} target="_blank" rel="noopener noreferrer">{lead ? label : host || 'Read the source'} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>}
+        </span>
+      </li>
+    );
+  });
+  return <ol className="lb-sources">{rows}</ol>;
 }
 
 /* Bold lead-ins ("When to seek care:") become real H2 subheadings, so the
@@ -1000,6 +989,10 @@ function withHeadings(body) {
   if (!kids.length) return body;
   const out = [];
   kids.forEach((el, i) => {
+    if (React.isValidElement(el) && el.type === 'ul' && el.props.className === 'ay-lib-sources') {
+      out.push(<SourceList key={`s-${i}`} items={React.Children.toArray(el.props.children)} />);
+      return;
+    }
     if (React.isValidElement(el) && el.type === 'p') {
       const parts = React.Children.toArray(el.props.children);
       const lead = parts[0];
@@ -1007,10 +1000,17 @@ function withHeadings(body) {
         const text = React.Children.toArray(lead.props.children).join('').trim();
         if (/:$/.test(text) && text.length < 70) {
           const label = text.replace(/:$/, '').replace(/\s*\(from [^)]*\)\s*$/i, '');
-          out.push(<h2 key={`h-${i}`} className="ay-lib-h2">{label}</h2>);
+          const isSources = /^(sources|references)$/i.test(label);
+          const isCare = /^when to seek care$/i.test(label);
           const rest = parts.slice(1);
           const hasText = rest.some((r) => (typeof r === 'string' ? r.trim() : true));
-          if (hasText) out.push(<p key={`p-${i}`}>{rest.map((r) => (typeof r === 'string' ? r.replace(/^\s+/, '') : r))}</p>);
+          const restEl = hasText ? <p key={`p-${i}`}>{rest.map((r) => (typeof r === 'string' ? r.replace(/^\s+/, '') : r))}</p> : null;
+          if (isCare) {
+            out.push(<aside key={`c-${i}`} className="lb-care" aria-labelledby={`lb-care-${i}`}><h2 id={`lb-care-${i}`} className="lb-h2">{label}</h2>{restEl}</aside>);
+            return;
+          }
+          out.push(<h2 key={`h-${i}`} id={isSources ? 'ct-sources' : undefined} className={`lb-h2${isSources ? ' lb-h2--sources' : ''}`}>{label}</h2>);
+          if (restEl) out.push(restEl);
           return;
         }
       }
@@ -1020,36 +1020,11 @@ function withHeadings(body) {
   return <>{out}</>;
 }
 
-function renderArticleCard(art, setSelectedId, progress = 0) {
-  // A real link: open in a new tab, copy the address, see where it goes.
-  return (
-    <a href={`/library/${art.id}`} className="ay-web-lib-card ay-lib-card" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); setSelectedId(art.id); }}>
-      <span className="ay3-clip__mast" aria-hidden="true"><span>ayna library</span><span>{minutesFor(art)} min</span></span>
-      <ArticleCover art={art} />
-      <h3>{art.title}</h3>
-      <p>{art.teaser}</p>
-      <span className="ay-lib-card__foot" data-min={minutesFor(art) > 3 ? `${minutesFor(art)} min read ·` : undefined}>
-        <span className="ay-lib-card__tags">
-          <span className="ay-lib-tag">{sectionOf(art.id)?.label || 'Health'}</span>
-        </span>
-        <span className="ay-lib-card__src">{art.source}</span>
-        <ReadState value={progress} />
-      </span>
-    </a>
-  );
-}
-
 const titleOf = (id) => ARTICLES.find((a) => a.id === id)?.title || id;
 // One taxonomy: every read lives in exactly one section, and the read's own
-// header, the filter chips and "Next in …" all use it.
-const ARTICLE_CATEGORIES = [
-  { id: 'menstrual', label: 'Menstrual Health', articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care', 'fibroids', 'iron-deficiency-anemia'] },
-  { id: 'hormonal', label: 'Hormonal Health', articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'] },
-  { id: 'chronic', label: 'Chronic & Pelvic Conditions', articleIds: ['endometriosis-basics', 'pelvic-floor-dysfunction', 'ovarian-cysts'] },
-  { id: 'vaginal-urinary', label: 'Vaginal & Urinary Health', articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis', 'genitourinary-syndrome-of-menopause'] },
-  { id: 'postpartum', label: 'Pregnancy & Postpartum', articleIds: ['postpartum-stretch-marks'] },
-]
-  // A to Z: sections by name, and the reads in each section by title (Eliz, 2026-10-21).
+// header, the contents list and "Next in …" all use it.
+// A to Z: sections by name, and the reads in each section by title (Eliz, 2026-10-21).
+const ARTICLE_CATEGORIES = READ_SECTIONS
   .map((c) => ({ ...c, articleIds: [...c.articleIds].sort((a, b) => titleOf(a).localeCompare(titleOf(b))) }))
   .sort((a, b) => a.label.localeCompare(b.label));
 const sectionOf = (id) => ARTICLE_CATEGORIES.find((c) => c.articleIds.includes(id)) || null;
@@ -1059,10 +1034,8 @@ function nextInSection(id) {
   if (!sec || sec.articleIds.length < 2) return null;
   const i = sec.articleIds.indexOf(id);
   const nextId = sec.articleIds[(i + 1) % sec.articleIds.length];
-  const article = ARTICLES.find((x) => x.id === nextId);
-  return article ? { article, label: `Next in ${sec.label}` } : null;
+  return ARTICLES.find((x) => x.id === nextId) || null;
 }
-
 
 const READ_PROGRESS_KEY = 'ayna_read_progress_v1';
 // Reading history is kept per account, so after logout (or on a shared
@@ -1088,37 +1061,18 @@ function loadReadProgress(userId) {
 // scrolled AND some time on the page (not a quick scroll to the bottom).
 const FINISH_MIN_MS = 45000;
 
-/** One progress style everywhere: mint fill on an ink outline + label. Unread reads get a small "New" tag instead of an empty bar. */
 function ProgressBar({ value = 0, className = '' }) {
   return <i className={`ay-lib-bar ${className}`.trim()} aria-hidden="true"><b style={{ width: `${Math.round(Math.min(1, value) * 100)}%` }} /></i>;
 }
 
 function ReadState({ value = 0 }) {
-  // Unread reads show nothing (a "New" tag on every read meant nothing).
+  // Unread reads show nothing.
   if (!(value > 0)) return null;
   const done = value >= 1;
-  return <span className="ay-lib-state">
+  return <span className="ay-lib-state lb-state">
     <ProgressBar value={value} />
     <small>{done ? 'Finished' : `${Math.round(value * 100)}% read`}</small>
   </span>;
-}
-
-// Read time from the article's real words (about 220 a minute), never a fixed number.
-function textOf(node) {
-  if (node == null || typeof node === 'boolean') return '';
-  if (typeof node === 'string' || typeof node === 'number') return ` ${node} `;
-  if (Array.isArray(node)) return node.map(textOf).join(' ');
-  if (React.isValidElement(node)) return textOf(node.props.children);
-  return '';
-}
-const MINUTES = new Map();
-function minutesFor(article) {
-  if (!article) return 1;
-  if (!MINUTES.has(article.id)) {
-    const words = textOf(article.body).split(/\s+/).filter(Boolean).length;
-    MINUTES.set(article.id, Math.max(1, Math.round(words / 220)));
-  }
-  return MINUTES.get(article.id);
 }
 
 const validId = (id) => (id && ARTICLES.some((a) => a.id === id) ? id : null);
@@ -1134,24 +1088,17 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   // A broken read link says so (it used to quietly show the whole list at the wrong address).
   const missingRead = Boolean(initialArticleId) && !validId(initialArticleId) && !selectedId;
   const [query, setQuery] = useState('');
+  useSearchReady(); // typed searches re-run when the engine arrives (it loads after first paint)
   const libPlaceholder = useRotatingPlaceholder(LIB_SEARCH_EXAMPLES, { prefix: 'Try: ', fallback: 'Search reads', enabled: !query });
   const [topic, setTopic] = useState('all');
+  const [jumpTo, setJumpTo] = useState(null);
   const [progress, setProgress] = useState(() => loadReadProgress(userId));
   React.useEffect(() => { setProgress(loadReadProgress(userId)); }, [userId]);
   const selected = ARTICLES.find((a) => a.id === selectedId);
-  // Opening a read un-crumples the page; closing crumples it back before the
-  // shelf returns. Reduced motion skips the delay.
-  const [closing, setClosing] = useState(false);
-  const closeRead = () => {
-    const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    // No crumple animation: reads open and close straight away (Pass 7 audit).
-    void reduce; void setClosing;
-    setSelectedId(null);
-  };
+  const closeRead = () => setSelectedId(null);
 
   // Same personalised shelves as the app's Library: reads matched to the
   // quiz answers first, then each topic with no repeats.
-  // Same four sections signed in or out (only "For you" is added for members).
   const rows = useMemo(() => ARTICLE_CATEGORIES.map((c) => ({ id: c.id, label: c.label, items: c.articleIds.map((id) => ARTICLES.find((a) => a.id === id)).filter(Boolean) })), []);
   const { forYou, hasProfile } = useMemo(() => {
     const lib = buildLibrary(ARTICLES, quizResults);
@@ -1165,7 +1112,6 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   const progressOf = (a) => progress[a.id] || 0;
   const finished = ARTICLES.filter((a) => progressOf(a) >= 1).length;
   const keepReading = ARTICLES.filter((a) => progressOf(a) > 0 && progressOf(a) < 1);
-  const topics = [['all', 'All'], ...(hasProfile && forYou.length ? [['foryou', 'For you']] : []), ...rows.map((r) => [r.id, r.label])];
 
   // Follow the prop when it changes after mount (e.g. URL /library/:slug, back button).
   const firstProp = React.useRef(true);
@@ -1184,6 +1130,14 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     changeCb.current?.(selectedId);
   }, [selectedId]);
 
+  // Back from a read to one topic: land on that topic's shelf.
+  React.useEffect(() => {
+    if (!jumpTo || selectedId) return;
+    const el = document.getElementById(jumpTo);
+    if (el) el.scrollIntoView({ block: 'start' });
+    setJumpTo(null);
+  }, [jumpTo, selectedId]);
+
   const record = React.useCallback((id, value) => setProgress((prev) => {
     const v = Math.round(Math.min(1, value) * 20) / 20;
     if (!id || (prev[id] || 0) >= v) return prev;
@@ -1195,11 +1149,9 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   // Reading progress: how far you've scrolled through the article body,
   // starting from 0 at the top (not how much happens to fit on screen).
   const bodyRef = React.useRef(null);
-  const [scrolled, setScrolled] = useState(0);
   React.useEffect(() => {
     if (!selected) return undefined;
     try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); } catch { window.scrollTo(0, 0); }
-    setScrolled(0);
     // Only count scrolling the reader does (wheel, touch, keys, scrollbar),
     // so opening a read never jumps straight to "39% read" or "Finished".
     let engaged = false;
@@ -1212,7 +1164,6 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       const bottom = el.getBoundingClientRect().bottom + window.scrollY;
       const total = bottom - window.innerHeight;
       const value = total <= 0 ? 1 : Math.min(1, Math.max(0, window.scrollY / total));
-      setScrolled(value);
       // Past 60% for 45 seconds counts as finished; before that, cap below 100%.
       maxValue = Math.max(maxValue, value);
       const longEnough = Date.now() - openedAt >= FINISH_MIN_MS;
@@ -1230,177 +1181,190 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     };
   }, [selected, record]);
 
-  // Sticky read bar sits right under the sticky site header (if there is one).
-  const statusRef = React.useRef(null);
-  React.useEffect(() => {
-    if (!selected) return undefined;
-    const nav = document.querySelector('.app-nav-wrap');
-    const el = statusRef.current;
-    if (!el) return undefined;
-    const apply = () => {
-      const pos = nav ? getComputedStyle(nav).position : '';
-      const h = nav && (pos === 'sticky' || pos === 'fixed') ? Math.round(nav.getBoundingClientRect().height) : 0;
-      el.style.setProperty('--ay-lib-sticky-top', `${h}px`);
-    };
-    apply();
-    if (!nav || typeof ResizeObserver === 'undefined') return undefined;
-    const ro = new ResizeObserver(apply);
-    ro.observe(nav);
-    return () => ro.disconnect();
-  }, [selected]);
-
-  const [barSmall, setBarSmall] = React.useState(false);
-  React.useEffect(() => {
-    const on = () => setBarSmall(window.scrollY > 320);
-    on();
-    window.addEventListener('scroll', on, { passive: true });
-    return () => window.removeEventListener('scroll', on);
-  }, []);
   const open = (id) => setSelectedId(id);
-  const card = (a) => <li key={a.id}>{renderArticleCard(a, open, progressOf(a))}</li>;
-  const shelf = (id, label, items) => items.length > 0 && <div key={id} id={`lib-${id}`} className="ay-web-lib-cat ay-wiki-sec">
-    <h2><span>{label}</span>{id === 'keep' && finished > 0
-      ? <span className="ay-lib-total is-inline" aria-label={`${finished} of ${ARTICLES.length} finished`}><span>{finished}/{ARTICLES.length} read</span><ProgressBar value={finished / ARTICLES.length} /></span>
-      : <small>{items.length} read{items.length === 1 ? '' : 's'}</small>}</h2>
-    <ul className="ay-web-lib-grid ay-lib-shelf">{items.map(card)}</ul>
-  </div>;
+  const cards = (items) => items.map((a) => <li key={a.id}><ReadCard article={a} layout="rail" href={`/library/${a.id}`} onOpen={(art) => open(art.id)} progress={progressOf(a)} /></li>);
 
   if (selected && DESIGNED_READS[selected.id]) {
     const Designed = DESIGNED_READS[selected.id].Component;
     const nextArticle = ARTICLES.find((a) => a.id === DESIGNED_READS[selected.id].next) || null;
-    return <Designed key={selected.id} onBack={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); closeRead(); }} nextArticle={nextArticle} onOpenNext={open} onOpenProduct={onOpenProduct} fallback={<article><h1>{selected.title}</h1>{withHeadings(selected.body)}</article>} />;
+    return <ProFeatureGate feature="reads" readId={selected.id} title={selected.title} onBack={closeRead}><Designed key={selected.id} onBack={(e) => { if (!plainClick(e)) return; e.preventDefault(); closeRead(); }} nextArticle={nextArticle} onOpenNext={open} onOpenProduct={onOpenProduct} fallback={<article><h1>{selected.title}</h1>{withHeadings(selected.body)}</article>} /></ProFeatureGate>;
   }
 
   if (selected) {
     const next = nextInSection(selected.id);
     const done = progressOf(selected) >= 1;
-    const label = done ? 'Finished' : scrolled > 0.02 ? `${Math.round(scrolled * 100)}% read` : `${minutesFor(selected)} min read`;
+    const sec = sectionOf(selected.id);
+    const related = [
+      ...(next ? [next] : []),
+      ...ARTICLES.filter((a) => a.id !== selected.id && a.id !== next?.id && (a.tags || []).some((t) => (selected.tags || []).includes(t))),
+      ...(sec ? sec.articleIds.map((id) => ARTICLES.find((a) => a.id === id)).filter((a) => a && a.id !== selected.id) : []),
+    ].filter((a, i, arr) => arr.findIndex((x) => x.id === a.id) === i).slice(0, 4);
+    const tone = READ_SECTION[selected.id] || 'hormonal';
     return (
-      <section className="container animate-fade-in-up ay-web-library ay-lib-reading">
-        {/* A thin reading line under the header, not a second sticky bar. */}
-        <div className="ay-lib-line" ref={statusRef} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round((done ? 1 : scrolled) * 100)} aria-valuetext={label}>
-          <span style={{ width: `${Math.round((done ? 1 : scrolled) * 100)}%` }} />
-        </div>
-        <button type="button" className="ay-lib-backlink" onClick={closeRead}><span aria-hidden="true">←</span> Library</button>
-        <article key={selected.id} className={`ay-web-lib-article ay3-paper${closing ? ' is-crumpling' : ''}`}>
-          <h1 className="ay-article-title">{selected.title}</h1>
-          <div className="ay-lib-article__tags">
-            <span className="ay-lib-tag">{sectionOf(selected.id)?.label || 'Health'}</span>
-          </div>
-          {/* Category once (the tag above), sources once in full at the end; this line jumps there. */}
-          <button type="button" className="ay-lib-article__src ay-lib-article__srclink" onClick={() => bodyRef.current?.querySelector('.ay-lib-sources')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>Sources: {selected.source} <span aria-hidden="true">↓</span></button>
-          <ArticleCover art={selected} large />
-          <div className="article-body" ref={bodyRef}>
-            {withHeadings(selected.body)}
-          </div>
-
-          <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
-          {next && <button type="button" className="ay-web-next-read" onClick={() => open(next.article.id)}>
-            <small>{next.label}</small><strong>{next.article.title}</strong><span aria-hidden="true">→</span>
-          </button>}
-        </article>
-        {/* Shopping sits outside the medical read, labelled as products. */}
-        <div className="ay-lib-products-wrap">
-          <ArticleProducts articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
-        </div>
-        <aside className={`ay3-infobox${closing ? ' is-crumpling' : ''}`} aria-label="About this read">
-                    {(() => {
-            const related = ARTICLES.filter((a) => a.id !== selected.id && (a.tags || []).some((t) => (selected.tags || []).includes(t))).slice(0, 4);
-            return related.length > 0 && (
-              <div className="ay3-infobox__rel">
-                <p className="ay3-libside__title">Related reads</p>
-                <ul>{related.map((a) => <li key={a.id}><button type="button" onClick={() => open(a.id)}>{a.title}</button></li>)}</ul>
+      <ProFeatureGate feature="reads" readId={selected.id} title={selected.title} onBack={closeRead}>
+      <section className="ct lb lb-read">
+        <header className={`lb-rhead lb-tone--${tone}`}>
+          <div className="lb-wrap lb-rhead__in">
+            <nav className="lb-crumbs" aria-label="Breadcrumb">
+              <BackLink label="Library" href="/explore/resources" onClick={closeRead} />
+              {sec && <><span aria-hidden="true">/</span><a href="/explore/resources" className="lb-crumb" onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); setJumpTo(`lib-${sec.id}`); closeRead(); }}>{sec.label}</a></>}
+            </nav>
+            <div className="lb-rhead__grid">
+              <div className="lb-rhead__text">
+                <h1 className="lb-rhead__title">{selected.title}</h1>
+                <p className="lb-rhead__teaser">{selected.teaser}</p>
               </div>
-            );
-          })()}
-        </aside>
+              <dl className="lb-facts">
+                <div><dt>Read time</dt><dd>{minutesFor(selected)} min{done ? ' · Finished' : ''}</dd></div>
+                <div><dt>Checked against</dt><dd>{selected.source}</dd></div>
+                <div className="lb-facts__go"><dd><a href="#ct-sources" className="lb-link" onClick={(e) => { e.preventDefault(); document.getElementById('ct-sources')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>See the sources <span aria-hidden="true">↓</span></a></dd></div>
+              </dl>
+            </div>
+          </div>
+        </header>
+        <div className="lb-wrap">
+          <article key={selected.id} className="lb-article" aria-label={selected.title}>
+            <div className="lb-prose" ref={bodyRef}>
+              <ReadVideo video={selected.video} />
+              {withHeadings(selected.body)}
+            </div>
+            <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
+          </article>
+        </div>
+        {related.length > 0 && (
+          <div className="lb-band"><section className="lb-wrap lb-shelf lb-shelf--related" aria-labelledby="lb-related-h">
+            <header className="lb-shelf__head">
+              <h2 id="lb-related-h" className="lb-shelf__title">Read next</h2>
+              {next && sec && <span className="lb-shelf__sub">Next in {sec.label}</span>}
+            </header>
+            <ul className="lb-shelf__row">{cards(related)}</ul>
+          </section></div>
+        )}
+        {/* Shopping sits outside the medical read, labelled as products. */}
+        <div className="ay-container lb-products">
+          <ArticleProducts articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
+          {/* Content connects to Ask (team direction 58): her questions about this read, answered in Ask ayna. */}
+          {onAsk && (
+            <section className="lb-ask" aria-labelledby="lb-ask-h">
+              <h2 id="lb-ask-h" className="lb-shelf__title">Questions about this?</h2>
+              <div className="lb-ask__row">
+                {[['Is this relevant to me?', 'Is this relevant to me?'], ['When should I see a clinician?', 'When should I see a clinician?'], ['Ask your own question', '']].map(([label, q]) => <button key={label} type="button" className="lb-btn lb-btn--small" onClick={() => onAsk(`About the read "${selected.title}": ${q}`)}>{label}</button>)}
+              </div>
+            </section>
+          )}
+        </div>
       </section>
+      </ProFeatureGate>
     );
   }
 
   const q = query.trim().toLowerCase();
+  const results = q.length >= 2 ? searchArticles(query, ARTICLES) : null;
+  const shelfItems = (r) => r.items;
+  // Say why these are "for you", in her words from the quiz.
+  const said = [...new Set([...(quizResults?.fullHealthIntake?.supportSelections || []), ...(quizResults?.frustrations || [])].map((x) => String(x).trim()).filter(Boolean))].slice(0, 3);
+
+  const shelf = (key, title, items, { sub = null, extra = null, seeAll = null } = {}) => items.length > 0 && (
+    <section key={key} id={`lib-${key}`} className="lb-shelf" aria-labelledby={`lib-${key}-h`}>
+      <header className="lb-shelf__head">
+        <h2 id={`lib-${key}-h`} className="lb-shelf__title">{title}</h2>
+        {sub && <span className="lb-shelf__sub">{sub}</span>}
+        {extra || (seeAll && <button type="button" className="lb-seeall" onClick={seeAll}>See all {items.length}</button>)}
+      </header>
+      <ul className="lb-shelf__row">{cards(items)}</ul>
+    </section>
+  );
+
   let body;
-  const inTopic = (a) => topic === 'all' || (topic === 'foryou' ? forYou.some((f) => f.id === a.id) : (rows.find((r) => r.id === topic)?.items || []).some((x) => x.id === a.id));
-  const shown = q.length >= 2 ? searchArticles(query, ARTICLES).filter(inTopic) : null;
-  if (q.length >= 2) {
-    const results = shown;
-    body = results.length ? <ul className="ay-web-lib-grid">{results.map(card)}</ul> : (
-      <div className="ay-lib-zero" role="status">
-        <p className="ay-lib-zero__h">Nothing for “{query.trim()}” yet.</p>
+  if (results) {
+    body = results.length ? (
+      <section className="lb-shelf lb-shelf--grid" aria-labelledby="lib-results-h">
+        <header className="lb-shelf__head"><h2 id="lib-results-h" className="lb-shelf__title">Reads about “{query.trim()}”</h2><span className="lb-shelf__sub">{results.length} read{results.length === 1 ? '' : 's'}</span></header>
+        <ul className="lb-shelf__row">{cards(results)}</ul>
+      </section>
+    ) : (
+      <div className="lb-zero" role="status">
+        <p className="lb-zero__h">Nothing for “{query.trim()}” yet.</p>
         <p>Try a topic:</p>
-        <div className="ay-lib-zero__chips">{rows.slice(0, 3).map((r) => <button type="button" key={r.id} onClick={() => { setQuery(''); setTopic(r.id); }}>{r.label}</button>)}</div>
-        <div className="ay-lib-zero__actions">
-          {onAsk && <button type="button" className="ay-lib-zero__ask" onClick={() => onAsk(query.trim())}>Ask ayna about {query.trim()}</button>}
-          <button type="button" className="ay-lib-zero__req" onClick={() => document.querySelector('.ay-web-lib-suggest')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>Request a read</button>
+        <div className="lb-zero__topics">{rows.slice(0, 3).map((r) => <button type="button" className="ay-chip" key={r.id} onClick={() => { setQuery(''); setJumpTo(`lib-${r.id}`); }}>{r.label}</button>)}</div>
+        <div className="lb-zero__actions">
+          {onAsk && <button type="button" className="ay-btn ay-btn--primary" onClick={() => onAsk(query.trim())}>Ask ayna about {query.trim()}</button>}
+          <button type="button" className="ay-btn ay-btn--secondary" onClick={() => document.querySelector('.ct-suggest')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>Request a read</button>
         </div>
       </div>
     );
   } else if (topic !== 'all') {
-    const items = topic === 'foryou' ? forYou : (rows.find((r) => r.id === topic)?.items || []);
-    body = <ul className="ay-web-lib-grid">{items.map(card)}</ul>;
+    const topicRow = rows.find((r) => r.id === topic);
+    const items = topic === 'foryou' ? forYou : (topicRow?.items || []);
+    const label = topic === 'foryou' ? 'For you' : topicRow?.label || 'Reads';
+    body = <section className="lb-shelf lb-shelf--grid" aria-labelledby="lib-topic-h">
+      <header className="lb-shelf__head"><h2 id="lib-topic-h" className="lb-shelf__title">{label}</h2><span className="lb-shelf__sub">{items.length} read{items.length === 1 ? '' : 's'}</span><button type="button" className="lb-seeall" onClick={() => { setJumpTo(topic === 'foryou' ? 'lib-foryou' : `lib-${topic}`); setTopic('all'); }}>All reads</button></header>
+      <ul className="lb-shelf__row">{cards(items)}</ul>
+    </section>;
   } else {
     body = <>
-      {FEATURED_READS.map((f) => <FeaturedRead key={f.id} feature={f} onOpen={open} />)}
-      {shelf('keep', 'Keep reading', keepReading)}
-      {hasProfile ? <>{shelf('foryou', 'Top 3 for you', forYou.slice(0, 3))}{(() => {
-        // Say why these are "for you", in her words from the quiz.
-        const said = [...new Set([...(quizResults?.fullHealthIntake?.supportSelections || []), ...(quizResults?.frustrations || [])].map((x) => String(x).trim()).filter(Boolean))].slice(0, 3);
-        return said.length && forYou.length ? <p className="ay-lib-foryou-why">Based on what you told us: {said.map((x) => x.toLowerCase()).join(', ')}.</p> : null;
-      })()}{forYou.length > 3 && <p className="ay-lib-more-row"><button type="button" className="ay-lib-more" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button></p>}</> : <a className="ay-lib-personalize" href="/quiz">See my matches <span aria-hidden="true">→</span></a>}
-      {rows.map((r) => shelf(r.id, r.label, r.items))}
+      <LibraryFeatured onOpen={open} pick={hasProfile ? forYou.find((a) => !FEATURED_READS.some((f) => f.id === a.id)) || null : null} onAsk={onAsk} />
+      {shelf('keep', 'Keep reading', keepReading, { sub: finished > 0 ? `${finished} of ${ARTICLES.length} finished` : null })}
+      {hasProfile && shelf('foryou', 'Top 3 for you', forYou.slice(0, 3), {
+        sub: said.length > 0 ? `Based on what you told us: ${said.map((x) => x.toLowerCase()).join(', ')}` : null,
+        extra: forYou.length > 3 ? <button type="button" className="lb-seeall" onClick={() => setTopic('foryou')}>See all {forYou.length}</button> : null,
+      })}
+      {/* The featured read isn't repeated in its topic shelf (P1-25). */}
+      {rows.map((r) => shelf(r.id, r.label, shelfItems(r), { seeAll: () => { setTopic(r.id); window.scrollTo({ top: 0 }); } }))}
     </>;
   }
 
+  const jump = (e, target) => { e.preventDefault(); setQuery(''); setTopic('all'); setJumpTo(target); };
+
   return (
-    <section className="container animate-fade-in-up ay-web-library is-wiki">
+    <section className="ct lb lb-lib">
       {missingRead && (
-        <div className="ay-lib-404" role="alert">
-          <p className="ay-lib-404__code">404</p>
+        <div className="lb-wrap"><div className="ct-404 ay-group is-padded" role="alert">
+          <p className="ct-404__code">404</p>
           <h2>We couldn’t find that read.</h2>
           <p>It may have moved, or the link may be wrong.</p>
-          <a href="/library" className="ay-lib-404__btn" onClick={(e) => { e.preventDefault(); onArticleChange?.(null); }}>See all reads</a>
-        </div>
+          <a href="/explore/resources" className="ay-btn ay-btn--primary" onClick={(e) => { e.preventDefault(); onArticleChange?.(null); }}>See all reads</a>
+        </div></div>
       )}
-      <header className="ay-wiki-top">
-        <div className="ay-wiki-top__text">
-          <p className="ay3-kicker">The ayna library</p>
-          <h1 className="ay3-title">Short reads, <em>real sources.</em></h1>
-          <p className="ay-wiki-top__sub">Plain-language reads on women&apos;s health, each one checked against clinical sources.</p>
-        </div>
-      </header>
-      <div className={`ay-wiki-bar${barSmall ? ' is-small' : ''}`}>
-        <label className="ay-web-lib-search">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-          <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={libPlaceholder} aria-label="Search reads" />
-        </label>
-        {<div className="ay-web-lib-filter ay-lib-chips" role="group" aria-label="Topics">
-          {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
-        </div>}
-      </div>
-      {q.length >= 2 && <SearchAssist query={query} resultCount={searchArticles(query, ARTICLES).length} onUse={setQuery} />}
-      <div className="ay3-libgrid">
-        <aside className="ay3-libside" aria-label="Library index">
-          <nav className="ay3-libside__box">
-            <p className="ay3-libside__title">A to Z</p>
-            <ul className="ay3-az">
-              {[...(shown || ARTICLES.filter(inTopic))].sort((a, b) => a.title.localeCompare(b.title)).map((a, i, arr) => {
-                const letter = a.title[0].toUpperCase();
-                const first = i === 0 || arr[i - 1].title[0].toUpperCase() !== letter;
+      <header className="lb-top">
+        <div className="lb-wrap lb-top__grid">
+          <div className="lb-top__main">
+            <h1 className="lb-top__title">Quick reads about <span className="lb-hl">your body</span></h1>
+            <p className="lb-top__lede">Plain-language reads on women&apos;s health, written by the ayna team. Each read lists the sources it uses.</p>
+            <label className="lb-search">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+              <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder={libPlaceholder} aria-label="Search reads" />
+            </label>
+            {/* Phones: the contents as one scrolling line of chips, count inside each chip (rule 6). */}
+            <div className="lb-chips" role="group" aria-label="Topics">
+              {rows.map((r) => {
+                const target = `lib-${r.id}`;
+                return <a key={r.id} className="lb-chip" href={`#${target}`} onClick={(e) => jump(e, target)}>{r.label} <span className="lb-chip__n">{r.items.length}</span></a>;
+              })}
+            </div>
+          </div>
+          <nav className="lb-toc" aria-labelledby="lb-toc-h">
+            <h2 id="lb-toc-h" className="lb-tab lb-toc__h">Contents <span className="lb-toc__total">{ARTICLES.length} reads</span></h2>
+            <ol className="lb-toc__list">
+              {rows.map((r) => {
+                const target = `lib-${r.id}`;
                 return (
-                  <li key={a.id} data-letter={first ? letter : undefined}>
-                    <button type="button" onClick={() => open(a.id)}>{a.title}</button>
-                    {progressOf(a) >= 1 && <span className="ay3-az__done" aria-label="Finished">✓</span>}
+                  <li key={r.id}>
+                    <a href={`#${target}`} onClick={(e) => jump(e, target)}>
+                      <span className="lb-toc__t">{r.label}</span>
+                      <span className="lb-toc__dots" aria-hidden="true" />
+                      <span className="lb-toc__c">{r.items.length} read{r.items.length === 1 ? '' : 's'}</span>
+                    </a>
                   </li>
                 );
               })}
-            </ul>
+            </ol>
           </nav>
-        </aside>
-        <div className="ay3-libmain">
-      {body}
         </div>
-      </div>
-      <SuggestBox mode="read" context="library" className="ay-web-lib-suggest" />
+      </header>
+      {results && <div className="lb-wrap"><SearchAssist query={query} resultCount={results.length} onUse={setQuery} /></div>}
+      <div className="lb-wrap lb-body">{body}</div>
+      <div className="lb-wrap"><SuggestBox mode="read" context="library" className="ct-suggest" /></div>
     </section>
   );
 }

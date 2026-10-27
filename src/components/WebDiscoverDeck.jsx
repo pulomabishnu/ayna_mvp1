@@ -1,8 +1,11 @@
 import { createPortal } from 'react-dom';
+import { CloseIcon, HeartIcon } from './icons/UiIcons.jsx';
 import { useEffect, useRef, useState } from 'react';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
-import { getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct } from '../data/products.js';
-import { formatPrice } from '../utils/formatPrice';
+import { getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
+import { whyLine } from '../utils/whyLine';
+import { matchText } from '../utils/matchDisplay';
+import { formatPrice, shownPriceText } from '../utils/formatPrice';
 import './WebDiscoverDeck.css';
 
 // "Swipe to discover" from the app, for the website: one product at a time.
@@ -20,7 +23,8 @@ export default function WebDiscoverDeck({ products = [], quizResults = null, sav
     const rows = fresh.slice(0, 200).map((product) => {
       const match = quizResults ? getProfileMatchPercentForProduct(product, quizResults) : null;
       const reasons = quizResults && match > 0 ? (getProfileMatchLabelsForProduct(product, quizResults) || []).slice(0, 4) : [];
-      return { product, match, reasons };
+      const why = quizResults && match > 0 ? whyLine(product, getProductMatchDetailsForProduct(product, quizResults)) : '';
+      return { product, match, reasons, why };
     });
     if (quizResults) rows.sort((a, b) => (b.match || 0) - (a.match || 0));
     return rows.slice(0, DECK_SIZE);
@@ -85,7 +89,8 @@ export default function WebDiscoverDeck({ products = [], quizResults = null, sav
                 <div className="wdeck-copy">
                   {current.product.brand && <span>{current.product.brand}</span>}
                   <strong>{current.product.name}</strong>
-                  <div><b>{formatPrice(current.product).main}</b>{Number.isFinite(current.match) && current.match > 0 && current.reasons.length > 0 && <em>{Math.round(current.match)}% match</em>}</div>
+                  <div>{shownPriceText(formatPrice(current.product).main) && <b>{formatPrice(current.product).main}</b>}{Number.isFinite(current.match) && current.match > 0 && current.reasons.length > 0 && <em>{matchText(current.match)}</em>}</div>
+                  {current.why && <small className="wdeck-why">{current.why}</small>}
                   <small className="wdeck-tap">Flip</small>
                 </div>
               </div>
@@ -101,7 +106,7 @@ export default function WebDiscoverDeck({ products = [], quizResults = null, sav
                   <span className="wdeck-back__label">{quizResults ? 'Not a direct match, but popular' : 'Take the quiz to see why things fit you'}</span>
                 )}
                 {(current.product.summary || current.product.description) && <p className="wdeck-back__summary">{String(current.product.summary || current.product.description).replace(/\s*\u2014\s*/g, ', ').slice(0, 160)}{String(current.product.summary || current.product.description).length > 160 ? '…' : ''}</p>}
-                <div className="wdeck-back__price"><b>{formatPrice(current.product).main}</b>{formatPrice(current.product).sub && <small>{formatPrice(current.product).sub}</small>}</div>
+                <div className="wdeck-back__price">{shownPriceText(formatPrice(current.product).main) && <b>{formatPrice(current.product).main}</b>}{formatPrice(current.product).sub && <small>{formatPrice(current.product).sub}</small>}</div>
               </div>
             </div>
           </article>
@@ -112,9 +117,9 @@ export default function WebDiscoverDeck({ products = [], quizResults = null, sav
         </div>}
       </div>
       {current && <div className="wdeck-actions">
-        <button type="button" className="wdeck-round" onClick={() => act('skip')} aria-label="Skip">✕</button>
+        <button type="button" className="wdeck-round" onClick={() => act('skip')} aria-label="Skip"><CloseIcon size={22} /></button>
         <button type="button" className="wdeck-view" onClick={() => onOpenProduct?.(current.product)}>Details</button>
-        <button type="button" className="wdeck-round is-save" onClick={() => act('save')} aria-label="Save">♥</button>
+        <button type="button" className="wdeck-round is-save" onClick={() => act('save')} aria-label="Save"><HeartIcon size={22} filled /></button>
       </div>}
       {current && <p className="wdeck-hint"><kbd>←</kbd> Skip · <kbd>Space</kbd> Flip · <kbd>→</kbd> Save</p>}
     </div>

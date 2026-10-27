@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import BackLink from './nav/BackLink.jsx';
 import { getSelectedNeeds } from '../data/products';
 import HealthConnectionsScreen from '../mobile/screens/profile/HealthConnectionsScreen.jsx';
 import HealthInsightsScreen from '../mobile/screens/profile/HealthInsightsScreen.jsx';
@@ -19,9 +20,7 @@ export default function WebHealthData({ user, quizResults, onBack, onSignIn, onE
   return (
     <section className="ay-hc-web" aria-labelledby="ay-hc-web-title">
       <div className="ay-hc-web-head">
-        <button type="button" className="ay-hc-web-back" onClick={back} aria-label="Back">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
-        </button>
+        <BackLink label={stack.length > 1 ? 'Health data' : 'You'} onClick={back} />
         <h1 id="ay-hc-web-title">{title}</h1>
       </div>
       <div className="ay-hc-web-body" key={top}>
@@ -35,6 +34,7 @@ export default function WebHealthData({ user, quizResults, onBack, onSignIn, onE
             authUser={user}
             onSignIn={onSignIn}
             onOpenInsights={() => push('insights')}
+            tabName="Today"
           />
         )}
       </div>

@@ -1,0 +1,88 @@
+/* =====================================================================
+   THE product card (founder reference, Oct 25 23:27): one anatomy for
+   every product grid and row on the website (.ay-product-card).
+   Butter card, 2px espresso border, radius 14, solid espresso hard shadow
+   down-right. The photo in an inset light panel (white family, thin light
+   border, same radius family), contained, never cropped. Text left:
+   brand (500) → one tag with a pink dot → name (700, larger) → category
+   (muted) → price (700, large; "Price at retailer" / "$13/month" + sub).
+   Save bottom-right: a heart in a double espresso ring. The match / hold
+   pill (one engine) is a small stamp on the photo's top-left corner.
+   ===================================================================== */
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card {
+  --pc-ink: #3e2723; --pc-bg: #ffedac; --pc-panel: #ffffff; --pc-panel-line: rgba(62, 39, 35, .16); --pc-soft: rgba(62, 39, 35, .72); --pc-shadow: none;
+  position: relative; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; min-width: 0;
+  padding: 14px 14px 16px !important; border: 2px solid var(--pc-ink) !important; border-radius: 16px!important; background: var(--pc-bg) !important; color: var(--pc-ink);
+  box-shadow: var(--pc-shadow) !important; overflow: visible !important; transition: transform .16s var(--ease-out, ease-out), box-shadow .16s var(--ease-out, ease-out);
+}
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-product-card { --pc-ink: #ffedac; --pc-bg: #4a312c; --pc-soft: rgba(255, 237, 172, .78); --pc-shadow: none; }
+@media (hover: hover) { :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card:has(.ay-product-card__link:hover) { transform: translate(-2px, -2px); box-shadow: none !important; } }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card:has(.ay-product-card__link:active) { transform: translate(3px, 3px); box-shadow: 3px 3px 0 var(--pc-ink) !important; }
+@media (prefers-reduced-motion: reduce) { :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card { transition: none; transform: none !important; } }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__link { display: flex !important; flex-direction: column; gap: 16px; flex: 1; min-width: 0; padding: 0 !important; color: inherit !important; text-decoration: none !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__tile {
+  position: relative; aspect-ratio: 1 / 1; padding: 14px !important; box-sizing: border-box; overflow: hidden;
+  border: 1.5px solid var(--pc-panel-line) !important; border-radius: 10px!important; background: var(--pc-panel) !important; box-shadow: none !important; transform: none !important;
+}
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__tile :is(img, picture) { width: 100% !important; height: 100% !important; object-fit: contain !important; border-radius: 0 !important; background: transparent !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__tile .ay-product-card__fallback { inset: 0 !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__body { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; padding: 0 2px !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__brand { font: 500 15px/1.25 var(--ay-sans-stack) !important; color: var(--pc-ink) !important; opacity: 1; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__name { order: 3; margin: 0 !important; min-height: 0 !important; font: 700 17px/1.25 var(--ay-sans-stack) !important; letter-spacing: -.005em; color: var(--pc-ink) !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__top { order: 1; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__kind { display: contents !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__kind > * { order: 2; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__kind > .ay-product-card__kindtext { order: 4; margin-top: 4px; font: 500 14px/1.3 var(--ay-sans-stack) !important; color: var(--pc-soft) !important; white-space: normal !important; overflow: visible !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__kind > :not(.ay-product-card__kindtext):not(.ay-product-card__mark) { font: 500 13px/1.3 var(--ay-sans-stack) !important; color: var(--pc-soft) !important; }
+/* the one tag: plain text with a pink dot */
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__kind .ay-product-card__mark { order: 2; display: inline-flex; align-items: center; gap: 7px; height: auto; padding: 0; border: 0 !important; background: none !important; color: var(--pc-ink) !important; font: 500 15px/1.25 var(--ay-sans-stack) !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__kind .ay-product-card__mark::before { content: '' !important; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--pc-ink); background: #f7badd; box-sizing: border-box; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__kind .ay-product-card__tag::before { content: none !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__price { order: 5; display: grid !important; gap: 2px; margin-top: auto !important; padding: 8px 54px 0 0 !important; font: 700 19px/1.2 var(--ay-sans-stack) !important; color: var(--pc-ink) !important; font-variant-numeric: tabular-nums; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__price.is-unknown { color: var(--pc-soft) !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__price small { font: 500 15px/1.3 var(--ay-sans-stack) !important; color: var(--pc-ink) !important; opacity: .9; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__match, :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__rating { order: 4; }
+/* the match / hold pill: a small stamp on the photo's corner; the why line stays in the text */
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__fit { display: contents; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__pill { position: absolute !important; z-index: 2; top: 22px; left: 22px; margin: 0 !important; border: 1.5px solid #3e2723 !important; box-shadow: 2px 2px 0 #3e2723 !important; transform: rotate(-4deg); }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__why { order: 6; display: block; margin: 4px 54px 0 2px; min-height: 0; font: 500 13px/1.35 var(--ay-sans-stack); color: var(--pc-soft); }
+/* save: a heart in a double ring, bottom-right */
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__heart {
+  position: absolute !important; z-index: 3; top: auto !important; left: auto !important; right: 14px !important; bottom: 14px !important;
+  display: grid !important; place-items: center; width: 48px !important; height: 48px !important; margin: 0 !important; padding: 0 !important;
+  border: 2px solid var(--pc-ink) !important; border-radius: 50% !important; background: var(--pc-bg) !important; color: var(--pc-ink) !important;
+  box-shadow: inset 0 0 0 3px var(--pc-bg), inset 0 0 0 5px var(--pc-ink) !important; cursor: pointer;
+  transition: transform var(--t-press, 110ms) var(--ease-pop, ease);
+}
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__heart svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__heart[aria-pressed='true'] svg { fill: #f7badd; stroke: #3e2723; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__heart:active { transform: scale(.92); }
+@media (prefers-reduced-motion: reduce) { :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__heart { transition: none; } }
+/* rows and grids leave room for the shadow */
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) :is(.wx-row, .ayshop__grid, .wx-grid, .ay-product-grid) { padding-bottom: 12px; padding-right: 10px; row-gap: 28px; }
+@media (max-width: 699px) {
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card { --pc-shadow: none; padding: 10px 10px 12px !important; }
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__tile { padding: 10px !important; }
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__price { padding-right: 46px !important; }
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__why { margin-right: 46px; font-size: 13px; }
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__name { font-size: 15.5px !important; }
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__price { font-size: 16px !important; }
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__heart { width: 44px !important; height: 44px !important; right: 10px !important; bottom: 10px !important; }
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card__pill { top: 16px; left: 16px; }
+}
+
+/* The same card as a row (Rundown story, Community mentions): photo panel left, text right,
+   the match stamp still on the photo corner, the why line under the text. */
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row { height: auto; padding: 12px !important; --pc-shadow: none; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-product-card.is-row { --pc-shadow: none; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__link { flex-direction: row; align-items: flex-start; gap: 14px; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__tile { flex: none; width: 112px; padding: 8px !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__body { gap: 4px; padding: 2px 0 0 !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__price { margin-top: 4px !important; padding-top: 2px !important; font-size: 16px !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row:not(:has(.ay-product-card__heart)) :is(.ay-product-card__price, .ay-product-card__why) { padding-right: 0 !important; margin-right: 0; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__pill { top: 6px; left: 6px; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__why { margin: 6px 0 0 126px; }
+@media (max-width: 699px) {
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__tile { width: 92px; }
+  :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card.is-row .ay-product-card__why { margin-left: 106px; }
+}

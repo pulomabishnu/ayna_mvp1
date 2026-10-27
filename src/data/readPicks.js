@@ -37,8 +37,8 @@ export const FRUSTRATION_TO_TAG = {
 };
 
 export const READ_SUMMARIES = {
-  "intimate-wash": { title: "Intimate Washes", teaser: "Why the vagina is self-cleaning, when to use (or skip) cleansers, and what OB-GYNs recommend for external care." },
-  "heavy-bleeding": { title: "Heavy Menstrual Bleeding", teaser: "What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated and treated." },
+  "intimate-wash": { title: "Intimate washes", teaser: "Why the vagina is self-cleaning, when to use (or skip) cleansers, and what OB-GYNs recommend for external care." },
+  "heavy-bleeding": { title: "Heavy menstrual bleeding", teaser: "What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated and treated." },
   "menopause-basics": { title: "Menopause & Perimenopause", teaser: "What perimenopause and menopause are, common symptoms, and how hormone therapy and lifestyle changes can help." },
   "uti-prevention": { title: "UTI Prevention", teaser: "Evidence-backed ways to reduce UTI risk and when to see a clinician for recurrent infections." },
   "yeast-infection-basics": { title: "Yeast Infection Basics", teaser: "What causes yeast infections, how to recognize them, when to treat at home vs. see a clinician, and how to prevent recurrence." },

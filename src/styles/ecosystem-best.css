@@ -1,0 +1,358 @@
+/* Ecosystem, the "best page" pass (Oct 21). Website /ecosystem.
+   Order on the page: striped awning (sky + butter, scalloped, from the
+   Oct 14 header the founder liked) → Products | Dashboard → a calm header
+   with one oval sticker → the shelves as the hero. Anything that is not a
+   shelf (life-stage check, optional questions, ayna news) lives in a slim
+   sticky side rail on wide screens and in one "things for you" strip on
+   smaller ones (components/eco/EcoRail.jsx).
+   Shelves borrow Spotify's titled rows (name, count, add, sideways cards),
+   Goodreads' named shelves with counts, and the Bordeaux deck's folder tabs
+   (pink, sky, espresso) and oval sticker. Motion: shelves rise in once,
+   card by card; tab underlines slide; hearts pop. Nothing moves with
+   reduced motion or the footer's "Pause motion" (html.ay-motion-paused). */
+
+/* ---------- Awning ---------- */
+html body .app-container .eco-awning {
+  position: relative; height: 34px; width: 100%;
+  filter: drop-shadow(0 1.5px 0 #3e2723);
+  transform-origin: 50% 0;
+  animation: eco-unroll .7s cubic-bezier(.2, .9, .3, 1.15) both;
+}
+html body .app-container .eco-awning::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, #f6e3a1 0 28px, #f6e3a1 28px 56px);
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 13px) no-repeat, radial-gradient(circle at 50% 0, #000 13.5px, transparent 14px) left bottom / 28px 14px repeat-x;
+  mask: linear-gradient(#000 0 0) top / 100% calc(100% - 13px) no-repeat, radial-gradient(circle at 50% 0, #000 13.5px, transparent 14px) left bottom / 28px 14px repeat-x;
+}
+html body .app-container[data-theme='brand-dark'] .eco-awning { filter: none; }
+html body .app-container[data-theme='brand-dark'] .eco-awning::before { background: repeating-linear-gradient(90deg, rgba(255, 237, 172, .12) 0 28px, #f7badd 28px 56px); }
+@keyframes eco-unroll { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@media (max-width: 767px) { html body .app-container .eco-awning { height: 26px; } }
+
+/* ---------- Tabs: the underline slides ---------- */
+html body .app-container.app-container.app-container .ay-ecoview2 { padding-top: 6px !important; }
+html body .app-container.app-container .eco-inklist { position: relative; }
+html body .app-container.app-container .eco-inklist .ay-tabs__tab::after { background: transparent !important; }
+html body .app-container.app-container :is(.eco-inklist, #ayeco .eco3-jump) > .eco-ink {
+  position: absolute; left: 0; bottom: -1px; height: 3px; border-radius: 3px 3px 0 0; background: var(--ay-text); pointer-events: none;
+  transition: transform .38s cubic-bezier(.3, 1.25, .5, 1), width .38s cubic-bezier(.3, 1.25, .5, 1), opacity .2s;
+}
+html body .app-container.app-container #ayeco .eco3-jump { position: relative !important; top: auto !important; }
+html body .app-container.app-container #ayeco .eco3-jump > .eco-ink { bottom: 4px; height: 2px; }
+html body .app-container.app-container #ayeco .eco3-jump a.is-on { text-decoration: none !important; }
+
+/* ---------- Header ---------- */
+html body .app-container.app-container #ayeco .ayeco__head { padding: 20px 0 20px !important; gap: 14px 32px !important; }
+html body .app-container.app-container #ayeco .eco-head__titlerow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+html body .app-container.app-container #ayeco .eco-head__titlerow h1 { margin: 0 !important; }
+html body .app-container.app-container #ayeco .eco-oval {
+  display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 50%;
+  background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; box-shadow: inset 0 0 0 3px #f7badd, inset 0 0 0 4.5px #3e2723;
+  font: 600 13px/1 var(--ay-sans-stack); white-space: nowrap; transform: rotate(-6deg);
+  animation: eco-stamp .55s cubic-bezier(.3, 1.5, .5, 1) .25s both;
+}
+html body .app-container.app-container #ayeco .eco-oval svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }
+@keyframes eco-stamp { from { opacity: 0; transform: rotate(-14deg) scale(1.35); } to { opacity: 1; transform: rotate(-6deg) scale(1); } }
+html body .app-container.app-container #ayeco .ayeco__stats { gap: 28px !important; }
+html body .app-container.app-container #ayeco .ayeco__stats b { font: 600 26px/1.05 var(--ay-sans-stack) !important; }
+html body .app-container.app-container #ayeco .ayeco__actions .ay-btn { min-height: 44px !important; }
+html body .app-container.app-container #ayeco .eco-more-redo { display: none !important; }
+@media (max-width: 599px) {
+  html body .app-container.app-container #ayeco .eco-redo { display: none !important; }
+  html body .app-container.app-container #ayeco .eco-more-redo { display: block !important; }
+  html body .app-container.app-container #ayeco .ayeco__actions .ay-btn { flex: 0 1 auto !important; }
+  html body .app-container.app-container #ayeco .ayeco__actions .ay-btn--primary { flex: 1 1 auto !important; }
+  html body .app-container.app-container #ayeco .eco3-more__menu { left: auto !important; right: 0 !important; min-width: min(280px, calc(100vw - 40px)) !important; }
+}
+@media (max-width: 767px) {
+  html body .app-container.app-container #ayeco .ayeco__head { padding: 14px 0 16px !important; gap: 12px !important; }
+  html body .app-container.app-container #ayeco .ayeco__head h1 { font-size: 30px !important; }
+  html body .app-container.app-container #ayeco .ayeco__stats { gap: 22px !important; }
+  html body .app-container.app-container #ayeco .ayeco__stats b { font-size: 22px !important; }
+  html body .app-container.app-container #ayeco .ayeco__stats span { font-size: 13px !important; margin-top: 2px !important; }
+  html body .app-container.app-container #ayeco .eco-oval { padding: 7px 13px; font-size: 13px; }
+}
+
+/* ---------- Body: shelves + "For you" ---------- */
+html body .app-container.app-container #ayeco .eco-body { display: block; margin-top: 16px; }
+html body .app-container.app-container #ayeco .eco-main { min-width: 0; }
+html body .app-container.app-container #ayeco .eco-rail { margin: 0 0 4px; }
+html body .app-container.app-container #ayeco .eco-rail__h { display: none; }
+html body .app-container.app-container #ayeco .eco-rail__strip {
+  display: flex; align-items: center; gap: 12px; width: 100%; max-width: 640px; min-height: 56px; margin: 0; padding: 8px 14px 8px 10px;
+  border: 1.5px solid var(--ay-outline-color); border-radius: 16px; background: var(--ay-group); color: var(--ay-text); text-align: left; cursor: pointer;
+  font: inherit; box-shadow: none; transition: transform .15s ease, background-color .15s;
+}
+html body .app-container.app-container #ayeco .eco-rail__strip:active { transform: scale(.985); }
+html body .app-container.app-container #ayeco .eco-rail__count { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; font: 700 14px/1 var(--ay-sans-stack); font-variant-numeric: tabular-nums; }
+html body .app-container.app-container #ayeco .eco-rail__striptext { display: grid; min-width: 0; flex: 1; gap: 2px; }
+html body .app-container.app-container #ayeco .eco-rail__striptext b { font: 600 15px/1.25 var(--ay-sans-stack); }
+html body .app-container.app-container #ayeco .eco-rail__striptext span { font: 500 13.5px/1.3 var(--ay-sans-stack); color: var(--ay-text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body .app-container.app-container #ayeco .eco-rail__chev { flex: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s cubic-bezier(.3, 1.3, .5, 1); }
+html body .app-container.app-container #ayeco .eco-rail.is-open .eco-rail__chev { transform: rotate(180deg); }
+html body .app-container.app-container #ayeco .eco-rail__list { display: none; }
+html body .app-container.app-container #ayeco .eco-rail.is-open .eco-rail__list { display: grid; gap: 22px; max-width: 640px; padding: 26px 0 8px; animation: eco-drop .35s cubic-bezier(.2, .8, .3, 1) both; }
+@keyframes eco-drop { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+/* cards in the rail / strip: small, a folder tab on top */
+html body .app-container.app-container #ayeco .eco-rail__item { position: relative; min-width: 0; }
+html body .app-container.app-container #ayeco .eco-rail__card { position: relative; margin: 0; padding: 16px 16px 14px; border: 1.5px solid var(--ay-outline-color); border-radius: 0 16px 16px 16px; background: var(--ay-page); color: var(--ay-text); }
+html body .app-container.app-container #ayeco .eco-rail__tab { position: absolute; left: -1.5px; top: -25px; height: 25px; margin: 0; padding: 5px 12px 0; box-sizing: border-box; border: 1.5px solid var(--ay-outline-color); border-bottom: 0; border-radius: 10px 10px 0 0; font: 600 13px/1.2 var(--ay-sans-stack); white-space: nowrap; }
+html body .app-container.app-container #ayeco .eco-rail__card.is-stages { background: #f7badd; color: #3e2723; border-color: #3e2723; }
+html body .app-container.app-container #ayeco .eco-rail__card.is-stages .eco-rail__tab { background: #3e2723; color: #ffedac; border-color: #3e2723; }
+html body .app-container.app-container #ayeco .eco-rail__card.is-news .eco-rail__tab { background: #f6e3a1; color: #3e2723; border-color: var(--ay-outline-color); }
+html body .app-container.app-container #ayeco .eco-rail__title { margin: 0 0 6px !important; padding-right: 28px; font: 600 17px/1.3 var(--ay-sans-stack) !important; color: inherit !important; letter-spacing: 0 !important; }
+html body .app-container.app-container #ayeco .eco-rail__card.is-stages .eco-rail__title { padding-right: 0; }
+html body .app-container.app-container #ayeco .eco-rail__title--sm { font-size: 15.5px !important; }
+html body .app-container.app-container #ayeco .eco-rail__body { margin: 0 0 12px; font: 500 14.5px/1.5 var(--ay-sans-stack); color: inherit; }
+html body .app-container.app-container #ayeco .eco-rail__body b { font-weight: 600; }
+html body .app-container.app-container #ayeco .eco-rail__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; }
+html body .app-container.app-container #ayeco .eco-rail__go { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #3e2723; color: #ffedac; font: 600 15px/1 var(--ay-sans-stack); box-shadow: 3px 3px 0 #ffedac, 3px 3px 0 1.5px #3e2723; cursor: pointer; transition: transform .12s, box-shadow .12s; }
+html body .app-container.app-container #ayeco .eco-rail__go svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+html body .app-container.app-container #ayeco .eco-rail__go:active { transform: translate(2px, 2px); box-shadow: 0 0 0 transparent; }
+html body .app-container.app-container #ayeco .eco-rail__quiet, html body .app-container.app-container #ayeco .eco-rail__link { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; color: inherit; font: 600 14.5px/1 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+html body .app-container.app-container #ayeco .eco-rail__x { position: absolute; top: 2px; right: 2px; z-index: 2; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0 !important; border-radius: 50%; background: none !important; color: var(--ay-text) !important; box-shadow: none !important; cursor: pointer; }
+html body .app-container.app-container #ayeco .eco-rail__x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+html body .app-container.app-container #ayeco .eco-rail__x:hover { background: var(--ay-group) !important; }
+/* The optional-questions card (FinishQuizCard / MorePersonalCard), made small. */
+html body .app-container.app-container #ayeco .eco-rail__slot .fq { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: none !important; gap: 10px !important; margin: 0 !important; padding: 16px 16px 14px !important; border: 1.5px solid var(--ay-outline-color) !important; border-radius: 16px !important; background: var(--ay-group) !important; }
+html body .app-container.app-container #ayeco .eco-rail__slot .fq :is(h2, h3) { margin: 0 0 4px !important; padding-right: 30px; font: 600 17px/1.3 var(--ay-sans-stack) !important; letter-spacing: 0 !important; }
+html body .app-container.app-container #ayeco .eco-rail__slot .fq p { font-size: 14px !important; line-height: 1.45 !important; }
+html body .app-container.app-container #ayeco .eco-rail__slot .fq__go { min-width: 0 !important; width: auto !important; min-height: 44px !important; padding: 0 16px !important; font-size: 14.5px !important; }
+html body .app-container.app-container #ayeco .eco-rail__slot .fq__actions { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+
+@media (min-width: 1180px) {
+  html body .app-container.app-container #ayeco .eco-body.has-rail { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 48px; align-items: start; }
+  html body .app-container.app-container #ayeco .eco-body.has-rail > .eco-rail { grid-column: 2; grid-row: 1; margin: 0; padding-top: 6px; }
+  html body .app-container.app-container #ayeco .eco-body.has-rail > .eco-main { grid-column: 1; grid-row: 1; }
+  html body .app-container.app-container #ayeco .eco-rail__strip { display: none; }
+  html body .app-container.app-container #ayeco .eco-rail__h { display: block; margin: 0 0 30px !important; font: 600 15px/1.2 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; letter-spacing: 0 !important; }
+  html body .app-container.app-container #ayeco .eco-rail__list, html body .app-container.app-container #ayeco .eco-rail.is-open .eco-rail__list { display: grid; gap: 34px; padding: 0; animation: none; }
+  html body .app-container.app-container #ayeco .eco-body.has-rail .eco3-extras { grid-template-columns: minmax(0, 1fr) !important; gap: var(--ay-s48) !important; }
+  html body .app-container.app-container #ayeco .eco-body.has-rail .ay-shelves__big .ay-shelf__row > li { flex-basis: calc((100% - 3.6 * 16px) / 4.25) !important; }
+}
+
+/* ---------- Search + jump ---------- */
+html body .app-container.app-container #ayeco .eco3-stickybar { margin: 18px 0 22px !important; }
+@media (max-width: 767px) {
+  html body .app-container.app-container #ayeco .eco3-stickybar { margin: 14px 0 14px !important; gap: 4px 20px !important; }
+  html body .app-container.app-container #ayeco .eco3-search input[type='search'] { height: 46px !important; min-height: 46px !important; }
+  html body .app-container.app-container #ayeco .eco3-jump { overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+}
+
+/* ---------- Shelves: folder tabs ---------- */
+html body .app-container.app-container #ayeco .ay-shelf { --tab: #f7badd; --tab-ink: #3e2723; }
+html body .app-container.app-container #ayeco .ay-shelf[data-tone='sky'], html body .app-container.app-container #ayeco .ay-shelf[data-tone='paint-sky'] { --tab: #769ebe; --tab-ink: #3e2723; }
+html body .app-container.app-container #ayeco .ay-shelf[data-tone='ink'] { --tab: #3e2723; --tab-ink: #ffedac; }
+html body .app-container.app-container #ayeco .ay-shelf[data-tone='paint-butter'] { --tab: #ffedac; --tab-ink: #3e2723; }
+html body .app-container.app-container[data-theme='brand-dark'] #ayeco .ay-shelf[data-tone='ink'] { --tab: #ffedac; --tab-ink: #3e2723; }
+html body .app-container.app-container #ayeco .ay-shelves, html body .app-container.app-container #ayeco .ay-shelves__big { gap: 36px !important; }
+html body .app-container.app-container #ayeco .ay-shelf__head { align-items: flex-end !important; gap: 10px !important; margin: 0 0 14px !important; border-bottom: 1.5px solid var(--ay-outline-color) !important; }
+html body .app-container.app-container #ayeco .ay-shelf__head > :not(.ay-shelf__name):not(.ay-shelf__rename):not(.ay-shelf__grip) { margin-bottom: 6px !important; }
+html body .app-container.app-container #ayeco .ay-shelf__name {
+  margin: 0 0 -1.5px !important; padding: 9px 16px 8px !important; max-width: calc(100% - 120px) !important;
+  background: var(--tab) !important; color: var(--tab-ink) !important;
+  border: 1.5px solid var(--ay-outline-color) !important; border-bottom-color: var(--tab) !important; border-radius: 16px 16px 0 0 !important;
+  font: 700 22px/1.1 var(--ay-heading, var(--ay-serif-stack)) !important; letter-spacing: -.015em !important;
+  transform-origin: 50% 100%;
+}
+html body .app-container.app-container #ayeco .ay-shelf[style*='--shelf-tab'] .ay-shelf__name { padding-left: 16px !important; }
+html body .app-container.app-container #ayeco .ay-shelf[style*='--shelf-tab'] .ay-shelf__name::before { display: none !important; content: none !important; }
+html body .app-container.app-container #ayeco .ay-shelf__rename input { min-height: 44px; }
+html body .app-container.app-container #ayeco .ay-shelf__count { font: 600 14px/1 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; font-variant-numeric: tabular-nums; }
+html body .app-container.app-container #ayeco .ay-shelf__tools { display: inline-flex; gap: 0; }
+html body .app-container.app-container #ayeco .ay-shelf__tool { width: 40px; height: 40px; border-radius: 50% !important; transition: background-color .15s, transform .15s; }
+html body .app-container.app-container #ayeco .ay-shelf__tool:hover { background: var(--ay-group) !important; }
+html body .app-container.app-container #ayeco .ay-shelf__nav { top: -62px !important; right: 72px !important; }
+html body .app-container.app-container #ayeco .ay-shelf__nav button { transition: transform .15s, background-color .15s; }
+html body .app-container.app-container #ayeco .ay-shelf__nav button:not(:disabled):hover { background: var(--ay-group) !important; }
+html body .app-container.app-container #ayeco .ay-shelf.is-drop .ay-shelf__head { border-bottom-style: dashed !important; }
+@media (max-width: 767px) {
+  html body .app-container.app-container #ayeco .ay-shelves, html body .app-container.app-container #ayeco .ay-shelves__big { gap: 28px !important; }
+  html body .app-container.app-container #ayeco .ay-shelf__name { font-size: 19px !important; padding: 8px 13px 7px !important; max-width: calc(100% - 96px) !important; }
+  html body .app-container.app-container #ayeco .ay-shelf__tools .ay-shelf__tool { width: 36px; height: 44px; }
+}
+@media (max-width: 360px) {
+  html body .app-container.app-container #ayeco .ay-shelf__name { font-size: 18px !important; }
+  html body .app-container.app-container #ayeco .ay-shelf__tools { display: none; }
+}
+
+/* cards: a small lift on hover, a press on tap */
+html body .app-container.app-container #ayeco .ay-shelf__row > li { transition: transform .2s cubic-bezier(.3, 1.4, .5, 1); }
+@media (hover: hover) { html body .app-container.app-container #ayeco .ay-shelf__row > li:hover { transform: translateY(-3px); } }
+html body .app-container.app-container #ayeco .ay-shelf__row > li:active { transform: scale(.98); }
+html body .app-container.app-container #ayeco .ay-shelf__addtile { transition: background-color .15s, transform .2s; }
+html body .app-container.app-container #ayeco .ay-shelf__addtile:hover { background: var(--ay-group) !important; }
+html body .app-container.app-container #ayeco .ay-shelf__addtile span { display: grid; place-items: center; width: 40px; height: 40px; border: 1.5px solid var(--ay-outline-color); border-radius: 50%; transition: transform .3s cubic-bezier(.3, 1.5, .5, 1); }
+html body .app-container.app-container #ayeco .ay-shelf__addtile:hover span { transform: rotate(90deg); }
+
+/* hearts pop when saved */
+html body .app-container.app-container #ayeco .ay-product-card__heart[aria-pressed='true'] svg { animation: eco-pop .45s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes eco-pop { 0% { transform: scale(1); } 40% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+/* empty states: a paper note, slightly tilted (polaroid from the deck) */
+html body .app-container.app-container #ayeco .eco3-empty { max-width: 460px; margin: 8px 0 0; padding: 22px 22px 20px !important; border: 1.5px solid var(--ay-outline-color); border-radius: 10px; background: var(--ay-group); transform: rotate(-1.2deg); }
+html body .app-container.app-container .ay-saved2__empty { padding: 16px; border: 0; border-radius: 16px; background: var(--ay-group); transform: none; max-width: none; }
+
+/* ---------- Reveal once (useRevealOnce) ---------- */
+html body .app-container.app-container #ayeco[data-eco-anim='1'] .ay-shelf[data-eco-in='0'] :is(.ay-shelf__row > li, .ay-shelf__name) { opacity: 0; }
+html body .app-container.app-container #ayeco[data-eco-anim='1'] .ay-shelf[data-eco-in='1'] .ay-shelf__row > li { animation: eco-rise .55s cubic-bezier(.2, .8, .3, 1) both; animation-delay: calc(var(--n, 5) * 45ms + 60ms); }
+html body .app-container.app-container #ayeco[data-eco-anim='1'] .ay-shelf[data-eco-in='1'] .ay-shelf__name { animation: eco-tab .45s cubic-bezier(.3, 1.4, .5, 1) both; }
+html body .app-container.app-container #ayeco[data-eco-anim='1'] :is(.eco3-gaps, .eco3-extras__tools, .eco3-extras__saved, .eco3-addrow)[data-eco-in='0'] { opacity: 0; }
+html body .app-container.app-container #ayeco[data-eco-anim='1'] :is(.eco3-gaps, .eco3-extras__tools, .eco3-extras__saved, .eco3-addrow)[data-eco-in='1'] { animation: eco-rise .55s cubic-bezier(.2, .8, .3, 1) both; }
+@keyframes eco-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes eco-tab { from { opacity: 0; transform: translateY(10px) scaleY(.85); } to { opacity: 1; transform: none; } }
+
+/* ---------- Dark ---------- */
+html body .app-container.app-container[data-theme='brand-dark'] #ayeco .eco-rail__go { background: #ffedac; color: #3e2723; box-shadow: 3px 3px 0 #f7badd; }
+html body .app-container.app-container[data-theme='brand-dark'] #ayeco .eco-rail__card.is-stages .eco-rail__go { background: #3e2723; color: #ffedac; box-shadow: 3px 3px 0 #ffedac, 3px 3px 0 1.5px #3e2723; }
+html body .app-container.app-container[data-theme='brand-dark'] #ayeco .eco-rail__card.is-stages .eco-rail__tab { background: #ffedac; color: #3e2723; }
+
+/* ---------- No motion ---------- */
+html.ay-motion-paused body .app-container .eco-awning,
+html.ay-motion-paused body .app-container.app-container #ayeco .eco-oval { animation: none !important; }
+html.ay-motion-paused body .app-container.app-container #ayeco :is(.ay-shelf__row > li, .ay-shelf__name, .eco3-gaps, .eco3-extras__tools, .eco3-extras__saved, .eco3-addrow, .ay-product-card__heart svg, .eco-rail__list) { animation: none !important; opacity: 1 !important; }
+html.ay-motion-paused body .app-container.app-container :is(.eco-inklist, #ayeco .eco3-jump) > .eco-ink { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  html body .app-container .eco-awning, html body .app-container.app-container #ayeco .eco-oval { animation: none !important; }
+  html body .app-container.app-container #ayeco :is(.ay-shelf__row > li, .ay-shelf__name, .eco3-gaps, .eco3-extras__tools, .eco3-extras__saved, .eco3-addrow, .ay-product-card__heart svg, .eco-rail__list) { animation: none !important; opacity: 1 !important; transform: none !important; }
+  html body .app-container.app-container :is(.eco-inklist, #ayeco .eco3-jump) > .eco-ink, html body .app-container.app-container #ayeco .eco-rail__chev { transition: none !important; }
+}
+
+/* rail: keep the quiz card in one column whatever the page-wide card rules say */
+html body .app-container.app-container #ayeco .eco-rail__slot .fq > *, html body .app-container.app-container #ayeco .eco-rail__slot .fq .fq__actions { grid-column: 1 / -1 !important; grid-row: auto !important; }
+html body .app-container.app-container #ayeco .eco-rail__slot .fq__go { box-shadow: var(--ay-sticker) !important; }
+html body .app-container.app-container #ayeco .ay-shelf:not([style*='--shelf-tab']) .ay-shelf__name, html body .app-container.app-container #ayeco .ay-shelf .ay-shelf__name { padding-left: 16px !important; }
+html body .app-container.app-container #ayeco .ay-shelf__count { align-self: flex-end; margin-bottom: 9px !important; padding: 3px 9px !important; border: 1.5px solid var(--ay-outline-color) !important; border-radius: 999px !important; font-size: 13px !important; line-height: 1.2 !important; color: var(--ay-text) !important; }
+@media (max-width: 767px) { html body .app-container.app-container #ayeco .ay-shelf .ay-shelf__name { padding-left: 13px !important; } }
+/* phone: the first card lines up with the page edge, the row still runs to the screen edge */
+@media (max-width: 767px) {
+  html body .app-container.app-container #ayeco .ay-shelf__row { padding-left: var(--ay-margin, 20px) !important; padding-right: var(--ay-margin, 20px) !important; scroll-padding-inline: var(--ay-margin, 20px) !important; }
+}
+
+/* ---------- Header: title left, stacked summary card right ---------- */
+html body .app-container.app-container #ayeco .ayeco__head { grid-template-columns: minmax(0, 1fr) minmax(0, 380px) !important; grid-template-areas: 'text card' 'actions card' !important; align-items: center !important; border-bottom: 0 !important; }
+html body .app-container.app-container #ayeco .ayeco__head .eco3-head__sub { max-width: 46ch; }
+html body .app-container.app-container #ayeco .eco-stack { grid-area: card; position: relative; margin: 6px 10px 12px 0; }
+html body .app-container.app-container #ayeco .eco-stack__back { position: absolute; inset: 0; transform: translate(10px, 10px) rotate(2.2deg); border: 1.5px solid #3e2723; border-radius: 20px; background: #f7badd; }
+html body .app-container.app-container #ayeco .eco-stack__card { position: relative; display: grid; gap: 14px; padding: 22px 22px 18px; border: 1.5px solid #3e2723; border-radius: 20px; background: #3e2723; color: #ffedac; }
+html body .app-container.app-container #ayeco .eco-stack .eco-oval { position: absolute; top: -18px; right: 18px; z-index: 2; }
+html body .app-container.app-container #ayeco .eco-stack__stats { display: flex !important; gap: 28px !important; }
+html body .app-container.app-container #ayeco .eco-stack__stats li, html body .app-container.app-container #ayeco .eco-stack__stats :is(b, span) { color: #ffedac !important; }
+html body .app-container.app-container #ayeco .eco-stack__stats b { font: 700 34px/1 var(--ay-heading, var(--ay-sans-stack)) !important; letter-spacing: -.02em !important; }
+html body .app-container.app-container #ayeco .eco-stack__stats span { font: 500 14px/1.3 var(--ay-sans-stack) !important; margin-top: 4px !important; opacity: .9; }
+html body .app-container.app-container #ayeco .eco-stack__needs { display: grid; gap: 8px; min-height: 44px; color: #ffedac !important; text-decoration: none !important; }
+html body .app-container.app-container #ayeco .eco-stack__needsline { font: 500 15px/1.3 var(--ay-sans-stack); }
+html body .app-container.app-container #ayeco .eco-stack__needsline b { font-weight: 700; }
+html body .app-container.app-container #ayeco .eco-stack__needs:hover .eco-stack__needsline { text-decoration: underline; text-underline-offset: 3px; }
+html body .app-container.app-container #ayeco .eco-stack__bar { display: block; height: 10px; border: 1.5px solid #ffedac; border-radius: 99px; overflow: hidden; }
+html body .app-container.app-container #ayeco .eco-stack__bar i { display: block; height: 100%; background: #f7badd; transform-origin: 0 50%; animation: eco-fill .9s cubic-bezier(.2, .8, .3, 1) .35s both; }
+@keyframes eco-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+html body .app-container.app-container #ayeco .eco-stack__cost { margin: 0; padding-top: 12px; border-top: 1px solid rgba(255, 237, 172, .25); }
+html body .app-container.app-container #ayeco .eco-stack__cost summary { color: #ffedac !important; font: 600 15px/1.3 var(--ay-sans-stack) !important; min-height: 24px; }
+html body .app-container.app-container #ayeco .eco-stack__cost span { color: rgba(255, 237, 172, .9) !important; }
+html body .app-container.app-container[data-theme='brand-dark'] #ayeco .eco-stack__card { background: #ffedac; color: #3e2723; border-color: #ffedac; }
+html body .app-container.app-container[data-theme='brand-dark'] #ayeco .eco-stack__card :is(.eco-stack__stats li, .eco-stack__stats b, .eco-stack__stats span, .eco-stack__needs, .eco-stack__cost summary, .eco-stack__cost span) { color: #3e2723 !important; }
+html body .app-container.app-container[data-theme='brand-dark'] #ayeco .eco-stack__bar { border-color: #3e2723; }
+html body .app-container.app-container[data-theme='brand-dark'] #ayeco .eco-stack__cost { border-top-color: rgba(62, 39, 35, .25); }
+html body .app-container.app-container[data-theme='brand-dark'] #ayeco .eco-stack__back { border-color: #ffedac; }
+@media (max-width: 767px) {
+  html body .app-container.app-container #ayeco .ayeco__head { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: 'text' 'card' 'actions' !important; }
+  html body .app-container.app-container #ayeco .eco-stack { margin: 14px 10px 14px 0; }
+  html body .app-container.app-container #ayeco .eco-stack__card { padding: 18px 18px 14px; gap: 12px; }
+  html body .app-container.app-container #ayeco .eco-stack__stats b { font-size: 28px !important; }
+  html body .app-container.app-container #ayeco .eco-stack .eco-oval { top: -16px; right: 12px; }
+  html body .app-container.app-container #ayeco .ayeco__head .eco3-head__sub { font-size: 15px !important; }
+}
+
+/* ---------- Rail: "Your shelves" contents with dotted leaders ---------- */
+html body .app-container.app-container #ayeco .eco-toc { display: none; }
+@media (min-width: 1180px) {
+  html body .app-container.app-container #ayeco .eco-toc { display: block; margin: 0 0 40px; }
+  html body .app-container.app-container #ayeco .eco-toc__h { margin: 0 0 8px !important; font: 600 15px/1.2 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; letter-spacing: 0 !important; }
+  html body .app-container.app-container #ayeco .eco-toc ol { margin: 0; padding: 0; list-style: none; }
+  html body .app-container.app-container #ayeco .eco-toc a { display: flex; align-items: baseline; gap: 6px; min-height: 40px; padding: 8px 0 0; color: var(--ay-text) !important; text-decoration: none !important; font: 600 15.5px/1.3 var(--ay-sans-stack); }
+  html body .app-container.app-container #ayeco .eco-toc__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  html body .app-container.app-container #ayeco .eco-toc__dots { flex: 1; min-width: 16px; border-bottom: 2px dotted var(--ay-text); opacity: .45; transform: translateY(-4px); }
+  html body .app-container.app-container #ayeco .eco-toc__n { font-variant-numeric: tabular-nums; }
+  html body .app-container.app-container #ayeco .eco-toc a:hover .eco-toc__name { text-decoration: underline; text-underline-offset: 3px; }
+  html body .app-container.app-container #ayeco .eco-rail.is-toc-only .eco-rail__h { display: none; }
+}
+@media (max-width: 1179px) { html body .app-container.app-container #ayeco .eco-rail.is-toc-only { display: none; } }
+html.ay-motion-paused body .app-container.app-container #ayeco .eco-stack__bar i { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { html body .app-container.app-container #ayeco .eco-stack__bar i { animation: none !important; } }
+html body .app-container.app-container #ayeco .eco-stack__card { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+html body .app-container.app-container #ayeco .eco-stack__card > * { grid-area: auto !important; }
+html body .app-container.app-container #ayeco .eco-stack__card > .eco-stack__stats { grid-column: 1 !important; grid-row: 1 !important; }
+html body .app-container.app-container #ayeco .eco-stack__card > .eco-stack__cost { grid-column: 2 !important; grid-row: 1 !important; padding: 0 0 4px; border: 0; text-align: right; }
+html body .app-container.app-container #ayeco .eco-stack__card > .eco-stack__cost[open] { grid-column: 1 / -1 !important; grid-row: 3 !important; text-align: left; }
+html body .app-container.app-container #ayeco .eco-stack__card > .eco-stack__needs { grid-column: 1 / -1 !important; grid-row: 2 !important; }
+html body .app-container.app-container #ayeco .eco-stack__card > .eco-oval { grid-row: auto !important; }
+@media (max-width: 767px) {
+  html body .app-container.app-container #ayeco .ayeco__head .eco3-head__sub { display: none; }
+  html body .app-container.app-container #ayeco .eco-stack__stats { gap: 20px !important; }
+  html body .app-container.app-container #ayeco .eco-stack__stats b { font-size: 26px !important; }
+  html body .app-container.app-container #ayeco .eco-stack__stats span { font-size: 13px !important; }
+  html body .app-container.app-container #ayeco .eco-stack__cost summary { font-size: 14px !important; }
+}
+@media (min-width: 1180px) {
+  html body .app-container.app-container #ayeco .eco-body.has-rail > .eco-rail { display: flex; flex-direction: column; max-height: calc(100vh - 124px); overflow-y: auto; scrollbar-width: thin; padding-right: 4px; padding-bottom: 12px; }
+  html body .app-container.app-container #ayeco .eco-rail .eco-toc { order: 3; margin: 40px 0 0; }
+  html body .app-container.app-container #ayeco .eco-rail.is-toc-only .eco-toc { margin-top: 0; }
+  html body .app-container.app-container #ayeco .eco-toc a { min-height: 36px; padding-top: 6px; }
+}
+
+/* ---------- Skeleton shelves (matches being built) ---------- */
+html body .app-container.app-container #ayeco .eco-skel { display: grid; gap: 36px; margin: 8px 0 0; }
+html body .app-container.app-container #ayeco .eco-skel__tab { display: block; width: 160px; height: 40px; border-radius: 16px 16px 0 0; background: var(--ay-group); border-bottom: 1.5px solid var(--ay-outline-color); }
+html body .app-container.app-container #ayeco .eco-skel__shelf { border-top: 0; }
+html body .app-container.app-container #ayeco .eco-skel__row { display: flex; gap: 16px; margin-top: 14px; overflow: hidden; }
+html body .app-container.app-container #ayeco .eco-skel__row span { flex: 0 0 calc((100% - 3.6 * 16px) / 4.6); aspect-ratio: 1 / 1.35; border-radius: 16px; background: var(--ay-group); animation: eco-pulse 1.4s ease-in-out infinite alternate; }
+html body .app-container.app-container #ayeco .eco-skel__row span:nth-child(2) { animation-delay: .15s; }
+html body .app-container.app-container #ayeco .eco-skel__row span:nth-child(3) { animation-delay: .3s; }
+@media (max-width: 767px) { html body .app-container.app-container #ayeco .eco-skel__row span { flex-basis: 42%; } }
+@keyframes eco-pulse { from { opacity: 1; } to { opacity: .5; } }
+html.ay-motion-paused body .app-container.app-container #ayeco .eco-skel__row span { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { html body .app-container.app-container #ayeco .eco-skel__row span { animation: none !important; } }
+@media (max-width: 360px) {
+  html body .app-container.app-container #ayeco .eco-stack__card > .eco-stack__cost { grid-column: 1 / -1 !important; grid-row: 3 !important; text-align: left; padding: 0; }
+  html body .app-container.app-container #ayeco .ayeco__actions { flex-wrap: nowrap !important; gap: 10px !important; }
+  html body .app-container.app-container #ayeco .ayeco__actions .ay-btn { padding: 0 16px !important; font-size: 15px !important; white-space: nowrap; }
+}
+
+/* Final layout pass (Oct 21, P1-14): stats card, then ONE toolbar row
+   (search · Add · More), then "For you" as one dismissible line. */
+html body .app-container.app-container #ayeco .eco3-stickybar .eco3-actions { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; margin: 0 !important; }
+html body .app-container.app-container #ayeco .eco3-add__short { display: none; }
+html body .app-container.app-container #ayeco .eco-rail__line { display: flex; align-items: center; gap: 8px; max-width: 640px; }
+html body .app-container.app-container #ayeco .eco-rail__line .eco-rail__strip { flex: 1; min-width: 0; }
+html body .app-container.app-container #ayeco .eco-rail__stripx { flex: none; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--ay-text); cursor: pointer; }
+html body .app-container.app-container #ayeco .eco-rail__stripx svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+html body .app-container.app-container #ayeco .eco-rail__stripx:focus-visible { outline: 3px solid var(--ay-focus); outline-offset: 2px; }
+@media (min-width: 1100px) { html body .app-container.app-container #ayeco .eco-rail__line { display: none; } }
+@media (max-width: 767px) {
+  html body .app-container.app-container #ayeco .eco3-stickybar { flex-direction: row !important; flex-wrap: nowrap !important; align-items: center !important; gap: 8px !important; margin: 12px 0 8px !important; }
+  html body .app-container.app-container #ayeco .eco3-stickybar .eco3-search { flex: 1 1 auto !important; min-width: 0; }
+  html body .app-container.app-container #ayeco .eco3-stickybar .eco3-jump { display: none !important; }
+  html body .app-container.app-container #ayeco .eco3-stickybar .eco-redo { display: none !important; }
+  html body .app-container.app-container #ayeco .eco3-stickybar .eco3-actions .ay-btn { min-height: 48px; padding-inline: 14px !important; }
+  html body .app-container.app-container #ayeco .eco3-add__long { display: none; }
+  html body .app-container.app-container #ayeco .eco3-add__short { display: inline; }
+  html body .app-container.app-container #ayeco .eco-rail__strip { min-height: 44px !important; padding: 6px 12px 6px 8px !important; border-radius: 999px !important; }
+  html body .app-container.app-container #ayeco .eco-rail__count { width: 26px; height: 26px; font-size: 13px; }
+  html body .app-container.app-container #ayeco .eco-rail__striptext { display: flex !important; align-items: baseline; gap: 6px !important; white-space: nowrap; overflow: hidden; }
+  html body .app-container.app-container #ayeco .eco-rail__striptext span { min-width: 0; }
+}
+html body .app-container.app-container #ayeco .eco3-more__dots { display: none; width: 22px; height: 22px; fill: currentColor; stroke: none; }
+@media (max-width: 767px) {
+  html body .app-container.app-container #ayeco .eco3-stickybar .eco3-more__sum { width: 48px; padding: 0 !important; justify-content: center; }
+  html body .app-container.app-container #ayeco .eco3-stickybar .eco3-more__sum::after { display: none !important; }
+  html body .app-container.app-container #ayeco .eco3-more__word { display: none; }
+  html body .app-container.app-container #ayeco .eco3-more__dots { display: block; }
+}
+/* Loop E (Oct 26): the one shadow is the pink sticker on primary buttons, so the summary card loses its offset "stacked" back. */
+html body .app-container.app-container #ayeco .eco-stack__back { display: none !important; }
+/* Loop E round 4: the phone "For you" line never cuts a sentence: label on top, the suggestion under it, wrapping. */
+html body .app-container.app-container #ayeco .eco-rail__line .eco-rail__strip { border-radius: 16px !important; min-height: 56px; padding-top: 8px !important; padding-bottom: 8px !important; text-align: left; }
+html body .app-container.app-container #ayeco .eco-rail__striptext { display: grid !important; gap: 2px; min-width: 0; white-space: normal !important; }
+html body .app-container.app-container #ayeco .eco-rail__striptext > * { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }

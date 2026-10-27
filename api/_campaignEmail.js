@@ -281,7 +281,9 @@ export function claimedEmail({ product }) {
     ${p('You can check on it anytime from your free product page.', `font-size:14px;line-height:22px;color:${SOFT};margin-top:16px`)}
   `;
   return {
-    subject: `It's yours: ${product?.name || 'your free product'}`,
+    // Inbox previews are seen by others: the product (which can reveal a
+    // condition) is only inside the email, never in the subject.
+    subject: "It's yours: your free product",
     html: renderLayout({ title: "It's yours", preheader: 'Add your address so we can send it.', body, reason: ACCOUNT_REASON }),
     text: `It's yours: ${product?.name || 'your free product'}${product?.brand ? ` by ${product.brand}` : ''}.\n\nOne more step: add the address you want it shipped to. Our team packs and sends these ourselves.\n${url}`,
   };

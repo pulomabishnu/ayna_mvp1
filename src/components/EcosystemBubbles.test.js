@@ -1,7 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { loadCatalog } from '../data/catalog.js';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 
 describe('resolveEcosystemProductArea', () => {
+  // The catalog loads after first paint (data/catalog.js); these checks need it.
+  beforeAll(() => loadCatalog());
+
   // Regression: a product added to the ecosystem long ago is stored as a frozen
   // snapshot (user_ecosystems.product_data) that can predate `category` being
   // assigned at all. Found live on Aditi's own ecosystem, 2026-08-24: Rael

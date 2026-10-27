@@ -1,0 +1,74 @@
+/* Design loop A (Oct 26): landing polish, rounds 1-5. Loaded after home.css
+   by LandingV2; selectors carry one extra class so they win over home.css
+   without !important wars. Log: scratchpad/loop/a/LOG.md. */
+
+/* ---- hero: standards stated once, as a quiet ruled row (#18 Tower 28) ---- */
+.hm :is(#ayk, .ayk-standards):is(#ayk, .ayk-standards):is(#ayk, .ayk-standards):is(#ayk, .ayk-standards).hm-standards {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 32px;
+  padding: 20px 0 !important;
+  background: transparent !important;
+  border-top: 1px solid var(--ay-hairline, rgba(62, 39, 35, .15)) !important;
+  border-bottom: 1px solid var(--ay-hairline, rgba(62, 39, 35, .15)) !important;
+}
+.hm :is(#ayk, .ayk-standards):is(#ayk, .ayk-standards):is(#ayk, .ayk-standards):is(#ayk, .ayk-standards).hm-standards > li {
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+}
+.hm :is(#ayk, .ayk-standards__icon):is(#ayk, .ayk-standards__icon):is(#ayk, .ayk-standards__icon):is(#ayk, .ayk-standards__icon) {
+  width: 36px; height: 36px; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--ay-pink-base, #f7badd); color: #3e2723;
+}
+.app-container.app-container .hm .hm-standards svg { width: 16px; height: 16px; }
+.app-container.app-container .hm .hm-standards-wrap { margin-top: 48px; }
+@media (max-width: 767px) {
+  .hm :is(#ayk, .ayk-standards):is(#ayk, .ayk-standards):is(#ayk, .ayk-standards):is(#ayk, .ayk-standards).hm-standards { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 16px 0 !important; }
+  .app-container.app-container .hm .hm-standards-wrap { margin-top: 8px; }
+}
+
+/* ---- hero on phones: the seal sits on the photo's top-right corner, never over the evidence card ---- */
+@media (max-width: 767px) {
+  .app-container.app-container .hm .hm-hero__seal.hm-scatter__seal { left: auto; right: -6px; top: -22px; }
+  .app-container.app-container .hm .hm-slot--ui { width: 58%; }
+}
+
+/* ---- sound familiar + needs: phrases as a 2 x 2 above, then the needs and a row of four (#22, #26, #53) ---- */
+@media (min-width: 1024px) {
+  .app-container.app-container .hm .hm-needsband__grid:not(.is-single) { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .app-container.app-container .hm .hm-needsband__grid:not(.is-single) .hm-needs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; border-top: 0; }
+  .app-container.app-container .hm .hm-needsband__grid:not(.is-single) .hm-needs > li { border-top: 1px solid var(--ay-hairline); }
+  .app-container.app-container .hm .hm-needsband__grid:not(.is-single) .hm-stickers { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.app-container.app-container .hm .hm-stickers > li > .hm-sticker { flex: 1 1 auto; }
+.app-container.app-container .hm .hm-sticker .ay-pcard__evtext > span:not(.sr-only) { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+
+/* ---- how it works on phones: the three evidence levels stack as rows (no three cramped columns) ---- */
+@media (max-width: 767px) {
+  .app-container.app-container .hm .hm-levels { display: block; }
+  .app-container.app-container .hm .hm-levels > li { grid-template-columns: minmax(0, 1fr); padding: 10px 0; border-bottom: 0; }
+  .app-container.app-container .hm .hm-levels > li:last-child { border-bottom: 1px solid var(--ay-hairline); }
+  .app-container.app-container .hm .hm-levels .ay-meter__word { font-size: 15px; }
+  .app-container.app-container .hm .hm-levels__note { font-size: 14px; }
+}
+
+/* ---- Founder change (Oct 26 13:38): no white surfaces. Calm tiles are deeper
+   butter with a thin espresso rule; white stays only behind product photos. ---- */
+.app-container.app-container .hm .hm-stats .ayk-fact { --ay-surface: #f6e3a1; --legacy-surface: #f6e3a1; background: #f6e3a1 !important; border: 1px solid rgba(62, 39, 35, .15) !important; }
+.app-container.app-container .hm .hm-ui--post,
+.app-container.app-container .hm .hm-rc .hm-post { background: #f6e3a1; }
+
+/* ---- how it works: evidence levels as one ruled three-column row under the steps on wide screens ---- */
+.app-container.app-container .hm .hm-levelswrap { display: grid; justify-items: start; }
+.app-container.app-container .hm .hm-levels--row { display: none; }
+@media (min-width: 1024px) {
+  .app-container.app-container .hm .hm-levels--in { display: none; }
+  .app-container.app-container .hm .hm-levels--row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--ay-hairline); }
+  .app-container.app-container .hm .hm-levels--row .hm-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin: 0; }
+  .app-container.app-container .hm .hm-levels--row .hm-levels > li,
+  .app-container.app-container .hm .hm-levels--row .hm-levels > li:last-child { padding: 0; border: 0; }
+}
+
+/* hero: the standards row closes the hero; 40px to the ticker, not 72 (dead butter band) */
+@media (min-width: 768px) { .app-container.app-container .hm .hm-hero { padding-bottom: 40px; } }
+@media (max-width: 767px) { .app-container.app-container .hm .hm-hero { padding-bottom: 32px; } }

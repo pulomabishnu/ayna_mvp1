@@ -1,0 +1,31 @@
+/* YouBento (YouBento.jsx): the You hub's numbers + sections as one bento. Same weight pattern as ay-bold.css. */
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) { margin: 0 0 var(--ay-sp-32); grid-auto-rows: minmax(140px, auto); }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-tile { width: 100%; font: inherit; justify-content: flex-start; gap: 8px; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) button.yb-tile { cursor: pointer; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) button.yb-tile:hover .yb-arrow { transform: translate(2px, -2px); }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .ayb-tile__label { font: 700 var(--ay-size-ui)/1.2 var(--ay-font-ui) !important; opacity: 1; }
+.yb-arrow, .yb-icon { width: 24px; height: 24px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s; }
+@media (prefers-reduced-motion: reduce) { .yb-arrow { transition: none; } }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-num { display: grid; gap: 4px; margin-top: auto; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .is-eco .ayb-tile__big { font-size: clamp(56px, 7vw, 96px) !important; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-name { margin-top: auto; font: 700 var(--ay-size-h2)/1.1 var(--ay-font-display); letter-spacing: -.01em; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .ayb-tile__cap b { font-weight: 700; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-plates { display: flex; gap: 10px; margin: 8px 0; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-plate { width: 96px; height: 96px; flex: 0 0 96px; }
+@media (max-width: 720px) {
+  :is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-plate { width: 84px; height: 84px; flex-basis: 84px; }
+  :is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-name { font-size: var(--ay-size-h3); }
+}
+.ayna-mobile :is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-plate { width: 84px; height: 84px; flex-basis: 84px; }
+.ayna-mobile :is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-name { font-size: 17px; }
+
+/* Your blend: the House Blend track, read-only */
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-blend { display: grid; gap: 10px; margin: 4px 0 0; padding: 0; list-style: none; width: 100%; }
+.yb-blend li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(64px, 1.4fr) minmax(0, 1fr); align-items: center; gap: 10px; font: 600 13px/1.2 var(--ay-font-ui); }
+.yb-blend li span:last-child { text-align: right; }
+.yb-blend i { position: relative; display: block; height: 8px; border-radius: 999px; border: 1.5px solid #3E2723; background: linear-gradient(to right, #3E2723 var(--pct), transparent var(--pct)); }
+.yb-blend b { position: absolute; top: 50%; left: var(--pct); width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; background: #FFEDAC; border: 1.5px solid #3E2723; box-sizing: border-box; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .is-full { grid-column: 1 / -1; min-height: 0; flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 16px; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .is-full .yb-top { width: auto; order: 3; margin-left: auto; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .is-full .yb-name { margin: 0; }

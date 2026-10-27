@@ -201,7 +201,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
         zIndex: 45,
         touchAction: 'none',
         userSelect: 'none',
-        transition: dragging ? 'none' : 'left .28s cubic-bezier(.4,0,.2,1), padding .22s ease, gap .22s ease',
+        transition: dragging ? 'none' : 'left .28s var(--ease-in-out), padding .22s ease, gap .22s ease',
       }}
     >
       {!isCompact && <div
@@ -211,7 +211,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
           boxSizing: 'border-box',
           borderRadius: '50%',
           background: 'linear-gradient(135deg,#3e2723,#3e2723 55%,#3e2723)',
-          animation: 'ay-float 3s ease-in-out infinite',
+          animation: 'ay-float 3s ease-in-out 1',
           flex: 'none',
         }}
       />}

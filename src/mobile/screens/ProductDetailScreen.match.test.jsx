@@ -4,16 +4,21 @@ import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../../data/produ
 import ProductDetailScreen from './ProductDetailScreen.jsx';
 
 describe('ProductDetailScreen match display', () => {
-  it('shows a relevant score below 60 as the one match pill', () => {
+  it('shows a relevant mid-range score as the one match pill', () => {
     const product = ALL_PRODUCTS.find((item) => item.id === 'p-vitex');
-    const quizAnswers = { fullHealthIntake: { supportSelections: ['PMS symptoms'] } };
+    const quizAnswers = { fullHealthIntake: { supportSelections: ['PMS symptoms'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } };
     const details = getProductMatchDetailsForProduct(product, quizAnswers);
     const percent = details.percent;
     expect(percent).toBeGreaterThan(0);
-    expect(percent).toBeLessThan(60);
+    expect(percent).toBeLessThan(75);
     const html = renderToStaticMarkup(<ProductDetailScreen product={product} quizAnswers={quizAnswers} />);
     expect(html).toContain('ay-match-pill');
-    expect(html).toContain(`<strong>${percent}%</strong><span>match</span>`);
+    // One rule everywhere (matchDisplay): 50+ shows the number, under 50 shows "Partial fit".
+    if (percent >= 50) expect(html).toContain(`<strong>${percent}%</strong><span>match</span>`);
+    else {
+      expect(html).toContain('Partial fit');
+      expect(html).not.toContain(`${percent}%`);
+    }
     // No ring overlay, no raw per-need score chips in the header.
     expect(html).not.toMatch(/PROFILE MATCH/);
     expect(html).not.toContain('ay-pdp-need__rows');

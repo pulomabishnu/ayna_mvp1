@@ -1,9 +1,10 @@
 /* global process */
 import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
 import { verifyUser, claimEcosystemBuild, releaseEcosystemBuild } from './_usageLimit.js';
+import { rateLimit } from './_rateLimit.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, providerConfigured } from './_llm.js';
 import { traceSessionId } from './_prismTrace.js';
-import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
+import { hasPremiumAccess, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { routeHealthQuery } from './_healthKnowledge.js';
 import {
   loadGroundingCatalog,
@@ -789,7 +790,8 @@ export default async function handler(req, res) {
     return await handleRequest(req, res);
   } catch (e) {
     console.error('[LLM API] Unhandled error:', e?.message, e?.stack?.slice(0, 400));
-    return res.status(500).json({ error: e?.message || String(e), type: 'unhandled_exception' });
+    // Generic to the client: raw exception text can carry provider responses or config details.
+    return res.status(500).json({ error: 'server_error', type: 'unhandled_exception' });
   }
 }
 
@@ -834,7 +836,18 @@ async function handleRequest(req, res) {
 
   const { user, error: authError, admin } = await verifyUser(req);
   if (!user) return res.status(401).json({ error: authError });
-  const isPremium = isPremiumUser(user);
+
+  // Burst cap for EVERY account, premium included: the weekly quota below
+  // does not apply to premium, so without this one stolen or scripted
+  // premium session could run unlimited paid model calls.
+  const burst = await rateLimit(`ecosystem:burst:${user.id}`, { max: 40, windowSec: 3600 });
+  if (!burst.ok) {
+    res.setHeader('Retry-After', String(burst.retryAfterSec || 3600));
+    return res.status(429).json({ error: 'rate_limited' });
+  }
+  let isPremium;
+  try { isPremium = await hasPremiumAccess(user, admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
   if (hasLegacyClientPremiumFlag(user)) {
     console.warn(`[llm-recs] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
   }

@@ -118,6 +118,10 @@ export default async function handler(req, res) {
     fetchRows(db, 'sms_conversations', user.id, { select: 'direction, message_body, created_at' }),
     fetchRows(db, 'user_ai_usage', user.id),
     fetchRows(db, 'user_ecosystem_builds', user.id),
+    fetchRows(db, 'pro_purchases', user.id),
+    fetchRows(db, 'pro_weekly_reads', user.id),
+    fetchRows(db, 'pro_subscriptions', user.id),
+    fetchRows(db, 'pro_focus_grants', user.id),
     fetchRows(db, 'user_learning_memory', user.id),
     fetchRows(db, 'recall_notifications', user.id),
     fetchRows(db, 'account_deletion_requests', user.id, { select: 'status, requested_at, processed_at' }),
@@ -142,11 +146,14 @@ export default async function handler(req, res) {
     // Text message settings and the consent log (no bodies, no numbers).
     fetchRows(db, 'sms_preferences', user.id, { single: true, select: 'reminders, orders, chat, health_details, stopped_at, consent_text_version, consent_at, created_at, updated_at' }),
     fetchRows(db, 'sms_events', user.id, { select: 'kind, detail, created_at' }),
+    // Her daily log and what she tried (supabase/daily_log_2026-10-24.sql).
+    fetchRows(db, 'user_daily_log', user.id, { select: 'day, pain, flow, pms, sleep, mood, skin, source, method, updated_at' }),
+    fetchRows(db, 'user_tries', user.id, { select: 'id, kind, ref, need, started_day, horizon_days, outcome, recorded_day, note, removed, source, method, updated_at' }),
   ]);
 
   const [phone, prefs, intake, ecosystem, healthProfiles, reviews, sms, aiUsage, builds, learningMemory, recalls, deletionRequests,
     cProfile, cPosts, cComments, cFollowing, cFollowers, cPlaylists, cSaved, cHelpful, cReqSent, cReqReceived, cBlocks, cRecs,
-    hConnections, hMetrics, hEvents, hImports, hRequests, smsPrefs, smsEvents] = entries;
+    hConnections, hMetrics, hEvents, hImports, hRequests, smsPrefs, smsEvents, dailyLog, tries] = entries;
   const warnings = entries.map((entry) => entry.warning).filter(Boolean);
   const meta = user.user_metadata || {};
 
@@ -220,6 +227,8 @@ export default async function handler(req, res) {
     recallNotificationRecords: recalls.data || [],
     accountDeletionRequests: deletionRequests.data || [],
     community,
+    dailyLog: dailyLog.data || [],
+    triesAndOutcomes: tries.data || [],
     connectedHealthData: {
       connections: hConnections.data || [],
       dailyValues: hMetrics.data || [],

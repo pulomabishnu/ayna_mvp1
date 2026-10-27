@@ -7,6 +7,7 @@ import {
   saveLearningMemoryForUser,
 } from './learningMemoryStore';
 import { filterRecommendationsToCatalog } from './catalogIntegrity';
+import { loadCatalog } from '../data/catalog.js';
 import { getAppSessionId } from './conversationId';
 
 const API_PATH = '/api/llm-recommendations';
@@ -295,6 +296,7 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
 
   // Belt and braces: the server already hydrates from the catalog.
   if (Array.isArray(data?.recommendations)) {
+    await loadCatalog();
     data.recommendations = filterRecommendationsToCatalog(data.recommendations);
   }
 

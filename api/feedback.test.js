@@ -15,13 +15,14 @@ describe('feedback API', () => {
     expect((await call({ action: 'claim-survey' })).code).toBe(401);
     expect(claimSurvey).not.toHaveBeenCalled();
   });
-  it('allows previously reviewed account holders into this new campaign only once', async () => {
+  it('passes the account age to the 14-day check and returns a receipt only when claimed', async () => {
     verifyUser.mockResolvedValue({ user: { id: 'one', user_metadata: { satisfaction_survey_completed_at: '2025-01-01' } } });
     claimSurvey.mockResolvedValueOnce(true).mockResolvedValueOnce(false);
     const first = await call({ action: 'claim-survey' });
     expect(first.body.claimed).toBe(true);
     expect((await call({ action: 'claim-survey' })).body).toEqual({ claimed: false });
     expect(first.body.receipt).not.toContain('one');
+    expect(claimSurvey.mock.calls[0][0]).toBe('one');
   });
   it('records yes and no for verified products without requiring or storing an account', async () => {
     for (const answer of ['yes', 'no']) {

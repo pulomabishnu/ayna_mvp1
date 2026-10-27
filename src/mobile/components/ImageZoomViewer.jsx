@@ -172,7 +172,7 @@ export default function ImageZoomViewer({ images = [], startIndex = 0, name = ''
           {zoomed ? 'Zoom out' : 'Zoom in'}
         </button>
         <button ref={closeRef} type="button" className="ay-zoom-btn ay-zoom-close" aria-label="Close photo viewer" onClick={onClose}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
         </button>
       </div>
       <div
@@ -203,11 +203,11 @@ export default function ImageZoomViewer({ images = [], startIndex = 0, name = ''
         {count > 1 ? (
           <>
             <button type="button" className="ay-zoom-btn" aria-label="Previous photo" onClick={() => go(-1)}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
             </button>
             <span className="ay-zoom-hint">Pinch or double tap to zoom. Swipe for more photos.</span>
             <button type="button" className="ay-zoom-btn" aria-label="Next photo" onClick={() => go(1)}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
             </button>
           </>
         ) : <span className="ay-zoom-hint">Pinch or double tap to zoom.</span>}

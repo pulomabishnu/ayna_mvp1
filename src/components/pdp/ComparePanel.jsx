@@ -3,20 +3,25 @@ import { useEdgeFade } from './useEdgeFade';
 import { ALL_PRODUCTS } from '../../data/products';
 import { compareRows } from './commerce';
 import { NOT_ON_FILE } from './glance';
+import { whyFirstLine } from '../../utils/whyLine';
+import { evidenceFor } from './evidenceLevels';
+import { EvidenceCounts } from './PdpParts.jsx';
 import './pdp.css';
 
 /**
  * "Compare with similar": this product beside 2-3 close alternatives from the
  * catalog, real fields only. Scrolls sideways on phones.
  */
-export default function ComparePanel({ product, others = [], onOpen, matchFor = null, renderThumb = null }) {
+export default function ComparePanel({ product, others = [], onOpen, matchFor = null, detailsFor = null, renderThumb = null }) {
   // Starts with the closest alternatives; she can swap in anything from the catalog.
   const [picked, setPicked] = useState(() => others.slice(0, 2).map((p) => p.id));
   const [q, setQ] = useState('');
   const byId = useMemo(() => new Map(ALL_PRODUCTS.map((p) => [p.id, p])), []);
   const chosen = picked.map((id) => byId.get(id) || others.find((o) => o.id === id)).filter(Boolean);
   const cols = [product, ...chosen].filter(Boolean);
-  const rows = compareRows(cols, { matchFor });
+  const rows = compareRows(cols, { matchFor, detailsFor });
+  // One plain sentence on why the top one ranks first, from the engine's reasons.
+  const firstLine = detailsFor && cols.length > 1 ? whyFirstLine(cols.map((p) => ({ product: p, details: detailsFor(p) }))) : '';
   const term = q.trim().toLowerCase();
   const results = term.length < 2 ? [] : ALL_PRODUCTS.filter((p) => p.id !== product.id && !picked.includes(p.id) && `${p.brand || ''} ${p.name}`.toLowerCase().includes(term)).slice(0, 6);
   const suggestions = others.filter((o) => !picked.includes(o.id)).slice(0, 5);
@@ -28,7 +33,7 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
   return (
     <section className="ay-compare" id="ay-sec-compare" tabIndex={-1} aria-labelledby="ay-compare-h">
       <div className="ay-pdp-sechead">
-        <h2 id="ay-compare-h">Compare with <em>similar.</em></h2>
+        <h2 id="ay-compare-h">Similar fit for you</h2>
       </div>
       <div className="ay-compare__pick">
         <label className="ay-compare__search">
@@ -42,6 +47,7 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
           <div className="ay-compare__sugg"><span>Related:</span>{suggestions.map((p) => <button key={p.id} type="button" onClick={() => add(p)}>+ {p.name}</button>)}</div>
         )}
       </div>
+      {firstLine && cols.length > 1 && rows.length > 0 && <p className="ay-compare__first">{firstLine}</p>}
       {cols.length < 2 || !rows.length ? <p className="ay-compare__empty">Pick a product above to compare.</p> : <div className="ay-compare__frame"><div className="ay-compare__scroll" ref={scrollRef} role="region" aria-labelledby="ay-compare-h" tabIndex={0}>
         <table>
           <thead>
@@ -61,7 +67,12 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
             {rows.map((r) => (
               <tr key={r.label}>
                 <th scope="row">{r.label}</th>
-                {r.values.map((v, i) => <td key={cols[i].id} className={`${i === 0 ? 'is-this' : ''}${v === NOT_ON_FILE ? ' is-unknown' : ''}`.trim() || undefined}>{v === NOT_ON_FILE ? '' : v}</td>)}
+                {/* Evidence: the grade (only from .gov) and the per-level marks, from the same function as the product page. */}
+                {r.values.map((v, i) => (
+                  <td key={cols[i].id} className={`${i === 0 ? 'is-this' : ''}${v === NOT_ON_FILE ? ' is-unknown' : ''}`.trim() || undefined}>
+                    {r.label === 'Evidence' ? (() => { const ev = evidenceFor(cols[i]); return <><span className="ay-compare__evstatus">{ev.status}</span><EvidenceCounts ev={ev} people={false} /></>; })() : v === NOT_ON_FILE ? '' : v}
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>

@@ -56,7 +56,7 @@ export function inPlace(handler) {
 // sky stay as box colours; as text they turn espresso so they read on yellow.
 export const DESIGNED_BASE_CSS = `
 :host { all: initial; display: block; }
-.ay-read { font-family: 'DM Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.ay-read { font-family: 'Figtree', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
 .ay-read, .ay-read * { box-sizing: border-box; }
 .ay-read [id] { scroll-margin-top: 96px !important; }
 .ay-read aside { top: 96px !important; }

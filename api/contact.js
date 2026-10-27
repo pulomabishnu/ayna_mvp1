@@ -1,5 +1,27 @@
-/* global process, fetch */
+/* global process */
 import { getClientIp, rateLimit } from './_rateLimit.js';
+import { getServiceClient } from './_usageLimit.js';
+
+/**
+ * Stores a copy of the message in public.contact_messages (server only, see
+ * supabase/contact_messages_2026-10-21.sql) so the founders' submissions sheet
+ * can list it. Never throws: if the table is missing or Supabase is down, the
+ * email below still goes out. Logs only the error message, never the row.
+ */
+export async function storeContactMessage(row, client = getServiceClient()) {
+  if (!client) return false;
+  try {
+    const { error } = await client.from('contact_messages').insert(row);
+    if (error) {
+      console.error('[contact] store failed:', error.message);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error('[contact] store failed:', e?.message);
+    return false;
+  }
+}
 
 const ALLOWED_REASONS = new Set([
   'Partnerships',
@@ -95,6 +117,8 @@ export default async function handler(req, res) {
       error: 'Contact email is temporarily unavailable. Please try again shortly.',
     });
   }
+
+  await storeContactMessage({ name, email, reason, subject, message });
 
   const safeName = escapeHtml(name);
   const safeEmail = escapeHtml(email);

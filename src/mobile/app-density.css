@@ -7,17 +7,17 @@
 
 /* ---------- Headings ---------- */
 /* Welcome cover: 40 -> 36 */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 500 !important; }
 /* Page titles */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-titlebar h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-title h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .am-top .am-title h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 500 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-titlebar h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 500 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-title h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 500 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .am-top .am-title h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 500 !important; }
 /* Section heads and empty states */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty h2 { font-size: calc(22px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty h2 { font-size: calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 500 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head h2,
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { font-size: calc(22px * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 400 !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-badges2__head h2 { font-size: calc(15px * var(--ayna-text-scale, 1)) !important; line-height: 1.45 !important; font-weight: 400 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { font-size: calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1)) !important; line-height: 1.15 !important; font-weight: 500 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-badges2__head h2 { font-size: calc(15px * var(--ayna-text-scale, 1)) !important; line-height: 1.45 !important; font-weight: 500 !important; }
 /* Profile hub: name 27 -> 24 (inline size, so !important) */
 .ayna-mobile.ayna-mobile .ayna-fresh-profile-hub .ay-hub-avatar + div > div:first-child { font-size: calc(17px * var(--ayna-text-scale, 1)) !important; font-weight: 600 !important; }
 

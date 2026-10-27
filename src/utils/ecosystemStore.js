@@ -1,5 +1,6 @@
 import { compactLegacyAuthMetadata } from './authMetadataCleanup';
 import { toCatalogProduct } from './catalogIntegrity';
+import { loadCatalog } from '../data/catalog.js';
 
 /**
  * Supabase persistence for user_ecosystems.
@@ -207,6 +208,10 @@ async function syncActiveShadowRows(supabase, userId, shadow, onlyIds = null) {
 }
 
 export async function loadEcosystemForUser(supabase, userId) {
+  // Rows are checked against the catalog (hydrateFromRows), which loads after
+  // first paint: wait for it so no product is dropped for arriving early.
+  const catalogReady = loadCatalog();
+  catalogReady.catch(() => {}); // awaited below; this only marks it handled
   // This also migrates any legacy Auth-metadata shadow into sessionStorage and
   // refreshes the JWT so subsequent Vercel API calls do not carry a huge header.
   try { await compactLegacyAuthMetadata(supabase); } catch (error) {
@@ -264,6 +269,7 @@ export async function loadEcosystemForUser(supabase, userId) {
     console.warn('[Ayna] user_ecosystems read/write unavailable; restored ecosystem from session fallback:', describeError(dbError, 'loadEcosystem'));
   }
 
+  await catalogReady;
   return hydrateFromRows(mergedRows);
 }
 

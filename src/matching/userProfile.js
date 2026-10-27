@@ -22,7 +22,7 @@ import {
   LIFE_STAGE_ID_BY_OPTION, LIFE_STAGE_COMPATIBILITY, ageBandFor, UNUSUAL_AGE_FOR_STAGE, FORMAT_ID_BY_OPTION, LEAVE_OUT_BY_OPTION,
   VALUE_ID_BY_OPTION, ALLERGEN_BY_OPTION, ALLERGEN_BY_ID, PCOS_REINFORCING_NEEDS, URINARY_UTI_NEEDS, MENSTRUAL_PRODUCT_NEEDS, POSTPARTUM_NEEDS,
   normalizeText, LEGACY_FRUSTRATION_NEEDS, LEGACY_CONCERN_NEEDS, LEGACY_SYMPTOM_NEEDS, LEGACY_PREFERENCE, LEGACY_SENSITIVITY_ALLERGEN,
-  CONTEXTS, LIFE_STAGE_BY_ID, needKind,
+  CONTEXTS, LIFE_STAGE_BY_ID, needKind, bleedingAfterMenopause, isBleedingAfterMenopauseNeed,
 } from './ontology.js';
 import { normalizeMedication } from './medications.js';
 import { extractFreeText, summarizeFreeText } from './freeText.js';
@@ -104,6 +104,8 @@ export const EXPERIENCE_EFFECTS = {
     no_difference: { same: -0.45, similar: -0.15, dimension: 'health', facet: 'mechanism', note: 'near duplicates down' },
     made_worse: { same: 0, similar: -0.2, dimension: 'safety', facet: 'ingredients', hardSuppress: true, note: 'shared formulations down' },
     not_sure: { same: 0, similar: 0, dimension: 'health', facet: 'mechanism' },
+    // Only from a tracked try (outcomes.js sideEffect), never inferred.
+    side_effect: { same: 0, similar: 0, dimension: 'safety', facet: 'ingredients', hardSuppress: true, safetyFlag: true, note: 'hide the same product' },
   },
   reaction: {
     none: { same: 0, similar: 0, dimension: 'safety', facet: 'ingredients' },
@@ -221,6 +223,34 @@ function singleState(value, { no = [], notSure = [], preferNot = [] } = {}) {
   if (preferNot.includes(v) || PREFER_NOT_RE.test(v)) return 'prefer_not';
   if (notSure.includes(v) || NOT_SURE_RE.test(v)) return 'not_sure';
   return 'answered';
+}
+
+/**
+ * "Not relevant" answers -> Map(productId -> Set of needIds, '*' = every need).
+ * Accepts ['id'], [{ id|productId, needId }], or { id: true | needId | [needIds] | { needId } }.
+ */
+function dismissedMap(v) {
+  const out = new Map();
+  const add = (id, needId) => {
+    if (id == null || id === '') return;
+    const key = String(id);
+    const set = out.get(key) || new Set();
+    set.add(needId ? String(needId) : '*');
+    out.set(key, set);
+  };
+  if (!v) return out;
+  if (v instanceof Set) v.forEach((id) => add(id, null));
+  else if (Array.isArray(v)) v.forEach((x) => (x && typeof x === 'object' ? add(x.id ?? x.productId, x.needId) : add(x, null)));
+  else if (typeof v === 'object') {
+    for (const [id, val] of Object.entries(v)) {
+      if (!val) continue;
+      if (Array.isArray(val)) { if (val.length) val.forEach((n) => add(id, n)); else add(id, null); }
+      else if (typeof val === 'string') add(id, val);
+      else if (typeof val === 'object') add(id, val.needId || null);
+      else add(id, null);
+    }
+  }
+  return out;
 }
 
 /**
@@ -358,6 +388,7 @@ export function buildUserProfile(intakeInput, options = {}) {
   }
   const conditionIds = new Set(conditions.map((c) => c.id));
   const conditionsState = diagnosisSel.includes('Prefer not to say') && !conditions.length ? 'prefer_not'
+    : diagnosisSel.includes('Not sure') && !conditions.length ? 'not_sure'
     : diagnosisSel.includes('None that I know of') && !conditions.length ? 'explicit_no'
       : conditions.length ? 'answered' : diagnosisSel.length || arr(intake.conditions).length ? 'answered' : 'skipped';
 
@@ -530,6 +561,8 @@ export function buildUserProfile(intakeInput, options = {}) {
     if (outcome) effects.push({ from: `outcome:${outcome}`, ...EXPERIENCE_EFFECTS.outcome[outcome] });
     if (reaction) effects.push({ from: `reaction:${reaction}`, ...EXPERIENCE_EFFECTS.reaction[reaction] });
     stopReasons.forEach((r) => effects.push({ from: `stop:${r}`, ...EXPERIENCE_EFFECTS.stop[r] }));
+    // "Side effect" recorded on a try (src/health/outcomes.js): hide this product, like "Worse".
+    if (h.sideEffect === true) effects.push({ from: 'outcome:side_effect', ...EXPERIENCE_EFFECTS.outcome.side_effect });
     return {
       name: h.name,
       normalized: normalizeName(h.name),
@@ -678,14 +711,27 @@ export function buildUserProfile(intakeInput, options = {}) {
     reordered: new Set(idList(b.reordered)),
     // Prices of past purchases (numbers). Used only to soften the budget curve a little.
     purchasedPrices: arr(b.purchasedPrices).map(Number).filter(Number.isFinite),
+    // Remembered history the engine honors (src/matching/forYou.js historyState).
+    // All of it is read fresh each time, so removing an entry is the undo.
+    // dismissed: "Not relevant" -> Map(productId -> Set(needIds | '*')).
+    dismissed: dismissedMap(b.dismissed),
+    // In her routine (counts as already having it).
+    routine: new Set(idList(b.routine)),
+    // Tried and it did not help (her product history: "No difference", or
+    // stopped because it did not help or stopped working).
+    triedWithoutHelp: new Set(history
+      .filter((h) => h.resolvedProductId && (h.outcome === 'no_difference' || h.stopReasons.some((r) => r === 'did_not_help' || r === 'stopped_working')))
+      .map((h) => String(h.resolvedProductId))),
   };
 
   const urgent = intake.safetyConcern === 'Yes' ? 'yes' : intake.safetyConcern === 'Not sure' ? 'not_sure' : intake.safetyConcern === 'No' ? 'no' : null;
 
   // ── Contradictions between explicit answers (spec B) ─────────────────
-  const periodNeeds = needs.filter((n) => MENSTRUAL_PRODUCT_NEEDS.has(n.id) || n.id === 'pain.menstrual_cramp').map((n) => n.id);
-  if (periodNeeds.length && ['menopause', 'postmenopause'].some((st) => lifeStages.includes(st))) {
-    contradictions.push({ code: 'period_need_vs_stage', affects: periodNeeds, text: 'You asked for period support and also chose menopause or post-menopause. Bleeding after menopause is worth raising with a clinician.' });
+  const periodNeeds = needs.filter((n) => isBleedingAfterMenopauseNeed(n.id)).map((n) => n.id);
+  if (bleedingAfterMenopause(lifeStages, periodNeeds)) {
+    // Founder, Oct 24: bleeding or spotting after menopause gets a prompt-evaluation
+    // message and no products for it (src/matching/eligibility.js postmenopausalBleedingBlock).
+    contradictions.push({ code: 'period_need_vs_stage', affects: periodNeeds, prominent: true, source: { label: 'MedlinePlus: Vaginal or uterine bleeding', url: 'https://medlineplus.gov/ency/article/007496.htm' }, text: 'You chose period or bleeding support and also menopause or post-menopause. Bleeding or spotting 12 months or more after your last period should be checked promptly by an ob-gyn or your clinician. ayna does not suggest products for it.' });
   }
   if ((needIds.has('fertility.ttc') || lifeStages.includes('ttc')) && lifeStages.includes('postmenopause')) {
     contradictions.push({ code: 'ttc_vs_postmenopause', affects: ['fertility.ttc'], text: 'Trying to conceive and post-menopause do not usually go together.' });

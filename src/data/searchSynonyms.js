@@ -541,7 +541,7 @@ export const KNOWN_BRANDS = [
 ];
 
 /** Popular searches shown when a word is not recognised ("try ..."). */
-export const POPULAR_SEARCHES = ['period underwear', 'PMS', 'cramps', 'sleep', 'UTI', 'prenatal vitamins', 'menopause', 'lube'];
+export const POPULAR_SEARCHES = ['period underwear', 'PMS', 'cramps', 'sleep', 'UTI', 'pregnancy', 'menopause', 'lube'];
 
 /** Every canonical term the engine should prefer when correcting. */
 export function curatedCanonicalTerms() {

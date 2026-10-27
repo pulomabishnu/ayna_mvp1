@@ -1,0 +1,177 @@
+/* Home widgets and the Customize Home sheet (src/home). Structure only, on
+   the existing Home / Today tokens: a design pass restyles this later.
+   App: two columns, small = 1, large = 2, fixed tile height so Home stays
+   on one 390x844 screen. Web Today: four columns, height follows content.
+   Brand palette only (butter, pink, sky, espresso) via the --x-* tokens. */
+
+.ayna-mobile :is(.ay-homewidgets, .ay-chs-layer) {
+  --x-ink: var(--d-ink, #3e2723); --x-soft: var(--d-ink-2, rgba(62, 39, 35, .75)); --x-group: var(--d-group, #f6e3a1); --x-hair: var(--d-hair, rgba(62, 39, 35, .15));
+  --x-page: var(--d-page, #ffedac); --x-pink: var(--d-pink, #f7badd); --x-sky: var(--d-sky, #769ebe);
+  --x-sans: var(--f-ui, 'Figtree', sans-serif); --x-serif: var(--ay-app-heading, var(--f-display, 'ayna Display', serif)); --x-scale: var(--ayna-text-scale, 1);
+}
+.app-container :is(.ay-homewidgets, .ay-chs-layer) {
+  --x-ink: var(--wh-ink, var(--ay-text, #3e2723)); --x-soft: var(--wh-soft, var(--ay-text-2, rgba(62, 39, 35, .74))); --x-group: var(--ay-group, #f6e3a1); --x-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
+  --x-page: var(--ay-page, #ffedac); --x-pink: #f7badd; --x-sky: #769ebe;
+  --x-sans: var(--ay-sans, 'Figtree', sans-serif); --x-serif: var(--ay-serif, 'ayna Display', serif); --x-scale: 1;
+}
+
+/* ---- The widget area ---- */
+.ay-homewidgets { display: grid; gap: 6px; min-width: 0; color: var(--x-ink); font-family: var(--x-sans); }
+.ay-homewidgets__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.app-container .ay-homewidgets { margin: 0 0 20px; }
+@media (min-width: 720px) { .app-container .ay-homewidgets__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; } }
+.ay-homewidgets__cell { min-width: 0; display: grid; }
+.ay-homewidgets__cell.is-large { grid-column: span 2; }
+.ay-homewidgets__bar { display: flex; justify-content: flex-end; }
+.ay-homewidgets__edit { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 4px; border: 0; background: transparent; color: var(--x-ink); font: 600 max(13px, calc(13px * var(--x-scale)))/1 var(--x-sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ay-homewidgets__edit svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linejoin: round; stroke-linecap: round; }
+
+/* ---- One widget ---- */
+.ay-w { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 10px 14px; border-radius: 16px; background: var(--x-group); color: var(--x-ink); overflow: hidden; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), .app-container) .ay-w__title { margin: 0; font: 600 calc(14px * var(--x-scale))/1.3 var(--x-sans); color: var(--x-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), .app-container) .ay-w__big { margin: 0; font: 400 calc(20px * var(--x-scale))/1.15 var(--x-serif); }
+.ay-w__big small { font: 400 max(13px, calc(13px * var(--x-scale)))/1.2 var(--x-sans); color: var(--x-soft); }
+.ay-w__sub, .ay-w__empty, .ay-w__lead { margin: 0; font: 400 calc(13px * var(--x-scale))/1.35 var(--x-sans); color: var(--x-soft); overflow-wrap: anywhere; }
+.ay-w__lead { color: var(--x-ink); font-weight: 600; }
+.ay-w__lines, .ay-w__products, .ay-w__chips { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; font: 400 calc(13px * var(--x-scale))/1.35 var(--x-sans); color: var(--x-ink); }
+.ay-w__lines li, .ay-w__products li { min-width: 0; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ay-w__products li { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ay-w__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ay-w__chips :is(button, span) { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border: 1.5px solid var(--x-ink); border-radius: 999px; background: transparent; color: var(--x-ink); font: 600 calc(13px * var(--x-scale))/1 var(--x-sans); }
+.ay-w__name { min-width: 0; padding: 0; border: 0; background: none; color: var(--x-ink); text-align: left; font: inherit; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; text-decoration: underline; text-decoration-color: var(--x-hair); text-underline-offset: 3px; }
+.ay-w__buy { flex: none; display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border-radius: 999px; background: var(--x-ink); color: var(--x-page); font: 600 calc(13px * var(--x-scale))/1 var(--x-sans); text-decoration: none; }
+.ay-w__act { align-self: flex-start; margin-top: auto; min-height: 32px; padding: 0; border: 0; background: none; color: var(--x-ink); font: 600 max(13px, calc(13px * var(--x-scale)))/1 var(--x-sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ay-w :is(button, a):focus-visible { outline: 3px solid var(--x-ink); outline-offset: 2px; border-radius: 6px; }
+
+/* Colour-block tiles (inspo 455687ac): one brand fill per category, espresso
+   ink on butter, pink and sky; butter ink on espresso. Same in dark mode. */
+.ay-w[data-tone] { --x-ink: #3e2723; --x-soft: rgba(62, 39, 35, .78); --x-hair: rgba(62, 39, 35, .22); --x-page: #ffedac; }
+.ay-w[data-tone='butter'] { background: #ffedac; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .22); }
+.ay-w[data-tone='pink'] { background: #f7badd; }
+.ay-w[data-tone='sky'] { background: #769ebe; }
+.ay-w[data-tone='espresso'] { --x-ink: #ffedac; --x-soft: rgba(255, 237, 172, .82); --x-hair: rgba(255, 237, 172, .25); --x-page: #3e2723; background: #3e2723; }
+.ay-w[data-tone='pink'] .ay-w-cycle li.is-period { background: #3e2723; }
+
+/* Big numeral beside a ring (log streak). */
+.ay-w__numring { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ay-w-ring { flex: none; width: 40px; height: 40px; }
+.ay-w-ring circle { fill: none; stroke-width: 5; }
+.ay-w-ring__track { stroke: var(--x-hair); }
+.ay-w-ring__fill { stroke: var(--x-ink); stroke-linecap: round; }
+
+/* Charts: bars and lines in espresso, period days in pink. */
+.ay-w-chart { margin: 4px 0 0; }
+.ay-w-chart svg { display: block; width: 100%; }
+.ay-w-chart rect { fill: var(--x-ink); }
+.ay-w-chart rect.is-mark { fill: var(--x-pink); }
+.ay-w-chart__line { fill: none; stroke: var(--x-ink); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.ay-w-chart__dot { fill: none; stroke: var(--x-ink); stroke-width: 6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.ay-w-chart__base { stroke: var(--x-hair); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ay-w-chart figcaption { display: flex; justify-content: space-between; font: 500 max(13px, calc(13px * var(--x-scale)))/1.3 var(--x-sans); color: var(--x-soft); }
+.ay-w-cycle { list-style: none; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 2px; margin: 4px 0 2px; padding: 0; }
+.ay-w-cycle li { height: 18px; border-radius: 4px; background: var(--x-page); border: 1px solid var(--x-hair); }
+.ay-w-cycle li.is-period { background: var(--x-pink); border-color: var(--x-ink); }
+
+/* App (iOS-widget style): four columns, one 88px row. Small = 1 column,
+   large = 2, so the 4-space cap is exactly one row and Home stays on one
+   390x844 screen. Today's health row alone keeps the full width. */
+.ayna-mobile .ay-homewidgets__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 88px; gap: 8px; }
+.ayna-mobile .ay-homewidgets__cell.is-wide { grid-column: 1 / -1; }
+.ayna-mobile .ay-homewidgets__grid:has(.is-wide) { grid-auto-rows: auto; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w { position: relative; height: 100%; padding: 8px 10px; gap: 2px; border-radius: 16px; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w:not(.ay-homehealth) > * { flex-shrink: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w--small:not(.ay-homehealth) { padding: 8px; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w--small .ay-w__title { font-size: max(13px, calc(13px * var(--x-scale))); }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w__title { font-size: calc(13px * var(--x-scale)); }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w--large:has(.ay-w__act) .ay-w__title { padding-right: 64px; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w__act { position: absolute; top: 4px; right: 10px; min-height: 28px; margin: 0; font-size: max(13px, calc(13px * var(--x-scale))); }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w--small .ay-w__act { display: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w__big { font-size: calc(18px * var(--x-scale)); }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w__big small { display: block; }
+.ayna-mobile .ay-homewidgets :is(.ay-w__sub, .ay-w__empty, .ay-w__lines, .ay-w__products, .ay-w__lead) { font-size: max(13px, calc(13px * var(--x-scale))); line-height: 1.3; }
+.ayna-mobile .ay-homewidgets :is(.ay-w__sub, .ay-w__empty) { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex-shrink: 1; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w__lines li { -webkit-line-clamp: 2; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w-chart figcaption { display: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w-chart svg { height: 30px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w--small .ay-w__buy { display: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-w__chips :is(button, span) { min-height: 26px; padding: 0 8px; font-size: 13px; }
+/* Home's health row keeps its own look (ayna-home.css) as the default widget. */
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-homehealth.ay-w { flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-radius: 20px; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-homewidgets__cell:not(.is-wide) .ay-homehealth.ay-w { flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 2px; padding: 8px 10px; border-radius: 16px; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-homewidgets__cell:not(.is-wide) .ay-homehealth p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 13px; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-homewidgets__cell:not(.is-wide) .ay-homehealth__actions > :not(:first-child) { display: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-homewidgets, .ay-chs-add__preview) .ay-homewidgets__cell:not(.is-wide) .ay-homehealth__actions button { min-height: 24px; }
+/* Home's two links share the last row with Edit. */
+.ayna-mobile .ay-homewidgets__bar.has-links { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: stretch; }
+.ayna-mobile .ay-homewidgets__bar.has-links .ay-homewidgets__edit { flex-direction: column; justify-content: center; gap: 2px; min-width: 52px; min-height: 56px; padding: 0 6px; border: 1.5px solid var(--x-ink); border-radius: 16px; text-decoration: none; }
+.app-container .ay-homewidgets .ay-homehealth { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.app-container .ay-homewidgets .ay-homehealth h2 { margin: 0; font: 600 14px/1.3 var(--x-sans); }
+.app-container .ay-homewidgets .ay-homehealth p { margin: 2px 0 0; font: 400 14px/1.35 var(--x-sans); color: var(--x-soft); }
+
+/* ---- Customize Home sheet ---- */
+.ay-chs-layer { position: fixed; inset: 0; z-index: 2147482900; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.ay-chs-dim { position: absolute; inset: 0; background: rgba(62, 39, 35, .4); }
+.ay-chs { position: relative; display: flex; flex-direction: column; width: 100%; max-width: 640px; max-height: 88dvh; min-height: 0; border-radius: 20px 20px 0 0; background: var(--x-page); color: var(--x-ink); font-family: var(--x-sans); touch-action: pan-y; }
+.app-container .ay-chs-layer { justify-content: center; padding: 24px; }
+.app-container .ay-chs { border-radius: 20px; max-height: 86vh; }
+@media (max-width: 640px) { .app-container .ay-chs-layer { justify-content: flex-end; padding: 0; } .app-container .ay-chs { border-radius: 20px 20px 0 0; } }
+.ay-chs > .ay-sheet-grabber { position: absolute; top: 0; left: 50%; width: 88px; height: 24px; margin: 0 0 0 -44px; border: 0; background: transparent; color: currentColor; }
+.ay-chs__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 20px 10px; border-bottom: 1px solid var(--x-hair); }
+.ay-chs__top h2 { margin: 0; font: 400 calc(24px * var(--x-scale))/1.15 var(--x-serif); }
+.ay-chs__done { min-height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--x-ink); color: var(--x-page); font: 600 15px/1 var(--x-sans); cursor: pointer; }
+.ay-chs__scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px 20px max(20px, env(safe-area-inset-bottom)); }
+.ay-chs__sec { display: grid; gap: 8px; padding: 12px 0; }
+.ay-chs__sec h3 { margin: 0; font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans); }
+.ay-chs-fixed, .ay-chs-list, .ay-chs-cats, .ay-chs-addlist { list-style: none; margin: 0; padding: 0; }
+.ay-chs-fixed { padding: 4px 14px; border-radius: 16px; background: var(--x-group); }
+.ay-chs-fixed li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; font: 500 14px/1.3 var(--x-sans); }
+.ay-chs-fixed li + li { border-top: 1px solid var(--x-hair); }
+.ay-chs-fixed small { color: var(--x-soft); font-size: 13px; }
+.ay-chs-cap { margin: 0; font: 500 13px/1.4 var(--x-sans); color: var(--x-soft); }
+.ay-chs-cap.is-full, .ay-chs-full { color: var(--x-ink); font-weight: 600; }
+.ay-chs-none { margin: 0; font: 400 14px/1.4 var(--x-sans); color: var(--x-soft); }
+.ay-chs-list { display: grid; gap: 6px; }
+.ay-chs-row { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: 'handle name size' 'handle config config' 'handle moves moves'; align-items: center; gap: 4px 8px; padding: 8px 12px 8px 4px; border-radius: 16px; background: var(--x-group); touch-action: none; }
+.ay-chs-row.is-dragging { outline: 2px solid var(--x-ink); }
+.ay-chs-handle { grid-area: handle; align-self: stretch; width: 40px; min-height: 44px; display: grid; place-items: center; border: 0; background: transparent; color: var(--x-ink); cursor: grab; touch-action: none; }
+.ay-chs-handle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; }
+.ay-chs-row__name { grid-area: name; font: 600 15px/1.3 var(--x-sans); min-width: 0; }
+.ay-chs-row .ay-chs-size { grid-area: size; }
+.ay-chs-row .ay-chs-config { grid-area: config; }
+.ay-chs-row__moves { grid-area: moves; display: flex; flex-wrap: wrap; gap: 0 18px; }
+.ay-chs-row__moves button, .ay-chs-reset { min-height: 44px; padding: 0; border: 0; background: none; color: var(--x-ink); font: 600 13px/1 var(--x-sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ay-chs-row__moves button:disabled, .ay-chs-reset:disabled { opacity: .45; cursor: default; }
+.ay-chs-size { display: inline-flex; padding: 2px; border: 1.5px solid var(--x-ink); border-radius: 999px; }
+.ay-chs-size button { min-height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: var(--x-ink); font: 600 13px/1 var(--x-sans); cursor: pointer; }
+.ay-chs-size button[aria-pressed='true'] { background: var(--x-ink); color: var(--x-page); }
+.ay-chs-size button:disabled { opacity: .4; cursor: default; }
+.ay-chs-config { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font: 500 13px/1.3 var(--x-sans); }
+.ay-chs-config select { min-height: 36px; padding: 0 10px; border: 1.5px solid var(--x-ink); border-radius: 10px; background: var(--x-page); color: var(--x-ink); font: 500 14px/1 var(--x-sans); }
+.ay-chs-cats { display: grid; gap: 6px; }
+.ay-chs-cat { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 48px; padding: 0 16px; border: 1.5px solid var(--x-ink); border-radius: 16px; background: transparent; color: var(--x-ink); font: 600 15px/1.2 var(--x-sans); cursor: pointer; }
+.ay-chs-cat[aria-expanded='true'] { background: var(--x-ink); color: var(--x-page); }
+.ay-chs-cat small { font-weight: 500; }
+.ay-chs-addlist { display: grid; gap: 10px; padding: 10px 0 4px; }
+.ay-chs-add { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--x-hair); border-radius: 16px; }
+.ay-chs-add__head h4 { margin: 0; font: 600 15px/1.3 var(--x-sans); }
+.ay-chs-add__head p { margin: 2px 0 0; font: 400 13px/1.4 var(--x-sans); color: var(--x-soft); }
+.ay-chs-add__preview { max-width: 360px; pointer-events: none; }
+.ay-chs-add__preview .ay-w { height: 88px; }
+.ayna-mobile .ay-chs-add__preview .ay-w--small { width: 96px; }
+.ayna-mobile .ay-chs-add__preview .ay-w--large { width: 200px; }
+.app-container .ay-chs-add__preview .ay-w { height: auto; min-height: 96px; }
+.app-container .ay-chs-add__preview .ay-w--small { max-width: 220px; }
+.ay-chs-add__controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.ay-chs-addbtn { min-height: 40px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--x-ink); color: var(--x-page); font: 600 14px/1 var(--x-sans); cursor: pointer; }
+.ay-chs-addbtn:disabled { opacity: .45; cursor: default; }
+.ay-chs-on { font: 600 13px/1.3 var(--x-sans); color: var(--x-soft); }
+.ay-chs-full { margin: 0; font: 600 13px/1.4 var(--x-sans); }
+.ay-chs__foot { padding: 8px 0 4px; border-top: 1px solid var(--x-hair); }
+.ay-chs :is(button, select):focus-visible { outline: 3px solid var(--x-ink); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { .ay-chs { animation: ay-chs-up 360ms cubic-bezier(.34, 1.36, .64, 1) backwards; } }
+@keyframes ay-chs-up { from { transform: translateY(100%); } to { transform: none; } }
+
+/* Website: Today's own heading styles must not resize widget titles. */
+html body .app-container .ay-homewidgets .ay-w .ay-w__title { margin: 0 !important; font: 600 15px/1.3 var(--x-sans) !important; letter-spacing: 0 !important; color: var(--x-ink) !important; }
+html body .app-container .ay-homewidgets .ay-w .ay-w__big { font: 400 24px/1.15 var(--x-serif) !important; color: var(--x-ink) !important; }
+html body .app-container .ay-chs .ay-chs-add__head h4, html body .app-container .ay-chs .ay-chs__sec h3 { margin: 0 !important; font: 600 15px/1.3 var(--x-sans) !important; letter-spacing: 0 !important; color: var(--x-ink) !important; }

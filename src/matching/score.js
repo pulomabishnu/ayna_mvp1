@@ -36,6 +36,7 @@ import { NEED_BY_ID, needPhrase, canonicalNeedId, CONDITION_PATHWAYS, CONDITION_
 import { buildProductProfile, normalizeBrand, CONTEXT_BONUS, productSimilarity, CYCLE_DEPENDENT_RULES, CYCLE_TRACKING_RULES } from './productProfile.js';
 import { checkMedicationInteractions, INTERACTION_TABLE } from './medications.js';
 import { normalizeName } from './userProfile.js';
+import { lifeStageBlock, lifeStageNeedBlock, postmenopausalBleedingBlock } from './eligibility.js';
 
 // Preference dimension weights (only known + applicable ones count).
 export const DIMENSION_WEIGHTS = { context: 3, format: 2, values: 2, price: 2, evidence: 2, brand: 1, effort: 1 };
@@ -243,6 +244,11 @@ export function evaluateSafety(productOrProfile, up) {
   // Passport states recalled / discontinued / unavailable count here too.
   const STATUS_TEXT = { recalled: 'This product has an active recall', discontinued: 'This product has been discontinued', unavailable: 'We could not find this product for sale right now' };
   if (pp.status && pp.status.state !== 'active') reasons.push({ code: `status_${pp.status.state}`, text: STATUS_TEXT[pp.status.state] || 'This listing is no longer available' });
+  // 0b. Life-stage eligibility (src/matching/eligibility.js), before any
+  //     preference: no cycle trackers or ovulation tests for someone who has
+  //     no menstrual cycle now (menopause, post-menopause, pregnancy).
+  const stageBlock = lifeStageBlock(pp, up);
+  if (stageBlock) reasons.push(stageBlock);
   const missingProductInfo = [];
   const pk = pp.passport?.known || null; // null: no passport, nothing to add
   const bodyRoute = pp.ingested || pp.formats.includes('suppository') || pp.formats.includes('topical');
@@ -259,6 +265,7 @@ export function evaluateSafety(productOrProfile, up) {
   for (const h of up.experience.history) {
     if (!sameProduct(h, pp)) continue;
     if (h.effects.some((e) => e.from === 'outcome:made_worse')) reasons.push({ code: 'history_made_worse', text: 'You said this made things worse' });
+    if (h.effects.some((e) => e.from === 'outcome:side_effect')) reasons.push({ code: 'history_side_effect', text: 'You reported a side effect from this' });
     if (h.exclude) reasons.push({ code: 'history_serious_reaction', text: 'You had a serious reaction to this product' });
     if (h.effects.some((e) => e.from === 'stop:clinician_stop')) reasons.push({ code: 'history_clinician_stop', text: 'A clinician recommended you stop this product' });
   }
@@ -557,16 +564,23 @@ export function resolveRelevance(pp, up, needId) {
  * - Any cycle-dependent relevance on a need that does not presume a cycle
  *   (an ovulation test for "hormone-related symptoms") is dropped.
  * - With no cycle at all (menopause, post-menopause, pregnancy), cycle
- *   trackers and ovulation tests are dropped for cycle needs too, unless she
- *   explicitly asked for fertility or ovulation support.
- * - Period products stay for period needs she explicitly selected (bleeding
- *   still needs products; the contradiction lowers confidence and care
- *   notes cover it).
+ *   trackers and ovulation tests are dropped for cycle needs too. A product
+ *   that is itself a cycle tracker or ovulation test is not eligible for her
+ *   at all (eligibility.js lifeStageBlock, in evaluateSafety), even for a
+ *   fertility need she picked; a care service keeps its fertility relevance.
+ * - After menopause, relevance from a claim about a current cycle (PMS,
+ *   cyclical breast tenderness, conception) is dropped (lifeStageNeedBlock).
+ * - Bleeding after menopause (a period or bleeding need she picked while in
+ *   menopause or post-menopause): no products for it, only the prompt-
+ *   evaluation message (founder, Oct 24; postmenopausalBleedingBlock).
  */
 export function notMenstruatingBlock(rel, up, needId) {
   const m = up.physiology?.menstruation;
   if (!m || !(rel.base > 0)) return false;
   const rule = rel.contextUsed?.rule || rel.entry?.rule;
+  // After menopause, a claim about a current cycle (PMS, cyclical breast
+  // tenderness, conception) does not hold even for a need she picked.
+  if (lifeStageNeedBlock(rel, up, needId)) return true;
   if (!CYCLE_DEPENDENT_RULES.has(rule)) return false;
   if (!isCyclePremisedNeed(needId)) return true;
   return m === 'none' && CYCLE_TRACKING_RULES.has(rule) && !String(needId).startsWith('fertility.');
@@ -1016,8 +1030,10 @@ export function scoreProductForNeed(productOrProfile, up, needIdIn, opts = {}) {
   const rel = resolveRelevance(pp, up, needId);
   // She does not menstruate now: relevance that only holds for someone who
   // does (period products, cycle trackers, ovulation tests) does not count.
-  const cycleBlocked = notMenstruatingBlock(rel, up, needId);
-  if (cycleBlocked) notes.filtered = 'not_menstruating';
+  // Bleeding after menopause: evaluation first, no products for it (founder, Oct 24).
+  const bleedingBlocked = rel.base > 0 && postmenopausalBleedingBlock(pp, up, needId);
+  const cycleBlocked = bleedingBlocked || notMenstruatingBlock(rel, up, needId);
+  if (cycleBlocked) notes.filtered = bleedingBlocked ? 'postmenopausal_bleeding' : 'not_menstruating';
   const base = cycleBlocked ? 0 : rel.base;
   const health = healthComponent(pp, up, need, base, notes);
   const relationship = cycleBlocked ? 'unrelated' : rel.relationship;

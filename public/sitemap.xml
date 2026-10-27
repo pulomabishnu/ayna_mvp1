@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://www.aynahealth.co/</loc></url>
-  <url><loc>https://www.aynahealth.co/shop</loc></url>
-  <url><loc>https://www.aynahealth.co/library</loc></url>
+  <url><loc>https://www.aynahealth.co/explore</loc></url>
+  <url><loc>https://www.aynahealth.co/explore/products</loc></url>
+  <url><loc>https://www.aynahealth.co/explore/services</loc></url>
+  <url><loc>https://www.aynahealth.co/explore/topics</loc></url>
+  <url><loc>https://www.aynahealth.co/explore/resources</loc></url>
   <url><loc>https://www.aynahealth.co/community</loc></url>
   <url><loc>https://www.aynahealth.co/about</loc></url>
   <url><loc>https://www.aynahealth.co/how-it-works</loc></url>
@@ -12,6 +15,7 @@
   <url><loc>https://www.aynahealth.co/privacy-policy</loc></url>
   <url><loc>https://www.aynahealth.co/terms-of-use</loc></url>
   <url><loc>https://www.aynahealth.co/consumer-health-data</loc></url>
+  <url><loc>https://www.aynahealth.co/campus-resources</loc></url>
   <url><loc>https://www.aynahealth.co/quiz</loc></url>
   <url><loc>https://www.aynahealth.co/product/always-infinity-flexfoam</loc></url>
   <url><loc>https://www.aynahealth.co/product/rael-large-organic-cotton-cover-pads-with-wings</loc></url>

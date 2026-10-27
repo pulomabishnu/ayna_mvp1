@@ -2,7 +2,9 @@ import { HEART_PATH } from '../utils/heart.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ProductImage from './ProductImage.jsx';
 import EmptyState from './EmptyState.jsx';
-import { getProfileMatchPercentForProduct } from '../../data/products.js';
+import { matchPercentFor, productMatch } from '../utils/matchScore.js';
+import { whyLine } from '../../utils/whyLine.js';
+import { matchText } from '../../utils/matchDisplay.js';
 import { displayName } from '../utils/displayName.js';
 
 // One-card-at-a-time product discovery. Drag right (or tap Save) to save,
@@ -19,15 +21,19 @@ function imageFor(product) {
 
 // `canSave` false (signed out): Save asks her to sign in and the card stays
 // put, so the pick is never lost and nothing is shown as saved that isn't.
-export default function DiscoverDeck({ products = [], quizAnswers = null, savedProducts = {}, onToggleSaved, onOpenProduct, onClose, canSave = true }) {
+export default function DiscoverDeck({ products = [], quizAnswers = null, matchOpts, savedProducts = {}, onToggleSaved, onOpenProduct, onClose, canSave = true }) {
+  // The order is set once when the deck opens (a save mid-deck must not
+  // reshuffle the cards); the percent on the card is read live from the same
+  // scorer as the Shop card and product page, so all three always agree.
+  const [orderOpts] = useState(matchOpts);
   const deck = useMemo(() => {
     const withMatch = products.slice(0, 200).map((product) => ({
       product,
-      match: quizAnswers ? getProfileMatchPercentForProduct(product, quizAnswers) : null,
+      rank: quizAnswers ? matchPercentFor(product, quizAnswers, orderOpts) : null,
     }));
-    if (quizAnswers) withMatch.sort((a, b) => (b.match || 0) - (a.match || 0));
+    if (quizAnswers) withMatch.sort((a, b) => (b.rank || 0) - (a.rank || 0));
     return withMatch.slice(0, DECK_SIZE);
-  }, [products, quizAnswers]);
+  }, [products, quizAnswers, orderOpts]);
 
   const [index, setIndex] = useState(0);
   const [drag, setDrag] = useState(null);
@@ -38,6 +44,8 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, savedP
   useEffect(() => { closeRef.current?.focus(); }, []);
 
   const current = deck[index];
+  const currentMatch = current && quizAnswers ? matchPercentFor(current.product, quizAnswers, matchOpts) : null;
+  const currentWhy = currentMatch != null ? whyLine(current.product, productMatch(current.product, quizAnswers, matchOpts)) : '';
   const reduced = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
   function act(kind) {
@@ -103,7 +111,8 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, savedP
                 <strong>{displayName(current.product)}</strong>
                 <div className="ay-deck-meta">
                   {current.product.price && <b>{String(current.product.price)}</b>}
-                  {Number.isFinite(current.match) && current.match > 0 && <em>{Math.round(current.match)}% match</em>}
+                  {currentMatch != null && <em>{matchText(currentMatch)}</em>}
+                  {currentWhy && <small className="ay-deck-why">{currentWhy}</small>}
                 </div>
               </div>
             </article>

@@ -1,0 +1,171 @@
+/* Deep round 2 (Oct 21): native-feel fixes for the iOS app.
+   Review: scratchpad/app2/REVIEW.md. Kept in its own file (loaded last from
+   MobileApp.jsx) so it never collides with the stylesheet consolidation on
+   style/consolidate; fold it in there once that lands.
+   Specificity: `html body .ayna-mobile:is(#ay,.ayna-mobile)` outranks the
+   older `.ayna-mobile` x10 chains without adding more of them.
+   Tokens only: --d-* colours (app-direction.css), motion tokens (tokens.css). */
+
+/* ---------- Connection status (OfflineBanner.jsx) ----------
+   One slim line above the tab bar, like iOS Mail's "Offline" status: matte
+   espresso, butter text, no shadow. Under sheets (Ask ayna is z 90), which
+   say it in their own words. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-net {
+  position: fixed; z-index: 85;
+  left: 16px; right: 16px;
+  bottom: calc(var(--ayna-bottom-nav-height, 76px) + 10px);
+  display: flex; align-items: center; gap: 8px;
+  min-height: 40px; padding: 8px 14px; box-sizing: border-box;
+  border-radius: 14px; background: #3e2723; color: #ffedac;
+  font: 500 calc(14px * var(--ayna-text-scale, 1))/1.3 var(--f-ui, 'Figtree', system-ui, sans-serif);
+  animation: ay2-net-in var(--t-base, 240ms) var(--ease-out, ease-out) both;
+}
+html body .ayna-mobile:is(#ay,.ayna-mobile)[data-theme='dark'] .ay-net { background: #ffedac; color: #3e2723; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-net svg { flex: none; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-net.is-back { background: #f7badd; color: #3e2723; }
+/* Screens without a tab bar (quiz, sign in, check-in): sit on the safe area. */
+html body .ayna-mobile:is(#ay,.ayna-mobile):is([data-screen='landing'],[data-screen='quiz'],[data-screen='building'],[data-screen='reveal'],[data-screen='signin'],[data-screen='checkin'],[data-screen='connect'],[data-screen='plan']) .ay-net { bottom: calc(max(12px, env(safe-area-inset-bottom)) + 84px); }
+@keyframes ay2-net-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* A photo that failed to load is an empty tile, never the browser's
+   broken-image glyph (offline Shop: need stickers, folder-tab photo). */
+html body .ayna-mobile:is(#ay,.ayna-mobile) img[data-broken] { visibility: hidden !important; }
+
+/* ---------- Product card: one badge, on the tile ----------
+   The kind line read "Intimate c… · ayna partner" on almost every card at
+   390 and 375: the badge squeezed the kind into an ellipsis. The badge now
+   sits on the photo's top-left corner (the heart has the top-right), so the
+   kind line has the full width. One badge per card, as the direction says. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-main { position: relative; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-kind .ay-pc-mark {
+  position: absolute; top: 8px; left: 8px; z-index: 2; margin: 0;
+  max-width: calc(100% - 64px);
+  min-height: 24px; padding: 0 9px; box-sizing: border-box;
+  border: 1.5px solid #3e2723; border-radius: 999px;
+  background: #ffedac; color: #3e2723;
+  font: 600 calc(13px * var(--ayna-text-scale, 1))/1 var(--f-ui, 'Figtree', system-ui, sans-serif);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-kind .ay-pc-mark::before { width: 8px; height: 8px; border-width: 1.5px; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-kind .ay-pc-mark.is-alert { background: #f7badd; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-kindtext { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- Ask ayna is a sheet: it covers the tab bar ----------
+   A modal sheet in iOS sits over the tab bar (HIG: tab bars hide inside
+   modals). The sheet stopped 69px short, so the tab bar stayed tappable under
+   the scrim and the input floated above it. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ayna-ask-drawer { bottom: 0 !important; z-index: 90 !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { padding-bottom: max(12px, env(safe-area-inset-bottom)) !important; box-sizing: border-box; }
+/* A failed question: a plain alert with "Try again", not faint grey text. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-ask-error {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin: 0 16px 10px; padding: 10px 10px 10px 14px; border-radius: 14px;
+  background: #f7badd; color: #3e2723;
+  font: 500 calc(14px * var(--ayna-text-scale, 1))/1.35 var(--f-ui, 'Figtree', system-ui, sans-serif);
+}
+html body .ayna-mobile:is(#ay,.ayna-mobile)[data-theme='dark'] .ay-ask-error { background: #f7badd; color: #3e2723; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-ask-error button {
+  flex: none; min-height: 44px; padding: 0 16px; border: 1.5px solid #3e2723; border-radius: 999px;
+  background: transparent; color: #3e2723; font: 600 calc(14px * var(--ayna-text-scale, 1))/1 var(--f-ui, 'Figtree', system-ui, sans-serif); cursor: pointer;
+}
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-ask-viewrecs { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; text-align: left; }
+
+/* ---------- Settings forms ----------
+   Password: the inner <input> picked up the global field border, so each
+   field showed a box inside a box. The wrapper is the field. (The settings
+   field rule in app-direction.css carries 1 id + 5 classes, hence 3 ids.) */
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pw-field input { border: 0 !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; min-height: 0 !important; height: auto !important; border-radius: 0 !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pw-field:focus-within { border-color: var(--d-ink, #3e2723) !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pw-field .ay-plain-btn { min-height: 44px; margin: -12px 0; padding: 0 4px; }
+/* Delete account: a real (destructive) button in both states, not grey text. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-danger-btn {
+  width: 100%; min-height: 52px; border: 1.5px solid var(--d-ink, #3e2723) !important; border-radius: 999px !important;
+  font: 600 calc(16px * var(--ayna-text-scale, 1))/1 var(--f-ui, 'Figtree', system-ui, sans-serif) !important;
+}
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-danger-btn[aria-disabled='true'] { background: transparent !important; color: var(--d-ink-2, rgba(62,39,35,.75)) !important; opacity: .7; }
+
+/* ---------- Small text and small targets ----------
+   The legal footer was 11.5px (direction: captions 12.5 on phones). */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-legal,
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-legal :is(p, a, button, span) { font-size: calc(13px * var(--ayna-text-scale, 1)) !important; line-height: 1.6 !important; }
+/* Community author names were 20px-tall buttons: a 44px hit area around them. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .am-author-line button { position: relative; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .am-author-line button::after { content: ''; position: absolute; inset: -12px -8px; }
+
+/* ---------- Text size (You > Appearance & preferences) ----------
+   Most screens size text with calc(… * --ayna-text-scale); Community didn't,
+   so "Extra large" changed one line there; Shop's tabs and chips were fixed
+   too. Zoom the parts that use fixed px (posts, folder tabs, topic chips,
+   start prompts, search, Shop tabs and chips). Zoom keeps the
+   layout in step with the text, the way Dynamic Type grows rows. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) :is(.am-note, .am-folders, .am-pods, .am-prompts, .am-search, .am-list-row) { zoom: var(--ayna-text-scale, 1); }
+/* Shop: folder tabs, quick chips, Filters and Swipe (14-15px fixed). */
+html body .ayna-mobile:is(#ay,.ayna-mobile) :is(.ayna-category-index .ay-folders, .ay-app-quick, .ay-shop-toolbar > button) { zoom: var(--ayna-text-scale, 1); }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-net { animation: none; }
+}
+
+/* ---------- Nothing stays put while the page scrolls (founder, Oct 21) ----------
+   Only the bottom tab bar stays. Removed here (app side; web/no-sticky does
+   the website):
+   - Ecosystem's collapsing "Your ecosystem" title bar,
+   - the product page's sticky section tabs and its pinned buy bar (the bar
+     now sits in the page under the price, ProductDetailScreen.jsx),
+   - the product page's floating back/share buttons (they scroll with the
+     photo; edge swipe and the tab bar still go back),
+   - the read page's sticky progress + back row.
+   In exchange, drilled-in screens keep the tab bar, like iOS. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .eco-app .eco-app-nav { display: none !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-pdp-scroll { position: relative !important; padding-bottom: 24px !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ayq-tabsbar { position: static !important; top: auto !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ayq-bar {
+  position: static !important; left: auto; right: auto; bottom: auto; z-index: auto;
+  margin: 16px 0 4px; padding: 0 !important; background: transparent !important;
+}
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-read-sticky { position: static !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):has(> .ayna-bottom-nav) .ayna-fresh-detail-overlay { bottom: var(--ayna-bottom-nav-height) !important; }
+/* The tab bar: same paper as the page, no hairline or shadow (no seam). */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ayna-bottom-nav { border-top: 0 !important; box-shadow: none !important; background: var(--d-page, #ffedac) !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ayq-bar__pill { width: 100% !important; box-sizing: border-box; }
+/* Health data step and Your plan: the "Skip for now" / "See my matches" footer
+   was sticky with a hairline; it now ends the page like any other block. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-qc-foot { position: static !important; border-top: 0 !important; box-shadow: none !important; background: transparent !important; }
+/* Older sticky rules still on the books for app blocks (some unused today):
+   pinned here so none of them can come back. The community composer's Post
+   button stays sticky: it lives inside a sheet, which the rule allows. */
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) :is(.ay-hd-areas, .ay-pt__bar, .ayp-ev .ay-tabs, .ay-glance__nav, .eco-app-float, .ay-read-status) { position: static !important; }
+/* Pushed You screens (Settings, Legal, Badges…): the back + title row used to
+   sit outside the scroller and stay put while the page moved under it. The
+   founder's rule is that only the tab bar stays, so the whole screen scrolls
+   as one: the column scrolls, the inner scroller just flows. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) div:has(> .ay-set-head) { overflow-y: auto !important; overflow-x: hidden; min-height: 0; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) div:has(> .ay-set-head) > .ay-set-head ~ * { overflow: visible !important; flex-shrink: 0 !important; min-height: auto !important; }
+/* Dashboard disclosure rows ("What ayna adds to Apple Health", "Your routine"):
+   a native-feeling row with a chevron that turns; the content opens in place. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold > summary { list-style: none; display: flex; align-items: center; gap: 12px; min-height: 44px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold > summary::-webkit-details-marker { display: none; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold__text { flex: 1; min-width: 0; display: block; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold__text > :is(h2, h3) { margin: 0 !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold__text > p { margin: 4px 0 0 !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold__chev { flex: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .7; transition: transform .22s cubic-bezier(.2,.8,.2,1); }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold[open] > summary .ay-fold__chev { transform: rotate(180deg); }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold[open] > summary { margin-bottom: 12px; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold > summary:focus-visible { outline: 2px solid var(--ayna-focus, currentColor); outline-offset: 4px; border-radius: 12px; }
+@media (prefers-reduced-motion: reduce) { html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-fold__chev { transition: none; } }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded { display: block !important; padding: 16px !important; border-radius: 20px !important; background: color-mix(in srgb, currentColor 6%, transparent) !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-fold__text > h2 { font-size: calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1)) !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-fold > :not(summary) + :not(summary) { margin-top: 14px; }
+/* Ecosystem on short phones (SE, 667pt): the count and "needs covered" share a
+   row so the first shelf product reaches the first screen. */
+@media (max-height: 720px) {
+  html body .ayna-mobile:is(#ay,.ayna-mobile) .eco-app-stack__card { display: grid !important; grid-template-columns: auto 1fr; column-gap: 18px; align-items: end; }
+  html body .ayna-mobile:is(#ay,.ayna-mobile) .eco-app-stack__card > :not(.eco-app-stack__nums, .eco-app-stack__needs, .eco-oval) { grid-column: 1 / -1; }
+  html body .ayna-mobile:is(#ay,.ayna-mobile) .eco-app-stack__card > .eco-app-stack__needs { margin-bottom: 4px !important; text-align: right; }
+  html body .ayna-mobile:is(#ay,.ayna-mobile) .eco-app-titlerow h1 { margin-bottom: 10px !important; }
+}
+/* Inside the folded routine card the time-of-day groups are plain sections (no card in a card). */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-rt-slot { background: none !important; box-shadow: none !important; border: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
+/* Ask ayna signed out: what works on this phone, and what needs an account. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-ask-local { margin: 0 0 6px; color: var(--ayna-text-muted); font: 500 calc(14px * var(--ayna-text-scale, 1))/1.45 var(--ayna-font-ui); }

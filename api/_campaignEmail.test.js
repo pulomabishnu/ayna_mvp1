@@ -25,6 +25,12 @@ describe('campaign emails', () => {
     }
   });
 
+  it('never names the product in a subject line (inbox previews are public)', () => {
+    const { subject, html } = claimedEmail({ product: { name: 'Yeast Infection Treatment', brand: 'B' } });
+    expect(subject).not.toContain('Yeast');
+    expect(html).toContain('Yeast Infection Treatment');
+  });
+
   it('escapes product data', () => {
     const { html } = claimedEmail({ product: { name: '<script>alert(1)</script>', brand: 'B&B', image: 'javascript:alert(1)' } });
     expect(html).not.toContain('<script>alert(1)');

@@ -1,3 +1,4 @@
+import { formatPrice } from '../utils/formatPrice.js';
 // ============================================================
 // Ayna Startups Database, Real Women's Health Startups
 // ============================================================
@@ -1483,4 +1484,55 @@ export function getPersonalizedStartups(quizAnswers) {
     });
 
     return scored.sort((a, b) => b.score - a.score).map(s => s.startup);
+}
+
+// ─── SERVICE CARD FACTS ────────────────────────────────
+// What a ServiceCard shows besides the name (Explore audit, Oct 25, issue 2):
+// the format, and the cost only where the record itself states one. Formats
+// are read from each service's own description above; nothing here is new
+// information. A service with no stated cost shows no price row at all
+// (never "Price at retailer"). Logos: none of these services has a logo file
+// on file yet (public/brands/), so the card shows the brand name on a plain
+// plate until real logos are added; add `logo: '/brands/<file>'` here then.
+const SERVICE_FACTS = {
+    's-allara': { format: 'Telehealth' },
+    's-oova': { format: 'At-home test' },
+    's-delune': { format: 'Supplement', cost: '$78 for three periods (Cramp Aid)' },
+    's-wile': { format: 'Supplement' },
+    's-mira': { format: 'At-home test' },
+    's-wildai': { format: 'App' },
+    's-kindbody': { format: 'Clinic' },
+    's-birdandbe': { format: 'Supplement' },
+    's-elektra': { format: 'App' },
+    's-embr': { format: 'Device' },
+    's-lisahealth': { format: 'App' },
+    's-pandia': { format: 'Telehealth', cost: 'Accepts insurance' },
+    's-august': { format: 'Period products' },
+    's-kegg': { format: 'Device' },
+    's-oula': { format: 'Clinic' },
+    's-poppyseed': { format: 'App' },
+    's-milkstork': { format: 'Shipping service' },
+    's-fullwell': { format: 'Supplement' },
+    's-perelel': { format: 'Supplement' },
+    's-needed': { format: 'Supplement' },
+    's-femometry': { format: 'Device', cost: '$199.99 regular price' },
+};
+
+/** The order of the Services format filter (the three the audit names first). */
+export const SERVICE_FORMATS = ['Telehealth', 'At-home test', 'App', 'Clinic', 'Device', 'Supplement', 'Period products', 'Shipping service'];
+
+/** { format, cost, logo, covers } for a service, from the record only. */
+export function serviceFacts(service) {
+    const f = SERVICE_FACTS[String(service?.id || '')] || {};
+    // A catalog service (Visana, an app) has no tagline: its own summary line, word for word.
+    const covers = String(service?.tagline || service?.summary || '').trim();
+    // A catalog service (Visana, Midi, an app; QA3 M8) states its own price
+    // in the record: its short main line, only when it is a known price.
+    const catalogService = !f.cost && !STARTUPS.some((x) => String(x.id) === String(service?.id || ''));
+    const own = catalogService && service?.price ? formatPrice(service).main : '';
+    const cost = f.cost || (own && own !== 'Price at retailer' ? own : '');
+    // Format from the record's own category when the service has no entry above
+    // (telehealth is a telehealth service, a tracker is an app); nothing guessed past that.
+    const fromCategory = { telehealth: 'Telehealth', tracker: 'App' }[String(service?.category || '')] || '';
+    return { format: f.format || fromCategory, cost, logo: f.logo || '', covers };
 }

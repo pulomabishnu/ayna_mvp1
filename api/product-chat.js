@@ -1,3 +1,4 @@
+import { proFeatureRules, consumeProChat } from './_proFeatures.js';
 /**
  * /api/product-chat, Answer user questions about a specific product.
  * Uses the already-generated aiInsights (clinical/science/community narratives)
@@ -6,10 +7,23 @@
 /* global process */
 import { loadGroundingCatalog, buildCatalogIndex, resolveCatalogProduct } from './_catalogGrounding.js';
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
-import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
+import { rateLimit } from './_rateLimit.js';
+import { hasPremiumAccess, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { callWithFallback, parseProviderOrder, stripDiagnosticLanguage } from './_llm.js';
 import { traceSessionId, traceMessages } from './_prismTrace.js';
 import { fetchOfficialSiteText } from './_officialSiteFetch.js';
+import { getPassportFacts } from '../src/data/passport/index.js';
+
+// The product passport (src/data/passport): known facts with their source,
+// built from the reviewed catalog record, never the client's copy.
+export function passportSummary(product, max = 24) {
+  let facts = [];
+  try { facts = getPassportFacts(product) || []; } catch { facts = []; }
+  return facts.filter((f) => f.known && f.value != null && f.value !== '')
+    .slice(0, max)
+    .map((f) => `- ${f.label || f.path}: ${clamp(Array.isArray(f.value) ? f.value.join(', ') : String(f.value), 200)}${f.source ? ` (source: ${clamp(String(f.source), 80)})` : ''}`)
+    .join('\n');
+}
 
 /**
  * Every field below arrives in the request body and is interpolated into the
@@ -41,7 +55,7 @@ function buildEcosystemSummary(ecosystemProducts) {
   return lines.join('\n');
 }
 
-function buildPrompt(question, product, aiInsights, userContext, ecosystemProducts, officialSiteText, brandFaqText) {
+function buildPrompt(question, product, aiInsights, userContext, ecosystemProducts, officialSiteText, brandFaqText, matchContext = '') {
   const name = clamp(product?.name, 120) || 'this product';
   const brand = clamp(product?.brand, 80);
   const summary = clamp(product?.summary, 1200);
@@ -101,7 +115,8 @@ ${safety.sideEffects ? `- Side effects: ${safety.sideEffects}` : ''}
 ${safety.recalls ? `- Recalls: ${safety.recalls}` : ''}
 ${doctorOpinion ? `- Clinician view: ${doctorOpinion}` : ''}
 ${communityReview ? `- Community feedback: ${communityReview}` : ''}
-
+${passportSummary(product) ? `\nPRODUCT PASSPORT (ayna's checked facts, each with its source):\n${passportSummary(product)}\n` : ''}
+${matchContext ? `HER MATCH (from ayna's match engine on her device; restate it, never compute or change a percent):\n${clamp(matchContext, 600)}\n` : ''}
 ${siteText ? `OFFICIAL SITE CONTENT (verified source, reference material only, see RULES):\n${siteText}\n` : 'NO OFFICIAL SITE CONTENT AVAILABLE for this product, do not claim brand-specific facts about it beyond PRODUCT IN VIEW or RESEARCH CONTEXT above.\n'}
 ${faqText ? `BRAND FAQs (verified source, reference material only, see RULES):\n${faqText}\n` : ''}
 RESEARCH CONTEXT:
@@ -142,7 +157,18 @@ export default async function handler(req, res) {
   const { user, error, admin } = await verifyUser(req);
   if (!user) return res.status(401).json({ error });
 
-  const isPremium = isPremiumUser(user);
+  // Burst cap for EVERY account, premium included: the weekly quota below
+  // does not apply to premium, so without this one stolen or scripted
+  // premium session could run unlimited paid model calls.
+  const burst = await rateLimit(`product-chat:burst:${user.id}`, { max: 20, windowSec: 600 });
+  if (!burst.ok) {
+    res.setHeader('Retry-After', String(burst.retryAfterSec || 600));
+    return res.status(429).json({ error: 'rate_limited' });
+  }
+
+  let isPremium;
+  try { isPremium = await hasPremiumAccess(user, admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
   if (hasLegacyClientPremiumFlag(user)) {
     console.warn(`[product-chat] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
   }
@@ -154,7 +180,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'invalid_json' });
   }
 
-  const { question, product: clientProduct, aiInsights, userContext, ecosystemProducts, conversationId, chatHistory } = body || {};
+  const { question, product: clientProduct, aiInsights, userContext, ecosystemProducts, conversationId, chatHistory, matchContext } = body || {};
   if (!question || typeof question !== 'string' || !question.trim()) {
     return res.status(400).json({ error: 'question is required' });
   }
@@ -195,9 +221,15 @@ export default async function handler(req, res) {
   let usagePeriod = null;
   let usageUsed = 0;
   let usageLimit = null;
-  if (!isPremium) {
-    const { allowed, used, limit, period, degraded } = await consumeUsage(admin, user.id, 'chat');
-    if (!allowed) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'chat' });
+  let rules;
+  try { rules = await proFeatureRules(admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
+  if (!isPremium || rules.enabled) {
+    let usage;
+    try { usage = rules.enabled ? await consumeProChat(admin, user.id, isPremium, rules) : await consumeUsage(admin, user.id, 'chat'); }
+    catch { return res.status(503).json({ error: 'usage_temporarily_unavailable' }); }
+    const { allowed, used, limit, period, degraded } = usage;
+    if (!allowed) return res.status(429).json({ error: rules.enabled ? 'daily_limit_reached' : 'weekly_limit_reached', used, limit, action: 'chat' });
     usagePeriod = degraded ? null : period;
     usageUsed = used;
     usageLimit = limit;
@@ -214,7 +246,8 @@ export default async function handler(req, res) {
     typeof userContext === 'string' ? userContext.slice(0, 4000) : '',
     ecosystemProducts,
     officialSiteText,
-    brandFaqText
+    brandFaqText,
+    typeof matchContext === 'string' ? matchContext.slice(0, 600) : ''
   );
   const order = parseProviderOrder('AI_INSIGHTS_PROVIDER_ORDER', 'anthropic,openai,gemini');
 
@@ -252,6 +285,6 @@ export default async function handler(req, res) {
   // failed and the user was surprised by a 429.
   return res.status(200).json({
     answer,
-    usage: isPremium ? { unlimited: true } : { used: usageUsed, limit: usageLimit },
+    usage: isPremium && !rules.enabled ? { unlimited: true } : { used: usageUsed, limit: usageLimit },
   });
 }
