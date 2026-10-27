@@ -15,12 +15,14 @@
  * a structured field the model returns alongside its answer, not a second,
  * disconnected system guessing at the same message.
  *
- * Same auth/quota pattern as product-chat.js, sharing its 'chat' usage
- * bucket, both are chat-type LLM usage against the same weekly budget.
+ * Ask ayna and product chat share one chat allowance. During the Pro rollout
+ * Free gets 5/day and Pro gets up to 50/day; before the feature flag is
+ * enabled the legacy quota behavior remains unchanged.
  */
 /* global process */
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
-import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
+import { hasPremiumAccess, hasLegacyClientPremiumFlag } from './_entitlement.js';
+import { proFeatureRules, consumeProChat } from './_proFeatures.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, stripDiagnosticLanguage } from './_llm.js';
 import { traceSessionId, traceMessages } from './_prismTrace.js';
 import { stripLinks } from './_catalogGrounding.js';
@@ -80,7 +82,9 @@ export default async function handler(req, res) {
   const { user, error, admin } = await verifyUser(req);
   if (!user) return res.status(401).json({ error });
 
-  const isPremium = isPremiumUser(user);
+  let isPremium;
+  try { isPremium = await hasPremiumAccess(user, admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
   if (hasLegacyClientPremiumFlag(user)) {
     console.warn(`[ask-ayna] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
   }
@@ -101,10 +105,20 @@ export default async function handler(req, res) {
     ? chatHistory.slice(-6).map((m) => `${m.role === 'user' ? 'Her' : 'Ayna'}: ${clamp(m.text, 400)}`).join('\n')
     : '';
 
+  let rules;
+  try { rules = await proFeatureRules(admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
+
   let usagePeriod = null;
   let usageUsed = 0;
   let usageLimit = null;
-  if (!isPremium) {
+  if (rules.enabled) {
+    const { allowed, used, limit, period, degraded } = await consumeProChat(admin, user.id, isPremium, rules);
+    if (!allowed) return res.status(429).json({ error: 'daily_limit_reached', used, limit, action: 'chat' });
+    usagePeriod = degraded ? null : period;
+    usageUsed = used;
+    usageLimit = limit;
+  } else if (!isPremium) {
     const { allowed, used, limit, period, degraded } = await consumeUsage(admin, user.id, 'chat');
     if (!allowed) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'chat' });
     usagePeriod = degraded ? null : period;
@@ -168,6 +182,6 @@ export default async function handler(req, res) {
     answer,
     profileUpdate,
     browseIntent,
-    usage: isPremium ? { unlimited: true } : { used: usageUsed, limit: usageLimit },
+    usage: rules.enabled ? { used: usageUsed, limit: usageLimit } : (isPremium ? { unlimited: true } : { used: usageUsed, limit: usageLimit }),
   });
 }
