@@ -2,6 +2,7 @@ import { Bento, Tile, Plate } from '../ui/ay';
 import { Sparkline } from '../../mobile/components/DashParts.jsx';
 import { estimatePhase } from '../../health/phase.js';
 import { glanceWords, lastDays, short } from '../../health/dashView.js';
+import { takeaway } from '../../health/takeaway.js';
 import { resolveCatalogProductImage } from '../ProductTileImage.jsx';
 import './week-bento.css';
 
@@ -120,10 +121,13 @@ export function glanceCharts(dash) {
   return list.map((c) => ({ ...c, area: c.group === 'sleep' ? 'sleep' : 'body' }));
 }
 
+// Home's variant gives each metric one colour role (founder Oct 26): sleep espresso, heart pink, steps butter.
+const HOME_TONE = { sleep_minutes: 'ink', resting_hr_bpm: 'pink', hrv_rmssd_ms: 'pink', hrv_sdnn_ms: 'pink', steps: 'butter' };
 const TONE = { sleep_minutes: 'deep', resting_hr_bpm: 'pink', hrv_rmssd_ms: 'pink', hrv_sdnn_ms: 'pink', steps: 'butter' };
 const LABEL = (c) => (c.metric === 'sleep_minutes' ? 'Sleep' : c.metric === 'steps' ? 'Steps' : c.label);
 
-export default function WeekBento({ coming = [], cycle = null, cycleWords = '', hormonalBC = false, charts = [], bandOf = () => null, today, products = [], productsLabel = 'Your routine', onOpenProducts = null, logged = null, onOpen = null, className = '' }) {
+export default function WeekBento({ coming = [], cycle = null, cycleWords = '', hormonalBC = false, charts = [], bandOf = () => null, today, products = [], productsLabel = 'Your routine', onOpenProducts = null, logged = null, onOpen = null, className = '', variant = 'default' }) {
+  const home = variant === 'home';
   const tiles = [];
   const btn = (area, aria, metric = null) => (onOpen ? { as: 'button', type: 'button', onClick: () => onOpen(area, metric), 'aria-label': aria, 'aria-haspopup': metric ? 'dialog' : undefined } : { role: 'group', 'aria-label': aria });
 
@@ -142,7 +146,8 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
     const now = short(c.metric, c.week ?? c.avg);
     if (!now) return;
     const [num, unit] = splitUnit(now);
-    const words = glanceWords(c);
+    const tk = home ? takeaway(c) : null;
+    const words = tk?.text || glanceWords(c);
     const usual = c.usual != null ? `usual ${short(c.metric, c.usual)}` : 'still learning your usual';
     // Up or down against her usual (same 3% band as the dials, ScoreRings).
     const nowVal = c.week ?? c.avg;
@@ -150,10 +155,12 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
     // Fewer than 3 days of data: the number and "vs usual" only, no near-empty chart (founder Oct 26 19:46).
     const enough = lastDays(c.points, today).filter((p) => p?.value != null).length >= 3;
     const bars = c.metric === 'sleep_minutes' || c.metric === 'steps';
-    const tone = TONE[c.metric] || (i % 2 ? 'butter' : 'deep');
+    const tone = (home ? HOME_TONE : TONE)[c.metric] || (i % 2 ? 'butter' : 'deep');
+    // Home: the first metric leads, full width; the rest pair up.
+    const span = home && i === 0 ? 'wide' : '';
     const area = c.area || c.metric;
     tiles.push(
-      <Tile key={c.metric} tone={tone} className={`wb-tile is-${c.metric}`} {...btn(area, `${LABEL(c)}: ${words}. ${now}, ${usual}.${onOpen ? ` Open ${LABEL(c).toLowerCase()}.` : ''}`, c.metric)}>
+      <Tile key={c.metric} tone={tone} span={span} className={`wb-tile is-${c.metric}`} {...btn(area, `${LABEL(c)}: ${words}. ${now}, ${usual}.${onOpen ? ` Open ${LABEL(c).toLowerCase()}.` : ''}`, c.metric)}>
         <span className="ayb-tile__label">{LABEL(c)}</span>
         {!enough ? null : bars
           ? <WeekBars points={c.points} usual={c.usual} today={today} metric={c.metric} label={LABEL(c)} />
@@ -218,5 +225,5 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
   // Two columns of half tiles side by side (founder Oct 26 19:46: "everything is still just stacked").
   // Only the products row and Coming up run the full width; a lone half stays a half.
   const laid = tiles;
-  return <Bento className={`wb ${className}`.trim()}>{laid}</Bento>;
+  return <Bento className={`wb${home ? ' is-home' : ''} ${className}`.trim()}>{laid}</Bento>;
 }

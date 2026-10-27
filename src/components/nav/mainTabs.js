@@ -1,7 +1,8 @@
 /**
  * The one main tab set for the app (bottom tab bar) and the website (top nav
- * and the phone tab bar): Shop · Services · Today · Community · Library (Today in the
- * middle, founder Oct 26 19:49)
+ * and the phone tab bar): Shop · Services · Home · Community · Library (Home in the
+ * middle, founder Oct 26 19:49; "Today" renamed Home, founder Oct 26 21:45: "can today
+ * just be home page and make it stand out"; key 'today' and /today stay)
  * (founder, Oct 26 2026: "CAN WE HAVE SHOP services community and library and
  * keep the ask ayna at the top"). Ask ayna is the button at the top of every
  * page; You is the round profile button beside it. Keys stay stable for
@@ -12,15 +13,15 @@
 export const MAIN_TABS = [
   { key: 'explore', label: 'Shop', href: '/explore', icon: 'shop' },
   { key: 'services', label: 'Services', href: '/explore/services', icon: 'services' },
-  { key: 'today', label: 'Today', href: '/today' },
+  { key: 'today', label: 'Home', href: '/today', icon: 'home', center: true },
   { key: 'community', label: 'Community', href: '/community' },
   { key: 'library', label: 'Library', href: '/explore/resources', icon: 'library' },
 ];
 
 /**
- * The app's tab bar: the same five as the website. Today is the dashboard
+ * The app's tab bar: the same five as the website. Home (was Today) is the dashboard
  * (AynaHomeScreen, the 'ayna' screen); its key stays 'home' so analytics and
- * CSS keep working. Shop is the 'explore' screen, Services the same screen
+ * CSS keep working. Home is the raised centre button (center: true). Shop is the 'explore' screen, Services the same screen
  * with Services picked, Library the 'library' screen. Ask ayna opens from the
  * header pill (and the suggestion pills under it); You from the round profile
  * button. The old `today`, `ask` and `ayna` screens still route (navTab.js aynaRoute).
@@ -28,7 +29,7 @@ export const MAIN_TABS = [
 export const APP_TABS = [
   { key: 'explore', label: 'Shop', icon: 'shop' },
   { key: 'services', label: 'Services', icon: 'services' },
-  { key: 'home', label: 'Today', icon: 'today' },
+  { key: 'home', label: 'Home', icon: 'home', center: true },
   { key: 'community', label: 'Community' },
   { key: 'library', label: 'Library', icon: 'library' },
 ];
