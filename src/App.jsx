@@ -171,7 +171,7 @@ import { ExploreHeader } from './components/explore/ExploreNav.jsx';
 import YouTabs from './components/you/YouTabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
-import RoutineSummary from './components/routine/RoutineSummary.jsx';
+import RoutinePlates from './components/routine/RoutinePlates.jsx';
 import TodayRead from './components/today/TodayRead.jsx';
 import { SaveFollowUpStrip } from './components/save/SaveFollowUp.jsx';
 import { savePrompt, stashPendingSave, takePendingSave } from './utils/savePrompt.js';
@@ -2753,7 +2753,7 @@ function App() {
               // one is in You > My ecosystem), and one read that fits her answers.
               aside: (quizResults || myProducts.length > 0) ? (
                 <>
-                  <RoutineSummary variant="web" hideMedicines userId={user?.id || null} quizAnswers={quizResults} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts}
+                  <RoutinePlates userId={user?.id || null} quizAnswers={quizResults} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts}
                     onOpenRoutine={() => { handleViewEcosystem(); window.setTimeout(() => document.getElementById('eco-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 600); }}
                     onOpenProduct={(p) => handleOpenProduct(p, { source: 'today_routine' })}
                     onCheckIn={() => openTodayLog('web')} />

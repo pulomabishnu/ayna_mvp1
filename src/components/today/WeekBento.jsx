@@ -125,7 +125,7 @@ const LABEL = (c) => (c.metric === 'sleep_minutes' ? 'Sleep' : c.metric === 'ste
 
 export default function WeekBento({ coming = [], cycle = null, cycleWords = '', hormonalBC = false, charts = [], bandOf = () => null, today, products = [], productsLabel = 'Your routine', onOpenProducts = null, logged = null, onOpen = null, className = '' }) {
   const tiles = [];
-  const btn = (area, aria) => (onOpen ? { as: 'button', type: 'button', onClick: () => onOpen(area), 'aria-label': aria } : { role: 'group', 'aria-label': aria });
+  const btn = (area, aria, metric = null) => (onOpen ? { as: 'button', type: 'button', onClick: () => onOpen(area, metric), 'aria-label': aria, 'aria-haspopup': metric ? 'dialog' : undefined } : { role: 'group', 'aria-label': aria });
 
   if (cycle?.cycleDay) {
     const value = hormonalBC ? `Day ${cycle.cycleDay} since your last bleed` : `Day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`;
@@ -144,19 +144,22 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
     const [num, unit] = splitUnit(now);
     const words = glanceWords(c);
     const usual = c.usual != null ? `usual ${short(c.metric, c.usual)}` : 'still learning your usual';
+    // Up or down against her usual (same 3% band as the dials, ScoreRings).
+    const nowVal = c.week ?? c.avg;
+    const dir = c.usual && nowVal != null ? (nowVal / c.usual > 1.03 ? 1 : nowVal / c.usual < 0.97 ? -1 : 0) : 0;
     // Fewer than 3 days of data: the number and "vs usual" only, no near-empty chart (founder Oct 26 19:46).
     const enough = lastDays(c.points, today).filter((p) => p?.value != null).length >= 3;
     const bars = c.metric === 'sleep_minutes' || c.metric === 'steps';
     const tone = TONE[c.metric] || (i % 2 ? 'butter' : 'deep');
     const area = c.area || c.metric;
     tiles.push(
-      <Tile key={c.metric} tone={tone} className={`wb-tile is-${c.metric}`} {...btn(area, `${LABEL(c)}: ${words}. ${now}, ${usual}.${onOpen ? ` Open ${LABEL(c).toLowerCase()}.` : ''}`)}>
+      <Tile key={c.metric} tone={tone} className={`wb-tile is-${c.metric}`} {...btn(area, `${LABEL(c)}: ${words}. ${now}, ${usual}.${onOpen ? ` Open ${LABEL(c).toLowerCase()}.` : ''}`, c.metric)}>
         <span className="ayb-tile__label">{LABEL(c)}</span>
         {!enough ? null : bars
           ? <WeekBars points={c.points} usual={c.usual} today={today} metric={c.metric} label={LABEL(c)} />
           : <span className="wb-spark"><Sparkline points={lastDays(c.points, today)} band={bandOf(c.metric)} metric={c.metric} w={160} h={44} label={`${LABEL(c)}, last 7 days`} /></span>}
         <span className="wb-num"><span className="ayb-tile__big">{num}</span>{unit && <span className="ayb-tile__unit">{unit}</span>}</span>
-        <span className="wb-take"><b>{words}</b><span>{usual}</span></span>
+        <span className="wb-take"><b>{dir !== 0 && <svg className="wb-dir" viewBox="0 0 24 24" aria-hidden="true"><path d={dir > 0 ? 'M12 19V5M6 11l6-6 6 6' : 'M12 5v14M6 13l6 6 6-6'} /></svg>}{words}</b><span>{usual}</span></span>
       </Tile>,
     );
   });
@@ -172,14 +175,18 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
     );
   }
 
-  const shown = products.filter((p) => p?.id).slice(0, 3);
+  const oddHalves = tiles.filter((t) => !t.props.span).length % 2 === 1;
+  const shown = products.filter((p) => p?.id).slice(0, oddHalves ? 2 : 3);
   if (shown.length) {
     const aria = `${productsLabel}: ${products.length} ${products.length === 1 ? 'product' : 'products'}, ${shown.map((p) => p.name).join(', ')}.${onOpenProducts ? ' Open.' : ''}`;
     // A lone wide tile on the last row spans the whole width (no empty half row).
-    const full = true;
+    // With an odd number of halves, the products tile fills the empty half; otherwise it is the one wide row.
+    const halves = tiles.filter((t) => !t.props.span).length;
+    const half = halves % 2 === 1;
+    const full = !half;
     const props = onOpenProducts ? { as: 'button', type: 'button', onClick: onOpenProducts, 'aria-label': aria } : { role: 'group', 'aria-label': aria };
     tiles.push(
-      <Tile key="products" tone="ink" span="wide" className={`wb-tile is-products${full ? ' is-full' : ''}`} {...props}>
+      <Tile key="products" tone="ink" span={half ? '' : 'wide'} className={`wb-tile is-products${full ? ' is-full' : ' is-half'}`} {...props}>
         <span className="ayb-tile__label">{productsLabel}</span>
         <span className="wb-plates" aria-hidden="true">
           {shown.map((p) => <Plate key={p.id} src={resolveCatalogProductImage(p) || ''} alt="" fallback={p.brand || p.name} className="wb-plate" />)}

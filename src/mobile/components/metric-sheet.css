@@ -1,0 +1,29 @@
+/* MetricSheet.jsx: a bottom sheet over the app or the website. Brand colours; reads in light and dark. */
+.ay-msheet-layer { position: fixed; inset: 0; z-index: 2147482900; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.ay-msheet-dim { position: absolute; inset: 0; background: rgba(62, 39, 35, .45); }
+.ay-msheet { position: relative; box-sizing: border-box; display: grid; gap: 16px; width: 100%; max-width: 560px; max-height: 88dvh; overflow-y: auto; padding: 12px 20px max(20px, env(safe-area-inset-bottom)); border-radius: 20px 20px 0 0; background: #ffedac; color: #3e2723; animation: ay-msheet-up 320ms cubic-bezier(.2, .8, .2, 1) both; }
+.ay-msheet-layer.is-web { justify-content: center; }
+.ay-msheet-layer.is-web .ay-msheet { border-radius: 20px; }
+@keyframes ay-msheet-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .ay-msheet { animation: none; } }
+.ay-msheet__grab { justify-self: center; width: 40px; height: 4px; border-radius: 999px; background: rgba(62, 39, 35, .3); }
+.ay-msheet__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ay-msheet__head h2 { margin: 0; font: 800 28px/1.1 var(--ay-font-display, var(--ay-app-heading, inherit)); letter-spacing: -.02em; color: inherit; }
+.ay-msheet__close { all: unset; box-sizing: border-box; cursor: pointer; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; }
+.ay-msheet__close svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.ay-msheet__close:focus-visible, .ay-msheet__more:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.ay-msheet .ay-msheet__body { display: grid; gap: 16px; padding: 0 !important; background: none !important; border: 0 !important; }
+.ay-msheet .ay-msheet__big { margin: 0; font: 800 44px/1 var(--ay-font-display, var(--ay-app-heading, inherit)) !important; letter-spacing: -.03em; color: #3e2723 !important; }
+.ay-msheet .ay-msheet__big small { margin-left: 8px; font: 600 15px/1.2 var(--ay-font-ui, inherit) !important; letter-spacing: 0; color: rgba(62, 39, 35, .78) !important; }
+.ay-msheet .ay-msheet__line { margin: 0; font: 600 17px/1.35 var(--ay-font-ui, inherit) !important; color: #3e2723 !important; }
+.ay-msheet__facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.ay-msheet__facts div { display: grid; gap: 2px; padding: 12px; border-radius: 16px; background: #f6e3a1; }
+.ay-msheet__facts dt { font: 500 13px/1.3 var(--ay-font-ui, inherit) !important; color: rgba(62, 39, 35, .78) !important; }
+.ay-msheet__facts dd { margin: 0; font: 700 15px/1.25 var(--ay-font-ui, inherit); color: #3e2723; }
+.ay-msheet__more { all: unset; box-sizing: border-box; cursor: pointer; justify-self: start; min-height: 44px; display: inline-flex; align-items: center; padding: 0 20px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 15px/1 var(--ay-font-ui, inherit); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet { background: #3e2723; color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet .ay-msheet__big, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet .ay-msheet__line, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__facts dd { color: #ffedac !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet .ay-msheet__big small, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__facts dt { color: rgba(255, 237, 172, .8) !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__facts div { background: rgba(255, 237, 172, .08); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__grab { background: rgba(255, 237, 172, .3); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__more { background: #ffedac; color: #3e2723; }

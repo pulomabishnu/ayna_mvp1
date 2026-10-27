@@ -15,10 +15,12 @@ import { OUTCOME_LABELS } from '../../health/routineOutcome.js';
 import { CycleRing as DsRing } from '../../components/personality/DS.jsx';
 import { SourceLink, PhaseCompare, NormalRanges, WeekPicks, Meter } from './HealthBento.jsx';
 import { AreaChart, FindingItem, GoalList, PhaseLine, RangeBar, RangePills, RoutineEffect, Sparkline } from './DashParts.jsx';
-import { OutlineButton, PillTabs, StatusPill, StickerButton, TextButton } from '../../components/ui/ay/index.js';
+import { OutlineButton, PillTabs, SnapCarousel, StatusPill, StickerButton, TextButton } from '../../components/ui/ay/index.js';
 import { insightStories } from '../../health/insightStory.js';
 import { displayName } from '../utils/displayName.js';
 import WeekBento from '../../components/today/WeekBento.jsx';
+import ScoreRings from './ScoreRings.jsx';
+import MetricSheet from './MetricSheet.jsx';
 import '../../styles/week-explained.css';
 import '../../styles/health-home.css';
 
@@ -146,7 +148,9 @@ function TriedSoFar({ products, outcomes, onOpenRoutine }) {
 }
 
 function ComingUp({ items, today }) {
+  const [more, setMore] = useState(false);
   if (!items.length) return null;
+  const hasMore = items.some((e) => e.sub || e.expect);
   return (
     <section className="ay-db-card" aria-labelledby="ay-db-coming-title">
       <h3 id="ay-db-coming-title" className="ay-db-h3">Coming up</h3>
@@ -159,13 +163,14 @@ function ComingUp({ items, today }) {
               <span>
                 <span className="ay-db-coming-t"><b>{e.title}</b><StatusPill>{n <= 0 ? 'Today' : n === 1 ? 'Tomorrow' : `In ${n} days`}</StatusPill></span>
                 <span className="sr-only">{fmtDay(e.day)}.</span>
-                {e.sub && <small>{e.sub}</small>}
-                {e.expect && <small>{e.expect}{e.source && <> <SourceLink source={{ ...e.source, label: 'Source' }} /></>}</small>}
+                {more && e.sub && <small>{e.sub}</small>}
+                {more && e.expect && <small>{e.expect}{e.source && <> <SourceLink source={{ ...e.source, label: 'Source' }} /></>}</small>}
               </span>
             </li>
           );
         })}
       </ol>
+      {hasMore && <TextButton aria-expanded={more} onClick={() => setMore((m) => !m)}>{more ? 'Show less' : 'Read more'}</TextButton>}
     </section>
   );
 }
@@ -206,12 +211,16 @@ export default function HealthHome({
   onRefresh = null,
   // 'error' with rows still here: say so and keep the last-known values (dashboard audit 9.3).
   status = 'ready',
+  // Your data's empty dial row: one way to connect a watch or ring.
+  onConnect = null,
 }) {
   const [tab, setTab] = useState('summary');
   const [range, setRange] = useState('month');
   const [added, setAdded] = useState({});
   const [rundownShown, setRundownShown] = useState(false);
   const [copied, setCopied] = useState(false);
+  // One metric's detail as a bottom sheet (MetricSheet): 'cycle' or a metric id.
+  const [sheet, setSheet] = useState(null);
   const topRef = useRef(null);
 
   const days = RANGES.find((r) => r.id === range).days;
@@ -311,10 +320,11 @@ export default function HealthHome({
   ];
   // Picture first (founder Oct 26 16:43): one chart per tile, one big number, one takeaway line.
   const glanceBlock = glance.length > 0 && (
-    <section className="ay-db-card ay-db-glance is-bento" aria-labelledby="ay-db-glance-title">
+    <section className="ay-db-glance is-bento" aria-labelledby="ay-db-glance-title">
       <h2 id="ay-db-glance-title" className="ay-db-h2">Your week at a glance</h2>
       <WeekBento
-        cycle={cycle}
+        // The cycle is the first dial above (ScoreRings); the tiles are her other metrics.
+        cycle={null}
         cycleWords={glance[0]?.id === 'cycle' ? glance[0].words : ''}
         hormonalBC={hormonalBC}
         charts={glanceMetrics.map((c) => ({ ...c, area: AREA_OF_METRIC(c.metric, groupOf) }))}
@@ -323,9 +333,9 @@ export default function HealthHome({
         products={routineProducts.length ? routineProducts : products}
         productsLabel={routineProducts.length ? 'Your routine' : 'Your products'}
         onOpenProducts={tabs.some((t) => t.id === 'routine') ? () => open('routine') : null}
-        onOpen={open}
+        onOpen={(area, metric) => (metric ? setSheet(metric) : open(area))}
       />
-      {missing.length > 0 && missing.length < 3 && <p className="ay-db-muted">{missing.join(' and ')}: connect a watch or ring to see {missing.length > 1 ? 'these' : 'this'}.</p>}
+      {missing.includes('Heart') && <p className="ay-db-muted">Heart: connect a watch or ring to see this.</p>}
     </section>
   );
 
@@ -353,24 +363,30 @@ export default function HealthHome({
   };
   // Highlights first (founder, Oct 26: Apple Health / Oura style): the one most notable change, open with its chart;
   // every other change stays one tap away under "See all highlights". Same findings, same words, nothing new computed.
+  // Highlights (Oura's top stories): one card each, side by side, the next one peeking, dots under them.
+  // Each card is the change in one line and its last 7 days; the title opens the full story in place.
+  const highlightCard = (x, i) => {
+    const c = chartOf(x.insight.metric);
+    return (
+      <div className="ay-db-hcard">
+        <div className="ay-db-highlight__top">
+          <p className="ay-db-highlight__kicker">{i === 0 ? 'Today’s highlight' : 'Highlight'}</p>
+          {c && c.points?.length > 1 && <span className="ay-db-highlight__spark"><Sparkline points={lastDays(c.points, today)} band={bandOf(c.metric)} metric={c.metric} label={`${c.label}, last 7 days. The shaded band is your usual.`} w={112} h={40} /></span>}
+        </div>
+        <ul className="ay-db-highlight__line">{findingFor(x)}</ul>
+      </div>
+    );
+  };
   const highlight = stories.length > 0 && (
-    <section className="ay-db-card ay-db-findings ay-db-highlight" aria-labelledby="ay-db-highlight-title">
-      <p className="ay-db-highlight__kicker">Today&rsquo;s highlight</p>
-      <h2 id="ay-db-highlight-title" className="sr-only">Today&rsquo;s highlight</h2>
-      <ul>{findingFor(stories[0])}</ul>
-      {(() => {
-        const c = chartOf(stories[0].insight.metric);
-        return c && c.points?.length > 1 ? <div className="ay-db-highlight__spark"><Sparkline points={lastDays(c.points, today)} band={bandOf(c.metric)} metric={c.metric} label={c.label} w={320} h={56} /><span>Last 7 days, shaded band is your usual</span></div> : null;
-      })()}
-      {(stories.length > 1 || backToUsual.length > 0) && (
-        <details className="ay-db-fold ay-db-highlight__all">
-          <summary>See all highlights ({stories.length + backToUsual.length})</summary>
-          <ul>
-            {stories.slice(1).map((x) => findingFor(x))}
-            {backToUsual.map((area) => <li key={area} className="ay-db-finding is-back"><p className="ay-db-h3"><span>{area}: back to your usual</span><StatusPill>Back to usual</StatusPill></p></li>)}
-          </ul>
-        </details>
-      )}
+    <section className="ay-db-highlight is-carousel" aria-labelledby="ay-db-highlight-title">
+      <h2 id="ay-db-highlight-title" className="ay-db-h2">Highlights</h2>
+      <SnapCarousel
+        label="Highlights"
+        items={[
+          ...stories.map((x, i) => ({ key: x.insight.id, node: highlightCard(x, i) })),
+          ...backToUsual.map((area) => ({ key: `back-${area}`, node: <div className="ay-db-hcard is-back"><p className="ay-db-highlight__kicker">Back to usual</p><p className="ay-db-h3">{area}: back to your usual</p></div> })),
+        ]}
+      />
     </section>
   );
   const areaFindings = (area) => stories.filter(({ insight }) => AREA_OF_METRIC(insight.metric, groupOf) === area);
@@ -403,9 +419,9 @@ export default function HealthHome({
     </section>
   );
   const askBlock = ask && starters.length > 0 && (
-    <section className="ay-db-card" aria-labelledby="ay-db-ask-title">
+    <section className="ay-db-askblock" aria-labelledby="ay-db-ask-title">
       <h2 id="ay-db-ask-title" className="ay-db-h2">Ask ayna about your week</h2>
-      <ul className="ay-db-ask">
+      <ul className="ay-db-ask is-row">
         {starters.map((st) => <li key={st.question}><button type="button" onClick={() => ask(st.question)}><span>{st.question}{st.reason && <small>{st.reason}</small>}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg></button></li>)}
       </ul>
     </section>
@@ -449,6 +465,7 @@ export default function HealthHome({
   const summary = (
     <div className="ay-db-summary">
       {surface === 'web' && todayFeed && <RundownEntry onShown={setRundownShown} />}
+      {hasData && <ScoreRings cycle={cycle} hormonalBC={hormonalBC} sleep={chartOf('sleep_minutes')} activity={steps} onOpen={(area) => setSheet(area === 'cycle' ? 'cycle' : area === 'sleep' ? 'sleep_minutes' : 'steps')} onConnect={onConnect} />}
       {highlight}
       {glanceBlock}
       <div className="ay-db-cols">
@@ -594,7 +611,7 @@ export default function HealthHome({
             <H className="ay-db-h1">{title}</H>
             {sourceLine}
           </div>
-          {cycle && !hormonalBC && <span className="ay-db-ringwrap"><span className="ay-db-ringcap" aria-hidden="true">Cycle day</span><span className="ay-db-ring" role="img" aria-label={`Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`}><DsRing day={cycle.cycleDay} length={cycle.avgLength} /></span></span>}
+          {cycle && !hormonalBC && !(hasData && current === 'summary') && <span className="ay-db-ringwrap"><span className="ay-db-ringcap" aria-hidden="true">Cycle day</span><span className="ay-db-ring" role="img" aria-label={`Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}`}><DsRing day={cycle.cycleDay} length={cycle.avgLength} /></span></span>}
         </header>
       )}
       {(tabs.length > 1 || (!showTitle && sourceLine)) && (
@@ -614,6 +631,21 @@ export default function HealthHome({
         {current === 'body' && bodyTab}
         {current === 'routine' && routineTab}
       </div>
+      {sheet && (
+        <MetricSheet
+          metric={sheet}
+          surface={surface}
+          today={today}
+          cycle={cycle}
+          hormonalBC={hormonalBC}
+          estimate={estimate}
+          bandOf={bandOf}
+          chartFor={(m, n) => buildDashboard(rows, { days: n, today }).groups.flatMap((g) => g.charts).find((c) => c.metric === m) || null}
+          areaLabel={sheet === 'cycle' ? 'cycle' : AREA_OF_METRIC(sheet, groupOf) === 'sleep' ? 'sleep' : 'body data'}
+          onSeeArea={() => open(sheet === 'cycle' ? 'cycle' : AREA_OF_METRIC(sheet, groupOf))}
+          onClose={() => setSheet(null)}
+        />
+      )}
       <footer className="ay-db-foot">
         <p className="ay-db-disclaimer">These describe your data, compared only with your own usual. Patterns, not a diagnosis. If something worries you, talk to a clinician.</p>
         {footer}

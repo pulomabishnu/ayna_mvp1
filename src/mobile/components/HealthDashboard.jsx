@@ -115,6 +115,7 @@ export default function HealthDashboard({ authUser, selectedNeedIds = [], hormon
           const without = buildContext(false);
           openAsk({ question, context: askHealth.on ? withHealth : without, buildContext, usesHealth: withHealth !== without, stats: extra?.stats || null });
         } : undefined}
+        onConnect={onConnect}
         footer={<OutlineButton onClick={onConnect}>Manage connected apps</OutlineButton>}
         surface="app"
         todayFeed={todayFeed}

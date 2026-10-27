@@ -7,3 +7,4 @@ export { default as Plate } from './Plate.jsx';
 export { ScallopPlate, PLATE_PATH } from './ScallopPlate.jsx';
 export { Band, Shout, Bento, Tile, BlendSlider, Marquee } from './Bold.jsx';
 export { ScallopEdge, BigFact, FactRows, CategorySticker, StatusPill, ProgressCount, CountRing, ShowAllList, DoDont, StandardsBand, CalmBlock, PinkSection } from './Signatures.jsx';
+export { default as SnapCarousel } from './SnapCarousel.jsx';

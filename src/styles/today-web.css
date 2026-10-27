@@ -83,3 +83,20 @@ html body .app-container .ay-wh.ay-wh--today .ay-today__item { padding: 20px 24p
   html body .app-container .ay-tread { grid-template-columns: 88px minmax(0, 1fr); gap: 12px; }
   html body .app-container .ay-tread__cover { width: 88px !important; }
 }
+
+/* Founder Oct 26 evening: no sticks, no stacks. Today's things sit two across on wide screens,
+   and Your week / Routine are one segmented toggle (WebDayViews in WebHealth.jsx). */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item::before { display: none; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__item { border-radius: 16px; padding: 20px !important; }
+@media (min-width: 900px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-today.is-web .ay-today__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-today.is-web .ay-today__list > :is(.is-safety, .is-care, .is-check_in, :last-child:nth-child(odd)) { grid-column: 1 / -1; }
+}
+.ay-wh-views { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; margin-top: 24px; min-width: 0; }
+.ay-wh-views .ayk-tabs { max-width: 420px; }
+.ay-wh-views .ayk-tabs__tab { min-height: 44px; font-size: 15px; }
+.ay-wh-views__panel[hidden] { display: none; }
+.ay-wh-views__panel > .ay-wh-day__flow { margin-top: 0; }
+/* The recap tiles use fixed colours, so the butter-deep one keeps espresso text in dark mode too. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows > li:nth-child(odd):nth-child(odd) { background: #f6e3a1; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows > li:nth-child(odd):nth-child(odd) b { color: #3e2723; }

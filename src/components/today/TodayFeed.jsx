@@ -151,7 +151,6 @@ function Progress({ items, t }) {
   return (
     <p className="ay-today__progress">
       <span>{done} of {total} done today</span>
-      <span className="ay-today__dots" aria-hidden="true">{Array.from({ length: total }, (_, i) => <i key={i} className={i < done ? 'is-on' : ''} />)}</span>
     </p>
   );
 }
@@ -355,6 +354,8 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   // 1 to 3 things for today, each the fact, "Ask why" and one way in;
   // everything else (answering, the log, saves) is on the full dashboard.
   compact = false, onOpenFull = null,
+  // Home's toggle: ({ things, count }) => the views, placed right under the Rundown card (compact only).
+  renderViews = null,
   // Website Today's right column: the weekly recap's lines and what she is trying now (WebHealth).
   onWeekly = null, onTries = null, onSetup = null,
 }) {
@@ -432,22 +433,40 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         compact={compact}
         onSeeData={(d) => { try { window.dispatchEvent(new CustomEvent('ayna:health-tab', { detail: { tab: d?.tab } })); } catch { /* old browser */ } }}
       />
-      {items.length > 0 && <Progress items={items} t={t} />}
-      {compact && (items.length > 0
-        ? <ul className="ay-today__list is-compact" data-tour="today-things">
-          {/* Safety and care always show; the rest stop at three things. */}
-          {(() => {
-            const shown = items.filter((it, i) => PROTECTED.has(it.tier) || i < 3);
-            // Bento: safety and care run wide; the rest pair up as halves, and a lone last half goes wide.
-            // Items with answer chips (follow-ups, check-ins) need the full width too.
-            const chipsy = (it) => it.type === 'follow_up' || it.type === 'check_in' || (it.actions || []).some((a) => a.id === 'show_options');
-            const halves = shown.filter((it) => !PROTECTED.has(it.tier) && !chipsy(it));
-            const lone = halves.length % 2 === 1 ? halves[halves.length - 1] : null;
-            return shown.map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={onOpenFull} onOutcome={onOutcome} wide={item === lone || chipsy(item)} />);
-          })()}
-          {reviewDue && items.length < 3 && <ReviewAsk compact due={reviewDue} t={t} onOpenProduct={onOpenProduct} onDone={() => setReviewTick((n) => n + 1)} />}
-        </ul>
-        : <p className="ay-today__empty">{t.decision.empty}</p>)}
+      {items.length > 0 && !renderViews && <Progress items={items} t={t} />}
+      {compact && (() => {
+        // Safety and care always show; the rest stop at three things.
+        const shown = items.filter((it, i) => PROTECTED.has(it.tier) || i < 3);
+        // Bento: safety and care run wide; the rest pair up as halves, and a lone last half goes wide.
+        // Items with answer chips (follow-ups, check-ins) need the full width too.
+        const chipsy = (it) => it.type === 'follow_up' || it.type === 'check_in' || (it.actions || []).some((a) => a.id === 'show_options');
+        const tile = (list) => {
+          const halves = list.filter((it) => !PROTECTED.has(it.tier) && !chipsy(it));
+          const lone = halves.length % 2 === 1 ? halves[halves.length - 1] : null;
+          return list.map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={onOpenFull} onOutcome={onOutcome} wide={item === lone || chipsy(item)} />);
+        };
+        const review = reviewDue && items.length < 3 && <ReviewAsk compact due={reviewDue} t={t} onOpenProduct={onOpenProduct} onDone={() => setReviewTick((n) => n + 1)} />;
+        if (!renderViews) {
+          return items.length > 0
+            ? <ul className="ay-today__list is-compact" data-tour="today-things">{tile(shown)}{review}</ul>
+            : <p className="ay-today__empty">{t.decision.empty}</p>;
+        }
+        // Home's toggle (founder Oct 26): safety and care stay on top, always in view;
+        // the 1 to 3 things for today become the toggle's first view, not a stack.
+        const top = shown.filter((it) => PROTECTED.has(it.tier));
+        const rest = shown.filter((it) => !PROTECTED.has(it.tier));
+        const { done, total } = todayProgress(items, t);
+        return <>
+          {top.length > 0 && <ul className="ay-today__list is-compact is-protected" aria-label="Safety first">{tile(top)}</ul>}
+          {renderViews({
+            count: Math.max(0, total - done),
+            hasCheckIn: checkInItem,
+            things: rest.length > 0 || review
+              ? <ul className="ay-today__list is-compact" data-tour="today-things">{tile(rest)}{review}</ul>
+              : <p className="ay-today__empty">{top.length ? 'Nothing else for today.' : t.decision.empty}</p>,
+          })}
+        </>;
+      })()}
       {!compact && (items.length > 0
         ? <ul className="ay-today__list" data-tour="today-things">
           {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} onOpenLog={() => setLogOpen(true)} onOutcome={onOutcome} />)}

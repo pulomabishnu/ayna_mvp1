@@ -19,7 +19,7 @@ import WeekBento, { cycleWordsFor, glanceCharts } from '../../components/today/W
 import { usualBand } from '../../health/dashView.js';
 import '../../styles/week-explained.css';
 import TodayViews from '../components/TodayViews.jsx';
-import RoutineSummary from '../../components/routine/RoutineSummary.jsx';
+import RoutinePlates from '../../components/routine/RoutinePlates.jsx';
 import '../ayna-home.css';
 
 /**
@@ -68,6 +68,55 @@ export default function AynaHomeScreen(props) {
   }, [healthInsightRows, today, cycle, quizAnswers, myProducts, onHomeView]);
   const firstName = String(authUser?.user_metadata?.first_name || '').split(' ')[0];
   const ask = (q, extra) => onAskAyna?.(typeof q === 'string' ? { question: q, ...(extra || {}) } : q);
+
+  // One toggle, one view at a time (founder Oct 26 evening): nothing stacked, nothing removed.
+  // TodayFeed keeps safety and care above it and hands in her 1 to 3 things for the Today view.
+  const renderViews = ({ things, count, hasCheckIn }) => (
+    <TodayViews
+      todayCount={count}
+      onOpenProduct={onOpenProduct}
+      onAllProducts={() => onHomeView?.('products')}
+      groups={[
+        { id: 'routine', label: 'Routine', items: myProducts.filter((p) => p?.id && !routineExcluded[p.id]) },
+        { id: 'saved', label: 'Saved', items: Object.values(savedProducts || {}).filter((p) => p?.id) },
+        { id: 'tried', label: 'Tried', items: myProducts.filter((p) => p?.id && Array.isArray(routineOutcomes[p.id]) && routineOutcomes[p.id].length) },
+      ]}
+      week={weekBento
+        ? <section className="ay-homeweek" aria-labelledby="ay-homeweek-h"><h2 id="ay-homeweek-h" className="sr-only">Your week</h2>{weekBento}</section>
+        : <HomeHeroArt look={look} products={[...myProducts, ...suggestedEcosystemProducts]} cycle={cycle} sleepPoints={sleepPoints} />}
+      routine={<RoutinePlates userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} onOpenRoutine={() => openDashboard()} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} emptyAction={onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Explore products</button> : null} />}
+      today={<>
+        {things}
+        {/* The check-in item already opens the log; the row is for days without one. */}
+        {!hasCheckIn && <div className="ay-tv__log"><span><b>Your log</b><small>Pain, flow, sleep, mood</small></span><button type="button" onClick={() => openDashboard(true)}>Check in</button></div>}
+        {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
+        <HomeWidgets
+          // The week bento already shows sleep; its default health row would repeat it (unless she chose it in Edit).
+          hideDefault={weekBento ? ['health'] : []}
+          surface="app"
+          userId={authUser?.id || null}
+          data={{
+            healthRows: healthInsightRows || [], healthSummary, healthConnectedCount, hormonalBC: usesHormonalBC(quizAnswers), quizAnswers,
+            saved: Object.values(savedProducts || {}), myProducts,
+            routineSource: { userId: authUser?.id || null, quizAnswers, matchOpts, products: myProducts, saved: savedProducts, omitted: omittedProducts },
+            askHistory: recentAsks, readProgress, articles, newPosts: rundownCommunity,
+          }}
+          on={{
+            ask, openLog: () => openDashboard(true), openHealth: authUser && onOpenHealthData ? onOpenHealthData : () => openDashboard(),
+            connect: authUser ? onOpenHealthData || onConnectHealth : onConnectHealth, openProduct: onOpenProduct, openSaved: onOpenSaved,
+            openEcosystem: () => onHomeView?.('products'), openRoutine: () => openDashboard(), openPost: onOpenCommunityPost,
+            openPlaylist: onOpenCommunitySeed ? (playlistId) => onOpenCommunitySeed({ playlistId }) : null,
+            openCommunity: onOpenCommunitySeed ? () => onOpenCommunitySeed({}) : null, openArticle: onOpenArticle,
+          }}
+        >
+          <nav className="ay-homelinks" data-tour="home-links" aria-label="More on Today">
+            <button type="button" onClick={() => openDashboard()}><span><b>My dashboard</b><small>Routine, log and health data</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+            <button type="button" onClick={() => onHomeView?.('products')}><span><b>Your products</b><small>{hasProducts ? `${myProducts.length} in your ecosystem` : 'Products that fit you'}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+          </nav>
+        </HomeWidgets>
+      </>}
+    />
+  );
 
   if (homeView === 'dashboard') {
     return (
@@ -131,50 +180,9 @@ export default function AynaHomeScreen(props) {
           onRundownFinish={onRundownFinish}
           onOpenFull={(item, o) => openDashboard(Boolean(o?.log))}
           moreHeading={false}
+          renderViews={renderViews}
         />
         </div>
-        {/* One toggle, one view at a time (founder Oct 26 evening): nothing stacked, nothing removed. */}
-        <TodayViews
-          onOpenProduct={onOpenProduct}
-          onAllProducts={() => onHomeView?.('products')}
-          groups={[
-            { id: 'routine', label: 'Routine', items: myProducts.filter((p) => p?.id && !routineExcluded[p.id]) },
-            { id: 'saved', label: 'Saved', items: Object.values(savedProducts || {}).filter((p) => p?.id) },
-            { id: 'tried', label: 'Tried', items: myProducts.filter((p) => p?.id && Array.isArray(routineOutcomes[p.id]) && routineOutcomes[p.id].length) },
-          ]}
-          week={weekBento
-            ? <section className="ay-homeweek ay-hd" aria-labelledby="ay-homeweek-h"><h2 id="ay-homeweek-h" className="sr-only">Your week</h2>{weekBento}</section>
-            : <div className="ay-hd"><HomeHeroArt look={look} products={[...myProducts, ...suggestedEcosystemProducts]} cycle={cycle} sleepPoints={sleepPoints} /></div>}
-          routine={<RoutineSummary variant="app" userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} hideMedicines onOpenRoutine={() => openDashboard()} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} />}
-          checkin={<>
-            <div className="ay-tv__log"><b>Your log</b><button type="button" className="ay-tv__more" onClick={() => openDashboard(true)}>Check in</button></div>
-        {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
-        <HomeWidgets
-          // The week bento already shows sleep; its default health row would repeat it (unless she chose it in Edit).
-          hideDefault={weekBento ? ['health'] : []}
-          surface="app"
-          userId={authUser?.id || null}
-          data={{
-            healthRows: healthInsightRows || [], healthSummary, healthConnectedCount, hormonalBC: usesHormonalBC(quizAnswers), quizAnswers,
-            saved: Object.values(savedProducts || {}), myProducts,
-            routineSource: { userId: authUser?.id || null, quizAnswers, matchOpts, products: myProducts, saved: savedProducts, omitted: omittedProducts },
-            askHistory: recentAsks, readProgress, articles, newPosts: rundownCommunity,
-          }}
-          on={{
-            ask, openLog: () => openDashboard(true), openHealth: authUser && onOpenHealthData ? onOpenHealthData : () => openDashboard(),
-            connect: authUser ? onOpenHealthData || onConnectHealth : onConnectHealth, openProduct: onOpenProduct, openSaved: onOpenSaved,
-            openEcosystem: () => onHomeView?.('products'), openRoutine: () => openDashboard(), openPost: onOpenCommunityPost,
-            openPlaylist: onOpenCommunitySeed ? (playlistId) => onOpenCommunitySeed({ playlistId }) : null,
-            openCommunity: onOpenCommunitySeed ? () => onOpenCommunitySeed({}) : null, openArticle: onOpenArticle,
-          }}
-        >
-          <nav className="ay-homelinks" data-tour="home-links" aria-label="More on Today">
-            <button type="button" onClick={() => openDashboard()}><span><b>My dashboard</b><small>Routine, log and health data</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
-            <button type="button" onClick={() => onHomeView?.('products')}><span><b>Your products</b><small>{hasProducts ? `${myProducts.length} in your ecosystem` : 'Products that fit you'}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
-          </nav>
-        </HomeWidgets>
-          </>}
-        />
       </div>
       {asking && <HomeAskSheet signedIn={Boolean(authUser?.id)} hasProfile={hasProfile} onClose={() => setAsking(false)} onAsk={(req) => ask(req.question ? req : askFromPrompt(req))} />}
     </div>

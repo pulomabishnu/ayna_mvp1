@@ -92,3 +92,4 @@
 :is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) .wb-bars svg { height: 64px; width: 100%; }
 :is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) .wb-spark svg { height: 44px; }
 :is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) .wb-tile:not(.is-products):not(.is-coming) { min-height: 180px; }
+:is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) .wb-dir { display: inline-block; width: 16px; height: 16px; margin: 0 4px -2px 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }

@@ -8,7 +8,7 @@ import { DEV_HEALTH_DEMO, DEV_HEALTH_DEMO_EMPTY, localToday } from '../mobile/ho
 import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
 import TodayFeed from './today/TodayFeed.jsx';
-import { OutlineButton } from './ui/ay/index.js';
+import { OutlineButton, PillTabs, pillPanelProps } from './ui/ay/index.js';
 import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './personality/DS.jsx';
 import { headline, readHomeLook } from '../mobile/components/homeLook.js';
 import { comingUp } from '../health/comingUp.js';
@@ -250,6 +250,26 @@ function DashBand({ title, today, cycle, sync, hormonalBC }) {
   );
 }
 
+/**
+ * Today's sections under the day as one segmented toggle (the app's TodayViews,
+ * PillTabs): one view at a time, the choice remembered for the session.
+ * With a single view it renders as before, with no toggle.
+ */
+const WEB_VIEW_KEY = 'ayna_web_today_view_v1';
+function WebDayViews({ views }) {
+  const [view, setView] = useState(() => { try { return sessionStorage.getItem(WEB_VIEW_KEY) || ''; } catch { return ''; } });
+  if (!views.length) return null;
+  if (views.length === 1) return views[0].node;
+  const current = views.some((v) => v.id === view) ? view : views[0].id;
+  const pick = (id) => { setView(id); try { sessionStorage.setItem(WEB_VIEW_KEY, id); } catch { /* private mode */ } };
+  return (
+    <div className="ay-wh-views">
+      <PillTabs tabs={views.map(({ id, label }) => ({ id, label }))} active={current} onChange={pick} label="Your day" idBase="ay-wh-v" />
+      {views.map((v) => <div key={v.id} {...pillPanelProps('ay-wh-v', v.id, current)} className="ay-wh-views__panel">{v.node}</div>)}
+    </div>
+  );
+}
+
 export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null, compact = false, aside = null, widgets = null }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
@@ -374,13 +394,20 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
         <div className="ay-wh-day is-single">
           <div className="ay-wh-day__main">
             {feed}
-            {hasSide && (
-              <div className="ay-wh-day__flow" role="region" aria-label="Your week and coming up">
-                <TodaySide week={weekInfo} bento={bento} coming={coming} trying={trying} setup={setup} today={today} />
-                {signedIn && hasData && <button type="button" className="ay-wh-side__more is-data" onClick={() => goData(true)}><span>See your data</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
-              </div>
-            )}
-            {aside && <div className="ay-wh-day__flow">{aside}</div>}
+            {/* Founder Oct 26 evening ("toggles instead of stacking"): her week and her routine
+                are one toggle under the day, one view at a time; nothing is removed. */}
+            <WebDayViews views={[
+              hasSide && {
+                id: 'week', label: 'Your week',
+                node: (
+                  <div className="ay-wh-day__flow" role="region" aria-label="Your week and coming up">
+                    <TodaySide week={weekInfo} bento={bento} coming={coming} trying={trying} setup={setup} today={today} />
+                    {signedIn && hasData && <button type="button" className="ay-wh-side__more is-data" onClick={() => goData(true)}><span>See your data</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
+                  </div>
+                ),
+              },
+              aside && { id: 'routine', label: 'Routine', node: <div className="ay-wh-day__flow">{aside}</div> },
+            ].filter(Boolean)} />
             {widgets}
             {signedIn && (h.status === 'loading' || h.status === 'idle') && !rows.length && <div className="ay-wh-loading" role="status"><i /><i /><i /><span>Loading your health data</span></div>}
             {signedIn && h.status === 'error' && !rows.length && (
