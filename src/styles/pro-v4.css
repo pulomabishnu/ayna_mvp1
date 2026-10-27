@@ -1,0 +1,139 @@
+/* ayna Pro: the locked card on gated features and the Unlock sheet (app: bottom sheet, web: centred card).
+   Founder vibe (Oct 27): minimal but unique, easy to read, colour only where it clarifies, tap to learn more.
+   One pink band with a wavy edge and the title in the ayna title font; plan cards in the product-card style
+   (butter, 1.5px espresso outline, hard espresso offset shadow); the one pink sticker on the primary button.
+   Brand colours only, no white. 13px minimum, 44px targets. Fixed colours inside the band, so dark reads. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access, :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet {
+  --pro-fg: #3e2723; --pro-fg-muted: rgba(62, 39, 35, .78); --pro-bg: #ffedac; --pro-deep: #f6e3a1;
+  --pro-line: #3e2723; --pro-shadow: #3e2723; --pro-rule: rgba(62, 39, 35, .15);
+  --pro-fill: #3e2723; --pro-on-fill: #ffedac;
+  color: var(--pro-fg); font-family: var(--ay-font-ui, 'Figtree', system-ui, sans-serif);
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) :is(.pro-access, .pro-sheet) {
+  --pro-fg: #ffedac; --pro-fg-muted: rgba(255, 237, 172, .82); --pro-bg: #3e2723; --pro-deep: rgba(255, 237, 172, .08);
+  --pro-line: #ffedac; --pro-shadow: #ffedac; --pro-rule: rgba(255, 237, 172, .2);
+  --pro-fill: #ffedac; --pro-on-fill: #3e2723;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-access, .pro-sheet) :is(h2, p) { margin: 0; text-transform: none; letter-spacing: normal; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-access, .pro-sheet) button { font-family: inherit; -webkit-tap-highlight-color: transparent; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-access, .pro-sheet) :focus-visible { outline: 3px solid var(--pro-fg); outline-offset: 2px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Locked card on a gated feature ---------- */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access { box-sizing: border-box; width: min(560px, calc(100% - 32px)); margin: clamp(20px, 6vw, 64px) auto; padding: 0; background: transparent; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__back {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin: 0 0 12px; padding: 0 4px 0 0;
+  border: 0; background: transparent; color: var(--pro-fg); font: 600 15px/1 var(--ay-font-ui, Figtree, sans-serif); cursor: pointer;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__card {
+  display: grid; gap: 12px; padding: 24px; border: 1.5px solid var(--pro-line); border-radius: 16px;
+  background: var(--pro-deep); box-shadow: 5px 5px 0 var(--pro-shadow);
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__head { display: flex; align-items: center; gap: 10px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__lock { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #f7badd; color: #3e2723; flex: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__tag { font: 600 14px/1.2 var(--ay-font-ui, Figtree, sans-serif); color: var(--pro-fg-muted); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__title { color: var(--pro-fg); font: 700 clamp(24px, 3.4vw, 30px)/1.1 var(--ay-font-display, 'ayna Display', serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__context { color: var(--pro-fg); font: 600 16px/1.35 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__copy { color: var(--pro-fg); font: 400 16px/1.5 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__error { padding: 10px 12px; border: 1.5px solid #3e2723; border-radius: 8px; background: #f7badd; color: #3e2723; font: 600 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 4px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-access__primary, .pro-sheet__cta) {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 24px;
+  border: 0; border-radius: 999px; background: var(--pro-fill); color: var(--pro-on-fill);
+  box-shadow: 3px 3px 0 #f7badd; font: 700 16px/1.1 var(--ay-font-ui, Figtree, sans-serif); cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-access__primary, .pro-sheet__cta):active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #f7badd; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-access__primary, .pro-sheet__cta):disabled { opacity: .7; cursor: progress; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__secondary {
+  min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: var(--pro-fg);
+  font: 600 15px/1.2 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 4px; cursor: pointer;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__fine { color: var(--pro-fg-muted); font: 400 13px/1.45 var(--ay-font-ui, Figtree, sans-serif); }
+
+/* ---------- The Unlock sheet ---------- */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet {
+  position: fixed; inset: 0; z-index: 10050; display: flex; align-items: center; justify-content: center; padding: 24px;
+  background: rgba(62, 39, 35, .55);
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel {
+  position: relative; box-sizing: border-box; width: min(480px, 100%); max-height: calc(100dvh - 48px); overflow: hidden auto;
+  border: 1.5px solid var(--pro-line); border-radius: 16px; background: var(--pro-bg); color: var(--pro-fg);
+  overscroll-behavior: contain; outline: none;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__band {
+  position: relative; padding: 28px 56px 22px 24px; background: #f7badd; color: #3e2723; margin-bottom: 14px;
+}
+/* The wavy edge from the Shop band, hanging into the butter. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__band::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -13px; height: 14px; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='16' viewBox='0 0 48 16'%3E%3Cpath d='M0 0h48v4C38 4 36 15 24 15S10 4 0 4Z' fill='%23f7badd'/%3E%3C/svg%3E") repeat-x 0 0 / 40px 14px;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__grab { display: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__close {
+  position: absolute; top: 12px; right: 12px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; color: #3e2723; cursor: pointer;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__close:focus-visible { outline: 3px solid #3e2723; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__title { color: #3e2723; font: 700 30px/1.05 var(--ay-font-display, 'ayna Display', serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__lede { margin-top: 8px; color: #3e2723; font: 500 15px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body { display: grid; gap: 16px; padding: 18px 24px 24px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rows { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rows li { display: flex; align-items: center; gap: 10px; color: var(--pro-fg); font: 500 15px/1.35 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__tick { flex: none; width: 22px; height: 22px; padding: 3px; box-sizing: border-box; border-radius: 50%; background: #f7badd; color: #3e2723; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__plans { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 0 5px 5px 0; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan {
+  display: grid; justify-items: start; align-content: start; gap: 2px; min-height: 132px; margin: 0; padding: 14px 14px 12px;
+  border: 1.5px solid var(--pro-line); border-radius: 16px; background: var(--pro-deep); color: var(--pro-fg);
+  box-shadow: 4px 4px 0 var(--pro-shadow); text-align: left; cursor: pointer; transition: transform 120ms ease, box-shadow 120ms ease;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan.is-on { background: #f7badd; color: #3e2723; border-color: #3e2723; outline: 2.5px solid var(--pro-line); outline-offset: 2px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--pro-shadow); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan:disabled { cursor: progress; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__top { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; min-height: 30px; margin-bottom: 4px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__label { font: 700 16px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__best { padding: 3px 8px; border: 1.5px solid #3e2723; border-radius: 999px; background: #f7badd; color: #3e2723; font: 600 13px/1.1 var(--ay-font-ui, Figtree, sans-serif); white-space: nowrap; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan.is-on .pro-plan__best { background: #ffedac; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__was { color: inherit; opacity: .85; font: 400 14px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__price { font: 700 34px/1 var(--ay-font-display, 'ayna Display', serif); letter-spacing: -.01em; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__today { font: 500 14px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__cta { width: 100%; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__renew { margin-top: -6px; color: var(--pro-fg); font: 500 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); text-align: center; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__error { padding: 10px 12px; border: 1.5px solid #3e2723; border-radius: 8px; background: #f7badd; color: #3e2723; font: 600 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__more {
+  display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44px; margin: 0; padding: 0;
+  border: 0; border-top: 1px solid var(--pro-rule); background: transparent; color: var(--pro-fg);
+  font: 600 15px/1.2 var(--ay-font-ui, Figtree, sans-serif); cursor: pointer;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__more svg { transition: transform 180ms ease; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__more[aria-expanded='true'] svg { transform: rotate(180deg); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__billing { display: grid; gap: 8px; margin-top: -8px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__billing[hidden] { display: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__billing p { color: var(--pro-fg-muted); font: 400 14px/1.5 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__billing b { color: var(--pro-fg); font-weight: 700; }
+
+/* App and phones: a bottom sheet with a grab bar. */
+@media (max-width: 640px) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet { align-items: flex-end; padding: 0; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel { width: 100%; max-height: 92dvh; border-width: 1.5px 0 0; border-radius: 16px 16px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__band { padding: 22px 56px 20px 16px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body { padding: 16px 16px 20px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__title { font-size: 28px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__price { font-size: 30px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access { width: calc(100% - 32px); }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-access__card { padding: 20px; }
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet { align-items: flex-end; padding: 0; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet__panel { width: 100%; max-height: 92dvh; border-width: 1.5px 0 0; border-radius: 16px 16px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); }
+@media (max-width: 640px) { :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__grab { display: block; position: absolute; top: 8px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 999px; background: rgba(62, 39, 35, .4); } }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet__grab { display: block; position: absolute; top: 8px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 999px; background: rgba(62, 39, 35, .4); }
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet { animation: pro-fade 180ms ease-out; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel { animation: pro-rise 240ms cubic-bezier(.2, .8, .2, 1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-plan, .pro-access__primary, .pro-sheet__cta, .pro-sheet__more svg) { transition: none; }
+}
+@keyframes pro-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pro-rise { from { transform: translateY(24px); opacity: .6; } to { transform: none; opacity: 1; } }

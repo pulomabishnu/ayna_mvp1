@@ -2476,6 +2476,7 @@ export default function MyEcosystem({
         {showSyncPaywall && (
             <SubscriptionPaywallModal
                 onClose={() => setShowSyncPaywall(false)}
+                feature="wearables"
                 featureName="wearable and health app syncing"
             />
         )}

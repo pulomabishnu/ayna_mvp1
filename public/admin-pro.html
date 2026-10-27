@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>ayna Pro controls</title>
+  <style>
+    /* Light pass to the ayna brand: butter, espresso, pink; no white. Internal page. */
+    @font-face { font-family: 'ayna Display'; src: url('/fonts/ayna-display-700.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+    @font-face { font-family: 'Figtree'; src: url('/fonts/figtree-latin-var.woff2') format('woff2'); font-weight: 300 900; font-display: swap; }
+    :root { color-scheme: light; --ink:#3e2723; --muted:rgba(62,39,35,.78); --bg:#ffedac; --deep:#f6e3a1; --pink:#f7badd; --line:rgba(62,39,35,.15); }
+    @media (prefers-color-scheme: dark) { :root { color-scheme: dark; --ink:#ffedac; --muted:rgba(255,237,172,.82); --bg:#3e2723; --deep:rgba(255,237,172,.08); --line:rgba(255,237,172,.2); } }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:400 16px/1.5 'Figtree', system-ui, sans-serif; }
+    main { width:min(760px, calc(100% - 32px)); margin:32px auto 72px; }
+    a { color:var(--ink); font-weight:700; text-underline-offset:4px; }
+    a:first-child { display:inline-flex; align-items:center; min-height:44px; }
+    :focus-visible { outline:3px solid var(--ink); outline-offset:2px; }
+    .eyebrow { margin:20px 0 8px; color:var(--muted); font-size:14px; font-weight:600; }
+    h1 { margin:0; font:700 clamp(32px, 6vw, 48px)/1.05 'ayna Display', 'Figtree', sans-serif; }
+    .lede { max-width:620px; color:var(--muted); font-size:16px; line-height:1.6; }
+    .card { margin-top:24px; border:1.5px solid var(--ink); border-radius:16px; background:var(--deep); padding:24px; box-shadow:4px 4px 0 var(--ink); }
+    .status-row { display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+    .state-label { margin:0 0 6px; font-size:14px; font-weight:600; color:var(--muted); }
+    .state { margin:0; font:700 30px/1.1 'ayna Display', 'Figtree', sans-serif; }
+    .switch { min-width:160px; min-height:48px; border:1.5px solid var(--ink); border-radius:999px; padding:0 22px; background:transparent; color:var(--ink); font:700 16px/1 'Figtree', sans-serif; cursor:pointer; }
+    .switch[aria-checked="true"] { border-color:var(--ink); background:var(--ink); color:var(--bg); box-shadow:3px 3px 0 #f7badd; }
+    .switch:disabled { opacity:.55; cursor:not-allowed; }
+    .note { margin:18px 0 0; padding:12px 14px; border:1px solid var(--line); border-radius:8px; line-height:1.5; }
+    .warning { border:1.5px solid #3e2723; background:var(--pink); color:#3e2723; }
+    .grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin-top:18px; }
+    .metric { border:1px solid var(--line); border-radius:16px; padding:14px; }
+    .metric strong { display:block; font:700 26px/1.1 'ayna Display', 'Figtree', sans-serif; }
+    .metric span { color:var(--muted); font-size:14px; }
+    .actions { display:flex; align-items:center; gap:16px; margin-top:18px; flex-wrap:wrap; }
+    .secondary { min-height:44px; border:1.5px solid var(--ink); border-radius:999px; padding:0 18px; background:transparent; color:var(--ink); font:600 15px/1 'Figtree', sans-serif; cursor:pointer; }
+    #message { min-height:1.5em; margin:16px 0 0; color:var(--muted); }
+    #message.error { color:var(--ink); font-weight:700; }
+    .hidden { display:none !important; }
+    @media (max-width:620px) { main { margin-top:20px; } .grid { grid-template-columns:1fr; } .switch { width:100%; } }
+  </style>
+</head>
+<body>
+  <main>
+    <a href="/you">Back to ayna</a>
+    <p class="eyebrow">Internal admin</p>
+    <h1>ayna Pro controls</h1>
+    <p class="lede">Turn the Free vs. Pro feature gates on or off for everyone. Changes apply immediately and do not require a Vercel redeploy.</p>
+
+    <section id="auth-card" class="card" aria-live="polite">
+      <strong id="auth-status">Checking admin access…</strong>
+      <p id="auth-detail" class="lede">You must be signed in with an approved ayna admin account.</p>
+    </section>
+
+    <section id="controls" class="card hidden" aria-labelledby="gate-heading">
+      <div class="status-row">
+        <div>
+          <p class="state-label">Production feature gates</p>
+          <h2 id="gate-heading" class="state">Checking…</h2>
+        </div>
+        <button id="gate-toggle" class="switch" type="button" role="switch" aria-checked="false" disabled>Loading…</button>
+      </div>
+      <p id="gate-note" class="note">Loading the live rollout setting…</p>
+
+      <div class="grid" aria-label="Current limits">
+        <div class="metric"><strong id="free-ask">…</strong><span>Free Ask ayna / day</span></div>
+        <div class="metric"><strong id="pro-ask">…</strong><span>Pro Ask ayna / day</span></div>
+        <div class="metric"><strong id="free-playlists">…</strong><span>Free playlists</span></div>
+      </div>
+
+      <div class="actions">
+        <button id="refresh" class="secondary" type="button">Refresh status</button>
+        <a href="/pro">Open Pro purchase page</a>
+      </div>
+      <p id="message" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+  <script src="/admin-pro.js" defer></script>
+</body>
+</html>

@@ -1,10 +1,11 @@
 import React from 'react';
 import GlossaryTerm from './GlossaryTerm';
 import AccountHead from './nav/AccountHead.jsx';
+import ProFeatureGate from './ProFeatureGate.jsx';
 import { getCareProfile } from '../utils/careProfile';
 import { findSharedActives, isService } from '../utils/sharedActives';
 
-export default function DoctorPrep({ checkinData = null, myProducts = {}, quizResults = {}, chatHistory = [], onBack, onOpenCheckin = null }) {
+function DoctorPrepContent({ checkinData = null, myProducts = {}, quizResults = {}, chatHistory = [], onBack, onOpenCheckin = null }) {
     const products = Object.values(myProducts || {}).filter(Boolean);
     const ecosystemStats = products.length;
     const care = getCareProfile(quizResults);
@@ -121,4 +122,10 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
             <p className="dp2-foot">ayna gives information only. It is not a medical device. Always check health facts with your doctor or nurse.</p>
         </div>
     );
+}
+
+export default function DoctorPrep(props) {
+    return <ProFeatureGate feature="appointment" title="Appointment prep" onBack={props.onBack}>
+        <DoctorPrepContent {...props} />
+    </ProFeatureGate>;
 }
