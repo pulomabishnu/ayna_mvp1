@@ -127,7 +127,7 @@ describe('Home: facts first, Ask why, and the Ask ayna sheet', () => {
     // The fact goes to the AI only with her health opt-in.
     expect(onAsk.mock.calls[0][0].context).toBe('');
   });
-  it('one-screen Home feed: the Rundown card and up to three things, each with Ask why; no log, no long lists', async () => {
+  it('one-screen Home feed: the Rundown card and up to three things, each with Ask ayna about this; no log, no long lists', async () => {
     sessionStorage.setItem('ayna_dev_fixture', 'today');
     const onAsk = vi.fn(); const onOpenFull = vi.fn();
     mount(<TodayFeed compact variant="app" onAsk={onAsk} onOpenFull={onOpenFull} moreHeading={false} />);
@@ -137,7 +137,7 @@ describe('Home: facts first, Ask why, and the Ask ayna sheet', () => {
     expect(items.filter((n) => !/is-(safety|care)/.test(n.className)).length).toBeLessThanOrEqual(3);
     expect(document.querySelector('.ay-today__log')).toBeNull();
     expect(document.querySelector('.ay-today__more')).toBeNull();
-    const why = btn('Ask why');
+    const why = btn('Ask ayna about this');
     if (why) {
       act(() => why.click());
       expect(onAsk.mock.calls[0][0]).toMatch(/^Why might this be\? /);

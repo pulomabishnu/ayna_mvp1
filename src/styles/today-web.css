@@ -129,3 +129,21 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-co
 :is(:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ds-w, .app-container), :is([data-theme='dark'], [data-theme='brand-dark']):is(#ds-w, .app-container)):is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials .ay-dial__arc.is-ink { stroke: #3e2723 !important; }
 :is(:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ds-w, .app-container), :is([data-theme='dark'], [data-theme='brand-dark']):is(#ds-w, .app-container)):is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials .ay-hh-bubble__ring { background: #3e2723 !important; }
 :is(:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ds-w, .app-container), :is([data-theme='dark'], [data-theme='brand-dark']):is(#ds-w, .app-container)):is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials .ay-hh-bubble__ring b { color: #ffedac !important; }
+
+/* Review (Oct 26): on a desktop, two columns. Left: the data (highlights, then Your week / Routine).
+   Right: one sticky column to act in (her things for today and setting up). One column below 1100px. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__act { display: grid; gap: 24px; min-width: 0; align-content: start; }
+@media (min-width: 1100px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day.is-single { max-width: 1160px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day.is-single .ay-wh-day__main { grid-template-columns: minmax(0, 1fr) 380px; column-gap: 32px; align-items: start; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day.is-single .ay-wh-day__main > * { grid-column: 1; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day.is-single .ay-wh-day__main > .ay-wh-day__act { grid-column: 2; grid-row: 1 / span 6; position: sticky; top: 96px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__act .ay-today.is-web .ay-today__list { display: grid; grid-template-columns: minmax(0, 1fr) !important; gap: 12px; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-day__act .ay-today.is-web .ay-today__list > * { grid-column: 1 !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-hhl .ayk-snap.is-card .ayk-snap__item { width: calc(50% - 6px); }
+}
+/* One colour rule on the website's things too: no left stick, no rotation; the butter surface. */
+@media (min-width: 1100px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead:has(.ay-wh-hello__dials) { max-width: 1160px; padding-right: 0 !important; grid-template-columns: minmax(0, 1fr) 520px !important; grid-template-areas: 'date dials' 'hi dials' 'days dials' !important; align-items: center; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials { justify-self: end; margin-top: 0; }
+}

@@ -1,5 +1,5 @@
 /* Today's one toggle (TodayViews.jsx): one view at a time, 24px between sections, 16px inside. */
-.ay-tv { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin: 8px 0 0; min-width: 0; }
+.ay-tv { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin: 0; min-width: 0; }
 .ay-tv .ayk-tabs__tab { min-height: 44px; }
 .ay-tv__panel { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
 .ay-tv__panel[hidden] { display: none; }
@@ -48,9 +48,8 @@
 .ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact .ay-chip { flex: none; }
 .ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact > .ay-today__actions { margin: 0 !important; }
 
-/* Colour blocking (Intelly's stat tiles): the things alternate pink and butter-deep; fixed colours read in dark too. */
-.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-tv .ay-today__list.is-compact > .ay-today__item.is-compact:nth-child(odd) { background: #f7badd !important; color: #3e2723 !important; }
-.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-tv .ay-today__list.is-compact > .ay-today__item.is-compact:nth-child(odd) :is(.ay-today__title, .ay-today__why, .ay-today__readmore, .ay-today__text, .ay-today__kicker) { color: #3e2723 !important; }
-.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-tv .ay-today__list.is-compact > .ay-today__item.is-compact:nth-child(odd) .ay-today__glyph { background: #ffedac; color: #3e2723; }
-.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-tv .ay-today__list.is-compact > .ay-today__item.is-compact:nth-child(odd) .ay-chip { background: transparent !important; color: #3e2723 !important; border-color: #3e2723 !important; }
-.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-tv .ay-today__list.is-compact > .ay-today__item.is-compact:nth-child(odd) .ay-today__primary { background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; }
+/* One colour rule (review, Oct 26): the For today cards are the butter surface; pink marks only what is for now. */
+
+/* The toggle stays in reach while its content scrolls (review #15). */
+.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-tv > .ayk-tabs { position: sticky; top: 8px; z-index: 20; background-color: #f6e3a1 !important; box-shadow: 0 0 0 8px var(--r-canvas, #ffedac); }
+.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile)[data-theme='dark'] .ay-homescreen .ay-tv > .ayk-tabs { background-color: #45302b !important; box-shadow: 0 0 0 8px var(--r-canvas, #2e1c18); }

@@ -416,7 +416,12 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
               });
               return <HomeHighlights items={items} today={today} onOpen={signedIn ? () => goData(true) : null} />;
             })()}
-            {feed}
+            {/* The day column (review, Oct 26: on a desktop it sits on the right, sticky): her things,
+                then setting up, as one place to act; the data stays on the left. */}
+            <div className="ay-wh-day__act">
+              {feed}
+              {setup.some((x) => x.done) && setup.some((x) => !x.done) && <TodaySide week={null} bento={null} coming={[]} trying={[]} setup={setup} today={today} />}
+            </div>
             {/* Founder Oct 26 evening ("toggles instead of stacking"): her week and her routine
                 are one toggle under the day, one view at a time; nothing is removed. */}
             <WebDayViews views={[
@@ -424,7 +429,7 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
                 id: 'week', label: 'Your week',
                 node: (
                   <div className="ay-wh-day__flow" role="region" aria-label="Your week and coming up">
-                    <TodaySide week={weekInfo} bento={bento} coming={coming} trying={trying} setup={setup} today={today} />
+                    <TodaySide week={weekInfo} bento={bento} coming={coming} trying={trying} setup={[]} today={today} />
                     {signedIn && hasData && <button type="button" className="ay-wh-side__more is-data" onClick={() => goData(true)}><span>See your data</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
                   </div>
                 ),

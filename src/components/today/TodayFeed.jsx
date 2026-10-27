@@ -82,7 +82,7 @@ function CompactItem({ item, t, onAsk, onFindCare, onOpenFull, onOutcome, wide =
         ? <p className="ay-today__why">{item.reason}</p>
         : <>
           <p id={reasonId} className="ay-today__why" hidden={!more}>{item.reason}</p>
-          <button type="button" className="ay-today__readmore" aria-expanded={more} aria-controls={reasonId} onClick={() => setMore((m) => !m)}>{more ? 'Show less' : 'Read more'}</button>
+          <button type="button" className="ay-today__readmore" aria-expanded={more} aria-controls={reasonId} onClick={() => setMore((m) => !m)}>{more ? 'Hide the reason' : 'See the reason'}</button>
         </>)}
       {outcomes.length > 0 && (
         <div className="ay-today__chips is-inline" role="group" aria-label="How did it go?">
@@ -101,7 +101,7 @@ function CompactItem({ item, t, onAsk, onFindCare, onOpenFull, onOutcome, wide =
           ? <button type="button" className="ay-today__primary" onClick={() => { t.opened(item); onFindCare(item); }}>Find care</button>
           : <a className="ay-today__primary" href={HRSA_FIND_CARE} target="_blank" rel="noopener noreferrer" onClick={() => t.opened(item)}>Find care<span className="sr-only"> (opens in a new tab)</span></a>)}
         {full && !outcomes.length && !fields.length && <button type="button" className="ay-today__primary is-quiet" onClick={() => full()}>{primaryLabel}</button>}
-        {why && <button type="button" className="ay-today__text" onClick={why}>Ask why</button>}
+        {why && <button type="button" className="ay-today__text" onClick={why}>Ask ayna about this</button>}
       </div>
     </li>
   );
@@ -274,7 +274,7 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
   const shownChips = allChips ? chipActs : chipActs.slice(0, FIRST_CHIPS);
   const menu = !protectedItem && (
     <ItemMenu label={`More for ${item.title}`}>
-      {why && !linkIsWhy && <button type="button" onClick={why}>Ask why</button>}
+      {why && !linkIsWhy && <button type="button" onClick={why}>Ask ayna about this</button>}
       {remind && !linkIsRemind && <button type="button" onClick={remind}>Remind me tonight</button>}
       {stopAct && <button type="button" onClick={() => onOutcome(item, 'stopped')}>Stopped using</button>}
       {!noteText && <button type="button" onClick={() => t.useful(item)}>Useful</button>}
@@ -333,9 +333,9 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
         {checkIn && !fields.length && <a className="ay-today__primary" href={`#${checkinId}`} onClick={(e) => openLogAt(e, null)}>Check in</a>}
         {acts.filter((a) => a.id === 'show_options').map((a) => <button key={a.id} type="button" className="ay-today__primary" onClick={() => t.showOptions(item, a.need)}>Show options</button>)}
         {acts.filter((a) => a.id === 'try_this').map((a) => <button key={a.id} type="button" className="ay-today__primary" onClick={() => t.startTry(item, a)}>Try this</button>)}
-        {protectedItem && why && <button type="button" className="ay-today__text" onClick={why}>Ask why</button>}
+        {protectedItem && why && <button type="button" className="ay-today__text" onClick={why}>Ask ayna about this</button>}
         {has('care_summary') && onAsk && <button type="button" className="ay-today__text" onClick={() => { t.opened(item); onAsk('Help me write a short summary of my pain to bring to a doctor visit.'); }}>Make a summary for my visit</button>}
-        {!protectedItem && linkIsWhy && <button type="button" className="ay-today__text" onClick={why}>Ask why</button>}
+        {!protectedItem && linkIsWhy && <button type="button" className="ay-today__text" onClick={why}>Ask ayna about this</button>}
         {linkIsRemind && <button type="button" className="ay-today__text" onClick={remind}>Remind me tonight</button>}
         {menu}
       </div>
@@ -467,13 +467,13 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
           {renderViews({
             count: Math.max(0, total - done),
             hasCheckIn: checkInItem,
-            // A stacked deck (founder Oct 26 22:52): the top card in full, the next ones peeking; answering sends it up.
+            // A stack of passes (founder Oct 26 22:52, 23:39): the others as title strips, the front card in full.
             things: rest.length > 0 || review
               ? <div data-tour="today-things"><CardDeck
                 storageKey={`ayna_deck_${userId || 'device'}_${t.today}`}
                 items={[
-                  ...tile(rest).map((node, i) => ({ key: rest[i].id, title: rest[i].title, tone: i % 2 ? 'butter' : 'pink', node })),
-                  ...(review ? [{ key: 'review', title: 'How is it going?', tone: rest.length % 2 ? 'butter' : 'pink', node: review }] : []),
+                  ...tile(rest).map((node, i) => ({ key: rest[i].id, title: rest[i].title, node })),
+                  ...(review ? [{ key: 'review', title: 'How is it going?', node: review }] : []),
                 ]}
               /></div>
               : <p className="ay-today__empty">{top.length ? 'Nothing else for today.' : t.decision.empty}</p>,

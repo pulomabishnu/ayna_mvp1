@@ -12,15 +12,23 @@ const btn = (text) => [...host.querySelectorAll('button')].find((b) => b.textCon
 const items = (onAnswer) => ['a', 'b', 'c'].map((k) => ({ key: k, title: `Q ${k}`, node: <li key={k}><h3>Q {k}</h3><button type="button" className="ay-chip" onClick={() => onAnswer(k)}>Yes {k}</button><button type="button" className="ay-today__readmore" aria-expanded="false">Read more</button></li> }));
 
 describe('CardDeck: the For today stack', () => {
-  it('shows only the top card, a count, and moves on with Later; the change is announced', () => {
+  it('the front card in full, the others as title strips; Later moves on and is announced', () => {
     vi.useFakeTimers();
     mount(<CardDeck items={items(() => {})} storageKey="t1" />);
-    expect(host.textContent).toContain('1 of 3');
-    expect(host.textContent).toContain('Q a');
-    expect(host.textContent).not.toContain('Q b');
+    expect(btn('Yes a')).toBeTruthy();
+    expect(btn('Yes b')).toBeUndefined();
+    const strips = [...host.querySelectorAll('.ay-fdeck__strip')].map((b) => b.getAttribute('aria-label'));
+    expect(strips).toEqual(['Open: Q b', 'Open: Q c']);
     act(() => { btn('Later').click(); vi.runAllTimers(); });
-    expect(host.textContent).toContain('2 of 3');
+    expect(btn('Yes b')).toBeTruthy();
     expect(host.querySelector('[aria-live]').textContent).toContain('Q b');
+  });
+  it('tapping a title strip brings that card to the front', () => {
+    mount(<CardDeck items={items(() => {})} storageKey="t4" />);
+    act(() => [...host.querySelectorAll('.ay-fdeck__strip')].find((b) => b.getAttribute('aria-label') === 'Open: Q c').click());
+    expect(btn('Yes c')).toBeTruthy();
+    expect(btn('Yes a')).toBeUndefined();
+    expect([...host.querySelectorAll('.ay-fdeck__strip')].map((b) => b.getAttribute('aria-label'))).toEqual(['Open: Q a', 'Open: Q b']);
   });
   it('an answer runs its own handler first, then the card goes; Read more keeps it', () => {
     vi.useFakeTimers();
@@ -30,7 +38,7 @@ describe('CardDeck: the For today stack', () => {
     expect(host.textContent).toContain('Q a');
     act(() => { btn('Yes a').click(); vi.runAllTimers(); });
     expect(onAnswer).toHaveBeenCalledWith('a');
-    expect(host.textContent).toContain('Q b');
+    expect(btn('Yes b')).toBeTruthy();
   });
   it('Show all lists every card (nothing is removed); the end says all done', () => {
     vi.useFakeTimers();

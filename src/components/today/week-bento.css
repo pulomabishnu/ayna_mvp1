@@ -18,7 +18,7 @@
 .wb-wheel circle { fill: none; stroke-width: 16; }
 .wb-wheel .wb-wheel__track { stroke: rgba(255, 237, 172, .22); }
 .wb-wheel .wb-wheel__period { stroke: #F7BADD; stroke-linecap: butt; }
-.wb-wheel .wb-wheel__ovu { stroke: #769EBE; stroke-linecap: butt; }
+.wb-wheel .wb-wheel__ovu { stroke: rgba(255, 237, 172, .7); stroke-linecap: butt; } /* Not blue: blue is for chart lines only (review, Oct 26). */
 .wb-wheel .wb-wheel__today { fill: #FFEDAC; stroke: #3E2723; stroke-width: 3; }
 .wb-wheel text { fill: #FFEDAC; font-family: var(--ay-font-ui); }
 .wb-wheel .wb-wheel__k { font-size: 13px; font-weight: 600; }
@@ -28,7 +28,7 @@
 .wb-key i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 4px; }
 .wb-key i:first-child { margin-left: 0; }
 .wb-key i.is-period { background: #F7BADD; }
-.wb-key i.is-ovu { background: #769EBE; }
+.wb-key i.is-ovu { background: rgba(255, 237, 172, .7); }
 .wb-key i.is-today { background: #FFEDAC; box-shadow: inset 0 0 0 2px #3E2723; }
 
 /* Bars (sleep, steps): espresso bars, last day pink, usual as a blue line */

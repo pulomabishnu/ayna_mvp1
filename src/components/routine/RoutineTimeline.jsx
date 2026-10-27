@@ -16,8 +16,6 @@ import './routine-timeline.css';
  * information only and never listed here.
  */
 const cap = (x) => (x ? `${x.charAt(0).toUpperCase()}${x.slice(1)}` : '');
-const ICON = { habit: 'M12 6v6l4 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z', track: 'M5 19V9m7 10V5m7 14v-7' };
-const TONES = ['butter', 'ink', 'deep'];
 
 // Is this "when" happening now? From her cycle day and the clock only.
 function isNow(when, cycle, hour) {
@@ -33,27 +31,32 @@ function Step({ it, onOpenProduct }) {
   const [open, setOpen] = useState(false);
   const id = `ay-rtl-${it.key}`;
   const product = it.kind === 'product';
+  const photo = product
+    ? <Plate src={resolveCatalogProductImage(it.product) || ''} alt="" fallback={it.product?.brand || it.title} className="ay-rtl__plate" />
+    // A step with no product (a habit): a solid monogram, never a placeholder icon (review, Oct 26).
+    : <span className="ay-rtl__mono" aria-hidden="true">{String(it.title || '?').trim().replace(/^(a|an|the|your)\s+/i, '').charAt(0).toUpperCase()}</span>;
+  const head = <>
+    <span className="ay-rtl__photo">{photo}</span>
+    <span className="ay-rtl__text">
+      <span className="ay-rtl__name">{it.title}</span>
+      {it.why && <span className="ay-rtl__why">{it.why}</span>}
+    </span>
+  </>;
   return (
     <li className={`ay-rtl__step${open ? ' is-open' : ''}`}>
-      <div className="ay-rtl__photo">
-        {product
-          ? <Plate src={resolveCatalogProductImage(it.product) || ''} alt="" fallback={it.product?.brand || it.title} className="ay-rtl__plate" />
-          : <span className="ay-rtl__habit" aria-hidden="true"><svg viewBox="0 0 24 24"><path d={ICON.habit} /></svg></span>}
-      </div>
-      <div className="ay-rtl__body">
-        <h4 className="ay-rtl__name">{it.title}</h4>
-        {it.why && <p className="ay-rtl__why">{it.why}</p>}
-        <button type="button" className="ay-rtl__more" aria-expanded={open} aria-controls={id} onClick={() => setOpen((v) => !v)}>
-          {open ? 'Less' : 'How and when'}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
-        </button>
-        <dl id={id} className="ay-rtl__detail" hidden={!open}>
-          {it.when && <div><dt>When</dt><dd>{cap(it.when)}</dd></div>}
-          {it.how && <div><dt>How</dt><dd>{it.how}</dd></div>}
-          {it.horizon && <div><dt>Try it for</dt><dd>{it.horizon.label}</dd></div>}
-          {it.know && <div><dt>How you will know</dt><dd>{it.know}</dd></div>}
-        </dl>
-        {product && onOpenProduct && <button type="button" className="ay-rtl__open" onClick={() => onOpenProduct(it.product)}>See product</button>}
-      </div>
+      {/* The row opens the product (one tap target); "How and when" opens in place. */}
+      {product && onOpenProduct
+        ? <button type="button" className="ay-rtl__row" onClick={() => onOpenProduct(it.product)} aria-label={`${it.title}. Open product.`}>{head}</button>
+        : <div className="ay-rtl__row">{head}</div>}
+      <button type="button" className="ay-rtl__more" aria-expanded={open} aria-controls={id} onClick={() => setOpen((v) => !v)}>
+        {open ? 'Less' : 'How and when'}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+      </button>
+      <dl id={id} className="ay-rtl__detail" hidden={!open}>
+        {it.when && <div><dt>When</dt><dd>{cap(it.when)}</dd></div>}
+        {it.how && <div><dt>How</dt><dd>{it.how}</dd></div>}
+        {it.horizon && <div><dt>Try it for</dt><dd>{it.horizon.label}</dd></div>}
+        {it.know && <div><dt>How you will know</dt><dd>{it.know}</dd></div>}
+      </dl>
     </li>
   );
 }
@@ -85,12 +88,11 @@ export default function RoutineTimeline({ cycle = null, onOpenRoutine, onOpenPro
     }
   }
   const tracks = list.map((r) => r.track).filter(Boolean);
-  let tone = 0;
   return (
     <div className="ay-rtl">
       <ol className="ay-rtl__line">
         {groups.map((g) => (
-          <li key={g.when} className={`ay-rtl__sec is-${g.now ? 'now' : TONES[tone++ % TONES.length]}`}>
+          <li key={g.when} className={`ay-rtl__sec is-${g.now ? 'now' : 'surface'}`}>
             <h3 className="ay-rtl__when">{g.now && <em>Now</em>}{g.when}</h3>
             <ul>{g.steps.map((it) => <Step key={it.key} it={it} onOpenProduct={onOpenProduct} />)}</ul>
           </li>
@@ -99,7 +101,7 @@ export default function RoutineTimeline({ cycle = null, onOpenRoutine, onOpenPro
           <li className="ay-rtl__sec is-track">
             <h3 className="ay-rtl__when">Your check-in</h3>
             <button type="button" className="ay-rtl__check" onClick={onCheckIn} disabled={!onCheckIn}>
-              <span className="ay-rtl__habit is-small" aria-hidden="true"><svg viewBox="0 0 24 24"><path d={ICON.track} /></svg></span>
+              <span className="ay-rtl__tick" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span>
               <span><b>{tracks.map((t, i) => (i ? `${t.title.charAt(0).toLowerCase()}${t.title.slice(1)}` : t.title)).join(' and ')}</b><small>About 30 seconds{onCheckIn ? '. Check in' : ''}</small></span>
             </button>
           </li>
