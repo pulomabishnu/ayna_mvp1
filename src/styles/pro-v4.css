@@ -32,11 +32,6 @@
 /* ---------- The checker frame ---------- */
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame { position: relative; box-sizing: border-box; padding: 12px; border: 1.5px solid #3e2723; border-radius: 22px; background: #3e2723; overflow: hidden; isolation: isolate; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) .pro-frame { border-color: #ffedac; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__edge { position: absolute; z-index: 0; background: repeating-conic-gradient(#3e2723 0 25%, #f7badd 0 50%) 0 0 / 24px 24px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__edge.is-top { top: 0; left: 0; right: 0; height: 12px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__edge.is-bottom { bottom: 0; left: 0; right: 0; height: 12px; background-position: 0 12px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__edge.is-left { top: 12px; bottom: 12px; left: 0; width: 12px; background-position: 0 12px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__edge.is-right { top: 12px; bottom: 12px; right: 0; width: 12px; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__inner { position: relative; z-index: 1; border: 1.5px solid #3e2723; border-radius: 12px; background: var(--pro-bg); }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) .pro-frame__inner { border-color: #ffedac; }
 
@@ -72,12 +67,7 @@
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__fine { flex-basis: 100%; color: var(--pro-fg-muted); font: 400 14px/1.45 var(--ay-font-ui, Figtree, sans-serif); }
 
 /* Inline: a limit she just hit (Ask ayna, playlists, ecosystem update). Smaller squares, seal beside the words. */
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame { --pro-tile: 16px; padding: 8px; border-radius: 18px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame__edge { background-size: 16px 16px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame__edge.is-top, :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame__edge.is-bottom { height: 8px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame__edge.is-bottom { background-position: 0 8px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame__edge.is-left, :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame__edge.is-right { top: 8px; bottom: 8px; width: 8px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame__edge.is-left { background-position: 0 8px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame { padding: 8px; border-radius: 18px; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame__inner { border-radius: 10px; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__card { grid-template-columns: auto 1fr; align-items: start; gap: 10px 14px; padding: 16px; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__seal { width: 44px; height: 44px; }
@@ -126,12 +116,6 @@
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__lede { color: var(--pro-fg); font: 500 16px/1.45 var(--ay-font-ui, Figtree, sans-serif); }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__lede b { font-weight: 700; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body { display: grid; gap: 16px; padding: 14px 24px 18px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rows { display: grid; gap: 12px; padding: 0; list-style: none; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rows li { display: grid; grid-template-columns: 40px 1fr; align-items: center; gap: 12px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__icon { display: grid; place-items: center; width: 40px; height: 40px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 12px; background: #f7badd; color: #3e2723; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rowtext { display: grid; gap: 1px; }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rowtext b { color: var(--pro-fg); font: 700 15px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
-:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__rowtext span { color: var(--pro-fg-muted); font: 400 14px/1.35 var(--ay-font-ui, Figtree, sans-serif); }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__plans { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 10px 5px 5px 0; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan {
   position: relative; display: grid; justify-items: start; align-content: start; gap: 6px; min-height: 124px; margin: 0; padding: 16px 14px 14px;
@@ -191,12 +175,6 @@
 /* Motion: the checker marches slowly, the sheet fades and scales in on the web and slides up in the app.
    With reduced motion nothing moves and the sheet just appears. */
 @media (prefers-reduced-motion: no-preference) {
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__edge.is-top { animation: pro-march-x 3.2s linear infinite; }
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__edge.is-right { animation: pro-march-y 3.2s linear infinite; }
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__edge.is-bottom { animation: pro-march-x-back 3.2s linear infinite; }
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__edge.is-left { animation: pro-march-y-back 3.2s linear infinite; }
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame__edge { animation-duration: 2.4s; }
-  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-march { animation: pro-march-strip 3.6s linear infinite; }
   :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet { animation: pro-fade 200ms ease-out both; }
   :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel { animation: pro-pop 260ms cubic-bezier(.2, .9, .25, 1) both; }
   :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet.is-closing { animation: pro-fade-out 200ms ease-in both; }
@@ -214,11 +192,6 @@
 @media (prefers-reduced-motion: reduce) {
   :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-plan, .pro-lock__cta, .pro-sheet__cta, .pro-sheet__more svg) { transition: none; }
 }
-@keyframes pro-march-x { from { background-position-x: 0; } to { background-position-x: var(--pro-tile, 24px); } }
-@keyframes pro-march-x-back { from { background-position-x: 0; } to { background-position-x: calc(var(--pro-tile, 24px) * -1); } }
-@keyframes pro-march-y { from { background-position-y: 0; } to { background-position-y: var(--pro-tile, 24px); } }
-@keyframes pro-march-y-back { from { background-position-y: calc(var(--pro-tile, 24px) / 2); } to { background-position-y: calc(var(--pro-tile, 24px) / -2); } }
-@keyframes pro-march-strip { from { background-position-x: 0; } to { background-position-x: 28px; } }
 @keyframes pro-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes pro-fade-out { from { opacity: 1; } to { opacity: 0; } }
 @keyframes pro-pop { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
@@ -228,3 +201,29 @@
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ay-ask-prolock { padding: 6px 16px 12px; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body a.pro-sheet__cta { text-decoration: none; box-sizing: border-box; }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__webnote { color: var(--pro-fg); font: 600 15px/1.4 var(--ay-font-ui, Figtree, sans-serif); text-align: center; }
+
+/* Pro, grouped (founder Oct 27, 17:00: categorize, in the timeline's language): a pink dot on a thin rule,
+   the group's name and one-line promise, then its features as small chips. The tapped one gets a pink dot. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups { display: grid; margin: 0; padding: 0; list-style: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item { position: relative; display: grid; gap: 2px; padding: 0 0 16px 26px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item::before { content: ''; position: absolute; left: 0; top: 4px; width: 12px; height: 12px; box-sizing: border-box; border: 1.5px solid var(--pro-line); border-radius: 50%; background: #f7badd; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item:not(:last-child)::after { content: ''; position: absolute; left: 5.25px; top: 18px; bottom: 2px; width: 1.5px; background: var(--pro-rule); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__name { color: var(--pro-fg); font: 700 16px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__promise { color: var(--pro-fg-muted); font: 400 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; padding: 0; list-style: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip { display: inline-flex; align-items: center; min-height: 26px; padding: 2px 9px; box-sizing: border-box; border: 1px solid var(--pro-line); border-radius: 999px; color: var(--pro-fg); font: 600 13px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip.is-on { border-width: 1.5px; font-weight: 700; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip.is-on::before { content: ''; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: #f7badd; box-shadow: 0 0 0 1px #3e2723; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip__tag { color: var(--pro-fg-muted); font-weight: 500; }
+@media (max-width: 640px) { :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__promise { display: none; } :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item { padding-bottom: 12px; } }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-groups__promise { display: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-groups__item { padding-bottom: 12px; }
+
+/* The marquee ring (CheckerFrame): espresso base, pink squares travelling round the whole shape. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__ring { position: absolute; inset: 0; z-index: 0; overflow: visible; pointer-events: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__base { stroke: #3e2723; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__dash { stroke: #f7badd; stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__dash { animation: pro-lap 16s linear infinite; }
+}
+@keyframes pro-lap { from { stroke-dashoffset: 0; } to { stroke-dashoffset: calc(var(--pro-lap) * -1); } }

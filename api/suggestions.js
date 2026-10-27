@@ -8,7 +8,7 @@ import { getClientIp, rateLimit } from './_rateLimit.js';
 import { checkCommunityText } from '../src/utils/communityRules.js';
 import { sendTeamAlert } from './_twilio.js';
 
-const CONTEXTS = new Set(['shop', 'shop-empty', 'library', 'app-shop', 'app-library', 'community', 'app-community']);
+const CONTEXTS = new Set(['shop', 'shop-empty', 'library', 'app-shop', 'app-library', 'community', 'app-community', 'health-connections', 'app-health-connections', 'pro']);
 
 export function clean(value, max) {
   if (typeof value !== 'string') return '';
@@ -31,7 +31,7 @@ export function cleanLink(value) {
 
 /** Validates a request body. Returns { row } or { error }. Exported for tests. */
 export function buildSuggestionRow(body = {}) {
-  const kind = ['read', 'product', 'topic'].includes(body.kind) ? body.kind : '';
+  const kind = ['read', 'product', 'topic', 'integration'].includes(body.kind) ? body.kind : '';
   if (!kind) return { error: 'Choose product or read.' };
   const context = CONTEXTS.has(body.context) ? body.context : null;
   const platform = body.platform === 'app' ? 'app' : 'web';
@@ -41,6 +41,13 @@ export function buildSuggestionRow(body = {}) {
     const link = cleanLink(body.link);
     if (link === null) return { error: 'That link does not look right.' };
     return { row: { kind, product_name: productName, link: link || null, reason: clean(body.reason, 500) || null, topic: null, context, platform } };
+  }
+  if (kind === 'integration') {
+    // An app or wearable to connect next (anonymous, founder Oct 27). The name
+    // goes in product_name so requests can be counted per app later.
+    const name = clean(body.productName, 120);
+    if (name.length < 2) return { error: 'Add the app or wearable name.' };
+    return { row: { kind, product_name: name, link: null, reason: clean(body.reason, 500) || null, topic: null, context, platform } };
   }
   if (kind === 'topic') {
     // A Community topic: a short name plus an optional "why".
@@ -61,6 +68,16 @@ const escHtml = (t) => String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt
 export function suggestionEmail(row) {
   const isProduct = row.kind === 'product';
   const isTopic = row.kind === 'topic';
+  if (row.kind === 'integration') {
+    const lines = [['Requested app/device', row.product_name], ['Note', row.reason], ['Date submitted', new Date().toUTCString()], ['From', `${row.context || 'unknown page'} (${row.platform})`]].filter(([, v]) => v);
+    return {
+      from: process.env.SUGGESTION_FROM_EMAIL || process.env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
+      to: TEAM_EMAILS(),
+      subject: `new ayna integration request: ${row.product_name}`,
+      text: `Someone requested an integration on ayna (anonymous).\n\n${lines.map(([k, v]) => `${k}: ${v}`).join('\n')}\n`,
+      html: `<p>Someone requested an integration on ayna (anonymous).</p><table cellpadding="4">${lines.map(([k, v]) => `<tr><td><b>${escHtml(k)}</b></td><td>${escHtml(v)}</td></tr>`).join('')}</table>`,
+    };
+  }
   const subject = isProduct ? `New product suggestion: ${row.product_name}`
     : isTopic ? `New Community topic suggestion: ${row.topic.slice(0, 60)}`
       : `New read suggestion: ${row.topic.slice(0, 60)}`;
@@ -83,6 +100,7 @@ export function suggestionEmail(row) {
 /** One-line team text for a suggestion. No identity, just what was typed, trimmed. */
 export function suggestionTextLine(row) {
   if (row.kind === 'product') return `new product suggestion: ${String(row.product_name || '').slice(0, 80)}`;
+  if (row.kind === 'integration') return `new integration request: ${String(row.product_name || '').slice(0, 80)}`;
   if (row.kind === 'topic') return `new community topic suggestion: ${String(row.topic || '').slice(0, 80)}`;
   return `new read suggestion: ${String(row.topic || '').slice(0, 80)}`;
 }

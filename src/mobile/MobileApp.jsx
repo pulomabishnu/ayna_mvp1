@@ -305,6 +305,14 @@ const AUTH_VALUE = {
 // Screens that make no sense to return to after signing in.
 const AUTH_NO_RETURN = new Set(['landing', 'signin', 'quiz', 'building', 'reveal', 'connect', 'checkin', 'plan']);
 
+/** Scroll every scrolled area of the app (and the page) back to the top. */
+function scrollAppToTop(root) {
+  const smooth = !(typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const opts = { top: 0, behavior: smooth ? 'smooth' : 'auto' };
+  if (root) for (const el of [root, ...root.querySelectorAll('*')]) { if (el.scrollTop > 0 && typeof el.scrollTo === 'function') el.scrollTo(opts); }
+  if (typeof window.scrollTo === 'function' && window.scrollY > 0) window.scrollTo(opts);
+}
+
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
   const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName, omittedProducts = {} } = session;
@@ -1560,7 +1568,7 @@ export default function MobileApp() {
 
   return (
     <div ref={rootRef} className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
-      <ProPaywallHost priority={2} />
+      <ProPaywallHost priority={2} onRequireAuth={() => requestAuth('ayna Pro')} />
       <ProductSheetContext.Provider value={sheetValue}>
       <AskContext.Provider value={nav.onAskAyna}>
       <AppHeaderContext.Provider value={headerValue}>
@@ -1644,7 +1652,11 @@ export default function MobileApp() {
         onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setExploreSection('resources'); setScreen('library'); }}
         // Home always opens on its root (the dashboard, or the chat in the chat-first variant).
         // Signed out with nothing on this phone, Home is the landing (founder, Oct 27 01:10).
-        onHome={() => { setHomeView(homeRoot); setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreenRaw(homeTarget); }}
+        onHome={() => {
+          // Already on Home: Home scrolls back to the top (founder, Oct 27 13:57: it looked unclickable).
+          if (screen === homeTarget && (screen !== 'ayna' || homeView === homeRoot) && !overlay && !askAynaOpen) { scrollAppToTop(rootRef.current); return; }
+          setHomeView(homeRoot); setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreenRaw(homeTarget);
+        }}
         // Ask ayna: the full chat as a tab screen (the 'ayna' screen's chat view).
         onAsk={() => { setAskAynaOpen(false); setOverlay(null); setHomeView('chat'); setScreenRaw('ayna'); }}
         tabList={chatFirst ? APP_TABS_CHAT_FIRST : APP_TABS}

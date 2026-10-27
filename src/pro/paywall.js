@@ -33,25 +33,25 @@ export function announceProChanged() {
 }
 
 // Gate ids that differ from the Pro features list ids.
-export const FEATURE_ALIAS = { trial: 'tracking' };
+export const FEATURE_ALIAS = { trial: 'tracking', recap: 'insights', history: 'insights' };
 
 /** The locked card's words, per gate id. Names come from the Pro features list. */
 const LOCK_LINES = {
-  ask: 'Free ayna includes 5 Ask ayna chats a day. Pro includes up to 50 a day.',
-  reads: 'Free ayna includes one Read each week. Pro opens every Read in the Library.',
-  playlists: 'Free ayna includes one playlist. Pro lets you make as many as you want.',
-  quiz: 'Free ayna includes one ecosystem update a month. Pro lets you update it anytime.',
-  wearables: 'Connect supported health apps and wearables so ayna can use the data you choose to share.',
-  history: 'Detailed cycle, sleep and body history. Your basic health view stays free.',
-  recap: 'A look back at your recent observations, where enough connected data is available.',
-  trial: 'Try one small change, then check back in 7 or 14 days. Basic health logging stays free.',
+  ask: 'Free ayna includes 5 Ask ayna chats a month. Pro includes up to 50 chats a month.',
+  reads: 'Free ayna includes 1 Read per week. Pro gives you unlimited Reads.',
+  playlists: 'Free ayna includes 1 playlist. Pro gives you unlimited playlists.',
+  quiz: 'Free ayna includes 1 quiz retake per month. Pro lets you retake it whenever your needs change.',
+  wearables: 'Connect Apple Health, Health Connect or Oura, or upload your health data or screenshots, so ayna can use the signals you choose to share.',
+  insights: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
+  history: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
+  recap: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
+  trial: 'More detailed tracking over time, with trend insights. Basic tracking stays free.',
   appointment: 'Organize symptoms, observations and questions before you see a clinician.',
-  insights: 'Deeper personalized health insights, as Pro expands.',
 };
 
 export function proFeatureName(feature) {
   const id = FEATURE_ALIAS[feature] || feature;
-  if (feature === 'insights') return 'Deeper health insights';
+  if (feature === 'appointment') return 'Appointment prep';
   return PRO_FEATURES.find((f) => f.id === id)?.label || 'ayna Pro';
 }
 
@@ -77,3 +77,60 @@ export function rememberProReturn(feature = '') {
     window.sessionStorage.setItem(RETURN_KEY, JSON.stringify({ path, feature, at: Date.now() }));
   } catch { /* storage may be unavailable */ }
 }
+
+/*
+ * Sign in, then straight back to ayna Pro (founder, Oct 27 17:15). Before sending her to sign in,
+ * the sheet or /pro saves where she was, the feature and the plan she picked. sessionStorage
+ * survives the same-tab Google/OAuth round trip; anything older than 30 minutes is ignored.
+ */
+export const RESUME_KEY = 'ayna.returnTo';
+export const RESUME_MAX_AGE_MS = 30 * 60 * 1000;
+
+export function saveProResume({ path, proFeature = '', plan = '' } = {}, storage = globalThis.sessionStorage, now = Date.now()) {
+  try {
+    const where = path || `${window.location.pathname}${window.location.search}`;
+    if (!where.startsWith('/') || where.startsWith('//')) return;
+    storage?.setItem(RESUME_KEY, JSON.stringify({ path: where, proFeature, plan, at: now, tries: 0 }));
+  } catch { /* storage blocked */ }
+}
+
+/** The saved target if it is fresh; a stale or broken one is cleared. */
+export function peekProResume(storage = globalThis.sessionStorage, now = Date.now()) {
+  try {
+    const saved = JSON.parse(storage?.getItem(RESUME_KEY) || 'null');
+    if (!saved || typeof saved.path !== 'string' || !saved.path.startsWith('/') || saved.path.startsWith('//') ||
+        !(now - Number(saved.at) >= 0 && now - Number(saved.at) < RESUME_MAX_AGE_MS)) {
+      storage?.removeItem(RESUME_KEY);
+      return null;
+    }
+    return saved;
+  } catch { return null; }
+}
+
+export function clearProResume(storage = globalThis.sessionStorage) {
+  try { storage?.removeItem(RESUME_KEY); } catch { /* storage blocked */ }
+}
+
+/**
+ * Once she is signed in: 'open' the sheet here (she is back where she was), 'navigate' to the saved
+ * path first (one try only, so a redirecting route can't loop), or nothing.
+ */
+export function resumeStep(saved, pathname) {
+  if (!saved) return null;
+  const target = saved.path.split(/[?#]/)[0];
+  if (target === '/pro' || target === '/pro.html') return pathname === target ? null : (Number(saved.tries) >= 1 ? 'drop' : 'navigate');
+  if (target === pathname || Number(saved.tries) >= 1) return 'open';
+  return 'navigate';
+}
+
+/** Perimeter of a rounded rectangle. */
+export function roundedPerimeter(w, h, r) {
+  const rr = Math.max(0, Math.min(r, w / 2, h / 2));
+  return 2 * (w + h) - (8 - 2 * Math.PI) * rr;
+}
+
+/** Path length that makes `square`-sized dashes tile the loop exactly (no seam). */
+export function marqueeLength(perimeter, square) {
+  return Math.max(2, Math.round(perimeter / (2 * square))) * 2 * square;
+}
+
