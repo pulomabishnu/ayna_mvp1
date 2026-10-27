@@ -53,7 +53,7 @@ begin
   select coalesce((raw_app_meta_data->>'is_premium')::boolean,false) into v_premium from auth.users where id=new.owner_id;
   if coalesce(v_premium,false) or (public.pro_access_status(new.owner_id)->>'active')::boolean then return new; end if;
   if (select count(*) from public.community_playlists where owner_id=new.owner_id) >= v_rules.free_playlists then
-    raise exception 'pro_playlist_limit';
+    raise exception 'Free ayna includes one playlist. ayna Pro Early Access includes unlimited playlists.';
   end if;
   return new;
 end;
