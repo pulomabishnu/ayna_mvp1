@@ -139,6 +139,7 @@ import { INTAKE_DRAFT_KEY, getIntakeSteps, optionalProgress, reconstructIntakeFr
 import { clearIntakeDraft, readDraftProgress } from './mobile/data/quizDraftProgress';
 import FinishQuizCard, { MorePersonalCard } from './components/FinishQuizCard';
 import './styles/flow.css';
+import './styles/home-tab.css';
 import './styles/web-neon-dark.css';
 import './styles/web-density.css';
 import './styles/theme-v3.css';
@@ -171,7 +172,7 @@ import { ExploreHeader } from './components/explore/ExploreNav.jsx';
 import YouTabs from './components/you/YouTabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
-import RoutinePlates from './components/routine/RoutinePlates.jsx';
+import RoutineTimeline from './components/routine/RoutineTimeline.jsx';
 import TodayRead from './components/today/TodayRead.jsx';
 import { SaveFollowUpStrip } from './components/save/SaveFollowUp.jsx';
 import { savePrompt, stashPendingSave, takePendingSave } from './utils/savePrompt.js';
@@ -269,7 +270,7 @@ const VIEW_TO_PATH = {
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
   quiz: 'Get matched', ecosystem: 'My ecosystem', discovery: 'Products', you: 'You', community: 'Community',
-  today: 'Today', explore: 'Shop', 'explore-topics': 'Health topics', 'explore-services': 'Services', ask: 'Ask ayna',
+  today: 'Home', explore: 'Shop', 'explore-topics': 'Health topics', 'explore-services': 'Services', ask: 'Ask ayna',
   waitlist: 'Partner brands', recommendations: 'Your recommendations', articles: 'Resources', screenings: 'Screenings',
   omitted: 'Omitted products', comparison: 'Compare products', recalls: 'Recalls',
   'doctor-prep': 'Appointment prep', 'profile-edit': 'Edit my answers',
@@ -355,6 +356,7 @@ PATH_TO_VIEW['/ecosystem'] = 'ecosystem';
 PATH_TO_VIEW['/shop'] = 'discovery';
 PATH_TO_VIEW['/library'] = 'articles';
 PATH_TO_VIEW['/health'] = 'today';
+PATH_TO_VIEW['/home'] = 'today'; // "Today" is called Home now (founder Oct 26 21:45); /today stays the address.
 PATH_TO_VIEW['/terms'] = 'terms-of-use';
 PATH_TO_VIEW['/privacy'] = 'privacy-policy';
 PATH_TO_VIEW['/startups'] = 'waitlist'; // old address keeps working
@@ -2466,10 +2468,10 @@ function App() {
             <span className="ay-nav__beta">beta</span>
           </a>
 
-          {/* The five main tabs, same names and order as the app (Today, Shop, Services, Community, Library). Real links (G02). */}
+          {/* The five main tabs, same names and order as the app (Shop, Services, Home, Community, Library). Home is the filled pill. Real links (G02). */}
           <div className="ay-nav__links">
             {MAIN_TABS.map((t) => (
-              <a key={t.key} href={t.href} className="ay-nav__link" aria-current={WEB_TAB_VIEWS[t.key].includes(currentView) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
+              <a key={t.key} href={t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={WEB_TAB_VIEWS[t.key].includes(currentView) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
                 {t.label}
                 {/* Landing audit 5: only on the landing and Today, until the quiz is done. */}
                 {t.key === 'today' && !authLoading && !quizResults && ['welcome', 'hero', 'today'].includes(currentView) && <span className="ay-nav__start">Start here</span>}
@@ -2743,7 +2745,7 @@ function App() {
         {currentView === 'today' && (
           <div className="wx-today" data-tour="today">
             {React.cloneElement(webHealth, {
-              title: 'Today',
+              title: 'Home',
               // Same model as the app: the Daily Rundown card leads (with no profile
               // it says how to make one), then the decision items and her log.
               intro: !quizResults && !dataLoading ? finishQuizCard() || null : null,
@@ -2753,7 +2755,7 @@ function App() {
               // one is in You > My ecosystem), and one read that fits her answers.
               aside: (quizResults || myProducts.length > 0) ? (
                 <>
-                  <RoutinePlates userId={user?.id || null} quizAnswers={quizResults} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts}
+                  <RoutineTimeline userId={user?.id || null} quizAnswers={quizResults} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts}
                     onOpenRoutine={() => { handleViewEcosystem(); window.setTimeout(() => document.getElementById('eco-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 600); }}
                     onOpenProduct={(p) => handleOpenProduct(p, { source: 'today_routine' })}
                     onCheckIn={() => openTodayLog('web')} />

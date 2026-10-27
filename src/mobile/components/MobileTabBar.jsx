@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { APP_TABS, TabIcon } from '../../components/nav/tabs.jsx';
+import '../../styles/home-tab.css';
 
 // The app's tabs, the same five as the website (founder, Oct 26):
 // Today · Shop · Services · Community · Library. Ask ayna and You are in the header.

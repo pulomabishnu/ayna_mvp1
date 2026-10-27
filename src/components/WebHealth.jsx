@@ -13,7 +13,10 @@ import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './pers
 import { headline, readHomeLook } from '../mobile/components/homeLook.js';
 import { comingUp } from '../health/comingUp.js';
 import { CountRing, ProgressCount, Shout } from './ui/ay';
-import { syncState, usualBand } from '../health/dashView.js';
+import { findingTitle, syncState, usualBand } from '../health/dashView.js';
+import ScoreRings from '../mobile/components/ScoreRings.jsx';
+import { HomeHighlights, RundownStory } from '../mobile/components/HomeHero.jsx';
+import { explainWeek } from '../health/weekInsights.js';
 import WeekBento, { cycleWordsFor, glanceCharts } from './today/WeekBento.jsx';
 import '../styles/web-health.css';
 import '../styles/today-web.css';
@@ -196,7 +199,7 @@ function Locked({ signedIn, connected, onSignIn, onOpenConnections }) {
  * number as the one bold graphic (cycle day, else last night's sleep; none
  * without data) and one die-cut product sticker.
  */
-function TodayBand({ title, today, name, cycle, sleepPoints, products, ring = true }) {
+function TodayBand({ title, today, name, cycle, sleepPoints, products, ring = true, dials = null }) {
   const hour = new Date().getHours();
   const hello = hour < 5 ? 'Hi' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   const look = readHomeLook();
@@ -211,6 +214,8 @@ function TodayBand({ title, today, name, cycle, sleepPoints, products, ring = tr
       {/* The number in words for screen readers (the ring is decoration). */}
       {num && <p className="sr-only">{`${num.label}: ${num.value}`}</p>}
       <DayStrip iso={today} className="ay-wh-hello__days" />
+      {/* Home's hero (founder Oct 26 21:45): her three dials, beside the greeting on wide screens. */}
+      {dials && <div className="ay-wh-hello__dials"><ScoreRings bare animate label="Your scores today" {...dials} /><RundownStory /></div>}
       <span className={`ay-wh-hello__art${num ? ' has-ring' : ''}`} aria-hidden="true">
         <Shapes className="ay-wh-hello__shapes" />
         {num && (cycle?.cycleDay
@@ -344,7 +349,16 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
   const todayFeed = widgets ? <>{feed}{widgets}</> : feed;
 
   const sleepPoints = dash.groups.flatMap((g) => g.charts).find((c) => c.metric === 'sleep_minutes')?.points || [];
-  const band = compact ? <TodayBand title={title} today={today} name={name} cycle={week.cycle?.cycleDay ? week.cycle : null} sleepPoints={sleepPoints} products={demoData?.products || products} ring={!(rows.length > 0)} /> : null;
+  const weekAll = week.groups.flatMap((g) => g.charts);
+  const dials = compact && rows.length > 0 ? {
+    cycle: week.cycle?.cycleDay ? week.cycle : null,
+    hormonalBC,
+    sleep: weekAll.find((c) => c.metric === 'sleep_minutes') || null,
+    activity: weekAll.find((c) => c.metric === 'steps') || null,
+    onOpen: signedIn ? () => goData(true) : null,
+    onConnect: onOpenConnections || onSignIn || null,
+  } : null;
+  const band = compact ? <TodayBand title={title} today={today} name={name} cycle={week.cycle?.cycleDay ? week.cycle : null} sleepPoints={sleepPoints} products={demoData?.products || products} ring={!(rows.length > 0)} dials={dials} /> : null;
 
   // Today (compact, the first main tab): a greeting from her own clock and one
   // sentence (UX spec 6), then two columns on desktop: the day on the left
@@ -393,6 +407,15 @@ export default function WebHealth({ user, health, products = [], needIds = [], h
         {intro}
         <div className="ay-wh-day is-single">
           <div className="ay-wh-day__main">
+            {/* The data first (founder 21:46): this week's highlights (the app Home's carousel): her findings, one sentence and a chart each. */}
+            {rows.length > 0 && (() => {
+              const longAll = buildDashboard(rows, { days: 90, today }).groups.flatMap((g) => g.charts);
+              const items = explainWeek(rows, { today, cycle: week.cycle?.cycleDay ? week.cycle : null, estimate: null, hormonalBC, max: 5 }).insights.map((i) => {
+                const c = weekAll.find((x) => x.metric === i.metric) || null;
+                return { id: i.id, metric: c ? i.metric : null, title: findingTitle(i), label: c ? (c.metric === 'sleep_minutes' ? 'Sleep' : c.metric === 'steps' ? 'Steps' : c.label) : 'Your week', chart: c, band: c ? usualBand(longAll.find((x) => x.metric === i.metric)?.points, today) : null };
+              });
+              return <HomeHighlights items={items} today={today} onOpen={signedIn ? () => goData(true) : null} />;
+            })()}
             {feed}
             {/* Founder Oct 26 evening ("toggles instead of stacking"): her week and her routine
                 are one toggle under the day, one view at a time; nothing is removed. */}

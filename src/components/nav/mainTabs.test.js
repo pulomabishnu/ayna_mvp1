@@ -5,8 +5,10 @@ import { MAIN_TABS, APP_TABS, APP_TABS_CHAT_FIRST, APP_EXPLORE_SECTIONS, AYNA_HO
 const vercel = JSON.parse(fs.readFileSync(new URL('../../../vercel.json', import.meta.url), 'utf8'));
 
 describe('main tabs (founder, Oct 24 2026)', () => {
-  it('are Shop, Services, Today, Community, Library, in that order (founder, Oct 26)', () => {
-    expect(MAIN_TABS.map((t) => t.label)).toEqual(['Shop', 'Services', 'Today', 'Community', 'Library']);
+  it('are Shop, Services, Home, Community, Library, in that order (founder, Oct 26; Today renamed Home 21:45)', () => {
+    expect(MAIN_TABS.map((t) => t.label)).toEqual(['Shop', 'Services', 'Home', 'Community', 'Library']);
+    // The keys stay, so routes, analytics and CSS keep working.
+    expect(MAIN_TABS.map((t) => t.key)).toEqual(['explore', 'services', 'today', 'community', 'library']);
     // Shop is the old Explore page (same key and address); Services and Library are its other pages.
     expect(MAIN_TABS.map((t) => t.href)).toEqual(['/explore', '/explore/services', '/today', '/community', '/explore/resources']);
     expect(MAIN_TABS.find((t) => t.label === 'Shop').key).toBe('explore');
@@ -19,6 +21,8 @@ describe('main tabs (founder, Oct 24 2026)', () => {
     expect(APP_TABS.find((t) => t.key === 'explore').icon).toBe('shop');
     expect(APP_TABS.find((t) => t.key === 'services').icon).toBe('services');
     expect(APP_TABS.find((t) => t.key === 'library').icon).toBe('library');
+    // Home is the raised centre button (founder Oct 26 21:45: "make it stand out").
+    expect(APP_TABS.find((t) => t.key === 'home')).toMatchObject({ label: 'Home', icon: 'home', center: true });
     expect(APP_TABS.some((t) => t.key === 'ask' || t.key === 'profile')).toBe(false);
     // The chat-first Home for the focus group names the first tab "ayna".
     expect(APP_TABS_CHAT_FIRST.map((t) => t.label)).toEqual(['Shop', 'Services', 'ayna', 'Community', 'Library']);

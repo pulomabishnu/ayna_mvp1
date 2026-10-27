@@ -22,3 +22,14 @@
 .ay-dials .ay-dial__empty button:focus-visible { outline: 2px solid #ffedac; outline-offset: 2px; }
 /* Dark: the band is the one light block, so the dials still stand out on the dark page. */
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-dials.ay-dials { background: rgba(255, 237, 172, .08); border: 1px solid rgba(255, 237, 172, .2); }
+/* Today's place on the cycle dial: a butter dot with an espresso ring at the arc's end. */
+.ay-dials .ay-dial__today { fill: #ffedac; stroke: #3e2723; stroke-width: 3; }
+/* Inside Home's hero band: no band of its own. */
+.ay-dials.ay-dials.is-bare { padding: 0; border: 0; background: none; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-dials.ay-dials.is-bare { border: 0; background: none; }
+/* The arcs fill once on first load (gentle, 900ms), never under reduced motion. */
+@keyframes ay-dial-fill { from { stroke-dasharray: 0 var(--ay-dial-c, 252); } }
+@keyframes ay-dial-pop { from { opacity: 0; transform: scale(.4); } }
+.ay-dials.is-animate .ay-dial__arc { animation: ay-dial-fill 900ms cubic-bezier(.2, .8, .2, 1) both; }
+.ay-dials.is-animate .ay-dial__today { transform-box: fill-box; transform-origin: center; animation: ay-dial-pop 300ms 800ms ease-out both; }
+@media (prefers-reduced-motion: reduce) { .ay-dials.is-animate :is(.ay-dial__arc, .ay-dial__today) { animation: none; } }

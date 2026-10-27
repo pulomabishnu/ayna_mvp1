@@ -358,6 +358,8 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   renderViews = null,
   // Website Today's right column: the weekly recap's lines and what she is trying now (WebHealth).
   onWeekly = null, onTries = null, onSetup = null,
+  // Home's streak: the days she logged (her log, as on "Your log"), sorted YYYY-MM-DD keys.
+  onLogged = null,
 }) {
   // DEV only (?fixture=today): sample logs and tries, dropped from production builds.
   const [fixture] = useState(() => (todayFixtureOn() ? makeTodayFixture() : null));
@@ -369,6 +371,9 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   // Set-up as a count that starts with what she already did (endowed progress, checklist c).
   const logged = Object.values(t.log || {}).some((e) => e && Object.values(e).some((v) => v != null));
   const setupKey = `${Boolean(intake)}|${logged}|${readRundownPush().on}`;
+  const loggedDays = Object.entries(t.log || {}).filter(([, e]) => e && Object.values(e).some((v) => v != null)).map(([d]) => d).sort();
+  const loggedKey = loggedDays.join(',');
+  useEffect(() => { onLogged?.(loggedDays); }, [loggedKey]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     onSetup?.([
       { id: 'profile', label: 'Create your health profile', done: Boolean(intake) },

@@ -100,3 +100,32 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-co
 /* The recap tiles use fixed colours, so the butter-deep one keeps espresso text in dark mode too. */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows > li:nth-child(odd):nth-child(odd) { background: #f6e3a1; color: #3e2723; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows > li:nth-child(odd):nth-child(odd) b { color: #3e2723; }
+
+/* Home's hero on the website: the three dials beside the greeting (two columns), under it on a phone. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead:has(.ay-wh-hello__dials) { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: 'date' 'hi' 'days' 'dials' !important; row-gap: 8px; padding-right: 0 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials { grid-area: dials; min-width: 0; width: 100%; max-width: 380px; justify-self: end; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials .ay-dial__svg { width: 104px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials .ay-dial__center { width: 104px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials :is(.ay-dial__label, .ay-dial__sub, .ay-dial__center b, .ay-dial__center small) { color: #ffedac !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials .ay-dial__empty p { color: #ffedac !important; }
+@media (max-width: 899px) {
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead:has(.ay-wh-hello__dials) { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'date' 'hi' 'days' 'dials'; padding-right: 0 !important; }
+  html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials { justify-self: stretch; max-width: none; margin-top: 12px; }
+}
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-hhl { margin: 24px 0 8px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-hhl .ayk-snap.is-card .ayk-snap__item { width: calc(50% - 6px); max-width: none; }
+@media (max-width: 899px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-hhl .ayk-snap.is-card .ayk-snap__item { width: calc(100% - 44px); } }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-hhl .ay-hhl__h { margin: 0; font: 700 24px/1.2 var(--ay-font-display) !important; color: var(--ay-text) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello:has(.ay-wh-hello__dials) .ay-wh-hello__days { margin-right: 0 !important; width: auto !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello:has(.ay-wh-hello__dials) .ay-wh-hello__hi { white-space: nowrap; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello:has(.ay-wh-hello__dials) .ay-wh-hello__art { display: none; }
+/* Home (founder 21:46): the Daily Rundown is only the story bubble in the hero; the big card stays only in its set-up state. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today:has(.ay-wh-hello__dials) .ay-rd-hero:not(:has(.is-setup)) { display: none !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 12px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials { max-width: 520px; justify-self: start; margin-top: 16px; }
+/* Dark: the hello band turns butter, so the dials take espresso. */
+:is(:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ds-w, .app-container), :is([data-theme='dark'], [data-theme='brand-dark']):is(#ds-w, .app-container)):is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials :is(.ay-dial__label, .ay-dial__sub, .ay-dial__center b, .ay-dial__center small, .ay-dial__empty p, .ay-hh-bubble__label) { color: #3e2723 !important; }
+:is(:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ds-w, .app-container), :is([data-theme='dark'], [data-theme='brand-dark']):is(#ds-w, .app-container)):is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials .ay-dial__track { stroke: rgba(62, 39, 35, .18) !important; }
+:is(:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ds-w, .app-container), :is([data-theme='dark'], [data-theme='brand-dark']):is(#ds-w, .app-container)):is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials .ay-dial__arc.is-ink { stroke: #3e2723 !important; }
+:is(:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ds-w, .app-container), :is([data-theme='dark'], [data-theme='brand-dark']):is(#ds-w, .app-container)):is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials .ay-hh-bubble__ring { background: #3e2723 !important; }
+:is(:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ds-w, .app-container), :is([data-theme='dark'], [data-theme='brand-dark']):is(#ds-w, .app-container)):is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials .ay-hh-bubble__ring b { color: #ffedac !important; }
