@@ -1,7 +1,8 @@
 /* global process */
 import { createHash } from 'node:crypto';
-import { verifyUser } from './_usageLimit.js';
+import { verifyUser, getServiceClient } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
+import { proFeatureRules } from './_proFeatures.js';
 import { PRO_FLOW, PRO_PLANS, proConfig, proStatus, proStripe, validateProPrices, renewalDate, syncProSubscription } from './_pro.js';
 
 function isAdminUser(user) {
@@ -20,6 +21,12 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(204).end();
+
+  if (req.method === 'GET' && req.query?.action === 'features') {
+    try { return res.status(200).json(await proFeatureRules(getServiceClient())); }
+    catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
+  }
+
   if (!['GET', 'POST'].includes(req.method)) return res.status(405).json({ error: 'method_not_allowed' });
 
   const { user, admin, error } = await verifyUser(req);
@@ -52,6 +59,18 @@ export default async function handler(req, res) {
     let body;
     try { body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); }
     catch { return res.status(400).json({ error: 'invalid_request' }); }
+
+    if (body.action === 'read') {
+      const rules = await proFeatureRules(admin);
+      if (!rules.enabled || !rules.premiumReadIds.includes(body.readId)) return res.status(200).json({ allowed: true });
+      const { data, error: readError } = await admin.rpc('pro_claim_read', {
+        p_user_id: user.id,
+        p_read_id: body.readId,
+        p_unlimited: active,
+      });
+      if (readError) throw new Error('Read allowance unavailable');
+      return res.status(200).json({ allowed: data === true, active });
+    }
 
     if (body.action === 'focus_grant' || body.action === 'focus_revoke') {
       if (!isAdmin) return res.status(403).json({ error: 'forbidden' });
@@ -88,13 +107,25 @@ export default async function handler(req, res) {
     if (!/^[0-9a-f-]{36}$/i.test(body.requestId || '')) return res.status(400).json({ error: 'invalid_request_id' });
 
     const stripe = proStripe();
-    const { price, renewal, coupon } = await validateProPrices(stripe, body.plan);
+    const offer = PRO_PLANS[body.plan];
+    const { renewal, coupon } = await validateProPrices(stripe, body.plan);
     const renewAt = renewalDate(status.launchAt, body.plan);
     if (renewAt < Date.now() / 1000 + 172800 || renewAt > Date.now() / 1000 + 730 * 86400) throw new Error('Unsupported launch date');
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
-      line_items: [{ price, quantity: 1 }, { price: renewal, quantity: 1 }],
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product: config.product,
+            unit_amount: offer.standardAmount,
+            metadata: { flow: PRO_FLOW, role: 'prepaid_first_term', plan: body.plan },
+          },
+          quantity: 1,
+        },
+        { price: renewal, quantity: 1 },
+      ],
       discounts: [{ coupon }],
       client_reference_id: user.id,
       metadata: { flow: PRO_FLOW, user_id: user.id, plan: body.plan, launch_at: status.launchAt, renew_at: String(renewAt) },
@@ -104,8 +135,8 @@ export default async function handler(req, res) {
         metadata: { flow: PRO_FLOW, user_id: user.id, plan: body.plan },
       },
       integration_identifier: `ayna_pro_${createHash('sha256').update(body.requestId).digest().subarray(0, 8).reduce((s, b) => s + String.fromCharCode(97 + b % 26), '')}`,
-      success_url: `${config.origin}/pro?checkout=success`,
-      cancel_url: `${config.origin}/pro?checkout=canceled`,
+      success_url: `${config.origin}/you?checkout=success`,
+      cancel_url: `${config.origin}/you?checkout=canceled`,
       custom_text: {
         submit: {
           message: 'Your Early Access coupon is applied today. Your purchased period starts at launch; then renews at the regular price shown unless canceled.',

@@ -1,4 +1,5 @@
 import TopicCover from '../../components/v3/TopicCover.jsx';
+import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { hasTeamCover } from '../../data/readCovers.js';
 import { Children, isValidElement, useRef, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
@@ -17,12 +18,6 @@ function estimateReadMinutes(body) {
   return Math.max(1, Math.round(words / 200));
 }
 
-// Every real article (src/components/Articles.jsx) ends its body with a
-// <p><strong>Sources:</strong></p> paragraph followed by a <ul> of citation
-// links, a consistent real convention, not a special case for one article.
-// Splitting on it lets the citation links render in a dedicated section
-// instead of a fabricated "reviewed by Dr. X" byline the real data has no
-// field for.
 function splitBodyAndSources(body) {
   const kids = Children.toArray(body?.props?.children ?? body);
   const splitIndex = kids.findIndex(
@@ -45,7 +40,7 @@ function splitBodyAndSources(body) {
   return { mainBody, sourceLinks };
 }
 
-export default function ArticleDetailScreen({ article, onBack, nextRead, onNext, onProgress, savedProgress = 0 }) {
+function ArticleDetailContent({ article, onBack, nextRead, onNext, onProgress, savedProgress = 0 }) {
   const scrollRef = useRef(null);
   const [progress, setProgress] = useState(0);
 
@@ -79,7 +74,6 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
 
   return (
     <div className="ayna-fresh-article" ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
-      {/* Progress and the back arrow stay on screen while she scrolls. */}
       <div className="ay-read-sticky">
         <div className={`ay-read-status${shown >= 1 ? ' is-done' : ''}`} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(shown * 100)}>
           <span className="ay-read-status-bar"><i style={{ width: `${shown * 100}%` }} /></span>
@@ -93,19 +87,19 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
       {hasTeamCover(article) ? <div className="ayna-read-photo"><img src={image} alt="" /></div> : <div className="ay-app-readhero"><TopicCover id={article.id} title={title} className="ay-app-cover is-hero" /></div>}
       <div className="ayna-read-content">
         <h1 className="ay-read-title">{title}</h1>
-        {teaser && (
-          <div className="ay-read-teaser" style={{ marginTop: 13 }}>
-            {teaser}
-          </div>
-        )}
-
-
+        {teaser && <div className="ay-read-teaser" style={{ marginTop: 13 }}>{teaser}</div>}
         <div className="ay-article-body" style={{ fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'var(--ayna-text)' }}>{mainBody}</div>
-
         {(sourceLinks.length > 0 || source) && <section className="ayna-read-sources" aria-label="Article sources"><h2>Sources</h2>{source && <p>{source}</p>}{sourceLinks.map((link, index) => <a key={`${link.href}-${index}`} href={link.href} target="_blank" rel="noopener noreferrer">{link.text}</a>)}</section>}
         {nextRead?.article && <section className="ayna-read-next" aria-label="Next article"><span>{nextRead.label}</span><button type="button" onClick={openNext}>{nextRead.article.title}<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6 6 6-6 6" /></svg></button></section>}
       </div>
       <LegalFooter />
     </div>
   );
+}
+
+export default function ArticleDetailScreen(props) {
+  if (!props.article) return <ArticleDetailContent {...props} />;
+  return <ProFeatureGate feature="reads" readId={props.article.id} title={props.article.title} onBack={props.onBack}>
+    <ArticleDetailContent {...props} />
+  </ProFeatureGate>;
 }

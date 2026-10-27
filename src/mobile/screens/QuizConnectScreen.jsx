@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import HealthConnectionsScreen from './profile/HealthConnectionsScreen.jsx';
+import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { useHealthData } from '../hooks/useHealthData.js';
 import './profile/health-connections.css';
 
 /**
- * End of the quiz, before her matches: an optional step to bring in health
- * data from the apps and wearables she already uses. Always skippable
- * ("Skip for now"); nothing is read until she connects a source.
+ * End of the quiz, before her matches: connecting supported health apps and
+ * wearables is a Pro benefit, but this step always remains skippable so Free
+ * users can finish onboarding without connecting anything.
  */
 export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQuizConnectSignIn, onBack }) {
   const [selected, setSelected] = useState(null);
@@ -24,19 +25,21 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
       </header>
       {!selected && (
         <div className="ay-qc-copy">
-          <h1>Connect your <em>health data.</em></h1>
-          <p>Bring in sleep, cycle, heart and activity from the apps you already use. ayna compares it with your own usual to sharpen your matches and build your routine. You choose what to share. Brands never see it.</p>
+          <h1>Connect your <em>health data with Pro.</em></h1>
+          <p>Pro members can connect supported apps and wearables, choose exactly what to share, and use that data in more personalized health experiences. ayna still works without a connection, and brands never see your health data.</p>
         </div>
       )}
       <div className="ay-qc-body">
-        <HealthConnectionsScreen
-          selectedId={selected}
-          onSelect={setSelected}
-          onBack={() => setSelected(null)}
-          authUser={authUser}
-          onSignIn={onQuizConnectSignIn}
-          compact
-        />
+        <ProFeatureGate feature="wearables" title="Connect health apps and wearables">
+          <HealthConnectionsScreen
+            selectedId={selected}
+            onSelect={setSelected}
+            onBack={() => setSelected(null)}
+            authUser={authUser}
+            onSignIn={onQuizConnectSignIn}
+            compact
+          />
+        </ProFeatureGate>
       </div>
       <footer className="ay-qc-foot">
         {connected && <p role="status">{health.connected.length === 1 ? '1 source connected' : `${health.connected.length} sources connected`}</p>}
