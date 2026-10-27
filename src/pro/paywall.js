@@ -37,9 +37,9 @@ export const FEATURE_ALIAS = { trial: 'tracking', recap: 'insights', history: 'i
 
 /** The locked card's words, per gate id. Names come from the Pro features list. */
 const LOCK_LINES = {
-  ask: 'Free ayna includes 5 Ask ayna chats a day. Pro includes up to 50 chats a day.',
-  reads: 'Free ayna includes 1 Read per week. Pro gives you expanded, unlimited access to Reads.',
-  playlists: 'Free ayna includes 1 playlist. Pro gives you expanded, unlimited playlists.',
+  ask: 'Free ayna includes 5 Ask ayna chats a month. Pro includes up to 50 chats a month.',
+  reads: 'Free ayna includes 1 Read per week. Pro gives you unlimited Reads.',
+  playlists: 'Free ayna includes 1 playlist. Pro gives you unlimited playlists.',
   quiz: 'Free ayna includes 1 quiz retake per month. Pro lets you retake it whenever your needs change.',
   wearables: 'Connect Apple Health or Android Health Connect in the ayna app, plus Oura and WHOOP, so ayna can use the signals you choose to share.',
   insights: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',

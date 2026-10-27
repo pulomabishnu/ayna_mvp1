@@ -382,7 +382,7 @@ export default function AskAynaModal({
       if (err?.code === 'not_signed_in') {
         onRequireAuth?.('Ask ayna');
       } else if (err?.code === 'weekly_limit_reached') {
-        setSendError("You've used your free chats for this week. They reset weekly.");
+        setSendError("You've used this month's free Ask ayna chats. They reset on the 1st.");
       } else {
         setSendError(err?.message || 'ayna couldn’t answer just now. Check your connection and ask again in a moment.');
       }

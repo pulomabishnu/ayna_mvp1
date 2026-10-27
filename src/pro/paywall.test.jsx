@@ -64,8 +64,8 @@ describe('the sheet and /pro only promise what is real', () => {
     for (const f of groups.flatMap((g) => g.features)) expect(f.growing).toBe(f.stage !== 'available');
   });
   it('uses the founder\'s Free vs Pro breakdown on /pro', () => {
-    for (const row of ['Personalization quiz', '1 retake per month', 'Unlimited retakes', '5 chats a day', 'Up to 50 chats a day', '1 Read per week',
-      'Expanded / unlimited access', 'Expanded / unlimited playlists', 'Wearable + health app connections', 'Basic insights',
+    for (const row of ['Personalization quiz', '1 retake per month', 'Unlimited retakes', '5 chats a month', 'Up to 50 chats a month', '1 Read per week',
+      'Unlimited playlists', 'Wearable + health app connections', 'Basic insights',
       'Deeper, more detailed personalized insights', 'Advanced tracking + trend insights', 'No connected health data', 'Recommendation explanations']) expect(proPage).toContain(row);
     for (const free of FREE_FEATURES) expect(proPage).toContain(free);
     expect(proPage).toContain('Free helps you find what fits. Pro learns with you.');

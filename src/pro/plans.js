@@ -32,9 +32,8 @@ export const PRO_SHORT = {
   health: 'Health-data personalization',
   insights: 'Deeper personalized insights',
   tracking: 'Advanced tracking + trends',
-  why: 'Deeper "why it fits"',
   quiz: 'Quiz retakes anytime',
-  ask: 'Up to 50 Ask chats a day',
+  ask: 'Up to 50 Ask chats a month',
   reads: 'Unlimited Reads',
   playlists: 'Unlimited playlists',
 };
@@ -42,7 +41,7 @@ export const PRO_SHORT = {
 /** Pro, grouped (founder: "don't just stack the features ... categorize it"). */
 export const PRO_GROUPS = [
   { id: 'connect', name: 'Connect your health data', promise: 'ayna learns from the cycle, sleep, activity and other signals you choose to share.', items: ['wearables', 'health'] },
-  { id: 'deeper', name: 'Go deeper', promise: 'Patterns and context over time, not single data points.', items: ['insights', 'tracking', 'why'] },
+  { id: 'deeper', name: 'Go deeper', promise: 'Patterns and context over time, not single data points.', items: ['insights', 'tracking'] },
   { id: 'limits', name: 'Fewer limits', promise: 'Use ayna as much as your needs change.', items: ['quiz', 'ask', 'reads', 'playlists'] },
 ];
 
