@@ -19,6 +19,12 @@ import { useAskSetup } from '../../components/ask/useAskSetup.js';
 import { useTapToTalk } from '../hooks/useTapToTalk.js';
 import { readWakeWordPref, startWakeWord, wakeWordSupport, writeWakeWordPref } from '../utils/wakeWord.js';
 import AynaGuideHub from './AynaGuideHub.jsx';
+import ProFeatureGate from '../../components/ProFeatureGate.jsx';
+import ProLock from '../../components/ProLock.jsx';
+
+// Guide pages that are ayna Pro features: Your week (recap), Try & check back
+// (advanced tracking), Appointment note (appointment prep). Memory stays free.
+const PRO_GUIDE_PAGES = { recap: 'recap', trial: 'trial', report: 'appointment' };
 import { useAskHealthPref, ASK_HEALTH_LABEL } from '../../health/askHealthPref.js';
 
 /**
@@ -181,6 +187,8 @@ export default function AskAynaModal({
   // Prompts grouped About you · Safety · Products, Safety first when flagged (components/ask/useAskSetup.js).
   const { safety, groups } = useAskSetup({ open, profile, matchOpts, products, signedIn: Boolean(session?.access_token), focusProduct, hasHealthData });
   const [guidePage, setGuidePage] = useState('');
+  // Today's free Ask ayna chats are used: the locked card sits above the composer.
+  const [askLock, setAskLock] = useState(false);
   // Back on the home view: start at the top, not where the chat was scrolled.
   useEffect(() => { if (home) bottomRef.current?.parentElement?.scrollTo({ top: 0 }); }, [home]);
   const seedDone = useRef(null);
@@ -362,6 +370,7 @@ export default function AskAynaModal({
 
       setMessages(newMessages);
       onChatHistoryUpdate?.(newMessages);
+      if (data.limitReached && Number(data.usage?.limit) < 50) setAskLock(true);
     } catch (err) {
       if (err?.code !== 'not_signed_in' && err?.code !== 'weekly_limit_reached') {
         // Roll the unanswered question back out of the thread and keep it.
@@ -448,6 +457,7 @@ export default function AskAynaModal({
         variant={asTab ? 'tab' : 'sheet'}
         header={header}
         footer={<>
+          {askLock && !guidePage && <div className="ay-ask-prolock"><ProLock variant="inline" feature="ask" onNotNow={() => setAskLock(false)} /></div>}
           {sendError && (
             <div className="ay-askp-pinned ay-ask-error" role="alert">
               <span>{sendError}</span>
@@ -479,7 +489,7 @@ export default function AskAynaModal({
           />
         )}
       >
-        {guidePage === 'voice' ? <VoiceSettings tapSupported={voice.supported} onBack={() => setGuidePage('')} /> : guidePage ? <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recapAskable ? recap : ''); } : null} onBack={() => setGuidePage('')} /> : null}
+        {guidePage === 'voice' ? <VoiceSettings tapSupported={voice.supported} onBack={() => setGuidePage('')} /> : guidePage ? (PRO_GUIDE_PAGES[guidePage] ? <ProFeatureGate feature={PRO_GUIDE_PAGES[guidePage]} onBack={() => setGuidePage('')}><AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recapAskable ? recap : ''); } : null} onBack={() => setGuidePage('')} /></ProFeatureGate> : <AynaGuideHub page={guidePage} guide={guide} onChange={onGuideChange} recap={recap} recapSources={recapSources} recapExportable={recapExportable} productNotes={productNotes} profile={summarizeProfile(profile || {})} onAsk={recapExportable ? (question) => { setGuidePage(''); send(question, recapAskable ? recap : ''); } : null} onBack={() => setGuidePage('')} />) : null}
         {home && !sending && !guidePage && (
           <AskStart
             name={name ? String(name).split(' ')[0] : ''}

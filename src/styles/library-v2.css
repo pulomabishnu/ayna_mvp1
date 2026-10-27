@@ -339,7 +339,3 @@ html body .app-container.app-container.app-container.app-container .lb.lb-read {
   html body .app-container.app-container.app-container.app-container .lb.lb-read .lb-rhead__grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   html body .app-container.app-container.app-container.app-container .lb.lb-read .lb-rhead__cover { order: -1; }
 }
-
-/* The BrandStrip replaces the wavy rule under the Library head (founder, Oct 27 13:20). */
-.ct.lb .lb-top::after { content: none !important; }
-.ct.lb .lb-strip { position: relative; z-index: 1; }

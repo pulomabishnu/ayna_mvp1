@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import BrandStrip from '../../components/ui/ay/BrandStrip.jsx';
 import { trackApp } from '../utils/appAnalytics.js';
 import { PANEL_ICONS } from '../components/pdpIcons.jsx';
 import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../../data/products.js';
@@ -16,7 +17,7 @@ import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, alsoAt, reta
 import { trackPdpRetailerClicked, eventSurface } from '../../utils/analyticsEvents.js';
 import { haptic } from '../../utils/haptics.js';
 import { buyModel } from '../../components/pdp/buyModel.js';
-import { heroPriceView } from '../../components/pdp/heroPrice.js';
+import { heroPriceView, MAX_PRICE_CHIPS } from '../../components/pdp/heroPrice.js';
 import { priceParts } from '../../data/passport/priceParts.js';
 import { matchLineState, topWarningFor, pageRecall, heroNotes, pregnancyFirstFrom, safetyLineFor, hasIud, cupOrDisc, keyFormat } from '../../components/pdp/pdpParts.js';
 import { useResearchState } from '../../data/researchLoader.js';
@@ -397,7 +398,8 @@ export default function ProductDetailScreen({
   })();
   const said = `${metaLine} ${highlights.map((h) => `${h.value} ${h.caption}`).join(' ')}`.toLowerCase();
   const heroV = heroPriceView(product, { price: priceParts(product), perUnit, glance, brand });
-  const priceNotes = heroNotes(heroV.notes).keep.filter((n) => !said.includes(String(n).toLowerCase().replace(/ eligible$/, '')) && !(perUse && /per (tablet|capsule|softgel|gummy|unit)|a day/i.test(n)));
+  // At most two fact chips by the price (founder, Oct 27); the rest are Product facts "Price details".
+  const priceNotes = heroNotes(heroV.notes).keep.filter((n) => !said.includes(String(n).toLowerCase().replace(/ eligible$/, '')) && !(perUse && /per (tablet|capsule|softgel|gummy|unit)|a day/i.test(n))).slice(0, MAX_PRICE_CHIPS);
   const others = alsoAt(buy?.rows);
   // Sizes or options as chips under the price (the variants, else the options listed in the price).
   const sizeChips = variantLabels.length ? variantLabels : (!perUse ? priceNotes : []);
@@ -460,7 +462,8 @@ export default function ProductDetailScreen({
           {sizeChips.length > 0 && (
             <div className="ay-pdp2-sizes">
               <p className="sr-only">{variantLabels.length ? variantKind : 'Options'}</p>
-              <ul className="ay-pdp2-chips" aria-label={variantLabels.length ? variantKind : 'Options'}>{sizeChips.map((l) => <li key={l}>{l}</li>)}</ul>
+              {/* Many options: one row that peeks and scrolls sideways, not a wall of stacked chips (founder, Oct 27). */}
+              <ul className={`ay-pdp2-chips${sizeChips.length > 3 ? ' is-scroll' : ''}`} aria-label={variantLabels.length ? variantKind : 'Options'} tabIndex={sizeChips.length > 3 ? 0 : undefined}>{sizeChips.map((l) => <li key={l}>{l}</li>)}</ul>
               {variantLabels.length > 0 && variantKind === 'Sizes' && <button type="button" className="ayv-textbtn" onClick={() => setAskOpen(true)}>Which size am I?</button>}
             </div>
           )}
@@ -518,6 +521,8 @@ export default function ProductDetailScreen({
 
         </div>
 
+        {/* The signature divider between the product and More like this (founder, Oct 27 13:44). */}
+        {related.more.length > 0 && <BrandStrip className="ay-pdp-strip" />}
         {related.more.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-more">
           <div className="ay-pdp-sechead"><h2 id="ay-pdp-related-more">More like this for you</h2><p>{related.personal ? 'Picks that fit your profile.' : 'For the same needs, from other parts of the shop.'}</p></div>
           <div className="ay-shelf2-row">{related.more.slice(0, 3).map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>

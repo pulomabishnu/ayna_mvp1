@@ -16,7 +16,8 @@ import '../../styles/home.css';
 import '../../styles/loop-a-landing.css';
 import '../../styles/uq-landing.css';
 import Photo from '../ui/Photo.jsx';
-import { Chip, Band, Bento, Tile, SnapCarousel, ScallopEdge } from '../ui/ay';
+import { Chip, Band, ScallopEdge } from '../ui/ay';
+import BrandStrip from '../ui/ay/BrandStrip.jsx';
 import SlideToStart from '../ui/SlideToStart.jsx';
 import { Rain, HeroSearch, BrandBar } from './kit.jsx';
 import './web-landing.css';
@@ -27,15 +28,21 @@ import './web-landing.css';
  * (hm-*), uq-landing.css (colour-blocked bands) and ./web-landing.css (the
  * hero, Pro and the closing note).
  *
- * Colour-blocked bands, adjacent bands never the same colour:
- *   1 hero: everything centred (a moderate title, search, Slide to start)
+ * The sequence (the hero and the bar were approved Oct 27; below them,
+ * founder 13:44, one idea and one picture a section):
+ *   1 hero: everything centred (title, Slide to start, search, How we match)
  *     over a faded layer of real products falling as cut-outs (./kit.jsx)
  *   2 partner marquee, pink seam (Pause motion stops it and the rain)
- *   3 does this sound familiar + needs, butter band
- *   4 how it works as a Bento (steps + catalog numbers), espresso band
- *   5 reads + community, pink band
- *   6 ayna Pro (Early Access, links to /pro), espresso band
- *   7 founders, butter band, then the medical note
+ *   3 does this sound familiar? a checkerboard of phrases and photos, butter
+ *   4 this week's picks, the same butter: need chips and four big cards
+ *   5 how ayna fits it to you: three photo steps and four big numbers, espresso
+ *     then the brown and pink BrandStrip
+ *   6 reads + community, butter (pink is an accent only, founder 13:58)
+ *   7 ayna Pro (Early Access, links to /pro), espresso
+ *     then the BrandStrip again
+ *   8 founders: half photo, half butter
+ *   9 the last ask: the promise and Slide to start, espresso, running into
+ *     the medical note
  * One page for everyone; signed in with a profile, the main action is
  * "Go to your Home". Nothing on the page is sticky. */
 
@@ -76,6 +83,19 @@ function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
   );
 }
 
+/* ======================================================================
+   Below the hero (founder, Oct 27 13:44: "fix the rest of the landing page
+   look at the inspo ... its still ugly ... i love the pink and brown bar
+   thing can u integrate more"). One idea and one picture per section, big
+   type, little text, in the order the best consumer-health pages use:
+   the problem, the products, how it works with the proof, reads and the
+   community, Pro, who we are, then one last ask.
+   Inspo moves: the Feel Fits pain-point checkerboard (4dfb3fbd), the PITCH
+   half-photo / half-colour split (audits/v3/inspo/36) and one oversized
+   closing line (FEEL FITS, the act). The brown and pink BrandStrip marks the
+   two turns of the page.
+   ====================================================================== */
+
 // Core needs lead (periods, intimate care, menopause, pelvic floor); creams, sleep and gadgets come after.
 const CORE = /pad|tampon|cup|disc|period|intimate|vaginal|menopause|pelvic|uti|cramp|fertility|postpartum|pregnan/i;
 function weeklyLineup() {
@@ -85,33 +105,47 @@ function weeklyLineup() {
   return [...core, ...list.filter((p) => !core.includes(p))];
 }
 
-/* ---------- 3. does this sound familiar + needs (pink band) ----------
-   Landing audit 6: the four phrases on the left; on the right six needs (plus
-   All needs) and four products. With no need picked the four are this week's
-   picks (signed in: her top picks). Each phrase is a common need from the quiz
-   (WebIntake.jsx COMMON_NEEDS), said the way people say it; these are prompts,
-   not testimonials. Signed out, every card says "See your match" (no number). */
+/* ---------- 3. does this sound familiar? (butter) ----------
+   The Feel Fits pain-point tiles (4dfb3fbd): each phrase is an espresso
+   tile beside its photo, laid as a checkerboard that echoes the brown and
+   pink bar (pink only as the accent, founder 13:58). Each phrase is a common need from the quiz (WebIntake.jsx
+   COMMON_NEEDS), said the way people say it; these are prompts, not
+   testimonials. Each pair is one link to that need in the Shop. */
 const FAMILIAR = [
   { q: 'My cramps knock me out every month.', need: 'Cramps or period pain', photo: '/landing/pajamas-overhead.webp' },
   { q: 'I bleed through everything.', need: 'Heavy periods', photo: '/landing/sink-flatlay.webp' },
   { q: 'I leak a little when I sneeze.', need: 'Bladder leakage or incontinence', photo: '/landing/curlers-call.webp' },
   { q: 'Things feel dry down there.', need: 'Vaginal dryness', photo: '/landing/robe-vanity.webp' },
 ];
-const SHOWN_NEEDS = 6;
-function Phrases({ onSearch }) {
+function Familiar({ onSearch }) {
   return (
-    // Founder Oct 26 20:17: a peeking snap carousel of photo-led cards instead of stacked rows.
-    // Founder Oct 27: no stickers, so the photos carry no die-cut product on their corner any more.
-    <SnapCarousel label="Does this sound familiar?" size="card" className="hm-needs-snap" items={FAMILIAR.map((t) => ({ key: t.q, node: (
-      <a className="hm-needs__row" href={`/explore/products?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
-        <span className="hm-needs__ph"><Photo src={t.photo} alt="" sizes="(max-width: 640px) 90vw, 420px" loading="lazy" decoding="auto" /></span>
-        <span className="hm-needs__quote">“{t.q}”</span>
-        <span className="hm-needs__go">See what helps <Arrow /></span>
-      </a>
-    ) }))} />
+    <section className="wlx-fam" aria-labelledby="wlx-fam-h">
+      <div className="hm-wrap">
+        <h2 id="wlx-fam-h" className="wlx-h2 wlx-fam__h">Does this sound familiar?</h2>
+        <ul className="wlx-check">
+          {FAMILIAR.map((t) => (
+            <li key={t.q} className="wlx-check__item">
+              <a className="wlx-check__link" href={`/explore/products?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
+                <span className="wlx-check__txt">
+                  <span className="wlx-check__q">“{t.q}”</span>
+                  <span className="wlx-check__go">See what helps <Arrow /></span>
+                </span>
+                <span className="wlx-check__ph"><Photo src={t.photo} alt="" sizes="(max-width: 767px) 50vw, 300px" loading="lazy" decoding="auto" /></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }
-function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, picks = null, signedOut = true }) {
+
+/* ---------- 4. the products (butter, the same band) ----------
+   The approved Shop cards (19c492f2): big square photos, little text. The
+   need chips switch the four; with none picked they are this week's picks
+   (signed in: her top picks). */
+const SHOWN_NEEDS = 6;
+function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
   const ready = useCatalogReady();
   const weekly = useMemo(() => (ready ? weeklyLineup().slice(0, 4) : []), [ready]);
   // Member picks: only products with a real photo, drugstore basics last.
@@ -142,46 +176,38 @@ function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, picks = null, sig
   if (ready && !needs.length && four.length < 2) return null;
   const listName = need ? `${need.label} products` : mine ? 'Top picks for you' : 'This week’s picks';
   return (
-    <Band tone="butter" className="hm-sec hm-needsband hm-band" aria-labelledby="hm-familiar-title">
+    <section className="wlx-picks" aria-labelledby="wlx-picks-h">
       <div className="hm-wrap">
-        <header className="hm-head">
-          <h2 id="hm-familiar-title" className="hm-h2">{signedOut ? 'Does this sound familiar?' : 'Explore by need'}</h2>
+        <header className="hm-head wlx-head">
+          <h2 id="wlx-picks-h" className="wlx-h2" aria-live="polite">{listName}</h2>
           <Go className="ay-btn ay-btn--text hm-head__all" href="/explore/products" onGo={() => onViewDiscovery?.('')}><span className="hm-head__long">See all products</span><span className="hm-head__short">See all<span className="ed-sr"> products</span></span><Arrow /></Go>
         </header>
-        <div className={`hm-needsband__grid${signedOut ? '' : ' is-single'}`}>
-          {signedOut && <Phrases onSearch={onSearch} />}
-          <div className="hm-shop">
-            <div className="hm-chips" role="group" aria-label="Choose a need">
-              {needs.length ? <>
-                {needs.map((n) => (<Chip key={n.id} selected={n.id === need?.id} onClick={() => setId(n.id === id ? null : n.id)}>{n.label} <span className="hm-chips__count"><span className="ed-sr">, </span>{n.pool.length}<span className="ed-sr"> products</span></span></Chip>))}
-                <Go className="ayk-chip hm-chips__all" href="/explore/products" onGo={() => onViewDiscovery?.('')}>All needs<Arrow /></Go>
-              </> : [0, 1, 2, 3, 4, 5].map((i) => <span key={i} className="hm-chips__skel" aria-hidden="true" />)}
-            </div>
-            <p className="hm-shop__label" aria-live="polite">{listName}</p>
-            <ul className="hm-stickers" key={need?.id || 'picks'} aria-label={loading ? 'Loading products' : listName}>
-              {!loading ? four.map((p) => (
-                <li key={p.id}>
-                  <ProductCard product={p} onOpen={onOpenProduct} className="hm-sticker" />
-                </li>
-              )) : [0, 1, 2, 3].map((i) => <li key={i} aria-hidden="true"><div className="hm-sticker__skel" /></li>)}
-            </ul>
-            {need && (
-              <div className="hm-shop__foot">
-                <Go className="ay-btn ay-btn--secondary" href="/explore/products" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label.toLowerCase()} products</Go>
-              </div>
-            )}
-          </div>
+        <div className="hm-chips wlx-chips" role="group" aria-label="Choose a need">
+          {needs.length ? <>
+            {needs.map((n) => (<Chip key={n.id} selected={n.id === need?.id} onClick={() => setId(n.id === id ? null : n.id)}>{n.label}</Chip>))}
+            <Go className="ayk-chip hm-chips__all" href="/explore/products" onGo={() => onViewDiscovery?.('')}>All needs<Arrow /></Go>
+          </> : [0, 1, 2, 3, 4, 5].map((i) => <span key={i} className="hm-chips__skel" aria-hidden="true" />)}
         </div>
+        <ul className="hm-stickers wlx-cards" key={need?.id || 'picks'} aria-label={loading ? 'Loading products' : listName}>
+          {!loading ? four.map((p) => (
+            <li key={p.id}>
+              <ProductCard product={p} onOpen={onOpenProduct} className="hm-sticker" />
+            </li>
+          )) : [0, 1, 2, 3].map((i) => <li key={i} aria-hidden="true"><div className="hm-sticker__skel" /></li>)}
+        </ul>
+        {need && (
+          <div className="hm-shop__foot">
+            <Go className="ay-btn ay-btn--secondary" href="/explore/products" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label.toLowerCase()} products</Go>
+          </div>
+        )}
       </div>
-    </Band>
+    </section>
   );
 }
 
-/* ---------- 4. how it works + evidence (espresso band) ----------
-   Landing audit 6: three steps (Answer, We check the evidence, You decide),
-   the three-level meter inside step 2, the four catalog numbers beneath and
-   the one call to action. Each step keeps its approved photo; the real piece
-   of ayna it describes sits on the photo as a sticker. */
+/* ---------- 5. how ayna fits it to you (espresso) ----------
+   Three real steps (so the numbers are steps), each a tall photo carrying the
+   piece of ayna it describes, then the catalog in four big numbers. */
 const STEPS = [
   { t: 'Answer a few short questions', d: 'About your body, your life stage and what you avoid.', ui: 'quiz', src: '/landing/hiw-questions-cabinet.webp', pos: '50% 35%' },
   { t: 'We check the evidence', d: 'Across products, apps and care.', ui: 'evidence', src: '/landing/hiw-evidence-reading.webp', pos: '50% 40%' },
@@ -189,17 +215,27 @@ const STEPS = [
 ];
 // Real life-stage options from the quiz (intakeModel LIFE_STAGE_LABELS), so the first step shows who ayna is for.
 const STAGE_CHIPS = ['Regular periods', 'Postpartum', 'Perimenopause', 'Post-menopause'];
+const LEVELS = [
+  { n: 3, word: 'Strong evidence' },
+  { n: 2, word: 'Some evidence' },
+  { n: 1, word: 'Limited evidence' },
+];
 function StepUI({ kind }) {
-  if (kind === 'quiz') return <span className="hm-stepui is-quiz" aria-hidden="true">{STAGE_CHIPS.map((c, i) => <span key={c} className={`ay-chip${i === 2 ? ' is-on' : ''}`}>{c}</span>)}</span>;
-  if (kind === 'decide') return <span className="hm-stepui is-decide" aria-hidden="true"><span className="hm-stepui__btn">Save</span><span className="hm-stepui__btn is-quiet">Compare</span></span>;
-  return null;
+  if (kind === 'quiz') return <span className="wlx-ui is-quiz" aria-hidden="true">{STAGE_CHIPS.map((c, i) => <span key={c} className={`ay-chip${i === 2 ? ' is-on' : ''}`}>{c}</span>)}</span>;
+  if (kind === 'decide') return <span className="wlx-ui is-decide" aria-hidden="true"><span className="wlx-ui__btn">Save</span><span className="wlx-ui__btn is-quiet">Compare</span></span>;
+  // the three evidence levels as the meter ayna shows on every product
+  return (
+    <ul className="wlx-ui is-meter" aria-label="The three evidence levels">
+      {LEVELS.map((l) => (
+        <li key={l.n} className="ay-meter" data-level={l.n}>
+          <span className="ay-meter__word">{l.word}</span>
+          <span className="ay-meter__bars" role="img" aria-label={`${l.n} of 3`}>{[1, 2, 3].map((b) => <i key={b} />)}</span>
+        </li>
+      ))}
+    </ul>
+  );
 }
 /* proof: every number is counted from the catalog when it loads (nothing typed in). */
-const LEVELS = [
-  { n: 3, word: 'Strong evidence', note: 'Research on the product itself.' },
-  { n: 2, word: 'Some evidence', note: 'Clinical guidelines, or research on its ingredients.' },
-  { n: 1, word: 'Limited evidence', note: 'Less direct research so far. We say so plainly.' },
-];
 function useCatalogNumbers() {
   const ready = useCatalogReady();
   return useMemo(() => {
@@ -227,137 +263,89 @@ function useCatalogNumbers() {
     ];
   }, [ready]);
 }
-function Levels({ className, onViewArticles }) {
-  return (
-    <div className={`hm-levelswrap ${className}`}>
-      <ul className="hm-levels" aria-label="The three evidence levels">
-        {LEVELS.map((l) => (
-          <li key={l.n}>
-            <span className="ay-meter" data-level={l.n}>
-              <span className="ay-meter__word">{l.word}</span>
-              <span className="ay-meter__bars" role="img" aria-label={`${l.n} of 3`}>{[1, 2, 3].map((b) => <i key={b} />)}</span>
-            </span>
-            <span className="hm-levels__note">{l.note}</span>
-          </li>
-        ))}
-      </ul>
-      <Go className="ay-btn ay-btn--text hm-levels__more" href="/explore/resources" onGo={onViewArticles}>Read our sources<Arrow /></Go>
-    </div>
-  );
-}
-/* Bento (#455687ac intelly dashboard, #007b85fd "At a Glance"): the three
-   steps and the four catalog numbers as tiles of different sizes and tones on
-   the espresso band, instead of a row of steps and a row of identical stats. */
-function StatTile({ s, tone }) {
-  if (!s) return <Tile tone={tone} as="li" className="hm-bt hm-bt--num is-skel" aria-hidden="true" />;
-  return <Tile tone={tone} as="li" className="hm-bt hm-bt--num" big={s.n.toLocaleString('en-US')} caption={s.label} />;
-}
-function HowEvidence({ onViewHowItWorks, onViewArticles, onStartQuiz, showStart = true }) {
+function HowEvidence({ onViewHowItWorks, onViewArticles }) {
   const nums = useCatalogNumbers() || [null, null, null, null];
-  const [s1, s2, s3] = STEPS;
   return (
-    <Band tone="ink" className="hm-sec hm-how hm-band" aria-labelledby="hm-how-title">
+    <Band tone="ink" className="hm-sec hm-band wlx-how" aria-labelledby="wlx-how-h">
       <div className="hm-wrap">
-        <header className="hm-head">
-          <h2 id="hm-how-title" className="hm-h2">How ayna fits it to you</h2>
+        <header className="hm-head wlx-head">
+          <h2 id="wlx-how-h" className="wlx-h2">How ayna fits it to you</h2>
           <Go className="ay-btn ay-btn--text hm-head__all" href="/how-it-works" onGo={onViewHowItWorks}><span className="hm-head__long">The full method</span><span className="hm-head__short">See all<span className="ed-sr"> of the method</span></span><Arrow /></Go>
         </header>
-        <p className="hm-body hm-how__lead">ayna matches women’s health products to your answers, and shows the research beside each one. Unsupported claims are labeled, not upgraded into facts.</p>
-        <Bento as="ol" className="hm-bento" aria-busy={nums[0] ? undefined : 'true'}>
-          <Tile tone="butter" span="big" as="li" className="hm-bt hm-bt--photo">
-            <span className="hm-bt__ph"><Photo src={s1.src} alt="" sizes="(max-width: 767px) 92vw, 600px" style={{ objectPosition: s1.pos }} loading="lazy" decoding="auto" /></span>
-            <span className="hm-bt__panel">
-              <span className="hm-bt__n" aria-hidden="true">1</span>
-              <h3 className="hm-h3"><span className="ed-sr">Step 1: </span>{s1.t}</h3>
-              <p>{s1.d}</p>
-              <StepUI kind="quiz" />
-            </span>
-          </Tile>
-          <Tile tone="pink" span="tall" as="li" className="hm-bt hm-bt--ev">
-            <span className="hm-bt__n" aria-hidden="true">2</span>
-            <h3 className="hm-h3"><span className="ed-sr">Step 2: </span>{s2.t}</h3>
-            <p>{s2.d}</p>
-            <Levels className="hm-levels--tile" onViewArticles={onViewArticles} />
-          </Tile>
-          <StatTile s={nums[0]} tone="butter" />
-          <StatTile s={nums[1]} tone="ink" />
-          <Tile tone="pink" span="wide" as="li" className="hm-bt hm-bt--decide">
-            <span className="hm-bt__side"><Photo src={s3.src} alt="" sizes="(max-width: 767px) 40vw, 260px" style={{ objectPosition: s3.pos }} loading="lazy" decoding="auto" /><StepUI kind="decide" /></span>
-            <span className="hm-bt__text">
-              <span className="hm-bt__n" aria-hidden="true">3</span>
-              <h3 className="hm-h3"><span className="ed-sr">Step 3: </span>{s3.t}</h3>
-              <p>{s3.d}</p>
-            </span>
-          </Tile>
-          <StatTile s={nums[2]} tone="butter" />
-          <StatTile s={nums[3]} tone="pink" />
-        </Bento>
-        {/* The one call to action after the hero: it closes the method. */}
-        {showStart && <div className="hm-how__cta"><Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Get my matches<Arrow /></Go></div>}
+        <p className="wlx-how__lead">Unsupported claims are labeled, not upgraded into facts.</p>
+        <ol className="wlx-steps">
+          {STEPS.map((s, i) => (
+            <li key={s.t} className={`wlx-step is-${s.ui}`}>
+              <span className="wlx-step__ph">
+                <Photo src={s.src} alt="" sizes="(max-width: 767px) 92vw, 400px" style={{ objectPosition: s.pos }} loading="lazy" decoding="auto" />
+                <StepUI kind={s.ui} />
+              </span>
+              <span className="wlx-step__n" aria-hidden="true">{i + 1}</span>
+              <h3 className="wlx-step__t"><span className="ed-sr">Step {i + 1}: </span>{s.t}</h3>
+              <p className="wlx-step__d">{s.d}</p>
+            </li>
+          ))}
+        </ol>
+        <ul className="wlx-stats" aria-busy={nums[0] ? undefined : 'true'}>
+          {nums.map((s, i) => (s
+            ? <li key={i}><b>{s.n.toLocaleString('en-US')}</b><span>{s.label}</span></li>
+            : <li key={i} className="is-skel" aria-hidden="true"><b>&nbsp;</b><span>&nbsp;</span></li>))}
+        </ul>
+        <Go className="ay-btn ay-btn--text wlx-how__more" href="/explore/resources" onGo={onViewArticles}>Read our sources<Arrow /></Go>
       </div>
     </Band>
   );
 }
 
-/* ---------- 5. reads + community: two columns ---------- */
+/* ---------- 6. reads + community (butter; no pink fills, founder 13:58) ----------
+   One lead read with a big photo, two more beside it, then the Community as
+   a half-photo / half-butter split (PITCH). */
 const LEAD_READS = [
-  { id: 'heavy-bleeding', title: 'Heavy menstrual bleeding', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/articles-heavy-bleeding-satin.webp', alt: 'Pads and tampons scattered on red satin', tone: 'pink' },
-  { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/articles-period-pain-hotwater.webp', alt: 'A woman in striped pajamas holding a hot water bottle', tone: 'sky' },
-  { id: 'pcos-basics', title: 'PMOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror', tone: 'butter' },
+  { id: 'heavy-bleeding', title: 'Heavy menstrual bleeding', source: 'UpToDate · ACOG · CDC', src: '/landing/articles-heavy-bleeding-satin.webp', alt: 'Pads and tampons scattered on red satin' },
+  { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/articles-period-pain-hotwater.webp', alt: 'A woman in striped pajamas holding a hot water bottle' },
+  { id: 'pcos-basics', title: 'PMOS: What It Is and How It’s Managed', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror' },
 ];
 function Reads({ onViewArticle, onViewArticles }) {
   const open = (id) => { if (onViewArticle) onViewArticle(id); else onViewArticles?.(); };
   return (
-    <div className="hm-reads">
-      <header className="hm-head">
-        <h2 id="hm-reads-title" className="hm-h2">Quick reads about your body, with sources</h2>
-        <a className="ay-btn ay-btn--text hm-head__all" href="/explore/resources" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}><span className="hm-head__long">Open the Library</span><span className="hm-head__short">See all<span className="ed-sr"> reads in the Library</span></span><Arrow /></a>
+    <>
+      <header className="hm-head wlx-head">
+        <h2 id="wlx-reads-h" className="wlx-h2">Quick reads about your body, with sources</h2>
+        <Go className="ay-btn ay-btn--text hm-head__all" href="/explore/resources" onGo={onViewArticles}><span className="hm-head__long">Open the Library</span><span className="hm-head__short">See all<span className="ed-sr"> reads in the Library</span></span><Arrow /></Go>
       </header>
-      {/* Plain rows (master prompt 154: no bento): photo, title, one line, sources. */}
-      <ul className="hm-readlist">
-        {LEAD_READS.map((r) => (
-          <li key={r.id}>
-            <a className="hm-readlist__row" href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
-              <span className="hm-readlist__ph"><Photo src={r.src} alt={r.alt} sizes="(max-width: 767px) 96px, 128px" loading="lazy" decoding="auto" /></span>
-              <span className="hm-readlist__text">
-                <strong className="hm-readlist__title">{r.title}</strong>
-                <small className="hm-readlist__src">Sources: {String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
+      <ul className="wlx-reads">
+        {LEAD_READS.map((r, i) => (
+          <li key={r.id} className={i ? 'is-small' : 'is-lead'}>
+            <a className="wlx-read" href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
+              <span className="wlx-read__ph"><Photo src={r.src} alt={r.alt} sizes={i ? '(max-width: 767px) 96px, 200px' : '(max-width: 767px) 92vw, 720px'} loading="lazy" decoding="auto" /></span>
+              <span className="wlx-read__text">
+                <strong className="wlx-read__t">{r.title}</strong>
+                <small className="wlx-read__src">Sources: {String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
               </span>
             </a>
           </li>
         ))}
       </ul>
-    </div>
+    </>
   );
 }
-/* the Community card: its photo, the latest ayna news, and up to two real posts once there are any */
+/* the Community: its photo, the latest ayna news, and one real post once there is one */
 function Community({ onViewCommunity, posts = [] }) {
   const news = useLatestAnnouncement();
+  const post = posts[0];
+  const anon = post && (post.is_anonymous || !post.author_id);
+  const who = post && (anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member');
   return (
-    <article className="hm-comm" aria-labelledby="hm-comm-title">
-      <span className="hm-comm__ph"><Photo sizes="(max-width: 767px) 92vw, 460px" src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" decoding="auto" /></span>
-      <div className="hm-comm__copy">
-        <h3 id="hm-comm-title" className="hm-h3">Real talk about what women actually use.</h3>
-        <div className="hm-news" aria-labelledby="hm-news-title">
-          <span className="hm-tab hm-news__label">ayna news</span>
-          <h3 id="hm-news-title" className="hm-h3">{news ? news.title : 'ayna Community is open.'}</h3>
-          <p>{news ? news.body : 'Ask questions, review what you use and share playlists with women who get it.'}</p>
-        </div>
-        {posts.length > 0 && (
-          <ul className="hm-posts" aria-label="From the Powder Room">
-            {posts.slice(0, 2).map((post) => {
-              const anon = post.is_anonymous || !post.author_id;
-              const who = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
-              return (
-                <li key={post.id}>
-                  <button type="button" className="hm-post" onClick={() => onViewCommunity?.()}>
-                    <span className="hm-post__meta">{post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} from {who}</span>
-                    <span className="hm-post__body">{post.body}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+    <article className="wlx-comm" aria-labelledby="wlx-comm-h">
+      <span className="wlx-comm__ph"><Photo sizes="(max-width: 767px) 92vw, 640px" src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" decoding="auto" /></span>
+      <div className="wlx-comm__copy">
+        <h3 id="wlx-comm-h" className="wlx-comm__h">Real talk about what women actually use.</h3>
+        <p className="wlx-comm__news"><span className="wlx-pill">ayna news</span> {news ? news.title : 'ayna Community is open.'}</p>
+        {post && (
+          <button type="button" className="wlx-post" onClick={() => onViewCommunity?.()}>
+            <span className="wlx-post__meta">{post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} from {who}</span>
+            <span className="wlx-post__body">{post.body}</span>
+          </button>
         )}
         <Go className="ay-btn ay-btn--secondary" href="/community" onGo={onViewCommunity}>{news ? 'Read it in Community' : 'Read reviews and questions'}<Arrow /></Go>
       </div>
@@ -366,8 +354,8 @@ function Community({ onViewCommunity, posts = [] }) {
 }
 function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts }) {
   return (
-    <Band tone="pink" className="hm-sec hm-rc hm-band" aria-label="Reads and Community">
-      <div className="hm-wrap hm-rc__grid">
+    <Band tone="butter" className="hm-sec hm-band wlx-rc" aria-labelledby="wlx-reads-h">
+      <div className="hm-wrap">
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         <Community onViewCommunity={onViewCommunity} posts={posts} />
       </div>
@@ -375,31 +363,7 @@ function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts 
   );
 }
 
-/* ---------- 6. founders (butter) ----------
-   The founders' photo and story (the page's one 44px statement line). The
-   Wefunder card moved to /about (critique, Oct 27: no investing pitch on the
-   consumer home page); the footer keeps its "Invest in ayna" link. */
-function Founders({ onViewAbout }) {
-  return (
-    <Band tone="butter" className="hm-sec hm-us hm-band" aria-labelledby="hm-us-title">
-      <div className="hm-wrap">
-        <div className="hm-us__grid">
-          <figure className="hm-polaroid">
-            <span className="hm-polaroid__ph"><Photo sizes="(max-width: 767px) 92vw, 600px" src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" decoding="auto" width="1800" height="1198" /></span>
-            <figcaption>Puloma, Eliz &amp; Ameera</figcaption>
-          </figure>
-          <div className="hm-us__copy">
-            <h2 id="hm-us-title" className="hm-h2">Built by three women who wanted better answers.</h2>
-            <p className="hm-body">We met at Cornell, bringing different experiences to the same question: why does understanding our options require so much searching?</p>
-            <Go className="ay-btn ay-btn--secondary" href="/about" onGo={onViewAbout}>Meet us</Go>
-          </div>
-        </div>
-      </div>
-    </Band>
-  );
-}
-
-/* ---------- 6. ayna Pro (espresso) ----------
+/* ---------- 7. ayna Pro (espresso) ----------
    Early Access prices (src/components/SubscriptionPaywallModal.jsx on main),
    as static text, and Learn more to /pro. */
 function Pro() {
@@ -408,9 +372,9 @@ function Pro() {
       <div className="hm-wrap wl-pro__grid">
         <div className="wl-pro__copy">
           <span className="wl-pro__tag">ayna Pro · Early Access</span>
-          <h2 id="wl-pro-h" className="hm-h2">More of ayna, when you want it.</h2>
-          <p className="hm-body">More Ask ayna, unlimited Reads and detailed health history. Basic matches, safety flags and evidence stay free.</p>
-          <a className="hm-howlink wl-pro__more" href="/pro">Learn more<Arrow /></a>
+          <h2 id="wl-pro-h" className="wlx-h2">More of ayna, when you want it.</h2>
+          <p className="wl-pro__body">More Ask ayna, unlimited Reads and detailed health history. Basic matches, safety flags and evidence stay free.</p>
+          <a className="wl-pro__more" href="/pro">Learn more<Arrow /></a>
         </div>
         <ul className="wl-pro__prices">
           <li><small>Monthly</small><b>$4.99</b><s>$8.99</s></li>
@@ -421,11 +385,43 @@ function Pro() {
   );
 }
 
+/* ---------- 8. founders (butter) ----------
+   The PITCH split: the photo runs to the page edge on one half, the words sit
+   on butter on the other. The Wefunder card lives on /about. */
+function Founders({ onViewAbout }) {
+  return (
+    <Band tone="butter" className="hm-band wlx-us" aria-labelledby="wlx-us-h">
+      <figure className="wlx-us__ph">
+        <Photo sizes="(max-width: 767px) 100vw, 50vw" src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" decoding="auto" width="1800" height="1198" />
+        <figcaption>Puloma, Eliz &amp; Ameera</figcaption>
+      </figure>
+      <div className="wlx-us__copy">
+        <h2 id="wlx-us-h" className="wlx-h2">Built by three women who wanted better answers.</h2>
+        <p className="wlx-us__p">We met at Cornell, bringing different experiences to the same question: why does understanding our options require so much searching?</p>
+        <Go className="ay-btn ay-btn--secondary" href="/about" onGo={onViewAbout}>Meet us</Go>
+      </div>
+    </Band>
+  );
+}
+
+/* ---------- 9. the last ask (espresso) ----------
+   The promise once more, as big as the page gets, and Slide to start. */
+function FinalCta({ cta }) {
+  return (
+    <Band tone="ink" className="hm-band wlx-end" aria-labelledby="wlx-end-h">
+      <div className="hm-wrap wlx-end__in">
+        <h2 id="wlx-end-h" className="wlx-end__h">Find what fits <span>your body.</span></h2>
+        <SlideToStart className="wlx-end__sts" size="lg" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
+      </div>
+    </Band>
+  );
+}
+
 /* ---------- page ---------- */
 // One page for everyone (the ayna logo opens it signed in or out). Signed in
-// with a profile, the main action is "Go to your Home" and the shop cards
-// drop "See your match". `communityPosts` are the most helpful Powder Room
-// posts (two are shown, in the Community card).
+// with a profile, the main action is "Go to your Home", the phrases step
+// aside and the shop cards drop "See your match". `communityPosts` are the
+// most helpful Powder Room posts (one is shown, in the Community half).
 export default function WebLanding({ signedIn = false, hasProfile = false, onStartQuiz, onGoHome, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, communityPosts = [], heroBanner = null }) {
   const rest = useAfterHeroPaint();
   const home = Boolean(signedIn && hasProfile && onGoHome);
@@ -436,12 +432,18 @@ export default function WebLanding({ signedIn = false, hasProfile = false, onSta
     <div id="ay-landing" className="ed ed-home hm hm-uq wl">
       <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />
       <BrandBar onOpen={onViewWaitlist} />
-      <NeedsBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} signedOut={!home} />
+      <Band tone="butter" as="div" className="hm-band wlx-butter">
+        {!home && <Familiar onSearch={onSearch} />}
+        <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
+      </Band>
       {rest && <>
-      <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!home} />
+      <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} />
+      <BrandStrip className="wlx-strip" />
       <ReadsCommunity onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
       <Pro />
+      <BrandStrip className="wlx-strip" />
       <Founders onViewAbout={onViewAbout} />
+      <FinalCta cta={cta} />
       </>}
       <div className="wl-note"><MedicalNote className="wl-note__p" /></div>
     </div>

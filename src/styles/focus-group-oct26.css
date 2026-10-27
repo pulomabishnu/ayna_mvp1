@@ -60,3 +60,12 @@
 /* Website header heart: the same ink as Ask ayna beside it, so it reads on butter and espresso headers. */
 .app-container.app-container .ay-nav__actions .ay-nav__heart { color: var(--ay-text) !important; }
 .app-container.app-container .ay-nav__actions .ay-nav__heart:hover { background: var(--ay-hover) !important; }
+
+/* Medical note on one line (founder Oct 27 15:55). The full sentence needs ~420px at 13px. */
+.ay-med-wrap { container-type: inline-size; width: 100%; flex: none; }
+.ay-med-wrap .ay-med-note { white-space: nowrap; max-width: none !important; }
+.ay-med-wrap .ay-med-note__short { display: none; }
+@container (max-width: 459px) {
+  .ay-med-wrap .ay-med-note__full { display: none; }
+  .ay-med-wrap .ay-med-note__short { display: inline; }
+}

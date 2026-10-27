@@ -61,6 +61,7 @@ const Recommendations = lazyView(() => import('./components/Recommendations'));
 const TrackedItems = lazyView(() => import('./components/TrackedItems'));
 const Comparison = lazyView(() => import('./components/Comparison'));
 const DoctorPrep = lazyView(() => import('./components/DoctorPrep'));
+const ProPaywallHost = lazyView(() => import('./components/ProPaywallHost'), null);
 const Recalls = lazyView(() => import('./components/Recalls'));
 // Pass 2 (perf): pages that Home, Shop and first paint never need. The
 // product page chunk is preloaded on /product/* pages (scripts/prerender.mjs).
@@ -2424,6 +2425,7 @@ function App() {
 
   return (
     <div className="app-container" data-theme={themeAttr} data-view={currentView} data-scroll-end={headerScroll.atEnd ? '1' : undefined}>
+      <ProPaywallHost />
       {/* Shared fixed stacking wrapper for top-of-viewport status rows, so the
           save-error banner and the ecosystem-generation bar stack instead of
           overlapping if both are showing at once, neither sets its own

@@ -1,43 +1,43 @@
-/* Home's hero, highlights and shortcuts (HomeHero.jsx). Calm colour rule (founder Oct 27 11:40): one surface,
-   --ay-calm-* tokens (butter in light, espresso in dark), pink only as an accent. 44px targets, 13px minimum. */
+/* Home's hero, highlights and shortcuts (HomeHero.jsx). Founder Oct 27 13:45: the espresso hero band stays;
+   pink is an accent only (no pink cards); keep it minimal: one espresso feature tile (Your data), the rest one calm surface
+   (--ay-calm-* tokens: butter in light, espresso in dark). 44px targets, 13px minimum. */
+
 
 /* ---------------------------------- Hero band ---------------------------------- */
 .ay-hh { margin: 0 calc(-1 * var(--d-gutter, 16px)); }
-.ay-hh__band { display: grid; gap: 16px; padding: 20px var(--d-gutter, 16px) 16px; background: var(--ay-calm-page); color: var(--ay-calm-fg); }
-/* Calm (Oct 27): the hero is the page colour; a wavy 1.5px rule (not a filled band edge) closes it. */
-.ay-hh__edge { display: block; width: 100%; height: 12px; margin: 0; overflow: visible; }
-.ay-hh__edge path { fill: none !important; stroke: var(--ay-calm-line); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
-.ay-hh .ay-hh__date { margin: 0; font: 600 14px/1.3 var(--ay-font-ui, inherit); color: var(--ay-calm-fg-muted); }
-.ay-hh .ay-hh__hi { margin: -8px 0 4px; font: 700 clamp(34px, 9.5vw, 44px)/1.04 var(--ay-font-display, var(--ay-app-heading, inherit)); letter-spacing: -.03em; color: var(--ay-calm-fg); }
+.ay-hh__band { display: grid; gap: 16px; padding: 20px var(--d-gutter, 16px) 16px; background: #3e2723; color: #ffedac; }
+.ay-hh__edge.ayk-edge { display: block; width: 100%; height: 14px; margin-top: -1px; }
+.ay-hh__edge path { fill: #3e2723 !important; }
+.ay-hh .ay-hh__date { margin: 0; font: 600 14px/1.3 var(--ay-font-ui, inherit); color: rgba(255, 237, 172, .82); }
+.ay-hh .ay-hh__hi { margin: -8px 0 4px; font: 700 clamp(34px, 9.5vw, 44px)/1.04 var(--ay-font-display, var(--ay-app-heading, inherit)); letter-spacing: -.03em; color: #ffedac; }
 .ay-hh .ay-dials.is-bare { padding: 0; }
 .ay-hh__row { display: flex; align-items: stretch; gap: 12px; }
 
 /* The Daily Rundown as a story bubble: a pink ring, today's count, one word. */
-.ay-hh-bubble { all: unset; box-sizing: border-box; cursor: pointer; flex: none; display: grid; justify-items: center; align-content: center; gap: 4px; min-width: 72px; min-height: 44px; border-radius: 16px; color: var(--ay-calm-fg); }
-.ay-hh-bubble__ring { position: relative; display: grid; place-items: center; width: 64px; height: 64px; box-sizing: border-box; border-radius: 50%; background: var(--ay-calm-box); border: var(--ay-calm-border); margin: 6px 0 2px; }
-/* The story ring: a pink ring with a gap (a pseudo element, since the app strips box-shadows). */
-.ay-hh-bubble__ring::before { content: ''; position: absolute; inset: -7px; border-radius: 50%; border: 3px solid #f7badd; pointer-events: none; }
-.ay-hh-bubble.is-done .ay-hh-bubble__ring::before { border-color: var(--ay-calm-track); }
-.ay-hh-bubble__ring b { font: 800 26px/1 var(--ay-font-display, inherit); color: var(--ay-calm-fg); letter-spacing: -.02em; }
-.ay-hh-bubble__check { position: absolute; right: -6px; bottom: -4px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #f7badd; border: 2px solid var(--ay-calm-page); }
+.ay-hh-bubble { all: unset; box-sizing: border-box; cursor: pointer; flex: none; display: grid; justify-items: center; align-content: center; gap: 4px; min-width: 72px; min-height: 44px; border-radius: 16px; color: #ffedac; }
+.ay-hh-bubble__ring { position: relative; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: #ffedac; box-shadow: 0 0 0 3px #3e2723, 0 0 0 6px #f7badd; margin: 6px 0 2px; }
+.ay-hh-bubble__ring b { font: 800 26px/1 var(--ay-font-display, inherit); color: #3e2723; letter-spacing: -.02em; }
+.ay-hh-bubble.is-done .ay-hh-bubble__ring { box-shadow: 0 0 0 3px #3e2723, 0 0 0 6px rgba(255, 237, 172, .35); }
+.ay-hh-bubble__check { position: absolute; right: -6px; bottom: -4px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #f7badd; border: 2px solid #3e2723; }
 .ay-hh-bubble__check svg, .ay-hh-streak__days svg { width: 13px; height: 13px; fill: none; stroke: #3e2723; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .ay-hh-bubble__label { font: 700 13px/1.2 var(--ay-font-ui, inherit); }
-.ay-hh-bubble:focus-visible, .ay-hh-streak:focus-visible { outline: 2px solid var(--ay-calm-fg); outline-offset: 3px; }
+.ay-hh-bubble:focus-visible, .ay-hh-streak:focus-visible { outline: 2px solid #f7badd; outline-offset: 3px; }
 
 /* The logging streak: one compact tappable row. */
-.ay-hh-streak { all: unset; box-sizing: border-box; cursor: pointer; flex: 1 1 auto; min-width: 0; display: grid; align-content: center; gap: 8px; min-height: 44px; padding: 12px 14px; border-radius: 16px; background: var(--ay-calm-box); border: var(--ay-calm-border); color: var(--ay-calm-fg); }
+.ay-hh-streak { all: unset; box-sizing: border-box; cursor: pointer; flex: 1 1 auto; min-width: 0; display: grid; align-content: center; gap: 8px; min-height: 44px; padding: 12px 14px; border-radius: 16px; background: rgba(255, 237, 172, .1); color: #ffedac; }
 .ay-hh-streak__top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .ay-hh-streak__top b { font: 800 17px/1.2 var(--ay-font-display, inherit); letter-spacing: -.01em; white-space: nowrap; }
-.ay-hh-streak__top small { font: 500 13px/1.2 var(--ay-font-ui, inherit); color: var(--ay-calm-fg-muted); text-align: right; }
+.ay-hh-streak__top small { font: 500 13px/1.2 var(--ay-font-ui, inherit); color: rgba(255, 237, 172, .82); text-align: right; }
 .ay-hh-streak__top small { margin-left: auto; }
-.ay-hh-streak__cal { flex: none; align-self: center; width: 20px; height: 20px; fill: none; stroke: var(--ay-calm-fg); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ay-hh-streak__cal { flex: none; align-self: center; width: 20px; height: 20px; fill: none; stroke: #ffedac; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .ay-hh-streak__days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
 .ay-hh-streak__days > span { display: grid; justify-items: center; gap: 2px; }
-.ay-hh-streak__days i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--ay-calm-fg-muted); }
-.ay-hh-streak__days .is-on i { background: var(--ay-calm-fg); border-color: var(--ay-calm-fg); }
-.ay-hh-streak__days .is-today i { border-color: var(--ay-calm-fg); box-shadow: 0 0 0 2px var(--ay-calm-box), 0 0 0 4px #f7badd; }
+.ay-hh-streak__days i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255, 237, 172, .45); }
+.ay-hh-streak__days .is-on i { background: #ffedac; border-color: #ffedac; }
+.ay-hh-streak__days .is-today i { border-color: #f7badd; box-shadow: 0 0 0 2px #3e2723, 0 0 0 4px #f7badd; }
 .ay-hh-streak__days .is-today.is-on i { background: #f7badd; }
-.ay-hh-streak__days small { font: 600 13px/1 var(--ay-font-ui, inherit); color: var(--ay-calm-fg-muted); }
+.ay-hh-streak__days small { font: 600 13px/1 var(--ay-font-ui, inherit); color: rgba(255, 237, 172, .82); }
+
 
 /* --------------------------------- Highlights ---------------------------------- */
 .ay-hhl { display: grid; gap: 12px; margin: 0; min-width: 0; }
@@ -64,6 +64,8 @@
 .ay-hsc__tile { all: unset; box-sizing: border-box; cursor: pointer; position: relative; display: grid; align-content: space-between; gap: 12px; min-height: 148px; padding: 16px; border-radius: 20px; }
 .ay-hsc__tile:focus-visible { outline: 2px solid var(--ay-fg, #3e2723); outline-offset: 2px; }
 .ay-hsc__tile { background: var(--ay-calm-box); color: var(--ay-calm-fg); border: var(--ay-calm-border); }
+.ay-hsc__tile.is-data { background: #3e2723; color: #ffedac; border-color: #3e2723; } /* the one espresso feature tile */
+.ay-hsc__tile.is-data .ay-hsc__ring .is-track { stroke: rgba(255, 237, 172, .2); }
 .ay-hsc__ring { position: relative; display: grid; place-items: center; width: 56px; height: 56px; }
 .ay-hsc__ring svg { position: absolute; inset: 0; width: 56px; height: 56px; }
 .ay-hsc__ring .is-track { fill: none; stroke: var(--ay-calm-track); stroke-width: 6; }
@@ -76,10 +78,17 @@
 .ay-hsc__go { position: absolute; top: 16px; right: 14px; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; }
 .ay-hsc__photos { display: flex; gap: 6px; min-height: 56px; align-items: center; }
 .ay-hsc__plate { width: 44px; height: 44px; flex: none; }
+/* Founder 13:45 screenshot: the shared plate rule (width 100%) beat the line above, so each plate stretched to
+   144px wide and 44px tall; the white plate drew small at the top with the photo spilling over it. Pin the size. */
+.ay-hsc :is(#ayk, .ay-hsc__plate):is(#ayk, .ay-hsc__plate):is(#ayk, .ay-hsc__plate):is(#ayk, .ay-hsc__plate) { width: 44px; height: 44px; aspect-ratio: 1 / 1; flex: none; }
 .ay-hsc__none { font: 700 13px/1.2 var(--ay-font-ui, inherit); }
 
 /* Dark: the espresso blocks sit on a dark page, so they get the soft butter wash and a hairline. */
-/* Dark: the --ay-calm-* tokens invert the same structure (espresso surfaces, butter text and outlines). */
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-hh__band { background: rgba(255, 237, 172, .08); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-hh__edge path { fill: rgba(255, 237, 172, .08) !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-hh-bubble__ring { box-shadow: 0 0 0 4px #f7badd; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-hh-streak__days .is-today i { box-shadow: 0 0 0 3px #f7badd; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-hsc__tile.is-data { background: rgba(255, 237, 172, .08); border-color: rgba(255, 237, 172, .45); }
 @media (prefers-reduced-motion: no-preference) {
   .ay-hsc__tile, .ay-hhl__card, .ay-hh-bubble, .ay-hh-streak { transition: transform 140ms ease; }
   .ay-hsc__tile:active, .ay-hhl__card:active, .ay-hh-bubble:active, .ay-hh-streak:active { transform: scale(.98); }
@@ -97,7 +106,7 @@
    (it stays only in its set-up state, which tells her how to make a profile). The story itself still opens. */
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact:not(:has(.is-setup)) { display: none !important; }
 /* The greeting keeps its size and colour against the app's global heading rules. */
-.ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-hh .ay-hh__hi { margin: -8px 0 4px !important; font: 700 clamp(34px, 9.5vw, 44px)/1.04 var(--ay-font-display, var(--ay-app-heading, inherit)) !important; letter-spacing: -.03em !important; color: var(--ay-calm-fg) !important; }
+.ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-hh .ay-hh__hi { margin: -8px 0 4px !important; font: 700 clamp(34px, 9.5vw, 44px)/1.04 var(--ay-font-display, var(--ay-app-heading, inherit)) !important; letter-spacing: -.03em !important; color: #ffedac !important; }
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-hhl .ay-hhl__h { font: 700 22px/1.2 var(--ay-font-display, var(--ay-app-heading, inherit)) !important; color: var(--ay-fg, #3e2723) !important; }
 /* Founder 23:18: 24px between Home's sections (hero, highlights, shortcuts, the toggle), nothing floating. */
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-homefeed { margin-top: 12px !important; }

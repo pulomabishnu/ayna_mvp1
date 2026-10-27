@@ -144,6 +144,8 @@ import TutorialLayer from './tutorial/TutorialLayer.jsx';
 import { growTransition } from '../utils/viewTransition.js';
 import { localToday } from '../utils/localDate.js';
 import { trackQuizStarted, trackFirstMatchShown, eventSurface } from '../utils/analyticsEvents.js';
+import ProPaywallHost from '../components/ProPaywallHost.jsx';
+import { openProPaywall, proLimitFeature } from '../pro/paywall.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -1186,6 +1188,7 @@ export default function MobileApp() {
       playlist = await communityStore.createPlaylist(supabase, authUser.id, { title, visibility, coverUrl: uploaded.url });
     } catch (error) {
       if (uploaded && !playlist) await deleteCommunityImage(supabase, uploaded.path).catch(() => {});
+      if (proLimitFeature(error) === 'playlists') openProPaywall({ feature: 'playlists' });
       throw new Error(error?.message && !/^\w+_\w+$/.test(error.message) ? error.message : 'The playlist could not be saved. Try again.');
     }
     // One request for all products instead of one per product.
@@ -1557,6 +1560,7 @@ export default function MobileApp() {
 
   return (
     <div ref={rootRef} className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
+      <ProPaywallHost priority={2} />
       <ProductSheetContext.Provider value={sheetValue}>
       <AskContext.Provider value={nav.onAskAyna}>
       <AppHeaderContext.Provider value={headerValue}>
