@@ -38,17 +38,6 @@ export default async function handler(req, res) {
       if (error) throw new Error('Read allowance unavailable');
       return res.status(200).json({ allowed: data === true });
     }
-    if (body?.action === 'quiz_retake_check' || body?.action === 'quiz_retake_claim') {
-      const rules = await proFeatureRules(admin);
-      if (!rules.enabled) return res.status(200).json({ allowed: true, unlimited: active, limit: rules.freeQuizRetakesPerWeek });
-      const { data, error } = await admin.rpc('pro_quiz_retake_allowance', {
-        p_user_id: user.id,
-        p_unlimited: active,
-        p_consume: body.action === 'quiz_retake_claim',
-      });
-      if (error || typeof data?.allowed !== 'boolean') throw new Error('Quiz retake allowance unavailable');
-      return res.status(200).json({ ...data, pro: active });
-    }
     if (body?.action === 'focus_grant' || body?.action === 'focus_revoke') {
       if (!isAdminUser(user)) return res.status(403).json({ error: 'forbidden' });
       if (!/^[0-9a-f-]{36}$/i.test(body.userId || '')) return res.status(400).json({ error: 'invalid_user' });
