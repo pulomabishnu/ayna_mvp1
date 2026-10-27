@@ -17,7 +17,7 @@ import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import WhyMatchPanel from './WhyMatchPanel';
 import { matchLine, priceParts } from '../data/passport/content';
 import { buildGlance, perUnitLabel } from './pdp/glance';
-import { heroPriceView } from './pdp/heroPrice';
+import { heroPriceView, MAX_PRICE_CHIPS } from './pdp/heroPrice';
 import HeroPrice from './pdp/HeroPrice.jsx';
 import { ProductAsk } from './passport/ProductSections';
 import ProductEvidence from './pdp/ProductEvidence';
@@ -777,7 +777,8 @@ export default function ProductModal({
   const metaLine = metaLineFor(product, glance, keyFormat(product, brand));
   const highlights = highlightsFor(product, glance);
   const said = `${metaLine} ${highlights.map((h) => `${h.value} ${h.caption}`).join(' ')}`.toLowerCase();
-  const priceNotes = heroNotes(priceView.notes).keep.filter((n) => !said.includes(String(n).toLowerCase().replace(/ eligible$/, '')) && !(perUse && /per (tablet|capsule|softgel|gummy|unit)|a day/i.test(n)));
+  // At most two by the price (founder, Oct 27: "is all this necessary"); the rest are Product facts "Price details".
+  const priceNotes = heroNotes(priceView.notes).keep.filter((n) => !said.includes(String(n).toLowerCase().replace(/ eligible$/, '')) && !(perUse && /per (tablet|capsule|softgel|gummy|unit)|a day/i.test(n))).slice(0, MAX_PRICE_CHIPS);
   // Is it for you: the website's right column on wide screens, above the tabs otherwise.
   const askStarters = productAskStarters({ hasProfile: Boolean(quizResults), percent: matchState?.kind === 'pct' ? matchState.percent : null, kind: cupOrDisc(product), hasIud: hasIud(quizResults), hasSizes: Boolean(product?.variants?.length) });
   const fitData = { details: matchDetails, hasProfile: Boolean(quizResults), onShowWhy: () => setShowWhy(true), extra: matchDetails?.healthData ? <HealthBackedBadge backed={{ section: matchDetails.healthData.section, tracker: ['tracker', 'wearable'].includes(String(product?.category || '').toLowerCase()) }} /> : null };
