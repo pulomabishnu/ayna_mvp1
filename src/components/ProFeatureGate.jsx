@@ -4,6 +4,7 @@ import { PREMIUM_READ_IDS } from '../pro/premiumReads.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { loadProFeatureRules, requestPro } from '../utils/proApi.js';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal.jsx';
+import '../styles/pro-v4.css';
 
 const LOCKED_COPY = {
   reads: ['Unlimited Reads', 'Free ayna includes one Read each week. Pro members can open unlimited Reads.'],
@@ -24,6 +25,8 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }
   const [showPaywall, setShowPaywall] = useState(false);
   const key = `${feature}:${readId}:${revision}`;
   const [defaultTitle, copy] = LOCKED_COPY[feature] || ['ayna Pro', 'This feature is included with ayna Pro.'];
+  const gateTitle = feature === 'reads' ? defaultTitle : (title || defaultTitle);
+  const contextTitle = feature === 'reads' && title ? title : '';
 
   useEffect(() => {
     const listener = getSupabaseClient()?.auth.onAuthStateChange((_event, session) => {
@@ -64,22 +67,40 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }
 
   if (result?.key === key && result.allowed) return children;
 
-  return <section className="pro-access" aria-label={title || defaultTitle}>
-    {onBack && <button type="button" className="ay-btn ay-btn--secondary" onClick={onBack}>Back</button>}
-    <p className="pro-access__eyebrow">ayna Pro</p>
-    <h2>{title || defaultTitle}</h2>
-    {result?.key !== key ? <p role="status">Checking access…</p> : <>
-      <p>{copy}</p>
-      {result.error && <p role="status">{result.error}</p>}
-      <p>Your basic matching, safety information, Community, and privacy controls stay free.</p>
-      {!Capacitor.isNativePlatform() ? (
-        <button type="button" className="ay-btn ay-btn--primary" onClick={() => setShowPaywall(true)}>See Early Access</button>
-      ) : (
-        <p>Already a Pro member? Sign in with the ayna account that has your membership.</p>
-      )}
-      <button type="button" className="ay-btn ay-btn--secondary" onClick={() => setRefresh(n => n + 1)}>Check access again</button>
-    </>}
-    {showPaywall && <SubscriptionPaywallModal onClose={() => setShowPaywall(false)} featureName={title || defaultTitle} featureDescription="all available ayna Pro features" />}
+  return <section className="pro-access" aria-label={gateTitle}>
+    {onBack && <button type="button" className="pro-access__back" onClick={onBack}>← Back</button>}
+    <div className="pro-access__card">
+      <p className="pro-access__eyebrow">ayna Pro Early Access</p>
+      <h2 className="pro-access__title">{gateTitle}</h2>
+      {result?.key !== key ? <div className="pro-access__copy"><p role="status">Checking access…</p></div> : <>
+        <div className="pro-access__copy">
+          {contextTitle && <p className="pro-access__context">{contextTitle}</p>}
+          <p>{copy}</p>
+          {result.error && <p className="pro-access__error" role="status">{result.error}</p>}
+          <p>Your basic matching, safety information, Community, and privacy controls stay free.</p>
+        </div>
+        <ul className="pro-access__included" aria-label="ayna Pro includes">
+          <li>Unlimited Reads</li>
+          <li>Up to 50 Ask ayna chats</li>
+          <li>Unlimited playlists</li>
+        </ul>
+        {!Capacitor.isNativePlatform() ? (
+          <div className="pro-access__actions">
+            <button type="button" className="pro-access__primary" onClick={() => setShowPaywall(true)}>Unlock ayna Pro · from $4.99</button>
+            <button type="button" className="pro-access__secondary" onClick={() => setRefresh(n => n + 1)}>Check access again</button>
+          </div>
+        ) : (
+          <>
+            <p className="pro-access__fine">Already a Pro member? Sign in with the ayna account that has your membership.</p>
+            <div className="pro-access__actions">
+              <button type="button" className="pro-access__secondary" onClick={() => setRefresh(n => n + 1)}>Check access again</button>
+            </div>
+          </>
+        )}
+        {!Capacitor.isNativePlatform() && <p className="pro-access__fine">Early Access unlocks Pro now. Your paid month or year starts January 1, 2027.</p>}
+      </>}
+    </div>
+    {showPaywall && <SubscriptionPaywallModal onClose={() => setShowPaywall(false)} featureName={gateTitle} featureDescription="all available ayna Pro features" />}
   </section>;
 }
 
