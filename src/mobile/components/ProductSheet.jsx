@@ -14,7 +14,7 @@ import { trackPdpRetailerClicked, eventSurface } from '../../utils/analyticsEven
 import { trackApp } from '../utils/appAnalytics.js';
 import { IN_ROUTINE } from '../../utils/routineCopy.js';
 import { buyModel } from '../../components/pdp/buyModel.js';
-import { heroPriceView } from '../../components/pdp/heroPrice.js';
+import { heroPriceView, MAX_PRICE_CHIPS } from '../../components/pdp/heroPrice.js';
 import { perUnitLabel } from '../../components/pdp/glance.js';
 import { priceParts } from '../../data/passport/priceParts.js';
 import { cardKind } from '../../utils/productCardFacts.js';
@@ -104,7 +104,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
   const glance = buildGlance(product, {});
   const topWarning = topWarningFor(product, glance, undefined, { pregnancyFirst });
   const buy = buyModel(product, { brand, name });
-  const priceNotes = heroNotes(heroPriceView(product, { price: priceParts(product), perUnit: perUnitLabel(product), glance, brand }).notes).keep;
+  const priceNotes = heroNotes(heroPriceView(product, { price: priceParts(product), perUnit: perUnitLabel(product), glance, brand }).notes).keep.slice(0, MAX_PRICE_CHIPS);
   const still = reduceMotion();
   const perUse = costPerUse(product);
   const highlights = highlightsFor(product, glance);

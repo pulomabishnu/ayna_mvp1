@@ -343,3 +343,9 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 /* The compare sheet holds the Compare layout: let it be wide enough and scroll. */
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ayv-ask2 .ay-compare { margin: 0; padding: 0; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ayv-ask2 .ay-compare .ay-pdp-sechead { display: none; }
+
+/* Many sizes or options: one row that peeks and scrolls sideways (founder, Oct 27: not stacking). */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-chips.is-scroll { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; margin: 0 -20px !important; padding: 2px 20px 4px !important; scroll-padding-inline: 20px; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-chips.is-scroll::-webkit-scrollbar { display: none; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-chips.is-scroll > li { flex: none; white-space: nowrap; scroll-snap-align: start; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-chips.is-scroll:focus-visible { outline: 2.5px solid currentColor; outline-offset: 2px; }
