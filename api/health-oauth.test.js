@@ -1,9 +1,10 @@
+vi.mock('./_healthAccess.js', () => ({ hasHealthAccess: async () => ctx.access }));
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createFakeDb } from './_healthFakeDb.test-helper.js';
 import { mockRes, mockReq } from './_test-helpers.js';
 import { ouraRows, ouraSleepRows } from '../src/health/providers/oura.js';
 
-const ctx = { db: null, user: { id: 'u1' } };
+const ctx = { db: null, user: { id: 'u1' }, access: true };
 vi.mock('./_usageLimit.js', () => ({
   verifyUser: async () => (ctx.user ? { user: ctx.user, admin: ctx.db, error: null } : { user: null, admin: ctx.db, error: 'auth_required' }),
   getServiceClient: () => ctx.db,
@@ -21,6 +22,8 @@ describe('health OAuth (Oura)', () => {
   beforeEach(() => {
     ctx.db = createFakeDb({ health_connections: [], health_daily_metrics: [], health_data_events: [], health_oauth_tokens: [], health_oauth_states: [] });
     ctx.user = { id: 'u1' };
+    ctx.access = true;
+    ctx.db.auth = { admin: { getUserById: async () => ({ data: { user: ctx.user } }) } };
     vi.stubEnv('HEALTH_TOKEN_ENCRYPTION_KEY', KEY);
     vi.stubEnv('OURA_CLIENT_ID', 'cid');
     vi.stubEnv('OURA_CLIENT_SECRET', 'secret');
@@ -35,6 +38,24 @@ describe('health OAuth (Oura)', () => {
     vi.stubGlobal('fetch', fetchMock);
   });
   afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
+
+  it('rechecks Pro on return from the provider before exchanging tokens', async () => {
+    await start();
+    const state = ctx.db.tables.health_oauth_states[0];
+    ctx.access = false;
+    const r = await callback({ state: state.nonce, code: 'code' });
+    expect(r.headers.location).toContain('pro_required');
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(ctx.db.tables.health_connections).toHaveLength(0);
+  });
+
+  it('refuses OAuth connection without active Pro', async () => {
+    ctx.access = false;
+    const r = await start();
+    expect(r.statusCode).toBe(403);
+    expect(r.body.error).toBe('pro_required');
+    expect(ctx.db.tables.health_oauth_states).toHaveLength(0);
+  });
 
   it('missing credentials: refuses to start instead of faking a connection', async () => {
     vi.stubEnv('OURA_CLIENT_ID', '');
@@ -172,6 +193,8 @@ describe('health OAuth (WHOOP, live only)', () => {
   beforeEach(() => {
     ctx.db = createFakeDb({ health_connections: [], health_daily_metrics: [], health_data_events: [], health_oauth_tokens: [], health_oauth_states: [] });
     ctx.user = { id: 'u1' };
+    ctx.access = true;
+    ctx.db.auth = { admin: { getUserById: async () => ({ data: { user: ctx.user } }) } };
     vi.stubEnv('HEALTH_TOKEN_ENCRYPTION_KEY', KEY);
     vi.stubEnv('WHOOP_CLIENT_ID', 'wid');
     vi.stubEnv('WHOOP_CLIENT_SECRET', 'wsecret');

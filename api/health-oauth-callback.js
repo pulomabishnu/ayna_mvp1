@@ -9,6 +9,7 @@
  * recorded and a first sync run. Redirects back with a status only, never data.
  */
 import { getServiceClient } from './_usageLimit.js';
+import { hasHealthAccess } from './_healthAccess.js';
 import { logHealthError, upsertConnection } from './_healthStore.js';
 import { exchangeCode, isLiveOnly, syncProvider } from './_healthProviders.js';
 
@@ -42,6 +43,8 @@ export default async function handler(req, res) {
   if (req.query?.error || typeof req.query?.code !== 'string') return back(res, state, state.provider, 'declined');
 
   try {
+    const { data, error: userError } = await admin.auth.admin.getUserById(state.user_id);
+    if (userError || !data?.user || !await hasHealthAccess(data.user, admin)) return back(res, state, state.provider, 'pro_required');
     await exchangeCode(admin, state.user_id, state.provider, req.query.code);
     await upsertConnection(admin, state.user_id, state.provider, { categories: state.categories, platform: state.return_to === 'app' ? null : 'web' });
     // Stored providers get a first sync now; live-only ones (WHOOP) are read when she opens ayna.

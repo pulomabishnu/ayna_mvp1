@@ -40,7 +40,7 @@ export const PRO_SHORT = {
 
 /** Pro, grouped (founder: "don't just stack the features ... categorize it"). */
 export const PRO_GROUPS = [
-  { id: 'connect', name: 'Connect your health data', promise: 'ayna learns from the cycle, sleep, activity and other signals you choose to share.', items: ['wearables', 'health'] },
+  { id: 'connect', name: 'Connect your health data', promise: 'ayna learns from the cycle, sleep, activity and other signals you choose to share.', items: ['dashboard', 'wearables', 'health'] },
   { id: 'deeper', name: 'Go deeper', promise: 'Patterns and context over time, not single data points.', items: ['insights', 'tracking'] },
   { id: 'limits', name: 'Fewer limits', promise: 'Use ayna as much as your needs change.', items: ['quiz', 'ask', 'reads', 'playlists'] },
 ];

@@ -7,7 +7,7 @@ import { loadProFeatureRules, requestPro } from '../utils/proApi.js';
 import ProLock from './ProLock.jsx';
 import '../styles/pro-v4.css';
 
-function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }) {
+function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosystem, children }) {
   const owner = useRef(null);
   const [revision, setRevision] = useState(0);
   const [refresh, setRefresh] = useState(0);
@@ -24,7 +24,14 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }
         setRevision(n => n + 1);
       }
     });
-    return () => listener?.data?.subscription.unsubscribe();
+    const recheck = () => { setResult(null); setRefresh(n => n + 1); };
+    window.addEventListener('focus', recheck);
+    document.addEventListener('visibilitychange', recheck);
+    return () => {
+      listener?.data?.subscription.unsubscribe();
+      window.removeEventListener('focus', recheck);
+      document.removeEventListener('visibilitychange', recheck);
+    };
   }, []);
 
   // Check again when Pro may have changed: after checkout, "already Pro", or
@@ -45,15 +52,19 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }
         const rules = await loadProFeatureRules(controller.signal);
         if (typeof rules.enabled !== 'boolean') throw new Error('We couldn’t check Pro access.');
         let allowed = !rules.enabled || (feature === 'reads' && !rules.premiumReadIds.includes(readId));
+        let expiresAt = null;
         if (!allowed) {
           const status = feature === 'reads'
             ? await requestPro({ action: 'read', readId, signal: controller.signal })
             : await requestPro({ signal: controller.signal });
           allowed = feature === 'reads' ? status.allowed : status.active;
+          // The server accounts for overlapping paid, temporary and staff grants.
+          expiresAt = status.accessExpiresAt || null;
         }
         if (!controller.signal.aborted) {
           setResult({ key, allowed });
-          timer = setTimeout(() => setRefresh(n => n + 1), 60000);
+          const delay = expiresAt && allowed ? Math.min(60000, Math.max(0, expiresAt - Date.now())) : 60000;
+          timer = setTimeout(() => { setResult(null); setRefresh(n => n + 1); }, delay);
         }
       } catch (error) {
         if (!controller.signal.aborted) setResult({ key, allowed: false, error: error.message });
@@ -82,10 +93,12 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, children }
       title={gateTitle}
       context={contextTitle}
       native={Capacitor.isNativePlatform()}
-      onNotNow={onBack}
+      onNotNow={onBack || onEcosystem}
       error={result.error || ''}
       onRetry={() => setRefresh(n => n + 1)}
-    />
+    >
+      {onEcosystem && <p className="pro-lock__alt"><button type="button" className="ct-link" onClick={onEcosystem}>See my ecosystem</button></p>}
+    </ProLock>
   </section>;
 }
 

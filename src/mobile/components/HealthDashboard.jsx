@@ -1,4 +1,5 @@
 import { useContext, useMemo } from 'react';
+import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { AskContext } from '../askContext.js';
 import { dashboardContext } from '../utils/dashboardAsk.js';
 import { useAskHealthPref } from '../../health/askHealthPref.js';
@@ -17,7 +18,12 @@ import '../screens/profile/health-connections.css';
  * Compared only with her own usual. Never a diagnosis.
  */
 
-export default function HealthDashboard({ authUser, selectedNeedIds = [], hormonalBC = false, onConnect, onAddGoal, onOpenRoutine, onOpenCheckin, onSignIn, products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, quizAnswers = null, onEditAnswers, onSaveToProfile = null, rundown = {}, view = 'today' }) {
+// The health dashboard is part of ayna Pro (founder, PR #87).
+export default function HealthDashboard(props) {
+  return <ProFeatureGate feature="dashboard" onEcosystem={props.onEcosystem}><HealthDashboardContent {...props} /></ProFeatureGate>;
+}
+
+export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormonalBC = false, onConnect, onAddGoal, onOpenRoutine, onOpenCheckin, onSignIn, products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, quizAnswers = null, onEditAnswers, onSaveToProfile = null, rundown = {}, view = 'today' }) {
   // view 'data': Home -> My dashboard ("Your data"). Home already shows the greeting, the
   // Daily Rundown and the check-in, so none of them repeat here (dashboard audit P0 3).
   const dataView = view === 'data';

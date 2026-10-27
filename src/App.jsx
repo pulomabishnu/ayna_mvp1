@@ -2393,6 +2393,7 @@ function App() {
   // tab on Ecosystem render this same element.
   const webHealth = (
     <WebHealth
+      onEcosystem={() => setCurrentView('ecosystem')}
       user={user}
       health={health}
       products={Object.values(myProducts)}

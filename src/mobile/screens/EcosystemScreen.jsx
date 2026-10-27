@@ -14,7 +14,8 @@ import { careNotes, shortNeedLabel } from '../../utils/matchDisplay.js';
 import { summarizeCareNotes, firstCareLink } from '../../utils/careSummary.js';
 import CareNote from '../../components/CareNote.jsx';
 import { Routine, ShoppingList } from '../components/RoutinePlan.jsx';
-import HealthDashboard from '../components/HealthDashboard.jsx';
+import { HealthDashboardContent as HealthDashboard } from '../components/HealthDashboard.jsx';
+import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { usesHormonalBC } from '../../health/weekInsights.js';
 import { budgetMax } from '../../health/plan.js';
 import { optionalProgress, reconstructIntakeFromSnapshot } from '../data/intakeModel.js';
@@ -329,12 +330,15 @@ export default function EcosystemScreen({
     </div>}
 
     {ecoTab === 'dashboard' && showTabs ? <div className="ay-eco-routine">
+      {/* The dashboard tab is part of ayna Pro (founder, PR #87). */}
+      <ProFeatureGate feature="dashboard" onEcosystem={() => onEcoTab?.('products')}>
       <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length ? () => routineRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }) : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined }} />
       {myProducts.length > 0 && <div ref={routineRef} className="ay-eco-plan" id="ay-eco-plan">
         <Routine products={myProducts} insights={healthInsights} needIds={goalIds} outcomes={routineOutcomes} onLogOutcome={onLogRoutineOutcome} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} excluded={routineExcluded} onToggleExcluded={onToggleRoutineProduct} />
         <ShoppingList products={myProducts} insights={healthInsights} excluded={routineExcluded} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} />
       </div>}
       {onOpenMonthlyCheckin && checkin}
+      </ProFeatureGate>
     </div> : <>
     {routines.routines.length > 0 && <div className="ay-eco-routines" style={{ padding: '0 var(--d-gutter, 20px)' }}><NeedRoutines state={routines} variant="app" onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} /></div>}
     {chipSections.length > 1 && !q && <div className="eco-app-chips" role="group" aria-label="Show a shelf">

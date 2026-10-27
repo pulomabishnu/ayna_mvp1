@@ -1,3 +1,4 @@
+vi.mock('./_healthAccess.js', () => ({ hasHealthAccess: async () => true }));
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createFakeDb } from './_healthFakeDb.test-helper.js';
 import { mockRes, mockReq } from './_test-helpers.js';

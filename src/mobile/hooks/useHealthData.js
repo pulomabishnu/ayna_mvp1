@@ -32,6 +32,7 @@ export const setHealthFlash = (msg) => { flash = msg; };
 export const takeHealthFlash = () => { const m = flash; flash = null; return m; };
 
 const RETURN_TEXT = {
+  pro_required: () => 'Get ayna Pro to connect health apps and wearables.',
   connected: (n) => `${n} connected. Your data is syncing.`,
   declined: (n) => `${n} wasn't connected, so nothing was shared. That's fine: ayna works without it, and you can try again any time.`,
   expired: () => 'That took too long. Try connecting again.',

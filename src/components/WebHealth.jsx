@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import ProFeatureGate from './ProFeatureGate.jsx';
 import { buildDashboard } from '../health/dashboard.js';
 import { buildInsights } from '../health/insights.js';
 import { healthMatchContext } from '../health/matchContext.js';
@@ -275,7 +276,12 @@ function WebDayViews({ views }) {
   );
 }
 
-export default function WebHealth({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null, compact = false, aside = null, widgets = null }) {
+// The health dashboard is part of ayna Pro (founder, PR #87).
+export default function WebHealth(props) {
+  return <ProFeatureGate feature="dashboard" onEcosystem={props.onEcosystem}><WebHealthContent {...props} /></ProFeatureGate>;
+}
+
+function WebHealthContent({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null, compact = false, aside = null, widgets = null }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
   // checked without an account. import.meta.env.DEV is false in production builds.

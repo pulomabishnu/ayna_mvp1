@@ -46,12 +46,14 @@ const LOCK_LINES = {
   history: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
   recap: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
   trial: 'More detailed tracking over time, with trend insights. Basic tracking stays free.',
+  dashboard: 'Your cycle, sleep, heart and activity together, with connected health apps and wearables. Your ecosystem stays free.',
   appointment: 'Organize symptoms, observations and questions before you see a clinician.',
 };
 
 export function proFeatureName(feature) {
   const id = FEATURE_ALIAS[feature] || feature;
   if (feature === 'appointment') return 'Appointment prep';
+  if (feature === 'dashboard') return 'Your health dashboard';
   return PRO_FEATURES.find((f) => f.id === id)?.label || 'ayna Pro';
 }
 
