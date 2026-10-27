@@ -23,15 +23,21 @@
 .ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile)[data-theme='dark'] .ayna-bottom-nav button.is-center.is-active .ay-nav-center { background: #ffedac !important; }
 
 /* ---- Website: the top nav's Home is the filled pill; the phone tab bar raises it like the app ---- */
-html body .app-container.app-container.app-container .ay-nav__link.is-home { align-self: center; height: auto !important; min-height: 44px; padding: 0 20px !important; border-radius: 999px !important; background: #3e2723 !important; color: #ffedac !important; font-weight: 700 !important; }
-html body .app-container.app-container.app-container .ay-nav__link.is-home::after { display: none !important; }
-html body .app-container.app-container.app-container .ay-nav__link.is-home[aria-current='page'] { box-shadow: 0 0 0 3px #f7badd !important; }
-html body .app-container.app-container.app-container .ay-nav__link.is-home:focus-visible { outline: 2px solid #3e2723; outline-offset: 3px; }
-/* QA (Oct 27): data-theme is on .app-container itself, so the old ancestor selector never matched and the
-   pill stayed espresso on the espresso dark nav (invisible). */
-html body .app-container.app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ay-nav__link.is-home { background: #ffedac !important; color: #3e2723 !important; }
+/* Review fix (Oct 26): the filled pill marks the CURRENT page, whichever it is; Home, when it isn't
+   current, stands out as an outlined pill so it is still easy to find. */
+html body .app-container.app-container.app-container .ay-nav__link:is(.is-home, [aria-current='page']) { align-self: center; height: auto !important; min-height: 44px; padding: 0 18px !important; border-radius: 999px !important; font-weight: 700 !important; }
+html body .app-container.app-container.app-container .ay-nav__link:is(.is-home, [aria-current='page'])::after { display: none !important; }
+html body .app-container.app-container.app-container .ay-nav__link.is-home:not([aria-current='page']) { box-shadow: inset 0 0 0 1.5px currentColor !important; color: var(--ay-text, #3e2723) !important; }
+html body .app-container.app-container.app-container .ay-nav__link[aria-current='page'] { background: #3e2723 !important; color: #ffedac !important; }
+html body .app-container.app-container.app-container .ay-nav__link:is(.is-home, [aria-current='page']):focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .app-container.app-container.app-container .ay-nav__link[aria-current='page'],
+.app-container.app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ay-nav__link[aria-current='page'] { background: #ffedac !important; color: #3e2723 !important; }
 html body .app-container.app-container.app-container .ay-tabbar--main a.is-center .ay-tabbar__icon { display: grid; place-items: center; width: 56px; height: 56px; margin-top: -28px; border-radius: 50%; background: #3e2723; color: #ffedac; border: 4px solid #ffedac; }
 html body .app-container.app-container.app-container .ay-tabbar--main a.is-center .ay-tabbar__icon svg { width: 26px; height: 26px; color: #ffedac; }
 html body .app-container.app-container.app-container .ay-tabbar--main a.is-center.is-on .ay-tabbar__icon { box-shadow: 0 0 0 3px #f7badd; background: #3e2723; }
 html body .app-container.app-container.app-container .ay-tabbar--main a.is-center .ay-tabbar__label { font-weight: 700; }
 html body .app-container.app-container.app-container .ay-tabbar--main { overflow: visible; }
+
+/* QA (Oct 26): the raised Home button overhangs the bar by about 34px; the scroll area keeps that much
+   clear at its foot (and as scroll padding), so nothing sits hidden under the button. */
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile) .ay-home__view { padding-bottom: calc(var(--ay-home-fab-overhang, 34px) + 12px) !important; scroll-padding-bottom: calc(var(--ay-home-fab-overhang, 34px) + 12px); }

@@ -1,24 +1,30 @@
-/* CardDeck.jsx: the stacked "For today" cards. The top card in full; the next one or two peek below it,
-   offset and scaled, each its own colour. Fixed brand colours so light and dark both read. */
-.ay-fdeck { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; }
+/* CardDeck.jsx: "For today" as a stack of passes (title strips above, the front card in full).
+   Fixed brand colours so light and dark both read. */
+.ay-fdeck { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
 .ay-fdeck__bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .ay-fdeck__count { font: 700 14px/1.2 var(--ay-font-ui, inherit); color: var(--ay-fg, #3e2723); font-variant-numeric: tabular-nums; }
-.ay-fdeck__text { all: unset; box-sizing: border-box; cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; font: 700 14px/1 var(--ay-font-ui, inherit); color: var(--ay-fg, #3e2723); text-decoration: underline; text-underline-offset: 3px; }
+.ay-fdeck__text { all: unset; box-sizing: border-box; cursor: pointer; min-height: 44px; font-size: 14px; display: inline-flex; align-items: center; font: 700 14px/1 var(--ay-font-ui, inherit); color: var(--ay-fg, #3e2723); text-decoration: underline; text-underline-offset: 3px; }
 .ay-fdeck__text:focus-visible, .ay-fdeck__btn:focus-visible { outline: 2px solid var(--ay-fg, #3e2723); outline-offset: 2px; border-radius: 999px; }
 
-/* The stack: room underneath for the peeking edges (10px each). */
-.ay-fdeck__stack { position: relative; padding-bottom: calc(var(--ay-fdeck-peek, 0) * 10px); isolation: isolate; }
-.ay-fdeck .ay-fdeck__list.ay-fdeck__top { position: relative; z-index: 3; display: block !important; margin: 0 !important; padding: 0 !important; list-style: none; transition: transform 280ms cubic-bezier(.2, .8, .2, 1), opacity 280ms ease; touch-action: pan-x; }
-.ay-fdeck .ay-fdeck__top.is-leaving { transform: translateY(-110%) rotate(-2deg); opacity: 0; }
-.ay-fdeck .ay-fdeck__top > li { box-shadow: 0 1px 0 rgba(62, 39, 35, .08) !important; }
-.ay-fdeck__peek { position: absolute; left: 0; right: 0; bottom: 0; height: 40px; border-radius: 16px; transform-origin: 50% 100%; }
-.ay-fdeck__peek.is-1 { z-index: 2; transform: scale(.96); bottom: calc((var(--ay-fdeck-peek, 1) - 1) * 10px); }
-.ay-fdeck__peek.is-2 { z-index: 1; transform: scale(.92); bottom: 0; }
-.ay-fdeck__peek.is-pink { background: #f7badd; }
-.ay-fdeck__peek.is-butter { background: #f6e3a1; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .18); }
-.ay-fdeck__peek.is-ink { background: #3e2723; }
-/* Coming forward: the new top card rises into place. */
-@keyframes ay-fdeck-in { from { transform: translateY(10px) scale(.96); opacity: .6; } }
+/* The stack of passes: title strips overlap downward (48px of each shows), the front card tucks under the last strip. */
+.ay-fdeck__stack { position: relative; isolation: isolate; display: grid; }
+.ay-fdeck__strips { list-style: none; margin: 0; padding: 0; display: grid; }
+.ay-fdeck__strips > li { position: relative; margin-bottom: -16px; }
+.ay-fdeck__strips > li:nth-child(1) { z-index: 1; }
+.ay-fdeck__strips > li:nth-child(2) { z-index: 2; }
+.ay-fdeck__strips > li:nth-child(3) { z-index: 3; }
+.ay-fdeck__strips > li:nth-child(n+4) { z-index: 4; }
+.ay-fdeck__strip { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: flex-start; gap: 10px; width: 100%; height: 64px; padding: 13px 16px 0; border-radius: 16px 16px 0 0; background: #f6e3a1; color: #3e2723; box-shadow: inset 0 1.5px 0 rgba(62, 39, 35, .16), inset 1.5px 0 0 rgba(62, 39, 35, .08), inset -1.5px 0 0 rgba(62, 39, 35, .08); }
+.ay-fdeck__strip:focus-visible { outline: 2px solid #3e2723; outline-offset: -4px; }
+.ay-fdeck__stitle { min-width: 0; flex: 1 1 auto; font: 700 15px/1.3 var(--ay-font-ui, inherit); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ay-fdeck__sgo { flex: none; width: 18px; height: 18px; margin-top: 1px; fill: none; stroke: #3e2723; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; opacity: .7; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-fdeck__strip { background: #3e2723; color: #ffedac; box-shadow: inset 0 1.5px 0 rgba(255, 237, 172, .22); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-fdeck__sgo { stroke: #ffedac; }
+.ay-fdeck .ay-fdeck__list.ay-fdeck__top { position: relative; z-index: 10; display: block !important; margin: 0 !important; padding: 0 !important; list-style: none; transition: transform 260ms cubic-bezier(.2, .8, .2, 1), opacity 260ms ease; touch-action: pan-x; }
+.ay-fdeck .ay-fdeck__top.has-strips > li { box-shadow: 0 -2px 0 rgba(62, 39, 35, .1) !important; }
+.ay-fdeck .ay-fdeck__top.is-leaving { transform: translateY(-40px); opacity: 0; }
+/* Coming forward: the new front card slides into place from the stack above. */
+@keyframes ay-fdeck-in { from { transform: translateY(-28px); opacity: .5; } }
 .ay-fdeck .ay-fdeck__top:not(.is-leaving) { animation: ay-fdeck-in 260ms cubic-bezier(.2, .8, .2, 1) both; }
 
 /* The top card's colour (pink or butter-deep), over the older compact-item rules. */
@@ -27,10 +33,10 @@
 .ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top > .ay-today__item :is(.ay-today__title, .ay-today__why, .ay-today__readmore, .ay-today__text, .ay-today__kicker) { color: #3e2723 !important; }
 .ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top > .ay-today__item .ay-chip { background: transparent !important; color: #3e2723 !important; border-color: #3e2723 !important; }
 .ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top > .ay-today__item .ay-today__primary { background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; }
-.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top > .ay-today__item { min-height: 168px; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top > .ay-today__item { min-height: 0; }
 
-.ay-fdeck__nav { display: flex; justify-content: center; margin-top: 4px; }
-.ay-fdeck__btn { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1.5px solid var(--ay-fg, #3e2723); color: var(--ay-fg, #3e2723); font: 700 15px/1 var(--ay-font-ui, inherit); }
+.ay-fdeck__btn { all: unset; box-sizing: border-box; cursor: pointer; position: relative; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--ay-fg, #3e2723); color: var(--ay-fg, #3e2723); font: 700 14px/1 var(--ay-font-ui, inherit); }
+.ay-fdeck__btn::after { content: ''; position: absolute; inset: -4px 0; }
 .ay-fdeck__btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
 .ay-fdeck__done { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 16px; background: var(--ay-surface, #f6e3a1); color: var(--ay-fg, #3e2723); }
@@ -39,8 +45,27 @@
 .ay-fdeck__tick svg { width: 20px; height: 20px; fill: none; stroke: #3e2723; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 .ay-fdeck.is-all .ay-fdeck__list { display: grid; gap: 12px; margin: 0; padding: 0; }
 
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-fdeck__peek.is-ink { background: rgba(255, 237, 172, .2); }
 @media (prefers-reduced-motion: reduce) {
   .ay-fdeck .ay-fdeck__list.ay-fdeck__top { transition: none; animation: none !important; }
   .ay-fdeck .ay-fdeck__top.is-leaving { transform: none; }
 }
+
+/* Founder 23:18: even spacing and compact controls. 16px inside the card, 12px between its rows;
+   the icon sits beside the title and everything under it uses the full width. */
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact { display: grid !important; grid-template-columns: minmax(0, 1fr); column-gap: 12px; row-gap: 12px; align-items: center; padding: 16px !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact > * { grid-column: 1 / -1 !important; grid-row: auto !important; margin: 0 !important; min-width: 0; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact > .ay-today__glyph { display: none !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact > .ay-today__glyph svg { width: 18px; height: 18px; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact > .ay-today__kicker { display: none !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact > .ay-today__title { grid-column: 1 / -1 !important; font-size: 17px !important; line-height: 1.25 !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-today__chips.is-inline { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-chip { position: relative; flex: 0 1 auto; min-width: 0; min-height: 36px !important; height: 36px; padding: 0 12px !important; font: 600 14px/1 var(--ay-font-ui, inherit) !important; white-space: nowrap; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-chip::after { content: ''; position: absolute; inset: -4px -3px; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-today__readmore { min-height: 32px !important; padding: 0 !important; font: 600 13px/1.2 var(--ay-font-ui, inherit) !important; justify-self: start; position: relative; text-decoration: underline; text-underline-offset: 3px; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-today__readmore::after { content: ''; position: absolute; inset: -6px -4px; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-today__actions { display: flex !important; flex-wrap: wrap; align-items: center; gap: 8px 16px !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-today__actions:empty { display: none !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-today__actions .ay-today__primary { position: relative; min-height: 36px !important; height: 36px; padding: 0 14px !important; background: transparent !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; box-shadow: none !important; font: 700 14px/1 var(--ay-font-ui, inherit) !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-today__actions .ay-today__primary::after { content: ''; position: absolute; inset: -4px -3px; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-today__actions .ay-today__text { position: relative; min-height: 32px !important; font: 600 14px/1.2 var(--ay-font-ui, inherit) !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-today__item.is-compact .ay-today__actions .ay-today__text::after { content: ''; position: absolute; inset: -6px -4px; }

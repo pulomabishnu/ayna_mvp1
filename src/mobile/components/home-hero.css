@@ -35,7 +35,7 @@
 .ay-hh-streak__days small { font: 600 13px/1 var(--ay-font-ui, inherit); color: rgba(255, 237, 172, .82); }
 
 /* --------------------------------- Highlights ---------------------------------- */
-.ay-hhl { display: grid; gap: 12px; margin: 8px 0 0; min-width: 0; }
+.ay-hhl { display: grid; gap: 12px; margin: 0; min-width: 0; }
 .ay-hhl .ay-hhl__h { margin: 0; font: 700 22px/1.2 var(--ay-font-display, var(--ay-app-heading, inherit)); letter-spacing: -.02em; color: var(--ay-fg, #3e2723); }
 .ay-hhl__card { all: unset; box-sizing: border-box; cursor: pointer; display: grid; align-content: start; gap: 10px; width: 100%; min-height: 44px; padding: 16px; border-radius: 20px; }
 .ay-hhl__card:focus-visible { outline: 2px solid var(--ay-fg, #3e2723); outline-offset: 2px; }
@@ -58,7 +58,7 @@
 .ay-hhl__why svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; }
 
 /* ---------------------------------- Shortcuts ---------------------------------- */
-.ay-hsc { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 8px 0 0; }
+.ay-hsc { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
 .ay-hsc__tile { all: unset; box-sizing: border-box; cursor: pointer; position: relative; display: grid; align-content: space-between; gap: 12px; min-height: 148px; padding: 16px; border-radius: 20px; }
 .ay-hsc__tile:focus-visible { outline: 2px solid var(--ay-fg, #3e2723); outline-offset: 2px; }
 .ay-hsc__tile.is-data { background: #3e2723; color: #ffedac; }
@@ -101,3 +101,9 @@
 /* The greeting keeps its size and colour against the app's global heading rules. */
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-hh .ay-hh__hi { margin: -8px 0 4px !important; font: 700 clamp(34px, 9.5vw, 44px)/1.04 var(--ay-font-display, var(--ay-app-heading, inherit)) !important; letter-spacing: -.03em !important; color: #ffedac !important; }
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-hhl .ay-hhl__h { font: 700 22px/1.2 var(--ay-font-display, var(--ay-app-heading, inherit)) !important; color: var(--ay-fg, #3e2723) !important; }
+/* Founder 23:18: 24px between Home's sections (hero, highlights, shortcuts, the toggle), nothing floating. */
+.ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-homefeed { margin-top: 12px !important; }
+.ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-today.is-compact { display: grid !important; gap: 24px !important; }
+.ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-today.is-compact > :is(.ay-hhl, [data-tour='home-links'], .ay-tv) { margin: 0 !important; }
+.ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-today.is-compact > :empty { display: none !important; }
+.ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-tv__panel { gap: 16px !important; }

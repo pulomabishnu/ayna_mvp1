@@ -2,19 +2,18 @@ import { useRef, useState } from 'react';
 import './card-deck.css';
 
 /**
- * The stacked card deck for Home's "For today" (founder Oct 26 22:52: "put them
- * stacked a little, but show the question, and when you click out of it the
- * card goes up"; Apple Wallet / iOS notification stack). Only the top card is
- * shown in full; the next one or two peek behind it (their top edge, in their
- * own colour). Answering on the top card, "Later", or swiping it up sends it up
- * and away, and the next comes forward. "Show all" fans them into the normal
- * list; nothing is removed. Safety and care never go in a deck (TodayFeed keeps
- * them on top, in full).
+ * Home's "For today" as a stack of passes (founder Oct 26 22:52 and 23:39: "stacked a little, but show
+ * the question", "I meant having the title peek out of each one"; Apple Wallet). The other cards sit
+ * above as overlapping title strips (one-line title on the butter surface), so every item reads
+ * at a glance; the front card shows in full at the bottom with its answers. Tapping a strip brings
+ * that card to the front. Answering on the front card, "Later", or swiping it up sends it away and
+ * the next one comes forward. "Show all" lists them normally; nothing is removed. Safety and care
+ * never go in here (TodayFeed keeps them above, in full).
  *
- *   <CardDeck items={[{ key, title, tone: 'pink' | 'butter', node }]} storageKey="…" />
+ *   <CardDeck items={[{ key, title, node }]} storageKey="…" />
  *
- * A card leaves on its own answer buttons (any button in it but "Read more",
- * the "…" menu and links out); its answer handlers run first, unchanged.
+ * The front card leaves on its own answer buttons (any button in it but "Read more", the "…" menu and
+ * disclosures); its answer handlers run first, unchanged.
  */
 const reduced = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
 const read = (k) => { try { return JSON.parse(sessionStorage.getItem(k) || '[]'); } catch { return []; } };
@@ -26,15 +25,23 @@ export default function CardDeck({ items = [], storageKey = 'ayna_deck_v1', labe
   const [gone, setGone] = useState(() => read(storageKey));
   const [all, setAll] = useState(false);
   const [leaving, setLeaving] = useState(null);
+  const [frontKey, setFrontKey] = useState(null);
+  const [entered, setEntered] = useState(0);
   const [say, setSay] = useState('');
   const drag = useRef(null);
   const [dy, setDy] = useState(0);
 
   const left = items.filter((it) => !gone.includes(it.key));
-  const top = left[0] || null;
+  const front = left.find((it) => it.key === frontKey) || left[0] || null;
+  const behind = left.filter((it) => it !== front);
   const total = items.length;
-  const position = total - left.length + 1;
+  const announce = (it, n) => setSay(it ? `${it.title}. ${n} of ${total} left for today.` : `${doneText}.`);
 
+  const bringForward = (it) => {
+    setFrontKey(it.key);
+    setEntered((n) => n + 1);
+    announce(it, left.length);
+  };
   const dismiss = (key) => {
     if (!key || leaving) return;
     const finish = () => {
@@ -42,64 +49,74 @@ export default function CardDeck({ items = [], storageKey = 'ayna_deck_v1', labe
       setLeaving(null);
       setDy(0);
       const after = left.filter((it) => it.key !== key);
-      setSay(after.length ? `Card ${total - after.length + 1} of ${total}: ${after[0].title}` : `${doneText}.`);
+      setFrontKey(after[0]?.key || null);
+      setEntered((n) => n + 1);
+      announce(after[0], after.length);
     };
     if (reduced()) { finish(); return; }
     setLeaving(key);
-    window.setTimeout(finish, 280);
+    window.setTimeout(finish, 260);
   };
-  const reset = () => { setGone([]); write(storageKey, []); setSay(`Card 1 of ${total}: ${items[0]?.title || ''}`); };
+  const reset = () => { setGone([]); write(storageKey, []); setFrontKey(null); announce(items[0], total); };
 
-  // Her answer on the top card (chips, the primary action) sends it on after its own handler runs.
-  const onTopClick = (e) => {
+  // Her answer on the front card (chips, the primary action) sends it on after its own handler runs.
+  const onFrontClick = (e) => {
     const b = e.target.closest('button, a');
-    if (!b || !e.currentTarget.contains(b) || b.closest(STAYS) || b.classList.contains('ay-fdeck__btn')) return;
-    window.setTimeout(() => dismiss(top?.key), 0);
+    if (!b || !e.currentTarget.contains(b) || b.closest(STAYS)) return;
+    window.setTimeout(() => dismiss(front?.key), 0);
   };
   // Swipe up (optional; the buttons always work). Not started from a control.
   const onDown = (e) => { if (e.target.closest('button, a, input, select, textarea')) return; drag.current = { y: e.clientY, id: e.pointerId }; };
   const onMove = (e) => { if (!drag.current || drag.current.id !== e.pointerId) return; setDy(Math.min(0, e.clientY - drag.current.y)); };
-  const onUp = () => { if (!drag.current) return; drag.current = null; if (dy < -60) dismiss(top?.key); else setDy(0); };
+  const onUp = () => { if (!drag.current) return; drag.current = null; if (dy < -60) dismiss(front?.key); else setDy(0); };
 
   if (!total) return null;
 
   if (all) {
     return (
       <div className="ay-fdeck is-all">
+        <ul className="ay-today__list is-compact ay-fdeck__list" aria-label={label}>{items.map((it) => it.node)}</ul>
         <div className="ay-fdeck__bar">
           <span className="ay-fdeck__count">{total} for today</span>
           <button type="button" className="ay-fdeck__text" onClick={() => setAll(false)}>Stack them</button>
         </div>
-        <ul className="ay-today__list is-compact ay-fdeck__list" aria-label={label}>{items.map((it) => it.node)}</ul>
       </div>
     );
   }
 
   return (
     <div className="ay-fdeck">
-      <div className="ay-fdeck__bar">
-        <span className="ay-fdeck__count">{top ? `${position} of ${total}` : `${total} done`}</span>
-        <button type="button" className="ay-fdeck__text" onClick={() => setAll(true)} aria-expanded="false">Show all</button>
-      </div>
       <p className="sr-only" aria-live="polite">{say}</p>
-      {top ? (
-        <div className="ay-fdeck__stack" style={{ '--ay-fdeck-peek': Math.min(2, left.length - 1) }}>
-          {/* The top card, in full; the list itself carries the motion and the swipe. */}
+      {front ? (
+        <div className="ay-fdeck__stack">
+          {/* The passes behind: one line each, tap to bring it to the front. */}
+          {behind.length > 0 && (
+            <ul className="ay-fdeck__strips" aria-label={`Also for today (${behind.length})`}>
+              {/* One colour rule (review, Oct 26): the passes are the butter surface; only the front card, the one for now, is pink. */}
+              {behind.map((it) => (
+                <li key={it.key}>
+                  <button type="button" className="ay-fdeck__strip" onClick={() => bringForward(it)} aria-label={`Open: ${it.title}`}>
+                    <span className="ay-fdeck__stitle" aria-hidden="true">{it.title}</span>
+                    <svg className="ay-fdeck__sgo" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6" /></svg>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {/* The front card, in full. */}
           <ul
-            key={top.key}
-            className={`ay-today__list is-compact ay-fdeck__list ay-fdeck__top is-${top.tone || 'butter'}${leaving === top.key ? ' is-leaving' : ''}`}
-            aria-label={`${label}, ${position} of ${total}`}
+            key={`${front.key}-${entered}`}
+            className={`ay-today__list is-compact ay-fdeck__list ay-fdeck__top is-pink${leaving === front.key ? ' is-leaving' : ''}${behind.length ? ' has-strips' : ''}`}
+            aria-label={`${label}: ${front.title}`}
             style={dy ? { transform: `translateY(${dy}px)`, transition: 'none' } : undefined}
-            onClickCapture={onTopClick}
+            onClickCapture={onFrontClick}
             onPointerDown={onDown}
             onPointerMove={onMove}
             onPointerUp={onUp}
             onPointerCancel={onUp}
           >
-            {top.node}
+            {front.node}
           </ul>
-          {/* The next one or two: only their top edge, in their own colour (decoration; the count says how many). */}
-          {left.slice(1, 3).map((it, i) => <span key={it.key} className={`ay-fdeck__peek is-${it.tone || 'butter'} is-${i + 1}`} aria-hidden="true" />)}
         </div>
       ) : (
         <div className="ay-fdeck__done" role="status">
@@ -108,9 +125,10 @@ export default function CardDeck({ items = [], storageKey = 'ayna_deck_v1', labe
           <button type="button" className="ay-fdeck__text" onClick={reset}>See them again</button>
         </div>
       )}
-      {top && (
-        <div className="ay-fdeck__nav">
-          <button type="button" className="ay-fdeck__btn" onClick={() => dismiss(top.key)} aria-label={left.length > 1 ? `Later. Next: ${left[1].title}` : 'Later'}>Later<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg></button>
+      {front && (
+        <div className="ay-fdeck__bar">
+          <button type="button" className="ay-fdeck__btn" onClick={() => dismiss(front.key)} aria-label={behind.length ? `Later. Next: ${behind[0].title}` : 'Later'}>Later<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg></button>
+          <button type="button" className="ay-fdeck__text" onClick={() => setAll(true)} aria-expanded="false">Show all</button>
         </div>
       )}
     </div>
