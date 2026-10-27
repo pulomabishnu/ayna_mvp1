@@ -3,43 +3,64 @@
    note. The rest of the page keeps home.css + uq-landing.css.
    Brand colours only; 13px minimum; 44px targets. */
 
-/* ---- 1. hero: espresso copy | butter field with the rain ---- */
-.app-container .hm.wl .wl-hero {
-  --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ed-text: #ffedac;
-  position: relative; display: grid; grid-template-columns: minmax(0, 1fr); background: #3e2723; color: #ffedac; overflow: hidden;
+/* ---- 1. hero: the espresso band (fixed colours, light and dark), a faded rain
+   behind, everything centred on top, ending in the wavy edge over the pink bar ---- */
+.app-container .hm.wl .wl-hero { position: relative; background: #f7badd; }
+.app-container .hm.wl .wl-hero__band {
+  position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center;
+  min-height: clamp(540px, calc(100svh - 190px), 680px); padding: 56px var(--ay-margin, 16px) 60px;
+  background: #3e2723; color: #ffedac; overflow: hidden;
 }
-.app-container .hm.wl .wl-hero__copy { display: flex; align-items: center; padding: 32px var(--ay-margin, 16px) 36px; }
-.app-container .hm.wl .wl-hero__in { display: grid; justify-items: start; gap: 20px; width: 100%; max-width: 600px; }
-.app-container.app-container .hm.hm-uq.wl .wl-shout { grid-area: auto; margin: 0; max-width: 12ch; font-size: clamp(48px, 13vw, 64px) !important; line-height: .95 !important; letter-spacing: -.035em !important; color: #ffedac !important; text-wrap: balance; }
-.app-container.app-container .hm.hm-uq.wl .wl-shout .hm-shout__pink { color: #f7badd; }
-.app-container.app-container .hm.hm-uq.wl .wl-lead { margin: 0; max-width: 34ch; font-size: 17px !important; line-height: 1.5 !important; color: rgba(255, 237, 172, .9) !important; }
-.app-container .hm.wl .wl-search { max-width: 520px; }
-.app-container .hm.wl .wl-sts { max-width: 520px; justify-items: start; color: #ffedac; }
-.app-container .hm.wl .wl-sts .ay-sts__hint { font-size: 14px; padding-left: 22px; }
-.app-container .hm.wl .wl-how { margin-top: -8px; }
-.app-container .hm.wl .wl-banner { width: 100%; max-width: 520px; }
-
-.app-container .hm.wl .wl-hero__field { position: relative; height: 340px; background: #ffedac; }
-.app-container .hm.wl .wl-rain { position: absolute; inset: 0; padding: 0 16px; --lk-gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.app-container .hm.wl .wl-rain .lk-rain__col:nth-child(4) { display: none; }
-
+.app-container .hm.wl .wl-edge { display: block; width: 100%; height: 14px; margin-top: -1px; }
+.app-container .hm.wl .wl-edge path { fill: #3e2723 !important; }
+/* the rain: faded, and washed out behind the centre so the words always read */
+.app-container .hm.wl .wl-rain { z-index: -2; opacity: .28; --lk-gap: 88px; --lk-colgap: 48px; --lk-pad: clamp(16px, 4vw, 72px); }
+.app-container .hm.wl .wl-hero__band::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse 44% 56% at 50% 50%, #3e2723 40%, rgba(62, 39, 35, 0) 100%); }
+/* phones: two columns behind */
+.app-container .hm.wl .wl-rain .lk-rain { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.app-container .hm.wl .wl-rain .lk-rain__col:nth-child(n + 3) { display: none; }
+/* desktop: one column a side at laptop widths, two a side on wide screens; the centre left clear */
 @media (min-width: 900px) {
-  .app-container .hm.wl .wl-hero { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); min-height: clamp(600px, calc(100svh - 76px), 780px); }
-  .app-container .hm.wl .wl-hero__copy { justify-content: flex-end; padding: 64px clamp(32px, 4vw, 72px) 64px max(var(--ay-margin, 64px), calc((100vw - var(--ay-container, 1240px)) / 2)); }
-  .app-container .hm.wl .wl-hero__in { gap: 24px; }
-  .app-container.app-container .hm.hm-uq.wl .wl-shout { max-width: 14ch; font-size: clamp(56px, 4.9vw, 84px) !important; }
-  .app-container.app-container .hm.hm-uq.wl .wl-lead { font-size: 20px !important; }
-  .app-container .hm.wl .wl-hero__field { height: auto; }
-  .app-container .hm.wl .wl-rain { padding: 0 clamp(20px, 2.4vw, 40px); --lk-gap: 26px; }
-  .app-container .hm.wl .wl-rain .lk-prod.is-l { width: 100%; }
-  .app-container .hm.wl .wl-rain .lk-w b { font-size: 17px; }
+  .app-container .hm.wl .wl-rain .lk-rain { grid-template-columns: minmax(0, 1fr) minmax(0, 600px) minmax(0, 1fr); }
+  .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(2) { grid-column: 3; }
 }
-@media (min-width: 1360px) {
-  .app-container .hm.wl .wl-rain { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(4) { display: block; }
+@media (min-width: 1500px) {
+  .app-container .hm.wl .wl-rain .lk-rain { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 620px) minmax(0, 1fr) minmax(0, 1fr); }
+  .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(n + 3) { display: block; }
+  .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(2) { grid-column: 2; }
+  .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(3) { grid-column: 4; }
+  .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(4) { grid-column: 5; }
 }
-/* brand dark: one espresso hero, no panel; the cut-outs sit on soft butter circles (kit) */
-.app-container[data-theme='brand-dark'] .hm.wl .wl-hero__field { background: transparent; }
+
+.app-container .hm.wl .wl-hero__in { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 560px; text-align: center; }
+.app-container.app-container .hm.wl .wl-title { margin: 0 0 4px; font: 800 clamp(34px, 9vw, 36px)/1.1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.03em !important; color: #ffedac !important; text-transform: none; max-width: none; }
+.app-container.app-container .hm.wl .wl-title > span { display: block; }
+/* the pink highlighter swipe on one phrase */
+.app-container.app-container .hm.wl .wl-title mark { background: #f7badd; color: #3e2723; padding: 0 .16em .02em; border-radius: .2em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.app-container.app-container .hm.wl .wl-lead { margin: 0 0 8px; max-width: 34ch; font: 500 17px/1.5 var(--ay-sans-stack, sans-serif) !important; color: rgba(255, 237, 172, .9) !important; text-wrap: balance; }
+.app-container .hm.wl .wl-search { max-width: 520px; }
+.app-container .hm.wl .wl-sts { max-width: 520px; color: #ffedac; }
+.app-container .hm.wl .wl-sts .ay-sts__hint { font-size: 14px; }
+.app-container .hm.wl .wl-how { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: -6px; color: #ffedac !important; font: 700 16px/1.2 var(--ay-sans-stack, sans-serif) !important; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+.app-container .hm.wl .wl-how svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .hm.wl .wl-how:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 8px; }
+.app-container .hm.wl .wl-banner { width: 100%; }
+@media (min-width: 900px) {
+  .app-container.app-container .hm.wl .wl-title { font-size: clamp(44px, 3.4vw, 48px) !important; }
+  .app-container.app-container .hm.wl .wl-lead { font-size: 19px !important; }
+}
+
+/* ---- below the hero: the same sections, quieter and with more room ---- */
+.app-container .hm.wl { --hm-pad: 72px; --hm-headgap: 28px; }
+@media (min-width: 900px) { .app-container .hm.wl { --hm-pad: 120px; --hm-headgap: 40px; } }
+.app-container .hm.wl .hm-head { margin-bottom: var(--hm-headgap); }
+/* no offset shadows on cards; one thin outline is enough */
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .hm.wl .ay-pcard.hm-sticker { box-shadow: none !important; }
+/* the need chips without their counts */
+.app-container .hm.wl .hm-chips__count { display: none; }
+/* the how-it-works tiles a little further apart */
+.app-container .hm.wl .hm-bento { gap: 20px; }
 
 /* ---- 6. ayna Pro ---- */
 .app-container .hm.wl .wl-pro__grid { display: grid; gap: 28px; align-items: center; }
@@ -58,3 +79,7 @@
 .app-container .hm.wl .wl-note { padding: 18px var(--ay-margin, 16px); background: #3e2723; color: #ffedac; }
 .app-container.app-container .hm.wl .wl-note__p { max-width: 1240px; margin: 0 auto; font: 500 14px/1.45 var(--ay-sans-stack, sans-serif) !important; color: rgba(255, 237, 172, .9) !important; text-align: center; }
 .app-container .hm.wl .wl-note__p a { color: inherit !important; text-decoration: underline; text-underline-offset: 3px; }
+
+/* one heading size for every section below the hero */
+.app-container.app-container .hm.wl .hm-sec .hm-h2 { font-size: clamp(28px, 3vw, 36px) !important; line-height: 1.1 !important; max-width: 22ch; }
+.app-container .hm.wl .hm-comm .hm-h3 { font-size: 22px !important; }

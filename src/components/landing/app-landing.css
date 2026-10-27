@@ -1,8 +1,9 @@
-/* AppLanding.jsx: the app's one-screen landing. Never scrolls: the screen is
-   a column the height of the app's own box (above the tab bar), the rain takes
-   whatever is left after the fixed parts. Sizes follow the box (cqh/cqw), so
-   it fits SE 375x667 through Pro Max 430x932 and the desktop phone preview.
-   Light: butter page, the rain multiplies onto butter. Dark: espresso page. */
+/* AppLanding.jsx: the app's one-screen landing. Never scrolls: a column the
+   height of the app's own box (above the tab bar). The espresso band takes
+   the space left over; the rain is an absolute layer inside it, so it never
+   adds height. Sizes follow the box (cqh/cqw): SE 375x667 through Pro Max
+   430x932 and the desktop phone preview. The band and the bar keep fixed
+   colours; the lower part is butter (light) or espresso (dark). */
 
 .ayna-mobile:is(#ay, .ayna-mobile) > .ay-landing-app {
   flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
@@ -12,45 +13,53 @@
 .ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) > .ay-landing-app { background: #3e2723; }
 
 #ay-landing.alx {
-  --alx-fg: #3e2723; --alx-soft: rgba(62, 39, 35, .82);
+  --alx-fg: #3e2723; --alx-soft: rgba(62, 39, 35, .84); --alx-page: #ffedac;
   position: relative; flex: 1 1 auto; min-height: 0; height: 100%; display: flex; flex-direction: column;
   box-sizing: border-box; padding: 0 0 30px; overflow: hidden; /* 30px: the tab bar's raised Home button */
-  background: #ffedac; color: var(--alx-fg); font-family: var(--ay-font-ui, 'Figtree', system-ui, sans-serif);
+  background: var(--alx-page); color: var(--alx-fg); font-family: var(--ay-font-ui, 'Figtree', system-ui, sans-serif);
 }
-[data-theme='dark'] #ay-landing.alx { --alx-fg: #ffedac; --alx-soft: rgba(255, 237, 172, .86); background: #3e2723; }
+[data-theme='dark'] #ay-landing.alx { --alx-fg: #ffedac; --alx-soft: rgba(255, 237, 172, .88); --alx-page: #3e2723; }
 #ay-landing.alx *, #ay-landing.alx *::before, #ay-landing.alx *::after { box-sizing: border-box; }
 
-/* top: the wordmark and Sign in, below the status bar */
-#ay-landing.alx .alx__top { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: calc(env(safe-area-inset-top, 0px) + 4px) 16px 0; }
-#ay-landing.alx .alx__mark { font: 700 28px/1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.03em; color: var(--alx-fg); }
-#ay-landing.alx .alx__btn { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid var(--alx-fg); color: var(--alx-fg); font: 700 15px/1 var(--ay-font-ui, inherit); }
-#ay-landing.alx :is(.alx__btn, .alx__link):focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
+/* the espresso band: everything left over */
+#ay-landing.alx .alx__band { position: relative; isolation: isolate; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; background: #3e2723; color: #ffedac; overflow: hidden; }
+#ay-landing.alx .alx__rain { z-index: -2; opacity: .28; --lk-gap: 64px; --lk-colgap: 120px; --lk-pad: 16px; }
+#ay-landing.alx .alx__band::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse 62% 46% at 50% 62%, #3e2723 35%, rgba(62, 39, 35, 0) 100%); }
+#ay-landing.alx .alx__edge { display: block; flex: none; width: 100%; height: 12px; margin-top: -1px; background: #f7badd; }
+#ay-landing.alx .alx__edge path { fill: #3e2723 !important; }
+#ay-landing.alx .alx__bar { flex: none; --lk-bar-h: 44px; }
+#ay-landing.alx .alx__bar .ayb-marquee__row { font-size: 15px !important; }
 
-/* the rain: everything left over */
-#ay-landing.alx .alx__rain { flex: 1 1 0; min-height: 0; margin: 2px 0 0; padding: 0 16px; --lk-gap: 14px; }
-#ay-landing.alx .alx__rain .lk-w b { font-size: 14px; }
+/* top: the wordmark centred, Sign in to the right, below the status bar */
+#ay-landing.alx .alx__top { position: relative; flex: none; display: flex; align-items: center; justify-content: center; min-height: 52px; padding: calc(env(safe-area-inset-top, 0px) + 4px) 16px 0; }
+#ay-landing.alx .alx__mark { font: 700 28px/1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.03em; color: #ffedac; }
+#ay-landing.alx .alx__btn { all: unset; box-sizing: border-box; cursor: pointer; position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; color: #ffedac; font: 700 15px/1 var(--ay-font-ui, inherit); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+#ay-landing.alx .alx__btn:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 8px; }
 
-/* the centre block: fixed parts, sized to the box */
-#ay-landing.alx .alx__center { flex: none; display: grid; justify-items: center; gap: clamp(8px, 1.5cqh, 14px); width: 100%; max-width: 560px; margin: 0 auto; padding: clamp(4px, 1cqh, 10px) 16px 0; text-align: center; }
-#ay-landing.alx .alx__title { margin: 0; font: 800 clamp(32px, min(10.6cqw, 5.8cqh), 52px)/.95 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.035em; color: var(--alx-fg) !important; text-transform: none; }
-#ay-landing.alx .alx__title span { display: inline-block; color: #3e2723; background: #f7badd; padding: 0 .12em .04em; border-radius: .18em; }
-#ay-landing.alx .alx__lead { margin: 0; max-width: 32ch; font: 500 clamp(15px, min(4.2cqw, 2.3cqh), 18px)/1.4 var(--ay-font-ui, inherit) !important; color: var(--alx-soft) !important; text-wrap: balance; }
-#ay-landing.alx .alx__search { --lk-search-h: clamp(48px, 6.6cqh, 56px); }
-#ay-landing.alx .alx__sts { gap: 4px; color: var(--alx-fg); }
+/* the title and the one line, centred in the band */
+#ay-landing.alx .alx__head { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(8px, 1.6cqh, 14px); padding: 8px 24px 16px; text-align: center; }
+#ay-landing.alx .alx__title { margin: 0; font: 800 clamp(32px, min(9.4cqw, 4.8cqh), 36px)/1.1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.03em; color: #ffedac !important; text-transform: none; }
+#ay-landing.alx .alx__title > span { display: block; }
+#ay-landing.alx .alx__title mark { background: #f7badd; color: #3e2723; padding: 0 .16em .02em; border-radius: .2em; }
+#ay-landing.alx .alx__lead { margin: 0; max-width: 30ch; font: 500 clamp(15px, 4.1cqw, 17px)/1.45 var(--ay-font-ui, inherit) !important; color: rgba(255, 237, 172, .9) !important; text-wrap: balance; }
+
+/* the actions, centred */
+#ay-landing.alx .alx__act { flex: none; display: flex; flex-direction: column; align-items: center; gap: clamp(10px, 1.8cqh, 16px); width: 100%; max-width: 480px; margin: 0 auto; padding: clamp(12px, 2.4cqh, 22px) 20px 4px; }
+#ay-landing.alx .alx__search { --lk-search-h: clamp(48px, 6.4cqh, 54px); }
+#ay-landing.alx .alx__sts { gap: 6px; color: var(--alx-fg); }
 #ay-landing.alx .alx__sts .ay-sts__hint { font-size: 13px; }
-#ay-landing.alx .alx__link { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; margin-top: -6px; color: var(--alx-fg); font: 700 15px/1 var(--ay-font-ui, inherit); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+#ay-landing.alx .alx__link { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; margin-top: -10px; color: var(--alx-fg); font: 700 15px/1 var(--ay-font-ui, inherit); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+#ay-landing.alx .alx__link:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 8px; }
 #ay-landing.alx .alx__banner { width: 100%; }
 /* the medical note, always on the screen */
-#ay-landing.alx .alx__med { flex: none; margin: 4px auto 0; padding: 0 20px; max-width: 420px; font: 500 13px/1.35 var(--ay-font-ui, inherit) !important; color: var(--alx-soft) !important; text-align: center; }
+#ay-landing.alx .alx__med { flex: none; margin: 0 auto; padding: 0 20px; max-width: 400px; font: 500 13px/1.4 var(--ay-font-ui, inherit) !important; color: var(--alx-soft) !important; text-align: center; }
 #ay-landing.alx .alx__med a { color: inherit !important; text-decoration: underline; text-underline-offset: 3px; }
 
 /* dark: the slider becomes butter on espresso */
 [data-theme='dark'] #ay-landing.alx .alx__sts.is-ink .ay-sts__track { background: #ffedac; color: #3e2723; border-color: #ffedac; }
 
-/* short boxes (SE and smaller): the rain gives way first, then the lead line */
-@container alxapp (max-height: 560px) {
+/* short boxes: the lead line gives way, then Explore first moves up */
+@container alxapp (max-height: 620px) {
   #ay-landing.alx .alx__lead { display: none; }
-}
-@container alxapp (max-height: 470px) {
-  #ay-landing.alx .alx__rain { display: none; }
 }

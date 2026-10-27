@@ -46,3 +46,24 @@ export function initialAppRoute({ devScreen = null, pendingQuiz = false, quizSte
     || (pendingQuiz ? quizStep || 'connect' : null)
     || (hasProfile ? 'home' : hasDraft ? 'ecointro' : 'landing'), variant);
 }
+
+/**
+ * Where Home goes (founder, Oct 27 11:38: "it should stay on the landing page
+ * when ur signed out on the app, not glitch and go to an empty dashboard").
+ * Signed out with nothing on this phone (no profile, no ecosystem, no quiz
+ * waiting), Home is the landing; otherwise the Home dashboard.
+ */
+export function homeScreenFor({ signedIn = false, hasProfile = false, pendingQuiz = false } = {}) {
+  return signedIn || hasProfile || pendingQuiz ? 'ayna' : 'landing';
+}
+
+/**
+ * True when the app is showing the Home dashboard to someone it should not:
+ * signed out (or her session still loading) with nothing on this phone. The
+ * chat view of Home (the Ask tab) is fine signed out; the dashboard is not.
+ */
+export function showsEmptyHome({ screen, view = null, variant = 'dashboard', signedIn = false, hasProfile = false, pendingQuiz = false } = {}) {
+  if (screen !== 'ayna' && screen !== 'today') return false;
+  if (screen === 'ayna' && view === 'chat' && variant !== 'chat') return false;
+  return homeScreenFor({ signedIn, hasProfile, pendingQuiz }) === 'landing';
+}
