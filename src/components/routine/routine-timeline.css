@@ -51,3 +51,5 @@ button.ay-rtl__row:focus-visible { outline: 2px solid currentColor; outline-offs
 .ay-rtl__detail { margin-left: 102px; }
 .ay-rtl .ay-rtl__name { -webkit-line-clamp: 3 !important; }
 /* Dark: the --ay-calm-* tokens invert the sections (espresso, butter text and outline). */
+/* The pink "Now" chip keeps espresso ink (a page rule made em inherit butter in dark, 1.4:1). */
+html body :is(#rtl1, .app-container, .ayna-mobile):is(#rtl2, .app-container, .ayna-mobile) .ay-rtl .ay-rtl__when em { color: #3e2723 !important; background: #f7badd !important; }

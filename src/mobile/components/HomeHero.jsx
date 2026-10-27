@@ -1,21 +1,18 @@
 import { useEffect, useState } from 'react';
 import ScoreRings from './ScoreRings.jsx';
 import { Sparkline } from './DashParts.jsx';
-import { Plate, SnapCarousel } from '../../components/ui/ay/index.js';
+import { ScallopEdge, Plate, SnapCarousel } from '../../components/ui/ay/index.js';
 import { resolveCatalogProductImage } from '../../components/ProductTileImage.jsx';
 import { short, lastDays } from '../../health/dashView.js';
 import './home-hero.css';
 
 /**
  * Home's hero (founder Oct 26 21:45: "really really cute", "the data is the
- * hero"): the greeting on the page colour, closed by a wavy rule (calm, Oct 27), her three
+ * hero"): one espresso band with a wavy edge holding the greeting, her three
  * dials (the same ScoreRings as Your data, filling once on load), then one
  * small row: the Daily Rundown as a story bubble and her logging streak.
  * Real data only; without data the dials say so with one Connect button.
  */
-
-// The hero's foot: an open wave drawn as a 1.5px line (calm rule, Oct 27), six waves across.
-const WAVE_LINE = `M0 6${Array.from({ length: 6 }, (_, i) => `Q${10 + i * 40} 0 ${20 + i * 40} 6Q${30 + i * 40} 12 ${40 + i * 40} 6`).join('')}`;
 
 const hello = () => {
   const h = new Date().getHours();
@@ -102,7 +99,7 @@ export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, s
           </div>
         )}
       </div>
-      <svg className="ay-hh__edge" viewBox="0 0 240 12" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d={WAVE_LINE} /></svg>
+      <ScallopEdge shape="wave" tone="ink" className="ay-hh__edge" />
     </section>
   );
 }
@@ -141,9 +138,10 @@ export function HomeHighlights({ items = [], today, onOpen }) {
   );
 }
 
-/** Two big shortcuts right under the highlights: Your data and Your products, on the one calm surface. */
+/** Two big shortcuts right under the highlights: Your data (the espresso feature tile) and Your products (calm surface, Oct 27). */
 export function HomeShortcuts({ cycle = null, sleep = null, products = [], onData, onProducts }) {
-  const shown = products.filter((p) => p?.id).slice(0, 3);
+  // Two photos: three ran under the corner arrow once the plates kept their 44px size (Oct 27).
+  const shown = products.filter((p) => p?.id).slice(0, 2);
   const R = 22;
   const C = 2 * Math.PI * R;
   const ring = cycle?.cycleDay
