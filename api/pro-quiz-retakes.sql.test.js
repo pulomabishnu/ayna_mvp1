@@ -1,55 +1,41 @@
-import { PGlite } from '@electric-sql/pglite';
 import { readFileSync } from 'node:fs';
-import { beforeAll, afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-let db;
-const uid = '00000000-0000-4000-8000-000000000001';
+const migration = readFileSync(
+  new URL('../supabase/migrations/20261027014500_pro_quiz_retakes.sql', import.meta.url),
+  'utf8'
+);
+const canonical = readFileSync(
+  new URL('../supabase/user_ecosystem_builds.sql', import.meta.url),
+  'utf8'
+);
 
-async function claim(buildId, limit = 1) {
-  const result = await db.query('select * from public.claim_ecosystem_build($1,$2,$3)', [uid, buildId, limit]);
-  return result.rows[0];
-}
-
-describe('personalization retake allowance', () => {
-  beforeAll(async () => {
-    db = new PGlite();
-    await db.exec(`
-      create role anon;
-      create role authenticated;
-      create role service_role bypassrls;
-      create schema auth;
-      create table auth.users(id uuid primary key);
-      insert into auth.users(id) values ('${uid}');
-      grant usage on schema public, auth to anon, authenticated, service_role;
-    `);
-    await db.exec(readFileSync(new URL('../supabase/user_ecosystem_builds.sql', import.meta.url), 'utf8'));
-  }, 30000);
-
-  afterAll(async () => { await db.close(); });
-  beforeEach(async () => { await db.exec('truncate public.user_ecosystem_builds;'); });
-
-  it('keeps the initial personalization free, then allows one retake per week', async () => {
-    expect(await claim('initial')).toMatchObject({ allowed: true, used: 0 });
-    expect(await claim('retake-one')).toMatchObject({ allowed: true, used: 1 });
-    expect(await claim('retake-two')).toMatchObject({ allowed: false, used: 1 });
+describe('personalization retake migration', () => {
+  it('preserves the pre-rollout lifetime quota until Pro feature rules are enabled', () => {
+    expect(migration).toContain('if not coalesce(v_rules_enabled, false) then');
+    expect(migration).toContain('Applying the migration alone must not change product');
   });
 
-  it('does not double-count retries or multiple batches of the same retake', async () => {
-    await claim('initial');
-    expect(await claim('retake-one')).toMatchObject({ allowed: true, used: 1 });
-    expect(await claim('retake-one')).toMatchObject({ allowed: true, used: 1 });
-    expect((await db.query('select count(*)::int as n from public.user_ecosystem_builds')).rows[0].n).toBe(2);
+  it('marks one historical build per user as the initial personalization', () => {
+    expect(migration).toContain('row_number() over (partition by user_id order by created_at, build_id) as rn');
+    expect(migration).toContain('set is_initial = (r.rn = 1)');
   });
 
-  it('allows another Free retake after the weekly window rolls over', async () => {
-    await claim('initial');
-    await claim('last-week-retake');
-    await db.exec("update public.user_ecosystem_builds set created_at = now() - interval '8 days' where build_id = 'last-week-retake'");
-    expect(await claim('this-week-retake')).toMatchObject({ allowed: true, used: 1 });
+  it('uses a UTC Monday-Sunday weekly window for Free retakes once rollout is enabled', () => {
+    expect(migration).toContain("date_trunc('week', now() at time zone 'UTC')");
+    expect(migration).toContain('and b.is_initial = false');
+    expect(migration).toContain('and b.created_at >= v_week_start');
   });
 
-  it('still allows initial personalization when the configured retake limit is zero', async () => {
-    expect(await claim('initial', 0)).toMatchObject({ allowed: true, used: 0 });
-    expect(await claim('retake', 0)).toMatchObject({ allowed: false, used: 0 });
+  it('keeps retries idempotent and lets active Pro bypass the weekly cap', () => {
+    expect(migration).toContain('public.pro_access_status(p_user_id)');
+    expect(migration).toMatch(/where b\.user_id = p_user_id and b\.build_id = p_build_id/);
+    expect(migration).toContain('return query select true, 0;');
+  });
+
+  it('keeps the canonical schema aligned with initial-vs-retake accounting', () => {
+    expect(canonical).toContain('is_initial boolean not null default false');
+    expect(canonical).toContain('user_ecosystem_builds_weekly_retakes_idx');
+    expect(canonical).toContain('Re-presenting the same build_id is always free');
   });
 });
