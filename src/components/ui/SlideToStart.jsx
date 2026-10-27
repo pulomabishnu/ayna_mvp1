@@ -13,8 +13,7 @@ import './slide-to-start.css';
  *
  * tone: 'butter' (a butter pill, for espresso bands) | 'ink' (an espresso
  * pill, for butter pages). size: 'md' | 'lg' (the landing's hero action:
- * taller, a bigger knob and label, the pink sticker shadow and a one-time
- * shimmer before the nudge).
+ * taller, a bigger knob and label, the pink sticker shadow).
  */
 const THUMB = 56;
 const PAD = 6;

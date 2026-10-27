@@ -49,13 +49,13 @@ function Widget({ k }) {
     case 'sleep':
       return <><span className="lk-bars">{SLEEP.map((v, i) => <i key={i} style={{ '--h': v / 9 }} />)}</span><small>Sleep</small></>;
     case 'streak':
-      return <><span className="lk-dots">{[1, 1, 1, 1, 0, 0, 0].map((on, i) => <i key={i} className={on ? 'is-on' : ''} />)}</span><small>Streak</small></>;
+      return <span className="lk-dots">{[1, 1, 1, 1, 0, 0, 0].map((on, i) => <i key={i} className={on ? 'is-on' : ''} />)}</span>;
     case 'match':
       return <span className="lk-pill"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg>Match</span>;
     case 'ask':
       return <span className="lk-bubble">Ask ayna</span>;
     case 'month':
-      return <><span className="lk-month">{MONTH.map((m, i) => <i key={i} className={m ? 'is-p' : ''} />)}</span><small>Your month</small></>;
+      return <span className="lk-month">{MONTH.map((m, i) => <i key={i} className={m ? 'is-p' : ''} />)}</span>;
     default:
       return null;
   }
@@ -134,8 +134,10 @@ export function HeroSearch({ onSearch, className = '' }) {
 }
 
 /* The brown and pink bar (founder, Oct 27 11:36: "i liked also the brown and
-   pink bar we used to have that was cute"): an espresso tab, then the real
-   partner names running on pink. Paused by reduced motion, on hover, and by
+   pink bar we used to have that was cute"; 13:01: "fix that part"): one
+   straight pink strip, outlined top and bottom, with an espresso pill for the
+   label (vertically centred, hidden on narrow screens), the real partner
+   names running beside it. Paused by reduced motion, on hover, and by
    Pause motion (this button and the footer share one setting; it also stops
    the rain). */
 export function BrandBar({ onOpen, href = '/partners', className = '' }) {
@@ -143,10 +145,10 @@ export function BrandBar({ onOpen, href = '/partners', className = '' }) {
   return (
     <section className={`lk-bar ${className}`.trim()} aria-labelledby="lk-bar-title">
       <h2 id="lk-bar-title" className="lk-sr">Brands we work with</h2>
-      <a className="lk-bar__tab" href={href} onClick={(e) => { if (!onOpen || !isPlainLeftClick(e)) return; e.preventDefault(); onOpen(); }}><span className="lk-bar__long">Brands we work with</span><span className="lk-bar__short" aria-hidden="true">Our brands</span><Arrow /></a>
+      <a className="lk-bar__tab" href={href} aria-label="Brands we work with" onClick={(e) => { if (!onOpen || !isPlainLeftClick(e)) return; e.preventDefault(); onOpen(); }}><span className="lk-bar__pill"><span className="lk-bar__long">Brands we work with</span><span className="lk-bar__short">Our brands</span><Arrow /></span></a>
       <Marquee items={PARTNER_BRANDS.map((b) => b.name)} tone="pink" className="lk-bar__run" />
       <button type="button" className="lk-bar__pause" aria-pressed={paused} onClick={toggle} aria-label={paused ? 'Play motion' : 'Pause motion'}>
-        <svg viewBox="0 0 24 24" aria-hidden="true">{paused ? <path d="M8 5l11 7-11 7z" /> : <path d="M8 5v14M16 5v14" />}</svg>
+        <span className="lk-bar__ring"><svg viewBox="0 0 24 24" aria-hidden="true">{paused ? <path d="M8 5l11 7-11 7z" /> : <path d="M8 5v14M16 5v14" />}</svg></span>
       </button>
     </section>
   );

@@ -64,7 +64,7 @@ html.ay-motion-paused .lk-rain__run { animation-play-state: paused; }
    Each packshot on a small rounded butter tile (its white would show on
    espresso); the shapes in pink and butter outlines. ---- */
 :is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) { --lk-field: transparent; --lk-fg: #ffedac; --lk-line: rgba(255, 237, 172, .75); }
-:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod__in { border-radius: 18px; background: #ffedac; overflow: hidden; isolation: isolate; padding: 8%; }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod__in { border-radius: 16px; background: #ffedac; overflow: hidden; isolation: isolate; padding: 8%; outline: 1.5px solid rgba(255, 237, 172, .55); outline-offset: 4px; }
 :is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod { opacity: .7; }
 :is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-w { opacity: .8; }
 
@@ -83,19 +83,23 @@ html.ay-motion .lsx-search__hint b { display: inline-block; animation: lk-hint 2
 .lsx-search button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .lk-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* ---- the brown and pink bar: espresso tab | partner names on pink | pause ---- */
-.lk-bar { display: flex; align-items: stretch; width: 100%; margin: 0; background: #f7badd; color: #3e2723; }
-.lk-bar .lk-bar__tab { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: var(--lk-bar-h, 52px); padding: 0 20px; background: #3e2723; color: #ffedac !important; font: 700 15px/1.2 var(--ay-font-ui, 'Figtree', sans-serif) !important; text-decoration: none !important; white-space: nowrap; }
-.lk-bar .lk-bar__tab svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.lk-bar .lk-bar__tab:hover .lk-bar__long, .lk-bar .lk-bar__tab:hover .lk-bar__short { text-decoration: underline; text-underline-offset: 3px; }
+/* ---- the brown and pink bar: one straight 48px pink strip, a 1.5px espresso
+   rule top and bottom, an espresso pill label, the names, a round pause ---- */
+.lk-bar { display: flex; align-items: center; gap: 8px; width: 100%; height: 51px; margin: 0; padding: 0 4px 0 8px; box-sizing: border-box; background: #f7badd; color: #3e2723; border-top: 1.5px solid #3e2723; border-bottom: 1.5px solid #3e2723; }
+.lk-bar .lk-bar__tab { flex: none; display: inline-flex; align-items: center; min-height: 44px; text-decoration: none !important; border-radius: 999px; }
+.lk-bar .lk-bar__pill { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 14px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 14px/1 var(--ay-font-ui, 'Figtree', sans-serif); white-space: nowrap; }
+.lk-bar .lk-bar__pill svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lk-bar .lk-bar__tab:hover .lk-bar__pill { text-decoration: underline; text-underline-offset: 3px; }
 .lk-bar .lk-bar__short { display: none; }
-.lk-bar :is(.lk-bar__tab, .lk-bar__pause):focus-visible { outline: 3px solid #3e2723; outline-offset: -5px; }
+.lk-bar :is(.lk-bar__tab, .lk-bar__pause):focus-visible { outline: 2.5px solid #3e2723; outline-offset: 1px; }
 .lk-bar .lk-bar__run { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; padding: 0 !important; background: transparent !important;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); }
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 20px, #000 calc(100% - 20px), transparent); mask-image: linear-gradient(90deg, transparent, #000 20px, #000 calc(100% - 20px), transparent); }
 .lk-bar .lk-bar__run .ayb-marquee__track { animation-duration: 90s; }
 .lk-bar .lk-bar__run .ayb-marquee__row { gap: 24px; padding: 0 12px; font: 700 17px/1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.01em; color: #3e2723; }
 .lk-bar .lk-bar__run .ayb-marquee__row li { flex: none; white-space: nowrap; }
-.lk-bar .lk-bar__pause { all: unset; box-sizing: border-box; cursor: pointer; flex: none; display: grid; place-items: center; width: 48px; min-height: var(--lk-bar-h, 52px); border-left: 1.5px solid #3e2723; background: #f7badd; color: #3e2723; }
-.lk-bar .lk-bar__pause svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
-@media (max-width: 640px) { .lk-bar .lk-bar__long { display: none; } .lk-bar .lk-bar__short { display: inline; } .lk-bar .lk-bar__tab { padding: 0 14px; } }
+.lk-bar .lk-bar__pause { all: unset; box-sizing: border-box; cursor: pointer; flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: #3e2723; }
+.lk-bar .lk-bar__ring { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #3e2723; }
+.lk-bar .lk-bar__pause svg { width: 14px; height: 14px; fill: currentColor; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+@media (max-width: 640px) { .lk-bar .lk-bar__long { display: none; } .lk-bar .lk-bar__short { display: inline; } }
+@media (max-width: 340px) { .lk-bar .lk-bar__tab { display: none; } .lk-bar { padding-left: 0; } }
 @media (prefers-reduced-motion: reduce) { .lk-bar .lk-bar__pause { display: none; } }

@@ -65,13 +65,13 @@ describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
 describe('the raining cut-outs (a faded layer behind the hero)', () => {
   it('products and the app features taking turns, one-word labels, no numbers or labels that read as data; products are bare cut-outs', () => {
     const html = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} />);
-    const rain = html.slice(html.indexOf('lk-rainbox'), html.indexOf('class="alx__top"'));
+    const rain = html.slice(html.indexOf('lk-rainbox'), html.indexOf('class="alx__head"'));
     expect(rain.length).toBeGreaterThan(100);
     const words = rain.replace(/<[^>]*>/g, ' ').replace(/^[^>]*>/, '').replace(/<[^>]*$/, '').split(/\s+/).filter(Boolean);
     // Words only (each feature's one-word label), never a number that could read as her data.
     expect(words.join(' ')).not.toMatch(/\d/);
     expect(new Set(words)).toEqual(new Set(['Cycle', 'Ask', 'ayna', 'Sleep', 'Match']));
-    expect((rain.match(/<img /g) || []).length).toBeLessThanOrEqual(6 * 6); // 6 copies of each column, 3 products a column at most
+    expect((rain.match(/<img /g) || []).length).toBeLessThanOrEqual(3 * 3 * 6); // 3 columns, 3 products each, 6 copies
     expect(new Set(RAIN_COLS.flat().filter((t) => t.k !== 'p').map((t) => t.k))).toEqual(new Set(['ring', 'sleep', 'streak', 'match', 'ask', 'month']));
     // products and the app's features take turns down every column
     RAIN_COLS.forEach((col) => col.forEach((t, i) => i && expect((t.k === 'p') !== (col[i - 1].k === 'p')).toBe(true)));
