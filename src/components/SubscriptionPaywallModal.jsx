@@ -1,15 +1,13 @@
 import React from 'react';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 
-const MONTHLY_PRICE = '$18';
-const ANNUAL_PRICE = '$162';
-const ANNUAL_SAVINGS = '3 months free';
-const CONTACT_EMAIL = 'puloma@aynahealth.co';
+const MONTHLY_PRICE = '$4.99';
+const MONTHLY_REGULAR = '$8.99';
+const ANNUAL_PRICE = '$45';
+const ANNUAL_REGULAR = '$90';
 
-export default function SubscriptionPaywallModal({ onClose, featureName = 'this feature', featureDescription = 'syncing and summarizing health data from wearables and EHRs' }) {
+export default function SubscriptionPaywallModal({ onClose, featureName = 'this feature', featureDescription = 'deeper personalized health tools and insights' }) {
   useEscapeToClose(true, onClose);
-  const monthlyHref = `mailto:${CONTACT_EMAIL}?subject=ayna%20Early%20Access%20Subscription%20(Monthly)&body=Hi%2C%20I%27d%20like%20to%20subscribe%20to%20ayna%20Premium%20at%20%2418%2Fmonth.`;
-  const annualHref = `mailto:${CONTACT_EMAIL}?subject=ayna%20Early%20Access%20Subscription%20(Annual)&body=Hi%2C%20I%27d%20like%20to%20subscribe%20to%20ayna%20Premium%20at%20%24162%2Fyear.`;
 
   return (
     <div
@@ -28,7 +26,7 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
           borderRadius: 'var(--radius-lg)',
           boxShadow: 'var(--shadow-lg)',
           padding: '2rem',
-          maxWidth: '480px',
+          maxWidth: '520px',
           width: '100%',
           position: 'relative',
         }}
@@ -55,27 +53,24 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
             padding: '0.4rem 1rem',
             borderRadius: 'var(--radius-pill)',
             fontSize: 12.5, fontWeight: 600,
-            textTransform: 'none', letterSpacing: 'normal',
             marginBottom: '1rem',
           }}>
-            Early access
+            ayna Pro Early Access
           </div>
           <h2 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.75rem', color: 'var(--color-text-main)' }}>
-            Get ayna Premium
+            Unlock Pro now
           </h2>
           <p style={{ fontSize: 16, color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-            ayna can only afford to offer {featureName} to paying users. {featureDescription} is
-            costly to build and maintain.
+            Get {featureName} plus ayna Pro&apos;s deeper personalized tools. {featureDescription}.
           </p>
           <p style={{ fontSize: 16, color: 'var(--color-text-muted)', lineHeight: 1.6, marginTop: '0.75rem' }}>
-            As an early user, we&apos;re offering a <strong>lifetime discount</strong>. {' '}
-            <strong>subscribe now to lock in this price forever.</strong>
+            Pay the Early Access price today and use Pro during beta. Your purchased month or year starts at the January 1, 2027 launch, not today.
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.25rem' }}>
           <a
-            href={monthlyHref}
+            href="/pro"
             style={{
               flex: 1, textAlign: 'center', textDecoration: 'none',
               padding: '1.25rem 1rem',
@@ -84,17 +79,15 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
               background: 'var(--color-surface-soft)',
               color: 'var(--color-text-main)',
               display: 'block',
-              transition: 'border-color 0.2s',
             }}
-            onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--color-primary)'}
-            onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}
           >
+            <div style={{ fontSize: 14, color: 'var(--color-text-muted)', marginBottom: '0.25rem' }}><del>{MONTHLY_REGULAR}</del></div>
             <div style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, color: 'var(--color-text-main)' }}>{MONTHLY_PRICE}</div>
-            <div style={{ fontSize: 14, color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>per month</div>
+            <div style={{ fontSize: 14, color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>first month</div>
           </a>
 
           <a
-            href={annualHref}
+            href="/pro"
             style={{
               flex: 1, textAlign: 'center', textDecoration: 'none',
               padding: '1.25rem 1rem',
@@ -112,16 +105,16 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
               padding: '0.15rem 0.6rem', borderRadius: 'var(--radius-pill)',
               fontSize: 12.5, fontWeight: 600, whiteSpace: 'nowrap',
             }}>
-              {ANNUAL_SAVINGS}
+              50% off
             </div>
+            <div style={{ fontSize: 14, color: 'var(--color-text-muted)', marginBottom: '0.25rem' }}><del>{ANNUAL_REGULAR}</del></div>
             <div style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, color: 'var(--color-text-main)' }}>{ANNUAL_PRICE}</div>
-            <div style={{ fontSize: 14, color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>per year</div>
+            <div style={{ fontSize: 14, color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>first year</div>
           </a>
         </div>
 
         <p style={{ textAlign: 'center', fontSize: 12.5, color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
-          Click a plan to email us and get started. Feature is currently in development. Your
-          early-user price is locked in forever once you subscribe.
+          Beta access before launch is included at no extra cost. After your purchased period ends, your plan renews at {MONTHLY_REGULAR}/month or {ANNUAL_REGULAR}/year unless canceled.
         </p>
       </div>
     </div>
