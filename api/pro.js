@@ -123,8 +123,8 @@ export default async function handler(req, res) {
         metadata: { flow: PRO_FLOW, user_id: user.id, plan: body.plan },
       },
       integration_identifier: `ayna_pro_${createHash('sha256').update(body.requestId).digest().subarray(0, 8).reduce((s, b) => s + String.fromCharCode(97 + b % 26), '')}`,
-      success_url: `${config.origin}/pro?checkout=success`,
-      cancel_url: `${config.origin}/pro?checkout=canceled`,
+      success_url: `${config.origin}/you?checkout=success`,
+      cancel_url: `${config.origin}/you?checkout=canceled`,
       custom_text: {
         submit: {
           message: 'Your Early Access coupon is applied today. Your purchased period starts at launch; then renews at the regular price shown unless canceled.',
