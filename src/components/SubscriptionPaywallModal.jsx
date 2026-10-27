@@ -4,7 +4,8 @@ import { Capacitor } from '@capacitor/core';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { useFocusTrap } from '../utils/useFocusTrap';
 import { requestPro } from '../utils/proApi.js';
-import { announceProChanged, rememberProReturn } from '../pro/paywall.js';
+import { announceProChanged, rememberProReturn, saveProResume } from '../pro/paywall.js';
+import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { PRO_TAGLINE } from '../pro/features.js';
 import { EARLY_ACCESS_LINE, PAID_TERM_STARTS, PLANS, proGroups } from '../pro/plans.js';
 import '../styles/pro-v4.css';
@@ -13,7 +14,7 @@ const reducedMotion = () => {
   try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return true; }
 };
 
-export default function SubscriptionPaywallModal({ onClose, feature = '', featureName = '' }) {
+export default function SubscriptionPaywallModal({ onClose, feature = '', featureName = '', initialPlan = '', onRequireAuth }) {
   // Close with the exit animation, then unmount. Reduced motion closes at once.
   const [closing, setClosing] = useState(false);
   const closeTimer = useRef(0);
@@ -36,7 +37,21 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
   const uid = useId();
   const titleId = `${uid}-title`;
   const billingId = `${uid}-billing`;
-  const [plan, setPlan] = useState('year');
+  const [plan, setPlan] = useState(PLANS.some((p) => p.id === initialPlan) ? initialPlan : 'year');
+  // Signed out: the button becomes "Sign in to get ayna Pro" and brings her back here after.
+  const [signedOut, setSignedOut] = useState(false);
+  useEffect(() => {
+    let live = true;
+    const client = getSupabaseClient();
+    if (!client) { setSignedOut(true); return undefined; }
+    client.auth.getSession().then(({ data }) => { if (live) setSignedOut(!data?.session?.user); }).catch(() => {});
+    return () => { live = false; };
+  }, []);
+  const signIn = () => {
+    saveProResume({ proFeature: feature, plan });
+    if (onRequireAuth) { onRequireAuth(); onClose?.(); return; }
+    window.location.assign('/you');
+  };
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
   const [billingOpen, setBillingOpen] = useState(false);
@@ -62,6 +77,7 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
       rememberProReturn(feature);
       window.location.assign(url.href);
     } catch (e) {
+      if (e?.code === 'sign_in_required') { setSignedOut(true); setBusy(''); return; }
       if (e?.code === 'already_pro') {
         // She already has it: unlock what is on screen instead of showing an error.
         announceProChanged();
@@ -136,9 +152,11 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
             <p className="pro-sheet__webnote">ayna Pro is available on the web for now.</p>
             <a className="pro-sheet__cta" href={webUrl} target="_blank" rel="noopener noreferrer">Get ayna Pro on the web</a>
           </> : <>
-          <button type="button" className="pro-sheet__cta" disabled={Boolean(busy)} aria-busy={busy ? 'true' : undefined} onClick={checkout}>
-            {busy ? 'Opening secure checkout…' : `Get ayna Pro · ${chosen.price}`}
-          </button>
+          {signedOut
+            ? <button type="button" className="pro-sheet__cta" onClick={signIn}>Sign in to get ayna Pro</button>
+            : <button type="button" className="pro-sheet__cta" disabled={Boolean(busy)} aria-busy={busy ? 'true' : undefined} onClick={checkout}>
+              {busy ? 'Opening secure checkout…' : `Get ayna Pro · ${chosen.price}`}
+            </button>}
           <p className="pro-sheet__trust">
             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6ZM9 12l2 2 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             Secure checkout with Stripe. Cancel anytime.

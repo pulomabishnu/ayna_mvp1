@@ -1560,7 +1560,7 @@ export default function MobileApp() {
 
   return (
     <div ref={rootRef} className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
-      <ProPaywallHost priority={2} />
+      <ProPaywallHost priority={2} onRequireAuth={() => requestAuth('ayna Pro')} />
       <ProductSheetContext.Provider value={sheetValue}>
       <AskContext.Provider value={nav.onAskAyna}>
       <AppHeaderContext.Provider value={headerValue}>

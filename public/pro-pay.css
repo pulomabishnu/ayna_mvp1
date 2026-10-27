@@ -40,8 +40,8 @@ em { color: var(--pink); font-style: normal; -webkit-text-stroke: var(--em-strok
 
 /* The plan card, framed by the checker. */
 .pro-buy { position: relative; }
-.pro-frame { --tile: 28px; position: relative; padding: 14px; border: 1.5px solid var(--line); border-radius: 26px; background: repeating-conic-gradient(#3e2723 0 25%, #f7badd 0 50%) 0 0 / var(--tile) var(--tile); box-shadow: 6px 6px 0 var(--pink); }
-.pro-frame-inner { display: grid; gap: 16px; padding: 22px; border: 1.5px solid var(--line); border-radius: 14px; background: var(--bg); }
+.pro-frame { position: relative; padding: 14px; border: 1.5px solid var(--line); border-radius: 26px; background: #3e2723; box-shadow: 6px 6px 0 var(--pink); }
+.pro-frame-inner { position: relative; z-index: 1; display: grid; gap: 16px; padding: 22px; border: 1.5px solid var(--line); border-radius: 14px; background: var(--bg); }
 .pro-status { display: grid; gap: 8px; color: var(--fg); font-weight: 500; }
 .pro-status:empty { display: none; }
 .pro-status.error { padding: 12px 14px; border: 1.5px solid #3e2723; border-radius: 12px; background: var(--pink); color: #3e2723; font-weight: 600; }
@@ -134,7 +134,7 @@ em { color: var(--pink); font-style: normal; -webkit-text-stroke: var(--em-strok
 }
 @media (max-width: 560px) {
   .pro-page { gap: 48px; padding-top: 8px; padding-bottom: 56px; }
-  .pro-frame { --tile: 20px; padding: 10px; box-shadow: 4px 4px 0 var(--pink); }
+  .pro-frame { padding: 10px; box-shadow: 4px 4px 0 var(--pink); }
   .pro-frame-inner { padding: 18px 14px; }
   .pro-plan-grid { gap: 12px; }
   .pro-plan { padding: 16px 12px 12px; }
@@ -144,14 +144,12 @@ em { color: var(--pink); font-style: normal; -webkit-text-stroke: var(--em-strok
   .pro-admin-actions { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .pro-march { animation: pro-march 4s linear infinite; }
-  .pro-frame { animation: pro-frame-march 6s linear infinite; }
+  .pro-ring-dash { animation: pro-lap 16s linear infinite; }
   .pro-hero > * { animation: pro-rise 420ms cubic-bezier(.2, .8, .2, 1) both; }
   .pro-hero > .pro-buy { animation-delay: 80ms; }
 }
 @media (prefers-reduced-motion: reduce) { .pro-plan, .pro-cta, .pro-more summary::after { transition: none; } }
-@keyframes pro-march { from { background-position: 0 0; } to { background-position: 32px 0; } }
-@keyframes pro-frame-march { from { background-position: 0 0; } to { background-position: var(--tile) var(--tile); } }
+@keyframes pro-lap { from { stroke-dashoffset: 0; } to { stroke-dashoffset: calc(var(--pro-lap) * -1); } }
 @keyframes pro-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
 /* The one repeat CTA at the end of the page. */
@@ -201,3 +199,8 @@ a.pro-cta { text-decoration: none; }
   .pro-free ul { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) { .pro-tr > span { font-size: 13px; } .pro-tr { grid-template-columns: 1.1fr .9fr 1.1fr; } }
+
+/* The plan card's marquee ring: pink squares travel round the whole rounded box (pro-pay.js draws it). */
+.pro-ring { position: absolute; inset: 0; z-index: 0; overflow: visible; pointer-events: none; }
+.pro-ring-base { stroke: #3e2723; fill: none; }
+.pro-ring-dash { stroke: #f7badd; fill: none; }

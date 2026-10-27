@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { FREE_FEATURES, PRO_FEATURES } from './features.js';
-import { proFeatureName, proLimitFeature, registerProPaywallHost } from './paywall.js';
+import { RESUME_KEY, RESUME_MAX_AGE_MS, marqueeLength, peekProResume, roundedPerimeter, proFeatureName, proLimitFeature, registerProPaywallHost, resumeStep, saveProResume } from './paywall.js';
 import ProLock from '../components/ProLock.jsx';
 import { PLANS, PRO_GROUPS, proGroups } from './plans.js';
 
@@ -12,7 +12,7 @@ const proApi = readFileSync(new URL('../../api/pro.js', import.meta.url), 'utf8'
 describe('the one locked state', () => {
   it('frames the lock in the checker, names the feature and has one Get ayna Pro button and a quiet Not now', () => {
     const html = renderToStaticMarkup(<ProLock feature="reads" />);
-    expect(html).toContain('pro-frame__edge is-top');
+    expect(html).toContain('class="pro-frame"');
     expect(html).toContain('Get ayna Pro to unlock');
     expect(html).toContain('More ayna Reads');
     expect(html.match(/class="pro-lock__cta"/g)).toHaveLength(1);
@@ -77,5 +77,51 @@ describe('the sheet and /pro only promise what is real', () => {
   it('returns checkout to /pro, which confirms and takes her back', () => {
     expect(proApi).toContain('/pro?checkout=success');
     expect(proApi).toContain('/pro?checkout=canceled');
+  });
+});
+
+describe('the checker ring runs round the whole shape', () => {
+  it('tiles the loop with whole square pairs so there is no seam', () => {
+    const p = roundedPerimeter(500, 300, 16);
+    expect(p).toBeCloseTo(1600 - (8 - 2 * Math.PI) * 16, 5);
+    const len = marqueeLength(p, 12);
+    expect(len % 24).toBe(0);
+    expect(Math.abs(len - p)).toBeLessThanOrEqual(12);
+  });
+  it('no longer animates each edge on its own', () => {
+    const css = readFileSync(new URL('../styles/pro-v4.css', import.meta.url), 'utf8');
+    expect(css).not.toContain('pro-frame__edge');
+    expect(css).toContain('@keyframes pro-lap');
+    expect(css).toMatch(/prefers-reduced-motion: no-preference\) \{\s*[^}]*\.pro-frame__dash \{ animation: pro-lap/);
+  });
+});
+
+describe('sign in, then back to ayna Pro', () => {
+  const store = () => { const m = new Map(); return { getItem: (k) => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k) }; };
+  it('saves where she was, the feature and the plan, and forgets it after 30 minutes', () => {
+    const s = store();
+    saveProResume({ path: '/library/endometriosis-basics', proFeature: 'reads', plan: 'month' }, s, 1000);
+    expect(peekProResume(s, 2000)).toMatchObject({ path: '/library/endometriosis-basics', proFeature: 'reads', plan: 'month' });
+    expect(peekProResume(s, 1000 + RESUME_MAX_AGE_MS + 1)).toBe(null);
+    expect(s.getItem(RESUME_KEY)).toBe(null);
+  });
+  it('never saves an off-site path', () => {
+    const s = store();
+    saveProResume({ path: '//evil.example/x' }, s);
+    expect(s.getItem(RESUME_KEY)).toBe(null);
+  });
+  it('re-opens the sheet where she was, or goes back there first, once', () => {
+    expect(resumeStep({ path: '/library/a', tries: 0 }, '/library/a')).toBe('open');
+    expect(resumeStep({ path: '/library/a', tries: 0 }, '/welcome')).toBe('navigate');
+    expect(resumeStep({ path: '/library/a', tries: 1 }, '/welcome')).toBe('open');
+    expect(resumeStep({ path: '/pro', tries: 0 }, '/you')).toBe('navigate');
+    expect(resumeStep({ path: '/pro', tries: 1 }, '/you')).toBe('drop');
+    expect(resumeStep(null, '/you')).toBe(null);
+  });
+  it('/pro sends signed-out buyers to sign in with a saved return to /pro', () => {
+    const js = readFileSync(new URL('../../public/pro-pay.js', import.meta.url), 'utf8');
+    expect(js).toContain("const RESUME = 'ayna.returnTo'");
+    expect(js).toContain("path: '/pro'");
+    expect(js).toContain('selectPlan(resumed.plan)');
   });
 });
