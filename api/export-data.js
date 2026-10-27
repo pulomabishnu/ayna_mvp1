@@ -119,6 +119,7 @@ export default async function handler(req, res) {
     fetchRows(db, 'user_ai_usage', user.id),
     fetchRows(db, 'user_ecosystem_builds', user.id),
     fetchRows(db, 'pro_purchases', user.id),
+    fetchRows(db, 'pro_weekly_reads', user.id),
     fetchRows(db, 'pro_subscriptions', user.id),
     fetchRows(db, 'pro_focus_grants', user.id),
     fetchRows(db, 'user_learning_memory', user.id),

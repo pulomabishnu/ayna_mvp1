@@ -1,3 +1,4 @@
+import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { useEffect, useRef, useState } from 'react';
 import { buildDashboard, RANGES } from '../../health/dashboard.js';
 import { estimatePhase, PHASE_SOURCES } from '../../health/phase.js';
@@ -609,9 +610,9 @@ export default function HealthHome({
       )}
       <div className="ay-db-panel" role={tabs.length > 1 ? 'tabpanel' : undefined} id={`ay-db-area-panel-${current}`} aria-labelledby={tabs.length > 1 ? `ay-db-area-tab-${current}` : undefined} key={current}>
         {current === 'summary' && summary}
-        {current === 'cycle' && cycleTab}
-        {current === 'sleep' && sleepTab}
-        {current === 'body' && bodyTab}
+        {current === 'cycle' && <ProFeatureGate feature="history" title="Health trends and history" onBack={() => pickTab('summary')}>{cycleTab}</ProFeatureGate>}
+        {current === 'sleep' && <ProFeatureGate feature="history" title="Health trends and history" onBack={() => pickTab('summary')}>{sleepTab}</ProFeatureGate>}
+        {current === 'body' && <ProFeatureGate feature="history" title="Health trends and history" onBack={() => pickTab('summary')}>{bodyTab}</ProFeatureGate>}
         {current === 'routine' && routineTab}
       </div>
       <footer className="ay-db-foot">

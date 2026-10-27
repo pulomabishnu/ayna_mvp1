@@ -1,3 +1,4 @@
+import ProFeatureGate from './components/ProFeatureGate.jsx';
 import ProAccess from './components/ProAccess.jsx';
 import FeedbackPrompts from './components/FeedbackPrompts';
 import { devPreviewOn } from './utils/devPreview.js';
@@ -3151,6 +3152,7 @@ function App() {
           />
         )}
         {currentView === 'doctor-prep' && !gatedPreview && (
+          <ProFeatureGate feature="appointment" title="Appointment prep" onBack={() => setCurrentView('ecosystem')}>
           <DoctorPrep
             checkinData={checkinData}
             myProducts={myProducts}
@@ -3159,6 +3161,7 @@ function App() {
             onOpenCheckin={() => setShowCheckin(true)}
             onBack={() => setCurrentView('ecosystem')}
           />
+          </ProFeatureGate>
         )}
 
         {showCheckin && (

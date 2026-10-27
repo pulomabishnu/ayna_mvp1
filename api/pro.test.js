@@ -8,6 +8,7 @@ vi.mock('./_usageLimit.js', () => ({
   verifyUser: async () => ({ user: edge.user, admin: edge.admin, error: edge.user ? null : 'auth_required' }),
   getServiceClient: () => edge.admin,
 }));
+vi.mock('../src/pro/premiumReads.js', () => ({ PREMIUM_READ_IDS: ['premium-read'] }));
 vi.mock('./_rateLimit.js', () => ({ rateLimit: async () => ({ ok: true }) }));
 vi.mock('stripe', async importOriginal => {
   const { default: RealStripe } = await importOriginal();
@@ -49,7 +50,7 @@ function paidSession(overrides = {}) {
 }
 let restore;
 beforeEach(() => {
-  restore = withEnv({ PRO_BILLING_ENABLED: '1', PRO_CHECKOUT_ENABLED: '1', STRIPE_RESTRICTED_KEY: 'rk_test_example', STRIPE_PRO_LIVEMODE: 'false',
+  restore = withEnv({ PRO_FEATURE_GATES_ENABLED: undefined, PRO_BILLING_ENABLED: '1', PRO_CHECKOUT_ENABLED: '1', STRIPE_RESTRICTED_KEY: 'rk_test_example', STRIPE_PRO_LIVEMODE: 'false',
     STRIPE_PRO_WEBHOOK_SECRET: 'whsec_test', STRIPE_PRO_PRODUCT_ID: 'prod_pro', STRIPE_PRO_MONTH_PRICE_ID: 'price_month', STRIPE_PRO_YEAR_PRICE_ID: 'price_year', STRIPE_PRO_MONTH_RENEWAL_PRICE_ID: 'price_month_renewal', STRIPE_PRO_YEAR_RENEWAL_PRICE_ID: 'price_year_renewal', SITE_URL: 'https://www.aynahealth.co' });
   edge.user = { id: userId, app_metadata: {}, user_metadata: {} };
   edge.admin = mockSupabase({ rpcResults: { pro_access_status: { data: { active: false, launchAt }, error: null } } });
@@ -246,5 +247,28 @@ describe('renewal lifecycle and temporary grants', () => {
   it('uses a calendar month/year for first renewal', () => {
     expect(new Date(renewalDate('2027-01-31T05:00:00Z', 'month') * 1000).toISOString()).toBe('2027-02-28T05:00:00.000Z');
     expect(new Date(renewalDate(launchAt, 'year') * 1000).toISOString()).toBe('2028-01-01T05:00:00.000Z');
+  });
+});
+
+describe('feature access endpoints',()=>{
+  it('exposes only public feature rules without account authentication',async()=>{
+    edge.user=null;const res=mockRes();await handler(mockReq({method:'GET',query:{action:'features'}}),res);
+    expect(res.statusCode).toBe(200);expect(res.body.enabled).toBe(false);expect(res.body).not.toHaveProperty('userId');
+  });
+  it.each([false,true])('uses the live entitlement for premium Read access active=%s',async active=>{
+    process.env.PRO_FEATURE_GATES_ENABLED='1';
+    edge.admin.rpc.mockImplementation(async(name,args)=>{
+      if(name==='pro_access_status') return {data:{active,launchAt}};
+      if(name==='pro_feature_config') return {data:{enabled:true,freeAskPerDay:5,proAskPerDay:50}};
+      if(name==='pro_claim_read') {expect(args.p_unlimited).toBe(active);return {data:active};}
+      throw new Error(name);
+    });
+    const res=await call({action:'read',readId:'premium-read'});expect(res.body.allowed).toBe(active);
+  });
+  it('does not consume premium Read quota for an unmarked public article',async()=>{
+    process.env.PRO_FEATURE_GATES_ENABLED='1';
+    edge.admin.rpc.mockImplementation(async name=>({data:name==='pro_access_status'?{active:false,launchAt}:{enabled:true}}));
+    const res=await call({action:'read',readId:'public-read'});expect(res.body.allowed).toBe(true);
+    expect(edge.admin.rpc.mock.calls.some(([name])=>name==='pro_claim_read')).toBe(false);
   });
 });

@@ -44,9 +44,27 @@ The page displays the regular price with a strike-through, the exact introductor
 - Focus-group grant/revoke controls on `/you/pro` appear for confirmed `ADMIN_EMAILS` accounts. The endpoint independently verifies admin authorization. Grants last 1–240 minutes and expire without cron. Ending a temporary grant does not remove independently paid access.
 - No migration of the legacy $5 payment, no charge packs, and no changes to marketplace, safety/evidence, Community or basic matching access.
 
-## Evolving feature bundle
+## Free and Pro feature contract
 
-This PR implements the payment/subscription state and connects it to the existing server Pro checks. It does **not** invent a final paid feature bundle, convert all Reads into premium content, or relabel existing free tools as Pro. The exact premium Read IDs, playlist allowance and deeper-feature boundaries still need product decisions before new locks are enabled. Existing AI quotas stay as they are; there is no “unlimited Ask” promise on the checkout. This keeps the latest scope focused on the Early Access lifecycle.
+`src/pro/features.js` lists the product split and labels the evolving capabilities explicitly. The checkout keeps the Early Access time benefit separate from the feature bundle.
+
+Available boundaries in this PR:
+- Shared daily Ask budget across Ask ayna and product chat: defaults **5/day Free, 50/day Pro**, reset at midnight UTC. Premium still has burst limits; it is not unlimited Ask. Failed work is refunded using the same day counter. Usage-store failures do not silently grant extra allowance.
+- **Unlimited Pro playlist creation** vs one free playlist by default. A database trigger locks creation per owner and counts authoritative rows, so simultaneous/direct Data API inserts cannot bypass the limit. Existing playlists are retained and remain editable after downgrade; existing per-playlist item limits still apply.
+- **Unlimited Pro premium Reads** vs one selected premium Read per UTC Monday–Sunday week. Reopening that Read is free. Both web and native readers use the same `src/pro/premiumReads.js` editorial list, which starts empty so existing public health articles are not arbitrarily paywalled. Add only approved Read IDs to that file. The allowance RPC cannot be called by browser roles.
+- Existing appointment prep (web and native guide), personalized recaps/check-backs (native guide), and detailed cycle/sleep/body history (shared web/native health dashboard) check the same Pro access. The basic health summary, routines, privacy/memory controls, Community, Shop, safety/evidence and basic match explanations remain free.
+- Timed focus-group grants bypass these Pro boundaries for their duration. Open local tools recheck entitlement periodically; background rechecks retain unfinished input while access remains active. Server AI checks take effect immediately on the next request.
+
+Broader adaptive routines, deeper personalized/match intelligence, additional tracking, wider wearable interpretation and specific member perks remain marked **Growing during Early Access**. Existing provider support is not presented as support for every provider listed in the roadmap. The feature list explicitly says availability varies across the website, app and available data.
+
+### Activate the feature split after validation
+
+1. Apply `20261027002913_pro_feature_access.sql` after the billing migration and the existing Community schema. If Community is installed later, rerun this migration to install its trigger.
+2. Review `src/pro/premiumReads.js` with the team. Empty means every current Read stays public.
+3. Enable the server-side rules: `update public.pro_feature_rules set enabled=true where id;` Defaults can be changed there (`free_ask_per_day`, `pro_ask_per_day`, `free_playlists`).
+4. Set `PRO_FEATURE_GATES_ENABLED=1` on the same deployment. Both switches must be configured together. These gates are separate from billing/sales switches so they can be verified before charging anyone.
+
+Read/tool boundaries are UI access controls around existing client-rendered content, not DRM: editorial article bodies and local health computations remain in the application bundle. This PR does not claim server-side secrecy for public/static article content. Billing permissions, daily usage, Read allowance records and playlist creation are checked by the server/database.
 
 ## Verification and live activation
 

@@ -1,3 +1,5 @@
+import { getServiceClient } from './_usageLimit.js';
+import { proFeatureRules } from './_proFeatures.js';
 import { createHash } from 'node:crypto';
 import { verifyUser } from './_usageLimit.js';
 import { isAdminUser } from './_admin.js';
@@ -7,6 +9,14 @@ import { PRO_FLOW, PRO_PLANS, proConfig, proStatus, proStripe, validateProPrices
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+  if (req.method === 'GET' && req.query?.action === 'features') {
+    try { return res.status(200).json(await proFeatureRules(getServiceClient())); }
+    catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
+  }
   if (!['GET', 'POST'].includes(req.method)) return res.status(405).json({ error: 'method_not_allowed' });
   const { user, admin, error } = await verifyUser(req);
   if (!user) return res.status(error === 'server_misconfigured' ? 503 : 401).json({ error: 'sign_in_required' });
@@ -21,6 +31,13 @@ export default async function handler(req, res) {
     let body;
     try { body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body; }
     catch { return res.status(400).json({ error: 'invalid_request' }); }
+    if (body?.action === 'read') {
+      const rules = await proFeatureRules(admin);
+      if (!rules.enabled || !rules.premiumReadIds.includes(body.readId)) return res.status(200).json({ allowed: true });
+      const { data, error } = await admin.rpc('pro_claim_read', { p_user_id: user.id, p_read_id: body.readId, p_unlimited: active });
+      if (error) throw new Error('Read allowance unavailable');
+      return res.status(200).json({ allowed: data === true });
+    }
     if (body?.action === 'focus_grant' || body?.action === 'focus_revoke') {
       if (!isAdminUser(user)) return res.status(403).json({ error: 'forbidden' });
       if (!/^[0-9a-f-]{36}$/i.test(body.userId || '')) return res.status(400).json({ error: 'invalid_user' });

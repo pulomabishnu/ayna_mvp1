@@ -1,3 +1,4 @@
+import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import TopicCover from '../../components/v3/TopicCover.jsx';
 import { hasTeamCover } from '../../data/readCovers.js';
 import { Children, isValidElement, useEffect, useRef, useState } from 'react';
@@ -46,7 +47,7 @@ function splitBodyAndSources(body) {
   return { mainBody, sourceLinks };
 }
 
-export default function ArticleDetailScreen({ article, onBack, nextRead, onNext, onProgress, savedProgress = 0, products = [], productsNote = '', onOpenProduct = null, onAsk = null, renderProduct = null }) {
+function ArticleDetailContent({ article, onBack, nextRead, onNext, onProgress, savedProgress = 0, products = [], productsNote = '', onOpenProduct = null, onAsk = null, renderProduct = null }) {
   const scrollRef = useRef(null);
   const [progress, setProgress] = useState(0);
   // Read time from the words actually on screen: many bodies are components
@@ -141,4 +142,9 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
       <LegalFooter />
     </div>
   );
+}
+
+export default function ArticleDetailScreen(props) {
+  if (!props.article) return <ArticleDetailContent {...props} />;
+  return <ProFeatureGate feature="reads" readId={props.article.id} title={props.article.title} onBack={props.onBack}><ArticleDetailContent {...props} /></ProFeatureGate>;
 }

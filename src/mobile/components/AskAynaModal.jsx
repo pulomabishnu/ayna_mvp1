@@ -1,3 +1,4 @@
+import { askLimitError } from '../../utils/askLimitError.js';
 import { useEffect, useRef, useState } from 'react';
 
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
@@ -339,7 +340,7 @@ export default function AskAynaModal({
       });
       const data = await res.json().catch(() => ({}));
       if (res.status === 401) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
+      if (res.status === 429) throw askLimitError(data?.error);
       if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
 
       const profileSummary = [summarizeProfile(profile || {}), allowGuideContext ? guideContext(guide) : ''].filter(Boolean).join('\n');
@@ -367,7 +368,7 @@ export default function AskAynaModal({
       setMessages(newMessages);
       onChatHistoryUpdate?.(newMessages);
     } catch (err) {
-      if (err?.code !== 'not_signed_in' && err?.code !== 'weekly_limit_reached') {
+      if (err?.code !== 'not_signed_in' && err?.code !== 'ask_limit_reached') {
         // Roll the unanswered question back out of the thread and keep it.
         setMessages(messages);
         setInput(msg);
@@ -376,8 +377,8 @@ export default function AskAynaModal({
       }
       if (err?.code === 'not_signed_in') {
         onRequireAuth?.('Ask ayna');
-      } else if (err?.code === 'weekly_limit_reached') {
-        setSendError("You've used your free chats for this week. They reset weekly.");
+      } else if (err?.code === 'ask_limit_reached') {
+        setSendError(err.message);
       } else {
         setSendError(err?.message || 'ayna couldn’t answer just now. Check your connection and ask again in a moment.');
       }

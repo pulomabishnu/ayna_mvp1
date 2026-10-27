@@ -13,3 +13,7 @@
 .pro-access__admin { margin-top: 32px; }
 .pro-access__admin form, .pro-access__admin label { display: grid; gap: 10px; }
 .pro-access__admin input { min-height: 44px; padding: 10px; color: inherit; background: var(--color-surface); border: 1px solid var(--color-border); }
+.pro-access__features { margin: 20px 0; border-bottom: 1px solid var(--color-border); padding-bottom: 16px; }
+.pro-access__features summary { cursor: pointer; font-weight: 600; padding: 8px 0; }
+.pro-access__features li { margin-top: 14px; line-height: 1.5; }
+.pro-access__features li p { font-size: 14px; color: var(--color-text-muted); margin: 4px 0 12px; }

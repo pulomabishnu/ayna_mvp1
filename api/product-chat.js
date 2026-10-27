@@ -1,3 +1,4 @@
+import { proFeatureRules, consumeProChat } from './_proFeatures.js';
 /**
  * /api/product-chat, Answer user questions about a specific product.
  * Uses the already-generated aiInsights (clinical/science/community narratives)
@@ -220,9 +221,15 @@ export default async function handler(req, res) {
   let usagePeriod = null;
   let usageUsed = 0;
   let usageLimit = null;
-  if (!isPremium) {
-    const { allowed, used, limit, period, degraded } = await consumeUsage(admin, user.id, 'chat');
-    if (!allowed) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'chat' });
+  let rules;
+  try { rules = await proFeatureRules(admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
+  if (!isPremium || rules.enabled) {
+    let usage;
+    try { usage = rules.enabled ? await consumeProChat(admin, user.id, isPremium, rules) : await consumeUsage(admin, user.id, 'chat'); }
+    catch { return res.status(503).json({ error: 'usage_temporarily_unavailable' }); }
+    const { allowed, used, limit, period, degraded } = usage;
+    if (!allowed) return res.status(429).json({ error: rules.enabled ? 'daily_limit_reached' : 'weekly_limit_reached', used, limit, action: 'chat' });
     usagePeriod = degraded ? null : period;
     usageUsed = used;
     usageLimit = limit;
@@ -278,6 +285,6 @@ export default async function handler(req, res) {
   // failed and the user was surprised by a 429.
   return res.status(200).json({
     answer,
-    usage: isPremium ? { unlimited: true } : { used: usageUsed, limit: usageLimit },
+    usage: isPremium && !rules.enabled ? { unlimited: true } : { used: usageUsed, limit: usageLimit },
   });
 }

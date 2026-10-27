@@ -26,6 +26,14 @@ describe('Early Access price and membership display', () => {
     expect(host.textContent).toContain('Then $8.99/month, unless canceled');
     expect(host.textContent).toContain('Then $90.00/year, unless canceled');
   });
+  it('describes the Free/Pro split and labels future capabilities honestly',async()=>{
+    await mount({user});
+    expect(host.textContent).toContain('Unlimited playlist creation');
+    expect(host.textContent).toContain('What stays free');
+    expect(host.textContent).toContain('Safety and evidence information');
+    expect(host.textContent).toContain('Growing during Early Access');
+    expect(host.textContent).toContain('Specific perks are still being defined.');
+  });
   it('never treats a success query parameter as paid access', async () => {
     window.history.replaceState({}, '', '/you/pro?checkout=success');
     await mount({ user });

@@ -1,3 +1,4 @@
+import { askLimitError } from '../../utils/askLimitError.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { trackApp } from '../utils/appAnalytics.js';
 import { PANEL_ICONS } from '../components/pdpIcons.jsx';
@@ -113,14 +114,14 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, ma
       });
       const data = await res.json().catch(() => ({}));
       if (res.status === 401) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
+      if (res.status === 429) throw askLimitError(data?.error);
       if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
       setMessages((prev) => [...prev, { role: 'assistant', text: data.answer }]);
     } catch (e) {
       if (e?.code === 'not_signed_in') {
         onRequireAuth?.('Ask ayna');
-      } else if (e?.code === 'weekly_limit_reached') {
-        setError("You've used your free chats for this week. They reset weekly.");
+      } else if (e?.code === 'ask_limit_reached') {
+        setError(e.message);
       } else {
         setError(e?.message || 'ayna couldn’t answer just now. Check your connection and ask again in a moment.');
       }

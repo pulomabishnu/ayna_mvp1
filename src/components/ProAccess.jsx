@@ -1,3 +1,4 @@
+import { PRO_FEATURES, FREE_FEATURES } from '../pro/features.js';
 import { useEffect, useRef, useState } from 'react';
 import { requestPro } from '../utils/proApi.js';
 import './proAccess.css';
@@ -46,6 +47,15 @@ export default function ProAccess({ user, onSignIn }) {
   return <section className="pro-access" aria-labelledby="pro-title">
     <p className="pro-access__eyebrow">ayna Early Access</p>
     <h1 id="pro-title">ayna Pro</h1>
+    <p>Free ayna helps you discover and get started. Pro helps you understand your health more deeply over time.</p>
+    <details className="pro-access__features" open><summary>What Early Access unlocks</summary>
+      <p>Tools vary across the website, app and available health data. Early Access includes new Pro additions as they are released.</p>
+      <ul>{PRO_FEATURES.filter(f => f.stage === 'available').map(f => <li key={f.id}><strong>{f.label}</strong><p>{f.description}</p></li>)}</ul>
+    </details>
+    <details className="pro-access__features"><summary>Growing during Early Access</summary><p>These capabilities are being expanded or finalized. Availability can vary across the website, app and connected data sources.</p>
+      <ul>{PRO_FEATURES.filter(f => f.stage === 'evolving').map(f => <li key={f.id}><strong>{f.label}</strong><p>{f.description}</p></li>)}</ul>
+    </details>
+    <details className="pro-access__features"><summary>What stays free</summary><ul>{FREE_FEATURES.map(label => <li key={label}>{label}</li>)}</ul></details>
     {!user ? <><p>Sign in to see your Pro access or choose an early-access plan.</p><button className="ay-btn ay-btn--primary" onClick={onSignIn}>Sign in</button></> : <>
       {current?.active ? <>
         <h2>Your Pro access is active.</h2>

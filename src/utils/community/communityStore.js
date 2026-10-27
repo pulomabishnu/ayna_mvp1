@@ -14,6 +14,7 @@ import { announceReviewsChanged, normalizeRating } from './reviewRatings.js';
 export const PAGE_SIZE = 20;
 
 const FRIENDLY_ERRORS = {
+  pro_playlist_limit: 'You’ve reached your free playlist allowance. ayna Pro includes unlimited playlist creation. Your existing playlists are still available.',
   community_rate_limited: "You're posting a lot right now, take a breather and try again in a bit.",
   community_post_unavailable: "This post isn't available anymore.",
   community_too_many_products: 'You can tag up to 3 products.',

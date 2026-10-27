@@ -35,6 +35,8 @@ function jsonReply(overrides = {}) {
 
 beforeEach(() => {
   restoreEnv = withEnv({
+    PRO_FEATURE_GATES_ENABLED: undefined,
+    PRO_BILLING_ENABLED: undefined,
     SUPABASE_URL: 'https://x.supabase.co',
     SUPABASE_SERVICE_ROLE_KEY: 'service-key',
     ANTHROPIC_API_KEY: 'test-key',
@@ -197,5 +199,21 @@ describe('POST /api/ask-ayna', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body.answer).not.toMatch(/\bdiagnos/i);
+  });
+});
+
+describe('daily Free vs Pro Ask allowance', () => {
+  it.each([[false,5],[true,50]])('caps premium=%s at %s questions per day',async(premium,limit)=>{
+    process.env.PRO_FEATURE_GATES_ENABLED='1';
+    globalThis.__mockSupabase=mockSupabase({user:{id:'user-1',app_metadata:{is_premium:premium}},rpcResults:{
+      pro_feature_config:{data:{enabled:true,freeAskPerDay:5,proAskPerDay:50,premiumReadIds:[]}},
+      consume_ai_usage:{data:[{allowed:false,used:limit}]},
+    }});
+    globalThis.fetch=vi.fn(async()=>anthropicOk(jsonReply()));
+    const res=mockRes();await(await loadHandler())(mockReq({body:validBody}),res);
+    expect(res.statusCode).toBe(429);expect(res.body).toMatchObject({error:'daily_limit_reached',limit});
+    const call=globalThis.__mockSupabase.rpcCalls.find(c=>c.name==='consume_ai_usage');
+    expect(call.args).toMatchObject({p_action:'chat',p_limit:limit});expect(call.args.p_period).toMatch(/^day:/);
+    expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 });
