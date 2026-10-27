@@ -216,6 +216,8 @@ export default function BrowseScreen({
   initialSearch = '',
   // Mounted inside Explore (Products): Explore owns the header and the page title.
   embedded = false,
+  // Inside Explore: the page title for the pink header band ("Shop", "Services"), with the search in the band.
+  bandTitle = '',
   // Explore's Products or Services toggle, shown on the same row as the need chips.
   typeToggle = null,
 }) {
@@ -481,8 +483,10 @@ export default function BrowseScreen({
           Explore text tabs above, then one toolbar (Filters, Compare, Swipe).
           Areas, quick filters and sort all live in the Filters sheet; the
           "Searches people make" phrases moved to the Categories tab. */}
-      <div className={`ayna-fresh-browse-heading ayna-shop-heading${embedded ? ' is-embedded' : ''}`}>
-        <div className="ay-shop-titlebar">{embedded ? <h2 id="ay-shop-title" className="sr-only">Products</h2> : <h1 id="ay-shop-title">Products</h1>}{!embedded && hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
+      {/* Inside Explore (founder, Oct 27: "fix the app header"): ONE compact pink band with a wavy
+          edge holding the page title and the search, the family of the website Shop header. */}
+      <div className={`ayna-fresh-browse-heading ayna-shop-heading${embedded ? ' is-embedded' : ''}${embedded && bandTitle ? ' ax-band' : ''}`}>
+        <div className="ay-shop-titlebar">{embedded ? (bandTitle ? <h1 id="ay-shop-title" className="ax-band__title">{bandTitle}</h1> : <h2 id="ay-shop-title" className="sr-only">Products</h2>) : <h1 id="ay-shop-title">Products</h1>}{!embedded && hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
         {!embedded && <NeedStickers className="ay-app-needs" active={searchValue} onPick={(q) => setSearchValue(q)} />}
         <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
         {!embedded && <div className="ay-app-quick" role="group" aria-label="Quick filters">
