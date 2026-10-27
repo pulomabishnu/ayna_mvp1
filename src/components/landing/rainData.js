@@ -1,15 +1,23 @@
 // The raining background's contents (kit.jsx Rain). Real catalog packshots only.
 // Checked one by one on butter (multiply): each drops its white cleanly, no box left.
-// Fun but in the back (founder, Oct 27 11:36): products around the edges with
-// four of the app's shapes between them, no numbers.
+// Founder, Oct 27 12:11: spread evenly, products and the app's features taking
+// turns ("your products + your data together"), each feature recognisable with
+// a one-word label (no numbers).
 export const RAIN_PRODUCTS = [
   'p-saalt-cup', 'p-thermacare', 'p-lena-cup', 'p-natracare-pad', 'p-evening-primrose', 'p-flo-gummies',
   'p-cora-disc', 'p-rael-organic-pad', 'p-lola-tampon', 'p-winx-uti-test-treat', 'p-honeypot-pad', 'p-vitex',
 ];
 const P = (i, s = 'm') => ({ k: 'p', id: RAIN_PRODUCTS[i], s });
+const W = (k) => ({ k });
 export const RAIN_COLS = [
-  [P(0, 'l'), { k: 'ring' }, P(1), P(2, 's'), { k: 'line' }],
-  [P(3), P(4, 'l'), { k: 'dots' }, P(5, 's')],
-  [P(6, 'l'), { k: 'match' }, P(7), P(8, 's'), { k: 'ring' }],
-  [P(9), { k: 'line' }, P(10, 'l'), P(11, 's'), { k: 'dots' }],
+  [P(0, 'l'), W('ring'), P(1), W('ask'), P(2, 'l'), W('streak')],
+  [W('sleep'), P(3, 'l'), W('match'), P(4), W('month'), P(5, 'l')],
+  [P(6), W('streak'), P(7, 'l'), W('sleep'), P(8), W('match')],
+  [W('month'), P(9), W('ask'), P(10, 'l'), W('ring'), P(11)],
+];
+// The app's two narrow edge columns: the compact features only (ring, sleep,
+// match, Ask), so nothing reaches in towards the words.
+export const RAIN_COLS_APP = [
+  [P(0, 'l'), W('ring'), P(1), W('ask'), P(2, 'l'), W('sleep')],
+  [W('match'), P(3, 'l'), W('sleep'), P(4), W('ring'), P(5, 'l')],
 ];

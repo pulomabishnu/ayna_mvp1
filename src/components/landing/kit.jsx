@@ -36,33 +36,44 @@ function Ring() {
     </svg>
   );
 }
-const LINE = [6, 9, 7, 8, 11, 10, 13];
-function Line({ w = 96, h = 40 }) {
-  const lo = Math.min(...LINE); const hi = Math.max(...LINE);
-  const pts = LINE.map((v, i) => `${(i / (LINE.length - 1)) * (w - 10) + 5},${h - 6 - ((v - lo) / (hi - lo)) * (h - 14)}`);
-  const [lx, ly] = pts[pts.length - 1].split(',');
-  return <svg className="lk-line" viewBox={`0 0 ${w} ${h}`}><polyline points={pts.join(' ')} /><circle cx={lx} cy={ly} r="4" /></svg>;
-}
+const SLEEP = [7, 5, 8, 6, 9, 4, 6];
+// A month of dots, a few period days filled (Your month, the calendar sheet on Home).
+const MONTH = Array.from({ length: 21 }, (_, i) => (i >= 2 && i <= 5 ? 'p' : ''));
 
-function Drop({ t, eager }) {
-  switch (t.k) {
-    case 'p':
-      return (
-        <span className={`lk-d lk-prod is-${t.s || 'm'}`}>
-          <span className="lk-prod__in"><img src={src(t.id)} alt="" width="160" height="160" loading="eager" decoding="async" fetchPriority={eager ? 'auto' : 'low'} /></span>
-        </span>
-      );
+// Each of the app's features as a small recognisable shape with a one-word
+// label (words only, never a number, so nothing reads as her data).
+function Widget({ k }) {
+  switch (k) {
     case 'ring':
-      return <span className="lk-d lk-w"><Ring /></span>;
-    case 'dots':
-      return <span className="lk-d lk-w"><span className="lk-dots">{[1, 1, 1, 1, 0, 0, 0].map((on, i) => <i key={i} className={on ? 'is-on' : ''} />)}</span></span>;
-    case 'line':
-      return <span className="lk-d lk-w"><Line /></span>;
+      return <><Ring /><small>Cycle</small></>;
+    case 'sleep':
+      return <><span className="lk-bars">{SLEEP.map((v, i) => <i key={i} style={{ '--h': v / 9 }} />)}</span><small>Sleep</small></>;
+    case 'streak':
+      return <><span className="lk-dots">{[1, 1, 1, 1, 0, 0, 0].map((on, i) => <i key={i} className={on ? 'is-on' : ''} />)}</span><small>Streak</small></>;
     case 'match':
-      return <span className="lk-d lk-w"><span className="lk-pill"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg><i /><i /></span></span>;
+      return <span className="lk-pill"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg>Match</span>;
+    case 'ask':
+      return <span className="lk-bubble">Ask ayna</span>;
+    case 'month':
+      return <><span className="lk-month">{MONTH.map((m, i) => <i key={i} className={m ? 'is-p' : ''} />)}</span><small>Your month</small></>;
     default:
       return null;
   }
+}
+
+// One even slot per item (a jittered grid: columns fall at different speeds
+// and alternate sides), products and the app's features taking turns.
+function Drop({ t, eager }) {
+  if (t.k === 'p') {
+    return (
+      <span className="lk-slot">
+        <span className={`lk-d lk-prod is-${t.s || 'm'}`}>
+          <span className="lk-prod__in"><img src={src(t.id)} alt="" width="160" height="160" loading="eager" decoding="async" fetchPriority={eager ? 'auto' : 'low'} /></span>
+        </span>
+      </span>
+    );
+  }
+  return <span className="lk-slot"><span className={`lk-d lk-w lk-w--${t.k}`}><Widget k={t.k} /></span></span>;
 }
 
 // Slow but visible: one fall takes 40 to 60 seconds, each column at its own pace.
@@ -71,8 +82,8 @@ const SPEEDS = [48, 58, 44, 54];
 const COPIES = [0, 1, 2, 3, 4, 5];
 
 /** The raining background: `cols` columns (the CSS may show fewer). Decoration only. */
-export function Rain({ cols = 4, onInk = false, className = '' }) {
-  const list = RAIN_COLS.slice(0, cols);
+export function Rain({ cols = 4, layout = RAIN_COLS, onInk = false, className = '' }) {
+  const list = layout.slice(0, cols);
   return (
     <div className={`lk-rainbox${onInk ? ' lk-rainbox--ink' : ''} ${className}`.trim()} aria-hidden="true">
       <div className="lk-rain" style={{ '--cols': list.length }}>

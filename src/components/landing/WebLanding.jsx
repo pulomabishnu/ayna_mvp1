@@ -53,8 +53,8 @@ function Go({ href, onGo, className, children }) {
    middle, not huge; clean, but keep the fun and the brown and pink bar.
    The espresso band she liked, ending in the wavy edge, with the falling
    cut-outs as a faded layer on both sides (soft butter circles on espresso)
-   and everything centred on top: a two-line title with a pink highlighter
-   swipe on "your body.", one line, the search, Slide to start (the welcome
+   and everything centred on top: a two-line title with "your body." in
+   pink (no box behind it, founder 12:08), one line, the search, Slide to start (the welcome
    tip's anchor) and How we match. The brown and pink bar runs under it. */
 function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
   return (
@@ -63,10 +63,11 @@ function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
         <Rain cols={4} onInk className="wl-rain" />
         <div className="wl-hero__in">
           {/* One promise on the website and the app (landing audit 4 and 9). */}
-          <h1 id="hm-hero-title" className="wl-title">Find what fits <span><mark>your body.</mark></span></h1>
+          <h1 id="hm-hero-title" className="wl-title">Find what fits <span>your body.</span></h1>
+          <p className="wl-one">Your products, routine and health data, finally in one place.</p>
           <p className="wl-lead">Women’s health products matched to you, with the evidence beside each one.</p>
+          <SlideToStart className="wl-sts" tour="landing-start" size="lg" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
           <HeroSearch onSearch={onSearch} className="wl-search" />
-          <SlideToStart className="wl-sts" tour="landing-start" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
           <a className="wl-how" href="/how-it-works" onClick={(e) => { if (!onViewHowItWorks || !isPlainLeftClick(e)) return; e.preventDefault(); onViewHowItWorks(); }}>How we match<Arrow /></a>
           {banner && <div className="wl-banner">{banner}</div>}
         </div>
@@ -431,7 +432,7 @@ export default function WebLanding({ signedIn = false, hasProfile = false, onSta
   const home = Boolean(signedIn && hasProfile && onGoHome);
   const cta = home
     ? { label: 'Go to your Home', slide: 'Slide to go to your Home', go: onGoHome }
-    : { label: 'Get my matches', slide: 'Slide to get your matches', go: onStartQuiz };
+    : { label: 'Get my matches', slide: 'Slide to find your matches', go: onStartQuiz };
   return (
     <div id="ay-landing" className="ed ed-home hm hm-uq wl">
       <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />

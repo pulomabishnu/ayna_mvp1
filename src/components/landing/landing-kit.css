@@ -21,47 +21,52 @@
 }
 .lk-rain__col { position: relative; min-width: 0; }
 .lk-rain__run { position: absolute; inset: 0 0 auto; display: flex; flex-direction: column; background: var(--lk-field); animation: lk-fall var(--dur, 50s) linear var(--delay, 0s) infinite; will-change: transform; }
-.lk-rain__set { display: flex; flex-direction: column; align-items: center; gap: var(--lk-gap, 72px); padding-bottom: var(--lk-gap, 72px); }
+.lk-rain__set { display: flex; flex-direction: column; align-items: center; gap: var(--lk-gap, 0px); padding-bottom: var(--lk-gap, 0px); }
 @keyframes lk-fall { from { transform: translate3d(0, -16.6667%, 0); } to { transform: translate3d(0, 0, 0); } }
 html.ay-motion-paused .lk-rain__run { animation-play-state: paused; }
 /* Reduced motion: the rain stands still. */
 @media (prefers-reduced-motion: reduce) { .lk-rain__run { animation: none; transform: translate3d(0, -8%, 0); } }
 
+/* ---- one even slot per item; columns alternate sides ---- */
+.lk-slot { display: flex; align-items: center; width: 100%; height: var(--lk-slot, 160px); }
+.lk-rain__set > :nth-child(odd) { justify-content: flex-start; }
+.lk-rain__set > :nth-child(even) { justify-content: flex-end; }
+.lk-rain__col:nth-child(even) .lk-rain__set > :nth-child(odd) { justify-content: flex-end; }
+.lk-rain__col:nth-child(even) .lk-rain__set > :nth-child(even) { justify-content: flex-start; }
+
 /* ---- cut-outs ---- */
-.lk-prod { display: block; width: 100%; }
+.lk-prod { display: block; width: 100%; max-width: var(--lk-prod-max, 132px); }
 .lk-prod.is-l { width: 100%; }
-.lk-prod.is-m { width: 82%; }
-.lk-prod.is-s { width: 64%; }
-.lk-rain__set > :nth-child(odd) { align-self: flex-start; }
-.lk-rain__set > :nth-child(even) { align-self: flex-end; }
-.lk-rain__col:nth-child(even) .lk-rain__set > :nth-child(odd) { align-self: flex-end; }
-.lk-rain__col:nth-child(even) .lk-rain__set > :nth-child(even) { align-self: flex-start; }
+.lk-prod.is-m { width: 84%; }
 .lk-prod__in { display: block; aspect-ratio: 1; }
 .lk-prod img { display: block; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
 
-/* ---- the app's shapes: outlines only, no numbers ---- */
-.lk-w { display: grid; justify-items: center; }
-.lk-ring { width: 60px; height: 60px; }
+/* ---- the app's features, outlines only, a one-word label each ---- */
+.lk-w { display: grid; justify-items: center; gap: 6px; color: var(--lk-fg); }
+.lk-w small { font: 700 13px/1 var(--ay-font-ui, 'Figtree', sans-serif); letter-spacing: .01em; color: var(--lk-fg); }
+.lk-ring { width: 56px; height: 56px; }
 .lk-ring__track { fill: none; stroke: var(--lk-line); stroke-width: 5; }
 .lk-ring__arc { fill: none; stroke: var(--lk-accent); stroke-width: 5; stroke-linecap: round; }
-.lk-dots { display: grid; grid-template-columns: repeat(7, 11px); gap: 6px; }
-.lk-dots i { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid var(--lk-line); box-sizing: border-box; }
+.lk-dots { display: grid; grid-template-columns: repeat(7, 10px); gap: 5px; }
+.lk-dots i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--lk-line); box-sizing: border-box; }
 .lk-dots i.is-on { background: var(--lk-accent); border-color: var(--lk-accent); }
-.lk-line { width: 96px; height: 40px; overflow: visible; }
-.lk-line polyline { fill: none; stroke: #769ebe; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.lk-line circle { fill: var(--lk-accent); }
-.lk-pill { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--lk-accent); }
-.lk-pill svg { width: 16px; height: 16px; fill: var(--lk-accent); }
-.lk-pill i { width: 22px; height: 6px; border-radius: 999px; background: var(--lk-accent); opacity: .7; }
-.lk-pill i + i { width: 12px; }
+.lk-bars { display: flex; align-items: flex-end; gap: 4px; height: 34px; }
+.lk-bars i { width: 8px; height: 100%; border-radius: 999px; background: var(--lk-line); transform: scaleY(var(--h)); transform-origin: bottom; }
+.lk-bars i:last-child { background: var(--lk-accent); }
+.lk-month { display: grid; grid-template-columns: repeat(7, 9px); gap: 4px; }
+.lk-month i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--lk-line); box-sizing: border-box; }
+.lk-month i.is-p { background: var(--lk-accent); border-color: var(--lk-accent); }
+.lk-pill { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--lk-accent); color: var(--lk-accent); font: 700 13px/1 var(--ay-font-ui, 'Figtree', sans-serif); }
+.lk-pill svg { width: 15px; height: 15px; fill: var(--lk-accent); }
+.lk-bubble { display: inline-flex; align-items: center; height: 34px; padding: 0 12px; border-radius: 16px 16px 16px 4px; border: 1.5px solid var(--lk-accent); color: var(--lk-accent); font: 700 13px/1 var(--ay-font-ui, 'Figtree', sans-serif); white-space: nowrap; }
 
 /* ---- on espresso (an espresso band, or dark mode): a soft see-through layer.
    Each packshot on a small rounded butter tile (its white would show on
    espresso); the shapes in pink and butter outlines. ---- */
-:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) { --lk-field: transparent; --lk-line: rgba(255, 237, 172, .7); }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) { --lk-field: transparent; --lk-fg: #ffedac; --lk-line: rgba(255, 237, 172, .75); }
 :is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod__in { border-radius: 18px; background: #ffedac; overflow: hidden; isolation: isolate; padding: 8%; }
-:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod { opacity: .5; }
-:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-w { opacity: .62; }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod { opacity: .7; }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-w { opacity: .8; }
 
 /* ---- the hero search: wide, butter, espresso outline ---- */
 .lsx-search { position: relative; display: flex; align-items: center; width: 100%; max-width: 560px; }

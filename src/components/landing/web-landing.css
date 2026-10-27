@@ -13,13 +13,29 @@
 }
 .app-container .hm.wl .wl-edge { display: block; width: 100%; height: 14px; margin-top: -1px; }
 .app-container .hm.wl .wl-edge path { fill: #3e2723 !important; }
-/* the rain: a soft see-through layer around the edges (each item carries its
-   own opacity, kit), with a wash only directly behind the copy */
-.app-container .hm.wl .wl-rain { z-index: -2; --lk-gap: 44px; --lk-colgap: 28px; --lk-pad: clamp(16px, 3vw, 48px); }
-.app-container .hm.wl .wl-hero__in::before { content: ''; position: absolute; inset: -40px -72px; z-index: -1; pointer-events: none;
-  background: radial-gradient(closest-side, #3e2723 78%, rgba(62, 39, 35, 0) 100%); }
-/* phones: one column a side, the middle clear */
-.app-container .hm.wl .wl-rain .lk-rain { grid-template-columns: minmax(0, 96px) minmax(0, 1fr) minmax(0, 96px); }
+/* the rain: a see-through layer around the edges (each item carries its own
+   opacity, kit), kept clear of the copy by where the columns sit */
+.app-container .hm.wl .wl-rain { z-index: -2; --lk-gap: 0px; --lk-colgap: 28px; --lk-pad: clamp(16px, 3vw, 48px); --lk-slot: 150px; --lk-prod-max: 124px; }
+@media (min-width: 900px) { .app-container .hm.wl .wl-rain { --lk-slot: 172px; } }
+/* phones only: the copy is wider than the clear middle, so a large, very soft
+   fade sits behind it (no edge anywhere); on desktop the middle is simply clear */
+.app-container .hm.wl .wl-hero__band::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse 75% 50% at 50% 46%, rgba(62, 39, 35, .92) 0%, rgba(62, 39, 35, .7) 45%, rgba(62, 39, 35, 0) 100%); }
+@media (min-width: 900px) { .app-container .hm.wl .wl-hero__band::before { display: none; } }
+/* phones: one narrow column a side, items held to the outer edge; the words sit between */
+.app-container .hm.wl .wl-rain .lk-rain { grid-template-columns: minmax(0, 64px) minmax(0, 1fr) minmax(0, 64px); }
+@media (max-width: 899px) {
+  .app-container .hm.wl .wl-rain { --lk-pad: 8px; --lk-slot: 112px; --lk-prod-max: 56px; }
+  .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(1) .lk-slot { justify-content: flex-start; }
+  .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(2) .lk-slot { justify-content: flex-end; }
+  .app-container .hm.wl .wl-rain .lk-ring { width: 44px; height: 44px; }
+  .app-container .hm.wl .wl-rain .lk-dots { grid-template-columns: repeat(7, 7px); gap: 2px; }
+  .app-container .hm.wl .wl-rain .lk-dots i { width: 7px; height: 7px; }
+  .app-container .hm.wl .wl-rain .lk-month { grid-template-columns: repeat(7, 6px); gap: 2px; }
+  .app-container .hm.wl .wl-rain .lk-month i { width: 6px; height: 6px; }
+  .app-container.app-container.app-container .hm.wl :is(.wl-title, .wl-one, .wl-lead) { max-width: calc(100vw - 2 * 68px); }
+  .app-container.app-container .hm.wl .wl-search.lsx-search input { background: #3e2723 !important; }
+}
 .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(2) { grid-column: 3; }
 .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(n + 3) { display: none; }
 /* desktop: two columns a side, the centre clear */
@@ -34,19 +50,27 @@
 .app-container .hm.wl .wl-hero__in { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 560px; text-align: center; }
 .app-container.app-container .hm.wl .wl-title { margin: 0 0 4px; font: 800 clamp(34px, 9vw, 36px)/1.1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.03em !important; color: #ffedac !important; text-transform: none; max-width: none; }
 .app-container.app-container .hm.wl .wl-title > span { display: block; }
-/* the pink highlighter swipe on one phrase */
-.app-container.app-container .hm.wl .wl-title mark { background: #f7badd; color: #3e2723; padding: 0 .16em .02em; border-radius: .2em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-.app-container.app-container .hm.wl .wl-lead { margin: 0 0 8px; max-width: 34ch; font: 500 17px/1.5 var(--ay-sans-stack, sans-serif) !important; color: rgba(255, 237, 172, .9) !important; text-wrap: balance; }
-.app-container .hm.wl .wl-search { max-width: 520px; }
-.app-container .hm.wl .wl-sts { max-width: 520px; color: #ffedac; }
-.app-container .hm.wl .wl-sts .ay-sts__hint { font-size: 14px; }
+/* "your body." in pink, nothing behind it */
+.app-container.app-container .hm.wl .wl-title > span { color: #f7badd; }
+.app-container.app-container .hm.wl .wl-one { margin: 0; max-width: 30ch; font: 700 18px/1.4 var(--ay-sans-stack, sans-serif) !important; color: #ffedac !important; text-wrap: balance; }
+.app-container.app-container .hm.wl .wl-lead { margin: -8px 0 8px; max-width: 40ch; font: 500 16px/1.5 var(--ay-sans-stack, sans-serif) !important; color: rgba(255, 237, 172, .86) !important; text-wrap: balance; }
+.app-container .hm.wl .wl-sts { width: 100%; max-width: 440px; color: #ffedac; }
+/* the search: secondary, compact and quiet under the main action */
+.app-container .hm.wl .wl-search { --lk-search-h: 46px; max-width: 440px; }
+.app-container .hm.wl .wl-search.lsx-search input { font-size: 15px !important; background: rgba(255, 237, 172, .06) !important; color: #ffedac !important; border-color: rgba(255, 237, 172, .55) !important; }
+.app-container .hm.wl .wl-search label > svg { stroke: #ffedac; }
+.app-container .hm.wl .wl-search .lsx-search__hint { font-size: 15px; color: rgba(255, 237, 172, .86); }
+.app-container .hm.wl .wl-search .lsx-search__hint b { color: #ffedac; }
+.app-container .hm.wl .wl-search button { width: 36px; height: 36px; right: 5px; background: #ffedac; color: #3e2723; }
+.app-container .hm.wl .wl-sts .ay-sts__hint { font-size: 14px; margin-top: 2px; }
 .app-container .hm.wl .wl-how { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: -6px; color: #ffedac !important; font: 700 16px/1.2 var(--ay-sans-stack, sans-serif) !important; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
 .app-container .hm.wl .wl-how svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .app-container .hm.wl .wl-how:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 8px; }
 .app-container .hm.wl .wl-banner { width: 100%; }
 @media (min-width: 900px) {
   .app-container.app-container .hm.wl .wl-title { font-size: clamp(44px, 3.4vw, 48px) !important; }
-  .app-container.app-container .hm.wl .wl-lead { font-size: 19px !important; }
+  .app-container.app-container .hm.wl .wl-one { font-size: 20px !important; }
+  .app-container.app-container .hm.wl .wl-lead { font-size: 17px !important; }
 }
 
 /* ---- below the hero: the same sections, quieter and with more room ---- */
