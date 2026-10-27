@@ -190,5 +190,5 @@ html body .app-container .ay-rundown-setting :is(.ay-today__primary, .ay-today__
 html body .app-container .ay-rundown-setting .ay-today__primary { border: 0; background: var(--ay-fill-ink, #3e2723); color: var(--ay-on-ink, #ffedac); box-shadow: 3px 3px 0 #f7badd; }
 html body .app-container .ay-rundown-setting .ay-today__text { border: 1.5px solid var(--ay-fg, #3e2723); background: transparent; color: inherit; }
 /* Email settings: the two frequency choices share one line instead of stacking. */
-html body .app-container .wy-email .wy-seg { flex-wrap: nowrap; gap: 8px; overflow-x: auto; scrollbar-width: none; }
-html body .app-container .wy-email .wy-seg > * { flex: none; }
+html body .wy-email.wy-email .wy-seg.wy-seg { flex-wrap: nowrap !important; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+html body .wy-email.wy-email .wy-seg.wy-seg > .ay-chip { flex: none; min-height: 44px; padding-inline: 10px !important; gap: 4px; }
