@@ -212,3 +212,26 @@ html body .app-container.app-container:is([data-theme='dark'], [data-theme='bran
 .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-input { background: var(--askp-bg) !important; }
 /* Loop D r2: the match pill in answer plates is the inverse of the panel in both themes (in dark it vanished: espresso on espresso). */
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__match .ay-match-pill:not(.is-hold) { background: var(--askp-ink) !important; color: var(--askp-bg) !important; }
+
+/* Ask critique (Oct 27): the first screen is a plain greeting, one line of context, then one segmented
+   filter over one chip group. No hero card, no colour-blocked groups, no sparkle, no arrow circles. */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-calm { display: grid; gap: 20px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-greet { display: grid; gap: 6px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-greet .ay-askp-hello { margin: 0 !important; font: 700 28px/1.1 var(--ay-font-display) !important; letter-spacing: -.015em !important; color: var(--askp-ink) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-greet .ay-askp-intro { margin: 0 !important; font: 500 15px/1.45 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-groups.is-filtered { display: grid; gap: 14px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-filter { max-width: none; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-filter__cap { margin: -4px 0 0 !important; font: 500 14px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-filter__one { margin: 0 !important; font: 600 14px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chips { display: flex !important; flex-wrap: wrap; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chips > li { margin: 0 !important; max-width: 100%; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip {
+  display: inline-flex !important; align-items: center; min-height: 44px; max-width: 100%;
+  margin: 0 !important; padding: 10px 14px !important; border: 1.5px solid var(--askp-ink) !important; border-radius: 12px !important;
+  background: transparent !important; color: var(--askp-ink) !important; box-shadow: none !important;
+  font: 600 15px/1.3 var(--ay-font-ui) !important; text-align: left; white-space: normal; cursor: pointer;
+}
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip:active { background: var(--askp-pink) !important; color: #3e2723 !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip:focus-visible { outline: 3px solid var(--askp-ink) !important; outline-offset: 2px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip.is-quiet { border-color: var(--askp-line) !important; font-weight: 500 !important; }
+@media (hover: hover) { .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip:hover { background: var(--askp-soft) !important; } }

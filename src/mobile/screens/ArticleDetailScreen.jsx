@@ -1,68 +1,27 @@
-import TopicCover from '../../components/v3/TopicCover.jsx';
-import { hasTeamCover } from '../../data/readCovers.js';
-import { Children, isValidElement, useEffect, useRef, useState } from 'react';
+import ReadCover from '../../components/library/ReadCover.jsx';
+import ReadBody, { SourcesAccordion } from '../../components/library/ReadBody.jsx';
+import { minutesFor, textOf } from '../../components/library/readTime.js';
+import { coverPhotoFor } from '../../data/readCovers.js';
+import { Children, isValidElement, useRef, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ReadVideo from '../../components/library/ReadVideo.jsx';
 import './article-detail.css';
 
-function extractText(node) {
-  if (node == null || typeof node === 'boolean') return '';
-  if (typeof node === 'string' || typeof node === 'number') return String(node);
-  if (Array.isArray(node)) return node.map(extractText).join(' ');
-  if (isValidElement(node)) return extractText(node.props.children);
-  return '';
-}
-
-function estimateReadMinutes(body) {
-  const words = extractText(body).trim().split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.round(words / 200));
-}
-
-// Every real article (src/components/Articles.jsx) ends its body with a
-// <p><strong>Sources:</strong></p> paragraph followed by a <ul> of citation
-// links, a consistent real convention, not a special case for one article.
-// Splitting on it lets the citation links render in a dedicated section
-// instead of a fabricated "reviewed by Dr. X" byline the real data has no
-// field for.
-function splitBodyAndSources(body) {
-  const kids = Children.toArray(body?.props?.children ?? body);
-  const splitIndex = kids.findIndex(
-    (child) => isValidElement(child) && child.type === 'p' && /sources:/i.test(extractText(child.props.children))
-  );
-  if (splitIndex < 0) return { mainBody: kids, sourceLinks: [] };
-
-  const mainBody = kids.slice(0, splitIndex);
-  const sourcesList = kids[splitIndex + 1];
-  let sourceLinks = [];
-  if (isValidElement(sourcesList) && sourcesList.type === 'ul') {
-    sourceLinks = Children.toArray(sourcesList.props.children)
-      .filter(isValidElement)
-      .map((li) => {
-        const link = Children.toArray(li.props.children).find((c) => isValidElement(c) && c.type === 'a');
-        return link ? { href: link.props.href, text: extractText(link.props.children) } : null;
-      })
-      .filter(Boolean);
-  }
-  return { mainBody, sourceLinks };
+// The read's own citation list ("Sources:" then a <ul> of links) as plain rows.
+function sourceLinks(items) {
+  const list = items.find((el) => isValidElement(el) && el.type === 'ul');
+  if (!list) return [];
+  return Children.toArray(list.props.children).filter(isValidElement).map((li) => {
+    const parts = Children.toArray(li.props.children);
+    const link = parts.find((c) => isValidElement(c) && c.type === 'a');
+    const text = textOf(parts).replace(/\s+/g, ' ').trim();
+    return link ? { href: link.props.href, text } : { href: null, text };
+  }).filter((x) => x.text);
 }
 
 export default function ArticleDetailScreen({ article, onBack, nextRead, onNext, onProgress, savedProgress = 0, products = [], productsNote = '', onOpenProduct = null, onAsk = null, renderProduct = null }) {
   const scrollRef = useRef(null);
   const [progress, setProgress] = useState(0);
-  // Read time from the words actually on screen: many bodies are components
-  // whose text isn't in props, so the static estimate said "1 min" for
-  // every read (deep round 2).
-  const [measuredMinutes, setMeasuredMinutes] = useState(0);
-  const articleId = article?.id;
-  useEffect(() => {
-    const el = scrollRef.current?.querySelector('.ay-article-body');
-    if (!el) return undefined;
-    const words = (el.innerText || el.textContent || '').trim().split(/\s+/).filter(Boolean).length;
-    if (!words) return undefined;
-    const frame = window.requestAnimationFrame(() => setMeasuredMinutes(Math.max(1, Math.round(words / 200))));
-    return () => window.cancelAnimationFrame(frame);
-  }, [articleId]);
-
   if (!article) {
     return (
       <div style={{ padding: 40, textAlign: 'center', color: 'var(--ayna-text-muted)', fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>
@@ -71,9 +30,10 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
     );
   }
 
-  const { title, source, tags = [], teaser, body, image } = article;
-  const readMinutes = measuredMinutes || estimateReadMinutes(body);
-  const { mainBody, sourceLinks } = splitBodyAndSources(body);
+  const { title, source, tags = [], teaser, body } = article;
+  // One read time everywhere (card, cover, this page): computed from the read's own words.
+  const readMinutes = minutesFor(article);
+  const photo = coverPhotoFor(article);
   const shown = Math.max(progress >= 0.95 ? 1 : progress, savedProgress);
 
   const handleScroll = () => {
@@ -104,7 +64,7 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
           <span className="ayna-read-meta">{tags[0] || 'Read'} · {readMinutes} min</span>
         </header>
       </div>
-      {hasTeamCover(article) ? <div className="ayna-read-photo"><img src={image} alt="" /></div> : <div className="ay-app-readhero"><TopicCover id={article.id} title={title} className="ay-app-cover is-hero" /></div>}
+      <div className={`ay-read-hero${photo ? ' has-photo' : ''}`}>{photo ? <img src={photo} alt="" /> : <ReadCover article={article} size="hero" />}</div>
       <div className="ayna-read-content">
         <h1 className="ay-read-title">{title}</h1>
         {teaser && (
@@ -113,12 +73,19 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
           </div>
         )}
 
-
-        <ReadVideo video={article.video} />
-
-        <div className="ay-article-body" style={{ fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'var(--ayna-text)' }}>{mainBody}</div>
-
-        {(sourceLinks.length > 0 || source) && <section className="ayna-read-sources" aria-label="Article sources"><h2>Sources</h2>{source && <p>{source}</p>}{sourceLinks.map((link, index) => <a key={`${link.href}-${index}`} href={link.href} target="_blank" rel="noopener noreferrer">{link.text}</a>)}</section>}
+        <ReadBody
+          body={body}
+          className="ay-read-body"
+          before={<ReadVideo video={article.video} />}
+          renderSources={(src) => {
+            const links = sourceLinks(src.items);
+            return (
+              <SourcesAccordion count={links.length || null} label={src.label}>
+                <div className="ayna-read-sources">{source && <p>{source}</p>}{links.map((link, index) => (link.href ? <a key={`${link.href}-${index}`} href={link.href} target="_blank" rel="noopener noreferrer">{link.text}</a> : <p key={index}>{link.text}</p>))}</div>
+              </SourcesAccordion>
+            );
+          }}
+        />
         {/* Content and products connect (team direction 58): products and a question to Ask, labelled as products, after the read. */}
         {products.length > 0 && onOpenProduct && renderProduct && (
           <section className="ay-read-products" aria-labelledby="ay-read-products-h">

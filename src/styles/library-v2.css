@@ -313,3 +313,29 @@ html body .app-container.app-container.app-container.app-container .lb .lb-ed__t
 /* p15 clean: featured reads as a SnapCarousel (Articles.jsx LibraryFeatured). */
 html body .app-container.app-container.app-container.app-container .lb .lb-ed__snap :is(.lb-ed__big, .lb-ed__tile) { grid-column: auto; grid-row: auto; height: 100%; box-sizing: border-box; }
 html body .app-container.app-container.app-container.app-container .lb .lb-ed__snap .lb-ed__tile { min-height: 280px; }
+
+/* Library critique (Oct 27): a read opens calm. No colour band or scalloped edge on the read header;
+   the read's photo (or its plain colour cover) sits beside the title, one meta line under it. The body
+   is ReadBody: "In short", tap-to-open sections, "When to seek care" always open, Sources folded. */
+html body .app-container.app-container.app-container.app-container .lb.lb-read {
+  & .lb-rhead { --band: transparent; --band-fg: var(--ay-text); padding: 8px 0 24px; }
+  & .lb-rhead::after { content: none; }
+  & .lb-rhead__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: center; margin-top: 16px; }
+  & .lb-rhead__meta { margin: 16px 0 0; font: 500 15px/1.45 var(--lb-sans); color: var(--ay-text-2, var(--ay-text)) !important; }
+  & .lb-rhead__cover { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 16px; border: 1.5px solid var(--ay-outline-color, #3e2723); }
+  & .lb-rhead__cover > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  & .lb-rhead__cover > .rc { position: absolute; inset: 0; height: 100%; border-radius: 0; }
+  & .lb-rhead__cover > .rc::after { content: none; }
+  & .lb-prose .ayr { gap: 24px; }
+  & .lb-prose .ayr-short li { font: 500 17px/1.55 var(--lb-sans) !important; margin: 0 !important; }
+  & .lb-prose .ayr-short ul { margin: 0 !important; padding-left: 20px !important; }
+  & .lb-prose .ayr-short__h, & .lb-prose .ayr-care__h { font: 700 18px/1.3 var(--lb-sans) !important; }
+  & .lb-prose .ayr-sec__btn { font: 700 19px/1.3 var(--lb-sans); min-height: 60px; }
+  & .lb-prose .ayr-sec__body p { margin: 0 0 14px !important; }
+  & .lb-prose .ayr-care p { color: #3e2723 !important; font-size: 17px !important; margin: 0 !important; }
+  & .lb-prose .lb-sources { margin: 0; }
+}
+@media (max-width: 1023px) {
+  html body .app-container.app-container.app-container.app-container .lb.lb-read .lb-rhead__grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  html body .app-container.app-container.app-container.app-container .lb.lb-read .lb-rhead__cover { order: -1; }
+}

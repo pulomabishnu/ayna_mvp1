@@ -3,7 +3,7 @@ import { ALL_PRODUCTS } from '../data/products.js';
 import { EdPage } from './editorial/EdPage';
 import { isPlainLeftClick } from '../utils/productRoute';
 import ProductCard from './ProductCard';
-import { Plate, Marquee } from './ui/ay';
+import { Plate } from './ui/ay';
 import { categoryLabel } from './pdp/categoryLabel.js';
 import { safeProductImageSrc } from '../utils/resolveProductImage.js';
 import { productImageOverride } from '../data/productImageOverrides.js';
@@ -233,18 +233,15 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
   };
   const partner = ORDERED.find((p) => p.brand === open) || null;
   const products = partner ? ALL_PRODUCTS.filter((p) => p.brand === partner.brand) : [];
-  // A partner's own product on the white plate (not a stock photo).
-  const heroPick = ORDERED.filter((pt) => !pt.prelaunch).map((pt) => ALL_PRODUCTS.find((x) => x.brand === pt.brand && /^\/(products|brands)\//.test(String(imgOf(x) || '')))).find(Boolean);
   return (
     <EdPage
       crumb="Partners"
-      photo={heroPick ? { src: imgOf(heroPick), alt: `${heroPick.brand} ${heroPick.name}`, product: true } : null}
+      // Critique (Oct 27): no single product as the hero (it read as that brand's page) and no
+      // brand ticker (it repeated the list below). The list itself is the page.
       title={PARTNERS.length > 0 ? 'Brands we work with.' : 'Brand partnerships are coming soon.'}
       lede={PARTNERS.length > 0
         ? 'Partner products may be featured higher in general Browse. Partnership never changes your personalized match scores or recommendation order.'
         : 'Check back soon. When partnerships go live, they may be featured in general Browse, but partnership will never change personalized match scores or recommendation order.'}
-      bandLabel="Partner brands"
-      band={PARTNERS.length > 0 ? <div className="uq-pbands"><span className="uq-pbands__n"><b>{ORDERED.length}</b> brands</span><Marquee items={ORDERED.map((p) => p.brand)} tone="pink" /></div> : null}
     >
       <header className="ed-head">
         <h2 className="ed-h2">Our partners</h2>

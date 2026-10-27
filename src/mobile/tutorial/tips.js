@@ -46,9 +46,9 @@ export const SCREENS = [
     id: 'chat',
     root: '[data-tour="chat"][data-open="true"]',
     tips: [
-      { id: 'chat-starters', anchor: '[data-tour="chat-starters"]', text: 'Tap a question about today’s Rundown to ask it.' },
+      { id: 'chat-starters', anchor: '[data-tour="ask-starters"] [data-tab="rundown"]', text: 'Tap a question about today’s Rundown to ask it.' },
       { id: 'chat-input', anchor: '[data-tour="chat-input"]', text: 'Type or tap the mic to ask anything.' },
-      { id: 'chat-guide', anchor: '[data-tour="chat-guide"]', text: 'Your week, memory and appointment notes live here.' },
+      { id: 'chat-guide', anchor: '[data-tour="ask-starters"] [data-tab="guide"]', text: 'Your week, memory and appointment notes live here.' },
     ],
   },
   {

@@ -1339,7 +1339,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           {i === quoteSlot && tab === 'for-you' && quoteBlock('is-inline')}
           {i === 5 && tab === 'for-you' && peopleBlock('is-inline')}
         </Fragment>)}
-        {!loading && posts.length === 0 && (tab === 'following' ? <div className="cm-empty">
+        {!loading && posts.length === 0 && !(topicsTab && scopedTopicList) && (tab === 'following' ? <div className="cm-empty">
           {(() => {
             const named = followingIds.map((id) => profileById.get(id)).filter(Boolean).slice(0, 3);
             if (!followingIds.length) return <><h2>You’re not following anyone yet</h2><p>Your feed gets better when you follow topics and people you care about.</p></>;
@@ -1367,7 +1367,6 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     setTab(k);
   };
   const onFeed = !page && !search;
-  const openMe = () => (profile ? openProfile(profile.username) : requireAccount('your Community profile'));
 
   // Side modules, each built only from loaded data and hidden when empty.
   const topics = (() => {
@@ -1397,7 +1396,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <label className="ct-search cm-search"><Icon name="search" size={20} /><input ref={searchRef} value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder={narrowSearch ? 'Search' : 'Search people, posts, playlists'} aria-label="Search community" aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'} />{search ? <button type="button" className="cm-search__clear" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); searchRef.current?.focus(); }}>×</button> : <kbd className="cm-kbd" aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>}</label>
         {user && <button type="button" className="cm-iconbtn cm-bell" onClick={openUpdates} aria-label={unreadCount + newAnns.length ? `Updates, ${unreadCount + newAnns.length} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount + newAnns.length > 0 && <span className="cm-bell-dot" aria-hidden="true">{unreadCount + newAnns.length > 9 ? '9+' : unreadCount + newAnns.length}</span>}</button>}
         <button type="button" className="ay-btn ay-btn--primary cm-post-btn" data-tour="community-compose" onClick={openPostTypes}><Icon name="plus" size={18} />Post</button>
-        {user && <button type="button" className="cm-iconbtn cm-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Set up your Community profile'}><Avatar size={44} name={profile?.display_name || 'You'} path={profile?.avatar_url} /></button>}
+        {/* One profile entry point (Community critique, Oct 27): her Community profile is the row at the top of the rail; the site's own avatar is in the top nav. */}
       </div>
     </header>
     {error && <p className="cm-error" role="alert">{error}</p>}
@@ -1407,8 +1406,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <div className="cm-navrow">{tabList}<button type="button" className="cm-topics-btn" aria-haspopup="dialog" onClick={() => setTopicsSheet(true)}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4" /></svg>Topics{onFeed && topicsTab && topicScope !== 'all' ? <span className="cm-topics-btn__on">{topicScope === 'mine' ? 'Mine' : topicLabel(topicScope)}</span> : null}</button></div>
         <div className="cm-rail__more">
           {user && profile && <button type="button" className="cm-me" onClick={() => openProfile(profile.username)}><Avatar size={36} name={profile.display_name || 'You'} path={profile.avatar_url} /><span><strong>{profile.display_name || 'You'}</strong><small>@{profile.username}</small></span></button>}
-          <h2 className="cm-rail__h">Topics</h2>
-          {topicChips('is-rail')}
+          {/* Topics are the one chip row above the feed; follow, edit and suggest live in the Topics sheet. */}
           {userTopics.available && <div className="ut-rail">
             <h2 className="cm-rail__h">Topics by members</h2>
             <MyTopicRows topics={userTopics.mine} activeId={page?.type === 'topic' ? page.id : null} onOpen={openTopic} />

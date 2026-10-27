@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { sentenceCase } from '../utils/sentenceCase.js';
-import { TESTING_WATERS_NOTICE } from '../data/investRound';
 import { useRecommendationViews } from '../utils/recommendationAnalytics';
 import { productsForNeed } from './landingNeeds';
 import { isPlainLeftClick, productHref } from '../utils/productRoute';
@@ -13,12 +12,10 @@ import { brandOf } from '../mobile/data/brandFallback.js';
 import ProductCard from './ProductCard';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { useLatestAnnouncement } from '../hooks/useLatestAnnouncement';
-import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
 import '../styles/editorial.css';
 import '../styles/home.css';
 import '../styles/loop-a-landing.css';
 import '../styles/uq-landing.css';
-import { Seal } from './personality/Bits.jsx';
 import Photo from './ui/Photo.jsx';
 import ReadMore from './info/ReadMore.jsx';
 import { Plate, Chip, Band, Shout, Bento, Tile, Marquee, SnapCarousel } from './ui/ay';
@@ -130,7 +127,6 @@ function HeroArt({ onOpenProduct }) {
   return (
     <div className="hm-art">
       <span className="hm-art__photo"><Photo src="/landing/pink-stripe-floor.webp" alt="" sizes="(max-width: 767px) 46vw, 300px" /></span>
-      <Seal className="hm-art__seal" />
       {lead ? (
         <a className="hm-art__lead" href={productHref(lead)} onClick={open(lead)}>
           <Plate src={lead.image} alt="" imgProps={{ loading: 'eager', decoding: 'auto' }} />
@@ -498,11 +494,11 @@ function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts 
   );
 }
 
-/* ---------- 6. founders + invest (butter) ----------
-   The founders' photo and story (the page's one 44px statement line), then a
-   small Wefunder card. Investment copy lives in src/data/invest.js; the full
-   legal notice stays with the button at 13px (legally required, readable). */
-function FoundersInvest({ onViewAbout }) {
+/* ---------- 6. founders (butter) ----------
+   The founders' photo and story (the page's one 44px statement line). The
+   Wefunder card moved to /about (critique, Oct 27: no investing pitch on the
+   consumer home page); the footer keeps its "Invest in ayna" link. */
+function Founders({ onViewAbout }) {
   return (
     <Band tone="butter" className="hm-sec hm-us hm-band" aria-labelledby="hm-us-title">
       <div className="hm-wrap">
@@ -517,18 +513,6 @@ function FoundersInvest({ onViewAbout }) {
             <Go className="ay-btn ay-btn--secondary" href="/about" onGo={onViewAbout}>Meet us</Go>
           </div>
         </div>
-        <article className="hm-invest" aria-labelledby="hm-invest-title">
-          <Seal className="hm-invest__seal" text="community round · community round · " />
-          <span className="hm-invest__ph"><Photo sizes="200px" src="/landing/laundry-duo.webp" alt="Two friends in curlers reading magazines together on a laundry room floor" loading="lazy" decoding="auto" width="736" height="981" /></span>
-          <div className="hm-invest__copy">
-            <h3 id="hm-invest-title" className="hm-h3">Invest in ayna</h3>
-            <ReadMore className="hm-more"><p className="hm-body">We&rsquo;re so excited to extend an opportunity for you to invest in ayna, whether you&rsquo;re one of our earliest ayna users or a part of the greater community passionate about ayna&rsquo;s work to expand the future of women&rsquo;s health. Join our community round and learn more on Wefunder.</p></ReadMore>
-            <a className="ay-btn ay-btn--secondary" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('landing')}>
-              Invest on Wefunder<span className="ed-sr"> (opens in a new tab)</span><Arrow />
-            </a>
-            <p className="hm-invest__legal">{TESTING_WATERS_NOTICE}</p>
-          </div>
-        </article>
       </div>
     </Band>
   );
@@ -550,7 +534,7 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
       {rest && <>
       <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!(personal && personal.hasQuiz)} />
       <ReadsCommunity onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
-      <FoundersInvest onViewAbout={onViewAbout} />
+      <Founders onViewAbout={onViewAbout} />
       </>}
     </div>
   );

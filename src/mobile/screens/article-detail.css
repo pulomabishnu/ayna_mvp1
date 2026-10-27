@@ -49,3 +49,13 @@
 /* Founder change (no white surfaces): the next-read button sits on deeper butter with a thin rule. */
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ayna-read-next button { background: #f6e3a1; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ayna-read-next button { background: rgba(255, 237, 172, .08); }
+
+/* Read hero (Library critique, Oct 27): the read's real photo, or its plain colour cover with the title.
+   One 1.5px outline, no offset shadow. */
+.ayna-mobile .ay-read-hero { margin: 8px var(--d-gutter, 20px) 0; }
+.ayna-mobile .ay-read-hero.has-photo { aspect-ratio: 16 / 10; overflow: hidden; border-radius: 16px; border: 1.5px solid var(--d-ink, #3e2723); }
+.ayna-mobile .ay-read-hero.has-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ayna-mobile .ay-read-hero .rc { border-radius: 16px; }
+.ayna-mobile .ay-read-body { margin-top: 24px; }
+/* Sources inside their accordion: plain link rows. */
+.ayna-mobile .ay-read-body .ayna-read-sources { margin: 0 !important; padding: 0 !important; border: 0 !important; }

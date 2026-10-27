@@ -2,7 +2,7 @@ import React from 'react';
 import ReadCover from './ReadCover.jsx';
 import { minutesFor } from './readTime.js';
 import { READ_SECTIONS } from '../../data/readSections.js';
-import { READ_CREDITS, readPhoto } from '../../data/readCovers.js';
+import { READ_CREDITS, coverPhotoFor } from '../../data/readCovers.js';
 import { EvMark } from '../cards/CardBits.jsx';
 import './read-card.css';
 
@@ -44,7 +44,7 @@ export default function ReadCard({ article, layout = 'rail', href = null, onOpen
     return (
       <article className={`ay-rcard ${feature ? 'is-feature' : 'is-row'} ${className}`.trim()}>
         <span className="ay-rcard__thumb" aria-hidden="true">
-          {readPhoto(id) ? <img src={readPhoto(id)} alt="" loading={feature ? 'eager' : 'lazy'} /> : <ReadCover article={article} size={feature ? 'hero' : 'thumb'} />}
+          {coverPhotoFor(article) ? <img src={coverPhotoFor(article)} alt="" loading={feature ? 'eager' : 'lazy'} /> : <ReadCover article={article} size={feature ? 'hero' : 'thumb'} />}
         </span>
         <div className="ay-rcard__text">
           <p className="ay-rcard__topic">{sectionLabel(id)} <span aria-hidden="true">·</span> {minutes} min read</p>

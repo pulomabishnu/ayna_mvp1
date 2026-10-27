@@ -1,6 +1,8 @@
 import React from 'react';
 import { EdPage, EdBlock } from './editorial/EdPage';
-import { StickerButton, OutlineButton, Bento, Tile } from './ui/ay';
+import { StickerButton, OutlineButton } from './ui/ay';
+import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
+import { TESTING_WATERS_NOTICE } from '../data/investRound';
 import ReadMore from './info/ReadMore.jsx';
 import { TEAM_CAPTION } from '../data/welcomeSlides.js';
 
@@ -24,7 +26,7 @@ const FOUNDERS = [
 // Advisors in discussion stay off the public page until confirmed.
 const SHOW_ADVISOR_IN_DISCUSSION = false;
 
-// Value cards in one colour family (#7 Double Take): white, pink, butter, white, each with a drawn icon.
+// What ayna stands for, said as plain lines (critique, Oct 27: no colour-rotating bento, no drawn icons).
 const PRINCIPLES = [
   { title: 'Matched to you', body: 'Your profile shapes what you see.', icon: <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" /><circle cx="16" cy="16" r="5" /><path d="M16 2v5M16 25v5M2 16h5M25 16h5" /></svg> },
   { title: 'Evidence-aware', body: 'Research and guidance add context.', icon: <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 5h13l5 5v17H7z" /><path d="M20 5v5h5M11 16h10M11 21h7" /></svg> },
@@ -117,32 +119,7 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
       lede="Women’s wellness products matched to your needs, with the research and reviews beside them."
       onBack={onBack} backLabel={backLabel}
       crumb="About"
-      photo="robe-pickles"
     >
-      <EdBlock
-        title="Find what fits your body, with the research right next to it."
-        intro="ayna matches women’s health products to your answers and puts the research and reviews beside each one, so you spend less time searching."
-      >
-        {/* Bento (uniqueness pass A): the four promises in four tones, with the
-            meaning of the name on the mirror photograph (moved here from the story, verbatim). */}
-        <Bento as="ol" className="ip-bento ip-about">
-          {PRINCIPLES.map((p, i) => (
-            <Tile key={p.title} as="li" tone={['ink', 'pink', 'butter', 'deep'][i]} span={i === 0 ? 'wide' : i === 3 ? 'wide' : ''} className="ip-bt ip-principle">
-              {p.icon}
-              <h3 className="ed-rowtitle">{p.title}</h3>
-              <p>{p.body}</p>
-            </Tile>
-          ))}
-          <Tile as="li" tone="butter" span="wide" className="ip-bt ip-mirror">
-            <span className="ip-mirror__ph"><img src="/landing/vanity-mirror.webp" alt="A woman taking notes at her vanity table" loading="lazy" /></span>
-            <span className="ip-mirror__q">
-              <strong>ayna means “mirror.”</strong>
-              <span>Our name means mirror in Bengali and Turkish. To us, it expresses what we want this experience to feel like: a place that reflects you, your questions and what matters to you.</span>
-            </span>
-          </Tile>
-        </Bento>
-      </EdBlock>
-
       <EdBlock title="We kept asking the same thing: why is this so hard to find?">
         <div className="ed-story">
           <div className="ed-prose">
@@ -167,6 +144,24 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
             </ReadMore>
           </div>
           <TeamPhoto />
+        </div>
+      </EdBlock>
+
+      <EdBlock
+        title="Find what fits your body, with the research right next to it."
+        intro="ayna matches women’s health products to your answers and puts the research and reviews beside each one, so you spend less time searching."
+      >
+        <ul className="ip-ticks ip-principles">
+          {PRINCIPLES.map((p) => (
+            <li key={p.title}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg><span><strong>{p.title}.</strong> {p.body}</span></li>
+          ))}
+        </ul>
+        <div className="ip-mirror ip-mirror--plain">
+          <span className="ip-mirror__ph"><img src="/landing/vanity-mirror.webp" alt="A woman taking notes at her vanity table" loading="lazy" /></span>
+          <span className="ip-mirror__q">
+            <strong>ayna means “mirror.”</strong>
+            <span>Our name means mirror in Bengali and Turkish. To us, it expresses what we want this experience to feel like: a place that reflects you, your questions and what matters to you.</span>
+          </span>
         </div>
       </EdBlock>
 
@@ -211,6 +206,15 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
           <span className="ed-meta">{ADVISOR_IN_DISCUSSION.title}</span>
           <span className="ed-caption">In conversation with ayna, not yet a confirmed advisor</span>
         </div>}
+      </EdBlock>
+
+      {/* Invest moved here from the consumer home page (critique, Oct 27). Same words, the full notice with it. */}
+      <EdBlock title="Invest in ayna">
+        <div className="ip-invest" id="invest">
+          <p className="ed-body">We&rsquo;re so excited to extend an opportunity for you to invest in ayna, whether you&rsquo;re one of our earliest ayna users or a part of the greater community passionate about ayna&rsquo;s work to expand the future of women&rsquo;s health. Join our community round and learn more on Wefunder.</p>
+          <p><a className="ay-btn ay-btn--secondary" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('about')}>Invest on Wefunder<span className="ed-sr"> (opens in a new tab)</span> <span aria-hidden="true">↗</span></a></p>
+          <p className="ip-invest__legal">{TESTING_WATERS_NOTICE}</p>
+        </div>
       </EdBlock>
 
       <EdBlock title="Got questions?">

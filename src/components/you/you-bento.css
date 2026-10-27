@@ -29,3 +29,23 @@
 :is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .is-full { grid-column: 1 / -1; min-height: 0; flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 16px; }
 :is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .is-full .yb-top { width: auto; order: 3; margin-left: auto; }
 :is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .is-full .yb-name { margin: 0; }
+
+/* layout "list" (app You, critique Oct 27): one espresso feature card, then grouped rows on the butter surface. */
+.yb.yb--list { display: grid; gap: 16px; }
+.yb.yb--list .yb-tile.is-eco { min-height: 0; }
+.yb-list { display: grid; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #f6e3a1; overflow: hidden; }
+.ayna-mobile[data-theme='dark'] .yb-list, .app-container[data-theme='brand-dark'] .yb-list { background: rgba(255, 237, 172, .08); }
+.yb-list > li + li { border-top: 1px solid rgba(62, 39, 35, .14); }
+.ayna-mobile[data-theme='dark'] .yb-list > li + li, .app-container[data-theme='brand-dark'] .yb-list > li + li { border-top-color: rgba(255, 237, 172, .16); }
+.yb-row { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 24px minmax(0, 1fr) auto auto; align-items: center; gap: 14px; width: 100%; min-height: 64px; padding: 12px 16px; color: var(--d-ink, #3e2723); cursor: pointer; }
+.ayna-mobile[data-theme='dark'] .yb-row, .app-container[data-theme='brand-dark'] .yb-row { color: #ffedac; }
+.yb-row:focus-visible { outline: 3px solid currentColor; outline-offset: -3px; border-radius: 16px; }
+.yb-row:active { background: rgba(62, 39, 35, .06); }
+.yb-row__icon, .yb-row__go { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.yb-row__go { opacity: .7; }
+.yb-row__text { display: grid; gap: 2px; min-width: 0; }
+.yb-row__text b { font: 600 16px/1.25 var(--ay-font-ui, 'Figtree', sans-serif); }
+.yb-row__text small { font: 500 14px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); opacity: .82; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.yb-row__n { font: 700 17px/1 var(--ay-font-ui, 'Figtree', sans-serif); font-variant-numeric: tabular-nums; }
+:is(#ayk, .yb-list):is(#ayk, .yb-list):is(#ayk, .yb-list) { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; align-self: start; }
+:is(#ayk, .yb-list):is(#ayk, .yb-list):is(#ayk, .yb-list) > li { margin: 0 !important; padding: 0 !important; min-height: 0 !important; }

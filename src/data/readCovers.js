@@ -35,3 +35,13 @@ export const READ_CREDITS = {
   'postpartum-stretch-marks': { by: 'Geena Yousry, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN' },
   'genitourinary-syndrome-of-menopause': { by: 'Shruti Gajjar, MS1', reviewedBy: 'Dr. Anuja Vyas, Board-Certified OBGYN' },
 };
+
+/**
+ * The one cover picture for a read, everywhere it shows (shelf, card, read
+ * page): the Library photo, else the writer's own artwork, else none (the
+ * read then gets a plain colour block with its title, ReadCover.jsx).
+ */
+export function coverPhotoFor(article) {
+  if (!article) return null;
+  return READ_PHOTOS[article.id] || (hasTeamCover(article) ? article.image : null);
+}

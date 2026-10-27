@@ -224,3 +224,58 @@ html body .app-container .ed .ip-prow__plate { grid-row: auto !important; grid-c
 html body .app-container .ed .ip-prow__name { font-size: 18px; margin-top: 4px; }
 html body .app-container .ed .ip-prow__blurb { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; font-size: 14px; }
 html body .app-container .ed .ip-prow__count { grid-row: auto !important; grid-column: auto !important; font-size: 14px; }
+
+/* How it works (critique, Oct 27): one funnel, a plain stepper, plain lines. Brand colours only:
+   espresso for the whole catalog, deep butter for the matches, pink for the part that is "for you". */
+html body .app-container .ip-fun { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+html body .app-container .ip-fun > li { display: flex; justify-content: center; margin: 0; }
+html body .app-container .ip-fun__bar { display: grid; justify-items: center; gap: 2px; box-sizing: border-box; min-height: 88px; padding: 14px 12px; border-radius: 16px; text-align: center; align-content: center; }
+html body .app-container .ip-fun__bar b { font: 700 clamp(32px, 4vw, 48px)/1 var(--ay-font-display, 'ayna Display', sans-serif); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+html body .app-container .ip-fun__bar span { font: 600 15px/1.25 var(--ay-font-ui, 'Figtree', sans-serif); }
+html body .app-container .ip-fun > .is-all .ip-fun__bar { background: #3e2723; color: #ffedac; }
+html body .app-container .ip-fun > .is-mid .ip-fun__bar { background: #f6e3a1; color: #3e2723; border: 1.5px solid #3e2723; }
+html body .app-container .ip-fun > .is-you .ip-fun__bar { background: #f7badd; color: #3e2723; }
+html body .app-container[data-theme='brand-dark'] .ip-fun > .is-all .ip-fun__bar { background: #ffedac; color: #3e2723; }
+html body .app-container[data-theme='brand-dark'] .ip-fun > .is-mid .ip-fun__bar { background: rgba(255, 237, 172, .1); color: #ffedac; border-color: #ffedac; }
+html body .app-container .ip-fun__bar :is(b, span) { color: inherit !important; }
+@media (max-width: 560px) { html body .app-container .ip-fun__bar { min-height: 76px; } html body .app-container .ip-fun__bar span { font-size: 14px; } }
+
+html body .app-container .ip-stepper { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; counter-reset: none; }
+html body .app-container .ip-stepper > li { position: relative; display: grid; align-content: start; gap: 8px; margin: 0; padding: 0; }
+html body .app-container .ip-stepper > li:not(:last-child)::after { content: ''; position: absolute; top: 21px; left: 52px; right: -12px; height: 1.5px; background: currentColor; opacity: .3; }
+html body .app-container .ip-stepper__n { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; font: 700 18px/1 var(--ay-font-ui, 'Figtree', sans-serif); }
+html body .app-container .ip-stepper h3 { margin: 4px 0 0 !important; }
+html body .app-container .ip-stepper p { margin: 0 !important; font: 500 16px/1.5 var(--ay-font-ui, 'Figtree', sans-serif); }
+@media (max-width: 860px) {
+  html body .app-container .ip-stepper { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  html body .app-container .ip-stepper > li { grid-template-columns: 44px minmax(0, 1fr); column-gap: 14px; }
+  html body .app-container .ip-stepper > li > :not(.ip-stepper__n) { grid-column: 2; }
+  html body .app-container .ip-stepper__n { grid-row: 1 / span 4; }
+  html body .app-container .ip-stepper > li:not(:last-child)::after { top: 52px; bottom: -14px; left: 21px; right: auto; width: 1.5px; height: auto; }
+}
+
+html body .app-container .ip-ticks { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+html body .app-container .ip-ticks > li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 12px; align-items: start; margin: 0; font: 500 17px/1.5 var(--ay-font-ui, 'Figtree', sans-serif); }
+html body .app-container .ip-ticks svg { width: 24px; height: 24px; margin-top: 1px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+html body .app-container .ip-levels { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(62, 39, 35, .18); }
+html body .app-container[data-theme='brand-dark'] .ip-levels, html body .app-container[data-theme='brand-dark'] .ip-levels > li { border-color: rgba(255, 237, 172, .2); }
+html body .app-container .ip-levels > li { display: grid; gap: 8px; margin: 0; padding: 16px 0; border-bottom: 1px solid rgba(62, 39, 35, .18); }
+html body .app-container .ip-levels__top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+html body .app-container .ip-levels__top strong { font: 700 17px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
+html body .app-container .ip-levels__top b { font: 700 24px/1 var(--ay-font-display, 'ayna Display', sans-serif); font-variant-numeric: tabular-nums; }
+html body .app-container .ip-levels__bar { display: block; height: 8px; border-radius: 99px; background: rgba(62, 39, 35, .12); overflow: hidden; }
+html body .app-container .ip-levels__bar > i { display: block; height: 100%; border-radius: inherit; background: #3e2723; }
+html body .app-container[data-theme='brand-dark'] .ip-levels__bar { background: rgba(255, 237, 172, .16); }
+html body .app-container[data-theme='brand-dark'] .ip-levels__bar > i { background: #ffedac; }
+html body .app-container .ip-levels__cap { font: 500 15px/1.45 var(--ay-font-ui, 'Figtree', sans-serif); opacity: .85; }
+
+/* About (critique, Oct 27): the promises as plain lines, the name's meaning beside its photo, Invest with its notice. */
+html body .app-container .ip-principles { margin-bottom: 32px; }
+html body .app-container .ip-mirror.ip-mirror--plain { max-width: 860px; overflow: hidden; border-radius: 16px; border: 1.5px solid currentColor; }
+html body .app-container .ip-mirror--plain .ip-mirror__q span { font-size: 17px; line-height: 1.5; }
+@media (max-width: 720px) { html body .app-container .ip-mirror.ip-mirror--plain { grid-template-columns: minmax(0, 1fr); } }
+html body .app-container .ip-invest { display: grid; gap: 16px; max-width: 720px; }
+html body .app-container .ip-invest p { margin: 0; }
+html body .app-container .ip-invest .ed-body { font-size: 17px; line-height: 1.55; }
+html body .app-container .ip-invest__legal { font: 500 14px/1.5 var(--ay-font-ui, 'Figtree', sans-serif); opacity: .85; }

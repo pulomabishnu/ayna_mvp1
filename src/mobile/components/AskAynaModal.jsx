@@ -176,10 +176,8 @@ export default function AskAynaModal({
   const [healthAsk, setHealthAsk] = useState(null); // { buildContext } while the inline switch shows
   // Home (tiles + recent questions) until she asks something.
   const [home, setHome] = useState(true);
-  // The sheet opens at half height and goes full once she asks or types
-  // (PDP build brief: 50% and 100%). The tab and Home's full-screen chat are always full.
-  const [detent, setDetent] = useState('half');
-  useEffect(() => { if (open) setDetent('half'); }, [open]);
+  // A true full-height sheet over the tab bar (Ask critique, Oct 27): no half detent any more.
+  // (The tab and Home's full-screen chat were always full.)
   // Prompts grouped About you · Safety · Products, Safety first when flagged (components/ask/useAskSetup.js).
   const { safety, groups } = useAskSetup({ open, profile, matchOpts, products, signedIn: Boolean(session?.access_token), focusProduct, hasHealthData });
   const [guidePage, setGuidePage] = useState('');
@@ -297,7 +295,6 @@ export default function AskAynaModal({
       // A later question answered here clears the stale "needs an account" note.
       setNeedsAccount('');
       setHome(false);
-      setDetent('full');
       const { answer, ...extras } = local;
       const next = [...messages, { role: 'user', text: msg }, { role: 'assistant', text: answer, ...extras, followUps: local.followUps || [] }];
       setMessages(next);
@@ -316,7 +313,6 @@ export default function AskAynaModal({
     setSendError('');
     setFailedMsg('');
     setHome(false);
-    setDetent('full');
     const userMsg = { role: 'user', text: msg, ...(stats?.length ? { stats } : {}) };
     const messagesWithUser = [...messages, userMsg];
     setMessages(messagesWithUser);
@@ -413,7 +409,6 @@ export default function AskAynaModal({
   if (!enabled || (!open && !hasOpened)) return null;
 
   const signedOut = session === null;
-  const full = asTab || homeMode || detent === 'full';
   const backBtn = !home && !guidePage
     ? <button type="button" aria-label="Back to Ask ayna home" onClick={() => setHome(true)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
     : null;
@@ -426,7 +421,6 @@ export default function AskAynaModal({
         ? <button type="button" className="ay-chat-top__back" onClick={onBackHome}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Today</button>
         : backBtn}
       end={<>
-        {!full && onClose && <button type="button" aria-label="Full height" onClick={() => setDetent('full')}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" /></svg></button>}
         {onClose && <button type="button" className="ay-ask-done" onClick={onClose}>Done</button>}
       </>}
     />
@@ -444,8 +438,9 @@ export default function AskAynaModal({
       data-tour="chat"
       className={`ayna-ask-drawer${asTab ? ' is-tab' : ''}${homeMode ? ' is-home' : ''}${homeMode && onBackHome ? ' is-full' : ''}`}
       data-open={open ? 'true' : 'false'}
-      data-detent={full ? 'full' : 'half'}
-      style={{ position: 'absolute', inset: '0 0 var(--ayna-bottom-nav-height) 0', zIndex: 60, background: 'var(--ayna-bg)', display: 'flex', flexDirection: 'column' }}
+      data-detent="full"
+      // As a sheet it covers the whole screen, tab bar included (the tab bar is hidden while it is open).
+      style={{ position: 'absolute', inset: asTab ? '0 0 var(--ayna-bottom-nav-height) 0' : 0, zIndex: asTab ? 60 : 300, background: 'var(--ayna-bg)', display: 'flex', flexDirection: 'column' }}
     >
       <div ref={sheetRef} className="ayna-ask-drawer-content" role={asTab ? 'region' : 'dialog'} aria-label="Ask ayna" aria-modal={open && !asTab ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
       {onClose && <button {...grabberProps} aria-label="Close Ask ayna" />}
@@ -490,31 +485,19 @@ export default function AskAynaModal({
             name={name ? String(name).split(' ')[0] : ''}
             intro={signedOut ? 'Answered on this phone, no account needed. Not medical advice.' : 'Uses your profile and checked sources. Not medical advice.'}
             how={how}
-            top={<>
-              {/* After today's Daily Rundown: questions about the cards she just saw (this session only). */}
-              {starters.length > 0 && (
-                <section className="ay-askp-group is-rundown" data-tour="chat-starters" aria-labelledby="ay-chat-starters-h">
-                  <h3 id="ay-chat-starters-h">From your Daily Rundown today</h3>
-                  <ul>{starters.map((st) => <li key={st.question}><button type="button" className="ay-askp-pill" onClick={() => (onStarter ? onStarter(st) : send(st.question))}><span>{st.question}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg></button></li>)}</ul>
-                </section>
-              )}
-            </>}
-            groups={groups}
+            // One segmented filter over one chip group (Ask critique, Oct 27): today's Rundown questions
+            // (this session only), About you · Safety · Products, then her guide pages when signed in.
+            groups={[
+              ...(starters.length > 0 ? [{ id: 'rundown', title: 'From your Daily Rundown today', short: 'Rundown', prompts: starters.map((st) => ({ question: st.question, action: () => (onStarter ? onStarter(st) : send(st.question)) })) }] : []),
+              ...groups,
+              ...(session !== null && session !== undefined ? [{ id: 'guide', title: 'Your guide', short: 'Guide', prompts: [
+                ['Your week: what changed for you', 'recap'], ['Memory: what ayna can remember', 'memory'], ['Try and check back', 'trial'], ['Appointment note', 'report'],
+              ].map(([question, page]) => ({ question, action: () => setGuidePage(page) })) }] : []),
+            ]}
             // A suggested question is sent on tap (founder, Oct 24 22:17); typing still waits for Send.
             onPick={(q) => send(q)}
             recent={recentQuestions(messages)}
             onContinue={messages.some((m) => m.role === 'user') ? () => setHome(false) : null}
-            bottom={session !== null && session !== undefined && (
-              <section className="ay-askp-group is-guide" data-tour="chat-guide" aria-labelledby="ay-askp-g-guide">
-                <h3 id="ay-askp-g-guide">Your guide</h3>
-                <ul>
-                  <li><button type="button" className="ay-askp-pill is-quiet" onClick={() => setGuidePage('recap')}><span>Your week: what changed for you</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
-                  <li><button type="button" className="ay-askp-pill is-quiet" onClick={() => setGuidePage('memory')}><span>Memory: what ayna can remember</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
-                  <li><button type="button" className="ay-askp-pill is-quiet" onClick={() => setGuidePage('trial')}><span>Try and check back</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
-                  <li><button type="button" className="ay-askp-pill is-quiet" onClick={() => setGuidePage('report')}><span>Appointment note</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button></li>
-                </ul>
-              </section>
-            )}
           />
         )}
         {!guidePage && !(home && !sending) && messages.map((m, i) => (

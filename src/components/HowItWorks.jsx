@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import HowItWorksFunnel from './HowItWorksFunnel';
-import { SAMPLE_PROFILE_CHIPS, getSampleFunnel } from '../utils/sampleFunnel';
+import { SAMPLE_PROFILE_CHIPS } from '../utils/sampleFunnel';
 import { evidenceCatalogCounts } from '../utils/evidenceCatalogCounts';
 import { DIMENSION_WEIGHTS, PREFERENCE_SPAN } from '../matching/score.js';
 import { MAX_SHOWN_PERCENT } from '../utils/matchDisplay.js';
 import { EdPage, EdBlock } from './editorial/EdPage';
-import { StickerButton, Bento, Tile, SnapCarousel } from './ui/ay';
+import { StickerButton } from './ui/ay';
 import ReadMore from './info/ReadMore.jsx';
 
 // What a personalized match is built from. Sponsorship is never one of them.
@@ -25,26 +25,29 @@ const LEVEL_TILES = [
   { id: 'people', title: 'People’s experiences', cap: 'Posts and reviews, kept in the Reviews tab.' },
 ];
 
-/* The four levels as a Bento (uniqueness pass A): the one level that can give a
-   grade is the big espresso tile; the others are smaller, in pink, butter and deep. */
-const LEVEL_LOOK = { gov: ['ink', 'big'], peer: ['pink', 'wide'], brand: ['butter', ''], people: ['deep', ''] };
+/* The four levels as one plain list (critique, Oct 27: no colour-rotating bento): each level with its
+   live count and a bar against the catalog total. A product can sit at more than one level, so the
+   bars are read one by one, never as parts of a whole. */
 function EvidenceLevels() {
   const [c, setC] = useState(null);
   useEffect(() => { let live = true; evidenceCatalogCounts().then((r) => { if (live) setC(r); }); return () => { live = false; }; }, []);
   return (
     <>
-      <Bento as="ul" className="ip-bento" aria-busy={!c || undefined}>
-        {LEVEL_TILES.map((l) => (
-          <Tile key={l.id} as="li" tone={LEVEL_LOOK[l.id][0]} span={LEVEL_LOOK[l.id][1]} className="ip-bt" big={c ? c[l.id] : '…'}>
-            <strong className="ip-bt__t">{l.title}</strong>
-            <span className="ip-bt__cap">{l.cap}</span>
-          </Tile>
+      <ul className="ip-levels" aria-busy={!c || undefined}>
+        {LEVEL_TILES.map((l, i) => (
+          <li key={l.id} className={i === 0 ? 'is-graded' : ''}>
+            <span className="ip-levels__top"><strong>{l.title}</strong><b>{c ? c[l.id] : '…'}</b></span>
+            <i className="ip-levels__bar" aria-hidden="true"><i style={{ width: c && c.total ? `${Math.round((c[l.id] / c.total) * 100)}%` : 0 }} /></i>
+            <span className="ip-levels__cap">{l.cap}</span>
+          </li>
         ))}
-      </Bento>
+      </ul>
       <p className="ed-caption" style={{ marginTop: 12 }}>{c ? `Products with at least one source at each level, out of ${c.total} products in the catalog today.` : 'Counting the catalog…'}</p>
     </>
   );
 }
+
+const TICK = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>;
 
 /* Standards, said once on the page (#18 Tower 28), on the pink band. The team's
    wording, unchanged: the three promises at a glance, their full text one tap away. */
@@ -93,7 +96,6 @@ function PercentBuild() {
 }
 
 export default function HowItWorks({ onBack, backLabel, onViewSources }) {
-  const funnel = getSampleFunnel();
   const openSources = () => {
     if (onViewSources) onViewSources();
     else if (onBack) onBack();
@@ -105,57 +107,40 @@ export default function HowItWorks({ onBack, backLabel, onViewSources }) {
       crumb="How it works"
       lede="ayna compares products with the health profile and preferences you choose to share, then adds cited research, clinical guidance, safety information and community context where available."
       onBack={onBack} backLabel={backLabel}
-      photo="marble-counter"
       bandLabel="Our standards"
       band={<Standards />}
     >
-      <EdBlock title="Four steps, in order." intro="The numbers below are a sample profile run live on today's catalog, not your results.">
-        {/* Founder Oct 26 20:17: a sequence is a step-through, not a stack. The four steps are a
-            snap carousel: one step per swipe, the next peeking, dots under it. */}
-        <SnapCarousel label="Four steps" size="card" className="ip-steps-snap" items={[
-          { key: 'step-1', node: (
-            <Tile as="div" tone="ink" className="ip-bt ip-step">
-              <span className="ip-step__n" aria-hidden="true">1</span>
-              <h3 className="ed-rowtitle"><span className="ed-sr">Step 1: </span>You tell us</h3>
-              <p>Stage of life, goals, sensitivities and the details you choose to share.</p>
-              <div className="ed-hiw__demo">
-                <span className="ed-caption">Sample profile</span>
-                <div className="ed-tags">{SAMPLE_PROFILE_CHIPS.map((t) => <span key={t}>{t}</span>)}</div>
-              </div>
-            </Tile>
-          ) },
-          { key: 'step-2', node: (
-            <Tile as="div" tone="pink" className="ip-bt ip-step">
-              <span className="ip-step__n" aria-hidden="true">2</span>
-              <h3 className="ed-rowtitle"><span className="ed-sr">Step 2: </span>We narrow the market</h3>
-              <p>Products across the open market are filtered for category fit, known safety conflicts and relevance.</p>
-              <div className="ip-step__nums">
-                <span><b>{funnel.catalog.toLocaleString()}</b><span>In the catalog</span></span>
-                <span aria-hidden="true" className="ip-step__arrow">→</span>
-                <span><b>{funnel.matched}</b><span>Matched to this profile</span></span>
-              </div>
-              <span className="ed-caption">Sample profile</span>
-            </Tile>
-          ) },
-          { key: 'step-3', node: (
-            <Tile as="div" tone="butter" className="ip-bt ip-step">
-              <span className="ip-step__n" aria-hidden="true">3</span>
-              <h3 className="ed-rowtitle"><span className="ed-sr">Step 3: </span>We add evidence</h3>
-              {/* .gov sources only (founder rule); was "ACOG guidance", which is not a .gov source. */}
-              <div className="ed-tags">{['MedlinePlus', 'NIH research', 'CDC data'].map((t) => <span key={t}>{t}</span>)}</div>
-              <ReadMore label="More"><p>Published research, clinical guidance, product and safety sources, and community experience, where available.</p><span className="ed-caption">Unsupported claims are labeled, not upgraded into facts.</span></ReadMore>
-            </Tile>
-          ) },
-          { key: 'step-4', node: (
-            <Tile as="div" tone="deep" className="ip-bt ip-step">
-              <span className="ip-step__n" aria-hidden="true">4</span>
-              <h3 className="ed-rowtitle"><span className="ed-sr">Step 4: </span>Your ecosystem</h3>
-              <div className="ip-step__nums"><span><b>{funnel.strong}</b><span>strong fits (80+), each with its match reason</span></span></div>
-              <span className="ed-caption">Sample profile</span>
-              <ReadMore label="More"><p>Your strongest fits, each shown with its match reason and source context.</p></ReadMore>
-            </Tile>
-          ) },
-        ]} />
+      {/* Critique (Oct 27): lead with the one funnel (the live sample counts), then a plain stepper. */}
+      <EdBlock title="From the whole catalog to your short list.">
+        <HowItWorksFunnel />
+      </EdBlock>
+
+      <EdBlock title="Four steps, in order.">
+        <ol className="ip-stepper">
+          <li>
+            <span className="ip-stepper__n" aria-hidden="true">1</span>
+            <h3 className="ed-rowtitle"><span className="ed-sr">Step 1: </span>You tell us</h3>
+            <p>Stage of life, goals, sensitivities and the details you choose to share.</p>
+            <ReadMore label="Sample profile"><div className="ed-tags">{SAMPLE_PROFILE_CHIPS.map((t) => <span key={t}>{t}</span>)}</div></ReadMore>
+          </li>
+          <li>
+            <span className="ip-stepper__n" aria-hidden="true">2</span>
+            <h3 className="ed-rowtitle"><span className="ed-sr">Step 2: </span>We narrow the market</h3>
+            <p>Products across the open market are filtered for category fit, known safety conflicts and relevance.</p>
+          </li>
+          <li>
+            <span className="ip-stepper__n" aria-hidden="true">3</span>
+            <h3 className="ed-rowtitle"><span className="ed-sr">Step 3: </span>We add evidence</h3>
+            {/* .gov sources only (founder rule); was "ACOG guidance", which is not a .gov source. */}
+            <p>{['MedlinePlus', 'NIH research', 'CDC data'].join(', ')}.</p>
+            <ReadMore label="More"><p>Published research, clinical guidance, product and safety sources, and community experience, where available.</p><span className="ed-caption">Unsupported claims are labeled, not upgraded into facts.</span></ReadMore>
+          </li>
+          <li>
+            <span className="ip-stepper__n" aria-hidden="true">4</span>
+            <h3 className="ed-rowtitle"><span className="ed-sr">Step 4: </span>Your ecosystem</h3>
+            <p>Your strongest fits, each shown with its match reason and source context.</p>
+          </li>
+        </ol>
       </EdBlock>
 
       <EdBlock title="How the % is built." intro="One engine for every match. Your need sets it; your preferences fine-tune it.">
@@ -167,45 +152,26 @@ export default function HowItWorks({ onBack, backLabel, onViewSources }) {
         </ReadMore>
       </EdBlock>
 
-      <EdBlock title="From the whole catalog to your short list.">
-        <HowItWorksFunnel />
-      </EdBlock>
-
       <EdBlock title="What we never do.">
-        <Bento as="ul" className="ip-bento ip-never">
-          <Tile as="li" tone="ink" span="wide" className="ip-bt">
-            <strong className="ip-bt__t">Brands can’t pay to change your match.</strong>
-            <span className="ip-bt__cap">Sponsorship is never a match input. Partner brands can be shown higher in Browse, always with a label.</span>
-          </Tile>
-          <Tile as="li" tone="pink" className="ip-bt" big={`${MAX_SHOWN_PERCENT}%`}>
-            <strong className="ip-bt__t">The highest match we show.</strong>
-          </Tile>
-          <Tile as="li" tone="butter" className="ip-bt">
-            <strong className="ip-bt__t">Skipping never lowers a match.</strong>
-            <span className="ip-bt__cap">A question you skip is left out of the math.</span>
-          </Tile>
-        </Bento>
+        <ul className="ip-ticks">
+          <li>{TICK}<span><strong>Brands can’t pay to change your match.</strong> Sponsorship is never a match input. Partner brands can be shown higher in Browse, always with a label.</span></li>
+          <li>{TICK}<span><strong>The highest match we show.</strong> {MAX_SHOWN_PERCENT}%.</span></li>
+          <li>{TICK}<span><strong>Skipping never lowers a match.</strong> A question you skip is left out of the math.</span></li>
+        </ul>
       </EdBlock>
 
       <EdBlock title="Evidence, by level." intro="Every source on a product is sorted into one of four levels. Only the first can give a grade.">
         <EvidenceLevels />
       </EdBlock>
 
-      <EdBlock title="Why not just ask a chatbot?">
-        <Bento as="ul" className="ip-bento ip-why">
-          <Tile as="li" tone="pink" className="ip-bt">
-            <strong className="ip-bt__t">Your profile</strong>
-            <span className="ip-bt__cap">Matches start from the answers you choose to share, not a one-off question.</span>
-          </Tile>
-          <Tile as="li" tone="butter" className="ip-bt">
-            <strong className="ip-bt__t">A checked catalog</strong>
-            <span className="ip-bt__cap">Products carry their sources and safety notes where available. Only .gov sources can give a grade.</span>
-          </Tile>
-          <Tile as="li" tone="ink" span="wide" className="ip-bt">
-            <strong className="ip-bt__t">Real products you can buy</strong>
-            <span className="ip-bt__cap">Each match is a real product with where to buy it, and you can compare it side by side.</span>
-          </Tile>
-        </Bento>
+      <EdBlock title="More about matching">
+        <ReadMore label="Why not just ask a chatbot?" lessLabel="Why not just ask a chatbot?">
+          <ul className="ip-ticks">
+            <li>{TICK}<span><strong>Your profile</strong> Matches start from the answers you choose to share, not a one-off question.</span></li>
+            <li>{TICK}<span><strong>A checked catalog</strong> Products carry their sources and safety notes where available. Only .gov sources can give a grade.</span></li>
+            <li>{TICK}<span><strong>Real products you can buy</strong> Each match is a real product with where to buy it, and you can compare it side by side.</span></li>
+          </ul>
+        </ReadMore>
         <p style={{ marginTop: 24 }}><StickerButton onClick={openSources}>Read our sources</StickerButton></p>
       </EdBlock>
     </EdPage>

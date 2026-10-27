@@ -2064,10 +2064,6 @@ export default function MyEcosystem({
                             <div className="eco-stack">
                                 <span className="eco-stack__back" aria-hidden="true" />
                                 <div className="eco-stack__card">
-                                    <span className="eco-oval">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>
-                                        Matched to you
-                                    </span>
                                     <ul className="eco3-stats ayeco__stats eco-stack__stats" aria-label="Your ecosystem in numbers">
                                         <li><b>{counts.products}</b><span>{counts.products === 1 ? 'product' : 'products'}</span></li>
                                         <li><b>{areaGroups.length}</b><span>{areaGroups.length === 1 ? 'shelf' : 'shelves'}</span></li>

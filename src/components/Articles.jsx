@@ -902,6 +902,8 @@ import ReadCard from './library/ReadCard.jsx';
 import { SnapCarousel } from './ui/ay/index.js';
 import ReadVideo from './library/ReadVideo.jsx';
 import { textOf, minutesFor } from './library/readTime.js';
+import ReadBody, { SourcesAccordion } from './library/ReadBody.jsx';
+import { coverPhotoFor } from '../data/readCovers.js';
 import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
 import VaginalAtrophyGsmArticle from './library/VaginalAtrophyGsmArticle.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
@@ -1096,6 +1098,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   const libPlaceholder = useRotatingPlaceholder(LIB_SEARCH_EXAMPLES, { prefix: 'Try: ', fallback: 'Search reads', enabled: !query });
   const [topic, setTopic] = useState('all');
   const [jumpTo, setJumpTo] = useState(null);
+  const [sourcesOpen, setSourcesOpen] = useState(false);
   const [progress, setProgress] = useState(() => loadReadProgress(userId));
   React.useEffect(() => { setProgress(loadReadProgress(userId)); }, [userId]);
   const selected = ARTICLES.find((a) => a.id === selectedId);
@@ -1191,7 +1194,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   if (selected && DESIGNED_READS[selected.id]) {
     const Designed = DESIGNED_READS[selected.id].Component;
     const nextArticle = ARTICLES.find((a) => a.id === DESIGNED_READS[selected.id].next) || null;
-    return <Designed key={selected.id} onBack={(e) => { if (!plainClick(e)) return; e.preventDefault(); closeRead(); }} nextArticle={nextArticle} onOpenNext={open} onOpenProduct={onOpenProduct} fallback={<article><h1>{selected.title}</h1>{withHeadings(selected.body)}</article>} />;
+    return <Designed key={selected.id} minutes={minutesFor(selected)} onBack={(e) => { if (!plainClick(e)) return; e.preventDefault(); closeRead(); }} nextArticle={nextArticle} onOpenNext={open} onOpenProduct={onOpenProduct} fallback={<article><h1>{selected.title}</h1>{withHeadings(selected.body)}</article>} />;
   }
 
   if (selected) {
@@ -1216,20 +1219,25 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
               <div className="lb-rhead__text">
                 <h1 className="lb-rhead__title">{selected.title}</h1>
                 <p className="lb-rhead__teaser">{selected.teaser}</p>
+                <p className="lb-rhead__meta">{minutesFor(selected)} min read{done ? ' · Finished' : ''} <span aria-hidden="true">·</span> Checked against {selected.source}</p>
               </div>
-              <dl className="lb-facts">
-                <div><dt>Read time</dt><dd>{minutesFor(selected)} min{done ? ' · Finished' : ''}</dd></div>
-                <div><dt>Checked against</dt><dd>{selected.source}</dd></div>
-                <div className="lb-facts__go"><dd><a href="#ct-sources" className="lb-link" onClick={(e) => { e.preventDefault(); document.getElementById('ct-sources')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>See the sources <span aria-hidden="true">↓</span></a></dd></div>
-              </dl>
+              {/* The read's real photo, or its plain colour cover with the title (Library critique, Oct 27). */}
+              <div className="lb-rhead__cover">{coverPhotoFor(selected) ? <img src={coverPhotoFor(selected)} alt="" /> : <ReadCover article={selected} size="hero" />}</div>
             </div>
           </div>
         </header>
         <div className="lb-wrap">
           <article key={selected.id} className="lb-article" aria-label={selected.title}>
             <div className="lb-prose" ref={bodyRef}>
-              <ReadVideo video={selected.video} />
-              {withHeadings(selected.body)}
+              <ReadBody
+                body={selected.body}
+                before={<ReadVideo video={selected.video} />}
+                renderSources={(src) => {
+                  const list = src.items.find((el) => React.isValidElement(el) && el.type === 'ul');
+                  const items = list ? React.Children.toArray(list.props.children) : [];
+                  return <SourcesAccordion id="ct-sources" label={src.label} count={items.filter(React.isValidElement).length || null} open={sourcesOpen} onToggle={setSourcesOpen}><SourceList items={items} /></SourcesAccordion>;
+                }}
+              />
             </div>
             <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
           </article>

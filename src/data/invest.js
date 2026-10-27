@@ -13,7 +13,7 @@ export const TTW_DISCLAIMER = "We are 'testing the waters' to gauge investor int
 
 export const INVEST_RISK = 'Investing in startups is risky. Only invest what you can afford to lose.';
 
-/** PostHog: someone clicked through to Wefunder. location: 'footer' | 'landing'. */
+/** PostHog: someone clicked through to Wefunder. location: 'footer' | 'about'. */
 export function trackInvestClick(location) {
   try { posthog.capture('invest_cta_clicked', { location }); } catch { /* analytics never blocks */ }
 }

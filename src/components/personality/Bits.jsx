@@ -5,8 +5,12 @@ import React, { useEffect, useId, useRef, useState } from 'react';
  * .ay-clip, .ay-ribbon, .ay-sticker, .ay-envelope). Everything here is
  * aria-hidden except the ribbon's list, which carries real names. */
 
-export function Seal({ className = '', text = 'matched to you · matched to you · ' }) {
+const MATCHED = 'matched to you · matched to you · ';
+export function Seal({ className = '', text = MATCHED }) {
   const id = useId().replace(/:/g, '');
+  // The rotating "matched to you" stamp is retired everywhere (founder, Oct 27: no stickers).
+  // Seals with their own words (e.g. the Rundown's closing) still draw.
+  if (text === MATCHED) return null;
   return (
     <span className={`ay-seal ${className}`} aria-hidden="true">
       <svg viewBox="0 0 100 100">

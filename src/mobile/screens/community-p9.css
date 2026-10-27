@@ -114,3 +114,15 @@
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .am-note .ay-pcard.ay-pcard.is-row > :is(.ayk-plate, .ay-pcard__photo) { grid-row: 1 / span 3 !important; align-self: center; }
 /* Price and tags are already hidden in feed posts; their empty wrappers went with them. */
 .am-screen .am-note:not(.is-full) .ay-pcard.is-row > :is(.ay-pcard__price, .ay-pcard__foot) { display: none !important; }
+
+/* Community critique (Oct 27): a feed with nothing in it is one calm block, no sticker art. */
+.ayna-mobile .am-feed-empty { display: grid; justify-items: start; gap: 8px; margin: 8px 0 16px; padding: 20px; border-radius: 16px; background: #f6e3a1; color: #3e2723; }
+.ayna-mobile[data-theme='dark'] .am-feed-empty { background: rgba(255, 237, 172, .08); color: #ffedac; }
+.ayna-mobile .am-feed-empty h2 { margin: 0 !important; color: inherit !important; font: 700 18px/1.25 var(--ay-font-ui, 'Figtree', sans-serif) !important; letter-spacing: 0 !important; }
+.ayna-mobile .am-feed-empty p { margin: 0 !important; color: inherit !important; font: 500 15px/1.45 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
+.ayna-mobile .am-feed-empty__btn { margin-top: 4px; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #3e2723; color: #ffedac; font: 600 15px/1 var(--ay-font-ui, 'Figtree', sans-serif); cursor: pointer; }
+.ayna-mobile[data-theme='dark'] .am-feed-empty__btn { background: #ffedac; color: #3e2723; }
+.ayna-mobile .am-feed-empty__btn:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
+/* Topic chips: one row that scrolls sideways, edge to edge. */
+.ayna-mobile .ay-topic-chips.is-onerow { gap: 8px; }
+.ayna-mobile .ay-topic-chips.is-onerow .ayk-chip { flex: none; }

@@ -634,9 +634,10 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
           </section>
         )}
 
-        {/* Uniqueness pass: the three numbers and the five sections as one bento (same as the website). */}
+        {/* You critique (Oct 27): one feature card (My ecosystem) and the sections as one grouped list. */}
         <div className="ay-you-bento" data-tour="you-sections" aria-label="You sections" role="navigation">
           <YouBento
+            layout="list"
             products={Array.isArray(myProducts) ? myProducts : Object.values(myProducts || {})}
             intake={showBlend ? intake : null}
             onOpenBlend={() => onOpen('blend')}
@@ -651,10 +652,7 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
           />
         </div>
 
-        <p className="ay-you-quick">
-          {onOpenMonthlyCheckin && <button type="button" onClick={onOpenMonthlyCheckin}>Monthly check-in</button>}
-          {signedIn && onEditProfile && <button type="button" onClick={onEditProfile}>Update answers</button>}
-        </p>
+        {/* Monthly check-in is a row above, and "Update answers" is the health profile bar in the header: no duplicate links. */}
       </div>
       <LegalFooter />
     </div>
@@ -3389,7 +3387,6 @@ export function AboutAynaScreen({ onBack }) {
         <section className="ayna-scrapbook__paper ayna-scrapbook__paper--intro">
           <h2>What is ayna?</h2>
           <p>You tell us about your body, your goals and what you avoid. We match women's health products to your answers and show why each one may fit.</p>
-          <div className="ayna-scrapbook__intro-stamp" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>Matched to you</div>
         </section>
 
         <section className="ayna-scrapbook__team" aria-label="The people behind ayna">

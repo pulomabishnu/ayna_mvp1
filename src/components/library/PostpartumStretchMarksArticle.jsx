@@ -140,7 +140,7 @@ function useSiteDark() {
   return dark;
 }
 
-export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onOpenNext, onOpenProduct = null, fallback = null }) {
+export default function PostpartumStretchMarksArticle({ minutes = 12, onBack, nextArticle, onOpenNext, onOpenProduct = null, fallback = null }) {
   const [p, setP] = useState(0);
   const [refsOpen, setRefsOpen] = useState(false);
   const dark = useSiteDark();
@@ -152,7 +152,7 @@ export default function PostpartumStretchMarksArticle({ onBack, nextArticle, onO
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-  const readLabel = p >= 0.97 ? 'Finished' : p > 0.02 ? `${Math.round(p * 100)}% read` : '12 min read';
+  const readLabel = p >= 0.97 ? 'Finished' : p > 0.02 ? `${Math.round(p * 100)}% read` : `${minutes} min read`;
   const refsLabel = refsOpen ? 'Hide' : `Show all ${REFS.length}`;
   const toggleRefs = () => setRefsOpen((o) => !o);
   const jump = (e) => {

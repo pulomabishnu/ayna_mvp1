@@ -1,16 +1,16 @@
 import { topicLabel } from '../../utils/community/topics.js';
+import { Chip } from '../ui/ay';
 import '../../styles/unique-b.css';
 
 /**
- * Community topics as colour blocks (uniqueness pass; cb919aa4 stacked colour
- * bars, the masterclass decks): one chunky block per topic she follows, plus
- * All and My topics, tones taking turns (pink, butter, butter-deep); the
- * selected one is espresso with a tick. Same filter as before (scope).
- * max: how many topic blocks show before the "More topics" block (app).
+ * Community topics as one row of plain chips (Community critique, Oct 27):
+ * My topics, All, up to three topics she follows, then the Topics sheet.
+ * Colour only shows which one is on (espresso); no rotating tones, no
+ * arrows. Same filter as before (scope). The row scrolls sideways
+ * ("is-onerow", unique-b.css) so it never stacks.
+ * max: how many followed topics show before "More topics".
  */
-const ARROW = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>;
-const TICK = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>;
-const TONES = ['pink', 'butter', 'deep'];
+const PLUS = <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>;
 
 export default function TopicBands({ followed = [], scope = 'all', onScope, onEdit, editLabel = null, max = 99, suggest = [], onFollow = null, className = '' }) {
   // Following nothing yet: a few topics to follow in one tap (the same follow as the Topics sheet).
@@ -24,21 +24,15 @@ export default function TopicBands({ followed = [], scope = 'all', onScope, onEd
   ];
   const more = followed.length > max;
   return (
-    <div className={`ub-topics ${className}`.trim()} role="group" aria-label="Filter posts by topic">
-      {items.map((t, i) => {
+    <div className={`ub-topics ay-topic-chips ${className}`.trim()} role="group" aria-label="Filter posts by topic">
+      {items.map((t) => {
         const on = scope === t.key;
-        return (
-          <button key={t.key} type="button" className={`ub-topic is-${on ? 'on' : TONES[i % TONES.length]}`} aria-pressed={on} onClick={() => onScope?.(on && t.key !== 'all' && t.key !== 'mine' ? 'mine' : t.key)}>
-            <span>{t.label}</span>{on ? TICK : ARROW}
-          </button>
-        );
+        return <Chip key={t.key} selected={on} onClick={() => onScope?.(on && t.key !== 'all' && t.key !== 'mine' ? 'mine' : t.key)}>{t.label}</Chip>;
       })}
-      {offers.map((k, i) => (
-        <button key={k} type="button" className={`ub-topic is-${TONES[(i + 1) % TONES.length]}`} aria-label={`Follow ${topicLabel(k)}`} onClick={() => { onFollow(k); onScope?.(k); }}>
-          <span>{topicLabel(k)}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
-        </button>
+      {offers.map((k) => (
+        <Chip key={k} icon={PLUS} aria-label={`Follow ${topicLabel(k)}`} onClick={() => { onFollow(k); onScope?.(k); }}>{topicLabel(k)}</Chip>
       ))}
-      {onEdit && <button type="button" className="ub-topic is-edit" onClick={onEdit}><span>{editLabel || (more ? 'More topics' : followed.length ? 'Edit topics' : 'Follow topics')}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>}
+      {onEdit && <Chip className="is-edit" onClick={onEdit}>{editLabel || (more ? 'More topics' : followed.length ? 'Edit topics' : 'Follow topics')}</Chip>}
     </div>
   );
 }

@@ -293,11 +293,10 @@ export default function EcosystemScreen({
         <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your ecosystem" aria-label="Search your ecosystem" />
       </form>}
       {/* One progress card (counts, needs covered, Wrapped) in place of the ring: the shelf counts live on the chips below. */}
-      {/* Stacked-card summary (the one stamp lives on its corner): real counts, needs covered, Wrapped. */}
+      {/* Summary card: real counts, needs covered, Wrapped (no stamp: QA, Oct 27). */}
       {ecoTab !== 'dashboard' && myProducts.length > 0 && <div className="eco-app-stack">
         <span className="eco-app-stack__back" aria-hidden="true" />
         <div className="eco-app-stack__card">
-          <span className="eco-oval"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>Matched to you</span>
           {/* Counted by utils/ecosystemCounts: the same numbers as Wrapped and the website. */}
           <p className="eco-app-stack__nums" aria-label="Your ecosystem at a glance"><span><b>{counts.products}</b>{counts.products === 1 ? 'product' : 'products'}</span></p>
           {counts.needs > 0 && <>

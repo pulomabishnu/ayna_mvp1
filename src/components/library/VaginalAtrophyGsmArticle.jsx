@@ -24,11 +24,11 @@ const IMG = {
   stigma: `${DIR}/talk-to-provider.webp`,
 };
 
-export default function VaginalAtrophyGsmArticle({ onBack, nextArticle, onOpenNext, fallback = null }) {
+export default function VaginalAtrophyGsmArticle({ minutes = 4, onBack, nextArticle, onOpenNext, fallback = null }) {
   const p = useReadProgress();
   const dark = useSiteDark();
   const progressPct = `${(p * 100).toFixed(1)}%`;
-  const readLabel = readLabelFor(p, 5);
+  const readLabel = readLabelFor(p, minutes);
   const jump = (e) => jumpTo(e);
   const next = <NextRead article={nextArticle} onOpen={onOpenNext} />;
   const credits = <Credits reviewer={<ReviewerVyas />} reviewerInitial="A" writer="Shruti Gajjar, MS1, Medical Student" writerInitial="S" />;

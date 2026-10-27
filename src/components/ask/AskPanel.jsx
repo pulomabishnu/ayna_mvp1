@@ -6,7 +6,7 @@ import { levelLabel } from '../pdp/evidenceMarks.js';
 import MatchPill from '../MatchPill.jsx';
 import ProductTileImage, { ProductImageFallback } from '../ProductTileImage.jsx';
 import './ask-panel.css';
-import { Shout } from '../ui/ay';
+import { PillTabs, pillPanelProps } from '../ui/ay';
 import '../../styles/unique-b.css';
 
 /**
@@ -27,16 +27,15 @@ import '../../styles/unique-b.css';
  * their own sending; everything she sees is drawn here.
  */
 
-const ARROW = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>;
 
-/** The one doodle (Sumie, #41): a small asterisk sparkle beside the title. */
+/** Kept for callers that still render it: draws nothing (founder, Oct 27: no sparkles or doodles). */
 export function AskSparkle() {
-  return <svg className="ay-askp-sparkle" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c.6 4.9 4.1 8.4 9 9-4.9.6-8.4 4.1-9 9-.6-4.9-4.1-8.4-9-9 4.9-.6 8.4-4.1 9-9z" /></svg>;
+  return null;
 }
 
-/** Title row: optional leading control (Back), "Ask ayna" + sparkle, optional trailing control (Done / close). */
+/** Title row: optional leading control (Back), "Ask ayna", optional trailing control (Done / close). */
 export function AskHeader({ start = null, end = null, level = 1, title = 'Ask ayna' }) {
-  const content = <>{title}<AskSparkle /></>;
+  const content = title;
   return (
     <div className="ay-askp-head">
       {start}
@@ -46,25 +45,30 @@ export function AskHeader({ start = null, end = null, level = 1, title = 'Ask ay
   );
 }
 
-/** Suggested questions: a short group heading, then one pill per question. A tap asks it. */
+/**
+ * Suggested questions (Ask critique, Oct 27): one segmented filter (About you ·
+ * Safety · Products, Safety first when flagged) over one group of chips. A tap
+ * on a chip asks it (or runs the chip's own action, e.g. a guide page).
+ */
 export function AskPrompts({ groups = [], onPick }) {
+  const idBase = `ay-askp-f${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
+  const [picked, setPicked] = useState(null);
   if (!groups.length) return null;
+  const active = groups.some((g) => g.id === picked) ? picked : groups[0].id;
+  const group = groups.find((g) => g.id === active);
+  const tabs = groups.length > 1;
   return (
-    <div className="ay-askp-groups" data-tour="ask-starters">
-      {groups.map((g) => (
-        <section key={g.id} className={`ay-askp-group is-${g.id}`} aria-labelledby={`ay-askp-g-${g.id}`}>
-          <h3 id={`ay-askp-g-${g.id}`}>{g.title}</h3>
-          <ul>
-            {g.prompts.map((p) => (
-              <li key={p.question}>
-                <button type="button" className="ay-askp-pill" onClick={() => { haptic('selection'); onPick(p.question, p); }}>
-                  <span>{p.question}</span>{ARROW}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
+    <div className="ay-askp-groups is-filtered" data-tour="ask-starters">
+      {tabs ? <PillTabs idBase={idBase} label="Suggested questions" tabs={groups.map((g) => ({ id: g.id, label: g.short || g.title }))} active={active} onChange={setPicked} className="ay-askp-filter" />
+        : <h3 className="ay-askp-filter__one">{group.title}</h3>}
+      {tabs && group.short && group.short !== group.title && <p className="ay-askp-filter__cap">{group.title}</p>}
+      <ul className="ay-askp-chips" {...(tabs ? { ...pillPanelProps(idBase, active, active), tabIndex: undefined } : {})}>
+        {group.prompts.map((p) => (
+          <li key={p.question}>
+            <button type="button" className="ay-askp-chip" onClick={() => { haptic('selection'); if (p.action) p.action(); else onPick(p.question, p); }}>{p.question}</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -208,11 +212,10 @@ export function AskHow({ open, children }) {
 export function AskStart({ name = '', intro = '', how = null, top = null, groups = [], onPick, recent = [], onContinue = null, bottom = null }) {
   const [howOpen, setHowOpen] = useState(false);
   return (
-    <div className="ay-askp-start is-bold">
-      {/* Uniqueness pass: a bold espresso start (the greeting as the page's one shout), then colour-blocked question groups. */}
-      <div className="ay-askp-hero">
-        <AskSparkle />
-        <Shout as="h2" size="l" className="ay-askp-hello">{name ? `Hi ${name}` : 'Hi there'}</Shout>
+    <div className="ay-askp-start is-calm">
+      {/* Ask critique (Oct 27): a plain greeting and one line of context, no hero card, no sparkle. */}
+      <div className="ay-askp-greet">
+        <h2 className="ay-askp-hello">{name ? `Hi ${name}` : 'Hi there'}</h2>
         <p className="ay-askp-intro">
           {intro}
           {how && <> <button type="button" className="ay-askp-howlink" aria-expanded={howOpen} aria-controls="ay-askp-how" onClick={() => setHowOpen((v) => !v)}>How Ask works</button></>}
@@ -227,7 +230,7 @@ export function AskStart({ name = '', intro = '', how = null, top = null, groups
             <h3 id="ay-askp-g-recent">Recent</h3>
             {onContinue && <button type="button" className="ay-askp-textbtn" onClick={onContinue}>Open chat</button>}
           </div>
-          <ul>{recent.map((q) => <li key={q}><button type="button" className="ay-askp-pill is-quiet" onClick={() => onPick(q)}><span>{q}</span>{ARROW}</button></li>)}</ul>
+          <ul className="ay-askp-chips">{recent.map((q) => <li key={q}><button type="button" className="ay-askp-chip is-quiet" onClick={() => onPick(q)}>{q}</button></li>)}</ul>
         </section>
       )}
       {bottom}

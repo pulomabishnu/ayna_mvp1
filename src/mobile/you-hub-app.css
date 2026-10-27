@@ -81,3 +81,10 @@
   /* Auth fields: deeper butter with an ink outline (no white), founder Oct 26. */
   &:not([data-theme='dark']) :is(.ay-auth, .ayna-fresh-auth) .ayna-fresh-auth-field.ayna-fresh-auth-field { background: #f6e3a1 !important; }
 }
+
+/* You critique (Oct 27), one colour rule: pink means "for you, now". The set-up card is her next step, so it is
+   the one pink block; no outline-on-white card. */
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-setup { border: 0 !important; background: #f7badd !important; color: #3e2723 !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-setup :is(h2, span, button, b) { color: #3e2723 !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-setup-bar i { background: rgba(62, 39, 35, .18) !important; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-setup-bar i.is-done { background: #3e2723 !important; }
