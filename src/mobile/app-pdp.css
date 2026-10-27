@@ -349,3 +349,6 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-chips.is-scroll::-webkit-scrollbar { display: none; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-chips.is-scroll > li { flex: none; white-space: nowrap; scroll-snap-align: start; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-chips.is-scroll:focus-visible { outline: 2.5px solid currentColor; outline-offset: 2px; }
+
+/* No sticky scroll on the product page (founder, Oct 27): the compare table's first column scrolls too. */
+#ay-pdp#ay-pdp#ay-pdp .ay-compare thead tr > td:first-child, #ay-pdp#ay-pdp#ay-pdp .ay-compare tr > :first-child { position: static !important; }

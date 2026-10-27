@@ -3038,6 +3038,11 @@ html body :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-p
     display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(340px, 420px) !important; gap: 0 48px !important; align-items: start !important;
   }
   html body #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body .ayv-sum2.has-side > .ayv-sum2__main { grid-column: 1 !important; grid-row: 1 !important; }
-  html body #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body .ayv-sum2.has-side > .ayv-sum2__side { grid-column: 2 !important; grid-row: 1 !important; position: sticky; top: 96px; }
+  html body #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body .ayv-sum2.has-side > .ayv-sum2__side { grid-column: 2 !important; grid-row: 1 !important; position: static !important; }
   html body #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body .ayv-sum2.has-side > .ayv-sum2__side .ayv-ask { margin: 0 !important; }
 }
+
+/* ---- Nothing sticky on the product page (founder, Oct 27: "no sticky scroll, it makes it look
+   vibe-coded"). The tab bar, the Ask/Buy column and the compare table's first column all scroll
+   with the page. ---- */
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ayq-st, .ayv-sum2__side) { position: static !important; top: auto !important; }
