@@ -51,18 +51,6 @@ export const HEALTH_SOURCES = [
     note: 'Oura data shows in your insights. It does not change your product matches until Oura confirms its terms allow it.',
   },
   {
-    id: 'whoop',
-    group: 'devices',
-    name: 'WHOOP',
-    kind: 'Band',
-    availability: 'oauth',
-    icon: 'watch',
-    categories: ['sleep', 'temperature', 'heart', 'activity', 'recovery'],
-    reads: 'Your main sleep each night and its stages, recovery score, resting heart rate, heart rate variability, overnight skin temperature and workouts.',
-    never: "We don't read your profile, body measurements, strain or minute-by-minute heart rate. WHOOP data is never given to an AI model.",
-    note: "WHOOP's terms don't allow apps to keep copies of WHOOP data, so ayna reads it fresh from WHOOP each time you open the app and never saves it.",
-  },
-  {
     id: 'health_connect',
     group: 'devices',
     name: 'Health Connect',
