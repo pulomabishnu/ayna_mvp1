@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import posthog from 'posthog-js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata, heardAboutUsLabel } from '../utils/heardAbout.js';
 import { clearAskHeardAbout } from '../utils/signupConsent.js';
+import { ensureAnalyticsContext } from '../utils/analyticsEvents.js';
 import './HeardAboutPrompt.css';
 
 /**
@@ -10,15 +12,27 @@ import './HeardAboutPrompt.css';
  * required field). Saved in the same user metadata fields as before
  * (heard_about, heard_about_other, heard_about_us), so nothing migrates.
  * `variant`: 'web' (centered card) or 'app' (bottom sheet).
+ *
+ * Analytics records only the fixed option value (instagram, tiktok, etc.).
+ * The free-text "Other" answer never goes to PostHog.
  */
 export default function HeardAboutPrompt({ onDone, onSaved, variant = 'web' }) {
   const [value, setValue] = useState('');
   const [other, setOther] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const close = () => { clearAskHeardAbout(); onDone?.(); };
+  const close = ({ skipped = false } = {}) => {
+    if (skipped) {
+      try {
+        ensureAnalyticsContext();
+        posthog.capture('signup_referral_source_skipped', { surface: variant === 'app' ? 'app' : 'web' });
+      } catch { /* analytics never blocks */ }
+    }
+    clearAskHeardAbout();
+    onDone?.();
+  };
   const save = async () => {
-    if (!value) { close(); return; }
+    if (!value) { close({ skipped: true }); return; }
     const supabase = getSupabaseClient();
     if (!supabase) { close(); return; }
     setSaving(true);
@@ -27,6 +41,14 @@ export default function HeardAboutPrompt({ onDone, onSaved, variant = 'web' }) {
     try {
       const { data, error: e } = await supabase.auth.updateUser({ data: { ...heardAboutMetadata(value, other), ...(label ? { heard_about_us: label } : {}) } });
       if (e) throw e;
+      try {
+        ensureAnalyticsContext();
+        // Keep the existing event name so historical acquisition charts do not split.
+        posthog.capture('signup_referral_source', {
+          source: value,
+          surface: variant === 'app' ? 'app' : 'web',
+        });
+      } catch { /* analytics never blocks */ }
       onSaved?.(data?.user || null);
       close();
     } catch (e) {
@@ -50,7 +72,7 @@ export default function HeardAboutPrompt({ onDone, onSaved, variant = 'web' }) {
         {error && <p className="ay-heard__err" role="alert">{error}</p>}
         <div className="ay-heard__actions">
           <button type="button" className="ay-heard__primary" onClick={save} disabled={saving || !value}>{saving ? 'Saving…' : 'Save'}</button>
-          <button type="button" className="ay-heard__skip" onClick={close} disabled={saving}>Skip</button>
+          <button type="button" className="ay-heard__skip" onClick={() => close({ skipped: true })} disabled={saving}>Skip</button>
         </div>
       </div>
     </div>
