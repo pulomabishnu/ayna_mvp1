@@ -349,3 +349,7 @@ html body .app-container #ay-landing.wl.hm .wlx-end .wlx-end__h.wlx-end__h { fon
 @media (max-width: 899px) {
   .app-container #ay-landing .ls-steps { margin-inline: -16px !important; padding: 4px 16px 12px !important; scroll-padding-inline: 16px; grid-auto-columns: 80%; }
 }
+/* Numbered picks, like a magazine gift guide (founder inspo, Oct 28). */
+.app-container #ay-landing .ls-row__item { position: relative; }
+.app-container #ay-landing .ls-row__n { position: absolute; z-index: 2; top: -10px; left: -10px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; font: 800 14px/1 var(--ay-sans-stack, sans-serif); pointer-events: none; }
+@media (max-width: 899px) { .app-container #ay-landing .ls-row__n { top: 6px; left: 6px; } }

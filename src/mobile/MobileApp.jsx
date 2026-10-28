@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { claimQuizRetake } from '../utils/proApi.js';
+import { fingerprintIntake, buildIdFromFingerprint } from '../utils/fetchLlmRecommendations.js';
 import { devPreviewOn } from '../utils/devPreview.js';
 import { needAreaLabels } from '../utils/needAreas.js';
 import { markOnboardingDone } from '../health/onboardingSignal.js';
@@ -1385,10 +1387,17 @@ export default function MobileApp() {
       updateSession((prev) => (prev.pendingQuiz ? { pendingQuiz: { ...prev.pendingQuiz, answers: addNeedToAnswers(prev.pendingQuiz.answers, needId) } } : {}));
       setPlanAddedGoals((g) => ({ ...g, [needId]: true }));
     },
-    onSeeMatches: () => {
+    onSeeMatches: async () => {
       if (!pendingQuiz) { setScreen(hasEcosystem ? 'eco' : 'ecointro'); return; }
       const quizAnswers = pendingQuiz.answers;
       const mode = pendingQuiz.mode;
+      // A retake (she already has an ecosystem) uses the monthly allowance:
+      // Free once a month, Pro anytime. Over it: the Pro sheet, answers kept.
+      if (mode === 'add' && authUser) {
+        const fp = fingerprintIntake(quizAnswers?.fullHealthIntake || quizAnswers);
+        const { allowed } = await claimQuizRetake(buildIdFromFingerprint(fp || String(Date.now())));
+        if (!allowed) { openProPaywall({ feature: 'quiz', featureName: 'Quiz retakes' }); return; }
+      }
       const seededProducts = planSeeded.length ? planSeeded : seedEcosystemFromAnswers(quizAnswers, planMatchOpts);
       const existingProducts = mode === 'add' ? myProducts : [];
       const existingIds = new Set(existingProducts.map((product) => product.id));

@@ -4,6 +4,7 @@ import { readBlend } from '../../utils/houseBlend.js';
 import { resolveCatalogProductImage } from '../ProductTileImage.jsx';
 import { requestPro } from '../../utils/proApi.js';
 import { openProPaywall, PRO_CHANGED_EVENT } from '../../pro/paywall.js';
+import { CheckerFrame } from '../ProLock.jsx';
 import './you-bento.css';
 
 /**
@@ -73,7 +74,9 @@ function Row({ k, t }) {
     <span className="yb-row__n">{t.value || ''}</span>
     {t.onClick && k !== 'logout' && CHEVRON}
   </>;
-  return <li>{t.onClick ? <button type="button" className={`yb-row${k === 'pro' ? ' yb-row--pro' : ''}`} onClick={t.onClick}>{inner}</button> : <div className="yb-row">{inner}</div>}</li>;
+  // The Pro row wears the paywall's moving brown and pink frame, so the way in looks like the lock it opens.
+  if (k === 'pro' && t.onClick) return <li className="yb-pro-li"><CheckerFrame square={8} radius={18} className="yb-pro-frame"><button type="button" className="yb-row yb-row--pro" onClick={t.onClick}>{inner}</button></CheckerFrame></li>;
+  return <li>{t.onClick ? <button type="button" className="yb-row" onClick={t.onClick}>{inner}</button> : <div className="yb-row">{inner}</div>}</li>;
 }
 
 function useProOffer() {
@@ -81,7 +84,7 @@ function useProOffer() {
   useEffect(() => {
     let live = true;
     const load = () => requestPro()
-      .then((status) => { if (live) setAvailable(status?.active !== true && status?.offerOpen === true); })
+      .then((status) => { if (live) setAvailable(status?.active === false && status?.offerOpen !== false); })
       .catch(() => { if (live) setAvailable(false); });
     load();
     const changed = () => load();

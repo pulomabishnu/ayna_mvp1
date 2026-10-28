@@ -61,3 +61,7 @@ html body :is(#rtl1, .app-container, .ayna-mobile):is(#rtl2, .app-container, .ay
   border: 1px solid #3e2723 !important; border-radius: 999px !important; vertical-align: 2px !important;
   font-family: var(--ay-font-ui, 'Figtree', sans-serif) !important; font-size: 13px !important; font-weight: 600 !important; font-style: normal !important; line-height: 1 !important; letter-spacing: 0 !important; text-transform: none !important;
 }
+/* The first how-to step, one line (the full text is in "How and when"). */
+.ay-rtl .ay-rtl__how { display: block; margin-top: 2px; font: 600 13px/1.35 var(--ay-font-ui, inherit); color: inherit; opacity: .9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.ay-rtl .ay-rtl__how::before { content: 'How: '; font-weight: 800; }
+.ay-rtl__step.is-open .ay-rtl__how { display: none; }

@@ -3,6 +3,7 @@ import { useRoutines } from './useRoutines.js';
 import { isMedicineProduct } from '../../health/medicineProduct.js';
 import { Plate } from '../ui/ay/index.js';
 import { resolveCatalogProductImage } from '../ProductTileImage.jsx';
+import { slotFor, SLOTS, howLine } from '../../health/plan.js';
 import './routine-timeline.css';
 
 /**
@@ -40,6 +41,7 @@ function Step({ it, onOpenProduct }) {
     <span className="ay-rtl__text">
       <span className="ay-rtl__name">{it.title}</span>
       {it.why && <span className="ay-rtl__why">{it.why}</span>}
+      {product && it.how && <span className="ay-rtl__how">{it.how}</span>}
     </span>
   </>;
   return (
@@ -61,10 +63,26 @@ function Step({ it, onOpenProduct }) {
   );
 }
 
-export default function RoutineTimeline({ cycle = null, onOpenRoutine, onOpenProduct, onCheckIn, emptyAction = null, max = 3, ...source }) {
+// Her ecosystem products that no routine step covers yet, as timeline steps
+// placed by when they're used (founder, Oct 28: "integrate products into the
+// routine more"). Medicines stay out (information only).
+const SLOT_TITLE = Object.fromEntries(SLOTS.map((x) => [x.id, x.title]));
+function ecosystemSteps(products, covered) {
+  const list = Array.isArray(products) ? products : Object.values(products || {});
+  return list
+    .filter((p) => p?.id && !covered.has(String(p.id)) && !isMedicineProduct(p) && p.userAdded !== true)
+    .map((p) => {
+      const how = howLine(p);
+      return { key: `eco:${p.id}`, kind: 'product', product: p, title: p.name, why: 'In your ecosystem', how: how?.text || null, when: SLOT_TITLE[slotFor(p)] || 'When you need it' };
+    });
+}
+
+export default function RoutineTimeline({ cycle = null, onOpenRoutine, onOpenProduct, onCheckIn, emptyAction = null, max = 3, ecoMax = 4, ...source }) {
   const { routines } = useRoutines(source);
   const list = routines.slice(0, max);
-  if (!list.length) {
+  const covered = new Set(list.flatMap((r) => r.start.filter((it) => it.kind === 'product').map((it) => String(it.product?.id))));
+  const extras = ecosystemSteps(source.products, covered).slice(0, ecoMax);
+  if (!list.length && !extras.length) {
     return (
       <div className="ay-rtl is-empty" data-tour="routine">
         <p>Your routine shows here once you add products.</p>
@@ -76,17 +94,19 @@ export default function RoutineTimeline({ cycle = null, onOpenRoutine, onOpenPro
   // One timeline across her routines: steps grouped by when they happen, in the order they first appear.
   const groups = [];
   const seen = new Set();
-  for (const r of list) {
-    for (const it of r.start) {
-      if (it.kind === 'product' && isMedicineProduct(it.product)) continue;
-      if (seen.has(it.key)) continue;
-      seen.add(it.key);
-      const when = cap(it.when || 'Any time');
-      let g = groups.find((x) => x.when === when);
-      if (!g) { g = { when, steps: [], now: isNow(when, cycle, hour) }; groups.push(g); }
-      g.steps.push(it);
-    }
-  }
+  const place = (it) => {
+    if (it.kind === 'product' && isMedicineProduct(it.product)) return;
+    if (seen.has(it.key)) return;
+    seen.add(it.key);
+    const when = cap(it.when || 'Any time');
+    let g = groups.find((x) => x.when.toLowerCase() === when.toLowerCase());
+    if (!g) { g = { when, steps: [], now: isNow(when, cycle, hour) }; groups.push(g); }
+    g.steps.push(it);
+  };
+  for (const r of list) r.start.forEach(place);
+  extras.forEach(place);
+  // What applies now comes first.
+  groups.sort((a, b) => Number(b.now) - Number(a.now));
   const tracks = list.map((r) => r.track).filter(Boolean);
   return (
     <div className="ay-rtl" data-tour="routine">

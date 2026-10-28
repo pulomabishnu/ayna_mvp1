@@ -1,6 +1,6 @@
 /* global process */
 import { createHash } from 'node:crypto';
-import { verifyUser, getServiceClient } from './_usageLimit.js';
+import { verifyUser, getServiceClient, claimEcosystemBuild } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
 import { proFeatureRules } from './_proFeatures.js';
 import { PRO_FLOW, PRO_PLANS, proConfig, proStatus, proStripe, validateProPrices, renewalDate, syncProSubscription } from './_pro.js';
@@ -76,6 +76,19 @@ export default async function handler(req, res) {
       });
       if (readError) throw new Error('Read allowance unavailable');
       return res.status(200).json({ allowed: data === true, active });
+    }
+
+    if (body.action === 'quiz_retake') {
+      // The app's quiz retake (it builds matches on the phone, so it never
+      // reaches /api/llm-recommendations, which is where the website claims
+      // its monthly retake). Same claim, same table: Free 1 a month, Pro
+      // unlimited (claim_ecosystem_build checks pro_access_status itself).
+      const rules = await proFeatureRules(admin);
+      if (!rules.enabled) return res.status(200).json({ allowed: true });
+      const buildId = String(body.buildId || '').trim().slice(0, 200);
+      if (!buildId) return res.status(400).json({ error: 'missing_build_id' });
+      const claim = await claimEcosystemBuild(admin, user.id, buildId);
+      return res.status(200).json({ allowed: claim.allowed, used: claim.used, limit: claim.limit });
     }
 
     if (body.action === 'feature_gates_set') {

@@ -125,8 +125,9 @@ function Shelf({ personal, quizResults, healthProfile, matchOpts, signedIn, onSt
 
         <p className="ls-shelf__label" aria-live="polite">{title}</p>
         <ul className={`ls-row${locked ? ' is-locked' : ''}`} aria-label={loading ? 'Loading products' : title}>
-          {!loading ? rows.map(({ product, percent, why, hold }) => (
+          {!loading ? rows.map(({ product, percent, why, hold }, n) => (
             <li key={product.id} className="ls-row__item">
+              <span className="ls-row__n" aria-hidden="true">{n + 1}</span>
               <ProductCard product={product} onOpen={onOpenProduct} className="ls-card" matchPercent={percent} matchHold={hold} matchLabel={percent != null ? `${percent}% match` : ''} />
               {locked
                 ? <Go className="ls-row__lock" href="/quiz" onGo={onStartQuiz}><Lock />See your match</Go>

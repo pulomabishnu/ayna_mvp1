@@ -235,3 +235,12 @@
 .pro-lock__setup li p { margin:6px 0 10px; font-size:14px; line-height:1.6; }
 .pro-lock__setup a { color:inherit; text-decoration:underline; text-underline-offset:4px; font-weight:600; }
 .pro-lock__expiry { border-top:1px solid currentColor; padding-top:16px; font-size:12px; line-height:1.65; opacity:.8; }
+
+/* The sheet's checker strip moves too, slowly, like the frame (founder, Oct 28:
+   "i like the pink and brown line moving for the paywall"). Still under reduced motion and Pause motion. */
+@media (prefers-reduced-motion: no-preference) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-march { animation: pro-march 6s linear infinite; }
+}
+html.ay-motion-paused :is(#ayp1, html):is(#ayp2, html) body .pro-march, html.ay-motion-paused .pro-march { animation: none !important; }
+html.ay-motion-paused .pro-frame__dash { animation: none !important; }
+@keyframes pro-march { from { background-position: 0 0; } to { background-position: 28px 0; } }

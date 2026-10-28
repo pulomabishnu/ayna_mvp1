@@ -83,6 +83,12 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
   const sinceRef = useRef({ id: '', at: 0 });
   const runRef = useRef(null);
   useLayoutEffect(() => { runRef.current = run; }, [run]);
+  const [offNote, setOffNote] = useState(false);
+  useEffect(() => {
+    if (!offNote) return undefined;
+    const t = window.setTimeout(() => setOffNote(false), 4500);
+    return () => window.clearTimeout(t);
+  }, [offNote]);
 
   // Seen state is per person: switch owner before the next check reads it.
   useEffect(() => { setTourOwner(userId); }, [userId]);
@@ -94,7 +100,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
       markScreenSeen(r.screenId);
       markTipsSeen(r.tips.map((t) => t.id), r.screenId);
       if (r.tips.some((t) => t.offNote)) markOffNoteShown();
-      if (how === 'off') setTipsEnabled(false);
+      if (how === 'off') { setTipsEnabled(false); setOffNote(true); }
       // The landing's welcome tip is her first tip: unless she turned them off, tips are on.
       else if (r.landing && readTour().enabled === null) setTipsEnabled(true);
     } else if (how === 'yes') setTipsEnabled(true);
@@ -223,7 +229,16 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
     return () => { window.clearTimeout(t); window.removeEventListener('keydown', onKey, true); document.removeEventListener('pointerdown', onDown, true); };
   }, [run, end, surface]);
 
-  if (!run) return null;
+  if (!run) {
+    // After "Turn off tips": say where to turn them back on, for a few seconds.
+    if (!offNote) return null;
+    return createPortal(
+      <div className={`ay-tour-offnote is-${surface}`} role="status" style={{ bottom: cfg.bottomInset() + 16 }}>
+        Tips off. Turn them back on in Settings.
+      </div>,
+      document.body,
+    );
+  }
   const still = reduceMotion();
   const cls = `ay-tour is-${surface}${still ? ' is-still' : ''}`;
 
