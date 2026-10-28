@@ -10,13 +10,9 @@ import './routine.css';
 import './routine-ds.css';
 
 /**
- * "Your period-pain routine": one routine per active need (team direction
- * 3, 4, 66, 67). Start here (1 to 3), Track it, Other options. Her changes
- * are made in place; the last one can be undone. Buying is never the point:
- * shopping the routine together is a quiet link at the end.
- *
- * Copy here is control labels and fixed frames only. Every Why, When and
- * How long line comes from src/health/routines.js.
+ * One routine per active need. The first scan is intentionally short:
+ * what it is, why it is here, and the next action. Timing, instructions,
+ * sources, past-result feedback and change controls stay one tap away.
  */
 
 const fmtDay = (day) => new Date(`${day}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -27,21 +23,16 @@ function Thumb({ product }) {
   return <span className="ay-rx__thumb" aria-hidden="true">{src && !broken ? <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} /> : <span>{(product?.brand || product?.name || '?').charAt(0)}</span>}</span>;
 }
 
-/** One source line; every other source one tap away under "Show sources" (nothing is dropped). */
+/** Sources stay available without turning every suggestion into a citation list. */
 function Sources({ list = [] }) {
   const s = list.filter((x) => x?.url);
   if (!s.length) return null;
   const link = (x) => <a href={x.url} target="_blank" rel="noopener noreferrer">{x.label}<span className="sr-only"> (opens in a new tab)</span></a>;
   return (
-    <div className="ay-rx__src">
-      <p>Source: {link(s[0])}</p>
-      {s.length > 1 && (
-        <details className="ay-rx__srcmore">
-          <summary>Show sources ({s.length})</summary>
-          <ul>{s.map((x) => <li key={x.url}>{link(x)}</li>)}</ul>
-        </details>
-      )}
-    </div>
+    <details className="ay-rx__srcmore">
+      <summary>Sources ({s.length})</summary>
+      <ul>{s.map((x) => <li key={x.url}>{link(x)}</li>)}</ul>
+    </details>
   );
 }
 
@@ -54,17 +45,39 @@ function TryLine({ item }) {
   return <p className="ay-rx__status">{due ? 'Time to say how it went.' : `Trying since ${fmtDay(t.startedDay)}.`}</p>;
 }
 
-/* Glance: why it is here. Scan: when, how long and how she will know, as one compact group. */
+/** Why stays visible. The plan is progressive disclosure. */
 function Facts({ item, onCheckIn }) {
+  const hasPlan = Boolean(item.when || item.horizon || item.know);
   return (
-    <dl className="ay-rx__facts">
-      <div className="is-why"><dt>Why</dt><dd>{item.why}</dd></div>
-      <div className="ay-rx__plan">
-        {item.when && <div><dt>When</dt><dd>{item.when}{item.how ? <><br /><span className="ay-rx__how">{item.how}</span>{item.howSource && <small> From {item.howSource}</small>}</> : null}</dd></div>}
-        {item.horizon && <div><dt>How long to try</dt><dd>{item.horizon.label.charAt(0).toUpperCase() + item.horizon.label.slice(1)}</dd></div>}
-        {item.know && <div><dt>How you’ll know</dt><dd>{item.know}{onCheckIn && <> <button type="button" className="ay-rx__link" onClick={onCheckIn}>Check in</button></>}</dd></div>}
+    <div className="ay-rx__facts">
+      <dl className="ay-rx__why"><div className="is-why"><dt>Why</dt><dd>{item.why}</dd></div></dl>
+      {hasPlan && (
+        <details className="ay-rx__planmore">
+          <summary>When + how to try it</summary>
+          <dl className="ay-rx__plan">
+            {item.when && <div><dt>When</dt><dd>{item.when}{item.how ? <><br /><span className="ay-rx__how">{item.how}</span>{item.howSource && <small> From {item.howSource}</small>}</> : null}</dd></div>}
+            {item.horizon && <div><dt>How long to try</dt><dd>{item.horizon.label.charAt(0).toUpperCase() + item.horizon.label.slice(1)}</dd></div>}
+            {item.know && <div><dt>How you’ll know</dt><dd>{item.know}{onCheckIn && <> <button type="button" className="ay-rx__link" onClick={onCheckIn}>Check in</button></>}</dd></div>}
+          </dl>
+        </details>
+      )}
+    </div>
+  );
+}
+
+function OutcomeActions({ routine, item, act }) {
+  if (!item.canStart) return null;
+  const tried = Boolean(item.lastTry);
+  const need = routine.need;
+  return (
+    <details className="ay-rx__outcome">
+      <summary>{tried ? 'Update how it went' : 'Tried this before?'}</summary>
+      <div className="ay-rx__chips" role="group" aria-label={`Did ${item.title} help?`}>
+        <button type="button" className="ay-rx__chip" aria-pressed={item.lastTry?.outcome === 'helpful'} onClick={() => act.outcome(need, item, 'helpful')}>Helped</button>
+        <button type="button" className="ay-rx__chip" aria-pressed={item.lastTry?.outcome === 'no_change'} onClick={() => act.outcome(need, item, 'no_change')}>Didn’t help</button>
+        {tried && <button type="button" className="ay-rx__chip" aria-pressed={item.lastTry?.outcome === 'unsure'} onClick={() => act.outcome(need, item, 'unsure')}>Not sure yet</button>}
       </div>
-    </dl>
+    </details>
   );
 }
 
@@ -78,7 +91,7 @@ function StartItem({ routine, item, act, onOpenProduct, onCheckIn, alternatives 
       <div className="ay-rx__itemhead">
         {item.kind === 'product' && <Thumb product={item.product} />}
         <div className="ay-rx__itemname">
-          <p className="ay-rx__kicker">{item.kind === 'product' ? 'A product' : item.informationOnly ? 'Information' : 'Something to try'}</p>
+          <p className="ay-rx__kicker">{item.kind === 'product' ? 'Product' : item.informationOnly ? 'Information' : 'Something to try'}</p>
           {item.kind === 'product'
             ? <h4><button type="button" className="ay-rx__namebtn" onClick={() => onOpenProduct?.(item.product)}>{item.title}</button></h4>
             : <h4>{item.title}</h4>}
@@ -91,17 +104,10 @@ function StartItem({ routine, item, act, onOpenProduct, onCheckIn, alternatives 
       <TryLine item={item} />
       <div className="ay-rx__actions">
         {item.canStart && !tried && <button type="button" className="ay-rx__primary" onClick={() => act.start(need, item)}>I’m trying this</button>}
-        {item.canStart && (
-          <span className="ay-rx__chips" role="group" aria-label={`Did ${item.title} help?`}>
-            <span className="ay-rx__chiplabel">{tried ? 'Did it help?' : 'Tried it before?'}</span>
-            <button type="button" className="ay-rx__chip" aria-pressed={item.lastTry?.outcome === 'helpful'} onClick={() => act.outcome(need, item, 'helpful')}>Helped</button>
-            <button type="button" className="ay-rx__chip" aria-pressed={item.lastTry?.outcome === 'no_change'} onClick={() => act.outcome(need, item, 'no_change')}>Didn’t help</button>
-            {tried && <button type="button" className="ay-rx__chip" aria-pressed={item.lastTry?.outcome === 'unsure'} onClick={() => act.outcome(need, item, 'unsure')}>Not sure yet</button>}
-          </span>
-        )}
+        <OutcomeActions routine={routine} item={item} act={act} />
       </div>
       <details className="ay-rx__change">
-        <summary>Change</summary>
+        <summary>More options</summary>
         <div className="ay-rx__changerow">
           {alternatives.length > 0 && <button type="button" className="ay-rx__text" aria-expanded={replacing} onClick={() => setReplacing((v) => !v)}>Replace</button>}
           {item.kind === 'product' && <button type="button" className="ay-rx__text" aria-pressed={Boolean(item.owned)} onClick={() => act.owned(need, item)}>{item.owned ? 'I don’t have it' : 'Already have it'}</button>}
@@ -201,32 +207,32 @@ function OneRoutine({ routine, act, note, onOpenProduct, onCheckIn, headingLevel
         )}
       </div>
       <div className="ay-rx__body">
-      <div className="ay-rx__main">
-      <h3 className="ay-rx__h">Start here</h3>
-      {routine.start.length
-        ? <ol className="ay-rx__list">{routine.start.map((item) => <StartItem key={item.key} routine={routine} item={item} act={act} onOpenProduct={onOpenProduct} onCheckIn={onCheckIn} alternatives={altFor(item)} />)}</ol>
-        : <p className="ay-rx__empty">Nothing in Start here. Add one of the options below.</p>}
-      <div className="ay-rx__track">
-        <div>
-          <p className="ay-rx__kicker">Track it</p>
-          <h4>{routine.track.title}</h4>
-          <p>{routine.track.body}</p>
+        <div className="ay-rx__main">
+          <h3 className="ay-rx__h">Start here</h3>
+          {routine.start.length
+            ? <ol className="ay-rx__list">{routine.start.map((item) => <StartItem key={item.key} routine={routine} item={item} act={act} onOpenProduct={onOpenProduct} onCheckIn={onCheckIn} alternatives={altFor(item)} />)}</ol>
+            : <p className="ay-rx__empty">Nothing in Start here. Add one of the options below.</p>}
+          <div className="ay-rx__track">
+            <div>
+              <p className="ay-rx__kicker">Track it</p>
+              <h4>{routine.track.title}</h4>
+              <p>{routine.track.body}</p>
+            </div>
+            {onCheckIn && <button type="button" className="ay-rx__primary" onClick={onCheckIn}>Check in</button>}
+          </div>
         </div>
-        {onCheckIn && <button type="button" className="ay-rx__primary" onClick={onCheckIn}>Check in</button>}
-      </div>
-      </div>
-      <div className="ay-rx__side">
-      {others.length > 0 && (
-        <details className="ay-rx__others">
-          <summary className="ay-rx__h ay-rx__otherssum">Other options ({others.length})</summary>
-          <ul>{shown.map((item) => <OtherItem key={item.key} routine={routine} item={item} act={act} onOpenProduct={onOpenProduct} canAdd={!routine.full} />)}</ul>
-          {others.length > OTHER_SHOWN && <button type="button" className="ay-rx__text" aria-expanded={more} onClick={() => setMore((v) => !v)}>{more ? 'Show fewer' : `Show ${others.length - OTHER_SHOWN} more`}</button>}
-          {routine.full && <p className="ay-rx__note">Start here holds {START_MAX}. Remove one to add another.</p>}
-        </details>
-      )}
-        <SetAside routine={routine} act={act} />
-        <ShopTogether routine={routine} />
-      </div>
+        <div className="ay-rx__side">
+          {others.length > 0 && (
+            <details className="ay-rx__others">
+              <summary className="ay-rx__h ay-rx__otherssum">Other options ({others.length})</summary>
+              <ul>{shown.map((item) => <OtherItem key={item.key} routine={routine} item={item} act={act} onOpenProduct={onOpenProduct} canAdd={!routine.full} />)}</ul>
+              {others.length > OTHER_SHOWN && <button type="button" className="ay-rx__text" aria-expanded={more} onClick={() => setMore((v) => !v)}>{more ? 'Show fewer' : `Show ${others.length - OTHER_SHOWN} more`}</button>}
+              {routine.full && <p className="ay-rx__note">Start here holds {START_MAX}. Remove one to add another.</p>}
+            </details>
+          )}
+          <SetAside routine={routine} act={act} />
+          <ShopTogether routine={routine} />
+        </div>
       </div>
     </details>
   );
