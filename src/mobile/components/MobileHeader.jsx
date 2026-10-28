@@ -24,6 +24,7 @@ export default function MobileHeader({ onOpenSettings, onBack, hideAsk = false }
   const head = useContext(AppHeaderContext);
   // Header is on every app tab: capture invite codes (idempotent).
   useEffect(() => { installReferralCapture(getSupabaseClient()); }, []);
+  const surface = typeof document !== 'undefined' ? document.querySelector('.ayna-mobile')?.dataset?.screen || '' : '';
   return <><header className="ayna-figma-header ayna-shared-header">
     <div className="ayna-shared-header-leading">
       {onBack && <button type="button" onClick={onBack} aria-label="Back" className="ayna-shared-header-action">
@@ -41,7 +42,7 @@ export default function MobileHeader({ onOpenSettings, onBack, hideAsk = false }
     </button>}
     {/* Focus group, Oct 26: Saved was hard to find, so a labelled heart with the count opens Saved. */}
     {head?.onOpenSaved && <button type="button" onClick={head.onOpenSaved} aria-label={head.savedCount ? `Saved, ${head.savedCount} ${head.savedCount === 1 ? 'product' : 'products'}` : 'Saved'} className={`ay-header-heart${head.savedCount ? ' has-saved' : ''}`} data-tab-target="saved" data-tour="saved-heart">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2Z" /></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7 2.2c0 5.6-7 9.3-7 9.3Z" /></svg>
       {head.savedCount > 0 && <span className="ay-heart-count" aria-hidden="true">{head.savedCount > 99 ? '99+' : head.savedCount}</span>}
     </button>}
     {onOpenSettings && <button type="button" onClick={onOpenSettings} aria-label="Settings" className="ayna-shared-header-action ay-header-saved ay-header-settings">
@@ -53,7 +54,7 @@ export default function MobileHeader({ onOpenSettings, onBack, hideAsk = false }
     </button>}
     </div>
   </header>
-  {/* Ask ayna suggestions under the header on Today, Shop, Services, Community and Library; tap sends, Hide collapses. */}
-  {head?.suggest && openAsk && <AskSuggestRow className="ay-asksug--app" signedIn={head.suggest.signedIn} hasProfile={head.suggest.hasProfile} onAsk={(question) => openAsk({ question })} />}
+  {/* Ask ayna suggestions under the header; the questions change with the page she is on. */}
+  {head?.suggest && openAsk && <AskSuggestRow className="ay-asksug--app" signedIn={head.suggest.signedIn} hasProfile={head.suggest.hasProfile} surface={surface} onAsk={(question) => openAsk({ question })} />}
   </>;
 }
