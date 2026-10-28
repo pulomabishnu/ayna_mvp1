@@ -1,0 +1,67 @@
+/* /pro density pass: the purchase decision stays visible; proof and terms disclose on request. */
+.pro-page { gap: clamp(48px, 7vw, 82px); }
+.pro-tagline { font: 700 clamp(24px, 3vw, 36px)/1.08 var(--display); letter-spacing: -.02em; max-width: 19ch; }
+.pro-early { max-width: 42em; color: var(--fg-muted); font-size: 14px; line-height: 1.5; }
+
+/* Let the checkout card be the one obviously raised object on the first screen. */
+.pro-plan { box-shadow: none; }
+.pro-plan.is-on { box-shadow: none; outline: 2px solid var(--pink); outline-offset: 2px; }
+.pro-plan:active:not(:disabled) { box-shadow: none; }
+
+.pro-section-head { display: grid; gap: 7px; }
+.pro-section-kicker { color: var(--fg-muted); font: 600 13px/1.3 var(--ui); }
+.pro-adds { display: grid; gap: 26px; }
+.pro-pillars {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-block: 1px solid var(--rule);
+}
+.pro-pillars > div { display: grid; align-content: start; gap: 7px; padding: 24px 28px 24px 0; }
+.pro-pillars > div + div { padding-left: 28px; border-left: 1px solid var(--rule); }
+.pro-pillars b { font: 700 20px/1.15 var(--display); letter-spacing: -.01em; }
+.pro-pillars span { color: var(--fg-muted); font-size: 15px; line-height: 1.48; }
+
+/* Detailed Pro list only exists after disclosure; keep it flat, not card-in-card. */
+.pro-more--section { max-width: 760px; }
+.pro-more--section .pro-more-body { padding-top: 6px; }
+.pro-more--section .pro-cats { display: grid; gap: 0; padding: 0; list-style: none; }
+.pro-more--section .pro-cat {
+  display: grid; gap: 8px; padding: 20px 0; border-top: 1px solid var(--rule);
+  background: transparent; border-radius: 0; box-shadow: none;
+}
+.pro-more--section .pro-cat h3 { font: 700 21px/1.15 var(--display); }
+.pro-more--section .pro-cat-promise { color: var(--fg-muted); }
+.pro-more--section .pro-cat ul { display: grid; gap: 12px; margin: 4px 0 0; padding: 0; list-style: none; }
+.pro-more--section .pro-cat li { display: grid; gap: 2px; }
+.pro-more--section .pro-cat li span { color: var(--fg-muted); font-size: 14px; line-height: 1.45; }
+
+/* One compact disclosure stack replaces four always-open sections. */
+.pro-details-stack { display: grid; max-width: 900px; border-bottom: 1px solid var(--rule); }
+.pro-more--major { max-width: none; border-top: 1px solid var(--rule); border-bottom: 0 !important; }
+.pro-more--major > summary { min-height: 70px; }
+.pro-more--major > summary > span { display: grid; gap: 3px; }
+.pro-more--major > summary b { font: 700 19px/1.2 var(--display); letter-spacing: -.01em; }
+.pro-more--major > summary small { color: var(--fg-muted); font: 400 14px/1.4 var(--ui); }
+.pro-more--major .pro-more-body { padding: 4px 0 24px; }
+.pro-more--major.pro-free .pro-more-body { max-width: 650px; }
+.pro-more--major.pro-free ul { display: grid; gap: 8px; margin: 10px 0 0; padding-left: 20px; }
+
+/* Comparison is useful but visually secondary. Remove the hard dashboard-like shadow. */
+.pro-details-stack .pro-table { box-shadow: none; }
+.pro-details-stack .pro-compare { gap: 0; }
+
+/* The bottom CTA is a closing reminder, not another giant panel. */
+.pro-end { max-width: 680px; margin-inline: auto; }
+
+@media (max-width: 760px) {
+  .pro-page { gap: 48px; }
+  .pro-pillars { grid-template-columns: 1fr; }
+  .pro-pillars > div { padding: 18px 0; }
+  .pro-pillars > div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); }
+  .pro-more--major > summary { min-height: 66px; }
+  .pro-more--major > summary small { font-size: 13px; }
+}
+
+@media (max-width: 640px) {
+  .pro-tagline { font-size: 26px; }
+  .pro-early { font-size: 13px; }
+}
