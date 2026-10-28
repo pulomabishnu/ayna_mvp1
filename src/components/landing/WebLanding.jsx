@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import LandingV2 from '../LandingV2.jsx';
-import MedicalNote from '../MedicalNote.jsx';
 import { isPlainLeftClick } from '../../utils/productRoute';
 import '../../styles/editorial.css';
 import '../../styles/home.css';
@@ -13,10 +12,11 @@ import { PLANS, PAID_TERM_STARTS } from '../../pro/plans.js';
 import './web-landing.css';
 import './landing-polish.css';
 import './landing-research-pass.css';
+import './landing-final-audit.css';
 
 /* Website landing: preserve the approved rain hero and brand strip. Below it:
- * picture-led needs, a short method, one focused Pro offer, Reads / Community,
- * founders, then one closing action. Secondary explanation stays collapsed. */
+ * picture-led needs, a short method, trust/content, founders, optional Pro,
+ * then one closing action. Secondary explanation stays collapsed. */
 
 const Arrow = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>);
 
@@ -95,7 +95,10 @@ function FinalCta({ cta }) {
   return (
     <Band tone="ink" className="hm-band wlx-end" aria-labelledby="wlx-end-h">
       <div className="hm-wrap wlx-end__in">
-        <h2 id="wlx-end-h" className="wlx-end__h">Find what fits <span>your body.</span></h2>
+        <div className="wlx-end__copy">
+          <span className="wlx-end__eyebrow">Start with the free ecosystem</span>
+          <h2 id="wlx-end-h" className="wlx-end__h">Find what fits <span>your body.</span></h2>
+        </div>
         <SlideToStart className="wlx-end__sts" size="lg" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
       </div>
     </Band>
@@ -122,7 +125,6 @@ export default function WebLanding({ signedIn = false, hasProfile = false, onSta
         <LandingV2 bodyOnly membershipSlot={<Pro />} onStartQuiz={home ? onGoHome : onStartQuiz} onViewDiscovery={onViewDiscovery} onOpenProduct={onOpenProduct} onViewArticles={onViewArticles} onViewArticle={onViewArticle} onViewAbout={onViewAbout} onViewWaitlist={onViewWaitlist} onViewCommunity={onViewCommunity} onViewHowItWorks={onViewHowItWorks} onSearch={onSearch} communityPosts={communityPosts} />
       </div>
       {rest && <FinalCta cta={cta} />}
-      <div className="wl-note"><MedicalNote className="wl-note__p" /></div>
     </div>
   );
 }
