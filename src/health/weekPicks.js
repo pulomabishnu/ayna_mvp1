@@ -19,6 +19,8 @@
  */
 import NEED_MAP_RESEARCH from '../data/matching/needMap.research.js';
 import { withoutMedicines } from './medicineProduct.js';
+import { explainWeek } from './weekInsights.js';
+import { usableForMatching } from './policy.js';
 
 const GRADED = NEED_MAP_RESEARCH.reduce((m, r) => m.set(`${r.product}|${r.need}`, r), new Map());
 
@@ -136,6 +138,16 @@ export function weekPicks({ ctx = {}, insights = [], needIds = [], products: all
   // Show in need order, owned first within a need.
   const order = needs.map((n) => n.needId);
   return picks.sort((a, b) => order.indexOf(a.needId) - order.indexOf(b.needId) || (b.owned - a.owned)).slice(0, limit);
+}
+
+/**
+ * Picks are a product surface, so only rows that SOURCE_POLICY allows for
+ * matching may shape them (src/health/policy.js). Oura data still shows in her
+ * insights; it never adds a need or a reason here until policy.js says so.
+ */
+export function weekPicksFromRows(rows = [], { today, cycle, estimate, hormonalBC, needIds, products, matches, limit, perNeed } = {}) {
+  const { insights, ctx } = explainWeek((rows || []).filter(usableForMatching), { today, cycle, estimate, hormonalBC, max: 7 });
+  return weekPicks({ ctx, insights, needIds, products, matches, limit, perNeed });
 }
 
 /** A direct next step for a measured change, only when a pick fits that change. */

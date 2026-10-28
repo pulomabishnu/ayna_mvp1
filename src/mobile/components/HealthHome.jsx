@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { buildDashboard, RANGES } from '../../health/dashboard.js';
 import { estimatePhase, PHASE_SOURCES } from '../../health/phase.js';
 import { explainWeek } from '../../health/weekInsights.js';
-import { weekPicks } from '../../health/weekPicks.js';
+import { weekPicksFromRows } from '../../health/weekPicks.js';
 import { fitFor } from '../../health/weekPicks.js';
 import { comingUp } from '../../health/comingUp.js';
 import { phaseCompare, normalRanges, goalsCovered, effectChecks, aynaAdds } from '../../health/beyondNumbers.js';
@@ -243,7 +243,8 @@ export default function HealthHome({
   const stories = insightStories(insights, { hormonalBC });
   const ctx = explained.ctx;
   const { status: findingStatusBy, backToUsual } = findingStatus(rows, insights, { today, hormonalBC });
-  const picks = weekPicks({ ctx, insights, needIds, products, matches });
+  // Product picks read only matching-eligible sources; the insights above still use every source.
+  const picks = weekPicksFromRows(rows, { today, cycle, estimate, hormonalBC, needIds, products, matches });
   const coming = comingUp(cycle, estimate, today, { hormonalBC, hasProducts: products.length > 0 && Boolean(onOpenRoutine) });
   const compare = phaseCompare(rows, { today, cycle, hormonalBC });
   const ranges = normalRanges(rows, { today, hormonalBC });
