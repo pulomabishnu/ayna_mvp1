@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react';
 import { Bento, Tile, Plate } from '../ui/ay';
 import { readBlend } from '../../utils/houseBlend.js';
 import { resolveCatalogProductImage } from '../ProductTileImage.jsx';
+import { requestPro } from '../../utils/proApi.js';
+import { openProPaywall, PRO_CHANGED_EVENT } from '../../pro/paywall.js';
 import './you-bento.css';
 
 /**
@@ -23,6 +26,7 @@ const ICON = {
   blend: <path d="M4 7h10M18 7h2M4 17h4M12 17h8M14 5v4M8 15v4" />,
   health: <path d="M3 12h4l2-5 4 10 2-5h6" />,
   activity: <path d="M5 6h14M5 12h14M5 18h9" />,
+  pro: <><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /><path d="M18.5 17.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8Z" /></>,
   logout: <path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M10 16l-4-4 4-4M6 12h10" />,
   settings: <><circle cx="12" cy="12" r="3" /><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8" /></>,
 };
@@ -69,13 +73,39 @@ function Row({ k, t }) {
     <span className="yb-row__n">{t.value || ''}</span>
     {t.onClick && k !== 'logout' && CHEVRON}
   </>;
-  return <li>{t.onClick ? <button type="button" className="yb-row" onClick={t.onClick}>{inner}</button> : <div className="yb-row">{inner}</div>}</li>;
+  return <li>{t.onClick ? <button type="button" className={`yb-row${k === 'pro' ? ' yb-row--pro' : ''}`} onClick={t.onClick}>{inner}</button> : <div className="yb-row">{inner}</div>}</li>;
+}
+
+function useProOffer() {
+  const [available, setAvailable] = useState(false);
+  useEffect(() => {
+    let live = true;
+    const load = () => requestPro()
+      .then((status) => { if (live) setAvailable(status?.active !== true && status?.offerOpen === true); })
+      .catch(() => { if (live) setAvailable(false); });
+    load();
+    const changed = () => load();
+    window.addEventListener(PRO_CHANGED_EVENT, changed);
+    window.addEventListener('focus', changed);
+    return () => {
+      live = false;
+      window.removeEventListener(PRO_CHANGED_EVENT, changed);
+      window.removeEventListener('focus', changed);
+    };
+  }, []);
+  return available;
 }
 
 export default function YouBento({ tiles = {}, products = [], intake = null, onOpenBlend = null, className = '', layout = 'bento' }) {
   const { eco, saved, checkins, health, activity, settings, logout } = tiles;
   const shown = products.filter((p) => p?.id).slice(0, 3);
   const said = blendSaid(intake);
+  const proOffer = useProOffer();
+  const pro = proOffer ? {
+    caption: 'Upgrade to ayna Pro',
+    sub: 'Health data, deeper insights and higher limits',
+    onClick: () => openProPaywall({ feature: 'dashboard', featureName: 'ayna Pro' }),
+  } : null;
   // App You (critique, Oct 27): one colour rule. Espresso is the one feature card (My ecosystem),
   // everything else is a calm grouped list on the butter surface; pink is kept for "for you / now".
   if (layout === 'list') {
@@ -92,6 +122,7 @@ export default function YouBento({ tiles = {}, products = [], intake = null, onO
             <span className="yb-num"><span className="ayb-tile__big">{eco.value}</span><span className="ayb-tile__cap">{eco.sub}</span></span>
           </Tile>
         )}
+        {pro && <ul className="yb-list yb-list--pro" aria-label="ayna Pro"><Row k="pro" t={pro} /></ul>}
         <ul className="yb-list" aria-label="Your things">
           <Row k="saved" t={saved} />
           <Row k="checkins" t={checkins} />
