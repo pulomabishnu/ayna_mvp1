@@ -58,17 +58,27 @@ export function renewalDate(launchAt, plan) {
 }
 export async function validateProPrices(stripe, plan) {
   const offer = PRO_PLANS[plan], config = proConfig();
-  const [renewal, coupon] = await Promise.all([
-    stripe.prices.retrieve(process.env[offer.recurringEnv]),
-    stripe.coupons.retrieve(process.env[offer.couponEnv]),
-  ]);
+  const couponId = process.env[offer.couponEnv];
+  const renewal = await stripe.prices.retrieve(process.env[offer.recurringEnv]);
+  let coupon = null;
+  try {
+    coupon = await stripe.coupons.retrieve(couponId);
+  } catch (error) {
+    const code = error?.code || error?.raw?.code;
+    const message = String(error?.message || error?.raw?.message || '');
+    const missingCouponRead = code === 'more_permissions_required' && /coupon_read|Coupons Read/i.test(message);
+    if (!missingCouponRead) throw error;
+    console.warn('[pro] coupon validation skipped because restricted Stripe key lacks coupon_read');
+  }
   const common = p => p.active && p.currency === 'usd' && p.product === config.product && p.livemode === config.livemode;
   const discountAmount = offer.standardAmount - offer.amount;
   if (!common(renewal) || renewal.type !== 'recurring' || renewal.unit_amount !== offer.regularAmount ||
-      renewal.recurring?.interval !== plan || renewal.recurring?.interval_count !== 1 || renewal.recurring?.usage_type !== 'licensed' ||
-      !coupon.valid || coupon.livemode !== config.livemode || coupon.duration !== 'once' || coupon.currency !== 'usd' ||
-      coupon.amount_off !== discountAmount || coupon.percent_off !== null) throw new Error('Pro price configuration mismatch');
-  return { renewal: renewal.id, coupon: coupon.id };
+      renewal.recurring?.interval !== plan || renewal.recurring?.interval_count !== 1 || renewal.recurring?.usage_type !== 'licensed') {
+    throw new Error('Pro price configuration mismatch');
+  }
+  if (coupon && (!coupon.valid || coupon.livemode !== config.livemode || coupon.duration !== 'once' || coupon.currency !== 'usd' ||
+      coupon.amount_off !== discountAmount || coupon.percent_off !== null)) throw new Error('Pro price configuration mismatch');
+  return { renewal: renewal.id, coupon: coupon?.id || couponId };
 }
 export async function revokeProPayment(admin, paymentIntent, reason, at) {
   if (!paymentIntent) return;
