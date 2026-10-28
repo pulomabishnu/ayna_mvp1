@@ -52,15 +52,9 @@ export function CheckerFrame({ className = '', square = 12, radius = 22, childre
 
 /**
  * ayna's one locked state, used by every paywall: the checker frame, a lock,
- * "Get ayna Pro to unlock" with the feature's name, one strong button and a
- * quiet "Not now". On the native app the Pro CTA goes straight to the web;
- * on the website it opens the normal Pro sheet.
- *
- *   variant="page"    a gated screen (Reads, appointment prep, wearables)
- *   variant="inline"  a limit she just hit (Ask ayna, playlists, ecosystem update)
- *
- * "Not now" calls onNotNow (usually Back); without one it folds the card into
- * a one-line reminder so the page stays usable.
+ * one strong Pro action and a quiet secondary action. The install handoff is
+ * deliberately collapsed on web so a two-step journey never becomes a stack
+ * of cards/CTAs inside the lock.
  */
 export default function ProLock({
   feature, title, context = '', line, variant = 'page', onNotNow, native = false,
@@ -69,6 +63,7 @@ export default function ProLock({
   const uid = useId();
   const [folded, setFolded] = useState(false);
   const [localSheet, setLocalSheet] = useState(false);
+  const [showInstall, setShowInstall] = useState(false);
   const name = title || proFeatureName(feature);
   const webSetup = !native && ['dashboard', 'wearables'].includes(feature);
   const webUrl = proWebUrl(feature);
@@ -97,35 +92,40 @@ export default function ProLock({
           <h2 id={`${uid}-t`} className="pro-lock__title">{name}</h2>
           {context && <p className="pro-lock__context">{context}</p>}
           <p className="pro-lock__line">{line || proLockLine(feature)}</p>
-          {webSetup && <div className="pro-lock__setup">
-            <ol>
-              <li>
-                <b>Get ayna Pro</b>
-                <p>Choose your plan on the web, then use the same ayna account in the app.</p>
-                <button type="button" className="pro-lock__cta" onClick={unlock}><LockIcon size={18} />Get ayna Pro</button>
-              </li>
-              <li>
-                <b>Get ayna on TestFlight</b>
-                <p>Install the iPhone beta, then sign in with the same account.</p>
-                <a href={TESTFLIGHT_URL} target="_blank" rel="noopener noreferrer">Download on TestFlight ↗</a>
-                <a href={TESTFLIGHT_URL} target="_blank" rel="noopener noreferrer" aria-label="Open ayna in TestFlight" style={{ display: 'block', width: 132, marginTop: 12, textDecoration: 'none' }}>
-                  <img src="/images/testflight-qr.svg" alt="QR code to install ayna through TestFlight" width="132" height="132" style={{ display: 'block', width: '132px', height: '132px', borderRadius: '12px' }} />
-                </a>
-                <p>Scan with your iPhone camera.</p>
-              </li>
-            </ol>
-            <p className="pro-lock__expiry">Cancel anytime. Access continues until your paid period ends, then the dashboard locks again.</p>
-          </div>}
           {children}
           {error && <p className="pro-lock__error" role="status">{error}{onRetry && <> <button type="button" className="pro-lock__retry" onClick={onRetry}>Check again</button></>}</p>}
         </div>
         <div className="pro-lock__actions">
-          {!webSetup && (native
+          {native
             ? <a className="pro-lock__cta" href={webUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}><LockIcon size={18} />Get ayna Pro</a>
-            : <button type="button" className="pro-lock__cta" onClick={unlock}><LockIcon size={18} />Get ayna Pro</button>)}
+            : <button type="button" className="pro-lock__cta" onClick={unlock}><LockIcon size={18} />Get ayna Pro</button>}
           <button type="button" className="pro-lock__quiet" onClick={() => (onNotNow ? onNotNow() : setFolded(true))}>Not now</button>
           {native && <p className="pro-lock__fine">Already a Pro member? Sign in with the ayna account that has your membership.</p>}
+          {webSetup && <>
+            <button
+              type="button"
+              className="pro-lock__quiet"
+              aria-expanded={showInstall}
+              aria-controls={`${uid}-install`}
+              onClick={() => setShowInstall((v) => !v)}
+            >
+              {showInstall ? 'Hide iPhone install' : 'Then install ayna on iPhone'}
+            </button>
+            <p className="pro-lock__fine">Cancel anytime. Paid access stays active through the end of your purchased period.</p>
+          </>}
         </div>
+        {webSetup && showInstall && <div
+          id={`${uid}-install`}
+          style={{ width: '100%', paddingTop: 16, borderTop: '1px solid var(--pro-rule)' }}
+        >
+          <p className="pro-lock__line" style={{ marginBottom: 12 }}>Scan with your iPhone camera or open TestFlight directly.</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 16 }}>
+            <a href={TESTFLIGHT_URL} target="_blank" rel="noopener noreferrer" aria-label="Open ayna in TestFlight" style={{ display: 'block', width: 116, textDecoration: 'none' }}>
+              <img src="/images/testflight-qr.svg" alt="QR code to install ayna through TestFlight" width="116" height="116" style={{ display: 'block', width: '116px', height: '116px' }} />
+            </a>
+            <a href={TESTFLIGHT_URL} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', fontWeight: 600, textUnderlineOffset: 4 }}>Open TestFlight ↗</a>
+          </div>
+        </div>}
       </div>
     </CheckerFrame>
     {sheet}
