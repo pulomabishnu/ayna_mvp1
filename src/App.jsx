@@ -2607,7 +2607,6 @@ function App() {
             onViewCommunity={() => setCurrentView('community')}
             onViewWaitlist={() => setCurrentView('waitlist')}
             onViewHowItWorks={handleViewHowItWorks}
-            onViewToday={() => setCurrentView('today')}
             user={user}
             loading={authLoading || (!!user && dataLoading)}
             hasProfile={!!quizResults}

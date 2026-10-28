@@ -1537,7 +1537,10 @@ export default function MobileApp() {
   }, []);
   // Header: You is the round profile button beside Ask ayna (founder, Oct 26), and
   // on the five tab roots a slim row of Ask suggestions sits under the header.
-  const suggestOn = !overlay && !askAynaOpen && ['explore', 'browse', 'library', 'community'].includes(screen); // Today has its own Ask bar
+  const suggestOn = !overlay && !askAynaOpen && ['explore', 'browse', 'library', 'community', 'eco', 'ecointro', 'saved'].includes(screen); // Today has its own Ask bar
+  const suggestSurface = screen === 'explore'
+    ? (exploreSection === 'services' ? 'services' : exploreSection === 'resources' ? 'library' : 'explore')
+    : screen;
   const headerValue = {
     onOpenProfile: () => { setAskAynaOpen(false); authResumeRef.current = null; setOverlay({ type: 'profile' }); },
     initial: String(resolvedName || '').trim().charAt(0).toUpperCase(),
@@ -1546,7 +1549,7 @@ export default function MobileApp() {
     // Focus group, Oct 26: Saved was hard to find. A heart with the count, beside Ask ayna and You.
     savedCount: Object.keys(savedMap || {}).length,
     onOpenSaved: () => { setAskAynaOpen(false); setOverlay(null); setScreen('saved'); },
-    suggest: suggestOn ? { signedIn: Boolean(authUser?.id), hasProfile: Boolean(effectiveQuizAnswers) } : null,
+    suggest: suggestOn ? { signedIn: Boolean(authUser?.id), hasProfile: Boolean(effectiveQuizAnswers), surface: suggestSurface } : null,
     // The ayna wordmark opens the landing, signed in or out (founder, Oct 27 01:13).
     onOpenLanding: openLanding,
   };

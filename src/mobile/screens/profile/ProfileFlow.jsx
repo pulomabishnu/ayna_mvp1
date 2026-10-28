@@ -64,6 +64,8 @@ import { useCheckinCountStatus } from '../../../hooks/useCheckinCount.js';
 import { isOverLimit } from '../../../utils/charLimit.js';
 import { RundownSetting } from '../../../components/today/RundownNotifyAsk.jsx';
 import { localDayKey as rundownDayKey } from '../../../utils/localDate.js';
+import { openProPaywall } from '../../../pro/paywall.js';
+import { useProAccess } from '../../../pro/useProAccess.js';
 
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
 
@@ -481,6 +483,18 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
   const shownPlaylists = playlists.slice(0, HUB_PLAYLIST_LIMIT);
   const openMyProfile = profile?.username && onOpenCommunity ? () => onOpenCommunity({ username: profile.username }) : null;
   const signedIn = !!authUserId;
+  const pro = useProAccess(authUserId || null);
+  const healthLocked = signedIn && !pro.checking && !pro.allowed;
+  const openHealthData = () => {
+    if (pro.checking) return;
+    if (!pro.allowed) { openProPaywall({ feature: 'wearables' }); return; }
+    onOpen('healthData');
+  };
+  const openHealthDashboard = () => {
+    if (pro.checking) return;
+    if (!pro.allowed) { openProPaywall({ feature: 'dashboard' }); return; }
+    onOpen('healthInsights');
+  };
   // No name yet: "Good morning" on its own and the designed default avatar, never "Y" for "You".
   const realName = String(name || '').trim() && String(name).trim() !== 'You' ? String(name).trim() : '';
   const checkins = useCheckinCountStatus(authUserId);
@@ -491,13 +505,13 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
   const connectedCount = (healthConnected || []).filter((c) => !c?.status || c.status === 'connected').length;
   // Her set-up as a count that starts with what she already did (You audit 12, Pai #12).
   const setup = setupSteps({ hasAnswers: !!intake, productCount: ecosystemCount, connectedCount, checkinCount });
-  const SETUP_GO = { quiz: onEditProfile, ecosystem: onOpenEcosystem, connect: () => onOpen('healthData'), checkin: onOpenMonthlyCheckin };
+  const SETUP_GO = { quiz: onEditProfile, ecosystem: onOpenEcosystem, connect: openHealthData, checkin: onOpenMonthlyCheckin };
   const knows = knowsLine({ answerCount: countAnswers(intake), connectedNames: connectedNames(healthConnected), savedCount });
   const row = (r) => r && (
     <button type="button" key={r.key} className="ay-you-row" data-tour={`you-${r.key}`} onClick={r.onClick}>
       <svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true">{HUB_ICONS[r.icon || r.key]}</svg>
       <span className="ay-you-row-title">{r.title}{r.sub && <small className="ay-you-row-sub">{r.sub}</small>}</span>
-      {r.value && <span className="ay-you-row-value">{r.value}</span>}
+      {r.locked ? <span className="ay-you-row-value" aria-label="ayna Pro required" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" /><path d="M8.5 10V8a3.5 3.5 0 0 1 7 0v2" /></svg>Pro</span> : r.value && <span className="ay-you-row-value">{r.value}</span>}
       <ChevronIcon />
     </button>
   );
@@ -519,9 +533,9 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
   // My health (pushed from the hub): the old My health, Tracking and Connected data groups in one place.
   if (view === 'health') {
     return shell('My health', <>
-      <ThisWeek authUserId={authUserId} onOpenDashboard={() => onOpen('healthInsights')} onConnect={() => onOpen('healthData')} />
+      {pro.checking ? <section className="ay-you-section" aria-labelledby="ay-you-week"><h2 className="ay-you-h2" id="ay-you-week">This week</h2><div className="ay-you-week is-loading" role="status">Checking Pro access…</div></section> : pro.allowed ? <ThisWeek authUserId={authUserId} onOpenDashboard={openHealthDashboard} onConnect={openHealthData} /> : <section className="ay-you-section" aria-labelledby="ay-you-week"><h2 className="ay-you-h2" id="ay-you-week">This week</h2><div className="ay-you-locked"><svg className="ay-you-locked-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" /><path d="M8.5 10V8a3.5 3.5 0 0 1 7 0v2" /></svg><p>Your health dashboard and connected health data are included with ayna Pro.</p><button type="button" className="ay-you-btn" onClick={openHealthDashboard}>Get ayna Pro</button></div></section>}
       {group('connected', 'Connected apps', [
-        { key: 'healthData', title: 'Health data', sub: 'Apple Health, Oura and uploads', value: connectedCount ? `${connectedCount} connected` : '', onClick: () => onOpen('healthData') },
+        { key: 'healthData', title: 'Health data', sub: healthLocked ? 'Apple Health, Oura and uploads · Pro' : 'Apple Health, Oura and uploads', value: healthLocked ? '' : connectedCount ? `${connectedCount} connected` : '', locked: healthLocked, onClick: openHealthData },
       ])}
       <DailyCheckin variant="app" userId={authUserId || null} />
       {group('checkins', 'Check-ins', [
@@ -622,6 +636,7 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
 
       <div className="ay-you-body">
         {!signedIn && <SignedOutCard><b>Build your health ecosystem</b><br />Keep your concerns, matches, saved products and health insights connected in one place.</SignedOutCard>}
+        {signedIn && !pro.checking && !pro.allowed && <section className="ay-you-section ay-you-group" aria-label="ayna Pro"><nav className="ay-you-list"><button type="button" className="ay-you-row" onClick={() => openProPaywall({ feature: 'dashboard' })}><svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /></svg><span className="ay-you-row-title">ayna Pro<small className="ay-you-row-sub">Health dashboard, connected data and higher limits</small></span><span className="ay-you-row-value">Upgrade</span><ChevronIcon /></button></nav></section>}
 
         {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
 
@@ -1480,8 +1495,8 @@ function PreferencesScreen({
         <SectionLabel>AI & personalization</SectionLabel>
         {loadState === 'ready' && prefs && <div style={{ background: 'var(--d-group)', border: 0, borderRadius: 20, padding: '4px 18px' }}>
           <ToggleRow first title="Personalize with my data" sub="Your quiz answers, cycle logs and connected health data shape your matches and insights. Off: none of it is used." on={personalizeWithData} onClick={handlePersonalizeToggle} />
-          {/* Opt-in, off by default (src/health/askHealthPref.js). Oura and WHOOP data is never sent. */}
-          <ToggleRow title={ASK_HEALTH_LABEL} sub={askHealth.on ? 'On. Questions you ask from Your health can include your cycle day, next period estimate, sleep, heart and activity trends. Never Oura or WHOOP data.' : 'Off. Ask ayna answers without your cycle and sleep data.'} on={askHealth.on} onClick={() => askHealth.set(!askHealth.on)} />
+          {/* Opt-in, off by default (src/health/askHealthPref.js). Oura data is never sent. */}
+          <ToggleRow title={ASK_HEALTH_LABEL} sub={askHealth.on ? 'On. Questions you ask from Your health can include your cycle day, next period estimate, sleep, heart and activity trends. Oura data is never sent to Ask ayna.' : 'Off. Ask ayna answers without your cycle and sleep data.'} on={askHealth.on} onClick={() => askHealth.set(!askHealth.on)} />
           {/* One setting in one place (walkthrough P1-19): the switch lives in Health data; this row says where it stands and goes there. */}
           <DrillRow title="Health data in your matches" sub={!personalizeWithData ? 'Off while Personalize with my data is off. Change it in Health data.' : `${healthPref.on ? 'On' : 'Off'}. Change it in Health data.`} onClick={onOpenHealthData} />
         </div>}
@@ -1730,11 +1745,18 @@ const SET_ICONS = {
 };
 
 function SettingsScreen({ onBack, onOpenTexts, onOpenPreferences, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenLegal, authUser, onSignOut, onSignIn }) {
+  const [query, setQuery] = useState('');
   const groups = [
-    ['Preferences', 'butter', [{ icon: 'appearance', title: 'Appearance & preferences', onClick: onOpenPreferences }, ...(onOpenTexts ? [{ icon: 'texts', title: 'Text messages', onClick: onOpenTexts }] : [])]],
-    ['About', 'pink', [{ icon: 'how', title: 'How it works', onClick: onOpenHowItWorks }, { icon: 'about', title: 'About ayna', onClick: onOpenAboutAyna }, { icon: 'brands', title: 'Brand partnerships', href: BRAND_PARTNERSHIPS_URL }, { icon: 'campus', title: 'Campus resources', href: CAMPUS_RESOURCES_URL }]],
-    ['Account', 'mint', [{ icon: 'account', title: 'Account information', onClick: onOpenAccountInfo }, { icon: 'privacy', title: 'Privacy & data', onClick: onOpenPrivacyData }, { icon: 'legal', title: 'Legal', onClick: onOpenLegal }, { icon: 'contact', title: 'Contact', onClick: onOpenContact }]],
+    ['Preferences', 'butter', [{ icon: 'appearance', title: 'Appearance & preferences', keywords: 'theme text size notifications personalization health data ask ayna suggestions tips', onClick: onOpenPreferences }, ...(onOpenTexts ? [{ icon: 'texts', title: 'Text messages', keywords: 'sms phone alerts reminders', onClick: onOpenTexts }] : [])]],
+    ['About', 'pink', [{ icon: 'how', title: 'How it works', keywords: 'matching evidence recommendations', onClick: onOpenHowItWorks }, { icon: 'about', title: 'About ayna', keywords: 'team company', onClick: onOpenAboutAyna }, { icon: 'brands', title: 'Brand partnerships', keywords: 'partners companies', href: BRAND_PARTNERSHIPS_URL }, { icon: 'campus', title: 'Campus resources', keywords: 'college university', href: CAMPUS_RESOURCES_URL }]],
+    ['Account', 'mint', [{ icon: 'account', title: 'Account information', keywords: 'email password name delete download', onClick: onOpenAccountInfo }, { icon: 'privacy', title: 'Privacy & data', keywords: 'health data analytics delete export connected', onClick: onOpenPrivacyData }, { icon: 'legal', title: 'Legal', keywords: 'privacy terms licenses policy', onClick: onOpenLegal }, { icon: 'contact', title: 'Contact', keywords: 'help support feedback partnership press', onClick: onOpenContact }]],
   ];
+  const normalizedQuery = query.trim().toLowerCase();
+  const matchesQuery = (text) => !normalizedQuery || String(text || '').toLowerCase().includes(normalizedQuery);
+  const visibleGroups = groups.map(([title, tone, rows]) => [title, tone, rows.filter((row) => matchesQuery(`${row.title} ${row.keywords || ''}`))]).filter(([, , rows]) => rows.length);
+  const showRundown = !normalizedQuery || matchesQuery('daily rundown today notifications summary');
+  const showTips = !normalizedQuery || matchesQuery('tips help tour ask ayna suggestions appearance preferences');
+  const noResults = normalizedQuery && !visibleGroups.length && !showRundown && !showTips;
   const rowInner = (row) => <>
     <span className="ay-set-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{SET_ICONS[row.icon]}</svg></span>
     <span className="ay-set-title">{row.title}</span>
@@ -1743,7 +1765,8 @@ function SettingsScreen({ onBack, onOpenTexts, onOpenPreferences, onOpenHowItWor
   return <div className="ayna-settings-index" style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
     <BackHeader title="Settings" onBack={onBack} />
     <div className="ayna-settings-scroll ay-set-scroll">
-      {groups.map(([title, tone, rows]) => <section key={title} aria-label={title} className={`ay-set-group is-${tone}`}>
+      <label className="ay-set-search" aria-label="Search settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search settings" autoCapitalize="none" /></label>
+      {visibleGroups.map(([title, tone, rows]) => <section key={title} aria-label={title} className={`ay-set-group is-${tone}`}>
         <h2>{title}</h2>
         <div className="ay-set-card">
           {rows.map((row) => row.href
@@ -1751,8 +1774,9 @@ function SettingsScreen({ onBack, onOpenTexts, onOpenPreferences, onOpenHowItWor
             : <button type="button" key={row.title} className="ay-set-row" onClick={row.onClick}>{rowInner(row)}</button>)}
         </div>
       </section>)}
-      <RundownSetting today={rundownDayKey()} />
-      <TipsSettings renderSwitch={(p) => <Toggle {...p} />} />
+      {showRundown && <RundownSetting today={rundownDayKey()} />}
+      {showTips && <TipsSettings renderSwitch={(p) => <Toggle {...p} />} />}
+      {noResults && <p className="ay-set-no-results" role="status">No settings match “{query.trim()}”.</p>}
       <button type="button" className={`ayna-account-session ay-set-session${authUser ? ' is-out' : ''}`} onClick={authUser ? onSignOut : onSignIn}>{authUser ? 'Sign out' : 'Sign in'}</button>
       <LegalFooter />
     </div>

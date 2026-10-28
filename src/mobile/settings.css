@@ -147,3 +147,11 @@
 
 /* Shopper charts */
 .ay-shopper-charts { display: grid; gap: 12px; padding: 14px 14px 0; }
+
+
+/* PR88 settings search */
+.ayna-mobile .ay-set-search { display:flex; align-items:center; gap:10px; margin:4px 0 18px; padding:0 2px 10px; border-bottom:1px solid var(--d-hair); color:var(--ayna-text-muted); }
+.ayna-mobile .ay-set-search svg { width:18px; height:18px; flex:none; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; }
+.ayna-mobile .ay-set-search input { width:100%; min-width:0; border:0; outline:0; background:transparent; color:var(--ayna-text); font:500 max(16px, calc(15px * var(--ayna-text-scale, 1)))/1.4 var(--ayna-font-ui); padding:8px 0; }
+.ayna-mobile .ay-set-search input::placeholder { color:var(--ayna-text-faint); }
+.ayna-mobile .ay-set-no-results { margin:30px 4px; color:var(--ayna-text-muted); font-size:calc(13px * var(--ayna-text-scale, 1)); line-height:1.5; text-align:center; }

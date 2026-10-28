@@ -319,6 +319,10 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [rating, setRating] = useState(() => normalizeRating(seedRating) || null);
   const [playlistTitle, setPlaylistTitle] = useState('');
   const [playlistVisibility, setPlaylistVisibility] = useState('public');
+  const [editingPlaylist, setEditingPlaylist] = useState(false);
+  const [editPlaylistTitle, setEditPlaylistTitle] = useState('');
+  const [editPlaylistDescription, setEditPlaylistDescription] = useState('');
+  const [editPlaylistVisibility, setEditPlaylistVisibility] = useState('public');
   const [coverColor, setCoverColor] = useState(COVER_COLORS[0]);
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [photos, setPhotos] = useState([]);
@@ -419,7 +423,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   // Team picks: the pull quote only shows a post the ayna team picked by hand.
   const [teamPicks, setTeamPicks] = useState([]);
   const [pickedPost, setPickedPost] = useState(null);
-  const closePage = () => { setPage(null); setDetails(null); setComments([]); setItems([]); setError(''); setEditingProfile(false); setProfileStats(null); };
+  const closePage = () => { setPage(null); setDetails(null); setComments([]); setItems([]); setError(''); setEditingProfile(false); setEditingPlaylist(false); setProfileStats(null); };
   const openCompose = (kind = 'post', prompt = null) => {
     // Posting in a health community needs an account (no anonymous guest posts).
     if (!user) { requireAccount(kind === 'review' ? 'reviews' : kind === 'playlist' ? 'playlists' : kind === 'recommend' ? 'friend recommendations' : 'posting'); return; }
@@ -567,7 +571,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     try { setComments(await community.listComments(supabase, post.id)); } catch (e) { notifyError(e); }
   };
   const openPlaylist = async (pl) => {
-    setProductId(null); setPage({ type: 'playlist', id: pl.id }); setDetails(pl); setError(''); window.scrollTo(0, 0);
+    setEditingPlaylist(false); setProductId(null); setPage({ type: 'playlist', id: pl.id }); setDetails(pl); setError(''); window.scrollTo(0, 0);
     setItems((pl.preview_product_ids || []).map((product_id) => ({ product_id })));
     setCollab({ available: false, rows: [] }); setInviteLink('');
     try { setItems(await community.listPlaylistItems(supabase, pl.id)); } catch (e) { if (!pl.preview_product_ids?.length) notifyError(e); }
@@ -1196,6 +1200,28 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     const count = details.item_count ?? items.length;
     const addable = products.filter((p) => !items.some((s) => String(s.product_id) === String(p.id)));
     const deletePl = async () => { setBusy(true); try { await community.deletePlaylist(supabase, details.id); closePage(); setRefresh((v) => v + 1); setNotice('Playlist deleted.'); } catch (e) { notifyError(e); } finally { setBusy(false); } };
+    const startPlaylistEdit = () => {
+      if (!mine) return;
+      setEditPlaylistTitle(details.title || '');
+      setEditPlaylistDescription(details.description || '');
+      setEditPlaylistVisibility(details.visibility || 'public');
+      setEditingPlaylist(true);
+      setError('');
+    };
+    const cancelPlaylistEdit = () => { setEditingPlaylist(false); setError(''); };
+    const savePlaylistEdit = async (event) => {
+      event?.preventDefault();
+      const title = editPlaylistTitle.trim();
+      const description = editPlaylistDescription.trim();
+      if (!mine || !title || breaksCommunityRules(title, description)) return;
+      setBusy(true); setError('');
+      try {
+        await community.updatePlaylist(supabase, details.id, { title, description, visibility: editPlaylistVisibility });
+        await refreshPlaylist(details.id);
+        setEditingPlaylist(false);
+        setNotice('Playlist updated.');
+      } catch (e) { notifyError(e); } finally { setBusy(false); }
+    };
     const removeItem = async (pid) => { setBusy(true); try { await community.removeFromPlaylist(supabase, details.id, pid); await refreshPlaylist(details.id); } catch (e) { notifyError(e); } finally { setBusy(false); } };
     const addItem = async () => { setBusy(true); try { await community.addToPlaylist(supabase, details.id, productId); await refreshPlaylist(details.id); setProductId(null); } catch (e) { notifyError(e); } finally { setBusy(false); } };
     const reloadCollab = () => community.listPlaylistCollaborators(supabase, details.id).then(setCollab).catch(() => {});
@@ -1214,6 +1240,25 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           <small>{count} {count === 1 ? 'product' : 'products'}{details.owner_display_name ? ` · by ${details.owner_display_name}` : ''}{collaborators.length ? ` with ${collaborators.map((c) => c.display_name || (c.username ? `@${c.username}` : 'a friend')).join(', ')}` : ''}</small>
         </div>
       </div>
+      {mine && editingPlaylist && <form className="cm-pl-edit" onSubmit={savePlaylistEdit} style={{ display: 'grid', gap: 16, margin: '18px 0 22px', padding: '18px 0', borderTop: '1px solid var(--d-hair)', borderBottom: '1px solid var(--d-hair)' }}>
+        <section className="cm-group">
+          <label className="cm-label" htmlFor="cm-pl-edit-name">Name</label>
+          <RuleField as="input" id="cm-pl-edit-name" value={editPlaylistTitle} maxLength={60} onChange={(e) => setEditPlaylistTitle(e.target.value)} onShowRules={openRules} />
+        </section>
+        <section className="cm-group">
+          <label className="cm-label" htmlFor="cm-pl-edit-description">Description</label>
+          <RuleField as="textarea" id="cm-pl-edit-description" autoGrow minRows={3} value={editPlaylistDescription} maxLength={240} onChange={(e) => setEditPlaylistDescription(e.target.value)} placeholder="Optional" onShowRules={openRules} />
+        </section>
+        <fieldset className="cm-group" style={{ border: 0, padding: 0, margin: 0 }}>
+          <legend className="cm-label">Who can see it</legend>
+          <div className="cm-seg" role="radiogroup">{AUDIENCE.map(([value, label]) => <button type="button" key={value} role="radio" aria-checked={editPlaylistVisibility === value} aria-pressed={editPlaylistVisibility === value} onClick={() => setEditPlaylistVisibility(value)}>{label}</button>)}</div>
+        </fieldset>
+        {breaksCommunityRules(editPlaylistTitle, editPlaylistDescription) && <p className="cm-muted">Check the highlighted text against the Community rules before saving.</p>}
+        <div className="cm-row">
+          <button type="submit" className="ay-btn ay-btn--primary" disabled={busy || !editPlaylistTitle.trim() || breaksCommunityRules(editPlaylistTitle, editPlaylistDescription)}>{busy ? 'Saving…' : 'Save changes'}</button>
+          <button type="button" className="ay-btn ay-btn--secondary" disabled={busy} onClick={cancelPlaylistEdit}>Cancel</button>
+        </div>
+      </form>}
       <ul className="ay-group cm-pl-list" aria-label="Products in this playlist">
         {items.map((it) => <li key={it.product_id} className="cm-pl-row">
           <Mention productId={it.product_id} productsById={productsById} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onOpenProduct={onOpenProduct} onSeeMatch={seeMatch} />
@@ -1238,7 +1283,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         </ul>
         {mine && <div className="cm-pl-invite">{inviteLink ? <><input readOnly value={inviteLink} aria-label="Invite link" onFocus={(e) => e.currentTarget.select()} /><button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={() => { navigator.clipboard?.writeText(inviteLink).then(() => toast('Link copied')).catch(() => {}); }}>Copy link</button></> : <button type="button" className="ct-link" onClick={makeInvite}>Get an invite link</button>}</div>}
       </section>}
-      {mine && <div className="cm-pl-owner"><button type="button" className="ct-link is-danger" disabled={busy} onClick={deletePl}>Delete playlist</button></div>}
+      {mine && <div className="cm-pl-owner"><button type="button" className="ct-link" disabled={busy} onClick={editingPlaylist ? cancelPlaylistEdit : startPlaylistEdit}>{editingPlaylist ? 'Cancel editing' : 'Edit playlist'}</button><button type="button" className="ct-link is-danger" disabled={busy} onClick={deletePl}>Delete playlist</button></div>}
     </section>;
   } else if (page?.type === 'topic') {
     main = <TopicPage variant="web" supabase={supabase} user={user} topicId={page.id} refreshKey={refresh} renderPost={(p, i) => renderPost(p, false, i)}
