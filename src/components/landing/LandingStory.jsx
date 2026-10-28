@@ -8,7 +8,7 @@ import { shownMatchPercent } from '../../utils/matchDisplay.js';
 import { productsForNeed } from '../landingNeeds';
 import ProductCard from '../ProductCard';
 import SuggestBox from '../SuggestBox.jsx';
-import { Chip } from '../ui/ay';
+import { Chip, Marquee } from '../ui/ay';
 import BrandStrip from '../ui/ay/BrandStrip.jsx';
 import { FAMILIAR, weeklyLineup, NEEDS_PHOTO } from '../LandingV2.jsx';
 import { PLANS, PAID_TERM_STARTS } from '../../pro/plans.js';
@@ -58,8 +58,8 @@ function Discover({ onSearch }) {
     <section className="ls ls--butter ls-discover" aria-labelledby="ls-discover-h">
       <div className="hm-wrap">
         <header className="ls-head">
-          <h2 id="ls-discover-h" className="ls-h2">What are you navigating?</h2>
-          <p className="ls-lede">Start with what’s going on. ayna finds what may help.</p>
+          <h2 id="ls-discover-h" className="ls-h2">What are you <em>navigating?</em></h2>
+          <p className="ls-script ls-discover__note" aria-hidden="true">tap one ↓</p>
         </header>
         <nav className="lp-need-index" aria-label="Common needs">
           {FAMILIAR.map((n) => <Go key={n.need} href={`/explore/products?q=${encodeURIComponent(n.need)}`} onGo={() => onSearch?.(n.need)} className="lp-need-index__link">{n.q.replace(/\.$/, '')}<Arrow /></Go>)}
@@ -200,44 +200,96 @@ function More({ title, children, className = '' }) {
   );
 }
 
-function WhyFit({ onOpenProduct, onViewHowItWorks }) {
+/* A round sticker with text running around it (the inspo's stamps). It
+   turns slowly; still under reduced motion and Pause motion. Decoration. */
+function Stamp({ text, children, className = '' }) {
+  const id = React.useId().replace(/:/g, '');
+  return (
+    <span className={`ls-stamp ${className}`.trim()} aria-hidden="true">
+      <svg viewBox="0 0 120 120">
+        <defs><path id={`ls-ring-${id}`} d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1 -88 0" /></defs>
+        <circle cx="60" cy="60" r="58" className="ls-stamp__disc" />
+        <text className="ls-stamp__ring"><textPath href={`#ls-ring-${id}`}>{text}</textPath></text>
+      </svg>
+      <span className="ls-stamp__mid">{children}</span>
+    </span>
+  );
+}
+
+/* A flower-shaped price sticker (the inspo's scalloped price badges). */
+function Bloom({ tone = 'ink', big, small, label }) {
+  const petals = Array.from({ length: 10 }, (_, i) => {
+    const a = (i / 10) * Math.PI * 2;
+    return <circle key={i} cx={50 + Math.cos(a) * 34} cy={50 + Math.sin(a) * 34} r="16" />;
+  });
+  return (
+    <li className={`ls-bloom is-${tone}`} aria-label={label}>
+      <svg viewBox="0 0 100 100" aria-hidden="true"><g>{petals}<circle cx="50" cy="50" r="36" /></g></svg>
+      <span aria-hidden="true"><strong>{big}</strong><small>{small}</small></span>
+    </li>
+  );
+}
+
+/* ---------- 2. how it works ----------
+   Three taped polaroids, numbered in script (the inspo's "one, two, three").
+   Step two carries the real engine's answer for a labelled example profile,
+   so "with the why" is shown, not said. */
+const STEPS = [
+  { n: 'one', t: 'Tell ayna what’s going on', d: 'Your needs, life stage and what you avoid.', src: '/landing/hiw-questions-cabinet.webp', alt: 'A woman reaching into her bathroom cabinet' },
+  { n: 'two', t: 'See your matches, and why', d: 'Every product gets a Health Match with the reasons.', src: '/landing/hiw-evidence-reading.webp', alt: 'Two friends reading together' },
+  { n: 'three', t: 'Build your ecosystem', d: 'Keep what fits, check in, ask ayna anytime.', src: '/landing/hiw-ecosystem-vanity.webp', alt: 'A tidy vanity with everyday care products' },
+];
+function HowItWorks({ onOpenProduct, onViewHowItWorks, onStartQuiz }) {
   const ready = useCatalogReady();
   const ex = ready ? getExample() : null;
   return (
-    <section className="ls ls--butter ls-why" aria-labelledby="ls-why-h">
-      <div className="hm-wrap ls-split">
-        <div className="ls-photo-stack">
-          <Pic src="/landing/hiw-evidence-reading.webp" alt="Two friends reading a book together" className="ls-photo ls-photo--tall" />
-          {ex && (
-            <figure className="ls-example">
-              <figcaption className="ls-example__cap">Example: cramps + heavy periods, fragrance-free, under $30</figcaption>
-              <button type="button" className="ls-example__prod" onClick={() => onOpenProduct?.(ex.product)}>
-                <span className="ls-example__img"><img src={ex.product.image} alt="" loading="lazy" decoding="async" /></span>
-                <span className="ls-example__name">{ex.product.name}</span>
-                <span className="ls-example__pct" aria-label={`${ex.percent}% match`}>{ex.percent}<small>%</small></span>
-              </button>
-              <ul className="ls-example__why">
-                {ex.b.raised.slice(0, 1).map((r) => <li key={r.text} className="is-up">{r.text}</li>)}
-                {ex.b.lowered.slice(0, 1).map((r) => <li key={r.text} className="is-down">{r.text}</li>)}
-                {ex.b.unknown.slice(0, 1).map((r) => <li key={r.text} className="is-q">Not sure yet: {r.text.charAt(0).toLowerCase() + r.text.slice(1)}</li>)}
-              </ul>
-            </figure>
-          )}
-        </div>
-        <div className="ls-why__copy">
-          <h2 id="ls-why-h" className="ls-h2">Every match comes with the <em>why.</em></h2>
-          <p className="ls-lede">What raised it, what lowered it, what ayna doesn’t know yet.</p>
+    <section className="ls ls--grid ls-how" aria-labelledby="ls-how-h">
+      <div className="hm-wrap">
+        <header className="ls-head ls-head--center">
+          <h2 id="ls-how-h" className="ls-h2">How ayna <em>works</em></h2>
+        </header>
+        <ol className="ls-steps">
+          {STEPS.map((st, i) => (
+            <li key={st.n} className="ls-step">
+              <figure className="ls-polaroid">
+                <Pic src={st.src} alt={st.alt} sizes="(max-width: 899px) 80vw, 340px" />
+                {i === 1 && ex && (
+                  <button type="button" className="ls-match-sticker" onClick={() => onOpenProduct?.(ex.product)} aria-label={`Example: ${ex.product.name}, ${ex.percent}% match. ${ex.b.raised[0]?.text || ''}`}>
+                    <span className="ls-match-sticker__img"><img src={ex.product.image} alt="" loading="lazy" decoding="async" /></span>
+                    <span className="ls-match-sticker__pct">{ex.percent}<small>%</small></span>
+                    <span className="ls-match-sticker__why">+ {ex.b.raised[0]?.text}</span>
+                    {ex.b.unknown[0] && <span className="ls-match-sticker__why is-q">? {ex.b.unknown[0].text}</span>}
+                    <span className="ls-match-sticker__cap">Example match</span>
+                  </button>
+                )}
+              </figure>
+              <span className="ls-script ls-step__n" aria-hidden="true">{st.n}</span>
+              <h3>{st.t}</h3>
+              <p>{st.d}</p>
+            </li>
+          ))}
+        </ol>
+        <div className="ls-how__foot">
           <p className="ls-badge-line"><span className="ls-zero">0%</span> of your match comes from brand partnerships.</p>
-          <More title="What ayna weighs, in order">
-            <ol className="ls-order">
-              {ORDER.map((o, i) => <li key={o.t}><span aria-hidden="true">{i + 1}</span><div><strong>{o.t}</strong><small>{o.d}</small></div></li>)}
-            </ol>
-            <Go className="ls-link" href="/how-it-works" onGo={onViewHowItWorks}>The full method<Arrow /></Go>
-          </More>
+          <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Get my matches<Arrow /></Go>
         </div>
+        <More title="What ayna weighs, in order" className="ls-more--center">
+          <ol className="ls-order">
+            {ORDER.map((o, n) => <li key={o.t}><span aria-hidden="true">{n + 1}</span><div><strong>{o.t}</strong><small>{o.d}</small></div></li>)}
+          </ol>
+          <Go className="ls-link" href="/how-it-works" onGo={onViewHowItWorks}>The full method<Arrow /></Go>
+        </More>
+        <Stamp text="women’s health · made for you · " className="ls-how__stamp">ayna</Stamp>
       </div>
     </section>
   );
+}
+
+/* The needs, running on a tilted pink ribbon between sections (the inspo's
+   "NOS SERVICES" band). Plain words, no claims. Paused with Pause motion. */
+const RIBBON = ['Period pain', 'Heavy flow', 'PMOS', 'Perimenopause', 'Pelvic floor', 'Vaginal dryness', 'UTIs', 'Postpartum', 'Fertility', 'Sleep'];
+function Ribbon() {
+  return <div className="ls-ribbon" aria-hidden="true"><Marquee items={RIBBON} tone="pink" /></div>;
 }
 
 /* ---------- 4. your health data, in context (Pro) ----------
@@ -284,7 +336,7 @@ function HealthContext({ pro, signedIn, onOpenPro, onOpenHealth }) {
           </ul>
         </div>
         <div>
-          <ProMark>with ayna Pro</ProMark>
+          <p className="ls-script ls-kicker">with ayna Pro</p>
           <h2 id="ls-health-h" className="ls-h2">Your health data, <em>in context.</em></h2>
           <p className="ls-lede">Cycle, sleep and activity, right next to what you use.</p>
           <p className="ls-badge-line">Never sold. Off until you connect it. Delete anytime.</p>
@@ -389,11 +441,14 @@ function ProPlan({ pro, offerOpen, onOpenPro, onOpenHealth, onAsk }) {
         ) : (
           <div className="ls-offer">
             <div className="ls-offer__prices">
-              <p><span className="ls-offer__tag">Early Access · up to 50% off</span></p>
+              <p className="ls-script ls-offer__note">early access, up to 50% off!</p>
               {/* Yearly leads, as on the paywall (pre-selected there). */}
-              <p className="ls-offer__price"><strong>{year.price}</strong> first year <s aria-label={`normally ${year.regular}`}>{year.regular}</s></p>
-              <p className="ls-offer__per">That’s {year.sub}.</p>
-              <p className="ls-offer__or">Or <strong>{month.price}</strong> for your first month <s aria-label={`normally ${month.regular}`}>{month.regular}</s></p>
+              <ul className="ls-blooms" aria-label="Early Access prices">
+                <Bloom tone="ink" big={year.price} small="first year" label={`${year.price} for your first year, normally ${year.regular}`} />
+                <Bloom tone="pink" big={year.sub.replace('/month', '')} small="a month, yearly" label={`${year.sub} when you pay yearly`} />
+                <Bloom tone="butter" big={month.price} small="first month" label={`Or ${month.price} for your first month, normally ${month.regular}`} />
+              </ul>
+              <p className="ls-offer__regular">Normally <s>{year.regular}/year</s> or <s>{month.regular}/month</s>.</p>
             </div>
             <div className="ls-offer__right">
               <p className="ls-offer__terms">Pro unlocks today. Early Access runs through Dec 31, 2026. Your paid term starts {PAID_TERM_STARTS}, then renews at {year.regular}/year or {month.regular}/month. Cancel anytime.</p>
@@ -425,9 +480,10 @@ export default function LandingStory({
   return (
     <>
       <Discover onSearch={onSearch} />
+      <Ribbon />
+      <HowItWorks onOpenProduct={onOpenProduct} onViewHowItWorks={onViewHowItWorks} onStartQuiz={onStartQuiz} />
       <Shelf personal={personalPicks} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} signedIn={signedIn}
         onStartQuiz={onStartQuiz} onLogIn={onLogIn} onGoHome={onGoHome} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onViewHowItWorks={onViewHowItWorks} />
-      <WhyFit onOpenProduct={onOpenProduct} onViewHowItWorks={onViewHowItWorks} />
       <HealthContext pro={pro} signedIn={signedIn} onOpenPro={onOpenPro} onOpenHealth={onOpenHealth} />
       <Ask onAsk={onAsk} pro={pro} />
       <ProPlan pro={pro} offerOpen={offerOpen} onOpenPro={onOpenPro} onOpenHealth={onOpenHealth} onAsk={onAsk} />

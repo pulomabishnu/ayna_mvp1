@@ -118,8 +118,8 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     const page = host.textContent;
     expect(page).toContain('Women’s health, made for you.');
     expect(page).toContain('Brands we work with');
-    // discover -> matched to you -> why -> health data in context (Pro) -> Ask -> Free vs Pro -> trust
-    const order = ['What are you navigating?', 'Matched to you, once ayna knows you.', 'Every match comes with the why.', 'Your health data, in context.', 'Ask ayna anything.', 'Free helps you find what fits. Pro learns with you.', 'Quick reads about your body, with sources', 'Built by three women who wanted better answers.'];
+    // discover -> how it works (with the why) -> matched to you -> health data in context (Pro) -> Ask -> Free vs Pro -> trust
+    const order = ['What are you navigating?', 'How ayna works', 'Matched to you, once ayna knows you.', 'Your health data, in context.', 'Ask ayna anything.', 'Free helps you find what fits. Pro learns with you.', 'Quick reads about your body, with sources', 'Built by three women who wanted better answers.'];
     const at = order.map((t) => page.indexOf(t));
     at.forEach((i, n) => expect(i, order[n]).toBeGreaterThan(-1));
     expect([...at].sort((a, b) => a - b)).toEqual(at);

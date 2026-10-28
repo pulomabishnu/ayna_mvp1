@@ -1314,8 +1314,8 @@ function App() {
     } else if (pendingAction === 'free-product') {
       setCurrentView('free-product');
     } else if (pendingAction === 'login') {
-      // Signing in lands on Today, the home for signed-in accounts.
-      setCurrentView('today');
+      // Logging in from the landing stays on the landing (founder, Oct 28).
+      setCurrentView('welcome');
     } else if (pendingAction === 'ecosystem') {
       setCurrentView('ecosystem');
     } else if (pendingAction === 'saved') {
@@ -2411,16 +2411,14 @@ function App() {
     />
   );
 
-  // Today is home for a signed-in account with a profile (founder, Oct 24 2026):
-  // the welcome page hands over to Today once her account and answers are in.
-  // Only a cold visit to / hands over; the logo (navigateHome) pins the landing.
+  // The landing stays the landing for everyone (founder, Oct 28: "if im signed
+  // in and just log on it shud take u to the landing page not home", and a
+  // refresh must stay on the page you're on). It used to hand a signed-in
+  // account with a profile over to My ecosystem on every visit to /, so a
+  // refresh of the landing jumped Home. Home is one tap away in the nav.
   useEffect(() => {
-    if (currentView !== 'welcome' && currentView !== 'hero') { landingPinnedRef.current = false; return; }
-    if (landingPinnedRef.current) return;
-    if (!user || !quizResults || authLoading || dataLoading || showWrapped) return;
-    // The website's Home is My ecosystem (founder, Oct 27 18:34); the health dashboard is in the app.
-    setCurrentView('ecosystem', { replace: true });
-  }, [currentView, user, quizResults, authLoading, dataLoading, showWrapped, setCurrentView]);
+    if (currentView !== 'welcome' && currentView !== 'hero') landingPinnedRef.current = false;
+  }, [currentView]);
 
   // Signed out, Today is never shown from a cold load, reload, Back or a link,
   // whatever answers or fixtures this browser kept (founder, Oct 27 13:46: "if im

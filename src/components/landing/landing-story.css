@@ -1,3 +1,5 @@
+@font-face { font-family: 'ayna Script'; src: url('/fonts/caveat-latin-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+
 /* LandingStory.jsx: the website landing under the hero (Oct 28).
    Brand colours only (butter, butter-deep, espresso, pink as accent), through
    the calm tokens so dark mode flips with the rest of the site. 13px minimum
@@ -237,3 +239,105 @@ html body .app-container #ay-landing.wl.hm .wlx-end .wlx-end__h.wlx-end__h, html
 .app-container #ay-landing .wl-classic .hm-us .hm-polaroid { max-width: 440px; }
 html body .app-container #ay-landing.wl.hm .wlx-end .wlx-end__h.wlx-end__h { font-size: clamp(32px, 3.6vw, 46px) !important; }
 .app-container #ay-landing .wlx-end .wlx-end__in { padding-block: clamp(40px, 5vw, 60px) !important; gap: 18px !important; }
+
+/* ================= cute pass (founder inspo, Oct 28: nectar, double take,
+   wand & workflow, Studio Ducasse): script notes, taped polaroids, grid
+   paper, a tilted ribbon, round stamps and flower price stickers. Brand
+   colours only; the script is an accent, never body text. ================= */
+.app-container #ay-landing .ls-script { font: 700 clamp(22px, 2.2vw, 28px)/1 'ayna Script', cursive !important; color: #3e2723; letter-spacing: 0; margin: 0; }
+.app-container #ay-landing .ls--ink .ls-script { color: #f7badd; }
+.app-container #ay-landing .ls-kicker { margin-bottom: 4px; transform: rotate(-3deg); display: inline-block; }
+.app-container #ay-landing .ls-discover .ls-head { display: flex; align-items: flex-end; justify-content: space-between; max-width: none; }
+.app-container #ay-landing .ls-discover__note { transform: rotate(-4deg); color: #3e2723; }
+.app-container #ay-landing .ls-discover .lp-need-index__link { border: 1.5px solid #3e2723; box-shadow: 4px 4px 0 #f7badd; }
+@media (min-width: 900px) {
+  .app-container #ay-landing .ls-discover .lp-need-index__link:nth-child(odd) { transform: rotate(-1deg); }
+  .app-container #ay-landing .ls-discover .lp-need-index__link:nth-child(even) { transform: rotate(1deg) translateY(6px); }
+}
+
+/* the tilted ribbon */
+.app-container #ay-landing .ls-ribbon { position: relative; z-index: 2; margin: -18px -2% -18px; transform: rotate(-1.5deg); border-block: 1.5px solid #3e2723; }
+.app-container #ay-landing .ls-ribbon .ayb-marquee { font: 800 18px/1 var(--ay-font-display, sans-serif) !important; }
+
+/* grid paper (nectar) */
+.app-container #ay-landing .ls--grid { --ls-page: #ffedac; background-color: #ffedac; background-image: linear-gradient(rgba(247, 186, 221, .7) 1px, transparent 1px), linear-gradient(90deg, rgba(247, 186, 221, .7) 1px, transparent 1px); background-size: 30px 30px; padding-top: clamp(56px, 6vw, 80px); }
+.app-container[data-theme='brand-dark'] #ay-landing .ls--grid { --ls-page: #3e2723; --ls-fg: #ffedac; --ls-line: #ffedac; background-color: #3e2723; background-image: linear-gradient(rgba(247, 186, 221, .18) 1px, transparent 1px), linear-gradient(90deg, rgba(247, 186, 221, .18) 1px, transparent 1px); }
+
+/* how it works: three taped polaroids */
+.app-container #ay-landing .ls-how .hm-wrap { position: relative; }
+.app-container #ay-landing .ls-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px); }
+.app-container #ay-landing .ls-step { display: grid; justify-items: center; align-content: start; text-align: center; gap: 6px; }
+.app-container #ay-landing .ls-step h3 { margin: 0; font: 800 19px/1.2 var(--ay-sans-stack, sans-serif) !important; color: var(--ls-fg) !important; }
+.app-container #ay-landing .ls-step p { margin: 0; max-width: 28ch; font: 500 15px/1.4 var(--ay-sans-stack, sans-serif); color: var(--ls-fg); }
+.app-container #ay-landing .ls-step__n { font-size: 34px !important; transform: rotate(-4deg); margin-top: 4px !important; }
+.app-container #ay-landing .ls-polaroid { position: relative; margin: 0 0 6px; padding: 10px 10px 34px; width: min(100%, 280px); background: #ffedac; border: 1.5px solid #3e2723; box-shadow: 5px 5px 0 #3e2723; }
+.app-container #ay-landing .ls-step:nth-child(1) .ls-polaroid { transform: rotate(-2.5deg); }
+.app-container #ay-landing .ls-step:nth-child(2) .ls-polaroid { transform: rotate(1.5deg); }
+.app-container #ay-landing .ls-step:nth-child(3) .ls-polaroid { transform: rotate(-1deg); }
+.app-container #ay-landing .ls-polaroid::before { content: ''; position: absolute; top: -12px; left: 50%; width: 84px; height: 24px; translate: -50% 0; rotate: -4deg; background: rgba(247, 186, 221, .85); border: 1px solid rgba(62, 39, 35, .25); }
+.app-container #ay-landing .ls-polaroid img { display: block; width: 100% !important; height: auto !important; aspect-ratio: 4 / 3.4 !important; object-fit: cover; border: 1.5px solid #3e2723; }
+.app-container #ay-landing .ls-match-sticker { all: unset; box-sizing: border-box; cursor: pointer; position: absolute; right: -22px; bottom: 6px; width: 210px; padding: 12px; display: grid; grid-template-columns: 44px 1fr; gap: 4px 10px; align-items: center; text-align: left; background: #3e2723; color: #ffedac; border-radius: 16px; box-shadow: 4px 4px 0 #f7badd; transform: rotate(3deg); }
+.app-container #ay-landing .ls-match-sticker:focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }
+.app-container #ay-landing .ls-match-sticker__img { grid-row: span 1; width: 44px; height: 44px; border-radius: 10px; background: #fff; display: grid; place-items: center; overflow: hidden; }
+.app-container #ay-landing .ls-match-sticker__img img { width: 88%; height: 88%; object-fit: contain; border: 0; aspect-ratio: auto; }
+.app-container #ay-landing .ls-match-sticker__pct { font: 800 34px/1 var(--ay-font-display, sans-serif); letter-spacing: -.03em; }
+.app-container #ay-landing .ls-match-sticker__pct small { font-size: 16px; }
+.app-container #ay-landing .ls-match-sticker__why { grid-column: 1 / -1; font: 600 13px/1.3 var(--ay-sans-stack, sans-serif); }
+.app-container #ay-landing .ls-match-sticker__why.is-q { opacity: .85; }
+.app-container #ay-landing .ls-match-sticker__cap { grid-column: 1 / -1; font: 700 'ayna Script'; font: 700 17px/1 'ayna Script', cursive; color: #f7badd; }
+.app-container #ay-landing .ls-how__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 20px; margin-top: clamp(28px, 4vw, 44px); }
+.app-container #ay-landing .ls-how__foot .ls-badge-line { margin: 0; }
+html body .app-container #ay-landing .ls-stamp.ls-how__stamp { position: absolute; top: -20px; right: clamp(16px, 6vw, 96px); }
+@media (max-width: 899px) {
+  .app-container #ay-landing .ls-steps { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 78%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: calc(-1 * var(--ay-margin, 16px)); padding: 14px var(--ay-margin, 16px) 18px; }
+  .app-container #ay-landing .ls-steps::-webkit-scrollbar { display: none; }
+  .app-container #ay-landing .ls-step { scroll-snap-align: center; }
+  .app-container #ay-landing .ls-match-sticker { right: -6px; width: 190px; }
+  html body .app-container #ay-landing .ls-stamp.ls-how__stamp { top: -40px; right: 4px; transform: scale(.75); }
+}
+
+/* round stamp */
+.app-container #ay-landing .ls-stamp { position: relative; display: inline-grid; place-items: center; width: 104px; height: 104px; z-index: 3; }
+.app-container #ay-landing .ls-stamp svg { position: absolute; inset: 0; width: 100%; height: 100%; animation: ls-spin 26s linear infinite; }
+.app-container #ay-landing .ls-stamp__disc { fill: #f7badd; stroke: #3e2723; stroke-width: 1.5; }
+.app-container #ay-landing .ls-stamp__ring { font: 800 13px var(--ay-sans-stack, sans-serif); letter-spacing: .16em; text-transform: uppercase; fill: #3e2723; }
+.app-container #ay-landing .ls-stamp__mid { position: relative; font: 800 22px/1 var(--ay-font-display, sans-serif); color: #3e2723; }
+@keyframes ls-spin { to { transform: rotate(360deg); } }
+html.ay-motion-paused .app-container #ay-landing .ls-stamp svg { animation: none; }
+@media (prefers-reduced-motion: reduce) { .app-container #ay-landing .ls-stamp svg { animation: none; } }
+
+/* flower price stickers */
+.app-container #ay-landing .ls-offer__note { transform: rotate(-3deg); margin-bottom: 10px !important; color: #3e2723; }
+.app-container #ay-landing .ls-blooms { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; flex-wrap: wrap; }
+.app-container #ay-landing .ls-bloom { position: relative; display: grid; place-items: center; width: 108px; height: 108px; }
+.app-container #ay-landing .ls-bloom svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.app-container #ay-landing .ls-bloom svg g { stroke: #3e2723; stroke-width: 1.2; }
+.app-container #ay-landing .ls-bloom.is-ink svg g { fill: #3e2723; }
+.app-container #ay-landing .ls-bloom.is-pink svg g { fill: #f7badd; }
+.app-container #ay-landing .ls-bloom.is-butter svg g { fill: #ffedac; }
+.app-container #ay-landing .ls-bloom:nth-child(1) { transform: rotate(-6deg); }
+.app-container #ay-landing .ls-bloom:nth-child(2) { transform: rotate(4deg) translateY(6px); }
+.app-container #ay-landing .ls-bloom:nth-child(3) { transform: rotate(-3deg); }
+.app-container #ay-landing .ls-bloom > span { position: relative; display: grid; justify-items: center; text-align: center; color: #3e2723; }
+.app-container #ay-landing .ls-bloom.is-ink > span { color: #ffedac; }
+.app-container #ay-landing .ls-bloom strong { font: 800 28px/1 var(--ay-font-display, sans-serif); letter-spacing: -.03em; }
+.app-container #ay-landing .ls-bloom small { font: 700 11px/1.15 var(--ay-sans-stack, sans-serif); max-width: 9ch; margin-top: 3px; }
+.app-container #ay-landing .ls-offer__regular { margin-top: 10px !important; font: 500 14px/1.4 var(--ay-sans-stack, sans-serif); opacity: .85; }
+.app-container #ay-landing .ls-offer__regular s { margin: 0; font: inherit; opacity: 1; }
+.app-container #ay-landing .ls-offer { background: #ffedac; box-shadow: 6px 6px 0 #3e2723; }
+@media (max-width: 420px) { .app-container #ay-landing .ls-bloom { width: 98px; height: 98px; } .app-container #ay-landing .ls-bloom strong { font-size: 24px; } }
+
+/* espresso sections get wavy edges in and out (wand & workflow) */
+.app-container #ay-landing .ls--ink { margin-block: 14px; }
+.app-container #ay-landing .ls--ink::before, .app-container #ay-landing .ls--ink::after { content: ''; position: absolute; left: 0; right: 0; height: 14px; background: #3e2723;
+  -webkit-mask: radial-gradient(12px 10px at 50% 0, transparent 98%, #000) 0 0 / 24px 14px repeat-x; mask: radial-gradient(12px 10px at 50% 0, transparent 98%, #000) 0 0 / 24px 14px repeat-x; }
+.app-container #ay-landing .ls--ink::before { top: -13px; transform: scaleY(-1); }
+.app-container #ay-landing .ls--ink::after { bottom: -13px; }
+
+/* the founders photo becomes a taped polaroid with a stamp */
+.app-container #ay-landing .wl-classic .hm-us .hm-polaroid { position: relative; padding: 10px 10px 30px; background: #ffedac; border: 1.5px solid #3e2723; box-shadow: 6px 6px 0 #f7badd; transform: rotate(-1.5deg); }
+.app-container #ay-landing .wl-classic .hm-us .hm-polaroid::before { content: ''; position: absolute; top: -12px; left: 40%; width: 96px; height: 24px; rotate: 3deg; background: rgba(247, 186, 221, .85); border: 1px solid rgba(62, 39, 35, .25); z-index: 2; }
+.app-container #ay-landing .wl-classic .hm-us figcaption { font: 700 22px/1 'ayna Script', cursive !important; text-align: center; margin-top: 8px; }
+@media (min-width: 900px) { .app-container #ay-landing .ls-offer { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } }
+.app-container #ay-landing .ls-blooms { flex-wrap: nowrap; }
+@media (max-width: 380px) { .app-container #ay-landing .ls-blooms { flex-wrap: wrap; } }
