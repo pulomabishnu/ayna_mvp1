@@ -1,0 +1,134 @@
+.ayna-mobile .ayna-settings-index .ay-set-scroll {
+  display: flex;
+  flex-direction: column;
+}
+
+.ayna-mobile .ay-settings-search {
+  order: -10;
+  margin: 4px 0 22px;
+  position: relative;
+  z-index: 2;
+}
+
+.ayna-mobile .ay-settings-search__field {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid var(--ayna-border);
+  border-radius: 16px;
+  background: var(--ayna-surface);
+}
+
+.ayna-mobile .ay-settings-search__field > svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  fill: none;
+  stroke: var(--ayna-text-muted);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+.ayna-mobile .ay-settings-search__field input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ayna-text);
+  font: inherit;
+  font-size: max(16px, calc(15px * var(--ayna-text-scale, 1)));
+}
+
+.ayna-mobile .ay-settings-search__field input::placeholder {
+  color: var(--ayna-text-faint);
+}
+
+.ayna-mobile .ay-settings-search__field > button {
+  min-height: 40px;
+  padding: 0 2px;
+  border: 0;
+  background: transparent;
+  color: var(--ayna-accent-dark);
+  font: inherit;
+  font-size: calc(12px * var(--ayna-text-scale, 1));
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ayna-mobile .ay-settings-search__results {
+  margin-top: 8px;
+  overflow: hidden;
+  border: 1px solid var(--ayna-border);
+  border-radius: 16px;
+  background: var(--ayna-surface);
+  box-shadow: 0 16px 34px -26px rgba(62, 39, 35, .45);
+}
+
+.ayna-mobile .ay-settings-search__results > button {
+  width: 100%;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border: 0;
+  border-top: 1px solid var(--ayna-border);
+  background: transparent;
+  color: var(--ayna-text);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ayna-mobile .ay-settings-search__results > button:first-child {
+  border-top: 0;
+}
+
+.ayna-mobile .ay-settings-search__results > button > span {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.ayna-mobile .ay-settings-search__results b {
+  font-size: calc(15px * var(--ayna-text-scale, 1));
+  font-weight: 600;
+}
+
+.ayna-mobile .ay-settings-search__results small {
+  color: var(--ayna-text-muted);
+  font-size: calc(12px * var(--ayna-text-scale, 1));
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.ayna-mobile .ay-settings-search__results > button > svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: var(--ayna-text-faint);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ayna-mobile .ay-settings-search__results > p {
+  margin: 0;
+  padding: 14px;
+  color: var(--ayna-text-muted);
+  font-size: calc(13px * var(--ayna-text-scale, 1));
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ayna-mobile .ay-settings-search * {
+    scroll-behavior: auto !important;
+  }
+}
