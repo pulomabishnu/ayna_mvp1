@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import posthog from 'posthog-js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { requestPro } from '../utils/proApi.js';
 import '../styles/pro-v4.css';
@@ -7,6 +8,15 @@ const MONTHLY_PRICE = '$4.99';
 const MONTHLY_REGULAR = '$8.99';
 const ANNUAL_PRICE = '$45';
 const ANNUAL_REGULAR = '$90';
+const ANALYTICS_SOURCE = 'subscription_paywall';
+
+function captureProEvent(event, properties = {}) {
+  try {
+    posthog.capture(event, { source: ANALYTICS_SOURCE, ...properties });
+  } catch {
+    // Analytics must never interrupt checkout.
+  }
+}
 
 export default function SubscriptionPaywallModal({ onClose, featureName = 'this feature', featureDescription = 'deeper personalized health tools and insights' }) {
   useEscapeToClose(true, onClose);
@@ -14,8 +24,19 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
   const [error, setError] = useState('');
   const attempts = useRef({});
 
+  useEffect(() => {
+    captureProEvent('pro_paywall_viewed');
+  }, []);
+
+  const closePaywall = () => {
+    captureProEvent('pro_paywall_closed');
+    onClose?.();
+  };
+
   const checkout = async (plan) => {
     if (busy) return;
+    const amount = plan === 'year' ? 45 : 4.99;
+    captureProEvent('pro_plan_selected', { plan, amount, currency: 'USD' });
     setBusy(plan);
     setError('');
     attempts.current[plan] ||= crypto.randomUUID();
@@ -23,15 +44,17 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
       const result = await requestPro({ plan, requestId: attempts.current[plan] });
       const url = new URL(result.url);
       if (url.protocol !== 'https:' || url.hostname !== 'checkout.stripe.com') throw new Error('Checkout is unavailable. Please try again.');
+      captureProEvent('pro_checkout_started', { plan, amount, currency: 'USD' });
       window.location.assign(url.href);
     } catch (e) {
+      captureProEvent('pro_checkout_failed', { plan });
       setError(e.message);
       setBusy('');
     }
   };
 
   return (
-    <div className="pro-paywall-v4" onClick={onClose}>
+    <div className="pro-paywall-v4" onClick={closePaywall}>
       <section
         className="pro-paywall-v4__sheet"
         role="dialog"
@@ -39,7 +62,7 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
         aria-labelledby="pro-paywall-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <button type="button" className="pro-paywall-v4__close" onClick={onClose} aria-label="Close">×</button>
+        <button type="button" className="pro-paywall-v4__close" onClick={closePaywall} aria-label="Close">×</button>
 
         <div className="pro-paywall-v4__head">
           <p className="pro-paywall-v4__eyebrow">ayna Pro Early Access</p>
