@@ -9,6 +9,7 @@ import { PLANS, PRO_GROUPS, proGroups } from './plans.js';
 const proPage = readFileSync(new URL('../../public/pro.html', import.meta.url), 'utf8');
 const proApi = readFileSync(new URL('../../api/pro.js', import.meta.url), 'utf8');
 const proLockSource = readFileSync(new URL('../components/ProLock.jsx', import.meta.url), 'utf8');
+const proHostSource = readFileSync(new URL('../components/ProPaywallHost.jsx', import.meta.url), 'utf8');
 const testflightQr = readFileSync(new URL('../../public/images/testflight-qr.svg', import.meta.url), 'utf8');
 
 describe('the one locked state', () => {
@@ -88,6 +89,14 @@ describe('the sheet and /pro only promise what is real', () => {
     expect(proPage).toContain('$4.99');
     expect(proPage).not.toMatch(/\u2014/);
   });
+  it('keeps the purchase decision visible and secondary detail behind disclosures', () => {
+    expect(proPage).toContain('Get ayna Pro · $45');
+    expect(proPage).toContain('<summary>See everything included</summary>');
+    expect(proPage).toContain('Compare Free and Pro');
+    expect(proPage).toContain('What stays free');
+    expect(proPage).toContain('How billing works');
+    expect(proPage).not.toMatch(/<details[^>]*\sopen(?:\s|>)/i);
+  });
   it('returns checkout to /pro, which confirms and takes her back', () => {
     expect(proApi).toContain('/pro?checkout=success');
     expect(proApi).toContain('/pro?checkout=canceled');
@@ -137,5 +146,7 @@ describe('sign in, then back to ayna Pro', () => {
     expect(js).toContain("const RESUME = 'ayna.returnTo'");
     expect(js).toContain("path: '/pro'");
     expect(js).toContain('selectPlan(resumed.plan)');
+    expect(proHostSource).toContain('promptForSavedProSignIn');
+    expect(proHostSource).toContain("requireAuthRef.current?.('ayna Pro')");
   });
 });
