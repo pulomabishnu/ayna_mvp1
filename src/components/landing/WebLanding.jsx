@@ -14,8 +14,8 @@ import './web-landing.css';
 import './landing-polish.css';
 
 /* Website landing: preserve the approved rain hero and brand strip. Below it:
- * needs and real products, a short method, Pro, Reads and Community, founders,
- * one closing action. Secondary explanations expand in place. */
+ * picture-led needs, a short method, one focused Pro offer, Reads / Community,
+ * founders, then one closing action. Secondary explanation stays collapsed. */
 
 const Arrow = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>);
 
@@ -48,34 +48,48 @@ function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
   );
 }
 
-/* ---------- 7. ayna Pro (espresso) ----------
-   Early Access prices (src/components/SubscriptionPaywallModal.jsx on main),
-   as static text, and Learn more to /pro. */
+/* ---------- ayna Pro ----------
+   The landing sells one idea, not a pricing dashboard. Exact plan detail stays
+   on /pro. The first prices are visible; feature depth and free-tier detail are
+   disclosed only when someone asks for them. */
 function Pro() {
+  const month = PLANS.find((plan) => plan.id === 'month') || PLANS[1];
+  const year = PLANS.find((plan) => plan.id === 'year') || PLANS[0];
   return (
     <Band tone="ink" className="hm-sec hm-band wl-pro" aria-labelledby="wl-pro-h">
-      <div className="hm-wrap wl-pro__grid">
+      <div className="hm-wrap lp-pro-simple">
         <div className="wl-pro__copy">
           <span className="wl-pro__tag">ayna Pro · Early Access</span>
-          <h2 id="wl-pro-h" className="wlx-h2">More of ayna, when you want it.</h2>
-          <p className="wl-pro__body">Your health dashboard, connected wearables, unlimited Reads and playlists. Basic matches, safety information and your ecosystem stay free.</p>
+          <h2 id="wl-pro-h" className="wlx-h2">Go deeper when you want to.</h2>
+          <p className="wl-pro__body">Connect your health data, see your dashboard and get more of ayna without the free limits.</p>
+          <div className="lp-pro-offer" aria-label="ayna Pro Early Access pricing">
+            <span className="lp-pro-offer__deal">Up to 50% off</span>
+            <strong>{month?.price || '$4.99'}</strong>
+            <span>first month</span>
+            <small>or {year?.price || '$45'} for your first year</small>
+          </div>
           <a className="ay-btn lp-pro-cta" href="/pro">Get ayna Pro<Arrow /></a>
-          <details className="lp-pro-details"><summary>What stays free?</summary><p>Browse and get your matches, read one Library article each week and create one playlist. Pro unlocks more; your saved ecosystem and privacy controls stay available.</p></details>
-        </div>
-        <div className="lp-pro-plans">
-          <ul className="wl-pro__prices">{[...PLANS].reverse().map((plan) => <li key={plan.id}>
-            <small>{plan.label}{plan.best ? ' · 50% off' : ''}</small><b>{plan.price}</b><span>today, for your first {plan.per}</span><span className="lp-plan-renew">{plan.renew}</span>
-          </li>)}</ul>
           <p className="lp-pro-timing">Unlock Pro now. Your paid term starts {PAID_TERM_STARTS}.</p>
-          <a className="wl-pro__more" href="/pro">Learn more about Pro<Arrow /></a>
+          <details className="lp-pro-details">
+            <summary>See what Pro includes</summary>
+            <div className="lp-pro-details__inside">
+              <ul>
+                <li>Health dashboard and connected health data</li>
+                <li>Deeper personalized insights and advanced tracking</li>
+                <li>Unlimited quiz retakes, Reads and playlists</li>
+                <li>Up to 50 Ask ayna chats a month</li>
+              </ul>
+              <p>Free still includes your ecosystem, basic matches and safety information.</p>
+              <a className="wl-pro__more" href="/pro">See full pricing and terms<Arrow /></a>
+            </div>
+          </details>
         </div>
       </div>
     </Band>
   );
 }
 
-/* ---------- 9. the last ask (espresso) ----------
-   The promise once more, as big as the page gets, and Slide to start. */
+/* ---------- last ask ---------- */
 function FinalCta({ cta }) {
   return (
     <Band tone="ink" className="hm-band wlx-end" aria-labelledby="wlx-end-h">
@@ -89,9 +103,8 @@ function FinalCta({ cta }) {
 
 /* ---------- page ---------- */
 // One page for everyone (the ayna logo opens it signed in or out). Signed in
-// with a profile, the main action is "Go to your Home", the phrases step
-// aside and the shop cards drop "See your match". `communityPosts` are the
-// most helpful Powder Room posts (one is shown, in the Community half).
+// with a profile, the main action is "Go to your Home". `communityPosts` are
+// the most helpful public Community posts when available.
 export default function WebLanding({ signedIn = false, hasProfile = false, onStartQuiz, onGoHome, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, communityPosts = [], heroBanner = null }) {
   const rest = useAfterHeroPaint();
   const home = Boolean(signedIn && hasProfile && onGoHome);
@@ -102,18 +115,17 @@ export default function WebLanding({ signedIn = false, hasProfile = false, onSta
     <div id="ay-landing" className="ed ed-home hm hm-uq wl">
       <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />
       <BrandBar onOpen={onViewWaitlist} />
-      {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the
-          raining pictures and widgets, and use the original website for the rest). */}
+      {/* Keep the approved hero. Everything underneath follows the quieter,
+          picture-led website composition and reveals secondary detail on demand. */}
       <div className="wl-classic">
         <LandingV2 bodyOnly membershipSlot={<Pro />} onStartQuiz={home ? onGoHome : onStartQuiz} onViewDiscovery={onViewDiscovery} onOpenProduct={onOpenProduct} onViewArticles={onViewArticles} onViewArticle={onViewArticle} onViewAbout={onViewAbout} onViewWaitlist={onViewWaitlist} onViewCommunity={onViewCommunity} onViewHowItWorks={onViewHowItWorks} onSearch={onSearch} communityPosts={communityPosts} />
       </div>
-      {rest && <>
-      <FinalCta cta={cta} />
-      </>}
+      {rest && <FinalCta cta={cta} />}
       <div className="wl-note"><MedicalNote className="wl-note__p" /></div>
     </div>
   );
 }
+
 /* LCP: the hero is the largest paint. Rendering the whole page in the first
    commit left it waiting behind one long task on slow phones, so everything
    after the shop band mounts once the first falling packshot is decoded (or
@@ -123,7 +135,6 @@ function useAfterHeroPaint() {
   useEffect(() => {
     if (ready) return undefined;
     let done = false;
-    // two frames: the hero's first paint happens before the rest of the page renders
     const go = () => { if (done) return; done = true; requestAnimationFrame(() => requestAnimationFrame(() => window.setTimeout(() => setReady(true), 0))); };
     const img = document.querySelector('.wl-rain img');
     if (img?.decode) img.decode().then(go, go); else go();
