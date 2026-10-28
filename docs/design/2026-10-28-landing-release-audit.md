@@ -21,12 +21,15 @@ These are design hypotheses supported by usability guidance, not measured conver
 - Reviewed existing playlist owner edit controls (title, description, visibility), contextual Ask suggestions and persistent toggle, Settings search, profile Pro entry and Health Data gate. Live signed-in account mutations and purchases were not performed.
 - Updated stale tests to reflect persistent suggestion preferences, hidden WHOOP availability, and gated article/health surfaces. Article content tests explicitly isolate the access gate; separate gate tests retain access checks.
 
-## Release dependency
+## Database release verification
 
-Production public assets point to Supabase project `mvvwgyspcohqxxcqkfrv`. The connected Supabase account lists only `pnliaqytgahrcerjpwvo` and denies migration-history access to the production project. No migrations were applied to either project. Do not merge/release until production history and prerequisites are verified and required migrations are applied:
+Production public assets point to Supabase project `mvvwgyspcohqxxcqkfrv`. The connector cannot access that project, but the signed-in Supabase dashboard can. Inspected migration history, prerequisite columns/functions and current definitions there. Applied the following in one transaction and recorded each in `supabase_migrations.schema_migrations`:
 
+- 20261027014500_pro_quiz_retakes.sql (missing prerequisite: initial-build marker and historical backfill)
 - 20261027160000_ecosystem_update_monthly.sql
 - 20261027213000_suggestions_integration.sql
 - 20261028005500_pro_quiz_monthly_retakes.sql
+
+Verified all four migration records, the monthly function and index, the integration suggestion constraint, exactly one initial build per existing user, and service-role-only function execution. No rollout flag was changed.
 
 Vercel target: `ayna_mvp1`, project `prj_3WQoSNEf3azcW0knmbUEeXNSkZB5`, team `team_rNoCxByzY0shUM1iJEjC10Us`. Production domain: aynahealth.co. Preview branch: web-next.
