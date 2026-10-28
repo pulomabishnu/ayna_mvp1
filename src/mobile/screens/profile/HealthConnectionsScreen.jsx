@@ -6,10 +6,9 @@ import { apiSourceFor, availabilityFor, sourceById } from '../../data/healthConn
 import { useHealthData } from '../../hooks/useHealthData.js';
 
 /**
- * Shared access boundary for web + app Health Data. Starting a NEW supported
- * app/wearable connection is a Pro benefit. Existing connections always stay
- * manageable so disconnect/delete/privacy controls cannot be paywalled.
- * Upload/manual/request-data paths remain available outside this gate.
+ * Health Data is a Pro surface. Free users hit the Pro boundary before seeing
+ * the connection workflow. Existing connections remain manageable even if Pro
+ * later expires so disconnect/delete/privacy controls are never paywalled.
  */
 export default function HealthConnectionsScreen(props) {
   const [pendingId, setPendingId] = useState(null);
@@ -20,6 +19,8 @@ export default function HealthConnectionsScreen(props) {
       .filter((connection) => connection.status !== 'disconnected')
       .map((connection) => connection.source)
   ), [health.connections]);
+
+  const hasExistingConnection = connectedSources.size > 0;
 
   const needsPro = (id) => {
     const sourceId = String(id || '').split(':')[0];
@@ -43,10 +44,27 @@ export default function HealthConnectionsScreen(props) {
     setPendingId(id);
   };
 
-  const gatedId = pendingId || (needsPro(props.selectedId) ? props.selectedId : null);
-  if (!gatedId) {
-    return <HealthConnectionsScreenCore {...props} onSelect={handleSelect} />;
+  const core = (
+    <HealthConnectionsScreenCore
+      {...props}
+      onSelect={handleSelect}
+    />
+  );
+
+  // Doorway gate: a Free account with nothing connected should never land in
+  // the provider picker first. Pro members pass straight through after the
+  // shared entitlement check. Former Pro members with existing data bypass
+  // this outer gate only so they can disconnect/delete what they already shared.
+  if (!hasExistingConnection && !props.selectedId && !pendingId) {
+    return (
+      <ProFeatureGate feature="wearables" title="Health data" onBack={props.onBack}>
+        {core}
+      </ProFeatureGate>
+    );
   }
+
+  const gatedId = pendingId || (needsPro(props.selectedId) ? props.selectedId : null);
+  if (!gatedId) return core;
 
   const source = sourceById(String(gatedId).split(':')[0]);
   const closeGate = () => {
