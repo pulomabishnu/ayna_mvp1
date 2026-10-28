@@ -231,11 +231,13 @@ function StepMatch({ ex, onOpenProduct }) {
   );
 }
 function StepEcosystem({ ready }) {
+  // The routine view from the app (founder inspo, Oct 28: "Tonight's routine"): when, what kind, the product.
   const items = ready ? ECO_IDS.map((id) => ALL_PRODUCTS.find((p) => p.id === id)).filter((p) => p?.image) : [];
+  const when = ['During your period', 'Overnight', 'When cramps start'];
   return (
     <div className="ls-ui ls-ui--eco" aria-hidden="true">
-      <p className="ls-ui__q">My ecosystem</p>
-      <ul>{items.map((p) => <li key={p.id}><span className="ls-ui__thumb"><img src={p.image} alt="" loading="lazy" decoding="async" /></span><span className="ls-ui__name">{p.name}</span><svg className="ls-ui__tick" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10" /></svg></li>)}</ul>
+      <p className="ls-ui__q">Your routine</p>
+      <ul>{items.map((p, i) => <li key={p.id}><span className="ls-ui__thumb"><img src={p.image} alt="" loading="lazy" decoding="async" /></span><span className="ls-ui__name"><small>{when[i] || 'Every day'}</small><span className="ls-ui__nm">{p.name}</span></span></li>)}</ul>
       <span className="ls-ui__streak"><Widget k="streak" /><small>Check-ins</small></span>
     </div>
   );
@@ -243,7 +245,7 @@ function StepEcosystem({ ready }) {
 const STEPS = [
   { t: 'Answer a few questions', d: 'Your needs, life stage and what you avoid.' },
   { t: 'See your matches, and why', d: 'Every product gets a Health Match with the reasons.' },
-  { t: 'Build your ecosystem', d: 'Keep what fits, check in, ask ayna anytime.' },
+  { t: 'Follow your routine', d: 'Keep what fits, check in, ask ayna anytime.' },
 ];
 function HowItWorks({ onOpenProduct, onViewHowItWorks }) {
   const ready = useCatalogReady();

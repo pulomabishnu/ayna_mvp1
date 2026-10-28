@@ -382,7 +382,7 @@ export default function EcosystemScreen({
     </section>}
     {view === 'routine' && <>
       {/* Glance first: the day timeline with her products by when she uses them; the full plans fold away. */}
-      <div className="eco-list"><RoutineTimeline compact {...routineSource} max={3} ecoMax={6} onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} /></div>
+      <div className="eco-list"><RoutineTimeline compact {...routineSource} max={3} ecoMax={6} onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} onShop={() => { const d = rootRef.current?.querySelector('.eco-more'); if (d) { d.open = true; rootRef.current.querySelector('.ayna-plan-shop, #ay-eco-plan')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }} /></div>
       <details className="eco-more">
         <summary>Full routines, when to use each product and your shopping list</summary>
       {routines.routines.length > 0 && <div className="ay-eco-routines" style={{ padding: '0 var(--d-gutter, 20px)' }}><NeedRoutines state={routines} variant="app" onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} /></div>}

@@ -96,3 +96,10 @@ html body .app-container #ay-landing .ls-ask .ls-split { align-items: start !imp
 
 /* dark mode: the reads and community text and buttons stay readable */
 html body .app-container[data-theme='brand-dark'] #ay-landing .wl-classic :is(.hm-readlist__title, .hm-readlist__src, .hm-comm .ay-btn, .hm-us .ay-btn, .hm-body) { color: #ffedac !important; border-color: #ffedac !important; }
+/* step three: the routine rows, flat like the app's (no outlined boxes) */
+html body .app-container #ay-landing .ls-ui--eco ul { gap: 2px !important; }
+html body .app-container #ay-landing .ls-ui--eco li { border: 0 !important; background: transparent !important; padding: 4px 0 !important; grid-template-columns: 36px minmax(0, 1fr) !important; }
+html body .app-container #ay-landing .ls-ui--eco li + li { border-top: 1px solid rgba(62, 39, 35, .12) !important; }
+html body .app-container #ay-landing .ls-ui--eco .ls-ui__name { display: grid; gap: 1px; }
+html body .app-container #ay-landing .ls-ui--eco .ls-ui__name small { font: 700 10px/1.2 var(--ay-sans-stack, sans-serif); letter-spacing: .05em; text-transform: uppercase; opacity: .65; }
+html body .app-container #ay-landing .ls-ui--eco .ls-ui__name { min-width: 0; overflow: hidden; } html body .app-container #ay-landing .ls-ui--eco .ls-ui__nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
