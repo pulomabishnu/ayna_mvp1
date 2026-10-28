@@ -1,40 +1,108 @@
 import posthog from 'posthog-js';
 import { useEffect } from 'react';
+import { isPartnerBrandItem } from './partnerBrands.js';
+import {
+  ALGORITHM_VERSION,
+  analyticsId,
+  ensureAnalyticsContext,
+  matchScoreBucket,
+} from './analyticsEvents.js';
 
 /**
- * recommendation_viewed: one event per recommended product shown, with
- * productId, category, position (1-based) and surface. It had been a single
- * event fired from MyEcosystem's auto-build step (with only a count), which
- * stopped running once that step began vetting picks (Sept), so views went
- * unlogged while ai_recommendations_completed kept firing.
+ * Recommendation telemetry for PR88+.
  *
- * Each product is logged once per surface per page load, so re-renders,
- * toggles and swaps don't inflate the count. No concern or health text is
- * sent, only catalog fields.
+ * We need a real denominator for algorithm and brand reporting, so every
+ * rendered recommendation gets an impression event. A recommendation run id
+ * ties the set together. Only catalog/decision metadata is sent: never health
+ * answers, symptoms, Ask text, wearable values, or profile free text.
  */
 const seen = new Set();
+const seenRuns = new Set();
 const MAX_POSITIONS = 24;
 
-export function recommendationViewEvents(products, surface) {
+function hash(value) {
+  let h = 2166136261;
+  const s = String(value || '');
+  for (let i = 0; i < s.length; i += 1) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+  return (h >>> 0).toString(36);
+}
+
+function scoreFor(p) {
+  const candidates = [p?.matchPercent, p?.matchPercentage, p?.match_score, p?.matchScore, p?.percent];
+  return candidates.find((v) => Number.isFinite(Number(v)));
+}
+
+function runContext(products, surface, extra = {}) {
+  const ids = (Array.isArray(products) ? products : []).slice(0, MAX_POSITIONS).map((p) => p?.id).filter(Boolean).join('|');
+  const algorithmVersion = analyticsId(extra.algorithm_version || extra.match_engine || ALGORITHM_VERSION, ALGORITHM_VERSION);
+  return {
+    recommendation_run_id: `rec_${hash(`${surface}|${algorithmVersion}|${ids}`)}`,
+    algorithm_version: algorithmVersion,
+    health_data_enabled: Boolean(extra.health_data_enabled),
+    health_data_applied: Boolean(extra.health_data_applied || extra.health_shaped),
+  };
+}
+
+export function recommendationViewEvents(products, surface, extra = {}) {
+  const run = runContext(products, surface, extra);
   const out = [];
   (Array.isArray(products) ? products : []).slice(0, MAX_POSITIONS).forEach((p, i) => {
     if (!p?.id) return;
+    const score = scoreFor(p);
     out.push({
+      // Keep old names so existing dashboards continue to work.
       productId: String(p.id),
       category: p.category ? String(p.category) : 'unknown',
       position: i + 1,
       surface,
+
+      // Canonical PR88+ names for algorithm/brand reporting.
+      product_id: String(p.id),
+      brand_id: analyticsId(p.brand),
+      is_partner: Boolean(isPartnerBrandItem(p)),
+      rank: i + 1,
+      match_score_bucket: matchScoreBucket(score),
+      ...run,
     });
   });
   return out;
 }
 
 export function trackRecommendationViews(products, surface, extra = {}) {
-  for (const props of recommendationViewEvents(products, surface)) {
-    const key = `${surface}:${props.productId}`;
+  ensureAnalyticsContext();
+  const rows = recommendationViewEvents(products, surface, extra);
+  if (!rows.length) return;
+  const run = rows[0];
+
+  if (!seenRuns.has(run.recommendation_run_id)) {
+    seenRuns.add(run.recommendation_run_id);
+    try {
+      posthog.capture('recommendation_run_completed', {
+        recommendation_run_id: run.recommendation_run_id,
+        algorithm_version: run.algorithm_version,
+        surface,
+        recommendation_count: rows.length,
+        health_data_enabled: run.health_data_enabled,
+        health_data_applied: run.health_data_applied,
+        match_engine: extra.match_engine,
+      });
+    } catch { /* analytics never blocks */ }
+  }
+
+  for (const props of rows) {
+    const key = `${props.recommendation_run_id}:${props.product_id}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    try { posthog.capture('recommendation_viewed', { ...props, ...extra }); } catch { /* analytics never blocks */ }
+    try {
+      // New denominator for true product/brand/rank performance.
+      posthog.capture('recommendation_impression', props);
+      // Keep the existing event alive for historical dashboards.
+      posthog.capture('recommendation_viewed', {
+        ...props,
+        concernCount: Number.isFinite(Number(extra.concernCount)) ? Number(extra.concernCount) : undefined,
+        match_engine: extra.match_engine,
+      });
+    } catch { /* analytics never blocks */ }
   }
 }
 
@@ -44,10 +112,10 @@ export function useRecommendationViews(products, surface, { enabled = true, extr
   useEffect(() => {
     if (!key) return;
     trackRecommendationViews(products, surface, extra);
-    // The id list is the dependency: same products in the same order = same views.
+    // The id list is the dependency: same products in the same order = same set.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, surface]);
 }
 
 /** Tests only. */
-export function _resetRecommendationViews() { seen.clear(); }
+export function _resetRecommendationViews() { seen.clear(); seenRuns.clear(); }
