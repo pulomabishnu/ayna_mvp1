@@ -1,0 +1,193 @@
+/* Final landing audit, Oct 28.
+   Keep the approved hero untouched. This file only resolves the lower-page
+   narrative, closing conversion moment, and footer handoff. */
+
+/* The page should read like one story, not a stack of equally loud modules:
+   need recognition -> how it works -> trust/useful content -> people ->
+   optional paid depth -> one final free-start action. */
+.app-container #ay-landing .wl-classic > .ed-home.hm-uq {
+  display: flex;
+  flex-direction: column;
+}
+.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-needsband { order: 1; }
+.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .lp-method { order: 2; }
+.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-rc { order: 3; }
+.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-us { order: 4; }
+.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .wl-pro { order: 5; }
+
+/* Give adjacent bands a deliberate handoff instead of accidental white gaps. */
+.app-container #ay-landing .hm-rc + .hm-us,
+.app-container #ay-landing .hm-us + .wl-pro { margin-top: 0 !important; }
+.app-container #ay-landing .hm-us { border-bottom: 0 !important; }
+
+/* Closing CTA: repeat the primary action at the end of a long page, but do not
+   create a second hero. It borrows the editorial pink field from the reference
+   sites and keeps one decision only. */
+.app-container #ay-landing .wlx-end {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #f7badd !important;
+  color: #3e2723 !important;
+  border: 0 !important;
+}
+.app-container #ay-landing .wlx-end__in {
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 390px);
+  align-items: center;
+  gap: clamp(28px, 6vw, 88px) !important;
+  padding-block: clamp(44px, 5vw, 68px) !important;
+}
+.app-container #ay-landing .wlx-end__copy { min-width: 0; }
+.app-container #ay-landing .wlx-end__eyebrow {
+  display: block;
+  margin: 0 0 9px;
+  color: #6d4039;
+  font: 600 11px/1.4 var(--ay-sans-stack, var(--ay-sans, sans-serif));
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+html body .app-container #ay-landing.wl.hm .wlx-end__h.wlx-end__h {
+  max-width: 12ch;
+  margin: 0 !important;
+  color: #3e2723 !important;
+  font-size: clamp(34px, 4vw, 54px) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -.03em !important;
+  text-align: left !important;
+}
+.app-container #ay-landing .wlx-end__h span { color: #fff8e6 !important; }
+.app-container #ay-landing .wlx-end__sts {
+  width: 100%;
+  max-width: 390px;
+  justify-self: end;
+}
+
+/* Footer handoff: the previous landing ended with a separate medical-note strip
+   and then the legal footer. The duplicate note is removed in WebLanding.jsx;
+   this makes the actual footer feel like the deliberate last band. */
+.app-container:has(#ay-landing) .ay-foot {
+  margin: 0 !important;
+  background: #3e2723 !important;
+  color: #ffedac !important;
+  border: 0 !important;
+}
+.app-container:has(#ay-landing) .ay-foot__strip {
+  margin: 0 !important;
+}
+.app-container:has(#ay-landing) .ay-foot__inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(44px, 5vw, 64px) clamp(20px, 4vw, 52px) 28px;
+}
+.app-container:has(#ay-landing) .ay-foot__grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.35fr) repeat(3, minmax(130px, .75fr));
+  gap: clamp(28px, 4vw, 64px);
+  align-items: start;
+}
+.app-container:has(#ay-landing) .ay-foot__logo {
+  margin: 0 0 10px;
+  color: #f7badd !important;
+  font: 800 clamp(34px, 3.5vw, 48px)/1 var(--ay-font-display, var(--ay-heading, sans-serif));
+  letter-spacing: -.035em;
+}
+.app-container:has(#ay-landing) .ay-foot__blurb {
+  max-width: 28ch;
+  margin: 0;
+  color: rgba(255,237,172,.78) !important;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.app-container:has(#ay-landing) .ay-foot__title {
+  margin: 0 0 13px;
+  color: #f7badd !important;
+  font: 600 11px/1.4 var(--ay-sans-stack, var(--ay-sans, sans-serif));
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+.app-container:has(#ay-landing) .ay-foot__col {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+}
+.app-container:has(#ay-landing) .ay-foot__link,
+.app-container:has(#ay-landing) .ay-footer-legal__link {
+  color: #ffedac !important;
+  font-size: 13px;
+  line-height: 1.45;
+  text-decoration: none;
+}
+.app-container:has(#ay-landing) :is(.ay-foot__link, .ay-footer-legal__link):hover {
+  color: #f7badd !important;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.app-container:has(#ay-landing) .ay-foot__base {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 42px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,237,172,.2);
+  color: rgba(255,237,172,.72) !important;
+  font-size: 12px;
+}
+.app-container:has(#ay-landing) .ay-foot__legal {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(300px, .8fr);
+  gap: 22px 40px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,237,172,.14);
+}
+.app-container:has(#ay-landing) .ay-foot__legaltext {
+  max-width: 82ch;
+  margin: 0;
+  color: rgba(255,237,172,.62) !important;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.app-container:has(#ay-landing) .ay-foot__legaltext strong { color: rgba(255,237,172,.82) !important; }
+.app-container:has(#ay-landing) .ay-foot__legallinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: start;
+  justify-content: flex-end;
+  gap: 8px 14px;
+}
+.app-container:has(#ay-landing) .ay-footer-analytics { color: rgba(255,237,172,.7) !important; font-size: 11px; }
+
+@media (max-width: 767px) {
+  .app-container #ay-landing .wlx-end__in {
+    grid-template-columns: 1fr;
+    gap: 24px !important;
+    padding-block: 40px !important;
+  }
+  html body .app-container #ay-landing.wl.hm .wlx-end__h.wlx-end__h {
+    max-width: 11ch;
+    font-size: 36px !important;
+  }
+  .app-container #ay-landing .wlx-end__sts {
+    max-width: none;
+    justify-self: stretch;
+  }
+
+  .app-container:has(#ay-landing) .ay-foot__inner { padding: 38px 20px 24px; }
+  .app-container:has(#ay-landing) .ay-foot__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 30px 22px;
+  }
+  .app-container:has(#ay-landing) .ay-foot__brand { grid-column: 1 / -1; }
+  .app-container:has(#ay-landing) .ay-foot__base {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 34px;
+  }
+  .app-container:has(#ay-landing) .ay-foot__legal {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .app-container:has(#ay-landing) .ay-foot__legallinks { justify-content: flex-start; }
+}
