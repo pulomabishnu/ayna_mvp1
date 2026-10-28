@@ -15,6 +15,9 @@ import SubscriptionPaywallModal from './SubscriptionPaywallModal.jsx';
 export default function ProPaywallHost({ priority = 1, onRequireAuth }) {
   const [request, setRequest] = useState(null);
   const hostRef = useRef(null);
+  const requireAuthRef = useRef(onRequireAuth);
+  requireAuthRef.current = onRequireAuth;
+
   useEffect(() => {
     const host = registerProPaywallHost(priority);
     hostRef.current = host;
@@ -43,7 +46,24 @@ export default function ProPaywallHost({ priority = 1, onRequireAuth }) {
         clearProResume();
       }
     };
-    client.auth.getSession().then(({ data }) => resume(data?.session)).catch(() => {});
+
+    const promptForSavedProSignIn = () => {
+      if (!hostRef.current?.isActive()) return;
+      const saved = peekProResume();
+      const target = String(saved?.path || '').split(/[?#]/)[0];
+      // /pro saves the selected plan before sending a signed-out buyer into
+      // the app. Do not make her find a second Log in button on /you: open the
+      // normal auth sheet immediately, then the SIGNED_IN handler below sends
+      // her straight back to the same Pro plan.
+      if (target === '/pro' || target === '/pro.html') {
+        timer = setTimeout(() => requireAuthRef.current?.('ayna Pro'), 150);
+      }
+    };
+
+    client.auth.getSession().then(({ data }) => {
+      if (data?.session?.user) resume(data.session);
+      else promptForSavedProSignIn();
+    }).catch(() => {});
     const { data } = client.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_IN') resume(session); });
     return () => { clearTimeout(timer); data?.subscription?.unsubscribe(); };
   }, []);
