@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Capacitor } from '@capacitor/core';
+import posthog from 'posthog-js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { useFocusTrap } from '../utils/useFocusTrap';
 import { requestPro } from '../utils/proApi.js';
@@ -10,21 +11,39 @@ import { PRO_TAGLINE } from '../pro/features.js';
 import { EARLY_ACCESS_LINE, PAID_TERM_STARTS, PLANS, proGroups } from '../pro/plans.js';
 import '../styles/pro-v4.css';
 
+const ANALYTICS_SOURCE = 'subscription_paywall';
 const reducedMotion = () => {
   try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return true; }
 };
+const planAmount = (plan) => Number(String(plan?.price || '').replace(/[^0-9.]/g, '')) || undefined;
+
+function captureProEvent(event, properties = {}) {
+  try {
+    posthog.capture(event, { source: ANALYTICS_SOURCE, ...properties });
+  } catch {
+    // Analytics must never interrupt auth or checkout.
+  }
+}
 
 export default function SubscriptionPaywallModal({ onClose, feature = '', featureName = '', initialPlan = '', onRequireAuth }) {
   // Close with the exit animation, then unmount. Reduced motion closes at once.
   const [closing, setClosing] = useState(false);
   const closeTimer = useRef(0);
+  const closeTracked = useRef(false);
   const close = useCallback(() => {
     if (closeTimer.current) return;
+    if (!closeTracked.current) {
+      closeTracked.current = true;
+      captureProEvent('pro_paywall_closed', { feature: feature || 'general' });
+    }
     if (reducedMotion()) { onClose?.(); return; }
     setClosing(true);
     closeTimer.current = window.setTimeout(() => onClose?.(), 200);
-  }, [onClose]);
+  }, [feature, onClose]);
   useEffect(() => () => window.clearTimeout(closeTimer.current), []);
+  useEffect(() => {
+    captureProEvent('pro_paywall_viewed', { feature: feature || 'general' });
+  }, [feature]);
   useEscapeToClose(true, close);
   // Portal to the themed app root (the app's .ayna-mobile or the website's .app-container), so the
   // sheet sits above the tab bar and screen stacking contexts but keeps light/dark.
@@ -64,9 +83,20 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
   const native = Capacitor.isNativePlatform();
   const webUrl = `https://www.aynahealth.co/pro${feature ? `?feature=${encodeURIComponent(feature)}` : ''}`;
 
+  const choosePlan = (nextPlan) => {
+    setPlan(nextPlan.id);
+    captureProEvent('pro_plan_selected', {
+      feature: feature || 'general',
+      plan: nextPlan.id,
+      amount: planAmount(nextPlan),
+      currency: 'USD',
+    });
+  };
+
   const checkout = async () => {
     if (busy) return;
     const target = chosen.id;
+    const amount = planAmount(chosen);
     setBusy(target);
     setError('');
     attempts.current[target] ||= crypto.randomUUID();
@@ -74,9 +104,11 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
       const result = await requestPro({ plan: target, requestId: attempts.current[target] });
       const url = new URL(result.url);
       if (url.protocol !== 'https:' || url.hostname !== 'checkout.stripe.com') throw new Error('Checkout is unavailable. Please try again.');
+      captureProEvent('pro_checkout_started', { feature: feature || 'general', plan: target, amount, currency: 'USD' });
       rememberProReturn(feature);
       window.location.assign(url.href);
     } catch (e) {
+      captureProEvent('pro_checkout_failed', { feature: feature || 'general', plan: target, error_code: e?.code || 'unknown' });
       if (e?.code === 'sign_in_required') { setSignedOut(true); setBusy(''); return; }
       if (e?.code === 'already_pro') {
         // She already has it: unlock what is on screen instead of showing an error.
@@ -133,7 +165,7 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
                 aria-checked={plan === p.id}
                 className={`pro-plan${plan === p.id ? ' is-on' : ''}`}
                 disabled={Boolean(busy)}
-                onClick={() => setPlan(p.id)}
+                onClick={() => choosePlan(p)}
               >
                 {p.badge && <span className="pro-plan__best">{p.badge}</span>}
                 <span className="pro-plan__top"><span className="pro-plan__dot" aria-hidden="true" /><span className="pro-plan__label">{p.label}</span></span>
