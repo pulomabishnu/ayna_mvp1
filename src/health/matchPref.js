@@ -1,16 +1,12 @@
 /**
  * "Use my health data in my matches": her own switch for whether connected
- * health data (Apple Health, Health Connect, WHOOP, imports) can re-order her
- * matches. On by default, the same as "Personalize with my data", and shown
- * wherever matches show it (src/components/health/HealthShapedNote.jsx), so
- * it is never on without her being able to see it and turn it off.
- *
- * Saved with her account (notification_preferences.health_data_in_matches_enabled,
- * supabase/notification_preferences.sql), so the website and the app agree.
- * One shared store: every screen that reads it sees a change at once.
+ * health data can re-order her matches. On by default and shared across web/app.
+ * Analytics records only the boolean preference and save success/failure,
+ * never the underlying health data.
  */
 import { useEffect, useSyncExternalStore } from 'react';
 import { fetchNotificationPreferences, patchNotificationPreferences } from '../mobile/utils/notificationPreferencesApi.js';
+import { EVENTS, eventSurface, trackEvent } from '../utils/analyticsEvents.js';
 
 let state = { userId: null, on: true, status: 'idle', error: null };
 const listeners = new Set();
@@ -36,12 +32,21 @@ function load(userId) {
 /** Turn it on or off. Updates every screen right away, rolls back if the save fails. */
 export async function setHealthInMatches(next) {
   const before = state.on;
-  set({ on: Boolean(next), error: null });
+  const enabled = Boolean(next);
+  set({ on: enabled, error: null });
   try {
-    await patchNotificationPreferences({ health_data_in_matches_enabled: Boolean(next) });
+    await patchNotificationPreferences({ health_data_in_matches_enabled: enabled });
+    trackEvent(EVENTS.HEALTH_MATCH_SETTING_CHANGED, { surface: eventSurface(), enabled, success: true });
     return true;
   } catch (e) {
-    set({ on: before, error: e?.code || 'save_failed' });
+    const failure = e?.code || 'save_failed';
+    set({ on: before, error: failure });
+    trackEvent(EVENTS.HEALTH_MATCH_SETTING_SAVE_FAILED, {
+      surface: eventSurface(),
+      enabled,
+      success: false,
+      failure_code: String(failure).replace(/[^a-z0-9_.:-]+/gi, '-').slice(0, 64),
+    });
     return false;
   }
 }
@@ -52,7 +57,7 @@ export const getHealthMatchPref = () => state;
 /** Test hook. */
 export function resetHealthMatchPref() { state = { userId: null, on: true, status: 'idle', error: null }; loading = null; emit(); }
 
-/** @param userId  the signed-in user (null when signed out); leave it out to only read the shared value. */
+/** @param userId the signed-in user (null when signed out); omit to only read shared value. */
 export function useHealthMatchPref(userId) {
   const s = useSyncExternalStore(subscribe, snapshot, snapshot);
   useEffect(() => { if (userId !== undefined) load(userId || null); }, [userId]);
