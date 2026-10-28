@@ -12,6 +12,7 @@ import { Rain, HeroSearch, BrandBar } from './kit.jsx';
 import { PLANS, PAID_TERM_STARTS } from '../../pro/plans.js';
 import './web-landing.css';
 import './landing-polish.css';
+import './landing-research-pass.css';
 
 /* Website landing: preserve the approved rain hero and brand strip. Below it:
  * picture-led needs, a short method, one focused Pro offer, Reads / Community,
