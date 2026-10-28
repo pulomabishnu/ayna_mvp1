@@ -34,7 +34,7 @@
 .yb.yb--list { display: grid; gap: 16px; }
 .yb.yb--list .yb-tile.is-eco { min-height: 0; }
 .yb-list { display: grid; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #f6e3a1; overflow: hidden; }
-.ayna-mobile[data-theme='dark'] .yb-list, .app-container[data-theme='brand-dark'] .yb-list { background: rgba(255, 237, 172, .08); }
+.yna-mobile[data-theme='dark'] .yb-list, .app-container[data-theme='brand-dark'] .yb-list { background: rgba(255, 237, 172, .08); }
 .yb-list > li + li { border-top: 1px solid rgba(62, 39, 35, .14); }
 .ayna-mobile[data-theme='dark'] .yb-list > li + li, .app-container[data-theme='brand-dark'] .yb-list > li + li { border-top-color: rgba(255, 237, 172, .16); }
 .yb-row { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 24px minmax(0, 1fr) auto auto; align-items: center; gap: 14px; width: 100%; min-height: 64px; padding: 12px 16px; color: var(--d-ink, #3e2723); cursor: pointer; }
@@ -49,3 +49,9 @@
 .yb-row__n { font: 700 17px/1 var(--ay-font-ui, 'Figtree', sans-serif); font-variant-numeric: tabular-nums; }
 :is(#ayk, .yb-list):is(#ayk, .yb-list):is(#ayk, .yb-list) { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; align-self: start; }
 :is(#ayk, .yb-list):is(#ayk, .yb-list):is(#ayk, .yb-list) > li { margin: 0 !important; padding: 0 !important; min-height: 0 !important; }
+
+/* Direct profile upgrade path: visible without turning the You screen into a sales page. */
+.yb-list--pro { background: #f7badd; }
+.yb-row--pro { min-height: 68px; }
+.yb-row--pro .yb-row__text b { font-weight: 700; }
+.ayna-mobile[data-theme='dark'] .yb-list--pro, .app-container[data-theme='brand-dark'] .yb-list--pro { background: rgba(247, 186, 221, .16); }
