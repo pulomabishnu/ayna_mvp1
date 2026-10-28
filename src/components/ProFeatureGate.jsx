@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { PREMIUM_READ_IDS } from '../pro/premiumReads.js';
 import { PRO_CHANGED_EVENT, proFeatureName } from '../pro/paywall.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { loadProFeatureRules, requestPro } from '../utils/proApi.js';
@@ -51,7 +50,10 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
       try {
         const rules = await loadProFeatureRules(controller.signal);
         if (typeof rules.enabled !== 'boolean') throw new Error('We couldn’t check Pro access.');
-        let allowed = !rules.enabled || (feature === 'reads' && !rules.premiumReadIds.includes(readId));
+        // Every signed-in Read uses the same one-per-week Free allowance. The
+        // server's atomic claim lets the same Read reopen during that week;
+        // Pro remains unlimited. Other Pro features use the normal active check.
+        let allowed = !rules.enabled;
         let expiresAt = null;
         if (!allowed) {
           const status = feature === 'reads'
@@ -103,6 +105,5 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
 }
 
 export default function ProFeatureGate(props) {
-  if (props.feature === 'reads' && !PREMIUM_READ_IDS.includes(props.readId)) return props.children;
   return <CheckedProFeatureGate {...props} />;
 }
