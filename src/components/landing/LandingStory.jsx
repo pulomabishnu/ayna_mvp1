@@ -9,7 +9,6 @@ import { productsForNeed } from '../landingNeeds';
 import ProductCard from '../ProductCard';
 import SuggestBox from '../SuggestBox.jsx';
 import { Chip } from '../ui/ay';
-import BrandStrip from '../ui/ay/BrandStrip.jsx';
 import { FAMILIAR, weeklyLineup, NEEDS_PHOTO } from '../LandingV2.jsx';
 import { Widget } from './kit.jsx';
 import { PLANS, PAID_TERM_STARTS } from '../../pro/plans.js';
@@ -125,9 +124,8 @@ function Shelf({ personal, quizResults, healthProfile, matchOpts, signedIn, onSt
 
         <p className="ls-shelf__label" aria-live="polite">{title}</p>
         <ul className={`ls-row${locked ? ' is-locked' : ''}`} aria-label={loading ? 'Loading products' : title}>
-          {!loading ? rows.map(({ product, percent, why, hold }, n) => (
+          {!loading ? rows.map(({ product, percent, why, hold }) => (
             <li key={product.id} className="ls-row__item">
-              <span className="ls-row__n" aria-hidden="true">{n + 1}</span>
               <ProductCard product={product} onOpen={onOpenProduct} className="ls-card" matchPercent={percent} matchHold={hold} matchLabel={percent != null ? `${percent}% match` : ''} />
               {locked
                 ? <Go className="ls-row__lock" href="/quiz" onGo={onStartQuiz}><Lock />See your match</Go>
@@ -267,7 +265,7 @@ function HowItWorks({ onOpenProduct, onViewHowItWorks }) {
           ))}
         </ol>
         <div className="ls-how__foot">
-          <p className="ls-badge-line"><span className="ls-zero">0%</span> of your match comes from brand partnerships.</p>
+          <p className="ls-plain-note">Brand partnerships never change your match.</p>
         </div>
         <More title="What ayna weighs, in order" className="ls-more--center">
           <ol className="ls-order">
@@ -379,7 +377,6 @@ function ProPlan({ pro, offerOpen, onOpenPro, onOpenHealth, onAsk }) {
   const month = PLANS.find((p) => p.id === 'month');
   return (
     <section className="ls ls--butter ls-plan" aria-labelledby="ls-plan-h">
-      <BrandStrip className="ls-plan__strip" />
       <div className="hm-wrap">
         <header className="ls-head ls-head--center">
           <h2 id="ls-plan-h" className="ls-h2">{pro ? 'You’re on ayna Pro.' : <>Free helps you find what fits. <em>Pro learns with you.</em></>}</h2>

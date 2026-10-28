@@ -80,3 +80,7 @@
 :is(#lh1, html):is(#lh2, html):is(#lh3, html):is(#lh4, html):is(#lh5, html):is(#lh6, html):is(#lh7, html):is(#lh8, html):is(#lh9, html) body .app-container .lb-top.lb-shophead .ay-scrollrow .lb-topics {
   display: flex !important; flex-wrap: nowrap !important; justify-content: flex-start !important; overflow-x: auto !important; padding: 2px 40px 4px 2px !important; scrollbar-width: none;
 }
+
+/* Calm pass (Oct 28): straight edge, like Shop. */
+:is(#lh1, html):is(#lh2, html):is(#lh3, html):is(#lh4, html):is(#lh5, html):is(#lh6, html):is(#lh7, html) body .app-container .lb-top.lb-shophead::after { display: none !important; }
+:is(#lh1, html):is(#lh2, html):is(#lh3, html):is(#lh4, html):is(#lh5, html):is(#lh6, html):is(#lh7, html) body .app-container .lb-top.lb-shophead { border-bottom: 1px solid rgba(62, 39, 35, .18) !important; }

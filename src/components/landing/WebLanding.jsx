@@ -9,12 +9,12 @@ import '../../styles/loop-a-landing.css';
 import '../../styles/uq-landing.css';
 import { ScallopEdge } from '../ui/ay';
 import SlideToStart from '../ui/SlideToStart.jsx';
-import BrandStrip from '../ui/ay/BrandStrip.jsx';
 import { Rain, HeroSearch, BrandBar } from './kit.jsx';
 import './web-landing.css';
 import './landing-polish.css';
 import './landing-research-pass.css';
 import './landing-final-audit.css';
+import './landing-calm.css';
 
 /* Website landing: preserve the approved rain hero and brand strip. Below it,
  * one product story with ayna Pro woven in (LandingStory.jsx), then Reads and
@@ -54,7 +54,6 @@ function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
 function FinalCta({ cta }) {
   return (
     <section className="wlx-end" aria-labelledby="wlx-end-h">
-      <BrandStrip />
       <div className="hm-wrap wlx-end__in">
         <div className="wlx-end__copy">
           <h2 id="wlx-end-h" className="wlx-end__h">Find what fits <span>your body.</span></h2>

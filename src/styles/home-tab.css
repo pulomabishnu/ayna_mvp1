@@ -153,3 +153,15 @@ html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__lin
   background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; box-shadow: 3px 3px 0 #f7badd !important;
 }
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link:not(.is-home)[aria-current='page']::after { background: #f7badd; height: 3px; }
+
+/* Header, calm pass (founder, Oct 28: "I don't like the squiggly thing"):
+   a straight espresso bar with a hairline, no scalloped edge, no offset
+   shadows. Home stays the one filled pill. */
+html body .app-container.app-container.app-container .app-nav-wrap::after { display: none !important; }
+html body .app-container.app-container.app-container .app-nav-wrap { border-bottom: 1px solid rgba(255, 237, 172, .14) !important; box-shadow: none !important; }
+html body .app-container.app-container.app-container .ay-nav--paper { height: 64px; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link.is-home { box-shadow: none !important; border-width: 0 !important; min-height: 36px; padding: 0 14px !important; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__links { gap: 4px; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__beta { border-width: 0; background: rgba(255, 237, 172, .16); color: #ffedac !important; }
+html body .app-container.app-container.app-container .ay-nav--paper :is(.ay-nav__ask, .ay-nav__icon) { border-width: 1px !important; border-color: rgba(255, 237, 172, .4) !important; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__login { box-shadow: none !important; }

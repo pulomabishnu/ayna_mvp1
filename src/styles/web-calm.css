@@ -1,0 +1,19 @@
+/* Website calm pass (founder, Oct 28: "it looks very vibe coded ... fix the
+   website"). The website only (.app-container; the app is .ayna-mobile and
+   keeps its own look). Hard offset shadows on every card, search and button
+   were the loudest "AI-made" tell; they become hairline borders. Colours,
+   fonts and layouts stay. Loaded last. */
+:is(#wc1, html):is(#wc2, html):is(#wc3, html):is(#wc4, html):is(#wc5, html) body .app-container :is(
+  .ay-pcard, .ay-btn, .lsx-search, .ayshop-hero__search, .ayshop-search, .lb-search, .ay-card, .ayk-card,
+  .cm-card, .cm-post, .wy-sec, .ay-group, .pro-frame, .ay-sts__track, .ay-chip, .ayk-chip
+) { box-shadow: none !important; }
+:is(#wc1, html):is(#wc2, html):is(#wc3, html):is(#wc4, html):is(#wc5, html) body .app-container .ay-pcard.ay-pcard { border: 1px solid rgba(62, 39, 35, .18) !important; margin: 0 !important; transform: none !important; }
+:is(#wc1, html):is(#wc2, html):is(#wc3, html):is(#wc4, html):is(#wc5, html) body .app-container[data-theme='brand-dark'] .ay-pcard.ay-pcard { border-color: rgba(255, 237, 172, .2) !important; }
+@media (hover: hover) {
+  :is(#wc1, html):is(#wc2, html):is(#wc3, html):is(#wc4, html):is(#wc5, html) body .app-container .ay-pcard.ay-pcard:hover { box-shadow: none !important; transform: none !important; border-color: rgba(62, 39, 35, .45) !important; }
+}
+/* search fields: one hairline, no drop shadow */
+:is(#wc1, html):is(#wc2, html):is(#wc3, html):is(#wc4, html):is(#wc5, html) body .app-container :is(.ayshop-hero, .lb-top) :is(form, label, input) { box-shadow: none !important; }
+:is(#wc1, html):is(#wc2, html):is(#wc3, html):is(#wc4, html):is(#wc5, html):is(#wc6, html) body .app-container main :is(.lb-search, .ay-svc, form[role='search'], .ayshop-hero *) { box-shadow: none !important; }
+:is(#wc1, html):is(#wc2, html):is(#wc3, html):is(#wc4, html):is(#wc5, html) body .app-container main .ay-svc { border: 1px solid rgba(62, 39, 35, .18) !important; }
+:is(#wc1, html):is(#wc2, html):is(#wc3, html):is(#wc4, html):is(#wc5, html):is(#wc6, html):is(#wc7, html):is(#wc8, html) body .app-container :is(.lb-search, .ayk-btn) { box-shadow: none !important; }

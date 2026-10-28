@@ -156,7 +156,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page).toContain('Suggest an app or wearable');
     // connected data never changes the percent; partnerships never change a match
     expect(page).toContain('never changes a match percent'); // inside How ayna uses it
-    expect(page).toContain('0% of your match comes from brand partnerships.');
+    expect(page).toContain('Brand partnerships never change your match.');
     // price, promo period, start of billing and renewal all visible
     const offer = host.querySelector('.ls-offer').textContent;
     ['$4.99', '$45', '$8.99/month', '$90/year', 'Jan 1, 2027', 'Cancel anytime'].forEach((t) => expect(offer).toContain(t));
