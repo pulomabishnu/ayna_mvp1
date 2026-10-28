@@ -8,6 +8,7 @@ import { PLANS, PRO_GROUPS, proGroups } from './plans.js';
 
 const proPage = readFileSync(new URL('../../public/pro.html', import.meta.url), 'utf8');
 const proApi = readFileSync(new URL('../../api/pro.js', import.meta.url), 'utf8');
+const testflightQr = readFileSync(new URL('../../public/images/testflight-qr.svg', import.meta.url), 'utf8');
 
 describe('the one locked state', () => {
   it('frames the lock in the checker, names the feature and has one Get ayna Pro button and a quiet Not now', () => {
@@ -18,21 +19,27 @@ describe('the one locked state', () => {
     expect(html.match(/class="pro-lock__cta"/g)).toHaveLength(1);
     expect(html).toContain('Not now');
   });
-  it('in the native app still shows the lock and opens the sheet, whose button goes to the website', () => {
+  it('sends the native app Pro CTA straight to the website and never shows TestFlight install copy', () => {
     const html = renderToStaticMarkup(<ProLock feature="wearables" native />);
     expect(html).toContain('pro-lock__cta');
+    expect(html).toContain('href="https://www.aynahealth.co/pro?feature=wearables"');
+    expect(html).toContain('>Get ayna Pro</a>');
     expect(html).toContain('Already a Pro member?');
-    const sheet = readFileSync(new URL('../components/SubscriptionPaywallModal.jsx', import.meta.url), 'utf8');
-    expect(sheet).toContain('Capacitor.isNativePlatform()');
-    expect(sheet).toContain('ayna Pro is available on the web for now.');
-    expect(sheet).toContain('https://www.aynahealth.co/pro');
+    expect(html).not.toContain('TestFlight');
+    expect(html).not.toContain('Download ayna on your iPhone');
   });
-  it('explains both iPhone setup steps and when canceled access ends on the dashboard lock', () => {
+  it('puts Pro first and TestFlight second on the website, with the exact install link and QR code', () => {
     const html = renderToStaticMarkup(<ProLock feature="dashboard" />);
-    expect(html).toContain('Download ayna on your iPhone');
+    const proStep = html.indexOf('<b>Get ayna Pro</b>');
+    const installStep = html.indexOf('<b>Get ayna on TestFlight</b>');
+    expect(proStep).toBeGreaterThan(-1);
+    expect(installStep).toBeGreaterThan(proStep);
     expect(html).toContain('https://testflight.apple.com/join/f3C9PypD');
-    expect(html).toContain('Sign in with the same ayna account');
+    expect(html).toContain('/images/testflight-qr.svg');
+    expect(html).toContain('Scan with your iPhone camera.');
+    expect(html).toContain('Sign in with the same account');
     expect(html).toContain('until your paid period ends');
+    expect(testflightQr).toContain('ayna TestFlight QR code');
     expect(renderToStaticMarkup(<ProLock feature="dashboard" native />)).not.toContain('Download on TestFlight');
   });
   it('names gates from the Pro features list', () => {
