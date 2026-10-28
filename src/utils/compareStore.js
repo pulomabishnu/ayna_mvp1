@@ -3,9 +3,12 @@
  * prompt, product cards in select mode and the compare page, on the app
  * and the website. Kept on this device (not health data); works signed out.
  *
- * { ids: [productId], items: { [id]: compact product }, selecting: boolean }
+ * Analytics records only product/catalog ids and compare actions. It never
+ * records health answers or any free text.
  */
+import posthog from 'posthog-js';
 import { useSyncExternalStore } from 'react';
+import { analyticsId, ensureAnalyticsContext, eventSurface } from './analyticsEvents.js';
 
 export const COMPARE_MIN = 2;
 export const COMPARE_MAX = 4;
@@ -14,8 +17,14 @@ const KEY = 'ayna_compare_v1';
 const KEEP = ['id', 'name', 'brand', 'category', 'type', 'price', 'image', 'imageUrl', 'images', 'summary', 'userAdded'];
 let state = load();
 const listeners = new Set();
-// The app or website root registers how to open the compare view.
 let opener = null;
+
+function capture(event, props = {}) {
+  try {
+    ensureAnalyticsContext();
+    posthog.capture(event, { surface: eventSurface(), compare_count: state.ids.length, ...props });
+  } catch { /* analytics never blocks compare */ }
+}
 
 function load() {
   try {
@@ -47,10 +56,15 @@ export const compareStore = {
     if (state.ids.includes(product.id)) {
       const items = { ...state.items }; delete items[product.id];
       set({ ...state, ids: state.ids.filter((x) => x !== product.id), items });
+      capture('compare_product_removed', { product_id: String(product.id), brand_id: analyticsId(product.brand), category: analyticsId(product.category) });
       return 'removed';
     }
-    if (state.ids.length >= COMPARE_MAX) return 'full';
+    if (state.ids.length >= COMPARE_MAX) {
+      capture('compare_limit_reached');
+      return 'full';
+    }
     set({ ...state, ids: [...state.ids, product.id], items: { ...state.items, [product.id]: compact(product) } });
+    capture('compare_product_added', { product_id: String(product.id), brand_id: analyticsId(product.brand), category: analyticsId(product.category) });
     return 'added';
   },
   add(product) { return state.ids.includes(product?.id) ? 'added' : this.toggle(product); },
@@ -58,12 +72,26 @@ export const compareStore = {
   replaceAll(products = []) {
     const list = products.filter((p) => p?.id).slice(0, COMPARE_MAX);
     set({ ...state, ids: list.map((p) => p.id), items: Object.fromEntries(list.map((p) => [p.id, compact(p)])) });
+    capture('compare_list_replaced', { compare_count: list.length });
   },
-  clear() { set({ ...state, ids: [], items: {} }); },
+  clear() {
+    const before = state.ids.length;
+    set({ ...state, ids: [], items: {} });
+    if (before) capture('compare_cleared');
+  },
   setOpener(fn) { opener = typeof fn === 'function' ? fn : null; return () => { if (opener === fn) opener = null; }; },
   canOpen: () => Boolean(opener),
-  open() { state = { ...state, selecting: false }; listeners.forEach((f) => f()); opener?.(); },
-  setSelecting(on) { if (state.selecting !== Boolean(on)) set({ ...state, selecting: Boolean(on) }); },
+  open() {
+    state = { ...state, selecting: false }; listeners.forEach((f) => f());
+    capture('compare_opened');
+    opener?.();
+  },
+  setSelecting(on) {
+    if (state.selecting !== Boolean(on)) {
+      set({ ...state, selecting: Boolean(on) });
+      capture(Boolean(on) ? 'compare_selecting_started' : 'compare_selecting_stopped');
+    }
+  },
 };
 
 /** React: the current compare list. `resolve(id)` maps an id to the full catalog product. */
