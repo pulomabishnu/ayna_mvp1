@@ -11,9 +11,12 @@ function anonymousCheckoutId(value) {
 }
 
 async function captureProPayment(event, session, at) {
-  const key = process.env.POSTHOG_PROJECT_KEY;
-  const host = process.env.POSTHOG_HOST;
-  if (!key || !host || session?.metadata?.flow !== PRO_FLOW) return;
+  // VITE_PUBLIC_POSTHOG_KEY is already configured for production and is a
+  // publishable client token. POSTHOG_PROJECT_KEY can override it later, but an
+  // accidentally-empty override must never disable Stripe-confirmed events.
+  const key = process.env.POSTHOG_PROJECT_KEY || process.env.VITE_PUBLIC_POSTHOG_KEY;
+  const host = process.env.POSTHOG_HOST || 'https://us.i.posthog.com';
+  if (!key || session?.metadata?.flow !== PRO_FLOW) return;
 
   try {
     await fetch(`${host.replace(/\/$/, '')}/capture/`, {
