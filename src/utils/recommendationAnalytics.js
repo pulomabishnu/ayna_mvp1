@@ -6,6 +6,7 @@ import {
   analyticsId,
   ensureAnalyticsContext,
   matchScoreBucket,
+  rememberRecommendationContext,
 } from './analyticsEvents.js';
 
 /**
@@ -96,8 +97,10 @@ export function trackRecommendationViews(products, surface, extra = {}) {
     const key = `${props.recommendation_run_id}:${props.product_id}`;
     if (seen.has(key)) continue;
     seen.add(key);
+    // Keep the recommendation context in memory so a later product open/save/
+    // routine add/Buy Now can be attributed back to this exact run and rank.
+    rememberRecommendationContext(props.product_id, props);
     try {
-      // New denominator for true product/brand/rank performance.
       posthog.capture('recommendation_impression', props);
       // Keep the existing event alive for historical dashboards.
       posthog.capture('recommendation_viewed', {
