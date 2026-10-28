@@ -65,3 +65,17 @@ html body :is(#rtl1, .app-container, .ayna-mobile):is(#rtl2, .app-container, .ay
 .ay-rtl .ay-rtl__how { display: block; margin-top: 2px; font: 600 13px/1.35 var(--ay-font-ui, inherit); color: inherit; opacity: .9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .ay-rtl .ay-rtl__how::before { content: 'How: '; font-weight: 800; }
 .ay-rtl__step.is-open .ay-rtl__how { display: none; }
+
+/* Compact: names, not photos (founder, Oct 28). One line per step; tap the name to open it. */
+.ay-rtl.is-compact .ay-rtl__photo { display: none !important; }
+.ay-rtl.is-compact .ay-rtl__sec { padding: 12px 14px !important; }
+.ay-rtl.is-compact .ay-rtl__when { margin-bottom: 6px !important; font-size: 15px !important; }
+.ay-rtl.is-compact .ay-rtl__step { display: grid !important; grid-template-columns: minmax(0, 1fr) max-content !important; align-items: center; gap: 4px 8px; padding: 8px 0 !important; border: 0 !important; border-top: 1px solid rgba(62, 39, 35, .18) !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+.ay-rtl.is-compact .ay-rtl__step:first-child { border-top: 0 !important; }
+.ay-rtl.is-compact .ay-rtl__row { padding: 0 !important; min-height: 0 !important; display: block !important; }
+.ay-rtl.is-compact .ay-rtl__name { font-size: 15px !important; text-decoration: underline; text-decoration-color: rgba(62, 39, 35, .3); text-underline-offset: 3px; }
+.ay-rtl.is-compact .ay-rtl__why { display: none !important; }
+.ay-rtl.is-compact .ay-rtl__more { font-size: 13px !important; padding: 0 !important; min-height: 32px; }
+.ay-rtl.is-compact .ay-rtl__detail { grid-column: 1 / -1; }
+.ay-rtl.is-compact .ay-rtl__sec ul { border: 0 !important; padding: 0 !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }
+.ay-rtl.is-compact .ay-rtl__more { width: auto !important; justify-self: end; margin: 0 !important; }

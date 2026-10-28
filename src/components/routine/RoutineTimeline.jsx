@@ -10,7 +10,7 @@ import './routine-timeline.css';
  * Her routine as a day timeline (founder Oct 26 21:45: "a day timeline, not a
  * carousel of small cards"). The Start-here steps of every active routine,
  * grouped by when they happen ("When cramps start", "During your period",
- * "Every night"). Each step: one big square photo (the old product-card
+ * "Every night"). Each step: its name (tap to open), one line of how (founder, Oct 28: no photos, they only took space; was one big square photo, the old product-card
  * look), its name and one line of why; a tap opens How, When and how long.
  * The section that applies right now (her cycle day, the time of day) is the
  * pink "Now" block. Same data as RoutineSummary (useRoutines); medicines are
@@ -77,7 +77,7 @@ function ecosystemSteps(products, covered) {
     });
 }
 
-export default function RoutineTimeline({ cycle = null, onOpenRoutine, onOpenProduct, onCheckIn, emptyAction = null, max = 3, ecoMax = 4, ...source }) {
+export default function RoutineTimeline({ compact = true, cycle = null, onOpenRoutine, onOpenProduct, onCheckIn, emptyAction = null, max = 3, ecoMax = 4, ...source }) {
   const { routines } = useRoutines(source);
   const list = routines.slice(0, max);
   const covered = new Set(list.flatMap((r) => r.start.filter((it) => it.kind === 'product').map((it) => String(it.product?.id))));
@@ -109,7 +109,7 @@ export default function RoutineTimeline({ cycle = null, onOpenRoutine, onOpenPro
   groups.sort((a, b) => Number(b.now) - Number(a.now));
   const tracks = list.map((r) => r.track).filter(Boolean);
   return (
-    <div className="ay-rtl" data-tour="routine">
+    <div className={`ay-rtl${compact ? ' is-compact' : ''}`} data-tour="routine">
       <ol className="ay-rtl__line">
         {groups.map((g) => (
           <li key={g.when} className={`ay-rtl__sec is-${g.now ? 'now' : 'surface'}`}>
