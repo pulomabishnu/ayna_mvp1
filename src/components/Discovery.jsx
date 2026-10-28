@@ -1780,7 +1780,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     {findBlock}
                     <div className="ayshop-hero__chips" data-tour="explore-sections">
                         <ScrollRow label="need chips">
-                            <ShopGroups active={macroGroup} onPick={pickArea} available={availableMacroGroups.map((g) => g.id)} subs={false} label="Filter by need" className="ayshop__groups" />
+                            <ShopGroups flat={typeFilter !== 'services'} active={macroGroup} onPick={pickArea} available={availableMacroGroups.map((g) => g.id)} subs={false} label="Filter by need" className="ayshop__groups" />
                         </ScrollRow>
                         {!lockType && <div className="ayshop__type" role="group" aria-label="Show">
                             {/* Products keeps the Shop's default grid ('all' browses products only); Services lists the services. */}
