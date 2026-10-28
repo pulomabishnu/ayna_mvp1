@@ -67,11 +67,26 @@
   padding: 0 10px;
 }
 .ay-asksug__hide:hover { background: var(--asksug-butter-deep); }
+.ay-asksug--hidden {
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+}
+.ay-asksug__hidden-note {
+  margin: 0;
+  padding: 3px 16px 7px;
+  color: var(--asksug-espresso);
+  opacity: .68;
+  font-size: 11px;
+  line-height: 1.35;
+}
 /* Brand dark: espresso page, butter text. */
 [data-theme="brand-dark"] .ay-asksug__lead,
 [data-theme="dark"] .ay-asksug__lead,
 [data-theme="brand-dark"] .ay-asksug__hide,
-[data-theme="dark"] .ay-asksug__hide { color: var(--asksug-butter); }
+[data-theme="dark"] .ay-asksug__hide,
+[data-theme="brand-dark"] .ay-asksug__hidden-note,
+[data-theme="dark"] .ay-asksug__hidden-note { color: var(--asksug-butter); }
 /* Website: sits under the fixed top nav, inside the page column. */
 .ay-asksug--web { max-width: 1200px; margin: 0 auto; }
 .ay-asksug--web .ay-asksug__row { padding: 8px 24px; }
