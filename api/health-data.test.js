@@ -1,4 +1,5 @@
-vi.mock('./_healthAccess.js', () => ({ hasHealthAccess: async () => true }));
+const access = vi.hoisted(() => ({ pro: true }));
+vi.mock('./_healthAccess.js', () => ({ hasHealthAccess: async () => access.pro }));
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createFakeDb } from './_healthFakeDb.test-helper.js';
 import { mockRes, mockReq } from './_test-helpers.js';
@@ -23,7 +24,23 @@ describe('/api/health-data', () => {
   beforeEach(() => {
     ctx.db = createFakeDb({ health_connections: [], health_daily_metrics: [], health_data_events: [], health_imports: [], health_source_requests: [], health_oauth_tokens: [] });
     ctx.user = { id: 'u1' };
+    access.pro = true;
     vi.stubEnv('HEALTH_TOKEN_ENCRYPTION_KEY', KEY);
+  });
+
+  it('adding health data is Pro on the server (manual imports too); leaving never is', async () => {
+    access.pro = false;
+    for (const body of [
+      { action: 'connect', source: 'apple_health', categories: ['sleep'], platform: 'ios' },
+      { action: 'import', declaredApp: 'Other', fileKind: 'csv', categories: ['sleep'], rows: [{ metric: 'sleep_minutes', day: day(1), value: 400 }] },
+      { action: 'update', source: 'apple_health', categories: ['sleep'] },
+    ]) {
+      const r = await call(body);
+      expect(r.statusCode, body.action).toBe(403);
+      expect(r.body.error).toBe('pro_required');
+    }
+    expect(ctx.db.tables.health_daily_metrics).toHaveLength(0);
+    expect((await call({ action: 'delete_all', confirm: 'DELETE' })).statusCode).toBe(200);
   });
 
   it('401 signed out, never touching data', async () => {

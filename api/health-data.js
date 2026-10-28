@@ -65,7 +65,10 @@ export default async function handler(req, res) {
     const body = req.body && typeof req.body === 'object' ? req.body : {};
     const action = String(body.action || '');
     const source = String(body.source || '');
-    if (['connect', 'sync', 'resume'].includes(action) && !await hasHealthAccess(user, admin)) {
+    // Anything that adds or changes stored health data is Pro (manual and
+    // screenshot imports included, audit Oct 28). Pausing, disconnecting and
+    // deleting stay open to everyone, so leaving is never behind a paywall.
+    if (['connect', 'sync', 'resume', 'import', 'update'].includes(action) && !await hasHealthAccess(user, admin)) {
       return res.status(403).json({ error: 'pro_required' });
     }
 

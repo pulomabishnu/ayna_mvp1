@@ -17,6 +17,7 @@
  */
 import { verifyUser } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
+import { hasHealthAccess } from './_healthAccess.js';
 import { callAnthropic, extractBalancedJsonObject } from './_llm.js';
 import { logHealthError } from './_healthStore.js';
 import { cleanRow, METRICS } from '../src/health/metrics.js';
@@ -56,8 +57,12 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'GET, POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
   if (!extractionEnabled()) return res.status(403).json({ error: 'extraction_disabled' });
 
-  const { user, error } = await verifyUser(req);
+  const { user, error, admin } = await verifyUser(req);
   if (error || !user) return res.status(401).json({ error: error || 'auth_required' });
+  // Screenshot reading is part of connected health, a Pro feature (audit, Oct 28).
+  try {
+    if (admin && !await hasHealthAccess(user, admin)) return res.status(403).json({ error: 'pro_required' });
+  } catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
   const limited = await rateLimit(`health-extract:${user.id}`, { max: 20, windowSec: 86400 });
   if (!limited.ok) return res.status(429).json({ error: 'rate_limited' });
 

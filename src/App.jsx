@@ -2589,6 +2589,8 @@ function App() {
           <AynaLanding
             onViewToday={handleViewEcosystem}
             onLogIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onAsk={(q) => openAsk(q)}
+            onOpenHealth={() => setCurrentView(user ? 'health-data' : 'you')}
             onViewEcosystem={handleViewEcosystem}
             myProducts={myProducts}
             savedProducts={savedProducts}

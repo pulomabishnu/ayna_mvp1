@@ -9,6 +9,12 @@ import WebLanding from './WebLanding.jsx';
 import { RAIN_COLS } from './rainData.js';
 
 vi.mock('../search/SmartSearchInput.jsx', () => ({ default: (props) => <input aria-label="Search" value={props.value} onChange={props.onChange} /> }));
+// The landing asks /api/pro whether she is a member; tests set the answer.
+const proStatus = { current: { active: false, offerOpen: true } };
+vi.mock('../../utils/proApi.js', () => ({
+  requestPro: vi.fn(async () => proStatus.current),
+  loadProFeatureRules: vi.fn(async () => ({ enabled: true })),
+}));
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 let root; let host;
@@ -103,24 +109,77 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(home).toContain('aria-label="Go to your Home. Slide or tap to start."');
   });
 
-  it('keeps the website sections and finishes with one free-start action', () => {
+  it('tells one product story under the hero and finishes with one free-start action', () => {
     vi.useFakeTimers();
     mount(<WebLanding onStartQuiz={() => {}} />);
     act(() => { vi.advanceTimersByTime(1500); });
     act(() => { vi.runOnlyPendingTimers(); });
     vi.useRealTimers();
     const page = host.textContent;
+    expect(page).toContain('Women’s health, made for you.');
     expect(page).toContain('Brands we work with');
-    expect(page).toContain('Does this sound familiar?');
-    expect(page).toContain('How ayna fits it to you');
-    expect(page).toContain('Quick reads about your body, with sources');
-    expect(page).toContain('Go deeper when you want to.');
-    expect(host.querySelector('a[href="/pro"]').textContent).toContain('Get ayna Pro');
-    expect(page).toContain('Built by three women who wanted better answers.');
+    // discover -> matched to you -> why -> health data in context (Pro) -> Ask -> Free vs Pro -> trust
+    const order = ['What are you navigating?', 'Matched to you, once ayna knows you.', 'Every match comes with the why.', 'Your health data, in context.', 'Ask ayna anything.', 'Free helps you find what fits. Pro learns with you.', 'Quick reads about your body, with sources', 'Built by three women who wanted better answers.'];
+    const at = order.map((t) => page.indexOf(t));
+    at.forEach((i, n) => expect(i, order[n]).toBeGreaterThan(-1));
+    expect([...at].sort((a, b) => a - b)).toEqual(at);
+    expect(host.querySelector('a[href="/pro"].ls-offer__cta').textContent).toContain('Get ayna Pro');
     const last = host.querySelector('#ay-landing').lastElementChild;
     expect(last.textContent).toContain('Start free. No purchase needed.');
     expect(last.querySelectorAll('button')).toHaveLength(1);
     expect(host.innerHTML).not.toContain('—');
+  });
+
+  it('signed out: products are shown without a number, behind one clear unlock', () => {
+    mount(<WebLanding onStartQuiz={() => {}} onLogIn={() => {}} />);
+    const shelf = host.querySelector('.ls-shelf');
+    expect(shelf.textContent).toContain('Sign in to unlock personalized results.');
+    expect(shelf.textContent).toContain('Log in');
+    expect(shelf.textContent).not.toMatch(/\d+% match/);
+    expect(shelf.querySelectorAll('.ls-row > li').length).toBeLessThanOrEqual(4);
+  });
+
+  it('only claims what the product does: real limits, live sources, no partner influence, plain renewal terms', () => {
+    mount(<WebLanding onStartQuiz={() => {}} />);
+    const page = host.textContent;
+    // limits (api/_proFeatures.js, pro_* SQL): monthly quiz retake, Ask 5 / 50 a month
+    expect(page).toContain('Retake once a month');
+    expect(page).toContain('5 chats a month');
+    // the full Free vs Pro comparison and the integration details are one tap away
+    expect([...host.querySelectorAll('.ls-more > summary')].map((x) => x.textContent)).toEqual(expect.arrayContaining(['What ayna weighs, in order', 'What you can connect', 'How ayna uses it', 'Your data, your call', 'Use something else? Suggest an app or wearable', 'Compare Free and Pro']));
+    expect(page).toContain('Up to 50 a month');
+    expect(page).not.toMatch(/unlimited (ask|chats)/i);
+    expect(page).not.toMatch(/once a week|per week.*quiz|quiz.*per week/i);
+    // integrations: Oura is insights only; no WHOOP, Flo or Strava
+    expect(page).toContain('Insights only, for now');
+    expect(page).not.toMatch(/WHOOP|Whoop|Strava|\bFlo\b/);
+    expect(page).toContain('Suggest an app or wearable');
+    // connected data never changes the percent; partnerships never change a match
+    expect(page).toContain('never changes a match percent'); // inside How ayna uses it
+    expect(page).toContain('0% of your match comes from brand partnerships.');
+    // price, promo period, start of billing and renewal all visible
+    const offer = host.querySelector('.ls-offer').textContent;
+    ['$4.99', '$45', '$8.99/month', '$90/year', 'Jan 1, 2027', 'Dec 31, 2026', 'Cancel anytime'].forEach((t) => expect(offer).toContain(t));
+  });
+
+  it('a Pro member sees what she has, not an offer', async () => {
+    proStatus.current = { active: true, offerOpen: true };
+    mount(<WebLanding signedIn userId="u1" hasProfile onGoHome={() => {}} onStartQuiz={() => {}} />);
+    await act(async () => { await Promise.resolve(); await Promise.resolve(); });
+    expect(host.textContent).toContain('You’re on ayna Pro.');
+    expect(host.querySelector('.ls-offer')).toBeNull();
+    expect(host.textContent).toContain('Open Health data');
+    expect(host.textContent).toContain('Up to 50 chats a month with ayna Pro.');
+    proStatus.current = { active: false, offerOpen: true };
+  });
+
+  it('a closed offer shows no price and no buy button', async () => {
+    proStatus.current = { active: false, offerOpen: false };
+    mount(<WebLanding signedIn userId="u2" onStartQuiz={() => {}} />);
+    await act(async () => { await Promise.resolve(); await Promise.resolve(); });
+    expect(host.querySelector('.ls-offer')).toBeNull();
+    expect(host.textContent).toContain('The Early Access offer is closed right now.');
+    proStatus.current = { active: false, offerOpen: true };
   });
 
   it('below the hero (founder, Oct 27 13:44-13:58): one idea a section, the brown and pink strip as two dividers, no pink fills, and a last Slide to start', () => {
@@ -142,24 +201,4 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     // the founders photo stays
     expect(page.querySelector('.wl-classic img[src*="founders"], .wl-classic source[srcset*="founders"]')).not.toBeNull();
   });
-});
-
-it('lets readers expand explanations, keeps renewal terms visible and ends with human trust before the final CTA', () => {
-  vi.useFakeTimers();
-  mount(<WebLanding onStartQuiz={() => {}} />);
-  act(() => { vi.advanceTimersByTime(1500); });
-  act(() => { vi.runOnlyPendingTimers(); });
-  const method = host.querySelector('.lp-method');
-  const disclosure = method.querySelector('details');
-  expect(disclosure.open).toBe(false);
-  act(() => disclosure.querySelector('summary').click());
-  expect(disclosure.open).toBe(true);
-  const pro = host.querySelector('.wl-pro');
-  expect(pro.textContent).toContain('$4.99');
-  expect(pro.textContent).toContain('$8.99/month');
-  expect(pro.textContent).toContain('Jan 1, 2027');
-  expect(host.querySelector('.hm-rc').compareDocumentPosition(pro) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-  expect(pro.compareDocumentPosition(host.querySelector('.hm-us')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-  expect(host.querySelector('.lp-pro-timing').textContent).toContain('$8.99/month');
-  vi.useRealTimers();
 });

@@ -46,13 +46,13 @@ import { HOME_SEARCH_HINTS } from './shop/homeSearchHints.js';
 
 // Plain words first (5-second test, P2-4): what people actually type.
 const SEARCH_HINTS = HOME_SEARCH_HINTS; // tested against the real search (suggestionChips.test.js)
-const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
+export const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 const Arrow = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>);
 
 /* CTAs that go somewhere are links (open in a new tab, copy the address), not buttons. */
-function Go({ href, onGo, className, children }) {
+export function Go({ href, onGo, className, children }) {
   return <a className={className} href={href} onClick={(e) => { if (!onGo || !isPlainLeftClick(e)) return; e.preventDefault(); onGo(); }}>{children}</a>;
 }
 
@@ -171,7 +171,7 @@ function Brands({ onViewWaitlist }) {
 
 // Core needs lead (periods, intimate care, menopause, pelvic floor); creams, sleep and gadgets come after.
 const CORE = /pad|tampon|cup|disc|period|intimate|vaginal|menopause|pelvic|uti|cramp|fertility|postpartum|pregnan/i;
-function weeklyLineup() {
+export function weeklyLineup() {
   const list = getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product)
     .filter((p) => p?.image && NEEDS_PHOTO(p) && !/sex|intimacy|toy/i.test(String(p.category || '')) && !/\banal\b|vibrator|dildo|mouth tape/i.test(String(p.name || '')));
   const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
@@ -185,7 +185,7 @@ function weeklyLineup() {
    (WebIntake.jsx COMMON_NEEDS), said the way people say it; these are prompts,
    not testimonials. Each photo carries a real product from the catalog as a
    die-cut on its corner. Signed out, every card says "See your match" (no number). */
-const FAMILIAR = [
+export const FAMILIAR = [
   { q: 'My cramps knock me out every month.', need: 'Cramps or period pain', photo: '/landing/pajamas-overhead.webp', match: /cramp|period pain|menstrual pain|dysmenorr|heat/i },
   { q: 'I bleed through everything.', need: 'Heavy periods', photo: '/landing/sink-flatlay.webp', match: /heavy|period underwear|overnight pad|super/i },
   { q: 'I leak a little when I sneeze.', need: 'Bladder leakage or incontinence', photo: '/landing/curlers-call.webp', match: /bladder|incontinen|leak|pelvic floor/i },
@@ -202,7 +202,7 @@ function DieCut({ product, className }) {
   if (!product?.image || failed) return null;
   return <span className={className}><img src={product.image} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} /></span>;
 }
-function Phrases({ onSearch }) {
+export function Phrases({ onSearch }) {
   const ready = useCatalogReady();
   const rows = useMemo(() => {
     const taken = new Set();
@@ -478,7 +478,7 @@ function Community({ onViewCommunity, posts = [] }) {
     </article>
   );
 }
-function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts, calm = false }) {
+export function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts, calm = false }) {
   return (
     <Band tone={calm ? "butter" : "deep"} className="hm-sec hm-rc hm-band" aria-label="Reads and Community">
       <div className="hm-wrap hm-rc__grid">
@@ -493,7 +493,7 @@ function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts,
    The founders' photo and story (the page's one 44px statement line). The
    Wefunder card moved to /about (critique, Oct 27: no investing pitch on the
    consumer home page); the footer keeps its "Invest in ayna" link. */
-function Founders({ onViewAbout }) {
+export function Founders({ onViewAbout }) {
   return (
     <Band tone="butter" className="hm-sec hm-us hm-band" aria-labelledby="hm-us-title">
       <div className="hm-wrap">

@@ -29,6 +29,12 @@ export async function consumeProChat(admin, userId, premium, rules) {
     p_limit: limit,
   });
   const row = Array.isArray(data) ? data[0] : data;
-  if (error || typeof row?.allowed !== 'boolean') throw new Error('Monthly usage unavailable');
+  // A counter outage must not turn into a 500 on every chat (audit, Oct 28).
+  // Same as the older weekly path: let the chat through, marked degraded, so
+  // nothing is refunded against a period that was never counted.
+  if (error || typeof row?.allowed !== 'boolean') {
+    console.warn('[pro] monthly chat counter unavailable; allowing degraded');
+    return { allowed: true, used: 0, limit, period, degraded: true };
+  }
   return { ...row, limit, period, degraded: false };
 }
