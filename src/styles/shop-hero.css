@@ -103,8 +103,3 @@
 :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow.is-over.at-end .ay-scrollrow__track { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 48px); mask-image: linear-gradient(to right, transparent 0, #000 48px); }
 :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow .ayk-chiprow,
 :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container .lb-shophead .ay-scrollrow .lb-topics { padding-left: 2px !important; }
-
-/* Calm pass (Oct 28): straight bottom edge on every pink page top, a
-   hairline instead of the wave. */
-:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero::after { display: none !important; }
-:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero { border-bottom: 1px solid rgba(62, 39, 35, .18) !important; }
