@@ -227,3 +227,11 @@
   :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__dash { animation: pro-lap var(--pro-dur, 60s) linear infinite; }
 }
 @keyframes pro-lap { from { stroke-dashoffset: 0; } to { stroke-dashoffset: calc(var(--pro-lap) * -1); } }
+
+.pro-lock__setup { text-align:left; margin:24px auto 0; max-width:440px; }
+.pro-lock__setup ol { list-style:decimal; padding-left:24px; margin:0; }
+.pro-lock__setup li { padding:0 0 20px 8px; }
+.pro-lock__setup li::marker { font-weight:700; }
+.pro-lock__setup li p { margin:6px 0 10px; font-size:14px; line-height:1.6; }
+.pro-lock__setup a { color:inherit; text-decoration:underline; text-underline-offset:4px; font-weight:600; }
+.pro-lock__expiry { border-top:1px solid currentColor; padding-top:16px; font-size:12px; line-height:1.65; opacity:.8; }

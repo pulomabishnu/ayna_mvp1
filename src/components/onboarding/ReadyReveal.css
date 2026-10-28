@@ -107,3 +107,8 @@ html body .app-container.app-container.app-container.app-container.app-container
 :is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-back ~ .ay-ob-ready__title { margin-top: 52px !important; }
 /* The reveal grew (3 to 5 matches): start at the top, never centre and clip the title. */
 :is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready.is-app { justify-content: flex-start !important; }
+
+.ay-ob-pro-invite { margin:32px 0 20px; padding:24px; border:1px solid #d8bda9; border-radius:18px; background:#fff9e9; color:#3e2723; }
+.ay-ob-pro-invite__eyebrow { font-size:12px; letter-spacing:.07em; text-transform:uppercase; }
+.ay-ob-pro-invite h2 { font-family:var(--ay-sans); font-size:28px; font-weight:400; margin:12px 0; }
+.ay-ob-pro-invite > p { line-height:1.6; }

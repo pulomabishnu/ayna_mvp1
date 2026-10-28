@@ -1823,8 +1823,8 @@ function App() {
         // screen; the account is only for keeping them (onboarding audit).
         markOnboardingDone();
         setQuizResults(completedResults);
-        guestTodayRef.current = true;
-        setCurrentView('today');
+        guestTodayRef.current = false;
+        setCurrentView('ecosystem');
         setShowAuthModal(true);
         return;
       }
@@ -1833,8 +1833,8 @@ function App() {
         markOnboardingDone();
         setQuizResults(completedResults);
         setPendingAction(null); pendingActionRef.current = null;
-        guestTodayRef.current = true;
-        setCurrentView('today');
+        guestTodayRef.current = false;
+        setCurrentView('ecosystem');
       }
       return;
     }
@@ -2433,10 +2433,10 @@ function App() {
   }, [currentView, user, authLoading, setCurrentView]);
 
   // Which main tab is current. Signed out, the landing is Home.
-  const webTabOn = (key) => WEB_TAB_VIEWS[key].includes(currentView) || (key === 'today' && !user && ['welcome', 'hero'].includes(currentView));
+  const webTabOn = (key) => WEB_TAB_VIEWS[key].includes(currentView);
   // Where each main tab goes (top nav and phone tab bar).
   const mainTabGo = {
-    // Signed out, Home is the landing, answers on this browser or not (founder, Oct 27 13:46).
+    // Home opens ecosystem setup for guests and the saved ecosystem for members.
     today: () => setCurrentView(webHomeView({ signedIn: Boolean(user), authLoading })),
     // Shop is the old Explore page (/explore); Services the same page with Services picked; Library the reads.
     explore: () => openExplore('overview'),
@@ -2484,7 +2484,7 @@ function App() {
           comes back on any scroll up; its hairline shows only with content under it. */}
         <div className={`app-nav-wrap${headerScroll.scrolled ? ' is-scrolled' : ''}${headerScroll.away ? ' is-away' : ''}`}>
         <nav
-          className={`ay-nav${isScrolled ? ' is-scrolled' : ''}${FOCUSED_FLOW_VIEWS.includes(currentView) ? ' is-focused' : ''}`}
+          className={`ay-nav ay-nav--paper${isScrolled ? ' is-scrolled' : ''}${FOCUSED_FLOW_VIEWS.includes(currentView) ? ' is-focused' : ''}`}
           data-on-gradient={navOnGradient ? navGradientVariant || 'yes' : undefined}
           aria-label="Primary"
         >
@@ -2496,8 +2496,9 @@ function App() {
           {/* Home leads the desktop navigation; mobile keeps the familiar centre Home tab. */}
           <div className="ay-nav__links">
             {WEB_TOP_TABS.map((t) => (
-              <a key={t.key} href={t.key === 'today' && !user ? '/' : t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
-                {t.label}
+              <a key={t.key} href={t.key === 'today' ? '/you/ecosystem' : t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
+                {t.key === 'today' && <span className="ay-nav__home-mark" aria-hidden="true"><TabIcon kind="home" /></span>}
+                <span>{t.label}</span>
               </a>
             ))}
           </div>
@@ -3027,8 +3028,8 @@ function App() {
         )}
         {/* My ecosystem (You > My ecosystem, /you/ecosystem). Its old Dashboard tab is Today. */}
         {currentView === 'ecosystem' && (
-          <EcosystemViewTabs dashboard={null} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
-          <YouTabs active="ecosystem" onGo={(key) => openYou(key === 'overview' ? null : key)} />
+          <EcosystemViewTabs dashboard={webHealth} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
+          {user && <YouTabs active="ecosystem" onGo={(key) => openYou(key === 'overview' ? null : key)} />}
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
           <ViewSkeleton
             label="Loading your ecosystem"
@@ -3043,8 +3044,21 @@ function App() {
             ecosystem" headers stacked on the same page. MyEcosystem now
             renders both combined (board 2a), so this toggle is gone rather
             than becoming a third, redundant copy. */}
-        {currentView === 'ecosystem' && !user && !authLoading && ecosystemQuizCard && <div className="mockup-page fq-web-slot">{ecosystemQuizCard}</div>}
-        {currentView === 'ecosystem' && !user && !authLoading && (
+        {currentView === 'ecosystem' && !user && !authLoading && guestPreview && ecosystemQuizCard && <div className="mockup-page fq-web-slot">{ecosystemQuizCard}</div>}
+        {currentView === 'ecosystem' && !user && !authLoading && !guestPreview && (
+          <section className="ay-ecosystem-entry" aria-labelledby="ecosystem-entry-title">
+            <span className="ay-ecosystem-entry__lock" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="7" y="14" width="18" height="14" rx="3"/><path d="M11 14V9a5 5 0 0 1 10 0v5M16 20v3"/></svg>
+            </span>
+            <p className="ay-ecosystem-entry__eyebrow">Your Home, made personal</p>
+            <h1 id="ecosystem-entry-title">Create your ecosystem</h1>
+            <p>Your matches, routines and saved finds, together in one place. Start with a few questions about you.</p>
+            <button type="button" className="ay-btn" onClick={handleStartQuiz}>Create your ecosystem <span aria-hidden="true">→</span></button>
+            <small>Start free. Explore ayna Pro after your results.</small>
+            <button type="button" className="ct-link" onClick={() => { setPendingAction('ecosystem'); pendingActionRef.current = 'ecosystem'; setShowAuthModal(true); }}>Already have an ecosystem? Log in</button>
+          </section>
+        )}
+        {currentView === 'ecosystem' && !user && !authLoading && guestPreview && (
           <EcosystemPreview
             products={ALL_PRODUCTS}
             matches={guestPreview?.products || []}

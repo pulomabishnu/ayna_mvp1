@@ -82,7 +82,7 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
   const remaining = useMemo(() => (answers?.fullHealthIntake ? moreRemaining(reconstructIntakeFromSnapshot(answers.fullHealthIntake)) : 0), [answers]);
   const Tag = variant === 'web' ? 'section' : 'main';
   // Today on the website and the app (all-pages brief, Oct 25).
-  const tab = 'Today';
+  const tab = variant === 'web' ? 'ecosystem' : 'Today';
   return (
     <Tag className={`ay-ob-ready uq-reveal is-${variant}`} aria-labelledby="ay-ob-ready-h">
       {onBack && (
@@ -104,7 +104,7 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
       ) : !ready ? (
         <p className="ay-ob-ready__lead" role="status">Getting your focus ready…</p>
       ) : (
-        <p className="ay-ob-ready__lead">You didn’t pick anything specific, so {tab} starts with quick check-ins. Add what you want help with any time in You.</p>
+        <p className="ay-ob-ready__lead">You didn’t pick anything specific, so {variant === 'web' ? 'your ecosystem starts with options to explore' : 'Today starts with quick check-ins'}. Add what you want help with any time in You.</p>
       )}
       {matches.length > 0 && (
         <section className="ay-ob-matches" aria-labelledby="ay-ob-matches-h">
@@ -139,6 +139,12 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
       )}
       {goals.length > 0 && <p className="ay-ob-ready__goals">With your goals in mind: {goals.map((g) => g.charAt(0).toLowerCase() + g.slice(1)).join(' and ')}.</p>}
       <p className="ay-ob-ready__note">Change anything ayna uses any time in You, My health.</p>
+      {variant === 'web' && <section className="ay-ob-pro-invite" aria-labelledby="ready-pro-title">
+        <p className="ay-ob-pro-invite__eyebrow">Your next step · optional</p>
+        <h2 id="ready-pro-title">Want more with ayna Pro?</h2>
+        <p>Add your health dashboard, connected wearables, unlimited Reads and playlists. Your basic ecosystem stays free.</p>
+        <a className="ay-ob-quiet" href="/pro" target="_blank" rel="noopener noreferrer">Explore ayna Pro <span className="ay-ob-sr">(opens in a new tab)</span></a>
+      </section>}
       <div className="ay-ob-ready__actions">
         <button type="button" className="ay-ob-primary" onClick={onSeeToday}>See my {tab}</button>
         {/* Focus group, Oct 26: two people missed this, so it is the clear second

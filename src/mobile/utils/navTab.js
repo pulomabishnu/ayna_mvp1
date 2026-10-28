@@ -72,12 +72,8 @@ export function showsEmptyHome({ screen, view = null, variant = 'dashboard', sig
   return homeScreenFor({ signedIn }) === 'landing';
 }
 
-/**
- * The website's Home: Today signed in, the landing ('welcome') signed out, the
- * same rule as the app. While her session is still being restored, Today (it
- * hands over to the landing if she turns out to be signed out).
- */
-export function webHomeView({ signedIn = false, authLoading = false } = {}) {
-  // Signed in, the website's Home is My ecosystem (founder, Oct 27 18:34).
-  return signedIn || authLoading ? 'ecosystem' : 'welcome';
+/** Home opens the ecosystem for every visitor. Guests see a setup lock;
+ * the logo independently opens the public landing page. */
+export function webHomeView() {
+  return 'ecosystem';
 }

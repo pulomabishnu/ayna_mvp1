@@ -27,6 +27,14 @@ describe('the one locked state', () => {
     expect(sheet).toContain('ayna Pro is available on the web for now.');
     expect(sheet).toContain('https://www.aynahealth.co/pro');
   });
+  it('explains both iPhone setup steps and when canceled access ends on the dashboard lock', () => {
+    const html = renderToStaticMarkup(<ProLock feature="dashboard" />);
+    expect(html).toContain('Download ayna on your iPhone');
+    expect(html).toContain('https://testflight.apple.com/join/f3C9PypD');
+    expect(html).toContain('Sign in with the same ayna account');
+    expect(html).toContain('until your paid period ends');
+    expect(renderToStaticMarkup(<ProLock feature="dashboard" native />)).not.toContain('Download on TestFlight');
+  });
   it('names gates from the Pro features list', () => {
     expect(proFeatureName('trial')).toBe('Advanced tracking');
     expect(proFeatureName('recap')).toBe('Deeper personalized insights');

@@ -513,7 +513,7 @@ function Founders({ onViewAbout }) {
   );
 }
 
-function CalmMethod({ onViewHowItWorks }) {
+function CalmMethod({ onViewHowItWorks, onStartQuiz }) {
   const steps = [
     { title: 'Tell us what matters', short: 'Your needs, life stage and preferences.', more: 'Take the personalization quiz at your own pace. You can review your answers and update them as your needs change.' },
     { title: 'See the fit and the evidence', short: 'A reason for each match, with sources.', more: 'Product pages distinguish strong, some and limited evidence. A match is an option to explore, not a diagnosis or a promise that a product will work for you.' },
@@ -532,7 +532,8 @@ function CalmMethod({ onViewHowItWorks }) {
           <span className="lp-method__number" aria-hidden="true">0{i + 1}</span>
           <div><h3>{step.title}</h3><p>{step.short}</p><details><summary>Read more<span className="ed-sr">: {step.title}</span></summary><p>{step.more}</p></details></div>
         </li>)}</ol>
-        <Go className="ay-btn ay-btn--text" href="/how-it-works" onGo={onViewHowItWorks}>The full method<Arrow /></Go>
+        <div className="lp-method__actions"><Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Create your ecosystem<Arrow /></Go>
+        <Go className="ay-btn ay-btn--text" href="/how-it-works" onGo={onViewHowItWorks}>The full method<Arrow /></Go></div>
       </div>
     </div>
   </section>;
@@ -553,7 +554,7 @@ export default function LandingV2({ bodyOnly = false, membershipSlot = null, onS
       {!personal?.dashboard && personalSlot && <div className="hm-personal">{personalSlot}</div>}
       <NeedsBand calm={bodyOnly} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} onStartQuiz={onStartQuiz} picks={personal?.topPicks || null} signedOut={!personal} />
       {rest && <>
-      {bodyOnly ? <CalmMethod onViewHowItWorks={onViewHowItWorks} /> : <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!(personal && personal.hasQuiz)} />}
+      {bodyOnly ? <CalmMethod onViewHowItWorks={onViewHowItWorks} onStartQuiz={onStartQuiz} /> : <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!(personal && personal.hasQuiz)} />}
       {membershipSlot}
       <ReadsCommunity calm={bodyOnly} onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
       <Founders onViewAbout={onViewAbout} />

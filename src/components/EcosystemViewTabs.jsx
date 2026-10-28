@@ -13,7 +13,7 @@ import { useSlidingInk } from './eco/ecoMotion';
  * onHero: the Products view opens with the espresso hero (signed in with
  * shelves), so the switch sits on that hero's background.
  */
-const TABS = [['products', 'Products'], ['dashboard', 'Dashboard']];
+const TABS = [['products', 'My ecosystem'], ['dashboard', 'Dashboard']];
 
 function readEcoView() {
   try { return new URLSearchParams(window.location.search).get('view') === 'dashboard' ? 'dashboard' : 'products'; } catch { return 'products'; }

@@ -76,9 +76,9 @@ describe('Home signed out', () => {
     expect(showsEmptyHome({ screen: 'ecointro' })).toBe(false);
     expect(showsEmptyHome({ screen: 'ayna', view: 'home', signedIn: true })).toBe(false);
   });
-  it('the website Home tab: the landing signed out, My ecosystem signed in or while her session loads', () => {
-    expect(webHomeView({})).toBe('welcome');
-    expect(webHomeView({ signedIn: false })).toBe('welcome');
+  it('the website Home tab always opens the ecosystem, with a setup lock for guests', () => {
+    expect(webHomeView({})).toBe('ecosystem');
+    expect(webHomeView({ signedIn: false })).toBe('ecosystem');
     expect(webHomeView({ signedIn: true })).toBe('ecosystem');
     expect(webHomeView({ signedIn: false, authLoading: true })).toBe('ecosystem');
   });

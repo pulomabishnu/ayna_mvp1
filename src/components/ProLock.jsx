@@ -85,6 +85,13 @@ export default function ProLock({
           <h2 id={`${uid}-t`} className="pro-lock__title">{name}</h2>
           {context && <p className="pro-lock__context">{context}</p>}
           <p className="pro-lock__line">{line || proLockLine(feature)}</p>
+          {!native && ['dashboard', 'wearables'].includes(feature) && <div className="pro-lock__setup">
+            <ol>
+              <li><b>Download ayna on your iPhone</b><p>Install the beta through TestFlight.</p><a href="https://testflight.apple.com/join/f3C9PypD" target="_blank" rel="noopener noreferrer">Download on TestFlight ↗</a></li>
+              <li><b>Get ayna Pro</b><p>Sign in with the same ayna account to unlock your dashboard and connect wearables and apps.</p></li>
+            </ol>
+            <p className="pro-lock__expiry">Cancel anytime. Access continues until your paid period ends, then the dashboard locks again.</p>
+          </div>}
           {children}
           {error && <p className="pro-lock__error" role="status">{error}{onRetry && <> <button type="button" className="pro-lock__retry" onClick={onRetry}>Check again</button></>}</p>}
         </div>

@@ -34,9 +34,10 @@ function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
         <Rain cols={4} onInk className="wl-rain" />
         <div className="wl-hero__in">
           {/* One promise on the website and the app (landing audit 4 and 9). */}
-          <h1 id="hm-hero-title" className="wl-title">Find what fits <span>your body.</span></h1>
-          <p className="wl-one">Your products, routine and health data, finally in one place.</p>
-          <SlideToStart className="wl-sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
+          <p className="wl-hero__eyebrow">Women’s health, on your terms</p>
+          <h1 id="hm-hero-title" className="wl-title">Your health. <span>Your ecosystem.</span></h1>
+          <p className="wl-one">Build your own corner of ayna: products, care and routines that fit your needs, with the why behind every match.</p>
+          <SlideToStart className="wl-sts" tour="landing-start" size="lg" hint={cta.free ? 'A few questions. Your first matches. Start free.' : null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
           <HeroSearch onSearch={onSearch} className="wl-search" />
           <a className="wl-how" href="/how-it-works" onClick={(e) => { if (!onViewHowItWorks || !isPlainLeftClick(e)) return; e.preventDefault(); onViewHowItWorks(); }}>How we match<Arrow /></a>
           {banner && <div className="wl-banner">{banner}</div>}
@@ -96,7 +97,7 @@ export default function WebLanding({ signedIn = false, hasProfile = false, onSta
   const home = Boolean(signedIn && hasProfile && onGoHome);
   const cta = home
     ? { label: 'Go to your Home', slide: 'Slide to go to your Home', go: onGoHome }
-    : { label: 'Get my matches', slide: 'Slide to find your matches', go: onStartQuiz };
+    : { label: 'Create your ecosystem', slide: 'Create your ecosystem', free: true, go: onStartQuiz };
   return (
     <div id="ay-landing" className="ed ed-home hm hm-uq wl">
       <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />

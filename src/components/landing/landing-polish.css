@@ -70,3 +70,15 @@ html body .app-container #ay-landing.wl.hm .wlx-end__h.wlx-end__h { font-size: c
 }
 /* A quiet rule separates the two paper sections after the membership block. */
 html body .app-container #ay-landing .wl-classic .hm-us { border-top: 1px solid var(--ay-hairline, rgba(62,39,35,.2)); }
+
+/* Tell visitors what they can do and what the first step asks of them. */
+html body .app-container #ay-landing.wl .wl-hero__eyebrow {
+  margin: 0; color: #f7badd; font: 500 12px/1.5 var(--ay-sans-stack, sans-serif) !important;
+  letter-spacing: .12em; text-transform: uppercase;
+}
+html body .app-container #ay-landing.wl .wl-one { max-width: 39ch; font-size: 18px !important; line-height: 1.6 !important; }
+html body .app-container #ay-landing.wl .wl-sts .ay-sts__hint {
+  margin-top: 12px; color: #ffedac !important; font: 400 13px/1.5 var(--ay-sans-stack, sans-serif) !important;
+}
+
+.lp-method__actions { display:flex; align-items:center; flex-wrap:wrap; gap:16px; margin-top:24px; }

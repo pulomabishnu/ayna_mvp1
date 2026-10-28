@@ -38,3 +38,21 @@ This refines PR #88 (`web-next`), not production. It uses the supplied Nectar, O
 ## Validation
 
 Full suite: 3,347 passed, 4 skipped, 337 test files passed. Production build passes. Focused lint has zero errors and two existing memo-dependency warnings in LandingV2. Desktop and 390px browser reviews cover navigation, product layout, the method disclosure and membership transition. A Vite-only `/pro` miss reflects the existing Vercel rewrite to `/pro.html`; the hosted preview is checked separately. Paid checkout and private-account changes are not exercised against live accounts.
+
+## Second pass: header personality and clearer conversion path
+
+The header now borrows the stationery references more directly: pink paper, a scalloped lower edge, an outlined Home tab with a small house mark, and a tilted beta stamp. Secondary links remain quiet, labeled and keyboard accessible. The edge disappears with the header during scrolling and is omitted in focused quiz flows.
+
+The hero now explains the actual offering before asking for action: products and care matched to the visitor's needs, with visible evidence and safety notes. The primary action says “Get my free matches”; the note underneath says a short quiz and no payment details. Existing search and browsing paths remain available. These are usability-informed changes, not a measured claim of conversion lift.
+
+Research: [Baymard's homepage findings](https://baymard.com/research-articles/ecommerce-homepage-ux) support clear category, search and curated discovery paths. [NN/G's descriptive CTA research](https://www.nngroup.com/articles/get-started/) supports making the next step explicit rather than using a vague “Get started” button. No fabricated testimonials, conversion metrics, urgency or trust badges were added.
+
+### Home and dashboard flow correction
+
+Founder clarified that Home contains My ecosystem and Dashboard; the logo opens the public landing. Home now opens `/you/ecosystem` for guests and members. Guests without results see a short locked “Create your ecosystem” entry, with a free quiz action and returning-member sign in. Guest results remain previewable; the quiz finish opens the ecosystem rather than an empty guest dashboard. The reveal offers Pro after the results, with a separate free continuation.
+
+Restored the accessible My ecosystem / Dashboard switch. Dashboard uses the existing server-checked Pro gate, including its expiry timer and focus refresh. The branded lock explains (1) download the iPhone beta through the existing TestFlight link, (2) get Pro and use the same account to connect wearables/apps. Cancellation keeps access through paid expiry; the existing gate test verifies relocking while the page stays open. No billing policies or live subscriptions were changed.
+
+Added a contextual Create your ecosystem action after the method explanation, alongside existing hero, product-match, Pro and closing actions. Retained category browsing and search. Research: https://www.nngroup.com/articles/better-link-labels/ and https://baymard.com/research-articles/ecommerce-homepage-ux . No conversion lift is claimed before measurement.
+
+Final validation: 41 targeted flow/paywall/navigation tests passed, including paid expiry; production build generated 299 pages. App.jsx lint still reports five pre-existing unused declarations and existing hook warnings; modified component lint adds no new errors. Full-suite follow-up is recorded in the PR once complete. Local preview cannot execute Vercel API routes; its Pro check therefore fails closed with a readable retry message. Hosted production billing was not exercised or changed.

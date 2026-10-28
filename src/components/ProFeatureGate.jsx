@@ -66,8 +66,8 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
           const delay = expiresAt && allowed ? Math.min(60000, Math.max(0, expiresAt - Date.now())) : 60000;
           timer = setTimeout(() => { setResult(null); setRefresh(n => n + 1); }, delay);
         }
-      } catch (error) {
-        if (!controller.signal.aborted) setResult({ key, allowed: false, error: error.message });
+      } catch {
+        if (!controller.signal.aborted) setResult({ key, allowed: false, error: 'We couldn’t confirm your Pro access. Please try again.' });
       }
     };
     check();
