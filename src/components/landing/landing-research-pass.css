@@ -6,9 +6,9 @@
 /* --------------------------------------------------------------------------
    Narrative order
    Hero + brand strip stay where they are. The body now tells one story:
-   1) recognize your need  2) understand the method  3) see useful proof/content
-   4) optionally go deeper with Pro  5) meet the people behind it.
-   The oversized duplicate closing CTA is intentionally removed. */
+   1) recognize your need  2) understand the method  3) see proof/content
+   4) meet the people behind it  5) optionally go deeper with Pro
+   6) finish on the same primary action the hero introduced. */
 .app-container #ay-landing .wl-classic > .ed-home.hm-uq {
   display: flex;
   flex-direction: column;
@@ -16,9 +16,8 @@
 .app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-needsband { order: 1; }
 .app-container #ay-landing .wl-classic > .ed-home.hm-uq > .lp-method { order: 2; }
 .app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-rc { order: 3; }
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .wl-pro { order: 4; }
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-us { order: 5; }
-.app-container #ay-landing .wlx-end { display: none !important; }
+.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-us { order: 4; }
+.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .wl-pro { order: 5; }
 
 /* --------------------------------------------------------------------------
    Scale + rhythm
@@ -199,8 +198,8 @@ html body .app-container #ay-landing .hm-comm__copy .hm-h2 {
 }
 
 /* --------------------------------------------------------------------------
-   Pro: conversion is obvious, but it no longer tries to become a second hero.
-   It reads like an editorial offer spread: copy left, price/decision right. */
+   Pro: obvious for someone ready to upgrade, but still a secondary conversion
+   path on the consumer homepage. */
 .app-container #ay-landing .wl-pro {
   position: relative;
 }
@@ -299,6 +298,55 @@ html body .app-container #ay-landing .hm-us .hm-body {
 }
 
 /* --------------------------------------------------------------------------
+   Closing conversion moment + footer handoff.
+   Long pages benefit from repeating the SAME primary action at the end. This
+   is deliberately one composition, not another information section. */
+html body .app-container #ay-landing .wlx-end {
+  display: block !important;
+  padding-block: clamp(54px, 6vw, 82px) !important;
+  border: 0 !important;
+}
+.app-container #ay-landing .wlx-end__in {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+  align-items: center;
+  gap: clamp(28px, 6vw, 80px);
+  max-width: 1080px;
+}
+html body .app-container #ay-landing .wlx-end__h {
+  margin: 0 !important;
+  max-width: 11ch;
+  font-size: clamp(38px, 5.4vw, 70px) !important;
+  line-height: .96 !important;
+  letter-spacing: -.045em !important;
+}
+.app-container #ay-landing .wlx-end__h span { color: #f7badd; }
+.app-container #ay-landing .wlx-end__sts { width: 100%; max-width: 420px; justify-self: end; }
+
+/* The landing should end decisively. The footer follows the CTA without an
+   extra floating disclaimer/blank band, and stays useful without becoming
+   another content wall. */
+.app-container[data-view='welcome'] .ay-foot,
+.app-container[data-view='hero'] .ay-foot { margin-top: 0 !important; }
+.app-container[data-view='welcome'] .ay-foot__inner,
+.app-container[data-view='hero'] .ay-foot__inner {
+  padding-top: clamp(30px, 4vw, 48px) !important;
+}
+.app-container[data-view='welcome'] .ay-foot__grid,
+.app-container[data-view='hero'] .ay-foot__grid {
+  gap: clamp(24px, 4vw, 52px) !important;
+}
+.app-container[data-view='welcome'] .ay-foot__blurb,
+.app-container[data-view='hero'] .ay-foot__blurb { max-width: 30ch; }
+.app-container[data-view='welcome'] .ay-foot__base,
+.app-container[data-view='hero'] .ay-foot__base { margin-top: 30px !important; }
+.app-container[data-view='welcome'] .ay-foot__legal,
+.app-container[data-view='hero'] .ay-foot__legal {
+  margin-top: 18px !important;
+  padding-top: 18px !important;
+}
+
+/* --------------------------------------------------------------------------
    Mobile: keep the same hierarchy, not a desktop page stacked into giant blocks. */
 @media (max-width: 767px) {
   html body .app-container #ay-landing.wl .wl-classic .hm-sec {
@@ -369,6 +417,22 @@ html body .app-container #ay-landing .hm-us .hm-body {
     grid-template-columns: 1fr !important;
     gap: 22px !important;
   }
+
+  html body .app-container #ay-landing .wlx-end {
+    padding-block: 44px !important;
+  }
+  .app-container #ay-landing .wlx-end__in {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  html body .app-container #ay-landing .wlx-end__h {
+    max-width: 9ch;
+    font-size: 38px !important;
+  }
+  .app-container #ay-landing .wlx-end__sts { justify-self: stretch; max-width: none; }
+
+  .app-container[data-view='welcome'] .ay-foot__grid,
+  .app-container[data-view='hero'] .ay-foot__grid { gap: 22px !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
