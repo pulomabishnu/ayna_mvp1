@@ -146,7 +146,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page).toContain('Retake once a month');
     expect(page).toContain('5 chats a month');
     // the full Free vs Pro comparison and the integration details are one tap away
-    expect([...host.querySelectorAll('.ls-more > summary')].map((x) => x.textContent)).toEqual(expect.arrayContaining(['What ayna weighs, in order', 'What you can connect', 'How ayna uses it', 'Your data, your call', 'Use something else? Suggest an app or wearable', 'Compare Free and Pro']));
+    expect([...host.querySelectorAll('.ls-more > summary')].map((x) => x.textContent)).toEqual(expect.arrayContaining(['What ayna weighs, in order', 'What you can connect', 'How ayna uses it', 'Your data, your call', 'Use something else? Suggest an app or wearable']));
     expect(page).toContain('Up to 50 a month');
     expect(page).not.toMatch(/unlimited (ask|chats)/i);
     expect(page).not.toMatch(/once a week|per week.*quiz|quiz.*per week/i);

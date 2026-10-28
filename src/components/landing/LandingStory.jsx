@@ -113,7 +113,7 @@ function Shelf({ personal, quizResults, healthProfile, matchOpts, signedIn, onSt
       <div className="hm-wrap">
         <header className="ls-head ls-head--row">
           <div>
-            <h2 id="ls-shelf-h" className="ls-h2">{mine ? 'Matched to you.' : 'Matched to you, once ayna knows you.'}</h2>
+            <h2 id="ls-shelf-h" className="ls-h2">{mine ? <>Matched to <em>you.</em></> : <>Matched to you, once ayna <em>knows you.</em></>}</h2>
             <p className="ls-lede">{mine ? 'Your best fits right now, and why.' : 'Your Health Match: how well each one fits you.'}</p>
           </div>
           <Go className="ls-link" href="/explore/products" onGo={() => onViewDiscovery?.(need?.group ? { initialMacroGroup: need.group } : '')}>See all products<Arrow /></Go>
@@ -235,7 +235,7 @@ function Bloom({ tone = 'ink', big, small, label }) {
    Step two carries the real engine's answer for a labelled example profile,
    so "with the why" is shown, not said. */
 const STEPS = [
-  { n: 'one', t: 'Tell ayna what’s going on', d: 'Your needs, life stage and what you avoid.', src: '/landing/hiw-questions-cabinet.webp', alt: 'A woman reaching into her bathroom cabinet' },
+  { n: 'one', t: 'Answer a few questions', d: 'Your needs, life stage and what you avoid.', src: '/landing/hiw-questions-cabinet.webp', alt: 'A woman reaching into her bathroom cabinet' },
   { n: 'two', t: 'See your matches, and why', d: 'Every product gets a Health Match with the reasons.', src: '/landing/hiw-evidence-reading.webp', alt: 'Two friends reading together' },
   { n: 'three', t: 'Build your ecosystem', d: 'Keep what fits, check in, ask ayna anytime.', src: '/landing/hiw-ecosystem-vanity.webp', alt: 'A tidy vanity with everyday care products' },
 ];
@@ -339,7 +339,7 @@ function HealthContext({ pro, signedIn, onOpenPro, onOpenHealth }) {
           <p className="ls-script ls-kicker">with ayna Pro</p>
           <h2 id="ls-health-h" className="ls-h2">Your health data, <em>in context.</em></h2>
           <p className="ls-lede">Cycle, sleep and activity, right next to what you use.</p>
-          <p className="ls-badge-line">Never sold. Off until you connect it. Delete anytime.</p>
+          <p className="ls-plain-note">Never sold. Off until you connect it. Delete anytime.</p>
           <div className="ls-mores">
             <More title="What you can connect">
               <table className="ls-sources">
@@ -385,7 +385,7 @@ function Ask({ onAsk, pro }) {
         <div>
           <h2 id="ls-ask-h" className="ls-h2">Ask ayna <em>anything.</em></h2>
           <p className="ls-lede">Answers that know your profile, with the sources behind them.</p>
-          <p className="ls-badge-line">{pro ? 'Up to 50 chats a month with ayna Pro.' : <>Free: 5 chats a month · <ProMark /> up to 50</>}</p>
+          <p className="ls-plain-note">{pro ? 'Up to 50 chats a month with ayna Pro.' : <>Free: 5 chats a month. <ProMark />: up to 50.</>}</p>
         </div>
         <div className="ls-photo-stack ls-ask__art">
           <Pic src="/landing/sink-tea.webp" alt="" className="ls-photo" />
@@ -411,12 +411,6 @@ const COMPARE = [
   { k: 'Health data', free: '–', pro: 'Apple Health, Health Connect, Oura and your own uploads' },
   { k: 'Insights and tracking', free: 'Basic', pro: 'Deeper insights and trends over time' },
 ];
-const FACTS = [
-  { big: '50', small: 'Ask ayna chats a month', free: 'Free: 5' },
-  { big: '∞', small: 'Reads, playlists and quiz retakes', free: 'Free: limited' },
-  { big: '4', small: 'ways to bring in your health data', free: 'Free: none' },
-  { big: '↗', small: 'Trends over time, not single days', free: 'Free: basic' },
-];
 function ProPlan({ pro, offerOpen, onOpenPro, onOpenHealth, onAsk }) {
   const year = PLANS.find((p) => p.id === 'year');
   const month = PLANS.find((p) => p.id === 'month');
@@ -427,9 +421,11 @@ function ProPlan({ pro, offerOpen, onOpenPro, onOpenHealth, onAsk }) {
         <header className="ls-head ls-head--center">
           <h2 id="ls-plan-h" className="ls-h2">{pro ? 'You’re on ayna Pro.' : <>Free helps you find what fits. <em>Pro learns with you.</em></>}</h2>
         </header>
-        <ul className="ls-facts">
-          {FACTS.map((f) => <li key={f.small}><strong aria-hidden={f.big === '↗' || undefined}>{f.big}</strong><span>{f.small}</span><small>{f.free}</small></li>)}
-        </ul>
+        <table className="ls-compare">
+          <caption className="lk-sr">ayna Free and ayna Pro</caption>
+          <thead><tr><th scope="col"><span className="lk-sr">Feature</span></th><th scope="col">Free</th><th scope="col"><ProMark>ayna Pro</ProMark></th></tr></thead>
+          <tbody>{COMPARE.map((r) => <tr key={r.k}><th scope="row">{r.k}</th><td>{r.free}</td><td>{r.pro}</td></tr>)}</tbody>
+        </table>
 
         {pro ? (
           <div className="ls-member">
@@ -459,13 +455,6 @@ function ProPlan({ pro, offerOpen, onOpenPro, onOpenHealth, onAsk }) {
             </div>
           </div>
         )}
-        <More title="Compare Free and Pro" className="ls-more--center">
-          <table className="ls-compare">
-            <caption className="lk-sr">ayna Free and ayna Pro</caption>
-            <thead><tr><th scope="col"><span className="lk-sr">Feature</span></th><th scope="col">Free</th><th scope="col"><ProMark>ayna Pro</ProMark></th></tr></thead>
-            <tbody>{COMPARE.map((r) => <tr key={r.k}><th scope="row">{r.k}</th><td>{r.free}</td><td>{r.pro}</td></tr>)}</tbody>
-          </table>
-        </More>
         <p className="lk-sr">{PRO_TAGLINE}</p>
       </div>
     </section>

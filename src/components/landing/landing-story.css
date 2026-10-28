@@ -48,7 +48,7 @@ html body .app-container #ay-landing .ls .ls-h2 em { font-style: italic; font-we
 .app-container #ay-landing .ls-chips > * { flex: none; }
 @media (min-width: 900px) { .app-container #ay-landing .ls-chips { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; } }
 .app-container #ay-landing .ls-shelf__label { margin: 0 0 12px; font: 700 13px/1.2 var(--ay-sans-stack, sans-serif); letter-spacing: .06em; text-transform: uppercase; color: var(--ls-fg); opacity: .8; }
-.app-container #ay-landing .ls-row { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 980px; }
+.app-container #ay-landing .ls-row { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .app-container #ay-landing .ls-row__item { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 8px; min-width: 0; }
 .app-container #ay-landing .ls-row .ls-card { height: 100%; }
 @media (max-width: 899px) {
@@ -244,11 +244,11 @@ html body .app-container #ay-landing.wl.hm .wlx-end .wlx-end__h.wlx-end__h { fon
    wand & workflow, Studio Ducasse): script notes, taped polaroids, grid
    paper, a tilted ribbon, round stamps and flower price stickers. Brand
    colours only; the script is an accent, never body text. ================= */
-.app-container #ay-landing .ls-script { font: 700 clamp(22px, 2.2vw, 28px)/1 'ayna Script', cursive !important; color: #3e2723; letter-spacing: 0; margin: 0; }
+.app-container #ay-landing .ls-script { font: 700 clamp(22px, 2.2vw, 28px)/1 'ayna Script', cursive !important; color: var(--ls-fg, #3e2723); letter-spacing: 0; margin: 0; }
 .app-container #ay-landing .ls--ink .ls-script { color: #f7badd; }
 .app-container #ay-landing .ls-kicker { margin-bottom: 4px; transform: rotate(-3deg); display: inline-block; }
 .app-container #ay-landing .ls-discover .ls-head { display: flex; align-items: flex-end; justify-content: space-between; max-width: none; }
-.app-container #ay-landing .ls-discover__note { transform: rotate(-4deg); color: #3e2723; }
+.app-container #ay-landing .ls-discover__note { transform: rotate(-4deg); }
 .app-container #ay-landing .ls-discover .lp-need-index__link { border: 1.5px solid #3e2723; box-shadow: 4px 4px 0 #f7badd; }
 @media (min-width: 900px) {
   .app-container #ay-landing .ls-discover .lp-need-index__link:nth-child(odd) { transform: rotate(-1deg); }
@@ -341,3 +341,17 @@ html.ay-motion-paused .app-container #ay-landing .ls-stamp svg { animation: none
 @media (min-width: 900px) { .app-container #ay-landing .ls-offer { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } }
 .app-container #ay-landing .ls-blooms { flex-wrap: nowrap; }
 @media (max-width: 380px) { .app-container #ay-landing .ls-blooms { flex-wrap: wrap; } }
+
+/* audit, Oct 28: one highlighted pill per page (the 0% line); other notes are plain */
+.app-container #ay-landing .ls-plain-note { margin: 16px 0 0; font: 700 15px/1.4 var(--ay-sans-stack, sans-serif); color: var(--ls-fg); }
+.app-container #ay-landing .ls-plan .ls-compare { margin-top: 8px; }
+.app-container #ay-landing .ls-row .ls-card img { max-height: 200px; }
+
+/* dark mode audit (Oct 28): the price card is a butter sticker in both themes,
+   so everything inside it stays espresso; the Community heading stays readable */
+.app-container[data-theme='brand-dark'] #ay-landing .ls-offer, .app-container[data-theme='brand-dark'] #ay-landing .ls-offer :is(p, span, small, s, li) { color: #3e2723 !important; }
+.app-container[data-theme='brand-dark'] #ay-landing .ls-offer { border-color: #3e2723; box-shadow: 6px 6px 0 #f7badd; }
+.app-container.app-container[data-theme='brand-dark'] #ay-landing .ls-offer .ls-offer__cta { background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; }
+.app-container.app-container[data-theme='brand-dark'] #ay-landing .ls-offer .ls-offer__cta span { color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] #ay-landing .wl-classic .hm-comm .hm-h2 { color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] #ay-landing .ls-offer .ls-bloom.is-ink > span, html body .app-container[data-theme='brand-dark'] #ay-landing .ls-offer .ls-bloom.is-ink :is(strong, small) { color: #ffedac !important; }
