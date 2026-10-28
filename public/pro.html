@@ -8,6 +8,7 @@
   <title>ayna Pro Early Access</title>
   <link rel="preload" href="/fonts/ayna-display-700.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/pro-pay.css" />
+  <link rel="stylesheet" href="/pro-density.css" />
   <script>
     // Follow the website's own light/dark choice when she has made one.
     try { var t = localStorage.getItem('ayna_web_theme_v2'); if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t); } catch (e) { /* storage blocked */ }
@@ -65,74 +66,92 @@
     </section>
 
     <section class="pro-adds" aria-labelledby="pro-adds-title">
-      <h2 id="pro-adds-title">What <em>Pro</em> adds</h2>
-      <ol class="pro-cats">
-        <li class="pro-cat">
-          <h3>Connect your health data</h3>
-          <p class="pro-cat-promise">ayna learns from the cycle, sleep, activity and other signals you choose to share.</p>
-          <ul>
-            <li><b>Wearable + health app connections</b><span>Apple Health, Health Connect, Oura, and manual health data or screenshot uploads. More wearables over time.</span></li>
-            <li><b>Health-data personalization</b><span>Connected health and app signals can improve your personalization.</span></li>
-          </ul>
-        </li>
-        <li class="pro-cat">
-          <h3>Go deeper</h3>
-          <p class="pro-cat-promise">Patterns and context over time, not single data points.</p>
-          <ul>
-            <li><b>Deeper personalized insights</b><span>Context around patterns, symptoms, goals, preferences, life stage and health signals.</span></li>
-            <li><b>Advanced tracking</b><span>Detailed tracking over time with trend insights.</span></li>
-          </ul>
-        </li>
-        <li class="pro-cat">
-          <h3>Fewer limits</h3>
-          <p class="pro-cat-promise">Use ayna as much as your needs change.</p>
-          <ul>
-            <li><b>Unlimited personalization</b><span>Retake the quiz whenever your needs change, not once a month.</span></li>
-            <li><b>More Ask ayna</b><span>Up to 50 chats a month, not 5.</span></li>
-            <li><b>More ayna Reads</b><span>Unlimited Reads, not 1 per week.</span></li>
-            <li><b>More playlists</b><span>Unlimited playlists, not 1.</span></li>
-          </ul>
-        </li>
-      </ol>
-    </section>
-
-    <section class="pro-compare" aria-labelledby="pro-compare-title">
-      <h2 id="pro-compare-title">Free and <em>Pro</em>, side by side</h2>
-      <div class="pro-table" role="table" aria-label="Free compared with ayna Pro">
-        <div class="pro-tr pro-th" role="row"><span role="columnheader">Feature</span><span role="columnheader">Free</span><span role="columnheader" class="is-pro">ayna Pro</span></div>
-        <div class="pro-tr pro-tg" role="row"><span role="rowheader" aria-colspan="3">Connect your health data</span></div>
-        <div class="pro-tr" role="row"><span role="rowheader">Wearable + health app connections</span><span role="cell"><span class="pro-no">No</span></span><span role="cell" class="is-pro"><span class="pro-yes">Yes</span></span></div>
-        <div class="pro-tr" role="row"><span role="rowheader">Health-data personalization</span><span role="cell">No connected health data</span><span role="cell" class="is-pro">Can use connected health and app signals to improve personalization</span></div>
-        <div class="pro-tr pro-tg" role="row"><span role="rowheader" aria-colspan="3">Go deeper</span></div>
-        <div class="pro-tr" role="row"><span role="rowheader">Deeper personalized insights</span><span role="cell">Basic insights</span><span role="cell" class="is-pro">Deeper, more detailed personalized insights</span></div>
-        <div class="pro-tr" role="row"><span role="rowheader">Advanced tracking</span><span role="cell">Limited / basic</span><span role="cell" class="is-pro">Advanced tracking + trend insights</span></div>
-        <div class="pro-tr" role="row"><span role="rowheader">Recommendation explanations <span class="pro-growing">Growing</span></span><span role="cell">Standard</span><span role="cell" class="is-pro">Deeper context around why products, resources, or insights are relevant</span></div>
-        <div class="pro-tr pro-tg" role="row"><span role="rowheader" aria-colspan="3">Fewer limits</span></div>
-        <div class="pro-tr" role="row"><span role="rowheader">Personalization quiz</span><span role="cell">1 retake per month</span><span role="cell" class="is-pro">Unlimited retakes</span></div>
-        <div class="pro-tr" role="row"><span role="rowheader">Ask ayna</span><span role="cell">5 chats a month</span><span role="cell" class="is-pro">Up to 50 chats a month</span></div>
-        <div class="pro-tr" role="row"><span role="rowheader">ayna Reads</span><span role="cell">1 Read per week</span><span role="cell" class="is-pro">Unlimited</span></div>
-        <div class="pro-tr" role="row"><span role="rowheader">Playlists</span><span role="cell">1 playlist</span><span role="cell" class="is-pro">Unlimited playlists</span></div>
+      <div class="pro-section-head">
+        <p class="pro-section-kicker">Why Pro</p>
+        <h2 id="pro-adds-title">What <em>Pro</em> adds</h2>
       </div>
+      <div class="pro-pillars" aria-label="Pro highlights">
+        <div><b>Connect your health data</b><span>Apple Health, Health Connect, Oura and manual uploads.</span></div>
+        <div><b>Go deeper</b><span>More context, patterns and advanced tracking over time.</span></div>
+        <div><b>Fewer limits</b><span>More Ask ayna, Reads and playlists, plus unlimited quiz retakes.</span></div>
+      </div>
+      <details class="pro-more pro-more--section">
+        <summary>See everything included</summary>
+        <div class="pro-more-body">
+          <ol class="pro-cats">
+            <li class="pro-cat">
+              <h3>Connect your health data</h3>
+              <p class="pro-cat-promise">ayna learns from the cycle, sleep, activity and other signals you choose to share.</p>
+              <ul>
+                <li><b>Wearable + health app connections</b><span>Apple Health, Health Connect, Oura, and manual health data or screenshot uploads. More wearables over time.</span></li>
+                <li><b>Health-data personalization</b><span>Connected health and app signals can improve your personalization.</span></li>
+              </ul>
+            </li>
+            <li class="pro-cat">
+              <h3>Go deeper</h3>
+              <p class="pro-cat-promise">Patterns and context over time, not single data points.</p>
+              <ul>
+                <li><b>Deeper personalized insights</b><span>Context around patterns, symptoms, goals, preferences, life stage and health signals.</span></li>
+                <li><b>Advanced tracking</b><span>Detailed tracking over time with trend insights.</span></li>
+              </ul>
+            </li>
+            <li class="pro-cat">
+              <h3>Fewer limits</h3>
+              <p class="pro-cat-promise">Use ayna as much as your needs change.</p>
+              <ul>
+                <li><b>Unlimited personalization</b><span>Retake the quiz whenever your needs change, not once a month.</span></li>
+                <li><b>More Ask ayna</b><span>Up to 50 chats a month, not 5.</span></li>
+                <li><b>More ayna Reads</b><span>Unlimited Reads, not 1 per week.</span></li>
+                <li><b>More playlists</b><span>Unlimited playlists, not 1.</span></li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+      </details>
     </section>
 
-    <section class="pro-free" aria-labelledby="pro-free-title">
-      <h2 id="pro-free-title">What stays free</h2>
-      <p>ayna is never useless without Pro. On the free plan you can:</p>
-      <ul>
-        <li>Complete your personalization profile</li>
-        <li>Receive personalized product and resource recommendations</li>
-        <li>Browse the marketplace</li>
-        <li>See your health match and recommendation results</li>
-        <li>Use basic Ask ayna</li>
-        <li>Access limited Reads</li>
-        <li>Create one playlist</li>
-        <li>Update your quiz monthly</li>
-      </ul>
-    </section>
+    <section class="pro-details-stack" aria-label="Plan details">
+      <details class="pro-more pro-more--major pro-compare">
+        <summary><span><b>Compare Free and Pro</b><small>See every limit and feature side by side</small></span></summary>
+        <div class="pro-more-body">
+          <h2 id="pro-compare-title" class="pro-sr">Free and <em>Pro</em>, side by side</h2>
+          <div class="pro-table" role="table" aria-label="Free compared with ayna Pro">
+            <div class="pro-tr pro-th" role="row"><span role="columnheader">Feature</span><span role="columnheader">Free</span><span role="columnheader" class="is-pro">ayna Pro</span></div>
+            <div class="pro-tr pro-tg" role="row"><span role="rowheader" aria-colspan="3">Connect your health data</span></div>
+            <div class="pro-tr" role="row"><span role="rowheader">Wearable + health app connections</span><span role="cell"><span class="pro-no">No</span></span><span role="cell" class="is-pro"><span class="pro-yes">Yes</span></span></div>
+            <div class="pro-tr" role="row"><span role="rowheader">Health-data personalization</span><span role="cell">No connected health data</span><span role="cell" class="is-pro">Can use connected health and app signals to improve personalization</span></div>
+            <div class="pro-tr pro-tg" role="row"><span role="rowheader" aria-colspan="3">Go deeper</span></div>
+            <div class="pro-tr" role="row"><span role="rowheader">Deeper personalized insights</span><span role="cell">Basic insights</span><span role="cell" class="is-pro">Deeper, more detailed personalized insights</span></div>
+            <div class="pro-tr" role="row"><span role="rowheader">Advanced tracking</span><span role="cell">Limited / basic</span><span role="cell" class="is-pro">Advanced tracking + trend insights</span></div>
+            <div class="pro-tr" role="row"><span role="rowheader">Recommendation explanations <span class="pro-growing">Growing</span></span><span role="cell">Standard</span><span role="cell" class="is-pro">Deeper context around why products, resources, or insights are relevant</span></div>
+            <div class="pro-tr pro-tg" role="row"><span role="rowheader" aria-colspan="3">Fewer limits</span></div>
+            <div class="pro-tr" role="row"><span role="rowheader">Personalization quiz</span><span role="cell">1 retake per month</span><span role="cell" class="is-pro">Unlimited retakes</span></div>
+            <div class="pro-tr" role="row"><span role="rowheader">Ask ayna</span><span role="cell">5 chats a month</span><span role="cell" class="is-pro">Up to 50 chats a month</span></div>
+            <div class="pro-tr" role="row"><span role="rowheader">ayna Reads</span><span role="cell">1 Read per week</span><span role="cell" class="is-pro">Unlimited</span></div>
+            <div class="pro-tr" role="row"><span role="rowheader">Playlists</span><span role="cell">1 playlist</span><span role="cell" class="is-pro">Unlimited playlists</span></div>
+          </div>
+        </div>
+      </details>
 
-    <section class="pro-faq" aria-label="Questions">
-      <details class="pro-more">
-        <summary>How billing works</summary>
+      <details class="pro-more pro-more--major pro-free">
+        <summary><span><b>What stays free</b><small>ayna still works without Pro</small></span></summary>
+        <div class="pro-more-body">
+          <p>ayna is never useless without Pro. On the free plan you can:</p>
+          <ul>
+            <li>Complete your personalization profile</li>
+            <li>Receive personalized product and resource recommendations</li>
+            <li>Browse the marketplace</li>
+            <li>See your health match and recommendation results</li>
+            <li>Use basic Ask ayna</li>
+            <li>Access limited Reads</li>
+            <li>Create one playlist</li>
+            <li>Update your quiz monthly</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="pro-more pro-more--major">
+        <summary><span><b>How billing works</b><small>Early Access, renewal and cancellation</small></span></summary>
         <div class="pro-more-body">
           <p>Subscribe now and Pro unlocks immediately. Use it through December 31, 2026. Your purchased subscription term begins in January 2027, so the Early Access period does not use up the month or year you bought.</p>
           <p>Early Access is up to 50% off: $4.99 for your first month instead of $8.99, or $45 for your first year instead of $90.</p>
@@ -140,16 +159,11 @@
           <p><b>Yearly.</b> Your purchased year begins in January 2027, then renews at $90/year unless canceled.</p>
         </div>
       </details>
-      <details class="pro-more">
-        <summary>Can I cancel?</summary>
+
+      <details class="pro-more pro-more--major">
+        <summary><span><b>Can I cancel?</b><small>Yes, anytime</small></span></summary>
         <div class="pro-more-body">
           <p>Yes. You can cancel automatic renewal anytime on this page. If you cancel, any access you already paid for remains through the end of that purchased period.</p>
-        </div>
-      </details>
-      <details class="pro-more">
-        <summary>What stays free?</summary>
-        <div class="pro-more-body">
-          <p>Your personalization profile, personalized product and resource recommendations, the marketplace, your health match and recommendation results, basic Ask ayna (5 chats a month), limited Reads (1 per week), one playlist and a monthly quiz update.</p>
         </div>
       </details>
     </section>
