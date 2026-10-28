@@ -90,12 +90,15 @@
     statusBox.classList.remove('error');
     statusBox.replaceChildren();
     const p = document.createElement('p');
-    p.textContent = 'Sign in to ayna first, then return here to choose your Early Access plan.';
+    p.textContent = 'Sign in to ayna to choose your Early Access plan. We’ll bring you right back here after sign-in.';
     const a = document.createElement('a');
     a.href = '/you';
     a.textContent = 'Sign in to ayna';
     a.style.fontWeight = '800';
     a.style.color = '#873d59';
+    a.addEventListener('click', () => {
+      try { window.sessionStorage.setItem('ayna_pending_auth_action', 'pro'); } catch { /* private mode */ }
+    });
     statusBox.append(p, a);
   }
 
