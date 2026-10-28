@@ -22,8 +22,8 @@ This refines PR #88 (`web-next`), not production. It uses the supplied Nectar, O
 
 ## Inputs or separate work still required
 
-- The notes contain no actual product-addition list or catalog-sheet link. No products, prices, images or claims have been invented or changed.
-- Missing service artwork needs the specific catalog records and approved assets; existing real artwork has been preserved.
+- Catalog additions are deferred at the user’s explicit request. No products, prices, images or claims have been invented or changed.
+- Missing service artwork is also deferred at the user’s explicit request; existing real artwork has been preserved.
 - The notes do not provide a reproducible shared Community-post link for the Wrapped redirect observation. The generic Wrapped invitation is now accurately labeled; public sharing of a person's private health results has not been added.
 - Investor preparation, outreach and Notion feedback uploads are outside this website PR. No external messages or document transfers were made.
 - PR #88 already calls out two database migrations before its broader release; this refinement adds no migration and does not run those on production.
