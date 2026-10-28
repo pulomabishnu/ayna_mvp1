@@ -1,0 +1,43 @@
+/* The app page header on Shop, Services and Library (founder, Oct 27: "FIX THE APP HEADER IT LOOKS
+   HORRIBLE"). Family of the website Shop header: the top bar and the slim Ask line stay on the butter
+   page as one top area; then ONE compact pink band with a wavy edge holding the page title (ayna title
+   font, left) and the search. No espresso band, no floating seal. The band keeps fixed colours
+   (pink, butter, espresso), so it reads the same in dark mode. */
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band {
+  --ah-pink: #f7badd; --ah-ink: #3e2723; --ah-butter: #ffedac;
+  position: relative; z-index: 1; display: flex; flex-direction: column; gap: 0;
+  box-sizing: border-box; margin: 0 0 30px !important; padding: 14px var(--d-gutter, 16px) 18px !important;
+  border-top: 1.5px solid var(--ah-ink) !important; background: var(--ah-pink) !important; color: var(--ah-ink);
+}
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band::after {
+  content: '' !important; display: block !important; position: absolute; left: 0; right: 0; top: 100%; height: 12px; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='12' viewBox='0 0 36 12'%3E%3Cpath d='M0 0h36v3C28.5 3 27 11 18 11S7.5 3 0 3Z' fill='%23f7badd'/%3E%3C/svg%3E") repeat-x 0 0 / 36px 12px !important;
+}
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band .ay-shop-titlebar { display: block; margin: 0; padding: 0; }
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band .ax-band__title {
+  position: static !important; width: auto !important; height: auto !important; overflow: visible !important; clip: auto !important;
+  margin: 0 0 12px !important; padding: 0 !important; color: var(--ah-ink) !important;
+  font: 700 calc(30px * var(--ayna-text-scale, 1))/1.05 var(--ay-app-heading, var(--ay-font-display)) !important; letter-spacing: -0.015em !important; text-align: left; text-transform: none !important;
+}
+/* The search, butter on pink with the espresso outline and a small offset shadow. */
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band .ayna-fresh-search-wrap { margin: 0 !important; padding: 0 !important; background: none !important; }
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band .ayna-fresh-search {
+  min-height: 48px !important; height: 48px; margin: 0 !important; border: 1.5px solid var(--ah-ink) !important; border-radius: 8px !important;
+  background: var(--ah-butter) !important; color: var(--ah-ink) !important; box-shadow: 3px 3px 0 var(--ah-ink) !important;
+}
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band .ayna-fresh-search :is(input, svg) { color: var(--ah-ink) !important; background: transparent !important; }
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band .ayna-fresh-search svg, .ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band .ayna-fresh-search svg * { stroke: var(--ah-ink) !important; color: var(--ah-ink) !important; }
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band .ayna-fresh-search input::placeholder { color: rgba(62, 39, 35, .78) !important; opacity: 1; }
+/* Library: the one-line lede reads under the search, small. */
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band .al-top__lede { order: 3; margin: 12px 0 0 !important; color: var(--ah-ink) !important; font: 500 13px/1.4 var(--ay-font-ui, Figtree, sans-serif) !important; }
+/* The Ask line belongs to the top area: snug under the top bar, slim pills (44px tap area kept). */
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ay-asksug--app { min-height: 0; }
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ay-asksug--app .ay-asksug__row { min-height: 0; padding: 0 16px 10px; gap: 6px; }
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ay-asksug--app :is(.ay-asksug__pill, .ay-asksug__hide) { height: 34px; min-height: 34px; padding: 0 12px; font-size: 13px; }
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ay-asksug--app :is(.ay-asksug__pill, .ay-asksug__hide)::after { inset: -5px 0; }
+
+/* Calm (founder Oct 27 11:40): Services and Library keep this header's layout but on the page colour
+   (butter in light, espresso in dark), closed by a 1.5px wavy rule. Shop alone keeps the pink band. */
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band.is-calm { --ah-pink: var(--ay-calm-page); --ah-ink: var(--ay-calm-fg); --ah-butter: var(--ay-calm-box); border-top: 0 !important; }
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band.is-calm::after { top: calc(100% - 6px); background: var(--ay-calm-line) !important; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6Q10 0 20 6T40 6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") 0 0 / 40px 12px repeat-x; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6Q10 0 20 6T40 6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") 0 0 / 40px 12px repeat-x; }
+.ayna-mobile:is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile):is(#ah, .ayna-mobile) .ax-band.is-calm .ayna-fresh-search input::placeholder { color: var(--ay-calm-fg-muted) !important; }

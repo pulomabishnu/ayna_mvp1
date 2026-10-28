@@ -4,7 +4,7 @@
 .ay-inline-err.ay-inline-err {
   display: flex; align-items: flex-start; gap: 8px;
   margin: 4px 0 0 !important; padding: 0 !important;
-  color: var(--ay-ink, #3e2723) !important;
+  color: var(--legacy-ink, #3e2723) !important;
   font: 600 var(--ay-fs-caption)/1.4 var(--ay-sans) !important;
   text-align: left;
 }
@@ -35,6 +35,6 @@ html body .app-container .ay-auth-card :is(input:not([type='checkbox']), select)
 html body .app-container .ay-auth-card .ay-auth-check-item { display: grid; gap: 4px; }
 html body .app-container .ay-auth-card .ay-auth-check { min-height: 44px; align-content: start; }
 html body .app-container .ay-auth-card .ay-auth-check.ay-check-invalid { margin: 0 -12px !important; color: #3e2723 !important; }
-html body .app-container .ay-auth-card .ay-auth-check.ay-check-invalid input { border-color: #3e2723 !important; background: #fffcf5 !important; outline: 2px solid #3e2723; outline-offset: 1px; }
+html body .app-container .ay-auth-card .ay-auth-check.ay-check-invalid input { border-color: #3e2723 !important; background: #ffedac !important; outline: 2px solid #3e2723; outline-offset: 1px; }
 html body .app-container .ay-auth-card .ay-inline-err { color: #3e2723 !important; }
 html body .app-container .ay-auth-card :is(input, select, .ay-auth-check) { scroll-margin: 96px; }

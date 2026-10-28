@@ -8,6 +8,7 @@
  * (src/health/records.js) are saved on her phone only, never on the server.
  */
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
+import { devPreviewOn } from '../../utils/devPreview.js';
 import { fetchHealthData, fetchLiveRows, syncDeviceRows, syncOAuthSource } from '../../health/healthApi.js';
 import { LIVE_ONLY_SOURCES } from '../../health/metrics.js';
 import { buildInsights } from '../../health/insights.js';
@@ -16,9 +17,12 @@ import { usableForInsights, usableForMatching } from '../../health/policy.js';
 import { healthStoreAvailability, nativeSourceForPlatform, readDailyHealth } from '../../health/native.js';
 import { deleteSavedRecords, hasRecords, loadSavedRecords, saveRecords } from '../../health/records.js';
 import { DEV_DEMO_CONNECTIONS, devDemoRows } from '../../health/devDemo.js';
+import { localToday } from '../../utils/localDate.js';
 
 // DEVELOPMENT ONLY (?healthdemo=1 in the local preview): made-up rows so the screens can be checked. Off in production builds.
-export const DEV_HEALTH_DEMO = Boolean(import.meta.env.DEV && typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('healthdemo') === '1');
+export const DEV_HEALTH_DEMO = Boolean(devPreviewOn() && typeof window !== 'undefined' && ['1', 'empty'].includes(new URLSearchParams(window.location.search).get('healthdemo')));
+/** DEVELOPMENT ONLY (?healthdemo=empty): a demo account with no health data, to check the empty dashboard. */
+export const DEV_HEALTH_DEMO_EMPTY = DEV_HEALTH_DEMO && new URLSearchParams(window.location.search).get('healthdemo') === 'empty';
 
 const AUTO_SYNC_MS = 6 * 3600000;
 
@@ -30,7 +34,7 @@ export const takeHealthFlash = () => { const m = flash; flash = null; return m; 
 const RETURN_TEXT = {
   pro_required: () => 'Get ayna Pro to connect health apps and wearables.',
   connected: (n) => `${n} connected. Your data is syncing.`,
-  declined: (n) => `${n} wasn't connected. Nothing was shared.`,
+  declined: (n) => `${n} wasn't connected, so nothing was shared. That's fine: ayna works without it, and you can try again any time.`,
   expired: () => 'That took too long. Try connecting again.',
   invalid_state: () => "That connection link wasn't valid. Try again from Health data.",
   failed: (n) => `${n} couldn't be connected. Try again.`,
@@ -88,8 +92,8 @@ export function resetHealthStore() {
 let inflight = null;
 let loadSeq = 0;
 
-/** Her own calendar day (native rows are written in local days, not UTC). */
-export const localToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+/** Her own calendar day (native rows are written in local days, not UTC). One helper: utils/localDate.js. */
+export { localToday };
 
 /** Days to read from the phone: the gap since the last sync, at least 14, at most 90. */
 const phoneDays = (lastSyncedAt) => {
@@ -107,7 +111,7 @@ export function loadHealthData(userId, { force = false } = {}) {
   set({ status: state.userId === userId && state.loadedAt ? 'refreshing' : 'loading', userId, error: null, records: state.userId === userId ? state.records : loadSavedRecords(userId) });
   const promise = (async () => {
     if (DEV_HEALTH_DEMO) {
-      set({ status: 'ready', connections: DEV_DEMO_CONNECTIONS, rows: devDemoRows(), live: {}, loadedAt: Date.now() });
+      set({ status: 'ready', connections: DEV_HEALTH_DEMO_EMPTY ? [] : DEV_DEMO_CONNECTIONS, rows: DEV_HEALTH_DEMO_EMPTY ? [] : devDemoRows(localToday()), live: {}, loadedAt: Date.now() });
       inflight = null;
       return;
     }
@@ -221,7 +225,8 @@ export function useHealthData(userId, selectedNeedIds = []) {
   const insightRows = useMemo(() => allRows.filter(usableForInsights), [allRows]);
   const insights = useMemo(() => buildInsights(insightRows, { today: localToday() }), [insightRows]);
   // Health Match only reads sources whose terms allow it (src/health/policy.js).
-  const matchSignals = useMemo(() => buildInsights(allRows.filter(usableForMatching), { today: localToday() }).signals, [allRows]);
+  // Trends plus timing facts (period due soon): both only ever strengthen a need she chose.
+  const matchSignals = useMemo(() => { const out = buildInsights(allRows.filter(usableForMatching), { today: localToday() }); return [...out.signals, ...(out.timing || [])]; }, [allRows]);
   const needKey = selectedNeedIds.join('|');
   const matchContext = useMemo(
     () => (matchSignals.length ? healthMatchContext(matchSignals, selectedNeedIds) : null),

@@ -13,8 +13,11 @@ describe('match explanation truthfulness', () => {
   it('shows a low scored match instead of contradicting the catalog', () => {
     // Per-need engine output: lead with the need, tier word from the engine tiers.
     const html = render({ percent: 37, tier: 'browse', needId: 'period.heavy', eligible: true, matchStatus: 'scored', needMatches: [{ needId: 'period.heavy', label: 'Heavy periods', phrase: 'heavy periods', score: 37, tier: 'browse', relevant: true, confidenceReasons: [] }], access: { label: 'Available online' }, reasonDetails: [{ component: 'primaryGoal', text: 'Relates to heavy periods' }], unknowns: ['Ingredient information is incomplete'] });
-    expect(html).toContain('37% for heavy periods');
-    expect(html).toContain('Browse');
+    // Under 50: no number, just "Partial fit" (one rule with the cards).
+    expect(html).toContain('Partial fit for heavy periods');
+    expect(html).not.toContain('37%');
+    // Under 60 no fit label (founder, Oct 24: 80+ Strong fit, 60 to 79 Good fit).
+    expect(html).not.toContain('Browse');
     expect(html).toContain('Available online');
     expect(html).toContain('Relates to heavy periods');
     expect(html).toContain('Ingredient information is incomplete');

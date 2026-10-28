@@ -1,49 +1,28 @@
-import TopicCover from '../../components/v3/TopicCover.jsx';
+import ReadCover from '../../components/library/ReadCover.jsx';
+import ReadBody, { SourcesAccordion } from '../../components/library/ReadBody.jsx';
+import { minutesFor, textOf } from '../../components/library/readTime.js';
+import { coverPhotoFor } from '../../data/readCovers.js';
 import ProFeatureGate from '../../components/ProFeatureGate.jsx';
-import { hasTeamCover } from '../../data/readCovers.js';
 import { Children, isValidElement, useRef, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
+import ReadVideo from '../../components/library/ReadVideo.jsx';
 import './article-detail.css';
 
-function extractText(node) {
-  if (node == null || typeof node === 'boolean') return '';
-  if (typeof node === 'string' || typeof node === 'number') return String(node);
-  if (Array.isArray(node)) return node.map(extractText).join(' ');
-  if (isValidElement(node)) return extractText(node.props.children);
-  return '';
+// The read's own citation list ("Sources:" then a <ul> of links) as plain rows.
+function sourceLinks(items) {
+  const list = items.find((el) => isValidElement(el) && el.type === 'ul');
+  if (!list) return [];
+  return Children.toArray(list.props.children).filter(isValidElement).map((li) => {
+    const parts = Children.toArray(li.props.children);
+    const link = parts.find((c) => isValidElement(c) && c.type === 'a');
+    const text = textOf(parts).replace(/\s+/g, ' ').trim();
+    return link ? { href: link.props.href, text } : { href: null, text };
+  }).filter((x) => x.text);
 }
 
-function estimateReadMinutes(body) {
-  const words = extractText(body).trim().split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.round(words / 200));
-}
-
-function splitBodyAndSources(body) {
-  const kids = Children.toArray(body?.props?.children ?? body);
-  const splitIndex = kids.findIndex(
-    (child) => isValidElement(child) && child.type === 'p' && /sources:/i.test(extractText(child.props.children))
-  );
-  if (splitIndex < 0) return { mainBody: kids, sourceLinks: [] };
-
-  const mainBody = kids.slice(0, splitIndex);
-  const sourcesList = kids[splitIndex + 1];
-  let sourceLinks = [];
-  if (isValidElement(sourcesList) && sourcesList.type === 'ul') {
-    sourceLinks = Children.toArray(sourcesList.props.children)
-      .filter(isValidElement)
-      .map((li) => {
-        const link = Children.toArray(li.props.children).find((c) => isValidElement(c) && c.type === 'a');
-        return link ? { href: link.props.href, text: extractText(link.props.children) } : null;
-      })
-      .filter(Boolean);
-  }
-  return { mainBody, sourceLinks };
-}
-
-function ArticleDetailContent({ article, onBack, nextRead, onNext, onProgress, savedProgress = 0 }) {
+function ArticleDetailContent({ article, onBack, topic = null, nextRead, onNext, onProgress, savedProgress = 0, products = [], productsNote = '', onOpenProduct = null, onAsk = null, renderProduct = null }) {
   const scrollRef = useRef(null);
   const [progress, setProgress] = useState(0);
-
   if (!article) {
     return (
       <div style={{ padding: 40, textAlign: 'center', color: 'var(--ayna-text-muted)', fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>
@@ -52,9 +31,10 @@ function ArticleDetailContent({ article, onBack, nextRead, onNext, onProgress, s
     );
   }
 
-  const { title, source, tags = [], teaser, body, image } = article;
-  const readMinutes = estimateReadMinutes(body);
-  const { mainBody, sourceLinks } = splitBodyAndSources(body);
+  const { title, source, tags = [], teaser, body } = article;
+  // One read time everywhere (card, cover, this page): computed from the read's own words.
+  const readMinutes = minutesFor(article);
+  const photo = coverPhotoFor(article);
   const shown = Math.max(progress >= 0.95 ? 1 : progress, savedProgress);
 
   const handleScroll = () => {
@@ -74,6 +54,7 @@ function ArticleDetailContent({ article, onBack, nextRead, onNext, onProgress, s
 
   return (
     <div className="ayna-fresh-article" ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
+      {/* Progress and the back arrow scroll with the article (nothing stays on screen while the page scrolls). */}
       <div className="ay-read-sticky">
         <div className={`ay-read-status${shown >= 1 ? ' is-done' : ''}`} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(shown * 100)}>
           <span className="ay-read-status-bar"><i style={{ width: `${shown * 100}%` }} /></span>
@@ -84,13 +65,55 @@ function ArticleDetailContent({ article, onBack, nextRead, onNext, onProgress, s
           <span className="ayna-read-meta">{tags[0] || 'Read'} · {readMinutes} min</span>
         </header>
       </div>
-      {hasTeamCover(article) ? <div className="ayna-read-photo"><img src={image} alt="" /></div> : <div className="ay-app-readhero"><TopicCover id={article.id} title={title} className="ay-app-cover is-hero" /></div>}
+      <div className={`ay-read-hero${photo ? ' has-photo' : ''}`}>{photo ? <img src={photo} alt="" /> : <ReadCover article={article} size="hero" />}</div>
       <div className="ayna-read-content">
         <h1 className="ay-read-title">{title}</h1>
-        {teaser && <div className="ay-read-teaser" style={{ marginTop: 13 }}>{teaser}</div>}
-        <div className="ay-article-body" style={{ fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'var(--ayna-text)' }}>{mainBody}</div>
-        {(sourceLinks.length > 0 || source) && <section className="ayna-read-sources" aria-label="Article sources"><h2>Sources</h2>{source && <p>{source}</p>}{sourceLinks.map((link, index) => <a key={`${link.href}-${index}`} href={link.href} target="_blank" rel="noopener noreferrer">{link.text}</a>)}</section>}
-        {nextRead?.article && <section className="ayna-read-next" aria-label="Next article"><span>{nextRead.label}</span><button type="button" onClick={openNext}>{nextRead.article.title}<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6 6 6-6 6" /></svg></button></section>}
+        {teaser && (
+          <div className="ay-read-teaser" style={{ marginTop: 13 }}>
+            {teaser}
+          </div>
+        )}
+
+        <ReadBody
+          body={body}
+          className="ay-read-body"
+          before={<ReadVideo video={article.video} />}
+          renderSources={(src) => {
+            const links = sourceLinks(src.items);
+            return (
+              <SourcesAccordion count={links.length || null} label={src.label}>
+                <div className="ayna-read-sources">{source && <p>{source}</p>}{links.map((link, index) => (link.href ? <a key={`${link.href}-${index}`} href={link.href} target="_blank" rel="noopener noreferrer">{link.text}</a> : <p key={index}>{link.text}</p>))}</div>
+              </SourcesAccordion>
+            );
+          }}
+        />
+        {/* Content and products connect (team direction 58): products and a question to Ask, labelled as products, after the read. */}
+        {products.length > 0 && onOpenProduct && renderProduct && (
+          <section className="ay-read-products" aria-labelledby="ay-read-products-h">
+            <h2 id="ay-read-products-h">Products for this topic</h2>
+            <p className="ay-read-products__disc">Products, not medical advice. Some links earn ayna a commission. It never changes what we show.</p>
+            {productsNote && <p className="ay-read-products__note" role="note"><svg className="ay-alert__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style={{ flex: "none", marginTop: 3 }}><path d="M8 1.6 14.6 13.4H1.4L8 1.6Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /><path d="M8 6.2v3.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="8" cy="11.6" r=".9" fill="currentColor" /></svg>{productsNote}</p>}
+            <div className="ay-shelf2-row">{products.map(({ product }) => <div key={product.id}>{renderProduct(product)}</div>)}</div>
+          </section>
+        )}
+        {onAsk && (
+          <section className="ay-read-ask" aria-labelledby="ay-read-ask-h">
+            <h2 id="ay-read-ask-h">Questions about this?</h2>
+            <div className="ay-read-ask__row">
+              {['Is this relevant to me?', 'When should I see a clinician?'].map((q) => <button key={q} type="button" onClick={() => onAsk({ question: `About the read "${title}": ${q}` })}>{q}</button>)}
+            </div>
+          </section>
+        )}
+        {/* Previous / next in this topic and the way back to all reads (Library nav pass, Oct 27). */}
+        {topic && (topic.prev || topic.next) && (
+          <nav className="ay-read-pager" aria-label={`More in ${topic.label}`}>
+            <p className="ay-read-pager__where">{topic.label} <span aria-hidden="true">·</span> read {topic.pos} of {topic.total}</p>
+            {topic.prev && <button type="button" className="ay-read-pager__link" onClick={() => { if (scrollRef.current) scrollRef.current.scrollTop = 0; setProgress(0); onNext?.(topic.prev); }}><small>Previous</small><span>{topic.prev.title}</span></button>}
+            {topic.next && <button type="button" className="ay-read-pager__link" onClick={() => { if (scrollRef.current) scrollRef.current.scrollTop = 0; setProgress(0); onNext?.(topic.next); }}><small>Next</small><span>{topic.next.title}</span></button>}
+            <button type="button" className="ay-read-pager__back" onClick={onBack}>All reads</button>
+          </nav>
+        )}
+        {nextRead?.article && !(topic && [topic.next?.id, topic.prev?.id].includes(nextRead.article.id)) && <section className="ayna-read-next" aria-label="Next article"><span>{nextRead.label}</span><button type="button" onClick={openNext}>{nextRead.article.title}<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6 6 6-6 6" /></svg></button></section>}
       </div>
       <LegalFooter />
     </div>

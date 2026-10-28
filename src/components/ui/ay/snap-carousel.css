@@ -1,0 +1,14 @@
+/* SnapCarousel.jsx: snap row with a peeking next card and dots. */
+.ayk-snap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
+.ayk-snap__list { list-style: none; margin: 0; padding: 0 0 2px; display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; min-width: 0; }
+.ayk-snap__list::-webkit-scrollbar { display: none; }
+.ayk-snap__item { flex: 0 0 auto; scroll-snap-align: start; display: flex; min-width: 0; }
+.ayk-snap__item > * { flex: 1 1 auto; min-width: 0; }
+.ayk-snap.is-card .ayk-snap__item { width: calc(100% - 44px); max-width: 420px; }
+.ayk-snap.is-plate .ayk-snap__item { width: 136px; }
+.ayk-snap__dots { display: flex; justify-content: center; flex-wrap: wrap; }
+.ayk-snap__dot { all: unset; box-sizing: border-box; cursor: pointer; display: grid; place-items: center; width: 28px; height: 44px; }
+.ayk-snap__dot i { display: block; width: 8px; height: 8px; border-radius: 999px; background: var(--ay-fg, #3e2723); opacity: .3; transition: width 160ms ease, opacity 160ms ease; }
+.ayk-snap__dot.is-on i { width: 20px; opacity: 1; }
+.ayk-snap__dot:focus-visible { outline: 2px solid var(--ay-fg, #3e2723); outline-offset: -6px; border-radius: 999px; }
+@media (prefers-reduced-motion: reduce) { .ayk-snap__dot i { transition: none; } }

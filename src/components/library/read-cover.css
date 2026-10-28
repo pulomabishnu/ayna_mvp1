@@ -1,0 +1,37 @@
+/* Library cover (ReadCover.jsx). Sizes come from the cover's own width
+   (container units), so a 148px app cover and a 300px desktop cover are the
+   same drawing. A photo, or the one calm surface with the title set large
+   (founder Oct 27 11:40: no alternating colours; butter in light, espresso in dark,
+   outlined). No icons, no label box. */
+.rc {
+  --rc-field: var(--ay-calm-box); --rc-ink: var(--ay-calm-fg); --rc-line: var(--ay-calm-line);
+  container-type: inline-size;
+  position: relative; display: block; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; isolation: isolate;
+  border-radius: 16px;
+  background: var(--rc-field); color: var(--rc-ink);
+  font-family: 'Figtree', system-ui, sans-serif; text-align: left;
+}
+.rc::after { content: ''; position: absolute; inset: 0; z-index: 3; border-radius: inherit; border: 1.5px solid var(--rc-line); box-sizing: border-box; pointer-events: none; }
+
+
+.rc__photo { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.rc__word {
+  position: absolute; left: 8cqi; right: 8cqi; top: 8cqi; z-index: 1;
+  display: block; max-width: 100%;
+  font: 700 clamp(20px, 15cqi, 46px)/.98 'ayna Display', 'Bricolage Grotesque', sans-serif; letter-spacing: -.02em;
+  color: var(--rc-ink); text-wrap: balance; overflow-wrap: break-word;
+}
+.rc--w2 .rc__word { font-size: clamp(18px, 12.5cqi, 40px); }
+.rc--w3 .rc__word { font-size: clamp(16px, 10.5cqi, 34px); }
+.rc__foot {
+  position: absolute; left: 8cqi; bottom: 7cqi; z-index: 1;
+  font: 600 13px/1 'Figtree', system-ui, sans-serif; color: var(--rc-ink);
+}
+.rc--photo .rc__foot { padding: 6px 10px; border-radius: 99px; background: #ffedac; color: #3e2723; }
+
+/* Wide cover (a read's own page, the featured read): the title sits low and big. */
+.rc--hero { aspect-ratio: 16 / 10; }
+.rc--hero .rc__word { top: auto; bottom: 7cqi; font-size: clamp(26px, 9cqi, 64px); }
+/* Small cover beside a title (list rows, "Top pick"): the title is already next to it. */
+.rc--thumb .rc__word { font-size: 15px !important; line-height: 1.1; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.lb-more__cover .rc .rc__foot { display: none; }

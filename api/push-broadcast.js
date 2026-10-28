@@ -56,8 +56,8 @@ textarea{min-height:110px;resize:vertical}.hint{font-size:12px;color:#8c8078;mar
 ${n}
 <form method="post">
 <label for="title">Title</label><input id="title" name="title" maxlength="${MAX_TITLE}" required value="${esc(title)}" placeholder="New in ayna">
-<label for="body">Message</label><textarea id="body" name="body" maxlength="${MAX_BODY}" required placeholder="We just added new brands to Early Stage — take a look!">${esc(body)}</textarea>
-<div class="hint">Keep it short — iPhones show about 2 lines. No health details.</div>
+<label for="body">Message</label><textarea id="body" name="body" maxlength="${MAX_BODY}" required placeholder="We just added new brands to Early Stage. Take a look!">${esc(body)}</textarea>
+<div class="hint">Keep it short: iPhones show about 2 lines. No health details.</div>
 <label for="password">Admin password</label><input id="password" name="password" type="password" required autocomplete="current-password">
 <div class="row"><button class="prev" name="action" value="preview">Preview</button><button class="send" name="action" value="send">Send to everyone</button></div>
 </form></main></body></html>`;
@@ -123,7 +123,7 @@ export default async function handler(req, res) {
     return send(200, page({ ...keep, notice: { tone: 'info', text: `Preview: this will go to ${audience.tokens.length} phone${audience.tokens.length === 1 ? '' : 's'} (${audience.users} ${audience.users === 1 ? 'person' : 'people'}). Tap "Send to everyone" to send it.` } }));
   }
   if (!audience.tokens.length) {
-    return send(200, page({ ...keep, notice: { tone: 'err', text: 'Nobody can receive it yet — no one has allowed notifications on the new app build.' } }));
+    return send(200, page({ ...keep, notice: { tone: 'err', text: 'Nobody can receive it yet. No one has allowed notifications on the new app build.' } }));
   }
 
   const results = await sendPush(audience.tokens, { title, body, data: { type: 'broadcast' } });

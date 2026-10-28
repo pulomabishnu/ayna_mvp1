@@ -17,6 +17,21 @@ vi.mock('@supabase/supabase-js', () => ({
   createClient: () => globalThis.__mockSupabase,
 }));
 
+// ayna Pro: the feature-rules switch is a Supabase RPC. These tests cover the
+// legacy quota path (rules off, as in production until the admin turns gates on),
+// so the switch is stubbed off by default; the Pro path has its own tests below.
+vi.mock('./_proFeatures.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    proFeatureRules: async () => {
+      const r = globalThis.__proRules;
+      if (r instanceof Error) throw r;
+      return { ...actual.DEFAULT_PRO_RULES, ...(r || {}) };
+    },
+  };
+});
+
 async function loadHandler() {
   vi.resetModules();
   return (await import('./ask-ayna.js')).default;
@@ -51,6 +66,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  globalThis.__proRules = undefined;
   restoreEnv();
   globalThis.fetch = realFetch;
   vi.restoreAllMocks();
@@ -76,6 +92,27 @@ describe('POST /api/ask-ayna', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body.profileUpdate.frustrations).toEqual(['Painful cramps']);
+  });
+
+  it('returns only whitelisted followUps', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk(jsonReply({
+      answer: 'Heat helps, and the Elaris Pod in your Ecosystem is a solid option.',
+      followUps: [
+        { type: 'open_product', productId: 'p-sootheher-elaris-pod' },
+        { type: 'open_product', productId: 'p-invented' },
+        { type: 'open_url', url: 'https://x.example' },
+        { type: 'ask', text: 'What helps on day 2?' },
+        { type: 'open_dashboard' },
+      ],
+    })));
+    const res = mockRes();
+    await (await loadHandler())(mockReq({ body: { message: 'What helps during my period?', ecosystemProducts: [{ id: 'p-sootheher-elaris-pod', name: 'Elaris Pod' }] } }), res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.followUps).toEqual([
+      { type: 'open_product', productId: 'p-sootheher-elaris-pod', label: 'Open Elaris Pod' },
+      { type: 'ask', text: 'What helps on day 2?', label: 'What helps on day 2?' },
+    ]);
   });
 
   it('rejects a request with no message', async () => {

@@ -20,7 +20,7 @@
 }
 
 /* ---- Card ---------------------------------------------------------------- */
-.app-container .ay-lib-card { width: 100%; text-align: left; cursor: pointer; color: var(--ay-ink); }
+.app-container .ay-lib-card { width: 100%; text-align: left; cursor: pointer; color: var(--legacy-ink); }
 .app-container .ay-lib-card::before { content: none !important; display: none !important; }
 .app-container .ay-lib-card h3 { margin: 0 0 8px !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.5em; /* micro: reserve 2 title lines */ }
 .app-container .ay-lib-card p { margin: 0 !important; -webkit-line-clamp: 2 !important; min-height: 2.9em; }
@@ -30,32 +30,32 @@
 /* LB05: sources on their own line */
 .app-container .ay-lib-card__src { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--ay-ink-soft); font: 600 var(--ay-fs-caption)/16px var(--ay-sans); }
 
-.app-container .ay-lib-tag { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); white-space: nowrap; }
+.app-container .ay-lib-tag { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border: 1.5px solid var(--legacy-ink); border-radius: 99px; background: var(--ay-paper); color: var(--legacy-ink); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); white-space: nowrap; }
 
 /* ---- LB02: typographic covers ------------------------------------------- */
 .app-container .ay-lib-cover {
   container-type: inline-size; display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
   aspect-ratio: 4 / 3; margin-bottom: 16px; padding: 16px; border-radius: var(--ay-radius-md);
-  background: var(--ay-peri); color: var(--ay-ink); overflow: hidden; position: relative;
+  background: var(--ay-peri); color: var(--legacy-ink); overflow: hidden; position: relative;
 }
 .app-container .ay-lib-cover.is-mint { background: var(--ay-mint); }
-.app-container .ay-lib-cover.is-butter { background: var(--ay-butter); }
-.app-container .ay-lib-cover.is-pink { background: var(--ay-pink); }
+.app-container .ay-lib-cover.is-butter { background: var(--legacy-butter); }
+.app-container .ay-lib-cover.is-pink { background: var(--legacy-pink); }
 .app-container .ay-lib-cover.is-peri { background: var(--ay-peri); }
-.app-container .ay-lib-cover::after { content: ''; position: absolute; top: 16px; right: 16px; width: 24px; height: 24px; border: 2px solid var(--ay-ink); border-radius: 50%; }
-.app-container .ay-lib-cover small { align-self: flex-start; padding: 4px 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 var(--ay-fs-caption)/1.2 var(--ay-sans); }
-.app-container .ay-lib-cover strong { display: block; color: var(--ay-ink); font-family: var(--ay-serif); font-weight: 400; font-size: var(--ay-fs-display); line-height: 1.1; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.app-container .ay-lib-cover::after { content: ''; position: absolute; top: 16px; right: 16px; width: 24px; height: 24px; border: 2px solid var(--legacy-ink); border-radius: 50%; }
+.app-container .ay-lib-cover small { align-self: flex-start; padding: 4px 10px; border: 1.5px solid var(--legacy-ink); border-radius: 99px; background: var(--ay-paper); color: var(--legacy-ink); font: 600 var(--ay-fs-caption)/1.2 var(--ay-sans); }
+.app-container .ay-lib-cover strong { display: block; color: var(--legacy-ink); font-family: var(--ay-serif); font-weight: 700; font-size: var(--ay-fs-display); line-height: 1.1; letter-spacing: -0.01em; overflow-wrap: anywhere; }
 .app-container .ay-web-lib-card__img { margin-bottom: 16px !important; }
 
 /* ---- LB03: one progress style -------------------------------------------- */
-.app-container .ay-lib-bar { position: relative; display: block; flex: none; width: 64px; height: 10px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); overflow: hidden; box-sizing: border-box; }
+.app-container .ay-lib-bar { position: relative; display: block; flex: none; width: 64px; height: 10px; border: 2px solid var(--legacy-ink); border-radius: 99px; background: var(--ay-paper); overflow: hidden; box-sizing: border-box; }
 .app-container .ay-lib-bar b { position: absolute; inset: 0 auto 0 0; background: var(--ay-mint); transition: width .3s ease; }
 .app-container .ay-lib-state { display: flex; align-items: center; gap: 8px; min-height: 24px; }
-.app-container .ay-lib-state small { color: var(--ay-ink); font: 600 var(--ay-fs-caption)/16px var(--ay-sans); }
-.app-container .ay-lib-new { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
+.app-container .ay-lib-state small { color: var(--legacy-ink); font: 600 var(--ay-fs-caption)/16px var(--ay-sans); }
+.app-container .ay-lib-new { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border: 1.5px solid var(--legacy-ink); border-radius: 99px; background: var(--legacy-butter); color: var(--legacy-ink); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); }
 
 /* header "3/15 read": bar centred on the label */
-.app-container .ay-lib-total { display: inline-flex; align-items: center; gap: 8px; color: var(--ay-ink); font: 600 var(--ay-fs-secondary)/20px var(--ay-sans); white-space: nowrap; }
+.app-container .ay-lib-total { display: inline-flex; align-items: center; gap: 8px; color: var(--legacy-ink); font: 600 var(--ay-fs-secondary)/20px var(--ay-sans); white-space: nowrap; }
 .app-container .ay-lib-total .ay-lib-bar { width: 96px; }
 
 /* ---- micro: chip gap 8px ------------------------------------------------- */
@@ -65,7 +65,7 @@
 /* ---- LB04: inline secondary button --------------------------------------- */
 .app-container a.ay-lib-personalize {
   display: inline-flex; align-items: center; gap: 8px; width: fit-content; min-height: 44px; margin: 0 0 48px; padding: 0 20px;
-  border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink) !important;
+  border: 2px solid var(--legacy-ink); border-radius: 99px; background: var(--ay-paper); color: var(--legacy-ink) !important;
   font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); text-decoration: none !important; transition: transform .18s var(--ay-pop), box-shadow .18s;
 }
 .app-container a.ay-lib-personalize:hover { transform: translate(-2px, -2px); box-shadow: var(--ay-shadow); }
@@ -73,21 +73,21 @@
 /* ---- AR01: full-width sticky read bar ------------------------------------ */
 .app-container .ay-web-library.ay-lib-reading { padding-top: 0 !important; }
 .app-container .ay-lib-status {
-  position: sticky; top: var(--ay-lib-sticky-top, 0px); z-index: 900; margin: 0 0 32px; padding: 12px 0;
+  position: relative; top: auto; z-index: 900; margin: 0 0 32px; padding: 12px 0;
   /* paper band that bleeds to both screen edges without causing horizontal scroll */
-  border-image: linear-gradient(to top, var(--ay-ink) 0 2px, var(--ay-paper) 2px) fill 0 // 0 100vw;
+  border-image: linear-gradient(to top, var(--legacy-ink) 0 2px, var(--ay-paper) 2px) fill 0 // 0 100vw;
 }
 .app-container .ay-lib-status__in { display: flex; align-items: center; gap: 16px; max-width: 760px; margin: 0 auto; }
-.app-container .ay-lib-status button { flex: none; min-height: 36px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); cursor: pointer; }
+.app-container .ay-lib-status button { flex: none; min-height: 36px; padding: 0 16px; border: 2px solid var(--legacy-ink); border-radius: 99px; background: var(--ay-paper); color: var(--legacy-ink); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); cursor: pointer; }
 .app-container .ay-lib-status .ay-lib-bar--wide { flex: 1; width: auto; }
-.app-container .ay-lib-status small { flex: none; min-width: 84px; text-align: right; color: var(--ay-ink); font: 600 var(--ay-fs-caption)/20px var(--ay-sans); }
+.app-container .ay-lib-status small { flex: none; min-width: 84px; text-align: right; color: var(--legacy-ink); font: 600 var(--ay-fs-caption)/20px var(--ay-sans); }
 
 /* ---- Article ------------------------------------------------------------- */
 .app-container .ay-lib-reading .ay-web-lib-article { box-shadow: var(--ay-shadow) !important; /* micro: one shadow token with the next-read card */ }
-.app-container .ay-lib-reading .ay-web-lib-article > :is(h1, h2) { margin: 0 0 16px !important; color: var(--ay-ink) !important; }
+.app-container .ay-lib-reading .ay-web-lib-article > :is(h1, h2) { margin: 0 0 16px !important; color: var(--legacy-ink) !important; }
 .app-container .ay-lib-article__tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
 .app-container .ay-lib-article__src { margin: 0 0 24px !important; color: var(--ay-ink-soft) !important; font: 600 var(--ay-fs-caption)/1.4 var(--ay-sans) !important; }
-.app-container .ay-lib-reading .article-body { color: var(--ay-ink) !important; }
+.app-container .ay-lib-reading .article-body { color: var(--legacy-ink) !important; }
 /* micro: sources align to the text edge */
 .app-container .ay-web-lib-article .article-body ul.ay-lib-sources { padding-left: 0 !important; margin-left: 0 !important; }
 .app-container .ay-web-lib-article .article-body ul.ay-lib-sources li { margin-bottom: 4px; }
@@ -97,25 +97,25 @@
 
 /* ---- AR04 + AR05: care rows straight on the article, 1px dividers ------- */
 .app-container .ay-lib-care, .app-container .ay-lib-products { margin-top: 40px; }
-.app-container .ay-lib-care h3, .app-container .ay-lib-products h3 { margin: 0 0 16px !important; color: var(--ay-ink) !important; font: 400 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
+.app-container .ay-lib-care h3, .app-container .ay-lib-products h3 { margin: 0 0 16px !important; color: var(--legacy-ink) !important; font: 700 var(--ay-fs-section)/1.1 var(--ay-serif) !important; letter-spacing: -0.01em !important; }
 .app-container .ay-web-lib-article details.ay-lib-row { margin: 0 !important; padding: 0 !important; border: 0 !important; border-top: 1px solid var(--ay-line) !important; border-radius: 0 !important; background: none !important; }
 .app-container .ay-web-lib-article details.ay-lib-row:last-of-type { border-bottom: 1px solid var(--ay-line) !important; }
-.app-container .ay-lib-row > summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; list-style: none; cursor: pointer; color: var(--ay-ink) !important; font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important; }
+.app-container .ay-lib-row > summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; list-style: none; cursor: pointer; color: var(--legacy-ink) !important; font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important; }
 .app-container .ay-lib-row > summary::-webkit-details-marker { display: none; }
-.app-container .ay-lib-row__chev { flex: none; width: 20px; height: 20px; fill: none; stroke: var(--ay-ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s ease; }
+.app-container .ay-lib-row__chev { flex: none; width: 20px; height: 20px; fill: none; stroke: var(--legacy-ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s ease; }
 .app-container .ay-lib-row[open] .ay-lib-row__chev { transform: rotate(180deg); }
 .app-container .ay-lib-row__body { padding: 0 0 16px; }
 .app-container .ay-lib-row__body p { margin: 0 0 8px !important; color: var(--ay-ink-soft) !important; font: 500 var(--ay-fs-secondary)/1.6 var(--ay-sans) !important; }
 .app-container .ay-lib-row__body ul { margin: 0; padding: 0; list-style: none; }
 .app-container .ay-lib-row__body li { margin: 0 0 8px; }
 .app-container .ay-lib-row__body a { font: 600 var(--ay-fs-secondary)/1.5 var(--ay-sans); }
-.app-container .ay-lib-row__link { padding: 0; border: 0; background: none; color: var(--ay-ink); font: 600 var(--ay-fs-secondary)/1.5 var(--ay-sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; text-align: left; }
+.app-container .ay-lib-row__link { padding: 0; border: 0; background: none; color: var(--legacy-ink); font: 600 var(--ay-fs-secondary)/1.5 var(--ay-sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; text-align: left; }
 .app-container .ay-lib-row__sub { display: block; color: var(--ay-ink-soft); font: 500 var(--ay-fs-secondary)/1.5 var(--ay-sans); }
 
 /* ---- AR03: products for this topic --------------------------------------- */
 .app-container .ay-lib-products__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 @media (max-width: 640px) { .app-container .ay-lib-products__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } }
-.app-container .ay-lib-why { display: inline-flex; align-items: center; min-height: 20px; padding: 0 8px; border-radius: 99px; background: var(--ay-mint); color: var(--ay-ink); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); white-space: nowrap; }
+.app-container .ay-lib-why { display: inline-flex; align-items: center; min-height: 20px; padding: 0 8px; border-radius: 99px; background: var(--ay-mint); color: var(--legacy-ink); font: 600 var(--ay-fs-caption)/1 var(--ay-sans); white-space: nowrap; }
 
 @media (max-width: 559px) {
   .app-container .ay-lib-status__in { gap: 8px; }
@@ -132,20 +132,20 @@
 .app-container .ay-web-lib-article .ay-lib-care { margin-top: 48px !important; }
 .app-container .ay-web-next-read { margin-top: 48px !important; padding: 16px 24px !important; gap: 8px 16px !important; min-height: 72px; }
 .app-container .ay-web-next-read small { font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans) !important; }
-.app-container .ay-web-next-read span { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ay-ink); color: var(--ay-paper) !important; font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 400 !important; letter-spacing: -0.01em !important; }
+.app-container .ay-web-next-read span { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--legacy-ink); color: var(--ay-paper) !important; font-size: var(--ay-fs-section) !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
 
 /* Featured read at the top of the Library: the article's own colours (brown,
    butter, pink) so it looks the same in light and dark mode, plus a "New"
    sticker in the style of the nav's "Start here" tag. */
-html body .app-container .ay-lib-feature { position: relative; display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 28px; align-items: center; margin: 0 0 40px; padding: 24px; border: 2px solid #3e2723; border-radius: 24px; background: #3e2723 !important; color: #ffedac !important; box-shadow: 5px 5px 0 #f7badd; text-decoration: none !important; transition: transform .2s, box-shadow .2s; }
-html body .app-container .ay-lib-feature:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 #f7badd; }
+html body .app-container .ay-lib-feature { position: relative; display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 28px; align-items: center; margin: 0 0 40px; padding: 24px; border: 2px solid #3e2723; border-radius: 24px; background: #3e2723 !important; color: #ffedac !important; box-shadow: none; text-decoration: none !important; transition: transform .2s, box-shadow .2s; }
+html body .app-container .ay-lib-feature:hover { transform: translate(-2px, -2px); box-shadow: none; }
 html body .app-container .ay-lib-feature__new { position: absolute; top: -14px; left: -10px; z-index: 1; padding: 7px 14px; border: 2px solid #3e2723; border-radius: 99px; background: #f7badd !important; color: #3e2723 !important; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important; letter-spacing: normal; text-transform: none; transform: rotate(-6deg); box-shadow: 2px 2px 0 #3e2723; }
 html body .app-container .ay-lib-feature__img { width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border: 2px solid #ffedac; border-radius: 18px; display: block; }
 html body .app-container .ay-lib-feature__text { display: grid; gap: 12px; min-width: 0; }
 html body .app-container .ay-lib-feature__kicker { color: #f7badd !important; font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans) !important; letter-spacing: normal; text-transform: none; }
-html body .app-container .ay-lib-feature__title { color: #ffedac !important; font: 400 var(--ay-fs-title)/1.1 var(--ay-serif) !important; text-wrap: balance; letter-spacing: -0.01em !important; }
+html body .app-container .ay-lib-feature__title { color: #ffedac !important; font: 700 var(--ay-fs-title)/1.1 var(--ay-serif) !important; text-wrap: balance; letter-spacing: -0.01em !important; }
 html body .app-container .ay-lib-feature__title em { color: #f7badd !important; font-style: italic; }
-html body .app-container .ay-lib-feature__teaser { color: #ffedac !important; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans) !important; }
+html body .app-container .ay-lib-feature__teaser { color: #ffedac !important; font: 500 var(--ay-fs-body)/1.55 var(--ay-sans) !important; }
 html body .app-container .ay-lib-feature__by { color: #ffedac !important; opacity: .85; font: 600 var(--ay-fs-secondary)/1.3 var(--ay-sans) !important; }
 html body .app-container .ay-lib-feature__cta { justify-self: start; margin-top: 4px; padding: 11px 18px; border-radius: 99px; background: #ffedac !important; color: #3e2723 !important; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important; }
 html body .app-container .ay-lib-feature .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

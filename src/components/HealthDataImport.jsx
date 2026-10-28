@@ -144,104 +144,109 @@ export default function HealthDataImport({ onUpdate }) {
   };
 
   return (
-    <div id="health-data-import" style={{ maxWidth: '800px', margin: '0 auto 3rem', padding: '1.5rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', scrollMarginTop: '1rem' }}>
-      <h3 style={{ fontSize: 'var(--ay-fs-section)', marginBottom: '0.5rem' }}>Health data import</h3>
-      <p style={{ color: 'var(--color-text-muted)', fontSize: 16, lineHeight: 1.55, marginBottom: '1.25rem' }}>
-        Connect EHR exports, manual conditions, and wearable summaries so your ecosystem ranking matches what you share with your care team. Raw Apple Health and FHIR files are parsed locally in this browser and are not uploaded. The summaries and health details you choose to save may be used by ayna and its AI providers when you request personalized AI features. We never sell health data.
-      </p>
+    <div id="health-data-import" className="hdi">
+      <h3 className="hdi-h">Health data import</h3>
+      {/* P1-12: the point first, the full notice (every word kept) one tap below. */}
+      <p className="hdi-sum">Raw files are read in this browser and not uploaded. We never sell health data.</p>
+      <details className="hdi-full">
+        <summary>How what you add is used</summary>
+        <p>
+          Connect EHR exports, manual conditions, and wearable summaries so your ecosystem ranking matches what you share with your care team. Raw Apple Health and FHIR files are parsed locally in this browser and are not uploaded. The summaries and health details you choose to save may be used by ayna and its AI providers when you request personalized AI features. We never sell health data.
+        </p>
+      </details>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
-        <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-          <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Apple Health</p>
-          <p style={{ fontSize: 14, color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
+      <div className="hdi-sources">
+        <div className="hdi-card">
+          <p className="hdi-card__t">Apple Health</p>
+          <p className="hdi-card__p">
             ayna doesn’t have a phone app, so we can’t read Apple Health directly off your device. Instead: open the <strong>Health app → your profile picture (top right) → Export All Health Data</strong>, then unzip the download to find <strong>export.xml</strong> and upload it below. We parse steps, sleep, heart rate, and cycle tracking data locally in your browser. The raw file is not sent to our servers.
           </p>
-          <label style={{ fontSize: 14, cursor: 'pointer', display: 'inline-block' }}>
-            <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: 14 }}>Choose export.xml</span>
-            <input type="file" accept=".xml,text/xml,application/xml" onChange={handleAppleHealthFile} style={{ display: 'none' }} />
+          <label className="hdi-file">
+            <span className="ay-btn ay-btn--secondary">Choose export.xml</span>
+            <input type="file" accept=".xml,text/xml,application/xml" onChange={handleAppleHealthFile} className="sr-only" />
           </label>
-          {appleHealthError && <p style={{ color: '#b91c1c', fontSize: 14, marginTop: '0.5rem' }}>{appleHealthError}</p>}
+          {appleHealthError && <p className="hdi-err" role="alert">{appleHealthError}</p>}
           {appleHealthSummary && !appleHealthError && (
-            <p style={{ fontSize: 14, color: 'var(--color-primary)', marginTop: '0.5rem' }}>Parsed and saved below. {appleHealthSummary}</p>
+            <p className="hdi-ok" role="status">Parsed and saved below. {appleHealthSummary}</p>
           )}
         </div>
-        <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-          <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Google Fit &amp; other apps</p>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: 14 }}>
+        <div className="hdi-card">
+          <p className="hdi-card__t">Google Fit &amp; other apps</p>
+          <label className="hdi-check">
             <input type="checkbox" checked={googleFit} onChange={(e) => setGoogleFit(e.target.checked)} />
             I use Google Fit, Apple Watch, Oura, or similar. I’ll paste a short summary below (sleep, steps, cycle estimates).
           </label>
         </div>
-        <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-          <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Electronic health record (FHIR)</p>
-          <p style={{ fontSize: 14, color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
+        <div className="hdi-card">
+          <p className="hdi-card__t">Electronic health record (FHIR)</p>
+          <p className="hdi-card__p">
             Many Epic / MyChart portals offer a <strong>Download my data</strong> export as a FHIR JSON bundle. Upload it here. We parse conditions and medication statements locally in your browser; the raw file is not sent to our servers.
           </p>
-          <label style={{ fontSize: 14, cursor: 'pointer', display: 'inline-block' }}>
-            <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: 14 }}>Choose FHIR JSON file</span>
-            <input type="file" accept=".json,application/json" onChange={handleFhirFile} style={{ display: 'none' }} />
+          <label className="hdi-file">
+            <span className="ay-btn ay-btn--secondary">Choose FHIR JSON file</span>
+            <input type="file" accept=".json,application/json" onChange={handleFhirFile} className="sr-only" />
           </label>
-          {fhirError && <p style={{ color: '#b91c1c', fontSize: 14, marginTop: '0.5rem' }}>{fhirError}</p>}
+          {fhirError && <p className="hdi-err" role="alert">{fhirError}</p>}
           {fhirConnected && !fhirError && (
-            <p style={{ fontSize: 14, color: 'var(--color-primary)', marginTop: '0.5rem' }}>FHIR summary saved. It can improve ranking and may be included as context when you request personalized AI features.</p>
+            <p className="hdi-ok" role="status">FHIR summary saved. It can improve ranking and may be included as context when you request personalized AI features.</p>
           )}
         </div>
       </div>
 
-      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: 14 }}>Conditions (one per line or comma-separated)</label>
+      <label className="hdi-label">Conditions (one per line or comma-separated)</label>
       <textarea
         value={conditions}
         onChange={(e) => setConditions(e.target.value)}
         rows={3}
-        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: 14 }}
+        className="hdi-input"
         placeholder="e.g. endometriosis, iron deficiency anemia"
       />
 
-      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: 14 }}>Medications &amp; supplements</label>
+      <label className="hdi-label">Medications &amp; supplements</label>
       <textarea
         value={medications}
         onChange={(e) => setMedications(e.target.value)}
         rows={3}
-        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: 14 }}
+        className="hdi-input"
         placeholder="e.g. levothyroxine 50 mcg, magnesium glycinate"
       />
 
-      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: 14 }}>Allergies</label>
+      <label className="hdi-label">Allergies</label>
       <textarea
         value={allergies}
         onChange={(e) => setAllergies(e.target.value)}
         rows={2}
-        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: 14 }}
+        className="hdi-input"
         placeholder="e.g. latex, penicillin"
       />
 
-      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: 14 }}>Freeform notes (cycle length, symptoms, app exports)</label>
+      <label className="hdi-label">Freeform notes (cycle length, symptoms, app exports)</label>
       <textarea
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
         rows={3}
-        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: 14 }}
+        className="hdi-input"
         placeholder="Anything else ayna should weigh when ranking products for you."
       />
 
-      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: 14 }}>Wearable &amp; activity summary (optional)</label>
-      <p style={{ fontSize: 14, color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.5 }}>
+      <label className="hdi-label">Wearable &amp; activity summary (optional)</label>
+      <p className="hdi-card__p">
         Paste averages or trends from Apple Health, Google Fit, Oura, Garmin, etc. (e.g. sleep 6.5h/night, 7k steps, resting HR 62). Used with your quiz and chat to tune recommendations. The summary is saved locally and may be sent with your request when a personalized AI feature needs that context.
       </p>
       <textarea
         value={wearableText}
         onChange={(e) => setWearableText(e.target.value)}
         rows={3}
-        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: 14 }}
+        className="hdi-input"
         placeholder="e.g. Last 30 days: avg sleep 6h20m; cycle app predicts period ±2 days; walking 8k steps/day."
       />
 
-      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
-        <button type="button" className="btn btn-primary" onClick={() => persist()}>
+      <div className="hdi-actions">
+        <button type="button" className="ay-btn ay-btn--primary" onClick={() => persist()}>
           Save to this browser
         </button>
         {savedAt && (
-          <span style={{ fontSize: 14, color: 'var(--color-text-muted)' }}>
+          <span className="hdi-card__p">
             Last saved {new Date(savedAt).toLocaleString()}
           </span>
         )}

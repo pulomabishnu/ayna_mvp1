@@ -1,9 +1,12 @@
 import React from 'react';
 import { ALL_PRODUCTS } from '../data/products.js';
-import { InfoPage } from './InfoPage';
+import { EdPage } from './editorial/EdPage';
 import { isPlainLeftClick } from '../utils/productRoute';
 import ProductCard from './ProductCard';
-import ProductTileImage from './ProductTileImage';
+import { Plate } from './ui/ay';
+import { categoryLabel } from './pdp/categoryLabel.js';
+import { safeProductImageSrc } from '../utils/resolveProductImage.js';
+import { productImageOverride } from '../data/productImageOverrides.js';
 import { RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_URL } from '../data/resaPartnership';
 
 /**
@@ -187,18 +190,32 @@ function BrandMark({ partner }) {
   if (partner.logo && !logoFailed) {
     return (
       <img
-        className="brand-partner__logo"
         src={partner.logo}
         alt={`${partner.brand} logo`}
         onError={() => setLogoFailed(true)}
       />
     );
   }
-  return <div className="brand-partner__wordmark">{partner.brand}</div>;
+  return <span>{partner.brand}</span>;
 }
 
 // The team's order exactly as listed in PARTNERS (2026-10-17; was A to Z).
 const ORDERED = PARTNERS;
+
+const imgOf = (x) => productImageOverride(x) || safeProductImageSrc(x?.image || x?.imageUrl || x?.images?.[0]);
+/** The brand's own packshot (a local /products or /brands file), else its local logo, else none (the plate shows the name). */
+function plateImage(partner, products) {
+  const shot = products.map(imgOf).find((u) => /^\/(products|brands)\//.test(String(u || '')));
+  if (shot) return shot;
+  return /^\/brands\//.test(partner.logo || '') ? partner.logo : '';
+}
+/** One category sticker per card (#9 Nectar): the brand's most common product category, from the catalog. */
+function stickerOf(partner, products) {
+  if (partner.prelaunch) return 'Pre-launch';
+  const n = {};
+  products.forEach((x) => { const l = categoryLabel(x); if (l) n[l] = (n[l] || 0) + 1; });
+  return Object.entries(n).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+}
 
 const slug = (b) => `brand-${String(b).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
@@ -217,62 +234,63 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onBrowse
   const partner = ORDERED.find((p) => p.brand === open) || null;
   const products = partner ? ALL_PRODUCTS.filter((p) => p.brand === partner.brand) : [];
   return (
-    <InfoPage tone="sky"
-      aside={(() => {
-        // The partners' own products on white, one per brand (not a stock photo).
-        const picks = ORDERED.filter((pt) => !pt.prelaunch).map((pt) => ALL_PRODUCTS.find((x) => x.brand === pt.brand && /^\/(products|brands)\//.test(String(x.image || x.imageUrl || '')))).filter(Boolean).slice(0, 4);
-        return picks.length === 4 ? (
-          <ul className="brand-hero-grid" aria-label="Products from partner brands">
-            {picks.map((x) => <li key={x.id}><ProductTileImage product={x} alt={`${x.brand} ${x.name}`} /></li>)}
-          </ul>
-        ) : null;
-      })()}
-      eyebrow="Partnerships"
+    <EdPage
+      crumb="Partners"
+      // Critique (Oct 27): no single product as the hero (it read as that brand's page) and no
+      // brand ticker (it repeated the list below). The list itself is the page.
       title={PARTNERS.length > 0 ? 'Brands we work with.' : 'Brand partnerships are coming soon.'}
       lede={PARTNERS.length > 0
         ? 'Partner products may be featured higher in general Browse. Partnership never changes your personalized match scores or recommendation order.'
         : 'Check back soon. When partnerships go live, they may be featured in general Browse, but partnership will never change personalized match scores or recommendation order.'}
-      width="wide"
     >
-      <ul className="brand-cards" aria-label="Partner brands, A to Z">
+      <header className="ed-head">
+        <h2 className="ed-h2">Our partners</h2>
+        <span className="ed-head__count">{ORDERED.length} brands</span>
+      </header>
+      <p className="ip-disclose">See <a href="/how-we-make-money">how we make money</a> and <a href="/how-it-works">how matches are made</a>.</p>
+      {/* Stacked rounded rows (#45 Skin Routine): plate · brand · what they make · N products. */}
+      <ul className="ip-partners" aria-label="Partner brands">
         {ORDERED.map((p) => {
-          const count = ALL_PRODUCTS.filter((x) => x.brand === p.brand).length;
+          const mine = ALL_PRODUCTS.filter((x) => x.brand === p.brand);
+          const count = mine.length;
           const on = open === p.brand;
+          const sticker = stickerOf(p, mine);
           return (
             <li key={p.brand} id={slug(p.brand)}>
-              <button type="button" className={`brand-card${on ? ' is-on' : ''}`} aria-expanded={on} aria-controls="brand-panel" onClick={() => pick(p.brand)}>
-                <span className="brand-card__name">{p.brand}{p.prelaunch && <small className="brand-card__tag">Pre-launch</small>}</span>
-                <span className="brand-card__blurb">{p.blurb}</span>
-                <span className="brand-card__count">{count ? `${count} product${count === 1 ? '' : 's'}` : 'Waitlist'}<span aria-hidden="true">{on ? ' ↑' : ' →'}</span></span>
+              <button type="button" className="ip-prow" aria-expanded={on} aria-controls="brand-panel" onClick={() => pick(p.brand)}>
+                <span className="ip-prow__plate"><Plate src={plateImage(p, mine)} alt="" fallback={p.brand} /></span>
+                <span className="ip-prow__name">{p.brand}{sticker && <span className="ayk-sticker">{sticker}</span>}</span>
+                <span className="ip-prow__blurb">{p.blurb}</span>
+                <span className="ip-prow__count">{count ? `${count} product${count === 1 ? '' : 's'}` : 'Waitlist'}<span aria-hidden="true">{on ? ' ↑' : ' ›'}</span></span>
               </button>
             </li>
           );
         })}
       </ul>
-      <section id="brand-panel" ref={panelRef} className="brand-panel" aria-live="polite" hidden={!partner}>
+      <section id="brand-panel" ref={panelRef} className="ed-brandpanel" aria-live="polite" hidden={!partner}>
         {partner && <>
-          <header className="brand-panel__head">
-            <BrandMark partner={partner} />
+          <header className="ed-brandpanel__head">
+            <div className="ed-brandpanel__mark"><BrandMark partner={partner} /></div>
             <div>
-              <h2 className="brand-partner__name">{partner.brand}{partner.prelaunch && <span className="brand-partner__prelaunch-tag">Pre-launch · Waitlist</span>}</h2>
-              <p className="brand-partner__blurb">{partner.blurb}</p>
-              <p className="brand-panel__links">
-                {partner.waitlistUrl && <a className="brand-partner__waitlist-cta" href={partner.waitlistUrl} target="_blank" rel="noopener noreferrer">{partner.waitlistCta || 'Join the waitlist'} →</a>}
-                <a className="brand-partner__link" href={`/shop?q=${encodeURIComponent(partner.brand)}`} onClick={(e) => {
+              <h2 className="ed-h2">{partner.brand}{partner.prelaunch && <> <span className="ed-badge" style={{ verticalAlign: 'middle' }}>Pre-launch · Waitlist</span></>}</h2>
+              <p className="ed-body" style={{ marginTop: 6 }}>{partner.blurb}</p>
+              <p className="ed-brandpanel__links">
+                {partner.waitlistUrl && <a className="ay-btn ay-btn--text" href={partner.waitlistUrl} target="_blank" rel="noopener noreferrer">{partner.waitlistCta || 'Join the waitlist'} →</a>}
+                <a className="ay-btn ay-btn--text" href={`/explore/products?q=${encodeURIComponent(partner.brand)}`} onClick={(e) => {
                   if (!onBrowseBrand || !isPlainLeftClick(e)) return;
                   e.preventDefault();
                   onBrowseBrand(partner.brand);
-                }}>See {partner.brand} in Shop →</a>
-                <button type="button" className="brand-panel__back" onClick={() => { setOpen(null); document.getElementById(slug(partner.brand))?.querySelector('button')?.focus(); }}>Back to brands ↑</button>
+                }}>See {partner.brand} in the Shop →</a>
+                <button type="button" className="ay-btn ay-btn--text" onClick={() => { setOpen(null); document.getElementById(slug(partner.brand))?.querySelector('button')?.focus(); }}>Back to brands ↑</button>
               </p>
             </div>
           </header>
-          {products.length > 0 && <div className="brand-panel__grid">
-            {products.map((product) => <ProductCard key={product.id} product={product} onOpen={onOpenProduct} inEcosystem={Boolean(myProducts[product.id])} />)}
+          {products.length > 0 && <div className="ed-brandpanel__grid">
+            {products.map((product) => <ProductCard key={product.id} product={product} onOpen={onOpenProduct} inEcosystem={Boolean(myProducts[product.id])} partnerMark={false} />)}
           </div>}
         </>}
       </section>
-      {PARTNERS.length > 0 && <p className="ay-info-partners__more">More coming soon</p>}
-    </InfoPage>
+      {PARTNERS.length > 0 && <p className="ed-meta" style={{ marginTop: 32 }}>More coming soon</p>}
+    </EdPage>
   );
 }

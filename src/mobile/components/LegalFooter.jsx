@@ -1,11 +1,12 @@
 import PrivacyPreferencesLink from '../../components/PrivacyPreferencesLink.jsx';
+import BrandStrip from '../../components/ui/ay/BrandStrip.jsx';
 
 // Same absolute URLs already used by the Legal screen in ProfileFlow.jsx
 // (PRIVACY_POLICY_URL/TERMS_URL) and by desktop's SiteFooter, kept here
 // too rather than threading in-app navigation callbacks through every
 // screen this footer appears on.
 const PRIVACY_POLICY_URL = 'https://www.aynahealth.co/privacy-policy';
-const CONSUMER_HEALTH_DATA_URL = 'https://www.aynahealth.co/consumer-health-data.html';
+const CONSUMER_HEALTH_DATA_URL = 'https://www.aynahealth.co/consumer-health-data';
 const TERMS_URL = 'https://www.aynahealth.co/terms-of-use';
 const HOW_WE_MAKE_MONEY_URL = 'https://www.aynahealth.co/how-we-make-money';
 
@@ -32,9 +33,12 @@ const LINK_STYLE = {
  * surface and would be low-contrast against those, so this uses the same
  * translucent-white treatment those screens already use for secondary text.
  */
-export default function LegalFooter({ variant = 'default' }) {
+export default function LegalFooter({ variant = 'default', strip = false }) {
   const light = variant === 'light';
   return (
+    <>
+    {/* The signature divider above the legal note on a few screens (founder, Oct 27 13:44). */}
+    {strip && <BrandStrip className="ay-legal-strip" />}
     <div
       className="ay-legal"
       style={{
@@ -45,15 +49,17 @@ export default function LegalFooter({ variant = 'default' }) {
         padding: '22px 24px max(22px, env(safe-area-inset-bottom))',
       }}
     >
-      18+ only. ayna provides wellness information only, not medical advice. We do not sell your personal health information.{' '}
-      <a href={PRIVACY_POLICY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Privacy Policy</a>
-      {' · '}
-      <a href={CONSUMER_HEALTH_DATA_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Consumer Health Data Privacy</a>
-      {' · '}
-      <a href={TERMS_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Terms of Use</a>
-      {' · '}
-      <a href={HOW_WE_MAKE_MONEY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>How We Make Money</a>
-      <PrivacyPreferencesLink style={LINK_STYLE} />
+      <p className="ay-legal__note" style={{ margin: 0 }}>18+ only. ayna provides wellness information only, not medical advice. We do not sell your personal health information.</p>
+      {/* QA (Oct 27): the links sit in their own wrapping row, each a full 44px
+          target. Inline, their padded hit areas overlapped across wrapped lines. */}
+      <p className="ay-legal__links">
+        <a href={PRIVACY_POLICY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Privacy policy</a>
+        <a href={CONSUMER_HEALTH_DATA_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Consumer health data notice</a>
+        <a href={TERMS_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Terms of use</a>
+        <a href={HOW_WE_MAKE_MONEY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>How we make money</a>
+        <PrivacyPreferencesLink style={LINK_STYLE} separator="" />
+      </p>
     </div>
+    </>
   );
 }

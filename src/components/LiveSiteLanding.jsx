@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { hasClinicalSources, CLINICAL_SOURCES_LABEL } from '../utils/clinicalSources';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
 import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../data/products.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
@@ -105,10 +106,7 @@ function explicitRating(product) {
   return Number.isFinite(value) ? value : null;
 }
 
-function hasClinicianSupport(product) {
-  const links = getVerificationLinks(product, 'doctor');
-  return Boolean(product?.doctorOpinion || product?.clinicianOpinion || product?.clinicianReview || links.length > 0);
-}
+const hasClinicianSupport = hasClinicalSources;
 
 function hasCommunitySupport(product) {
   const rating = explicitRating(product);
@@ -124,7 +122,7 @@ function productTypeOptions() {
 
 /** Mirrors Discovery's "Ayna" match-quality filter, minus the quiz-derived
  * best-match ranking that only Discovery has access to — here "Best Match"
- * just means "already recommended to you," and "In My Ecosystem" is only
+ * just means "already recommended to you," and "In My ecosystem" is only
  * meaningful (and only passed) for the returning-user shop. */
 function matchesAyna(product, filter, { ownedIds, recommendedIds } = {}) {
   if (!filter || filter === 'all') return true;
@@ -582,9 +580,9 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
                 <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
                   <option value="all">Any</option>
                   <option value="best-match">Best Match</option>
-                  <option value="clinician">Clinical Context</option>
-                  <option value="community">Community Favorite</option>
-                  <option value="ecosystem">In My Ecosystem</option>
+                  <option value="clinician">{CLINICAL_SOURCES_LABEL}</option>
+                  <option value="community">Community favorite</option>
+                  <option value="ecosystem">In my routine</option>
                 </select>
               </label>
               <label>
@@ -638,7 +636,7 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
           <div className="ayna-landing-shop-grid ayna-landing-shop-grid--returning">
             {shownProducts.map((product) => {
               const badge = ownedIds.has(product.id)
-                ? 'IN YOUR ECOSYSTEM'
+                ? 'In your routine'
                 : (personalize && recommendedIds.has(product.id) ? 'FOR YOU' : null);
               return (
                 <button
@@ -872,8 +870,8 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
                 <span>ayna</span>
                 <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
                   <option value="all">Any</option>
-                  <option value="clinician">Clinical Context</option>
-                  <option value="community">Community Favorite</option>
+                  <option value="clinician">{CLINICAL_SOURCES_LABEL}</option>
+                  <option value="community">Community favorite</option>
                 </select>
               </label>
               <label>

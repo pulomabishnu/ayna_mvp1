@@ -63,14 +63,36 @@ const FRIENDLY_HOSTS = {
   'www.healthline.com': 'Healthline',
   'webmd.com': 'WebMD',
   'www.webmd.com': 'WebMD',
+  'womenshealth.gov': 'womenshealth.gov',
+  'dailymed.nlm.nih.gov': 'DailyMed',
+  'effectivehealthcare.ahrq.gov': 'AHRQ',
+  'nichd.nih.gov': 'NICHD',
+  'niddk.nih.gov': 'NIDDK',
 };
 
+// Host names of organisations known by their initials (shown in capitals, never re-cased).
+export const HOST_ACRONYMS = new Set(['doaj', 'fda', 'nih', 'nhs', 'acog', 'cdc', 'who', 'usp', 'ncbi', 'pmc', 'aafp', 'aap', 'acs', 'ama', 'nccih', 'nice', 'ods', 'ewg', 'ftc', 'cpsc', 'epa', 'usda', 'hhs', 'nami', 'sart', 'asrm', 'ams', 'ias', 'bmj', 'jama', 'nejm', 'plos', 'mdpi', 'aad', 'ucsf', 'ucla', 'nyu', 'unc', 'ohsu', 'upmc']);
+
+// Pure and called for every source of every product on the first Shop
+// render, so the label is memoized per URL.
+const HOST_LABEL_CACHE = new Map();
 export function hostLabel(url) {
+  const key = String(url ?? '');
+  if (HOST_LABEL_CACHE.has(key)) return HOST_LABEL_CACHE.get(key);
+  const label = hostLabelUncached(key);
+  if (HOST_LABEL_CACHE.size > 5000) HOST_LABEL_CACHE.clear();
+  HOST_LABEL_CACHE.set(key, label);
+  return label;
+}
+
+function hostLabelUncached(url) {
   try {
     const host = new URL(url).hostname.replace(/^www\./, '');
     if (FRIENDLY_HOSTS[host]) return FRIENDLY_HOSTS[host];
     const parts = host.split('.');
     const base = parts.length >= 2 ? parts[parts.length - 2] : host;
+    // Organisations known by their initials keep them ("doaj.org" is DOAJ, not Doaj).
+    if (HOST_ACRONYMS.has(base.toLowerCase())) return base.toUpperCase();
     return base.charAt(0).toUpperCase() + base.slice(1);
   } catch {
     return null;

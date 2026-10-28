@@ -5,9 +5,9 @@ import ProFeatureGate from './ProFeatureGate.jsx';
 export * from './ArticlesCore.jsx';
 
 /**
- * Pro-aware boundary around the existing Library. The Library itself stays
- * byte-for-byte unchanged in ArticlesCore so its reading UX, SEO content and
- * article taxonomy do not drift while access rules evolve.
+ * Pro-aware boundary around the existing Library. Public visitors can still
+ * discover/read the Library. Once signed in, every opened Read participates in
+ * the Free weekly allowance; Pro is unlimited.
  */
 export default function Articles(props) {
   const [activeArticleId, setActiveArticleId] = useState(props.initialArticleId || null);
@@ -35,7 +35,7 @@ export default function Articles(props) {
     />
   );
 
-  if (!activeArticleId) return library;
+  if (!activeArticleId || !props.userId) return library;
 
   return (
     <ProFeatureGate

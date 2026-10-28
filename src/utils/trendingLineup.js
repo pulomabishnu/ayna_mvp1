@@ -21,7 +21,7 @@
  * Adding products or categories to the catalog reshuffles future weeks; that's
  * fine — the guarantees above still hold for whatever the catalog is.
  */
-import { CATEGORY_LABELS, MACRO_GROUPS } from '../data/products.js';
+import { CATEGORY_LABELS, MACRO_GROUPS } from '../data/catalogTaxonomy.js';
 import { isPlaceholderProductImage } from './resolveProductImage.js';
 import { hasFlaggedRecall } from './productSafetyAlert.js';
 

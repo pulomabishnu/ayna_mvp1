@@ -3,6 +3,7 @@
 // never a client-supplied user id).
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { apiUrl } from '../../utils/apiUrl.js';
+import { fetchWithTimeout } from '../../utils/network.js';
 
 async function getAccessToken() {
   const supabase = getSupabaseClient();
@@ -15,7 +16,7 @@ export async function registerDeviceToken(deviceToken, platform) {
   const token = await getAccessToken();
   if (!token) throw new Error('not_signed_in');
 
-  const res = await fetch(apiUrl('/api/device-tokens'), {
+  const res = await fetchWithTimeout(apiUrl('/api/device-tokens'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

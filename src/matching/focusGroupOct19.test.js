@@ -105,8 +105,9 @@ describe('bug 1: no period/cycle products for someone who does not menstruate', 
   it('explicit asks still work: fertility/ovulation support, and period products for period needs she selected', () => {
     const fert = seedFor({ age: '44', lifeStageSelections: ['I do not currently get periods'], supportSelections: ['Ovulation tracking or support'] }, 'v1');
     expect(fert.shelves[0].productIds.length).toBeGreaterThan(0);
+    // Spotting after menopause: evaluation first, no products for it (founder, Oct 24).
     const pads = seedFor({ age: '56', lifeStageSelections: ['I am in menopause'], supportSelections: ['Spotting between periods'] }, 'v1');
-    expect(pads.shelves[0].productIds.length).toBeGreaterThan(0);
+    expect(pads.shelves.flatMap((sh) => sh.productIds).filter((id) => !/^d-|telehealth/.test(id))).toEqual([]);
     // "No periods now" (cause not stated) can still track an irregular cycle she asked about.
     const paused = seedFor({ age: '28', lifeStageSelections: ['I do not currently get periods'], supportSelections: ['Irregular periods'] }, 'v1');
     expect(paused.shelves[0].productIds.length).toBeGreaterThan(0);
@@ -136,7 +137,11 @@ describe('bug 2: a format preference does not empty the Ecosystem', () => {
         expect(teaShelf.productIds.length, shelf.needId).toBeGreaterThanOrEqual(shelf.productIds.length);
       }
       // Never padded: every pick still clears the bar for its own need.
-      tea.shelves.forEach((s) => s.picks.forEach((p) => expect(p.score).toBeGreaterThanOrEqual(50)));
+      // v2: a partial fit (35+) only where nothing clears 50, or a labelled fallback.
+      tea.shelves.forEach((s) => s.picks.forEach((p) => {
+        if (engine === 'v1') expect(p.score).toBeGreaterThanOrEqual(50);
+        else if (!p.v2?.fallback) expect(p.score).toBeGreaterThanOrEqual(35);
+      }));
     });
   }
 

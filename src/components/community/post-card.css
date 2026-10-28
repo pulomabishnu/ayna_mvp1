@@ -1,0 +1,129 @@
+/*
+ * Community post cards, app and website (founder Oct 27 01:11: "make it easier
+ * to distinguish different posts, it kinda just blends in"). Every post is its
+ * own card in the approved product card style: butter surface, 1.5px espresso
+ * outline, the 4px espresso offset, 16px padding, 14px between cards.
+ * Order: author row, chips (Question / Review pill, topic), bold title, stars,
+ * body (3 lines), photos, a compact product row, then the actions under a thin rule.
+ *
+ * The older community sheets reach the notes with id-weighted selectors, so this
+ * file uses the same 6-id prefix to win without touching them.
+ */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard {
+  --pcc-bg: #FFEDAC;
+  --pcc-ink: #3E2723;
+  --pcc-edge: #3E2723;
+  --pcc-rule: rgba(62, 39, 35, 0.18);
+  --pcc-chip: #F6E3A1;
+  --pcc-pink: #F7BADD;
+  position: relative;
+  display: flex !important;
+  flex-direction: column;
+  gap: 10px !important;
+  margin: 0 0 14px !important;
+  padding: 16px 16px 6px !important;
+  border: 1.5px solid var(--pcc-edge) !important;
+  border-radius: 12px !important;
+  background: var(--pcc-bg) !important;
+  color: var(--pcc-ink) !important;
+  box-shadow: 4px 4px 0 var(--pcc-edge) !important;
+  min-width: 0;
+}
+/* Dark: espresso card, butter outline and offset (as the product card does in dark). */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body :is(.ayna-mobile[data-theme="dark"], .app-container[data-theme*="dark"]) .ay-postcard.ay-postcard {
+  --pcc-bg: #3E2723;
+  --pcc-ink: #FFEDAC;
+  --pcc-edge: #FFEDAC;
+  --pcc-rule: rgba(255, 237, 172, 0.22);
+  --pcc-chip: rgba(255, 237, 172, 0.12);
+}
+/* The full post (its own page) keeps the card, with no entrance animation. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard.is-full { margin-top: 4px !important; animation: none; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard + .ay-postcard { margin-top: 0 !important; }
+
+/* Author row at the top. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard > :is(.am-note-head, .cm-post-head) { margin: 0 !important; padding: 0 !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard :is(.am-author-line, .cm-post-who) :is(strong, button) { color: var(--pcc-ink) !important; font-weight: 700 !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard :is(.am-note-who small, .cm-post-meta) { color: var(--pcc-ink) !important; opacity: 0.78; font-size: 13px !important; }
+
+/* Chips: the Question / Review pill, the topic, a question's status. */
+.ay-postcard__tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard :is(.ay-postcard__pill, .ay-postcard__topic, .ay-postcard__status) {
+  display: inline-flex; align-items: center; gap: 5px; min-height: 26px; padding: 2px 10px; border-radius: 999px;
+  font: 600 13px/1.2 var(--ay-font-ui, inherit); color: var(--pcc-ink); white-space: nowrap;
+}
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-postcard__pill { border: 1.5px solid var(--pcc-ink); background: transparent; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-postcard__pill.is-question { border-color: #3E2723; background: var(--pcc-pink); color: #3E2723; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-postcard__pill svg { flex: none; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-postcard__topic { border: 1px solid var(--pcc-rule); background: var(--pcc-chip); font-weight: 500; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-postcard__status { padding: 2px 4px; font-weight: 500; opacity: 0.85; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-postcard__status.is-open { opacity: 1; text-decoration: underline; text-decoration-color: var(--pcc-pink); text-decoration-thickness: 3px; text-underline-offset: 4px; }
+
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-postcard__stars { display: inline-flex; align-items: center; gap: 6px; min-height: 26px; color: var(--pcc-ink); font: 600 13px/1.2 var(--ay-font-ui, inherit); }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-postcard__stars :is(.cr-stars, .cm-stars) { display: inline-flex; gap: 1px; margin: 0 !important; color: var(--pcc-ink); }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-postcard__stars svg { width: 16px; height: 16px; }
+
+/* The title: her first sentence, bold. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-postcard__title { margin: 0; color: var(--pcc-ink); font: 700 17px/1.35 var(--ay-font-ui, inherit) !important; letter-spacing: 0; text-wrap: pretty; overflow-wrap: anywhere; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-postcard__title button { display: block; width: 100%; min-height: 0; margin: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .app-container .ay-postcard.ay-postcard .ay-postcard__title { font-size: 19px !important; }
+
+/* Body: regular weight, 3 lines in the feed. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard :is(.am-note-body, .cm-body) { margin: 0 !important; color: var(--pcc-ink) !important; font-weight: 400 !important; font-size: 16px !important; line-height: 1.5 !important; background: none !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard:not(.is-full) :is(.am-note-body, .cm-body) { display: -webkit-box !important; -webkit-line-clamp: 3 !important; -webkit-box-orient: vertical; overflow: hidden; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard :is(.am-readmore, .cm-readmore) { align-self: flex-start; min-height: 44px; margin: -10px 0 -8px !important; padding: 0 !important; color: var(--pcc-ink) !important; font-size: 15px !important; font-weight: 600 !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard :is(.am-review-facts, .cm-review-facts) { margin: 0 !important; }
+
+/* A product mention: one compact row inside the card (no second card, no offset). */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard :is(.ay-pcard, .ay-product-card).is-row {
+  --pc-shadow: transparent;
+  grid-template-columns: 48px minmax(0, 1fr) !important;
+  column-gap: 12px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 8px 10px !important;
+  border: 1px solid var(--pcc-rule) !important;
+  border-radius: 10px !important;
+  background: var(--pcc-chip) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard :is(.am-mention-wrap, .cm-mention-wrap) { margin: 0 !important; border: 0 !important; box-shadow: none !important; background: none !important; padding: 0 !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-pcard.is-row > :is(.ayk-plate, .ay-pcard__photo) { grid-column: 1 !important; grid-row: 1 / span 3 !important; width: 48px !important; height: 48px !important; min-height: 0 !important; aspect-ratio: 1 !important; border-radius: 8px !important; overflow: hidden; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-pcard.is-row > :is(.ay-pcard__body) { grid-column: 2 !important; display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-start !important; column-gap: 8px; row-gap: 2px; min-width: 0; text-align: left !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-pcard.is-row .ay-pcard__body > * { text-align: left !important; justify-content: flex-start !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-pcard.is-row :is(.ay-pcard__meta) { flex: 1 0 100%; margin: 0 !important; font-size: 13px !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-pcard.is-row .ay-pcard__name { flex: 1 1 auto; min-width: 0; margin: 0 !important; font-size: 15px !important; line-height: 1.3 !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard:not(.is-full) .ay-pcard.is-row .ay-pcard__cat { display: none !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard .ay-pcard.is-row .ay-pcard__price { display: inline-flex !important; margin: 0 !important; }
+
+/* Actions: Helpful, Reply, Save, under a thin rule. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard > :is(.am-note-actions, .cm-actions) { margin: 2px 0 0 !important; padding: 2px 0 0 !important; border: 0 !important; border-top: 1px solid var(--pcc-rule) !important; background: none !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ay-postcard.ay-postcard > :is(.am-note-actions, .cm-actions) button { min-height: 44px; color: var(--pcc-ink) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ay-postcard { animation: none !important; }
+}
+
+/* Community, tidier feed (founder Oct 27 18:34: "some posts are taking up the entire screen and there's a
+   lot of white space"). In the feed, photos are small square thumbnails in one row (the full photos
+   open with the post); on a wide screen with no right column the feed uses the width as two columns. */
+html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ayna-mobile):is(#cmf3, .app-container, .ayna-mobile) :is(.cm-main > .ay-postcard, .am-feed .ay-postcard, .ay-postcard) :is(.cm-photos, .am-polaroids):not(:has(span.cm-polaroid)) {
+  display: flex !important; flex-wrap: nowrap !important; gap: 8px !important; padding: 0 !important; overflow: hidden;
+}
+html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ayna-mobile):is(#cmf3, .app-container, .ayna-mobile) :is(.cm-photos, .am-polaroids) > button:is(.cm-polaroid, .am-polaroid) {
+  flex: none !important; width: 120px !important; height: 120px !important; max-width: none !important; padding: 0 !important; margin: 0 !important; transform: none !important;
+  border: 1.5px solid #3e2723 !important; border-radius: 12px !important; overflow: hidden; box-shadow: none !important; background: #f6e3a1 !important;
+}
+html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ayna-mobile):is(#cmf3, .app-container, .ayna-mobile) :is(.cm-photos, .am-polaroids) > button:is(.cm-polaroid, .am-polaroid) img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block; }
+@media (max-width: 480px) {
+  html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ayna-mobile):is(#cmf3, .app-container, .ayna-mobile) :is(.cm-photos, .am-polaroids) > button:is(.cm-polaroid, .am-polaroid) { width: 96px !important; height: 96px !important; }
+}
+/* A lighter card: a 3px offset instead of 4, less padding. */
+html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container):is(#cmf4, .app-container) .cm-main > .ay-postcard { box-shadow: 3px 3px 0 #3e2723 !important; padding: 18px 20px !important; }
+@media (min-width: 1100px) {
+  html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container) .cm-layout:has(> .cm-side:empty) { grid-template-columns: 188px minmax(0, 1fr) !important; }
+  html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container) .cm-layout:has(> .cm-side:empty) > .cm-side { display: none !important; }
+  html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container) .cm-layout:has(> .cm-side:empty) > .cm-main { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; column-gap: 20px !important; align-items: start !important; }
+  html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container) .cm-layout:has(> .cm-side:empty) > .cm-main > :not(.ay-postcard) { grid-column: 1 / -1 !important; }
+}

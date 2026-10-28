@@ -2,6 +2,7 @@ import { HEART_PATH } from '../utils/heart.js';
 
 // Shared empty / error state: one sticker-style illustration, one line,
 // one action. Used wherever a list can be empty or a feed can fail.
+// The sticker settles once (rotate -6deg to -3deg) and then stays still.
 const ART = {
   bookmark: <path d="M8 4h8v16l-4-3-4 3V4Z" />,
   heart: <path d={HEART_PATH} />,
@@ -11,11 +12,11 @@ const ART = {
   spark: <path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7Z" />,
 };
 
-export default function EmptyState({ art = 'spark', tone = 'pink', title, body, actionLabel, onAction, secondaryLabel, onSecondary, compact = false }) {
+export default function EmptyState({ art = 'search', tone = 'pink', title, body, actionLabel, onAction, secondaryLabel, onSecondary, compact = false }) {
   return (
     <div className={`ay-empty ay-empty--${tone}${compact ? ' is-compact' : ''}`} role="status">
       <div className="ay-empty-art" aria-hidden="true">
-        <span className={`ay-empty-burst is-${tone === 'pink' ? 'rose' : 'sky'}`}><svg viewBox="0 0 24 24">{ART[art] || ART.spark}</svg></span>
+        <span className={`ay-empty-burst ay-sticker-settle is-${tone === 'pink' ? 'rose' : 'sky'}`}><svg viewBox="0 0 24 24">{ART[art] || ART.search}</svg></span>
       </div>
       <h2>{title}</h2>
       {body && <p>{body}</p>}

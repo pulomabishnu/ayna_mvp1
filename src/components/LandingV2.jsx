@@ -1,75 +1,59 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import posthog from 'posthog-js';
-import { WEFUNDER_URL, TESTING_WATERS_NOTICE } from '../data/investRound';
+import React, { useEffect, useMemo, useState } from 'react';
+import MedicalNote from './MedicalNote.jsx';
+import { sentenceCase } from '../utils/sentenceCase.js';
 import { useRecommendationViews } from '../utils/recommendationAnalytics';
-import { BASICS_PRODUCTS } from '../data/basicsProducts.js';
 import { productsForNeed } from './landingNeeds';
-import { productHref, isPlainLeftClick } from '../utils/productRoute';
+import { isPlainLeftClick, productHref } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
-import { ALL_PRODUCTS, MACRO_GROUPS } from '../data/products';
-import { getDailyFact } from '../data/welcomeSlides.js';
-import { formatPrice } from '../utils/formatPrice';
+import { ALL_PRODUCTS, MACRO_GROUPS, basicsProductIds, useCatalogReady } from '../data/catalog.js';
+import { shopCatalogCounts } from '../data/catalogCounts.js';
+
+import { brandOf } from '../mobile/data/brandFallback.js';
+import ProductCard from './ProductCard';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
-import LandingStories from './LandingStories';
-import '../styles/landing-v2.css';
+import { useLatestAnnouncement } from '../hooks/useLatestAnnouncement';
+import '../styles/editorial.css';
+import '../styles/home.css';
+import '../styles/loop-a-landing.css';
+import '../styles/uq-landing.css';
+import Photo from './ui/Photo.jsx';
+import ReadMore from './info/ReadMore.jsx';
+import { Plate, Chip, Band, Shout, Bento, Tile, Marquee, SnapCarousel } from './ui/ay';
+import { HOME_SEARCH_HINTS } from './shop/homeSearchHints.js';
 
-/* First-visit landing, v2. One job per section, minimal words, one palette:
- * cream (60) / pink (30) / butter (10) with ink for text and lines, plus one
- * dark band. Everything moving can be paused with a single control (WCAG 2.2.2). */
+/* The website home (v2, Oct 21). Styles: src/styles/home.css (hm-*).
+ *
+ * Visual thesis: a well-kept bathroom cabinet + a stationery scrapbook. Big
+ * Bricolage type, real photos used large, full-bleed colour blocks that butt
+ * against each other (no empty butter gaps), and crisp vector devices only:
+ * the "matched to you" seal (once), the brand ribbon (once), die-cut product
+ * stickers, a taped polaroid. References: Spicy Margarita (hero collage, huge
+ * numerals, split dark/photo band), Retro Bloom (die-cut stickers on a colour
+ * band), Feel Fits (checkerboard), Glossier (stat callouts beside a photo),
+ * "Academy" (colourful read covers with a scalloped edge), Samba (taped photo).
+ *
+ * Uniqueness pass (Oct 26, scratchpad UNIQUE_PASS.md): colour-blocked bands,
+ * adjacent bands never the same colour, styles in src/styles/uq-landing.css.
+ *   1 hero, espresso band: the one Shout, real products big on a pink tile
+ *   2 partner marquee, pink seam (the page's one motion; Pause motion stops it)
+ *   3 does this sound familiar + needs, butter band
+ *   4 how it works as a Bento (steps + catalog numbers), espresso band
+ *   5 reads + community, pink band
+ *   6 founders + invest, butter band
+ * Members get the same page with their name, their dashboard row and their picks.
+ * Nothing on the page is sticky. */
 
-// One topic at a time, changing every few seconds (Ameera, Oct 16).
-const SEARCH_HINTS = ['organic pads', 'PCOS support', 'bad cramps', 'pelvic floor', 'night sweats', 'vaginal dryness', 'leaking when I sneeze', 'sleep and stress', 'UTI burning', 'heavy flow overnight', 'menopause', 'itchy down there', 'hormonal acne', 'trying to conceive', 'postpartum pads'];
-const BASICS_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
+// Plain words first (5-second test, P2-4): what people actually type.
+const SEARCH_HINTS = HOME_SEARCH_HINTS; // tested against the real search (suggestionChips.test.js)
 const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-const HERO = [
-  { src: '/landing/tub-girls.webp', alt: 'Two friends getting ready together in a bathtub, surrounded by makeup', pos: '50% 35%' },
-  { src: '/landing/robe-kiss.webp', alt: 'A woman in a striped robe blowing a kiss to the mirror light', pos: '50% 30%' },
-  { src: '/landing/bed-selfie.webp', alt: 'A woman lying on a bed taking a selfie, her routine laid out around her', pos: '50% 40%' },
-];
+const Arrow = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>);
 
-const STRIP = [
-  { src: '/landing/robe-vanity.webp', alt: 'A woman in a white robe at a marble vanity in a pink room' },
-  { src: '/landing/sink-flatlay.webp', alt: 'A sink full of brushes, makeup and hair tools, from above' },
-  { src: '/landing/laundry-duo.webp', alt: 'Two friends in curlers reading magazines on a laundry room floor' },
-  { src: '/landing/sink-heels-dryer.webp', alt: 'A vintage sink piled with a hair dryer, sunglasses and heels' },
-  { src: '/landing/pajamas-overhead.webp', alt: 'A woman in red striped pajamas on the phone, from above' },
-  { src: '/landing/vanity-hairdryer.webp', alt: 'A woman drying her hair at a crowded bedroom vanity' },
-  { src: '/landing/pad-thread-art.webp', alt: 'Red thread arranged over a white pad, as still life' },
-  { src: '/landing/bag-tubes.webp', alt: 'A vintage leather bag overflowing with colorful product tubes' },
-];
-
-function useReveal() {
-  const ref = useRef(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || reducedMotion()) return undefined;
-    el.setAttribute('data-reveal', 'wait');
-    let done = false;
-    const show = () => { if (done) return; done = true; el.setAttribute('data-reveal', 'in'); window.removeEventListener('scroll', check); };
-    function check() { if (el.getBoundingClientRect().top < window.innerHeight * 0.92) show(); }
-    window.addEventListener('scroll', check, { passive: true });
-    const t = window.setTimeout(check, 100);
-    const safety = window.setTimeout(show, 6000);
-    return () => { window.clearTimeout(t); window.clearTimeout(safety); window.removeEventListener('scroll', check); };
-  }, []);
-  return ref;
-}
-
-const Arrow = () => (<span className="lv-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" /></svg></span>);
-const Win = ({ title }) => (<div className="lv-win" aria-hidden="true"><span className="lv-win__dots"><i /><i /><i /></span><span>{title}</span></div>);
-
-/* ---------- ticker: brand names only, slow ---------- */
-function Ticker() {
-  const names = PARTNER_BRANDS.map((b) => b.name);
-  const row = (hidden) => (
-    <ul className="lv-ticker__row" aria-hidden={hidden || undefined}>
-      {[...names, ...names].map((t, i) => (<li key={i} aria-hidden={i >= names.length ? true : undefined}>{t}<span aria-hidden="true">{'★'}</span></li>))}
-    </ul>
-  );
-  return <div className="lv-ticker" role="presentation"><div className="lv-ticker__track">{row(false)}{row(true)}</div></div>;
+/* CTAs that go somewhere are links (open in a new tab, copy the address), not buttons. */
+function Go({ href, onGo, className, children }) {
+  return <a className={className} href={href} onClick={(e) => { if (!onGo || !isPlainLeftClick(e)) return; e.preventDefault(); onGo(); }}>{children}</a>;
 }
 
 /* ---------- hero ---------- */
@@ -86,364 +70,516 @@ function Search({ onSearch }) {
     return () => window.clearInterval(t);
   }, [q, focused]);
   return (
-    <form className="lv-search" role="search" onSubmit={(e) => { e.preventDefault(); onSearch(q); }}>
+    <form className="ed-search hm-search" role="search" onSubmit={(e) => { e.preventDefault(); onSearch(q); }}>
       <label>
-        <span className="lv-sr">Search products</span>
+        <span className="ed-sr">Search products</span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
         <SmartSearchInput
           type="search" value={q} onChange={(e) => setQ(e.target.value)}
           suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }}
-          onPick={(s) => onSearch(s.query)} anchor=".lv-search" placeholder=" " enterKeyHint="search" autoComplete="off"
+          onPick={(s) => onSearch(s.query)} anchor=".ed-search" placeholder=" " enterKeyHint="search" autoComplete="off"
           onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
         />
-        {!q && <span className="lv-search__hint" aria-hidden="true">Search <b key={i} className="lv-search__topic">{SEARCH_HINTS[i]}</b></span>}
+        {!q && <span className="ed-search__hint" aria-hidden="true">Search <b key={i}>{SEARCH_HINTS[i]}</b></span>}
+        {!q && !focused && <kbd className="ay-kbd" aria-hidden="true">{/Mac|iPhone|iPad/.test(typeof navigator !== 'undefined' ? navigator.platform || navigator.userAgent : '') ? '⌘K' : 'Ctrl K'}</kbd>}
       </label>
-      <button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button>
+      <button type="submit" aria-label="Search"><Arrow /></button>
     </form>
   );
 }
 
-function Hero({ onStartQuiz, onSearch, personal = null, banner = null }) {
+/* Uniqueness pass (Oct 26): the hero is an espresso band with the page's one
+   Shout (Bricolage 800, 48-120px) and real products shown big on a pink tile
+   beside the founders' photograph. Nothing in the hero moves; the page's one
+   motion is the partner marquee under it. */
+function Hero({ onStartQuiz, onSearch, onOpenProduct, onViewHowItWorks, personal = null, banner = null }) {
+  const cta = personal && (personal.ecoCount > 0 || personal.hasQuiz)
+    ? <Go className="ay-btn ay-btn--primary" href="/you/ecosystem" onGo={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></Go>
+    : banner || <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Get my matches<Arrow /></Go>;
   return (
-    <section className="lv-hero" aria-labelledby="lv-hero-title">
-      {/* Members get the same photo hero with their name (team call, Oct 16). */}
-      <div className="lv-hero__photos">
-        {HERO.map((p, i) => (<img key={p.src} src={p.src} alt={p.alt} style={{ objectPosition: p.pos }} {...(i === 0 ? { fetchPriority: 'high' } : {})} />))}
-      </div>
-      <div className="lv-hero__copy">
-        {personal ? <>
-          <h1 id="lv-hero-title">Welcome back, <em>{personal.name}.</em></h1>
-          <p>{personal.ecoCount > 0 ? `${personal.ecoCount} product${personal.ecoCount === 1 ? '' : 's'} in your ecosystem.` : 'Health products matched to your body.'}</p>
-          {personal.ecoCount > 0 || personal.hasQuiz
-            ? <Go className="lv-btn lv-btn--butter" href="/ecosystem" onGo={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></Go>
-            : banner || <Go className="lv-btn lv-btn--butter" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>}
-        </> : <>
-          <h1 id="lv-hero-title">Build your <em>ecosystem.</em></h1>
-          <p>Health products matched to your body.</p>
-          {banner || <Go className="lv-btn lv-btn--butter" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>}
-        </>}
-        <Search onSearch={onSearch} />
-      </div>
-      <div className="lv-stamp" aria-hidden="true">
-        <svg viewBox="0 0 200 200"><defs><path id="lv-stamp-path" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0" /></defs>
-          <text><textPath href="#lv-stamp-path" textLength="455" lengthAdjust="spacing">MATCHED TO YOU {'★'} MATCHED TO YOU {'★'}</textPath></text></svg>
-        <span>you</span>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- who we are ---------- */
-function Purpose({ onViewAbout }) {
-  const ref = useReveal();
-  return (
-    <section ref={ref} className="lv-purpose" aria-labelledby="lv-purpose-title">
-      <div className="lv-purpose__copy">
-        <p className="lv-script">who we are</p>
-        <h2 id="lv-purpose-title">Built by three women who wanted better answers.</h2>
-        <Go className="lv-btn lv-btn--line" href="/about" onGo={onViewAbout}>Meet us</Go>
-      </div>
-      <figure className="lv-polaroid">
-        <img src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" width="1800" height="1198" />
-        <figcaption className="lv-script">Puloma, Eliz &amp; Ameera</figcaption>
-      </figure>
-    </section>
-  );
-}
-
-/* ---------- invest: Wefunder community round (Ameera, Oct 20) ----------
-   Testing-the-waters rules apply: no offering terms here (see data/investRound.js). */
-function Invest() {
-  const ref = useReveal();
-  const onClick = () => { try { posthog.capture('invest_cta_clicked', { location: 'landing' }); } catch { /* analytics never blocks */ } };
-  return (
-    <section ref={ref} id="invest" className="lv-sec lv-invest" aria-labelledby="lv-invest-title">
-      <div className="lv-invest__card lv-card">
-        <div className="lv-invest__copy">
-          <p id="lv-invest-title" className="lv-script">invest in ayna</p>
-          <p>We&rsquo;re so excited to extend an opportunity for you to invest in ayna, whether you&rsquo;re one of our earliest ayna users or a part of the greater community passionate about ayna&rsquo;s work to expand the future of women&rsquo;s health. Join our community round and learn more on Wefunder.</p>
-          <a className="lv-btn lv-btn--ink" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={onClick}>
-            Invest on Wefunder<Arrow /><span className="lv-sr"> (opens in a new tab)</span>
-          </a>
+    <Band tone="ink" className="hm-hero hm-band" aria-labelledby="hm-hero-title">
+      <div className="hm-wrap hm-hero__grid">
+        {personal
+          ? <Shout id="hm-hero-title" className="hm-shout">Welcome back, <span className="hm-shout__pink">{personal.name}</span>.</Shout>
+          // One promise on the website and the app (landing audit 4 and 9).
+          : <Shout id="hm-hero-title" className="hm-shout">Find what fits <span className="hm-shout__pink">your body.</span></Shout>}
+        <div className="hm-hero__copy">
+          <p className="hm-lead">{personal
+            ? (personal.ecoCount > 0 ? `${personal.ecoCount} product${personal.ecoCount === 1 ? '' : 's'} in your ecosystem.` : 'Health products matched to your body.')
+            // Glance first (founder 16:54): the app's one line, the same promise in fewer words.
+            : 'Women’s health products matched to you, with the evidence beside each one.'}</p>
+          <div className="hm-hero__actions">{cta}<a className="hm-howlink" href="/how-it-works" onClick={(e) => { if (!onViewHowItWorks || !isPlainLeftClick(e)) return; e.preventDefault(); onViewHowItWorks(); }}>How we match<Arrow /></a></div>
+          <Search onSearch={onSearch} />
+          <MedicalNote className="hm-med-note" />
         </div>
-        <img className="lv-invest__img" src="/landing/laundry-duo.webp" alt="Two friends in curlers reading magazines together on a laundry room floor" loading="lazy" width="736" height="981" />
-        <p className="lv-invest__legal">{TESTING_WATERS_NOTICE}</p>
+        <HeroArt onOpenProduct={onOpenProduct} />
       </div>
-    </section>
+    </Band>
   );
 }
 
-/* CTAs that go somewhere are links (open in a new tab, copy the address), not buttons. */
-function Go({ href, onGo, className, children }) {
-  return <a className={className} href={href} onClick={(e) => { if (!onGo || !isPlainLeftClick(e)) return; e.preventDefault(); onGo(); }}>{children}</a>;
+/* Hero visual: the approved ayna photograph and this week's first three real
+   products from Explore, the lead one big on a pink tile (#38 Rhode, #32
+   Glossier: packshots large on a tinted block). The products link to their pages. */
+function HeroArt({ onOpenProduct }) {
+  const ready = useCatalogReady();
+  const picks = useMemo(() => (ready ? weeklyLineup().slice(0, 3) : []), [ready]);
+  const open = (p) => (e) => { if (!onOpenProduct || !isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct(p); };
+  const [lead, ...rest] = picks;
+  return (
+    <div className="hm-art">
+      <span className="hm-art__photo"><Photo src="/landing/pink-stripe-floor.webp" alt="" sizes="(max-width: 767px) 46vw, 300px" /></span>
+      {lead ? (
+        <a className="hm-art__lead" href={productHref(lead)} onClick={open(lead)}>
+          <Plate src={lead.image} alt="" imgProps={{ loading: 'eager', decoding: 'auto' }} />
+          <span className="hm-art__name"><span className="hm-art__brand">{brandOf(lead) || lead.brand}</span>{lead.name}</span>
+        </a>
+      ) : <span className="hm-art__lead is-skel" aria-hidden="true" />}
+      <span className="hm-art__pair">
+        {rest.length ? rest.map((p) => (
+          <a key={p.id} className="hm-art__small" href={productHref(p)} onClick={open(p)} aria-label={`${brandOf(p) || p.brand || ''} ${p.name}`.trim()}>
+            <Plate src={p.image} alt="" imgProps={{ loading: 'eager', decoding: 'auto' }} />
+          </a>
+        )) : [0, 1].map((i) => <span key={i} className="hm-art__small is-skel" aria-hidden="true" />)}
+      </span>
+    </div>
+  );
 }
 
-/* ---------- product tiles ---------- */
-function Tiles({ products, onOpenProduct, ranked = false }) {
+/* ---------- partner brands: the page's one motion, a pink marquee seam under the hero ----------
+   Real partner names only (utils/partnerBrands). Paused by reduced motion, on
+   hover, and by Pause motion (this button and the footer share one setting). */
+function Brands({ onViewWaitlist }) {
+  const names = PARTNER_BRANDS.map((b) => b.name);
+  const paused = useMotionPaused();
+  const toggle = () => {
+    const next = !paused;
+    document.documentElement.classList.toggle('ay-motion-paused', next);
+    try { localStorage.setItem('ayna_motion_paused', next ? '1' : '0'); } catch { /* storage unavailable */ }
+  };
   return (
-    <ul className={`lv-tiles${ranked ? ' is-ranked' : ''}`}>
-      {products.map((p, i) => (
-        <li key={p.id}>
-          <a href={productHref(p.id)} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct?.(p); }}>
-            <span className="lv-tile__img">
-              {ranked && <b className="lv-rank" aria-hidden="true">{i + 1}</b>}
-              <img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />
-              {isPartnerBrandItem(p) && <span className="lv-fav" title="A partner brand ayna has reviewed">ayna<br />partner</span>}
-            </span>
-            <span className="lv-tile__row">
-              <span className="lv-tile__name">{p.name}</span>
-              {(() => { const pr = formatPrice(p).main; return /\$/.test(pr) ? <span className="lv-tile__price">{pr}</span> : null; })()}
-            </span>
-            {p.brand && <span className="lv-tile__brand">{p.brand}</span>}
-          </a>
-        </li>
-      ))}
-    </ul>
+    <section className="hm-brands hm-marq" aria-labelledby="hm-brands-title">
+      <h2 id="hm-brands-title" className="ed-sr">Brands we work with</h2>
+      <a className="hm-marq__tab" href="/partners" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}><span className="hm-ribbon__long">Brands we work with</span><span className="hm-ribbon__short" aria-hidden="true">Our brands</span><Arrow /></a>
+      <Marquee items={names} tone="pink" className="hm-marq__run" />
+      <button type="button" className="hm-marq__pause" aria-pressed={paused} onClick={toggle} aria-label={paused ? 'Play motion' : 'Pause motion'}>
+        <svg viewBox="0 0 24 24" aria-hidden="true">{paused ? <path d="M8 5l11 7-11 7z" /> : <path d="M8 5v14M16 5v14" />}</svg>
+      </button>
+    </section>
   );
 }
 
 // Core needs lead (periods, intimate care, menopause, pelvic floor); creams, sleep and gadgets come after.
 const CORE = /pad|tampon|cup|disc|period|intimate|vaginal|menopause|pelvic|uti|cramp|fertility|postpartum|pregnan/i;
-function Trending({ onOpenProduct, onViewDiscovery, picks = null }) {
-  // The first four products a new visitor sees: everyday picks, not sex tech.
-  const weekly = useMemo(() => {
-    const list = getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product)
-      .filter((p) => p?.image && NEEDS_PHOTO(p) && !/sex|intimacy|toy/i.test(String(p.category || '')) && !/\banal\b|vibrator|dildo|mouth tape/i.test(String(p.name || '')));
-    const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
-    return [...core, ...list.filter((p) => !core.includes(p))].slice(0, 4);
-  }, []);
-  // Member picks: only products with a real photo, and the drugstore basics
-  // (Advil, Aleve, Monistat...) after the curated and partner products.
+function weeklyLineup() {
+  const list = getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product)
+    .filter((p) => p?.image && NEEDS_PHOTO(p) && !/sex|intimacy|toy/i.test(String(p.category || '')) && !/\banal\b|vibrator|dildo|mouth tape/i.test(String(p.name || '')));
+  const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
+  return [...core, ...list.filter((p) => !core.includes(p))];
+}
+
+/* ---------- 3. does this sound familiar + needs (pink band) ----------
+   Landing audit 6: the four phrases on the left; on the right six needs (plus
+   All needs) and four products. With no need picked the four are this week's
+   picks (signed in: her top picks). Each phrase is a common need from the quiz
+   (WebIntake.jsx COMMON_NEEDS), said the way people say it; these are prompts,
+   not testimonials. Each photo carries a real product from the catalog as a
+   die-cut on its corner. Signed out, every card says "See your match" (no number). */
+const FAMILIAR = [
+  { q: 'My cramps knock me out every month.', need: 'Cramps or period pain', photo: '/landing/pajamas-overhead.webp', match: /cramp|period pain|menstrual pain|dysmenorr|heat/i },
+  { q: 'I bleed through everything.', need: 'Heavy periods', photo: '/landing/sink-flatlay.webp', match: /heavy|period underwear|overnight pad|super/i },
+  { q: 'I leak a little when I sneeze.', need: 'Bladder leakage or incontinence', photo: '/landing/curlers-call.webp', match: /bladder|incontinen|leak|pelvic floor/i },
+  { q: 'Things feel dry down there.', need: 'Vaginal dryness', photo: '/landing/robe-vanity.webp', match: /dryness|lubric|moistur|vaginal dry/i },
+];
+const SHOWN_NEEDS = 6;
+function productFor(t, taken) {
+  const text = (p) => `${p.name || ''} ${p.category || ''} ${(p.healthFunctions || []).join(' ')} ${(p.tags || []).join(' ')}`;
+  return ALL_PRODUCTS.find((p) => p?.image && NEEDS_PHOTO(p) && !taken.has(p.id) && t.match.test(text(p)) && !/\banal\b|vibrator|dildo/i.test(String(p.name || ''))) || null;
+}
+/* A die-cut on its plate: if the product photo fails to load, the plate goes too (never an empty white square). */
+function DieCut({ product, className }) {
+  const [failed, setFailed] = useState(false);
+  if (!product?.image || failed) return null;
+  return <span className={className}><img src={product.image} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} /></span>;
+}
+function Phrases({ onSearch }) {
+  const ready = useCatalogReady();
+  const rows = useMemo(() => {
+    const taken = new Set();
+    return FAMILIAR.map((t) => { const p = ready ? productFor(t, taken) : null; if (p) taken.add(p.id); return { ...t, product: p }; });
+  }, [ready]);
+  return (
+    // Founder Oct 26 20:17: a peeking snap carousel of photo-led cards instead of stacked rows.
+    <SnapCarousel label="Does this sound familiar?" size="card" className="hm-needs-snap" items={rows.map((t) => ({ key: t.q, node: (
+      <a className="hm-needs__row" href={`/explore/products?q=${encodeURIComponent(t.need)}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onSearch?.(t.need); }}>
+        <span className="hm-needs__ph"><Photo src={t.photo} alt="" sizes="(max-width: 640px) 90vw, 420px" loading="lazy" decoding="auto" /><DieCut product={t.product} className="hm-needs__prod" /></span>
+        <span className="hm-needs__quote">“{t.q}”</span>
+        <span className="hm-needs__go">See what helps <Arrow /></span>
+      </a>
+    ) }))} />
+  );
+}
+function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, picks = null, signedOut = true, calm = false }) {
+  const ready = useCatalogReady();
+  const weekly = useMemo(() => (ready ? weeklyLineup().slice(0, 4) : []), [ready]);
+  // Member picks: only products with a real photo, drugstore basics last.
   const personal = useMemo(() => {
     if (!picks) return null;
     const shown = picks.filter((p) => p?.image && NEEDS_PHOTO(p));
-    return [...shown.filter((p) => !BASICS_IDS.has(p.id)), ...shown.filter((p) => BASICS_IDS.has(p.id))];
-  }, [picks]);
-  const items = personal && personal.length >= 2 ? personal.slice(0, 4) : weekly;
-  const ref = useReveal();
+    const basics = basicsProductIds();
+    return [...shown.filter((p) => !basics.has(p.id)), ...shown.filter((p) => basics.has(p.id))];
+  }, [picks, ready]);
+  const mine = Boolean(personal && personal.length >= 2);
+  const pickItems = mine ? personal.slice(0, 4) : weekly;
   // recommendation_viewed for her top picks (not the weekly picks everyone sees).
-  useRecommendationViews(personal && personal.length >= 2 ? items : null, 'home_top_picks');
-  if (items.length < 2) return null;
-  return (
-    <section ref={ref} className="lv-sec" aria-labelledby="lv-trend-title">
-      <header className="lv-head">
-        {personal && personal.length >= 2
-          ? <h2 id="lv-trend-title">Top picks for your <em>needs</em></h2>
-          : <h2 id="lv-trend-title">This week’s <em>picks</em></h2>}
-        <Go className="lv-btn lv-btn--line" href="/shop" onGo={() => onViewDiscovery?.('')}>See the Shop</Go>
-      </header>
-      <Tiles products={items} onOpenProduct={onOpenProduct} ranked />
-    </section>
-  );
-}
-
-/* ---------- dark band: shop by need (every Shop category) + photo strip under it ---------- */
-function ShopBand({ onOpenProduct, onViewDiscovery }) {
+  useRecommendationViews(mine ? pickItems : null, 'home_top_picks');
   const needs = useMemo(() => MACRO_GROUPS.filter((g) => g.id !== 'all')
-    .map((g) => ({ id: g.id, label: g.label, group: g.id }))
+    .map((g) => ({ id: g.id, label: sentenceCase(g.label), group: g.id }))
     .map((n) => ({ ...n, pool: productsForNeed(n).filter(NEEDS_PHOTO).sort((a, b) => Number(isPartnerBrandItem(b)) - Number(isPartnerBrandItem(a))) }))
-    .filter((n) => n.pool.length >= 2), []);
-  const [id, setId] = useState(needs[0]?.id);
-  const [allChips, setAllChips] = useState(false);
-  const need = needs.find((n) => n.id === id) || needs[0];
-  const CHIP_MAX = 7;
-  const shownNeeds = allChips ? needs : needs.slice(0, CHIP_MAX).concat(needs.slice(CHIP_MAX).filter((n) => n.id === id));
-  const ref = useReveal();
-  if (!need) return null;
+    .filter((n) => n.pool.length >= 2)
+    .slice(0, SHOWN_NEEDS), [ready]);
+  const [id, setId] = useState(null);
+  const need = needs.find((n) => n.id === id) || null;
+  let four = pickItems;
+  if (need) {
+    const partner = need.pool.filter((p) => isPartnerBrandItem(p)).slice(0, 1);
+    const rest = need.pool.filter((p) => !isPartnerBrandItem(p));
+    four = [...partner, ...rest].slice(0, 4).sort((a, b) => need.pool.indexOf(a) - need.pool.indexOf(b));
+  }
+  const loading = !ready || (!need && four.length < 2);
+  if (ready && !needs.length && four.length < 2) return null;
+  const listName = need ? `${need.label} products` : mine ? 'Top picks for you' : 'This week’s picks';
   return (
-    <section ref={ref} className="lv-band" aria-labelledby="lv-shop-title">
-      <h2 id="lv-shop-title">Shop by <em>need</em></h2>
-      <div className="lv-chips" role="group" aria-label="Choose a need">
-        {shownNeeds.map((n) => (<button key={n.id} type="button" aria-pressed={n.id === need.id} onClick={() => setId(n.id)}>{n.label}</button>))}
-        {needs.length > CHIP_MAX && <button type="button" className="lv-chips__more" aria-expanded={allChips} onClick={() => setAllChips((v) => !v)}>{allChips ? 'Fewer' : `More (${needs.length - CHIP_MAX})`}</button>}
+    <Band tone="butter" className="hm-sec hm-needsband hm-band" aria-labelledby="hm-familiar-title">
+      <div className="hm-wrap">
+        <header className="hm-head">
+          <h2 id="hm-familiar-title" className="hm-h2">{signedOut ? 'Does this sound familiar?' : 'Explore by need'}</h2>
+          <Go className="ay-btn ay-btn--text hm-head__all" href="/explore/products" onGo={() => onViewDiscovery?.('')}><span className="hm-head__long">See all products</span><span className="hm-head__short">See all<span className="ed-sr"> products</span></span><Arrow /></Go>
+        </header>
+        {calm && signedOut && <div className="lp-need-index" aria-label="Browse common needs">
+          {FAMILIAR.map((need) => <Go key={need.need} href={`/explore/products?q=${encodeURIComponent(need.need)}`} onGo={() => onSearch?.(need.need)} className="lp-need-index__link">{need.q.replace(/\.$/, '')}<Arrow /></Go>)}
+        </div>}
+        <div className={`hm-needsband__grid${calm || !signedOut ? ' is-single' : ''}`}>
+          {signedOut && !calm && <Phrases onSearch={onSearch} />}
+          <div className="hm-shop">
+            <div className="hm-chips" role="group" aria-label="Choose a need">
+              {needs.length ? <>
+                {needs.map((n) => (<Chip key={n.id} selected={n.id === need?.id} onClick={() => setId(n.id === id ? null : n.id)}>{n.label} <span className="hm-chips__count"><span className="ed-sr">, </span>{n.pool.length}<span className="ed-sr"> products</span></span></Chip>))}
+                <Go className="ayk-chip hm-chips__all" href="/explore/products" onGo={() => onViewDiscovery?.('')}>All needs<Arrow /></Go>
+              </> : [0, 1, 2, 3, 4, 5].map((i) => <span key={i} className="hm-chips__skel" aria-hidden="true" />)}
+            </div>
+            <p className="hm-shop__label" aria-live="polite">{listName}</p>
+            <ul className="hm-stickers" key={need?.id || 'picks'} aria-label={loading ? 'Loading products' : listName}>
+              {!loading ? four.map((p) => (
+                <li key={p.id}>
+                  <ProductCard product={p} onOpen={onOpenProduct} className="hm-sticker" />
+                  {signedOut && <Go className="hm-sticker__match" href="/quiz" onGo={onStartQuiz}>See your match<Arrow /></Go>}
+                </li>
+              )) : [0, 1, 2, 3].map((i) => <li key={i} aria-hidden="true"><div className="hm-sticker__skel" /></li>)}
+            </ul>
+            {need && (
+              <div className="hm-shop__foot">
+                <Go className="ay-btn ay-btn--secondary" href="/explore/products" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label.toLowerCase()} products</Go>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-      <div key={need.id} className="lv-band__grid"><Tiles products={(() => { const partner = need.pool.filter((p) => isPartnerBrandItem(p)).slice(0, 1); const rest = need.pool.filter((p) => !isPartnerBrandItem(p)); return [...partner, ...rest].slice(0, 4).sort((a, b) => need.pool.indexOf(a) - need.pool.indexOf(b)); })()} onOpenProduct={onOpenProduct} /></div>
-      <div className="lv-band__foot">
-        <Go className="lv-btn lv-btn--butter" href="/shop" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label} products</Go>
-        <Go className="lv-link" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the whole Shop</Go>
-      </div>
-    </section>
+    </Band>
   );
 }
 
-function Strip() {
-  const list = (hidden) => (
-    <ul className="lv-strip__row" aria-hidden={hidden || undefined}>
-      {STRIP.map((p) => (<li key={p.src}><img src={p.src} alt={hidden ? '' : p.alt} loading="lazy" /></li>))}
-    </ul>
-  );
-  return <div className="lv-strip" aria-label="Photographs from ayna"><div className="lv-strip__track">{list(false)}{list(true)}</div></div>;
-}
-
-/* ---------- why: numbered hotspots on the photo (tap a dot, or the list) ---------- */
-const WHY = [
-  { t: 'Matched to your body', d: 'See how well each product fits you, based on what you tell us.', img: '/landing/lilies.webp', alt: 'Legs in pink socks with a bunch of lilies across the lap' },
-  { t: 'Evidence beside each pick', d: 'What the research says, with sources, right next to the product.', img: '/landing/marble-counter.webp', alt: 'A marble bathroom counter full of products, seen from above' },
-  { t: 'Real experiences', d: 'Posts from women who have actually used it.', img: '/landing/curlers-call.webp', alt: 'A woman in hair curlers laughing on the phone in her bathroom' },
-  { t: 'Your whole routine', d: 'Save what you use and see what fits next.', img: '/landing/sink-tea.webp', alt: 'A bathroom sink holding heels, sunglasses, tea and makeup' },
+/* ---------- 4. how it works + evidence (espresso band) ----------
+   Landing audit 6: three steps (Answer, We check the evidence, You decide),
+   the three-level meter inside step 2, the four catalog numbers beneath and
+   the one call to action. Each step keeps its approved photo; the real piece
+   of ayna it describes sits on the photo as a sticker. */
+const STEPS = [
+  { t: 'Answer a few short questions', d: 'About your body, your life stage and what you avoid.', ui: 'quiz', src: '/landing/hiw-questions-cabinet.webp', pos: '50% 35%' },
+  { t: 'We check the evidence', d: 'Across products, apps and care.', ui: 'evidence', src: '/landing/hiw-evidence-reading.webp', pos: '50% 40%' },
+  { t: 'You decide', d: 'Nothing is bought until you say so.', ui: 'decide', src: '/landing/hiw-decide-basket.webp', pos: '50% 45%' },
 ];
-
-const SPOTS = [['27%', '24%'], ['74%', '40%'], ['20%', '66%'], ['88%', '56%']];
-
-function Why({ paused }) {
-  const ref = useReveal();
-  const [a, setA] = useState(0);
-  const [touched, setTouched] = useState(false);
-  // Nothing moves on its own: the numbers change when you tap them.
-  void paused; void touched;
-  const pick = (i) => { setTouched(true); setA(i); };
+// Real life-stage options from the quiz (intakeModel LIFE_STAGE_LABELS), so the first step shows who ayna is for.
+const STAGE_CHIPS = ['Regular periods', 'Postpartum', 'Perimenopause', 'Post-menopause'];
+function StepUI({ kind }) {
+  if (kind === 'quiz') return <span className="hm-stepui is-quiz" aria-hidden="true">{STAGE_CHIPS.map((c, i) => <span key={c} className={`ay-chip${i === 2 ? ' is-on' : ''}`}>{c}</span>)}</span>;
+  if (kind === 'decide') return <span className="hm-stepui is-decide" aria-hidden="true"><span className="hm-stepui__btn">Save</span><span className="hm-stepui__btn is-quiet">Compare</span></span>;
+  return null;
+}
+/* proof: every number is counted from the catalog when it loads (nothing typed in). */
+const LEVELS = [
+  { n: 3, word: 'Strong evidence', note: 'Research on the product itself.' },
+  { n: 2, word: 'Some evidence', note: 'Clinical guidelines, or research on its ingredients.' },
+  { n: 1, word: 'Limited evidence', note: 'Less direct research so far. We say so plainly.' },
+];
+function useCatalogNumbers() {
+  const ready = useCatalogReady();
+  return useMemo(() => {
+    if (!ready || !ALL_PRODUCTS.length) return null;
+    const brands = new Set();
+    const sources = new Set();
+    for (const p of ALL_PRODUCTS) {
+      const b = String(brandOf(p) || p.brand || '').trim().toLowerCase();
+      if (b) brands.add(b);
+      for (const k of ['scientificCitations', 'doctorOpinionCitations', 'safetyNoteSources']) {
+        for (const c of (Array.isArray(p[k]) ? p[k] : [])) {
+          const u = String(c?.url || '').trim().replace(/[#?].*$/, '').replace(/\/$/, '').toLowerCase();
+          if (u) sources.add(u);
+        }
+      }
+    }
+    const needs = MACRO_GROUPS.filter((g) => g.id !== 'all').length;
+    // The same counts the Shop and Services pages show (one source: data/catalogCounts.js).
+    const { products, services } = shopCatalogCounts();
+    return [
+      { n: products + services, label: `${products} products in the Shop and ${services} services` },
+      { n: brands.size, label: 'brands, big and small' },
+      { n: sources.size, label: 'sources linked on product pages' },
+      { n: needs, label: 'areas of care, from periods to menopause' },
+    ];
+  }, [ready]);
+}
+function Levels({ className, onViewArticles }) {
   return (
-    <section ref={ref} className="lv-sec" aria-labelledby="lv-why-title">
-      <div className="lv-why lv-why--grid">
-        {/* One counter photo with the four numbers scattered on it. */}
-        <div className="lv-cnt" role="group" aria-label="What ayna does: tap a number">
-          <img src="/landing/hiw-ecosystem-vanity.webp" alt="A marble bathroom vanity by candlelight, skincare and makeup laid out around the sink" loading="lazy" />
-          {WHY.map((w, i) => (
-            <button key={w.t} type="button" className={`lv-cnt__n${i === a ? ' is-on' : ''}`} style={{ left: SPOTS[i][0], top: SPOTS[i][1] }} aria-pressed={i === a} aria-label={`${i + 1}. ${w.t}`} onClick={() => pick(i)}>{i + 1}</button>
-          ))}
-        </div>
-        <div className="lv-why__body">
-          <p className="lv-script">what ayna actually is</p>
-          <h2 id="lv-why-title">Your counter, <em>decoded.</em></h2>
-          <ol>
-            {WHY.map((w, i) => (
-              <li key={w.t} className={i === a ? 'is-on' : ''}>
-                <button type="button" aria-pressed={i === a} onClick={() => pick(i)}>
-                  <b aria-hidden="true">{i + 1}</b>
-                  <span className="lv-why__txt"><strong>{w.t}</strong>{i === a && <small key={a}>{w.d}</small>}</span>
-                </button>
-              </li>
-            ))}
-          </ol>
-        </div>
+    <div className={`hm-levelswrap ${className}`}>
+      <ul className="hm-levels" aria-label="The three evidence levels">
+        {LEVELS.map((l) => (
+          <li key={l.n}>
+            <span className="ay-meter" data-level={l.n}>
+              <span className="ay-meter__word">{l.word}</span>
+              <span className="ay-meter__bars" role="img" aria-label={`${l.n} of 3`}>{[1, 2, 3].map((b) => <i key={b} />)}</span>
+            </span>
+            <span className="hm-levels__note">{l.note}</span>
+          </li>
+        ))}
+      </ul>
+      <Go className="ay-btn ay-btn--text hm-levels__more" href="/explore/resources" onGo={onViewArticles}>Read our sources<Arrow /></Go>
+    </div>
+  );
+}
+/* Bento (#455687ac intelly dashboard, #007b85fd "At a Glance"): the three
+   steps and the four catalog numbers as tiles of different sizes and tones on
+   the espresso band, instead of a row of steps and a row of identical stats. */
+function StatTile({ s, tone }) {
+  if (!s) return <Tile tone={tone} as="li" className="hm-bt hm-bt--num is-skel" aria-hidden="true" />;
+  return <Tile tone={tone} as="li" className="hm-bt hm-bt--num" big={s.n.toLocaleString('en-US')} caption={s.label} />;
+}
+function HowEvidence({ onViewHowItWorks, onViewArticles, onStartQuiz, showStart = true }) {
+  const nums = useCatalogNumbers() || [null, null, null, null];
+  const [s1, s2, s3] = STEPS;
+  return (
+    <Band tone="ink" className="hm-sec hm-how hm-band" aria-labelledby="hm-how-title">
+      <div className="hm-wrap">
+        <header className="hm-head">
+          <h2 id="hm-how-title" className="hm-h2">How ayna fits it to you</h2>
+          <Go className="ay-btn ay-btn--text hm-head__all" href="/how-it-works" onGo={onViewHowItWorks}><span className="hm-head__long">The full method</span><span className="hm-head__short">See all<span className="ed-sr"> of the method</span></span><Arrow /></Go>
+        </header>
+        <p className="hm-body hm-how__lead">ayna matches women’s health products to your answers, and shows the research beside each one. Unsupported claims are labeled, not upgraded into facts.</p>
+        <Bento as="ol" className="hm-bento" aria-busy={nums[0] ? undefined : 'true'}>
+          <Tile tone="butter" span="big" as="li" className="hm-bt hm-bt--photo">
+            <span className="hm-bt__ph"><Photo src={s1.src} alt="" sizes="(max-width: 767px) 92vw, 600px" style={{ objectPosition: s1.pos }} loading="lazy" decoding="auto" /></span>
+            <span className="hm-bt__panel">
+              <span className="hm-bt__n" aria-hidden="true">1</span>
+              <h3 className="hm-h3"><span className="ed-sr">Step 1: </span>{s1.t}</h3>
+              <p>{s1.d}</p>
+              <StepUI kind="quiz" />
+            </span>
+          </Tile>
+          <Tile tone="butter" span="tall" as="li" className="hm-bt hm-bt--ev">
+            <span className="hm-bt__n" aria-hidden="true">2</span>
+            <h3 className="hm-h3"><span className="ed-sr">Step 2: </span>{s2.t}</h3>
+            <p>{s2.d}</p>
+            <Levels className="hm-levels--tile" onViewArticles={onViewArticles} />
+          </Tile>
+          <StatTile s={nums[0]} tone="butter" />
+          <StatTile s={nums[1]} tone="ink" />
+          <Tile tone="butter" span="wide" as="li" className="hm-bt hm-bt--decide">
+            <span className="hm-bt__side"><Photo src={s3.src} alt="" sizes="(max-width: 767px) 40vw, 260px" style={{ objectPosition: s3.pos }} loading="lazy" decoding="auto" /><StepUI kind="decide" /></span>
+            <span className="hm-bt__text">
+              <span className="hm-bt__n" aria-hidden="true">3</span>
+              <h3 className="hm-h3"><span className="ed-sr">Step 3: </span>{s3.t}</h3>
+              <p>{s3.d}</p>
+            </span>
+          </Tile>
+          <StatTile s={nums[2]} tone="butter" />
+          <StatTile s={nums[3]} tone="ink" />
+        </Bento>
+        {/* The one call to action after the hero: it closes the method. */}
+        {showStart && <div className="hm-how__cta"><Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Get my matches<Arrow /></Go></div>}
       </div>
-    </section>
+    </Band>
   );
 }
 
-/* ---------- reads: three equal photo cards with their sources, today's fact above ---------- */
-// The reads that earn trust lead (pass 5), each on a real photo from the shoot.
+/* ---------- 5. reads + community: two columns ---------- */
 const LEAD_READS = [
-  { id: 'heavy-bleeding', title: 'Heavy Menstrual Bleeding', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/articles-heavy-bleeding-satin.webp', alt: 'Pads and tampons scattered on red satin' },
-  { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/articles-period-pain-hotwater.webp', alt: 'A woman in striped pajamas holding a hot water bottle' },
-  { id: 'pcos-basics', title: 'PMOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror' },
+  { id: 'heavy-bleeding', title: 'Heavy menstrual bleeding', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/articles-heavy-bleeding-satin.webp', alt: 'Pads and tampons scattered on red satin', tone: 'pink' },
+  { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/articles-period-pain-hotwater.webp', alt: 'A woman in striped pajamas holding a hot water bottle', tone: 'sky' },
+  { id: 'pcos-basics', title: 'PCOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror', tone: 'butter' },
 ];
 function Reads({ onViewArticle, onViewArticles }) {
-  const ref = useReveal();
-  const fact = useMemo(() => { try { return getDailyFact(); } catch { return null; } }, []);
+  // Word of the day removed in the landing clean-up (founder, Oct 27 19:22).
   const open = (id) => { if (onViewArticle) onViewArticle(id); else onViewArticles?.(); };
   return (
-    <section ref={ref} className="lv-sec lv-reads2" aria-labelledby="lv-reads-title">
-      <header className="lv-head">
-        <h2 id="lv-reads-title">Short reads, real sources.</h2>
-        <a className="lv-btn lv-btn--line" href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}>Open the Library</a>
+    <div className="hm-reads">
+      <header className="hm-head">
+        <h2 id="hm-reads-title" className="hm-h2">Quick reads about your body, with sources</h2>
+        <a className="ay-btn ay-btn--text hm-head__all" href="/explore/resources" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}><span className="hm-head__long">Open the Library</span><span className="hm-head__short">See all<span className="ed-sr"> reads in the Library</span></span><Arrow /></a>
       </header>
-      {fact && <p className="lv-fact"><b>Today: {fact.term}.</b> {fact.text} <small className="lv-fact__src">From the ayna glossary.</small></p>}
-      <ul className="lv-reads2__row">
+      {/* Plain rows (master prompt 154: no bento): photo, title, one line, sources. */}
+      <ul className="hm-readlist">
         {LEAD_READS.map((r) => (
           <li key={r.id}>
-            <a href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
-              <span className="lv-reads2__img"><img src={r.src} alt={r.alt} loading="lazy" /></span>
-              <strong>{r.title}</strong>
-              <span className="lv-reads2__teaser">{r.teaser}</span>
-              <small>Sources: {r.source}</small>
+            <a className="hm-readlist__row" href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
+              <span className="hm-readlist__ph"><Photo src={r.src} alt={r.alt} sizes="(max-width: 767px) 96px, 128px" loading="lazy" decoding="auto" /></span>
+              <span className="hm-readlist__text">
+                <strong className="hm-readlist__title">{r.title}</strong>
+                <small className="hm-readlist__src">Sources: {String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
+              </span>
             </a>
           </li>
         ))}
       </ul>
-    </section>
+    </div>
+  );
+}
+/* the Community card: its photo, the latest ayna news, and up to two real posts once there are any */
+function Community({ onViewCommunity, posts = [] }) {
+  const news = useLatestAnnouncement();
+  return (
+    <article className="hm-comm" aria-labelledby="hm-comm-title">
+      <span className="hm-comm__ph"><Photo sizes="(max-width: 767px) 92vw, 460px" src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" decoding="auto" /></span>
+      <div className="hm-comm__copy">
+        <h2 id="hm-comm-title" className="hm-h2">Real talk about what women actually use.</h2>
+        <ReadMore className="hm-more"><p className="hm-body">Reviews, questions and routines from women who use these products. Ask a question, review what you use or share a playlist.</p></ReadMore>
+        <div className="hm-news" aria-labelledby="hm-news-title">
+          <span className="hm-tab hm-news__label">ayna news</span>
+          <h3 id="hm-news-title" className="hm-h3">{news ? news.title : 'ayna Community is open.'}</h3>
+          <p>{news ? news.body : 'Ask questions, review what you use and share playlists with women who get it.'}</p>
+        </div>
+        {posts.length > 0 && (
+          <ul className="hm-posts" aria-label="From the Powder Room">
+            {posts.slice(0, 2).map((post) => {
+              const anon = post.is_anonymous || !post.author_id;
+              const who = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
+              return (
+                <li key={post.id}>
+                  <button type="button" className="hm-post" onClick={() => onViewCommunity?.()}>
+                    <span className="hm-post__meta">{post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} from {who}</span>
+                    <span className="hm-post__body">{post.body}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        <Go className="ay-btn ay-btn--secondary" href="/community" onGo={onViewCommunity}>{news ? 'Read it in Community' : 'Read reviews and questions'}<Arrow /></Go>
+      </div>
+    </article>
+  );
+}
+function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts, calm = false }) {
+  return (
+    <Band tone={calm ? "butter" : "deep"} className="hm-sec hm-rc hm-band" aria-label="Reads and Community">
+      <div className="hm-wrap hm-rc__grid">
+        <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
+        <Community onViewCommunity={onViewCommunity} posts={posts} />
+      </div>
+    </Band>
   );
 }
 
-/* ---------- how it works: four photos, each numbered (Eliz's mockup), then the start card ---------- */
-const STEPS = [
-  { t: 'Answer six questions', d: 'About your body and what you avoid.', src: '/landing/hiw-questions-cabinet.webp', alt: 'A woman in a white robe reaching into her bathroom cabinet', pos: '50% 35%' },
-  { t: 'We check the evidence', d: 'Across products, apps and care.', src: '/landing/hiw-evidence-reading.webp', alt: 'Two friends in glasses reading a book together in front of bookshelves', pos: '50% 40%' },
-  { t: 'Get your ecosystem', d: 'Ranked for you.', src: '/landing/hiw-ecosystem-cabinet.webp', alt: 'A medicine cabinet with shelves full of skincare and beauty products', pos: '50% 50%' },
-  { t: 'You decide', d: 'Nothing is bought until you say so.', src: '/landing/hiw-decide-basket.webp', alt: 'Looking down at a red shopping basket of products between two sneakers', pos: '50% 45%' },
-];
-
-function Start({ onStartQuiz, onViewDiscovery }) {
-  const ref = useReveal();
-  const [s, setS] = useState(0);
+/* ---------- 6. founders (butter) ----------
+   The founders' photo and story (the page's one 44px statement line). The
+   Wefunder card moved to /about (critique, Oct 27: no investing pitch on the
+   consumer home page); the footer keeps its "Invest in ayna" link. */
+function Founders({ onViewAbout }) {
   return (
-    <>
-    <section ref={ref} className="lv-sec lv-start" aria-labelledby="lv-how-title">
-      <header className="lv-head">
-        <h2 id="lv-how-title">How it <em>works</em></h2>
-      </header>
-      <ol className="lv-steps">
-        {STEPS.map((st, i) => (
-          <li key={st.t} className={i === s ? 'is-on' : ''} onMouseEnter={() => setS(i)} onFocus={() => setS(i)}>
-            <figure>
-              <img src={st.src} alt={st.alt} style={{ objectPosition: st.pos }} loading="lazy" />
-              <b aria-hidden="true">{i + 1}</b>
-            </figure>
-            <h3>{st.t}</h3>
-            <p>{st.d}</p>
-          </li>
-        ))}
-      </ol>
-    </section>
-    <section className="lv-sec lv-final" aria-labelledby="lv-start-title">
-      <div className="lv-start__card lv-card">
-        <div className="lv-start__copy">
-          <h2 id="lv-start-title">Start with <em>six</em> questions.</h2>
-          <p>Then a shop matched to you.</p>
-          <div className="lv-start__cta">
-            <Go className="lv-btn lv-btn--ink" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>
-            <Go className="lv-link" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the Shop</Go>
+    <Band tone="butter" className="hm-sec hm-us hm-band" aria-labelledby="hm-us-title">
+      <div className="hm-wrap">
+        <div className="hm-us__grid">
+          <figure className="hm-polaroid">
+            <span className="hm-polaroid__ph"><Photo sizes="(max-width: 767px) 92vw, 600px" src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" decoding="auto" width="1800" height="1198" /></span>
+            <figcaption>Puloma, Eliz &amp; Ameera</figcaption>
+          </figure>
+          <div className="hm-us__copy">
+            <h2 id="hm-us-title" className="hm-h2 hm-statement">Built by three women who wanted better answers.</h2>
+            <p className="hm-body">We met at Cornell, bringing different experiences to the same question: why does understanding our options require so much searching?</p>
+            <Go className="ay-btn ay-btn--secondary" href="/about" onGo={onViewAbout}>Meet us</Go>
           </div>
         </div>
-        <img src="/landing/banner-bath-phone.webp" alt="A woman in a face mask relaxing in a pink tiled bath, scrolling her phone, products along the ledge" loading="lazy" width="960" height="400" />
       </div>
-    </section>
-    </>
+    </Band>
   );
 }
 
-/* Partner brands: the brown strip of names always runs; the pink
-   "Brands we work with" label slides in when you hover (or focus) it. */
-function PartnersTop({ onViewWaitlist }) {
-  return (
-    <section className="lv-partners lv-partners--top lv-partners--peek" aria-labelledby="lv-partners-title">
-      <h2 id="lv-partners-title" className="lv-partners__h">
-        <a href="/partners" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}>Brands we work with <span aria-hidden="true">→</span></a>
-      </h2>
-      <Ticker />
-    </section>
-  );
+function CalmMethod({ onViewHowItWorks, onStartQuiz }) {
+  const steps = [
+    { title: 'Tell us what matters', short: 'Your needs, life stage and preferences.', more: 'Take the personalization quiz at your own pace. You can review your answers and update them as your needs change.' },
+    { title: 'See the fit and the evidence', short: 'A reason for each match, with sources.', more: 'Product pages distinguish strong, some and limited evidence. A match is an option to explore, not a diagnosis or a promise that a product will work for you.' },
+    { title: 'Build a routine that feels like you', short: 'Keep what you use. Leave what you don’t.', more: 'Save the options you want to revisit, add products to your ecosystem and use check-ins to record your experience. Buying is always your choice.' },
+  ];
+  return <section className="lp-method hm-sec" aria-labelledby="hm-how-title">
+    <div className="hm-wrap lp-method__grid">
+      <figure className="lp-method__photo">
+        <Photo src="/landing/hiw-questions-cabinet.webp" alt="A bathroom cabinet filled with everyday care essentials" sizes="(max-width: 767px) 92vw, 480px" loading="lazy" />
+        <figcaption>A little less guessing.</figcaption>
+      </figure>
+      <div className="lp-method__copy">
+        <p className="lp-eyebrow">Made around you</p>
+        <h2 id="hm-how-title" className="hm-h2">How ayna fits it to you</h2>
+        <ol className="lp-method__steps">{steps.map((step, i) => <li key={step.title}>
+          <span className="lp-method__number" aria-hidden="true">0{i + 1}</span>
+          <div><h3>{step.title}</h3><p>{step.short}</p><details><summary>Read more<span className="ed-sr">: {step.title}</span></summary><p>{step.more}</p></details></div>
+        </li>)}</ol>
+        <div className="lp-method__actions"><Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Create your ecosystem<Arrow /></Go>
+        <Go className="ay-btn ay-btn--text" href="/how-it-works" onGo={onViewHowItWorks}>The full method<Arrow /></Go></div>
+      </div>
+    </div>
+  </section>;
 }
 
 /* ---------- page ---------- */
 // `personal` (signed in): the same page with a welcome-back hero, and
-// `personalSlot` (her next step, top picks, Powder Room) right under it.
-export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onSearch, personal = null, personalSlot = null, personalTail = null, heroBanner = null }) {
-  // One motion control for the whole site: the footer's "Pause motion".
-  const paused = useMotionPaused();
+// `personalSlot` (her dashboard row) right under it; `communityPosts` are
+// the most helpful Powder Room posts (two are shown, in the Community card).
+export default function LandingV2({ bodyOnly = false, membershipSlot = null, onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, personal = null, personalSlot = null, communityPosts = [], heroBanner = null }) {
+  const rest = useAfterHeroPaint();
   return (
-    <div className={`lv${paused ? ' is-paused' : ''}`}>
-      <div className="lv-wrap">
-        <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} banner={heroBanner} />
-        {/* Members: the same page, with their own cards under the hero and their top picks in place of the week's picks. */}
-        {personal?.dashboard ? personalSlot : <PartnersTop onViewWaitlist={onViewWaitlist} />}
-        {!personal?.dashboard && personalSlot}
-        {/* Page order (Ameera, Oct 16): picks, counter, shop by need, what's new, who we are, reads, how it works + start. */}
-        <Trending onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={personal?.topPicks || null} />
-        <Why paused={paused} />
-        <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
-        {/* The moving photo strip is back (Ameera, Oct 17). */}
-        <Strip />
-        <LandingStories paused={paused} onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
-        <Purpose onViewAbout={onViewAbout} />
-        {/* Wefunder community round, right after who we are (Ameera, Oct 20). */}
-        <Invest />
-        <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
-        {personalTail}
-        {!(personal && personal.hasQuiz) && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
-      </div>
+    <div className="ed ed-home hm hm-uq">
+      {/* Community posts sit lower down, after how it works, never above the value prop (founder, Oct 24). */}
+      {/* bodyOnly: the website keeps its own hero (the falling pictures) and brand bar above these. */}
+      {!bodyOnly && <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} onOpenProduct={onOpenProduct} onViewHowItWorks={onViewHowItWorks} personal={personal} banner={heroBanner} />}
+      {bodyOnly ? null : personal?.dashboard ? <div className="hm-personal">{personalSlot}</div> : <Brands onViewWaitlist={onViewWaitlist} />}
+      {!personal?.dashboard && personalSlot && <div className="hm-personal">{personalSlot}</div>}
+      <NeedsBand calm={bodyOnly} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} onStartQuiz={onStartQuiz} picks={personal?.topPicks || null} signedOut={!personal} />
+      {rest && <>
+      {bodyOnly ? <CalmMethod onViewHowItWorks={onViewHowItWorks} onStartQuiz={onStartQuiz} /> : <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!(personal && personal.hasQuiz)} />}
+      {!bodyOnly && membershipSlot}
+      <ReadsCommunity calm={bodyOnly} onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
+      {bodyOnly && membershipSlot}
+      <Founders onViewAbout={onViewAbout} />
+      </>}
     </div>
   );
+}
+/* LCP: the hero photo is the largest paint. Rendering the whole page in the
+   first commit left the photo waiting behind one long task on slow phones, so
+   everything after the shop band mounts once the photo is decoded (or after
+   1.2s at most). It is below the fold on every screen size. */
+function useAfterHeroPaint() {
+  const [ready, setReady] = useState(() => typeof window === 'undefined' || window.scrollY > 0);
+  useEffect(() => {
+    if (ready) return undefined;
+    let done = false;
+    // two frames: the photo's first paint happens before the rest of the page renders
+    const go = () => { if (done) return; done = true; requestAnimationFrame(() => requestAnimationFrame(() => window.setTimeout(() => setReady(true), 0))); };
+    const img = document.querySelector('.hm-art__photo img');
+    if (img?.decode) img.decode().then(go, go); else go();
+    const t = window.setTimeout(go, 1200);
+    return () => { done = true; window.clearTimeout(t); };
+  }, [ready]);
+  return ready;
 }
 function useMotionPaused() {
   const read = () => { try { return document.documentElement.classList.contains('ay-motion-paused') || localStorage.getItem('ayna_motion_paused') === '1'; } catch { return false; } };

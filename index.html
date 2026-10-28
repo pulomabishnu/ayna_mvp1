@@ -8,26 +8,25 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/ayna-favicon-v5-180.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="Personalized women's health product discovery with cited research, clinical context, safety information, and community experiences." />
-  <meta property="og:title" content="ayna | Personalized Women's Health Product Discovery" />
+  <meta property="og:title" content="ayna | Personalized women's health product discovery" />
   <meta property="og:description" content="Personalized women's health product discovery with cited research, clinical context, safety information, and community experiences." />
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ayna" />
   <meta property="og:image" content="https://www.aynahealth.co/og/wrapped.png" />
   <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- The website uses two typefaces: DM Serif Display 400 (headings) and DM Sans 400/500/600.
-       The logo's Bricolage is subset to the four letters it draws. The phone app loads its own set (main.jsx). -->
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&text=ayna&display=swap" rel="stylesheet">
+  <!-- The website uses two typefaces, self-hosted in /fonts: ayna Display (Bricolage Grotesque 700 with optical sizes, titles) and Figtree (body).
+       The logo uses the same self-hosted Bricolage file (styles/fonts.css); nothing loads from Google. -->
+  <link rel="preload" href="/fonts/ayna-display-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/figtree-latin-var.woff2" as="font" type="font/woff2" crossorigin>
 
-  <title>ayna | Personalized Women's Health Product Discovery</title>
+  <title>ayna | Personalized women's health product discovery</title>
 </head>
 
 <body>
   <style>
     body:has(#ay-boot) { margin: 0; background: #ffedac; }
-    #ay-boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: #ffedac; color: #3e2723; font-family: 'DM Sans', system-ui, sans-serif; text-align: center; padding: 16px; box-sizing: border-box; }
+    #ay-boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: #ffedac; color: #3e2723; font-family: 'Figtree', system-ui, sans-serif; text-align: center; padding: 16px; box-sizing: border-box; }
     #ay-boot .ay-boot__mark { font: 800 48px/1 'Bricolage Grotesque', system-ui, sans-serif; letter-spacing: -0.03em; }
     #ay-boot .ay-boot__dots { display: flex; gap: 8px; }
     #ay-boot .ay-boot__dots i { width: 10px; height: 10px; border-radius: 50%; background: #3e2723; animation: ayBoot 1.2s ease-in-out infinite; }

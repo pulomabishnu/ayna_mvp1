@@ -37,8 +37,8 @@ describe('health source catalog', () => {
     expect(availabilityFor(rec, { isNative: false }).ok).toBe(false);
     expect(availabilityFor(rec, { isNative: true, nativePlatform: 'android' }).ok).toBe(false);
   });
-  it('WHOOP is an OAuth source, read live', () => {
-    expect(HEALTH_SOURCES.find((s) => s.id === 'whoop').availability).toBe('oauth');
+  it('WHOOP is hidden until production OAuth is available', () => {
+    expect(HEALTH_SOURCES.find((s) => s.id === 'whoop')).toBeUndefined();
     expect(HEALTH_SOURCES.find((s) => s.id === 'request').kind).not.toMatch(/WHOOP/);
   });
   it('Flo is import-only, never an OAuth "connect"', () => {
@@ -68,8 +68,10 @@ describe('value editing on the review screen', () => {
 
 describe('screens render honestly when signed out', () => {
   it('list shows every source and never claims a connection', () => {
-    const html = renderToStaticMarkup(createElement(HealthConnectionsScreen, { selectedId: null, onSelect: () => {}, authUser: null }));
-    for (const s of HEALTH_SOURCES) expect(html).toContain(s.name.replace('&', '&amp;'));
+    const html = renderToStaticMarkup(createElement(HealthConnectionsScreenCore, { selectedId: null, onSelect: () => {}, authUser: null }));
+    // The "Request another" row became the anonymous Suggest an app or wearable box (founder Oct 27).
+    for (const s of HEALTH_SOURCES.filter((x) => x.id !== 'request')) expect(html).toContain(s.name.replace('&', '&amp;'));
+    expect(html).toContain('Suggest an app or wearable');
     expect(html).toContain('Not available');
     expect(html).toContain('Sign in');
     expect(html).not.toContain('>On<');
@@ -88,4 +90,30 @@ describe('screens render honestly when signed out', () => {
   it('insights screen checks Pro access before showing anything', () => {
     expect(renderToStaticMarkup(createElement(HealthInsightsScreen, { authUser: null }))).toContain('Checking access…');
   });
+});
+
+describe('what each source can provide (team direction 42-43)', () => {
+  it('names the four groups each source can provide', async () => {
+    const { providesFor, providesLine, sourceById } = await import('./healthConnections.js');
+    expect(providesFor(sourceById('apple_health')).map((g) => g.id)).toEqual(['sleep', 'cycle', 'activity', 'heart']);
+    expect(providesLine(sourceById('flo'))).toBe('Cycle and temperature');
+    expect(providesLine(sourceById('request'))).toBe('');
+  });
+  it('explains the permission steps for phone and sign-in sources only', async () => {
+    const { connectSteps, sourceById } = await import('./healthConnections.js');
+    expect(connectSteps(sourceById('apple_health'))[0]).toMatch(/Health access sheet/);
+    expect(connectSteps(sourceById('oura'))[0]).toMatch(/go to Oura/);
+    expect(connectSteps(sourceById('upload'))).toEqual([]);
+  });
+  it('shows the last sync time in words', async () => {
+    const { lastSyncedLine } = await import('./healthConnections.js');
+    expect(lastSyncedLine(null)).toBe('Not synced yet');
+    expect(lastSyncedLine('2026-10-24T13:14:00Z')).toMatch(/^Last synced Oct 24/);
+  });
+});
+
+it('does not expose the provider picker before access is checked', () => {
+  const html = renderToStaticMarkup(createElement(HealthConnectionsScreen, { authUser: null }));
+  expect(html).toContain('Checking access');
+  expect(html).not.toContain('Search apps and wearables');
 });

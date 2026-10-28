@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProfileMatchLabelsForProduct } from '../data/products.js';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProfileMatchLabelsForProduct } from '../data/catalog.js';
+import { sentenceCase } from '../utils/sentenceCase.js';
 
 // A product added to the ecosystem is stored as a frozen JSON snapshot
 // (user_ecosystems.product_data, see src/utils/ecosystemStore.js) taken at
@@ -17,7 +18,13 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProf
 //      anything ("device", "wellness", ...) or missing entirely (found
 //      live: "Lumie Bodyclock Starter 30," a real product with full content,
 //      whose category matched nothing here or anywhere in the catalog).
-const CURRENT_CATEGORY_BY_ID = new Map(ALL_PRODUCTS.map((p) => [p.id, p.category]));
+// Built on first use from whichever catalog is loaded (data/catalog.js loads it after first paint).
+let currentCategoryById = null;
+let currentCategorySource = null;
+const currentCategoryFor = (id) => {
+  if (currentCategorySource !== ALL_PRODUCTS) { currentCategoryById = new Map(ALL_PRODUCTS.map((p) => [p.id, p.category])); currentCategorySource = ALL_PRODUCTS; }
+  return currentCategoryById.get(id);
+};
 
 // A single bare word, shared with an unrelated everyday meaning, is weak
 // evidence on its own for which of several possible areas a product belongs
@@ -49,7 +56,7 @@ function scoreGroupMatch(product, group) {
 }
 
 function resolveArea(product, areas) {
-  const category = CURRENT_CATEGORY_BY_ID.get(product?.id) || product?.category;
+  const category = currentCategoryFor(product?.id) || product?.category;
   if (category) {
     const area = areas.find((a) => a.categories.includes(category));
     if (area) return area;
@@ -101,7 +108,7 @@ const BUBBLE = 128;
  * own area here, so it's added back explicitly.
  */
 const AREAS = [
-  ...MACRO_GROUPS.filter((g) => g.id !== 'all').map((g) => ({ key: g.id, label: g.label, categories: g.categories })),
+  ...MACRO_GROUPS.filter((g) => g.id !== 'all').map((g) => ({ key: g.id, label: sentenceCase(g.label), categories: g.categories })),
   { key: 'care', label: 'Virtual care', categories: ['telehealth'] },
   // MACRO_GROUPS deliberately excludes the bare 'supplement' category from every
   // area (see its own comment: one flat "Supplements" chip would be useless for
@@ -171,7 +178,7 @@ export default function EcosystemBubbles({
     // should instead be a single affordance to Browse and pick anything,
     // not the app pre-choosing which gaps look most fillable). Only shown
     // when there's an actual empty seat in the ring to put it in.
-    const addMoreSeat = { key: '__add-more__', label: '+ Add more', products: [], gap: true };
+    const addMoreSeat = { key: '__add-more__', label: 'Add more', products: [], gap: true };
     const seats = filledCapped.length < MAX_SATELLITES ? [...filledCapped, addMoreSeat] : filledCapped;
 
     return { seats, covered: filled.length };

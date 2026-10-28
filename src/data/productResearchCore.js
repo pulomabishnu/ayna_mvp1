@@ -114,11 +114,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Never wear the cup for more than 12 hours at a time without washing it properly.",
    "If you have an IUD, check with your doctor first and break the seal before removing the cup so you don't dislodge the IUD.",
    "If you feel pain, burning, irritation, or inflammation in the genital area, remove the cup and contact a doctor."
-  ],
-  "warningsSource": {
-   "url": "https://cdn.shopify.com/s/files/1/2705/9430/files/files_instructions_saalt_instructions_in_english.pdf",
-   "label": "Saalt Cup instructions leaflet (Saalt)"
-  }
+  ]
  },
  "p-nature-made-iron-65mg": {
   "whoItsFor": [
@@ -275,11 +271,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Don't wear the same pair for more than 12 hours, and change sooner on heavier days.",
    "Wash with a mild, unscented, dye-free detergent and add an extra rinse.",
    "Skip fabric softener and let them air-dry."
-  ],
-  "warningsSource": {
-   "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-   "label": "Cleveland Clinic: What is period underwear and does it work?"
-  }
+  ]
  },
  "p-cora-organic-tampons": {
   "whoItsFor": [
@@ -332,11 +324,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Check with your healthcare provider before use if you are trying to get pregnant, are pregnant or nursing, have any medical condition, or take any medications.",
    "For adult use only. Keep out of reach of children.",
    "Do not use if the tamper-evident seal is broken or missing."
-  ],
-  "warningsSource": {
-   "url": "https://www.vitacost.com/products/wholesome-story-myo-d-chiro-inositol-120-vegetarian-capsules-114887",
-   "label": "Wholesome Story Myo & D-Chiro Inositol label, via Vitacost"
-  }
+  ]
  },
  "p-spearmint-pcos": {
   "whoItsFor": [
@@ -379,11 +367,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Check with your healthcare provider before starting, especially if you are pregnant, nursing or taking medication.",
    "For adult use only. Keep out of reach of children.",
    "The label carries a California Prop 65 warning about exposure to chemicals the state lists as causing cancer."
-  ],
-  "warningsSource": {
-   "url": "https://target.com/p/love-wellness-bye-bye-bloat-for-fast-bloating-relief-60ct/-/A-80209808",
-   "label": "Love Wellness Bye Bye Bloat label, via Target"
-  }
+  ]
  },
  "p-intimina-kegel": {
   "whoItsFor": [
@@ -456,11 +440,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Do not take if you are pregnant, breastfeeding or trying to get pregnant.",
    "Keep out of reach of children.",
    "Do not use if any part of the blister pack is torn, open or damaged."
-  ],
-  "warningsSource": {
-   "url": "https://www.vitacost.com/products/estroven-menopause-relief-mood-boost-30-caplets-63596",
-   "label": "Estroven Menopause Relief + Mood Boost label, via Vitacost"
-  }
+  ]
  },
  "p-remifemin": {
   "whoItsFor": [
@@ -512,11 +492,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "If you are pregnant, check with your healthcare practitioner before using it.",
    "Use only if the bottle's seal is intact.",
    "Store tightly sealed in a cool, dry place."
-  ],
-  "warningsSource": {
-   "url": "https://www.vitacost.com/products/thorne-creatine-16-oz-450-g-70006",
-   "label": "Thorne Creatine 16 oz label text (Vitacost listing)"
-  }
+  ]
  },
  "d-nurx-bc": {
   "whoItsFor": [
@@ -997,11 +973,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "If you have an IUD, a history of prolapse, a pre-existing condition, or gynecological concerns, check with your doctor before use.",
    "Wear it for up to 12 hours.",
    "If you have side effects, stop using it and contact your doctor."
-  ],
-  "warningsSource": {
-   "url": "https://www.target.com/p/cora-reusable-menstrual-disc-1ct/-/A-82433921",
-   "label": "Cora Reusable Menstrual Disc label text (Target product listing)"
-  }
+  ]
  },
  "p-modibodi": {
   "whoItsFor": [
@@ -1115,11 +1087,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Contact your healthcare provider if you have an abnormal vaginal odor that won't go away or comes with itching, burning, irritation, or discharge.",
    "It is not a contraceptive and has no spermicide.",
    "If pregnant or breastfeeding, ask your healthcare provider before use."
-  ],
-  "warningsSource": {
-   "url": "https://uk.iherb.com/pr/good-clean-love-restore-moisturizing-vaginal-gel-15-applications-2-fl-oz-59-ml/143638",
-   "label": "Good Clean Love Restore Moisturizing Vaginal Gel label as listed on iHerb"
-  }
+  ]
  },
  "p-flo-gummies": {
   "whoItsFor": [
@@ -1171,11 +1139,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Ask your healthcare professional before use if you have or suspect a medical condition, take prescription drugs, or are pregnant or breastfeeding.",
    "Keep out of reach of children.",
    "Store in a cool, dry place."
-  ],
-  "warningsSource": {
-   "url": "https://www.vitacost.com/products/hum-nutrition-flatter-me-60-vegan-capsules-136402",
-   "label": "Vitacost: HUM Nutrition Flatter Me product label"
-  }
+  ]
  },
  "p-thermacare": {
   "whoItsFor": [
@@ -1203,8 +1167,8 @@ export const PRODUCT_RESEARCH_CORE = {
    "Each heat cell contains iron and can be harmful if swallowed; keep away from children and pets."
   ],
   "warningsSource": {
-   "url": "https://www.orderroombox.com/product/thermacare-heatwraps-menstrual-pain-therapy/",
-   "label": "Retailer listing reproducing the ThermaCare Menstrual HeatWraps label"
+   "url": "https://www.thermacare.com/product-labels/LBL-00000248-WEB-READY-THERMACARE-MENSTRUAL.PDF",
+   "label": "ThermaCare Menstrual label (thermacare.com)"
   }
  },
  "p-portable-heating": {
@@ -1231,11 +1195,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Don't use it on skin that can't feel temperature changes, and never use it on an infant.",
    "Don't crush or fold the pad during use or storage.",
    "Read and follow all of the manufacturer's instructions before use."
-  ],
-  "warningsSource": {
-   "url": "https://webarchive.library.unt.edu/web/20081205084122/http:/www.fda.gov/cdrh/heatpad.pdf",
-   "label": "FDA/CPSC Public Health Advisory: Hazards Associated with the Use of Electric Heating Pads (1995, archived)"
-  }
+  ]
  },
  "p-viboos-heating-pad": {
   "whoItsFor": [
@@ -1261,11 +1221,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Don't sit or lie on the pad, and don't crush or fold it.",
    "Don't use it on skin that can't feel temperature changes, and never use it on an infant.",
    "Check it before each use, throw it out if it looks worn or the cord is frayed, and unplug it when you're done."
-  ],
-  "warningsSource": {
-   "url": "https://webarchive.library.unt.edu/web/20081205084122/http:/www.fda.gov/cdrh/heatpad.pdf",
-   "label": "FDA/CPSC Public Health Advisory: Hazards Associated with the Use of Electric Heating Pads (1995, archived)"
-  }
+  ]
  },
  "d-betterhelp": {
   "whoItsFor": [
@@ -2299,10 +2255,6 @@ export const PRODUCT_RESEARCH_CORE = {
    "Skip fabric softener and bleach, which can stop the absorbent layers from working.",
    "Switch to a fresh pair if you start to feel damp or uncomfortable."
   ],
-  "warningsSource": {
-   "url": "https://periodaisle.com/blogs/all/how-often-should-you-change-period-underwear-best-practices-for-maximum-comfort",
-   "label": "Aisle: How Often Should You Change Period Underwear?"
-  },
   "communityReview": "Reviews of the underwear itself are mostly positive: people say it feels soft and not bulky, handles overnight flow without leaks, holds up in the wash, and comes in an inclusive size range. The most common complaints are about the company rather than the product, including long shipping waits even with priority shipping, slow customer service and refunds, and a final-sale policy some only noticed after ordering. A few mention the Booster shifting out of place, staining over time, or needing to size up.",
   "communityReviewSources": [
    {
@@ -2579,11 +2531,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Wash it with warm water and soap after each use.",
    "If you share it, put a new condom on it each time, especially between different partners.",
    "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions."
-  ],
-  "warningsSource": {
-   "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-   "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
-  }
+  ]
  },
  "p-oboo-woo": {
   "whoItsFor": [
@@ -2608,11 +2556,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Wash it with warm water and soap after each use.",
    "If you share it, put a new condom on it each time, especially between different partners.",
    "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions."
-  ],
-  "warningsSource": {
-   "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-   "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
-  }
+  ]
  },
  "p-oboo-shoop": {
   "whoItsFor": [
@@ -2638,11 +2582,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "If you share it, put a new condom on it each time, especially between different partners.",
    "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions.",
    "Wash it, or change the condom, when you switch between vaginal and anal use."
-  ],
-  "warningsSource": {
-   "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-   "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
-  }
+  ]
  },
  "p-oboo-moon": {
   "whoItsFor": [
@@ -2697,11 +2637,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Wash it with warm water and soap after each use.",
    "If you share it, put a new condom on it each time, especially between different partners.",
    "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions."
-  ],
-  "warningsSource": {
-   "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-   "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
-  }
+  ]
  },
  "p-oboo-groove": {
   "whoItsFor": [
@@ -2727,11 +2663,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "If you share it, put a new condom on it each time, especially between different partners.",
    "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions.",
    "Wash it, or change the condom, when you switch between vaginal and anal use."
-  ],
-  "warningsSource": {
-   "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-   "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
-  }
+  ]
  },
  "p-oboo-boom": {
   "whoItsFor": [
@@ -2757,11 +2689,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "If you share it, put a new condom on it each time, especially between different partners.",
    "Check it regularly for scratches or breaks, and follow the maker's cleaning and storage instructions.",
    "Wash it, or change the condom, when you switch between vaginal and anal use."
-  ],
-  "warningsSource": {
-   "url": "https://seftonsexualhealth.nhs.uk/adult-safer-sex",
-   "label": "NHS Sefton Sexual Health: Safer sex (sex toys)"
-  }
+  ]
  },
  "p-oboo-smooth-daily": {
   "whoItsFor": [
@@ -3699,10 +3627,6 @@ export const PRODUCT_RESEARCH_CORE = {
    "Like most clothing, this underwear can burn if exposed to a flame.",
    "Do not flush."
   ],
-  "warningsSource": {
-   "url": "https://stopandshop.com/groceries/product/depend-womens-silhouette-incontinence-underwear-maximum-l-20-ct-pkg/329225",
-   "label": "Depend Silhouette Maximum label text (as listed on Stop & Shop product page)"
-  },
   "communityReview": "Reviewers often say these hold up overnight and during activity, feel close to regular underwear, and are hard to spot under clothes, especially the black version. Common complaints are a pad area that feels too short or narrow, waistbands that dig in or irritate skin, and reports that newer packs leak more than older ones. Fit for larger bodies is another recurring sticking point.",
   "communityReviewSources": [
    {
@@ -3865,10 +3789,6 @@ export const PRODUCT_RESEARCH_CORE = {
    "Review the app's settings, since defaults often lean toward sharing.",
    "Keep the app and your phone's operating system updated to fix privacy and security problems."
   ],
-  "warningsSource": {
-   "url": "https://consumer.ftc.gov/consumer-alerts/2021/01/does-your-health-app-protect-your-sensitive-info",
-   "label": "FTC Consumer Alert: Does your health app protect your sensitive info?"
-  },
   "effectiveness": "No independent study of Stardust's predictions was found. For the product type, a 2016 Obstetrics and Gynecology study found only 20 of 108 free period-tracking apps met basic accuracy criteria. Stardust was not named, and apps have changed since then.",
   "effectivenessSources": [
    {
@@ -3939,11 +3859,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "For adults only.",
    "Ask a doctor before use if you are pregnant or nursing, take medication, or have a medical condition.",
    "Keep out of reach of children."
-  ],
-  "warningsSource": {
-   "url": "https://www.vitacost.com/now-foods-d-mannose-500-mg-240-veg-capsules",
-   "label": "NOW Foods D-Mannose 500 mg capsules, label copy on Vitacost"
-  }
+  ]
  },
  "p-cystex": {
   "whoItsFor": [
@@ -3970,11 +3886,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Do not use if you are allergic to salicylates, including aspirin.",
    "Stop and ask a doctor if you have used it for 3 days, get ringing in your ears, or notice signs of stomach bleeding.",
    "Pregnancy: Cleveland Clinic says taking it between weeks 20 and 30 of pregnancy may harm the baby and not to take it after week 30, so ask your clinician first."
-  ],
-  "warningsSource": {
-   "url": "https://otclabels.com/lib/otc/otc-meds/cystex-1/",
-   "label": "Cystex Drug Facts label (Clarion Brands), via OTClabels.com"
-  }
+  ]
  },
  "p-cora-organic-pads": {
   "whoItsFor": [
@@ -4028,11 +3940,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Stop using it and get medical advice if you have a bad reaction.",
    "Not intended for children; keep out of reach of children.",
    "Do not use if the safety seal is broken or missing."
-  ],
-  "warningsSource": {
-   "url": "https://www.vitacost.com/products/garden-of-life-dr-formulated-probiotics-once-daily-women-s-50-billion-30-vegetarian-capsules-64442",
-   "label": "Product label (Supplement Facts and warnings) as listed on Vitacost"
-  }
+  ]
  },
  "p-evening-primrose": {
   "whoItsFor": [
@@ -4057,11 +3965,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Don't take it if you have a bleeding condition, and be careful with blood thinners or anti-platelet medicines.",
    "Stop taking it two weeks before surgery.",
    "It might raise the risk of pregnancy complications."
-  ],
-  "warningsSource": {
-   "url": "https://www.mayoclinic.org/drugs-supplements-evening-primrose/art-20364500",
-   "label": "Mayo Clinic: Evening primrose"
-  }
+  ]
  },
  "p-vitex": {
   "whoItsFor": [
@@ -4087,11 +3991,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "If you have a hormone-sensitive cancer, talk to your doctor before using it.",
    "Lab studies suggest it may weaken birth control pills and hormone therapy, though this hasn't been confirmed in people.",
    "It may interfere with dopamine-related drugs, such as some Parkinson's medicines and antipsychotics."
-  ],
-  "warningsSource": {
-   "url": "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/chasteberry",
-   "label": "Memorial Sloan Kettering Cancer Center: Chasteberry (About Herbs)"
-  }
+  ]
  },
  "p-fish-oil": {
   "whoItsFor": [
@@ -4115,11 +4015,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Ask a doctor before use if you are pregnant or breastfeeding, have a medical condition, or take medicines, including blood thinners.",
    "Do not take if the tamper-evident seal is broken or missing.",
    "Keep out of reach of children."
-  ],
-  "warningsSource": {
-   "url": "https://www.vitacost.com/products/nordic-naturals-omega-woman-with-evening-primrose-oil-120-soft-gels-4298",
-   "label": "Nordic Naturals Omega Woman product label as listed on Vitacost"
-  }
+  ]
  },
  "p-b-complex": {
   "whoItsFor": [
@@ -4143,11 +4039,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "If you are pregnant, ask your healthcare practitioner before using this product.",
    "Use only if the bottle is sealed.",
    "Long-term B6 intake above 100 mg a day has been linked to nerve damage; at the label's top dose (3 capsules) this product alone gives about 70 mg."
-  ],
-  "warningsSource": {
-   "url": "https://www.vitacost.com/products/thorne-b-complex-12-60-capsules-18126",
-   "label": "Thorne B-Complex #12 label as listed on Vitacost (B6 limit from HSA Singapore, linked above)"
-  }
+  ]
  },
  "p-cranberry-supplement": {
   "whoItsFor": [
@@ -4201,11 +4093,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Not intended for children; keep out of reach of children.",
    "Don't go over 40 mg of zinc a day from all sources; 50 mg or more for weeks can lower copper and weaken immune function.",
    "Zinc can block absorption of quinolone and tetracycline antibiotics, so take the antibiotic at least 2 hours before or 4 to 6 hours after zinc."
-  ],
-  "warningsSource": {
-   "url": "https://www.vitacost.com/products/garden-of-life-vitamin-code-raw-zinc-with-vitamin-c-60-vegan-capsules-46033",
-   "label": "Garden of Life Vitamin Code Raw Zinc label as listed on Vitacost (limits and antibiotic timing from NIH ODS Zinc fact sheet, linked above)"
-  }
+  ]
  },
  "p-boric-acid": {
   "whoItsFor": [
@@ -4231,11 +4119,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Do not use if you are pregnant or nursing.",
    "Do not use on broken or irritated skin, and stop and contact a doctor if symptoms persist or worsen, or you have irritation or burning.",
    "Avoid sex while using the suppositories, and keep out of reach of children."
-  ],
-  "warningsSource": {
-   "url": "https://www.heb.com/product-detail/the-honey-pot-boric-acid-and-herbs-suppositories/5689050",
-   "label": "The Honey Pot Boric Acid and Herbs Suppositories label as listed on H-E-B"
-  }
+  ]
  },
  "p-love-wellness-intimate-skin-support": {
   "whoItsFor": [
@@ -4261,11 +4145,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "A mild stinging feeling may happen in rare cases.",
    "This is not a treatment for UTIs; see your doctor for UTI symptoms.",
    "Don't use it if you're sensitive to any ingredient, and seek medical advice if your symptoms persist."
-  ],
-  "warningsSource": {
-   "url": "https://www.ulta.com/p/p-pimprod2050204",
-   "label": "Ulta Beauty: Love Wellness Intimate Skin Support product label"
-  }
+  ]
  },
  "p-elvie-trainer": {
   "whoItsFor": [
@@ -4348,11 +4228,7 @@ export const PRODUCT_RESEARCH_CORE = {
   "warnings": [
    "For external use only.",
    "Avoid contact with eyes."
-  ],
-  "warningsSource": {
-   "url": "https://www.heb.com/product-detail/the-honey-pot-intimate-foaming-wash-sensitive-with-cucumber-aloe/12430512",
-   "label": "H-E-B: The Honey Pot Intimate Foaming Wash, Sensitive with Cucumber Aloe (label text)"
-  }
+  ]
  },
  "p-luna-wash": {
   "whoItsFor": [
@@ -4376,10 +4252,6 @@ export const PRODUCT_RESEARCH_CORE = {
    "For external use only; don't use it inside the vagina, which cleans itself.",
    "Patch test on the inside of your arm 24 hours before first use."
   ],
-  "warningsSource": {
-   "url": "https://boots.com/lunadaily-the-everywhere-wash-250ml-10336536",
-   "label": "Boots: Luna Daily The Everywhere Wash (product label text)"
-  },
   "communityReview": "Reviewers often say the wash feels gentle on sensitive skin and leaves it soft and hydrated, and many like the light scent. Common complaints are a watery texture that doesn't lather much, occasional pump problems, a scent some find too faint, and a price that feels high for a body wash.",
   "communityReviewSources": [
    {
@@ -4453,11 +4325,7 @@ export const PRODUCT_RESEARCH_CORE = {
   "warnings": [
    "Ovia's own App Store privacy label says your location, identifiers, usage data and diagnostics may be used to track you across other companies' apps and sites.",
    "The same label says data linked to your identity can include health and fitness data, financial info and sensitive info, so review your privacy settings."
-  ],
-  "warningsSource": {
-   "url": "https://apps.apple.com/app/570244389",
-   "label": "Ovia Cycle & Pregnancy Tracker (Ovuline, Inc.), Apple App Store listing, App Privacy label"
-  }
+  ]
  },
  "d-glow": {
   "whoItsFor": [
@@ -4482,11 +4350,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Glow is meant to help you predict ovulation to get pregnant. It is not meant to be used as birth control.",
    "The app's information does not replace professional medical advice, so check medical questions with a healthcare provider.",
    "Glow's App Store privacy label says some data, including purchases, location and identifiers, may be used to track you across other companies' apps and sites, so review your privacy settings."
-  ],
-  "warningsSource": {
-   "url": "https://apps.apple.com/app/id638021335",
-   "label": "Glow Ovulation & Period App, Apple App Store listing (description and App Privacy label)"
-  }
+  ]
  },
  "d-maven": {
   "whoItsFor": [
@@ -4511,11 +4375,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Not for emergency or urgent care needs. In a true emergency, call 911 or go to the nearest emergency room.",
    "Not a substitute for your own doctor's care.",
    "Program nurses and other representatives cannot diagnose problems or suggest treatment."
-  ],
-  "warningsSource": {
-   "url": "https://plexusbenefits.uhc.com/wp-content/uploads/2025/07/maven-maternity-member-flier.pdf",
-   "label": "UnitedHealthcare: Maven Maternity member flier"
-  }
+  ]
  },
  "d-tia": {
   "whoItsFor": [
@@ -4627,11 +4487,7 @@ export const PRODUCT_RESEARCH_CORE = {
   },
   "warnings": [
    "Call your OB/GYN right away if you have a fever of 100.4 °F or higher, more pain, or foul-smelling discharge."
-  ],
-  "warningsSource": {
-   "url": "https://www.bmc.org/bump-beyond/postpartum-experience/physical-health/perineal-care.md",
-   "label": "Boston Medical Center, Bump & Beyond: Perineal care (official guidance for postpartum perineal care)"
-  }
+  ]
  },
  "p-lansinoh-pads": {
   "whoItsFor": [
@@ -4684,11 +4540,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Accidental overdose of iron-containing products is a leading cause of fatal poisoning in children under 6.",
    "Keep this product out of reach of children, and call a doctor or poison control center right away in case of accidental overdose.",
    "Check with your health care practitioner before using it if you are pregnant or nursing."
-  ],
-  "warningsSource": {
-   "url": "https://www.vitacost.com/products/ritual-essential-for-women-prenatal-multivitamin-citrus-60-vegan-capsules-153103",
-   "label": "Ritual Essential for Women Prenatal Multivitamin label, as reproduced on Vitacost"
-  }
+  ]
  },
  "p-belly-bandit": {
   "whoItsFor": [
@@ -4752,11 +4604,7 @@ export const PRODUCT_RESEARCH_CORE = {
   },
   "warnings": [
    "Some people get slight irritation from silicone-based lube if it isn't washed off soon after vaginal sex."
-  ],
-  "warningsSource": {
-   "url": "https://health.cornell.edu/sites/health/files/pdf-library/Condoms_Lube.pdf",
-   "label": "Cornell Health: Condoms and Lube (guidance for silicone-based lubricants)"
-  }
+  ]
  },
  "p-v-wash": {
   "whoItsFor": [
@@ -4802,10 +4650,6 @@ export const PRODUCT_RESEARCH_CORE = {
    "Stop using it if a rash or discomfort develops.",
    "Keep out of the reach and sight of children."
   ],
-  "warningsSource": {
-   "url": "https://www.ulta.com/p/unscented-gentle-soothing-wipes-pimprod2007177",
-   "label": "SweetSpot Labs Unscented Gentle Soothing Wipes label text (Ulta product listing)"
-  },
   "communityReview": "Reviewers often say the wipes feel gentle and soothing, leave skin soft without drying it out, and are handy to carry. Common complaints are a scent some find strong or artificial, wipes that feel thin or dry, occasional irritation or burning, and a small count for the price.",
   "communityReviewSources": [
    {
@@ -4838,11 +4682,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "For external use only, and keep it out of your eyes.",
    "Stop use and ask a doctor if your symptoms get worse, last more than 7 days, or clear up and then come back within a few days.",
    "Keep out of reach of children. If swallowed, get medical help or call Poison Control right away."
-  ],
-  "warningsSource": {
-   "url": "https://otclabels.com/lib/otc/otc-meds/daily-vlotion/",
-   "label": "Kindra Daily V Lotion product label (OTC Labels)"
-  }
+  ]
  },
  "p-citracal-bone-health": {
   "whoItsFor": [
@@ -4868,11 +4708,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "If you're pregnant, breastfeeding, taking medicine, or have any medical condition, ask a health professional before use.",
    "Older adults, teens, and anyone who has trouble swallowing should check with a health professional before use.",
    "Not for children under 12, and do not take more than the recommended amount."
-  ],
-  "warningsSource": {
-   "url": "https://nz.iherb.com/pr/citracal-maximum-plus-d3-180-coated-caplets/31720",
-   "label": "Citracal Maximum Plus + D3 label text (iHerb product listing, 180-caplet size)"
-  }
+  ]
  },
  "d-peanut": {
   "whoItsFor": [
@@ -4897,11 +4733,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "The app is rated 18+.",
    "Posts come from other users, and health and wellness topics are part of the community.",
    "The developer says some data, including purchases and sensitive info, may be used to track you across other companies' apps and websites, so check the privacy settings before sharing."
-  ],
-  "warningsSource": {
-   "url": "https://apps.apple.com/app/id1178656034",
-   "label": "Peanut on the Apple App Store (developer's listing and privacy label)"
-  }
+  ]
  },
  "p-intimina-lily": {
   "whoItsFor": [
@@ -4928,11 +4760,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Don't wear it for more than 8 hours at a time.",
    "It is not a contraceptive and won't protect against pregnancy or STIs, so remove it before sex.",
    "Stop using it and contact a medical practitioner if you have any pain or discomfort."
-  ],
-  "warningsSource": {
-   "url": "https://www.superdrug.com/natural-pain-relief/health/womens-intimate-health-care/periods/menstrual-cups/intimina-menstrual-lily-cup-compact-a/p/mp-00440408",
-   "label": "Intimina Lily Cup Compact label text (Superdrug product listing)"
-  }
+  ]
  },
  "p-hello-disc": {
   "whoItsFor": [
@@ -4959,11 +4787,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Do not leave the disc in for more than 12 hours.",
    "It is not birth control and won't prevent pregnancy.",
    "If condoms are your only birth control, remove the disc before sex, since friction could cause a tiny tear in the condom."
-  ],
-  "warningsSource": {
-   "url": "https://www.chemistwarehouse.co.nz/buy/122640/hello-period-menstrual-disc",
-   "label": "Hello Disc label text (Chemist Warehouse NZ product listing)"
-  }
+  ]
  },
  "p-saalt-disc": {
   "whoItsFor": [
@@ -5048,11 +4872,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Do not wear the same pair for more than 12 hours, and change sooner on your heaviest days.",
    "Wash with a mild, unscented, dye-free detergent and skip fabric softener; leftover detergent can irritate your skin.",
    "If you mainly need protection from urine leaks, choose a product designed for that."
-  ],
-  "warningsSource": {
-   "url": "https://health.clevelandclinic.org/does-period-underwear-work",
-   "label": "Cleveland Clinic Health Essentials: Does period underwear work? (no brand page or label found for Bambody)"
-  }
+  ]
  },
  "p-bodily-kit": {
   "whoItsFor": [
@@ -5077,11 +4897,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Call your OB/GYN right away if you have a fever of 100.4 F or higher, more pain, or a foul-smelling discharge.",
    "Signs your stitches may be infected include redness, a smelly discharge, new or growing swelling or pain, or feeling feverish and unwell.",
    "Change your pad often and wash your hands before changing it, to lower the risk of infection."
-  ],
-  "warningsSource": {
-   "url": "https://www.bmc.org/bump-beyond/postpartum-experience/physical-health/perineal-care",
-   "label": "Boston Medical Center: Perineal care (first warning); The Rotherham NHS Foundation Trust: Caring for your perineum after giving birth (second and third). Bodily's product page lists no safety warnings."
-  }
+  ]
  },
  "p-haakaa-pump": {
   "whoItsFor": [
@@ -5135,11 +4951,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Take the cups off before you breastfeed.",
    "Do not use other nipple treatments, like creams, together with the cups; the brand says this may make them work less well.",
    "Wash them every day with warm water to remove milk residue."
-  ],
-  "warningsSource": {
-   "url": "https://jilliansdrawers.com/products/silverette-silver-nursing-cups",
-   "label": "Jillian's Drawers: Silverette Silver Nursing Cups (brand how-to-use instructions, retailer copy)"
-  }
+  ]
  },
  "p-hatch-oil": {
   "whoItsFor": [
@@ -5245,11 +5057,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "For adult use only; do not let children under 2 use this pillow.",
    "To prevent suffocation, never put it in a crib, play pen or bassinet, or near anywhere a baby may sleep.",
    "Keep it away from heat and open flame."
-  ],
-  "warningsSource": {
-   "url": "https://well.ca/products/leachco-snoogle-chic-total-body-pillow_129572.html",
-   "label": "Well.ca: Leachco Snoogle Chic Total Body Pillow (label safety precautions, retailer copy)"
-  }
+  ]
  },
  "p-dame-arc": {
   "whoItsFor": [
@@ -5275,11 +5083,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Do not use silicone-based lube with Arc; use water-based.",
    "Do not insert anally; the base is not flared enough.",
    "Clean after every use with soap and water or a water-based toy cleaner; never use alcohol, petroleum or acetone, and do not boil it or put it in the dishwasher."
-  ],
-  "warningsSource": {
-   "url": "https://cdn.shopify.com/s/files/1/1027/2873/files/Arc_Manual.pdf",
-   "label": "Dame Arc user manual (PDF)"
-  }
+  ]
  },
  "p-lelo-sona": {
   "whoItsFor": [
@@ -5305,11 +5109,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "Use only water-based lube, not silicone lube.",
    "Clean it with toy cleaner.",
    "Do not leave it in heat or direct sunlight."
-  ],
-  "warningsSource": {
-   "url": "https://www.superdrug.com/health/sexual-health/vibrators-adult-toys/vibrators/lelo-sona-cruise-clitoral-massager-cerise/p/mp-00120986",
-   "label": "Superdrug: LELO SONA Cruise Clitoral Massager (product copy; lelo.com page could not be opened)"
-  }
+  ]
  },
  "p-mystery-vibe": {
   "whoItsFor": [
@@ -5363,11 +5163,7 @@ export const PRODUCT_RESEARCH_CORE = {
   "warnings": [
    "For external use only.",
    "Avoid contact with your eyes and mouth."
-  ],
-  "warningsSource": {
-   "url": "https://www.vitacost.com/products/ph-d-feminine-health-boric-acid-foam-wash-sensitive-6-fl-oz-177-ml-152146",
-   "label": "Vitacost: pH-D Feminine Health Boric Acid Foam Wash, Sensitive (label copy)"
-  }
+  ]
  },
  "p-sweetspot-buff-brighten": {
   "whoItsFor": [
@@ -5394,11 +5190,7 @@ export const PRODUCT_RESEARCH_CORE = {
    "This product has AHAs that can make your skin more sensitive to the sun, so use sunscreen and limit sun exposure while using it and for a week after.",
    "Avoid your eyes; if it gets in them, rinse well with water.",
    "Stop using it if you get a rash or discomfort, and if you're pregnant, check with your doctor before using AHA or BHA products."
-  ],
-  "warningsSource": {
-   "url": "https://www.ulta.com/p/p-xlsImpprod18651011",
-   "label": "Ulta: SweetSpot Labs Buff & Brighten AHA/BHA Body Exfoliating Pads (brand product listing)"
-  }
+  ]
  },
  "p-gennev-care": {
   "whoItsFor": [

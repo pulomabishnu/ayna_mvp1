@@ -76,9 +76,9 @@
     gateNote.textContent = enabled
       ? 'Pro gates are ON. Free-tier limits and Pro-only restrictions are active for users now.'
       : 'Pro gates are OFF. Users are not currently blocked by the Free vs. Pro feature restrictions.';
-    freeAsk.textContent = String(rules.freeAskPerDay ?? '—');
-    proAsk.textContent = String(rules.proAskPerDay ?? '—');
-    freePlaylists.textContent = String(rules.freePlaylists ?? '—');
+    freeAsk.textContent = String(rules.freeAskPerDay ?? 'n/a');
+    proAsk.textContent = String(rules.proAskPerDay ?? 'n/a');
+    freePlaylists.textContent = String(rules.freePlaylists ?? 'n/a');
   }
 
   function setBusy(value) {

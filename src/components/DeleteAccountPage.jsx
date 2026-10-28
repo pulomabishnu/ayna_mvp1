@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import BackLink from './nav/BackLink.jsx';
 import posthog from 'posthog-js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { deleteAllSavedRecordsOnDevice } from '../health/records.js';
+import { fetchWithTimeout } from '../utils/network.js';
+import CharRing from './ui/CharRing.jsx';
+import { isOverLimit } from '../utils/charLimit.js';
 
 const REASON_OPTIONS = [
   'Not what I expected',
@@ -189,7 +193,7 @@ export default function DeleteAccountPage({ onBack }) {
         });
       } catch { /* analytics unavailable */ }
 
-      const res = await fetch('/api/account-delete', {
+      const res = await fetchWithTimeout('/api/account-delete', {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -213,36 +217,28 @@ export default function DeleteAccountPage({ onBack }) {
     }
   };
 
-  const labelStyle = { display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: 14, marginBottom: '0.9rem' };
-  const inputStyle = { padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: 14 };
 
   return (
-    <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '640px' }}>
-      <div className="card" style={{ padding: '1rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-          <h2 style={{ margin: 0, fontSize: 'var(--ay-fs-section)', color: '#8a1c13' }}>Delete your account</h2>
-          <button type="button" className="btn btn-outline" onClick={onBack} disabled={busy || reauthBusy}>
-            Back
-          </button>
-        </div>
-
-        <p style={{ margin: '0 0 1rem', color: 'var(--color-text-muted)', fontSize: 14, lineHeight: 1.5 }}>
+    <section className="ct dl ay-container">
+      <BackLink label="You" onClick={onBack} disabled={busy || reauthBusy} />
+      <h1 className="ay-h1">Delete your account</h1>
+      <div className="ay-alert dl-warn"><span aria-hidden="true">!</span><p>
           This permanently deletes your ayna account, health intake, imported health profile, ecosystem, saved/tracked/hidden products, reviews, learning memory, phone/SMS records, notification preferences, and other account-linked data. Active-tab ayna caches on this browser are cleared too. This cannot be undone.
-        </p>
-
+        </p></div>
+      <div className="ay-group is-padded dl-form">
         {loadingUser && (
-          <p style={{ color: 'var(--color-text-muted)', fontSize: 14 }}>Loading your account…</p>
+          <p className="dl-note">Loading your account…</p>
         )}
 
         {!loadingUser && step === 'reauth' && (
           <>
-            <p style={{ margin: '0 0 1rem', fontSize: 14, fontWeight: 600 }}>
+            <p className="dl-lead">
               First, confirm it's you by logging in again.
             </p>
 
             {reauthMethod === 'password' && (
               <>
-                <label style={labelStyle}>
+                <label className="dl-field">
                   Email
                   <input
                     type="email"
@@ -250,10 +246,10 @@ export default function DeleteAccountPage({ onBack }) {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={reauthBusy}
                     autoComplete="username"
-                    style={{ ...inputStyle, maxWidth: '320px' }}
+                    
                   />
                 </label>
-                <label style={labelStyle}>
+                <label className="dl-field">
                   Password
                   <input
                     type="password"
@@ -261,14 +257,14 @@ export default function DeleteAccountPage({ onBack }) {
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={reauthBusy}
                     autoComplete="current-password"
-                    style={{ ...inputStyle, maxWidth: '320px' }}
+                    
                   />
                 </label>
-                {reauthError && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: 14 }}>{reauthError}</p>}
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                {reauthError && <p role="status" className="dl-err">{reauthError}</p>}
+                <div className="dl-actions">
                   <button
                     type="button"
-                    className="btn btn-primary"
+                    className="ay-btn ay-btn--primary"
                     onClick={handlePasswordReauth}
                     disabled={!email.trim() || !password || reauthBusy}
                   >
@@ -282,19 +278,19 @@ export default function DeleteAccountPage({ onBack }) {
               <>
                 {!otpSent ? (
                   <>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginBottom: '0.9rem' }}>
+                    <p className="dl-note">
                       We'll text a verification code to the phone number on your account to confirm it's you.
                     </p>
-                    {reauthError && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: 14 }}>{reauthError}</p>}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                      <button type="button" className="btn btn-primary" onClick={handleSendOtp} disabled={reauthBusy}>
+                    {reauthError && <p role="status" className="dl-err">{reauthError}</p>}
+                    <div className="dl-actions">
+                      <button type="button" className="ay-btn ay-btn--primary" onClick={handleSendOtp} disabled={reauthBusy}>
                         {reauthBusy ? 'Sending…' : 'Send code'}
                       </button>
                     </div>
                   </>
                 ) : (
                   <>
-                    <label style={labelStyle}>
+                    <label className="dl-field">
                       Verification code
                       <input
                         type="text"
@@ -302,12 +298,12 @@ export default function DeleteAccountPage({ onBack }) {
                         value={otpCode}
                         onChange={(e) => setOtpCode(e.target.value)}
                         disabled={reauthBusy}
-                        style={{ ...inputStyle, maxWidth: '220px' }}
+                        
                       />
                     </label>
-                    {reauthError && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: 14 }}>{reauthError}</p>}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                      <button type="button" className="btn btn-primary" onClick={handleVerifyOtp} disabled={!otpCode.trim() || reauthBusy}>
+                    {reauthError && <p role="status" className="dl-err">{reauthError}</p>}
+                    <div className="dl-actions">
+                      <button type="button" className="ay-btn ay-btn--primary" onClick={handleVerifyOtp} disabled={!otpCode.trim() || reauthBusy}>
                         {reauthBusy ? 'Verifying…' : 'Verify'}
                       </button>
                     </div>
@@ -318,12 +314,12 @@ export default function DeleteAccountPage({ onBack }) {
 
             {reauthMethod === 'google' && (
               <>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: 14, marginBottom: '0.9rem' }}>
+                <p className="dl-note">
                   You'll be asked to confirm your Google account.
                 </p>
-                {reauthError && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: 14 }}>{reauthError}</p>}
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <button type="button" className="btn btn-primary" onClick={handleGoogleReauth} disabled={reauthBusy}>
+                {reauthError && <p role="status" className="dl-err">{reauthError}</p>}
+                <div className="dl-actions">
+                  <button type="button" className="ay-btn ay-btn--primary" onClick={handleGoogleReauth} disabled={reauthBusy}>
                     {reauthBusy ? 'Redirecting…' : 'Continue with Google'}
                   </button>
                 </div>
@@ -331,8 +327,8 @@ export default function DeleteAccountPage({ onBack }) {
             )}
 
             {!reauthMethod && (
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn btn-primary" onClick={() => setStep('confirm')}>
+              <div className="dl-actions">
+                <button type="button" className="ay-btn ay-btn--primary" onClick={() => setStep('confirm')}>
                   Next: confirm deletion
                 </button>
               </div>
@@ -342,13 +338,13 @@ export default function DeleteAccountPage({ onBack }) {
 
         {!loadingUser && step === 'confirm' && (
           <>
-            <label style={labelStyle}>
+            <label className="dl-field">
               Reason for leaving (optional, helps us improve)
               <select
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 disabled={busy}
-                style={inputStyle}
+                
               >
                 <option value="">Prefer not to say</option>
                 {REASON_OPTIONS.map((opt) => (
@@ -358,40 +354,25 @@ export default function DeleteAccountPage({ onBack }) {
             </label>
 
             {reason === 'Other' && (
-              <label style={labelStyle}>
+              <label className="dl-field">
                 Tell us more (optional)
-                <textarea
+                <span className="ay-charfield"><textarea
                   rows={2}
                   value={reasonDetails}
                   onChange={(e) => setReasonDetails(e.target.value)}
                   disabled={busy}
-                  maxLength={600}
-                  style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
-                />
+                  aria-invalid={isOverLimit(reasonDetails, 600) || undefined}
+                /><CharRing value={reasonDetails} max={600} /></span>
               </label>
             )}
 
-            {error && <p role="status" style={{ margin: '0 0 0.9rem', color: '#8a1c13', fontSize: 14 }}>{error}</p>}
+            {error && <p role="status" className="dl-err">{error}</p>}
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.5rem' }}>
-              <button type="button" className="btn btn-outline" onClick={onBack} disabled={busy}>
+            <div className="dl-actions">
+              <button type="button" className="ay-btn ay-btn--secondary" onClick={onBack} disabled={busy}>
                 Cancel
               </button>
-              <button
-                type="button"
-                onClick={handleDelete}
-                disabled={busy}
-                style={{
-                  padding: '0.55rem 0.9rem',
-                  border: 0,
-                  borderRadius: 'var(--radius-md)',
-                  background: '#b42318',
-                  color: 'white',
-                  fontWeight: 600,
-                  cursor: busy ? 'not-allowed' : 'pointer',
-                  opacity: busy ? 0.55 : 1,
-                }}
-              >
+              <button type="button" className="ay-btn ay-btn--primary dl-danger" onClick={handleDelete} disabled={busy || isOverLimit(reasonDetails, 600)}>
                 {busy ? 'Deleting…' : 'Permanently delete account'}
               </button>
             </div>

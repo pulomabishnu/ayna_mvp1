@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { findTerm } from '../../data/glossary.js';
+import { conditionDisplayName } from '../../../utils/conditionRename.js';
 import SmartSearchInput from '../../../components/search/SmartSearchInput.jsx';
 import { matchesSearchOption } from '../../../utils/search/index.js';
+import { AGE_MIN, AGE_MAX } from '../../data/intakeModel.js';
 
 // Game-style answer controls for the mobile intake. Every control keeps the
 // exact value contract of the widget it replaced (same option strings, same
@@ -14,14 +16,14 @@ const Check = () => (
 
 /* ---------- chips + stickers ---------- */
 
-export function ChipList({ items, selected = [], onToggle, compact = false, muted = [] }) {
+export function ChipList({ items, selected = [], onToggle, compact = false, muted = [], labels = {} }) {
   return (
     <div className={`ip-chips${compact ? ' is-compact' : ''}`}>
       {items.map((item) => {
         const on = selected.includes(item);
         return (
           <button type="button" key={item} aria-pressed={on} className={`ip-chip${muted.includes(item) ? ' is-muted' : ''}${findTerm(item) ? ' has-term' : ''}`} onClick={() => onToggle(item)}>
-            {on && <Check />}<span>{item}</span>
+            {on && <Check />}<span>{labels[item] || conditionDisplayName(item)}</span>
           </button>
         );
       })}
@@ -33,7 +35,7 @@ const STICKER_TILTS = [-2.2, 1.6, 1.1, -1.4, -0.8, 2, 1.4, -1.8];
 
 export function StickerGrid({ items, selected = [], onToggle, labels = {}, glyphs = {}, icons }) {
   return (
-    <div className={`ip-stickers${icons ? ' has-icons' : ''}`}>
+    <div className={`ip-stickers${icons ? ' has-icons' : ''}${!icons && !Object.keys(glyphs || {}).length ? ' is-plain' : ''}`}>
       {items.map((item, index) => {
         const on = selected.includes(item);
         const icon = icons?.[item];
@@ -43,7 +45,7 @@ export function StickerGrid({ items, selected = [], onToggle, labels = {}, glyph
             onClick={() => onToggle(item)}>
             {icon && <span className="ip-sticker-icon">{icon}</span>}
             {!icon && glyphs[item] && <span className="ip-sticker-glyph" data-glyph={glyphs[item]} aria-hidden="true" />}
-            <span className="ip-sticker-label">{labels[item] || item}</span>
+            <span className="ip-sticker-label">{labels[item] || conditionDisplayName(item)}</span>
             <span className="ip-sticker-badge" aria-hidden="true"><Check /></span>
           </button>
         );
@@ -66,7 +68,7 @@ export function SearchField({ value, onChange, placeholder }) {
 
 // Plain, high-clarity single choice. Used for every safety question, so it
 // deliberately has no playful treatment: full-width rows, radio dot, label.
-export function ChoiceRows({ options, value, onChange }) {
+export function ChoiceRows({ options, value, onChange, labels = {} }) {
   return (
     <div className="ip-rows" role="radiogroup">
       {options.map((opt) => {
@@ -74,7 +76,7 @@ export function ChoiceRows({ options, value, onChange }) {
         return (
           <button type="button" key={opt} role="radio" aria-checked={on} className="ip-row" onClick={() => onChange(opt)}>
             <span className="ip-radio" aria-hidden="true" />
-            <span>{opt}</span>
+            <span>{labels[opt] || opt}</span>
           </button>
         );
       })}
@@ -84,8 +86,8 @@ export function ChoiceRows({ options, value, onChange }) {
 
 /* ---------- age ---------- */
 
-const MIN_AGE = 18;
-const MAX_AGE = 90;
+const MIN_AGE = AGE_MIN;
+const MAX_AGE = AGE_MAX;
 
 /** Type your age, or use −/+ and the ruler. Commits on 2+ digits or blur so "2…" doesn't flash the under-18 note. */
 function AgeInput({ value, onCommit }) {
@@ -115,7 +117,7 @@ export function AgeDial({ value, onChange, underage, onOpenGate }) {
       </div>
       <input className="ip-ruler" type="range" min={MIN_AGE} max={MAX_AGE} value={hasValue ? Math.min(MAX_AGE, n) : MIN_AGE}
         onChange={(e) => onChange(e.target.value)} aria-label="Slide to choose your age" style={{ '--fill': `${fill}%` }} />
-      <div className="ip-ruler-ends" aria-hidden="true"><span>18</span><span>{hasValue ? 'years' : 'choose age'}</span><span>90+</span></div>
+      <div className="ip-ruler-ends" aria-hidden="true"><span>18</span><span>{hasValue ? 'years' : 'choose age'}</span><span>{MAX_AGE}+</span></div>
       {underage && (
         <button type="button" className="ip-warning" onClick={onOpenGate}>
           <strong>ayna is for ages 18 and up</strong>

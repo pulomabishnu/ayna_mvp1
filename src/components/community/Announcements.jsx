@@ -9,6 +9,9 @@ import { CATEGORY_LABELS } from '../../data/products.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
 import ProductTileImage, { ProductImageFallback } from '../ProductTileImage';
 import { RuleField } from './RuleField.jsx';
+import { CharRing } from './notesKit.jsx';
+import RelativeTime from '../ui/RelativeTime.jsx';
+import { autofocusTarget } from '../../utils/delightRuntime.js';
 import { VerifiedBadge } from './VerifiedBadge.jsx';
 import { RichText } from './richText.jsx';
 import RichEditor from './RichEditor.jsx';
@@ -21,7 +24,6 @@ import './community-shared.css';
 // (variant="app").
 
 const KIND_LABEL = { playlist: 'Playlist', product: 'Product', read: 'Read', link: 'Link' };
-const dateLabel = (v) => (v ? new Date(v).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '');
 const eventDate = (d) => { if (!d) return ''; const [y, m, day] = d.split('-').map(Number); return new Date(y, m - 1, day).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }); };
 const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -52,7 +54,7 @@ function Dialog({ title, onClose, host, children, footer }) {
   useEffect(() => {
     const opener = document.activeElement;
     const node = ref.current;
-    (node?.querySelector('[data-autofocus]') || node)?.focus();
+    (autofocusTarget(node) || node)?.focus(); // no surprise keyboard (utils/delightRuntime.js)
     const onKey = (e) => {
       if (e.key === 'Escape') { e.stopPropagation(); closeRef.current(); return; }
       if (e.key !== 'Tab' || !node) return;
@@ -317,7 +319,7 @@ export default function Announcements({ supabase, user, products = [], productsB
     </div>
     {error && <p className="cr-error" role="alert">{error}</p>}
     {rows === null ? <div className="cr-ann-skel" aria-busy="true" aria-label="Loading announcements"><span /><span /></div>
-      : rows.length === 0 ? (variant === 'web' ? null : <div className="cr-ann-empty"><h2>No announcements yet</h2><p>{available ? 'News from the ayna team will show up here.' : 'Announcements are coming soon.'}</p></div>)
+      : rows.length === 0 ? (<div className="cr-ann-empty"><h2>No announcements yet</h2><p>{available ? 'News from the ayna team will show up here.' : 'Announcements are coming soon.'}</p></div>)
         : <ol className="cr-ann-list">{rows.map((row) => {
           const rx = reactions[row.id] || { count: 0, mine: false };
           const nReplies = replyCounts[row.id] || 0;
@@ -326,7 +328,7 @@ export default function Announcements({ supabase, user, products = [], productsB
           return <li key={row.id} className="cr-ann-card">
             <header className="cr-ann-head">
               <Initials name={nameFor(row.author_id)} />
-              <div className="cr-ann-meta">{author(row.author_id)}<time dateTime={row.created_at}>{dateLabel(row.created_at)}</time></div>
+              <div className="cr-ann-meta">{author(row.author_id)}<RelativeTime at={row.created_at} /></div>
               {canPost && <button type="button" className="cr-text-btn" disabled={busy} onClick={() => remove(row)}>Delete</button>}
             </header>
             <h3 className="cr-ann-title">{row.title}</h3>
@@ -339,11 +341,12 @@ export default function Announcements({ supabase, user, products = [], productsB
             </footer>
             {open === row.id && <div className="cr-ann-thread">
               {replies.map((r) => <div key={r.id} className="cr-ann-reply">
-                <div className="cr-ann-reply-head">{author(r.author_id, true)}<time dateTime={r.created_at}>{dateLabel(r.created_at)}</time></div>
+                <div className="cr-ann-reply-head">{author(r.author_id, true)}<RelativeTime at={r.created_at} /></div>
                 <p>{r.body}</p>
               </div>)}
               {user ? <div className="cr-ann-reply-box">
                 <RuleField value={replyBody} maxLength={ann.ANNOUNCEMENT_REPLY_MAX} onChange={(e) => setReplyBody(e.target.value)} placeholder="Write a reply" aria-label="Your reply" className="cr-input" autoGrow minRows={2} maxGrowPx={240} onShowRules={onShowRules} />
+                <CharRing length={replyBody.length} max={ann.ANNOUNCEMENT_REPLY_MAX} className="ay-ring cr-ring" />
                 <button type="button" className="cr-btn is-small" disabled={busy || !replyBody.trim() || breaksCommunityRules(replyBody)} onClick={() => sendReply(row)}>Post reply</button>
               </div> : <button type="button" className="cr-btn is-ghost is-small" onClick={() => onRequireAuth?.('replies')}>Sign in to reply</button>}
             </div>}

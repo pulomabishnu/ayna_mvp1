@@ -1,32 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { PREMIUM_READ_IDS } from '../pro/premiumReads.js';
+import { PRO_CHANGED_EVENT, proFeatureName } from '../pro/paywall.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { loadProFeatureRules, requestPro } from '../utils/proApi.js';
-import SubscriptionPaywallModal from './SubscriptionPaywallModal.jsx';
+import ProLock from './ProLock.jsx';
 import '../styles/pro-v4.css';
-
-const LOCKED_COPY = {
-  dashboard: ['Your health dashboard', 'Unlock your health dashboard and connect supported health apps and wearables with ayna Pro. Your ecosystem stays available.'],
-  reads: ['Unlimited Reads', 'Free ayna includes one Read each week. Pro members can open unlimited Reads.'],
-  wearables: ['Connect health apps and wearables', 'Connecting supported health apps and wearables is included with ayna Pro.'],
-  insights: ['Deeper personalized insights', 'Deeper personalized health insights are included with ayna Pro.'],
-  history: ['Health trends and history', 'Detailed health trends and history are included with ayna Pro. Your basic health view stays free.'],
-  recap: ['Personalized recaps', 'Personalized recaps are included with ayna Pro.'],
-  trial: ['Advanced tracking', 'Personal try-and-check-back tracking is included with ayna Pro.'],
-  appointment: ['Appointment prep', 'Appointment prep is included with ayna Pro.'],
-  quiz: ['Unlimited quiz retakes', 'Free ayna includes one personalization quiz retake each week. Pro members can retake it anytime.'],
-};
 
 function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosystem, children }) {
   const owner = useRef(null);
   const [revision, setRevision] = useState(0);
   const [refresh, setRefresh] = useState(0);
   const [result, setResult] = useState(null);
-  const [showPaywall, setShowPaywall] = useState(false);
   const key = `${feature}:${readId}:${revision}`;
-  const [defaultTitle, copy] = LOCKED_COPY[feature] || ['ayna Pro', 'This feature is included with ayna Pro.'];
-  const gateTitle = feature === 'reads' ? defaultTitle : (title || defaultTitle);
+  const gateTitle = feature === 'reads' ? proFeatureName('reads') : (title || proFeatureName(feature));
   const contextTitle = feature === 'reads' && title ? title : '';
 
   useEffect(() => {
@@ -47,6 +33,16 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
     };
   }, []);
 
+  // Check again when Pro may have changed: after checkout, "already Pro", or
+  // when she comes back to this tab from another one.
+  useEffect(() => {
+    const again = () => setRefresh(n => n + 1);
+    const visible = () => { if (document.visibilityState === 'visible') again(); };
+    window.addEventListener(PRO_CHANGED_EVENT, again);
+    document.addEventListener('visibilitychange', visible);
+    return () => { window.removeEventListener(PRO_CHANGED_EVENT, again); document.removeEventListener('visibilitychange', visible); };
+  }, []);
+
   useEffect(() => {
     const controller = new AbortController();
     let timer;
@@ -54,7 +50,10 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
       try {
         const rules = await loadProFeatureRules(controller.signal);
         if (typeof rules.enabled !== 'boolean') throw new Error('We couldn’t check Pro access.');
-        let allowed = !rules.enabled || (feature === 'reads' && !rules.premiumReadIds.includes(readId));
+        // Every signed-in Read uses the same one-per-week Free allowance. The
+        // server's atomic claim lets the same Read reopen during that week;
+        // Pro remains unlimited. Other Pro features use the normal active check.
+        let allowed = !rules.enabled;
         let expiresAt = null;
         if (!allowed) {
           const status = feature === 'reads'
@@ -69,8 +68,8 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
           const delay = expiresAt && allowed ? Math.min(60000, Math.max(0, expiresAt - Date.now())) : 60000;
           timer = setTimeout(() => { setResult(null); setRefresh(n => n + 1); }, delay);
         }
-      } catch (error) {
-        if (!controller.signal.aborted) setResult({ key, allowed: false, error: error.message });
+      } catch {
+        if (!controller.signal.aborted) setResult({ key, allowed: false, error: 'We couldn’t confirm your Pro access. Please try again.' });
       }
     };
     check();
@@ -79,45 +78,32 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
 
   if (result?.key === key && result.allowed) return children;
 
-  return <section className="pro-access" aria-label={gateTitle}>
-    {onBack && <button type="button" className="pro-access__back" onClick={onBack}>← Back</button>}
-    <div className="pro-access__card">
-      <p className="pro-access__eyebrow">ayna Pro Early Access</p>
-      <h2 className="pro-access__title">{gateTitle}</h2>
-      {result?.key !== key ? <div className="pro-access__copy"><p role="status">Checking access…</p></div> : <>
-        <div className="pro-access__copy">
-          {contextTitle && <p className="pro-access__context">{contextTitle}</p>}
-          <p>{copy}</p>
-          {result.error && <p className="pro-access__error" role="status">{result.error}</p>}
-          <p>Your basic matching, safety information, Community, and privacy controls stay free.</p>
-        </div>
-        <ul className="pro-access__included" aria-label="ayna Pro includes">
-          <li>Unlimited Reads</li>
-          <li>Up to 50 Ask ayna chats</li>
-          <li>Unlimited playlists</li>
-        </ul>
-        {!Capacitor.isNativePlatform() ? (
-          <div className="pro-access__actions">
-            <button type="button" className="pro-access__primary" onClick={() => setShowPaywall(true)}>{feature === 'dashboard' ? 'Get ayna Pro' : 'Unlock ayna Pro · from $4.99'}</button>
-            <button type="button" className="pro-access__secondary" onClick={() => setRefresh(n => n + 1)}>Check access again</button>
-          </div>
-        ) : (
-          <>
-            <p className="pro-access__fine">Already a Pro member? Sign in with the ayna account that has your membership.</p>
-            <div className="pro-access__actions">
-              <button type="button" className="pro-access__secondary" onClick={() => setRefresh(n => n + 1)}>Check access again</button>
-            </div>
-          </>
-        )}
-        {onEcosystem && <div className="pro-access__actions"><button type="button" className="pro-access__secondary" onClick={onEcosystem}>See my ecosystem</button></div>}
-        {!Capacitor.isNativePlatform() && <p className="pro-access__fine">Early Access unlocks Pro now. Your paid month or year starts January 1, 2027.</p>}
-      </>}
-    </div>
-    {showPaywall && <SubscriptionPaywallModal onClose={() => setShowPaywall(false)} featureName={gateTitle} featureDescription="all available ayna Pro features" />}
+  // While the first check runs, a quiet line only: a Pro member never sees a lock flash.
+  if (result?.key !== key) {
+    return <section className="pro-gate pro-gate--checking" aria-busy="true">
+      <p className="pro-gate__checking" role="status">Checking access…</p>
+    </section>;
+  }
+
+  return <section className="pro-gate" aria-label={gateTitle}>
+    {onBack && <button type="button" className="pro-gate__back" onClick={onBack}>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      Back
+    </button>}
+    <ProLock
+      feature={feature}
+      title={gateTitle}
+      context={contextTitle}
+      native={Capacitor.isNativePlatform()}
+      onNotNow={onBack || onEcosystem}
+      error={result.error || ''}
+      onRetry={() => setRefresh(n => n + 1)}
+    >
+      {onEcosystem && <p className="pro-lock__alt"><button type="button" className="ct-link" onClick={onEcosystem}>See my ecosystem</button></p>}
+    </ProLock>
   </section>;
 }
 
 export default function ProFeatureGate(props) {
-  if (props.feature === 'reads' && !PREMIUM_READ_IDS.includes(props.readId)) return props.children;
   return <CheckedProFeatureGate {...props} />;
 }

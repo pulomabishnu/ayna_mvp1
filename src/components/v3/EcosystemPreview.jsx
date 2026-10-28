@@ -1,13 +1,15 @@
 import React, { useMemo } from 'react';
 import ProductTileImage, { ProductImageFallback, resolveCatalogProductImage } from '../ProductTileImage';
+import '../../styles/you-hub.css';
 
-/* My Ecosystem for someone who is not signed in: the page itself, so she can
+/* Your ecosystem for someone who is not signed in: the page itself, so she can
    see what it is before being asked for anything. The shelves are real Shop
-   products shown as an example, blurred and locked, with one clear way in. */
+   products, labelled as an example (not blurred: the checklist bans ghost
+   data and blur), beside one clear way in. */
 const SAMPLE_SHELVES = [
   { key: 'period', label: 'Period', cats: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'period-care'] },
-  { key: 'intimate', label: 'Intimate Care', cats: ['intimate-care'] },
-  { key: 'pain', label: 'Pain + Recovery', cats: ['cramp-relief'] },
+  { key: 'intimate', label: 'Intimate care', cats: ['intimate-care'] },
+  { key: 'pain', label: 'Pain and recovery', cats: ['cramp-relief'] },
 ];
 
 function pick(products, cats, n) {
@@ -34,14 +36,14 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn, mat
     return (
       <section className="ay-ecoprev is-mine" aria-labelledby="ay-ecoprev-title">
         <header className="ay-ecoprev__head">
-          <h1 id="ay-ecoprev-title" className="ay-ecoprev__title">Your <em>matches</em></h1>
+          <h1 id="ay-ecoprev-title" className="ay-ecoprev__title">Your products</h1>
           <p className="ay-ecoprev__lede">{matches.length} picks from your answers. Tap one to see why it fits.</p>
         </header>
         <div className="ay-ecoprev__save" role="note">
           <p>Save them with a free account so they’re here next time. Your answers stay on this device until you do.</p>
           <div>
             <button type="button" className="ay-ecoprev__primary" onClick={onSave}>Save my matches</button>
-            {onBrowse && <button type="button" className="ay-ecoprev__secondary" onClick={onBrowse}>Browse the Shop by best match</button>}
+            {onBrowse && <button type="button" className="ay-ecoprev__secondary" onClick={onBrowse}>Browse products by best match</button>}
           </div>
         </div>
         <ul className="ay-ecoprev__mine">
@@ -61,8 +63,8 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn, mat
   return (
     <section className="ay-ecoprev" aria-labelledby="ay-ecoprev-title">
       <header className="ay-ecoprev__head">
-        <h1 id="ay-ecoprev-title" className="ay-ecoprev__title">My <em>Ecosystem</em></h1>
-        <p className="ay-ecoprev__lede">The products that fit your body, sorted onto shelves by what you need them for.</p>
+        <h1 id="ay-ecoprev-title" className="ay-ecoprev__title">Build your health ecosystem</h1>
+        <p className="ay-ecoprev__lede">Keep your concerns, matches, saved products and health insights connected in one place.</p>
       </header>
 
       <ol className="ay-ecoprev__steps">
@@ -71,8 +73,9 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn, mat
         <li><b>Fill the gaps.</b> Needs with nothing on them yet get their best picks.</li>
       </ol>
 
-      <div className="ay-ecoprev__stage">
-        <div className="ay-ecoprev__shelves" aria-hidden="true">
+      <div className="ay-ecoprev__stage is-honest">
+        <div className="ay-ecoprev__shelves">
+          <p className="ay-ecoprev__note">An example from the Shop, not your matches.</p>
           {shelves.map((s) => (
             <div key={s.key} className="ay-ecoprev__shelf">
               <p className="ay-ecoprev__shelfname">{s.label}</p>
@@ -93,11 +96,10 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn, mat
           </span>
           <h2 className="ay-ecoprev__locktitle">Your shelves are waiting</h2>
           <p className="ay-ecoprev__locktext">Build your ecosystem to fill these with products picked for you.</p>
-          <button type="button" className="ay-ecoprev__primary" onClick={onBuild}>See my matches</button>
+          <button type="button" className="ay-ecoprev__primary" onClick={onBuild}>Build mine</button>
           <button type="button" className="ay-ecoprev__secondary" onClick={onSignIn}>I already have one. Sign in</button>
         </div>
       </div>
-      <p className="ay-ecoprev__note">The shelves above are an example from the Shop, not your matches.</p>
     </section>
   );
 }

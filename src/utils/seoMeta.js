@@ -5,10 +5,10 @@
  * prerender (scripts/prerender.mjs) so crawlers and browsers see the same
  * words. Nothing here adds a claim the catalog doesn't already make.
  */
-import { HEALTH_FUNCTIONS } from '../data/products.js';
+import { HEALTH_FUNCTIONS } from '../data/catalogTaxonomy.js';
 import { brandOf } from '../mobile/data/brandFallback.js';
-import { categoryLabel } from '../components/pdp/glance.js';
-import { priceParts } from '../data/passport/content.js';
+import { categoryLabel } from '../components/pdp/categoryLabel.js';
+import { priceParts } from '../data/passport/priceParts.js';
 
 export const SITE_ORIGIN = 'https://www.aynahealth.co';
 

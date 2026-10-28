@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { checkCommunityText } from '../../utils/communityRules.js';
 import { RuleNote } from './RuleField.jsx';
+import { CharRing } from './notesKit.jsx';
 import { serializeEditor } from './richTextFormat.js';
 
 // The announcement message box, edited like a Google Doc (Oct 16): what you
@@ -124,6 +125,7 @@ export default function RichEditor({ id, onChange, maxLength = 4000, placeholder
         onPaste={onPaste}
         onBlur={sync}
       />
+      <CharRing length={text.length} max={maxLength} className="ay-ring cr-ring" />
       <RuleNote id={noteId} check={check} onShowRules={onShowRules} />
     </div>
   );

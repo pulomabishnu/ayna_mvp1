@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { CATEGORIES, METRICS } from '../../../health/metrics.js';
-import { categoriesFor, fileKind, originFor, parseHealthFile } from '../../../health/manualImport.js';
+import { categoriesFor, fileKind, foundSummary, originFor, parseHealthFile } from '../../../health/manualImport.js';
 import { confirmImport, extractFromImage, extractionStatus } from '../../../health/healthApi.js';
 import { formatValue, parseEdited } from '../../../health/format.js';
+import { localToday } from '../../../utils/localDate.js';
 
 /**
  * "Upload health data". The file is read on her device; nothing is saved until
@@ -16,7 +17,7 @@ const fmtDay = (day) => new Date(`${day}T12:00:00Z`).toLocaleDateString('en-US',
 const TYPEABLE = ['sleep_minutes', 'steps', 'resting_hr_bpm', 'hrv_rmssd_ms', 'basal_temp_c', 'menstrual_flow', 'workout_minutes', 'active_energy_kcal', 'readiness_score'];
 
 function ManualEntry({ onAdd, declaredOrigin }) {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localToday();
   const [day, setDay] = useState(today);
   const [metric, setMetric] = useState('sleep_minutes');
   const [text, setText] = useState('');
@@ -136,7 +137,8 @@ export default function HealthUploadScreen({ signedIn, onSignIn, onDone, presetA
         platform: Capacitor.isNativePlatform() ? Capacitor.getPlatform() : 'web',
       });
       setRows([]);
-      onDone?.(`Saved ${out.saved} ${out.saved === 1 ? 'value' : 'values'}. Your file wasn't kept.`);
+      const used = consent.filter((c) => cats.includes(c)).map((c) => CATEGORIES[c].label.toLowerCase());
+      onDone?.(`Saved ${out.saved} ${out.saved === 1 ? 'value' : 'values'}${used.length ? ` (${used.join(', ')})` : ''}. ayna now uses them for your insights and routine. Your file wasn't kept.`);
     } catch (e) {
       setError(e?.code === 'not_signed_in' ? 'Sign in to save.' : 'Saving failed. Nothing was saved. Try again.');
     } finally { setBusy(false); }
@@ -147,6 +149,13 @@ export default function HealthUploadScreen({ signedIn, onSignIn, onDone, presetA
       <div className="ay-hc-detail">
         <div className="ay-hc-detail-head"><span className="ay-hc-icon is-lg"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10" /></svg></span><div><h2>We found</h2><p>Check each value. Tap one to fix it, × to drop it.</p></div></div>
         {meta.fromImage && <p className="ay-hc-note">Read from your image, so mistakes are possible. Check every number before saving.</p>}
+        {rows.length > 0 && (
+          <div className="ay-hc-facts" role="status">
+            <p><b>What ayna found in your file</b></p>
+            <ul className="ay-hc-steps">{foundSummary(rows).map((f) => <li key={f.metric}>{f.line}</li>)}</ul>
+            <p className="ay-hc-small">ayna reads the numbers only. It doesn't interpret them or diagnose anything from a file.</p>
+          </div>
+        )}
         <div className="ay-hc-card ay-hc-review">
           {rows.map((r, i) => (
             <ReviewRow
@@ -169,8 +178,9 @@ export default function HealthUploadScreen({ signedIn, onSignIn, onDone, presetA
         {typing && <ManualEntry declaredOrigin={origin} onAdd={(r) => setRows((rs) => [...rs.filter((x) => !(x.metric === r.metric && x.day === r.day)), r])} />}
 
         {cats.length > 0 && (
-          <section className="ay-hc-group is-peri" aria-label="Save these">
-            <h2>Save to ayna</h2>
+          <section className="ay-hc-group is-peri" aria-label="What should ayna use this for?">
+            <h2>What should ayna use this for?</h2>
+            <p className="ay-hc-usedfor">Tick what you want ayna to use to personalize your insights and routine. Anything you leave unticked is not saved.</p>
             <div className="ay-hc-card">
               {cats.map((c) => (
                 <label key={c} className="ay-hc-row is-static ay-hc-check">

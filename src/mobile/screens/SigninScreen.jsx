@@ -1,44 +1,25 @@
 import { useEffect, useState } from 'react';
+import { picksAreasLine } from '../../utils/needAreas.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { hydrateCatalogProduct } from '../../data/products.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
-import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../../utils/heardAbout.js';
 import { stashPendingSignupMeta } from '../../utils/pendingConsent.js';
-import { setRememberMe } from '../../utils/supabaseClient.js';
+import { AI_CONSENT_ERROR, AI_CONSENT_TEXT, LEGAL_LINKS, acknowledgementLead, consentMetadata, markAskHeardAbout } from '../../utils/signupConsent.js';
+import { cleanFirstName } from '../data/intakeModel.js';
+import { getSupabaseClient, setRememberMe } from '../../utils/supabaseClient.js';
+import { CODE_COPY, EMAIL_CODE_LENGTH, cleanCode, isEmailNotConfirmed, verifyEmailCode } from '../../utils/authCodes.js';
 import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../../utils/formErrors.js';
 import InlineError from '../../components/InlineError.jsx';
 import '../auth.css';
 import '../../styles/flow.css';
 
-/** "Where did you hear about us?" is REQUIRED on account creation (founder
- * spec, 2026-10). Same check as src/components/AuthGate.jsx's copy. */
-function isHeardAboutAnswered(value) {
-  return HEARD_ABOUT_OPTIONS.some((o) => o.value === value);
-}
-
-// Same three statements, same order, same required-before-signup gate as
-// src/components/AuthGate.jsx's CONSENT_ITEMS, this is a real compliance
-// step for a health app processing self-reported data via AI, not
-// decoration, so it isn't something to drop for a simpler mobile form.
-const CONSENT_ITEMS = [
-  'The health information I share with ayna is self-reported wellness information, not a clinical record.',
-  'My wellness data may be processed by an external AI service to personalize recommendations. ayna takes measures to anonymize and secure this information and never sells it.',
-  'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
-];
-
-// What to do when each box above is left unticked (plain, one per box; the
-// legal wording above stays as it is).
-const CONSENT_ERRORS = [
-  'Tick this box to confirm what you share is self-reported, not a clinical record.',
-  'Tick this box to agree that an external AI service may process your wellness data.',
-  'Tick this box to confirm ayna gives wellness information, not medical advice.',
-];
-const CONSENT_KEYS = CONSENT_ITEMS.map((_, i) => `consent${i}`);
-// Screen order, so the first miss is the one we scroll to.
-const ERROR_ORDER = ['firstName', 'email', 'password', 'heardAbout', ...CONSENT_KEYS];
-const FIELD_IDS = { firstName: 'ay-auth-first', email: 'ay-auth-email', password: 'ay-auth-password', heardAbout: 'ay-auth-heard', ...Object.fromEntries(CONSENT_KEYS.map((k, i) => [k, `ay-auth-consent-${i}`])) };
+// Same one AI-processing box and acknowledgement sentence as the website
+// (src/utils/signupConsent.js), onboarding audit (Oct 25). Her name comes
+// from the quiz; "Where did you hear about us?" is asked after sign-up.
+const ERROR_ORDER = ['email', 'password', 'aiConsent'];
+const FIELD_IDS = { email: 'ay-auth-email', password: 'ay-auth-password', aiConsent: 'ay-auth-consent-ai' };
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const errId = (key) => `${FIELD_IDS[key]}-err`;
 
@@ -75,12 +56,6 @@ const EmailIcon = (
   <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-border)" strokeWidth="1.75" style={{ flex: 'none' }}>
     <rect x="3" y="5" width="18" height="14" rx="3" />
     <path d="M4 7l8 6 8-6" />
-  </svg>
-);
-const PersonIcon = (
-  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-border)" strokeWidth="1.75" strokeLinecap="round" style={{ flex: 'none' }} aria-hidden="true">
-    <circle cx="12" cy="8" r="4" />
-    <path d="M4.5 20a7.5 7.5 0 0 1 15 0" />
   </svg>
 );
 const LockIcon = (
@@ -173,8 +148,8 @@ function AppleButton({ onClick, disabled }) {
       }}
     >
       <svg width="16" height="18" viewBox="0 0 16 18">
-        <path fill="#FFEDAC" d="M13.06 9.53c-.02-1.96 1.6-2.9 1.67-2.94-.91-1.33-2.33-1.51-2.84-1.53-1.21-.12-2.36.71-2.97.71-.62 0-1.55-.7-2.55-.68-1.31.02-2.53.76-3.2 1.93-1.37 2.37-.35 5.87.98 7.79.65.94 1.42 1.99 2.44 1.96.98-.04 1.35-.63 2.53-.63 1.18 0 1.51.63 2.55.6 1.05-.02 1.72-.95 2.36-1.89.75-1.08 1.05-2.13 1.06-2.18-.02-.01-2.03-.78-2.03-3.13z" />
-        <path fill="#FFEDAC" d="M11.1 3.68c.54-.65.9-1.56.8-2.46-.77.03-1.71.51-2.27 1.15-.5.57-.94 1.5-.82 2.38.86.06 1.75-.44 2.29-1.07z" />
+        <path fill="currentColor" d="M13.06 9.53c-.02-1.96 1.6-2.9 1.67-2.94-.91-1.33-2.33-1.51-2.84-1.53-1.21-.12-2.36.71-2.97.71-.62 0-1.55-.7-2.55-.68-1.31.02-2.53.76-3.2 1.93-1.37 2.37-.35 5.87.98 7.79.65.94 1.42 1.99 2.44 1.96.98-.04 1.35-.63 2.53-.63 1.18 0 1.51.63 2.55.6 1.05-.02 1.72-.95 2.36-1.89.75-1.08 1.05-2.13 1.06-2.18-.02-.01-2.03-.78-2.03-3.13z" />
+        <path fill="currentColor" d="M11.1 3.68c.54-.65.9-1.56.8-2.46-.77.03-1.71.51-2.27 1.15-.5.57-.94 1.5-.82 2.38.86.06 1.75-.44 2.29-1.07z" />
       </svg>
       {disabled ? 'Opening Apple…' : 'Continue with Apple'}
     </button>
@@ -193,8 +168,11 @@ export default function SigninScreen({
   onAuthBack,
   onStartEcosystem,
   myProducts = [],
-  topAreas = [],
+  // Her picked needs' labels (QA3 M11), never product categories.
+  saveAreas = [],
+  firstName: intakeName = '',
 }) {
+  const topAreas = saveAreas || [];
   const ecoPicks = (myProducts || []).filter(Boolean);
   // Thumbnails use the catalog photo (same lookup as the product page), and
   // picks that have one go first so the row shows real products.
@@ -204,19 +182,17 @@ export default function SigninScreen({
   }).sort((a, b) => Number(b.hasPhoto) - Number(a.hasPhoto));
   const showEcoSummary = ecoPicks.length > 0 && !authUser;
   const [mode, setMode] = useState(initialMode); // 'signup' | 'signin' | 'check-email'
-  const [firstName, setFirstName] = useState('');
+  // Her first name from the quiz (asked there only).
+  const firstName = cleanFirstName(intakeName);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [checked, setChecked] = useState([false, false, false]);
+  const [aiConsent, setAiConsent] = useState(false);
   // Remember me (sign-in): controls ONLY where the Supabase session token is
   // stored (localStorage vs sessionStorage, src/utils/supabaseClient.js).
   // Defaults on. Never deletes any account data.
   const [rememberMe, setRememberMeChecked] = useState(true);
-  // Required "Where did you hear about us?" (saved in user metadata).
-  const [heardAbout, setHeardAbout] = useState('');
-  const [heardOther, setHeardOther] = useState('');
   // Create account is only offered in the save step after the quiz (opened
-  // in signup mode). Opened for sign-in, new people go build an Ecosystem.
+  // in signup mode). Opened for sign-in, new people go build an ecosystem.
   const canSignUp = initialMode === 'signup';
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -227,6 +203,11 @@ export default function SigninScreen({
   const [summaryAction, setSummaryAction] = useState('create your account');
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
+  // The emailed code, same as the website (src/utils/authCodes.js).
+  const [emailCode, setEmailCode] = useState('');
+  const [codeError, setCodeError] = useState('');
+  const [verifying, setVerifying] = useState(false);
+  const [checkNote, setCheckNote] = useState('');
 
   // Cross-tab pickup: confirming email in a different tab establishes the
   // session there via localStorage, which fires onAuthStateChange back in
@@ -235,7 +216,7 @@ export default function SigninScreen({
   // leaving them stuck on "check your email" until they manually reopen
   // the app.
   useEffect(() => {
-    if (mode === 'check-email' && authUser) onAuthenticated(firstName.trim() || undefined);
+    if (mode === 'check-email' && authUser) onAuthenticated(firstName || undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, authUser]);
 
@@ -255,9 +236,9 @@ export default function SigninScreen({
     return () => window.removeEventListener('ayna:native-oauth-error', onOAuthError);
   }, []);
 
-  const toggleCheck = (i) => {
-    setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
-    setFieldErrors((prev) => clearError(prev, CONSENT_KEYS[i]));
+  const toggleAiConsent = () => {
+    setAiConsent((v) => !v);
+    setFieldErrors((prev) => clearError(prev, 'aiConsent'));
   };
   const clearField = (key) => setFieldErrors((prev) => clearError(prev, key));
   const invalidProps = (key) => ({
@@ -267,12 +248,11 @@ export default function SigninScreen({
   });
 
   // Checks the required fields for this tap. `fields` limits it to the
-  // ones that apply (Google/Apple sign-up only needs heard-about + boxes).
+  // ones that apply (Apple/Google sign-up only needs the consent box).
   // On a miss: inline messages, scroll + focus the first, warning haptic.
   const validateRequired = (fields, action) => {
     const next = {};
     const want = (k) => fields.includes(k);
-    if (want('firstName') && !firstName.trim()) next.firstName = 'Add your first name.';
     if (want('email')) {
       if (!email.trim()) next.email = 'Add your email.';
       else if (!EMAIL_RE.test(email.trim())) next.email = 'Check your email. It needs an @ and a domain, like you@email.com.';
@@ -281,8 +261,7 @@ export default function SigninScreen({
       if (!password) next.password = mode === 'signup' ? 'Add a password.' : 'Add your password.';
       else if (mode === 'signup' && password.length < 8) next.password = 'Use at least 8 characters for your password.';
     }
-    if (want('heardAbout') && !isHeardAboutAnswered(heardAbout)) next.heardAbout = 'Choose where you heard about ayna.';
-    CONSENT_KEYS.forEach((k, i) => { if (want(k) && !checked[i]) next[k] = CONSENT_ERRORS[i]; });
+    if (want('aiConsent') && !aiConsent) next.aiConsent = AI_CONSENT_ERROR;
     setFieldErrors(next);
     setSummaryAction(action);
     const first = firstErrorKey(next, ERROR_ORDER);
@@ -293,9 +272,9 @@ export default function SigninScreen({
     window.requestAnimationFrame(() => revealField(document.getElementById(FIELD_IDS[first])));
     return false;
   };
-  const SIGNUP_FIELDS = ['firstName', 'email', 'password', 'heardAbout', ...CONSENT_KEYS];
-  const SOCIAL_SIGNUP_FIELDS = ['heardAbout', ...CONSENT_KEYS];
-  const summary = errorSummary(fieldErrors, CONSENT_KEYS, summaryAction);
+  const SIGNUP_FIELDS = ['email', 'password', 'aiConsent'];
+  const SOCIAL_SIGNUP_FIELDS = ['aiConsent'];
+  const summary = errorSummary(fieldErrors, ['aiConsent'], summaryAction);
 
   const handleSignUp = async () => {
     if (!validateRequired(SIGNUP_FIELDS, 'create your account')) return;
@@ -305,9 +284,10 @@ export default function SigninScreen({
     // sign-in option); see src/utils/supabaseClient.js.
     setRememberMe(true);
     try {
-      const { needsConfirmation } = await onSignUp({ email: email.trim(), password, firstName: firstName.trim(), metadata: heardAboutMetadata(heardAbout, heardOther) });
-      if (needsConfirmation) setMode('check-email');
-      else onAuthenticated(firstName.trim() || undefined);
+      const { needsConfirmation } = await onSignUp({ email: email.trim(), password, firstName: firstName || undefined, metadata: consentMetadata() });
+      markAskHeardAbout();
+      if (needsConfirmation) { setCheckNote(CODE_COPY.emailSent(email.trim())); setEmailCode(''); setMode('check-email'); }
+      else onAuthenticated(firstName || undefined);
     } catch (e) {
       if (e.code === 'email_already_exists') setMode('signin');
       setError(e.message || 'We couldn’t sign you in. Check your connection and try again.');
@@ -325,6 +305,8 @@ export default function SigninScreen({
       await onSignIn({ email: email.trim(), password });
       onAuthenticated();
     } catch (e) {
+      // Same as the website: an account that was never verified goes to the code step, not a dead end.
+      if (isEmailNotConfirmed(e)) { setCheckNote(CODE_COPY.emailNotConfirmed); setEmailCode(''); setMode('check-email'); return; }
       setError(e.message || 'We couldn’t sign you in. Check your connection and try again.');
     } finally {
       setLoading(false);
@@ -338,7 +320,8 @@ export default function SigninScreen({
     // to. Signing in with an existing account needs no re-consent.
     if (mode === 'signup' && !validateRequired(SOCIAL_SIGNUP_FIELDS, 'continue')) return;
     setError('');
-    stashPendingSignupMeta(mode === 'signup' ? heardAboutMetadata(heardAbout, heardOther) : null);
+    stashPendingSignupMeta(mode === 'signup' ? { ...(firstName ? { first_name: firstName, full_name: firstName } : {}), ...consentMetadata() } : null);
+    if (mode === 'signup') markAskHeardAbout();
     // Before the OAuth redirect: the flag must already be set when the
     // returning setSession writes the session through the storage adapter.
     setRememberMe(mode === 'signup' ? true : rememberMe);
@@ -356,7 +339,8 @@ export default function SigninScreen({
     // Same gates as handleGoogle above.
     if (mode === 'signup' && !validateRequired(SOCIAL_SIGNUP_FIELDS, 'continue')) return;
     setError('');
-    stashPendingSignupMeta(mode === 'signup' ? heardAboutMetadata(heardAbout, heardOther) : null);
+    stashPendingSignupMeta(mode === 'signup' ? { ...(firstName ? { first_name: firstName, full_name: firstName } : {}), ...consentMetadata() } : null);
+    if (mode === 'signup') markAskHeardAbout();
     setRememberMe(mode === 'signup' ? true : rememberMe);
     setAppleLoading(true);
     try {
@@ -373,11 +357,27 @@ export default function SigninScreen({
     setResendMsg('');
     try {
       await onResendConfirmation(email.trim());
-      setResendMsg('Sent. Check your inbox (and spam folder) again in a minute.');
+      setResendMsg(CODE_COPY.resent);
     } catch (e) {
       setResendMsg(e.message || 'Could not resend right now, try again in a moment.');
     } finally {
       setResending(false);
+    }
+  };
+
+  const handleVerifyCode = async (e) => {
+    e?.preventDefault?.();
+    if (cleanCode(emailCode, EMAIL_CODE_LENGTH).length !== EMAIL_CODE_LENGTH) { setCodeError(CODE_COPY.emailPrompt); return; }
+    setCodeError('');
+    setVerifying(true);
+    try {
+      await verifyEmailCode(getSupabaseClient(), email, emailCode);
+      setResendMsg(CODE_COPY.verified);
+      // onAuthStateChange delivers the session; the check-email effect above then moves on.
+    } catch (err) {
+      setCodeError(err.message || CODE_COPY.wrongOrExpired);
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -398,7 +398,7 @@ export default function SigninScreen({
       }}
     >
       <button className="ayna-fresh-auth-back ay-auth-back" type="button" onClick={onAuthBack} aria-label="Back">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
       </button>
       {mode === 'check-email' ? (
         <>
@@ -407,25 +407,46 @@ export default function SigninScreen({
             Almost there.
           </div>
           <div className="ay-auth-check-copy">
-            A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it. Once confirmed, come back here, this screen updates on its own.
+            {checkNote || CODE_COPY.emailSent(email.trim())} It comes from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it.
           </div>
+          <form className="ay-auth-code" onSubmit={handleVerifyCode} noValidate>
+            <label className={`ayna-fresh-auth-field${codeError ? ' is-invalid' : ''}`} htmlFor="ay-auth-email-code">
+              <span>Verification code</span>
+              <input
+                id="ay-auth-email-code"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                placeholder={CODE_COPY.emailPlaceholder}
+                maxLength={EMAIL_CODE_LENGTH}
+                value={emailCode}
+                onChange={(e) => { setEmailCode(cleanCode(e.target.value, EMAIL_CODE_LENGTH)); setCodeError(''); }}
+                aria-invalid={codeError ? true : undefined}
+                aria-describedby={codeError ? 'ay-auth-code-err' : undefined}
+                style={inputStyle}
+              />
+            </label>
+            {codeError && <div id="ay-auth-code-err" className="ay-auth-check-msg" role="alert">{codeError}</div>}
+            <PrimaryButton onClick={handleVerifyCode} disabled={verifying}>{verifying ? 'Checking…' : 'Verify and continue'}</PrimaryButton>
+          </form>
           {resendMsg && <div className="ay-auth-check-msg" role="status">{resendMsg}</div>}
           <button type="button" className="ay-auth-link" disabled={resending} onClick={handleResend}>
-            {resending ? 'Sending…' : 'Resend confirmation email'}
+            {resending ? 'Sending…' : 'Resend code'}
           </button>
           <div style={{ flex: 1 }} />
         </>
       ) : (
         <>
           <header className="ay-auth-head">
-            <h1>{mode === 'signup' ? (showEcoSummary ? 'Save your Ecosystem' : 'Sign up') : 'Sign in'}</h1>
-            {mode === 'signup' && showEcoSummary && <p>Create an account to keep it.</p>}
+            {/* Offered as "save these" (onboarding audit section 6, #36 PITCH). */}
+            <h1>{mode === 'signup' ? 'Save your matches' : 'Sign in'}</h1>
+            {mode === 'signup' && <p>Free. We never sell your health information.</p>}
           </header>
 
           {mode === 'signup' && showEcoSummary && (
-            <section className="ay-auth-eco" aria-label="Your Ecosystem">
+            <section className="ay-auth-eco" aria-label="Your ecosystem">
               <div className="ay-auth-eco-copy">
-                <strong>{ecoPicks.length} {ecoPicks.length === 1 ? 'pick' : 'picks'}{topAreas.length ? ` · ${topAreas.length} ${topAreas.length === 1 ? 'area' : 'areas'}` : ''}</strong>
+                <strong>{picksAreasLine(ecoPicks.length, topAreas.length)}</strong>
                 {topAreas.length > 0 && <span>{topAreas.slice(0, 4).join(', ')}</span>}
               </div>
               <div className="ay-auth-eco-thumbs" aria-hidden="true">
@@ -441,15 +462,14 @@ export default function SigninScreen({
             </section>
           )}
 
+          {/* Fastest way in first: Apple, then Google, then email (onboarding audit #1). */}
+          <div className="ay-auth-social">
+            <AppleButton onClick={handleApple} disabled={appleLoading || googleLoading || loading} />
+            <GoogleButton onClick={handleGoogle} disabled={googleLoading || appleLoading || loading} />
+          </div>
+          <div className="ay-auth-or" aria-hidden="true"><span>or</span></div>
+
           <div className="ay-auth-form">
-          {mode === 'signup' && (
-            <>
-              <Field label="First name" icon={PersonIcon} invalid={Boolean(fieldErrors.firstName)}>
-                <input type="text" autoComplete="given-name" placeholder="Your first name" value={firstName} onChange={(e) => { setFirstName(e.target.value); clearField('firstName'); }} style={inputStyle} {...invalidProps('firstName')} />
-              </Field>
-              <InlineError id={errId('firstName')}>{fieldErrors.firstName}</InlineError>
-            </>
-          )}
 
           <Field label="Email" icon={EmailIcon} invalid={Boolean(fieldErrors.email)}>
             <input type="email" autoComplete="email" placeholder="you@email.com" value={email} onChange={(e) => { setEmail(e.target.value); clearField('email'); }} style={inputStyle} {...invalidProps('email')} />
@@ -457,38 +477,21 @@ export default function SigninScreen({
           <InlineError id={errId('email')}>{fieldErrors.email}</InlineError>
 
           <Field label="Password" icon={LockIcon} invalid={Boolean(fieldErrors.password)}>
-            <input type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} placeholder="••••••••" value={password} onChange={(e) => { setPassword(e.target.value); clearField('password'); }} style={inputStyle} {...invalidProps('password')} />
+            <input type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} placeholder={mode === 'signup' ? 'At least 8 characters' : 'Your password'} value={password} onChange={(e) => { setPassword(e.target.value); clearField('password'); }} style={inputStyle} {...invalidProps('password')} />
           </Field>
           <InlineError id={errId('password')}>{fieldErrors.password}</InlineError>
 
           {mode === 'signup' && (
-            <div className="ay-auth-heard">
-              <label className="ay-auth-heard-label" htmlFor="ay-auth-heard">Where did you hear about us?</label>
-              <select value={heardAbout} onChange={(e) => { setHeardAbout(e.target.value); clearField('heardAbout'); }} className={`${heardAbout ? '' : 'is-empty'}${fieldErrors.heardAbout ? ' is-invalid' : ''}`} {...invalidProps('heardAbout')}>
-                <option value="">Choose one</option>
-                {HEARD_ABOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-              {heardAbout === 'other' && (
-                <input type="text" aria-label="Where you heard about us" placeholder="Tell us where" maxLength={HEARD_ABOUT_OTHER_MAX} value={heardOther} onChange={(e) => setHeardOther(e.target.value)} autoComplete="off" />
-              )}
-              <InlineError id={errId('heardAbout')}>{fieldErrors.heardAbout}</InlineError>
-            </div>
-          )}
-
-          {mode === 'signup' && (
             <div className="ay-auth-consent">
-              {CONSENT_ITEMS.map((text, i) => {
-                const key = CONSENT_KEYS[i];
-                return (
-                  <div key={i} className="ay-auth-consent-item">
-                    <label className={`ay-auth-consent-row${fieldErrors[key] ? ' ay-check-invalid' : ''}`}>
-                      <input type="checkbox" checked={checked[i]} onChange={() => toggleCheck(i)} {...invalidProps(key)} />
-                      <span className="ay-auth-consent-text">{text}</span>
-                    </label>
-                    <InlineError id={errId(key)}>{fieldErrors[key]}</InlineError>
-                  </div>
-                );
-              })}
+              <div className="ay-auth-consent-item">
+                <label className={`ay-auth-consent-row${fieldErrors.aiConsent ? ' ay-check-invalid' : ''}`}>
+                  <input type="checkbox" checked={aiConsent} onChange={toggleAiConsent} {...invalidProps('aiConsent')} />
+                  <span className="ay-auth-consent-text">{AI_CONSENT_TEXT}</span>
+                </label>
+                {/* #12 Pai: trust badges beside the consent line. */}
+                <p className="ay-auth-badges" aria-label="How we treat your data"><span>Never sold</span><span>Encrypted in transit</span></p>
+                <InlineError id={errId('aiConsent')}>{fieldErrors.aiConsent}</InlineError>
+              </div>
             </div>
           )}
 
@@ -498,9 +501,9 @@ export default function SigninScreen({
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMeChecked(e.target.checked)}
-                style={{ width: 18, height: 18, flex: 'none', margin: 0, accentColor: 'var(--ay-ink, #3e2723)' }}
+                style={{ width: 18, height: 18, flex: 'none', margin: 0, accentColor: 'var(--legacy-ink, #3e2723)' }}
               />
-              <span style={{ fontFamily: "var(--ayna-font-ui)", lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', fontWeight: 400, color: 'var(--ay-ink, #3e2723)' }}>Remember me</span>
+              <span style={{ fontFamily: "var(--ayna-font-ui)", lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', fontWeight: 400, color: 'var(--legacy-ink, #3e2723)' }}>Remember me</span>
             </label>
           )}
 
@@ -508,11 +511,17 @@ export default function SigninScreen({
           <InlineError className="ay-inline-err--summary">{summary}</InlineError>
 
 
+            {mode === 'signup' && (
+              <p className="ay-auth-ack">
+                {acknowledgementLead('creating an account')}{' '}
+                {LEGAL_LINKS.map((l, i) => <span key={l.href}>{i > 0 && (i === LEGAL_LINKS.length - 1 ? ' and ' : ', ')}<a href={l.href} target="_blank" rel="noopener noreferrer">{l.label}</a></span>)}.
+              </p>
+            )}
             {mode === 'signup' ? (
               <PrimaryButton onClick={handleSignUp} disabled={loading}>
-                <span>{loading ? 'Creating account…' : 'Create my account'}</span>
+                <span>{loading ? 'Creating account…' : 'Create account'}</span>
                 {!loading && (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-heading)" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-heading)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M5 12h14M13 6l6 6-6 6" />
                   </svg>
                 )}
@@ -524,12 +533,6 @@ export default function SigninScreen({
             )}
           </div>
 
-          <div className="ay-auth-or" aria-hidden="true"><span>or</span></div>
-
-          <div className="ay-auth-social">
-            <GoogleButton onClick={handleGoogle} disabled={googleLoading || appleLoading || loading} />
-            <AppleButton onClick={handleApple} disabled={appleLoading || googleLoading || loading} />
-          </div>
 
           <button type="button" className="ayna-fresh-auth-switch ay-auth-link" onClick={() => {
             setError('');
@@ -538,16 +541,16 @@ export default function SigninScreen({
             else if (canSignUp) setMode('signup');
             else onStartEcosystem?.();
           }}>
-            {mode === 'signup' ? 'Already have an account? Sign in' : canSignUp ? <>Don’t have an account? <b>Create one</b></> : <>Don’t have an account? <b>Build your Ecosystem</b></>}
+            {mode === 'signup' ? 'Already have an account? Sign in' : canSignUp ? <>Don’t have an account? <b>Create one</b></> : <>Don’t have an account? <b>Build your ecosystem</b></>}
           </button>
 
-          <div className="ayna-fresh-auth-trust" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, opacity: 0.6 }}>
+          {mode !== 'signup' && <div className="ayna-fresh-auth-trust" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, opacity: 0.6 }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFEDAC" strokeWidth="2" strokeLinecap="round">
               <rect x="5" y="11" width="14" height="10" rx="2.5" />
               <path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3" />
             </svg>
-            <span style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', letterSpacing: '.6px' }}>Encrypted. Never sold.</span>
-          </div>
+            <span style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', letterSpacing: '.2px' }}>Encrypted. Never sold.</span>
+          </div>}
         </>
       )}
       <LegalFooter variant="light" />

@@ -136,6 +136,33 @@ async function loadHealthIntakeUncached() {
   return local;
 }
 
+const isPlainObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
+function isEmptyAnswer(v) {
+  if (v == null) return true;
+  if (typeof v === 'string') return v.trim() === '';
+  if (Array.isArray(v)) return v.length === 0;
+  if (isPlainObject(v)) return Object.keys(v).length === 0;
+  return false;
+}
+
+/**
+ * Her saved answers merged with a new save: a new non-empty answer wins, but
+ * an empty or missing one never replaces something she had already answered
+ * (a quiz opened before her answers loaded would otherwise wipe them).
+ */
+export function mergeIntakeAnswers(saved, next) {
+  if (!isPlainObject(saved) || saved[RESET_MARKER]) return next;
+  if (!isPlainObject(next)) return isEmptyAnswer(next) ? saved : next;
+  const out = { ...saved };
+  for (const [key, value] of Object.entries(next)) {
+    const before = saved[key];
+    if (isPlainObject(before) && isPlainObject(value)) out[key] = mergeIntakeAnswers(before, value);
+    else if (isEmptyAnswer(value) && !isEmptyAnswer(before)) out[key] = before;
+    else out[key] = value;
+  }
+  return out;
+}
+
 export async function saveHealthIntakeForCurrentUser(profile) {
   forgetSharedIntake();
   const supabase = getSupabaseClient();
@@ -150,12 +177,32 @@ export async function saveHealthIntakeForCurrentUser(profile) {
     toStore = profile.fullHealthIntake;
   }
 
+  // What this tab already had (her loaded answers, or a pending reset).
+  const before = readLocal(userId);
+
   // Session fallback FIRST so Finish remains responsive during a transient
   // outage. Supabase remains the durable source of truth.
-  const localSaved = writeLocal(userId, toStore);
+  let localSaved = writeLocal(userId, mergeIntakeAnswers(before, toStore));
 
   if (!supabase) return { saved: false, localSaved, reason: 'supabase_not_configured' };
   if (!userId) return { saved: false, localSaved, reason: 'no_authenticated_user' };
+
+  // Merge with the row already on the server before replacing it, so saved
+  // answers are never overwritten by blanks. A reset waiting to sync means
+  // there is nothing to keep. If the read fails, merge with this tab's copy.
+  if (!before?.[RESET_MARKER]) {
+    let existing = before;
+    try {
+      const { data, error } = await withTimeout(
+        supabase.from(TABLE).select('profile').eq('user_id', userId).maybeSingle(),
+        SERVER_SAVE_TIMEOUT_MS,
+        'server_read_timeout'
+      );
+      if (!error) existing = data?.profile || before;
+    } catch { /* keep this tab's copy */ }
+    toStore = mergeIntakeAnswers(existing, toStore);
+    localSaved = writeLocal(userId, toStore);
+  }
 
   const payload = {
     user_id: userId,

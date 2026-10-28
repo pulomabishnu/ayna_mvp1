@@ -1,14 +1,22 @@
 (() => {
-  const ACTION_KEY = 'ayna_pending_auth_action';
-  const PRO_ACTION = 'pro';
+  const RESUME_KEY = 'ayna.returnTo';
+  const MAX_AGE_MS = 30 * 60 * 1000;
 
   if (window.location.pathname === '/pro' || window.location.pathname === '/pro.html') return;
 
   function pendingProReturn() {
     try {
-      return window.sessionStorage.getItem(ACTION_KEY) === PRO_ACTION;
+      const saved = JSON.parse(window.sessionStorage.getItem(RESUME_KEY) || 'null');
+      if (!saved || typeof saved.path !== 'string' || !saved.path.startsWith('/') || saved.path.startsWith('//')) return null;
+      const target = saved.path.split(/[?#]/)[0];
+      if (target !== '/pro' && target !== '/pro.html') return null;
+      if (!(Date.now() - Number(saved.at) >= 0 && Date.now() - Number(saved.at) < MAX_AGE_MS)) {
+        window.sessionStorage.removeItem(RESUME_KEY);
+        return null;
+      }
+      return saved;
     } catch {
-      return false;
+      return null;
     }
   }
 
@@ -31,17 +39,16 @@
   }
 
   function returnToProWhenReady() {
-    if (!pendingProReturn() || !accessTokenFromBrowser()) return false;
-    try { window.sessionStorage.removeItem(ACTION_KEY); } catch { /* best effort */ }
-    window.location.replace('/pro');
+    const saved = pendingProReturn();
+    if (!saved || !accessTokenFromBrowser()) return false;
+    window.location.replace(saved.path);
     return true;
   }
 
   if (!pendingProReturn() || returnToProWhenReady()) return;
 
-  // Sign-in can complete in-place (email/password) or after an OAuth round trip.
-  // Keep this tiny pre-app watcher alive only for a Pro return so either path
-  // lands back on the plan page as soon as Supabase has persisted the session.
+  // Email/password can finish in place and OAuth can finish after a round trip.
+  // Keep this tiny pre-app watcher alive only while a fresh /pro return is pending.
   const timer = window.setInterval(() => {
     if (!pendingProReturn() || returnToProWhenReady()) window.clearInterval(timer);
   }, 300);

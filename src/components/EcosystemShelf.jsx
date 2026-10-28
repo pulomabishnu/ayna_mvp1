@@ -78,7 +78,7 @@ export default function EcosystemShelf({ myProducts = {}, onOpenProduct, onExplo
                     className="eco-shelf__tile eco-shelf__tile--add"
                     onClick={() => onExploreArea?.(area)}
                   >
-                    Add +
+                    Find one
                   </button>
                 )}
               </div>

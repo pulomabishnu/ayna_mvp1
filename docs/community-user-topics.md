@@ -1,8 +1,11 @@
-# Community: user-created topics (deferred)
+# Community: user-created topics
 
-Status: designed, not built. Community ships with the curated ayna topics
-only (`src/utils/community/topics.js`), plus a "Suggest a topic" sheet that
-emails and texts the team (`api/suggestions.js`, kind `topic`).
+Status: built 2026-10-21 (branch app/user-topics), switched off until
+`supabase/community_user_topics_2026-10-21.sql` is run in the Supabase SQL
+editor. Until then Community shows the curated ayna topics only
+(`src/utils/community/topics.js`) plus the "Suggest a topic" sheet that
+emails and texts the team (`api/suggestions.js`, kind `topic`), exactly as
+before. Build decisions are at the end of this file.
 
 ## When to turn this on
 
@@ -90,3 +93,47 @@ working exactly as today.
 - Contrast rule: every brand pair, pass and fail.
 - Invite code join flow at the store layer.
 - Graceful degradation when the tables do not exist.
+
+## Build decisions (2026-10-21)
+
+Where this design left something open, these are the choices made, after
+looking at how Reddit (anyone can start a subreddit, removed only when it
+breaks the rules), Discord (any server, but Server Discovery listing needs
+clear rules and active moderation), Geneva (homes with public or private
+rooms found through Explore) and Peanut (volunteer "MVP" moderators) handle
+it. For a small women's health community the safest simple mix:
+
+- **Public topics are checked first.** A new public topic is `pending`:
+  only its creator and members see it until an admin approves it on
+  `/admin/topics` (Discord's "listed only after review" idea). Friends-only
+  and invite-only topics go live straight away for their own audience.
+  Renaming an approved public topic sends it back to review. Only an admin
+  or the service role can approve or hide (database trigger + RLS).
+- **Anonymous creator, public topics only.** "Don't show my name" shows
+  "Started by a member". The creator's id, handle and name are masked in
+  `community_feed_topics` and on the admin screen; the base table is only
+  readable by its creator, and the member list only by the owner.
+- **Names:** 3 to 40 characters, no links (names or descriptions), the
+  full community rules in the browser and API, a backstop in the database,
+  no ayna/team impersonation, and no claiming a clinician runs it ("Ask a
+  doctor", "Dr ...", "Nurse-approved"); a topic can still be about doctors
+  ("Doctor visits"). Names that match a curated topic point to it.
+- **Rate limit:** 3 new topics per account per 24 hours (API and database),
+  20 per account in total, 20 writes per IP per hour, no guests.
+- **Fonts:** the design said DM Serif Display / DM Sans; the site has since
+  moved to ayna Display + Figtree (design-direction.md), so the two title
+  choices are "Display" (ayna Display) and "Plain" (Figtree 700).
+- **Invite codes** live in their own table (`community_topic_invites`),
+  minted by `community_topic_invite_code`, never readable directly, so a
+  member can't lift the code from the topic row. Owners and co-owners can
+  share it; only the owner can rotate it.
+- **Co-owners** are promoted from members by the owner (Members sheet).
+- **Moderation by owners:** "Remove from this topic" under each post on the
+  topic page (the post stays the author's post).
+- **Feed views** `community_feed_posts` and `community_feed_comments` are
+  rebuilt from their live definitions with `topic_id` and one filter added,
+  so private and pending topic posts never reach anyone outside them.
+- **Admin screen** `/admin/topics` (server check in
+  `api/community-topics-admin.js` via `api/_admin.js`): pending topics
+  (Approve / Hide), reported topics (Keep / Hide), hidden topics (Show
+  again), and Suggest a topic messages (Mark done, `suggestions.reviewed_at`).

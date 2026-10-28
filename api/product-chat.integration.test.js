@@ -22,6 +22,21 @@ vi.mock('@supabase/supabase-js', () => ({
   createClient: () => globalThis.__mockSupabase,
 }));
 
+// ayna Pro: the feature-rules switch is a Supabase RPC. These tests cover the
+// legacy quota path (rules off, as in production until the admin turns gates on),
+// so the switch is stubbed off by default; the Pro path has its own tests below.
+vi.mock('./_proFeatures.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    proFeatureRules: async () => {
+      const r = globalThis.__proRules;
+      if (r instanceof Error) throw r;
+      return { ...actual.DEFAULT_PRO_RULES, ...(r || {}) };
+    },
+  };
+});
+
 const fetchOfficialSiteTextMock = vi.fn(async () => null);
 vi.mock('./_officialSiteFetch.js', () => ({
   fetchOfficialSiteText: (...args) => fetchOfficialSiteTextMock(...args),
@@ -68,6 +83,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  globalThis.__proRules = undefined;
   restoreEnv();
   globalThis.fetch = realFetch;
   fetchOfficialSiteTextMock.mockReset().mockResolvedValue(null);
@@ -344,5 +360,35 @@ describe('POST /api/product-chat — product integrity', () => {
     expect(res.statusCode).toBe(200);
     expect(fetchOfficialSiteTextMock).not.toHaveBeenCalled();
     expect(sentBody.messages[0].content).not.toContain('Cures everything instantly.');
+  });
+});
+
+describe('POST /api/product-chat — ayna Pro daily allowance', () => {
+  it('uses the daily allowance when the gates are on and stops before calling the provider', async () => {
+    globalThis.__proRules = { enabled: true, freeAskPerDay: 5, proAskPerDay: 50 };
+    supa.rpc.mockImplementation(async (name, args) => {
+      supa.rpcCalls.push({ name, args });
+      return { data: [{ allowed: false, used: 5 }], error: null };
+    });
+    globalThis.fetch = vi.fn(async () => anthropicOk('An answer.'));
+    const res = mockRes();
+    await (await loadHandler())(mockReq({ body: validBody }), res);
+    // The handler 429s with daily_limit_reached; _proQuotaResponse turns that into a
+    // plain answer so older clients show the daily (not weekly) reset copy.
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toMatchObject({ limitReached: true, usage: { used: 5, limit: 5 } });
+    const consume = supa.rpcCalls.find((c) => c.name === 'consume_ai_usage');
+    expect(consume.args.p_period).toMatch(/^month:\d{4}-\d{2}$/);
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it('fails closed (503) without calling the provider when the Pro rules cannot be read', async () => {
+    globalThis.__proRules = new Error('rules down');
+    globalThis.fetch = vi.fn(async () => anthropicOk('An answer.'));
+    const res = mockRes();
+    await (await loadHandler())(mockReq({ body: validBody }), res);
+    expect(res.statusCode).toBe(503);
+    expect(res.body.error).toBe('pro_temporarily_unavailable');
+    expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 });

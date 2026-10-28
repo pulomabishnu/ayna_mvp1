@@ -10,7 +10,10 @@ import { applyCatalogCorrections } from '../data/catalogCorrections.js';
  * lookups. A product is shown only if it resolves to a catalog record;
  * catalog facts always win over whatever was cached/saved.
  */
-import { ALL_PRODUCTS } from '../data/products.js';
+// The catalog loads after first paint (data/catalog.js). Every caller that can
+// run before it has (the stores below, the AI caches) awaits loadCatalog()
+// first, so a product is never dropped just because the catalog wasn't here yet.
+import { ALL_PRODUCTS } from '../data/catalog.js';
 import { getLoadedCatalog } from './productCatalog.js';
 
 // Per-user / per-recommendation fields that are NOT product facts and may
@@ -86,6 +89,8 @@ export function toCatalogProduct(product, map = catalogMap()) {
 
 /** Filter a { id: product } map down to catalog-backed products (ids re-keyed to catalog ids). */
 export function filterProductMapToCatalog(productMap) {
+  // Nothing saved: skip building the catalog map (about 90ms on a throttled phone).
+  if (!productMap || !Object.keys(productMap).length) return {};
   const map = catalogMap();
   const out = {};
   for (const product of Object.values(productMap || {})) {

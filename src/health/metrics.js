@@ -35,15 +35,15 @@ export const CATEGORIES = {
   },
   heart: {
     label: 'Heart',
-    why: 'Resting heart rate and heart rate variability, to see how recovered or stretched you have been compared with your own normal.',
+    why: 'To see how recovered or stretched you are, from your resting heart rate and heart rate variability compared with your own normal.',
   },
   activity: {
     label: 'Activity',
-    why: 'Steps, active energy and workouts, to connect how much you move with how you feel.',
+    why: 'To connect how much you move (steps, active energy and workouts) with how you feel.',
   },
   recovery: {
     label: 'Readiness',
-    why: "Your device's own daily readiness score, as another view of recovery.",
+    why: "To add your device's own daily readiness score as another view of recovery.",
   },
 };
 

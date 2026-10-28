@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import posthog from 'posthog-js';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import { fetchWithTimeout } from '../utils/network.js';
+import { localToday } from '../utils/localDate.js';
 
 async function getAccessToken() {
   const supabase = getSupabaseClient();
@@ -58,7 +60,7 @@ export default function AccountDataControls({ onOpenDeleteAccount }) {
     setMessage('');
     try {
       const { token } = await getAccessToken();
-      const res = await fetch('/api/account-data', {
+      const res = await fetchWithTimeout('/api/account-data', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error('Could not prepare your download. Please try again.');
@@ -66,7 +68,7 @@ export default function AccountDataControls({ onOpenDeleteAccount }) {
       const objectUrl = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = objectUrl;
-      a.download = `ayna-data-${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `ayna-data-${localToday()}.json`;
       document.body.appendChild(a);
       a.click();
       a.remove();

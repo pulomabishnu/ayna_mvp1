@@ -26,8 +26,9 @@ export const PMOS_SHORT = 'PMOS';
 export const PMOS_FULL = 'polyendocrine metabolic ovarian syndrome';
 
 const QUICK = /pcos|polycystic ovar(?:y|ian) syndrome/i;
-// Pieces of text that must stay verbatim: links, bare domains, paths, r/ names.
-const PROTECTED = /(?:\bhttps?:\/\/|\bwww\.)\S+|\br\/[A-Za-z0-9_]+|[A-Za-z0-9_.-]*\/[A-Za-z0-9_./-]*pcos[A-Za-z0-9_./-]*|\b[a-z0-9-]+\.(?:com|org|gov|net|co|edu|io|uk)\/\S*/gi;
+// Pieces of text that must stay verbatim: links, bare domains, paths, r/ names,
+// and the one-time "(formerly PCOS)" next to the new name (conditionDisplayName).
+const PROTECTED = /\(formerly PCOS\)|(?:\bhttps?:\/\/|\bwww\.)\S+|\br\/[A-Za-z0-9_]+|[A-Za-z0-9_.-]*\/[A-Za-z0-9_./-]*pcos[A-Za-z0-9_./-]*|\b[a-z0-9-]+\.(?:com|org|gov|net|co|edu|io|uk)\/\S*/gi;
 
 function matchCase(source, replacement) {
   if (source === source.toUpperCase() && /[A-Z]/.test(source)) return replacement.toUpperCase();
@@ -92,4 +93,14 @@ export function renamePcosDeep(value, opts) {
     return out;
   }
   return value;
+}
+
+/**
+ * Where she picks the condition (setup chips): "PMOS (formerly PCOS)", so
+ * someone who knows it as PCOS recognizes it. The saved value stays "PCOS".
+ * Everywhere else people read just "PMOS".
+ */
+export function conditionDisplayName(text) {
+  if (typeof text !== 'string') return text;
+  return text.replace(/^PCOS\b/, 'PMOS (formerly PCOS)');
 }

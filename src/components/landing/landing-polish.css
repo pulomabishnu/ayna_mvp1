@@ -1,0 +1,205 @@
+/* Landing polish: preserve the approved hero, then make the rest editorial,
+   picture-led and easy to skim. One visible decision per section; secondary
+   explanation lives in details / deeper pages instead of crowding the page. */
+
+/* Hero: keep the approved composition. Only quiet the supporting copy. */
+html body .app-container #ay-landing.wl .wl-one { font-weight: 400 !important; max-width: 39ch; font-size: 18px !important; line-height: 1.6 !important; }
+html body .app-container #ay-landing.wl .wl-how { font-weight: 500 !important; font-size: 14px !important; }
+html body .app-container #ay-landing.wl .wl-hero__eyebrow {
+  margin: 0; color: #f7badd; font: 500 12px/1.5 var(--ay-sans-stack, sans-serif) !important;
+  letter-spacing: .12em; text-transform: uppercase;
+}
+html body .app-container #ay-landing.wl .wl-sts .ay-sts__hint {
+  margin-top: 12px; color: #ffedac !important; font: 400 13px/1.5 var(--ay-sans-stack, sans-serif) !important;
+}
+
+/* Global landing rhythm: fewer, larger compositions. */
+html body .app-container #ay-landing.wl .wl-classic .hm-sec { padding-block: clamp(64px, 8vw, 108px) !important; }
+html body .app-container #ay-landing.wl .wl-classic .hm-h2 {
+  max-width: 20ch; font-size: clamp(32px, 3.4vw, 48px) !important; line-height: 1.06 !important;
+  letter-spacing: -.025em !important;
+}
+html body .app-container #ay-landing.wl .hm-head { margin-bottom: clamp(24px, 3vw, 40px) !important; }
+html body .app-container #ay-landing.wl .hm-head__all { font-weight: 500 !important; }
+
+/* ----------------------------------------------------------------------
+   Needs: turn the existing text index into four large editorial image tiles.
+   This keeps familiar language but removes the "list of links + chips + cards"
+   stack. The product proof underneath is only three products, with no repeated
+   per-card conversion button. */
+.app-container #ay-landing .lp-need-index {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px;
+  margin: 0 0 clamp(44px, 6vw, 72px);
+}
+.app-container #ay-landing .lp-need-index__link {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 20px;
+  min-height: clamp(240px, 27vw, 360px); padding: 26px;
+  border: 0; border-radius: 18px; background-size: cover; background-position: center;
+  color: #ffedac !important; font: 700 clamp(20px, 2.1vw, 30px)/1.08 var(--ay-font-display, sans-serif) !important;
+  letter-spacing: -.02em; text-decoration: none !important;
+}
+.app-container #ay-landing .lp-need-index__link::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; background: rgba(62, 39, 35, .38);
+}
+.app-container #ay-landing .lp-need-index__link:nth-child(1) { background-image: url('/landing/pajamas-overhead.webp'); background-position: 50% 50%; }
+.app-container #ay-landing .lp-need-index__link:nth-child(2) { background-image: url('/landing/sink-flatlay.webp'); background-position: 50% 52%; }
+.app-container #ay-landing .lp-need-index__link:nth-child(3) { background-image: url('/landing/curlers-call.webp'); background-position: 50% 45%; }
+.app-container #ay-landing .lp-need-index__link:nth-child(4) { background-image: url('/landing/robe-vanity.webp'); background-position: 50% 45%; }
+.app-container #ay-landing .lp-need-index__link svg {
+  position: relative; z-index: 1; flex: none; width: 38px; height: 38px; padding: 9px;
+  box-sizing: border-box; border-radius: 50%; background: #f7badd; color: #3e2723;
+  fill: none; stroke: currentColor; stroke-width: 2;
+}
+.app-container #ay-landing .lp-need-index__link:hover { text-decoration: none !important; }
+.app-container #ay-landing .lp-need-index__link:hover svg { transform: translateX(2px); }
+.app-container #ay-landing .lp-need-index__link:focus-visible { outline: 3px solid #3e2723; outline-offset: 4px; }
+html body .app-container #ay-landing .hm-needsband__grid.is-single { display: block !important; }
+html body .app-container #ay-landing .hm-shop .hm-chips { display: none !important; }
+html body .app-container #ay-landing .hm-shop__label {
+  margin: 0 0 18px; font: 600 16px/1.3 var(--ay-sans-stack, sans-serif) !important;
+}
+html body .app-container #ay-landing .hm-stickers {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: clamp(16px, 2vw, 24px) !important;
+}
+html body .app-container #ay-landing .hm-stickers > li:nth-child(n + 4) { display: none !important; }
+html body .app-container #ay-landing .hm-sticker__match { display: none !important; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .hm.wl .ay-pcard.hm-sticker { box-shadow: none !important; }
+
+/* ----------------------------------------------------------------------
+   Method: one still photo and three compact steps. Long explanations are
+   already native <details>, so the first scan stays short. */
+.app-container #ay-landing .lp-method {
+  background: var(--ay-page, #fff8e6); color: var(--ay-text, #3e2723);
+  border-block: 1px solid var(--ay-hairline, rgba(62,39,35,.18));
+}
+.app-container #ay-landing .lp-method__grid {
+  display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr);
+  gap: clamp(44px, 7vw, 104px); align-items: center;
+}
+.app-container #ay-landing .lp-method__photo {
+  position: relative; margin: 0; aspect-ratio: 4 / 5; max-height: 590px;
+  border-radius: 88px 88px 14px 14px; overflow: hidden; background: #f7badd;
+}
+.app-container #ay-landing .lp-method__photo :is(picture, img) { display: block; width: 100%; height: 100%; object-fit: cover; }
+.app-container #ay-landing .lp-method__photo figcaption {
+  position: absolute; bottom: 20px; left: 20px; right: 20px; padding: 11px 16px;
+  border-radius: 4px; text-align: center; font: 500 16px/1.3 var(--ay-sans-stack);
+  background: #ffedac; color: #3e2723;
+}
+.app-container #ay-landing .lp-eyebrow { margin: 0 0 14px; font: 500 12px/1.5 var(--ay-sans-stack); letter-spacing: .1em; text-transform: uppercase; }
+.app-container #ay-landing .lp-method__steps { margin: 30px 0 12px; padding: 0; list-style: none; }
+.app-container #ay-landing .lp-method__steps > li {
+  display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 16px;
+  padding: 20px 0; border-top: 1px solid var(--ay-hairline, rgba(62,39,35,.22));
+}
+.app-container #ay-landing .lp-method__number { padding-top: 4px; font: 500 13px/1.5 var(--ay-sans-stack); }
+html body .app-container #ay-landing .lp-method__steps h3 { margin: 0 0 6px; font: 600 20px/1.25 var(--ay-font-display, sans-serif) !important; letter-spacing: -.015em; }
+html body .app-container #ay-landing .lp-method__steps p { margin: 0; max-width: 46ch; font: 400 15px/1.55 var(--ay-sans-stack) !important; }
+.app-container #ay-landing .lp-method summary,
+.app-container #ay-landing .lp-pro-details summary {
+  display: flex; align-items: center; gap: 8px; min-height: 44px; width: fit-content;
+  cursor: pointer; font: 500 14px/1.4 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 4px;
+}
+.app-container #ay-landing .lp-method details p { padding: 4px 0 12px; color: rgba(62,39,35,.78); }
+.app-container #ay-landing :is(.lp-method, .lp-pro-details) summary:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.app-container #ay-landing .lp-method__actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 24px; }
+
+/* ----------------------------------------------------------------------
+   Pro: one conversion composition, not a pricing dashboard. */
+.app-container #ay-landing .lp-pro-simple { display: block; }
+.app-container #ay-landing .lp-pro-simple .wl-pro__copy { max-width: 760px; margin: 0 auto; text-align: center; }
+html body .app-container #ay-landing .wl-pro .wlx-h2 {
+  max-width: 14ch; margin-inline: auto; font-size: clamp(38px, 4.8vw, 68px) !important;
+  line-height: 1 !important;
+}
+html body .app-container #ay-landing .wl-pro__tag {
+  display: block; width: auto; margin: 0 0 18px; padding: 0; border: 0; background: transparent;
+  color: #f7badd !important; font: 600 14px/1.3 var(--ay-sans-stack, sans-serif) !important;
+}
+html body .app-container #ay-landing .wl-pro__body {
+  max-width: 45ch; margin: 22px auto 0; font: 400 18px/1.55 var(--ay-sans-stack, sans-serif) !important;
+  color: rgba(255,237,172,.9) !important;
+}
+.app-container #ay-landing .lp-pro-offer {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 5px 10px;
+  margin: 32px auto 24px; color: #ffedac;
+}
+.app-container #ay-landing .lp-pro-offer__deal { flex-basis: 100%; color: #f7badd; font: 600 14px/1.3 var(--ay-sans-stack); }
+.app-container #ay-landing .lp-pro-offer strong { font: 800 clamp(48px, 6vw, 76px)/.95 var(--ay-font-display, sans-serif); letter-spacing: -.04em; }
+.app-container #ay-landing .lp-pro-offer > span:not(.lp-pro-offer__deal) { font: 500 17px/1.3 var(--ay-sans-stack); }
+.app-container #ay-landing .lp-pro-offer small { flex-basis: 100%; margin-top: 5px; font: 400 14px/1.4 var(--ay-sans-stack); color: rgba(255,237,172,.8); }
+.app-container #ay-landing .lp-pro-cta {
+  min-width: min(100%, 260px); background: #f7badd !important; color: #3e2723 !important;
+  border-color: #f7badd !important;
+}
+html body .app-container #ay-landing .lp-pro-timing {
+  margin: 16px auto 0; font: 400 13px/1.5 var(--ay-sans-stack) !important; color: rgba(255,237,172,.76) !important;
+}
+.app-container #ay-landing .lp-pro-details { max-width: 540px; margin: 12px auto 0; color: #ffedac; text-align: left; }
+.app-container #ay-landing .lp-pro-details summary { margin: 0 auto; color: #ffedac; }
+.app-container #ay-landing .lp-pro-details__inside { padding-top: 10px; }
+.app-container #ay-landing .lp-pro-details__inside ul { margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(255,237,172,.22); }
+.app-container #ay-landing .lp-pro-details__inside li { padding: 11px 0; border-bottom: 1px solid rgba(255,237,172,.16); font: 400 15px/1.45 var(--ay-sans-stack); }
+html body .app-container #ay-landing .lp-pro-details__inside p { margin: 14px 0 0; font: 400 14px/1.55 var(--ay-sans-stack) !important; color: rgba(255,237,172,.82) !important; }
+.app-container #ay-landing .wl-pro__more { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; margin-top: 4px; color: #ffedac !important; font-weight: 600; }
+
+/* ----------------------------------------------------------------------
+   Reads + Community: two big visual doors, not a content dashboard. */
+html body .app-container #ay-landing .hm-rc__grid {
+  display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: clamp(28px, 4vw, 56px) !important; align-items: start;
+}
+html body .app-container #ay-landing .hm-readlist > li:nth-child(n + 2) { display: none !important; }
+.app-container #ay-landing .hm-readlist { margin-top: 0; }
+.app-container #ay-landing .hm-readlist__row { display: block !important; text-decoration: none !important; }
+.app-container #ay-landing .hm-readlist__ph {
+  display: block !important; width: 100% !important; aspect-ratio: 4 / 3; overflow: hidden;
+  border-radius: 18px; background: #f7badd;
+}
+.app-container #ay-landing .hm-readlist__ph :is(picture, img) { display: block; width: 100% !important; height: 100% !important; object-fit: cover; }
+.app-container #ay-landing .hm-readlist__text { display: grid; gap: 8px; padding-top: 16px; }
+html body .app-container #ay-landing .hm-readlist__title { font: 700 22px/1.15 var(--ay-font-display, sans-serif) !important; letter-spacing: -.015em; }
+html body .app-container #ay-landing .hm-readlist__src { font: 400 13px/1.45 var(--ay-sans-stack) !important; }
+.app-container #ay-landing .hm-comm { padding: 0 !important; border: 0 !important; box-shadow: none !important; background: transparent !important; }
+.app-container #ay-landing .hm-comm__ph {
+  display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 18px;
+}
+.app-container #ay-landing .hm-comm__ph :is(picture, img) { display: block; width: 100%; height: 100%; object-fit: cover; }
+.app-container #ay-landing .hm-comm__copy { padding: 16px 0 0 !important; }
+html body .app-container #ay-landing .hm-comm__copy .hm-h2 { font-size: clamp(26px, 2.7vw, 38px) !important; }
+.app-container #ay-landing .hm-comm :is(.hm-more, .hm-news, .hm-posts) { display: none !important; }
+
+/* Founders: keep the real photo and short story; remove scrapbook stacking. */
+.app-container #ay-landing .hm-polaroid { transform: none !important; padding: 0 !important; border: 0 !important; box-shadow: none !important; background: transparent !important; }
+.app-container #ay-landing .hm-polaroid__ph { border-radius: 18px; overflow: hidden; }
+.app-container #ay-landing .hm-polaroid figcaption { margin-top: 10px; font-size: 13px; }
+html body .app-container #ay-landing .wl-classic .hm-us { border-top: 1px solid var(--ay-hairline, rgba(62,39,35,.2)); }
+
+/* Closing statement: obvious without trying to out-shout the hero. */
+html body .app-container #ay-landing.wl.hm .wlx-end__h.wlx-end__h { font-size: clamp(38px, 5vw, 64px) !important; }
+.app-container #ay-landing .wlx-end__in { gap: 24px; }
+
+@media (max-width: 767px) {
+  html body .app-container #ay-landing.wl .wl-classic .hm-sec { padding-block: 56px !important; }
+  .app-container #ay-landing .lp-need-index { grid-template-columns: 1fr; gap: 12px; margin-bottom: 40px; }
+  .app-container #ay-landing .lp-need-index__link { min-height: 220px; padding: 20px; font-size: 23px !important; }
+  html body .app-container #ay-landing .hm-stickers {
+    display: grid !important; grid-template-columns: repeat(3, minmax(210px, 74vw)) !important;
+    gap: 14px !important; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px;
+  }
+  html body .app-container #ay-landing .hm-stickers > li { scroll-snap-align: start; }
+  .app-container #ay-landing .lp-method__grid { grid-template-columns: 1fr; gap: 34px; }
+  .app-container #ay-landing .lp-method__photo { aspect-ratio: 4 / 3; max-height: 360px; border-radius: 54px 54px 10px 10px; }
+  .app-container #ay-landing .lp-method__photo figcaption { bottom: 14px; left: 14px; right: 14px; font-size: 14px; }
+  .app-container #ay-landing .lp-method__steps { margin-top: 22px; }
+  .app-container #ay-landing .lp-method__steps > li { column-gap: 10px; }
+  html body .app-container #ay-landing .hm-rc__grid { grid-template-columns: 1fr !important; gap: 52px !important; }
+  .app-container #ay-landing .lp-pro-simple .wl-pro__copy { text-align: left; }
+  html body .app-container #ay-landing .wl-pro .wlx-h2 { margin-inline: 0; }
+  html body .app-container #ay-landing .wl-pro__body { margin-inline: 0; }
+  .app-container #ay-landing .lp-pro-offer { justify-content: flex-start; }
+  .app-container #ay-landing .lp-pro-details { margin-inline: 0; }
+  .app-container #ay-landing .lp-pro-details summary { margin-inline: 0; }
+  .app-container #ay-landing .lp-pro-cta { width: 100%; }
+}

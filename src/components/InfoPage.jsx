@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import BackLink from './nav/BackLink.jsx';
 import '../styles/audit-info.css';
 import { PHOTOS } from './v3/photos.js';
 
@@ -14,8 +15,6 @@ import { PHOTOS } from './v3/photos.js';
  *
  * The medical disclaimer is NOT repeated here: it lives once in SiteFooter.
  */
-const TONE_BY_EYEBROW = { legal: 'paper' };
-const EDGE_BY_TONE = { rose: 'ay3-torn', sky: 'ay3-zigzag', ink: 'ay3-scallop', paper: '' };
 
 function useContents(rootRef, enabled) {
   const [items, setItems] = useState([]);
@@ -36,9 +35,8 @@ function useContents(rootRef, enabled) {
   return [items, active];
 }
 
-export function InfoPage({ eyebrow, title, lede, onBack, width = 'default', className = '', aside, tone, toc, photos, children }) {
+export function InfoPage({ eyebrow, title, lede, onBack, backLabel = 'My ecosystem', width = 'default', className = '', aside, toc, photos, children }) {
   const rootRef = useRef(null);
-  const t = tone || TONE_BY_EYEBROW[String(eyebrow || '').toLowerCase()] || 'rose';
   const showToc = toc ?? width === 'read';
   const [items, active] = useContents(rootRef, showToc);
   const go = (e, id) => {
@@ -49,16 +47,12 @@ export function InfoPage({ eyebrow, title, lede, onBack, width = 'default', clas
   };
   return (
     <div ref={rootRef} className={`ay-info ay-info--${width}${showToc && items.length > 2 ? ' ay-info--toc' : ''}${className ? ` ${className}` : ''}`}>
-      <header className={`ay-info__head${aside ? ' ay-info__head--split' : ''}${!aside && photos?.length ? ' ay3-withpile' : ''} ay3-band ay3-band--${t} ${EDGE_BY_TONE[t] || ''} ay3-edge-bottom ay3-infohero`}>
-        <div className="ay-info__head-main">
-          {onBack && (
-            <button type="button" className="ay-info__back" onClick={onBack}>
-              <span aria-hidden="true">←</span> Back
-            </button>
-          )}
+      <header className={`ay-info__head ay-info__head--calm${aside ? ' ay-info__head--split' : ''}`}>
+        <div className="ay-info__head-main ay-acct-head">
+          {onBack && <BackLink label={backLabel} onClick={onBack} />}
           {eyebrow && <span className="ay-info__eyebrow">{eyebrow}</span>}
-          <h1 className="ay-info__title">{title}</h1>
-          {lede && <p className="ay-info__lede">{lede}</p>}
+          <h1 className="ay-info__title ay-acct-head__title">{title}</h1>
+          {lede && <div className="ay-acct-head__lede"><p className="ay-info__lede">{lede}</p></div>}
         </div>
         {aside}
         {/* One still photo (the tap-to-shuffle pile was a toy with no job). */}

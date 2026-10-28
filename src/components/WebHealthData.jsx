@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
+import BackLink from './nav/BackLink.jsx';
 import { getSelectedNeeds } from '../data/products';
 import HealthConnectionsScreen from '../mobile/screens/profile/HealthConnectionsScreen.jsx';
 import HealthInsightsScreen from '../mobile/screens/profile/HealthInsightsScreen.jsx';
-import { apiSourceFor, sourceById } from '../mobile/data/healthConnections.js';
+import { Capacitor } from '@capacitor/core';
+import { apiSourceFor, availabilityFor, sourceById } from '../mobile/data/healthConnections.js';
 import { useHealthData } from '../mobile/hooks/useHealthData.js';
 import ProFeatureGate from './ProFeatureGate.jsx';
 import '../mobile/screens/profile/health-connections.css';
@@ -29,7 +31,9 @@ export default function WebHealthData({ user, quizResults, onBack, onSignIn, onE
     const sourceId = String(id || '').split(':')[0];
     const source = sourceById(sourceId);
     const connected = health.connections.some((connection) => connection.source === apiSourceFor(sourceId) && connection.status !== 'disconnected');
-    const newSupportedConnection = !connected && ['oauth', 'device'].includes(source?.availability);
+    // Only a connection this device can actually make is sold as Pro; the rest explain themselves.
+    const canConnectHere = availabilityFor(source, { isNative: Capacitor.isNativePlatform(), nativePlatform: Capacitor.getPlatform() }).ok;
+    const newSupportedConnection = !connected && canConnectHere && ['oauth', 'device'].includes(source?.availability);
     push(newSupportedConnection ? `${PRO_CONNECT_PREFIX}${id}` : id);
   };
 
@@ -41,22 +45,20 @@ export default function WebHealthData({ user, quizResults, onBack, onSignIn, onE
       authUser={user}
       onSignIn={onSignIn}
       onOpenInsights={() => push('insights')}
+      tabName="Today"
     />
   );
 
   return (
     <section className="ay-hc-web" aria-labelledby="ay-hc-web-title">
       <div className="ay-hc-web-head">
-        <button type="button" className="ay-hc-web-back" onClick={back} aria-label="Back">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
-        </button>
+        <BackLink label={stack.length > 1 ? 'Health data' : 'You'} onClick={back} />
         <h1 id="ay-hc-web-title">{title}</h1>
       </div>
       <div className="ay-hc-web-body" key={top}>
         {top === 'insights' ? (
-          <ProFeatureGate feature="insights" title="Deeper health insights" onBack={back}>
-            <HealthInsightsScreen authUser={user} selectedNeedIds={selectedNeedIds} onConnect={() => setStack(['list'])} onEditProfile={onEditProfile} />
-          </ProFeatureGate>
+          // The basic health dashboard stays free, the same as in the app (founder's Free vs Pro, Oct 27).
+          <HealthInsightsScreen authUser={user} selectedNeedIds={selectedNeedIds} onConnect={() => setStack(['list'])} onEditProfile={onEditProfile} />
         ) : gatedSourceId ? (
           <ProFeatureGate feature="wearables" title={`Connect ${sourceTitle || 'health data'}`} onBack={back}>
             {connectionScreen(gatedSourceId)}

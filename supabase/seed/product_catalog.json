@@ -545,7 +545,7 @@
     ],
     "where_to_buy_in_stock": {},
     "safety": {
-      "fdaStatus": "FDA-registered",
+      "fdaStatus": "FDA-regulated Class II medical device (unscented menstrual tampon, product code HEB). LOLA says its tampons are FDA 510(k) cleared. FDA records list LOLA's company, ALYK, Inc., with tampon 510(k) clearances held by its manufacturers, such as K151170 (Tosama 100% organic cotton tampon), but ayna could not match a clearance number to this exact product.",
       "materials": "100% organic cotton (tampon and string), BPA-free compact plastic applicator",
       "recalls": "⚠️ 2021 lawsuit, later dropped: a proposed federal class action (Manson v. ALYK Inc., S.D.N.Y., No. 7:21-cv-05688) alleged LOLA tampons lack a protective outer coating and can unravel or shed cotton fibers inside the body during removal. The plaintiff voluntarily dismissed the case without prejudice on February 22, 2022, before any ruling or settlement, so the allegations were never proven or disproven in court. No recall has been issued.",
       "allergens": "Hypoallergenic, fragrance-free, dye-free",
@@ -1853,10 +1853,10 @@
     "extra": {
       "platform": "iOS, Android",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "integrations": [
         "Apple Health"
@@ -2307,9 +2307,9 @@
       "allergens": "Check label",
       "sideEffects": "Generally well tolerated. D-mannose may cause mild diarrhea or stomach upset in some people, especially at higher doses. Use caution if you have kidney disease."
     },
-    "doctor_opinion": "D-mannose has evidence for UTI prevention in some women. Use alongside adequate hydration and post-coital voiding.",
+    "doctor_opinion": "The best evidence so far does not support D-mannose, the main ingredient listed here, for preventing UTIs. In a 2024 randomized trial in JAMA Internal Medicine, 598 women with recurrent UTIs took 2 g of D-mannose powder or a placebo every day for 6 months. D-mannose did not lower the share who saw a clinician for a suspected UTI (51.0% vs 55.7%, not a significant difference), and the authors concluded it should not be recommended to prevent UTIs. Uqora Control itself has not been tested in a published trial. If you get UTIs often, ask a clinician about prevention options with stronger evidence. Drinking enough water and peeing after sex are common, low-risk habits to keep up.",
     "community_review": "Community discussions on Amazon note satisfaction with recurrent UTI prevention when taken daily.",
-    "effectiveness": "Clinically studied ingredients for UTI prevention.",
+    "effectiveness": "Weak evidence. D-mannose, its main listed ingredient, did not prevent UTIs better than a placebo in a 2024 JAMA Internal Medicine trial of 598 women with recurrent UTIs (51.0% vs 55.7% saw a clinician for a suspected UTI within 6 months). Uqora Control itself has not been tested in a published trial.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
     "source": "curated",
@@ -2321,8 +2321,7 @@
       "ratingNote": "User reviews are positive, but a 2024 JAMA study found D-mannose did not significantly reduce UTI recurrence vs placebo. Clinical evidence is mixed.",
       "ingredients": "D-mannose, hibiscus extract.",
       "badges": [
-        "UTI Focus",
-        "Evidence-Based"
+        "UTI Focus"
       ],
       "verificationLinks": {
         "doctor": {
@@ -3802,10 +3801,10 @@
     "extra": {
       "platform": "Web, app",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "badges": [
         "Telehealth",
@@ -3908,10 +3907,10 @@
     "extra": {
       "platform": "Web, app",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "badges": [
         "Telehealth",
@@ -4014,10 +4013,10 @@
     "extra": {
       "platform": "Web, iOS, Android",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "badges": [
         "Telehealth",
@@ -4128,10 +4127,10 @@
     "extra": {
       "platform": "Web, iOS, Android",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "badges": [
         "Telehealth",
@@ -8144,10 +8143,10 @@
     "extra": {
       "platform": "iOS, Android",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "integrations": [
         "Apple Health",
@@ -8381,10 +8380,10 @@
     "extra": {
       "platform": "iOS, Android",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "integrations": [
         "Apple Health",
@@ -8490,10 +8489,10 @@
     "extra": {
       "platform": "Web, iOS, Android",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "integrations": [],
       "badges": [
@@ -8609,10 +8608,10 @@
     "extra": {
       "platform": "Web, iOS",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "integrations": [
         "Apple Health"
@@ -8734,10 +8733,10 @@
     "extra": {
       "platform": "Web, iOS",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "integrations": [],
       "verificationLinks": {
@@ -9182,10 +9181,10 @@
     "extra": {
       "platform": "iOS, Android",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "integrations": [],
       "verificationLinks": {
@@ -9416,10 +9415,10 @@
     "extra": {
       "platform": "iOS only",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "integrations": [
         "All iOS Health Apps"
@@ -11030,10 +11029,10 @@
     "extra": {
       "platform": "Web, Mobile",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "integrations": [],
       "badges": [
@@ -13283,10 +13282,10 @@
     "extra": {
       "platform": "Web, Mobile",
       "privacy": {
-        "dataStorage": "Review the provider current privacy policy for data storage details.",
-        "sellsData": "Review the provider current privacy policy for data sharing and sale disclosures.",
-        "hipaa": "Review the provider current privacy notices for applicable privacy protections.",
-        "keyPolicy": "Privacy practices can change. Verify the provider current policy before sharing sensitive health information."
+        "dataStorage": "Review the provider's current privacy policy for data storage details.",
+        "sellsData": "Review the provider's current privacy policy for data sharing and sale disclosures.",
+        "hipaa": "Review the provider's current privacy notices for applicable privacy protections.",
+        "keyPolicy": "Privacy practices can change. Verify the provider's current policy before sharing sensitive health information."
       },
       "integrations": [],
       "badges": [

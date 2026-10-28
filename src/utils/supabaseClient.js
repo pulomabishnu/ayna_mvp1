@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { supabaseFetch } from './network.js';
 import { processLock } from '@supabase/auth-js';
 import { Capacitor } from '@capacitor/core';
 
@@ -213,6 +214,9 @@ export function getSupabaseClient() {
     const storageKey = authStorageKey(url);
 
     client = createClient(url, anonKey, {
+      // Every query, auth refresh and upload has a ceiling (src/utils/network.js),
+      // so a dead connection ends in an error message, never an endless spinner.
+      global: { fetch: supabaseFetch },
       auth: {
         // Keep the existing implicit flow everywhere except the web Google
         // callback. On that callback page the SAME main client performs the

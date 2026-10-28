@@ -3,8 +3,12 @@
 // Drops info-only rows (a drug lowering a nutrient is not a reason to avoid the
 // product) and rows without a credible source. Usage: node scripts/merge-med-interactions.mjs <file>
 import fs from 'node:fs';
-const ALLOW = /(^|\.)(nih\.gov|medlineplus\.gov|fda\.gov|cdc\.gov|mayoclinic\.org|clevelandclinic\.org|nhs\.uk|cochrane\.org|cochranelibrary\.com|who\.int|nice\.org\.uk)$/i;
-const credible = (u) => { try { return ALLOW.test(new URL(u).hostname); } catch { return false; } };
+// Founder rule (Oct 24 2026): clinical claims cite reputable .gov health sites only
+// (MedlinePlus, NIH and its institutes incl. NLM, FDA, CDC, womenshealth.gov, AHRQ).
+// PubMed/PMC papers are left out until someone has opened and checked them.
+const ALLOW = /(^|\.)(nih\.gov|medlineplus\.gov|fda\.gov|cdc\.gov|womenshealth\.gov|ahrq\.gov|hhs\.gov)$/i;
+const PAPER = /^(pubmed|pmc)\.ncbi\.nlm\.nih\.gov$/i;
+const credible = (u) => { try { const h = new URL(u).hostname; return ALLOW.test(h) && !PAPER.test(h); } catch { return false; } };
 const data = JSON.parse(fs.readFileSync(process.argv[2], 'utf8')).interactions || [];
 // Words that would match the wrong thing in product text.
 const UNSAFE_TERMS = new Set(['fiber', 'dietary fiber', 'bha', 'sulfur', 'potassium', 'soy', 'soybean', 'b12', 'vitamin h', 'coffee extract', 'panax', 'aspirin']);

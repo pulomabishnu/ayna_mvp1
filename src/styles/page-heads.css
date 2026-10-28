@@ -1,0 +1,92 @@
+/* One page head on the website (founder, Oct 27 13:46: "the pages look extremely disorganized";
+   13:47: "make sure the theme is consistent across pages ... the rest of them have a yellow header
+   but the shop has pink"). Shop, Services, Community, Library and the info pages share:
+   - the page colour (butter in light, espresso in dark), no full pink fill (pink stays an accent);
+   - the same title: 700, 48px on a laptop, 32px on a phone, left-aligned on the container edge;
+   - the same space above the title and below the head;
+   - one bottom edge: the 1.5px wavy espresso rule (butter in dark), full width. No other rule.
+   Home keeps its espresso hero band (the one espresso role, Oct 27 13:45); it shares the title,
+   spacing and left edge. Spacing and alignment only: the components inside are untouched.
+   The Shop keeps its approved layout: title, the wide search with the round arrow, one row of
+   need chips (with arrows when they overflow), then the big product grid. */
+
+:root {
+  --phd-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6Q10 0 20 6T40 6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E");
+  --phd-top: 40px;      /* nav to title */
+  --phd-bottom: 40px;   /* last line of the head to the rule */
+  --phd-after: 40px;    /* rule to the page content */
+  --phd-title: 48px;
+}
+@media (max-width: 767px) {
+  :root { --phd-top: 24px; --phd-bottom: 28px; --phd-after: 24px; --phd-title: 32px; }
+}
+
+/* ---- The title, the same on every head ---- */
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container :is(
+  .cm-head.cm-titlerow h1,
+  .ay-ih .ay-ih__h1,
+  .ay-ih h1,
+  .ay-wh-hello .ay-wh-hello__hi
+) {
+  margin: 0 !important; max-width: 22ch;
+  font-family: var(--ay-heading, 'ayna Display', serif) !important; font-weight: 700 !important;
+  font-size: var(--phd-title) !important; line-height: 1.05 !important; letter-spacing: -0.02em !important;
+  text-align: left !important; text-transform: none !important; text-wrap: balance;
+}
+
+/* ---- The head box: same space above and below, left edge on the container ---- */
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container :is(.cm-head.cm-titlerow, .ay-ih.uq-bleed) {
+  position: relative; padding-top: var(--phd-top) !important; padding-bottom: var(--phd-bottom) !important; margin-top: 0 !important; margin-bottom: var(--phd-after) !important;
+  border: 0 !important; box-shadow: none !important;
+}
+/* The one bottom edge: a full-width wavy rule. */
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container :is(.cm-head.cm-titlerow, .ay-ih.uq-bleed)::after {
+  content: '' !important; display: block !important; position: absolute !important; z-index: 0 !important;
+  top: auto !important; bottom: -6px !important; left: 50% !important; right: auto !important; width: 100vw !important; height: 12px !important; margin: 0 0 0 -50vw !important;
+  background: var(--ay-calm-line, #3e2723) !important; border: 0 !important; border-radius: 0 !important; transform: none !important; pointer-events: none;
+  -webkit-mask: var(--phd-wave) 0 0 / 40px 12px repeat-x !important; mask: var(--phd-wave) 0 0 / 40px 12px repeat-x !important;
+}
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container :is(.cm-head.cm-titlerow, .ay-ih.uq-bleed)::before { content: none !important; }
+
+/* ---- Shop and Services: the butter head (no pink band), left-aligned like the others ---- */
+/* The search: a pill, 1.5px espresso outline, butter fill, and the round espresso arrow to search. */
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ayshop-hero .ayshop__search { position: relative; }
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ayshop-hero .ayshop__search input[type='search'] { padding-right: 64px !important; }
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ayshop-hero .ayshop__search-go {
+  position: absolute; z-index: 2; top: 50%; right: 6px; transform: translateY(-50%);
+  display: grid; place-items: center; box-sizing: border-box; width: 44px; height: 44px; min-height: 44px; margin: 0; padding: 0;
+  border: 0; border-radius: 50%; background: #3e2723; color: #ffedac; cursor: pointer;
+}
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ayshop-hero .ayshop__search-go svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ayshop-hero .ayshop__search-go:hover { transform: translateY(-50%) translateX(1px); }
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ayshop-hero .ayshop__search-go:focus-visible { outline: 3px solid var(--ay-calm-fg, #3e2723); outline-offset: 2px; }
+/* The need chips: arrows on phones too, so the row reads as "more this way". */
+@media (max-width: 767px) {
+  :is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ayshop-hero .ayshop__search input[type='search'] { height: 52px !important; min-height: 52px !important; }
+  :is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ayshop-hero .ayshop__search-icon { top: 26px !important; }
+}
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ayshop-hero .ay-scrollrow__arrow { border-color: var(--ay-calm-fg) !important; background: var(--ay-calm-page) !important; color: var(--ay-calm-fg) !important; }
+
+/* ---- Library: the title starts at the top, beside the Contents box ---- */
+
+/* ---- Community: no second rule under the title row (the wavy rule is the edge) ---- */
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .cm-head.cm-titlerow { background: none !important; }
+
+/* ---- Home: the espresso hero keeps its colour; its greeting starts on the container edge ---- */
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ay-wh.ay-wh--today { max-width: calc(var(--ay-container, 1240px) + 2 * var(--ay-margin, 64px)) !important; padding-left: var(--ay-margin, 64px) !important; padding-right: var(--ay-margin, 64px) !important; box-sizing: border-box; }
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead {
+  max-width: none !important; margin-left: 0 !important; margin-right: 0 !important;
+  padding-top: var(--phd-top) !important; padding-bottom: var(--phd-bottom) !important; padding-right: 0 !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+}
+
+/* ---- Info pages (About, How it works, ...): the same butter head, no espresso band ---- */
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ay-ih.uq-bleed { background: var(--ay-calm-page) !important; }
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ay-ih.uq-bleed :is(h1, p, a, span, li, nav) { color: var(--ay-calm-fg) !important; }
+
+/* ---- Every head starts right under the site header (some pages add their own top padding) ---- */
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ct.cm:has(> .cm-head.cm-titlerow) { padding-top: 0 !important; }
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ed-wrap > .ay-ih.uq-bleed:first-child { margin-top: -8px !important; }
+@media (max-width: 767px) {
+}
+

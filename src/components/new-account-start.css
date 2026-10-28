@@ -2,28 +2,28 @@
    Works inside the website (.app-container) and the app (.ayna-mobile). */
 .ay-newacct {
   position: fixed; inset: 0; z-index: 1200; display: grid; place-items: center; padding: 16px;
-  background: rgba(29, 26, 43, .45);
+  background: rgba(62, 39, 35, .45);
 }
 .ay-newacct__card {
   position: relative; display: grid; justify-items: center; gap: 16px; width: min(100%, 440px);
-  padding: 32px 24px 24px; border: 2px solid var(--ay-ink, #1d1a2b); border-radius: 24px;
-  background: var(--ay-paper, #fffcf5); color: var(--ay-ink, #1d1a2b); text-align: center;
-  box-shadow: 4px 4px 0 var(--ay-ink, #1d1a2b); font-family: var(--ay-sans);
+  padding: 32px 24px 24px; border: 2px solid var(--legacy-ink, #3e2723); border-radius: 24px;
+  background: var(--ay-paper, #ffedac); color: var(--legacy-ink, #3e2723); text-align: center;
+  box-shadow: 4px 4px 0 var(--legacy-ink, #3e2723); font-family: var(--ay-sans);
 }
-.ay-newacct__mark { display: grid; place-items: center; width: 56px; height: 56px; border: 2px solid #1d1a2b; border-radius: 50%; background: var(--ay-butter, #f7e78e); color: #1d1a2b; }
-.ay-newacct__mark svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.ay-newacct__mark { display: grid; place-items: center; width: 56px; height: 56px; border: 2px solid #3e2723; border-radius: 50%; background: var(--legacy-butter, #ffedac); color: #3e2723; }
+.ay-newacct__mark svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.75; }
 .ay-newacct__card h2 { margin: 0; font: 400 var(--ay-fs-section)/1.15 var(--ay-serif); letter-spacing: -0.01em; color: inherit; text-wrap: balance; }
 .ay-newacct__card p { margin: 0; max-width: 34ch; font: 400 var(--ay-fs-body)/1.55 var(--ay-sans); color: var(--ay-ink-soft, #4a4658); }
 .ay-newacct__primary {
-  width: 100%; min-height: 48px; padding: 0 24px; border: 2px solid var(--ay-ink, #1d1a2b); border-radius: 999px;
-  background: var(--ay-ink, #1d1a2b); color: var(--ay-paper, #fffcf5); font: 600 var(--ay-fs-body)/1 var(--ay-sans);
+  width: 100%; min-height: 48px; padding: 0 24px; border: 2px solid var(--legacy-ink, #3e2723); border-radius: 999px;
+  background: var(--legacy-ink, #3e2723); color: var(--ay-paper, #ffedac); font: 600 var(--ay-fs-body)/1 var(--ay-sans);
   cursor: pointer; transition: transform .15s ease;
 }
 .ay-newacct__primary:active { transform: scale(.98); }
 .ay-newacct__quiet { min-height: 44px; padding: 0 16px; border: 0; background: none; color: var(--ay-ink-soft, #4a4658); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
 .ay-newacct__close { position: absolute; top: 8px; right: 8px; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: inherit; cursor: pointer; }
 .ay-newacct__close svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
-.ay-newacct :is(button):focus-visible { outline: 3px solid var(--ay-ink, #1d1a2b); outline-offset: 2px; }
+.ay-newacct :is(button):focus-visible { outline: 3px solid var(--legacy-ink, #3e2723); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .ay-newacct__primary { transition: none; } }
 
 /* Dark: neon edge, butter mark glows. */

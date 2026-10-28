@@ -1,0 +1,138 @@
+/* Home stands out (founder Oct 26 21:45: "make it stand out"): the centre tab is a raised round espresso
+   button with a butter icon (app and the website's phone tab bar); on the website's top nav Home is the
+   filled pill. Same button and link semantics; targets stay 44px or more. */
+
+/* ---- App tab bar ---- */
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile) .ayna-bottom-nav { overflow: visible !important; }
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile) .ayna-bottom-nav button.is-center { overflow: visible !important; background: transparent !important; color: var(--b-espresso, #3e2723) !important; min-height: 56px !important; }
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile) .ayna-bottom-nav button.is-center .ay-nav-center {
+  box-sizing: border-box !important; width: 60px !important; height: 60px !important; padding: 0 !important; margin: -30px 0 0 !important; border-radius: 50% !important;
+  display: grid !important; place-items: center !important;
+  background: #ffedac !important; color: #3e2723 !important;
+  border: 2px solid #3e2723 !important; box-shadow: 0 0 0 4px #ffedac !important;
+}
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile) .ayna-bottom-nav button.is-center .ay-nav-center svg { width: 28px !important; height: 28px !important; padding: 0 !important; background: none !important; color: currentColor !important; }
+/* Founder, Oct 27 13:57 ("also unclickable"): Home looked selected on every tab. Not current, it is an
+   outlined circle with a normal label; current, it fills espresso with a bold label and a pink ring. */
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile) .ayna-bottom-nav button.is-center > span:last-child { font-weight: inherit !important; }
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile) .ayna-bottom-nav button.is-center.is-active > span:last-child { font-weight: 700 !important; }
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile) .ayna-bottom-nav button.is-center.is-active .ay-nav-center { background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; box-shadow: 0 0 0 4px #ffedac, 0 0 0 7px #f7badd !important; }
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile) .ayna-bottom-nav button.is-center:focus-visible { outline: none !important; }
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile) .ayna-bottom-nav button.is-center:focus-visible .ay-nav-center { outline: 3px solid #3e2723 !important; outline-offset: 3px; }
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile)[data-theme='dark'] .ayna-bottom-nav button.is-center { color: #ffedac !important; }
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile)[data-theme='dark'] .ayna-bottom-nav button.is-center .ay-nav-center { background: #3e2723 !important; color: #ffedac !important; border-color: #ffedac !important; box-shadow: 0 0 0 4px #3e2723 !important; }
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile)[data-theme='dark'] .ayna-bottom-nav button.is-center.is-active .ay-nav-center { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; box-shadow: 0 0 0 4px #3e2723, 0 0 0 7px #f7badd !important; }
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile)[data-theme='dark'] .ayna-bottom-nav button.is-center:focus-visible .ay-nav-center { outline-color: #ffedac !important; }
+
+/* ---- Website: the top nav's Home is the filled pill; the phone tab bar raises it like the app ---- */
+/* Review fix (Oct 26): the filled pill marks the CURRENT page, whichever it is; Home, when it isn't
+   current, stands out as an outlined pill so it is still easy to find. */
+html body .app-container.app-container.app-container .ay-nav__links { gap: 8px; }
+html body .app-container.app-container.app-container .ay-nav__link {
+  align-self: center; min-height: 44px; height: auto; padding: 0 12px !important;
+  font-weight: 400 !important; border-radius: 0 !important; box-shadow: none !important;
+}
+html body .app-container.app-container.app-container .ay-nav__link:not(.is-home)[aria-current='page'] {
+  background: transparent !important; color: var(--ay-text, #3e2723) !important;
+  text-decoration: underline !important; text-decoration-thickness: 2px !important; text-underline-offset: 8px;
+}
+html body .app-container.app-container.app-container .ay-nav__link:not(.is-home)::after { display: none !important; }
+html body .app-container.app-container.app-container .ay-nav__link.is-home {
+  padding: 0 20px !important; border-radius: 999px !important; font-weight: 700 !important;
+  background: #f7badd !important; color: #3e2723 !important;
+}
+html body .app-container.app-container.app-container .ay-nav__link.is-home[aria-current='page'] {
+  box-shadow: inset 0 0 0 1.5px #3e2723 !important;
+}
+html body .app-container.app-container.app-container .ay-nav__link:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+
+html body .app-container.app-container.app-container .ay-tabbar--main a.is-center .ay-tabbar__icon { display: grid; place-items: center; box-sizing: border-box; width: 56px; height: 56px; margin-top: -28px; border-radius: 50%; background: #ffedac; color: #3e2723; border: 2px solid #3e2723; box-shadow: 0 0 0 4px #ffedac; }
+html body .app-container.app-container.app-container .ay-tabbar--main a.is-center .ay-tabbar__icon svg { width: 26px; height: 26px; color: currentColor; }
+html body .app-container.app-container.app-container .ay-tabbar--main a.is-center.is-on .ay-tabbar__icon { box-shadow: 0 0 0 4px #ffedac, 0 0 0 7px #f7badd; background: #3e2723; color: #ffedac; }
+html body .app-container.app-container.app-container .ay-tabbar--main a.is-center.is-on .ay-tabbar__label { font-weight: 700; }
+html body .app-container.app-container.app-container .ay-tabbar--main { overflow: visible; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .app-container.app-container.app-container .ay-tabbar--main a.is-center .ay-tabbar__icon,
+.app-container.app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tabbar--main a.is-center .ay-tabbar__icon { background: #3e2723; color: #ffedac; border-color: #ffedac; box-shadow: 0 0 0 4px #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .app-container.app-container.app-container .ay-tabbar--main a.is-center.is-on .ay-tabbar__icon,
+.app-container.app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tabbar--main a.is-center.is-on .ay-tabbar__icon { background: #ffedac; color: #3e2723; box-shadow: 0 0 0 4px #3e2723, 0 0 0 7px #f7badd; }
+
+/* QA (Oct 26): the raised Home button overhangs the bar by about 34px; the scroll area keeps that much
+   clear at its foot (and as scroll padding), so nothing sits hidden under the button. */
+.ayna-mobile:is(#ht, .ayna-mobile):is(#ht, .ayna-mobile):is(#ht, .ayna-mobile) .ay-home__view { padding-bottom: calc(var(--ay-home-fab-overhang, 34px) + 12px) !important; scroll-padding-bottom: calc(var(--ay-home-fab-overhang, 34px) + 12px); }
+
+/* Stationery header: Ayna's pink paper, a scalloped seam, and one small Home tab.
+   Navigation remains real text; the decoration never takes focus or handles clicks. */
+html body .app-container.app-container.app-container .app-nav-wrap {
+  --ay-text: #3e2723; --ay-text-2: #3e2723; --ay-outline-color: #3e2723;
+  --ay-feature-bg: #3e2723; --ay-feature-fg: #ffedac;
+  --paper-header: #f7badd;
+  background: var(--paper-header) !important; border-bottom: 0 !important;
+}
+html body .app-container.app-container.app-container .app-nav-wrap::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -8px; height: 9px;
+  background: radial-gradient(ellipse 12px 9px at 12px 0, var(--paper-header) 97%, transparent 100%) 0 0 / 24px 9px repeat-x;
+  pointer-events: none;
+}
+html body .app-container.app-container.app-container .ay-nav--paper { height: 78px; gap: 32px; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__links { gap: 12px; margin-left: 20px; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__logo { font-size: 32px !important; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__beta {
+  align-self: flex-start; margin-top: 6px; padding: 3px 6px; border: 1px solid currentColor;
+  border-radius: 3px; background: #ffedac; transform: rotate(-8deg); font-size: 10px !important;
+  letter-spacing: .04em !important;
+}
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link {
+  min-height: 44px; font-size: 15px !important; padding: 0 10px !important; transition: color 160ms ease;
+}
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link.is-home {
+  position: relative; padding: 0 16px !important; gap: 8px; background: #ffedac !important;
+  color: #3e2723 !important; border: 1px solid #3e2723 !important;
+  border-radius: 10px 5px 10px 5px !important; box-shadow: 2px 3px 0 #3e2723 !important;
+  transform: rotate(-3deg); margin-right: 8px; font-weight: 600 !important;
+}
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link.is-home > span { transform: rotate(3deg); }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__home-mark { display: inline-flex; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__home-mark svg { width: 17px; height: 17px; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link:not(.is-home)[aria-current='page'] {
+  text-decoration: none !important;
+}
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link:not(.is-home)[aria-current='page']::after {
+  display: block !important; content: ''; position: absolute; bottom: 3px; left: 10px; right: 10px;
+  height: 5px; border: 0; border-bottom: 2px solid currentColor; border-radius: 50%;
+  background: transparent; transform: rotate(-3deg);
+}
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link:not(.is-home):hover { text-decoration: underline !important; text-underline-offset: 5px; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__ask { background: transparent !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .app-nav-wrap {
+  --paper-header: #3e2723; --ay-text: #ffedac; --ay-text-2: #ffedac; --ay-outline-color: #ffedac;
+  --ay-feature-bg: #ffedac; --ay-feature-fg: #3e2723;
+}
+@media (min-width: 900px) and (max-width: 1120px) {
+  html body .app-container.app-container.app-container .ay-nav--paper { gap: 20px; }
+  html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__links { gap: 2px; margin-left: 0; }
+}
+@media (max-width: 899px) {
+  html body .app-container.app-container.app-container .ay-nav--paper { height: 64px; }
+  html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__logo { font-size: 28px !important; }
+  html body .app-container.app-container.app-container .app-nav-wrap::after { height: 6px; bottom: -5px; background-size: 24px 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link { transition: none; }
+}
+html body .app-container.app-container.app-container .app-nav-wrap.is-away:not(:focus-within)::after { opacity: 0; }
+html body .app-container.app-container.app-container .app-nav-wrap:has(.ay-nav.is-focused)::after { display: none; }
+
+.ay-ecosystem-entry { max-width: 660px; margin: clamp(40px,8vw,100px) auto; padding: clamp(28px,6vw,64px); text-align:center; color:#3e2723; background:#fff9e9; border:1px solid #d8bda9; border-radius:120px 120px 18px 18px; box-shadow:6px 7px 0 #f7badd; }
+.ay-ecosystem-entry__lock { display:block; width:48px; margin:0 auto 24px; }
+.ay-ecosystem-entry__lock svg { width:100%; }
+.ay-ecosystem-entry__eyebrow { font-size:12px; letter-spacing:.1em; text-transform:uppercase; }
+.ay-ecosystem-entry h1 { font-family:var(--ay-sans); font-weight:600; font-size:clamp(32px,5vw,48px); line-height:1.1; margin:18px 0; }
+.ay-ecosystem-entry > p:not(.ay-ecosystem-entry__eyebrow) { max-width:400px; margin:0 auto 28px; line-height:1.65; }
+.ay-ecosystem-entry .ay-btn { background:#3e2723; color:#fff9e9; padding:16px 24px; border-radius:8px; }
+.ay-ecosystem-entry small { display:block; margin:16px 0 28px; line-height:1.5; }
+.ay-ecosystem-entry > .ct-link { display:block; margin:auto; }
+@media(max-width:600px) { .ay-ecosystem-entry { margin:32px 20px 100px; } }
+
+html body .app-container.app-container.app-container .ay-ecoview2 { margin-top:24px; }
+@media(max-width:899px) { html body .app-container.app-container.app-container .ay-ecoview2 { margin-top:16px; } }

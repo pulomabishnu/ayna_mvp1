@@ -1,0 +1,11 @@
+/* BrandStrip.jsx: espresso and pink squares in a 14px bar, a 1.5px espresso
+   rule top and bottom (the website footer's strip before Oct 27, 15098d39).
+   Fixed brand colours; in dark mode the rules turn butter so the bar still
+   reads against an espresso page. */
+.ayk-strip {
+  display: block; width: 100%; height: 14px !important; min-height: 0 !important; max-height: 14px; margin: 0; padding: 0; box-sizing: border-box; flex: none;
+  border-block: 1.5px solid #3e2723;
+  background: repeating-conic-gradient(#3e2723 0 25%, #f7badd 0 50%) 0 0 / 28px 28px;
+}
+:is([data-theme='dark'], [data-theme='brand-dark']) .ayk-strip { border-color: #ffedac; }
+.ayk-strip.is-lg { height: 18px !important; max-height: 18px; background-size: 36px 36px; }

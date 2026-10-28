@@ -11,4 +11,10 @@ describe('formatPrice', () => {
     expect(formatPrice({ price: '$30/month' }).main).toBe('$30/month');
     expect(formatPrice({ price: '~$20-35' }).main).toBe('About $20–35');
   });
+  it('names the unit of a bare pack count (P1-4)', () => {
+    expect(formatPrice({ price: '$10 for 18', name: 'Organic Tampons', category: 'tampon' }).sub).toBe('18 tampons');
+    expect(formatPrice({ price: '$8 for 18', name: 'Infinity FlexFoam', category: 'pad' }).sub).toBe('18 pads');
+    expect(formatPrice({ price: '$5 for 12', name: 'Mystery', category: 'other' }).sub).toBe('pack of 12');
+    expect(formatPrice({ price: '$12 for 100 softgels' }).sub).toBe('100 softgels');
+  });
 });

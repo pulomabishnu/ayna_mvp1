@@ -4,8 +4,8 @@
 .ayna-scrapbook__header button{min-height:40px;padding:8px 13px;border:1px solid #3e2723;border-radius:12px;background:#ffedac;color:#3e2723;font:500 13px var(--ayna-font-ui);cursor:pointer}
 .ayna-scrapbook__scroll{flex:1;min-height:0;overflow-y:auto;padding:0 20px 32px}
 .ayna-scrapbook__scroll>section,.ayna-scrapbook__footer{max-width:520px;margin-left:auto;margin-right:auto}
-.ayna-scrapbook__eyebrow{display:block;color:#3e2723;text-transform:uppercase;letter-spacing:.12em;font:500 11.5px var(--ayna-font-ui)}
-.ayna-scrapbook h1,.ayna-scrapbook h2{font-family:'Bricolage Grotesque',var(--ayna-font-ui);font-weight:900;letter-spacing:-.065em}
+.ayna-scrapbook__eyebrow{display:block;color:#3e2723;text-transform: none;letter-spacing: 0;font:500 13px var(--ayna-font-ui)}
+.ayna-scrapbook h1,.ayna-scrapbook h2{font-family:'ayna Display',var(--ayna-font-ui);font-weight:900;letter-spacing:-.065em}
 .ayna-scrapbook h1 em,.ayna-scrapbook h2 em{font:italic 500 1.06em var(--ayna-font-display);color:inherit}
 .ayna-scrapbook__hero{position:relative;overflow:hidden;min-height:230px;margin:0 -20px 22px!important;padding:31px 23px;background:#3e2723;color:#ffedac}
 .ayna-scrapbook__hero .ayna-scrapbook__eyebrow{color:#F7BADD}
@@ -24,7 +24,7 @@
 .ayna-scrapbook__polaroid{overflow:hidden;padding:7px;border-radius:19px;background:#ffedac;border:1px solid #3e2723}
 .ayna-scrapbook__photo{height:clamp(190px,55vw,300px);overflow:hidden;border-radius:13px;background:#ffedac}
 .ayna-scrapbook__photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 42%}
-.ayna-scrapbook__handwriting{padding:8px 7px 4px;color:#3e2723;font:italic 400 15px/1.45 'DM Sans', system-ui, sans-serif}
+.ayna-scrapbook__handwriting{padding:8px 7px 4px;color:#3e2723;font:italic 400 15px/1.45 'Figtree', system-ui, sans-serif}
 .ayna-scrapbook__team-note{padding:18px 20px;border-radius:18px;background:#F7BADD}
 .ayna-scrapbook__team-note h2{margin:7px 0;font-size:28px;line-height:1.15;font-weight:400}
 .ayna-scrapbook__team-note p{margin:0;font-size:13px;font-weight:500;line-height:1.5}
@@ -65,3 +65,7 @@
 .ayna-scrapbook__advisor-copy{display:grid;gap:3px;min-width:0}
 .ayna-scrapbook__advisors strong{font-size:13px;font-weight:500;line-height:1.2}.ayna-scrapbook__advisors small{overflow-wrap:anywhere;font-size:11.5px;font-weight:500;line-height:1.3}
 .ayna-scrapbook__footer{margin-top:19px;padding:15px;border-radius:12px;background:#ffedac;color:#3e2723;text-align:center;font-size:13px;font-weight:500;line-height:1.4}
+/* "Matched to you" is a sticker, not a button (walkthrough P2-18): the oval
+   stamp from the Ecosystem card, tilted, with the asterisk. */
+.ayna-mobile .ayna-scrapbook__intro-stamp { display: inline-flex !important; align-items: center; gap: 6px; padding: 7px 13px !important; border: 1.5px solid #3e2723 !important; border-radius: 50% !important; background: #ffedac; color: #3e2723 !important; box-shadow: inset 0 0 0 3px #ffedac, inset 0 0 0 4.5px #3e2723; font: 600 12.5px/1 var(--f-ui, 'Figtree', sans-serif) !important; white-space: nowrap; transform: rotate(-6deg); cursor: default; pointer-events: none; }
+.ayna-mobile .ayna-scrapbook__intro-stamp svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; }

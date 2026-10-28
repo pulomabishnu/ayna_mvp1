@@ -1,0 +1,105 @@
+/* The website Shop header (founder, Oct 27: "the shop page on the website is also good and
+   simple", the production version). One pink band with a wavy bottom edge, a single serif
+   headline ("Shop by need." / "Services."), the wide search and one row of need chips that
+   scrolls sideways with arrow buttons. Then calm butter space, the toolbar and the grid.
+   Fixed colours inside the band (pink, butter, espresso), so it reads the same in dark mode. */
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop { overflow-x: clip; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero {
+  --sh-pink: #f7badd; --sh-ink: #3e2723; --sh-butter: #ffedac;
+  position: relative; box-sizing: border-box; width: 100vw; margin: calc(-1 * var(--ay-s32, 32px)) 0 64px calc(50% - 50vw);
+  padding: 56px max(var(--ay-gutter, 20px), calc(50vw - 610px)) 40px;
+  border-top: 1.5px solid var(--sh-ink); background: var(--sh-pink); color: var(--sh-ink); text-align: center;
+}
+/* The wavy edge: soft round waves hanging into the butter page. */
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -15px; height: 16px; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='16' viewBox='0 0 48 16'%3E%3Cpath d='M0 0h48v4C38 4 36 15 24 15S10 4 0 4Z' fill='%23f7badd'/%3E%3C/svg%3E") repeat-x 0 0 / 48px 16px;
+}
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero__title {
+  margin: 0 0 20px !important; color: var(--sh-ink) !important;
+  font: 700 clamp(34px, 4.4vw, 52px)/1.05 var(--ay-heading, 'ayna Display', serif) !important; letter-spacing: -0.01em !important; text-transform: none !important;
+}
+/* Search: wide, centred, butter with the espresso outline and offset shadow. */
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero .ayshop__find { display: flex; justify-content: center; align-items: center; gap: 8px; max-width: 680px; margin: 0 auto 24px !important; padding: 0 !important; background: none !important; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero .ayshop__find .ayshop__search { flex: 1 1 auto; max-width: none; min-width: 0; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero .ayshop__search input[type='search'] {
+  height: 56px; min-height: 56px; border: 1.5px solid var(--sh-ink) !important; border-radius: 8px !important;
+  background: var(--sh-butter) !important; color: var(--sh-ink) !important; box-shadow: 4px 4px 0 var(--sh-ink) !important; font-size: 16px !important;
+}
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero .ayshop__search input[type='search']::placeholder { color: rgba(62, 39, 35, .8) !important; opacity: 1; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero .ayshop__search-icon { top: 28px; stroke: var(--sh-ink); }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero .ayshop__search .ay-kbd, :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero .ayshop__search kbd { color: var(--sh-ink); border-color: rgba(62, 39, 35, .5); background: transparent; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero .ayshop__barfilters { border-color: var(--sh-ink); background: var(--sh-butter); color: var(--sh-ink); }
+/* One row of need chips, scrolling sideways, arrows when it overflows. */
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero__chips { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ay-scrollrow { display: flex; align-items: center; justify-content: center; gap: 10px; max-width: 100%; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ay-scrollrow__track { min-width: 0; max-width: 100%; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero .ay-shopgroups { margin: 0; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero .ayk-chiprow {
+  display: flex; flex-wrap: nowrap !important; gap: 10px; overflow-x: auto; scrollbar-width: none; padding: 2px 4px 4px; margin: 0; scroll-snap-type: x proximity;
+}
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero .ayk-chiprow::-webkit-scrollbar { display: none; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero .ayk-chip {
+  flex: none; min-height: 44px; padding: 0 18px; border: 1.5px solid var(--sh-ink) !important; border-radius: 999px !important;
+  background: var(--sh-butter) !important; color: var(--sh-ink) !important; box-shadow: none !important; font: 500 16px/1.2 var(--ay-font-ui, Figtree, sans-serif) !important; white-space: nowrap; scroll-snap-align: start;
+}
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero .ayk-chip.is-on { background: var(--sh-ink) !important; color: var(--sh-butter) !important; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero .ayk-chip:focus-visible { outline: 3px solid var(--sh-ink); outline-offset: 2px; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ay-scrollrow__arrow {
+  flex: none; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1.5px solid #3e2723; border-radius: 50%;
+  background: #ffedac; color: #3e2723; font: 600 18px/1 var(--ay-font-ui, Figtree, sans-serif); cursor: pointer;
+}
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ay-scrollrow__arrow:disabled { opacity: .4; cursor: default; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ay-scrollrow__arrow:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero .ayshop__type { color: var(--sh-ink); }
+/* Below the band: Filters · Personalized on the left, Sort on the right, then the count. */
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero ~ .ayshop__toolbar { margin-top: 0; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero ~ .ayshop__applied { margin: 24px 0 28px; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero ~ .ayshop__applied .ayshop__count { color: var(--ay-text, #3e2723); font-size: 16px; font-weight: 500; }
+/* The grid: 4 across at 1280, 2 on phones; cards in a row the same height. */
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop .ayshop__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 28px; align-items: stretch; padding: 0 6px 6px 0; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop .ayshop__grid > :not(.ay-pcard):not(.ayshop__divider):not(.ayshop__ribbon) { min-width: 0; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop .ayshop__grid > :is(.ayshop__divider, .ayshop__ribbon) { grid-column: 1 / -1; }
+@media (max-width: 1100px) { :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop .ayshop__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 767px) {
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero { margin: calc(-1 * var(--ay-s8, 8px)) 0 40px calc(50% - 50vw); padding: 28px 16px 24px; }
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero__title { margin-bottom: 16px !important; font-size: 32px !important; }
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero .ayshop__find { margin-bottom: 16px !important; }
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero .ayshop__search input[type='search'] { height: 48px; min-height: 48px; box-shadow: 3px 3px 0 var(--sh-ink) !important; font-size: 15px !important; }
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero .ayshop__search-icon { top: 24px; }
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ay-scrollrow { width: 100%; justify-content: flex-start; }
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ay-scrollrow__track { flex: 1 1 auto; }
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero .ay-scrollrow__arrow { display: none; }
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .ayshop-hero .ayk-chiprow { margin: 0; padding: 2px 0 4px; }
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero .ayk-chip { font-size: 15px !important; padding: 0 14px; }
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop-hero ~ .ayshop__applied { margin: 12px 0 16px; }
+  :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html) body .app-container .ayshop .ayshop__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; padding: 0 4px 4px 0; }
+}
+
+/* Services shares the Shop's pink band (founder Oct 27 18:35: Library and Services match the Shop). */
+
+/* Topic chips (Shop, Services, Library): one row the width of the search that fades into the band at
+   its edges, with the round arrows under it to see the other topics (founder Oct 27 18:53). */
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow {
+  display: grid !important; grid-template-columns: 1fr 1fr; grid-template-areas: 'track track' 'back next'; justify-items: center; row-gap: 12px; column-gap: 12px;
+  width: 100%; max-width: 680px; margin: 0 auto;
+}
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow:not(.is-over) { grid-template-areas: 'track track'; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow__track { grid-area: track; width: 100%; min-width: 0; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow.is-over .ay-scrollrow__track {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+}
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow .ayk-chiprow,
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container .lb-shophead .ay-scrollrow .lb-topics { padding: 2px 40px 4px !important; justify-content: flex-start !important; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container .lb-shophead .ay-scrollrow .lb-topics { display: flex !important; flex-wrap: nowrap !important; overflow-x: auto !important; scrollbar-width: none; scroll-snap-type: x proximity; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container .lb-shophead .ay-scrollrow .lb-topics::-webkit-scrollbar { display: none; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container .lb-shophead .ay-scrollrow .lb-topic { flex: none; white-space: nowrap; scroll-snap-align: start; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow__arrow { display: grid !important; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow__arrow.is-back { grid-area: back; justify-self: end; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow__arrow.is-next { grid-area: next; justify-self: start; }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow { min-width: 0 !important; width: min(100%, 680px) !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; justify-self: center; }
+/* Fade only the side that has more topics (the first chip is never faded at the start). */
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow.is-over.at-start .ay-scrollrow__track { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent 100%); mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent 100%); }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow.is-over.at-end .ay-scrollrow__track { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 48px); mask-image: linear-gradient(to right, transparent 0, #000 48px); }
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container :is(.ayshop-hero, .lb-shophead) .ay-scrollrow .ayk-chiprow,
+:is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html):is(#sh7, html) body .app-container .lb-shophead .ay-scrollrow .lb-topics { padding-left: 2px !important; }

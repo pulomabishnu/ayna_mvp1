@@ -12,26 +12,23 @@ import { productHref } from '../src/utils/productRoute.js';
 import { productSeoTitle, productSeoDescription } from '../src/utils/seoMeta.js';
 import { productJsonLd, breadcrumbJsonLd } from '../src/components/pdp/commerce.js';
 import { resolveBuyUrl } from '../src/utils/buyLink.js';
+import { buildHeroSeed } from '../src/components/pdp/heroSeed.js';
+import { SEO_PAGES, HOME_TITLE, organizationJsonLd, websiteJsonLd, readBreadcrumbJsonLd } from '../src/utils/seoPages.js';
 
 const SITE = 'https://www.aynahealth.co';
 const DIST = new URL('../dist/', import.meta.url);
 const shell = fs.readFileSync(new URL('index.html', DIST), 'utf8');
 
-const DEFAULT_TITLE = "ayna | Personalized Women's Health Product Discovery";
-const PAGES = {
-  '/shop': ['Shop | ayna', "Shop women's health products ranked by how well they fit you: period care, intimate care, fertility, menopause and more."],
-  '/library': ['Library | ayna', "Plain-language guides to women's health topics, with sources, from the ayna Library."],
-  '/community': ['Community | ayna', "Real experiences with women's health products from the ayna community."],
-  '/about': ['About | ayna', "Women's wellness products matched to your needs, with the research and reviews beside them. Meet ayna's founders and advisors."],
-  '/how-it-works': ['How it works | ayna', 'How ayna matches products to you: your profile, the market, the evidence and your shop.'],
-  '/how-we-make-money': ['How we make money | ayna', 'How ayna earns money, and why it never changes your matches.'],
-  '/partners': ['Partner brands | ayna', 'The brands ayna works with, and how partnerships are disclosed.'],
-  '/contact': ['Contact | ayna', 'Get in touch with the ayna team.'],
-  '/privacy-policy': ['Privacy Policy | ayna', 'How ayna collects, uses and protects your information.'],
-  '/terms-of-use': ['Terms of Use | ayna', 'The terms for using ayna.'],
-  '/consumer-health-data': ['Consumer Health Data Privacy Notice | ayna', 'How ayna handles consumer health data.'],
-  '/campus-resources': ['Campus resources | ayna', 'Find verified sexual assault support, advocacy, reporting, medical, and campus resources for your college or university.'],
-  '/quiz': ['Get matched | ayna', 'Answer six questions and get health products matched to your body.'],
+// Titles and descriptions for the site's own pages live in src/utils/seoPages.js
+// (the app's title effect uses the same list). /shop and /library are permanent
+// redirects (vercel.json) to Explore > Products and Resources, so they have no page.
+const PAGES = SEO_PAGES;
+// Personal pages get a noindex page of their own as well as the X-Robots-Tag
+// header (vercel.json), so the rule is in the HTML even without that header.
+const NOINDEX_PAGES = {
+  '/today': ['Today | ayna', 'Today with ayna: what matters for you today, and your daily log.'],
+  '/ask': ['Ask ayna', 'Ask ayna about your health and the products you use.'],
+  '/you': ['You | ayna', 'Your profile, saved products, ecosystem and settings on ayna.'],
 };
 
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -46,7 +43,7 @@ const jsonLdTag = (id, data) => {
   return `<script type="application/ld+json" id="${id}">${JSON.stringify(list.length === 1 ? list[0] : list).replace(/</g, '\\u003c')}</script>`;
 };
 
-function page(url, title, description, { image = null, noindex = false, jsonLd = '', body = '' } = {}) {
+function page(url, title, description, { image = null, noindex = false, jsonLd = '', body = '', ogType = '' } = {}) {
   let html = shell;
   // Replacement functions, not strings: catalog text has "$" (prices), which a replacement string would read as a group reference.
   const set = (re, tag) => { html = re.test(html) ? html.replace(re, () => tag) : html.replace('</head>', () => `  ${tag}\n</head>`); };
@@ -55,6 +52,7 @@ function page(url, title, description, { image = null, noindex = false, jsonLd =
   set(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="${esc(title)}" />`);
   set(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${esc(description)}" />`);
   if (image) set(/<meta property="og:image"[^>]*>/, `<meta property="og:image" content="${esc(image)}" />`);
+  if (ogType) set(/<meta property="og:type"[^>]*>/, `<meta property="og:type" content="${esc(ogType)}" />`);
   if (url) {
     set(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${esc(SITE + url)}" />`);
     set(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${esc(SITE + (url === '/' ? '/' : url))}" />`);
@@ -62,7 +60,7 @@ function page(url, title, description, { image = null, noindex = false, jsonLd =
   if (noindex) set(/<meta name="robots"[^>]*>/, '<meta name="robots" content="noindex" />');
   if (jsonLd) html = html.replace('</head>', () => `  ${jsonLd}\n</head>`);
   // Readable without JavaScript (crawlers that don't run it); React replaces it on load.
-  if (url && url !== '/') html = html.replace(/<body([^>]*)>/, (_, attrs) => `<body${attrs}>\n  <noscript>${body || `<h1>${esc(title.replace(/ \| ayna( Library)?$/, ''))}</h1><p>${esc(description)}</p>`}</noscript>`);
+  if (url && url !== '/' && !noindex) html = html.replace(/<body([^>]*)>/, (_, attrs) => `<body${attrs}>\n  <noscript>${body || `<h1>${esc(title.replace(/ \| ayna( Library)?$/, ''))}</h1><p>${esc(description)}</p>`}</noscript>`);
   return html;
 }
 
@@ -72,8 +70,73 @@ function write(url, html) {
   fs.writeFileSync(file, html);
 }
 
+// Route chunks to fetch in parallel with the entry script (perf, pass 2):
+// without these, the Shop and product page code only starts downloading after
+// the entry has run. Found by the chunk name Vite gives each lazy import.
+const ASSETS = fs.existsSync(new URL('assets/', DIST)) ? fs.readdirSync(new URL('assets/', DIST)) : [];
+// A chunk plus the chunks it imports statically (read from its own import
+// lines), so the whole route arrives in one round trip instead of a waterfall.
+const staticDeps = (file, seen = new Set()) => {
+  if (seen.has(file)) return seen;
+  seen.add(file);
+  let code = '';
+  try { code = fs.readFileSync(new URL(`assets/${file}`, DIST), 'utf8').slice(0, 4000); } catch { return seen; }
+  for (const m of code.matchAll(/(?:import|from)\s*["']\.\/([\w.-]+\.js)["']/g)) if (!/^(index|vendor-)/.test(m[1])) staticDeps(m[1], seen);
+  return seen;
+};
+const chunkLinks = (name) => {
+  const own = ASSETS.filter((f) => f.startsWith(`${name}-`) && /\.(js|css)$/.test(f));
+  const js = new Set(own.filter((f) => f.endsWith('.js')).flatMap((f) => [...staticDeps(f)]));
+  return [...[...js].map((f) => `<link rel="modulepreload" crossorigin href="/assets/${f}" />`), ...own.filter((f) => f.endsWith('.css')).map((f) => `<link rel="preload" as="style" href="/assets/${f}" />`)].join('\n  ');
+};
+// Everything Vite loads for a lazy page: its JS and CSS, read from the entry's
+// __vite__mapDeps table. Vite waits for a lazy page's CSS before running it,
+// so CSS it doesn't preload here (the shared chunks' styles) starts late and
+// holds the page back (perf: about 0.4s on a throttled phone's product page).
+// The catalog chunk (products-*.js) is in these lists, so it downloads with the entry.
+const entryFile = (shell.match(/<script type="module"[^>]*src="\/assets\/([^"]+\.js)"/) || [])[1];
+const entryCode = entryFile ? fs.readFileSync(new URL(`assets/${entryFile}`, DIST), 'utf8') : '';
+const depTable = (() => { try { return JSON.parse((entryCode.match(/m\.f=(\[[^\]]*\])/) || [])[1] || 'null'); } catch { return null; } })();
+const inShell = new Set([...shell.matchAll(/(?:src|href)="\/(assets\/[^"]+)"/g)].map((m) => m[1]));
+const routeLinks = (name, { cssRel = 'preload' } = {}) => {
+  const m = depTable && entryCode.match(new RegExp(`import\\("\\./(${name}-[\\w-]+\\.js)"\\),__vite__mapDeps\\(\\[([\\d,]+)\\]\\)`));
+  if (!m) return chunkLinks(name);
+  const files = [...new Set([`assets/${m[1]}`, ...m[2].split(',').map((i) => depTable[Number(i)])])].filter((f) => f && !inShell.has(f));
+  return [
+    ...files.filter((f) => f.endsWith('.js')).map((f) => `<link rel="modulepreload" crossorigin href="/${f}" />`),
+    ...files.filter((f) => f.endsWith('.css')).map((f) => (cssRel === 'stylesheet' ? `<link rel="stylesheet" crossorigin href="/${f}" />` : `<link rel="preload" as="style" href="/${f}" />`)),
+  ].join('\n  ');
+};
+const withHead = (html, extra) => (extra ? html.replace('</head>', () => `  ${extra}\n</head>`) : html);
+// Shop on a phone shows its first products on the first screen (final layout
+// pass, P1-3), so the catalog chunk is that page's LCP path: it starts with the
+// HTML instead of after the entry has run (it was 1.5s late on a throttled phone).
+const CATALOG_CHUNK = ASSETS.find((f) => /^products-[\w-]+\.js$/.test(f));
+// The Shop grid also waits for the search engine (utils/search/index.js, its own
+// index-*.js chunk that imports the catalog), so it starts with the HTML too.
+const SEARCH_CHUNK = CATALOG_CHUNK && ASSETS.find((f) => { if (!/^index-[\w-]+\.js$/.test(f)) return false; try { const head = fs.readFileSync(new URL(`assets/${f}`, DIST), 'utf8').slice(0, 3000); return head.includes(`from"./${CATALOG_CHUNK}"`) && head.includes('naturalLanguageSearch'); } catch { return false; } });
+const SHOP_PRELOAD = [routeLinks('Discovery'), ...[CATALOG_CHUNK, SEARCH_CHUNK].filter(Boolean).map((f) => `<link rel="modulepreload" crossorigin href="/assets/${f}" />`)].join('\n  ');
+// Product pages paint their hero before the page code runs (ProductHeroPreview),
+// so the product page styles apply from the start (about 37KB, beside index.css).
+const PDP_PRELOAD = routeLinks('ProductModal', { cssRel: 'stylesheet' });
+
+// Home (dist/index.html, also the shell for app-only routes). The old hero
+// photo preload (/landing/pink-stripe-floor*.avif) is gone: the landing hero is
+// the product scatter now and no page shows that photo, so the preload only
+// competed with what the page does paint. The new animated hero should add its
+// own preload here only for an image that is its largest paint.
+{
+  const shellFile = new URL('index.html', DIST);
+  let html = fs.readFileSync(shellFile, 'utf8');
+  // Who runs the site and what it is called (Google uses the WebSite name as the site name).
+  // These two describe the site, so they hold on any route the shell serves.
+  if (!html.includes('id="ay-site-jsonld"')) html = withHead(html, jsonLdTag('ay-site-jsonld', [organizationJsonLd(), websiteJsonLd()]));
+  fs.writeFileSync(shellFile, html);
+}
+
 let count = 0;
-for (const [url, [title, desc]] of Object.entries(PAGES)) { write(url, page(url, title, desc)); count += 1; }
+for (const [url, [title, desc]] of Object.entries(PAGES)) { write(url, withHead(page(url, title, desc), url === '/explore/products' ? SHOP_PRELOAD : '')); count += 1; }
+for (const [url, [title, desc]] of Object.entries(NOINDEX_PAGES)) { write(url, page(url, title, desc, { noindex: true })); count += 1; }
 
 const absImage = (src) => (!src ? null : /^https?:/i.test(src) ? src : `${SITE}${src.startsWith('/') ? '' : '/'}${src}`);
 const asList = (v) => (Array.isArray(v) ? v : v ? [v] : []).map((x) => String(x ?? '').trim()).filter(Boolean);
@@ -112,7 +175,15 @@ for (const p of ALL_PRODUCTS) {
     productJsonLd(p, { origin: SITE, buyUrl, url: `${SITE}${url}` }),
     breadcrumbJsonLd(p, { origin: SITE }),
   ]);
-  write(url, page(url, title, description, { image: absImage(p.image), jsonLd, body: productBody(p, description) }));
+  // The hero the page paints first (ProductHeroPreview), worked out with
+  // ProductModal's own helpers. "<" escaped so catalog text can't close the tag.
+  const seed = buildHeroSeed(p);
+  const seedTag = seed ? `<script type="application/json" id="ay-product-seed">${JSON.stringify(seed).replace(/</g, '\\u003c')}</script>` : '';
+  // The product photo is the page's largest paint: fetch it with the entry, not after it
+  // (the same address the hero shows, which can be a cleaned-up studio photo).
+  const heroSrc = seed?.image || (typeof p.image === 'string' ? p.image : '');
+  const heroImg = heroSrc && /^(\/|https:\/\/)/.test(heroSrc) && !/\.svg(\?|$)/i.test(heroSrc) ? `<link rel="preload" as="image" fetchpriority="high" href="${esc(heroSrc)}" />` : '';
+  write(url, withHead(page(url, title, description, { image: absImage(p.image), jsonLd, body: productBody(p, description) }), [PDP_PRELOAD, heroImg, seedTag].filter(Boolean).join('\n  ')));
   count += 1;
 }
 const dupes = (m) => [...m.entries()].filter(([, ids]) => ids.length > 1);
@@ -154,10 +225,10 @@ for (const chunk of chunks) {
     isPartOf: { '@type': 'WebSite', name: 'ayna', url: SITE },
   };
   const body = `<h1>${esc(headline)}</h1>${writer ? `<p>By ${esc(writer)}</p>` : ''}${paras.slice(0, 2).map((t) => `<p>${esc(t)}</p>`).join('')}`;
-  write(url, page(url, `${headline} | ayna Library`, description, { image: absImage(image), jsonLd: jsonLdTag('ay-read-jsonld', [ld]), body }));
+  write(url, page(url, `${headline} | ayna Library`, description, { image: absImage(image), ogType: 'article', jsonLd: jsonLdTag('ay-read-jsonld', [ld, readBreadcrumbJsonLd(id, headline)]), body }));
   count += 1;
 }
 
 // Real 404 page: same app shell (it shows ayna's "Page not found"), never indexed.
 fs.writeFileSync(new URL('404.html', DIST), page(null, 'Page not found | ayna', "This page doesn't exist on ayna.", { noindex: true }));
-console.log(`prerender: ${count} pages + 404.html (default title kept for /: ${DEFAULT_TITLE})`);
+console.log(`prerender: ${count} pages + 404.html (home keeps the shell title: ${HOME_TITLE})`);

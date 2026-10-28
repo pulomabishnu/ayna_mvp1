@@ -1,0 +1,52 @@
+/* The one read card (ReadCard.jsx), website and app. Tokens only; no shadow, no blue. */
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard {
+  --rk-ink: var(--ay-ink, #3e2723); --rk-muted: var(--ay-ink-muted, rgba(62, 39, 35, .78));
+  position: relative; margin: 0; color: var(--rk-ink); font-family: var(--ay-font-ui); text-align: left;
+}
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard .ay-rcard__link { all: unset; color: inherit; font: inherit; cursor: pointer; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard .ay-rcard__link::after { content: ''; position: absolute; inset: 0; border-radius: var(--ay-r-md, 16px); }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard .ay-rcard__link:focus-visible::after { outline: 2px solid var(--rk-ink); outline-offset: 3px; }
+@media (hover: hover) { :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard:hover .ay-rcard__link { text-decoration: underline; text-underline-offset: 3px; } }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard .ay-rcard__title { margin: 0 !important; color: var(--rk-ink) !important; letter-spacing: 0 !important; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard .ay-rcard__state { display: block; margin-top: 4px; color: var(--rk-muted); font: 500 13px/1.4 var(--ay-font-ui); }
+/* Rail card: 4:3 cover, then topic · read time, then the title (15/600, two lines). */
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail { display: grid; align-content: start; gap: 8px; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail .ay-rcard__cover { display: block; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail .ay-rcard__cover .rc { border-radius: var(--ay-r-md, 16px); aspect-ratio: 4 / 3; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail .ay-rcard__topic { margin: 4px 0 0 !important; color: var(--rk-muted); font: 500 13px/1.35 var(--ay-font-ui) !important; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail .ay-rcard__title { font: 600 15px/1.3 var(--ay-font-ui) !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+/* List row: 120px cover, then topic · title · one line · credits · sources, divided by 1px rules. */
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 16px; align-items: start; padding: 16px 0; border-top: var(--ay-rule, 1px solid rgba(62, 39, 35, .15)); }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row .ay-rcard__thumb { display: block; position: relative; width: 120px; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--ay-r-md, 16px); background: #fff; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row .ay-rcard__thumb > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row .ay-rcard__text { display: grid; gap: 4px; min-width: 0; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row .ay-rcard__topic { margin: 0 !important; color: var(--rk-muted); font: 500 14px/1.4 var(--ay-font-ui) !important; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row .ay-rcard__title { font: 700 17px/1.3 var(--ay-font-ui) !important; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row .ay-rcard__line { margin: 0 !important; color: var(--rk-ink); font: 500 15px/1.45 var(--ay-font-ui) !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row .ay-rcard__credit { margin: 0 !important; color: var(--rk-ink); font: 500 13px/1.4 var(--ay-font-ui) !important; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row .ay-rcard__sources { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0 !important; color: var(--rk-muted); font: 500 13px/1.4 var(--ay-font-ui) !important; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row .ay-rcard__src { display: inline-flex; align-items: center; gap: 4px; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard .ay-pcard__evmark { color: var(--rk-ink); }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard .sr-only { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 560px) {
+  :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row { grid-template-columns: 88px minmax(0, 1fr); gap: 12px; }
+  :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-row .ay-rcard__thumb { width: 88px; }
+}
+/* layout "feature": the one big feature of the Reads editorial grid (uniqueness pass, Oct 26). The photo
+   (or drawn cover) big on top, then topic and time, a 30px title, one line, credit and sources. */
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature { position: relative; display: grid; align-content: start; gap: 12px; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__thumb { display: block; position: relative; width: 100%; aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--ay-r-md, 16px); background: #fff; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__thumb > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__thumb > .rc { position: absolute; inset: 0; width: 100%; height: 100%; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__text { display: grid; gap: 6px; min-width: 0; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__topic { margin: 0 !important; color: var(--rk-muted); font: 500 14px/1.4 var(--ay-font-ui) !important; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__title { margin: 0 !important; font: 700 30px/1.08 var(--ay-font-display) !important; letter-spacing: -.015em; text-wrap: balance; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__link::after { content: ''; position: absolute; inset: 0; border-radius: var(--ay-r-md, 16px); }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__line { margin: 0 !important; color: var(--rk-ink); font: 500 16px/1.5 var(--ay-font-ui) !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__credit { margin: 0 !important; color: var(--rk-ink); font: 500 13px/1.4 var(--ay-font-ui) !important; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__sources { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0 !important; color: var(--rk-muted); font: 500 13px/1.4 var(--ay-font-ui) !important; }
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__src { display: inline-flex; align-items: center; gap: 4px; }
+@media (max-width: 720px) { :is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-feature .ay-rcard__title { font-size: 26px !important; } }
+
+/* Glance pass (p14): a one-line summary under a cover in the Reads grid; the full read opens on tap. */
+:is(#rc1, html):is(#rc2, html):is(#rc3, html) body .ay-rcard.is-rail .ay-rcard__sum { margin: 0; color: inherit; opacity: .85; font: 400 13px/1.4 var(--ay-font-ui) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

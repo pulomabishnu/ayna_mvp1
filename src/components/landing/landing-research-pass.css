@@ -1,0 +1,434 @@
+/* Oct 28 landing research pass.
+   Preserve the approved hero. Below it, use ayna's existing palette/type/assets
+   with a quieter hierarchy: one primary conversion goal, editorial asymmetry,
+   progressive disclosure, and fewer equally-loud sections. */
+
+/* --------------------------------------------------------------------------
+   Narrative order
+   Hero + brand strip stay where they are. The body now tells one story:
+   1) recognize your need  2) understand the method  3) see proof/content
+   4) meet the people behind it  5) optionally go deeper with Pro
+   6) finish on the same primary action the hero introduced. */
+/* Section order lives in the markup so keyboard and visual reading agree. */
+
+/* --------------------------------------------------------------------------
+   Scale + rhythm
+   The hero is the only truly oversized moment. Everything below uses a tighter
+   3-level type hierarchy so a section does not feel like another hero. */
+html body .app-container #ay-landing.wl .wl-classic .hm-sec {
+  padding-block: clamp(46px, 5.2vw, 72px) !important;
+}
+html body .app-container #ay-landing.wl .wl-classic .hm-h2,
+html body .app-container #ay-landing.wl .wl-classic .wlx-h2 {
+  max-width: 19ch;
+  font-size: clamp(28px, 2.75vw, 40px) !important;
+  line-height: 1.06 !important;
+  letter-spacing: -.022em !important;
+}
+html body .app-container #ay-landing.wl .wl-classic .hm-body,
+html body .app-container #ay-landing.wl .wl-classic .wl-pro__body {
+  font-size: 15px !important;
+  line-height: 1.55 !important;
+}
+html body .app-container #ay-landing.wl .hm-head {
+  margin-bottom: clamp(18px, 2.2vw, 28px) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Needs: editorial mosaic, not four giant equal cards.
+   One lead image establishes the mood; the other three become quicker paths. */
+.app-container #ay-landing .lp-need-index {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: 150px 150px;
+  gap: 12px;
+  margin: 0 0 clamp(32px, 4vw, 48px);
+}
+.app-container #ay-landing .lp-need-index__link {
+  min-height: 0;
+  height: 100%;
+  padding: 18px;
+  border-radius: 8px;
+  font-size: clamp(17px, 1.6vw, 23px) !important;
+  line-height: 1.08 !important;
+}
+.app-container #ay-landing .lp-need-index__link:nth-child(1) {
+  grid-column: 1 / 7;
+  grid-row: 1 / 3;
+}
+.app-container #ay-landing .lp-need-index__link:nth-child(2) {
+  grid-column: 7 / 13;
+  grid-row: 1;
+}
+.app-container #ay-landing .lp-need-index__link:nth-child(3) {
+  grid-column: 7 / 10;
+  grid-row: 2;
+}
+.app-container #ay-landing .lp-need-index__link:nth-child(4) {
+  grid-column: 10 / 13;
+  grid-row: 2;
+}
+.app-container #ay-landing .lp-need-index__link::before {
+  background: linear-gradient(to top, rgba(62,39,35,.58), rgba(62,39,35,.08) 66%);
+}
+.app-container #ay-landing .lp-need-index__link svg {
+  width: 30px;
+  height: 30px;
+  padding: 7px;
+}
+
+/* Keep product breadth visible without creating a second gallery wall. */
+html body .app-container #ay-landing .hm-shop__label {
+  margin-bottom: 12px;
+  font-size: 13px !important;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+html body .app-container #ay-landing .hm-stickers {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+.app-container #ay-landing .hm-sticker { border-radius: 8px !important; }
+
+/* --------------------------------------------------------------------------
+   Method: compact editorial split. The photo is broad rather than towering;
+   a small checker seam borrows the playful print language from the references
+   without becoming a decorative frame around the whole section. */
+.app-container #ay-landing .lp-method {
+  position: relative;
+  border-block: 0;
+  background: #fff8e6;
+}
+.app-container #ay-landing .lp-method::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 10px;
+  background: repeating-linear-gradient(90deg, #3e2723 0 18px, #f7badd 18px 36px);
+}
+.app-container #ay-landing .lp-method__grid {
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+  gap: clamp(30px, 5vw, 68px);
+  align-items: center;
+}
+.app-container #ay-landing .lp-method__photo {
+  aspect-ratio: 5 / 4;
+  max-height: 430px;
+  border-radius: 8px;
+}
+.app-container #ay-landing .lp-method__photo figcaption {
+  left: 14px;
+  right: auto;
+  bottom: 14px;
+  width: fit-content;
+  padding: 8px 11px;
+  border-radius: 2px;
+  font-size: 13px;
+  text-align: left;
+}
+.app-container #ay-landing .lp-eyebrow {
+  margin-bottom: 9px;
+  color: #7d4d45;
+  font-size: 11px;
+  letter-spacing: .12em;
+}
+.app-container #ay-landing .lp-method__steps {
+  margin: 18px 0 8px;
+}
+.app-container #ay-landing .lp-method__steps > li {
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 10px;
+  padding: 14px 0;
+}
+html body .app-container #ay-landing .lp-method__steps h3 {
+  margin-bottom: 3px;
+  font-size: 17px !important;
+  line-height: 1.2 !important;
+}
+html body .app-container #ay-landing .lp-method__steps p {
+  font-size: 14px !important;
+  line-height: 1.48 !important;
+}
+.app-container #ay-landing .lp-method summary {
+  min-height: 34px;
+  font-size: 13px;
+}
+.app-container #ay-landing .lp-method__actions {
+  gap: 12px;
+  margin-top: 17px;
+}
+
+/* --------------------------------------------------------------------------
+   Reads + Community: the trust/editorial beat. Pink is a section color here,
+   not another card color. Unequal columns make the page feel art-directed. */
+html body .app-container #ay-landing .hm-rc {
+  background: #f7badd !important;
+  color: #3e2723 !important;
+}
+html body .app-container #ay-landing .hm-rc__grid {
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr) !important;
+  gap: clamp(22px, 3.6vw, 48px) !important;
+  align-items: end !important;
+}
+.app-container #ay-landing .hm-readlist__ph {
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+}
+.app-container #ay-landing .hm-comm__ph {
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+}
+.app-container #ay-landing .hm-readlist__text,
+.app-container #ay-landing .hm-comm__copy {
+  padding-top: 11px !important;
+}
+html body .app-container #ay-landing .hm-readlist__title {
+  font-size: clamp(18px, 1.8vw, 24px) !important;
+}
+html body .app-container #ay-landing .hm-comm__copy .hm-h2 {
+  font-size: clamp(22px, 2.15vw, 31px) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Pro: obvious for someone ready to upgrade, but still a secondary conversion
+   path on the consumer homepage. */
+.app-container #ay-landing .wl-pro {
+  position: relative;
+}
+.app-container #ay-landing .lp-pro-simple .wl-pro__copy {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(250px, .9fr);
+  grid-template-areas:
+    'tag offer'
+    'title offer'
+    'body offer'
+    'cta offer'
+    'timing details';
+  column-gap: clamp(34px, 6vw, 92px);
+  row-gap: 10px;
+  max-width: 980px;
+  margin: 0 auto;
+  text-align: left;
+  align-items: start;
+}
+.app-container #ay-landing .wl-pro__tag { grid-area: tag; }
+.app-container #ay-landing .wl-pro .wlx-h2 { grid-area: title; margin: 0 !important; }
+.app-container #ay-landing .wl-pro__body { grid-area: body; margin: 6px 0 6px !important; max-width: 42ch !important; }
+.app-container #ay-landing .lp-pro-offer {
+  grid-area: offer;
+  align-self: center;
+  justify-self: stretch;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  justify-content: start;
+  gap: 3px 8px;
+  margin: 0;
+  padding: 28px 0 24px 28px;
+  border-left: 1px solid rgba(255,237,172,.3);
+  text-align: left;
+}
+.app-container #ay-landing .lp-pro-offer__deal,
+.app-container #ay-landing .lp-pro-offer small { grid-column: 1 / -1; }
+.app-container #ay-landing .lp-pro-offer strong {
+  font-size: clamp(42px, 4.5vw, 58px);
+}
+.app-container #ay-landing .lp-pro-offer > span:not(.lp-pro-offer__deal) {
+  font-size: 14px;
+}
+.app-container #ay-landing .lp-pro-cta {
+  grid-area: cta;
+  width: fit-content;
+  min-width: 210px;
+  margin-top: 6px;
+}
+.app-container #ay-landing .lp-pro-timing {
+  grid-area: timing;
+  margin: 2px 0 0 !important;
+}
+.app-container #ay-landing .lp-pro-details {
+  grid-area: details;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  text-align: left;
+}
+.app-container #ay-landing .lp-pro-details summary {
+  margin: 0;
+  color: #ffedac;
+  font-size: 13px;
+}
+
+/* --------------------------------------------------------------------------
+   Founders: human proof, not another campaign. */
+html body .app-container #ay-landing .hm-us {
+  padding-block: clamp(42px, 4.7vw, 64px) !important;
+  border-top: 0 !important;
+  background: #fff8e6 !important;
+}
+.app-container #ay-landing .hm-us__grid {
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr) !important;
+  gap: clamp(28px, 5vw, 64px) !important;
+  align-items: center !important;
+}
+.app-container #ay-landing .hm-polaroid__ph {
+  aspect-ratio: 3 / 2;
+  border-radius: 8px;
+}
+.app-container #ay-landing .hm-polaroid__ph :is(picture, img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+html body .app-container #ay-landing .hm-us .hm-statement {
+  max-width: 18ch;
+  font-size: clamp(26px, 2.6vw, 38px) !important;
+}
+html body .app-container #ay-landing .hm-us .hm-body {
+  max-width: 48ch;
+  font-size: 14px !important;
+}
+
+/* --------------------------------------------------------------------------
+   Closing conversion moment + footer handoff.
+   Long pages benefit from repeating the SAME primary action at the end. This
+   is deliberately one composition, not another information section. */
+html body .app-container #ay-landing .wlx-end {
+  display: block !important;
+  padding-block: clamp(54px, 6vw, 82px) !important;
+  border: 0 !important;
+}
+.app-container #ay-landing .wlx-end__in {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+  align-items: center;
+  gap: clamp(28px, 6vw, 80px);
+  max-width: 1080px;
+}
+html body .app-container #ay-landing .wlx-end__h {
+  margin: 0 !important;
+  max-width: 11ch;
+  font-size: clamp(38px, 5.4vw, 70px) !important;
+  line-height: .96 !important;
+  letter-spacing: -.045em !important;
+}
+.app-container #ay-landing .wlx-end__h span { color: #f7badd; }
+.app-container #ay-landing .wlx-end__sts { width: 100%; max-width: 420px; justify-self: end; }
+
+/* The landing should end decisively. The footer follows the CTA without an
+   extra floating disclaimer/blank band, and stays useful without becoming
+   another content wall. */
+.app-container[data-view='welcome'] .ay-foot,
+.app-container[data-view='hero'] .ay-foot { margin-top: 0 !important; }
+.app-container[data-view='welcome'] .ay-foot__inner,
+.app-container[data-view='hero'] .ay-foot__inner {
+  padding-top: clamp(30px, 4vw, 48px) !important;
+}
+.app-container[data-view='welcome'] .ay-foot__grid,
+.app-container[data-view='hero'] .ay-foot__grid {
+  gap: clamp(24px, 4vw, 52px) !important;
+}
+.app-container[data-view='welcome'] .ay-foot__blurb,
+.app-container[data-view='hero'] .ay-foot__blurb { max-width: 30ch; }
+.app-container[data-view='welcome'] .ay-foot__base,
+.app-container[data-view='hero'] .ay-foot__base { margin-top: 30px !important; }
+.app-container[data-view='welcome'] .ay-foot__legal,
+.app-container[data-view='hero'] .ay-foot__legal {
+  margin-top: 18px !important;
+  padding-top: 18px !important;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile: keep the same hierarchy, not a desktop page stacked into giant blocks. */
+@media (max-width: 767px) {
+  html body .app-container #ay-landing.wl .wl-classic .hm-sec {
+    padding-block: 42px !important;
+  }
+  html body .app-container #ay-landing.wl .wl-classic .hm-h2,
+  html body .app-container #ay-landing.wl .wl-classic .wlx-h2 {
+    font-size: 28px !important;
+  }
+
+  .app-container #ay-landing .lp-need-index {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: 172px 130px 130px;
+    gap: 8px;
+    margin-bottom: 30px;
+  }
+  .app-container #ay-landing .lp-need-index__link {
+    padding: 14px;
+    font-size: 17px !important;
+  }
+  .app-container #ay-landing .lp-need-index__link:nth-child(1) { grid-column: 1 / 3; grid-row: 1; }
+  .app-container #ay-landing .lp-need-index__link:nth-child(2) { grid-column: 1; grid-row: 2; }
+  .app-container #ay-landing .lp-need-index__link:nth-child(3) { grid-column: 2; grid-row: 2; }
+  .app-container #ay-landing .lp-need-index__link:nth-child(4) { grid-column: 1 / 3; grid-row: 3; }
+
+  html body .app-container #ay-landing .hm-stickers {
+    grid-template-columns: repeat(3, minmax(170px, 68vw)) !important;
+    gap: 10px !important;
+  }
+
+  .app-container #ay-landing .lp-method__grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .app-container #ay-landing .lp-method__photo {
+    aspect-ratio: 16 / 10;
+    max-height: 270px;
+    border-radius: 8px;
+  }
+
+  html body .app-container #ay-landing .hm-rc__grid {
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+  }
+  .app-container #ay-landing .hm-readlist__ph { aspect-ratio: 16 / 10; }
+  .app-container #ay-landing .hm-comm {
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+  .app-container #ay-landing .hm-comm__ph { aspect-ratio: 1 / 1; }
+  .app-container #ay-landing .hm-comm__copy { min-width: 0; padding-top: 0 !important; }
+  .app-container #ay-landing .hm-comm__copy .ay-btn { max-width: 100%; white-space: normal; text-align: left; padding: 12px 16px; }
+  .app-container #ay-landing .lp-method__actions { flex-wrap: wrap; }
+  html body .app-container #ay-landing .hm-comm__copy .hm-h2 { font-size: 21px !important; }
+
+  .app-container #ay-landing .lp-pro-simple .wl-pro__copy {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas: 'tag' 'title' 'body' 'offer' 'cta' 'timing' 'details';
+    gap: 9px;
+  }
+  .app-container #ay-landing .lp-pro-offer {
+    padding: 18px 0;
+    margin: 7px 0 2px;
+    border-left: 0;
+    border-block: 1px solid rgba(255,237,172,.25);
+  }
+  .app-container #ay-landing .lp-pro-cta { width: 100%; }
+
+  .app-container #ay-landing .hm-us__grid {
+    grid-template-columns: 1fr !important;
+    gap: 22px !important;
+  }
+
+  html body .app-container #ay-landing .wlx-end {
+    padding-block: 44px !important;
+  }
+  .app-container #ay-landing .wlx-end__in {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  html body .app-container #ay-landing .wlx-end__h {
+    max-width: 9ch;
+    font-size: 38px !important;
+  }
+  .app-container #ay-landing .wlx-end__sts { justify-self: stretch; max-width: none; }
+
+  .app-container[data-view='welcome'] .ay-foot__grid,
+  .app-container[data-view='hero'] .ay-foot__grid { gap: 22px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-container #ay-landing .lp-need-index__link:hover svg { transform: none; }
+}

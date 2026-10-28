@@ -1,0 +1,47 @@
+/* A read, structured for a glance (ReadBody.jsx), app and website.
+   "In short" on deep butter, the sections as tap-to-open rows divided by
+   1px rules, "When to seek care" always open on pink. Brand colours only. */
+:is(#ayr, .ayr):is(#ayr, .ayr):is(#ayr, .ayr) {
+  --ayr-ink: #3e2723; --ayr-soft: rgba(62, 39, 35, .78); --ayr-rule: rgba(62, 39, 35, .18);
+  --ayr-short: #f6e3a1; --ayr-short-ink: #3e2723; --ayr-short-line: rgba(62, 39, 35, .9);
+  display: grid; gap: 20px; color: var(--ayr-ink); text-align: left;
+}
+:is(.ayna-mobile[data-theme='dark'], .app-container[data-theme='brand-dark'], [data-ay-theme='brand-dark']) :is(#ayr, .ayr):is(#ayr, .ayr):is(#ayr, .ayr) {
+  --ayr-ink: #ffedac; --ayr-soft: rgba(255, 237, 172, .82); --ayr-rule: rgba(255, 237, 172, .22);
+  --ayr-short: rgba(255, 237, 172, .08); --ayr-short-ink: #ffedac; --ayr-short-line: rgba(255, 237, 172, .5);
+}
+.ayr .ayr-byline { color: var(--ayr-soft); font: 400 15px/1.5 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayr .ayr-byline :is(div, em, a) { color: inherit !important; margin: 0 !important; }
+
+.ayr .ayr-short { margin: 0; padding: 18px 20px 20px; border-radius: 16px; background: var(--ayr-short); color: var(--ayr-short-ink); border: 1.5px solid var(--ayr-short-line); }
+.ayr .ayr-short__h { margin: 0 0 10px !important; color: inherit !important; font: 700 17px/1.3 var(--ay-font-ui, 'Figtree', sans-serif) !important; letter-spacing: 0 !important; }
+.ayr .ayr-short ul { display: grid; gap: 10px; margin: 0 !important; padding: 0 0 0 20px !important; list-style: disc; }
+.ayr .ayr-short li { margin: 0 !important; color: inherit !important; font: 500 16px/1.5 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
+.ayr .ayr-short li::marker { color: inherit; }
+
+.ayr .ayr-secs { display: grid; border-top: 1px solid var(--ayr-rule); }
+.ayr .ayr-sec { border-bottom: 1px solid var(--ayr-rule); }
+.ayr .ayr-sources { border-top: 1px solid var(--ayr-rule); }
+.ayr .ayr-sec__h { margin: 0 !important; padding: 0 !important; font: inherit !important; }
+.ayr .ayr-sec__btn {
+  all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; min-height: 56px; padding: 12px 0; cursor: pointer;
+  color: var(--ayr-ink); font: 700 17px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); text-align: left;
+}
+.ayr .ayr-sec__btn:focus-visible { outline: 3px solid var(--ayr-ink); outline-offset: 2px; border-radius: 6px; }
+.ayr .ayr-sec__btn svg { flex: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s ease; }
+.ayr .ayr-sec.is-open > .ayr-sec__h .ayr-sec__btn svg { transform: rotate(180deg); }
+.ayr .ayr-sec__n { color: var(--ayr-soft); font-weight: 500; }
+.ayr .ayr-sec__body { padding: 0 0 20px; }
+.ayr .ayr-sec__body[hidden] { display: none !important; }
+.ayr .ayr-sec__body > * + * { margin-top: 14px !important; }
+.ayr .ayr-sec__body :is(p, li) { color: var(--ayr-ink) !important; font: 400 16px/1.6 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
+.ayr .ayr-sec__body :is(ul, ol) { margin-bottom: 0 !important; }
+.ayr .ayr-sec__body img { max-width: 100%; height: auto; }
+.ayr .ayr-sec__body figcaption { color: var(--ayr-soft) !important; font: 400 14px/1.45 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
+
+.ayr .ayr-care { margin: 0; padding: 18px 20px 20px; border-radius: 16px; background: #f7badd; color: #3e2723; }
+.ayr .ayr-care__h { margin: 0 0 6px !important; color: #3e2723 !important; font: 700 17px/1.3 var(--ay-font-ui, 'Figtree', sans-serif) !important; letter-spacing: 0 !important; }
+.ayr .ayr-care p { margin: 0 !important; color: #3e2723 !important; font: 500 16px/1.55 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
+
+@media (prefers-reduced-motion: reduce) { .ayr .ayr-sec__btn svg { transition: none; } }

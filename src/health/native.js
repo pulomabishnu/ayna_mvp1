@@ -54,27 +54,97 @@ export async function healthStoreAvailability() {
   }
 }
 
-/** Shows the system permission sheet(s) for these categories' read types only. Never asks for write access. */
-export async function requestHealthAccess(categories) {
+// iOS: which read types ayna has already put in front of her (this phone).
+// Apple never says whether a READ was allowed, so this only records that the
+// sheet was shown for these types; it is what stops ayna asking again on every
+// connect or category change (Oct 26 focus group: "it kept asking me").
+export const IOS_ASKED_KEY = 'ayna.health.ios.asked.v1';
+const FLOW_TYPE = 'menstrualFlow';
+function askedIosTypes() {
+  try { return new Set(JSON.parse(globalThis.localStorage?.getItem(IOS_ASKED_KEY) || '{}').types || []); } catch { return new Set(); }
+}
+function rememberIosAsked(types) {
+  try {
+    const all = new Set([...askedIosTypes(), ...types]);
+    globalThis.localStorage?.setItem(IOS_ASKED_KEY, JSON.stringify({ types: [...all].sort(), at: new Date().toISOString() }));
+  } catch { /* private mode: HealthKit's own request status still prevents a repeat sheet */ }
+}
+
+/**
+ * Shows the system permission sheet for these categories' read types only.
+ * Never asks for write access.
+ *
+ * iOS: ONE sheet. Period days (menstrual flow) are asked for in the same
+ * sheet as sleep, temperature, heart and activity, through capacitor-ayna-cycle
+ * (the @capgo plugin has no menstrual-flow type). Before Oct 27 these were two
+ * sheets back to back: the first never listed period data and the second
+ * looked like a repeat. Nothing is asked when HealthKit says she has already
+ * answered for every type (getRequestStatus "unnecessary"), or, on a build
+ * without that call, when this phone already showed the sheet for them.
+ * `force` asks anyway (iOS still shows nothing for types she answered).
+ */
+export async function requestHealthAccess(categories, { force = false } = {}) {
   const platform = Capacitor.getPlatform();
   const metrics = metricsForCategories(categories);
   if (!metrics.length) throw new Error('no_categories');
   const read = pluginTypesFor(metrics, platform);
+  const wantsFlow = metrics.includes('menstrual_flow');
+  const cycleReady = Capacitor.isPluginAvailable('AynaCycle');
   let granted = null;
   const within = (p, ms, label) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error(`timeout:${label}`)), ms))]);
+
+  if (platform === 'ios') {
+    const wanted = [...read, ...(wantsFlow ? [FLOW_TYPE] : [])];
+    if (!wanted.length) return { asked: false, granted };
+    let status = 'unknown';
+    // getRequestStatus only exists in the one-sheet native build; an older
+    // build rejects it and keeps the old two-sheet path below.
+    let oneSheet = false;
+    if (cycleReady) {
+      try { status = (await within(AynaCycle.getRequestStatus({ readTypes: read, includeFlow: wantsFlow }), 10000, 'request_status'))?.status || 'unknown'; oneSheet = true; } catch { status = 'unknown'; }
+    }
+    const askedBefore = wanted.every((t) => askedIosTypes().has(t));
+    if (!force && (status === 'unnecessary' || (status === 'unknown' && askedBefore))) {
+      rememberIosAsked(wanted);
+      return { asked: false, alreadyAnswered: true, granted };
+    }
+    // One sheet with every type, period days included.
+    let combined = false;
+    if (oneSheet) {
+      try { await within(AynaCycle.requestAuthorization({ readTypes: read, includeFlow: wantsFlow }), 120000, 'health_sheet'); combined = true; } catch (err) { console.warn('[ayna health] permission sheet', err?.message || err); }
+    }
+    // Fallback when the combined sheet did not happen (an older native build,
+    // or the call failed): the old path, @capgo's sheet then a period-only
+    // sheet. When the combined sheet did happen, @capgo is not asked at all:
+    // HealthKit permission belongs to the app, not to a plugin, so its reads
+    // work without it.
+    if (!combined) {
+      if (read.length) {
+        try { await within(Health.requestAuthorization({ read, write: [], requestHistoryAccess: false }), 120000, 'health_sheet'); } catch (err) {
+          // iOS never tells apps whether reads were allowed, so a slow or odd answer
+          // here is not a reason to stop: reading just returns nothing for what she declined.
+          console.warn('[ayna health] permission sheet', err?.message || err);
+        }
+      }
+      if (wantsFlow && cycleReady) {
+        try { await within(AynaCycle.requestAuthorization(), 60000, 'cycle_sheet'); } catch (err) { console.warn('[ayna health] cycle permission', err?.message || err); }
+      }
+    }
+    rememberIosAsked(wanted);
+    return { asked: true, granted };
+  }
+
   if (read.length) {
     try {
       const status = await within(Health.requestAuthorization({ read, write: [], requestHistoryAccess: platform === 'android' }), 120000, 'health_sheet');
-      // Android reports real grants; iOS reports nothing useful for reads.
+      // Android reports real grants.
       if (platform === 'android') granted = status?.readAuthorized || [];
     } catch (err) {
       console.warn('[ayna health] permission sheet', err?.message || err);
-      // iOS never tells apps whether reads were allowed, so a slow or odd answer
-      // here is not a reason to stop: reading just returns nothing for what she declined.
-      if (platform !== 'ios') throw err;
+      throw err;
     }
   }
-  if (metrics.includes('menstrual_flow') && Capacitor.isPluginAvailable('AynaCycle')) {
+  if (wantsFlow && cycleReady) {
     try { await within(AynaCycle.requestAuthorization(), 60000, 'cycle_sheet'); } catch (err) { console.warn('[ayna health] cycle permission', err?.message || err); }
   }
   return { asked: true, granted };

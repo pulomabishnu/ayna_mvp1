@@ -1,42 +1,33 @@
-import RotatingProducts from '../components/RotatingProducts.jsx';
-import SlideToStart from '../components/SlideToStart.jsx';
-import { PARTNER_BRANDS } from '../../utils/partnerBrands';
-import '../landing.css';
+import AppLanding from '../../components/landing/AppLanding.jsx';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
+import '../../styles/onboarding.css';
 
-// The feature reel (what the app does) on the website's hero parts: stamp,
-// serif headline with the pink italic word, brand ticker. No photographs.
-export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAccount, onAboutAyna, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
-  const names = PARTNER_BRANDS.map((b) => b.name);
-  return <main className="ay-land">
-    <section className="ay-land-hero" aria-labelledby="ay-land-title">
-      <header className="ay-land-top">
-        <span className="ay-land-mark">ayna</span>
-        <button type="button" onClick={onAlreadyHaveAccount}>Sign in</button>
-      </header>
-      <div className="ay-land-reel">
-        <div className="ay-cover-widget"><RotatingProducts /></div>
-      </div>
-      <div className="ay-land-copy">
-        <div className="ay-land-stamp is-small" aria-hidden="true">
-          <svg viewBox="0 0 200 200"><defs><path id="ay-land-stamp-path" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0" /></defs>
-            <text><textPath href="#ay-land-stamp-path" textLength="455" lengthAdjust="spacing">MATCHED TO YOU {'★'} MATCHED TO YOU {'★'}</textPath></text></svg>
-          <span>you</span>
-        </div>
-        <h1 id="ay-land-title">Build your <em>ecosystem.</em></h1>
-        <p>Health products matched to your body.</p>
-      </div>
-    </section>
-    <div className="ay-land-ticker" aria-hidden="true">
-      <div className="ay-land-ticker-track">
-        {[0, 1].map((k) => <ul key={k}>{names.map((n) => <li key={n}>{n}<span>{'★'}</span></li>)}</ul>)}
-      </div>
-    </div>
-    <section className="ay-land-actions" aria-label="Start ayna">
-      {quizDraft && onResumeQuiz
-        ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} className="ay-land-finish" />
-        : <SlideToStart onComplete={onStartQuiz} />}
-      <div className="ay-land-links"><button type="button" onClick={onBrowse}>Just browsing</button><button type="button" onClick={onAboutAyna}>About us</button></div>
-    </section>
-  </main>;
+// The app's landing (founder, Oct 27 10:40): one fixed screen, no scrolling.
+// The raining cut-outs, the wordmark, the headline, search, Slide to start
+// and the medical note. Signed out, the Home tab IS this screen, inside the
+// app shell with the tab bar; the ayna wordmark opens it for everyone. Every
+// feature is one tap away in the tabs (and "Explore first"), not below.
+// Signed in with a profile, the main action is "Go to your Home".
+// Get my matches still goes straight to question 1, no account first.
+
+export default function LandingScreen({
+  authUser = null, hasEcosystem = false, lastQuizAnswers = null,
+  onStartQuiz, onBrowse, onAlreadyHaveAccount, onGoToday, quizDraft = null, onResumeQuiz, onStartOverQuiz,
+}) {
+  const signedIn = Boolean(authUser);
+  const hasProfile = Boolean(hasEcosystem || lastQuizAnswers);
+  return (
+    <main className="ay-landing-app" aria-label="ayna">
+      <AppLanding
+        signedIn={signedIn}
+        hasProfile={hasProfile}
+        onStartQuiz={onStartQuiz}
+        onGoHome={onGoToday}
+        onSearch={(q) => onBrowse?.(String(q || '').trim())}
+        onSignIn={onAlreadyHaveAccount}
+        onBrowse={() => onBrowse?.()}
+        banner={!hasProfile && quizDraft && onResumeQuiz ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} /> : null}
+      />
+    </main>
+  );
 }

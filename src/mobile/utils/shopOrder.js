@@ -1,9 +1,11 @@
-import { ALL_PRODUCTS, getRecommendationMatchesAndRest } from '../../data/products.js';
+import { ALL_PRODUCTS, getRecommendationMatchesAndRest, fitsHerProfile } from '../../data/products.js';
 import { buildUserProfile, buildProductProfile, budgetFit } from '../../matching/index.js';
+import { featuredOrder } from '../../data/packshots.js';
 
 // Shop's default "All" order.
-// - Guests (no quiz answers): one shuffle per app session, so the grid does
-//   not reshuffle every time she comes back to Shop.
+// - Guests (no quiz answers): the website's Featured order (featuredShopOrder),
+//   fixed across loads (QA3 M8). The seeded shuffle below is kept for callers
+//   that want a per-session order.
 // - With quiz answers: the matching engine's own ranking first
 //   (getRecommendationMatchesAndRest, the same engine Ecosystem uses), then
 //   the rest of the catalog: within her budget, then over it, then products
@@ -55,6 +57,15 @@ export function stableShopOrder(products, seed = sessionSeed()) {
   return seededShuffle(Array.isArray(products) ? products : [], seed);
 }
 
+/**
+ * Shop's default order (QA3 M8): the website's Featured order over the
+ * catalog order, the same on every load and every device. Deterministic, so
+ * it also breaks ties for rankShopForProfile.
+ */
+export function featuredShopOrder(products) {
+  return featuredOrder(Array.isArray(products) ? products : []);
+}
+
 const MIDLIFE = ['perimenopause', 'menopause', 'postmenopause'];
 
 /** True when a product is built for a life stage her answers clearly rule out. */
@@ -84,7 +95,9 @@ export function rankShopForProfile(products, quizAnswers, matchOpts) {
     if (matchIndex.has(product.id)) return { product, tier: 0, order: matchIndex.get(product.id) };
     let tier;
     if (isForOtherLifeStage(product, up)) tier = 3;
-    else if (!eligible.has(product.id)) tier = 4;
+    // Left out for her, or not a fit at all (fitsHerProfile: e.g. period
+    // products when bleeding after menopause needs checking first).
+    else if (!eligible.has(product.id) || !fitsHerProfile(product, quizAnswers, null, matchOpts)) tier = 4;
     else {
       const amount = buildProductProfile(product)?.price?.amount ?? null;
       const fit = budget ? budgetFit(amount, budget) : null;

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://www.aynahealth.co/</loc></url>
-  <url><loc>https://www.aynahealth.co/shop</loc></url>
-  <url><loc>https://www.aynahealth.co/library</loc></url>
+  <url><loc>https://www.aynahealth.co/explore</loc></url>
+  <url><loc>https://www.aynahealth.co/explore/products</loc></url>
+  <url><loc>https://www.aynahealth.co/explore/services</loc></url>
+  <url><loc>https://www.aynahealth.co/explore/topics</loc></url>
+  <url><loc>https://www.aynahealth.co/explore/resources</loc></url>
   <url><loc>https://www.aynahealth.co/community</loc></url>
   <url><loc>https://www.aynahealth.co/about</loc></url>
   <url><loc>https://www.aynahealth.co/how-it-works</loc></url>
@@ -12,6 +15,7 @@
   <url><loc>https://www.aynahealth.co/privacy-policy</loc></url>
   <url><loc>https://www.aynahealth.co/terms-of-use</loc></url>
   <url><loc>https://www.aynahealth.co/consumer-health-data</loc></url>
+  <url><loc>https://www.aynahealth.co/campus-resources</loc></url>
   <url><loc>https://www.aynahealth.co/quiz</loc></url>
   <url><loc>https://www.aynahealth.co/product/always-infinity-flexfoam</loc></url>
   <url><loc>https://www.aynahealth.co/product/rael-large-organic-cotton-cover-pads-with-wings</loc></url>
@@ -293,21 +297,4 @@
   <url><loc>https://www.aynahealth.co/product/easy-home-ovulation-test-strips-50-lh-tests</loc></url>
   <url><loc>https://www.aynahealth.co/product/visby-medical-visby-women-s-at-home-sti-test</loc></url>
   <url><loc>https://www.aynahealth.co/product/rugby-vitamin-b6-25-mg-tablets</loc></url>
-  <url><loc>https://www.aynahealth.co/library/intimate-wash</loc></url>
-  <url><loc>https://www.aynahealth.co/library/heavy-bleeding</loc></url>
-  <url><loc>https://www.aynahealth.co/library/menopause-basics</loc></url>
-  <url><loc>https://www.aynahealth.co/library/uti-prevention</loc></url>
-  <url><loc>https://www.aynahealth.co/library/yeast-infection-basics</loc></url>
-  <url><loc>https://www.aynahealth.co/library/period-pain-when-to-seek-care</loc></url>
-  <url><loc>https://www.aynahealth.co/library/pcos-basics</loc></url>
-  <url><loc>https://www.aynahealth.co/library/pelvic-floor-dysfunction</loc></url>
-  <url><loc>https://www.aynahealth.co/library/endometriosis-basics</loc></url>
-  <url><loc>https://www.aynahealth.co/library/bacterial-vaginosis</loc></url>
-  <url><loc>https://www.aynahealth.co/library/pmdd</loc></url>
-  <url><loc>https://www.aynahealth.co/library/fibroids</loc></url>
-  <url><loc>https://www.aynahealth.co/library/iron-deficiency-anemia</loc></url>
-  <url><loc>https://www.aynahealth.co/library/ovarian-cysts</loc></url>
-  <url><loc>https://www.aynahealth.co/library/hormonal-birth-control</loc></url>
-  <url><loc>https://www.aynahealth.co/library/postpartum-stretch-marks</loc></url>
-  <url><loc>https://www.aynahealth.co/library/genitourinary-syndrome-of-menopause</loc></url>
 </urlset>

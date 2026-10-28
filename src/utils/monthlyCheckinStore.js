@@ -1,18 +1,24 @@
 import { getSupabaseClient, getSupabaseUser } from './supabaseClient.js';
+import { localDayKey, legacyUtcDayKey } from './localDate.js';
 
 const TABLE = 'monthly_checkins';
 
 // Always the 1st of the month, matches monthly_checkins.sql's
 // (user_id, check_in_month) unique index, so "this month" and "last month"
 // are unambiguous regardless of what day it actually is.
+// Local calendar (P0 date bug): east of UTC the old toISOString() gave the
+// last day of the previous month ("2026-09-30" for October in Tokyo).
 export function monthKey(date = new Date()) {
-  const d = new Date(date.getFullYear(), date.getMonth(), 1);
-  return d.toISOString().slice(0, 10);
+  return localDayKey(new Date(date.getFullYear(), date.getMonth(), 1));
 }
 
 export function previousMonthKey(date = new Date()) {
-  const d = new Date(date.getFullYear(), date.getMonth() - 1, 1);
-  return d.toISOString().slice(0, 10);
+  return localDayKey(new Date(date.getFullYear(), date.getMonth() - 1, 1));
+}
+
+/** The key older builds wrote for this month (UTC of local midnight on the 1st), so saved rows still count. */
+export function legacyMonthKey(date = new Date()) {
+  return legacyUtcDayKey(new Date(date.getFullYear(), date.getMonth(), 1));
 }
 
 async function resolveUserId(supabase) {
@@ -47,7 +53,7 @@ export async function loadMonthlyCheckinStatus() {
     .eq('user_id', userId)
     .lte('check_in_month', thisMonth)
     .order('check_in_month', { ascending: false })
-    .limit(2);
+    .limit(3);
 
   if (error) {
     console.warn('[monthlyCheckinStore] load failed:', error.message || error);
@@ -55,8 +61,9 @@ export async function loadMonthlyCheckinStatus() {
   }
 
   const rows = data || [];
-  const thisMonthCheckin = rows.find((r) => r.check_in_month === thisMonth) || null;
-  const lastCheckin = rows.find((r) => r.check_in_month !== thisMonth) || null;
+  const thisKeys = new Set([thisMonth, legacyMonthKey()]);
+  const thisMonthCheckin = rows.find((r) => thisKeys.has(r.check_in_month)) || null;
+  const lastCheckin = rows.find((r) => !thisKeys.has(r.check_in_month)) || null;
   return { thisMonthCheckin, lastCheckin };
 }
 
@@ -83,5 +90,19 @@ export async function saveMonthlyCheckin(answers) {
   } catch (error) {
     console.warn('[monthlyCheckinStore] save threw:', error);
     return { saved: false, reason: error?.message || 'server_save_failed' };
+  }
+}
+
+/** How many monthly check-ins she has done (her rows only, RLS). null when unknown. */
+export async function countMonthlyCheckins() {
+  const supabase = getSupabaseClient();
+  const userId = await resolveUserId(supabase);
+  if (!supabase || !userId) return null;
+  try {
+    const { count, error } = await supabase.from(TABLE).select('check_in_month', { count: 'exact', head: true }).eq('user_id', userId);
+    if (error) return null;
+    return Number.isFinite(count) ? count : null;
+  } catch {
+    return null;
   }
 }

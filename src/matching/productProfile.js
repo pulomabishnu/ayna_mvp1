@@ -35,7 +35,9 @@ function researchStage(productId, key, applicable) {
   if (r[key] === 'ok') return { overall: 'verified', trimester_1: 'verified', trimester_2: 'verified', trimester_3: 'verified', evidence_source: r[`${key}_source`] || r.source_url, last_reviewed: r.reviewed, onlyIfUnknown: true };
   const overall = RESEARCH_STATUS[r[key]];
   if (!overall) return null;
-  return { overall, trimester_1: overall, trimester_2: overall, trimester_3: overall, evidence_source: r[`${key}_source`] || r.source_url, last_reviewed: r.reviewed };
+  // No .gov page (or brand label) found: the cautious status is kept as ayna policy (Oct 24).
+  const evidence = r[`${key}_basis`] === 'ayna_policy' ? 'ayna policy (no .gov source found)' : r[`${key}_source`] || r.source_url;
+  return { overall, trimester_1: overall, trimester_2: overall, trimester_3: overall, evidence_source: evidence, last_reviewed: r.reviewed };
 }
 
 // ─── Relevance levels (spec) ────────────────────────────────────────────────
@@ -484,6 +486,58 @@ function capacityFor(f) {
   if (f.cat === 'cup' || f.cat === 'disc') return 'high';
   if (f.has('heavy-flow') || f.n(/\bsuper\b/)) return 'high';
   return 'regular';
+}
+
+// Capacity in mL (Oct 26, match honesty). Read only from facts the brand
+// itself states: a passport fact whose source is the brand's own page, or a
+// catalog line that says "per the brand". A retailer listing or a lab study of
+// the product type is not used (founder rule: product facts come from the
+// brand's own website). Every size the brand lists, e.g. Small 25 mL and
+// Regular 30 mL; null when nothing usable is on file, which the engine treats
+// as unknown, never as a fit.
+const BRAND_SOURCES = new Set(['brand', 'manufacturer']);
+const SIZE_WORD = /\b(Teen|Mini|Small|Short|Regular|Medium|Large|Tall)\b/g;
+export function parseCapacityMl(text) {
+  const t = String(text || '');
+  const sizes = [];
+  const re = /(\d+(?:\.\d+)?)\s*m[lL]\b/g;
+  let m;
+  let prevEnd = 0;
+  while ((m = re.exec(t))) {
+    const ml = Number(m[1]);
+    if (!(ml > 0 && ml < 500)) { prevEnd = m.index + m[0].length; continue; }
+    const after = t.slice(m.index + m[0].length).match(/^\s*\(\s*(Teen|Mini|Small|Short|Regular|Medium|Large|Tall)\s*\)/);
+    let label = after ? after[1] : null;
+    if (!label) {
+      const before = [...t.slice(prevEnd, m.index).matchAll(SIZE_WORD)];
+      label = before.length ? before[before.length - 1][1] : null;
+    }
+    if (!sizes.some((x) => x.ml === ml && x.label === label)) sizes.push({ label, ml });
+    prevEnd = m.index + m[0].length;
+  }
+  return sizes;
+}
+/** True when the brand's own page (passport fact) says the product is reusable. */
+function reusableByBrand(passport) {
+  return [['identity', 'variant'], ['pricing', 'size_count'], ['composition', 'dosage']].some((path) => {
+    const fact = passport?.[path[0]]?.[path[1]];
+    return Boolean(fact?.known && BRAND_SOURCES.has(fact.source_type) && typeof fact.value === 'string' && /\breusable\b/i.test(fact.value) && !/single[- ]use|disposable/i.test(fact.value));
+  });
+}
+function capacityMlFor(product, passport, f) {
+  if (!['cup', 'disc', 'period-underwear'].includes(f.cat)) return null;
+  for (const path of [['identity', 'variant'], ['pricing', 'size_count'], ['composition', 'dosage']]) {
+    const fact = passport?.[path[0]]?.[path[1]];
+    if (!fact?.known || !BRAND_SOURCES.has(fact.source_type)) continue;
+    const sizes = parseCapacityMl(typeof fact.value === 'string' ? fact.value : '');
+    if (sizes.length) return { sizes, max: Math.max(...sizes.map((x) => x.ml)), source: fact.source || null, source_url: fact.source_url || null };
+  }
+  const line = String(product.effectiveness || '');
+  if (/\bper the brand\b/i.test(line)) {
+    const sizes = parseCapacityMl(line);
+    if (sizes.length) return { sizes, max: Math.max(...sizes.map((x) => x.ml)), source: 'catalog (per the brand)', source_url: product.url || null };
+  }
+  return null;
 }
 
 // ─── Formats ────────────────────────────────────────────────────────────────
@@ -1024,9 +1078,25 @@ function worseStage(a, b) {
  * What the engine reads from the passport. Missing passport -> everything
  * unknown, nothing excluded.
  */
+// A reviewed passport fact can carry stage_status: 'avoid' | 'caution' | 'ok',
+// a reviewer's reading of exactly what the source says (the quote is the
+// fact's value). 'ok' only counts from a .gov source and only fills an unknown;
+// it never loosens a caution from the label or anywhere else.
+const GOV_SOURCE = /^https:\/\/([a-z0-9-]+\.)*(nih\.gov|medlineplus\.gov|fda\.gov|cdc\.gov|womenshealth\.gov|ahrq\.gov|hhs\.gov)\//i;
+function stageFromReview(fact) {
+  const s = fact?.stage_status;
+  const evidence = fact?.source_url || 'product passport (reviewed source)';
+  const at = fact?.verified_at || null;
+  const all = (overall, extra = {}) => ({ overall, trimester_1: overall, trimester_2: overall, trimester_3: overall, evidence_source: evidence, last_reviewed: at, ...extra });
+  if (s === 'avoid') return all('contraindicated');
+  if (s === 'caution') return all('caution');
+  if (s === 'ok' && GOV_SOURCE.test(fact?.source_url || '')) return all('verified', { onlyIfUnknown: true });
+  return null;
+}
+
 function passportLayer(product, passport, applicable) {
   if (!passport) {
-    return { status: null, freshness: null, completeness: null, missingCritical: [], ingredientIds: [], ingredientClasses: [], reviewedText: '', pregnancyText: '', breastfeedingText: '', interactionText: '', known: {}, claims: [], qa: null };
+    return { status: null, freshness: null, completeness: null, missingCritical: [], ingredientIds: [], ingredientClasses: [], reviewedText: '', pregnancyText: '', breastfeedingText: '', pregnancyStage: null, breastfeedingStage: null, interactionText: '', known: {}, claims: [], qa: null };
   }
   const c = passport.composition;
   const sf = passport.safety;
@@ -1045,6 +1115,9 @@ function passportLayer(product, passport, applicable) {
     reviewedText,
     pregnancyText: reviewed(sf.pregnancy) ? normalizeClinician(factText(sf.pregnancy)) : '',
     breastfeedingText: reviewed(sf.breastfeeding) ? normalizeClinician(factText(sf.breastfeeding)) : '',
+    // A reviewer's reading of what the source says (stage_status), with its source.
+    pregnancyStage: reviewed(sf.pregnancy) ? stageFromReview(sf.pregnancy) : null,
+    breastfeedingStage: reviewed(sf.breastfeeding) ? stageFromReview(sf.breastfeeding) : null,
     interactionText: reviewed(sf.medication_interactions) ? factText(sf.medication_interactions).toLowerCase() : '',
     // Safety facts we have any information on (catalog or reviewed). Not applicable counts as known.
     known: {
@@ -1160,11 +1233,11 @@ export function buildProductProfile(product) {
   // breastfeeding months later, so research breastfeeding status skips them.
   const internalPeriod = !ingested && (['tampon', 'cup', 'disc', 'menstrual-cup', 'menstrual-disc'].includes(f.cat)
     || /tampon|menstrual (cup|disc)|\b(cup|disc)\b/.test(String(product.name || '').toLowerCase()) && (f.cat === 'period' || formats.includes('period_care')));
-  const pregnancy = worseStage(worseStage(stageSafety(stText, PREGNANCY_RULES, stageApplies), ppLayer.pregnancyText ? stageSafety(ppLayer.pregnancyText, PREGNANCY_RULES, stageApplies) : null),
-    researchStage(product.id, 'pregnancy', stageApplies));
+  const pregnancy = worseStage(worseStage(worseStage(stageSafety(stText, PREGNANCY_RULES, stageApplies), ppLayer.pregnancyText ? stageSafety(ppLayer.pregnancyText, PREGNANCY_RULES, stageApplies) : null),
+    stageApplies ? ppLayer.pregnancyStage : null), researchStage(product.id, 'pregnancy', stageApplies));
   if (internalPeriod && pregnancy.overall !== 'not_applicable') pregnancy.pregnantOnly = true;
-  const breastfeeding = worseStage(worseStage(stageSafety(stText, BREASTFEEDING_RULES, stageApplies), ppLayer.breastfeedingText ? stageSafety(ppLayer.breastfeedingText, BREASTFEEDING_RULES, stageApplies) : null),
-    internalPeriod ? null : researchStage(product.id, 'breastfeeding', stageApplies));
+  const breastfeeding = worseStage(worseStage(worseStage(stageSafety(stText, BREASTFEEDING_RULES, stageApplies), ppLayer.breastfeedingText ? stageSafety(ppLayer.breastfeedingText, BREASTFEEDING_RULES, stageApplies) : null),
+    stageApplies ? ppLayer.breastfeedingStage : null), internalPeriod ? null : researchStage(product.id, 'breastfeeding', stageApplies));
 
   // Relevance. Unconditional levels merge by MAX; contextual levels are kept
   // separately (with the contexts they require) and only count at scoring
@@ -1254,10 +1327,12 @@ export function buildProductProfile(product) {
     age: ageFor(product, f, stText),
     formats,
     menstrual: PERIOD_CATEGORIES.has(f.cat) ? {
-      capacity, leak_protection: f.fn('leak-protection') || f.has('leaks'),
+      capacity, capacity_ml: capacityMlFor(product, passport, f), leak_protection: f.fn('leak-protection') || f.has('leaks'),
       versatile: f.cat === 'period-underwear' && f.t(/multiple absorbency|absorbency levels|modular|inserts/),
     } : null,
     price,
+    // Reusable per the brand's own page (passport), for the match's "reusable" factor.
+    reusable_by_brand: reusableByBrand(passport),
     fsa_hsa: [product.fsaHsaEligible, product.fsa_hsa_eligible, product.fsaEligible, product.fsa_eligible, product.hsaEligible, product.hsa_eligible].some((v) => v === true) ? 'yes'
       : product.fsaHsaEligible === false ? 'no' : 'unknown',
     internal: product.internal === true || ['tampon', 'cup', 'disc'].includes(f.cat),

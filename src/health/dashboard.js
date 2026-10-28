@@ -13,6 +13,7 @@
 import { resolveDaily, series } from './dedupe.js';
 import { METRICS } from './metrics.js';
 import { periodStarts, fmtMinutes, RECENT_DAYS, BASELINE_DAYS } from './insights.js';
+import { localToday } from '../utils/localDate.js';
 
 const DAY = 86400000;
 const MIN_BASELINE = 10;
@@ -143,8 +144,14 @@ function cycleFor(resolved, today, days) {
  * @param {Array} rows   raw daily rows (any sources; deduped here)
  * @param {object} [opts] { today: 'YYYY-MM-DD', days: 7|30|90, preferred }
  */
+function missingToday(name) {
+  if (import.meta.env?.DEV) console.warn(`${name}: pass { today: localToday() }`);
+  return localToday();
+}
+
 export function buildDashboard(rows, opts = {}) {
-  const today = opts.today || isoDay(Date.now());
+  // `today` is her local day (P0 date bug): callers pass localToday(). Never the UTC date.
+  const today = opts.today || missingToday('buildDashboard');
   const days = opts.days || 30;
   const resolved = resolveDaily(rows, opts.preferred);
   const groups = GROUPS.map((g) => {

@@ -1,0 +1,40 @@
+/* Click-to-load read video (ReadVideo.jsx). Website (.app-container) and app
+   (.ayna-mobile). Object card language: 1.5px espresso outline, radius 16.
+   Espresso poster, butter type, pink play button carrying the hard 3px offset
+   (an espresso offset on an espresso poster can't be seen). No gradients,
+   glows or blur. */
+.ay-rvideo { --rv-ink: #3e2723; --rv-paper: #ffedac; --rv-pink: #f7badd; margin: 0 0 32px; max-width: 680px; }
+.ay-rvideo__frame { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border: 1.5px solid var(--rv-ink); border-radius: 16px; background: var(--rv-ink); }
+.ay-rvideo__frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.ay-rvideo__frame iframe:focus-visible { outline: 3px solid var(--rv-pink); outline-offset: -3px; }
+
+.app-container .ay-rvideo__poster, .ayna-mobile .ay-rvideo__poster {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 12px;
+  width: 100%; height: 100%; margin: 0; padding: 20px 24px !important; box-sizing: border-box; text-align: left;
+  border: 0 !important; border-radius: 0 !important; background: var(--rv-ink) !important; color: var(--rv-paper) !important; box-shadow: none !important; cursor: pointer;
+}
+.ay-rvideo__poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* A photo poster gets a flat scrim strip under the title so the type stays readable. */
+.ay-rvideo__poster.has-image .ay-rvideo__title { padding: 6px 10px; border-radius: 10px; background: rgba(62, 39, 35, .82); }
+.ay-rvideo__title { position: relative; max-width: 26ch; font: 700 22px/1.15 var(--ay-heading, var(--ay-app-heading, 'ayna Display', 'Bricolage Grotesque', sans-serif)); letter-spacing: -.02em; }
+.ay-rvideo__play { position: relative; display: grid; place-items: center; width: 56px; height: 56px; border: 1.5px solid var(--rv-paper); border-radius: 999px; background: var(--rv-pink); color: var(--rv-ink); box-shadow: 3px 3px 0 var(--rv-paper); transition: transform var(--t-press, 110ms) var(--ease-pop, ease-out), box-shadow var(--t-press, 110ms) var(--ease-out, ease-out); }
+.ay-rvideo__play svg { width: 24px; height: 24px; margin-left: 3px; fill: currentColor; }
+@media (hover: hover) and (pointer: fine) { .ay-rvideo__poster:hover .ay-rvideo__play { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--rv-paper); } }
+.ay-rvideo__poster:active .ay-rvideo__play { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--rv-paper); }
+.app-container .ay-rvideo__poster:focus-visible, .ayna-mobile .ay-rvideo__poster:focus-visible { outline: 3px solid var(--rv-pink) !important; outline-offset: -5px; }
+.ay-rvideo__cap { margin: 10px 0 0; font: 500 13px/1.4 var(--ay-sans-stack, var(--ayna-font-ui, 'Figtree', system-ui, sans-serif)); color: rgba(62, 39, 35, .78); }
+
+/* Dark themes: espresso card on espresso page needs a butter outline. */
+.app-container[data-theme='brand-dark'] .ay-rvideo, .ayna-mobile[data-theme='dark'] .ay-rvideo { --rv-ink: #ffedac; --rv-paper: #3e2723; }
+.app-container[data-theme='brand-dark'] .ay-rvideo__cap, .ayna-mobile[data-theme='dark'] .ay-rvideo__cap { color: rgba(255, 237, 172, .8); }
+
+/* App placement and text scale. */
+.ayna-mobile .ay-rvideo { margin: 20px 0 24px; }
+.ayna-mobile .ay-rvideo__title { font-size: calc(19px * var(--ayna-text-scale, 1)); }
+.ayna-mobile .ay-rvideo__cap { font-size: calc(13px * var(--ayna-text-scale, 1)); }
+@media (max-width: 480px) {
+  .app-container .ay-rvideo__poster, .ayna-mobile .ay-rvideo__poster { padding: 14px 16px !important; }
+  .ay-rvideo__title { font-size: 18px; }
+  .ay-rvideo__play { width: 48px; height: 48px; }
+}
+@media (prefers-reduced-motion: reduce) { .ay-rvideo__play { transition: none; } .ay-rvideo__poster:hover .ay-rvideo__play, .ay-rvideo__poster:active .ay-rvideo__play { transform: none; } }

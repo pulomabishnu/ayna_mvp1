@@ -33,16 +33,38 @@ const GUIDELINE_LINKS = {
     ]
 };
 
-export default function Screenings({ checkinData, onNavigate }) {
+// The live reminders' own words, shared with the "What you'll see" preview so the two never drift.
+const COPY = {
+    stiNow: 'Since you are sexually active, an annual STI screening is recommended to ensure your sexual health.',
+    pap: 'Clinical guidelines recommend a Pap smear every 3 years for women ages 21-65.',
+    uti: 'A UTI can get worse fast.',
+    talk: 'Catching unusual symptoms early helps.',
+};
+const PREVIEW = [
+    { type: 'STI Screening', line: COPY.stiNow },
+    { type: 'Pap Smear / Cervical Screening', line: COPY.pap },
+    { type: 'Immediate UTI Care', line: COPY.uti },
+    { type: 'Talk to Your OB-GYN or PCP', line: COPY.talk },
+];
+
+export default function Screenings({ checkinData, onNavigate, onOpenCheckin = null, onBack = null }) {
     if (!checkinData) {
         return (
-            <InfoPage tone="sky" eyebrow="Health maintenance" title="Recommended screenings" width="read">
-                <div className="ay-info-card ay-info-card--pad ay-info-empty">
+            <InfoPage eyebrow="Health maintenance" title="Recommended screenings" width="read" onBack={onBack}>
+                <div className="ay-info-card ay-info-card--pad ay-info-empty ay-scr-gate">
                     <h2 className="ay-info__h3">No check-in yet</h2>
                     <p className="ay-info__body">
-                        Do your <strong>Monthly Check-in</strong> to get screening and doctor visit tips based on your symptoms and history.
+                        Do your <strong>monthly check-in</strong> to get screening and doctor visit tips based on your symptoms and history.
                     </p>
+                    {onOpenCheckin && <button type="button" className="ay-btn ay-btn--primary" onClick={onOpenCheckin}>Check in now</button>}
                 </div>
+                {/* What the page shows after a check-in, in the reminders' own words. Nothing here is about her yet. */}
+                <section className="ay-scr-preview" aria-labelledby="ay-scr-preview-h">
+                    <h2 className="ay-group__title" id="ay-scr-preview-h">What you’ll see</h2>
+                    <ul className="ay-scr-preview__list">
+                        {PREVIEW.map((p) => <li key={p.type}><b title={findGlossaryTermInText(p.type) || undefined}>{p.type}</b><span>{p.line}</span></li>)}
+                    </ul>
+                </section>
             </InfoPage>
         );
     }
@@ -60,7 +82,7 @@ export default function Screenings({ checkinData, onNavigate }) {
             recommendations.push({
                 type: 'STI Screening',
                 urgency: 'high',
-                message: 'Due now. Since you are sexually active, an annual STI screening is recommended to ensure your sexual health.',
+                message: `Due now. ${COPY.stiNow}`,
                 action: 'Schedule with PCP, OBGYN, or Planned Parenthood',
                 links: [TELEHEALTH_SERVICES[0], ...GUIDELINE_LINKS.sti]
             });
@@ -80,7 +102,7 @@ export default function Screenings({ checkinData, onNavigate }) {
         recommendations.push({
             type: 'Pap Smear / Cervical Screening',
             urgency: 'high',
-            message: 'Due now. Clinical guidelines recommend a Pap smear every 3 years for women ages 21-65.',
+            message: `Due now. ${COPY.pap}`,
             action: 'Visit your OB-GYN in person for an exam',
             linkType: 'discovery',
             linkText: 'Find OB-GYN-friendly apps'
@@ -92,7 +114,7 @@ export default function Screenings({ checkinData, onNavigate }) {
         recommendations.push({
             type: 'Immediate UTI Care',
             urgency: 'high',
-            message: 'A UTI can get worse fast. See a doctor today, or use a telehealth service to get antibiotics right away.',
+            message: `${COPY.uti} See a doctor today, or use a telehealth service to get antibiotics right away.`,
             action: 'Visit Urgent Care, or use Wisp or Planned Parenthood Direct',
             links: [TELEHEALTH_SERVICES[2], TELEHEALTH_SERVICES[0], ...GUIDELINE_LINKS.uti],
             suggestedProduct: { name: 'AZO UTI Test Strips', desc: 'Confirm markers before your visit.' }
@@ -104,14 +126,14 @@ export default function Screenings({ checkinData, onNavigate }) {
         recommendations.push({
             type: 'Talk to Your OB-GYN or PCP',
             urgency: 'medium',
-            message: `Based on your recent check-in symptoms. ${severeSymptoms.join(', ')}. It's a good idea to talk to a doctor. Catching unusual symptoms early helps.`,
+            message: `Based on your recent check-in symptoms. ${severeSymptoms.join(', ')}. It's a good idea to talk to a doctor. ${COPY.talk}`,
             action: 'Book a visit with your primary care provider',
             links: [TELEHEALTH_SERVICES[1], ...GUIDELINE_LINKS.general]
         });
     }
 
     return (
-        <InfoPage tone="sky"
+        <InfoPage onBack={onBack}
             eyebrow="Health maintenance"
             title="Recommended screenings"
             lede="Care reminders based on your health data and recent check-ins."
@@ -163,7 +185,7 @@ export default function Screenings({ checkinData, onNavigate }) {
                                             <div className="ay-info__small">{rec.suggestedProduct.desc}</div>
                                         </div>
                                         <button type="button" className="ay-info-btn" onClick={() => onNavigate?.('discovery')}>
-                                            Find in Shop
+                                            Find in the Shop
                                         </button>
                                     </div>
                                 )}

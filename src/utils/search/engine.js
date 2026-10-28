@@ -46,6 +46,37 @@ const FILTER_RULES = [
   ['latexFree', /\blatex[- ]?free\b/],
   ['nonHormonal', /\b(non[- ]?hormonal|hormone[- ]?free|no hormones|without hormones)\b/],
 ];
+// "Not a pill", "isn't a pill", "no pills", "pill-free", "non-pill": a format she
+// wants left out (UX 26, TD 40). Ids are the ontology FORMATS the product
+// profile carries (profile.formats).
+const NEG_FORMAT_WORDS = [
+  ['pill_capsule', 'pills?|tablets?|capsules?|caplets?|softgels?|gel ?caps?'],
+  ['gummy', 'gumm(?:y|ies)'],
+  ['powder', 'powders?'],
+  ['drink_tea', 'teas?|drinks?'],
+  ['patch', 'patch(?:es)?'],
+  ['topical', 'creams?|lotions?|gels?'],
+  ['suppository', 'suppositor(?:y|ies)'],
+  ['device', 'devices?|gadgets?'],
+  ['app_service', 'apps?'],
+];
+const NEGATOR = "(?:not|no|non|without|isn'?t|is not|aren'?t|are not|nothing|never|avoid(?:ing)?|skip(?:ping)?|other than|instead of)";
+const NEG_FORMAT_RES = NEG_FORMAT_WORDS.map(([id, words]) => [id,
+  new RegExp(`\\b${NEGATOR}[\\s-]+(?:(?:a|an|any|the|more|taking|swallowing|another)\\s+)?(?:${words})\\b|\\b(?:${words})[\\s-]?free\\b`, 'g')]);
+/** Formats the query asks to leave out, and the words that said so. */
+export function negatedFormats(text) {
+  const t = normalizeText(text);
+  const ids = [];
+  const words = new Set();
+  for (const [id, re] of NEG_FORMAT_RES) {
+    re.lastIndex = 0;
+    const hits = t.match(re);
+    if (!hits) continue;
+    ids.push(id);
+    for (const h of hits) for (const w of h.split(/[^a-z']+/)) if (w) { words.add(w); words.add(w.replace(/'/g, '')); }
+  }
+  return { ids, words };
+}
 // Words that only express a filter; dropped from the text part of the query.
 const FILTER_WORDS = new Set(['cheap', 'cheaper', 'cheapest', 'budget', 'affordable', 'inexpensive', 'bargain', 'expensive', 'fragrance', 'unscented', 'scent', 'scented', 'perfume', 'free', 'safe', 'friendly', 'reusable', 'washable', 'vegan', 'organic', 'cruelty', 'hsa', 'fsa', 'eligible', 'latex', 'non', 'nonhormonal', 'hormone', 'hormonal', 'hormones', 'under', 'below', 'over', 'above', 'dollars', 'bucks', 'usd', 'max', 'less', 'more', 'than', 'cost', 'low']);
 // Filter words that are ALSO the thing being searched when nothing else is.
@@ -298,6 +329,8 @@ export function createSearchEngine(config = {}) {
     const min = text.match(PRICE_MIN_RE);
     if (min) filters.minPrice = Number(min[1]);
     for (const [name, re] of FILTER_RULES) if (re.test(text)) filters[name] = true;
+    const negated = negatedFormats(rawText).ids;
+    if (negated.length) filters.excludeFormats = negated;
     if (filters.pregnancy) { pushUnique(needs, 'pregnancy.safe_discovery'); }
     if (filters.breastfeeding) pushUnique(needs, 'postpartum.lactation');
     // "pads" is a category, not a need: a category word alone never brings in need products.
@@ -356,8 +389,14 @@ export function createSearchEngine(config = {}) {
     // "Did you mean" only offers words we know: an unknown word is flagged on its own.
     const knownCorrected = tokens.filter((t) => t.status !== 'unknown').map((t) => (t.status === 'corrected' ? t.to : t.word)).join(' ');
     const intentText = normalizeText(searchParts.join(' ')).replace(/\s+/g, ' ');
+    // Format exclusions are read from what she typed (spelling fixes can split "isn't").
+    const negated = negatedFormats(raw);
     const intent = detectIntent(intentText);
-    let words = intentText.split(' ').filter((w) => w && !FILLER.has(w) && !FILTER_WORDS.has(w) && !/^\$?\d/.test(w));
+    if (negated.ids.length) intent.filters.excludeFormats = negated.ids;
+    else delete intent.filters.excludeFormats;
+    const NEG_WORDS = new Set(['not', 'no', 'non', 'without', 'isn', 'isnt', 't', 'is', 'aren', 'arent', 'are', 'nothing', 'never', 'avoid', 'avoiding', 'skip', 'skipping', 'free', 'a', 'an', 'any', 'more', 'taking', 'swallowing', 'another', 'other', 'instead', 'of']);
+    let words = intentText.split(' ').filter((w) => w && !FILLER.has(w) && !FILTER_WORDS.has(w) && !/^\$?\d/.test(w)
+      && !(negated.ids.length && (negated.words.has(w) || negated.words.has(w.replace(/'/g, '')) || (NEG_WORDS.has(w.replace(/'/g, '')) && negated.words.has(w.replace(/'/g, ''))))));
     if (!words.length) words = intentText.split(' ').filter((w) => KEEP_IF_ALONE.has(w));
     const searchText = [...new Set(words)].join(' ');
     const result = {
@@ -409,6 +448,10 @@ export function createSearchEngine(config = {}) {
       if (price == null) return false;
       if (f.maxPrice != null && price > f.maxPrice) return false;
       if (f.minPrice != null && price < f.minPrice) return false;
+    }
+    if (f.excludeFormats?.length) {
+      const formats = profileOf(item, e)?.formats || [];
+      if (f.excludeFormats.some((id) => formats.includes(id))) return false;
     }
     const p = (f.fragranceFree || f.pregnancy || f.organic || f.vegan || f.reusable || f.crueltyFree || f.latexFree || f.nonHormonal) ? profileOf(item, e) : null;
     if (f.fragranceFree && p && p.safety?.fragrance !== 'no') return false;

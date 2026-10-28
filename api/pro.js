@@ -64,10 +64,14 @@ export default async function handler(req, res) {
 
     if (body.action === 'read') {
       const rules = await proFeatureRules(admin);
-      if (!rules.enabled || !rules.premiumReadIds.includes(body.readId)) return res.status(200).json({ allowed: true });
+      if (!rules.enabled) return res.status(200).json({ allowed: true });
+      if (!String(body.readId || '').trim()) return res.status(400).json({ error: 'invalid_read' });
+      // Free accounts may claim one Read per UTC week. Reopening that same Read
+      // remains allowed for the rest of the week; Pro is unlimited. The RPC is
+      // atomic, so two tabs cannot both claim a different first Read.
       const { data, error: readError } = await admin.rpc('pro_claim_read', {
         p_user_id: user.id,
-        p_read_id: body.readId,
+        p_read_id: String(body.readId).trim(),
         p_unlimited: active,
       });
       if (readError) throw new Error('Read allowance unavailable');
@@ -149,8 +153,8 @@ export default async function handler(req, res) {
         metadata: { flow: PRO_FLOW, user_id: user.id, plan: body.plan },
       },
       integration_identifier: `ayna_pro_${createHash('sha256').update(body.requestId).digest().subarray(0, 8).reduce((s, b) => s + String.fromCharCode(97 + b % 26), '')}`,
-      success_url: `${config.origin}/you?checkout=success`,
-      cancel_url: `${config.origin}/you?checkout=canceled`,
+      success_url: `${config.origin}/pro?checkout=success`,
+      cancel_url: `${config.origin}/pro?checkout=canceled`,
       custom_text: {
         submit: {
           message: 'Your Early Access coupon is applied today. Your purchased period starts at launch; then renews at the regular price shown unless canceled.',

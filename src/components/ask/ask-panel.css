@@ -1,0 +1,246 @@
+/* Ask ayna, one component (AskPanel.jsx) on the app sheet, the website panel and /ask.
+   Ask audit (Oct 25) sections 6, 7, 10, 11 + PDP build brief type/shape tables:
+   butter + espresso, pink the one accent (prompt arrows, the send sticker), butter-deep surface (#F6E3A1),
+   type: hello 22 display · title 20 display · ui 15/600 · body 16/500 · meta 14/500 · caption 13/500.
+   Radii 8 / 16 / 999 / 50%, the 30/30/30/8 corner on Ask's bubbles only. One shadow: the 3px pink sticker on Send.
+   Every rule is prefixed with an id-weight :is() so the older sheet and app cascades (12-class chains with
+   !important) cannot restyle the new parts. */
+
+.ay-askp:is(#ay-askp, .ay-askp) {
+  --askp-bg: #f6e3a1; /* founder Oct 26: no white surfaces; butter-deep with espresso rules (white only behind product photos) */
+  --askp-page: #ffedac;
+  --askp-ink: #3e2723;
+  --askp-muted: rgba(62, 39, 35, .74);
+  --askp-line: rgba(62, 39, 35, .15);
+  --askp-soft: #ffedac;
+  --askp-on-ink: #ffedac;
+  --askp-pink: #f7badd;
+  display: flex !important; flex-direction: column !important; min-height: 0 !important; height: 100%;
+  margin: 0 !important; padding: 0 !important; border: 0 !important; box-shadow: none !important;
+  background: var(--askp-bg) !important; color: var(--askp-ink) !important;
+  font: 500 16px/1.55 var(--ay-font-ui, 'Figtree', system-ui, sans-serif) !important;
+}
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-askp:is(#ay-askp, .ay-askp) {
+  --askp-bg: #3e2723;
+  --askp-page: #3e2723;
+  --askp-ink: #ffedac;
+  --askp-muted: rgba(255, 237, 172, .8);
+  --askp-line: rgba(255, 237, 172, .2);
+  --askp-soft: rgba(255, 237, 172, .08);
+  --askp-on-ink: #3e2723;
+}
+.ay-askp:is(#ay-askp, .ay-askp) *, .ay-askp:is(#ay-askp, .ay-askp) *::before, .ay-askp:is(#ay-askp, .ay-askp) *::after { box-sizing: border-box; }
+.ay-askp:is(#ay-askp, .ay-askp) .sr-only { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; }
+
+/* Header: Back · Ask ayna ✳ · Done */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-head { flex: none; display: flex !important; align-items: center; gap: 12px; min-height: 56px; margin: 0 !important; padding: 8px 16px !important; border: 0 !important; border-bottom: 1px solid var(--askp-line) !important; background: transparent !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-head::before { content: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-title { flex: 1; display: inline-flex; align-items: center; gap: 6px; margin: 0 !important; font: 700 20px/1.15 var(--ay-font-display) !important; letter-spacing: -.01em !important; color: var(--askp-ink) !important; text-transform: none !important; background: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-sparkle { width: 16px; height: 16px; fill: var(--askp-pink); stroke: var(--askp-ink); stroke-width: 1.2; flex: none; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-head__end:empty { display: none; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-head button { min-width: 44px; min-height: 44px; display: inline-grid; place-items: center; padding: 0 8px !important; margin: 0 !important; border: 0 !important; border-radius: 999px !important; background: transparent !important; color: var(--askp-ink) !important; box-shadow: none !important; font: 600 15px/1 var(--ay-font-ui) !important; cursor: pointer; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-head button svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* The conversation */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: flex !important; flex-direction: column; gap: 16px; padding: 24px 16px 24px !important; background: transparent !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start { display: grid; gap: 16px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-hello { margin: 0 !important; font: 700 22px/1.15 var(--ay-font-display) !important; color: var(--askp-ink) !important; letter-spacing: -.01em !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-intro { margin: -8px 0 0 !important; font: 500 13px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-howlink, .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-textbtn { display: inline; min-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--askp-ink) !important; font: 600 13px/1.4 var(--ay-font-ui) !important; text-decoration: underline !important; text-underline-offset: 3px; cursor: pointer; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-textbtn { font-size: 14px !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-how { display: grid; gap: 8px; padding: 12px 16px !important; border-left: 3px solid var(--askp-ink) !important; background: var(--askp-soft) !important; border-radius: 0 8px 8px 0 !important; font: 500 14px/1.45 var(--ay-font-ui) !important; color: var(--askp-ink) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-how p { margin: 0 !important; font: inherit !important; color: inherit !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-how ul { margin: 0; padding-left: 18px; }
+
+/* Suggested questions: short group heading, single pills (#1 board, #16 The Ordinary) */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-groups { display: grid; gap: 16px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-group { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; background: none; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-group h3 { margin: 0 !important; font: 600 13px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; letter-spacing: 0 !important; text-transform: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-group__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-group ul { display: grid; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill { width: 100%; min-height: 48px; display: flex !important; align-items: center; justify-content: space-between; gap: 12px; margin: 0 !important; padding: 8px 8px 8px 16px !important; border: 1.5px solid var(--askp-ink) !important; border-radius: 999px !important; background: var(--askp-bg) !important; color: var(--askp-ink) !important; box-shadow: none !important; text-align: left !important; font: 600 15px/1.3 var(--ay-font-ui) !important; cursor: pointer; transition: transform var(--ay-dur-press, 120ms) ease; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill:active { transform: scale(.98); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill:focus-visible { outline: 2px solid var(--askp-ink) !important; outline-offset: 2px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill svg { flex: none; width: 32px; height: 32px; padding: 8px; border-radius: 50%; background: var(--askp-pink); fill: none; stroke: #3e2723; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill.is-quiet { border-color: var(--askp-line) !important; font-weight: 500 !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill.is-quiet svg { background: transparent; stroke: var(--askp-ink); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-group.is-safety:first-child h3 { color: var(--askp-ink) !important; }
+
+/* Messages: hers right (espresso), ayna's left (butter-deep, outlined); 30/30/30/8 is Ask's corner */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-user { align-items: flex-end; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-bubble { max-width: 100%; padding: 16px !important; border-radius: 30px 30px 30px 8px !important; border: 1.5px solid var(--askp-ink) !important; background: var(--askp-bg) !important; color: var(--askp-ink) !important; box-shadow: none !important; font: 500 16px/1.55 var(--ay-font-ui) !important; white-space: normal; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-user .ay-askp-bubble { max-width: 85%; padding: 12px 16px !important; border-radius: 30px 30px 8px 30px !important; border-color: transparent !important; background: var(--askp-ink) !important; color: var(--askp-on-ink) !important; white-space: pre-wrap; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-bubble { width: 100%; display: grid; gap: 16px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text { display: grid; gap: 8px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text :is(p, ul, ol) { margin: 0 !important; font: inherit !important; color: inherit !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text :is(ul, ol) { padding-left: 20px !important; display: grid; gap: 4px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text > :first-child { font-weight: 600 !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text ul.md-marked { padding-left: 0 !important; list-style: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text ul.md-marked > li { padding-left: 1.25em; text-indent: -1.25em; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-system p { margin: 0 !important; font: 500 14px/1.45 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-failed .ay-askp-bubble { border-style: dashed !important; }
+
+/* Key number (#29) */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-stat { display: flex; align-items: baseline; gap: 12px; margin: 0 !important; padding: 12px 0 0 !important; border-top: 1px solid var(--askp-line); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-stat b { font: 800 32px/1 var(--ay-font-display) !important; color: var(--askp-ink) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-stat span { display: inline-flex; align-items: center; font: 500 13px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+/* Facts as label / value rows (#58) */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-facts { display: grid; margin: 0 !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-facts > div { display: grid; gap: 2px; padding: 8px 0; border-top: 1px solid var(--askp-line); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-facts dt { font: 600 13px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-facts dd { margin: 0 !important; font: 500 15px/1.4 var(--ay-font-ui) !important; color: var(--askp-ink) !important; }
+/* Do / Don't, Good for / Not for (#21) */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-cols h4 { margin: 0 0 8px !important; font: 700 15px/1.3 var(--ay-font-ui) !important; color: var(--askp-ink) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-cols ul { display: grid; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-cols li { display: flex; gap: 8px; align-items: flex-start; font: 500 14px/1.45 var(--ay-font-ui) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-cols__mark { flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--askp-ink); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-cols__mark.is-yes { background: var(--askp-ink); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-cols__mark svg { width: 12px; height: 12px; fill: none; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-cols__mark.is-yes svg { stroke: var(--askp-on-ink); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-cols__mark.is-no svg { stroke: var(--askp-ink); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-cols__from { grid-column: 1 / -1; margin: 0 !important; font: 500 13px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+/* Product plates with the match pill and reason (#53) */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plates { display: grid; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate { width: 100%; display: flex !important; gap: 12px; align-items: center; margin: 0 !important; padding: 8px !important; border: 1px solid var(--askp-line) !important; border-radius: 16px !important; background: transparent !important; color: var(--askp-ink) !important; box-shadow: none !important; text-align: left !important; font: inherit !important; cursor: pointer; }
+.ay-askp:is(#ay-askp, .ay-askp) div.ay-askp-plate { cursor: default; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__img { flex: none; width: 64px; height: 64px; display: grid; place-items: center; overflow: hidden; border-radius: 16px; background: #fff; } /* white only behind the product photo */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__img :is(img, div) { width: 100% !important; height: 100% !important; object-fit: contain !important; transform: scale(.82); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__text { min-width: 0; display: grid; gap: 4px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__name { font: 600 15px/1.3 var(--ay-font-ui) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__match:empty { display: none; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__match :is(.ay-match-pill, .ay-match-pill *) { font-size: 13px !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__see { font: 600 13px/1.4 var(--ay-font-ui) !important; text-decoration: underline; text-underline-offset: 3px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__why { font: 500 13px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+/* Sources (evidence marks) and Based on */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-end { display: grid; gap: 8px; margin: 0; padding: 12px 0 0 !important; border-top: 1px solid var(--askp-line) !important; background: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-sources { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-sources a { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; max-width: 100%; padding: 4px 12px !important; border: 1px solid var(--askp-line) !important; border-radius: 999px !important; color: var(--askp-ink) !important; background: transparent !important; text-decoration: none !important; font: 500 13px/1.3 var(--ay-font-ui) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-sources a > span:not(.sr-only) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ay-askp:is(#ay-askp, .ay-askp) .ayv-mark8 { flex: none; display: inline-block; width: 10px; height: 10px; margin-right: 6px; color: var(--askp-ink); }
+.ay-askp:is(#ay-askp, .ay-askp) :is(.ay-askp-based, .ay-askp-nosrc, .ay-askp-related) { margin: 0 !important; font: 500 13px/1.45 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-based b { font-weight: 700 !important; color: var(--askp-ink) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-related button { display: inline; min-height: 0 !important; padding: 0 !important; margin: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--askp-ink) !important; font: 600 13px/1.45 var(--ay-font-ui) !important; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+/* Follow-ups ("Got questions?" chips, #20), share, profile choice: outline pills */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-followups { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-followup, .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-act { display: inline-flex !important; align-items: center; gap: 6px; min-height: 40px; margin: 0 !important; padding: 8px 14px !important; border: 1.5px solid var(--askp-ink) !important; border-radius: 999px !important; background: var(--askp-bg) !important; color: var(--askp-ink) !important; box-shadow: none !important; font: 600 14px/1.2 var(--ay-font-ui) !important; cursor: pointer; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-followup.is-else { border-color: var(--askp-line) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-act.is-primary { background: var(--askp-ink) !important; color: var(--askp-on-ink) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-share-answer__btn { font-size: 13px !important; }
+
+/* Notes inside the list: sign-in, the health-data switch, errors, listening */
+.ay-askp:is(#ay-askp, .ay-askp) :is(.ay-ask-account, .ay-askp-note, .ay-ask-health) { display: grid; gap: 8px; margin: 0 !important; padding: 12px 16px !important; border: 0 !important; border-left: 3px solid var(--askp-ink) !important; border-radius: 0 8px 8px 0 !important; background: var(--askp-soft) !important; color: var(--askp-ink) !important; box-shadow: none !important; font: 500 14px/1.45 var(--ay-font-ui) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) :is(.ay-ask-account, .ay-askp-note, .ay-ask-health) p { margin: 0 !important; font: inherit !important; color: inherit !important; }
+.ay-askp:is(#ay-askp, .ay-askp) :is(.ay-ask-account, .ay-askp-note) button { justify-self: start; min-height: 44px; margin: 0 !important; padding: 0 20px !important; border: 0 !important; border-radius: 999px !important; background: var(--askp-ink) !important; color: var(--askp-on-ink) !important; box-shadow: var(--ay-sticker, 3px 3px 0 #f7badd) !important; font: 600 15px/1 var(--ay-font-ui) !important; cursor: pointer; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-ask-health__switch { display: flex !important; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--askp-ink) !important; font: 600 14px/1.3 var(--ay-font-ui) !important; text-align: left; cursor: pointer; box-shadow: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-ask-health__switch b { flex: none; min-width: 52px; padding: 6px 10px; border-radius: 999px; border: 1.5px solid var(--askp-ink); text-align: center; font: 700 13px/1 var(--ay-font-ui); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-ask-health__switch[aria-checked='true'] b { background: var(--askp-ink); color: var(--askp-on-ink); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-typing { display: inline-flex; gap: 6px; align-items: center; padding: 16px; border: 1.5px solid var(--askp-ink); border-radius: 30px 30px 30px 8px; width: fit-content; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-typing i { width: 8px; height: 8px; border-radius: 50%; background: var(--askp-ink); animation: ay-askp-dot 1s infinite ease-in-out; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-typing i:nth-child(2) { animation-delay: .15s; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-typing i:nth-child(3) { animation-delay: .3s; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-typing small { font: 500 13px/1.4 var(--ay-font-ui); color: var(--askp-muted); margin-left: 4px; }
+@keyframes ay-askp-dot { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-typing i { animation: none; opacity: .7; } }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pinned { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 16px 8px !important; padding: 8px 12px !important; border-left: 3px solid var(--askp-ink) !important; border-radius: 0 8px 8px 0 !important; background: var(--askp-soft) !important; color: var(--askp-ink) !important; font: 500 14px/1.4 var(--ay-font-ui) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pinned button { flex: none; min-height: 40px; padding: 0 14px !important; border: 1.5px solid var(--askp-ink) !important; border-radius: 999px !important; background: transparent !important; color: var(--askp-ink) !important; font: 600 14px/1 var(--ay-font-ui) !important; box-shadow: none !important; cursor: pointer; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pinned .ay-listening__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--askp-pink); border: 1.5px solid var(--askp-ink); flex: none; }
+
+/* Composer: mic · input · Send (sticker) */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-composer { flex: none; display: grid; gap: 8px; margin: 0 !important; padding: 12px 16px max(12px, env(safe-area-inset-bottom)) !important; border: 0 !important; border-top: 1px solid var(--askp-line) !important; background: var(--askp-bg) !important; box-shadow: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-composer__row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-input { flex: 1 1 0; width: 0 !important; min-width: 0 !important; height: 48px; margin: 0 !important; padding: 0 20px !important; border: 1.5px solid var(--askp-ink) !important; border-radius: 999px !important; background: var(--askp-bg) !important; color: var(--askp-ink) !important; box-shadow: none !important; font: 500 16px/1.2 var(--ay-font-ui) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-input::placeholder { color: var(--askp-muted) !important; opacity: 1; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-mic { flex: none; width: 48px; height: 48px; min-height: 48px; display: grid !important; place-items: center; margin: 0 !important; padding: 0 !important; border: 1.5px solid var(--askp-ink) !important; border-radius: 50% !important; background: var(--askp-bg) !important; color: var(--askp-ink) !important; box-shadow: none !important; cursor: pointer; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-mic[aria-pressed='true'] { background: var(--askp-pink) !important; color: #3e2723 !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-mic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-send { flex: none; height: 48px; min-height: 48px; margin: 0 3px 3px 0 !important; padding: 0 20px !important; border: 0 !important; border-radius: 999px !important; background: var(--askp-ink) !important; color: var(--askp-on-ink) !important; box-shadow: var(--ay-sticker, 3px 3px 0 #f7badd) !important; font: 600 15px/1 var(--ay-font-ui) !important; opacity: 1 !important; cursor: pointer; transition: transform var(--ay-dur-press, 120ms) ease, box-shadow var(--ay-dur-press, 120ms) ease; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-send:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-send:disabled { background: transparent !important; color: var(--askp-ink) !important; border: 1.5px solid var(--askp-ink) !important; box-shadow: none !important; cursor: default; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-foot { margin: 0 !important; font: 500 13px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+
+/* App: the sheet with two heights (PDP build brief: 50% and 100%) */
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer[data-detent='half'] .ayna-ask-drawer-content { margin-top: 50dvh !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { border-radius: 16px 16px 0 0 !important; background: #f6e3a1 !important; transition: margin-top var(--ay-dur-sheet, 240ms) ease, transform var(--t-sheet, 240ms) var(--ease-out, ease-out); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-tab .ayna-ask-drawer-content { border-radius: 0 !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-drawer .ayna-ask-drawer-content,
+:is([data-theme='dark'], [data-theme='brand-dark']) .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content,
+.ayna-mobile:is(#ay, .ayna-mobile):is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-drawer .ayna-ask-drawer-content { background: #3e2723 !important; } /* outranks the 1-id light rule (a butter strip showed under the composer in dark) */
+@media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { transition: none !important; } }
+
+/* Website: a 400px panel on the right (PDP build brief), a sheet on phones, and the full page at /ask */
+html body .app-container.app-container .ayna-ask-panel.ay-askp-shell { position: fixed !important; top: 0 !important; right: 0 !important; bottom: 0 !important; left: auto !important; width: 400px !important; max-width: 100vw !important; height: auto !important; max-height: none !important; z-index: 2100 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-left: 1.5px solid #3e2723 !important; border-radius: 0 !important; background: #f6e3a1 !important; box-shadow: none !important; overflow: hidden !important; animation: ay-askp-in var(--ay-dur-sheet, 240ms) ease-out both; }
+html body .app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-panel.ay-askp-shell { background: #3e2723 !important; border-left-color: #ffedac !important; }
+@keyframes ay-askp-in { from { transform: translateX(24px); opacity: .6; } to { transform: none; opacity: 1; } }
+@media (max-width: 899px) {
+  html body .app-container.app-container .ayna-ask-panel.ay-askp-shell { top: calc(env(safe-area-inset-top, 0px) + 24px) !important; left: 0 !important; width: auto !important; border-left: 0 !important; border-top: 1.5px solid #3e2723 !important; border-radius: 16px 16px 0 0 !important; animation-name: ay-ask-sheet-up; }
+}
+@media (prefers-reduced-motion: reduce) { html body .app-container.app-container .ayna-ask-panel.ay-askp-shell { animation: none !important; } }
+html body .app-container.app-container .wx-askpage .ayna-ask-panel.ay-askp-shell.is-page { position: relative !important; inset: auto !important; top: auto !important; width: auto !important; max-width: 720px !important; height: min(78vh, 820px) !important; min-height: 520px; margin: 0 auto !important; border: 1.5px solid #3e2723 !important; border-radius: 16px !important; animation: none !important; z-index: auto !important; }
+html body .app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .wx-askpage .ayna-ask-panel.ay-askp-shell.is-page { border-color: #ffedac !important; }
+@media (max-width: 760px) { html body .app-container.app-container .wx-askpage .ayna-ask-panel.ay-askp-shell.is-page { height: calc(100dvh - 160px) !important; min-height: 460px; } }
+
+/* Today's "Ask ayna" sheet (HomeAskSheet), drawn with AskPanel's own parts (Ask audit issue 4: one Ask on every surface):
+   butter-deep surface with a 1.5px top edge (no scallop inside a sheet), title + one sparkle, outline pills with the pink arrow
+   and the fact each prompt comes from, the same composer. Three ids outrank the older ds-app sheet chain. */
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet { display: flex; flex-direction: column; gap: 0; padding: 24px 0 0 !important; border: 0; border-top: 1.5px solid #3e2723; border-radius: 16px 16px 0 0; background: #f6e3a1; overflow: hidden; }
+:is([data-theme='dark'], [data-theme='brand-dark']).ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet, .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is([data-theme='dark'], [data-theme='brand-dark']) .ay-asksheet { background: #3e2723; border-top-color: #ffedac; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet::before, .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet::after { content: none; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp { flex: 1 1 auto; height: auto; min-height: 0; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-head { min-height: 48px; padding-top: 0 !important; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-title::before { content: none; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-scroll { padding: 16px !important; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__prompts { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; border-radius: 0; background: none; list-style: none; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__prompts li + li { border-top: 0; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__prompts button::before, .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet__prompts button::after { content: none; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill.has-reason { min-height: 60px; border-radius: 30px !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill.has-reason > span { display: grid; gap: 2px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill__reason { font: 500 13px/1.35 var(--ay-font-ui); color: var(--askp-muted); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-pill__q { font: 600 15px/1.3 var(--ay-font-ui); }
+
+/* Her numbers that went with a dashboard question (AskStatCard): calm register, 13px floor. */
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats { align-self: flex-start; max-width: 100%; margin: 0 !important; padding: 12px 16px !important; border: 0 !important; border-left: 3px solid var(--askp-ink) !important; border-radius: 0 8px 8px 0 !important; background: var(--askp-soft) !important; color: var(--askp-ink) !important; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats figcaption { margin: 0 0 8px !important; font: 600 13px/1.3 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats b { font: 700 20px/1.05 var(--ay-font-display) !important; color: var(--askp-ink) !important; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askh-stats small { font: 500 13px/1.3 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-goals { margin: 0 !important; font: 500 14px/1.45 var(--ay-font-ui) !important; }
+/* Loop D r2: the Today sheet's mic and input match AskPanel (the older ds-app sheet painted them pink and butter). */
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-mic:not([aria-pressed='true']) { background: var(--askp-bg) !important; color: var(--askp-ink) !important; border-color: var(--askp-ink) !important; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp-input { background: var(--askp-bg) !important; }
+/* Loop D r2: the match pill in answer plates is the inverse of the panel in both themes (in dark it vanished: espresso on espresso). */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-plate__match .ay-match-pill:not(.is-hold) { background: var(--askp-ink) !important; color: var(--askp-bg) !important; }
+
+/* Ask critique (Oct 27): the first screen is a plain greeting, one line of context, then one segmented
+   filter over one chip group. No hero card, no colour-blocked groups, no sparkle, no arrow circles. */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-start.is-calm { display: grid; gap: 20px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-greet { display: grid; gap: 6px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-greet .ay-askp-hello { margin: 0 !important; font: 700 28px/1.1 var(--ay-font-display) !important; letter-spacing: -.015em !important; color: var(--askp-ink) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-greet .ay-askp-intro { margin: 0 !important; font: 500 15px/1.45 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-groups.is-filtered { display: grid; gap: 14px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-filter { max-width: none; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-filter__cap { margin: -4px 0 0 !important; font: 500 14px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-filter__one { margin: 0 !important; font: 600 14px/1.4 var(--ay-font-ui) !important; color: var(--askp-muted) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chips { display: flex !important; flex-wrap: wrap; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chips > li { margin: 0 !important; max-width: 100%; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip {
+  display: inline-flex !important; align-items: center; min-height: 44px; max-width: 100%;
+  margin: 0 !important; padding: 10px 14px !important; border: 1.5px solid var(--askp-ink) !important; border-radius: 12px !important;
+  background: transparent !important; color: var(--askp-ink) !important; box-shadow: none !important;
+  font: 600 15px/1.3 var(--ay-font-ui) !important; text-align: left; white-space: normal; cursor: pointer;
+}
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip:active { background: var(--askp-pink) !important; color: #3e2723 !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip:focus-visible { outline: 3px solid var(--askp-ink) !important; outline-offset: 2px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip.is-quiet { border-color: var(--askp-line) !important; font-weight: 500 !important; }
+@media (hover: hover) { .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-chip:hover { background: var(--askp-soft) !important; } }
+
+/* The suggested-question tabs (Rundown, About you, Safety, Products, Guide): never clip or overlap a
+   label; on a narrow phone the row scrolls sideways instead (founder, Oct 27 13:51). The selected
+   pill is measured per tab in PillTabs/useSlidingInk. */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-filter.ayk-tabs:is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs) {
+  grid-template-columns: repeat(var(--ayk-tabs-n, 4), minmax(max-content, 1fr)) !important;
+  overflow-x: auto !important; overflow-y: hidden !important; scrollbar-width: none; overscroll-behavior-x: contain;
+}
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-filter.ayk-tabs::-webkit-scrollbar { display: none; }

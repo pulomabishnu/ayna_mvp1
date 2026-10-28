@@ -2,16 +2,33 @@
    same 40px height, round, 2px ink outline, small offset shadow. */
 .ayna-mobile .ay-header-actions .ayna-shared-header-action.ay-header-saved {
   position: relative; width: 40px !important; height: 40px !important; min-width: 40px; min-height: 40px;
-  border: 2px solid var(--ay-ink) !important; border-radius: 50% !important;
-  background: var(--ay-paper) !important; color: var(--ay-ink) !important;
-  box-shadow: 2px 2px 0 var(--ay-ink) !important;
+  border: 2px solid var(--legacy-ink) !important; border-radius: 50% !important;
+  background: var(--ay-paper) !important; color: var(--legacy-ink) !important;
+  box-shadow: 2px 2px 0 var(--legacy-ink) !important;
   transition: transform .14s var(--ay-ease), box-shadow .14s;
 }
 .ayna-mobile .ay-header-actions .ay-header-saved::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; }
 .ayna-mobile .ay-header-actions .ay-header-saved svg { width: 20px; height: 20px; stroke-width: 2; }
-.ayna-mobile .ay-header-actions .ay-header-saved:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ay-ink) !important; }
+.ayna-mobile .ay-header-actions .ay-header-saved:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--legacy-ink) !important; }
 .ayna-mobile[data-theme='dark'] .ay-header-actions .ayna-shared-header-action.ay-header-saved {
-  border-color: var(--ay-butter) !important; background: #3e2723 !important; color: #ffedac !important;
-  box-shadow: 0 0 14px rgba(255, 237, 172, .3) !important;
+  border-color: var(--legacy-butter) !important; background: #3e2723 !important; color: #ffedac !important;
+  box-shadow: 2px 2px 0 rgba(255, 237, 172, .5) !important; /* matte: no glow */
 }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile .ay-header-actions .ay-header-saved { transition: none; } }
+
+/* Collapsing large title: the wordmark and the 17pt title cross-fade. */
+.ayna-mobile .ayna-shared-header-leading { position: relative; }
+.ayna-mobile .ay-header-inline-title { position: absolute; left: 0; top: 50%; translate: 0 -50%; font: 700 17px/1.2 var(--ay-font-display, 'ayna Display', sans-serif); color: var(--legacy-ink); white-space: nowrap; opacity: 0; transition: opacity var(--t-fast) var(--ease-in-out); pointer-events: none; }
+.ayna-mobile .ayna-shared-header-leading .ayna-shared-wordmark { transition: opacity var(--t-fast) var(--ease-in-out); }
+.ayna-mobile .ayna-shared-header.is-collapsed .ayna-shared-wordmark { opacity: 0; }
+.ayna-mobile .ayna-shared-header.is-collapsed .ay-header-inline-title { opacity: 1; }
+.ayna-mobile .ayna-shared-header-leading:has(> button) .ay-header-inline-title { left: 52px; }
+
+/* The wordmark is a button that opens the landing (founder, Oct 27 01:13): it looks exactly like the wordmark. */
+.ayna-mobile .ayna-shared-header button.ay-logo-btn { -webkit-appearance: none; appearance: none; margin: 0; padding: 0 4px 0 0; border: 0; background: none; min-height: 44px; display: inline-flex; align-items: center; cursor: pointer; line-height: 1; }
+.ayna-mobile .ayna-shared-header button.ay-logo-btn:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; border-radius: 8px; }
+/* The wordmark sits straight on the header (founder, Oct 27 13:46: "on the app the logo has a white
+   background?"). An old `.ayna-figma-header button` rule painted every header button white (#302a3e in
+   dark); the logo is text, so no tile: butter page in light, espresso in dark. */
+.ayna-mobile .ayna-figma-header.ayna-shared-header button.ay-logo-btn,
+.ayna-mobile[data-theme='dark'] .ayna-figma-header.ayna-shared-header button.ay-logo-btn { background: transparent !important; border-radius: 8px !important; box-shadow: none !important; }

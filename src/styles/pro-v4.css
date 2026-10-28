@@ -1,338 +1,237 @@
-/* ayna Pro gate + checkout, aligned with the Neycher HydroBloom PDP direction from PR #73. */
-.pro-access,
-.pro-paywall-v4 {
-  --pro-fg: #3e2723;
-  --pro-fg-rgb: 62, 39, 35;
-  --pro-bg: #ffedac;
-  --pro-panel: #fff6cf;
-  --pro-cream: #fffaeb;
-  --pro-pink: #f7badd;
-  --pro-sky: #769ebe;
-  --pro-rose: #a8487a;
-  --pro-button: #3e2723;
-  --pro-button-text: #ffedac;
-  color: var(--pro-fg);
-  font-family: 'DM Sans', system-ui, sans-serif;
+/* ayna Pro: the one locked state (ProLock), the gate around it (ProFeatureGate) and the Get ayna Pro
+   sheet (app: bottom sheet that slides up; web: centred card that fades and scales in).
+   Founder (Oct 27, 15:52): "more obvious paywalls ... that brown and pink stripe around it with a lock
+   saying get ayna pro to unlock ... maybe it can be animated and show it moving so its compelling".
+   The checker frame is the BrandStrip's espresso and pink squares, its four edges marching clockwise
+   slowly (static with reduced motion). Brand colours only, no white. 13px minimum, 44px targets. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-gate, .pro-lock, .pro-lock-fold, .pro-sheet) {
+  --pro-fg: #3e2723; --pro-fg-muted: rgba(62, 39, 35, .8); --pro-bg: #ffedac; --pro-deep: #f6e3a1;
+  --pro-line: #3e2723; --pro-shadow: #3e2723; --pro-rule: rgba(62, 39, 35, .16);
+  --pro-fill: #3e2723; --pro-on-fill: #ffedac; --pro-hl: #f7badd;
+  color: var(--pro-fg); font-family: var(--ay-font-ui, 'Figtree', system-ui, sans-serif);
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) :is(.pro-gate, .pro-lock, .pro-lock-fold, .pro-sheet) {
+  --pro-fg: #ffedac; --pro-fg-muted: rgba(255, 237, 172, .82); --pro-bg: #3e2723; --pro-deep: #4a312c;
+  --pro-line: #ffedac; --pro-shadow: #ffedac; --pro-rule: rgba(255, 237, 172, .2);
+  --pro-fill: #ffedac; --pro-on-fill: #3e2723; --pro-hl: rgba(247, 186, 221, .45);
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-gate, .pro-lock, .pro-lock-fold, .pro-sheet) :is(h2, p, ol, ul) { margin: 0; text-transform: none; letter-spacing: normal; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-gate, .pro-lock, .pro-lock-fold, .pro-sheet) button { font-family: inherit; -webkit-tap-highlight-color: transparent; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-gate, .pro-lock, .pro-lock-fold, .pro-sheet) :focus-visible { outline: 3px solid var(--pro-fg); outline-offset: 2px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- The gate around a locked screen ---------- */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-gate { box-sizing: border-box; width: min(580px, calc(100% - 32px)); margin: clamp(16px, 5vw, 56px) auto; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-gate--checking { display: grid; place-items: center; min-height: 160px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-gate__checking { color: var(--pro-fg-muted); font: 500 15px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-gate__back {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin: 0 0 10px; padding: 0 4px 0 0;
+  border: 0; background: transparent; color: var(--pro-fg); font: 600 15px/1 var(--ay-font-ui, Figtree, sans-serif); cursor: pointer;
 }
 
-html body .app-container[data-theme='brand-dark'] .pro-access,
-html body .app-container[data-theme='brand-dark'] .pro-paywall-v4 {
-  --pro-fg: #ffedac;
-  --pro-fg-rgb: 255, 237, 172;
-  --pro-bg: #43292a;
-  --pro-panel: #3a2324;
-  --pro-cream: #ffedac;
-  --pro-pink: #f7badd;
-  --pro-sky: #769ebe;
-  --pro-rose: #f7badd;
-  --pro-button: #ffedac;
-  --pro-button-text: #3e2723;
-}
+/* ---------- The checker frame ---------- */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame { position: relative; box-sizing: border-box; padding: 12px; border: 1.5px solid #3e2723; border-radius: 22px; background: #3e2723; overflow: hidden; isolation: isolate; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) .pro-frame { border-color: #ffedac; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__inner { position: relative; z-index: 1; border: 1.5px solid #3e2723; border-radius: 12px; background: var(--pro-bg); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) .pro-frame__inner { border-color: #ffedac; }
 
-.pro-access {
-  width: min(760px, calc(100% - 32px));
-  margin: clamp(28px, 7vw, 72px) auto;
-  padding: 0;
-  background: transparent;
+/* ---------- The locked card ---------- */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock { width: 100%; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__card { display: grid; justify-items: start; gap: 14px; padding: 28px 24px 22px; text-align: left; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__seal {
+  display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%;
+  background: var(--pro-fill); color: #f7badd;
 }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__text { display: grid; gap: 6px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__kicker { color: var(--pro-fg); font: 700 15px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__kicker::before { content: ''; display: inline-block; width: 8px; height: 8px; margin: 0 8px 1px 0; border-radius: 50%; background: #f7badd; box-shadow: 0 0 0 1.5px var(--pro-line); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__title { color: var(--pro-fg); font: 700 clamp(28px, 4vw, 36px)/1.05 var(--ay-font-display, 'ayna Display', serif); letter-spacing: -.01em; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__context { color: var(--pro-fg); font: 600 16px/1.35 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__line { max-width: 44ch; color: var(--pro-fg-muted); font: 400 16px/1.5 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__error { padding: 10px 12px; border: 1.5px solid #3e2723; border-radius: 10px; background: #f7badd; color: #3e2723; font: 600 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__retry { min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #3e2723; font: 700 14px/1 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; width: 100%; margin-top: 4px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-lock__cta, .pro-sheet__cta) {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 26px;
+  border: 0; border-radius: 999px; background: var(--pro-fill); color: var(--pro-on-fill);
+  box-shadow: 4px 4px 0 #f7badd; font: 700 17px/1.1 var(--ay-font-ui, Figtree, sans-serif); cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-lock__cta, .pro-sheet__cta):hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 #f7badd; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-lock__cta, .pro-sheet__cta):active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #f7badd; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-lock__cta, .pro-sheet__cta):disabled { opacity: .75; cursor: progress; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-lock__quiet, .pro-sheet__notnow) {
+  min-height: 44px; padding: 0 6px; border: 0; background: transparent; color: var(--pro-fg-muted);
+  font: 600 15px/1.2 var(--ay-font-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; cursor: pointer;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__fine { flex-basis: 100%; color: var(--pro-fg-muted); font: 400 14px/1.45 var(--ay-font-ui, Figtree, sans-serif); }
 
-.pro-access__back {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  color: var(--pro-fg);
-  padding: 0;
-  margin: 0 0 18px;
-  font: 700 14px/1 'DM Sans', system-ui, sans-serif;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  cursor: pointer;
-}
+/* Inline: a limit she just hit (Ask ayna, playlists, ecosystem update). Smaller squares, seal beside the words. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame { padding: 8px; border-radius: 18px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-frame__inner { border-radius: 10px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__card { grid-template-columns: auto 1fr; align-items: start; gap: 10px 14px; padding: 16px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__seal { width: 44px; height: 44px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__title { font-size: 22px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__line { font-size: 14px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__actions { grid-column: 1 / -1; margin-top: 0; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock--inline .pro-lock__cta { min-height: 48px; padding: 0 20px; font-size: 16px; }
 
-.pro-access__card {
-  position: relative;
-  overflow: hidden;
-  display: grid;
-  gap: 18px;
-  padding: clamp(24px, 5vw, 44px);
-  border: 3px solid var(--pro-fg);
-  border-radius: 34px;
-  background: var(--pro-panel);
-  box-shadow: 9px 9px 0 var(--pro-pink);
+/* Folded after "Not now": one line that keeps the way back to Pro. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock-fold {
+  display: flex; align-items: center; gap: 10px; box-sizing: border-box; width: 100%; padding: 4px 4px 4px 12px;
+  border: 1.5px solid var(--pro-line); border-radius: 999px; background: var(--pro-deep);
 }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock-fold__icon { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: #f7badd; color: #3e2723; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock-fold__text { flex: 1; min-width: 0; color: var(--pro-fg); font: 600 14px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock-fold__go { flex: none; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--pro-fill); color: var(--pro-on-fill); font: 700 14px/1 var(--ay-font-ui, Figtree, sans-serif); cursor: pointer; }
 
-.pro-access__card::after {
-  content: '';
-  position: absolute;
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  right: -72px;
-  bottom: -84px;
-  background: var(--pro-sky);
-  opacity: .55;
-  pointer-events: none;
+/* ---------- The Get ayna Pro sheet ---------- */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet {
+  position: fixed; inset: 0; z-index: 10050; display: flex; align-items: center; justify-content: center; padding: 24px;
+  background: rgba(62, 39, 35, .58);
 }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel {
+  position: relative; box-sizing: border-box; width: min(468px, 100%); max-height: calc(100dvh - 48px); overflow: hidden auto;
+  border: 1.5px solid #3e2723; border-radius: 22px; background: var(--pro-bg); color: var(--pro-fg);
+  box-shadow: 6px 6px 0 #f7badd; overscroll-behavior: contain; outline: none;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) .pro-sheet__panel { border-color: #ffedac; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-march {
+  display: block; height: 14px; border-bottom: 1.5px solid #3e2723;
+  background: repeating-conic-gradient(#3e2723 0 25%, #f7badd 0 50%) 0 0 / 28px 28px;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__head { position: relative; display: grid; justify-items: start; gap: 10px; padding: 22px 60px 6px 24px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__grab { display: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__close {
+  position: absolute; top: 12px; right: 12px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; color: var(--pro-fg); cursor: pointer;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__sticker {
+  display: inline-block; padding: 5px 12px; border: 1.5px solid #3e2723; border-radius: 999px; background: #f7badd; color: #3e2723;
+  font: 700 13px/1.1 var(--ay-font-ui, Figtree, sans-serif); transform: rotate(-2deg);
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__title { color: var(--pro-fg); font: 700 38px/1 var(--ay-font-display, 'ayna Display', serif); letter-spacing: -.015em; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__title em { color: #f7badd !important; font-style: normal; -webkit-text-stroke: 1.5px #3e2723; paint-order: stroke fill; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) .pro-sheet__title em { -webkit-text-stroke: 0 !important; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__lede { color: var(--pro-fg); font: 500 16px/1.45 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__lede b { font-weight: 700; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body { display: grid; gap: 16px; padding: 14px 24px 18px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__plans { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 10px 5px 5px 0; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan {
+  position: relative; display: grid; justify-items: start; align-content: start; gap: 6px; min-height: 124px; margin: 0; padding: 16px 14px 14px;
+  border: 1.5px solid var(--pro-line); border-radius: 16px; background: var(--pro-deep); color: var(--pro-fg);
+  box-shadow: 4px 4px 0 var(--pro-shadow); text-align: left; cursor: pointer; transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan.is-on { background: var(--pro-fill); color: var(--pro-on-fill); border-color: var(--pro-fill); box-shadow: 4px 4px 0 #f7badd; outline: 2px solid #f7badd; outline-offset: 2px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--pro-shadow); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan:disabled { cursor: progress; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__best { position: absolute; top: -12px; right: 10px; padding: 3px 10px; border: 1.5px solid #3e2723; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 13px/1.1 var(--ay-font-ui, Figtree, sans-serif); white-space: nowrap; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__top { display: flex; align-items: center; gap: 8px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__dot { flex: none; width: 18px; height: 18px; box-sizing: border-box; border: 2px solid currentColor; border-radius: 50%; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan.is-on .pro-plan__dot { border-color: #f7badd; background: #f7badd; box-shadow: inset 0 0 0 3px var(--pro-fill); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__label { font: 700 16px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__amount { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__price { font: 700 34px/1 var(--ay-font-display, 'ayna Display', serif); letter-spacing: -.01em; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__was { color: inherit; opacity: .8; font: 500 14px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__sub { font: 600 14px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__cta { width: 100%; min-height: 56px; font-size: 18px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__trust { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: -6px; color: var(--pro-fg); font: 600 14px/1.3 var(--ay-font-ui, Figtree, sans-serif); text-align: center; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__error { padding: 10px 12px; border: 1.5px solid #3e2723; border-radius: 10px; background: #f7badd; color: #3e2723; font: 600 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__when { display: grid; padding: 14px 16px 2px; border-radius: 14px; background: var(--pro-deep); list-style: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__when li { position: relative; display: grid; gap: 1px; padding: 0 0 12px 26px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__when li::before { content: ''; position: absolute; left: 0; top: 3px; width: 12px; height: 12px; box-sizing: border-box; border: 1.5px solid var(--pro-line); border-radius: 50%; background: #f7badd; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__when li:not(:last-child)::after { content: ''; position: absolute; left: 5.25px; top: 17px; bottom: 2px; width: 1.5px; background: var(--pro-rule); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__when b { color: var(--pro-fg); font: 700 14px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__when span { color: var(--pro-fg-muted); font: 400 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__more {
+  display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44px; margin: 0; padding: 0;
+  border: 0; border-top: 1px solid var(--pro-rule); background: transparent; color: var(--pro-fg);
+  font: 600 15px/1.2 var(--ay-font-ui, Figtree, sans-serif); cursor: pointer;
+}
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__more svg { transition: transform 180ms ease; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__more[aria-expanded='true'] svg { transform: rotate(180deg); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__billing { display: grid; gap: 8px; margin-top: -8px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__billing[hidden] { display: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__billing p { color: var(--pro-fg-muted); font: 400 14px/1.5 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__billing b { color: var(--pro-fg); font-weight: 700; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__notnow { justify-self: center; margin-top: -8px; }
 
-.pro-access__eyebrow,
-.pro-paywall-v4__eyebrow {
-  justify-self: start;
-  margin: 0;
-  padding: 8px 13px;
-  border-radius: 999px;
-  background: var(--pro-pink);
-  color: #3e2723 !important;
-  font: 700 12px/1 'DM Sans', system-ui, sans-serif;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-}
-
-.pro-access__title,
-.pro-paywall-v4__title {
-  margin: 0;
-  max-width: 13ch;
-  color: var(--pro-fg) !important;
-  font: 400 clamp(36px, 6vw, 58px)/.98 'DM Serif Display', Georgia, serif;
-  letter-spacing: normal;
-  text-wrap: balance;
-}
-
-.pro-access__copy {
-  display: grid;
-  gap: 10px;
-  max-width: 62ch;
-}
-.pro-access__copy p {
-  margin: 0;
-  color: var(--pro-fg) !important;
-  font: 400 clamp(16px, 2.2vw, 19px)/1.6 'DM Sans', system-ui, sans-serif;
-}
-.pro-access__copy .pro-access__context {
-  font-weight: 700;
-}
-.pro-access__included {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.pro-access__included li {
-  padding: 8px 12px;
-  border: 1.5px solid rgba(var(--pro-fg-rgb), .45);
-  border-radius: 999px;
-  background: var(--pro-cream);
-  color: #3e2723 !important;
-  font: 700 13px/1 'DM Sans', system-ui, sans-serif;
-}
-.pro-access__actions {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: stretch;
-}
-.pro-access__primary,
-.pro-paywall-v4__buy {
-  appearance: none;
-  min-height: 58px;
-  border: 2px solid var(--pro-button);
-  border-radius: 999px;
-  background: var(--pro-button);
-  color: var(--pro-button-text) !important;
-  padding: 0 24px;
-  font: 700 16px/1 'DM Sans', system-ui, sans-serif;
-  cursor: pointer;
-  box-shadow: none;
-}
-.pro-access__primary { flex: 1 1 260px; }
-.pro-access__secondary {
-  appearance: none;
-  min-height: 58px;
-  border: 2px solid var(--pro-fg);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--pro-fg) !important;
-  padding: 0 22px;
-  font: 700 15px/1 'DM Sans', system-ui, sans-serif;
-  cursor: pointer;
-}
-.pro-access__fine {
-  position: relative;
-  z-index: 1;
-  margin: -4px 0 0;
-  color: var(--pro-fg) !important;
-  opacity: .76;
-  font: 500 13px/1.5 'DM Sans', system-ui, sans-serif;
-}
-.pro-access__error {
-  margin: 0;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: var(--pro-pink);
-  color: #3e2723 !important;
-  font-weight: 700;
-}
-
-.pro-paywall-v4 {
-  position: fixed;
-  inset: 0;
-  z-index: 3000;
-  display: grid;
-  place-items: center;
-  padding: 18px;
-  background: rgba(42, 26, 25, .72);
-  backdrop-filter: blur(7px);
-}
-.pro-paywall-v4__sheet {
-  position: relative;
-  width: min(760px, 100%);
-  max-height: min(90vh, 760px);
-  overflow: auto;
-  padding: clamp(24px, 5vw, 42px);
-  border: 3px solid var(--pro-fg);
-  border-radius: 34px;
-  background: var(--pro-bg);
-  box-shadow: 10px 10px 0 var(--pro-pink);
-}
-.pro-paywall-v4__close {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  border: 2px solid var(--pro-fg);
-  border-radius: 50%;
-  background: var(--pro-cream);
-  color: #3e2723 !important;
-  font: 700 18px/1 'DM Sans', system-ui, sans-serif;
-  cursor: pointer;
-}
-.pro-paywall-v4__head {
-  display: grid;
-  gap: 14px;
-  padding-right: 48px;
-}
-.pro-paywall-v4__head p {
-  margin: 0;
-  max-width: 60ch;
-  color: var(--pro-fg) !important;
-  font: 400 16px/1.6 'DM Sans', system-ui, sans-serif;
-}
-.pro-paywall-v4__offer {
-  margin: 26px 0 12px;
-  padding: 18px 20px;
-  border-radius: 22px;
-  background: var(--pro-sky);
-  color: #2a1a19 !important;
-  font: 700 15px/1.45 'DM Sans', system-ui, sans-serif;
-}
-.pro-paywall-v4__plans {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 18px;
-}
-.pro-paywall-v4__plan {
-  position: relative;
-  display: grid;
-  gap: 10px;
-  align-content: start;
-  min-width: 0;
-  padding: 22px;
-  border: 2px solid var(--pro-fg);
-  border-radius: 26px;
-  background: var(--pro-panel);
-  color: var(--pro-fg);
-}
-.pro-paywall-v4__plan--best { background: var(--pro-cream); }
-.pro-paywall-v4__badge {
-  justify-self: start;
-  margin: -10px 0 0;
-  padding: 7px 11px;
-  border-radius: 999px;
-  background: var(--pro-pink);
-  color: #3e2723 !important;
-  font: 700 12px/1 'DM Sans', system-ui, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: .07em;
-}
-.pro-paywall-v4__plan-label {
-  margin: 0;
-  color: var(--pro-rose) !important;
-  font: 700 12px/1 'DM Sans', system-ui, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-}
-.pro-paywall-v4__price {
-  display: flex;
-  align-items: baseline;
-  gap: 9px;
-  flex-wrap: wrap;
-}
-.pro-paywall-v4__price strong {
-  color: var(--pro-fg) !important;
-  font: 700 clamp(30px, 5vw, 42px)/1 'DM Sans', system-ui, sans-serif;
-}
-.pro-paywall-v4__price del,
-.pro-paywall-v4__price span,
-.pro-paywall-v4__plan p {
-  color: var(--pro-fg) !important;
-  opacity: .78;
-}
-.pro-paywall-v4__price del { font-size: 14px; }
-.pro-paywall-v4__price span { font-size: 13px; }
-.pro-paywall-v4__plan p {
-  margin: 0;
-  font: 400 14px/1.5 'DM Sans', system-ui, sans-serif;
-}
-.pro-paywall-v4__buy {
-  width: 100%;
-  margin-top: 6px;
-}
-.pro-paywall-v4__buy:disabled {
-  opacity: .58;
-  cursor: wait;
-}
-.pro-paywall-v4__error {
-  margin: 16px 0 0;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: var(--pro-pink);
-  color: #3e2723 !important;
-  font: 700 14px/1.45 'DM Sans', system-ui, sans-serif;
-}
-.pro-paywall-v4__renewal {
-  margin: 18px 0 0;
-  color: var(--pro-fg) !important;
-  opacity: .78;
-  text-align: center;
-  font: 500 12.5px/1.5 'DM Sans', system-ui, sans-serif;
-}
-
+/* App and phones: a bottom sheet with a grab bar under the marching strip. */
 @media (max-width: 640px) {
-  .pro-access { width: min(100% - 20px, 760px); margin: 20px auto 36px; }
-  .pro-access__card { padding: 22px 18px 24px; border-radius: 26px; box-shadow: 6px 6px 0 var(--pro-pink); }
-  .pro-access__title, .pro-paywall-v4__title { font-size: clamp(34px, 11vw, 46px); }
-  .pro-access__actions { display: grid; grid-template-columns: 1fr; }
-  .pro-access__primary, .pro-access__secondary { width: 100%; }
-  .pro-paywall-v4 { padding: 10px; align-items: end; }
-  .pro-paywall-v4__sheet { width: 100%; max-height: 94vh; padding: 24px 16px 28px; border-radius: 28px 28px 18px 18px; box-shadow: none; }
-  .pro-paywall-v4__head { padding-right: 46px; }
-  .pro-paywall-v4__plans { grid-template-columns: 1fr; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet { align-items: flex-end; padding: 0; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel { width: 100%; max-height: 94dvh; border-width: 1.5px 0 0; border-radius: 20px 20px 0 0; box-shadow: none; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__grab { display: block; position: absolute; top: 8px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 999px; background: var(--pro-rule); }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__head { padding: 22px 56px 4px 16px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body { padding: 12px 16px 18px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__title { font-size: 34px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-plan__price { font-size: 30px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-gate { width: calc(100% - 32px); }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock__card { padding: 24px 18px 18px; }
 }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet { align-items: flex-end; padding: 0; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet__panel { width: 100%; max-height: 94dvh; border-width: 1.5px 0 0; border-radius: 20px 20px 0 0; box-shadow: none; padding-bottom: env(safe-area-inset-bottom, 0px); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet__grab { display: block; position: absolute; top: 8px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 999px; background: var(--pro-rule); }
 
+/* Motion: the checker marches slowly, the sheet fades and scales in on the web and slides up in the app.
+   With reduced motion nothing moves and the sheet just appears. */
 @media (prefers-reduced-motion: no-preference) {
-  .pro-access__primary,
-  .pro-access__secondary,
-  .pro-paywall-v4__buy,
-  .pro-paywall-v4__close { transition: transform .16s ease, box-shadow .16s ease; }
-  .pro-access__primary:hover,
-  .pro-paywall-v4__buy:hover { transform: translateY(-2px); }
-  .pro-access__secondary:hover,
-  .pro-paywall-v4__close:hover { transform: translateY(-1px); }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet { animation: pro-fade 200ms ease-out both; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel { animation: pro-pop 260ms cubic-bezier(.2, .9, .25, 1) both; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet.is-closing { animation: pro-fade-out 200ms ease-in both; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet.is-closing .pro-sheet__panel { animation: pro-pop-out 200ms ease-in both; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-lock { animation: pro-fade 220ms ease-out both; }
 }
+@media (prefers-reduced-motion: no-preference) and (max-width: 640px) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__panel { animation-name: pro-up; animation-duration: 320ms; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet.is-closing .pro-sheet__panel { animation-name: pro-down; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet__panel { animation-name: pro-up; animation-duration: 320ms; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-sheet.is-closing .pro-sheet__panel { animation-name: pro-down; animation-duration: 200ms; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-plan, .pro-lock__cta, .pro-sheet__cta, .pro-sheet__more svg) { transition: none; }
+}
+@keyframes pro-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pro-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes pro-pop { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes pro-pop-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(6px) scale(.97); } }
+@keyframes pro-up { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes pro-down { from { transform: none; } to { transform: translateY(100%); } }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ay-ask-prolock { padding: 6px 16px 12px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body a.pro-sheet__cta { text-decoration: none; box-sizing: border-box; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__webnote { color: var(--pro-fg); font: 600 15px/1.4 var(--ay-font-ui, Figtree, sans-serif); text-align: center; }
+
+/* Pro, grouped (founder Oct 27, 17:00: categorize, in the timeline's language): a pink dot on a thin rule,
+   the group's name and one-line promise, then its features as small chips. The tapped one gets a pink dot. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups { display: grid; margin: 0; padding: 0; list-style: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item { position: relative; display: grid; gap: 2px; padding: 0 0 16px 26px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item::before { content: ''; position: absolute; left: 0; top: 4px; width: 12px; height: 12px; box-sizing: border-box; border: 1.5px solid var(--pro-line); border-radius: 50%; background: #f7badd; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item:not(:last-child)::after { content: ''; position: absolute; left: 5.25px; top: 18px; bottom: 2px; width: 1.5px; background: var(--pro-rule); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__name { color: var(--pro-fg); font: 700 16px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__promise { color: var(--pro-fg-muted); font: 400 14px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; padding: 0; list-style: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip { display: inline-flex; align-items: center; min-height: 26px; padding: 2px 9px; box-sizing: border-box; border: 1px solid var(--pro-line); border-radius: 999px; color: var(--pro-fg); font: 600 13px/1.2 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip.is-on { border-width: 1.5px; font-weight: 700; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip.is-on::before { content: ''; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: #f7badd; box-shadow: 0 0 0 1px #3e2723; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-chip__tag { color: var(--pro-fg-muted); font-weight: 500; }
+@media (max-width: 640px) { :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__promise { display: none; } :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-groups__item { padding-bottom: 12px; } }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-groups__promise { display: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .ayna-mobile .pro-groups__item { padding-bottom: 12px; }
+
+/* The marquee ring (CheckerFrame): espresso base, pink squares travelling round the whole shape. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__ring { position: absolute; inset: 0; z-index: 0; overflow: visible; pointer-events: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__base { stroke: #3e2723; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__dash { stroke: #f7badd; stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-frame__dash { animation: pro-lap var(--pro-dur, 60s) linear infinite; }
+}
+@keyframes pro-lap { from { stroke-dashoffset: 0; } to { stroke-dashoffset: calc(var(--pro-lap) * -1); } }
+
+.pro-lock__setup { text-align:left; margin:24px auto 0; max-width:440px; }
+.pro-lock__setup ol { list-style:decimal; padding-left:24px; margin:0; }
+.pro-lock__setup li { padding:0 0 20px 8px; }
+.pro-lock__setup li::marker { font-weight:700; }
+.pro-lock__setup li p { margin:6px 0 10px; font-size:14px; line-height:1.6; }
+.pro-lock__setup a { color:inherit; text-decoration:underline; text-underline-offset:4px; font-weight:600; }
+.pro-lock__expiry { border-top:1px solid currentColor; padding-top:16px; font-size:12px; line-height:1.65; opacity:.8; }

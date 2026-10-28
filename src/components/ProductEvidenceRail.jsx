@@ -54,7 +54,7 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
   // live by a user 2026-09-24: this card told her to "build your ecosystem"
   // on a product page that, one section up, already said "In your ecosystem".
   const noMatchFallback = isInEcosystem
-    ? 'Already in your ecosystem'
+    ? 'Already in your routine'
     : hasEcosystemContext
       ? 'Add this to your ecosystem to see your match'
       : 'Build your ecosystem to see your match';
@@ -131,7 +131,7 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
       </div>
 
       <div className="pdp-rail__card">
-        <div className="pdp-rail__label">Clinician Opinion</div>
+        <div className="pdp-rail__label">Clinician opinion</div>
         {clinicianNote ? (
           <>
             <div className="pdp-rail__body pdp-rail__body--dark">{clinicianNote}</div>

@@ -1,0 +1,104 @@
+/* kit.jsx: the raining collage and the hero search (website / and the app landing).
+   Brand colours only: butter #FFEDAC / #F6E3A1, espresso #3E2723, pink #F7BADD,
+   blue #769EBE for the chart line only. 13px minimum. Only transform animates.
+
+   The rain sits on a butter field in light mode: each falling column carries
+   the same butter as its own background, so the packshots (white backgrounds)
+   multiply onto butter and read as cut-outs. A moving column is its own
+   compositing group, which is why the butter is on the column and not only
+   on the field behind it. Dark mode: each packshot gets a soft butter circle
+   and multiplies onto that instead. */
+
+.lk-rainbox {
+  --lk-field: #ffedac; --lk-fg: #3e2723; --lk-accent: #f7badd; --lk-line: rgba(62, 39, 35, .25);
+  position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; user-select: none;
+}
+.lk-rain {
+  position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--lk-colgap, 32px);
+  padding: 0 var(--lk-pad, 16px); overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+}
+.lk-rain__col { position: relative; min-width: 0; }
+.lk-rain__run { position: absolute; inset: 0 0 auto; display: flex; flex-direction: column; background: var(--lk-field); animation: lk-fall var(--dur, 50s) linear var(--delay, 0s) infinite; will-change: transform; }
+.lk-rain__set { display: flex; flex-direction: column; align-items: center; gap: var(--lk-gap, 0px); padding-bottom: var(--lk-gap, 0px); }
+@keyframes lk-fall { from { transform: translate3d(0, -16.6667%, 0); } to { transform: translate3d(0, 0, 0); } }
+html.ay-motion-paused .lk-rain__run { animation-play-state: paused; }
+/* Reduced motion: the rain stands still. */
+@media (prefers-reduced-motion: reduce) { .lk-rain__run { animation: none; transform: translate3d(0, -8%, 0); } }
+
+/* ---- one even slot per item; columns alternate sides ---- */
+.lk-slot { display: flex; align-items: center; width: 100%; height: var(--lk-slot, 160px); }
+.lk-rain__set > :nth-child(odd) { justify-content: flex-start; }
+.lk-rain__set > :nth-child(even) { justify-content: flex-end; }
+.lk-rain__col:nth-child(even) .lk-rain__set > :nth-child(odd) { justify-content: flex-end; }
+.lk-rain__col:nth-child(even) .lk-rain__set > :nth-child(even) { justify-content: flex-start; }
+
+/* ---- cut-outs ---- */
+.lk-prod { display: block; width: 100%; max-width: var(--lk-prod-max, 132px); }
+.lk-prod.is-l { width: 100%; }
+.lk-prod.is-m { width: 84%; }
+.lk-prod__in { display: block; aspect-ratio: 1; }
+.lk-prod img { display: block; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+
+/* ---- the app's features, outlines only, a one-word label each ---- */
+.lk-w { display: grid; justify-items: center; gap: 6px; color: var(--lk-fg); }
+.lk-w small { font: 700 13px/1 var(--ay-font-ui, 'Figtree', sans-serif); letter-spacing: .01em; color: var(--lk-fg); }
+.lk-ring { width: 56px; height: 56px; }
+.lk-ring__track { fill: none; stroke: var(--lk-line); stroke-width: 5; }
+.lk-ring__arc { fill: none; stroke: var(--lk-accent); stroke-width: 5; stroke-linecap: round; }
+.lk-dots { display: grid; grid-template-columns: repeat(7, 10px); gap: 5px; }
+.lk-dots i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--lk-line); box-sizing: border-box; }
+.lk-dots i.is-on { background: var(--lk-accent); border-color: var(--lk-accent); }
+.lk-bars { display: flex; align-items: flex-end; gap: 4px; height: 34px; }
+.lk-bars i { width: 8px; height: 100%; border-radius: 999px; background: var(--lk-line); transform: scaleY(var(--h)); transform-origin: bottom; }
+.lk-bars i:last-child { background: var(--lk-accent); }
+.lk-month { display: grid; grid-template-columns: repeat(7, 9px); gap: 4px; }
+.lk-month i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--lk-line); box-sizing: border-box; }
+.lk-month i.is-p { background: var(--lk-accent); border-color: var(--lk-accent); }
+.lk-pill { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--lk-accent); color: var(--lk-accent); font: 700 13px/1 var(--ay-font-ui, 'Figtree', sans-serif); }
+.lk-pill svg { width: 15px; height: 15px; fill: var(--lk-accent); }
+.lk-bubble { display: inline-flex; align-items: center; height: 34px; padding: 0 12px; border-radius: 16px 16px 16px 4px; border: 1.5px solid var(--lk-accent); color: var(--lk-accent); font: 700 13px/1 var(--ay-font-ui, 'Figtree', sans-serif); white-space: nowrap; }
+
+/* ---- on espresso (an espresso band, or dark mode): a soft see-through layer.
+   Each packshot on a small rounded butter tile (its white would show on
+   espresso); the shapes in pink and butter outlines. ---- */
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) { --lk-field: transparent; --lk-fg: #ffedac; --lk-line: rgba(255, 237, 172, .75); }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod__in { border-radius: 16px; background: #ffedac; overflow: hidden; isolation: isolate; padding: 8%; outline: 1.5px solid rgba(255, 237, 172, .55); outline-offset: 4px; }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod { opacity: .7; }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-w { opacity: .8; }
+
+/* ---- the hero search: wide, butter, espresso outline ---- */
+.lsx-search { position: relative; display: flex; align-items: center; width: 100%; max-width: 560px; }
+.lsx-search label { position: relative; flex: 1; display: flex; align-items: center; min-width: 0; margin: 0; }
+.lsx-search label > svg { position: absolute; left: 16px; width: 20px; height: 20px; fill: none; stroke: #3e2723; stroke-width: 2; stroke-linecap: round; pointer-events: none; z-index: 1; }
+.lsx-search.lsx-search input { all: unset; box-sizing: border-box; width: 100%; height: var(--lk-search-h, 56px); padding: 0 60px 0 46px !important; border-radius: 999px !important; border: 1.5px solid #3e2723 !important; background: #ffedac !important; color: #3e2723 !important; font: 500 16px/1 var(--ay-font-ui, 'Figtree', sans-serif) !important; box-shadow: none !important; }
+.lsx-search.lsx-search input:focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }
+.lsx-search__hint { position: absolute; left: 46px; right: 60px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left; color: rgba(62, 39, 35, .78); font: 500 16px/1.4 var(--ay-font-ui, 'Figtree', sans-serif); padding-block: 2px; pointer-events: none; }
+.lsx-search__hint b { font-weight: 700; color: #3e2723; }
+html.ay-motion .lsx-search__hint b { display: inline-block; animation: lk-hint 280ms var(--ay-ease, ease-out) both; }
+@keyframes lk-hint { from { opacity: 0; transform: translate3d(0, 6px, 0); } }
+.lsx-search.lsx-search button { all: unset; box-sizing: border-box; cursor: pointer; position: absolute; right: 6px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #3e2723; color: #ffedac; }
+.lsx-search.lsx-search button:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
+.lsx-search button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lk-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---- the brown and pink bar: one straight 48px pink strip, a 1.5px espresso
+   rule top and bottom, an espresso pill label, the names, a round pause ---- */
+.lk-bar { display: flex; align-items: center; gap: 8px; width: 100%; height: 51px; margin: 0; padding: 0 4px 0 8px; box-sizing: border-box; background: #f7badd; color: #3e2723; border-top: 1.5px solid #3e2723; border-bottom: 1.5px solid #3e2723; }
+.lk-bar .lk-bar__tab { flex: none; display: inline-flex; align-items: center; min-height: 44px; text-decoration: none !important; border-radius: 999px; }
+.lk-bar .lk-bar__pill { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 14px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 14px/1 var(--ay-font-ui, 'Figtree', sans-serif); white-space: nowrap; }
+.lk-bar .lk-bar__pill svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lk-bar .lk-bar__tab:hover .lk-bar__pill { text-decoration: underline; text-underline-offset: 3px; }
+.lk-bar .lk-bar__short { display: none; }
+.lk-bar :is(.lk-bar__tab, .lk-bar__pause):focus-visible { outline: 2.5px solid #3e2723; outline-offset: 1px; }
+.lk-bar .lk-bar__run { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; margin-left: 8px; padding: 0 !important; background: transparent !important; overflow: hidden; }
+.lk-bar .lk-bar__run .ayb-marquee__track { animation-duration: 90s; }
+.lk-bar .lk-bar__run .ayb-marquee__row { gap: 24px; padding: 0 12px 0 0; font: 700 17px/1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.01em; color: #3e2723; }
+.lk-bar .lk-bar__run .ayb-marquee__row li { flex: none; white-space: nowrap; }
+.lk-bar .lk-bar__pause { all: unset; box-sizing: border-box; cursor: pointer; flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: #3e2723; }
+.lk-bar .lk-bar__ring { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #3e2723; }
+.lk-bar .lk-bar__pause svg { width: 14px; height: 14px; fill: currentColor; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+@media (max-width: 640px) { .lk-bar .lk-bar__long { display: none; } .lk-bar .lk-bar__short { display: inline; } }
+@media (max-width: 340px) { .lk-bar .lk-bar__tab { display: none; } .lk-bar { padding-left: 0; } }
+@media (prefers-reduced-motion: reduce) { .lk-bar .lk-bar__pause { display: none; } }

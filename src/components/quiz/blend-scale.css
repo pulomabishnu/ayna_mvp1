@@ -1,0 +1,18 @@
+/* BlendScale: ordered quiz scales as one row of large segmented buttons
+   (critique Oct 27: no slider, no placeholder, nothing pre-selected).
+   Theme-following tokens (--ay-fg / --ay-fill-ink / --ay-on-ink), so it reads in light and dark. */
+.uq-blend { display: grid; gap: 8px; width: 100%; max-width: 560px; color: var(--ay-fg, #3e2723); box-sizing: border-box; }
+.uq-seg__row { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); border: 1.5px solid var(--ay-fg, #3e2723); border-radius: 14px; overflow: hidden; }
+.app-container .uq-seg__btn.uq-seg__btn, .ayna-mobile .uq-seg__btn.uq-seg__btn, .uq-seg__btn {
+  display: grid; place-items: center; min-width: 0; min-height: 64px; margin: 0; padding: 6px 2px !important;
+  border: 0 !important; border-left: 1.5px solid var(--ay-fg, #3e2723) !important; border-radius: 0 !important;
+  background: transparent !important; color: var(--ay-fg, #3e2723) !important; box-shadow: none !important;
+  font: 600 14px/1.2 var(--ay-font-ui, 'Figtree', sans-serif) !important; letter-spacing: -.01em; text-align: center; overflow-wrap: normal; word-break: normal; hyphens: manual; cursor: pointer;
+}
+.app-container .uq-seg__btn.uq-seg__btn:first-child, .ayna-mobile .uq-seg__btn.uq-seg__btn:first-child, .uq-seg__btn:first-child { border-left: 0 !important; }
+.app-container .uq-seg__btn.uq-seg__btn.is-on, .ayna-mobile .uq-seg__btn.uq-seg__btn.is-on, .uq-seg__btn.is-on { background: var(--ay-fill-ink, #3e2723) !important; color: var(--ay-on-ink, #ffedac) !important; font-weight: 700 !important; }
+.uq-seg__btn:focus-visible { outline: 3px solid var(--ay-pink-base, #f7badd) !important; outline-offset: -4px; }
+.uq-blend__extras { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.app-container .uq-blend__chip, .ayna-mobile .uq-blend__chip, .uq-blend__chip { min-height: 44px; padding: 0 16px !important; border: 1.5px solid var(--ay-fg, #3e2723) !important; border-radius: 999px !important; background: transparent !important; box-shadow: none !important; color: var(--ay-fg, #3e2723) !important; font: 600 14px/1.2 var(--ay-font-ui, 'Figtree', sans-serif) !important; cursor: pointer; }
+.app-container .uq-blend__chip.is-on, .ayna-mobile .uq-blend__chip.is-on, .uq-blend__chip.is-on { background: var(--ay-fill-ink, #3e2723) !important; color: var(--ay-on-ink, #ffedac) !important; border-color: var(--ay-fill-ink, #3e2723) !important; }
+.uq-blend__chip:focus-visible { outline: 3px solid var(--ay-fg, #3e2723); outline-offset: 2px; }

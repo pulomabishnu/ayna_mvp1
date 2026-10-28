@@ -1,0 +1,212 @@
+/* The app's ayna tab (founder, Oct 24 20:12): the chat as home, a small
+   switch at the top (Chat · Products · My dashboard), the quick product
+   sheet, one-tap product actions in the Rundown, and the mic.
+   Tokens only (app-direction.css): --d-page, --d-group, --d-ink, --d-ink-2,
+   --d-hair, --d-pink, --d-sky, --d-shadow. Radii 10 / 16-20 / 999. */
+
+/* ---- Home fills the screen like any tab: its view is the scroller ---- */
+.ayna-mobile:is(#ay, .ayna-mobile) > .ay-home { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.ayna-mobile:is(#ay, .ayna-mobile) > .ay-home > .ay-home__view { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.ayna-mobile:is(#ay, .ayna-mobile) > .ay-home > .ay-home__view[hidden] { display: none; }
+
+/* Chat-first Home (?home=chat, focus group): the switch at the top. */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-home-top { display: flex; align-items: center; justify-content: center; gap: 8px; padding: max(14px, env(safe-area-inset-top)) var(--d-gutter, 20px) 10px; background: var(--d-page); color: var(--d-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-home-top__back { flex: none; width: 44px; height: 44px; display: grid; place-items: center; margin-left: -10px; border: 0; border-radius: 999px; background: transparent; color: var(--d-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-home-top__back svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-home-top__spacer { flex: none; width: 34px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homeswitch { display: inline-flex; flex: 0 1 auto; min-width: 0; padding: 3px; border: 1.5px solid var(--d-ink); border-radius: 999px; background: transparent; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homeswitch [role='tab'] { flex: none; min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--d-ink); font: 500 calc(14px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui, 'Figtree', sans-serif); white-space: nowrap; cursor: pointer; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homeswitch [role='tab'][aria-selected='true'] { background: var(--d-ink); color: var(--d-page); font-weight: 600; }
+@media (max-width: 359px) { .ayna-mobile:is(#ay, .ayna-mobile) .ay-homeswitch [role='tab'] { padding: 0 10px; } }
+
+/* The chat's own header becomes the switch row (no second title above it). */
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-home .ay-home-top { padding-top: max(14px, env(safe-area-inset-top)); border-bottom: 1px solid var(--d-hair); }
+
+/* ---- The chat from Home: full screen (no tab bar), a Back to Home ---- */
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-full, .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-tab.is-full { bottom: 0 !important; z-index: 80 !important; }
+/* QA Oct 25: the full-screen chat has no tab bar under it, so its composer sits on the bottom edge (safe area kept by the content padding) */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-top { display: flex; align-items: center; gap: 8px; padding: max(12px, env(safe-area-inset-top)) var(--d-gutter, 20px) 10px; border-bottom: 1px solid var(--d-hair); background: var(--d-page); color: var(--d-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-top__back { flex: none; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin-left: -8px; padding: 0 8px; border: 0; border-radius: 999px; background: transparent; color: var(--d-ink); font: 500 calc(15px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-top__back svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-top h1 { flex: 1; margin: 0; text-align: center; font: 400 calc(20px * var(--ayna-text-scale, 1))/1.2 var(--ay-app-heading); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-top__spacer { flex: none; width: 72px; }
+
+/* ---- Chat home: starters from today's Rundown, the signed-out intro ---- */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-starters { margin: 0 0 6px; padding: 14px 16px 6px; border-radius: 20px; background: var(--d-group); color: var(--d-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-starters h2 { margin: 0 0 4px; font: 600 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--d-ink-2); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-starters ul { list-style: none; margin: 0; padding: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-starters li + li { border-top: 1px solid var(--d-hair); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-starters button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 48px; padding: 10px 0; border: 0; background: transparent; color: var(--d-ink); text-align: left; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.35 var(--ay-font-ui, 'Figtree', sans-serif); cursor: pointer; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-starters button small { display: block; margin-top: 2px; font-weight: 400; font-size: calc(13px * var(--ayna-text-scale, 1)); color: var(--d-ink-2); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-starters svg { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-intro { margin: 0 0 4px; color: var(--d-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-intro h2 { margin: 0 0 6px; font: 400 calc(26px * var(--ayna-text-scale, 1))/1.1 var(--ay-app-heading); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-intro p { margin: 0; font: 400 calc(15px * var(--ayna-text-scale, 1))/1.45 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--d-ink-2); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-intro .ay-chat-intro__signin { margin-top: 10px; min-height: 44px; padding: 0 18px; border: 1.5px solid var(--d-ink); border-radius: 999px; background: transparent; color: var(--d-ink); font: 600 calc(14px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-voicelink { align-self: flex-start; min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--d-ink-2); text-decoration: underline; text-underline-offset: 3px; font: 500 calc(13px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui, 'Figtree', sans-serif); }
+
+/* ---- Mic (tap to talk) and the listening indicator ---- */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-mic { flex: none; width: 46px; height: 46px; display: grid; place-items: center; border: 1.5px solid var(--d-ink); border-radius: 999px; background: transparent; color: var(--d-ink); cursor: pointer; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-mic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-mic[aria-pressed='true'] { background: var(--d-pink); color: #3e2723; border-color: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-listening { display: flex; align-items: center; gap: 10px; margin: 0 20px; padding: 10px 14px; border-radius: 16px; background: var(--d-pink); color: #3e2723; font: 500 calc(14px * var(--ayna-text-scale, 1))/1.35 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-listening__dot { flex: none; width: 10px; height: 10px; border-radius: 999px; background: #3e2723; animation: ay-listen 1.2s var(--ease-in-out, ease-in-out) infinite alternate; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-listening span { flex: 1; min-width: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-listening button { flex: none; min-height: 36px; padding: 0 14px; border: 1.5px solid #3e2723; border-radius: 999px; background: transparent; color: #3e2723; font-weight: 600; }
+@keyframes ay-listen { from { opacity: .35; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ay, .ayna-mobile) .ay-listening__dot { animation: none; } }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-voice { display: flex; flex-direction: column; gap: 12px; color: var(--d-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-voice h2 { margin: 0; font: 400 calc(24px * var(--ayna-text-scale, 1))/1.15 var(--ay-app-heading); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-voice p { margin: 0; font: 400 calc(14px * var(--ayna-text-scale, 1))/1.45 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--d-ink-2); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-voice__group { margin: 0; padding: 4px 16px; border-radius: 20px; background: var(--d-group); list-style: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-voice__group li { padding: 12px 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-voice__group li + li { border-top: 1px solid var(--d-hair); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-voice__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--d-ink); text-align: left; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-voice__row b { flex: none; min-width: 44px; padding: 6px 10px; border-radius: 999px; border: 1.5px solid var(--d-ink); text-align: center; font-weight: 600; font-size: calc(13px * var(--ayna-text-scale, 1)); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-voice__row[aria-checked='true'] b { background: var(--d-pink); color: #3e2723; border-color: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-voice__row:disabled { opacity: .55; cursor: not-allowed; }
+
+/* ---- The quick product sheet, over the story or the chat ---- */
+.ayna-mobile .ay-psheet-layer { position: fixed; inset: 0; z-index: 2147483100; display: flex; flex-direction: column; justify-content: flex-end; }
+.ayna-mobile .ay-psheet-dim { position: absolute; inset: 0; background: var(--sheet-dim, rgba(62, 39, 35, .4)); animation: ay-dim-in var(--t-base, 240ms) var(--ease-out, ease-out) both; }
+.ayna-mobile .ay-psheet { position: relative; display: flex; flex-direction: column; max-height: 88dvh; min-height: 0; border-radius: 20px 20px 0 0; background: var(--d-page, #ffedac); color: var(--d-ink, #3e2723); animation: ay-sheet-in var(--t-sheet, 360ms) var(--ease-out, ease-out) both; touch-action: pan-y; overflow: hidden; }
+.ayna-mobile .ay-psheet-layer.is-full .ay-psheet { max-height: none; height: 100dvh; border-radius: 0; }
+.ayna-mobile .ay-psheet-layer.is-full .ay-psheet > * { flex: 1; min-height: 0; }
+.ayna-mobile .ay-psheet-layer.is-still :is(.ay-psheet, .ay-psheet-dim) { animation: none; }
+.ayna-mobile .ay-psheet > .ay-sheet-grabber { position: absolute; top: 0; left: 50%; width: 88px; height: 24px; margin: 0 0 0 -44px; z-index: 2; color: currentColor; }
+.ayna-mobile .ay-psheet__bar { display: flex; justify-content: flex-end; padding: 8px 10px 0; }
+.ayna-mobile .ay-psheet__close { width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 999px; background: transparent; color: inherit; }
+.ayna-mobile .ay-psheet__scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 var(--d-gutter, 20px) max(24px, env(safe-area-inset-bottom)); }
+.ayna-mobile .ay-psheet__head { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; margin-top: -8px; }
+.ayna-mobile .ay-psheet__img { position: relative; width: 96px; height: 96px; overflow: hidden; border: 1.5px solid var(--d-tile-line, #3e2723); border-radius: 16px; background: #fff; }
+.ayna-mobile .ay-psheet__img img { width: 100%; height: 100%; object-fit: contain; }
+.ayna-mobile .ay-psheet__id { min-width: 0; }
+.ayna-mobile .ay-psheet__brand { margin: 0 0 2px; font: 500 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--d-ink-2); }
+.ayna-mobile .ay-psheet__id h2 { margin: 0; font: 400 calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1))/1.15 var(--ay-app-heading); overflow-wrap: anywhere; }
+.ayna-mobile .ay-psheet__price { margin: 6px 0 0; font: 600 calc(15px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile .ay-psheet__price small { font-weight: 400; color: var(--d-ink-2); }
+.ayna-mobile .ay-psheet__match { display: flex; align-items: center; gap: 10px; margin: 14px 0 0; font: 400 calc(14px * var(--ayna-text-scale, 1))/1.4 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile .ay-psheet__hold { display: flex; flex-direction: column; gap: 4px; margin: 14px 0 0; padding: 12px 14px; border-radius: 16px; background: var(--d-group); font: 400 calc(14px * var(--ayna-text-scale, 1))/1.4 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile .ay-psheet__hold b { font-weight: 600; }
+.ayna-mobile .ay-psheet .ayq { margin-top: 18px; }
+.ayna-mobile .ay-psheet .ayq-st { top: 0; }
+.ayna-mobile .ay-psheet__more { display: block; width: 100%; min-height: 48px; margin: 18px 0 4px; border: 1.5px solid var(--d-ink); border-radius: 999px; background: transparent; color: var(--d-ink); font: 600 calc(15px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui, 'Figtree', sans-serif); }
+/* Sign in to save and toasts sit above the sheet when it is open. */
+.ayna-mobile:has([data-product-sheet]) :is(.ay-sas-dim, .ayna-profile-auth-backdrop, .ay-gtoast) { z-index: 2147483200 !important; }
+
+/* ---- Buy · Save · Add to my routine (sheet and Rundown product cards) ---- */
+.ayna-mobile .ay-pquick { margin-top: 14px; }
+.ayna-mobile .ay-pquick__row { display: flex; flex-wrap: wrap; gap: 8px; }
+.ayna-mobile .ay-pquick__row > * { min-height: 44px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid var(--d-ink, #3e2723); border-radius: 999px; background: transparent; color: var(--d-ink, #3e2723); text-decoration: none; font: 600 calc(14px * var(--ayna-text-scale, 1))/1 var(--ay-font-ui, 'Figtree', sans-serif); cursor: pointer; }
+.ayna-mobile .ay-pquick__buy { background: var(--d-ink, #3e2723) !important; color: var(--d-page, #ffedac) !important; box-shadow: var(--d-shadow) !important; }
+.ayna-mobile .ay-pquick__row > .is-on { background: var(--d-pink, #f7badd); color: #3e2723; border-color: #3e2723; }
+.ayna-mobile .ay-pquick__leave { margin: 8px 0 0; font: 400 calc(13px * var(--ayna-text-scale, 1))/1.4 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--d-ink-2, rgba(62, 39, 35, .75)); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd .ay-pquick__row > * { border-color: var(--rd-ink); color: var(--rd-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd .ay-pquick__buy { background: var(--rd-accent) !important; color: var(--rd-on-accent) !important; border-color: var(--rd-accent); box-shadow: none !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd .ay-pquick__row > .is-on { background: var(--rd-ink); color: var(--rd-bg); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd .ay-pquick__leave { color: var(--rd-soft); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd-product__open { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; align-items: start; grid-column: 1 / -1; margin: 0; padding: 0; border: 0; background: none; color: inherit; text-align: left; font: inherit; cursor: pointer; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd-product.has-open { grid-template-columns: minmax(0, 1fr); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd-product .ay-pquick { grid-column: 1 / -1; margin-top: 0; }
+.ayna-mobile .ay-rd-hold { display: block; margin-top: 4px; font-weight: 600; }
+
+/* =====================================================================
+   Oct 25 design pass (app ayna home). Refs: Cooper AI cefbab0a (Hello +
+   action rows), Oura "One Big Thing", Wrapped type-as-form, INSPO 72419ae7
+   (one raised element), rule 8 (16-20 gutter, 12 between cards).
+   ===================================================================== */
+/* the switch: 44px targets (HIG), the open view in pink like the tab bar's active pill */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homeswitch { padding: 3px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homeswitch [role='tab'] { min-height: 40px; padding: 0 16px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homeswitch [role='tab']::after { content: ''; position: absolute; inset: -2px 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homeswitch [role='tab'] { position: relative; }
+/* chat home: the hello as the screen's one display line */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-chat-intro h2,
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-askh-hello.ay-askh-hello h2 { font: 700 calc(28px * var(--ayna-text-scale, 1))/1.08 var(--ay-app-heading) !important; letter-spacing: -.02em !important; }
+/* the product sheet: the product first and big (Baymard: inspect the product), name in the display face */
+.ayna-mobile .ay-psheet__head { grid-template-columns: 128px 1fr; gap: 16px; }
+.ayna-mobile .ay-psheet__img { width: 128px; height: 128px; border-radius: 20px; rotate: -1.5deg; }
+.ayna-mobile .ay-psheet__id h2 { font: 700 calc(24px * var(--ayna-text-scale, 1))/1.05 var(--ay-app-heading) !important; letter-spacing: -.02em; }
+.ayna-mobile .ay-psheet__price { font-size: calc(17px * var(--ayna-text-scale, 1)); }
+/* Rundown product card: the photo large on its white tile (story rules, B) */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd-product__open { grid-template-columns: 1fr; gap: 14px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd-product__open .ay-rd-product__img { width: min(58%, 220px); height: auto; aspect-ratio: 1 / 1; border-radius: 24px; box-shadow: 4px 4px 0 var(--rd-ink); rotate: 2deg; }
+/* ---- Home: the Ask ayna bar ---- */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homeask__bar { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 18px; border: 1.5px solid var(--d-ink); border-radius: 999px; background: var(--d-group); color: var(--d-ink-2); text-align: left; font: 400 calc(16px * var(--ayna-text-scale, 1))/1.2 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homeask__bar svg { flex: none; width: 20px; height: 20px; fill: none; stroke: var(--d-ink); stroke-width: 1.75; stroke-linejoin: round; }
+
+/* ---- Home, dashboard first: one phone screen (team sync, Oct 25) ----
+   The Ask ayna bar, the Rundown card, 1 to 3 things (fact, Ask why, one way
+   in), one health data / log row, two links. Scrolls only on small phones. */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen { overflow-y: auto; overflow-x: clip; gap: 8px; padding: 0 0 12px; background: var(--d-page); color: var(--d-ink); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen > :not(.ayna-shared-header):not(h1) { margin-left: var(--d-gutter, 20px); margin-right: var(--d-gutter, 20px); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-homeask__bar { width: auto; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-homefeed { display: block; gap: 0; padding: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-today.is-compact { display: grid; gap: 10px; margin: 0 !important; padding: 0 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd-hero.is-compact { margin: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd-hero.is-compact .ay-rd-hero__card { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'kicker go' 'title go'; align-items: center; column-gap: 12px; row-gap: 2px; padding: 14px 16px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd-hero.is-compact .ay-rd-hero__card > p:not(.ay-rd-hero__kicker):not(.ay-rd-hero__new) { display: none; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd-hero.is-compact .ay-rd-hero__kicker { grid-area: kicker; margin: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd-hero.is-compact h2 { grid-area: title; margin: 0; font-size: calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1)); line-height: 1.15; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd-hero.is-compact .ay-rd-hero__go { grid-area: go; margin: 0; white-space: nowrap; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-rd-hero.is-compact .ay-rd-hero__card.is-setup { grid-template-areas: 'kicker kicker' 'title title' 'go go'; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-today__list.is-compact { display: grid; gap: 8px; margin: 0 !important; padding: 0 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact { display: grid; gap: 2px; margin: 0 !important; padding: 10px 14px !important; border-radius: 16px; background: var(--d-group); }
+/* The kicker stays only where it carries weight (care and safety). */
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:not(.is-care):not(.is-safety) .ay-today__kicker { display: none !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact .ay-today__title { margin: 0 !important; font-size: calc(17px * var(--ayna-text-scale, 1)) !important; line-height: 1.25 !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact .ay-today__why { margin: 0 !important; font-size: calc(14px * var(--ayna-text-scale, 1)) !important; line-height: 1.35 !important; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact .ay-today__actions { display: flex; flex-wrap: wrap; align-items: center; margin: 2px 0 0 !important; gap: 0 18px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact .ay-today__actions > * { min-height: 36px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-today.is-compact .ay-today__empty { margin: 0 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact .ay-rd-hero__card { padding: 12px 16px !important; border-radius: 20px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homescreen .ay-rd-hero.is-compact .ay-rd-hero__go { min-height: 44px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homehealth { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-radius: 20px; background: var(--d-group); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homehealth__text { min-width: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homehealth h2 { margin: 0; font: 600 calc(14px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homehealth p { margin: 2px 0 0; font: 400 calc(14px * var(--ayna-text-scale, 1))/1.35 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--d-ink-2); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homehealth__actions { flex: none; display: flex; gap: 14px; align-items: center; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homehealth__actions button { min-height: 36px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homelinks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homelinks button { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 56px; padding: 8px 12px; border: 1.5px solid var(--d-ink); border-radius: 16px; background: transparent; color: var(--d-ink); text-align: left; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homelinks b { display: block; font: 600 calc(14px * var(--ayna-text-scale, 1))/1.25 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homelinks small { display: block; font: 400 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--d-ink-2); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-homelinks svg { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---- The Ask ayna sheet from Home: springs up, instant with reduced motion ---- */
+.ayna-mobile .ay-asksheet-layer { position: fixed; inset: 0; z-index: 2147482900; display: flex; flex-direction: column; justify-content: flex-end; }
+.ayna-mobile .ay-asksheet-dim { position: absolute; inset: 0; background: var(--sheet-dim, rgba(62, 39, 35, .4)); animation: ay-dim-in var(--t-base, 240ms) var(--ease-out, ease-out) both; }
+.ayna-mobile .ay-asksheet { position: relative; display: grid; gap: 12px; max-height: 88dvh; overflow-y: auto; padding: 22px var(--d-gutter, 20px) max(16px, env(safe-area-inset-bottom)); border-radius: 20px 20px 0 0; background: var(--d-page, #ffedac); color: var(--d-ink, #3e2723); animation: ay-asksheet-up 420ms cubic-bezier(.34, 1.36, .64, 1) both; touch-action: pan-y; }
+@keyframes ay-asksheet-up { from { transform: translateY(100%); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ayna-mobile .ay-asksheet, .ayna-mobile .ay-asksheet-dim { animation: none; } }
+.ayna-mobile .ay-asksheet > .ay-sheet-grabber { position: absolute; top: 0; left: 50%; width: 88px; height: 24px; margin: 0 0 0 -44px; color: currentColor; }
+.ayna-mobile .ay-asksheet h2 { margin: 0; font: 400 calc(24px * var(--ayna-text-scale, 1))/1.15 var(--ay-app-heading); }
+.ayna-mobile .ay-asksheet__prompts { margin: 0; padding: 4px 16px; border-radius: 20px; background: var(--d-group); list-style: none; }
+.ayna-mobile .ay-asksheet__prompts li + li { border-top: 1px solid var(--d-hair); }
+.ayna-mobile .ay-asksheet__prompts button { display: grid; gap: 2px; width: 100%; min-height: 56px; padding: 10px 0; border: 0; background: transparent; color: var(--d-ink); text-align: left; }
+.ayna-mobile .ay-asksheet__reason { font: 400 calc(13px * var(--ayna-text-scale, 1))/1.35 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--d-ink-2); }
+.ayna-mobile .ay-asksheet__q { font: 600 calc(16px * var(--ayna-text-scale, 1))/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayna-mobile .ay-asksheet__form { display: flex; align-items: center; gap: 8px; }
+.ayna-mobile .ay-asksheet__input { flex: 1; min-width: 0; min-height: 46px; padding: 0 16px; border: 1.5px solid var(--d-ink); border-radius: 999px; background: var(--d-group); color: var(--d-ink); font-size: max(16px, calc(14px * var(--ayna-text-scale, 1))); }
+.ayna-mobile .ay-asksheet__send { min-height: 46px; padding: 0 18px; border: 0; border-radius: 999px; background: var(--d-ink); color: var(--d-page); font-weight: 600; }
+.ayna-mobile .ay-asksheet__send:disabled { opacity: .5; }
+.ayna-mobile .ay-asksheet__note, .ayna-mobile .ay-asksheet__error { margin: 0; font: 400 calc(13px * var(--ayna-text-scale, 1))/1.35 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--d-ink-2); }
+
+/* ---- Four tabs (founder, Oct 24 22:12): Home, Explore, Community, You ---- */
+html body .ayna-mobile:is(#ay, .ayna-mobile) .ayna-bottom-nav.is-4-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+
+/* Glance pass (p14): Today's things as a mixed-width bento (wide + halves), a small mark on each, the reason behind "Read more". */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__list.is-compact { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: dense; align-items: stretch; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__list.is-compact > * { min-width: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__list.is-compact > .is-wide,
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__list.is-compact > :not(.ay-today__item) { grid-column: 1 / -1; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact { align-content: start; gap: 6px; padding: 14px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:not(.is-wide) .ay-today__title { font-size: calc(16px * var(--ayna-text-scale, 1)) !important; overflow-wrap: anywhere; }
+.ay-today__glyph { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #f7badd; color: #3e2723; }
+.ay-today__glyph svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-today__item.is-care .ay-today__glyph, .ay-today__item.is-safety .ay-today__glyph { background: #3e2723; color: #ffedac; }
+.ay-today__readmore { justify-self: start; min-height: 44px; padding: 0; border: 0; background: none; color: inherit; font: 700 14px/1.2 var(--ay-font-ui, inherit); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact .ay-today__why[hidden] { display: none !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-today__item.is-care .ay-today__glyph, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-today__item.is-safety .ay-today__glyph { background: #ffedac; color: #3e2723; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:not(.is-wide) { display: flex !important; flex-direction: column; align-items: flex-start; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:not(.is-wide) .ay-today__actions { position: static !important; margin-top: auto !important; }

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import ArticleDetailScreen from './ArticleDetailScreen.jsx';
 
@@ -21,3 +21,6 @@ describe('article content and citations', () => {
     expect(html).toContain('Next article');
   });
 });
+
+// Content assertions run after access is granted; the real gate has its own tests.
+vi.mock('../../components/ProFeatureGate.jsx', () => ({ default: ({ children }) => children }));

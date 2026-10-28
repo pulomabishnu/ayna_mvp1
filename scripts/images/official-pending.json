@@ -1,0 +1,181 @@
+{
+ "note": "Official images served remotely for now (the audit sandbox could not download). Make local copies: public/products/catalog/<id>.webp, 640px square, white background, <=150KB; then move the id into PRODUCT_IMAGE_OVERRIDES.",
+ "checkedOn": "2026-10-21",
+ "pending": [
+  {
+   "id": "d-headspace",
+   "src": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/47/69/b2/4769b27b-0ca9-879c-7348-37afa93a9525/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+   "source": "https://apps.apple.com/us/app/headspace-sleep-meditation/id493145008"
+  },
+  {
+   "id": "d-calm",
+   "src": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/84/9f/5f/849f5ff1-ceb7-d05d-00f8-7877b02544b8/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg",
+   "source": "https://apps.apple.com/us/app/calm/id571800810"
+  },
+  {
+   "id": "d-stardust",
+   "src": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7e/48/55/7e485542-d911-0560-398b-b8188d697814/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/512x512bb.jpg",
+   "source": "https://apps.apple.com/us/app/stardust-period-tracker/id1495829322"
+  },
+  {
+   "id": "d-apple-health",
+   "src": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/60/e8/ae/60e8ae47-8a07-ad37-3371-d515af4b4a43/cycle.tracking-0-0-1x_U007ewatch-0-1-P3-85-220.png/512x512bb.jpg",
+   "source": "Apple App Store artwork (Cycle Tracking), the catalog image at icon size instead of a 1200x630 banner"
+  },
+  {
+   "id": "d-eight-sleep",
+   "src": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5d/5a/08/5d5a084c-f898-c2f5-67ca-b9fb0211ea73/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/512x512bb.jpg",
+   "source": "https://apps.apple.com/us/app/eight-sleep/id1086913845"
+  },
+  {
+   "id": "d-oura",
+   "src": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/a8/3e/4e/a83e4ebb-f262-cd77-c428-96c6ab71e28e/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/512x512bb.jpg",
+   "source": "https://apps.apple.com/us/app/oura/id1043837948"
+  },
+  {
+   "id": "d-visana",
+   "src": "https://cdn.prod.website-files.com/665de822e7cb2e44b31a0c0e/668416243c57b6be1bdcf3a7_Open%20Graph%20Image%20-%20Home2.png",
+   "source": "https://www.visanahealth.com/"
+  },
+  {
+   "id": "p-aleve-naproxen-220",
+   "src": "https://www.aleve.com/sites/g/files/vrxlpx56211/files/2023-09/aleve-PDP-AleveTablets.jpg",
+   "source": "https://www.aleve.com/products/aleve-tablets/"
+  },
+  {
+   "id": "p-visby-womens-sti-test",
+   "src": "https://cdn.shopify.com/s/files/1/0687/8484/9052/files/Visby-Women_s-STI-Device-in-hand.webp?width=800",
+   "source": "https://visby.com/products/visby-womens-at-home-sti-test-kit"
+  },
+  {
+   "id": "p-kiero-moisturizing-barrier-cream",
+   "src": "https://cdn.shopify.com/s/files/1/0712/7246/4570/files/kiero-_-01_ca9d328d-18b7-4a70-a8e5-4e96eecf1dea.jpg?width=800",
+   "source": "https://us.kieroskincare.com/products/moisturizing-barrier-cream"
+  },
+  {
+   "id": "p-kiero-balance-toner-pads",
+   "src": "https://cdn.shopify.com/s/files/1/0712/7246/4570/files/kiero-_-01.jpg?width=800",
+   "source": "https://us.kieroskincare.com/products/balance-toner-pads"
+  },
+  {
+   "id": "p-tampontribe-teen-pads",
+   "src": "https://cdn.shopify.com/s/files/1/0048/6971/8083/files/new-organic-teen-pads-7008691.jpg?width=800",
+   "source": "https://tampontribe.com/products/organic-teen-pads"
+  },
+  {
+   "id": "p-goodbug-good-down-there",
+   "src": "https://cdn.shopify.com/s/files/1/0657/8225/1745/products/GoodDownThere_3.jpg?width=800",
+   "source": "https://thegoodbug.com/products/good-down-there-for-vaginal-health"
+  },
+  {
+   "id": "p-cbb-perfect-ph-probiotic-gummies",
+   "src": "https://m.media-amazon.com/images/I/41qCKV-R2gL._AC_SL800_.jpg",
+   "source": "Amazon listing main image"
+  },
+  {
+   "id": "p-estherformula-ceramide-strips",
+   "src": "https://m.media-amazon.com/images/I/51q39aFdEdL._AC_SL800_.jpg",
+   "source": "Amazon listing main image"
+  },
+  {
+   "id": "p-hero-mighty-patch-original",
+   "src": "https://m.media-amazon.com/images/I/61p+1+md+8L._AC_SL800_.jpg",
+   "source": "Amazon listing main image (Hero Cosmetics store)"
+  },
+  {
+   "id": "p-hero-pimple-correct",
+   "src": "https://m.media-amazon.com/images/I/61Le1S+bw0L._AC_SL800_.jpg",
+   "source": "Amazon listing main image (Hero Cosmetics store)"
+  },
+  {
+   "id": "p-hero-mighty-cleanser",
+   "src": "https://m.media-amazon.com/images/I/6140V0SQHdL._AC_SL800_.jpg",
+   "source": "Amazon listing main image (Hero Cosmetics store)"
+  },
+  {
+   "id": "p-cocoandeve-tripeptide-hair-density-serum",
+   "src": "https://m.media-amazon.com/images/I/51xmpBxUvcL._AC_SL800_.jpg",
+   "source": "Amazon listing main image"
+  },
+  {
+   "id": "p-najeau-follicle-drops",
+   "src": "https://m.media-amazon.com/images/I/512842JgyVL._AC_SL800_.jpg",
+   "source": "Amazon listing main image"
+  },
+  {
+   "id": "p-refilled-cytokine-effector-plus",
+   "src": "https://m.media-amazon.com/images/I/61AgTzHlPLL._AC_SL800_.jpg",
+   "source": "Amazon listing main image"
+  },
+  {
+   "id": "p-bigvita-scalp-serum-plus",
+   "src": "https://m.media-amazon.com/images/I/51O7+TsgxZL._AC_SL800_.jpg",
+   "source": "Amazon listing main image"
+  },
+  {
+   "id": "p-arrae-mb-1",
+   "src": "https://m.media-amazon.com/images/I/51cUawzhbWL._AC_SL800_.jpg",
+   "source": "Amazon listing main image"
+  },
+  {
+   "id": "p-cbb-13-in-1-womens-gummies",
+   "src": "https://m.media-amazon.com/images/I/51slr4TLhVL._AC_SL800_.jpg",
+   "source": "Amazon listing main image"
+  },
+  {
+   "id": "p-advil-ibuprofen-200",
+   "src": "https://target.scene7.com/is/image/Target/GUEST_0ffb5fb8-4373-4132-85cd-ff831395c45f?wid=800&hei=800&qlt=80&fmt=webp",
+   "source": "Target listing main image"
+  },
+  {
+   "id": "p-monistat-3-combo",
+   "src": "https://target.scene7.com/is/image/Target/GUEST_17956779-2a01-4b05-a23d-33ae2edd3a56?wid=800&hei=800&qlt=80&fmt=webp",
+   "source": "Target listing main image"
+  },
+  {
+   "id": "p-womens-rogaine-foam",
+   "src": "https://target.scene7.com/is/image/Target/GUEST_46c2cf3c-9fac-49cf-82eb-0bb182f66dc7?wid=800&hei=800&qlt=80&fmt=webp",
+   "source": "Target listing main image"
+  },
+  {
+   "id": "p-panoxyl-bpo-10-wash",
+   "src": "https://target.scene7.com/is/image/Target/GUEST_99e7b206-1c38-49b8-9762-0c4533700929?wid=800&hei=800&qlt=80&fmt=webp",
+   "source": "Target listing main image"
+  },
+  {
+   "id": "p-differin-adapalene-gel",
+   "src": "https://target.scene7.com/is/image/Target/GUEST_38a3ac7f-4dc8-4bf4-b9df-a38bb1e270a5?wid=800&hei=800&qlt=80&fmt=webp",
+   "source": "Target listing main image"
+  },
+  {
+   "id": "p-metamucil-psyllium-orange",
+   "src": "https://target.scene7.com/is/image/Target/GUEST_e38a4ac5-9e82-47dc-ba6a-c62be9537c9e?wid=800&hei=800&qlt=80&fmt=webp",
+   "source": "Target listing main image"
+  },
+  {
+   "id": "p-miralax-peg-3350",
+   "src": "https://target.scene7.com/is/image/Target/GUEST_e144d80a-8509-4b9d-9c1c-e0ddb5c971d1?wid=800&hei=800&qlt=80&fmt=webp",
+   "source": "Target listing main image"
+  },
+  {
+   "id": "p-nature-made-folic-acid-400",
+   "src": "https://target.scene7.com/is/image/Target/GUEST_c1f5861a-74ef-4429-a9b2-bf0d8ba7446c?wid=800&hei=800&qlt=80&fmt=webp",
+   "source": "Target listing main image"
+  },
+  {
+   "id": "p-rugby-vitamin-b6-25",
+   "src": "https://target.scene7.com/is/image/Target/GUEST_82e8093d-18ff-416c-8cc1-df4e6c2b314e?wid=800&hei=800&qlt=80&fmt=webp",
+   "source": "Target listing main image"
+  },
+  {
+   "id": "p-taro-clotrimazole-7",
+   "src": "https://i5.walmartimages.com/seo/Taro-Clotrimazole-7-Vaginal-Cream-45-g_01c243f1-eccb-4843-9210-556e40650cb5.99099c95694f52d78d8c1c6a124feb83.jpeg?odnHeight=800&odnWidth=800&odnBg=FFFFFF",
+   "source": "Walmart listing main image"
+  },
+  {
+   "id": "p-easyhome-lh-strips-50",
+   "src": "https://i5.walmartimages.com/seo/Easy-Home-Reliable-Ovulation-Predictor-Kit-50-LH-Tests-50-Count_97181863-097f-4d20-8305-1f27d899d7e1.f07b15b47e10c12116db2df39dc6a3a8.jpeg?odnHeight=800&odnWidth=800&odnBg=FFFFFF",
+   "source": "Walmart listing main image"
+  }
+ ]
+}

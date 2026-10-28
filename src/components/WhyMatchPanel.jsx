@@ -1,8 +1,13 @@
 import { createPortal } from 'react-dom';
+import { MATCH_BASIS } from './pdp/PdpParts.jsx';
+import MatchFeedback from './today/MatchFeedback.jsx';
 import { useEffect } from 'react';
 import { getProductMatchDetailsForProduct } from '../data/products.js';
-import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE } from '../utils/matchDisplay';
+import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE, shownMatchPercent, PARTIAL_FIT, isBleedingEvaluation } from '../utils/matchDisplay';
+import BleedingEvaluationNote from './match/BleedingEvaluationNote.jsx';
 import '../styles/match-ui.css';
+import HealthWhyLine from './health/HealthWhyLine.jsx';
+import { whyLine } from '../utils/whyLine';
 
 // "Why this match" from the app, for the website: the same match engine
 // output (getProductMatchDetailsForProduct), shown as a side panel.
@@ -38,15 +43,19 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
     <aside className="ay-why" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
       <header><h2>{title}</h2><button type="button" onClick={onClose} aria-label="Close">×</button></header>
       {hasScore ? <section className={`ay-why-hero ${TONE[tier] || 'is-partial'}`}>
-        <div className="ay-why-ring" style={{ '--a': `${percent * 3.6}deg` }}><span>{percent}<small>%</small></span></div>
+        {shownMatchPercent(percent) != null
+          ? <div className="ay-why-ring" style={{ '--a': `${percent * 3.6}deg` }}><span>{percent}<small>%</small></span></div>
+          : <div className="ay-why-ring is-partial" style={{ '--a': '0deg' }}><span><small>{PARTIAL_FIT}</small></span></div>}
         <div>
-          <span className="ay-why-tier">{tierWord(tier, percent)}</span>
+          {tierWord(tier, percent) && <span className="ay-why-tier">{tierWord(tier, percent)}</span>}
           <strong>{needHeadline(percent, best?.phrase)}</strong>
+          {whyLine(product, details, { max: 2 }) && <p className="ay-why-line">{whyLine(product, details, { max: 2 })}</p>}
           <p className="ay-why-based">{BASED_ON_LINE}</p>
+          <p className="ay-why-based">{MATCH_BASIS} <a href="/how-it-works">How we match</a></p>
         </div>
       </section> : excluded ? <section className="ay-why-excluded">
         {exclusions.length > 0 ? exclusions.map((line) => <p key={line}>{tidy(line)}</p>) : <p>This product does not fit your current health profile.</p>}
-      </section> : <p className="ay-why-intro">{matchStatus === 'no-profile' ? 'Take the quiz to see how this product relates to your answers.' : 'We couldn’t match this product to your answers, so we leave the score blank instead of guessing.'}</p>}
+      </section> : isBleedingEvaluation(details) ? <BleedingEvaluationNote note={details.bleedingEvaluation} /> : <p className="ay-why-intro">{matchStatus === 'no-profile' ? 'Take the quiz to see how this product relates to your answers.' : 'We couldn’t match this product to your answers, so we leave the score blank instead of guessing.'}</p>}
       {!excluded && why.considerations.length > 0 && <section className="ay-why-cautions is-first"><h3>Before you choose</h3>{why.considerations.map((n, i) => <p key={i}>{tidy(n.text)}</p>)}</section>}
       {hasScore && why.restricted && <section className="ay-why-restricted">
         <h3>Safety not checked yet</h3>
@@ -54,6 +63,7 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
         {onUpdateHealth && <button type="button" className="ay-why-cta" onClick={onUpdateHealth}>Update health profile</button>}
       </section>}
       {hasScore && reasonDetails.length > 0 && <section><h3>What matches</h3><ul className="ay-why-reasons">{reasonDetails.map((r, i) => <li key={`${r.component}-${i}`}><span>{kind(r.component)}</span><p>{tidy(r.text)}</p></li>)}</ul></section>}
+      {hasScore && <HealthWhyLine healthData={details.healthData} />}
       {hasScore && why.basedOn.length > 0 && <section><h3 className="ay-why-h-edit">Based on{onUpdateHealth && <button type="button" className="ay-why-edit" onClick={onUpdateHealth}>Edit</button>}</h3><ul className="ay-why-inputs">{why.basedOn.map((line) => <li key={line}>{tidy(line)}</li>)}</ul></section>}
       {hasScore && why.hint && <section className="ay-why-hint">
         <p>{why.hint}</p>
@@ -63,8 +73,9 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
         <h3>Your needs it helps with</h3>
         <ul className="ay-need-rows">{rows.filter((r) => r.score > 0).map((r) => <li key={r.needId} className={r.score > 0 ? `is-${r.tier}` : 'is-none'}>
           <span className="ay-need-rows__label" title={r.label}>{tidy(r.short)}</span>
-          <span className="ay-need-rows__bar" aria-hidden="true"><i style={{ width: `${r.score}%` }} /></span>
-          <strong>{r.score}</strong>
+          {/* Under 50: no bar, no number (one rule with the cards). */}
+          <span className="ay-need-rows__bar" aria-hidden="true">{shownMatchPercent(r.score) != null && <i style={{ width: `${r.score}%` }} />}</span>
+          <strong>{shownMatchPercent(r.score) ?? ''}</strong>
           <small>{r.word}</small>
         </li>)}</ul>
         {rows.some((r) => !(r.score > 0)) && <details className="ay-why-more"><summary>Doesn’t address: {rows.filter((r) => !(r.score > 0)).length} other need{rows.filter((r) => !(r.score > 0)).length === 1 ? '' : 's'}</summary><ul className="ay-why-chips">{rows.filter((r) => !(r.score > 0)).map((r) => <li key={r.needId}>{tidy(r.short)}</li>)}</ul></details>}
@@ -75,6 +86,7 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
         {unknowns.map((n) => <p key={n}>{tidy(n)}</p>)}
       </section>}
       {matchStatus === 'no-profile' && onUpdateHealth && <button type="button" className="ay-why-cta" onClick={onUpdateHealth}>Take the quiz</button>}
+      {hasScore && <MatchFeedback productId={product?.id} onUpdateHealth={onUpdateHealth} />}
       <p className="ay-why-fine">A match to what you shared, not a diagnosis or a promise of results. We never guess why you have a symptom. Availability is shown separately and never changes the score.</p>
     </aside>
   </div>, document.body);

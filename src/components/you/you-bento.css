@@ -1,0 +1,57 @@
+/* YouBento (YouBento.jsx): the You hub's numbers + sections as one bento. Same weight pattern as ay-bold.css. */
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) { margin: 0 0 var(--ay-sp-32); grid-auto-rows: minmax(140px, auto); }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-tile { width: 100%; font: inherit; justify-content: flex-start; gap: 8px; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) button.yb-tile { cursor: pointer; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) button.yb-tile:hover .yb-arrow { transform: translate(2px, -2px); }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .ayb-tile__label { font: 700 var(--ay-size-ui)/1.2 var(--ay-font-ui) !important; opacity: 1; }
+.yb-arrow, .yb-icon { width: 24px; height: 24px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s; }
+@media (prefers-reduced-motion: reduce) { .yb-arrow { transition: none; } }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-num { display: grid; gap: 4px; margin-top: auto; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .is-eco .ayb-tile__big { font-size: clamp(56px, 7vw, 96px) !important; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-name { margin-top: auto; font: 700 var(--ay-size-h2)/1.1 var(--ay-font-display); letter-spacing: -.01em; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .ayb-tile__cap b { font-weight: 700; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-plates { display: flex; gap: 10px; margin: 8px 0; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-plate { width: 96px; height: 96px; flex: 0 0 96px; }
+@media (max-width: 720px) {
+  :is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-plate { width: 84px; height: 84px; flex-basis: 84px; }
+  :is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-name { font-size: var(--ay-size-h3); }
+}
+.ayna-mobile :is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-plate { width: 84px; height: 84px; flex-basis: 84px; }
+.ayna-mobile :is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-name { font-size: 17px; }
+
+/* Your blend: the House Blend track, read-only */
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .yb-blend { display: grid; gap: 10px; margin: 4px 0 0; padding: 0; list-style: none; width: 100%; }
+.yb-blend li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(64px, 1.4fr) minmax(0, 1fr); align-items: center; gap: 10px; font: 600 13px/1.2 var(--ay-font-ui); }
+.yb-blend li span:last-child { text-align: right; }
+.yb-blend i { position: relative; display: block; height: 8px; border-radius: 999px; border: 1.5px solid #3E2723; background: linear-gradient(to right, #3E2723 var(--pct), transparent var(--pct)); }
+.yb-blend b { position: absolute; top: 50%; left: var(--pct); width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; background: #FFEDAC; border: 1.5px solid #3E2723; box-sizing: border-box; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .is-full { grid-column: 1 / -1; min-height: 0; flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 16px; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .is-full .yb-top { width: auto; order: 3; margin-left: auto; }
+:is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb):is(#ayk, .yb) .is-full .yb-name { margin: 0; }
+
+/* layout "list" (app You, critique Oct 27): one espresso feature card, then grouped rows on the butter surface. */
+.yb.yb--list { display: grid; gap: 16px; }
+.yb.yb--list .yb-tile.is-eco { min-height: 0; }
+.yb-list { display: grid; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #f6e3a1; overflow: hidden; }
+.yna-mobile[data-theme='dark'] .yb-list, .app-container[data-theme='brand-dark'] .yb-list { background: rgba(255, 237, 172, .08); }
+.yb-list > li + li { border-top: 1px solid rgba(62, 39, 35, .14); }
+.ayna-mobile[data-theme='dark'] .yb-list > li + li, .app-container[data-theme='brand-dark'] .yb-list > li + li { border-top-color: rgba(255, 237, 172, .16); }
+.yb-row { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 24px minmax(0, 1fr) auto auto; align-items: center; gap: 14px; width: 100%; min-height: 64px; padding: 12px 16px; color: var(--d-ink, #3e2723); cursor: pointer; }
+.ayna-mobile[data-theme='dark'] .yb-row, .app-container[data-theme='brand-dark'] .yb-row { color: #ffedac; }
+.yb-row:focus-visible { outline: 3px solid currentColor; outline-offset: -3px; border-radius: 16px; }
+.yb-row:active { background: rgba(62, 39, 35, .06); }
+.yb-row__icon, .yb-row__go { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.yb-row__go { opacity: .7; }
+.yb-row__text { display: grid; gap: 2px; min-width: 0; }
+.yb-row__text b { font: 600 16px/1.25 var(--ay-font-ui, 'Figtree', sans-serif); }
+.yb-row__text small { font: 500 14px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); opacity: .82; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.yb-row__n { font: 700 17px/1 var(--ay-font-ui, 'Figtree', sans-serif); font-variant-numeric: tabular-nums; }
+:is(#ayk, .yb-list):is(#ayk, .yb-list):is(#ayk, .yb-list) { height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; align-self: start; }
+:is(#ayk, .yb-list):is(#ayk, .yb-list):is(#ayk, .yb-list) > li { margin: 0 !important; padding: 0 !important; min-height: 0 !important; }
+
+/* Direct profile upgrade path: visible without turning the You screen into a sales page. */
+.yb-list--pro { background: #f7badd; }
+.yb-row--pro { min-height: 68px; }
+.yb-row--pro .yb-row__text b { font-weight: 700; }
+.ayna-mobile[data-theme='dark'] .yb-list--pro, .app-container[data-theme='brand-dark'] .yb-list--pro { background: rgba(247, 186, 221, .16); }

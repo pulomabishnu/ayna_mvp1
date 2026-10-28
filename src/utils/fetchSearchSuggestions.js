@@ -1,5 +1,6 @@
 import posthog from 'posthog-js';
 import { filterProductListToCatalog } from './catalogIntegrity';
+import { loadCatalog } from '../data/catalog.js';
 import { getAppSessionId } from './conversationId';
 import { redactErrorMessage } from './errorAnalytics';
 
@@ -10,19 +11,6 @@ import { redactErrorMessage } from './errorAnalytics';
  * resolves it against the real deployment there instead.
  */
 import { apiUrl } from './apiUrl.js';
-
-const HEALTH_ANALYTICS_TERMS = [
-  'period', 'menstrual', 'bleeding', 'cramp', 'pelvic', 'vagina', 'vaginal', 'vulva', 'discharge', 'odor',
-  'itching', 'uti', 'urinary', 'yeast infection', 'bacterial vaginosis', 'pcos', 'pmos', 'polycystic', 'polyendocrine', 'endometriosis',
-  'fibroid', 'ovarian cyst', 'pmdd', 'pms', 'menopause', 'perimenopause', 'fertility', 'infertility', 'pregnan',
-  'postpartum', 'birth control', 'contraception', 'hormone', 'sexual health', 'painful sex', 'vaginismus',
-  'vulvodynia', 'iron deficiency', 'anemia', 'reproductive', 'cycle', 'hot flash', 'night sweat',
-];
-
-function looksHealthSensitive(query) {
-  const q = String(query || '').toLowerCase();
-  return HEALTH_ANALYTICS_TERMS.some((term) => q.includes(term));
-}
 
 function captureSearchAnalytics(event, properties) {
   try {
@@ -37,7 +25,6 @@ function baseAnalyticsProps({ query, category, personalized }) {
     queryLength: String(query || '').length,
     category: category || 'all',
     personalized: Boolean(personalized),
-    sensitiveHealthQuery: looksHealthSensitive(query),
   };
 }
 
@@ -108,6 +95,8 @@ export async function fetchSearchSuggestions(opts) {
 
   // Don't cache personalized results, they're user-specific
   const cacheKey = personalized ? null : sessionCacheKey(query, category, symptom, maxResults);
+  // Results are checked against the catalog, which loads after first paint.
+  await loadCatalog();
   if (cacheKey) {
     const cached = readSessionCache(cacheKey);
     if (cached) {

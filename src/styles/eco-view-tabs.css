@@ -1,0 +1,47 @@
+/* Ecosystem "Products | Dashboard" switch (EcosystemViewTabs.jsx). Same
+   segmented pill as the app's Ecosystem screen (.ay-eco-tabs): espresso
+   outline, the chosen view filled. 44px targets, brand colours only.
+   The strip uses the page grid (--mockup-page-width + --mockup-gutter, as
+   .eco3 and the nav do), so the switch lines up with the content's left edge. */
+html body .app-container.app-container.app-container .ay-ecoview {
+  display: flex; justify-content: flex-start;
+  width: 100%; max-width: var(--mockup-page-width); margin: 0 auto; box-sizing: border-box;
+  padding: 24px var(--mockup-gutter) 0;
+}
+html body .app-container.app-container.app-container .ay-ecoview__tabs {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px;
+  width: min(100%, 320px); margin: 0; padding: 4px; box-sizing: border-box;
+  border: 2px solid #3e2723; border-radius: 99px; background: #ffedac;
+}
+html body .app-container.app-container.app-container .ay-ecoview__tabs button {
+  min-height: 44px; margin: 0; padding: 0 16px; border: 0 !important; border-radius: 99px !important;
+  background: transparent !important; box-shadow: none !important; color: #3e2723 !important;
+  font: 600 var(--ay-fs-secondary)/1 var(--ay-sans) !important; letter-spacing: 0 !important; text-transform: none !important;
+  cursor: pointer; transition: background-color 150ms ease, color 150ms ease;
+}
+html body .app-container.app-container.app-container .ay-ecoview__tabs button:hover:not(.is-on) { text-decoration: underline; text-underline-offset: 3px; }
+html body .app-container.app-container.app-container .ay-ecoview__tabs button.is-on { background: #3e2723 !important; color: #ffedac !important; }
+html body .app-container.app-container.app-container .ay-ecoview__tabs button:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+/* On espresso (dark theme, or over the Products hero): butter outline, the chosen view butter. */
+html body .app-container.app-container.app-container:is([data-theme='brand-dark']) .ay-ecoview__tabs,
+html body .app-container.app-container.app-container .ay-ecoview--onhero .ay-ecoview__tabs { border-color: #ffedac; background: #3e2723; }
+html body .app-container.app-container.app-container:is([data-theme='brand-dark']) .ay-ecoview__tabs button,
+html body .app-container.app-container.app-container .ay-ecoview--onhero .ay-ecoview__tabs button { color: #ffedac !important; }
+html body .app-container.app-container.app-container:is([data-theme='brand-dark']) .ay-ecoview__tabs button.is-on,
+html body .app-container.app-container.app-container .ay-ecoview--onhero .ay-ecoview__tabs button.is-on { background: #ffedac !important; color: #3e2723 !important; }
+/* Over the hero: the strip is the top of the hero band, full bleed the same
+   way the hero is (espresso box-shadow, clipped to the strip's own height). */
+html body .app-container.app-container.app-container .ay-ecoview--onhero {
+  position: relative; background: #3e2723; box-shadow: 0 0 0 100vmax #3e2723; clip-path: inset(0 -100vmax);
+}
+/* Dark theme: the hero is rose, so the strip is rose and the switch goes back to espresso on a light ground. */
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay-ecoview--onhero { background: #f7badd; box-shadow: 0 0 0 100vmax #f7badd; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ecoview--onhero .ay-ecoview__tabs { border-color: #3e2723; background: #f7badd; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ecoview--onhero .ay-ecoview__tabs button { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ecoview--onhero .ay-ecoview__tabs button.is-on { background: #3e2723 !important; color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ecoview--onhero .ay-ecoview__tabs button:focus-visible { outline-color: #3e2723; }
+/* 24px from the switch to the hero's content (the hero's own top padding is 28px). */
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .ay-ecoview--onhero + .ay-ecoview__panel > .eco3 > .ay3-ecohero:first-child { padding-top: 24px !important; }
+@media (prefers-reduced-motion: reduce) {
+  html body .app-container.app-container.app-container .ay-ecoview__tabs button { transition: none; }
+}

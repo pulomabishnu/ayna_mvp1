@@ -35,8 +35,6 @@
     try { gpc = navigator.globalPrivacyControl === true; } catch { /* unavailable */ }
     if (!gpc) return true;
 
-    // Match the main app's region-scoped GPC behavior. Fail closed if the
-    // region lookup cannot confirm that analytics may remain on.
     try {
       const response = await fetch('/api/gpc-region', { cache: 'no-store' });
       if (!response.ok) return false;
@@ -99,8 +97,6 @@
     document.getElementById(id)?.addEventListener('click', () => {
       const properties = { plan, amount, currency: 'USD' };
       capture('pro_plan_selected', properties);
-      // This is the user's request to enter Stripe checkout. The authoritative
-      // paid event still comes only from the signed Stripe webhook.
       capture('pro_checkout_requested', properties);
     }, { capture: true });
   }

@@ -138,3 +138,11 @@ export function takeProductTab(now = Date.now()) {
   } catch { /* ignore */ }
   return null;
 }
+
+/** Take the pending hand-off only when it is for `tab` (e.g. a card's match pill asks for "why"). */
+export function takeProductTabIf(tab, now = Date.now()) {
+  if (!pendingProductTab || pendingProductTab.tab !== tab) return false;
+  const fresh = now - pendingProductTab.at < 5000;
+  pendingProductTab = null;
+  return fresh;
+}

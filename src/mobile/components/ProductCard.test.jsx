@@ -30,14 +30,15 @@ describe('product card match display', () => {
     const shop = renderToStaticMarkup(<ProductCard variant="list" product={{ ...pad, productUrl: 'https://example.com/products/flow-pad' }} onClick={() => {}} />);
     const search = renderToStaticMarkup(<ProductCard variant="list" product={{ ...pad, productUrl: 'https://example.com/search?q=flow-pad' }} onClick={() => {}} />);
     expect(shop).toContain('href="https://example.com/products/flow-pad"');
-    expect(shop).toContain('Shop');
+    expect(shop).toContain('Buy');
     expect(shop).toContain('Details');
-    expect(search).not.toContain('>Shop');
+    expect(search).not.toContain('>Buy');
   });
 
   it('keeps availability text out of the price row', () => {
     const html = renderToStaticMarkup(<ProductCard product={{ ...pad, price: 'Available in US' }} onClick={() => {}} />);
-    expect(html).toContain('<b class="is-muted">Price at retailer</b>');
+    // QA3 M8: an unknown price is hidden, never "Price at retailer".
+    expect(html).not.toContain('Price at retailer');
     expect(html).not.toContain('Available in US');
   });
 });

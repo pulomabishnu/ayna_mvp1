@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { devPreviewOn } from '../utils/devPreview.js';
+import { needAreaLabels } from '../utils/needAreas.js';
+import { markOnboardingDone } from '../health/onboardingSignal.js';
 import { trackApp, appScreenName } from './utils/appAnalytics.js';
+import { navTabFor, aynaRoute, initialAppRoute, homeScreenFor, showsEmptyHome } from './utils/navTab.js';
 import { useRecommendationViews } from '../utils/recommendationAnalytics.js';
 import './mobile.css';
 import './editorial.css';
@@ -10,38 +14,67 @@ import './reference-system.css';
 import './tokens.css';
 import './app-play.css';
 import './no-focus-ring.css';
-import { ALL_PRODUCTS, getEcosystemAlternatives, getEcosystemSeedFromQuiz, filterPrescriptionCareGate, hydrateCatalogProduct, getSelectedNeeds } from '../data/products.js';
+import { ALL_PRODUCTS, getProductById, getEcosystemAlternatives, getEcosystemSeedFromQuiz, filterPrescriptionCareGate, hydrateCatalogProduct, getSelectedNeeds, getProductMatchDetailsForProduct } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from '../utils/ecosystemStore.js';
+import { forYouPicks } from './utils/forYouPicks.js';
 import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake.js';
 import { behaviorFrom } from '../utils/matchDisplay.js';
 import { ARTICLES } from '../components/Articles.jsx';
+import { topicNeighbors } from '../data/readSections.js';
 import { rankReadsForProfile, readFitsStage } from './utils/personalReads.js';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
+import useMyAvatarUrl from '../hooks/useMyAvatarUrl.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
-import { usePushNotifications } from './hooks/usePushNotifications.js';
+import { usePushNotifications, usePushRoutes } from './hooks/usePushNotifications.js';
+import { PUSH_ASK_EVENT } from '../components/today/rundownPush.js';
+import { noteRoutineAdd, noteRoutineRemove } from '../health/routineFollowUps.js';
 import { useHealthData, DEV_HEALTH_DEMO } from './hooks/useHealthData.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
+import { recordRoutineOutcome } from '../health/routineOutcome.js';
+import { fromRoutineOutcomes, outcomesToProductHistory, readTries, saveTry, setTriesOwner } from '../health/outcomes.js';
+import { syncUserData } from '../health/userDataSync.js';
+import { productNotesFromRoutine, readGuide, saveGuide } from './utils/aynaGuide.js';
+import { buildDashboard } from '../health/dashboard.js';
+import { explainWeek, usesHormonalBC } from '../health/weekInsights.js';
+import { weekSummary, NEVER_TO_LLM } from './utils/dashboardAsk.js';
+import { useAskHealthPref } from '../health/askHealthPref.js';
+import { LIVE_ONLY_SOURCES } from '../health/metrics.js';
 import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
 import { fetchNotificationPreferences } from './utils/notificationPreferencesApi.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
+import { SOURCE_NAMES } from './data/healthConnections.js';
 import { getNextArticle } from './utils/nextArticle.js';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, isStepAnswered, reconstructIntakeFromSnapshot } from './data/intakeModel.js';
 import { clearIntakeDraft, readDraftProgress } from './data/quizDraftProgress.js';
 import FinishQuizCard from '../components/FinishQuizCard.jsx';
+import FeedbackPrompts from '../components/FeedbackPrompts.jsx';
 import MobileTabBar from './components/MobileTabBar.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
+import HomeSwitch from './components/HomeSwitch.jsx';
+import './ayna-home.css';
 import ProfileFlow, { AboutAynaScreen } from './screens/profile/ProfileFlow.jsx';
 
 import LandingScreen from './screens/LandingScreen.jsx';
-import BrowseScreen from './screens/BrowseScreen.jsx';
+import AynaHomeScreen from './screens/AynaHomeScreen.jsx';
+import AynaHomeChatScreen from './screens/AynaHomeChatScreen.jsx';
+import { readHomeVariant } from './utils/homeVariant.js';
+import { APP_TABS, APP_TABS_CHAT_FIRST } from '../components/nav/mainTabs.js';
+import ExploreScreen from './screens/ExploreScreen.jsx';
+import ProductSheet from './components/ProductSheet.jsx';
+import { pregnancyFirstFrom } from '../components/pdp/pdpParts.js';
+import { ProductSheetContext } from './productSheetContext.js';
+import { matchState as productMatchState } from '../utils/matchState.js';
+import { useRundownCommunity } from './hooks/useRundownCommunity.js';
 import ProductDetailScreen from './screens/ProductDetailScreen.jsx';
+import ProductCard from './components/ProductCard.jsx';
+import { readsForProduct, productsForRead, ROW_NOTES } from '../data/readLinks.js';
 import ArticleDetailScreen from './screens/ArticleDetailScreen.jsx';
 import EcosystemIntroScreen from './screens/EcosystemIntroScreen.jsx';
 import IntakeScreen from './screens/IntakeScreen.jsx';
@@ -54,13 +87,21 @@ import EcosystemScreen from './screens/EcosystemScreen.jsx';
 import EcosystemResetDialog from './components/EcosystemResetDialog.jsx';
 import SavedScreen from './screens/SavedScreen.jsx';
 import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
-import LibraryScreen from './screens/LibraryScreen.jsx';
-import { AskContext } from './askContext.js';
+import { AskContext, AppHeaderContext } from './askContext.js';
 import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
 import CommunityScreen from './screens/CommunityScreen.jsx';
 import QuizConnectScreen from './screens/QuizConnectScreen.jsx';
+import ReadyScreen from './screens/ReadyScreen.jsx';
 import PlanScreen from './screens/PlanScreen.jsx';
+import CompareScreen from './screens/CompareScreen.jsx';
+import SaveAuthSheet from '../components/save/SaveAuthSheet.jsx';
+import { SaveFollowUpStrip } from '../components/save/SaveFollowUp.jsx';
+import { savePrompt, stashPendingSave, takePendingSave } from '../utils/savePrompt.js';
+import { setSavedRemindersOwner } from '../utils/savedReminders.js';
+import { compareStore } from '../utils/compareStore.js';
+import { addedToRoutineText, REMOVED_FROM_ROUTINE } from '../utils/routineCopy.js';
 import { healthMatchContext } from '../health/matchContext.js';
+import { useHealthMatchPref } from '../health/matchPref.js';
 import { addNeedToAnswers } from '../matching/addNeed.js';
 import * as communityStore from '../utils/community/communityStore.js';
 import { uploadCommunityImage, deleteCommunityImage } from '../utils/community/imageUpload.js';
@@ -79,7 +120,33 @@ import './app-polish.css';
 import './app-landing.css';
 import './app-health.css';
 import './app-ux-fixes.css';
+import './app-compact.css';
+// Design direction (docs/design-direction.md): loaded last, outranks the layers above.
+import './app-direction.css';
 import './keyboardModality.js';
+import { savedHaptic, addedHaptic } from '../utils/feedback.js';
+import { useSheetDrag } from './hooks/useSheetDrag.js';
+import PushLayer from './components/PushLayer.jsx';
+import GlobalToast from '../components/v3/GlobalToast.jsx';
+import HeardAboutPrompt from '../components/HeardAboutPrompt.jsx';
+import { shouldAskHeardAbout } from '../utils/signupConsent.js';
+import { toast } from '../utils/toast.js';
+// Motion moments (sheets, push, tab fade) and app-wide press states; last so it wins.
+import './app-motion.css';
+// Deep round 2 (Oct 21): native-feel fixes. Own file so it doesn't collide with
+// the stylesheet consolidation on style/consolidate; loaded last.
+import './app-polish-2.css';
+// Oct 21-22 design language kit + the app pass (DESIGN_SYSTEM_OCT25); last so it wins.
+import '../styles/ds.css';
+import './ds-app.css';
+import '../styles/focus-group-oct26.css';
+import OfflineBanner from './components/OfflineBanner.jsx';
+import TutorialLayer from './tutorial/TutorialLayer.jsx';
+import { growTransition } from '../utils/viewTransition.js';
+import { localToday } from '../utils/localDate.js';
+import { trackQuizStarted, trackFirstMatchShown, eventSurface } from '../utils/analyticsEvents.js';
+import ProPaywallHost from '../components/ProPaywallHost.jsx';
+import { openProPaywall, proLimitFeature } from '../pro/paywall.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -90,13 +157,31 @@ import './keyboardModality.js';
 // entirely, so a Google sign-in always fell through to "You" everywhere.
 function displayNameFromUser(user) {
   const meta = user?.user_metadata || {};
-  const raw = meta.first_name || meta.firstName || meta.given_name || meta.full_name || meta.name || '';
+  // The name she typed (sign-up, or You > Account information) is kept as
+  // typed: cutting it to its first word made an edit like "Mary Ann" turn
+  // back into "Mary" on the next refresh, so the edit looked unsaved.
+  const own = String(meta.first_name || meta.firstName || '').trim();
+  if (own) return own;
+  // Provider names (Google, Apple) are full names: use the first word.
+  const raw = meta.given_name || meta.full_name || meta.name || '';
   return String(raw).trim().split(/\s+/).filter(Boolean)[0] || '';
 }
 
 const SCREENS = {
   landing: LandingScreen,
-  browse: BrowseScreen,
+  // App tabs (founder, Oct 24 22:03; team sync Oct 25): Explore · Library ·
+  // Home (centre) · Community · You. 'ayna' is Home: dashboard first on one
+  // screen, with the chat and Products one tap away; ?home=chat shows the
+  // chat-first Home for the focus group (AynaHomeChatScreen). The old 'today',
+  // 'ask' and 'ayna' keys open it (navTab.js aynaRoute).
+  // Explore's Products section keeps the 'browse' key, so its $screen name
+  // (and the app dashboard) does not change. 'library' is a pushed screen
+  // under Explore (founder, Oct 24 22:12: no Library tab), with Back.
+  ayna: AynaHomeScreen,
+  explore: ExploreScreen,
+  browse: ExploreScreen,
+  // The reads are Explore's Reads tab (Explore audit, Oct 25): the old 'library' screen opens it.
+  library: ExploreScreen,
   ecointro: EcosystemIntroScreen,
   quiz: IntakeScreen,
   building: BuildingScreen,
@@ -106,8 +191,8 @@ const SCREENS = {
   saved: SavedScreen,
   community: CommunityScreen,
   checkin: MonthlyCheckinScreen,
-  library: LibraryScreen,
   connect: QuizConnectScreen,
+  ready: ReadyScreen,
   plan: PlanScreen,
 };
 
@@ -188,14 +273,15 @@ function seedEcosystemFromAnswers(quizAnswers, matchOpts) {
   const { mergedProducts, seedMeta } = getEcosystemSeedFromQuiz(quizAnswers, null, matchOpts);
   return capProductsPerBrand(Object.values(mergedProducts || {}).map((p) => {
     const area = resolveEcosystemProductArea(p, REAL_ECOSYSTEM_AREAS);
-    return { ...p, areaKey: area ? area.key : null, needId: seedMeta?.[p.id]?.needId || null };
+    // intakeGenerated: ayna picked it from her answers, she did not add it (QA M3; same flag as the website).
+    return { ...p, areaKey: area ? area.key : null, needId: seedMeta?.[p.id]?.needId || null, intakeGenerated: true };
   }));
 }
 
 // Which quiz-end step (connect / plan) this tab was on, so a full-page sign-in
 // redirect (Oura, WHOOP, Google, Apple) comes back to it. Tab-only storage.
 const QUIZ_STEP_KEY = 'ayna_quiz_step';
-const DEV_DEMO_USER = import.meta.env.DEV ? { id: 'dev-health-demo', email: 'demo@localhost', user_metadata: { full_name: 'Demo' } } : null;
+const DEV_DEMO_USER = devPreviewOn() ? { id: 'dev-health-demo', email: 'demo@localhost', user_metadata: { full_name: 'Demo' } } : null;
 function quizStepToResume() {
   try { const v = sessionStorage.getItem(QUIZ_STEP_KEY); return ['connect', 'plan'].includes(v) ? v : null; } catch { return null; }
 }
@@ -207,23 +293,64 @@ function hasSavedIntakeDraft() {
   } catch { return false; }
 }
 
+// Screens where the feedback survey may appear (never the quiz, sign-in or a sheet).
+const APP_FEEDBACK_SCREENS = new Set(['landing', 'ayna', 'explore', 'eco', 'browse', 'library', 'saved']);
+
+// What an account adds, said before asking her to sign in (team direction 56).
+const AUTH_VALUE = {
+  'Ask ayna': 'ayna’s AI answers this from your health profile and checked sources. A free account keeps your questions private to you. Questions about your matches, what helped before and your day already work without one.',
+  'health data': 'Connecting Apple Health or Oura needs a free account, so your data stays tied to you and only you can see it.',
+  playlists: 'Saving a list to Community needs a free account, so it is yours to share or keep private.',
+};
+
+// Screens that make no sense to return to after signing in.
+const AUTH_NO_RETURN = new Set(['landing', 'signin', 'quiz', 'building', 'reveal', 'connect', 'checkin', 'plan']);
+
+/** Scroll every scrolled area of the app (and the page) back to the top. */
+function scrollAppToTop(root) {
+  const smooth = !(typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const opts = { top: 0, behavior: smooth ? 'smooth' : 'auto' };
+  if (root) for (const el of [root, ...root.querySelectorAll('*')]) { if (el.scrollTop > 0 && typeof el.scrollTo === 'function') el.scrollTo(opts); }
+  if (typeof window.scrollTo === 'function' && window.scrollY > 0) window.scrollTo(opts);
+}
+
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
   const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName, omittedProducts = {} } = session;
+  const [heardDismissed, setHeardDismissed] = useState(false);
   const myProducts = useMemo(() => storedProducts.map(hydrateCatalogProduct), [storedProducts]);
   // The welcome screen is the signed-out entry point. Returning accounts
   // move into their ecosystem once auth finishes restoring their session.
-  const [screen, setScreen] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('screen'))
-    // Answers waiting on the quiz-end steps always come back there (after a
-    // provider or Google sign-in redirect, a refresh, or the app relaunching),
-    // so they are never stranded.
-    || (session.pendingQuiz ? quizStepToResume() || 'connect' : null)
-    || (!hasEcosystem && hasSavedIntakeDraft() ? 'ecointro' : 'landing'));
-  const [ecoTab, setEcoTab] = useState('products');
+  // Returning on this phone (signed out too) with her profile or ecosystem
+  // saved here, she lands on the ayna chat, never back on the first-run welcome.
+  // Dashboard-first Home by default; ?home=chat (or the dev flag) shows the chat-first one.
+  const [homeVariant] = useState(() => readHomeVariant());
+  const chatFirst = homeVariant === 'chat';
+  const [initialRoute] = useState(() => initialAppRoute({
+    variant: homeVariant,
+    devScreen: import.meta.env.DEV ? new URLSearchParams(window.location.search).get('screen') : null,
+    pendingQuiz: Boolean(session.pendingQuiz),
+    quizStep: session.pendingQuiz ? quizStepToResume() : null,
+    hasProfile: Boolean(hasEcosystem || session.lastQuizAnswers),
+    hasDraft: hasSavedIntakeDraft(),
+  }));
+  const [screen, setScreenRaw] = useState(initialRoute.screen);
+  // Home's view: 'home' (one-screen dashboard), 'dashboard', 'chat', 'products'
+  // (chat-first variant: 'chat', 'products', 'dashboard').
+  const homeRoot = chatFirst ? 'chat' : 'home';
+  const [homeView, setHomeView] = useState(initialRoute.view || homeRoot);
+  // Every way in still works: 'today' and 'ayna' open Home, 'ask' the chat.
+  const setScreen = (next) => {
+    const r = aynaRoute(next, homeVariant);
+    if (r.view) setHomeView(r.view);
+    setScreenRaw(r.screen);
+  };
+  // Explore's section when it is not Products ('browse') or Resources ('library').
+  const [exploreSection, setExploreSection] = useState('overview');
   const [planAddedGoals, setPlanAddedGoals] = useState({});
   const [hasIntakeDraft, setHasIntakeDraft] = useState(hasSavedIntakeDraft);
   // Product/article detail render as an overlay ON TOP of whichever base
-  // screen (Browse, My Ecosystem, Saved) is currently mounted, instead of
+  // screen (Browse, My ecosystem, Saved) is currently mounted, instead of
   // replacing it`screen` never changes when one opens. That's what makes
   // "back" free: the underlying screen was never unmounted, so its own
   // state (search text, personalized toggle, scroll position, infinite-
@@ -237,19 +364,66 @@ export default function MobileApp() {
   const overlayType = overlay?.type || null;
   const overlayProductId = overlay?.type === 'product' ? overlay?.item?.id || null : null;
   const overlayProductCategory = overlay?.type === 'product' ? overlay?.item?.category || null : null;
+  // The ayna tab's views keep the old $screen names (Ask and Today), so the
+  // "Mobile App (TestFlight)" dashboard keeps counting; Products is new.
+  const screenForAnalytics = screen === 'ayna' ? ({ home: 'today', chat: 'ask', dashboard: 'today', products: 'ayna_products' })[homeView] || 'today' : screen;
   useEffect(() => {
-    const name = appScreenName(screen, overlayType);
+    const name = appScreenName(screenForAnalytics, overlayType);
     try { window.__aynaView = name; } catch { /* no window */ }
-    trackApp('$screen', { $screen_name: name });
-  }, [screen, overlayType]);
+    // $screen_name keeps the old names where a screen moved (browse, library,
+    // eco, profile), so the app dashboard keeps counting; nav_tab says which
+    // of the five tabs it now sits under.
+    trackApp('$screen', { $screen_name: name, nav_tab: navTabFor(screen, overlayType) || 'none', home_variant: homeVariant });
+  }, [screenForAnalytics, screen, overlayType]);
   // recommendation_viewed: the products ayna matched to her needs (seeded with
   // a needId), on her Ecosystem screen, in shelf order.
-  const ecoRecommended = screen === 'eco' && !overlayType ? myProducts.filter((p) => p?.needId) : null;
+  const ecoRecommended = (screen === 'eco' || (screen === 'ayna' && homeView === 'products')) && !overlayType ? myProducts.filter((p) => p?.needId) : null;
   useRecommendationViews(ecoRecommended, 'app_ecosystem');
   useEffect(() => {
     if (!overlayProductId) return;
     trackApp('product_card_opened', { productId: overlayProductId, category: overlayProductCategory });
   }, [overlayProductId, overlayProductCategory]);
+  // Browser Back (the web preview, Android back): each screen or drill-in
+  // she opens is one history step, so Back returns to the previous one in
+  // the app instead of leaving the page. Overlay items stay in memory here
+  // (not in history.state, which only holds an index).
+  const navStackRef = useRef([]);
+  const restoringRef = useRef(false);
+  useEffect(() => {
+    if (restoringRef.current) { restoringRef.current = false; return; }
+    const stack = navStackRef.current;
+    const last = stack[stack.length - 1];
+    if (last && last.screen === screen && last.overlay === overlay && last.homeView === homeView) return;
+    // Home's views are steps too: Back from the chat or Products returns to Home.
+    stack.push({ screen, overlay, homeView });
+    if (stack.length > 60) stack.splice(0, stack.length - 60);
+    try {
+      if (stack.length === 1) window.history.replaceState({ ...(window.history.state || {}), aynaNav: 0 }, '');
+      else window.history.pushState({ aynaNav: stack.length - 1 }, '');
+    } catch { /* history unavailable */ }
+  }, [screen, overlay, homeView]);
+  useEffect(() => {
+    const onPop = () => {
+      const stack = navStackRef.current;
+      if (stack.length < 2) return;
+      stack.pop();
+      const prev = stack[stack.length - 1];
+      restoringRef.current = true;
+      setOverlay(prev.overlay);
+      if (prev.homeView) setHomeView(prev.homeView);
+      setScreenRaw(prev.screen);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+  // Leaving something she opened: a history step back when that is where she
+  // came from (so Back does not reopen it), else straight to `to`.
+  const goBackTo = (to) => {
+    const stack = navStackRef.current;
+    const prev = stack[stack.length - 2];
+    if (prev && prev.screen === aynaRoute(to).screen && !prev.overlay) { try { window.history.back(); return; } catch { /* fall through */ } }
+    setScreen(to);
+  };
   const [readArticleIds, setReadArticleIds] = useState([]);
   // How far each read has been scrolled (0–1). Per-device convenience, so localStorage is fine.
   const [readProgress, setReadProgress] = useState(() => { try { return JSON.parse(localStorage.getItem('ayna_read_progress_v1') || '{}') || {}; } catch { return {}; } });
@@ -261,6 +435,8 @@ export default function MobileApp() {
     return next;
   });
   const [intakeMode, setIntakeMode] = useState('new');
+  // 'more': the optional setup questions, opened from the reveal (ReadyScreen).
+  const [intakeFlow, setIntakeFlow] = useState('auto');
   const [ecosystemNotice, setEcosystemNotice] = useState('');
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [resettingEcosystem, setResettingEcosystem] = useState(false);
@@ -284,9 +460,32 @@ export default function MobileApp() {
     setCommunitySeed({ token: Date.now() });
     setScreen('community');
   }, []);
+  const closeAuthSheetNow = () => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; };
+  const authSheet = useSheetDrag(closeAuthSheetNow);
+  const closeAuthSheet = () => authSheet.close();
+  const authSheetOpen = overlay?.type === 'profile-auth' || !!authPrompt;
+  useEffect(() => {
+    if (!authSheetOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') closeAuthSheetNow(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+  // Tab switches cross-fade in 120ms (never slide); drill-ins push (PushLayer).
+  const rootRef = useRef(null);
+  const prevScreenRef = useRef(screen);
+  useEffect(() => {
+    const TABS = ['ayna', 'explore', 'eco', 'ecointro', 'browse', 'library', 'community', 'saved'];
+    const was = prevScreenRef.current;
+    prevScreenRef.current = screen;
+    if (was === screen || !TABS.includes(screen) || !TABS.includes(was)) return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    rootRef.current?.firstElementChild?.animate?.([{ opacity: 0 }, { opacity: 1 }], { duration: 120, easing: 'linear' });
+  }, [screen]);
   const swipeStart = useRef(null);
   const handleMainTouchStart = (event) => {
-    if (overlay || !['browse', 'eco'].includes(screen) || event.touches.length !== 1) return;
+    // Home (its dashboard view) and Explore, the first two tabs; never on the chat.
+    const onHomeRoot = screen === 'ayna' && homeView === (chatFirst ? 'dashboard' : 'home');
+    if (overlay || !(onHomeRoot || ['browse', 'explore'].includes(screen)) || event.touches.length !== 1) return;
     const target = event.target;
     if (target.closest('input, textarea, select, [contenteditable="true"], [data-no-page-swipe]')) return;
     swipeStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
@@ -297,17 +496,45 @@ export default function MobileApp() {
     const dy = event.changedTouches[0].clientY - swipeStart.current.y;
     swipeStart.current = null;
     if (Math.abs(dx) < 85 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
-    if (screen === 'eco' && dx < 0) { setBrowseQuery(''); setScreen('browse'); }
-    if (screen === 'browse' && dx > 0 && hasEcosystem) setScreen('eco');
+    // Swipe between the first two tabs, Home and Explore.
+    if (screen === 'ayna' && dx < 0) { setExploreSection('overview'); setScreen('explore'); }
+    if ((screen === 'explore' || screen === 'browse') && dx > 0) { setHomeView(homeRoot); setScreenRaw(homeTarget); }
   };
   const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
   const authUser = realAuthUser || (DEV_HEALTH_DEMO ? DEV_DEMO_USER : null);
-  const [loadedAccountId, setLoadedAccountId] = useState(null);
+  // Time to first value (all-pages brief v3): quiz start -> first match on screen. No health details.
   useEffect(() => {
-    if (authLoading || !authUser || screen !== 'landing') return;
-    Promise.resolve().then(() => setScreen(hasEcosystem ? 'eco' : 'ecointro'));
+    if (screen === 'quiz' && intakeMode === 'new') trackQuizStarted({ surface: eventSurface(), signed_in: Boolean(authUser) });
+    else if (screen === 'reveal') trackFirstMatchShown({ surface: eventSurface() });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen]);
+  const [guideState, setGuideState] = useState({ userId: null, value: null });
+  const guide = useMemo(() => guideState.userId === authUser?.id && guideState.value ? guideState.value : readGuide(authUser?.id), [guideState, authUser?.id]);
+  const updateGuide = (next) => {
+    if (!authUser?.id) return;
+    setGuideState({ userId: authUser.id, value: next });
+    saveGuide(authUser.id, next);
+  };
+  const [loadedAccountId, setLoadedAccountId] = useState(null);
+  // The landing opened on purpose (the ayna wordmark, founder Oct 27 01:13)
+  // stays up for a signed-in account; only the cold-start landing hands over to Home.
+  const landingPinnedRef = useRef(false);
+  useEffect(() => {
+    if (screen !== 'landing') { landingPinnedRef.current = false; return; }
+    if (authLoading || !authUser || landingPinnedRef.current) return;
+    Promise.resolve().then(() => setScreen('ayna'));
   }, [authLoading, authUser, hasEcosystem, screen]);
+  // Signed out with nothing on this phone, Home is the landing: never an empty
+  // dashboard, whatever sent her there (a late auth answer, a swipe, Back, a
+  // stale session that turned out signed out). Founder, Oct 27 11:38.
+  const homeTarget = homeScreenFor({ signedIn: Boolean(authUser), hasProfile: Boolean(hasEcosystem || lastQuizAnswers), pendingQuiz: Boolean(session.pendingQuiz) });
+  useEffect(() => {
+    if (!showsEmptyHome({ screen, view: homeView, variant: homeVariant, signedIn: Boolean(authUser), hasProfile: Boolean(hasEcosystem || lastQuizAnswers), pendingQuiz: Boolean(session.pendingQuiz) })) return;
+    // (the render below already shows the landing in the meantime)
+    Promise.resolve().then(() => setScreenRaw('landing'));
+  }, [screen, homeView, homeVariant, authUser, hasEcosystem, lastQuizAnswers, session.pendingQuiz]);
+  const openLanding = () => { landingPinnedRef.current = true; setAskAynaOpen(false); setOverlay(null); setScreenRaw('landing'); };
   const requestAuth = (feature, resume = null) => {
     authResumeRef.current = resume || (() => setScreen(screen));
     setAuthPrompt({ feature });
@@ -335,7 +562,7 @@ export default function MobileApp() {
     setAuthPrompt(null);
     setAskAynaOpen(false);
     setOverlay(null);
-    if (lastQuizAnswers && !authUser) { setRevealAtEnd(true); setScreen('reveal'); return; }
+    if (lastQuizAnswers && !authUser) { setRevealFrom(AUTH_NO_RETURN.has(screen) ? 'ayna' : screen); setRevealAtEnd(true); setScreen('reveal'); return; }
     setIntakeMode('new');
     setEditingHealthProfile(false);
     setScreen('quiz');
@@ -351,21 +578,44 @@ export default function MobileApp() {
   // uses); signing in later merges these into her account. One gentle nudge
   // per visit, never a wall in front of the save.
   const [saveNudge, setSaveNudge] = useState(false);
-  const saveNudgeShownRef = useRef(false);
+  // Signed out, Save first says what an account is for (team direction 22):
+  // Continue signs in and finishes the save; she can keep it on this phone too.
+  const [saveSheet, setSaveSheet] = useState(null);
+  const finishSave = (product) => {
+    toggleSaved(product);
+    savedHaptic(); markPushMoment();
+    // "Remind me later · Compare" next to what she saved (inline on its page).
+    savePrompt.show(product);
+  };
   const handleToggleSaved = (product) => {
     const adding = !savedMap[product?.id];
+    if (adding && !authUser) { setSaveSheet(product); return; }
+    if (adding) { finishSave(product); return; }
     toggleSaved(product);
-    if (!authUser && adding && !saveNudgeShownRef.current) {
-      saveNudgeShownRef.current = true;
-      setSaveNudge(true);
-    }
+    savePrompt.hide();
+    toast('Removed from Saved', { label: 'Undo', onClick: () => finishSave(product) });
   };
+  const openCompare = (product = null) => {
+    if (product?.id) compareStore.add(product);
+    compareStore.setSelecting(false);
+    setOverlay({ type: 'compare' });
+  };
+  const openCompareRef = useRef(openCompare);
+  openCompareRef.current = openCompare;
+  useEffect(() => compareStore.setOpener(() => openCompareRef.current()), []);
   useEffect(() => {
     if (!saveNudge) return undefined;
     const t = setTimeout(() => setSaveNudge(false), 6000);
     return () => clearTimeout(t);
   }, [saveNudge]);
   useEffect(() => { if (authUser) Promise.resolve().then(() => setSaveNudge(false)); }, [authUser]);
+  useEffect(() => { setSavedRemindersOwner(authUser?.id || null); }, [authUser?.id]);
+  // A save she started signed out finishes once she is signed in.
+  useEffect(() => {
+    if (!authUser?.id || authLoading) return;
+    const pending = takePendingSave();
+    if (pending && !savedMap[pending.id]) Promise.resolve().then(() => finishSave(pending));
+  }, [authUser?.id, authLoading]); // eslint-disable-line react-hooks/exhaustive-deps
   const [browseQuery, setBrowseQuery] = useState('');
   // Behavior signals for the matching engine (saved, "Not for me", in her
   // Ecosystem). Memoized: the engine caches profiles by this object.
@@ -375,13 +625,36 @@ export default function MobileApp() {
   );
   const { theme, resolvedTheme, setThemeMode } = useThemeMode();
   const [personalized, setPersonalized] = usePersonalizedFeed(authUser?.id);
-  // Requests push permission and registers this device on launch (iOS only
-  // for now); stores the token against authUser once both are available.
-  // Registration only, nothing sends a push yet.
-  usePushNotifications(authUser?.id);
+  // Push permission is asked in context: after her first save or add, never
+  // on launch (iOS only for now). Registration only, nothing sends a push yet.
+  const [askPush, setAskPush] = useState(() => { try { return localStorage.getItem('ayna_push_asked_v1') === '1'; } catch { return false; } });
+  const markPushMoment = () => { if (askPush) return; try { localStorage.setItem('ayna_push_asked_v1', '1'); } catch { /* storage blocked */ } setAskPush(true); };
+  usePushNotifications(authUser?.id, askPush);
+  // Today's "Get your Daily Rundown each morning?" (after her first Rundown) is also a push moment.
+  useEffect(() => {
+    const ask = () => markPushMoment();
+    window.addEventListener(PUSH_ASK_EVENT, ask);
+    return () => window.removeEventListener(PUSH_ASK_EVENT, ask);
+  });
+  // A tapped notification opens Today, or the product a recall alert is about.
+  usePushRoutes((route) => {
+    setAskAynaOpen(false);
+    if (route.screen === 'today') { setOverlay(null); setScreen('today'); return; }
+    if (route.screen === 'product') {
+      const item = getProductById(route.productId) || ALL_PRODUCTS.find((p) => String(p.id) === route.productId);
+      if (item) setOverlay({ type: 'product', item: hydrateCatalogProduct(item) });
+    }
+  });
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(() => !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask')));
   const [askAynaHistoryState, setAskAynaHistoryState] = useState({ userId: null, messages: [] });
+  const [askSeed, setAskSeed] = useState(null);
+  // The end-of-rundown questions, as the chat's starters for this session (founder, Oct 24 20:12).
+  const [askStarters, setAskStarters] = useState([]);
+  // Text for the chat box from a Siri / Shortcuts link (co.aynahealth.app://ask?q=...).
+  const [askDraft, setAskDraft] = useState(null);
+  // The quick product sheet over the Rundown or the chat (ProductSheet.jsx).
+  const [sheetProduct, setSheetProduct] = useState(null);
   const askAynaHistory = askAynaHistoryState.userId === authUser?.id ? askAynaHistoryState.messages : [];
   const setAskAynaHistory = (messages) => setAskAynaHistoryState({ userId: authUser?.id, messages });
   // App-wide gate for Preferences > AI & Personalization > "Personalize with
@@ -399,7 +672,12 @@ export default function MobileApp() {
   const [resumeQuizDraft, setResumeQuizDraft] = useState(false);
   // "Make my matches more personal" opens the quiz at her next optional question.
   const [intakeAtOptional, setIntakeAtOptional] = useState(false);
+  // "Update life stages" (Ecosystem): the quiz opens on the life stage question.
+  const [intakeAtStep, setIntakeAtStep] = useState('');
   const [revealAtEnd, setRevealAtEnd] = useState(false);
+  // Where a replayed story was opened from: leaving it goes back there
+  // (team direction 35), never into setup. Null for the first-run story.
+  const [revealFrom, setRevealFrom] = useState(null);
   const lastIntakeModeRef = useRef('new');
   // "Get matched" on a product page: after the quiz, land back on that product with her match.
   const returnProductRef = useRef(null);
@@ -411,8 +689,9 @@ export default function MobileApp() {
   }, [screen]);
   useEffect(() => {
     // Back in the quiz: her answers live in the quiz draft again until she finishes.
-    if (screen === 'quiz' && session.pendingQuiz) updateSession({ pendingQuiz: null });
-  }, [screen, session.pendingQuiz, updateSession]);
+    // (Not for the reveal's optional questions: those add to the answers she just gave.)
+    if (screen === 'quiz' && session.pendingQuiz && intakeFlow !== 'more') updateSession({ pendingQuiz: null });
+  }, [screen, session.pendingQuiz, updateSession, intakeFlow]);
   useEffect(() => {
     try {
       if (['connect', 'plan'].includes(screen)) sessionStorage.setItem(QUIZ_STEP_KEY, screen);
@@ -424,7 +703,8 @@ export default function MobileApp() {
   }, [screen, resumeQuizDraft]);
   useEffect(() => {
     if (screen !== 'quiz' && intakeAtOptional) Promise.resolve().then(() => setIntakeAtOptional(false));
-  }, [screen, intakeAtOptional]);
+    if (screen !== 'quiz' && intakeAtStep) Promise.resolve().then(() => setIntakeAtStep(''));
+  }, [screen, intakeAtOptional, intakeAtStep]);
   const resumeQuizAtLastStep = () => {
     // From the quiz-end steps, go back into the answers she just gave (not yet saved).
     const fromPending = Boolean(session.pendingQuiz?.answers);
@@ -454,6 +734,7 @@ export default function MobileApp() {
   // captured a name (e.g. signed in with Google before this fallback
   // chain existed), without needing a one-time migration.
   const resolvedName = userName || displayNameFromUser(authUser);
+  const myAvatarUrl = useMyAvatarUrl(authUser?.id);
 
   // Load the signed-in user's existing website ecosystem into mobile.
   // Mobile still keeps its local session cache for instant rendering, but
@@ -537,7 +818,7 @@ export default function MobileApp() {
       }));
 
       // Mid quiz-end steps: stay there so her new answers get applied.
-      if (remoteProducts.length > 0 && !session.pendingQuiz) setScreen('eco');
+      if (remoteProducts.length > 0 && !session.pendingQuiz) setScreen('ayna');
       setLoadedAccountId(userId);
     })().catch((error) => {
       console.warn('[Ayna] mobile ecosystem sync failed:', error);
@@ -568,7 +849,10 @@ export default function MobileApp() {
   }, []);
   const browseProducts = buildBrowseProducts(discoveredProducts);
 
-  const Screen = SCREENS[screen] || LandingScreen;
+  // Never paint an empty dashboard for a signed-out visitor, not even for the
+  // one frame before the effect above moves her back to the landing.
+  const emptyHome = showsEmptyHome({ screen, view: homeView, variant: homeVariant, signedIn: Boolean(authUser), hasProfile: Boolean(hasEcosystem || lastQuizAnswers), pendingQuiz: Boolean(session.pendingQuiz) });
+  const Screen = emptyHome ? LandingScreen : screen === 'ayna' && chatFirst ? AynaHomeChatScreen : SCREENS[screen] || LandingScreen;
 
   // BrowseScreen/EcosystemScreen/EcosystemIntroScreen all default this to
   // the literal letter 'A' when it's not passed, that default was always
@@ -580,6 +864,8 @@ export default function MobileApp() {
     .map((key) => AREA_LABELS.find((a) => a.key === key)?.label)
     .filter(Boolean)
     .slice(0, 3);
+  // Save sheet: her picked needs (QA3 M11), from her latest answers.
+  const saveAreaLabels = useMemo(() => needAreaLabels(lastQuizAnswers || session.pendingQuiz?.answers || null, getSelectedNeeds), [lastQuizAnswers, session.pendingQuiz]);
   const goalCount = lastQuizAnswers?.frustrations?.length || 0;
   // "Personalize with my data" (Preferences > AI & Personalization), off
   // suppresses ambient personalization (match %, the For You toggles, Ask
@@ -595,20 +881,45 @@ export default function MobileApp() {
     try { return effectiveQuizAnswers ? getSelectedNeeds(effectiveQuizAnswers).map((n) => n.id) : []; } catch { return []; }
   }, [effectiveQuizAnswers]);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
-  const healthContext = personalizeWithData ? health.matchContext : null;
+  const guideRecap = useMemo(() => {
+    if (!authUser?.id || !personalizeWithData) return '';
+    const sections = health.insights?.sections || [];
+    const ready = sections.filter((section) => section.status === 'ready');
+    const today = localToday();
+    const week = buildDashboard(health.insightRows || [], { days: 30, today });
+    const estimate = sections.find((section) => section.id === 'cycle')?.estimate || null;
+    const explained = explainWeek(health.insightRows || [], { today, cycle: week.cycle?.cycleDay ? week.cycle : null, estimate, hormonalBC: usesHormonalBC(effectiveQuizAnswers), max: 2 });
+    return explained.insights.length ? explained.insights.map((insight) => insight.text).join(' ') : weekSummary(ready) || '';
+  }, [authUser?.id, personalizeWithData, health.insights, health.insightRows, effectiveQuizAnswers]);
+  const guideSources = personalizeWithData ? [...new Set((health.insights?.sections || []).filter((section) => section.status === 'ready').flatMap((section) => section.sources || []))].map((source) => SOURCE_NAMES[source] || source).join(', ') : '';
+  const guideRecapExportable = !(health.insights?.sections || []).some((section) => section.status === 'ready' && (section.sources || []).some((source) => LIVE_ONLY_SOURCES.includes(source)));
+  // The recap may go to Ask ayna only with her opt-in, and never when any of it
+  // came from Oura or WHOOP (their terms; src/health/policy.js).
+  const askHealthPref = useAskHealthPref(authUser?.id || null);
+  const guideRecapAskable = askHealthPref.on && !(health.insights?.sections || []).some((section) => section.status === 'ready' && (section.sources || []).some((source) => NEVER_TO_LLM.has(source)));
+  // Her own switch for health data in matches (Preferences and Health data), shared with the website.
+  const healthInMatches = useHealthMatchPref(authUser?.id || null).on;
+  const healthDataOn = personalizeWithData && healthInMatches;
+  const healthContext = healthDataOn ? health.matchContext : null;
   // Apple Health Records she saved on this phone: allergies and medicines for
   // safety, conditions as context. Never sent anywhere.
   const healthRecords = personalizeWithData ? health.records : null;
+  // What she reported trying (routine check-ins and tries, src/health/outcomes.js).
+  // Only recorded outcomes count; "Worse" and "Side effect" move that product down.
+  const routineOutcomesForUser = authUser?.id ? session.routineOutcomesByUser?.[authUser.id] : null;
+  const outcomeHistory = useMemo(() => {
+    if (!authUser?.id) return null;
+    const history = outcomesToProductHistory([...fromRoutineOutcomes(routineOutcomesForUser || {}, ALL_PRODUCTS), ...readTries()], ALL_PRODUCTS);
+    return history.length ? history : null;
+  }, [authUser?.id, routineOutcomesForUser]);
   const matchOpts = useMemo(() => {
-    if (!healthContext && !healthRecords) return baseMatchOpts;
-    return { ...baseMatchOpts, ...(healthContext ? { healthContext } : {}), ...(healthRecords ? { healthRecords } : {}) };
-  }, [baseMatchOpts, healthContext, healthRecords]);
+    if (!healthContext && !healthRecords && !outcomeHistory) return baseMatchOpts;
+    return { ...baseMatchOpts, ...(healthContext ? { healthContext } : {}), ...(healthRecords ? { healthRecords } : {}), ...(outcomeHistory ? { outcomeHistory } : {}) };
+  }, [baseMatchOpts, healthContext, healthRecords, outcomeHistory]);
   const suggestedEcosystemProducts = useMemo(() => {
     if (!effectiveQuizAnswers) return [];
-    const savedIds = new Set(myProducts.map((product) => product.id));
-    return seedEcosystemFromAnswers(effectiveQuizAnswers, matchOpts)
-      .filter((product) => !savedIds.has(product.id))
-      .slice(0, 6);
+    // Only what she added herself is left out (utils/forYouPicks.js).
+    return forYouPicks(seedEcosystemFromAnswers(effectiveQuizAnswers, matchOpts), myProducts, 6);
   }, [effectiveQuizAnswers, myProducts, matchOpts]);
 
   // End of the quiz (connect -> plan -> matches): her new answers wait in
@@ -620,8 +931,8 @@ export default function MobileApp() {
     try { return pendingAnswers ? getSelectedNeeds(pendingAnswers).map((n) => n.id) : []; } catch { return []; }
   }, [pendingAnswers]);
   const planHealthContext = useMemo(
-    () => (personalizeWithData && health.matchSignals?.length ? healthMatchContext(health.matchSignals, pendingNeedIds) : null),
-    [personalizeWithData, health.matchSignals, pendingNeedIds],
+    () => (healthDataOn && health.matchSignals?.length ? healthMatchContext(health.matchSignals, pendingNeedIds) : null),
+    [healthDataOn, health.matchSignals, pendingNeedIds],
   );
   // Same behavior inputs the quiz always seeded with ("Not for me" only), plus health context.
   const planBaseOpts = useMemo(() => behaviorFrom({ omitted: omittedProducts }), [omittedProducts]);
@@ -629,7 +940,8 @@ export default function MobileApp() {
     ...planBaseOpts,
     ...(planHealthContext ? { healthContext: planHealthContext } : {}),
     ...(healthRecords ? { healthRecords } : {}),
-  }), [planBaseOpts, planHealthContext, healthRecords]);
+    ...(outcomeHistory ? { outcomeHistory } : {}),
+  }), [planBaseOpts, planHealthContext, healthRecords, outcomeHistory]);
   const planSeeded = useMemo(() => {
     if (!pendingAnswers || !['connect', 'plan'].includes(screen)) return [];
     try { return seedEcosystemFromAnswers(pendingAnswers, planMatchOpts); } catch { return []; }
@@ -661,7 +973,7 @@ export default function MobileApp() {
     // the way react-hooks/set-state-in-effect expects it.
     Promise.resolve().then(() => {
       updateSession((prev) => ({ userName: firstName || prev.userName }));
-      setScreen(hasEcosystem ? 'eco' : 'ecointro');
+      setScreen('ayna');
     });
   }, [authUser]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -682,6 +994,8 @@ export default function MobileApp() {
     setOverlay(null);
     setAskAynaOpen(false);
     setAskAynaHistory([]);
+    setAskStarters([]);
+    setSheetProduct(null);
     pendingQuizEcosystemRef.current = null;
     resetSession();
     if (authUser) clearLocalSaves();
@@ -711,16 +1025,25 @@ export default function MobileApp() {
         }).catch((error) => console.warn('[Ayna] mobile ecosystem remove sync failed:', error));
         delete ecosystemFlagsRef.current.trackedProducts[product.id];
       }
+      noteRoutineRemove(product.id);
+      toast(REMOVED_FROM_ROUTINE, { label: 'Undo', onClick: () => addToEcosystemRef.current?.(product) });
       return;
     }
+    // Follow-ups at day 7 and cycle 3, and a review ask after 3 cycles (routineFollowUps.js).
+    noteRoutineAdd(product);
 
     trackApp('product_added', { productId: product.id, category: product.category, type: product.type });
     const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);
     const ecosystemProduct = {
       ...product,
       areaKey: product.areaKey || area?.key || null,
+      // She added it herself, so it is hers even if ayna suggested it first.
+      intakeGenerated: false,
+      userAdded: true,
     };
 
+    addedHaptic();
+    markPushMoment();
     updateSession((prev) => ({
       myProducts: prev.myProducts.some((p) => p.id === ecosystemProduct.id)
         ? prev.myProducts
@@ -733,6 +1056,8 @@ export default function MobileApp() {
     if (!authUser && !ecoNudgeShownRef.current) {
       ecoNudgeShownRef.current = true;
       setSaveNudge('eco');
+    } else {
+      toast(addedToRoutineText());
     }
 
     const supabase = getSupabaseClient();
@@ -748,6 +1073,24 @@ export default function MobileApp() {
       ecosystemFlagsRef.current.trackedProducts[ecosystemProduct.id] = ecosystemProduct;
     }
   };
+
+  // One quiz answer changed in place (You > Your blend). Same save path as the
+  // quiz; matches re-rank from the new answers. Rolls back if nothing saved.
+  const handleUpdateIntake = async (nextIntake) => {
+    if (!nextIntake) return false;
+    const previous = lastQuizAnswers;
+    updateSession({ lastQuizAnswers: mapIntakeToLegacyQuizProfile(nextIntake) });
+    try {
+      const r = await saveHealthIntakeForCurrentUser(nextIntake);
+      if (r?.saved || r?.localSaved) return true;
+    } catch { /* rolled back below */ }
+    updateSession({ lastQuizAnswers: previous });
+    return false;
+  };
+
+  // Undo in a toast runs after later renders, so it calls the latest handler.
+  const addToEcosystemRef = useRef(null);
+  addToEcosystemRef.current = handleAddToEcosystem;
 
   // "Not for me" (same as the website's toggleOmitProduct): hides the product
   // from every recommendation, seed and swap, and takes it out of the
@@ -788,7 +1131,7 @@ export default function MobileApp() {
       await clearHealthIntakeForCurrentUser();
       pendingQuizEcosystemRef.current = null;
       ecosystemFlagsRef.current = { trackedProducts: {}, omittedProducts: {} };
-      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false, pendingQuiz: null, routineHave: {} });
+      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false, pendingQuiz: null, routineHave: {}, routineExcluded: {}, routineOutcomesByUser: {} });
       setEcosystemNotice('');
       try { localStorage.removeItem('ayna_intake_draft_v1'); } catch { /* storage unavailable */ }
       setHasIntakeDraft(false);
@@ -813,7 +1156,7 @@ export default function MobileApp() {
 
   // "Add to my goals" on a health-data suggestion (You -> Health, Ecosystem):
   // the goal is added exactly as if she had picked it in the quiz, and the
-  // new matches for it join her Ecosystem. Nothing is added without the tap.
+  // new matches for it join her ecosystem. Nothing is added without the tap.
   const handleAddGoal = (needId) => {
     if (!lastQuizAnswers) {
       setEcosystemNotice('Take the quiz first, then you can add goals from your health data.');
@@ -830,7 +1173,7 @@ export default function MobileApp() {
     updateSession({ lastQuizAnswers: nextAnswers, myProducts: nextProducts, hasEcosystem: nextProducts.length > 0 });
     let label = needId;
     try { label = getSelectedNeeds(nextAnswers).find((n) => n.id === needId)?.phrase || needId; } catch { /* keep id */ }
-    setEcosystemNotice(added.length ? `Added ${label} to your goals. ${added.length} new match${added.length === 1 ? '' : 'es'} in your Ecosystem.` : `Added ${label} to your goals. No new strong matches for it yet.`);
+    setEcosystemNotice(added.length ? `Added ${label} to your goals. ${added.length} new match${added.length === 1 ? '' : 'es'} in your ecosystem.` : `Added ${label} to your goals. No new strong matches for it yet.`);
     const supabase = getSupabaseClient();
     if (authUser && supabase && added.length) {
       upsertProductsBatch(supabase, authUser.id, added, { inEcosystem: true, isTracked: false, isOmitted: false })
@@ -854,12 +1197,11 @@ export default function MobileApp() {
       playlist = await communityStore.createPlaylist(supabase, authUser.id, { title, visibility, coverUrl: uploaded.url });
     } catch (error) {
       if (uploaded && !playlist) await deleteCommunityImage(supabase, uploaded.path).catch(() => {});
+      if (proLimitFeature(error) === 'playlists') openProPaywall({ feature: 'playlists' });
       throw new Error(error?.message && !/^\w+_\w+$/.test(error.message) ? error.message : 'The playlist could not be saved. Try again.');
     }
-    let added = 0;
-    for (const id of productIds) {
-      try { await communityStore.addToPlaylist(supabase, playlist.id, id); added += 1; } catch { /* counted below */ }
-    }
+    // One request for all products instead of one per product.
+    const added = await communityStore.addManyToPlaylist(supabase, playlist.id, productIds);
     return { playlist, added, missed: productIds.length - added };
   };
 
@@ -893,14 +1235,30 @@ export default function MobileApp() {
     // force it back to light.
     onStartQuiz: () => { setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); },
     onOpenMonthlyCheckin: () => setScreen('checkin'),
-    onReplayStory: () => { setRevealAtEnd(false); setScreen('reveal'); },
+    onReplayStory: () => { setRevealFrom(screen); setRevealAtEnd(false); setScreen('reveal'); },
+    // Leaving a replayed story: back to where she opened it.
+    onExitStory: revealFrom ? () => { const to = revealFrom; setRevealFrom(null); goBackTo(to); } : null,
     // An Ecosystem shelf's "Shop" passes its need label as the search.
     onBrowse: (query) => { setBrowseQuery(typeof query === 'string' ? query : ''); setScreen('browse'); },
     onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
     onOpenSaved: () => setScreen('saved'),
+    // Saved > Startups (waitlists), which lives in the You flow.
+    onOpenStartups: () => setOverlay({ type: 'profile', screen: 'startups' }),
+    onOpenCompare: openCompare,
+    onToggleOmit: handleToggleOmit,
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
-    onGoLanding: () => setScreen('landing'),
-    onOpenProduct: (p) => setOverlay({ type: 'product', item: p }),
+    onGoToday: () => setScreen('today'),
+    exploreSection: screen === 'browse' ? 'products' : screen === 'library' ? 'resources' : exploreSection,
+    onExploreSection: (key, search = '') => {
+      if (key === 'products') { setBrowseQuery(search || ''); setScreen('browse'); return; }
+      if (key === 'resources') { setScreen('library'); return; }
+      setExploreSection(key);
+      setScreen('explore');
+    },
+    onOpenCommunityPost: (postId) => { setOverlay(null); setCommunitySeed({ postId, token: Date.now() }); setScreen('community'); },
+    onOpenCommunitySeed: (seed) => { setOverlay(null); setCommunitySeed({ ...(seed || {}), token: Date.now() }); setScreen('community'); },
+    onGoLanding: openLanding,
+    onOpenProduct: (p) => growTransition(() => setOverlay({ type: 'product', item: p }), { target: 'product', from: 'img' }),
     onOpenArticle: (a) => {
       setReadArticleIds((ids) => ids.includes(a.id) ? ids : [...ids, a.id]);
       setOverlay({ type: 'article', item: a });
@@ -909,12 +1267,32 @@ export default function MobileApp() {
     onOpenHealthData: () => { if (authUser) setOverlay({ type: 'profile', screen: health.insights.sections.length ? 'healthInsights' : 'healthData' }); else openProfile(); },
     healthSummary: authUser ? health.insights.sections.find((sec) => sec.status === 'ready') || null : null,
     healthConnectedCount: health.connected.length,
-    healthSuggestions: personalizeWithData && authUser ? health.matchContext?.suggestions || [] : [],
+    healthSuggestions: healthDataOn && authUser ? health.matchContext?.suggestions || [] : [],
     healthInsights: healthInsightsForPlan,
     onAddGoal: handleAddGoal,
-    ecoTab,
-    onEcoTab: setEcoTab,
+    // Today: open one quiz question, or save a quick answer she chose to keep (signed in).
+    onEditIntakeStep: (step) => { setIntakeMode('add'); setIntakeAtOptional(false); setIntakeAtStep(step || 'lifeStage'); setEditingHealthProfile(true); setScreen('quiz'); },
+    onUpdateIntake: authUser ? handleUpdateIntake : null,
     routineHave: session.routineHave || {},
+    routineExcluded: session.routineExcluded || {},
+    routineOutcomes: authUser?.id ? session.routineOutcomesByUser?.[authUser.id] || {} : {},
+    onLogRoutineOutcome: authUser?.id ? (productId, rating) => {
+      updateSession((prev) => ({
+        routineOutcomesByUser: {
+          ...(prev.routineOutcomesByUser || {}),
+          [authUser.id]: recordRoutineOutcome(prev.routineOutcomesByUser?.[authUser.id] || {}, productId, rating),
+        },
+      }));
+      // The same check-in as a try, so it reaches her account (src/health/outcomes.js).
+      const next = recordRoutineOutcome(session.routineOutcomesByUser?.[authUser.id] || {}, productId, rating);
+      const asTry = fromRoutineOutcomes({ [productId]: next[productId] }, ALL_PRODUCTS)[0];
+      if (asTry) { setTriesOwner(authUser.id); saveTry(asTry); syncUserData({ userId: authUser.id, force: true }).catch(() => {}); }
+    } : null,
+    onToggleRoutineProduct: (id) => updateSession((prev) => {
+      const next = { ...(prev.routineExcluded || {}) };
+      if (next[id]) delete next[id]; else next[id] = true;
+      return { routineExcluded: next };
+    }),
     onSavePlaylist: authUser ? handleSaveShoppingPlaylist : null,
     onOpenPlaylist: (playlistId) => { setOverlay(null); setCommunitySeed({ playlistId, token: Date.now() }); setScreen('community'); },
     onConnectHealth: () => (authUser ? setOverlay({ type: 'profile', screen: 'healthData' }) : requestAuth('health data')),
@@ -927,21 +1305,44 @@ export default function MobileApp() {
     onAlreadyHaveAccount: () => openAuth('signin'),
     onAboutAyna: () => setOverlay({ type: 'about' }),
     onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
-    onAskAyna: () => authUser ? setAskAynaOpen(true) : requestAuth('Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); }),
+    // onAskAyna() opens the drawer; onAskAyna({ question, context }) also asks
+    // that question with what she's looking at (e.g. her dashboard numbers).
+    onAskAyna: (opts) => {
+      if (opts && typeof opts.question === 'string') setAskSeed({ id: Date.now(), question: opts.question, context: typeof opts.context === 'string' ? opts.context : '', buildContext: typeof opts.buildContext === 'function' ? opts.buildContext : null, usesHealth: opts.usesHealth === true, stats: Array.isArray(opts.stats) ? opts.stats.slice(0, 3) : null });
+      // On Home the chat is one of its views: open it there instead of a sheet.
+      if (screen === 'ayna' && !overlay) { setAskAynaOpen(false); setHomeView('chat'); return; }
+      // Signed out too: the guided chat opens, answers what it can on this
+      // phone, and asks to sign in only for questions that need the AI.
+      setAskAynaOpen(true);
+    },
     onBack: () => {
+      // The Library is pushed from Explore (or a link): Back returns where she came from.
+      if (screen === 'library') { if (navStackRef.current.length > 1) { try { window.history.back(); return; } catch { /* fall through */ } } setScreen('explore'); return; }
+      if (screen === 'quiz' && intakeFlow === 'more') { setIntakeFlow('auto'); setScreen('ready'); return; }
+      if (screen === 'reveal' && revealFrom) { const to = revealFrom; setRevealFrom(null); goBackTo(to); return; }
       if (['building', 'reveal', 'connect'].includes(screen)) {
         resumeQuizAtLastStep();
         return;
       }
-      if (screen === 'plan') { setScreen('connect'); return; }
-      setScreen(screen === 'quiz' ? (hasEcosystem ? 'eco' : 'ecointro') : screen === 'ecointro' ? 'landing' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing');
+      if (screen === 'plan') { setScreen(session.pendingQuiz?.fromCheckin ? 'today' : 'connect'); return; }
+      // My ecosystem sits under You: its back goes to You.
+      if (screen === 'eco' || screen === 'saved' || (screen === 'ecointro' && authUser)) { openProfile(); return; }
+      setScreen(screen === 'ecointro' ? 'landing' : homeTarget);
     },
     onRetake: () => { setIntakeMode('add'); setIntakeAtOptional(false); setEditingHealthProfile(true); setScreen('quiz'); },
     onPersonalize: () => { setIntakeMode('add'); setIntakeAtOptional(true); setEditingHealthProfile(true); setScreen('quiz'); },
+    onFixLifeStages: () => { setIntakeMode('add'); setIntakeAtOptional(false); setIntakeAtStep('lifeStage'); setEditingHealthProfile(true); setScreen('quiz'); },
     onRequestEcosystemReset: () => setResetDialogOpen(true),
     onUpdateHealth: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onEditProfile: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onComplete: (quizAnswers) => {
+      // The reveal's optional questions: back to the reveal with the fuller answers.
+      if (intakeFlow === 'more') {
+        updateSession((prev) => ({ pendingQuiz: { ...(prev.pendingQuiz || { mode: 'new' }), answers: quizAnswers } }));
+        setIntakeFlow('auto');
+        setScreen('ready');
+        return;
+      }
       // Not saved as her answers yet: first the optional health step, then her plan.
       trackApp('intake_completed', {
         concernsCount: Array.isArray(quizAnswers?.primaryConcerns) ? quizAnswers.primaryConcerns.length : 0,
@@ -952,9 +1353,28 @@ export default function MobileApp() {
       setResumeQuizDraft(false);
       setIntakeAtOptional(false);
       setIntakeMode('new');
-      setScreen(authUser && health.connected.length ? 'plan' : 'connect');
+      // First run: health data (step 7), then the reveal. Edits keep the plan step.
+      setScreen(authUser && health.connected.length ? (intakeMode === 'new' ? 'ready' : 'plan') : 'connect');
     },
-    onQuizConnectContinue: () => setScreen('plan'),
+    // Monthly check-in: she already has an account and an ecosystem, so it
+    // goes straight to her updated plan instead of back through the
+    // onboarding "Connect your health data" step (deep round 2).
+    onCheckinComplete: (quizAnswers) => {
+      trackApp('intake_completed', { concernsCount: Array.isArray(quizAnswers?.primaryConcerns) ? quizAnswers.primaryConcerns.length : 0, mode: 'checkin' });
+      updateSession({ pendingQuiz: { answers: quizAnswers, mode: 'add', fromCheckin: true } });
+      setPlanAddedGoals({});
+      setResumeQuizDraft(false);
+      setIntakeAtOptional(false);
+      setIntakeMode('new');
+      setScreen('plan');
+    },
+    onQuizConnectContinue: () => setScreen(session.pendingQuiz?.mode === 'new' ? 'ready' : 'plan'),
+    // The reveal (ReadyScreen): "See my Today" saves her first matches the
+    // same way "See my matches" does, then opens Today instead of the story.
+    onSeeMyToday: () => { nav.onSeeMatches(); markOnboardingDone(); setScreen('today'); },
+    onReadyCreateAccount: () => { authResumeRef.current = null; authReturnScreenRef.current = 'ready'; setAuthMode('signup'); setScreen('signin'); },
+    onReadyBack: () => setScreen('connect'),
+    onMakeMorePersonal: () => { setIntakeFlow('more'); setScreen('quiz'); },
     onQuizConnectSignIn: () => { authResumeRef.current = null; authReturnScreenRef.current = 'connect'; setAuthMode('signup'); setScreen('signin'); },
     planProducts,
     planAnswers: pendingAnswers,
@@ -984,8 +1404,8 @@ export default function MobileApp() {
       });
       if (mode === 'add') {
         setEcosystemNotice(addedProducts.length
-          ? `${addedProducts.length} new product${addedProducts.length === 1 ? '' : 's'} added. Your existing Ecosystem stayed in place.`
-          : 'No new strong matches this time. Your existing Ecosystem stayed in place.');
+          ? `${addedProducts.length} new product${addedProducts.length === 1 ? '' : 's'} added. Your existing ecosystem stayed in place.`
+          : 'No new strong matches this time. Your existing ecosystem stayed in place.');
       } else {
         setEcosystemNotice('');
       }
@@ -1017,7 +1437,7 @@ export default function MobileApp() {
     // (a monthly check-in, a retaken quiz, an edited profile) already has an
     // account and this same ecosystem attached to it, routing them through
     // "sign in" again after finishing is a dead end, not a next step.
-    onFinish: () => { setRevealAtEnd(false); setScreen('reveal'); },
+    onFinish: () => { setRevealFrom(null); setRevealAtEnd(false); setScreen('reveal'); },
     onContinue: () => authUser ? setScreen('eco') : openAuth('signup'),
     initialMode: authMode,
     onAuthBack: () => {
@@ -1039,6 +1459,8 @@ export default function MobileApp() {
     authUser,
     onSignUp: signUpWithPassword,
     onSignIn: signInWithPassword,
+    // Her first name from the quiz: sign-up never asks again (onboarding audit #1).
+    firstName: lastQuizAnswers?.firstName || session.pendingQuiz?.firstName || '',
     // Remember where Google/Apple started: the post-quiz save may create an
     // account; a plain sign-in that does gets the "build it first" step.
     onGoogleSignIn: () => { const mode = authMode === 'signup' || lastQuizAnswers || session.pendingQuiz ? 'save' : 'signin'; markOAuthSource(mode); return signInWithGoogle({ mode }); },
@@ -1050,12 +1472,18 @@ export default function MobileApp() {
       authResumeRef.current = null;
       if (resume) resume();
       else if (session.pendingQuiz && authReturnScreenRef.current === 'connect') setScreen('connect');
-      else setScreen(hasEcosystem ? 'eco' : 'ecointro');
+      // Back to where she signed in from (Community invites, Saved, Today...), not always the
+      // first tab: signing in should never move her away from what she was doing (team direction 55).
+      else if (authReturnScreenRef.current && !AUTH_NO_RETURN.has(authReturnScreenRef.current)) setScreen(authReturnScreenRef.current);
+      else setScreen('ayna');
     },
     hasEcosystem,
   };
 
-  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan'].includes(screen) && (!overlay || ['profile', 'profile-auth'].includes(overlay.type));
+  // The chat is the Ask ayna tab (all-pages brief, Oct 25), so the tab bar stays under it.
+  const showTabBar = !['quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
+  // Deep round 2: the tab bar stays on drilled-in screens (product, read, why
+  // this match), as in iOS; tapping a tab pops back to that tab's root.
   // Reads ranked from her app answers (personalReads.js): matching reads
   // first, reads for another life stage (e.g. menopause at 24) last.
   const rankedEcosystemReads = rankReadsForProfile(ARTICLES, effectiveQuizAnswers);
@@ -1063,22 +1491,95 @@ export default function MobileApp() {
     .filter((article) => !readArticleIds.includes(article.id))
     .concat(rankedEcosystemReads.filter((article) => readArticleIds.includes(article.id)))
     .slice(0, 3);
-  const activeTab = ['profile', 'profile-auth'].includes(overlay?.type) ? 'profile'
-    : screen === 'browse' ? 'browse'
-      : screen === 'library' ? 'library'
-      : screen === 'community' ? 'community'
-        : ['eco', 'ecointro'].includes(screen) ? 'home' : null;
+  // Ask ayna is a tab (all-pages brief, Oct 25): the chat view of 'ayna', or the drawer when it is open.
+  const activeTab = askAynaOpen && !chatFirst && !overlay ? 'ask' : navTabFor(screen, overlay?.type, { view: homeView, variant: homeVariant, section: exploreSection });
+
+  // "New in Community" for the Daily Rundown: real public posts for her topics and follows.
+  const rundownCommunity = useRundownCommunity(authUser?.id || null, effectiveQuizAnswers);
+  // The Daily Rundown ended (or she closed it): its questions become the chat's
+  // starters; finishing it lands her in the chat (founder, Oct 24 20:12), X
+  // mid-story stays on Home (QA, Oct 25: toChat is false then).
+  const handleRundownFinish = ({ starters = [], toChat = false } = {}) => {
+    setAskStarters(Array.isArray(starters) ? starters.slice(0, 3) : []);
+    if (!toChat) return;
+    setOverlay(null);
+    setAskAynaOpen(false);
+    setAskSeed(null);
+    setHomeView('chat');
+    setScreenRaw('ayna');
+  };
+  // Siri and Shortcuts (when the iOS App Intent lands, see the report):
+  // co.aynahealth.app://ask opens the chat; ?q= puts the question in the box.
+  useEffect(() => {
+    let remove = null;
+    let live = true;
+    (async () => {
+      try {
+        const { Capacitor } = await import('@capacitor/core');
+        if (!Capacitor.isNativePlatform()) return;
+        const { App } = await import('@capacitor/app');
+        const handle = await App.addListener('appUrlOpen', ({ url }) => {
+          const m = /^co\.aynahealth\.app:\/\/ask\/?(?:\?(.*))?$/i.exec(String(url || ''));
+          if (!m) return;
+          let q = '';
+          try { q = new URLSearchParams(m[1] || '').get('q') || ''; } catch { q = ''; }
+          setOverlay(null);
+          setAskAynaOpen(false);
+          setSheetProduct(null);
+          setHomeView('chat');
+          setScreenRaw('ayna');
+          if (q) setAskDraft({ id: Date.now(), text: q });
+        });
+        if (live) remove = handle; else handle.remove();
+      } catch { /* not native */ }
+    })();
+    return () => { live = false; remove?.remove?.(); };
+  }, []);
+  // Header: You is the round profile button beside Ask ayna (founder, Oct 26), and
+  // on the five tab roots a slim row of Ask suggestions sits under the header.
+  const suggestOn = !overlay && !askAynaOpen && ['explore', 'browse', 'library', 'community', 'eco', 'ecointro', 'saved'].includes(screen); // Today has its own Ask bar
+  const suggestSurface = screen === 'explore'
+    ? (exploreSection === 'services' ? 'services' : exploreSection === 'resources' ? 'library' : 'explore')
+    : screen;
+  const headerValue = {
+    onOpenProfile: () => { setAskAynaOpen(false); authResumeRef.current = null; setOverlay({ type: 'profile' }); },
+    initial: String(resolvedName || '').trim().charAt(0).toUpperCase(),
+    // Her photo in the round profile button (founder, Oct 26 23:38), else her initial, else the person icon.
+    avatarUrl: myAvatarUrl,
+    // Focus group, Oct 26: Saved was hard to find. A heart with the count, beside Ask ayna and You.
+    savedCount: Object.keys(savedMap || {}).length,
+    onOpenSaved: () => { setAskAynaOpen(false); setOverlay(null); setScreen('saved'); },
+    suggest: suggestOn ? { signedIn: Boolean(authUser?.id), hasProfile: Boolean(effectiveQuizAnswers), surface: suggestSurface } : null,
+    // The ayna wordmark opens the landing, signed in or out (founder, Oct 27 01:13).
+    onOpenLanding: openLanding,
+  };
+  const sheetValue = {
+    open: (product) => { if (product?.id) setSheetProduct(product); },
+    isOpen: Boolean(sheetProduct),
+    isSaved: (id) => isSaved(id),
+    toggleSaved: (product) => handleToggleSaved(product),
+    inRoutine: (id) => myProducts.some((p) => p.id === id),
+    addToRoutine: (product) => handleAddToEcosystem(product),
+    matchStateFor: (product) => productMatchState(product, effectiveQuizAnswers, matchOpts),
+    // The same engine inputs as every other card, for the product card inside the Rundown.
+    quizAnswers: effectiveQuizAnswers,
+    matchOpts,
+  };
 
   if (authLoading || (authUser?.id && !DEV_HEALTH_DEMO && loadedAccountId !== authUser.id)) {
-    return <div className="ayna-mobile" data-theme={resolvedTheme} style={{ display: 'grid', placeItems: 'center', minHeight: '100dvh', background: 'var(--ayna-bg)' }} role="status" aria-live="polite"><div style={{ textAlign: 'center', color: 'var(--ayna-heading)' }}><div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 34 }}>ayna</div><p style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>Opening your Ecosystem…</p></div></div>;
+    return <div className="ayna-mobile" data-theme={resolvedTheme} style={{ display: 'grid', placeItems: 'center', minHeight: '100dvh', background: 'var(--ayna-bg)' }} role="status" aria-live="polite"><div style={{ textAlign: 'center', color: 'var(--ayna-heading)' }}><div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 34 }}>ayna</div><p style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>Opening your ecosystem…</p></div></div>;
   }
 
   return (
-    <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
+    <div ref={rootRef} className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
+      <ProPaywallHost priority={2} onRequireAuth={() => requestAuth('ayna Pro')} />
+      <ProductSheetContext.Provider value={sheetValue}>
       <AskContext.Provider value={nav.onAskAyna}>
+      <AppHeaderContext.Provider value={headerValue}>
       <Screen
-        key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen}
+        key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen === 'browse' && browseQuery ? `browse-${browseQuery}` : screen}
         {...nav}
+        {...(screen === 'checkin' ? { onComplete: nav.onCheckinComplete } : {})}
         seedKind={communitySeed?.kind}
         seedProductId={communitySeed?.productId}
         seedPlaylistId={communitySeed?.playlistId}
@@ -1108,17 +1609,20 @@ export default function MobileApp() {
         lastQuizAnswers={lastQuizAnswers}
         hasIntakeDraft={hasIntakeDraft && !hasEcosystem}
         onDraftChange={setHasIntakeDraft}
-        initialSnapshot={editingHealthProfile && !resumeQuizDraft ? lastQuizAnswers?.fullHealthIntake || null : null}
+        flow={screen === 'quiz' ? intakeFlow : undefined}
+        initialSnapshot={intakeFlow === 'more' ? session.pendingQuiz?.answers?.fullHealthIntake || null : editingHealthProfile && !resumeQuizDraft ? lastQuizAnswers?.fullHealthIntake || null : null}
         startAtBeginning={intakeMode === 'add' && !resumeQuizDraft && !intakeAtOptional && editingHealthProfile}
         startAtOptional={intakeAtOptional && !resumeQuizDraft}
-        introEnabled={!resumeQuizDraft && !intakeAtOptional}
+        startAtStep={intakeAtStep && !resumeQuizDraft ? intakeAtStep : ''}
+        introEnabled={!resumeQuizDraft && !intakeAtOptional && !intakeAtStep}
         revealStartAtEnd={revealAtEnd}
         ecosystemNotice={ecosystemNotice}
         name={resolvedName}
         headerInitial={headerInitial}
         tags={topAreaLabels.length ? `${topAreaLabels.length} area${topAreaLabels.length === 1 ? '' : 's'} covered` : ''}
         relatedReads={ecosystemReads}
-        topAreas={screen === 'reveal' ? topAreaLabels : topAreaLabels.length ? topAreaLabels : ['Period', 'Hormones', 'Sleep']}
+        topAreas={topAreaLabels}
+        saveAreas={saveAreaLabels}
         productCount={myProducts.length}
         readCount={ARTICLES.length}
         goalCount={goalCount}
@@ -1127,9 +1631,16 @@ export default function MobileApp() {
           { label: 'Reads', value: ARTICLES.length },
           { label: 'Pillars', value: topAreaLabels.length },
         ]}
+        homeView={homeView}
+        onHomeView={(v) => { setAskAynaOpen(false); setHomeView(v); }}
+        healthInsightRows={health.insightRows || []}
+        rundownCommunity={rundownCommunity}
+        onRundownFinish={handleRundownFinish}
+        recentAsks={screen === 'ayna' ? askAynaHistory : undefined}
       />
+      </AppHeaderContext.Provider>
       </AskContext.Provider>
-      {newAccountStart && authUser && !['quiz', 'building', 'connect', 'plan'].includes(screen) && (
+      {newAccountStart && authUser && !['quiz', 'building', 'connect', 'plan', 'ready'].includes(screen) && (
         <NewAccountStart
           name={resolvedName}
           onStart={() => { setNewAccountStart(false); startEcosystemFlow(); }}
@@ -1139,34 +1650,57 @@ export default function MobileApp() {
       )}
       {showTabBar && <MobileTabBar
         active={activeTab}
-        onHome={() => { setAskAynaOpen(false); setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
-        onBrowse={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setScreen('browse'); }}
+        onExplore={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setExploreSection('overview'); setScreen('explore'); }}
+        // Services: the Shop page with Services picked. Library: the reads.
+        onServices={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setExploreSection('services'); setScreen('explore'); }}
+        onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setExploreSection('resources'); setScreen('library'); }}
+        // Home always opens on its root (the dashboard, or the chat in the chat-first variant).
+        // Signed out with nothing on this phone, Home is the landing (founder, Oct 27 01:10).
+        onHome={() => {
+          // Already on Home: Home scrolls back to the top (founder, Oct 27 13:57: it looked unclickable).
+          if (screen === homeTarget && (screen !== 'ayna' || homeView === homeRoot) && !overlay && !askAynaOpen) { scrollAppToTop(rootRef.current); return; }
+          setHomeView(homeRoot); setAskAynaOpen(false); setOverlay(null); setAskSeed(null); setScreenRaw(homeTarget);
+        }}
+        // Ask ayna: the full chat as a tab screen (the 'ayna' screen's chat view).
+        onAsk={() => { setAskAynaOpen(false); setOverlay(null); setHomeView('chat'); setScreenRaw('ayna'); }}
+        tabList={chatFirst ? APP_TABS_CHAT_FIRST : APP_TABS}
         onCommunity={() => { setAskAynaOpen(false); setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
-        onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setScreen('library'); }}
-        onProfile={() => { setAskAynaOpen(false); openProfile(); }}
+        // You opens for everyone: signed out it says what an account keeps, and Settings still works.
+        onProfile={() => { setAskAynaOpen(false); authResumeRef.current = null; setOverlay({ type: 'profile' }); }}
       />}
       {saveNudge && !authUser && (
         <div className="ay-save-nudge" role="status">
-          <span>{saveNudge === 'eco' ? 'Added to your Ecosystem on this phone. Sign in to keep it on every device.' : 'Saved on this phone. Sign in to keep your saves on every device.'}</span>
+          <span>{saveNudge === 'eco' ? 'Added to your routine on this phone. Sign in to keep it on every device.' : 'Saved on this phone. Sign in to keep your saves on every device.'}</span>
           <button type="button" onClick={() => { setSaveNudge(false); openAuth('signin'); }}>Sign in</button>
-          <button type="button" className="ay-save-nudge-x" aria-label="Dismiss" onClick={() => setSaveNudge(false)}>×</button>
+          <button type="button" className="ay-save-nudge-x" aria-label="Dismiss" onClick={() => setSaveNudge(false)}><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
         </div>
+      )}
+      {!overlay && !authPrompt && <SaveFollowUpStrip onCompare={openCompare} variant="app" />}
+      {saveSheet && (
+        <SaveAuthSheet
+          product={saveSheet}
+          onContinue={() => { stashPendingSave(saveSheet); setSaveSheet(null); openAuth('signin'); }}
+          onKeepHere={() => { const p = saveSheet; setSaveSheet(null); finishSave(p); }}
+          onClose={() => setSaveSheet(null)}
+        />
       )}
       <EcosystemResetDialog open={resetDialogOpen} busy={resettingEcosystem} onCancel={() => setResetDialogOpen(false)} onConfirm={handleResetEcosystem} />
       {(overlay?.type === 'profile-auth' || authPrompt) && (
-        <div className="ayna-profile-auth-backdrop" style={authPrompt ? { zIndex: 100, bottom: 0 } : undefined} onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>
-          <section className="ayna-profile-auth-sheet" role="dialog" aria-modal="true" aria-labelledby="ayna-profile-auth-title" onClick={(event) => event.stopPropagation()}>
-            <button type="button" className="ayna-profile-auth-close" aria-label="Close" onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>×</button>
+        <div className="ayna-profile-auth-backdrop ay-sheet-dim" style={authPrompt ? { zIndex: 100, bottom: 0 } : undefined} onClick={closeAuthSheet}>
+          <section ref={authSheet.sheetRef} className="ayna-profile-auth-sheet ay-sheet-in" role="dialog" aria-modal="true" aria-labelledby="ayna-profile-auth-title" onClick={(event) => event.stopPropagation()}>
+            <button {...authSheet.grabberProps} aria-label="Close sign in" />
+            <button type="button" className="ayna-profile-auth-close" aria-label="Close" onClick={closeAuthSheet}><svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
             <h2 id="ayna-profile-auth-title">{authPrompt ? `Sign in for ${authPrompt.feature}` : 'Sign in to ayna'}</h2>
+            {authPrompt && AUTH_VALUE[authPrompt.feature] && <p className="ayna-profile-auth-why">{AUTH_VALUE[authPrompt.feature]}</p>}
             <button type="button" className="ayna-profile-auth-primary" onClick={() => openAuth('signin', !!authPrompt)}>Sign in</button>
             {!authPrompt && quizDraft && <FinishQuizCard progress={quizDraft} onContinue={resumeQuiz} onStartOver={startQuizOver} />}
-            {!(quizDraft && !authPrompt) && <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>{hasEcosystem ? <>New here? <b>Save your Ecosystem to an account</b></> : <>Don’t have an account? <b>Build your Ecosystem</b></>}</button>}
+            {!(quizDraft && !authPrompt) && <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>{hasEcosystem || lastQuizAnswers ? <>New here? <b>Keep your profile and matches with a free account</b></> : <>Don’t have an account? <b>Set up my ayna</b></>}</button>}
           </section>
         </div>
       )}
-      {overlay?.type === 'about' && <div className="ayna-fresh-detail-overlay" style={{ position: 'fixed', inset: 0, zIndex: 80, background: 'var(--ayna-surface)', display: 'flex' }}><AboutAynaScreen onBack={() => setOverlay(null)} /></div>}
+      {overlay?.type === 'about' && <PushLayer zIndex={80} onBack={() => setOverlay(null)}><AboutAynaScreen onBack={() => setOverlay(null)} /></PushLayer>}
       {overlay?.type === 'product' && (
-        <div className="ayna-fresh-detail-overlay" style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
+        <PushLayer key={`p-${overlay.item?.id}`} onBack={() => setOverlay(null)}>
           <ProductDetailScreen
             product={overlay.item}
             onBack={() => setOverlay(null)}
@@ -1176,6 +1710,7 @@ export default function MobileApp() {
             onAddToEcosystem={() => handleAddToEcosystem(overlay.item)}
             isOmitted={!!omittedProducts[overlay.item?.id]}
             onToggleOmit={() => handleToggleOmit(overlay.item)}
+            onCompare={openCompare}
             onOpenHealthData={() => { if (authUser) setOverlay({ type: 'profile', screen: 'healthData' }); else requestAuth('health data', () => setOverlay({ type: 'profile', screen: 'healthData' })); }}
             matchOpts={matchOpts}
             onOpenReview={(postId) => { setCommunitySeed({ postId, token: Date.now() }); setOverlay(null); setScreen('community'); }}
@@ -1192,49 +1727,76 @@ export default function MobileApp() {
               setOverlay(null);
               setScreen('community');
             }}
+            onFixSafety={(step) => { setOverlay(null); nav.onEditIntakeStep(step); }}
             onStartQuiz={() => { returnProductRef.current = overlay.item || null; setOverlay(null); setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); }}
             authUser={authUser}
             onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
-            quizAnswers={authUser ? effectiveQuizAnswers : null}
+            quizAnswers={effectiveQuizAnswers}
             ecosystemProducts={myProducts}
-            onOpenProduct={(item) => setOverlay({ type: 'product', item })}
+            onOpenProduct={(item) => growTransition(() => setOverlay({ type: 'product', item }), { target: 'product', from: 'img' })}
+            reads={readsForProduct(overlay.item, 3).map((r) => {
+              const article = ARTICLES.find((x) => x.id === r.id);
+              return article ? { id: r.id, title: r.title, onClick: () => { setReadArticleIds((ids) => (ids.includes(r.id) ? ids : [...ids, r.id])); setOverlay({ type: 'article', item: article }); } } : null;
+            }).filter(Boolean)}
             theme={theme}
             onToggleTheme={setThemeMode}
           />
-        </div>
+        </PushLayer>
       )}
       {overlay?.type === 'article' && (
-        <div className="ayna-fresh-detail-overlay" style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
+        <PushLayer key={`a-${overlay.item?.id}`} onBack={() => setOverlay(null)}>
           <ArticleDetailScreen
             key={overlay.item.id}
             article={overlay.item}
             onBack={() => setOverlay(null)}
             savedProgress={readProgress[overlay.item.id] || 0}
             onProgress={(value) => recordReadProgress(overlay.item.id, value)}
+            topic={topicNeighbors(overlay.item.id, ARTICLES)}
             nextRead={getNextArticle(overlay.item, ARTICLES, readArticleIds, rankReadsForProfile(ARTICLES, effectiveQuizAnswers), (article) => readFitsStage(article, effectiveQuizAnswers))}
             onNext={(article) => {
               setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]);
               setOverlay({ type: 'article', item: article });
             }}
+            products={productsForRead(overlay.item.id, browseProducts, 4)}
+            productsNote={ROW_NOTES[overlay.item.id] || ''}
+            onOpenProduct={(item) => setOverlay({ type: 'product', item })}
+            renderProduct={(item) => <ProductCard product={item} quizAnswers={effectiveQuizAnswers} matchOpts={matchOpts} onClick={() => setOverlay({ type: 'product', item })} />}
+            onAsk={nav.onAskAyna}
             theme={theme}
           />
-        </div>
+        </PushLayer>
+      )}
+      {overlay?.type === 'compare' && (
+        <PushLayer key="compare" onBack={() => setOverlay(null)}>
+          <CompareScreen
+            onBack={() => setOverlay(null)}
+            onOpenProduct={(item) => setOverlay({ type: 'product', item })}
+            savedProducts={savedMap}
+            quizAnswers={effectiveQuizAnswers}
+            matchOpts={matchOpts}
+          />
+        </PushLayer>
       )}
       {overlay?.type === 'why-match' && (
-        <div className="ayna-fresh-detail-overlay" style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
+        <PushLayer key={`w-${overlay.item?.id}`} onBack={() => setOverlay(null)}>
           <WhyMatchScreen
             product={overlay.item}
             quizAnswers={effectiveQuizAnswers}
             matchOpts={matchOpts}
             onBack={() => setOverlay(null)}
             onUpdateHealth={() => { setOverlay(null); setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
+            onFixSafety={(step) => { setOverlay(null); nav.onEditIntakeStep(step); }}
             onViewDetails={() => setOverlay({ type: 'product', item: overlay.item })}
           />
-        </div>
+        </PushLayer>
       )}
       {overlay?.type === 'profile' && (
         <AskContext.Provider value={nav.onAskAyna}>
         <ProfileFlow
+          onUpdateIntake={authUser ? handleUpdateIntake : null}
+          onUpdateIntakeLocal={handleUpdateIntake}
+          onEditProfileAt={nav.onEditIntakeStep}
+          healthConnected={health.connected}
           key={overlay.screen || 'hub'}
           initialScreen={overlay.screen || null}
           onClose={() => setOverlay(null)}
@@ -1249,6 +1811,7 @@ export default function MobileApp() {
           savedCount={Object.keys(savedMap || {}).length}
           quizAnswers={effectiveQuizAnswers}
           myProducts={myProducts}
+          matchProducts={suggestedEcosystemProducts}
           savedProducts={savedMap}
           onViewAlternative={handleViewAlternative}
           onBrowse={() => setScreen('browse')}
@@ -1265,28 +1828,104 @@ export default function MobileApp() {
           onResumeQuiz={resumeQuiz}
           onStartOverQuiz={startQuizOver}
           onAddGoal={handleAddGoal}
-          onOpenRoutine={() => { setEcoTab('dashboard'); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
+          onOpenRoutine={() => { setOverlay(null); setScreen('today'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}
           readProgress={readProgress}
-          onOpenProduct={(product) => setOverlay({ type: 'product', item: product })}
+          onOpenProduct={(product) => growTransition(() => setOverlay({ type: 'product', item: product }), { target: 'product', from: 'img' })}
           onOpenArticle={(article) => { setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]); setOverlay({ type: 'article', item: article }); }}
           onOpenCommunity={(seed) => { setOverlay(null); setCommunitySeed({ ...seed, token: Date.now() }); setScreen('community'); }}
+          recentAsks={askAynaHistory}
         />
         </AskContext.Provider>
       )}
       <AskAynaModal
         key={authUser?.id || 'anonymous'}
-        open={askAynaOpen}
-        enabled={!!authUser || !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask'))}
+        open={askAynaOpen || (screen === 'ayna' && homeView === 'chat' && !overlay)}
+        asTab={screen === 'ayna' && homeView === 'chat' && !askAynaOpen}
+        // Home: the chat full screen with Back to Home; chat-first variant: the switch on top.
+        renderHomeTop={chatFirst && screen === 'ayna' && !askAynaOpen ? (leading) => <HomeSwitch view={homeView} onChange={(v) => { setAskAynaOpen(false); setHomeView(v); }} leading={leading} /> : null}
+        // Ask ayna is a root tab now, so no Back button; Today is one tap away in the tab bar.
+        onBackHome={null}
+        starters={askStarters}
+        onStarter={(st) => nav.onAskAyna(st)}
+        draft={askDraft}
+        seed={askSeed}
+        enabled
         profile={effectiveQuizAnswers}
+        guide={guide}
+        onGuideChange={updateGuide}
+        recap={guideRecap}
+        recapSources={guideSources}
+        recapExportable={guideRecapExportable}
+        recapAskable={guideRecapAskable}
+        productNotes={productNotesFromRoutine(myProducts, authUser?.id ? session.routineOutcomesByUser?.[authUser.id] || {} : {})}
+        allowGuideContext={personalizeWithData}
         onProfileUpdate={(answers) => updateSession({ lastQuizAnswers: answers })}
         chatHistory={askAynaHistory}
         onChatHistoryUpdate={setAskAynaHistory}
         name={resolvedName}
+        onClose={screen === 'ayna' && homeView === 'chat' && !askAynaOpen ? null : () => setAskAynaOpen(false)}
         onNavigateToDiscovery={() => { setAskAynaOpen(false); setScreen('browse'); }}
+        products={myProducts}
+        matchOpts={matchOpts}
+        focusProduct={overlay?.type === 'product' ? overlay.item : null}
+        reads={rankedEcosystemReads}
+        hasHealthData={!!authUser && health.connected.length > 0}
+        resolveProduct={(id) => myProducts.find((p) => String(p.id) === String(id)) || browseProducts.find((p) => String(p.id) === String(id)) || null}
+        // A product in the chat opens the quick sheet over it; the chat keeps its place.
+        onOpenProduct={(product) => setSheetProduct(product)}
+        onBrowse={(intent) => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(String(intent?.query || intent?.category || '').replace(/[-_]/g, ' ')); setScreen('browse'); }}
+        onOpenDashboard={hasEcosystem ? () => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); } : null}
+        onOpenRead={(article) => { setAskAynaOpen(false); setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]); setOverlay({ type: 'article', item: article }); }}
         onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
         onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
       />
+      {sheetProduct && (
+        <ProductSheet
+          key={sheetProduct.id}
+          product={sheetProduct}
+          onClose={() => setSheetProduct(null)}
+          matchState={productMatchState(sheetProduct, effectiveQuizAnswers, matchOpts)}
+          details={effectiveQuizAnswers ? getProductMatchDetailsForProduct(sheetProduct, effectiveQuizAnswers, null, matchOpts) : null}
+          pregnancyFirst={pregnancyFirstFrom(effectiveQuizAnswers)}
+          answers={effectiveQuizAnswers}
+          onAsk={(q) => { setSheetProduct(null); nav.onAskAyna({ question: q }); }}
+          saved={isSaved(sheetProduct.id)}
+          onToggleSaved={handleToggleSaved}
+          inRoutine={myProducts.some((p) => p.id === sheetProduct.id)}
+          onAddToRoutine={handleAddToEcosystem}
+          // "Read more": the full product page fills the sheet; Back returns to the sheet.
+          renderFull={(item, back) => (
+            <ProductDetailScreen
+              product={item}
+              onBack={back}
+              isSaved={isSaved(item.id)}
+              onToggleSaved={() => handleToggleSaved(item)}
+              isInEcosystem={myProducts.some((p) => p.id === item.id)}
+              onAddToEcosystem={() => handleAddToEcosystem(item)}
+              isOmitted={!!omittedProducts[item.id]}
+              onToggleOmit={() => handleToggleOmit(item)}
+              matchOpts={matchOpts}
+              authUser={authUser}
+              onRequireAuth={(feature) => requestAuth(feature || 'Ask ayna', () => {})}
+              quizAnswers={effectiveQuizAnswers}
+              ecosystemProducts={myProducts}
+              onOpenProduct={(next) => setSheetProduct(next)}
+              theme={theme}
+              onToggleTheme={setThemeMode}
+            />
+          )}
+        />
+      )}
+      </ProductSheetContext.Provider>
+      {/* Same 14-day feedback survey as the website, only on resting screens. */}
+      <FeedbackPrompts key={realAuthUser?.id || 'guest'} user={realAuthUser} authLoading={authLoading} currentView={overlayType || askAynaOpen ? 'busy' : screen} safeViews={APP_FEEDBACK_SCREENS} />
+      <OfflineBanner rootRef={rootRef} />
+      <GlobalToast variant="app" />
+      {/* "Where did you hear about us?" once after sign-up, optional (onboarding audit #1). */}
+      {authUser && !heardDismissed && screen !== 'signin' && shouldAskHeardAbout(authUser) && <HeardAboutPrompt variant="app" onDone={() => setHeardDismissed(true)} />}
+      {/* First-visit tips (src/mobile/tutorial): one overlay, reads data-tour anchors. */}
+      <TutorialLayer userId={authUser?.id || null} ready={Boolean(lastQuizAnswers || hasEcosystem)} />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getSupabaseClient, getWebGoogleOAuthClient } from '../utils/supabaseClient';
 import { flushPendingConsent } from '../utils/pendingConsent.js';
+import { EdState } from './editorial/EdPage';
 
 export default function AuthCallback({ onAuthenticated }) {
   const [status, setStatus] = useState('loading');
@@ -193,30 +194,21 @@ export default function AuthCallback({ onAuthenticated }) {
 
   if (status === 'confirmed') {
     return (
-      <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem', padding: '2rem', textAlign: 'center', background: 'var(--color-bg, #fff)' }}>
-        <div style={{ fontSize: 'var(--ay-fs-title)' }}>✓</div>
-        <h2 style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, margin: 0 }}>Your email is confirmed.</h2>
-        <p style={{ color: 'var(--color-text-muted, #666)', maxWidth: '360px', lineHeight: 1.6, margin: 0 }}>
-          Your email has been confirmed. You can close this tab and sign in to ayna.
-        </p>
-      </div>
+      <EdState title="Your email is confirmed.">
+        <p className="ed-lead">Your email has been confirmed. You can close this tab and sign in to ayna.</p>
+      </EdState>
     );
   }
 
   if (status === 'error') {
     return (
-      <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem', padding: '2rem', textAlign: 'center' }}>
-        <p style={{ color: '#b42318', fontWeight: 600 }}>Could not complete sign-in.</p>
-        <p style={{ color: '#666', fontSize: 14, maxWidth: '400px' }}>{errorMsg || 'Please return to ayna and try again.'}</p>
-      </div>
+      <EdState title="Could not complete sign-in." tone="error">
+        <p className="ed-lead">{errorMsg || 'Please return to ayna and try again.'}</p>
+      </EdState>
     );
   }
 
-  return (
-    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: 'var(--color-text-muted, #666)' }}>Signing you in…</p>
-    </div>
-  );
+  return <EdState busy><p className="ed-lead">Signing you in…</p></EdState>;
 }
 
 function PasswordRecoveryForm({ done, onDone }) {
@@ -224,14 +216,11 @@ function PasswordRecoveryForm({ done, onDone }) {
   const [pw2, setPw2] = useState('');
   const [err, setErr] = useState('');
   const [saving, setSaving] = useState(false);
-  const box = { minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '0.9rem', padding: '2rem', textAlign: 'center' };
-  const input = { width: '100%', maxWidth: 320, padding: '0.8rem 1rem', borderRadius: 12, border: '1px solid #d6d3d1', fontSize: 16, boxSizing: 'border-box' };
   if (done) {
     return (
-      <div style={box}>
-        <h2 style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, margin: 0 }}>Password updated</h2>
-        <p style={{ color: '#666', maxWidth: 360, lineHeight: 1.6, margin: 0 }}>You can now sign in to ayna with your new password, on the website or in the app.</p>
-      </div>
+      <EdState title="Password updated">
+        <p className="ed-lead">You can now sign in to ayna with your new password, on the website or in the app.</p>
+      </EdState>
     );
   }
   const submit = async (e) => {
@@ -248,14 +237,21 @@ function PasswordRecoveryForm({ done, onDone }) {
     onDone();
   };
   return (
-    <form onSubmit={submit} style={box}>
-      <h2 style={{ fontSize: 'var(--ay-fs-section)', fontWeight: 600, margin: 0 }}>Set a new password</h2>
-      <input type="password" autoComplete="new-password" placeholder="New password (8+ characters)" value={pw} onChange={(e) => setPw(e.target.value)} style={input} />
-      <input type="password" autoComplete="new-password" placeholder="Confirm new password" value={pw2} onChange={(e) => setPw2(e.target.value)} style={input} />
-      {err && <p style={{ color: '#b42318', margin: 0, fontSize: 14 }}>{err}</p>}
-      <button type="submit" disabled={saving} style={{ padding: '0.8rem 1.6rem', borderRadius: 99, border: 'none', background: '#262a52', color: '#fff', fontWeight: 600, fontSize: 16, cursor: saving ? 'not-allowed' : 'pointer' }}>
-        {saving ? 'Saving…' : 'Save new password'}
-      </button>
-    </form>
+    <EdState title="Set a new password">
+      <form onSubmit={submit} className="ed-stack" noValidate>
+        <div className="ed-field">
+          <label htmlFor="ed-pw1">New password (8+ characters)</label>
+          <input id="ed-pw1" type="password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} aria-invalid={err ? true : undefined} aria-describedby={err ? 'ed-pw-err' : undefined} />
+        </div>
+        <div className="ed-field">
+          <label htmlFor="ed-pw2">Confirm new password</label>
+          <input id="ed-pw2" type="password" autoComplete="new-password" value={pw2} onChange={(e) => setPw2(e.target.value)} aria-invalid={err ? true : undefined} aria-describedby={err ? 'ed-pw-err' : undefined} />
+        </div>
+        {err && <p id="ed-pw-err" className="ed-err" role="alert">{err}</p>}
+        <div>
+          <button type="submit" className="ay-btn ay-btn--primary" disabled={saving}>{saving ? 'Saving…' : 'Save new password'}</button>
+        </div>
+      </form>
+    </EdState>
   );
 }

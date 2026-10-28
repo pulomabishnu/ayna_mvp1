@@ -1,0 +1,73 @@
+/* AppLanding.jsx: the app's one-screen landing. Never scrolls: a column the
+   height of the app's own box (above the tab bar). The espresso band takes
+   the space left over; the rain is an absolute layer inside it, so it never
+   adds height. Sizes follow the box (cqh/cqw): SE 375x667 through Pro Max
+   430x932 and the desktop phone preview. The band and the bar keep fixed
+   colours; the lower part is butter (light) or espresso (dark). */
+
+.ayna-mobile:is(#ay, .ayna-mobile) > .ay-landing-app {
+  flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
+  overflow: hidden; overscroll-behavior: none; background: #ffedac;
+  container-type: size; container-name: alxapp;
+}
+.ayna-mobile[data-theme='dark']:is(#ay, .ayna-mobile) > .ay-landing-app { background: #3e2723; }
+
+#ay-landing.alx {
+  --alx-fg: #3e2723; --alx-soft: rgba(62, 39, 35, .84); --alx-page: #ffedac;
+  position: relative; flex: 1 1 auto; min-height: 0; height: 100%; display: flex; flex-direction: column;
+  box-sizing: border-box; padding: 0 0 36px; overflow: hidden; /* 36px: clear of the tab bar's raised Home button */
+  background: var(--alx-page); color: var(--alx-fg); font-family: var(--ay-font-ui, 'Figtree', system-ui, sans-serif);
+}
+[data-theme='dark'] #ay-landing.alx { --alx-fg: #ffedac; --alx-soft: rgba(255, 237, 172, .88); --alx-page: #3e2723; }
+#ay-landing.alx *, #ay-landing.alx *::before, #ay-landing.alx *::after { box-sizing: border-box; }
+
+/* the espresso band: everything left over */
+#ay-landing.alx .alx__band { position: relative; isolation: isolate; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; background: #3e2723; color: #ffedac; overflow: hidden; }
+/* the rain: its own strip between the wordmark and the words (never behind
+   them), three columns, products and features taking turns */
+#ay-landing.alx .alx__rain { position: relative; inset: auto; z-index: 0; flex: 1 1 0; min-height: 0; --lk-gap: 0px; --lk-colgap: 18px; --lk-pad: 18px; --lk-slot: clamp(92px, 13cqh, 112px); --lk-prod-max: 76px; }
+#ay-landing.alx .alx__rain .lk-ring { width: 46px; height: 46px; }
+#ay-landing.alx .alx__copy { display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.4cqh, 12px); }
+#ay-landing.alx .alx__edge { display: block; flex: none; width: 100%; height: 12px; margin-top: -1px; background: #f7badd; }
+#ay-landing.alx .alx__edge path { fill: #3e2723 !important; }
+
+/* top: the wordmark centred, Sign in to the right, below the status bar */
+#ay-landing.alx .alx__top { position: relative; flex: none; display: flex; align-items: center; justify-content: center; min-height: 52px; padding: calc(env(safe-area-inset-top, 0px) + 4px) 16px 0; }
+#ay-landing.alx .alx__mark { font: 700 28px/1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.03em; color: #ffedac; }
+#ay-landing.alx .alx__btn { all: unset; box-sizing: border-box; cursor: pointer; position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; color: #ffedac; font: 700 15px/1 var(--ay-font-ui, inherit); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+#ay-landing.alx .alx__btn:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 8px; }
+
+/* the title and the one line, centred in the band */
+#ay-landing.alx .alx__head { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px 0 clamp(12px, 2.4cqh, 24px); text-align: center; }
+#ay-landing.alx .alx__title { margin: 0; font: 800 clamp(40px, 11cqw, 44px)/1.04 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.03em; color: #ffedac !important; text-transform: none; }
+#ay-landing.alx .alx__title > span { display: block; }
+#ay-landing.alx .alx__title > span { color: #f7badd; }
+#ay-landing.alx .alx__one { margin: 0; max-width: 28ch; font: 700 clamp(15px, 4cqw, 17px)/1.35 var(--ay-font-ui, inherit) !important; color: #ffedac !important; text-wrap: balance; }
+
+/* the actions, centred */
+#ay-landing.alx .alx__act { flex: none; display: flex; flex-direction: column; align-items: center; gap: clamp(12px, 2cqh, 18px); width: 100%; max-width: 480px; margin: 0 auto; padding: clamp(20px, 3.4cqh, 32px) 20px 0; }
+/* the search: secondary, compact and quiet under the main action */
+#ay-landing.alx .alx__search { --lk-search-h: 46px; max-width: 100%; }
+#ay-landing.alx .alx__search.lsx-search input { font-size: 15px !important; background: transparent !important; border-color: #3e2723 !important; }
+#ay-landing.alx .alx__search .lsx-search__hint { font-size: 15px; }
+#ay-landing.alx .alx__search button { width: 36px; height: 36px; right: 5px; }
+[data-theme='dark'] #ay-landing.alx .alx__search.lsx-search input { color: #ffedac !important; border-color: #ffedac !important; }
+[data-theme='dark'] #ay-landing.alx .alx__search label > svg { stroke: #ffedac; }
+[data-theme='dark'] #ay-landing.alx .alx__search .lsx-search__hint, [data-theme='dark'] #ay-landing.alx .alx__search .lsx-search__hint b { color: rgba(255, 237, 172, .88); }
+[data-theme='dark'] #ay-landing.alx .alx__search button { background: #ffedac; color: #3e2723; }
+#ay-landing.alx .alx__sts { width: 100%; gap: 8px; color: var(--alx-fg); }
+#ay-landing.alx .alx__sts .ay-sts__hint { font-size: 13px; }
+#ay-landing.alx .alx__link { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; margin-top: -10px; color: var(--alx-fg); font: 700 15px/1 var(--ay-font-ui, inherit); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+#ay-landing.alx .alx__link:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 8px; }
+#ay-landing.alx .alx__banner { width: 100%; }
+/* the medical note, always on the screen */
+#ay-landing.alx .alx__med { flex: none; margin: clamp(12px, 2.4cqh, 24px) auto 0; padding: 0 20px; max-width: 400px; font: 500 13px/1.4 var(--ay-font-ui, inherit) !important; color: var(--alx-soft) !important; text-align: center; }
+#ay-landing.alx .alx__med a { color: inherit !important; text-decoration: underline; text-underline-offset: 3px; }
+
+/* dark: the slider becomes butter on espresso */
+[data-theme='dark'] #ay-landing.alx .alx__sts.is-ink .ay-sts__track { background: #ffedac; color: #3e2723; border-color: #ffedac; }
+
+/* short boxes: the lead line gives way, then Explore first moves up */
+/* the sleep bars a little narrower in the app's edge columns */
+#ay-landing.alx .alx__rain .lk-bars { gap: 3px; height: 30px; }
+#ay-landing.alx .alx__rain .lk-bars i { width: 6px; }

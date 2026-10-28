@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { readTour } from '../../tutorial/tourStore.js';
 import './quiz-intro.css';
 
 // A few seconds at the very start of the quiz (app and website) that shows
@@ -18,6 +19,10 @@ function setHidden(hidden) {
     else localStorage.removeItem(QUIZ_INTRO_HIDDEN_KEY);
   } catch { /* storage unavailable */ }
 }
+// Tips switched off in Settings (tutorial/tourStore.js): no Quick tip either (QA, Oct 25).
+function tipsSwitchedOff() {
+  try { return readTour().enabled === false; } catch { return false; }
+}
 function prefersReducedMotion() {
   try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; }
 }
@@ -27,7 +32,8 @@ function prefersReducedMotion() {
  * `enabled={false}` skips it, e.g. when the quiz reopens mid-way.
  */
 export default function QuizIntro({ variant = 'app', enabled = true }) {
-  const [open, setOpen] = useState(() => enabled && !quizIntroHidden());
+  const [tipsOff] = useState(tipsSwitchedOff);
+  const [open, setOpen] = useState(() => enabled && !tipsOff && !quizIntroHidden());
   const [leaving, setLeaving] = useState(false);
   const [still] = useState(prefersReducedMotion);
   // Touching the checkbox stops the auto-advance so it never closes under her finger.
@@ -59,7 +65,7 @@ export default function QuizIntro({ variant = 'app', enabled = true }) {
     return () => clearTimeout(t);
   }, [open, enabled, hintGone]);
   if (!open) {
-    if (!enabled || hintGone || !quizIntroHidden()) return null;
+    if (!enabled || tipsOff || hintGone || !quizIntroHidden()) return null;
     return (
       <p className={`qi-mini qi-mini--${variant}`} role="note">
         Hold any answer to see what it means

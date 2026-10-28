@@ -1,9 +1,11 @@
+# Personal pages (Today, Ask, You, account and admin pages, Community member
+# pages and posts) are kept out of search with an X-Robots-Tag: noindex header
+# (vercel.json) and a robots meta tag, not blocked here: a crawler that can't
+# fetch a page never sees its noindex. Old addresses (/shop, /library,
+# /ecosystem, /health, /discovery) stay crawlable so their permanent
+# redirects are followed and their ranking moves to the new pages.
 User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /you
-Disallow: /ecosystem
-Disallow: /auth/
-Disallow: /mobile-preview
 
 Sitemap: https://www.aynahealth.co/sitemap.xml

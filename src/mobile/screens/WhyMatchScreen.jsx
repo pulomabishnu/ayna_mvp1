@@ -1,11 +1,15 @@
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
+import { MATCH_BASIS } from '../../components/pdp/PdpParts.jsx';
+import MatchFeedback from '../../components/today/MatchFeedback.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
-import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE } from '../../utils/matchDisplay.js';
+import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE, shownMatchPercent, PARTIAL_FIT, isSafetyHold, SAFETY_HOLD, isBleedingEvaluation, BLEEDING_EVALUATION } from '../../utils/matchDisplay.js';
+import SafetyHoldNote from '../../components/match/SafetyHoldNote.jsx';
+import BleedingEvaluationNote from '../../components/match/BleedingEvaluationNote.jsx';
 import '../match.css';
 import '../eco-needs.css';
 import '../../styles/match-ui.css';
-import { whyLine } from '../../health/matchContext.js';
-import { SOURCE_NAMES } from '../data/healthConnections.js';
+import HealthWhyLine from '../../components/health/HealthWhyLine.jsx';
+import { whyLine } from '../../utils/whyLine.js';
 
 // Why this matches: what matched and the inputs it used. It never says why
 // she has a symptom; missing answers lower confidence, never the percent.
@@ -28,13 +32,14 @@ function reasonKind(component) {
 
 const TONE = { excellent: 'is-strong', strong: 'is-good', exploratory: 'is-partial', browse: 'is-partial' };
 
-export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack, onUpdateHealth, onViewDetails }) {
+export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack, onUpdateHealth, onViewDetails, onFixSafety = null }) {
   const details = getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts);
-  // Only set when connected health data supports a need she chose (src/health/matchContext.js).
-  const healthLine = whyLine(details?.healthData, (id) => SOURCE_NAMES[id] || id);
   const { percent, eligible, matchStatus, reasonDetails = [], considerations = [], unknowns = [], unmetNeeds = [], tier, access } = details;
   const hasScore = eligible !== false && matchStatus === 'scored' && Number.isFinite(percent) && percent > 0;
   const excluded = matchStatus === 'excluded' || eligible === false;
+  // Held back for safety: no percent, no per-need numbers (founder, Oct 24).
+  const held = isSafetyHold(details);
+  const evaluation = isBleedingEvaluation(details);
   const why = whyMatch(details);
   const rows = matchStatus === 'no-profile' ? [] : needBreakdown(details);
   // Needs this product scores 0 on are listed once as "not for this" instead of empty bars.
@@ -44,7 +49,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
   const notes = hasScore ? confidenceNotes(details, product) : [];
   const exclusionReasons = excluded ? exclusionLines(details) : [];
   const exclusions = exclusionReasons.length ? exclusionReasons : excluded ? considerations.map((c) => c.text).filter(Boolean) : [];
-  const title = excluded ? 'Not in your matches' : hasScore ? 'Why this matches' : matchStatus === 'no-profile' ? 'About this match' : 'No clear match';
+  const title = excluded ? 'Not in your matches' : held ? SAFETY_HOLD : evaluation ? BLEEDING_EVALUATION : hasScore ? 'Why this matches' : matchStatus === 'no-profile' ? 'About this match' : 'No clear match';
 
   return (
     <main className="ayna-match-page">
@@ -57,14 +62,22 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
       <div className="ayna-match-scroll">
         {hasScore ? (
           <section className={`ayna-match-result ay-match-hero ${TONE[tier] || 'is-partial'}`} aria-label={needHeadline(percent, best?.phrase)}>
-            <div className="ayna-match-ring" aria-hidden="true" style={{ '--match-angle': `${percent * 3.6}deg` }}><span>{percent}<small>%</small></span></div>
+            {shownMatchPercent(percent) != null
+              ? <div className="ayna-match-ring" aria-hidden="true" style={{ '--match-angle': `${percent * 3.6}deg` }}><span>{percent}<small>%</small></span></div>
+              : <div className="ayna-match-ring is-partial" aria-hidden="true" style={{ '--match-angle': '0deg' }}><span><small>{PARTIAL_FIT}</small></span></div>}
             <div>
-              <span className="ay-match-tier">{tierWord(tier, percent)}</span>
+              {tierWord(tier, percent) && <span className="ay-match-tier">{tierWord(tier, percent)}</span>}
               <h2>{needHeadline(percent, best?.phrase)}</h2>
+              {whyLine(product, details, { max: 2 }) && <p className="ay-match-why">{whyLine(product, details, { max: 2 })}</p>}
               <p className="ay-match-based">{BASED_ON_LINE}</p>
+          <p className="ay-match-based">{MATCH_BASIS} <a href="/how-it-works">How we match</a></p>
               {access?.label && <p className="ay-match-access"><span aria-hidden="true">●</span> {access.label}</p>}
             </div>
           </section>
+        ) : evaluation ? (
+          <BleedingEvaluationNote note={details.bleedingEvaluation} />
+        ) : held ? (
+          <SafetyHoldNote hold={details.safetyHold} onFix={onFixSafety || (onUpdateHealth ? () => onUpdateHealth() : null)} />
         ) : excluded ? (
           <section className="ayna-match-intro ay-match-excluded">{exclusions.length > 0
             ? exclusions.map((line) => <p key={line}>{tidy(line)}</p>)
@@ -88,12 +101,8 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
             <ul className="ayna-match-reasons">{reasonDetails.map((reason, index) => <li key={`${reason.component}-${index}`}><span>{reasonKind(reason.component)}</span><p>{tidy(reason.text)}</p></li>)}</ul>
           </section>
         )}
-        {hasScore && healthLine && (
-          <section className="ayna-match-section ay-why-health">
-            <h2>Your health data</h2>
-            <p><b>{healthLine.text}.</b> {healthLine.detail}</p>
-          </section>
-        )}
+        {/* Only when connected health data backs the need this matches (src/health/matchContext.js). */}
+        {hasScore && <HealthWhyLine healthData={details?.healthData} as="h2" className="ayna-match-section ay-why-health" />}
         {hasScore && why.basedOn.length > 0 && (
           <section className="ayna-match-section">
             <h2>Based on</h2>
@@ -106,13 +115,14 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
             {onUpdateHealth && <button type="button" onClick={onUpdateHealth}>Add to profile</button>}
           </section>
         )}
-        {rows.length > 1 && !excluded && (
+        {rows.length > 1 && !excluded && !held && (
           <section className="ayna-match-section">
             <h2>Your needs</h2>
             {scoredRows.length > 0 && <ul className="ay-need-rows">{scoredRows.map((r) => <li key={r.needId} className={r.score > 0 ? `is-${r.tier}` : 'is-none'}>
               <span className="ay-need-rows__label">{tidy(r.short)}</span>
-              <span className="ay-need-rows__bar" aria-hidden="true"><i style={{ width: `${r.score}%` }} /></span>
-              <strong>{r.score}</strong>
+              {/* Under 50: no bar, no number (one rule with the cards). */}
+              <span className="ay-need-rows__bar" aria-hidden="true">{shownMatchPercent(r.score) != null && <i style={{ width: `${r.score}%` }} />}</span>
+              <strong>{shownMatchPercent(r.score) ?? ''}</strong>
               <small>{r.word}</small>
             </li>)}</ul>}
             {offRows.length > 0 && <p className="ay-need-rows__off">Not for this: {offRows.map((r) => tidy(r.short)).join(', ')}</p>}
@@ -125,12 +135,13 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
           <section className="ayna-match-section ayna-match-cautions"><h2>Before you choose</h2>{why.considerations.map((note, index) => <div key={index}><p>{tidy(note.text)}</p>{note.cta && onViewDetails && <button type="button" onClick={onViewDetails}>{note.cta}</button>}</div>)}</section>
         )}
         {(notes.length > 0 || unknowns.length > 0) && (
-          <section className="ayna-match-section"><h2>What we could not confirm</h2>
-            {notes.length > 0 && <ul className="ay-match-notes" aria-label="What lowers our confidence">{notes.map((n) => <li key={n}>{n}</li>)}</ul>}
+          <section className="ayna-match-section"><h2>{notes.length ? 'Worth checking' : 'What we could not confirm'}</h2>
+            {notes.length > 0 && <ul className="ay-match-notes" aria-label="Worth checking">{notes.map((n) => <li key={n}>{n}</li>)}</ul>}
             {unknowns.map((note) => <p key={note}>{tidy(note)}</p>)}
           </section>
         )}
         {matchStatus === 'no-profile' && onUpdateHealth && <button type="button" className="ayna-match-update" onClick={onUpdateHealth}>Complete health profile</button>}
+        {hasScore && <MatchFeedback productId={product?.id} onUpdateHealth={onUpdateHealth} />}
         <p className="ayna-match-disclaimer">A match to what you shared, not a diagnosis or a promise of results. We never guess why you have a symptom. Availability is shown separately and never changes the score.</p>
         <LegalFooter />
       </div>

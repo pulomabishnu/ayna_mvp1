@@ -1,5 +1,6 @@
 import { compactLegacyAuthMetadata } from './authMetadataCleanup';
 import { filterProductMapToCatalog } from './catalogIntegrity';
+import { loadCatalog } from '../data/catalog.js';
 
 /**
  * Wishlist / Save for later persistence.
@@ -18,6 +19,9 @@ function isMissingColumn(error) {
   return error.code === UNDEFINED_COLUMN || /column .*is_saved.* does not exist/i.test(error.message || '');
 }
 
+// Reads the device's saved list, checked against the catalog, so call it only
+// once the catalog has loaded (data/catalog.js isCatalogReady): before that
+// every product would read as unknown (App.jsx restores it on load).
 export function loadSavedProducts() {
   try {
     const raw = localStorage.getItem(LS_KEY);
@@ -27,6 +31,29 @@ export function loadSavedProducts() {
   } catch {
     return {};
   }
+}
+
+// The device's saved list exactly as stored (no catalog check), for merging
+// before the catalog has loaded so nothing stored is dropped.
+export function loadSavedProductsRaw() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * What to store after a save or unsave. Before the stored list has been
+ * restored into the page, `next` only holds this one change, so merge it into
+ * the stored list instead of replacing it (a guest's list shrank to one item).
+ */
+export function savedListToPersist(next, { restored, removedId = null } = {}) {
+  if (restored) return next;
+  const merged = { ...loadSavedProductsRaw(), ...next };
+  if (removedId) delete merged[removedId];
+  return merged;
 }
 
 export function persistSavedProducts(map) {
@@ -67,6 +94,8 @@ export async function loadSavedForUser(supabase, userId) {
     return null;
   }
 
+  // Checked against the catalog below, which loads after first paint.
+  await loadCatalog();
   const out = {};
   for (const row of data || []) {
     out[row.product_id] = row.product_data || {
