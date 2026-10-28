@@ -1,6 +1,8 @@
+import posthog from 'posthog-js';
 import { compactLegacyAuthMetadata } from './authMetadataCleanup';
 import { filterProductMapToCatalog } from './catalogIntegrity';
 import { loadCatalog } from '../data/catalog.js';
+import { analyticsId, ensureAnalyticsContext, eventSurface } from './analyticsEvents.js';
 
 /**
  * Wishlist / Save for later persistence.
@@ -8,6 +10,10 @@ import { loadCatalog } from '../data/catalog.js';
  * localStorage keeps the UI instant. Supabase user_ecosystems is the durable
  * sync layer. Saved-product blobs must never be stored in Auth user_metadata,
  * because Supabase embeds user_metadata in the JWT sent on every API request.
+ *
+ * Product-level analytics are emitted only after a signed-in durable write.
+ * This gives algorithm/brand reporting a canonical product id without storing
+ * any health profile fields.
  */
 
 const LS_KEY = 'ayna_saved_for_later_v1';
@@ -19,22 +25,16 @@ function isMissingColumn(error) {
   return error.code === UNDEFINED_COLUMN || /column .*is_saved.* does not exist/i.test(error.message || '');
 }
 
-// Reads the device's saved list, checked against the catalog, so call it only
-// once the catalog has loaded (data/catalog.js isCatalogReady): before that
-// every product would read as unknown (App.jsx restores it on load).
 export function loadSavedProducts() {
   try {
     const raw = localStorage.getItem(LS_KEY);
     const parsed = raw ? JSON.parse(raw) : {};
-    // PRODUCT INTEGRITY: only catalog products, with current catalog facts.
     return parsed && typeof parsed === 'object' ? filterProductMapToCatalog(parsed) : {};
   } catch {
     return {};
   }
 }
 
-// The device's saved list exactly as stored (no catalog check), for merging
-// before the catalog has loaded so nothing stored is dropped.
 export function loadSavedProductsRaw() {
   try {
     const parsed = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
@@ -44,11 +44,6 @@ export function loadSavedProductsRaw() {
   }
 }
 
-/**
- * What to store after a save or unsave. Before the stored list has been
- * restored into the page, `next` only holds this one change, so merge it into
- * the stored list instead of replacing it (a guest's list shrank to one item).
- */
 export function savedListToPersist(next, { restored, removedId = null } = {}) {
   if (restored) return next;
   const merged = { ...loadSavedProductsRaw(), ...next };
@@ -94,7 +89,6 @@ export async function loadSavedForUser(supabase, userId) {
     return null;
   }
 
-  // Checked against the catalog below, which loads after first paint.
   await loadCatalog();
   const out = {};
   for (const row of data || []) {
@@ -138,6 +132,18 @@ export async function setSavedForUser(supabase, userId, product, isSaved) {
     else console.warn('[Ayna] wishlist table write unavailable; local copy retained:', error.message || error);
     return false;
   }
+
+  try {
+    ensureAnalyticsContext();
+    posthog.capture('product_saved_state_changed', {
+      product_id: String(product.id),
+      brand_id: analyticsId(product.brand),
+      category: analyticsId(product.category),
+      saved: Boolean(isSaved),
+      surface: eventSurface(),
+    });
+  } catch { /* analytics never blocks saves */ }
+
   return true;
 }
 
