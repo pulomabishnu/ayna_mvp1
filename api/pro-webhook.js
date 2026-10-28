@@ -1,8 +1,43 @@
 /* global Buffer */
+import { createHash } from 'node:crypto';
 import { proConfig, proStripe, proAdmin, fulfillProSession, revokeProPayment, fulfillProInvoice, syncProSubscription, cancelRefundedSubscription } from './_pro.js';
 
 export const config = { api: { bodyParser: false } };
 const id = value => typeof value === 'string' ? value : value?.id;
+const PRO_FLOW = 'ayna_pro_early_access_v1';
+
+function anonymousCheckoutId(value) {
+  return `pro_checkout_${createHash('sha256').update(String(value || '')).digest('hex').slice(0, 24)}`;
+}
+
+async function captureProPayment(event, session, at) {
+  const key = process.env.POSTHOG_PROJECT_KEY;
+  const host = process.env.POSTHOG_HOST;
+  if (!key || !host || session?.metadata?.flow !== PRO_FLOW) return;
+
+  try {
+    await fetch(`${host.replace(/\/$/, '')}/capture/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key: key,
+        event,
+        timestamp: at,
+        properties: {
+          distinct_id: anonymousCheckoutId(session.id),
+          source: 'stripe_webhook',
+          plan: session.metadata?.plan || 'unknown',
+          amount: Number.isFinite(session.amount_total) ? session.amount_total / 100 : undefined,
+          currency: String(session.currency || 'usd').toUpperCase(),
+          payment_status: session.payment_status || undefined,
+          $process_person_profile: false,
+        },
+      }),
+    });
+  } catch {
+    // Analytics must never block or fail payment fulfillment.
+  }
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
@@ -30,13 +65,15 @@ export default async function handler(req, res) {
     const at = new Date(event.created * 1000).toISOString();
     if (['checkout.session.completed', 'checkout.session.async_payment_succeeded'].includes(event.type)) {
       await fulfillProSession(stripe, admin, object.id, at);
+      if (object.payment_status === 'paid') await captureProPayment('pro_payment_succeeded', object, at);
     } else if (event.type === 'checkout.session.async_payment_failed') {
       const session = await stripe.checkout.sessions.retrieve(object.id);
-      if (session.metadata?.flow === 'ayna_pro_early_access_v1' && session.payment_status !== 'paid' && session.subscription) {
+      if (session.metadata?.flow === PRO_FLOW && session.payment_status !== 'paid' && session.subscription) {
         const sub = await stripe.subscriptions.retrieve(id(session.subscription));
         if (sub.status !== 'canceled') await stripe.subscriptions.cancel(sub.id);
         await syncProSubscription(stripe, admin, sub.id);
       }
+      await captureProPayment('pro_payment_failed', session, at);
     } else if (event.type === 'invoice.paid') {
       await fulfillProInvoice(stripe, admin, object.id, at);
     } else if (['customer.subscription.updated', 'customer.subscription.deleted'].includes(event.type)) {
