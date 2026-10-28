@@ -3,6 +3,13 @@ import { marqueeLength, openProPaywall, proFeatureName, proLockLine, roundedPeri
 import SubscriptionPaywallModal from './SubscriptionPaywallModal.jsx';
 import '../styles/pro-v4.css';
 
+const TESTFLIGHT_URL = 'https://testflight.apple.com/join/f3C9PypD';
+const PRO_WEB_URL = 'https://www.aynahealth.co/pro';
+
+function proWebUrl(feature = '') {
+  return `${PRO_WEB_URL}${feature ? `?feature=${encodeURIComponent(feature)}` : ''}`;
+}
+
 export function LockIcon({ size = 22 }) {
   return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /><circle cx="12" cy="15.5" r="1.5" fill="currentColor" /></svg>;
 }
@@ -45,8 +52,9 @@ export function CheckerFrame({ className = '', square = 12, radius = 22, childre
 
 /**
  * ayna's one locked state, used by every paywall: the checker frame, a lock,
- * "Get ayna Pro to unlock" with the feature's name, one strong button that
- * opens the Pro sheet, and a quiet "Not now".
+ * "Get ayna Pro to unlock" with the feature's name, one strong button and a
+ * quiet "Not now". On the native app the Pro CTA goes straight to the web;
+ * on the website it opens the normal Pro sheet.
  *
  *   variant="page"    a gated screen (Reads, appointment prep, wearables)
  *   variant="inline"  a limit she just hit (Ask ayna, playlists, ecosystem update)
@@ -62,16 +70,20 @@ export default function ProLock({
   const [folded, setFolded] = useState(false);
   const [localSheet, setLocalSheet] = useState(false);
   const name = title || proFeatureName(feature);
+  const webSetup = !native && ['dashboard', 'wearables'].includes(feature);
+  const webUrl = proWebUrl(feature);
   const unlock = () => {
     if (!openProPaywall({ feature, featureName: name })) setLocalSheet(true);
   };
-  const sheet = localSheet && <SubscriptionPaywallModal feature={feature} featureName={name} onClose={() => setLocalSheet(false)} />;
+  const sheet = !native && localSheet && <SubscriptionPaywallModal feature={feature} featureName={name} onClose={() => setLocalSheet(false)} />;
 
   if (folded) {
     return <div className={`pro-lock-fold pro-lock-fold--${variant}`}>
       <span className="pro-lock-fold__icon"><LockIcon size={18} /></span>
       <span className="pro-lock-fold__text">{name} is part of ayna Pro</span>
-      <button type="button" className="pro-lock-fold__go" onClick={unlock}>Get ayna Pro</button>
+      {native
+        ? <a className="pro-lock-fold__go" href={webUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>Get ayna Pro</a>
+        : <button type="button" className="pro-lock-fold__go" onClick={unlock}>Get ayna Pro</button>}
       {sheet}
     </div>;
   }
@@ -85,10 +97,22 @@ export default function ProLock({
           <h2 id={`${uid}-t`} className="pro-lock__title">{name}</h2>
           {context && <p className="pro-lock__context">{context}</p>}
           <p className="pro-lock__line">{line || proLockLine(feature)}</p>
-          {!native && ['dashboard', 'wearables'].includes(feature) && <div className="pro-lock__setup">
+          {webSetup && <div className="pro-lock__setup">
             <ol>
-              <li><b>Download ayna on your iPhone</b><p>Install the beta through TestFlight.</p><a href="https://testflight.apple.com/join/f3C9PypD" target="_blank" rel="noopener noreferrer">Download on TestFlight ↗</a></li>
-              <li><b>Get ayna Pro</b><p>Sign in with the same ayna account to unlock your dashboard and connect wearables and apps.</p></li>
+              <li>
+                <b>Get ayna Pro</b>
+                <p>Choose your plan on the web, then use the same ayna account in the app.</p>
+                <button type="button" className="pro-lock__cta" onClick={unlock}><LockIcon size={18} />Get ayna Pro</button>
+              </li>
+              <li>
+                <b>Get ayna on TestFlight</b>
+                <p>Install the iPhone beta, then sign in with the same account.</p>
+                <a href={TESTFLIGHT_URL} target="_blank" rel="noopener noreferrer">Download on TestFlight ↗</a>
+                <a href={TESTFLIGHT_URL} target="_blank" rel="noopener noreferrer" aria-label="Open ayna in TestFlight" style={{ display: 'block', width: 132, marginTop: 12, textDecoration: 'none' }}>
+                  <img src="/images/testflight-qr.svg" alt="QR code to install ayna through TestFlight" width="132" height="132" style={{ display: 'block', width: '132px', height: '132px', borderRadius: '12px' }} />
+                </a>
+                <p>Scan with your iPhone camera.</p>
+              </li>
             </ol>
             <p className="pro-lock__expiry">Cancel anytime. Access continues until your paid period ends, then the dashboard locks again.</p>
           </div>}
@@ -96,9 +120,9 @@ export default function ProLock({
           {error && <p className="pro-lock__error" role="status">{error}{onRetry && <> <button type="button" className="pro-lock__retry" onClick={onRetry}>Check again</button></>}</p>}
         </div>
         <div className="pro-lock__actions">
-          <button type="button" className="pro-lock__cta" onClick={unlock}>
-            <LockIcon size={18} />Get ayna Pro
-          </button>
+          {!webSetup && (native
+            ? <a className="pro-lock__cta" href={webUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}><LockIcon size={18} />Get ayna Pro</a>
+            : <button type="button" className="pro-lock__cta" onClick={unlock}><LockIcon size={18} />Get ayna Pro</button>)}
           <button type="button" className="pro-lock__quiet" onClick={() => (onNotNow ? onNotNow() : setFolded(true))}>Not now</button>
           {native && <p className="pro-lock__fine">Already a Pro member? Sign in with the ayna account that has your membership.</p>}
         </div>
