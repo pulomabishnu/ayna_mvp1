@@ -377,7 +377,7 @@ export const INTERVENTION_CLASSES = {
     summary: 'Going to bed and waking up at the same time, winding down before bed and keeping the room dark and quiet can help sleep.',
     caution: null,
     needs: ['cycle_sleep', 'pms'],
-    sources: [SOURCES.nhlbiInsomnia, SOURCES.medlineSleepHabits, SOURCES.owhPms],
+    sources: [SOURCES.nhlbiInsomnia, SOURCES.medlineSleepHabits, { label: 'CDC NIOSH: Create a good sleep environment', url: 'https://www.cdc.gov/niosh/work-hour-training-for-nurses/longhours/mod6/02.html' }, SOURCES.owhPms],
     followUpDays: 28,
     productsAllowed: false,
     catalog: null,

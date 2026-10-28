@@ -179,7 +179,7 @@ import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
 import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
 import { MAIN_TABS, TabIcon, AskMark, ProfileMark } from './components/nav/tabs.jsx';
-import { YOU_SECTIONS, YOU_SECTION_ALIASES } from './components/nav/mainTabs.js';
+import { WEB_TOP_TABS, YOU_SECTIONS, YOU_SECTION_ALIASES } from './components/nav/mainTabs.js';
 import YouTabs from './components/you/YouTabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
@@ -2493,13 +2493,11 @@ function App() {
             <span className="ay-nav__beta">beta</span>
           </a>
 
-          {/* The five main tabs, same names and order as the app (Shop, Services, Home, Community, Library). The current page is the filled pill (Home only when current). Real links (G02). */}
+          {/* Home leads the desktop navigation; mobile keeps the familiar centre Home tab. */}
           <div className="ay-nav__links">
-            {MAIN_TABS.map((t) => (
-              <a key={t.key} href={t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
+            {WEB_TOP_TABS.map((t) => (
+              <a key={t.key} href={t.key === 'today' && !user ? '/' : t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
                 {t.label}
-                {/* Landing audit 5: only on the landing and Today, until the quiz is done. */}
-                {t.key === 'today' && !authLoading && !quizResults && ['welcome', 'hero', 'today'].includes(currentView) && <span className="ay-nav__start">Start here</span>}
               </a>
             ))}
           </div>

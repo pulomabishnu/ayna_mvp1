@@ -18,6 +18,10 @@ export const MAIN_TABS = [
   { key: 'library', label: 'Library', href: '/explore/resources', icon: 'library' },
 ];
 
+// Desktop reading order starts with Home; the mobile centre button keeps its place.
+export const WEB_TOP_TABS = ['today', 'explore', 'services', 'library', 'community']
+  .map((key) => MAIN_TABS.find((tab) => tab.key === key));
+
 /**
  * The app's tab bar: the same five as the website. Home (was Today) is the dashboard
  * (AynaHomeScreen, the 'ayna' screen); its key stays 'home' so analytics and

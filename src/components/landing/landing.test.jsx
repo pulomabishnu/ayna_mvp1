@@ -115,7 +115,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page).toContain('How ayna fits it to you');
     expect(page).toContain('Quick reads about your body, with sources');
     expect(page).toContain('More of ayna, when you want it.');
-    expect(host.querySelector('a[href="/pro"]').textContent).toContain('Learn more');
+    expect(host.querySelector('a[href="/pro"]').textContent).toContain('Get ayna Pro');
     expect(page).toContain('Built by three women who wanted better answers.');
     const last = host.querySelector('#ay-landing').lastElementChild;
     expect(last.textContent).toContain('In an emergency, call 911.');
@@ -141,4 +141,22 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     // the founders photo stays
     expect(page.querySelector('.wl-classic img[src*="founders"], .wl-classic source[srcset*="founders"]')).not.toBeNull();
   });
+});
+
+it('lets readers expand explanations, keeps Pro terms visible and puts membership before the Library', () => {
+  vi.useFakeTimers();
+  mount(<WebLanding onStartQuiz={() => {}} />);
+  act(() => { vi.advanceTimersByTime(1500); });
+  act(() => { vi.runOnlyPendingTimers(); });
+  const method = host.querySelector('.lp-method');
+  const disclosure = method.querySelector('details');
+  expect(disclosure.open).toBe(false);
+  act(() => disclosure.querySelector('summary').click());
+  expect(disclosure.open).toBe(true);
+  const pro = host.querySelector('.wl-pro');
+  expect(pro.textContent).toContain('$4.99');
+  expect(pro.textContent).toContain('$8.99/month');
+  expect(pro.textContent).toContain('Jan 1, 2027');
+  expect(pro.compareDocumentPosition(host.querySelector('.hm-rc')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  vi.useRealTimers();
 });

@@ -141,12 +141,13 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
             <div className="ays-act">
               <button type="button" className="ays-cta" onClick={onPrimary || onClose}>{primaryLabel}</button>
               <div className="ay-wr-secondary">
-                <button type="button" className="ays-link" onClick={share}>
+                <button type="button" className="ays-link" onClick={share} aria-describedby="wrapped-invite-note">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" /></svg>
-                  Share
+                  Invite a friend
                 </button>
                 <button type="button" className="ays-link" onClick={onBrowse}>Browse instead</button>
               </div>
+              <p id="wrapped-invite-note" className="ay-wr-invite-note">Shares an invitation to ayna, not your health results.</p>
             </div>
           </>}
           {active === 'empty' && <>

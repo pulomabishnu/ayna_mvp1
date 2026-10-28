@@ -96,6 +96,7 @@ function actionItem(cls, needId, ctx, tries) {
   return {
     key, kind: 'action', ref: cls.id, need: needId,
     title: cls.label,
+    how: cls.id === 'sleep_routine' ? 'Dim the lights, then choose a quiet wind-down: reading, breathing exercises or guided relaxation audio. Close the curtains; try an eye mask if light still bothers you. Keep the room cool and quiet, then aim for a similar bedtime and wake-up time.' : null,
     why: `For your ${needLabelFor(needId, ctx)}. ${cls.summary}`,
     caution: [consult ? `Ask a doctor or pharmacist before using this. ${safety.consults.map((c) => c.reason).join(' ')}` : '', cls.caution || ''].filter(Boolean).join(' ') || null,
     when: CLASS_WHEN[cls.id] || null,

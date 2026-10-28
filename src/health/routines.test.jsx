@@ -144,3 +144,12 @@ describe('QA M3: auto-built picks are suggestions, not hers', async () => {
     expect(html).not.toContain('You have this');
   });
 });
+
+it('gives a sleep habit practical steps without prescribing a supplement', () => {
+  const [routine] = buildRoutines({ needs: ['cycle_sleep'], profile: notPregnant, catalog });
+  const habit = [...routine.start, ...routine.other].find((item) => item.ref === 'sleep_routine');
+  expect(habit.how).toMatch(/wind-down/);
+  expect(habit.how).toMatch(/eye mask/);
+  expect(habit.how).not.toMatch(/magnesium|mg|dose/i);
+  expect(habit.sources.some((source) => source.url.startsWith('https://www.cdc.gov/'))).toBe(true);
+});

@@ -1,0 +1,72 @@
+/* Keep the existing butter / espresso / pink palette and Bricolage type.
+   The landing gets editorial spacing, fewer competing outlines and short disclosures. */
+/* The hero keeps its rain and familiar action; secondary text is quieter. */
+html body .app-container #ay-landing.wl .wl-one { font-weight: 400 !important; max-width: 35ch; }
+html body .app-container #ay-landing.wl .wl-how { font-weight: 500 !important; font-size: 14px !important; }
+html body .app-container #ay-landing.wl .wl-classic .hm-sec { padding-block: clamp(56px, 7vw, 96px) !important; }
+html body .app-container #ay-landing.wl .wl-classic .hm-h2 { max-width: 22ch; font-size: clamp(30px, 3.2vw, 46px) !important; line-height: 1.1 !important; }
+html body .app-container #ay-landing.wl .hm-head__all { font-weight: 500 !important; }
+
+/* A small index of recognizable needs, then actual product cards. No carousel of decoration. */
+.app-container #ay-landing .lp-need-index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 36px; margin: -8px 0 36px; }
+.app-container #ay-landing .lp-need-index__link {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  min-height: 64px; padding: 14px 0; border-bottom: 1px solid var(--ay-hairline, rgba(62,39,35,.22));
+  font: 400 17px/1.4 var(--ay-sans-stack, sans-serif) !important;
+  text-decoration: none !important; color: var(--ay-text, #3e2723) !important;
+}
+.app-container #ay-landing .lp-need-index__link svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.app-container #ay-landing .lp-need-index__link:hover { text-decoration: underline !important; text-underline-offset: 4px; }
+.app-container #ay-landing .lp-need-index__link:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+html body .app-container #ay-landing .hm-needsband__grid.is-single { display: block !important; }
+html body .app-container #ay-landing .hm-shop__label { margin: 24px 0 16px; font-weight: 500 !important; }
+html body .app-container #ay-landing .hm-chips__count { display: none; }
+html body .app-container #ay-landing .hm-stickers { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+/* Existing ProductCard artwork, crop and image proportions are deliberately unchanged. */
+
+/* One still photograph, a short sequence, and optional explanations. */
+.app-container #ay-landing .lp-method { background: var(--ay-page, #fff8e6); color: var(--ay-text, #3e2723); border-block: 1px solid var(--ay-hairline, rgba(62,39,35,.18)); }
+.app-container #ay-landing .lp-method__grid { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1fr); gap: clamp(40px, 7vw, 100px); align-items: center; }
+.app-container #ay-landing .lp-method__photo { position: relative; margin: 0; aspect-ratio: 4 / 5; max-height: 600px; border-radius: 120px 120px 12px 12px; overflow: hidden; background: #f7badd; }
+.app-container #ay-landing .lp-method__photo :is(picture, img) { display: block; width: 100%; height: 100%; object-fit: cover; }
+.app-container #ay-landing .lp-method__photo figcaption { position: absolute; bottom: 24px; left: 24px; right: 24px; padding: 12px 18px; border-radius: 4px; text-align: center; font: 500 17px/1.3 var(--ay-sans-stack); background: #ffedac; color: #3e2723; }
+.app-container #ay-landing .lp-eyebrow { margin: 0 0 16px; font: 500 12px/1.5 var(--ay-sans-stack); letter-spacing: .12em; text-transform: uppercase; }
+.app-container #ay-landing .lp-method__steps { margin: 32px 0 16px; padding: 0; list-style: none; }
+.app-container #ay-landing .lp-method__steps > li { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 20px; padding: 22px 0; border-top: 1px solid var(--ay-hairline, rgba(62,39,35,.22)); }
+.app-container #ay-landing .lp-method__number { padding-top: 4px; font: 500 13px/1.5 var(--ay-sans-stack); }
+html body .app-container #ay-landing .lp-method__steps h3 { margin: 0 0 7px; font: 600 21px/1.25 var(--ay-font-display, sans-serif) !important; letter-spacing: -.015em; }
+html body .app-container #ay-landing .lp-method__steps p { margin: 0; max-width: 48ch; font: 400 16px/1.6 var(--ay-sans-stack) !important; }
+.app-container #ay-landing .lp-method summary { display: flex; align-items: center; gap: 8px; min-height: 44px; width: fit-content; cursor: pointer; font: 500 14px/1.4 var(--ay-sans-stack); text-decoration: underline; text-underline-offset: 4px; }
+.app-container #ay-landing .lp-method details p { padding-bottom: 12px; }
+.app-container #ay-landing :is(.lp-method, .lp-pro-details) summary:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+/* Pro is a clear choice after the method, with honest first-term and renewal prices. */
+html body .app-container #ay-landing .wl-pro .wlx-h2 { max-width: 20ch; font-size: clamp(32px, 3.3vw, 46px) !important; line-height: 1.1 !important; }
+html body .app-container #ay-landing .wl-pro__body { font-weight: 400 !important; }
+.app-container #ay-landing .lp-pro-cta { background: #f7badd !important; color: #3e2723 !important; border-color: #f7badd !important; margin-top: 6px; }
+.app-container #ay-landing .lp-pro-details { max-width: 45ch; color: #ffedac; }
+.app-container #ay-landing .lp-pro-details summary { min-height: 44px; display: list-item; cursor: pointer; padding-top: 12px; font: 400 14px/1.5 var(--ay-sans-stack); }
+html body .app-container #ay-landing .lp-pro-details p { margin: 8px 0 0; font: 400 15px/1.6 var(--ay-sans-stack) !important; color: #ffedac !important; }
+.app-container #ay-landing .wl-pro__prices li { border-radius: 8px; gap: 14px; padding: 24px; }
+.app-container #ay-landing .wl-pro__prices li > span { font: 400 14px/1.5 var(--ay-sans-stack); }
+.app-container #ay-landing .wl-pro__prices .lp-plan-renew { border-top: 1px solid rgba(255,237,172,.3); padding-top: 14px; }
+html body .app-container #ay-landing .lp-pro-timing { margin: 18px 0 4px; font: 400 14px/1.6 var(--ay-sans-stack) !important; color: #ffedac !important; }
+html body .app-container #ay-landing .wl-pro__prices b { font-size: clamp(40px, 4.5vw, 60px); }
+
+/* Closing statement is smaller than the hero, so the page has one clear peak. */
+html body .app-container #ay-landing.wl.hm .wlx-end__h.wlx-end__h { font-size: clamp(38px, 5vw, 64px) !important; }
+.app-container #ay-landing .wlx-end__in { gap: 24px; }
+
+@media (max-width: 767px) {
+  .app-container #ay-landing .lp-need-index { grid-template-columns: 1fr; margin-bottom: 28px; }
+  .app-container #ay-landing .lp-need-index__link { min-height: 58px; font-size: 16px !important; }
+  html body .app-container #ay-landing .hm-stickers { gap: 14px; }
+  .app-container #ay-landing .lp-method__grid { grid-template-columns: 1fr; gap: 32px; }
+  .app-container #ay-landing .lp-method__photo { aspect-ratio: 4 / 3; max-height: 360px; border-radius: 72px 72px 8px 8px; }
+  .app-container #ay-landing .lp-method__photo figcaption { bottom: 16px; left: 16px; right: 16px; font-size: 15px; }
+  .app-container #ay-landing .lp-method__steps { margin-top: 24px; }
+  .app-container #ay-landing .lp-method__steps > li { column-gap: 12px; }
+  .app-container #ay-landing .wl-pro__prices li { padding: 18px 16px; }
+}
+/* A quiet rule separates the two paper sections after the membership block. */
+html body .app-container #ay-landing .wl-classic .hm-us { border-top: 1px solid var(--ay-hairline, rgba(62,39,35,.2)); }
