@@ -42,7 +42,7 @@ const MONTH = Array.from({ length: 21 }, (_, i) => (i >= 2 && i <= 5 ? 'p' : '')
 
 // Each of the app's features as a small recognisable shape with a one-word
 // label (words only, never a number, so nothing reads as her data).
-function Widget({ k }) {
+export function Widget({ k }) {
   switch (k) {
     case 'ring':
       return <><Ring /><small>Cycle</small></>;
