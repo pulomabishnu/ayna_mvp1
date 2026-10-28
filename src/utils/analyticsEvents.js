@@ -24,31 +24,22 @@ export const EVENTS = {
   PRODUCT_CARD_CLICKED: 'product_card_clicked',
   PDP_VIEWED: 'pdp_viewed',
   PDP_RETAILER_CLICKED: 'pdp_retailer_clicked',
-
-  // PR88 product / UX
   LANDING_PRIMARY_CTA_CLICKED: 'landing_primary_cta_clicked',
   LANDING_HOW_MATCHING_CLICKED: 'landing_how_matching_clicked',
   LANDING_PRO_CTA_CLICKED: 'landing_pro_cta_clicked',
   SETTINGS_SEARCH_STARTED: 'settings_search_started',
   SETTINGS_SEARCH_RESULT_CLICKED: 'settings_search_result_clicked',
   ASK_QUESTION_SUBMITTED: 'ask_question_submitted',
-
-  // PR88 health + personalization
   HEALTH_MATCH_SETTING_CHANGED: 'health_match_setting_changed',
   HEALTH_MATCH_SETTING_SAVE_FAILED: 'health_match_setting_save_failed',
   HEALTH_SHAPING_STATUS: 'health_shaping_status',
   HEALTH_SHAPING_WHY_CLICKED: 'health_shaping_why_clicked',
   HEALTH_SHAPING_CONNECT_CLICKED: 'health_shaping_connect_clicked',
-
-  // PR88 Pro + limits
   PRO_GATE_VIEWED: 'pro_gate_viewed',
-
-  // PR88 routine / durable recommendation value
   ROUTINE_PRODUCT_ADDED: 'routine_product_added',
   ROUTINE_PRODUCT_REMOVED: 'routine_product_removed',
 };
 
-// Allowed property keys and their type. Nothing else passed to trackEvent leaves the device.
 const ALLOWED = {
   surface: 'enum_surface',
   where: 'id',
@@ -93,19 +84,95 @@ const ALLOWED = {
 };
 const SURFACES = new Set(['web', 'app', 'mobile_web', 'landing', 'pro', 'ask', 'you', 'settings', 'health', 'ecosystem', 'library', 'community', 'shop']);
 const ID = /^[a-z0-9][a-z0-9_.:-]{0,95}$/i;
+const PRODUCT_CONTEXT_MAX_AGE = 30 * 60 * 1000;
 
 let client = posthog;
 let contextRegistered = false;
+let capturePatched = false;
 let domTrackingInstalled = false;
+const recommendationContext = new Map();
 
-/** Tests swap the client. */
 export function setAnalyticsClient(c) {
   client = c || posthog;
   contextRegistered = false;
+  capturePatched = false;
+}
+
+export function analyticsId(value, fallback = 'unknown') {
+  const s = String(value || '').trim().toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 64);
+  return s || fallback;
+}
+
+export function matchScoreBucket(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 'unknown';
+  if (n >= 90) return '90-100';
+  if (n >= 80) return '80-89';
+  if (n >= 70) return '70-79';
+  if (n >= 60) return '60-69';
+  return 'under-60';
+}
+
+/**
+ * Remember the context in which a product was recommended. Later events for
+ * that same product inherit the run/rank/version automatically. This is
+ * in-memory only and contains no health answers.
+ */
+export function rememberRecommendationContext(productId, context = {}) {
+  if (!productId) return;
+  recommendationContext.set(String(productId), {
+    recommendation_run_id: context.recommendation_run_id,
+    algorithm_version: context.algorithm_version,
+    rank: Number.isFinite(Number(context.rank)) ? Math.round(Number(context.rank)) : undefined,
+    match_score_bucket: context.match_score_bucket,
+    brand_id: context.brand_id,
+    is_partner: typeof context.is_partner === 'boolean' ? context.is_partner : undefined,
+    health_data_applied: typeof context.health_data_applied === 'boolean' ? context.health_data_applied : undefined,
+    remembered_at: Date.now(),
+  });
+}
+
+function normalizeCapturedProps(_eventName, props) {
+  if (!props || typeof props !== 'object' || Array.isArray(props)) return props;
+  const out = { ...props };
+
+  // Canonical aliases so old and new screens can share one dashboard.
+  const productId = out.product_id ?? out.productId;
+  if (productId != null && String(productId)) {
+    out.product_id = String(productId);
+    const ctx = recommendationContext.get(String(productId));
+    if (ctx && Date.now() - ctx.remembered_at <= PRODUCT_CONTEXT_MAX_AGE) {
+      if (out.recommendation_run_id == null && ctx.recommendation_run_id) out.recommendation_run_id = ctx.recommendation_run_id;
+      if (out.algorithm_version == null && ctx.algorithm_version) out.algorithm_version = ctx.algorithm_version;
+      if (out.rank == null && ctx.rank != null) out.rank = ctx.rank;
+      if (out.match_score_bucket == null && ctx.match_score_bucket) out.match_score_bucket = ctx.match_score_bucket;
+      if (out.brand_id == null && ctx.brand_id) out.brand_id = ctx.brand_id;
+      if (out.is_partner == null && ctx.is_partner != null) out.is_partner = ctx.is_partner;
+      if (out.health_data_applied == null && ctx.health_data_applied != null) out.health_data_applied = ctx.health_data_applied;
+    }
+  }
+  if (out.brand_id == null && out.brand) out.brand_id = analyticsId(out.brand);
+  if (out.rank == null && Number.isFinite(Number(out.position))) out.rank = Math.round(Number(out.position));
+  if (out.match_score_bucket == null) {
+    const score = out.matchPercent ?? out.matchPercentage ?? out.match_score ?? out.matchScore;
+    if (score != null) out.match_score_bucket = matchScoreBucket(score);
+  }
+  return out;
+}
+
+function patchCapture() {
+  if (capturePatched || typeof client?.capture !== 'function') return;
+  const original = client.capture.bind(client);
+  client.capture = (eventName, props, ...rest) => original(eventName, normalizeCapturedProps(eventName, props), ...rest);
+  capturePatched = true;
 }
 
 /** Register common tags once. Direct posthog.capture calls inherit these too. */
 export function ensureAnalyticsContext() {
+  patchCapture();
   if (contextRegistered) return;
   try {
     client.register?.({
@@ -116,7 +183,6 @@ export function ensureAnalyticsContext() {
   } catch { /* analytics never blocks */ }
 }
 
-/** Keep only allowed keys with safe values (exported for tests). */
 export function cleanProps(props = {}) {
   const out = {};
   for (const [k, v] of Object.entries(props || {})) {
@@ -136,26 +202,6 @@ export function trackEvent(name, props = {}) {
   try { client.capture(name, cleanProps(props)); } catch { /* analytics never blocks */ }
 }
 
-/** Short stable id for a brand without sending free text. */
-export function analyticsId(value, fallback = 'unknown') {
-  const s = String(value || '').trim().toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 64);
-  return s || fallback;
-}
-
-/** 93 -> '90-100'. Keeps dashboards useful without treating a score as health data. */
-export function matchScoreBucket(value) {
-  const n = Number(value);
-  if (!Number.isFinite(n)) return 'unknown';
-  if (n >= 90) return '90-100';
-  if (n >= 80) return '80-89';
-  if (n >= 70) return '70-79';
-  if (n >= 60) return '60-69';
-  return 'under-60';
-}
-
 const store = {
   get(k) { try { return window.localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { window.localStorage.setItem(k, v); } catch { /* private mode */ } },
@@ -167,13 +213,11 @@ const K_LAST_OPEN = 'ayna:an:last_open_day';
 const K_CHECKINS = 'ayna:an:checkin_days';
 const seen = new Set();
 
-/** Quiz started (first question on screen). Remembers the time for first_match_shown. */
 export function trackQuizStarted({ surface, signed_in = false } = {}) {
   store.set(K_QUIZ, String(Date.now()));
   trackEvent(EVENTS.QUIZ_STARTED, { surface, signed_in });
 }
 
-/** First match on screen, once per device. */
 export function trackFirstMatchShown({ surface, matches_count = 0 } = {}) {
   if (store.get(K_FIRST_MATCH)) return;
   store.set(K_FIRST_MATCH, '1');
@@ -182,7 +226,6 @@ export function trackFirstMatchShown({ surface, matches_count = 0 } = {}) {
   trackEvent(EVENTS.FIRST_MATCH_SHOWN, { surface, matches_count, seconds_to_match: seconds });
 }
 
-/** App or site opened; at most once per local day. Feeds D1/D7/D30. */
 export function trackAppOpened({ surface, signed_in = false } = {}, now = new Date()) {
   ensureAnalyticsContext();
   installPr88InteractionTracking();
@@ -194,7 +237,6 @@ export function trackAppOpened({ surface, signed_in = false } = {}, now = new Da
   trackEvent(EVENTS.APP_OPENED, { surface, signed_in, days_since_first_open: Math.max(0, localDaysBetween(first, today) || 0) });
 }
 
-/** A daily check-in saved. Sends how many local days this week had one; never what was logged. */
 export function trackCheckin({ surface, where = 'today' } = {}, now = new Date()) {
   const today = localDayKey(now);
   let days = [];
@@ -204,12 +246,10 @@ export function trackCheckin({ surface, where = 'today' } = {}, now = new Date()
   trackEvent(EVENTS.CHECKIN_LOGGED, { surface, where, checkins_this_week: days.length });
 }
 
-/** The notification prompt was answered. */
 export function trackNotificationPrompt({ surface, granted, prompt = 'after_rundown' } = {}) {
   trackEvent(EVENTS.NOTIFICATION_PROMPT_ANSWERED, { surface, granted, prompt });
 }
 
-/** A product card was on screen (once per surface/where/product per page load). */
 export function trackCardViewed({ surface, where, product_id, position } = {}) {
   const key = `${surface}:${where}:${product_id}`;
   if (!product_id || seen.has(key)) return;
@@ -221,7 +261,6 @@ export function trackCardClicked({ surface, where, product_id, position } = {}) 
   trackEvent(EVENTS.PRODUCT_CARD_CLICKED, { surface, where, product_id, position });
 }
 
-/** Product page opened, with its review count. */
 export function trackPdpViewed({ surface, product_id, review_count = 0 } = {}) {
   trackEvent(EVENTS.PDP_VIEWED, { surface, product_id, review_count, has_5_reviews: review_count >= 5 });
 }
@@ -230,18 +269,13 @@ export function trackPdpRetailerClicked({ surface, product_id, retailer } = {}) 
   trackEvent(EVENTS.PDP_RETAILER_CLICKED, { surface, product_id, retailer });
 }
 
-/** Surface for an event: native app, mobile web, or normal web. */
 export function eventSurface() {
   if (typeof window === 'undefined') return 'web';
   if (window.Capacitor?.isNativePlatform?.() || window.location?.pathname?.startsWith('/mobile-preview')) return 'app';
   return window.matchMedia?.('(max-width: 767px)').matches ? 'mobile_web' : 'web';
 }
 
-/**
- * Small PR88 interaction layer for surfaces that otherwise have no central action
- * callback. It never sends button text or input contents. Explicit feature
- * helpers remain the source of truth for product/recommendation/health actions.
- */
+/** Small PR88 interaction layer. Never sends button text or input contents. */
 export function installPr88InteractionTracking(doc = globalThis.document) {
   if (domTrackingInstalled || !doc?.addEventListener) return;
   domTrackingInstalled = true;
