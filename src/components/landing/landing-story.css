@@ -16,7 +16,7 @@
 .app-container #ay-landing .ls .ls-head--row > div { display: grid; gap: 12px; max-width: 640px; }
 @media (max-width: 699px) { .app-container #ay-landing .ls .ls-head--row { flex-direction: column; align-items: flex-start; gap: 4px; } }
 .app-container #ay-landing .ls .ls-head--center { margin-inline: auto; text-align: center; justify-items: center; }
-html body .app-container #ay-landing .ls .ls-h2 { margin: 0; font: 800 clamp(28px, 3.4vw, 40px)/1.05 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.025em !important; color: var(--ls-fg) !important; text-wrap: balance; text-transform: none; }
+html body .app-container #ay-landing .ls .ls-h2 { margin: 0; font: 800 clamp(26px, 2.9vw, 36px)/1.08 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.025em !important; color: var(--ls-fg) !important; text-wrap: balance; text-transform: none; }
 html body .app-container #ay-landing .ls .ls-h2 em { font-style: italic; font-weight: 700; }
 .app-container #ay-landing .ls--ink .ls-h2 em { color: #f7badd; }
 .app-container #ay-landing .ls .ls-lede { margin: 0; max-width: 56ch; font: 500 17px/1.5 var(--ay-sans-stack, sans-serif); color: var(--ls-fg); opacity: .88; text-wrap: pretty; }
@@ -338,3 +338,14 @@ html body .app-container[data-theme='brand-dark'] #ay-landing .wl-classic .hm-co
 .app-container #ay-landing .ls-chat__dot { width: 10px; height: 10px; border-radius: 50%; background: #f7badd; border: 1.5px solid #3e2723; }
 .app-container #ay-landing .ls-chat .ls-bubbles { position: static; max-width: none; justify-items: end; }
 .app-container #ay-landing .ls-chat__foot { margin: 0; font: 500 13px/1.4 var(--ay-sans-stack, sans-serif); color: #3e2723; opacity: .8; }
+
+/* audit (Oct 28): moderate headings everywhere, smaller photos lower down */
+html body .app-container #ay-landing .wl-classic :is(.hm-h2, .hm-statement) { font-size: clamp(26px, 2.9vw, 36px) !important; line-height: 1.08 !important; }
+.app-container #ay-landing .wl-classic .hm-readlist__ph { aspect-ratio: 16 / 6 !important; }
+.app-container #ay-landing .wl-classic .hm-comm__ph { aspect-ratio: 16 / 8 !important; }
+.app-container #ay-landing .wl-classic .hm-us .hm-polaroid { max-width: 380px; }
+html body .app-container #ay-landing.wl.hm .wlx-end .wlx-end__h.wlx-end__h { font-size: clamp(28px, 3vw, 38px) !important; }
+.app-container #ay-landing .ls-ui--quiz .ls-ui__bar { margin-top: 18px; }
+@media (max-width: 899px) {
+  .app-container #ay-landing .ls-steps { margin-inline: -16px !important; padding: 4px 16px 12px !important; scroll-padding-inline: 16px; grid-auto-columns: 80%; }
+}

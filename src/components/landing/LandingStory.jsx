@@ -113,7 +113,6 @@ function Shelf({ personal, quizResults, healthProfile, matchOpts, signedIn, onSt
         <header className="ls-head ls-head--row">
           <div>
             <h2 id="ls-shelf-h" className="ls-h2">{mine ? <>Matched to <em>you.</em></> : <>Matched to you, once ayna <em>knows you.</em></>}</h2>
-            <p className="ls-lede">{mine ? 'Your best fits right now, and why.' : 'Your Health Match: how well each one fits you.'}</p>
           </div>
           <Go className="ls-link" href="/explore/products" onGo={() => onViewDiscovery?.(need?.group ? { initialMacroGroup: need.group } : '')}>See all products<Arrow /></Go>
         </header>
@@ -139,7 +138,7 @@ function Shelf({ personal, quizResults, healthProfile, matchOpts, signedIn, onSt
         {locked ? (
           <div className="ls-unlock">
             <span className="ls-unlock__icon" aria-hidden="true"><Lock /></span>
-            <p><strong>{signedIn ? 'Finish your quiz to unlock your matches.' : 'Sign in to unlock personalized results.'}</strong> A few questions. Free.</p>
+            <p><strong>{signedIn ? 'Finish your quiz to unlock your matches.' : 'Sign in to unlock personalized results.'}</strong></p>
             <div className="ls-unlock__actions">
               <Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Get my matches<Arrow /></Go>
               {!signedIn && onLogIn && <button type="button" className="ay-btn ay-btn--text" onClick={onLogIn}>Log in</button>}
@@ -263,7 +262,6 @@ function HowItWorks({ onOpenProduct, onViewHowItWorks }) {
               {ui[i]}
               <span className="ls-step__n" aria-hidden="true">{i + 1}</span>
               <h3>{st.t}</h3>
-              <p>{st.d}</p>
             </li>
           ))}
         </ol>
@@ -307,7 +305,6 @@ function HealthContext({ pro, signedIn, onOpenPro, onOpenHealth }) {
         <div>
           <ProMark>with ayna Pro</ProMark>
           <h2 id="ls-health-h" className="ls-h2">Your health data, <em>in context.</em></h2>
-          <p className="ls-lede">Cycle, sleep and activity, right next to what you use.</p>
           <p className="ls-plain-note">Never sold. Off until you connect it. Delete anytime.</p>
           <div className="ls-mores">
             <More title="What you can connect">
@@ -317,20 +314,16 @@ function HealthContext({ pro, signedIn, onOpenPro, onOpenHealth }) {
                 <tbody>{SOURCES.map((s) => <tr key={s.name}><th scope="row">{s.name}<small>{s.where}</small></th><td>{s.gives}</td><td>{s.use}</td></tr>)}</tbody>
               </table>
             </More>
-            <More title="How ayna uses it">
-              <p>When your data backs up a need you told ayna about, that need comes first in your ecosystem.</p>
-              <p>It never adds a need you didn’t choose, never changes a match percent and never diagnoses anything. Oura data stays in your insights until Oura confirms its terms allow matching.</p>
-            </More>
-            <More title="Your data, your call">
+            <More title="Privacy and how ayna uses it">
               <ul className="ls-ticks">
-                <li>Nothing is connected until you choose it, one source at a time.</li>
-                <li>Never sold. Never shared with brands or advertisers.</li>
-                <li>Pause, disconnect or delete it anytime in Health data.</li>
-                <li>Ask ayna only sees your cycle and sleep if you turn that on.</li>
+                <li>Off until you connect it, one source at a time. Never sold or shared with brands.</li>
+                <li>When your data backs up a need you chose, that need comes first. It never adds a need, never changes a match percent and never diagnoses.</li>
+                <li>Oura stays in your insights until Oura confirms its terms allow matching.</li>
+                <li>Pause, disconnect or delete it anytime.</li>
               </ul>
               <a className="ls-link" href="/consumer-health-data">Consumer health data notice<Arrow /></a>
             </More>
-            <More title="Use something else? Suggest an app or wearable">
+            <More title="Suggest an app or wearable">
               <SuggestBox mode="integration" context="landing" />
             </More>
           </div>
@@ -353,7 +346,6 @@ function Ask({ onAsk, pro }) {
       <div className="hm-wrap ls-split">
         <div>
           <h2 id="ls-ask-h" className="ls-h2">Ask ayna <em>anything.</em></h2>
-          <p className="ls-lede">Answers that know your profile, with the sources behind them.</p>
           <p className="ls-plain-note">{pro ? 'Up to 50 chats a month with ayna Pro.' : <>Free: 5 chats a month. <ProMark />: up to 50.</>}</p>
         </div>
         <div className="ls-chat">
@@ -409,7 +401,7 @@ function ProPlan({ pro, offerOpen, onOpenPro, onOpenHealth, onAsk }) {
               <p className="ls-offer__or">Or <strong>{month.price}</strong> for your first month <s aria-label={`normally ${month.regular}`}>{month.regular}</s></p>
             </div>
             <div className="ls-offer__right">
-              <p className="ls-offer__terms">Pro unlocks today. Early Access runs through Dec 31, 2026. Your paid term starts {PAID_TERM_STARTS}, then renews at {year.regular}/year or {month.regular}/month. Cancel anytime.</p>
+              <p className="ls-offer__terms">Pro unlocks today. Your paid term starts {PAID_TERM_STARTS}, then renews at {year.regular}/year or {month.regular}/month. Cancel anytime.</p>
               <div className="ls-offer__act">
                 <Go className="ay-btn ay-btn--primary ls-offer__cta" href="/pro" onGo={onOpenPro}>Get ayna Pro<Arrow /></Go>
                 <span>Free stays free.</span>

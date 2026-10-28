@@ -146,7 +146,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page).toContain('Retake once a month');
     expect(page).toContain('5 chats a month');
     // the full Free vs Pro comparison and the integration details are one tap away
-    expect([...host.querySelectorAll('.ls-more > summary')].map((x) => x.textContent)).toEqual(expect.arrayContaining(['What ayna weighs, in order', 'What you can connect', 'How ayna uses it', 'Your data, your call', 'Use something else? Suggest an app or wearable']));
+    expect([...host.querySelectorAll('.ls-more > summary')].map((x) => x.textContent)).toEqual(expect.arrayContaining(['What ayna weighs, in order', 'What you can connect', 'Privacy and how ayna uses it', 'Suggest an app or wearable']));
     expect(page).toContain('Up to 50 a month');
     expect(page).not.toMatch(/unlimited (ask|chats)/i);
     expect(page).not.toMatch(/once a week|per week.*quiz|quiz.*per week/i);
@@ -159,7 +159,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page).toContain('0% of your match comes from brand partnerships.');
     // price, promo period, start of billing and renewal all visible
     const offer = host.querySelector('.ls-offer').textContent;
-    ['$4.99', '$45', '$8.99/month', '$90/year', 'Jan 1, 2027', 'Dec 31, 2026', 'Cancel anytime'].forEach((t) => expect(offer).toContain(t));
+    ['$4.99', '$45', '$8.99/month', '$90/year', 'Jan 1, 2027', 'Cancel anytime'].forEach((t) => expect(offer).toContain(t));
   });
 
   it('a Pro member sees what she has, not an offer', async () => {

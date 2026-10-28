@@ -137,3 +137,19 @@ html body .app-container.app-container.app-container .app-nav-wrap:has(.ay-nav.i
 
 html body .app-container.app-container.app-container .ay-ecoview2 { margin-top:24px; }
 @media(max-width:899px) { html body .app-container.app-container.app-container .ay-ecoview2 { margin-top:16px; } }
+
+/* Website header (founder, Oct 28): espresso, calm, with Home as the one
+   raised butter pill. The pink page tops (Shop, Services, Library,
+   Community) sit under it without clashing, and the landing's espresso hero
+   runs straight on from it. Same in dark mode. */
+html body .app-container.app-container.app-container .app-nav-wrap {
+  --paper-header: #3e2723; --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ay-outline-color: #ffedac;
+  --ay-feature-bg: #ffedac; --ay-feature-fg: #3e2723; color: #ffedac;
+}
+html body .app-container.app-container.app-container .ay-nav--paper { height: 68px; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__logo { color: #ffedac !important; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__beta { color: #3e2723 !important; border-color: #ffedac; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link.is-home {
+  background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; box-shadow: 3px 3px 0 #f7badd !important;
+}
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link:not(.is-home)[aria-current='page']::after { background: #f7badd; height: 3px; }

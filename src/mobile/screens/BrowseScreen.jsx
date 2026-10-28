@@ -525,7 +525,7 @@ export default function BrowseScreen({
           "Searches people make" phrases moved to the Categories tab. */}
       {/* Inside Explore (founder, Oct 27: "fix the app header"): ONE compact pink band with a wavy
           edge holding the page title and the search, the family of the website Shop header. */}
-      <div className={`ayna-fresh-browse-heading ayna-shop-heading${embedded ? ' is-embedded' : ''}${embedded && bandTitle ? ` ax-band${bandTitle === 'Shop' ? '' : ' is-calm'}` : ''}`}>
+      <div className={`ayna-fresh-browse-heading ayna-shop-heading${embedded ? ' is-embedded' : ''}${embedded && bandTitle ? ' ax-band' : ''}`}>
         <div className="ay-shop-titlebar">{embedded ? (bandTitle ? <h1 id="ay-shop-title" className="ax-band__title">{bandTitle}</h1> : <h2 id="ay-shop-title" className="sr-only">Products</h2>) : <h1 id="ay-shop-title">Products</h1>}{!embedded && hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
         {!embedded && <NeedStickers className="ay-app-needs" active={searchValue} onPick={(q) => setSearchValue(q)} />}
         <SearchBar placeholder={bandTitle === 'Services' ? 'Search services' : 'Search products or brands'} value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
