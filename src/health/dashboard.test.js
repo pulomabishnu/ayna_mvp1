@@ -87,6 +87,38 @@ describe('routine and shopping list', () => {
     expect(list.groups[0].id).toBe('before-period');
     expect(list.groups[0].items.map((i) => i.product.id)).toEqual(['pad']);
   });
+  it('keeps Oura-derived notes off the routine and shopping list (matching policy)', () => {
+    const ouraSleep = [...run('sleep_minutes', 0, 6, 360, 'oura'), ...run('sleep_minutes', 7, 34, 450, 'oura')];
+    const insights = buildInsights(ouraSleep, { today: TODAY });
+    expect(insights.sections.find((s) => s.id === 'sleep').signal).toBeTruthy();
+    expect(buildRoutine(products, insights).slots.find((s) => s.id === 'night').note).toBeNull();
+  });
+  it('still adds the same sleep note from a matching-eligible source', () => {
+    const appleSleep = [...run('sleep_minutes', 0, 6, 360), ...run('sleep_minutes', 7, 34, 450)];
+    const insights = buildInsights(appleSleep, { today: TODAY });
+    expect(buildRoutine(products, insights).slots.find((s) => s.id === 'night').note).toBe('Your sleep has been shorter than your usual lately.');
+  });
+  it('drops a note when any of its sources is not matching-eligible', () => {
+    const mixed = [...run('sleep_minutes', 0, 6, 360), ...run('sleep_minutes', 7, 34, 450), ...run('sleep_minutes', 0, 6, 362, 'oura')];
+    const insights = buildInsights(mixed, { today: TODAY });
+    const sleep = insights.sections.find((s) => s.id === 'sleep');
+    if (sleep.sources.includes('oura')) expect(buildRoutine(products, insights).slots.find((s) => s.id === 'night').note).toBeNull();
+  });
+  it('keeps the period estimate from her own uploads, and drops it from an ineligible source', () => {
+    const flow = (source) => [...run('menstrual_flow', 60, 64, 3, source), ...run('menstrual_flow', 32, 36, 3, source), ...run('menstrual_flow', 4, 8, 2, source)];
+    const own = buildInsights(flow('manual_import'), { today: TODAY });
+    expect(buildRoutine(products, own).slots.find((s) => s.id === 'period').note).toMatch(/^Next period estimated around /);
+    expect(buildShoppingList(products, own).groups[0].id).toBe('before-period');
+    const garmin = buildInsights(flow('garmin'), { today: TODAY });
+    expect(buildRoutine(products, garmin).slots.find((s) => s.id === 'period').note).toBeNull();
+    expect(buildShoppingList(products, garmin).groups[0].id).not.toBe('before-period');
+  });
+  it('never changes which products are in the routine', () => {
+    const ouraSleep = [...run('sleep_minutes', 0, 6, 360, 'oura'), ...run('sleep_minutes', 7, 34, 450, 'oura')];
+    const withOura = buildRoutine(products, buildInsights(ouraSleep, { today: TODAY }));
+    const without = buildRoutine(products, null);
+    expect(withOura.slots.map((s) => [s.id, s.items.map((i) => i.product.id)])).toEqual(without.slots.map((s) => [s.id, s.items.map((i) => i.product.id)]));
+  });
   it('shopping list is physical products only, with real store names', () => {
     const list = buildShoppingList(products, null, { getBuyUrl: (p) => (p.id === 'mag' ? 'https://shop.example/mag' : null) });
     expect(list.count).toBe(4);

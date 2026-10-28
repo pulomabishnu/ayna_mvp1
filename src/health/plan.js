@@ -11,6 +11,7 @@ import { brandHowTo } from '../utils/howToSource.js';
  */
 
 import { PRICE_RANGE_BOUNDS, PRICE_NOT_IMPORTANT } from '../matching/userProfile.js';
+import { SOURCE_POLICY } from './policy.js';
 import { parsePrice } from '../matching/productProfile.js';
 import { needPhrase } from '../matching/ontology.js';
 import { fitFor } from './weekPicks.js';
@@ -76,11 +77,23 @@ export function reasonForProduct(product, needIds = []) {
 const fmtDay = (day) => new Date(`${day}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 
 /**
+ * The routine and shopping list are product surfaces, so a section's notes
+ * may only come from sources that policy.js allows for matching. A section
+ * built from any source that is not (Oura today) is left out here; it still
+ * shows on her Health Insights screen.
+ */
+function matchableSections(insights) {
+  return Object.fromEntries((insights?.sections || [])
+    .filter((s) => Array.isArray(s.sources) && s.sources.length > 0 && s.sources.every((src) => SOURCE_POLICY[src]?.matching === true))
+    .map((s) => [s.id, s]));
+}
+
+/**
  * @param {Array} products  products matching picked for her (her Ecosystem)
  * @param {object} [insights] buildInsights(...) output, or null when no health data
  */
 export function buildRoutine(products = [], insights = null) {
-  const sections = Object.fromEntries((insights?.sections || []).map((s) => [s.id, s]));
+  const sections = matchableSections(insights);
   const estimate = sections.cycle?.estimate || null;
   const sleepShorter = Boolean(sections.sleep?.signal);
   const seen = new Set();
@@ -102,7 +115,7 @@ export function buildRoutine(products = [], insights = null) {
  * Period products move to the top with a date when her cycle data gives one.
  */
 export function buildShoppingList(products = [], insights = null, { getBuyUrl = () => null } = {}) {
-  const estimate = (insights?.sections || []).find((s) => s.id === 'cycle')?.estimate || null;
+  const estimate = matchableSections(insights).cycle?.estimate || null;
   const physical = products.filter((p) => p && p.type !== 'digital');
   const toItem = (p) => ({
     product: p,
