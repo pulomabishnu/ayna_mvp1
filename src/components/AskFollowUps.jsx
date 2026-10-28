@@ -1,4 +1,5 @@
-import { trackFollowUp } from '../utils/askFollowUps.js';
+import { useEffect } from 'react';
+import { trackFollowUp, trackFollowUpsRendered } from '../utils/askFollowUps.js';
 import '../styles/ask-followups.css';
 
 const ICON = {
@@ -16,6 +17,13 @@ const ICON = {
  * sheet and the website panel; each surface passes onAction.
  */
 export default function AskFollowUps({ chips, onAction, disabled = false }) {
+  const signature = (chips || []).map((f) => f?.type).filter(Boolean).join('|');
+  useEffect(() => {
+    if (signature) trackFollowUpsRendered(chips);
+    // Only the safe type signature matters. Labels can contain health context.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signature]);
+
   if (!chips?.length) return null;
   return (
     <div className="ay-followups" role="group" aria-label="Next steps">

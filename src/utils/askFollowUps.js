@@ -1,4 +1,5 @@
 import posthog from 'posthog-js';
+import { ensureAnalyticsContext } from './analyticsEvents.js';
 
 /**
  * Client half of Ask ayna follow-ups (server half: api/_askFollowUps.js).
@@ -46,7 +47,33 @@ export function chipsFor(followUps, { canOpen = () => true, hasDashboard = true,
   return [...out, ASK_ELSE];
 }
 
+/**
+ * Record what kinds of follow-up the answer offered. No label/question/body is
+ * sent because those can contain health detail.
+ */
+export function trackFollowUpsRendered(followUps, { surface = 'ask' } = {}) {
+  ensureAnalyticsContext();
+  const safe = (Array.isArray(followUps) ? followUps : [])
+    .filter((f) => f && (KNOWN.has(f.type) || f.type === ASK_ELSE.type))
+    .slice(0, 5);
+  if (!safe.length) return;
+  try {
+    posthog.capture('ask_followups_rendered', {
+      surface,
+      followup_count: safe.length,
+      has_product: safe.some((f) => f.type === 'open_product'),
+      has_browse: safe.some((f) => f.type === 'browse'),
+      has_ask: safe.some((f) => f.type === 'ask' || f.type === 'ask_else'),
+      has_dashboard: safe.some((f) => f.type === 'open_dashboard'),
+      has_read: safe.some((f) => f.type === 'open_library'),
+      has_guide: safe.some((f) => f.type === 'open_guide'),
+    });
+  } catch { /* analytics off */ }
+}
+
 /** Type only: never the label or question, which can carry health detail. */
-export function trackFollowUp(type) {
-  try { posthog.capture('ask_followup_clicked', { type }); } catch { /* analytics off */ }
+export function trackFollowUp(type, { surface = 'ask' } = {}) {
+  ensureAnalyticsContext();
+  if (!(KNOWN.has(type) || type === ASK_ELSE.type)) return;
+  try { posthog.capture('ask_followup_clicked', { type, surface }); } catch { /* analytics off */ }
 }

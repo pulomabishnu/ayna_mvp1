@@ -1,19 +1,31 @@
 import { useEffect, useRef, useState } from 'react';
+import posthog from 'posthog-js';
 import { Capacitor } from '@capacitor/core';
 import { PRO_CHANGED_EVENT, proFeatureName } from '../pro/paywall.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { loadProFeatureRules, requestPro } from '../utils/proApi.js';
+import { analyticsId, ensureAnalyticsContext, eventSurface } from '../utils/analyticsEvents.js';
 import ProLock from './ProLock.jsx';
 import '../styles/pro-v4.css';
 
 function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosystem, children }) {
   const owner = useRef(null);
+  const tracked = useRef(new Set());
   const [revision, setRevision] = useState(0);
   const [refresh, setRefresh] = useState(0);
   const [result, setResult] = useState(null);
   const key = `${feature}:${readId}:${revision}`;
   const gateTitle = feature === 'reads' ? proFeatureName('reads') : (title || proFeatureName(feature));
   const contextTitle = feature === 'reads' && title ? title : '';
+
+  const captureOnce = (token, event, props = {}) => {
+    if (tracked.current.has(token)) return;
+    tracked.current.add(token);
+    try {
+      ensureAnalyticsContext();
+      posthog.capture(event, { surface: eventSurface(), feature: analyticsId(feature), ...props });
+    } catch { /* analytics never blocks access */ }
+  };
 
   useEffect(() => {
     const listener = getSupabaseClient()?.auth.onAuthStateChange((_event, session) => {
@@ -33,8 +45,6 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
     };
   }, []);
 
-  // Check again when Pro may have changed: after checkout, "already Pro", or
-  // when she comes back to this tab from another one.
   useEffect(() => {
     const again = () => setRefresh(n => n + 1);
     const visible = () => { if (document.visibilityState === 'visible') again(); };
@@ -50,9 +60,6 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
       try {
         const rules = await loadProFeatureRules(controller.signal);
         if (typeof rules.enabled !== 'boolean') throw new Error('We couldn’t check Pro access.');
-        // Every signed-in Read uses the same one-per-week Free allowance. The
-        // server's atomic claim lets the same Read reopen during that week;
-        // Pro remains unlimited. Other Pro features use the normal active check.
         let allowed = !rules.enabled;
         let expiresAt = null;
         if (!allowed) {
@@ -60,25 +67,34 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
             ? await requestPro({ action: 'read', readId, signal: controller.signal })
             : await requestPro({ signal: controller.signal });
           allowed = feature === 'reads' ? status.allowed : status.active;
-          // The server accounts for overlapping paid, temporary and staff grants.
           expiresAt = status.accessExpiresAt || null;
         }
         if (!controller.signal.aborted) {
           setResult({ key, allowed });
+          const id = feature === 'reads' && readId ? analyticsId(readId) : '';
+          captureOnce(`access:${key}:${allowed}`, 'pro_feature_access_checked', { allowed, ...(id ? { content_id: id } : {}) });
+          if (feature === 'reads') {
+            captureOnce(`read:${readId}:${allowed}`, allowed ? 'read_opened' : 'read_limit_reached', { ...(id ? { content_id: id } : {}) });
+          }
+          if (!allowed) captureOnce(`gate:${key}`, 'pro_gate_shown');
           const delay = expiresAt && allowed ? Math.min(60000, Math.max(0, expiresAt - Date.now())) : 60000;
           timer = setTimeout(() => { setResult(null); setRefresh(n => n + 1); }, delay);
         }
       } catch {
-        if (!controller.signal.aborted) setResult({ key, allowed: false, error: 'We couldn’t confirm your Pro access. Please try again.' });
+        if (!controller.signal.aborted) {
+          setResult({ key, allowed: false, error: 'We couldn’t confirm your Pro access. Please try again.' });
+          captureOnce(`access-error:${key}`, 'pro_feature_access_failed');
+        }
       }
     };
     check();
     return () => { controller.abort(); clearTimeout(timer); };
+    // captureOnce is intentionally stable through refs; re-run only when access inputs change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feature, readId, key, refresh]);
 
   if (result?.key === key && result.allowed) return children;
 
-  // While the first check runs, a quiet line only: a Pro member never sees a lock flash.
   if (result?.key !== key) {
     return <section className="pro-gate pro-gate--checking" aria-busy="true">
       <p className="pro-gate__checking" role="status">Checking access…</p>

@@ -1,4 +1,5 @@
 import { PRO_FEATURES } from './features.js';
+import { EVENTS, analyticsId, eventSurface, trackEvent } from '../utils/analyticsEvents.js';
 
 /**
  * One way in to ayna Pro from anywhere: a locked card, a limit she just hit,
@@ -23,6 +24,14 @@ export function hasProPaywallHost() { return hosts.size > 0; }
 
 export function openProPaywall(detail = {}) {
   if (!hosts.size || typeof window === 'undefined') return false;
+  // One central gate event means Ask, Reads, quiz retakes, health data,
+  // wearables, dashboard, playlists and future gates all use the same funnel.
+  const feature = analyticsId(detail.feature || detail.proFeature || detail.gate || detail.reason || 'unknown');
+  trackEvent(EVENTS.PRO_GATE_VIEWED, {
+    surface: eventSurface(),
+    gate_reason: feature,
+    feature,
+  });
   window.dispatchEvent(new CustomEvent(PRO_PAYWALL_EVENT, { detail }));
   return true;
 }
@@ -135,4 +144,3 @@ export function roundedPerimeter(w, h, r) {
 export function marqueeLength(perimeter, square) {
   return Math.max(2, Math.round(perimeter / (2 * square))) * 2 * square;
 }
-
