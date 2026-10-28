@@ -1,16 +1,14 @@
 /**
- * "Add to routine" follow-ups (retention checklist d and e, Today audit v2
- * section 12). When she adds a product to her routine:
- *   day 7     a follow-up nudge ("Your ayna check-in is ready")
- *   cycle 3   a second nudge, and from that day Today asks for a review
- *             ("You've used it for 3 cycles. How is it going?")
- * Cycle 3 uses her own average cycle length when ayna has one, else 28 days.
- * The nudges go through /api/today-reminders (kind 'follow_up'), so the lock
- * screen never says what they are about. Which product they are for stays on
- * this device (owner-scoped key, like the rest of Today).
+ * "Add to routine" follow-ups. When she adds a product to her routine:
+ *   day 7     a follow-up nudge
+ *   cycle 3   a second nudge and review ask
+ *
+ * Analytics records only product/catalog ids and the action. It never records
+ * cycle dates, health answers, reminder text, or review text.
  */
 import { addDays, todayKey } from './dailyLog.js';
 import { FOLLOW_UP_HOUR, localAt, scheduleTodayReminder } from './todayReminders.js';
+import { EVENTS, analyticsId, eventSurface, trackEvent } from '../utils/analyticsEvents.js';
 
 export const ROUTINE_FOLLOWUPS_KEY = 'ayna_routine_followups_v1';
 export const FIRST_CHECK_DAYS = 7;
@@ -32,16 +30,19 @@ export function followUpDays(today, cycleLength = null) {
   return { day7: addDays(today, FIRST_CHECK_DAYS), cycle3: addDays(today, REVIEW_CYCLES * len) };
 }
 
-/**
- * She added `product` to her routine: remember it and book both nudges.
- * Re-adding the same product keeps the first dates. Returns the record.
- */
+/** She added `product` to her routine. Re-adding keeps the first dates. */
 export function noteRoutineAdd(product, { today = todayKey(), cycleLength = null, storage = globalThis.localStorage, schedule = scheduleTodayReminder } = {}) {
   if (!product?.id) return null;
   const map = readRoutineFollowUps(storage);
   if (map[product.id] && !map[product.id].removed) return map[product.id];
   const rec = { addedDay: today, ...followUpDays(today, cycleLength), review: null };
   write({ ...map, [product.id]: rec }, storage);
+  trackEvent(EVENTS.ROUTINE_PRODUCT_ADDED, {
+    surface: eventSurface(),
+    product_id: String(product.id),
+    brand_id: analyticsId(product.brand),
+    category: analyticsId(product.category),
+  });
   for (const day of [rec.day7, rec.cycle3]) {
     Promise.resolve(schedule({ kind: 'follow_up', sendAt: localAt(day, FOLLOW_UP_HOUR) })).catch(() => {});
   }
@@ -52,10 +53,12 @@ export function noteRoutineAdd(product, { today = todayKey(), cycleLength = null
 export function noteRoutineRemove(productId, storage = globalThis.localStorage) {
   const map = readRoutineFollowUps(storage);
   if (!map[productId]) return map;
-  return write({ ...map, [productId]: { ...map[productId], removed: true } }, storage);
+  const out = write({ ...map, [productId]: { ...map[productId], removed: true } }, storage);
+  trackEvent(EVENTS.ROUTINE_PRODUCT_REMOVED, { surface: eventSurface(), product_id: String(productId) });
+  return out;
 }
 
-/** 'written' (she opened the review) or 'later' (asked again in 14 days) or 'no' (never again). */
+/** 'written' (opened review), 'later' (ask again in 14 days), or 'no'. */
 export function markReviewAsk(productId, answer, { today = todayKey(), storage = globalThis.localStorage } = {}) {
   const map = readRoutineFollowUps(storage);
   if (!map[productId]) return map;
@@ -63,7 +66,7 @@ export function markReviewAsk(productId, answer, { today = todayKey(), storage =
   return write({ ...map, [productId]: { ...map[productId], review } }, storage);
 }
 
-/** Products in her routine for 3 cycles that she has not been asked about (oldest first). */
+/** Products in her routine for 3 cycles that she has not been asked about. */
 export function reviewsDue({ today = todayKey(), inRoutine = null, storage = globalThis.localStorage } = {}) {
   const ids = inRoutine ? new Set(inRoutine.map((p) => p?.id).filter(Boolean).map(String)) : null;
   return Object.entries(readRoutineFollowUps(storage))
