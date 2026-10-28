@@ -24,7 +24,7 @@ export default function MobileHeader({ onOpenSettings, onBack, hideAsk = false }
   const head = useContext(AppHeaderContext);
   // Header is on every app tab: capture invite codes (idempotent).
   useEffect(() => { installReferralCapture(getSupabaseClient()); }, []);
-  const surface = typeof document !== 'undefined' ? document.querySelector('.ayna-mobile')?.dataset?.screen || '' : '';
+  const surface = head?.suggest?.surface || (typeof document !== 'undefined' ? document.querySelector('.ayna-mobile')?.dataset?.screen || '' : '');
   return <><header className="ayna-figma-header ayna-shared-header">
     <div className="ayna-shared-header-leading">
       {onBack && <button type="button" onClick={onBack} aria-label="Back" className="ayna-shared-header-action">
