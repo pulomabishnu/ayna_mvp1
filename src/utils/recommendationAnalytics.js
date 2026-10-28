@@ -28,18 +28,20 @@ function hash(value) {
 }
 
 function scoreFor(p) {
-  const candidates = [p?.matchPercent, p?.matchPercentage, p?.match_score, p?.matchScore, p?.percent];
+  const candidates = [p?.matchPercent, p?.matchPercentage, p?.match_score, p?.matchScore, p?.score, p?.percent];
   return candidates.find((v) => Number.isFinite(Number(v)));
 }
 
 function runContext(products, surface, extra = {}) {
-  const ids = (Array.isArray(products) ? products : []).slice(0, MAX_POSITIONS).map((p) => p?.id).filter(Boolean).join('|');
+  const list = (Array.isArray(products) ? products : []).slice(0, MAX_POSITIONS);
+  const ids = list.map((p) => p?.id).filter(Boolean).join('|');
   const algorithmVersion = analyticsId(extra.algorithm_version || extra.match_engine || ALGORITHM_VERSION, ALGORITHM_VERSION);
+  const derivedHealthApplied = list.some((p) => Boolean(p?.healthBacked || p?.healthData || p?.healthShaped));
   return {
     recommendation_run_id: `rec_${hash(`${surface}|${algorithmVersion}|${ids}`)}`,
     algorithm_version: algorithmVersion,
-    health_data_enabled: Boolean(extra.health_data_enabled),
-    health_data_applied: Boolean(extra.health_data_applied || extra.health_shaped),
+    health_data_enabled: Boolean(extra.health_data_enabled || extra.healthMatchEnabled),
+    health_data_applied: Boolean(extra.health_data_applied || extra.health_shaped || derivedHealthApplied),
   };
 }
 
@@ -62,6 +64,7 @@ export function recommendationViewEvents(products, surface, extra = {}) {
       is_partner: Boolean(isPartnerBrandItem(p)),
       rank: i + 1,
       match_score_bucket: matchScoreBucket(score),
+      product_health_backed: Boolean(p?.healthBacked || p?.healthData),
       ...run,
     });
   });
