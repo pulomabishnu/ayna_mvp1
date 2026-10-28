@@ -39,6 +39,24 @@ const SURFACE_PROMPTS = {
     'Help me compare these services',
     'What should I prepare before an appointment?',
   ],
+  eco: [
+    'Why is this in my ecosystem?',
+    'Which part of my routine should I focus on?',
+    'What could I simplify in my routine?',
+    'Help me understand one of my matches',
+  ],
+  ecointro: [
+    'What can my ecosystem help me organize?',
+    'How does ayna choose my matches?',
+    'What should I tell ayna about myself?',
+    'How do I make my matches more useful?',
+  ],
+  saved: [
+    'Help me choose between my saved products',
+    'Which saved option fits my needs best?',
+    'What should I compare before I buy?',
+    'Which saved items do similar things?',
+  ],
 };
 
 export function navAskSuggestions({ signedIn = false, hasProfile = false, surface = '', max = 4 } = {}) {
