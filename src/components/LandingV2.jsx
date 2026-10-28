@@ -555,8 +555,9 @@ export default function LandingV2({ bodyOnly = false, membershipSlot = null, onS
       <NeedsBand calm={bodyOnly} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} onStartQuiz={onStartQuiz} picks={personal?.topPicks || null} signedOut={!personal} />
       {rest && <>
       {bodyOnly ? <CalmMethod onViewHowItWorks={onViewHowItWorks} onStartQuiz={onStartQuiz} /> : <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!(personal && personal.hasQuiz)} />}
-      {membershipSlot}
+      {!bodyOnly && membershipSlot}
       <ReadsCommunity calm={bodyOnly} onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
+      {bodyOnly && membershipSlot}
       <Founders onViewAbout={onViewAbout} />
       </>}
     </div>

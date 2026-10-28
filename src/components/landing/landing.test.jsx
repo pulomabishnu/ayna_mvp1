@@ -103,7 +103,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(home).toContain('aria-label="Go to your Home. Slide or tap to start."');
   });
 
-  it('keeps the website sections, the Pro teaser with Learn more to /pro, the founders and the medical note last', () => {
+  it('keeps the website sections and finishes with one free-start action', () => {
     vi.useFakeTimers();
     mount(<WebLanding onStartQuiz={() => {}} />);
     act(() => { vi.advanceTimersByTime(1500); });
@@ -114,11 +114,12 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page).toContain('Does this sound familiar?');
     expect(page).toContain('How ayna fits it to you');
     expect(page).toContain('Quick reads about your body, with sources');
-    expect(page).toContain('More of ayna, when you want it.');
+    expect(page).toContain('Go deeper when you want to.');
     expect(host.querySelector('a[href="/pro"]').textContent).toContain('Get ayna Pro');
     expect(page).toContain('Built by three women who wanted better answers.');
     const last = host.querySelector('#ay-landing').lastElementChild;
-    expect(last.textContent).toContain('In an emergency, call 911.');
+    expect(last.textContent).toContain('Start free. No purchase needed.');
+    expect(last.querySelectorAll('button')).toHaveLength(1);
     expect(host.innerHTML).not.toContain('—');
   });
 
@@ -137,13 +138,13 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     const end = page.querySelector('.wlx-end');
     expect(end.querySelector('.ay-sts__track').getAttribute('aria-label')).toBe('Create your ecosystem. Slide or tap to start.');
     expect(page.querySelectorAll('[data-tour="landing-start"]').length).toBe(1);
-    expect(end.nextElementSibling).toBe(page.lastElementChild);
+    expect(end).toBe(page.lastElementChild);
     // the founders photo stays
     expect(page.querySelector('.wl-classic img[src*="founders"], .wl-classic source[srcset*="founders"]')).not.toBeNull();
   });
 });
 
-it('lets readers expand explanations, keeps Pro terms visible and puts membership before the Library', () => {
+it('lets readers expand explanations, keeps renewal terms visible and ends with human trust before the final CTA', () => {
   vi.useFakeTimers();
   mount(<WebLanding onStartQuiz={() => {}} />);
   act(() => { vi.advanceTimersByTime(1500); });
@@ -157,6 +158,8 @@ it('lets readers expand explanations, keeps Pro terms visible and puts membershi
   expect(pro.textContent).toContain('$4.99');
   expect(pro.textContent).toContain('$8.99/month');
   expect(pro.textContent).toContain('Jan 1, 2027');
-  expect(pro.compareDocumentPosition(host.querySelector('.hm-rc')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  expect(host.querySelector('.hm-rc').compareDocumentPosition(pro) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  expect(pro.compareDocumentPosition(host.querySelector('.hm-us')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  expect(host.querySelector('.lp-pro-timing').textContent).toContain('$8.99/month');
   vi.useRealTimers();
 });

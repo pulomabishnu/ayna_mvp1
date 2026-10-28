@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import ReadVideo from './ReadVideo.jsx';
 import ArticleDetailScreen from '../../mobile/screens/ArticleDetailScreen.jsx';
@@ -64,3 +64,6 @@ describe('read pages', () => {
     expect(ARTICLES.filter((a) => a.video).length).toBe(0);
   });
 });
+
+// Content assertions run after access is granted; the real gate has its own tests.
+vi.mock('../ProFeatureGate.jsx', () => ({ default: ({ children }) => children }));

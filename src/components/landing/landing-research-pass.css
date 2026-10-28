@@ -9,15 +9,7 @@
    1) recognize your need  2) understand the method  3) see proof/content
    4) meet the people behind it  5) optionally go deeper with Pro
    6) finish on the same primary action the hero introduced. */
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq {
-  display: flex;
-  flex-direction: column;
-}
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-needsband { order: 1; }
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .lp-method { order: 2; }
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-rc { order: 3; }
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-us { order: 4; }
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .wl-pro { order: 5; }
+/* Section order lives in the markup so keyboard and visual reading agree. */
 
 /* --------------------------------------------------------------------------
    Scale + rhythm
@@ -377,7 +369,7 @@ html body .app-container #ay-landing .wlx-end__h {
     gap: 10px !important;
   }
 
-  .app-container #ay-landing .lp-method__grid { gap: 24px; }
+  .app-container #ay-landing .lp-method__grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   .app-container #ay-landing .lp-method__photo {
     aspect-ratio: 16 / 10;
     max-height: 270px;
@@ -396,7 +388,9 @@ html body .app-container #ay-landing .wlx-end__h {
     align-items: start;
   }
   .app-container #ay-landing .hm-comm__ph { aspect-ratio: 1 / 1; }
-  .app-container #ay-landing .hm-comm__copy { padding-top: 0 !important; }
+  .app-container #ay-landing .hm-comm__copy { min-width: 0; padding-top: 0 !important; }
+  .app-container #ay-landing .hm-comm__copy .ay-btn { max-width: 100%; white-space: normal; text-align: left; padding: 12px 16px; }
+  .app-container #ay-landing .lp-method__actions { flex-wrap: wrap; }
   html body .app-container #ay-landing .hm-comm__copy .hm-h2 { font-size: 21px !important; }
 
   .app-container #ay-landing .lp-pro-simple .wl-pro__copy {

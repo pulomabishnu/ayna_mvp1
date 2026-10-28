@@ -31,7 +31,7 @@ describe('aynaIntegrations', () => {
   it('routes devices without a direct connection through Apple Health or Health Connect', () => {
     expect(aynaSourceFor({ id: 'd-garmin', name: 'Garmin Venu', type: 'digital' })?.id).toBe('apple_health');
     expect(aynaSourceFor({ id: 'd-fitbit', name: 'Fitbit Charge 6', type: 'digital' })?.id).toBe('health_connect');
-    expect(aynaSourceFor({ id: 'd-whoop', name: 'WHOOP 4.0', type: 'digital' })?.id).toBe('whoop');
+    expect(aynaSourceFor({ id: 'd-whoop', name: 'WHOOP 4.0', type: 'digital' })).toBeNull();
   });
 
   it('ignores a source that is not connectable', () => {

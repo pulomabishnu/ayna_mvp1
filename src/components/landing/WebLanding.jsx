@@ -70,7 +70,7 @@ function Pro() {
             <small>or {year?.price || '$45'} for your first year</small>
           </div>
           <a className="ay-btn lp-pro-cta" href="/pro">Get ayna Pro<Arrow /></a>
-          <p className="lp-pro-timing">Unlock Pro now. Your paid term starts {PAID_TERM_STARTS}.</p>
+          <p className="lp-pro-timing">Unlock Pro now. Your paid term starts {PAID_TERM_STARTS}.<br />{month.renew} Yearly renews at {year.regular}/year.</p>
           <details className="lp-pro-details">
             <summary>See what Pro includes</summary>
             <div className="lp-pro-details__inside">
@@ -93,15 +93,16 @@ function Pro() {
 /* ---------- last ask ---------- */
 function FinalCta({ cta }) {
   return (
-    <Band tone="ink" className="hm-band wlx-end" aria-labelledby="wlx-end-h">
+    <section className="wlx-end" aria-labelledby="wlx-end-h">
       <div className="hm-wrap wlx-end__in">
         <div className="wlx-end__copy">
-          <span className="wlx-end__eyebrow">Start with the free ecosystem</span>
+          <span className="wlx-end__eyebrow">{cta.free ? 'Your next step, made simple' : 'Your corner of ayna'}</span>
           <h2 id="wlx-end-h" className="wlx-end__h">Find what fits <span>your body.</span></h2>
+          <p className="wlx-end__description">{cta.free ? 'A few questions. Options matched to you. A place to make them your own.' : 'Your matches, saved favorites and routines, all together.'}</p>
         </div>
-        <SlideToStart className="wlx-end__sts" size="lg" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
+        <SlideToStart className="wlx-end__sts" size="lg" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" hint={cta.free ? 'Start free. No purchase needed.' : null} />
       </div>
-    </Band>
+    </section>
   );
 }
 

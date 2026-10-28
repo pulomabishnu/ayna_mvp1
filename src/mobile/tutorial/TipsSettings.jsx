@@ -76,9 +76,9 @@ function SettingsSearch() {
         {query && <button type="button" aria-label="Clear settings search" onClick={() => setQuery('')}>Clear</button>}
       </label>
       {q && (
-        <div className="ay-settings-search__results" role="listbox" aria-label="Settings search results">
+        <div className="ay-settings-search__results" role="region" aria-label="Settings search results">
           {matches.length ? matches.map((item) => (
-            <button key={`${item.label}-${item.localId || 'page'}`} type="button" role="option" onClick={() => choose(item)}>
+            <button key={`${item.label}-${item.localId || 'page'}`} type="button" onClick={() => choose(item)}>
               <span><b>{item.label}</b><small>{item.hint}</small></span>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
             </button>

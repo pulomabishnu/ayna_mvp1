@@ -5,19 +5,11 @@
 /* The page should read like one story, not a stack of equally loud modules:
    need recognition -> how it works -> trust/useful content -> people ->
    optional paid depth -> one final free-start action. */
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq {
-  display: flex;
-  flex-direction: column;
-}
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-needsband { order: 1; }
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .lp-method { order: 2; }
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-rc { order: 3; }
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .hm-us { order: 4; }
-.app-container #ay-landing .wl-classic > .ed-home.hm-uq > .wl-pro { order: 5; }
+/* Section order lives in the markup so keyboard and visual reading agree. */
 
 /* Give adjacent bands a deliberate handoff instead of accidental white gaps. */
 .app-container #ay-landing .hm-rc + .hm-us,
-.app-container #ay-landing .hm-us + .wl-pro { margin-top: 0 !important; }
+.app-container #ay-landing .wl-pro + .hm-us { margin-top: 0 !important; }
 .app-container #ay-landing .hm-us { border-bottom: 0 !important; }
 
 /* Closing CTA: repeat the primary action at the end of a long page, but do not
@@ -57,7 +49,7 @@ html body .app-container #ay-landing.wl.hm .wlx-end__h.wlx-end__h {
   letter-spacing: -.03em !important;
   text-align: left !important;
 }
-.app-container #ay-landing .wlx-end__h span { color: #fff8e6 !important; }
+.app-container #ay-landing .wlx-end__h span { color: #3e2723 !important; }
 .app-container #ay-landing .wlx-end__sts {
   width: 100%;
   max-width: 390px;
@@ -145,9 +137,9 @@ html body .app-container #ay-landing.wl.hm .wlx-end__h.wlx-end__h {
 .app-container:has(#ay-landing) .ay-foot__legaltext {
   max-width: 82ch;
   margin: 0;
-  color: rgba(255,237,172,.62) !important;
-  font-size: 11px;
-  line-height: 1.55;
+  color: #ffedac !important;
+  font-size: 12px;
+  line-height: 1.6;
 }
 .app-container:has(#ay-landing) .ay-foot__legaltext strong { color: rgba(255,237,172,.82) !important; }
 .app-container:has(#ay-landing) .ay-foot__legallinks {
@@ -190,4 +182,49 @@ html body .app-container #ay-landing.wl.hm .wlx-end__h.wlx-end__h {
     gap: 16px;
   }
   .app-container:has(#ay-landing) .ay-foot__legallinks { justify-content: flex-start; }
+}
+
+/* A single, centered closing invitation after the founders' story. */
+html body .app-container #ay-landing.wl.hm .wlx-end {
+  padding-block: 0 !important;
+}
+.app-container #ay-landing .wlx-end__in {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 26px !important;
+  padding-block: clamp(56px, 7vw, 88px) !important;
+  text-align: center;
+}
+html body .app-container #ay-landing.wl.hm .wlx-end__h.wlx-end__h {
+  max-width: 16ch;
+  font-size: clamp(38px, 4.5vw, 62px) !important;
+  text-align: center !important;
+}
+.app-container #ay-landing .wlx-end__h span { display: block; }
+.app-container #ay-landing .wlx-end__description {
+  max-width: 37ch;
+  margin: 20px auto 0;
+  font-size: 16px;
+  line-height: 1.55;
+}
+.app-container #ay-landing .wlx-end__sts { justify-self: center; }
+.app-container #ay-landing .wlx-end__sts .ay-sts__hint { color: #3e2723; }
+/* Four short rows instead of an eight-row sitemap dominating the ending. */
+.app-container:has(#ay-landing) .ay-foot__grid {
+  grid-template-columns: minmax(160px, 1fr) minmax(270px, 1.5fr) minmax(130px, .7fr) minmax(150px, .8fr);
+  gap: 28px;
+}
+.app-container:has(#ay-landing) .ay-foot__col { gap: 0; }
+.app-container:has(#ay-landing) .ay-foot__col[aria-label="Browse"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 18px;
+}
+.app-container:has(#ay-landing) .ay-foot__title { grid-column: 1 / -1; }
+.app-container:has(#ay-landing) .ay-foot__link { min-height: 44px; display: flex; align-items: center; }
+.app-container:has(#ay-landing) .ay-foot__base { margin-top: 24px; }
+.app-container:has(#ay-landing) .ay-foot__base span { color: #ffedac !important; }
+@media (max-width: 900px) {
+  .app-container:has(#ay-landing) .ay-foot__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .app-container:has(#ay-landing) .ay-foot__brand,
+  .app-container:has(#ay-landing) .ay-foot__col[aria-label="Browse"] { grid-column: 1 / -1; }
 }

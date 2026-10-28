@@ -484,8 +484,10 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
   const openMyProfile = profile?.username && onOpenCommunity ? () => onOpenCommunity({ username: profile.username }) : null;
   const signedIn = !!authUserId;
   const pro = useProAccess(authUserId || null);
-  const healthLocked = signedIn && !pro.checking && !pro.allowed;
+  const hasManagedConnections = healthConnected.some((c) => c.status !== 'disconnected');
+  const healthLocked = signedIn && !pro.checking && !pro.allowed && !hasManagedConnections;
   const openHealthData = () => {
+    if (hasManagedConnections) { onOpen('healthData'); return; }
     if (pro.checking) return;
     if (!pro.allowed) { openProPaywall({ feature: 'wearables' }); return; }
     onOpen('healthData');
@@ -636,7 +638,7 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
 
       <div className="ay-you-body">
         {!signedIn && <SignedOutCard><b>Build your health ecosystem</b><br />Keep your concerns, matches, saved products and health insights connected in one place.</SignedOutCard>}
-        {signedIn && !pro.checking && !pro.allowed && <section className="ay-you-section ay-you-group" aria-label="ayna Pro"><nav className="ay-you-list"><button type="button" className="ay-you-row" onClick={() => openProPaywall({ feature: 'dashboard' })}><svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /></svg><span className="ay-you-row-title">ayna Pro<small className="ay-you-row-sub">Health dashboard, connected data and higher limits</small></span><span className="ay-you-row-value">Upgrade</span><ChevronIcon /></button></nav></section>}
+        {signedIn && !pro.checking && !pro.allowed && <section className="ay-you-section ay-you-group" aria-label="ayna Pro"><nav className="ay-you-list"><button type="button" className="ay-you-row" onClick={() => openProPaywall({ feature: 'dashboard' })}><svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /></svg><span className="ay-you-row-title">Upgrade to ayna Pro<small className="ay-you-row-sub">Health dashboard, connected data and higher limits</small></span><span className="ay-you-row-value">Upgrade</span><ChevronIcon /></button></nav></section>}
 
         {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
 
