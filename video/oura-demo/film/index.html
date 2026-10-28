@@ -1,0 +1,319 @@
+<!doctype html>
+<!--
+  ayna · Oura demo film. A deterministic timeline: window.setTime(t) places every
+  layer for time t (seconds), so any frame renders on its own (render.py).
+
+  Every product pixel here is a capture of the real app (../assets, made by
+  capture/capture.py). Nothing in the product is redrawn. This file only adds:
+  the device frame and status bar, motion, editorial type and the close.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ayna film</title>
+<style>
+  @font-face { font-family: 'DM Serif Display'; font-weight: 400; src: url(../node_modules/@fontsource/dm-serif-display/files/dm-serif-display-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'DM Sans'; font-weight: 400; src: url(../node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'DM Sans'; font-weight: 500; src: url(../node_modules/@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'DM Sans'; font-weight: 600; src: url(../node_modules/@fontsource/dm-sans/files/dm-sans-latin-600-normal.woff2) format('woff2'); }
+
+  /* ayna tokens (src/mobile/app-design.css) */
+  :root { --ink: #3e2723; --butter: #ffedac; --pink: #f7badd; --blue: #769ebe;
+          --stage: #fff6d6; /* butter lifted toward paper, so the app's own butter reads against it */
+          --shell: #f9e7a8; /* the app shell colour, sampled from the captures */ }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--stage); }
+  #stage { position: absolute; inset: 0; background: var(--stage); }
+  #cam { position: absolute; inset: 0; transform-origin: 0 0; will-change: transform; }
+
+  /* Device */
+  #phone { position: absolute; transform-origin: 50% 50%; }
+  #body { position: absolute; border-radius: 66px; background: #1c1918;
+          box-shadow: inset 0 0 0 1.5px #4b4542, inset 0 0 0 4px #121010, 0 40px 80px rgba(62,39,35,.16), 0 12px 24px rgba(62,39,35,.10); }
+  .btn { position: absolute; background: #2a2523; border-radius: 2px; }
+  #screen { position: absolute; overflow: hidden; border-radius: 54px; background: var(--shell); }
+  #screen img.s { position: absolute; left: 0; width: 100%; opacity: 0; }
+  #status { position: absolute; left: 0; right: 0; top: 0; background: var(--shell); font: 600 16.5px/1 'DM Sans', sans-serif; color: #111; }
+  #status .time { position: absolute; left: 50px; top: 19px; letter-spacing: -.1px; }
+  #status svg { position: absolute; top: 19px; fill: currentColor; }
+  #island { position: absolute; background: #050505; border-radius: 20px; }
+  #home { position: absolute; left: 0; right: 0; bottom: 0; background: var(--shell); }
+  #home i { position: absolute; left: 50%; bottom: 8px; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: #111; opacity: .85; }
+  #glass { position: absolute; inset: 0; border-radius: 54px; pointer-events: none;
+           background: linear-gradient(118deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 38%); }
+
+  /* Shared-element lifts: a duplicate of the real component leaves its slot */
+  #veil { position: absolute; inset: 0; background: var(--stage); opacity: 0; }
+  .slot { position: absolute; border-radius: 14px; background: rgba(62,39,35,.07); opacity: 0; }
+  .lift { position: absolute; opacity: 0; transform-origin: 50% 50%; will-change: transform; }
+  .lift.region { border-radius: 18px; background-repeat: no-repeat; }
+  .tap { position: absolute; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%;
+         background: rgba(62,39,35,.16); box-shadow: 0 0 0 1.5px rgba(62,39,35,.22); opacity: 0; }
+
+  /* Editorial type: flat, outside the device, never in depth */
+  .copy { position: absolute; font: 400 54px/1.12 'DM Serif Display', serif; color: var(--ink); letter-spacing: -.4px; opacity: 0; white-space: nowrap; }
+  .copy.small { font: 500 21px/1.3 'DM Sans', sans-serif; letter-spacing: .2px; color: rgba(62,39,35,.62); }
+  #close { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  #close img { width: 236px; opacity: 0; }
+  #close .l1 { font: 400 50px/1.2 'DM Serif Display', serif; color: var(--ink); margin-top: 34px; opacity: 0; letter-spacing: -.3px; }
+  #close .l2 { font: 500 20px/1.4 'DM Sans', sans-serif; color: rgba(62,39,35,.6); margin-top: 18px; opacity: 0; letter-spacing: .2px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="cam">
+    <div id="lanes"></div>
+    <div id="phone">
+      <div id="body"></div>
+      <div class="btn" id="b1"></div><div class="btn" id="b2"></div><div class="btn" id="b3"></div><div class="btn" id="b4"></div>
+      <div id="screen">
+        <div id="app"></div>
+        <div id="slots"></div>
+        <div id="veil"></div>
+        <div id="status"><span class="time">9:41</span>
+          <svg id="sig" width="19" height="12" viewBox="0 0 19 12"><rect x="0" y="8" width="3.2" height="4" rx=".8"/><rect x="5.1" y="5.5" width="3.2" height="6.5" rx=".8"/><rect x="10.2" y="3" width="3.2" height="9" rx=".8"/><rect x="15.3" y="0" width="3.2" height="12" rx=".8"/></svg>
+          <svg id="wifi" width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 2.6c2.3 0 4.4.9 6 2.4l1.2-1.3A10.2 10.2 0 0 0 8.5.8 10.2 10.2 0 0 0 1.3 3.7L2.5 5a8.4 8.4 0 0 1 6-2.4Zm0 3.6c1.3 0 2.5.5 3.4 1.3L13.1 6a6.9 6.9 0 0 0-9.2 0l1.2 1.5c.9-.8 2.1-1.3 3.4-1.3Zm0 3.5c.5 0 1 .2 1.3.5L8.5 11.9 7.2 10.2c.3-.3.8-.5 1.3-.5Z"/></svg>
+          <svg id="batt" width="28" height="13" viewBox="0 0 28 13"><rect x=".5" y=".5" width="24" height="12" rx="3.6" fill="none" stroke="currentColor" opacity=".38"/><rect x="2.2" y="2.2" width="20.6" height="8.6" rx="2.2"/><path d="M26 4.3v4.4c.9-.3 1.5-1.2 1.5-2.2S26.9 4.6 26 4.3Z" opacity=".45"/></svg>
+        </div>
+        <div id="island"></div>
+        <div id="home"><i></i></div>
+        <div id="glass"></div>
+      </div>
+      <div id="taps"></div>
+    </div>
+    <div id="lifts"></div>
+  </div>
+  <div id="copies"></div>
+  <div id="close">
+    <img id="wordmark" src="../assets/elements/wordmark.png" alt="ayna">
+    <div class="l1">women’s health, in context</div>
+    <div class="l2">connected today. more, with Oura’s approval.</div>
+  </div>
+</div>
+
+<script>
+// ───────────────────────── geometry ─────────────────────────
+const M = window.MANIFEST;                 // assets/manifest.json, injected by render.py
+const PT = 0.9624;                         // stage px per iPhone point (screen = 820 px tall)
+const SCREEN_W = 393 * PT, SCREEN_H = 852 * PT, STATUS = 54 * PT, HOME = 34 * PT, BEZEL = 12;
+const PH = { w: SCREEN_W + 2 * BEZEL, h: SCREEN_H + 2 * BEZEL };
+
+// ───────────────────────── easing ─────────────────────────
+function bezier(x1, y1, x2, y2) {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t, dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+  return (x) => { if (x <= 0) return 0; if (x >= 1) return 1; let t = x; for (let i = 0; i < 8; i++) { const e = sx(t) - x; if (Math.abs(e) < 1e-6) break; t -= e / (dx(t) || 1e-6); } return sy(Math.min(1, Math.max(0, t))); };
+}
+const OUT = bezier(.22, .9, .25, 1);       // lifts: quick departure, long settle, no overshoot
+const INOUT = bezier(.45, 0, .2, 1);       // returns and transitions
+const SINE = bezier(.37, 0, .63, 1);       // camera
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const prog = (t, a, b, ease = INOUT) => ease(clamp((t - a) / (b - a)));
+const lerp = (a, b, k) => a + (b - a) * k;
+const fade = (t, a, b, c, d) => (t < a || t > d) ? 0 : t < b ? INOUT((t - a) / (b - a)) : t <= c ? 1 : 1 - INOUT((t - c) / (d - c));
+
+// ───────────────────────── build DOM ─────────────────────────
+const $ = (s) => document.querySelector(s);
+const SCREENS = {};
+for (const name of Object.keys(M.screens)) {
+  const img = new Image(); img.className = 's'; img.src = '../assets/' + M.screens[name];
+  img.style.top = STATUS + 'px'; img.style.height = (764 * PT) + 'px';
+  $('#app').appendChild(img); SCREENS[name] = img;
+}
+const screenAt = (x, y) => ({ x: BEZEL + x * PT, y: BEZEL + STATUS + y * PT });   // app pt -> phone px
+
+const LIFTS = {};
+function makeLift(name) {
+  const e = M.elements[name], d = document.createElement('div');
+  d.className = 'lift' + (e.kind === 'region' ? ' region' : '');
+  const w = e.box[2] * PT, h = e.box[3] * PT;
+  d.style.width = w + 'px'; d.style.height = h + 'px';
+  if (e.kind === 'region') {
+    d.style.backgroundImage = `url(../assets/${M.screens[e.screen]})`;
+    d.style.backgroundSize = `${393 * PT}px ${764 * PT}px`;
+    d.style.backgroundPosition = `${-e.box[0] * PT}px ${-e.box[1] * PT}px`;
+  } else {
+    const img = new Image(); img.src = '../assets/' + e.file; img.style.width = '100%'; img.style.height = '100%'; img.style.display = 'block'; d.appendChild(img);
+  }
+  $('#lifts').appendChild(d);
+  const slot = document.createElement('div'); slot.className = 'slot';
+  const p = screenAt(e.box[0], e.box[1]);
+  Object.assign(slot.style, { left: (p.x - BEZEL) + 'px', top: (p.y - BEZEL) + 'px', width: w + 'px', height: h + 'px' });
+  $('#slots').appendChild(slot);
+  LIFTS[name] = { el: d, slot, w, h, box: e.box };
+}
+['oura_row', 'facts', 'focus', 'lead_card', 'frag_card', 'sleep_card', 'policy', 'lead_card2', 'sleep_card2'].forEach((n) => {
+  if (n.endsWith('2')) { M.elements[n] = M.elements[n.slice(0, -1)]; }
+  makeLift(n);
+  if (n.endsWith('2')) { $('#lanes').appendChild(LIFTS[n].el); LIFTS[n].slot.remove(); LIFTS[n].slot = document.createElement('div'); }
+});
+
+const TAPS = {};
+for (const [name, [x, y]] of Object.entries(M.taps)) {
+  const d = document.createElement('div'); d.className = 'tap'; const p = screenAt(x, y);
+  d.style.left = p.x + 'px'; d.style.top = p.y + 'px'; $('#taps').appendChild(d); TAPS[name] = d;
+}
+
+const COPIES = {};
+function copy(name, text, x, y, small = false, align = 'left') {
+  const d = document.createElement('div'); d.className = 'copy' + (small ? ' small' : ''); d.textContent = text;
+  d.style.left = x + 'px'; d.style.top = y + 'px'; if (align === 'center') d.style.transform = 'translateX(-50%)';
+  $('#copies').appendChild(d); COPIES[name] = d;
+}
+copy('choose', 'she chooses what to share', 150, 690);
+copy('matched', 'matched to what she told ayna', 150, 812);
+copy('nights', 'her Oura nights, in her insights', 150, 900);
+copy('lane_discovery', 'discovery · from what she shared', 330, 878, true, 'center');
+copy('lane_insights', 'insights · from Oura', 1590, 878, true, 'center');
+copy('separate', 'Oura powers insights today. discovery stays separate.', 960, 960, false, 'center');
+COPIES.separate.style.fontSize = '44px';
+
+// ───────────────────────── layout ─────────────────────────
+// Phone body
+Object.assign($('#body').style, { width: PH.w + 'px', height: PH.h + 'px' });
+Object.assign($('#screen').style, { left: BEZEL + 'px', top: BEZEL + 'px', width: SCREEN_W + 'px', height: SCREEN_H + 'px' });
+Object.assign($('#status').style, { height: STATUS + 'px' });
+Object.assign($('#home').style, { height: HOME + 'px' });
+$('#sig').style.left = (SCREEN_W - 98) + 'px'; $('#wifi').style.left = (SCREEN_W - 74) + 'px'; $('#batt').style.left = (SCREEN_W - 52) + 'px';
+Object.assign($('#island').style, { width: 122 * PT + 'px', height: 36 * PT + 'px', left: (SCREEN_W - 122 * PT) / 2 + BEZEL - BEZEL + 'px', top: 11 * PT + 'px' });
+Object.assign($('#phone').style, { width: PH.w + 'px', height: PH.h + 'px' });
+[['b1', -3, 168, 3, 30], ['b2', -3, 228, 3, 62], ['b3', -3, 300, 3, 62], ['b4', PH.w, 252, 3, 96]].forEach(([id, x, y, w, h]) =>
+  Object.assign($('#' + id).style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' }));
+
+// ───────────────────────── timeline ─────────────────────────
+const DUR = 38.0;
+// Which real screen is on the phone, with short crossfades between states.
+const CUTS = [
+  [0.0, 'list_pre'], [4.05, 'consent_0', .30], [4.95, 'consent_1', .12], [5.55, 'consent_2', .12],
+  [9.05, 'oura_on', .35], [10.15, 'results', .40], [14.35, 'results_swiped', .35], [18.05, 'sleep', .35], [24.55, 'oura_on', .40],
+];
+// Phone placement per moment: [time, centerX, centerY, scale]
+const PHONE_KEYS = [[0, 1240, 540, 1], [24.3, 1240, 540, 1], [25.3, 960, 520, .94], [38, 960, 520, .94]];
+// Camera: [time, scale, focusX, focusY] (slow push-ins, one pull-back)
+const CAM_KEYS = [[0, 1, 960, 540], [4.0, 1.035, 1060, 520], [4.1, 1.0, 960, 540], [9.9, 1.03, 1020, 520],
+                  [10.1, 1.0, 960, 540], [17.9, 1.03, 1000, 540], [18.1, 1.0, 960, 540], [24.0, 1.04, 980, 530],
+                  [25.4, 1.0, 960, 540], [31.4, 1.0, 960, 540]];
+// Lifts: name, start, settled, return start, home, target center (x, y), lifted scale
+const LIFT_PLAN = [
+  ['oura_row', 1.55, 2.15, 3.35, 3.85, 640, 470, 1.28],
+  ['facts', 6.25, 6.85, 8.45, 8.95, 610, 470, 1.32],
+  ['focus', 10.85, 11.45, 13.75, 14.20, 420, 330, 1.10],
+  ['lead_card', 11.35, 11.95, 13.75, 14.20, 800, 480, 1.00],
+  ['frag_card', 14.95, 15.55, 17.40, 17.90, 600, 470, 1.20],
+  ['sleep_card', 19.10, 19.70, 23.55, 24.10, 560, 460, 0.95],
+];
+const TAP_PLAN = [['oura_row', 1.35], ['toggle_1', 4.82], ['toggle_2', 5.42]];
+
+function keyed(keys, t) {
+  if (t <= keys[0][0]) return keys[0].slice(1);
+  for (let i = 1; i < keys.length; i++) if (t <= keys[i][0]) {
+    const [t0, ...a] = keys[i - 1], [t1, ...b] = keys[i], k = SINE((t - t0) / (t1 - t0));
+    return a.map((v, j) => lerp(v, b[j], k));
+  }
+  return keys[keys.length - 1].slice(1);
+}
+
+let phoneBox = null;
+function placePhone(t) {
+  const [cx, cy, s] = keyed(PHONE_KEYS, t);
+  const el = $('#phone');
+  el.style.left = (cx - PH.w / 2) + 'px'; el.style.top = (cy - PH.h / 2) + 'px'; el.style.transform = `scale(${s})`;
+  phoneBox = { cx, cy, s };
+}
+// stage position of an element's slot (its spot on the phone)
+function slotCenter(L) {
+  const p = screenAt(L.box[0], L.box[1]);
+  const lx = p.x + L.w / 2 - PH.w / 2, ly = p.y + L.h / 2 - PH.h / 2;
+  return { x: phoneBox.cx + lx * phoneBox.s, y: phoneBox.cy + ly * phoneBox.s, s: phoneBox.s };
+}
+
+function placeLane(L, k, side, tx, ty, ts) {
+  const fx = phoneBox.cx + side * 70, fy = phoneBox.cy;
+  const x = lerp(fx, tx, k), y = lerp(fy, ty, k), s = lerp(ts * 0.86, ts, k);
+  L.el.style.left = (x - L.w / 2) + 'px'; L.el.style.top = (y - L.h / 2) + 'px';
+  L.el.style.transform = `scale(${s})`; L.el.style.opacity = clamp(k * 1.6);
+  L.el.style.filter = `drop-shadow(0 ${(22 * k).toFixed(1)}px ${(34 * k).toFixed(1)}px rgba(62,39,35,${(0.18 * k).toFixed(3)}))`;
+}
+function placeLift(L, k, tx, ty, ts, depth) {
+  const from = slotCenter(L);
+  const x = lerp(from.x, tx, k), y = lerp(from.y, ty, k), s = lerp(from.s, ts, k);
+  L.el.style.left = (x - L.w / 2) + 'px'; L.el.style.top = (y - L.h / 2) + 'px';
+  L.el.style.transform = `scale(${s})`;
+  L.el.style.opacity = k > 0.0005 ? 1 : 0;
+  const sh = lerp(0, 1, depth);
+  L.el.style.filter = sh > 0.01 ? `drop-shadow(0 ${(22 * sh).toFixed(1)}px ${(34 * sh).toFixed(1)}px rgba(62,39,35,${(0.20 * sh).toFixed(3)}))` : 'none';
+  L.slot.style.opacity = clamp(k * 1.4);
+}
+
+window.setTime = function (t) {
+  // camera
+  const [cs, fx, fy] = keyed(CAM_KEYS, t);
+  $('#cam').style.transform = `translate(${960 - fx * cs}px, ${540 - fy * cs}px) scale(${cs})`;
+  placePhone(t);
+
+  // screens
+  let cur = 0; for (let i = 0; i < CUTS.length; i++) if (t >= CUTS[i][0]) cur = i;
+  for (const img of Object.values(SCREENS)) img.style.opacity = 0;
+  const [c0, name, xf = 0.3] = CUTS[cur];
+  const k = xf ? clamp((t - c0) / xf) : 1;
+  if (cur > 0 && k < 1) SCREENS[CUTS[cur - 1][1]].style.opacity = 1;
+  SCREENS[name].style.opacity = cur === 0 ? 1 : INOUT(k);
+  const shown = (cur > 0 && k < 0.5) ? CUTS[cur - 1][1] : name;
+  const [top, bottom] = (M.edges && M.edges[shown]) || ['#f9e7a8', '#f9e7a8'];
+  const dark = (hex) => { const n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) < 110; };
+  $('#status').style.background = top; $('#status').style.color = dark(top) ? '#fff6e0' : '#111';
+  $('#home').style.background = bottom; $('#home i').style.background = dark(bottom) ? '#fff6e0' : '#111';
+
+  // taps
+  for (const [n, t0] of TAP_PLAN) {
+    const d = TAPS[n], u = (t - t0) / 0.42;
+    if (u < 0 || u > 1) { d.style.opacity = 0; continue; }
+    d.style.opacity = (u < .25 ? u / .25 : 1 - (u - .25) / .75) * 0.9;
+    d.style.transform = `scale(${0.7 + 0.35 * OUT(u)})`;
+  }
+
+  // single-element lifts (shots 1–4)
+  for (const L of Object.values(LIFTS)) { L.el.style.opacity = 0; L.slot.style.opacity = 0; }
+  for (const [n, a, b, c, d, tx, ty, ts] of LIFT_PLAN) {
+    if (t < a || t > d) continue;
+    const k = t < c ? prog(t, a, b, OUT) : 1 - prog(t, c, d, INOUT);
+    placeLift(LIFTS[n], k, tx, ty, ts, k);
+  }
+
+  // shot 5: two lanes in one app, kept apart, then the real policy line
+  if (t >= 25.2 && t <= 32.2) {
+    const kin = prog(t, 25.35, 26.15, OUT), kout = 1 - prog(t, 31.0, 31.7, INOUT), k = kin * kout;
+    if (k > 0) {
+      placeLane(LIFTS.lead_card2, k, -1, 330, 520, 1.14);
+      const k2 = prog(t, 25.6, 26.4, OUT) * kout;
+      placeLane(LIFTS.sleep_card2, k2, 1, 1590, 480, 0.72);
+    }
+    const kp = prog(t, 26.9, 27.6, OUT) * (1 - prog(t, 30.9, 31.5, INOUT));
+    if (kp > 0) placeLift(LIFTS.policy, kp, 960, 470, 1.62, kp);
+  }
+
+  $('#veil').style.opacity = 0.62 * prog(t, 26.7, 27.5, INOUT) * (1 - prog(t, 30.9, 31.5, INOUT));
+
+  // editorial copy (flat)
+  const C = (n, a, b, c, d, dy = 10) => { const v = fade(t, a, b, c, d); const el = COPIES[n]; el.style.opacity = v;
+    const base = el.style.transform.includes('translateX') ? 'translateX(-50%) ' : ''; el.style.transform = base + `translateY(${(1 - v) * dy}px)`; };
+  C('choose', 7.0, 7.5, 8.35, 8.75);
+  C('matched', 11.75, 12.25, 17.25, 17.7);
+  C('nights', 19.5, 20.0, 23.4, 23.85);
+  C('lane_discovery', 26.0, 26.5, 30.8, 31.3, 0);
+  C('lane_insights', 26.25, 26.75, 30.8, 31.3, 0);
+  C('separate', 27.7, 28.25, 30.75, 31.25);
+
+  // fade the product out, then the close
+  const out = prog(t, 31.75, 32.55, INOUT);
+  $('#cam').style.opacity = 1 - out;
+  $('#wordmark').style.opacity = fade(t, 32.85, 33.5, 99, 100);
+  document.querySelector('#close .l1').style.opacity = fade(t, 33.55, 34.2, 99, 100);
+  document.querySelector('#close .l2').style.opacity = fade(t, 34.6, 35.2, 99, 100);
+  const end = prog(t, 37.55, 38.0, INOUT);
+  $('#close').style.opacity = 1 - end;
+};
+window.DURATION = DUR;
+window.ready = Promise.all([document.fonts.ready, ...[...document.images].map((i) => i.decode().catch(() => {}))]);
+</script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+{
+ "scale": 3,
+ "screen_pt": [
+  393,
+  764
+ ],
+ "screens": {
+  "list_pre": "screens/list_pre.png",
+  "consent_0": "screens/consent_0.png",
+  "consent_1": "screens/consent_1.png",
+  "consent_2": "screens/consent_2.png",
+  "oura_on": "screens/oura_on.png",
+  "results": "screens/results.png",
+  "results_swiped": "screens/results_swiped.png",
+  "dash": "screens/dash.png",
+  "sleep": "screens/sleep.png"
+ },
+ "elements": {
+  "oura_row": {
+   "kind": "region",
+   "screen": "list_pre",
+   "box": [
+    36,
+    211.421875,
+    321,
+    123.25
+   ]
+  },
+  "facts": {
+   "kind": "region",
+   "screen": "consent_2",
+   "box": [
+    24,
+    169.46875,
+    345,
+    172.984375
+   ]
+  },
+  "policy": {
+   "kind": "region",
+   "screen": "oura_on",
+   "box": [
+    24,
+    326.453125,
+    345,
+    80.53125
+   ]
+  },
+  "focus": {
+   "kind": "region",
+   "screen": "results",
+   "box": [
+    10,
+    208,
+    373,
+    223.28125
+   ]
+  },
+  "lead_card": {
+   "kind": "iso",
+   "screen": "results",
+   "file": "elements/lead_card.png",
+   "box": [
+    12,
+    461.375,
+    272.390625,
+    333.765625
+   ]
+  },
+  "frag_card": {
+   "kind": "iso",
+   "screen": "results_swiped",
+   "file": "elements/frag_card.png",
+   "box": [
+    12.171875,
+    461.375,
+    272.390625,
+    333.765625
+   ]
+  },
+  "source_line": {
+   "kind": "iso",
+   "screen": "sleep",
+   "file": "elements/source_line.png",
+   "box": [
+    12,
+    88.59375,
+    230.546875,
+    74.78125
+   ]
+  },
+  "sleep_card": {
+   "kind": "iso",
+   "screen": "sleep",
+   "file": "elements/sleep_card.png",
+   "box": [
+    6,
+    227.375,
+    381,
+    671.046875
+   ]
+  },
+  "wordmark": {
+   "kind": "iso",
+   "screen": "wordmark",
+   "file": "elements/wordmark.png",
+   "box": [
+    14,
+    4,
+    72.34375,
+    56
+   ]
+  }
+ },
+ "taps": {
+  "oura_row": [
+   196.5,
+   273.046875
+  ],
+  "toggle_1": [
+   333.0,
+   560.40625
+  ],
+  "toggle_2": [
+   333.0,
+   685.765625
+  ]
+ },
+ "edges": {
+  "list_pre": [
+   "#fceaa9",
+   "#ffedac"
+  ],
+  "consent_0": [
+   "#fceaa9",
+   "#ffedac"
+  ],
+  "consent_1": [
+   "#fceaa9",
+   "#ffedac"
+  ],
+  "consent_2": [
+   "#fceaa9",
+   "#ffedac"
+  ],
+  "oura_on": [
+   "#fceaa9",
+   "#ffedac"
+  ],
+  "results": [
+   "#3d2622",
+   "#3d2622"
+  ],
+  "results_swiped": [
+   "#3d2622",
+   "#3d2622"
+  ],
+  "dash": [
+   "#fceaa9",
+   "#ffedac"
+  ],
+  "sleep": [
+   "#fceaa9",
+   "#ffedac"
+  ]
+ }
+}

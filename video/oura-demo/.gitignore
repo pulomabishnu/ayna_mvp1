@@ -1,0 +1,4 @@
+node_modules/
+film/out/
+capture/__pycache__/
+capture/persona_state.json
