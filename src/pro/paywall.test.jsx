@@ -8,6 +8,7 @@ import { PLANS, PRO_GROUPS, proGroups } from './plans.js';
 
 const proPage = readFileSync(new URL('../../public/pro.html', import.meta.url), 'utf8');
 const proApi = readFileSync(new URL('../../api/pro.js', import.meta.url), 'utf8');
+const proLockSource = readFileSync(new URL('../components/ProLock.jsx', import.meta.url), 'utf8');
 const testflightQr = readFileSync(new URL('../../public/images/testflight-qr.svg', import.meta.url), 'utf8');
 
 describe('the one locked state', () => {
@@ -26,21 +27,19 @@ describe('the one locked state', () => {
     expect(html).toContain('>Get ayna Pro</a>');
     expect(html).toContain('Already a Pro member?');
     expect(html).not.toContain('TestFlight');
-    expect(html).not.toContain('Download ayna on your iPhone');
+    expect(html).not.toContain('install ayna on iPhone');
   });
-  it('puts Pro first and TestFlight second on the website, with the exact install link and QR code', () => {
+  it('keeps the website install handoff secondary instead of stacking it into the Pro gate', () => {
     const html = renderToStaticMarkup(<ProLock feature="dashboard" />);
-    const proStep = html.indexOf('<b>Get ayna Pro</b>');
-    const installStep = html.indexOf('<b>Get ayna on TestFlight</b>');
-    expect(proStep).toBeGreaterThan(-1);
-    expect(installStep).toBeGreaterThan(proStep);
-    expect(html).toContain('https://testflight.apple.com/join/f3C9PypD');
-    expect(html).toContain('/images/testflight-qr.svg');
-    expect(html).toContain('Scan with your iPhone camera.');
-    expect(html).toContain('Sign in with the same account');
-    expect(html).toContain('until your paid period ends');
+    expect(html.match(/class="pro-lock__cta"/g)).toHaveLength(1);
+    expect(html).toContain('Then install ayna on iPhone');
+    expect(html).not.toContain('Download on TestFlight');
+    expect(html).not.toContain('/images/testflight-qr.svg');
+    expect(html).toContain('Paid access stays active through the end of your purchased period');
+    expect(proLockSource).toContain('https://testflight.apple.com/join/f3C9PypD');
+    expect(proLockSource).toContain('/images/testflight-qr.svg');
+    expect(proLockSource).toContain('Scan with your iPhone camera or open TestFlight directly.');
     expect(testflightQr).toContain('ayna TestFlight QR code');
-    expect(renderToStaticMarkup(<ProLock feature="dashboard" native />)).not.toContain('Download on TestFlight');
   });
   it('names gates from the Pro features list', () => {
     expect(proFeatureName('trial')).toBe('Advanced tracking');
