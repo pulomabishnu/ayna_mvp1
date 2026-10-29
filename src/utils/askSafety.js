@@ -66,3 +66,19 @@ export function localSafetyAnswer(text, safety) {
   }
   return null;
 }
+
+// Red flags (review, Oct 29): answered on this device before anything else,
+// signed in or not, so urgent symptoms never wait on the model or an account.
+// Wording follows ayna's care rules: no diagnosis, go to care now.
+const RED_FLAG = /\b(severe|unbearable|worst|excruciating)\s+(?:\w+\s+){0,2}(pain|cramps?|bleeding)\b|\bfever\b.*\b(pain|discharge|bleeding|cramps?)\b|\b(pain|discharge|bleeding|cramps?)\b.*\bfever\b|\bfaint(ed|ing)?\b|\bpassed out\b|\bsoak(ing|ed)?\s+(?:through\s+)?(?:a\s+)?(pad|tampon)s?\s+(every|each)\s+hour\b|\bbleeding\b.*\bpregnan|\bpregnan\w*\b.*\bbleeding\b|\bsuicid|\bhurt myself\b/i;
+export function localRedFlagAnswer(text) {
+  const t = String(text || '');
+  if (!RED_FLAG.test(t)) return null;
+  if (/\bsuicid|\bhurt myself\b/i.test(t)) {
+    return { answer: 'I’m really glad you told me. If you might act on these thoughts, call or text **988** (Suicide & Crisis Lifeline, US) or **911** right now. You don’t have to go through this alone.', followUps: [], basedOn: ['what you wrote'] };
+  }
+  return {
+    answer: '**This needs medical care now.** Severe or worsening pain, a fever with pain or unusual discharge, fainting, bleeding that soaks a pad or tampon every hour, or any bleeding in pregnancy should be checked promptly. Call your clinician or go to urgent care, and call **911** if it feels like an emergency. ayna can’t tell what’s causing it.',
+    followUps: [], basedOn: ['what you wrote'],
+  };
+}

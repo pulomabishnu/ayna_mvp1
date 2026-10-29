@@ -65,3 +65,29 @@ describe('top match', () => {
     expect(out.followUps[0].label).toBe('See full match details');
   });
 });
+
+describe('Ask review (Oct 29): safety questions come from the engine', async () => {
+  const { localAnswer } = await import('./askAnswer.js');
+  const profile = { fullHealthIntake: { allergyStatus: 'No', takesCurrent: 'Yes', currentMedicationItems: ['Sertraline'], safetyConcern: 'No', diagnosisSelections: ['None that I know of'], lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain'], age: '29' }, personalizationCompleted: true };
+  it('a brand name alone finds the product', async () => {
+    const r = await localAnswer('what is my match for ThermaCare', { profile, signedIn: true });
+    expect(r.answer).toMatch(/ThermaCare Menstrual Pain Therapy/);
+  });
+  it('"why is X on hold" gives the hold state and reason, never a percent', async () => {
+    const r = await localAnswer('why is magnesium glycinate on hold', { profile, signedIn: true });
+    expect(r.answer).toMatch(/Checking this product/);
+    expect(r.answer).not.toMatch(/\d+% match/);
+  });
+  it('a pregnancy question about a product states the product’s own fact', async () => {
+    const r = await localAnswer('is Flo gummies safe in pregnancy', { profile, signedIn: true });
+    expect(r.answer).toMatch(/In pregnancy:/);
+  });
+  it('red flags are answered on the device first, signed in or not', async () => {
+    const r = await localAnswer('I have severe pain and fever', { signedIn: false });
+    expect(r.urgent).toBe(true);
+    expect(r.answer).toMatch(/medical care now/);
+  });
+  it('a general question with no product named still goes to ayna’s AI', async () => {
+    expect(await localAnswer('what helps cramps', { profile, signedIn: true })).toBeNull();
+  });
+});

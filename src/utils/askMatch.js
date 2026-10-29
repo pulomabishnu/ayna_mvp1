@@ -4,7 +4,8 @@
 // Ask can never make up a different percent. Anything else goes to Ask ayna.
 
 import { findConfidentProductMatch } from './naturalLanguageSearch.js';
-import { whyMatch, exclusionLines, confidenceNotes, needBreakdown, shownMatchPercent, SAFETY_HOLD, MATCH_UNAVAILABLE, SAFETY_HOLD_LINE, SAFETY_HOLD_PRODUCT_LINE } from './matchDisplay.js';
+import { whyMatch, exclusionLines, confidenceNotes, needBreakdown, shownMatchPercent, SAFETY_HOLD, MATCH_UNAVAILABLE, SAFETY_HOLD_LINE, SAFETY_HOLD_PRODUCT_LINE, HOLD_STATE_TITLE, HOLD_STATE_LINE } from './matchDisplay.js';
+import { buildProductProfile } from '../matching/productProfile.js';
 import { whyLine } from './whyLine.js';
 import { breakdownFromDetails } from '../matching/breakdown.js';
 
@@ -22,11 +23,31 @@ const MATCH_INTENT = [
 
 const TOP_MATCH = /\b(?:top|best)\s+match\b/i;
 
-const FILLER = /\b(what(?:'|’)?s|what|is|are|my|me|the|a|an|for|with|on|how|well|does|do|would|will|match(?:es|ed)?|score|percent|per|cent|fit|good|and|why|it|this|that|tell|show|please|ayna|to|of)\b|[%?!.,"“”]/gi;
+// "Is <product> safe for me / with my medicines / in pregnancy?", "Why is
+// <product> on hold?", "Can I use <product>?" (review, Oct 29): answered from
+// the same engine as the card (its match, hold or exclusion), never by the
+// model, which does not know her safety checks. Only when a product is named.
+const SAFETY_INTENT = [
+  /\b(?:is|are)\b.+\b(?:safe|ok|okay|right|good|suitable)\b/i,
+  /\bwhy\b.+\b(?:on\s+hold|held|being\s+reviewed|checking|no\s+match|not\s+(?:in\s+)?my\s+matches)\b/i,
+  /\bcan\s+i\s+(?:use|take|try)\b/i,
+];
+const isSafetyQuestion = (t) => SAFETY_INTENT.some((re) => re.test(t));
+
+const FILLER = /\b(what(?:'|’)?s|what|is|are|my|me|the|a|an|for|with|on|how|well|does|do|would|will|match(?:es|ed)?|score|percent|per|cent|fit|good|and|why|it|this|that|tell|show|please|ayna|to|of|safe|ok|okay|right|suitable|can|i|use|take|try|while|in|pregnancy|pregnant|breastfeeding|medicines?|medications?|meds|hold|held|being|reviewed|checking|no|not|matches)\b|[%?!.,"“”]/gi;
 
 export function isMatchQuestion(text) {
   const t = String(text || '');
-  return t.length <= 200 && MATCH_INTENT.some((re) => re.test(t));
+  return t.length <= 200 && (MATCH_INTENT.some((re) => re.test(t)) || isSafetyQuestion(t));
+}
+
+/** A product named by brand or a distinctive word ("ThermaCare", "Estroven") when the full-name search is unsure. */
+function productByName(query, catalog) {
+  const q = String(query || '').trim().toLowerCase();
+  if (q.length < 3) return { one: null, some: [] };
+  const stem = (w) => w.replace(/ies$/, 'y').replace(/(?<!s)s$/, '');
+  const hits = catalog.filter((p) => { const n = `${p.brand || ''} ${p.name || ''}`.toLowerCase(); return q.split(/\s+/).every((w) => n.includes(stem(w))); });
+  return { one: hits.length === 1 ? hits[0] : null, some: hits.slice(0, 4) };
 }
 
 /** The product words left after taking out the question words. */
@@ -47,7 +68,7 @@ const nameOf = (p) => String(p?.name || p?.title || 'This product').trim();
  * @returns {{ answer: string, followUps: object[], productId: string|null } | null}
  *   null when it is not a match question (send it to Ask as usual).
  */
-export function answerMatchQuestion(text, ctx) {
+function answerMatchCore(text, ctx) {
   if (!isMatchQuestion(text)) return null;
   const { catalog = [], quizAnswers = null, healthProfile = null, matchOpts, categoryLabels = {}, getDetails, getTop = null, focusProduct = null } = ctx || {};
   const query = TOP_MATCH.test(text) ? '' : productQueryFrom(text);
@@ -64,10 +85,29 @@ export function answerMatchQuestion(text, ctx) {
       }
       top = best?.p || null;
     }
-    if (top) return answerMatchQuestion(`why is this matched to me`, { ...ctx, focusProduct: top });
+    if (top) return answerMatchCore(`why is this matched to me`, { ...ctx, focusProduct: top });
   }
   const id = query ? findConfidentProductMatch(query, catalog, null, categoryLabels) : undefined;
-  const product = (id && catalog.find((p) => String(p.id) === String(id))) || (!query ? focusProduct : null);
+  const byName = !id && query ? productByName(query, catalog) : { one: null, some: [] };
+  const product = (id && catalog.find((p) => String(p.id) === String(id))) || byName.one || (!query ? focusProduct : null);
+  const safetyOnly = isSafetyQuestion(text) && !MATCH_INTENT.some((re) => re.test(text));
+
+  // Several products by that name: each one's status for her, from the
+  // engine, and a tap for the full answer.
+  if (!product && byName.some.length > 1) {
+    const statusOf = (p) => {
+      if (!quizAnswers || typeof getDetails !== 'function') return '';
+      const d = getDetails(p, quizAnswers, healthProfile, matchOpts);
+      if (d?.matchStatus === 'safety-hold') return HOLD_STATE_TITLE[d.safetyHold?.state] || SAFETY_HOLD;
+      if (d?.matchStatus === 'excluded' || d?.eligible === false) return 'not in your matches';
+      const shown = d?.matchStatus === 'scored' ? shownMatchPercent(d.percent) : null;
+      return shown != null ? `${shown}% match` : d?.matchStatus === 'scored' && d.percent > 0 ? 'partial fit' : 'no match for your needs';
+    };
+    return { productId: null, answer: `There’s more than one. Here’s where each stands for you:\n\n${byName.some.map((p) => { const st = statusOf(p); return `- **${nameOf(p)}**${st ? `: ${st}` : ''}`; }).join('\n')}\n\nTap one for the full reason.`, followUps: byName.some.map((p) => ({ type: 'ask', text: `What is my match for ${nameOf(p)}?`, label: nameOf(p).slice(0, 36) })) };
+  }
+  // A general safety question with no product named ("can I use a heating
+  // pad?") goes to Ask as usual.
+  if (!product && safetyOnly) return null;
 
   if (!product) {
     return {
@@ -101,7 +141,7 @@ export function answerMatchQuestion(text, ctx) {
   if (why.restricted || details?.matchStatus === 'safety-hold') {
     // Same words as the card and product page (founder, Oct 24): no percent, the reason, the fix.
     const hold = details?.safetyHold;
-    return { productId: String(product.id), followUps: open, answer: [`**${name}**: ${SAFETY_HOLD} · ${MATCH_UNAVAILABLE}.`, hold?.kind === 'product' ? SAFETY_HOLD_PRODUCT_LINE : SAFETY_HOLD_LINE, hold?.reason || '', hold?.fix?.label ? (hold.fix.step ? `To resolve it: ${hold.fix.label.replace(/^Answer: /, 'answer “')}${hold.fix.label.startsWith('Answer: ') ? '” in your profile.' : ''}` : hold.fix.label) : ''].filter(Boolean).join('\n\n') };
+    return { productId: String(product.id), followUps: open, answer: [`**${name}**: ${HOLD_STATE_TITLE[hold?.state] || SAFETY_HOLD} · ${MATCH_UNAVAILABLE}.`, HOLD_STATE_LINE[hold?.state] || (hold?.kind === 'product' ? SAFETY_HOLD_PRODUCT_LINE : SAFETY_HOLD_LINE), hold?.reason || '', hold?.fix?.label ? (hold.fix.step ? `To resolve it: ${hold.fix.label.replace(/^Answer: /, 'answer “')}${hold.fix.label.startsWith('Answer: ') ? '” in your profile.' : ''}` : hold.fix.label) : ''].filter(Boolean).join('\n\n') };
   }
 
   if (details?.matchStatus === 'bleeding-evaluation') {
@@ -139,6 +179,28 @@ export function answerMatchQuestion(text, ctx) {
     'The match is how well it fits what you’ve told ayna, not a medical judgement.',
   ];
   return { productId: String(product.id), followUps: open, answer: parts.filter(Boolean).join('\n\n') };
+}
+
+// "Is it safe in pregnancy / while breastfeeding?": what the product's own
+// facts say, from the same profile the engine reads. Unknown is said as unknown.
+const STAGE_WORDS = { contraindicated: 'not for use', caution: 'check with a clinician first', verified: 'checked as fine by a reviewed source', unknown: 'not confirmed: ayna doesn’t have this fact yet', not_applicable: '' };
+function stageFactLine(text, product) {
+  const t = String(text || '');
+  const preg = /pregnan/i.test(t); const bf = /breastfeed|nursing|lactat/i.test(t);
+  if (!product || (!preg && !bf)) return '';
+  let pp; try { pp = buildProductProfile(product); } catch { return ''; }
+  const lines = [];
+  if (preg && STAGE_WORDS[pp.pregnancy?.overall]) lines.push(`**In pregnancy:** ${STAGE_WORDS[pp.pregnancy.overall]}.`);
+  if (bf && STAGE_WORDS[pp.breastfeeding?.overall]) lines.push(`**While breastfeeding:** ${STAGE_WORDS[pp.breastfeeding.overall]}.`);
+  return lines.length ? `${lines.join('\n')}\nAsk your clinician or pharmacist before using it.` : '';
+}
+
+export function answerMatchQuestion(text, ctx) {
+  const r = answerMatchCore(text, ctx);
+  if (!r?.productId) return r;
+  const product = (ctx?.catalog || []).find((p) => String(p.id) === String(r.productId)) || ctx?.focusProduct || null;
+  const line = stageFactLine(text, product);
+  return line ? { ...r, answer: `${line}\n\n${r.answer}` } : r;
 }
 
 /** Loads the catalog and engine only when a match question comes in. */
