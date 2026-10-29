@@ -93,6 +93,13 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   const [home, setHome] = useState(true);
   // Back on the home view: start at the top, not where the chat was scrolled.
   useEffect(() => { if (home) messagesRef.current?.scrollTo({ top: 0 }); }, [home]);
+  // Escape closes the side panel (Oct 29 audit: dialogs close on Escape).
+  useEffect(() => {
+    if (!open || asPage) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape' && !e.defaultPrevented) setOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, asPage]);
   const [messages, setMessages] = useState(
     chatHistory?.length > 0 ? chatHistory : buildWelcome()
   );
@@ -525,7 +532,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             {home && !sending && (
               <AskStart
                 name={firstName}
-                intro={signedOut ? 'Answered on this device, no account needed. Not medical advice.' : 'Uses your profile and checked sources. Not medical advice.'}
+                intro={signedOut ? 'Quick answers need no account; other questions need a free one. Not medical advice.' : 'Uses your profile and checked sources. Not medical advice.'}
                 how={how}
                 groups={groups}
                 // A suggested question is sent on tap (founder, Oct 24 22:17); typing waits for Send.

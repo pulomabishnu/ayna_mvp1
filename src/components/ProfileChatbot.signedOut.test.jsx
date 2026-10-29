@@ -28,7 +28,7 @@ describe('web Ask signed out with quiz answers', () => {
     const onRequireAuth = vi.fn();
     await act(async () => root.render(<ProfileChatbot asPage profile={{ fullHealthIntake: { supportSelections: ['Hot flashes'] } }} user={null} onRequireAuth={onRequireAuth} />));
     await flush();
-    expect(host.textContent).toContain('Answered on this device');
+    expect(host.textContent).toContain('Quick answers need no account');
     await act(async () => { btn('What should I focus on today?').click(); });
     await flush();
     expect(host.textContent).toContain('Log how you slept');

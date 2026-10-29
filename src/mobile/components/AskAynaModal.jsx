@@ -493,7 +493,7 @@ export default function AskAynaModal({
         {home && !sending && !guidePage && (
           <AskStart
             name={name ? String(name).split(' ')[0] : ''}
-            intro={signedOut ? 'Answered on this phone, no account needed. Not medical advice.' : 'Uses your profile and checked sources. Not medical advice.'}
+            intro={signedOut ? 'Quick answers need no account; other questions need a free one. Not medical advice.' : 'Uses your profile and checked sources. Not medical advice.'}
             how={how}
             // One segmented filter over one chip group (Ask critique, Oct 27): today's Rundown questions
             // (this session only), About you · Safety · Products, then her guide pages when signed in.
