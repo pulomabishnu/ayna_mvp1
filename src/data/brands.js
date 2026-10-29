@@ -10287,32 +10287,193 @@ export const BRAND_PRODUCTS = [
             'Not menstruating or menopausal: GoodCycle says it may not be the right fit, and to check with a clinician because it contains iron.',
             'Teens: GoodCycle says it is formulated for adults and to ask a pediatrician first.',
         ],
-        communityReview: 'GoodCycle\'s 2024 consumer focus group: 45 people used the routine for a full cycle and self-reported results, with no comparison group. 89% reported better digestion and regularity, 78% fewer PMS symptoms, 71% more energy, 67% better sleep, 64% more cycle awareness and 44% better mood. GoodCycle notes results are self-reported and individual results may vary. Customer quotes on takegoodcycle.com describe easier cramps, steadier energy and support coming off birth control.',
+        communityReview: 'On takegoodcycle.com\'s reviews page, DailyBasis has 4.8 out of 5 stars from 48 reviews (checked October 29, 2026). Reviewers most often mention lighter cramps, better digestion, steadier energy and mood across the cycle, and an easy routine; several mix it into smoothies, and one says it tastes like greens. In their words: "I just finished my first month and I noticed my period cramps seem lighter!" (Emily); "It has noticeably improved my digestion and I\'ve been looking forward to the light energy boost" (Tessa); "I\'ve felt more stable and consistent levels of energy, mood, and hunger throughout the month, even on my period" (Nicolette); "No negative side effects for me, and I really enjoy the flavor" (Molly); and a reviewer with PMDD symptoms wrote that after a month of daily use, "those symptoms went away for my following cycle" (Dana). These reviews are on GoodCycle\'s own site, which chooses how reviews are shown: every review ayna could read there was 5 stars, and 4 were marked Verified.',
         effectiveness: 'No clinical trial of DailyBasis itself is cited by GoodCycle; its evidence is a 45-person self-reported focus group and published research on individual ingredients.',
         ingredients: 'Vitamins A, C, D3, E, K2 and B vitamins (incl. P-5-P B6, 5-MTHF folate, methyl B12), calcium, iron, iodine, magnesium, zinc, selenium, manganese, chromium, molybdenum, CoQ10, greens blend, botanicals (broccoli, green tea extract, lutein in Replenish; quercetin, alpha lipoic acid, phosphatidylcholine in Balance), amino acids (NAC, taurine, BCAAs), probiotics.',
-        ingredientScienceNote: 'A few of the ingredients GoodCycle highlights, with what published research says about each ingredient. These studies tested the ingredient on its own, often at a different dose, not DailyBasis.',
+        ingredientScienceNote: 'Every ingredient GoodCycle lists, with GoodCycle\'s own explanation of why it\'s there (from takegoodcycle.com/pages/ingredients). Where published research on an ingredient exists, it follows; those studies tested the ingredient on its own, often at a different dose, not DailyBasis. GoodCycle\'s explanations are the brand\'s claims, not checked by ayna.',
         ingredientScience: [
             {
-                name: 'Vitamin B6 and magnesium',
-                text: 'A systematic review of nine trials (940 women) found vitamin B6 at doses up to 100 mg a day likely helps premenstrual symptoms, though most of the trials were low quality. In a small trial, magnesium plus B6 lowered PMS scores the most of three groups, but scores also fell with placebo. Balance has 20 mg of B6 and 150 mg of magnesium per serving, lower than many of the doses studied.',
+                name: 'Vitamin B6',
+                text: 'Per GoodCycle: We use pyridoxal 5\' phosphate, the active form of Vitamin B6, to help the body use its amino acids, metabolize excess hormones, and support energy and neurotransmitter production. Vitamin B6 paired with magnesium may help support easing common PMS symptoms.\n\nResearch: a systematic review of nine trials (940 women) found vitamin B6 at doses up to 100 mg a day likely helps premenstrual symptoms, though most of the trials were low quality. In a small trial, magnesium plus B6 lowered PMS scores the most of three groups, but scores also fell with placebo. Balance has 20 mg of B6 per serving (Replenish 6.2 mg), lower than many of the doses studied.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/10334745/', label: 'PubMed (NIH): Vitamin B-6 for premenstrual syndrome, systematic review (BMJ, 1999)' },
                     { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3208934/', label: 'NIH (PMC): Magnesium, and magnesium plus vitamin B6, on PMS severity (Iran J Nurs Midwifery Res, 2010)' },
+                    { url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' },
+                ],
+            },
+            {
+                name: 'Magnesium',
+                text: 'Per GoodCycle: We use magnesium bisglycinate, a highly absorbable form of magnesium bound to the amino acid glycine. This form is less likely to cause gastrointestinal issues compared to other types of magnesium. Magnesium bisglycinate helps support heart and circulation health, supports blood sugar levels already within a normal range, supports relaxation, and aids in cellular energy production.\n\nResearch: in a small trial, magnesium plus vitamin B6 lowered PMS scores the most of three groups (magnesium alone, magnesium plus B6, placebo), but scores also fell with placebo. Balance has 150 mg of magnesium per serving (Replenish 60 mg).',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3208934/', label: 'NIH (PMC): Magnesium, and magnesium plus vitamin B6, on PMS severity (Iran J Nurs Midwifery Res, 2010)' },
+                    { url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' },
                 ],
             },
             {
                 name: 'Calcium',
-                text: 'In a double-blind trial of 66 students with PMS, 500 mg of calcium a day for two months reduced PMS symptom scores, including mood symptoms, compared with placebo. Balance has 310 mg of calcium per serving.',
+                text: 'Per GoodCycle: We use calcium citrate, a more absorbable form of calcium that works alongside Vitamin D3 to help contribute to bone growth and maintenance. Calcium is especially important for women, whose bone density needs shift as they age.\n\nResearch: in a double-blind trial of 66 students with PMS, 500 mg of calcium a day for two months reduced PMS symptom scores, including mood symptoms, compared with placebo. Balance has 310 mg of calcium per serving (Replenish 160 mg).',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/28217679/', label: 'PubMed (NIH): Calcium for premenstrual syndrome, double-blind randomized trial (Obstet Gynecol Sci, 2017)' },
+                    { url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' },
                 ],
             },
             {
                 name: 'Iron',
-                text: 'Monthly blood loss raises iron needs. In a 16-week study of teen girls in Indonesia, iron tablets improved iron levels compared with placebo whether taken weekly or for four days during the period, but weekly dosing raised hemoglobin more. Replenish has 18 mg of iron and Balance 12.3 mg, so DailyBasis provides iron every day of the cycle.',
+                text: 'Per GoodCycle: We use iron bisglycinate, a form of iron that minimizes nausea and gastrointestinal side effects sometimes associated with iron supplements. Iron is critical for the health of red blood cells and for the transport of oxygen throughout the body. Iron needs may increase for menstruating people due to monthly blood loss.\n\nResearch: in a 16-week study of teen girls in Indonesia, iron tablets improved iron levels compared with placebo whether taken weekly or for four days during the period, but weekly dosing raised hemoglobin more. Replenish has 18 mg of iron and Balance 12.3 mg, so DailyBasis provides iron every day of the cycle.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/11890637/', label: 'PubMed (NIH): Iron during menstruation vs. weekly iron supplementation (Asia Pac J Clin Nutr, 2002)' },
+                    { url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' },
                 ],
+            },
+            {
+                name: 'Vitamin A',
+                text: 'Per GoodCycle: We use beta carotene, a natural pigment found in plants and fruits like carrots, which the body converts into Vitamin A - an antioxidant that supports the immune system and supports skin and vision health. The Supplement Facts label lists vitamin A as palmitate, not beta carotene.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Vitamin C',
+                text: 'Per GoodCycle: We use Vitamin C (ascorbic acid), which the body cannot produce naturally and is essential in helping to support immune health, promoting collagen formation, and supporting normal liver function.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Vitamin D3',
+                text: 'Per GoodCycle: We use Vitamin D3 (cholecalciferol), the same form of Vitamin D produced by the skin when exposed to sunlight. In the body, Vitamin D3 supports calcium absorption for bone health, supports healthy blood sugar levels already within a normal range, and supports mood balance.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Vitamin E',
+                text: 'Per GoodCycle: We use D-Alpha tocopherol, the most active, fat-soluble form of Vitamin E found in many seeds, nuts, and leafy green vegetables, which helps support the immune system and protects cells from harmful molecules called free radicals.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Vitamin K2',
+                text: 'Per GoodCycle: We use menaquinone-7, a form of Vitamin K2, which supports bone health by helping direct calcium to where it\'s needed in the body.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Thiamin (vitamin B1)',
+                text: 'Per GoodCycle: We use thiamin (also known as Vitamin B1) as energy-balancing support. Thiamin helps convert carbohydrates into energy and metabolize fats and proteins.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Riboflavin (vitamin B2)',
+                text: 'Per GoodCycle: We use riboflavin 5-phosphate sodium (also known as Vitamin B2), which supports the metabolism of sugars and fats in the body, and helps the body convert and activate other B vitamins into active forms to help support hormone balance.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Niacin (vitamin B3)',
+                text: 'Per GoodCycle: We use niacin, (also known as Vitamin B3), a vitamin that can help with energy levels, brain health, and bone/ joint health.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Folate (5-MTHF)',
+                text: 'Per GoodCycle: We use 5-MTHF, the active version of folate (also known as Vitamin B9), a B vitamin that helps ease common PMS symptoms by supporting metabolism, brain function, and cellular energy production.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Vitamin B12',
+                text: 'Per GoodCycle: We use methylcobalamin, the most active form of Vitamin B12, to help with healthy red blood cell production and the regulation of the nervous system.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Biotin (vitamin B7)',
+                text: 'Per GoodCycle: Biotin (also known as Vitamin B7) helps the body break down fats, carbohydrates, and amino acids and can help with hair growth, nail strength, and skin health.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Pantothenic acid (vitamin B5)',
+                text: 'Per GoodCycle: Pantothenic acid (also known as Vitamin B5), helps break down fatty acids by making a substance called co-enzyme A (CoA). CoA processes the other essential fatty acids found in DailyBasis, making them more effective in the body while also aiding in the breakdown of fatty acids from the diet.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Iodine',
+                text: 'Per GoodCycle: We use potassium iodide, a salt of iodine, that supports thyroid function which is critical for regulating metabolism and energy levels.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Zinc',
+                text: 'Per GoodCycle: We use zinc bisglycinate chelate, a highly absorbable form of zinc, to support immune function and reproductive health. Zinc bisglycinate chelate helps metabolize testosterone and support white blood cells in responding to immune challenges. It also has antioxidant properties that protect the body from oxidative stress.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Selenium',
+                text: 'Per GoodCycle: We use selenium to support cell function, metabolism, and thyroid health, while supporting healthy circulation. Selenium may also help support balanced progesterone and estrogen levels.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Manganese',
+                text: 'Per GoodCycle: Manganese bisglycinate, an absorbable form of manganese, helps the body metabolize carbohydrates, supports mitochondrial function, supports joint, bone, and organ health, and helps protect the body against oxidative damage.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Chromium',
+                text: 'Per GoodCycle: Chromium picolinate, a more absorbable form of chromium, is a nutrient that supports metabolic health, supports a healthy inflammatory response after intense exercise, supports blood sugar levels already within a normal range, and can helps ease cravings for sugar and carbohydrates, particularly during the luteal phase of the cycle when these cravings tend to increase. The Supplement Facts label lists chromium as an amino acid chelate, not picolinate.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Molybdenum',
+                text: 'Per GoodCycle: Molybdenum glycinate, an absorbable form of molybdenum, helps support hormonal balance by helping support normal liver function and the metabolism of progesterone and estrogen. It also aids in the metabolism of sulfur-containing amino acids, which supports thyroid hormone production.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'CoQ10',
+                text: 'Per GoodCycle: We use CoQ10 to support mitochondrial function, helping support energy levels.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Quercetin (Balance)',
+                text: 'Per GoodCycle: We use quercetin to help support immune health and a healthy inflammatory response in the body.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Alpha lipoic acid (Balance)',
+                text: 'Per GoodCycle: We use Alpha Lipoic Acid, an antioxidant that helps protect from oxidative stress, can help support normal liver function, and helps support nerve health and energy production.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Phosphatidylcholine (Balance)',
+                text: 'Per GoodCycle: Phosphatidylcholine is a component of the membranes that surround liver cells, that can help support normal liver cell structure and function.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Broccoli powder',
+                text: 'Per GoodCycle: We use broccoli sprouts, which are rich in phytonutrients that support a healthy inflammatory response and can support hormone balance. They are also high in fiber, which aids in digestion and gut health.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Green tea leaf extract (Replenish)',
+                text: 'Per GoodCycle: We use green tea extract to help support healthy blood sugar metabolism already within a normal range, which plays a role in energy, digestion, and overall balance.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Lutein esters (Replenish)',
+                text: 'Per GoodCycle: We use lutein to support healthy circulation, which plays a role in supporting healthy follicle development.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'N-acetyl L-cysteine (NAC)',
+                text: 'Per GoodCycle: N-Acetylcysteine (NAC) is an amino acid with antioxidant properties that can help support a healthy inflammatory response. NAC may help support the body\'s antioxidant defenses and glutathione production, which helps maintain cellular balance.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Taurine',
+                text: 'Per GoodCycle: Taurine is an amino acid known for its role in helping support heart and brain health.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Branched-chain amino acids (leucine, valine, isoleucine)',
+                text: 'Per GoodCycle: Branch Chain Amino Acids (BCAAs) are comprised of Leucine, Valine, and Isoleucine, which are essential nutrients typically found in animal products and legumes. BCAAs aid in protein synthesis and help support muscle maintenance.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Probiotics (L. rhamnosus, L. plantarum, L. reuteri, B. bifidum)',
+                text: 'Per GoodCycle: We use a combination of potent diverse probiotics to support intestinal microbiome balance.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
+            },
+            {
+                name: 'Greens blend (oat grass, barley grass, wheatgrass, alfalfa)',
+                text: 'Per GoodCycle: A high-fiber, antioxidant-rich greens blend designed to support active follicular development and help eliminate hormonal byproducts like excess estrogen.',
+                citations: [{ url: 'https://takegoodcycle.com/pages/ingredients', label: 'takegoodcycle.com: Ingredients' }],
             },
         ],
         scientificCitations: [],
@@ -10325,6 +10486,7 @@ export const BRAND_PRODUCTS = [
             },
             community: {
                 links: [
+                    { platform: 'website', url: 'https://takegoodcycle.com/pages/reviews', text: 'takegoodcycle.com: Customer reviews', summary: 'GoodCycle\'s reviews page: 4.8 out of 5 from 48 reviews as of October 29, 2026.' },
                     { platform: 'website', url: 'https://takegoodcycle.com/products/daily-basis', text: 'takegoodcycle.com: DailyBasis', summary: 'GoodCycle\'s product page, with customer quotes and directions.' },
                     { platform: 'website', url: 'https://takegoodcycle.com/pages/faq', text: 'takegoodcycle.com: FAQ', summary: 'GoodCycle\'s answers on cycle timing, birth control, pregnancy, allergens and medicines.' },
                     { platform: 'website', url: 'https://takegoodcycle.com/pages/references', text: 'takegoodcycle.com: Scientific references', summary: 'The research list GoodCycle cites for its ingredients.' },
