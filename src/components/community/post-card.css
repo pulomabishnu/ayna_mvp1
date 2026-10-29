@@ -127,3 +127,11 @@ html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-co
   html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container) .cm-layout:has(> .cm-side:empty) > .cm-main { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; column-gap: 20px !important; align-items: start !important; }
   html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container) .cm-layout:has(> .cm-side:empty) > .cm-main > :not(.ay-postcard) { grid-column: 1 / -1 !important; }
 }
+
+/* Oct 29 (founder screenshot): two columns of posts with different heights left big empty holes.
+   One readable column of posts instead, like a feed; flat cards with a hairline, no offset shadow. */
+@media (min-width: 1100px) {
+  html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container):is(#cmf4, .app-container) .cm-layout:has(> .cm-side:empty) > .cm-main { display: grid !important; grid-template-columns: minmax(0, 760px) !important; justify-content: start !important; row-gap: 16px !important; }
+}
+html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container):is(#cmf4, .app-container):is(#cmf5, .app-container) .cm-main > .ay-postcard { box-shadow: none !important; border: 1px solid rgba(62, 39, 35, .22) !important; border-radius: 20px !important; }
+html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container) .cm-main > .cm-pinned-ann { max-width: 760px; }

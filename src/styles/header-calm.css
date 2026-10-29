@@ -69,3 +69,5 @@ html body .app-container.app-container .ay-ecosystem-entry .ay-btn { border-radi
 html body .app-container.app-container[data-theme='brand-dark'] .ay-ecosystem-entry { background: rgba(255, 237, 172, .08); color: #ffedac; }
 html body .app-container.app-container[data-theme='brand-dark'] .ay-ecosystem-entry__eyebrow { color: rgba(255, 237, 172, .7); }
 @media (max-width: 600px) { html body .app-container.app-container .ay-ecosystem-entry { margin: 32px 16px 64px; padding: 32px 20px; } }
+/* A clicked nav link kept a box around it (mouse focus). The box shows for keyboard focus only. */
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper :is(a, button):focus:not(:focus-visible) { outline: none !important; box-shadow: none !important; }
