@@ -12,3 +12,10 @@ html body .app-container .wht .ay-hsc { max-width: none; }
   html body .app-container .wht .ay-hh__band > .ay-dials { grid-column: 2; grid-row: 1 / span 3; align-self: center; }
   html body .app-container .wht .ay-hh__band > .ay-hh__row { grid-column: 1; }
 }
+
+/* Founder, Oct 29: the brown band runs the full width of the screen, right
+   under the header. Content stays on the page grid; only the colour (and the
+   wavy edge) reach the edges. body already clips horizontal overflow. */
+html body .app-container .wht { margin-top: 0; }
+html body .app-container .wht .ay-hh__band { border-radius: 0; box-shadow: 0 0 0 100vmax #3e2723; clip-path: inset(0 -100vmax); }
+html body .app-container.app-container .wht .ay-hh .ay-hh__edge { display: block; width: 100vw !important; max-width: none !important; margin-left: calc(50% - 50vw) !important; margin-right: 0 !important; }
