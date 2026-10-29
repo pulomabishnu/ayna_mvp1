@@ -2153,7 +2153,7 @@ export default function MyEcosystem({
                     quizSlot={quizSlot}
                     quizKey={quizSlotKind === 'finish' ? 'finish' : 'personal'}
                     onShownChange={setRailShown}
-                    shelves={shelfToc}
+                    shelves={useTabs ? [] : shelfToc}
                 />
                 <div className="eco-main">
                 <div className={careFirst ? 'eco3-secondary' : 'eco3-flow'}>

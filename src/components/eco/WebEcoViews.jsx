@@ -1,17 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import RoutineTimeline from '../routine/RoutineTimeline.jsx';
 import { shownMatchPercent } from '../../utils/matchDisplay.js';
 import { productHref, isPlainLeftClick } from '../../utils/productRoute';
 import './web-eco-views.css';
 
-/* The website's ecosystem, one list at a time (founder, Oct 28: "separate my products,
- * ayna's recommendations and the ones I saved ... easy to navigate ... it shouldn't be
- * you scroll down so much to find stuff"). The same four views as the app:
- *   Mine        her products, one compact card per area of care (names, not photos)
- *   ayna picks  matches she doesn't have yet, by need, with Add
- *   Saved       hearted products, with Add
- *   Routine     the day timeline; full routines fold away below it
- */
+/* The website's ecosystem, one list at a time, in the app's own language
+ * (founder, Oct 28: "we had the app designed so nice"). Same four views as the
+ * app: Mine, ayna picks, Saved, Routine.
+ *
+ * Borrowed from the app's Ecosystem screen, on purpose:
+ *   - the shelf head: a pink folder tab sitting on a 1.5px espresso rule, a
+ *     count, and "Add" as a text link on the right;
+ *   - products as plain rows under the rule (name, then brand and price), with
+ *     the dark match pill. No box around each shelf: the rule and the spacing
+ *     do the grouping (master prompt 8 and 22: proximity before containers,
+ *     no cards around everything).
+ * The website only changes the layout: shelves sit in two columns so 50
+ * products read in about one screen. */
 
 export const WEB_ECO_VIEWS = [
   ['mine', 'Mine'],
@@ -33,59 +38,78 @@ export function WebEcoTabs({ view, onView, counts = {} }) {
 }
 
 const priceOf = (p) => { const m = String(p?.price || '').match(/^\$\s?\d[\d.,]*(?:\s?[–-]\s?\$?\d[\d.,]*)?/); return m ? m[0].replace(/\s/g, '') : null; };
+const Chev = () => <svg className="weco-row__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>;
 
 function Row({ product, pct, onOpen, actionLabel, onAction, done = false }) {
+  const meta = [product.brand, priceOf(product)].filter(Boolean).join(' · ');
   return (
     <li className="weco-row">
       <a className="weco-row__main" href={productHref(product)} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpen?.(product); }}>
         <span className="weco-row__name">{product.name}</span>
-        <small className="weco-row__meta">{[product.brand, priceOf(product)].filter(Boolean).join(' · ')}</small>
+        {meta && <small className="weco-row__meta">{meta}</small>}
       </a>
-      {pct != null && <span className="weco-row__pct" aria-label={`${pct}% match`}>{pct}%</span>}
-      {onAction && <button type="button" className={`weco-row__act${done ? ' is-done' : ''}`} onClick={() => onAction(product)} disabled={done}>{done ? 'Added' : actionLabel}</button>}
+      {pct != null && <span className="weco-row__pct">{pct}% match</span>}
+      {onAction
+        ? <button type="button" className={`weco-row__act${done ? ' is-done' : ''}`} onClick={() => onAction(product)} disabled={done}>{done ? 'Added' : actionLabel}</button>
+        : <Chev />}
     </li>
   );
 }
 
-/** Mine: one card per area, product names as rows, so 50 products fit on about one screen. */
-export function WebEcoMine({ groups = [], onOpenProduct, onAddMore, onAddSomething }) {
+/** One shelf: folder tab on the rule, then rows. Five show; the rest open in place. */
+function Shelf({ id, label, count, onAdd, addLabel = 'Add', children, extra = null }) {
+  return (
+    <section className="weco-shelf" aria-labelledby={id}>
+      <header className="weco-shelf__head">
+        <h3 id={id}>{label}</h3>
+        {count != null && <span className="weco-shelf__n" aria-label={`${count} products`}>{count}</span>}
+        {onAdd && <button type="button" className="weco-shelf__add" onClick={onAdd}>{addLabel}<span className="weco-sr"> to {label}</span></button>}
+      </header>
+      {children}
+      {extra}
+    </section>
+  );
+}
+
+function Rows({ items, render, first = 5, label }) {
+  const [open, setOpen] = useState(false);
+  const shown = open ? items : items.slice(0, first);
+  return (
+    <>
+      <ul className="weco-rows">{shown.map(render)}</ul>
+      {items.length > first && (
+        <button type="button" className="weco-more" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+          {open ? 'Show less' : `Show all ${items.length}`}<span className="weco-sr"> in {label}</span>
+        </button>
+      )}
+    </>
+  );
+}
+
+/** Mine: one shelf per area of care, product names as rows. */
+export function WebEcoMine({ groups = [], onOpenProduct, onAddMore }) {
   if (!groups.length) return null;
   return (
-    <div className="weco-grid">
+    <div className="weco-shelves">
       {groups.map((g) => (
-        <section key={g.key} className="weco-card" aria-labelledby={`weco-area-${g.key}`}>
-          <header className="weco-card__head">
-            <h3 id={`weco-area-${g.key}`}>{g.label}</h3>
-            <span className="weco-card__n" aria-label={`${g.products.length} products`}>{g.products.length}</span>
-          </header>
-          <ul className="weco-rows">
-            {g.products.slice(0, 5).map((p) => <Row key={p.id} product={p} onOpen={onOpenProduct} />)}
-          </ul>
-          {g.products.length > 5 && (
-            <details className="weco-card__more">
-              <summary>{g.products.length - 5} more</summary>
-              <ul className="weco-rows">{g.products.slice(5).map((p) => <Row key={p.id} product={p} onOpen={onOpenProduct} />)}</ul>
-            </details>
-          )}
-          {onAddMore && <button type="button" className="weco-card__add" onClick={() => onAddMore(g)}>+ Find more for {g.label.toLowerCase()}</button>}
-        </section>
+        <Shelf key={g.key} id={`weco-area-${g.key}`} label={g.label} count={g.products.length} onAdd={onAddMore ? () => onAddMore(g) : null}>
+          <Rows items={g.products} label={g.label} render={(p) => <Row key={p.id} product={p} onOpen={onOpenProduct} />} />
+        </Shelf>
       ))}
-      {onAddSomething && <button type="button" className="weco-card weco-card--add" onClick={onAddSomething}><span aria-hidden="true">+</span>Add something you already use</button>}
     </div>
   );
 }
 
-/** ayna picks: grouped by need, best match first, only what she doesn't have. */
+/** ayna picks: by need, best match first, only what she doesn't have. */
 export function WebEcoPicks({ needs = [], pctFor, onOpenProduct, onAdd, isOwned, onExplore }) {
   const shown = needs.map((n) => ({ ...n, picks: n.picks.filter((p) => !isOwned(p.id)) })).filter((n) => n.picks.length);
   if (!shown.length) return <p className="weco-empty">No new picks right now. {onExplore && <button type="button" onClick={onExplore}>Explore products</button>}</p>;
   return (
-    <div className="weco-grid">
+    <div className="weco-shelves">
       {shown.map((n) => (
-        <section key={n.id} className="weco-card" aria-labelledby={`weco-need-${n.id}`}>
-          <header className="weco-card__head"><h3 id={`weco-need-${n.id}`}>For {n.short.toLowerCase()}</h3><span className="weco-card__n">{n.picks.length}</span></header>
-          <ul className="weco-rows">{n.picks.slice(0, 5).map((p) => <Row key={p.id} product={p} pct={pctFor(p)} onOpen={onOpenProduct} actionLabel="Add" onAction={onAdd} />)}</ul>
-        </section>
+        <Shelf key={n.id} id={`weco-need-${n.id}`} label={n.short} count={n.picks.length}>
+          <Rows items={n.picks} label={n.short} render={(p) => <Row key={p.id} product={p} pct={pctFor(p)} onOpen={onOpenProduct} actionLabel="Add" onAction={onAdd} />} />
+        </Shelf>
       ))}
     </div>
   );
@@ -94,9 +118,11 @@ export function WebEcoPicks({ needs = [], pctFor, onOpenProduct, onAdd, isOwned,
 export function WebEcoSaved({ saved = [], pctFor, onOpenProduct, onAdd, isOwned }) {
   if (!saved.length) return <p className="weco-empty">Tap the heart on any product to save it here.</p>;
   return (
-    <section className="weco-card weco-card--wide" aria-label="Saved products">
-      <ul className="weco-rows weco-rows--cols">{saved.map((p) => <Row key={p.id} product={p} pct={pctFor(p)} onOpen={onOpenProduct} actionLabel="Add" onAction={onAdd} done={isOwned(p.id)} />)}</ul>
-    </section>
+    <div className="weco-shelves is-one">
+      <Shelf id="weco-saved" label="Saved" count={saved.length}>
+        <ul className="weco-rows weco-rows--cols">{saved.map((p) => <Row key={p.id} product={p} pct={pctFor(p)} onOpen={onOpenProduct} actionLabel="Add" onAction={onAdd} done={isOwned(p.id)} />)}</ul>
+      </Shelf>
+    </div>
   );
 }
 
