@@ -123,3 +123,7 @@
 /* App: fill the screen column (Today's column is already inset). */
 .ay-asksug--app { width: auto; }
 .ay-homescreen > .ay-asksug--app .ay-asksug__row { padding-left: 0; padding-right: 0; }
+
+/* Oct 29 audit: the row ran off the right edge mid-word. It fades out at the edge instead, so it
+   reads as a row you can swipe, not cut-off text. */
+.ay-asksug__row { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent); padding-right: 40px; }

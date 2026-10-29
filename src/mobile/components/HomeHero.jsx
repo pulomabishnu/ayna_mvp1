@@ -59,7 +59,7 @@ function Streak({ streak, onLog, onMonth = null }) {
   const { count, loggedToday, week } = streak;
   const said = week.filter((d) => d.on).map((d) => weekdayLong(d.day)).join(', ');
   const title = count > 0 ? `${count}-day streak` : 'Start your streak';
-  const sub = loggedToday ? 'Logged today' : count > 0 ? 'Log today to keep it' : 'Log today, about 30 seconds';
+  const sub = loggedToday ? 'Logged today' : count > 0 ? 'Log today to keep it' : 'Log today';
   return (
     <button type="button" className="ay-hh-streak" data-tour="streak" onClick={onMonth || onLog} aria-haspopup={onMonth ? 'dialog' : undefined}
       aria-label={`${title}. ${said ? `Logged ${said}.` : 'Nothing logged this week yet.'} ${sub}.${onMonth ? ' Open your month.' : ''}`}>
@@ -163,7 +163,7 @@ export function HomeShortcuts({ cycle = null, sleep = null, products = [], onDat
         <span className="ay-hsc__photos" aria-hidden="true">
           {shown.length
             ? shown.map((p) => <Plate key={p.id} src={resolveCatalogProductImage(p) || ''} alt="" fallback={p.brand || p.name} className="ay-hsc__plate" />)
-            : <span className="ay-hsc__none">Your matches</span>}
+            : <span className="ay-hsc__none is-plus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></span>}
         </span>
         <span className="ay-hsc__text" aria-hidden="true"><b>Your products</b><small>{products.length ? `${products.length} in your ecosystem` : 'Find what fits you'}</small></span>
         <svg className="ay-hsc__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>

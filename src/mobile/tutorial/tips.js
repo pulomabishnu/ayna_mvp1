@@ -426,6 +426,8 @@ export const AVOID = [
   '[data-tour-avoid]', '[role="alert"]',
   '.ay-asksheet__form', '.ay-asksheet .ay-askp-composer', '.ay-ask-input',
   '.lsx-search',
+  // The app landing's promise stays readable on a first visit (Oct 29 audit).
+  '#alx-title',
 ];
 /** The website adds its own: the product page's safety hold and cautions, and the Ask composer. */
 export const WEB_AVOID = [
