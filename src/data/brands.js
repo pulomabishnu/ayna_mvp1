@@ -6099,7 +6099,7 @@ export const BRAND_PRODUCTS = [
         affiliateUrl: 'https://collabs.shop/a8b3sb', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/vaginal-wellness-kit.webp',
-        summary: 'A 2-week trial kit of Alubri\'s two core moisturizers in trial sizes: the Vaginal Moisturizing Gel (30 mL, with single-use applicators) for internal hydration and microbiome balance, and the Intimate Serum (30 mL) for external vulvar hydration. Alubri pitches it as an easy introduction to the brand.',
+        summary: 'Try Alubri for two weeks with clinically proven Vaginal Moisturizing Gel for internal hydration and microbiome balancing, and Intimate Serum for external hydration to support intimate confidence. The kit has trial sizes of both: the gel (30 mL, with single-use applicators) and the serum (30 mL).',
         safety: {
             fdaStatus: 'alubri.com presents both products as hormone-free personal-care moisturizers and does not describe either as an FDA-cleared device or drug.',
             materials: '1 × 30 mL (1.0 fl oz) Vaginal Moisturizing Gel with single-use applicators, and 1 × 30 mL (1.0 fl oz) Intimate Serum. Full ingredient lists are on the Alubri Vaginal Moisturizing Gel and Alubri Intimate Serum entries. Hormone-free and fragrance-free.',
@@ -6199,7 +6199,7 @@ export const BRAND_PRODUCTS = [
         affiliateUrl: 'https://collabs.shop/xbngwb', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/rejuvenate-restore-kit.png',
-        summary: 'A trial-size pair of Alubri\'s two external products for comfort before and after intimacy: the Intimate Serum (28 mL) for daily water-based hydration, and the Calming Cream (30 mL), an OTC 0.25% hydrocortisone cream for itching and irritation. Both are hormone-free and fragrance-free.',
+        summary: 'A trial-size pair of Alubri\'s two external products for comfort before and after intimacy. It has the Intimate Serum (28 mL) for daily water-based hydration, and the Calming Cream (30 mL), an OTC 0.25% hydrocortisone cream for itching and irritation. Both are hormone-free and fragrance-free.',
         safety: {
             fdaStatus: 'The Calming Cream is an over-the-counter external analgesic (hydrocortisone 0.25%), per alubri.com. The Intimate Serum is presented as a personal-care serum and is not described as an FDA-cleared device or drug.',
             materials: '1 × 28 mL (0.9 fl oz) Intimate Serum and 1 × 30 mL (1.0 fl oz) Calming Cream. Full ingredient lists are on the Alubri Intimate Serum and Alubri Calming Cream entries. Hormone-free and fragrance-free.',
