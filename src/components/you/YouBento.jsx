@@ -4,7 +4,6 @@ import { readBlend } from '../../utils/houseBlend.js';
 import { resolveCatalogProductImage } from '../ProductTileImage.jsx';
 import { requestPro } from '../../utils/proApi.js';
 import { openProPaywall, PRO_CHANGED_EVENT } from '../../pro/paywall.js';
-import { CheckerFrame } from '../ProLock.jsx';
 import './you-bento.css';
 
 /**
@@ -74,8 +73,9 @@ function Row({ k, t }) {
     <span className="yb-row__n">{t.value || ''}</span>
     {t.onClick && k !== 'logout' && CHEVRON}
   </>;
-  // The Pro row wears the paywall's moving brown and pink frame, so the way in looks like the lock it opens.
-  if (k === 'pro' && t.onClick) return <li className="yb-pro-li"><CheckerFrame square={8} radius={18} className="yb-pro-frame"><button type="button" className="yb-row yb-row--pro" onClick={t.onClick}>{inner}</button></CheckerFrame></li>;
+  // The Pro row (Oct 29: inside the checker frame its words were espresso on espresso, so it read as an
+  // empty box). Now one soft pink row with the same anatomy as the others.
+  if (k === 'pro' && t.onClick) return <li className="yb-pro-li"><button type="button" className="yb-row yb-row--pro" onClick={t.onClick}>{inner}</button></li>;
   return <li>{t.onClick ? <button type="button" className="yb-row" onClick={t.onClick}>{inner}</button> : <div className="yb-row">{inner}</div>}</li>;
 }
 

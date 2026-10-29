@@ -320,10 +320,11 @@ describe('budget', () => {
 });
 
 describe('medications', () => {
-  it('unknown interaction lowers confidence, never reads as compatible', () => {
+  it('unknown interaction on something swallowed holds it (P0: unknown is not safe), never reads as compatible', () => {
     const up = user({ supportSelections: ['Cramps or period pain'], takesCurrent: 'Yes', currentMedicationItems: ['Ozempic'] });
     const supp = score('p-magnesium-glycinate', up, 'pain.menstrual_cramp');
-    expect(supp.confidenceReasons.map((c) => c.code)).toContain('medication_unknown');
+    expect(supp.safety.restricted).toBe(true);
+    expect(supp.safety.missingProductInfo).toContain('interaction_info');
     expect(supp.safety.blockedClaims).toContain('medication_compatible');
     const device = score('p-thermacare', up, 'pain.menstrual_cramp');
     expect(device.confidenceReasons.map((c) => c.code)).not.toContain('medication_unknown');

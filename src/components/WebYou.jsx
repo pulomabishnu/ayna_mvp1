@@ -253,7 +253,7 @@ function HealthMatchStatus({ userId, onOpen }) {
   );
 }
 
-export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = null, healthConnected = [], section = null, nav = null, onOpenSection, recentAsks = [], savedSlot = null, onOpenPost, onUpdateIntake = null, onOpenCommunity, onOpenArticle, user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null, signedOutSlot = null }) {
+export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = null, healthConnected = [], section = null, nav = null, onOpenSection, recentAsks = [], savedSlot = null, onOpenPost, onUpdateIntake = null, onOpenCommunity, onOpenArticle, user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onConnectHealth = null, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null, signedOutSlot = null }) {
   const settingsRef = useRef(null);
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   const checkin = useCheckinCountStatus(user?.id);
@@ -516,7 +516,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
       {/* My health = the old My health, Tracking and Connected data tabs, in one place (You audit P1). */}
       {section === 'health' && <>
       <div className="wy-col">
-        <ThisWeek userId={user.id} onOpen={onOpenHealth || onOpenHealthData} onConnect={onOpenHealthData || onOpenHealth} />
+        <ThisWeek userId={user.id} onOpen={onOpenHealth || onOpenHealthData} onConnect={onConnectHealth || onOpenHealthData || onOpenHealth} />
         <section className="wy-sec" aria-labelledby="wy-things-h">
           <h2 className="ay-group__title" id="wy-things-h">Connected apps</h2>
           <ul className="ay-group wy-rows">

@@ -118,7 +118,8 @@ describe('one match percent per product (v2) on every surface', () => {
 
   it('?match=v1 still gives the old numbers for comparison', () => {
     const q = PERSONAS.pms;
-    const p = byId.get('p-vitex');
+    // A product scored (not held) on both engines for this persona.
+    const p = [...byId.values()].find((x) => getProductMatchDetailsForProduct(x, q).matchStatus === 'scored' && getProductMatchDetailsForProduct(x, q, null, { engine: 'v1' }).matchStatus === 'scored');
     const v1 = getProductMatchDetailsForProduct(p, q, null, { engine: 'v1' });
     const v2 = getProductMatchDetailsForProduct(p, q);
     expect(v1.engine).toBe('v1');

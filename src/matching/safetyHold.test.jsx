@@ -51,16 +51,25 @@ describe('safety hold rate with the real setup shape', async () => {
     const q = mapIntakeToLegacyQuizProfile(buildSnapshot(intake));
     return ALL_PRODUCTS.map((p) => getProductMatchDetailsForProduct(p, q)).filter((d) => d.matchStatus === 'safety-hold');
   };
-  it('answering None holds nothing back; a real medicine is checked, not held', () => {
-    expect(held(base)).toHaveLength(0);
-    expect(held({ ...base, takesCurrent: 'Yes', currentMedicationItems: ['Sertraline'] })).toHaveLength(0);
+  it('answering None holds back only products with an open clinician review', () => {
+    // Oct 29 (P0): a product under clinician review shows "Match being reviewed" for everyone.
+    const h = held(base);
+    expect(h.length).toBeLessThanOrEqual(5);
+    for (const d of h) expect(d.safetyHold.state).toBe('in_review');
+  });
+  it('a listed medicine holds swallowed products nobody reviewed against it, never devices', () => {
+    // Oct 29 (P0, unknown is not safe): unknown interaction = "Checking this product".
+    const h = held({ ...base, takesCurrent: 'Yes', currentMedicationItems: ['Sertraline'] });
+    expect(h.length).toBeLessThan(15);
+    for (const d of h) expect(['researching', 'in_review']).toContain(d.safetyHold.state);
+    for (const d of h.filter((x) => x.safetyHold.state === 'researching')) expect(d.missingProductInfo).toContain('interaction_info');
   });
   it('Not sure / Prefer not to answer hold only relevant products that depend on that answer', () => {
     for (const takesCurrent of ["I'm not sure", 'Prefer not to say']) {
       const h = held({ ...base, takesCurrent });
       expect(h.length).toBeGreaterThan(0);
       expect(h.length).toBeLessThan(20);
-      for (const d of h) expect(d.missingSafetyFields).toContain('medications');
+      for (const d of h.filter((x) => x.safetyHold.state !== 'in_review')) expect(d.missingSafetyFields).toContain('medications');
     }
   });
 });

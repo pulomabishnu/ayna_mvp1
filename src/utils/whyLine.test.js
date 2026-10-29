@@ -58,10 +58,13 @@ describe('whyLine is never empty for a scored match', () => {
     expect(whyLine({}, d({ needMatches: [{ needId: 'cycle.pms', label: 'PMS symptoms', relationship: 'secondary' }], needId: 'cycle.pms', reasonDetails: [], outputs: {} }))).toBe('Another option for your PMS symptoms');
     expect(whyLine({}, d({ needMatches: [{ needId: 'cycle.pms', label: 'PMS symptoms' }], needId: 'cycle.pms', reasonDetails: [{ text: 'Something new from the engine' }], outputs: {} }))).toBe('For your PMS symptoms');
   });
-  it('real engine: vitex for PMS (a Partial fit with a missing safety detail) gets a plain line', () => {
+  it('real engine: vitex for PMS (open clinician review, Oct 29) gets no why line; a scored secondary option does', () => {
     const q = { age: 24, lifeStageSelections: ['I get periods regularly'], supportSelections: ['PMS symptoms'], takesCurrent: 'No' };
     const p = getProductById('p-vitex');
-    expect(whyLine(p, getProductMatchDetailsForProduct(p, q))).toBe('Another option for your PMS symptoms');
+    expect(getProductMatchDetailsForProduct(p, q).matchStatus).toBe('safety-hold');
+    const lines = ALL_PRODUCTS.map((x) => [x, getProductMatchDetailsForProduct(x, q)]).filter(([, d]) => d.matchStatus === 'scored' && d.percent >= 1 && d.eligible !== false).map(([x, d]) => whyLine(x, d));
+    expect(lines.length).toBeGreaterThan(0);
+    for (const l of lines) expect(l).toBeTruthy();
   });
   it('real engine: every scored, non-excluded match across several profiles has a line', () => {
     const qs = [

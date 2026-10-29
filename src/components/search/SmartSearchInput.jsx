@@ -20,7 +20,8 @@ import './smart-search.css';
  *
  * Props beyond <input>:
  *   flagUnknown  (default true)  underline unknown words
- *   suggest      false | { kinds?, products?, articles?, limit? }
+ *   suggest      false | { kinds?, products?, articles?, limit?, onEmpty? }
+ *                onEmpty: options shown on focus before she types ({ kind, label, query })
  *   onPick(s)    a suggestion was chosen; default: replaces the text
  *   anchor       CSS selector of the ancestor the dropdown lines up with
  *   vocabulary   extra known words for this box (e.g. the medication list)
@@ -84,6 +85,9 @@ const SmartSearchInput = forwardRef(function SmartSearchInput({
   const unknownWords = [...new Set(unknownTokens.map((t) => t.raw))];
 
   const items = useMemo(() => {
+    // Empty box, focused: show the starter options (e.g. every category) so
+    // she can pick without typing (founder, Oct 29).
+    if (suggest && !text.trim() && Array.isArray(suggest.onEmpty)) return suggest.onEmpty;
     if (!suggest || text.trim().length < 2) return [];
     try { return searchSuggestions(text, typeof suggest === 'object' ? suggest : {}); } catch { return []; }
   }, [suggest, text, searchReady]);

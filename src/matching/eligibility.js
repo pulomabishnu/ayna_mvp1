@@ -21,6 +21,7 @@
 // Nothing here reads partner, price or commission fields.
 import { CYCLE_TRACKING_RULES, buildProductProfile } from './productProfile.js';
 import { isCyclePremisedNeed, MENSTRUAL_PRODUCT_NEEDS, isAfterMenopauseStage } from './ontology.js';
+import { stageScopeFor } from '../data/matching/stageScope.js';
 
 // ─── 1. Catalog recommendation eligibility ──────────────────────────────────
 // Accessories, refills and add-ons: useful next to the product they belong
@@ -83,11 +84,30 @@ export function isCycleTrackingProduct(pp) {
   return Object.values(pp.health_need_relevance || {}).some((e) => CYCLE_TRACKING_RULES.has(e?.rule) && (e.score > 0 || (e.contextual || []).length));
 }
 
-const noCycle = (up) => up?.physiology?.menstruation === 'none';
+// 'paused' (no periods right now, cause not said) counts too: a cycle
+// tracker or ovulation test has nothing to track (audit finding B).
+const noCycle = (up) => ['none', 'paused'].includes(up?.physiology?.menstruation);
 
 export const LIFE_STAGE_TEXT = {
   no_cycle_tracking: 'Built around tracking a menstrual cycle, and you told us you do not get periods now',
 };
+
+/**
+ * Stage-scoped products (src/data/matching/stageScope.js). From her answers
+ * only, never her age (audit finding A).
+ * @returns {null | { block: {code,text} } | { hold: 'life_stage' | 'confirm_life_stage' }}
+ */
+export function stageScopeCheck(pp, up) {
+  const scope = stageScopeFor(pp?.product_id);
+  if (!scope) return null;
+  const stages = up?.physiology?.lifeStages || [];
+  const breastfeeding = up?.safety?.breastfeeding === 'yes';
+  const mine = new Set([...stages, ...(breastfeeding ? ['breastfeeding'] : [])]);
+  if (scope.stages.some((st) => mine.has(st))) return null;
+  if (!mine.size) return { hold: 'life_stage' };
+  if (scope.ask.some((st) => mine.has(st))) return { hold: 'confirm_life_stage' };
+  return { block: { code: 'life_stage_out_of_scope', text: `Made for ${scope.phrase}, which is not the life stage you shared` } };
+}
 
 /**
  * Product-level life-stage gate, read by evaluateSafety (so it runs before

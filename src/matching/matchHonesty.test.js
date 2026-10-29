@@ -190,8 +190,11 @@ describe('distribution across needs stays stable', () => {
   const mean = (a) => a.reduce((s, x) => s + x, 0) / a.length;
   it('other needs: mean within 1 point of the baseline, few at 99', () => {
     // Baseline: other categories n 641, mean 55.45, 1.9% at 99.
-    expect(other.length).toBeGreaterThan(500);
-    expect(Math.abs(mean(other) - 55.45)).toBeLessThanOrEqual(1);
+    // Oct 29 (P0): fewer scored, because clinician-review and unreviewed-interaction products are held.
+    expect(other.length).toBeGreaterThan(420);
+    // Within 2.5 since Oct 29: the held products leave the scored set (the
+    // population changed, no percent did).
+    expect(Math.abs(mean(other) - 55.45)).toBeLessThanOrEqual(2.5);
     expect(other.filter((x) => x >= 99).length / other.length).toBeLessThanOrEqual(0.02);
   });
   it('period products: no longer saturated at 99', () => {
@@ -204,7 +207,9 @@ describe('distribution across needs stays stable', () => {
     expect(kneeOf(0.5)).toBe(0.5);
   });
   it('hold and evaluation counts are what they were', () => {
-    // Baseline: 315 safety holds + bleeding evaluations across these personas.
-    expect(holds).toBe(315);
+    // Baseline: 315 safety holds + bleeding evaluations across these personas
+    // until Oct 29; 482 after the P0 holds (open clinician review, unreviewed
+    // interactions, conflicting or old safety answers). Pinned so any change is deliberate.
+    expect(holds).toBe(482);
   });
 });

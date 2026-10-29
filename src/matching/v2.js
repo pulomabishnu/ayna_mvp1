@@ -28,6 +28,7 @@ import { scoreProduct, scoreProductForNeed, evaluateSafety, evidenceFor, budgetF
 import { qualificationForEcosystem, buildEcosystem } from './ecosystem.js';
 import { needSignals, discoveryValue, historyState, NOT_RECOMMENDED_AGAIN } from './forYou.js';
 import { isRecommendable } from './eligibility.js';
+import { recommendationEligibilityForUser } from './gate.js';
 import { MENSTRUAL_PRODUCT_NEEDS, VALUE_BY_ID, needPhrase } from './ontology.js';
 
 export const V2 = {
@@ -168,8 +169,14 @@ export function focusOf(pp, needIds) {
   return all ? mine / all : 1;
 }
 
-export function bandFor(health, confidence = 1) {
-  if (health >= V2.strongFloor && confidence >= V2.strongConfidence) return 'strong';
+// "Strong" means the same number everywhere: the shown percent reaches 80,
+// where the label says "Strong fit" (matchDisplay.js fitLabel). Before Oct 29
+// the band started at 0.75, so a 76% card read Strong here and Good there
+// (audit J). A weak need (one she did not pick, or one her stage
+// contradicts) is never Strong (audit I).
+export const STRONG_BAND_PERCENT = 80;
+export function bandFor(health, confidence = 1, { weak = false } = {}) {
+  if (!weak && Math.round(100 * health) >= STRONG_BAND_PERCENT && confidence >= V2.strongConfidence) return 'strong';
   if (health >= V2.ecosystemFloor) return 'good';
   if (health >= V2.partialFloor) return 'partial';
   return 'none';
@@ -237,7 +244,7 @@ export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signa
   const shownHealth = kneeOf(health);
   const fit = Math.max(0, Math.min(1, shownHealth + pf.total + experience));
   const rankKey = (shownHealth + pf.total) * (1 - V2.prefWeight + V2.prefWeight * pref) + experience + hash01(`${userKey}|${pp.product_id}`) * 0.001;
-  const band = bandFor(fit, r.confidence ?? 1);
+  const band = bandFor(fit, r.confidence ?? 1, { weak });
   // The breakdown (raised / lowered / unknown), from the same numbers: the
   // base parts telescope from "made for this need" to shownHealth, so
   // sum(parts) + experience is exactly the fit before clamping.
@@ -629,9 +636,20 @@ export function buildEcosystemV2(up, products, options = {}) {
     // through every safety rule) rather than an empty shelf, minus anything
     // the research says does not fit this need. Labelled as partial fits.
     if (!homed.length && Array.isArray(shelf.picks) && shelf.picks.length) {
+      // Fallbacks are candidates like any other (audit H): the central gate,
+      // catalog eligibility and the partial floor all apply again here.
       const fallback = shelf.picks
         .filter((r) => { const row = REVIEWED.get(`${r.productId}|${shelf.needId}`); return !row || row.strength !== 'none'; })
         .filter((r) => { const pp = profileById.get(r.productId); return pp && !skipForHistory(pp, shelf.needId); })
+        .filter((r) => {
+          const pp = profileById.get(r.productId);
+          const raw = (products || []).find((p) => p?.id === r.productId);
+          if (!raw || !isRecommendable(raw, pp)) return false;
+          const gate = recommendationEligibilityForUser(pp, up, { surface: 'ecosystem_fallback' });
+          if (gate.decision !== 'eligible') return false;
+          const scored = withV2Score(pp, r, needIds, userKey, signals, up);
+          return (scored.v2?.fit ?? 0) >= V2.partialFloor;
+        })
         .slice(0, V2.fallbackPerNeed)
         .map((r) => {
           // The shown percent is still v2's for this need (same number as the product page).

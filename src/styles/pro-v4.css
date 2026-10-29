@@ -282,3 +282,23 @@ html.ay-motion-paused .pro-frame__dash { animation: none !important; }
   :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__close { top: 24px; right: 24px; }
   :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__body { row-gap: 20px; padding: 20px 32px 24px; }
 }
+
+/* The locked card, calmer (founder, Oct 29: "make this nicer"): a thinner checker, centred at a
+   reading width, a smaller lock beside the kicker, three perks with icons, one full-width Get ayna
+   Pro with Not now under it, and the install link and fine print set apart below a hairline. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock--page { max-width: 520px; margin-left: auto; margin-right: auto; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock--page .pro-lock__card { gap: 16px; padding: 28px 28px 24px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock--page .pro-lock__seal { width: 44px; height: 44px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock--page .pro-lock__seal svg { width: 20px; height: 20px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock--page .pro-lock__kicker::before { display: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock--page .pro-lock__kicker { font-size: 14px; color: var(--pro-fg-muted); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock--page .pro-lock__title { font-size: clamp(26px, 3.2vw, 30px); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock--page .pro-lock__line { font-size: 15px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock__perks { display: grid; gap: 10px; margin: 6px 0 0 !important; padding: 0 !important; list-style: none; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock__perks li { display: flex; align-items: center; gap: 12px; color: var(--pro-fg); font: 600 15px/1.3 var(--ay-font-ui, Figtree, sans-serif); }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock__perks li > span { display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 50%; background: #f7badd; color: #3e2723; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock__perks svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock--page .pro-lock__actions { display: grid; justify-items: center; gap: 4px; margin-top: 4px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock--page .pro-lock__cta { width: 100%; justify-content: center; box-shadow: none !important; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock--page .pro-lock__quiet { min-height: 40px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html):is(#ayp4, html) body .pro-lock--page .pro-lock__fine { margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--pro-rule, rgba(62, 39, 35, .15)); text-align: center; font-size: 13px; }

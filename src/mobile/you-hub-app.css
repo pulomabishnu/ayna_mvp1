@@ -88,3 +88,10 @@
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-setup :is(h2, span, button, b) { color: #3e2723 !important; }
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-setup-bar i { background: rgba(62, 39, 35, .18) !important; }
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-you-setup-bar i.is-done { background: #3e2723 !important; }
+
+/* You page (founder, Oct 29: "never fixed this page"): one even 16px rhythm between blocks; the
+   header no longer leaves a ~50px hole above Your set-up, and the list ends close to the footer. */
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay2,.ayna-mobile):is(#ay3,.ayna-mobile):is(#ay4,.ayna-mobile):is(#ay5,.ayna-mobile) .ay-you.ay-you .ay-you-head.ay-you-band.ay-you-band { margin-bottom: 0 !important; padding-bottom: 16px !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay2,.ayna-mobile) .ay-you.ay-you .ay-you-body.ay-you-body { display: grid !important; row-gap: 16px !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay2,.ayna-mobile) .ay-you.ay-you .ay-you-body.ay-you-body > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay2,.ayna-mobile) .ay-you.ay-you .ay-you-bento .yb.yb--list { margin-bottom: 24px !important; }

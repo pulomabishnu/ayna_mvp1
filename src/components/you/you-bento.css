@@ -57,3 +57,5 @@
 .ayna-mobile[data-theme='dark'] .yb-list--pro, .app-container[data-theme='brand-dark'] .yb-list--pro { background: rgba(247, 186, 221, .16); }
 .yb-pro-li { list-style: none; padding: 6px 0; }
 .yb-pro-frame .yb-row--pro { width: 100%; background: transparent; }
+.yb-row--pro { width: 100%; border-radius: 18px; background: #f7badd !important; color: #3e2723 !important; padding-left: 16px; padding-right: 16px; }
+.yb-row--pro :is(.yb-row__text b, .yb-row__text small, .yb-row__icon, .yb-row__go) { color: #3e2723 !important; stroke: currentColor; }

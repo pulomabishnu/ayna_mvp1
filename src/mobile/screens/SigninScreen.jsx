@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import ProfileSetupStep from '../../components/ProfileSetupStep.jsx';
 import { picksAreasLine } from '../../utils/needAreas.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
@@ -215,8 +216,9 @@ export default function SigninScreen({
   // down from that). Move forward the moment that arrives instead of
   // leaving them stuck on "check your email" until they manually reopen
   // the app.
+  // Email verified: photo + username first, then she's in (founder, Oct 29).
   useEffect(() => {
-    if (mode === 'check-email' && authUser) onAuthenticated(firstName || undefined);
+    if (mode === 'check-email' && authUser) setMode('profile');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, authUser]);
 
@@ -400,7 +402,11 @@ export default function SigninScreen({
       <button className="ayna-fresh-auth-back ay-auth-back" type="button" onClick={onAuthBack} aria-label="Back">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
       </button>
-      {mode === 'check-email' ? (
+      {mode === 'profile' && authUser ? (
+        <div className="ay-psetup-card">
+          <ProfileSetupStep supabase={getSupabaseClient()} user={authUser} firstName={firstName} onDone={() => onAuthenticated(firstName || undefined)} />
+        </div>
+      ) : mode === 'check-email' ? (
         <>
           <div style={{ flex: 1 }} />
           <div className="ay-auth-check-title">

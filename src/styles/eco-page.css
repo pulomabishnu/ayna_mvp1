@@ -192,3 +192,7 @@ html body .app-container #ayeco .eco3-addrow__label { text-align: left !importan
 html body .app-container #ayeco .eco3-addrow__chips { justify-content: flex-start !important; }
 @media (max-width: 767px) { html body .app-container #ayeco .eco3-addrow__shelf { flex-direction: column; align-items: flex-start !important; } }
 html body .app-container #ayeco .ay-shelf:not([style*='--shelf-tab']) .ay-shelf__name { padding-left: 0 !important; }
+
+/* Founder, Oct 29: the search icon sat 4px from the top of the box. Centre it
+   on the input itself (the form is exactly the input's height). */
+html body .app-container #ayeco form.eco3-search > .ayna-browse__search-icon { top: 50% !important; bottom: auto !important; margin: 0 !important; transform: translateY(-50%) !important; translate: none !important; }

@@ -47,6 +47,9 @@
   z-index: 1000;
   box-sizing: border-box;
   max-width: min(640px, calc(100vw - 32px));
+  max-height: min(360px, 60vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   margin: 0;
   padding: 8px;
   list-style: none;

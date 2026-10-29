@@ -367,7 +367,7 @@ export default function EcosystemScreen({
       </ProFeatureGate>
     </div> : <>
     {hasAnything && <div className="eco-views" role="tablist" aria-label="Ecosystem lists">
-      {[['mine', 'Using', currentProducts.length], ['picks', 'For you', picksForYou.length], ['saved', 'Saved', savedList.length], ['routine', 'Routine', null]].map(([id, label, n]) => (
+      {[['mine', 'My products', currentProducts.length], ['picks', 'ayna picks', picksForYou.length], ['saved', 'Saved', savedList.length], ['routine', 'Routine', null]].map(([id, label, n]) => (
         <button key={id} type="button" role="tab" aria-selected={view === id} className={view === id ? 'is-on' : ''} onClick={() => { setView(id); setChip('all'); }}>{label}{n != null && n > 0 && <small>{n}</small>}</button>
       ))}
     </div>}

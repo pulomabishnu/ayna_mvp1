@@ -545,7 +545,7 @@ export function ProductMatch({ glance, matchPercent, why = '', fallback = '', on
   if (hold && hasProfile) {
     return (
       <section className="ay-story ay-story--match is-none" aria-label="Your match">
-        <SafetyHoldNote hold={hold} onFix={onFixHold} />
+        <SafetyHoldNote surface="product_page" hold={hold} onFix={onFixHold} />
       </section>
     );
   }

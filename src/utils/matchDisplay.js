@@ -21,6 +21,21 @@ export const SAFETY_HOLD = 'Safety hold';
 export const MATCH_UNAVAILABLE = 'Match unavailable';
 export const SAFETY_HOLD_LINE = 'We need one more safety detail before we can determine your match.';
 export const SAFETY_HOLD_PRODUCT_LINE = 'We need one more safety fact about this product before we can determine your match.';
+// Hold states (src/matching/gate.js): what she sees instead of a percent.
+export const HOLD_STATE_TITLE = {
+  needs_answer: 'Safety hold',
+  confirm: 'Please confirm',
+  researching: 'Checking this product',
+  in_review: 'Match being reviewed',
+  verified_unknown: 'Brand doesn’t share this',
+};
+export const HOLD_STATE_LINE = {
+  needs_answer: SAFETY_HOLD_LINE,
+  confirm: 'Two of your answers disagree, or one is old. Confirm it to see your match.',
+  researching: SAFETY_HOLD_PRODUCT_LINE,
+  in_review: 'A clinician is checking this product before we show a match.',
+  verified_unknown: 'We looked, and the brand doesn’t publish this safety fact.',
+};
 export const isSafetyHold = (details) => details?.matchStatus === 'safety-hold';
 
 // Bleeding after menopause (founder, Oct 24): a period or bleeding product
