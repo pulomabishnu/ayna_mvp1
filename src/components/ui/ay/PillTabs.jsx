@@ -52,7 +52,6 @@ export default function PillTabs({ tabs = [], active, onChange, label, labelId, 
       {list.map((t) => {
         const on = t.id === active;
         const props = {
-          key: t.id,
           role: 'tab',
           id: `${idBase}-tab-${t.id}`,
           'data-tab': t.id,
@@ -64,8 +63,8 @@ export default function PillTabs({ tabs = [], active, onChange, label, labelId, 
         };
         const body = <>{t.label}{t.count > 0 && <span className="ayk-tabs__count">{t.count}</span>}</>;
         return t.href
-          ? <a {...props} href={t.href} onClick={(e) => { if (onChange) { e.preventDefault(); choose(t.id); } }}>{body}</a>
-          : <button {...props} type="button" onClick={() => choose(t.id)}>{body}</button>;
+          ? <a key={t.id} {...props} href={t.href} onClick={(e) => { if (onChange) { e.preventDefault(); choose(t.id); } }}>{body}</a>
+          : <button key={t.id} {...props} type="button" onClick={() => choose(t.id)}>{body}</button>;
       })}
     </div>
   );

@@ -186,3 +186,7 @@ html body .app-container .ed .ed-acc__panel > * + * { margin-top: 12px; }
 /* How we match: the four steps as a snap carousel (ip-steps-snap). */
 html body .app-container .ip-steps-snap .ip-step { min-height: 300px; height: 100%; box-sizing: border-box; }
 html body .app-container .ip-steps-snap { margin-top: 8px; }
+
+/* Contact (Oct 29 audit): the form sat in the left half of the pink band with nothing beside it.
+   It is centred now, one comfortable reading width. */
+html body .app-container.app-container .uq-contact .ed-form { max-width: 640px; margin-left: auto !important; margin-right: auto !important; }

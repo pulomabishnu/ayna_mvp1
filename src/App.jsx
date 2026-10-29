@@ -2994,6 +2994,7 @@ function App() {
             onBack={handleBackFromStandalonePage}
             backLabel={standaloneBackLabel}
             onViewSources={handleViewArticles}
+            onStart={handleStartQuiz}
           />
         )}
         {currentView === 'about' && (
@@ -3032,10 +3033,10 @@ function App() {
         )}
         {/* My ecosystem (You > My ecosystem, /you/ecosystem). Its old Dashboard tab is Today. */}
         {currentView === 'ecosystem' && (
-          /* Signed in, this page is the website Home: the app-style band on top already links to her data
-             (the dashboard) and the account menu has Saved and Settings, so no tab rows stack above it
-             (founder, Oct 29: three rows of tabs read as vibe coded). */
-          <EcosystemViewTabs dashboard={user ? null : webHealth} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
+          /* This page is the website Home: no tab rows above it (founder, Oct 29: three rows of tabs read
+             as vibe coded). Signed in, the band on top links to her data (the dashboard); signed out,
+             a dashboard tab only led to a lock. */
+          <EcosystemViewTabs dashboard={null} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
           <ViewSkeleton
             label="Loading your ecosystem"

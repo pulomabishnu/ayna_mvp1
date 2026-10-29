@@ -275,9 +275,11 @@
 .aq--web .aq-title:is(#aq-h, h1):is(#aq-i, h1) { max-width: 20ch; font-size: calc(46px * var(--ayna-text-scale, 1)) !important; }
 .aq--web .aq-helper { font-size: 17px; }
 .aq--web .aq-foot { position: sticky; bottom: 0; z-index: 3; padding: 16px 0 24px; background: var(--aq-page); }
-.aq--web .aq-cta { max-width: 360px; justify-self: end; }
-.aq--web .aq-hint { text-align: right; }
-.aq--web .aq-link { justify-self: end; }
+/* Oct 29 audit: the button spans the question column, so it lines up with the answers above it
+   (it sat in the right half, away from everything it acts on). */
+.aq--web .aq-cta { max-width: none; justify-self: stretch; }
+.aq--web .aq-hint { text-align: center; }
+.aq--web .aq-link { justify-self: center; }
 .aq--web.aq-block .aq-col { min-height: min(640px, calc(100dvh - 200px)); padding: 16px 40px 8px; border-radius: 28px; background: var(--aq-page); }
 .aq--web.aq-block .aq-top { margin-left: -14px; }
 .aq--web.aq-block .aq-foot { position: static; background: transparent; }
