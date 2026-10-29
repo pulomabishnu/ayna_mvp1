@@ -1600,5 +1600,29 @@
   "by": "Eliz",
   "what": "added 4 new products",
   "note": "p-vpod-everyday-comfort-single, p-vpod-everyday-comfort-3-pack, p-vpod-elite-single, p-vpod-elite-3-pack"
+ },
+ {
+  "at": "2026-10-29T20:05:32.438Z",
+  "by": "Eliz",
+  "what": "p-vpod-everyday-comfort-single.name",
+  "note": "Eliz: use the product names shown on hervpod.com (2026-10-29)"
+ },
+ {
+  "at": "2026-10-29T20:05:32.686Z",
+  "by": "Eliz",
+  "what": "p-vpod-everyday-comfort-3-pack.name",
+  "note": "Eliz: use the product names shown on hervpod.com (2026-10-29)"
+ },
+ {
+  "at": "2026-10-29T20:05:32.976Z",
+  "by": "Eliz",
+  "what": "p-vpod-elite-single.name",
+  "note": "Eliz: use the product names shown on hervpod.com (2026-10-29)"
+ },
+ {
+  "at": "2026-10-29T20:05:33.208Z",
+  "by": "Eliz",
+  "what": "p-vpod-elite-3-pack.name",
+  "note": "Eliz: use the product names shown on hervpod.com (2026-10-29)"
  }
 ]

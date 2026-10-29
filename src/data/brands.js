@@ -6305,7 +6305,7 @@ export const BRAND_PRODUCTS = [
     // pods are now listed as reusable everywhere (replace every 30 days).
     {
         id: 'p-vpod-everyday-comfort-single',
-        name: 'VPod Everyday Comfort Single Pack',
+        name: 'VPod Everyday Single Pod',
         brand: 'VPod',
         category: 'intimate-care',
         type: 'physical',
@@ -6397,7 +6397,7 @@ export const BRAND_PRODUCTS = [
     },
     {
         id: 'p-vpod-everyday-comfort-3-pack',
-        name: 'VPod Everyday Comfort 3 Pack',
+        name: 'VPod Everyday 3-Pack',
         brand: 'VPod',
         category: 'intimate-care',
         type: 'physical',
@@ -6489,7 +6489,7 @@ export const BRAND_PRODUCTS = [
     },
     {
         id: 'p-vpod-elite-single',
-        name: 'VPod Postpartum & Menopause Comfort Single Pack',
+        name: 'VPod Elite Single Pod',
         brand: 'VPod',
         category: 'postpartum',
         type: 'physical',
@@ -6578,7 +6578,7 @@ export const BRAND_PRODUCTS = [
     },
     {
         id: 'p-vpod-elite-3-pack',
-        name: 'VPod Postpartum & Menopause Comfort 3 Pack',
+        name: 'VPod Elite 3-Pack',
         brand: 'VPod',
         category: 'postpartum',
         type: 'physical',
