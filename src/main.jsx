@@ -37,6 +37,7 @@ import { applyStoredConsent, getStoredConsent, isMandatoryGpcVisitor } from './u
 import { appErrorProperties } from './utils/errorAnalytics'
 import { sanitizeEventPayload } from './utils/analyticsSanitize'
 import { analyticsPlatform, resolvePosthogKey } from './utils/analyticsPlatform'
+import { trackAppOpened, eventSurface } from './utils/analyticsEvents.js'
 
 // One origin only. Sign-in keeps its session (and the PKCE code verifier) per
 // origin, and Supabase sends every sign-in back to www.aynahealth.co. Someone who
@@ -163,7 +164,14 @@ function sanitizePosthogEvent(event) {
   // Pageviews on a moved page also carry the old address (legacy_path: /shop,
   // /library, /ecosystem, /health), so dashboards built on those keep counting.
   const legacy = event?.event === '$pageview' && typeof window !== 'undefined' ? legacyPathFor(window.location.pathname) : null;
-  return sanitizeEventPayload(event, legacy ? { platform: ANALYTICS_PLATFORM, legacy_path: legacy } : { platform: ANALYTICS_PLATFORM });
+  const clean = sanitizeEventPayload(event, legacy ? { platform: ANALYTICS_PLATFORM, legacy_path: legacy } : { platform: ANALYTICS_PLATFORM });
+  // Capacitor's WebView reports $host=localhost even in a shipped iPhone app.
+  // The project's test-traffic rule excludes localhost, hiding every real app
+  // event. Keep the capacitor:// URL, but give native events a distinct host.
+  if (Capacitor.isNativePlatform() && clean?.properties) {
+    clean.properties.$host = 'native.aynahealth.co';
+  }
+  return clean;
 }
 
 if (!POSTHOG_KEY) {
@@ -242,7 +250,7 @@ if (!POSTHOG_KEY) {
       ph.register({ platform: ANALYTICS_PLATFORM });
       if (Capacitor.isNativePlatform()) registerNativeAppAnalytics(ph);
       // D1 / D7 / D30: one app_opened per local day (no health details).
-      import('./utils/analyticsEvents.js').then(({ trackAppOpened, eventSurface }) => trackAppOpened({ surface: eventSurface() })).catch(() => {});
+      trackAppOpened({ surface: Capacitor.isNativePlatform() ? 'app' : eventSurface() });
     },
   });
 }
@@ -251,12 +259,15 @@ if (!POSTHOG_KEY) {
 // events never existed. Send the same names ("Application Opened" etc.) and
 // $app_version / $app_build, which the TestFlight dashboard already uses.
 function registerNativeAppAnalytics(ph) {
-  import('@capacitor/app').then(async ({ App: CapApp }) => {
+  // Capture the open before loading the native plugin: a missing or slow
+  // plugin must not make the most basic app metric disappear.
+  try { ph.capture('Application Opened', { from_background: false }); } catch { /* ignore */ }
+  import('@capacitor/app').then(({ App: CapApp }) => {
     try {
-      const info = await CapApp.getInfo();
-      ph.register({ $app_version: info?.version || '', $app_build: info?.build || '' });
+      CapApp.getInfo().then((info) => {
+        ph.register({ $app_version: info?.version || '', $app_build: info?.build || '' });
+      }).catch(() => {});
     } catch { /* app info unavailable */ }
-    try { ph.capture('Application Opened', { from_background: false }); } catch { /* ignore */ }
     try {
       CapApp.addListener('appStateChange', ({ isActive }) => {
         try { ph.capture(isActive ? 'Application Opened' : 'Application Backgrounded', isActive ? { from_background: true } : {}); } catch { /* ignore */ }

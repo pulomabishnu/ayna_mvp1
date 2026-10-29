@@ -50,3 +50,8 @@ export function chipsFor(followUps, { canOpen = () => true, hasDashboard = true,
 export function trackFollowUp(type) {
   try { posthog.capture('ask_followup_clicked', { type }); } catch { /* analytics off */ }
 }
+
+/** Only counts and action types; never sends question or answer text. */
+export function trackFollowUpsShown(chips) {
+  try { posthog.capture('ask_followups_rendered', { count: chips.length }); } catch { /* analytics off */ }
+}

@@ -9,8 +9,8 @@ describe('recommendation_viewed', () => {
 
   it('builds productId, category and 1-based position', () => {
     expect(recommendationViewEvents([{ id: 'p-a', category: 'menstrual' }, null, { id: 'p-b' }], 'ecosystem')).toEqual([
-      { productId: 'p-a', category: 'menstrual', position: 1, surface: 'ecosystem' },
-      { productId: 'p-b', category: 'unknown', position: 3, surface: 'ecosystem' },
+      { productId: 'p-a', product_id: 'p-a', category: 'menstrual', position: 1, rank: 1, brand_id: undefined, is_partner: false, surface: 'ecosystem' },
+      { productId: 'p-b', product_id: 'p-b', category: 'unknown', position: 3, rank: 3, brand_id: undefined, is_partner: false, surface: 'ecosystem' },
     ]);
   });
 
@@ -20,7 +20,7 @@ describe('recommendation_viewed', () => {
     trackRecommendationViews(list, 'ecosystem');
     trackRecommendationViews(list, 'home_top_picks');
     expect(posthog.capture).toHaveBeenCalledTimes(4);
-    expect(posthog.capture).toHaveBeenCalledWith('recommendation_viewed', { productId: 'p-a', category: 'x', position: 1, surface: 'ecosystem' });
+    expect(posthog.capture).toHaveBeenCalledWith('recommendation_viewed', { productId: 'p-a', product_id: 'p-a', category: 'x', position: 1, rank: 1, brand_id: undefined, is_partner: false, surface: 'ecosystem' });
   });
 
   it('never sends more than 24 positions', () => {

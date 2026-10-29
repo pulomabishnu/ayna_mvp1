@@ -134,7 +134,13 @@ export function identifyAccount(posthog, supabase, user, { now = Date.now(), ses
     if (isNew && !readLocal(sentKey)) {
       let referral = null;
       try { referral = posthog.get_property?.('$initial_referring_domain') || null; } catch { /* ignore */ }
-      posthog.capture?.('signed_up', { method: provider, referral_source: referral || '$direct' });
+      const heardAbout = String(user.user_metadata?.heard_about || '');
+      const source = ['instagram', 'tiktok', 'friend_family', 'clinician', 'search', 'event', 'other'].includes(heardAbout) ? heardAbout : null;
+      posthog.capture?.('signed_up', {
+        method: provider,
+        referral_source: referral || '$direct',
+        ...(source ? { heard_about_source: source } : {}),
+      });
       writeLocal(sentKey, '1');
     }
 

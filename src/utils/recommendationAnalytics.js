@@ -1,5 +1,6 @@
 import posthog from 'posthog-js';
 import { useEffect } from 'react';
+import { isPartnerBrandItem } from './partnerBrands.js';
 
 /**
  * recommendation_viewed: one event per recommended product shown, with
@@ -21,8 +22,12 @@ export function recommendationViewEvents(products, surface) {
     if (!p?.id) return;
     out.push({
       productId: String(p.id),
+      product_id: String(p.id),
       category: p.category ? String(p.category) : 'unknown',
       position: i + 1,
+      rank: i + 1,
+      brand_id: p.brand ? String(p.brand).slice(0, 64) : undefined,
+      is_partner: isPartnerBrandItem(p),
       surface,
     });
   });

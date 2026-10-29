@@ -8,6 +8,7 @@
  * (src/health/records.js) are saved on her phone only, never on the server.
  */
 import { useEffect, useMemo, useSyncExternalStore } from 'react';
+import posthog from 'posthog-js';
 import { devPreviewOn } from '../../utils/devPreview.js';
 import { fetchHealthData, fetchLiveRows, syncDeviceRows, syncOAuthSource } from '../../health/healthApi.js';
 import { LIVE_ONLY_SOURCES } from '../../health/metrics.js';
@@ -49,6 +50,15 @@ export function handleHealthReturn(urlString) {
   const source = isApp ? url.searchParams.get('source') : url.searchParams.get('health_source');
   const status = isApp ? url.searchParams.get('status') : url.searchParams.get('health_status');
   if (!source || !status) return false;
+  // Provider and outcome only; no health values or authorization URL.
+  if (Object.hasOwn(NAMES, source) && Object.hasOwn(RETURN_TEXT, status)) {
+    try {
+      posthog.capture(status === 'connected' ? 'health_connection_succeeded' : 'health_connection_failed', {
+        provider: source,
+        ...(status === 'connected' ? {} : { reason: status }),
+      });
+    } catch { /* analytics never blocks the return */ }
+  }
   const text = RETURN_TEXT[status] || RETURN_TEXT.failed;
   setHealthFlash(text(NAMES[source] || 'Your app'));
   return true;
