@@ -17,9 +17,6 @@ html body .app-container #ayeco .weco-shelves.is-one { grid-template-columns: mi
 html body .app-container #ayeco .weco-shelf { min-width: 0; }
 
 /* The app's folder tab: pink label sitting on the espresso rule. */
-html body .app-container #ayeco .weco-shelf__head { display: flex; align-items: flex-end; gap: 8px; margin: 0 0 4px; border-bottom: 1.5px solid #3e2723; }
-html body .app-container.app-container #ayeco .weco-shelf__head h3 { margin: 0 0 -1.5px; padding: 8px 14px 7px; max-width: calc(100% - 110px); background: #f7badd; color: #3e2723 !important; border: 1.5px solid #3e2723; border-bottom-color: #f7badd; border-radius: 16px 16px 0 0; font: 700 18px/1.15 var(--ay-heading, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.015em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-html body .app-container #ayeco .weco-shelf__n { align-self: flex-end; margin-bottom: 8px; padding: 3px 9px; border: 1.5px solid #3e2723; border-radius: 999px; font: 600 12.5px/1.2 var(--ay-sans-stack, sans-serif); color: #3e2723; font-variant-numeric: tabular-nums; }
 html body .app-container #ayeco .weco-shelf__add { align-self: flex-end; margin: 0 0 0 auto; min-height: 40px; padding: 0 2px; border: 0; background: none; color: #3e2723; font: 600 15px/1 var(--ay-sans-stack, sans-serif); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; cursor: pointer; }
 html body .app-container #ayeco .weco-shelf__add:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 6px; }
 
@@ -61,3 +58,17 @@ html body .app-container #ayeco .weco-panel { margin-bottom: 40px; }
 }
 @media (prefers-reduced-motion: reduce) { html body .app-container #ayeco .weco-tabs button { transition: none; } }
 html body .app-container #ayeco .weco-sr { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Plain section headings (founder, Oct 28: no pink folder tabs anywhere). */
+html body .app-container #ayeco .weco-shelf__head { display: flex; align-items: baseline; gap: 10px; padding-bottom: 10px; border-bottom: 1.5px solid #3e2723; }
+html body .app-container.app-container #ayeco .weco-shelf__head h3 { margin: 0; font: 700 20px/1.2 var(--ay-heading, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.01em; color: #3e2723 !important; }
+html body .app-container #ayeco .weco-shelf__n { font: 500 14px/1 var(--ay-sans-stack, sans-serif); color: #6d4c41; }
+html body .app-container #ayeco .weco-shelf__add { align-self: baseline; }
+
+/* View switcher as plain text links with an underline on the current one (founder: fewer pill switchers). */
+html body .app-container #ayeco .weco-tabs { display: flex; gap: 28px; margin: 8px 0 32px; padding: 0; border: 0; border-bottom: 1px solid rgba(62, 39, 35, .2); border-radius: 0; background: none; }
+html body .app-container #ayeco .weco-tabs button { min-height: 44px; padding: 0 0 2px; border-radius: 0; border-bottom: 3px solid transparent; margin-bottom: -1px; background: none; font: 600 16px/1 var(--ay-sans-stack, sans-serif); gap: 6px; }
+html body .app-container #ayeco .weco-tabs button:hover:not(.is-on) { background: none; border-bottom-color: rgba(62, 39, 35, .3); }
+html body .app-container #ayeco .weco-tabs button.is-on { background: none; color: #3e2723; border-bottom-color: #3e2723; font-weight: 700; }
+html body .app-container #ayeco .weco-tabs small { min-width: 0; height: auto; padding: 0; background: none; color: #6d4c41; font: 500 14px/1 var(--ay-sans-stack, sans-serif); }
+@media (max-width: 640px) { html body .app-container #ayeco .weco-tabs { gap: 20px; overflow-x: auto; } html body .app-container #ayeco .weco-tabs button { flex: none; padding: 0 0 2px; font-size: 15px; } }

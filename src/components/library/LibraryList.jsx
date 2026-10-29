@@ -32,7 +32,6 @@ export function ReadRow({ article, onOpen, chosen = false, progress = 0, showSec
   return (
     <li className="ll-row">
       <a className="ll-row__link" href={`/library/${article.id}`} onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); onOpen?.(article); }}>
-        <Thumb article={article} size="row" />
         <span className="ll-row__text">
           <small className="ll-row__meta">{[showSection ? sectionLabel(article.id) : null, `${minutes} min read`, state].filter(Boolean).join(' · ')}</small>
           <span className="ll-row__title">{article.title}</span>

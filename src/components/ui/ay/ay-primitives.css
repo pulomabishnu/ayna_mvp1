@@ -136,3 +136,11 @@
 html.ay-motion .ayk-tabs__ink { transition: transform var(--ay-dur-toggle, 220ms) var(--ay-ease, ease-out); }
 html.ay-motion :is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(.has-ink > *) { transition: background-color 60ms linear, color 60ms linear !important; }
 html.ay-motion :is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(.has-ink > *).is-on { transition: background-color 80ms linear 160ms, color 80ms linear 120ms !important; }
+
+/* Website: switchers as plain text links with an underline on the current one, instead of a pill
+   track (founder, Oct 28: "cut down on the pill tab switchers"). The app keeps its pill tabs. */
+:is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs):is(#ayk, .ayk-tabs):not(.ayna-mobile *) { display: flex !important; gap: 28px !important; width: auto; max-width: none; padding: 0 !important; overflow-x: auto !important; border: 0 !important; border-bottom: 1px solid var(--ay-hairline) !important; border-radius: 0 !important; background: none !important; scrollbar-width: none; }
+:is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):not(.ayna-mobile *) { flex: none; min-height: 44px !important; margin: 0 0 -1px !important; padding: 0 0 2px !important; border-radius: 0 !important; border-bottom: 3px solid transparent !important; background: none !important; color: var(--ay-fg) !important; font: 600 15px/1 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
+:is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):not(.ayna-mobile *):hover { border-bottom-color: var(--ay-hairline) !important; }
+:is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):is(#ayk, .ayk-tabs__tab):not(.ayna-mobile *).is-on { background: none !important; color: var(--ay-fg) !important; border-bottom-color: var(--ay-fg) !important; font-weight: 700 !important; }
+.ayk-tabs:not(.ayna-mobile *) .ayk-tabs__ink { display: none !important; }

@@ -907,7 +907,6 @@ import { coverPhotoFor } from '../data/readCovers.js';
 import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArticle.jsx';
 import VaginalAtrophyGsmArticle from './library/VaginalAtrophyGsmArticle.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
-import ScrollRow from './shop/ScrollRow.jsx';
 import { FeaturedReads, ReadShelf } from './library/LibraryList.jsx';
 import { useProStatus } from '../pro/useProStatus.js';
 import { openProPaywall } from '../pro/paywall.js';
@@ -1329,16 +1328,22 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           {/* The round arrow, as on the Shop search: jumps to the results. */}
           <button type="button" className="lb-search-go" aria-label="Show results" onClick={() => document.querySelector('.lb-lib .lb-body')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button>
         </label>
-<ScrollRow label="topics" className="lb-topicrow">
-                  <div className="lb-topics" role="group" aria-label="Filter reads by topic">
-          <button type="button" className="lb-topic" aria-pressed={!results && topic === 'all'} onClick={() => pickTopic('all')}>All</button>
-          {hasProfile && forYou.length > 0 && <button type="button" className="lb-topic" aria-pressed={!results && topic === 'foryou'} onClick={() => pickTopic('foryou')}>For you</button>}
-          {rows.map((r) => <button key={r.id} type="button" className="lb-topic" aria-pressed={!results && topic === r.id} onClick={() => pickTopic(r.id)}>{r.label}</button>)}
-        </div>
-        </ScrollRow>
+
       </header>
       {results && <div className="lb-wrap"><SearchAssist query={query} resultCount={results.length} onUse={setQuery} /></div>}
-      <div className="lb-wrap lb-body">{body}</div>
+      {/* A reference-library layout (founder, Oct 28: "like Wikipedia or an online resource library",
+          fewer pill switchers): topics as a plain list on the left, the reads on the right. */}
+      <div className="lb-wrap lb-body ll-layout">
+        <nav className="ll-side" aria-label="Library topics">
+          <p className="ll-side__h">Topics</p>
+          <ul>
+            <li><button type="button" aria-current={!results && topic === 'all' ? 'true' : undefined} onClick={() => pickTopic('all')}>All reads<span>{ARTICLES.length}</span></button></li>
+            {hasProfile && forYou.length > 0 && <li><button type="button" aria-current={!results && topic === 'foryou' ? 'true' : undefined} onClick={() => pickTopic('foryou')}>For you<span>{forYou.length}</span></button></li>}
+            {rows.map((r) => <li key={r.id}><button type="button" aria-current={!results && topic === r.id ? 'true' : undefined} onClick={() => pickTopic(r.id)}>{r.label}<span>{r.items.length}</span></button></li>)}
+          </ul>
+        </nav>
+        <div className="ll-main">{body}</div>
+      </div>
       <div className="lb-wrap"><SuggestBox mode="read" context="library" className="ct-suggest" /></div>
     </section>
   );

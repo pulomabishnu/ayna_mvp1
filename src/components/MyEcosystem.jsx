@@ -984,6 +984,8 @@ export default function MyEcosystem({
     savedProducts = {},
     onToggleSaved = null,
     onOpenCheckIn = null,
+    // Website Home top (the app's Home band and tiles), shown above the lists once she has products.
+    homeTop = null,
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
     useEscapeToClose(showAddModal, () => setShowAddModal(false));
@@ -2075,7 +2077,7 @@ export default function MyEcosystem({
                 {/* Oct 2026 redesign: the website version of the app's
                     Ecosystem screen. Header + search, the ring overview, then
                     one section per area of care using the Shop card. */}
-                <header className="eco3-head ayeco__head">
+                {useTabs && homeTop ? homeTop : <header className="eco3-head ayeco__head">
                     <div className="eco3-head__text">
                         <h1 id="eco3-title" className="ay-h1">My ecosystem</h1>
                         <p className="eco3-head__sub">
@@ -2112,7 +2114,7 @@ export default function MyEcosystem({
                             </div>
                         );
                     })()}
-                </header>
+                </header>}
 
                 {careFirst && (
                     <section className="eco3-carefirst" aria-labelledby="eco3-carefirst-title">

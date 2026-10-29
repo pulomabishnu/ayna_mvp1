@@ -25,14 +25,11 @@
 .app-container .ll-shelves { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; row-gap: 40px; align-items: start; }
 .app-container .ll-shelves.is-one { grid-template-columns: minmax(0, 1fr); }
 .app-container .ll-shelf { min-width: 0; }
-.app-container .ll-shelf__head { display: flex; align-items: flex-end; gap: 8px; border-bottom: 1.5px solid #3e2723; }
-.app-container.app-container .ll-shelf__head h3 { margin: 0 0 -1.5px; padding: 8px 14px 7px; max-width: calc(100% - 120px); background: #f7badd; color: #3e2723 !important; border: 1.5px solid #3e2723; border-bottom-color: #f7badd; border-radius: 16px 16px 0 0; font: 700 17px/1.15 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.app-container .ll-shelf__n { align-self: flex-end; margin-bottom: 8px; padding: 3px 9px; border: 1.5px solid #3e2723; border-radius: 999px; font: 600 12.5px/1.2 var(--ay-sans-stack, sans-serif); color: #3e2723; }
 .app-container .ll-shelf__head > :is(button, a):last-child:not(.ll-shelf__n) { align-self: flex-end; margin: 0 0 6px auto; min-height: 36px; padding: 0 2px; border: 0; background: none; color: #3e2723; font: 600 15px/1 var(--ay-sans-stack, sans-serif); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; cursor: pointer; }
 .app-container .ll-shelf__note { margin: 10px 0 0; font: 500 14px/1.4 var(--ay-sans-stack, sans-serif); color: #5d4037; }
 .app-container .ll-rows { margin: 0; padding: 0; list-style: none; }
 .app-container .ll-row { border-bottom: 1px solid rgba(62, 39, 35, .16); }
-.app-container .ll-row__link { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto auto; align-items: center; gap: 14px; min-height: 64px; padding: 10px 0; color: #3e2723 !important; text-decoration: none !important; }
+.app-container .ll-row__link { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 14px; min-height: 56px; padding: 10px 0; color: #3e2723 !important; text-decoration: none !important; }
 .app-container .ll-row__link:hover .ll-row__title { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
 .app-container .ll-row__link:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 10px; }
 .app-container .ll-row__text { display: grid; gap: 3px; min-width: 0; }
@@ -60,3 +57,37 @@
 .app-container .ll-glyph svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
 /* Lists show straight away: no fade-up on scroll (master prompt 17). */
 .app-container :is(.ll-shelf, .ll-featured, .ll-free) { opacity: 1 !important; transform: none !important; animation: none !important; }
+
+/* Plain section headings, like an online reference library (founder, Oct 28: no pink folder tabs).
+   Title, a quiet count, an optional link, one thin rule. */
+.app-container .ll-shelf__head { display: flex; align-items: baseline; gap: 10px; padding-bottom: 10px; border-bottom: 1.5px solid #3e2723; }
+.app-container.app-container .ll-shelf__head h3 { margin: 0; font: 700 20px/1.2 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.01em; color: #3e2723 !important; }
+.app-container .ll-shelf__n { font: 500 14px/1 var(--ay-sans-stack, sans-serif); color: #6d4c41; }
+
+/* Reference-library layout: topic list on the left, reads on the right. */
+.app-container .ll-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; align-items: start; }
+.app-container .ll-side { position: sticky; top: 96px; }
+.app-container .ll-side__h { margin: 0 0 8px; font: 700 13px/1 var(--ay-sans-stack, sans-serif); letter-spacing: .04em; text-transform: uppercase; color: #6d4c41; }
+.app-container .ll-side ul { margin: 0; padding: 0; list-style: none; border-left: 1.5px solid rgba(62, 39, 35, .2); }
+.app-container .ll-side button { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; min-height: 40px; margin-left: -1.5px; padding: 0 0 0 14px; border: 0; border-left: 3px solid transparent; background: none; color: #3e2723; font: 500 15px/1.25 var(--ay-sans-stack, sans-serif); text-align: left; cursor: pointer; }
+.app-container .ll-side button span { font-size: 13px; color: #6d4c41; }
+.app-container .ll-side button:hover { text-decoration: underline; text-underline-offset: 3px; }
+.app-container .ll-side button[aria-current='true'] { border-left-color: #3e2723; font-weight: 700; }
+.app-container .ll-side button:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
+.app-container .ll-layout .ll-featured__grid { grid-template-columns: minmax(0, 1fr); }
+.app-container .ll-layout .ll-feature { grid-template-columns: 200px minmax(0, 1fr); }
+.app-container .ll-layout .ll-thumb.is-feature { width: 200px; }
+@media (max-width: 900px) {
+  .app-container .ll-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .app-container .ll-side { position: static; }
+  .app-container .ll-side__h { display: none; }
+  .app-container .ll-side ul { display: flex; gap: 20px; overflow-x: auto; border-left: 0; border-bottom: 1px solid rgba(62, 39, 35, .2); scrollbar-width: none; }
+  .app-container .ll-side ul::-webkit-scrollbar { display: none; }
+  .app-container .ll-side button { flex: none; width: auto; margin: 0 0 -1px; padding: 0 0 2px; border-left: 0; border-bottom: 3px solid transparent; white-space: nowrap; }
+  .app-container .ll-side button span { display: none; }
+  .app-container .ll-side button[aria-current='true'] { border-bottom-color: #3e2723; }
+  .app-container .ll-layout .ll-feature { grid-template-columns: 112px minmax(0, 1fr); }
+  .app-container .ll-layout .ll-thumb.is-feature { width: 112px; }
+}
+
+/* Rows are text only, like a reference index; photos stay on the featured reads. */

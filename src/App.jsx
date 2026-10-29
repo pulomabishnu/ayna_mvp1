@@ -164,6 +164,7 @@ import './styles/no-vibe.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
 import ProLock from './components/ProLock.jsx';
 import { proDoor, retakeDoor } from './pro/proDoor.js';
+import WebHomeTop from './components/you/WebHomeTop.jsx';
 import { readHomeLook } from './mobile/components/homeLook.js';
 import { webHomeView } from './mobile/utils/navTab.js';
 // Keep the ?homestyle=a|b preview pick before the router rewrites the address (Today loads lazily).
@@ -3071,6 +3072,15 @@ function App() {
         {currentView === 'ecosystem' && user && (
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
+            homeTop={user ? <WebHomeTop
+              firstName={String(user?.user_metadata?.first_name || '').split(' ')[0]}
+              healthRows={health?.insightRows || []}
+              quizAnswers={quizResults}
+              products={Object.values(myProducts || {})}
+              onData={() => setCurrentView('today')}
+              onProducts={() => document.getElementById('weco-tab-mine')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              onConnect={goHealthData}
+            /> : null}
             quizSlot={ecosystemQuizCard}
             quizSlotKind={webQuizDraft ? 'finish' : 'personal'}
             onFixLifeStages={() => { setEditAtStep('lifeStage'); setCurrentView('profile-edit'); }}
