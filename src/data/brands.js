@@ -5684,7 +5684,7 @@ export const BRAND_PRODUCTS = [
         affiliateUrl: 'https://collabs.shop/d0dtyn', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
         image: '/products/alubri/vaginal-moisturizing-gel.webp',
-        summary: 'A hormone-free, fragrance-free internal vaginal moisturizer that Alubri says delivers up to 72 hours of hydration from one application. It pairs hyaluronic acid (sodium hyaluronate) and lactic acid with Alubri\'s proprietary "Activated Oil Complex" (pre-activated coconut and rosehip oils), which the brand says balances the vaginal microbiome. Each box is a 50 mL tube with 8 single-use applicators; used twice a week, one box lasts about 4 weeks.',
+        summary: 'A hormone-free, fragrance-free internal vaginal moisturizer clinically proven to deliver up to 72 hours of hydration from one application, per Alubri\'s third-party, IRB-approved study of 51 menopausal women. It pairs hyaluronic acid (sodium hyaluronate) and lactic acid with Alubri\'s proprietary "Activated Oil Complex" (pre-activated coconut and rosehip oils), which the brand says balances the vaginal microbiome. Each box is a 50 mL tube with 8 single-use applicators; used twice a week, one box lasts about 4 weeks.',
         safety: {
             fdaStatus: 'alubri.com presents it as a hormone-free personal-care moisturizer and does not describe it as an FDA-cleared device or drug.',
             // Full ingredient list as printed on alubri.com, shown in full
@@ -5732,7 +5732,7 @@ export const BRAND_PRODUCTS = [
             'Itching or irritation that persists despite a moisturizer can be a sign of infection. See a doctor.',
             'Not tested for compatibility with condoms, per Alubri.',
         ],
-        communityReview: 'Customer reviews for this gel are on its Amazon listing, and a Reddit r/AskONLYWomenOver30 thread has women comparing the vaginal moisturizers they\'ve tried (both linked below). Neither site allows automated access, so ayna hasn\'t pulled a rating or quotes from them; read them directly. alubri.com itself shows no star rating, only the brand\'s own study results: 94% of participants said the fragrance-free gel smells good and 88% said it stayed put.',
+        communityReview: 'On alubri.com, the gel has 4.3 out of 5 stars from 327 reviews (checked on alubri.com October 29, 2026). More customer reviews are on its Amazon listing, and a Reddit r/AskONLYWomenOver30 thread has women comparing the vaginal moisturizers they\'ve tried (both linked below). In Alubri\'s own study, 94% of participants said the fragrance-free gel smells good and 88% said it stayed put.',
         effectiveness: 'Alubri reports a 64% increase in vaginal hydration 72 hours after one application, plus favorable microbiome changes, in its own study of 51 menopausal women. No independent study of this product is cited on alubri.com.',
         // Plain-text ingredient summary, kept as a string since search
         // indexing, the interaction checker, and DoctorPrep.jsx all read it.
@@ -5838,7 +5838,7 @@ export const BRAND_PRODUCTS = [
             'Itching or irritation that persists despite a moisturizer can be a sign of infection. See a doctor.',
             'Not tested for compatibility with condoms, per Alubri.',
         ],
-        communityReview: 'Customer reviews for this serum are on its Amazon listing, and there\'s a Reddit post about it in r/Influenster (both linked below). Influenster is a product-testing community whose members often get products free to review, so weigh posts there with that in mind. Neither site allows automated access, so ayna hasn\'t pulled a rating or quotes; read them directly. alubri.com itself shows no star rating, only the brand\'s own study results (above).',
+        communityReview: 'On alubri.com, the serum has 4.4 out of 5 stars from 252 reviews (checked on alubri.com October 29, 2026). More customer reviews are on its Amazon listing, and there\'s a Reddit post about it in r/Influenster (both linked below). Influenster is a product-testing community whose members often get products free to review, so weigh posts there with that in mind.',
         effectiveness: 'Alubri reports a 152% increase in vulvar hydration after one application, and high self-reported hydration after 2 weeks of use, in its own studies. No independent study of this product is cited on alubri.com.',
         ingredients: 'Sodium hyaluronate (hyaluronic acid), inulin, betaine, lactic acid / sodium lactate, aloe, green tea extract, chamomile extract, vitamin E (tocopherol).',
         // Only the key ingredients alubri.com highlights for this product
@@ -5934,7 +5934,7 @@ export const BRAND_PRODUCTS = [
             'Itching or irritation that persists can be a sign of infection. See a doctor.',
             'Not tested for compatibility with condoms, per Alubri.',
         ],
-        communityReview: 'Customer reviews for this cream are on its own Amazon listing (linked below). Amazon blocks automated access, so ayna hasn\'t pulled a rating or quotes; read them directly. alubri.com itself shows no star rating. The only customer feedback on the site is the brand\'s own study results: 92% said it isn\'t greasy and 100% said it was easy to use.',
+        communityReview: 'On alubri.com, the Calming Cream has 4.6 out of 5 stars from 248 reviews (checked on alubri.com October 29, 2026). More customer reviews are on its own Amazon listing (linked below).',
         effectiveness: 'Hydrocortisone is the active ingredient for itch relief. Alubri\'s own study of 53 women reports that 94% felt soothed after one application. No independent study of this product is cited on alubri.com.',
         ingredients: 'Hydrocortisone 0.25% (active). Inactive highlights: shea butter, sodium hyaluronate (hyaluronic acid), lactic acid, oat extract, aloe, Activated Oil Complex (hydrolyzed coconut and rosehip oils), vitamin E (tocopherol).',
         // Only the key ingredients alubri.com highlights for this product
@@ -6036,7 +6036,7 @@ export const BRAND_PRODUCTS = [
             'Itching or irritation that persists despite a moisturizer can be a sign of infection. See a doctor.',
             'Not tested for compatibility with condoms, per Alubri.',
         ],
-        communityReview: 'Customer reviews for this balm are on its own Amazon listing (linked below). Amazon blocks automated access, so ayna hasn\'t pulled a rating or quotes; read them directly. alubri.com itself shows no star rating. The only customer feedback on the site is the brand\'s own study results: 92% said it isn\'t greasy and 100% said it was easy to use.',
+        communityReview: 'On alubri.com, the Vulva Balm has 4.5 out of 5 stars from 257 reviews (checked on alubri.com October 29, 2026). More customer reviews are on its own Amazon listing (linked below). In Alubri\'s own study, 92% said it isn\'t greasy and 100% said it was easy to use.',
         effectiveness: 'Alubri reports a significant drop in vulvar pH (6.3 to 6.0) after 24 hours and two weeks, plus high self-reported hydration, in its own study of 50 women. No independent study of this product is cited on alubri.com.',
         ingredients: 'Sodium hyaluronate (hyaluronic acid), palmitoyl hexapeptide-52 (peptide), Activated Oil Complex (hydrolyzed coconut and rosehip oils), dragon fruit extract, Tasmanian pepperberry extract, oat kernel extract, green tea extract, vitamin E (tocopherol).',
         // Only the key ingredients alubri.com highlights for this product
@@ -6134,7 +6134,7 @@ export const BRAND_PRODUCTS = [
             'Itching or irritation that persists despite a moisturizer can be a sign of infection. See a doctor.',
             'Not tested for compatibility with condoms, per Alubri.',
         ],
-        communityReview: 'Customer reviews for this kit are on its own Amazon listing (linked below). Amazon blocks automated access, so ayna hasn\'t pulled a rating or quotes; read them directly. alubri.com itself shows no star rating. The only customer feedback on the site is the brand\'s own study results for each product (above).',
+        communityReview: 'On alubri.com, the Vaginal Wellness Kit has 4.7 out of 5 stars from 11 reviews (checked on alubri.com October 29, 2026). More customer reviews are on its own Amazon listing (linked below).',
         effectiveness: 'Each product\'s results come from Alubri\'s own studies (see the full-size Gel and Serum entries). No independent study of either product is cited on alubri.com.',
         ingredients: 'Gel: sodium hyaluronate, lactic acid, Activated Oil Complex (hydrolyzed coconut and rosehip oils), dragon fruit extract, aloe. Serum: sodium hyaluronate, inulin, betaine, lactic acid, aloe, green tea, chamomile.',
         // Only the key ingredients alubri.com highlights for this product
@@ -6236,7 +6236,7 @@ export const BRAND_PRODUCTS = [
             'Itching or irritation that persists can be a sign of infection. See a doctor.',
             'Not tested for compatibility with condoms, per Alubri.',
         ],
-        communityReview: 'Customer reviews for this kit are on its own Amazon listing (linked below). Amazon blocks automated access, so ayna hasn\'t pulled a rating or quotes; read them directly. alubri.com itself shows no star rating. The only customer feedback on the site is the brand\'s own study results for each product (above).',
+        communityReview: 'The Rejuvenate & Restore Kit is new and has no reviews on alubri.com yet (checked October 29, 2026). Customer reviews for it are on its own Amazon listing (linked below), and the full-size Intimate Serum and Calming Cream have their own ratings on their ayna pages.',
         effectiveness: 'Each product\'s results come from Alubri\'s own studies (see the full-size Serum and Calming Cream entries). No independent study of either product is cited on alubri.com.',
         ingredients: 'Serum: sodium hyaluronate, inulin, betaine, lactic acid, aloe, green tea, chamomile. Cream: hydrocortisone 0.25% (active), shea butter, sodium hyaluronate, lactic acid, oat extract, aloe, Activated Oil Complex (hydrolyzed coconut and rosehip oils).',
         // Only the key ingredients alubri.com highlights for this product
@@ -7941,7 +7941,7 @@ export const BRAND_PRODUCTS = [
             'Not tested for compatibility with condoms, per Alubri.',
             'The balm is for external use only.',
         ],
-        communityReview: 'alubri.com shows no customer reviews for this kit. Reviews for the full-size products are on their Amazon listings (linked from the Vaginal Moisturizing Gel and Vulva Balm pages on ayna).',
+        communityReview: 'The Moisture Renewal Kit is new and has no reviews on alubri.com yet (checked October 29, 2026). The full-size Vaginal Moisturizing Gel and Vulva Balm have their own ratings and Amazon reviews on their ayna pages.',
         effectiveness: 'Same products as the full sizes: Alubri reports a 64% increase in vaginal hydration 72 hours after one gel application in its study of 51 menopausal women, and a vulvar pH drop with the balm in a 50-woman study. No independent study is cited on alubri.com.',
         ingredients: 'Gel: sodium hyaluronate (hyaluronic acid), lactic acid, Activated Oil Complex (hydrolyzed coconut and rosehip oils), aloe, glucomannan. Balm: sodium hyaluronate, a peptide, Activated Oil Complex, oat, green tea and dragon fruit extracts.',
         ingredientScienceNote: 'The same key ingredients as the full-size Gel and Balm. These studies show what each ingredient can do, not that this kit works.',

@@ -391,7 +391,10 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     // Whatever the line under the product name didn't already say.
     const shown = String(heroLine || '').replace(/…$/, '').trim();
     let body = full;
-    if (shown && full.startsWith(shown)) body = full.slice(shown.length).trim();
+    // A line cut short with "…" doesn't end on a sentence: show the whole summary
+    // here, so the rest never starts mid-sentence (Alubri kits, Oct 29).
+    const cut = /…$/.test(String(heroLine || ''));
+    if (shown && !cut && full.startsWith(shown)) body = full.slice(shown.length).trim();
     else if (shown && full.trim() === shown) body = '';
     return [body, d.aynaDetail].filter(Boolean).join('\n\n');
   })();
