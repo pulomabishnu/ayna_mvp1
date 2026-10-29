@@ -16,7 +16,7 @@
 import { localMatchAnswer } from './askMatch.js';
 import { localHistoryAnswer } from './askHistory.js';
 import { localTodayAnswer, localItemAnswer } from './askToday.js';
-import { localSafetyAnswer } from './askSafety.js';
+import { localSafetyAnswer, localRedFlagAnswer } from './askSafety.js';
 import { localCatalogAnswer, markSources, relatedReads } from './askCatalog.js';
 import { productCard, listableCards } from './askProducts.js';
 
@@ -49,6 +49,8 @@ async function withMatchExtras(r, ctx) {
  */
 export async function localAnswer(msg, ctx = {}) {
   const { profile = null, healthProfile = null, matchOpts, focusProduct = null, signedIn = false, safety = null } = ctx;
+  const r = localRedFlagAnswer(msg);
+  if (r) return { ...r, local: true, urgent: true };
   const s = localSafetyAnswer(msg, safety);
   if (s) return { ...s, local: true };
   const m = await safe(localMatchAnswer(msg, { quizAnswers: profile, healthProfile, matchOpts, focusProduct }));

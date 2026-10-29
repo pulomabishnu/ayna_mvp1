@@ -60,6 +60,7 @@ import './community/topics/user-topics.css';
 import TopicBands from './community/TopicBands.jsx';
 import { Shout } from './ui/ay';
 import { openProPaywall, proLimitFeature } from '../pro/paywall.js';
+import FriendRecs from './community/FriendRecs.jsx';
 
 // The app's Community, built for the website. Same data and rules (shared
 // community store, ranking, topics, guest posting). Three columns on wide
@@ -1518,6 +1519,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       </section>
     </Sheet>}
     {showUpdates && <Sheet title="Updates" className="cm-updates" onClose={() => setShowUpdates(false)}>
+      {user && <FriendRecs supabase={supabase} userId={user.id} productsById={productsById} onOpenProduct={(p) => { setShowUpdates(false); onOpenProduct?.(p); }} />}
       {!notifications ? <div className="cm-skel-list" aria-busy="true" aria-label="Loading updates"><span className="cm-skel-line" /><span className="cm-skel-line is-mid" /></div>
         : notifications.length ? (() => {
           // People, not system strings: "Eliz accepted your friend request".
@@ -1544,6 +1546,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
                 {(() => {
                   const postId = n.post_id || n.data?.post_id || n.payload?.post_id || null;
                   const aboutPost = postId && /comment|reply|reaction|helpful|mention/i.test(String(n.type || ''));
+                  const recProduct = /recommend/i.test(String(n.type || '')) ? productsById.get(String(n.product_id || n.data?.product_id || n.payload?.product_id || '')) : null;
+                  if (recProduct) return <button type="button" className="cm-notes-link" onClick={() => { setShowUpdates(false); onOpenProduct?.(recProduct); }}>{text}: {recProduct.name}</button>;
                   if (aboutPost) return <button type="button" className="cm-notes-link" onClick={async () => { setShowUpdates(false); try { const post = await community.getFeedPost(supabase, postId); if (post) openPost(post); } catch (e) { notifyError(e); } }}>{text}</button>;
                   if (n.actor?.username) return <button type="button" className="cm-notes-link" onClick={() => { setShowUpdates(false); openProfile(n.actor.username); }}>{text}</button>;
                   return <span>{text}</span>;

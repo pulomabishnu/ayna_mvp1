@@ -81,6 +81,8 @@ import {
 } from '../data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../data/intakeCatalog.js';
 import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../data/onboardingFlow.js';
+// Questions whose options have a plain meaning on press-and-hold (glossary.js): the answers get data-tour="quiz-hold" and the quiz tip points there.
+const HOLD_TIP_TYPES = new Set(['aboutYou', 'lifeStage', 'support', 'topics', 'conditions', 'allergies', 'formats', 'price', 'avoidOnly', 'wantOnly', 'fsaHsa']);
 
 // The app's quiz. Questions, order, required/optional rules, branching and
 // saved answers all live in mobile/data/intakeModel.js (shared with the
@@ -564,7 +566,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const [intake, setIntake] = useState(() => savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot));
   // A draft or deep link on a follow-up that moved under the life stage opens the life stage.
   const [draftStepId] = useState(() => (savedDraft?.stepId ? resumeStepId({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId) : ''));
-  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtStep && initialSnapshot ? resumeStepId(reconstructIntakeFromSnapshot(initialSnapshot), startAtStep) : null) || (flow === 'more' ? getOnboardingSteps(reconstructIntakeFromSnapshot(initialSnapshot), { part: 'more' })[0]?.id : null) || (onboarding ? (savedDraft && getOnboardingSteps({ ...EMPTY, ...savedDraft.intake }, { part: 'core' }).some((st) => st.id === draftStepId) ? draftStepId : 'helpTopics') : null) || draftStepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
+  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtStep && initialSnapshot ? resumeStepId(reconstructIntakeFromSnapshot(initialSnapshot), startAtStep) : null) || (flow === 'more' ? getOnboardingSteps(reconstructIntakeFromSnapshot(initialSnapshot), { part: 'more' })[0]?.id : null) || (onboarding ? (savedDraft && getOnboardingSteps({ ...EMPTY, ...savedDraft.intake }, { part: 'core' }).some((st) => st.id === draftStepId) ? draftStepId : 'name') : null) || draftStepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started (not
   // re-derived as answers change), so a step's flag clears only by actually
@@ -1031,7 +1033,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       cta={{ label: isLast && phase === 'optional' ? 'See my results' : 'Continue', onClick: goNext, disabled: !ready, count: countForStep }}
       below={phase === 'optional' && !isLast ? <button type="button" className="aq-link" onClick={() => finish()}>See my results now</button> : null}
       rootProps={{ onTouchStart: onStoryTouchStart, onTouchEnd: onStoryTouchEnd, onWheel: onStoryWheel }}
-      answerProps={{ onPointerDown: startHold, onPointerUp: endHold, onPointerLeave: endHold, onPointerCancel: endHold, onPointerMove: (e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }, onClickCapture: swallowClickAfterHold, onContextMenu: (e) => { if (holdRef.current.fired) e.preventDefault(); } }}
+      answerProps={{ ...(HOLD_TIP_TYPES.has(step.type) ? { 'data-tour': 'quiz-hold' } : {}), onPointerDown: startHold, onPointerUp: endHold, onPointerLeave: endHold, onPointerCancel: endHold, onPointerMove: (e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }, onClickCapture: swallowClickAfterHold, onContextMenu: (e) => { if (holdRef.current.fired) e.preventDefault(); } }}
       overlay={<>
         <QuizIntro variant="app" enabled={introEnabled && !onboarding} />
         {glossary && <GlossaryCard term={glossary.term} definition={glossary.definition} onClose={() => setGlossary(null)} />}

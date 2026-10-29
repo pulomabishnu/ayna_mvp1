@@ -15,11 +15,9 @@
 import { SUPPORT_GROUPS, getIntakeSteps, isStepAnswered } from './intakeModel.js';
 
 export const ONBOARDING_SCREENS = [
-  { n: 1, id: 'help', label: 'What you want help with' },
-  // Life stage comes second (focus group, Oct 26: older and post-menopause
-  // members felt the quiz was written for younger people), so the questions
-  // after it can skip what does not apply to her stage.
+  // Founder, Oct 29: name, age and life stage first, then what she wants help with.
   { n: 2, id: 'stage', label: 'Your life stage' },
+  { n: 1, id: 'help', label: 'What you want help with' },
   { n: 3, id: 'experience', label: 'What you are experiencing' },
   { n: 4, id: 'goals', label: 'Your goals' },
   { n: 5, id: 'prefs', label: 'Your preferences' },
@@ -134,15 +132,19 @@ const WHY_WEB = {
 // New first-run titles (sentence case, plain words). Step types and saved
 // fields stay those of intakeModel.js.
 const TITLES = {
-  support: { title: 'What are you experiencing?', subtitle: 'You don’t need a diagnosis to use ayna.' },
+  support: { title: 'What are you experiencing right now?', subtitle: 'Pick everything that applies. You don’t need a diagnosis.' },
+  periodFlow: { title: 'How heavy is your period flow?', subtitle: 'On a typical heavy day' },
+  periodPain: { title: 'How much do period cramps or pain affect your day?' },
+  ttcDuration: { title: 'How long have you been trying to get pregnant?' },
+  pregnancyTrimester: { title: 'How far along is your pregnancy?' },
   safety: { title: 'Is anything new or getting worse quickly?', subtitle: 'Symptoms that are new, severe or changing fast' },
   age: { title: 'How old are you?' },
-  lifeStage: { title: 'Where are you right now?', subtitle: 'You can be in perimenopause and still have regular periods. Not sure is a fine answer.' },
+  lifeStage: { title: 'What life stage are you in right now?', subtitle: 'You can be in perimenopause and still have regular periods. Not sure is a fine answer.' },
   formats: { title: 'Which kinds of products do you like using?' },
   priceRange: { title: 'What would you usually spend on one product?' },
   avoidIngredients: { title: 'Anything you want your products to avoid?', type: 'avoidOnly' },
   fsaHsa: { title: 'Do you have an FSA or HSA?', subtitle: 'These are accounts, often through work, that let you pay for eligible health costs with money before tax. Some health products qualify.' },
-  trust: { title: 'What should matter most?', subtitle: 'Drag to rank. Evidence comes first unless you change it.' },
+  trust: { title: 'What matters most when you pick a product?', subtitle: 'Drag to rank. Evidence comes first unless you change it.' },
   conditions: { title: 'Any diagnosed conditions?', subtitle: 'Only ones a clinician has diagnosed' },
   allergies: { title: 'Any allergies or sensitivities?' },
   medications: { title: 'Taking any medicines or supplements?' },
@@ -179,13 +181,16 @@ export function getOnboardingSteps(intake, { part = 'all', surface = 'app' } = {
   if (avoid) byId.set('preferIngredients', { ...avoid, id: 'preferIngredients', type: 'wantOnly', title: 'Anything you prefer your products to have or be?' });
   const decorate = (s, screen, extra = {}) => ({ ...s, ...(TITLES[s.id] || {}), screen, why: WHY_FOR[s.id] || s.info, ...extra });
   const out = [];
-  out.push({ id: 'helpTopics', section: 'help', type: 'topics', title: 'What would you like ayna to help you with?', subtitle: 'You don’t need a diagnosis to use ayna.', screen: 1, why: WHY_FOR.helpTopics, required: false, optional: false, phase: 'required' });
+  // Order (founder, Oct 29): name, age, life stage, then what she wants help
+  // with and what she's experiencing, goals, preferences, safety.
   // Her first name is its own optional screen, before her age (critique, Oct 27:
   // name and age were two questions in one card). Saved in the same field.
   out.push({ id: 'name', section: 'core', type: 'name', title: 'What should we call you?', screen: 2, why: WHY_FOR.name, required: false, optional: false, phase: 'required' });
+  const helpTopicsStep = { id: 'helpTopics', section: 'help', type: 'topics', title: 'What would you like ayna to help you with?', subtitle: 'You don’t need a diagnosis to use ayna.', screen: 3, why: WHY_FOR.helpTopics, required: false, optional: false, phase: 'required' };
   for (const n of [2, 3, 4, 5, 6]) {
+    if (n === 3) out.push(helpTopicsStep);
     if (n === 4) {
-      out.push({ id: 'goals', section: 'goals', type: 'goals', title: 'What are your goals?', screen: 4, why: WHY_FOR.goals, required: false, optional: true, phase: 'optional' });
+      out.push({ id: 'goals', section: 'goals', type: 'goals', title: 'What do you want ayna to help you do?', screen: 4, why: WHY_FOR.goals, required: false, optional: true, phase: 'optional' });
       continue;
     }
     for (const id of SCREEN_ORDER[n]) {

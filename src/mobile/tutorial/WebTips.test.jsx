@@ -277,7 +277,7 @@ describe('website registry and placement', () => {
   });
   it('covers the six screens, at most 2 tips each, one short sentence', () => {
     // The page screens, plus parts (within) for long pages and the top bar.
-    expect(WEB_SCREENS.filter((s) => !s.within).map((s) => s.id).sort()).toEqual(['ask', 'community', 'compare', 'explore', 'landing', 'library', 'metric-sheet', 'product-page', 'services', 'today', 'you']);
+    expect(WEB_SCREENS.filter((s) => !s.within).map((s) => s.id).sort()).toEqual(['ask', 'community', 'compare', 'explore', 'landing', 'library', 'metric-sheet', 'product-page', 'quiz-hold', 'services', 'today', 'you']);
     for (const s of WEB_SCREENS) {
       expect(tipsToShow(s, () => true).length).toBeLessThanOrEqual(2);
       for (const t of s.tips) {
