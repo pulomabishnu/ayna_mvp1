@@ -128,7 +128,8 @@ describe('one breakdown, same number everywhere', () => {
         const sum = [...bd.raised, ...bd.lowered].reduce((s, x) => s + x.delta, 0);
         expect(Math.abs(Math.min(99, Math.round(100 * Math.max(0, Math.min(1, sum)))) - d.percent)).toBeLessThanOrEqual(1);
         expect(Math.abs(sum - d.v2.fit)).toBeLessThan(0.01);
-        expect(bd.label).toBe(d.percent < 50 ? 'Partial fit' : d.percent >= 80 ? 'Strong fit' : d.percent >= 60 ? 'Good fit' : '');
+        // Oct 29 review: an 80+ the engine did not call Strong (low confidence) reads Good fit.
+        expect(bd.label).toBe(d.percent < 50 ? 'Partial fit' : d.percent >= 80 ? (d.v2?.band === 'strong' ? 'Strong fit' : 'Good fit') : d.percent >= 60 ? 'Good fit' : '');
         checked += 1;
       }
     }
