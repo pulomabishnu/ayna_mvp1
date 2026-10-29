@@ -30,7 +30,7 @@ export function matchPercentFromDetails(details) {
 }
 
 const item = (p) => ({ factor: p.factor, text: p.text, ...(Number.isFinite(p.delta) ? { delta: p.delta } : {}) });
-const empty = (extra) => ({ percent: null, label: '', raised: [], lowered: [], unknown: [], reason: '', note: PARTNER_NOTE, ...extra });
+const empty = (extra) => ({ percent: null, label: '', raised: [], lowered: [], unknown: [], checks: [], evidence: null, reason: '', note: PARTNER_NOTE, ...extra });
 
 /**
  * @param {object|null} product catalog product
@@ -70,6 +70,10 @@ export function breakdownFromDetails(product, details) {
     raised,
     lowered,
     unknown,
+    // From the decision trace (src/matching/trace.js): safety checks that
+    // passed for her, and the evidence grade the score used.
+    checks: details.trace?.checks || [],
+    evidence: details.trace?.evidence || null,
     reason: whyLine(product, details) || '',
     note: PARTNER_NOTE,
   };

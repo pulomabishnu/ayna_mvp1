@@ -121,7 +121,7 @@ const REVIEWED = new Map([...NEED_MAP_RESEARCH, ...NEED_MAP_REVIEWED].map((r) =>
 
 // Products judged on fit, not on an effect claim (deep dive 3): pads, cups,
 // underwear, apps, tests. Their evidence factor is 1.0.
-const NO_EFFECT_CATEGORIES = new Set(['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cup-steamer', 'tracker', 'app', 'diagnostics', 'test', 'telehealth', 'therapy', 'condom', 'lubricant', 'wearable']);
+export const NO_EFFECT_CATEGORIES = new Set(['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cup-steamer', 'tracker', 'app', 'diagnostics', 'test', 'telehealth', 'therapy', 'condom', 'lubricant', 'wearable']);
 const UNIVERSAL_CATEGORIES = new Set(['telehealth', 'therapy']);
 
 /** Draft GRADE-style evidence grade for this product and need. */

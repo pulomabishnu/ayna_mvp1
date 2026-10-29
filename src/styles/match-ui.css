@@ -139,3 +139,15 @@ body .ay-why .ay-why-restricted p { margin: 0 0 12px; color: inherit; font: 500 
 
 /* Under 50 the ring shows words, not a number (src/utils/matchDisplay.js). */
 .ay-why-ring.is-partial span small { display: block; font-size: 13px; line-height: 1.2; text-align: center; }
+
+/* Decision-trace sections (src/components/match/WhyTrace.jsx), web panel + app screen. */
+.ay-why-trace { margin: 0 0 20px; }
+.ay-why-trace :is(h2, h3) { margin: 0 0 8px; font-size: 17px; }
+.ay-why-trace p { margin: 0; line-height: 1.5; }
+.ay-why-checks, .ay-why-factors { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ay-why-checks li { position: relative; padding-left: 26px; line-height: 1.45; }
+.ay-why-checks li::before { content: '✓'; position: absolute; left: 0; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #f7badd; color: #3e2723; font: 700 12px/18px system-ui; text-align: center; }
+.ay-why-factors li { display: grid; grid-template-columns: 22px 1fr; gap: 6px; line-height: 1.45; }
+.ay-why-factors li > span[aria-hidden] { font-weight: 800; }
+.ay-why-trace.is-locked { padding: 14px 16px; border-radius: 16px; border: 1.5px dashed currentColor; }
+.ay-why-trace .ay-why-pro { margin-top: 10px; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 2px solid #3e2723; background: #f7badd; color: #3e2723; font-weight: 700; cursor: pointer; }

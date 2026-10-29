@@ -24,6 +24,7 @@ import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_I
 import { buildEcosystemV2, scoreProductV2, withV2Score, userKeyOf } from '../matching/v2.js';
 import { isRecommendable, recommendationEligibility } from '../matching/eligibility.js';
 import { holdStateFor } from '../matching/gate.js';
+import { decisionTrace } from '../matching/trace.js';
 import { CONFIRM_FIELDS } from '../matching/score.js';
 import { matchPercentFromDetails } from '../matching/breakdown.js';
 import { needSignals, orderForYou, historyState, NOT_RECOMMENDED_AGAIN } from '../matching/forYou.js';
@@ -1798,6 +1799,9 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
         matchMeaning: 'fit_to_what_she_told_ayna_not_a_probability_it_works',
         v2: best?.v2 || null,
         v1Percent: best ? (best.v1Score ?? best.score) : null,
+        // What the engine did, step by step (src/matching/trace.js). Every
+        // reason and "Checked for you" line on screen comes from here.
+        trace: decisionTrace({ safety, pp, best, up }),
     };
 
     let details;

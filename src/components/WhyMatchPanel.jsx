@@ -6,6 +6,7 @@ import { getProductMatchDetailsForProduct } from '../data/products.js';
 import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE, shownMatchPercent, PARTIAL_FIT, isBleedingEvaluation } from '../utils/matchDisplay';
 import BleedingEvaluationNote from './match/BleedingEvaluationNote.jsx';
 import '../styles/match-ui.css';
+import WhyTrace from './match/WhyTrace.jsx';
 import HealthWhyLine from './health/HealthWhyLine.jsx';
 import { whyLine } from '../utils/whyLine';
 
@@ -63,6 +64,7 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
         {onUpdateHealth && <button type="button" className="ay-why-cta" onClick={onUpdateHealth}>Update health profile</button>}
       </section>}
       {hasScore && reasonDetails.length > 0 && <section><h3>What matches</h3><ul className="ay-why-reasons">{reasonDetails.map((r, i) => <li key={`${r.component}-${i}`}><span>{kind(r.component)}</span><p>{tidy(r.text)}</p></li>)}</ul></section>}
+      {hasScore && <WhyTrace product={product} details={details} Heading="h3" />}
       {hasScore && <HealthWhyLine healthData={details.healthData} />}
       {hasScore && why.basedOn.length > 0 && <section><h3 className="ay-why-h-edit">Based on{onUpdateHealth && <button type="button" className="ay-why-edit" onClick={onUpdateHealth}>Edit</button>}</h3><ul className="ay-why-inputs">{why.basedOn.map((line) => <li key={line}>{tidy(line)}</li>)}</ul></section>}
       {hasScore && why.hint && <section className="ay-why-hint">
