@@ -1710,6 +1710,9 @@ export function safetyHoldFor(safety) {
             fix: { label: state === 'confirm' ? 'Confirm my answers' : `Answer: ${SAFETY_FIELD_QUESTION[f] || 'one safety question'}`, step: SAFETY_FIELD_STEP[f] || null },
         };
     }
+    if ((safety?.missingProductInfo || []).includes('product_facts')) {
+        return { kind: 'product', state: 'researching', reason: 'You added this yourself. We’ll show your match once we’ve checked its label and safety facts.', fix: { label: 'Nothing for you to do.', step: null } };
+    }
     if (state === 'in_review') {
         return { kind: 'product', state, reason: 'A clinician is reviewing this product. We’ll show your match when that’s done.', fix: { label: 'Nothing for you to do.', step: null } };
     }

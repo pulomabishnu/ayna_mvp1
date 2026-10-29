@@ -181,6 +181,7 @@ export const PRODUCT_INFO_TEXT = {
   interaction_info: 'medicine interaction information for this product',
   allergen_info: 'allergen information for this product',
   clinician_review: 'a clinician review of this product',
+  product_facts: 'the label and safety facts for this product',
 };
 // Products that carry ingredients or materials that touch skin or enter the
 // body. An allergy with an unknown status here is a hold (audit C); for
@@ -552,6 +553,9 @@ export function evaluateSafety(productOrProfile, up) {
   // A clinician review is open on this product (passport QA): no confident
   // match for anyone until it is done (audit K).
   if (pp.passport?.qa === 'needs_clinician_review') missingProductInfo.push('clinician_review');
+  // A product she added herself (not in the catalog): no match until ayna
+  // has read its label (P2, add any product). Never a guess from its name.
+  if (pp.user_added) missingProductInfo.push('product_facts');
 
   // Facts we looked for and the brand does not publish (VERIFIED UNKNOWN).
   const undisclosed = pp.passport?.undisclosed || {};

@@ -1394,6 +1394,8 @@ export function buildProductProfile(product) {
       interaction_text: ppLayer.interactionText,
       claim_evidence: passportClaims,
     },
+    // Added by her, not in the catalog: nothing about it has been checked yet.
+    user_added: product.userAdded === true && (product.type === 'user' || String(product.id || '').startsWith('user-')),
     ingredient_ids: ppLayer.ingredientIds,
     ingredient_classes: ppLayer.ingredientClasses,
   };
