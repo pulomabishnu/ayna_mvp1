@@ -97,3 +97,4 @@ export function explainProduct(product, intake, opts = {}) {
 
 // Convenience for callers that only need the profile for one product.
 export function productProfileFor(product) { return buildProductProfile(product); }
+export { recommendationEligibilityForUser, holdStateFor, GATE_STATES } from './gate.js';

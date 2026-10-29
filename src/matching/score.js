@@ -36,7 +36,7 @@ import { NEED_BY_ID, needPhrase, canonicalNeedId, CONDITION_PATHWAYS, CONDITION_
 import { buildProductProfile, normalizeBrand, CONTEXT_BONUS, productSimilarity, CYCLE_DEPENDENT_RULES, CYCLE_TRACKING_RULES } from './productProfile.js';
 import { checkMedicationInteractions, INTERACTION_TABLE } from './medications.js';
 import { normalizeName } from './userProfile.js';
-import { lifeStageBlock, lifeStageNeedBlock, postmenopausalBleedingBlock } from './eligibility.js';
+import { lifeStageBlock, lifeStageNeedBlock, postmenopausalBleedingBlock, stageScopeCheck } from './eligibility.js';
 
 // Preference dimension weights (only known + applicable ones count).
 export const DIMENSION_WEIGHTS = { context: 3, format: 2, values: 2, price: 2, evidence: 2, brand: 1, effort: 1 };
@@ -161,7 +161,15 @@ export const REQUIRED_FIELD_TEXT = {
   medications: 'what medicines or supplements you take',
   pregnancy_status: 'whether you are pregnant (your life stage)',
   breastfeeding_status: 'whether you are breastfeeding',
+  // P0 holds (audit A, F, G): she can resolve each one in a tap.
+  life_stage: 'your life stage',
+  confirm_life_stage: 'which life stage you are in now',
+  confirm_answers: 'which of your safety answers is right',
+  pregnancy_current: 'whether you are still pregnant',
+  medications_current: 'whether your medicine list is still right',
 };
+/** Holds she resolves by confirming an answer (not a missing one). */
+export const CONFIRM_FIELDS = new Set(['confirm_life_stage', 'confirm_answers', 'pregnancy_current', 'medications_current']);
 
 // Product-side safety facts the passport does not have yet. When one is
 // safety-critical for THIS user, the product is restricted (held back, the
@@ -171,7 +179,23 @@ export const PRODUCT_INFO_TEXT = {
   breastfeeding_info: 'breastfeeding safety information for this product',
   ingredient_list: 'a full ingredient list for this product',
   interaction_info: 'medicine interaction information for this product',
+  allergen_info: 'allergen information for this product',
+  clinician_review: 'a clinician review of this product',
 };
+// Products that carry ingredients or materials that touch skin or enter the
+// body. An allergy with an unknown status here is a hold (audit C); for
+// other physical products (a heating pad) it stays a caution.
+const ALLERGEN_CONTACT_CATEGORIES = new Set(['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'intimate-care', 'sex-tech', 'incontinence',
+  'skincare', 'hair', 'postpartum', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'medication', 'supplement', 'menopause', 'contraception']);
+export function carriesIngredients(pp) {
+  if (!pp || pp.is_digital || pp.access?.is_care_service) return false;
+  return Boolean(pp.ingested || pp.formats.includes('topical') || pp.formats.includes('suppository') || pp.formats.includes('period_care')
+    || ALLERGEN_CONTACT_CATEGORIES.has(String(pp.category || '').toLowerCase()));
+}
+// Routes where a medicine interaction matters (swallowed, absorbed inside).
+function systemicRoute(pp, hormoneActive) {
+  return Boolean(pp.ingested || pp.formats.includes('suppository') || hormoneActive);
+}
 const HORMONE_ACTIVE_CLASSES = new Set(['hormone', 'hormone-active', 'phytoestrogen']);
 
 const clamp01 = (x) => Math.max(0, Math.min(1, x));
@@ -249,8 +273,17 @@ export function evaluateSafety(productOrProfile, up) {
   //     no menstrual cycle now (menopause, post-menopause, pregnancy).
   const stageBlock = lifeStageBlock(pp, up);
   if (stageBlock) reasons.push(stageBlock);
+  // 0c. Stage-scoped products (menopause-only, pregnancy-only, nursing):
+  //     her stated stage outside the scope excludes; no stage holds and asks.
+  //     Never from age (audit A).
+  const scope = stageScopeCheck(pp, up);
+  if (scope?.block) reasons.push(scope.block);
+  else if (scope?.hold) missingFields.push(scope.hold);
   const missingProductInfo = [];
-  const pk = pp.passport?.known || null; // null: no passport, nothing to add
+  // What the product passport has facts on. No passport = nothing known
+  // (audit D: a missing passport used to skip these holds).
+  const pk = pp.passport?.known || {};
+  const ingredientsKnown = Boolean(pk.ingredients) || (pp.ingredients || []).length > 0;
   const bodyRoute = pp.ingested || pp.formats.includes('suppository') || pp.formats.includes('topical');
   const hormoneActive = pp.safety.hormones === 'yes' || (pp.ingredient_classes || []).some((c) => HORMONE_ACTIVE_CLASSES.has(c));
 
@@ -282,6 +315,9 @@ export function evaluateSafety(productOrProfile, up) {
         if (d.variant) {
           penalize('allergen_variant', `Some versions contain ${phrase}`);
           cautions.push({ code: 'allergen_variant', text: `Some versions contain ${phrase}. Choose the ${phrase}-free version.` });
+        } else if (carriesIngredients(pp)) {
+          // Unknown is not safe (audit C): held until we know.
+          missingProductInfo.push('allergen_info');
         } else {
           penalize('allergen_unknown', `We could not confirm it is ${phrase}-free`);
           cautions.push({ code: 'allergen_unknown', text: `We could not confirm it is ${phrase}-free. Check the label.` });
@@ -308,7 +344,7 @@ export function evaluateSafety(productOrProfile, up) {
 
   // 3b. A specific allergy and no ingredient list or allergen facts at all for
   //     something she swallows, inserts or puts on skin: we cannot check it.
-  if (pk && bodyRoute && s.allergies.some((a) => a.attr) && !pk.ingredients && !pk.allergens) missingProductInfo.push('ingredient_list');
+  if (bodyRoute && s.allergies.some((a) => a.attr) && !ingredientsKnown && !pk.allergens) missingProductInfo.push('ingredient_list');
 
   // 4. Leave out (allergy-equivalent or strong = hard filter on a confirmed 'yes').
   for (const l of s.leaveOut) {
@@ -372,8 +408,13 @@ export function evaluateSafety(productOrProfile, up) {
     interaction.findings.filter((f) => f.verdict === 'caution').forEach((f) => cautions.push({ code: 'medication_caution', text: clean(f.message) }));
   }
   if (interaction.unknownPairs > 0 && interaction.verdict !== 'avoid') {
-    penalize('medication_unknown', 'Interaction with your medicines not reviewed');
     blockedClaims.add('medication_compatible');
+    // Medicines she listed + something swallowed or absorbed inside that no
+    // one has reviewed against them: held (audit E). Topical products and a
+    // medicine only implied by her life stage keep a caution.
+    const listed = s.medications.some((m) => m.source !== 'life_stage');
+    if (listed && systemicRoute(pp, hormoneActive) && interaction.verdict !== 'caution') missingProductInfo.push('interaction_info');
+    else penalize('medication_unknown', 'Interaction with your medicines not reviewed');
   }
   // 6b. Reviewed label / NIH interaction text that names one of her medicines.
   const labelText = pp.passport?.interaction_text || '';
@@ -392,7 +433,7 @@ export function evaluateSafety(productOrProfile, up) {
   }
   // 6c. Hormone-active product, she takes medicines, and nobody has reviewed its interactions.
   const takesMeds = s.medications.some((m) => m.source !== 'life_stage');
-  if (pk && takesMeds && pp.ingested && hormoneActive && !pk.interactions && !['avoid', 'caution'].includes(interaction.verdict)) {
+  if (takesMeds && pp.ingested && hormoneActive && !pk.interactions && !['avoid', 'caution'].includes(interaction.verdict)) {
     missingProductInfo.push('interaction_info');
     blockedClaims.add('medication_compatible');
   }
@@ -462,7 +503,7 @@ export function evaluateSafety(productOrProfile, up) {
   }
   // 7b. Pregnant or breastfeeding + hormone-active product with no pregnancy /
   //     breastfeeding facts at all: restricted until the passport has them.
-  if (pk && hormoneActive && bodyRoute) {
+  if (hormoneActive && bodyRoute) {
     if (pStatus === 'pregnant' && preg.overall === 'unknown' && !pk.pregnancy) missingProductInfo.push('pregnancy_info');
     if (s.breastfeeding === 'yes' && pp.breastfeeding.overall === 'unknown' && !pk.breastfeeding) missingProductInfo.push('breastfeeding_info');
   }
@@ -494,15 +535,28 @@ export function evaluateSafety(productOrProfile, up) {
     if (pp.passport.completeness < PASSPORT_COMPLETENESS_FLOOR) penalize('passport_incomplete', 'Limited verified product facts');
   }
   if (up.physiology.confidenceFlags.includes('unusual_combination')) penalize('unusual_combination', 'Unusual age and life stage combination');
+  // Conflicting stages, conflicting safety answers and old safety answers
+  // hold and ask her (audit F, G). Unknown is not safe; neither is a guess
+  // between two of her answers.
   const conflicting = up.physiology.compatibility.conflictingStages;
-  if (conflicting.some((st) => ['designed_for', 'not_relevant', 'relevant'].includes(pp.life_stage[st]))) {
-    penalize('stage_needs_clarification', 'Life stages that need clarification');
+  if (conflicting.some((st) => ['designed_for', 'not_relevant', 'relevant', 'contraindicated'].includes(pp.life_stage[st]))) {
+    if (systemicRoute(pp, hormoneActive) || stageScopeCheck(pp, { physiology: { lifeStages: [] }, safety: {} })) missingFields.push('confirm_life_stage');
+    else penalize('stage_needs_clarification', 'Life stages that need clarification');
   }
   const rec = up.recency?.stale || {};
-  if (rec.pregnancy && pStatus === 'pregnant' && preg.overall !== 'not_applicable') penalize('stale_pregnancy', 'Your pregnancy answer is from a while ago');
-  if (rec.medications && s.medications.length && pp.interaction_relevant) penalize('stale_medications', 'Your medicine list is from a while ago');
-  if (up.contradictions?.some((c) => c.affects.includes('safety')) && bodyContact(pp)) penalize('answer_contradiction', 'Some safety answers conflict');
+  if (rec.pregnancy && pStatus === 'pregnant' && preg.overall !== 'not_applicable') missingFields.push('pregnancy_current');
+  if (rec.medications && s.medications.some((m) => m.source !== 'life_stage') && pp.interaction_relevant && systemicRoute(pp, hormoneActive)) missingFields.push('medications_current');
+  else if (rec.medications && s.medications.length && pp.interaction_relevant) penalize('stale_medications', 'Your medicine list is from a while ago');
+  if (up.contradictions?.some((c) => c.affects.includes('safety')) && carriesIngredients(pp)) missingFields.push('confirm_answers');
+  else if (up.contradictions?.some((c) => c.affects.includes('safety')) && bodyContact(pp)) penalize('answer_contradiction', 'Some safety answers conflict');
+  // A clinician review is open on this product (passport QA): no confident
+  // match for anyone until it is done (audit K).
+  if (pp.passport?.qa === 'needs_clinician_review') missingProductInfo.push('clinician_review');
 
+  // Facts we looked for and the brand does not publish (VERIFIED UNKNOWN).
+  const undisclosed = pp.passport?.undisclosed || {};
+  const UNDISCLOSED_KEY = { pregnancy_info: 'pregnancy', breastfeeding_info: 'breastfeeding', interaction_info: 'interactions', allergen_info: 'allergens', ingredient_list: 'ingredients' };
+  const undisclosedInfo = [...new Set(missingProductInfo)].filter((f) => undisclosed[UNDISCLOSED_KEY[f]]);
   const restricted = reasons.length === 0 && (missingFields.length > 0 || missingProductInfo.length > 0);
   if (restricted) penalize('restricted', 'Safety details missing');
   const confidence = Math.max(0.2, penalties.reduce((c, p) => c * p.factor, 1));
@@ -516,6 +570,7 @@ export function evaluateSafety(productOrProfile, up) {
       || (up.physiology.lifeStages || []).some((st) => /postpartum|pregnan|ttc|breastfeed/.test(String(st))),
     missingFields: [...new Set(missingFields)],
     missingProductInfo: [...new Set(missingProductInfo)],
+    undisclosedInfo,
     reasons,
     cautions,
     penalties,

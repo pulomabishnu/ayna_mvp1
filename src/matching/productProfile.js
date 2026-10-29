@@ -1127,6 +1127,15 @@ function passportLayer(product, passport, applicable) {
       allergens: c.allergens?.notApplicable || Boolean(c.allergens?.known),
       ingredients: c.ingredients?.notApplicable || Boolean(c.ingredients?.known) || Boolean(c.materials?.known),
     },
+    // Looked for and not published by the brand (fact status 'unavailable'):
+    // VERIFIED UNKNOWN, a different message from "still checking".
+    undisclosed: {
+      pregnancy: !sf.pregnancy?.known && sf.pregnancy?.status === 'unavailable',
+      breastfeeding: !sf.breastfeeding?.known && sf.breastfeeding?.status === 'unavailable',
+      interactions: !sf.medication_interactions?.known && sf.medication_interactions?.status === 'unavailable',
+      allergens: !c.allergens?.known && c.allergens?.status === 'unavailable',
+      ingredients: !c.ingredients?.known && c.ingredients?.status === 'unavailable',
+    },
     claims,
     qa: passport.qa?.status || null,
   };
@@ -1381,6 +1390,7 @@ export function buildProductProfile(product) {
       missing_critical: ppLayer.missingCritical,
       freshness: ppLayer.freshness ? ppLayer.freshness.state : null,
       known: ppLayer.known,
+      undisclosed: ppLayer.undisclosed || {},
       interaction_text: ppLayer.interactionText,
       claim_evidence: passportClaims,
     },

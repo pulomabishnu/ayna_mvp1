@@ -23,6 +23,8 @@ import { getListingStatus as passportListingStatus } from './passport/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
 import { buildEcosystemV2, scoreProductV2, withV2Score, userKeyOf } from '../matching/v2.js';
 import { isRecommendable, recommendationEligibility } from '../matching/eligibility.js';
+import { holdStateFor } from '../matching/gate.js';
+import { CONFIRM_FIELDS } from '../matching/score.js';
 import { matchPercentFromDetails } from '../matching/breakdown.js';
 import { needSignals, orderForYou, historyState, NOT_RECOMMENDED_AGAIN } from '../matching/forYou.js';
 import { shapeEcosystemWithHealth } from '../matching/healthShaping.js';
@@ -962,14 +964,28 @@ export function hydrateCatalogProduct(product) {
     const catalogProduct = getProductById(product.id)
         || RELEASED_STARTUPS.find((entry) => entry.id === product.id);
     if (!catalogProduct) return product;
+    // The current catalog wins for every fact matching and safety read
+    // (audit L): a recall, a new warning or a corrected ingredient list after
+    // she saved it must reach her. Only her own row fields (saved date,
+    // notes, quantity, position) come from the saved copy.
+    const current = {};
+    for (const k of CATALOG_AUTHORITATIVE_FIELDS) if (catalogProduct[k] !== undefined) current[k] = catalogProduct[k];
     return {
         ...catalogProduct,
         ...product,
+        ...current,
         tags: catalogProduct.tags || product.tags,
         healthFunctions: catalogProduct.healthFunctions || product.healthFunctions,
         safety: catalogProduct.safety || product.safety,
     };
 }
+export const CATALOG_AUTHORITATIVE_FIELDS = [
+    'name', 'brand', 'category', 'status', 'hidden', 'recommendable', 'validation', 'qaStatus',
+    'ingredients', 'warnings', 'contraindications', 'avoidIfSensitivity', 'allergens', 'materials',
+    'pregnancy', 'pregnancySafety', 'breastfeeding', 'breastfeedingSafety', 'interactions', 'drugInteractions',
+    'ageRange', 'minAge', 'maxAge', 'format', 'formats', 'evidenceStrength', 'evidence', 'citations',
+    'whoItsFor', 'howToUse', 'summary', 'description', 'requiresCondition', 'regulatoryStatus', 'fdaStatus',
+];
 
 /**
  * Map user-listed current products to closest products already in the catalog.
@@ -1669,8 +1685,8 @@ const TEEN_EXCLUDED = {
 };
 
 // Which setup question resolves a missing safety answer (the intake step id).
-const SAFETY_FIELD_STEP = { medications: 'medications', pregnancy_status: 'lifeStage', breastfeeding_status: 'lifeStage' };
-const SAFETY_FIELD_QUESTION = { medications: 'Taking any medicines or supplements?', pregnancy_status: 'Your life stage (pregnancy)', breastfeeding_status: 'Your life stage (breastfeeding)' };
+const SAFETY_FIELD_STEP = { medications: 'medications', pregnancy_status: 'lifeStage', breastfeeding_status: 'lifeStage', life_stage: 'lifeStage', confirm_life_stage: 'lifeStage', pregnancy_current: 'lifeStage', medications_current: 'medications', confirm_answers: 'allergies' };
+const SAFETY_FIELD_QUESTION = { medications: 'Taking any medicines or supplements?', pregnancy_status: 'Your life stage (pregnancy)', breastfeeding_status: 'Your life stage (breastfeeding)', life_stage: 'Your life stage' };
 
 /**
  * A safety hold, said plainly: why the match is unavailable and what would
@@ -1678,18 +1694,31 @@ const SAFETY_FIELD_QUESTION = { medications: 'Taking any medicines or supplement
  * no step (ayna has to find the label facts first).
  */
 export function safetyHoldFor(safety) {
+    const state = holdStateFor(safety);
     const fields = (safety?.missingFields || []).filter((f) => REQUIRED_FIELD_TEXT[f]);
     const info = (safety?.missingProductInfo || []).filter((f) => PRODUCT_INFO_TEXT[f]);
-    if (fields.length) {
-        const f = fields[0];
+    if (state === 'needs_answer' || state === 'confirm') {
+        const ask = fields.filter((f) => (state === 'confirm') === CONFIRM_FIELDS.has(f));
+        const f = ask[0] || fields[0];
         return {
             kind: 'profile',
-            reason: `We don’t know ${fields.map((x) => REQUIRED_FIELD_TEXT[x]).join(' or ')} yet, and that decides whether this product is safe for you.`,
-            fix: { label: `Answer: ${SAFETY_FIELD_QUESTION[f] || 'one safety question'}`, step: SAFETY_FIELD_STEP[f] || null },
+            state,
+            reason: state === 'confirm'
+                ? `Please confirm ${REQUIRED_FIELD_TEXT[f]}. It decides whether this product is safe for you.`
+                : `We don’t know ${ask.map((x) => REQUIRED_FIELD_TEXT[x]).join(' or ')} yet, and that decides whether this product is safe for you.`,
+            fix: { label: state === 'confirm' ? 'Confirm my answers' : `Answer: ${SAFETY_FIELD_QUESTION[f] || 'one safety question'}`, step: SAFETY_FIELD_STEP[f] || null },
         };
+    }
+    if (state === 'in_review') {
+        return { kind: 'product', state, reason: 'A clinician is reviewing this product. We’ll show your match when that’s done.', fix: { label: 'Nothing for you to do.', step: null } };
+    }
+    if (state === 'verified_unknown') {
+        const gone = (safety?.undisclosedInfo || []).map((x) => PRODUCT_INFO_TEXT[x]).filter(Boolean);
+        return { kind: 'product', state, reason: `The brand doesn’t share ${gone.join(' or ') || 'this safety fact'}, and your answers make it matter.`, fix: { label: 'Ask a pharmacist or your clinician before using it.', step: null } };
     }
     return {
         kind: 'product',
+        state: 'researching',
         reason: `We don’t have ${info.map((x) => PRODUCT_INFO_TEXT[x]).join(' or ') || 'all the safety facts for this product'} yet, and your answers make that matter.`,
         fix: { label: 'ayna is checking the label. Nothing for you to do.', step: null },
     };

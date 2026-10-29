@@ -307,7 +307,15 @@ export function buildUserProfile(intakeInput, options = {}) {
   // Recency: when the intake was answered (per-answer stamps when present).
   const answeredAt = toTime(intake.personalizationCompletedAt ?? intake.completedAt ?? intake.updatedAt ?? intakeInput?.personalizationCompletedAt ?? null);
   const answerAgeDays = answeredAt != null ? Math.max(0, Math.round((now - answeredAt) / DAY_MS)) : null;
-  const stale = (key) => answerAgeDays != null && answerAgeDays > RECENCY_RULES[key].staleAfterDays;
+  // Per-fact freshness (src/matching/factFreshness.js): each group's own
+  // time when she has one, else the whole-intake time (older profiles).
+  const factStamps = (intake.factUpdatedAt && typeof intake.factUpdatedAt === 'object' ? intake.factUpdatedAt : null)
+    || (intakeInput?.factUpdatedAt && typeof intakeInput.factUpdatedAt === 'object' ? intakeInput.factUpdatedAt : null) || {};
+  const factAgeDays = (key) => {
+    const t = toTime(factStamps[key]) ?? answeredAt;
+    return t != null ? Math.max(0, Math.round((now - t) / DAY_MS)) : null;
+  };
+  const stale = (key) => { const d = factAgeDays(key); return d != null && d > RECENCY_RULES[key].staleAfterDays; };
 
   // Free text first: several layers read it.
   const freeTextSources = [intake.anythingElse].filter(Boolean);
@@ -779,6 +787,7 @@ export function buildUserProfile(intakeInput, options = {}) {
 
   const recency = {
     answeredAt, answerAgeDays,
+    factAgeDays: Object.fromEntries(Object.keys(RECENCY_RULES).map((k) => [k, factAgeDays(k)])),
     stale: Object.fromEntries(Object.keys(RECENCY_RULES).map((k) => [k, stale(k)])),
   };
 

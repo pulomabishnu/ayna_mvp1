@@ -198,6 +198,7 @@ import { openTodayLog } from './components/today/openLog.js';
 import HomeWidgets from './home/HomeWidgets.jsx';
 import { markReturnToFreeProduct, takeReturnToFreeProduct } from './utils/freeProductCampaign';
 import { trackQuizStarted, trackFirstMatchShown, eventSurface } from './utils/analyticsEvents.js';
+import { stampFactUpdates } from './matching/factFreshness.js';
 
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
 // Today · Shop · Services · Community · Library (founder, Oct 26). Shop keeps the 'explore' key.
@@ -1825,11 +1826,13 @@ function App() {
     const toToday = opts?.land === 'today';
     const toSave = opts?.land === 'save';
     await loadCatalog(); // her matches come from the catalog (already loaded by the quiz page)
-    const completedResults = {
+    // Per-fact freshness: only the answers she changed get a new time
+    // (src/matching/factFreshness.js).
+    const completedResults = stampFactUpdates({
       ...results,
       personalizationCompleted: true,
       personalizationCompletedAt: new Date().toISOString(),
-    };
+    }, quizResults);
     if (!user) {
       // Signed out: show her matches first (the same reveal signed-in users
       // get), then ask her to create an account to keep them.

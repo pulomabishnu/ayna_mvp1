@@ -108,8 +108,12 @@ describe('persona sweep (release gates)', () => {
     expect(v2.gini).toBeLessThanOrEqual(0.6);
     expect(v2.strongShare).toBeLessThanOrEqual(0.3);
     // Floors so variety and coverage do not slip back.
-    expect(v2.catalogCoverage).toBeGreaterThanOrEqual(0.29);
-    expect(v2.avgPicks).toBeGreaterThanOrEqual(2.7);
-    expect(v2.emptyShelfShare).toBeLessThanOrEqual(0.3);
+    // Oct 29 (P0, unknown is not safe): products with an open clinician
+    // review (36 of 281) and unreviewed medicine interactions are held, not
+    // shown. Coverage 0.30 -> 0.25, avg picks 2.8 -> 2.4, empty 0.28 -> 0.38.
+    // They come back as the review queue (product_review_queue) closes.
+    expect(v2.catalogCoverage).toBeGreaterThanOrEqual(0.24);
+    expect(v2.avgPicks).toBeGreaterThanOrEqual(2.3);
+    expect(v2.emptyShelfShare).toBeLessThanOrEqual(0.4);
   });
 });

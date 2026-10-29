@@ -100,8 +100,13 @@ describe('personalized relevance scoring', () => {
         expect(vitex).toBeTruthy();
         expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['Cramps or period pain'] } })).toBe(0);
         expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PCOS support'] } })).toBe(0);
-        // Medicines answered, so the supplement is scored rather than on a safety hold.
-        const pmsMatch = getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } });
+        // Oct 29 (P0): vitex has an open clinician review (passport QA), so
+        // it shows "Match being reviewed" with no percent, for everyone.
+        const held = getProductMatchDetailsForProduct(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } });
+        expect(held.matchStatus).toBe('safety-hold');
+        expect(held.safetyHold.state).toBe('in_review');
+        expect(held.percent).toBeNull();
+        const pmsMatch = held.v2 ? Math.round(held.v2.fit * 100) : 0;
         expect(pmsMatch).toBeGreaterThan(0);
         // v2: research grade B for PMS (NCCIH: low-to-moderate quality trials) and
         // a secondary relevance (an unreviewed research row can't lift it), so
@@ -134,6 +139,8 @@ describe('personalized relevance scoring', () => {
         for (const id of ['p-inositol-wholesome', 'p-spearmint-pcos']) {
             const product = ALL_PRODUCTS.find((entry) => entry.id === id);
             const match = getProductMatchDetailsForProduct(product, pcosOnly);
+            // Open clinician review (Oct 29, P0): no percent at all, never a strong claim.
+            if (match.matchStatus === 'safety-hold') { expect(match.safetyHold.state, id).toBe('in_review'); expect(match.percent, id).toBeNull(); continue; }
             expect(match.percent, id).toBeGreaterThan(0);
             expect(match.percent, id).toBeLessThan(60);
             expect(match.unknowns.some((note) => /evidence.*limited/i.test(note)), id).toBe(true);
@@ -261,7 +268,9 @@ describe('personalized relevance scoring', () => {
         expect(unrelated.percent).toBe(0);
         expect(unrelated.matchStatus).toBe('excluded');
         const diagnosed = getProductMatchDetailsForProduct(iron, { fullHealthIntake: { supportSelections: ['Fatigue or low energy'], diagnosisSelections: ['Anemia or iron deficiency'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } });
-        expect(diagnosed.percent).toBeGreaterThan(0);
+        // 65 mg iron is above the NIH upper limit: open clinician review (P0), so held, not scored.
+        expect(diagnosed.matchStatus).toBe('safety-hold');
+        expect(diagnosed.safetyHold.state).toBe('in_review');
     });
 
     it('returns no personalized percentage when there are no personalization signals', () => {
