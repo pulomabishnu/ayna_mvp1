@@ -23,10 +23,43 @@ function Photo({ product }) {
   return <ProductTileImage product={product} imgStyle={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: '12%' }} letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />} />;
 }
 
-export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'Open my ecosystem →', onPrimary }) {
+// Counts up from 0 when the slide opens (respects reduced motion).
+function useCountUp(target, on, reduced) {
+  const [n, setN] = useState(reduced ? target : 0);
+  useEffect(() => {
+    if (!on || reduced) { setN(target); return undefined; }
+    let raf; const t0 = performance.now();
+    const step = (t) => { const k = Math.min(1, (t - t0) / 700); setN(Math.round(target * (1 - (1 - k) ** 3))); if (k < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [target, on, reduced]);
+  return n;
+}
+function CountUp({ value, on, reduced }) { return <>{useCountUp(value, on, reduced)}</>; }
+
+// The inspo's pink starburst: eight thin points, slowly turning.
+function Burst({ className = '' }) {
+  const pts = [];
+  for (let i = 0; i < 16; i += 1) { const a = (Math.PI * i) / 8; const r = i % 2 ? 9 : 48; pts.push(`${50 + r * Math.cos(a)},${50 + r * Math.sin(a)}`); }
+  return <svg className={`ay-wr-burst ${className}`.trim()} viewBox="0 0 100 100" aria-hidden="true"><polygon points={pts.join(' ')} /></svg>;
+}
+// A ring that fills to `share` (0..1) with a knob at the end, like the inspo's gauge.
+function Ring({ share = 1, children }) {
+  const r = 44; const c = 2 * Math.PI * r; const a = -Math.PI / 2 + 2 * Math.PI * share;
+  return <div className="ay-wr-ring" style={{ '--c': c, '--off': c * (1 - share) }}>
+    <svg viewBox="0 0 100 100" aria-hidden="true"><circle className="ay-wr-ring__track" cx="50" cy="50" r={r} /><circle className="ay-wr-ring__fill" cx="50" cy="50" r={r} /><circle className="ay-wr-ring__knob" cx={50 + r * Math.cos(a)} cy={50 + r * Math.sin(a)} r="4.5" /></svg>
+    <div className="ay-wr-ring__in">{children}</div>
+  </div>;
+}
+// Little bars that grow in, one per match (the inspo's waveform).
+function Bars({ n }) {
+  return <span className="ay-wr-bars" aria-hidden="true">{Array.from({ length: Math.max(3, Math.min(14, n * 3)) }, (_, i) => <i key={i} style={{ '--h': `${30 + ((i * 37) % 70)}%`, '--i': i }} />)}</span>;
+}
+const TILE = ['is-pink', 'is-butter', 'is-blue', 'is-ink'];
+
+export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, moreTopics = [], guest = false }) {
   const picks = products.filter(Boolean);
-  const top = picks.slice(0, 4);
-  const first = top[0];
+  const first = picks[0];
   const intake = quizResults?.fullHealthIntake || null;
   const persona = buildPersona(intake);
   const areas = [...new Set(picks.map((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label).filter(Boolean))];
@@ -34,7 +67,16 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   const firstMatch = Number.isFinite(raw) && raw > 0 ? Math.round(raw) : null;
   const firstWhy = firstMatch ? whyLine(first, getProductMatchDetailsForProduct(first, quizResults)) : '';
   const goals = (intake?.supportSelections || []).filter((s) => s !== 'Nothing right now').length;
-  const slides = picks.length ? ['intro', ...(areas.length ? ['focus'] : []), 'match', ...(persona ? ['persona'] : []), 'lineup', 'finish'] : ['empty'];
+  // Founder, Oct 29: matches per category (animated), each with its top match
+  // and "Show another" to swap it; more personal answers offered BEFORE the
+  // story; the end says "See all your matches".
+  const byArea = areas.map((label) => ({ label, items: picks.filter((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label === label) }))
+    .sort((a, b) => b.items.length - a.items.length);
+  const maxArea = Math.max(1, ...byArea.map((a) => a.items.length));
+  const [swap, setSwap] = useState({});
+  const slides = picks.length
+    ? [...(onPersonalize && moreQuestions > 0 ? ['more'] : []), 'intro', ...(byArea.length ? ['categories'] : []), 'match', ...(persona ? ['persona'] : []), 'finish']
+    : ['empty'];
 
   // Back from the sign-up step reopens the story on its last slide.
   const [index, setIndex] = useState(() => (startAtEnd ? slides.length - 1 : 0));
@@ -51,14 +93,14 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
 
   const gest = useStoryGestures({ onPrev: prev, onNext: next, onClose });
   useEffect(() => {
-    if (paused || gest.held || last || reduced) return undefined;
+    if (paused || gest.held || last || reduced || active === 'more' || active === 'categories') return undefined;
     const t = window.setInterval(() => {
       progressRef.current += 80 / DURATION;
       if (progressRef.current >= 1) { progressRef.current = 0; setProgress(0); setIndex((i) => Math.min(slides.length - 1, i + 1)); }
       else setProgress(progressRef.current);
     }, 80);
     return () => window.clearInterval(t);
-  }, [index, paused, gest.held, last, reduced, slides.length]);
+  }, [index, paused, gest.held, last, reduced, slides.length, active]);
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'ArrowRight') next(); if (e.key === 'ArrowLeft') prev(); if (e.key === 'Escape') onClose?.(); };
     window.addEventListener('keydown', onKey);
@@ -94,16 +136,43 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
       <div className="ays-stage" {...gest.bind}>
         <section className="ays-card" key={active}>
           {active === 'intro' && <>
-            <div className="ays-visual"><p className="ays-big is-huge"><b>{picks.length}</b><small>{picks.length === 1 ? 'pick' : 'picks'}</small></p></div>
+            <div className="ays-visual"><Burst className="is-corner" /><Ring share={Math.min(1, areas.length / Math.max(1, goals || areas.length))}><b><CountUp value={picks.length} on={active === 'intro'} reduced={reduced} /></b><small>{picks.length === 1 ? 'match' : 'matches'}</small></Ring></div>
             <div className="ays-words">
               <p className="ays-kicker">Your ecosystem is ready</p>
               <h1 className="ays-title">Your ayna, wrapped</h1>
               <p className="ay-wr-stat"><strong>{areas.length}</strong><span>{areas.length === 1 ? 'area' : 'areas'}</span>{goals > 0 && <><i aria-hidden="true" /><strong>{goals}</strong><span>{goals === 1 ? 'goal' : 'goals'}</span></>}</p>
             </div>
           </>}
-          {active === 'focus' && <>
-            <div className="ays-words"><p className="ays-kicker">Your ecosystem covers</p></div>
-            <ol className="ay-wr-ranks">{areas.slice(0, 3).map((a, i) => { const p = picks.find((x) => resolveEcosystemProductArea(x, ECOSYSTEM_AREAS)?.label === a); return <li key={a}><span>{i + 1}</span><strong>{a}</strong>{p && plate(p, 'ay-wr-rankplate')}</li>; })}</ol>
+          {active === 'more' && <>
+            <div className="ays-visual"><Burst /></div>
+            <div className="ays-words">
+              <p className="ays-kicker">Before your summary</p>
+              <h1 className="ays-title">Make your matches more personal</h1>
+              <p className="ays-body">Your matches use what you’ve told us so far. {moreQuestions} quick {moreQuestions === 1 ? 'question' : 'questions'} sharpen them:</p>
+              {moreTopics.length > 0 && <ul className="ay-wr-topics">{moreTopics.slice(0, 6).map((t, i) => <li key={t} style={{ '--i': i }}>{t}</li>)}</ul>}
+              <p className="ays-body is-small">About 2 minutes. Skip any you like.</p>
+            </div>
+            <div className="ays-act">
+              <button type="button" className="ays-cta" onClick={onPersonalize}>Answer {moreQuestions} quick {moreQuestions === 1 ? 'question' : 'questions'}</button>
+              <div className="ay-wr-secondary"><button type="button" className="ays-link" onClick={next}>Not now, show my summary</button></div>
+            </div>
+          </>}
+          {active === 'categories' && <>
+            <div className="ays-words"><p className="ays-kicker">Your matches by category</p></div>
+            <ol className="ay-wr-bento">{byArea.slice(0, 4).map((a, i) => {
+              const at = (swap[a.label] || 0) % a.items.length;
+              const p = a.items[at];
+              return <li key={a.label} className={TILE[i % TILE.length]} style={{ '--d': `${i * 110}ms` }}>
+                <div className="ay-wr-bento__top">
+                  <span className="ay-wr-bento__label">{a.label}</span>
+                  {p && plate(p, 'ay-wr-bento__plate')}
+                </div>
+                <strong className="ay-wr-bento__n"><CountUp value={a.items.length} on={active === 'categories'} reduced={reduced} /><small>{a.items.length === 1 ? 'match' : 'matches'}</small></strong>
+                <Bars n={a.items.length} />
+                {p && <p className="ay-wr-bento__pick" key={p.id}><span>Top match</span><b>{p.name}</b></p>}
+                {a.items.length > 1 && <button type="button" className="ay-wr-bento__swap" onClick={() => setSwap((m) => ({ ...m, [a.label]: (m[a.label] || 0) + 1 }))} aria-label={`Show another ${a.label} match`}>Show another</button>}
+              </li>;
+            })}</ol>
           </>}
           {active === 'match' && first && <>
             <div className="ays-visual">
@@ -122,12 +191,8 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
             <div className="ays-words"><p className="ays-kicker">How you shop</p><h1 className="ays-title">{persona.title}</h1></div>
             <dl className="ay-wr-facts">{persona.facts.map(([l, v]) => <div key={l}><dt>{l}</dt><dd>{v}</dd></div>)}</dl>
           </>}
-          {active === 'lineup' && <>
-            <div className="ay-wr-grid">{top.map((p, i) => <span key={p.id || i} className="ay-wr-cell">{plate(p)}</span>)}</div>
-            <div className="ays-words"><p className="ays-kicker">Your picks</p><h1 className="ays-title">{picks.length} {picks.length === 1 ? 'pick' : 'picks'} that fit your answers</h1></div>
-          </>}
           {active === 'finish' && <>
-            <div className="ays-visual">
+            <div className="ays-visual"><Burst className="is-corner" />
               <div className="ay-wr-card">
                 <span className="ay-wr-card-mark">ayna</span>
                 <strong className="ay-wr-card-title">{persona?.title || 'My ecosystem'}</strong>
@@ -145,7 +210,8 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" /></svg>
                   Invite a friend
                 </button>
-                <button type="button" className="ays-link" onClick={onBrowse}>Browse instead</button>
+                {/* Guest: the main button saves; this one shows her matches without an account. */}
+                <button type="button" className="ays-link" onClick={onBrowse}>{guest ? 'See all your matches' : 'Browse the Shop'}</button>
               </div>
               <p id="wrapped-invite-note" className="ay-wr-invite-note">Shares an invitation to ayna, not your health results.</p>
             </div>
@@ -158,7 +224,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
       </div>
       <div className="ays-nav">
         <button type="button" className="ays-icon" onClick={prev} disabled={index === 0} aria-label="Previous slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
-        {!last ? <button type="button" className="ays-link ay-wr-skip" onClick={() => { progressRef.current = 0; setProgress(0); setIndex(slides.length - 1); }}>Skip to my products</button> : <span aria-hidden="true">{index + 1} of {slides.length}</span>}
+        {!last ? <button type="button" className="ays-link ay-wr-skip" onClick={() => { progressRef.current = 0; setProgress(0); setIndex(slides.length - 1); }}>Skip to the end</button> : <span aria-hidden="true">{index + 1} of {slides.length}</span>}
         <button type="button" className="ays-icon" onClick={next} disabled={last} aria-label="Next slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
       </div>
     </div>

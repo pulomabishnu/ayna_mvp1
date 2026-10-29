@@ -77,3 +77,53 @@
 @media (prefers-reduced-motion: reduce) { .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-arc { animation: none; } }
 
 .ays.ay-wr .ay-wr-invite-note { margin: 8px 0 0; text-align: center; font: 400 13px/1.5 var(--ay-sans-stack, sans-serif); color: inherit; }
+
+/* Oct 29, from the inspo board: a pink starburst, a ring gauge with a knob,
+   colour-blocked bento tiles with big numbers and growing bars. Everything
+   animates in once per slide; reduced motion shows the end state. */
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-visual { position: relative; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-burst { width: min(46%, 180px); fill: var(--s-pink); animation: ayWrSpin 18s linear infinite, ayWrPop .6s cubic-bezier(.2,1.4,.4,1) both; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-burst.is-corner { position: absolute; top: -6px; right: -4px; width: 86px; opacity: .95; z-index: 0; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-body.is-small { font-size: 14px; opacity: .8; }
+
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-ring { position: relative; width: min(70%, 260px); aspect-ratio: 1; z-index: 1; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-ring svg { width: 100%; height: 100%; transform: rotate(0deg); overflow: visible; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-ring__track { fill: none; stroke: color-mix(in srgb, var(--s-fg) 18%, transparent); stroke-width: 6; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-ring__fill { fill: none; stroke: var(--s-pink); stroke-width: 6; stroke-linecap: round; stroke-dasharray: var(--c); stroke-dashoffset: var(--off); transform: rotate(-90deg); transform-origin: 50% 50%; animation: ayWrRing 1.1s cubic-bezier(.2,.8,.2,1) both; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-ring__knob { fill: var(--s-butter, #ffedac); stroke: var(--s-pink); stroke-width: 2; animation: ayWrPop .5s 1s both; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-ring__in { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; color: var(--s-fg); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-ring__in b { font: 700 clamp(72px, 22vw, 112px)/.85 var(--s-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-ring__in small { font: 600 16px/1.2 var(--s-ui); opacity: .8; margin-top: 6px; }
+
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-topics { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 8px; padding: 0; list-style: none; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-topics li { padding: 8px 12px; border-radius: 999px; background: var(--s-pink); color: #3e2723; font: 600 14px/1.2 var(--s-ui); animation: ayWrIn .4s ease-out both; animation-delay: calc(var(--i) * 70ms + 200ms); }
+
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; padding: 0; list-style: none; width: 100%; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento li { position: relative; display: grid; align-content: start; gap: 6px; min-height: 176px; padding: 12px; border-radius: 22px; box-sizing: border-box; color: #3e2723; animation: ayWrTile .55s cubic-bezier(.2,1.2,.4,1) both; animation-delay: var(--d, 0ms); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento li.is-pink { background: #f7badd; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento li.is-butter { background: #ffedac; border: 1.5px solid #3e2723; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento li.is-blue { background: #c9dceb; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento li.is-ink { background: #3e2723; color: #ffedac; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento__label { font: 700 15px/1.15 var(--s-ui); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento__plate { flex: none; width: 40px; height: 40px; padding: 3px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento__plate > span { inset: 3px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento__n { display: flex; align-items: baseline; gap: 6px; font: 700 44px/.9 var(--s-display); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento__n small { font: 600 13px/1 var(--s-ui); letter-spacing: 0; opacity: .8; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bars { display: flex; align-items: flex-end; gap: 3px; height: 22px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bars i { display: block; width: 3px; height: var(--h); border-radius: 2px; background: currentColor; opacity: .85; transform-origin: bottom; animation: ayWrBar .6s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--d, 0ms) + var(--i) * 35ms + 250ms); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento__pick { display: grid; gap: 1px; margin: 2px 0 0; font: 500 12px/1.3 var(--s-ui); animation: ayWrIn .35s ease-out both; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento__pick span { opacity: .75; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento__pick b { font-weight: 700; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento__swap { justify-self: start; min-height: 32px; padding: 0 12px; border-radius: 999px; border: 1.5px solid currentColor; background: transparent; color: inherit; font: 700 12px/1 var(--s-ui); cursor: pointer; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-bento__swap:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+@keyframes ayWrIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes ayWrTile { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: none; } }
+@keyframes ayWrBar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes ayWrRing { from { stroke-dashoffset: var(--c); } to { stroke-dashoffset: var(--off); } }
+@keyframes ayWrPop { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }
+@keyframes ayWrSpin { to { rotate: 360deg; } }
+@media (prefers-reduced-motion: reduce) {
+  .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ay-wr-burst, .ay-wr-ring__fill, .ay-wr-ring__knob, .ay-wr-topics li, .ay-wr-bento li, .ay-wr-bars i, .ay-wr-bento__pick) { animation: none; }
+}

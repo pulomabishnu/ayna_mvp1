@@ -145,6 +145,7 @@ export const URGENT_STATUS = ['Yes', 'No', 'Not sure'];
 export const BREASTFEEDING_STATUS = ['Yes', 'No', 'Prefer not to say'];
 // Follow-up question copy, shared so the app and the website ask the same thing.
 export const FOLLOWUP_QUESTIONS = {
+  utiFrequency: 'How often do you get UTI symptoms?',
   ttcDuration: 'How long have you been trying?',
   pregnancyTrimester: 'How far along are you?',
   postpartumTiming: 'How long ago did you give birth?',
@@ -984,13 +985,13 @@ export function getIntakeSteps(intake) {
   const postpartumStepOwn = postpartumRequired(intake) && !hasLifeStage(intake, 'I am postpartum');
   return [
     // Required minimum
-    req({ id: 'age', section: 'core', title: 'Your age', type: 'age', info: 'We use your age to skip products that are not meant for you, like menopause supplements in your 20s. Type it, tap plus or minus, or slide the ruler.' }),
+    req({ id: 'age', section: 'core', title: 'Your age', type: 'age', info: 'Some products have an age range on the label, so we check it. Your life stage comes from what you tell us, never from your age. Type it, tap plus or minus, or slide the ruler.' }),
     req({ id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', info: 'Pick every stage that fits right now. You can be in perimenopause and still have regular periods. It changes what we show, for example pregnancy-safe picks only, or midlife support. Not sure, or rather not say? Those count too.' }),
     req({ id: 'support', section: 'support', title: 'What needs support?', type: 'support', info: 'Pick everything you want help with. Each one becomes its own shelf of products in your ecosystem. Use the tabs or search to find more. "Nothing right now" counts too.' }),
     ...(flowRequired(intake) && periodQuestionsApply(intake) ? [req(flowStep)] : []),
     ...(painRequired(intake) && periodQuestionsApply(intake) ? [req({ id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list.' })] : []),
     ...(ttcStepOwn ? [req(ttcStep)] : []),
-    ...(utiRequired(intake) ? [req({ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', info: 'How often UTI-type symptoms come back. Symptoms right now point you to testing and care first; repeat symptoms bring prevention forward.' })] : []),
+    ...(utiRequired(intake) ? [req({ id: 'utiFrequency', section: 'support', title: FOLLOWUP_QUESTIONS.utiFrequency, subtitle: 'Burning, urgency or peeing more often', type: 'utiFrequency', info: 'How often UTI-type symptoms come back. Symptoms right now point you to testing and care first; repeat symptoms bring prevention forward.' })] : []),
     ...(postpartumStepOwn ? [req({ id: 'postpartumTiming', section: 'support', title: FOLLOWUP_QUESTIONS.postpartumTiming, type: 'postpartumTiming', info: 'How long since you gave birth. Recovery, nursing and hair needs change a lot over the first year.' })] : []),
     req({ id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', info: 'Only conditions a clinician has diagnosed. Some products are not a good fit with certain conditions, so we filter those out. "None", "Not sure" and "Prefer not to answer" all count.' }),
     req({ id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', info: 'Anything you react to. Products with these ingredients or materials will not show up in your picks.' }),
@@ -1050,4 +1051,23 @@ export function firstOptionalResumeStepId(intake) {
   const skipped = intake.skippedSteps || [];
   const open = optional.filter((s) => !isStepAnswered(s.id, intake));
   return (open.find((s) => !skipped.includes(s.id)) || open[0] || optional[0])?.id || CHECKPOINT_STEP;
+}
+
+// What each optional question is about, in plain words (Wrapped's "more
+// personal matches" card names them instead of a vague "add to my answers").
+const OPTIONAL_TOPIC = {
+  products: 'Products you’ve tried', avoidRepeat: 'Products to skip', formats: 'Formats you like',
+  recommendationCount: 'How many picks per need', priceRange: 'Your budget', brandOpenness: 'Brands you trust',
+  trustedBrands: 'Brands you trust', avoidIngredients: 'Ingredients to avoid', fsaHsa: 'FSA or HSA',
+  trust: 'What matters most to you', zip: 'Your ZIP code, for care near you',
+};
+/** Plain names of the optional questions she has not answered yet (deduped, in order). */
+export function remainingOptionalTopics(intake) {
+  const out = [];
+  for (const s of splitIntakeSteps(intake).optional) {
+    if (isStepAnswered(s.id, intake)) continue;
+    const t = OPTIONAL_TOPIC[s.id];
+    if (t && !out.includes(t)) out.push(t);
+  }
+  return out;
 }

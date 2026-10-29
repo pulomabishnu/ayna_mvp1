@@ -58,14 +58,18 @@ export function tierOf(score) {
 
 // Match labels (founder, Oct 24): 80+ Strong fit, 60 to 79 Good fit, under 60
 // no label (under 50 the number itself becomes "Partial fit").
-export function fitLabel(score) {
+// band: the engine's band when known (v2.bandFor). An 80+ that the engine did
+// not call Strong (low confidence: an answer it needed is missing) reads
+// "Good fit", so the word never claims more than the engine does (review, Oct 29).
+export function fitLabel(score, band = null) {
   const s = Number(score);
   if (!Number.isFinite(s)) return '';
-  return s >= 80 ? 'Strong fit' : s >= 60 ? 'Good fit' : '';
+  if (s >= 80) return band && band !== 'strong' ? 'Good fit' : 'Strong fit';
+  return s >= 60 ? 'Good fit' : '';
 }
 
-export function tierWord(tier, score) {
-  if (Number.isFinite(Number(score)) && score != null) return fitLabel(score);
+export function tierWord(tier, score, band = null) {
+  if (Number.isFinite(Number(score)) && score != null) return fitLabel(score, band);
   return TIER_WORDS[tier] || TIER_WORDS[tierOf(score)];
 }
 

@@ -1,7 +1,7 @@
 import { shownMatchPercent } from '../../utils/matchDisplay.js';
 
 export const WEB_ECO_VIEWS = [
-  ['mine', 'My products'],
+  ['mine', 'All'],
   ['picks', 'ayna picks'],
   ['saved', 'Saved'],
   ['routine', 'Routine'],

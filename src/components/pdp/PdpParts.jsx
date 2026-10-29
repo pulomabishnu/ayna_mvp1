@@ -324,9 +324,9 @@ export function MatchLockup({ state, breakdown = null, onAskWhy = null, onFull =
   return (
     <div className="ayv-lock" data-tour="pdp-why">
       <p className="ayv-lock__row">
-        <MatchPill percent={state.percent} size="lock" className="ayv-lock__pill" />
+        <button type="button" className="ayv-lock__pillbtn" aria-label={`${shown != null ? `${shown}% match` : 'Partial fit'}. Why this match?`} aria-expanded={open} aria-controls={`${idBase}-panel`} onClick={() => setOpen((v) => !v)}><MatchPill percent={state.percent} size="lock" className="ayv-lock__pill" /></button>
         {reason && <span className="ayv-lock__reason">{reason}.</span>}
-        {' '}<button type="button" className="ayv-lock__why" aria-expanded={open} aria-controls={`${idBase}-panel`} aria-label={open ? 'Hide what this match means' : `What's this? Why ${shown != null ? `${shown}%` : 'this fit'}`} onClick={() => setOpen((v) => !v)}>{open ? 'Hide' : 'What’s this?'}</button>
+        {' '}<button type="button" className="ayv-lock__why" aria-expanded={open} aria-controls={`${idBase}-panel`} aria-label={open ? 'Hide what this match means' : `What's this? Why ${shown != null ? `${shown}%` : 'this fit'}`} onClick={() => setOpen((v) => !v)}>{open ? 'Hide' : 'Why this match?'}</button>
       </p>
       <div id={`${idBase}-panel`} className="ayv-lock__panel" hidden={!open || undefined}>
         <MatchExplain breakdown={breakdown} onFull={onFull} onAskWhy={onAskWhy} shown={shown} />

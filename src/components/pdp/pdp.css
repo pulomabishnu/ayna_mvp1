@@ -3047,3 +3047,6 @@ html body :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-p
    vibe-coded"). The tab bar, the Ask/Buy column and the compare table's first column all scroll
    with the page. ---- */
 html body :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) :is(.ayq-st, .ayv-sum2__side) { position: static !important; top: auto !important; }
+/* Oct 29: the match pill opens "Why this match?" too (people tap the number). */
+html body .ayv-lock__pillbtn { display: inline-flex; padding: 0 !important; margin: 0; border: 0 !important; background: none !important; box-shadow: none !important; cursor: pointer; min-height: 0 !important; border-radius: 999px; }
+html body .ayv-lock__pillbtn:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }

@@ -67,7 +67,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
               ? <div className="ayna-match-ring" aria-hidden="true" style={{ '--match-angle': `${percent * 3.6}deg` }}><span>{percent}<small>%</small></span></div>
               : <div className="ayna-match-ring is-partial" aria-hidden="true" style={{ '--match-angle': '0deg' }}><span><small>{PARTIAL_FIT}</small></span></div>}
             <div>
-              {tierWord(tier, percent) && <span className="ay-match-tier">{tierWord(tier, percent)}</span>}
+              {tierWord(tier, percent, details?.v2?.band) && <span className="ay-match-tier">{tierWord(tier, percent, details?.v2?.band)}</span>}
               <h2>{needHeadline(percent, best?.phrase)}</h2>
               {whyLine(product, details, { max: 2 }) && <p className="ay-match-why">{whyLine(product, details, { max: 2 })}</p>}
               <p className="ay-match-based">{BASED_ON_LINE}</p>

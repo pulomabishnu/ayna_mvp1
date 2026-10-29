@@ -136,7 +136,7 @@ import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, productRouteKey, parseProductIdFromPath } from './utils/productRoute';
 import { productSeoTitle, productSeoDescription } from './utils/seoMeta';
 import { SEO_PAGES, HOME_TITLE, HOME_DESCRIPTION, isNoindexPath } from './utils/seoPages.js';
-import { INTAKE_DRAFT_KEY, getIntakeSteps, optionalProgress, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
+import { INTAKE_DRAFT_KEY, getIntakeSteps, optionalProgress, remainingOptionalTopics, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
 import { clearIntakeDraft, readDraftProgress } from './mobile/data/quizDraftProgress';
 import FinishQuizCard, { MorePersonalCard } from './components/FinishQuizCard';
 import './styles/flow.css';
@@ -1647,12 +1647,18 @@ function App() {
   // Drafts are kept per device (the server only stores finished answers).
   const handleResumeQuiz = () => { setQuizResume(true); setCurrentView('quiz'); };
   const handleStartQuizOver = () => { clearIntakeDraft(); handleRedoQuiz(); };
+  const wrappedAfterPersonalizeRef = useRef(false);
   const handlePersonalizeQuiz = () => { setEditAtOptional(true); setCurrentView('profile-edit'); };
   const webQuizDraft = !quizResults && !authLoading && !dataLoading && !['quiz', 'profile-edit'].includes(currentView) ? readDraftProgress({ surface: 'web' }) : null;
   const finishQuizCard = (compact = false) => (webQuizDraft ? <FinishQuizCard variant="web" compact={compact} progress={webQuizDraft} onContinue={handleResumeQuiz} onStartOver={handleStartQuizOver} /> : null);
   let webOptionalRemaining = 0;
+  let webOptionalTopics = [];
   if (quizResults?.fullHealthIntake && !webQuizDraft) {
-    try { webOptionalRemaining = optionalProgress(reconstructIntakeFromSnapshot(quizResults.fullHealthIntake)).remaining; } catch { webOptionalRemaining = 0; }
+    try {
+      const rebuilt = reconstructIntakeFromSnapshot(quizResults.fullHealthIntake);
+      webOptionalRemaining = optionalProgress(rebuilt).remaining;
+      webOptionalTopics = remainingOptionalTopics(rebuilt);
+    } catch { webOptionalRemaining = 0; }
   }
   // One quiz card at a time: an unfinished quiz first, else the optional questions.
   const ecosystemQuizCard = webQuizDraft ? finishQuizCard() : (user && webOptionalRemaining > 0 ? <MorePersonalCard remaining={webOptionalRemaining} onAnswer={handlePersonalizeQuiz} /> : null);
@@ -1920,7 +1926,9 @@ function App() {
       concernsCount: Array.isArray(completedResults.primaryConcerns) ? completedResults.primaryConcerns.length : 0,
       conditionsCount: Array.isArray(completedResults.conditions) ? completedResults.conditions.length : 0,
     });
-    if (toToday) { markOnboardingDone(); setCurrentView('today'); return; }
+    // ayna Wrapped after every finished quiz (founder, Oct 29: "what happened
+    // to ayna Wrapped"), also when she chose "See my Today" on the reveal.
+    if (toToday) { markOnboardingDone(); setCurrentView('today'); setShowWrapped(true); return; }
     setCurrentView('ecosystem');
     setShowWrapped(true);
   };
@@ -1977,6 +1985,8 @@ function App() {
       }).catch(e => reportSaveFailure('Could not save your ecosystem', e));
     }
     setCurrentView('ecosystem');
+    // Came from Wrapped's "Add to my answers": back to the summary with the new picks.
+    if (wrappedAfterPersonalizeRef.current) { wrappedAfterPersonalizeRef.current = false; setShowWrapped(true); }
   };
 
   const handleSwapEcosystemSeedProduct = (oldProductId, newProduct) => {
@@ -2680,6 +2690,7 @@ function App() {
               setPendingQuizResults(null);
               setPendingAction(null); pendingActionRef.current = null;
             }}
+            guest
             primaryLabel="Save my matches →"
             onPrimary={() => { setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
             onClose={() => { setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
@@ -2701,6 +2712,10 @@ function App() {
             onClose={() => { setShowWrapped(false); if (user && takeReturnToFreeProduct()) setCurrentView('free-product'); }}
             onBack={handleWrappedBackToQuiz}
             onBrowse={() => { setShowWrapped(false); handleViewDiscovery(''); }}
+            onPrimary={() => { setShowWrapped(false); setCurrentView('ecosystem'); }}
+            moreQuestions={webOptionalRemaining}
+            moreTopics={webOptionalTopics}
+            onPersonalize={() => { setShowWrapped(false); wrappedAfterPersonalizeRef.current = true; handlePersonalizeQuiz(); }}
           />
         )}
         {currentView === 'community' && (

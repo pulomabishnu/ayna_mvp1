@@ -10,11 +10,11 @@ import { whyLine } from '../utils/whyLine.js';
 export const PARTNER_NOTE = 'Partnerships never change this score.';
 
 /** One label per percent (founder, Oct 24): 80+ Strong fit, 60 to 79 Good fit, under 50 Partial fit. */
-export function matchLabel(percent) {
+export function matchLabel(percent, band = null) {
   const n = Number(percent);
   if (!Number.isFinite(n) || n <= 0) return '';
   if (shownMatchPercent(n) == null) return PARTIAL_FIT;
-  return fitLabel(n);
+  return fitLabel(n, band);
 }
 
 /**
@@ -65,7 +65,7 @@ export function breakdownFromDetails(product, details) {
   const unknown = (v2?.unknown || []).map((u) => ({ factor: u.factor, text: u.text }));
   return {
     percent: details.percent,
-    label: matchLabel(details.percent),
+    label: matchLabel(details.percent, details.v2?.band || null),
     status,
     raised,
     lowered,
