@@ -193,6 +193,13 @@ export function carriesIngredients(pp) {
   return Boolean(pp.ingested || pp.formats.includes('topical') || pp.formats.includes('suppository') || pp.formats.includes('period_care')
     || ALLERGEN_CONTACT_CATEGORIES.has(String(pp.category || '').toLowerCase()));
 }
+// Materials and scents are not a question for something only swallowed (a
+// gummy has no latex band or perfume); everything else stays a question.
+const MATERIAL_OR_SCENT = new Set(['latex', 'adhesives', 'nickel', 'synthetic_materials', 'fragrance', 'essential_oils']);
+function allergenApplies(attr, pp) {
+  const touches = pp.formats.includes('topical') || pp.formats.includes('suppository') || pp.formats.includes('period_care') || !pp.ingested;
+  return touches || !MATERIAL_OR_SCENT.has(attr);
+}
 // Routes where a medicine interaction matters (swallowed, absorbed inside).
 function systemicRoute(pp, hormoneActive) {
   return Boolean(pp.ingested || pp.formats.includes('suppository') || hormoneActive);
@@ -316,7 +323,7 @@ export function evaluateSafety(productOrProfile, up) {
         if (d.variant) {
           penalize('allergen_variant', `Some versions contain ${phrase}`);
           cautions.push({ code: 'allergen_variant', text: `Some versions contain ${phrase}. Choose the ${phrase}-free version.` });
-        } else if (carriesIngredients(pp)) {
+        } else if (carriesIngredients(pp) && allergenApplies(a.attr, pp)) {
           // Unknown is not safe (audit C): held until we know.
           missingProductInfo.push('allergen_info');
         } else {
