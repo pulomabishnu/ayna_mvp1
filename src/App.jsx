@@ -169,6 +169,7 @@ import { proDoor, retakeDoor, proNow } from './pro/proDoor.js';
 import { openProPaywall } from './pro/paywall.js';
 import { Capacitor } from '@capacitor/core';
 import AppOnlySheet from './components/AppOnlySheet.jsx';
+import { resetRoutineData } from './utils/resetRoutine.js';
 import WebHomeTop from './components/you/WebHomeTop.jsx';
 import { readHomeLook } from './mobile/components/homeLook.js';
 import { webHomeView } from './mobile/utils/navTab.js';
@@ -1660,6 +1661,7 @@ function App() {
     }
     forgetSharedIntake();
     try { localStorage.removeItem(INTAKE_DRAFT_KEY); } catch { /* storage blocked */ }
+    resetRoutineData();
     setMyProducts({});
     setTrackedProducts({});
     setOmittedProducts({});

@@ -87,6 +87,7 @@ import NewAccountStart from '../components/NewAccountStart.jsx';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from '../utils/oauthNewAccount.js';
 import EcosystemScreen from './screens/EcosystemScreen.jsx';
 import EcosystemResetDialog from './components/EcosystemResetDialog.jsx';
+import { resetRoutineData } from '../utils/resetRoutine.js';
 import SavedScreen from './screens/SavedScreen.jsx';
 import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
 import { AskContext, AppHeaderContext } from './askContext.js';
@@ -1137,6 +1138,7 @@ export default function MobileApp() {
       updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false, pendingQuiz: null, routineHave: {}, routineExcluded: {}, routineOutcomesByUser: {} });
       setEcosystemNotice('');
       try { localStorage.removeItem('ayna_intake_draft_v1'); } catch { /* storage unavailable */ }
+      resetRoutineData();
       setHasIntakeDraft(false);
       setIntakeMode('new');
       setEditingHealthProfile(false);

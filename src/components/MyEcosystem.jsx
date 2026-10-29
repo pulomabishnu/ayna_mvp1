@@ -1,6 +1,7 @@
 import NeedRoutines from './routine/NeedRoutines.jsx';
 import { useRoutines } from './routine/useRoutines.js';
 import { categoryStarterOptions } from './search/starterOptions.js';
+import { ECOSYSTEM_RESET_COPY } from '../utils/resetRoutine.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { ecosystemCounts } from '../utils/ecosystemCounts.js';
 import { relatedNeedSuggestions } from '../matching/relatedNeeds';
@@ -2219,7 +2220,7 @@ export default function MyEcosystem({
                                     )
                                 )}
                                 {typeof onResetEcosystem === 'function' && (
-                                    <ConfirmButton role="menuitem" className="ay-confirm" ms={8000} cancelLabel="Cancel, keep everything" armedLabel="Tap again to erase your ecosystem, its tracking and your quiz answers. Saved products and check-ins stay." onConfirm={(e) => { e.currentTarget.closest('details').open = false; onResetEcosystem(); }}>Reset my ecosystem</ConfirmButton>
+                                    <ConfirmButton role="menuitem" className="ay-confirm" ms={8000} cancelLabel="Cancel, keep everything" armedLabel={`Tap again to reset. ${ECOSYSTEM_RESET_COPY}`} onConfirm={(e) => { e.currentTarget.closest('details').open = false; onResetEcosystem(); }}>Reset my ecosystem</ConfirmButton>
                                 )}
                             </div>
                         </details>
