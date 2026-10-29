@@ -49,9 +49,8 @@
  * list is the single source of truth for BOTH "is this a partner" and what
  * order partners sort in, so the two can't drift out of sync.
  *
- * The team's order also has Cool Comforts (VPod, 17th, hidden). It isn't on
- * the site yet, so it's left out until its products go live; slot it back in
- * at that position then.
+ * Cool Comforts (VPod) is 17th in the team's order; slotted back in
+ * 2026-10-29 when its products went live again.
  *
  * Added 2026-10-27: GoodCycle (DailyBasis), confirmed brand partner, at its
  * 10th place in the team's order.
@@ -77,6 +76,7 @@ export const PARTNER_BRAND_ORDER = [
   /\btampon tribe\b/, // Tampon Tribe (partner from 2026-10-17)
   /\bmy pelvic bra\b/, // My Pelvic Bra
   /\bvio2\b/, // VIO2
+  /\bvpod\b/, // VPod (Cool Comforts Co.), live again from 2026-10-29
 ];
 
 /** Back-compat alias: the redesign's components/tests import this name. */
@@ -91,7 +91,7 @@ export const PARTNER_BRAND_PATTERNS = PARTNER_BRAND_ORDER;
 export const PARTNER_BRANDS = [
   'Rèsa', 'BUNI', 'LiM Method', 'Winx Health', 'Momotaro Apotheca', 'Neycher', 'SootheHer', 'Alubri',
   'Connect Pelvic Floor Fitness', 'Elitone', 'GoodCycle', 'LOLA', 'Proov', 'gina', 'Tampon Tribe',
-  'My Pelvic Bra', 'VIO2',
+  'My Pelvic Bra', 'VIO2', 'VPod',
 ].map((name, i) => ({ name, pattern: PARTNER_BRAND_ORDER[i] }));
 
 /**

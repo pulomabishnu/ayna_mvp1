@@ -37,8 +37,7 @@ import { RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_URL } from '../data/res
 const PARTNERS = [
   // Display order set by the team 2026-10-17 (same order as the partner pin
   // in Shop/Discovery, see PARTNER_BRAND_ORDER in src/utils/partnerBrands.js).
-  // Cool Comforts (VPod, hidden) is in that order too but has no card yet:
-  // it's not on the site.
+  // Cool Comforts (VPod) is last, 17th in the team's order.
   {
     // First "for now" at Eliz's request (2026-10-17); pre-launch, so it keeps
     // its highlighted waitlist card.
@@ -184,6 +183,14 @@ const PARTNERS = [
     url: 'https://go.shopmy.us/p-83948920',
     blurb:
       'Dentist-designed mouth tape that encourages nasal breathing during sleep.',
+  },
+  {
+    // Cool Comforts Co., 17th in the team's order; live again 2026-10-29.
+    brand: 'VPod',
+    logo: '',
+    url: 'https://hervpod.com',
+    blurb:
+      'Reusable cooling gel pods for external vulvar itching, burning and irritation.',
   },
   // Liv Labs (Pippa Resistance Spring) is NOT yet a confirmed partner, its
   // two products stay in the catalog (src/data/brands.js) so they still

@@ -6297,11 +6297,14 @@ export const BRAND_PRODUCTS = [
     // public/products/vpod/. affiliateUrl values are Ayna's Shopify Collabs
     // short links (2026-10-16), each verified to redirect to its own product.
     //
-    // HIDDEN 2026-10-17 (not deleted) so Eliz can fix the descriptions. To make
-    // it live again, follow "Hidden products" in CLAUDE.md.
+    // Hidden 2026-10-17 so Eliz could fix the descriptions; live again
+    // 2026-10-29 at Eliz's request after the fix: per Dr. K (VPod's CEO), the
+    // 20 minutes is how long the pod touches the skin, not how long relief
+    // lasts, so the summaries no longer state a relief time (the 20-minute
+    // wear limit stays in How to use). hervpod.com re-read 2026-10-29: the
+    // pods are now listed as reusable everywhere (replace every 30 days).
     {
         id: 'p-vpod-everyday-comfort-single',
-        hidden: true,
         name: 'VPod Everyday Comfort Single Pack',
         brand: 'VPod',
         category: 'intimate-care',
@@ -6315,13 +6318,13 @@ export const BRAND_PRODUCTS = [
         affiliateUrl: 'https://collabs.shop/bxd4fg',
         faqUrl: 'https://hervpod.com/pages/faq',
         image: '/products/vpod/everyday-comfort-single.webp',
-        summary: 'A reusable, drug-free cooling gel pod you freeze and place in your underwear for up to 20 minutes of relief from external vulvar and vaginal itching, burning, dryness, irritation, or swelling. The curved, flexible pod has a 100% medical-grade silicone exterior that stays in place without adhesive. VPod markets it for yeast infections, BV, allergies, perimenopause and menopause, pregnancy and postpartum, and after sex or workouts; it eases symptoms but doesn’t treat their cause. One pod per pack.',
+        summary: 'A reusable, drug-free cooling gel pod you freeze and place in your underwear to relieve external vulvar and vaginal itching, burning, dryness, irritation, or swelling. Clean it after each use and refreeze it; VPod recommends replacing each pod every 30 days. The curved, flexible pod has a 100% medical-grade silicone exterior that stays in place without adhesive. VPod markets it for yeast infections, BV, allergies, perimenopause and menopause, pregnancy and postpartum, and after sex or workouts; it eases symptoms but doesn’t treat their cause. One pod per pack.',
         safety: {
             fdaStatus: 'Registered with the FDA as an over-the-counter medical product, per hervpod.com. FDA registration means the company and product are listed with the FDA; it is not FDA clearance or approval.',
             materials: 'Each pod is 3 in long x 2.5 in wide, with a 100% medical-grade silicone exterior and a flexible gel interior (the gel itself isn\'t disclosed). Hypoallergenic, odor-free, and sterile when packaged. Made in China for Cool Comforts Co. (Cincinnati, OH).',
             recalls: 'No recalls are mentioned on hervpod.com; check current FDA and manufacturer recall notices.',
             sideEffects: 'Cold can feel too intense on sensitive skin, so VPod says to test the temperature first and limit each use to 20 minutes. Full warnings are listed below.',
-            opinionAlerts: 'hervpod.com contradicts itself on reuse: the product page says single-use and "Do not reuse," but its FAQ and full instructions say the pod is reusable for up to 30 days with cleaning. ayna follows the detailed instructions; check the package insert.',
+            opinionAlerts: 'VPod is reusable: clean it after each use, disinfect it at least daily, and replace each pod every 30 days or sooner if damaged (VPod\'s instructions).',
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of ACOG guidance and a Cochrane review; not a direct clinician quote. Product details are from hervpod.com.',
@@ -6394,7 +6397,6 @@ export const BRAND_PRODUCTS = [
     },
     {
         id: 'p-vpod-everyday-comfort-3-pack',
-        hidden: true,
         name: 'VPod Everyday Comfort 3 Pack',
         brand: 'VPod',
         category: 'intimate-care',
@@ -6408,13 +6410,13 @@ export const BRAND_PRODUCTS = [
         affiliateUrl: 'https://collabs.shop/dozcta',
         faqUrl: 'https://hervpod.com/pages/faq',
         image: '/products/vpod/everyday-comfort-3-pack.webp',
-        summary: 'A reusable, drug-free cooling gel pod you freeze and place in your underwear for up to 20 minutes of relief from external vulvar and vaginal itching, burning, dryness, irritation, or swelling. The curved, flexible pod has a 100% medical-grade silicone exterior that stays in place without adhesive. VPod markets it for yeast infections, BV, allergies, perimenopause and menopause, pregnancy and postpartum, and after sex or workouts; it eases symptoms but doesn’t treat their cause. Three pods per pack.',
+        summary: 'A reusable, drug-free cooling gel pod you freeze and place in your underwear to relieve external vulvar and vaginal itching, burning, dryness, irritation, or swelling. Clean it after each use and refreeze it; VPod recommends replacing each pod every 30 days. The curved, flexible pod has a 100% medical-grade silicone exterior that stays in place without adhesive. VPod markets it for yeast infections, BV, allergies, perimenopause and menopause, pregnancy and postpartum, and after sex or workouts; it eases symptoms but doesn’t treat their cause. Three pods per pack.',
         safety: {
             fdaStatus: 'Registered with the FDA as an over-the-counter medical product, per hervpod.com. FDA registration means the company and product are listed with the FDA; it is not FDA clearance or approval.',
             materials: 'Each pod is 3 in long x 2.5 in wide, with a 100% medical-grade silicone exterior and a flexible gel interior (the gel itself isn\'t disclosed). Hypoallergenic, odor-free, and sterile when packaged. Made in China for Cool Comforts Co. (Cincinnati, OH).',
             recalls: 'No recalls are mentioned on hervpod.com; check current FDA and manufacturer recall notices.',
             sideEffects: 'Cold can feel too intense on sensitive skin, so VPod says to test the temperature first and limit each use to 20 minutes. Full warnings are listed below.',
-            opinionAlerts: 'hervpod.com contradicts itself on reuse: the product page says single-use and "Do not reuse," but its FAQ and full instructions say the pod is reusable for up to 30 days with cleaning. ayna follows the detailed instructions; check the package insert.',
+            opinionAlerts: 'VPod is reusable: clean it after each use, disinfect it at least daily, and replace each pod every 30 days or sooner if damaged (VPod\'s instructions).',
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of ACOG guidance and a Cochrane review; not a direct clinician quote. Product details are from hervpod.com.',
@@ -6487,7 +6489,6 @@ export const BRAND_PRODUCTS = [
     },
     {
         id: 'p-vpod-elite-single',
-        hidden: true,
         name: 'VPod Postpartum & Menopause Comfort Single Pack',
         brand: 'VPod',
         category: 'postpartum',
@@ -6501,13 +6502,13 @@ export const BRAND_PRODUCTS = [
         affiliateUrl: 'https://collabs.shop/y6b4i1',
         faqUrl: 'https://hervpod.com/pages/faq',
         image: '/products/vpod/elite-single.webp',
-        summary: 'VPod’s extra-soft cooling gel pod designed for new moms, for targeted relief of tearing, bruising, swelling, dryness, and irritation before and after birth, and for menopause-related discomfort. Like the Everyday pod, you freeze it and place it in your underwear for up to 20 minutes; it has a 100% medical-grade silicone exterior and is drug-free. It eases symptoms but doesn’t treat their cause. One pod per pack; sold as VPod Elite.',
+        summary: 'VPod’s extra-soft cooling gel pod designed for new moms, for targeted relief of tearing, bruising, swelling, dryness, and irritation before and after birth, and for menopause-related discomfort. Like the Everyday pod, it\'s reusable: you freeze it and place it in your underwear, then clean and refreeze it, and VPod recommends replacing each pod every 30 days. It has a 100% medical-grade silicone exterior and is drug-free. It eases symptoms but doesn’t treat their cause. One pod per pack; sold as VPod Elite.',
         safety: {
             fdaStatus: 'Registered with the FDA as an over-the-counter medical product, per hervpod.com. FDA registration means the company and product are listed with the FDA; it is not FDA clearance or approval.',
             materials: 'Each pod is 3 in long x 2.5 in wide, with a 100% medical-grade silicone exterior and a flexible gel interior (the gel itself isn\'t disclosed). Hypoallergenic, odor-free, and sterile when packaged. Made in China for Cool Comforts Co. (Cincinnati, OH).',
             recalls: 'No recalls are mentioned on hervpod.com; check current FDA and manufacturer recall notices.',
             sideEffects: 'Cold can feel too intense on sensitive skin, so VPod says to test the temperature first and limit each use to 20 minutes. Full warnings are listed below.',
-            opinionAlerts: 'hervpod.com contradicts itself on reuse: the product page says single-use and "Do not reuse," but its FAQ and full instructions say the pod is reusable for up to 30 days with cleaning. ayna follows the detailed instructions; check the package insert.',
+            opinionAlerts: 'VPod is reusable: clean it after each use, disinfect it at least daily, and replace each pod every 30 days or sooner if damaged (VPod\'s instructions).',
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of ACOG guidance and a Cochrane review; not a direct clinician quote. Product details are from hervpod.com.',
@@ -6577,7 +6578,6 @@ export const BRAND_PRODUCTS = [
     },
     {
         id: 'p-vpod-elite-3-pack',
-        hidden: true,
         name: 'VPod Postpartum & Menopause Comfort 3 Pack',
         brand: 'VPod',
         category: 'postpartum',
@@ -6591,13 +6591,13 @@ export const BRAND_PRODUCTS = [
         affiliateUrl: 'https://collabs.shop/i776ti',
         faqUrl: 'https://hervpod.com/pages/faq',
         image: '/products/vpod/elite-3-pack.webp',
-        summary: 'VPod’s extra-soft cooling gel pod designed for new moms, for targeted relief of tearing, bruising, swelling, dryness, and irritation before and after birth, and for menopause-related discomfort. Like the Everyday pod, you freeze it and place it in your underwear for up to 20 minutes; it has a 100% medical-grade silicone exterior and is drug-free. It eases symptoms but doesn’t treat their cause. Three pods per pack; sold as VPod Elite.',
+        summary: 'VPod’s extra-soft cooling gel pod designed for new moms, for targeted relief of tearing, bruising, swelling, dryness, and irritation before and after birth, and for menopause-related discomfort. Like the Everyday pod, it\'s reusable: you freeze it and place it in your underwear, then clean and refreeze it, and VPod recommends replacing each pod every 30 days. It has a 100% medical-grade silicone exterior and is drug-free. It eases symptoms but doesn’t treat their cause. Three pods per pack; sold as VPod Elite.',
         safety: {
             fdaStatus: 'Registered with the FDA as an over-the-counter medical product, per hervpod.com. FDA registration means the company and product are listed with the FDA; it is not FDA clearance or approval.',
             materials: 'Each pod is 3 in long x 2.5 in wide, with a 100% medical-grade silicone exterior and a flexible gel interior (the gel itself isn\'t disclosed). Hypoallergenic, odor-free, and sterile when packaged. Made in China for Cool Comforts Co. (Cincinnati, OH).',
             recalls: 'No recalls are mentioned on hervpod.com; check current FDA and manufacturer recall notices.',
             sideEffects: 'Cold can feel too intense on sensitive skin, so VPod says to test the temperature first and limit each use to 20 minutes. Full warnings are listed below.',
-            opinionAlerts: 'hervpod.com contradicts itself on reuse: the product page says single-use and "Do not reuse," but its FAQ and full instructions say the pod is reusable for up to 30 days with cleaning. ayna follows the detailed instructions; check the package insert.',
+            opinionAlerts: 'VPod is reusable: clean it after each use, disinfect it at least daily, and replace each pod every 30 days or sooner if damaged (VPod\'s instructions).',
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of ACOG guidance and a Cochrane review; not a direct clinician quote. Product details are from hervpod.com.',

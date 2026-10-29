@@ -44,9 +44,9 @@ sitemap, or chatbot shows it. `ALL_PRODUCTS` excludes hidden entries;
 delete a hidden entry, its images, or its seed files. (`TEMPORARILY_HIDDEN_IDS`
 in `src/data/products.js` is a separate list for discontinued products.)
 
-**Currently hidden:** VPod (Cool Comforts Co.), all four entries in
-`src/data/brands.js` (`p-vpod-*`). Hidden 2026-10-17 so Eliz can fix the
-descriptions.
+**Currently hidden:** Liv Labs, both Pippa entries in `src/data/brands.js`
+(`p-livlabs-pippa-*`), hidden 2026-10-17 at Eliz's request. (VPod was hidden
+2026-10-17 to fix its descriptions and made live again 2026-10-29.)
 
 **"Make it live"** (for VPod, or any hidden brand):
 1. Make the requested text edits, following the health-claims rules above.
