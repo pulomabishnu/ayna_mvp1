@@ -5,7 +5,9 @@ export function textOf(node) {
   if (node == null || typeof node === 'boolean') return '';
   if (typeof node === 'string' || typeof node === 'number') return ` ${node} `;
   if (Array.isArray(node)) return node.map(textOf).join(' ');
-  if (React.isValidElement(node)) return textOf(node.props.children);
+  // Components carry their words in other props too (title, items, rows), not only children.
+  if (React.isValidElement(node)) return Object.entries(node.props || {}).filter(([k]) => k !== 'key' && k !== 'ref' && !/^on[A-Z]|^(?:className|style|id|href|src|alt|aria-|data-)/.test(k)).map(([, v]) => textOf(v)).join(' ');
+  if (typeof node === 'object') return Object.values(node).map(textOf).join(' ');
   return '';
 }
 

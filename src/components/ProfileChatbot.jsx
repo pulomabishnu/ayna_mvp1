@@ -15,6 +15,7 @@ import { useAskSetup } from './ask/useAskSetup.js';
 import { recentQuestions } from '../utils/askRecent.js';
 import { mayAutoFocus } from '../utils/delightRuntime.js';
 import ProLock from './ProLock.jsx';
+import { ASK_SIGN_IN, ASK_MONTHLY_LIMIT, ASK_BURST_LIMIT, askLimitCode } from '../pro/askLimitCopy.js';
 
 /** Merges a profileUpdate the backend returned into the current profile, deduping against what's already there. */
 function mergeProfileUpdate(currentProfile, update) {
@@ -92,6 +93,13 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   const [home, setHome] = useState(true);
   // Back on the home view: start at the top, not where the chat was scrolled.
   useEffect(() => { if (home) messagesRef.current?.scrollTo({ top: 0 }); }, [home]);
+  // Escape closes the side panel (Oct 29 audit: dialogs close on Escape).
+  useEffect(() => {
+    if (!open || asPage) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape' && !e.defaultPrevented) setOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, asPage]);
   const [messages, setMessages] = useState(
     chatHistory?.length > 0 ? chatHistory : buildWelcome()
   );
@@ -400,7 +408,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       });
       const data = await res.json().catch(() => ({}));
       if (res.status === 401) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
+      if (res.status === 429) throw Object.assign(new Error('limit_reached'), { code: askLimitCode(data) });
       if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
 
       const extras = await aiAnswerExtras(data, { msg, profileSent: Boolean(summarizeProfile(profile || {})), resolveProduct, profile, healthProfile, matchOpts }).catch(() => ({ basedOn: ['ayna’s AI'], sources: [] }));
@@ -431,9 +439,11 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       if (data.limitReached && Number(data.usage?.limit) < 50) setAskLock(true);
     } catch (err) {
       if (err?.code === 'not_signed_in') {
-        setSendError('Sign in to ask ayna anything. Free accounts get a few chats each week.');
+        setSendError(ASK_SIGN_IN);
+      } else if (err?.code === 'rate_limited') {
+        setSendError(ASK_BURST_LIMIT);
       } else if (err?.code === 'weekly_limit_reached') {
-        setSendError("You've used this month's free Ask ayna chats. They reset on the 1st, or get ayna Pro for up to 50 a month.");
+        setSendError(ASK_MONTHLY_LIMIT);
       } else {
         // The failure lives in the conversation, next to the question, with a way forward.
         const failed = [...messagesWithUser, { role: 'assistant', failed: true, question: msg, text: isNetworkError(err) ? err.message : 'I couldn’t answer that just now.' }];
@@ -522,7 +532,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             {home && !sending && (
               <AskStart
                 name={firstName}
-                intro={signedOut ? 'Answered on this device, no account needed. Not medical advice.' : 'Uses your profile and checked sources. Not medical advice.'}
+                intro={signedOut ? 'Quick answers need no account; other questions need a free one. Not medical advice.' : 'Uses your profile and checked sources. Not medical advice.'}
                 how={how}
                 groups={groups}
                 // A suggested question is sent on tap (founder, Oct 24 22:17); typing waits for Send.

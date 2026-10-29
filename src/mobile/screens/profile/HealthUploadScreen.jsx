@@ -140,7 +140,7 @@ export default function HealthUploadScreen({ signedIn, onSignIn, onDone, presetA
       const used = consent.filter((c) => cats.includes(c)).map((c) => CATEGORIES[c].label.toLowerCase());
       onDone?.(`Saved ${out.saved} ${out.saved === 1 ? 'value' : 'values'}${used.length ? ` (${used.join(', ')})` : ''}. ayna now uses them for your insights and routine. Your file wasn't kept.`);
     } catch (e) {
-      setError(e?.code === 'not_signed_in' ? 'Sign in to save.' : 'Saving failed. Nothing was saved. Try again.');
+      setError(e?.code === 'not_signed_in' ? 'Sign in to save.' : /pro_required/.test(String(e?.code || e?.message || '')) ? 'Saving health data is part of ayna Pro. Nothing was saved.' : 'Saving failed. Nothing was saved. Try again.');
     } finally { setBusy(false); }
   };
 

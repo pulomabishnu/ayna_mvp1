@@ -8,7 +8,8 @@ import { requestPro } from '../utils/proApi.js';
 import { announceProChanged, rememberProReturn, saveProResume } from '../pro/paywall.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { PRO_TAGLINE } from '../pro/features.js';
-import { EARLY_ACCESS_LINE, PAID_TERM_STARTS, PLANS, proGroups } from '../pro/plans.js';
+import { EARLY_ACCESS_LINE, PAID_TERM_STARTS, PLANS } from '../pro/plans.js';
+import ProStory from './pro/ProStory.jsx';
 import '../styles/pro-v4.css';
 
 const ANALYTICS_SOURCE = 'subscription_paywall';
@@ -77,7 +78,6 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
   const [billingOpen, setBillingOpen] = useState(false);
   const attempts = useRef({});
   const chosen = PLANS.find((p) => p.id === plan) || PLANS[0];
-  const groups = proGroups(feature);
   const unlocking = featureName && featureName !== 'ayna Pro' ? featureName : '';
   // The iPhone app does not sell Pro (founder, Oct 27 16:43): same benefits and prices,
   // and the button opens /pro on the website (main.jsx opens external links in the in-app browser).
@@ -135,7 +135,6 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
         aria-labelledby={titleId}
         onClick={(e) => e.stopPropagation()}
       >
-        <span className="pro-march" aria-hidden="true" />
         <header className="pro-sheet__head">
           <span className="pro-sheet__grab" aria-hidden="true" />
           <button type="button" className="pro-sheet__close" onClick={close} aria-label="Close">
@@ -147,16 +146,22 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
         </header>
 
         <div className="pro-sheet__body">
-          <ol className="pro-groups" aria-label="Included with ayna Pro">
-            {groups.map((g) => <li key={g.id} className="pro-groups__item">
-              <b className="pro-groups__name">{g.name}</b>
-              <span className="pro-groups__promise">{g.promise}</span>
-              <ul className="pro-groups__chips">
-                {g.features.map((f) => <li key={f.id} className={`pro-chip${f.on ? ' is-on' : ''}`}>{f.short}{f.growing && <span className="pro-chip__tag">{'\u00a0· growing'}</span>}</li>)}
-              </ul>
-            </li>)}
-          </ol>
+          <div className="pro-sheet__col is-info">
+          <ProStory feature={feature} />
+          <button type="button" className="pro-sheet__more" aria-expanded={billingOpen} aria-controls={billingId} onClick={() => setBillingOpen((v) => !v)}>
+            How billing works
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+          <div id={billingId} className="pro-sheet__billing" hidden={!billingOpen}>
+            <p>{EARLY_ACCESS_LINE}</p>
+            <p>Early Access pricing is applied now. Save up to 50% on your first paid term.</p>
+            <p><b>Monthly.</b> {PLANS[1].terms}</p>
+            <p><b>Yearly.</b> {PLANS[0].terms}</p>
+            <p>Cancel automatic renewal anytime. Access already paid for stays active through the end of that purchased period.</p>
+          </div>
+          </div>
 
+          <div className="pro-sheet__col is-buy">
           <div className="pro-sheet__plans" role="radiogroup" aria-label="Choose a plan">
             {PLANS.map((p) => (
               <button
@@ -202,16 +207,6 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
             <li><b>After that</b><span>{chosen.renew}</span></li>
           </ol>
 
-          <button type="button" className="pro-sheet__more" aria-expanded={billingOpen} aria-controls={billingId} onClick={() => setBillingOpen((v) => !v)}>
-            How billing works
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          </button>
-          <div id={billingId} className="pro-sheet__billing" hidden={!billingOpen}>
-            <p>{EARLY_ACCESS_LINE}</p>
-            <p>Early Access pricing is applied now. Save up to 50% on your first paid term.</p>
-            <p><b>Monthly.</b> {PLANS[1].terms}</p>
-            <p><b>Yearly.</b> {PLANS[0].terms}</p>
-            <p>Cancel automatic renewal anytime. Access already paid for stays active through the end of that purchased period.</p>
           </div>
           <button type="button" className="pro-sheet__notnow" onClick={close}>Not now</button>
         </div>

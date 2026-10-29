@@ -235,3 +235,50 @@
 .pro-lock__setup li p { margin:6px 0 10px; font-size:14px; line-height:1.6; }
 .pro-lock__setup a { color:inherit; text-decoration:underline; text-underline-offset:4px; font-weight:600; }
 .pro-lock__expiry { border-top:1px solid currentColor; padding-top:16px; font-size:12px; line-height:1.65; opacity:.8; }
+
+/* The sheet's checker strip moves too, slowly, like the frame (founder, Oct 28:
+   "i like the pink and brown line moving for the paywall"). Still under reduced motion and Pause motion. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Static strip in the sheet (founder, Oct 28: the moving bar is too much when it opens). */
+}
+html.ay-motion-paused :is(#ayp1, html):is(#ayp2, html) body .pro-march, html.ay-motion-paused .pro-march { animation: none !important; }
+html.ay-motion-paused .pro-frame__dash { animation: none !important; }
+@keyframes pro-march { from { background-position: 0 0; } to { background-position: 28px 0; } }
+
+/* Two columns on wide screens (founder, Oct 28: "make this wider ... see buy without scrolling", then
+   "even out the spacing"). The markup has two column wrappers; on phones they are display: contents and
+   `order` keeps the one-column reading order (what Pro is, plans, buy, how it works, small print). */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__col { display: contents; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body > .pro-sheet__col > .ps { order: 1; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body > .pro-sheet__col > .pro-sheet__plans { order: 2; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body > .pro-sheet__col > :is(.pro-sheet__error, .pro-sheet__webnote, .pro-sheet__cta) { order: 3; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body > .pro-sheet__col > .pro-sheet__trust { order: 4; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body > .pro-sheet__col > .pro-sheet__when { order: 5; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body > .pro-sheet__col > .pro-sheet__more { order: 6; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body > .pro-sheet__col > .pro-sheet__billing { order: 7; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body > .pro-sheet__notnow { order: 9; }
+@media (min-width: 900px) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__panel { width: min(960px, 100%); }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__head { padding: 28px 72px 8px 32px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 40px; align-items: start; padding: 16px 32px 32px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__col { display: grid; gap: 16px; align-content: start; min-width: 0; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__plans { padding-top: 12px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) :is(.pro-sheet__trust, .pro-sheet__billing, .pro-sheet__notnow) { margin-top: 0; }
+  /* How Early Access works as one row of three short steps, so the buy column stays short. */
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__when { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 14px 16px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__when li { padding: 0; padding-top: 20px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__when li::before { top: 0; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__when li:not(:last-child)::after { left: 18px; right: -6px; top: 5.25px; bottom: auto; width: auto; height: 1.5px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__when span { font-size: 13px; }
+}
+
+/* Sheet polish (founder, Oct 28): no checker strip on the sheet; the close button sits inside with the
+   same 20px inset as the header; "Not now" centred under both columns; even top spacing. */
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__close { top: 20px; right: 20px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__head { padding-top: 24px; }
+:is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet__body > .pro-sheet__notnow { justify-self: center; grid-column: 1 / -1; margin-top: 0; }
+@media (min-width: 900px) {
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__head { padding: 32px 88px 8px 32px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__close { top: 24px; right: 24px; }
+  :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body .pro-sheet:not(.ayna-mobile .pro-sheet) .pro-sheet__body { row-gap: 20px; padding: 20px 32px 24px; }
+}

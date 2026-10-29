@@ -37,3 +37,38 @@ it('rechecks access when returning to the app', async () => {
   await act(async () => window.dispatchEvent(new Event('focus')));
   expect(host.textContent).not.toContain('Private dashboard');
 });
+
+// Reads (Oct 28): the free Read is chosen on purpose, never spent by opening.
+const renderRead = async (readId = 'r1') => act(async () => root.render(<ProFeatureGate feature="reads" readId={readId} title="Period pain" onBack={() => {}}><div>Read body</div></ProFeatureGate>));
+it('asks before spending the free Read, then opens it', async () => {
+  ctx.status = { active: false, weeklyRead: null, allowed: true };
+  await renderRead();
+  expect(host.textContent).toContain('Your free Read this week');
+  expect(host.textContent).toContain('Use my free Read');
+  expect(host.textContent).not.toContain('Read body');
+  const use = [...host.querySelectorAll('button')].find((b) => b.textContent === 'Use my free Read');
+  await act(async () => use.click());
+  expect(host.textContent).toBe('Read body');
+});
+it('opens the Read she already chose this week', async () => {
+  ctx.status = { active: false, weeklyRead: 'r1' };
+  await renderRead('r1');
+  expect(host.textContent).toBe('Read body');
+});
+it('locks other Reads once the free one is used, and says so', async () => {
+  ctx.status = { active: false, weeklyRead: 'r1' };
+  await renderRead('r2');
+  expect(host.textContent).not.toContain('Read body');
+  expect(host.textContent).toContain('used this week’s free Read');
+});
+it('signed out, a Read stays locked and offers ayna Pro, never opens or says try again', async () => {
+  ctx.status = null;
+  const signedOut = Object.assign(new Error('Sign in'), { code: 'sign_in_required' });
+  const original = ctx.request.getMockImplementation();
+  ctx.request.mockImplementation(() => { throw signedOut; });
+  await act(async () => root.render(<ProFeatureGate feature="reads" readId="heavy-bleeding" title="Heavy bleeding" onBack={() => {}}><div>Read text</div></ProFeatureGate>));
+  expect(host.textContent).not.toContain('Read text');
+  expect(host.textContent).toContain('Get ayna Pro');
+  expect(host.textContent).not.toContain('try again');
+  ctx.request.mockImplementation(original || (() => {}));
+});

@@ -1,0 +1,35 @@
+/* Pro story (Oct 28). Brand tokens only; 4/8 spacing; one 1.5px rule; the app's tile radius (24px). */
+.ps { display: grid; gap: 12px; min-width: 0; }
+.ps__bars { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; }
+.ps__bars span { position: relative; height: 4px; border-radius: 99px; background: rgba(62, 39, 35, .18); overflow: hidden; }
+.ps__bars span i { position: absolute; inset: 0; transform-origin: 0 50%; transform: scaleX(0); background: #3e2723; border-radius: inherit; }
+.ps__bars span.is-done i { transform: scaleX(1); }
+.ps__bars span.is-on i { animation: ps-fill var(--ps-dur, 4s) linear forwards; }
+.ps__bars span.is-on.is-still i { animation: none; transform: scaleX(1); }
+@keyframes ps-fill { to { transform: scaleX(1); } }
+
+.ps__slide { position: relative; display: grid; align-content: end; justify-items: start; gap: 8px; min-height: 260px; padding: 24px; border: 1.5px solid #3e2723; border-radius: 24px; box-sizing: border-box; overflow: hidden; }
+.ps__slide.is-ink { background: #3e2723; color: #ffedac; }
+.ps__slide.is-pink { background: #f7badd; color: #3e2723; }
+.ps__slide.is-butter { background: #f6e3a1; color: #3e2723; }
+.ps__icon { position: absolute; top: 20px; right: 20px; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: #ffedac; color: #3e2723; border: 1.5px solid #3e2723; }
+.ps__slide.is-butter .ps__icon { background: #f7badd; }
+.ps__icon svg { width: 32px; height: 32px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ps .ps__count { margin: 0; font: 700 13px/1 var(--ay-font-ui, 'Figtree', sans-serif); opacity: .75; }
+.ps .ps__t { margin: 0; max-width: 16ch; font: 700 28px/1.08 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.02em; color: inherit; }
+.ps .ps__d { margin: 0; max-width: 34ch; font: 500 16px/1.4 var(--ay-font-ui, 'Figtree', sans-serif); color: inherit; opacity: .9; }
+.ps__tap { position: absolute; top: 0; bottom: 0; width: 40%; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.ps__tap.is-back { left: 0; }
+.ps__tap.is-next { right: 0; width: 60%; }
+.ps__tap:focus-visible { outline: 3px solid #3e2723; outline-offset: -6px; border-radius: 20px; }
+.ps__slide.is-ink .ps__tap:focus-visible { outline-color: #f7badd; }
+.ps__foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ps__more { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: #3e2723 !important; font: 700 15px/1 var(--ay-font-ui, 'Figtree', sans-serif); text-decoration: underline; text-decoration-color: #f7badd; text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.ps__more svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ps__arrows { display: inline-flex; gap: 8px; }
+.ps__arrows button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1.5px solid #3e2723; border-radius: 50%; background: transparent; color: #3e2723; cursor: pointer; }
+.ps__arrows button:hover { background: #3e2723; color: #ffedac; }
+.ps__arrows button:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
+.ps__arrows svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 640px) { .ps__slide { min-height: 200px; padding: 20px; } .ps .ps__t { font-size: 24px; } .ps__icon { width: 52px; height: 52px; } .ps__icon svg { width: 26px; height: 26px; } }
+@media (prefers-reduced-motion: reduce) { .ps__bars span.is-on i { animation: none; transform: scaleX(1); } }

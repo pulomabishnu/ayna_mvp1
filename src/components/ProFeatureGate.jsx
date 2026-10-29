@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { PRO_CHANGED_EVENT, proFeatureName } from '../pro/paywall.js';
+import { PRO_CHANGED_EVENT, proFeatureName, openProPaywall } from '../pro/paywall.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { loadProFeatureRules, requestPro } from '../utils/proApi.js';
-import ProLock from './ProLock.jsx';
+import ProLock, { CheckerFrame, LockIcon } from './ProLock.jsx';
 import '../styles/pro-v4.css';
 
 function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosystem, children }) {
@@ -55,21 +55,33 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
         // Pro remains unlimited. Other Pro features use the normal active check.
         let allowed = !rules.enabled;
         let expiresAt = null;
+        let choose = false;
+        let usedOn = null;
         if (!allowed) {
-          const status = feature === 'reads'
-            ? await requestPro({ action: 'read', readId, signal: controller.signal })
-            : await requestPro({ signal: controller.signal });
-          allowed = feature === 'reads' ? status.allowed : status.active;
+          const status = await requestPro({ signal: controller.signal });
           // The server accounts for overlapping paid, temporary and staff grants.
           expiresAt = status.accessExpiresAt || null;
+          if (feature !== 'reads') allowed = status.active;
+          else if (status.active) allowed = true;
+          // Reads (founder, Oct 28: "letting you only choose one"): the free
+          // Read is never spent silently. Her chosen Read opens; with none
+          // chosen yet she picks this one on purpose; otherwise it is locked
+          // and says which one she used.
+          else if (status.weeklyRead && status.weeklyRead === readId) allowed = true;
+          else if (!status.weeklyRead) choose = true;
+          else usedOn = status.weeklyRead;
         }
         if (!controller.signal.aborted) {
-          setResult({ key, allowed });
+          setResult({ key, allowed, choose, usedOn });
           const delay = expiresAt && allowed ? Math.min(60000, Math.max(0, expiresAt - Date.now())) : 60000;
           timer = setTimeout(() => { setResult(null); setRefresh(n => n + 1); }, delay);
         }
-      } catch {
-        if (!controller.signal.aborted) setResult({ key, allowed: false, error: 'We couldn’t confirm your Pro access. Please try again.' });
+      } catch (err) {
+        if (controller.signal.aborted) return;
+        // Signed out: a plain lock that says to get ayna Pro (the sheet asks her to sign in first),
+        // never an open door and never a "try again" error (founder, Oct 29: locks are really locked).
+        if (err?.code === 'sign_in_required') setResult({ key, allowed: false, signedOut: true });
+        else setResult({ key, allowed: false, error: 'We couldn’t confirm your Pro access. Please try again.' });
       }
     };
     check();
@@ -77,6 +89,42 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
   }, [feature, readId, key, refresh]);
 
   if (result?.key === key && result.allowed) return children;
+
+  if (result?.key === key && result.choose) {
+    const claim = async () => {
+      setResult({ key, claiming: true, choose: true });
+      try {
+        const out = await requestPro({ action: 'read', readId });
+        setResult({ key, allowed: Boolean(out?.allowed), usedOn: out?.allowed ? null : 'another' });
+      } catch {
+        setResult({ key, choose: true, error: 'We couldn’t open this Read. Please try again.' });
+      }
+    };
+    return <section className="pro-gate" aria-label="Your free Read this week">
+      {onBack && <button type="button" className="pro-gate__back" onClick={onBack}>
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        Back
+      </button>}
+      <section className="pro-lock pro-lock--page pro-choose">
+        <CheckerFrame square={12} radius={22}>
+          <div className="pro-lock__card">
+            <span className="pro-lock__seal" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13ZM13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" /></svg></span>
+            <div className="pro-lock__text">
+              <p className="pro-lock__kicker">Your free Read this week</p>
+              <h2 className="pro-lock__title">{contextTitle || 'Read this one?'}</h2>
+              <p className="pro-lock__line">Free accounts choose one Read a week. You can reopen it until Sunday. ayna Pro opens every Read.</p>
+              {result.error && <p className="pro-lock__error" role="status">{result.error}</p>}
+            </div>
+            <div className="pro-lock__actions">
+              <button type="button" className="pro-lock__cta" onClick={claim} disabled={result.claiming}>{result.claiming ? 'Opening…' : 'Use my free Read'}</button>
+              <button type="button" className="pro-lock__quiet" onClick={() => { if (!openProPaywall({ feature: 'reads', featureName: proFeatureName('reads') })) window.open('https://www.aynahealth.co/pro?feature=reads', '_blank', 'noopener'); }}><LockIcon size={16} /> Get every Read with Pro</button>
+              {onBack && <button type="button" className="pro-lock__quiet" onClick={onBack}>Not now</button>}
+            </div>
+          </div>
+        </CheckerFrame>
+      </section>
+    </section>;
+  }
 
   // While the first check runs, a quiet line only: a Pro member never sees a lock flash.
   if (result?.key !== key) {
@@ -94,6 +142,8 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
       feature={feature}
       title={gateTitle}
       context={contextTitle}
+      line={feature === 'reads' && result?.usedOn ? 'You’ve used this week’s free Read. A new one opens Monday, or get every Read with ayna Pro.'
+        : feature === 'reads' && result?.signedOut ? 'Free accounts choose one Read a week. ayna Pro opens every Read.' : undefined}
       native={Capacitor.isNativePlatform()}
       onNotNow={onBack || onEcosystem}
       error={result.error || ''}

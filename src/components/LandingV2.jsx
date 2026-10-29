@@ -6,7 +6,7 @@ import { productsForNeed } from './landingNeeds';
 import { isPlainLeftClick, productHref } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
-import { ALL_PRODUCTS, MACRO_GROUPS, basicsProductIds, useCatalogReady } from '../data/catalog.js';
+import { ALL_PRODUCTS, MACRO_GROUPS, basicsProductIds, useCatalogReady, getProductById } from '../data/catalog.js';
 import { shopCatalogCounts } from '../data/catalogCounts.js';
 
 import { brandOf } from '../mobile/data/brandFallback.js';
@@ -18,7 +18,7 @@ import '../styles/home.css';
 import '../styles/loop-a-landing.css';
 import '../styles/uq-landing.css';
 import Photo from './ui/Photo.jsx';
-import ReadMore from './info/ReadMore.jsx';
+import { LEAD_READS } from './landing/landingData.js';
 import { Plate, Chip, Band, Shout, Bento, Tile, Marquee, SnapCarousel } from './ui/ay';
 import { HOME_SEARCH_HINTS } from './shop/homeSearchHints.js';
 
@@ -219,7 +219,7 @@ function Phrases({ onSearch }) {
     ) }))} />
   );
 }
-function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, picks = null, signedOut = true, calm = false }) {
+function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, picks = null, signedOut = true }) {
   const ready = useCatalogReady();
   const weekly = useMemo(() => (ready ? weeklyLineup().slice(0, 4) : []), [ready]);
   // Member picks: only products with a real photo, drugstore basics last.
@@ -256,11 +256,8 @@ function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, pick
           <h2 id="hm-familiar-title" className="hm-h2">{signedOut ? 'Does this sound familiar?' : 'Explore by need'}</h2>
           <Go className="ay-btn ay-btn--text hm-head__all" href="/explore/products" onGo={() => onViewDiscovery?.('')}><span className="hm-head__long">See all products</span><span className="hm-head__short">See all<span className="ed-sr"> products</span></span><Arrow /></Go>
         </header>
-        {calm && signedOut && <div className="lp-need-index" aria-label="Browse common needs">
-          {FAMILIAR.map((need) => <Go key={need.need} href={`/explore/products?q=${encodeURIComponent(need.need)}`} onGo={() => onSearch?.(need.need)} className="lp-need-index__link">{need.q.replace(/\.$/, '')}<Arrow /></Go>)}
-        </div>}
-        <div className={`hm-needsband__grid${calm || !signedOut ? ' is-single' : ''}`}>
-          {signedOut && !calm && <Phrases onSearch={onSearch} />}
+        <div className={`hm-needsband__grid${signedOut ? '' : ' is-single'}`}>
+          {signedOut && <Phrases onSearch={onSearch} />}
           <div className="hm-shop">
             <div className="hm-chips" role="group" aria-label="Choose a need">
               {needs.length ? <>
@@ -412,30 +409,23 @@ function HowEvidence({ onViewHowItWorks, onViewArticles, onStartQuiz, showStart 
 }
 
 /* ---------- 5. reads + community: two columns ---------- */
-const LEAD_READS = [
-  { id: 'heavy-bleeding', title: 'Heavy menstrual bleeding', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/articles-heavy-bleeding-satin.webp', alt: 'Pads and tampons scattered on red satin', tone: 'pink' },
-  { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/articles-period-pain-hotwater.webp', alt: 'A woman in striped pajamas holding a hot water bottle', tone: 'sky' },
-  { id: 'pcos-basics', title: 'PCOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror', tone: 'butter' },
-];
+
 function Reads({ onViewArticle, onViewArticles }) {
-  // Word of the day removed in the landing clean-up (founder, Oct 27 19:22).
+  // Three photo cards in one row (Oct 28: no half-empty column beside a tall card).
   const open = (id) => { if (onViewArticle) onViewArticle(id); else onViewArticles?.(); };
   return (
-    <div className="hm-reads">
+    <div className="hm-reads lp-reads">
       <header className="hm-head">
-        <h2 id="hm-reads-title" className="hm-h2">Quick reads about your body, with sources</h2>
+        <h2 id="hm-reads-title" className="hm-h2">Quick reads, with sources</h2>
         <a className="ay-btn ay-btn--text hm-head__all" href="/explore/resources" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}><span className="hm-head__long">Open the Library</span><span className="hm-head__short">See all<span className="ed-sr"> reads in the Library</span></span><Arrow /></a>
       </header>
-      {/* Plain rows (master prompt 154: no bento): photo, title, one line, sources. */}
-      <ul className="hm-readlist">
+      <ul className="lp-reads__row">
         {LEAD_READS.map((r) => (
           <li key={r.id}>
-            <a className="hm-readlist__row" href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
-              <span className="hm-readlist__ph"><Photo src={r.src} alt={r.alt} sizes="(max-width: 767px) 96px, 128px" loading="lazy" decoding="auto" /></span>
-              <span className="hm-readlist__text">
-                <strong className="hm-readlist__title">{r.title}</strong>
-                <small className="hm-readlist__src">Sources: {String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
-              </span>
+            <a className="lp-read" href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
+              <span className="lp-read__ph"><Photo src={r.src} alt={r.alt} sizes="(max-width: 767px) 70vw, 380px" loading="lazy" decoding="auto" /></span>
+              <strong className="lp-read__t">{r.title}</strong>
+              <small className="lp-read__src">{String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
             </a>
           </li>
         ))}
@@ -443,45 +433,41 @@ function Reads({ onViewArticle, onViewArticles }) {
     </div>
   );
 }
-/* the Community card: its photo, the latest ayna news, and up to two real posts once there are any */
+/* the Community: one wide card, photo on the left; the latest ayna news and one real post */
 function Community({ onViewCommunity, posts = [] }) {
   const news = useLatestAnnouncement();
+  // One post, with its context (master prompt 15: community content keeps its
+  // context). A review shows only when it names the product and was positive;
+  // otherwise a question. A complaint with no product named read as random.
+  const productOf = (p) => (p?.product_id ? getProductById(p.product_id) : null);
+  const post = posts.find((p) => p.kind === 'review' && productOf(p) && (Number(p.rating) >= 4 || p.would_recommend === true) && String(p.body || '').length > 30)
+    || posts.find((p) => p.kind === 'question' && String(p.body || '').length > 20)
+    || null;
+  const product = productOf(post);
+  const anon = post && (post.is_anonymous || !post.author_id);
+  const who = post && (anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member');
   return (
-    <article className="hm-comm" aria-labelledby="hm-comm-title">
-      <span className="hm-comm__ph"><Photo sizes="(max-width: 767px) 92vw, 460px" src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" decoding="auto" /></span>
-      <div className="hm-comm__copy">
+    <article className="lp-comm" aria-labelledby="hm-comm-title">
+      <span className="lp-comm__ph"><Photo sizes="(max-width: 767px) 92vw, 520px" src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" decoding="auto" /></span>
+      <div className="lp-comm__copy">
+        <span className="hm-tab lp-comm__tag">ayna Community</span>
         <h2 id="hm-comm-title" className="hm-h2">Real talk about what women actually use.</h2>
-        <ReadMore className="hm-more"><p className="hm-body">Reviews, questions and routines from women who use these products. Ask a question, review what you use or share a playlist.</p></ReadMore>
-        <div className="hm-news" aria-labelledby="hm-news-title">
-          <span className="hm-tab hm-news__label">ayna news</span>
-          <h3 id="hm-news-title" className="hm-h3">{news ? news.title : 'ayna Community is open.'}</h3>
-          <p>{news ? news.body : 'Ask questions, review what you use and share playlists with women who get it.'}</p>
-        </div>
-        {posts.length > 0 && (
-          <ul className="hm-posts" aria-label="From the Powder Room">
-            {posts.slice(0, 2).map((post) => {
-              const anon = post.is_anonymous || !post.author_id;
-              const who = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
-              return (
-                <li key={post.id}>
-                  <button type="button" className="hm-post" onClick={() => onViewCommunity?.()}>
-                    <span className="hm-post__meta">{post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} from {who}</span>
-                    <span className="hm-post__body">{post.body}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        <Go className="ay-btn ay-btn--secondary" href="/community" onGo={onViewCommunity}>{news ? 'Read it in Community' : 'Read reviews and questions'}<Arrow /></Go>
+        {post ? (
+          <button type="button" className="lp-comm__post" onClick={() => onViewCommunity?.()}>
+            <span className="lp-comm__meta">{post.kind === 'review' && product ? `${who} on ${product.name}` : `Question from ${who}`}</span>
+            <span className="lp-comm__body">“{post.body}”</span>
+          </button>
+        ) : <p className="lp-comm__p">Reviews, questions and routines from women who use these products.</p>}
+        {news && <p className="lp-comm__news"><b>ayna news</b> {news.title}</p>}
+        <Go className="ay-btn ay-btn--secondary" href="/community" onGo={onViewCommunity}>Read reviews and questions<Arrow /></Go>
       </div>
     </article>
   );
 }
-function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts, calm = false }) {
+export function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts }) {
   return (
-    <Band tone={calm ? "butter" : "deep"} className="hm-sec hm-rc hm-band" aria-label="Reads and Community">
-      <div className="hm-wrap hm-rc__grid">
+    <Band tone="deep" className="hm-sec hm-rc hm-band lp-rc" aria-label="Reads and Community">
+      <div className="hm-wrap lp-rc__in">
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         <Community onViewCommunity={onViewCommunity} posts={posts} />
       </div>
@@ -493,7 +479,7 @@ function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts,
    The founders' photo and story (the page's one 44px statement line). The
    Wefunder card moved to /about (critique, Oct 27: no investing pitch on the
    consumer home page); the footer keeps its "Invest in ayna" link. */
-function Founders({ onViewAbout }) {
+export function Founders({ onViewAbout }) {
   return (
     <Band tone="butter" className="hm-sec hm-us hm-band" aria-labelledby="hm-us-title">
       <div className="hm-wrap">
@@ -513,37 +499,11 @@ function Founders({ onViewAbout }) {
   );
 }
 
-function CalmMethod({ onViewHowItWorks, onStartQuiz }) {
-  const steps = [
-    { title: 'Tell us what matters', short: 'Your needs, life stage and preferences.', more: 'Take the personalization quiz at your own pace. You can review your answers and update them as your needs change.' },
-    { title: 'See the fit and the evidence', short: 'A reason for each match, with sources.', more: 'Product pages distinguish strong, some and limited evidence. A match is an option to explore, not a diagnosis or a promise that a product will work for you.' },
-    { title: 'Build a routine that feels like you', short: 'Keep what you use. Leave what you don’t.', more: 'Save the options you want to revisit, add products to your ecosystem and use check-ins to record your experience. Buying is always your choice.' },
-  ];
-  return <section className="lp-method hm-sec" aria-labelledby="hm-how-title">
-    <div className="hm-wrap lp-method__grid">
-      <figure className="lp-method__photo">
-        <Photo src="/landing/hiw-questions-cabinet.webp" alt="A bathroom cabinet filled with everyday care essentials" sizes="(max-width: 767px) 92vw, 480px" loading="lazy" />
-        <figcaption>A little less guessing.</figcaption>
-      </figure>
-      <div className="lp-method__copy">
-        <p className="lp-eyebrow">Made around you</p>
-        <h2 id="hm-how-title" className="hm-h2">How ayna fits it to you</h2>
-        <ol className="lp-method__steps">{steps.map((step, i) => <li key={step.title}>
-          <span className="lp-method__number" aria-hidden="true">0{i + 1}</span>
-          <div><h3>{step.title}</h3><p>{step.short}</p><details><summary>Read more<span className="ed-sr">: {step.title}</span></summary><p>{step.more}</p></details></div>
-        </li>)}</ol>
-        <div className="lp-method__actions"><Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Create your ecosystem<Arrow /></Go>
-        <Go className="ay-btn ay-btn--text" href="/how-it-works" onGo={onViewHowItWorks}>The full method<Arrow /></Go></div>
-      </div>
-    </div>
-  </section>;
-}
-
 /* ---------- page ---------- */
 // `personal` (signed in): the same page with a welcome-back hero, and
 // `personalSlot` (her dashboard row) right under it; `communityPosts` are
 // the most helpful Powder Room posts (two are shown, in the Community card).
-export default function LandingV2({ bodyOnly = false, membershipSlot = null, onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, personal = null, personalSlot = null, communityPosts = [], heroBanner = null }) {
+export default function LandingV2({ bodyOnly = false, onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, personal = null, personalSlot = null, communityPosts = [], heroBanner = null }) {
   const rest = useAfterHeroPaint();
   return (
     <div className="ed ed-home hm hm-uq">
@@ -552,12 +512,10 @@ export default function LandingV2({ bodyOnly = false, membershipSlot = null, onS
       {!bodyOnly && <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} onOpenProduct={onOpenProduct} onViewHowItWorks={onViewHowItWorks} personal={personal} banner={heroBanner} />}
       {bodyOnly ? null : personal?.dashboard ? <div className="hm-personal">{personalSlot}</div> : <Brands onViewWaitlist={onViewWaitlist} />}
       {!personal?.dashboard && personalSlot && <div className="hm-personal">{personalSlot}</div>}
-      <NeedsBand calm={bodyOnly} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} onStartQuiz={onStartQuiz} picks={personal?.topPicks || null} signedOut={!personal} />
+      <NeedsBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} onStartQuiz={onStartQuiz} picks={personal?.topPicks || null} signedOut={!personal} />
       {rest && <>
-      {bodyOnly ? <CalmMethod onViewHowItWorks={onViewHowItWorks} onStartQuiz={onStartQuiz} /> : <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!(personal && personal.hasQuiz)} />}
-      {!bodyOnly && membershipSlot}
-      <ReadsCommunity calm={bodyOnly} onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
-      {bodyOnly && membershipSlot}
+      <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!bodyOnly && !(personal && personal.hasQuiz)} />
+      <ReadsCommunity onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
       <Founders onViewAbout={onViewAbout} />
       </>}
     </div>

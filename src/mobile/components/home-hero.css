@@ -119,3 +119,6 @@
    20px side margin; the band is full-bleed, edge to edge, with the wavy foot. */
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-hh { margin-left: 0 !important; margin-right: 0 !important; width: 100% !important; max-width: none !important; border-radius: 0 !important; }
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-homescreen .ay-hh__band { padding-left: var(--d-gutter, 20px) !important; padding-right: var(--d-gutter, 20px) !important; border-radius: 0 !important; }
+/* No products yet: a plus in a circle, the same mark as the data tile's empty ring (Oct 29 audit). */
+.ay-hsc__none.is-plus { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; border: 6px solid var(--ay-calm-track); box-sizing: border-box; }
+.ay-hsc__none.is-plus svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }

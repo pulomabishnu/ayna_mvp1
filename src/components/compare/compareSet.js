@@ -136,7 +136,7 @@ function reviews(product, ratingFor) {
   const ours = ratingFor ? ratingFor(product) : null;
   if (ours && Number.isFinite(ours.value) && ours.count > 0) return `★ ${ours.value.toFixed(1)} from ${ours.count} ayna member${ours.count === 1 ? '' : 's'}`;
   if (product?.userRating && product?.userRatingSourceUrl) return `★ ${product.userRating} online rating, not checked by ayna`;
-  return 'No ayna reviews yet';
+  return '0 reviews';
 }
 
 // Match and Preferences always have a row (team direction 21); without her answers they say so.

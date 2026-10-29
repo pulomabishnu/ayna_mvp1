@@ -25,7 +25,11 @@ export default function HealthConnectionsScreen(props) {
   const needsPro = (id) => {
     const sourceId = String(id || '').split(':')[0];
     const source = sourceById(sourceId);
-    if (!source || !['oauth', 'device'].includes(source.availability)) return false;
+    if (!source) return false;
+    // Uploads and imports save through the same Pro-only endpoint (health-data import), so they are
+    // gated here too; before, a free account parsed and reviewed a whole file and then got "Saving failed".
+    if (['upload', 'import_only'].includes(source.availability)) return true;
+    if (!['oauth', 'device'].includes(source.availability)) return false;
     // A source this device can't connect at all (e.g. Apple Health in a browser) shows its own
     // honest explanation instead of a paywall for something she could not use.
     if (!availabilityFor(source, { isNative: Capacitor.isNativePlatform(), nativePlatform: Capacitor.getPlatform() }).ok) return false;
@@ -55,6 +59,11 @@ export default function HealthConnectionsScreen(props) {
   // the provider picker first. Pro members pass straight through after the
   // shared entitlement check. Former Pro members with existing data bypass
   // this outer gate only so they can disconnect/delete what they already shared.
+  // While her connections load (signed in, first load), don't decide yet: a
+  // former Pro member with data would otherwise see the lock flash first.
+  if (props.authUser?.id && !props.selectedId && ['idle', 'loading'].includes(health.status) && !hasExistingConnection) {
+    return <div className="ay-health-doorway-wait" role="status" aria-live="polite"><span className="sr-only">Loading health data</span></div>;
+  }
   if (!hasExistingConnection && !props.selectedId && !pendingId) {
     return (
       <ProFeatureGate feature="wearables" title="Health data" onBack={props.onBack}>

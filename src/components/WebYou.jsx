@@ -1,4 +1,6 @@
 import { avatarInitials } from '../utils/avatarInitials';
+import ProTag from '../pro/ProTag.jsx';
+import WebSettingsSearch from './you/WebSettingsSearch.jsx';
 import WhatAynaKnows from './you/WhatAynaKnows.jsx';
 import DailyCheckin from './you/DailyCheckin.jsx';
 import BoxWaitlist, { SHOW_BOX_WAITLIST } from './you/BoxWaitlist.jsx';
@@ -209,7 +211,7 @@ function ThisWeek({ userId, onOpen, onConnect }) {
       <div className="ay-group is-padded wy-week is-empty">
         <svg className="wy-week__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6" /></svg>
         <p className="wy-note">Your health dashboard lives here. Connect Apple Health, Oura or upload a file to see your week.</p>
-        {onConnect && <button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={onConnect}>Connect</button>}
+        {onConnect && <button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={onConnect}>Connect<ProTag /></button>}
       </div>
     </section>;
   }
@@ -252,6 +254,7 @@ function HealthMatchStatus({ userId, onOpen }) {
 }
 
 export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = null, healthConnected = [], section = null, nav = null, onOpenSection, recentAsks = [], savedSlot = null, onOpenPost, onUpdateIntake = null, onOpenCommunity, onOpenArticle, user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct, onOpenHealthData, onOpenHealth, healthSummary = null, healthConnectedCount = 0, quizSlot = null, signedOutSlot = null }) {
+  const settingsRef = useRef(null);
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   const checkin = useCheckinCountStatus(user?.id);
   const checkinCount = checkin.count;
@@ -448,7 +451,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
 
     {nav}
 
-    <div className={`wy-grid is-${section || 'ov2'}`}>
+    <div ref={settingsRef} className={`wy-grid is-${section || 'ov2'}`}>
       {!section && <>
       {/* You overview, cleaned up (founder, Oct 27: "fix the profile page too"). Left: her things as one
           feature card and one grouped list (same rows as the app), Settings and Log out last. Right: her
@@ -590,6 +593,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
       </>}
 
       {section === 'settings' && <>
+      <div className="wy-settings-search-row"><WebSettingsSearch scopeRef={settingsRef} /></div>
       <div className="wy-col yh-calm">
         <section className="wy-sec" id="wyou-account" aria-labelledby="wy-account-h">
           <div className="wy-sec__head"><h2 className="ay-group__title" id="wy-account-h">Account</h2>{note && <span className="wy-count" role="status">{note}</span>}</div>

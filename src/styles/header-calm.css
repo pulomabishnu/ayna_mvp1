@@ -1,0 +1,73 @@
+/* Website header, clean pass (founder, Oct 29: "make the ayna logo brown and the header yellow
+   for all the pages except the landing page ... clean up the header, it looks horrible and
+   overcrowded"). One row, one weight of everything:
+     - butter bar with an espresso logo on every page but the landing (the landing keeps espresso,
+       running into its hero); dark mode keeps the espresso bar, following the device
+     - nav links are plain text; the current page gets a short underline (no Home pill, no icon)
+     - Ask ayna, Saved and the account are quiet: no outlined circles, no badges in outlines
+     - "beta" is a small word beside the logo, not a pill */
+html body .app-container.app-container.app-container .app-nav-wrap:not(.is-landing) {
+  --paper-header: #ffedac; --ay-text: #3e2723; --ay-text-2: #3e2723; --ay-outline-color: #3e2723;
+  --ay-feature-bg: #3e2723; --ay-feature-fg: #ffedac; --hc-soft: rgba(62, 39, 35, .62); --hc-hover: rgba(62, 39, 35, .07);
+  color: #3e2723; background: #ffedac !important; border-bottom: 1px solid rgba(62, 39, 35, .1) !important;
+}
+html body .app-container.app-container.app-container .app-nav-wrap.is-landing,
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .app-nav-wrap {
+  --paper-header: #3e2723; --ay-text: #ffedac; --ay-text-2: #ffedac; --ay-outline-color: #ffedac;
+  --ay-feature-bg: #ffedac; --ay-feature-fg: #3e2723; --hc-soft: rgba(255, 237, 172, .7); --hc-hover: rgba(255, 237, 172, .1);
+  color: #ffedac; background: #3e2723 !important; border-bottom: 1px solid rgba(255, 237, 172, .12) !important;
+}
+
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper { height: 64px; gap: 40px; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__logo { display: inline-flex; align-items: baseline; gap: 6px; color: var(--ay-text) !important; font-size: 30px !important; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__beta { align-self: auto; margin: 0; padding: 0; border: 0 !important; background: none !important; color: var(--hc-soft) !important; font: 600 11px/1 var(--ay-sans-stack, sans-serif) !important; letter-spacing: .06em !important; text-transform: uppercase; transform: none; }
+
+/* links: plain text, current page underlined */
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__links { gap: 28px; margin-left: 0; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__link,
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__link.is-home {
+  min-height: 44px; margin: 0; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important;
+  color: var(--ay-text) !important; font: 500 15px/1 var(--ay-sans-stack, sans-serif) !important;
+}
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__home-mark { display: none !important; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__link[aria-current='page'] { font-weight: 700 !important; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__link::after { display: block !important; content: ''; position: absolute; left: 0; right: 0; bottom: 6px; height: 2px; border-radius: 2px; background: transparent; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__link[aria-current='page']::after { background: #f7badd; height: 3px; }
+html body .app-container.app-container.app-container .app-nav-wrap:not(.is-landing) .ay-nav--paper .ay-nav__link[aria-current='page']::after { background: #3e2723; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .app-nav-wrap .ay-nav--paper .ay-nav__link[aria-current='page']::after { background: #f7badd; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__link:not([aria-current='page']):hover { text-decoration: none !important; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__link:not([aria-current='page']):hover::after { background: var(--hc-soft); }
+
+/* actions: quiet, evenly spaced */
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav__actions { gap: 8px; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__ask { min-height: 40px; padding: 0 14px 0 4px; border: 0 !important; background: var(--hc-hover) !important; color: var(--ay-text); font-size: 14px; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__ask:hover { background: var(--hc-hover) !important; filter: brightness(.97); }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__ask-orb { width: 30px; height: 30px; border: 0; background: #f7badd; color: #3e2723; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper :is(.ay-nav__icon, .ay-nav__heart) { width: 40px !important; height: 40px !important; min-width: 40px; border: 0 !important; background: transparent !important; color: var(--ay-text) !important; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper :is(.ay-nav__icon, .ay-nav__heart):hover { background: var(--hc-hover) !important; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-avatar { width: 36px !important; height: 36px !important; min-width: 36px; box-shadow: none !important; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-heart-count { top: 0; right: -2px; min-width: 18px; height: 18px; padding: 0 4px; border: 0; background: #f7badd; color: #3e2723; font-size: 11px; }
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__login { min-height: 40px !important; height: 40px; padding: 0 18px !important; border: 0 !important; }
+
+@media (max-width: 1120px) {
+  html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper { gap: 24px; }
+  html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__links { gap: 20px; }
+}
+@media (max-width: 899px) {
+  html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper { height: 56px; }
+  html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__logo { font-size: 26px !important; }
+}
+/* Signed out on a wide screen: Log in is the one account control (the round profile button is the phone's). */
+@media (min-width: 900px) { html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper .ay-nav__profile { display: none !important; } }
+
+/* The signed-out Home card (Oct 29 audit): the same soft tile as the rest of the site, not an arch
+   with an offset pink shadow; the shouty eyebrow becomes plain small text. */
+html body .app-container.app-container .ay-ecosystem-entry { max-width: 560px; margin: 64px auto 96px; padding: 48px 40px; border: 0; border-radius: 28px; background: #f6e3a1; box-shadow: none; }
+html body .app-container.app-container .ay-ecosystem-entry__eyebrow { letter-spacing: 0; text-transform: none; font-size: 14px; color: #6d4c41; }
+html body .app-container.app-container .ay-ecosystem-entry h1 { font-family: var(--ay-font-display, 'Bricolage Grotesque', sans-serif); font-weight: 700; letter-spacing: -.02em; margin: 8px 0 12px; }
+html body .app-container.app-container .ay-ecosystem-entry .ay-btn { border-radius: 999px; padding: 0 24px; min-height: 48px; }
+html body .app-container.app-container[data-theme='brand-dark'] .ay-ecosystem-entry { background: rgba(255, 237, 172, .08); color: #ffedac; }
+html body .app-container.app-container[data-theme='brand-dark'] .ay-ecosystem-entry__eyebrow { color: rgba(255, 237, 172, .7); }
+@media (max-width: 600px) { html body .app-container.app-container .ay-ecosystem-entry { margin: 32px 16px 64px; padding: 32px 20px; } }
+/* A clicked nav link kept a box around it (mouse focus). The box shows for keyboard focus only. */
+html body .app-container.app-container.app-container .app-nav-wrap .ay-nav--paper :is(a, button):focus:not(:focus-visible) { outline: none !important; box-shadow: none !important; }

@@ -50,7 +50,7 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn, mat
           {matches.map((p) => (
             <li key={p.id}>
               <button type="button" onClick={() => onOpenProduct && onOpenProduct(p)}>
-                <span className="ay-ecoprev__mineimg"><ProductTileImage product={p} alt="" letterNode={<ProductImageFallback />} /></span>
+                <span className="ay-ecoprev__mineimg"><ProductTileImage product={p} alt="" letterNode={<ProductImageFallback product={p} />} /></span>
                 <span className="ay-ecoprev__minename">{p.brand && !String(p.name || '').startsWith(p.brand) ? <small>{p.brand}</small> : null}{p.name}</span>
               </button>
             </li>

@@ -161,8 +161,12 @@ import './styles/page-heads.css';
 import './styles/shop-hero.css';
 import './styles/library-head.css';
 import './styles/no-vibe.css';
+import './styles/header-calm.css';
+import './styles/pdp-calm.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
 import ProLock from './components/ProLock.jsx';
+import { proDoor, retakeDoor } from './pro/proDoor.js';
+import WebHomeTop from './components/you/WebHomeTop.jsx';
 import { readHomeLook } from './mobile/components/homeLook.js';
 import { webHomeView } from './mobile/utils/navTab.js';
 // Keep the ?homestyle=a|b preview pick before the router rewrites the address (Today loads lazily).
@@ -1314,8 +1318,8 @@ function App() {
     } else if (pendingAction === 'free-product') {
       setCurrentView('free-product');
     } else if (pendingAction === 'login') {
-      // Signing in lands on Today, the home for signed-in accounts.
-      setCurrentView('today');
+      // Logging in from the landing stays on the landing (founder, Oct 28).
+      setCurrentView('welcome');
     } else if (pendingAction === 'ecosystem') {
       setCurrentView('ecosystem');
     } else if (pendingAction === 'saved') {
@@ -1454,6 +1458,19 @@ function App() {
     try { return quizResults ? getSelectedNeeds(quizResults).map((n) => n.id) : []; } catch { return []; }
   }, [quizResults, catalogReady]);
   const health = useHealthData(user?.id || null, healthNeedIds);
+  // Connect buttons: a free account with nothing connected gets the Pro sheet where she tapped,
+  // not a setup page that then locks (founder, Oct 28). With a connection she can still manage it.
+  // Old /you/ecosystem?view=dashboard links: signed in, the dashboard is Today now.
+  useEffect(() => {
+    if (currentView !== 'ecosystem' || !user) return;
+    try { if (new URLSearchParams(window.location.search).get('view') === 'dashboard') setCurrentView('today'); } catch { /* no URL */ }
+  }, [currentView, user]);
+
+  const goHealthData = () => {
+    if (!user) { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); return; }
+    if (health.connected.length) { setCurrentView('health-data'); return; }
+    proDoor('wearables', () => setCurrentView('health-data'));
+  };
   // Her switch (You, Health data): "Use my health data in my matches". Shared with the app.
   const healthInMatches = useHealthMatchPref(user?.id || null).on;
   const matchOpts = useMemo(
@@ -2405,22 +2422,20 @@ function App() {
       onAsk={(q, extra) => openAsk(q, extra?.stats)}
       onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }}
       onOpenConnections={() => {
-        if (user) { setCurrentView('health-data'); return; }
+        if (user) { goHealthData(); return; }
         setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true);
       }}
     />
   );
 
-  // Today is home for a signed-in account with a profile (founder, Oct 24 2026):
-  // the welcome page hands over to Today once her account and answers are in.
-  // Only a cold visit to / hands over; the logo (navigateHome) pins the landing.
+  // The landing stays the landing for everyone (founder, Oct 28: "if im signed
+  // in and just log on it shud take u to the landing page not home", and a
+  // refresh must stay on the page you're on). It used to hand a signed-in
+  // account with a profile over to My ecosystem on every visit to /, so a
+  // refresh of the landing jumped Home. Home is one tap away in the nav.
   useEffect(() => {
-    if (currentView !== 'welcome' && currentView !== 'hero') { landingPinnedRef.current = false; return; }
-    if (landingPinnedRef.current) return;
-    if (!user || !quizResults || authLoading || dataLoading || showWrapped) return;
-    // The website's Home is My ecosystem (founder, Oct 27 18:34); the health dashboard is in the app.
-    setCurrentView('ecosystem', { replace: true });
-  }, [currentView, user, quizResults, authLoading, dataLoading, showWrapped, setCurrentView]);
+    if (currentView !== 'welcome' && currentView !== 'hero') landingPinnedRef.current = false;
+  }, [currentView]);
 
   // Signed out, Today is never shown from a cold load, reload, Back or a link,
   // whatever answers or fixtures this browser kept (founder, Oct 27 13:46: "if im
@@ -2482,7 +2497,7 @@ function App() {
       <a className="ay-skip" href="#ay-content">Skip to content</a>
       {/* The header sits outside <main>. It slides away while scrolling down and
           comes back on any scroll up; its hairline shows only with content under it. */}
-        <div className={`app-nav-wrap${headerScroll.scrolled ? ' is-scrolled' : ''}${headerScroll.away ? ' is-away' : ''}`}>
+        <div className={`app-nav-wrap${['welcome', 'hero'].includes(currentView) ? ' is-landing' : ''}${headerScroll.scrolled ? ' is-scrolled' : ''}${headerScroll.away ? ' is-away' : ''}`}>
         <nav
           className={`ay-nav ay-nav--paper${isScrolled ? ' is-scrolled' : ''}${FOCUSED_FLOW_VIEWS.includes(currentView) ? ' is-focused' : ''}`}
           data-on-gradient={navOnGradient ? navGradientVariant || 'yes' : undefined}
@@ -2589,6 +2604,8 @@ function App() {
           <AynaLanding
             onViewToday={handleViewEcosystem}
             onLogIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onAsk={(q) => openAsk(q)}
+            onOpenHealth={() => (user ? goHealthData() : setCurrentView('you'))}
             onViewEcosystem={handleViewEcosystem}
             myProducts={myProducts}
             savedProducts={savedProducts}
@@ -2719,7 +2736,7 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onSignOut={handleSignOut}
             onDeleteAccount={handleOpenDeleteAccount}
-            onOpenHealthData={() => setCurrentView('health-data')}
+            onOpenHealthData={goHealthData}
             onOpenHealth={() => setCurrentView('today')}
             healthSummary={health.insights.sections.find((sec) => sec.status === 'ready') || null}
             healthConnectedCount={health.connected.length}
@@ -2770,21 +2787,9 @@ function App() {
           <DeleteAccountPage onBack={() => setCurrentView('you')} />
         )}
         {/* Today: the first main tab and the home for signed-in accounts. Same page /health showed. */}
-        {/* Website, signed in: the health dashboard lives in the ayna app with ayna Pro (founder, Oct 27 18:34).
-            Home here is My ecosystem; this page explains where the dashboard is. Guests keep Today. */}
-        {currentView === 'today' && user && (
-          <div className="ay-container wx-dashlock">
-            <ProLock
-              feature="wearables"
-              title="Your health dashboard"
-              context="On the ayna app, with ayna Pro"
-              line="Your cycle, sleep and activity dashboard lives in the ayna app on your phone. Connect Apple Health, Health Connect or Oura there with ayna Pro."
-              onNotNow={handleViewEcosystem}
-            >
-              <p className="wx-dashlock__alt"><button type="button" className="ct-link" onClick={handleViewEcosystem}>Go to My ecosystem</button></p>
-            </ProLock>
-          </div>
-        )}
+        {/* Website, signed in: the same dashboard the Ecosystem "Dashboard" tab shows, behind its own
+            server-checked Pro gate (Oct 28 audit: a static lock here told Pro members to buy Pro). */}
+        {currentView === 'today' && user && <div className="wx-today">{webHealth}</div>}
         {currentView === 'today' && !user && (
           <div className="wx-today" data-tour="today">
             {React.cloneElement(webHealth, {
@@ -2820,8 +2825,8 @@ function App() {
                   on={{
                     ask: (q) => openAsk(typeof q === 'string' ? q : q?.question),
                     openLog: () => openTodayLog('web'),
-                    openHealth: user ? () => setCurrentView('health-data') : null,
-                    connect: user ? () => setCurrentView('health-data') : null,
+                    openHealth: user ? goHealthData : null,
+                    connect: user ? goHealthData : null,
                     openProduct: (p) => handleOpenProduct(p, { source: 'today_widget' }),
                     openSaved: handleViewWishlist,
                     openEcosystem: handleViewEcosystem,
@@ -2989,6 +2994,7 @@ function App() {
             onBack={handleBackFromStandalonePage}
             backLabel={standaloneBackLabel}
             onViewSources={handleViewArticles}
+            onStart={handleStartQuiz}
           />
         )}
         {currentView === 'about' && (
@@ -3027,8 +3033,10 @@ function App() {
         )}
         {/* My ecosystem (You > My ecosystem, /you/ecosystem). Its old Dashboard tab is Today. */}
         {currentView === 'ecosystem' && (
-          <EcosystemViewTabs dashboard={webHealth} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
-          {user && <YouTabs active="ecosystem" onGo={(key) => openYou(key === 'overview' ? null : key)} />}
+          /* This page is the website Home: no tab rows above it (founder, Oct 29: three rows of tabs read
+             as vibe coded). Signed in, the band on top links to her data (the dashboard); signed out,
+             a dashboard tab only led to a lock. */
+          <EcosystemViewTabs dashboard={null} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
           <ViewSkeleton
             label="Loading your ecosystem"
@@ -3075,6 +3083,15 @@ function App() {
         {currentView === 'ecosystem' && user && (
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
+            homeTop={user ? <WebHomeTop
+              firstName={accountFirstName(user) || quizResults?.firstName || ''}
+              healthRows={health?.insightRows || []}
+              quizAnswers={quizResults}
+              products={Object.values(myProducts || {})}
+              onData={() => proDoor('dashboard', () => setCurrentView('today'))}
+              onProducts={() => document.getElementById('weco-tab-mine')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              onConnect={goHealthData}
+            /> : null}
             quizSlot={ecosystemQuizCard}
             quizSlotKind={webQuizDraft ? 'finish' : 'personal'}
             onFixLifeStages={() => { setEditAtStep('lifeStage'); setCurrentView('profile-edit'); }}
@@ -3092,7 +3109,7 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onOpenDoctorPrep={() => setCurrentView('doctor-prep')}
             onBuildEcosystem={handleStartQuiz}
-            onRedoQuiz={handleRedoQuiz}
+            onRedoQuiz={() => (user ? retakeDoor(handleRedoQuiz) : handleRedoQuiz())}
             onResetEcosystem={handleResetEcosystem}
             onEditHealthProfile={handleOpenHealthProfileEditor}
             onOpenPhoneVerify={handleOpenPhoneVerification}

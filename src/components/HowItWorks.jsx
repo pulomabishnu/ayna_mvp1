@@ -5,7 +5,7 @@ import { evidenceCatalogCounts } from '../utils/evidenceCatalogCounts';
 import { DIMENSION_WEIGHTS, PREFERENCE_SPAN } from '../matching/score.js';
 import { MAX_SHOWN_PERCENT } from '../utils/matchDisplay.js';
 import { EdPage, EdBlock } from './editorial/EdPage';
-import { StickerButton } from './ui/ay';
+import { StickerButton, OutlineButton } from './ui/ay';
 import ReadMore from './info/ReadMore.jsx';
 
 // What a personalized match is built from. Sponsorship is never one of them.
@@ -95,7 +95,7 @@ function PercentBuild() {
   );
 }
 
-export default function HowItWorks({ onBack, backLabel, onViewSources }) {
+export default function HowItWorks({ onBack, backLabel, onViewSources, onStart }) {
   const openSources = () => {
     if (onViewSources) onViewSources();
     else if (onBack) onBack();
@@ -172,7 +172,11 @@ export default function HowItWorks({ onBack, backLabel, onViewSources }) {
             <li>{TICK}<span><strong>Real products you can buy</strong> Each match is a real product with where to buy it, and you can compare it side by side.</span></li>
           </ul>
         </ReadMore>
-        <p style={{ marginTop: 24 }}><StickerButton onClick={openSources}>Read our sources</StickerButton></p>
+        {/* One clear next step at the end (Oct 29 audit): get matched; the sources stay one tap away. */}
+        <div className="ip-closer__cta" style={{ marginTop: 24 }}>
+          {onStart && <StickerButton onClick={() => onStart()}>Get my matches</StickerButton>}
+          {onStart ? <OutlineButton onClick={openSources}>Read our sources</OutlineButton> : <StickerButton onClick={openSources}>Read our sources</StickerButton>}
+        </div>
       </EdBlock>
     </EdPage>
   );

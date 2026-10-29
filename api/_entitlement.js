@@ -16,9 +16,17 @@ export function isPremiumUser(user) {
  */
 export async function hasPremiumAccess(user, admin) {
   if (isPremiumUser(user)) return true;
-  if (process.env.PRO_BILLING_ENABLED !== '1') return false;
+  // The purchase ledger is the source of truth whenever it exists. /api/pro,
+  // the quiz-retake function and the playlist trigger all read it directly,
+  // so this check must too, or a paying member shows "Pro active" but gets
+  // Free limits on Ask and health data (audit, Oct 28). PRO_BILLING_ENABLED
+  // now only decides whether a missing ledger is an error (billing on) or
+  // simply "not Pro" (billing not set up yet, migration not run).
   const { data, error } = await admin.rpc('pro_access_status', { p_user_id: user.id });
-  if (error || typeof data?.active !== 'boolean') throw new Error('Pro entitlement unavailable');
+  if (error || typeof data?.active !== 'boolean') {
+    if (process.env.PRO_BILLING_ENABLED !== '1') return false;
+    throw new Error('Pro entitlement unavailable');
+  }
   return data.active;
 }
 

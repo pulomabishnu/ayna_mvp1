@@ -112,3 +112,11 @@ html body .app-container.app-container.app-container.app-container.app-container
 .ay-ob-pro-invite__eyebrow { font-size:12px; letter-spacing:.07em; text-transform:uppercase; }
 .ay-ob-pro-invite h2 { font-family:var(--ay-sans); font-size:28px; font-weight:400; margin:12px 0; }
 .ay-ob-pro-invite > p { line-height:1.6; }
+
+/* Oct 29 audit: the Pro card's link was butter on cream (unreadable) and the card was off-brand
+   white with a shouty eyebrow. Now a butter tile with espresso text and a readable link. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-pro-invite { border: 0; border-radius: 24px; background: #ffedac; color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-pro-invite__eyebrow { margin: 0; letter-spacing: 0; text-transform: none; font-size: 14px; color: #6d4c41; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-pro-invite h2 { margin: 6px 0 8px; font-family: var(--ay-font-display, 'Bricolage Grotesque', sans-serif); font-weight: 700; font-size: 24px; letter-spacing: -.015em; color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-pro-invite > p { margin: 0 0 8px; color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-pro-invite .ay-ob-quiet { display: inline-flex; padding: 0 !important; color: #3e2723 !important; text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: #f7badd; }

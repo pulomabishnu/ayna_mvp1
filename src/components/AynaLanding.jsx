@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ALL_PRODUCTS, useCatalogReady } from '../data/catalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import * as communityStore from '../utils/community/communityStore.js';
 import WebLanding from './landing/WebLanding.jsx';
@@ -78,15 +79,31 @@ function usePosts() {
 
 export default function AynaLanding({
   onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewCommunity,
-  onViewWaitlist, onViewHowItWorks, onViewToday, user, hasProfile = false, loading = false, heroBanner = null,
+  onViewWaitlist, onViewHowItWorks, onViewToday, onLogIn, onAsk, onOpenHealth, user, hasProfile = false, loading = false, heroBanner = null,
+  quizResults = null, healthProfile = null, matchOpts, recommendedProductIds = null,
 }) {
   const posts = usePosts();
+  // Her top picks, in her ecosystem's order (only products with a photo; at most four are shown).
+  const catalogReady = useCatalogReady();
+  const personalPicks = useMemo(() => {
+    if (!user || !hasProfile || !Array.isArray(recommendedProductIds) || !recommendedProductIds.length) return null;
+    const byId = new Map(ALL_PRODUCTS.map((p) => [String(p.id), p]));
+    return recommendedProductIds.map((id) => byId.get(String(id))).filter((p) => p?.image).slice(0, 8);
+  }, [user, hasProfile, recommendedProductIds, catalogReady]);
   // HI01: hold a skeleton until the session and profile resolve, so the main action never flips.
   if (loading) return <HomeSkeleton />;
   return (
     <WebLanding
       signedIn={Boolean(user)}
+      userId={user?.id || null}
       hasProfile={hasProfile}
+      quizResults={quizResults}
+      healthProfile={healthProfile}
+      matchOpts={matchOpts}
+      personalPicks={personalPicks}
+      onLogIn={onLogIn}
+      onAsk={onAsk}
+      onOpenHealth={onOpenHealth}
       onStartQuiz={onStartQuiz}
       onGoHome={onViewToday}
       onSearch={(q) => onViewDiscovery?.(discoveryTargetFor(q))}

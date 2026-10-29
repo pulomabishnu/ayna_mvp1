@@ -6,6 +6,7 @@
  * action (ctx.on.*). Copy is plain, sentence case, no em dashes.
  */
 import { useId } from 'react';
+import ProTag from '../../pro/ProTag.jsx';
 import MiniChart from './MiniChart.jsx';
 import { REGISTRY, SUMMARY_TOPICS } from './registry.js';
 
@@ -154,7 +155,7 @@ function Health({ size, ctx }) {
       <div className="ay-homehealth__actions">
         {(g || summary?.headline) && ctx.on.ask && <button type="button" className="ay-today__text" onClick={() => ctx.on.ask({ question: 'What stands out in my health data this week?' })}>Ask why</button>}
         {ctx.on.openLog && <button type="button" className="ay-today__text" onClick={ctx.on.openLog}>Log today</button>}
-        {!connected && ctx.on.connect && size === 'large' && <button type="button" className="ay-today__text" onClick={ctx.on.connect}>Connect</button>}
+        {!connected && ctx.on.connect && size === 'large' && <button type="button" className="ay-today__text" onClick={ctx.on.connect}>Connect<ProTag /></button>}
       </div>
     </section>
   );

@@ -3,13 +3,14 @@ import { useRoutines } from './useRoutines.js';
 import { isMedicineProduct } from '../../health/medicineProduct.js';
 import { Plate } from '../ui/ay/index.js';
 import { resolveCatalogProductImage } from '../ProductTileImage.jsx';
+import { slotFor, SLOTS, howLine } from '../../health/plan.js';
 import './routine-timeline.css';
 
 /**
  * Her routine as a day timeline (founder Oct 26 21:45: "a day timeline, not a
  * carousel of small cards"). The Start-here steps of every active routine,
  * grouped by when they happen ("When cramps start", "During your period",
- * "Every night"). Each step: one big square photo (the old product-card
+ * "Every night"). Each step: its name (tap to open), one line of how (founder, Oct 28: no photos, they only took space; was one big square photo, the old product-card
  * look), its name and one line of why; a tap opens How, When and how long.
  * The section that applies right now (her cycle day, the time of day) is the
  * pink "Now" block. Same data as RoutineSummary (useRoutines); medicines are
@@ -40,6 +41,7 @@ function Step({ it, onOpenProduct }) {
     <span className="ay-rtl__text">
       <span className="ay-rtl__name">{it.title}</span>
       {it.why && <span className="ay-rtl__why">{it.why}</span>}
+      {product && it.how && <span className="ay-rtl__how">{it.how}</span>}
     </span>
   </>;
   return (
@@ -61,10 +63,68 @@ function Step({ it, onOpenProduct }) {
   );
 }
 
-export default function RoutineTimeline({ cycle = null, onOpenRoutine, onOpenProduct, onCheckIn, emptyAction = null, max = 3, ...source }) {
+/* Compact row (founder inspo, Oct 28: "Tonight's routine"): a small icon or
+   product thumb, what kind of step it is, the name, one line. The row opens
+   the product; "How" opens the steps in place. */
+const KIND = { product: 'Product', habit: 'Try', track: 'Track' };
+function HabitIcon({ title }) {
+  const t = String(title || '').toLowerCase();
+  if (/sleep|night|bed|wind/.test(t)) return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" /></svg>;
+  if (/heat|warm/.test(t)) return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4c-1.5 2 1.5 3 0 5M12 4c-1.5 2 1.5 3 0 5M16 4c-1.5 2 1.5 3 0 5M4 13h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" /></svg>;
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg>;
+}
+function Row({ it, onOpenProduct }) {
+  const [open, setOpen] = useState(false);
+  const id = `ay-rt2-${it.key}`;
+  const product = it.kind === 'product';
+  const sub = product ? (it.how || it.why) : it.why;
+  const [broken, setBroken] = useState(false);
+  const img = product && !broken ? resolveCatalogProductImage(it.product) : null;
+  const body = <>
+    <span className={`ay-rt2__ic${product && img ? ' is-thumb' : ''}`} aria-hidden="true">{product && img ? <img src={img} alt="" loading="lazy" decoding="async" onError={() => setBroken(true)} /> : <HabitIcon title={it.title} />}</span>
+    <span className="ay-rt2__txt">
+      <small>{KIND[it.kind] || 'Try'}</small>
+      <b>{it.title}</b>
+      {sub && <span>{sub}</span>}
+    </span>
+  </>;
+  const hasDetail = Boolean(it.when || it.how || it.horizon || it.know);
+  return (
+    <li className={`ay-rt2__row${open ? ' is-open' : ''}`}>
+      {product && onOpenProduct
+        ? <button type="button" className="ay-rt2__main" onClick={() => onOpenProduct(it.product)} aria-label={`${it.title}. Open product.`}>{body}</button>
+        : <button type="button" className="ay-rt2__main" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-controls={id}>{body}</button>}
+      {product && hasDetail && <button type="button" className="ay-rt2__how" aria-expanded={open} aria-controls={id} onClick={() => setOpen((v) => !v)}>How<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></button>}
+      {hasDetail && <dl id={id} className="ay-rt2__detail" hidden={!open}>
+        {it.when && <div><dt>When</dt><dd>{cap(it.when)}</dd></div>}
+        {it.how && <div><dt>How</dt><dd>{it.how}</dd></div>}
+        {it.horizon && <div><dt>Try it for</dt><dd>{it.horizon.label}</dd></div>}
+        {it.know && <div><dt>How you will know</dt><dd>{it.know}</dd></div>}
+      </dl>}
+    </li>
+  );
+}
+
+// Her ecosystem products that no routine step covers yet, as timeline steps
+// placed by when they're used (founder, Oct 28: "integrate products into the
+// routine more"). Medicines stay out (information only).
+const SLOT_TITLE = Object.fromEntries(SLOTS.map((x) => [x.id, x.title]));
+function ecosystemSteps(products, covered) {
+  const list = Array.isArray(products) ? products : Object.values(products || {});
+  return list
+    .filter((p) => p?.id && !covered.has(String(p.id)) && !isMedicineProduct(p) && p.userAdded !== true)
+    .map((p) => {
+      const how = howLine(p);
+      return { key: `eco:${p.id}`, kind: 'product', product: p, title: p.name, why: 'In your ecosystem', how: how?.text || null, when: SLOT_TITLE[slotFor(p)] || 'When you need it' };
+    });
+}
+
+export default function RoutineTimeline({ compact = true, cycle = null, onOpenRoutine, onOpenProduct, onCheckIn, onShop = null, emptyAction = null, max = 3, ecoMax = 4, ...source }) {
   const { routines } = useRoutines(source);
   const list = routines.slice(0, max);
-  if (!list.length) {
+  const covered = new Set(list.flatMap((r) => r.start.filter((it) => it.kind === 'product').map((it) => String(it.product?.id))));
+  const extras = ecosystemSteps(source.products, covered).slice(0, ecoMax);
+  if (!list.length && !extras.length) {
     return (
       <div className="ay-rtl is-empty" data-tour="routine">
         <p>Your routine shows here once you add products.</p>
@@ -76,20 +136,50 @@ export default function RoutineTimeline({ cycle = null, onOpenRoutine, onOpenPro
   // One timeline across her routines: steps grouped by when they happen, in the order they first appear.
   const groups = [];
   const seen = new Set();
-  for (const r of list) {
-    for (const it of r.start) {
-      if (it.kind === 'product' && isMedicineProduct(it.product)) continue;
-      if (seen.has(it.key)) continue;
-      seen.add(it.key);
-      const when = cap(it.when || 'Any time');
-      let g = groups.find((x) => x.when === when);
-      if (!g) { g = { when, steps: [], now: isNow(when, cycle, hour) }; groups.push(g); }
-      g.steps.push(it);
-    }
-  }
+  const place = (it) => {
+    if (it.kind === 'product' && isMedicineProduct(it.product)) return;
+    if (seen.has(it.key)) return;
+    seen.add(it.key);
+    const when = cap(it.when || 'Any time');
+    let g = groups.find((x) => x.when.toLowerCase() === when.toLowerCase());
+    if (!g) { g = { when, steps: [], now: isNow(when, cycle, hour) }; groups.push(g); }
+    g.steps.push(it);
+  };
+  for (const r of list) r.start.forEach(place);
+  extras.forEach(place);
+  // What applies now comes first.
+  groups.sort((a, b) => Number(b.now) - Number(a.now));
   const tracks = list.map((r) => r.track).filter(Boolean);
+  if (compact) {
+    const productCount = groups.reduce((n, g) => n + g.steps.filter((it) => it.kind === 'product').length, 0);
+    return (
+      <div className="ay-rt2" data-tour="routine">
+        <ol className="ay-rt2__list">
+          {groups.map((g) => (
+            <li key={g.when} className={`ay-rt2__group${g.now ? ' is-now' : ''}`}>
+              <p className="ay-rt2__when">{g.when}{g.now && <em>Now</em>}</p>
+              <ul>{g.steps.map((it) => <Row key={it.key} it={it} onOpenProduct={onOpenProduct} />)}</ul>
+            </li>
+          ))}
+          {tracks.length > 0 && (
+            <li className="ay-rt2__group">
+              <p className="ay-rt2__when">Your check-in</p>
+              <ul><li className="ay-rt2__row"><button type="button" className="ay-rt2__main" onClick={onCheckIn} disabled={!onCheckIn}>
+                <span className="ay-rt2__ic is-track" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span>
+                <span className="ay-rt2__txt"><small>Track</small><b>{tracks.map((t, i) => (i ? `${t.title.charAt(0).toLowerCase()}${t.title.slice(1)}` : t.title)).join(' and ')}</b><span>About 30 seconds</span></span>
+              </button></li></ul>
+            </li>
+          )}
+        </ol>
+        {(onShop && productCount > 0) || onOpenRoutine ? <div className="ay-rt2__foot">
+          {onShop && productCount > 0 && <button type="button" className="ay-rt2__shop" onClick={onShop}>Shop {productCount} product{productCount === 1 ? '' : 's'}</button>}
+          {onOpenRoutine && <button type="button" className="ay-rt2__all" onClick={onOpenRoutine}>See your full routine</button>}
+        </div> : null}
+      </div>
+    );
+  }
   return (
-    <div className="ay-rtl" data-tour="routine">
+    <div className={`ay-rtl${compact ? ' is-compact' : ''}`} data-tour="routine">
       <ol className="ay-rtl__line">
         {groups.map((g) => (
           <li key={g.when} className={`ay-rtl__sec is-${g.now ? 'now' : 'surface'}`}>

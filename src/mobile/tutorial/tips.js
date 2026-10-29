@@ -386,7 +386,7 @@ export const WEB_SCREENS = [
     root: '.app-container[data-view="articles"] .lb-lib',
     tips: [
       { id: 'library-search', anchor: '.app-container[data-view="articles"] .lb-search', text: 'Search reads by symptom, product or topic.' },
-      { id: 'library-topics', anchor: '.app-container[data-view="articles"] .lb-topics > :first-child', text: 'Tap a topic to see only those reads.' },
+      { id: 'library-topics', anchor: '.app-container[data-view="articles"] .ll-side ul > :first-child', text: 'Pick a topic to see only those reads.' },
     ],
   },
   {
@@ -426,12 +426,16 @@ export const AVOID = [
   '[data-tour-avoid]', '[role="alert"]',
   '.ay-asksheet__form', '.ay-asksheet .ay-askp-composer', '.ay-ask-input',
   '.lsx-search',
+  // The app landing's promise stays readable on a first visit (Oct 29 audit).
+  '#alx-title',
 ];
 /** The website adds its own: the product page's safety hold and cautions, and the Ask composer. */
 export const WEB_AVOID = [
   ...AVOID,
   '.ay-hold', '.ay-buy__warn', '.ayq-alert',
   '.ayna-ask-panel__composer',
+  // The landing's promise stays readable on a first visit (Oct 29 audit: the welcome tip covered it on phones).
+  '#hm-hero-title',
 ];
 export const avoidFor = (surface = 'app') => (surface === 'web' ? WEB_AVOID : AVOID);
 

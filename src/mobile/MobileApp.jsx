@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { claimQuizRetake } from '../utils/proApi.js';
+import { fingerprintIntake, buildIdFromFingerprint } from '../utils/fetchLlmRecommendations.js';
 import { devPreviewOn } from '../utils/devPreview.js';
 import { needAreaLabels } from '../utils/needAreas.js';
 import { markOnboardingDone } from '../health/onboardingSignal.js';
@@ -147,6 +149,7 @@ import { localToday } from '../utils/localDate.js';
 import { trackQuizStarted, trackFirstMatchShown, eventSurface } from '../utils/analyticsEvents.js';
 import ProPaywallHost from '../components/ProPaywallHost.jsx';
 import { openProPaywall, proLimitFeature } from '../pro/paywall.js';
+import { proDoor, retakeDoor } from '../pro/proDoor.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -623,7 +626,7 @@ export default function MobileApp() {
     () => behaviorFrom({ saved: savedMap, omitted: omittedProducts, inEcosystem: myProducts }),
     [savedMap, omittedProducts, myProducts]
   );
-  const { theme, resolvedTheme, setThemeMode } = useThemeMode();
+  const { theme, resolvedTheme, setThemeMode, themeChoice } = useThemeMode();
   const [personalized, setPersonalized] = usePersonalizedFeed(authUser?.id);
   // Push permission is asked in context: after her first save or add, never
   // on launch (iOS only for now). Registration only, nothing sends a push yet.
@@ -1264,7 +1267,13 @@ export default function MobileApp() {
       setOverlay({ type: 'article', item: a });
     },
     onOpenProfile: openProfile,
-    onOpenHealthData: () => { if (authUser) setOverlay({ type: 'profile', screen: health.insights.sections.length ? 'healthInsights' : 'healthData' }); else openProfile(); },
+    // Free account with nothing connected: the Pro sheet where she tapped, not a setup screen that locks (Oct 28).
+    onOpenHealthData: () => {
+      if (!authUser) { openProfile(); return; }
+      const screen = health.insights.sections.length ? 'healthInsights' : 'healthData';
+      if (health.connected.length && screen === 'healthData') { setOverlay({ type: 'profile', screen }); return; }
+      proDoor(screen === 'healthInsights' ? 'dashboard' : 'wearables', () => setOverlay({ type: 'profile', screen }));
+    },
     healthSummary: authUser ? health.insights.sections.find((sec) => sec.status === 'ready') || null : null,
     healthConnectedCount: health.connected.length,
     healthSuggestions: healthDataOn && authUser ? health.matchContext?.suggestions || [] : [],
@@ -1295,7 +1304,7 @@ export default function MobileApp() {
     }),
     onSavePlaylist: authUser ? handleSaveShoppingPlaylist : null,
     onOpenPlaylist: (playlistId) => { setOverlay(null); setCommunitySeed({ playlistId, token: Date.now() }); setScreen('community'); },
-    onConnectHealth: () => (authUser ? setOverlay({ type: 'profile', screen: 'healthData' }) : requestAuth('health data')),
+    onConnectHealth: () => { if (!authUser) { requestAuth('health data'); return; } const go = () => setOverlay({ type: 'profile', screen: 'healthData' }); if (health.connected.length) go(); else proDoor('wearables', go); },
     onToggleHave: (id) => updateSession((prev) => {
       const next = { ...(prev.routineHave || {}) };
       if (next[id]) delete next[id]; else next[id] = true;
@@ -1329,7 +1338,8 @@ export default function MobileApp() {
       if (screen === 'eco' || screen === 'saved' || (screen === 'ecointro' && authUser)) { openProfile(); return; }
       setScreen(screen === 'ecointro' ? 'landing' : homeTarget);
     },
-    onRetake: () => { setIntakeMode('add'); setIntakeAtOptional(false); setEditingHealthProfile(true); setScreen('quiz'); },
+    // Free accounts with this month's retake used see Pro before the quiz, not after answering it (Oct 28).
+    onRetake: () => retakeDoor(() => { setIntakeMode('add'); setIntakeAtOptional(false); setEditingHealthProfile(true); setScreen('quiz'); }),
     onPersonalize: () => { setIntakeMode('add'); setIntakeAtOptional(true); setEditingHealthProfile(true); setScreen('quiz'); },
     onFixLifeStages: () => { setIntakeMode('add'); setIntakeAtOptional(false); setIntakeAtStep('lifeStage'); setEditingHealthProfile(true); setScreen('quiz'); },
     onRequestEcosystemReset: () => setResetDialogOpen(true),
@@ -1385,10 +1395,17 @@ export default function MobileApp() {
       updateSession((prev) => (prev.pendingQuiz ? { pendingQuiz: { ...prev.pendingQuiz, answers: addNeedToAnswers(prev.pendingQuiz.answers, needId) } } : {}));
       setPlanAddedGoals((g) => ({ ...g, [needId]: true }));
     },
-    onSeeMatches: () => {
+    onSeeMatches: async () => {
       if (!pendingQuiz) { setScreen(hasEcosystem ? 'eco' : 'ecointro'); return; }
       const quizAnswers = pendingQuiz.answers;
       const mode = pendingQuiz.mode;
+      // A retake (she already has an ecosystem) uses the monthly allowance:
+      // Free once a month, Pro anytime. Over it: the Pro sheet, answers kept.
+      if (mode === 'add' && authUser) {
+        const fp = fingerprintIntake(quizAnswers?.fullHealthIntake || quizAnswers);
+        const { allowed } = await claimQuizRetake(buildIdFromFingerprint(fp || String(Date.now())));
+        if (!allowed) { openProPaywall({ feature: 'quiz', featureName: 'Quiz retakes' }); return; }
+      }
       const seededProducts = planSeeded.length ? planSeeded : seedEcosystemFromAnswers(quizAnswers, planMatchOpts);
       const existingProducts = mode === 'add' ? myProducts : [];
       const existingIds = new Set(existingProducts.map((product) => product.id));
@@ -1592,6 +1609,7 @@ export default function MobileApp() {
         authUser={authUser}
         theme={theme}
         onToggleTheme={setThemeMode}
+        themeChoice={themeChoice}
         personalized={personalized}
         onPersonalizedChange={setPersonalized}
         products={browseProducts}
@@ -1711,7 +1729,7 @@ export default function MobileApp() {
             isOmitted={!!omittedProducts[overlay.item?.id]}
             onToggleOmit={() => handleToggleOmit(overlay.item)}
             onCompare={openCompare}
-            onOpenHealthData={() => { if (authUser) setOverlay({ type: 'profile', screen: 'healthData' }); else requestAuth('health data', () => setOverlay({ type: 'profile', screen: 'healthData' })); }}
+            onOpenHealthData={() => { const go = () => setOverlay({ type: 'profile', screen: 'healthData' }); if (!authUser) { requestAuth('health data', go); return; } if (health.connected.length) go(); else proDoor('wearables', go); }}
             matchOpts={matchOpts}
             onOpenReview={(postId) => { setCommunitySeed({ postId, token: Date.now() }); setOverlay(null); setScreen('community'); }}
             onCommunityAction={(kind) => {
@@ -1740,6 +1758,7 @@ export default function MobileApp() {
             }).filter(Boolean)}
             theme={theme}
             onToggleTheme={setThemeMode}
+            themeChoice={themeChoice}
           />
         </PushLayer>
       )}
@@ -1802,6 +1821,7 @@ export default function MobileApp() {
           onClose={() => setOverlay(null)}
           theme={theme}
           onToggleTheme={setThemeMode}
+          themeChoice={themeChoice}
           onSignOut={handleSignOut}
           onSignIn={() => openAuth('signin')}
           authUser={authUser}
@@ -1913,6 +1933,7 @@ export default function MobileApp() {
               onOpenProduct={(next) => setSheetProduct(next)}
               theme={theme}
               onToggleTheme={setThemeMode}
+              themeChoice={themeChoice}
             />
           )}
         />

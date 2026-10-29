@@ -1,0 +1,14 @@
+/* Website Home top (Oct 28): the app's Home band and shortcut tiles, laid out for a wide screen.
+   Greeting left, the three dials right, the app's wavy edge, then the two tiles. */
+html body .app-container .wht { margin: 8px 0 32px; }
+html body .app-container .wht .ay-hh { margin: 0; }
+html body .app-container .wht .ay-hh__band { grid-template-columns: minmax(0, 1fr); padding: 28px 32px 24px; border-radius: 24px 24px 0 0; }
+html body .app-container.app-container .wht .ay-hh .ay-hh__hi { margin: -4px 0 0; font-size: clamp(36px, 4vw, 48px); }
+html body .app-container .wht .ay-hh__edge path { fill: #3e2723 !important; }
+html body .app-container .wht__tiles { margin-top: 16px; }
+html body .app-container .wht .ay-hsc { max-width: none; }
+@media (min-width: 900px) {
+  html body .app-container .wht .ay-hh__band { grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-rows: auto auto 1fr; column-gap: 48px; align-items: start; }
+  html body .app-container .wht .ay-hh__band > .ay-dials { grid-column: 2; grid-row: 1 / span 3; align-self: center; }
+  html body .app-container .wht .ay-hh__band > .ay-hh__row { grid-column: 1; }
+}

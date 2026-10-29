@@ -90,7 +90,7 @@ describe('the raining cut-outs (a faded layer behind the hero)', () => {
 describe('the website landing: the v2 home, optimized for desktop', () => {
   it('hero: a centred title, search, Slide to start (welcome tip anchor) and the rain beside it', () => {
     const html = renderToStaticMarkup(<WebLanding onStartQuiz={() => {}} onViewHowItWorks={() => {}} />);
-    expect(html).toContain('aria-label="Create your ecosystem. Slide or tap to start."');
+    expect(html).toContain('aria-label="Get my matches. Slide or tap to start."');
     expect(html).toContain('data-tour="landing-start"');
     expect(html).toContain('class="lsx-search wl-search"');
     expect(html).toMatch(/class="lk-rainbox lk-rainbox--ink wl-rain" aria-hidden="true"/);
@@ -103,7 +103,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(home).toContain('aria-label="Go to your Home. Slide or tap to start."');
   });
 
-  it('keeps the website sections and finishes with one free-start action', () => {
+  it('keeps the website sections, the Pro teaser with Learn more to /pro, the founders and the medical note last', () => {
     vi.useFakeTimers();
     mount(<WebLanding onStartQuiz={() => {}} />);
     act(() => { vi.advanceTimersByTime(1500); });
@@ -111,55 +111,37 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     vi.useRealTimers();
     const page = host.textContent;
     expect(page).toContain('Brands we work with');
-    expect(page).toContain('Does this sound familiar?');
-    expect(page).toContain('How ayna fits it to you');
-    expect(page).toContain('Quick reads about your body, with sources');
-    expect(page).toContain('Go deeper when you want to.');
-    expect(host.querySelector('a[href="/pro"]').textContent).toContain('Get ayna Pro');
+    expect(page).toContain('What you can do on ayna');
+    expect(page).toContain('What’s behind every match');
+    expect(page).toContain('Quick reads, with sources');
+    expect(page).toContain('More of ayna, when you want it.');
+    expect(host.querySelector('a[href="/pro"]').textContent).toContain('See what Pro includes');
     expect(page).toContain('Built by three women who wanted better answers.');
     const last = host.querySelector('#ay-landing').lastElementChild;
-    expect(last.textContent).toContain('Start free. No purchase needed.');
-    expect(last.querySelectorAll('button')).toHaveLength(1);
+    expect(last.textContent).toContain('In an emergency, call 911.');
     expect(host.innerHTML).not.toContain('—');
   });
 
-  it('below the hero (founder, Oct 27 13:44-13:58): one idea a section, the brown and pink strip as two dividers, no pink fills, and a last Slide to start', () => {
+  it('below the hero (founder, Oct 29): one butter page of soft tiles, one espresso close with Pro and a last Slide to start', () => {
     vi.useFakeTimers();
     mount(<WebLanding onStartQuiz={() => {}} />);
     act(() => { vi.advanceTimersByTime(1500); });
     act(() => { vi.runOnlyPendingTimers(); });
     vi.useRealTimers();
     const page = host.querySelector('#ay-landing');
-    // the original website's sections sit under the falling pictures (founder, Oct 27 19:18)
-    expect(page.querySelector('.wl-classic .hm-ev, .wl-classic .hm-sec')).not.toBeNull();
-    // pink is an accent only below the hero: no full pink band
+    // five feature tiles, each with an icon circle; no chip switcher above the picks
+    expect(page.querySelectorAll('.lb-bento > .lb-tile').length).toBe(5);
+    expect(page.querySelectorAll('.lb-bento .lb-ic').length).toBe(5);
+    expect(page.querySelector('.lb [role="group"]')).toBeNull();
+    // pink is an accent only below the hero: no full pink band, and no checker strip before the close
     expect(page.querySelectorAll('.ayb-band.is-pink').length).toBe(0);
-    // the last ask before the note repeats Slide to start, without a second welcome-tip anchor
-    const end = page.querySelector('.wlx-end');
-    expect(end.querySelector('.ay-sts__track').getAttribute('aria-label')).toBe('Create your ecosystem. Slide or tap to start.');
+    expect(page.querySelector('.wl-turn')).toBeNull();
+    // the last ask repeats Slide to start, without a second welcome-tip anchor, then the note ends the page
+    const end = page.querySelector('.lb-close .wlx-end');
+    expect(end.querySelector('.ay-sts__track').getAttribute('aria-label')).toBe('Get my matches. Slide or tap to start.');
     expect(page.querySelectorAll('[data-tour="landing-start"]').length).toBe(1);
-    expect(end).toBe(page.lastElementChild);
+    expect(page.querySelector('.lb-close').nextElementSibling).toBe(page.lastElementChild);
     // the founders photo stays
-    expect(page.querySelector('.wl-classic img[src*="founders"], .wl-classic source[srcset*="founders"]')).not.toBeNull();
+    expect(page.querySelector('.lb img[src*="founders"], .lb source[srcset*="founders"]')).not.toBeNull();
   });
-});
-
-it('lets readers expand explanations, keeps renewal terms visible and ends with human trust before the final CTA', () => {
-  vi.useFakeTimers();
-  mount(<WebLanding onStartQuiz={() => {}} />);
-  act(() => { vi.advanceTimersByTime(1500); });
-  act(() => { vi.runOnlyPendingTimers(); });
-  const method = host.querySelector('.lp-method');
-  const disclosure = method.querySelector('details');
-  expect(disclosure.open).toBe(false);
-  act(() => disclosure.querySelector('summary').click());
-  expect(disclosure.open).toBe(true);
-  const pro = host.querySelector('.wl-pro');
-  expect(pro.textContent).toContain('$4.99');
-  expect(pro.textContent).toContain('$8.99/month');
-  expect(pro.textContent).toContain('Jan 1, 2027');
-  expect(host.querySelector('.hm-rc').compareDocumentPosition(pro) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-  expect(pro.compareDocumentPosition(host.querySelector('.hm-us')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-  expect(host.querySelector('.lp-pro-timing').textContent).toContain('$8.99/month');
-  vi.useRealTimers();
 });

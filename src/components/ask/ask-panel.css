@@ -244,3 +244,8 @@ html body .app-container.app-container:is([data-theme='dark'], [data-theme='bran
   overflow-x: auto !important; overflow-y: hidden !important; scrollbar-width: none; overscroll-behavior-x: contain;
 }
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-filter.ayk-tabs::-webkit-scrollbar { display: none; }
+/* Oct 29 audit: before the first message the Ask page was a tall empty box. Empty, it fits its
+   content (starters, then the composer); once she asks, it grows to the full chat height. */
+html body .app-container.app-container .wx-askpage .ayna-ask-panel.ay-askp-shell.is-page:not(:has(.ay-askp-msg)) { height: auto !important; min-height: 0 !important; }
+html body .app-container.app-container .wx-askpage .ayna-ask-panel.ay-askp-shell.is-page:not(:has(.ay-askp-msg)) .ay-askp-scroll { flex: 0 0 auto; }
+html body .app-container.app-container .wx-askpage { padding-top: 32px; padding-bottom: 48px; }

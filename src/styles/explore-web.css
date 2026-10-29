@@ -132,3 +132,8 @@ html body .app-container .wx-askpage .ayna-ask-panel.is-page .ayna-ask-panel__id
 
 /* You (web), Oct 25: her name as the page's display moment (INSPO 59f3adc7 / 72419ae7 profile header). */
 html body :is(#ay-x, .app-container.app-container.app-container) main .wy-who h1.ay-h1.ay-h1.ay-h1.ay-h1 { font: 700 clamp(44px, 5vw, 72px)/.92 var(--ay-heading, var(--ay-serif)) !important; letter-spacing: -.035em !important; }
+
+/* Oct 29 audit: before the first message the Ask page was a tall empty box with the composer at
+   its foot. Empty, it fits its content so the starters and the box sit together; once she asks,
+   it grows to the full chat height. */
+

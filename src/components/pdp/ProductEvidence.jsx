@@ -739,7 +739,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         <div className="ayq-reviews"><ProductCommunityReviews productId={baseProduct?.id} rows={reviewRows} onOpenReview={onOpenReview} initial={4} /></div>
         {memberReviews.length > 0 && <><h4 className="ayq-subh">From ayna members</h4><ul className="ayq-quotes">{memberReviews.map((r) => <li key={r.slice(0, 40)}><blockquote>{r}</blockquote></li>)}</ul></>}
         {rateControls}
-        {!ratingLines.length && !reviewRows.length && !rv.text.length && <p className="ayq-p">No reviews yet. Tried it? You can be the first.</p>}
+        {!ratingLines.length && !reviewRows.length && !rv.text.length && <p className="ayq-p">0 reviews yet. Tried it? You can be the first.</p>}
       </div>
       <aside className="ayq-side">
         {rv.elsewhere.length > 0 && (
@@ -1081,6 +1081,18 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
               <span className="ayg-src">ayna members</span>
             </div>
           )}
+        </div>
+      )}
+      {/* Nothing to show: just 0, never a note about how reviews were gathered (founder, Oct 29). */}
+      {!bigRating && !breakdown && !glanceCards.length && !reviewRows.length && (
+        <div className="ayg-bento ayg-rev is-one">
+          <div className="ayg-tile is-ink is-wide ayg-rate" role="group" aria-label="Reviews">
+            <span className="ayg-rate__big">0</span>
+            <span className="ayg-rate__right">
+              <span className="ayg-rate__stars" aria-hidden="true"><RatingStars value={0} size={20} /></span>
+              <span className="ayg-rate__count">reviews yet</span>
+            </span>
+          </div>
         </div>
       )}
       {glanceCards.length > 0 && <ul className="ayg-cards" aria-label="Top reviews">{glanceCards.map(({ key, ...c }) => <GlanceReview key={key} {...c} />)}</ul>}

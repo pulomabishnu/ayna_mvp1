@@ -18,8 +18,8 @@ export default function TopicBands({ followed = [], scope = 'all', onScope, onEd
   // At most five filters at the top (advisor, Oct 26): the rest live in the Topics sheet.
   max = Math.min(max, followed.length ? 3 : 0);
   const items = [
-    ...(followed.length ? [{ key: 'mine', label: 'My topics' }] : []),
     { key: 'all', label: 'All' },
+    ...(followed.length ? [{ key: 'mine', label: 'My topics' }] : []),
     ...followed.slice(0, max).map((k) => ({ key: k, label: topicLabel(k) })),
   ];
   const more = followed.length > max;
@@ -27,7 +27,7 @@ export default function TopicBands({ followed = [], scope = 'all', onScope, onEd
     <div className={`ub-topics ay-topic-chips ${className}`.trim()} role="group" aria-label="Filter posts by topic">
       {items.map((t) => {
         const on = scope === t.key;
-        return <Chip key={t.key} selected={on} onClick={() => onScope?.(on && t.key !== 'all' && t.key !== 'mine' ? 'mine' : t.key)}>{t.label}</Chip>;
+        return <Chip key={t.key} selected={on} onClick={() => onScope?.(on && t.key !== 'all' && t.key !== 'mine' ? 'all' : t.key)}>{t.label}</Chip>;
       })}
       {offers.map((k) => (
         <Chip key={k} icon={PLUS} aria-label={`Follow ${topicLabel(k)}`} onClick={() => { onFollow(k); onScope?.(k); }}>{topicLabel(k)}</Chip>

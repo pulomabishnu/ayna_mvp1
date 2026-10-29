@@ -33,6 +33,30 @@ export function noDash(t) {
 
 // "N/A", "N/A (Software)" and "N/A." in front of a real note say nothing.
 const NA_LEAD = /^(n\/?a|none|not applicable|unknown|not on file)\b\.?(\s*\([^()]*\))?\.?\s*/i;
+/* Notes about how reviews were (not) gathered are never shown as reviews (founder, Oct 29: "never
+   say stuff like this, always just put 0"). A paragraph that explains a site blocked us, that we
+   couldn't pull a rating, or that there is no rating is dropped; the page then says 0 reviews. The
+   team's text in the catalog is left as it is. */
+const REVIEWS_META = /automated access|blocks? (?:bots|scrap|automat)|(?:hasn[’']t|has not|haven[’']t|have not|couldn[’']t|could not|wasn[’']t able|was not able|unable) to (?:pull|fetch|retrieve|access|read|verify|find|load)|\bhasn[’']t pulled|read them directly|shows? no (?:star )?ratings?|no (?:star )?rating (?:is )?(?:shown|listed|available|published)|no (?:customer |public |verified )?reviews (?:were |are )?(?:found|available|listed|published|yet)|not enough reviews|no reviews (?:on|at) (?:the|its)|independently (?:re-?)?verif(?:iable|ied)|at time of writing|linked below|reviews (?:for this [\w-]+ )?are on (?:its|the)|only customer feedback|(?:allows?|permit) automated|review (?:volume|data) (?:is|was) (?:still )?(?:limited|low)/i;
+export function isReviewsMeta(text) { return REVIEWS_META.test(String(text || '')); }
+/** Text without its sentences (and clauses) about how reviews were (not) gathered. */
+export function withoutReviewsMeta(text) {
+  const keep = String(text || '').split(/(?<=[.!?]["”’)]?)\s+(?=[A-Z"“(])/).map((sentence) => {
+    if (!isReviewsMeta(sentence)) return sentence;
+    // Keep what comes before the note about gathering; what follows it ("so ...", "read them ...") goes too.
+    const all = sentence.split(/\s*[;:]\s+|,\s+(?=(?:so|and so|but|read|amazon)\b)/i).filter(Boolean);
+    const firstMeta = all.findIndex(isReviewsMeta);
+    const parts = firstMeta === 0 ? all.slice(1).filter((c) => !isReviewsMeta(c) && !/^(?:so|and so|but|read)\b/i.test(c)) : all.slice(0, firstMeta);
+    if (!parts.length) return '';
+    const out = parts.join('. ').trim();
+    return /[.!?]$/.test(out) ? out : `${out}.`;
+  }).filter(Boolean).join(' ').trim();
+  if (/^\d+% said\b/i.test(keep)) return ''; // a brand-study figure that lost its subject
+  // What is left only says where reviews are: nothing to show.
+  if ((keep.length < 160 && /\b(?:carry|carries|has|have|are on|is on|displays?|lists?) (?:its own |their own )?(?:customer )?reviews\b/i.test(keep) && !/[“"]/.test(keep)) || keep.length < 25) return '';
+  return String(text || '').trim().startsWith(keep.slice(0, 12)) ? keep : keep.charAt(0).toUpperCase() + keep.slice(1);
+}
+
 export function meaningful(v) {
   const t = String(v ?? '').trim();
   if (!t) return '';
@@ -243,16 +267,16 @@ export function buildEvidence(product, { heroLine = '', glance = null } = {}) {
     ...getVerificationLinks(product, 'community'),
   ], brand);
   const brandRatingText = [product.safety?.opinionAlerts, product.ratingNote, product.communityReview].join(' ');
-  const elsewhere = communityAll.filter((l) => ['retail', 'brand'].includes(l.kind.tier)).map((l) => ({ ...l, rating: parseRating(l.summary) || parseRating(l.title) }));
+  const elsewhere = communityAll.filter((l) => ['retail', 'brand'].includes(l.kind.tier)).map((l) => ({ ...l, summary: withoutReviewsMeta(l.summary), rating: parseRating(l.summary) || parseRating(l.title) }));
   const commAi = clean(product.verificationLinks?.community?.aiSummary);
   const reviews = {
-    text: paragraphs(meaningful(product.communityReview)),
-    sourceSummary: commAi && normText(commAi) !== normText(product.communityReview) ? commAi : '',
-    ratingNote: clean(product.ratingNote),
+    text: paragraphs(meaningful(product.communityReview)).map(withoutReviewsMeta).filter(Boolean),
+    sourceSummary: commAi && normText(commAi) !== normText(product.communityReview) && withoutReviewsMeta(commAi) ? withoutReviewsMeta(commAi) : '',
+    ratingNote: withoutReviewsMeta(clean(product.ratingNote)),
     brandRating: parseRating(brandRatingText),
     userRating: product.userRating ? { value: product.userRating, url: product.userRatingSourceUrl || '' } : null,
     elsewhere,
-    online: communityAll.filter((l) => !['retail', 'brand'].includes(l.kind.tier)),
+    online: communityAll.filter((l) => !['retail', 'brand'].includes(l.kind.tier)).map((l) => ({ ...l, summary: withoutReviewsMeta(l.summary) })),
     incentivized: (product.incentivizedReviewSites || []).filter((x) => x?.site).map((x) => `${noDash(x.site)}${x.source ? ` (per ${noDash(x.source)})` : ''}`),
   };
 

@@ -166,13 +166,6 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: 'rate_limited' });
   }
 
-  let isPremium;
-  try { isPremium = await hasPremiumAccess(user, admin); }
-  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
-  if (hasLegacyClientPremiumFlag(user)) {
-    console.warn(`[product-chat] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
-  }
-
   let body;
   try {
     body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
@@ -218,6 +211,14 @@ export default async function handler(req, res) {
   // unlimited *billed* Anthropic + OpenAI calls that never touched the counter.
   // It was also a check-then-act race: N concurrent requests all read the same
   // pre-increment value and all passed.
+  // Entitlement after validation, so a bad request never touches the database.
+  let isPremium;
+  try { isPremium = await hasPremiumAccess(user, admin); }
+  catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }
+  if (hasLegacyClientPremiumFlag(user)) {
+    console.warn(`[product-chat] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
+  }
+
   let rules;
   try { rules = await proFeatureRules(admin); }
   catch { return res.status(503).json({ error: 'pro_temporarily_unavailable' }); }

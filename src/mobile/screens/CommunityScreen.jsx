@@ -1,5 +1,6 @@
 // Topic pods here are the curated ayna list (src/utils/community/topics.js).
 import TopicBands from '../../components/community/TopicBands.jsx';
+import { playlistDoor } from '../../pro/proDoor.js';
 // Topics started by members live in src/components/community/topics/ (shared
 // with the website); they stay hidden until their migration runs. See
 // docs/community-user-topics.md.
@@ -273,7 +274,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   const closeTopicSheet = useCallback(() => setTopicSheetOpen(false), []);
   const topicScope = topicScopeChoice === 'mine' && !followedTopics.length ? 'all'
     : topicScopeChoice && topicScopeChoice !== 'mine' && topicScopeChoice !== 'all' && !followedTopics.includes(topicScopeChoice) ? (followedTopics.length ? 'mine' : 'all')
-    : topicScopeChoice || (followedTopics.length ? 'mine' : 'all');
+    : topicScopeChoice || 'all'; // All by default, same as the website (Oct 28)
   const topicsTab = tab === 'for-you' || tab === 'question' || tab === 'review';
   const scopedTopics = !topicsTab || topicScope === 'all' ? null : topicScope === 'mine' ? followedKey.split(',').filter(Boolean) : [topicScope];
   const scopedTopicsKey = scopedTopics ? scopedTopics.join(',') : '';
@@ -448,6 +449,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       return;
     }
     if (prompt?.starter && isOnlyStarter(body, starter)) { setBody(prompt.starter); setStarter(prompt.starter); }
+    if (kind === 'playlist') { playlistDoor(supabase, authUser?.id, () => { closePage(); setCompose(kind); setError(''); }); return; }
     closePage(); setCompose(kind); setError('');
   };
 

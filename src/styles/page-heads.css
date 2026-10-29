@@ -15,10 +15,10 @@
   --phd-top: 40px;      /* nav to title */
   --phd-bottom: 40px;   /* last line of the head to the rule */
   --phd-after: 40px;    /* rule to the page content */
-  --phd-title: 48px;
+  --phd-title: 40px;
 }
 @media (max-width: 767px) {
-  :root { --phd-top: 24px; --phd-bottom: 28px; --phd-after: 24px; --phd-title: 32px; }
+  :root { --phd-top: 24px; --phd-bottom: 28px; --phd-after: 24px; --phd-title: 30px; }
 }
 
 /* ---- The title, the same on every head ---- */
@@ -89,4 +89,5 @@
 :is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container .ed-wrap > .ay-ih.uq-bleed:first-child { margin-top: -8px !important; }
 @media (max-width: 767px) {
 }
+
 

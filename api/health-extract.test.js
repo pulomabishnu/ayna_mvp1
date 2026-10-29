@@ -4,6 +4,8 @@ import { mockRes, mockReq } from './_test-helpers.js';
 const calls = vi.hoisted(() => ({ anthropic: [] }));
 vi.mock('./_usageLimit.js', () => ({ verifyUser: async () => ({ user: { id: 'u1' }, admin: {}, error: null }) }));
 vi.mock('./_rateLimit.js', () => ({ rateLimit: async () => ({ ok: true }) }));
+const access = vi.hoisted(() => ({ pro: true }));
+vi.mock('./_healthAccess.js', () => ({ hasHealthAccess: async () => access.pro }));
 vi.mock('./_llm.js', async (orig) => {
   const real = await orig();
   return { ...real, callAnthropic: vi.fn(async (args) => { calls.anthropic.push(args); return { text: '{"values":[{"metric":"sleep_minutes","day":"today","value":392},{"metric":"resting_hr_bpm","day":"2026-10-10","value":68},{"metric":"blood_glucose","day":"2026-10-10","value":5},{"metric":"steps","day":"2099-01-01","value":10}]}' }; }) };
@@ -13,7 +15,16 @@ const { default: handler, candidatesFromModel } = await import('./health-extract
 const run = async (req) => { const res = mockRes(); await handler(req, res); return res; };
 
 describe('/api/health-extract (screenshots)', () => {
-  beforeEach(() => { calls.anthropic.length = 0; vi.unstubAllEnvs(); });
+  beforeEach(() => { calls.anthropic.length = 0; access.pro = true; vi.unstubAllEnvs(); });
+
+  it('is a Pro feature on the server: a Free account is refused before anything is read', async () => {
+    vi.stubEnv('HEALTH_IMAGE_EXTRACTION', 'anthropic');
+    access.pro = false;
+    const r = await run(mockReq({ body: { mediaType: 'image/png', data: 'iVBORw0KGgo=' } }));
+    expect(r.statusCode).toBe(403);
+    expect(r.body.error).toBe('pro_required');
+    expect(calls.anthropic).toHaveLength(0);
+  });
 
   it('is off by default and says so; nothing is sent anywhere', async () => {
     expect((await run(mockReq({ method: 'GET' }))).body).toEqual({ enabled: false });

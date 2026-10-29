@@ -37,12 +37,18 @@ export function useThemeMode() {
   }, []);
 
   // Saved only once she chooses; until then the phone's setting leads.
+  // 'system' clears her pick, so the phone's setting leads again (founder, Oct 29: the default is the device's).
   const setThemeMode = useCallback((next) => {
+    if (next === 'system') {
+      setPick(null);
+      try { localStorage.removeItem(THEME_KEY); localStorage.removeItem(OLD_KEY); } catch { /* private mode */ }
+      return;
+    }
     if (!MODES.has(next)) return;
     setPick(next);
     try { localStorage.setItem(THEME_KEY, next); } catch { /* private mode */ }
   }, []);
 
   const mode = pick || system;
-  return { theme: mode, resolvedTheme: mode, setThemeMode, followsSystem: !pick };
+  return { theme: mode, resolvedTheme: mode, setThemeMode, followsSystem: !pick, themeChoice: pick || 'system' };
 }

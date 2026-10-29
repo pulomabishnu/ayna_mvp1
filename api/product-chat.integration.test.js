@@ -103,7 +103,9 @@ describe('POST /api/product-chat — quota accounting', () => {
     await (await loadHandler())(mockReq({ body: validBody }), res);
 
     expect(res.statusCode).toBe(200);
-    expect(order[0]).toBe('rpc:consume_ai_usage');
+    // The Pro entitlement lookup (pro_access_status) may come first; the first
+    // quota call must still be the reservation, before any provider call.
+    expect(order.filter((o) => o !== 'rpc:pro_access_status')[0]).toBe('rpc:consume_ai_usage');
     expect(order.indexOf('rpc:consume_ai_usage')).toBeLessThan(order.indexOf('provider'));
   });
 

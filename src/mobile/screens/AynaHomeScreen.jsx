@@ -117,7 +117,8 @@ export default function AynaHomeScreen(props) {
           {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
           <HomeWidgets
             // The dials and Your week already show sleep; the default health row would repeat it (unless she chose it in Edit).
-            hideDefault={charts.length ? ['health'] : []}
+            // With no health data, the default row is just "Your log" again under the Check in row above (Oct 28 audit).
+            hideDefault={charts.length || (!hasCheckIn && !healthConnectedCount) ? ['health'] : []}
             surface="app"
             userId={authUser?.id || null}
             data={{

@@ -138,3 +138,15 @@
 .ay-tour__welcome.is-banner .ay-tour__actions { gap: 4px; }
 .ay-tour__welcome.is-banner .ay-tour__actions button { min-height: 44px; padding: 0 16px; font-size: 14px; }
 .ay-tour__welcome.is-banner .ay-tour__ghost { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; }
+
+/* "Tips off. Turn them back on in Settings." (fades after a few seconds) */
+.ay-tour-offnote { position: fixed; left: 50%; z-index: 4200; translate: -50% 0; max-width: calc(100vw - 32px); padding: 10px 16px; border-radius: 999px; background: #3e2723; color: #ffedac; border: 1.5px solid #3e2723; box-shadow: 3px 3px 0 #f7badd; font: 600 14px/1.3 var(--ay-sans-stack, 'Figtree', sans-serif); text-align: center; animation: ay-tour-offnote 4.5s ease both; pointer-events: none; }
+@keyframes ay-tour-offnote { 0% { opacity: 0; transform: translateY(6px); } 8%, 85% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ay-tour-offnote { animation: none; } }
+
+/* The landing's welcome tip on phones (Oct 29 audit): one short card, so it fits under the search
+   instead of covering the promise above Slide to start. */
+@media (max-width: 560px) {
+  .ay-tour__tip[data-tip='landing-start'] .ay-tour__off-note { display: none; }
+  .ay-tour__tip[data-tip='landing-start'] { padding-top: 12px !important; padding-bottom: 12px !important; }
+}

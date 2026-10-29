@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { playlistDoor } from '../pro/proDoor.js';
 import { hasWhy, whyLead } from '../utils/whyLine';
 import { isSafetyHold } from '../utils/matchDisplay';
 import BackLink from './nav/BackLink.jsx';
@@ -292,7 +293,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [topicSheetOpen, setTopicSheetOpen] = useState(false);
   const topicScope = topicScopeChoice === 'mine' && !followedTopics.length ? 'all'
     : topicScopeChoice && topicScopeChoice !== 'mine' && topicScopeChoice !== 'all' && !followedTopics.includes(topicScopeChoice) ? (followedTopics.length ? 'mine' : 'all')
-      : topicScopeChoice || (followedTopics.length ? 'mine' : 'all');
+      // Default is All (founder, Oct 28: "why is the default not 'all'"); My topics is one tap away.
+      : topicScopeChoice || 'all';
   const topicsTab = tab === 'for-you' || tab === 'question' || tab === 'review';
   const scopedTopicsKey = !topicsTab || topicScope === 'all' ? '' : topicScope === 'mine' ? followedKey : topicScope;
   const scopedTopicList = scopedTopicsKey ? scopedTopicsKey.split(',').filter(Boolean) : null;
@@ -428,6 +430,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     // Posting in a health community needs an account (no anonymous guest posts).
     if (!user) { requireAccount(kind === 'review' ? 'reviews' : kind === 'playlist' ? 'playlists' : kind === 'recommend' ? 'friend recommendations' : 'posting'); return; }
     if (prompt?.starter && isOnlyStarter(body, starter)) { setBody(prompt.starter); setStarter(prompt.starter); }
+    if (kind === 'playlist') { playlistDoor(supabase, user.id, () => { setCompose(kind); setError(''); }); return; }
     setCompose(kind); setError('');
   };
   // Names for the Following empty state.

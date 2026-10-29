@@ -638,7 +638,7 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
 
       <div className="ay-you-body">
         {!signedIn && <SignedOutCard><b>Build your health ecosystem</b><br />Keep your concerns, matches, saved products and health insights connected in one place.</SignedOutCard>}
-        {signedIn && !pro.checking && !pro.allowed && <section className="ay-you-section ay-you-group" aria-label="ayna Pro"><nav className="ay-you-list"><button type="button" className="ay-you-row" onClick={() => openProPaywall({ feature: 'dashboard' })}><svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /></svg><span className="ay-you-row-title">Upgrade to ayna Pro<small className="ay-you-row-sub">Health dashboard, connected data and higher limits</small></span><span className="ay-you-row-value">Upgrade</span><ChevronIcon /></button></nav></section>}
+        {/* The one "Upgrade to ayna Pro" row lives in YouBento (shared with the website), so it shows once. */}
 
         {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
 
@@ -1297,15 +1297,17 @@ function DrillRow({ title, sub, onClick, first }) {
 }
 
 const THEME_SWATCHES = [
+  { key: 'system', label: 'Device' },
   { key: 'light', label: 'Light' },
   { key: 'dark', label: 'Dark' },
 ];
 
 function ThemeSwatch({ mode, selected, onClick }) {
-  const bg = mode === 'light' ? '#FFEDAC' : '#2E1C18';
+  // Device: half butter, half espresso.
+  const bg = mode === 'light' ? '#FFEDAC' : mode === 'dark' ? '#2E1C18' : 'linear-gradient(135deg, #FFEDAC 0 50%, #2E1C18 50% 100%)';
   const barColor = mode === 'dark' ? 'rgba(255,249,242,.35)' : 'rgba(41,37,36,.25)';
   return (
-    <button type="button" aria-label={mode === 'dark' ? 'Dark theme' : 'Light theme'} aria-pressed={selected} onClick={onClick} style={{ border: 0, padding: 0, background: 'transparent', color: 'var(--ayna-text)', cursor: 'pointer', textAlign: 'center' }}>
+    <button type="button" aria-label={mode === 'dark' ? 'Dark theme' : mode === 'light' ? 'Light theme' : 'Match my device'} aria-pressed={selected} onClick={onClick} style={{ border: 0, padding: 0, background: 'transparent', color: 'var(--ayna-text)', cursor: 'pointer', textAlign: 'center' }}>
       <div
         style={{
           height: 58,
@@ -1342,6 +1344,7 @@ function ThemeSwatch({ mode, selected, onClick }) {
 function PreferencesScreen({
   onBack,
   theme,
+  themeChoice = null,
   onToggleTheme,
   onOpenChannels,
   onOpenHealthData,
@@ -1450,9 +1453,9 @@ function PreferencesScreen({
         <SectionLabel>Appearance</SectionLabel>
         <div style={{ background: 'transparent', border: 0, borderBottom: '1px solid var(--ayna-border)', borderRadius: 0, padding: '18px 0' }}>
           <div style={{ fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Theme</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
             {THEME_SWATCHES.map((s) => (
-              <ThemeSwatch key={s.key} mode={s.key} selected={theme === s.key} onClick={() => onToggleTheme(s.key)} />
+              <ThemeSwatch key={s.key} mode={s.key} selected={(themeChoice || theme) === s.key} onClick={() => onToggleTheme(s.key)} />
             ))}
           </div>
         </div>
@@ -3625,6 +3628,7 @@ export default function ProfileFlow({
   healthConnected = [],
   onClose,
   theme,
+  themeChoice = null,
   onToggleTheme,
   onSignOut,
   onSignIn,
@@ -3785,6 +3789,7 @@ export default function ProfileFlow({
       <PreferencesScreen
         onBack={goBack}
         theme={theme}
+        themeChoice={themeChoice}
         onToggleTheme={onToggleTheme}
         onOpenChannels={() => pushScreen('channels')}
         onOpenHealthData={() => pushScreen('healthData')}

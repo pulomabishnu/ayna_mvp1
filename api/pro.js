@@ -1,6 +1,6 @@
 /* global process */
 import { createHash } from 'node:crypto';
-import { verifyUser, getServiceClient } from './_usageLimit.js';
+import { verifyUser, getServiceClient, claimEcosystemBuild } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
 import { proFeatureRules } from './_proFeatures.js';
 import { PRO_FLOW, PRO_PLANS, proConfig, proStatus, proStripe, validateProPrices, renewalDate, syncProSubscription } from './_pro.js';
@@ -42,9 +42,42 @@ export default async function handler(req, res) {
     const isAdmin = isAdminUser(user);
 
     if (req.method === 'GET') {
+      // Which Read this week's free allowance went to (null if unused), so a
+      // free account can choose its one Read knowingly instead of spending it
+      // on whatever it opens first. Gates off or Pro: nothing to choose.
+      let gates = true;
+      let weeklyRead = null;
+      try { gates = (await proFeatureRules(admin)).enabled !== false; } catch { gates = true; }
+      if (gates && !active) {
+        const now = new Date();
+        const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - ((now.getUTCDay() + 6) % 7)));
+        try {
+          const { data } = await admin.from('pro_weekly_reads').select('read_id')
+            .eq('user_id', user.id).eq('week_start', monday.toISOString().slice(0, 10)).maybeSingle();
+          weeklyRead = data?.read_id || null;
+        } catch { weeklyRead = null; }
+      }
+      // Is this month's free quiz retake still open? (Read only, nothing is claimed.) Lets the app and
+      // website lock a retake before the quiz starts instead of after she answers everything.
+      let quizRetakeOpen = true;
+      if (gates && !active) {
+        try {
+          const now = new Date();
+          const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+          const { count: builds } = await admin.from('user_ecosystem_builds').select('build_id', { count: 'exact', head: true }).eq('user_id', user.id);
+          if (builds) {
+            const { count: used } = await admin.from('user_ecosystem_builds').select('build_id', { count: 'exact', head: true })
+              .eq('user_id', user.id).eq('is_initial', false).gte('created_at', monthStart);
+            quizRetakeOpen = (used || 0) < 1;
+          }
+        } catch { quizRetakeOpen = true; }
+      }
       return res.status(200).json({
         ...status,
         active,
+        gates,
+        weeklyRead,
+        quizRetakeOpen,
         // Staff grants do not expire with a separate paid purchase.
         accessExpiresAt: legacyPremium ? null : (Math.max(Date.parse(status.termEndsAt) || 0, Date.parse(status.temporaryUntil) || 0) || null),
         offerOpen,
@@ -76,6 +109,19 @@ export default async function handler(req, res) {
       });
       if (readError) throw new Error('Read allowance unavailable');
       return res.status(200).json({ allowed: data === true, active });
+    }
+
+    if (body.action === 'quiz_retake') {
+      // The app's quiz retake (it builds matches on the phone, so it never
+      // reaches /api/llm-recommendations, which is where the website claims
+      // its monthly retake). Same claim, same table: Free 1 a month, Pro
+      // unlimited (claim_ecosystem_build checks pro_access_status itself).
+      const rules = await proFeatureRules(admin);
+      if (!rules.enabled) return res.status(200).json({ allowed: true });
+      const buildId = String(body.buildId || '').trim().slice(0, 200);
+      if (!buildId) return res.status(400).json({ error: 'missing_build_id' });
+      const claim = await claimEcosystemBuild(admin, user.id, buildId);
+      return res.status(200).json({ allowed: claim.allowed, used: claim.used, limit: claim.limit });
     }
 
     if (body.action === 'feature_gates_set') {

@@ -79,7 +79,7 @@ html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__lin
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__logo { font-size: 32px !important; }
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__beta {
   align-self: flex-start; margin-top: 6px; padding: 3px 6px; border: 1px solid currentColor;
-  border-radius: 3px; background: #ffedac; transform: rotate(-8deg); font-size: 10px !important;
+  border-radius: 999px; background: #ffedac; font-size: 10px !important;
   letter-spacing: .04em !important;
 }
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link {
@@ -87,11 +87,12 @@ html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__lin
 }
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link.is-home {
   position: relative; padding: 0 16px !important; gap: 8px; background: #ffedac !important;
-  color: #3e2723 !important; border: 1px solid #3e2723 !important;
-  border-radius: 10px 5px 10px 5px !important; box-shadow: 2px 3px 0 #3e2723 !important;
-  transform: rotate(-3deg); margin-right: 8px; font-weight: 600 !important;
+  color: #3e2723 !important; border: 1.5px solid #3e2723 !important;
+  border-radius: 999px !important; box-shadow: 3px 3px 0 #3e2723 !important;
+  margin-right: 12px; font-weight: 700 !important;
 }
-html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link.is-home > span { transform: rotate(3deg); }
+/* Calmer header (founder, Oct 28: "less overstimulating ... but emphasize the
+   home"): nothing tilts; Home is the one raised pill, the rest are plain text. */
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__home-mark { display: inline-flex; }
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__home-mark svg { width: 17px; height: 17px; }
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link:not(.is-home)[aria-current='page'] {
@@ -99,8 +100,8 @@ html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__lin
 }
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link:not(.is-home)[aria-current='page']::after {
   display: block !important; content: ''; position: absolute; bottom: 3px; left: 10px; right: 10px;
-  height: 5px; border: 0; border-bottom: 2px solid currentColor; border-radius: 50%;
-  background: transparent; transform: rotate(-3deg);
+  height: 2px; border: 0; border-radius: 2px;
+  background: currentColor;
 }
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link:not(.is-home):hover { text-decoration: underline !important; text-underline-offset: 5px; }
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__ask { background: transparent !important; }
@@ -136,3 +137,31 @@ html body .app-container.app-container.app-container .app-nav-wrap:has(.ay-nav.i
 
 html body .app-container.app-container.app-container .ay-ecoview2 { margin-top:24px; }
 @media(max-width:899px) { html body .app-container.app-container.app-container .ay-ecoview2 { margin-top:16px; } }
+
+/* Website header (founder, Oct 28): espresso, calm, with Home as the one
+   raised butter pill. The pink page tops (Shop, Services, Library,
+   Community) sit under it without clashing, and the landing's espresso hero
+   runs straight on from it. Same in dark mode. */
+html body .app-container.app-container.app-container .app-nav-wrap {
+  --paper-header: #3e2723; --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ay-outline-color: #ffedac;
+  --ay-feature-bg: #ffedac; --ay-feature-fg: #3e2723; color: #ffedac;
+}
+html body .app-container.app-container.app-container .ay-nav--paper { height: 68px; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__logo { color: #ffedac !important; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__beta { color: #3e2723 !important; border-color: #ffedac; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link.is-home {
+  background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; box-shadow: 3px 3px 0 #f7badd !important;
+}
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link:not(.is-home)[aria-current='page']::after { background: #f7badd; height: 3px; }
+
+/* Header, calm pass (founder, Oct 28: "I don't like the squiggly thing"):
+   a straight espresso bar with a hairline, no scalloped edge, no offset
+   shadows. Home stays the one filled pill. */
+html body .app-container.app-container.app-container .app-nav-wrap::after { display: none !important; }
+html body .app-container.app-container.app-container .app-nav-wrap { border-bottom: 1px solid rgba(255, 237, 172, .14) !important; box-shadow: none !important; }
+html body .app-container.app-container.app-container .ay-nav--paper { height: 64px; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__link.is-home { box-shadow: none !important; border-width: 0 !important; min-height: 36px; padding: 0 14px !important; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__links { gap: 4px; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__beta { border-width: 0; background: rgba(255, 237, 172, .16); color: #ffedac !important; }
+html body .app-container.app-container.app-container .ay-nav--paper :is(.ay-nav__ask, .ay-nav__icon) { border-width: 1px !important; border-color: rgba(255, 237, 172, .4) !important; }
+html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__login { box-shadow: none !important; }
