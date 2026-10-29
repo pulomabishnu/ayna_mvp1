@@ -1,0 +1,32 @@
+/* Product page, website, organised (founder, Oct 29: "very disorganized ... make the featured
+   smaller ... put them next to each other ... the header there has too much going on, uneven").
+   - top row: breadcrumb left, Share right, across the whole page
+   - photo and the buy card side by side, the same top line, the photo a modest square
+   - the four sections as underline text tabs, not a pill switcher
+   - no checker strip between the reads and "More like this" */
+@media (min-width: 1000px) {
+  html body .app-container[data-view] #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4:not(.ayna-mobile *) .ayp-top { width: auto !important; max-width: none !important; margin: 0 0 20px !important; }
+  html body .app-container[data-view] #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4:not(.ayna-mobile *) .ayv-dk { grid-template-columns: minmax(0, 460px) minmax(0, 1fr) !important; column-gap: 56px !important; align-items: start !important; margin: 0 !important; }
+  html body .app-container[data-view] #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4:not(.ayna-mobile *) .ayv-dk__decide { margin: 0 !important; max-width: none !important; }
+  html body .app-container[data-view] #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4:not(.ayna-mobile *) .ayv-dk__gallery { width: 100%; padding: 0 !important; margin: 0 !important; }
+  html body .app-container[data-view] #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4:not(.ayna-mobile *) .ayv-dk__gallery .ay-gal, html body .app-container[data-view] #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4:not(.ayna-mobile *) .ayv-dk__gallery .ay-gal__stage { margin-top: 0 !important; padding-top: 0 !important; }
+  html body .app-container[data-view] #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4:not(.ayna-mobile *) .ayv-dk__gallery .ay-gal { width: 100% !important; max-width: 460px !important; margin: 0 !important; }
+  html body .app-container[data-view] #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4:not(.ayna-mobile *) .ayv-dk__gallery .ay-gal__stage { position: relative; width: 100% !important; aspect-ratio: 1 / 1; height: auto !important; max-height: none !important; border-radius: 24px !important; overflow: hidden; }
+  html body .app-container[data-view] #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4:not(.ayna-mobile *) .ayv-dk__gallery .ay-gal__zoom { right: 28px !important; bottom: 28px !important; width: 40px; height: 40px; }
+  html body .app-container[data-view] #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4:not(.ayna-mobile *) .ayv-hero { padding-bottom: 48px !important; }
+}
+/* section tabs: underline text */
+html body .app-container[data-view] #pdp-v4 #ay-tabs#ay-tabs#ay-tabs:not(.ayna-mobile *) .ayq-st__list { display: flex !important; gap: 28px !important; padding: 0 !important; border-radius: 0 !important; background: none !important; border: 0 !important; border-bottom: 1px solid rgba(62, 39, 35, .18) !important; overflow-x: auto !important; scrollbar-width: none; }
+html body .app-container[data-view] #pdp-v4 #ay-tabs#ay-tabs#ay-tabs:not(.ayna-mobile *) .ayq-st__tab { flex: none; min-height: 44px !important; margin-bottom: -1px; padding: 0 0 2px !important; border-radius: 0 !important; border: 0 !important; border-bottom: 3px solid transparent !important; background: none !important; color: #3e2723 !important; font: 500 16px/1 var(--ay-sans-stack, sans-serif) !important; white-space: nowrap !important; }
+html body .app-container[data-view] #pdp-v4 #ay-tabs#ay-tabs#ay-tabs:not(.ayna-mobile *) .ayq-st__tab.is-on { border-bottom-color: #3e2723 !important; font-weight: 700 !important; background: none !important; color: #3e2723 !important; }
+html body .app-container[data-view] #pdp-v4 #ay-tabs#ay-tabs#ay-tabs:not(.ayna-mobile *) .ayq-st__tab:hover:not(.is-on) { border-bottom-color: rgba(62, 39, 35, .3) !important; }
+html body .app-container[data-view][data-theme='brand-dark'] #pdp-v4 #ay-tabs#ay-tabs#ay-tabs:not(.ayna-mobile *) .ayq-st__list { border-bottom-color: rgba(255, 237, 172, .2) !important; background: none !important; }
+html body .app-container[data-view][data-theme='brand-dark'] #pdp-v4 #ay-tabs#ay-tabs#ay-tabs:not(.ayna-mobile *) .ayq-st__tab { color: #ffedac !important; }
+html body .app-container[data-view][data-theme='brand-dark'] #pdp-v4 #ay-tabs#ay-tabs#ay-tabs:not(.ayna-mobile *) .ayq-st__tab.is-on { border-bottom-color: #f7badd !important; color: #ffedac !important; background: none !important; }
+/* no checker strip */
+html body .app-container[data-view] #pdp-v4:not(.ayna-mobile *) .ayp-strip { display: none !important; }
+@media (min-width: 1000px) {
+  html body .app-container[data-view] #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4:not(.ayna-mobile *) .ayv-hero .ayv-dk__gallery > .ayp-gallery { max-width: 460px !important; margin: 0 !important; }
+}
+/* no wavy edge under the top (founder, Oct 28: no squiggles) */
+html body .app-container[data-view] #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4:not(.ayna-mobile *) .ayv-hero::after { content: none !important; }
