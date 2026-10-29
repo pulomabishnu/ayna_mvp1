@@ -51,13 +51,12 @@ function readLocalShadow(userId) {
     const current = window.sessionStorage.getItem(key);
     if (current) return normalizeShadow(JSON.parse(current));
 
-    // One-time migration from older builds that persisted a personalized
-    // ecosystem snapshot in localStorage.
-    const legacy = window.localStorage.getItem(key);
-    if (!legacy) return emptyShadow();
-    const parsed = normalizeShadow(JSON.parse(legacy));
+    // Device copy (Oct 29): when the table write fails, her picks must survive
+    // closing the tab, so a copy is kept on this device until the table has it.
+    const saved = window.localStorage.getItem(key);
+    if (!saved) return emptyShadow();
+    const parsed = normalizeShadow(JSON.parse(saved));
     try { window.sessionStorage.setItem(key, JSON.stringify(parsed)); } catch { /* ignore */ }
-    try { window.localStorage.removeItem(key); } catch { /* ignore */ }
     return parsed;
   } catch {
     return emptyShadow();
@@ -68,8 +67,9 @@ function writeLocalShadow(userId, shadow) {
   if (!userId || typeof window === 'undefined') return false;
   const key = localShadowKey(userId);
   try {
-    window.sessionStorage.setItem(key, JSON.stringify(normalizeShadow(shadow)));
-    try { window.localStorage.removeItem(key); } catch { /* ignore */ }
+    const json = JSON.stringify(normalizeShadow(shadow));
+    window.sessionStorage.setItem(key, json);
+    try { window.localStorage.setItem(key, json); } catch { /* ignore */ }
     return true;
   } catch {
     return false;
@@ -290,7 +290,8 @@ export function isGeneratedPick(product) {
  * she added herself, tracked or saved are never touched, and nothing is deleted.
  * (clearEcosystemForUser below wipes everything and is kept for account reset.)
  */
-export async function clearGeneratedPicksForUser(supabase, userId) {
+export async function clearGeneratedPicksForUser(supabase, userId, { keepIds = [] } = {}) {
+  const keep = new Set(keepIds);
   try {
     const { data, error } = await supabase
       .from('user_ecosystems')
@@ -298,7 +299,7 @@ export async function clearGeneratedPicksForUser(supabase, userId) {
       .eq('user_id', userId)
       .eq('in_ecosystem', true);
     if (error) throw error;
-    const ids = (data || []).filter((row) => isGeneratedPick(row.product_data)).map((row) => row.product_id);
+    const ids = (data || []).filter((row) => isGeneratedPick(row.product_data) && !keep.has(row.product_id)).map((row) => row.product_id);
     if (!ids.length) return { cleared: 0, synced: true };
     const { error: updateError } = await supabase
       .from('user_ecosystems')
@@ -325,15 +326,7 @@ export async function clearEcosystemForUser(supabase, userId, { includeTracking 
     const { error: updateError, count } = await updateQuery;
     if (updateError) throw updateError;
 
-    const { error: deleteError } = await supabase
-      .from('user_ecosystems')
-      .delete()
-      .eq('user_id', userId)
-      .eq('in_ecosystem', false)
-      .eq('is_tracked', false)
-      .eq('is_omitted', false)
-      .eq('is_saved', false);
-    if (deleteError && deleteError.code !== '42703') throw deleteError;
+    // Rows are kept (switched off, not deleted) so a reset can be undone.
     return { cleared: count ?? null, synced: true };
   } catch (error) {
     console.warn('[Ayna] user_ecosystems reset deferred; session fallback retained:', describeError(error, 'clearEcosystem'));

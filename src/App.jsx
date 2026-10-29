@@ -1279,8 +1279,9 @@ function App() {
       // Tagged so a later AI rebuild can tell these generated picks apart from
       // products she added herself (handleBuildEcosystemFromLlm).
       const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
-      setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([, p]) => p && !isGeneratedPick(p))) }));
-      setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && !isGeneratedPick(myProductsRef.current[id]))]);
+      const keepIds = keptGeneratedIds(pendingQuizResults);
+    setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([id, p]) => p && (!isGeneratedPick(p) || keepIds.has(id)))) }));
+      setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && (!isGeneratedPick(myProductsRef.current[id]) || keepIds.has(id)))]);
       clearCachedLlmRecommendations();
       try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch { /* ignore */ }
       const _supabase = getSupabaseClient();
@@ -1299,7 +1300,7 @@ function App() {
         // has products (guest quiz on a new device, then "Save my matches"). The
         // old clear-then-seed wiped everything she had added herself. The saved
         // rows load back in and merge with these picks (see the data load above).
-        seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => clearGeneratedPicksForUser(_supabase, user.id)).then(() => {
+        seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => clearGeneratedPicksForUser(_supabase, user.id, { keepIds: [...keepIds] })).then(() => {
           const seeded = Object.values(instantProducts);
           if (seeded.length) {
             return upsertProductsBatch(_supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false });
@@ -1900,8 +1901,9 @@ function App() {
     const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
     trackFirstMatchShown({ surface: eventSurface(), matches_count: Object.keys(instantProducts).length });
     // Her own products stay on her shelves; only ayna's earlier picks are replaced.
-    setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([, p]) => p && !isGeneratedPick(p))) }));
-    setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && !isGeneratedPick(myProductsRef.current[id]))]);
+    const keepIds = keptGeneratedIds(completedResults);
+    setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([id, p]) => p && (!isGeneratedPick(p) || keepIds.has(id)))) }));
+    setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && (!isGeneratedPick(myProductsRef.current[id]) || keepIds.has(id)))]);
     llmBuiltThisSessionRef.current = false;
     clearCachedLlmRecommendations();
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch { /* ignore */ }
@@ -1914,7 +1916,7 @@ function App() {
     // session ends if the async LLM build (the only other thing that writes
     // to user_ecosystems) never finishes.
     if (supabase && user) {
-      seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => clearGeneratedPicksForUser(supabase, user.id)).then(() => {
+      seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => clearGeneratedPicksForUser(supabase, user.id, { keepIds: [...keepIds] })).then(() => {
         const seeded = Object.values(instantProducts);
         if (seeded.length) {
           return upsertProductsBatch(supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false });
@@ -1964,8 +1966,9 @@ function App() {
     // products she added herself (handleBuildEcosystemFromLlm).
     const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
     // Her own products stay on her shelves; only ayna's earlier picks are replaced.
-    setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([, p]) => p && !isGeneratedPick(p))) }));
-    setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && !isGeneratedPick(myProductsRef.current[id]))]);
+    const keepIds = keptGeneratedIds(updatedResults);
+    setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([id, p]) => p && (!isGeneratedPick(p) || keepIds.has(id)))) }));
+    setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && (!isGeneratedPick(myProductsRef.current[id]) || keepIds.has(id)))]);
     llmBuiltThisSessionRef.current = false;
     clearCachedLlmRecommendations();
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch { /* ignore */ }
@@ -1976,7 +1979,7 @@ function App() {
     // re-seeded ecosystem survives even if the async LLM rebuild never
     // completes.
     if (supabase && user) {
-      seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => clearGeneratedPicksForUser(supabase, user.id)).then(() => {
+      seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => clearGeneratedPicksForUser(supabase, user.id, { keepIds: [...keepIds] })).then(() => {
         const seeded = Object.values(instantProducts);
         if (seeded.length) {
           return upsertProductsBatch(supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false });
@@ -2186,15 +2189,30 @@ function App() {
     }
   };
 
+  // Founder, Oct 29 ("why did my stuff delete"): a retake, an edited profile or
+  // a refresh used to switch off EVERY earlier ayna pick. Now an earlier pick
+  // stays when it is in her routine or still fits her (a match, or held for a
+  // safety check, which then says "Checking this product"); only picks that no
+  // longer fit her at all are taken off. Her own products always stay.
+  const keptGeneratedIds = (results) => new Set(Object.values(myProductsRef.current || {}).filter((p) => {
+    if (!p?.id || !isGeneratedPick(p)) return false;
+    if (trackedProducts?.[p.id]) return true;
+    try {
+      const d = getProductMatchDetailsForProduct(p, results || quizResults, healthProfile, matchOpts);
+      return d?.matchStatus === 'safety-hold' || (d?.matchStatus === 'scored' && Number(d.percent) >= 50);
+    } catch { return true; }
+  }).map((p) => p.id));
   const handleBuildEcosystemFromLlm = useCallback((products) => {
     setSaveError(null);
     if (!Array.isArray(products) || products.length === 0) return;
     llmBuiltThisSessionRef.current = true;
     const valid = products.filter(p => p?.id);
     const llmIdSet = new Set(valid.map(p => p.id));
+    const keepOnRebuild = keptGeneratedIds();
     const staleGeneratedIds = Object.values(myProductsRef.current)
       .filter(p => p?.id && (p.llmGenerated || p.intakeGenerated) && !p._userSwapped && !llmIdSet.has(p.id))
-      .map(p => p.id);
+      .map(p => p.id)
+      .filter((id) => !keepOnRebuild.has(id));
     const manualIds = Object.keys(myProductsRef.current).filter(id => {
       const product = myProductsRef.current[id];
       return product && ((!product.llmGenerated && !product.intakeGenerated) || product._userSwapped);
@@ -2206,7 +2224,7 @@ function App() {
         const p = prev[id];
         return p && ((!p.llmGenerated && !p.intakeGenerated) || p._userSwapped);
       });
-      const manual = Object.fromEntries(currentManualIds.map(id => [id, prev[id]]));
+      const manual = Object.fromEntries([...currentManualIds, ...[...keepOnRebuild].filter((id) => prev[id])].map(id => [id, prev[id]]));
       return { ...valid.reduce((acc, p) => { acc[p.id] = p; return acc; }, {}), ...manual };
     });
     setEcosystemOrder(() => [
