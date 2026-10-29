@@ -23,15 +23,15 @@ describe('first-run setup (seven screens)', () => {
       expect([...screens].sort((a, b) => a - b)).toEqual(screens);
       expect(ob.every((s) => s.why)).toBe(true);
     }
-    // Life stage early (focus group, Oct 26), her name on its own screen (critique, Oct 27).
-    expect(ids({}).slice(0, 6)).toEqual(['helpTopics', 'name', 'age', 'lifeStage', 'support', 'safety']);
+    // Founder, Oct 29: name, age, life stage, then what she wants help with.
+    expect(ids({}).slice(0, 6)).toEqual(['name', 'age', 'lifeStage', 'helpTopics', 'support', 'safety']);
   });
 
   it('minimum questions first, the optional ones only after the reveal', () => {
     const i = intake({ supportSelections: ['Cramps or period pain'] });
     const core = getOnboardingSteps(i, { part: 'core' });
     const more = getOnboardingSteps(i, { part: 'more' });
-    expect(core.map((s) => s.id)).toEqual(['helpTopics', 'name', 'age', 'lifeStage', 'support', 'periodPain', 'safety', 'conditions', 'allergies', 'medications']);
+    expect(core.map((s) => s.id)).toEqual(['name', 'age', 'lifeStage', 'helpTopics', 'support', 'periodPain', 'safety', 'conditions', 'allergies', 'medications']);
     expect(more.map((s) => s.id)).toEqual(['goals', 'formats', 'priceRange', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'trust', 'periodFlow']);
     expect(onboardingProgress(core[4], 'core').label).toBe('Step 3 of 5');
     // Given the list she sees, every screen counts (critique, Oct 27).
@@ -47,9 +47,9 @@ describe('first-run setup (seven screens)', () => {
   it('screen 1 is a list of topics with Something else; screen 3 the spec goals', () => {
     expect(HELP_TOPICS).toContain('Something else');
     expect(HELP_TOPICS).toContain('Periods & cramps');
-    expect(getOnboardingSteps(intake())[0].title).toBe('What would you like ayna to help you with?');
+    expect(getOnboardingSteps(intake()).find((s) => s.id === 'helpTopics').title).toBe('What would you like ayna to help you with?');
     expect(GOALS).toContain('Find evidence-backed options');
-    expect(getOnboardingSteps(intake())[0].subtitle).toContain('You don’t need a diagnosis to use ayna.');
+    expect(getOnboardingSteps(intake()).find((s) => s.id === 'helpTopics').subtitle).toContain('You don’t need a diagnosis to use ayna.');
   });
 
   it('topics only narrow screen 2; no topic shows everything; every option is a real intake option', () => {

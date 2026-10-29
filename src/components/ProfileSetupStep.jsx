@@ -28,7 +28,7 @@ export function suggestUsername(user, firstName = '') {
   return base.length >= 3 ? base : '';
 }
 
-export default function ProfileSetupStep({ supabase, user, firstName = '', onDone }) {
+export default function ProfileSetupStep({ supabase, user, firstName = '', onDone, allowLater = false }) {
   const [checking, setChecking] = useState(true);
   const [handle, setHandle] = useState(() => suggestUsername(user, firstName));
   const [taken, setTaken] = useState(false);
@@ -141,7 +141,7 @@ export default function ProfileSetupStep({ supabase, user, firstName = '', onDon
 
       {error && <p className="ay-psetup__err" role="alert">{error}</p>}
       <button type="submit" className="ay-psetup__go" disabled={Boolean(problem) || taken || saving}>{saving ? 'Saving…' : 'Finish'}</button>
-      {offline && <button type="button" className="ay-psetup__link ay-psetup__later" onClick={() => onDone?.()}>Finish later</button>}
+      {(offline || allowLater) && <button type="button" className="ay-psetup__link ay-psetup__later" onClick={() => onDone?.()}>Finish later</button>}
     </form>
   );
 }

@@ -170,6 +170,7 @@ import { openProPaywall } from './pro/paywall.js';
 import { Capacitor } from '@capacitor/core';
 import AppOnlySheet from './components/AppOnlySheet.jsx';
 import HealthRefreshPrompt from './components/health/HealthRefreshPrompt.jsx';
+import ProfileSetupGate from './components/ProfileSetupGate.jsx';
 import { resetRoutineData } from './utils/resetRoutine.js';
 import { outcomesToProductHistory, readTries } from './health/outcomes.js';
 import WebHomeTop from './components/you/WebHomeTop.jsx';
@@ -3586,6 +3587,8 @@ function App() {
         {user && !heardDismissed && !consentGateOpen && !showAuthModal && !newAccountStart && !['auth-callback', 'campus-resources'].includes(currentView) && shouldAskHeardAbout(user) && (
           <HeardAboutPrompt variant="web" onDone={() => setHeardDismissed(true)} onSaved={(u) => { if (u) setUser(u); }} />
         )}
+        {/* Photo + username for every new or older account without one, whatever way she signed in (founder, Oct 29). */}
+        {user && <ProfileSetupGate user={user} firstName={quizResults?.firstName || ''} blocked={showAuthModal || consentGateOpen || showWrapped || currentView === 'quiz' || currentView === 'auth-callback' || (!heardDismissed && shouldAskHeardAbout(user))} />}
         {newAccountStart && user && currentView !== 'quiz' && (
           <NewAccountStart
             onStart={() => { setNewAccountStart(false); setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}

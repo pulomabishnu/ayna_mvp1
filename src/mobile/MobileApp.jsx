@@ -87,6 +87,7 @@ import NewAccountStart from '../components/NewAccountStart.jsx';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from '../utils/oauthNewAccount.js';
 import EcosystemScreen from './screens/EcosystemScreen.jsx';
 import EcosystemResetDialog from './components/EcosystemResetDialog.jsx';
+import ProfileSetupGate from '../components/ProfileSetupGate.jsx';
 import { resetRoutineData } from '../utils/resetRoutine.js';
 import { stampFactUpdates } from '../matching/factFreshness.js';
 import SavedScreen from './screens/SavedScreen.jsx';
@@ -1709,6 +1710,8 @@ export default function MobileApp() {
           onClose={() => setSaveSheet(null)}
         />
       )}
+      {/* Photo + username for every account without one, whatever way she signed in (founder, Oct 29). */}
+      {authUser && <ProfileSetupGate variant="app" user={authUser} firstName={lastQuizAnswers?.firstName || ''} blocked={['signin', 'quiz', 'building', 'reveal', 'connect', 'ecointro'].includes(screen) || Boolean(overlay)} />}
       <EcosystemResetDialog open={resetDialogOpen} busy={resettingEcosystem} onCancel={() => setResetDialogOpen(false)} onConfirm={handleResetEcosystem} />
       {(overlay?.type === 'profile-auth' || authPrompt) && (
         <div className="ayna-profile-auth-backdrop ay-sheet-dim" style={authPrompt ? { zIndex: 100, bottom: 0 } : undefined} onClick={closeAuthSheet}>

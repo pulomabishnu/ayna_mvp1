@@ -27,6 +27,8 @@ import { isShortHelper } from './quiz/quizText.js';
 import MedicalNote from './MedicalNote.jsx';
 import '../styles/onboarding.css';
 import './WebIntake.audit.css';
+// Questions whose options have a plain meaning on press-and-hold (glossary.js): the answers get data-tour="quiz-hold" and the quiz tip points there.
+const HOLD_TIP_TYPES = new Set(['aboutYou', 'lifeStage', 'support', 'topics', 'conditions', 'allergies', 'formats', 'price', 'avoidOnly', 'wantOnly', 'fsaHsa']);
 // Website-only conditions that change what is safe (condition research, Oct 17).
 const WEB_EXTRA_CONDITIONS = ['Kidney disease', 'Bleeding or clotting disorder', 'History of blood clots', 'Heart disease', 'Liver disease', 'Stomach ulcer or stomach bleeding', 'Asthma'];
 
@@ -284,7 +286,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
     if (singleStep) return startAtStep;
     if (onboarding) {
       const draftId = savedDraft?.stepId ? webResumeStep({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId) : savedDraft?.stepId;
-      return draftId && webOnboardingSteps({ ...EMPTY, ...(savedDraft?.intake || {}) }).some((s) => s.id === draftId && s.id !== 'ready') ? draftId : 'helpTopics';
+      return draftId && webOnboardingSteps({ ...EMPTY, ...(savedDraft?.intake || {}) }).some((s) => s.id === draftId && s.id !== 'ready') ? draftId : 'name';
     }
     if (savedDraft?.stepId) return webResumeStep({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId);
     if (!initialSnapshot) return 'age';
@@ -767,7 +769,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const obProgress = onboarding ? onboardingProgress(step, step.obPart === 'more' ? 'more' : 'core', steps.filter((s) => s.obPart === (step.obPart === 'more' ? 'more' : 'core'))) : null;
   // About you shows as two screens on the website: age, then life stage (titles from the first-run question set).
   const view = step.type === 'aboutYou'
-    ? (aboutPart === 'age' ? { title: 'How old are you?', subtitle: '' } : { title: 'Where are you right now?', subtitle: 'You can be in perimenopause and still have regular periods. Not sure is a fine answer.' })
+    ? (aboutPart === 'age' ? { title: 'How old are you?', subtitle: '' } : { title: 'What life stage are you in right now?', subtitle: 'You can be in perimenopause and still have regular periods. Not sure is a fine answer.' })
     : { title: step.title, subtitle: step.subtitle };
   const multi = isMultiSelectStep(step) || (step.type === 'aboutYou' && aboutPart === 'stage');
   const helperShort = isShortHelper(view.subtitle) ? view.subtitle : '';
@@ -797,7 +799,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
         {onboarding && index === 0 && onExplore && <button type="button" className="aq-link" onClick={onExplore}>Explore first</button>}
         {phase === 'more' && !isLast && <button type="button" className="aq-link" onClick={() => finish()} disabled={saving}>See my results now</button>}
       </>}
-      answerProps={{ onPointerDown: startHold, onPointerUp: endHold, onPointerLeave: endHold, onPointerCancel: endHold, onPointerMove: (e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }, onClickCapture: swallow, onContextMenu: (e) => { if (hold.current.fired) e.preventDefault(); } }}
+      answerProps={{ ...(HOLD_TIP_TYPES.has(step.type) && (step.type !== 'aboutYou' || aboutPart === 'stage') ? { 'data-tour': 'quiz-hold' } : {}), onPointerDown: startHold, onPointerUp: endHold, onPointerLeave: endHold, onPointerCancel: endHold, onPointerMove: (e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }, onClickCapture: swallow, onContextMenu: (e) => { if (hold.current.fired) e.preventDefault(); } }}
       overlay={glossary && <GlossaryCard term={glossary.term} definition={glossary.definition} onClose={() => setGlossary(null)} />}
     >
       {multi && helperShort && <p className="aq-caption">Pick all that apply</p>}

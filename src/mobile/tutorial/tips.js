@@ -53,6 +53,17 @@ export const SCREENS = [
     ],
   },
   {
+    // The quiz (founder, Oct 29): people didn't know they can hold an option
+    // to see what it means. Shown once, no opt-in needed, like the landing tip.
+    id: 'quiz-hold',
+    root: '[data-tour="quiz-hold"]',
+    landing: true,
+    waitMs: 900,
+    tips: [
+      { id: 'quiz-hold', anchor: '[data-tour="quiz-hold"]', text: 'Press and hold any option to see what it means.' },
+    ],
+  },
+  {
     id: 'product-page',
     root: '[data-tour="pdp"]',
     tips: [
@@ -271,6 +282,17 @@ export const WEB_SCREENS = [
     waitMs: 2400,
     tips: [
       { id: 'landing-start', anchor: '[data-tour="landing-start"] .ay-sts__track', text: 'Welcome to ayna: start here to build your ecosystem.' },
+    ],
+  },
+  {
+    // The quiz (founder, Oct 29): people didn't know they can hold an option
+    // to see what it means. Shown once, no opt-in needed, like the landing tip.
+    id: 'quiz-hold',
+    root: '[data-tour="quiz-hold"]',
+    landing: true,
+    waitMs: 900,
+    tips: [
+      { id: 'quiz-hold', anchor: '[data-tour="quiz-hold"]', text: 'Press and hold any option to see what it means.' },
     ],
   },
   {

@@ -56,6 +56,7 @@ import { PostInPicker } from '../../components/community/topics/TopicBits.jsx';
 import { useUserTopics } from '../../components/community/topics/useUserTopics.js';
 import '../../components/community/topics/user-topics.css';
 import { openProPaywall, proLimitFeature } from '../../pro/paywall.js';
+import FriendRecs from '../../components/community/FriendRecs.jsx';
 
 const TABS = [ ['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'], ['announcements', 'Announcements'] ];
 // Five feeds in the pill bar (never scrolls on phones); Announcements opens from the pinned card and the Topics sheet.
@@ -1144,6 +1145,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
             {sent.length > 0 && <><h3 className="am-friends-heading">Sent <span>{sent.length}</span></h3>{sent.map((r) => row(r, <button type="button" className="am-secondary" disabled={busy} onClick={() => answerFriendRequest(r, false)}>Cancel</button>))}</>}
           </section>;
         })()}
+        {page.type === 'notifications' && authUser && <FriendRecs supabase={supabase} userId={authUser.id} productsById={productsById} onOpenProduct={onOpenProduct} />}
         {page.type === 'notifications' && (details || []).map((n) => <div className="am-card" key={n.id}><p>{n.message || n.body || n.type?.replace(/_/g, ' ')}</p><small>{timeLabel(n.created_at)}</small></div>)}
         {page.type === 'profile' && details && !authUser && <div className="am-profile-actions"><button type="button" className="am-primary" onClick={() => requireAccount('following people')}>Follow</button><button type="button" className="am-secondary" onClick={() => requireAccount('friends')}>Add friend</button></div>}
       </div> : <>
