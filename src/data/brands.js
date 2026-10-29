@@ -5469,16 +5469,20 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
-    // Liv Labs (Pippa Resistance Spring), catalog entry only, NOT yet an
-    // ayna brand partner (as of 2026-09-23). isEmergingBrand still shows the
-    // "Brand" tag on Discovery, but it's deliberately left out of
-    // src/utils/partnerBrands.js's PARTNER_BRAND_PATTERNS allowlist and off
-    // the Brand Partnerships page until a partnership is confirmed. Distinct
-    // from LiM Method (limmethod.com) elsewhere in this catalog, similarly
-    // named but a different company: Liv Labs (livlabsfitness.com) makes the
-    // internally-worn Pippa resistance spring, invented by Carly Price.
-    // Product facts checked via web search (direct fetch of
-    // livlabsfitness.com is blocked in this environment).
+    // Liv Labs (Pippa Resistance Spring), catalog entries only, NOT an ayna
+    // brand partner: deliberately left out of src/utils/partnerBrands.js and
+    // the Brand Partnerships page. Distinct from LiM Method (limmethod.com),
+    // a different company: Liv Labs (livlabsfitness.com) makes the
+    // internally worn Pippa resistance spring.
+    //
+    // Rewritten 2026-10-29 at Eliz's request from what Liv Labs (Carly Price)
+    // sent the team, plus the sources she pointed to, all read that day:
+    // livlabsfitness.com (both kit pages, incl. their reviews), the Pippa
+    // listing on My Pelvizen (app.mypelvizen.com/marketplace_items/22, which
+    // has the Quick Start Plan), the Pippa listing on mypelvicbra.shop, and
+    // the ICS 2026 abstract (ics.org/2026/abstract/105). NIH SBIR grant
+    // R44HD105574 checked on NIH RePORTER; openFDA has no 510(k) or
+    // registration for Liv Labs or Pippa (checked 2026-10-29).
     //
     // HIDDEN 2026-10-17 (not deleted) at Eliz's request: not visible anywhere
     // on the site. To make it live again, follow "Hidden products" in CLAUDE.md.
@@ -5489,62 +5493,76 @@ export const BRAND_PRODUCTS = [
         brand: 'Liv Labs',
         category: 'pelvic-floor',
         type: 'physical',
-        internal: false,
+        internal: true,
         healthFunctions: ['pelvic-floor'],
-        tags: ['incontinence', 'fitness', 'comfort', 'safety-concern'],
-        price: '$99.00',
+        tags: ['fitness', 'pelvic-floor', 'comfort'],
+        price: '$119.00',
         whereToBuy: ['livlabsfitness.com'],
         url: 'https://livlabsfitness.com/products/pippa-resistance-spring-starter-kit',
         image: '/products/livlabs/pippa-starter-kit.webp',
-        summary: 'A soft, conforming silicone resistance spring worn internally (like a tampon) that gently activates the pelvic floor with everyday movement: no batteries, screens, or scheduled exercises required. Invented by Carly Price, previously known for reimagining the pillow at Casper and holding 41 patents, in consultation with Bay Area pelvic health specialists; she co-founded Liv Labs with longtime collaborator Melody Roberts to bring it to market. Backed by Y Combinator and recognized in Fast Company\'s 2025 Innovation by Design Awards.',
+        // Who Liv Labs builds Pippa for (their ideal customer profile, from
+        // Carly Price's email to the team, 2026-10-29). Backend only: nothing
+        // on the site displays this field; it's here so matching and the team
+        // know who the product suits.
+        idealCustomers: [
+            'Runners, power lifters, triathletes, Ironman competitors, gymnasts, dancers and other athletes',
+            'Postpartum moms who are very physically active',
+            'Women over 40 who are very physically active',
+        ],
+        // What Liv Labs says about the product's classification (same email).
+        brandNotes: 'Liv Labs classes Pippa as a fitness/wellness product and ships it under the code for resistance bands. Brand disclaimer: "This product is not intended to diagnose, treat, cure, or prevent any disease." Liv Labs is preparing Starter and Fit Kit versions that come with a storage pouch; images to follow.',
+        summary: 'The first wearable product designed to boost pelvic floor fitness, just by wearing it while you move, per Liv Labs. Pippa is a soft spring of platinum-catalyzed biomedical silicone, worn internally like a tampon; its spring-form gently engages the pelvic floor, creating continual light resistance that helps the brain better recruit the right muscles, at the right time, and with the right amount of force. Liv Labs\' comparison: a resistance band, but for the pelvic floor. The Starter Kit has one light-resistance spring (42 mm) and a reusable applicator, and is meant for women who have never had children and have been advised to do kegels. Developed over 7 years by female designers, engineers, athletes and clinical experts.',
         safety: {
-            fdaStatus: 'Marketed as a general wellness/fitness product, not an FDA-cleared medical device. The brand states the springs are made from high-purity biomedical silicone (the type used in implants) and have been tested to medical device standards (including biocompatibility, microbiological, chemical, and cleaning-validation testing) by an ISO 13485:2016-certified manufacturer, though ayna could not independently confirm a specific FDA clearance or registration.',
-            materials: 'High-purity biomedical-grade silicone spring; reusable plastic applicator, similar in concept to a tampon applicator.',
+            fdaStatus: 'Sold as a fitness/wellness product, not a medical device, per Liv Labs ("not intended to diagnose, treat, cure, or prevent any disease"). ayna found no FDA 510(k) clearance or FDA registration for Liv Labs or Pippa (openFDA, checked 2026-10-29). Its NIH grant was awarded for testing toward a 510(k) clearance, which has not been found.',
+            materials: 'Starter Kit: one light-resistance (42 mm) spring and one reusable applicator. Springs are made in the USA of premium, platinum-catalyzed biomedical silicone, free of BPAs and microplastics, per Liv Labs. Each spring is safe for up to 92 uses if used as directed, per Liv Labs.',
             recalls: 'No recalls found.',
-            sideEffects: 'Worn internally, like a tampon or menstrual cup, so the same general hygiene and infection-risk considerations apply: wash hands before handling, clean the spring after every use as directed, and don\'t share it. Unlike a tampon, it isn\'t absorbent, so it doesn\'t carry the same toxic shock syndrome risk profile tied to absorbency, but any object worn internally for extended periods still carries some infection risk if hygiene guidance isn\'t followed.',
-            opinionAlerts: 'The brand states Pippa can be worn during pregnancy and menses and that wear duration is "a matter of individual preference," with some users reportedly wearing it all day. Ayna was not able to independently verify a brand-recommended maximum daily wear time or independent clinical guidance specific to extended internal wear of this device; check current guidance directly with Liv Labs and, if pregnant or postpartum, with a clinician first.',
+            sideEffects: 'Liv Labs says Pippa has been safety-tested, including for use during pregnancy and menstruation. One Starter Kit reviewer said wearing it every day almost gave her sore pelvic floor muscles, and switched to about three times a week.',
+            opinionAlerts: 'It is worn internally, so follow the cleaning steps every time (wash with a cleanser and air dry between uses). If you can feel it during use and can\'t insert it further, Liv Labs suggests seeing a healthcare provider.',
         },
-        clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'Pippa\'s underlying idea (an internally worn object that gives the pelvic floor something to respond to during normal movement) sits in the same conceptual family as weighted vaginal cones, a pelvic-floor training method with real clinical backing. A Cochrane review found weighted vaginal cones are more effective than no treatment for stress urinary incontinence, and may work about as well as standard pelvic floor muscle training (Kegels), though the evidence that cones outperform standard PFMT specifically is inconclusive. Cones and Pippa aren\'t identical (cones rely on gravity and the sensation of "losing" a weight, while Pippa\'s spring relies on gentle conforming resistance) but the shared mechanism, internal proprioceptive/resistance feedback prompting a pelvic floor contraction, is a real, studied approach, not a novel unproven idea.',
-        doctorOpinionShort: 'Conceptually similar to weighted vaginal cones, a pelvic-floor training method with real Cochrane-level evidence (better than no treatment, roughly comparable to standard Kegels), but Pippa\'s specific spring design hasn\'t itself been independently clinically trialed, even though its materials and manufacturing claims are reassuring on safety.',
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'From Liv Labs and the ICS 2026 abstract of a study Liv Labs funded, plus one independent review of a related device category (weighted vaginal cones).',
+        doctorOpinion: 'Liv Labs funded a mechanistic study at Baylor University\'s Institute for Musculoskeletal Advancement, led by Dr. Laurel Proulx, a pelvic health physical therapist and researcher. Its abstract was published by the International Continence Society (ICS 2026, abstract 105). Fifteen women aged 20 to 39 with no pelvic floor symptoms were imaged with and without Pippa inserted (ultrasound and shear wave elastography), in a single group, before-and-after design. With Pippa in place, normal lifting and lowering of the pelvic floor was unchanged, and the puborectalis muscle became stiffer from rest to bearing down (change-score analysis, p=0.03). During a voluntary squeeze, stiffness was lower with the device (p=0.04), which the authors say is not well understood. The study measured muscle mechanics in one session, not symptoms; the authors say research in women with symptoms, during and after pregnancy, and in perimenopause is needed to know whether it helps. The abstract states the funder had no role in the design, analysis or writing.\n\nDr. Mallory Willis, a pelvic health physical therapist and owner of Peak Pelvic Health, wrote in a review on Liv Labs\' site: "These are a great, comfortable and easy to use option especially for postpartum recovery!"\n\nFor context, a related device category, weighted vaginal cones, has a Cochrane review: 23 small trials (1,806 women) found cones better than no treatment for stress urinary incontinence and about as good as pelvic floor muscle training. Cones work differently (holding a weight in place), so this doesn\'t test Pippa itself.',
+        doctorOpinionShort: 'A Liv Labs-funded study of 15 women without symptoms (ICS 2026) found Pippa left normal pelvic floor movement unchanged and stiffened a key pelvic floor muscle during bearing down. It didn\'t measure symptoms. A pelvic health PT calls it a comfortable, easy option for postpartum recovery.',
         doctorOpinionCitations: [
-            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', label: 'Cochrane: Weighted vaginal cones for urinary incontinence' },
+            { url: 'https://www.ics.org/2026/abstract/105', label: 'ICS 2026 abstract 105: Neuromuscular effects of an OTC vaginal support device (Baylor University; funded by Liv Labs)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/23836411/', label: 'PubMed (NIH): Weighted vaginal cones for urinary incontinence (Cochrane review, 2013)' },
         ],
         whoItsFor: [
-            'People wanting a passive, no-routine-required way to engage the pelvic floor during everyday movement or exercise',
-            'Those who\'ve tried standard Kegels/PFMT and want to try a device-assisted alternative in the same general category as vaginal cones',
-            'Not a substitute for an individualized pelvic floor PT evaluation for significant or persistent incontinence or prolapse symptoms',
+            'Physically active women who want the benefits of pelvic floor exercise without a kegel routine: group classes, running, dancing, weight lifting, military training and sports (per Liv Labs)',
+            'Starter Kit: women who have never had children and have been advised to do kegels. If you\'ve had children, Liv Labs recommends the Fit Kit.',
+            'Liv Labs\' three uses: worn during workouts for a passive pelvic floor boost; as a recovery tool for biofeedback and retraining after childbirth or injury; and for added resistance during pelvic floor exercises',
         ],
         howToUse: {
-            intro: 'Per Liv Labs\' own instructions:',
+            intro: 'Per Liv Labs\' Quick Start Plan:',
             steps: [
-                'Wash hands and the spring before first use and before/after each use going forward.',
-                'Insert using the included reusable applicator, similar to inserting a tampon.',
-                'Wear during daily movement, exercise, or as preferred: the brand describes wear duration as a matter of individual preference.',
-                'Remove, clean, and store as directed; keep away from children and pets.',
+                'Insert it with the applicator, much like a tampon. A water-based lubricant can make insertion more comfortable.',
+                'Check placement: after a few moments you shouldn\'t feel it. If you do, insert it further up. If that isn\'t possible, consider seeing a healthcare provider.',
+                'Then move as usual: walk, hike, run, work out or do yard work. No squeeze-and-relax drills are needed, and kegels done with Pippa in place will feel harder.',
+                'Remove it any time. Wash with cleanser and air dry between uses. Each spring is good for up to 92 uses if used as directed.',
             ],
-            sourceUrl: 'https://livlabsfitness.com/products/pippa-resistance-spring-starter-kit',
-            sourceLabel: 'livlabsfitness.com: Pippa Starter Kit',
+            sourceUrl: 'https://app.mypelvizen.com/marketplace_items/22',
+            sourceLabel: 'My Pelvizen: Pippa Resistance Spring (Liv Labs\' Quick Start Plan)',
         },
         warnings: [
-            'This is worn internally: follow the brand\'s hygiene instructions closely (wash hands and the device before and after each use) to reduce infection risk.',
-            'If pregnant, postpartum, or managing a diagnosed pelvic floor condition (prolapse, significant incontinence), check with a clinician or pelvic floor PT before use.',
-            'Stop use and seek care for pain, unusual discharge, bleeding, or signs of infection.',
+            'Worn internally: wash it with a cleanser and air dry between every use (Liv Labs).',
+            'Not intended to diagnose, treat, cure or prevent any disease (Liv Labs). For leaking, prolapse or pelvic pain, see a clinician or pelvic floor physical therapist.',
+            'Pregnant or postpartum: Liv Labs says it\'s safety-tested for use in pregnancy; check with your clinician first.',
+            'Stop and seek care for pain, bleeding, unusual discharge or signs of infection.',
         ],
-        communityReview: 'Pippa has real outside validation as a product: Fast Company\'s 2025 Innovation by Design Awards recognized it, and Liv Labs is Y Combinator-backed. Independent (non-brand) user review volume is still limited at time of writing outside the brand\'s own Kickstarter and site, consistent with an early-stage startup product.',
-        ingredients: 'High-purity biomedical-grade silicone resistance spring (light resistance in the Starter Kit); reusable applicator.',
-        effectiveness: 'Works on the same general principle as weighted vaginal cones, a related device category with real Cochrane-level evidence for pelvic floor training.',
+        communityReview: 'On livlabsfitness.com the Starter Kit has 2 reviews, both 5 stars (checked October 29, 2026). One reviewer found daily wear almost made her muscles sore and now wears it about three times a week; another, using it to stay ahead of problems as she ages, wears it on the treadmill and on walks and praised a customer-care call that walked her through insertion. The Fit Kit page has more reviews (13), most from women who have had children. Pippa was named a Fast Company 2025 Innovation by Design honoree, per Liv Labs.',
+        ingredients: 'Platinum-catalyzed biomedical silicone resistance spring (light, 42 mm); reusable applicator.',
+        effectiveness: 'A Liv Labs-funded mechanistic study in 15 women without symptoms (ICS 2026 abstract) found Pippa preserved normal pelvic floor movement and increased puborectalis stiffness during bearing down. It did not measure symptoms such as leaking, and no trial in women with symptoms has been published yet. Full results are expected in the journal Continence, per Liv Labs.',
         scientificCitations: [
-            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', text: 'Cochrane: Weighted vaginal cones for urinary incontinence', summary: 'Found weighted vaginal cones more effective than no active treatment for stress urinary incontinence, and possibly comparable to standard pelvic floor muscle training, the closest independently studied device category to Pippa\'s internal-resistance mechanism, though not identical to it.' },
+            { url: 'https://www.ics.org/2026/abstract/105', text: 'ICS 2026 abstract 105: Neuromuscular Effects of an Over-the-Counter Vaginal Support Device: A Mechanistic Evaluation in Asymptomatic Women', summary: 'Single-group, before-and-after imaging study of 15 women aged 20 to 39 without symptoms (Baylor University). Pippa preserved normal pelvic floor movement and increased puborectalis stiffness during bearing down; stiffness during a voluntary squeeze was lower with the device. Funded by Liv Labs. Continence 19S (2026) 102582.' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/23836411/', text: 'Cochrane: Weighted vaginal cones for urinary incontinence (2013)', summary: '23 small trials, 1,806 women: cones were better than no treatment for stress urinary incontinence and about as good as pelvic floor muscle training. A related device category, not Pippa itself.' },
         ],
         integrations: [],
-        badges: ['Female-Founded', 'Fast Company 2025 Innovation Award'],
+        badges: ['Female-Founded', 'Fast Company 2025 Innovation by Design Honoree'],
         verificationLinks: {
             community: { links: [
+                { platform: 'website', url: 'https://livlabsfitness.com/products/pippa-resistance-spring-starter-kit', text: 'livlabsfitness.com: Pippa Starter Kit reviews', summary: '2 reviews, both 5 stars, as of October 29, 2026.' },
+                { platform: 'website', url: 'https://app.mypelvizen.com/marketplace_items/22', text: 'My Pelvizen: Pippa Resistance Spring', summary: 'Liv Labs\' Quick Start Plan, quotes from users and a PT, and a summary of the research.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/pelvicfloor/search/?q=pippa%20liv%20labs', text: 'Reddit r/pelvicfloor: Pippa/Liv Labs search', summary: 'User discussion of the Pippa resistance spring.' },
-                { platform: 'instagram', url: 'https://www.instagram.com/livlabsfitness/', text: 'Liv Labs on Instagram', summary: 'Brand content and community posts.' },
-                { platform: 'press', url: 'https://www.prweb.com/releases/pippa-by-liv-labs-recognized-in-fast-companys-2025-innovation-by-design-awards-302566602.html', text: 'PRWeb: Pippa recognized in Fast Company 2025 Innovation by Design Awards', summary: 'Independent press recognition of the product.' },
             ] },
         },
         isEmergingBrand: true,
@@ -5556,39 +5574,74 @@ export const BRAND_PRODUCTS = [
         brand: 'Liv Labs',
         category: 'pelvic-floor',
         type: 'physical',
-        internal: false,
+        internal: true,
         healthFunctions: ['pelvic-floor'],
-        tags: ['incontinence', 'fitness', 'comfort'],
+        tags: ['fitness', 'pelvic-floor', 'postpartum', 'comfort'],
         price: '$149.00',
-        whereToBuy: ['livlabsfitness.com'],
+        whereToBuy: ['livlabsfitness.com', 'mypelvicbra.shop'],
         url: 'https://livlabsfitness.com/products/pippa-fit-kit',
         image: '/products/livlabs/pippa-fit-kit.webp',
-        summary: 'From Liv Labs (see the Pippa Starter Kit entry for the brand\'s founder story): includes both a light- and a medium-resistance Pippa spring plus applicator, letting users progress to a stronger resistance level as pelvic floor engagement builds.',
-        safety: {
-            fdaStatus: 'Marketed as a general wellness/fitness product, not an FDA-cleared medical device. See the Pippa Starter Kit entry for the brand\'s materials and manufacturing claims.',
-            materials: 'High-purity biomedical-grade silicone springs (light and medium resistance); reusable applicator.',
-            recalls: 'No recalls found.',
-            sideEffects: 'Same internal-wear hygiene considerations as the Starter Kit: wash hands and the spring before and after each use.',
-            opinionAlerts: 'Same as the Starter Kit: wear-duration guidance is described by the brand as a matter of preference; ayna could not independently verify a specific maximum recommended wear time.',
-        },
-        clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'Same underlying device category and evidence picture as the Pippa Starter Kit (see that entry for the fuller discussion of the related vaginal-cone research): this kit simply adds a medium-resistance spring so users can progress in resistance level as pelvic floor engagement builds, similar in concept to progressing to a heavier weighted cone in that literature.',
-        doctorOpinionShort: 'Same evidence and caveats as the Pippa Starter Kit; this kit adds a medium-resistance spring for progression.',
-        doctorOpinionCitations: [
-            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', label: 'Cochrane: Weighted vaginal cones for urinary incontinence' },
+        // Liv Labs' ideal customer profile (backend only, see the Starter Kit).
+        idealCustomers: [
+            'Runners, power lifters, triathletes, Ironman competitors, gymnasts, dancers and other athletes',
+            'Postpartum moms who are very physically active',
+            'Women over 40 who are very physically active',
         ],
-        communityReview: 'See the Pippa Starter Kit entry: independent (non-brand) review volume for this specific kit is limited at time of writing.',
-        ingredients: 'High-purity biomedical-grade silicone resistance springs (light and medium resistance); reusable applicator.',
-        effectiveness: 'Same underlying evidence picture as the Starter Kit; the added medium-resistance spring is a progression option, not a separately studied variant.',
+        brandNotes: 'Liv Labs classes Pippa as a fitness/wellness product and ships it under the code for resistance bands. Brand disclaimer: "This product is not intended to diagnose, treat, cure, or prevent any disease." Liv Labs is preparing Starter and Fit Kit versions that come with a storage pouch; images to follow.',
+        summary: 'The first wearable product designed to boost pelvic floor fitness, just by wearing it while you move, per Liv Labs. Pippa is a soft spring of platinum-catalyzed biomedical silicone, worn internally like a tampon; its spring-form gently engages the pelvic floor, creating continual light resistance that helps the brain better recruit the right muscles, at the right time, and with the right amount of force. The Fit Kit has two sizes, a light (42 mm) and a medium (50 mm) resistance spring, plus a reusable applicator, and is recommended for women who have had children and have been advised to do kegels. You may need to try both sizes to find your fit. Developed over 7 years by female designers, engineers, athletes and clinical experts.',
+        safety: {
+            fdaStatus: 'Sold as a fitness/wellness product, not a medical device, per Liv Labs ("not intended to diagnose, treat, cure, or prevent any disease"). ayna found no FDA 510(k) clearance or FDA registration for Liv Labs or Pippa (openFDA, checked 2026-10-29). Its NIH grant was awarded for testing toward a 510(k) clearance, which has not been found.',
+            materials: 'Fit Kit: one light (42 mm) and one medium (50 mm) resistance spring and one reusable applicator. Springs are made in the USA of premium, platinum-catalyzed biomedical silicone, free of BPAs and microplastics, per Liv Labs. Each spring is safe for up to 92 uses if used as directed, per Liv Labs.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Liv Labs says Pippa has been safety-tested, including for use during pregnancy and menstruation. A Starter Kit reviewer said daily wear almost gave her sore pelvic floor muscles, and switched to about three times a week.',
+            opinionAlerts: 'It is worn internally, so follow the cleaning steps every time (wash with a cleanser and air dry between uses). If you can feel it during use and can\'t insert it further, Liv Labs suggests seeing a healthcare provider.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'From Liv Labs and the ICS 2026 abstract of a study Liv Labs funded, plus one independent review of a related device category (weighted vaginal cones).',
+        doctorOpinion: 'Liv Labs funded a mechanistic study at Baylor University\'s Institute for Musculoskeletal Advancement, led by Dr. Laurel Proulx, a pelvic health physical therapist and researcher. Its abstract was published by the International Continence Society (ICS 2026, abstract 105). Fifteen women aged 20 to 39 with no pelvic floor symptoms were imaged with and without Pippa inserted (ultrasound and shear wave elastography), in a single group, before-and-after design. With Pippa in place, normal lifting and lowering of the pelvic floor was unchanged, and the puborectalis muscle became stiffer from rest to bearing down (change-score analysis, p=0.03). During a voluntary squeeze, stiffness was lower with the device (p=0.04), which the authors say is not well understood. The study measured muscle mechanics in one session, not symptoms; the authors say research in women with symptoms, during and after pregnancy, and in perimenopause is needed to know whether it helps. The abstract states the funder had no role in the design, analysis or writing.\n\nDr. Mallory Willis, a pelvic health physical therapist and owner of Peak Pelvic Health, wrote in a review of the Fit Kit on Liv Labs\' site: "These are a great, comfortable and easy to use option especially for postpartum recovery!"\n\nFor context, a related device category, weighted vaginal cones, has a Cochrane review: 23 small trials (1,806 women) found cones better than no treatment for stress urinary incontinence and about as good as pelvic floor muscle training. Cones work differently (holding a weight in place), so this doesn\'t test Pippa itself.',
+        doctorOpinionShort: 'A Liv Labs-funded study of 15 women without symptoms (ICS 2026) found Pippa left normal pelvic floor movement unchanged and stiffened a key pelvic floor muscle during bearing down. It didn\'t measure symptoms. A pelvic health PT calls it a comfortable, easy option for postpartum recovery.',
+        doctorOpinionCitations: [
+            { url: 'https://www.ics.org/2026/abstract/105', label: 'ICS 2026 abstract 105: Neuromuscular effects of an OTC vaginal support device (Baylor University; funded by Liv Labs)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/23836411/', label: 'PubMed (NIH): Weighted vaginal cones for urinary incontinence (Cochrane review, 2013)' },
+        ],
+        whoItsFor: [
+            'Physically active women who want the benefits of pelvic floor exercise without a kegel routine: group classes, running, dancing, weight lifting, military training and sports (per Liv Labs)',
+            'Fit Kit: women who have had children and have been advised to do kegels (Liv Labs\' recommendation)',
+            'Liv Labs\' three uses: worn during workouts for a passive pelvic floor boost; as a recovery tool for biofeedback and retraining after childbirth or injury; and for added resistance during pelvic floor exercises',
+        ],
+        howToUse: {
+            intro: 'Per Liv Labs\' Quick Start Plan:',
+            steps: [
+                'Insert it with the applicator, much like a tampon. A water-based lubricant can make insertion more comfortable.',
+                'Check placement: after a few moments you shouldn\'t feel it. If you do, insert it further up. If that isn\'t possible, consider seeing a healthcare provider.',
+                'Then move as usual: walk, hike, run, work out or do yard work. No squeeze-and-relax drills are needed, and kegels done with Pippa in place will feel harder.',
+                'Try both springs: Liv Labs suggests experimenting, or using each for different activities.',
+                'Remove it any time. Wash with cleanser and air dry between uses. Each spring is good for up to 92 uses if used as directed.',
+            ],
+            sourceUrl: 'https://app.mypelvizen.com/marketplace_items/22',
+            sourceLabel: 'My Pelvizen: Pippa Resistance Spring (Liv Labs\' Quick Start Plan)',
+        },
+        warnings: [
+            'Worn internally: wash it with a cleanser and air dry between every use (Liv Labs).',
+            'Not intended to diagnose, treat, cure or prevent any disease (Liv Labs). For leaking, prolapse or pelvic pain, see a clinician or pelvic floor physical therapist.',
+            'Pregnant or postpartum: Liv Labs says it\'s safety-tested for use in pregnancy; check with your clinician first.',
+            'Stop and seek care for pain, bleeding, unusual discharge or signs of infection.',
+            'Bought from myPelvicBra: products for internal use can\'t be returned once the package is opened.',
+        ],
+        communityReview: 'On livlabsfitness.com the Fit Kit has 13 reviews: 11 five-star and 2 four-star (checked October 29, 2026). Several reviewers, many of them mothers, describe running, jumping classes and long runs without leaking, and one, years after a large vaginal birth, says she regained sensation and control within a week. Others note it\'s comfortable, stays put and that you may need to try both sizes. On mypelvicbra.shop, its 2 reviews are both 2 stars; one says it would have worked better with flat ends. Pippa was named a Fast Company 2025 Innovation by Design honoree, per Liv Labs.',
+        ingredients: 'Platinum-catalyzed biomedical silicone resistance springs (light 42 mm and medium 50 mm); reusable applicator.',
+        effectiveness: 'A Liv Labs-funded mechanistic study in 15 women without symptoms (ICS 2026 abstract) found Pippa preserved normal pelvic floor movement and increased puborectalis stiffness during bearing down. It did not measure symptoms such as leaking, and no trial in women with symptoms has been published yet. Full results are expected in the journal Continence, per Liv Labs.',
         scientificCitations: [
-            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', text: 'Cochrane: Weighted vaginal cones for urinary incontinence', summary: 'Found weighted vaginal cones more effective than no active treatment for stress urinary incontinence, and possibly comparable to standard pelvic floor muscle training.' },
+            { url: 'https://www.ics.org/2026/abstract/105', text: 'ICS 2026 abstract 105: Neuromuscular Effects of an Over-the-Counter Vaginal Support Device: A Mechanistic Evaluation in Asymptomatic Women', summary: 'Single-group, before-and-after imaging study of 15 women aged 20 to 39 without symptoms (Baylor University). Pippa preserved normal pelvic floor movement and increased puborectalis stiffness during bearing down; stiffness during a voluntary squeeze was lower with the device. Funded by Liv Labs. Continence 19S (2026) 102582.' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/23836411/', text: 'Cochrane: Weighted vaginal cones for urinary incontinence (2013)', summary: '23 small trials, 1,806 women: cones were better than no treatment for stress urinary incontinence and about as good as pelvic floor muscle training. A related device category, not Pippa itself.' },
         ],
         integrations: [],
-        badges: [],
+        badges: ['Female-Founded', 'Fast Company 2025 Innovation by Design Honoree'],
         verificationLinks: {
             community: { links: [
-                { platform: 'instagram', url: 'https://www.instagram.com/livlabsfitness/', text: 'Liv Labs on Instagram', summary: 'Brand content and community posts.' },
+                { platform: 'website', url: 'https://livlabsfitness.com/products/pippa-fit-kit', text: 'livlabsfitness.com: Pippa Fit Kit reviews', summary: '13 reviews (11 five-star, 2 four-star) as of October 29, 2026.' },
+                { platform: 'website', url: 'https://www.mypelvicbra.shop/collections/all/products/pippa%C2%AE-resistance-spring', text: 'mypelvicbra.shop: Pippa Resistance Spring', summary: 'myPelvicBra\'s listing of the Fit Kit, with 2 reviews (both 2 stars) as of October 29, 2026.' },
+                { platform: 'website', url: 'https://app.mypelvizen.com/marketplace_items/22', text: 'My Pelvizen: Pippa Resistance Spring', summary: 'Liv Labs\' Quick Start Plan, quotes from users and a PT, and a summary of the research.' },
             ] },
         },
         isEmergingBrand: true,
