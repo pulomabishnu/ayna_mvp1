@@ -72,3 +72,15 @@ html body .app-container #ayeco .weco-tabs button:hover:not(.is-on) { background
 html body .app-container #ayeco .weco-tabs button.is-on { background: none; color: #3e2723; border-bottom-color: #3e2723; font-weight: 700; }
 html body .app-container #ayeco .weco-tabs small { min-width: 0; height: auto; padding: 0; background: none; color: #6d4c41; font: 500 14px/1 var(--ay-sans-stack, sans-serif); }
 @media (max-width: 640px) { html body .app-container #ayeco .weco-tabs { gap: 20px; overflow-x: auto; } html body .app-container #ayeco .weco-tabs button { flex: none; padding: 0 0 2px; font-size: 15px; } }
+
+/* Dark (follows the device by default): text on the page turns butter. */
+html body .app-container[data-theme='brand-dark'] #ayeco :is(.weco-row__main, .weco-more, .weco-empty, .weco-fold > summary, .weco-shelf__add, .weco-tabs button, .weco-tabs button.is-on) { color: #ffedac !important; }
+html body .app-container.app-container[data-theme='brand-dark'] #ayeco :is(.weco-row__name, .weco-shelf__head h3) { color: #ffedac !important; }
+html body .app-container.app-container[data-theme='brand-dark'] #ayeco :is(.weco-row__meta, .weco-shelf__n, .weco-tabs small) { color: rgba(255, 237, 172, .72) !important; }
+html body .app-container[data-theme='brand-dark'] #ayeco .weco-row { border-bottom-color: rgba(255, 237, 172, .16); }
+html body .app-container[data-theme='brand-dark'] #ayeco .weco-shelf__head { border-bottom-color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] #ayeco .weco-tabs { border-bottom-color: rgba(255, 237, 172, .2); }
+html body .app-container[data-theme='brand-dark'] #ayeco .weco-tabs button.is-on { border-bottom-color: #f7badd; }
+html body .app-container[data-theme='brand-dark'] #ayeco .weco-row__chev { stroke: #ffedac; }
+html body .app-container[data-theme='brand-dark'] #ayeco .weco-row__pct { background: #ffedac; color: #3e2723; }
+html body .app-container[data-theme='brand-dark'] #ayeco .weco-row__act { border-color: #ffedac; }

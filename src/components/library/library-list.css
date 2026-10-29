@@ -91,3 +91,14 @@
 }
 
 /* Rows are text only, like a reference index; photos stay on the featured reads. */
+
+/* Dark (follows the device by default): text that sits on the page turns butter; cards stay butter. */
+html body .app-container[data-theme='brand-dark'] :is(.ll-h2, .ll-shelf__head h3, .ll-row__title, .ll-side button, .ll-shelf__head > :is(button, a):last-child:not(.ll-shelf__n)) { color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] .ll-row__link { color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] :is(.ll-row__meta, .ll-shelf__n, .ll-side__h, .ll-side button span, .ll-shelf__note) { color: rgba(255, 237, 172, .72) !important; }
+html body .app-container[data-theme='brand-dark'] .ll-row { border-bottom-color: rgba(255, 237, 172, .16); }
+html body .app-container[data-theme='brand-dark'] .ll-shelf__head { border-bottom-color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ll-side ul { border-left-color: rgba(255, 237, 172, .2); border-bottom-color: rgba(255, 237, 172, .2); }
+html body .app-container[data-theme='brand-dark'] .ll-side button[aria-current='true'] { border-left-color: #f7badd; border-bottom-color: #f7badd; }
+html body .app-container[data-theme='brand-dark'] .ll-row__chev { stroke: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ll-row__free { background: #f7badd; color: #3e2723; }

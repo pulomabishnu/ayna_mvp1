@@ -626,7 +626,7 @@ export default function MobileApp() {
     () => behaviorFrom({ saved: savedMap, omitted: omittedProducts, inEcosystem: myProducts }),
     [savedMap, omittedProducts, myProducts]
   );
-  const { theme, resolvedTheme, setThemeMode } = useThemeMode();
+  const { theme, resolvedTheme, setThemeMode, themeChoice } = useThemeMode();
   const [personalized, setPersonalized] = usePersonalizedFeed(authUser?.id);
   // Push permission is asked in context: after her first save or add, never
   // on launch (iOS only for now). Registration only, nothing sends a push yet.
@@ -1609,6 +1609,7 @@ export default function MobileApp() {
         authUser={authUser}
         theme={theme}
         onToggleTheme={setThemeMode}
+        themeChoice={themeChoice}
         personalized={personalized}
         onPersonalizedChange={setPersonalized}
         products={browseProducts}
@@ -1757,6 +1758,7 @@ export default function MobileApp() {
             }).filter(Boolean)}
             theme={theme}
             onToggleTheme={setThemeMode}
+            themeChoice={themeChoice}
           />
         </PushLayer>
       )}
@@ -1819,6 +1821,7 @@ export default function MobileApp() {
           onClose={() => setOverlay(null)}
           theme={theme}
           onToggleTheme={setThemeMode}
+          themeChoice={themeChoice}
           onSignOut={handleSignOut}
           onSignIn={() => openAuth('signin')}
           authUser={authUser}
@@ -1930,6 +1933,7 @@ export default function MobileApp() {
               onOpenProduct={(next) => setSheetProduct(next)}
               theme={theme}
               onToggleTheme={setThemeMode}
+              themeChoice={themeChoice}
             />
           )}
         />

@@ -183,3 +183,12 @@ html body .app-container #ay-landing .lb-close + .wl-note { border-top: 0; }
 }
 @media (prefers-reduced-motion: reduce) { html body .app-container #ay-landing .lb-tile__a { transition: none; } html body .app-container #ay-landing .lb-tile__a:hover { transform: none; } }
 html.ay-motion-paused body .app-container #ay-landing .lb-tile__a:hover { transform: none; }
+
+/* Dark (follows the device by default): the page goes deep espresso, headings and links butter;
+   the tiles keep their colours (they carry their own text colour), espresso tiles get a soft edge. */
+html body .app-container[data-theme='brand-dark'] #ay-landing .lb { background: #2e1c18; }
+html body .app-container.app-container[data-theme='brand-dark'] #ay-landing .lb > .lb-sec > .lb-wrap > .lb-h2,
+html body .app-container.app-container[data-theme='brand-dark'] #ay-landing .lb > .lb-sec > .lb-wrap > .lb-head .lb-h2 { color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] #ay-landing .lb > .lb-sec > .lb-wrap > .lb-head .lb-more { color: #ffedac !important; text-decoration-color: #f7badd; }
+html body .app-container[data-theme='brand-dark'] #ay-landing .lb :is(.lb-tile.is-ink .lb-tile__a, .lb-stat.is-ink) { box-shadow: inset 0 0 0 1px rgba(255, 237, 172, .16); }
+html body .app-container[data-theme='brand-dark'] #ay-landing .lb-close { background: #3e2723; }

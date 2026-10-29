@@ -76,8 +76,12 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
           const delay = expiresAt && allowed ? Math.min(60000, Math.max(0, expiresAt - Date.now())) : 60000;
           timer = setTimeout(() => { setResult(null); setRefresh(n => n + 1); }, delay);
         }
-      } catch {
-        if (!controller.signal.aborted) setResult({ key, allowed: false, error: 'We couldn’t confirm your Pro access. Please try again.' });
+      } catch (err) {
+        if (controller.signal.aborted) return;
+        // Signed out: a plain lock that says to get ayna Pro (the sheet asks her to sign in first),
+        // never an open door and never a "try again" error (founder, Oct 29: locks are really locked).
+        if (err?.code === 'sign_in_required') setResult({ key, allowed: false, signedOut: true });
+        else setResult({ key, allowed: false, error: 'We couldn’t confirm your Pro access. Please try again.' });
       }
     };
     check();
@@ -138,7 +142,8 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
       feature={feature}
       title={gateTitle}
       context={contextTitle}
-      line={feature === 'reads' && result?.usedOn ? 'You’ve used this week’s free Read. A new one opens Monday, or get every Read with ayna Pro.' : undefined}
+      line={feature === 'reads' && result?.usedOn ? 'You’ve used this week’s free Read. A new one opens Monday, or get every Read with ayna Pro.'
+        : feature === 'reads' && result?.signedOut ? 'Free accounts choose one Read a week. ayna Pro opens every Read.' : undefined}
       native={Capacitor.isNativePlatform()}
       onNotNow={onBack || onEcosystem}
       error={result.error || ''}

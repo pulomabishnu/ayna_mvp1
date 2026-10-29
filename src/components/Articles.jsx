@@ -35,7 +35,8 @@ export default function Articles(props) {
     />
   );
 
-  if (!activeArticleId || !props.userId) return library;
+  // Signed out too: a Read is gated (founder, Oct 29). Signed out, the lock offers ayna Pro, whose sheet asks her to sign in.
+  if (!activeArticleId) return library;
 
   return (
     <ProFeatureGate

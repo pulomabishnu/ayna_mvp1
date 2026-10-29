@@ -161,6 +161,7 @@ import './styles/page-heads.css';
 import './styles/shop-hero.css';
 import './styles/library-head.css';
 import './styles/no-vibe.css';
+import './styles/header-calm.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
 import ProLock from './components/ProLock.jsx';
 import { proDoor, retakeDoor } from './pro/proDoor.js';
@@ -2495,7 +2496,7 @@ function App() {
       <a className="ay-skip" href="#ay-content">Skip to content</a>
       {/* The header sits outside <main>. It slides away while scrolling down and
           comes back on any scroll up; its hairline shows only with content under it. */}
-        <div className={`app-nav-wrap${headerScroll.scrolled ? ' is-scrolled' : ''}${headerScroll.away ? ' is-away' : ''}`}>
+        <div className={`app-nav-wrap${['welcome', 'hero'].includes(currentView) ? ' is-landing' : ''}${headerScroll.scrolled ? ' is-scrolled' : ''}${headerScroll.away ? ' is-away' : ''}`}>
         <nav
           className={`ay-nav ay-nav--paper${isScrolled ? ' is-scrolled' : ''}${FOCUSED_FLOW_VIEWS.includes(currentView) ? ' is-focused' : ''}`}
           data-on-gradient={navOnGradient ? navGradientVariant || 'yes' : undefined}
