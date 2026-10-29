@@ -5607,3 +5607,4 @@ html body .app-container.app-container.app-container.app-container.app-container
 /* p15 clean (founder: "no ugly sticks/stars"): the curved-text seals on the website set their
    words at under 13px. They are aria-hidden decoration, so they are dropped. */
 :is(.wx-seal, .hm-art__seal, .hm-invest__seal).ay-seal { display: none !important; }
+.app-container .eco3-head__build { margin-top: 16px; }

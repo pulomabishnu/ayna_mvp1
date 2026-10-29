@@ -2086,8 +2086,12 @@ export default function MyEcosystem({
                     <div className="eco3-head__text">
                         <h1 id="eco3-title" className="ay-h1">My ecosystem</h1>
                         <p className="eco3-head__sub">
-                            {llmLoading && myProductList.length === 0 ? 'Building your matches…' : myProductList.length === 0 ? 'No picks yet' : 'Everything you use and what it is for, sorted onto shelves by need.'}
+                            {llmLoading && myProductList.length === 0 ? 'Building your matches…' : myProductList.length === 0 ? 'Your shelves are empty. ayna can fill them from the answers you already gave.' : 'Everything you use and what it is for, sorted onto shelves by need.'}
                         </p>
+                        {/* Empty shelves (Oct 29): one clear way back instead of a bare "No picks yet". */}
+                        {!llmLoading && myProductList.length === 0 && typeof onBuildEcosystem === 'function' && (
+                            <button type="button" className="ay-btn ay-btn--primary eco3-head__build" onClick={() => onBuildEcosystem()}>Build my picks</button>
+                        )}
                     </div>
                     {/* Stacked-card summary: the one stamp, her real numbers, needs covered and the monthly estimate. */}
                     {myProductList.length > 0 && (() => {
