@@ -145,27 +145,29 @@ function FeatureArt({ kind }) {
 }
 const STAGE_CHIPS = ['Regular periods', 'Postpartum', 'Perimenopause'];
 const FEATURES = [
-  { k: 'match', tone: 'pink', wide: true, t: 'Get matched', d: 'Answer a few questions about your body. See products and care matched to your needs, and why each one fits.', href: '/quiz', cta: 'Start free' },
-  { k: 'evidence', tone: 'butter', t: 'See the evidence', d: 'Every product shows how strong the research behind it is.', href: '/how-it-works', cta: 'How we match' },
-  { k: 'routine', tone: 'ink', t: 'Build your routine', d: 'Know when to use what you already have.', href: '/you/ecosystem', cta: 'Your ecosystem' },
-  { k: 'ask', tone: 'butter', t: 'Ask ayna', d: 'Questions about your body or a product, answered with sources.', href: '/ask', cta: 'Ask a question' },
-  { k: 'month', tone: 'pink', t: 'Check in', d: 'A quick log of how you feel shows what is working.', href: '/you/ecosystem', cta: 'Your month' },
-];
-function Features({ onGo }) {
+  { k: 'match', tone: 'pink', wide: true, t: 'Get matched', d: 'A few questions. Products and care matched to you, and why.', href: '/quiz', label: 'Start free' },
+  { k: 'evidence', tone: 'butter', t: 'See the evidence', d: 'How strong the research is, on every product.', href: '/how-it-works' },
+  { k: 'routine', tone: 'ink', t: 'Build your routine', d: 'When to use what you already have.', href: '/you/ecosystem' },
+  { k: 'ask', tone: 'butter', t: 'Ask ayna', d: 'Questions about your body, answered with sources.', href: '/ask' },
+  { k: 'month', tone: 'ink', t: 'Check in', d: 'Pain, flow, sleep, mood.', href: '/you/ecosystem' },
+]
+function Features({ onGo, member = false }) {
+  const list = member ? FEATURES.map((f) => (f.k === 'match' ? { ...f, t: 'Your matches', d: 'Your products and care, matched to you, and why.', href: '/you/ecosystem', label: 'Go to your Home' } : f)) : FEATURES;
   return (
     <section className="lpf" aria-labelledby="lpf-h">
       <div className="hm-wrap">
         <h2 id="lpf-h" className="lp-h2">What you can do on ayna</h2>
         <ul className="lpf-grid">
-          {FEATURES.map((f) => (
+          {list.map((f) => (
             <li key={f.k} className={`lpf-tile is-${f.tone}${f.wide ? ' is-wide' : ''}`}>
               <a href={f.href} className="lpf-tile__link" onClick={(e) => { if (!onGo?.[f.k] || !isPlainLeftClick(e)) return; e.preventDefault(); onGo[f.k](); }}>
-                <span className="lpf-tile__text">
+                <span className="lpf-tile__head">
                   <strong className="lpf-tile__t">{f.t}</strong>
-                  <span className="lpf-tile__d">{f.d}</span>
+                  <svg className="lpf-tile__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
                 </span>
+                <span className="lpf-tile__d">{f.d}</span>
                 <FeatureArt kind={f.k} />
-                <span className="lpf-tile__go"><span>{f.cta}</span><span className="lpf-tile__arrow" aria-hidden="true"><Arrow /></span></span>
+                {f.label && <span className="lpf-tile__pill">{f.label}</span>}
               </a>
             </li>
           ))}
@@ -298,6 +300,9 @@ function useCatalogNumbers() {
 /* ---------- 7. ayna Pro (espresso) ----------
    Early Access prices (src/components/SubscriptionPaywallModal.jsx on main),
    as static text, and Learn more to /pro. */
+// The server reports the offer closed whenever checkout is switched off (preview
+// builds), so "closed" only shows once the Early Access window has really passed.
+const offerEnded = () => Date.now() >= Date.parse('2027-01-01T00:00:00');
 function Pro({ pro = false, offerOpen = null }) {
   const month = PLANS.find((x) => x.id === 'month');
   const year = PLANS.find((x) => x.id === 'year');
@@ -312,9 +317,9 @@ function Pro({ pro = false, offerOpen = null }) {
             : 'Connect your health data, go deeper on your patterns and lift the free limits. Matches, safety notes and evidence stay free.'}</p>
           <a className="wl-pro__more" href={pro ? '/health-data' : '/pro'}>{pro ? 'Connect health data' : 'See what Pro includes'}<Arrow /></a>
         </div>
-        {!pro && (offerOpen === false
-          ? <p className="wl-pro__closed">The Early Access offer is closed right now.</p>
-          : <div className="wl-pro__side">
+        {!pro && offerOpen === false && offerEnded() && <p className="wl-pro__closed">The Early Access offer has ended. See ayna Pro for current pricing.</p>}
+        {!pro && !(offerOpen === false && offerEnded()) && (
+          <div className="wl-pro__side">
             <ul className="wl-pro__prices">
               <li><small>Monthly</small><b>{month.price}</b><s>{month.regular}</s><em>first month</em></li>
               <li className="is-best"><small>Yearly</small><b>{year.price}</b><s>{year.regular}</s><em>first year</em></li>
@@ -357,7 +362,7 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
       <BrandBar onOpen={onViewWaitlist} />
       {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the
           raining pictures and widgets, and use the original website for the rest). */}
-      <Features onGo={{ match: home ? onGoHome : onStartQuiz, evidence: onViewHowItWorks, ask: onAsk, routine: home ? onGoHome : null, month: home ? onGoHome : null }} />
+      <Features member={home} onGo={{ match: home ? onGoHome : onStartQuiz, evidence: onViewHowItWorks, ask: onAsk, routine: home ? onGoHome : null, month: home ? onGoHome : null }} />
       <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={Array.isArray(personalPicks) ? personalPicks : null} />
       {rest && <>
       <Proof onViewArticles={onViewArticles} />

@@ -6,7 +6,7 @@ import { productsForNeed } from './landingNeeds';
 import { isPlainLeftClick, productHref } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
-import { ALL_PRODUCTS, MACRO_GROUPS, basicsProductIds, useCatalogReady } from '../data/catalog.js';
+import { ALL_PRODUCTS, MACRO_GROUPS, basicsProductIds, useCatalogReady, getProductById } from '../data/catalog.js';
 import { shopCatalogCounts } from '../data/catalogCounts.js';
 
 import { brandOf } from '../mobile/data/brandFallback.js';
@@ -439,7 +439,14 @@ function Reads({ onViewArticle, onViewArticles }) {
 /* the Community: one wide card, photo on the left; the latest ayna news and one real post */
 function Community({ onViewCommunity, posts = [] }) {
   const news = useLatestAnnouncement();
-  const post = posts.find((p) => String(p.body || '').length > 40) || posts[0];
+  // One post, with its context (master prompt 15: community content keeps its
+  // context). A review shows only when it names the product and was positive;
+  // otherwise a question. A complaint with no product named read as random.
+  const productOf = (p) => (p?.product_id ? getProductById(p.product_id) : null);
+  const post = posts.find((p) => p.kind === 'review' && productOf(p) && (Number(p.rating) >= 4 || p.would_recommend === true) && String(p.body || '').length > 30)
+    || posts.find((p) => p.kind === 'question' && String(p.body || '').length > 20)
+    || null;
+  const product = productOf(post);
   const anon = post && (post.is_anonymous || !post.author_id);
   const who = post && (anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member');
   return (
@@ -450,7 +457,7 @@ function Community({ onViewCommunity, posts = [] }) {
         <h2 id="hm-comm-title" className="hm-h2">Real talk about what women actually use.</h2>
         {post ? (
           <button type="button" className="lp-comm__post" onClick={() => onViewCommunity?.()}>
-            <span className="lp-comm__meta">{post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} from {who}</span>
+            <span className="lp-comm__meta">{post.kind === 'review' && product ? `${who} on ${product.name}` : `Question from ${who}`}</span>
             <span className="lp-comm__body">“{post.body}”</span>
           </button>
         ) : <p className="lp-comm__p">Reviews, questions and routines from women who use these products.</p>}
