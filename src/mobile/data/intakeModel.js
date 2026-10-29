@@ -1052,3 +1052,22 @@ export function firstOptionalResumeStepId(intake) {
   const open = optional.filter((s) => !isStepAnswered(s.id, intake));
   return (open.find((s) => !skipped.includes(s.id)) || open[0] || optional[0])?.id || CHECKPOINT_STEP;
 }
+
+// What each optional question is about, in plain words (Wrapped's "more
+// personal matches" card names them instead of a vague "add to my answers").
+const OPTIONAL_TOPIC = {
+  products: 'Products you’ve tried', avoidRepeat: 'Products to skip', formats: 'Formats you like',
+  recommendationCount: 'How many picks per need', priceRange: 'Your budget', brandOpenness: 'Brands you trust',
+  trustedBrands: 'Brands you trust', avoidIngredients: 'Ingredients to avoid', fsaHsa: 'FSA or HSA',
+  trust: 'What matters most to you', zip: 'Your ZIP code, for care near you',
+};
+/** Plain names of the optional questions she has not answered yet (deduped, in order). */
+export function remainingOptionalTopics(intake) {
+  const out = [];
+  for (const s of splitIntakeSteps(intake).optional) {
+    if (isStepAnswered(s.id, intake)) continue;
+    const t = OPTIONAL_TOPIC[s.id];
+    if (t && !out.includes(t)) out.push(t);
+  }
+  return out;
+}
