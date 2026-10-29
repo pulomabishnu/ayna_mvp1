@@ -30,6 +30,8 @@ import SearchAssist from './search/SearchAssist.jsx';
 import { findConfidentProductMatch } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { isPartnerBrandItem, getPartnerBrandRank } from '../utils/partnerBrands';
+import { categoryStarterOptions } from './search/starterOptions.js';
+const CATEGORY_STARTERS = categoryStarterOptions();
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { recordSearch } from '../utils/recentActivity';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
@@ -993,9 +995,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             // Featured leads with one product per partner brand; the brand's other
             // products stay in the Shop in their normal place (they used to be
             // hidden, so the count changed from load to load).
-            // Never for someone with a profile, even with the switch off: her order is
-            // personal relevance first, and partnership never moves it (UX 12, 30).
-            const featuredLead = browsingWithoutTextQuery && !personalizationFilter && !hasQuizFrustrations && !hasHealthImport
+            // Founder, Oct 29: with personalization switched OFF, partners lead in
+            // their set order for everyone, profile or not (the partner disclosure
+            // says exactly this). With it ON, or in a text search, partnership
+            // never moves anything, and it never touches a match percent.
+            const featuredLead = browsingWithoutTextQuery && !personalizationFilter
                 ? new Set(pickOnePerPartnerBrand(list, orderSeed).filter((it) => getPartnerBrandRank(it) !== null).map((it) => it.id))
                 : null;
             const leadRank = (it) => (featuredLead && featuredLead.has(it.id) ? getPartnerBrandRank(it) : null);
@@ -1701,7 +1705,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             <form onSubmit={handleSmartSearch} className="ayshop__search" data-tour={inExplore ? 'explore-search' : undefined} onFocus={() => setSearchFocused(true)} onBlur={() => setSearchFocused(false)}>
                 <SmartSearchInput
                     type="search"
-                    suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 7 }}
+                    suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 7, onEmpty: CATEGORY_STARTERS }}
                     onPick={(s) => runSearch(s.query)}
                     value={searchQuery}
                     onChange={(e) => {

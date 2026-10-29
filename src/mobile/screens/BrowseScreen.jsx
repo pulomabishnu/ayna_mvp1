@@ -19,7 +19,9 @@ import SuggestBox from '../../components/SuggestBox.jsx';
 import { sentenceCase } from '../../utils/sentenceCase.js';
 import { getPersonalizedProductIds, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS, isTeenProduct } from '../../data/products.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
-import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
+import { isPartnerBrandItem, getPartnerBrandRank } from '../../utils/partnerBrands.js';
+import { categoryStarterOptions } from '../../components/search/starterOptions.js';
+const CATEGORY_STARTERS = categoryStarterOptions();
 import { scoreSearchMatch, correctedSearchQuery, searchArticles, analyzeSearch } from '../../utils/search/index.js';
 import SearchAssist from '../../components/search/SearchAssist.jsx';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
@@ -430,8 +432,17 @@ export default function BrowseScreen({
   // page you browse freely, never placement inside an actual text search
   // or a personalized order (For You, or the default order once she has
   // quiz answers).
-  if (featuredOrder && !searchTermRaw && !(personalized && hasProfile) && !rankByProfile) {
-    filtered = [...filtered].sort((a, b) => (isPartnerBrandItem(b) ? 1 : 0) - (isPartnerBrandItem(a) ? 1 : 0));
+  // Founder, Oct 29: switch OFF = partners lead in their set order
+  // (PARTNER_BRAND_ORDER), profile or not, same as the website. Switch ON or a
+  // text search: partnership never moves anything.
+  if (featuredOrder && !searchTermRaw && !personalized) {
+    // One product per partner brand leads (the website's rule); the brand's
+    // other products keep their normal place.
+    const lead = new Map();
+    for (const p of filtered) { const r = getPartnerBrandRank(p); if (r !== null && !lead.has(r)) lead.set(r, p.id); }
+    const leadIds = new Set(lead.values());
+    const rank = (p) => (leadIds.has(p.id) ? getPartnerBrandRank(p) : Number.MAX_SAFE_INTEGER);
+    filtered = [...filtered].sort((a, b) => rank(a) - rank(b));
     // Packshots she can buy now first, pre-orders last (Explore audit issue 6), same as the website.
     filtered = orderFeatured(filtered);
   }
@@ -528,7 +539,7 @@ export default function BrowseScreen({
       <div className={`ayna-fresh-browse-heading ayna-shop-heading${embedded ? ' is-embedded' : ''}${embedded && bandTitle ? ' ax-band' : ''}`}>
         <div className="ay-shop-titlebar">{embedded ? (bandTitle ? <h1 id="ay-shop-title" className="ax-band__title">{bandTitle}</h1> : <h2 id="ay-shop-title" className="sr-only">Products</h2>) : <h1 id="ay-shop-title">Products</h1>}{!embedded && hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
         {!embedded && <NeedStickers className="ay-app-needs" active={searchValue} onPick={(q) => setSearchValue(q)} />}
-        <SearchBar placeholder={bandTitle === 'Services' ? 'Search services' : 'Search products or brands'} value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
+        <SearchBar placeholder={bandTitle === 'Services' ? 'Search services' : 'Search products or brands'} value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6, onEmpty: CATEGORY_STARTERS }} onPick={(s) => setSearchValue(s.query)} />
         {!embedded && <div className="ay-app-quick" role="group" aria-label="Quick filters">
           {quick.map(([label, key, value]) => <button key={key} type="button" className="ayna-shop-category" aria-pressed={filters[key] === value} onClick={() => setFilters((cur) => ({ ...EMPTY_FILTERS, ...(cur || {}), [key]: (cur || {})[key] === value ? 'all' : value }))}>{label}</button>)}
         </div>}

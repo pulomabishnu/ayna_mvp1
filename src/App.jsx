@@ -165,7 +165,10 @@ import './styles/header-calm.css';
 import './styles/pdp-calm.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
 import ProLock from './components/ProLock.jsx';
-import { proDoor, retakeDoor } from './pro/proDoor.js';
+import { proDoor, retakeDoor, proNow } from './pro/proDoor.js';
+import { openProPaywall } from './pro/paywall.js';
+import { Capacitor } from '@capacitor/core';
+import AppOnlySheet from './components/AppOnlySheet.jsx';
 import WebHomeTop from './components/you/WebHomeTop.jsx';
 import { readHomeLook } from './mobile/components/homeLook.js';
 import { webHomeView } from './mobile/utils/navTab.js';
@@ -1467,8 +1470,16 @@ function App() {
     try { if (new URLSearchParams(window.location.search).get('view') === 'dashboard') setCurrentView('today'); } catch { /* no URL */ }
   }, [currentView, user]);
 
+  // Website: Apple Health, Health Connect and Oura connect in the app, so
+  // Connect says "Download the app" (founder, Oct 29), with the Pro button
+  // for a free account. The native app goes through the Pro door as before.
+  const [appOnly, setAppOnly] = useState(null);
   const goHealthData = () => {
     if (!user) { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); return; }
+    if (!Capacitor.isNativePlatform()) {
+      proNow().then((st) => setAppOnly({ pro: !st || !st.gates || st.active })).catch(() => setAppOnly({ pro: false }));
+      return;
+    }
     proDoor('wearables', () => setCurrentView('health-data'));
   };
   // Settings > Health data: someone with a connection on file can always manage or remove it.
@@ -2471,6 +2482,13 @@ function App() {
 
   return (
     <div className="app-container" data-theme={themeAttr} data-view={currentView} data-scroll-end={headerScroll.atEnd ? '1' : undefined}>
+      <AppOnlySheet
+        open={Boolean(appOnly)}
+        pro={Boolean(appOnly?.pro)}
+        onClose={() => setAppOnly(null)}
+        onGetPro={() => { setAppOnly(null); openProPaywall({ feature: 'wearables' }); }}
+        onUpload={() => { setAppOnly(null); setCurrentView('health-data'); }}
+      />
       <ProPaywallHost onRequireAuth={() => { setAuthFeature('ayna Pro'); setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }} />
       {/* Shared fixed stacking wrapper for top-of-viewport status rows, so the
           save-error banner and the ecosystem-generation bar stack instead of

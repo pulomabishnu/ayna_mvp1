@@ -1,0 +1,36 @@
+.ay-apponly {
+  position: fixed; inset: 0; z-index: 1200; display: grid; place-items: center; padding: 16px;
+  background: rgba(62, 39, 35, .42);
+}
+.ay-apponly__card {
+  position: relative; width: min(440px, 100%); max-height: calc(100vh - 32px); overflow: auto;
+  background: var(--ay-butter, #ffedac); color: var(--ay-espresso, #3e2723);
+  border: 2px solid var(--ay-espresso, #3e2723); border-radius: 24px; padding: 28px 24px 24px;
+  box-shadow: 0 6px 0 var(--ay-espresso, #3e2723);
+}
+.ay-apponly__x {
+  position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%;
+  border: 0; background: transparent; color: inherit; font-size: 24px; line-height: 1; cursor: pointer;
+}
+.ay-apponly__x:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.ay-apponly__k { margin: 0 0 6px; font-size: 13px; font-weight: 600; letter-spacing: .02em; opacity: .8; }
+.ay-apponly__t { margin: 0 0 8px; font-size: 24px; line-height: 1.15; padding-right: 32px; }
+.ay-apponly__line { margin: 0 0 18px; font-size: 15px; line-height: 1.45; opacity: .9; }
+.ay-apponly__qr { display: flex; align-items: center; gap: 16px; margin: 0 0 20px; }
+.ay-apponly__qr img { display: block; width: 112px; height: 112px; border-radius: 12px; background: #fff; padding: 6px; }
+.ay-apponly__qr p { margin: 0; font-size: 14px; opacity: .8; }
+.ay-apponly__actions { display: grid; gap: 10px; }
+.ay-apponly__cta, .ay-apponly__ghost {
+  display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 999px;
+  font: inherit; font-weight: 700; font-size: 16px; text-decoration: none; cursor: pointer;
+}
+.ay-apponly__cta { background: var(--ay-espresso, #3e2723); color: var(--ay-butter, #ffedac); border: 2px solid var(--ay-espresso, #3e2723); }
+.ay-apponly__ghost { background: var(--ay-pink-base, #f7badd); color: var(--ay-espresso, #3e2723); border: 2px solid var(--ay-espresso, #3e2723); }
+.ay-apponly__quiet { background: none; border: 0; color: inherit; font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; padding: 6px; }
+@media (max-width: 420px) {
+  .ay-apponly__qr { display: none; }
+}
+/* The site's global button rules are stronger than a plain class. */
+html body .ay-apponly .ay-apponly__x { font: 400 28px/1 var(--ay-sans-stack, system-ui) !important; padding: 0 !important; min-height: 0 !important; display: grid; place-items: center; }
+html body .ay-apponly :is(.ay-apponly__cta, .ay-apponly__ghost) { font: 700 16px/1 var(--ay-sans-stack, system-ui) !important; padding: 0 20px !important; }
+html body .ay-apponly .ay-apponly__quiet { font: 600 15px/1.2 var(--ay-sans-stack, system-ui) !important; }
