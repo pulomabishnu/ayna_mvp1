@@ -88,6 +88,7 @@ import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from '../
 import EcosystemScreen from './screens/EcosystemScreen.jsx';
 import EcosystemResetDialog from './components/EcosystemResetDialog.jsx';
 import { resetRoutineData } from '../utils/resetRoutine.js';
+import { stampFactUpdates } from '../matching/factFreshness.js';
 import SavedScreen from './screens/SavedScreen.jsx';
 import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
 import { AskContext, AppHeaderContext } from './askContext.js';
@@ -1080,9 +1081,11 @@ export default function MobileApp() {
 
   // One quiz answer changed in place (You > Your blend). Same save path as the
   // quiz; matches re-rank from the new answers. Rolls back if nothing saved.
-  const handleUpdateIntake = async (nextIntake) => {
-    if (!nextIntake) return false;
+  const handleUpdateIntake = async (rawIntake) => {
+    if (!rawIntake) return false;
     const previous = lastQuizAnswers;
+    // Only the answers she changed get a new time (src/matching/factFreshness.js).
+    const nextIntake = stampFactUpdates(rawIntake, previous?.fullHealthIntake || previous || null);
     updateSession({ lastQuizAnswers: mapIntakeToLegacyQuizProfile(nextIntake) });
     try {
       const r = await saveHealthIntakeForCurrentUser(nextIntake);

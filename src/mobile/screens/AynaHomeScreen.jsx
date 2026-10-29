@@ -24,6 +24,7 @@ import '../../styles/week-explained.css';
 import TodayViews from '../components/TodayViews.jsx';
 import RoutineTimeline from '../../components/routine/RoutineTimeline.jsx';
 import '../ayna-home.css';
+import HealthRefreshPrompt from '../../components/health/HealthRefreshPrompt.jsx';
 
 /**
  * The app's centre tab, Home (team sync, Oct 25; founder, Oct 24 22:05):
@@ -173,6 +174,8 @@ export default function AynaHomeScreen(props) {
         {/* The data is the hero (founder Oct 26 21:46): greeting, three dials, the Rundown bubble and her streak. */}
         <HomeHero name={firstName} today={today} cycle={cycle} hormonalBC={hbc} sleep={chartOf('sleep_minutes')} activity={chartOf('steps')}
           onOpenMetric={openMetric} onConnect={authUser ? onOpenHealthData || onConnectHealth : onConnectHealth} streak={streak} onLog={() => openDashboard(true)} onMonth={() => setMonthOpen(true)} />
+        {/* "Is this still right?" for an old safety answer (src/health/healthRefresh.js). */}
+        {authUser && quizAnswers && onUpdateIntake && <HealthRefreshPrompt variant="app" quizResults={quizAnswers} onSave={onUpdateIntake} onUpdate={onEditIntakeStep || null} />}
         {/* .ay-hd: the dashboard's own tokens and card styles, as on the full dashboard. */}
         <div className="ay-hd ay-homefeed">
         {/* Picture first (founder Oct 26 16:43): with health data, her week as a bento of real charts; else the hero art. */}

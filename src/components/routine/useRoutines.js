@@ -19,6 +19,7 @@ import { readToday } from '../../health/todayStore.js';
 import { syncUserData } from '../../health/userDataSync.js';
 import { FOLLOW_UP_HOUR, localAt, scheduleTodayReminder } from '../../health/todayReminders.js';
 import { buildRoutines, changeRoutine, readRoutinePrefs, replaceRoutinePrefs, setRoutinePrefsOwner, START_MAX, tryIdFor } from '../../health/routines.js';
+import { recordOutcomeSample } from '../../matching/calibration.js';
 
 const fmtDay = (day) => new Date(`${day}T12:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
 
@@ -176,6 +177,8 @@ export function useRoutines({
       const existing = tries.find((t) => t.id === id) || item.lastTry || null;
       const base = existing || createTry({ id, kind: item.kind === 'product' ? 'product' : 'action', ref: item.ref, product: item.product, need, startedDay: today, horizonDays: item.horizon?.days, interventionKind: item.horizon?.kind });
       saveTry(recordOutcome(base, outcome, { day: today }));
+      // Anonymous band + outcome only, for calibration (src/matching/calibration.js).
+      if (item.kind === 'product' && item.product) recordOutcomeSample({ details: detailsFor(item.product), outcome });
       bump();
       sync();
       const words = outcome === 'helpful' ? 'Noted: it helped. ayna keeps it in your routine.' : outcome === 'unsure' ? 'Noted. You can answer later.' : 'Noted: it did not help. ayna will not suggest it again.';

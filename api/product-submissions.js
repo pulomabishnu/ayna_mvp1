@@ -16,8 +16,10 @@ function normalizeName(value) {
     .toLowerCase();
 }
 
+// 'ecosystem_add': she added a product ayna doesn't have to her own
+// ecosystem (P2, add any product). The team researches it from here.
 function safeSource(value) {
-  return value === 'global_search' ? 'global_search' : 'browse';
+  return value === 'global_search' || value === 'ecosystem_add' ? value : 'browse';
 }
 
 async function optionalUser(admin, req) {
@@ -72,17 +74,20 @@ export default async function handler(req, res) {
       if (existing) return res.status(200).json({ ok: true, submission: existing, duplicate: true });
     }
 
-    const { data, error } = await admin
+    const insert = (src) => admin
       .from('product_submissions')
       .insert({
         name,
         normalized_name: normalizedName,
-        source,
+        source: src,
         user_id: user?.id || null,
         client_submission_id: clientSubmissionId,
       })
       .select('id,name,status,created_at')
       .single();
+    let { data, error } = await insert(source);
+    // An older table whose source check predates 'ecosystem_add': keep the request anyway.
+    if (error?.code === '23514' && source === 'ecosystem_add') ({ data, error } = await insert('browse'));
 
     if (error) throw error;
     return res.status(201).json({ ok: true, submission: data });

@@ -11,7 +11,7 @@ import './web-home-top.css';
  * with none, one Connect button), then the two shortcut tiles, Your data and Your products. The lists
  * (Using, For you, Saved, Routine) follow underneath on the page.
  */
-export default function WebHomeTop({ firstName = '', healthRows = [], quizAnswers = null, products = [], onData, onProducts, onConnect }) {
+export default function WebHomeTop({ firstName = '', healthRows = [], quizAnswers = null, products = [], onData, onProducts, onConnect, refresh = null }) {
   const today = localToday();
   const { cycle, sleep, activity } = useMemo(() => {
     const w = buildDashboard(healthRows || [], { days: 30, today });
@@ -23,6 +23,7 @@ export default function WebHomeTop({ firstName = '', healthRows = [], quizAnswer
     <div className="wht">
       <HomeHero name={firstName} today={today} cycle={cycle} hormonalBC={usesHormonalBC(quizAnswers)} sleep={sleep} activity={activity}
         onOpenMetric={onData ? () => onData() : null} onConnect={onConnect} />
+      {refresh}
       <div className="wht__tiles">
         <HomeShortcuts cycle={cycle} sleep={sleep} products={products} onData={onData} onProducts={onProducts} />
       </div>

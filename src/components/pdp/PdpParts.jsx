@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import MatchPill from '../MatchPill.jsx';
 import SafetyHoldNote from '../match/SafetyHoldNote.jsx';
 import BleedingEvaluationNote from '../match/BleedingEvaluationNote.jsx';
-import { matchText, shownMatchPercent, MATCH_UNAVAILABLE, SAFETY_HOLD } from '../../utils/matchDisplay.js';
+import { matchText, shownMatchPercent, MATCH_UNAVAILABLE, SAFETY_HOLD, MATCH_MEANING } from '../../utils/matchDisplay.js';
 import PdpIcon from './PdpIcon.jsx';
 import { splitShow, SHOW_FIRST } from './pdpParts.js';
 import { LEVELS, levelLabel, levelCountWords } from './evidenceLevels.js';
@@ -299,7 +299,9 @@ export function MatchExplain({ breakdown = null, onFull = null, onAskWhy = null,
         </ul>
       ) : <p className="ayv-explain__none">The engine’s reasons are on the full breakdown.</p>}
       {unknown.length > 0 && <p className="ayv-explain__unknown"><b>ayna doesn’t know yet:</b> {unknown.map((u) => u.text).join('; ')}</p>}
-      <p className="ayv-explain__basis">{MATCH_BASIS}</p>
+      {breakdown?.checks?.length > 0 && <p className="ayv-explain__checks"><b>Checked for you:</b> {breakdown.checks.slice(0, 3).map((c) => c.text).join('; ')}</p>}
+      {breakdown?.evidence && <p className="ayv-explain__evidence"><b>Evidence:</b> {breakdown.evidence.label}. {breakdown.evidence.line}</p>}
+      <p className="ayv-explain__basis"><b>{MATCH_MEANING}</b> {MATCH_BASIS}</p>
       <p className="ayv-lock__foot">{breakdown?.note || 'Partnerships never change this score.'}</p>
       <p className="ayv-lock__actions">
         {onAskWhy && <button type="button" className="ayv-obtn" onClick={() => onAskWhy(`Why is my match ${shown != null ? `${shown}%` : 'a partial fit'}?`)}><PdpIcon name="ask" size={16} />Ask ayna why</button>}

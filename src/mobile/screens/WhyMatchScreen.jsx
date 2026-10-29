@@ -8,6 +8,7 @@ import BleedingEvaluationNote from '../../components/match/BleedingEvaluationNot
 import '../match.css';
 import '../eco-needs.css';
 import '../../styles/match-ui.css';
+import WhyTrace from '../../components/match/WhyTrace.jsx';
 import HealthWhyLine from '../../components/health/HealthWhyLine.jsx';
 import { whyLine } from '../../utils/whyLine.js';
 
@@ -101,6 +102,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
             <ul className="ayna-match-reasons">{reasonDetails.map((reason, index) => <li key={`${reason.component}-${index}`}><span>{reasonKind(reason.component)}</span><p>{tidy(reason.text)}</p></li>)}</ul>
           </section>
         )}
+        {hasScore && <WhyTrace product={product} details={details} Heading="h2" />}
         {/* Only when connected health data backs the need this matches (src/health/matchContext.js). */}
         {hasScore && <HealthWhyLine healthData={details?.healthData} as="h2" className="ayna-match-section ay-why-health" />}
         {hasScore && why.basedOn.length > 0 && (
