@@ -1124,6 +1124,7 @@ export default function MyEcosystem({
         ? [...ecosystemOrder.filter(id => myProducts[id]), ...Object.keys(myProducts).filter(id => !ecosystemOrder.includes(id))]
         : Object.keys(myProducts);
     const myProductList = myProductIds.map(id => myProducts[id]).filter(Boolean);
+    const ecoSuggest = useMemo(() => (myProductList.length ? { kinds: ['product', 'brand', 'category'], products: myProductList, limit: 6 } : { kinds: ['need', 'category', 'brand', 'product'], limit: 6 }), [myProductIds.join('|')]); // eslint-disable-line react-hooks/exhaustive-deps
     const estimatedMonthlyTotal = useMemo(() => {
         let total = 0;
         let counted = 0;
@@ -2171,8 +2172,15 @@ export default function MyEcosystem({
                         if (myProductList.length === 0 || visibleMatchCount === 0) searchShop(ecoQueryTrimmed);
                     }}
                 >
+                    {/* A dropdown of options as she types (founder, Oct 29): her own products first; a pick opens it. */}
                     <SmartSearchInput
                         type="search"
+                        suggest={ecoSuggest}
+                        onPick={(s) => {
+                            const mine = s?.id ? myProductList.find((p) => p.id === s.id) : null;
+                            if (mine && typeof onOpenProduct === 'function') { onOpenProduct(mine); return; }
+                            setEcoQuery(s?.query || '');
+                        }}
                         value={ecoQuery}
                         onChange={(e) => setEcoQuery(e.target.value)}
                         placeholder={myProductList.length ? 'Search your ecosystem' : 'Search products'}
