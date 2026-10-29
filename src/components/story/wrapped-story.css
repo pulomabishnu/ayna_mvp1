@@ -127,3 +127,19 @@
 @media (prefers-reduced-motion: reduce) {
   .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ay-wr-burst, .ay-wr-ring__fill, .ay-wr-ring__knob, .ay-wr-topics li, .ay-wr-bento li, .ay-wr-bars i, .ay-wr-bento__pick) { animation: none; }
 }
+
+/* Oct 29 layout pass (founder: "everything is so low and disorganized"):
+   each slide's content is one centred block, not pushed to the bottom; the
+   visual takes its natural size; screen-reader-only text stays hidden (the
+   story is portaled outside the app, where .sr-only had no rule). */
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-card { justify-content: center; gap: 18px; padding: 8px 0 16px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-visual { flex: 0 0 auto; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-more .ays-visual, .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-finish .ays-visual { margin-bottom: 4px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-more .ay-wr-burst { width: 112px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-intro .ays-card, .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-match .ays-card { text-align: left; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-categories .ays-card { justify-content: flex-start; padding-top: 4px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-categories .ays-words .ays-kicker { font-size: 15px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-ring { width: min(64%, 240px); margin: 0 auto; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-hero { margin: 0 auto; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card { width: 100%; }
