@@ -1468,8 +1468,12 @@ function App() {
 
   const goHealthData = () => {
     if (!user) { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); return; }
-    if (health.connected.length) { setCurrentView('health-data'); return; }
     proDoor('wearables', () => setCurrentView('health-data'));
+  };
+  // Settings > Health data: someone with a connection on file can always manage or remove it.
+  const manageHealthData = () => {
+    if (user && health.connected.length) { setCurrentView('health-data'); return; }
+    goHealthData();
   };
   // Her switch (You, Health data): "Use my health data in my matches". Shared with the app.
   const healthInMatches = useHealthMatchPref(user?.id || null).on;
@@ -2736,7 +2740,8 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onSignOut={handleSignOut}
             onDeleteAccount={handleOpenDeleteAccount}
-            onOpenHealthData={goHealthData}
+            onOpenHealthData={manageHealthData}
+            onConnectHealth={goHealthData}
             onOpenHealth={() => setCurrentView('today')}
             healthSummary={health.insights.sections.find((sec) => sec.status === 'ready') || null}
             healthConnectedCount={health.connected.length}

@@ -10,6 +10,15 @@ function proWebUrl(feature = '') {
   return `${PRO_WEB_URL}${feature ? `?feature=${encodeURIComponent(feature)}` : ''}`;
 }
 
+// What Pro adds, three short lines with icons (Oct 29: the lock was one long paragraph). Same facts as src/pro/plans.js.
+const PERKS = [
+  { t: 'Your health dashboard', for: ['dashboard'], icon: <><circle cx="12" cy="12" r="8" /><path d="M8.5 13.5l2-2 2 2 3-3.5" /></> },
+  { t: 'Apple Health, Health Connect and Oura', for: ['wearables', 'health'], icon: <><rect x="7" y="6" width="10" height="12" rx="3" /><path d="M9 6l1-3h4l1 3M9 18l1 3h4l1-3" /></> },
+  { t: 'Every Read and 50 Ask ayna chats a month', for: ['reads', 'ask'], icon: <><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13ZM13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" /></> },
+];
+
+const EXTRA = { t: 'Retake the quiz and make playlists anytime', for: [], icon: <><path d="M7 15.5c-2 0-3.5-1.6-3.5-3.5S5 8.5 7 8.5c3.5 0 6.5 7 10 7 2 0 3.5-1.6 3.5-3.5S19 8.5 17 8.5c-3.5 0-6.5 7-10 7Z" /></> };
+
 export function LockIcon({ size = 22 }) {
   return <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /><circle cx="12" cy="15.5" r="1.5" fill="currentColor" /></svg>;
 }
@@ -84,7 +93,7 @@ export default function ProLock({
   }
 
   return <section className={`pro-lock pro-lock--${variant}`} aria-labelledby={`${uid}-t`}>
-    <CheckerFrame square={variant === 'inline' ? 8 : 12} radius={variant === 'inline' ? 18 : 22}>
+    <CheckerFrame square={variant === 'inline' ? 6 : 8} radius={variant === 'inline' ? 18 : 24}>
       <div className="pro-lock__card">
         <span className="pro-lock__seal"><LockIcon size={variant === 'inline' ? 20 : 26} /></span>
         <div className="pro-lock__text">
@@ -92,6 +101,9 @@ export default function ProLock({
           <h2 id={`${uid}-t`} className="pro-lock__title">{name}</h2>
           {context && <p className="pro-lock__context">{context}</p>}
           <p className="pro-lock__line">{line || proLockLine(feature)}</p>
+          {variant !== 'inline' && <ul className="pro-lock__perks" aria-label="ayna Pro includes">
+            {PERKS.filter((x) => !x.for.includes(feature)).concat(PERKS.some((x) => x.for.includes(feature)) ? [EXTRA] : []).map((x) => <li key={x.t}><span aria-hidden="true"><svg viewBox="0 0 24 24">{x.icon}</svg></span>{x.t}</li>)}
+          </ul>}
           {children}
           {error && <p className="pro-lock__error" role="status">{error}{onRetry && <> <button type="button" className="pro-lock__retry" onClick={onRetry}>Check again</button></>}</p>}
         </div>

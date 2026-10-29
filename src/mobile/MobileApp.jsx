@@ -1271,7 +1271,9 @@ export default function MobileApp() {
     onOpenHealthData: () => {
       if (!authUser) { openProfile(); return; }
       const screen = health.insights.sections.length ? 'healthInsights' : 'healthData';
-      if (health.connected.length && screen === 'healthData') { setOverlay({ type: 'profile', screen }); return; }
+      // Locked for a free account even with an old connection on file (founder, Oct 29: a locked
+      // Connect button opens Get ayna Pro, never the page). Managing or removing a connection stays
+      // open in Settings > Health data.
       proDoor(screen === 'healthInsights' ? 'dashboard' : 'wearables', () => setOverlay({ type: 'profile', screen }));
     },
     healthSummary: authUser ? health.insights.sections.find((sec) => sec.status === 'ready') || null : null,
@@ -1304,7 +1306,7 @@ export default function MobileApp() {
     }),
     onSavePlaylist: authUser ? handleSaveShoppingPlaylist : null,
     onOpenPlaylist: (playlistId) => { setOverlay(null); setCommunitySeed({ playlistId, token: Date.now() }); setScreen('community'); },
-    onConnectHealth: () => { if (!authUser) { requestAuth('health data'); return; } const go = () => setOverlay({ type: 'profile', screen: 'healthData' }); if (health.connected.length) go(); else proDoor('wearables', go); },
+    onConnectHealth: () => { if (!authUser) { requestAuth('health data'); return; } const go = () => setOverlay({ type: 'profile', screen: 'healthData' }); proDoor('wearables', go); },
     onToggleHave: (id) => updateSession((prev) => {
       const next = { ...(prev.routineHave || {}) };
       if (next[id]) delete next[id]; else next[id] = true;
@@ -1729,7 +1731,7 @@ export default function MobileApp() {
             isOmitted={!!omittedProducts[overlay.item?.id]}
             onToggleOmit={() => handleToggleOmit(overlay.item)}
             onCompare={openCompare}
-            onOpenHealthData={() => { const go = () => setOverlay({ type: 'profile', screen: 'healthData' }); if (!authUser) { requestAuth('health data', go); return; } if (health.connected.length) go(); else proDoor('wearables', go); }}
+            onOpenHealthData={() => { const go = () => setOverlay({ type: 'profile', screen: 'healthData' }); if (!authUser) { requestAuth('health data', go); return; } proDoor('wearables', go); }}
             matchOpts={matchOpts}
             onOpenReview={(postId) => { setCommunitySeed({ postId, token: Date.now() }); setOverlay(null); setScreen('community'); }}
             onCommunityAction={(kind) => {

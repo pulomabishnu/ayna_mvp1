@@ -646,7 +646,7 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
         {signedIn && setup.next && (
           <section className="ay-you-setup" aria-labelledby="ay-you-setup-h">
             <div className="ay-you-setup-top"><h2 className="ay-you-h2" id="ay-you-setup-h">Your set-up</h2><span>{setup.done} of {setup.total} steps done</span></div>
-            <span className="ay-you-setup-bar" aria-hidden="true">{setup.steps.map((st) => <i key={st.key} className={st.done ? 'is-done' : ''} />)}</span>
+            <span className="ay-you-setup-bar" aria-hidden="true">{/* Fills left to right with the count done, so "1 of 4" never lights the third segment. */}{setup.steps.map((st, i) => <i key={st.key} className={i < setup.steps.filter((x) => x.done).length ? 'is-done' : ''} />)}</span>
             {SETUP_GO[setup.next.key] && <button type="button" className="ay-you-setup-go" onClick={SETUP_GO[setup.next.key]}>Next: {setup.next.label} <ChevronIcon /></button>}
           </section>
         )}
