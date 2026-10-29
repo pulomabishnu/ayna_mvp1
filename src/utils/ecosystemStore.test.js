@@ -69,8 +69,8 @@ describe('clearEcosystemForUser — must not destroy tracked/omitted state', () 
     expect(update.payload).toMatchObject({ in_ecosystem: false, is_tracked: false, is_omitted: false });
     expect(update.payload).not.toHaveProperty('is_saved');
     expect(update.filters).toEqual({ user_id: 'user-reset' });
-    const cleanup = sb.calls.find((c) => c.op === 'delete');
-    expect(cleanup.filters.is_saved).toBe(false);
+    // Nothing is deleted: a reset only switches rows off, so it can be undone.
+    expect(sb.calls.find((c) => c.op === 'delete')).toBeFalsy();
   });
   it('UPDATEs the ecosystem flag rather than deleting the rows', async () => {
     const sb = makeSupabase();
@@ -85,19 +85,10 @@ describe('clearEcosystemForUser — must not destroy tracked/omitted state', () 
     expect(update.filters).toMatchObject({ user_id: 'user-1', in_ecosystem: true });
   });
 
-  it('deletes ONLY rows left carrying no state at all', async () => {
+  it('never deletes rows, so a reset can be undone', async () => {
     const sb = makeSupabase();
     await clearEcosystemForUser(sb, 'user-1');
-
-    const del = sb.calls.find((c) => c.op === 'delete');
-    expect(del).toBeTruthy();
-    // All three flags must be false — a row still tracked or hidden survives.
-    expect(del.filters).toMatchObject({
-      user_id: 'user-1',
-      in_ecosystem: false,
-      is_tracked: false,
-      is_omitted: false,
-    });
+    expect(sb.calls.find((c) => c.op === 'delete')).toBeFalsy();
   });
 
   it('falls back to the durable shadow instead of losing the change on an RLS denial', async () => {
