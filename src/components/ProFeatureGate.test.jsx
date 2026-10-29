@@ -61,3 +61,14 @@ it('locks other Reads once the free one is used, and says so', async () => {
   expect(host.textContent).not.toContain('Read body');
   expect(host.textContent).toContain('used this week’s free Read');
 });
+it('signed out, a Read stays locked and offers ayna Pro, never opens or says try again', async () => {
+  ctx.status = null;
+  const signedOut = Object.assign(new Error('Sign in'), { code: 'sign_in_required' });
+  const original = ctx.request.getMockImplementation();
+  ctx.request.mockImplementation(() => { throw signedOut; });
+  await act(async () => root.render(<ProFeatureGate feature="reads" readId="heavy-bleeding" title="Heavy bleeding" onBack={() => {}}><div>Read text</div></ProFeatureGate>));
+  expect(host.textContent).not.toContain('Read text');
+  expect(host.textContent).toContain('Get ayna Pro');
+  expect(host.textContent).not.toContain('try again');
+  ctx.request.mockImplementation(original || (() => {}));
+});

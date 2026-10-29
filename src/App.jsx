@@ -3088,7 +3088,7 @@ function App() {
               healthRows={health?.insightRows || []}
               quizAnswers={quizResults}
               products={Object.values(myProducts || {})}
-              onData={() => setCurrentView('today')}
+              onData={() => proDoor('dashboard', () => setCurrentView('today'))}
               onProducts={() => document.getElementById('weco-tab-mine')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
               onConnect={goHealthData}
             /> : null}
