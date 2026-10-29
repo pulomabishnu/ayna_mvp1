@@ -432,6 +432,8 @@ export const WEB_AVOID = [
   ...AVOID,
   '.ay-hold', '.ay-buy__warn', '.ayq-alert',
   '.ayna-ask-panel__composer',
+  // The landing's promise stays readable on a first visit (Oct 29 audit: the welcome tip covered it on phones).
+  '#hm-hero-title',
 ];
 export const avoidFor = (surface = 'app') => (surface === 'web' ? WEB_AVOID : AVOID);
 

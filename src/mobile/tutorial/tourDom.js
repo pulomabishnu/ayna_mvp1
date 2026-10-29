@@ -78,6 +78,12 @@ export const overlap = (a, b) => Math.max(0, Math.min(a.right, b.right) - Math.m
  * first (`beside`, website desktop). Never over a safety item or an Ask
  * input, never under a fixed header (`topInset`) or tab bar (`bottomInset`).
  */
+function stackBelow(anchor, avoid, { left, w, h }) {
+  const under = (a) => a.right > left && a.left < left + w && a.top >= anchor.bottom - 1 && a.top < anchor.bottom + GAP + h;
+  const blockers = avoid.filter(under);
+  if (!blockers.length) return [];
+  return [{ side: 'below', left, top: Math.max(...blockers.map((a) => a.bottom)) + GAP }];
+}
 function stackAbove(anchor, avoid, { left, w, h }) {
   const over = (a) => a.right > left && a.left < left + w && a.bottom <= anchor.top + 1 && a.bottom > anchor.top - GAP - h;
   const blockers = avoid.filter(over);
@@ -101,6 +107,9 @@ export function placeBubble(anchor, size, { vw, vh, avoid = [], bottomInset = 0,
     { side: 'above', left: centered, top: anchor.top - GAP - h },
     // Something to keep clear sits right above the anchor (the landing's search over Slide to start):
     // go above that too, still pointing down at the anchor, before pinning to an edge.
+    // Just under the thing right below the anchor (the search under Slide to start) first, still pointing
+    // up at it: closer to the anchor than going above the hero's title.
+    ...stackBelow(anchor, avoid, { left: centered, w, h }),
     ...stackAbove(anchor, avoid, { left: centered, w, h }),
     { side: 'pin-bottom', left: centered, top: floor - h },
     { side: 'pin-top', left: centered, top: Math.max(EDGE + 40, ceil) },
