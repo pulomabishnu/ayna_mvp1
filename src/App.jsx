@@ -1458,6 +1458,12 @@ function App() {
   const health = useHealthData(user?.id || null, healthNeedIds);
   // Connect buttons: a free account with nothing connected gets the Pro sheet where she tapped,
   // not a setup page that then locks (founder, Oct 28). With a connection she can still manage it.
+  // Old /you/ecosystem?view=dashboard links: signed in, the dashboard is Today now.
+  useEffect(() => {
+    if (currentView !== 'ecosystem' || !user) return;
+    try { if (new URLSearchParams(window.location.search).get('view') === 'dashboard') setCurrentView('today'); } catch { /* no URL */ }
+  }, [currentView, user]);
+
   const goHealthData = () => {
     if (!user) { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); return; }
     if (health.connected.length) { setCurrentView('health-data'); return; }
@@ -3024,8 +3030,10 @@ function App() {
         )}
         {/* My ecosystem (You > My ecosystem, /you/ecosystem). Its old Dashboard tab is Today. */}
         {currentView === 'ecosystem' && (
-          <EcosystemViewTabs dashboard={webHealth} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
-          {user && <YouTabs active="ecosystem" onGo={(key) => openYou(key === 'overview' ? null : key)} />}
+          /* Signed in, this page is the website Home: the app-style band on top already links to her data
+             (the dashboard) and the account menu has Saved and Settings, so no tab rows stack above it
+             (founder, Oct 29: three rows of tabs read as vibe coded). */
+          <EcosystemViewTabs dashboard={user ? null : webHealth} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
           <ViewSkeleton
             label="Loading your ecosystem"
@@ -3073,7 +3081,7 @@ function App() {
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
             homeTop={user ? <WebHomeTop
-              firstName={String(user?.user_metadata?.first_name || '').split(' ')[0]}
+              firstName={accountFirstName(user) || quizResults?.firstName || ''}
               healthRows={health?.insightRows || []}
               quizAnswers={quizResults}
               products={Object.values(myProducts || {})}
