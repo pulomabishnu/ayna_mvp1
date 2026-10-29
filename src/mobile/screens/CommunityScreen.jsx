@@ -1,5 +1,6 @@
 // Topic pods here are the curated ayna list (src/utils/community/topics.js).
 import TopicBands from '../../components/community/TopicBands.jsx';
+import { playlistDoor } from '../../pro/proDoor.js';
 // Topics started by members live in src/components/community/topics/ (shared
 // with the website); they stay hidden until their migration runs. See
 // docs/community-user-topics.md.
@@ -448,6 +449,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       return;
     }
     if (prompt?.starter && isOnlyStarter(body, starter)) { setBody(prompt.starter); setStarter(prompt.starter); }
+    if (kind === 'playlist') { playlistDoor(supabase, authUser?.id, () => { closePage(); setCompose(kind); setError(''); }); return; }
     closePage(); setCompose(kind); setError('');
   };
 

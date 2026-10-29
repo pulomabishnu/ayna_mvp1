@@ -149,6 +149,7 @@ import { localToday } from '../utils/localDate.js';
 import { trackQuizStarted, trackFirstMatchShown, eventSurface } from '../utils/analyticsEvents.js';
 import ProPaywallHost from '../components/ProPaywallHost.jsx';
 import { openProPaywall, proLimitFeature } from '../pro/paywall.js';
+import { proDoor } from '../pro/proDoor.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -1266,7 +1267,13 @@ export default function MobileApp() {
       setOverlay({ type: 'article', item: a });
     },
     onOpenProfile: openProfile,
-    onOpenHealthData: () => { if (authUser) setOverlay({ type: 'profile', screen: health.insights.sections.length ? 'healthInsights' : 'healthData' }); else openProfile(); },
+    // Free account with nothing connected: the Pro sheet where she tapped, not a setup screen that locks (Oct 28).
+    onOpenHealthData: () => {
+      if (!authUser) { openProfile(); return; }
+      const screen = health.insights.sections.length ? 'healthInsights' : 'healthData';
+      if (health.connected.length && screen === 'healthData') { setOverlay({ type: 'profile', screen }); return; }
+      proDoor(screen === 'healthInsights' ? 'dashboard' : 'wearables', () => setOverlay({ type: 'profile', screen }));
+    },
     healthSummary: authUser ? health.insights.sections.find((sec) => sec.status === 'ready') || null : null,
     healthConnectedCount: health.connected.length,
     healthSuggestions: healthDataOn && authUser ? health.matchContext?.suggestions || [] : [],
@@ -1297,7 +1304,7 @@ export default function MobileApp() {
     }),
     onSavePlaylist: authUser ? handleSaveShoppingPlaylist : null,
     onOpenPlaylist: (playlistId) => { setOverlay(null); setCommunitySeed({ playlistId, token: Date.now() }); setScreen('community'); },
-    onConnectHealth: () => (authUser ? setOverlay({ type: 'profile', screen: 'healthData' }) : requestAuth('health data')),
+    onConnectHealth: () => { if (!authUser) { requestAuth('health data'); return; } const go = () => setOverlay({ type: 'profile', screen: 'healthData' }); if (health.connected.length) go(); else proDoor('wearables', go); },
     onToggleHave: (id) => updateSession((prev) => {
       const next = { ...(prev.routineHave || {}) };
       if (next[id]) delete next[id]; else next[id] = true;
@@ -1720,7 +1727,7 @@ export default function MobileApp() {
             isOmitted={!!omittedProducts[overlay.item?.id]}
             onToggleOmit={() => handleToggleOmit(overlay.item)}
             onCompare={openCompare}
-            onOpenHealthData={() => { if (authUser) setOverlay({ type: 'profile', screen: 'healthData' }); else requestAuth('health data', () => setOverlay({ type: 'profile', screen: 'healthData' })); }}
+            onOpenHealthData={() => { const go = () => setOverlay({ type: 'profile', screen: 'healthData' }); if (!authUser) { requestAuth('health data', go); return; } if (health.connected.length) go(); else proDoor('wearables', go); }}
             matchOpts={matchOpts}
             onOpenReview={(postId) => { setCommunitySeed({ postId, token: Date.now() }); setOverlay(null); setScreen('community'); }}
             onCommunityAction={(kind) => {

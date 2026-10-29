@@ -1,4 +1,5 @@
 import { short } from '../../health/dashView.js';
+import ProTag from '../../pro/ProTag.jsx';
 import { takeaway } from '../../health/takeaway.js';
 import { useCountUp } from '../../utils/motion.js';
 import './score-rings.css';
@@ -90,7 +91,7 @@ export default function ScoreRings({ cycle = null, hormonalBC = false, sleep = n
       {missing.length > 0 && (
         <div className="ay-dial__empty">
           <p>{connectText || `Connect a watch or ring to see your ${missing.join(' and ')}.`}</p>
-          {onConnect && <button type="button" onClick={onConnect}>Connect</button>}
+          {onConnect && <button type="button" onClick={onConnect}>Connect<ProTag /></button>}
         </div>
       )}
     </section>

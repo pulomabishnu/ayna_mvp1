@@ -42,9 +42,26 @@ export default async function handler(req, res) {
     const isAdmin = isAdminUser(user);
 
     if (req.method === 'GET') {
+      // Which Read this week's free allowance went to (null if unused), so a
+      // free account can choose its one Read knowingly instead of spending it
+      // on whatever it opens first. Gates off or Pro: nothing to choose.
+      let gates = true;
+      let weeklyRead = null;
+      try { gates = (await proFeatureRules(admin)).enabled !== false; } catch { gates = true; }
+      if (gates && !active) {
+        const now = new Date();
+        const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - ((now.getUTCDay() + 6) % 7)));
+        try {
+          const { data } = await admin.from('pro_weekly_reads').select('read_id')
+            .eq('user_id', user.id).eq('week_start', monday.toISOString().slice(0, 10)).maybeSingle();
+          weeklyRead = data?.read_id || null;
+        } catch { weeklyRead = null; }
+      }
       return res.status(200).json({
         ...status,
         active,
+        gates,
+        weeklyRead,
         // Staff grants do not expire with a separate paid purchase.
         accessExpiresAt: legacyPremium ? null : (Math.max(Date.parse(status.termEndsAt) || 0, Date.parse(status.temporaryUntil) || 0) || null),
         offerOpen,

@@ -163,6 +163,7 @@ import './styles/library-head.css';
 import './styles/no-vibe.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
 import ProLock from './components/ProLock.jsx';
+import { proDoor } from './pro/proDoor.js';
 import { readHomeLook } from './mobile/components/homeLook.js';
 import { webHomeView } from './mobile/utils/navTab.js';
 // Keep the ?homestyle=a|b preview pick before the router rewrites the address (Today loads lazily).
@@ -1454,6 +1455,13 @@ function App() {
     try { return quizResults ? getSelectedNeeds(quizResults).map((n) => n.id) : []; } catch { return []; }
   }, [quizResults, catalogReady]);
   const health = useHealthData(user?.id || null, healthNeedIds);
+  // Connect buttons: a free account with nothing connected gets the Pro sheet where she tapped,
+  // not a setup page that then locks (founder, Oct 28). With a connection she can still manage it.
+  const goHealthData = () => {
+    if (!user) { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); return; }
+    if (health.connected.length) { setCurrentView('health-data'); return; }
+    proDoor('wearables', () => setCurrentView('health-data'));
+  };
   // Her switch (You, Health data): "Use my health data in my matches". Shared with the app.
   const healthInMatches = useHealthMatchPref(user?.id || null).on;
   const matchOpts = useMemo(
@@ -2405,7 +2413,7 @@ function App() {
       onAsk={(q, extra) => openAsk(q, extra?.stats)}
       onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }}
       onOpenConnections={() => {
-        if (user) { setCurrentView('health-data'); return; }
+        if (user) { goHealthData(); return; }
         setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true);
       }}
     />
@@ -2588,7 +2596,7 @@ function App() {
             onViewToday={handleViewEcosystem}
             onLogIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
             onAsk={(q) => openAsk(q)}
-            onOpenHealth={() => setCurrentView(user ? 'health-data' : 'you')}
+            onOpenHealth={() => (user ? goHealthData() : setCurrentView('you'))}
             onViewEcosystem={handleViewEcosystem}
             myProducts={myProducts}
             savedProducts={savedProducts}
@@ -2719,7 +2727,7 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onSignOut={handleSignOut}
             onDeleteAccount={handleOpenDeleteAccount}
-            onOpenHealthData={() => setCurrentView('health-data')}
+            onOpenHealthData={goHealthData}
             onOpenHealth={() => setCurrentView('today')}
             healthSummary={health.insights.sections.find((sec) => sec.status === 'ready') || null}
             healthConnectedCount={health.connected.length}
@@ -2770,21 +2778,9 @@ function App() {
           <DeleteAccountPage onBack={() => setCurrentView('you')} />
         )}
         {/* Today: the first main tab and the home for signed-in accounts. Same page /health showed. */}
-        {/* Website, signed in: the health dashboard lives in the ayna app with ayna Pro (founder, Oct 27 18:34).
-            Home here is My ecosystem; this page explains where the dashboard is. Guests keep Today. */}
-        {currentView === 'today' && user && (
-          <div className="ay-container wx-dashlock">
-            <ProLock
-              feature="wearables"
-              title="Your health dashboard"
-              context="On the ayna app, with ayna Pro"
-              line="Your cycle, sleep and activity dashboard lives in the ayna app on your phone. Connect Apple Health, Health Connect or Oura there with ayna Pro."
-              onNotNow={handleViewEcosystem}
-            >
-              <p className="wx-dashlock__alt"><button type="button" className="ct-link" onClick={handleViewEcosystem}>Go to My ecosystem</button></p>
-            </ProLock>
-          </div>
-        )}
+        {/* Website, signed in: the same dashboard the Ecosystem "Dashboard" tab shows, behind its own
+            server-checked Pro gate (Oct 28 audit: a static lock here told Pro members to buy Pro). */}
+        {currentView === 'today' && user && <div className="wx-today">{webHealth}</div>}
         {currentView === 'today' && !user && (
           <div className="wx-today" data-tour="today">
             {React.cloneElement(webHealth, {
@@ -2820,8 +2816,8 @@ function App() {
                   on={{
                     ask: (q) => openAsk(typeof q === 'string' ? q : q?.question),
                     openLog: () => openTodayLog('web'),
-                    openHealth: user ? () => setCurrentView('health-data') : null,
-                    connect: user ? () => setCurrentView('health-data') : null,
+                    openHealth: user ? goHealthData : null,
+                    connect: user ? goHealthData : null,
                     openProduct: (p) => handleOpenProduct(p, { source: 'today_widget' }),
                     openSaved: handleViewWishlist,
                     openEcosystem: handleViewEcosystem,

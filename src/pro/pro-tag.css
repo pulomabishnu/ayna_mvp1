@@ -1,0 +1,2 @@
+.ay-protag { display: inline-flex; align-items: center; gap: 3px; margin-left: 6px; padding: 2px 7px 2px 5px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 800 11px/1.2 var(--ay-sans-stack, 'Figtree', sans-serif); letter-spacing: .01em; vertical-align: middle; white-space: nowrap; }
+.ay-protag svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }

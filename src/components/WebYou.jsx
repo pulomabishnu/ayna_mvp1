@@ -1,4 +1,5 @@
 import { avatarInitials } from '../utils/avatarInitials';
+import ProTag from '../pro/ProTag.jsx';
 import WebSettingsSearch from './you/WebSettingsSearch.jsx';
 import WhatAynaKnows from './you/WhatAynaKnows.jsx';
 import DailyCheckin from './you/DailyCheckin.jsx';
@@ -210,7 +211,7 @@ function ThisWeek({ userId, onOpen, onConnect }) {
       <div className="ay-group is-padded wy-week is-empty">
         <svg className="wy-week__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6" /></svg>
         <p className="wy-note">Your health dashboard lives here. Connect Apple Health, Oura or upload a file to see your week.</p>
-        {onConnect && <button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={onConnect}>Connect</button>}
+        {onConnect && <button type="button" className="ay-btn ay-btn--secondary cm-small" onClick={onConnect}>Connect<ProTag /></button>}
       </div>
     </section>;
   }
