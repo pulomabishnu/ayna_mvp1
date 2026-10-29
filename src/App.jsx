@@ -161,7 +161,6 @@ import './styles/page-heads.css';
 import './styles/shop-hero.css';
 import './styles/library-head.css';
 import './styles/no-vibe.css';
-import './styles/web-calm.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
 import ProLock from './components/ProLock.jsx';
 import { readHomeLook } from './mobile/components/homeLook.js';

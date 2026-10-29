@@ -264,3 +264,35 @@ html body .app-container #ay-landing.wl .wl-classic .hm-how__lead { max-width: 6
   html body .app-container #ay-landing.wl .wl-classic .hm-bento { grid-template-columns: minmax(0, 1fr) !important; }
   html body .app-container #ay-landing.wl .wl-classic .hm-sec { padding-top: 56px !important; padding-bottom: 56px !important; }
 }
+
+/* Pro, refined (Oct 28): first-term labels, the terms line, member and closed-offer states. */
+.app-container .hm.wl .wl-pro__side { display: grid; gap: 14px; }
+.app-container .hm.wl .wl-pro__prices li.is-best { position: relative; }
+.app-container .hm.wl .wl-pro__prices em { font: 600 13px/1.2 var(--ay-sans-stack, sans-serif); font-style: normal; opacity: .85; }
+.app-container.app-container .hm.wl .wl-pro__terms { margin: 0; font: 500 13px/1.5 var(--ay-sans-stack, sans-serif) !important; color: rgba(255, 237, 172, .78) !important; max-width: 52ch; }
+.app-container.app-container .hm.wl .wl-pro__closed { margin: 0; padding: 20px; border-radius: 16px; border: 1.5px dashed rgba(255, 237, 172, .6); font: 600 16px/1.4 var(--ay-sans-stack, sans-serif) !important; color: #ffedac !important; }
+
+/* Refine pass (Oct 28): the earlier composition, tightened.
+   - one even rhythm: 72px between sections on desktop, 48px on phones, so nothing feels endless;
+   - step 3's photo fills its card (no empty middle);
+   - the picks label reads as a label, not a footnote;
+   - Pro and the last ask are separated by the pink and brown checker instead of one long brown block;
+   - the closing line is big but not shouting, and the footer sits right under the medical note. */
+html body .app-container #ay-landing.wl .wl-classic .hm-sec { padding-top: 72px !important; padding-bottom: 72px !important; }
+html body .app-container #ay-landing.wl .wl-classic .hm-needsband { padding-top: 56px !important; }
+html body .app-container #ay-landing.wl .wl-classic .hm-how__lead { margin-bottom: 32px !important; }
+html body .app-container #ay-landing.wl .wl-classic .hm-bento > .hm-bt--decide { grid-template-rows: minmax(220px, 1fr) auto !important; }
+html body .app-container #ay-landing.wl .wl-classic .hm-bento > .hm-bt--decide .hm-bt__side { position: relative; display: block; min-height: 220px; height: 100%; overflow: hidden; }
+html body .app-container #ay-landing.wl .wl-classic .hm-bento > .hm-bt--decide .hm-bt__side :is(picture, img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+html body .app-container #ay-landing.wl .wl-classic .hm-shop__label { margin: 4px 0 12px !important; font: 700 15px/1.2 var(--ay-sans-stack, sans-serif) !important; color: #3e2723 !important; letter-spacing: 0; }
+html body .app-container #ay-landing.wl .wl-pro { padding-top: 80px !important; padding-bottom: 80px !important; }
+html body .app-container #ay-landing.wl .wl-turn { height: 14px; background: repeating-linear-gradient(90deg, #f7badd 0 14px, #3e2723 14px 28px); }
+html body .app-container #ay-landing.wl .wlx-end { padding-top: 80px !important; padding-bottom: 64px !important; }
+html body .app-container.app-container #ay-landing.wl .wlx-end__h { font-size: clamp(48px, 7vw, 104px) !important; }
+html body .app-container.app-container:has(#ay-landing.wl) footer.ay-foot { margin-top: 0 !important; }
+@media (max-width: 900px) {
+  html body .app-container #ay-landing.wl .wl-classic .hm-sec { padding-top: 48px !important; padding-bottom: 48px !important; }
+  html body .app-container #ay-landing.wl .wl-classic .hm-needsband { padding-top: 40px !important; }
+  html body .app-container #ay-landing.wl .wl-pro { padding-top: 56px !important; padding-bottom: 56px !important; }
+  html body .app-container #ay-landing.wl .wlx-end { padding-top: 56px !important; padding-bottom: 48px !important; }
+}

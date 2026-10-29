@@ -46,13 +46,13 @@ import { HOME_SEARCH_HINTS } from './shop/homeSearchHints.js';
 
 // Plain words first (5-second test, P2-4): what people actually type.
 const SEARCH_HINTS = HOME_SEARCH_HINTS; // tested against the real search (suggestionChips.test.js)
-export const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
+const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 const Arrow = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>);
 
 /* CTAs that go somewhere are links (open in a new tab, copy the address), not buttons. */
-export function Go({ href, onGo, className, children }) {
+function Go({ href, onGo, className, children }) {
   return <a className={className} href={href} onClick={(e) => { if (!onGo || !isPlainLeftClick(e)) return; e.preventDefault(); onGo(); }}>{children}</a>;
 }
 
@@ -171,7 +171,7 @@ function Brands({ onViewWaitlist }) {
 
 // Core needs lead (periods, intimate care, menopause, pelvic floor); creams, sleep and gadgets come after.
 const CORE = /pad|tampon|cup|disc|period|intimate|vaginal|menopause|pelvic|uti|cramp|fertility|postpartum|pregnan/i;
-export function weeklyLineup() {
+function weeklyLineup() {
   const list = getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product)
     .filter((p) => p?.image && NEEDS_PHOTO(p) && !/sex|intimacy|toy/i.test(String(p.category || '')) && !/\banal\b|vibrator|dildo|mouth tape/i.test(String(p.name || '')));
   const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
@@ -185,7 +185,7 @@ export function weeklyLineup() {
    (WebIntake.jsx COMMON_NEEDS), said the way people say it; these are prompts,
    not testimonials. Each photo carries a real product from the catalog as a
    die-cut on its corner. Signed out, every card says "See your match" (no number). */
-export const FAMILIAR = [
+const FAMILIAR = [
   { q: 'My cramps knock me out every month.', need: 'Cramps or period pain', photo: '/landing/pajamas-overhead.webp', match: /cramp|period pain|menstrual pain|dysmenorr|heat/i },
   { q: 'I bleed through everything.', need: 'Heavy periods', photo: '/landing/sink-flatlay.webp', match: /heavy|period underwear|overnight pad|super/i },
   { q: 'I leak a little when I sneeze.', need: 'Bladder leakage or incontinence', photo: '/landing/curlers-call.webp', match: /bladder|incontinen|leak|pelvic floor/i },
@@ -202,7 +202,7 @@ function DieCut({ product, className }) {
   if (!product?.image || failed) return null;
   return <span className={className}><img src={product.image} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} /></span>;
 }
-export function Phrases({ onSearch }) {
+function Phrases({ onSearch }) {
   const ready = useCatalogReady();
   const rows = useMemo(() => {
     const taken = new Set();
@@ -219,7 +219,7 @@ export function Phrases({ onSearch }) {
     ) }))} />
   );
 }
-function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, picks = null, signedOut = true, calm = false }) {
+function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, picks = null, signedOut = true }) {
   const ready = useCatalogReady();
   const weekly = useMemo(() => (ready ? weeklyLineup().slice(0, 4) : []), [ready]);
   // Member picks: only products with a real photo, drugstore basics last.
@@ -256,11 +256,8 @@ function NeedsBand({ onOpenProduct, onViewDiscovery, onSearch, onStartQuiz, pick
           <h2 id="hm-familiar-title" className="hm-h2">{signedOut ? 'Does this sound familiar?' : 'Explore by need'}</h2>
           <Go className="ay-btn ay-btn--text hm-head__all" href="/explore/products" onGo={() => onViewDiscovery?.('')}><span className="hm-head__long">See all products</span><span className="hm-head__short">See all<span className="ed-sr"> products</span></span><Arrow /></Go>
         </header>
-        {calm && signedOut && <div className="lp-need-index" aria-label="Browse common needs">
-          {FAMILIAR.map((need) => <Go key={need.need} href={`/explore/products?q=${encodeURIComponent(need.need)}`} onGo={() => onSearch?.(need.need)} className="lp-need-index__link">{need.q.replace(/\.$/, '')}<Arrow /></Go>)}
-        </div>}
-        <div className={`hm-needsband__grid${calm || !signedOut ? ' is-single' : ''}`}>
-          {signedOut && !calm && <Phrases onSearch={onSearch} />}
+        <div className={`hm-needsband__grid${signedOut ? '' : ' is-single'}`}>
+          {signedOut && <Phrases onSearch={onSearch} />}
           <div className="hm-shop">
             <div className="hm-chips" role="group" aria-label="Choose a need">
               {needs.length ? <>
@@ -415,7 +412,7 @@ function HowEvidence({ onViewHowItWorks, onViewArticles, onStartQuiz, showStart 
 const LEAD_READS = [
   { id: 'heavy-bleeding', title: 'Heavy menstrual bleeding', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/articles-heavy-bleeding-satin.webp', alt: 'Pads and tampons scattered on red satin', tone: 'pink' },
   { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/articles-period-pain-hotwater.webp', alt: 'A woman in striped pajamas holding a hot water bottle', tone: 'sky' },
-  { id: 'pcos-basics', title: 'PCOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror', tone: 'butter' },
+  { id: 'pcos-basics', title: 'PMOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror', tone: 'butter' },
 ];
 function Reads({ onViewArticle, onViewArticles }) {
   // Word of the day removed in the landing clean-up (founder, Oct 27 19:22).
@@ -478,9 +475,9 @@ function Community({ onViewCommunity, posts = [] }) {
     </article>
   );
 }
-export function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts, calm = false }) {
+function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts }) {
   return (
-    <Band tone={calm ? "butter" : "deep"} className="hm-sec hm-rc hm-band" aria-label="Reads and Community">
+    <Band tone="deep" className="hm-sec hm-rc hm-band" aria-label="Reads and Community">
       <div className="hm-wrap hm-rc__grid">
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         <Community onViewCommunity={onViewCommunity} posts={posts} />
@@ -493,7 +490,7 @@ export function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity,
    The founders' photo and story (the page's one 44px statement line). The
    Wefunder card moved to /about (critique, Oct 27: no investing pitch on the
    consumer home page); the footer keeps its "Invest in ayna" link. */
-export function Founders({ onViewAbout }) {
+function Founders({ onViewAbout }) {
   return (
     <Band tone="butter" className="hm-sec hm-us hm-band" aria-labelledby="hm-us-title">
       <div className="hm-wrap">
@@ -513,37 +510,11 @@ export function Founders({ onViewAbout }) {
   );
 }
 
-function CalmMethod({ onViewHowItWorks, onStartQuiz }) {
-  const steps = [
-    { title: 'Tell us what matters', short: 'Your needs, life stage and preferences.', more: 'Take the personalization quiz at your own pace. You can review your answers and update them as your needs change.' },
-    { title: 'See the fit and the evidence', short: 'A reason for each match, with sources.', more: 'Product pages distinguish strong, some and limited evidence. A match is an option to explore, not a diagnosis or a promise that a product will work for you.' },
-    { title: 'Build a routine that feels like you', short: 'Keep what you use. Leave what you don’t.', more: 'Save the options you want to revisit, add products to your ecosystem and use check-ins to record your experience. Buying is always your choice.' },
-  ];
-  return <section className="lp-method hm-sec" aria-labelledby="hm-how-title">
-    <div className="hm-wrap lp-method__grid">
-      <figure className="lp-method__photo">
-        <Photo src="/landing/hiw-questions-cabinet.webp" alt="A bathroom cabinet filled with everyday care essentials" sizes="(max-width: 767px) 92vw, 480px" loading="lazy" />
-        <figcaption>A little less guessing.</figcaption>
-      </figure>
-      <div className="lp-method__copy">
-        <p className="lp-eyebrow">Made around you</p>
-        <h2 id="hm-how-title" className="hm-h2">How ayna fits it to you</h2>
-        <ol className="lp-method__steps">{steps.map((step, i) => <li key={step.title}>
-          <span className="lp-method__number" aria-hidden="true">0{i + 1}</span>
-          <div><h3>{step.title}</h3><p>{step.short}</p><details><summary>Read more<span className="ed-sr">: {step.title}</span></summary><p>{step.more}</p></details></div>
-        </li>)}</ol>
-        <div className="lp-method__actions"><Go className="ay-btn ay-btn--primary" href="/quiz" onGo={onStartQuiz}>Create your ecosystem<Arrow /></Go>
-        <Go className="ay-btn ay-btn--text" href="/how-it-works" onGo={onViewHowItWorks}>The full method<Arrow /></Go></div>
-      </div>
-    </div>
-  </section>;
-}
-
 /* ---------- page ---------- */
 // `personal` (signed in): the same page with a welcome-back hero, and
 // `personalSlot` (her dashboard row) right under it; `communityPosts` are
 // the most helpful Powder Room posts (two are shown, in the Community card).
-export default function LandingV2({ bodyOnly = false, membershipSlot = null, onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, personal = null, personalSlot = null, communityPosts = [], heroBanner = null }) {
+export default function LandingV2({ bodyOnly = false, onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, personal = null, personalSlot = null, communityPosts = [], heroBanner = null }) {
   const rest = useAfterHeroPaint();
   return (
     <div className="ed ed-home hm hm-uq">
@@ -552,12 +523,10 @@ export default function LandingV2({ bodyOnly = false, membershipSlot = null, onS
       {!bodyOnly && <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} onOpenProduct={onOpenProduct} onViewHowItWorks={onViewHowItWorks} personal={personal} banner={heroBanner} />}
       {bodyOnly ? null : personal?.dashboard ? <div className="hm-personal">{personalSlot}</div> : <Brands onViewWaitlist={onViewWaitlist} />}
       {!personal?.dashboard && personalSlot && <div className="hm-personal">{personalSlot}</div>}
-      <NeedsBand calm={bodyOnly} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} onStartQuiz={onStartQuiz} picks={personal?.topPicks || null} signedOut={!personal} />
+      <NeedsBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} onSearch={onSearch} onStartQuiz={onStartQuiz} picks={personal?.topPicks || null} signedOut={!personal} />
       {rest && <>
-      {bodyOnly ? <CalmMethod onViewHowItWorks={onViewHowItWorks} onStartQuiz={onStartQuiz} /> : <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!(personal && personal.hasQuiz)} />}
-      {!bodyOnly && membershipSlot}
-      <ReadsCommunity calm={bodyOnly} onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
-      {bodyOnly && membershipSlot}
+      <HowEvidence onViewHowItWorks={onViewHowItWorks} onViewArticles={onViewArticles} onStartQuiz={onStartQuiz} showStart={!bodyOnly && !(personal && personal.hasQuiz)} />
+      <ReadsCommunity onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
       <Founders onViewAbout={onViewAbout} />
       </>}
     </div>
