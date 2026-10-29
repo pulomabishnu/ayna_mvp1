@@ -179,7 +179,7 @@ export function useToday({ userId = null, intake = null, healthRows = [], cycle 
   return {
     today, decision, notes, intent, store, pendingProfileSaves,
     // For the rundown (src/components/rundown): the same state decide() read.
-    patterns: state.patterns, tries, healthRows,
+    patterns: state.patterns, tries, healthRows, intake,
     // After menopause: the log hides PMS and asks about bleeding, not flow.
     postCycle: isPostCycle(safetyContextFrom(state.profile)),
     // Cycle estimates are skipped on hormonal birth control and in pregnancy ("not sure" counts).

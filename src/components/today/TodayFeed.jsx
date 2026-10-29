@@ -11,6 +11,9 @@ import ItemMenu from './ItemMenu.jsx';
 import { readRundownPush } from './rundownPush.js';
 import { NOT_HELPING, nextBestMatch } from './nextBest.js';
 import { markReviewAsk, reviewsDue } from '../../health/routineFollowUps.js';
+import { createTry, recordOutcome, saveTry } from '../../health/outcomes.js';
+import { recordOutcomeSample } from '../../matching/calibration.js';
+import { getProductMatchDetailsForProduct } from '../../data/products.js';
 import { readRundownMemory, seenFirstRundown } from '../rundown/rundownStore.js';
 import { eventSurface, trackCheckin } from '../../utils/analyticsEvents.js';
 import { Chip, StatusPill } from '../ui/ay';
@@ -128,13 +131,26 @@ function ReviewAsk({ due, t, onOpenProduct, onDone, compact }) {
   const p = getProductById(due.productId);
   if (!p) return null;
   const answer = (a) => { markReviewAsk(due.productId, a, { today: t.today }); onDone(); };
+  // "Is it helping?" in one tap (P3, outcomes): saved as her own outcome for
+  // this product (src/health/outcomes.js), which the engine reads ("Worse"
+  // moves it down), plus one anonymous band + outcome sample for calibration.
+  const helped = (outcome) => {
+    try { saveTry(recordOutcome(createTry({ id: `try:review:${p.id}`, kind: 'product', ref: p.id, product: p, startedDay: due.addedDay || t.today, horizonDays: 0 }), outcome, { day: t.today })); } catch { /* storage blocked */ }
+    if (t.intake) { try { recordOutcomeSample({ details: getProductMatchDetailsForProduct(p, t.intake), outcome }); } catch { /* best effort */ } }
+    answer('outcome');
+  };
   return (
     <li className={`ay-today__item is-review${compact ? ' is-compact' : ''}`}>
       <p className="ay-today__kicker">Review<StatusPill>In my routine</StatusPill></p>
       <h3 className="ay-today__title">{compact ? `How is ${p.name} going?` : `You have used ${p.name} for 3 cycles. How is it going?`}</h3>
+      <div className="ay-today__actions" role="group" aria-label="Is it helping?">
+        <button type="button" className="ay-today__primary" onClick={() => helped('helpful')}>It’s helping</button>
+        <button type="button" className="ay-today__text" onClick={() => helped('no_change')}>No change</button>
+        <button type="button" className="ay-today__text" onClick={() => helped('worse')}>Worse</button>
+      </div>
       {!compact && <p className="ay-today__why">A short review helps the next person decide.</p>}
       <div className="ay-today__actions">
-        {onOpenProduct && <button type="button" className="ay-today__primary" onClick={() => { answer('written'); onOpenProduct(p); }}>{compact ? 'Review' : 'Write a review'}</button>}
+        {onOpenProduct && <button type="button" className="ay-today__text" onClick={() => { answer('written'); onOpenProduct(p); }}>{compact ? 'Review' : 'Write a review'}</button>}
         <button type="button" className="ay-today__text" onClick={() => answer('later')}>Not now</button>
         {!compact && (
           <ItemMenu label={`More for ${p.name}`}>

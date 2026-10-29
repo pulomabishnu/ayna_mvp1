@@ -171,6 +171,7 @@ import { Capacitor } from '@capacitor/core';
 import AppOnlySheet from './components/AppOnlySheet.jsx';
 import HealthRefreshPrompt from './components/health/HealthRefreshPrompt.jsx';
 import { resetRoutineData } from './utils/resetRoutine.js';
+import { outcomesToProductHistory, readTries } from './health/outcomes.js';
 import WebHomeTop from './components/you/WebHomeTop.jsx';
 import { readHomeLook } from './mobile/components/homeLook.js';
 import { webHomeView } from './mobile/utils/navTab.js';
@@ -1491,12 +1492,20 @@ function App() {
   };
   // Her switch (You, Health data): "Use my health data in my matches". Shared with the app.
   const healthInMatches = useHealthMatchPref(user?.id || null).on;
+  // What she reported trying (src/health/outcomes.js), same as the app: only
+  // recorded outcomes count; "Worse" and "Side effect" move that product down.
+  // Re-read when she changes page (Today and routines write it on this device).
+  const outcomeHistory = useMemo(() => {
+    if (!user?.id) return null;
+    try { const h = outcomesToProductHistory(readTries(), ALL_PRODUCTS); return h.length ? h : null; } catch { return null; }
+  }, [user?.id, currentView]); // eslint-disable-line react-hooks/exhaustive-deps
   const matchOpts = useMemo(
     () => {
       const base = behaviorFrom({ saved: savedProducts, omitted: omittedProducts, inEcosystem: myProducts });
-      return healthInMatches && health.matchContext ? { ...base, healthContext: health.matchContext } : base;
+      const withHealth = healthInMatches && health.matchContext ? { ...base, healthContext: health.matchContext } : base;
+      return outcomeHistory ? { ...withHealth, outcomeHistory } : withHealth;
     },
-    [savedProducts, omittedProducts, myProducts, health.matchContext, healthInMatches]
+    [savedProducts, omittedProducts, myProducts, health.matchContext, healthInMatches, outcomeHistory]
   );
 
   const recommendedProductIds = useMemo(() => {
