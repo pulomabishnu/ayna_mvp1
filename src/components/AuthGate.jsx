@@ -10,6 +10,7 @@ import { AI_CONSENT_ERROR, AI_CONSENT_TEXT, acknowledgementLead, LEGAL_LINKS, co
 import { cleanFirstName } from '../mobile/data/intakeModel.js';
 import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../utils/formErrors.js';
 import InlineError from './InlineError.jsx';
+import ProfileSetupStep from './ProfileSetupStep.jsx';
 import '../styles/audit-qya.css';
 import './AuthGate.css';
 import { maskedChange, formatUsPhone } from '../utils/inputMask.js';
@@ -107,6 +108,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   // 'code'), not a confirmation link (main, 2026-09).
   const [emailSignupStep, setEmailSignupStep] = useState('details');
   const [emailCode, setEmailCode] = useState('');
+  const [profileSetup, setProfileSetup] = useState(null);
   // Signup via native Supabase phone-OTP auth instead of email/password
   // requested 2026-08-25 as an alternative for anyone whose confirmation
   // email never arrives (see the resend feature above). Fully independent
@@ -332,7 +334,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       setNeedsConfirmation(false);
       setResendMsg('');
       setSuccessMsg(CODE_COPY.verified);
-      onAuthenticated?.(data.user || data.session.user, data.session);
+      // New account, email just verified: photo + username first, then she's
+      // in (founder, Oct 29). ProfileSetupStep calls onAuthenticated when done.
+      setProfileSetup({ user: data.user || data.session.user, session: data.session });
     } catch (err) {
       setError(err.message || CODE_COPY.wrongOrExpired);
     } finally {
@@ -556,6 +560,14 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
         } : undefined}
       >
+        {profileSetup ? (
+          <ProfileSetupStep
+            supabase={supabase}
+            user={profileSetup.user}
+            firstName={nameMeta?.first_name || firstName || ''}
+            onDone={() => { const p = profileSetup; setProfileSetup(null); onAuthenticated?.(p.user, p.session); }}
+          />
+        ) : <>
         {isModal && onSkip && (
           <button type="button" className="ay-auth-close" onClick={onSkip} style={styles.closeBtn} aria-label="Close">×</button>
         )}
@@ -930,6 +942,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             Skip for now
           </button>
         )}
+        </>}
       </div>
     </div>
   );
