@@ -1,4 +1,6 @@
 import { SAFETY_HOLD, MATCH_UNAVAILABLE, SAFETY_HOLD_LINE, SAFETY_HOLD_PRODUCT_LINE, HOLD_STATE_TITLE, HOLD_STATE_LINE } from '../../utils/matchDisplay.js';
+import { useEffect } from 'react';
+import { trackMatchWithheld } from '../../utils/reviewAnalytics.js';
 import './safety-hold.css';
 
 /**
@@ -7,7 +9,9 @@ import './safety-hold.css';
  * `onFix(step)` opens that setup question; product-side gaps need nothing
  * from her. Never a percent. Used by the product page, Why, Compare and Ask.
  */
-export default function SafetyHoldNote({ hold, onFix, compact = false, className = '' }) {
+export default function SafetyHoldNote({ hold, onFix, compact = false, className = '', surface = 'product' }) {
+  // Product id and a coarse state only (src/utils/reviewAnalytics.js): never why.
+  useEffect(() => { if (hold?.productId) trackMatchWithheld({ productId: hold.productId, state: hold.state, surface }); }, [hold?.productId, hold?.state, surface]);
   if (!hold) return null;
   const canFix = Boolean(hold.fix?.step && onFix);
   const title = HOLD_STATE_TITLE[hold.state] || SAFETY_HOLD;

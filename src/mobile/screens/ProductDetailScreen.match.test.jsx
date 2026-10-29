@@ -5,8 +5,9 @@ import ProductDetailScreen from './ProductDetailScreen.jsx';
 
 describe('ProductDetailScreen match display', () => {
   it('shows a relevant mid-range score as the one match pill', () => {
-    const product = ALL_PRODUCTS.find((item) => item.id === 'p-vitex');
+    // A scored mid-range match (vitex was used until Oct 29; it now has an open clinician review, so no percent).
     const quizAnswers = { fullHealthIntake: { supportSelections: ['PMS symptoms'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } };
+    const product = ALL_PRODUCTS.find((item) => { const d = getProductMatchDetailsForProduct(item, quizAnswers); return d.matchStatus === 'scored' && d.percent > 0 && d.percent < 75; });
     const details = getProductMatchDetailsForProduct(product, quizAnswers);
     const percent = details.percent;
     expect(percent).toBeGreaterThan(0);

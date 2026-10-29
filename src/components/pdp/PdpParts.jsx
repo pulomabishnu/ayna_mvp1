@@ -51,7 +51,7 @@ export function MatchLine({ state, onWhy = null, onFix = null, onQuiz = null }) 
   if (state.kind === 'hold') {
     return (
       <div className="ayv-match is-hold" data-tour="pdp-why">
-        {state.hold ? <SafetyHoldNote hold={state.hold} onFix={onFix} compact /> : <p className="ayv-match__row"><MatchPill hold size="sm" /><span className="ayv-match__why">{MATCH_UNAVAILABLE}</span></p>}
+        {state.hold ? <SafetyHoldNote surface="product_card" hold={state.hold} onFix={onFix} compact /> : <p className="ayv-match__row"><MatchPill hold size="sm" /><span className="ayv-match__why">{MATCH_UNAVAILABLE}</span></p>}
         {onWhy && <button type="button" className="ayv-textbtn" onClick={onWhy} aria-label={`${SAFETY_HOLD}. ${MATCH_UNAVAILABLE}. See why`}>See why</button>}
       </div>
     );

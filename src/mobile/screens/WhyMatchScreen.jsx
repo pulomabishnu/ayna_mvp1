@@ -77,7 +77,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
         ) : evaluation ? (
           <BleedingEvaluationNote note={details.bleedingEvaluation} />
         ) : held ? (
-          <SafetyHoldNote hold={details.safetyHold} onFix={onFixSafety || (onUpdateHealth ? () => onUpdateHealth() : null)} />
+          <SafetyHoldNote surface="why" hold={details.safetyHold} onFix={onFixSafety || (onUpdateHealth ? () => onUpdateHealth() : null)} />
         ) : excluded ? (
           <section className="ayna-match-intro ay-match-excluded">{exclusions.length > 0
             ? exclusions.map((line) => <p key={line}>{tidy(line)}</p>)

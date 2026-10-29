@@ -1887,7 +1887,7 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
         // The card, product page, Compare, Rundown, Ask and Why show the hold,
         // its exact reason and what resolves it. 0 is only for sorting.
         if (details.eligibility === 'restricted' && details.matchStatus === 'scored') {
-            details = { ...details, percent: null, score: 0, sortScore: 0, matchStatus: 'safety-hold', tier: 'browse', goalMatch: null, healthMatch: null, needMatches: details.needMatches.map((m) => ({ ...m, score: null, held: true })), safetyHold: safetyHoldFor(safety) };
+            details = { ...details, percent: null, score: 0, sortScore: 0, matchStatus: 'safety-hold', tier: 'browse', goalMatch: null, healthMatch: null, needMatches: details.needMatches.map((m) => ({ ...m, score: null, held: true })), safetyHold: { ...safetyHoldFor(safety), productId: pp.product_id || null } };
         }
         // Bleeding after menopause (founder, Oct 24): a period or bleeding
         // product gets no match for it, only the prompt-evaluation message
