@@ -908,59 +908,13 @@ import PostpartumStretchMarksArticle from './library/PostpartumStretchMarksArtic
 import VaginalAtrophyGsmArticle from './library/VaginalAtrophyGsmArticle.jsx';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
 import ScrollRow from './shop/ScrollRow.jsx';
+import { FeaturedReads, ReadShelf } from './library/LibraryList.jsx';
+import { useProStatus } from '../pro/useProStatus.js';
+import { openProPaywall } from '../pro/paywall.js';
 import '../styles/library-v2.css';
 const LIB_SEARCH_EXAMPLES = ['heavy periods', 'PMOS', 'period pain', 'when to see a doctor', 'UTI', 'perimenopause', 'fibroids', 'endometriosis', 'yeast vs BV', 'pelvic floor', 'night sweats', 'missed period'];
 
 const plainClick = (e) => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0);
-
-/* Top of the Library as plain rows (master prompt 154: no bento): the
-   featured reads, each with its photo, section, time, title, one line and who
-   wrote and reviewed it; then one row for her pick (or getting matched) and
-   one for asking or suggesting a read. */
-function LibraryFeatured({ onOpen, pick = null, onAsk = null }) {
-  const go = (id) => (e) => { if (!plainClick(e)) return; e.preventDefault(); onOpen(id); };
-  const [lead, second] = FEATURED_READS.map((f) => ARTICLES.find((a) => a.id === f.id)).filter(Boolean);
-  // Uniqueness pass (Oct 26): an editorial grid with one big feature (#4dfb3fbd FEEL FITS grid), not a list.
-  // Same reads, same words: the lead read big with its photo, the second as a tall cover, her pick on
-  // pink and "Can't find it?" on espresso.
-  return (
-    <section className="lb-featured lb-ed" aria-labelledby="lib-featured-h">
-      <header className="lb-shelf__head"><h2 id="lib-featured-h" className="lb-shelf__title">Featured reads</h2></header>
-      {/* Founder Oct 26 20:17: featured reads are a peeking snap carousel (one card per swipe,
-          dots under it), the same pattern as Community highlights and product reviews. */}
-      <SnapCarousel label="Featured reads" size="card" className="lb-ed__snap" items={[
-        lead && { key: lead.id, node: <div className="lb-ed__big" id="lib-featured"><ReadCard article={lead} layout="feature" href={`/library/${lead.id}`} onOpen={(a) => onOpen(a.id)} /></div> },
-        second && { key: second.id, node: <div className="lb-ed__big" id={`lib-featured-${second.id}`}><ReadCard article={second} layout="feature" href={`/library/${second.id}`} onOpen={(a) => onOpen(a.id)} /></div> },
-        { key: 'pick', node: (
-        <div className="lb-ed__tile is-pink">
-          {pick ? (
-            <a href={`/library/${pick.id}`} className="lb-ed__pick" onClick={go(pick.id)}>
-              <span className="lb-more__label">Top pick for you</span>
-              <strong className="lb-ed__title">{pick.title}</strong>
-              <span className="lb-more__meta">{minutesFor(pick)} min read</span>
-              <span className="lb-ed__cover"><ReadCover article={pick} /></span>
-            </a>
-          ) : (
-            <>
-              <span className="lb-more__label">For you</span>
-              <strong className="lb-ed__title">Get reads picked for what you told us.</strong>
-              <a className="lb-btn lb-btn--small" href="/quiz">See my matches <span aria-hidden="true">→</span></a>
-            </>
-          )}
-        </div>) },
-        { key: 'ask', node: (
-        <div className="lb-ed__tile is-ink">
-          <span className="lb-more__label">Can’t find it?</span>
-          <strong className="lb-ed__title">Ask about anything, or tell us what to write next.</strong>
-          <span className="lb-more__actions">
-            {onAsk && <button type="button" className="lb-btn lb-btn--small" onClick={() => onAsk('')}>Ask ayna</button>}
-            <button type="button" className="lb-link" onClick={() => document.querySelector('.ct-suggest')?.scrollIntoView({ behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' })}>Suggest a read</button>
-          </span>
-        </div>) },
-      ].filter(Boolean)} />
-    </section>
-  );
-}
 
 /* Sources as a numbered list at the end of the read: publisher, the page's
    title, and where it opens. Text comes straight from the read. */
@@ -1127,6 +1081,10 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   }, [quizResults, healthProfile]);
 
   const progressOf = (a) => progress[a.id] || 0;
+  // Free accounts choose one Read a week (ProFeatureGate asks first); the Library shows which one.
+  const proStatus = useProStatus(userId);
+  const freeReads = Boolean(userId) && proStatus.gates && !proStatus.active && !proStatus.checking;
+  const chosenRead = freeReads ? ARTICLES.find((a) => a.id === proStatus.weeklyRead) || null : null;
   const finished = ARTICLES.filter((a) => progressOf(a) >= 1).length;
   const keepReading = ARTICLES.filter((a) => progressOf(a) > 0 && progressOf(a) < 1);
 
@@ -1296,28 +1254,24 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
 
   const q = query.trim().toLowerCase();
   const results = q.length >= 2 ? searchArticles(query, ARTICLES) : null;
-  const shelfItems = (r) => r.items;
   // Say why these are "for you", in her words from the quiz.
   const said = [...new Set([...(quizResults?.fullHealthIntake?.supportSelections || []), ...(quizResults?.frustrations || [])].map((x) => String(x).trim()).filter(Boolean))].slice(0, 3);
 
-  const shelf = (key, title, items, { sub = null, extra = null, seeAll = null } = {}) => items.length > 0 && (
-    <section key={key} id={`lib-${key}`} className="lb-shelf" aria-labelledby={`lib-${key}-h`}>
-      <header className="lb-shelf__head">
-        <h2 id={`lib-${key}-h`} className="lb-shelf__title">{title}</h2>
-        {sub && <span className="lb-shelf__sub">{sub}</span>}
-        {extra || (seeAll && <button type="button" className="lb-seeall" onClick={seeAll}>See all {items.length}</button>)}
-      </header>
-      <ul className="lb-shelf__row">{cards(items)}</ul>
-    </section>
+  const openRead = (a) => open(a.id);
+  const chosenId = chosenRead?.id || null;
+  const freeLine = freeReads && !results && (
+    <p className="ll-free" role="status">
+      {chosenRead
+        ? <span>Your free Read this week: <b>{chosenRead.title}</b>. A new one opens Monday.</span>
+        : <span><b>One free Read a week.</b> Open any Read and choose it.</span>}
+      <button type="button" onClick={() => openProPaywall({ feature: 'reads' })}>Every Read with Pro</button>
+    </p>
   );
 
   let body;
   if (results) {
     body = results.length ? (
-      <section className="lb-shelf lb-shelf--grid" aria-labelledby="lib-results-h">
-        <header className="lb-shelf__head"><h2 id="lib-results-h" className="lb-shelf__title">Reads about “{query.trim()}”</h2><span className="lb-shelf__sub">{results.length} read{results.length === 1 ? '' : 's'}</span></header>
-        <ul className="lb-shelf__row">{cards(results)}</ul>
-      </section>
+      <div className="ll-shelves is-one"><ReadShelf mixed id="lib-results" label={`Reads about “${query.trim()}”`} items={results} onOpen={openRead} chosenId={chosenId} progressOf={progressOf} /></div>
     ) : (
       <div className="lb-zero" role="status">
         <p className="lb-zero__h">Nothing for “{query.trim()}” yet.</p>
@@ -1333,28 +1287,23 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     const topicRow = rows.find((r) => r.id === topic);
     const items = topic === 'foryou' ? forYou : (topicRow?.items || []);
     const label = topic === 'foryou' ? 'For you' : topicRow?.label || 'Reads';
-    body = <section className="lb-shelf lb-shelf--grid" aria-labelledby="lib-topic-h">
-      <header className="lb-shelf__head"><h2 id="lib-topic-h" className="lb-shelf__title">{label}</h2><span className="lb-shelf__sub">{items.length} read{items.length === 1 ? '' : 's'}</span><button type="button" className="lb-seeall" onClick={() => { setJumpTo(topic === 'foryou' ? 'lib-foryou' : `lib-${topic}`); setTopic('all'); }}>All reads</button></header>
-      <ul className="lb-shelf__row">{cards(items)}</ul>
-    </section>;
+    body = <>{freeLine}<div className="ll-shelves is-one"><ReadShelf mixed={topic === 'foryou'} id="lib-topic" label={label} items={items} onOpen={openRead} chosenId={chosenId} progressOf={progressOf}
+      action={<button type="button" onClick={() => { setJumpTo(topic === 'foryou' ? 'lib-foryou' : `lib-${topic}`); setTopic('all'); }}>All reads</button>} /></div></>;
   } else {
+    // Library, all: two featured reads, then shelves of rows (founder, Oct 28: the huge pictures and
+    // spaced-out grid read as unfinished; the app's list rows are what she likes). Featured reads aren't repeated.
+    const featured = FEATURED_READS.map((f) => ARTICLES.find((a) => a.id === f.id)).filter(Boolean);
+    const notFeatured = (a) => !FEATURED_READS.some((f) => f.id === a.id);
     body = <>
-      <LibraryFeatured onOpen={open} pick={hasProfile ? forYou.find((a) => !FEATURED_READS.some((f) => f.id === a.id)) || null : null} onAsk={onAsk} />
-      {shelf('keep', 'Keep reading', keepReading, { sub: finished > 0 ? `${finished} of ${ARTICLES.length} finished` : null })}
-      {hasProfile && shelf('foryou', 'Top 3 for you', forYou.slice(0, 3), {
-        sub: said.length > 0 ? `Based on what you told us: ${said.map((x) => x.toLowerCase()).join(', ')}` : null,
-        extra: forYou.length > 3 ? <button type="button" className="lb-seeall" onClick={() => setTopic('foryou')}>See all {forYou.length}</button> : null,
-      })}
-      {/* Every read in one even grid, like the Shop (founder Oct 27 18:34: "i still hate the library").
-          Topic shelves left lone cards on half-empty rows; the topic chips above filter instead.
-          Ordered by topic, each card says its topic. The featured reads aren't repeated (P1-25). */}
-      {(() => {
-        const all = rows.flatMap((r) => shelfItems(r)).filter((a, i, arr) => arr.findIndex((x) => x.id === a.id) === i && !FEATURED_READS.some((f) => f.id === a.id));
-        return all.length > 0 && <section id="lib-all" className="lb-shelf lb-shelf--grid lb-allgrid" aria-labelledby="lib-all-h">
-          <header className="lb-shelf__head"><h2 id="lib-all-h" className="lb-shelf__title">All reads</h2><span className="lb-shelf__sub">{all.length} reads</span></header>
-          <ul className="lb-shelf__row">{cards(all)}</ul>
-        </section>;
-      })()}
+      {freeLine}
+      <FeaturedReads reads={featured} onOpen={openRead} />
+      <div className="ll-shelves">
+        {keepReading.length > 0 && <ReadShelf mixed id="lib-keep" label="Keep reading" items={keepReading} onOpen={openRead} chosenId={chosenId} progressOf={progressOf} note={finished > 0 ? `${finished} of ${ARTICLES.length} finished` : null} />}
+        {hasProfile && forYou.length > 0 && <ReadShelf mixed id="lib-foryou" label="For you" items={forYou.slice(0, 5)} onOpen={openRead} chosenId={chosenId} progressOf={progressOf}
+          note={said.length > 0 ? `From what you told us: ${said.map((x) => x.toLowerCase()).join(', ')}` : null}
+          action={forYou.length > 5 ? <button type="button" onClick={() => setTopic('foryou')}>See all</button> : null} />}
+        {rows.map((r) => <ReadShelf key={r.id} id={`lib-${r.id}`} label={r.label} items={r.items.filter(notFeatured)} onOpen={openRead} chosenId={chosenId} progressOf={progressOf} />)}
+      </div>
     </>;
   }
 

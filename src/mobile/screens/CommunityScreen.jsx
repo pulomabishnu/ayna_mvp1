@@ -274,7 +274,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   const closeTopicSheet = useCallback(() => setTopicSheetOpen(false), []);
   const topicScope = topicScopeChoice === 'mine' && !followedTopics.length ? 'all'
     : topicScopeChoice && topicScopeChoice !== 'mine' && topicScopeChoice !== 'all' && !followedTopics.includes(topicScopeChoice) ? (followedTopics.length ? 'mine' : 'all')
-    : topicScopeChoice || (followedTopics.length ? 'mine' : 'all');
+    : topicScopeChoice || 'all'; // All by default, same as the website (Oct 28)
   const topicsTab = tab === 'for-you' || tab === 'question' || tab === 'review';
   const scopedTopics = !topicsTab || topicScope === 'all' ? null : topicScope === 'mine' ? followedKey.split(',').filter(Boolean) : [topicScope];
   const scopedTopicsKey = scopedTopics ? scopedTopics.join(',') : '';

@@ -293,7 +293,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [topicSheetOpen, setTopicSheetOpen] = useState(false);
   const topicScope = topicScopeChoice === 'mine' && !followedTopics.length ? 'all'
     : topicScopeChoice && topicScopeChoice !== 'mine' && topicScopeChoice !== 'all' && !followedTopics.includes(topicScopeChoice) ? (followedTopics.length ? 'mine' : 'all')
-      : topicScopeChoice || (followedTopics.length ? 'mine' : 'all');
+      // Default is All (founder, Oct 28: "why is the default not 'all'"); My topics is one tap away.
+      : topicScopeChoice || 'all';
   const topicsTab = tab === 'for-you' || tab === 'question' || tab === 'review';
   const scopedTopicsKey = !topicsTab || topicScope === 'all' ? '' : topicScope === 'mine' ? followedKey : topicScope;
   const scopedTopicList = scopedTopicsKey ? scopedTopicsKey.split(',').filter(Boolean) : null;

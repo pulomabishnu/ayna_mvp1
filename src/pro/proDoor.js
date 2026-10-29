@@ -20,7 +20,7 @@ if (typeof window !== 'undefined') window.addEventListener(PRO_CHANGED_EVENT, ()
 export async function proNow() {
   if (cache.value && Date.now() - cache.at < 60000) return cache.value;
   const s = await requestPro();
-  cache = { at: Date.now(), value: { active: Boolean(s?.active), gates: s?.gates !== false } };
+  cache = { at: Date.now(), value: { active: Boolean(s?.active), gates: s?.gates !== false, quizRetakeOpen: s?.quizRetakeOpen !== false } };
   return cache.value;
 }
 
@@ -49,5 +49,15 @@ export async function playlistDoor(supabase, userId, go) {
     if ((count || 0) < 1) return go?.();
   } catch { return go?.(); }
   if (!openProPaywall({ feature: 'playlists' })) return go?.();
+  return undefined;
+}
+
+/** Quiz retakes (Free: 1 a month). Checked before the quiz starts, so she never answers every question
+ *  and then meets the paywall. The server claim at the end still decides. */
+export async function retakeDoor(go) {
+  let status = null;
+  try { status = await proNow(); } catch { status = null; }
+  if (!status || !status.gates || status.active || status.quizRetakeOpen) return go?.();
+  if (!openProPaywall({ feature: 'quiz', featureName: 'Quiz retakes' })) return go?.();
   return undefined;
 }

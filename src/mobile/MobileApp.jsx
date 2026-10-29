@@ -149,7 +149,7 @@ import { localToday } from '../utils/localDate.js';
 import { trackQuizStarted, trackFirstMatchShown, eventSurface } from '../utils/analyticsEvents.js';
 import ProPaywallHost from '../components/ProPaywallHost.jsx';
 import { openProPaywall, proLimitFeature } from '../pro/paywall.js';
-import { proDoor } from '../pro/proDoor.js';
+import { proDoor, retakeDoor } from '../pro/proDoor.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -1338,7 +1338,8 @@ export default function MobileApp() {
       if (screen === 'eco' || screen === 'saved' || (screen === 'ecointro' && authUser)) { openProfile(); return; }
       setScreen(screen === 'ecointro' ? 'landing' : homeTarget);
     },
-    onRetake: () => { setIntakeMode('add'); setIntakeAtOptional(false); setEditingHealthProfile(true); setScreen('quiz'); },
+    // Free accounts with this month's retake used see Pro before the quiz, not after answering it (Oct 28).
+    onRetake: () => retakeDoor(() => { setIntakeMode('add'); setIntakeAtOptional(false); setEditingHealthProfile(true); setScreen('quiz'); }),
     onPersonalize: () => { setIntakeMode('add'); setIntakeAtOptional(true); setEditingHealthProfile(true); setScreen('quiz'); },
     onFixLifeStages: () => { setIntakeMode('add'); setIntakeAtOptional(false); setIntakeAtStep('lifeStage'); setEditingHealthProfile(true); setScreen('quiz'); },
     onRequestEcosystemReset: () => setResetDialogOpen(true),

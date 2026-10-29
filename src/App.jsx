@@ -163,7 +163,7 @@ import './styles/library-head.css';
 import './styles/no-vibe.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
 import ProLock from './components/ProLock.jsx';
-import { proDoor } from './pro/proDoor.js';
+import { proDoor, retakeDoor } from './pro/proDoor.js';
 import { readHomeLook } from './mobile/components/homeLook.js';
 import { webHomeView } from './mobile/utils/navTab.js';
 // Keep the ?homestyle=a|b preview pick before the router rewrites the address (Today loads lazily).
@@ -3088,7 +3088,7 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onOpenDoctorPrep={() => setCurrentView('doctor-prep')}
             onBuildEcosystem={handleStartQuiz}
-            onRedoQuiz={handleRedoQuiz}
+            onRedoQuiz={() => (user ? retakeDoor(handleRedoQuiz) : handleRedoQuiz())}
             onResetEcosystem={handleResetEcosystem}
             onEditHealthProfile={handleOpenHealthProfileEditor}
             onOpenPhoneVerify={handleOpenPhoneVerification}

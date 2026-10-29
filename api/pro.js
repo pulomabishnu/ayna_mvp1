@@ -57,11 +57,27 @@ export default async function handler(req, res) {
           weeklyRead = data?.read_id || null;
         } catch { weeklyRead = null; }
       }
+      // Is this month's free quiz retake still open? (Read only, nothing is claimed.) Lets the app and
+      // website lock a retake before the quiz starts instead of after she answers everything.
+      let quizRetakeOpen = true;
+      if (gates && !active) {
+        try {
+          const now = new Date();
+          const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+          const { count: builds } = await admin.from('user_ecosystem_builds').select('build_id', { count: 'exact', head: true }).eq('user_id', user.id);
+          if (builds) {
+            const { count: used } = await admin.from('user_ecosystem_builds').select('build_id', { count: 'exact', head: true })
+              .eq('user_id', user.id).eq('is_initial', false).gte('created_at', monthStart);
+            quizRetakeOpen = (used || 0) < 1;
+          }
+        } catch { quizRetakeOpen = true; }
+      }
       return res.status(200).json({
         ...status,
         active,
         gates,
         weeklyRead,
+        quizRetakeOpen,
         // Staff grants do not expire with a separate paid purchase.
         accessExpiresAt: legacyPremium ? null : (Math.max(Date.parse(status.termEndsAt) || 0, Date.parse(status.temporaryUntil) || 0) || null),
         offerOpen,

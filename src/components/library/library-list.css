@@ -1,0 +1,62 @@
+/* Website Library lists (Oct 28). Brand tokens only: espresso #3e2723, butter #ffedac / #f6e3a1, pink #f7badd.
+   4/8 spacing, one 1.5px rule weight, the ecosystem's folder-tab heads. */
+.app-container .ll-h2 { margin: 0 0 16px; font: 700 clamp(24px, 2.2vw, 28px)/1.15 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.015em; color: #3e2723 !important; }
+
+/* Featured: two wide cards, photo beside the words. */
+.app-container .ll-featured { margin: 0 0 48px; }
+.app-container .ll-featured__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin: 0; padding: 0; list-style: none; }
+.app-container .ll-feature { display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 20px; align-items: start; height: 100%; padding: 16px; border: 1.5px solid #3e2723; border-radius: 20px; background: #f6e3a1; color: #3e2723 !important; text-decoration: none !important; box-sizing: border-box; transition: transform .15s ease, box-shadow .15s ease; }
+.app-container .ll-feature:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 #3e2723; }
+.app-container .ll-feature:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
+.app-container .ll-feature__text { display: grid; gap: 6px; min-width: 0; }
+.app-container .ll-feature__title { font: 700 20px/1.2 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.01em; color: #3e2723; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container .ll-feature__line { font: 500 15px/1.4 var(--ay-sans-stack, 'Figtree', sans-serif); color: #5d4037; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container .ll-feature__credit { font: 500 13px/1.3 var(--ay-sans-stack, sans-serif); color: #6d4c41; }
+
+/* Covers: one modest size each. */
+.app-container .ll-thumb { position: relative; display: block; overflow: hidden; border: 1.5px solid #3e2723; background: #f6e3a1; flex: none; }
+.app-container .ll-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.app-container .ll-thumb .rc { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 0 !important; border: 0 !important; }
+.app-container .ll-thumb.is-feature { width: 168px; aspect-ratio: 4 / 3; border-radius: 14px; }
+.app-container .ll-thumb.is-row { width: 64px; height: 64px; border-radius: 12px; }
+.app-container .ll-thumb.is-row .rc__word { font-size: 11px !important; padding: 6px !important; }
+
+/* Shelves: folder tab on the rule, rows under it, two shelves side by side. */
+.app-container .ll-shelves { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; row-gap: 40px; align-items: start; }
+.app-container .ll-shelves.is-one { grid-template-columns: minmax(0, 1fr); }
+.app-container .ll-shelf { min-width: 0; }
+.app-container .ll-shelf__head { display: flex; align-items: flex-end; gap: 8px; border-bottom: 1.5px solid #3e2723; }
+.app-container.app-container .ll-shelf__head h3 { margin: 0 0 -1.5px; padding: 8px 14px 7px; max-width: calc(100% - 120px); background: #f7badd; color: #3e2723 !important; border: 1.5px solid #3e2723; border-bottom-color: #f7badd; border-radius: 16px 16px 0 0; font: 700 17px/1.15 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-container .ll-shelf__n { align-self: flex-end; margin-bottom: 8px; padding: 3px 9px; border: 1.5px solid #3e2723; border-radius: 999px; font: 600 12.5px/1.2 var(--ay-sans-stack, sans-serif); color: #3e2723; }
+.app-container .ll-shelf__head > :is(button, a):last-child:not(.ll-shelf__n) { align-self: flex-end; margin: 0 0 6px auto; min-height: 36px; padding: 0 2px; border: 0; background: none; color: #3e2723; font: 600 15px/1 var(--ay-sans-stack, sans-serif); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; cursor: pointer; }
+.app-container .ll-shelf__note { margin: 10px 0 0; font: 500 14px/1.4 var(--ay-sans-stack, sans-serif); color: #5d4037; }
+.app-container .ll-rows { margin: 0; padding: 0; list-style: none; }
+.app-container .ll-row { border-bottom: 1px solid rgba(62, 39, 35, .16); }
+.app-container .ll-row__link { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto auto; align-items: center; gap: 14px; min-height: 64px; padding: 10px 0; color: #3e2723 !important; text-decoration: none !important; }
+.app-container .ll-row__link:hover .ll-row__title { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+.app-container .ll-row__link:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 10px; }
+.app-container .ll-row__text { display: grid; gap: 3px; min-width: 0; }
+.app-container .ll-row__meta { font: 500 13px/1.3 var(--ay-sans-stack, sans-serif); color: #6d4c41; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-container .ll-row__title { font: 600 16px/1.3 var(--ay-sans-stack, sans-serif); color: #3e2723; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container .ll-row__free { padding: 4px 9px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 12px/1.1 var(--ay-sans-stack, sans-serif); white-space: nowrap; }
+.app-container .ll-row__chev { width: 18px; height: 18px; fill: none; stroke: #3e2723; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .6; }
+
+/* The free-Read line under the topics. */
+.app-container .ll-free { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 0 0 32px; padding: 14px 18px; border: 1.5px solid #3e2723; border-radius: 16px; background: #f6e3a1; font: 500 15px/1.4 var(--ay-sans-stack, sans-serif); color: #3e2723; }
+.app-container .ll-free b { font-weight: 700; }
+.app-container .ll-free button { margin-left: auto; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 14px/1 var(--ay-sans-stack, sans-serif); cursor: pointer; }
+
+@media (max-width: 900px) {
+  .app-container .ll-featured__grid, .app-container .ll-shelves { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .app-container .ll-feature { grid-template-columns: 112px minmax(0, 1fr); gap: 14px; padding: 12px; }
+  .app-container .ll-thumb.is-feature { width: 112px; }
+  .app-container .ll-feature__title { font-size: 17px; }
+  .app-container .ll-free button { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .app-container .ll-feature { transition: none; } .app-container .ll-feature:hover { transform: none; } }
+.app-container .ll-glyph { display: grid !important; place-items: center; }
+.app-container .ll-glyph svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+/* Lists show straight away: no fade-up on scroll (master prompt 17). */
+.app-container :is(.ll-shelf, .ll-featured, .ll-free) { opacity: 1 !important; transform: none !important; animation: none !important; }
