@@ -37,7 +37,8 @@ import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles
 import ProductCard from './ProductCard';
 import '../styles/eco-redesign.css';
 import EcoRail from './eco/EcoRail.jsx';
-import { WebEcoTabs, WebEcoMine, WebEcoPicks, WebEcoSaved, WebEcoRoutine, makePctFor } from './eco/WebEcoViews.jsx';
+import { WebEcoTabs, WebEcoMine, WebEcoPicks, WebEcoSaved, WebEcoRoutine } from './eco/WebEcoViews.jsx';
+import { makePctFor } from './eco/webEcoModel.js';
 import { useRevealOnce, useSlidingInk } from './eco/ecoMotion';
 import { lifeStageClash, STAGE_NOTE_CODE } from './eco/lifeStageFix';
 import '../styles/ecosystem-best.css';

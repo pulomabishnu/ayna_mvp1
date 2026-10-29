@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import RoutineTimeline from '../routine/RoutineTimeline.jsx';
-import { shownMatchPercent } from '../../utils/matchDisplay.js';
+import { WEB_ECO_VIEWS } from './webEcoModel.js';
 import { productHref, isPlainLeftClick } from '../../utils/productRoute';
 import './web-eco-views.css';
 
@@ -18,12 +18,7 @@ import './web-eco-views.css';
  * The website only changes the layout: shelves sit in two columns so 50
  * products read in about one screen. */
 
-export const WEB_ECO_VIEWS = [
-  ['mine', 'Mine'],
-  ['picks', 'ayna picks'],
-  ['saved', 'Saved'],
-  ['routine', 'Routine'],
-];
+
 
 export function WebEcoTabs({ view, onView, counts = {} }) {
   return (
@@ -133,12 +128,4 @@ export function WebEcoRoutine({ source, onOpenProduct, onCheckIn, children }) {
       {children && <details className="weco-fold"><summary>Full routines and other options</summary>{children}</details>}
     </div>
   );
-}
-
-export function makePctFor(quizResults, scoreFor) {
-  return (p) => {
-    if (!quizResults) return null;
-    const d = scoreFor(p);
-    return d?.percent > 0 && (d.matchStatus || 'scored') === 'scored' ? shownMatchPercent(d.percent) : null;
-  };
 }
