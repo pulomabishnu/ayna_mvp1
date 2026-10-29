@@ -169,6 +169,7 @@ import { proDoor, retakeDoor, proNow } from './pro/proDoor.js';
 import { openProPaywall } from './pro/paywall.js';
 import { Capacitor } from '@capacitor/core';
 import AppOnlySheet from './components/AppOnlySheet.jsx';
+import HealthRefreshPrompt from './components/health/HealthRefreshPrompt.jsx';
 import { resetRoutineData } from './utils/resetRoutine.js';
 import WebHomeTop from './components/you/WebHomeTop.jsx';
 import { readHomeLook } from './mobile/components/homeLook.js';
@@ -1918,9 +1919,11 @@ function App() {
   // One quiz answer changed in place (You > Your blend): same save path as the
   // monthly check-in; matches re-rank from the new answers. Rolls back and
   // returns false if neither the server nor the device copy saved.
-  const handleUpdateIntake = async (nextIntake) => {
-    if (!nextIntake) return false;
+  const handleUpdateIntake = async (rawIntake) => {
+    if (!rawIntake) return false;
     const previous = quizResults;
+    // Only the answers she changed get a new time (src/matching/factFreshness.js).
+    const nextIntake = stampFactUpdates(rawIntake, previous?.fullHealthIntake || previous || null);
     setQuizResults(mapIntakeToLegacyQuizProfile(nextIntake));
     try {
       const r = await saveHealthIntakeForCurrentUser(nextIntake);
@@ -3119,6 +3122,7 @@ function App() {
               onData={() => proDoor('dashboard', () => setCurrentView('today'))}
               onProducts={() => document.getElementById('weco-tab-mine')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
               onConnect={goHealthData}
+              refresh={quizResults ? <div className="wht__refresh"><HealthRefreshPrompt quizResults={quizResults} onSave={handleUpdateIntake} onUpdate={(step) => { setEditAtStep(step || ''); setCurrentView('profile-edit'); }} /></div> : null}
             /> : null}
             quizSlot={ecosystemQuizCard}
             quizSlotKind={webQuizDraft ? 'finish' : 'personal'}

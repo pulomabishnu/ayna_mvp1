@@ -35,11 +35,14 @@ export function stampFactUpdates(next, prev, nowIso = new Date().toISOString(), 
   const b = inner(next);
   const before = (prev && (inner(prev).factUpdatedAt || prev.factUpdatedAt)) || {};
   const fallback = prev ? (a.personalizationCompletedAt || prev.personalizationCompletedAt || null) : null;
+  // A newer stamp already on `next` (she just confirmed it) wins over the old one.
+  const own = b.factUpdatedAt || next.factUpdatedAt || {};
   const stamps = {};
   for (const [key, fields] of Object.entries(FACT_FIELDS)) {
     const changed = !prev || fields.some((f) => !same(a[f], b[f]));
     const confirmed = (opts.confirmed || []).includes(key);
-    stamps[key] = changed || confirmed ? nowIso : before[key] || fallback || nowIso;
+    const kept = String(own[key] || '') > String(before[key] || '') ? own[key] : before[key];
+    stamps[key] = changed || confirmed ? nowIso : kept || fallback || nowIso;
   }
   const out = { ...next, factUpdatedAt: stamps };
   if (next.fullHealthIntake && typeof next.fullHealthIntake === 'object') out.fullHealthIntake = { ...next.fullHealthIntake, factUpdatedAt: stamps };
