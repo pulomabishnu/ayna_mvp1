@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { openProPaywall } from '../../pro/paywall.js';
 import { useRecommendationViews } from '../../utils/recommendationAnalytics';
 import { isPlainLeftClick } from '../../utils/productRoute';
 import { getWeeklyTrendingLineup } from '../../utils/trendingLineup';
@@ -52,6 +53,42 @@ const ICONS = {
 };
 const Icon = ({ k, className = '' }) => (<span className={`lb-ic ${className}`} aria-hidden="true"><svg viewBox="0 0 24 24">{ICONS[k]}</svg></span>);
 
+/* Motion (founder, Oct 29: "make it fun, animated, really tap into the inspo"). Each widget plays once
+   when it scrolls into view: the ring draws, the bars grow, a chip gets picked, a routine slot gets
+   ticked, the answer types in, the numbers count up. Nothing loops. Without JS, under reduced motion
+   or with Pause motion on, everything shows in its finished state. */
+const motionOff = () => {
+  try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('ay-motion-paused'); } catch { return true; }
+};
+const canPlay = () => typeof window !== 'undefined' && typeof IntersectionObserver !== 'undefined' && !motionOff();
+function usePlayOnView() {
+  const ref = useRef(null);
+  const [state, setState] = useState(() => (canPlay() ? 'ready' : 'static')); // static | ready | in
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || state !== 'ready') return undefined;
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { setState('in'); io.disconnect(); }
+    }, { threshold: 0.25 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [state]);
+  const cls = state === 'static' ? '' : state === 'in' ? ' lb-anim is-in' : ' lb-anim';
+  return [ref, cls, state];
+}
+function CountUp({ n, play }) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    if (play !== 'in') return undefined;
+    let raf; const t0 = performance.now(); const dur = 1100;
+    const tick = (t) => { const k = Math.min(1, (t - t0) / dur); setV(Math.round(n * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [n, play]);
+  const shown = play === 'static' ? n : play === 'ready' ? 0 : v;
+  return <>{shown.toLocaleString('en-US')}</>;
+}
+
 /* ---------- 1. what you can do ---------- */
 const BARS = [5, 7, 4, 8, 6, 9, 7, 3, 6, 8, 5, 7, 4, 6, 8, 5, 9, 6];
 function Widget({ kind }) {
@@ -68,7 +105,7 @@ function Widget({ kind }) {
   );
   if (kind === 'checkin') return (
     <span className="lb-w lb-w--bars" aria-hidden="true">
-      {BARS.map((h, i) => <i key={i} className={i >= 4 && i <= 8 ? 'is-p' : ''} style={{ height: `${h * 10}%` }} />)}
+      {BARS.map((h, i) => <i key={i} className={i >= 4 && i <= 8 ? 'is-p' : ''} style={{ height: `${h * 10}%`, '--i': i }} />)}
     </span>
   );
   if (kind === 'routine') return (
@@ -81,6 +118,7 @@ function Widget({ kind }) {
   return (
     <span className="lb-w lb-w--ask" aria-hidden="true">
       <span className="lb-bub is-me">Is a cup or a disc better for a heavy flow?</span>
+      <span className="lb-typing"><i /><i /><i /></span>
       <span className="lb-bub">Here’s what the research says, with sources.</span>
     </span>
   );
@@ -93,12 +131,13 @@ const FEATURES = [
   { k: 'ask', tone: 'ink', span: 2, t: 'Ask ayna', d: 'Questions about your body, answered with sources.', href: '/ask' },
 ];
 export function WhatYouCanDo({ onGo, member = false }) {
+  const [ref, anim] = usePlayOnView();
   const list = member ? FEATURES.map((f) => (f.k === 'match' ? { ...f, t: 'Your matches', d: 'Your products and care, matched to you, and why.', href: '/you/ecosystem', cta: 'Go to your Home' } : f)) : FEATURES;
   return (
     <section className="lb-sec" aria-labelledby="lb-do-h">
       <div className="lb-wrap">
         <h2 id="lb-do-h" className="lb-h2">What you can do on ayna</h2>
-        <ul className="lb-bento">
+        <ul className={`lb-bento${anim}`} ref={ref}>
           {list.map((f) => (
             <li key={f.k} className={`lb-tile is-${f.tone}${f.span === 2 ? ' is-wide' : ''}`}>
               <Go className="lb-tile__a" href={f.href} onGo={onGo?.[f.k]}>
@@ -184,6 +223,7 @@ function useCatalogNumbers() {
 }
 export function Proof({ onViewArticles }) {
   const nums = useCatalogNumbers();
+  const [ref, anim, play] = usePlayOnView();
   return (
     <section className="lb-sec" aria-labelledby="lb-proof-h">
       <div className="lb-wrap">
@@ -191,9 +231,9 @@ export function Proof({ onViewArticles }) {
           <h2 id="lb-proof-h" className="lb-h2">What’s behind every match</h2>
           <Go className="lb-more" href="/explore/resources" onGo={onViewArticles}>Read our sources<Arrow /></Go>
         </header>
-        <ul className="lb-stats" aria-busy={nums ? undefined : 'true'}>
+        <ul className={`lb-stats${anim}`} ref={ref} aria-busy={nums ? undefined : 'true'}>
           {(nums || [0, 1, 2, 3]).map((s, i) => (s
-            ? <li key={s.unit} className={`lb-stat is-${s.tone}`}><Icon k={s.icon} /><b>{s.n.toLocaleString('en-US')}</b><span>{s.unit}</span></li>
+            ? <li key={s.unit} className={`lb-stat is-${s.tone}`}><Icon k={s.icon} /><b><span className="lb-sr">{s.n.toLocaleString('en-US')}</span><span aria-hidden="true"><CountUp n={s.n} play={play} /></span></b><span>{s.unit}</span></li>
             : <li key={i} className="lb-stat is-light is-skel" aria-hidden="true" />))}
         </ul>
       </div>
@@ -271,6 +311,8 @@ export function ProAndEnd({ pro = false, offerOpen = null, cta }) {
   const year = PLANS.find((x) => x.id === 'year');
   const month = PLANS.find((x) => x.id === 'month');
   const closed = offerOpen === false && offerEnded();
+  // The sheet opens right here with the plan she tapped (signed out, it asks her to sign in first).
+  const getPro = (plan) => { if (!openProPaywall({ feature: '', featureName: '', plan })) window.location.assign('/pro'); };
   return (
     <section className="lb-close" aria-label="ayna Pro and get started">
       <div className="lb-wrap">
@@ -280,13 +322,16 @@ export function ProAndEnd({ pro = false, offerOpen = null, cta }) {
             <h2 id="wl-pro-h" className="lb-h2">{pro ? 'You’re on ayna Pro.' : 'More of ayna, when you want it.'}</h2>
             <p className="lb-p">{pro ? 'Your dashboard, every Read and up to 50 Ask ayna chats a month.' : 'Matches, safety notes and evidence stay free. Pro adds:'}</p>
             <ul className="lb-adds">{PRO_ADDS.map((a) => <li key={a.t}><Icon k={a.icon} />{a.t}</li>)}</ul>
-            <a className="lb-more" href={pro ? '/health-data' : '/pro'}>{pro ? 'Connect health data' : 'See what Pro includes'}<Arrow /></a>
+            <span className="lb-pro__acts">
+              {!pro && !closed && <button type="button" className="lb-pill is-butter" onClick={() => getPro('year')}>Get ayna Pro<Arrow /></button>}
+              <a className="lb-more" href={pro ? '/health-data' : '/pro'}>{pro ? 'Connect health data' : 'See what Pro includes'}<Arrow /></a>
+            </span>
           </div>
           {!pro && closed && <p className="lb-p">The Early Access offer has ended. See ayna Pro for current pricing.</p>}
           {!pro && !closed && (
             <div className="lb-prices">
-              <div className="lb-price is-pink"><span className="lb-price__top"><small>Yearly</small><em>{year.badge}</em></span><b>{year.price}</b><span>first year, then {year.regular}</span></div>
-              <div className="lb-price is-light"><span className="lb-price__top"><small>Monthly</small></span><b>{month.price}</b><span>first month, then {month.regular}</span></div>
+              <button type="button" className="lb-price is-pink" onClick={() => getPro('year')} aria-label={`Yearly, ${year.price} the first year, then ${year.regular}. Get ayna Pro`}><span className="lb-price__top"><small>Yearly</small><em>{year.badge}</em></span><b>{year.price}</b><span>first year, then {year.regular}</span></button>
+              <button type="button" className="lb-price is-light" onClick={() => getPro('month')} aria-label={`Monthly, ${month.price} the first month, then ${month.regular}. Get ayna Pro`}><span className="lb-price__top"><small>Monthly</small></span><b>{month.price}</b><span>first month, then {month.regular}</span></button>
               <p className="lb-terms">Pro unlocks right away. Your paid term starts {PAID_TERM_STARTS}. Cancel anytime.</p>
             </div>
           )}

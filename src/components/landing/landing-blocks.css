@@ -87,7 +87,7 @@ html body .app-container #ay-landing .lb-stat.is-pink { background: #f7badd; }
 html body .app-container #ay-landing .lb-stat.is-ink { background: #3e2723; color: #ffedac; }
 html body .app-container #ay-landing .lb-stat .lb-ic { margin-bottom: 20px; }
 html body .app-container.app-container #ay-landing .lb-stat b { font: 800 clamp(48px, 4.6vw, 64px)/.95 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.035em; color: inherit !important; font-variant-numeric: tabular-nums; }
-html body .app-container.app-container #ay-landing .lb-stat span:not(.lb-ic) { max-width: 20ch; font: 500 15px/1.35 var(--ay-sans-stack, sans-serif) !important; color: inherit !important; opacity: .82; }
+html body .app-container.app-container #ay-landing .lb-stat > span:not(.lb-ic) { max-width: 20ch; font: 500 15px/1.35 var(--ay-sans-stack, sans-serif) !important; color: inherit !important; opacity: .82; }
 html body .app-container #ay-landing .lb-stat.is-skel { background: rgba(62, 39, 35, .06); }
 
 /* ---------- 4. reads and community ---------- */
@@ -192,3 +192,63 @@ html body .app-container.app-container[data-theme='brand-dark'] #ay-landing .lb 
 html body .app-container[data-theme='brand-dark'] #ay-landing .lb > .lb-sec > .lb-wrap > .lb-head .lb-more { color: #ffedac !important; text-decoration-color: #f7badd; }
 html body .app-container[data-theme='brand-dark'] #ay-landing .lb :is(.lb-tile.is-ink .lb-tile__a, .lb-stat.is-ink) { box-shadow: inset 0 0 0 1px rgba(255, 237, 172, .16); }
 html body .app-container[data-theme='brand-dark'] #ay-landing .lb-close { background: #3e2723; }
+
+/* ---------- motion: plays once on view (class lb-anim is only added when motion is allowed) ---------- */
+html body .app-container #ay-landing .lb-sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+html body .app-container #ay-landing .lb-typing { display: none; }
+/* icon circles tilt on hover */
+html body .app-container #ay-landing .lb-tile__a .lb-ic { transition: transform .35s cubic-bezier(.34, 1.56, .64, 1); }
+html body .app-container #ay-landing .lb-tile__a:hover .lb-ic { transform: rotate(-12deg) scale(1.08); }
+/* ring draws */
+html body .app-container #ay-landing .lb-anim .lb-ring__arc { stroke-dasharray: 0 100; transition: stroke-dasharray 1.3s cubic-bezier(.22, 1, .36, 1) .25s; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-ring__arc { stroke-dasharray: 72 100; }
+html body .app-container #ay-landing .lb-anim .lb-ring__mid { opacity: 0; transform: scale(.85); transition: opacity .4s ease .9s, transform .5s cubic-bezier(.34, 1.56, .64, 1) .9s; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-ring__mid { opacity: 1; transform: none; }
+/* bars grow one after another */
+html body .app-container #ay-landing .lb-anim .lb-w--bars i { transform: scaleY(.08); transform-origin: bottom; transition: transform .6s cubic-bezier(.34, 1.4, .64, 1); transition-delay: calc(var(--i, 0) * 45ms + 200ms); }
+html body .app-container #ay-landing .lb-anim.is-in .lb-w--bars i { transform: none; }
+/* a stage chip gets picked */
+html body .app-container #ay-landing .lb-anim .lb-w--chips span.is-on { background: #ffedac; color: #3e2723; transition: background-color .3s ease .9s, color .3s ease .9s; }
+html body .app-container #ay-landing .lb-anim .lb-w--chips span.is-on::before { width: 0; margin-right: 0; opacity: 0; transition: width .25s ease 1.1s, margin .25s ease 1.1s, opacity .2s ease 1.1s; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-w--chips span.is-on { background: #3e2723; color: #ffedac; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-w--chips span.is-on::before { width: 10px; margin-right: 8px; opacity: 1; }
+/* a routine slot gets ticked */
+html body .app-container #ay-landing .lb-anim .lb-slot.is-done { background: #f6e3a1; transition: background-color .35s ease 1s; }
+html body .app-container #ay-landing .lb-anim .lb-slot.is-done i { background: transparent; transform: scale(1); transition: background-color .2s ease 1s, transform .4s cubic-bezier(.34, 1.8, .64, 1) 1s; }
+html body .app-container #ay-landing .lb-anim .lb-slot.is-done i::after { opacity: 0; transition: opacity .2s ease 1.15s; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-slot.is-done { background: #f7badd; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-slot.is-done i { background: #3e2723; transform: scale(1.15); }
+html body .app-container #ay-landing .lb-anim.is-in .lb-slot.is-done i::after { opacity: 1; }
+/* the question slides in, dots type, the answer arrives */
+html body .app-container #ay-landing .lb-anim .lb-w--ask { grid-template-areas: 'q' 'a'; }
+html body .app-container #ay-landing .lb-anim .lb-bub.is-me { grid-area: q; opacity: 0; transform: translateY(10px); transition: opacity .35s ease .2s, transform .45s cubic-bezier(.34, 1.4, .64, 1) .2s; }
+html body .app-container #ay-landing .lb-anim .lb-bub:not(.is-me) { grid-area: a; opacity: 0; transform: translateY(10px); transition: opacity .35s ease 1.9s, transform .45s cubic-bezier(.34, 1.4, .64, 1) 1.9s; }
+html body .app-container #ay-landing .lb-anim .lb-typing { grid-area: a; justify-self: start; align-self: start; display: inline-flex; gap: 5px; padding: 15px 16px; border-radius: 20px 20px 20px 6px; background: #ffedac; opacity: 0; }
+html body .app-container #ay-landing .lb-anim .lb-typing i { width: 7px; height: 7px; border-radius: 50%; background: #3e2723; opacity: .45; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-bub { opacity: 1; transform: none; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-typing { animation: lb-typing-show 1.2s ease .7s both; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-typing i { animation: lb-dot .6s ease-in-out .7s 2 both; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-typing i:nth-child(2) { animation-delay: .85s; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-typing i:nth-child(3) { animation-delay: 1s; }
+@keyframes lb-typing-show { 0% { opacity: 0; } 15%, 85% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+@keyframes lb-dot { 0%, 100% { transform: none; opacity: .45; } 50% { transform: translateY(-4px); opacity: 1; } }
+/* stat tiles rise in, one after another; the numbers count up (JS) */
+html body .app-container #ay-landing .lb-anim .lb-stat { opacity: 0; transform: translateY(16px); transition: opacity .5s ease, transform .6s cubic-bezier(.34, 1.3, .64, 1); }
+html body .app-container #ay-landing .lb-anim .lb-stat:nth-child(2) { transition-delay: .08s; }
+html body .app-container #ay-landing .lb-anim .lb-stat:nth-child(3) { transition-delay: .16s; }
+html body .app-container #ay-landing .lb-anim .lb-stat:nth-child(4) { transition-delay: .24s; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-stat { opacity: 1; transform: none; }
+
+/* Pro: the buy button and the price tiles are buttons */
+html body .app-container #ay-landing .lb-pro__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 4px; }
+html body .app-container #ay-landing .lb-pill.is-butter { border: 0; background: #ffedac; color: #3e2723 !important; cursor: pointer; transition: transform .2s cubic-bezier(.34, 1.56, .64, 1); }
+html body .app-container #ay-landing .lb-pill.is-butter:hover { transform: translateY(-2px); }
+html body .app-container #ay-landing .lb-pill.is-butter:focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }
+html body .app-container #ay-landing button.lb-price { width: 100%; border: 0; text-align: left; font: inherit; cursor: pointer; transition: transform .25s cubic-bezier(.34, 1.56, .64, 1); }
+html body .app-container #ay-landing button.lb-price:hover { transform: translateY(-4px) rotate(-1deg); }
+html body .app-container #ay-landing button.lb-price:focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  html body .app-container #ay-landing :is(.lb-tile__a .lb-ic, button.lb-price, .lb-pill.is-butter) { transition: none; }
+  html body .app-container #ay-landing :is(.lb-tile__a:hover .lb-ic, button.lb-price:hover, .lb-pill.is-butter:hover) { transform: none; }
+}
+html.ay-motion-paused body .app-container #ay-landing :is(.lb-tile__a:hover .lb-ic, button.lb-price:hover, .lb-pill.is-butter:hover) { transform: none; }
