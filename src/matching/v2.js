@@ -71,6 +71,11 @@ export const V2 = {
   // good fit (fit >= breadthFloor), up to her picks per need. Never a partial
   // fit, never a weak need: no padding when nothing else fits.
   breadthFloor: 0.6,
+  // Minimum shelf (founder, Oct 29): with no picks-per-need answer, every need
+  // she picked aims for 3 products, each a DIFFERENT type (ibuprofen, then a
+  // heat device, then something else), each still a real fit (>= ecosystemFloor,
+  // never partial, never a held product). Shorter only when nothing else fits.
+  minPerNeed: 3,
   // Ecosystem choices within this much value count as tied; curated discovery
   // (forYou.js discoveryValue) decides between them.
   nearTie: 0.005,
@@ -578,6 +583,31 @@ export function buildEcosystemV2(up, products, options = {}) {
       if (!home.partial && home.v2.fit >= V2.breadthFloor && !isWeak(home.needId) && homeCount < perNeed && beats(option, wide)) wide = option;
     }
     if (best && best.value < V2.stopGain) best = wide;
+    if (!best) break;
+    take(best);
+  }
+  // Minimum fill: a need under min(minPerNeed, her picks) takes the best
+  // remaining real fit of a type it does not have yet.
+  const minFor = (needId) => Math.min(needCap(needId), perNeed, V2.minPerNeed);
+  for (let guard = 0; guard < slots * 2 && chosen.length < Math.max(slots, needs.length * V2.minPerNeed); guard += 1) {
+    let best = null;
+    for (const c of candidates) {
+      if (chosen.some((x) => x.pp.product_id === c.pp.product_id)) continue;
+      const brand = c.pp.brand?.key;
+      const trusted = brand && up.shopping?.trustedBrands?.some((t) => t.key === brand);
+      if (brand && !trusted && (brandCount.get(brand) || 0) >= V2.maxPerBrand) continue;
+      const isUniversal = UNIVERSAL_CATEGORIES.has(String(c.pp.category || '').toLowerCase())
+        && Object.keys(c.pp.health_need_relevance || {}).length >= V2.universalNeedCount;
+      if (isUniversal && universal >= V2.maxUniversal) continue;
+      for (const [needId, x] of c.results) {
+        if (x.partial || x.v2.fit < V2.ecosystemFloor || isWeak(needId)) continue;
+        const have = chosen.filter((y) => y.home.needId === needId).length;
+        if (have >= minFor(needId)) continue;
+        if ((typesByNeed.get(needId) || new Set()).has(typeKey(c.pp, needId))) continue;
+        const option = { c, home: { needId, ...x }, isUniversal, short: minFor(needId) - have };
+        if (!best || option.short > best.short || (option.short === best.short && x.v2.rankKey > best.home.v2.rankKey)) best = option;
+      }
+    }
     if (!best) break;
     take(best);
   }
