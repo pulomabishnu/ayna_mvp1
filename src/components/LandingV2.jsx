@@ -18,6 +18,7 @@ import '../styles/home.css';
 import '../styles/loop-a-landing.css';
 import '../styles/uq-landing.css';
 import Photo from './ui/Photo.jsx';
+import { LEAD_READS } from './landing/landingData.js';
 import { Plate, Chip, Band, Shout, Bento, Tile, Marquee, SnapCarousel } from './ui/ay';
 import { HOME_SEARCH_HINTS } from './shop/homeSearchHints.js';
 
@@ -408,11 +409,7 @@ function HowEvidence({ onViewHowItWorks, onViewArticles, onStartQuiz, showStart 
 }
 
 /* ---------- 5. reads + community: two columns ---------- */
-const LEAD_READS = [
-  { id: 'heavy-bleeding', title: 'Heavy menstrual bleeding', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/articles-heavy-bleeding-satin.webp', alt: 'Pads and tampons scattered on red satin', tone: 'pink' },
-  { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/articles-period-pain-hotwater.webp', alt: 'A woman in striped pajamas holding a hot water bottle', tone: 'sky' },
-  { id: 'pcos-basics', title: 'PMOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror', tone: 'butter' },
-];
+
 function Reads({ onViewArticle, onViewArticles }) {
   // Three photo cards in one row (Oct 28: no half-empty column beside a tall card).
   const open = (id) => { if (onViewArticle) onViewArticle(id); else onViewArticles?.(); };

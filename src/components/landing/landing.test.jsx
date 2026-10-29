@@ -122,23 +122,26 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(host.innerHTML).not.toContain('—');
   });
 
-  it('below the hero (founder, Oct 27 13:44-13:58): one idea a section, the brown and pink strip as two dividers, no pink fills, and a last Slide to start', () => {
+  it('below the hero (founder, Oct 29): one butter page of soft tiles, one espresso close with Pro and a last Slide to start', () => {
     vi.useFakeTimers();
     mount(<WebLanding onStartQuiz={() => {}} />);
     act(() => { vi.advanceTimersByTime(1500); });
     act(() => { vi.runOnlyPendingTimers(); });
     vi.useRealTimers();
     const page = host.querySelector('#ay-landing');
-    // the original website's sections sit under the falling pictures (founder, Oct 27 19:18)
-    expect(page.querySelector('.wl-classic .hm-ev, .wl-classic .hm-sec')).not.toBeNull();
-    // pink is an accent only below the hero: no full pink band
+    // five feature tiles, each with an icon circle; no chip switcher above the picks
+    expect(page.querySelectorAll('.lb-bento > .lb-tile').length).toBe(5);
+    expect(page.querySelectorAll('.lb-bento .lb-ic').length).toBe(5);
+    expect(page.querySelector('.lb [role="group"]')).toBeNull();
+    // pink is an accent only below the hero: no full pink band, and no checker strip before the close
     expect(page.querySelectorAll('.ayb-band.is-pink').length).toBe(0);
-    // the last ask before the note repeats Slide to start, without a second welcome-tip anchor
-    const end = page.querySelector('.wlx-end');
+    expect(page.querySelector('.wl-turn')).toBeNull();
+    // the last ask repeats Slide to start, without a second welcome-tip anchor, then the note ends the page
+    const end = page.querySelector('.lb-close .wlx-end');
     expect(end.querySelector('.ay-sts__track').getAttribute('aria-label')).toBe('Get my matches. Slide or tap to start.');
     expect(page.querySelectorAll('[data-tour="landing-start"]').length).toBe(1);
-    expect(end.nextElementSibling).toBe(page.lastElementChild);
+    expect(page.querySelector('.lb-close').nextElementSibling).toBe(page.lastElementChild);
     // the founders photo stays
-    expect(page.querySelector('.wl-classic img[src*="founders"], .wl-classic source[srcset*="founders"]')).not.toBeNull();
+    expect(page.querySelector('.lb img[src*="founders"], .lb source[srcset*="founders"]')).not.toBeNull();
   });
 });
