@@ -10216,7 +10216,7 @@ export const BRAND_PRODUCTS = [
     // (it lists beta carotene, chromium picolinate and boron; the label lists
     // vitamin A palmitate, chromium amino acid chelate and no boron), so the
     // label is used. Reported to the team rather than resolved here.
-    // Photos from takegoodcycle.com, saved under public/products/goodcycle/.
+    // Photos saved under public/products/goodcycle/.
     {
         id: 'p-goodcycle-dailybasis',
         name: 'DailyBasis by GoodCycle',
@@ -10236,8 +10236,10 @@ export const BRAND_PRODUCTS = [
         // testing it with their rebrand. Nothing in the app reads this field;
         // set live: true (and add the display) once GoodCycle confirms.
         discountCode: { code: 'AYNAHEALTH', percentOff: 30, live: false, note: 'Pending GoodCycle testing after the rebrand (2026-10-27).' },
-        image: '/products/goodcycle/daily-basis-both.webp',
+        // Cover photo supplied by Eliz (2026-10-29); the rest from takegoodcycle.com.
+        image: '/products/goodcycle/daily-basis-cover.webp',
         gallery: [
+            '/products/goodcycle/daily-basis-both.webp',
             '/products/goodcycle/daily-basis-replenish.webp',
             '/products/goodcycle/daily-basis-balance.webp',
             '/products/goodcycle/daily-basis-replenish-facts.webp',
