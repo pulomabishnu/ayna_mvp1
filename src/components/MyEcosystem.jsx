@@ -37,6 +37,7 @@ import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles
 import ProductCard from './ProductCard';
 import '../styles/eco-redesign.css';
 import EcoRail from './eco/EcoRail.jsx';
+import { WebEcoTabs, WebEcoMine, WebEcoPicks, WebEcoSaved, WebEcoRoutine, makePctFor } from './eco/WebEcoViews.jsx';
 import { useRevealOnce, useSlidingInk } from './eco/ecoMotion';
 import { lifeStageClash, STAGE_NOTE_CODE } from './eco/lifeStageFix';
 import '../styles/ecosystem-best.css';
@@ -998,6 +999,8 @@ export default function MyEcosystem({
     const jumpInk = useSlidingInk(jumpRef, jumpOn);
     const ecoRootRef = useRef(null);
     const [railShown, setRailShown] = useState(false);
+    // One list at a time, like the app (founder, Oct 28): Mine, ayna picks, Saved, Routine.
+    const [webView, setWebView] = useState('mine');
     // Shelves, gaps and tools ease in once, card by card, as they scroll into view.
     const gapsFoldRef = useRef(null);
     useRevealOnce(ecoRootRef, '.ay-shelf, .eco3-gaps, .eco3-extras__tools, .eco3-extras__saved, .eco3-addrow');
@@ -1172,6 +1175,14 @@ export default function MyEcosystem({
         [quizResults, healthProfile, matchOpts]
     );
     const needShelves = useMemo(() => needSeed?.shelves || [], [needSeed]);
+    const useTabs = myProductList.length > 0;
+    const pickNeeds = useMemo(() => needShelves.map((shelf) => ({
+        id: shelf.needId,
+        short: shortNeedLabel(shelf.label),
+        picks: (shelf.picks || []).map((pick) => myProducts[pick.productId] || getProductById(pick.productId)).filter(Boolean),
+    })), [needShelves, myProducts]);
+    const savedList = useMemo(() => Object.values(savedProducts || {}).filter((p) => p?.id && p.name), [savedProducts]);
+    const pctFor = useMemo(() => makePctFor(quizResults, (p) => getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts)), [quizResults, healthProfile, matchOpts]);
     // The fold's glance: the top pick of each gap, as photos (real catalog images only).
     const gapPhotos = needShelves.map((sh) => sh.picks?.[0]?.productId).filter(Boolean).map((id) => getProductById(id)).filter(Boolean).slice(0, 3);
     const careFlags = needSeed?.careFlags || null;
@@ -2109,11 +2120,23 @@ export default function MyEcosystem({
                     </section>
                 )}
 
-                {routines.routines.length > 0 && (
+                {useTabs && <WebEcoTabs view={webView} onView={setWebView} counts={{ mine: myProductList.length, picks: pickNeeds.reduce((n, x) => n + x.picks.filter((p) => !myProducts[p.id]).length, 0), saved: savedList.length }} />}
+                {useTabs && webView !== 'mine' && (
+                    <div className="weco-panel" id="weco-panel" role="tabpanel" aria-labelledby={`weco-tab-${webView}`}>
+                        {webView === 'picks' && <WebEcoPicks needs={pickNeeds} pctFor={pctFor} onOpenProduct={onOpenProduct} onAdd={(p) => onToggleProduct?.(p)} isOwned={(id) => Boolean(myProducts[id])} onExplore={typeof onGoToSearch === 'function' ? () => onGoToSearch({ query: '' }) : null} />}
+                        {webView === 'saved' && <WebEcoSaved saved={savedList} pctFor={pctFor} onOpenProduct={onOpenProduct} onAdd={(p) => onToggleProduct?.(p)} isOwned={(id) => Boolean(myProducts[id])} />}
+                        {webView === 'routine' && (
+                            <WebEcoRoutine source={{ userId: user?.id || null, quizAnswers: quizResults, matchOpts, products: myProducts, saved: savedProducts, omitted: omittedProducts }} onOpenProduct={onOpenProduct} onCheckIn={onOpenCheckIn}>
+                                {routines.routines.length > 0 && <NeedRoutines state={routines} variant="web" id="eco-routines" onOpenProduct={onOpenProduct} onCheckIn={onOpenCheckIn} />}
+                            </WebEcoRoutine>
+                        )}
+                    </div>
+                )}
+                {!useTabs && routines.routines.length > 0 && (
                     <NeedRoutines state={routines} variant="web" id="eco-routines" onOpenProduct={onOpenProduct} onCheckIn={onOpenCheckIn} />
                 )}
 
-                <div className={`eco-body${railShown ? ' has-rail' : ''}`}>
+                {(!useTabs || webView === 'mine') && <div className={`eco-body${railShown ? ' has-rail' : ''}${useTabs ? ' is-tabbed' : ''}`} id={useTabs ? 'weco-panel' : undefined} role={useTabs ? 'tabpanel' : undefined} aria-labelledby={useTabs ? 'weco-tab-mine' : undefined}>
                 <EcoRail
                     clash={stageClash}
                     onFixStages={typeof onFixLifeStages === 'function' ? onFixLifeStages : onEditHealthProfile}
@@ -2177,7 +2200,7 @@ export default function MyEcosystem({
                             </div>
                         </details>
                     </div>
-                <nav className="eco3-jump" aria-label="On this page" ref={jumpRef}>
+                {!useTabs && <nav className="eco3-jump" aria-label="On this page" ref={jumpRef}>
                     <span className="eco-ink" aria-hidden="true" style={jumpInk} />
                     {/* Same order as the page; the section you're in is underlined. */}
                     {[
@@ -2188,7 +2211,7 @@ export default function MyEcosystem({
                     ].filter(Boolean).map(([id, label]) => (
                         <a key={id} href={`#${id}`} data-ink-on={jumpOn === id ? 'true' : undefined} className={jumpOn === id ? 'is-on' : undefined} aria-current={jumpOn === id ? 'location' : undefined} onClick={(e) => { e.preventDefault(); if (id === 'eco3-needs-title' && gapsFoldRef.current) gapsFoldRef.current.open = true; document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{label}</a>
                     ))}
-                </nav>
+                </nav>}
                 </div>
                 {ecoQueryTrimmed && (
                     <div className="eco3-searchbar-row" role="status">
@@ -2272,7 +2295,10 @@ export default function MyEcosystem({
 
                 {/* The page title already says what this is; the shelves start straight away (heading kept for screen readers and the jump link). */}
                 {visibleAreaGroups.length > 0 && <h2 className="sr-only eco3-shelfanchor" id="eco3-shelves-title" tabIndex={-1}>Your shelves</h2>}
-                {visibleAreaGroups.length > 0 && (
+                {useTabs && visibleAreaGroups.length > 0 && (
+                    <WebEcoMine groups={visibleAreaGroups} onOpenProduct={onOpenProduct} onAddMore={typeof onGoToSearch === 'function' ? (group) => onGoToSearch(exploreAreaOptions(group)) : null} />
+                )}
+                {!useTabs && visibleAreaGroups.length > 0 && (
                     <ShelfRows
                         userId={user?.id || ''}
                         key={`${user?.id || ''}|${visibleAreaGroups.map((g) => g.key).join('|')}`}
@@ -2302,7 +2328,7 @@ export default function MyEcosystem({
                     </div>
                 )}
 
-                {!ecoQueryTrimmed && needShelves.length > 0 && (
+                {!useTabs && !ecoQueryTrimmed && needShelves.length > 0 && (
                     <section className="eco3-gaps" aria-labelledby="eco3-needs-title">
                         {/* Glance first (founder Oct 26 16:54): the gaps as one line + her best picks' photos; the full strip one tap away. */}
                         <details className="ub-fold" ref={gapsFoldRef}>
@@ -2421,10 +2447,10 @@ export default function MyEcosystem({
                     </details>
                 </div>
                 </div>
-                {savedSlot && <div className="eco3-extras__saved">{savedSlot}</div>}
+                {savedSlot && !useTabs && <div className="eco3-extras__saved">{savedSlot}</div>}
                 </div>
                 </div>
-                </div>
+                </div>}
 
                 {showCareSheet && (
                     <div className="eco2-sheet-overlay eco3-sheet-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowCareSheet(false); }}>

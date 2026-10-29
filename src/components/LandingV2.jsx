@@ -18,7 +18,6 @@ import '../styles/home.css';
 import '../styles/loop-a-landing.css';
 import '../styles/uq-landing.css';
 import Photo from './ui/Photo.jsx';
-import ReadMore from './info/ReadMore.jsx';
 import { Plate, Chip, Band, Shout, Bento, Tile, Marquee, SnapCarousel } from './ui/ay';
 import { HOME_SEARCH_HINTS } from './shop/homeSearchHints.js';
 
@@ -415,24 +414,21 @@ const LEAD_READS = [
   { id: 'pcos-basics', title: 'PMOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/articles-pcos-mirror.webp', alt: 'Red lips reflected in a small red compact mirror', tone: 'butter' },
 ];
 function Reads({ onViewArticle, onViewArticles }) {
-  // Word of the day removed in the landing clean-up (founder, Oct 27 19:22).
+  // Three photo cards in one row (Oct 28: no half-empty column beside a tall card).
   const open = (id) => { if (onViewArticle) onViewArticle(id); else onViewArticles?.(); };
   return (
-    <div className="hm-reads">
+    <div className="hm-reads lp-reads">
       <header className="hm-head">
-        <h2 id="hm-reads-title" className="hm-h2">Quick reads about your body, with sources</h2>
+        <h2 id="hm-reads-title" className="hm-h2">Quick reads, with sources</h2>
         <a className="ay-btn ay-btn--text hm-head__all" href="/explore/resources" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}><span className="hm-head__long">Open the Library</span><span className="hm-head__short">See all<span className="ed-sr"> reads in the Library</span></span><Arrow /></a>
       </header>
-      {/* Plain rows (master prompt 154: no bento): photo, title, one line, sources. */}
-      <ul className="hm-readlist">
+      <ul className="lp-reads__row">
         {LEAD_READS.map((r) => (
           <li key={r.id}>
-            <a className="hm-readlist__row" href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
-              <span className="hm-readlist__ph"><Photo src={r.src} alt={r.alt} sizes="(max-width: 767px) 96px, 128px" loading="lazy" decoding="auto" /></span>
-              <span className="hm-readlist__text">
-                <strong className="hm-readlist__title">{r.title}</strong>
-                <small className="hm-readlist__src">Sources: {String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
-              </span>
+            <a className="lp-read" href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
+              <span className="lp-read__ph"><Photo src={r.src} alt={r.alt} sizes="(max-width: 767px) 70vw, 380px" loading="lazy" decoding="auto" /></span>
+              <strong className="lp-read__t">{r.title}</strong>
+              <small className="lp-read__src">{String(r.source || '').replace(/\s*·\s*/g, ', ')}</small>
             </a>
           </li>
         ))}
@@ -440,45 +436,34 @@ function Reads({ onViewArticle, onViewArticles }) {
     </div>
   );
 }
-/* the Community card: its photo, the latest ayna news, and up to two real posts once there are any */
+/* the Community: one wide card, photo on the left; the latest ayna news and one real post */
 function Community({ onViewCommunity, posts = [] }) {
   const news = useLatestAnnouncement();
+  const post = posts.find((p) => String(p.body || '').length > 40) || posts[0];
+  const anon = post && (post.is_anonymous || !post.author_id);
+  const who = post && (anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member');
   return (
-    <article className="hm-comm" aria-labelledby="hm-comm-title">
-      <span className="hm-comm__ph"><Photo sizes="(max-width: 767px) 92vw, 460px" src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" decoding="auto" /></span>
-      <div className="hm-comm__copy">
+    <article className="lp-comm" aria-labelledby="hm-comm-title">
+      <span className="lp-comm__ph"><Photo sizes="(max-width: 767px) 92vw, 520px" src="/landing/story-reviews-phones.webp" alt="Friends in a circle looking down at their phones, blue sky above" loading="lazy" decoding="auto" /></span>
+      <div className="lp-comm__copy">
+        <span className="hm-tab lp-comm__tag">ayna Community</span>
         <h2 id="hm-comm-title" className="hm-h2">Real talk about what women actually use.</h2>
-        <ReadMore className="hm-more"><p className="hm-body">Reviews, questions and routines from women who use these products. Ask a question, review what you use or share a playlist.</p></ReadMore>
-        <div className="hm-news" aria-labelledby="hm-news-title">
-          <span className="hm-tab hm-news__label">ayna news</span>
-          <h3 id="hm-news-title" className="hm-h3">{news ? news.title : 'ayna Community is open.'}</h3>
-          <p>{news ? news.body : 'Ask questions, review what you use and share playlists with women who get it.'}</p>
-        </div>
-        {posts.length > 0 && (
-          <ul className="hm-posts" aria-label="From the Powder Room">
-            {posts.slice(0, 2).map((post) => {
-              const anon = post.is_anonymous || !post.author_id;
-              const who = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
-              return (
-                <li key={post.id}>
-                  <button type="button" className="hm-post" onClick={() => onViewCommunity?.()}>
-                    <span className="hm-post__meta">{post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} from {who}</span>
-                    <span className="hm-post__body">{post.body}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        <Go className="ay-btn ay-btn--secondary" href="/community" onGo={onViewCommunity}>{news ? 'Read it in Community' : 'Read reviews and questions'}<Arrow /></Go>
+        {post ? (
+          <button type="button" className="lp-comm__post" onClick={() => onViewCommunity?.()}>
+            <span className="lp-comm__meta">{post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : 'Post'} from {who}</span>
+            <span className="lp-comm__body">“{post.body}”</span>
+          </button>
+        ) : <p className="lp-comm__p">Reviews, questions and routines from women who use these products.</p>}
+        {news && <p className="lp-comm__news"><b>ayna news</b> {news.title}</p>}
+        <Go className="ay-btn ay-btn--secondary" href="/community" onGo={onViewCommunity}>Read reviews and questions<Arrow /></Go>
       </div>
     </article>
   );
 }
 function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts }) {
   return (
-    <Band tone="deep" className="hm-sec hm-rc hm-band" aria-label="Reads and Community">
-      <div className="hm-wrap hm-rc__grid">
+    <Band tone="deep" className="hm-sec hm-rc hm-band lp-rc" aria-label="Reads and Community">
+      <div className="hm-wrap lp-rc__in">
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         <Community onViewCommunity={onViewCommunity} posts={posts} />
       </div>

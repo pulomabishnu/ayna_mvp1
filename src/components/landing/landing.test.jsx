@@ -113,7 +113,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page).toContain('Brands we work with');
     expect(page).toContain('Does this sound familiar?');
     expect(page).toContain('How ayna fits it to you');
-    expect(page).toContain('Quick reads about your body, with sources');
+    expect(page).toContain('Quick reads, with sources');
     expect(page).toContain('More of ayna, when you want it.');
     expect(host.querySelector('a[href="/pro"]').textContent).toContain('See what Pro includes');
     expect(page).toContain('Built by three women who wanted better answers.');

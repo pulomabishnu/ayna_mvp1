@@ -296,3 +296,35 @@ html body .app-container.app-container:has(#ay-landing.wl) footer.ay-foot { marg
   html body .app-container #ay-landing.wl .wl-pro { padding-top: 56px !important; padding-bottom: 56px !important; }
   html body .app-container #ay-landing.wl .wlx-end { padding-top: 56px !important; padding-bottom: 48px !important; }
 }
+
+/* Reads + Community, rebuilt (Oct 28): three read cards in a row, then one wide Community card.
+   No half-empty column, no stacked review boxes. */
+html body .app-container #ay-landing.wl .lp-rc__in { display: grid; gap: 40px; }
+.app-container .hm.wl .lp-reads__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin: 0; padding: 0; list-style: none; }
+.app-container .hm.wl .lp-read { display: grid; gap: 8px; color: #3e2723 !important; text-decoration: none; }
+.app-container .hm.wl .lp-read__ph { position: relative; display: block; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; border: 1.5px solid #3e2723; background: #f6e3a1; }
+.app-container .hm.wl .lp-read__ph :is(picture, img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; transition: transform .4s ease; }
+.app-container .hm.wl .lp-read:hover .lp-read__ph img { transform: scale(1.03); }
+.app-container.app-container .hm.wl .lp-read__t { margin-top: 6px; font: 700 19px/1.25 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.01em; }
+.app-container.app-container .hm.wl .lp-read__src { font: 500 13px/1.4 var(--ay-sans-stack, sans-serif) !important; color: rgba(62, 39, 35, .72) !important; }
+.app-container .hm.wl .lp-read:focus-visible { outline: 3px solid #3e2723; outline-offset: 4px; border-radius: 16px; }
+.app-container .hm.wl .lp-comm { display: grid; grid-template-columns: minmax(0, 1fr); border: 1.5px solid #3e2723; border-radius: 20px; overflow: hidden; background: #ffedac; }
+.app-container .hm.wl .lp-comm__ph { position: relative; display: block; aspect-ratio: 16 / 9; }
+.app-container .hm.wl .lp-comm__ph :is(picture, img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 0 !important; }
+.app-container .hm.wl .lp-comm__copy { display: grid; justify-items: start; align-content: center; gap: 14px; padding: 28px 24px; }
+.app-container .hm.wl .lp-comm__tag { margin: 0; }
+.app-container.app-container .hm.wl .lp-comm__copy .hm-h2 { margin: 0; max-width: 18ch; }
+.app-container .hm.wl .lp-comm__post { display: grid; gap: 6px; width: 100%; max-width: 52ch; padding: 0 0 0 16px; border: 0; border-left: 3px solid #f7badd; background: none; text-align: left; color: #3e2723; cursor: pointer; }
+.app-container.app-container .hm.wl .lp-comm__meta { font: 600 13px/1.2 var(--ay-sans-stack, sans-serif) !important; color: rgba(62, 39, 35, .72) !important; }
+.app-container.app-container .hm.wl .lp-comm__body { font: 500 17px/1.45 var(--ay-sans-stack, sans-serif) !important; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container.app-container .hm.wl :is(.lp-comm__p, .lp-comm__news) { margin: 0; max-width: 52ch; font: 500 15px/1.45 var(--ay-sans-stack, sans-serif) !important; color: #3e2723 !important; }
+.app-container .hm.wl .lp-comm__news b { display: inline-block; margin-right: 6px; padding: 2px 10px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 12px/1.6 var(--ay-sans-stack, sans-serif); }
+@media (min-width: 900px) {
+  .app-container .hm.wl .lp-comm { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); min-height: 340px; }
+  .app-container .hm.wl .lp-comm__ph { aspect-ratio: auto; min-height: 100%; }
+  .app-container .hm.wl .lp-comm__copy { padding: 40px 48px; }
+}
+@media (max-width: 767px) {
+  .app-container .hm.wl .lp-reads__row { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 72%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; margin-right: calc(var(--ay-margin, 16px) * -1); }
+  .app-container .hm.wl .lp-reads__row > li { scroll-snap-align: start; }
+}
