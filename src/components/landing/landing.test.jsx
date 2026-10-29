@@ -111,8 +111,8 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     vi.useRealTimers();
     const page = host.textContent;
     expect(page).toContain('Brands we work with');
-    expect(page).toContain('Does this sound familiar?');
-    expect(page).toContain('How ayna fits it to you');
+    expect(page).toContain('What you can do on ayna');
+    expect(page).toContain('What’s behind every match');
     expect(page).toContain('Quick reads, with sources');
     expect(page).toContain('More of ayna, when you want it.');
     expect(host.querySelector('a[href="/pro"]').textContent).toContain('See what Pro includes');

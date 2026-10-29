@@ -460,7 +460,7 @@ function Community({ onViewCommunity, posts = [] }) {
     </article>
   );
 }
-function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts }) {
+export function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts }) {
   return (
     <Band tone="deep" className="hm-sec hm-rc hm-band lp-rc" aria-label="Reads and Community">
       <div className="hm-wrap lp-rc__in">
@@ -475,7 +475,7 @@ function ReadsCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts 
    The founders' photo and story (the page's one 44px statement line). The
    Wefunder card moved to /about (critique, Oct 27: no investing pitch on the
    consumer home page); the footer keeps its "Invest in ayna" link. */
-function Founders({ onViewAbout }) {
+export function Founders({ onViewAbout }) {
   return (
     <Band tone="butter" className="hm-sec hm-us hm-band" aria-labelledby="hm-us-title">
       <div className="hm-wrap">

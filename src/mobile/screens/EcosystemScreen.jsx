@@ -301,7 +301,7 @@ export default function EcosystemScreen({
   const checkinLabel = `Check in for ${new Date().toLocaleString('en-US', { month: 'long' })}`;
   const showCheckin = Boolean(checkinDue && onOpenMonthlyCheckin);
   const forYouButton = forYou.length > 0 && <button type="button" className="eco-app-foryou" aria-haspopup="dialog" onClick={() => setSheet(true)}>
-    <span className="eco-app-foryou__count" aria-hidden="true">{forYou.length}</span>For you<span className="sr-only"> ({forYou.length})</span>
+    <span className="eco-app-foryou__count" aria-hidden="true">{forYou.length}</span>Updates<span className="sr-only"> ({forYou.length})</span>
   </button>;
   const chev = <svg className="eco-app-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>;
   const showTabs = Boolean(onEcoTab);
@@ -367,7 +367,7 @@ export default function EcosystemScreen({
       </ProFeatureGate>
     </div> : <>
     {hasAnything && <div className="eco-views" role="tablist" aria-label="Ecosystem lists">
-      {[['mine', 'Mine', currentProducts.length], ['picks', 'ayna picks', picksForYou.length], ['saved', 'Saved', savedList.length], ['routine', 'Routine', null]].map(([id, label, n]) => (
+      {[['mine', 'Using', currentProducts.length], ['picks', 'For you', picksForYou.length], ['saved', 'Saved', savedList.length], ['routine', 'Routine', null]].map(([id, label, n]) => (
         <button key={id} type="button" role="tab" aria-selected={view === id} className={view === id ? 'is-on' : ''} onClick={() => { setView(id); setChip('all'); }}>{label}{n != null && n > 0 && <small>{n}</small>}</button>
       ))}
     </div>}
@@ -419,7 +419,7 @@ export default function EcosystemScreen({
             <p>No strong matches for {section.phrase} yet.</p>
             <button type="button" onClick={() => onBrowse?.(shortNeedLabel(section.label))}>Explore {shortNeedLabel(section.label).toLowerCase()}</button>
           </div>}
-          {!section.products.length && shown.length > 0 && <p className="ay-shelf2-note">Nothing here yet. <button type="button" className="eco-link" onClick={() => setView('picks')}>See {shown.length} ayna pick{shown.length === 1 ? '' : 's'}</button></p>}
+          {!section.products.length && shown.length > 0 && <p className="ay-shelf2-note">Nothing here yet. <button type="button" className="eco-link" onClick={() => setView('picks')}>See {shown.length} suggestion{shown.length === 1 ? '' : 's'}</button></p>}
           {section.products.length > 0 && <div className="ay-shelf2-row">{shown.map((product) => section.products.length
             ? <div className="ay-shelf2-pick eco-app-mine" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={quizAnswers} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />
               {/* A living routine (You audit 12): "Day 12 · Is it working?" from the date she added it, to her daily log. */}
@@ -473,7 +473,7 @@ export default function EcosystemScreen({
     {sheet && forYou.length > 0 && <div className="eco-app-sheet" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) setSheet(false); }}>
       <div className="eco-app-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="eco-app-sheet-title">
         <span className="eco-app-sheet__grab" aria-hidden="true" />
-        <div className="eco-app-sheet__head"><h2 id="eco-app-sheet-title">For you</h2><button type="button" className="eco-app-sheet__done" onClick={() => setSheet(false)} autoFocus>Done</button></div>
+        <div className="eco-app-sheet__head"><h2 id="eco-app-sheet-title">Updates</h2><button type="button" className="eco-app-sheet__done" onClick={() => setSheet(false)} autoFocus>Done</button></div>
         <div className="eco-app-sheet__list">{forYou.map((it) => <div key={it.key} className="eco-app-sheet__item">{it.node}</div>)}</div>
       </div>
     </div>}
