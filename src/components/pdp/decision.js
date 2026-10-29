@@ -155,7 +155,7 @@ export function matchBreakdownFor(product, details) {
   // Over 97 the page prints 97: say so as its own line, so the parts still add up to the number shown.
   const cap = shown != null && b.percent > MAX_SHOWN_PERCENT ? sumPoints([...raised, ...lowered]) - shown : 0;
   if (cap > 0) lowered.push({ text: `Capped at ${MAX_SHOWN_PERCENT}: ayna never shows a higher match`, points: -cap, cap: true });
-  return { percent: b.percent, shown, reason: b.reason || '', note: b.note || PARTNER_NOTE, raised, lowered, unknown: items(b.unknown) };
+  return { percent: b.percent, shown, reason: b.reason || '', note: b.note || PARTNER_NOTE, raised, lowered, unknown: items(b.unknown), checks: b.checks || [], evidence: b.evidence || null, label: b.label || '' };
 }
 
 const sumPoints = (xs) => xs.reduce((s, x) => s + (Number.isFinite(x.points) ? x.points : 0), 0);
