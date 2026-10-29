@@ -146,6 +146,7 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
         </header>
 
         <div className="pro-sheet__body">
+          <div className="pro-sheet__col is-info">
           <ol className="pro-groups" aria-label="Included with ayna Pro">
             {groups.map((g) => <li key={g.id} className="pro-groups__item">
               <b className="pro-groups__name">{g.name}</b>
@@ -155,7 +156,20 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
               </ul>
             </li>)}
           </ol>
+          <button type="button" className="pro-sheet__more" aria-expanded={billingOpen} aria-controls={billingId} onClick={() => setBillingOpen((v) => !v)}>
+            How billing works
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+          <div id={billingId} className="pro-sheet__billing" hidden={!billingOpen}>
+            <p>{EARLY_ACCESS_LINE}</p>
+            <p>Early Access pricing is applied now. Save up to 50% on your first paid term.</p>
+            <p><b>Monthly.</b> {PLANS[1].terms}</p>
+            <p><b>Yearly.</b> {PLANS[0].terms}</p>
+            <p>Cancel automatic renewal anytime. Access already paid for stays active through the end of that purchased period.</p>
+          </div>
+          </div>
 
+          <div className="pro-sheet__col is-buy">
           <div className="pro-sheet__plans" role="radiogroup" aria-label="Choose a plan">
             {PLANS.map((p) => (
               <button
@@ -201,18 +215,8 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
             <li><b>After that</b><span>{chosen.renew}</span></li>
           </ol>
 
-          <button type="button" className="pro-sheet__more" aria-expanded={billingOpen} aria-controls={billingId} onClick={() => setBillingOpen((v) => !v)}>
-            How billing works
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          </button>
-          <div id={billingId} className="pro-sheet__billing" hidden={!billingOpen}>
-            <p>{EARLY_ACCESS_LINE}</p>
-            <p>Early Access pricing is applied now. Save up to 50% on your first paid term.</p>
-            <p><b>Monthly.</b> {PLANS[1].terms}</p>
-            <p><b>Yearly.</b> {PLANS[0].terms}</p>
-            <p>Cancel automatic renewal anytime. Access already paid for stays active through the end of that purchased period.</p>
-          </div>
           <button type="button" className="pro-sheet__notnow" onClick={close}>Not now</button>
+          </div>
         </div>
       </section>
     </div>,
