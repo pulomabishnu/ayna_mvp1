@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { PushNotifications } from '@capacitor/push-notifications';
+import posthog from 'posthog-js';
 import { registerDeviceToken } from '../utils/deviceTokenApi.js';
 
 /**
@@ -46,10 +47,17 @@ export function usePushNotifications(userId, askNow = false) {
         const current = await PushNotifications.checkPermissions();
         if (current.receive !== 'granted' && !askNow) { if (!cancelled) setStatus('idle'); return; }
         setStatus('requesting');
+        if (current.receive !== 'granted') {
+          try { posthog.capture('push_permission_prompted'); } catch { /* analytics never blocks permission */ }
+        }
         const perm = current.receive === 'granted' ? current : await PushNotifications.requestPermissions();
         if (perm.receive !== 'granted') {
+          try { posthog.capture('push_permission_denied'); } catch { /* ignore */ }
           if (!cancelled) setStatus('denied');
           return;
+        }
+        if (current.receive !== 'granted') {
+          try { posthog.capture('push_permission_granted'); } catch { /* ignore */ }
         }
         // Fires the native APNs registration; the 'registration' listener
         // above receives the resulting token asynchronously.
@@ -72,7 +80,10 @@ export function usePushNotifications(userId, askNow = false) {
     const key = `${token}:${userId}`;
     if (sentRef.current === key) return;
     registerDeviceToken(token, 'ios')
-      .then(() => { sentRef.current = key; })
+      .then(() => {
+        sentRef.current = key;
+        try { posthog.capture('push_token_registered'); } catch { /* ignore */ }
+      })
       .catch((err) => console.warn('[push] token storage failed:', err?.message || err));
   }, [token, userId]);
 
@@ -98,6 +109,7 @@ export function usePushRoutes(onRoute) {
   useEffect(() => {
     if (Capacitor.getPlatform() !== 'ios') return undefined;
     const handle = PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
+      try { posthog.capture('push_notification_opened'); } catch { /* ignore */ }
       const route = routeForPush(action?.notification?.data);
       if (route) ref.current?.(route);
     });

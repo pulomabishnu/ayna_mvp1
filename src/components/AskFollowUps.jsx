@@ -1,4 +1,5 @@
-import { trackFollowUp } from '../utils/askFollowUps.js';
+import { useEffect, useRef } from 'react';
+import { trackFollowUp, trackFollowUpsShown } from '../utils/askFollowUps.js';
 import '../styles/ask-followups.css';
 
 const ICON = {
@@ -16,6 +17,13 @@ const ICON = {
  * sheet and the website panel; each surface passes onAction.
  */
 export default function AskFollowUps({ chips, onAction, disabled = false }) {
+  const lastShown = useRef('');
+  const signature = chips?.map((chip) => chip.type).join('|') || '';
+  useEffect(() => {
+    if (!signature || disabled || lastShown.current === signature) return;
+    lastShown.current = signature;
+    trackFollowUpsShown(chips);
+  }, [chips, disabled, signature]);
   if (!chips?.length) return null;
   return (
     <div className="ay-followups" role="group" aria-label="Next steps">

@@ -43,6 +43,7 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
   useEffect(() => () => window.clearTimeout(closeTimer.current), []);
   useEffect(() => {
     captureProEvent('pro_paywall_viewed', { feature: feature || 'general' });
+    captureProEvent('pro_gate_viewed', { gate_reason: feature || 'general' });
   }, [feature]);
   useEscapeToClose(true, close);
   // Portal to the themed app root (the app's .ayna-mobile or the website's .app-container), so the

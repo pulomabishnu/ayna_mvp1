@@ -57,6 +57,13 @@ describe('analytics identity', () => {
     expect(ph.calls.some((c) => c[1] === 'signed_up')).toBe(false);
     expect(ph.calls.find((c) => c[1] === 'account_session_started')[2]).toEqual({ is_returning: true, account_age_days_bucket: '7-29d' });
   });
+  it('records a selected signup source without sending free text', async () => {
+    const ph = fakePosthog();
+    const user = { ...U, user_metadata: { heard_about: 'other', heard_about_other: 'private detail' } };
+    await identifyAccount(ph, fakeSupabase(), user, { now: Date.parse('2026-10-17T12:05:00Z') });
+    expect(ph.calls.find((c) => c[1] === 'signed_up')[2]).toEqual({ method: 'google', referral_source: 'linkedin.com', heard_about_source: 'other' });
+    expect(JSON.stringify(ph.calls)).not.toContain('private detail');
+  });
   it('never sends the email or Supabase id as an event property', async () => {
     const ph = fakePosthog();
     await identifyAccount(ph, fakeSupabase(), U, { now: Date.parse('2026-10-17T12:05:00Z') });

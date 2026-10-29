@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import posthog from 'posthog-js';
 import SuggestBox from '../../../components/SuggestBox.jsx';
 import { Capacitor } from '@capacitor/core';
 import { CATEGORIES } from '../../../health/metrics.js';
@@ -237,6 +238,7 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
 
   const connect = async () => {
     setBusy(true); setError(null); setMessage(null); setDenied(false);
+    try { posthog.capture('health_connection_started', { provider: apiSource }); } catch { /* analytics never blocks connection */ }
     try {
       if (source.availability === 'oauth') {
         const { url } = await startOAuth(apiSource, selected, isNative ? 'app' : 'web');
@@ -247,7 +249,10 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
         return;
       }
       if (source.availability === 'device') {
-        if (storeState && !storeState.available) { setError(storeMessage(storeState.reason, source)); return; }
+        if (storeState && !storeState.available) {
+          try { posthog.capture('health_connection_failed', { provider: apiSource, reason: 'unavailable' }); } catch { /* ignore */ }
+          setError(storeMessage(storeState.reason, source)); return;
+        }
         // Each step has a time limit and logs where it is, so a stuck step shows a
         // clear message (and a line in the Xcode console) instead of spinning forever.
         const step = async (name, p, ms) => {
@@ -261,6 +266,7 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
         const access = await step('permission', requestHealthAccess(selected), 200000);
         // Android says what was allowed. Nothing allowed: stop here, nothing saved, offer a retry.
         if (Array.isArray(access?.granted) && access.granted.length === 0) {
+          try { posthog.capture('health_connection_failed', { provider: apiSource, reason: 'permission_denied' }); } catch { /* ignore */ }
           setDenied(true);
           setError(`${source.name} didn't give ayna access, so nothing was shared. That's fine: ayna works without it. You can try again, or allow it in Health Connect.`);
           return;
@@ -271,6 +277,7 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
           if (first instanceof HealthApiError && first.status && first.status < 500 && first.status !== 0) throw first;
           await step('save_connection', connectDeviceSource(apiSource, selected, Capacitor.getPlatform()), 30000);
         }
+        try { posthog.capture('health_connection_succeeded', { provider: apiSource }); } catch { /* ignore */ }
         // Connected. Reloading the list and reading her data happen in the
         // background, so the button never waits on them.
         setMessage('Connected. Your data is syncing now. Your trends show on the Dashboard tab of your ecosystem.');
@@ -284,6 +291,7 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
           .catch(() => setMessage('Connected. Reading your data is taking a while; tap Sync now in a minute.'));
       }
     } catch (e) {
+      try { posthog.capture('health_connection_failed', { provider: apiSource, reason: e?.step || e?.code || 'unknown' }); } catch { /* ignore */ }
       const stepMsg = {
         permission: `The ${source.name} permission sheet didn't finish. Try again, and if no sheet appears, open the Health app, tap your picture, Privacy, Apps, and check ayna.`,
         save_connection: 'Your phone gave access, but ayna couldn’t save the connection. Check your internet and try again.',

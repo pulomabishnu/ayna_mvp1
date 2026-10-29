@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import posthog from 'posthog-js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata, heardAboutUsLabel } from '../utils/heardAbout.js';
 import { clearAskHeardAbout } from '../utils/signupConsent.js';
@@ -27,6 +28,12 @@ export default function HeardAboutPrompt({ onDone, onSaved, variant = 'web' }) {
     try {
       const { data, error: e } = await supabase.auth.updateUser({ data: { ...heardAboutMetadata(value, other), ...(label ? { heard_about_us: label } : {}) } });
       if (e) throw e;
+      // The answer usually arrives after signed_up, so record it separately.
+      // Only the fixed choice leaves the device, never the free-text detail.
+      try {
+        posthog.capture('signup_source_provided', { source: value, surface: variant });
+        posthog.setPersonProperties?.({ heard_about_source: value });
+      } catch { /* analytics never blocks signup */ }
       onSaved?.(data?.user || null);
       close();
     } catch (e) {
