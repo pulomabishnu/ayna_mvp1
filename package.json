@@ -15,7 +15,8 @@
     "preview": "vite preview",
     "buyurls:update": "node scripts/update-product-buy-urls.mjs",
     "build:ios": "node scripts/check-posthog-key.mjs && npm run build && npx cap sync ios",
-    "build:android": "node scripts/check-posthog-key.mjs && npm run build && npx cap sync android"
+    "build:android": "node scripts/check-posthog-key.mjs && npm run build && npx cap sync android",
+    "calibration:report": "node scripts/calibration-report.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",
