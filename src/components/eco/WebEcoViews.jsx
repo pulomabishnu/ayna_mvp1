@@ -103,7 +103,7 @@ export function WebEcoSaved({ saved = [], pctFor, onOpenProduct, onAdd, isOwned 
 export function WebEcoRoutine({ source, onOpenProduct, onCheckIn, children }) {
   return (
     <div className="weco-routine">
-      <div className="weco-card weco-card--wide"><RoutineTimeline compact {...source} max={3} ecoMax={6} onOpenProduct={onOpenProduct} onCheckIn={onCheckIn} /></div>
+      <div className="weco-routine__day"><RoutineTimeline compact {...source} max={3} ecoMax={6} onOpenProduct={onOpenProduct} onCheckIn={onCheckIn} /></div>
       {children && <details className="weco-fold"><summary>Full routines and other options</summary>{children}</details>}
     </div>
   );

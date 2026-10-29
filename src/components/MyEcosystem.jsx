@@ -1176,11 +1176,6 @@ export default function MyEcosystem({
     );
     const needShelves = useMemo(() => needSeed?.shelves || [], [needSeed]);
     const useTabs = myProductList.length > 0;
-    const pickNeeds = useMemo(() => needShelves.map((shelf) => ({
-        id: shelf.needId,
-        short: shortNeedLabel(shelf.label),
-        picks: (shelf.picks || []).map((pick) => myProducts[pick.productId] || getProductById(pick.productId)).filter(Boolean),
-    })), [needShelves, myProducts]);
     const savedList = useMemo(() => Object.values(savedProducts || {}).filter((p) => p?.id && p.name), [savedProducts]);
     const pctFor = useMemo(() => makePctFor(quizResults, (p) => getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts)), [quizResults, healthProfile, matchOpts]);
     // The fold's glance: the top pick of each gap, as photos (real catalog images only).
@@ -1717,6 +1712,21 @@ export default function MyEcosystem({
             return ai - bi;
         });
     }, [hasCompletedPersonalization, activeTiered, quizResults]);
+    // ayna picks (web tabs): the matching engine's picks per need, then the tiered
+    // recommendations per concern, never her own products, nothing she marked Not for me.
+    const pickNeeds = useMemo(() => {
+        const full = (p) => (p?.id ? (getProductById(p.id) || p) : null);
+        const out = [];
+        const seen = new Set(Object.keys(myProducts || {}));
+        const push = (id, short, list) => {
+            const picks = list.map(full).filter((p) => p && p.name && !seen.has(p.id) && !omittedProducts?.[p.id]);
+            picks.forEach((p) => seen.add(p.id));
+            if (picks.length) out.push({ id, short, picks });
+        };
+        needShelves.forEach((shelf) => push(`need-${shelf.needId}`, shortNeedLabel(shelf.label), (shelf.picks || []).map((pick) => ({ id: pick.productId }))));
+        recommendedProductsForDisplay.forEach((sec) => push(`rec-${sec.id}`, sec.displayLabel || sec.concern, sec.tiers.flatMap((t) => [t.product, ...(t.alternatives || [])])));
+        return out;
+    }, [needShelves, recommendedProductsForDisplay, myProducts, omittedProducts]);
 
     useEffect(() => {
         setRecommendedSwapByKey({});
