@@ -76,13 +76,13 @@ describe('syncFromSheet', () => {
   it('a private sheet (Google sign-in page) changes nothing', async () => {
     const db = mockSupabase();
     const r = await syncFromSheet(db, { force: true, fetchImpl: async () => ({ ok: true, text: async () => '<!DOCTYPE html><html>Sign in</html>' }) });
-    expect(r).toEqual({ ok: false, error: 'sheet_not_public' });
+    expect(r).toMatchObject({ ok: false, error: 'sheet_not_public' });
     expect(db.tableCalls).toHaveLength(0);
   });
 
   it('a network error never throws', async () => {
     const db = mockSupabase();
     const r = await syncFromSheet(db, { force: true, fetchImpl: async () => { throw new Error('down'); } });
-    expect(r).toEqual({ ok: false, error: 'sync_failed' });
+    expect(r).toMatchObject({ ok: false, error: 'sync_failed', detail: 'down' });
   });
 });

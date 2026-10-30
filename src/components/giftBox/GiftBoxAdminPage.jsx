@@ -197,18 +197,27 @@ const SYNC_ERRORS = {
   sheet_empty: 'The sheet has no products.',
 };
 
-function SheetSync({ sheetUrl, act }) {
-  const [msg, setMsg] = useState('');
+function syncMessage(r) {
+  if (!r) return '';
+  if (r.ok) {
+    if (r.skippedSync) return '';
+    const skipped = (r.skipped || []).map((x) => `row ${x.row} (${x.reason})`).join(', ');
+    return `Synced ${r.synced} products from the sheet, ${r.shown} shown.${skipped ? ` Skipped: ${skipped}.` : ''}`;
+  }
+  return `${SYNC_ERRORS[r.error] || 'Couldn’t copy the sheet into the site.'}${r.detail ? ` (${r.detail})` : ''}`;
+}
+
+function SheetSync({ sheetUrl, lastSync, act }) {
+  const [result, setResult] = useState(null);
   const [busy, setBusy] = useState(false);
+  const shown = result || lastSync;
   const sync = async () => {
-    setBusy(true); setMsg('');
+    setBusy(true);
     try {
-      const r = await adminAction({ action: 'sync_sheet' });
-      const skipped = (r.skipped || []).map((s) => `row ${s.row} (${s.reason})`).join(', ');
-      setMsg(`Synced ${r.synced} products, ${r.shown} shown.${skipped ? ` Skipped: ${skipped}.` : ''}`);
+      setResult(await adminAction({ action: 'sync_sheet' }));
       await act(null);
     } catch (e) {
-      setMsg(SYNC_ERRORS[e.body?.error] || 'Sync didn’t work. Try again in a minute.');
+      setResult(e.body || { ok: false, error: 'sync_failed', detail: e.code });
     } finally { setBusy(false); }
   };
   return (
@@ -218,17 +227,17 @@ function SheetSync({ sheetUrl, act }) {
         <button type="button" className="ay-btn ay-btn--primary gb-small" disabled={busy} onClick={sync}>{busy ? 'Syncing…' : 'Sync now'}</button>
         {sheetUrl ? <a className="ay-btn ay-btn--text" href={sheetUrl} target="_blank" rel="noopener noreferrer">Open the sheet</a> : null}
       </div>
-      {msg ? <p className="ay-meta" role="status">{msg}</p> : null}
+      {shown && syncMessage(shown) ? <p className={shown.ok ? 'ay-meta' : 'gb-fielderr'} role="status">{syncMessage(shown)}</p> : null}
     </div>
   );
 }
 
-function Products({ products, sheetUrl, act }) {
+function Products({ products, sheetUrl, lastSync, act }) {
   const [editing, setEditing] = useState(null);
   const save = async (body) => { const r = await act(body); if (r?.ok) setEditing(null); return Boolean(r?.ok); };
   return (
     <>
-      <SheetSync sheetUrl={sheetUrl} act={act} />
+      <SheetSync sheetUrl={sheetUrl} lastSync={lastSync} act={act} />
       {editing ? null : <ProductForm initial={EMPTY_PRODUCT} onSave={save} />}
       <ul className="gb-admin__list">
         {products.map((p) => (editing === p.id ? (
@@ -254,10 +263,11 @@ function Products({ products, sheetUrl, act }) {
 
 export default function GiftBoxAdminPage({ user, authLoading, onSignIn }) {
   const [tab, setTab] = useState('orders');
+  const [tabPicked, setTabPicked] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
 
-  const refresh = useCallback(() => getAdmin().then((d) => { setData(d); setError(''); }, (e) => setError(e.code || 'error')), []);
+  const refresh = useCallback(() => getAdmin().then((d) => { setData(d); setError(''); if (!tabPicked && (!d.products.length || d.sync?.ok === false)) setTab('products'); }, (e) => setError(e.code || 'error')), [tabPicked]);
   useEffect(() => { if (!authLoading && user) refresh(); }, [authLoading, user, refresh]);
 
   const act = useCallback(async (body) => {
@@ -298,7 +308,7 @@ export default function GiftBoxAdminPage({ user, authLoading, onSignIn }) {
         <div className="ay-tabs">
           <div className="ay-tabs__list" role="tablist">
             {TABS.map(([k, label]) => (
-              <button key={k} type="button" role="tab" className="ay-tabs__tab" aria-selected={tab === k} onClick={() => setTab(k)}>
+              <button key={k} type="button" role="tab" className="ay-tabs__tab" aria-selected={tab === k} onClick={() => { setTab(k); setTabPicked(true); }}>
                 {label} <span className="ay-tabs__count">{counts[k]}</span>
               </button>
             ))}
@@ -306,7 +316,7 @@ export default function GiftBoxAdminPage({ user, authLoading, onSignIn }) {
           <div className="ay-tabs__panel gb-admin__panel" role="tabpanel">
             {tab === 'orders' ? <Orders orders={data.orders} act={act} /> : null}
             {tab === 'links' ? <Links links={data.links} act={act} /> : null}
-            {tab === 'products' ? <Products products={data.products} sheetUrl={data.sheetUrl} act={act} /> : null}
+            {tab === 'products' ? <Products products={data.products} sheetUrl={data.sheetUrl} lastSync={data.sync} act={act} /> : null}
           </div>
         </div>
       </div>

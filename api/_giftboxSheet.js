@@ -127,7 +127,10 @@ export async function syncFromSheet(db, { force = false, fetchImpl = fetch, now 
       const res = await fetchImpl(sheetCsvUrl(), { redirect: 'follow', signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined });
       const body = res.ok ? await res.text() : '';
       // A private sheet answers with Google's sign-in page, not CSV.
-      if (!res.ok || /^\s*<(!doctype|html)/i.test(body)) return { ok: false, error: 'sheet_not_public' };
+      if (!res.ok || /^\s*<(!doctype|html)/i.test(body)) {
+        lastSyncAt = 0;
+        return { ok: false, error: 'sheet_not_public', detail: res.ok ? 'Google returned a web page, not CSV' : `Google answered HTTP ${res.status}` };
+      }
       const { products, skipped, error } = rowsToProducts(parseCsv(body));
       if (error) return { ok: false, error };
       if (!products.length) return { ok: false, error: 'sheet_empty' };
@@ -147,9 +150,10 @@ export async function syncFromSheet(db, { force = false, fetchImpl = fetch, now 
       }
       return { ok: true, synced: products.length, shown: products.filter((p) => p.is_active).length, hiddenRemoved: gone.length, skipped };
     } catch (e) {
-      console.error('[giftbox sheet]', e?.message || e);
+      const detail = [e?.code, e?.message, e?.details, e?.hint].filter(Boolean).join(' · ') || String(e);
+      console.error('[giftbox sheet]', detail);
       lastSyncAt = 0; // try again on the next request
-      return { ok: false, error: 'sync_failed' };
+      return { ok: false, error: 'sync_failed', detail };
     } finally {
       inFlight = null;
     }

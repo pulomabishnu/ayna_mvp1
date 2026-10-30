@@ -38,7 +38,8 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      await syncFromSheet(admin);
+      // The team page always re-reads the sheet, and says so if it couldn't.
+      const sync = await syncFromSheet(admin, { force: true });
       const [p, i, o] = await Promise.all([
         admin.from('giftbox_products').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
         admin.from('giftbox_invites').select('*').order('created_at', { ascending: false }).limit(200),
@@ -46,7 +47,7 @@ export default async function handler(req, res) {
       ]);
       const err = p.error || i.error || o.error;
       if (err) throw err;
-      return res.status(200).json({ products: p.data || [], links: i.data || [], orders: o.data || [], sheetUrl: sheetEditUrl() });
+      return res.status(200).json({ products: p.data || [], links: i.data || [], orders: o.data || [], sheetUrl: sheetEditUrl(), sync });
     }
 
     const body = req.body && typeof req.body === 'object' ? req.body : {};
