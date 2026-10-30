@@ -54,3 +54,12 @@ describe('sanitizeEventPayload', () => {
     expect(sanitizeAnalyticsObject({ a: { share_url: '/c?q=x' } })).toEqual({ a: { share_url: '/c' } });
   });
 });
+
+describe('gift box links', () => {
+  it('never sends a winner link token', async () => {
+    const { scrubUrl } = await import('./analyticsSanitize.js');
+    expect(scrubUrl('https://www.aynahealth.co/gift/AbCdEfGhIjKlMnOpQrStUvWx')).toBe('https://www.aynahealth.co/gift/link');
+    expect(scrubUrl('/gift/AbCdEfGhIjKlMnOpQrStUvWx')).toBe('/gift/link');
+    expect(scrubUrl('/gift')).toBe('/gift');
+  });
+});

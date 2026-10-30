@@ -43,7 +43,7 @@ export const SEO_PAGES = {
 export const NOINDEX_SECTIONS = [
   'today', 'ask', 'you', 'recommendations', 'compare', 'comparison', 'omitted', 'recalls', 'tracked', 'screenings',
   'appointment-prep', 'profile', 'text-ayna', 'delete-account', 'health-data', 'auth', 'confirmed',
-  'admin', 'internal', 'free-product', 'mobile-preview', 'wrapped', 'join', 'a',
+  'admin', 'internal', 'free-product', 'gift', 'mobile-preview', 'wrapped', 'join', 'a',
 ];
 
 /**

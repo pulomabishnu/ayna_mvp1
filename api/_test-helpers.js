@@ -81,6 +81,7 @@ export function mockSupabase({
         order() { return api; },
         limit() { return api; },
         maybeSingle() { return api; },
+        single() { return api; },
         then(resolve) {
           const key = `${table}.${rec.op}`;
           const result = tableResults[key] ?? tableResults[table] ?? { data: null, error: null };
