@@ -36,7 +36,7 @@ describe('ecosystem counts', () => {
     expect(hero).toContain(`<b>${c.products}</b>products`);
     expect(hero).toContain(`<b>${c.needsCovered} of ${c.needs}</b> needs covered`);
     expect(hero).not.toContain('needs have picks');
-    expect(wrapped).toContain(`<strong>${c.products}</strong><span>products</span>`);
+    expect(wrapped).toContain(`<b>${c.products}</b><small>products</small>`);
     expect(wrapped).toContain(`<strong>${c.needsCovered} of ${c.needs}</strong><span>needs covered</span>`);
   });
 

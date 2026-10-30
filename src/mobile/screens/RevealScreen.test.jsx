@@ -14,8 +14,9 @@ describe('intake results preview', () => {
       onBack={noop}
       onGoBrowse={noop}
     />);
-    expect(html).toContain('Story 1 of 5');
-    expect(html).toContain('<strong>2</strong><span>products</span>');
+    // Same story as the website: intro, matches by category, #1 match, finish.
+    expect(html).toContain('Story 1 of 4');
+    expect(html).toMatch(/<b>2<\/b><small>products<\/small>/);
     expect(html).toContain('Your ecosystem is ready');
     expect(html).not.toContain('0 products');
   });

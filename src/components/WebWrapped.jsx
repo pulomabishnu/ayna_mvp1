@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { shownMatchPercent, PARTIAL_FIT } from '../utils/matchDisplay.js';
 import { createPortal } from 'react-dom';
 import { getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
@@ -25,9 +25,12 @@ function Photo({ product }) {
 
 // Counts up from 0 when the slide opens (respects reduced motion).
 function useCountUp(target, on, reduced) {
-  const [n, setN] = useState(reduced ? target : 0);
-  useEffect(() => {
+  // Starts at the real number (so it is right without animation, and for
+  // screen readers), then counts up from 0 before the first paint.
+  const [n, setN] = useState(target);
+  useLayoutEffect(() => {
     if (!on || reduced) { setN(target); return undefined; }
+    setN(0);
     let raf; const t0 = performance.now();
     const step = (t) => { const k = Math.min(1, (t - t0) / 700); setN(Math.round(target * (1 - (1 - k) ** 3))); if (k < 1) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step);
@@ -57,15 +60,16 @@ function Bars({ n }) {
 }
 const TILE = ['is-pink', 'is-butter', 'is-blue', 'is-ink'];
 
-export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, moreTopics = [], guest = false }) {
+export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, moreTopics = [], guest = false, inline = false, careNote = null, percentFor = null, whyFor = null, emptyBack = null, counts = null }) {
   const picks = products.filter(Boolean);
   const first = picks[0];
   const intake = quizResults?.fullHealthIntake || null;
   const persona = buildPersona(intake);
   const areas = [...new Set(picks.map((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label).filter(Boolean))];
-  const raw = first && quizResults ? getProfileMatchPercentForProduct(first, quizResults, healthProfile, matchOpts) : null;
+  // The app passes its own scorer so "#1 match 97%" matches its cards exactly.
+  const raw = first && quizResults ? (percentFor ? percentFor(first) : getProfileMatchPercentForProduct(first, quizResults, healthProfile, matchOpts)) : null;
   const firstMatch = Number.isFinite(raw) && raw > 0 ? Math.round(raw) : null;
-  const firstWhy = firstMatch ? whyLine(first, getProductMatchDetailsForProduct(first, quizResults)) : '';
+  const firstWhy = firstMatch ? (whyFor ? whyFor(first) : whyLine(first, getProductMatchDetailsForProduct(first, quizResults))) : '';
   const goals = (intake?.supportSelections || []).filter((s) => s !== 'Nothing right now').length;
   // Founder, Oct 29: matches per category (animated), each with its top match
   // and "Show another" to swap it; more personal answers offered BEFORE the
@@ -123,7 +127,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   const pct = firstMatch ? shownMatchPercent(firstMatch) : null;
   const plate = (p, cls = '') => <span className={`ays-plate ${cls}`.trim()}><span><Photo product={p} /></span></span>;
 
-  return createPortal(<div className={`ays ay-wr ${surface} is-${active}`} data-theme={theme} role="dialog" aria-modal="true" aria-label="Your ayna Wrapped">
+  const story = <div className={`ays ay-wr ${surface} is-${active}${inline ? ' is-inline' : ''}`} data-theme={theme} role={inline ? 'region' : 'dialog'} aria-modal={inline ? undefined : 'true'} aria-label="Your ayna Wrapped">
     <div className="ays-frame">
       <StoryTop
         count={slides.length} index={index} progress={reduced ? null : last ? 1 : progress} title="Your ayna summary"
@@ -136,11 +140,16 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
       <div className="ays-stage" {...gest.bind}>
         <section className="ays-card" key={active}>
           {active === 'intro' && <>
-            <div className="ays-visual"><Burst className="is-corner" /><Ring share={Math.min(1, areas.length / Math.max(1, goals || areas.length))}><b><CountUp value={picks.length} on={active === 'intro'} reduced={reduced} /></b><small>{picks.length === 1 ? 'match' : 'matches'}</small></Ring></div>
+            {careNote}
+            <div className="ays-visual"><Burst className="is-corner" />{counts
+              // App: the same numbers, in the same words, as her Ecosystem hero (utils/ecosystemCounts).
+              ? <Ring share={counts.needs > 0 ? counts.needsCovered / counts.needs : 1}><b><CountUp value={counts.products} on={active === 'intro'} reduced={reduced} /></b><small>{counts.products === 1 ? 'product' : 'products'}</small></Ring>
+              : <Ring share={Math.min(1, areas.length / Math.max(1, goals || areas.length))}><b><CountUp value={picks.length} on={active === 'intro'} reduced={reduced} /></b><small>{picks.length === 1 ? 'match' : 'matches'}</small></Ring>}</div>
             <div className="ays-words">
               <p className="ays-kicker">Your ecosystem is ready</p>
               <h1 className="ays-title">Your ayna, wrapped</h1>
-              <p className="ay-wr-stat"><strong>{areas.length}</strong><span>{areas.length === 1 ? 'area' : 'areas'}</span>{goals > 0 && <><i aria-hidden="true" /><strong>{goals}</strong><span>{goals === 1 ? 'goal' : 'goals'}</span></>}</p>
+              {counts && counts.needs > 0 ? <p className="ay-wr-stat"><strong>{counts.needsCovered} of {counts.needs}</strong><span>{counts.needs === 1 ? 'need' : 'needs'} covered</span></p>
+              : <p className="ay-wr-stat"><strong>{areas.length}</strong><span>{areas.length === 1 ? 'area' : 'areas'}</span>{goals > 0 && <><i aria-hidden="true" /><strong>{goals}</strong><span>{goals === 1 ? 'goal' : 'goals'}</span></>}</p>}
             </div>
           </>}
           {active === 'more' && <>
@@ -217,8 +226,9 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
             </div>
           </>}
           {active === 'empty' && <>
-            <div className="ays-words"><h1 className="ays-title">No strong match yet</h1><p className="ays-body">Your answers didn’t point to one clear pick. The Shop is sorted by need.</p></div>
-            <div className="ays-act"><button type="button" className="ays-cta" onClick={onBrowse}>Go to Shop</button></div>
+            {careNote}
+            <div className="ays-words"><h1 className="ays-title">No strong match yet</h1><p className="ays-body">No strong match yet. Your answers didn’t point to one clear pick. The Shop is sorted by need.</p></div>
+            <div className="ays-act"><button type="button" className="ays-cta" onClick={onBrowse}>Go to the Shop</button>{emptyBack && <div className="ay-wr-secondary"><button type="button" className="ays-link" onClick={emptyBack}>Edit answers</button></div>}</div>
           </>}
         </section>
       </div>
@@ -229,5 +239,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
       </div>
     </div>
     <div className="ay-wr-toast" role="status" aria-live="polite">{shareState && <span>{shareState}</span>}</div>
-  </div>, document.body);
+  </div>;
+  // The app renders it in place (it is a screen there); the website floats it over the page.
+  return inline ? story : createPortal(story, document.body);
 }
