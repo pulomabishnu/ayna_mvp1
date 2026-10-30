@@ -81,13 +81,15 @@ export function WeekBars({ points, usual = null, today, metric, label }) {
   const aria = `${label}, last 7 days: ${days.filter((d) => d.value != null).map((d) => `${dayInitial(d.day)} ${short(metric, d.value)}`).join(', ')}${usual != null ? `. Your usual ${short(metric, usual)}` : ''}.`;
   return (
     <figure className="wb-bars">
-      <svg viewBox={`0 0 ${W} ${H + 18}`} preserveAspectRatio="none" role="img" aria-label={aria}>
+      {/* The bars stretch to the card's width; the day letters are real text
+          below them (inside the stretched SVG they came out squashed on iPhone). */}
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img" aria-label={aria}>
         {days.map((d, i) => d.value != null && (
-          <rect key={d.day} className={i === lastIdx ? 'is-last' : ''} x={i * (bw + gap)} y={y(d.value)} width={bw} height={Math.max(2, H - y(d.value))} rx="4" />
+          <rect key={d.day} className={i === lastIdx ? 'is-last' : ''} x={i * (bw + gap)} y={y(d.value)} width={bw} height={Math.max(2, H - y(d.value))} rx="3" />
         ))}
-        {usual != null && <line className="wb-bars__usual" x1="0" x2={W} y1={y(usual)} y2={y(usual)} />}
-        {days.map((d, i) => <text key={`t-${d.day}`} className="wb-bars__d" x={i * (bw + gap) + bw / 2} y={H + 15} textAnchor="middle">{dayInitial(d.day)}</text>)}
+        {usual != null && <line className="wb-bars__usual" x1="0" x2={W} y1={y(usual)} y2={y(usual)} vectorEffect="non-scaling-stroke" />}
       </svg>
+      <span className="wb-bars__days" aria-hidden="true">{days.map((d) => <span key={`t-${d.day}`}>{dayInitial(d.day)}</span>)}</span>
     </figure>
   );
 }

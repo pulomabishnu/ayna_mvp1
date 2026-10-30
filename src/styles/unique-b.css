@@ -48,7 +48,7 @@ html body .app-container.app-container.app-container.app-container.app-container
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-home-hello.is-band .ay-home-hello__days li { border-color: color-mix(in srgb, var(--ubf) 40%, transparent) !important; color: var(--ubf) !important; background: transparent !important; }
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-home-hello.is-band .ay-home-hello__days li.is-today { background: #F7BADD !important; color: #3E2723 !important; border-color: #F7BADD !important; }
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-home-hello.is-band .ay-home-hello__days li :is(small, b) { color: inherit !important; }
-.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-homeweek { margin: 16px 0 8px; }
+.ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-homeweek { margin: 0; display: grid; gap: 12px; } /* the toggle above already gives 16px */
 .ayna-mobile:is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile):is(#ay, #ds-a, .ayna-mobile) .ay-homeweek > h2 { margin: 0 0 10px; font: 700 20px/1.2 var(--f-display, 'ayna Display', sans-serif); color: var(--d-ink, #3e2723); }
 
 /* ---------- Ask: bold espresso start (AskStart), colour-blocked question groups ---------- */

@@ -33,11 +33,14 @@
 
 /* Bars (sleep, steps): espresso bars, last day pink, usual as a blue line */
 :is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) .wb-bars { margin: 0; width: 100%; }
-.wb-bars svg { display: block; width: 100%; height: 88px; overflow: visible; }
+.wb-bars svg { display: block; width: 100%; height: 72px; overflow: visible; }
 .wb-bars rect { fill: currentColor; opacity: .82; }
 .wb-bars rect.is-last { fill: #F7BADD; opacity: 1; stroke: var(--ay-calm-line); stroke-width: 1.5; }
 .wb-bars .wb-bars__usual { stroke: #769EBE; stroke-width: 2.5; stroke-dasharray: 5 4; }
 .wb-bars .wb-bars__d { fill: currentColor; font: 600 13px var(--ay-font-ui); }
+/* Day letters under the bars: each one centred on its bar (bar = 18 of 196 units). */
+.wb-bars .wb-bars__days { display: flex; justify-content: space-between; margin-top: 6px; font: 600 13px/1 var(--ay-font-ui); color: currentColor; }
+.wb-bars .wb-bars__days > span { width: calc(100% * 18 / 196); text-align: center; }
 .is-butter .wb-bars rect.is-last, .is-deep .wb-bars rect.is-last { fill: #F7BADD; }
 
 /* Sparkline inside a tile: bigger; on pink the line is espresso (blue would not read) */
