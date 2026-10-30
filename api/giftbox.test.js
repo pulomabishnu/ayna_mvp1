@@ -3,6 +3,7 @@ import { mockReq, mockRes, mockSupabase } from './_test-helpers.js';
 
 vi.mock('./_usageLimit.js', () => ({ verifyUser: vi.fn() }));
 vi.mock('./_campaign.js', async (orig) => ({ ...(await orig()), getServiceClient: vi.fn() }));
+vi.mock('./_giftboxSheet.js', async (orig) => ({ ...(await orig()), syncFromSheet: vi.fn(async () => ({ ok: true })) }));
 const { verifyUser } = await import('./_usageLimit.js');
 const { getServiceClient } = await import('./_campaign.js');
 const { default: shop } = await import('./giftbox.js');

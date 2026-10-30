@@ -5,6 +5,9 @@
 -- out for free with their shipping address. The link locks after one order.
 -- Admins can also check out from /gift (signed in) with no limit.
 --
+-- Products normally come from the team's Google Sheet: the site re-reads it
+-- every few minutes (and on "Sync now") and upserts by the sheet's id column.
+--
 -- Idempotent: safe to re-run. NOT applied automatically; run it once in the
 -- Supabase SQL editor.
 --
@@ -21,6 +24,10 @@
 
 create table if not exists public.giftbox_products (
   id uuid primary key default gen_random_uuid(),
+  -- The row's "id" in the team's Google Sheet (api/_giftboxSheet.js). Null for
+  -- products added by hand on /admin/gift.
+  sheet_id text unique check (sheet_id is null or sheet_id ~ '^[A-Za-z0-9_.-]{1,80}$'),
+  category text not null default '' check (char_length(category) <= 60),
   brand text not null default '' check (char_length(brand) <= 120),
   name text not null check (char_length(name) between 1 and 200),
   notes text not null default '' check (char_length(notes) <= 2000),
@@ -71,6 +78,10 @@ create table if not exists public.giftbox_orders (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Re-run safety if an earlier copy of this file was applied before the sheet columns existed.
+alter table public.giftbox_products add column if not exists sheet_id text unique;
+alter table public.giftbox_products add column if not exists category text not null default '';
 
 create index if not exists giftbox_orders_created_idx on public.giftbox_orders (created_at desc);
 create index if not exists giftbox_invites_created_idx on public.giftbox_invites (created_at desc);

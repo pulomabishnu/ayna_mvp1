@@ -62,6 +62,7 @@ export function safeUrl(v) {
 export function publicProduct(p) {
   return {
     id: p.id,
+    category: p.category || '',
     brand: p.brand || '',
     name: p.name,
     notes: p.notes || '',

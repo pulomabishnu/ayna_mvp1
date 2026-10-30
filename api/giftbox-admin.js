@@ -7,10 +7,12 @@
  *   POST { action: 'create_link', winnerName, winnerEmail?, label?, budgetCents, expiresInDays? }
  *   POST { action: 'revoke_link', id }
  *   POST { action: 'order_status', id, status }
+ *   POST { action: 'sync_sheet' }                    re-read the Google Sheet now
  */
 import { randomBytes } from 'node:crypto';
 import { verifyUser } from './_usageLimit.js';
 import { isCampaignAdmin, setPrivateHeaders } from './_campaign.js';
+import { sheetEditUrl, syncFromSheet } from './_giftboxSheet.js';
 import { EMAIL_RE, ORDER_STATUSES, UUID_RE, safeUrl } from './_giftbox.js';
 
 const intIn = (v, min, max) => {
@@ -36,6 +38,7 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
+      await syncFromSheet(admin);
       const [p, i, o] = await Promise.all([
         admin.from('giftbox_products').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
         admin.from('giftbox_invites').select('*').order('created_at', { ascending: false }).limit(200),
@@ -43,7 +46,7 @@ export default async function handler(req, res) {
       ]);
       const err = p.error || i.error || o.error;
       if (err) throw err;
-      return res.status(200).json({ products: p.data || [], links: i.data || [], orders: o.data || [] });
+      return res.status(200).json({ products: p.data || [], links: i.data || [], orders: o.data || [], sheetUrl: sheetEditUrl() });
     }
 
     const body = req.body && typeof req.body === 'object' ? req.body : {};
@@ -55,6 +58,7 @@ export default async function handler(req, res) {
       if (body.imageUrl && !safeUrl(body.imageUrl)) return res.status(400).json({ error: 'bad_request', field: 'imageUrl' });
       if (body.productUrl && !safeUrl(body.productUrl)) return res.status(400).json({ error: 'bad_request', field: 'productUrl' });
       const row = {
+        category: text(body.category, 60),
         brand: text(body.brand, 120),
         name,
         notes: String(body.notes ?? '').trim().slice(0, 2000),
@@ -76,6 +80,11 @@ export default async function handler(req, res) {
       const { data, error: insErr } = await admin.from('giftbox_products').insert(row).select().single();
       if (insErr) throw insErr;
       return res.status(200).json({ ok: true, product: data });
+    }
+
+    if (body.action === 'sync_sheet') {
+      const result = await syncFromSheet(admin, { force: true });
+      return res.status(result.ok ? 200 : 502).json(result);
     }
 
     if (body.action === 'create_link') {

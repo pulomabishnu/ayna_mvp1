@@ -18,9 +18,13 @@ const EMPTY_SHIP = { name: '', email: '', phone: '', line1: '', line2: '', city:
 const FIELD_ERRORS = { name: 'Add your name.', email: 'Add a valid email.', line1: 'Add your street address.', city: 'Add your city.', state: 'Add your state.', postal: 'Add your ZIP code.' };
 
 function Tile({ product }) {
+  // Images are hotlinked from brand sites; if one won't load, show the brand name instead of a broken icon.
+  const [broken, setBroken] = useState(false);
   return (
     <div className="ay-product-card__tile">
-      {product.imageUrl ? <img src={product.imageUrl} alt="" loading="lazy" /> : <span className="gb-nophoto">{product.brand || 'ayna'}</span>}
+      {product.imageUrl && !broken
+        ? <img src={product.imageUrl} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken(true)} />
+        : <span className="gb-nophoto">{product.brand || 'ayna'}</span>}
     </div>
   );
 }
@@ -55,6 +59,7 @@ export default function GiftBoxPage({ user, authLoading, onSignIn }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [done, setDone] = useState(null);
+  const [category, setCategory] = useState('');
 
   useEffect(() => {
     if (!token && authLoading) return undefined;
@@ -79,6 +84,9 @@ export default function GiftBoxPage({ user, authLoading, onSignIn }) {
   const total = cartTotal(cart, products);
   const left = budget == null ? null : budget - total;
   const lines = products.filter((p) => cart[p.id]);
+  // Filter chips, in the sheet's order of first appearance.
+  const categories = [...new Set(products.map((p) => p.category).filter(Boolean))];
+  const shown = category ? products.filter((p) => p.category === category) : products;
   const count = lines.reduce((n, p) => n + cart[p.id], 0);
 
   const canAdd = (p) => (cart[p.id] || 0) < p.maxPerOrder && (left == null || p.priceCents <= left);
@@ -196,9 +204,18 @@ export default function GiftBoxPage({ user, authLoading, onSignIn }) {
           </button>
         </div>
 
+        {categories.length > 1 ? (
+          <div className="ay-chip-row gb-chips" role="group" aria-label="Filter by category">
+            <button type="button" className="ay-chip" aria-pressed={!category} onClick={() => setCategory('')}>All</button>
+            {categories.map((c) => (
+              <button key={c} type="button" className="ay-chip" aria-pressed={category === c} onClick={() => setCategory(category === c ? '' : c)}>{c}</button>
+            ))}
+          </div>
+        ) : null}
+
         {products.length ? (
           <ul className="ay-product-grid gb-grid">
-            {products.map((p) => {
+            {shown.map((p) => {
               const inCart = cart[p.id] || 0;
               const tooMuch = left != null && p.priceCents > left && !inCart;
               return (

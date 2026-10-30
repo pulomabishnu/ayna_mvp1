@@ -13,6 +13,7 @@
 import { verifyUser } from './_usageLimit.js';
 import { getServiceClient, isCampaignAdmin, setPrivateHeaders } from './_campaign.js';
 import { sendCampaignEmail, sendTeamAlert } from './_campaignEmail.js';
+import { syncFromSheet } from './_giftboxSheet.js';
 import { TOKEN_RE, parseCart, parseShipping, publicProduct, teamOrderEmail, winnerConfirmationEmail } from './_giftbox.js';
 
 const LINK_ERRORS = { invalid_link: 404, already_used: 410, expired: 410 };
@@ -29,6 +30,8 @@ async function loadInvite(db, token) {
 }
 
 async function loadProducts(db) {
+  // Picks up Google Sheet edits at most every few minutes; never blocks on a sheet problem.
+  await syncFromSheet(db);
   const { data, error } = await db.from('giftbox_products').select('*').eq('is_active', true)
     .order('sort_order', { ascending: true }).order('created_at', { ascending: true });
   if (error) throw error;
