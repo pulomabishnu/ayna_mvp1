@@ -1,0 +1,75 @@
+/* Gift box (/gift, /admin/gift). Built from ayna-system.css pieces: pink
+   pagehead band, product grid + card, sheet, fields. Only layout glue here.
+   No sticky elements (site rule). */
+
+.app-container .gb { padding-bottom: var(--ay-s64); color: var(--ay-text); }
+.app-container .gb-pad { padding-block: var(--ay-s48); display: grid; gap: var(--ay-s12); justify-items: start; }
+.app-container .gb-head { --ph-top: 33px; }
+.app-container .gb-head p { margin: var(--ay-s8) 0 0; font: 500 17px/1.45 var(--ay-sans-stack); }
+
+/* limit + check out */
+.app-container .gb-bar { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: var(--ay-s8) var(--ay-s16); margin: 0 0 var(--ay-s32); }
+.app-container .gb-bar__status { margin: 0; font: 500 16px/1.4 var(--ay-sans-stack); }
+.app-container .gb-bar__status b { font-weight: 700; }
+.app-container .gb-bar .ay-btn { grid-column: 2; grid-row: 1 / span 2; }
+.app-container .gb-meter { grid-column: 1; height: 10px; border: 1.5px solid var(--ay-outline-color); border-radius: 999px; overflow: hidden; background: var(--ay-tile-bg); max-width: 420px; }
+.app-container .gb-meter i { display: block; height: 100%; background: var(--ay-alert-bg); transition: width .2s; }
+
+/* cards */
+.app-container.app-container .gb .gb-cardbtn { width: 100%; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; text-align: left; cursor: pointer; font: inherit; height: auto; flex: 1; }
+.app-container .gb-cardbtn:focus-visible { outline: 3px solid var(--ay-focus); outline-offset: 3px; }
+.app-container .gb-notes { order: 4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; font: 500 13px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
+.app-container .gb-nophoto { font: 600 15px/1.2 var(--ay-sans-stack); color: #3e2723; text-align: center; }
+.app-container .gb-add { margin-top: var(--ay-s12); }
+.app-container .gb-add .ay-btn { min-height: 44px; }
+.app-container .gb-qty { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; min-height: 44px; border: 1.5px solid var(--ay-outline-color); border-radius: 999px; background: var(--ay-alert-bg); color: #3e2723; text-align: center; font: 700 16px/1 var(--ay-sans-stack); }
+.app-container.app-container .gb .gb-qty button { height: 42px; min-height: 0; padding: 0 !important; border: 0 !important; border-radius: 999px !important; background: none !important; box-shadow: none !important; color: #3e2723 !important; font: 600 24px/1 var(--ay-sans-stack) !important; cursor: pointer; }
+.app-container .gb-qty button:disabled { opacity: .35; cursor: not-allowed; }
+
+/* detail + checkout sheets */
+.app-container .gb-sheet { width: min(100%, 560px); max-height: calc(100vh - 48px); overflow-y: auto; }
+.app-container .gb-detail .ay-product-card__tile { max-width: 280px; margin: 0 auto var(--ay-s16); }
+.app-container .gb-detail__notes { margin: var(--ay-s8) 0; font: 500 15px/1.55 var(--ay-sans-stack); white-space: pre-line; }
+.app-container .gb-subhead { margin: var(--ay-s24) 0 0; font: 700 var(--ay-type-h3)/1.2 var(--ay-serif-stack); }
+.app-container .gb-admin__form .gb-subhead { margin-top: 0; }
+.app-container .gb-lines { list-style: none; margin: var(--ay-s8) 0 var(--ay-s16); padding: 0; }
+.app-container .gb-lines li { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: var(--ay-s12); padding: var(--ay-s8) 0; border-bottom: 1px solid var(--ay-hairline); font: 500 15px/1.4 var(--ay-sans-stack); }
+.app-container .gb-lines li .ay-btn--text { min-height: 32px; font-size: 14px !important; }
+.app-container .gb-lines__total { font-weight: 700 !important; border-bottom: 0 !important; }
+.app-container .gb-free { justify-self: end; padding: 2px 8px; border-radius: 999px; background: var(--ay-alert-bg); color: #3e2723; font: 600 13px/1.35 var(--ay-sans-stack); }
+.app-container .gb-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0 var(--ay-s12); }
+.app-container .gb-fielderr { margin: 6px 0 0; font: 600 14px/1.4 var(--ay-sans-stack); color: #8a1c3c; }
+.app-container[data-theme='brand-dark'] .gb-fielderr { color: #f7badd; }
+.app-container .gb .ay-field[aria-invalid='true'] { outline: 2px solid #8a1c3c; }
+.app-container .gb-once { margin-top: var(--ay-s16) !important; }
+
+/* admin */
+.app-container .gb-admin__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ay-s16); }
+.app-container .gb-admin__panel { padding-top: var(--ay-s24); }
+.app-container .gb-admin__tools { display: flex; justify-content: flex-end; margin-bottom: var(--ay-s16); }
+.app-container .gb-admin__list { list-style: none; margin: var(--ay-s24) 0 0; padding: 0; display: grid; gap: var(--ay-s12); }
+.app-container .gb-admin__form { margin: 0 0 var(--ay-s8); }
+.app-container .gb-small { min-height: 40px !important; padding: 0 16px !important; font-size: 14px !important; }
+.app-container .gb-order__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ay-s12); }
+.app-container .gb-status { width: auto !important; min-height: 40px !important; padding-block: 8px !important; }
+.app-container .gb-order__ship, .app-container .gb-order__note { margin: 0; font: 500 14px/1.5 var(--ay-sans-stack); }
+.app-container .gb-order__note { margin-top: var(--ay-s8); color: var(--ay-text-2); }
+.app-container .gb-made { display: grid; gap: var(--ay-s8); justify-items: start; margin-top: var(--ay-s16); padding: var(--ay-s16); border-radius: var(--ay-r-card); background: var(--ay-alert-bg); color: #3e2723; }
+.app-container .gb-made p { margin: 0; }
+.app-container .gb-made code { word-break: break-all; font: 500 14px/1.4 ui-monospace, Menlo, monospace; }
+.app-container .gb-linkrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ay-s12); padding: var(--ay-s12) 0; border-bottom: 1px solid var(--ay-hairline); }
+.app-container .gb-linkrow__actions { display: flex; align-items: center; gap: var(--ay-s12); }
+.app-container .gb-prow { display: grid; grid-template-columns: 56px 1fr auto; align-items: center; gap: var(--ay-s12); padding: var(--ay-s8) 0; border-bottom: 1px solid var(--ay-hairline); }
+.app-container .gb-prow.is-off { opacity: .55; }
+.app-container .gb-prow__img { width: 56px; height: 56px; border: 1.5px solid #3e2723; border-radius: var(--ay-r-tile); background: #fff; overflow: hidden; display: grid; place-items: center; }
+.app-container .gb-prow__img img { width: 100%; height: 100%; object-fit: contain; }
+.app-container .gb-prow__body { display: grid; gap: 2px; min-width: 0; }
+.app-container .gb-check { display: flex; align-items: flex-end; padding-bottom: 12px; font: 600 14px/1.3 var(--ay-sans-stack); }
+.app-container .gb-check input { margin-right: 8px; width: 18px; height: 18px; vertical-align: -3px; }
+
+@media (max-width: 767px) {
+  .app-container .gb-head { --ph-top: 21px; }
+  .app-container .gb-bar { grid-template-columns: 1fr; }
+  .app-container .gb-bar .ay-btn { grid-column: 1; grid-row: auto; width: 100%; }
+  .app-container .gb-sheet { max-height: calc(100vh - 24px); }
+}

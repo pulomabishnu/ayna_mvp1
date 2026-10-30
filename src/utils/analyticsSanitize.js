@@ -24,7 +24,9 @@ export const FREE_TEXT_URL_PARAMS = new Set([
 ]);
 
 // Any property whose key looks like it holds a URL.
-const URL_KEY = /(url|referrer|href)$/i;
+const URL_KEY = /(url|referrer|href|pathname)$/i;
+// A gift box winner link is a key (/gift/<token>): never send the token.
+const GIFT_LINK = /(\/gift\/)[A-Za-z0-9_-]{20,64}/;
 
 /**
  * Drop free-text params from a URL string and any `key=value` hash (auth
@@ -40,6 +42,10 @@ export function scrubUrl(value) {
     return value;
   }
   let changed = false;
+  if (GIFT_LINK.test(url.pathname)) {
+    url.pathname = url.pathname.replace(GIFT_LINK, '$1link');
+    changed = true;
+  }
   for (const key of [...url.searchParams.keys()]) {
     if (FREE_TEXT_URL_PARAMS.has(key.toLowerCase())) {
       url.searchParams.delete(key);

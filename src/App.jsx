@@ -56,6 +56,8 @@ const AdminResearchPage = lazyView(() => import('./components/AdminResearchPage'
 const AdminTopicsPage = lazyView(() => import('./components/AdminTopicsPage'));
 const FreeProductPage = lazyView(() => import('./components/freeProduct/FreeProductPage'));
 const CampaignAdminPage = lazyView(() => import('./components/CampaignAdminPage'));
+const GiftBoxPage = lazyView(() => import('./components/giftBox/GiftBoxPage'));
+const GiftBoxAdminPage = lazyView(() => import('./components/giftBox/GiftBoxAdminPage'));
 const PhoneVerification = lazyView(() => import('./components/PhoneVerification'));
 const Recommendations = lazyView(() => import('./components/Recommendations'));
 const TrackedItems = lazyView(() => import('./components/TrackedItems'));
@@ -288,6 +290,10 @@ const VIEW_TO_PATH = {
   'free-product': '/free-product',
   'free-product-reward': '/free-product/reward',
   'admin-campaign': '/admin/campaign',
+  // Focus group winner's gift box. Winners open /gift/<one-time link>; admins shop /gift.
+  // Real gate is server-side: api/giftbox.js and api/giftbox-admin.js.
+  gift: '/gift',
+  'admin-gift': '/admin/gift',
 };
 // Friendly document.title per view'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
@@ -308,6 +314,8 @@ const VIEW_TITLES = {
   'free-product': 'Your free product',
   'free-product-reward': 'Your free product',
   'admin-campaign': 'Free product campaign',
+  gift: 'Your gift box',
+  'admin-gift': 'Gift box',
 };
 
 // The home page's words, the same as index.html (src/utils/seoPages.js).
@@ -428,6 +436,7 @@ function youSectionFromPath(path) {
   return YOU_SECTION_KEYS.includes(key) ? key : null;
 }
 function viewFromSubPath(path) {
+  if (/^\/gift\/[A-Za-z0-9_-]{20,64}\/?$/.test(path)) return 'gift';
   if (slugFromPath(path)) return 'shared-answer';
   if (articleIdFromPath(path)) return 'articles';
   if (communityHandleFromPath(path) || communityPostFromPath(path)) return 'community';
@@ -1018,6 +1027,8 @@ function App() {
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'community',
       'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'waitlist', 'not-found', 'ecosystem',
       'free-product', 'free-product-reward', 'health', 'shared-answer',
+      // A winner's gift box link works without an account.
+      'gift', 'admin-gift',
       'today', 'explore', 'explore-topics', 'explore-services', 'ask',
       // Compare works signed out (a shared /compare?ids= link must open, not bounce to the landing).
       'comparison',
@@ -2976,6 +2987,12 @@ function App() {
         {currentView === 'admin-campaign' && (
           <CampaignAdminPage onBack={handleBackFromStandalonePage} />
         )}
+        {(currentView === 'gift' || currentView === 'admin-gift') && (() => {
+          const signIn = () => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); };
+          return currentView === 'gift'
+            ? <GiftBoxPage user={user} authLoading={authLoading} onSignIn={signIn} />
+            : <GiftBoxAdminPage user={user} authLoading={authLoading} onSignIn={signIn} />;
+        })()}
         {currentView === 'admin-topics' && (
           <AdminTopicsPage onBack={handleBackFromStandalonePage} />
         )}
