@@ -32,3 +32,8 @@
    dark); the logo is text, so no tile: butter page in light, espresso in dark. */
 .ayna-mobile .ayna-figma-header.ayna-shared-header button.ay-logo-btn,
 .ayna-mobile[data-theme='dark'] .ayna-figma-header.ayna-shared-header button.ay-logo-btn { background: transparent !important; border-radius: 8px !important; box-shadow: none !important; }
+
+/* iPhone (founder, Oct 29): the header scrolled half under the status bar and
+   looked cut in half. It now stays pinned like an iOS nav bar, on its own
+   background, under the status-bar strip (z 70). */
+.ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-home__view, .ayna-fresh-ecosystem, .ayna-fresh-profile-hub) > .ayna-shared-header { position: sticky; top: 0; z-index: 60; }
