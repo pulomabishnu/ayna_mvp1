@@ -3176,7 +3176,10 @@ html body .app-container .wc3 .wc-post:nth-of-type(5n + 2) { transform: rotate(-
 html body .app-container .wc-team-tag { white-space: nowrap; }
 html body .app-container .lx .ay-partners .ay-partners-title { color: #3e2723 !important; }
 /* Global "Pause motion" */
-html.ay-motion-paused *, html.ay-motion-paused *::before, html.ay-motion-paused *::after { animation-play-state: paused !important; scroll-behavior: auto !important; }
+/* Pause motion freezes every animation. The negative delay freezes one-shot entrances
+   (sign-in dialog, sheets) on their LAST frame, not their first: paused at frame 0 they
+   stayed invisible (opacity 0), so Sign in showed only the dark backdrop. */
+html.ay-motion-paused *, html.ay-motion-paused *::before, html.ay-motion-paused *::after { animation-play-state: paused !important; animation-delay: -60s !important; scroll-behavior: auto !important; }
 /* Tablet (701–900px): the four nav links fit, so keep the text nav instead of a hamburger. */
 @media (min-width: 768px) and (max-width: 900px) {
   html body .app-container .app-nav .desktop-only { display: flex !important; }
