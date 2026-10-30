@@ -11,7 +11,7 @@ import { localToday } from '../../utils/localDate.js';
 const TABS = [['orders', 'Orders'], ['links', 'Winner links'], ['products', 'Products']];
 const ORDER_STATUS = { new: 'New', preparing: 'Preparing', shipped: 'Shipped', delivered: 'Delivered', canceled: 'Canceled' };
 const LINK_STATUS = { open: 'Not used yet', redeemed: 'Ordered', revoked: 'Turned off' };
-const EMPTY_PRODUCT = { brand: '', name: '', price: '', notes: '', imageUrl: '', productUrl: '', maxPerOrder: '1', sortOrder: '0', isActive: true };
+const EMPTY_PRODUCT = { category: '', brand: '', name: '', price: '', notes: '', imageUrl: '', productUrl: '', maxPerOrder: '1', sortOrder: '0', isActive: true };
 
 const dollarsToCents = (v) => {
   const n = Number(String(v).replace(/[$,\s]/g, ''));
@@ -157,7 +157,7 @@ function ProductForm({ initial, onSave, onCancel }) {
     if (!f.name.trim() || priceCents === null || f.price === '') { setErr('Add a name and a price.'); return; }
     setErr('');
     const ok = await onSave({
-      action: 'save_product', id: f.id, brand: f.brand, name: f.name, notes: f.notes, priceCents,
+      action: 'save_product', id: f.id, category: f.category, brand: f.brand, name: f.name, notes: f.notes, priceCents,
       imageUrl: f.imageUrl, productUrl: f.productUrl, maxPerOrder: Number(f.maxPerOrder) || 1, sortOrder: Number(f.sortOrder) || 0, isActive: f.isActive,
     });
     if (ok && !f.id) setF(EMPTY_PRODUCT);
@@ -166,6 +166,7 @@ function ProductForm({ initial, onSave, onCancel }) {
     <form className="ay-group is-padded gb-admin__form" onSubmit={save}>
       <h2 className="gb-subhead">{f.id ? `Edit ${initial.name}` : 'Add a product'}</h2>
       <div className="gb-row">
+        <div><label className="ay-field-label" htmlFor="gp-cat">Category</label><input id="gp-cat" className="ay-field" placeholder="Skin" value={f.category} onChange={set('category')} /></div>
         <div><label className="ay-field-label" htmlFor="gp-brand">Brand</label><input id="gp-brand" className="ay-field" value={f.brand} onChange={set('brand')} /></div>
         <div><label className="ay-field-label" htmlFor="gp-name">Name</label><input id="gp-name" className="ay-field" value={f.name} onChange={set('name')} /></div>
         <div><label className="ay-field-label" htmlFor="gp-price">Value ($)</label><input id="gp-price" className="ay-field" inputMode="decimal" value={f.price} onChange={set('price')} /></div>
@@ -190,17 +191,59 @@ function ProductForm({ initial, onSave, onCancel }) {
   );
 }
 
-function Products({ products, act }) {
+const SYNC_ERRORS = {
+  sheet_not_public: 'The site can’t open the sheet. In Google Sheets: Share → General access → Anyone with the link → Viewer.',
+  no_header: 'Couldn’t find the header row (it needs id and name columns).',
+  sheet_empty: 'The sheet has no products.',
+};
+
+function syncMessage(r) {
+  if (!r) return '';
+  if (r.ok) {
+    if (r.skippedSync) return '';
+    const skipped = (r.skipped || []).map((x) => `row ${x.row} (${x.reason})`).join(', ');
+    return `Synced ${r.synced} products from the sheet, ${r.shown} shown.${skipped ? ` Skipped: ${skipped}.` : ''}`;
+  }
+  return `${SYNC_ERRORS[r.error] || 'Couldn’t copy the sheet into the site.'}${r.detail ? ` (${r.detail})` : ''}`;
+}
+
+function SheetSync({ sheetUrl, lastSync, act }) {
+  const [result, setResult] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const shown = result || lastSync;
+  const sync = async () => {
+    setBusy(true);
+    try {
+      setResult(await adminAction({ action: 'sync_sheet' }));
+      await act(null);
+    } catch (e) {
+      setResult(e.body || { ok: false, error: 'sync_failed', detail: e.code });
+    } finally { setBusy(false); }
+  };
+  return (
+    <div className="ay-group is-padded gb-sync">
+      <p>Products come from the Google Sheet and update on their own every few minutes. Products added below (not in the sheet) stay as they are.</p>
+      <div className="gb-linkrow__actions">
+        <button type="button" className="ay-btn ay-btn--primary gb-small" disabled={busy} onClick={sync}>{busy ? 'Syncing…' : 'Sync now'}</button>
+        {sheetUrl ? <a className="ay-btn ay-btn--text" href={sheetUrl} target="_blank" rel="noopener noreferrer">Open the sheet</a> : null}
+      </div>
+      {shown && syncMessage(shown) ? <p className={shown.ok ? 'ay-meta' : 'gb-fielderr'} role="status">{syncMessage(shown)}</p> : null}
+    </div>
+  );
+}
+
+function Products({ products, sheetUrl, lastSync, act }) {
   const [editing, setEditing] = useState(null);
   const save = async (body) => { const r = await act(body); if (r?.ok) setEditing(null); return Boolean(r?.ok); };
   return (
     <>
+      <SheetSync sheetUrl={sheetUrl} lastSync={lastSync} act={act} />
       {editing ? null : <ProductForm initial={EMPTY_PRODUCT} onSave={save} />}
       <ul className="gb-admin__list">
         {products.map((p) => (editing === p.id ? (
           <li key={p.id}>
             <ProductForm
-              initial={{ id: p.id, brand: p.brand, name: p.name, price: String(p.price_cents / 100), notes: p.notes, imageUrl: p.image_url || '', productUrl: p.product_url || '', maxPerOrder: String(p.max_per_order), sortOrder: String(p.sort_order), isActive: p.is_active }}
+              initial={{ id: p.id, category: p.category || '', brand: p.brand, name: p.name, price: String(p.price_cents / 100), notes: p.notes, imageUrl: p.image_url || '', productUrl: p.product_url || '', maxPerOrder: String(p.max_per_order), sortOrder: String(p.sort_order), isActive: p.is_active }}
               onSave={save} onCancel={() => setEditing(null)} />
           </li>
         ) : (
@@ -208,7 +251,7 @@ function Products({ products, act }) {
             <div className="gb-prow__img">{p.image_url ? <img src={p.image_url} alt="" /> : null}</div>
             <div className="gb-prow__body">
               <b>{p.name}</b>
-              <span className="ay-meta">{[p.brand, money(p.price_cents), p.max_per_order > 1 ? `up to ${p.max_per_order}` : '', p.is_active ? '' : 'hidden'].filter(Boolean).join(' · ')}</span>
+              <span className="ay-meta">{[p.category, p.sheet_id ? 'from sheet' : '', p.brand, money(p.price_cents), p.max_per_order > 1 ? `up to ${p.max_per_order}` : '', p.is_active ? '' : 'hidden'].filter(Boolean).join(' · ')}</span>
             </div>
             <button type="button" className="ay-btn ay-btn--text" onClick={() => setEditing(p.id)}>Edit</button>
           </li>
@@ -220,13 +263,15 @@ function Products({ products, act }) {
 
 export default function GiftBoxAdminPage({ user, authLoading, onSignIn }) {
   const [tab, setTab] = useState('orders');
+  const [tabPicked, setTabPicked] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
 
-  const refresh = useCallback(() => getAdmin().then((d) => { setData(d); setError(''); }, (e) => setError(e.code || 'error')), []);
+  const refresh = useCallback(() => getAdmin().then((d) => { setData(d); setError(''); if (!tabPicked && (!d.products.length || d.sync?.ok === false)) setTab('products'); }, (e) => setError(e.code || 'error')), [tabPicked]);
   useEffect(() => { if (!authLoading && user) refresh(); }, [authLoading, user, refresh]);
 
   const act = useCallback(async (body) => {
+    if (!body) { await refresh(); return null; }
     try {
       const r = await adminAction(body);
       await refresh();
@@ -263,7 +308,7 @@ export default function GiftBoxAdminPage({ user, authLoading, onSignIn }) {
         <div className="ay-tabs">
           <div className="ay-tabs__list" role="tablist">
             {TABS.map(([k, label]) => (
-              <button key={k} type="button" role="tab" className="ay-tabs__tab" aria-selected={tab === k} onClick={() => setTab(k)}>
+              <button key={k} type="button" role="tab" className="ay-tabs__tab" aria-selected={tab === k} onClick={() => { setTab(k); setTabPicked(true); }}>
                 {label} <span className="ay-tabs__count">{counts[k]}</span>
               </button>
             ))}
@@ -271,7 +316,7 @@ export default function GiftBoxAdminPage({ user, authLoading, onSignIn }) {
           <div className="ay-tabs__panel gb-admin__panel" role="tabpanel">
             {tab === 'orders' ? <Orders orders={data.orders} act={act} /> : null}
             {tab === 'links' ? <Links links={data.links} act={act} /> : null}
-            {tab === 'products' ? <Products products={data.products} act={act} /> : null}
+            {tab === 'products' ? <Products products={data.products} sheetUrl={data.sheetUrl} lastSync={data.sync} act={act} /> : null}
           </div>
         </div>
       </div>
