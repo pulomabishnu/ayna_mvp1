@@ -279,6 +279,8 @@ function useEvidence(product, aynaData) {
       communityText: noDash(meaningful(product.communityReview)),
       memberReviews: (aynaData?.reviews || []).map((r) => noDash(r?.text)).filter(Boolean).slice(0, 3),
       community, brandRating,
+      // The brand's own reviews page for this product (e.g. alubri.com), listed first under Reviews.
+      brandReviews: product.brandReviewsUrl ? { url: product.brandReviewsUrl, title: noDash(product.brandReviewsLabel || `${product.brand || 'Brand'} reviews`), publisher: sourceName(product.brandReviewsUrl, product.brand), summary: noDash(product.brandReviewsSummary || '') } : null,
       warnings,
       pregnancy: pregValue && !/pregnan/i.test(warnText) ? pregValue : '',
       sideEffects, fdaRaw, fda, allergens, safetyLinks,
@@ -509,7 +511,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {d.memberReviews.length > 0 && <><h3 className="ay-part__h">From ayna members</h3>{d.memberReviews.map((r) => <blockquote key={r.slice(0, 40)} className="ay-ev__quote">{r}</blockquote>)}</>}
       {!ratingLine && !reviewRows.length && !communityText && !d.communitySummary && !d.memberReviews.length && <p className="ay-ev__body">No reviews yet.</p>}
       {rateControls}
-      <Links items={[...onlineLinks, ...(d.brand ? [{ url: `https://www.trustpilot.com/search?query=${encodeURIComponent(d.brand)}`, title: `${d.brand} on Trustpilot`, publisher: 'Trustpilot' }] : [])]} label="Read more reviews online" />
+      <Links items={[...(d.brandReviews ? [d.brandReviews] : []), ...onlineLinks.filter((l) => !d.brandReviews || l.url !== d.brandReviews.url), ...(d.brand ? [{ url: `https://www.trustpilot.com/search?query=${encodeURIComponent(d.brand)}`, title: `${d.brand} on Trustpilot`, publisher: 'Trustpilot' }] : [])]} label="Read more reviews online" />
     </> },
     d.how && { id: 'how', label: 'How to use', body: <>
       {d.how.intro && <div className="ay-box is-butter"><Paras text={d.how.intro} /></div>}

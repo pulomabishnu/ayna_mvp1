@@ -5683,6 +5683,10 @@ export const BRAND_PRODUCTS = [
         url: 'https://alubri.com/products/vaginal-moisturizing-gel',
         affiliateUrl: 'https://collabs.shop/d0dtyn', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
+        // Customer reviews on Alubri's own product page (checked 2026-11-01).
+        brandReviewsUrl: 'https://alubri.com/products/vaginal-moisturizing-gel',
+        brandReviewsLabel: 'Customer reviews on alubri.com: Vaginal Moisturizing Gel',
+        brandReviewsSummary: '4.3 out of 5 from 327 reviews on alubri.com as of November 1, 2026.',
         image: '/products/alubri/vaginal-moisturizing-gel.webp',
         summary: 'A hormone-free, fragrance-free internal vaginal moisturizer clinically proven to deliver up to 72 hours of hydration from one application, per Alubri\'s third-party, IRB-approved study of 51 menopausal women. It pairs hyaluronic acid (sodium hyaluronate) and lactic acid with Alubri\'s proprietary "Activated Oil Complex" (pre-activated coconut and rosehip oils), which the brand says balances the vaginal microbiome. Each box is a 50 mL tube with 8 single-use applicators; used twice a week, one box lasts about 4 weeks.',
         safety: {
@@ -5798,6 +5802,10 @@ export const BRAND_PRODUCTS = [
         url: 'https://alubri.com/products/intimate-serum',
         affiliateUrl: 'https://collabs.shop/jseteg', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
+        // Customer reviews on Alubri's own product page (checked 2026-11-01).
+        brandReviewsUrl: 'https://alubri.com/products/intimate-serum',
+        brandReviewsLabel: 'Customer reviews on alubri.com: Intimate Serum',
+        brandReviewsSummary: '4.4 out of 5 from 252 reviews on alubri.com as of November 1, 2026.',
         image: '/products/alubri/intimate-serum.webp',
         summary: 'A lightweight, water-based serum for external intimate skin: the vulva, labia, and vaginal opening. It pairs hyaluronic acid (sodium hyaluronate) with inulin, which Alubri says also supports a healthy skin microbiome, plus aloe, green tea, and chamomile. The brand says it absorbs with no oily residue, feels cooling, and helps the skin hold on to its natural moisture. Hormone-free and fragrance-free. Sold in a 50 mL bottle or a 1.0 fl oz trial size.',
         safety: {
@@ -5893,6 +5901,10 @@ export const BRAND_PRODUCTS = [
         url: 'https://alubri.com/products/calming-cream',
         affiliateUrl: 'https://collabs.shop/wnwjkw', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
+        // Customer reviews on Alubri's own product page (checked 2026-11-01).
+        brandReviewsUrl: 'https://alubri.com/products/calming-cream',
+        brandReviewsLabel: 'Customer reviews on alubri.com: Calming Cream',
+        brandReviewsSummary: '4.6 out of 5 from 248 reviews on alubri.com as of November 1, 2026.',
         image: '/products/alubri/calming-cream.png',
         summary: 'An over-the-counter anti-itch cream for external intimate skin, with 0.25% hydrocortisone to relieve itching and irritation. The base adds shea butter, hyaluronic acid, lactic acid, oat, aloe, and Alubri\'s Activated Oil Complex, which the brand says supports a balanced vulvar microbiome. Alubri positions it as giving the relief of an OTC ointment in a lightweight, non-greasy cream. Hormone-free and fragrance-free.',
         safety: {
@@ -5996,6 +6008,10 @@ export const BRAND_PRODUCTS = [
         url: 'https://alubri.com/products/vulva-balm',
         affiliateUrl: 'https://collabs.shop/frt2q3', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
+        // Customer reviews on Alubri's own product page (checked 2026-11-01).
+        brandReviewsUrl: 'https://alubri.com/products/vulva-balm',
+        brandReviewsLabel: 'Customer reviews on alubri.com: Vulva Balm',
+        brandReviewsSummary: '4.5 out of 5 from 257 reviews on alubri.com as of November 1, 2026.',
         image: '/products/alubri/vulva-balm.png',
         summary: 'A non-greasy daily moisturizer for the vulva that Alubri says hydrates, soothes, protects against dryness, and calms sensitive skin. It combines hyaluronic acid (sodium hyaluronate), a peptide, and Alubri\'s Activated Oil Complex with oat, green tea, dragon fruit, and Tasmanian pepperberry extracts. The brand describes a rich but lightweight balm that absorbs quickly to a soft, powdery finish. Hormone-free, fragrance-free, and hypoallergenic.',
         safety: {
@@ -6098,6 +6114,10 @@ export const BRAND_PRODUCTS = [
         url: 'https://alubri.com/products/vaginal-wellness-kit-bag-version',
         affiliateUrl: 'https://collabs.shop/a8b3sb', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
+        // Customer reviews on Alubri's own product page (checked 2026-11-01).
+        brandReviewsUrl: 'https://alubri.com/products/vaginal-wellness-kit-bag-version',
+        brandReviewsLabel: 'Customer reviews on alubri.com: Vaginal Wellness Kit',
+        brandReviewsSummary: '4.7 out of 5 from 11 reviews on alubri.com as of November 1, 2026.',
         image: '/products/alubri/vaginal-wellness-kit.webp',
         summary: 'Try Alubri for two weeks with clinically proven Vaginal Moisturizing Gel for internal hydration and microbiome balancing, and Intimate Serum for external hydration to support intimate confidence. The kit has trial sizes of both: the gel (30 mL, with single-use applicators) and the serum (30 mL).',
         safety: {
@@ -6198,6 +6218,10 @@ export const BRAND_PRODUCTS = [
         url: 'https://alubri.com/products/rejuvenate-restore-kit',
         affiliateUrl: 'https://collabs.shop/xbngwb', // ayna affiliate link (2026-10-18)
         faqUrl: 'https://alubri.com/pages/faq',
+        // Customer reviews on Alubri's own product page (checked 2026-11-01).
+        brandReviewsUrl: 'https://alubri.com/products/rejuvenate-restore-kit',
+        brandReviewsLabel: 'Customer reviews on alubri.com: Rejuvenate & Restore Kit',
+        brandReviewsSummary: 'No reviews yet on alubri.com as of November 1, 2026.',
         image: '/products/alubri/rejuvenate-restore-kit.png',
         summary: 'Two clinically proven, trial-sized Alubri products: Vulva Balm for hydration and daily comfort, and Calming Cream for fast relief from itching and irritation.',
         safety: {
@@ -7895,6 +7919,10 @@ export const BRAND_PRODUCTS = [
         url: 'https://alubri.com/products/moisture-renewal-kit',
         affiliateUrl: 'https://collabs.shop/f4isvs',
         faqUrl: 'https://alubri.com/pages/faq',
+        // Customer reviews on Alubri's own product page (checked 2026-11-01).
+        brandReviewsUrl: 'https://alubri.com/products/moisture-renewal-kit',
+        brandReviewsLabel: 'Customer reviews on alubri.com: Moisture Renewal Kit',
+        brandReviewsSummary: 'No reviews yet on alubri.com as of November 1, 2026.',
         image: '/products/alubri/moisture-renewal-kit.webp',
         summary: 'A two-week trial kit of Alubri\'s two dryness products: a 30 mL Vaginal Moisturizing Gel with 4 single-use applicators for inside, and a 15 g Vulva Balm for outside. Alubri says the gel gives up to 72 hours of hydration and balances the vaginal microbiome, and the balm relieves and prevents external dryness. Both are hormone-free and fragrance-free, and the brand describes them as gynecologist- and dermatologist-tested. A smaller, lower-cost way to try both before buying full sizes.',
         safety: {
