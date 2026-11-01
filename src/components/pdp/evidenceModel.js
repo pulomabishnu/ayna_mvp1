@@ -263,6 +263,8 @@ export function buildEvidence(product, { heroLine = '', glance = null } = {}) {
 
   // Reviews
   const communityAll = collectLinks([
+    // The brand's own reviews page for this product (e.g. alubri.com) comes first.
+    ...(product.brandReviewsUrl ? [{ url: product.brandReviewsUrl, text: product.brandReviewsLabel || `${brand || 'Brand'} reviews`, summary: product.brandReviewsSummary || '' }] : []),
     ...(product.communityReviewSourceUrl ? [{ url: product.communityReviewSourceUrl, text: product.communityReviewSourceLabel }] : []),
     ...getVerificationLinks(product, 'community'),
   ], brand);
