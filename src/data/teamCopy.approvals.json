@@ -1600,5 +1600,65 @@
   "by": "Ameera",
   "what": "d-clue.privacy (dataStorage, sellsData, hipaa, keyPolicy)",
   "note": "Ameera approved in chat Oct 21 (\"The copy OKs: Clue, Uqora, LOLA, and the postpartum title\"); grammar only: \"provider current\" to \"provider's current\" in the shared privacy-review text (src/data/catalogEvidence.js). privacy is not a locked field, logged for the record."
+ },
+ {
+  "at": "2026-11-01T23:50:28.694Z",
+  "by": "Eliz",
+  "what": "p-alubri-calming-cream.communityReview",
+  "note": "Alubri (Sarah Williams) asked for their alubri.com ratings; Eliz asked to make the fix (2026-10-29)"
+ },
+ {
+  "at": "2026-11-01T23:50:28.869Z",
+  "by": "Eliz",
+  "what": "p-alubri-intimate-serum.communityReview",
+  "note": "Alubri (Sarah Williams) asked for their alubri.com ratings; Eliz asked to make the fix (2026-10-29)"
+ },
+ {
+  "at": "2026-11-01T23:50:29.046Z",
+  "by": "Eliz",
+  "what": "p-alubri-moisture-renewal-kit.communityReview",
+  "note": "Alubri (Sarah Williams) asked for their alubri.com ratings; Eliz asked to make the fix (2026-10-29)"
+ },
+ {
+  "at": "2026-11-01T23:50:29.232Z",
+  "by": "Eliz",
+  "what": "p-alubri-rejuvenate-restore-kit.communityReview",
+  "note": "Alubri (Sarah Williams) asked for their alubri.com ratings; Eliz asked to make the fix (2026-10-29)"
+ },
+ {
+  "at": "2026-11-01T23:50:29.561Z",
+  "by": "Eliz",
+  "what": "p-alubri-vaginal-moisturizing-gel.communityReview",
+  "note": "Alubri (Sarah Williams) asked for their alubri.com ratings; Eliz asked to make the fix (2026-10-29)"
+ },
+ {
+  "at": "2026-11-01T23:50:29.747Z",
+  "by": "Eliz",
+  "what": "p-alubri-vaginal-wellness-kit.communityReview",
+  "note": "Alubri (Sarah Williams) asked for their alubri.com ratings; Eliz asked to make the fix (2026-10-29)"
+ },
+ {
+  "at": "2026-11-01T23:50:29.953Z",
+  "by": "Eliz",
+  "what": "p-alubri-vulva-balm.communityReview",
+  "note": "Alubri (Sarah Williams) asked for their alubri.com ratings; Eliz asked to make the fix (2026-10-29)"
+ },
+ {
+  "at": "2026-11-01T23:50:30.118Z",
+  "by": "Eliz",
+  "what": "p-alubri-vaginal-moisturizing-gel.summary",
+  "note": "Alubri's approved 72-hour language, with study attribution (2026-10-29)"
+ },
+ {
+  "at": "2026-11-01T23:50:30.365Z",
+  "by": "Eliz",
+  "what": "p-alubri-vaginal-wellness-kit.summary",
+  "note": "Alubri's shorter kit copy (Sarah Williams); Eliz asked to use it (2026-10-29)"
+ },
+ {
+  "at": "2026-11-01T23:50:30.777Z",
+  "by": "Eliz",
+  "what": "p-alubri-rejuvenate-restore-kit.summary",
+  "note": "Alubri's R&R Kit copy from Sarah Williams; Eliz asked to use it as written (2026-11-01)"
  }
 ]
