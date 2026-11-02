@@ -33,7 +33,9 @@ jobs:
         run: npm test -- --reporter=verbose
 
       - name: Verify catalog export
+        if: always()
         run: npm run catalog:check
 
       - name: Production build
+        if: always()
         run: npm run build
