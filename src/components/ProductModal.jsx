@@ -4,6 +4,7 @@ import { PlateName } from './cards/CardBits.jsx';
 import { SnapCarousel } from './ui/ay/index.js';
 import { useResearchState } from '../data/researchLoader';
 import ProductCard from './ProductCard';
+import CheckoutMvp from './CheckoutMvp.jsx';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
 import { isSafetyHold, isBleedingEvaluation } from '../utils/matchDisplay.js';
 import { whyLine } from '../utils/whyLine';
@@ -845,6 +846,7 @@ export default function ProductModal({
                   {noLinkBuy}
                 </div>
                 {purchaseNotes}
+                <CheckoutMvp product={product} />
                 {warningLine}
                 <ActionsRow
                   saved={isSaved}
