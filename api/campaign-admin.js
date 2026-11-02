@@ -10,11 +10,16 @@
  *   POST { action: 'campaign', state: 'launch'|'pause'|'resume'|'end' }
  *   POST { action: 'vinted_list' }                              prizes that are Vinted listings, with status
  *   POST { action: 'vinted', results: [{ listingId, status }] } available|reserved|sold; emails the team on a change
+ *   POST { action: 'pool_sync' }                                re-read the gift box sheet and refresh the prize pool now
+ *   POST { action: 'test_pool' }                                what the spinner can land on right now (for the test spinner)
+ *   POST { action: 'test_spin', exclude: [rewardProductId] }    one test spin: saves nothing, uses up nothing
  */
 import { verifyUser } from './_usageLimit.js';
 import { isCampaignAdmin, rpc, setPrivateHeaders } from './_campaign.js';
 import { sendCampaignEmail, sendTeamAlert, shippedEmail, teamVintedAlert } from './_campaignEmail.js';
 import { CAMPAIGN_ID } from '../src/utils/freeProductCampaign.js';
+import { refreshGiftboxPool } from './_campaignPool.js';
+import { sheetEditUrl } from './_giftboxSheet.js';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const STATUSES = new Set(['needs_shipping', 'preparing', 'shipped', 'delivered', 'canceled']);
@@ -38,7 +43,9 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      return res.status(200).json(await rpc(admin, 'campaign_admin_overview', { p_campaign: CAMPAIGN_ID }));
+      const poolSync = await refreshGiftboxPool(admin);
+      const overview = await rpc(admin, 'campaign_admin_overview', { p_campaign: CAMPAIGN_ID });
+      return res.status(200).json({ ...overview, poolSync, sheetUrl: sheetEditUrl() });
     }
     const body = req.body && typeof req.body === 'object' ? req.body : {};
 
@@ -120,6 +127,30 @@ export default async function handler(req, res) {
       const { error: upErr } = await admin.from('reward_campaigns').update({ ...patch, updated_at: now }).eq('id', CAMPAIGN_ID);
       if (upErr) return res.status(409).json({ error: 'not_saved' });
       return res.status(200).json({ ok: true });
+    }
+
+    if (body.action === 'pool_sync') {
+      const result = await refreshGiftboxPool(admin, { force: true });
+      if (!result.ok) return res.status(502).json({ error: result.error, message: `Could not sync: ${result.detail || result.sheet?.detail || result.error}` });
+      if (result.sheet && !result.sheet.ok) {
+        return res.status(200).json({ ok: true, message: `Couldn't read the sheet (${result.sheet.detail || result.sheet.error}), so the pool still shows the last good copy.`, result });
+      }
+      const inPool = result.pool?.inPool;
+      return res.status(200).json({ ok: true, message: `Synced. ${inPool ?? 'The'} product${inPool === 1 ? '' : 's'} can be won right now.`, result });
+    }
+
+    if (body.action === 'test_pool') {
+      const { data: c } = await admin.from('reward_campaigns').select('max_spins').eq('id', CAMPAIGN_ID).maybeSingle();
+      const pool = await rpc(admin, 'campaign_pool', { p_campaign: CAMPAIGN_ID });
+      return res.status(200).json({ maxSpins: c?.max_spins || 3, pool: Array.isArray(pool) ? pool : [] });
+    }
+
+    if (body.action === 'test_spin') {
+      const raw = Array.isArray(body.exclude) ? body.exclude : [];
+      if (raw.length > 50 || raw.some((id) => !UUID_RE.test(String(id)))) return res.status(400).json({ error: 'bad_request' });
+      const product = await rpc(admin, 'campaign_admin_test_spin', { p_campaign: CAMPAIGN_ID, p_exclude: raw.map(String) });
+      if (!product) return res.status(409).json({ error: 'no_inventory' });
+      return res.status(200).json({ ok: true, product });
     }
 
     if (body.action === 'vinted_list') {

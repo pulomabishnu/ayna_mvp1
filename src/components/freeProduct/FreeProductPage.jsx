@@ -373,7 +373,7 @@ function ProgressView({ status, user, onUnlock, onRefresh, toast }) {
 
 /* ------------------------------- Reward stage ------------------------------- */
 
-function ResultCard({ product, headingRef }) {
+export function ResultCard({ product, headingRef }) {
   const summary = product.summary && product.summary.length > 200 ? `${product.summary.slice(0, 197).trim()}…` : product.summary;
   return (
     <article className="fp-result">
@@ -567,7 +567,7 @@ function LandedList({ landed, currentId, onPick, disabled }) {
   );
 }
 
-function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
+export function RewardView({ status, user, onRefresh, onBack, toast, setStatus, client = api }) {
   const maxSpins = status.campaign.maxSpins || 3;
   const [current, setCurrent] = useState(status.lastSpin || null); // { spinId, product }
   const [spinning, setSpinning] = useState(false);
@@ -586,7 +586,7 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
   const canSpin = Boolean(status.canSpin) && !spinning;
   const currentGone = current && landed.some((l) => l.spinId === current.spinId && !l.available);
 
-  useEffect(() => { api.trackOnce('reward_experience_opened', {}, user.id); }, [user.id]);
+  useEffect(() => { client.trackOnce('reward_experience_opened', {}, user.id); }, [client, user.id]);
 
   const doSpin = async () => {
     if (spinning || claiming) return;
@@ -595,9 +595,9 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
     setSpinning(true);
     setSettled(false);
     try {
-      const res = await api.spin();
+      const res = await client.spin();
       spinCount.current = res.spinNumber || spinCount.current + 1;
-      api.track(rejected ? 'reward_respun' : 'reward_spun', { spinNumber: spinCount.current, ...(rejected ? { rejectedProductId: rejected } : {}) });
+      client.track(rejected ? 'reward_respun' : 'reward_spun', { spinNumber: spinCount.current, ...(rejected ? { rejectedProductId: rejected } : {}) });
       setCurrent({ spinId: res.spinId, product: res.product });
     } catch (err) {
       setSpinning(false);
@@ -615,11 +615,11 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
     const c = currentRef.current;
     if (c) {
       setAnnounce(`You got ${c.product.name}${c.product.brand ? ` by ${c.product.brand}` : ''}.`);
-      api.track('reward_product_shown', { productId: c.product.productId, spinNumber: spinCount.current });
+      client.track('reward_product_shown', { productId: c.product.productId, spinNumber: spinCount.current });
     }
     onRefresh(); // spins left and the list of spins come from the server
     setTimeout(() => headingRef.current?.focus({ preventScroll: false }), 30);
-  }, [onRefresh]);
+  }, [client, onRefresh]);
 
   const pick = (l) => {
     setProblem(null);
@@ -636,19 +636,19 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
     let key;
     try { key = window.sessionStorage.getItem(pendingClaimKey(current.spinId)); } catch { key = null; }
     if (!key) {
-      key = api.newIdempotencyKey();
+      key = client.newIdempotencyKey();
       try { window.sessionStorage.setItem(pendingClaimKey(current.spinId), key); } catch { /* private mode */ }
     }
-    api.track('reward_claim_attempted', { productId: current.product.productId, spinNumber: spinCount.current });
+    client.track('reward_claim_attempted', { productId: current.product.productId, spinNumber: spinCount.current });
     try {
-      const res = await api.claim(current.spinId, key);
-      api.track('reward_claimed', { productId: current.product.productId, spinsBeforeClaim: spinCount.current });
+      const res = await client.claim(current.spinId, key);
+      client.track('reward_claimed', { productId: current.product.productId, spinsBeforeClaim: spinCount.current });
       setConfirming(false);
       setStatus((s) => ({ ...s, claim: res.claim, eligible: false }));
     } catch (err) {
       setConfirming(false);
       if (err.code === 'out_of_stock') {
-        api.track('reward_claim_failed', { reason: 'out_of_stock', productId: current.product.productId });
+        client.track('reward_claim_failed', { reason: 'out_of_stock', productId: current.product.productId });
         const fresh = await onRefresh();
         const others = (fresh?.landed || []).some((l) => l.available);
         setProblem(fresh?.canSpin
@@ -658,10 +658,10 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
       } else if (err.code === 'already_claimed') {
         onRefresh();
       } else if (err.code === 'not_eligible' || err.code === 'campaign_inactive') {
-        api.track('reward_claim_failed', { reason: err.code });
+        client.track('reward_claim_failed', { reason: err.code });
         onRefresh();
       } else {
-        api.track('reward_claim_failed', { reason: 'network' });
+        client.track('reward_claim_failed', { reason: 'network' });
         setProblem({ tone: 'alert', text: "We couldn't confirm your claim. Nothing is lost, press Claim this again and we'll pick up where we left off." });
       }
     } finally {

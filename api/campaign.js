@@ -16,6 +16,7 @@
 import { verifyUser } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
 import { rpc, setPrivateHeaders } from './_campaign.js';
+import { refreshGiftboxPool } from './_campaignPool.js';
 import { claimedEmail, sendCampaignEmail, sendTeamAlert, teamClaimAlert, teamShippingAlert } from './_campaignEmail.js';
 import {
   CAMPAIGN_ID,
@@ -143,6 +144,8 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       if (await limited('status', user.id, res)) return;
+      // The prizes are the gift box sheet: pick up its edits (throttled, never blocks on a problem).
+      await refreshGiftboxPool(admin);
       return res.status(200).json(await loadStatus(admin, user));
     }
 
@@ -153,6 +156,7 @@ export default async function handler(req, res) {
         return await handleFeedback(admin, user, body, res);
       case 'spin': {
         if (await limited('spin', user.id, res)) return;
+        await refreshGiftboxPool(admin);
         const result = await rpc(admin, 'campaign_spin', { p_campaign: CAMPAIGN_ID, p_user: user.id });
         if (!result?.ok) {
           const code = ['no_inventory', 'already_claimed', 'no_spins_left'].includes(result?.error) ? 409 : 403;

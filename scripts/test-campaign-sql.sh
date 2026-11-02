@@ -209,4 +209,57 @@ echo "   first=$V1 rerun=$V2 new_products=$ADDED manyo(units:listings)=$MANYO gl
 echo "   ok  41 prizes, 42 units; a sold listing stays sold on re-run"
 
 echo
+echo "── Gift box sheet is the prize pool: show=yes in, show=no out, max = units, claims kept"
+run supabase/migrations/20261030120000_gift_box.sql
+run supabase/migrations/20261101120000_campaign_giftbox_pool.sql
+# Idempotent: applying it twice must not fail.
+run supabase/migrations/20261101120000_campaign_giftbox_pool.sql
+q "delete from public.reward_vinted_listings; delete from public.reward_claims; delete from public.reward_spins;
+   update public.reward_products set is_active = true where product_id is null;
+   update public.reward_campaigns set is_active = true, starts_at = now() - interval '1 day', ends_at = null where id = '$C';" >/dev/null
+OLDON=$(q "select count(*) from public.reward_products where campaign_id = '$C' and is_active")
+q "insert into public.giftbox_products (sheet_id, category, brand, name, price_cents, image_url, product_url, max_per_order, is_active) values
+   ('boj-glow', 'Skin', 'Beauty of Joseon', 'Glow Deep Serum Rice + Alpha Arbutin 60ml', 2000, 'https://img.example.com/a.jpg', 'https://shop.example.com/a', 1, true),
+   ('besque', 'Body', 'Besque', 'Magic Luxury Body Oil Unscented 100ml', 6800, 'http://insecure.example.com/b.jpg', null, 2, true),
+   ('sold-one', 'Skin', 'TULA', 'Glaze Plumping Lip Treatment 8g', 2400, null, null, 1, false),
+   ('shirt', 'Clothing', 'Gap', 'Navy Bomber Jacket', 6000, null, null, 1, false);" >/dev/null
+S1=$(q "select (r ->> 'added') || '|' || (r ->> 'inPool') from (select public.campaign_sync_giftbox_pool('$C') r) x")
+OFF=$(q "select count(*) from public.reward_products where campaign_id = '$C' and is_active and giftbox_product_id is null")
+POOL=$(q "select string_agg(x ->> 'brand', ',' order by x ->> 'brand') from jsonb_array_elements(public.campaign_pool('$C')) x")
+INSECURE=$(q "select coalesce(image_url, 'null') from public.reward_products where name like 'Magic Luxury%'")
+# Up to 3 spins, then no more.
+U=$(q "select public.test_make_eligible('$C', 'giftbox-spinner@example.com')")
+for i in 1 2 3; do q "select public.campaign_spin('$C', '$U') ->> 'ok'" >/dev/null; done
+FOURTH=$(q "select public.campaign_spin('$C', '$U') ->> 'error'")
+MAX=$(q "select max_spins from public.reward_campaigns where id = '$C'")
+# Win the Glow Deep serum (max 1): it leaves the pool, and stays claimed through a re-sync.
+SG=$(q "select s.id from public.reward_spins s join public.reward_products rp on rp.id = s.reward_product_id where s.user_id = '$U' and rp.brand = 'Beauty of Joseon' limit 1")
+if [ -z "$SG" ]; then
+  # The random picks skipped it: land on it directly to test the claim path.
+  SG=$(q "insert into public.reward_spins (campaign_id, user_id, reward_product_id) select '$C', '$U', id from public.reward_products where brand = 'Beauty of Joseon' and giftbox_product_id is not null returning id")
+fi
+CL=$(q "select coalesce(public.campaign_claim('$C', '$U', '$SG', 'giftbox-key-00000001') ->> 'error', 'claimed')")
+q "select public.campaign_sync_giftbox_pool('$C')" >/dev/null
+GLOW=$(q "select inventory_claimed || '/' || inventory_total from public.reward_products where brand = 'Beauty of Joseon' and giftbox_product_id is not null")
+POOL2=$(q "select coalesce(string_agg(x ->> 'brand', ','), '') from jsonb_array_elements(public.campaign_pool('$C')) x")
+# Ameera flips TULA back to show=yes and Besque to show=no in the sheet.
+q "update public.giftbox_products set is_active = true where sheet_id = 'sold-one'; update public.giftbox_products set is_active = false where sheet_id = 'besque';
+   select public.campaign_sync_giftbox_pool('$C');" >/dev/null
+POOL3=$(q "select coalesce(string_agg(x ->> 'brand', ','), '') from jsonb_array_elements(public.campaign_pool('$C')) x")
+# Lowering max below what was claimed never un-claims anything.
+q "update public.giftbox_products set max_per_order = 1 where sheet_id = 'boj-glow'; select public.campaign_sync_giftbox_pool('$C');" >/dev/null
+GLOW2=$(q "select inventory_claimed || '/' || inventory_total from public.reward_products where brand = 'Beauty of Joseon' and giftbox_product_id is not null")
+# Test spin: saves nothing, uses nothing.
+SPINS_BEFORE=$(q "select count(*) from public.reward_spins")
+TEST=$(q "select public.campaign_admin_test_spin('$C', '{}') ->> 'brand'")
+SPINS_AFTER=$(q "select count(*) from public.reward_spins")
+NOACCESS=$(q "set role authenticated; select has_function_privilege('public.campaign_sync_giftbox_pool(text)', 'execute')::text || has_function_privilege('public.campaign_admin_test_spin(text, uuid[])', 'execute')::text; reset role;" | head -1)
+echo "   old_rows_on=$OLDON sync=$S1 old_left_on=$OFF pool=$POOL http_photo=$INSECURE max_spins=$MAX fourth_spin=$FOURTH claim=$CL glow=$GLOW pool_after_claim=$POOL2 pool_after_edit=$POOL3 glow_after_max=$GLOW2 test=$TEST spins=$SPINS_BEFORE/$SPINS_AFTER browser=$NOACCESS"
+[ "$S1" = "2|2" ] && [ "$OFF" = 0 ] && [ "$POOL" = "Beauty of Joseon,Besque" ] && [ "$INSECURE" = null ] && [ "$MAX" = 3 ] \
+  && [ "$FOURTH" = no_spins_left ] && [ "$CL" = claimed ] && [ "$GLOW" = "1/1" ] && [ "$POOL2" = Besque ] && [ "$POOL3" = TULA ] \
+  && [ "$GLOW2" = "1/1" ] && [ "$TEST" = TULA ] && [ "$SPINS_BEFORE" = "$SPINS_AFTER" ] && [ "$NOACCESS" = falsefalse ] \
+  || { echo "❌ gift box pool test failed"; exit 1; }
+echo "   ok  only show=yes sheet rows can be won, 3 spins, a won unit stays won"
+
+echo
 echo "✅ campaign SQL: behaviour and concurrency tests pass"
