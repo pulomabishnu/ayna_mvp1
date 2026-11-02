@@ -1986,7 +1986,7 @@ export function fitsHerProfile(product, quizAnswers, healthProfile = null, opts 
     if (!product || !quizAnswers) return true;
     const d = buildMatchDetails(product, quizAnswers, healthProfile, opts);
     // A safety hold is not a fit yet (P0, Nov 2): it never sits in a list that implies one.
-    if (d.eligible === false || d.matchStatus === 'excluded' || d.matchStatus === 'bleeding-evaluation' || d.matchStatus === 'safety-hold') return false;
+    if (d.eligible === false || d.matchStatus === 'excluded' || d.matchStatus === 'bleeding-evaluation' || d.matchStatus === 'safety-hold' || d.eligibility === 'restricted' || d.recommendable === false) return false;
     // Bleeding after menopause: no period product or accessory (a cup steamer) either.
     if (d.careFlags?.contradictions?.some((c) => c.code === 'period_need_vs_stage') && PERIOD_PRODUCT_CATEGORIES.has(String(product.category || '').toLowerCase())) return false;
     return true;

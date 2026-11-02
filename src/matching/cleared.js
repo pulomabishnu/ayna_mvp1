@@ -9,6 +9,7 @@
 //   { status: 'cleared',  percent, band, reasons }   may be recommended
 //   { status: 'hold',     reason, next }              no number, ever
 //   { status: 'excluded', reason }                    not for her
+//   { status: 'no_fit' }                              safe to browse, not a match
 //
 // A hold has no percent or score field at all, so no screen can show one by
 // mistake. Unknown is not safe: anything not clearly cleared is a hold.
@@ -31,11 +32,13 @@ export function decideProduct(details) {
       next: h?.fix || null,
     };
   }
+  if (status === 'no-relevance' || status === 'no-profile') return { status: 'no_fit' };
   if (status !== 'scored') return { status: 'hold', reason: status || 'unknown', state: 'not_scored', next: null };
   if (details.eligibility !== 'eligible' || details.eligible !== true) return { status: 'hold', reason: 'not cleared', state: 'not_scored', next: null };
   if (details.recommendable !== true) return { status: 'excluded', reason: 'listing not recommendable' };
   const pct = details.percent;
-  if (!(typeof pct === 'number' && Number.isFinite(pct) && pct > 0)) return { status: 'hold', reason: 'no fit', state: 'not_scored', next: null };
+  if (!(typeof pct === 'number' && Number.isFinite(pct))) return { status: 'hold', reason: 'no number', state: 'not_scored', next: null };
+  if (pct <= 0) return { status: 'no_fit' };
   return { status: 'cleared', percent: pct, band: details.v2?.band || null, reasons: details.reasons || [] };
 }
 

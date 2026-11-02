@@ -45,3 +45,10 @@ describe('decideProduct: one result, three shapes', () => {
     expect(decideProduct({ ...ok, missingProductInfo: ['pregnancy safety'] }).status).toBe('hold');
   });
 });
+
+describe('decideProduct: no fit is its own result', () => {
+  it('scored at 0 or no relevance is no_fit, not a hold', () => {
+    expect(decideProduct({ ...ok, percent: 0 }).status).toBe('no_fit');
+    expect(decideProduct({ ...ok, matchStatus: 'no-relevance' }).status).toBe('no_fit');
+  });
+});
