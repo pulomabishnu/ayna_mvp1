@@ -450,7 +450,7 @@
 .app-container.app-container .ay-foot__base { display: flex; flex-wrap: wrap; gap: var(--ay-s8) var(--ay-s24); margin-top: var(--ay-s40); padding-top: var(--ay-s20); border-top: 1px solid var(--ay-hairline); font: 500 14px/1.4 var(--ay-sans-stack); color: var(--ay-text-2); }
 .app-container.app-container .ay-foot__base > span { color: var(--ay-text-2) !important; }
 .app-container.app-container .ay-foot__legal { display: grid; gap: var(--ay-s12); margin-top: var(--ay-s16); }
-.app-container.app-container .ay-foot__legaltext { margin: 0; max-width: 90ch; font: 500 13px/1.55 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
+.app-container.app-container .ay-foot__legaltext { margin: 0; max-width: none; font: 500 13px/1.55 var(--ay-sans-stack) !important; color: var(--ay-text-2) !important; }
 .app-container.app-container .ay-foot__legaltext strong { color: var(--ay-text) !important; font-weight: 600; }
 .app-container.app-container .ay-foot__legallinks { display: flex; flex-wrap: wrap; gap: 0 var(--ay-s20); align-items: center; }
 .app-container.app-container .ay-foot__legallinks :is(a, button), .app-container.app-container .ay-foot .ay-footer-analytics, .app-container.app-container .ay-foot .ay-footer-legal__link { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--ay-text) !important; font: 500 13px/1.3 var(--ay-sans-stack) !important; text-decoration: underline !important; text-underline-offset: 3px; text-transform: none !important; letter-spacing: 0 !important; cursor: pointer; }
