@@ -1337,6 +1337,8 @@ function App() {
       handleViewDiscovery('');
     } else if (pendingAction === 'free-product') {
       setCurrentView('free-product');
+    } else if (pendingAction === 'free-product-reward') {
+      setCurrentView('free-product-reward');
     } else if (pendingAction === 'login') {
       // Logging in from the landing stays on the landing (founder, Oct 28).
       setCurrentView('welcome');
@@ -2979,7 +2981,8 @@ function App() {
             stage={currentView === 'free-product-reward' ? 'reward' : 'progress'}
             onNavigate={(view) => setCurrentView(view)}
             // Back to this page after signing in (Google, Apple or email), not to My Ecosystem.
-            onSignIn={() => { setPendingAction('free-product'); pendingActionRef.current = 'free-product'; setShowAuthModal(true); }}
+            // From the spinner (/free-product/reward, e.g. the "you unlocked it" email) she comes back to the spinner.
+            onSignIn={() => { const back = currentView === 'free-product-reward' ? 'free-product-reward' : 'free-product'; setPendingAction(back); pendingActionRef.current = back; setShowAuthModal(true); }}
             // New here: quiz, save matches (makes the account), see them, then back to this page.
             onStartQuiz={() => { markReturnToFreeProduct(); handleStartQuiz(); }}
           />
