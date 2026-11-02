@@ -365,6 +365,7 @@ export default function ProductModal({
   // Signed-in person, if any. Logged out, the page offers Save instead of
   // "Add to my ecosystem" (there is no ecosystem yet).
   user = undefined,
+  onSignIn = null,
   onStartQuiz = null,
   // A safety hold's fix: open that setup question.
   onFixSafety = null,
@@ -846,7 +847,7 @@ export default function ProductModal({
                   {noLinkBuy}
                 </div>
                 {purchaseNotes}
-                <CheckoutMvp product={product} />
+                <CheckoutMvp product={product} onSignIn={onSignIn} />
                 {warningLine}
                 <ActionsRow
                   saved={isSaved}
