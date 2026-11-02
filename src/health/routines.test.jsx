@@ -77,7 +77,7 @@ describe('changeRoutine', () => {
     expect(build().other.some((x) => x.key === 'class:heat')).toBe(true);
     p = changeRoutine(p, { op: 'replace', need: 'period_pain', key: 'product:p-heat-b', with: 'class:movement' }, storage);
     expect(build().start.some((x) => x.key === 'class:movement')).toBe(true);
-    p = changeRoutine(p, { op: 'postpone', need: 'period_pain', key: 'class:movement', days: 7, today: '2026-10-24' }, storage);
+    p = changeRoutine(p, { op: 'postpone', need: 'period_pain', key: 'class:movement', days: 3650, today: '2026-10-24' /* long enough that the real date never passes it */ }, storage);
     expect(build().postponed.some((x) => x.key === 'class:movement')).toBe(true);
     p = changeRoutine(p, { op: 'notForMe', need: 'period_pain', key: 'product:p-heat-a', today: '2026-10-24' }, storage);
     expect([...build().start, ...build().other].some((x) => x.ref === 'p-heat-a')).toBe(false);

@@ -25,3 +25,23 @@ describe('clearedForRecommendation: only a fully cleared, scored product passes'
     expect(clearedForRecommendation(details)).toBe(false);
   });
 });
+
+import { decideProduct } from './cleared.js';
+describe('decideProduct: one result, three shapes', () => {
+  it('cleared carries the percent', () => {
+    expect(decideProduct(ok)).toMatchObject({ status: 'cleared', percent: 82 });
+  });
+  it('a hold carries no number at all and says what would clear it', () => {
+    const d = decideProduct({ ...ok, matchStatus: 'safety-hold', eligibility: 'restricted', percent: null, safetyHold: { reason: 'We don’t know your life stage', state: 'needs_answer', fix: { label: 'Answer: life stage', step: 'lifeStage' } } });
+    expect(d.status).toBe('hold');
+    expect(d).not.toHaveProperty('percent');
+    expect(d).not.toHaveProperty('score');
+    expect(d.next).toEqual({ label: 'Answer: life stage', step: 'lifeStage' });
+  });
+  it('excluded wins over everything', () => {
+    expect(decideProduct({ ...ok, eligible: false }).status).toBe('excluded');
+  });
+  it('a missing product fact is a hold even if marked scored', () => {
+    expect(decideProduct({ ...ok, missingProductInfo: ['pregnancy safety'] }).status).toBe('hold');
+  });
+});
