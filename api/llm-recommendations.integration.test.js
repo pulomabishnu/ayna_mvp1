@@ -36,8 +36,13 @@ async function loadHandler() {
   return (await import('./llm-recommendations.js')).default;
 }
 
+// Safety questions answered, as the real quiz requires. Without them every
+// ingested product is on a safety hold and (P0, Nov 2) never reaches the model.
+const ANSWERED = { lifeStageSelections: ['I get periods regularly'], takesCurrent: 'No', allergyStatus: 'No', safetyConcern: 'No' };
+
 /** A representative intake. Expands to 9 concerns — under MAX_CONCERNS. */
 const wideIntake = {
+  ...ANSWERED,
   age: 31,
   location: '94110',
   conditions: ['PCOS', 'Endometriosis'],
@@ -55,6 +60,7 @@ const wideIntake = {
  * passes either way. This intake is what makes the cap observable.
  */
 const hugeIntake = {
+  ...ANSWERED,
   age: 31,
   location: '94110',
   conditions: ['PCOS', 'Endometriosis', 'perimenopause'],
@@ -443,7 +449,7 @@ describe('POST /api/llm-recommendations — product integrity (catalog only)', (
     ])));
     const handler = await loadHandler();
     const res = mockRes();
-    await handler(mockReq({ body: { intake: { primaryConcerns: ['Sleep and energy'] }, buildId: 'b-integrity' } }), res);
+    await handler(mockReq({ body: { intake: { ...ANSWERED, primaryConcerns: ['Sleep and energy'] }, buildId: 'b-integrity' } }), res);
 
     expect(res.statusCode).toBe(200);
     const tiers = res.body.recommendations[0].tiers;
@@ -468,7 +474,7 @@ describe('POST /api/llm-recommendations — product integrity (catalog only)', (
     ])));
     const handler = await loadHandler();
     const res = mockRes();
-    await handler(mockReq({ body: { intake: { primaryConcerns: ['Sleep and energy'] }, buildId: 'b-invented' } }), res);
+    await handler(mockReq({ body: { intake: { ...ANSWERED, primaryConcerns: ['Sleep and energy'] }, buildId: 'b-invented' } }), res);
     expect(res.statusCode).toBe(502);
     expect(supa.rpc).toHaveBeenCalledWith('release_ecosystem_build', expect.anything());
   });
@@ -476,7 +482,7 @@ describe('POST /api/llm-recommendations — product integrity (catalog only)', (
   it('puts the catalog and the catalog-only rule in the prompt', async () => {
     globalThis.fetch = vi.fn(async () => anthropicOk(recPayload()));
     const handler = await loadHandler();
-    await handler(mockReq({ body: { intake: { primaryConcerns: ['Sleep and energy'] }, buildId: 'b-prompt' } }), mockRes());
+    await handler(mockReq({ body: { intake: { ...ANSWERED, primaryConcerns: ['Sleep and energy'] }, buildId: 'b-prompt' } }), mockRes());
     const prompt = JSON.parse(globalThis.fetch.mock.calls[0][1].body).messages[0].content;
     expect(prompt).toContain('AYNA CATALOG');
     expect(prompt).toContain('CATALOG-ONLY RULE');
@@ -488,10 +494,46 @@ describe('postmenopausal AI candidate gating', () => {
   it('withholds period trackers and products for unselected symptoms before generation', async () => {
     const { catalogCandidatesForConcern } = await import('./llm-recommendations.js');
     const { ALL_PRODUCTS } = await import('../src/data/products.js');
-    const intake = { lifeStageSelections: ['I am post-menopause'], supportSelections: ['Bone health'], takesCurrent: 'No' }; // Safety answered: unanswered, the supplement is on a safety hold.
+    // Every safety question answered, so the supplement can be scored and offered.
+    const intake = { lifeStageSelections: ['I am post-menopause'], supportSelections: ['Bone health'], takesCurrent: 'No', allergyStatus: 'No', safetyConcern: 'No' };
     const candidates = catalogCandidatesForConcern(ALL_PRODUCTS, 'Bone health', 60, intake);
     const ids = candidates.map(p => p.id);
     expect(ids).toContain('p-citracal-bone-health');
     for (const id of ['d-clue', 'd-stardust', 'p-proov-empower', 'p-elitone', 'p-kindra-lotion']) expect(ids).not.toContain(id);
+  });
+});
+
+// P0, Nov 2: one gate everywhere. A product on a safety hold used to reach
+// the model because the filter read `eligible` (still true on a hold).
+describe('AI candidates: a held product is never offered or returned', () => {
+  const heldIntake = { primaryConcerns: ['Sleep and energy'] }; // safety questions unanswered
+
+  it('the supplement really is on a safety hold for her (so this test cannot go quiet)', async () => {
+    const { ALL_PRODUCTS, getProductMatchDetailsForProduct } = await import('../src/data/products.js');
+    const p = ALL_PRODUCTS.find((x) => x.id === 'p-magnesium-glycinate');
+    const d = getProductMatchDetailsForProduct(p, { fullHealthIntake: heldIntake });
+    expect(d.matchStatus).toBe('safety-hold');
+    expect(d.eligible).toBe(true); // the field the old filter trusted
+    expect(d.percent).toBeNull();
+  });
+
+  it('is not in the candidate set sent to the model', async () => {
+    const { catalogCandidatesForConcern } = await import('./llm-recommendations.js');
+    const { ALL_PRODUCTS } = await import('../src/data/products.js');
+    const ids = catalogCandidatesForConcern(ALL_PRODUCTS, 'Sleep and energy', 60, heldIntake).map((p) => p.id);
+    expect(ids).not.toContain('p-magnesium-glycinate');
+    // ...but it is offered once she has answered the safety questions.
+    const answered = catalogCandidatesForConcern(ALL_PRODUCTS, 'Sleep and energy', 60, { ...heldIntake, ...ANSWERED }).map((p) => p.id);
+    expect(answered).toContain('p-magnesium-glycinate');
+  });
+
+  it('is dropped if the model returns it anyway', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk(recPayload()));
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler(mockReq({ body: { intake: heldIntake, buildId: 'b-held' } }), res);
+    expect(res.ended).toBe(true);
+    expect(globalThis.fetch).toHaveBeenCalled(); // the model really answered with the held product
+    expect(JSON.stringify(res.body)).not.toContain('p-magnesium-glycinate');
   });
 });
