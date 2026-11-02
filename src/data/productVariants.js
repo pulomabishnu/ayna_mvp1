@@ -1423,44 +1423,16 @@ export const PRODUCT_VARIANTS = {
         "url": "https://www.target.com/p/-/A-90569336",
         "image": "/products/packaging/cora-90569336.jpg",
         "amazonAsin": "B08288RTFX"
-      },
-      {
-        "id": "target-76155166",
-        "label": "Overnight — 28 count",
-        "url": "https://www.target.com/p/-/A-76155166",
-        "image": "/products/packaging/cora-76155166.jpg",
-        "amazonAsin": "B07XL578S2"
-      },
-      {
-        "id": "target-93261793",
-        "label": "Extra Heavy Overnight — 20 count",
-        "url": "https://www.target.com/p/-/A-93261793",
-        "image": "/products/packaging/cora-93261793.jpg",
-        "amazonAsin": "B0DH6S25DP"
       }
     ]
   },
   "p-cora-overnight": {
     "sourceUrl": "https://www.target.com/p/-/A-76155166",
     "verifiedAt": "2026-09-26",
-    "familyName": "Cora Organic Cotton Pads",
+    "familyName": "Cora Organic Cotton Overnight Pads",
     "defaultVariantId": "target-76155166",
     "image": "/products/packaging/cora-76155166.jpg",
     "variants": [
-      {
-        "id": "target-76155164",
-        "label": "Regular — 32 count",
-        "url": "https://www.target.com/p/-/A-76155164",
-        "image": "/products/packaging/cora-76155164.jpg",
-        "amazonAsin": "B07XR7DVL4"
-      },
-      {
-        "id": "target-90569336",
-        "label": "Super — 30 count",
-        "url": "https://www.target.com/p/-/A-90569336",
-        "image": "/products/packaging/cora-90569336.jpg",
-        "amazonAsin": "B08288RTFX"
-      },
       {
         "id": "target-76155166",
         "label": "Overnight — 28 count",
