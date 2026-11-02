@@ -26,7 +26,7 @@ This note says what to learn, when, and the lines that never move.
   helped rate per band with Wilson intervals; no claim under 30 answers a band.
 - Research gaps: `npm run research:plan`.
 
-Start Stage 2 only when every band has at least 200 answers and the report
+Start Stage 2 only when every band has at least 200 answers, with enough answers in each sensitive slice (pregnant, trying, breastfeeding, menopause, taking medicines) to check it separately, and the report
 says `ok` or `inverted` (inverted means the hand-built bands need fixing first).
 
 ## Stage 2: recalibrate the bands (simple, explainable)
@@ -64,8 +64,9 @@ so the same way the gate does: no percent, a reason, a next step.
 
 ## Regulation
 
-ayna is consumer-facing; the Jan 2026 FDA CDS guidance covers HCP-facing tools
-and gives no new consumer policy. Staying in product discovery (no diagnosis,
+ayna is consumer-facing. The Jan 2026 FDA CDS guidance is written for
+HCP-facing tools, but FDA's existing digital-health policies still apply to
+software functions meant for patients and caregivers, so it is not a free pass. Staying in product discovery (no diagnosis,
 no treatment decisions, no threshold alerts from wearables) and keeping the
 basis of every recommendation visible is the conservative path. Have counsel
 review before any learned model ships.

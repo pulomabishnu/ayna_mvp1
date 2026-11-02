@@ -1,4 +1,5 @@
 import { ALL_PRODUCTS, getProductMatchDetailsForProduct, getSelectedNeeds, getMatchCareFlags } from '../data/products.js';
+import { clearedForRecommendation } from '../matching/cleared.js';
 import { LEGACY_CONCERN_NEEDS, needIdForOption } from '../matching/ontology.js';
 import { LEGACY_CONCERN_BY_ITEM } from '../mobile/data/intakeModel.js';
 import { buildProductProfile } from '../matching/productProfile.js';
@@ -227,9 +228,9 @@ function concernNeedIds(concern, intake) {
 /** Best eligible need match for this concern, or null. */
 function concernMatch(product, intake, needIds) {
     const details = getProductMatchDetailsForProduct(product, intake);
-    if (details?.eligible === false) return { details, match: null };
-    // Held back for her (e.g. pregnancy safety unknown): never a tier pick.
-    if ((details?.missingProductInfo || []).length > 0) return { details, match: null };
+    // One gate (P0, Nov 2): a hold (she owes an answer or a product fact is
+    // unknown), an exclusion or a listing that isn't recommendable is never a tier pick.
+    if (!clearedForRecommendation(details)) return { details, match: null };
     // Same qualification as the ecosystem engine (src/matching/ecosystem.js):
     // supplement score floors and the "PMS in the name alone" rule.
     let pp = null;

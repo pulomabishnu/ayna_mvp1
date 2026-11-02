@@ -16,6 +16,7 @@ import {
 } from './_catalogGrounding.js';
 import { CONCERN_CONFIG } from '../src/utils/recommendationEngine.js';
 import { isRxOnlyProduct, getProductMatchDetailsForProduct } from '../src/data/products.js';
+import { clearedForRecommendation } from '../src/matching/cleared.js';
 
 // Hard ceilings on client-supplied work. Without these, one request with 500
 // primaryConcerns and batchSize 500 issued 500 sequential LLM calls.
@@ -543,16 +544,15 @@ function scopedIntakeFor(intake, profile, concern) {
  */
 export function catalogCandidatesForConcern(catalog, concern, max = 60, intake = null) {
   const profile = intake?.fullHealthIntake || intake || {};
-  const stages = [profile.lifeStage, ...(profile.lifeStageSelections || [])].filter(Boolean).join(' ');
-  const menopauseStage = /menopaus/i.test(stages);
   if (intake) {
     const scopedIntake = scopedIntakeFor(intake, profile, concern);
     catalog = (catalog || []).filter((product) => {
-      const details = getProductMatchDetailsForProduct(product, scopedIntake);
-      // Products held back because the product's own safety facts are unknown
-      // for her (e.g. herbals with no pregnancy data while pregnant/TTC) aren't offered.
-      if ((details.missingProductInfo || []).length > 0) return false;
-      return details.eligible && (!menopauseStage || details.percent > 0);
+      // One gate (P0, Nov 2): the model may only choose among products the
+      // deterministic engine fully cleared for her. A safety hold (she owes an
+      // answer, or a product fact is unknown), an exclusion, a listing that is
+      // not recommendable, or no score: never offered. The same filter runs
+      // again on what the model returns (handleRequest), so it can't re-admit one.
+      return clearedForRecommendation(getProductMatchDetailsForProduct(product, scopedIntake));
     });
   }
   const cfg = concernConfigFor(concern);
