@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { availableProduct, checkoutConfig, fulfillCheckout, notifySupplier } from './_checkoutCore.js';
+import { availableProduct, checkoutConfig, checkoutWebhookSecret, fulfillCheckout, notifySupplier } from './_checkoutCore.js';
 
 afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
 
@@ -7,25 +7,29 @@ describe('direct checkout gates', () => {
   it('rejects a live Stripe key even when checkout is enabled', () => {
     vi.stubEnv('CHECKOUT_TEST_ENABLED', '1');
     vi.stubEnv('STRIPE_CHECKOUT_TEST_KEY', 'sk_live_example');
-    vi.stubEnv('STRIPE_CHECKOUT_WEBHOOK_SECRET', 'whsec_example');
     vi.stubEnv('CHECKOUT_TEST_ORDER_EMAIL', 'orders@example.com');
     vi.stubEnv('RESEND_API_KEY', 're_example');
     expect(() => checkoutConfig()).toThrow('checkout_not_configured');
   });
 
-  it('reuses existing preview Stripe test envs without allowing live mode', () => {
+  it('reuses the existing preview Stripe test API key without requiring a duplicate key', () => {
     vi.stubEnv('CHECKOUT_TEST_ENABLED', '1');
     vi.stubEnv('STRIPE_CHECKOUT_TEST_KEY', '');
-    vi.stubEnv('STRIPE_CHECKOUT_WEBHOOK_SECRET', '');
     vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_preview');
-    vi.stubEnv('STRIPE_WEBHOOK_SECRET', 'whsec_preview');
     vi.stubEnv('CHECKOUT_TEST_ORDER_EMAIL', 'orders@example.com');
     vi.stubEnv('RESEND_API_KEY', 're_example');
     vi.stubEnv('SITE_URL', 'https://preview.example.com');
     expect(checkoutConfig()).toMatchObject({
-      key: 'sk_test_preview', secret: 'whsec_preview', mailbox: 'orders@example.com',
-      origin: 'https://preview.example.com',
+      key: 'sk_test_preview', mailbox: 'orders@example.com', origin: 'https://preview.example.com',
     });
+  });
+
+  it('requires a checkout-specific webhook signing secret', () => {
+    vi.stubEnv('STRIPE_WEBHOOK_SECRET', 'whsec_generic');
+    vi.stubEnv('STRIPE_CHECKOUT_WEBHOOK_SECRET', '');
+    expect(() => checkoutWebhookSecret()).toThrow('checkout_webhook_not_configured');
+    vi.stubEnv('STRIPE_CHECKOUT_WEBHOOK_SECRET', 'whsec_checkout');
+    expect(checkoutWebhookSecret()).toBe('whsec_checkout');
   });
 
   it('does not offer a catalog item until the product and supplier are enabled', async () => {
@@ -56,7 +60,6 @@ describe('direct checkout gates', () => {
   it('never emails a supplier address different from the internal test mailbox', async () => {
     vi.stubEnv('CHECKOUT_TEST_ENABLED', '1');
     vi.stubEnv('STRIPE_CHECKOUT_TEST_KEY', 'sk_test_example');
-    vi.stubEnv('STRIPE_CHECKOUT_WEBHOOK_SECRET', 'whsec_example');
     vi.stubEnv('CHECKOUT_TEST_ORDER_EMAIL', 'internal@example.com');
     vi.stubEnv('RESEND_API_KEY', 're_example');
     const send = vi.fn();
