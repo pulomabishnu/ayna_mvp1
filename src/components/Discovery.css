@@ -63,3 +63,7 @@
 /* Suggestion box placement on Shop */
 .app-container .ayna-browse .ayna-browse__suggest { margin-top: 64px; }
 .app-container .ayna-browse__empty .ayna-browse__suggest { width: 100%; max-width: 640px; margin-top: 32px; }
+
+/* Nov 2 audit: the selected chip is painted pink by the theme (pink = selected),
+   so its text is espresso, not butter (butter on pink was unreadable). */
+html body .app-container .ay-shopfilters__chips button.is-on { color: var(--legacy-ink, #3e2723) !important; }

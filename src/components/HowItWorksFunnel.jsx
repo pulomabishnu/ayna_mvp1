@@ -13,7 +13,7 @@ import { getSampleFunnel, SAMPLE_LABEL } from '../utils/sampleFunnel';
 export default function HowItWorksFunnel() {
   const f = getSampleFunnel();
   const STAGES = [
-    { label: 'In the ayna catalog today', value: f.catalog, tone: 'all' },
+    { label: 'Products and services in the ayna catalog today', value: f.catalog, tone: 'all' }, // Nov 2 audit: services are counted here, not in the 'products' captions below
     { label: 'Matched to this profile', value: f.matched, tone: 'mid' },
     { label: 'Strong fits (80+)', value: f.strong, tone: 'you' },
   ];

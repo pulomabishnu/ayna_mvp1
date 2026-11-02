@@ -20,7 +20,13 @@ function contexts(product) {
   const name = String(p.name || '').toLowerCase();
   const tags = (Array.isArray(p.tags) ? p.tags : []).map((t) => String(t).toLowerCase());
   const out = [];
-  if (['tampon', 'cup', 'disc', 'menstrual-cup', 'menstrual-disc'].includes(cat) || /tampon|menstrual (cup|disc)/.test(name)) out.push('internal');
+  // Category decides first (Nov 2 audit): "Tampon Tribe" pads matched the name test
+  // and showed the toxic shock box on a pad. The brand is removed before the name test,
+  // and external products (pads, liners, underwear) never get it.
+  const brand = String(p.brand || '').toLowerCase();
+  const plainName = brand ? name.split(brand).join(' ') : name;
+  const external = ['pad', 'pads', 'liner', 'pantyliner', 'period-underwear'].includes(cat);
+  if (['tampon', 'cup', 'disc', 'menstrual-cup', 'menstrual-disc'].includes(cat) || (!external && /tampon|menstrual (cup|disc)/.test(plainName))) out.push('internal');
   if (cat === 'pregnancy' || tags.includes('pregnancy') || /prenatal|pregnan/.test(name)) out.push('pregnancy');
   if (cat === 'postpartum' || tags.includes('postpartum') || /postpartum|post-partum/.test(name)) out.push('postpartum');
   return out;

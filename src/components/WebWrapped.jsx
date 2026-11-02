@@ -227,7 +227,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
           </>}
           {active === 'empty' && <>
             {careNote}
-            <div className="ays-words"><h1 className="ays-title">No strong match yet</h1><p className="ays-body">No strong match yet. Your answers didn’t point to one clear pick. The Shop is sorted by need.</p></div>
+            <div className="ays-words"><h1 className="ays-title">No strong match yet</h1><p className="ays-body">Your answers didn’t point to one clear pick. The Shop is sorted by need.</p></div>
             <div className="ays-act"><button type="button" className="ays-cta" onClick={onBrowse}>Go to the Shop</button>{emptyBack && <div className="ay-wr-secondary"><button type="button" className="ays-link" onClick={emptyBack}>Edit answers</button></div>}</div>
           </>}
         </section>

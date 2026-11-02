@@ -216,3 +216,9 @@ html body .app-container[data-theme='brand-dark'] .ay-ecoprev.is-mine :is(.ay-ec
 @media (max-width: 900px) { html body .app-container .ay-ecoprev__mine { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { html body .app-container .ay-ecoprev.is-mine { padding: 32px 16px 64px; } html body .app-container .ay-ecoprev__mine { gap: 12px; } }
 @media (prefers-reduced-motion: reduce) { html body .app-container .ay-ecoprev__mine button { transition: none; } html body .app-container .ay-ecoprev__mine button:hover { transform: none; } }
+/* Nov 2 audit: on phones "As it happens" was clipped by the toggle. The chips
+   wrap below the label at full width; the text column can shrink. */
+@media (max-width: 560px) {
+  html body .wy-email.wy-email .wy-seg.wy-seg { flex-wrap: wrap !important; overflow: visible; }
+  html body .wy-email .ay-group__text { min-width: 0; }
+}
