@@ -13,6 +13,21 @@ describe('direct checkout gates', () => {
     expect(() => checkoutConfig()).toThrow('checkout_not_configured');
   });
 
+  it('reuses existing preview Stripe test envs without allowing live mode', () => {
+    vi.stubEnv('CHECKOUT_TEST_ENABLED', '1');
+    vi.stubEnv('STRIPE_CHECKOUT_TEST_KEY', '');
+    vi.stubEnv('STRIPE_CHECKOUT_WEBHOOK_SECRET', '');
+    vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_preview');
+    vi.stubEnv('STRIPE_WEBHOOK_SECRET', 'whsec_preview');
+    vi.stubEnv('CHECKOUT_TEST_ORDER_EMAIL', 'orders@example.com');
+    vi.stubEnv('RESEND_API_KEY', 're_example');
+    vi.stubEnv('SITE_URL', 'https://preview.example.com');
+    expect(checkoutConfig()).toMatchObject({
+      key: 'sk_test_preview', secret: 'whsec_preview', mailbox: 'orders@example.com',
+      origin: 'https://preview.example.com',
+    });
+  });
+
   it('does not offer a catalog item until the product and supplier are enabled', async () => {
     const product = { id: 'one', name: 'One', product_type: 'physical', is_active: true,
       checkout_enabled: false, checkout_price_cents: 1199, checkout_sku: 'ONE',
