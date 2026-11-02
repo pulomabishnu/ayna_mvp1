@@ -3,14 +3,6 @@ import { supabaseFetch } from './network.js';
 import { processLock } from '@supabase/auth-js';
 import { Capacitor } from '@capacitor/core';
 import { hasPendingConsent } from './pendingConsent.js';
-import {
-  eventSurface,
-  hasPendingSignupFlow,
-  trackSignupFailed,
-  trackSignupStarted,
-  trackSignupVerificationRequired,
-  trackSignupVerified,
-} from './analyticsEvents.js';
 
 // Supabase's implicit OAuth flow can fall back to SITE_URL when a requested
 // redirect is not allowed. In that case Google may successfully return to
@@ -52,6 +44,31 @@ normalizeWebOAuthReturnPath();
 let client = null;
 let webGoogleOAuthClient = null;
 const analyticsWrappedAuth = new WeakSet();
+let signupAnalyticsPromise = null;
+
+const NOOP_SIGNUP_ANALYTICS = {
+  eventSurface: () => (Capacitor.isNativePlatform() ? 'app' : 'web'),
+  hasPendingSignupFlow: () => false,
+  trackSignupFailed: () => false,
+  trackSignupStarted: () => false,
+  trackSignupVerificationRequired: () => false,
+  trackSignupVerified: () => false,
+};
+
+/**
+ * Keep the auth/storage module safe to import in stripped-down browser and
+ * test environments. PostHog is only loaded when a real signup/auth event
+ * needs measuring, and an analytics load failure can never block auth.
+ */
+async function getSignupAnalytics() {
+  try {
+    signupAnalyticsPromise ||= import('./analyticsEvents.js');
+    return await signupAnalyticsPromise;
+  } catch {
+    signupAnalyticsPromise = null;
+    return NOOP_SIGNUP_ANALYTICS;
+  }
+}
 
 function authStorageKey(url) {
   try {
@@ -91,29 +108,30 @@ function installSignupAnalytics(supabase) {
 
   const signUp = auth.signUp.bind(auth);
   auth.signUp = async (credentials) => {
+    const analytics = await getSignupAnalytics();
     const method = authMethod(credentials);
-    trackSignupStarted({ surface: eventSurface(), method, verification: method === 'email' ? 'email_code' : 'none' });
+    analytics.trackSignupStarted({ surface: analytics.eventSurface(), method, verification: method === 'email' ? 'email_code' : 'none' });
     try {
       const result = await signUp(credentials);
       if (result?.error) {
-        trackSignupFailed({ surface: eventSurface(), method, stage: 'account_create', reason: analyticsErrorCode(result.error) });
+        analytics.trackSignupFailed({ surface: analytics.eventSurface(), method, stage: 'account_create', reason: analyticsErrorCode(result.error) });
         return result;
       }
       // Supabase returns identities: [] when email enumeration protection turns
       // an existing account into a successful-looking response. It is not a
       // new signup and must not stay in the funnel.
       if (result?.data?.user?.identities?.length === 0) {
-        trackSignupFailed({ surface: eventSurface(), method, stage: 'account_create', reason: 'account_exists' });
+        analytics.trackSignupFailed({ surface: analytics.eventSurface(), method, stage: 'account_create', reason: 'account_exists' });
         return result;
       }
       if (result?.data?.session?.user) {
-        trackSignupVerified({ surface: eventSurface(), method, user_created_at: result.data.session.user.created_at });
+        analytics.trackSignupVerified({ surface: analytics.eventSurface(), method, user_created_at: result.data.session.user.created_at });
       } else {
-        trackSignupVerificationRequired({ surface: eventSurface(), method, verification: method === 'email' ? 'email_code' : 'otp' });
+        analytics.trackSignupVerificationRequired({ surface: analytics.eventSurface(), method, verification: method === 'email' ? 'email_code' : 'otp' });
       }
       return result;
     } catch (error) {
-      trackSignupFailed({ surface: eventSurface(), method, stage: 'account_create', reason: analyticsErrorCode(error) });
+      analytics.trackSignupFailed({ surface: analytics.eventSurface(), method, stage: 'account_create', reason: analyticsErrorCode(error) });
       throw error;
     }
   };
@@ -123,35 +141,37 @@ function installSignupAnalytics(supabase) {
     // Phone OTP is also used to re-authenticate before account deletion. Only
     // the create-account path carries the signup consent metadata.
     if (!carriesSignupConsent(credentials)) return signInWithOtp(credentials);
+    const analytics = await getSignupAnalytics();
     const method = authMethod(credentials);
-    trackSignupStarted({ surface: eventSurface(), method, verification: method === 'phone' ? 'sms' : 'otp' });
+    analytics.trackSignupStarted({ surface: analytics.eventSurface(), method, verification: method === 'phone' ? 'sms' : 'otp' });
     try {
       const result = await signInWithOtp(credentials);
       if (result?.error) {
-        trackSignupFailed({ surface: eventSurface(), method, stage: 'account_create', reason: analyticsErrorCode(result.error) });
+        analytics.trackSignupFailed({ surface: analytics.eventSurface(), method, stage: 'account_create', reason: analyticsErrorCode(result.error) });
         return result;
       }
-      trackSignupVerificationRequired({ surface: eventSurface(), method, verification: method === 'phone' ? 'sms' : 'otp' });
+      analytics.trackSignupVerificationRequired({ surface: analytics.eventSurface(), method, verification: method === 'phone' ? 'sms' : 'otp' });
       return result;
     } catch (error) {
-      trackSignupFailed({ surface: eventSurface(), method, stage: 'account_create', reason: analyticsErrorCode(error) });
+      analytics.trackSignupFailed({ surface: analytics.eventSurface(), method, stage: 'account_create', reason: analyticsErrorCode(error) });
       throw error;
     }
   };
 
   const verifyOtp = auth.verifyOtp.bind(auth);
   auth.verifyOtp = async (credentials) => {
-    const wasSignup = hasPendingSignupFlow();
+    const analytics = await getSignupAnalytics();
+    const wasSignup = analytics.hasPendingSignupFlow();
     try {
       const result = await verifyOtp(credentials);
       if (wasSignup && result?.error) {
-        trackSignupFailed({ surface: eventSurface(), method: authMethod(credentials), stage: 'verification', reason: analyticsErrorCode(result.error) });
+        analytics.trackSignupFailed({ surface: analytics.eventSurface(), method: authMethod(credentials), stage: 'verification', reason: analyticsErrorCode(result.error) });
       } else if (wasSignup && result?.data?.session?.user) {
-        trackSignupVerified({ surface: eventSurface(), method: authMethod(credentials), user_created_at: result.data.session.user.created_at });
+        analytics.trackSignupVerified({ surface: analytics.eventSurface(), method: authMethod(credentials), user_created_at: result.data.session.user.created_at });
       }
       return result;
     } catch (error) {
-      if (wasSignup) trackSignupFailed({ surface: eventSurface(), method: authMethod(credentials), stage: 'verification', reason: analyticsErrorCode(error) });
+      if (wasSignup) analytics.trackSignupFailed({ surface: analytics.eventSurface(), method: authMethod(credentials), stage: 'verification', reason: analyticsErrorCode(error) });
       throw error;
     }
   };
@@ -162,15 +182,16 @@ function installSignupAnalytics(supabase) {
   const signInWithOAuth = auth.signInWithOAuth.bind(auth);
   auth.signInWithOAuth = async (credentials) => {
     if (!hasPendingConsent()) return signInWithOAuth(credentials);
+    const analytics = await getSignupAnalytics();
     const method = authMethod(credentials);
-    trackSignupStarted({ surface: eventSurface(), method, verification: 'oauth' });
-    trackSignupVerificationRequired({ surface: eventSurface(), method, verification: 'oauth' });
+    analytics.trackSignupStarted({ surface: analytics.eventSurface(), method, verification: 'oauth' });
+    analytics.trackSignupVerificationRequired({ surface: analytics.eventSurface(), method, verification: 'oauth' });
     try {
       const result = await signInWithOAuth(credentials);
-      if (result?.error) trackSignupFailed({ surface: eventSurface(), method, stage: 'oauth_start', reason: analyticsErrorCode(result.error) });
+      if (result?.error) analytics.trackSignupFailed({ surface: analytics.eventSurface(), method, stage: 'oauth_start', reason: analyticsErrorCode(result.error) });
       return result;
     } catch (error) {
-      trackSignupFailed({ surface: eventSurface(), method, stage: 'oauth_start', reason: analyticsErrorCode(error) });
+      analytics.trackSignupFailed({ surface: analytics.eventSurface(), method, stage: 'oauth_start', reason: analyticsErrorCode(error) });
       throw error;
     }
   };
@@ -179,9 +200,12 @@ function installSignupAnalytics(supabase) {
   // session. The pending-flow marker is local-only and expires after 48h, so
   // ordinary returning-user sign-ins do not emit signup_verified.
   auth.onAuthStateChange((_event, session) => {
-    if (session?.user && hasPendingSignupFlow()) {
-      trackSignupVerified({ surface: eventSurface(), user_created_at: session.user.created_at });
-    }
+    if (!session?.user) return;
+    void getSignupAnalytics().then((analytics) => {
+      if (analytics.hasPendingSignupFlow()) {
+        analytics.trackSignupVerified({ surface: analytics.eventSurface(), user_created_at: session.user.created_at });
+      }
+    });
   });
 }
 
