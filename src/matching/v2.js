@@ -34,6 +34,8 @@ import { MENSTRUAL_PRODUCT_NEEDS, VALUE_BY_ID, needPhrase } from './ontology.js'
 export const V2 = {
   S: { direct: 1.0, strong: 1.0, secondary: 0.6 },
   E: { A: 1.0, B: 0.85, C: 0.65 },
+  // Health-claim products that are not ingested (apps, tests, wearables, care): evidence counts, more gently.
+  E_CLAIM: { A: 1.0, B: 0.96, C: 0.92 },
   focusWeight: 0.25,
   // Preferences count for a quarter of the ranking (research, Oct 17: no study
   // gives an optimum; 0.20 to 0.30 recommended). Health fit is never changed by it.
@@ -45,7 +47,9 @@ export const V2 = {
   ecosystemFloor: 0.5,
   partialFloor: 0.35,
   strongFloor: 0.75,
-  strongConfidence: 0.6,
+  // Strong needs HIGH confidence (score.js confidenceLevel: 0.75+), Nov 2 review:
+  // a word that sounds certain only when the answers it needed are complete and recent.
+  strongConfidence: 0.75,
   stopGain: 0.02,
   slots: 12,
   perNeed: 3,
@@ -124,9 +128,23 @@ export const NEED_MAP_REVIEWED = [];
 import NEED_MAP_RESEARCH from '../data/matching/needMap.research.js';
 const REVIEWED = new Map([...NEED_MAP_RESEARCH, ...NEED_MAP_REVIEWED].map((r) => [`${r.product}|${r.need}`, r]));
 
-// Products judged on fit, not on an effect claim (deep dive 3): pads, cups,
-// underwear, apps, tests. Their evidence factor is 1.0.
-export const NO_EFFECT_CATEGORIES = new Set(['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cup-steamer', 'tracker', 'app', 'diagnostics', 'test', 'telehealth', 'therapy', 'condom', 'lubricant', 'wearable']);
+// Products judged on fit alone, not on an effect claim (deep dive 3): pads,
+// cups, underwear, condoms, lubricant. Their evidence factor is 1.0.
+export const ATTRIBUTE_FIT_CATEGORIES = new Set(['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cup-steamer', 'condom', 'lubricant']);
+// Not ingested, but they make a health-performance claim (Nov 2 review): an
+// app that predicts ovulation, a home test, a wearable, telehealth or therapy.
+// Whether that claim holds up is an evidence question, so evidence counts,
+// at a gentler rate than for things she takes (V2.E_CLAIM).
+export const HEALTH_CLAIM_CATEGORIES = new Set(['tracker', 'app', 'diagnostics', 'test', 'telehealth', 'therapy', 'wearable']);
+/** Kept for older callers: every category that is not an ingested/effect product. */
+export const NO_EFFECT_CATEGORIES = new Set([...ATTRIBUTE_FIT_CATEGORIES, ...HEALTH_CLAIM_CATEGORIES]);
+/** Evidence factor for one product and grade: full for effect products, gentler for claim products, none for fit-only. */
+export function evidenceFactorFor(category, grade) {
+  const c = String(category || '').toLowerCase();
+  if (ATTRIBUTE_FIT_CATEGORIES.has(c)) return 1;
+  if (HEALTH_CLAIM_CATEGORIES.has(c)) return V2.E_CLAIM[grade] ?? 1;
+  return V2.E[grade] ?? 1;
+}
 const UNIVERSAL_CATEGORIES = new Set(['telehealth', 'therapy']);
 
 /** Draft GRADE-style evidence grade for this product and need. */
@@ -226,7 +244,8 @@ function hash01(s) {
 export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signals?.profile || null) {
   const isEffect = !NO_EFFECT_CATEGORIES.has(String(pp.category || '').toLowerCase());
   const grade = evidenceGrade(pp, r.needId);
-  const needFit = strengthOf(pp, r.needId, r.relationship) * (isEffect ? V2.E[grade] : 1);
+  const E = evidenceFactorFor(pp.category, grade);
+  const needFit = strengthOf(pp, r.needId, r.relationship) * E;
   const focus = focusOf(pp, needIds);
   // Existing product-fit modifiers (flow capacity, UTI timing, life-stage design) carry over
   // as the ratio of v1 health to the plain relationship level.
@@ -254,7 +273,7 @@ export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signa
   // base parts telescope from "made for this need" to shownHealth, so
   // sum(parts) + experience is exactly the fit before clamping.
   const strength = strengthOf(pp, r.needId, r.relationship);
-  const baseParts = health > 0 ? healthParts(pp, r, needIds, { strength, E: isEffect ? V2.E[grade] : 1, grade, isEffect, focusTerm, focus, modifiers, weakTerm, weakReason: signal?.reason || null }) : [];
+  const baseParts = health > 0 ? healthParts(pp, r, needIds, { strength, E, grade, isEffect, focusTerm, focus, modifiers, weakTerm, weakReason: signal?.reason || null }) : [];
   const expPart = experience ? [{ factor: 'history', kind: experience > 0 ? 'raised' : 'lowered', delta: round3(experience), text: experience > 0 ? 'You said this or something like it helped' : 'You said this or something like it did not help' }] : [];
   const parts = [...baseParts, ...pf.parts, ...expPart];
   const top = pf.parts.filter((x) => x.kind === 'raised' && x.reason).sort((a, b) => REASON_ORDER.indexOf(a.factor) - REASON_ORDER.indexOf(b.factor) || b.delta - a.delta)[0] || null;

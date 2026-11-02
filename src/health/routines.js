@@ -151,6 +151,8 @@ export function routineProducts(needId, { catalog = [], inRoutine = {}, detailsF
     if (!productSafety(p, ctx).ok) continue;
     const d = detailsFor ? detailsFor(p) : null;
     if (d && (d.matchStatus === 'excluded' || d.eligible === false)) continue;
+    // A held product is only listed if she already has it (P0, Nov 2): never suggested.
+    if (d && d.matchStatus === 'safety-hold' && !inRoutine[p.id]) continue;
     out.push({ product: p, details: d, level: Math.max(...fits.map((f) => f.level || 0)), owned: Boolean(inRoutine[p.id]) });
   }
   return out.sort((a, b) => Number(b.owned) - Number(a.owned)

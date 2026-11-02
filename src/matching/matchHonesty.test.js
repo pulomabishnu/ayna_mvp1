@@ -195,7 +195,9 @@ describe('distribution across needs stays stable', () => {
     expect(other.length).toBeGreaterThan(420);
     // Within 2.5 since Oct 29: the held products leave the scored set (the
     // population changed, no percent did).
-    expect(Math.abs(mean(other) - 55.45)).toBeLessThanOrEqual(2.5);
+    // Nov 2 (deliberate): apps, tests, wearables and care now carry their
+    // evidence grade (V2.E_CLAIM), so the mean moved from about 54 to 51.7.
+    expect(Math.abs(mean(other) - 51.7)).toBeLessThanOrEqual(1.5);
     expect(other.filter((x) => x >= 99).length / other.length).toBeLessThanOrEqual(0.02);
   });
   it('period products: no longer saturated at 99', () => {
