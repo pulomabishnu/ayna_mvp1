@@ -86,9 +86,10 @@ export async function createCheckout(db, stripe, user, cart, returnPath) {
 }
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-export async function notifySupplier(db, order, items) {
+export async function notifySupplier(db, order, items, supplier) {
   if (order.supplier_notified_at) return;
   const cfg = checkoutConfig();
+  if (supplier.order_email !== cfg.mailbox) throw new Error('test_mailbox_mismatch');
   const address = order.shipping_address || {};
   const lines = [address.line1, address.line2, address.city,
     [address.state, address.postal_code].filter(Boolean).join(' '), address.country].filter(Boolean);
@@ -102,7 +103,7 @@ export async function notifySupplier(db, order, items) {
     headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY,
       'Content-Type': 'application/json', 'Idempotency-Key': 'ayna-test-order-' + order.id },
     body: JSON.stringify({ from: process.env.CHECKOUT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
-      to: [cfg.mailbox], subject: 'Ayna test order ' + order.id.slice(0, 8), html: body }),
+      to: [supplier.order_email], subject: 'Ayna test order ' + order.id.slice(0, 8), html: body }),
   });
   if (!response.ok) throw new Error('supplier_email_failed');
   need(await db.from('checkout_orders').update({ supplier_notified_at: new Date().toISOString() })
@@ -140,5 +141,7 @@ export async function fulfillCheckout(db, stripe, sessionId) {
     order_id: order.id, supplier_id: attempt.supplier_id, product_id: i.product_id,
     product_name: i.name, sku: i.sku, quantity: i.quantity, unit_price_cents: i.unit_price_cents,
   })), { onConflict: 'order_id,product_id', ignoreDuplicates: true }), 'items_save_failed');
-  await notifySupplier(db, order, items.map(i => ({ product_name: i.name, ...i })));
+  const supplier = need(await db.from('checkout_suppliers').select('order_email')
+    .eq('id', attempt.supplier_id).single(), 'supplier_missing');
+  await notifySupplier(db, order, items.map(i => ({ product_name: i.name, ...i })), supplier);
 }
