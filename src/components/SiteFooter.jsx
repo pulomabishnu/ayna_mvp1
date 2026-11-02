@@ -134,22 +134,23 @@ export default function SiteFooter({
           <a className="ay-foot__link" href="/explore/services" onClick={(e) => footerGo(e, onMainTab.services)}>Services</a>
           <a className="ay-foot__link" href="/explore/resources" onClick={(e) => footerGo(e, onMainTab.library || onViewArticles)}>Library</a>
           <a className="ay-foot__link" href="/community" onClick={(e) => footerGo(e, onViewCommunity)}>Community</a>
-          <a className="ay-foot__link" href="/you/ecosystem" onClick={(e) => footerGo(e, onViewEcosystem)}>My ecosystem</a>
-          <a className="ay-foot__link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How it works</a>
-          <a className="ay-foot__link" href="/campus-resources">Campus resources</a>
+          <a className="ay-foot__link" href="/you/ecosystem" onClick={(e) => footerGo(e, onViewEcosystem)}>My Ecosystem</a>
+          <a className="ay-foot__link" href="/campus-resources">Campus Resources</a>
         </FooterColumn>
 
         <FooterColumn title="Company">
           <a className="ay-foot__link" href="/about" onClick={(e) => footerGo(e, onViewAbout)}>About</a>
-          <a className="ay-foot__link" href="/partners" onClick={(e) => footerGo(e, onViewWaitlist)}>Partner brands</a>
+          <a className="ay-foot__link" href="/partners" onClick={(e) => footerGo(e, onViewWaitlist)}>Partner Brands</a>
           <a className="ay-foot__link" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('footer')}>Invest in ayna <span aria-hidden="true">↗</span><span className="sr-only"> (opens Wefunder in a new tab)</span></a>
+          <a className="ay-foot__link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How It Works</a>
         </FooterColumn>
 
-        <FooterColumn title="Get in touch">
+        <FooterColumn title="Get in Touch">
           <a className="ay-foot__link" href="/contact" onClick={(e) => footerGo(e, onViewContact)}>Contact</a>
-          <a className="ay-foot__link" href="https://form.typeform.com/to/Jt7rx3BS?typeform-source=aynahealth.co" target="_blank" rel="noreferrer">Give us <span className="ay-foot__nowrap" style={{ whiteSpace: 'nowrap' }}>feedback <span aria-hidden="true">↗</span></span><span className="sr-only"> (opens in a new tab)</span></a>
+          <a className="ay-foot__link" href="https://form.typeform.com/to/Jt7rx3BS?typeform-source=aynahealth.co" target="_blank" rel="noreferrer">Give Us <span className="ay-foot__nowrap" style={{ whiteSpace: 'nowrap' }}>Feedback <span aria-hidden="true">↗</span></span><span className="sr-only"> (opens in a new tab)</span></a>
           <a className="ay-foot__link" href="https://www.instagram.com/ayna.health/" target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
           <a className="ay-foot__link" href="https://www.tiktok.com/@aynahealth" target="_blank" rel="noreferrer">TikTok <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+          <a className="ay-foot__link" href="https://luma.com/aynafocusgroup" target="_blank" rel="noreferrer">Win $200+ in Products <span aria-hidden="true">↗</span><span className="sr-only"> (opens our focus group sign-up in a new tab)</span></a>
         </FooterColumn>
       </div>
 
@@ -165,10 +166,10 @@ export default function SiteFooter({
           {' '}Our Wefunder round is testing the waters under Regulation Crowdfunding: no money is accepted and a reservation involves no obligation until a Form C is filed.
         </p>
         <nav className="ay-foot__legallinks" aria-label="Legal">
-          <a className="ay-footer-legal__link" href="/privacy-policy" onClick={(e) => footerGo(e, onViewPrivacyPolicy)}>Privacy policy</a>
-          <a className="ay-footer-legal__link" href="/consumer-health-data" onClick={(e) => footerGo(e, onViewConsumerHealthData)}>Consumer health data notice</a>
-          <a className="ay-footer-legal__link" href="/terms-of-use" onClick={(e) => footerGo(e, onViewTermsOfUse)}>Terms of use</a>
-          <a className="ay-footer-legal__link" href="/how-we-make-money" onClick={(e) => footerGo(e, onViewHowWeMakeMoney)}>How we make money</a>
+          <a className="ay-footer-legal__link" href="/privacy-policy" onClick={(e) => footerGo(e, onViewPrivacyPolicy)}>Privacy Policy</a>
+          <a className="ay-footer-legal__link" href="/consumer-health-data" onClick={(e) => footerGo(e, onViewConsumerHealthData)}>Consumer Health Data Notice</a>
+          <a className="ay-footer-legal__link" href="/terms-of-use" onClick={(e) => footerGo(e, onViewTermsOfUse)}>Terms of Use</a>
+          <a className="ay-footer-legal__link" href="/how-we-make-money" onClick={(e) => footerGo(e, onViewHowWeMakeMoney)}>How We Make Money</a>
           <AnalyticsToggle />
           <MotionToggle />
         </nav>
