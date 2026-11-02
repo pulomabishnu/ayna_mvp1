@@ -460,7 +460,14 @@ export function evaluateSafety(productOrProfile, up) {
     const tKey = s.trimester ? `trimester_${s.trimester}` : null;
     const status = tKey && preg[tKey] ? preg[tKey] : preg.overall;
     if (status === 'contraindicated' || preg.overall === 'contraindicated') reasons.push({ code: 'pregnancy_contraindicated', text: 'Not for use during pregnancy' });
-    else if (status === 'caution') {
+    // Nov 2 audit (P0): something she takes whose label says to ask a clinician
+    // in pregnancy (ibuprofen: not at 20 weeks or later) was still an 81% match
+    // for a third-trimester profile. In pregnancy that is her clinician's call,
+    // so it is never put forward as a match.
+    else if (status === 'caution' && systemicRoute(pp, hormoneActive)) {
+      reasons.push({ code: 'pregnancy_clinician_only', text: 'In pregnancy, use only if your clinician says so' });
+      blockedClaims.add('pregnancy_safe');
+    } else if (status === 'caution') {
       penalize('pregnancy_caution', 'Clinician check advised in pregnancy');
       cautions.push({ code: 'pregnancy_caution', text: 'Check with your clinician before using this in pregnancy.' });
       blockedClaims.add('pregnancy_safe');
