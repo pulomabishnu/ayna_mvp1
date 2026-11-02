@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { availableProduct, checkoutConfig, fulfillCheckout } from './_checkoutCore.js';
+import { availableProduct, checkoutConfig, fulfillCheckout, notifySupplier } from './_checkoutCore.js';
 
-afterEach(() => vi.unstubAllEnvs());
+afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
 
 describe('direct checkout gates', () => {
   it('rejects a live Stripe key even when checkout is enabled', () => {
@@ -36,5 +36,18 @@ describe('direct checkout gates', () => {
     }) } } };
     await expect(fulfillCheckout(db, stripe, 'cs_test_123')).resolves.toBeUndefined();
     expect(db.from).not.toHaveBeenCalled();
+  });
+
+  it('never emails a supplier address different from the internal test mailbox', async () => {
+    vi.stubEnv('CHECKOUT_TEST_ENABLED', '1');
+    vi.stubEnv('STRIPE_CHECKOUT_TEST_KEY', 'sk_test_example');
+    vi.stubEnv('STRIPE_CHECKOUT_WEBHOOK_SECRET', 'whsec_example');
+    vi.stubEnv('CHECKOUT_TEST_ORDER_EMAIL', 'internal@example.com');
+    vi.stubEnv('RESEND_API_KEY', 're_example');
+    const send = vi.fn();
+    vi.stubGlobal('fetch', send);
+    await expect(notifySupplier({}, { id: 'order', shipping_address: {} }, [],
+      { order_email: 'partner@example.com' })).rejects.toThrow('test_mailbox_mismatch');
+    expect(send).not.toHaveBeenCalled();
   });
 });
