@@ -1840,6 +1840,7 @@ export default function MobileApp() {
           ecosystemCount={myProducts.length}
           savedCount={Object.keys(savedMap || {}).length}
           quizAnswers={effectiveQuizAnswers}
+          ownAnswers={lastQuizAnswers}
           myProducts={myProducts}
           matchProducts={suggestedEcosystemProducts}
           savedProducts={savedMap}
