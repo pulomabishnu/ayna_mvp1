@@ -37,3 +37,8 @@
    looked cut in half. It now stays pinned like an iOS nav bar, on its own
    background, under the status-bar strip (z 70). */
 .ayna-mobile:is(#ay, .ayna-mobile) :is(.ay-home__view, .ayna-fresh-ecosystem, .ayna-fresh-profile-hub) > .ayna-shared-header { position: sticky; top: 0; z-index: 60; }
+/* Nov 2 audit (P0): Home's view is a flex column, so the header shrank to its
+   min-height while carrying the notch padding, and its buttons rode up under
+   the Dynamic Island. It never shrinks, and is always tall enough for the
+   notch plus its 44px controls. */
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-shared-header { flex-shrink: 0 !important; min-height: calc(max(10px, env(safe-area-inset-top)) + 58px) !important; box-sizing: border-box; }

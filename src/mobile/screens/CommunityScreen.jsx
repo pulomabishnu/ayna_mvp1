@@ -1147,6 +1147,9 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
         })()}
         {page.type === 'notifications' && authUser && <FriendRecs supabase={supabase} userId={authUser.id} productsById={productsById} onOpenProduct={onOpenProduct} />}
         {page.type === 'notifications' && (details || []).map((n) => <div className="am-card" key={n.id}><p>{n.message || n.body || n.type?.replace(/_/g, ' ')}</p><small>{timeLabel(n.created_at)}</small></div>)}
+        {/* Nov 2 audit: an empty Updates page was blank. */}
+        {page.type === 'notifications' && details == null && <p className="am-collab-empty" aria-busy="true">Loading updates…</p>}
+        {page.type === 'notifications' && Array.isArray(details) && details.length === 0 && <p className="am-collab-empty">No likes, replies or follows yet. They show up here.</p>}
         {page.type === 'profile' && details && !authUser && <div className="am-profile-actions"><button type="button" className="am-primary" onClick={() => requireAccount('following people')}>Follow</button><button type="button" className="am-secondary" onClick={() => requireAccount('friends')}>Add friend</button></div>}
       </div> : <>
         {authUser && !profile && profileState === 'ready' && <div className="am-card am-profile-setup"><strong>Join Community</strong><p>Health answers stay private.</p><div className="am-profile-setup-fields"><RuleField as="input" aria-label="Display name" value={profileName} maxLength={50} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" onShowRules={openRules} /><RuleField as="input" aria-label="Username" value={profileHandle} maxLength={30} onChange={(e) => setProfileHandle(e.target.value)} placeholder="Username" onShowRules={openRules} /></div><button type="button" disabled={busy || !profileName.trim() || !profileHandle.trim() || breaksCommunityRules(profileName, profileHandle)} onClick={saveProfile}>Create profile</button></div>}

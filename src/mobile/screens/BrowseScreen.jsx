@@ -598,7 +598,8 @@ export default function BrowseScreen({
           {!embedded && <div className="ay-shop-comparerow"><CompareToggle /></div>}
           {/* Founder Oct 26: "too much overcrowded writing". The count stays on one short line here.
               Oct 27: no commission note in the shop list; it sits beside every Buy button and in the footer. */}
-          {embedded && <p className="ay-shop-note is-embedded"><b role="status">{shownTotal} {shownTotal === 1 ? 'result' : 'results'}</b></p>}
+          {/* Nov 2 audit: with "My matches only" on, the count said 49 for 1 match. Say what is shown. */}
+          {embedded && <p className="ay-shop-note is-embedded"><b role="status">{serviceSplit ? `${filtered.length} ${filtered.length === 1 ? 'match' : 'matches'} · ${otherServices.length} more` : `${shownTotal} ${shownTotal === 1 ? 'result' : 'results'}`}</b></p>}
         </>;
         return embedded
           ? <div className="ayna-category-index is-embedded">{toolbar}</div>

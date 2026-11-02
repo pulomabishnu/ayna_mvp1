@@ -143,3 +143,9 @@
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-ring { width: min(64%, 240px); margin: 0 auto; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-hero { margin: 0 auto; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card { width: 100%; }
+/* Nov 2 audit: a long #1 match name stretched every row past the card and pushed
+   the other values off it. Rows are now a fixed two-column grid; the value
+   wraps to two lines and then truncates. The card never grows past the story. */
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card { max-width: 100%; min-width: 0; overflow: hidden; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card li { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card li b { max-width: none; min-width: 0; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; }
