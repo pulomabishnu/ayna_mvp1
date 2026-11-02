@@ -10,10 +10,16 @@ export const checkoutAdmin = () => {
   return db;
 };
 export function checkoutConfig() {
-  const key = process.env.STRIPE_CHECKOUT_TEST_KEY || '';
-  const secret = process.env.STRIPE_CHECKOUT_WEBHOOK_SECRET || '';
+  // Prefer checkout-specific test credentials when provided. Preview already has
+  // Stripe test credentials under the older generic names, so reuse those rather
+  // than requiring a duplicate secret. The test-key guard below still prevents a
+  // live Stripe key from ever activating this checkout flow.
+  const key = process.env.STRIPE_CHECKOUT_TEST_KEY || process.env.STRIPE_SECRET_KEY || '';
+  const secret = process.env.STRIPE_CHECKOUT_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET || '';
   const mailbox = process.env.CHECKOUT_TEST_ORDER_EMAIL || '';
-  const origin = new URL(process.env.SITE_URL || 'https://www.aynahealth.co');
+  let origin;
+  try { origin = new URL(process.env.SITE_URL || 'https://www.aynahealth.co'); }
+  catch { throw new Error('checkout_not_configured'); }
   if (process.env.CHECKOUT_TEST_ENABLED !== '1' || !/^(rk|sk)_test_/.test(key) ||
       !secret.startsWith('whsec_') || !mailbox || !process.env.RESEND_API_KEY ||
       !['https:', 'http:'].includes(origin.protocol) ||
