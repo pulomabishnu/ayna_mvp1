@@ -16,7 +16,7 @@ describe('the one locked state', () => {
   it('frames the lock in the checker, names the feature and has one Get ayna Pro button and a quiet Not now', () => {
     const html = renderToStaticMarkup(<ProLock feature="reads" />);
     expect(html).toContain('class="pro-frame"');
-    expect(html).toContain('Get ayna Pro to unlock');
+    expect(html).toContain('Included with ayna Pro');
     expect(html).toContain('More ayna Reads');
     expect(html.match(/class="pro-lock__cta"/g)).toHaveLength(1);
     expect(html).toContain('Not now');

@@ -344,7 +344,8 @@ export default function AskAynaModal({
       const data = await res.json().catch(() => ({}));
       if (res.status === 401) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
       if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
-      if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
+      // Never show a raw server error string (Nov 2 audit): one plain line.
+      if (!res.ok || !data?.answer) throw new Error('Could not get an answer right now.');
 
       const profileSummary = [summarizeProfile(profile || {}), allowGuideContext ? guideContext(guide) : ''].filter(Boolean).join('\n');
       const extras = await aiAnswerExtras(data, { msg, profileSent: Boolean(profileSummary), contextSent: Boolean(context), healthSent: Boolean(context && askHealth.on && healthAsk), resolveProduct, profile, matchOpts }).catch(() => ({ basedOn: ['ayna’s AI'], sources: [] }));

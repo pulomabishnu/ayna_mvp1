@@ -109,3 +109,5 @@ html body :is(#rtl1, .app-container, .ayna-mobile):is(#rtl2, .app-container, .ay
 :is(#rt1, html):is(#rt2, html):is(#rt3, html) body .ay-rt2 .ay-rt2__txt > small { font: 700 11px/1.2 var(--ay-font-ui, Figtree, sans-serif) !important; letter-spacing: .05em !important; text-transform: uppercase !important; opacity: .65 !important; }
 :is(#rt1, html):is(#rt2, html):is(#rt3, html) body .ay-rt2 .ay-rt2__group + .ay-rt2__group { border-top: 1px solid rgba(62, 39, 35, .12) !important; }
 :is(#rt1, html):is(#rt2, html):is(#rt3, html) body .ay-rt2 .ay-rt2__list { border: 1px solid rgba(62, 39, 35, .14) !important; }
+/* Nov 2 audit: no all-caps labels (design rules). Sentence case, normal tracking. */
+:is(#rt1, html):is(#rt2, html):is(#rt3, html):is(#rt4, html) body .ay-rt2 :is(.ay-rt2__when, .ay-rt2__txt > small, .ay-rt2__txt small, .ay-rt2__detail dt) { text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; }
