@@ -23,10 +23,12 @@ checkout disabled. No live payment or supplier order is possible from this code.
 4. Configure a Stripe **test-mode** webhook for
    `/api/checkout-webhook` with `checkout.session.completed` and
    `checkout.session.async_payment_succeeded`. Use its signing secret.
-5. Enable the single test supplier and product in the storefront database:
+5. Set the test supplier email to the same internal address as
+   `CHECKOUT_TEST_ORDER_EMAIL`, then enable the supplier and product:
 
 ```sql
-update public.checkout_suppliers set active = true
+update public.checkout_suppliers
+set active = true, order_email = '<your internal test mailbox>'
 where name = 'SootheHer test fulfillment';
 update public.product_catalog set checkout_enabled = true
 where id = 'p-sootheher-gel-pad-refills'
