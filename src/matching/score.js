@@ -553,6 +553,11 @@ export function evaluateSafety(productOrProfile, up) {
   }
   const rec = up.recency?.stale || {};
   if (rec.pregnancy && pStatus === 'pregnant' && preg.overall !== 'not_applicable') missingFields.push('pregnancy_current');
+  // Risk-based freshness (Nov 2): something she takes, decided on pregnancy or
+  // trying-to-conceive answers older than 90 days, asks "still true?" first.
+  const confirm = up.recency?.confirm || {};
+  if (!missingFields.includes('pregnancy_current') && confirm.pregnancy && (pStatus === 'pregnant' || s.ttc) && systemicRoute(pp, hormoneActive) && preg.overall !== 'not_applicable') missingFields.push('pregnancy_current');
+  if (confirm.medications && !rec.medications && s.medications.some((m) => m.source !== 'life_stage') && pp.interaction_relevant && systemicRoute(pp, hormoneActive)) missingFields.push('medications_current');
   if (rec.medications && s.medications.some((m) => m.source !== 'life_stage') && pp.interaction_relevant && systemicRoute(pp, hormoneActive)) missingFields.push('medications_current');
   else if (rec.medications && s.medications.length && pp.interaction_relevant) penalize('stale_medications', 'Your medicine list is from a while ago');
   if (up.contradictions?.some((c) => c.affects.includes('safety')) && carriesIngredients(pp)) missingFields.push('confirm_answers');

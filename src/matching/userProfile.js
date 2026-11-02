@@ -137,6 +137,10 @@ export const RECENCY_RULES = {
   needs: { staleAfterDays: 180, factor: 0.92 },
   budget: { staleAfterDays: 365, factor: 0.95 },
 };
+// RISK-BASED FRESHNESS (Nov 2 review). RECENCY_RULES above are profile-refresh
+// intervals. A decision that depends on pregnancy or medicines for something
+// she would take is riskier, so it asks a one-tap "still true?" sooner.
+export const SAFETY_CONFIRM_DAYS = { pregnancy: 90, medications: 90 };
 const DAY_MS = 86400000;
 function toTime(v) {
   if (v == null || v === '' || v === true) return null;
@@ -744,6 +748,11 @@ export function buildUserProfile(intakeInput, options = {}) {
   if ((needIds.has('fertility.ttc') || lifeStages.includes('ttc')) && lifeStages.includes('postmenopause')) {
     contradictions.push({ code: 'ttc_vs_postmenopause', affects: ['fertility.ttc'], text: 'Trying to conceive and post-menopause do not usually go together.' });
   }
+  // Pregnant and trying to conceive at once (Nov 2): which is true now decides
+  // what is safe to take, so anything she would take asks first.
+  if (lifeStages.includes('pregnant') && lifeStages.includes('ttc')) {
+    contradictions.push({ code: 'pregnant_vs_ttc', affects: ['safety'], text: 'You chose both pregnant and trying to conceive. We ask which is true now before suggesting anything you would take.' });
+  }
   if (trimester && !lifeStages.includes('pregnant') && ['menopause', 'postmenopause', 'no_periods'].some((st) => lifeStages.includes(st))) {
     contradictions.push({ code: 'trimester_vs_stage', affects: ['safety'], text: 'You shared a pregnancy trimester and a stage that does not usually go with pregnancy.' });
   }
@@ -789,6 +798,8 @@ export function buildUserProfile(intakeInput, options = {}) {
     answeredAt, answerAgeDays,
     factAgeDays: Object.fromEntries(Object.keys(RECENCY_RULES).map((k) => [k, factAgeDays(k)])),
     stale: Object.fromEntries(Object.keys(RECENCY_RULES).map((k) => [k, stale(k)])),
+    // Older than the safety-confirm window (used only for systemic products).
+    confirm: Object.fromEntries(Object.entries(SAFETY_CONFIRM_DAYS).map(([k, days]) => { const d = factAgeDays(k); return [k, d != null && d > days]; })),
   };
 
   // Connected health data (src/health/matchContext.js): marks needs she CHOSE
