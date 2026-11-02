@@ -86,7 +86,7 @@ export async function createCheckout(db, stripe, user, cart, returnPath) {
 }
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-export async function notifySupplier(db, order, items, supplier) {
+export async function notifySupplier(db, order, items) {
   if (order.supplier_notified_at) return;
   const cfg = checkoutConfig();
   const address = order.shipping_address || {};
@@ -140,6 +140,5 @@ export async function fulfillCheckout(db, stripe, sessionId) {
     order_id: order.id, supplier_id: attempt.supplier_id, product_id: i.product_id,
     product_name: i.name, sku: i.sku, quantity: i.quantity, unit_price_cents: i.unit_price_cents,
   })), { onConflict: 'order_id,product_id', ignoreDuplicates: true }), 'items_save_failed');
-  const supplier = need(await db.from('checkout_suppliers').select('name').eq('id', attempt.supplier_id).single(), 'supplier_missing');
-  await notifySupplier(db, order, items.map(i => ({ product_name: i.name, ...i })), supplier);
+  await notifySupplier(db, order, items.map(i => ({ product_name: i.name, ...i })));
 }
