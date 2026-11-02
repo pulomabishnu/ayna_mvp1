@@ -2,6 +2,15 @@ import { createClient } from '@supabase/supabase-js';
 import { supabaseFetch } from './network.js';
 import { processLock } from '@supabase/auth-js';
 import { Capacitor } from '@capacitor/core';
+import { hasPendingConsent } from './pendingConsent.js';
+import {
+  eventSurface,
+  hasPendingSignupFlow,
+  trackSignupFailed,
+  trackSignupStarted,
+  trackSignupVerificationRequired,
+  trackSignupVerified,
+} from './analyticsEvents.js';
 
 // Supabase's implicit OAuth flow can fall back to SITE_URL when a requested
 // redirect is not allowed. In that case Google may successfully return to
@@ -42,6 +51,7 @@ normalizeWebOAuthReturnPath();
 
 let client = null;
 let webGoogleOAuthClient = null;
+const analyticsWrappedAuth = new WeakSet();
 
 function authStorageKey(url) {
   try {
@@ -50,6 +60,129 @@ function authStorageKey(url) {
   } catch {
     return undefined;
   }
+}
+
+function analyticsErrorCode(error) {
+  const raw = String(error?.code || error?.name || 'unknown').toLowerCase();
+  return raw.replace(/[^a-z0-9_.:-]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 64) || 'unknown';
+}
+
+function authMethod(credentials) {
+  if (credentials?.provider) return String(credentials.provider).toLowerCase();
+  if (credentials?.phone) return 'phone';
+  if (credentials?.email) return 'email';
+  return 'unknown';
+}
+
+function carriesSignupConsent(credentials) {
+  const data = credentials?.options?.data;
+  return Boolean(data?.consent_version || data?.consent_given_at);
+}
+
+/**
+ * Measure account-creation friction at the Supabase boundary instead of in
+ * individual screens. That keeps web + native behavior aligned and never
+ * sends email, phone, tokens or provider error messages to analytics.
+ */
+function installSignupAnalytics(supabase) {
+  const auth = supabase?.auth;
+  if (!auth || analyticsWrappedAuth.has(auth)) return;
+  analyticsWrappedAuth.add(auth);
+
+  const signUp = auth.signUp.bind(auth);
+  auth.signUp = async (credentials) => {
+    const method = authMethod(credentials);
+    trackSignupStarted({ surface: eventSurface(), method, verification: method === 'email' ? 'email_code' : 'none' });
+    try {
+      const result = await signUp(credentials);
+      if (result?.error) {
+        trackSignupFailed({ surface: eventSurface(), method, stage: 'account_create', reason: analyticsErrorCode(result.error) });
+        return result;
+      }
+      // Supabase returns identities: [] when email enumeration protection turns
+      // an existing account into a successful-looking response. It is not a
+      // new signup and must not stay in the funnel.
+      if (result?.data?.user?.identities?.length === 0) {
+        trackSignupFailed({ surface: eventSurface(), method, stage: 'account_create', reason: 'account_exists' });
+        return result;
+      }
+      if (result?.data?.session?.user) {
+        trackSignupVerified({ surface: eventSurface(), method, user_created_at: result.data.session.user.created_at });
+      } else {
+        trackSignupVerificationRequired({ surface: eventSurface(), method, verification: method === 'email' ? 'email_code' : 'otp' });
+      }
+      return result;
+    } catch (error) {
+      trackSignupFailed({ surface: eventSurface(), method, stage: 'account_create', reason: analyticsErrorCode(error) });
+      throw error;
+    }
+  };
+
+  const signInWithOtp = auth.signInWithOtp.bind(auth);
+  auth.signInWithOtp = async (credentials) => {
+    // Phone OTP is also used to re-authenticate before account deletion. Only
+    // the create-account path carries the signup consent metadata.
+    if (!carriesSignupConsent(credentials)) return signInWithOtp(credentials);
+    const method = authMethod(credentials);
+    trackSignupStarted({ surface: eventSurface(), method, verification: method === 'phone' ? 'sms' : 'otp' });
+    try {
+      const result = await signInWithOtp(credentials);
+      if (result?.error) {
+        trackSignupFailed({ surface: eventSurface(), method, stage: 'account_create', reason: analyticsErrorCode(result.error) });
+        return result;
+      }
+      trackSignupVerificationRequired({ surface: eventSurface(), method, verification: method === 'phone' ? 'sms' : 'otp' });
+      return result;
+    } catch (error) {
+      trackSignupFailed({ surface: eventSurface(), method, stage: 'account_create', reason: analyticsErrorCode(error) });
+      throw error;
+    }
+  };
+
+  const verifyOtp = auth.verifyOtp.bind(auth);
+  auth.verifyOtp = async (credentials) => {
+    const wasSignup = hasPendingSignupFlow();
+    try {
+      const result = await verifyOtp(credentials);
+      if (wasSignup && result?.error) {
+        trackSignupFailed({ surface: eventSurface(), method: authMethod(credentials), stage: 'verification', reason: analyticsErrorCode(result.error) });
+      } else if (wasSignup && result?.data?.session?.user) {
+        trackSignupVerified({ surface: eventSurface(), method: authMethod(credentials), user_created_at: result.data.session.user.created_at });
+      }
+      return result;
+    } catch (error) {
+      if (wasSignup) trackSignupFailed({ surface: eventSurface(), method: authMethod(credentials), stage: 'verification', reason: analyticsErrorCode(error) });
+      throw error;
+    }
+  };
+
+  // OAuth is used for both sign-in and create-account. The create path stashes
+  // consent immediately before calling signInWithOAuth, so this check is the
+  // privacy-safe signal that this redirect belongs in the signup funnel.
+  const signInWithOAuth = auth.signInWithOAuth.bind(auth);
+  auth.signInWithOAuth = async (credentials) => {
+    if (!hasPendingConsent()) return signInWithOAuth(credentials);
+    const method = authMethod(credentials);
+    trackSignupStarted({ surface: eventSurface(), method, verification: 'oauth' });
+    trackSignupVerificationRequired({ surface: eventSurface(), method, verification: 'oauth' });
+    try {
+      const result = await signInWithOAuth(credentials);
+      if (result?.error) trackSignupFailed({ surface: eventSurface(), method, stage: 'oauth_start', reason: analyticsErrorCode(result.error) });
+      return result;
+    } catch (error) {
+      trackSignupFailed({ surface: eventSurface(), method, stage: 'oauth_start', reason: analyticsErrorCode(error) });
+      throw error;
+    }
+  };
+
+  // Email links, OTPs, native OAuth and web OAuth all converge on a real
+  // session. The pending-flow marker is local-only and expires after 48h, so
+  // ordinary returning-user sign-ins do not emit signup_verified.
+  auth.onAuthStateChange((_event, session) => {
+    if (session?.user && hasPendingSignupFlow()) {
+      trackSignupVerified({ surface: eventSurface(), user_created_at: session.user.created_at });
+    }
+  });
 }
 
 // Google starts through a PKCE-capable client, but deliberately uses the SAME
@@ -288,6 +421,11 @@ export function getSupabaseClient() {
         return signInWithOAuth(credentials);
       };
     }
+
+    // Install after the web Google routing wrapper so analytics sees the same
+    // final auth methods every screen calls. The wrapper is a no-op on normal
+    // sign-in and delete-account re-auth flows.
+    installSignupAnalytics(client);
   } catch (e) {
     // createClient throws synchronously on a malformed VITE_SUPABASE_URL
     // (e.g. missing "https://", a stray trailing space, a copy-pasted anon
