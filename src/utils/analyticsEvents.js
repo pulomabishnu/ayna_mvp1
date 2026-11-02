@@ -99,6 +99,7 @@ const K_LAST_OPEN = 'ayna:an:last_open_day';
 const K_CHECKINS = 'ayna:an:checkin_days';
 const K_SIGNUP_FLOW = 'ayna:an:signup_flow_v1';
 const SIGNUP_FLOW_TTL_MS = 48 * 60 * 60 * 1000;
+const EXISTING_ACCOUNT_SKEW_MS = 5 * 60 * 1000;
 const seen = new Set();
 
 function safeId(value, fallback = 'unknown') {
@@ -155,9 +156,22 @@ export function trackSignupVerificationRequired({ surface, method, verification 
 }
 
 /** A real Supabase session exists for the pending create-account attempt. */
-export function trackSignupVerified({ surface, method } = {}) {
+export function trackSignupVerified({ surface, method, user_created_at } = {}) {
   const flow = readSignupFlow();
   if (!flow || flow.verified) return false;
+
+  // OAuth can be initiated from the create-account UI for an address that
+  // already owns an ayna account. In that case Supabase signs in the existing
+  // user successfully. Use created_at locally to reject that false conversion;
+  // the timestamp itself is never an analytics property and never leaves here.
+  if (user_created_at) {
+    const createdAt = Date.parse(user_created_at);
+    if (Number.isFinite(createdAt) && createdAt < Number(flow.started_at) - EXISTING_ACCOUNT_SKEW_MS) {
+      store.remove(K_SIGNUP_FLOW);
+      return false;
+    }
+  }
+
   flow.surface = SURFACES.has(surface) ? surface : flow.surface;
   flow.method = safeId(method, flow.method || 'unknown');
   flow.verified = true;
