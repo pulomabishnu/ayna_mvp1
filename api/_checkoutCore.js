@@ -10,23 +10,26 @@ export const checkoutAdmin = () => {
   return db;
 };
 export function checkoutConfig() {
-  // Prefer checkout-specific test credentials when provided. Preview already has
-  // Stripe test credentials under the older generic names, so reuse those rather
-  // than requiring a duplicate secret. The test-key guard below still prevents a
-  // live Stripe key from ever activating this checkout flow.
+  // Preview already has a Stripe test API key under the older generic name, so
+  // reuse that key rather than duplicating it. Webhook signing secrets are
+  // endpoint-specific and are intentionally handled separately below.
   const key = process.env.STRIPE_CHECKOUT_TEST_KEY || process.env.STRIPE_SECRET_KEY || '';
-  const secret = process.env.STRIPE_CHECKOUT_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET || '';
   const mailbox = process.env.CHECKOUT_TEST_ORDER_EMAIL || '';
   let origin;
   try { origin = new URL(process.env.SITE_URL || 'https://www.aynahealth.co'); }
   catch { throw new Error('checkout_not_configured'); }
   if (process.env.CHECKOUT_TEST_ENABLED !== '1' || !/^(rk|sk)_test_/.test(key) ||
-      !secret.startsWith('whsec_') || !mailbox || !process.env.RESEND_API_KEY ||
+      !mailbox || !process.env.RESEND_API_KEY ||
       !['https:', 'http:'].includes(origin.protocol) ||
       (origin.protocol === 'http:' && origin.hostname !== 'localhost')) {
     throw new Error('checkout_not_configured');
   }
-  return { key, secret, mailbox, origin: origin.origin };
+  return { key, mailbox, origin: origin.origin };
+}
+export function checkoutWebhookSecret() {
+  const secret = process.env.STRIPE_CHECKOUT_WEBHOOK_SECRET || '';
+  if (!secret.startsWith('whsec_')) throw new Error('checkout_webhook_not_configured');
+  return secret;
 }
 export const checkoutStripe = () => new Stripe(checkoutConfig().key, {
   apiVersion: '2026-09-30.endive', maxNetworkRetries: 2, timeout: 10000,
