@@ -8,7 +8,7 @@ const readCart = () => {
 };
 const money = cents => '$' + (cents / 100).toFixed(2);
 
-export default function CheckoutMvp({ product }) {
+export default function CheckoutMvp({ product, onSignIn }) {
   const [offer, setOffer] = useState(null);
   const [cart, setCart] = useState(readCart);
   const [orders, setOrders] = useState([]);
@@ -58,7 +58,11 @@ export default function CheckoutMvp({ product }) {
     setBusy(true); setMessage('');
     try {
       const session = (await getSupabaseClient()?.auth.getSession())?.data?.session;
-      if (!session?.access_token) { setMessage('Sign in to place a test order.'); return; }
+      if (!session?.access_token) {
+        setMessage('Sign in to Ayna to place a test order. Your cart will stay here.');
+        onSignIn?.();
+        return;
+      }
       const response = await fetch('/api/checkout', {
         method: 'POST', headers: { 'Content-Type': 'application/json',
           Authorization: 'Bearer ' + session.access_token },
