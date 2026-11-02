@@ -1,11 +1,11 @@
 /* global Buffer */
-import { checkoutAdmin, checkoutConfig, checkoutStripe, fulfillCheckout } from './_checkoutCore.js';
+import { checkoutAdmin, checkoutStripe, checkoutWebhookSecret, fulfillCheckout } from './_checkoutCore.js';
 
 export const config = { api: { bodyParser: false } };
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
-  let stripe, settings;
-  try { settings = checkoutConfig(); stripe = checkoutStripe(); }
+  let stripe, secret;
+  try { secret = checkoutWebhookSecret(); stripe = checkoutStripe(); }
   catch { return res.status(503).json({ error: 'checkout_not_configured' }); }
   let event;
   try {
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       }
       raw = Buffer.concat(chunks);
     }
-    event = stripe.webhooks.constructEvent(raw, req.headers['stripe-signature'], settings.secret);
+    event = stripe.webhooks.constructEvent(raw, req.headers['stripe-signature'], secret);
   } catch { return res.status(400).json({ error: 'invalid_signature' }); }
   if (event.livemode) return res.status(400).json({ error: 'wrong_mode' });
   if (!['checkout.session.completed', 'checkout.session.async_payment_succeeded'].includes(event.type))
