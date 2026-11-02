@@ -17,7 +17,10 @@
     "build:ios": "node scripts/check-posthog-key.mjs && npm run build && npx cap sync ios",
     "build:android": "node scripts/check-posthog-key.mjs && npm run build && npx cap sync android",
     "calibration:report": "node scripts/calibration-report.mjs",
-    "research:plan": "node scripts/research-plan.mjs"
+    "research:plan": "node scripts/research-plan.mjs",
+    "catalog:readiness": "node scripts/catalog-readiness.mjs",
+    "safety:audit": "node scripts/safety-audit.mjs",
+    "match:groups": "node scripts/match-groups-report.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",
