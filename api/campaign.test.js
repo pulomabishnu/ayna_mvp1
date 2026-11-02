@@ -2,6 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockReq, mockRes, mockSupabase } from './_test-helpers.js';
 
+vi.mock('./_campaignPool.js', () => ({ refreshGiftboxPool: vi.fn(async () => ({ ok: true, skippedSync: true })) }));
 vi.mock('./_usageLimit.js', () => ({ verifyUser: vi.fn() }));
 vi.mock('./_rateLimit.js', () => ({ rateLimit: vi.fn(async () => ({ ok: true })), getClientIp: () => 'test' }));
 

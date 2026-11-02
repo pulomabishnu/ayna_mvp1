@@ -4,6 +4,7 @@ import { adminAction, getAdminOverview } from './freeProduct/campaignClient';
 import { FEEDBACK_QUESTIONS, FULFILLMENT_LABELS, REFERRAL_STATUS_LABELS, feedbackAsText, feedbackByQuestion, vintedIdsFromText } from '../utils/freeProductCampaign';
 import ConfirmButton from './ui/ConfirmButton.jsx';
 import { localToday } from '../utils/localDate.js';
+import TestSpinner from './freeProduct/TestSpinner.jsx';
 
 /**
  * Internal view of the free product campaign: /admin/campaign. Not linked from
@@ -133,6 +134,8 @@ export default function CampaignAdminPage({ onBack }) {
   const EMPTY_ITEM = { brand: '', name: '', size: '', imageUrl: '', productUrl: '', inventoryTotal: 1 };
   const [adding, setAdding] = useState(EMPTY_ITEM);
   const [open, setOpen] = useState(null);
+  const [testing, setTesting] = useState(null); // { maxSpins, pool } while the test spinner is open
+  const [showOff, setShowOff] = useState(false);
 
   const load = useCallback(() => getAdminOverview().then(
     (d) => { setData(d); setState('ok'); },
@@ -151,12 +154,22 @@ export default function CampaignAdminPage({ onBack }) {
     setMsg('');
     try {
       const r = await adminAction(body);
-      setMsg(done || (r.emailed ? 'Saved. Shipping email sent.' : 'Saved.'));
+      setMsg(done || r.message || (r.emailed ? 'Saved. Shipping email sent.' : 'Saved.'));
       await load();
       return true;
     } catch (e) {
       setMsg(e.body?.message || `Could not save (${e.code}).`);
       return false;
+    }
+  };
+
+  const startTest = async () => {
+    setMsg('');
+    try {
+      const r = await adminAction({ action: 'test_pool' });
+      setTesting({ maxSpins: r.maxSpins || 3, pool: r.pool || [] });
+    } catch (e) {
+      setMsg(e.body?.message || `Could not open the test spinner (${e.code}).`);
     }
   };
 
@@ -174,6 +187,10 @@ export default function CampaignAdminPage({ onBack }) {
   if (!c) return <section className="fp mockup-page"><h1 className="fp-h1">Campaign not found</h1><p className="fp-sub">Apply supabase/migrations/20261015120000_free_product_campaign.sql first.</p></section>;
   const live = c.is_active && c.starts_at && (!c.ends_at || new Date(c.ends_at) > new Date());
   const t = data.totals;
+  const fromSheet = c.pool_source === 'giftbox';
+  const inPool = data.inventory.filter((r) => r.isActive && r.inventoryRemaining > 0).length;
+  const offCount = data.inventory.filter((r) => !r.isActive).length;
+  const poolRows = fromSheet && !showOff ? data.inventory.filter((r) => r.isActive) : data.inventory;
 
   return (
     <section className="fp fp-admin mockup-page">
@@ -189,6 +206,7 @@ export default function CampaignAdminPage({ onBack }) {
           {c.starts_at && live && <button type="button" className="fp-btn" onClick={() => act({ action: 'campaign', state: 'pause' })}>Pause</button>}
           {c.starts_at && !c.is_active && <button type="button" className="fp-btn" onClick={() => act({ action: 'campaign', state: 'resume' })}>Resume</button>}
           {c.starts_at && !c.ends_at && <ConfirmButton className="fp-btn is-ghost ay-confirm" armedLabel="Tap again to end. No more spins or claims." onConfirm={() => act({ action: 'campaign', state: 'end' })}>End</ConfirmButton>}
+          <button type="button" className="fp-btn is-ink" onClick={startTest}>Test the spinner</button>
           <button type="button" className="fp-btn is-ghost" onClick={() => downloadCsv(data.people)}>Export CSV</button>
           <button type="button" className="fp-btn is-ghost" onClick={onBack}>Back</button>
         </div>
@@ -201,32 +219,54 @@ export default function CampaignAdminPage({ onBack }) {
         ))}
       </ul>
 
+      {testing && (
+        <section className="fp-section" aria-label="Test the spinner">
+          <TestSpinner maxSpins={testing.maxSpins} pool={testing.pool} onClose={() => setTesting(null)} />
+        </section>
+      )}
+
       <AllFeedback people={data.people} />
 
       <section className="fp-section">
-        <div className="fp-section__head"><h2>Reward pool</h2><p>Only these products can be won. A product with 0 left is never offered.</p></div>
+        {fromSheet ? (
+          <div className="fp-section__head">
+            <h2>Prize pool</h2>
+            <p>
+              Same products as the gift box: every row in the sheet with show = yes, and each can be won as many times as its max. {inPool} can be won right now.
+              {data.poolSync && !data.poolSync.ok ? ` Last sync didn't work (${data.poolSync.detail || data.poolSync.error}), so this is the last good copy.` : ''}
+              {data.poolSync?.sheet && data.poolSync.sheet.ok === false ? ` Couldn't read the sheet (${data.poolSync.sheet.detail || data.poolSync.sheet.error}).` : ''}
+            </p>
+            <div className="fp-actions">
+              <button type="button" className="fp-btn" onClick={() => act({ action: 'pool_sync' }, null)}>Sync now</button>
+              {data.sheetUrl && <a className="fp-btn is-ghost" href={data.sheetUrl} target="_blank" rel="noreferrer">Edit the sheet</a>}
+              {offCount > 0 && <button type="button" className="fp-link" onClick={() => setShowOff((v) => !v)}>{showOff ? 'Hide' : 'Show'} {offCount} not in the pool</button>}
+            </div>
+          </div>
+        ) : (
+          <div className="fp-section__head"><h2>Reward pool</h2><p>Only these products can be won. A product with 0 left is never offered.</p></div>
+        )}
         <div className="fp-panel" style={{ overflowX: 'auto' }}>
           <table className="fp-table">
             <thead><tr><th>Product</th><th>Total</th><th>Claimed</th><th>Left</th><th>Shown</th><th>Active</th><th /></tr></thead>
             <tbody>
-              {data.inventory.map((r) => (
+              {poolRows.map((r) => (
                 <tr key={r.rewardProductId}>
                   <td><b>{r.name}</b><br /><small>{[r.brand, r.size].filter(Boolean).join(' · ')}{r.productId ? ` · ${r.productId}` : ''}</small></td>
                   <td>
-                    <input type="number" min={r.inventoryClaimed} defaultValue={r.inventoryTotal} aria-label={`Total units of ${r.name}`} style={{ width: 80 }}
-                      onBlur={(e) => { const v = Number(e.target.value); if (v !== r.inventoryTotal) act({ action: 'inventory', rewardProductId: r.rewardProductId, inventoryTotal: v }); }} />
+                    {fromSheet ? r.inventoryTotal : <input type="number" min={r.inventoryClaimed} defaultValue={r.inventoryTotal} aria-label={`Total units of ${r.name}`} style={{ width: 80 }}
+                      onBlur={(e) => { const v = Number(e.target.value); if (v !== r.inventoryTotal) act({ action: 'inventory', rewardProductId: r.rewardProductId, inventoryTotal: v }); }} />}
                   </td>
                   <td>{r.inventoryClaimed}</td>
                   <td><b>{r.inventoryRemaining}</b></td>
                   <td>{r.timesShown}</td>
                   <td>{r.isActive ? 'Yes' : 'No'}</td>
-                  <td><button type="button" className="fp-link" onClick={() => act({ action: 'inventory', rewardProductId: r.rewardProductId, isActive: !r.isActive })}>{r.isActive ? 'Turn off' : 'Turn on'}</button></td>
+                  <td>{!fromSheet && <button type="button" className="fp-link" onClick={() => act({ action: 'inventory', rewardProductId: r.rewardProductId, isActive: !r.isActive })}>{r.isActive ? 'Turn off' : 'Turn on'}</button>}</td>
                 </tr>
               ))}
-              {!data.inventory.length && <tr><td colSpan={7}>No products yet. Add one below.</td></tr>}
+              {!poolRows.length && <tr><td colSpan={7}>{fromSheet ? 'Nothing from the sheet yet. Press Sync now.' : 'No products yet. Add one below.'}</td></tr>}
             </tbody>
           </table>
-          <form className="fp-additem" onSubmit={(e) => { e.preventDefault(); act({ action: 'add_product', ...adding, inventoryTotal: Number(adding.inventoryTotal) }, 'Added to the pool.').then((ok) => { if (ok) setAdding(EMPTY_ITEM); }); }}>
+          {!fromSheet && <form className="fp-additem" onSubmit={(e) => { e.preventDefault(); act({ action: 'add_product', ...adding, inventoryTotal: Number(adding.inventoryTotal) }, 'Added to the pool.').then((ok) => { if (ok) setAdding(EMPTY_ITEM); }); }}>
             <h3>Add a product</h3>
             <label className="fp-field"><span>Brand</span><input value={adding.brand} onChange={(e) => setAdding((a) => ({ ...a, brand: e.target.value }))} /></label>
             <label className="fp-field"><span>Product</span><input value={adding.name} onChange={(e) => setAdding((a) => ({ ...a, name: e.target.value }))} /></label>
@@ -235,11 +275,11 @@ export default function CampaignAdminPage({ onBack }) {
             <label className="fp-field" style={{ gridColumn: '1 / -1' }}><span>Photo URL (https)</span><input value={adding.imageUrl} onChange={(e) => setAdding((a) => ({ ...a, imageUrl: e.target.value }))} /></label>
             <label className="fp-field" style={{ gridColumn: '1 / -1' }}><span>Product page URL (optional)</span><input value={adding.productUrl} onChange={(e) => setAdding((a) => ({ ...a, productUrl: e.target.value }))} /></label>
             <button type="submit" className="fp-btn is-ink">Add to pool</button>
-          </form>
+          </form>}
         </div>
       </section>
 
-      <VintedPrizes act={act} />
+      {!fromSheet && <VintedPrizes act={act} />}
 
       <section className="fp-section">
         <div className="fp-section__head"><h2>People</h2><p>Sorted by verified friends. Shipping details are shown here only.</p></div>

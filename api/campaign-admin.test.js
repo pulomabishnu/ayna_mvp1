@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockReq, mockRes, mockSupabase } from './_test-helpers.js';
 
+vi.mock('./_campaignPool.js', () => ({ refreshGiftboxPool: vi.fn(async () => ({ ok: true, skippedSync: true })) }));
 vi.mock('./_usageLimit.js', () => ({ verifyUser: vi.fn() }));
 const { verifyUser } = await import('./_usageLimit.js');
 const { default: adminHandler } = await import('./campaign-admin.js');
@@ -119,5 +120,54 @@ describe('api/campaign-admin vinted', () => {
     expect(mail.subject).toBe('Vinted: 1 prize taken out of the free product pool');
     expect(mail.text).toContain('Olay Super Cream');
     fetchSpy.mockRestore();
+  });
+});
+
+describe('api/campaign-admin test spinner + sheet pool', () => {
+  const asAdmin = (admin) => verifyUser.mockResolvedValue({ user: { id: 'u', email: 'team@aynahealth.co', email_confirmed_at: '2026-10-01T00:00:00Z' }, error: null, admin });
+  const PRODUCT = { rewardProductId: '11111111-2222-4333-8444-555555555555', name: 'Glow Deep Serum', brand: 'Beauty of Joseon' };
+
+  it('a test spin saves nothing: only the read-only test pick runs', async () => {
+    const admin = mockSupabase({ rpcResults: { campaign_admin_test_spin: { data: PRODUCT, error: null } } });
+    asAdmin(admin);
+    const res = mockRes();
+    await adminHandler(mockReq({ body: { action: 'test_spin', exclude: ['aaaaaaaa-2222-4333-8444-555555555555'] } }), res);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.product.name).toBe('Glow Deep Serum');
+    expect(admin.rpcCalls.map((c) => c.name)).toEqual(['campaign_admin_test_spin']);
+    expect(admin.rpcCalls[0].args.p_exclude).toEqual(['aaaaaaaa-2222-4333-8444-555555555555']);
+  });
+
+  it('rejects a test spin with junk ids', async () => {
+    asAdmin(mockSupabase());
+    const res = mockRes();
+    await adminHandler(mockReq({ body: { action: 'test_spin', exclude: ["1'; drop table x"] } }), res);
+    expect(res.statusCode).toBe(400);
+  });
+
+  it('says so when nothing can be won', async () => {
+    asAdmin(mockSupabase({ rpcResults: { campaign_admin_test_spin: { data: null, error: null } } }));
+    const res = mockRes();
+    await adminHandler(mockReq({ body: { action: 'test_spin', exclude: [] } }), res);
+    expect(res.statusCode).toBe(409);
+    expect(res.body.error).toBe('no_inventory');
+  });
+
+  it('non-admins cannot test spin', async () => {
+    verifyUser.mockResolvedValue({ user: { id: 'u', email: 'someone@example.com' }, error: null, admin: mockSupabase() });
+    const res = mockRes();
+    await adminHandler(mockReq({ body: { action: 'test_spin', exclude: [] } }), res);
+    expect(res.statusCode).toBe(403);
+  });
+
+  it('Sync now forces a sheet + pool refresh', async () => {
+    const { refreshGiftboxPool } = await import('./_campaignPool.js');
+    refreshGiftboxPool.mockResolvedValueOnce({ ok: true, sheet: { ok: true }, pool: { ok: true, inPool: 12 } });
+    asAdmin(mockSupabase());
+    const res = mockRes();
+    await adminHandler(mockReq({ body: { action: 'pool_sync' } }), res);
+    expect(res.statusCode).toBe(200);
+    expect(refreshGiftboxPool.mock.calls.at(-1)[1]).toEqual({ force: true });
+    expect(res.body.message).toMatch(/12 products can be won/);
   });
 });
