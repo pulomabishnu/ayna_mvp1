@@ -14,7 +14,8 @@ export default function CheckoutMvp({ product }) {
   const [orders, setOrders] = useState([]);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
-  const checkoutReturn = new URLSearchParams(window.location.search).get('checkout');
+  const checkoutReturn = typeof window === 'undefined'
+    ? null : new URLSearchParams(window.location.search).get('checkout');
   useEffect(() => {
     let current = true;
     setOffer(null);
