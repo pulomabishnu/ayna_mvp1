@@ -47,7 +47,9 @@ export const V2 = {
   ecosystemFloor: 0.5,
   partialFloor: 0.35,
   strongFloor: 0.75,
-  strongConfidence: 0.6,
+  // Strong needs HIGH confidence (score.js confidenceLevel: 0.75+), Nov 2 review:
+  // a word that sounds certain only when the answers it needed are complete and recent.
+  strongConfidence: 0.75,
   stopGain: 0.02,
   slots: 12,
   perNeed: 3,

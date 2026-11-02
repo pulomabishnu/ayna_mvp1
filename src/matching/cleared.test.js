@@ -52,3 +52,11 @@ describe('decideProduct: no fit is its own result', () => {
     expect(decideProduct({ ...ok, matchStatus: 'no-relevance' }).status).toBe('no_fit');
   });
 });
+
+import { breakdownFromDetails } from './breakdown.js';
+describe('fit, evidence and confidence are shown apart', () => {
+  it('the breakdown carries a confidence line separate from evidence', () => {
+    const b = breakdownFromDetails({ id: 'x', name: 'X' }, { ...ok, confidence: 'medium', v2: { band: 'good', parts: [], unknown: [] } });
+    expect(b.confidence).toMatchObject({ level: 'medium', label: 'Medium' });
+  });
+});

@@ -301,6 +301,7 @@ export function MatchExplain({ breakdown = null, onFull = null, onAskWhy = null,
       {unknown.length > 0 && <p className="ayv-explain__unknown"><b>ayna doesn’t know yet:</b> {unknown.map((u) => u.text).join('; ')}</p>}
       {breakdown?.checks?.length > 0 && <p className="ayv-explain__checks"><b>Checked for you:</b> {breakdown.checks.slice(0, 3).map((c) => c.text).join('; ')}</p>}
       {breakdown?.evidence && <p className="ayv-explain__evidence"><b>Evidence:</b> {breakdown.evidence.label}. {breakdown.evidence.line}</p>}
+      {breakdown?.confidence && <p className="ayv-explain__evidence"><b>How sure we are:</b> {breakdown.confidence.label}. {breakdown.confidence.line}</p>}
       <p className="ayv-explain__basis"><b>{MATCH_MEANING}</b> {MATCH_BASIS}</p>
       <p className="ayv-lock__foot">{breakdown?.note || 'Partnerships never change this score.'}</p>
       <p className="ayv-lock__actions">

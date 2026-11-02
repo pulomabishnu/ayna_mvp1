@@ -8,6 +8,11 @@ import { shownMatchPercent, fitLabel, PARTIAL_FIT, SAFETY_HOLD, MATCH_UNAVAILABL
 import { whyLine } from '../utils/whyLine.js';
 
 export const PARTNER_NOTE = 'Partnerships never change this score.';
+export const CONFIDENCE_WORDS = {
+  high: { level: 'high', label: 'High', line: 'Your answers cover what this product needs, and they are recent.' },
+  medium: { level: 'medium', label: 'Medium', line: 'Some answers this product needs are missing or a while old.' },
+  limited: { level: 'limited', label: 'Limited', line: 'Several answers this product needs are missing. Adding them makes this more precise.' },
+};
 
 /** One label per percent (founder, Oct 24): 80+ Strong fit, 60 to 79 Good fit, under 50 Partial fit. */
 export function matchLabel(percent, band = null) {
@@ -74,6 +79,10 @@ export function breakdownFromDetails(product, details) {
     // passed for her, and the evidence grade the score used.
     checks: details.trace?.checks || [],
     evidence: details.trace?.evidence || null,
+    // How sure ayna is (Nov 2): kept apart from fit and evidence, so one
+    // number never stands in for all three. From how complete and recent her
+    // answers are for this kind of product (score.js confidence).
+    confidence: CONFIDENCE_WORDS[details.confidence] || null,
     reason: whyLine(product, details) || '',
     note: PARTNER_NOTE,
   };
