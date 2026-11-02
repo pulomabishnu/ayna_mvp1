@@ -11,7 +11,7 @@
  */
 import { CATALOG_CORRECTIONS } from '../data/catalogCorrections.js';
 import { PRODUCT_BUY_URLS } from '../data/productBuyUrls.js';
-import { amazonAffiliateUrlForAsin, getAmazonAffiliateUrlForProduct } from '../data/productAffiliateUrls.js';
+import { amazonAffiliateUrlForAsin, getAmazonAffiliateUrlForProduct, AMAZON_ASSOCIATES_TAG } from '../data/productAffiliateUrls.js';
 import { isPartnerBrandItem } from './partnerBrands.js';
 
 function hasRealPath(url) {
@@ -158,7 +158,26 @@ function standardBuyUrl(product, variant) {
  */
 export function resolveBuyUrl(product, variant = null) {
   if (!product) return null;
-  return isPartnerBrandItem(product) ? partnerBuyUrl(product, variant) : standardBuyUrl(product, variant);
+  const url = isPartnerBrandItem(product) ? partnerBuyUrl(product, variant) : standardBuyUrl(product, variant);
+  return url && !isPartnerBrandItem(product) ? withAmazonTag(url) : url;
+}
+
+/**
+ * Every Amazon link ayna sends someone to carries ayna's Associates tag
+ * (founder, Nov 2): a raw amazon.com product link from a catalog record gets
+ * ?tag=aynahealth-20 (replacing any other tag). Short links (amzn.to, a.co)
+ * can't take a parameter and are left alone; partner links never go to Amazon.
+ */
+export function withAmazonTag(value) {
+  if (!isAmazonUrl(value)) return value;
+  try {
+    const u = new URL(String(value).trim());
+    if (!/(^|\.)amazon\.[a-z.]+$/.test(u.hostname.toLowerCase())) return value;
+    u.searchParams.set('tag', AMAZON_ASSOCIATES_TAG);
+    return u.toString();
+  } catch {
+    return value;
+  }
 }
 
 /** True when Buy Now opens Amazon for this product (not for the selected size). */

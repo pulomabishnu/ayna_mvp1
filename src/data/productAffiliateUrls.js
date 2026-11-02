@@ -137,6 +137,18 @@ Refilled Hair Recovery Cytokine Effector Plus (Spot Serum)|B0GMRT3ZLD
 BIGVITA Scalp Serum+|B0D82212P3
 Arrae MB-1 Metabolism Support|B0FZV4LDX2
 CBB Women's 13 in 1 Supplement Gummies|B0BWSMCMTZ
+Intimina Lily Cup|B00BL1137Q
+SweetSpot Labs Wipes|B0DVGZLL7W
+SweetSpot Labs Buff and Brighten AHA BHA Exfoliating Pads|B0FWD26RJ4
+Tampax Pure Cotton|B0B986WL73
+Joylux vFit Device|B0B42KYZ98
+Joylux vFit PLUS|B0GL49K2MR
+Joylux Juicy Like A Peach Vaginal Gel|B0GZJ4LY4F
+Joylux reliefHER Vaginal Hydration Melts|B0GQ6FWBQL
+Joylux Lets Spin Intimacy Gel|B0DHJ4L4Q1
+Joylux revitalizHER Hydrating Serum|B089NZ1FHB
+Joylux SHEbar Intimate Cleansing Bar|B091SVMHVH
+Joylux coldHER Cooling Bra Inserts|B0CM7C8LRW
 `.trim().split('\n');
 
 function normalizeProductName(value) {
@@ -227,6 +239,20 @@ const AMAZON_ROW_BY_PRODUCT_ID = {
   'p-kiero-comfort-cleansing-balm': 'kiero comfort cleansing balm',
   'p-kiero-moisturizing-barrier-cream': 'kiero moisturizing barrier cream',
   'p-kiero-balance-toner-pads': 'kiero balance toner pads',
+  // Nov 2 (founder's Amazon sheet): only rows whose Amazon item is this same product.
+  'p-estroven-mood': 'estroven mood and memory',
+  'p-intimina-lily': 'intimina lily cup',
+  'p-sweet-spot-wipes': 'sweetspot labs wipes',
+  'p-sweetspot-buff-brighten': 'sweetspot labs buff and brighten aha bha exfoliating pads',
+  'p-tampax-pure': 'tampax pure cotton',
+  'p-joylux-vfit': 'joylux vfit device',
+  'p-joylux-vfit-plus': 'joylux vfit plus',
+  'p-joylux-juicy-like-a-peach': 'joylux juicy like a peach vaginal gel',
+  'p-joylux-reliefher': 'joylux reliefher vaginal hydration melts',
+  'p-joylux-lets-spin': 'joylux lets spin intimacy gel',
+  'p-joylux-revitalizher': 'joylux revitalizher hydrating serum',
+  'p-joylux-shebar': 'joylux shebar intimate cleansing bar',
+  'p-joylux-coldher': 'joylux coldher cooling bra inserts',
 };
 
 export function getAmazonAffiliateUrl(productName) {
