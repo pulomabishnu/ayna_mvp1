@@ -12,7 +12,7 @@
 //   factors   what raised or lowered the number (v2 parts)
 //
 // Pure. No model, no partner or price field.
-import { NO_EFFECT_CATEGORIES } from './v2.js';
+import { ATTRIBUTE_FIT_CATEGORIES } from './v2.js';
 import { stageScopeFor } from '../data/matching/stageScope.js';
 
 export const EVIDENCE_WORDS = {
@@ -51,7 +51,7 @@ export function decisionTrace({ safety, pp, best, up }) {
   let evidence = null;
   if (best?.needId) {
     steps.push({ step: 'need', needId: best.needId, relationship: best.relationship || null, needTier: best.v2?.needTier || null, weak: Boolean(best.v2?.weakNeed) });
-    const fitOnly = NO_EFFECT_CATEGORIES.has(String(pp.category || '').toLowerCase());
+    const fitOnly = ATTRIBUTE_FIT_CATEGORIES.has(String(pp.category || '').toLowerCase());
     const grade = best.v2?.grade || null;
     evidence = fitOnly ? { grade: null, ...FIT_ONLY } : grade && EVIDENCE_WORDS[grade] ? { grade, ...EVIDENCE_WORDS[grade], draft: true } : null;
     if (evidence) steps.push({ step: 'evidence', grade: evidence.grade, fitOnly });

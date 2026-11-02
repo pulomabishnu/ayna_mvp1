@@ -117,3 +117,21 @@ describe('persona sweep (release gates)', () => {
     expect(v2.emptyShelfShare).toBeLessThanOrEqual(0.4);
   });
 });
+
+import { evidenceFactorFor } from './v2.js';
+import { _trustWeightsForTests as trustWeights } from './score.js';
+describe('evidence by claim type (Nov 2)', () => {
+  it('fit-only products ignore evidence; health-claim products count it gently; effect products fully', () => {
+    expect(evidenceFactorFor('pad', 'C')).toBe(1);
+    expect(evidenceFactorFor('app', 'C')).toBeLessThan(1);
+    expect(evidenceFactorFor('app', 'C')).toBeGreaterThan(evidenceFactorFor('supplement', 'C'));
+    expect(evidenceFactorFor('test', 'A')).toBe(1);
+  });
+  it('preferring community reviews never drops clinical evidence below half for things she takes', () => {
+    const pp = { ingested: true, is_digital: false, access: {}, formats: [], care_roles: [] };
+    const up = { trust: { weights: { clinical: 0.05, community: 0.9, expert: 0.05 } } };
+    expect(trustWeights(pp, up).clinical).toBeGreaterThanOrEqual(0.5);
+    const pad = { ingested: false, is_digital: false, access: {}, formats: ['period_care'], care_roles: [] };
+    expect(trustWeights(pad, up).clinical).toBeLessThan(0.5); // fit-only: her preference stands
+  });
+});
