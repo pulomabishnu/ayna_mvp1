@@ -20,6 +20,9 @@ function contexts(product) {
   const name = String(p.name || '').toLowerCase();
   const tags = (Array.isArray(p.tags) ? p.tags : []).map((t) => String(t).toLowerCase());
   const out = [];
+  // A product can opt out of the pregnancy/postpartum boxes when they don't fit it
+  // (Alubri Intimate Serum, Nov 3: an everyday moisturizer tagged postpartum for dryness).
+  const noLifeStage = p.urgentSigns === 'internal-only';
   // Category decides first (Nov 2 audit): "Tampon Tribe" pads matched the name test
   // and showed the toxic shock box on a pad. The brand is removed before the name test,
   // and external products (pads, liners, underwear) never get it.
@@ -27,8 +30,8 @@ function contexts(product) {
   const plainName = brand ? name.split(brand).join(' ') : name;
   const external = ['pad', 'pads', 'liner', 'pantyliner', 'period-underwear'].includes(cat);
   if (['tampon', 'cup', 'disc', 'menstrual-cup', 'menstrual-disc'].includes(cat) || (!external && /tampon|menstrual (cup|disc)/.test(plainName))) out.push('internal');
-  if (cat === 'pregnancy' || tags.includes('pregnancy') || /prenatal|pregnan/.test(name)) out.push('pregnancy');
-  if (cat === 'postpartum' || tags.includes('postpartum') || /postpartum|post-partum/.test(name)) out.push('postpartum');
+  if (!noLifeStage && (cat === 'pregnancy' || tags.includes('pregnancy') || /prenatal|pregnan/.test(name))) out.push('pregnancy');
+  if (!noLifeStage && (cat === 'postpartum' || tags.includes('postpartum') || /postpartum|post-partum/.test(name))) out.push('postpartum');
   return out;
 }
 

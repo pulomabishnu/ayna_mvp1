@@ -5753,6 +5753,9 @@ export const BRAND_PRODUCTS = [
         brandReviewsUrl: 'https://alubri.com/products/intimate-serum',
         brandReviewsLabel: 'Customer reviews on alubri.com: Intimate Serum',
         brandReviewsSummary: '4.4 out of 5 from 252 reviews on alubri.com as of November 1, 2026.',
+        // No postpartum/pregnancy "When to get help now" box: it doesn't fit an
+        // everyday moisturizer (Alubri, Sarah Williams, Nov 3; Eliz asked).
+        urgentSigns: 'internal-only',
         image: '/products/alubri/intimate-serum.webp',
         summary: 'A lightweight, water-based serum for external intimate skin: the vulva, labia, and vaginal opening. It pairs hyaluronic acid (sodium hyaluronate) with inulin, which Alubri says also supports a healthy skin microbiome, plus aloe, green tea, and chamomile. The brand says it absorbs with no oily residue, feels cooling, and helps the skin hold on to its natural moisture. Hormone-free and fragrance-free. Sold in a 50 mL bottle or a 1.0 fl oz trial size.',
         safety: {
