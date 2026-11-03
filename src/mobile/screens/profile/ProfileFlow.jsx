@@ -53,9 +53,10 @@ import ConfirmButton from '../../../components/ui/ConfirmButton.jsx';
 import { maskedChange, formatUsPhone } from '../../../utils/inputMask.js';
 import usePersistentState from '../../../hooks/usePersistentState.js';
 import CharRing from '../../../components/ui/CharRing.jsx';
-import { PillTabs, ArchAvatar, HouseBlend } from '../../../components/you/YouBits.jsx';
+import { PillTabs, HouseBlend } from '../../../components/you/YouBits.jsx';
 import { setupSteps, knowsLine, countAnswers, connectedNames } from '../../../components/you/setupSteps.js';
 import '../../you-hub-app.css';
+import '../../you-v2.css';
 import YouBento from '../../../components/you/YouBento.jsx';
 import { Shout } from '../../../components/ui/ay';
 import '../../../styles/unique-b.css';
@@ -609,11 +610,14 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
 
   // The You hub (You audit section 6): who she is, what ayna knows, her set-up, and the five sections.
   return (
-    <div className="ayna-fresh-profile-hub ay-you" data-tour="you" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+    <div className="ayna-fresh-profile-hub ay-you ay-you--v2" data-tour="you" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <MobileHeader onOpenSettings={onOpenSettings} />
       <header className="ay-you-head ay-you-band">
         <div className="ay-you-id">
-          <ArchAvatar className="ay-you-arch" src={showPhoto ? publicMediaUrl(profile.avatar_url) : ''} initial={realName ? initial : ''} onError={() => setAvatarFailed(true)} />
+          {/* Nov 2 redo (founder: "it's ugly"; inspo folder profile screen): a round photo in a pink ring. */}
+          <span className={`ay-you2-ava${showPhoto ? ' has-photo' : ''}`} aria-hidden="true">
+            {showPhoto ? <img src={publicMediaUrl(profile.avatar_url)} alt="" onError={() => setAvatarFailed(true)} /> : <b>{realName ? initial : 'a'}</b>}
+          </span>
           <span className="ay-you-names">
             {/* The page's one shout (uniqueness pass): her name, oversized, on the espresso band. */}
             <h1>{realName ? <><span className="ay-you-hello">{greetingForNow()},</span> <Shout as="span" size="l" className="ay-you-shout">{realName}</Shout></> : <Shout as="span" size="l" className="ay-you-shout">{greetingForNow()}</Shout>}</h1>
@@ -628,6 +632,13 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
           </button>
         )}
         {signedIn && (
+          <nav className="ay-you2-stats" aria-label="Your numbers">
+            {onOpenEcosystem && <button type="button" onClick={onOpenEcosystem}><b>{fmtCount(ecosystemCount)}</b><span>{ecosystemCount === 1 ? 'Product' : 'Products'}</span></button>}
+            {onOpenSaved && <button type="button" onClick={onOpenSaved}><b>{fmtCount(savedCount)}</b><span>Saved</span></button>}
+            <button type="button" onClick={onOpenMonthlyCheckin}><b>{checkinCount != null ? fmtCount(checkinCount) : checkins.settled ? '0' : '…'}</b><span>{checkinCount === 1 ? 'Check-in' : 'Check-ins'}</span></button>
+          </nav>
+        )}
+        {signedIn && !setup.next && profileFilledPct < 100 && (
           <button type="button" className="ay-you-progress" onClick={onEditProfile} aria-label={`Health profile ${profileFilledPct}% complete. ${profileFilledPct >= 100 ? 'Review answers' : 'Finish it'}.`}>
             <span>Health profile <b>{profileFilledPct}% complete</b> <u>{profileFilledPct >= 100 ? 'Review' : 'Finish'}</u></span>
             <i aria-hidden="true"><i style={{ width: `${profileFilledPct}%` }} /></i>
@@ -645,7 +656,8 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
         {/* Pai #12: set-up as "2 of 4" with one next step; gone once everything is done. */}
         {signedIn && setup.next && (
           <section className="ay-you-setup" aria-labelledby="ay-you-setup-h">
-            <div className="ay-you-setup-top"><h2 className="ay-you-h2" id="ay-you-setup-h">Your set-up</h2><span>{setup.done} of {setup.total} steps done</span></div>
+            <div className="ay-you-setup-top"><h2 className="ay-you-h2" id="ay-you-setup-h">Finish setting up</h2><span>{setup.done} of {setup.total} done</span></div>
+            {profileFilledPct < 100 && <p className="ay-you2-setup-sub">Health profile <b>{profileFilledPct}% complete</b></p>}
             <span className="ay-you-setup-bar" aria-hidden="true">{/* Fills left to right with the count done, so "1 of 4" never lights the third segment. */}{setup.steps.map((st, i) => <i key={st.key} className={i < setup.steps.filter((x) => x.done).length ? 'is-done' : ''} />)}</span>
             {SETUP_GO[setup.next.key] && <button type="button" className="ay-you-setup-go" onClick={SETUP_GO[setup.next.key]}>Next: {setup.next.label} <ChevronIcon /></button>}
           </section>
@@ -659,9 +671,10 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
             intake={showBlend ? intake : null}
             onOpenBlend={() => onOpen('blend')}
             tiles={{
-              eco: onOpenEcosystem ? { caption: 'My ecosystem', value: fmtCount(ecosystemCount), sub: ecosystemCount === 1 ? 'product, grouped by need' : 'products, grouped by need', onClick: onOpenEcosystem } : null,
-              saved: onOpenSaved ? { caption: 'Saved', value: fmtCount(savedCount), sub: 'Products, posts, startups', onClick: onOpenSaved } : null,
-              checkins: signedIn ? { caption: checkinCount === 1 ? 'Monthly check-in' : 'Monthly check-ins', value: checkinCount != null ? fmtCount(checkinCount) : checkins.settled ? '–' : '…', sub: 'Done so far', onClick: onOpenMonthlyCheckin } : null,
+              // Ecosystem, Saved and Check-ins are the number strip under her name (Nov 2).
+              eco: signedIn ? null : onOpenEcosystem ? { caption: 'My ecosystem', value: fmtCount(ecosystemCount), sub: ecosystemCount === 1 ? 'product, grouped by need' : 'products, grouped by need', onClick: onOpenEcosystem } : null,
+              saved: signedIn ? null : onOpenSaved ? { caption: 'Saved', value: fmtCount(savedCount), sub: 'Products, posts, startups', onClick: onOpenSaved } : null,
+              checkins: null,
               health: { caption: 'My health', sub: 'Dashboard, tracking, apps', onClick: () => onOpen('myHealth') },
               activity: { caption: 'Activity', sub: 'Questions, posts, reviews', onClick: () => onOpen('activity') },
               settings: { caption: 'Settings & privacy', sub: 'Account and your data', onClick: onOpenSettings },
