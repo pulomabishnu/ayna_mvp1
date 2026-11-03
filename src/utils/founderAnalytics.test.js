@@ -76,6 +76,29 @@ describe('founder analytics exclusion', () => {
     expect(ph.register).toHaveBeenCalledWith({ is_internal: true, internal_role: 'founder' });
   });
 
+  it('lets native/TestFlight founder traffic reach QA while keeping it tagged internal', () => {
+    window.Capacitor = { isNativePlatform: () => true };
+    const ph = {
+      register: vi.fn(),
+      people: { set: vi.fn() },
+    };
+
+    expect(tagFounderAnalyticsIfNeeded(ph, 'ameera@aynahealth.co')).toBe(true);
+
+    // main.jsx uses this helper as its capture-time suppression guard. Native
+    // must return false so tester events are not dropped before PostHog sees them.
+    expect(hasInternalBrowserMarker()).toBe(false);
+
+    ph.register.mockClear();
+    ph.people.set.mockClear();
+
+    // The persisted marker still tags future native sessions as internal, so
+    // customer dashboards can exclude them while the QA dashboard includes them.
+    expect(tagFounderAnalyticsIfNeeded(ph)).toBe(true);
+    expect(ph.register).toHaveBeenCalledWith({ is_internal: true, internal_role: 'founder' });
+    expect(ph.people.set).toHaveBeenCalledWith({ is_internal: true, internal_role: 'founder' });
+  });
+
   it('does not mark a normal user or browser as internal', () => {
     const ph = {
       register: vi.fn(),
