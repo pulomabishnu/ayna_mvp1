@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getMyCommunityProfile, isUsernameTaken, normalizeHandle, upsertCommunityProfile, setAvatarPath } from '../utils/community/communityStoreCore.js';
 import { uploadCommunityImage, checkImageFile } from '../utils/community/imageUpload.js';
 import { breaksCommunityRules } from '../utils/communityRules.js';
+import { eventSurface, trackProfileSetupFinished, trackProfileSetupStarted } from '../utils/analyticsEvents.js';
 import './profile-setup-step.css';
 
 /**
@@ -41,13 +42,24 @@ export default function ProfileSetupStep({ supabase, user, firstName = '', onDon
   const fileRef = useRef(null);
   const problem = usernameProblem(handle);
   const clean = normalizeHandle(handle);
+  const surface = eventSurface();
+
+  // This helper is a no-op for older/returning accounts. It only emits when a
+  // verified create-account flow is still pending in analyticsEvents.js.
+  useEffect(() => { trackProfileSetupStarted({ surface }); }, [surface]);
 
   // Already has a username: nothing to set up.
   useEffect(() => {
     let live = true;
     if (!supabase || !user?.id) { setChecking(false); setOffline(true); return undefined; }
     getMyCommunityProfile(supabase, user.id)
-      .then((p) => { if (!live) return; if (p?.username) onDone?.(); else setChecking(false); })
+      .then((p) => {
+        if (!live) return;
+        if (p?.username) {
+          trackProfileSetupFinished({ surface, outcome: 'already_complete' });
+          onDone?.();
+        } else setChecking(false);
+      })
       .catch(() => { if (live) { setChecking(false); } });
     return () => { live = false; };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -90,6 +102,7 @@ export default function ProfileSetupStep({ supabase, user, firstName = '', onDon
           await setAvatarPath(supabase, user.id, up.path);
         } catch { /* the username is saved; the photo can be added later from You */ }
       }
+      trackProfileSetupFinished({ surface, outcome: 'completed' });
       onDone?.();
     } catch (err) {
       const msg = String(err?.message || '');
@@ -98,6 +111,11 @@ export default function ProfileSetupStep({ supabase, user, firstName = '', onDon
     } finally {
       setSaving(false);
     }
+  };
+
+  const finishLater = () => {
+    trackProfileSetupFinished({ surface, outcome: 'skipped' });
+    onDone?.();
   };
 
   if (checking) return <div className="ay-psetup" aria-busy="true"><p className="ay-psetup__sub">One moment…</p></div>;
@@ -141,7 +159,7 @@ export default function ProfileSetupStep({ supabase, user, firstName = '', onDon
 
       {error && <p className="ay-psetup__err" role="alert">{error}</p>}
       <button type="submit" className="ay-psetup__go" disabled={Boolean(problem) || taken || saving}>{saving ? 'Saving…' : 'Finish'}</button>
-      {(offline || allowLater) && <button type="button" className="ay-psetup__link ay-psetup__later" onClick={() => onDone?.()}>Finish later</button>}
+      {(offline || allowLater) && <button type="button" className="ay-psetup__link ay-psetup__later" onClick={finishLater}>Finish later</button>}
     </form>
   );
 }

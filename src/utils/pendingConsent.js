@@ -61,6 +61,17 @@ export function stashPendingConsent() {
   }
 }
 
+/**
+ * True only while the create-account OAuth flow has consent waiting to be
+ * written after the redirect. This exposes intent, never the consent payload,
+ * so analytics can distinguish "create account with Google/Apple" from an
+ * ordinary returning-user sign-in without reading names, emails or answers.
+ */
+export function hasPendingConsent() {
+  try { return Boolean(sessionStorage.getItem(STORAGE_KEY)); }
+  catch { return false; }
+}
+
 // Awaited, retried once, and the stash is cleared ONLY after the write
 // succeeds, clearing first (an earlier version of this logic did) would
 // erase the consent record from both places on a transient failure.
