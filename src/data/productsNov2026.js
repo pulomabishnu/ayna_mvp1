@@ -9,7 +9,7 @@
 export const NOV_2026_PRODUCTS = [
   {
     "id": "d-alloy-menopause-care-hormone-therapy-and-sexual",
-    "name": "Alloy Menopause care (hormone therapy and sexual health)",
+    "name": "Menopause care (hormone therapy and sexual health)",
     "brand": "Alloy",
     "category": "telehealth",
     "type": "digital",
@@ -81,7 +81,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "d-twentyeight-health-birth-control-emergency-contr",
-    "name": "Twentyeight Health Birth control, emergency contraception and urgent care",
+    "name": "Birth control, emergency contraception and urgent care",
     "brand": "Twentyeight Health",
     "category": "contraception",
     "type": "digital",
@@ -216,7 +216,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-elladx-ella-dx-annual-panel",
-    "name": "EllaDx Ella Dx Annual Panel",
+    "name": "Ella Dx Annual Panel",
     "brand": "EllaDx",
     "category": "diagnostics",
     "type": "physical",
@@ -285,7 +285,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-hormona-perimenopause-test-kit-app",
-    "name": "Hormona Perimenopause Test Kit + App",
+    "name": "Perimenopause Test Kit + App",
     "brand": "Hormona",
     "category": "diagnostics",
     "type": "physical",
@@ -363,7 +363,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-clearblue-menopause-stage-indicator",
-    "name": "Clearblue Menopause Stage Indicator",
+    "name": "Menopause Stage Indicator",
     "brand": "Clearblue",
     "category": "diagnostics",
     "type": "physical",
@@ -725,7 +725,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "d-menolog-listed-as-menelle-perimenopause-tracker",
-    "name": "Menolog (listed as Menelle) Perimenopause Tracker: Menelle",
+    "name": "Perimenopause Tracker: Menelle",
     "brand": "Menolog (listed as Menelle)",
     "category": "tracker",
     "type": "digital",
@@ -841,7 +841,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-replens-long-lasting-vaginal-moisturizer",
-    "name": "Replens Long-Lasting Vaginal Moisturizer",
+    "name": "Long-Lasting Vaginal Moisturizer",
     "brand": "Replens",
     "category": "intimate-care",
     "type": "physical",
@@ -931,7 +931,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-replens-external-comfort-gel",
-    "name": "Replens External Comfort Gel",
+    "name": "External Comfort Gel",
     "brand": "Replens",
     "category": "intimate-care",
     "type": "physical",
@@ -1012,7 +1012,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-replens-silky-smooth-silicone-based-lubricant",
-    "name": "Replens Silky Smooth Silicone-Based Lubricant",
+    "name": "Silky Smooth Silicone-Based Lubricant",
     "brand": "Replens",
     "category": "intimate-care",
     "type": "physical",
@@ -1095,7 +1095,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-kindra-v-relief-serum",
-    "name": "Kindra V Relief Serum",
+    "name": "V Relief Serum",
     "brand": "Kindra",
     "category": "intimate-care",
     "type": "physical",
@@ -1178,7 +1178,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-kindra-v-lube-water-based-lubricant",
-    "name": "Kindra V Lube Water-Based Lubricant",
+    "name": "V Lube Water-Based Lubricant",
     "brand": "Kindra",
     "category": "intimate-care",
     "type": "physical",
@@ -1259,7 +1259,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-kindra-v-lube-silicone-lubricant",
-    "name": "Kindra V Lube Silicone Lubricant",
+    "name": "V Lube Silicone Lubricant",
     "brand": "Kindra",
     "category": "intimate-care",
     "type": "physical",
@@ -1329,7 +1329,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-kindra-boric-acid-suppositories",
-    "name": "Kindra Boric Acid Suppositories",
+    "name": "Boric Acid Suppositories",
     "brand": "Kindra",
     "category": "intimate-care",
     "type": "physical",
@@ -1396,7 +1396,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-womaness-coco-bliss-external-vaginal-moisturizer",
-    "name": "Womaness Coco Bliss External Vaginal Moisturizer",
+    "name": "Coco Bliss External Vaginal Moisturizer",
     "brand": "Womaness",
     "category": "intimate-care",
     "type": "physical",
@@ -1469,7 +1469,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-womaness-daily-v-soothe",
-    "name": "Womaness Daily V Soothe",
+    "name": "Daily V Soothe",
     "brand": "Womaness",
     "category": "intimate-care",
     "type": "physical",
@@ -1542,7 +1542,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-womaness-melt-for-you-vaginal-inserts",
-    "name": "Womaness Melt For You Vaginal Inserts",
+    "name": "Melt For You Vaginal Inserts",
     "brand": "Womaness",
     "category": "intimate-care",
     "type": "physical",
@@ -1617,7 +1617,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-stripes-vag-of-honor-vaginal-moisturizer",
-    "name": "Stripes Vag of Honor Vaginal Moisturizer",
+    "name": "Vag of Honor Vaginal Moisturizer",
     "brand": "Stripes",
     "category": "intimate-care",
     "type": "physical",
@@ -1690,7 +1690,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-stripes-oh-my-glide-intimate-play-oil",
-    "name": "Stripes Oh My Glide Intimate Play Oil",
+    "name": "Oh My Glide Intimate Play Oil",
     "brand": "Stripes",
     "category": "intimate-care",
     "type": "physical",
@@ -1758,7 +1758,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-bonafide-revaree",
-    "name": "Bonafide Revaree",
+    "name": "Revaree",
     "brand": "Bonafide",
     "category": "intimate-care",
     "type": "physical",
@@ -1839,7 +1839,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-bonafide-revaree-plus",
-    "name": "Bonafide Revaree Plus",
+    "name": "Revaree Plus",
     "brand": "Bonafide",
     "category": "intimate-care",
     "type": "physical",
@@ -1914,7 +1914,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-bonafide-clairvee-vaginal-pre-probiotic",
-    "name": "Bonafide Clairvee Vaginal Pre + Probiotic",
+    "name": "Clairvee Vaginal Pre + Probiotic",
     "brand": "Bonafide",
     "category": "supplement",
     "type": "physical",
@@ -1983,7 +1983,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-vella-meltwater-vaginal-emollient",
-    "name": "Vella Meltwater Vaginal Emollient",
+    "name": "Meltwater Vaginal Emollient",
     "brand": "Vella",
     "category": "intimate-care",
     "type": "physical",
@@ -2050,7 +2050,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-vella-everslide-personal-lubricant",
-    "name": "Vella Everslide Personal Lubricant",
+    "name": "Everslide Personal Lubricant",
     "brand": "Vella",
     "category": "intimate-care",
     "type": "physical",
@@ -2117,7 +2117,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-vella-ebbtide-vaginal-inserts",
-    "name": "Vella Ebbtide Vaginal Inserts",
+    "name": "Ebbtide Vaginal Inserts",
     "brand": "Vella",
     "category": "cramp-relief",
     "type": "physical",
@@ -2194,7 +2194,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-o-positiv-uro-vaginal-probiotic-capsules",
-    "name": "O Positiv URO Vaginal Probiotic Capsules",
+    "name": "URO Vaginal Probiotic Capsules",
     "brand": "O Positiv",
     "category": "supplement",
     "type": "physical",
@@ -2269,7 +2269,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-o-positiv-uro-boric-acid-vaginal-suppository",
-    "name": "O Positiv URO Boric Acid Vaginal Suppository",
+    "name": "URO Boric Acid Vaginal Suppository",
     "brand": "O Positiv",
     "category": "intimate-care",
     "type": "physical",
@@ -2345,7 +2345,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-o-positiv-uro-ph-balanced-probiotic-intimate-was",
-    "name": "O Positiv URO pH-Balanced Probiotic Intimate Wash",
+    "name": "URO pH-Balanced Probiotic Intimate Wash",
     "brand": "O Positiv",
     "category": "intimate-care",
     "type": "physical",
@@ -2420,7 +2420,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-bonafide-relizen",
-    "name": "Bonafide Relizen",
+    "name": "Relizen",
     "brand": "Bonafide",
     "category": "menopause",
     "type": "physical",
@@ -2493,7 +2493,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-bonafide-thermella",
-    "name": "Bonafide Thermella",
+    "name": "Thermella",
     "brand": "Bonafide",
     "category": "menopause",
     "type": "physical",
@@ -2565,7 +2565,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-bonafide-serenol",
-    "name": "Bonafide Serenol",
+    "name": "Serenol",
     "brand": "Bonafide",
     "category": "supplement",
     "type": "physical",
@@ -2641,7 +2641,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-bonafide-ristela",
-    "name": "Bonafide Ristela",
+    "name": "Ristela",
     "brand": "Bonafide",
     "category": "supplement",
     "type": "physical",
@@ -2710,7 +2710,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-bonafide-noctera",
-    "name": "Bonafide Noctera",
+    "name": "Noctera",
     "brand": "Bonafide",
     "category": "sleep",
     "type": "physical",
@@ -2784,7 +2784,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-womaness-let-me-sleep",
-    "name": "Womaness Let Me Sleep",
+    "name": "Let Me Sleep",
     "brand": "Womaness",
     "category": "sleep",
     "type": "physical",
@@ -2864,7 +2864,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-kindra-menorelief",
-    "name": "Kindra MenoRelief",
+    "name": "MenoRelief",
     "brand": "Kindra",
     "category": "menopause",
     "type": "physical",
@@ -2944,7 +2944,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-stripes-the-inside-addition-menopause-probiotic",
-    "name": "Stripes The Inside Addition Menopause Probiotic",
+    "name": "The Inside Addition Menopause Probiotic",
     "brand": "Stripes",
     "category": "menopause",
     "type": "physical",
@@ -3023,7 +3023,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-o-positiv-meno-menopause-capsules",
-    "name": "O Positiv MENO Menopause Capsules",
+    "name": "MENO Menopause Capsules",
     "brand": "O Positiv",
     "category": "menopause",
     "type": "physical",
@@ -3104,7 +3104,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-o-positiv-meno-menopause-gummies",
-    "name": "O Positiv MENO Menopause Gummies",
+    "name": "MENO Menopause Gummies",
     "brand": "O Positiv",
     "category": "menopause",
     "type": "physical",
@@ -3181,7 +3181,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-o-positiv-flo-pms-capsules",
-    "name": "O Positiv FLO PMS Capsules",
+    "name": "FLO PMS Capsules",
     "brand": "O Positiv",
     "category": "supplement",
     "type": "physical",
@@ -3255,7 +3255,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-o-positiv-flo-ovarian-support-capsules-myo-d-chi",
-    "name": "O Positiv FLO Ovarian Support Capsules (Myo + D-Chiro Inositol)",
+    "name": "FLO Ovarian Support Capsules (Myo + D-Chiro Inositol)",
     "brand": "O Positiv",
     "category": "supplement",
     "type": "physical",
@@ -3328,7 +3328,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-o-positiv-uro-urinary-tract-health-capsules",
-    "name": "O Positiv URO Urinary Tract Health Capsules",
+    "name": "URO Urinary Tract Health Capsules",
     "brand": "O Positiv",
     "category": "supplement",
     "type": "physical",
@@ -3401,7 +3401,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-biolae-meno-essential",
-    "name": "Biolae Meno Essential",
+    "name": "Meno Essential",
     "brand": "Biolae",
     "category": "menopause",
     "type": "physical",
@@ -3479,7 +3479,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-perelel-perimenopause-support-pack",
-    "name": "Perelel Perimenopause Support Pack",
+    "name": "Perimenopause Support Pack",
     "brand": "Perelel",
     "category": "menopause",
     "type": "physical",
@@ -3552,7 +3552,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-perelel-hormonal-balance-support",
-    "name": "Perelel Hormonal Balance Support",
+    "name": "Hormonal Balance Support",
     "brand": "Perelel",
     "category": "supplement",
     "type": "physical",
@@ -3627,7 +3627,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-perelel-conception-support-pack",
-    "name": "Perelel Conception Support Pack",
+    "name": "Conception Support Pack",
     "brand": "Perelel",
     "category": "supplement",
     "type": "physical",
@@ -3697,7 +3697,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-perelel-fertility-support",
-    "name": "Perelel Fertility+ Support",
+    "name": "Fertility+ Support",
     "brand": "Perelel",
     "category": "supplement",
     "type": "physical",
@@ -3764,7 +3764,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-perelel-prenatal-pack-1st-2nd-3rd-trimester",
-    "name": "Perelel Prenatal Pack (1st / 2nd / 3rd Trimester)",
+    "name": "Prenatal Pack (1st / 2nd / 3rd Trimester)",
     "brand": "Perelel",
     "category": "pregnancy",
     "type": "physical",
@@ -3844,7 +3844,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-perelel-mom-multi-support-pack",
-    "name": "Perelel Mom Multi Support Pack",
+    "name": "Mom Multi Support Pack",
     "brand": "Perelel",
     "category": "postpartum",
     "type": "physical",
@@ -3916,7 +3916,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-perelel-daily-iron-ease",
-    "name": "Perelel Daily Iron Ease",
+    "name": "Daily Iron Ease",
     "brand": "Perelel",
     "category": "supplement",
     "type": "physical",
@@ -3987,7 +3987,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-thorne-berberine",
-    "name": "Thorne Berberine",
+    "name": "Berberine",
     "brand": "Thorne",
     "category": "supplement",
     "type": "physical",
@@ -4056,7 +4056,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-thorne-5-mthf-1-mg",
-    "name": "Thorne 5-MTHF 1 mg",
+    "name": "5-MTHF 1 mg",
     "brand": "Thorne",
     "category": "supplement",
     "type": "physical",
@@ -4125,7 +4125,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-seeking-health-dao-enzyme-formerly-histamine-dig",
-    "name": "Seeking Health DAO Enzyme (formerly Histamine Digest / Histamine Block)",
+    "name": "DAO Enzyme (formerly Histamine Digest / Histamine Block)",
     "brand": "Seeking Health",
     "category": "gut-health",
     "type": "physical",
@@ -4199,7 +4199,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-effective-nutra-dim-300-mg-with-bioperine",
-    "name": "Effective Nutra DIM 300 mg with BioPerine",
+    "name": "DIM 300 mg with BioPerine",
     "brand": "Effective Nutra",
     "category": "supplement",
     "type": "physical",
@@ -4267,7 +4267,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-micro-ingredients-myo-d-chiro-inositol-powder",
-    "name": "Micro Ingredients Myo & D-Chiro Inositol Powder",
+    "name": "Myo & D-Chiro Inositol Powder",
     "brand": "Micro Ingredients",
     "category": "supplement",
     "type": "physical",
@@ -4339,7 +4339,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-rif-care-organic-cotton-and-hemp-fiber-menstrual",
-    "name": "Rif Care Organic Cotton and Hemp Fiber Menstrual Pads with Wings",
+    "name": "Organic Cotton and Hemp Fiber Menstrual Pads with Wings",
     "brand": "Rif Care",
     "category": "pad",
     "type": "physical",
@@ -4416,7 +4416,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-rif-care-organic-cotton-non-applicator-tampons",
-    "name": "Rif Care Organic Cotton Non-Applicator Tampons",
+    "name": "Organic Cotton Non-Applicator Tampons",
     "brand": "Rif Care",
     "category": "tampon",
     "type": "physical",
@@ -4496,7 +4496,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-rif-care-organic-cotton-and-hemp-fiber-leakproof",
-    "name": "Rif Care Organic Cotton and Hemp Fiber Leakproof Period Undies (no PFA added)",
+    "name": "Organic Cotton and Hemp Fiber Leakproof Period Undies (no PFA added)",
     "brand": "Rif Care",
     "category": "period-underwear",
     "type": "physical",
@@ -4569,7 +4569,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-viv-for-your-v-viv-disc",
-    "name": "Viv for your V Viv Disc",
+    "name": "Viv Disc",
     "brand": "Viv for your V",
     "category": "disc",
     "type": "physical",
@@ -4653,7 +4653,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-viv-for-your-v-viv-menstrual-cup",
-    "name": "Viv for your V Viv Menstrual Cup",
+    "name": "Viv Menstrual Cup",
     "brand": "Viv for your V",
     "category": "cup",
     "type": "physical",
@@ -4733,7 +4733,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-viv-for-your-v-viv-organic-cotton-tampons",
-    "name": "Viv for your V Viv Organic Cotton Tampons",
+    "name": "Viv Organic Cotton Tampons",
     "brand": "Viv for your V",
     "category": "tampon",
     "type": "physical",
@@ -4803,7 +4803,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-viv-for-your-v-viv-bamboo-pads-liners",
-    "name": "Viv for your V Viv Bamboo Pads & Liners",
+    "name": "Viv Bamboo Pads & Liners",
     "brand": "Viv for your V",
     "category": "pad",
     "type": "physical",
@@ -4876,7 +4876,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-ferra-period-brownies",
-    "name": "Ferra Period Brownies",
+    "name": "Period Brownies",
     "brand": "Ferra",
     "category": "supplement",
     "type": "physical",
@@ -4934,7 +4934,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-popmask-big-hug-self-heating-patches",
-    "name": "Popmask Big Hug Self-Heating Patches",
+    "name": "Big Hug Self-Heating Patches",
     "brand": "Popmask",
     "category": "cramp-relief",
     "type": "physical",
@@ -5004,7 +5004,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-popmask-flash-me-hot-flash-cooling-spray-80ml",
-    "name": "Popmask Flash Me Hot Flash Cooling Spray 80ml",
+    "name": "Flash Me Hot Flash Cooling Spray 80ml",
     "brand": "Popmask",
     "category": "menopause",
     "type": "physical",
@@ -5065,7 +5065,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-hoolest-verelief-prime",
-    "name": "Hoolest VeRelief Prime",
+    "name": "VeRelief Prime",
     "brand": "Hoolest",
     "category": "mental-health",
     "type": "physical",
@@ -5142,7 +5142,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-queen-of-the-thrones-ritual-starter-liver-castor",
-    "name": "Queen of the Thrones Ritual Starter - Liver Castor Oil Pack Kit",
+    "name": "Ritual Starter - Liver Castor Oil Pack Kit",
     "brand": "Queen of the Thrones",
     "category": "intimate-care",
     "type": "physical",
@@ -5223,7 +5223,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-cean-lymphatic-maternity-compression-romper",
-    "name": "CEAN Lymphatic Maternity Compression Romper",
+    "name": "Lymphatic Maternity Compression Romper",
     "brand": "CEAN",
     "category": "pregnancy",
     "type": "physical",
@@ -5290,7 +5290,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-pore-favor-acne-supplement",
-    "name": "Pore Favor Acne Supplement",
+    "name": "Acne Supplement",
     "brand": "Pore Favor",
     "category": "supplement",
     "type": "physical",
@@ -5350,7 +5350,7 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "p-topicals-faded-brightening-clearing-serum-unscen",
-    "name": "Topicals Faded Brightening + Clearing Serum (Unscented)",
+    "name": "Faded Brightening + Clearing Serum (Unscented)",
     "brand": "Topicals",
     "category": "skincare",
     "type": "physical",
