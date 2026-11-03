@@ -329,7 +329,10 @@ function healthParts(pp, r, needIds, x) {
     else if (steps[i].factor === 'evidence') text = `Evidence for your ${phrase} is graded ${x.grade} in ayna's draft review (not yet clinically reviewed)`;
     else if (steps[i].factor === 'focus') {
       const others = Object.entries(pp.health_need_relevance || {}).filter(([id, e]) => !needIds.has(id) && ((typeof e === 'number' ? e : e?.score) || 0) >= 0.55).length;
-      text = others ? `Also made for ${others} other ${others === 1 ? 'need' : 'needs'} you did not pick` : 'Also made for needs you did not pick';
+      // Founder, Nov 2: the old wording read as a penalty for helping more. It is a
+      // ranking choice: products made mainly for her need come first, so one
+      // all-in-one product doesn't fill everyone's ecosystem.
+      text = others ? `Made for ${others + 1} needs, so products made just for your ${phrase} rank a little higher` : `Made for several needs, so products made just for your ${phrase} rank a little higher`;
     } else if (steps[i].factor === 'details') {
       if (delta > 0) text = r.contextUsed?.phrase ? `Designed for ${r.contextUsed.phrase}` : `Suits the details you gave about your ${phrase}`;
       else text = MENSTRUAL_PRODUCT_NEEDS.has(r.needId) && r.flowFit != null && r.flowFit < 1 ? 'Its absorbency is not the best fit for the flow you described' : `Less suited to the details you gave about your ${phrase}`;
