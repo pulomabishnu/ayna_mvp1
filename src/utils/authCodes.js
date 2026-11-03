@@ -17,6 +17,7 @@ export const cleanCode = (raw, length) => String(raw || '').replace(/\D/g, '').s
 export const CODE_COPY = {
   emailSent: (email) => `We sent an ${EMAIL_CODE_LENGTH}-digit code to ${email}. Enter it below to finish creating your account.`,
   emailNotConfirmed: 'Your email still needs verifying. Enter the code from your email below.',
+  verifyExisting: (email) => `To keep using ayna, please verify your email. We sent an ${EMAIL_CODE_LENGTH}-digit code to ${email}.`,
   emailPrompt: `Enter the ${EMAIL_CODE_LENGTH}-digit code from your email.`,
   emailPlaceholder: `${EMAIL_CODE_LENGTH}-digit code`,
   smsPrompt: `Enter the ${SMS_CODE_LENGTH}-digit code we texted you.`,

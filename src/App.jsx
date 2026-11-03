@@ -1,4 +1,5 @@
 import FeedbackPrompts from './components/FeedbackPrompts';
+import { isUnverifiedEmailUser, savePendingVerification, markCodeSent, shouldSendCode } from './utils/pendingVerification.js';
 import { devPreviewOn } from './utils/devPreview.js';
 import { markOnboardingDone } from './health/onboardingSignal.js';
 import { noteRoutineAdd, noteRoutineRemove } from './health/routineFollowUps.js';
@@ -540,6 +541,20 @@ function NotFoundState({ title, subtitle, ctaLabel, onCta, onSearch, searchPlace
 // first render so the initial history entry gets its key.
 installScrollMemory();
 
+// An older email account that never verified its email: not signed in. A
+// fresh code is emailed (at most every 10 minutes) and the sign-in box opens
+// on "Verify your email" (founder, Nov 2).
+function holdUnverified(supabase, session) {
+  const u = session?.user;
+  if (!isUnverifiedEmailUser(u)) return session;
+  const v = savePendingVerification(u.email, 'existing');
+  if (shouldSendCode(v)) {
+    markCodeSent(u.email);
+    supabase.auth.resend({ type: 'signup', email: u.email, options: { emailRedirectTo: 'https://www.aynahealth.co/confirmed' } }).catch(() => {});
+  }
+  return null;
+}
+
 function App() {
   const [currentView, setCurrentViewRaw] = useState(getInitialView);
   // app_error reports which screen it happened on (production builds minify component names).
@@ -992,7 +1007,9 @@ function App() {
     const isCallbackPage = window.location.pathname === '/auth/callback';
     if (!isCallbackPage) {
       supabase.auth.getSession()
-        .then(({ data: { session } }) => {
+        .then(({ data: { session: raw } }) => {
+          const session = holdUnverified(supabase, raw);
+          if (raw && !session) setShowAuthModal(true);
           setUser(session?.user ?? null);
           setUserSession(session ?? null);
 
@@ -1033,7 +1050,10 @@ function App() {
       // Compare works signed out (a shared /compare?ids= link must open, not bounce to the landing).
       'comparison',
     ];
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, rawSession) => {
+      // Never in until the email is verified (founder, Nov 2); the sign-in box opens on the code step.
+      const session = holdUnverified(supabase, rawSession);
+      if (rawSession && !session) { setShowAuthModal(true); return; }
       // A different account (or none) must never reuse the previous account's cached intake.
       if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') forgetSharedIntake();
       if (session) {

@@ -162,7 +162,7 @@ export function HomeShortcuts({ cycle = null, sleep = null, products = [], onDat
       <button type="button" className="ay-hsc__tile is-products" onClick={onProducts} aria-label={`Your products: ${products.length} ${products.length === 1 ? 'product' : 'products'}. Open.`}>
         <span className="ay-hsc__photos" aria-hidden="true">
           {shown.length
-            ? shown.map((p) => <Plate key={p.id} src={resolveCatalogProductImage(p) || ''} alt="" fallback={p.brand || p.name} className="ay-hsc__plate" />)
+            ? shown.map((p) => <Plate key={p.id} src={resolveCatalogProductImage(p) || ''} alt="" className="ay-hsc__plate"><svg className="ay-hsc__plateicon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z" /><path d="M9 8V7a3 3 0 0 1 6 0v1" /></svg></Plate>)
             : <span className="ay-hsc__none is-plus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></span>}
         </span>
         <span className="ay-hsc__text" aria-hidden="true"><b>Your products</b><small>{products.length ? `${products.length} in your ecosystem` : 'Find what fits you'}</small></span>
