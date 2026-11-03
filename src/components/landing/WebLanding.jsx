@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { WhatYouCanDo, Picks, Proof, ReadsAndCommunity, Founders, ProAndEnd } from './LandingBody.jsx';
+import React, { useEffect, useRef, useState } from 'react';
+import { WhatYouCanDo, Picks, Proof, ReadsAndCommunity, Founders, ProAndEnd, useRiseOnView } from './LandingBody.jsx';
 import MedicalNote from '../MedicalNote.jsx';
 import { isPlainLeftClick } from '../../utils/productRoute';
 import '../../styles/editorial.css';
@@ -61,13 +61,15 @@ function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
 // most helpful Powder Room posts (one is shown, in the Community half).
 export default function WebLanding({ signedIn = false, userId = null, hasProfile = false, onAsk, personalPicks = null, onStartQuiz, onGoHome, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, communityPosts = [], heroBanner = null }) {
   const rest = useAfterHeroPaint();
+  const pageRef = useRef(null);
+  useRiseOnView(pageRef, [rest]);
   const { active: pro, offerOpen } = useProStatus(signedIn ? userId : null);
   const home = Boolean(signedIn && hasProfile && onGoHome);
   const cta = home
     ? { label: 'Go to your Home', slide: 'Slide to go to your Home', go: onGoHome }
     : { label: 'Get my matches', slide: 'Slide to find your matches', go: onStartQuiz };
   return (
-    <div id="ay-landing" className="ed ed-home hm hm-uq wl">
+    <div id="ay-landing" className="ed ed-home hm hm-uq wl" ref={pageRef}>
       <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />
       <BrandBar onOpen={onViewWaitlist} />
       {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the

@@ -1,0 +1,46 @@
+/* Landing motion (founder, Nov 2: "see how animated perfit.app is"). Each part
+   plays once when it scrolls into view; nothing moves for people who ask for
+   reduced motion (lb-anim / lb-rise are only added when motion is allowed). */
+
+/* Section titles rise in. */
+html body .app-container #ay-landing .lb-rise { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .7s cubic-bezier(.22, 1, .36, 1); }
+html body .app-container #ay-landing .lb-rise.is-in { opacity: 1; transform: none; }
+
+/* Feature tiles deal in one after another, a little tilted, then settle. */
+html body .app-container #ay-landing .lb-bento.lb-anim > .lb-tile { opacity: 0; transform: translateY(34px) rotate(calc((var(--n, 0) - 2) * 1.2deg)) scale(.97); transition: opacity .45s ease calc(var(--n, 0) * 90ms), transform .7s cubic-bezier(.34, 1.3, .64, 1) calc(var(--n, 0) * 90ms); }
+html body .app-container #ay-landing .lb-bento.lb-anim.is-in > .lb-tile { opacity: 1; transform: none; }
+
+/* Picks drop in like polaroids on a table, alternating tilt, springy settle. */
+html body .app-container #ay-landing .lb-picks.lb-anim > li { opacity: 0; transform: translateY(-46px) rotate(calc(var(--tilt, -5deg))) scale(.94); transition: opacity .35s ease calc(var(--n, 0) * 110ms), transform .75s cubic-bezier(.34, 1.35, .64, 1) calc(var(--n, 0) * 110ms); }
+html body .app-container #ay-landing .lb-picks.lb-anim > li:nth-child(even) { --tilt: 6deg; }
+html body .app-container #ay-landing .lb-picks.lb-anim.is-in > li { opacity: 1; transform: none; }
+
+/* A little lift and tilt on hover (mouse only). */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  html body .app-container #ay-landing .lb-picks > li { transition: transform .35s cubic-bezier(.34, 1.3, .64, 1); }
+  html body .app-container #ay-landing .lb-picks.is-in > li:hover,
+  html body .app-container #ay-landing .lb-picks:not(.lb-anim) > li:hover { transform: translateY(-6px) rotate(-1.2deg); transition-delay: 0s; }
+  html body .app-container #ay-landing .lb-picks.is-in > li:nth-child(even):hover,
+  html body .app-container #ay-landing .lb-picks:not(.lb-anim) > li:nth-child(even):hover { transform: translateY(-6px) rotate(1.2deg); }
+  html body .app-container #ay-landing .lb-bento .lb-tile .lb-pill { transition: transform .3s cubic-bezier(.34, 1.5, .64, 1); }
+  html body .app-container #ay-landing .lb-bento .lb-tile:hover .lb-pill { transform: scale(1.06); }
+}
+
+/* Ask ayna tile: the question types itself, cursor blinks, then the answer pops. */
+html body .app-container #ay-landing .lb-caret { display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -.15em; background: currentColor; animation: lb-blink .75s step-end infinite; }
+html body .app-container #ay-landing .lb-caret.is-done { animation: lb-blink .75s step-end 3, lb-gone 0s linear 2.25s forwards; }
+html body .app-container #ay-landing .lb-ghost { visibility: hidden; }
+html body .app-container #ay-landing .lb-caret { margin-right: -2px; }
+@keyframes lb-blink { 50% { opacity: 0; } }
+@keyframes lb-gone { to { opacity: 0; } }
+html body .app-container #ay-landing .lb-anim .lb-bub.is-me { transition-delay: 0s !important; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-typing { animation-delay: 2.1s !important; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-typing i { animation-delay: 2.1s !important; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-typing i:nth-child(2) { animation-delay: 2.25s !important; }
+html body .app-container #ay-landing .lb-anim.is-in .lb-typing i:nth-child(3) { animation-delay: 2.4s !important; }
+html body .app-container #ay-landing .lb-anim .lb-bub:not(.is-me) { transform: translateY(10px) scale(.92); transform-origin: left bottom; transition: opacity .3s ease 3.2s, transform .5s cubic-bezier(.34, 1.5, .64, 1) 3.2s !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  html body .app-container #ay-landing :is(.lb-rise, .lb-anim > li, .lb-anim > .lb-tile) { opacity: 1 !important; transform: none !important; transition: none !important; }
+  html body .app-container #ay-landing .lb-caret { display: none; }
+}

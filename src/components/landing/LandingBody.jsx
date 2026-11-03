@@ -12,6 +12,7 @@ import SlideToStart from '../ui/SlideToStart.jsx';
 import { PLANS, PAID_TERM_STARTS } from '../../pro/plans.js';
 import { LEAD_READS, pickCommunityPost } from './landingData.js';
 import './landing-blocks.css';
+import './landing-motion.css';
 
 /*
  * The landing below the hero (founder, Oct 28-29: every section under the hero was wrong; "use every
@@ -76,6 +77,23 @@ function usePlayOnView() {
   const cls = state === 'static' ? '' : state === 'in' ? ' lb-anim is-in' : ' lb-anim';
   return [ref, cls, state];
 }
+/* Section titles rise in as they reach the screen (once each). */
+export function useRiseOnView(rootRef, deps = []) {
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || !canPlay()) return undefined;
+    const els = [...root.querySelectorAll('.lb-h2, .lb-close h2')].filter((el) => !el.classList.contains('lb-rise'));
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+    }, { threshold: 0.4 });
+    for (const el of els) {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.9) continue; // already on screen: leave it be
+      el.classList.add('lb-rise'); io.observe(el);
+    }
+    return () => io.disconnect();
+  }, deps); // eslint-disable-line react-hooks/exhaustive-deps
+}
 function CountUp({ n, play }) {
   const [v, setV] = useState(0);
   useEffect(() => {
@@ -89,9 +107,26 @@ function CountUp({ n, play }) {
   return <>{shown.toLocaleString('en-US')}</>;
 }
 
+/* Perfit-style live demo (founder, Nov 2): the Ask question types itself,
+   letter by letter with a blinking cursor, once the tiles are on screen. The
+   full sentence is in the page from the start (screen readers, no motion). */
+function TypedLine({ text, play }) {
+  const [n, setN] = useState(play === 'static' ? text.length : 0);
+  useEffect(() => {
+    if (play !== 'in') return undefined;
+    let i = 0; let t;
+    const step = () => { i += 1; setN(i); if (i < text.length) t = window.setTimeout(step, 34 + (text[i - 1] === ' ' ? 40 : 0)); };
+    t = window.setTimeout(step, 350);
+    return () => window.clearTimeout(t);
+  }, [play, text]);
+  if (play === 'static') return text;
+  // The untyped rest stays in place, invisible, so the bubble never changes size (no jump).
+  return <>{text.slice(0, n)}<span className={`lb-caret${n >= text.length ? ' is-done' : ''}`} /><span className="lb-ghost">{text.slice(n)}</span></>;
+}
+
 /* ---------- 1. what you can do ---------- */
 const BARS = [5, 7, 4, 8, 6, 9, 7, 3, 6, 8, 5, 7, 4, 6, 8, 5, 9, 6];
-function Widget({ kind }) {
+function Widget({ kind, play = 'static' }) {
   if (kind === 'match') return (
     <span className="lb-w lb-w--chips" aria-hidden="true">
       {['Regular periods', 'Postpartum', 'Perimenopause'].map((c, i) => <span key={c} className={i === 2 ? 'is-on' : ''}>{c}</span>)}
@@ -117,7 +152,7 @@ function Widget({ kind }) {
   );
   return (
     <span className="lb-w lb-w--ask" aria-hidden="true">
-      <span className="lb-bub is-me">Is a cup or a disc better for a heavy flow?</span>
+      <span className="lb-bub is-me"><TypedLine text="Is a cup or a disc better for a heavy flow?" play={play} /></span>
       <span className="lb-typing"><i /><i /><i /></span>
       <span className="lb-bub">Here’s what the research says, with sources.</span>
     </span>
@@ -131,7 +166,7 @@ const FEATURES = [
   { k: 'ask', tone: 'ink', span: 2, t: 'Ask ayna', d: 'Questions about your body, answered with sources.', href: '/ask' },
 ];
 export function WhatYouCanDo({ onGo, member = false }) {
-  const [ref, anim] = usePlayOnView();
+  const [ref, anim, play] = usePlayOnView();
   const list = member ? FEATURES.map((f) => (f.k === 'match' ? { ...f, t: 'Your matches', d: 'Your products and care, matched to you, and why.', href: '/you/ecosystem', cta: 'Go to your Home' } : f)) : FEATURES;
   return (
     <section className="lb-sec" aria-labelledby="lb-do-h">
@@ -139,13 +174,13 @@ export function WhatYouCanDo({ onGo, member = false }) {
         <h2 id="lb-do-h" className="lb-h2">What you can do on ayna</h2>
         <ul className={`lb-bento${anim}`} ref={ref}>
           {list.map((f) => (
-            <li key={f.k} className={`lb-tile is-${f.tone}${f.span === 2 ? ' is-wide' : ''}`}>
+            <li key={f.k} className={`lb-tile is-${f.tone}${f.span === 2 ? ' is-wide' : ''}`} style={{ '--n': list.indexOf(f) }}>
               <Go className="lb-tile__a" href={f.href} onGo={onGo?.[f.k]}>
                 <span className="lb-tile__top">
                   <span className="lb-tile__words"><strong className="lb-tile__t">{f.t}</strong><span className="lb-tile__d">{f.d}</span></span>
                   <Icon k={f.k} />
                 </span>
-                <Widget kind={f.k} />
+                <Widget kind={f.k} play={play} />
                 {f.cta && <span className="lb-pill">{f.cta}<Arrow /></span>}
               </Go>
             </li>
@@ -179,6 +214,11 @@ export function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
   useRecommendationViews(mine ? four : null, 'home_top_picks');
   if (ready && four.length < 2) return null;
   const name = mine ? 'Top picks for you' : 'This week’s picks';
+  return <PicksList name={name} ready={ready} four={four} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />;
+}
+/* Picks deal in like polaroids dropped on a table, then settle (founder, Nov 2). */
+function PicksList({ name, ready, four, onOpenProduct, onViewDiscovery }) {
+  const [ref, anim] = usePlayOnView();
   return (
     <section className="lb-sec" aria-labelledby="lb-picks-h">
       <div className="lb-wrap">
@@ -186,8 +226,8 @@ export function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
           <h2 id="lb-picks-h" className="lb-h2">{name}</h2>
           <Go className="lb-more" href="/explore/products" onGo={() => onViewDiscovery?.('')}>See all products<Arrow /></Go>
         </header>
-        <ul className="lb-picks" aria-label={ready ? name : 'Loading products'}>
-          {ready ? four.map((p) => <li key={p.id}><ProductCard product={p} onOpen={onOpenProduct} className="hm-sticker" /></li>)
+        <ul className={`lb-picks${ready ? anim : ''}`} ref={ref} aria-label={ready ? name : 'Loading products'}>
+          {ready ? four.map((p, i) => <li key={p.id} style={{ '--n': i }}><ProductCard product={p} onOpen={onOpenProduct} className="hm-sticker" /></li>)
             : [0, 1, 2, 3].map((i) => <li key={i} aria-hidden="true"><div className="lb-skel" /></li>)}
         </ul>
       </div>
