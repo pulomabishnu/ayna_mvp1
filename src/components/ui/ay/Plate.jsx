@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ScallopPlate } from './ScallopPlate.jsx';
 import './ay-primitives.css';
 
@@ -14,10 +15,13 @@ import './ay-primitives.css';
  */
 export default function Plate({ src = '', alt = '', saved = false, tone = null, stroke = false, frame = 'square', sticker = null, fallback = '', className = '', children = null, imgProps = {} }) {
   const t = tone || (saved ? 'pink' : 'white');
+  // A failed image falls back to the brand name (Nov 2 audit), never the browser's broken-image icon.
+  const [failed, setFailed] = useState('');
+  const showImg = src && failed !== src;
   return (
     <div className={`ayk-plate is-${frame} ${className}`.trim()}>
       <ScallopPlate tone={t} stroke={stroke} className={`ayk-plate__svg is-${t}`} />
-      {src ? <img className="ayk-plate__img" src={src} alt={alt} loading="lazy" decoding="async" {...imgProps} />
+      {showImg ? <img className="ayk-plate__img" src={src} alt={alt} loading="lazy" decoding="async" {...imgProps} onError={(e) => { setFailed(src); imgProps.onError?.(e); }} />
         : children || (fallback && <span className="ayk-plate__name">{fallback}</span>)}
       {sticker && <span className="ayk-sticker ayk-plate__sticker">{sticker}</span>}
     </div>

@@ -15,8 +15,9 @@ export default function SavedForLater({
   onAddToEcosystem,
   onBrowse,
 }) {
-  // "For later" only: anything already on her shelves isn't listed twice (audit).
-  const items = Object.values(savedProducts || {}).filter((p) => p?.id && !myProducts?.[p.id]);
+  // Every saved product (Nov 2 audit): the heart badge and You both count all of
+  // them, so a shelved one hidden here read "Nothing saved yet" next to "Saved 4".
+  const items = Object.values(savedProducts || {}).filter((p) => p?.id);
 
   return (
     <section id="ayna-wishlist" className="ay-shelf ay-saved2" aria-labelledby="ayna-wishlist-h">

@@ -115,3 +115,6 @@ html body .ayna-mobile.ayna-mobile .ay-grid-note .ay-shop-note.is-commission { m
 /* p15 clean: "How we make money" in the Shop note gets a 44px tap area without changing the line. */
 html body .ayshop__note a { position: relative; }
 html body .ayshop__note a::after { content: ''; position: absolute; left: -4px; right: -4px; top: 50%; height: 44px; transform: translateY(-50%); }
+/* Nov 2 audit: the Library topic chips started at the screen edge (a later rule
+   zeroed the row's padding). First chip lines up with Shop's, at the gutter. */
+html body .ayna-mobile :is(#ayk, .al-topics--v9):is(#ayk, .al-topics--v9):is(#ayk, .al-topics--v9):is(#ayk, .al-topics--v9):is(#ayk, .al-topics--v9) { padding-inline: var(--d-gutter, 20px) !important; scroll-padding-inline: var(--d-gutter, 20px); }

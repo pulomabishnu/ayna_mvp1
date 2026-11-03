@@ -305,3 +305,20 @@
 @media (prefers-reduced-motion: reduce) {
   .aq *, .aq *::before, .aq *::after { animation: none !important; transition: none !important; }
 }
+
+/* Nov 2 (founder: "formatted badly"): on the website every quiz part shares
+   one 640px column. The progress bar spans it (back and skip sit just outside,
+   in the margin), inputs fill it, and Continue follows the answers 32px below
+   instead of being pinned at the bottom of an empty screen. Long steps still
+   keep Continue in reach (sticky). */
+.aq--web .aq-col { min-height: 0; }
+.aq--web .qz-input { width: 100%; max-width: none !important; }
+.aq--web .aq-foot { padding-top: 8px; }
+@media (min-width: 820px) {
+  .aq--web .aq-top { position: relative; margin-left: 0; padding: 10px 0; }
+  .aq--web .aq-top > .aq-icon, .aq--web .aq-top > .is-spacer { position: absolute; top: 50%; translate: 0 -50%; left: -60px; }
+  .aq--web .aq-top > .is-spacer { display: none; }
+  .aq--web .aq-top > .aq-skip { position: absolute; top: 50%; translate: 0 -50%; right: -72px; }
+}
+/* Narrow screens: no empty slot after the bar, so it ends where the answers end. */
+.aq-top > .is-spacer:last-child { display: none; }

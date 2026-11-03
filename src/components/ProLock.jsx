@@ -97,7 +97,7 @@ export default function ProLock({
       <div className="pro-lock__card">
         <span className="pro-lock__seal"><LockIcon size={variant === 'inline' ? 20 : 26} /></span>
         <div className="pro-lock__text">
-          <p className="pro-lock__kicker">Get ayna Pro to unlock</p>
+          <p className="pro-lock__kicker">Included with ayna Pro</p>
           <h2 id={`${uid}-t`} className="pro-lock__title">{name}</h2>
           {context && <p className="pro-lock__context">{context}</p>}
           <p className="pro-lock__line">{line || proLockLine(feature)}</p>

@@ -1389,7 +1389,10 @@ export default function MobileApp() {
     onQuizConnectContinue: () => setScreen(session.pendingQuiz?.mode === 'new' ? 'ready' : 'plan'),
     // The reveal (ReadyScreen): "See my Today" saves her first matches the
     // same way "See my matches" does, then opens Today instead of the story.
-    onSeeMyToday: () => { nav.onSeeMatches(); markOnboardingDone(); setScreen('today'); },
+    // Signed out (Nov 2 audit, P0): Home is the landing for guests, so "See my
+    // Today" landed back on "Slide to find your matches" with no sign her
+    // matches were kept. Guests see their summary, which ends in saving them.
+    onSeeMyToday: () => { nav.onSeeMatches(); markOnboardingDone(); if (authUser) setScreen('today'); else { setRevealFrom(null); setRevealAtEnd(false); setScreen('reveal'); } },
     onReadyCreateAccount: () => { authResumeRef.current = null; authReturnScreenRef.current = 'ready'; setAuthMode('signup'); setScreen('signin'); },
     onReadyBack: () => setScreen('connect'),
     onMakeMorePersonal: () => { setIntakeFlow('more'); setScreen('quiz'); },
@@ -1711,7 +1714,7 @@ export default function MobileApp() {
         />
       )}
       {/* Photo + username for every account without one, whatever way she signed in (founder, Oct 29). */}
-      {authUser && <ProfileSetupGate variant="app" user={authUser} firstName={lastQuizAnswers?.firstName || ''} blocked={['signin', 'quiz', 'building', 'reveal', 'connect', 'ecointro'].includes(screen) || Boolean(overlay)} />}
+      {authUser && <ProfileSetupGate variant="app" user={authUser} firstName={lastQuizAnswers?.firstName || ''} blocked={['signin', 'quiz', 'building', 'reveal', 'connect', 'ecointro'].includes(screen) || Boolean(overlay) || (!heardDismissed && shouldAskHeardAbout(authUser))} />}
       <EcosystemResetDialog open={resetDialogOpen} busy={resettingEcosystem} onCancel={() => setResetDialogOpen(false)} onConfirm={handleResetEcosystem} />
       {(overlay?.type === 'profile-auth' || authPrompt) && (
         <div className="ayna-profile-auth-backdrop ay-sheet-dim" style={authPrompt ? { zIndex: 100, bottom: 0 } : undefined} onClick={closeAuthSheet}>
@@ -1840,6 +1843,7 @@ export default function MobileApp() {
           ecosystemCount={myProducts.length}
           savedCount={Object.keys(savedMap || {}).length}
           quizAnswers={effectiveQuizAnswers}
+          ownAnswers={lastQuizAnswers}
           myProducts={myProducts}
           matchProducts={suggestedEcosystemProducts}
           savedProducts={savedMap}

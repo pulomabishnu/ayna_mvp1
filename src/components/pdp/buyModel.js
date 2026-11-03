@@ -41,7 +41,9 @@ export function buyModel(product, { variant = null, brand = '', name = '', price
   const shown = shownName;
   const label = prelaunch ? (product.waitlistCtaLabel || 'Join the waitlist')
     : isService ? `Visit ${shown.length <= 34 ? shown : retailer || 'the site'}`
-    : retailer ? `Buy at ${retailer.length <= 24 ? retailer : 'the seller'}${price ? ` · ${price}` : ''}` : '';
+    // Nov 2 audit: "Buy at target.com · $23.49" wrapped onto two lines on a phone.
+    // The price is printed right above the button, so a long label drops it.
+    : retailer ? ((base) => (price && `${base} · ${price}`.length <= 22 ? `${base} · ${price}` : base))(`Buy at ${retailer.length <= 24 ? retailer : 'the seller'}`) : '';
   const verb = isService ? 'get started' : 'buy';
   // Every store on file: the Buy link first, then other links, then stores named without a link.
   const others = retailerLinks(product, url);

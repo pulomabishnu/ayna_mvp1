@@ -352,3 +352,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 
 /* No sticky scroll on the product page (founder, Oct 27): the compare table's first column scrolls too. */
 #ay-pdp#ay-pdp#ay-pdp .ay-compare thead tr > td:first-child, #ay-pdp#ay-pdp#ay-pdp .ay-compare tr > :first-child { position: static !important; }
+
+/* Nov 2 audit: inside the passport block another rule zeroed its left margin,
+   so it touched the screen edge. Same gutters as everything else. */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-passport .ay-pdp2-cmpbtn { box-sizing: border-box; width: calc(100% - 2 * var(--d-gutter, 20px)) !important; margin: 16px var(--d-gutter, 20px) 0 !important; }

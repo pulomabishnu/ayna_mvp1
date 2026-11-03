@@ -164,6 +164,8 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-article h1 + p { margin-bottom: 16px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-article p { font-size: 15px !important; font-weight: 500 !important; line-height: 1.45 !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-cabinet-home, .ayna-fresh-browse-screen, .ay-lib, .ayna-fresh-saved) { padding-bottom: 96px !important; }
+/* Inside Shop/Services/Library (.ax--embed) the outer page already clears the tab bar; a second 96px left a blank gap above the footer. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ax--embed :is(.ayna-fresh-browse-screen, .ay-lib) { padding-bottom: 8px !important; }
 /* sign up: inputs on the system border */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-auth-field { border: 2px solid rgba(62, 39, 35, .3) !important; border-radius: 14px !important; min-height: 56px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-auth-field:focus-within { border-color: var(--b-espresso) !important; }

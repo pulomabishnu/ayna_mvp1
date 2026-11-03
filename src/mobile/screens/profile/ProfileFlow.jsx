@@ -3638,6 +3638,10 @@ export default function ProfileFlow({
   ecosystemCount = 0,
   savedCount = 0,
   quizAnswers = null,
+  // Her own saved answers, whatever "Personalize with my data" says (Nov 2):
+  // that setting turns off personalized picks, not her own profile. Before,
+  // turning it off made the profile read 0% and "Answer the quiz".
+  ownAnswers = undefined,
   myProducts = [],
   matchProducts = [],
   savedProducts = {},
@@ -3699,7 +3703,8 @@ export default function ProfileFlow({
   // Edge swipe back through the stack, like every pushed screen in iOS.
   const swipeBack = useEdgeSwipeBack(goBack, screenStack.length > 1);
 
-  const profileFilledPct = getProfileCompletionPct(quizAnswers?.fullHealthIntake || quizAnswers);
+  const own = ownAnswers !== undefined ? ownAnswers : quizAnswers;
+  const profileFilledPct = getProfileCompletionPct(own?.fullHealthIntake || own);
   const selectedNeedIds = useMemo(() => { try { return quizAnswers ? getSelectedNeeds(quizAnswers).map((n) => n.id) : []; } catch { return []; } }, [quizAnswers]);
   const shopperAlertsCount = getSafetyAlerts(myProducts, quizAnswers).length;
 
@@ -3711,7 +3716,7 @@ export default function ProfileFlow({
         onBack={goBack}
         healthConnected={healthConnected}
         recentAsks={recentAsks}
-        intake={quizAnswers?.fullHealthIntake || null}
+        intake={own?.fullHealthIntake || null}
         onUpdateIntake={onUpdateIntake}
         authUserId={authUser?.id}
         name={name}
@@ -3744,7 +3749,7 @@ export default function ProfileFlow({
       <div className="ay-you" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
         <BackHeader title="Your blend" onBack={goBack} />
         <div className="ay-you-body">
-          <HouseBlend intake={quizAnswers?.fullHealthIntake || null} onSave={onUpdateIntake} />
+          <HouseBlend intake={own?.fullHealthIntake || null} onSave={onUpdateIntake} />
           <nav className="ay-you-section ay-you-list" aria-label="More about your answers">
             <button type="button" className="ay-you-row" onClick={() => pushScreen('shopper')}>
               <svg className="ay-you-row-icon" viewBox="0 0 24 24" aria-hidden="true">{HUB_ICONS.shopper}</svg>
@@ -3835,7 +3840,7 @@ export default function ProfileFlow({
         authUser={authUser}
         name={name}
         onNameChanged={onNameChanged}
-        quizAnswers={quizAnswers}
+        quizAnswers={own}
         onOpenPassword={() => pushScreen('password')}
         onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
         onOpenManageData={() => pushScreen('manageData')}
@@ -3919,7 +3924,7 @@ export default function ProfileFlow({
         <WhatAynaKnows
           variant="app"
           focus={screen.slice('beliefs:'.length)}
-          quizAnswers={quizAnswers}
+          quizAnswers={own}
           userId={authUser?.id || null}
           connected={healthConnected}
           onUpdateIntake={onUpdateIntakeLocal || onUpdateIntake}

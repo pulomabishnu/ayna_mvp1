@@ -106,3 +106,18 @@ describe('P0 catalog sweep: properties every product must keep', () => {
     expect(changed).toEqual([]);
   }, 120000);
 });
+
+describe('P0: pregnancy and medicines whose label says ask a clinician (Nov 2 audit)', () => {
+  it('ibuprofen is never a match in pregnancy (any trimester)', () => {
+    const advil = ALL_PRODUCTS.find((p) => p.id === 'p-advil-ibuprofen-200');
+    expect(advil).toBeTruthy();
+    for (const t of ['First trimester', 'Second trimester', 'Third trimester', '']) {
+      const d = decide(advil, { ...base, lifeStageSelections: ['I am pregnant'], pregnancyTrimester: t, supportSelections: ['Cramps or period pain'] });
+      expect(d.status, t || 'no trimester').not.toBe('cleared');
+    }
+  });
+  it('ibuprofen still matches period cramps when not pregnant', () => {
+    const advil = ALL_PRODUCTS.find((p) => p.id === 'p-advil-ibuprofen-200');
+    expect(decide(advil, { ...base, lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain'] }).status).toBe('cleared');
+  });
+});

@@ -1106,3 +1106,9 @@
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-mark { flex: none; display: inline-flex; align-items: center; gap: 5px; font: 600 calc(13px * var(--ayna-text-scale, 1))/1.3 var(--f-ui); color: var(--d-ink); }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-mark::before { content: ''; width: 9px; height: 9px; box-sizing: border-box; border-radius: 50%; background: #f7badd; border: 1.5px solid var(--d-ink); }
 .ayna-mobile:is(#ay,.ayna-mobile) .ay-pc-kindtext + .ay-pc-mark { margin-left: 2px; }
+/* Nov 2 audit: the status-bar strip matches dark screens (Ready, quiz section
+   breaks) instead of a butter band over espresso. */
+.ayna-mobile:is(#ay,.ayna-mobile):is([data-screen='ready'], :has(.aq-block)) { --d-statusbar: #3e2723; }
+/* Profile overlays (Settings, My health, Activity) paint over the strip, so
+   they carry their own strip and nothing scrolls under the clock. */
+.ayna-mobile .ayna-fresh-profile-overlay::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top, 0px); background: var(--d-page, #ffedac); z-index: 5; pointer-events: none; }

@@ -143,7 +143,8 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
       title={gateTitle}
       context={contextTitle}
       line={feature === 'reads' && result?.usedOn ? 'You’ve used this week’s free Read. A new one opens Monday, or get every Read with ayna Pro.'
-        : feature === 'reads' && result?.signedOut ? 'Free accounts choose one Read a week. ayna Pro opens every Read.' : undefined}
+        // Nov 2 audit: a new visitor hasn't used anything yet; say how to get her free Read.
+        : feature === 'reads' && result?.signedOut ? 'Create a free account (or log in) to choose one free Read every week. ayna Pro opens every Read.' : undefined}
       native={Capacitor.isNativePlatform()}
       onNotNow={onBack || onEcosystem}
       error={result.error || ''}

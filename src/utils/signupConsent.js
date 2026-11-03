@@ -41,24 +41,20 @@ export function consentMetadata(now = new Date().toISOString()) {
   };
 }
 
-// "Where did you hear about us?" is optional and asked after sign-up
-// (HeardAboutPrompt.jsx). A sign-up sets this flag; the prompt shows once
-// she is signed in, then clears it whether she answers or skips.
+// "Where did you hear about us?" is required (founder, Nov 2): every signed-in
+// account without an answer is asked, on any device and any sign-in method,
+// until she answers (HeardAboutPrompt.jsx). The flag below is kept so older
+// callers keep working; it no longer decides whether to ask.
 const HEARD_FLAG = 'ayna_ask_heard_about';
-const HEARD_FLAG_TTL = 24 * 60 * 60 * 1000;
 
 export function markAskHeardAbout() {
-  try { localStorage.setItem(HEARD_FLAG, String(Date.now())); } catch { /* storage unavailable: the question is optional */ }
+  try { localStorage.setItem(HEARD_FLAG, String(Date.now())); } catch { /* storage unavailable */ }
 }
 
 export function shouldAskHeardAbout(user) {
-  if (!user || user.user_metadata?.heard_about) return false;
-  try {
-    const at = Number(localStorage.getItem(HEARD_FLAG));
-    return Number.isFinite(at) && at > 0 && Date.now() - at < HEARD_FLAG_TTL;
-  } catch {
-    return false;
-  }
+  if (!user || !user.id) return false;
+  const m = user.user_metadata || {};
+  return !(m.heard_about || m.heard_about_us);
 }
 
 export function clearAskHeardAbout() {

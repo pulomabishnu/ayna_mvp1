@@ -213,6 +213,8 @@ describe('distribution across needs stays stable', () => {
     // Baseline: 315 safety holds + bleeding evaluations across these personas
     // until Oct 29; 482 after the P0 holds (open clinician review, unreviewed
     // interactions, conflicting or old safety answers). Pinned so any change is deliberate.
-    expect(holds).toBe(482);
+    // Nov 2 (deliberate): 19 pregnancy holds are now exclusions, because in
+    // pregnancy a medicine whose label says ask a clinician is never put forward.
+    expect(holds).toBe(463);
   });
 });

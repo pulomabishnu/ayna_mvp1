@@ -66,8 +66,8 @@
 
 /* Reference-library layout: topic list on the left, reads on the right. */
 .app-container .ll-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; align-items: start; }
-.app-container .ll-side { position: sticky; top: 96px; }
-.app-container .ll-side__h { margin: 0 0 8px; font: 700 13px/1 var(--ay-sans-stack, sans-serif); letter-spacing: .04em; text-transform: uppercase; color: #6d4c41; }
+.app-container .ll-side {  }
+.app-container .ll-side__h { margin: 0 0 8px; font: 700 15px/1.2 var(--ay-sans-stack, sans-serif); color: #6d4c41; }
 .app-container .ll-side ul { margin: 0; padding: 0; list-style: none; border-left: 1.5px solid rgba(62, 39, 35, .2); }
 .app-container .ll-side button { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; min-height: 40px; margin-left: -1.5px; padding: 0 0 0 14px; border: 0; border-left: 3px solid transparent; background: none; color: #3e2723; font: 500 15px/1.25 var(--ay-sans-stack, sans-serif); text-align: left; cursor: pointer; }
 .app-container .ll-side button span { font-size: 13px; color: #6d4c41; }
