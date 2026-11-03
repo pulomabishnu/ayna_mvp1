@@ -3,12 +3,26 @@ import posthog from 'posthog-js';
 /**
  * Where visitors drop off (founder, Nov 3: "track friction, where they drop
  * off"). Two events, kept separate from analyticsEvents.js:
- *   landing_cta_clicked  { cta, surface }                       which home-page button
+ *   landing_cta_clicked  { cta, surface, copy? }                which home-page button (and its words)
  *   quiz_step_viewed     { step_id, step_number, step_total, part, surface }
  * Only names of buttons and questions, never an answer or anything about her
  * health. `platform` is added to every event in src/main.jsx.
  */
-const CTAS = new Set(['sign_up_free', 'go_home', 'watch_demo', 'sign_up_free_demo', 'go_home_demo']);
+const CTAS = new Set(['start_quiz', 'start_quiz_demo', 'start_quiz_end', 'start_quiz_nav', 'sign_up_free', 'go_home', 'watch_demo', 'sign_up_free_demo', 'go_home_demo', 'go_home_end']);
+
+/**
+ * The main button's words (Nov 3 research: first person, says what you get, says free).
+ * Default "Get my free matches". A PostHog multivariate flag `landing-cta-copy` can
+ * switch a share of visitors to "Sign up free" to compare; `copy` is sent with each click.
+ */
+export const CTA_COPY = { get_my_free_matches: 'Get my free matches', sign_up_free: 'Sign up free' };
+export function landingCtaCopy() {
+  try {
+    const v = client.getFeatureFlag?.('landing-cta-copy');
+    if (typeof v === 'string' && CTA_COPY[v]) return v;
+  } catch { /* flags not loaded */ }
+  return 'get_my_free_matches';
+}
 const SURFACES = new Set(['web', 'app', 'mobile_web']);
 const SAFE_ID = /^[a-zA-Z][a-zA-Z0-9_]{0,40}$/;
 
@@ -16,9 +30,9 @@ let client = posthog;
 /** Tests swap the client. */
 export function setFunnelClient(c) { client = c || posthog; }
 
-export function trackLandingCta(cta, surface = 'web') {
+export function trackLandingCta(cta, surface = 'web', copy = null) {
   if (!CTAS.has(cta)) return;
-  try { client.capture('landing_cta_clicked', { cta, surface: SURFACES.has(surface) ? surface : 'web' }); } catch { /* never blocks */ }
+  try { client.capture('landing_cta_clicked', { cta, surface: SURFACES.has(surface) ? surface : 'web', ...(CTA_COPY[copy] ? { copy } : {}) }); } catch { /* never blocks */ }
 }
 
 const lastStep = { key: '' };

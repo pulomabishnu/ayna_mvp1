@@ -91,7 +91,9 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
   it('hero (founder, Nov 3): says what ayna does, 3 reasons, one Sign up free button (welcome tip anchor), the demo, search and the rain', () => {
     const html = renderToStaticMarkup(<WebLanding onStartQuiz={() => {}} onViewHowItWorks={() => {}} />);
     expect(text(html)).toContain('Find women’s health products');
-    expect(html).toMatch(/<button type="button" class="wl-cta" data-tour="landing-start">Sign up free<\/button>/);
+    // Nov 3 CTA research: first person, says what you get, says free.
+    expect(html).toMatch(/<button type="button" class="wl-cta" data-tour="landing-start">Get my free matches<svg/);
+    expect(text(html)).toContain('Free. No card. About 1 minute.');
     expect(html.match(/<li><svg/g)?.length).toBe(3);
     expect(html).toContain('href="#ay-demo"');
     expect(html).toContain('id="ay-demo"');
@@ -104,7 +106,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(html).toContain('aria-label="Pause motion"');
     expect(html).not.toContain('<mark');
     const home = renderToStaticMarkup(<WebLanding signedIn hasProfile onGoHome={() => {}} onStartQuiz={() => {}} />);
-    expect(home).toContain('>Go to your Home</button>');
+    expect(home).toContain('>Go to your Home<svg');
   });
 
   it('keeps the website sections, the Pro teaser with Learn more to /pro, the founders and the medical note last', () => {
@@ -145,7 +147,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page.querySelector('.wl-turn')).toBeNull();
     // the last ask repeats Slide to start, without a second welcome-tip anchor, then the note ends the page
     const end = page.querySelector('.lb-close .wlx-end');
-    expect(end.querySelector('button.lb-end__btn').textContent).toBe('Sign up free');
+    expect(end.querySelector('button.lb-end__btn').textContent).toBe('Get my free matches');
     expect(page.querySelectorAll('[data-tour="landing-start"]').length).toBe(1);
     expect(page.querySelector('.lb-close').nextElementSibling).toBe(page.lastElementChild);
     // the founders photo stays

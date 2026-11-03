@@ -32,7 +32,8 @@ describe('first-run setup (seven screens)', () => {
     const core = getOnboardingSteps(i, { part: 'core' });
     const more = getOnboardingSteps(i, { part: 'more' });
     // Nov 3: four screens before her matches; name and the safety questions right after the reveal.
-    expect(core.map((s) => s.id)).toEqual(['age', 'lifeStage', 'helpTopics', 'support', 'periodPain', 'safety']);
+    // Nov 3 (later): 4 questions, all used by the matcher (the topic screen only filtered the next one).
+    expect(core.map((s) => s.id)).toEqual(['age', 'lifeStage', 'support', 'periodPain', 'safety']);
     expect(more.map((s) => s.id)).toEqual(['conditions', 'allergies', 'medications', 'goals', 'formats', 'priceRange', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'trust', 'periodFlow', 'name']);
     // Given the list she sees, every screen counts (critique, Oct 27).
     expect(onboardingProgress(core[3], 'core', core).label).toBe(`Step 4 of ${core.length}`);

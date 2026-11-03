@@ -194,6 +194,7 @@ import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
 import { MAIN_TABS, TabIcon, AskMark, ProfileMark } from './components/nav/tabs.jsx';
 import { WEB_TOP_TABS, YOU_SECTIONS, YOU_SECTION_ALIASES } from './components/nav/mainTabs.js';
+import { trackLandingCta, landingCtaCopy, CTA_COPY } from './utils/funnelEvents.js';
 import YouTabs from './components/you/YouTabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
@@ -2678,6 +2679,11 @@ function App() {
                 >
                   Log in
                 </button>
+                {/* Nov 3 (CTA research): on the desktop landing, the main button is also in the menu bar,
+                    so it's there whenever the bar comes back on scroll up. Phones keep Log in only. */}
+                {['welcome', 'hero'].includes(currentView) && (
+                  <button type="button" className="ay-nav__start" onClick={() => { const c = landingCtaCopy(); trackLandingCta('start_quiz_nav', 'web', c); handleStartQuiz(); }}>{CTA_COPY[landingCtaCopy()]}</button>
+                )}
                 </>
               )}
               {showAccountMenu && user && (

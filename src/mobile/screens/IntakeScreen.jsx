@@ -673,7 +673,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
   const goTo = (id, dir) => { setSearch(''); setZipError(''); setSectionBreak(null); setDirection(dir); setStepId(id); };
   // At most three breaks per quiz, named after the real first-run sections.
-  const BREAK_SCREENS = obPart === 'core' ? [3, 6] : obPart === 'more' ? [5] : [];
+  // Nov 3: none in the first 4 questions (a divider asked nothing and cost a tap).
+  const BREAK_SCREENS = obPart === 'more' ? [5] : [];
   const breakBefore = (from, to, list) => {
     if (!to || to.screen === from.screen || !BREAK_SCREENS.includes(to.screen)) return null;
     const label = ONBOARDING_SCREENS.find((sc) => sc.n === to.screen)?.label;

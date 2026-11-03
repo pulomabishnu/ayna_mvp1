@@ -6,7 +6,7 @@ import '../../styles/home.css';
 import '../../styles/loop-a-landing.css';
 import '../../styles/uq-landing.css';
 import { ScallopEdge } from '../ui/ay';
-import { trackLandingCta } from '../../utils/funnelEvents.js';
+import { trackLandingCta, landingCtaCopy, CTA_COPY } from '../../utils/funnelEvents.js';
 import HowItWorksDemo from './HowItWorksDemo.jsx';
 import { Rain, HeroSearch, BrandBar } from './kit.jsx';
 import { useProStatus } from '../../pro/useProStatus.js';
@@ -58,7 +58,7 @@ function Hero({ cta, onSearch, banner = null }) {
           <h1 id="hm-hero-title" className="wl-title">Find women’s health products <span>that fit you.</span></h1>
           <p className="wl-one">Pads, vitamins, sleep help and more. Answer 4 questions and see what fits you.</p>
           <div className="wl-ctas">
-            <button type="button" className="wl-cta" data-tour="landing-start" onClick={() => { trackLandingCta(cta.id); cta.go?.(); }}>{cta.label}</button>
+            <button type="button" className="wl-cta" data-tour="landing-start" onClick={() => { trackLandingCta(cta.id, 'web', cta.copy); cta.go?.(); }}>{cta.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
             <a className="wl-watch" href="#ay-demo" onClick={watch}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M10 8.5v7l6-3.5-6-3.5Z" /></svg>Watch how it works</a>
           </div>
           {cta.note && <p className="wl-cta-note">{cta.note}</p>}
@@ -97,14 +97,15 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
   useRiseOnView(pageRef, [rest]);
   const { active: pro, offerOpen } = useProStatus(signedIn ? userId : null);
   const home = Boolean(signedIn && hasProfile && onGoHome);
+  const [copy] = useState(landingCtaCopy);
   const cta = home
-    ? { id: 'go_home', label: 'Go to your Home', slide: 'Slide to go to your Home', go: onGoHome }
-    : { id: 'sign_up_free', label: 'Sign up free', slide: 'Slide to sign up free', note: 'Free. No card needed.', go: onStartQuiz };
+    ? { id: 'go_home', label: 'Go to your Home', go: onGoHome }
+    : { id: 'start_quiz', copy, label: CTA_COPY[copy], note: 'Free. No card. About 1 minute.', go: onStartQuiz };
   return (
     <div id="ay-landing" className="ed ed-home hm hm-uq wl" ref={pageRef}>
       <Hero cta={cta} onSearch={onSearch} banner={home ? null : heroBanner} />
       <Reasons />
-      <HowItWorksDemo onStart={() => { trackLandingCta(`${cta.id}_demo`); cta.go?.(); }} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />
+      <HowItWorksDemo onStart={() => { trackLandingCta(`${cta.id}_demo`, 'web', cta.copy); cta.go?.(); }} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />
       <BrandBar onOpen={onViewWaitlist} />
       {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the
           raining pictures and widgets, and use the original website for the rest). */}
@@ -117,7 +118,7 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
           <Founders onViewAbout={onViewAbout} />
         </>}
       </div>
-      {rest && <ProAndEnd pro={pro === true} offerOpen={offerOpen} cta={cta} />}
+      {rest && <ProAndEnd pro={pro === true} offerOpen={offerOpen} cta={{ ...cta, go: () => { trackLandingCta(`${cta.id}_end`, 'web', cta.copy); cta.go?.(); } }} />}
       <div className="wl-note"><MedicalNote className="wl-note__p" /></div>
     </div>
   );

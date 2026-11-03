@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { setFunnelClient, trackLandingCta, trackQuizStep } from './funnelEvents.js';
+import { setFunnelClient, trackLandingCta, trackQuizStep, landingCtaCopy } from './funnelEvents.js';
 
 const sent = [];
 beforeEach(() => { sent.length = 0; setFunnelClient({ capture: (n, p) => sent.push([n, p]) }); });
@@ -9,6 +9,15 @@ describe('drop-off events', () => {
     trackLandingCta('sign_up_free');
     trackLandingCta('anything else');
     expect(sent).toEqual([['landing_cta_clicked', { cta: 'sign_up_free', surface: 'web' }]]);
+  });
+  it('the button words: "Get my free matches" unless the landing-cta-copy flag picks "Sign up free"; the words go with the click', () => {
+    expect(landingCtaCopy()).toBe('get_my_free_matches');
+    setFunnelClient({ capture: (n, p) => sent.push([n, p]), getFeatureFlag: () => 'sign_up_free' });
+    expect(landingCtaCopy()).toBe('sign_up_free');
+    setFunnelClient({ capture: (n, p) => sent.push([n, p]), getFeatureFlag: () => 'something odd' });
+    expect(landingCtaCopy()).toBe('get_my_free_matches');
+    trackLandingCta('start_quiz', 'web', 'sign_up_free');
+    expect(sent.at(-1)).toEqual(['landing_cta_clicked', { cta: 'start_quiz', surface: 'web', copy: 'sign_up_free' }]);
   });
   it('records the question she sees (its name, never her answer), once per view', () => {
     trackQuizStep({ stepId: 'support', number: 3, total: 4 });

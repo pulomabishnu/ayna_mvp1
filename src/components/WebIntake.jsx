@@ -397,9 +397,10 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
     if (index > 0) go(steps[index - 1].id, 'back');
     else if (phase === 'more') go(CHECKPOINT, 'back');
   };
-  // At most three breaks: before "What you are experiencing" and "For your safety", and before "Your preferences".
+  // Nov 3: the first 4 questions run straight through (a divider screen asked nothing and cost a tap).
+  // One break is left, before "Your preferences" in the optional part after the matches.
   const breakBefore = (from, to, list) => {
-    if (!to || to.screen === from.screen || to.obPart !== from.obPart || !(from.obPart === 'more' ? [5] : [3, 6]).includes(to.screen)) return null;
+    if (!to || to.screen === from.screen || to.obPart !== from.obPart || from.obPart !== 'more' || to.screen !== 5) return null;
     const label = ONBOARDING_SCREENS.find((sc) => sc.n === to.screen)?.label;
     return label ? { label, count: list.filter((st) => st.screen === to.screen && st.obPart === to.obPart).length, nextId: to.id } : null;
   };
@@ -538,7 +539,9 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); next(); } }} />
         {zipError && <p className="qz-alert qz-zip-err" id="qz-zip-err" role="alert">{zipError}</p>}
       </div>;
-      case 'support': if (onboarding) {
+      // Nov 3: with no topic picked first (the new 4-question start), show the short
+      // "Common at your stage" list with More topics, not every group at once.
+      case 'support': if (onboarding && (intake.helpTopics || []).length) {
         const groups = supportGroupsForTopics(intake.helpTopics);
         const q = search.trim().toLowerCase();
         const known = new Set(groups.flatMap((g) => g.items));
@@ -560,7 +563,11 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       } else {
         const q = search.trim().toLowerCase();
         const known = new Set(SUPPORT_GROUPS.flatMap((g) => g.items));
-        const tailoredCommon = commonNeedOptions(intake, [...known], COMMON_NEEDS);
+        const stageCommon = commonNeedOptions(intake, [...known], COMMON_NEEDS);
+        // Nov 3: if she gets periods, cramps is always on the short list. (The research priors
+        // have a cramps row for 18-24 only, so 25+ never saw it; this is from her answer, not a rate.)
+        const getsPeriods = (intake.lifeStageSelections || []).some((x) => x === 'I get periods regularly' || x === 'My periods are irregular');
+        const tailoredCommon = getsPeriods && !stageCommon.includes('Cramps or period pain') ? ['Cramps or period pain', ...stageCommon].slice(0, 6) : stageCommon;
         const custom = intake.supportSelections.filter((i) => !known.has(i));
         return <>
           <Search value={search} onChange={setSearch} placeholder="Search, e.g. cramps, sleep, acne" />
@@ -781,7 +788,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const obProgress = onboarding ? onboardingProgress(step, step.obPart === 'more' ? 'more' : 'core', steps.filter((s) => s.obPart === (step.obPart === 'more' ? 'more' : 'core'))) : null;
   // About you shows as two screens on the website: age, then life stage (titles from the first-run question set).
   const view = step.type === 'aboutYou'
-    ? (aboutPart === 'age' ? { title: 'How old are you?', subtitle: '' } : { title: 'What life stage are you in right now?', subtitle: 'You can be in perimenopause and still have regular periods. Not sure is a fine answer.' })
+    ? (aboutPart === 'age' ? { title: 'How old are you?', subtitle: '' } : { title: 'Which of these is you right now?', subtitle: 'Not sure is OK.' })
     : { title: step.title, subtitle: step.subtitle };
   const multi = isMultiSelectStep(step) || (step.type === 'aboutYou' && aboutPart === 'stage');
   const helperShort = isShortHelper(view.subtitle) ? view.subtitle : '';
