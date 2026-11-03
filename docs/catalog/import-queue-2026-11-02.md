@@ -136,6 +136,45 @@ brush, smart mirror, novelty underwear bundles.
 | Pore Favor | Acne Supplement | https://www.porefavor.com/en-us/products/clear-skin-supplement | acne |
 | Topicals | Faded Brightening + Clearing Serum | https://www.amazon.com/dp/B09V9QRHCD | hyperpigmentation |
 
+## Status (Nov 2, done)
+
+Researched from each brand's page and openFDA, then added in
+`src/data/productsNov2026.js` (sources in each entry's `researchSources`).
+
+**Live (50):** Twentyeight Health Birth control, emergency contraception and urgent care, Function Health Membership, Hormona Perimenopause Test Kit + App, Balance - Menopause & Hormones, Caria: Menopause & Midlife, Health & Her App, Stella: Menopause relief, perry: Perimenopause Community, Menolog (listed as Menelle) Perimenopause Tracker: Menelle, Lively - Period Tracker, Cycle, Kindra V Relief Serum, Kindra V Lube Water-Based Lubricant, Kindra V Lube Silicone Lubricant, Kindra Boric Acid Suppositories, Womaness Coco Bliss External Vaginal Moisturizer, Womaness Daily V Soothe, Womaness Melt For You Vaginal Inserts, Stripes Vag of Honor Vaginal Moisturizer, Stripes Oh My Glide Intimate Play Oil, Bonafide Revaree, Bonafide Revaree Plus, Bonafide Clairvee Vaginal Pre + Probiotic, Vella Meltwater Vaginal Emollient, Vella Everslide Personal Lubricant, Bonafide Thermella, Bonafide Ristela, O Positiv URO Urinary Tract Health Capsules, Perelel Perimenopause Support Pack, Perelel Hormonal Balance Support, Perelel Conception Support Pack, Perelel Fertility+ Support, Perelel Prenatal Pack (1st / 2nd / 3rd Trimester), Perelel Mom Multi Support Pack, Perelel Daily Iron Ease, Thorne Berberine, Thorne 5-MTHF 1 mg, Seeking Health DAO Enzyme (formerly Histamine Digest / Histamine Block), Micro Ingredients Myo & D-Chiro Inositol Powder, Rif Care Organic Cotton and Hemp Fiber Menstrual Pads with Wings, Rif Care Organic Cotton Non-Applicator Tampons, Rif Care Organic Cotton and Hemp Fiber Leakproof Period Undies (no PFA added), Viv for your V Viv Disc, Viv for your V Viv Menstrual Cup, Viv for your V Viv Organic Cotton Tampons, Viv for your V Viv Bamboo Pads & Liners, Popmask Big Hug Self-Heating Patches, Hoolest VeRelief Prime, Queen of the Thrones Ritual Starter - Liver Castor Oil Pack Kit, CEAN Lymphatic Maternity Compression Romper, Topicals Faded Brightening + Clearing Serum (Unscented).
+
+**Added but hidden until a fact is filled (25):**
+- Alloy Menopause care (hormone therapy and sexual health): No price on the homepage (no membership, consult or product prices); no brand pricing page found; Page says 'board-certified doctors', not 'licensed clinicians' - use that wording; States served not stated; Also sells sk
+- EllaDx Ella Dx Annual Panel: Sheet says 'Hormones / Thyroid / Fertility / Anemia panels' but this page does NOT list estrogen, progesterone, testosterone, FSH, LH, AMH, ferritin or iron. Only thyroid is clearly covered. Other EllaDx panels were not 
+- Clearblue Menopause Stage Indicator: No price on brand page; Amazon link (B0C68D39LQ) could not be read (robots blocked), so ASIN match unverified; No product image URL from page; Page does not address hormonal contraception or HRT users, pregnancy or breas
+- Replens Long-Lasting Vaginal Moisturizer: Price not shown on brand page.; Full ingredient list not on brand page.; Pregnancy/breastfeeding not addressed.; Amazon listing could not be read (WebFetch blocked by amazon.com robots); ASIN not verified.
+- Replens External Comfort Gel: Price and size not shown on brand page.; Full ingredient list not on page.; Allergens, pregnancy, breastfeeding not addressed.; Condom compatibility not stated (brand recommends Silky Smooth for sex).
+- Replens Silky Smooth Silicone-Based Lubricant: Price and size not shown on brand page.; Full ingredient list not on page.; Toy compatibility not stated.; Pregnancy/breastfeeding not addressed.
+- Vella Ebbtide Vaginal Inserts: Price per pack size unclear.; Sheet groups it with lubes; it is a CBD cramp-relief insert.; Page 'clinically proven' claims cite studies not read here.; Tag 'herbal' is a judgment (plant-derived CBD); review.
+- O Positiv URO Vaginal Probiotic Capsules: no product photo yet (the brand page shows only a generic image); Pregnancy, breastfeeding, allergens not stated.; og:image is a generic site-wide 'Preview-Photo.jpg' shared by all O Positiv pages; set to null.; Gummy fo
+- O Positiv URO Boric Acid Vaginal Suppository: no product photo yet (the brand page shows only a generic image); Page does not mention BV; sheet's 'BV' use not sourced.; og:image is a generic site-wide preview photo; set to null.; Amazon listing could not be read (We
+- O Positiv URO pH-Balanced Probiotic Intimate Wash: Full ingredient lists per scent not captured verbatim; re-read page.; Vanilla & Honey contains fragrance; do not tag fragrance-free.; No numeric pH given.; Pregnancy/breastfeeding not addressed.
+- Bonafide Relizen: Supplement Facts amount for the pollen extract blend not shown on page; No allergen statement (contains pollen extract; page does not address pollen allergy); No pregnancy, breastfeeding or medication warnings on page; B
+- Bonafide Serenol: Supplement Facts amounts (chromium, pollen blend, royal jelly) not shown on page; No pregnancy, breastfeeding or medication warnings on page; Bonafide page heading reads '180 tablets | 3-month supply' while the single-bo
+- Bonafide Noctera: Supplement Facts amounts not shown on page; No allergen statement; No pregnancy or breastfeeding info on page; Contains SAMe; page gives no specific interaction warning beyond general medication note
+- Womaness Let Me Sleep: Supplement Facts amounts (melatonin dose etc.) not shown on page; Amazon listing could not be read (amazon.com blocked fetch: robots_disallowed), so ASIN and match are unverified
+- Kindra MenoRelief: No Supplement Facts panel; maca root amount not shown; No pregnancy or breastfeeding info on page; Image: og:image URL was truncated in the fetch, so not reported; 90-capsule price unclear
+- Stripes The Inside Addition Menopause Probiotic: No Supplement Facts amounts, %DV or CFU counts on page; No allergen statement; No pregnancy, breastfeeding or medication warnings on page (contains ashwagandha and green tea); bone-health function is from page's 'support
+- O Positiv MENO Menopause Capsules: Chromium amount not shown; No %DV on page; og:image is a generic site preview image (Preview-Photo.jpg), not reported; Sheet row lumps capsules and gummies; split into two products because formulas differ
+- O Positiv MENO Menopause Gummies: no product photo yet (the brand page shows only a generic image); No %DV on page; Page lists canonical URL https://opositiv.com/products/meno-menopause-gummy-vitamins (not separately fetched); url field uses the fetched 
+- O Positiv FLO PMS Capsules: no product photo yet (the brand page shows only a generic image); No pregnancy, breastfeeding or medication warnings on page (contains chasteberry and dong quai); Individual herb amounts in the 86 mg blend not disclosed;
+- O Positiv FLO Ovarian Support Capsules (Myo + D-Chiro Inositol): no product photo yet (the brand page shows only a generic image); No allergen statement; No pregnancy or breastfeeding info on page (relevant: marketed for ovulation/fertility); 'acne' tag not stated on page; page mentio
+- Biolae Meno Essential: Capsule count / days per bottle not on page; Excipients (other ingredients) not on page; No dairy or full allergen statement; AUST L number not shown; TGA listing per brand only
+- Effective Nutra DIM 300 mg with BioPerine: Amazon listing could not be read (WebFetch: robots_disallowed), so the ASIN and amazonMatches are unverified. Brand image filename contains B07NCJH91H, which suggests it matches, but not verified.; Pregnancy, breastfeedi
+- Ferra Period Brownies: Full ingredients and nutrition facts missing; Allergens missing (likely relevant for a baked food: wheat, egg, dairy unknown); Count per box missing; Pregnancy/breastfeeding not stated
+- Popmask Flash Me Hot Flash Cooling Spray 80ml: Full ingredients list missing; No directions or warnings; Fragrance details missing (scented product; not fragrance-free); Pregnancy info missing
+- Pore Favor Acne Supplement: Ingredients and amounts missing: only in an image (https://www.porefavor.com/cdn/shop/files/the-acne-supplement-706215.webp?v=1732724399) that could not be read; No directions (only customer reviews mention 2 capsules a 
+
+**Not added:** Kindra Soothe Vulva Wash (no product page found), Midday app (no readable page).
+Amazon pages could not be read by the research tools, so no Amazon links were added for these;
+Buy goes to the brand's page. To make a hidden one live: fill the gap from the brand page, delete
+its `hidden: true`, run the tests.
+
 ## Next step
 For each row: read the brand page and label, write the entry in src/data
 (team copy rules apply), check FDA status in openFDA, run `npm run catalog:check`,
