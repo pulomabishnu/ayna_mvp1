@@ -3464,6 +3464,7 @@ function App() {
               ecosystemProducts={Object.values(myProducts)}
               matchOpts={matchOpts}
               user={user}
+              onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }}
               userSession={userSession}
               onAskAyna={(q) => openAsk(q)}
               onOpenProduct={handleOpenProduct}
