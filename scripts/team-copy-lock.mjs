@@ -56,6 +56,17 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     fs.writeFileSync(LOCK, `${JSON.stringify(lock, null, 1)}\n`);
     fs.writeFileSync(LOG, `${JSON.stringify(log, null, 1)}\n`);
     console.log(`approved ${id}.${field} (by ${by})`);
+  } else if (args.includes('--approve-hide')) {
+    // A founder asked for a product to be hidden (its copy stays in src/data).
+    if (!by || by.startsWith('--')) throw new Error('--by "Name" is required: who asked for this change');
+    const id = args[args.indexOf('--approve-hide') + 1];
+    if (!lock[id]) throw new Error(`unknown ${id}`);
+    if (now[id]) throw new Error(`${id} is still shown; add hidden: true first`);
+    delete lock[id];
+    log.push({ at: new Date().toISOString(), by, what: `hidden ${id}`, note });
+    fs.writeFileSync(LOCK, `${JSON.stringify(lock, null, 1)}\n`);
+    fs.writeFileSync(LOG, `${JSON.stringify(log, null, 1)}\n`);
+    console.log(`approved hiding ${id} (by ${by})`);
   } else if (args.includes('--add-new')) {
     if (!by || by.startsWith('--')) throw new Error('--by "Name" is required');
     const added = Object.keys(now).filter((id) => !lock[id]);
@@ -65,6 +76,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     fs.writeFileSync(LOG, `${JSON.stringify(log, null, 1)}\n`);
     console.log(`added ${added.length}`);
   } else {
-    console.log('usage: --init | --approve id.field --by Name [--note text] | --add-new --by Name');
+    console.log('usage: --init | --approve id.field --by Name [--note text] | --approve-hide id --by Name [--note text] | --add-new --by Name');
   }
 }

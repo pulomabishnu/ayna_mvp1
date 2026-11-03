@@ -215,6 +215,6 @@ describe('distribution across needs stays stable', () => {
     // interactions, conflicting or old safety answers). Pinned so any change is deliberate.
     // Nov 2 (deliberate): 19 pregnancy holds are now exclusions, because in
     // pregnancy a medicine whose label says ask a clinician is never put forward.
-    expect(holds).toBe(463);
+    expect(holds).toBe(462); // Nov 2: Cora Overnight hidden (same product as Cora Organic Pads), one fewer hold
   });
 });

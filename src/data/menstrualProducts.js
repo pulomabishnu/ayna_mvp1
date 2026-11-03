@@ -156,6 +156,9 @@ export const MENSTRUAL_PHYSICAL = [
     },
     {
         id: 'p-cora-overnight',
+        // Nov 2, Ameera: same product as Cora Organic Pads (p-cora-organic-pads,
+        // whose options include Overnight and Extra Heavy Overnight). Hidden, not deleted.
+        hidden: true,
         name: 'Cora Overnight Pads',
         category: 'pad',
         type: 'physical',

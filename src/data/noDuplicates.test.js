@@ -33,10 +33,7 @@ describe('catalog has no duplicate products', () => {
 import { getAmazonAffiliateUrlForProduct } from './productAffiliateUrls.js';
 import { PRODUCT_VARIANTS } from './productVariants.js';
 
-// Same product as another entry in another size, waiting for a founder to
-// approve hiding it (team copy lock): node scripts/team-copy-lock.mjs needs a
-// named approval. Cora Overnight Pads = the Overnight / Extra Heavy Overnight
-// options of Cora Organic Pads.
+// Hidden duplicates keep their old variant data in productVariants.js.
 const PENDING_MERGE = new Set(['p-cora-overnight']);
 
 describe('one Amazon listing is one product', () => {
@@ -67,3 +64,15 @@ describe('one Amazon listing is one product', () => {
   });
 });
 
+
+import { getProductById, MERGED_PRODUCT_IDS } from './products.js';
+
+describe('merged size/absorbency duplicates', () => {
+  it('a merged id is hidden, kept in the data, and opens the one product', () => {
+    for (const [oldId, mainId] of Object.entries(MERGED_PRODUCT_IDS)) {
+      expect(CATALOG_PRODUCTS.some((p) => p.id === oldId && p.hidden)).toBe(true);
+      expect(ALL_PRODUCTS.some((p) => p.id === oldId)).toBe(false);
+      expect(getProductById(oldId)?.id).toBe(mainId);
+    }
+  });
+});

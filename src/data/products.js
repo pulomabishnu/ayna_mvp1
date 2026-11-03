@@ -934,10 +934,20 @@ export const BASICS_PRODUCT_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
 let productByIdIndex = null;
 let productByRouteIndex = null;
 
+/**
+ * Entries hidden because they were the same product as another one in a
+ * different size or absorbency (Ameera, Nov 2). The old id opens the one
+ * product, so saved Ecosystems, routines and shared links keep working.
+ */
+export const MERGED_PRODUCT_IDS = Object.freeze({
+    'p-cora-overnight': 'p-cora-organic-pads',
+});
+
 export function getProductById(id) {
     if (!id) return null;
 
-    const key = String(id).trim();
+    const raw = String(id).trim();
+    const key = MERGED_PRODUCT_IDS[raw] || raw;
 
     if (!productByIdIndex) productByIdIndex = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
     const exact = productByIdIndex.get(key);
