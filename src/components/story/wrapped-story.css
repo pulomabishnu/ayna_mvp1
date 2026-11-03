@@ -149,3 +149,6 @@
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card { max-width: 100%; min-width: 0; overflow: hidden; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card li { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card li b { max-width: none; min-width: 0; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; }
+
+/* Small Wrapped plates: fallback name fits. */
+.ay-wr :is(.ay-wr-rankplate, .ay-wr-bento__plate) :is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name) { max-width: 88% !important; font-size: 9px !important; line-height: 1.1 !important; overflow-wrap: normal !important; word-break: normal !important; }

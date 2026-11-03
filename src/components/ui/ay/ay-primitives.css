@@ -51,6 +51,8 @@
 :is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg):is(#ayk, .ayk-plate__svg).is-butter path { fill: var(--ay-butter-deep-base); }
 :is(#ayk, .ayk-plate__img):is(#ayk, .ayk-plate__img):is(#ayk, .ayk-plate__img):is(#ayk, .ayk-plate__img) { position: relative; width: 70% !important; height: 70% !important; object-fit: contain !important; border-radius: 0 !important; background: none !important; mix-blend-mode: multiply; }
 :is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name) { position: relative; max-width: 70%; color: var(--ay-espresso) !important; font: 700 var(--ay-size-h3)/1.2 var(--ay-font-display) !important; text-align: center; overflow-wrap: anywhere; }
+/* Nov 2: the brand-name fallback never spills out of its plate (it ran down the Home tile). At most 3 lines, clipped inside. */
+:is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name):is(#ayk, .ayk-plate__name) { max-height: 84%; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
 :is(#ayk, .ayk-plate__sticker):is(#ayk, .ayk-plate__sticker):is(#ayk, .ayk-plate__sticker):is(#ayk, .ayk-plate__sticker) { position: absolute; top: 6%; left: 6%; }
 
 /* ===== Category sticker + status pill ===== */

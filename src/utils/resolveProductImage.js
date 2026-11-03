@@ -1,3 +1,4 @@
+import { apiUrl } from './apiUrl.js';
 // Resolves a real product image for products with placeholder images via /api/product-image
 // Results are cached in localStorage so the lookup only ever runs once per product.
 
@@ -99,7 +100,9 @@ export function isPlaceholderProductImage(imageUrl, allowBrandLogo = false) {
 
 function proxyExternalImage(src) {
   if (!/^https?:\/\//i.test(src)) return src;
-  return `/api/image-proxy?url=${encodeURIComponent(src)}`;
+  // apiUrl: inside the iOS/Android app a bare /api path points at the phone
+  // (capacitor://localhost), so 35 product photos never loaded there (Nov 2).
+  return apiUrl(`/api/image-proxy?url=${encodeURIComponent(src)}`);
 }
 
 /**
