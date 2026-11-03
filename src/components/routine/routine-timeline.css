@@ -33,7 +33,7 @@ button.ay-rtl__row:focus-visible { outline: 2px solid currentColor; outline-offs
 .ay-rtl__check b { font: 700 16px/1.25 var(--ay-font-ui, inherit); }
 .ay-rtl__check small { font: 500 13px/1.3 var(--ay-font-ui, inherit); opacity: .85; }
 .ay-rtl__all { all: unset; box-sizing: border-box; cursor: pointer; justify-self: start; min-height: 44px; display: inline-flex; align-items: center; padding: 0 20px; border-radius: 999px; border: 1.5px solid var(--ay-fg, #3e2723); color: var(--ay-fg, #3e2723); font: 600 15px/1 var(--ay-font-ui, inherit); }
-:is([data-theme='dark'], [data-theme='brand-dark']) @media (prefers-reduced-motion: reduce) { .ay-rtl__more svg { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .ay-rtl__more svg { transition: none; } }
 /* Headings keep the section's colour against the app's and site's global heading rules. */
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-rtl .ay-rtl__when, html body .app-container.app-container.app-container .ay-rtl .ay-rtl__when { color: inherit !important; font: 800 19px/1.2 var(--ay-font-display, inherit) !important; margin: 0 !important; }
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-rtl .ay-rtl__name, html body .app-container.app-container.app-container .ay-rtl .ay-rtl__name { color: inherit !important; font: 700 17px/1.25 var(--ay-font-ui, inherit) !important; margin: 0 !important; }
