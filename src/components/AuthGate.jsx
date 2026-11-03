@@ -3,6 +3,7 @@ import { picksAreasLine } from '../utils/needAreas.js';
 import { getSupabaseClient, setRememberMe } from '../utils/supabaseClient';
 import { devPreviewOn } from '../utils/devPreview.js';
 import { CODE_COPY, EMAIL_CODE_LENGTH, SMS_CODE_LENGTH, cleanCode, codeErrorText, isEmailNotConfirmed, verifyEmailCode } from '../utils/authCodes.js';
+import { savePendingVerification, readPendingVerification, clearPendingVerification } from '../utils/pendingVerification.js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
 import { pendingReferralMeta } from '../utils/freeProductCampaign.js';
@@ -75,7 +76,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const [mode, setMode] = useState(() => (allowSignup && initialMode !== 'signin' ? 'signup' : 'signin'));
   // Her first name from the quiz (asked there only, never again here).
   const firstName = cleanFirstName(intakeName);
-  const [email, setEmail] = useState('');
+  // Back from the email app (page reloaded): the code step with her email (founder, Nov 2).
+  const [pendingVerify] = useState(() => readPendingVerification());
+  const [email, setEmail] = useState(pendingVerify?.email || '');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -101,12 +104,13 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   // → Authentication → Email/SMTP settings, outside this repo), but a
   // resend option means a stuck user isn't just left staring at "check your
   // inbox" forever.
-  const [needsConfirmation, setNeedsConfirmation] = useState(false);
+  const [needsConfirmation, setNeedsConfirmation] = useState(Boolean(pendingVerify));
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
   // Email signups verify with the 8-digit code Supabase emails ('details' ->
   // 'code'), not a confirmation link (main, 2026-09).
-  const [emailSignupStep, setEmailSignupStep] = useState('details');
+  const [emailSignupStep, setEmailSignupStep] = useState(pendingVerify ? 'code' : 'details');
+  useEffect(() => { if (emailSignupStep === 'code' && email.trim()) savePendingVerification(email); }, [emailSignupStep, email]);
   const [emailCode, setEmailCode] = useState('');
   const [profileSetup, setProfileSetup] = useState(null);
   // Signup via native Supabase phone-OTP auth instead of email/password
@@ -331,6 +335,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     try {
       // Same check, length and words as the app (src/utils/authCodes.js).
       const data = await verifyEmailCode(supabase, email, emailCode);
+      clearPendingVerification();
       setNeedsConfirmation(false);
       setResendMsg('');
       setSuccessMsg(CODE_COPY.verified);
@@ -785,6 +790,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                   type="button"
                   className="ay-auth-linkbtn"
                   onClick={() => {
+                    clearPendingVerification();
                     setEmailSignupStep('details');
                     setEmailCode('');
                     setError('');

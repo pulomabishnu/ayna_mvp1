@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { readPendingVerification } from '../utils/pendingVerification.js';
 import { claimQuizRetake } from '../utils/proApi.js';
 import { fingerprintIntake, buildIdFromFingerprint } from '../utils/fetchLlmRecommendations.js';
 import { devPreviewOn } from '../utils/devPreview.js';
@@ -545,6 +546,17 @@ export default function MobileApp() {
     authResumeRef.current = resume || (() => setScreen(screen));
     setAuthPrompt({ feature });
   };
+  // Came back from Gmail and the app had reloaded: open the code step again
+  // (SigninScreen restores her email), never the start of sign-up.
+  const pendingVerifyShownRef = useRef(false);
+  useEffect(() => {
+    if (authLoading || authUser || pendingVerifyShownRef.current || screen === 'signin') return;
+    if (!readPendingVerification()) return;
+    pendingVerifyShownRef.current = true;
+    authReturnScreenRef.current = 'ready';
+    setAuthMode('signup');
+    setScreen('signin');
+  }, [authLoading, authUser, screen]);
   const openAuth = (mode, fromPrompt = false) => {
     if (!fromPrompt) authResumeRef.current = null;
     setAuthPrompt(null);

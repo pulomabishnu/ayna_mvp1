@@ -11,6 +11,7 @@ import { AI_CONSENT_ERROR, AI_CONSENT_TEXT, LEGAL_LINKS, acknowledgementLead, co
 import { cleanFirstName } from '../data/intakeModel.js';
 import { getSupabaseClient, setRememberMe } from '../../utils/supabaseClient.js';
 import { CODE_COPY, EMAIL_CODE_LENGTH, cleanCode, isEmailNotConfirmed, verifyEmailCode } from '../../utils/authCodes.js';
+import { savePendingVerification, readPendingVerification, clearPendingVerification } from '../../utils/pendingVerification.js';
 import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../../utils/formErrors.js';
 import InlineError from '../../components/InlineError.jsx';
 import '../auth.css';
@@ -182,10 +183,13 @@ export default function SigninScreen({
     return { p, src: raw, hasPhoto: Boolean(productImageOverride(p) || safeProductImageSrc(raw, p.type === 'digital')) };
   }).sort((a, b) => Number(b.hasPhoto) - Number(a.hasPhoto));
   const showEcoSummary = ecoPicks.length > 0 && !authUser;
-  const [mode, setMode] = useState(initialMode); // 'signup' | 'signin' | 'check-email'
+  // Back from Gmail after the phone reloaded the app: straight to the code
+  // step with her email, not the start of sign-up (founder, Nov 2).
+  const [pending] = useState(() => (authUser ? null : readPendingVerification()));
+  const [mode, setMode] = useState(pending ? 'check-email' : initialMode); // 'signup' | 'signin' | 'check-email'
   // Her first name from the quiz (asked there only).
   const firstName = cleanFirstName(intakeName);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(pending?.email || '');
   const [password, setPassword] = useState('');
   const [aiConsent, setAiConsent] = useState(false);
   // Remember me (sign-in): controls ONLY where the Supabase session token is
@@ -208,7 +212,11 @@ export default function SigninScreen({
   const [emailCode, setEmailCode] = useState('');
   const [codeError, setCodeError] = useState('');
   const [verifying, setVerifying] = useState(false);
-  const [checkNote, setCheckNote] = useState('');
+  const [checkNote, setCheckNote] = useState(pending ? CODE_COPY.emailSent(pending.email) : '');
+  // Remember the code step on this device until she's verified.
+  useEffect(() => { if (mode === 'check-email' && !authUser && email.trim()) savePendingVerification(email); }, [mode, authUser, email]);
+  useEffect(() => { if (authUser) clearPendingVerification(); }, [authUser]);
+  const startOver = () => { clearPendingVerification(); setEmailCode(''); setCodeError(''); setResendMsg(''); setCheckNote(''); setMode(canSignUp ? 'signup' : 'signin'); };
 
   // Cross-tab pickup: confirming email in a different tab establishes the
   // session there via localStorage, which fires onAuthStateChange back in
@@ -439,6 +447,7 @@ export default function SigninScreen({
           <button type="button" className="ay-auth-link" disabled={resending} onClick={handleResend}>
             {resending ? 'Sending…' : 'Resend code'}
           </button>
+          <button type="button" className="ay-auth-link" onClick={startOver}>Wrong email? Start over</button>
           <div style={{ flex: 1 }} />
         </>
       ) : (
