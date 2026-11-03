@@ -120,3 +120,10 @@ html body .app-container.app-container.app-container.app-container.app-container
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-pro-invite h2 { margin: 6px 0 8px; font-family: var(--ay-font-display, 'Bricolage Grotesque', sans-serif); font-weight: 700; font-size: 24px; letter-spacing: -.015em; color: #3e2723; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-pro-invite > p { margin: 0 0 8px; color: #3e2723; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-pro-invite .ay-ob-quiet { display: inline-flex; padding: 0 !important; color: #3e2723 !important; text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: #f7badd; }
+
+/* Nov 3: the three safety questions, asked right after the reveal. Pink card
+   above the main button so it reads as the next step. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-safety { all: unset; box-sizing: border-box; cursor: pointer; display: grid; gap: 4px; width: 100%; padding: 14px 16px; border-radius: 18px; background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; text-align: left; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-safety b { font: 700 16px/1.25 var(--ay-font-ui, inherit); color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-safety small { font: 500 13px/1.35 var(--ay-font-ui, inherit); color: #3e2723; opacity: .85; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-safety:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }

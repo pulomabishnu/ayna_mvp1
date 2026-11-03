@@ -31,17 +31,17 @@ describe('first-run setup (seven screens)', () => {
     const i = intake({ supportSelections: ['Cramps or period pain'] });
     const core = getOnboardingSteps(i, { part: 'core' });
     const more = getOnboardingSteps(i, { part: 'more' });
-    expect(core.map((s) => s.id)).toEqual(['name', 'age', 'lifeStage', 'helpTopics', 'support', 'periodPain', 'safety', 'conditions', 'allergies', 'medications']);
-    expect(more.map((s) => s.id)).toEqual(['goals', 'formats', 'priceRange', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'trust', 'periodFlow']);
-    expect(onboardingProgress(core[4], 'core').label).toBe('Step 3 of 5');
+    // Nov 3: four screens before her matches; name and the safety questions right after the reveal.
+    expect(core.map((s) => s.id)).toEqual(['age', 'lifeStage', 'helpTopics', 'support', 'periodPain', 'safety']);
+    expect(more.map((s) => s.id)).toEqual(['conditions', 'allergies', 'medications', 'goals', 'formats', 'priceRange', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'trust', 'periodFlow', 'name']);
     // Given the list she sees, every screen counts (critique, Oct 27).
-    expect(onboardingProgress(core[4], 'core', core).label).toBe(`Step 5 of ${core.length}`);
+    expect(onboardingProgress(core[3], 'core', core).label).toBe(`Step 4 of ${core.length}`);
     expect(more.find((s) => s.id === 'priceRange').title).toBe('What would you usually spend on one product?');
     expect(more.find((s) => s.id === 'avoidIngredients').title).toBe('Anything you want your products to avoid?');
     expect(more.find((s) => s.id === 'preferIngredients').title).toBe('Anything you prefer your products to have or be?');
     expect(more.find((s) => s.id === 'fsaHsa').subtitle).toMatch(/before tax/);
-    expect(moreRemaining(i)).toBe(8);
-    expect(moreRemaining({ ...i, goals: ['Improve sleep'], skippedSteps: ['formats', 'priceRange', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'trust', 'periodFlow'] })).toBe(0);
+    expect(moreRemaining(i)).toBe(11); // name (optional) never counts as left to do
+    expect(moreRemaining({ ...i, goals: ['Improve sleep'], skippedSteps: ['conditions', 'allergies', 'medications', 'name', 'formats', 'priceRange', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'trust', 'periodFlow'] })).toBe(0);
   });
 
   it('screen 1 is a list of topics with Something else; screen 3 the spec goals', () => {

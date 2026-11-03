@@ -399,3 +399,13 @@ html body .app-container.app-container.app-container .ay-recalls .ay-recalls__mo
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-recalls :is(.ay-info-note__action, .ay-info-note__action strong) { color: var(--ay-fg) !important; background: none !important; }
 /* Section titles follow the theme on every account page (some pages pin --ay-text to espresso). */
 html body .app-container.app-container.app-container .ay-group__title { color: var(--ay-fg) !important; }
+
+/* Pricing link for signed-out phones on the landing (founder, Nov 3). Desktop has it in the menu. */
+.app-container.app-container .ay-nav__pricing { display: none; }
+@media (max-width: 899px) {
+  .app-container.app-container .ay-nav__pricing { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; color: var(--ay-text, #3e2723) !important; font: 600 14px/1 var(--ay-sans-stack, sans-serif); text-decoration: underline; text-underline-offset: 4px; white-space: nowrap; }
+}
+/* Signed-out phones on the landing: Saved has nothing in it yet, so the heart makes room for Pricing. */
+@media (max-width: 899px) {
+  .app-container.app-container .ay-nav__actions:has(.ay-nav__pricing) .ay-nav__heart { display: none !important; }
+}

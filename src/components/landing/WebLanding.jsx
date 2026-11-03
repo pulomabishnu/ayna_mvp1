@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { WhatYouCanDo, Picks, Proof, ReadsAndCommunity, Founders, ProAndEnd, useRiseOnView } from './LandingBody.jsx';
 import MedicalNote from '../MedicalNote.jsx';
-import { isPlainLeftClick } from '../../utils/productRoute';
 import '../../styles/editorial.css';
 import '../../styles/home.css';
 import '../../styles/loop-a-landing.css';
 import '../../styles/uq-landing.css';
 import { ScallopEdge } from '../ui/ay';
-import SlideToStart from '../ui/SlideToStart.jsx';
+import { trackLandingCta } from '../../utils/funnelEvents.js';
+import HowItWorksDemo from './HowItWorksDemo.jsx';
 import { Rain, HeroSearch, BrandBar } from './kit.jsx';
 import { useProStatus } from '../../pro/useProStatus.js';
 import './web-landing.css';
@@ -24,7 +24,6 @@ import './web-landing.css';
  * One page for everyone; signed in with a profile, the main action is
  * "Go to your Home". Nothing on the page is sticky. */
 
-const Arrow = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>);
 
 /* ---------- 1. hero ----------
    Founder, Oct 27 11:32-11:36: the rain in the back, faded; the title in the
@@ -34,18 +33,41 @@ const Arrow = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h
    and everything centred on top (13:01: big, not crowded): a big two-line
    title with "your body." in pink, one line on what ayna connects, the search, Slide to start (the welcome
    tip's anchor) and How we match. The brown and pink bar runs under it. */
-function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
+// Nov 3 (founder notes + research): say what ayna does in the headline, the
+// exact detail in the subheadline, the three reasons right under it, and one
+// plain "Sign up free" button (a slider was one more thing to figure out).
+// Website, last 30 days before this: 357 visitors, 63% left from the home page,
+// 21 started the quiz.
+const VALUE_PROPS = [
+  { k: 'match', t: 'Made for you', d: 'Picked for your body and your stage of life.' },
+  { k: 'safe', t: 'Safe first', d: 'We check your medicines and allergies first.' },
+  { k: 'evidence', t: 'No paid spots', d: 'Brands can\u2019t pay to be picked. You see the research.' },
+];
+const PROP_ICON = {
+  match: <path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z" />,
+  safe: <><path d="M12 3 5 6v5c0 4.4 3 8.4 7 10 4-1.6 7-5.6 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></>,
+  evidence: <><path d="M7 3h7l4 4v14H7z" /><path d="M14 3v4h4M10 12h5M10 16h5" /></>,
+};
+function Hero({ cta, onSearch, banner = null }) {
+  const watch = (e) => { e.preventDefault(); trackLandingCta('watch_demo'); document.getElementById('ay-demo')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
   return (
     <section className="wl-hero" aria-labelledby="hm-hero-title">
       <div className="wl-hero__band">
         <Rain cols={4} onInk className="wl-rain" />
         <div className="wl-hero__in">
-          {/* One promise on the website and the app (landing audit 4 and 9). */}
-          <h1 id="hm-hero-title" className="wl-title">Find what fits <span>your body.</span></h1>
-          <p className="wl-one">Your products, routine and health data, finally in one place.</p>
-          <SlideToStart className="wl-sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
+          <h1 id="hm-hero-title" className="wl-title">Find women’s health products <span>that fit you.</span></h1>
+          <p className="wl-one">Answer 4 questions. See what fits you, and why.</p>
+          <ul className="wl-props" aria-label="Why ayna">
+            {VALUE_PROPS.map((v) => (
+              <li key={v.k}><svg viewBox="0 0 24 24" aria-hidden="true">{PROP_ICON[v.k]}</svg><span><b>{v.t}</b><small>{v.d}</small></span></li>
+            ))}
+          </ul>
+          <div className="wl-ctas">
+            <button type="button" className="wl-cta" data-tour="landing-start" onClick={() => { trackLandingCta(cta.id); cta.go?.(); }}>{cta.label}</button>
+            <a className="wl-watch" href="#ay-demo" onClick={watch}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M10 8.5v7l6-3.5-6-3.5Z" /></svg>Watch how it works</a>
+          </div>
+          {cta.note && <p className="wl-cta-note">{cta.note}</p>}
           <HeroSearch onSearch={onSearch} className="wl-search" />
-          <a className="wl-how" href="/how-it-works" onClick={(e) => { if (!onViewHowItWorks || !isPlainLeftClick(e)) return; e.preventDefault(); onViewHowItWorks(); }}>How we match<Arrow /></a>
           {banner && <div className="wl-banner">{banner}</div>}
         </div>
       </div>
@@ -66,11 +88,12 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
   const { active: pro, offerOpen } = useProStatus(signedIn ? userId : null);
   const home = Boolean(signedIn && hasProfile && onGoHome);
   const cta = home
-    ? { label: 'Go to your Home', slide: 'Slide to go to your Home', go: onGoHome }
-    : { label: 'Get my matches', slide: 'Slide to find your matches', go: onStartQuiz };
+    ? { id: 'go_home', label: 'Go to your Home', slide: 'Slide to go to your Home', go: onGoHome }
+    : { id: 'sign_up_free', label: 'Sign up free', slide: 'Slide to sign up free', note: 'Free. No card needed.', go: onStartQuiz };
   return (
     <div id="ay-landing" className="ed ed-home hm hm-uq wl" ref={pageRef}>
-      <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />
+      <Hero cta={cta} onSearch={onSearch} banner={home ? null : heroBanner} />
+      <HowItWorksDemo onStart={() => { trackLandingCta(`${cta.id}_demo`); cta.go?.(); }} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />
       <BrandBar onOpen={onViewWaitlist} />
       {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the
           raining pictures and widgets, and use the original website for the rest). */}

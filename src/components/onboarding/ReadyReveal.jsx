@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getSelectedNeeds, useCatalogReady } from '../../data/catalog.js';
 import { moreRemaining } from '../../mobile/data/onboardingFlow.js';
-import { reconstructIntakeFromSnapshot } from '../../mobile/data/intakeModel.js';
+import { reconstructIntakeFromSnapshot, isStepAnswered } from '../../mobile/data/intakeModel.js';
 import { Plate } from '../ui/ay';
 import MatchPill from '../MatchPill.jsx';
 import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct, getRecommendationMatchesAndRest } from '../../data/products.js';
@@ -80,6 +80,13 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
   useEffect(() => { if (matches.length) trackFirstMatchShown({ surface: eventSurface(), matches_count: matches.length }); }, [matches.length]);
   const goals = (answers?.fullHealthIntake?.goals || []).slice(0, 2);
   const remaining = useMemo(() => (answers?.fullHealthIntake ? moreRemaining(reconstructIntakeFromSnapshot(answers.fullHealthIntake)) : 0), [answers]);
+  // Nov 3: the safety questions now come right after the reveal. Until they're
+  // answered, anything she takes stays off her list, so ask for them first.
+  const safetyLeft = useMemo(() => {
+    if (!answers?.fullHealthIntake) return 0;
+    const i = reconstructIntakeFromSnapshot(answers.fullHealthIntake);
+    return ['conditions', 'allergies', 'medications'].filter((id) => !isStepAnswered(id, i)).length;
+  }, [answers]);
   const Tag = variant === 'web' ? 'section' : 'main';
   // Today on the website and the app (all-pages brief, Oct 25).
   const tab = variant === 'web' ? 'ecosystem' : 'Today';
@@ -146,10 +153,16 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
         <a className="ay-ob-quiet" href="/pro" target="_blank" rel="noopener noreferrer">Explore ayna Pro <span className="ay-ob-sr">(opens in a new tab)</span></a>
       </section>}
       <div className="ay-ob-ready__actions">
+        {onMorePersonal && safetyLeft > 0 && (
+          <button type="button" className="ay-ob-safety" onClick={onMorePersonal}>
+            <b>{safetyLeft} quick safety {safetyLeft === 1 ? 'question' : 'questions'}</b>
+            <small>So we can show you things you take, like vitamins.</small>
+          </button>
+        )}
         <button type="button" className="ay-ob-primary" onClick={onSeeToday}>See my {tab}</button>
         {/* Focus group, Oct 26: two people missed this, so it is the clear second
             button, right under the main one, with what it adds. */}
-        {onMorePersonal && remaining > 0 && (
+        {onMorePersonal && safetyLeft === 0 && remaining > 0 && (
           <button type="button" className="ay-ob-more ay-ob-more--clear" onClick={onMorePersonal}>
             <span>Make my matches more personal<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
             <small>Adds your goals, budget and ingredient preferences to your matches. {remaining} optional {remaining === 1 ? 'question' : 'questions'}.</small>

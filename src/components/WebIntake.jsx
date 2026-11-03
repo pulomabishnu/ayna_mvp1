@@ -25,6 +25,7 @@ import ReadyReveal from './onboarding/ReadyReveal.jsx';
 import { QuizFrame, QuizBlock, Chips as KitChips, Rows as KitRows, SubQuestion, GlossaryCard } from './quiz/QuizKit.jsx';
 import { isShortHelper } from './quiz/quizText.js';
 import MedicalNote from './MedicalNote.jsx';
+import { trackQuizStep } from '../utils/funnelEvents.js';
 import '../styles/onboarding.css';
 import './WebIntake.audit.css';
 // Questions whose options have a plain meaning on press-and-hold (glossary.js): the answers get data-tour="quiz-hold" and the quiz tip points there.
@@ -269,11 +270,16 @@ function webOnboardingSteps(intake) {
     ? { ...s, title: 'About you', type: 'aboutYou', why: 'Some products are not meant for every age or stage, for example pregnancy-safe picks only, or midlife support. You can be in perimenopause and still have regular periods. Not sure, or rather not say? Those count too.' }
     : s), obPart }));
   // Starts at question 1: no intro card (onboarding audit #5).
+  // Nov 3: four screens, then her matches. Health data is offered after the
+  // safety questions, not before the reveal.
+  const more = web(getOnboardingSteps(intake, { part: 'more', surface: 'web' }), 'more');
+  const afterSafety = Math.max(0, more.findIndex((st) => !st.afterReveal || st.id === 'name'));
   return [
     ...web(getOnboardingSteps(intake, { part: 'core', surface: 'web' }), 'core'),
-    { id: 'connect', section: 'connect', type: 'connect', screen: 7, title: 'Connect health data', subtitle: 'Optional. Quick check-ins work too.', optional: true, required: false, obPart: 'core' },
     { id: 'ready', section: 'ready', type: 'ready', screen: 7, title: '', optional: false, required: false, obPart: 'core' },
-    ...web(getOnboardingSteps(intake, { part: 'more', surface: 'web' }), 'more'),
+    ...more.slice(0, afterSafety),
+    { id: 'connect', section: 'connect', type: 'connect', screen: 7, title: 'Connect health data', subtitle: 'Optional. Quick check-ins work too.', optional: true, required: false, obPart: 'more' },
+    ...more.slice(afterSafety),
   ];
 }
 
@@ -286,7 +292,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
     if (singleStep) return startAtStep;
     if (onboarding) {
       const draftId = savedDraft?.stepId ? webResumeStep({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId) : savedDraft?.stepId;
-      return draftId && webOnboardingSteps({ ...EMPTY, ...(savedDraft?.intake || {}) }).some((s) => s.id === draftId && s.id !== 'ready') ? draftId : 'name';
+      return draftId && webOnboardingSteps({ ...EMPTY, ...(savedDraft?.intake || {}) }).some((s) => s.id === draftId && s.id !== 'ready') ? draftId : 'age';
     }
     if (savedDraft?.stepId) return webResumeStep({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId);
     if (!initialSnapshot) return 'age';
@@ -351,6 +357,12 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const isFollowUp = (st) => FOLLOWUP_STEP_IDS.has(st.id);
   const shownTotal = phase === 'more' ? steps.length : steps.filter((st) => !isFollowUp(st)).length;
   const shownIndex = phase === 'more' ? index + 1 : Math.max(1, steps.slice(0, index + 1).filter((st) => !isFollowUp(st)).length);
+
+  // Drop-off (Nov 3): which question is on screen (its name only, never an answer).
+  const viewedId = step.type === 'aboutYou' ? `aboutYou_${aboutPart}` : step.id;
+  useEffect(() => {
+    trackQuizStep({ stepId: viewedId, number: shownIndex, total: shownTotal, part: step.obPart === 'more' || phase === 'more' ? 'more' : 'core', surface: 'web' });
+  }, [viewedId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Age and life stage share one screen here, so that screen checks both.
   const answerId = step.type === 'aboutYou' ? 'aboutYou' : step.id;

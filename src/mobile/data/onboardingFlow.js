@@ -207,14 +207,19 @@ export function getOnboardingSteps(intake, { part = 'all', surface = 'app' } = {
       }
     }
   }
-  const steps = out.map((s) => ({ ...s, safety: s.screen === 6 && s.required }));
-  // Team direction (sections 28, 29): the few questions needed for safe first
-  // matches come first, then the reveal; everything optional comes after it,
-  // behind "Make my matches more personal".
-  if (part === 'core') return steps.filter((s) => !s.optional);
-  if (part === 'more') return steps.filter((s) => s.optional);
+  const steps = out.map((s) => ({ ...s, safety: s.screen === 6 && s.required, afterReveal: AFTER_REVEAL.has(s.id) }));
+  // Nov 3 (founder: "onboarding too heavy"; 3 of 21 website visitors who started
+  // finished): four screens, then her matches. Her name and the three safety
+  // questions (conditions, allergies, medicines) come right after the reveal,
+  // first in "more". Nothing loosens: until they're answered, anything she
+  // takes is held ("needs information"), never shown as a match.
+  if (part === 'core') return steps.filter((s) => !s.optional && !s.afterReveal);
+  if (part === 'more') return [...steps.filter((s) => s.afterReveal && s.id !== 'name'), ...steps.filter((s) => s.optional && !s.afterReveal), ...steps.filter((s) => s.id === 'name')];
   return steps;
 }
+
+/** Asked right after the reveal, not before it (Nov 3). */
+export const AFTER_REVEAL = new Set(['name', 'conditions', 'allergies', 'medications']);
 
 /** Screens in the first part, health data (7) last. */
 export const CORE_SCREENS = [1, 2, 3, 6, 7];

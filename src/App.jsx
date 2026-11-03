@@ -2617,6 +2617,8 @@ function App() {
                 <span>{t.label}</span>
               </a>
             ))}
+            {/* Founder, Nov 3: a Pricing link in the menu. /pro is the Free vs Pro page. */}
+            <a href="/pro" className="ay-nav__link ay-nav__pricing-link"><span>Pricing</span></a>
           </div>
 
           {currentView === 'quiz' && (
@@ -2639,6 +2641,8 @@ function App() {
                 {savedCount > 0 && <span className="ay-heart-count" aria-hidden="true">{savedCount > 99 ? '99+' : savedCount}</span>}
               </a>
             )}
+            {/* Phones hide the menu links, so signed-out visitors on the landing get Pricing here. */}
+            {!user && ['welcome', 'hero'].includes(currentView) && <a href="/pro" className="ay-nav__pricing">Pricing</a>}
             {/* Signed out on the landing: Log in stays in the header on phones too (QA, Oct 25). */}
             <div ref={accountMenuRef} className={`ay-nav__account${!user && ['welcome', 'hero'].includes(currentView) ? ' is-landing-guest' : ''}`}>
               {user ? (
