@@ -152,8 +152,13 @@ export function requiredFieldsFor(pp) {
   const req = [];
   // A reviewed label or NIH fact sheet naming interactions counts like the reviewed table.
   const passportInteractions = Boolean(pp.passport?.interaction_text && INTERACTION_WORDS.test(pp.passport.interaction_text));
-  if (pp.ingested && (pp.ingredient_keys.some((k) => INTERACTION_INGREDIENTS.has(k)) || passportInteractions)) req.push('medications');
-  const pregnancyConcern = ['contraindicated', 'caution'].includes(pp.pregnancy.overall) || pp.safety.hormones === 'yes';
+  // Nov 2: an herbal product she takes is held until we know her medicines, even
+  // when its herbs aren't in the reviewed interaction table yet (FLO PMS:
+  // chasteberry and dong quai cleared for someone who hadn't answered). Unknown is not safe.
+  if (pp.ingested && (pp.ingredient_keys.some((k) => INTERACTION_INGREDIENTS.has(k)) || passportInteractions || pp.herbal)) req.push('medications');
+  // ...and, when its label says nothing about pregnancy, until we know whether she is pregnant.
+  const pregnancyConcern = ['contraindicated', 'caution'].includes(pp.pregnancy.overall) || pp.safety.hormones === 'yes'
+    || (pp.herbal && pp.pregnancy.overall === 'unknown');
   if (pregnancyConcern && (pp.ingested || pp.formats.includes('suppository') || (pp.safety.hormones === 'yes' && pp.formats.includes('topical')))) req.push('pregnancy_status');
   return req;
 }

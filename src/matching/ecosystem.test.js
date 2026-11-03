@@ -134,7 +134,8 @@ describe('ordering and tie-breaks', () => {
     const a = shelf(buildEcosystem(clinicalFirst, ALL_PRODUCTS, { picksPerNeed: 10 }), 'pain.menstrual_cramp');
     const b = shelf(buildEcosystem(communityFirst, ALL_PRODUCTS, { picksPerNeed: 10 }), 'pain.menstrual_cramp');
     // p-viboos-heating-pad joined the catalog on main and is direct cramp relief too.
-    const direct = ['p-sootheher-elaris-pod', 'p-thermacare', 'p-portable-heating', 'p-viboos-heating-pad'];
+    // Nov 2: Popmask's self-heating cramp patches (founder's sheet) are direct relief too.
+    const direct = ['p-sootheher-elaris-pod', 'p-thermacare', 'p-portable-heating', 'p-viboos-heating-pad', 'p-popmask-big-hug-self-heating-patches'];
     expect(ids(a)[0]).toBe('p-sootheher-elaris-pod');
     expect(ids(b)[0]).not.toBe('p-sootheher-elaris-pod');
     // Direct cramp relief stays above secondary options under either ranking.

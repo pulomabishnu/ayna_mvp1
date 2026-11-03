@@ -6,6 +6,7 @@ import { PRODUCT_RESEARCH_CORE } from './productResearchCore.js';
 // VERIFICATION: Only add real, verifiable products. Confirm whereToBuy URLs work
 // and the brand/product exists. Do not add placeholder or fake entries.
 // ============================================================
+import { NOV_2026_PRODUCTS } from './productsNov2026.js';
 import { EXTENDED_PHYSICAL, EXTENDED_DIGITAL } from './productsExtended.js';
 import { EXTENDED_PHYSICAL_2, EXTENDED_DIGITAL_2 } from './productsExtended2.js';
 import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
@@ -908,6 +909,8 @@ export const CATALOG_PRODUCTS = [
     ...INCONTINENCE_PHYSICAL,
     // Evidence-backed basics (Oct 17): facts from FDA labels and clinical sources.
     ...BASICS_PRODUCTS,
+    // Founder's sheet, Nov 2 (researched from brand pages and openFDA).
+    ...NOV_2026_PRODUCTS,
 ]
     .map(withCatalogEvidence)
     // The research fields matching, search and filters read (safety rules included) ship
@@ -934,10 +937,20 @@ export const BASICS_PRODUCT_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
 let productByIdIndex = null;
 let productByRouteIndex = null;
 
+/**
+ * Entries hidden because they were the same product as another one in a
+ * different size or absorbency (Ameera, Nov 2). The old id opens the one
+ * product, so saved Ecosystems, routines and shared links keep working.
+ */
+export const MERGED_PRODUCT_IDS = Object.freeze({
+    'p-cora-overnight': 'p-cora-organic-pads',
+});
+
 export function getProductById(id) {
     if (!id) return null;
 
-    const key = String(id).trim();
+    const raw = String(id).trim();
+    const key = MERGED_PRODUCT_IDS[raw] || raw;
 
     if (!productByIdIndex) productByIdIndex = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
     const exact = productByIdIndex.get(key);

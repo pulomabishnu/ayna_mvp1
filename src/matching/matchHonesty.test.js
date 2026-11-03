@@ -197,7 +197,9 @@ describe('distribution across needs stays stable', () => {
     // population changed, no percent did).
     // Nov 2 (deliberate): apps, tests, wearables and care now carry their
     // evidence grade (V2.E_CLAIM), so the mean moved from about 54 to 51.7.
-    expect(Math.abs(mean(other) - 51.7)).toBeLessThanOrEqual(1.5);
+    // Nov 2 (deliberate): 50 products from the founder's sheet joined (brand-sourced
+    // evidence, so lower on average); n 601, mean 49.9. Existing products' percents unchanged.
+    expect(Math.abs(mean(other) - 49.9)).toBeLessThanOrEqual(1.5);
     expect(other.filter((x) => x >= 99).length / other.length).toBeLessThanOrEqual(0.02);
   });
   it('period products: no longer saturated at 99', () => {
@@ -215,6 +217,9 @@ describe('distribution across needs stays stable', () => {
     // interactions, conflicting or old safety answers). Pinned so any change is deliberate.
     // Nov 2 (deliberate): 19 pregnancy holds are now exclusions, because in
     // pregnancy a medicine whose label says ask a clinician is never put forward.
-    expect(holds).toBe(463);
+    // Nov 2: Cora Overnight hidden (-1); an herbal product she takes waits for her medicines
+    // and pregnancy answer when its label is silent (+1); 50 new products, most of them
+    // supplements still missing a safety answer (+40).
+    expect(holds).toBe(502);
   });
 });
