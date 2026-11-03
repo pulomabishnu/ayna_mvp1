@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { isUnverifiedEmailUser, savePendingVerification } from '../../utils/pendingVerification.js';
+import { isUnverifiedEmailUser, savePendingVerification, markCodeSent, shouldSendCode } from '../../utils/pendingVerification.js';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
@@ -71,8 +71,17 @@ export function useSupabaseAuth() {
     // An email account that hasn't confirmed its email never counts as signed
     // in (founder, Nov 2: no one gets past sign-up until they verify), even
     // if the project's Confirm email setting were ever switched off.
+    // An existing account that never verified: send her a fresh code (once per
+    // 10 minutes) and the app opens "Verify your email" (founder, Nov 2).
     const accept = (u) => {
-      if (isUnverifiedEmailUser(u)) { savePendingVerification(u.email); return null; }
+      if (isUnverifiedEmailUser(u)) {
+        const v = savePendingVerification(u.email, 'existing');
+        if (shouldSendCode(v)) {
+          markCodeSent(u.email);
+          supabase.auth.resend({ type: 'signup', email: u.email, options: { emailRedirectTo: emailConfirmRedirect() } }).catch(() => {});
+        }
+        return null;
+      }
       return u ?? null;
     };
     supabase.auth.getSession()

@@ -212,7 +212,7 @@ export default function SigninScreen({
   const [emailCode, setEmailCode] = useState('');
   const [codeError, setCodeError] = useState('');
   const [verifying, setVerifying] = useState(false);
-  const [checkNote, setCheckNote] = useState(pending ? CODE_COPY.emailSent(pending.email) : '');
+  const [checkNote, setCheckNote] = useState(pending ? (pending.reason === 'existing' ? CODE_COPY.verifyExisting(pending.email) : CODE_COPY.emailSent(pending.email)) : '');
   // Remember the code step on this device until she's verified.
   useEffect(() => { if (mode === 'check-email' && !authUser && email.trim()) savePendingVerification(email); }, [mode, authUser, email]);
   useEffect(() => { if (authUser) clearPendingVerification(); }, [authUser]);
@@ -418,7 +418,7 @@ export default function SigninScreen({
         <>
           <div style={{ flex: 1 }} />
           <div className="ay-auth-check-title">
-            Almost there.
+            {pending?.reason === 'existing' ? 'Verify your email' : 'Almost there.'}
           </div>
           <div className="ay-auth-check-copy">
             {checkNote || CODE_COPY.emailSent(email.trim())} It comes from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it.

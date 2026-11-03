@@ -767,8 +767,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             )
           ) : authMethod === 'email' && emailSignupStep === 'code' ? (
             <>
+              {pendingVerify?.reason === 'existing' && <h3 className="ay-auth-verify-title">Verify your email</h3>}
               <p style={{ ...styles.success, color: 'var(--color-text-muted)' }}>
-                Enter the verification code sent to <strong>{email}</strong>.
+                {pendingVerify?.reason === 'existing' ? <>To keep using ayna, enter the code we just sent to <strong>{email}</strong>.</> : <>Enter the verification code sent to <strong>{email}</strong>.</>}
               </p>
               <Field id="auth-email-code" label="Verification code">
                 <input
