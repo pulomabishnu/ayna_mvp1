@@ -8,7 +8,6 @@ import { shopCatalogCounts } from '../../data/catalogCounts.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
 import ProductCard from '../ProductCard';
 import Photo from '../ui/Photo.jsx';
-import SlideToStart from '../ui/SlideToStart.jsx';
 import { PLANS, PAID_TERM_STARTS } from '../../pro/plans.js';
 import { LEAD_READS, pickCommunityPost } from './landingData.js';
 import './landing-blocks.css';
@@ -200,7 +199,7 @@ function weeklyLineup() {
   const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
   return [...core, ...list.filter((p) => !core.includes(p))];
 }
-export function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
+export function Picks({ onOpenProduct, onViewDiscovery, picks = null, search = null }) {
   const ready = useCatalogReady();
   const weekly = useMemo(() => (ready ? weeklyLineup().slice(0, 4) : []), [ready]);
   const personal = useMemo(() => {
@@ -214,10 +213,10 @@ export function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
   useRecommendationViews(mine ? four : null, 'home_top_picks');
   if (ready && four.length < 2) return null;
   const name = mine ? 'Top picks for you' : 'This week’s picks';
-  return <PicksList name={name} ready={ready} four={four} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />;
+  return <PicksList name={name} ready={ready} four={four} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} search={search} />;
 }
 /* Picks deal in like polaroids dropped on a table, then settle (founder, Nov 2). */
-function PicksList({ name, ready, four, onOpenProduct, onViewDiscovery }) {
+function PicksList({ name, ready, four, onOpenProduct, onViewDiscovery, search = null }) {
   const [ref, anim] = usePlayOnView();
   return (
     <section className="lb-sec" aria-labelledby="lb-picks-h">
@@ -226,6 +225,7 @@ function PicksList({ name, ready, four, onOpenProduct, onViewDiscovery }) {
           <h2 id="lb-picks-h" className="lb-h2">{name}</h2>
           <Go className="lb-more" href="/explore/products" onGo={() => onViewDiscovery?.('')}>See all products<Arrow /></Go>
         </header>
+        {search}
         <ul className={`lb-picks${ready ? anim : ''}`} ref={ref} aria-label={ready ? name : 'Loading products'}>
           {ready ? four.map((p, i) => <li key={p.id} style={{ '--n': i }}><ProductCard product={p} onOpen={onOpenProduct} className="hm-sticker" /></li>)
             : [0, 1, 2, 3].map((i) => <li key={i} aria-hidden="true"><div className="lb-skel" /></li>)}
@@ -378,7 +378,8 @@ export function ProAndEnd({ pro = false, offerOpen = null, cta }) {
         </div>
         <div className="lb-end wlx-end">
           <h2 className="lb-end__h">Find what fits <span>your body.</span></h2>
-          <SlideToStart className="lb-end__sts" size="lg" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
+          {/* Nov 3: the same plain button as the top of the page. */}
+          <button type="button" className="lb-end__btn" onClick={cta.go}>{cta.label}</button>
         </div>
       </div>
     </section>

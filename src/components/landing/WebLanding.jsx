@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { WhatYouCanDo, Picks, Proof, ReadsAndCommunity, Founders, ProAndEnd, useRiseOnView } from './LandingBody.jsx';
+import { Picks, Proof, Founders, ProAndEnd, useRiseOnView } from './LandingBody.jsx';
 import MedicalNote from '../MedicalNote.jsx';
 import '../../styles/editorial.css';
 import '../../styles/home.css';
@@ -39,9 +39,9 @@ import './web-landing.css';
 // Website, last 30 days before this: 357 visitors, 63% left from the home page,
 // 21 started the quiz.
 const VALUE_PROPS = [
-  { k: 'match', t: 'Made for you', d: 'Picked for your body and your stage of life.' },
-  { k: 'safe', t: 'Safe first', d: 'We check your medicines and allergies first.' },
-  { k: 'evidence', t: 'No paid spots', d: 'Brands can\u2019t pay to be picked. You see the research.' },
+  { k: 'match', t: 'Made for you', d: 'Picked for your body and what you need.' },
+  { k: 'safe', t: 'Safe first', d: 'We check your medicines first.' },
+  { k: 'evidence', t: 'Honest picks', d: 'Brands can\u2019t pay to be picked.' },
 ];
 const PROP_ICON = {
   match: <path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z" />,
@@ -56,22 +56,32 @@ function Hero({ cta, onSearch, banner = null }) {
         <Rain cols={4} onInk className="wl-rain" />
         <div className="wl-hero__in">
           <h1 id="hm-hero-title" className="wl-title">Find women’s health products <span>that fit you.</span></h1>
-          <p className="wl-one">Answer 4 questions. See what fits you, and why.</p>
-          <ul className="wl-props" aria-label="Why ayna">
-            {VALUE_PROPS.map((v) => (
-              <li key={v.k}><svg viewBox="0 0 24 24" aria-hidden="true">{PROP_ICON[v.k]}</svg><span><b>{v.t}</b><small>{v.d}</small></span></li>
-            ))}
-          </ul>
+          <p className="wl-one">Pads, vitamins, sleep help and more. Answer 4 questions and see what fits you.</p>
           <div className="wl-ctas">
             <button type="button" className="wl-cta" data-tour="landing-start" onClick={() => { trackLandingCta(cta.id); cta.go?.(); }}>{cta.label}</button>
             <a className="wl-watch" href="#ay-demo" onClick={watch}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M10 8.5v7l6-3.5-6-3.5Z" /></svg>Watch how it works</a>
           </div>
           {cta.note && <p className="wl-cta-note">{cta.note}</p>}
-          <HeroSearch onSearch={onSearch} className="wl-search" />
           {banner && <div className="wl-banner">{banner}</div>}
         </div>
       </div>
       <ScallopEdge shape="wave" tone="ink" className="wl-edge" />
+    </section>
+  );
+}
+
+/* ---------- 2. three reasons ----------
+   Founder, Nov 3 ("less crowded, look nice, not overstimulating"): the hero
+   keeps only the headline, one line and one button (like perfit.app). The
+   three reasons get their own calm row right under it, with room around them. */
+function Reasons() {
+  return (
+    <section className="wl-why" aria-label="Why ayna">
+      <ul className="wl-why__list">
+        {VALUE_PROPS.map((v) => (
+          <li key={v.k}><svg viewBox="0 0 24 24" aria-hidden="true">{PROP_ICON[v.k]}</svg><b>{v.t}</b><span>{v.d}</span></li>
+        ))}
+      </ul>
     </section>
   );
 }
@@ -93,17 +103,17 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
   return (
     <div id="ay-landing" className="ed ed-home hm hm-uq wl" ref={pageRef}>
       <Hero cta={cta} onSearch={onSearch} banner={home ? null : heroBanner} />
+      <Reasons />
       <HowItWorksDemo onStart={() => { trackLandingCta(`${cta.id}_demo`); cta.go?.(); }} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />
       <BrandBar onOpen={onViewWaitlist} />
       {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the
           raining pictures and widgets, and use the original website for the rest). */}
       {/* Below the hero (./LandingBody.jsx): one calm butter page, then one espresso close. */}
       <div className="lb">
-        <WhatYouCanDo member={home} onGo={{ match: home ? onGoHome : onStartQuiz, evidence: onViewHowItWorks, ask: onAsk, routine: home ? onGoHome : null, checkin: home ? onGoHome : null }} />
-        <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={Array.isArray(personalPicks) ? personalPicks : null} />
+        {/* Nov 3: the five feature tiles said the same as "How ayna works", so they're gone; the search moved here, next to the products. */}
+        <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={Array.isArray(personalPicks) ? personalPicks : null} search={<HeroSearch onSearch={onSearch} className="lb-search" />} />
         {rest && <>
           <Proof onViewArticles={onViewArticles} />
-          <ReadsAndCommunity onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
           <Founders onViewAbout={onViewAbout} />
         </>}
       </div>

@@ -92,11 +92,11 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     const html = renderToStaticMarkup(<WebLanding onStartQuiz={() => {}} onViewHowItWorks={() => {}} />);
     expect(text(html)).toContain('Find women’s health products');
     expect(html).toMatch(/<button type="button" class="wl-cta" data-tour="landing-start">Sign up free<\/button>/);
-    expect(html.match(/<li/g)?.length).toBeGreaterThanOrEqual(3);
+    expect(html.match(/<li><svg/g)?.length).toBe(3);
     expect(html).toContain('href="#ay-demo"');
     expect(html).toContain('id="ay-demo"');
     expect(html).toContain('data-tour="landing-start"');
-    expect(html).toContain('class="lsx-search wl-search"');
+    expect(html).toContain('lb-search');
     expect(html).toMatch(/class="lk-rainbox lk-rainbox--ink wl-rain" aria-hidden="true"/);
     expect(text(html)).toContain('How we match');
     // The website keeps the brown and pink bar, with its pause button; no box behind "your body.".
@@ -115,9 +115,10 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     vi.useRealTimers();
     const page = host.textContent;
     expect(page).toContain('Brands we work with');
-    expect(page).toContain('What you can do on ayna');
+    expect(page).toContain('How ayna works');
+    expect(page).not.toContain('What you can do on ayna');
     expect(page).toContain('What’s behind every match');
-    expect(page).toContain('Quick reads, with sources');
+    expect(page).not.toContain('Quick reads, with sources');
     expect(page).toContain('More of ayna, when you want it.');
     expect(host.querySelector('a[href="/pro"]').textContent).toContain('See what Pro includes');
     expect(page).toContain('Built by three women who wanted better answers.');
@@ -133,16 +134,18 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     act(() => { vi.runOnlyPendingTimers(); });
     vi.useRealTimers();
     const page = host.querySelector('#ay-landing');
-    // five feature tiles, each with an icon circle; no chip switcher above the picks
-    expect(page.querySelectorAll('.lb-bento > .lb-tile').length).toBe(5);
-    expect(page.querySelectorAll('.lb-bento .lb-ic').length).toBe(5);
+    // Nov 3 (less crowded): no feature tiles and no reads/community block; 3 reasons on their own row; search sits with the products
+    expect(page.querySelectorAll('.lb-bento').length).toBe(0);
+    expect(page.querySelectorAll('.wl-why li').length).toBe(3);
+    expect(page.querySelector('.lb .lb-search')).not.toBeNull();
+    expect(page.querySelector('.wl-hero .wl-search, .wl-hero .wl-props')).toBeNull();
     expect(page.querySelector('.lb [role="group"]')).toBeNull();
     // pink is an accent only below the hero: no full pink band, and no checker strip before the close
     expect(page.querySelectorAll('.ayb-band.is-pink').length).toBe(0);
     expect(page.querySelector('.wl-turn')).toBeNull();
     // the last ask repeats Slide to start, without a second welcome-tip anchor, then the note ends the page
     const end = page.querySelector('.lb-close .wlx-end');
-    expect(end.querySelector('.ay-sts__track').getAttribute('aria-label')).toBe('Sign up free. Slide or tap to start.');
+    expect(end.querySelector('button.lb-end__btn').textContent).toBe('Sign up free');
     expect(page.querySelectorAll('[data-tour="landing-start"]').length).toBe(1);
     expect(page.querySelector('.lb-close').nextElementSibling).toBe(page.lastElementChild);
     // the founders photo stays

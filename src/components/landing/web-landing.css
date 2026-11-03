@@ -360,3 +360,32 @@ html body .app-container #ay-landing.wl.hm .wl-title.wl-title.wl-title.wl-title 
   .app-container .hm.wl .wl-search { order: 6; }
   .app-container .hm.wl .wl-banner { order: 7; }
 }
+
+/* Nov 3, "less crowded, not overstimulating" (perfit.app: one line, one button, product photos).
+   The hero keeps the headline, one line and one button. The rain shows products only, softer:
+   no floating Match / Ask ayna / sleep / ring widgets. */
+.app-container .hm.wl .wl-rain .lk-w { display: none !important; }
+.app-container .hm.wl .wl-rain { opacity: .8; }
+.app-container .hm.wl .wl-hero__in { gap: 22px; }
+@media (min-width: 900px) { .app-container .hm.wl .wl-hero__band { min-height: min(640px, calc(100svh - 72px)); } }
+
+/* The three reasons, on their own calm row under the hero. */
+.app-container .hm.wl .wl-why { background: #ffedac; padding: 64px 20px 8px; }
+.app-container .hm.wl .wl-why__list { list-style: none; margin: 0 auto; padding: 0; max-width: 1000px; display: grid; gap: 36px; text-align: center; }
+@media (min-width: 760px) { .app-container .hm.wl .wl-why__list { grid-template-columns: repeat(3, 1fr); gap: 48px; } }
+.app-container .hm.wl .wl-why li { display: grid; justify-items: center; gap: 6px; }
+.app-container .hm.wl .wl-why svg { width: 52px; height: 52px; padding: 13px; margin-bottom: 8px; box-sizing: border-box; border-radius: 50%; background: #f7badd; fill: none; stroke: #3e2723; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .hm.wl .wl-why b { font: 800 22px/1.2 var(--ay-font-display, sans-serif) !important; color: #3e2723 !important; letter-spacing: -.01em; }
+.app-container .hm.wl .wl-why span { max-width: 260px; font: 500 16px/1.45 var(--ay-sans-stack, sans-serif) !important; color: #3e2723 !important; opacity: .8; }
+.app-container .hm.wl .hd { padding-top: 72px; padding-bottom: 72px; }
+
+/* Search sits with the products now. */
+.app-container .hm.wl .lb-search { max-width: 520px; margin: 0 0 24px; }
+
+/* The last button matches the top one. */
+.app-container .hm.wl .lb-end__btn { all: unset; box-sizing: border-box; cursor: pointer; min-height: 56px; padding: 0 36px; display: inline-flex; align-items: center; border-radius: 999px; background: #f7badd; color: #3e2723; font: 800 18px/1 var(--ay-sans-stack, sans-serif); box-shadow: 0 4px 0 #ffedac; transition: transform .2s cubic-bezier(.34, 1.5, .64, 1); }
+.app-container .hm.wl .lb-end__btn:hover { transform: translateY(-2px); }
+.app-container .hm.wl .lb-end__btn:focus-visible { outline: 3px solid #ffedac; outline-offset: 3px; }
+.app-container .hm.wl .lb-search { --lk-search-h: 48px; }
+.app-container .hm.wl .lb-search.lsx-search input { font-size: 15px !important; background: #fff8dc !important; color: #3e2723 !important; border-color: #3e2723 !important; }
+.app-container .hm.wl .lb-search button { width: 38px; height: 38px; right: 5px; background: #3e2723; color: #ffedac; }
