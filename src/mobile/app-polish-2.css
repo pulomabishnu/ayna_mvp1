@@ -169,3 +169,8 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-fold > :not(sum
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-rt.is-folded .ay-rt-slot { background: none !important; box-shadow: none !important; border: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
 /* Ask ayna signed out: what works on this phone, and what needs an account. */
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-ask-local { margin: 0 0 6px; color: var(--ayna-text-muted); font: 500 calc(14px * var(--ayna-text-scale, 1))/1.45 var(--ayna-font-ui); }
+/* Nov 2: the bar's z-index did nothing (it was position: static), so screens
+   that end at the bar's top (the profile overlay, z 70) drew over the Home
+   circle that rises above it. Positioned and one layer up, the circle is
+   always whole; full-screen sheets (z 80+) still cover the bar. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ayna-bottom-nav { position: relative !important; z-index: 71 !important; }
