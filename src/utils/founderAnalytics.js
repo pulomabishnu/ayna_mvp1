@@ -20,13 +20,34 @@ export function isFounderEmail(email) {
   return INTERNAL_FOUNDER_EMAILS.has(String(email || '').trim().toLowerCase());
 }
 
-export function hasInternalBrowserMarker() {
+function hasPersistedInternalBrowserMarker() {
   if (typeof window === 'undefined') return false;
   try {
     return window.localStorage.getItem(INTERNAL_BROWSER_KEY) === 'founder';
   } catch {
     return false;
   }
+}
+
+function isNativeRuntime() {
+  if (typeof window === 'undefined') return false;
+  try {
+    return window.Capacitor?.isNativePlatform?.() === true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Whether founder analytics should be suppressed at the capture boundary.
+ *
+ * Website founder traffic stays fully suppressed. Native/TestFlight traffic is
+ * intentionally allowed through so the tester-only PostHog QA dashboard can
+ * verify real builds. tagFounderAnalyticsIfNeeded() still tags the native
+ * person/session as internal, so customer dashboards continue to exclude it.
+ */
+export function hasInternalBrowserMarker() {
+  return hasPersistedInternalBrowserMarker() && !isNativeRuntime();
 }
 
 function persistInternalBrowserMarker() {
@@ -46,13 +67,17 @@ function persistInternalBrowserMarker() {
  * Once a founder signs in on a browser, the browser marker persists so future
  * signed-out visits on that same Chrome/Safari profile remain internal too.
  * New browsers/devices become internal as soon as the founder signs in once.
+ *
+ * Native/TestFlight builds deliberately keep this internal tag even though
+ * hasInternalBrowserMarker() does not suppress their capture. That separation
+ * lets QA see tester events while customer-facing metrics filter them out.
  */
 export function tagFounderAnalyticsIfNeeded(ph, email = '') {
   if (!ph) return false;
 
   const founder = isFounderEmail(email);
   if (founder) persistInternalBrowserMarker();
-  if (!founder && !hasInternalBrowserMarker()) return false;
+  if (!founder && !hasPersistedInternalBrowserMarker()) return false;
 
   try {
     ph.register?.({ is_internal: true, internal_role: 'founder' });
