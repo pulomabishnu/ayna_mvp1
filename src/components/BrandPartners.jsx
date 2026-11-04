@@ -179,6 +179,18 @@ const PARTNERS = [
     blurb:
       'Dentist-designed mouth tape that encourages nasal breathing during sleep.',
   },
+  {
+    // Confirmed partner from 2026-11-04, PRE-LAUNCH: waitlist only. waitlistUrl
+    // is Naya's waitlist page until ayna's waitlist affiliate link is added.
+    brand: 'Naya',
+    logo: '/products/naya/applicator-kit.webp',
+    url: 'https://www.naya-applicator.com/',
+    prelaunch: true,
+    waitlistUrl: 'https://www.naya-applicator.com/waitlist?SQF_REFERRAL_SOURCE=ayna',
+    waitlistCta: 'Join the waitlist',
+    blurb:
+      'A reusable tampon applicator in the works, for the comfort of an applicator without the plastic waste.',
+  },
   // Liv Labs (Pippa Resistance Spring) is NOT yet a confirmed partner, its
   // two products stay in the catalog (src/data/brands.js) so they still
   // surface in Discovery/search, but intentionally left off this page and
