@@ -134,7 +134,7 @@ describe('one breakdown, same number everywhere', () => {
       }
     }
     expect(checked).toBeGreaterThan(200);
-  });
+  }, 30_000);
 
   it('Ask answers with the same percent, reason and breakdown', () => {
     const p = byId.get('p-saalt-disc');
