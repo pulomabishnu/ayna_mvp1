@@ -608,3 +608,6 @@ html body .app-container .aq.aq--web .aq-col > .aq-top .aq-icon:not(.is-spacer) 
 html body .app-container .aq.aq--web .aq-answer .aq-sub :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):not(.is-on):not([aria-checked='true']) { background: #f6e3a1 !important; }
 html body .app-container .aq.aq--web .aq-answer .aq-chip.has-sub > svg { left: 16px; top: 16px; }
 html body .app-container.app-container .aq.aq--web .aq-answer .qz-chip.is-dashed { border: 0 none !important; outline: 0; }
+/* "None of these" / "Prefer not to say" are normal tiles too (no underline, same corner circle). */
+html body .app-container .aq.aq--web .aq-answer .aq-chip.is-muted:not(.is-on) { text-decoration: none; font-weight: 600; background: transparent !important; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .3) !important; }
+html body .app-container .aq.aq--web .aq-answer .aq-chip.is-muted:not(.is-on)::before { content: '' !important; display: block; border: 0 !important; background: #f6e3a1 !important; }

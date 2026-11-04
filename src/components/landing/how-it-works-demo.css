@@ -270,3 +270,41 @@
   .app-container .hd--trio .hd-len { padding: 0 16px; }
 }
 .app-container .hd--trio .hd-screen { text-align: left; }
+/* Nov 4 v7: the real demo video in a phone, chapters beside it. Butter page. */
+.app-container .hd.hd--video { padding: 96px 24px; background: #ffedac; }
+.app-container .hd-v { display: grid; grid-template-columns: minmax(0, 1fr) 380px; align-items: center; gap: 64px; max-width: 1080px; margin: 0 auto; }
+.app-container .hd--video .hd-title { margin: 0 0 8px; font-size: clamp(32px, 4vw, 48px) !important; line-height: 1.05 !important; }
+.app-container .hd-v__sub { margin: 0 0 32px; font: 400 18px/1.45 var(--ay-sans-stack, sans-serif); color: rgba(62, 39, 35, .8); }
+.app-container .hd-v__ch { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1.5px solid rgba(62, 39, 35, .15); }
+.app-container .hd-v__ch li { border-bottom: 1.5px solid rgba(62, 39, 35, .15); }
+.app-container .hd-v__ch button { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: flex-start; gap: 16px; width: 100%; padding: 16px 0; }
+.app-container .hd-v__ch button:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; border-radius: 10px; }
+.app-container .hd-v__ch b { display: block; font: 700 18px/1.3 var(--ay-sans-stack, sans-serif); color: #3e2723; }
+.app-container .hd-v__ch small { display: block; margin-top: 4px; font: 400 15px/1.45 var(--ay-sans-stack, sans-serif); color: rgba(62, 39, 35, .78); }
+.app-container .hd-v__ch button:not(.is-on) b { opacity: .6; }
+.app-container .hd-v__ch button:not(.is-on) small { display: none; }
+.app-container .hd-v__ch button.is-on .hd-n { background: #3e2723; color: #ffedac; }
+.app-container .hd--video .hd-actions { margin-top: 32px; }
+.app-container .hd-v__stage { display: grid; justify-items: center; }
+.app-container .hd-v__phone { position: relative; width: 100%; max-width: 360px; padding: 10px; border-radius: 48px; background: #3e2723; }
+.app-container .hd-v__phone video { display: block; width: 100%; aspect-ratio: 390 / 844; border-radius: 38px; background: #ffedac; object-fit: cover; cursor: pointer; }
+.app-container .hd-v__play { all: unset; box-sizing: border-box; cursor: pointer; position: absolute; right: 22px; bottom: 22px; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 999px; background: #3e2723; color: #ffedac; box-shadow: 0 0 0 2px #ffedac; }
+.app-container .hd-v__play:not(.is-playing) { left: 50%; top: 50%; right: auto; bottom: auto; width: 72px; height: 72px; margin: -36px 0 0 -36px; background: #f7badd; color: #3e2723; box-shadow: 0 0 0 3px #3e2723; }
+.app-container .hd-v__play svg { width: 22px; height: 22px; fill: currentColor; }
+.app-container .hd-v__play:not(.is-playing) svg { width: 30px; height: 30px; margin-left: 3px; }
+.app-container .hd-v__play:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
+@media (max-width: 899px) {
+  .app-container .hd.hd--video { padding: 56px 16px; }
+  .app-container .hd-v { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .app-container .hd-v__stage { order: -1; }
+  .app-container .hd-v__phone { max-width: 320px; }
+}
+@media (max-width: 899px) {
+  .app-container .hd-v { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+  .app-container .hd-v__copy { display: contents; }
+  .app-container .hd--video .hd-title { order: 1; }
+  .app-container .hd-v__sub { order: 2; margin-bottom: 24px; }
+  .app-container .hd-v__stage { order: 3; margin-bottom: 24px; }
+  .app-container .hd-v__ch { order: 4; }
+  .app-container .hd--video .hd-actions { order: 5; }
+}

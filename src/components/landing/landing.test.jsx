@@ -115,7 +115,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     vi.useRealTimers();
     const page = host.textContent;
     expect(page).toContain('Brands we work with');
-    expect(page).toContain('How ayna works'); expect(page).toContain('Questions');
+    expect(page).toContain('See how ayna works'); expect(page).toContain('Questions');
     expect(page).toContain('What’s behind every match');
     expect(page).toContain('Quick reads, with sources');
     expect(page).toContain('More of ayna, when you want it.');
