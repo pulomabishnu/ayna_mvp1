@@ -127,3 +127,56 @@ html body .app-container.app-container.app-container.app-container.app-container
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-safety b { font: 700 16px/1.25 var(--ay-font-ui, inherit); color: #3e2723; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-safety small { font: 500 13px/1.35 var(--ay-font-ui, inherit); color: #3e2723; opacity: .85; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-safety:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
+
+/* Nov 3 (founder): every need the same size, no ranking; two big next steps right under the
+   matches (no empty gap), then two small links. Works on the espresso web card and the app. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready { justify-content: flex-start; }
+.app-container .ay-ob-ready.is-web.is-web { min-height: 0 !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__needs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__needs li { padding: 10px 16px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 16px/1.2 var(--o-sans, sans-serif); animation: ay-ob-rise 420ms ease-out both; animation-delay: calc(200ms + var(--i, 0) * 60ms); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__needs li::before { content: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-next { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 18px; max-width: 520px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__h { margin: 0 0 2px; font: 800 22px/1.2 var(--o-serif, sans-serif); color: var(--o-ink); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 14px 18px; border-radius: 22px; text-align: left; transition: transform .2s cubic-bezier(.34, 1.5, .64, 1); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn:hover { transform: translateY(-2px); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn:focus-visible { outline: 3px solid var(--o-ink); outline-offset: 3px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn.is-wrapped { background: #f7badd; color: #3e2723; box-shadow: 0 4px 0 #ffedac; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn.is-keep { background: #ffedac; color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn b { display: block; font: 800 18px/1.2 var(--o-sans, sans-serif); color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn small { display: block; margin-top: 3px; font: 500 14px/1.35 var(--o-sans, sans-serif); color: #3e2723; opacity: .85; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__ic { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__ic svg { width: 20px; height: 20px; fill: #ffedac; stroke: #ffedac; stroke-width: 0; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-keep .ay-ob-next__ic svg { fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn.is-wrapped .ay-ob-next__ic { animation: ay-ob-pulse 1.8s ease-in-out 1s 3; }
+@keyframes ay-ob-pulse { 50% { transform: scale(1.12); } }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 24px; margin-top: 4px; }
+@media (prefers-reduced-motion: reduce) { :is(.ayna-mobile, .app-container) .ay-ob-ready :is(.ay-ob-ready__needs li, .ay-ob-next__ic) { animation: none !important; } }
+
+/* Nov 3 v2: the count, what it's based on, one equal card per need, the main button and where her matches live. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-count { display: inline-block; padding: 0 .18em; border-radius: .2em; background: #f7badd; color: #3e2723; animation: ay-ob-pop .6s cubic-bezier(.2, 1.5, .4, 1) .2s both; }
+@keyframes ay-ob-pop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__based { margin: -4px 0 0; font: 600 15px/1.4 var(--o-sans, sans-serif); color: var(--o-soft, currentColor); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs { display: grid; gap: 10px; margin-top: 8px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__h { margin: 0; font: 700 15px/1.3 var(--o-sans, sans-serif); color: var(--o-soft, currentColor); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+@media (min-width: 640px) { :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list > li { display: grid; align-content: start; gap: 10px; min-height: 112px; padding: 14px 16px !important; border-radius: 20px !important; background: #ffedac !important; color: #3e2723 !important; box-sizing: border-box; animation: ay-ob-rise 420ms ease-out both; animation-delay: calc(250ms + var(--i, 0) * 80ms); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list > li::before { content: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__top b { font: 800 17px/1.2 var(--o-sans, sans-serif); color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__top em { flex: none; padding: 4px 10px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 13px/1.2 var(--o-sans, sans-serif); font-style: normal; white-space: nowrap; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__top em.is-none { background: transparent; color: #3e2723; box-shadow: inset 0 0 0 1.5px #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__pics { display: flex; gap: 8px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__pics .ay-ob-match__plate { width: 52px !important; height: 52px !important; flex: none; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list small { font: 500 14px/1.4 var(--o-sans, sans-serif); color: #3e2723; opacity: .85; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 60px; padding: 0 24px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 800 19px/1 var(--o-sans, sans-serif); box-shadow: 0 4px 0 #ffedac; transition: transform .2s cubic-bezier(.34, 1.5, .64, 1); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main:hover { transform: translateY(-2px); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main:focus-visible { outline: 3px solid var(--o-ink); outline-offset: 3px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__where { margin: 0; text-align: center; font: 500 14px/1.4 var(--o-sans, sans-serif); color: var(--o-soft, currentColor); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__where b { color: var(--o-ink); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__h { margin: 6px 0 0; text-align: center; font: 700 14px/1 var(--o-sans, sans-serif); color: var(--o-soft, currentColor); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn.is-wrapped { background: #c9dceb; box-shadow: none; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn { min-height: 68px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-keep .ay-ob-next__ic svg[viewBox] path[d^="M12 3"] { fill: #ffedac; }
+@media (prefers-reduced-motion: reduce) { :is(.ayna-mobile, .app-container) .ay-ob-ready :is(.ay-ob-count, .ay-ob-needs__list > li) { animation: none !important; } }

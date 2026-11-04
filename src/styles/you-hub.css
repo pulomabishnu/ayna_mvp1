@@ -222,3 +222,13 @@ html body .app-container[data-theme='brand-dark'] .ay-ecoprev.is-mine :is(.ay-ec
   html body .wy-email.wy-email .wy-seg.wy-seg { flex-wrap: wrap !important; overflow: visible; }
   html body .wy-email .ay-group__text { min-width: 0; }
 }
+
+/* Nov 3: her matches grouped by need (same groups as the results page and Wrapped). */
+html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__group { display: grid; gap: 12px; margin: 0 0 28px; }
+html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__gh { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 1.5px solid rgba(62, 39, 35, .2); }
+html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__gh h2 { margin: 0; font: 800 20px/1.2 var(--ay-font-display, sans-serif); color: #3e2723; }
+html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__gcount { flex: none; padding: 5px 11px; border-radius: 999px; background: #3e2723; color: #ffedac !important; font: 700 13px/1.2 var(--ay-sans-stack, sans-serif) !important; }
+html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__mine { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__mine button { align-content: start; }
+html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__why { font: 500 13px/1.35 var(--ay-sans-stack, sans-serif); color: #3e2723; opacity: .85; }
+html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__save { margin-top: 8px; }

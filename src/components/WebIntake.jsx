@@ -732,7 +732,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   if (onboarding && step.type === 'ready') {
     const preview = mapIntakeToLegacyQuizProfile(buildSnapshot(intake));
     return <div className="ct qz-page" data-step="ready">
-      <ReadyReveal variant="web" answers={preview} signedIn={signedIn} onSeeToday={() => finish(intake, { land: 'today' })} onCreateAccount={() => finish(intake, { land: 'save' })} onBack={back} onMorePersonal={() => { const more = steps.find((s) => s.obPart === 'more'); if (more) go(more.id); }} />
+      <ReadyReveal variant="web" answers={preview} signedIn={signedIn} onSeeToday={() => finish(intake, { land: 'today' })} onWatchWrapped={() => finish(intake)} onCreateAccount={() => finish(intake, { land: 'save' })} onBack={back} onMorePersonal={() => { const more = steps.find((s) => s.obPart === 'more'); if (more) go(more.id); }} />
       {saveError && <p className="qz-alert">{saveError}</p>}
     </div>;
   }

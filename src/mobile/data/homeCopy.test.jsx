@@ -18,7 +18,7 @@ describe('Today in the app and on the website', () => {
     const app = renderToStaticMarkup(<ReadyReveal variant="app" onSeeToday={() => {}} />);
     expect(app).toContain('See my Today');
     expect(app).not.toMatch(/\bHome\b/);
-    expect(renderToStaticMarkup(<ReadyReveal variant="web" onSeeToday={() => {}} />)).toContain('See my ecosystem');
+    expect(renderToStaticMarkup(<ReadyReveal variant="web" onSeeToday={() => {}} />)).toContain('See my ecosystem'); // no answers: no count
     const land = renderToStaticMarkup(<LandingScreen onStart={() => {}} />).replace(/<[^>]+>/g, ' ');
     expect(land).not.toMatch(/\bHome\b/);
   });

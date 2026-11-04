@@ -2864,6 +2864,7 @@ function App() {
               <EcosystemPreview
                 products={ALL_PRODUCTS}
                 matches={guestPreview?.products || []}
+                results={guestPreview?.results || null}
                 onBuild={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
                 onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }}
                 onSave={() => {
@@ -3193,6 +3194,7 @@ function App() {
           <EcosystemPreview
             products={ALL_PRODUCTS}
             matches={guestPreview?.products || []}
+            results={guestPreview?.results || null}
             onBuild={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
             onSignIn={() => { setPendingAction('ecosystem'); pendingActionRef.current = 'ecosystem'; setShowAuthModal(true); }}
             onSave={() => {

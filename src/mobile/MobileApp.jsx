@@ -1405,6 +1405,8 @@ export default function MobileApp() {
     // Today" landed back on "Slide to find your matches" with no sign her
     // matches were kept. Guests see their summary, which ends in saving them.
     onSeeMyToday: () => { nav.onSeeMatches(); markOnboardingDone(); if (authUser) setScreen('today'); else { setRevealFrom(null); setRevealAtEnd(false); setScreen('reveal'); } },
+    // Nov 3: the reveal's main button plays the Wrapped story (signed in or out).
+    onWatchWrapped: () => { nav.onSeeMatches(); markOnboardingDone(); setRevealFrom(null); setRevealAtEnd(false); setScreen('reveal'); },
     onReadyCreateAccount: () => { authResumeRef.current = null; authReturnScreenRef.current = 'ready'; setAuthMode('signup'); setScreen('signin'); },
     onReadyBack: () => setScreen('connect'),
     onMakeMorePersonal: () => { setIntakeFlow('more'); setScreen('quiz'); },
