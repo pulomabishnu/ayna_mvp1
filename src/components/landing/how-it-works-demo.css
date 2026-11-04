@@ -108,3 +108,115 @@
 .app-container .hd-scr { gap: 12px; }
 @media (max-width: 899px) { .app-container .hd { padding: 48px 16px; } .app-container .hd-stage .hd-phone { height: 500px; } .app-container .hd-stage { order: 0; } }
 .app-container .hd-ask { margin-top: auto; padding: 12px 16px; border-radius: 999px; border: 1.5px solid rgba(62, 39, 35, .3); font: 500 13px/1.2 var(--ay-sans-stack, sans-serif); color: rgba(62, 39, 35, .7); }
+
+/* Nov 4 v3 (founder: "use the inspo"). The phone screens in her inspo's language: a dark
+   espresso screen, answers and products as soft pink / butter tiles, round icon circles,
+   big numbers. ayna colours only. */
+.app-container .hd-screen { background: #3e2723; }
+.app-container .hd-stage .hd-phone { padding: 8px; background: #2c1b18; }
+.app-container .hd-scr { padding: 28px 14px 14px; gap: 10px; }
+.app-container .hd-meta { color: rgba(255, 237, 172, .7); }
+.app-container .hd-q { color: #ffedac; font-size: 22px; }
+.app-container .hd-chips { grid-template-columns: 1fr 1fr; gap: 8px; }
+.app-container .hd-chips span { position: relative; display: flex; align-items: flex-end; min-height: 64px; padding: 10px 34px 10px 10px; border: 0; border-radius: 18px; background: #f6e3a1; color: #3e2723; font: 600 12px/1.2 var(--ay-sans-stack, sans-serif); }
+.app-container .hd-chips span:nth-child(4n + 1), .app-container .hd-chips span:nth-child(4n + 4) { background: #f7badd; }
+.app-container .hd-chips span::after { content: ''; position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 999px; background: #ffedac; }
+@keyframes hd-pick { to { background: #ffedac; box-shadow: inset 0 0 0 2px #f7badd; } }
+.app-container .hd-chips span.is-pick::after { background: #3e2723 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5.5 12.5l4 4L18.5 8' fill='none' stroke='%23f7badd' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 13px no-repeat; }
+.app-container .hd-next { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 4px 14px 4px 4px; border-radius: 16px; background: #ffedac; color: #3e2723; text-align: left; }
+.app-container .hd-next::before { content: ''; flex: none; width: 34px; height: 34px; border-radius: 12px; background: #f7badd url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6' fill='none' stroke='%233e2723' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat; }
+.app-container .hd-src { border: 0; border-radius: 18px; background: rgba(255, 237, 172, .1); color: #ffedac; }
+.app-container .hd-src b { color: #f7badd; }
+/* Matches: one colour tile each, % in a ring. */
+.app-container .hd-list { gap: 8px; }
+.app-container .hd-list li { border: 0; border-radius: 20px; background: #f6e3a1; padding: 8px; }
+.app-container .hd-list li:first-child { background: #f7badd; }
+.app-container .hd-tile { border: 0; border-radius: 14px; background: #fff; }
+.app-container .hd-ring { background: conic-gradient(#3e2723 calc(var(--p) * 1%), rgba(62, 39, 35, .15) 0); }
+.app-container .hd-ring b { background: #ffedac; }
+.app-container .hd-foot { color: rgba(255, 237, 172, .75); }
+/* Ask: pink and butter bubbles. */
+.app-container .hd-bub { background: #ffedac; color: #3e2723; border-radius: 18px; }
+.app-container .hd-bub.is-me { background: #f7badd; color: #3e2723; }
+.app-container .hd-prod { border: 0; border-radius: 20px; background: #f6e3a1; }
+.app-container .hd-ask { border-color: rgba(255, 237, 172, .3); color: rgba(255, 237, 172, .7); }
+/* Daily: the notification, then inspo tiles. */
+.app-container .hd-note-push { background: #ffedac; color: #3e2723; border-radius: 18px; }
+.app-container .hd-note-push b { color: #3e2723; }
+.app-container .hd-dots { padding: 12px; border-radius: 18px; background: #f7badd; }
+.app-container .hd-dots i { border-color: #3e2723; }
+.app-container .hd-dots small { color: #3e2723; }
+.app-container .hd-prod.is-daily { background: #f6e3a1; }
+.app-container .hd-prod.is-daily .hd-info small { color: rgba(62, 39, 35, .75); }
+.app-container .hd-pair .hd-next { justify-content: center; padding: 10px; font-size: 12px; }
+.app-container .hd-pair .hd-next::before { display: none; }
+.app-container .hd-next.is-ghost { background: transparent; color: #ffedac; box-shadow: inset 0 0 0 1.5px rgba(255, 237, 172, .5); }
+/* Nov 4 v4 (founder: "the video needs to be really good"): it plays like a screen recording.
+   A tap dot moves to each answer and to Next, picked tiles fill in, the Next bar presses,
+   match rings fill up, ayna types before it answers, the morning notification drops in. */
+@property --p { syntax: '<number>'; inherits: true; initial-value: 0; }
+.app-container .hd-scr { position: relative; }
+.app-container .hd-stage .hd-phone { width: min(380px, 88vw); height: 560px; }
+.app-container .hd-chips span.is-pick::after { background: #ffedac; animation: hd-check .2s ease both; animation-delay: calc(.8s + var(--i) * .7s); }
+@keyframes hd-check { to { background: #3e2723 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5.5 12.5l4 4L18.5 8' fill='none' stroke='%23f7badd' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 13px no-repeat; } }
+@keyframes hd-pick { 0% { transform: scale(1); } 40% { transform: scale(.95); } 100% { transform: scale(1); background: #ffedac; box-shadow: inset 0 0 0 2px #3e2723; } }
+.app-container .hd-next.is-press { animation: hd-press .3s ease 2.7s both; }
+@keyframes hd-press { 50% { transform: scale(.96); } 100% { transform: none; background: #f7badd; } }
+.app-container .hd-cursor { position: absolute; z-index: 2; width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 999px; background: rgba(247, 186, 221, .55); box-shadow: 0 0 0 2px #f7badd; pointer-events: none; left: 50%; top: 70%; }
+.app-container .hd-cursor.is-ask { animation: hd-tap-ask 3.4s cubic-bezier(.4, 0, .2, 1) .1s both; }
+.app-container .hd-cursor.is-safe { animation: hd-tap-safe 3.4s cubic-bezier(.4, 0, .2, 1) .1s both; }
+@keyframes hd-tap-ask {
+  0% { left: 50%; top: 70%; opacity: 0; }
+  10% { opacity: 1; }
+  20% { left: 27%; top: 30%; transform: scale(1); }
+  23% { transform: scale(.7); } 26% { transform: scale(1); }
+  40% { left: 73%; top: 30%; transform: scale(1); }
+  43% { transform: scale(.7); } 46% { transform: scale(1); }
+  76% { left: 50%; top: 93%; transform: scale(1); }
+  80% { transform: scale(.7); } 84% { transform: scale(1); opacity: 1; }
+  100% { left: 50%; top: 93%; opacity: 0; }
+}
+@keyframes hd-tap-safe {
+  0% { left: 50%; top: 75%; opacity: 0; }
+  10% { opacity: 1; }
+  40% { left: 73%; top: 31%; transform: scale(1); }
+  43% { transform: scale(.7); } 46% { transform: scale(1); }
+  76% { left: 50%; top: 93%; transform: scale(1); }
+  80% { transform: scale(.7); } 84% { transform: scale(1); opacity: 1; }
+  100% { left: 50%; top: 93%; opacity: 0; }
+}
+.app-container .hd-ring { animation: hd-fillring 1.1s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(.3s + var(--i, 0) * .15s); }
+@keyframes hd-fillring { from { --p: 0; } }
+.app-container .hd-typing { display: inline-flex; gap: 4px; align-self: flex-start; padding: 10px 12px; border-radius: 18px; background: rgba(255, 237, 172, .15); animation: hd-typing 1.1s ease .3s both; overflow: hidden; }
+.app-container .hd-typing i { width: 6px; height: 6px; border-radius: 999px; background: #ffedac; animation: hd-blink .9s ease-in-out infinite; }
+.app-container .hd-typing i:nth-child(2) { animation-delay: .15s; } .app-container .hd-typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes hd-typing { 0% { opacity: 0; } 15%, 80% { opacity: 1; max-height: 30px; padding: 10px 12px; } 100% { opacity: 0; max-height: 0; padding: 0 12px; margin: -10px 0 0; } }
+@keyframes hd-blink { 50% { opacity: .3; } }
+.app-container .hd-bub:not(.is-me) { animation-delay: 1.4s; }
+.app-container .hd-src { animation-delay: 1.8s; }
+.app-container .hd-prod { animation-delay: 2.1s; }
+.app-container .hd-note-push { animation: hd-drop .5s cubic-bezier(.2, 1.2, .4, 1) .3s both; }
+@keyframes hd-drop { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: none; } }
+.app-container .hd-dots i { animation: hd-in .25s ease both; animation-delay: calc(.9s + var(--i, 0) * .1s); }
+.app-container .hd-prod.is-daily { animation-delay: 1.8s; }
+.app-container .hd-pair { animation-delay: 2.3s; }
+@media (prefers-reduced-motion: reduce) { .app-container .hd-cursor, .app-container .hd-typing { display: none; } }
+/* Taps: a pink ripple on each tile as it's picked, and on Next (no free-floating cursor). */
+.app-container .hd-chips span { min-height: 72px; overflow: hidden; }
+.app-container .hd-chips span.is-pick::before { content: ''; position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 999px; background: #f7badd; opacity: 0; animation: hd-ripple .6s ease-out both; animation-delay: calc(.75s + var(--i) * .7s); }
+.app-container .hd-chips span.is-first::before, .app-container .hd-chips span.is-first, .app-container .hd-chips span.is-first::after { --i: 0; }
+@keyframes hd-ripple { 0% { opacity: .8; transform: scale(.2); } 100% { opacity: 0; transform: scale(4); } }
+.app-container .hd-next.is-press { position: relative; overflow: hidden; }
+.app-container .hd-safe-why { margin-top: auto; }
+/* Picked is obvious on the dark screen: unpicked tiles are quiet, picked ones turn pink. */
+.app-container .hd-chips span, .app-container .hd-chips span:nth-child(4n + 1), .app-container .hd-chips span:nth-child(4n + 4) { background: rgba(255, 237, 172, .12); color: #ffedac; }
+.app-container .hd-chips span::after { background: rgba(255, 237, 172, .2); }
+@keyframes hd-pick { 0% { transform: scale(1); } 40% { transform: scale(.95); } 100% { transform: scale(1); background: #f7badd; color: #3e2723; } }
+.app-container .hd-stage .hd-phone { height: 520px; }
+.app-container .hd-sleep { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 4px 12px; padding: 12px; border-radius: 18px; background: #f6e3a1; color: #3e2723; }
+.app-container .hd-sleep small { grid-column: 1 / -1; font: 600 11px/1.2 var(--ay-sans-stack, sans-serif); }
+.app-container .hd-sleep b { font: 700 22px/1 var(--ay-font-display, sans-serif); }
+.app-container .hd-wave { display: flex; align-items: center; gap: 3px; height: 32px; }
+.app-container .hd-wave i { width: 3px; border-radius: 2px; background: #3e2723; transform-origin: center; animation: hd-bar .5s ease both; animation-delay: calc(.6s + var(--i) * 50ms); }
+@keyframes hd-bar { from { transform: scaleY(0); } }
+@media (prefers-reduced-motion: reduce) { .app-container .hd-chips span.is-pick { background: #f7badd; color: #3e2723; } }

@@ -26,15 +26,15 @@ const MATCHES = [
   { id: 'p-portable-heating', name: 'Comfytemp Portable Heating Pad', price: '$30', pct: 87 },
   { id: 'p-thermacare', name: 'ThermaCare Menstrual HeatWraps', price: '', pct: 85 },
 ];
-const CHIPS = ['Cramps or period pain', 'Trouble sleeping', 'Heavy periods', 'PMS symptoms', 'Bloating', 'Brain fog'];
+const CHIPS = ['Cramps or period pain', 'Trouble sleeping', 'Heavy periods', 'PMS symptoms', 'Bloating', 'Acne', 'Fatigue or low energy', 'Brain fog'];
 const img = (id) => `/products/catalog/${id}.webp`;
 
 const motionOff = () => {
   try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return true; }
 };
 
-function Ring({ pct }) {
-  return <span className="hd-ring" style={{ '--p': pct }} aria-hidden="true"><b>{pct}%</b></span>;
+function Ring({ pct, i = 0 }) {
+  return <span className="hd-ring" style={{ '--p': pct, '--i': i }} aria-hidden="true"><b>{pct}%</b></span>;
 }
 
 function Screen({ k }) {
@@ -45,7 +45,7 @@ function Screen({ k }) {
       <div className="hd-chips">
         {CHIPS.map((c, i) => <span key={c} className={i < 2 ? 'is-pick' : ''} style={{ '--i': i }}>{c}</span>)}
       </div>
-      <span className="hd-next">See my matches</span>
+      <span className="hd-next is-press">See my matches</span>
     </div>
   );
   if (k === 'match') return (
@@ -57,7 +57,7 @@ function Screen({ k }) {
           <li key={m.id} style={{ '--i': i }}>
             <span className="hd-tile"><img src={img(m.id)} alt="" loading="lazy" /></span>
             <span className="hd-info"><b>{m.name}</b><small>Matches the period cramps you selected</small>{m.price && <em>{m.price}</em>}</span>
-            <Ring pct={m.pct} />
+            <Ring pct={m.pct} i={i} />
           </li>
         ))}
       </ul>
@@ -69,10 +69,10 @@ function Screen({ k }) {
       <p className="hd-meta">Safety question 3 of 3</p>
       <p className="hd-q">Taking any medicines or supplements?</p>
       <div className="hd-chips">
-        {['Yes', 'None', 'Not sure', 'Prefer not to answer'].map((c, i) => <span key={c} className={i === 0 ? 'is-pick' : ''} style={{ '--i': i }}>{c}</span>)}
+        {['Yes', 'None', 'Not sure', 'Prefer not to answer'].map((c, i) => <span key={c} className={i === 1 ? 'is-pick is-first' : ''} style={{ '--i': i }}>{c}</span>)}
       </div>
       <span className="hd-src"><b>Why we ask</b>Some supplements don’t mix with some medicines. If one might not be safe for you, we hold it back.</span>
-      <span className="hd-next">See my matches</span>
+      <span className="hd-next is-press">See my matches</span>
     </div>
   );
   if (k === 'daily') return (
@@ -80,7 +80,8 @@ function Screen({ k }) {
       <span className="hd-note-push"><b>ayna</b>Your ayna daily rundown is ready.<small>8:00 am · change it in Settings</small></span>
       <p className="hd-meta">Your daily rundown</p>
       <p className="hd-q">How did you sleep?</p>
-      <span className="hd-dots" aria-hidden="true">{[1, 1, 0, 1, 1, 0, 0].map((on, i) => <i key={i} className={on ? 'is-on' : ''} />)}<small>4 of 7 check-ins</small></span>
+      <span className="hd-sleep" aria-hidden="true"><small>Last night</small><span className="hd-wave">{[30, 70, 45, 90, 60, 35, 80, 50, 70, 40, 65, 55].map((h, i) => <i key={i} style={{ height: `${h}%`, '--i': i }} />)}</span><b>7h 40m</b></span>
+      <span className="hd-dots" aria-hidden="true">{[1, 1, 0, 1, 1, 0, 0].map((on, i) => <i key={i} className={on ? 'is-on' : ''} style={{ '--i': i }} />)}<small>4 of 7 check-ins</small></span>
       <span className="hd-prod is-daily"><span className="hd-tile"><img src={img('p-saalt-cup-steamer')} alt="" loading="lazy" /></span><span className="hd-info"><small>Goes with your Saalt Menstrual Cup</small><b>Saalt Cup Steamer</b></span></span>
       <span className="hd-pair"><span className="hd-next">Add to my ecosystem</span><span className="hd-next is-ghost">Not for me</span></span>
     </div>
@@ -89,6 +90,7 @@ function Screen({ k }) {
     <div className="hd-scr">
       <p className="hd-meta">Ask ayna</p>
       <span className="hd-bub is-me">Does heat really help cramps?</span>
+      <span className="hd-typing" aria-hidden="true"><i /><i /><i /></span>
       <span className="hd-bub">MedlinePlus lists heat on the lower belly as self-care for period cramps.</span>
       <span className="hd-src"><b>Source</b>MedlinePlus · medlineplus.gov</span>
       <span className="hd-prod"><span className="hd-tile"><img src={img('p-thermacare')} alt="" loading="lazy" /></span>ThermaCare HeatWraps<Ring pct={85} /></span>
