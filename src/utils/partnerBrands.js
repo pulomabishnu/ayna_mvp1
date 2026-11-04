@@ -39,6 +39,9 @@
  *
  * Added 2026-10-05: Rèsa, confirmed pre-launch partnership.
  *
+ * Added 2026-11-04: Livi (LiviWell), affiliate partnership (Eliz). Eliz: the three
+ * brands added Nov 4 (Naya, The Fertility Class, Livi) rank last.
+ *
  * Confirmed brand partners. Partner status is used only for browse-facing
  * partner labels/disclosures and general Browse promotion; it must never be
  * used as a personalized recommendation signal.
@@ -72,6 +75,7 @@ export const PARTNER_BRAND_ORDER = [
   /\btampon tribe\b/, // Tampon Tribe (partner from 2026-10-17)
   /\bmy pelvic bra\b/, // My Pelvic Bra
   /\bvio2\b/, // VIO2
+  /\blivi\b/, // Livi, LiviWell (affiliate partner from 2026-11-04)
 ];
 
 /** Back-compat alias: the redesign's components/tests import this name. */
@@ -86,7 +90,7 @@ export const PARTNER_BRAND_PATTERNS = PARTNER_BRAND_ORDER;
 export const PARTNER_BRANDS = [
   'Rèsa', 'BUNI', 'LiM Method', 'Winx Health', 'Momotaro Apotheca', 'Neycher', 'SootheHer', 'Alubri',
   'Connect Pelvic Floor Fitness', 'Elitone', 'LOLA', 'Proov', 'gina', 'Tampon Tribe',
-  'My Pelvic Bra', 'VIO2',
+  'My Pelvic Bra', 'VIO2', 'Livi',
 ].map((name, i) => ({ name, pattern: PARTNER_BRAND_ORDER[i] }));
 
 /**
