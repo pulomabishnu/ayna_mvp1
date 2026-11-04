@@ -713,7 +713,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         let cancelled = false;
         loadProductCatalog().then(({ products, source }) => {
             if (cancelled || source === 'bundled') return;
-            setDiscoveredProducts(products.filter((p) => p.source === 'discovered'));
+            setDiscoveredProducts(products.filter((p) => p.source === 'discovered' || p.source === 'imported'));
         }).catch(() => {});
         return () => { cancelled = true; };
     }, []);
