@@ -186,7 +186,7 @@ const PARTNERS = [
     logo: '/products/naya/applicator-kit.webp',
     url: 'https://www.naya-applicator.com/',
     prelaunch: true,
-    waitlistUrl: 'https://www.naya-applicator.com/waitlist',
+    waitlistUrl: 'https://www.naya-applicator.com/waitlist?SQF_REFERRAL_SOURCE=ayna',
     waitlistCta: 'Join the waitlist',
     blurb:
       'A reusable tampon applicator in the works, for the comfort of an applicator without the plastic waste.',

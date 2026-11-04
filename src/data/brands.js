@@ -10259,7 +10259,7 @@ export const BRAND_PRODUCTS = [
         price: '$28.99 (listed price; pre-launch, join the waitlist)',
         whereToBuy: [],
         url: 'https://www.naya-applicator.com/',
-        affiliateUrl: 'https://www.naya-applicator.com/waitlist',
+        affiliateUrl: 'https://www.naya-applicator.com/waitlist?SQF_REFERRAL_SOURCE=ayna',
         image: '/products/naya/applicator-kit.webp',
         gallery: ['/products/naya/applicator-kit-contents.webp', '/products/naya/applicator-kit-pouch.webp'],
         summary: 'A reusable tampon applicator, designed to be used again instead of discarded after each insertion, so you get the comfort of an applicator without the plastic waste, per Naya. The kit comes with five tampons, so you can try the applicator across the start of a cycle, and a protective cotton pouch that keeps it clean and discreet in a bag, pocket or gym locker between uses. Naya hasn\'t launched yet: the first 5,000 waitlist sign-ups get access to its first batch.',
@@ -10323,7 +10323,7 @@ export const BRAND_PRODUCTS = [
         price: '$12.00 for 32 (listed price; pre-launch, join the waitlist)',
         whereToBuy: [],
         url: 'https://www.naya-applicator.com/shop/p/regular-tampons',
-        affiliateUrl: 'https://www.naya-applicator.com/waitlist',
+        affiliateUrl: 'https://www.naya-applicator.com/waitlist?SQF_REFERRAL_SOURCE=ayna',
         image: '/products/naya/regular-tampons.webp',
         summary: 'Regular, applicator-free tampons (32), 100% plastic-free and cellophane wrapped, per Naya. Made for use with the Naya reusable applicator, or without it. Not yet released: join Naya\'s waitlist to be first to know when they\'re on the market.',
         safety: {
