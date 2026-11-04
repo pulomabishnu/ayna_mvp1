@@ -1,4 +1,6 @@
 import { addNeedToAnswers, needOption } from '../matching/addNeed.js';
+import { NEEDS as ONTOLOGY_NEEDS } from '../matching/ontology.js';
+const NEEDS_BY_ID = Object.fromEntries(ONTOLOGY_NEEDS.map((n) => [n.id, n]));
 import { PRODUCT_RESEARCH_CORE } from './productResearchCore.js';
 // ============================================================
 // Ayna Product Database
@@ -1925,7 +1927,7 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
     // exclusion still wins), and it never changes her matches: matchStatus stays 'no-relevance',
     // so lists, For you and the Rundown don't treat it as one of hers.
     if (details.matchStatus === 'no-relevance' && signals && !opts?._browse) {
-        const browse = browseFitFor(savedProduct, quizAnswers, healthProfile, opts, pp);
+        const browse = browseFitFor(savedProduct, quizAnswers, healthProfile, opts, pp, up);
         if (browse) details = { ...details, browseFit: browse };
     }
     if (!focusId) entry.details = details;
@@ -1933,23 +1935,81 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
 }
 
 const BROWSE_ANSWERS = new WeakMap();
-function browseFitFor(savedProduct, quizAnswers, healthProfile, opts, pp) {
+
+/*
+ * Browse fit, v2 (founder, Nov 4: "why at 22 would I get 92% for bladder leaks if I said I
+ * didn't have any"). v1 scored the product as if she HAD the need, so it showed the fit-if-
+ * needed, not the fit for her. The right number is an expected fit:
+ *
+ *     browse % = fit if she had the need (the same engine, same safety rules)
+ *              x how likely the need is for her, from what she told us
+ *
+ * "How likely" is a small, stated table, not a guess about her body. Not picking something in
+ * "What do you want help with?" is the strongest signal we have, so it counts for most:
+ *   0.75  everyday for her life stage, even unpicked (period care if she has periods,
+ *         pregnancy care if pregnant, postpartum care if postpartum, menopause care in the
+ *         transition, fertility if trying to conceive)
+ *   0.20  she didn't pick it, and nothing in her answers rules it out
+ *   0.05  she said no in a related answer (no period pain, light flow, UTIs rarely)
+ *   0     it doesn't apply to her life stage (menopause care at 22, pregnancy care when not
+ *         pregnant, period care with no periods): no number, "Not for your life stage"
+ * Base rates alone wouldn't do it: self-reported leaks are common even in young women who've
+ * never been pregnant (33.5%, n=635, PMC12177332), but she told us she doesn't want help with it.
+ * The number never changes her matches: matchStatus stays 'no-relevance'.
+ */
+const NEEDS_PERIODS = (id) => /^(period\.|cycle\.)/.test(id) || ['pain.menstrual_cramp', 'mood.pmdd', 'bloating.cycle_related', 'mood.cycle_related', 'pain.cycle_headache'].includes(id);
+const TRANSITION_NEEDS = (id) => /^(vasomotor\.|menopause\.)/.test(id);
+const TRANSITION_STAGES = ['perimenopause', 'menopause', 'postmenopause'];
+export function browseLikelihood(needId, up) {
+    const ph = up?.physiology || {};
+    const stages = new Set(ph.lifeStages || []);
+    const age = Number.isFinite(ph.age) ? ph.age : null;
+    const hasPeriods = ph.menstruation == null ? !['menopause', 'postmenopause', 'pregnant', 'no_periods'].some((st) => stages.has(st)) : false;
+    const inTransition = TRANSITION_STAGES.some((st) => stages.has(st));
+    // Doesn't apply to her life stage.
+    if (NEEDS_PERIODS(needId) && !hasPeriods) return { r: 0, kind: 'not_stage' };
+    if (/^pregnancy\./.test(needId) && !stages.has('pregnant')) return { r: 0, kind: 'not_stage' };
+    if (/^postpartum\./.test(needId) && !stages.has('postpartum')) return { r: 0, kind: 'not_stage' };
+    if (needId === 'fertility.ttc' && !stages.has('ttc')) return { r: 0, kind: 'not_stage' };
+    if (TRANSITION_NEEDS(needId) && !inTransition && (age == null || age < 40)) return { r: 0, kind: 'not_stage' };
+    // Everyday for her stage, even if she didn't pick it.
+    if (needId === 'period.product_support' && hasPeriods) return { r: 0.75, kind: 'stage' };
+    if (/^pregnancy\./.test(needId) && stages.has('pregnant')) return { r: 0.75, kind: 'stage' };
+    if (/^postpartum\./.test(needId) && stages.has('postpartum')) return { r: 0.75, kind: 'stage' };
+    if (/^fertility\./.test(needId) && stages.has('ttc')) return { r: 0.75, kind: 'stage' };
+    if (TRANSITION_NEEDS(needId) && inTransition) return { r: 0.75, kind: 'stage' };
+    // She said no in a related answer.
+    if (needId === 'pain.menstrual_cramp' && ph.painIntensity === 0) return { r: 0.05, kind: 'said_no' };
+    if (needId === 'period.heavy' && ['light', 'very_light'].includes(ph.flow)) return { r: 0.05, kind: 'said_no' };
+    if (/^urinary\.(recurrent_uti|burning)$/.test(needId) && ph.utiFrequency === 'rarely') return { r: 0.05, kind: 'said_no' };
+    return { r: 0.2, kind: 'not_picked' };
+}
+
+function browseFitFor(savedProduct, quizAnswers, healthProfile, opts, pp, up) {
     if (!quizAnswers || typeof quizAnswers !== 'object') return null;
-    const top = Object.entries(pp?.health_need_relevance || {})
+    // The product's two strongest needs; the one with the best expected fit for her is shown.
+    const cands = Object.entries(pp?.health_need_relevance || {})
         .filter(([id, e]) => e.score > 0 && needOption(id))
-        .sort((a, b) => b[1].score - a[1].score)[0];
-    if (!top) return null;
-    const needId = top[0];
+        .sort((a, b) => b[1].score - a[1].score).slice(0, 2).map(([id]) => id);
+    if (!cands.length) return null;
     let byNeed = BROWSE_ANSWERS.get(quizAnswers);
     if (!byNeed) { byNeed = new Map(); BROWSE_ANSWERS.set(quizAnswers, byNeed); }
-    if (!byNeed.has(needId)) byNeed.set(needId, addNeedToAnswers(quizAnswers, needId));
-    const answers = byNeed.get(needId);
-    if (!answers || answers === quizAnswers) return null;
-    const d = buildMatchDetails(savedProduct, answers, healthProfile, { ...(opts || {}), _browse: true });
-    // A product still under safety review keeps its hold here too (never a number).
-    if (d.matchStatus === 'safety-hold') return { hold: true, safetyHold: d.safetyHold || null, needId };
-    if (d.matchStatus !== 'scored' || !Number.isFinite(d.percent) || d.percent <= 0) return null;
-    return { percent: d.percent, needId: d.needId, needLabel: d.needLabel || null, phrase: (d.needMatches || []).find((m) => m.needId === d.needId)?.phrase || d.needLabel || '', reasonDetails: (d.reasonDetails || []).slice(0, 3) };
+    let best = null; let notStage = null; let hold = null;
+    for (const needId of cands) {
+        const like = browseLikelihood(needId, up);
+        if (like.r === 0) { notStage = notStage || { notForStage: true, needId, phrase: NEEDS_BY_ID[needId]?.phrase || '' }; continue; }
+        if (!byNeed.has(needId)) byNeed.set(needId, addNeedToAnswers(quizAnswers, needId));
+        const answers = byNeed.get(needId);
+        if (!answers || answers === quizAnswers) continue;
+        const d = buildMatchDetails(savedProduct, answers, healthProfile, { ...(opts || {}), _browse: true });
+        // A product still under safety review keeps its hold here too (never a number).
+        if (d.matchStatus === 'safety-hold') { hold = hold || { hold: true, safetyHold: d.safetyHold || null, needId }; continue; }
+        if (d.matchStatus !== 'scored' || !Number.isFinite(d.percent) || d.percent <= 0) continue;
+        const phrase = (d.needMatches || []).find((m) => m.needId === d.needId)?.phrase || NEEDS_BY_ID[needId]?.phrase || '';
+        const percent = Math.round(d.percent * like.r);
+        if (!best || percent > best.percent) best = { percent, fitIfPicked: d.percent, likelihood: like.r, kind: like.kind, needId, phrase };
+    }
+    return best || hold || notStage;
 }
 
 /**

@@ -22,6 +22,16 @@ const tidy = (t) => String(t || '').replace(ACRONYM_RE, (m) => (m.toLowerCase() 
 const kind = (c) => (GOAL.has(c) ? 'Your needs' : PROFILE.has(c) ? 'Your profile' : 'Your preferences');
 const TONE = { excellent: 'is-strong', strong: 'is-good', exploratory: 'is-partial', browse: 'is-partial' };
 
+/* Browse fit (not for anything she picked), said with its math (src/data/products.js browseLikelihood). */
+function browseExplain(bf) {
+  if (!bf) return '';
+  if (bf.hold) return bf.safetyHold?.reason || 'We’re still checking this product’s safety, so there’s no number yet.';
+  if (bf.notForStage) return `This is made for ${bf.phrase || 'something'} that doesn’t fit your life stage, so we don’t give it a number.`;
+  const what = bf.phrase || 'what it’s for';
+  const odds = bf.kind === 'stage' ? `${what} is part of your life stage, so we count it as likely for you (75%)` : bf.kind === 'said_no' ? `your answers say you don’t have ${what}, so we count it as very unlikely (5%)` : `you didn’t pick ${what}, so we count it as unlikely for you right now (20%)`;
+  return `This isn’t for anything you picked. If it were, it would be a ${bf.fitIfPicked}% fit. But ${odds}. ${bf.fitIfPicked}% × ${Math.round(bf.likelihood * 100)}% = ${bf.percent}%. Pick it in your answers and it becomes one of your matches.`;
+}
+
 export default function WhyMatchPanel({ product, quizResults, healthProfile = null, matchOpts, onClose, onUpdateHealth }) {
   const details = getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts);
   const { percent, eligible, matchStatus, reasonDetails = [], considerations = [], unknowns = [], unmetNeeds = [], tier } = details;
@@ -56,7 +66,7 @@ export default function WhyMatchPanel({ product, quizResults, healthProfile = nu
         </div>
       </section> : excluded ? <section className="ay-why-excluded">
         {exclusions.length > 0 ? exclusions.map((line) => <p key={line}>{tidy(line)}</p>) : <p>This product does not fit your current health profile.</p>}
-      </section> : isBleedingEvaluation(details) ? <BleedingEvaluationNote note={details.bleedingEvaluation} /> : <p className="ay-why-intro">{matchStatus === 'no-profile' ? 'Take the quiz to see how this product relates to your answers.' : (details.browseFit?.hold ? (details.browseFit.safetyHold?.reason || 'We’re still checking this product’s safety, so there’s no number yet.') : details.browseFit ? `This isn’t for anything you picked. If you wanted help with ${details.browseFit.phrase || 'what it’s for'}, it would be a ${shownMatchPercent(details.browseFit.percent) != null ? `${shownMatchPercent(details.browseFit.percent)}%` : 'partial'} fit, from your age, life stage and preferences.` : 'We couldn’t match this product to your answers, so we leave the score blank instead of guessing.')}</p>}
+      </section> : isBleedingEvaluation(details) ? <BleedingEvaluationNote note={details.bleedingEvaluation} /> : <p className="ay-why-intro">{matchStatus === 'no-profile' ? 'Take the quiz to see how this product relates to your answers.' : (browseExplain(details.browseFit) || 'We couldn’t match this product to your answers, so we leave the score blank instead of guessing.')}</p>}
       {!excluded && why.considerations.length > 0 && <section className="ay-why-cautions is-first"><h3>Before you choose</h3>{why.considerations.map((n, i) => <p key={i}>{tidy(n.text)}</p>)}</section>}
       {hasScore && why.restricted && <section className="ay-why-restricted">
         <h3>Safety not checked yet</h3>

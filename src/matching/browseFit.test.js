@@ -18,6 +18,21 @@ describe('browse fit', () => {
     const badge = matchBadge(d);
     expect(badge?.browse).toBe(true);
   });
+  it('the browse % is fit-if-needed x how likely the need is for her (founder, Nov 4: 92% for bladder leaks at 22 was wrong)', () => {
+    const pads = getProductMatchDetailsForProduct(getProductById('p-poise-ultra-thin-moderate'), crampsAt22).browseFit;
+    expect(pads.kind).toBe('not_picked');
+    expect(pads.likelihood).toBe(0.2);
+    expect(pads.percent).toBe(Math.round(pads.fitIfPicked * 0.2));
+    expect(pads.percent).toBeLessThan(30);
+    const cup = getProductMatchDetailsForProduct(getProductById('p-saalt-cup'), crampsAt22).browseFit;
+    expect(cup.kind).toBe('stage'); // she has periods: period care is everyday for her
+    expect(cup.percent).toBeGreaterThan(pads.percent);
+  });
+  it('menopause care at 22 gets no number: not her life stage', () => {
+    const d = getProductMatchDetailsForProduct(getProductById('p-womaness-me'), crampsAt22);
+    expect(d.browseFit?.percent).toBeUndefined();
+    expect(matchBadge(d)).toBeNull();
+  });
   it('never turns into one of her matches (decide, lists)', () => {
     const d = getProductMatchDetailsForProduct(getProductById('p-saalt-cup'), crampsAt22);
     expect(decideProduct(d).status).not.toBe('cleared');
@@ -32,7 +47,7 @@ describe('browse fit', () => {
     for (const p of ALL_PRODUCTS) {
       const d = getProductMatchDetailsForProduct(p, crampsAt22);
       if (d.matchStatus === 'scored') scored += 1;
-      else if (d.browseFit && !d.browseFit.hold) browse += 1;
+      else if (d.browseFit && Number.isFinite(d.browseFit.percent)) browse += 1;
       else if (d.browseFit?.hold) other += 1;
       else if (d.matchStatus === 'no-relevance') none += 1;
       else other += 1;
