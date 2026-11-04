@@ -939,11 +939,13 @@ let productByRouteIndex = null;
 
 /**
  * Entries hidden because they were the same product as another one in a
- * different size or absorbency (Ameera, Nov 2). The old id opens the one
+ * different size or absorbency (Ameera, Nov 2), or a second listing of the
+ * same app (Balance, Nov 4). The old id opens the one
  * product, so saved Ecosystems, routines and shared links keep working.
  */
 export const MERGED_PRODUCT_IDS = Object.freeze({
     'p-cora-overnight': 'p-cora-organic-pads',
+    'd-balance-balance-menopause-hormones': 'd-balance-menopause',
 });
 
 export function getProductById(id) {
