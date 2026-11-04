@@ -163,16 +163,14 @@ a.pro-cta { text-decoration: none; }
 .pro-tagline { font: 700 clamp(22px, 2.6vw, 28px)/1.2 var(--display); letter-spacing: -.01em; }
 .pro-early { max-width: 34em; padding-left: 14px; border-left: 3px solid var(--pink); color: var(--fg-muted); font-size: 15px; }
 
-/* What Pro adds: three groups on one thin rule with pink dots (the timeline's language), tidy two-line items. */
+/* What Pro adds: three groups of tidy two-line items, separated by space alone. */
 .pro-adds { display: grid; gap: 28px; }
-.pro-cats { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin: 0; padding: 0; list-style: none; }
-.pro-cats::before { content: ''; position: absolute; top: 6px; left: 0; right: 0; height: 1.5px; background: var(--rule); }
-.pro-cat { position: relative; display: grid; align-content: start; gap: 8px; padding-top: 30px; }
-.pro-cat::before { content: ''; position: absolute; top: 0; left: 0; width: 14px; height: 14px; border: 1.5px solid var(--line); border-radius: 50%; background: var(--pink); }
+.pro-cats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin: 0; padding: 0; list-style: none; }
+.pro-cat { display: grid; align-content: start; gap: 8px; }
 .pro-cat h3 { margin: 0; font: 700 26px/1.1 var(--display); letter-spacing: -.01em; }
 .pro-cat-promise { color: var(--fg-muted); font-size: 15px; }
 .pro-cat ul { display: grid; gap: 14px; margin: 8px 0 0; padding: 0; list-style: none; }
-.pro-cat li { display: grid; gap: 2px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.pro-cat li { display: grid; gap: 2px; }
 .pro-cat li b { font-size: 16px; font-weight: 700; line-height: 1.3; }
 .pro-cat li span { color: var(--fg-muted); font-size: 14px; line-height: 1.4; }
 .pro-growing { display: inline-block; margin-left: 6px; padding: 1px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--fg); font-size: 13px; font-weight: 600; vertical-align: 1px; }
@@ -191,10 +189,6 @@ a.pro-cta { text-decoration: none; }
 .pro-free li::before { content: ''; position: absolute; left: 0; top: .5em; width: 10px; height: 10px; border: 1.5px solid var(--line); border-radius: 50%; }
 
 @media (max-width: 900px) {
-  .pro-cats { grid-template-columns: 1fr; gap: 0; }
-  .pro-cats::before { top: 8px; bottom: 8px; left: 6.25px; right: auto; width: 1.5px; height: auto; }
-  .pro-cat { padding: 0 0 28px 30px; }
-  .pro-cat::before { top: 6px; }
   .pro-cat h3 { font-size: 22px; }
   .pro-free ul { grid-template-columns: 1fr; }
 }

@@ -21,18 +21,18 @@
 .pro-pillars span { color: var(--fg-muted); font-size: 15px; line-height: 1.48; }
 
 /* Detailed Pro list only exists after disclosure; keep it flat, not card-in-card. */
-.pro-more--section { max-width: 760px; }
-.pro-more--section .pro-more-body { padding-top: 6px; }
-.pro-more--section .pro-cats { display: grid; gap: 0; padding: 0; list-style: none; }
-.pro-more--section .pro-cat {
-  display: grid; gap: 8px; padding: 20px 0; border-top: 1px solid var(--rule);
-  background: transparent; border-radius: 0; box-shadow: none;
-}
+.pro-more.pro-more--section { border: 0; }
+.pro-more--section > summary { justify-content: flex-start; gap: 12px; }
+.pro-more--section .pro-more-body { padding: 8px 0 0; }
+/* Same columns and padding as .pro-pillars above, so the groups sit under their highlights. */
+.pro-more--section .pro-cats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+/* Subgrid: heading, promise and list start on the same line in all three columns. */
+.pro-more--section .pro-cat { grid-row: span 3; grid-template-rows: subgrid; row-gap: 10px; padding: 0 28px 0 0; }
+.pro-more--section .pro-cat + .pro-cat { padding-left: 28px; }
 .pro-more--section .pro-cat h3 { font: 700 21px/1.15 var(--display); }
-.pro-more--section .pro-cat-promise { color: var(--fg-muted); }
-.pro-more--section .pro-cat ul { display: grid; gap: 12px; margin: 4px 0 0; padding: 0; list-style: none; }
-.pro-more--section .pro-cat li { display: grid; gap: 2px; }
-.pro-more--section .pro-cat li span { color: var(--fg-muted); font-size: 14px; line-height: 1.45; }
+.pro-more--section .pro-cat ul { gap: 18px; margin: 10px 0 0; align-content: start; }
+.pro-more--section .pro-cat li { gap: 4px; }
+.pro-more--section .pro-cat li span { line-height: 1.45; }
 
 /* One compact disclosure stack replaces four always-open sections. */
 .pro-details-stack { display: grid; max-width: 900px; border-bottom: 1px solid var(--rule); }
@@ -57,6 +57,8 @@
   .pro-pillars { grid-template-columns: 1fr; }
   .pro-pillars > div { padding: 18px 0; }
   .pro-pillars > div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); }
+  .pro-more--section .pro-cats { grid-template-columns: minmax(0, 1fr); row-gap: 32px; }
+  .pro-more--section .pro-cat, .pro-more--section .pro-cat + .pro-cat { grid-row: auto; grid-template-rows: none; padding: 0; }
   .pro-more--major > summary { min-height: 66px; }
   .pro-more--major > summary small { font-size: 13px; }
 }
