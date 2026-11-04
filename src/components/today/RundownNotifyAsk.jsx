@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { DEFAULT_RUNDOWN_TIME, PUSH_ASK_EVENT, RUNDOWN_TIMES, bookTomorrow, readRundownPush, timeLabel, writeRundownPush } from './rundownPush.js';
+import { DEFAULT_RUNDOWN_TIME, PUSH_ASK_EVENT, RUNDOWN_TIMES, applyRundownPref, bookTomorrow, readRundownPush, timeLabel, writeRundownPush } from './rundownPush.js';
 import { eventSurface, trackNotificationPrompt } from '../../utils/analyticsEvents.js';
 
 const RESULT = {
-  scheduled: (t) => `Done. Your next one comes tomorrow at ${t}.`,
+  scheduled: (t) => `Done. You’ll get it every day at ${t}.`,
+  denied: () => 'Notifications are off for ayna on this phone. Turn them on in your phone’s Settings, then here.',
+  unavailable: () => 'Saved. Reminders come through the ayna app on your phone.',
+  off: () => 'Daily Rundown reminders are off.',
   signed_out: () => 'Saved on this device. Sign in so ayna can send it to your phone.',
   offline: () => 'You are offline, so we could not set it yet. We will try after your next Rundown.',
   error: () => 'We could not set it right now. We will try again after your next Rundown.',
@@ -59,28 +62,30 @@ export function RundownSetting({ today }) {
   const [time, setTime] = useState(pref.time || DEFAULT_RUNDOWN_TIME);
   const [note, setNote] = useState('');
   const isOn = Boolean(pref.on);
-  const turnOn = async (t = time) => {
-    setPref(writeRundownPush({ answered: true, on: true, time: t }));
-    trackNotificationPrompt({ surface: eventSurface(), granted: true, prompt: 'settings' });
-    try { window.dispatchEvent(new CustomEvent(PUSH_ASK_EVENT)); } catch { /* old browser */ }
-    const status = await bookTomorrow(today, t).catch(() => 'error');
-    setNote((RESULT[status] || RESULT.error)(timeLabel(t)));
+  const apply = async (next) => {
+    const merged = { ...pref, ...next, answered: true };
+    setPref(merged);
+    if (next.on) {
+      trackNotificationPrompt({ surface: eventSurface(), granted: true, prompt: 'settings' });
+      try { window.dispatchEvent(new CustomEvent(PUSH_ASK_EVENT)); } catch { /* old browser */ }
+    }
+    const status = await applyRundownPref(today, { on: merged.on, time: merged.time });
+    setNote((RESULT[status] || RESULT.error)(timeLabel(merged.time)));
   };
-  const turnOff = () => { setPref(writeRundownPush({ answered: true, on: false })); setNote('Daily Rundown reminders are off.'); };
   return (
     <section className="ay-rundown-setting" aria-labelledby="ay-rundown-setting-h">
       <h3 id="ay-rundown-setting-h">Daily Rundown reminder</h3>
-      <p>One notification a day. Nothing about your health shows on the lock screen.</p>
+      <p>“Your ayna daily rundown is ready,” once a day. Nothing about your health shows on the lock screen.</p>
       <div className="ay-today__notify-row">
         <label className="ay-today__notify-time">
           <span>Time</span>
-          <select value={time} onChange={(e) => { setTime(e.target.value); if (isOn) turnOn(e.target.value); }}>
+          <select value={time} onChange={(e) => { setTime(e.target.value); apply({ on: isOn, time: e.target.value }); }}>
             {RUNDOWN_TIMES.map((t) => <option key={t} value={t}>{timeLabel(t)}</option>)}
           </select>
         </label>
         {isOn
-          ? <button type="button" className="ay-today__text" onClick={turnOff}>Turn off</button>
-          : <button type="button" className="ay-today__primary" onClick={() => turnOn()}>Turn on</button>}
+          ? <button type="button" className="ay-today__text" onClick={() => apply({ on: false })}>Turn off</button>
+          : <button type="button" className="ay-today__primary" onClick={() => apply({ on: true, time })}>Turn on</button>}
       </div>
       {note && <p className="ay-today__notify-done" role="status">{note}</p>}
     </section>

@@ -35,7 +35,7 @@ describe('Add to routine follow-ups (checklist d, e)', () => {
 
 describe('Rundown notification preference', () => {
   it('defaults to unanswered at 8:00 am and keeps her time', () => {
-    expect(readRundownPush()).toEqual({ answered: false, on: false, time: '08:00' });
+    expect(readRundownPush()).toEqual({ answered: false, on: true, time: '08:00' }); // Nov 3: on by default (founder)
     writeRundownPush({ answered: true, on: true, time: '07:30' });
     expect(readRundownPush()).toEqual({ answered: true, on: true, time: '07:30' });
     expect(timeLabel('07:30')).toBe('7:30 am');
