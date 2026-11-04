@@ -696,7 +696,7 @@ export function buildUserProfile(intakeInput, options = {}) {
   const fsaHsa = { FSA: 'fsa', HSA: 'hsa', Both: 'both', No: 'none', 'Not sure': 'unsure' }[fsaRaw] || intake.fsaHsa || null;
 
   const picks = Number(intake.recommendedProductsPerArea);
-  const picksPerNeed = Number.isFinite(picks) && picks > 0 ? Math.min(10, Math.max(1, Math.round(picks))) : 3;
+  const picksPerNeed = Number.isFinite(picks) && picks > 0 ? Math.min(10, Math.max(1, Math.round(picks))) : 5; // founder, Nov 4: 3 to 5 per need by default
 
   // ── Trust ────────────────────────────────────────────────────────────
   const touched = intake.trustRankingTouched === true || (intake.trustRankingTouched === undefined && arr(intake.trustRanking).length > 0);

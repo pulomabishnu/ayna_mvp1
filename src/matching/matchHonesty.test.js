@@ -220,6 +220,8 @@ describe('distribution across needs stays stable', () => {
     // Nov 2: Cora Overnight hidden (-1); an herbal product she takes waits for her medicines
     // and pregnancy answer when its label is silent (+1); 50 new products, most of them
     // supplements still missing a safety answer (+40).
-    expect(holds).toBe(502);
+    // Nov 4: products that matched nothing are now tagged (vaginal melts, hair serums, an
+    // anti-itch cream, the pelvic floor trainers); 3 of them wait on clinician review (+3).
+    expect(holds).toBe(505);
   });
 });
