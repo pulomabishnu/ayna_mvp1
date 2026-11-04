@@ -10234,6 +10234,226 @@ export const BRAND_PRODUCTS = [
         isEmergingBrand: true,
     },
 
+    // Naya (naya-applicator.com, Naya Applicator LLC), PRE-LAUNCH brand partner,
+    // added 2026-11-04 at Eliz's request. Nothing has shipped: both products are
+    // "Sold Out" on the brand's store with "Be first to know when we're on the
+    // market", and the only action is joining the waitlist. Everything below is
+    // from naya-applicator.com (home, shop, both product pages, Our Story, FAQ,
+    // waitlist page), read 2026-11-04. openFDA has no registration or 510(k) for
+    // Naya Applicator LLC or the Naya name (checked 2026-11-04; K160511 is an
+    // unrelated "Naya Health" breast pump). affiliateUrl is the brand's waitlist
+    // page until ayna's waitlist affiliate link is added. Photos: the kit cover
+    // was supplied by Eliz; the rest are from naya-applicator.com, saved under
+    // public/products/naya/.
+    {
+        id: 'p-naya-applicator-kit',
+        name: 'Naya Applicator Kit',
+        brand: 'Naya',
+        category: 'tampon',
+        type: 'physical',
+        internal: true,
+        prelaunch: true,
+        waitlistCtaLabel: 'Join the waitlist',
+        healthFunctions: ['menstrual-collection'],
+        tags: ['sustainability', 'reusable', 'waitlist', 'pre-launch', 'cost'],
+        price: '$28.99 (listed price; pre-launch, join the waitlist)',
+        whereToBuy: [],
+        url: 'https://www.naya-applicator.com/',
+        affiliateUrl: 'https://www.naya-applicator.com/waitlist?SQF_REFERRAL_SOURCE=ayna',
+        image: '/products/naya/applicator-kit.webp',
+        gallery: ['/products/naya/applicator-kit-contents.webp', '/products/naya/applicator-kit-pouch.webp'],
+        summary: 'A reusable tampon applicator, designed to be used again instead of discarded after each insertion, so you get the comfort of an applicator without the plastic waste, per Naya. The kit comes with five tampons, so you can try the applicator across the start of a cycle, and a protective cotton pouch that keeps it clean and discreet in a bag, pocket or gym locker between uses. Naya hasn\'t launched yet: the first 5,000 waitlist sign-ups get access to its first batch.',
+        safety: {
+            fdaStatus: 'Pre-launch. ayna found no FDA registration or 510(k) clearance for Naya Applicator LLC or this applicator (openFDA, checked 2026-11-04). The tampons are used with the applicator; tampons are regulated by the FDA as medical devices.',
+            materials: 'One reusable tampon applicator, five tampons and a cotton storage pouch, per naya-applicator.com. Naya hasn\'t published the applicator\'s material yet.',
+            recalls: 'Not yet released, no recalls.',
+            sideEffects: 'Naya is still in R&D and says final care instructions are coming; for now it says to rinse the applicator with water after each use. Cleaning instructions will be included with the kit.',
+            opinionAlerts: 'Pre-launch: final design, care instructions and ship date aren\'t set yet.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from Naya\'s own site (naya-applicator.com), not independent clinical literature.',
+        doctorOpinion: 'Naya says it is building the first self-cleaning reusable tampon applicator in the U.S. The product hasn\'t launched, so there is no published testing of its cleaning, safety or fit yet. Founder Julia started Naya after living in Berlin for four months, where she couldn\'t find a tampon she could use, and wanted a safe, reusable alternative to single-use plastic applicators.',
+        doctorOpinionShort: 'A reusable tampon applicator to cut plastic waste, per Naya. Pre-launch, so there is no published testing of it yet.',
+        whoItsFor: [
+            'People who prefer applicator tampons and want to cut single-use plastic waste (per Naya)',
+            'Early adopters comfortable joining a waitlist before the product ships',
+        ],
+        howToUse: {
+            intro: 'Per Naya\'s site:',
+            steps: [
+                'Remove the packaging from an applicator-free tampon and pull out the string.',
+                'Insert the tampon into the applicator.',
+                'Use it as you would a normal applicator tampon.',
+                'Clean the applicator with water after use. Naya says final care instructions will come with the kit.',
+            ],
+            sourceUrl: 'https://www.naya-applicator.com/',
+            sourceLabel: 'naya-applicator.com: How it works',
+        },
+        warnings: [
+            'Pre-launch: specs, final care instructions and ship date are not final.',
+            'Naya ships only to the US once launched, per its FAQ.',
+        ],
+        communityReview: 'Naya hasn\'t launched, so there are no customer reviews yet.',
+        effectiveness: 'Not yet released; no study of the applicator has been published.',
+        ingredients: 'Reusable tampon applicator; five tampons; cotton storage pouch.',
+        scientificCitations: [],
+        integrations: [],
+        badges: ['Pre-launch', 'Waitlist', 'Female-Founded'],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [
+                { platform: 'website', url: 'https://www.naya-applicator.com/ourstory', text: 'naya-applicator.com: Our Story', summary: 'Founder Julia on why she started Naya.' },
+                { platform: 'website', url: 'https://www.naya-applicator.com/faq-1', text: 'naya-applicator.com: FAQ', summary: 'Sizing, care (still in R&D) and shipping (US only once launched).' },
+            ] },
+        },
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-naya-regular-tampons',
+        name: 'Naya Regular Tampons',
+        brand: 'Naya',
+        category: 'tampon',
+        type: 'physical',
+        internal: true,
+        prelaunch: true,
+        waitlistCtaLabel: 'Join the waitlist',
+        healthFunctions: ['menstrual-collection'],
+        tags: ['sustainability', 'waitlist', 'pre-launch'],
+        price: '$12.00 for 32 (listed price; pre-launch, join the waitlist)',
+        whereToBuy: [],
+        url: 'https://www.naya-applicator.com/shop/p/regular-tampons',
+        affiliateUrl: 'https://www.naya-applicator.com/waitlist?SQF_REFERRAL_SOURCE=ayna',
+        image: '/products/naya/regular-tampons.webp',
+        summary: 'Regular, applicator-free tampons (32), 100% plastic-free and cellophane wrapped, per Naya. Made for use with the Naya reusable applicator, or without it. Not yet released: join Naya\'s waitlist to be first to know when they\'re on the market.',
+        safety: {
+            fdaStatus: 'Tampons are regulated by the FDA as medical devices. ayna found no FDA registration or 510(k) clearance for Naya Applicator LLC (openFDA, checked 2026-11-04); naya-applicator.com doesn\'t list who makes the tampons.',
+            materials: '32 regular-absorbency, applicator-free tampons, cellophane wrapped, 100% plastic-free, per Naya.',
+            recalls: 'Not yet released, no recalls.',
+            opinionAlerts: 'Pre-launch: Naya hasn\'t published the tampons\' materials or manufacturer yet.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from Naya\'s own site (naya-applicator.com), not independent clinical literature.',
+        doctorOpinion: 'Naya recommends starting with its Regular applicator kit and Regular tampons; its applicators fit tampons by industry-standard absorbency levels. The tampons haven\'t launched, and Naya hasn\'t published their materials or maker yet.',
+        doctorOpinionShort: 'Applicator-free, plastic-free regular tampons made to pair with Naya\'s reusable applicator. Pre-launch.',
+        whoItsFor: [
+            'People using the Naya reusable applicator, or anyone who wants plastic-free, applicator-free tampons (per Naya)',
+        ],
+        warnings: [
+            'Pre-launch: materials and ship date aren\'t final.',
+        ],
+        communityReview: 'Not yet released, so there are no customer reviews yet.',
+        effectiveness: 'Not yet released.',
+        ingredients: '32 regular, applicator-free tampons (materials not yet published).',
+        scientificCitations: [],
+        integrations: [],
+        badges: ['Pre-launch', 'Waitlist'],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [
+                { platform: 'website', url: 'https://www.naya-applicator.com/faq-1', text: 'naya-applicator.com: FAQ', summary: 'Sizing and shipping (US only once launched).' },
+            ] },
+        },
+        isEmergingBrand: true,
+    },
+
+    // The Fertility Class (thefertilityclass.com), affiliate brand partner, added
+    // 2026-11-04 at Eliz's request. Everything below is from the brand's own pages
+    // (home, About, FAQs, Studies, Advisory Board, HSA/FSA, IVF & IUI guide,
+    // Testimonials), read 2026-11-04, and the affiliate checkout page
+    // ($45/month, 7-day trial, $0 due today). The two Aviva Method studies were
+    // read in full via NCBI (PMC10821191 / PMID 38276063; PMC10671949 / PMID
+    // 38002635). The brand's other citations are general research on pelvic blood
+    // flow, exercise and stress, not on this program, so they aren't cited here.
+    // An exercise program, not a medical device, so no FDA status applies.
+    // No independent reviews (Reddit, Trustpilot) were found; the site's
+    // testimonials are brand-curated. Cover photo supplied by Eliz; the rest are from thefertilityclass.com, saved
+    // under public/products/fertility-class/.
+    {
+        id: 'd-the-fertility-class',
+        name: 'The Fertility Class Exercise Method',
+        brand: 'The Fertility Class',
+        category: 'fertility',
+        type: 'digital',
+        internal: false,
+        healthFunctions: ['fertility'],
+        tags: ['fertility', 'irregular', 'pcos', 'cramps', 'fitness'],
+        price: '$45/month (7-day free trial, cancel anytime; HSA/FSA reimbursable through Flex, per the brand)',
+        whereToBuy: [],
+        platform: 'Online, on-demand',
+        url: 'https://thefertilityclass.com/',
+        affiliateUrl: 'https://myclass.thefertilityclass.com/a/2148088258/fLawFjD7',
+        image: '/products/fertility-class/cover.webp',
+        gallery: ['/products/fertility-class/class-movement.webp', '/products/fertility-class/group-class.webp', '/products/fertility-class/founders.webp'],
+        summary: 'An online, on-demand movement program for cycle health and fertility, built on the Aviva Method, an exercise system developed by Hungarian physiotherapist Aviva Steiner, per the brand. Classes are 20 to 30 minutes, need no equipment and are organized by cycle phase (follicular, ovulatory, luteal, menstrual) and by goal: preparing to conceive, IVF preparation, cycle regulation. Membership includes the class library, a Foundations series, a one-on-one onboarding call with a certified instructor, an IVF and IUI protocol, and a private community. Founded by certified Aviva Method teachers Zsofia Jamieson and Marta Han.',
+        ingredients: 'Not a physical product: see "How it works" below for what the membership includes.',
+        safety: {
+            fdaStatus: 'Exercise and education program; not a medical device.',
+            materials: 'N/A',
+            recalls: 'N/A',
+            sideEffects: 'The brand says the program is not recommended for people with a spinal hernia, menorrhagia (extremely heavy bleeding), active malignant tumors, uncontrolled prolapse or recent abdominal surgery (without clearance), or an IUD currently in place, and requires a one-on-one session first for anyone with an endometriosis diagnosis.',
+            opinionAlerts: 'The fertility, hormone and blood-flow benefits on the brand\'s site are the brand\'s claims. The published studies of the Aviva Method looked at period pain, not fertility.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'The program\'s medical advisor is reproductive endocrinologist Katherine VanHise, MD (HRC Fertility), and its scientific advisor is reproductive epidemiologist Carmen Messerlian, PhD, per the brand. The study summaries are ayna\'s reading of the published papers.',
+        doctorOpinion: 'Per The Fertility Class, its advisory board includes reproductive endocrinologist Dr. Katherine VanHise (HRC Fertility), who reviews its content and its IVF and IUI program, and reproductive epidemiologist Dr. Carmen Messerlian (founder of Vie Science, former Harvard T.H. Chan faculty).\n\nTwo published studies have tested Aviva exercise, both by the same Hungarian research group, both in women with painful periods (primary dysmenorrhea), not fertility. Both were small and not randomized: women chose whether to join the in-person, instructor-led exercise group (twice a week, 30 minutes) or the control group. In the 2024 study (78 women), menstrual pain dropped significantly more in the exercise group; the authors call the results preliminary. In the 2023 study (73 women), period pain did not differ between groups, and the uterine arteries\' pulsatility index rose more in the exercise group, which the authors read as reduced blood flow to the uterus from blood being redirected after exercise.\n\nThe brand says a pilot study in IVF patients has not been published and a larger controlled study is underway. ayna found no published study of the program\'s effect on fertility, ovulation or pregnancy.',
+        doctorOpinionShort: 'Advised by a reproductive endocrinologist, per the brand. Two small, non-randomized studies of Aviva exercise looked at period pain (one found less pain, one didn\'t); none has tested fertility.',
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/38276063/', label: 'PubMed: Kovács et al. 2024, Aviva exercise and pain in primary dysmenorrhea (78 women, non-randomized)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/38002635/', label: 'PubMed: Kovács et al. 2023, exercise and uterine artery pulsatility index in primary dysmenorrhea (73 women, non-randomized)' },
+        ],
+        whoItsFor: [
+            'Women trying to conceive, naturally or with IVF or IUI, who want a gentle movement practice alongside their care (per the brand)',
+            'Women with irregular, absent or painful periods, or PCOS, who want a guided at-home routine (per the brand)',
+            'People who want short, low-impact, no-equipment classes they can do at home',
+        ],
+        howToUse: {
+            intro: 'Per The Fertility Class:',
+            steps: [
+                'Start with the Foundations series to learn the exercise sequence, plus a one-on-one onboarding call with a certified instructor.',
+                'Practice 20 to 30 minute classes at home, matched to your cycle phase. If you aren\'t cycling regularly, they guide you on another rhythm.',
+                'Each class has a warm-up, the signature sequence of deep abdominal and pelvic exercises, and a cool-down with stretching and breathwork. A mat is optional; some moves use a chair for balance.',
+                'If you\'re having IVF or IUI, they recommend starting at least a month before a treatment cycle and following the phase-by-phase plan, which pauses some exercises during sensitive phases. Check with your fertility specialist first.',
+            ],
+            sourceUrl: 'https://www.thefertilityclass.com/faqs',
+            sourceLabel: 'thefertilityclass.com: FAQs',
+        },
+        warnings: [
+            'Not recommended, per the brand, with a spinal hernia, extremely heavy periods (menorrhagia), active malignant tumors, uncontrolled prolapse, recent abdominal surgery without clearance, or an IUD in place.',
+            'With an endometriosis diagnosis, the brand requires a one-on-one session with an instructor before starting.',
+            'During IVF or IUI, check with your fertility clinic before starting or changing exercise.',
+        ],
+        communityReview: 'The brand\'s testimonials page shares member stories of pregnancies, returned periods and less period pain. These are chosen by the brand. ayna found no independent reviews or ratings.',
+        effectiveness: 'Per the brand, members report reduced PMS, more regular cycles and stronger fertility markers within one to three months. Published research on the Aviva Method is limited to two small, non-randomized studies on period pain; fertility outcomes haven\'t been studied.',
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/38276063/',
+                text: 'Kovács et al., Medicina 2024: The Effect of Aviva Exercise Intervention on Pain Level and Body Awareness in Women with Primary Dysmenorrhea',
+                summary: 'Prospective observational study, 78 women (40 exercise, 38 control), not randomized. Twice-weekly 30-minute Aviva exercise for two cycles. Menstrual pain fell significantly more in the exercise group (p < 0.001); body awareness did not differ. The authors call the results preliminary and say larger trials are needed. Studied period pain, not fertility.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/38002635/',
+                text: 'Kovács et al., J Clin Med 2023: The Effect of Exercise on Pulsatility Index of Uterine Arteries and Pain in Primary Dysmenorrhea',
+                summary: 'Same group, 73 women (38 exercise, 35 control), not randomized. The uterine artery pulsatility index rose more in the exercise group (p = 0.011), which the authors interpret as reduced uterine blood flow from redistribution after exercise. Period pain did not differ between groups.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [
+                { url: 'https://www.thefertilityclass.com/advisory-board-1', text: 'thefertilityclass.com: Medical & Scientific Advisory Board', summary: 'Dr. Katherine VanHise (reproductive endocrinologist, HRC Fertility) and Dr. Carmen Messerlian (reproductive epidemiologist).' },
+            ] },
+            scientific: { links: [] },
+            community: { links: [
+                { platform: 'website', url: 'https://www.thefertilityclass.com/testimonials', text: 'thefertilityclass.com: Testimonials', summary: 'Member stories chosen by the brand; no independent reviews found.' },
+                { platform: 'website', url: 'https://www.thefertilityclass.com/studies', text: 'thefertilityclass.com: Studies', summary: 'The research the brand cites, including the two Aviva Method studies.' },
+                { platform: 'website', url: 'https://thestoryexchange.org/a-course-focused-on-reproductive-health-and-wellness/', text: 'The Story Exchange: interview with co-founder Zsofia Jamieson', summary: 'Q&A with co-founder Zsofia Jamieson (May 2026). The Story Exchange named The Fertility Class to its 2026 list of 15 Brilliant Business Ideas.' },
+            ] },
+        },
+        integrations: [],
+        badges: ['Female-Founded'],
+        isEmergingBrand: true,
+    },
+
     // Livi (mylivi.com, LiviWell, Inc.), affiliate brand partner, added 2026-11-04
     // at Eliz's request. Product facts, price, instructions and FAQ from
     // mylivi.com (product page, The Science, FAQs, About Us), read 2026-11-04.
