@@ -337,7 +337,7 @@ describe('Rundown to chat hand-off', () => {
   it('X mid-story stays on Home (QA, Oct 25), the starters still carry over', () => {
     const onFinish = vi.fn();
     mount(<Rundown t={t} onFinish={onFinish} onAsk={() => {}} />);
-    act(() => btn('Start rundown').click());
+    act(() => [...document.querySelectorAll('button')].find((b) => b.textContent.startsWith('Play my rundown')).click());
     act(() => btn('Close rundown').click());
     expect(onFinish).toHaveBeenCalledTimes(1);
     expect(onFinish.mock.calls[0][0].toChat).toBe(false);
@@ -346,7 +346,7 @@ describe('Rundown to chat hand-off', () => {
   it('finishing the daily rundown stays where she was (founder, Oct 27 13:51); its questions are the last card and still carry over', () => {
     const onFinish = vi.fn(); const onAsk = vi.fn();
     mount(<Rundown t={t} onFinish={onFinish} onAsk={onAsk} />);
-    act(() => btn('Start rundown').click());
+    act(() => [...document.querySelectorAll('button')].find((b) => b.textContent.startsWith('Play my rundown')).click());
     for (let i = 0; i < 20 && !btn('Finish'); i += 1) act(() => btn('Next card').click());
     // The last card is Ask ayna, with questions from the cards she saw.
     const asks = [...document.querySelectorAll('.ay-rd-asks button')].map((b) => b.textContent);
@@ -364,7 +364,7 @@ describe('Rundown to chat hand-off', () => {
   it('a question on the last card opens Ask with it', () => {
     const onFinish = vi.fn(); const onAsk = vi.fn();
     mount(<Rundown t={t} onFinish={onFinish} onAsk={onAsk} />);
-    act(() => btn('Start rundown').click());
+    act(() => [...document.querySelectorAll('button')].find((b) => b.textContent.startsWith('Play my rundown')).click());
     for (let i = 0; i < 20 && !btn('Finish'); i += 1) act(() => btn('Next card').click());
     act(() => [...document.querySelectorAll('.ay-rd-asks button')].find((b) => b.textContent === 'Why was my sleep shorter last night?').click());
     expect(onAsk).toHaveBeenCalledWith('Why was my sleep shorter last night?', expect.objectContaining({ usesHealth: true }));
@@ -374,7 +374,7 @@ describe('Rundown to chat hand-off', () => {
   it('leaving for something else carries the starters over without switching to the chat', () => {
     const onFinish = vi.fn(); const onAsk = vi.fn();
     mount(<Rundown t={t} onFinish={onFinish} onAsk={onAsk} />);
-    act(() => btn('Start rundown').click());
+    act(() => [...document.querySelectorAll('button')].find((b) => b.textContent.startsWith('Play my rundown')).click());
     act(() => btn('Next card').click());
     act(() => btn('Ask why').click());
     expect(onFinish.mock.calls[0][0].toChat).toBe(false);

@@ -66,9 +66,9 @@ describe('Today shows the rundown hero only with real content', () => {
     saveLogEntry(todayKey(), { pain: 0, flow: 'none', pms: 0, sleep: 2, mood: 2, skin: 2 });
     saveTry({ id: 't1', kind: 'action', ref: 'heat', need: 'period_pain', startedDay: addDays(todayKey(), -30), horizonDays: 28 });
     mount(<TodayFeed variant="web" />);
-    expect(host.textContent).toContain('Your Daily Rundown');
-    expect(host.textContent).toContain('60 seconds. The things worth knowing about your health today.');
-    act(() => btn('Start rundown', host).click());
+    expect(host.textContent).toContain('Your daily rundown'); // Nov 3: the card leads with today's headline
+    expect(host.textContent).toContain('Did heat help?'); // today's real headline, not a filler line
+    act(() => [...host.querySelectorAll('button')].find((b) => b.textContent.startsWith('Play my rundown')).click());
     expect(document.querySelector('.ay-rd')).toBeTruthy();
     const opened = posthog.capture.mock.calls.find(([e]) => e === 'rundown_opened');
     expect(opened[1]).toEqual({ kind: 'daily', count: 3, categories: ['frame', 'goal'] });
@@ -76,7 +76,7 @@ describe('Today shows the rundown hero only with real content', () => {
   it('nothing to say: no hero', () => {
     saveLogEntry(todayKey(), { pain: 0, flow: 'none', pms: 0, sleep: 2, mood: 2, skin: 2 });
     mount(<TodayFeed variant="web" />);
-    expect(host.textContent).not.toContain('Your Daily Rundown');
+    expect(host.textContent).not.toContain('Your daily rundown');
   });
 });
 

@@ -1,12 +1,13 @@
+import { complementsFor, ownsProduct } from '../../matching/complements.js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { buildRundown } from './buildRundown.js';
+import { buildRundown, cyclePosition, sleepChange } from './buildRundown.js';
 import { buildWeeklyRecap } from './weeklyRecap.js';
 import RundownStory from './RundownStory.jsx';
 import { markCardSeen, markNotUseful, markPeriodAnswer, markRundownHidden, markRundownViewed, markWeeklySeen, readRundownMemory, setRundownOwner, finishedRundown } from './rundownStore.js';
 import { autoLaunchDecision, listenForExternalOpens, openedExternally, urlIsDeepLink } from './autoLaunch.js';
 import { setTodayAskContext } from '../../utils/askToday.js';
 import { getAskHealthPref } from '../../health/askHealthPref.js';
-import { getProductMatchDetailsForProduct, getSelectedNeeds, useCatalogReady } from '../../data/catalog.js';
+import { getProductById, getProductMatchDetailsForProduct, getSelectedNeeds, useCatalogReady } from '../../data/catalog.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { evidenceLevel } from '../pdp/evidenceLevel.js';
@@ -18,7 +19,6 @@ import { withoutMedicines } from '../../health/medicineProduct.js';
 import { readRoutinePrefs } from '../../health/routines.js';
 import { onboardingDoneAt, onboardingJustFinished } from '../../health/onboardingSignal.js';
 import './rundown.css';
-import { MarkSticker } from '../personality/DS.jsx';
 import ItemMenu from '../today/ItemMenu.jsx';
 import { rebookIfOn } from '../today/rundownPush.js';
 
@@ -95,11 +95,21 @@ export default function Rundown({
     if (!intake || !catalogReady) return {};
     try { return Object.fromEntries(getSelectedNeeds(intake).map((n) => [n.id, n.phrase || n.label || ''])); } catch { return {}; }
   }, [intake, catalogReady]);
+  // Goes with what she owns (founder, Nov 3: Saalt Cup -> Saalt Steamer). Not something she
+  // already has or saved; the same safety gates as everything else (src/matching/complements.js).
+  const complements = useMemo(() => {
+    if (!catalogReady) return [];
+    const exclude = new Set([...(products || []).filter(ownsProduct).map((p) => p.id), ...(saved || []).map((p) => p?.id).filter(Boolean)]);
+    return complementsFor({
+      owned: products || [], byId: getProductById, exclude,
+      details: (p) => (intake ? getProductMatchDetailsForProduct(p, intake, healthProfile, matchOpts) : null),
+    });
+  }, [products, saved, intake, catalogReady, healthProfile, matchOpts]);
   const daily = useMemo(() => buildRundown({
     today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries, healthRows: t.healthRows,
-    matches, saved: savedForRundown, reads: Boolean(onOpenRead), community, memory, hasProfile: Boolean(intake), needLabels,
+    matches, complements, saved: savedForRundown, reads: Boolean(onOpenRead), community, memory, hasProfile: Boolean(intake), needLabels,
     hormonalBC: Boolean(t.hormonalBC), postCycle: Boolean(t.postCycle), pregnant: Boolean(t.pregnant),
-  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, savedForRundown, onOpenRead, community, memory, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
+  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, complements, savedForRundown, onOpenRead, community, memory, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
   const weekly = useMemo(() => buildWeeklyRecap({ today, log: t.log, tries: t.tries, patterns: t.patterns, saved }), [today, t.log, t.tries, t.patterns, saved]);
   const cards = open === 'weekly' ? weekly.cards : daily.cards;
 
@@ -227,6 +237,25 @@ export default function Rundown({
   const hiddenToday = memory.hiddenDay === today && !protectedToday;
   const hide = (on) => { setMemory(markRundownHidden(today, on)); trackToday('rundown_card_action', { kind: 'daily', category: 'frame', action: on ? 'hide_today' : 'show_today' }); };
   const things = daily.cards.filter((c) => c.category !== 'frame').length;
+  // Nov 3 (founder: "ugly, boring, sizes weird; make it worth looking at, informative without
+  // wearables"): the card leads with today's real headline and three at-a-glance tiles from her
+  // own data (cycle day, last night's sleep, check-ins this week), then the rest as plain rows.
+  const content = daily.cards.filter((c) => c.category !== 'frame');
+  const lead = content[0] || null;
+  const glance = (() => {
+    const out = [];
+    const pos = cyclePosition(t.log || {}, today);
+    if (pos && !t.hormonalBC && !t.postCycle && !t.pregnant) out.push({ k: 'cycle', n: `Day ${pos.cycleDay}`, l: pos.daysToNext > 0 ? `Period in about ${pos.daysToNext} ${pos.daysToNext === 1 ? 'day' : 'days'}` : 'Of your cycle', ring: Math.min(1, pos.cycleDay / Math.max(1, pos.avgLength)) });
+    const sl = sleepChange(t.healthRows || [], today);
+    if (sl) out.push({ k: 'sleep', n: `${Math.floor(sl.lastNight / 60)}h ${Math.round(sl.lastNight % 60)}m`, l: `Sleep · ${Math.abs(Math.round(sl.diff)) < 15 ? 'about your usual' : `${Math.abs(Math.round(sl.diff))} min ${sl.diff < 0 ? 'less' : 'more'} than usual`}` });
+    const days = Array.from({ length: 7 }, (_, i) => addDays(today, -6 + i));
+    const on = days.map((d) => Boolean(t.log?.[d] && Object.values(t.log[d]).some((v) => v != null)));
+    const week = on.filter(Boolean).length;
+    out.push({ k: 'checkins', n: `${week}/7`, l: week ? 'Days checked in' : 'Check in to start', dots: on });
+    return out.slice(0, 3);
+  })();
+  const hasWearable = (t.healthRows || []).length > 0;
+  const dateLine = new Date(`${today}T12:00:00`).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
   if (!daily.cards.length && !weekly.cards.length) {
     if (intake || !onSetUp) return null;
@@ -248,18 +277,33 @@ export default function Rundown({
       )}
       {daily.cards.length > 0 && !hiddenToday && (
         <div className={`ay-rd-hero__card${highlight ? ' is-new' : ''}`} data-tour="rundown-card">
-          <MarkSticker name="sparkle" tone="pink" className="ay-rd-hero__sticker" />
           {highlight && <p className="ay-rd-hero__new">Ready for today</p>}
-          <p className="ay-rd-hero__kicker">{protectedToday ? 'Something important today' : 'Today'}{!compact && things > 0 ? ` · ${things} ${things === 1 ? 'thing' : 'things'}` : ''}</p>
-          <h2 id="ay-rd-hero-h">Your Daily Rundown</h2>
-          <p>60 seconds. The things worth knowing about your health today.</p>
-          {/* A peek at what is inside: the real card labels, in story order. */}
-          {things > 0 && (
-            <ol className="ay-rd-hero__inside" aria-label="Inside today's rundown">
-              {daily.cards.filter((c) => c.category !== 'frame').slice(0, 4).map((c) => <li key={c.key} className={`is-${c.category}`}>{c.kicker}</li>)}
-            </ol>
+          <p className="ay-rd-hero__kicker">{protectedToday ? 'Something important today' : `Your daily rundown · ${dateLine}`}</p>
+          <h2 id="ay-rd-hero-h">{lead?.title || 'Your daily rundown'}</h2>
+          {!compact && glance.length > 0 && (
+            <ul className="ay-rd-glance" aria-label="At a glance">
+              {glance.map((g) => (
+                <li key={g.k} className={`is-${g.k}`}>
+                  {g.ring != null && <span className="ay-rd-ring" style={{ '--p': g.ring }} aria-hidden="true" />}
+                  {g.k === 'sleep' && <span className="ay-rd-moon" aria-hidden="true" />}
+                  <b>{g.n}</b><span>{g.l}</span>
+                  {g.dots && <i className="ay-rd-dots" aria-hidden="true">{g.dots.map((d, i) => <i key={i} className={d ? 'is-on' : ''} />)}</i>}
+                </li>
+              ))}
+            </ul>
           )}
-          <button type="button" className="ay-rd-hero__go" onClick={() => start('daily')}>Start rundown</button>
+          {!compact && content.length > 1 && (
+            <ul className="ay-rd-rows" aria-label="Also in today's rundown">
+              {content.slice(1).filter((c) => c.category !== 'win').slice(0, 4).map((c) => <li key={c.key} className={`is-${c.category}`}><span>{c.kicker}</span>{c.title}</li>)}
+            </ul>
+          )}
+          <button type="button" className="ay-rd-hero__go" onClick={() => start('daily')}>{things > 1 ? `Play my rundown · ${things} things` : 'Play my rundown'}</button>
+          {!compact && !hasWearable && !protectedToday && variant !== 'app' && (
+            <a className="ay-rd-connect" href="/health-data">
+              <span><b>Make this sharper with sleep and heart data</b><small>Connect Apple Health or Oura. Part of ayna Pro.</small></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+            </a>
+          )}
           {!compact && !protectedToday && (
             <ItemMenu label="More for your Daily Rundown" className="is-rundown">
               <button type="button" onClick={() => hide(true)}>Hide today</button>
