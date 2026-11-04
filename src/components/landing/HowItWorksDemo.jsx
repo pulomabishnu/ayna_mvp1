@@ -114,17 +114,15 @@ export default function HowItWorksDemo({ onStart, startLabel = 'Sign up free', o
             {onViewHowItWorks && <a className="hd-more" href="/how-it-works" onClick={(e) => { e.preventDefault(); onViewHowItWorks(); }}>How we match</a>}
           </div>
         </div>
-        {!still && (
-          <div className="hd-stage">
+        <div className="hd-stage">
             <div className="hd-phone" aria-hidden="true">
               <span className="hd-notch" />
               <div className="hd-screen" key={scene}><Screen k={SCENES[scene].k} /></div>
             </div>
-            <button type="button" className="hd-pause" onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Play the walkthrough' : 'Pause the walkthrough'}>
+            {!still && <button type="button" className="hd-pause" onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Play the walkthrough' : 'Pause the walkthrough'}>
               {paused ? <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5Z" /></svg> : <svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg>}
-            </button>
-          </div>
-        )}
+            </button>}
+        </div>
       </div>
     </section>
   );

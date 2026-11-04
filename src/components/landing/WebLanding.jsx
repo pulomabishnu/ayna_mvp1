@@ -75,7 +75,7 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
       <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />
       <BrandBar onOpen={onViewWaitlist} />
       {/* Nov 4 (founder): the walkthrough on the iPhone, right under the hero. */}
-      {!home && <HowItWorksDemo onStart={cta.go} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />}
+      <HowItWorksDemo onStart={cta.go} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />
       {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the
           raining pictures and widgets, and use the original website for the rest). */}
       {/* Below the hero (./LandingBody.jsx): one calm butter page, then one espresso close. */}
