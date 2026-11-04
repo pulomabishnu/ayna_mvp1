@@ -12,6 +12,8 @@ const PACKSHOT_PENDING = new Set([
   'p-resa-rhythm-bracelet',
   // Livi (Nov 4, Eliz's photo): brand photo until a packshot is shot.
   'p-livi-after-sex-absorption-device',
+  // Oura Ring, Eight Sleep Pod, Inito monitor: devices moved from Services to Shop (Ameera, Nov 4); brand photos until packshots are shot.
+  'd-oura', 'd-eight-sleep', 'd-initio',
   // Momotaro Apotheca (Oct 17): brand photos until packshots are shot.
   // Oct 18 additions (Eliz's photos): Alubri kit, Momotaro Body Oil, Tampon Tribe bulk buys.
   ...['p-alubri-moisture-renewal-kit', 'p-momotaro-body-oil', 'p-tampontribe-tampons-bulk-buy', 'p-tampontribe-pads-bulk-buy', 'p-tampontribe-menstrual-cup'],
