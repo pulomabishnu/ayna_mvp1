@@ -72,8 +72,8 @@ export function showsEmptyHome({ screen, view = null, variant = 'dashboard', sig
   return homeScreenFor({ signedIn }) === 'landing';
 }
 
-/** Home opens the ecosystem for every visitor. Guests see a setup lock;
- * the logo independently opens the public landing page. */
-export function webHomeView() {
-  return 'ecosystem';
+/** The website Home tab is the chart-based health dashboard for signed-in
+ * members and the public landing for guests. My ecosystem stays under You. */
+export function webHomeView({ signedIn = false } = {}) {
+  return signedIn ? 'today' : 'welcome';
 }
