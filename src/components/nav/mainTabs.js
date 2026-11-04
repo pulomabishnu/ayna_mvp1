@@ -19,7 +19,8 @@ export const MAIN_TABS = [
 ];
 
 // Desktop reading order starts with Home; the mobile centre button keeps its place.
-export const WEB_TOP_TABS = ['today', 'explore', 'services', 'library', 'community']
+// Library is in the website footer, not the desktop header (founder, Nov 4: the header is crowded).
+export const WEB_TOP_TABS = ['today', 'explore', 'services', 'community']
   .map((key) => MAIN_TABS.find((tab) => tab.key === key));
 
 /**
