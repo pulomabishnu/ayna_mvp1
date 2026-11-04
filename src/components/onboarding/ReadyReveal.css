@@ -205,3 +205,47 @@ html body .app-container.app-container.app-container.app-container.app-container
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn small { display: block; margin-top: 3px; font: 500 14px/1.35 var(--o-sans, sans-serif); color: #3e2723; opacity: .85; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn svg { flex: none; width: 22px; height: 22px; fill: none; stroke: #3e2723; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__wrapped { justify-self: center; }
+
+/* Nov 4 v2 (founder: "too many boxes", "crowding"): results on the page itself, same column
+   and left edge as the quiz. One headline, her needs as a plain list, one button. */
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web.is-web { max-width: 640px; margin: 0 auto; padding: 24px 24px 64px !important; border-radius: 0; background: transparent !important; color: #3e2723; --o-ink: #3e2723; --o-soft: rgba(62, 39, 35, .75); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-back { margin: 0 0 32px; width: 44px; height: 44px; border-radius: 10px; border: 1.5px solid rgba(62, 39, 35, .25); color: #3e2723 !important; background: transparent; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-ready__title { margin: 0 0 8px; color: #3e2723 !important; font-size: clamp(32px, 4vw, 44px) !important; line-height: 1.08 !important; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-count { padding: 0; background: none; color: inherit; animation: none; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-ready__based { margin: 0 0 32px; color: rgba(62, 39, 35, .75) !important; font: 500 15px/1.4 var(--o-sans, sans-serif); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs { gap: 8px; margin: 0 0 32px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__h { color: rgba(62, 39, 35, .75); font: 600 14px/1.3 var(--o-sans, sans-serif); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__list { grid-template-columns: minmax(0, 1fr); gap: 0; border-top: 1.5px solid rgba(62, 39, 35, .14); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__list > li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; min-height: 0; padding: 14px 0 !important; border-radius: 0 !important; border: 0 !important; border-bottom: 1.5px solid rgba(62, 39, 35, .14) !important; background: transparent !important; box-shadow: none !important; animation: none; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__top { display: grid; gap: 2px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__top b { font: 600 17px/1.3 var(--o-sans, sans-serif); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__top em, html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__top em.is-none { padding: 0; border-radius: 0; background: none; box-shadow: none; color: rgba(62, 39, 35, .75); font: 500 14px/1.3 var(--o-sans, sans-serif); font-style: normal; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__list small { flex-basis: 100%; color: rgba(62, 39, 35, .75); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__pics { display: flex; gap: 8px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__pics > * { width: 48px; height: 48px; border-radius: 10px; box-shadow: none; border: 1.5px solid rgba(62, 39, 35, .12); }
+/* Next step: one button, one note, quiet links. */
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next { display: grid; justify-items: start; gap: 8px; max-width: none; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 20px 0 24px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 17px/1 var(--o-sans, sans-serif); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main:hover { background: #2c1b18; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__note { font: 500 14px/1.4 var(--o-sans, sans-serif); color: var(--o-soft, rgba(62, 39, 35, .75)); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__link { all: unset; cursor: pointer; margin-top: 8px; font: 600 15px/1.3 var(--o-sans, sans-serif); color: var(--o-ink, #3e2723); text-decoration: underline; text-underline-offset: 4px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__link + .ay-ob-next__link { margin-top: 0; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__link:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; border-radius: 4px; }
+.ayna-mobile .ay-ob-ready .ay-ob-next__main { background: #f7badd; color: #3e2723; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web #ay-ob-ready-h { margin: 0 0 8px !important; color: #3e2723 !important; -webkit-text-fill-color: #3e2723; font: 700 clamp(32px, 4vw, 44px)/1.08 var(--ay-font-display, sans-serif) !important; letter-spacing: -.02em !important; opacity: 1 !important; transform: none !important; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-back ~ #ay-ob-ready-h { margin-top: 0 !important; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-back { position: static !important; display: grid; place-items: center; margin: 0 0 32px !important; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-next { display: grid !important; justify-items: start; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-next__main { width: auto !important; justify-self: start; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-back { border-radius: 10px !important; }
+/* Founder, Nov 4: answering more has to stand out. One pink block under the save button. */
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; gap: 16px; width: 100%; margin-top: 24px; padding: 16px 20px; border-radius: 16px; background: #f7badd; color: #3e2723; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more > span { flex: 1; display: grid; gap: 4px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more b { font: 700 18px/1.25 var(--o-sans, sans-serif); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more small { font: 500 15px/1.4 var(--o-sans, sans-serif); color: rgba(62, 39, 35, .82); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more svg { flex: none; width: 40px; height: 40px; padding: 10px; box-sizing: border-box; border-radius: 999px; background: #3e2723; fill: none; stroke: #f7badd; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s ease; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more:hover svg { transform: translateX(3px); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-ready__actions { max-width: none !important; }

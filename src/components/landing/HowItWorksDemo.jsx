@@ -13,20 +13,20 @@ import './how-it-works-demo.css';
  * a safety hold, and a MedlinePlus source. It is labelled as an example.
  */
 const SCENES = [
-  { k: 'ask', t: 'Pick what you want help with', d: 'Cramps, sleep, heavy periods and more. About 1 minute.' },
+  { k: 'ask', t: 'Pick what you want help with', d: 'Cramps, sleep, heavy periods and more.' },
+  { k: 'safe', t: 'Answer 3 safety questions', d: 'Conditions, allergies and medicines, before any match.' },
   { k: 'match', t: 'See your matches', d: 'Each one shows a % and why it fits you.' },
-  { k: 'safe', t: 'We check safety first', d: 'If we need to know your medicines, we ask before showing it.' },
   { k: 'chat', t: 'Ask anything', d: 'Answers show where they come from.' },
-  { k: 'daily', t: 'Every morning, your rundown', d: 'A short daily check-in, and what goes with what you already own.' },
+  { k: 'daily', t: 'Every morning, your rundown', d: 'A short check-in, and what goes with what you own.' },
 ];
-const MS = [4500, 6500, 5000, 5000, 5500];
+const MS = [4500, 5000, 6500, 5000, 5500];
 
 const MATCHES = [
   { id: 'p-viboos-heating-pad', name: 'VIBOOS Electric Heating Pad', price: '$12.99', pct: 87 },
   { id: 'p-portable-heating', name: 'Comfytemp Portable Heating Pad', price: '$30', pct: 87 },
   { id: 'p-thermacare', name: 'ThermaCare Menstrual HeatWraps', price: '', pct: 85 },
 ];
-const CHIPS = ['Cramps or period pain', 'Trouble sleeping', 'Heavy periods', 'PMS symptoms', 'Pelvic pain', 'Fatigue or low energy', 'Bloating', 'Brain fog'];
+const CHIPS = ['Cramps or period pain', 'Trouble sleeping', 'Heavy periods', 'PMS symptoms', 'Bloating', 'Brain fog'];
 const img = (id) => `/products/catalog/${id}.webp`;
 
 const motionOff = () => {
@@ -40,7 +40,7 @@ function Ring({ pct }) {
 function Screen({ k }) {
   if (k === 'ask') return (
     <div className="hd-scr">
-      <p className="hd-meta">Question 3 of 4</p>
+      <p className="hd-meta">Question 3</p>
       <p className="hd-q">What do you want help with?</p>
       <div className="hd-chips">
         {CHIPS.map((c, i) => <span key={c} className={i < 2 ? 'is-pick' : ''} style={{ '--i': i }}>{c}</span>)}
@@ -66,14 +66,13 @@ function Screen({ k }) {
   );
   if (k === 'safe') return (
     <div className="hd-scr">
-      <p className="hd-meta">Before we show this one</p>
-      <div className="hd-hold">
-        <span className="hd-tile is-big"><img src={img('p-evening-primrose')} alt="" loading="lazy" /></span>
-        <b>NOW Foods Evening Primrose Oil</b>
-        <span className="hd-tag">Safety hold · Match unavailable</span>
-        <small>We don’t know what medicines or supplements you take yet, and that decides whether this is safe for you.</small>
-        <span className="hd-next is-pink">Answer: Taking any medicines?</span>
+      <p className="hd-meta">Safety question 3 of 3</p>
+      <p className="hd-q">Taking any medicines or supplements?</p>
+      <div className="hd-chips">
+        {['Yes', 'None', 'Not sure', 'Prefer not to answer'].map((c, i) => <span key={c} className={i === 0 ? 'is-pick' : ''} style={{ '--i': i }}>{c}</span>)}
       </div>
+      <span className="hd-src"><b>Why we ask</b>Some supplements don’t mix with some medicines. If one might not be safe for you, we hold it back.</span>
+      <span className="hd-next">See my matches</span>
     </div>
   );
   if (k === 'daily') return (
@@ -93,6 +92,7 @@ function Screen({ k }) {
       <span className="hd-bub">MedlinePlus lists heat on the lower belly as self-care for period cramps.</span>
       <span className="hd-src"><b>Source</b>MedlinePlus · medlineplus.gov</span>
       <span className="hd-prod"><span className="hd-tile"><img src={img('p-thermacare')} alt="" loading="lazy" /></span>ThermaCare HeatWraps<Ring pct={85} /></span>
+      <span className="hd-ask">Ask a follow-up…</span>
     </div>
   );
 }
@@ -117,7 +117,7 @@ export default function HowItWorksDemo({ onStart, startLabel = 'Get my free matc
   useEffect(() => {
     if (still || paused || done || !onScreen) return undefined;
     const t = window.setTimeout(() => {
-      if (scene === SCENES.length - 1) { setScene(1); setDone(true); } else setScene((n) => n + 1);
+      if (scene === SCENES.length - 1) { setScene(2); setDone(true); } else setScene((n) => n + 1);
     }, MS[scene]);
     return () => window.clearTimeout(t);
   }, [scene, still, paused, done, onScreen]);
@@ -136,7 +136,7 @@ export default function HowItWorksDemo({ onStart, startLabel = 'Get my free matc
               <li key={s.k} className={!still && i === scene ? 'is-on' : ''}>
                 <button type="button" onClick={() => { setScene(i); setPaused(true); }} aria-current={!still && i === scene ? 'step' : undefined}>
                   <span className="hd-n">{i + 1}</span>
-                  <span><b>{s.t}</b><small>{s.d}</small></span>
+                  <span><b>{s.t}</b>{(still || i === scene) && <small>{s.d}</small>}</span>
                 </button>
                 {playing && i === scene && <i className="hd-bar is-run" style={{ '--ms': `${MS[scene]}ms` }} key={`${scene}`} aria-hidden="true" />}
               </li>
@@ -146,7 +146,6 @@ export default function HowItWorksDemo({ onStart, startLabel = 'Get my free matc
             {onStart && <button type="button" className="hd-start" onClick={onStart}>{startLabel}</button>}
             {onViewHowItWorks && <a className="hd-more" href="/how-it-works" onClick={(e) => { e.preventDefault(); onViewHowItWorks(); }}>How we match</a>}
           </div>
-          <p className="hd-note">Free. No card. About 1 minute.</p>
         </div>
         {still ? (
           <div className="hd-grid">

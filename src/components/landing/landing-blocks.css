@@ -252,8 +252,3 @@ html body .app-container #ay-landing button.lb-price:focus-visible { outline: 3p
   html body .app-container #ay-landing :is(.lb-tile__a:hover .lb-ic, button.lb-price:hover, .lb-pill.is-butter:hover) { transform: none; }
 }
 html.ay-motion-paused body .app-container #ay-landing :is(.lb-tile__a:hover .lb-ic, button.lb-price:hover, .lb-pill.is-butter:hover) { transform: none; }
-
-/* Nov 3 (audit): the catalog counts as one plain row (no tiles, no count-up). */
-.app-container .lb .lb-facts { display: flex; flex-wrap: wrap; gap: 8px 32px; margin: 0; padding: 20px 0 0; border-top: 1.5px solid rgba(62, 39, 35, .18); list-style: none; }
-.app-container .lb .lb-facts li { font: 500 17px/1.3 var(--ay-sans-stack, sans-serif); color: #3e2723; }
-.app-container .lb .lb-facts b { font: 700 28px/1 var(--ay-font-display, sans-serif); margin-right: 4px; }

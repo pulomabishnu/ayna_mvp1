@@ -277,10 +277,12 @@ function webOnboardingSteps(intake) {
   // safety questions, not before the reveal.
   const more = web(getOnboardingSteps(intake, { part: 'more', surface: 'web' }), 'more');
   const afterSafety = Math.max(0, more.findIndex((st) => !st.afterReveal || st.id === 'name'));
+  // Nov 4 (founder: "why would you save your matches then do safety, the order doesn't make
+  // sense"): the 3 safety questions come before the matches, so what she sees is already checked.
   return [
     ...web(getOnboardingSteps(intake, { part: 'core', surface: 'web' }), 'core'),
-    { id: 'ready', section: 'ready', type: 'ready', screen: 7, title: '', optional: false, required: false, obPart: 'core' },
     ...more.slice(0, afterSafety),
+    { id: 'ready', section: 'ready', type: 'ready', screen: 7, title: '', optional: false, required: false, obPart: 'core' },
     { id: 'connect', section: 'connect', type: 'connect', screen: 7, title: 'Connect health data', subtitle: 'Optional. Quick check-ins work too.', optional: true, required: false, obPart: 'more' },
     ...more.slice(afterSafety),
   ];
@@ -855,13 +857,17 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
 
   const obProgress = (() => {
     if (!onboarding) return null;
+    if (SAFETY_IDS.includes(step.id)) {
+      const n = SAFETY_IDS.indexOf(step.id) + 1;
+      return { now: n, total: SAFETY_IDS.length, label: `Safety question ${n} of ${SAFETY_IDS.length}` };
+    }
     if (step.obPart === 'more' && moreScope) {
       const list = steps.filter((s) => s.obPart === 'more' && (moreScope === 'safety' ? SAFETY_IDS.includes(s.id) : !SAFETY_IDS.includes(s.id)));
       const now = Math.max(1, list.findIndex((s) => s.id === step.id) + 1);
       return { now, total: list.length, label: `${moreScope === 'safety' ? 'Safety question' : 'Question'} ${now} of ${list.length}` };
     }
     const part = step.obPart === 'more' ? 'more' : 'core';
-    const pr = onboardingProgress(step, part, steps.filter((s) => s.obPart === part));
+    const pr = onboardingProgress(step, part, steps.filter((s) => s.obPart === part && !SAFETY_IDS.includes(s.id)));
     // The website shows age and life stage as two screens of one step: count them as two questions.
     if (part === 'core' && steps.some((s) => s.type === 'aboutYou')) {
       const total = pr.total + 1;
@@ -909,8 +915,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       answerProps={{ ...(HOLD_TIP_TYPES.has(step.type) && (step.type !== 'aboutYou' || aboutPart === 'stage') ? { 'data-tour': 'quiz-hold' } : {}), onPointerDown: startHold, onPointerUp: endHold, onPointerLeave: endHold, onPointerCancel: endHold, onPointerMove: (e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }, onClickCapture: swallow, onContextMenu: (e) => { if (hold.current.fired) e.preventDefault(); } }}
       overlay={glossary && <GlossaryCard term={glossary.term} definition={glossary.definition} onClose={() => setGlossary(null)} />}
     >
-      {multi && helperShort && !/pick all/i.test(helperShort) && <p className="aq-caption">Pick all that apply</p>}
-      {body()}
+            {body()}
     </QuizFrame>
   </div>;
 }

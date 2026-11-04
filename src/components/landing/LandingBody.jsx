@@ -8,6 +8,7 @@ import { shopCatalogCounts } from '../../data/catalogCounts.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
 import ProductCard from '../ProductCard';
 import Photo from '../ui/Photo.jsx';
+import SlideToStart from '../ui/SlideToStart.jsx';
 import { PLANS, PAID_TERM_STARTS } from '../../pro/plans.js';
 import { LEAD_READS, pickCommunityPost } from './landingData.js';
 import './landing-blocks.css';
@@ -76,10 +77,23 @@ function usePlayOnView() {
   const cls = state === 'static' ? '' : state === 'in' ? ' lb-anim is-in' : ' lb-anim';
   return [ref, cls, state];
 }
-/* Nov 3: section titles no longer fade up. It's a vibe-coded tell (docs/anti-vibe-checklist.md),
-   and a re-run bug left "This week's picks" invisible (the observer was disconnected while the
-   title stayed at opacity 0). Kept as a no-op so callers don't change. */
-export function useRiseOnView() {}
+/* Section titles rise in as they reach the screen (once each). */
+export function useRiseOnView(rootRef, deps = []) {
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || !canPlay()) return undefined;
+    const els = [...root.querySelectorAll('.lb-h2, .lb-close h2')].filter((el) => !el.classList.contains('lb-rise'));
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+    }, { threshold: 0.4 });
+    for (const el of els) {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.9) continue; // already on screen: leave it be
+      el.classList.add('lb-rise'); io.observe(el);
+    }
+    return () => io.disconnect();
+  }, deps); // eslint-disable-line react-hooks/exhaustive-deps
+}
 function CountUp({ n, play }) {
   const [v, setV] = useState(0);
   useEffect(() => {
@@ -186,7 +200,7 @@ function weeklyLineup() {
   const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
   return [...core, ...list.filter((p) => !core.includes(p))];
 }
-export function Picks({ onOpenProduct, onViewDiscovery, picks = null, search = null }) {
+export function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
   const ready = useCatalogReady();
   const weekly = useMemo(() => (ready ? weeklyLineup().slice(0, 4) : []), [ready]);
   const personal = useMemo(() => {
@@ -200,10 +214,10 @@ export function Picks({ onOpenProduct, onViewDiscovery, picks = null, search = n
   useRecommendationViews(mine ? four : null, 'home_top_picks');
   if (ready && four.length < 2) return null;
   const name = mine ? 'Top picks for you' : 'This week’s picks';
-  return <PicksList name={name} ready={ready} four={four} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} search={search} />;
+  return <PicksList name={name} ready={ready} four={four} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />;
 }
 /* Picks deal in like polaroids dropped on a table, then settle (founder, Nov 2). */
-function PicksList({ name, ready, four, onOpenProduct, onViewDiscovery, search = null }) {
+function PicksList({ name, ready, four, onOpenProduct, onViewDiscovery }) {
   const [ref, anim] = usePlayOnView();
   return (
     <section className="lb-sec" aria-labelledby="lb-picks-h">
@@ -212,7 +226,6 @@ function PicksList({ name, ready, four, onOpenProduct, onViewDiscovery, search =
           <h2 id="lb-picks-h" className="lb-h2">{name}</h2>
           <Go className="lb-more" href="/explore/products" onGo={() => onViewDiscovery?.('')}>See all products<Arrow /></Go>
         </header>
-        {search}
         <ul className={`lb-picks${ready ? anim : ''}`} ref={ref} aria-label={ready ? name : 'Loading products'}>
           {ready ? four.map((p, i) => <li key={p.id} style={{ '--n': i }}><ProductCard product={p} onOpen={onOpenProduct} className="hm-sticker" /></li>)
             : [0, 1, 2, 3].map((i) => <li key={i} aria-hidden="true"><div className="lb-skel" /></li>)}
@@ -241,9 +254,7 @@ function useCatalogNumbers() {
     }
     const { products, services } = shopCatalogCounts();
     return [
-      // Nov 3: products and services counted apart, so this matches the Shop's own count.
-      { n: products, unit: 'products', icon: 'bag', tone: 'pink' },
-      { n: services, unit: 'care services', icon: 'bag', tone: 'light' },
+      { n: products + services, unit: 'products and services', icon: 'bag', tone: 'pink' },
       { n: brands.size, unit: 'brands, big and small', icon: 'tag', tone: 'light' },
       { n: sources.size, unit: 'sources linked on product pages', icon: 'link', tone: 'ink' },
       { n: MACRO_GROUPS.filter((g) => g.id !== 'all').length, unit: 'areas of care, periods to menopause', icon: 'grid', tone: 'light' },
@@ -252,6 +263,7 @@ function useCatalogNumbers() {
 }
 export function Proof({ onViewArticles }) {
   const nums = useCatalogNumbers();
+  const [ref, anim, play] = usePlayOnView();
   return (
     <section className="lb-sec" aria-labelledby="lb-proof-h">
       <div className="lb-wrap">
@@ -259,9 +271,10 @@ export function Proof({ onViewArticles }) {
           <h2 id="lb-proof-h" className="lb-h2">What’s behind every match</h2>
           <Go className="lb-more" href="/explore/resources" onGo={onViewArticles}>Read our sources<Arrow /></Go>
         </header>
-        {/* Nov 3 (audit): one plain row of real counts, no coloured tiles or count-up. */}
-        <ul className="lb-facts" aria-busy={nums ? undefined : 'true'}>
-          {(nums || []).map((s) => <li key={s.unit}><b>{s.n.toLocaleString('en-US')}</b> {s.unit}</li>)}
+        <ul className={`lb-stats${anim}`} ref={ref} aria-busy={nums ? undefined : 'true'}>
+          {(nums || [0, 1, 2, 3]).map((s, i) => (s
+            ? <li key={s.unit} className={`lb-stat is-${s.tone}`}><Icon k={s.icon} /><b><span className="lb-sr">{s.n.toLocaleString('en-US')}</span><span aria-hidden="true"><CountUp n={s.n} play={play} /></span></b><span>{s.unit}</span></li>
+            : <li key={i} className="lb-stat is-light is-skel" aria-hidden="true" />))}
         </ul>
       </div>
     </section>
@@ -365,8 +378,7 @@ export function ProAndEnd({ pro = false, offerOpen = null, cta }) {
         </div>
         <div className="lb-end wlx-end">
           <h2 className="lb-end__h">Find what fits <span>your body.</span></h2>
-          {/* Nov 3: the same plain button as the top of the page. */}
-          <button type="button" className="lb-end__btn" onClick={cta.go}>{cta.label}</button>
+          <SlideToStart className="lb-end__sts" size="lg" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
         </div>
       </div>
     </section>

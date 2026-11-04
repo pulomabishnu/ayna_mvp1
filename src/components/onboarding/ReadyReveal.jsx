@@ -138,30 +138,22 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
       ) : (
         <p className="ay-ob-ready__lead">You didn’t pick anything specific, so {variant === 'web' ? 'your ecosystem starts with options to explore' : 'Today starts with quick check-ins'}. Add what you want help with any time in You.</p>
       )}
-      {/* Nov 3 (founder: "not obvious to do the more questions", "shouldn't let you leave until
-          you make an account"): a numbered checklist. Signed out, the last step is the free account
-          (no way to the matches page without it); signed in, it's "See all N matches". */}
-      <div className="ay-ob-ready__actions ay-ob-steps">
-        <h2 className="ay-ob-steps__h">Your next steps</h2>
-        <ol className="ay-ob-steps__list">
-          <li className="is-done"><span className="ay-ob-steps__n" aria-hidden="true">✓</span><span><b>Answer your first questions</b><small>Done</small></span></li>
-          {onMorePersonal && safetyLeft > 0 && (
-            <li className="is-now"><span className="ay-ob-steps__n" aria-hidden="true">2</span>
-              <button type="button" className="ay-ob-steps__btn" onClick={onSafety || onMorePersonal}><span><b>Answer {safetyLeft} safety {safetyLeft === 1 ? 'question' : 'questions'}</b><small>About your medicines and allergies. Unlocks vitamins and other things you take. 30 seconds.</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
-            </li>
-          )}
-          {onMorePersonal && safetyLeft === 0 && remaining > 0 && (
-            <li className="is-now"><span className="ay-ob-steps__n" aria-hidden="true">2</span>
-              <button type="button" className="ay-ob-steps__btn" onClick={onMorePersonal}><span><b>Make my matches better</b><small>{remaining} quick {remaining === 1 ? 'question' : 'questions'}: your goals, budget and what you like.</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
-            </li>
-          )}
-          <li className={onMorePersonal && (safetyLeft > 0 || remaining > 0) ? '' : 'is-now'}><span className="ay-ob-steps__n" aria-hidden="true">{onMorePersonal && (safetyLeft > 0 || remaining > 0) ? 3 : 2}</span>
-            {!signedIn && onCreateAccount
-              ? <button type="button" className="ay-ob-steps__btn is-main" onClick={onCreateAccount}><span><b>Save my {total > 0 ? `${total} ` : ''}matches</b><small>Make a free account so they’re here next time. No card needed.</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
-              : <button type="button" className="ay-ob-steps__btn is-main" onClick={onSeeToday}><span><b>{variant === 'web' ? (total > 0 ? `See all ${total} matches` : 'See my ecosystem') : 'See my Today'}</b><small>They’re saved in {variant === 'web' ? 'Home, in the top menu' : 'Today'}.</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>}
-          </li>
-        </ol>
-        {onWatchWrapped && total > 0 && signedIn && <button type="button" className="ay-ob-quiet ay-ob-steps__wrapped" onClick={onWatchWrapped}>Watch my ayna Wrapped</button>}
+      {/* Nov 4 (founder: order didn't make sense, too many boxes): the safety questions are
+          already answered before this page, so there is one next step (save, or see them) and
+          one optional link to make the matches closer. */}
+      <div className="ay-ob-ready__actions ay-ob-next">
+        {!signedIn && onCreateAccount
+          ? <button type="button" className="ay-ob-next__main" onClick={onCreateAccount}>Save my {total > 0 ? `${total} ` : ''}matches<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+          : <button type="button" className="ay-ob-next__main" onClick={onSeeToday}>{variant === 'web' ? (total > 0 ? `See all ${total} matches` : 'See my ecosystem') : 'See my Today'}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>}
+        <small className="ay-ob-next__note">{!signedIn && onCreateAccount ? 'A free account keeps them here next time. No card.' : `They’re saved in ${variant === 'web' ? 'Home' : 'Today'}.`}</small>
+        {onMorePersonal && safetyLeft === 0 && remaining > 0 && (
+          <button type="button" className="ay-ob-next__more" onClick={onMorePersonal}>
+            <span><b>Answer {remaining} more {remaining === 1 ? 'question' : 'questions'}</b><small>Your goals, budget and what you like, for closer matches.</small></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </button>
+        )}
+        {onMorePersonal && safetyLeft > 0 && <button type="button" className="ay-ob-next__link" onClick={onSafety || onMorePersonal}>Answer {safetyLeft} safety {safetyLeft === 1 ? 'question' : 'questions'} to see more</button>}
+        {onWatchWrapped && total > 0 && signedIn && <button type="button" className="ay-ob-next__link" onClick={onWatchWrapped}>Watch my ayna Wrapped</button>}
       </div>
     </Tag>
   );

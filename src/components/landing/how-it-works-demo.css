@@ -99,3 +99,12 @@
 .app-container .hd-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; animation: hd-in .4s var(--ease-out, ease) 1.3s both; }
 .app-container .hd-pair .hd-next { margin: 0; }
 .app-container .hd-next.is-ghost { background: transparent; color: #3e2723; box-shadow: inset 0 0 0 1.5px #3e2723; }
+/* Nov 4: tighter list (only the playing step shows its line), phone sized to its screens. */
+.app-container .hd { padding: 80px 24px; }
+.app-container .hd-steps button { padding: 12px 0; }
+.app-container .hd-steps small { margin-top: 2px; }
+.app-container .hd-sub { margin-bottom: 24px; }
+.app-container .hd-stage .hd-phone { height: 520px; }
+.app-container .hd-scr { gap: 12px; }
+@media (max-width: 899px) { .app-container .hd { padding: 48px 16px; } .app-container .hd-stage .hd-phone { height: 500px; } .app-container .hd-stage { order: 0; } }
+.app-container .hd-ask { margin-top: auto; padding: 12px 16px; border-radius: 999px; border: 1.5px solid rgba(62, 39, 35, .3); font: 500 13px/1.2 var(--ay-sans-stack, sans-serif); color: rgba(62, 39, 35, .7); }

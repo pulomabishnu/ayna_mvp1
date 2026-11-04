@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Picks, Proof, Founders, ProAndEnd, useRiseOnView } from './LandingBody.jsx';
+import { WhatYouCanDo, Picks, Proof, ReadsAndCommunity, Founders, ProAndEnd, useRiseOnView } from './LandingBody.jsx';
 import MedicalNote from '../MedicalNote.jsx';
+import { isPlainLeftClick } from '../../utils/productRoute';
 import '../../styles/editorial.css';
 import '../../styles/home.css';
 import '../../styles/loop-a-landing.css';
 import '../../styles/uq-landing.css';
 import { ScallopEdge } from '../ui/ay';
-import { trackLandingCta, landingCtaCopy, CTA_COPY } from '../../utils/funnelEvents.js';
-import HowItWorksDemo from './HowItWorksDemo.jsx';
+import SlideToStart from '../ui/SlideToStart.jsx';
 import { Rain, HeroSearch, BrandBar } from './kit.jsx';
 import { useProStatus } from '../../pro/useProStatus.js';
 import './web-landing.css';
+import HowItWorksDemo from './HowItWorksDemo.jsx';
 
 /* The website's / (founder, Oct 27 10:40: "i liked how we had the website
  * ... optimize it for web"). The v2 website home is back, desktop-first, with
@@ -24,6 +25,7 @@ import './web-landing.css';
  * One page for everyone; signed in with a profile, the main action is
  * "Go to your Home". Nothing on the page is sticky. */
 
+const Arrow = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>);
 
 /* ---------- 1. hero ----------
    Founder, Oct 27 11:32-11:36: the rain in the back, faded; the title in the
@@ -33,32 +35,18 @@ import './web-landing.css';
    and everything centred on top (13:01: big, not crowded): a big two-line
    title with "your body." in pink, one line on what ayna connects, the search, Slide to start (the welcome
    tip's anchor) and How we match. The brown and pink bar runs under it. */
-// Nov 3 (founder notes + research): say what ayna does in the headline, the
-// exact detail in the subheadline, the three reasons right under it, and one
-// plain "Sign up free" button (a slider was one more thing to figure out).
-// Website, last 30 days before this: 357 visitors, 63% left from the home page,
-// 21 started the quiz.
-const VALUE_PROPS = [
-  { k: 'match', t: 'Made for you', d: 'Picked for your body and what you need.' },
-  { k: 'safe', t: 'Safe first', d: 'We check your medicines first.' },
-  { k: 'evidence', t: 'Honest picks', d: 'Brands can\u2019t pay to be picked.' },
-];
-function Hero({ cta, onSearch, banner = null }) {
-  const watch = (e) => { e.preventDefault(); trackLandingCta('watch_demo'); document.getElementById('ay-demo')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
   return (
     <section className="wl-hero" aria-labelledby="hm-hero-title">
       <div className="wl-hero__band">
         <Rain cols={4} onInk className="wl-rain" />
         <div className="wl-hero__in">
-          <h1 id="hm-hero-title" className="wl-title">Find women’s health products that fit you.</h1>
-          <p className="wl-one">Pads, vitamins, sleep help and more. Answer a few quick questions and see what fits you.</p>
-          <div className="wl-ctas">
-            <button type="button" className="wl-cta" data-tour="landing-start" onClick={() => { trackLandingCta(cta.id, 'web', cta.copy); cta.go?.(); }}>{cta.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
-            <a className="wl-watch" href="#ay-demo" onClick={watch}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M10 8.5v7l6-3.5-6-3.5Z" /></svg>Watch how it works</a>
-          </div>
-          {cta.note && <p className="wl-cta-note">{cta.note}</p>}
-          {/* Nov 3 (audit): the 3 reasons as one quiet line of ticks, not an icon-in-a-circle trio. */}
-          <ul className="wl-ticks" aria-label="Why ayna">{VALUE_PROPS.map((v) => <li key={v.k}>{v.t}<span>: {v.d.replace(/\.$/, '')}</span></li>)}</ul>
+          {/* One promise on the website and the app (landing audit 4 and 9). */}
+          <h1 id="hm-hero-title" className="wl-title">Find what fits <span>your body.</span></h1>
+          <p className="wl-one">Your products, routine and health data, finally in one place.</p>
+          <SlideToStart className="wl-sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
+          <HeroSearch onSearch={onSearch} className="wl-search" />
+          <a className="wl-how" href="/how-it-works" onClick={(e) => { if (!onViewHowItWorks || !isPlainLeftClick(e)) return; e.preventDefault(); onViewHowItWorks(); }}>How we match<Arrow /></a>
           {banner && <div className="wl-banner">{banner}</div>}
         </div>
       </div>
@@ -78,27 +66,28 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
   useRiseOnView(pageRef, [rest]);
   const { active: pro, offerOpen } = useProStatus(signedIn ? userId : null);
   const home = Boolean(signedIn && hasProfile && onGoHome);
-  const [copy] = useState(landingCtaCopy);
   const cta = home
-    ? { id: 'go_home', label: 'Go to your Home', go: onGoHome }
-    : { id: 'start_quiz', copy, label: CTA_COPY[copy], note: 'Free. No card. About 1 minute.', go: onStartQuiz };
+    ? { label: 'Go to your Home', slide: 'Slide to go to your Home', go: onGoHome }
+    : { label: 'Get my matches', slide: 'Slide to find your matches', go: onStartQuiz };
   return (
     <div id="ay-landing" className="ed ed-home hm hm-uq wl" ref={pageRef}>
-      <Hero cta={cta} onSearch={onSearch} banner={home ? null : heroBanner} />
-      <HowItWorksDemo onStart={() => { trackLandingCta(`${cta.id}_demo`, 'web', cta.copy); cta.go?.(); }} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />
+      <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />
       <BrandBar onOpen={onViewWaitlist} />
+      {/* Nov 4 (founder: keep the walkthrough, make it more informative). */}
+      {!home && <HowItWorksDemo onStart={cta.go} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />}
       {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the
           raining pictures and widgets, and use the original website for the rest). */}
       {/* Below the hero (./LandingBody.jsx): one calm butter page, then one espresso close. */}
       <div className="lb">
-        {/* Nov 3: the five feature tiles said the same as "How ayna works", so they're gone; the search moved here, next to the products. */}
-        <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={Array.isArray(personalPicks) ? personalPicks : null} search={<HeroSearch onSearch={onSearch} className="lb-search" />} />
+        <WhatYouCanDo member={home} onGo={{ match: home ? onGoHome : onStartQuiz, evidence: onViewHowItWorks, ask: onAsk, routine: home ? onGoHome : null, checkin: home ? onGoHome : null }} />
+        <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={Array.isArray(personalPicks) ? personalPicks : null} />
         {rest && <>
           <Proof onViewArticles={onViewArticles} />
+          <ReadsAndCommunity onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
           <Founders onViewAbout={onViewAbout} />
         </>}
       </div>
-      {rest && <ProAndEnd pro={pro === true} offerOpen={offerOpen} cta={{ ...cta, go: () => { trackLandingCta(`${cta.id}_end`, 'web', cta.copy); cta.go?.(); } }} />}
+      {rest && <ProAndEnd pro={pro === true} offerOpen={offerOpen} cta={cta} />}
       <div className="wl-note"><MedicalNote className="wl-note__p" /></div>
     </div>
   );
