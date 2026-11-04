@@ -21,7 +21,7 @@ export function landingCtaCopy() {
     const v = client.getFeatureFlag?.('landing-cta-copy');
     if (typeof v === 'string' && CTA_COPY[v]) return v;
   } catch { /* flags not loaded */ }
-  return 'get_my_free_matches';
+  return 'sign_up_free'; // founder, Nov 4: the main button says "Sign up free"
 }
 const SURFACES = new Set(['web', 'app', 'mobile_web']);
 const SAFE_ID = /^[a-zA-Z][a-zA-Z0-9_]{0,40}$/;

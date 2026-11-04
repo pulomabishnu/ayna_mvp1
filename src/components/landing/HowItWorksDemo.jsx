@@ -99,7 +99,7 @@ function Screen({ k }) {
   );
 }
 
-export default function HowItWorksDemo({ onStart, startLabel = 'Get my free matches', onViewHowItWorks }) {
+export default function HowItWorksDemo({ onStart, startLabel = 'Sign up free', onViewHowItWorks }) {
   const ref = useRef(null);
   const [still] = useState(motionOff);
   const [scene, setScene] = useState(0);
@@ -128,26 +128,41 @@ export default function HowItWorksDemo({ onStart, startLabel = 'Get my free matc
   const replay = () => { setDone(false); setPaused(false); setScene(0); };
   const cur = SCENES[scene];
   return (
-    <section id="ay-demo" ref={ref} className={`hd${still ? ' is-still' : ''}`} aria-labelledby="hd-title">
+    <section id="ay-demo" ref={ref} className={`hd hd--v5${still ? ' is-still' : ''}`} aria-labelledby="hd-title">
       <div className="hd-in">
         <div className="hd-copy">
           <h2 id="hd-title" className="hd-title">How ayna works</h2>
-          <p className="hd-sub">Answer a few quick questions. See what fits you, and why.</p>
-          <ol className="hd-steps">
-            {SCENES.map((s, i) => (
-              <li key={s.k} className={!still && i === scene ? 'is-on' : ''}>
-                <button type="button" onClick={() => { setScene(i); setPaused(true); }} aria-current={!still && i === scene ? 'step' : undefined}>
-                  <span className="hd-n">{i + 1}</span>
-                  <span><b>{s.t}</b>{(still || i === scene) && <small>{s.d}</small>}</span>
+          {/* Nov 4 (founder: the 5-row list was ugly): one step at a time, big, with the inspo's
+              page dots under it. The dots are buttons, so any step can be opened. */}
+          {!still && (
+            <div className="hd-now" aria-live="polite">
+              <span className="hd-now__n">Step {scene + 1} of {SCENES.length}</span>
+              <b className="hd-now__t" key={`t${scene}`}>{cur.t}</b>
+              <span className="hd-now__d" key={`d${scene}`}>{cur.d}</span>
+            </div>
+          )}
+          {!still && (
+            <div className="hd-pager" role="group" aria-label="Walkthrough steps">
+              {SCENES.map((s, i) => (
+                <button type="button" key={s.k} className={i === scene ? 'is-on' : ''} aria-label={`Step ${i + 1}: ${s.t}`} aria-current={i === scene ? 'step' : undefined} onClick={() => { setScene(i); setPaused(true); }}>
+                  {i === scene && playing && <i style={{ '--ms': `${MS[scene]}ms` }} key={`b${scene}`} />}
                 </button>
-                {playing && i === scene && <i className="hd-bar is-run" style={{ '--ms': `${MS[scene]}ms` }} key={`${scene}`} aria-hidden="true" />}
-              </li>
-            ))}
-          </ol>
+              ))}
+              {done
+                ? <button type="button" className="hd-pause" onClick={replay}>Replay</button>
+                : <button type="button" className="hd-pause" onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Play the walkthrough' : 'Pause the walkthrough'}>{paused ? 'Play' : 'Pause'}</button>}
+            </div>
+          )}
+          {still && (
+            <ol className="hd-steps">
+              {SCENES.map((s, i) => <li key={s.k}><span className="hd-n">{i + 1}</span><span><b>{s.t}</b><small>{s.d}</small></span></li>)}
+            </ol>
+          )}
           <div className="hd-actions">
             {onStart && <button type="button" className="hd-start" onClick={onStart}>{startLabel}</button>}
             {onViewHowItWorks && <a className="hd-more" href="/how-it-works" onClick={(e) => { e.preventDefault(); onViewHowItWorks(); }}>How we match</a>}
           </div>
+          <p className="hd-len">Example for cramps and trouble sleeping. Real products from our catalog.</p>
         </div>
         {still ? (
           <div className="hd-grid">
@@ -157,13 +172,6 @@ export default function HowItWorksDemo({ onStart, startLabel = 'Get my free matc
           <div className="hd-stage">
             <div className="hd-phone" aria-hidden="true">
               <div className="hd-screen" key={scene}><Screen k={cur.k} /></div>
-            </div>
-            <p className="hd-cap" aria-live="polite"><b>{scene + 1}. {cur.t}.</b> {cur.d}</p>
-            <div className="hd-ctrl">
-              {done
-                ? <button type="button" className="hd-pause" onClick={replay}>Replay</button>
-                : <button type="button" className="hd-pause" onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Play the walkthrough' : 'Pause the walkthrough'}>{paused ? 'Play' : 'Pause'}</button>}
-              <span className="hd-len">25 sec · example for cramps and trouble sleeping</span>
             </div>
           </div>
         )}

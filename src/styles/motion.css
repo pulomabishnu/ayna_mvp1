@@ -116,9 +116,11 @@ html.ay-motion-paused .ay-reveal { opacity: 1; translate: none; transition: none
   --ay-rise: 10px;        /* small rise, no bounce */
 }
 
-/* Cards and sections rise in once as they enter the viewport (installMotion). */
-html.ay-motion [data-rise-state='wait'] { opacity: 0; transform: translate3d(0, var(--ay-rise), 0); }
-html.ay-motion [data-rise-state='in'] { opacity: 1; transform: none; transition: opacity var(--ay-dur-rise) var(--ay-ease), transform var(--ay-dur-rise) var(--ay-ease); }
+/* Nov 4 (audit): no fade-up on every card and section. It's a vibe-coded tell (anti-vibe
+   checklist: "don't animate every element as it enters the viewport") and it left whole
+   sections blank until scrolled. installMotion still marks them, so score rings below the
+   fold can wait to fill; the content itself always shows. */
+html.ay-motion [data-rise-state='wait'], html.ay-motion [data-rise-state='in'] { opacity: 1; transform: none; }
 /* A score ring waiting below the fold holds its fill until it is seen. */
 html.ay-motion [data-rise-state='wait'] .ay-dials.is-animate :is(.ay-dial__arc, .ay-dial__today) { animation-play-state: paused; }
 

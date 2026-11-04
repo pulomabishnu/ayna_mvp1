@@ -10,12 +10,12 @@ describe('drop-off events', () => {
     trackLandingCta('anything else');
     expect(sent).toEqual([['landing_cta_clicked', { cta: 'sign_up_free', surface: 'web' }]]);
   });
-  it('the button words: "Get my free matches" unless the landing-cta-copy flag picks "Sign up free"; the words go with the click', () => {
-    expect(landingCtaCopy()).toBe('get_my_free_matches');
-    setFunnelClient({ capture: (n, p) => sent.push([n, p]), getFeatureFlag: () => 'sign_up_free' });
+  it('the button words: "Sign up free" unless the landing-cta-copy flag picks "Get my free matches"; the words go with the click', () => {
     expect(landingCtaCopy()).toBe('sign_up_free');
-    setFunnelClient({ capture: (n, p) => sent.push([n, p]), getFeatureFlag: () => 'something odd' });
+    setFunnelClient({ capture: (n, p) => sent.push([n, p]), getFeatureFlag: () => 'get_my_free_matches' });
     expect(landingCtaCopy()).toBe('get_my_free_matches');
+    setFunnelClient({ capture: (n, p) => sent.push([n, p]), getFeatureFlag: () => 'something odd' });
+    expect(landingCtaCopy()).toBe('sign_up_free');
     trackLandingCta('start_quiz', 'web', 'sign_up_free');
     expect(sent.at(-1)).toEqual(['landing_cta_clicked', { cta: 'start_quiz', surface: 'web', copy: 'sign_up_free' }]);
   });

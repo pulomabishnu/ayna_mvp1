@@ -399,6 +399,7 @@ PATH_TO_VIEW['/comparison'] = 'comparison'; // old Compare address; /compare?ids
 PATH_TO_VIEW['/'] = 'welcome';
 // Old Shop URL keeps working (bookmarks, shared links); it is replaced on load.
 PATH_TO_VIEW['/discovery'] = 'discovery';
+PATH_TO_VIEW['/services'] = 'explore-services'; // typed or shared /services opened the 404 page (audit, Nov 4)
 // Campaign invite links: /join?ref=<code>. The code is stored first-touch
 // (badges.js) before the URL is tidied to '/', then the visitor lands on home.
 PATH_TO_VIEW['/join'] = 'welcome';

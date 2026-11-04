@@ -78,22 +78,10 @@ function usePlayOnView() {
   return [ref, cls, state];
 }
 /* Section titles rise in as they reach the screen (once each). */
-export function useRiseOnView(rootRef, deps = []) {
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root || !canPlay()) return undefined;
-    const els = [...root.querySelectorAll('.lb-h2, .lb-close h2')].filter((el) => !el.classList.contains('lb-rise'));
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
-    }, { threshold: 0.4 });
-    for (const el of els) {
-      const r = el.getBoundingClientRect();
-      if (r.top < window.innerHeight * 0.9) continue; // already on screen: leave it be
-      el.classList.add('lb-rise'); io.observe(el);
-    }
-    return () => io.disconnect();
-  }, deps); // eslint-disable-line react-hooks/exhaustive-deps
-}
+// Nov 4 (audit): headings no longer fade up as they scroll in (anti-vibe checklist: no
+// fade-up on every section; it also left "This week's picks" invisible). Kept as a no-op so
+// callers don't change.
+export function useRiseOnView() {}
 function CountUp({ n, play }) {
   const [v, setV] = useState(0);
   useEffect(() => {

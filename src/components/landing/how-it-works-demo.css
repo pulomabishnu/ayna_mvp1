@@ -220,3 +220,29 @@
 .app-container .hd-wave i { width: 3px; border-radius: 2px; background: #3e2723; transform-origin: center; animation: hd-bar .5s ease both; animation-delay: calc(.6s + var(--i) * 50ms); }
 @keyframes hd-bar { from { transform: scaleY(0); } }
 @media (prefers-reduced-motion: reduce) { .app-container .hd-chips span.is-pick { background: #f7badd; color: #3e2723; } }
+/* Nov 4 v5 (founder: "just ugly"): the inspo's pink page with the dark phone on it. Left:
+   one big step at a time and the inspo's page dots (the active one is a long pill that fills
+   while the step plays). One button. */
+.app-container .hd.hd--v5 { padding: 96px 24px; background: #f7badd; }
+.app-container .hd--v5 .hd-in { max-width: 1080px; grid-template-columns: minmax(0, 1fr) 400px; gap: 64px; }
+@media (max-width: 899px) { .app-container .hd--v5 .hd-in { grid-template-columns: minmax(0, 1fr); gap: 32px; } .app-container .hd.hd--v5 { padding: 56px 16px; } }
+.app-container .hd--v5 .hd-title { margin: 0 0 32px; font-size: clamp(36px, 5vw, 56px) !important; line-height: 1 !important; }
+.app-container .hd--v5 .hd-now { display: grid; gap: 8px; min-height: 168px; align-content: start; }
+.app-container .hd--v5 .hd-now__n { font: 700 14px/1.2 var(--ay-sans-stack, sans-serif); color: rgba(62, 39, 35, .75); }
+.app-container .hd--v5 .hd-now__t { font: 700 clamp(28px, 3.4vw, 40px)/1.08 var(--ay-font-display, sans-serif); letter-spacing: -.015em; color: #3e2723; animation: hd-in .4s var(--ease-out, ease) both; }
+.app-container .hd--v5 .hd-now__d { max-width: 34ch; font: 500 18px/1.45 var(--ay-sans-stack, sans-serif); color: rgba(62, 39, 35, .85); animation: hd-in .4s var(--ease-out, ease) .08s both; }
+.app-container .hd--v5 .hd-pager { display: flex; align-items: center; gap: 8px; margin: 24px 0 0; }
+.app-container .hd--v5 .hd-pager > button:not(.hd-pause) { all: unset; box-sizing: border-box; cursor: pointer; position: relative; overflow: hidden; width: 12px; height: 12px; border-radius: 999px; background: rgba(62, 39, 35, .3); transition: width .3s var(--ease-out, ease), background-color .3s; }
+.app-container .hd--v5 .hd-pager > button:not(.hd-pause)::after { content: ''; position: absolute; inset: -16px -4px; }
+.app-container .hd--v5 .hd-pager > button.is-on { width: 48px; background: rgba(62, 39, 35, .3); }
+.app-container .hd--v5 .hd-pager > button.is-on:not(:has(i)) { background: #3e2723; }
+.app-container .hd--v5 .hd-pager > button i { position: absolute; inset: 0; border-radius: inherit; background: #3e2723; transform-origin: left; animation: hd-fill var(--ms, 5000ms) linear forwards; }
+.app-container .hd--v5 .hd-pager > button:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
+.app-container .hd--v5 .hd-pager .hd-pause { margin-left: 12px; min-height: 36px; padding: 0 14px; border-color: rgba(62, 39, 35, .5); font-size: 13px; }
+.app-container .hd--v5 .hd-actions { margin-top: 40px; }
+.app-container .hd--v5 .hd .hd-start, .app-container .hd.hd--v5 .hd-start { box-shadow: 3px 3px 0 #ffedac; }
+.app-container .hd--v5 .hd-len { display: block; margin: 12px 0 0; color: rgba(62, 39, 35, .75); }
+.app-container .hd--v5 .hd-stage { justify-items: center; }
+.app-container .hd--v5 .hd-stage .hd-phone { width: 380px; max-width: 88vw; height: 600px; padding: 10px; border-radius: 44px; background: #3e2723; box-shadow: 8px 8px 0 #3e2723; }
+.app-container .hd--v5 .hd-screen { border-radius: 34px; }
+@media (max-width: 899px) { .app-container .hd--v5 .hd-stage { order: 0; } .app-container .hd--v5 .hd-now { min-height: 0; } .app-container .hd--v5 .hd-stage .hd-phone { height: 560px; } }
