@@ -76,23 +76,10 @@ function usePlayOnView() {
   const cls = state === 'static' ? '' : state === 'in' ? ' lb-anim is-in' : ' lb-anim';
   return [ref, cls, state];
 }
-/* Section titles rise in as they reach the screen (once each). */
-export function useRiseOnView(rootRef, deps = []) {
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root || !canPlay()) return undefined;
-    const els = [...root.querySelectorAll('.lb-h2, .lb-close h2')].filter((el) => !el.classList.contains('lb-rise'));
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
-    }, { threshold: 0.4 });
-    for (const el of els) {
-      const r = el.getBoundingClientRect();
-      if (r.top < window.innerHeight * 0.9) continue; // already on screen: leave it be
-      el.classList.add('lb-rise'); io.observe(el);
-    }
-    return () => io.disconnect();
-  }, deps); // eslint-disable-line react-hooks/exhaustive-deps
-}
+/* Nov 3: section titles no longer fade up. It's a vibe-coded tell (docs/anti-vibe-checklist.md),
+   and a re-run bug left "This week's picks" invisible (the observer was disconnected while the
+   title stayed at opacity 0). Kept as a no-op so callers don't change. */
+export function useRiseOnView() {}
 function CountUp({ n, play }) {
   const [v, setV] = useState(0);
   useEffect(() => {
@@ -254,7 +241,9 @@ function useCatalogNumbers() {
     }
     const { products, services } = shopCatalogCounts();
     return [
-      { n: products + services, unit: 'products and services', icon: 'bag', tone: 'pink' },
+      // Nov 3: products and services counted apart, so this matches the Shop's own count.
+      { n: products, unit: 'products', icon: 'bag', tone: 'pink' },
+      { n: services, unit: 'care services', icon: 'bag', tone: 'light' },
       { n: brands.size, unit: 'brands, big and small', icon: 'tag', tone: 'light' },
       { n: sources.size, unit: 'sources linked on product pages', icon: 'link', tone: 'ink' },
       { n: MACRO_GROUPS.filter((g) => g.id !== 'all').length, unit: 'areas of care, periods to menopause', icon: 'grid', tone: 'light' },
@@ -263,7 +252,6 @@ function useCatalogNumbers() {
 }
 export function Proof({ onViewArticles }) {
   const nums = useCatalogNumbers();
-  const [ref, anim, play] = usePlayOnView();
   return (
     <section className="lb-sec" aria-labelledby="lb-proof-h">
       <div className="lb-wrap">
@@ -271,10 +259,9 @@ export function Proof({ onViewArticles }) {
           <h2 id="lb-proof-h" className="lb-h2">What’s behind every match</h2>
           <Go className="lb-more" href="/explore/resources" onGo={onViewArticles}>Read our sources<Arrow /></Go>
         </header>
-        <ul className={`lb-stats${anim}`} ref={ref} aria-busy={nums ? undefined : 'true'}>
-          {(nums || [0, 1, 2, 3]).map((s, i) => (s
-            ? <li key={s.unit} className={`lb-stat is-${s.tone}`}><Icon k={s.icon} /><b><span className="lb-sr">{s.n.toLocaleString('en-US')}</span><span aria-hidden="true"><CountUp n={s.n} play={play} /></span></b><span>{s.unit}</span></li>
-            : <li key={i} className="lb-stat is-light is-skel" aria-hidden="true" />))}
+        {/* Nov 3 (audit): one plain row of real counts, no coloured tiles or count-up. */}
+        <ul className="lb-facts" aria-busy={nums ? undefined : 'true'}>
+          {(nums || []).map((s) => <li key={s.unit}><b>{s.n.toLocaleString('en-US')}</b> {s.unit}</li>)}
         </ul>
       </div>
     </section>

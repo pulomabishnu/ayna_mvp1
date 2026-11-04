@@ -43,11 +43,6 @@ const VALUE_PROPS = [
   { k: 'safe', t: 'Safe first', d: 'We check your medicines first.' },
   { k: 'evidence', t: 'Honest picks', d: 'Brands can\u2019t pay to be picked.' },
 ];
-const PROP_ICON = {
-  match: <path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z" />,
-  safe: <><path d="M12 3 5 6v5c0 4.4 3 8.4 7 10 4-1.6 7-5.6 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></>,
-  evidence: <><path d="M7 3h7l4 4v14H7z" /><path d="M14 3v4h4M10 12h5M10 16h5" /></>,
-};
 function Hero({ cta, onSearch, banner = null }) {
   const watch = (e) => { e.preventDefault(); trackLandingCta('watch_demo'); document.getElementById('ay-demo')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
   return (
@@ -55,33 +50,19 @@ function Hero({ cta, onSearch, banner = null }) {
       <div className="wl-hero__band">
         <Rain cols={4} onInk className="wl-rain" />
         <div className="wl-hero__in">
-          <h1 id="hm-hero-title" className="wl-title">Find women’s health products <span>that fit you.</span></h1>
+          <h1 id="hm-hero-title" className="wl-title">Find women’s health products that fit you.</h1>
           <p className="wl-one">Pads, vitamins, sleep help and more. Answer 4 questions and see what fits you.</p>
           <div className="wl-ctas">
             <button type="button" className="wl-cta" data-tour="landing-start" onClick={() => { trackLandingCta(cta.id, 'web', cta.copy); cta.go?.(); }}>{cta.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
             <a className="wl-watch" href="#ay-demo" onClick={watch}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M10 8.5v7l6-3.5-6-3.5Z" /></svg>Watch how it works</a>
           </div>
           {cta.note && <p className="wl-cta-note">{cta.note}</p>}
+          {/* Nov 3 (audit): the 3 reasons as one quiet line of ticks, not an icon-in-a-circle trio. */}
+          <ul className="wl-ticks" aria-label="Why ayna">{VALUE_PROPS.map((v) => <li key={v.k}>{v.t}<span>: {v.d.replace(/\.$/, '')}</span></li>)}</ul>
           {banner && <div className="wl-banner">{banner}</div>}
         </div>
       </div>
       <ScallopEdge shape="wave" tone="ink" className="wl-edge" />
-    </section>
-  );
-}
-
-/* ---------- 2. three reasons ----------
-   Founder, Nov 3 ("less crowded, look nice, not overstimulating"): the hero
-   keeps only the headline, one line and one button (like perfit.app). The
-   three reasons get their own calm row right under it, with room around them. */
-function Reasons() {
-  return (
-    <section className="wl-why" aria-label="Why ayna">
-      <ul className="wl-why__list">
-        {VALUE_PROPS.map((v) => (
-          <li key={v.k}><svg viewBox="0 0 24 24" aria-hidden="true">{PROP_ICON[v.k]}</svg><b>{v.t}</b><span>{v.d}</span></li>
-        ))}
-      </ul>
     </section>
   );
 }
@@ -104,7 +85,6 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
   return (
     <div id="ay-landing" className="ed ed-home hm hm-uq wl" ref={pageRef}>
       <Hero cta={cta} onSearch={onSearch} banner={home ? null : heroBanner} />
-      <Reasons />
       <HowItWorksDemo onStart={() => { trackLandingCta(`${cta.id}_demo`, 'web', cta.copy); cta.go?.(); }} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />
       <BrandBar onOpen={onViewWaitlist} />
       {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the

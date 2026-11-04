@@ -895,7 +895,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       surface="web" stepKey={step.id} sub={step.type === 'aboutYou' ? aboutPart : undefined} direction={direction} progress={progress}
       onBack={canBack ? back : null} onSkip={step.optional || step.type === 'topics' ? skip : null}
       title={view.title} helper={helperShort || (multi ? 'Pick all that apply' : '')} why={why}
-      lead={onboarding && index === 0 ? <MedicalNote className="qz-med-note" /> : null}
+      lead={onboarding && index === 0 && (step.type !== 'aboutYou' || aboutPart === 'age') ? <MedicalNote className="qz-med-note" /> : null}
       hint={!ready && !saving ? missingAnswerHint(hintId, intake) : null}
       cta={{ label: saving ? 'Saving…' : singleStep ? 'Save' : step.type === 'connect' ? (connectOpen ? 'I’m done, continue' : 'Not now') : isLast && phase === 'more' ? 'See my results' : 'Continue', onClick: next, disabled: !ready || saving }}
       below={<>

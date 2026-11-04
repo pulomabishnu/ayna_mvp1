@@ -344,7 +344,8 @@ html body .app-container .aq.aq--web .aq-title { max-width: none; margin: 0 0 12
 html body .app-container .aq.aq--web .aq-helper { justify-content: flex-start; text-align: left; margin: 0 0 32px; font-size: 17px; color: rgba(62, 39, 35, .78); }
 html body .app-container .aq.aq--web .aq-answer { padding: 0; background: transparent; border-radius: 0; }
 /* Answers: a lettered list. */
-html body .app-container .aq.aq--web .aq-chips { display: grid !important; grid-template-columns: minmax(0, 1fr); gap: 8px; max-width: 520px; counter-reset: aq-opt; }
+html body .app-container .aq.aq--web .aq-answer { counter-reset: aq-opt; }
+html body .app-container .aq.aq--web .aq-chips { display: grid !important; grid-template-columns: minmax(0, 1fr); gap: 8px; max-width: 520px; counter-reset: none; }
 html body .app-container .aq.aq--web .aq-chip { counter-increment: aq-opt; justify-content: flex-start; gap: 12px; min-height: 52px; padding: 8px 16px 8px 10px; border: 1.5px solid rgba(62, 39, 35, .35) !important; border-radius: 10px; background: rgba(255, 255, 255, .35); color: #3e2723; font: 500 17px/1.3 var(--aq-ui) !important; text-align: left; box-shadow: none; transition: background-color .15s var(--aq-ease), border-color .15s var(--aq-ease); }
 html body .app-container .aq.aq--web .aq-chip::before { content: counter(aq-opt, upper-alpha); flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 10px; border: 1.5px solid rgba(62, 39, 35, .35); background: #fffaf0; font: 700 13px/1 var(--aq-ui); }
 html body .app-container .aq.aq--web .aq-chip:hover:not(.is-on) { background: rgba(255, 255, 255, .7); border-color: #3e2723 !important; transform: none; }
@@ -366,7 +367,7 @@ html body .app-container .aq.aq--web .aq-foot { position: static !important; dis
 html body .app-container .aq.aq--web .aq-cta { width: auto; min-height: 52px; padding: 0 20px 0 24px; gap: 12px; border-radius: 999px; background: #3e2723; color: #ffedac; box-shadow: 0 3px 0 #f7badd; }
 html body .app-container .aq.aq--web .aq-cta > span { flex: none; font: 700 17px/1 var(--aq-ui); }
 html body .app-container .aq.aq--web .aq-cta > i { width: 24px; height: 24px; }
-html body .app-container .aq.aq--web .aq-cta:disabled { background: rgba(62, 39, 35, .12); color: rgba(62, 39, 35, .5); box-shadow: none; }
+html body .app-container .aq.aq--web .aq-cta:disabled { background: rgba(62, 39, 35, .2); color: rgba(62, 39, 35, .72); box-shadow: none; }
 html body .app-container .aq.aq--web .aq-foot::after { content: 'or press Enter ↵'; font: 500 14px/1 var(--aq-ui); color: rgba(62, 39, 35, .6); }
 html body .app-container .aq.aq--web .aq-hint { flex-basis: 100%; order: 2; text-align: left; }
 html body .app-container .aq.aq--web .aq-foot > :not(.aq-cta):not(.aq-hint) { flex-basis: 100%; order: 3; justify-self: start; text-align: left; }
@@ -379,3 +380,10 @@ html body .app-container .aq.aq--web .qz-med-note { margin: 0 0 24px; font-size:
   html body .app-container .aq.aq--web .aq-cta { width: 100%; justify-content: space-between; }
 }
 @media (hover: none) { html body .app-container .aq.aq--web .aq-foot::after { display: none; } }
+
+/* The extra rows under the short list ("More topics", "Nothing right now") line up with the options. */
+html body .app-container .aq.aq--web .aq-answer .qz-chips.is-small { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; max-width: 520px; margin-top: 8px; }
+html body .app-container .aq.aq--web .aq-answer .qz-chips.is-small > .aq-chips { margin: 0; }
+html body .app-container .aq.aq--web .aq-answer .qz-chip.is-dashed { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 16px 8px 10px; border: 1.5px dashed rgba(62, 39, 35, .45); border-radius: 10px; background: transparent; color: #3e2723; font: 500 17px/1.3 var(--aq-ui); text-align: left; cursor: pointer; }
+html body .app-container .aq.aq--web .aq-answer .qz-chip.is-dashed::before { content: '+'; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 10px; border: 1.5px dashed rgba(62, 39, 35, .45); font: 700 15px/1 var(--aq-ui); }
+html body .app-container .aq.aq--web .aq-answer .qz-chip.is-dashed:hover { border-color: #3e2723; background: rgba(255, 255, 255, .5); }

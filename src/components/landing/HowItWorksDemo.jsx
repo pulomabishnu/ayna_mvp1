@@ -2,73 +2,96 @@ import { useEffect, useRef, useState } from 'react';
 import './how-it-works-demo.css';
 
 /**
- * "Watch how it works" (founder, Nov 3: add an explainer video). A 24-second
- * animated walkthrough drawn in code, not a video file: four scenes of what
- * ayna does, in the app's own colours. It plays only while on screen, has a
- * pause button, and shows the four steps still for anyone who asks for
- * reduced motion. The words describe what the product does; the products in
- * it are generic (no brand, no claim).
+ * "How ayna works" (founder, Nov 3: "I still wouldn't understand, the video needs to be better,
+ * bring conversions"). Research (NN/g instructional video + auto-forwarding, WCAG 2.2.2,
+ * Perfit / Function Health): show the real result, keep it short, captions always on screen,
+ * play once and stop on the matches, a pause button, and steps you can click.
+ *
+ * Every screen is full of real ayna content: real catalog products and photos, the match % and
+ * the why line exactly as the engine gave them for this example (age 22, regular periods,
+ * cramps + trouble sleeping, medicines not answered yet, Nov 3 2026), the app's own words for
+ * a safety hold, and a MedlinePlus source. It is labelled as an example.
  */
 const SCENES = [
-  { k: 'ask', step: '1', t: 'Tell us how you feel', d: 'Answer 4 quick questions.' },
-  { k: 'match', step: '2', t: 'See your matches', d: 'Each one says why it fits you.' },
-  { k: 'safe', step: '3', t: 'Safe first', d: 'We check your medicines and allergies before you take anything.' },
-  { k: 'chat', step: '4', t: 'Ask anything', d: 'Get answers, and see where they come from.' },
+  { k: 'ask', t: 'Pick what you want help with', d: 'Cramps, sleep, heavy periods and more. 4 quick questions.' },
+  { k: 'match', t: 'See your matches', d: 'Each one shows a % and why it fits you.' },
+  { k: 'safe', t: 'We check safety first', d: 'If we need to know your medicines, we ask before showing it.' },
+  { k: 'chat', t: 'Ask anything', d: 'Answers show where they come from.' },
 ];
-const SCENE_MS = 6000;
+const MS = [4500, 6500, 5000, 5000];
+
+const MATCHES = [
+  { id: 'p-viboos-heating-pad', name: 'VIBOOS Electric Heating Pad', price: '$12.99', pct: 87 },
+  { id: 'p-portable-heating', name: 'Comfytemp Portable Heating Pad', price: '$30', pct: 87 },
+  { id: 'p-thermacare', name: 'ThermaCare Menstrual HeatWraps', price: '', pct: 85 },
+];
+const CHIPS = ['Cramps or period pain', 'Trouble sleeping', 'Heavy periods', 'PMS symptoms', 'Pelvic pain', 'Fatigue or low energy', 'Bloating', 'Brain fog'];
+const img = (id) => `/products/catalog/${id}.webp`;
 
 const motionOff = () => {
   try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return true; }
 };
 
+function Ring({ pct }) {
+  return <span className="hd-ring" style={{ '--p': pct }} aria-hidden="true"><b>{pct}%</b></span>;
+}
+
 function Screen({ k }) {
   if (k === 'ask') return (
-    <div className="hd-scr hd-scr--ask">
-      <p className="hd-q">How do you feel?</p>
+    <div className="hd-scr">
+      <p className="hd-meta">Question 3 of 4</p>
+      <p className="hd-q">What do you want help with?</p>
       <div className="hd-chips">
-        {['Cramps or period pain', 'Trouble sleeping', 'Bloating', 'Hot flashes'].map((c, i) => <span key={c} className={i === 0 ? 'is-pick' : ''} style={{ '--i': i }}>{c}</span>)}
+        {CHIPS.map((c, i) => <span key={c} className={i < 2 ? 'is-pick' : ''} style={{ '--i': i }}>{c}</span>)}
       </div>
-      <span className="hd-next">Next</span>
-      <span className="hd-tap" aria-hidden="true" />
+      <span className="hd-next">See my matches</span>
     </div>
   );
   if (k === 'match') return (
-    <div className="hd-scr hd-scr--match">
-      <p className="hd-q">Your matches</p>
-      {[['Heat patch', 'Strong fit', 'Made for period cramps'], ['Cramp balm', 'Good fit', 'Helps cramps. Nothing to swallow.']].map(([n, f, why], i) => (
-        <div key={n} className="hd-card" style={{ '--i': i }}>
-          <i className="hd-card__img" />
-          <span><b>{n}</b><em>{f}</em><small>{why}</small></span>
-        </div>
-      ))}
+    <div className="hd-scr">
+      <p className="hd-meta">Your matches</p>
+      <p className="hd-q">For your period cramps</p>
+      <ul className="hd-list">
+        {MATCHES.map((m, i) => (
+          <li key={m.id} style={{ '--i': i }}>
+            <span className="hd-tile"><img src={img(m.id)} alt="" loading="lazy" /></span>
+            <span className="hd-info"><b>{m.name}</b><small>Matches the period cramps you selected</small>{m.price && <em>{m.price}</em>}</span>
+            <Ring pct={m.pct} />
+          </li>
+        ))}
+      </ul>
+      <p className="hd-foot">How well it fits what you told us. Not the chance it will work.</p>
     </div>
   );
   if (k === 'safe') return (
-    <div className="hd-scr hd-scr--safe">
-      <p className="hd-q">Safe first</p>
+    <div className="hd-scr">
+      <p className="hd-meta">Before we show this one</p>
       <div className="hd-hold">
-        <b>Supplement for sleep</b>
-        <small>Tell us your medicines first.</small>
-        <span className="hd-hold__btn">Answer</span>
+        <span className="hd-tile is-big"><img src={img('p-evening-primrose')} alt="" loading="lazy" /></span>
+        <b>NOW Foods Evening Primrose Oil</b>
+        <span className="hd-tag">Safety hold · Match unavailable</span>
+        <small>We don’t know what medicines or supplements you take yet, and that decides whether this is safe for you.</small>
+        <span className="hd-next is-pink">Answer: Taking any medicines?</span>
       </div>
-      <div className="hd-shield" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.4 3 8.4 7 10 4-1.6 7-5.6 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></svg></div>
     </div>
   );
   return (
-    <div className="hd-scr hd-scr--chat">
-      <p className="hd-q">Ask ayna</p>
-      <span className="hd-bub is-me">Is a cup or a disc better for a heavy flow?</span>
-      <span className="hd-dots"><i /><i /><i /></span>
-      <span className="hd-bub">Here&rsquo;s what the research says.</span>
+    <div className="hd-scr">
+      <p className="hd-meta">Ask ayna</p>
+      <span className="hd-bub is-me">Does heat really help cramps?</span>
+      <span className="hd-bub">MedlinePlus lists heat on the lower belly as self-care for period cramps.</span>
+      <span className="hd-src"><b>Source</b>MedlinePlus · medlineplus.gov</span>
+      <span className="hd-prod"><span className="hd-tile"><img src={img('p-thermacare')} alt="" loading="lazy" /></span>ThermaCare HeatWraps<Ring pct={85} /></span>
     </div>
   );
 }
 
-export default function HowItWorksDemo({ onStart, startLabel = 'Sign up free', onViewHowItWorks }) {
+export default function HowItWorksDemo({ onStart, startLabel = 'Get my free matches', onViewHowItWorks }) {
   const ref = useRef(null);
   const [still] = useState(motionOff);
   const [scene, setScene] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [done, setDone] = useState(false);
   const [onScreen, setOnScreen] = useState(false);
 
   useEffect(() => {
@@ -79,27 +102,32 @@ export default function HowItWorksDemo({ onStart, startLabel = 'Sign up free', o
     return () => io.disconnect();
   }, []);
 
+  // Plays through once, then stays on the matches (no endless loop).
   useEffect(() => {
-    if (still || paused || !onScreen) return undefined;
-    const t = window.setTimeout(() => setScene((n) => (n + 1) % SCENES.length), SCENE_MS);
+    if (still || paused || done || !onScreen) return undefined;
+    const t = window.setTimeout(() => {
+      if (scene === SCENES.length - 1) { setScene(1); setDone(true); } else setScene((n) => n + 1);
+    }, MS[scene]);
     return () => window.clearTimeout(t);
-  }, [scene, still, paused, onScreen]);
+  }, [scene, still, paused, done, onScreen]);
 
-  const playing = !still && !paused && onScreen;
+  const playing = !still && !paused && !done && onScreen;
+  const replay = () => { setDone(false); setPaused(false); setScene(0); };
+  const cur = SCENES[scene];
   return (
     <section id="ay-demo" ref={ref} className={`hd${still ? ' is-still' : ''}`} aria-labelledby="hd-title">
       <div className="hd-in">
         <div className="hd-copy">
-          <p className="hd-kicker">It takes about a minute</p>
           <h2 id="hd-title" className="hd-title">How ayna works</h2>
+          <p className="hd-sub">Answer 4 questions. See what fits you, and why.</p>
           <ol className="hd-steps">
             {SCENES.map((s, i) => (
               <li key={s.k} className={!still && i === scene ? 'is-on' : ''}>
                 <button type="button" onClick={() => { setScene(i); setPaused(true); }} aria-current={!still && i === scene ? 'step' : undefined}>
-                  <span className="hd-n">{s.step}</span>
+                  <span className="hd-n">{i + 1}</span>
                   <span><b>{s.t}</b><small>{s.d}</small></span>
                 </button>
-                {!still && i === scene && <i className={`hd-bar${playing ? ' is-run' : ''}`} style={{ '--ms': `${SCENE_MS}ms` }} key={`${scene}-${paused}-${onScreen}`} aria-hidden="true" />}
+                {playing && i === scene && <i className="hd-bar is-run" style={{ '--ms': `${MS[scene]}ms` }} key={`${scene}`} aria-hidden="true" />}
               </li>
             ))}
           </ol>
@@ -107,16 +135,24 @@ export default function HowItWorksDemo({ onStart, startLabel = 'Sign up free', o
             {onStart && <button type="button" className="hd-start" onClick={onStart}>{startLabel}</button>}
             {onViewHowItWorks && <a className="hd-more" href="/how-it-works" onClick={(e) => { e.preventDefault(); onViewHowItWorks(); }}>How we match</a>}
           </div>
+          <p className="hd-note">Free. No card. About 1 minute.</p>
         </div>
-        {!still && (
+        {still ? (
+          <div className="hd-grid">
+            {SCENES.map((s) => <figure key={s.k} className="hd-phone is-small"><div className="hd-screen"><Screen k={s.k} /></div><figcaption>{s.t}</figcaption></figure>)}
+          </div>
+        ) : (
           <div className="hd-stage">
             <div className="hd-phone" aria-hidden="true">
-              <span className="hd-notch" />
-              <div className="hd-screen" key={scene}><Screen k={SCENES[scene].k} /></div>
+              <div className="hd-screen" key={scene}><Screen k={cur.k} /></div>
             </div>
-            <button type="button" className="hd-pause" onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Play the walkthrough' : 'Pause the walkthrough'}>
-              {paused ? <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5Z" /></svg> : <svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg>}
-            </button>
+            <p className="hd-cap" aria-live="polite"><b>{scene + 1}. {cur.t}.</b> {cur.d}</p>
+            <div className="hd-ctrl">
+              {done
+                ? <button type="button" className="hd-pause" onClick={replay}>Replay</button>
+                : <button type="button" className="hd-pause" onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Play the walkthrough' : 'Pause the walkthrough'}>{paused ? 'Play' : 'Pause'}</button>}
+              <span className="hd-len">20 sec · example for cramps and trouble sleeping</span>
+            </div>
           </div>
         )}
       </div>

@@ -94,7 +94,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     // Nov 3 CTA research: first person, says what you get, says free.
     expect(html).toMatch(/<button type="button" class="wl-cta" data-tour="landing-start">Get my free matches<svg/);
     expect(text(html)).toContain('Free. No card. About 1 minute.');
-    expect(html.match(/<li><svg/g)?.length).toBe(3);
+    expect(html.match(/<ul class="wl-ticks"/g)?.length).toBe(1);
     expect(html).toContain('href="#ay-demo"');
     expect(html).toContain('id="ay-demo"');
     expect(html).toContain('data-tour="landing-start"');
@@ -138,7 +138,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     const page = host.querySelector('#ay-landing');
     // Nov 3 (less crowded): no feature tiles and no reads/community block; 3 reasons on their own row; search sits with the products
     expect(page.querySelectorAll('.lb-bento').length).toBe(0);
-    expect(page.querySelectorAll('.wl-why li').length).toBe(3);
+    expect(page.querySelectorAll('.wl-ticks li').length).toBe(3);
     expect(page.querySelector('.lb .lb-search')).not.toBeNull();
     expect(page.querySelector('.wl-hero .wl-search, .wl-hero .wl-props')).toBeNull();
     expect(page.querySelector('.lb [role="group"]')).toBeNull();
