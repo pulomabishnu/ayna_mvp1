@@ -611,3 +611,32 @@ html body .app-container.app-container .aq.aq--web .aq-answer .qz-chip.is-dashed
 /* "None of these" / "Prefer not to say" are normal tiles too (no underline, same corner circle). */
 html body .app-container .aq.aq--web .aq-answer .aq-chip.is-muted:not(.is-on) { text-decoration: none; font-weight: 600; background: transparent !important; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .3) !important; }
 html body .app-container .aq.aq--web .aq-answer .aq-chip.is-muted:not(.is-on)::before { content: '' !important; display: block; border: 0 !important; background: #f6e3a1 !important; }
+
+/* ===== Nov 4, v5 (founder: "why are the things on the quiz so big"). Same inspo tiles, sized
+   like real onboarding answers (Typeform, Flo, Noom: one line of text, a 48-56px tap target):
+   2 per row, 56px tall, one calm butter fill for every answer, the picked one turns espresso
+   with a small pink check (the inspo's dark card). No patchwork of colours. ===== */
+html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) { gap: 8px; }
+html body .app-container .aq.aq--web .aq-answer :is(.aq-chip, .aq-row) { flex-direction: row; align-items: center; justify-content: space-between; min-height: 56px; padding: 10px 12px 10px 16px; border-radius: 16px !important; font: 600 15px/1.25 var(--aq-ui); background: #f6e3a1 !important; }
+html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):nth-child(4n + 1), html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):nth-child(4n + 4) { background: #f6e3a1 !important; }
+html body .app-container .aq.aq--web .aq-answer .aq-chip::before { position: static; order: 2; flex: none; width: 22px !important; height: 22px !important; margin-left: 12px; background: #ffedac !important; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .25) !important; }
+html body .app-container .aq.aq--web .aq-answer .aq-row .aq-dot { position: static; order: 2; width: 22px; height: 22px; margin-left: 12px; background: #ffedac; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .25); }
+html body .app-container .aq.aq--web .aq-answer :is(.aq-chip.is-on, .aq-chip[aria-checked='true'])::before, html body .app-container .aq.aq--web .aq-answer .aq-chip[role='radio'][aria-checked='true']::before { background-size: 14px !important; box-shadow: none !important; }
+html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) > :is(.aq-chip.is-on, .aq-chip[aria-checked='true'], .aq-row.is-on) { background: #3e2723 !important; color: #ffedac !important; }
+html body .app-container .aq.aq--web .aq-answer .aq-chip > svg { position: static; order: 1; margin: 0 0 0 auto; width: 16px; height: 16px; }
+html body .app-container .aq.aq--web .aq-answer .aq-chip > span { order: 0; }
+html body .app-container .aq.aq--web .aq-answer .aq-chip:hover:not(.is-on) { transform: none; background: #f2dc93 !important; }
+html body .app-container .aq.aq--web .aq-answer .aq-chip.is-muted:not(.is-on), html body .app-container .aq.aq--web .aq-answer .qz-chip.is-dashed, html body .app-container .aq.aq--web .aq-answer .qz-chips.is-small .aq-chip { min-height: 56px; padding: 10px 12px 10px 16px; flex-direction: row; align-items: center; justify-content: space-between; border-radius: 16px !important; font: 600 15px/1.25 var(--aq-ui); }
+html body .app-container .aq.aq--web .aq-answer .qz-chip.is-dashed::before { position: static; order: 2; width: 22px; height: 22px; font-size: 16px; }
+html body .app-container .aq.aq--web .aq-answer .aq-sub :is(.aq-chip, .aq-row) { min-height: 48px; font-size: 14px; }
+html body .app-container .aq.aq--web .qz-age .qz-age-top { padding: 12px 16px; }
+html body .app-container .aq.aq--web .qz-age output.qz-age-out:not(.is-empty) { font-size: 64px !important; }
+html body .app-container .aq.aq--web .aq-title { font-size: clamp(28px, 3.2vw, 36px) !important; }
+html body .app-container .aq.aq--web .aq-cta { min-height: 56px; max-width: 320px; border-radius: 18px; }
+html body .app-container .aq.aq--web .aq-cta > i { width: 44px; height: 44px; border-radius: 14px; }
+html body .app-container .aq.aq--web .aq-cta > span { padding-right: 44px; }
+@media (max-width: 899px) {
+  html body .app-container .aq.aq--web .aq-title { font-size: 26px !important; }
+  html body .app-container .aq.aq--web .aq-answer :is(.aq-chip, .aq-row) { min-height: 52px; font-size: 14px; }
+  html body .app-container .aq.aq--web .aq-cta { max-width: none; }
+}

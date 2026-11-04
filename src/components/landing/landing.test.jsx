@@ -88,23 +88,19 @@ describe('the raining cut-outs (a faded layer behind the hero)', () => {
 });
 
 describe('the website landing: the v2 home, optimized for desktop', () => {
-  it('hero (founder, Nov 4): what we do, the exact detail, 3 reasons, one "Sign up free" button and the walkthrough', () => {
+  it('hero: a centred title, search, Slide to start (welcome tip anchor) and the rain beside it', () => {
     const html = renderToStaticMarkup(<WebLanding onStartQuiz={() => {}} onViewHowItWorks={() => {}} />);
-    expect(text(html)).toContain('Women’s health products,'); expect(text(html)).toContain('matched to you.');
-    expect(html).toContain('class="wl-why"');
-    expect(html).toMatch(/class="wl-cta__btn"[^>]*>Sign up free/);
-    expect(text(html)).toContain('Free. No card. About 1 minute.');
+    expect(html).toContain('aria-label="Sign up free. Slide or tap to start."');
     expect(html).toContain('data-tour="landing-start"');
+    expect(html).toContain('class="lsx-search wl-search"');
     expect(html).toMatch(/class="lk-rainbox lk-rainbox--ink wl-rain" aria-hidden="true"/);
-    expect(text(html)).toContain('Watch how it works');
-    expect(html).toContain('id="ay-demo"');
+    expect(text(html)).toContain('How we match');
     // The website keeps the brown and pink bar, with its pause button; no box behind "your body.".
     expect(html).toContain('class="lk-bar"');
     expect(html).toContain('aria-label="Pause motion"');
     expect(html).not.toContain('<mark');
     const home = renderToStaticMarkup(<WebLanding signedIn hasProfile onGoHome={() => {}} onStartQuiz={() => {}} />);
-    expect(home).toMatch(/class="wl-cta__btn"[^>]*>Go to your Home/);
-    expect(home).not.toContain('id="ay-demo"');
+    expect(home).toContain('aria-label="Go to your Home. Slide or tap to start."');
   });
 
   it('keeps the website sections, the Pro teaser with Learn more to /pro, the founders and the medical note last', () => {
@@ -115,7 +111,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     vi.useRealTimers();
     const page = host.textContent;
     expect(page).toContain('Brands we work with');
-    expect(page).toContain('See how ayna works'); expect(page).toContain('Questions');
+    expect(page).toContain('What you can do on ayna');
     expect(page).toContain('What’s behind every match');
     expect(page).toContain('Quick reads, with sources');
     expect(page).toContain('More of ayna, when you want it.');
@@ -134,8 +130,8 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     vi.useRealTimers();
     const page = host.querySelector('#ay-landing');
     // five feature tiles, each with an icon circle; no chip switcher above the picks
-    expect(page.querySelectorAll('.lb-bento').length).toBe(0); // the walkthrough replaced the tiles (Nov 4)
-    expect(page.querySelectorAll('.wl-faq__item').length).toBe(5);
+    expect(page.querySelectorAll('.lb-bento > .lb-tile').length).toBe(5);
+    expect(page.querySelectorAll('.lb-bento .lb-ic').length).toBe(5);
     expect(page.querySelector('.lb [role="group"]')).toBeNull();
     // pink is an accent only below the hero: no full pink band, and no checker strip before the close
     expect(page.querySelectorAll('.ayb-band.is-pink').length).toBe(0);

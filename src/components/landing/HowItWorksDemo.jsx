@@ -2,55 +2,104 @@ import { useEffect, useRef, useState } from 'react';
 import './how-it-works-demo.css';
 
 /**
- * "How ayna works" (founder, Nov 4: "a demo video"). A real screen recording of ayna on a
- * phone: the landing page, Sign up free, the quiz, the 3 safety questions and the matches,
- * with captions in it. 47 seconds, no sound, 1.5 MB (public/videos/ayna-demo.mp4, made with
- * scripts/record-demo.cjs + ffmpeg). It plays muted when it scrolls into view and pauses when it
- * leaves; the three chapters jump to that part. Reduced motion: it doesn't autoplay.
+ * "Watch how it works" (founder, Nov 3: add an explainer video). A 24-second
+ * animated walkthrough drawn in code, not a video file: four scenes of what
+ * ayna does, in the app's own colours. It plays only while on screen, has a
+ * pause button, and shows the four steps still for anyone who asks for
+ * reduced motion. The words describe what the product does; the products in
+ * it are generic (no brand, no claim).
  */
-const CHAPTERS = [
-  { t: 0, label: 'Answer a few questions', d: 'What you want help with. About a minute.' },
-  { t: 26.5, label: '3 safety questions', d: 'Conditions, allergies and medicines, before any match.' },
-  { t: 38, label: 'See your matches', d: 'What fits you and why. Save them free.' },
+const SCENES = [
+  { k: 'ask', step: '1', t: 'Tell us how you feel', d: 'A few quick questions. About a minute.' },
+  { k: 'safe', step: '2', t: 'Safety first', d: '3 questions on medicines and allergies, before any match.' },
+  { k: 'match', step: '3', t: 'See your matches', d: 'Each one says why it fits you.' },
+  { k: 'chat', step: '4', t: 'Ask anything', d: 'Get answers, and see where they come from.' },
 ];
+const SCENE_MS = 6000;
 
 const motionOff = () => {
   try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return true; }
 };
 
+function Screen({ k }) {
+  if (k === 'ask') return (
+    <div className="hd-scr hd-scr--ask">
+      <p className="hd-q">How do you feel?</p>
+      <div className="hd-chips">
+        {['Cramps or period pain', 'Trouble sleeping', 'Bloating', 'Hot flashes'].map((c, i) => <span key={c} className={i === 0 ? 'is-pick' : ''} style={{ '--i': i }}>{c}</span>)}
+      </div>
+      <span className="hd-next">Next</span>
+      <span className="hd-tap" aria-hidden="true" />
+    </div>
+  );
+  if (k === 'match') return (
+    <div className="hd-scr hd-scr--match">
+      <p className="hd-q">Your matches</p>
+      {[['Heat patch', 'Strong fit', 'Made for period cramps'], ['Cramp balm', 'Good fit', 'Helps cramps. Nothing to swallow.']].map(([n, f, why], i) => (
+        <div key={n} className="hd-card" style={{ '--i': i }}>
+          <i className="hd-card__img" />
+          <span><b>{n}</b><em>{f}</em><small>{why}</small></span>
+        </div>
+      ))}
+    </div>
+  );
+  if (k === 'safe') return (
+    <div className="hd-scr hd-scr--safe">
+      <p className="hd-q">Safe first</p>
+      <div className="hd-hold">
+        <b>Supplement for sleep</b>
+        <small>Tell us your medicines first.</small>
+        <span className="hd-hold__btn">Answer</span>
+      </div>
+      <div className="hd-shield" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.4 3 8.4 7 10 4-1.6 7-5.6 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></svg></div>
+    </div>
+  );
+  return (
+    <div className="hd-scr hd-scr--chat">
+      <p className="hd-q">Ask ayna</p>
+      <span className="hd-bub is-me">Is a cup or a disc better for a heavy flow?</span>
+      <span className="hd-dots"><i /><i /><i /></span>
+      <span className="hd-bub">Here&rsquo;s what the research says.</span>
+    </div>
+  );
+}
+
 export default function HowItWorksDemo({ onStart, startLabel = 'Sign up free', onViewHowItWorks }) {
-  const box = useRef(null);
-  const vid = useRef(null);
-  const [now, setNow] = useState(0);
-  const [playing, setPlaying] = useState(false);
+  const ref = useRef(null);
+  const [still] = useState(motionOff);
+  const [scene, setScene] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [onScreen, setOnScreen] = useState(false);
 
   useEffect(() => {
-    const el = box.current; const v = vid.current;
-    if (!el || !v || typeof IntersectionObserver === 'undefined' || motionOff()) return undefined;
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
-    }, { threshold: 0.5 });
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting), { threshold: 0.35 });
     io.observe(el);
     return () => io.disconnect();
   }, []);
 
-  const at = CHAPTERS.reduce((a, c, i) => (now >= c.t ? i : a), 0);
-  const jump = (t) => { const v = vid.current; if (!v) return; v.currentTime = t; v.play().catch(() => {}); };
-  const toggle = () => { const v = vid.current; if (!v) return; if (v.paused) v.play().catch(() => {}); else v.pause(); };
+  useEffect(() => {
+    if (still || paused || !onScreen) return undefined;
+    const t = window.setTimeout(() => setScene((n) => (n + 1) % SCENES.length), SCENE_MS);
+    return () => window.clearTimeout(t);
+  }, [scene, still, paused, onScreen]);
 
+  const playing = !still && !paused && onScreen;
   return (
-    <section id="ay-demo" ref={box} className="hd hd--video" aria-labelledby="hd-title">
-      <div className="hd-v">
-        <div className="hd-v__copy">
-          <h2 id="hd-title" className="hd-title">See how ayna works</h2>
-          <p className="hd-v__sub">A real 45-second run through the app.</p>
-          <ol className="hd-v__ch">
-            {CHAPTERS.map((c, i) => (
-              <li key={c.label}>
-                <button type="button" className={i === at ? 'is-on' : ''} aria-current={i === at ? 'step' : undefined} onClick={() => jump(c.t)}>
-                  <span className="hd-n">{i + 1}</span>
-                  <span><b>{c.label}</b><small>{c.d}</small></span>
+    <section id="ay-demo" ref={ref} className={`hd${still ? ' is-still' : ''}`} aria-labelledby="hd-title">
+      <div className="hd-in">
+        <div className="hd-copy">
+          <p className="hd-kicker">It takes about a minute</p>
+          <h2 id="hd-title" className="hd-title">How ayna works</h2>
+          <ol className="hd-steps">
+            {SCENES.map((s, i) => (
+              <li key={s.k} className={!still && i === scene ? 'is-on' : ''}>
+                <button type="button" onClick={() => { setScene(i); setPaused(true); }} aria-current={!still && i === scene ? 'step' : undefined}>
+                  <span className="hd-n">{s.step}</span>
+                  <span><b>{s.t}</b><small>{s.d}</small></span>
                 </button>
+                {!still && i === scene && <i className={`hd-bar${playing ? ' is-run' : ''}`} style={{ '--ms': `${SCENE_MS}ms` }} key={`${scene}-${paused}-${onScreen}`} aria-hidden="true" />}
               </li>
             ))}
           </ol>
@@ -59,16 +108,17 @@ export default function HowItWorksDemo({ onStart, startLabel = 'Sign up free', o
             {onViewHowItWorks && <a className="hd-more" href="/how-it-works" onClick={(e) => { e.preventDefault(); onViewHowItWorks(); }}>How we match</a>}
           </div>
         </div>
-        <div className="hd-v__stage">
-          <div className="hd-v__phone">
-            <video ref={vid} src="/videos/ayna-demo.mp4" poster="/videos/ayna-demo-poster.jpg" muted playsInline loop preload="metadata"
-              aria-label="Screen recording: signing up, answering the quiz and the safety questions, and seeing matches on ayna"
-              onTimeUpdate={(e) => setNow(e.currentTarget.currentTime)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onClick={toggle} />
-            <button type="button" className={`hd-v__play${playing ? ' is-playing' : ''}`} onClick={toggle} aria-label={playing ? 'Pause the video' : 'Play the video'}>
-              {playing ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg> : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7L8 5Z" /></svg>}
+        {!still && (
+          <div className="hd-stage">
+            <div className="hd-phone" aria-hidden="true">
+              <span className="hd-notch" />
+              <div className="hd-screen" key={scene}><Screen k={SCENES[scene].k} /></div>
+            </div>
+            <button type="button" className="hd-pause" onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Play the walkthrough' : 'Pause the walkthrough'}>
+              {paused ? <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5Z" /></svg> : <svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg>}
             </button>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

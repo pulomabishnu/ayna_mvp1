@@ -78,9 +78,7 @@ function usePlayOnView() {
   return [ref, cls, state];
 }
 /* Section titles rise in as they reach the screen (once each). */
-// Nov 4 (audit): headings no longer fade up as they scroll in (anti-vibe checklist: no
-// fade-up on every section; it also left "This week's picks" invisible). Kept as a no-op so
-// callers don't change.
+// Nov 4 (audit): headings don't fade up as they scroll in (it left titles invisible). No-op so callers don't change.
 export function useRiseOnView() {}
 function CountUp({ n, play }) {
   const [v, setV] = useState(0);
