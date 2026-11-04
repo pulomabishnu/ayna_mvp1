@@ -63,7 +63,7 @@
 
 /* Small banner (website home hero): one row on desktop, stacked on phones. */
 .fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq--compact {
-  grid-template-columns: minmax(0, 1fr) !important; gap: 8px !important; margin: 0 0 24px !important; padding: 16px !important;
+  grid-template-columns: minmax(0, 1fr) !important; gap: 8px !important; margin: 0 auto 24px !important; padding: 16px !important;
   border-radius: 22px !important; box-shadow: none !important; max-width: 640px;
 }
 .fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq--compact h2 { font: 600 calc(var(--ay-fs-body) * var(--ayna-text-scale, 1))/1.25 var(--ay-sans) !important; }
