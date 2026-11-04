@@ -6,7 +6,9 @@ import { loadProFeatureRules, requestPro } from '../utils/proApi.js';
 import ProLock, { CheckerFrame, LockIcon } from './ProLock.jsx';
 import '../styles/pro-v4.css';
 
-function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosystem, children }) {
+// fallback(state): optional. Instead of the full-page lock (and the "Checking access" line),
+// render this page with state 'checking' or 'locked' (Home keeps its free parts, founder Nov 4).
+function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosystem, fallback = null, children }) {
   const owner = useRef(null);
   const [revision, setRevision] = useState(0);
   const [refresh, setRefresh] = useState(0);
@@ -89,6 +91,7 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
   }, [feature, readId, key, refresh]);
 
   if (result?.key === key && result.allowed) return children;
+  if (fallback) return fallback(result?.key === key ? 'locked' : 'checking');
 
   if (result?.key === key && result.choose) {
     const claim = async () => {

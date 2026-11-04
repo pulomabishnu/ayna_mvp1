@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import ProFeatureGate from './ProFeatureGate.jsx';
+import ProLock from './ProLock.jsx';
+import { Capacitor } from '@capacitor/core';
 import { buildDashboard } from '../health/dashboard.js';
 import { buildInsights } from '../health/insights.js';
 import { healthMatchContext } from '../health/matchContext.js';
@@ -276,9 +278,17 @@ function WebDayViews({ views }) {
   );
 }
 
-// The health dashboard is part of ayna Pro (founder, PR #87).
+// The health dashboard is part of ayna Pro (founder, PR #87). Without Pro, Home still shows
+// (Rundown, the day, check-ins) with one lock line for the health-data parts, never a full-page
+// paywall (founder, Nov 4: "i shud still see the dashboard and it shud just have that lock").
 export default function WebHealth(props) {
-  return <ProFeatureGate feature="dashboard" onEcosystem={props.onEcosystem}><WebHealthContent {...props} /></ProFeatureGate>;
+  const free = (state) => <WebHealthContent
+    {...props}
+    compact
+    health={{ status: 'ready', insightRows: [], connected: [], insights: { sections: [] } }}
+    intro={<>{state === 'locked' && <div className="ay-wh-prolock"><ProLock feature="dashboard" variant="inline" startFolded native={Capacitor.isNativePlatform()} /></div>}{props.intro}</>}
+  />;
+  return <ProFeatureGate feature="dashboard" onEcosystem={props.onEcosystem} fallback={free}><WebHealthContent {...props} /></ProFeatureGate>;
 }
 
 function WebHealthContent({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null, compact = false, aside = null, widgets = null }) {

@@ -146,3 +146,7 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-co
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead:has(.ay-wh-hello__dials) { max-width: 1160px; padding-right: 0 !important; grid-template-columns: minmax(0, 1fr) 520px !important; grid-template-areas: 'date dials' 'hi dials' 'days dials' !important; align-items: center; }
   html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh--today .ay-wh-hello__dials { justify-self: end; margin-top: 0; }
 }
+
+/* Home without Pro (founder, Nov 4): one lock line above the day, not a full-page paywall. */
+html body .app-container .ay-wh .ay-wh-prolock { width: 100%; max-width: 1160px; margin: 20px auto 12px; box-sizing: border-box; }
+@media (max-width: 1192px) { html body .app-container .ay-wh .ay-wh-prolock { padding: 0 16px; } }

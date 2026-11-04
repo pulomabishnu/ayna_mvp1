@@ -67,10 +67,11 @@ export function CheckerFrame({ className = '', square = 12, radius = 22, childre
  */
 export default function ProLock({
   feature, title, context = '', line, variant = 'page', onNotNow, native = false,
-  error = '', onRetry, children,
+  error = '', onRetry, children, startFolded = false,
 }) {
   const uid = useId();
-  const [folded, setFolded] = useState(false);
+  // startFolded: just the one-line lock (Home, founder Nov 4: "it shud jus thave that lock").
+  const [folded, setFolded] = useState(startFolded);
   const [localSheet, setLocalSheet] = useState(false);
   const [showInstall, setShowInstall] = useState(false);
   const name = title || proFeatureName(feature);

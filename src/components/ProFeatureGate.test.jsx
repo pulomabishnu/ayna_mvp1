@@ -72,3 +72,12 @@ it('signed out, a Read stays locked and offers ayna Pro, never opens or says try
   expect(host.textContent).not.toContain('try again');
   ctx.request.mockImplementation(original || (() => {}));
 });
+
+// Home (founder, Nov 4): without Pro the page still shows, with a lock line, not the full paywall.
+it('renders the fallback page instead of the full lock when one is given', async () => {
+  await act(async () => root.render(<ProFeatureGate feature="dashboard" fallback={(s) => <div>Free home {s}</div>}><div>Private dashboard</div></ProFeatureGate>));
+  expect(host.textContent).toBe('Free home locked');
+  ctx.status = { active: true };
+  await act(async () => window.dispatchEvent(new Event('focus')));
+  expect(host.textContent).toBe('Private dashboard');
+});
