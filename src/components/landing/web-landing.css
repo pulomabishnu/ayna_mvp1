@@ -328,3 +328,11 @@ html body .app-container #ay-landing.wl .lp-rc__in { display: grid; gap: 40px; }
   .app-container .hm.wl .lp-reads__row { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 72%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; margin-right: calc(var(--ay-margin, 16px) * -1); }
   .app-container .hm.wl .lp-reads__row > li { scroll-snap-align: start; }
 }
+/* Nov 4: the new title sits on two lines on a computer ("Women's health products," /
+   "matched to you."), the subheadline on one, nothing else added. */
+@media (min-width: 900px) {
+  .app-container .hm.wl .wl-hero__in { max-width: 760px; }
+  html body .app-container #ay-landing.wl.hm .wl-title.wl-title.wl-title.wl-title { font-size: 52px !important; white-space: nowrap; }
+  .app-container.app-container .hm.wl .wl-one { max-width: none; }
+  .app-container .hm.wl :is(.wl-sts, .wl-search) { max-width: 440px; }
+}

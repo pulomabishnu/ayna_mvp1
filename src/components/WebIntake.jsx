@@ -25,6 +25,9 @@ import ReadyReveal from './onboarding/ReadyReveal.jsx';
 import { QuizFrame, QuizBlock, Chips as KitChips, Rows as KitRows, SubQuestion, GlossaryCard } from './quiz/QuizKit.jsx';
 import { isShortHelper } from './quiz/quizText.js';
 import MedicalNote from './MedicalNote.jsx';
+import { trackQuizStep } from '../utils/funnelEvents.js';
+import { proNow } from '../pro/proDoor.js';
+import { rememberProReturn } from '../pro/paywall.js';
 import '../styles/onboarding.css';
 import './WebIntake.audit.css';
 // Questions whose options have a plain meaning on press-and-hold (glossary.js): the answers get data-tour="quiz-hold" and the quiz tip points there.
@@ -262,6 +265,9 @@ function webResumeStep(intake, id) {
 // Website first run (no intro card, onboarding audit #5): the seven setup screens (onboardingFlow.js) with age and
 // life stage on one screen, then health data, then the reveal.
 const ONBOARDING_ONLY = ['helpTopics', 'goals'];
+const SAFETY_IDS = ['conditions', 'allergies', 'medications'];
+/** The optional preference questions ("Answer N more questions"), without the health-data step or her name. */
+const isPrefStep = (s) => s?.obPart === 'more' && !SAFETY_IDS.includes(s.id) && !['connect', 'name', 'ready'].includes(s.id);
 // Minimum questions, health data, the reveal; then, only if she asks for it
 // ("Make my matches more personal"), the optional ones, and back to the reveal.
 function webOnboardingSteps(intake) {
@@ -269,11 +275,18 @@ function webOnboardingSteps(intake) {
     ? { ...s, title: 'About you', type: 'aboutYou', why: 'Some products are not meant for every age or stage, for example pregnancy-safe picks only, or midlife support. You can be in perimenopause and still have regular periods. Not sure, or rather not say? Those count too.' }
     : s), obPart }));
   // Starts at question 1: no intro card (onboarding audit #5).
+  // Nov 3: four screens, then her matches. Health data is offered after the
+  // safety questions, not before the reveal.
+  const more = web(getOnboardingSteps(intake, { part: 'more', surface: 'web' }), 'more');
+  const afterSafety = Math.max(0, more.findIndex((st) => !st.afterReveal || st.id === 'name'));
+  // Nov 4 (founder: "why would you save your matches then do safety, the order doesn't make
+  // sense"): the 3 safety questions come before the matches, so what she sees is already checked.
   return [
     ...web(getOnboardingSteps(intake, { part: 'core', surface: 'web' }), 'core'),
-    { id: 'connect', section: 'connect', type: 'connect', screen: 7, title: 'Connect health data', subtitle: 'Optional. Quick check-ins work too.', optional: true, required: false, obPart: 'core' },
+    ...more.slice(0, afterSafety),
     { id: 'ready', section: 'ready', type: 'ready', screen: 7, title: '', optional: false, required: false, obPart: 'core' },
-    ...web(getOnboardingSteps(intake, { part: 'more', surface: 'web' }), 'more'),
+    { id: 'connect', section: 'connect', type: 'connect', screen: 7, title: 'Connect health data', subtitle: 'Optional. Quick check-ins work too.', optional: true, required: false, obPart: 'more' },
+    ...more.slice(afterSafety),
   ];
 }
 
@@ -286,7 +299,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
     if (singleStep) return startAtStep;
     if (onboarding) {
       const draftId = savedDraft?.stepId ? webResumeStep({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId) : savedDraft?.stepId;
-      return draftId && webOnboardingSteps({ ...EMPTY, ...(savedDraft?.intake || {}) }).some((s) => s.id === draftId && s.id !== 'ready') ? draftId : 'name';
+      return draftId && webOnboardingSteps({ ...EMPTY, ...(savedDraft?.intake || {}) }).some((s) => s.id === draftId && s.id !== 'ready') ? draftId : 'age';
     }
     if (savedDraft?.stepId) return webResumeStep({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId);
     if (!initialSnapshot) return 'age';
@@ -352,6 +365,43 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const shownTotal = phase === 'more' ? steps.length : steps.filter((st) => !isFollowUp(st)).length;
   const shownIndex = phase === 'more' ? index + 1 : Math.max(1, steps.slice(0, index + 1).filter((st) => !isFollowUp(st)).length);
 
+  // Drop-off (Nov 3): which question is on screen (its name only, never an answer).
+  // Pro status for the health-data step: open only for Pro members or while Pro gates are off.
+  const [connectOpen, setConnectOpen] = useState(false);
+  useEffect(() => {
+    if (step.type !== 'connect') return undefined;
+    let live = true;
+    const check = () => proNow().then((st) => { if (live) setConnectOpen(Boolean(st && (st.active || !st.gates))); }).catch(() => {});
+    check();
+    window.addEventListener('focus', check);
+    return () => { live = false; window.removeEventListener('focus', check); };
+  }, [step.type]);
+  // Typeform-style keys (Nov 3): a letter picks that answer, Enter continues. Never while typing in a field.
+  const keyRef = useRef({ ready: false, next: null });
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || e.defaultPrevented) return;
+      const t = e.target;
+      if (t && (t.closest?.('input, textarea, select, [contenteditable="true"], [role="dialog"]'))) return;
+      if (e.key === 'Enter') {
+        if (t && t.closest?.('button, a')) return;
+        if (keyRef.current.ready && keyRef.current.next) { e.preventDefault(); keyRef.current.next(); }
+        return;
+      }
+      if (/^[a-z]$/i.test(e.key)) {
+        const opts = [...document.querySelectorAll('.aq--web .aq-answer .aq-chip')];
+        const btn = opts[e.key.toUpperCase().charCodeAt(0) - 65];
+        if (btn) { e.preventDefault(); btn.click(); }
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+  const viewedId = step.type === 'aboutYou' ? `aboutYou_${aboutPart}` : step.id;
+  useEffect(() => {
+    trackQuizStep({ stepId: viewedId, number: shownIndex, total: shownTotal, part: step.obPart === 'more' || phase === 'more' ? 'more' : 'core', surface: 'web' });
+  }, [viewedId]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Age and life stage share one screen here, so that screen checks both.
   const answerId = step.type === 'aboutYou' ? 'aboutYou' : step.id;
   const set = (key, value) => setIntake((prev) => ({ ...prev, [key]: value }));
@@ -385,21 +435,36 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
     if (index > 0) go(steps[index - 1].id, 'back');
     else if (phase === 'more') go(CHECKPOINT, 'back');
   };
-  // At most three breaks: before "What you are experiencing" and "For your safety", and before "Your preferences".
+  // Nov 3: the first 4 questions run straight through (a divider screen asked nothing and cost a tap).
+  // One break is left, before "Your preferences" in the optional part after the matches.
   const breakBefore = (from, to, list) => {
-    if (!to || to.screen === from.screen || to.obPart !== from.obPart || !(from.obPart === 'more' ? [5] : [3, 6]).includes(to.screen)) return null;
+    if (!to || to.screen === from.screen || to.obPart !== from.obPart || from.obPart !== 'more' || to.screen !== 5) return null;
     const label = ONBOARDING_SCREENS.find((sc) => sc.n === to.screen)?.label;
     return label ? { label, count: list.filter((st) => st.screen === to.screen && st.obPart === to.obPart).length, nextId: to.id } : null;
   };
   // After the six core questions: a checkpoint. In "more detail", the last step finishes.
   // Editing one answer from the summary returns to the summary.
   const [fromSummary, setFromSummary] = useState(false);
+  // Nov 3 (founder: "it says answer 3 safety questions but it's more than 3"): the results
+  // page starts either just the 3 safety questions, or just the preference questions;
+  // each one comes back to the results page when it's done.
+  const [moreScope, setMoreScope] = useState(null);
+  const [prefsDone, setPrefsDone] = useState(false);
   const advance = (answers = intake) => {
     if (singleStep) { finish(answers); return; }
     if (onboarding) {
       const list = webOnboardingSteps(answers);
       const at = list.findIndex((s) => s.id === step.id);
       if (step.id === 'ready') return;
+      if (moreScope === 'safety' && SAFETY_IDS.includes(step.id) && !SAFETY_IDS.includes(list[at + 1]?.id)) { setMoreScope(null); go('ready'); return; }
+      // Nov 4 (founder: "the extra questions didn't change my match"): the preference questions
+      // run straight through (no health-data step, no divider screens) and come back to the
+      // matches, which are rebuilt from the new answers.
+      if (moreScope === 'prefs') {
+        const nxt = list.slice(at + 1).find((s) => isPrefStep(s));
+        if (nxt) { go(nxt.id); return; }
+        setMoreScope(null); setPrefsDone(true); go('ready'); return;
+      }
       if (at >= 0 && at < list.length - 1) {
         const brk = breakBefore(step, list[at + 1], list);
         if (brk) { setDirection('forward'); setSectionBreak(brk); window.scrollTo({ top: 0 }); return; }
@@ -483,11 +548,39 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
           expand={{ [SOMETHING_ELSE]: <label className="ip-other-text"><span>Tell us in your own words</span><input value={intake.supportOtherText} maxLength={80} placeholder="For example, migraines" onChange={(e) => set('supportOtherText', e.target.value)} /></label> }} />
       </>;
       case 'goals': return <Chips label={step.title} items={GOALS} selected={intake.goals || []} onToggle={(v) => setIntake((prev) => ({ ...prev, goals: (prev.goals || []).includes(v) ? prev.goals.filter((x) => x !== v) : [...(prev.goals || []), v] }))} />;
-      case 'connect': return <>
-        <dl className="ay-qc-uses">
-          {['sleep', 'cycle', 'temperature', 'heart', 'activity'].filter((k) => CATEGORIES[k]).map((k) => <div key={k}><dt>{CATEGORIES[k].label}</dt><dd>Used {CATEGORIES[k].why.charAt(0).toLowerCase()}{CATEGORIES[k].why.slice(1)}</dd></div>)}
-        </dl>
-      </>;
+      // Nov 3 (founder): connecting health data takes three steps on the website: get ayna Pro
+      // (checkout brings her back here and the step ticks itself), get the iPhone app, then log in
+      // there with the same account and connect. Then she carries on here.
+      case 'connect': return <ol className="qz-conn">
+        <li className={connectOpen ? 'is-done' : 'is-now'}>
+          <span className="qz-conn__n" aria-hidden="true">{connectOpen ? '✓' : '1'}</span>
+          <div>
+            <b>Get ayna Pro</b>
+            {connectOpen ? <small>Done. You have ayna Pro.</small> : <>
+              <small>Health data is part of ayna Pro. After you pay, you come right back here.</small>
+              <button type="button" className="qz-conn__btn" onClick={() => { rememberProReturn('wearables'); window.location.href = '/pro'; }}>Get ayna Pro</button>
+            </>}
+          </div>
+        </li>
+        <li className={connectOpen ? 'is-now' : 'is-later'}>
+          <span className="qz-conn__n" aria-hidden="true">2</span>
+          <div>
+            <b>Get the ayna app on your iPhone</b>
+            <small>Scan this with your phone camera, or open the link on your iPhone. It installs through TestFlight, Apple’s app for beta apps.</small>
+            <div className="qz-conn__app">
+              <img src="/testflight-qr.svg" alt="QR code for the ayna iPhone app on TestFlight" width="132" height="132" />
+              <a className="qz-conn__link" href="https://testflight.apple.com/join/f3C9PypD" target="_blank" rel="noopener noreferrer">Open the TestFlight link<span className="sr-only"> (opens in a new tab)</span></a>
+            </div>
+          </div>
+        </li>
+        <li className="is-later">
+          <span className="qz-conn__n" aria-hidden="true">3</span>
+          <div>
+            <b>Log in and connect</b>
+            <small>In the app, log in with this same account. Go to You, then Health data, and connect Apple Health or Oura. Then come back here and continue.</small>
+          </div>
+        </li>
+      </ol>;
       // First run: her name is its own screen (critique, Oct 27).
       case 'name': return <label className="qz-name">
         <span>Your first name <small>Optional</small></span>
@@ -526,7 +619,9 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); next(); } }} />
         {zipError && <p className="qz-alert qz-zip-err" id="qz-zip-err" role="alert">{zipError}</p>}
       </div>;
-      case 'support': if (onboarding) {
+      // Nov 3: with no topic picked first (the new 4-question start), show the short
+      // "Common at your stage" list with More topics, not every group at once.
+      case 'support': if (onboarding && (intake.helpTopics || []).length) {
         const groups = supportGroupsForTopics(intake.helpTopics);
         const q = search.trim().toLowerCase();
         const known = new Set(groups.flatMap((g) => g.items));
@@ -548,7 +643,11 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       } else {
         const q = search.trim().toLowerCase();
         const known = new Set(SUPPORT_GROUPS.flatMap((g) => g.items));
-        const tailoredCommon = commonNeedOptions(intake, [...known], COMMON_NEEDS);
+        const stageCommon = commonNeedOptions(intake, [...known], COMMON_NEEDS);
+        // Nov 3: if she gets periods, cramps is always on the short list. (The research priors
+        // have a cramps row for 18-24 only, so 25+ never saw it; this is from her answer, not a rate.)
+        const getsPeriods = (intake.lifeStageSelections || []).some((x) => x === 'I get periods regularly' || x === 'My periods are irregular');
+        const tailoredCommon = getsPeriods && !stageCommon.includes('Cramps or period pain') ? ['Cramps or period pain', ...stageCommon].slice(0, 6) : stageCommon;
         const custom = intake.supportSelections.filter((i) => !known.has(i));
         return <>
           <Search value={search} onChange={setSearch} placeholder="Search, e.g. cramps, sleep, acne" />
@@ -708,12 +807,13 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
   const agePart = step.type === 'aboutYou' && aboutPart === 'age';
   const ready = step.type === 'connect' ? true : agePart ? requiredReady('age', intake) && !minorBlocked : step.id === 'zip' ? String(intake.zipcode || '').length > 0 : requiredReady(answerId, intake) && isStepAnswered(answerId, intake) && !minorBlocked;
+  keyRef.current = { ready: ready && !saving, next };
 
   // First run, last screen: the reveal. "See my Today" saves and opens Today.
   if (onboarding && step.type === 'ready') {
     const preview = mapIntakeToLegacyQuizProfile(buildSnapshot(intake));
     return <div className="ct qz-page" data-step="ready">
-      <ReadyReveal variant="web" answers={preview} signedIn={signedIn} onSeeToday={() => finish(intake, { land: 'today' })} onCreateAccount={() => finish(intake, { land: 'save' })} onBack={back} onMorePersonal={() => { const more = steps.find((s) => s.obPart === 'more'); if (more) go(more.id); }} />
+      <ReadyReveal variant="web" answers={preview} signedIn={signedIn} onSeeToday={() => finish(intake, { land: 'today' })} onWatchWrapped={() => finish(intake)} onCreateAccount={() => finish(intake, { land: 'save' })} onBack={back} onSafety={() => { const first = steps.find((s) => s.obPart === 'more' && SAFETY_IDS.includes(s.id) && !isStepAnswered(s.id, intake)) || steps.find((s) => SAFETY_IDS.includes(s.id)); setMoreScope('safety'); if (first) go(first.id); }} onMorePersonal={() => { const more = steps.find(isPrefStep); setMoreScope('prefs'); if (more) go(more.id); }} prefsDone={prefsDone} />
       {saveError && <p className="qz-alert">{saveError}</p>}
     </div>;
   }
@@ -766,10 +866,34 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
     </div>;
   }
 
-  const obProgress = onboarding ? onboardingProgress(step, step.obPart === 'more' ? 'more' : 'core', steps.filter((s) => s.obPart === (step.obPart === 'more' ? 'more' : 'core'))) : null;
+  const obProgress = (() => {
+    if (!onboarding) return null;
+    if (SAFETY_IDS.includes(step.id)) {
+      const n = SAFETY_IDS.indexOf(step.id) + 1;
+      return { now: n, total: SAFETY_IDS.length, label: `Safety question ${n} of ${SAFETY_IDS.length}` };
+    }
+    if (step.obPart === 'more' && moreScope) {
+      const list = steps.filter((s) => (moreScope === 'safety' ? s.obPart === 'more' && SAFETY_IDS.includes(s.id) : isPrefStep(s)));
+      const now = Math.max(1, list.findIndex((s) => s.id === step.id) + 1);
+      return { now, total: list.length, label: `${moreScope === 'safety' ? 'Safety question' : 'Question'} ${now} of ${list.length}` };
+    }
+    const part = step.obPart === 'more' ? 'more' : 'core';
+    const pr = onboardingProgress(step, part, steps.filter((s) => s.obPart === part && !SAFETY_IDS.includes(s.id)));
+    // The website shows age and life stage as two screens of one step: count them as two questions.
+    if (part === 'core' && steps.some((s) => s.type === 'aboutYou')) {
+      const total = pr.total + 1;
+      const now = step.type === 'aboutYou' ? (aboutPart === 'age' ? 1 : 2) : pr.now + 1;
+      // Nov 4 (founder: the counts weren't accurate). What she picks for help can add a
+      // follow-up (cramps, heavy periods, UTIs), so the total is only shown once it can't change.
+      const known = isStepAnswered('support', intake) && step.id !== 'support' && step.type !== 'aboutYou';
+      return { now, total, label: known ? `Question ${now} of ${total}` : `Question ${now}` };
+    }
+    return pr;
+  })();
   // About you shows as two screens on the website: age, then life stage (titles from the first-run question set).
   const view = step.type === 'aboutYou'
-    ? (aboutPart === 'age' ? { title: 'How old are you?', subtitle: '' } : { title: 'What life stage are you in right now?', subtitle: 'You can be in perimenopause and still have regular periods. Not sure is a fine answer.' })
+    ? (aboutPart === 'age' ? { title: 'How old are you?', subtitle: '' } : { title: 'Which of these is you right now?', subtitle: 'Not sure is OK.' })
+    : step.type === 'connect' ? { title: 'Connect your health data', subtitle: 'Optional. 3 steps, about 5 minutes.' }
     : { title: step.title, subtitle: step.subtitle };
   const multi = isMultiSelectStep(step) || (step.type === 'aboutYou' && aboutPart === 'stage');
   const helperShort = isShortHelper(view.subtitle) ? view.subtitle : '';
@@ -791,9 +915,9 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       surface="web" stepKey={step.id} sub={step.type === 'aboutYou' ? aboutPart : undefined} direction={direction} progress={progress}
       onBack={canBack ? back : null} onSkip={step.optional || step.type === 'topics' ? skip : null}
       title={view.title} helper={helperShort || (multi ? 'Pick all that apply' : '')} why={why}
-      lead={onboarding && index === 0 ? <MedicalNote className="qz-med-note" /> : null}
+      lead={onboarding && index === 0 && (step.type !== 'aboutYou' || aboutPart === 'age') ? <MedicalNote className="qz-med-note" /> : null}
       hint={!ready && !saving ? missingAnswerHint(hintId, intake) : null}
-      cta={{ label: saving ? 'Saving…' : singleStep ? 'Save' : isLast && phase === 'more' ? 'See my results' : 'Continue', onClick: next, disabled: !ready || saving }}
+      cta={{ label: saving ? 'Saving…' : singleStep ? 'Save' : step.type === 'connect' ? (connectOpen ? 'I’m done, continue' : 'Not now') : isLast && phase === 'more' ? 'See my results' : 'Continue', onClick: next, disabled: !ready || saving }}
       below={<>
         {saveError && <p className="aq-err">{saveError}</p>}
         {onboarding && index === 0 && onExplore && <button type="button" className="aq-link" onClick={onExplore}>Explore first</button>}
@@ -802,8 +926,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       answerProps={{ ...(HOLD_TIP_TYPES.has(step.type) && (step.type !== 'aboutYou' || aboutPart === 'stage') ? { 'data-tour': 'quiz-hold' } : {}), onPointerDown: startHold, onPointerUp: endHold, onPointerLeave: endHold, onPointerCancel: endHold, onPointerMove: (e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }, onClickCapture: swallow, onContextMenu: (e) => { if (hold.current.fired) e.preventDefault(); } }}
       overlay={glossary && <GlossaryCard term={glossary.term} definition={glossary.definition} onClose={() => setGlossary(null)} />}
     >
-      {multi && helperShort && <p className="aq-caption">Pick all that apply</p>}
-      {body()}
+            {body()}
     </QuizFrame>
   </div>;
 }

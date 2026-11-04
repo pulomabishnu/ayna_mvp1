@@ -132,14 +132,15 @@ const WHY_WEB = {
 // New first-run titles (sentence case, plain words). Step types and saved
 // fields stay those of intakeModel.js.
 const TITLES = {
-  support: { title: 'What are you experiencing right now?', subtitle: 'Pick everything that applies. You don’t need a diagnosis.' },
+  // Nov 3 (founder: "a 5 year old should be able to fill this out"): short, plain words.
+  support: { title: 'What do you want help with?', subtitle: 'Pick all that fit.' },
   periodFlow: { title: 'How heavy is your period flow?', subtitle: 'On a typical heavy day' },
-  periodPain: { title: 'How much do period cramps or pain affect your day?' },
+  periodPain: { title: 'How much do period cramps get in your way?' },
   ttcDuration: { title: 'How long have you been trying to get pregnant?' },
   pregnancyTrimester: { title: 'How far along is your pregnancy?' },
-  safety: { title: 'Is anything new or getting worse quickly?', subtitle: 'Symptoms that are new, severe or changing fast' },
+  safety: { title: 'Is anything new or getting worse fast?', subtitle: 'Like new pain, or something that feels very wrong.' },
   age: { title: 'How old are you?' },
-  lifeStage: { title: 'What life stage are you in right now?', subtitle: 'You can be in perimenopause and still have regular periods. Not sure is a fine answer.' },
+  lifeStage: { title: 'Which of these is you right now?', subtitle: 'Pick all that fit. Not sure is OK.' },
   formats: { title: 'Which kinds of products do you like using?' },
   priceRange: { title: 'What would you usually spend on one product?' },
   avoidIngredients: { title: 'Anything you want your products to avoid?', type: 'avoidOnly' },
@@ -207,14 +208,23 @@ export function getOnboardingSteps(intake, { part = 'all', surface = 'app' } = {
       }
     }
   }
-  const steps = out.map((s) => ({ ...s, safety: s.screen === 6 && s.required }));
-  // Team direction (sections 28, 29): the few questions needed for safe first
-  // matches come first, then the reveal; everything optional comes after it,
-  // behind "Make my matches more personal".
-  if (part === 'core') return steps.filter((s) => !s.optional);
-  if (part === 'more') return steps.filter((s) => s.optional);
+  const steps = out.map((s) => ({ ...s, safety: s.screen === 6 && s.required, afterReveal: AFTER_REVEAL.has(s.id) }));
+  // Nov 3 (founder: "onboarding too heavy"; 3 of 21 website visitors who started
+  // finished): four screens, then her matches. Her name and the three safety
+  // questions (conditions, allergies, medicines) come right after the reveal,
+  // first in "more". Nothing loosens: until they're answered, anything she
+  // takes is held ("needs information"), never shown as a match.
+  // The topic screen ("What would you like ayna to help you with?") only filtered the
+  // next screen and read like it; the matcher never used it. The first part is now
+  // 4 questions that all feed the matcher: age, life stage, what she wants help with
+  // (her needs), and the urgent check. Topics stay editable from her profile.
+  if (part === 'core') return steps.filter((s) => !s.optional && !s.afterReveal && s.id !== 'helpTopics');
+  if (part === 'more') return [...steps.filter((s) => s.afterReveal && s.id !== 'name'), ...steps.filter((s) => s.optional && !s.afterReveal), ...steps.filter((s) => s.id === 'name')];
   return steps;
 }
+
+/** Asked right after the reveal, not before it (Nov 3). */
+export const AFTER_REVEAL = new Set(['name', 'conditions', 'allergies', 'medications']);
 
 /** Screens in the first part, health data (7) last. */
 export const CORE_SCREENS = [1, 2, 3, 6, 7];

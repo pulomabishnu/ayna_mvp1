@@ -128,7 +128,8 @@ describe('ordering and tie-breaks', () => {
   });
 
   it('trust reweighting changes order among good products only', () => {
-    const base = { supportSelections: ['Cramps or period pain'] };
+    // Price isn't a factor here, so the skipped-budget price mix (Nov 4) doesn't thin the shelf.
+    const base = { supportSelections: ['Cramps or period pain'], priceRange: ['Price is not a major factor for me'] };
     const clinicalFirst = user({ ...base, trustRanking: ['Clinical or scientific evidence', 'Reviews and experiences from other women', 'Brand reputation or expert recommendations'], trustRankingTouched: true });
     const communityFirst = user({ ...base, trustRanking: ['Reviews and experiences from other women', 'Brand reputation or expert recommendations', 'Clinical or scientific evidence'], trustRankingTouched: true });
     const a = shelf(buildEcosystem(clinicalFirst, ALL_PRODUCTS, { picksPerNeed: 10 }), 'pain.menstrual_cramp');

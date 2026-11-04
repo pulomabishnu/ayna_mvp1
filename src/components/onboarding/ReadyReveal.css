@@ -120,3 +120,133 @@ html body .app-container.app-container.app-container.app-container.app-container
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-pro-invite h2 { margin: 6px 0 8px; font-family: var(--ay-font-display, 'Bricolage Grotesque', sans-serif); font-weight: 700; font-size: 24px; letter-spacing: -.015em; color: #3e2723; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-pro-invite > p { margin: 0 0 8px; color: #3e2723; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-pro-invite .ay-ob-quiet { display: inline-flex; padding: 0 !important; color: #3e2723 !important; text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: #f7badd; }
+
+/* Nov 3: the three safety questions, asked right after the reveal. Pink card
+   above the main button so it reads as the next step. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-safety { all: unset; box-sizing: border-box; cursor: pointer; display: grid; gap: 4px; width: 100%; padding: 14px 16px; border-radius: 18px; background: #f7badd; color: #3e2723; border: 1.5px solid #3e2723; text-align: left; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-safety b { font: 700 16px/1.25 var(--ay-font-ui, inherit); color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-safety small { font: 500 13px/1.35 var(--ay-font-ui, inherit); color: #3e2723; opacity: .85; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-safety:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
+
+/* Nov 3 (founder): every need the same size, no ranking; two big next steps right under the
+   matches (no empty gap), then two small links. Works on the espresso web card and the app. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready { justify-content: flex-start; }
+.app-container .ay-ob-ready.is-web.is-web { min-height: 0 !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__needs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__needs li { padding: 10px 16px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 16px/1.2 var(--o-sans, sans-serif); animation: ay-ob-rise 420ms ease-out both; animation-delay: calc(200ms + var(--i, 0) * 60ms); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__needs li::before { content: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-next { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 18px; max-width: 520px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__h { margin: 0 0 2px; font: 800 22px/1.2 var(--o-serif, sans-serif); color: var(--o-ink); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 14px 18px; border-radius: 22px; text-align: left; transition: transform .2s cubic-bezier(.34, 1.5, .64, 1); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn:hover { transform: translateY(-2px); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn:focus-visible { outline: 3px solid var(--o-ink); outline-offset: 3px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn.is-wrapped { background: #f7badd; color: #3e2723; box-shadow: 0 4px 0 #ffedac; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn.is-keep { background: #ffedac; color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn b { display: block; font: 800 18px/1.2 var(--o-sans, sans-serif); color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn small { display: block; margin-top: 3px; font: 500 14px/1.35 var(--o-sans, sans-serif); color: #3e2723; opacity: .85; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__ic { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__ic svg { width: 20px; height: 20px; fill: #ffedac; stroke: #ffedac; stroke-width: 0; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-keep .ay-ob-next__ic svg { fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn.is-wrapped .ay-ob-next__ic { animation: ay-ob-pulse 1.8s ease-in-out 1s 3; }
+@keyframes ay-ob-pulse { 50% { transform: scale(1.12); } }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 24px; margin-top: 4px; }
+@media (prefers-reduced-motion: reduce) { :is(.ayna-mobile, .app-container) .ay-ob-ready :is(.ay-ob-ready__needs li, .ay-ob-next__ic) { animation: none !important; } }
+
+/* Nov 3 v2: the count, what it's based on, one equal card per need, the main button and where her matches live. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-count { display: inline-block; padding: 0 .18em; border-radius: .2em; background: #f7badd; color: #3e2723; animation: ay-ob-pop .6s cubic-bezier(.2, 1.5, .4, 1) .2s both; }
+@keyframes ay-ob-pop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-ready__based { margin: -4px 0 0; font: 600 15px/1.4 var(--o-sans, sans-serif); color: var(--o-soft, currentColor); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs { display: grid; gap: 10px; margin-top: 8px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__h { margin: 0; font: 700 15px/1.3 var(--o-sans, sans-serif); color: var(--o-soft, currentColor); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+@media (min-width: 640px) { :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list > li { display: grid; align-content: start; gap: 10px; min-height: 112px; padding: 14px 16px !important; border-radius: 20px !important; background: #ffedac !important; color: #3e2723 !important; box-sizing: border-box; animation: ay-ob-rise 420ms ease-out both; animation-delay: calc(250ms + var(--i, 0) * 80ms); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list > li::before { content: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__top b { font: 800 17px/1.2 var(--o-sans, sans-serif); color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__top em { flex: none; padding: 4px 10px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 13px/1.2 var(--o-sans, sans-serif); font-style: normal; white-space: nowrap; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__top em.is-none { background: transparent; color: #3e2723; box-shadow: inset 0 0 0 1.5px #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__pics { display: flex; gap: 8px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__pics .ay-ob-match__plate { width: 52px !important; height: 52px !important; flex: none; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list small { font: 500 14px/1.4 var(--o-sans, sans-serif); color: #3e2723; opacity: .85; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 60px; padding: 0 24px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 800 19px/1 var(--o-sans, sans-serif); box-shadow: 0 4px 0 #ffedac; transition: transform .2s cubic-bezier(.34, 1.5, .64, 1); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main:hover { transform: translateY(-2px); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main:focus-visible { outline: 3px solid var(--o-ink); outline-offset: 3px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__where { margin: 0; text-align: center; font: 500 14px/1.4 var(--o-sans, sans-serif); color: var(--o-soft, currentColor); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__where b { color: var(--o-ink); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__h { margin: 6px 0 0; text-align: center; font: 700 14px/1 var(--o-sans, sans-serif); color: var(--o-soft, currentColor); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn.is-wrapped { background: #c9dceb; box-shadow: none; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn { min-height: 68px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-keep .ay-ob-next__ic svg[viewBox] path[d^="M12 3"] { fill: #ffedac; }
+@media (prefers-reduced-motion: reduce) { :is(.ayna-mobile, .app-container) .ay-ob-ready :is(.ay-ob-count, .ay-ob-needs__list > li) { animation: none !important; } }
+
+/* Nov 3 v3: one screen, a numbered checklist of next steps. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__title { font-size: clamp(34px, 6vw, 54px) !important; line-height: 1.02 !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list > li { min-height: 0; padding: 12px 14px !important; gap: 8px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__pics .ay-ob-match__plate { width: 44px !important; height: 44px !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-steps { display: grid; gap: 10px; margin-top: 14px; max-width: none; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__h { margin: 0; font: 800 22px/1.2 var(--o-serif, sans-serif); color: var(--o-ink); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__list { display: grid; gap: 10px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__list > li { display: flex; align-items: center; gap: 12px; padding: 0 !important; background: none !important; border: 0 !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__list > li::before { content: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__n { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--o-ink); color: var(--o-ink); font: 800 16px/1 var(--o-sans, sans-serif); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-done .ay-ob-steps__n { background: var(--o-ink); color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-done > span:last-child b { text-decoration: line-through; opacity: .7; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-done > span:last-child { color: var(--o-ink); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-done b { display: block; font: 700 16px/1.2 var(--o-sans, sans-serif); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-done small { font: 500 13px/1.2 var(--o-sans, sans-serif); opacity: .8; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-now .ay-ob-steps__n { background: #f7badd; border-color: #f7badd; color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn { all: unset; box-sizing: border-box; cursor: pointer; flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; padding: 12px 18px; border-radius: 18px; background: #ffedac; color: #3e2723; transition: transform .2s cubic-bezier(.34, 1.5, .64, 1); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-now .ay-ob-steps__btn { background: #f7badd; box-shadow: 0 4px 0 #ffedac; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn:hover { transform: translateY(-2px); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn:focus-visible { outline: 3px solid var(--o-ink); outline-offset: 3px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn b { display: block; font: 800 17px/1.2 var(--o-sans, sans-serif); color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn small { display: block; margin-top: 3px; font: 500 14px/1.35 var(--o-sans, sans-serif); color: #3e2723; opacity: .85; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn svg { flex: none; width: 22px; height: 22px; fill: none; stroke: #3e2723; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__wrapped { justify-self: center; }
+
+/* Nov 4 v2 (founder: "too many boxes", "crowding"): results on the page itself, same column
+   and left edge as the quiz. One headline, her needs as a plain list, one button. */
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web.is-web { max-width: 640px; margin: 0 auto; padding: 24px 24px 64px !important; border-radius: 0; background: transparent !important; color: #3e2723; --o-ink: #3e2723; --o-soft: rgba(62, 39, 35, .75); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-back { margin: 0 0 32px; width: 44px; height: 44px; border-radius: 10px; border: 1.5px solid rgba(62, 39, 35, .25); color: #3e2723 !important; background: transparent; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-ready__title { margin: 0 0 8px; color: #3e2723 !important; font-size: clamp(32px, 4vw, 44px) !important; line-height: 1.08 !important; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-count { padding: 0; background: none; color: inherit; animation: none; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-ready__based { margin: 0 0 32px; color: rgba(62, 39, 35, .75) !important; font: 500 15px/1.4 var(--o-sans, sans-serif); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs { gap: 8px; margin: 0 0 32px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__h { color: rgba(62, 39, 35, .75); font: 600 14px/1.3 var(--o-sans, sans-serif); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__list { grid-template-columns: minmax(0, 1fr); gap: 0; border-top: 1.5px solid rgba(62, 39, 35, .14); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__list > li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; min-height: 0; padding: 14px 0 !important; border-radius: 0 !important; border: 0 !important; border-bottom: 1.5px solid rgba(62, 39, 35, .14) !important; background: transparent !important; box-shadow: none !important; animation: none; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__top { display: grid; gap: 2px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__top b { font: 600 17px/1.3 var(--o-sans, sans-serif); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__top em, html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__top em.is-none { padding: 0; border-radius: 0; background: none; box-shadow: none; color: rgba(62, 39, 35, .75); font: 500 14px/1.3 var(--o-sans, sans-serif); font-style: normal; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__list small { flex-basis: 100%; color: rgba(62, 39, 35, .75); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__pics { display: flex; gap: 8px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.is-web .ay-ob-needs__pics > * { width: 48px; height: 48px; border-radius: 10px; box-shadow: none; border: 1.5px solid rgba(62, 39, 35, .12); }
+/* Next step: one button, one note, quiet links. */
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next { display: grid; justify-items: start; gap: 8px; max-width: none; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 20px 0 24px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 17px/1 var(--o-sans, sans-serif); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main:hover { background: #2c1b18; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__main svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__note { font: 500 14px/1.4 var(--o-sans, sans-serif); color: var(--o-soft, rgba(62, 39, 35, .75)); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__link { all: unset; cursor: pointer; margin-top: 8px; font: 600 15px/1.3 var(--o-sans, sans-serif); color: var(--o-ink, #3e2723); text-decoration: underline; text-underline-offset: 4px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__link + .ay-ob-next__link { margin-top: 0; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__link:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; border-radius: 4px; }
+.ayna-mobile .ay-ob-ready .ay-ob-next__main { background: #f7badd; color: #3e2723; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web #ay-ob-ready-h { margin: 0 0 8px !important; color: #3e2723 !important; -webkit-text-fill-color: #3e2723; font: 700 clamp(32px, 4vw, 44px)/1.08 var(--ay-font-display, sans-serif) !important; letter-spacing: -.02em !important; opacity: 1 !important; transform: none !important; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-back ~ #ay-ob-ready-h { margin-top: 0 !important; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-back { position: static !important; display: grid; place-items: center; margin: 0 0 32px !important; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-next { display: grid !important; justify-items: start; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-next__main { width: auto !important; justify-self: start; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-back { border-radius: 10px !important; }
+/* Founder, Nov 4: answering more has to stand out. One pink block under the save button. */
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; gap: 16px; width: 100%; margin-top: 24px; padding: 16px 20px; border-radius: 16px; background: #f7badd; color: #3e2723; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more > span { flex: 1; display: grid; gap: 4px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more b { font: 700 18px/1.25 var(--o-sans, sans-serif); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more small { font: 500 15px/1.4 var(--o-sans, sans-serif); color: rgba(62, 39, 35, .82); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more svg { flex: none; width: 40px; height: 40px; padding: 10px; box-sizing: border-box; border-radius: 999px; background: #3e2723; fill: none; stroke: #f7badd; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s ease; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more:hover svg { transform: translateX(3px); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-ready__actions { max-width: none !important; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-ready__updated { display: inline-flex; align-items: center; gap: 8px; margin: -16px 0 32px; padding: 8px 14px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 600 14px/1.3 var(--o-sans, sans-serif); }

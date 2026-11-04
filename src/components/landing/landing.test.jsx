@@ -90,7 +90,7 @@ describe('the raining cut-outs (a faded layer behind the hero)', () => {
 describe('the website landing: the v2 home, optimized for desktop', () => {
   it('hero: a centred title, search, Slide to start (welcome tip anchor) and the rain beside it', () => {
     const html = renderToStaticMarkup(<WebLanding onStartQuiz={() => {}} onViewHowItWorks={() => {}} />);
-    expect(html).toContain('aria-label="Get my matches. Slide or tap to start."');
+    expect(html).toContain('aria-label="Sign up free. Slide or tap to start."');
     expect(html).toContain('data-tour="landing-start"');
     expect(html).toContain('class="lsx-search wl-search"');
     expect(html).toMatch(/class="lk-rainbox lk-rainbox--ink wl-rain" aria-hidden="true"/);
@@ -138,7 +138,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page.querySelector('.wl-turn')).toBeNull();
     // the last ask repeats Slide to start, without a second welcome-tip anchor, then the note ends the page
     const end = page.querySelector('.lb-close .wlx-end');
-    expect(end.querySelector('.ay-sts__track').getAttribute('aria-label')).toBe('Get my matches. Slide or tap to start.');
+    expect(end.querySelector('.ay-sts__track').getAttribute('aria-label')).toBe('Sign up free. Slide or tap to start.');
     expect(page.querySelectorAll('[data-tour="landing-start"]').length).toBe(1);
     expect(page.querySelector('.lb-close').nextElementSibling).toBe(page.lastElementChild);
     // the founders photo stays

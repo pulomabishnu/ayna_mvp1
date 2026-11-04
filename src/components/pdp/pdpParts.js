@@ -44,16 +44,30 @@ export function splitShow(list, n = SHOW_FIRST) {
  * @returns {{kind:'pct', percent:number, why:string}
  *   | {kind:'hold', hold:object}
  *   | {kind:'evaluation', note:object, text:string}
+ *   | {kind:'browse', percent:number, why:string}
  *   | {kind:'none', text:string}
  *   | {kind:'quiz'}
  *   | null}
  */
+/** The one line under a browse fit: what it's for and why the number is what it is. */
+export function browseWhy(bf) {
+  const what = bf.phrase || 'what it’s for';
+  if (bf.kind === 'stage') return `For ${what}, which fits your life stage. You didn’t pick it, so it’s not one of your matches.`;
+  if (bf.kind === 'said_no') return `For ${what}. Your answers say you don’t have this.`;
+  return `For ${what}, which you didn’t pick. If you had, it would be a ${bf.fitIfPicked}% match.`;
+}
+
 export function matchLineState({ details = null, percent = null, hasProfile = false, why = '', fallback = '', canQuiz = false } = {}) {
   if (!hasProfile || !details || details.matchStatus === 'no-profile') return canQuiz ? { kind: 'quiz' } : null;
   if (isBleedingEvaluation(details)) return { kind: 'evaluation', note: details.bleedingEvaluation || null, text: details.bleedingEvaluation?.text || BLEEDING_EVALUATION };
   if (isSafetyHold(details) || details.eligibility === 'restricted') return { kind: 'hold', hold: details.safetyHold || null, text: MATCH_UNAVAILABLE };
   if (Number.isFinite(percent) && percent > 0) return { kind: 'pct', percent: Math.round(percent), why: why || fallback || '' };
   if (details.matchStatus === 'excluded') return { kind: 'none', text: exclusionLines(details)[0] || 'Not a fit right now' };
+  // Not for anything she picked, but scored as if she wanted help with what it's for (browse fit).
+  const bf = details.browseFit;
+  if (bf?.hold) return { kind: 'hold', hold: bf.safetyHold || null, text: MATCH_UNAVAILABLE };
+  if (bf?.notForStage) return { kind: 'none', text: bf.phrase ? `Made for ${bf.phrase}, which doesn’t fit your life stage.` : 'Not for your life stage.' };
+  if (bf && Number.isFinite(bf.percent) && bf.percent > 0) return { kind: 'browse', percent: Math.round(bf.percent), why: browseWhy(bf) };
   return { kind: 'none', text: 'No clear match for what you told us' };
 }
 

@@ -399,3 +399,20 @@ html body .app-container.app-container.app-container .ay-recalls .ay-recalls__mo
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-recalls :is(.ay-info-note__action, .ay-info-note__action strong) { color: var(--ay-fg) !important; background: none !important; }
 /* Section titles follow the theme on every account page (some pages pin --ay-text to espresso). */
 html body .app-container.app-container.app-container .ay-group__title { color: var(--ay-fg) !important; }
+
+/* Pricing link for signed-out phones on the landing (founder, Nov 3). Desktop has it in the menu. */
+.app-container.app-container .ay-nav__pricing { display: none; }
+@media (max-width: 899px) {
+  .app-container.app-container .ay-nav__pricing { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; color: var(--ay-text, #3e2723) !important; font: 600 14px/1 var(--ay-sans-stack, sans-serif); text-decoration: underline; text-underline-offset: 4px; white-space: nowrap; }
+}
+/* Signed-out phones on the landing: Saved has nothing in it yet, so the heart makes room for Pricing. */
+@media (max-width: 899px) {
+  .app-container.app-container .ay-nav__actions:has(.ay-nav__pricing) .ay-nav__heart { display: none !important; }
+}
+
+/* The main button in the desktop menu bar on the landing (Nov 3). Log in steps back to an outline. */
+.app-container.app-container .ay-nav__start { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; min-height: 44px; margin-left: 10px; padding: 0 20px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 15px/1 var(--ay-sans-stack, sans-serif); white-space: nowrap; }
+.app-container.app-container .ay-nav__start:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+.app-container.app-container .ay-nav__account:has(.ay-nav__start) { display: flex; align-items: center; }
+.app-container.app-container .ay-nav__account:has(.ay-nav__start) .ay-nav__login { background: transparent !important; color: inherit !important; border-color: currentColor !important; }
+@media (max-width: 899px) { .app-container.app-container .ay-nav__start { display: none !important; } }

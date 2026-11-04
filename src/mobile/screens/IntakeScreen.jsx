@@ -80,6 +80,7 @@ import {
   isMultiSelectStep,
 } from '../data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../data/intakeCatalog.js';
+import { trackQuizStep } from '../../utils/funnelEvents.js';
 import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../data/onboardingFlow.js';
 // Questions whose options have a plain meaning on press-and-hold (glossary.js): the answers get data-tour="quiz-hold" and the quiz tip points there.
 const HOLD_TIP_TYPES = new Set(['aboutYou', 'lifeStage', 'support', 'topics', 'conditions', 'allergies', 'formats', 'price', 'avoidOnly', 'wantOnly', 'fsaHsa']);
@@ -566,7 +567,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const [intake, setIntake] = useState(() => savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot));
   // A draft or deep link on a follow-up that moved under the life stage opens the life stage.
   const [draftStepId] = useState(() => (savedDraft?.stepId ? resumeStepId({ ...EMPTY, ...savedDraft.intake }, savedDraft.stepId) : ''));
-  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtStep && initialSnapshot ? resumeStepId(reconstructIntakeFromSnapshot(initialSnapshot), startAtStep) : null) || (flow === 'more' ? getOnboardingSteps(reconstructIntakeFromSnapshot(initialSnapshot), { part: 'more' })[0]?.id : null) || (onboarding ? (savedDraft && getOnboardingSteps({ ...EMPTY, ...savedDraft.intake }, { part: 'core' }).some((st) => st.id === draftStepId) ? draftStepId : 'name') : null) || draftStepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
+  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtStep && initialSnapshot ? resumeStepId(reconstructIntakeFromSnapshot(initialSnapshot), startAtStep) : null) || (flow === 'more' ? getOnboardingSteps(reconstructIntakeFromSnapshot(initialSnapshot), { part: 'more' })[0]?.id : null) || (onboarding ? (savedDraft && getOnboardingSteps({ ...EMPTY, ...savedDraft.intake }, { part: 'core' }).some((st) => st.id === draftStepId) ? draftStepId : (getOnboardingSteps({ ...EMPTY, ...(savedDraft?.intake || {}) }, { part: 'core' })[0]?.id || 'age')) : null) || draftStepId || (startAtOptional && initialSnapshot ? firstOptionalResumeStepId(reconstructIntakeFromSnapshot(initialSnapshot)) : startAtBeginning || !initialSnapshot ? 'age' : firstUnansweredStepId(reconstructIntakeFromSnapshot(initialSnapshot))));
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started (not
   // re-derived as answers change), so a step's flag clears only by actually
@@ -622,6 +623,10 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const currentIndex = Math.max(0, visibleSteps.findIndex((s) => s.id === stepId));
   const step = atCheckpoint ? { id: CHECKPOINT_STEP, section: 'checkpoint', title: '', type: 'checkpoint' } : (visibleSteps[currentIndex] || visibleSteps[0]);
   const isLast = currentIndex === visibleSteps.length - 1;
+  // Drop-off (Nov 3): which question is on screen (its name only, never an answer).
+  useEffect(() => {
+    if (step?.id) trackQuizStep({ stepId: step.id, number: currentIndex + 1, total: visibleSteps.length, part: onboarding && obPart === 'more' ? 'more' : phase === 'optional' ? 'more' : 'core', surface: 'app' });
+  }, [step?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   // Every screen is its own numbered step (age and life stage used to share
   // one "About you" number, so the count and bar stood still between them).
   const countedSteps = visibleSteps;
@@ -668,7 +673,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
   const goTo = (id, dir) => { setSearch(''); setZipError(''); setSectionBreak(null); setDirection(dir); setStepId(id); };
   // At most three breaks per quiz, named after the real first-run sections.
-  const BREAK_SCREENS = obPart === 'core' ? [3, 6] : obPart === 'more' ? [5] : [];
+  // Nov 3: none in the first 4 questions (a divider asked nothing and cost a tap).
+  const BREAK_SCREENS = obPart === 'more' ? [5] : [];
   const breakBefore = (from, to, list) => {
     if (!to || to.screen === from.screen || !BREAK_SCREENS.includes(to.screen)) return null;
     const label = ONBOARDING_SCREENS.find((sc) => sc.n === to.screen)?.label;

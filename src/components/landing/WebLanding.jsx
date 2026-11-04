@@ -11,6 +11,8 @@ import SlideToStart from '../ui/SlideToStart.jsx';
 import { Rain, HeroSearch, BrandBar } from './kit.jsx';
 import { useProStatus } from '../../pro/useProStatus.js';
 import './web-landing.css';
+import HowItWorksDemo from './HowItWorksDemo.jsx';
+import { trackLandingCta } from '../../utils/funnelEvents.js';
 
 /* The website's / (founder, Oct 27 10:40: "i liked how we had the website
  * ... optimize it for web"). The v2 website home is back, desktop-first, with
@@ -41,8 +43,8 @@ function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
         <Rain cols={4} onInk className="wl-rain" />
         <div className="wl-hero__in">
           {/* One promise on the website and the app (landing audit 4 and 9). */}
-          <h1 id="hm-hero-title" className="wl-title">Find what fits <span>your body.</span></h1>
-          <p className="wl-one">Your products, routine and health data, finally in one place.</p>
+          <h1 id="hm-hero-title" className="wl-title">Women’s health products, <span>matched to you.</span></h1>
+          <p className="wl-one">Take a 1-minute quiz. See what fits and why.</p>
           <SlideToStart className="wl-sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
           <HeroSearch onSearch={onSearch} className="wl-search" />
           <a className="wl-how" href="/how-it-works" onClick={(e) => { if (!onViewHowItWorks || !isPlainLeftClick(e)) return; e.preventDefault(); onViewHowItWorks(); }}>How we match<Arrow /></a>
@@ -67,11 +69,13 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
   const home = Boolean(signedIn && hasProfile && onGoHome);
   const cta = home
     ? { label: 'Go to your Home', slide: 'Slide to go to your Home', go: onGoHome }
-    : { label: 'Get my matches', slide: 'Slide to find your matches', go: onStartQuiz };
+    : { label: 'Sign up free', slide: 'Slide to sign up free', go: () => { trackLandingCta('sign_up_free', 'web', 'Sign up free'); onStartQuiz?.(); } }; // founder's brief: the button says Sign up free
   return (
     <div id="ay-landing" className="ed ed-home hm hm-uq wl" ref={pageRef}>
       <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />
       <BrandBar onOpen={onViewWaitlist} />
+      {/* Nov 4 (founder): the walkthrough on the iPhone, right under the hero. */}
+      {!home && <HowItWorksDemo onStart={cta.go} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />}
       {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the
           raining pictures and widgets, and use the original website for the rest). */}
       {/* Below the hero (./LandingBody.jsx): one calm butter page, then one espresso close. */}

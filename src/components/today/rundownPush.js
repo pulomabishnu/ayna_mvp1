@@ -12,16 +12,19 @@ import { addDays } from '../../health/dailyLog.js';
 import { localAt, scheduleTodayReminder } from '../../health/todayReminders.js';
 
 export const RUNDOWN_PUSH_KEY = 'ayna_rundown_push_v1';
-export const RUNDOWN_TIMES = ['07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+// Nov 3: any half hour from 5:00 am to 11:30 pm (default 8:00 am).
+export const RUNDOWN_TIMES = Array.from({ length: 38 }, (_, i) => { const m = 300 + i * 30; return `${String(Math.floor(m / 60)).padStart(2, '0')}:${m % 60 ? '30' : '00'}`; });
 export const DEFAULT_RUNDOWN_TIME = '08:00';
 export const PUSH_ASK_EVENT = 'ayna:push-ask';
 
 export function readRundownPush(storage = globalThis.localStorage) {
   try {
     const v = JSON.parse(storage?.getItem(RUNDOWN_PUSH_KEY) || 'null');
-    if (!v || typeof v !== 'object') return { answered: false, on: false, time: DEFAULT_RUNDOWN_TIME };
+    // Nov 3 (founder: daily, default 8 am): on unless she turns it off. In the app it still
+    // needs the phone's permission, asked in context; the website never books it by default.
+    if (!v || typeof v !== 'object') return { answered: false, on: true, time: DEFAULT_RUNDOWN_TIME };
     return { answered: Boolean(v.answered), on: Boolean(v.on), time: RUNDOWN_TIMES.includes(v.time) ? v.time : DEFAULT_RUNDOWN_TIME };
-  } catch { return { answered: false, on: false, time: DEFAULT_RUNDOWN_TIME }; }
+  } catch { return { answered: false, on: true, time: DEFAULT_RUNDOWN_TIME }; }
 }
 
 export function writeRundownPush(next, storage = globalThis.localStorage) {
@@ -45,6 +48,27 @@ export function bookTomorrow(today, time = DEFAULT_RUNDOWN_TIME, deps = {}) {
 /** After a Rundown opens: if she turned the notification on, book the next one. */
 export function rebookIfOn(today, storage = globalThis.localStorage) {
   const p = readRundownPush(storage);
-  if (!p.on) return null;
-  return bookTomorrow(today, p.time).catch(() => 'error');
+  // In the app: one repeating reminder on the phone (src/mobile/utils/localRundown.js). After
+  // her first Rundown is the moment to ask for permission (Apple HIG: ask in context).
+  return import('../../mobile/utils/localRundown.js').then(async ({ localRundownAvailable, syncRundownReminder }) => {
+    if (localRundownAvailable()) {
+      const status = await syncRundownReminder({ ask: !p.answered, pref: p });
+      if (!p.answered && status !== 'unavailable') writeRundownPush({ answered: true, on: status === 'scheduled' }, storage);
+      return status;
+    }
+    // Website: the server reminder only when she turned it on herself.
+    if (!p.on || !p.answered) return null;
+    return bookTomorrow(today, p.time).catch(() => 'error');
+  }).catch(() => null);
+}
+
+/** Settings: turn the reminder on or off, or change the time. Uses the phone's own reminder in the app. */
+export async function applyRundownPref(today, next, storage = globalThis.localStorage) {
+  const pref = writeRundownPush({ answered: true, ...next }, storage);
+  try {
+    const { localRundownAvailable, syncRundownReminder } = await import('../../mobile/utils/localRundown.js');
+    if (localRundownAvailable()) return syncRundownReminder({ ask: pref.on, pref });
+  } catch { /* fall through to the server reminder */ }
+  if (!pref.on) return 'off';
+  return bookTomorrow(today, pref.time).catch(() => 'error');
 }

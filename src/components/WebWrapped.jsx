@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { shownMatchPercent, PARTIAL_FIT } from '../utils/matchDisplay.js';
 import { createPortal } from 'react-dom';
-import { getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
+import { getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, getEcosystemSeedFromQuiz } from '../data/products.js';
 import { whyLine } from '../utils/whyLine';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
@@ -54,13 +54,20 @@ function Ring({ share = 1, children }) {
     <div className="ay-wr-ring__in">{children}</div>
   </div>;
 }
-// Little bars that grow in, one per match (the inspo's waveform).
-function Bars({ n }) {
-  return <span className="ay-wr-bars" aria-hidden="true">{Array.from({ length: Math.max(3, Math.min(14, n * 3)) }, (_, i) => <i key={i} style={{ '--h': `${30 + ((i * 37) % 70)}%`, '--i': i }} />)}</span>;
+// Nov 3 (founder: "like Spotify Wrapped", every category even): each slide is one
+// bold flat colour with big type on it (Spotify's "type as form"), the title
+// words land one at a time, and her number repeats as a pattern behind it.
+// Categories are all the same size and colour, in the order of her picks, never ranked.
+function Kinetic({ text, className = 'ays-title' }) {
+  const words = String(text || '').split(/\s+/).filter(Boolean);
+  return <h1 className={`${className} ay-wr-kin`} aria-label={text}>{words.map((w, i) => <span key={`${w}${i}`} aria-hidden="true" style={{ '--w': i }}>{w}</span>)}</h1>;
 }
-const TILE = ['is-pink', 'is-butter', 'is-blue', 'is-ink'];
+function TypeWall({ value }) {
+  if (value == null || value === '') return null;
+  return <div className="ay-wr-wall" aria-hidden="true">{Array.from({ length: 4 }, (_, r) => <span key={r} style={{ '--r': r }}>{Array.from({ length: 6 }, () => value).join(' ')}</span>)}</div>;
+}
 
-export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, moreTopics = [], guest = false, inline = false, careNote = null, percentFor = null, whyFor = null, emptyBack = null, counts = null }) {
+export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, guest = false, inline = false, careNote = null, percentFor = null, whyFor = null, emptyBack = null, counts = null }) {
   const picks = products.filter(Boolean);
   const first = picks[0];
   const intake = quizResults?.fullHealthIntake || null;
@@ -74,12 +81,23 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   // Founder, Oct 29: matches per category (animated), each with its top match
   // and "Show another" to swap it; more personal answers offered BEFORE the
   // story; the end says "See all your matches".
-  const byArea = areas.map((label) => ({ label, items: picks.filter((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label === label) }))
-    .sort((a, b) => b.items.length - a.items.length);
-  const maxArea = Math.max(1, ...byArea.map((a) => a.items.length));
+  // Nov 3: grouped by what she asked for help with (the matcher's needs, same as
+  // the results page), not by product type, so both screens tell one story.
+  const byNeed = (() => {
+    if (!quizResults) return [];
+    try {
+      const byId = new Map(picks.map((p) => [p.id, p]));
+      return (getEcosystemSeedFromQuiz(quizResults, healthProfile, matchOpts).shelves || [])
+        .map((sh) => ({ label: sh.label, items: (sh.productIds || []).map((id) => byId.get(id)).filter(Boolean) }))
+        .filter((g) => g.items.length);
+    } catch { return []; }
+  })();
+  const byArea = byNeed.length ? byNeed : areas.map((label) => ({ label, items: picks.filter((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label === label) }));
+  const groupWord = byNeed.length ? (byArea.length === 1 ? 'need' : 'needs') : (byArea.length === 1 ? 'area' : 'areas');
   const [swap, setSwap] = useState({});
   const slides = picks.length
-    ? [...(onPersonalize && moreQuestions > 0 ? ['more'] : []), 'intro', ...(byArea.length ? ['categories'] : []), 'match', ...(persona ? ['persona'] : []), 'finish']
+    // Nov 3: no "answer more questions" slide before the story; that choice is on the reveal and at the end.
+    ? ['intro', ...(byArea.length ? ['categories'] : []), 'match', ...(persona ? ['persona'] : []), 'finish']
     : ['empty'];
 
   // Back from the sign-up step reopens the story on its last slide.
@@ -97,7 +115,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
 
   const gest = useStoryGestures({ onPrev: prev, onNext: next, onClose });
   useEffect(() => {
-    if (paused || gest.held || last || reduced || active === 'more' || active === 'categories') return undefined;
+    if (paused || gest.held || last || reduced || active === 'categories') return undefined;
     const t = window.setInterval(() => {
       progressRef.current += 80 / DURATION;
       if (progressRef.current >= 1) { progressRef.current = 0; setProgress(0); setIndex((i) => Math.min(slides.length - 1, i + 1)); }
@@ -141,49 +159,33 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
         <section className="ays-card" key={active}>
           {active === 'intro' && <>
             {careNote}
+            <TypeWall value={counts ? counts.products : picks.length} />
             <div className="ays-visual"><Burst className="is-corner" />{counts
               // App: the same numbers, in the same words, as her Ecosystem hero (utils/ecosystemCounts).
               ? <Ring share={counts.needs > 0 ? counts.needsCovered / counts.needs : 1}><b><CountUp value={counts.products} on={active === 'intro'} reduced={reduced} /></b><small>{counts.products === 1 ? 'product' : 'products'}</small></Ring>
-              : <Ring share={Math.min(1, areas.length / Math.max(1, goals || areas.length))}><b><CountUp value={picks.length} on={active === 'intro'} reduced={reduced} /></b><small>{picks.length === 1 ? 'match' : 'matches'}</small></Ring>}</div>
+              : <Ring share={Math.min(1, byArea.length / Math.max(1, goals || byArea.length))}><b><CountUp value={picks.length} on={active === 'intro'} reduced={reduced} /></b><small>{picks.length === 1 ? 'match' : 'matches'}</small></Ring>}</div>
             <div className="ays-words">
               <p className="ays-kicker">Your ecosystem is ready</p>
-              <h1 className="ays-title">Your ayna, wrapped</h1>
+              <Kinetic text="Your ayna, wrapped" />
               {counts && counts.needs > 0 ? <p className="ay-wr-stat"><strong>{counts.needsCovered} of {counts.needs}</strong><span>{counts.needs === 1 ? 'need' : 'needs'} covered</span></p>
-              : <p className="ay-wr-stat"><strong>{areas.length}</strong><span>{areas.length === 1 ? 'area' : 'areas'}</span>{goals > 0 && <><i aria-hidden="true" /><strong>{goals}</strong><span>{goals === 1 ? 'goal' : 'goals'}</span></>}</p>}
-            </div>
-          </>}
-          {active === 'more' && <>
-            <div className="ays-visual"><Burst /></div>
-            <div className="ays-words">
-              <p className="ays-kicker">Before your summary</p>
-              <h1 className="ays-title">Make your matches more personal</h1>
-              <p className="ays-body">Your matches use what you’ve told us so far. {moreQuestions} quick {moreQuestions === 1 ? 'question' : 'questions'} sharpen them:</p>
-              {moreTopics.length > 0 && <ul className="ay-wr-topics">{moreTopics.slice(0, 6).map((t, i) => <li key={t} style={{ '--i': i }}>{t}</li>)}</ul>}
-              <p className="ays-body is-small">About 2 minutes. Skip any you like.</p>
-            </div>
-            <div className="ays-act">
-              <button type="button" className="ays-cta" onClick={onPersonalize}>Answer {moreQuestions} quick {moreQuestions === 1 ? 'question' : 'questions'}</button>
-              <div className="ay-wr-secondary"><button type="button" className="ays-link" onClick={next}>Not now, show my summary</button></div>
+              : <p className="ay-wr-stat"><strong>{byArea.length}</strong><span>{groupWord}</span></p>}
             </div>
           </>}
           {active === 'categories' && <>
-            <div className="ays-words"><p className="ays-kicker">Your matches by category</p></div>
-            <ol className="ay-wr-bento">{byArea.slice(0, 4).map((a, i) => {
+            <div className="ays-words"><p className="ays-kicker">What we found for you</p><Kinetic text={`${picks.length} ${picks.length === 1 ? 'match' : 'matches'} for ${byArea.length} ${groupWord}`} /></div>
+            <ul className={`ay-wr-even is-n${Math.min(byArea.length, 6)}`}>{byArea.slice(0, 6).map((a, i) => {
               const at = (swap[a.label] || 0) % a.items.length;
               const p = a.items[at];
-              return <li key={a.label} className={TILE[i % TILE.length]} style={{ '--d': `${i * 110}ms` }}>
-                <div className="ay-wr-bento__top">
-                  <span className="ay-wr-bento__label">{a.label}</span>
-                  {p && plate(p, 'ay-wr-bento__plate')}
-                </div>
-                <strong className="ay-wr-bento__n"><CountUp value={a.items.length} on={active === 'categories'} reduced={reduced} /><small>{a.items.length === 1 ? 'match' : 'matches'}</small></strong>
-                <Bars n={a.items.length} />
-                {p && <p className="ay-wr-bento__pick" key={p.id}><span>Top match</span><b>{p.name}</b></p>}
-                {a.items.length > 1 && <button type="button" className="ay-wr-bento__swap" onClick={() => setSwap((m) => ({ ...m, [a.label]: (m[a.label] || 0) + 1 }))} aria-label={`Show another ${a.label} match`}>Show another</button>}
+              return <li key={a.label} style={{ '--d': `${i * 120}ms` }}>
+                {p && plate(p, 'ay-wr-even__plate')}
+                <span className="ay-wr-even__label">{a.label}</span>
+                <strong className="ay-wr-even__n"><CountUp value={a.items.length} on={active === 'categories'} reduced={reduced} /> {a.items.length === 1 ? 'match' : 'matches'}</strong>
+                {a.items.length > 1 && <button type="button" className="ay-wr-even__swap" onClick={() => setSwap((m) => ({ ...m, [a.label]: (m[a.label] || 0) + 1 }))} aria-label={`Show another ${a.label} match`}>Show another</button>}
               </li>;
-            })}</ol>
+            })}</ul>
           </>}
           {active === 'match' && first && <>
+            <TypeWall value={pct != null ? `${pct}%` : '#1'} />
             <div className="ays-visual">
               <div className="ay-wr-hero">
                 {plate(first)}
@@ -192,12 +194,12 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
             </div>
             <div className="ays-words">
               <p className="ays-kicker">Your #1 match</p>
-              <h1 className={`ays-title${String(first.name || '').length > 40 ? ' is-long' : ''}`}>{first.name}</h1>
+              <Kinetic text={first.name} className={`ays-title${String(first.name || '').length > 40 ? ' is-long' : ''}`} />
               {(first.brand || firstWhy) && <p className="ays-body">{[first.brand, firstWhy].filter(Boolean).join(' · ')}</p>}
             </div>
           </>}
           {active === 'persona' && persona && <>
-            <div className="ays-words"><p className="ays-kicker">How you shop</p><h1 className="ays-title">{persona.title}</h1></div>
+            <div className="ays-words"><p className="ays-kicker">Your shopping style</p><Kinetic text={persona.title} /></div>
             <dl className="ay-wr-facts">{persona.facts.map(([l, v]) => <div key={l}><dt>{l}</dt><dd>{v}</dd></div>)}</dl>
           </>}
           {active === 'finish' && <>
@@ -207,13 +209,14 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
                 <strong className="ay-wr-card-title">{persona?.title || 'My ecosystem'}</strong>
                 <ul>
                   <li><span>Picks</span><b>{picks.length}</b></li>
-                  <li><span>Areas</span><b>{areas.slice(0, 2).join(', ') || areas.length}</b></li>
+                  {/* The card people screenshot and share: product types only, never her needs (health data). */}<li><span>Areas</span><b>{areas.slice(0, 2).join(', ') || areas.length}</b></li>
                   {first && <li><span>#1 match</span><b>{first.name}</b></li>}
                 </ul>
               </div>
             </div>
             <div className="ays-act">
               <button type="button" className="ays-cta" onClick={onPrimary || onClose}>{primaryLabel}</button>
+              {onPersonalize && moreQuestions > 0 && <button type="button" className="ays-link ay-wr-better" onClick={onPersonalize}>Make my matches better · {moreQuestions} quick {moreQuestions === 1 ? 'question' : 'questions'}</button>}
               <div className="ay-wr-secondary">
                 <button type="button" className="ays-link" onClick={share} aria-describedby="wrapped-invite-note">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" /></svg>

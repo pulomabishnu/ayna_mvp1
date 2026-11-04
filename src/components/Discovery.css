@@ -67,3 +67,24 @@
 /* Nov 2 audit: the selected chip is painted pink by the theme (pink = selected),
    so its text is espresso, not butter (butter on pink was unreadable). */
 html body .app-container .ay-shopfilters__chips button.is-on { color: var(--legacy-ink, #3e2723) !important; }
+
+/* Nov 4 (founder: consolidate the filters, easy to read): five folding sections. The heading
+   row says what's inside (or how many are on); chips are one size everywhere, including the
+   Leave out chips. */
+.app-container .ay-shopfilters__sec { border-bottom: 1.5px solid rgba(62, 39, 35, .14); }
+.app-container .ay-shopfilters__sec summary { display: grid; grid-template-columns: auto auto 1fr auto; align-items: center; gap: 4px 10px; min-height: 64px; cursor: pointer; list-style: none; }
+.app-container .ay-shopfilters__sec summary::-webkit-details-marker { display: none; }
+.app-container .ay-shopfilters__sec summary > span:first-child { font: 700 17px/1.25 var(--ay-sans); color: #3e2723; }
+.app-container .ay-shopfilters__sec summary small { grid-column: 1 / 4; grid-row: 2; margin: -6px 0 12px; font: 400 14px/1.3 var(--ay-sans); color: rgba(62, 39, 35, .7); }
+.app-container .ay-shopfilters__on { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 12px/1 var(--ay-sans); box-sizing: border-box; }
+.app-container .ay-shopfilters__sec summary i { grid-column: 4; grid-row: 1; position: relative; width: 28px; height: 28px; border-radius: 999px; background: #f6e3a1; }
+.app-container .ay-shopfilters__sec summary i::before { content: ''; position: absolute; left: 50%; top: 45%; width: 8px; height: 8px; margin: -5px 0 0 -4px; border-right: 2px solid #3e2723; border-bottom: 2px solid #3e2723; transform: rotate(45deg); transition: transform .2s ease; }
+.app-container .ay-shopfilters__sec[open] summary i::before { transform: rotate(-135deg); margin-top: -1px; }
+.app-container .ay-shopfilters__sec summary:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; border-radius: 10px; }
+.app-container .ay-shopfilters__secbody { display: grid; gap: 16px; padding: 0 0 20px; }
+.app-container .ay-shopfilters__sub { margin: 0 0 8px; font: 600 13px/1.2 var(--ay-sans); color: rgba(62, 39, 35, .7); }
+.app-container .ay-shopfilters__chips button { min-height: 40px; padding: 0 14px; font-size: 14px !important; }
+.app-container .ay-shopfilters__row .ayshop__avoid { margin: 0; }
+.app-container .ay-shopfilters__row .ayshop__avoid :is(button, label) { min-height: 40px; font-size: 14px; border-radius: 999px; }
+/* The browse fit line on a product page: same pill, a calmer line. */
+.app-container .ayv-match.is-browse .ayv-match__why { color: rgba(62, 39, 35, .8); }

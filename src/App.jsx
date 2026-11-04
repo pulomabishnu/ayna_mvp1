@@ -194,6 +194,7 @@ import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
 import { MAIN_TABS, TabIcon, AskMark, ProfileMark } from './components/nav/tabs.jsx';
 import { WEB_TOP_TABS, YOU_SECTIONS, YOU_SECTION_ALIASES } from './components/nav/mainTabs.js';
+import { trackLandingCta, landingCtaCopy, CTA_COPY } from './utils/funnelEvents.js';
 import YouTabs from './components/you/YouTabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
@@ -398,6 +399,7 @@ PATH_TO_VIEW['/comparison'] = 'comparison'; // old Compare address; /compare?ids
 PATH_TO_VIEW['/'] = 'welcome';
 // Old Shop URL keeps working (bookmarks, shared links); it is replaced on load.
 PATH_TO_VIEW['/discovery'] = 'discovery';
+PATH_TO_VIEW['/services'] = 'explore-services'; // typed or shared /services opened the 404 page (audit, Nov 4)
 // Campaign invite links: /join?ref=<code>. The code is stored first-touch
 // (badges.js) before the URL is tidied to '/', then the visitor lands on home.
 PATH_TO_VIEW['/join'] = 'welcome';
@@ -1909,10 +1911,10 @@ function App() {
       if (toSave) {
         // "Save these matches" on the reveal: her matches are already on
         // screen; the account is only for keeping them (onboarding audit).
+        // Nov 3 (founder: "it shouldn't let you leave until you make an account"): the sign-up
+        // opens over the results page; closing it leaves her there, not on the matches page.
         markOnboardingDone();
-        setQuizResults(completedResults);
         guestTodayRef.current = false;
-        setCurrentView('ecosystem');
         setShowAuthModal(true);
         return;
       }
@@ -2617,6 +2619,8 @@ function App() {
                 <span>{t.label}</span>
               </a>
             ))}
+            {/* Founder, Nov 3: a Pricing link in the menu. /pro is the Free vs Pro page. */}
+            <a href="/pro" className="ay-nav__link ay-nav__pricing-link"><span>Pricing</span></a>
           </div>
 
           {currentView === 'quiz' && (
@@ -2639,6 +2643,8 @@ function App() {
                 {savedCount > 0 && <span className="ay-heart-count" aria-hidden="true">{savedCount > 99 ? '99+' : savedCount}</span>}
               </a>
             )}
+            {/* Phones hide the menu links, so signed-out visitors on the landing get Pricing here. */}
+            {!user && ['welcome', 'hero'].includes(currentView) && <a href="/pro" className="ay-nav__pricing">Pricing</a>}
             {/* Signed out on the landing: Log in stays in the header on phones too (QA, Oct 25). */}
             <div ref={accountMenuRef} className={`ay-nav__account${!user && ['welcome', 'hero'].includes(currentView) ? ' is-landing-guest' : ''}`}>
               {user ? (
@@ -2674,6 +2680,11 @@ function App() {
                 >
                   Log in
                 </button>
+                {/* Nov 3 (CTA research): on the desktop landing, the main button is also in the menu bar,
+                    so it's there whenever the bar comes back on scroll up. Phones keep Log in only. */}
+                {['welcome', 'hero'].includes(currentView) && (
+                  <button type="button" className="ay-nav__start" onClick={() => { const c = landingCtaCopy(); trackLandingCta('start_quiz_nav', 'web', c); handleStartQuiz(); }}>{CTA_COPY[landingCtaCopy()]}</button>
+                )}
                 </>
               )}
               {showAccountMenu && user && (
@@ -2854,6 +2865,7 @@ function App() {
               <EcosystemPreview
                 products={ALL_PRODUCTS}
                 matches={guestPreview?.products || []}
+                results={guestPreview?.results || null}
                 onBuild={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
                 onSignIn={() => { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); }}
                 onSave={() => {
@@ -3183,6 +3195,7 @@ function App() {
           <EcosystemPreview
             products={ALL_PRODUCTS}
             matches={guestPreview?.products || []}
+            results={guestPreview?.results || null}
             onBuild={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
             onSignIn={() => { setPendingAction('ecosystem'); pendingActionRef.current = 'ecosystem'; setShowAuthModal(true); }}
             onSave={() => {

@@ -448,3 +448,47 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh.ay-w
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-rundown-setting .ay-today__primary { border: 0 !important; background: #3e2723 !important; color: #ffedac !important; box-shadow: 3px 3px 0 #f7badd !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-rundown-setting .ay-today__primary { background: #ffedac !important; color: #3e2723 !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-rundown-setting .ay-today__text { border: 1.5px solid currentColor !important; background: transparent !important; color: inherit !important; }
+
+/* Nov 3 Rundown card: one column (headline, glance tiles, rows, then the button), the "…" menu top right. */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card { grid-template-columns: minmax(0, 1fr); row-gap: 12px; padding: 24px !important; border-radius: 20px !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card h2 { font: 700 24px/1.2 var(--ay-font-display) !important; padding-right: 40px; }
+@media (min-width: 900px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card h2 { font-size: 30px !important; } }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__go { grid-column: 1 !important; grid-row: auto; justify-self: start; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card > .ay-menu, html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card > [class*='item-menu'], html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card > .is-rundown { position: absolute; top: 16px; right: 16px; grid-column: 1; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance li { padding: 14px 16px; border-radius: 16px; background: rgba(255, 237, 172, .1); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance b { font: 700 28px/1 var(--ay-font-display) !important; color: #ffedac !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance span { font: 500 13px/1.35 var(--ay-font-ui) !important; color: rgba(255, 237, 172, .8) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-rows li { font: 500 16px/1.35 var(--ay-font-ui) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-rows li span { font: 500 13px/1.2 var(--ay-font-ui) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-connect { max-width: 520px; }
+/* Nov 3 v2 (her favourite inspo: pastel tiles on the dark card, big numbers, a small visual each). */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance li { position: relative; display: grid; align-content: end; gap: 4px; min-height: 132px; padding: 16px; border-radius: 16px; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance li.is-cycle { background: #f7badd; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance li.is-sleep { background: #c9dceb; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance li.is-checkins { background: #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance b { font: 700 30px/1 var(--ay-font-display) !important; color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance span:not(.ay-rd-ring):not(.ay-rd-moon) { font: 600 13px/1.3 var(--ay-font-ui) !important; color: rgba(62, 39, 35, .78) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-ring { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 999px; background: conic-gradient(#3e2723 calc(var(--p) * 360deg), rgba(62, 39, 35, .15) 0); -webkit-mask: radial-gradient(circle, transparent 11px, #000 12px); mask: radial-gradient(circle, transparent 11px, #000 12px); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-moon { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 999px; box-shadow: inset -9px -3px 0 0 #3e2723; transform: rotate(-20deg); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-dots { position: absolute; top: 18px; right: 14px; display: flex; gap: 4px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-dots i { width: 8px; height: 22px; border-radius: 999px; background: rgba(62, 39, 35, .18); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-dots i.is-on { background: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-rows { border-top: 0; display: grid; gap: 8px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-rows li { padding: 12px 14px; border: 0; border-radius: 16px; background: rgba(255, 237, 172, .08); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card > :is(.ay-rd-glance, .ay-rd-rows, .ay-rd-connect) { width: 100%; max-width: none; justify-self: stretch; box-sizing: border-box; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__card { grid-template-columns: minmax(0, 1fr) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)) !important; }
+@media (max-width: 480px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance li { min-height: 116px; padding: 14px; } html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance b { font-size: 26px !important; } }
+@media (max-width: 480px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance li { padding-top: 60px; } html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-dots { right: auto; left: 14px; } html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh :is(.ay-rd-ring, .ay-rd-moon) { right: auto; left: 14px; } }
+/* Nov 3 v3: ayna colours only (espresso card, pink and butter tiles, white only behind a product photo, sky as a chart line). */
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance li.is-sleep { background: #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance li.is-checkins { background: #ffedac; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance li.is-cycle + li.is-sleep + li.is-checkins { background: #f7badd; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-glance li { min-height: 150px; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-rows li { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: none; border: 1px solid rgba(255, 237, 172, .25) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-rows li p { margin: 0; display: grid; gap: 2px; color: #ffedac; font: 600 15px/1.3 var(--ay-font-ui); }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-rows__shelf { flex: none; width: 52px; height: 52px; border-radius: 10px; background: #fff; border: 1.5px solid #3e2723; object-fit: contain; padding: 4px; box-sizing: border-box; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-hero__go { justify-self: stretch !important; width: 100%; text-align: left; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-connect { border-style: dashed !important; border-color: rgba(255, 237, 172, .4) !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-rd-connect__line { flex: none; width: 52px; height: 24px; fill: none; stroke: #769ebe; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }

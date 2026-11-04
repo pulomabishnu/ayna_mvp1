@@ -197,7 +197,7 @@ function Folder({ title, tone = '', children, id, icon = '', className = '' }) {
 const TIER_LEVEL = { credible: 'gov', paper: 'peer', brand: 'brand', community: 'people' };
 function KindTag({ kind }) {
   const lv = TIER_LEVEL[kind?.tier];
-  const label = kind?.tier === 'credible' ? 'Checked against .gov' : kind?.label;
+  const label = kind?.tier === 'credible' ? 'Government health site' : kind?.label;
   if (!label) return null;
   return <>{lv && <EvidenceMark level={lv} />}{label}</>;
 }
@@ -604,7 +604,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     <div className="ayv-stack">
       {ex.sources.length > 0 && (
         <div className="ayq-srcs">
-          <h4 className="ayq-subh" id="ayq-clin-src">.gov health sources <span className="ayq-count">{ex.sources.length}</span></h4>
+          <h4 className="ayq-subh" id="ayq-clin-src">Where this comes from <span className="ayq-count">{ex.sources.length}</span></h4>
           <ShowAll items={ex.sources} className="ayq-srcgrid is-compact ayv-srclist" label="sources" render={(s) => <SourceBody s={s} />} itemClass={(s) => `ayq-src${s.negative ? ' is-negative' : ''}`} />
         </div>
       )}
@@ -624,14 +624,14 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         <>
           {/* No named clinician: say so plainly, then ayna's own clinical summary, labelled. */}
           {/* One status sentence, then the content (audit 7.6 / 9.1: it used to say "no clinician" three ways). */}
-          <p className="ayv-empty">No clinician has reviewed this yet. Here’s ayna’s summary of the guidance.</p>
+          <p className="ayv-empty">No doctor has reviewed this yet. Here’s what health guides say, in short.</p>
           <section className="ayv-box" aria-label="ayna’s clinical summary">
-            {ex.attribution && <p className={ex.synthesis ? 'ayq-meta' : 'ayq-byline'}>{ex.synthesis ? <>Note on file: <Tx>{ex.attribution}</Tx></> : <><b>Who wrote this:</b> <Tx>{ex.attribution}</Tx></>}</p>}
+            {ex.attribution && <p className={ex.synthesis ? 'ayq-meta' : 'ayq-byline'}>{ex.synthesis ? <Tx>{ex.attribution}</Tx> : <><b>Who wrote this:</b> <Tx>{ex.attribution}</Tx></>}</p>}
             {ex.opinion.length > 0 && <ReadShelf list={ex.opinion} label="The full expert view" leadIn />}
           </section>
         </>
       )}
-      {ex.note.length > 0 && <Folder id="ayq-more-clinical" title="More clinical context" icon="stethoscope"><ReadShelf list={ex.note} label="More clinical context" /><p className="ayq-meta">From the clinical guidance in the sources.</p></Folder>}
+      {ex.note.length > 0 && <Folder id="ayq-more-clinical" title="More from health guides" icon="stethoscope"><ReadShelf list={ex.note} label="More from health guides" /></Folder>}
       {ex.sourceSummary && (
         <Folder id="ayq-clin-sum" title="What the linked sources say">
           <p className="ayq-p"><Tx>{ex.sourceSummary.text}</Tx></p>

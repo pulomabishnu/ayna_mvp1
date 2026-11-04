@@ -96,6 +96,9 @@ const RENAMED_LABELS = [
   'Some links earn ayna a commission. It never changes your matches.', // app disclosure is the website's one line now; "Partnerships never change this score." sits in Why N%?
   'App or online', // a fact chip above the name (removed, audit 7.2); Format says "Virtual care service"
   'Explore', // the breadcrumb's first crumb is the Shop tab now (tab renames, Oct 26)
+  // Nov 3 (founder: plain words on the Clinical opinion tab; UI labels only, the attribution text itself stays).
+  'No clinician has reviewed this yet. Here’s ayna’s summary of the guidance.',
+  'More clinical context', 'From the clinical guidance in the sources.',
   'What’s included and details', 'Works with:', 'Check with a clinician first', 'Possible side effects', 'Also worth knowing', 'Downsides to know', 'Label and regulatory facts', 'Labels on file', 'Privacy',
 ];
 const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r === c : r.test(c)));
@@ -124,7 +127,8 @@ describe('product page keeps every piece of information', () => {
         const after = flat(html[surface]);
         for (const c of before[p.id][surface]) {
           if (renamed(c)) continue;
-          if (!present(after, c)) missing.push(`${p.id} ${surface}: ${c}`);
+          // Nov 3: the "Note on file:" label was dropped; the attribution after it must still be there.
+          if (!present(after, c.replace(/^Note on file: /, ''))) missing.push(`${p.id} ${surface}: ${c}`);
         }
       }
     }

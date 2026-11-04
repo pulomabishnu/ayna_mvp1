@@ -28,24 +28,40 @@ export default function UrgentSigns({ product, flags = null, compact = false }) 
     const had = sources.find((x) => x.url === f.source_url);
     if (had) had.title = `${had.title}; ${t}`; else sources.push({ url: f.source_url, publisher: sourceName(f.source_url), title: t });
   }
-  return (
-    <section className={`ay-urgent${compact ? ` is-compact is-n${list.length}` : ''}`} aria-label="When to get help now">
-      {compact ? (
-        <div className="ay-urgent__head">
-          <h3 className="ay-urgent__h">When to get help now</h3>
-          <SourcesButton items={sources} title="Sources for these signs" />
-        </div>
-      ) : <h3 className="ay-urgent__h">When to get help now</h3>}
+  const groups = [...new Set(list.map((f) => (/toxic_shock/.test(f.id) ? 'toxic shock' : /postpartum/.test(f.id) ? 'after birth' : 'pregnancy')))];
+  const body = (
+    <>
       <ul className="ay-urgent__list">
         {list.map((f) => (
           <li key={f.id}>
             <p className="ay-urgent__what"><b>{what(f)}</b> for {condition(f)}:</p>
-            <ul className="ay-urgent__signs">{f.signs.map((s) => <li key={s}>{us(s)}</li>)}</ul>
+            <ul className="ay-urgent__signs">{f.signs.map((x) => <li key={x}>{us(x)}</li>)}</ul>
             {!compact && <a className="ay-urgent__src" href={f.source_url} target="_blank" rel="noopener noreferrer">Source: {sourceName(f.source_url)}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a>}
           </li>
         ))}
       </ul>
       {list.some((f) => /psychosis/.test(f.id)) && <p className="ay-urgent__note">Thoughts of harming yourself? Call or text 988, any time.</p>}
+    </>
+  );
+  // Product page (founder, Nov 3: the always-open box was huge on things like a lip balm):
+  // one clear line that opens the full list. Every sign and source is still on the page.
+  if (compact) return (
+    <details className={`ay-urgent is-compact is-fold is-n${list.length}`} aria-label="When to get help now">
+      <summary className="ay-urgent__sum">
+        <span className="ay-urgent__ic" aria-hidden="true">!</span>
+        <span><b>When to get help now</b><small>Warning signs for {groups.join(' and ')}</small></span>
+        <span className="ay-urgent__chev" aria-hidden="true" />
+      </summary>
+      <div className="ay-urgent__body">
+        <div className="ay-urgent__head"><SourcesButton items={sources} title="Sources for these signs" /></div>
+        {body}
+      </div>
+    </details>
+  );
+  return (
+    <section className="ay-urgent" aria-label="When to get help now">
+      <h3 className="ay-urgent__h">When to get help now</h3>
+      {body}
     </section>
   );
 }

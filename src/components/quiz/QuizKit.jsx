@@ -64,6 +64,7 @@ export function QuizFrame({
         </header>
         <div className="aq-scroll">
           <div className="aq-slide" key={`${stepKey}-${sub || ''}`}>
+            {progress?.label && <p className="aq-count">{progress.label}</p>}
             {flag && <p className="aq-flag">{flag}</p>}
             <h1 className="aq-title">{title}</h1>
             {(helper || whyItems.length > 0) && (

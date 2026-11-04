@@ -20,7 +20,7 @@ import { DATA_RULES, deltaCard, periodCard, periodStatus, sleepCard, stepsCard }
 
 export const CATEGORY_RANK = {
   // Her data comes right after safety and care (founder, Oct 24 23:29).
-  safety: 1, data: 2, goal: 3, change: 4, symptom: 5, pattern: 6, education: 7, match: 8, saved: 9, community: 10, win: 11,
+  safety: 1, data: 2, goal: 3, change: 4, symptom: 5, pattern: 6, education: 7, match: 8, complement: 8.5, saved: 9, community: 10, win: 11,
 };
 export const CATEGORIES = Object.keys(CATEGORY_RANK);
 // Ranking heuristics, not clinical thresholds.
@@ -339,6 +339,12 @@ export function buildRundown(input = {}) {
     // flashes), her best match for a goal she picked herself. Never filler.
     const best = rank(matches.filter((m) => strong(m) && wanted.has(m.needId))) || (wanted.size ? null : rank(matches.filter((m) => strong(m) && m.needSignal !== 'weak' && (input.needLabels || {})[m.needId])));
     if (best) add({ key: `match:${best.product.id}`, category: 'match', kind: 'match', kicker: 'Matched to you', title: matchTitle(best, decision?.debug?.needs || {}, input.needLabels || {}), match: best, followUps: [`Why is ${best.product.name} my match?`] });
+  }
+
+  // 7b. Goes with what she owns (src/matching/complements.js): one a day, never next to care.
+  if (!hasCare) {
+    const cp = (input.complements || []).find((c) => c?.product?.id && shownOn(memory, `complement:${c.product.id}`, today, 1) === 0) || (input.complements || [])[0];
+    if (cp?.product?.id) add({ key: `complement:${cp.product.id}`, category: 'complement', kind: 'complement', kicker: 'New for your ecosystem', title: `Goes with your ${cp.parent.name}`, product: cp.product, parent: cp.parent, line: cp.line, note: cp.note, sources: cp.sources || [], followUps: [`Do I need the ${cp.product.name}?`] });
   }
 
   // 8. Saved: something she saved at least a few days ago.
