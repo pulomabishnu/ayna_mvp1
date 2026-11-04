@@ -93,6 +93,8 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     const member = renderToStaticMarkup(<WebLanding signedIn hasProfile onGoHome={() => {}} onStartQuiz={() => {}} />);
     for (const html of [guest, member]) {
       expect(html).toContain('id="ay-demo"');
+      // Server rendering uses reduced motion: the phone should still be present, just not animated.
+      expect(html).toContain('class="hd-phone"');
       expect(html).toContain('How ayna works');
       expect(html).toContain('Take the quiz');
       expect(html).toContain('Get matched');
