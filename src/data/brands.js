@@ -2038,7 +2038,7 @@ export const BRAND_PRODUCTS = [
         name: 'Proov Clinical: F.A.S.T. Method, Path to Pregnancy',
         brand: 'Proov',
         category: 'telehealth',
-        type: 'physical',
+        type: 'digital',
         internal: false,
         healthFunctions: ['fertility', 'telehealth'],
         tags: ['fertility', 'irregular'],
