@@ -30,7 +30,7 @@
 .app-container .gb-qty button:disabled { opacity: .35; cursor: not-allowed; }
 
 /* detail + checkout sheets */
-.app-container .gb-sheet { width: min(100%, 560px); max-height: calc(100vh - 48px); overflow-y: auto; }
+.app-container.app-container .ay-sheet.gb-sheet { width: min(100%, 560px); max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 .app-container .gb-detail .ay-product-card__tile { max-width: 280px; margin: 0 auto var(--ay-s16); }
 .app-container .gb-detail__notes { margin: var(--ay-s8) 0; font: 500 15px/1.55 var(--ay-sans-stack); white-space: pre-line; }
 .app-container .gb-subhead { margin: var(--ay-s24) 0 0; font: 700 var(--ay-type-h3)/1.2 var(--ay-serif-stack); }
@@ -74,7 +74,7 @@
   .app-container .gb-head { --ph-top: 21px; }
   .app-container .gb-bar { grid-template-columns: 1fr; }
   .app-container .gb-bar .ay-btn { grid-column: 1; grid-row: auto; width: 100%; }
-  .app-container .gb-sheet { max-height: calc(100vh - 24px); }
+  .app-container.app-container .ay-sheet.gb-sheet { width: 100%; max-height: 92vh; max-height: 92dvh; }
 }
 .app-container .gb-sync { display: grid; gap: var(--ay-s12); margin-bottom: var(--ay-s16); }
 .app-container .gb-sync p { margin: 0; font: 500 15px/1.5 var(--ay-sans-stack); }
