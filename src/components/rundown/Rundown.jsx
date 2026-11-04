@@ -294,14 +294,14 @@ export default function Rundown({
           )}
           {!compact && content.length > 1 && (
             <ul className="ay-rd-rows" aria-label="Also in today's rundown">
-              {content.slice(1).filter((c) => c.category !== 'win').slice(0, 4).map((c) => <li key={c.key} className={`is-${c.category}`}><span>{c.kicker}</span>{c.title}</li>)}
+              {content.slice(1).filter((c) => c.category !== 'win').slice(0, 4).map((c) => <li key={c.key} className={`is-${c.category}`}>{c.product?.image && <img className="ay-rd-rows__shelf" src={c.product.image} alt="" loading="lazy" />}<p><span>{c.kicker}</span>{c.title}</p></li>)}
             </ul>
           )}
           <button type="button" className="ay-rd-hero__go" onClick={() => start('daily')}>{things > 1 ? `Play my rundown · ${things} things` : 'Play my rundown'}</button>
           {!compact && !hasWearable && !protectedToday && variant !== 'app' && (
             <a className="ay-rd-connect" href="/health-data">
-              <span><b>Make this sharper with sleep and heart data</b><small>Connect Apple Health or Oura. Part of ayna Pro.</small></span>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+              <span><b>Make this sharper</b><small>Connect Apple Health or Oura for sleep and heart data. ayna Pro.</small></span>
+              <svg className="ay-rd-connect__line" viewBox="0 0 52 24" aria-hidden="true"><polyline points="2,18 10,12 18,15 26,6 34,10 42,4 50,8" /></svg>
             </a>
           )}
           {!compact && !protectedToday && (
