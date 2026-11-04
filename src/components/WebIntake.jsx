@@ -26,6 +26,7 @@ import { QuizFrame, QuizBlock, Chips as KitChips, Rows as KitRows, SubQuestion, 
 import { isShortHelper } from './quiz/quizText.js';
 import MedicalNote from './MedicalNote.jsx';
 import { trackQuizStep } from '../utils/funnelEvents.js';
+import { proNow } from '../pro/proDoor.js';
 import '../styles/onboarding.css';
 import './WebIntake.audit.css';
 // Questions whose options have a plain meaning on press-and-hold (glossary.js): the answers get data-tour="quiz-hold" and the quiz tip points there.
@@ -359,6 +360,14 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const shownIndex = phase === 'more' ? index + 1 : Math.max(1, steps.slice(0, index + 1).filter((st) => !isFollowUp(st)).length);
 
   // Drop-off (Nov 3): which question is on screen (its name only, never an answer).
+  // Pro status for the health-data step: open only for Pro members or while Pro gates are off.
+  const [connectOpen, setConnectOpen] = useState(false);
+  useEffect(() => {
+    if (step.type !== 'connect') return undefined;
+    let live = true;
+    proNow().then((st) => { if (live) setConnectOpen(Boolean(st && (st.active || !st.gates))); }).catch(() => {});
+    return () => { live = false; };
+  }, [step.type]);
   const viewedId = step.type === 'aboutYou' ? `aboutYou_${aboutPart}` : step.id;
   useEffect(() => {
     trackQuizStep({ stepId: viewedId, number: shownIndex, total: shownTotal, part: step.obPart === 'more' || phase === 'more' ? 'more' : 'core', surface: 'web' });
@@ -496,7 +505,16 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
           expand={{ [SOMETHING_ELSE]: <label className="ip-other-text"><span>Tell us in your own words</span><input value={intake.supportOtherText} maxLength={80} placeholder="For example, migraines" onChange={(e) => set('supportOtherText', e.target.value)} /></label> }} />
       </>;
       case 'goals': return <Chips label={step.title} items={GOALS} selected={intake.goals || []} onToggle={(v) => setIntake((prev) => ({ ...prev, goals: (prev.goals || []).includes(v) ? prev.goals.filter((x) => x !== v) : [...(prev.goals || []), v] }))} />;
-      case 'connect': return <>
+      // Nov 3 (founder): connecting health data is ayna Pro, so say that here
+      // instead of a setup-looking list. Pro members (or gates off) see what each signal is used for.
+      case 'connect': if (!connectOpen) return <div className="qz-pro">
+        <span className="qz-pro__tag">ayna Pro</span>
+        <p className="qz-pro__lead">Connect Apple Health, Oura and more. ayna uses your sleep, cycle, temperature, heart and activity to make your matches fit you even better.</p>
+        <ul className="qz-pro__chips">{['sleep', 'cycle', 'temperature', 'heart', 'activity'].filter((k) => CATEGORIES[k]).map((k) => <li key={k}>{CATEGORIES[k].label}</li>)}</ul>
+        <a className="qz-pro__btn" href="/pro" target="_blank" rel="noopener noreferrer">Get ayna Pro<span className="sr-only"> (opens in a new tab)</span></a>
+        <small className="qz-pro__note">Your matches stay free. You can add this any time.</small>
+      </div>;
+      return <>
         <dl className="ay-qc-uses">
           {['sleep', 'cycle', 'temperature', 'heart', 'activity'].filter((k) => CATEGORIES[k]).map((k) => <div key={k}><dt>{CATEGORIES[k].label}</dt><dd>Used {CATEGORIES[k].why.charAt(0).toLowerCase()}{CATEGORIES[k].why.slice(1)}</dd></div>)}
         </dl>
@@ -789,6 +807,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   // About you shows as two screens on the website: age, then life stage (titles from the first-run question set).
   const view = step.type === 'aboutYou'
     ? (aboutPart === 'age' ? { title: 'How old are you?', subtitle: '' } : { title: 'Which of these is you right now?', subtitle: 'Not sure is OK.' })
+    : step.type === 'connect' && !connectOpen ? { title: 'Connect your health data', subtitle: 'Part of ayna Pro.' }
     : { title: step.title, subtitle: step.subtitle };
   const multi = isMultiSelectStep(step) || (step.type === 'aboutYou' && aboutPart === 'stage');
   const helperShort = isShortHelper(view.subtitle) ? view.subtitle : '';
@@ -812,7 +831,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       title={view.title} helper={helperShort || (multi ? 'Pick all that apply' : '')} why={why}
       lead={onboarding && index === 0 ? <MedicalNote className="qz-med-note" /> : null}
       hint={!ready && !saving ? missingAnswerHint(hintId, intake) : null}
-      cta={{ label: saving ? 'Saving…' : singleStep ? 'Save' : isLast && phase === 'more' ? 'See my results' : 'Continue', onClick: next, disabled: !ready || saving }}
+      cta={{ label: saving ? 'Saving…' : singleStep ? 'Save' : step.type === 'connect' && !connectOpen ? 'Not now' : isLast && phase === 'more' ? 'See my results' : 'Continue', onClick: next, disabled: !ready || saving }}
       below={<>
         {saveError && <p className="aq-err">{saveError}</p>}
         {onboarding && index === 0 && onExplore && <button type="button" className="aq-link" onClick={onExplore}>Explore first</button>}

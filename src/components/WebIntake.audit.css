@@ -16,3 +16,13 @@ html body .app-container.app-container.app-container.app-container.app-container
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M6 6l12 12'/%3E%3C/svg%3E") center / contain no-repeat;
             mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M6 6l12 12'/%3E%3C/svg%3E") center / contain no-repeat; }
 }
+
+/* Nov 3: the health-data step is an ayna Pro invite for free accounts. */
+.app-container .qz-pro { display: grid; justify-items: start; gap: 14px; padding: 22px; border-radius: 22px; background: #3e2723; color: #ffedac; }
+.app-container .qz-pro__tag { padding: 5px 12px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 800 13px/1.2 var(--ay-sans-stack, sans-serif); }
+.app-container .qz-pro__lead { margin: 0; font: 600 17px/1.45 var(--ay-sans-stack, sans-serif); color: #ffedac !important; }
+.app-container .qz-pro__chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.app-container .qz-pro__chips li { padding: 7px 12px; border-radius: 999px; border: 1.5px solid rgba(255, 237, 172, .6); color: #ffedac; font: 600 14px/1.2 var(--ay-sans-stack, sans-serif); }
+.app-container .qz-pro__btn { display: inline-flex; align-items: center; min-height: 52px; padding: 0 26px; border-radius: 999px; background: #f7badd; color: #3e2723 !important; font: 800 17px/1 var(--ay-sans-stack, sans-serif); text-decoration: none !important; box-shadow: 0 3px 0 #ffedac; }
+.app-container .qz-pro__btn:focus-visible { outline: 3px solid #ffedac; outline-offset: 3px; }
+.app-container .qz-pro__note { font: 500 14px/1.4 var(--ay-sans-stack, sans-serif); color: rgba(255, 237, 172, .85); }

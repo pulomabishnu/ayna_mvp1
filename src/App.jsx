@@ -1910,10 +1910,10 @@ function App() {
       if (toSave) {
         // "Save these matches" on the reveal: her matches are already on
         // screen; the account is only for keeping them (onboarding audit).
+        // Nov 3 (founder: "it shouldn't let you leave until you make an account"): the sign-up
+        // opens over the results page; closing it leaves her there, not on the matches page.
         markOnboardingDone();
-        setQuizResults(completedResults);
         guestTodayRef.current = false;
-        setCurrentView('ecosystem');
         setShowAuthModal(true);
         return;
       }

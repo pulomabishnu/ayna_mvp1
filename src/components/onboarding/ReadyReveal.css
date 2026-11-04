@@ -180,3 +180,28 @@ html body .app-container.app-container.app-container.app-container.app-container
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__btn { min-height: 68px; }
 :is(.ayna-mobile, .app-container) .ay-ob-ready .is-keep .ay-ob-next__ic svg[viewBox] path[d^="M12 3"] { fill: #ffedac; }
 @media (prefers-reduced-motion: reduce) { :is(.ayna-mobile, .app-container) .ay-ob-ready :is(.ay-ob-count, .ay-ob-needs__list > li) { animation: none !important; } }
+
+/* Nov 3 v3: one screen, a numbered checklist of next steps. */
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__title { font-size: clamp(34px, 6vw, 54px) !important; line-height: 1.02 !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list > li { min-height: 0; padding: 12px 14px !important; gap: 8px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__pics .ay-ob-match__plate { width: 44px !important; height: 44px !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready.ay-ob-ready .ay-ob-steps { display: grid; gap: 10px; margin-top: 14px; max-width: none; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__h { margin: 0; font: 800 22px/1.2 var(--o-serif, sans-serif); color: var(--o-ink); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__list { display: grid; gap: 10px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__list > li { display: flex; align-items: center; gap: 12px; padding: 0 !important; background: none !important; border: 0 !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__list > li::before { content: none !important; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__n { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--o-ink); color: var(--o-ink); font: 800 16px/1 var(--o-sans, sans-serif); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-done .ay-ob-steps__n { background: var(--o-ink); color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-done > span:last-child b { text-decoration: line-through; opacity: .7; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-done > span:last-child { color: var(--o-ink); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-done b { display: block; font: 700 16px/1.2 var(--o-sans, sans-serif); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-done small { font: 500 13px/1.2 var(--o-sans, sans-serif); opacity: .8; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-now .ay-ob-steps__n { background: #f7badd; border-color: #f7badd; color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn { all: unset; box-sizing: border-box; cursor: pointer; flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; padding: 12px 18px; border-radius: 18px; background: #ffedac; color: #3e2723; transition: transform .2s cubic-bezier(.34, 1.5, .64, 1); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .is-now .ay-ob-steps__btn { background: #f7badd; box-shadow: 0 4px 0 #ffedac; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn:hover { transform: translateY(-2px); }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn:focus-visible { outline: 3px solid var(--o-ink); outline-offset: 3px; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn b { display: block; font: 800 17px/1.2 var(--o-sans, sans-serif); color: #3e2723; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn small { display: block; margin-top: 3px; font: 500 14px/1.35 var(--o-sans, sans-serif); color: #3e2723; opacity: .85; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__btn svg { flex: none; width: 22px; height: 22px; fill: none; stroke: #3e2723; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+:is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-steps__wrapped { justify-self: center; }
