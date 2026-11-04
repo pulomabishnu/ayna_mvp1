@@ -84,10 +84,21 @@ function MatchPlate({ src, product }) {
   return <span className="ay-ob-match__plate is-plate" aria-hidden="true"><Plate src={src && !failed ? src : ''} alt="" fallback={word} imgProps={{ loading: 'lazy', onError: () => setFailed(true) }} /></span>;
 }
 
-export default function ReadyReveal({ answers = null, variant = 'app', signedIn = false, onSeeToday, onWatchWrapped, onCreateAccount, onBack, onMorePersonal, onSafety = null }) {
+export default function ReadyReveal({ prefsDone = false, answers = null, variant = 'app', signedIn = false, onSeeToday, onWatchWrapped, onCreateAccount, onBack, onMorePersonal, onSafety = null }) {
   const ready = useCatalogReady();
   const matches = useMemo(() => (ready ? firstMatches(answers, 5) : []), [answers, ready]);
   const { rows, total } = useMemo(() => (ready ? perNeed(answers) : { rows: [], total: 0 }), [answers, ready]);
+  // Nov 4 (founder: "the extra questions didn't change my match"): say what changed. The
+  // matches before the extra questions are kept for this tab only (ids, no answers).
+  const changed = useMemo(() => {
+    const ids = rows.flatMap((r) => r.products.map((p) => p.id));
+    try {
+      if (!prefsDone) { if (ids.length) sessionStorage.setItem('ayna:reveal-ids', JSON.stringify(ids)); return null; }
+      const before = JSON.parse(sessionStorage.getItem('ayna:reveal-ids') || 'null');
+      if (!Array.isArray(before)) return null;
+      return ids.filter((id) => !before.includes(id)).length;
+    } catch { return null; }
+  }, [rows, prefsDone]);
   const intakeNow = answers?.fullHealthIntake || {};
   const stageLabels = (intakeNow.lifeStageSelections || []).map((x) => LIFE_STAGE_LABELS[x]).filter(Boolean);
   const basedOn = [intakeNow.age ? `Age ${intakeNow.age}` : '', ...stageLabels].filter(Boolean);
@@ -114,6 +125,7 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
       {/* Nov 3 (founder): say how many, show every need she picked the same size, then what to do. */}
       <h1 id="ay-ob-ready-h" className="ay-ob-ready__title">{total > 0 ? <>We found <span className="ay-ob-count">{total}</span> {total === 1 ? 'match' : 'matches'} for you.</> : 'Your profile is ready.'}</h1>
       {basedOn.length > 0 && <p className="ay-ob-ready__based">Based on: {basedOn.join(' · ')}</p>}
+      {prefsDone && <p className="ay-ob-ready__updated" role="status">{changed > 0 ? `Updated: ${changed} new ${changed === 1 ? 'match' : 'matches'} from your budget, formats and what you like.` : changed === 0 ? 'Updated with your answers. Your matches still fit best.' : 'Updated with your answers on budget, formats and what you like.'}</p>}
       {/* Care first: the prompt-evaluation message sits above her picks. */}
       {bleeding && <BleedingEvaluationNote className="ay-ob-ready__care" title={bleeding.title} note={bleeding} />}
       {rows.length > 0 ? (
@@ -148,7 +160,7 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
         <small className="ay-ob-next__note">{!signedIn && onCreateAccount ? 'A free account keeps them here next time. No card.' : `They’re saved in ${variant === 'web' ? 'Home' : 'Today'}.`}</small>
         {onMorePersonal && safetyLeft === 0 && remaining > 0 && (
           <button type="button" className="ay-ob-next__more" onClick={onMorePersonal}>
-            <span><b>Answer {remaining} more {remaining === 1 ? 'question' : 'questions'}</b><small>Your goals, budget and what you like, for closer matches.</small></span>
+            <span><b>Answer a few more questions</b><small>Your goals, budget and what you like, for closer matches.</small></span>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </button>
         )}

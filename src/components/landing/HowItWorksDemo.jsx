@@ -12,14 +12,6 @@ import './how-it-works-demo.css';
  * cramps + trouble sleeping, medicines not answered yet, Nov 3 2026), the app's own words for
  * a safety hold, and a MedlinePlus source. It is labelled as an example.
  */
-const SCENES = [
-  { k: 'ask', t: 'Pick what you want help with', d: 'Cramps, sleep, heavy periods and more.' },
-  { k: 'safe', t: 'Answer 3 safety questions', d: 'Conditions, allergies and medicines, before any match.' },
-  { k: 'match', t: 'See your matches', d: 'Each one shows a % and why it fits you.' },
-  { k: 'chat', t: 'Ask anything', d: 'Answers show where they come from.' },
-  { k: 'daily', t: 'Every morning, your rundown', d: 'A short check-in, and what goes with what you own.' },
-];
-const MS = [4500, 5000, 6500, 5000, 5500];
 
 const MATCHES = [
   { id: 'p-viboos-heating-pad', name: 'VIBOOS Electric Heating Pad', price: '$12.99', pct: 87 },
@@ -29,9 +21,6 @@ const MATCHES = [
 const CHIPS = ['Cramps or period pain', 'Trouble sleeping', 'Heavy periods', 'PMS symptoms', 'Bloating', 'Acne', 'Fatigue or low energy', 'Brain fog'];
 const img = (id) => `/products/catalog/${id}.webp`;
 
-const motionOff = () => {
-  try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return true; }
-};
 
 function Ring({ pct, i = 0 }) {
   return <span className="hd-ring" style={{ '--p': pct, '--i': i }} aria-hidden="true"><b>{pct}%</b></span>;
@@ -99,82 +88,50 @@ function Screen({ k }) {
   );
 }
 
+const TRIO = [
+  { k: 'ask', n: 1, t: 'Answer a few questions', d: 'What you want help with, then 3 safety questions.' },
+  { k: 'match', n: 2, t: 'See your matches', d: 'Each one shows a % and why it fits you.' },
+  { k: 'daily', n: 3, t: 'Come back each morning', d: 'A short check-in, and what goes with what you own.' },
+];
+
+/**
+ * Nov 4 v6 (founder: "how ayna works still looks like shit", "too much pink"): her inspo is
+ * three phones side by side, so that's what this is. Three steps you get at a glance, each
+ * phone playing its screen once when the section scrolls into view. Butter page, espresso
+ * phones, no list of steps. On a phone they sit in a row you can swipe.
+ */
 export default function HowItWorksDemo({ onStart, startLabel = 'Sign up free', onViewHowItWorks }) {
   const ref = useRef(null);
-  const [still] = useState(motionOff);
-  const [scene, setScene] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [done, setDone] = useState(false);
-  const [onScreen, setOnScreen] = useState(false);
-
+  const [seen, setSeen] = useState(() => typeof IntersectionObserver === 'undefined');
   useEffect(() => {
     const el = ref.current;
     if (!el || typeof IntersectionObserver === 'undefined') return undefined;
-    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting), { threshold: 0.35 });
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } }, { threshold: 0.3 });
     io.observe(el);
     return () => io.disconnect();
   }, []);
-
-  // Plays through once, then stays on the matches (no endless loop).
-  useEffect(() => {
-    if (still || paused || done || !onScreen) return undefined;
-    const t = window.setTimeout(() => {
-      if (scene === SCENES.length - 1) { setScene(2); setDone(true); } else setScene((n) => n + 1);
-    }, MS[scene]);
-    return () => window.clearTimeout(t);
-  }, [scene, still, paused, done, onScreen]);
-
-  const playing = !still && !paused && !done && onScreen;
-  const replay = () => { setDone(false); setPaused(false); setScene(0); };
-  const cur = SCENES[scene];
   return (
-    <section id="ay-demo" ref={ref} className={`hd hd--v5${still ? ' is-still' : ''}`} aria-labelledby="hd-title">
-      <div className="hd-in">
-        <div className="hd-copy">
+    <section id="ay-demo" ref={ref} className="hd hd--trio" aria-labelledby="hd-title">
+      <div className="hd-trio">
+        <header className="hd-trio__head">
           <h2 id="hd-title" className="hd-title">How ayna works</h2>
-          {/* Nov 4 (founder: the 5-row list was ugly): one step at a time, big, with the inspo's
-              page dots under it. The dots are buttons, so any step can be opened. */}
-          {!still && (
-            <div className="hd-now" aria-live="polite">
-              <span className="hd-now__n">Step {scene + 1} of {SCENES.length}</span>
-              <b className="hd-now__t" key={`t${scene}`}>{cur.t}</b>
-              <span className="hd-now__d" key={`d${scene}`}>{cur.d}</span>
-            </div>
-          )}
-          {!still && (
-            <div className="hd-pager" role="group" aria-label="Walkthrough steps">
-              {SCENES.map((s, i) => (
-                <button type="button" key={s.k} className={i === scene ? 'is-on' : ''} aria-label={`Step ${i + 1}: ${s.t}`} aria-current={i === scene ? 'step' : undefined} onClick={() => { setScene(i); setPaused(true); }}>
-                  {i === scene && playing && <i style={{ '--ms': `${MS[scene]}ms` }} key={`b${scene}`} />}
-                </button>
-              ))}
-              {done
-                ? <button type="button" className="hd-pause" onClick={replay}>Replay</button>
-                : <button type="button" className="hd-pause" onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Play the walkthrough' : 'Pause the walkthrough'}>{paused ? 'Play' : 'Pause'}</button>}
-            </div>
-          )}
-          {still && (
-            <ol className="hd-steps">
-              {SCENES.map((s, i) => <li key={s.k}><span className="hd-n">{i + 1}</span><span><b>{s.t}</b><small>{s.d}</small></span></li>)}
-            </ol>
-          )}
           <div className="hd-actions">
             {onStart && <button type="button" className="hd-start" onClick={onStart}>{startLabel}</button>}
             {onViewHowItWorks && <a className="hd-more" href="/how-it-works" onClick={(e) => { e.preventDefault(); onViewHowItWorks(); }}>How we match</a>}
           </div>
-          <p className="hd-len">Example for cramps and trouble sleeping. Real products from our catalog.</p>
-        </div>
-        {still ? (
-          <div className="hd-grid">
-            {SCENES.map((s) => <figure key={s.k} className="hd-phone is-small"><div className="hd-screen"><Screen k={s.k} /></div><figcaption>{s.t}</figcaption></figure>)}
-          </div>
-        ) : (
-          <div className="hd-stage">
-            <div className="hd-phone" aria-hidden="true">
-              <div className="hd-screen" key={scene}><Screen k={cur.k} /></div>
-            </div>
-          </div>
-        )}
+        </header>
+        <ol className="hd-trio__list">
+          {TRIO.map((s) => (
+            <li key={s.k}>
+              <div className="hd-phone" aria-hidden="true">
+                <div className="hd-screen" key={seen ? 'on' : 'off'}>{seen ? <Screen k={s.k} /> : null}</div>
+              </div>
+              <p className="hd-trio__t"><span className="hd-n">{s.n}</span>{s.t}</p>
+              <p className="hd-trio__d">{s.d}</p>
+            </li>
+          ))}
+        </ol>
+        <p className="hd-len">Example for period cramps. Real products from our catalog.</p>
       </div>
     </section>
   );

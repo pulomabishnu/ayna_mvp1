@@ -246,3 +246,27 @@
 .app-container .hd--v5 .hd-stage .hd-phone { width: 380px; max-width: 88vw; height: 600px; padding: 10px; border-radius: 44px; background: #3e2723; box-shadow: 8px 8px 0 #3e2723; }
 .app-container .hd--v5 .hd-screen { border-radius: 34px; }
 @media (max-width: 899px) { .app-container .hd--v5 .hd-stage { order: 0; } .app-container .hd--v5 .hd-now { min-height: 0; } .app-container .hd--v5 .hd-stage .hd-phone { height: 560px; } }
+/* Nov 4 v6: three phones side by side (her inspo), butter page. */
+.app-container .hd.hd--trio { padding: 96px 24px; background: #ffedac; }
+.app-container .hd-trio { max-width: 1160px; margin: 0 auto; }
+.app-container .hd-trio__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; margin-bottom: 40px; }
+.app-container .hd--trio .hd-title { margin: 0; font-size: clamp(32px, 4vw, 48px) !important; line-height: 1.05 !important; }
+.app-container .hd--trio .hd-actions { margin: 0; }
+.app-container .hd-trio__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin: 0; padding: 0; list-style: none; }
+.app-container .hd-trio__list > li { display: grid; justify-items: center; text-align: center; }
+.app-container .hd--trio .hd-phone { width: 100%; max-width: 320px; height: 560px; aspect-ratio: auto; padding: 8px; border-radius: 40px; background: #3e2723; box-shadow: none; }
+.app-container .hd--trio .hd-screen { border-radius: 32px; }
+.app-container .hd-trio__t { display: inline-flex; align-items: center; gap: 10px; margin: 24px 0 4px; font: 700 20px/1.25 var(--ay-sans-stack, sans-serif); color: #3e2723; }
+.app-container .hd-trio__t .hd-n { width: 30px; height: 30px; font-size: 14px; background: #3e2723; color: #ffedac; border: 0; }
+.app-container .hd-trio__d { max-width: 30ch; margin: 0; font: 400 16px/1.45 var(--ay-sans-stack, sans-serif); color: rgba(62, 39, 35, .82); }
+.app-container .hd--trio .hd-len { margin: 32px 0 0; text-align: center; }
+@media (max-width: 899px) {
+  .app-container .hd.hd--trio { padding: 56px 0; }
+  .app-container .hd-trio__head { padding: 0 16px; margin-bottom: 24px; }
+  .app-container .hd-trio__list { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 16px 8px; scrollbar-width: none; }
+  .app-container .hd-trio__list::-webkit-scrollbar { display: none; }
+  .app-container .hd-trio__list > li { flex: 0 0 82%; scroll-snap-align: center; }
+  .app-container .hd--trio .hd-phone { height: 520px; }
+  .app-container .hd--trio .hd-len { padding: 0 16px; }
+}
+.app-container .hd--trio .hd-screen { text-align: left; }

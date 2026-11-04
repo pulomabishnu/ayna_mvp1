@@ -266,6 +266,8 @@ function webResumeStep(intake, id) {
 // life stage on one screen, then health data, then the reveal.
 const ONBOARDING_ONLY = ['helpTopics', 'goals'];
 const SAFETY_IDS = ['conditions', 'allergies', 'medications'];
+/** The optional preference questions ("Answer N more questions"), without the health-data step or her name. */
+const isPrefStep = (s) => s?.obPart === 'more' && !SAFETY_IDS.includes(s.id) && !['connect', 'name', 'ready'].includes(s.id);
 // Minimum questions, health data, the reveal; then, only if she asks for it
 // ("Make my matches more personal"), the optional ones, and back to the reveal.
 function webOnboardingSteps(intake) {
@@ -447,6 +449,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   // page starts either just the 3 safety questions, or just the preference questions;
   // each one comes back to the results page when it's done.
   const [moreScope, setMoreScope] = useState(null);
+  const [prefsDone, setPrefsDone] = useState(false);
   const advance = (answers = intake) => {
     if (singleStep) { finish(answers); return; }
     if (onboarding) {
@@ -454,6 +457,14 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       const at = list.findIndex((s) => s.id === step.id);
       if (step.id === 'ready') return;
       if (moreScope === 'safety' && SAFETY_IDS.includes(step.id) && !SAFETY_IDS.includes(list[at + 1]?.id)) { setMoreScope(null); go('ready'); return; }
+      // Nov 4 (founder: "the extra questions didn't change my match"): the preference questions
+      // run straight through (no health-data step, no divider screens) and come back to the
+      // matches, which are rebuilt from the new answers.
+      if (moreScope === 'prefs') {
+        const nxt = list.slice(at + 1).find((s) => isPrefStep(s));
+        if (nxt) { go(nxt.id); return; }
+        setMoreScope(null); setPrefsDone(true); go('ready'); return;
+      }
       if (at >= 0 && at < list.length - 1) {
         const brk = breakBefore(step, list[at + 1], list);
         if (brk) { setDirection('forward'); setSectionBreak(brk); window.scrollTo({ top: 0 }); return; }
@@ -802,7 +813,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   if (onboarding && step.type === 'ready') {
     const preview = mapIntakeToLegacyQuizProfile(buildSnapshot(intake));
     return <div className="ct qz-page" data-step="ready">
-      <ReadyReveal variant="web" answers={preview} signedIn={signedIn} onSeeToday={() => finish(intake, { land: 'today' })} onWatchWrapped={() => finish(intake)} onCreateAccount={() => finish(intake, { land: 'save' })} onBack={back} onSafety={() => { const first = steps.find((s) => s.obPart === 'more' && SAFETY_IDS.includes(s.id) && !isStepAnswered(s.id, intake)) || steps.find((s) => SAFETY_IDS.includes(s.id)); setMoreScope('safety'); if (first) go(first.id); }} onMorePersonal={() => { const more = steps.find((s) => s.obPart === 'more' && !SAFETY_IDS.includes(s.id)); setMoreScope('prefs'); if (more) go(more.id); }} />
+      <ReadyReveal variant="web" answers={preview} signedIn={signedIn} onSeeToday={() => finish(intake, { land: 'today' })} onWatchWrapped={() => finish(intake)} onCreateAccount={() => finish(intake, { land: 'save' })} onBack={back} onSafety={() => { const first = steps.find((s) => s.obPart === 'more' && SAFETY_IDS.includes(s.id) && !isStepAnswered(s.id, intake)) || steps.find((s) => SAFETY_IDS.includes(s.id)); setMoreScope('safety'); if (first) go(first.id); }} onMorePersonal={() => { const more = steps.find(isPrefStep); setMoreScope('prefs'); if (more) go(more.id); }} prefsDone={prefsDone} />
       {saveError && <p className="qz-alert">{saveError}</p>}
     </div>;
   }
@@ -862,7 +873,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       return { now: n, total: SAFETY_IDS.length, label: `Safety question ${n} of ${SAFETY_IDS.length}` };
     }
     if (step.obPart === 'more' && moreScope) {
-      const list = steps.filter((s) => s.obPart === 'more' && (moreScope === 'safety' ? SAFETY_IDS.includes(s.id) : !SAFETY_IDS.includes(s.id)));
+      const list = steps.filter((s) => (moreScope === 'safety' ? s.obPart === 'more' && SAFETY_IDS.includes(s.id) : isPrefStep(s)));
       const now = Math.max(1, list.findIndex((s) => s.id === step.id) + 1);
       return { now, total: list.length, label: `${moreScope === 'safety' ? 'Safety question' : 'Question'} ${now} of ${list.length}` };
     }

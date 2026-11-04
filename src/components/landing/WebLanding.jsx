@@ -26,7 +26,6 @@ import HowItWorksDemo from './HowItWorksDemo.jsx';
  * "Go to your Home". Nothing on the page is sticky. */
 
 const Arrow = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>);
-const Tick = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>);
 const Play = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M10 8.5v7l6-3.5-6-3.5Z" /></svg>);
 
 /* ---------- 1. hero ----------
@@ -48,16 +47,12 @@ function Hero({ cta, banner = null }) {
               detail, the top 3 reasons right under it, one button "Sign up free" with what it
               costs under it, and the walkthrough one tap away. */}
           <h1 id="hm-hero-title" className="wl-title">Women’s health products, <span>matched to you.</span></h1>
-          <p className="wl-one">Tell us your symptoms, life stage and medicines. We show the products and care that fit you, and why.</p>
-          <ul className="wl-why" aria-label="Why ayna">
-            <li><Tick />Safety checked against your medicines</li>
-            <li><Tick />Brands can’t pay for a better match</li>
-            <li><Tick />Sources you can check</li>
-          </ul>
+          <p className="wl-one">Tell us your symptoms, life stage and medicines. See what fits you, and why.</p>
           <div className="wl-cta" data-tour="landing-start">
             <button type="button" className="wl-cta__btn" onClick={() => { trackLandingCta(cta.id, 'web', cta.label); cta.go?.(); }}>{cta.label}<Arrow /></button>
             <p className="wl-cta__note">{cta.note}</p>
           </div>
+          <p className="wl-why">Safety checked first<i aria-hidden="true" />Brands can’t pay for a match<i aria-hidden="true" />Sources shown</p>
           <a className="wl-how" href="#ay-demo" onClick={(e) => { const el = document.getElementById('ay-demo'); if (!el || !isPlainLeftClick(e)) return; e.preventDefault(); trackLandingCta('watch_demo'); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><Play />Watch how it works</a>
           {banner && <div className="wl-banner">{banner}</div>}
         </div>

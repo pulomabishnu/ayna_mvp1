@@ -353,3 +353,17 @@ html body .app-container #ay-landing .wl-faq__item[open] summary i::after { tran
 html body .app-container #ay-landing .wl-faq__item summary:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; border-radius: 10px; }
 html body .app-container #ay-landing .wl-faq__item p { max-width: 60ch; margin: 0 0 20px; font: 400 17px/1.5 var(--ay-sans-stack, sans-serif); color: rgba(62, 39, 35, .86); }
 html body .app-container #ay-landing .wl-faq__item p a { color: #3e2723; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+/* Nov 4 v2 (founder: "way too overcrowded", "too much pink up there"): the rain keeps only
+   the product photos (no Match pills, dots, sleep bars or rings), the title is one colour,
+   the 3 reasons are one quiet line under the button, and pink is only the button. */
+.app-container .hm.wl .wl-rain .lk-w { display: none !important; }
+.app-container .hm.wl .wl-rain .lk-prod { opacity: .55; }
+.app-container.app-container .hm.wl .wl-title > span { color: #ffedac; }
+.app-container .hm.wl .wl-hero__in { gap: 16px; max-width: 620px; }
+.app-container.app-container .hm.wl .wl-one { max-width: 34ch; font-size: 19px !important; color: rgba(255, 237, 172, .9) !important; }
+.app-container .hm.wl .wl-cta { margin-top: 12px; }
+.app-container .hm.wl .wl-cta__btn { box-shadow: none; }
+.app-container .hm.wl .wl-cta__btn:active { box-shadow: none; transform: scale(.98); }
+.app-container.app-container .hm.wl p.wl-why { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 12px; margin: 8px 0 0; padding: 0; font: 500 14px/1.4 var(--ay-sans-stack, sans-serif); color: rgba(255, 237, 172, .78); }
+.app-container .hm.wl p.wl-why i { width: 4px; height: 4px; border-radius: 999px; background: rgba(255, 237, 172, .5); }
+.app-container .hm.wl .wl-how { font-size: 15px !important; }

@@ -249,3 +249,4 @@ html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more svg {
 html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more:hover svg { transform: translateX(3px); }
 html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
 html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-ready__actions { max-width: none !important; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-ready__updated { display: inline-flex; align-items: center; gap: 8px; margin: -16px 0 32px; padding: 8px 14px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 600 14px/1.3 var(--o-sans, sans-serif); }
