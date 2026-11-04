@@ -19,6 +19,8 @@ const NOT_TAGGED_ON_PURPOSE = {
   'p-estherformula-ceramide-strips': 'claims', 'p-seeking-health-dao-enzyme-formerly-histamine-dig': 'claims',
   'p-queen-of-the-thrones-ritual-starter-liver-castor': 'claims', 'p-alubri-rejuvenate-restore-kit': 'claims',
   'p-joylux-vfit': 'device', 'p-joylux-vfit-plus': 'device', 'p-joylux-ilyeo-body': 'device',
+  // Livi absorbs normal post-sex fluid, not a treatment for a quiz health condition.
+  'p-livi-after-sex-absorption-device': 'device',
 };
 const NEED_IDS = new Set(NEEDS.map((n) => n.id));
 const live = CATALOG_PRODUCTS.filter((p) => !p.hidden);
