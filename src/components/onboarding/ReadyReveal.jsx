@@ -84,7 +84,7 @@ function MatchPlate({ src, product }) {
   return <span className="ay-ob-match__plate is-plate" aria-hidden="true"><Plate src={src && !failed ? src : ''} alt="" fallback={word} imgProps={{ loading: 'lazy', onError: () => setFailed(true) }} /></span>;
 }
 
-export default function ReadyReveal({ answers = null, variant = 'app', signedIn = false, onSeeToday, onWatchWrapped, onCreateAccount, onBack, onMorePersonal }) {
+export default function ReadyReveal({ answers = null, variant = 'app', signedIn = false, onSeeToday, onWatchWrapped, onCreateAccount, onBack, onMorePersonal, onSafety = null }) {
   const ready = useCatalogReady();
   const matches = useMemo(() => (ready ? firstMatches(answers, 5) : []), [answers, ready]);
   const { rows, total } = useMemo(() => (ready ? perNeed(answers) : { rows: [], total: 0 }), [answers, ready]);
@@ -147,7 +147,7 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
           <li className="is-done"><span className="ay-ob-steps__n" aria-hidden="true">✓</span><span><b>Answer 4 questions</b><small>Done</small></span></li>
           {onMorePersonal && safetyLeft > 0 && (
             <li className="is-now"><span className="ay-ob-steps__n" aria-hidden="true">2</span>
-              <button type="button" className="ay-ob-steps__btn" onClick={onMorePersonal}><span><b>Answer {safetyLeft} safety {safetyLeft === 1 ? 'question' : 'questions'}</b><small>About your medicines and allergies. Unlocks vitamins and other things you take. 30 seconds.</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+              <button type="button" className="ay-ob-steps__btn" onClick={onSafety || onMorePersonal}><span><b>Answer {safetyLeft} safety {safetyLeft === 1 ? 'question' : 'questions'}</b><small>About your medicines and allergies. Unlocks vitamins and other things you take. 30 seconds.</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
             </li>
           )}
           {onMorePersonal && safetyLeft === 0 && remaining > 0 && (

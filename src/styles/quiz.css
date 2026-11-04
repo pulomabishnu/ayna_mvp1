@@ -322,3 +322,60 @@
 }
 /* Narrow screens: no empty slot after the bar, so it ends where the answers end. */
 .aq-top > .is-spacer:last-child { display: none; }
+
+/* ---------- Nov 3: the website quiz, Typeform-style in ayna's theme ----------
+   Founder: "use Typeform as inspo, with our theme; make sure it doesn't look vibe coded".
+   Research (Typeform's taker UI; The Fountain Institute "7 signs of a vibe-coded UI";
+   docs/anti-vibe-checklist.md): one question per screen, left-aligned, a quiet count above it,
+   answers as a lettered list (A, B, C; type the letter to pick), one ordinary-size button with
+   "press Enter", no boxes around groups, no sticky bars. One spacing grid (8/12/16/24/32/48),
+   radii only 10 / 16 / 999, one type scale (display for the question, Figtree for the rest). */
+html body .app-container .aq.aq--web { padding: 48px 24px 64px; }
+html body .app-container .aq.aq--web .aq-col { max-width: 640px; margin: 0 auto; padding: 0; background: transparent; box-shadow: none; border-radius: 0; min-height: 0; }
+html body .app-container .aq.aq--web .aq-col > .aq-top { position: relative !important; margin: 0 0 48px !important; padding: 0 !important; gap: 16px; display: flex !important; }
+html body .app-container .aq.aq--web .aq-col > .aq-top > :is(.aq-icon, .aq-skip, .is-spacer) { position: static !important; translate: none !important; left: auto !important; right: auto !important; }
+html body .app-container .aq.aq--web .aq-col > .aq-top > .is-spacer { display: block !important; }
+html body .app-container .aq.aq--web .aq-icon:not(.is-spacer) { width: 44px; height: 44px; border-radius: 999px; border: 1.5px solid rgba(62, 39, 35, .3); background: transparent; }
+html body .app-container .aq.aq--web .aq-bar { flex: 1; height: 4px; margin: 0; background: rgba(62, 39, 35, .12); }
+html body .app-container .aq.aq--web .aq-bar > span { background: #3e2723; transition: width .4s var(--aq-ease); }
+html body .app-container .aq.aq--web .aq-slide { text-align: left; }
+html body .app-container .aq.aq--web .aq-count { margin: 0 0 12px; font: 600 15px/1.2 var(--aq-ui); color: rgba(62, 39, 35, .7); }
+html body .app-container .aq.aq--web .aq-title { max-width: none; margin: 0 0 12px !important; font-size: clamp(30px, 3.6vw, 40px) !important; line-height: 1.12 !important; letter-spacing: -.015em; text-align: left; }
+html body .app-container .aq.aq--web .aq-helper { justify-content: flex-start; text-align: left; margin: 0 0 32px; font-size: 17px; color: rgba(62, 39, 35, .78); }
+html body .app-container .aq.aq--web .aq-answer { padding: 0; background: transparent; border-radius: 0; }
+/* Answers: a lettered list. */
+html body .app-container .aq.aq--web .aq-chips { display: grid !important; grid-template-columns: minmax(0, 1fr); gap: 8px; max-width: 520px; counter-reset: aq-opt; }
+html body .app-container .aq.aq--web .aq-chip { counter-increment: aq-opt; justify-content: flex-start; gap: 12px; min-height: 52px; padding: 8px 16px 8px 10px; border: 1.5px solid rgba(62, 39, 35, .35) !important; border-radius: 10px; background: rgba(255, 255, 255, .35); color: #3e2723; font: 500 17px/1.3 var(--aq-ui) !important; text-align: left; box-shadow: none; transition: background-color .15s var(--aq-ease), border-color .15s var(--aq-ease); }
+html body .app-container .aq.aq--web .aq-chip::before { content: counter(aq-opt, upper-alpha); flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 10px; border: 1.5px solid rgba(62, 39, 35, .35); background: #fffaf0; font: 700 13px/1 var(--aq-ui); }
+html body .app-container .aq.aq--web .aq-chip:hover:not(.is-on) { background: rgba(255, 255, 255, .7); border-color: #3e2723 !important; transform: none; }
+html body .app-container .aq.aq--web :is(.aq-chip.is-on, .aq-chip[aria-checked='true']) { background: #3e2723 !important; border-color: #3e2723 !important; color: #ffedac !important; }
+html body .app-container .aq.aq--web :is(.aq-chip.is-on, .aq-chip[aria-checked='true'])::before { background: #f7badd; border-color: #f7badd; color: #3e2723; }
+html body .app-container .aq.aq--web .aq-chip.is-muted:not(.is-on) { border-style: dashed !important; background: transparent; }
+html body .app-container .aq.aq--web .aq-chip.is-muted::before { content: '+'; }
+html body .app-container .aq.aq--web .aq-sub { padding: 8px 0 8px 40px; }
+html body .app-container .aq.aq--web .aq-row { border-radius: 10px !important; }
+html body .app-container .aq.aq--web .qz-search { max-width: 520px; margin-bottom: 16px; }
+html body .app-container .aq.aq--web .qz-search input { border-radius: 999px !important; }
+html body .app-container .aq.aq--web .qz-groups h3 { margin: 24px 0 8px; font: 700 14px/1.2 var(--aq-ui); color: rgba(62, 39, 35, .7); }
+/* Age: the number large, the slider under it, left-aligned with the question. */
+html body .app-container .aq.aq--web .qz-age { max-width: 520px; padding: 0 !important; background: transparent !important; border: 0 !important; }
+html body .app-container .aq.aq--web .qz-age .qz-age-top { display: flex !important; flex-direction: row; align-items: baseline; gap: 12px; }
+html body .app-container .aq.aq--web .qz-age output.qz-age-out:not(.is-empty) { order: -1; font-family: var(--aq-display) !important; font-size: 64px !important; font-weight: 700 !important; line-height: 1 !important; }
+/* One ordinary button, left-aligned, with the Enter hint. Not sticky. */
+html body .app-container .aq.aq--web .aq-foot { position: static !important; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 32px 0 0; background: transparent !important; }
+html body .app-container .aq.aq--web .aq-cta { width: auto; min-height: 52px; padding: 0 20px 0 24px; gap: 12px; border-radius: 999px; background: #3e2723; color: #ffedac; box-shadow: 0 3px 0 #f7badd; }
+html body .app-container .aq.aq--web .aq-cta > span { flex: none; font: 700 17px/1 var(--aq-ui); }
+html body .app-container .aq.aq--web .aq-cta > i { width: 24px; height: 24px; }
+html body .app-container .aq.aq--web .aq-cta:disabled { background: rgba(62, 39, 35, .12); color: rgba(62, 39, 35, .5); box-shadow: none; }
+html body .app-container .aq.aq--web .aq-foot::after { content: 'or press Enter ↵'; font: 500 14px/1 var(--aq-ui); color: rgba(62, 39, 35, .6); }
+html body .app-container .aq.aq--web .aq-hint { flex-basis: 100%; order: 2; text-align: left; }
+html body .app-container .aq.aq--web .aq-foot > :not(.aq-cta):not(.aq-hint) { flex-basis: 100%; order: 3; justify-self: start; text-align: left; }
+html body .app-container .aq.aq--web .qz-med-note { margin: 0 0 24px; font-size: 13px; text-align: left; color: rgba(62, 39, 35, .65); }
+.aq--app .aq-count { display: none; }
+@media (max-width: 640px) {
+  html body .app-container .aq.aq--web { padding: 16px 16px 32px; }
+  html body .app-container .aq.aq--web .aq-col > .aq-top { margin-bottom: 32px !important; }
+  html body .app-container .aq.aq--web .aq-foot::after { display: none; }
+  html body .app-container .aq.aq--web .aq-cta { width: 100%; justify-content: space-between; }
+}
+@media (hover: none) { html body .app-container .aq.aq--web .aq-foot::after { display: none; } }
