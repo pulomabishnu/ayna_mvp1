@@ -199,6 +199,14 @@ const PARTNERS = [
     blurb:
       'Online movement classes for cycle health and fertility, built on the Aviva Method.',
   },
+  {
+    // Affiliate partner from 2026-11-04 (see src/utils/partnerBrands.js).
+    brand: 'Livi',
+    logo: '/products/livi/box.webp',
+    url: 'https://liviwellinc.sjv.io/jR7yr6',
+    blurb:
+      'An FDA-cleared device you insert after sex to absorb semen and discharge.',
+  },
   // Liv Labs (Pippa Resistance Spring) is NOT yet a confirmed partner, its
   // two products stay in the catalog (src/data/brands.js) so they still
   // surface in Discovery/search, but intentionally left off this page and

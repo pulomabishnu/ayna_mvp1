@@ -10453,4 +10453,92 @@ export const BRAND_PRODUCTS = [
         badges: ['Female-Founded'],
         isEmergingBrand: true,
     },
+
+    // Livi (mylivi.com, LiviWell, Inc.), affiliate brand partner, added 2026-11-04
+    // at Eliz's request. Product facts, price, instructions and FAQ from
+    // mylivi.com (product page, The Science, FAQs, About Us), read 2026-11-04.
+    // FDA: openFDA 510(k) K252005, Liviwell, Inc., "Livi Device", Substantially
+    // Equivalent 2026-03-20, product code HEB (unscented menstrual tampon), Class
+    // II, 21 CFR 884.5470; LiviWell Inc's registration listing names K252005.
+    // Study: Ingber et al., O&G Open 2026 (PMID 42541233, PMC13427381), read in
+    // full via NCBI, including its limitations and disclosures. Cover photo
+    // supplied by Eliz; the rest are from mylivi.com, under public/products/livi/.
+    {
+        id: 'p-livi-after-sex-absorption-device',
+        name: 'Livi After-Sex Absorption Device',
+        brand: 'Livi',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health', 'sexual-health'],
+        tags: ['comfort', 'vaginal-health', 'single-use', 'discomfort'],
+        price: '$13.99 (3 individually wrapped devices)',
+        whereToBuy: ['mylivi.com'],
+        url: 'https://www.mylivi.com/products/livi-after-sex-absorption-device-3-pk',
+        affiliateUrl: 'https://liviwellinc.sjv.io/jR7yr6',
+        faqUrl: 'https://www.mylivi.com/pages/faqs',
+        // Customer reviews on Livi's own product page (checked 2026-11-04).
+        brandReviewsUrl: 'https://www.mylivi.com/products/livi-after-sex-absorption-device-3-pk',
+        brandReviewsLabel: 'Customer reviews on mylivi.com',
+        brandReviewsSummary: '5.0 out of 5 from 23 reviews on mylivi.com as of November 4, 2026.',
+        image: '/products/livi/box.webp',
+        gallery: ['/products/livi/how-to-use.webp', '/products/livi/tip.webp'],
+        summary: 'A single-use device you insert right after sex to absorb semen and other vaginal discharge, so it doesn\'t drip out over the following hours. It goes in with a tampon-style applicator; a soft, tulip-shaped foam tip absorbs in as little as 60 seconds, and you remove it by its strings within 15 minutes. FDA 510(k)-cleared (K252005). Not for menstrual use, not a contraceptive, and it does not protect against STIs.',
+        safety: {
+            fdaStatus: 'FDA 510(k)-cleared: K252005 (Liviwell, Inc., "Livi Device"), found substantially equivalent March 20, 2026. Class II, under the FDA\'s unscented menstrual tampon product code (HEB). Per the brand, it is cleared for insertion into the vagina after intercourse to absorb semen or other vaginal discharge.',
+            materials: 'Soft, medical-grade absorbent foam with a tulip-shaped tip, a two-piece applicator and retrieval strings, per mylivi.com.',
+            recalls: 'No recalls found (openFDA 510(k) record checked 2026-11-04).',
+            sideEffects: 'Do not leave it in longer than 15 minutes, or use it for menstrual flow. The box warns that Livi is similar to a tampon and tampons are associated with toxic shock syndrome (TSS). The study authors list irritation, hypersensitivity and TSS as theoretical risks of leaving it in too long.',
+            opinionAlerts: 'Not a contraceptive and does not protect against STIs. The brand says it is not indicated for UTIs or bacterial vaginosis, and there is no evidence it prevents BV.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Co-founded by urogynecologist Dr. Michael Ingber, LiviWell\'s Chief Medical Officer. The study summary is ayna\'s reading of the published paper, which LiviWell funded.',
+        doctorOpinion: 'LiviWell was co-founded by Dr. Michael Ingber, a board-certified urogynecologist trained at Cleveland Clinic, and Dan Seewald, former head of Worldwide Innovation at Pfizer, per the brand.\n\nThe main study of Livi was published in O&G Open, the American College of Obstetricians and Gynecologists\' open-access journal, in 2026. It was a prospective cohort study with no control group for symptoms: 542 women enrolled and 291 (54%) answered the follow-up survey. Of those, 98% reported less post-sex discharge and 84% less odor, and 94% would recommend it. In a subgroup of 48 women who measured their own vaginal pH after sex with and without Livi, pH was lower with Livi at 2 to 6 hours (5.2 vs 5.5) and 10 to 14 hours (4.6 vs 5.1).\n\nThe study was funded by LiviWell. Dr. Ingber, the lead author, owns equity in the company, and two co-authors consult for it. The authors note the participants were self-selected, many didn\'t finish, and the study allowed up to an hour of wear, longer than the 15 minutes the label now allows.',
+        doctorOpinionShort: 'FDA 510(k)-cleared. One published study (LiviWell-funded, no control group, 291 of 542 women responding) found most users reported less dripping and odor, and a lower vaginal pH after sex in a 48-woman subgroup.',
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/42541233/', label: 'PubMed: Ingber et al., O&G Open 2026, Patient Satisfaction With a Novel Postcoital Intravaginal Fluid-Absorbing Device' },
+        ],
+        whoItsFor: [
+            'Anyone bothered by semen dripping out, discharge or odor after sex (per the brand)',
+            'People who want something quick to use right after sex instead of wiping or changing underwear',
+        ],
+        howToUse: {
+            intro: 'Per Livi\'s instructions. Use it right after sex; sitting or lying on your back with knees apart helps.',
+            steps: [
+                'Wash your hands and unwrap it. The applicator tip should be rounded with strings hanging out the bottom. Don\'t use it if damaged.',
+                'Holding the finger grip with your thumb and middle finger, gently slide the applicator into your vagina until your fingers touch the opening.',
+                'Push the plunger all the way in with your pointer finger, then pull the applicator out. The foam stays inside with the strings outside your body.',
+                'After at least 60 seconds and no more than 15 minutes, relax and gently pull the strings to remove it. Put it and the applicator back in the wrapper and throw it away. Do not flush.',
+            ],
+            sourceUrl: 'https://www.mylivi.com/products/livi-after-sex-absorption-device-3-pk',
+            sourceLabel: 'mylivi.com: How to use',
+        },
+        warnings: [
+            'Remove within 15 minutes. Not for extended or overnight wear.',
+            'Not for menstrual use.',
+            'Livi is similar to a tampon, and tampons are associated with toxic shock syndrome (TSS), per the box.',
+            'Not a contraceptive, and it does not protect against sexually transmitted infections.',
+        ],
+        communityReview: 'All 23 reviews on mylivi.com are 5 stars (as of November 4, 2026). Reviewers, including some who say they are OB-GYNs or urologists, describe less dripping, odor and cleanup after sex. When reviewers mentioned fewer UTIs, LiviWell replied that Livi is not FDA-indicated for UTIs or vaginitis.',
+        effectiveness: 'In LiviWell\'s funded, uncontrolled study, 98% of 291 respondents reported less post-sex discharge and 84% less odor; a 48-woman subgroup had lower vaginal pH after sex with Livi than without. FDA-cleared to absorb semen and vaginal discharge; not indicated to prevent UTIs or BV.',
+        ingredients: 'Absorbent foam device with applicator and retrieval strings; 3 individually wrapped per pack.',
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/42541233/',
+                text: 'Ingber et al., O&G Open 2026: Patient Satisfaction With a Novel Postcoital Intravaginal Fluid-Absorbing Device',
+                summary: 'Prospective cohort with no control group for symptoms. 542 enrolled, 291 (53.7%) completed the post-use survey: 98.0% reported improved discharge, 84.3% improved odor. In a paired subgroup of 48, vaginal pH was lower with the device at 2 to 6 hours (5.2 vs 5.5, P=.025) and 10 to 14 hours (4.6 vs 5.1, P<.001). Funded by LiviWell; the lead author holds equity and two co-authors consult for the company.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [
+                { platform: 'website', url: 'https://www.mylivi.com/pages/the-science', text: 'mylivi.com: The Science', summary: 'The brand\'s explanation of semen, vaginal pH and its study results.' },
+                { platform: 'website', url: 'https://www.mylivi.com/pages/faqs', text: 'mylivi.com: FAQs', summary: 'How long to leave it in, what it is not for (periods, contraception, STIs, BV) and shipping (US only).' },
+            ] },
+        },
+        integrations: [],
+        badges: ['FDA-Cleared'],
+        isEmergingBrand: true,
+    },
 ];
