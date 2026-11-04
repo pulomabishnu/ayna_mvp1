@@ -220,7 +220,9 @@ describe('distribution across needs stays stable', () => {
     // Nov 2: Cora Overnight hidden (-1); an herbal product she takes waits for her medicines
     // and pregnancy answer when its label is silent (+1); 50 new products, most of them
     // supplements still missing a safety answer (+40).
-    // Nov 4: Naya's two tampon products added (+2, the same bleeding check every tampon gets).
-    expect(holds).toBe(504);
+    // Nov 4: products that matched nothing are now tagged (vaginal melts, hair serums, an
+    // anti-itch cream, the pelvic floor trainers); 3 of them wait on clinician review (+3).
+    // Nov 4: Naya's two tampon products are also checked for bleeding (+2).
+    expect(holds).toBe(507);
   });
 });

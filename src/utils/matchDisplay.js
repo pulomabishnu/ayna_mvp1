@@ -131,6 +131,12 @@ function bestNeed(details, needId = null) {
  * @returns {{ percent: number, phrase: string, needId: string, label: string, basedOn: string, restricted: boolean, confidenceLevel: string|null } | null}
  */
 export function matchBadge(details, { needId = null } = {}) {
+  // Browse fit (Nov 4): not for anything she picked, scored as if she wanted help with what it's for.
+  if (details && details.matchStatus === 'no-relevance' && details.browseFit && !details.browseFit.hold && Number.isFinite(details.browseFit.percent) && details.browseFit.percent > 0) {
+    const bf = details.browseFit;
+    const partial = bf.percent < MIN_BADGE_SCORE;
+    return { percent: bf.percent, partial, browse: true, phrase: bf.phrase || '', needId: bf.needId || null, label: partial ? PARTIAL_FIT : needHeadline(bf.percent, bf.phrase || ''), basedOn: BASED_ON_LINE, restricted: false, confidenceLevel: null };
+  }
   if (!details || details.matchStatus !== 'scored' || details.eligible === false) return null;
   const percent = details.percent;
   if (!Number.isFinite(percent) || percent <= 0) return null;

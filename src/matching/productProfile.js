@@ -105,6 +105,11 @@ function claimText(text) {
 // Botanicals with reproductive or hormonal effects, or no pregnancy data as a class.
 const HERBAL_RE = /\b(vitex|chaste ?berry|chasteberry|agnus castus|dong quai|angelica sinensis|black cohosh|evening primrose|ashwagandha|maca|red clover|st\.? john'?s wort|ginseng|licorice|liquorice|fenugreek|shatavari|wild yam|red raspberry leaf|raspberry leaf|motherwort|valerian|saw palmetto|dandelion|turmeric|curcumin|rhodiola|schisandra|tribulus|hops|kava|ginkgo|cramp bark|false unicorn|blue cohosh|pennyroyal|mugwort|yarrow|herbal blend|botanical blend)\b/;
 
+// Nov 4 (catalog audit): new products came in with category spellings the rules didn't know
+// ("pelvic-floor-trainer", "pelvic-floor-exerciser"), so they matched nothing. One alias map.
+const CATEGORY_ALIASES = { 'pelvic-floor-trainer': 'pelvic-floor', 'pelvic-floor-exerciser': 'pelvic-floor', 'kegel': 'pelvic-floor', 'menstrual-cup': 'cup', 'menstrual-disc': 'disc', 'pads': 'pad', 'tampons': 'tampon' };
+export function normalCategory(c) { const k = String(c || '').toLowerCase().trim(); return CATEGORY_ALIASES[k] || k; }
+
 function facts(product) {
   const tags = new Set((product.tags || []).map((t) => String(t).toLowerCase()));
   const hf = new Set((product.healthFunctions || []).map((t) => String(t).toLowerCase()));
@@ -118,12 +123,12 @@ function facts(product) {
     // tc: text with benefit-denying sentences removed (for "mentions X" rules).
     tc: (re) => re.test(claims),
     limited: product.evidenceStrength === 'limited',
-    id: product.id, cat: String(product.category || '').toLowerCase(), type: String(product.type || '').toLowerCase(),
+    id: product.id, cat: normalCategory(product.category), type: String(product.type || '').toLowerCase(),
     tags, hf, name, text,
     has: (t) => tags.has(t), fn: (h) => hf.has(h), n: (re) => re.test(name), t: (re) => re.test(text),
     // Format words also appear in the price text ("$15 for 60 capsules").
     fmt: (re) => re.test(`${text} ${priceText} ${String(product.ingredients || '').toLowerCase()}`),
-    isCat: (...c) => c.includes(String(product.category || '').toLowerCase()),
+    isCat: (...c) => c.includes(normalCategory(product.category)),
   };
 }
 
@@ -468,6 +473,19 @@ export const RELEVANCE_RULES = [
     when: (f) => (f.has('sleep') || f.fn('sleep')) && !(f.cat === 'menopause' || (f.cat === 'supplement' && f.has('menopause'))), set: { 'sleep.trouble': SECONDARY } },
   { id: 'sleep_energy_group', why: 'Catalog groups this under sleep and energy.',
     when: (f) => f.fn('sleep-energy') && !f.has('sleep') && !f.n(/\biron\b/), set: { 'energy.fatigue': ADJACENT } },
+  // Nov 4 (catalog audit): products that matched nothing because no rule covered them.
+  // Relevance = what the product is made for (its label and the brand's stated use), never
+  // whether it works: evidence is scored separately and the limited-evidence cap still applies.
+  { id: 'hair_growth_topical_or_oral', why: 'Made for thinning hair or shedding (the brand’s stated use).',
+    when: (f) => (f.isCat('hair') || f.has('hair') || f.fn('skin-hair')) && !f.n(/minoxidil|rogaine/) && (f.t(/hair (growth|loss|thinning|density|shedding|fall)|thinning|shedding|follicle|scalp serum/) || f.has('hair thinning') || f.has('thinning')),
+    set: { 'hair.loss': SECONDARY } },
+  { id: 'vaginal_melt_or_emollient', why: 'Vaginal moisturizers and melts are made for dryness.',
+    when: (f) => (f.cat === 'intimate-care' || f.cat === 'menopause') && (f.n(/melts?\b|emollient|hydrat|moisturi/) || f.t(/vaginal (dryness|hydration)|(menopause|menopausal)[- ]related dryness|for dryness/))
+      && !f.t(/\bwash\b|wipes?\b|cleansing bar/) && !f.n(/wash|cleanser|bar\b|toner|oil\b/),
+    set: { 'vaginal.dryness': STRONG, 'pain.sexual': ADJACENT, 'menopause.body_changes': ADJACENT } },
+  { id: 'external_anti_itch', why: 'An anti-itch cream for external intimate skin (hydrocortisone).',
+    when: (f) => f.cat === 'intimate-care' && f.t(/hydrocortisone|anti-itch/),
+    set: { 'vaginal.irritation': STRONG } },
   { id: 'accessory_cap', why: 'Accessories never rank above the product they belong to.',
     when: (f) => f.has('accessory'), set: {}, cap: { '*': SECONDARY } },
   // Spec: 0.80 means strong evidence or relevance. A product the catalog marks

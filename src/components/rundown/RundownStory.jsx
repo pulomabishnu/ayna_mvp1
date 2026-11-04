@@ -120,6 +120,27 @@ function Body({ card, h, done }) {
         </div>
       );
     }
+    case 'complement': {
+      // Goes with what she owns (src/matching/complements.js): the brand's line, the honest note,
+      // then add it or not. No % (it's not a match for a need).
+      const p = card.product;
+      return (
+        <div className={`ay-rd-product ay-rd-comp${h.sheet ? ' has-open' : ''}`}>
+          {h.sheet
+            ? <AppProductCard product={p} quizAnswers={h.sheet.quizAnswers || null} matchOpts={h.sheet.matchOpts} onClick={() => h.openSheet(p)} onOpenWhyMatch={() => h.openSheet(p)} />
+            : <ProductCard product={p} onOpen={h.whyMatch || undefined} />}
+          <p className="ay-rd-comp__line">{card.line}</p>
+          {card.note && <p className="ay-rd-comp__note">{card.note}</p>}
+          {card.sources?.length > 0 && <p className="ay-rd-comp__src">Sources: {card.sources.map((x, i) => <span key={x.url}>{i ? ', ' : ''}<a href={x.url} target="_blank" rel="noopener noreferrer">{x.title}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</p>}
+          <span className="ay-rd-actions">
+            {h.sheet
+              ? <button type="button" className="ay-rd-primary" onClick={() => { h.sheetAdd(p); h.next(); }}>{h.sheet.inRoutine(p.id) ? 'Added' : 'Add to my ecosystem'}</button>
+              : h.whyMatch && <button type="button" className="ay-rd-primary" onClick={() => h.whyMatch(p)}>See it and add</button>}
+            {h.notForMe && <button type="button" className="ay-rd-link" onClick={() => h.notForMe(card)}>Not for me</button>}
+          </span>
+        </div>
+      );
+    }
     case 'saved': {
       // A product held back for safety never shows a %: "Safety hold · Match unavailable",
       // with what ayna still needs, under the card.
@@ -313,6 +334,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     explore: onExplore ? () => { onAction?.(card, 'open'); onExplore(); } : null,
     askFollowUp: onAskFollowUp ? (f) => { onAction?.(closingCard || card, 'ask'); onAskFollowUp(f); } : null,
     findCare: onFindCare,
+    notForMe: onNotUseful ? (c) => hide(c, 'not_relevant') : null,
     remindTomorrow: onRemindTomorrow ? async () => { setMsg(await onRemindTomorrow()); onAction?.(card, 'remind'); } : null,
   };
   const isData = DATA_KINDS.has(card.kind);

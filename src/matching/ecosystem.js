@@ -152,6 +152,9 @@ export function sortResults(results, up, profilesById) {
     .map((x) => x.r);
 }
 
+const DEFAULT_PRICE_CAP = 25;
+const MIN_SHELF = 3;
+
 export function diversify(sorted, profilesById, up, limit = sorted.length, selectedCounts = null) {
   const pool = sorted.map((r, i) => ({
     r,
@@ -161,11 +164,28 @@ export function diversify(sorted, profilesById, up, limit = sorted.length, selec
       - i * 1e-6,
   }));
   const out = [];
+  // Nov 4 (founder): every pick on a shelf is different (no second item from the same brand
+  // while another brand qualifies), and when she skipped the budget question the shelf
+  // holds at most ONE item over $25; the rest are $25 or less. Both relax only when the
+  // shelf would otherwise have fewer than MIN_SHELF picks.
+  const defaultBudget = up?.shopping && !up.shopping.budget && !up.shopping.priceNotImportant;
+  const pricey = (pp) => { const a = pp?.price?.amount; return Number.isFinite(a) ? a > DEFAULT_PRICE_CAP : false; };
+  const physical = (pp) => !(pp?.formats || []).includes('app_service');
   while (pool.length && out.length < limit) {
     let bestIdx = 0;
     let bestKey = -Infinity;
+    const brandsUsed = new Set(out.map((o) => profilesById.get(o.productId)?.brand?.key).filter(Boolean));
+    const priceyUsed = out.filter((o) => { const op = profilesById.get(o.productId); return physical(op) && pricey(op); }).length;
+    const allowed = (pp) => {
+      if (pp?.brand?.key && brandsUsed.has(pp.brand.key)) return false;
+      if (defaultBudget && physical(pp) && pricey(pp) && priceyUsed >= 1) return false;
+      return true;
+    };
+    const anyAllowed = pool.some((c) => allowed(profilesById.get(c.r.productId)));
+    if (!anyAllowed && out.length >= Math.min(MIN_SHELF, limit)) break;
     pool.forEach((c, idx) => {
       const pp = profilesById.get(c.r.productId);
+      if (anyAllowed && !allowed(pp)) return;
       let pen = 0;
       for (const o of out) {
         const op = profilesById.get(o.productId);

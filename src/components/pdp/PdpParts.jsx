@@ -64,6 +64,12 @@ export function MatchLine({ state, onWhy = null, onFix = null, onQuiz = null }) 
       </div>
     );
   }
+  if (state.kind === 'browse') {
+    const body = <><MatchPill percent={state.percent} size="sm" /><span className="ayv-match__why">{state.why}</span>{onWhy && <span className="ayv-match__go">See why</span>}</>;
+    return onWhy
+      ? <button type="button" className="ayv-match is-browse" data-tour="pdp-why" onClick={onWhy} aria-label={`${matchText(state.percent)}. ${state.why} See why`}>{body}</button>
+      : <p className="ayv-match is-browse" data-tour="pdp-why">{body}</p>;
+  }
   if (state.kind === 'none') {
     return onWhy
       ? <button type="button" className="ayv-match is-none" data-tour="pdp-why" onClick={onWhy}><span className="ayv-match__why">{state.text}</span><span className="ayv-match__go">See why</span></button>

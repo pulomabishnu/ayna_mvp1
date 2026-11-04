@@ -35,6 +35,7 @@ import useMyAvatarUrl from '../hooks/useMyAvatarUrl.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
 import { usePushNotifications, usePushRoutes } from './hooks/usePushNotifications.js';
+import { syncRundownReminder, onRundownReminderTap } from './utils/localRundown.js';
 import { PUSH_ASK_EVENT } from '../components/today/rundownPush.js';
 import { noteRoutineAdd, noteRoutineRemove } from '../health/routineFollowUps.js';
 import { useHealthData, DEV_HEALTH_DEMO } from './hooks/useHealthData.js';
@@ -654,6 +655,12 @@ export default function MobileApp() {
     window.addEventListener(PUSH_ASK_EVENT, ask);
     return () => window.removeEventListener(PUSH_ASK_EVENT, ask);
   });
+  // Nov 3: the daily Rundown reminder lives on the phone (repeats every day at her time).
+  // Keep it booked at launch (no permission prompt here), and a tap opens Today.
+  useEffect(() => {
+    syncRundownReminder({ ask: false }).catch(() => {});
+    return onRundownReminderTap(() => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // A tapped notification opens Today, or the product a recall alert is about.
   usePushRoutes((route) => {
     setAskAynaOpen(false);
@@ -1405,6 +1412,8 @@ export default function MobileApp() {
     // Today" landed back on "Slide to find your matches" with no sign her
     // matches were kept. Guests see their summary, which ends in saving them.
     onSeeMyToday: () => { nav.onSeeMatches(); markOnboardingDone(); if (authUser) setScreen('today'); else { setRevealFrom(null); setRevealAtEnd(false); setScreen('reveal'); } },
+    // Nov 3: the reveal's main button plays the Wrapped story (signed in or out).
+    onWatchWrapped: () => { nav.onSeeMatches(); markOnboardingDone(); setRevealFrom(null); setRevealAtEnd(false); setScreen('reveal'); },
     onReadyCreateAccount: () => { authResumeRef.current = null; authReturnScreenRef.current = 'ready'; setAuthMode('signup'); setScreen('signin'); },
     onReadyBack: () => setScreen('connect'),
     onMakeMorePersonal: () => { setIntakeFlow('more'); setScreen('quiz'); },

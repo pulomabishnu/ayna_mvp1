@@ -453,7 +453,12 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
 /** Shop filters as a side sheet (bottom sheet on phones). Rendered into the
  * page shell so it sits above the Ask ayna dock and is never cut off by it.
  * Filters apply live; the footer button just closes and shows the count. */
-function FilterSheet({ groups, personalizedToggle, sort = null, extra = null, resultCount, activeCount, onClear, onClose }) {
+/* Nov 4 (founder: "the shop filters need updating, easy to read, consolidate"): the ten
+   separate lists are five folding sections (Price, Area, Life stage, Ingredients and values,
+   Evidence and reviews). Each heading shows how many are on, Price is open to start, and the
+   rest open with a tap. A section's rows share one chip style; small sub-labels only where
+   two kinds of choice sit together. */
+function FilterSheet({ sections, personalizedToggle, sort = null, resultCount, activeCount, onClear, onClose }) {
     const closeRef = useRef(null);
     const onCloseRef = useRef(onClose);
     useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
@@ -467,6 +472,7 @@ function FilterSheet({ groups, personalizedToggle, sort = null, extra = null, re
     }, []);
     const host = typeof document !== 'undefined' ? (document.querySelector('.app-container') || document.body) : null;
     if (!host) return null;
+    const shown = sections.map((sec) => ({ ...sec, rows: sec.rows.filter((r) => r.extra || r.options.length > 0) })).filter((sec) => sec.rows.length > 0);
     return createPortal(
         <div className="ay-shopfilters" role="presentation">
             <button type="button" className="ay-shopfilters__scrim" aria-label="Close filters" tabIndex={-1} onClick={onClose} />
@@ -490,17 +496,33 @@ function FilterSheet({ groups, personalizedToggle, sort = null, extra = null, re
                             {sort.note}
                         </fieldset>
                     )}
-                    {extra && <div className="ay-shopfilters__group">{extra}</div>}
-                    {groups.filter((g) => g[3].length > 0).map(([label, value, set, options]) => (
-                        <fieldset key={label} className="ay-shopfilters__group">
-                            <legend>{label}</legend>
-                            <div className="ay-shopfilters__chips">
-                                {options.map(([v, l]) => (
-                                    <button key={v} type="button" className={value === v ? 'is-on' : ''} aria-pressed={value === v} onClick={() => set(value === v ? 'all' : v)}>{l}</button>
-                                ))}
-                            </div>
-                        </fieldset>
-                    ))}
+                    {shown.map((sec) => {
+                        const on = sec.rows.reduce((n, r) => n + (r.extra ? (r.count || 0) : (r.value && r.value !== 'all' && r.options.some(([v]) => v === r.value) ? 1 : 0)), 0);
+                        return (
+                            <details key={sec.title} className="ay-shopfilters__sec" open={sec.open || on > 0}>
+                                <summary>
+                                    <span>{sec.title}</span>
+                                    {on > 0 && <span className="ay-shopfilters__on">{on}</span>}
+                                    {sec.hint && !on && <small>{sec.hint}</small>}
+                                    <i aria-hidden="true" />
+                                </summary>
+                                <div className="ay-shopfilters__secbody">
+                                    {sec.rows.map((r, i) => (
+                                        <div key={r.label || i} className="ay-shopfilters__row" role="group" aria-label={r.label || sec.title}>
+                                            {r.label && <p className="ay-shopfilters__sub">{r.label}</p>}
+                                            {r.extra || (
+                                                <div className="ay-shopfilters__chips">
+                                                    {r.options.map(([v, l]) => (
+                                                        <button key={v} type="button" className={r.value === v ? 'is-on' : ''} aria-pressed={r.value === v} onClick={() => r.set(r.value === v ? 'all' : v)}>{l}</button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </details>
+                        );
+                    })}
                 </div>
                 <footer className="ay-shopfilters__foot">
                     <button type="button" className="ay-shopfilters__clear" onClick={onClear} disabled={!activeCount}>Clear all</button>
@@ -1874,21 +1896,25 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             {showFilters && (
                 <FilterSheet
-                    groups={[
-                        ...(inExplore ? [['Area', macroGroup, pickArea, SHOP_GROUPS.map((g) => [g.id, g.label])]] : []),
-                        ...(lockType ? [] : [['Type', typeFilter, setTypeFilter, [['products', 'Products'], ['services', 'Apps & services']]]]),
-                        ['Price', priceFilter, setPriceFilter, [['under-25', 'Under $25'], ['25-50', '$25–49'], ['50-100', '$50–99'], ['100-plus', '$100+']]],
-                        ['Billing', priceFilter, setPriceFilter, [['subscription', 'Subscription or membership']]],
-                        ['Eligibility', eligibilityFilter, setEligibilityFilter, [['fsa-hsa', 'FSA/HSA eligible']]],
+                    sections={[
+                        { title: 'Price', open: true, rows: [
+                            { value: priceFilter, set: setPriceFilter, options: [['under-25', 'Under $25'], ['25-50', '$25–49'], ['50-100', '$50–99'], ['100-plus', '$100+'], ['subscription', 'Subscription']] },
+                            { value: eligibilityFilter, set: setEligibilityFilter, options: [['fsa-hsa', 'FSA/HSA eligible']] },
+                        ] },
+                        ...(inExplore ? [{ title: 'Area', hint: 'Periods, pelvic floor, menopause…', rows: [{ value: macroGroup, set: pickArea, options: SHOP_GROUPS.map((g) => [g.id, sentenceCase(g.label)]) }] }] : []),
+                        ...(lockType ? [] : [{ title: 'Type', rows: [{ value: typeFilter, set: setTypeFilter, options: [['products', 'Products'], ['services', 'Apps & services']] }] }]),
                         // Fertility, Pregnancy, Postpartum and Menopause are category chips on the page already.
-                        ['Life stage', lifeStageFilter, setLifeStageFilter, [['period', 'Period years'], ['fertility', 'Trying to conceive'], ['pregnancy', 'Pregnant'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause and menopause'], ['postmenopause', 'Post-menopause']]],
-                        ['Preferences', preferenceFilter, setPreferenceFilter, [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Paraben or chlorine free (as labeled)']].filter(([v]) => v === preferenceFilter || preferenceOptions.some((o) => o.value === v))],
-                        ['Sustainability', sustainabilityFilter, setSustainabilityFilter, [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']].filter(([v]) => sustainabilityOptions.some((o) => o.value === v))],
-                        ['Show only', aynaFilter, setAynaFilter, [['clinician', CLINICAL_SOURCES_LABEL], ['community', 'Community favorite'], ...(user ? [['ecosystem', 'In my routine']] : [])]],
+                        { title: 'Life stage', hint: 'Period years to post-menopause', rows: [{ value: lifeStageFilter, set: setLifeStageFilter, options: [['period', 'Period years'], ['fertility', 'Trying to conceive'], ['pregnancy', 'Pregnant'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause and menopause'], ['postmenopause', 'Post-menopause']] }] },
+                        { title: 'Ingredients and values', hint: 'Leave out fragrance, vegan, reusable…', rows: [
+                            ...(inExplore ? [{ label: 'Leave out', extra: <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ayshop__avoid" />, count: avoidAttrs.length, options: [] }] : []),
+                            // With "Leave out" in the sheet, its fragrance and paraben chips cover the same thing, so they aren't repeated here.
+                            { label: 'Good for', value: preferenceFilter, set: setPreferenceFilter, options: [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Paraben or chlorine free (as labeled)']].filter(([v]) => v === preferenceFilter || (preferenceOptions.some((o) => o.value === v) && !(inExplore && ['fragrance-free', 'clean-ingredients'].includes(v)))) },
+                            { label: 'Planet', value: sustainabilityFilter, set: setSustainabilityFilter, options: [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']].filter(([v]) => sustainabilityOptions.some((o) => o.value === v)) },
+                        ] },
+                        { title: 'Evidence and reviews', hint: 'Clinical sources, community favorites', rows: [{ value: aynaFilter, set: setAynaFilter, options: [['clinician', CLINICAL_SOURCES_LABEL], ['community', 'Community favorite'], ...(user ? [['ecosystem', 'In my routine']] : [])] }] },
                     ]}
                     personalizedToggle={hasProfileForSort ? personalizedSwitch : null}
                     sort={{ value: sortValue, choices: sortChoices, set: applySort, note: bestQuizNote }}
-                    extra={inExplore ? <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ayshop__avoid" /> : null}
                     resultCount={gridItems.length}
                     activeCount={sheetFilterCount}
                     onClear={clearSheetFilters}

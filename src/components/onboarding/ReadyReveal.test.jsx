@@ -17,7 +17,7 @@ describe('ReadyReveal bleeding after menopause', () => {
       const html = renderToStaticMarkup(<ReadyReveal variant={variant} answers={POST_MENO_HEAVY} onSeeToday={() => {}} />);
       const care = html.indexOf('Get bleeding after menopause checked');
       expect(care).toBeGreaterThan(-1);
-      expect(care).toBeLessThan(html.indexOf('initially focus on'));
+      expect(care).toBeLessThan(html.indexOf('What you asked for help with'));
       expect(html).toContain('should be checked promptly');
       expect(html).toContain('medlineplus.gov');
       expect(html).not.toMatch(/—/);
@@ -30,6 +30,6 @@ describe('ReadyReveal bleeding after menopause', () => {
   it('no message for someone who still gets periods', () => {
     const html = renderToStaticMarkup(<ReadyReveal answers={REGULAR_HEAVY} onSeeToday={() => {}} />);
     expect(html).not.toContain('Get bleeding after menopause checked');
-    expect(html).toContain('% match');
+    expect(html).toMatch(/We found .*match/);
   });
 });
