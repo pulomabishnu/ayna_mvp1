@@ -1,3 +1,4 @@
+import { PRODUCT_VARIANTS_NOV2026 } from './productVariantsNov2026.js';
 // Verified manufacturer/retailer options. Never construct a size link from guessed labels.
 export const PRODUCT_VARIANTS = {
   "p-belly-bandit": {
@@ -1539,7 +1540,9 @@ export const PRODUCT_VARIANTS = {
 };
 
 export function applyProductVariants(product) {
-  const options = PRODUCT_VARIANTS[product?.id];
+  const base = PRODUCT_VARIANTS[product?.id];
+  const added = PRODUCT_VARIANTS_NOV2026[product?.id];
+  const options = base && added ? { ...base, variants: [...base.variants, ...added.variants] } : (base || added);
   if (!options) return product;
   return {
     ...product,
