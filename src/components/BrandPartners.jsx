@@ -191,6 +191,14 @@ const PARTNERS = [
     blurb:
       'A reusable tampon applicator in the works, for the comfort of an applicator without the plastic waste.',
   },
+  {
+    // Affiliate partner from 2026-11-04 (see src/utils/partnerBrands.js).
+    brand: 'The Fertility Class',
+    logo: '/products/fertility-class/cover.webp',
+    url: 'https://myclass.thefertilityclass.com/a/2148088258/fLawFjD7',
+    blurb:
+      'Online movement classes for cycle health and fertility, built on the Aviva Method.',
+  },
   // Liv Labs (Pippa Resistance Spring) is NOT yet a confirmed partner, its
   // two products stay in the catalog (src/data/brands.js) so they still
   // surface in Discovery/search, but intentionally left off this page and
