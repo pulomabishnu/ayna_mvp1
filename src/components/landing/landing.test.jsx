@@ -88,6 +88,21 @@ describe('the raining cut-outs (a faded layer behind the hero)', () => {
 });
 
 describe('the website landing: the v2 home, optimized for desktop', () => {
+  it('keeps the animated phone walkthrough under the hero for guests and signed-in members', () => {
+    const guest = renderToStaticMarkup(<WebLanding onStartQuiz={() => {}} />);
+    const member = renderToStaticMarkup(<WebLanding signedIn hasProfile onGoHome={() => {}} onStartQuiz={() => {}} />);
+    for (const html of [guest, member]) {
+      expect(html).toContain('id="ay-demo"');
+      expect(html).toContain('How ayna works');
+      expect(html).toContain('Take the quiz');
+      expect(html).toContain('Get matched');
+      expect(html).toContain('Shop what fits');
+      expect(html.indexOf('id="ay-demo"')).toBeGreaterThan(html.indexOf('class="lk-bar"'));
+      expect(html.indexOf('id="ay-demo"')).toBeLessThan(html.indexOf('class="lb"'));
+    }
+    expect(member).toContain('Go to your Home');
+  });
+
   it('hero: a centred title, search, Slide to start (welcome tip anchor) and the rain beside it', () => {
     const html = renderToStaticMarkup(<WebLanding onStartQuiz={() => {}} onViewHowItWorks={() => {}} />);
     expect(html).toContain('aria-label="Sign up free. Slide or tap to start."');
