@@ -2082,8 +2082,7 @@ export default function MyEcosystem({
                 {/* Oct 2026 redesign: the website version of the app's
                     Ecosystem screen. Header + search, the ring overview, then
                     one section per area of care using the Shop card. */}
-                {homeTop}
-                {(!homeTop || myProductList.length === 0) && <header className="eco3-head ayeco__head">
+                {useTabs && homeTop ? homeTop : <header className="eco3-head ayeco__head">
                     <div className="eco3-head__text">
                         <h1 id="eco3-title" className="ay-h1">My ecosystem</h1>
                         <p className="eco3-head__sub">
