@@ -26,9 +26,15 @@ describe('demo health data changes her Ecosystem (website v2 and app v1 engines)
       // It only re-orders: never adds or removes a product.
       expect(allIds(after.shelves)).toEqual(allIds(before.shelves));
       const sleepAfter = picks(after.shelves)['sleep.trouble'];
-      const lastCategory = getProductById(sleepAfter[sleepAfter.length - 1])?.category;
-      expect(['tracker', 'wearable']).toContain(lastCategory);
-      expect(sleepAfter).not.toEqual(picks(before.shelves)['sleep.trouble']);
+      // Any tracker on the shelf sits after the products that act on sleep.
+      const cats = sleepAfter.map((id) => getProductById(id)?.category);
+      const firstTracker = cats.findIndex((c) => ['tracker', 'wearable'].includes(c));
+      if (firstTracker >= 0) expect(cats.slice(firstTracker).every((c) => ['tracker', 'wearable'].includes(c))).toBe(true);
+      // Re-ordering only happens when the shelf has a tracker to move back
+      // (v1's sleep shelf has none since Eight Sleep became a physical product, Nov 4).
+      if (picks(before.shelves)['sleep.trouble'].some((id) => ['tracker', 'wearable'].includes(getProductById(id)?.category))) {
+        expect(sleepAfter).not.toEqual(picks(before.shelves)['sleep.trouble']);
+      }
       const change = after.healthShaped.changes.find((c) => c.needId === 'sleep.trouble');
       expect(change).toMatchObject({ kind: 'trend', shelfMovedUp: true, sources: ['apple_health'] });
       // Badges ride along on the picks, never on trackers.
