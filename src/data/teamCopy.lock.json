@@ -7918,5 +7918,29 @@
   "safety.allergens": "2be88ca4242c",
   "safety.sideEffects": "0f8bee12bb83",
   "safety.opinionAlerts": "2be88ca4242c"
+ },
+ "d-the-fertility-class": {
+  "name": "6c5dfe0ec279",
+  "brand": "5551e6a3a890",
+  "price": "a1b1b1344980",
+  "summary": "9278335832cf",
+  "description": "2be88ca4242c",
+  "doctorOpinion": "3b6ff5b2236a",
+  "communityReview": "a6df39f81ba4",
+  "effectiveness": "cbdb98804383",
+  "ingredients": "a6a520f60623",
+  "category": "55413719e3b6",
+  "url": "cc3c91715cc8",
+  "image": "1b8fde52899b",
+  "whoItsFor": "7229925197fd",
+  "howToUse": "a55e6ca82e52",
+  "warnings": "f5656d7d3b51",
+  "badges": "093abe120d5e",
+  "safety.fdaStatus": "32bd77fa3ca7",
+  "safety.materials": "eeb6b6c8968b",
+  "safety.recalls": "eeb6b6c8968b",
+  "safety.allergens": "2be88ca4242c",
+  "safety.sideEffects": "65d9ff88d097",
+  "safety.opinionAlerts": "007e12f9a746"
  }
 }
