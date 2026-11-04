@@ -133,7 +133,7 @@ const WHY_WEB = {
 // fields stay those of intakeModel.js.
 const TITLES = {
   // Nov 3 (founder: "a 5 year old should be able to fill this out"): short, plain words.
-  support: { title: 'What do you want help with?', subtitle: 'Pick all that fit. This is how we pick your products.' },
+  support: { title: 'What do you want help with?', subtitle: 'Pick all that fit.' },
   periodFlow: { title: 'How heavy is your period flow?', subtitle: 'On a typical heavy day' },
   periodPain: { title: 'How much do period cramps get in your way?' },
   ttcDuration: { title: 'How long have you been trying to get pregnant?' },
