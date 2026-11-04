@@ -443,6 +443,8 @@ export const NOV_2026_PRODUCTS = [
   },
   {
     "id": "d-balance-balance-menopause-hormones",
+    "hidden": true,
+    "hiddenReason": "Duplicate of d-balance-menopause (same Balance menopause app); merged Nov 4 2026 per Ameera.",
     "name": "Balance - Menopause & Hormones",
     "brand": "Balance",
     "category": "menopause",
