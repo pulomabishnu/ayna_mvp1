@@ -559,7 +559,7 @@ export const EXTENDED_DIGITAL = [
 
     // ─── FERTILITY ──────────────────────────────────────
     {
-        id: 'd-initio', name: 'Inito Fertility Monitor', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'fertility'], price: '$149 monitor + $50/15 strips', userRating: 4.6, whereToBuy: ['Amazon', 'inito.com'], platform: 'iOS, Android', image: 'https://m.media-amazon.com/images/I/71uAS-t2WNL._AC_UF1000,1000_QL80_.jpg', summary: 'Measures 4 hormones (E3G, LH, PdG, FSH) from urine at home. Confirms ovulation, not just predicts.',
+        id: 'd-initio', name: 'Inito Fertility Monitor', category: 'tracker', type: 'physical', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'fertility'], price: '$149 monitor + $50/15 strips', userRating: 4.6, whereToBuy: ['Amazon', 'inito.com'], platform: 'iOS, Android', image: 'https://m.media-amazon.com/images/I/71uAS-t2WNL._AC_UF1000,1000_QL80_.jpg', summary: 'Measures 4 hormones (E3G, LH, PdG, FSH) from urine at home. Confirms ovulation, not just predicts.',
         safety: {
             fdaStatus: 'FDA-listed Class I over-the-counter hormone test, which is exempt from FDA premarket clearance; no 510(k) clearance found. Verified in the FDA device registration database, 2026-10-02.', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A (Diagnostic). Potential for user error in strip dipping.',
@@ -578,7 +578,7 @@ export const EXTENDED_DIGITAL = [
 
     // ─── WEARABLES ──────────────────────────────────────
     {
-        id: 'd-oura', name: 'Oura Ring Gen 3', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking', 'fitness-cycle'], tags: ['irregular', 'comfort', 'privacy'], price: '$299 + $6/month', userRating: 4.6, whereToBuy: ['ouraring.com', 'Amazon', 'Best Buy'], platform: 'iOS, Android', image: 'https://static0.xdaimages.com/wordpress/wp-content/uploads/2022/09/Silver-Oura-Ring-Gen-3-Horizon-on-white-background.jpg?q=50&fit=crop&w=800&dpr=1.5', summary: 'Smart ring that tracks cycle, sleep, HRV, temperature, and activity. Period prediction via temperature trends.',
+        id: 'd-oura', name: 'Oura Ring Gen 3', category: 'tracker', type: 'physical', internal: false, healthFunctions: ['cycle-tracking', 'fitness-cycle'], tags: ['irregular', 'comfort', 'privacy'], price: '$299 + $6/month', userRating: 4.6, whereToBuy: ['ouraring.com', 'Amazon', 'Best Buy'], platform: 'iOS, Android', image: 'https://static0.xdaimages.com/wordpress/wp-content/uploads/2022/09/Silver-Oura-Ring-Gen-3-Horizon-on-white-background.jpg?q=50&fit=crop&w=800&dpr=1.5', summary: 'Smart ring that tracks cycle, sleep, HRV, temperature, and activity. Period prediction via temperature trends.',
         safety: {
             fdaStatus: 'Not FDA-cleared (wellness device)', materials: 'Titanium, non-allergenic', recalls: 'No recalls.', allergens: 'Non-nickel, hypoallergenic coating',
             sideEffects: 'Potential skin irritation from moisture trapped under the ring. In December 2025, some users reported rings overheating, with images circulating of scorched or partially melted devices; Oura characterized the incidents as extremely rare and said it found no evidence of a broader safety issue.',
@@ -612,7 +612,7 @@ export const EXTENDED_DIGITAL = [
         }
     },
     {
-        id: 'd-eight-sleep', name: 'Eight Sleep Pod 4', category: 'sleep', type: 'digital', internal: false, healthFunctions: ['sleep', 'fitness-cycle'], tags: ['sleep', 'energy', 'menopause', 'comfort', 'hormonal'], price: '$2,245+', userRating: 4.5, whereToBuy: ['eightsleep.com'], platform: 'iOS, Android', image: 'https://res.cloudinary.com/eightsleep/image/upload/c_fill,w_1200,h_630,f_jpg,q_auto/v1747147611/Homepage_c0dril.png', summary: 'Smart mattress cover that automatically heats and cools each side of the bed throughout the night. Tracks sleep stages, HRV, heart rate, and respiratory rate. And adjusts temperature in real time to improve sleep quality.',
+        id: 'd-eight-sleep', name: 'Eight Sleep Pod 4', category: 'sleep', type: 'physical', internal: false, healthFunctions: ['sleep', 'fitness-cycle'], tags: ['sleep', 'energy', 'menopause', 'comfort', 'hormonal'], price: '$2,245+', userRating: 4.5, whereToBuy: ['eightsleep.com'], platform: 'iOS, Android', image: 'https://res.cloudinary.com/eightsleep/image/upload/c_fill,w_1200,h_630,f_jpg,q_auto/v1747147611/Homepage_c0dril.png', summary: 'Smart mattress cover that automatically heats and cools each side of the bed throughout the night. Tracks sleep stages, HRV, heart rate, and respiratory rate. And adjusts temperature in real time to improve sleep quality.',
         safety: {
             fdaStatus: 'Not FDA-cleared (wellness device)', materials: 'Polyester, spandex blend; water-based cooling system', recalls: 'No recalls.', allergens: 'No known allergens; water system requires occasional maintenance',
             sideEffects: 'Some users report waking from cooling cycles; not recommended for those with Raynaud\'s.',
