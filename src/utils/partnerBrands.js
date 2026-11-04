@@ -72,6 +72,7 @@ export const PARTNER_BRAND_ORDER = [
   /\btampon tribe\b/, // Tampon Tribe (partner from 2026-10-17)
   /\bmy pelvic bra\b/, // My Pelvic Bra
   /\bvio2\b/, // VIO2
+  /\bnaya\b/, // Naya reusable tampon applicator (pre-launch partner from 2026-11-04)
 ];
 
 /** Back-compat alias: the redesign's components/tests import this name. */
@@ -86,7 +87,7 @@ export const PARTNER_BRAND_PATTERNS = PARTNER_BRAND_ORDER;
 export const PARTNER_BRANDS = [
   'Rèsa', 'BUNI', 'LiM Method', 'Winx Health', 'Momotaro Apotheca', 'Neycher', 'SootheHer', 'Alubri',
   'Connect Pelvic Floor Fitness', 'Elitone', 'LOLA', 'Proov', 'gina', 'Tampon Tribe',
-  'My Pelvic Bra', 'VIO2',
+  'My Pelvic Bra', 'VIO2', 'Naya',
 ].map((name, i) => ({ name, pattern: PARTNER_BRAND_ORDER[i] }));
 
 /**
@@ -97,6 +98,7 @@ export const PARTNER_BRANDS = [
  */
 export const PRELAUNCH_PARTNER_PATTERNS = [
   /\br[eè]sa\b/,
+  /\bnaya\b/, // Naya (2026-11-04): waitlist only, not yet released
 ];
 
 export function isPrelaunchPartnerItem(item) {
@@ -132,6 +134,12 @@ const PARTNER_DISCLOSURE =
 const PRELAUNCH_PARTNER_DISCLOSURE =
   'This brand is pre-launch, so this is a waitlist, not a purchase: the link takes you to reserve a spot with an early deposit. ayna has partnered with this brand after personally reviewing them, and ayna does not earn a commission on the deposit. Partners do not and cannot influence which products ayna honestly curates for you.';
 
+// Waitlist with no deposit (Naya, Nov 4): joining is free, and the partner link
+// can still earn ayna a commission later.
+const PRELAUNCH_FREE_WAITLIST_DISCLOSURE =
+  'This brand is pre-launch, so this is a waitlist, not a purchase: the link takes you to join the brand\'s waitlist, free. ayna has partnered with this brand after personally reviewing them, and may earn a commission through this partner link once the product launches. Partners do not and cannot influence which products ayna honestly curates for you.';
+
 export function getPartnerDisclosureText(item) {
-  return isPrelaunchPartnerItem(item) ? PRELAUNCH_PARTNER_DISCLOSURE : PARTNER_DISCLOSURE;
+  if (!isPrelaunchPartnerItem(item)) return PARTNER_DISCLOSURE;
+  return /deposit/i.test(String(item?.price || '')) || !item?.price ? PRELAUNCH_PARTNER_DISCLOSURE : PRELAUNCH_FREE_WAITLIST_DISCLOSURE;
 }
