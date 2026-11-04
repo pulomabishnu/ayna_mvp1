@@ -144,7 +144,7 @@ export default function ReadyReveal({ answers = null, variant = 'app', signedIn 
       <div className="ay-ob-ready__actions ay-ob-steps">
         <h2 className="ay-ob-steps__h">Your next steps</h2>
         <ol className="ay-ob-steps__list">
-          <li className="is-done"><span className="ay-ob-steps__n" aria-hidden="true">✓</span><span><b>Answer 4 questions</b><small>Done</small></span></li>
+          <li className="is-done"><span className="ay-ob-steps__n" aria-hidden="true">✓</span><span><b>Answer your first questions</b><small>Done</small></span></li>
           {onMorePersonal && safetyLeft > 0 && (
             <li className="is-now"><span className="ay-ob-steps__n" aria-hidden="true">2</span>
               <button type="button" className="ay-ob-steps__btn" onClick={onSafety || onMorePersonal}><span><b>Answer {safetyLeft} safety {safetyLeft === 1 ? 'question' : 'questions'}</b><small>About your medicines and allergies. Unlocks vitamins and other things you take. 30 seconds.</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>

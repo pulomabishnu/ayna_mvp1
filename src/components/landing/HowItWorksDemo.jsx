@@ -13,12 +13,13 @@ import './how-it-works-demo.css';
  * a safety hold, and a MedlinePlus source. It is labelled as an example.
  */
 const SCENES = [
-  { k: 'ask', t: 'Pick what you want help with', d: 'Cramps, sleep, heavy periods and more. 4 quick questions.' },
+  { k: 'ask', t: 'Pick what you want help with', d: 'Cramps, sleep, heavy periods and more. About 1 minute.' },
   { k: 'match', t: 'See your matches', d: 'Each one shows a % and why it fits you.' },
   { k: 'safe', t: 'We check safety first', d: 'If we need to know your medicines, we ask before showing it.' },
   { k: 'chat', t: 'Ask anything', d: 'Answers show where they come from.' },
+  { k: 'daily', t: 'Every morning, your rundown', d: 'A short daily check-in, and what goes with what you already own.' },
 ];
-const MS = [4500, 6500, 5000, 5000];
+const MS = [4500, 6500, 5000, 5000, 5500];
 
 const MATCHES = [
   { id: 'p-viboos-heating-pad', name: 'VIBOOS Electric Heating Pad', price: '$12.99', pct: 87 },
@@ -75,6 +76,16 @@ function Screen({ k }) {
       </div>
     </div>
   );
+  if (k === 'daily') return (
+    <div className="hd-scr">
+      <span className="hd-note-push"><b>ayna</b>Your ayna daily rundown is ready.<small>8:00 am · change it in Settings</small></span>
+      <p className="hd-meta">Your daily rundown</p>
+      <p className="hd-q">How did you sleep?</p>
+      <span className="hd-dots" aria-hidden="true">{[1, 1, 0, 1, 1, 0, 0].map((on, i) => <i key={i} className={on ? 'is-on' : ''} />)}<small>4 of 7 check-ins</small></span>
+      <span className="hd-prod is-daily"><span className="hd-tile"><img src={img('p-saalt-cup-steamer')} alt="" loading="lazy" /></span><span className="hd-info"><small>Goes with your Saalt Menstrual Cup</small><b>Saalt Cup Steamer</b></span></span>
+      <span className="hd-pair"><span className="hd-next">Add to my ecosystem</span><span className="hd-next is-ghost">Not for me</span></span>
+    </div>
+  );
   return (
     <div className="hd-scr">
       <p className="hd-meta">Ask ayna</p>
@@ -119,7 +130,7 @@ export default function HowItWorksDemo({ onStart, startLabel = 'Get my free matc
       <div className="hd-in">
         <div className="hd-copy">
           <h2 id="hd-title" className="hd-title">How ayna works</h2>
-          <p className="hd-sub">Answer 4 questions. See what fits you, and why.</p>
+          <p className="hd-sub">Answer a few quick questions. See what fits you, and why.</p>
           <ol className="hd-steps">
             {SCENES.map((s, i) => (
               <li key={s.k} className={!still && i === scene ? 'is-on' : ''}>
@@ -151,7 +162,7 @@ export default function HowItWorksDemo({ onStart, startLabel = 'Get my free matc
               {done
                 ? <button type="button" className="hd-pause" onClick={replay}>Replay</button>
                 : <button type="button" className="hd-pause" onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Play the walkthrough' : 'Pause the walkthrough'}>{paused ? 'Play' : 'Pause'}</button>}
-              <span className="hd-len">20 sec · example for cramps and trouble sleeping</span>
+              <span className="hd-len">25 sec · example for cramps and trouble sleeping</span>
             </div>
           </div>
         )}

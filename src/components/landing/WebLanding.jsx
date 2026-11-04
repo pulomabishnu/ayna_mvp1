@@ -51,7 +51,7 @@ function Hero({ cta, onSearch, banner = null }) {
         <Rain cols={4} onInk className="wl-rain" />
         <div className="wl-hero__in">
           <h1 id="hm-hero-title" className="wl-title">Find women’s health products that fit you.</h1>
-          <p className="wl-one">Pads, vitamins, sleep help and more. Answer 4 questions and see what fits you.</p>
+          <p className="wl-one">Pads, vitamins, sleep help and more. Answer a few quick questions and see what fits you.</p>
           <div className="wl-ctas">
             <button type="button" className="wl-cta" data-tour="landing-start" onClick={() => { trackLandingCta(cta.id, 'web', cta.copy); cta.go?.(); }}>{cta.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
             <a className="wl-watch" href="#ay-demo" onClick={watch}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M10 8.5v7l6-3.5-6-3.5Z" /></svg>Watch how it works</a>

@@ -866,7 +866,10 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
     if (part === 'core' && steps.some((s) => s.type === 'aboutYou')) {
       const total = pr.total + 1;
       const now = step.type === 'aboutYou' ? (aboutPart === 'age' ? 1 : 2) : pr.now + 1;
-      return { now, total, label: `Question ${now} of ${total}` };
+      // Nov 4 (founder: the counts weren't accurate). What she picks for help can add a
+      // follow-up (cramps, heavy periods, UTIs), so the total is only shown once it can't change.
+      const known = isStepAnswered('support', intake) && step.id !== 'support' && step.type !== 'aboutYou';
+      return { now, total, label: known ? `Question ${now} of ${total}` : `Question ${now}` };
     }
     return pr;
   })();
@@ -906,7 +909,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       answerProps={{ ...(HOLD_TIP_TYPES.has(step.type) && (step.type !== 'aboutYou' || aboutPart === 'stage') ? { 'data-tour': 'quiz-hold' } : {}), onPointerDown: startHold, onPointerUp: endHold, onPointerLeave: endHold, onPointerCancel: endHold, onPointerMove: (e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }, onClickCapture: swallow, onContextMenu: (e) => { if (hold.current.fired) e.preventDefault(); } }}
       overlay={glossary && <GlossaryCard term={glossary.term} definition={glossary.definition} onClose={() => setGlossary(null)} />}
     >
-      {multi && helperShort && <p className="aq-caption">Pick all that apply</p>}
+      {multi && helperShort && !/pick all/i.test(helperShort) && <p className="aq-caption">Pick all that apply</p>}
       {body()}
     </QuizFrame>
   </div>;

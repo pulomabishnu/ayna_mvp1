@@ -387,3 +387,82 @@ html body .app-container .aq.aq--web .aq-answer .qz-chips.is-small > .aq-chips {
 html body .app-container .aq.aq--web .aq-answer .qz-chip.is-dashed { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 16px 8px 10px; border: 1.5px dashed rgba(62, 39, 35, .45); border-radius: 10px; background: transparent; color: #3e2723; font: 500 17px/1.3 var(--aq-ui); text-align: left; cursor: pointer; }
 html body .app-container .aq.aq--web .aq-answer .qz-chip.is-dashed::before { content: '+'; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 10px; border: 1.5px dashed rgba(62, 39, 35, .45); font: 700 15px/1 var(--aq-ui); }
 html body .app-container .aq.aq--web .aq-answer .qz-chip.is-dashed:hover { border-color: #3e2723; background: rgba(255, 255, 255, .5); }
+
+/* Nov 4 (founder: "make the quiz cuter, use the inspo, our branding"). From her two
+   favourite shots: a centred question, the answer in one soft rounded tile, the big
+   number on a coloured block over a tick ruler, a square back key, and a Next bar
+   with a pink arrow square. ayna colours only (espresso, butter, pink, cream). */
+html body .app-container .aq.aq--web .aq-col > .aq-top .aq-icon:not(.is-spacer) { border-radius: 16px; border-color: rgba(62, 39, 35, .18); background: #fffaf0; }
+html body .app-container .aq.aq--web .aq-bar { height: 8px; border-radius: 999px; }
+html body .app-container .aq.aq--web .aq-bar > span { position: relative; border-radius: 999px; background: #3e2723; overflow: visible; }
+html body .app-container .aq.aq--web .aq-bar > span::after { content: ''; position: absolute; right: -8px; top: 50%; width: 16px; height: 16px; margin-top: -8px; border-radius: 999px; background: #f7badd; border: 2.5px solid #3e2723; box-sizing: border-box; }
+html body .app-container .aq.aq--web .aq-slide { text-align: center; }
+html body .app-container .aq.aq--web .aq-count { display: inline-block; margin: 0 0 16px; padding: 6px 12px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 13px/1.2 var(--aq-ui); }
+html body .app-container .aq.aq--web .aq-title { margin-left: auto !important; margin-right: auto !important; max-width: 16ch; text-align: center; }
+html body .app-container .aq.aq--web .aq-helper { justify-content: center; text-align: center; }
+html body .app-container .aq.aq--web .aq-answer { display: grid; justify-items: center; text-align: left; }
+html body .app-container .aq.aq--web .aq-answer > * { width: 100%; max-width: 520px; }
+/* The answers: one soft tile, roomy rows, round letter keys. */
+html body .app-container .aq.aq--web .aq-chips { gap: 10px; max-width: 520px; margin: 0 auto; }
+html body .app-container .aq.aq--web .aq-chip { min-height: 58px; padding: 8px 16px 8px 10px; border: 1.5px solid rgba(62, 39, 35, .14) !important; border-radius: 16px; background: #fffaf0; font-size: 17px; transition: transform .16s var(--aq-ease), background-color .16s var(--aq-ease); }
+html body .app-container .aq.aq--web .aq-chip::before { width: 36px; height: 36px; border-radius: 999px; border: 0; background: #ffedac; color: #3e2723; font-weight: 700; }
+html body .app-container .aq.aq--web .aq-chip:hover:not(.is-on) { background: #fffaf0; border-color: rgba(62, 39, 35, .4) !important; transform: translateY(-1px); }
+html body .app-container .aq.aq--web :is(.aq-chip.is-on, .aq-chip[aria-checked='true']) { background: #f7badd !important; border-color: #3e2723 !important; color: #3e2723 !important; }
+html body .app-container .aq.aq--web :is(.aq-chip.is-on, .aq-chip[aria-checked='true'])::before { content: '✓'; background: #3e2723; border: 0; color: #ffedac; }
+html body .app-container .aq.aq--web .aq-chip.is-muted:not(.is-on) { background: transparent; border-style: dashed !important; border-color: rgba(62, 39, 35, .35) !important; }
+html body .app-container .aq.aq--web .aq-chip.is-muted::before { content: '+'; background: transparent; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .35); }
+html body .app-container .aq.aq--web .qz-group h3 { text-align: left; }
+/* Age: the number on a pink block, over a tick ruler. */
+html body .app-container .aq.aq--web .qz-age { margin: 0 auto; }
+html body .app-container .aq.aq--web .qz-age .qz-age-top { flex-direction: column; align-items: center; justify-content: center; gap: 0; min-height: 148px; padding: 20px 16px 16px; border-radius: 24px; background: #f7badd; }
+html body .app-container .aq.aq--web .qz-age .qz-age-label { order: 2; margin: 6px 0 0; font: 600 14px/1.2 var(--aq-ui); color: rgba(62, 39, 35, .75); }
+html body .app-container .aq.aq--web .qz-age output.qz-age-out:not(.is-empty) { font-size: 88px !important; letter-spacing: -.03em; color: #3e2723; }
+html body .app-container .aq.aq--web .qz-age output.qz-age-out small { font: 600 16px/1 var(--aq-ui); letter-spacing: 0; }
+html body .app-container .aq.aq--web .qz-age output.qz-age-out.is-empty { font: 700 22px/1.2 var(--aq-display); color: #3e2723; }
+html body .app-container .aq.aq--web .qz-age .qz-age-slide { position: relative; margin-top: 16px; padding-top: 18px; background: repeating-linear-gradient(90deg, rgba(62, 39, 35, .35) 0 2px, transparent 2px 10px) center top / calc(100% - 112px) 14px no-repeat; }
+html body .app-container .aq.aq--web .qz-age .qz-age-step { border-radius: 16px; background: #fffaf0; }
+html body .app-container .aq.aq--web .qz-age :is(.qz-age-type, .qz-age-under, .qz-age-ends) { justify-self: center; }
+html body .app-container .aq.aq--web .qz-age .qz-age-ends { padding: 0 56px; }
+/* Footer: a square back key is already up top; Next is the inspo bar with a pink arrow square. */
+html body .app-container .aq.aq--web .aq-foot { justify-content: center; }
+html body .app-container .aq.aq--web .aq-cta { min-height: 60px; padding: 6px 24px 6px 6px; gap: 16px; border-radius: 20px; box-shadow: none; }
+html body .app-container .aq.aq--web .aq-cta > i { order: -1; width: 48px; height: 48px; border-radius: 16px; background: #f7badd; color: #3e2723; }
+html body .app-container .aq.aq--web .aq-cta > i svg { width: 22px; height: 22px; }
+html body .app-container .aq.aq--web .aq-cta:disabled > i { background: rgba(62, 39, 35, .12); color: rgba(62, 39, 35, .6); }
+html body .app-container .aq.aq--web .aq-foot > :not(.aq-cta):not(.aq-hint) { justify-self: center; text-align: center; }
+@media (max-width: 899px) {
+  html body .app-container .aq.aq--web .aq-cta { width: 100%; justify-content: flex-start; }
+  html body .app-container .aq.aq--web .qz-age output.qz-age-out:not(.is-empty) { font-size: 72px !important; }
+}
+@media (prefers-reduced-motion: reduce) { html body .app-container .aq.aq--web .aq-chip { transition: none; } }
+html body .app-container .aq.aq--web .aq-bar { overflow: visible; }
+html body .app-container .aq.aq--web .qz-age .qz-age-ends { justify-self: stretch; width: 100%; box-sizing: border-box; display: flex; justify-content: space-between; }
+html body .app-container .aq.aq--web .ay-med-note { justify-content: center; text-align: center; }
+/* Spacing pass (Nov 4): the whole question and its Continue fit one laptop screen; air between groups, not inside them. 8/12/16/24/32 only. */
+html body .app-container .aq.aq--web { padding: 24px 24px 48px; }
+html body .app-container .aq.aq--web .aq-col > .aq-top { margin: 0 0 32px !important; }
+html body .app-container .aq.aq--web .aq-slide { padding: 0; }
+html body .app-container .aq.aq--web .aq-count { margin: 0 0 12px; }
+html body .app-container .aq.aq--web .aq-title { margin: 0 auto 8px !important; }
+html body .app-container .aq.aq--web .aq-helper { margin: 0 auto 24px; max-width: 44ch; font-size: 17px; line-height: 1.45; }
+html body .app-container .aq.aq--web .aq-helper:empty { display: none; }
+html body .app-container .aq.aq--web .ay-med-note { margin: -8px auto 24px; max-width: 520px; font-size: 13px; }
+html body .app-container .aq.aq--web .aq-caption { width: 100%; max-width: 520px; margin: 0 auto 12px; text-align: left; }
+html body .app-container .aq.aq--web .qz-age .qz-age-top { min-height: 0; padding: 16px 16px 12px; }
+html body .app-container .aq.aq--web .qz-age output.qz-age-out:not(.is-empty) { font-size: 72px !important; }
+html body .app-container .aq.aq--web .qz-age .qz-age-slide { margin-top: 12px; }
+html body .app-container .aq.aq--web .qz-age .qz-age-type { margin-top: 12px; }
+html body .app-container .aq.aq--web .qz-age .qz-age-type input { border: 1.5px solid rgba(62, 39, 35, .35) !important; border-radius: 10px !important; background: #fffaf0 !important; box-shadow: none !important; outline-offset: 2px; }
+html body .app-container .aq.aq--web .aq-foot { padding: 24px 0 0; }
+/* Letter keys only where there's a keyboard; on touch the key is a plain ring. */
+@media (hover: none) {
+  html body .app-container .aq.aq--web .aq-chip:not(.is-on):not([aria-checked='true']):not(.is-muted)::before { content: ''; width: 24px; height: 24px; background: transparent; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .35); }
+  html body .app-container .aq.aq--web :is(.aq-chip.is-on, .aq-chip[aria-checked='true'])::before { width: 24px; height: 24px; font-size: 13px; }
+}
+@media (max-width: 899px) {
+  html body .app-container .aq.aq--web { padding: 16px 16px 32px; }
+  html body .app-container .aq.aq--web .aq-col > .aq-top { margin: 0 0 24px !important; }
+  html body .app-container .aq.aq--web .aq-title { font-size: 30px !important; }
+  html body .app-container .aq.aq--web .aq-helper { font-size: 16px; margin-bottom: 16px; }
+  html body .app-container .aq.aq--web .aq-chip { min-height: 52px; font-size: 16px; }
+}
