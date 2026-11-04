@@ -213,8 +213,8 @@ import { stampFactUpdates } from './matching/factFreshness.js';
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
 // Today · Shop · Services · Community · Library (founder, Oct 26). Shop keeps the 'explore' key.
 const WEB_TAB_VIEWS = {
-  // Website Home = My ecosystem (founder, Oct 27 18:34).
-  today: ['today', 'ecosystem'],
+  // Home is the health dashboard; My ecosystem remains a separate profile destination.
+  today: ['today'],
   explore: ['explore', 'explore-topics', 'discovery', 'product'],
   services: ['explore-services'],
   library: ['articles'],
@@ -2545,7 +2545,7 @@ function App() {
   const webTabOn = (key) => WEB_TAB_VIEWS[key].includes(currentView);
   // Where each main tab goes (top nav and phone tab bar).
   const mainTabGo = {
-    // Home opens ecosystem setup for guests and the saved ecosystem for members.
+    // Home opens the existing health dashboard for members and the public landing for guests.
     today: () => setCurrentView(webHomeView({ signedIn: Boolean(user), authLoading })),
     // Shop is the old Explore page (/explore); Services the same page with Services picked; Library the reads.
     explore: () => openExplore('overview'),
@@ -2612,7 +2612,7 @@ function App() {
           {/* Home leads the desktop navigation; mobile keeps the familiar centre Home tab. */}
           <div className="ay-nav__links">
             {WEB_TOP_TABS.map((t) => (
-              <a key={t.key} href={t.key === 'today' ? '/you/ecosystem' : t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
+              <a key={t.key} href={t.key === 'today' ? (user ? '/today' : '/') : t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
                 {t.key === 'today' && <span className="ay-nav__home-mark" aria-hidden="true"><TabIcon kind="home" /></span>}
                 <span>{t.label}</span>
               </a>
