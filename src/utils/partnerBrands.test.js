@@ -72,9 +72,16 @@ describe('partnerBrands', () => {
       expect(getPartnerDisclosureText(buni)).toMatch(/may earn a commission/);
     });
 
-    it('matches no catalog product other than Rèsa', () => {
-      const hits = ALL_PRODUCTS.filter((p) => isPrelaunchPartnerItem(p)).map((p) => p.id);
-      expect(hits).toEqual(['p-resa-rhythm-bracelet']);
+    it('gives Naya (free waitlist, no deposit) a disclosure that does not mention a deposit', () => {
+      const naya = ALL_PRODUCTS.find((p) => p.id === 'p-naya-applicator-kit');
+      expect(getPartnerBadgeLabel(naya)).toBe('ayna partner · Waitlist');
+      expect(getPartnerDisclosureText(naya)).toMatch(/waitlist, free/);
+      expect(getPartnerDisclosureText(naya)).not.toMatch(/deposit/);
+    });
+
+    it('matches only the pre-launch partners (Rèsa, and Naya from Nov 4)', () => {
+      const hits = ALL_PRODUCTS.filter((p) => isPrelaunchPartnerItem(p)).map((p) => p.id).sort();
+      expect(hits).toEqual(['p-naya-applicator-kit', 'p-naya-regular-tampons', 'p-resa-rhythm-bracelet']);
     });
   });
 });

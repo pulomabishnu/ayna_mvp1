@@ -180,6 +180,18 @@ const PARTNERS = [
       'Dentist-designed mouth tape that encourages nasal breathing during sleep.',
   },
   {
+    // Confirmed partner from 2026-11-04, PRE-LAUNCH: waitlist only. waitlistUrl
+    // is Naya's waitlist page until ayna's waitlist affiliate link is added.
+    brand: 'Naya',
+    logo: '/products/naya/applicator-kit.webp',
+    url: 'https://www.naya-applicator.com/',
+    prelaunch: true,
+    waitlistUrl: 'https://www.naya-applicator.com/waitlist?SQF_REFERRAL_SOURCE=ayna',
+    waitlistCta: 'Join the waitlist',
+    blurb:
+      'A reusable tampon applicator in the works, for the comfort of an applicator without the plastic waste.',
+  },
+  {
     // Affiliate partner from 2026-11-04 (see src/utils/partnerBrands.js).
     brand: 'The Fertility Class',
     logo: '/products/fertility-class/cover.webp',
