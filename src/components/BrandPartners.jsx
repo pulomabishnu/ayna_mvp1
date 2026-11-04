@@ -182,7 +182,7 @@ const PARTNERS = [
   {
     // Affiliate partner from 2026-11-04 (see src/utils/partnerBrands.js).
     brand: 'The Fertility Class',
-    logo: '/products/fertility-class/class-movement.webp',
+    logo: '/products/fertility-class/cover.webp',
     url: 'https://myclass.thefertilityclass.com/a/2148088258/fLawFjD7',
     blurb:
       'Online movement classes for cycle health and fertility, built on the Aviva Method.',

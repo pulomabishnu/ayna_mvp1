@@ -10244,7 +10244,7 @@ export const BRAND_PRODUCTS = [
     // flow, exercise and stress, not on this program, so they aren't cited here.
     // An exercise program, not a medical device, so no FDA status applies.
     // No independent reviews (Reddit, Trustpilot) were found; the site's
-    // testimonials are brand-curated. Photos from thefertilityclass.com, saved
+    // testimonials are brand-curated. Cover photo supplied by Eliz; the rest are from thefertilityclass.com, saved
     // under public/products/fertility-class/.
     {
         id: 'd-the-fertility-class',
@@ -10260,8 +10260,8 @@ export const BRAND_PRODUCTS = [
         platform: 'Online, on-demand',
         url: 'https://thefertilityclass.com/',
         affiliateUrl: 'https://myclass.thefertilityclass.com/a/2148088258/fLawFjD7',
-        image: '/products/fertility-class/class-movement.webp',
-        gallery: ['/products/fertility-class/group-class.webp', '/products/fertility-class/founders.webp'],
+        image: '/products/fertility-class/cover.webp',
+        gallery: ['/products/fertility-class/class-movement.webp', '/products/fertility-class/group-class.webp', '/products/fertility-class/founders.webp'],
         summary: 'An online, on-demand movement program for cycle health and fertility, built on the Aviva Method, an exercise system developed by Hungarian physiotherapist Aviva Steiner, per the brand. Classes are 20 to 30 minutes, need no equipment and are organized by cycle phase (follicular, ovulatory, luteal, menstrual) and by goal: preparing to conceive, IVF preparation, cycle regulation. Membership includes the class library, a Foundations series, a one-on-one onboarding call with a certified instructor, an IVF and IUI protocol, and a private community. Founded by certified Aviva Method teachers Zsofia Jamieson and Marta Han.',
         ingredients: 'Not a physical product: see "How it works" below for what the membership includes.',
         safety: {
