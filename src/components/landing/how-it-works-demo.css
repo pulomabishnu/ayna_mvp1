@@ -78,3 +78,38 @@
 }
 /* Nov 4: a little shorter so the screens are not mostly empty. */
 .app-container .hd-phone { aspect-ratio: 9 / 15; }
+/* Nov 4 (founder: "more informative, same design"): every screen full of real content. */
+.app-container .hd-phone { aspect-ratio: 9 / 17.5; width: min(320px, 82vw); }
+.app-container .hd-scr { padding: 48px 14px 16px; gap: 8px; }
+.app-container .hd-meta { margin: 0; font: 700 11px/1.2 var(--ay-sans-stack, sans-serif); letter-spacing: .02em; color: rgba(62, 39, 35, .7); }
+.app-container .hd-q { font-size: 18px; }
+.app-container .hd-chips span { padding: 9px 11px; font-size: 12px; }
+.app-container .hd-small { margin: 0; font: 500 11px/1.35 var(--ay-sans-stack, sans-serif); color: rgba(62, 39, 35, .75); }
+.app-container .hd-card { padding: 8px; gap: 10px; align-items: center; }
+.app-container .hd-card__img { width: 48px; height: 48px; display: grid; place-items: center; overflow: hidden; box-shadow: none; border: 1.5px solid rgba(62, 39, 35, .15); }
+.app-container .hd-card__img img { width: 86%; height: 86%; object-fit: contain; }
+.app-container .hd-card b { font-size: 12.5px; }
+.app-container .hd-card em { margin: 3px 0; font-size: 10.5px; }
+.app-container .hd-card small { font-size: 11px; }
+.app-container .hd-hold { padding: 10px 12px; gap: 4px; background: #f6e3a1; }
+.app-container .hd-hold b { font-size: 13px; }
+.app-container .hd-hold small { font-size: 12px; }
+.app-container .hd-src { display: grid; gap: 2px; padding: 8px 10px; border-radius: 12px; border: 1.5px solid rgba(62, 39, 35, .25); font: 600 11.5px/1.3 var(--ay-sans-stack, sans-serif); color: #3e2723; animation: hd-pop .4s cubic-bezier(.34, 1.4, .64, 1) 2.7s both; }
+.app-container .hd-src b { font-size: 10px; color: rgba(62, 39, 35, .7); }
+.app-container .hd-card.is-small { animation-delay: 3s; }
+.app-container .hd-push { display: grid; gap: 2px; padding: 10px 12px; border-radius: 16px; background: #3e2723; color: #ffedac; font: 600 12px/1.3 var(--ay-sans-stack, sans-serif); animation: hd-drop .6s cubic-bezier(.34, 1.35, .64, 1) .2s both; }
+.app-container .hd-push b { font-size: 10px; letter-spacing: .04em; text-transform: uppercase; color: #f7badd; }
+.app-container .hd-push small { font-size: 10.5px; opacity: .75; }
+.app-container .hd-scr--daily .hd-next, .app-container .hd-scr--safe .hd-next { animation-delay: 2.4s; }
+/* 3: a product page in miniature. */
+.app-container .hd-pdp { display: grid; gap: 6px; animation: hd-pop .45s cubic-bezier(.34, 1.4, .64, 1) .15s both; }
+.app-container .hd-pdp__img { display: grid; place-items: center; height: 120px; border-radius: 18px; background: #fff; border: 1.5px solid #3e2723; overflow: hidden; }
+.app-container .hd-pdp__img img { height: 88%; width: auto; object-fit: contain; }
+.app-container .hd-pdp b { font: 700 15px/1.2 var(--ay-sans-stack, sans-serif); color: #3e2723; }
+.app-container .hd-pdp__row { display: flex; align-items: center; gap: 8px; }
+.app-container .hd-pdp__row em { flex: none; padding: 3px 8px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 10.5px/1.2 var(--ay-sans-stack, sans-serif); font-style: normal; }
+.app-container .hd-pdp__row small { font: 500 11px/1.3 var(--ay-sans-stack, sans-serif); color: rgba(62, 39, 35, .8); }
+.app-container .hd-facts { display: grid; gap: 0; margin: 2px 0 0; padding: 0; list-style: none; border-top: 1.5px solid rgba(62, 39, 35, .15); }
+.app-container .hd-facts li { padding: 7px 0; border-bottom: 1.5px solid rgba(62, 39, 35, .15); font: 500 11.5px/1.3 var(--ay-sans-stack, sans-serif); color: #3e2723; animation: hd-pop .35s ease both; animation-delay: calc(.6s + var(--i) * .25s); }
+.app-container .hd-facts b { margin-right: 6px; font-weight: 800; }
+.app-container .hd-scr--shop .hd-next { background: #f7badd; color: #3e2723; animation-delay: 1.8s; }
