@@ -1,3 +1,4 @@
+import { addNeedToAnswers, needOption } from '../matching/addNeed.js';
 import { PRODUCT_RESEARCH_CORE } from './productResearchCore.js';
 // ============================================================
 // Ayna Product Database
@@ -1917,8 +1918,38 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
             details = { ...details, percent: null, score: 0, sortScore: 0, matchStatus: 'bleeding-evaluation', tier: 'browse', bleedingEvaluation: { text: note?.text || BLEEDING_EVALUATION_TEXT, source: note?.source || null } };
         }
     }
+    // Nov 4 (founder: "just because I didn't match the Saalt Cup doesn't mean I don't match with it
+    // at all, if I'm browsing and curious"): a product that isn't for anything she picked still
+    // gets a number, "how it would fit you if you wanted help with what it's for". It is scored
+    // exactly as if she had picked that need (same engine, same safety rules, so a hold or an
+    // exclusion still wins), and it never changes her matches: matchStatus stays 'no-relevance',
+    // so lists, For you and the Rundown don't treat it as one of hers.
+    if (details.matchStatus === 'no-relevance' && signals && !opts?._browse) {
+        const browse = browseFitFor(savedProduct, quizAnswers, healthProfile, opts, pp);
+        if (browse) details = { ...details, browseFit: browse };
+    }
     if (!focusId) entry.details = details;
     return details;
+}
+
+const BROWSE_ANSWERS = new WeakMap();
+function browseFitFor(savedProduct, quizAnswers, healthProfile, opts, pp) {
+    if (!quizAnswers || typeof quizAnswers !== 'object') return null;
+    const top = Object.entries(pp?.health_need_relevance || {})
+        .filter(([id, e]) => e.score > 0 && needOption(id))
+        .sort((a, b) => b[1].score - a[1].score)[0];
+    if (!top) return null;
+    const needId = top[0];
+    let byNeed = BROWSE_ANSWERS.get(quizAnswers);
+    if (!byNeed) { byNeed = new Map(); BROWSE_ANSWERS.set(quizAnswers, byNeed); }
+    if (!byNeed.has(needId)) byNeed.set(needId, addNeedToAnswers(quizAnswers, needId));
+    const answers = byNeed.get(needId);
+    if (!answers || answers === quizAnswers) return null;
+    const d = buildMatchDetails(savedProduct, answers, healthProfile, { ...(opts || {}), _browse: true });
+    // A product still under safety review keeps its hold here too (never a number).
+    if (d.matchStatus === 'safety-hold') return { hold: true, safetyHold: d.safetyHold || null, needId };
+    if (d.matchStatus !== 'scored' || !Number.isFinite(d.percent) || d.percent <= 0) return null;
+    return { percent: d.percent, needId: d.needId, needLabel: d.needLabel || null, phrase: (d.needMatches || []).find((m) => m.needId === d.needId)?.phrase || d.needLabel || '', reasonDetails: (d.reasonDetails || []).slice(0, 3) };
 }
 
 /**

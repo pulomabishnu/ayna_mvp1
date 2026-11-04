@@ -44,6 +44,7 @@ export function splitShow(list, n = SHOW_FIRST) {
  * @returns {{kind:'pct', percent:number, why:string}
  *   | {kind:'hold', hold:object}
  *   | {kind:'evaluation', note:object, text:string}
+ *   | {kind:'browse', percent:number, why:string}
  *   | {kind:'none', text:string}
  *   | {kind:'quiz'}
  *   | null}
@@ -54,6 +55,10 @@ export function matchLineState({ details = null, percent = null, hasProfile = fa
   if (isSafetyHold(details) || details.eligibility === 'restricted') return { kind: 'hold', hold: details.safetyHold || null, text: MATCH_UNAVAILABLE };
   if (Number.isFinite(percent) && percent > 0) return { kind: 'pct', percent: Math.round(percent), why: why || fallback || '' };
   if (details.matchStatus === 'excluded') return { kind: 'none', text: exclusionLines(details)[0] || 'Not a fit right now' };
+  // Not for anything she picked, but scored as if she wanted help with what it's for (browse fit).
+  const bf = details.browseFit;
+  if (bf?.hold) return { kind: 'hold', hold: bf.safetyHold || null, text: MATCH_UNAVAILABLE };
+  if (bf && Number.isFinite(bf.percent) && bf.percent > 0) return { kind: 'browse', percent: Math.round(bf.percent), why: bf.phrase ? `If you wanted help with ${bf.phrase}. Not one of your picks.` : 'Not one of your picks.' };
   return { kind: 'none', text: 'No clear match for what you told us' };
 }
 
