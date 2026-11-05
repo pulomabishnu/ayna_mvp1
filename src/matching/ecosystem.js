@@ -292,7 +292,7 @@ function shelfQuality(picks, restrictedCount, needId, userFieldsMissing = true, 
   const phrase = needPhrase(needId);
   if (!picks.length) {
     // Nov 5 (10-person run: pregnant with constipation read "no product we can stand behind").
-    if (!restrictedCount && stageHeld) return { quality: 'none', note: `The products for ${phrase} are ones to check with your clinician first while you are ${stageHeld}, so we are not showing them here.` };
+    if (!restrictedCount && stageHeld) return { quality: 'none', note: `While you are ${stageHeld}, check with your clinician before taking anything for ${phrase}.` };
     if (restrictedCount && !userFieldsMissing) return { quality: 'none', note: `We are still checking safety details for the products that fit ${phrase}, so we are holding them back.` };
     return restrictedCount
       ? { quality: 'none', note: `We need a couple of safety details before we can suggest products for ${phrase}.` }

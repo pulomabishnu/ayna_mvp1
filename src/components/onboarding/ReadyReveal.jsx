@@ -78,7 +78,7 @@ function perNeed(answers) {
         : info ? `Held back for now: we don’t have ${info.replace(/ for this product$/, '')} for these yet, and you told us something that makes it matter.`
           : 'Held back for now: we can’t confirm these are safe for what you told us.';
       // Nov 5: an empty shelf that is empty on purpose (pregnancy, bleeding after menopause) says why.
-      const why = !products.length && ['clinician_first_for_stage', 'care_first'].includes(sh.emptyReason) ? sh.qualityNote || '' : '';
+      const why = products.length ? '' : sh.emptyReason === 'care_first' ? 'Best checked by a clinician, not a product.' : sh.emptyReason === 'clinician_first_for_stage' ? sh.qualityNote || '' : '';
       return { id: sh.needId, label: sh.label, products, held, needsAnswers, heldWhy, why };
     });
     // Nov 4: one "check with a clinician" line when a need she picked calls for it (spotting, UTI now, severe pain).
@@ -143,7 +143,8 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
       {prefsDone && <p className="ay-ob-ready__updated" role="status">{changed > 0 ? `Updated: ${changed} new ${changed === 1 ? 'match' : 'matches'} from your budget, formats and what you like.` : changed === 0 ? 'Updated with your answers. Your matches still fit best.' : 'Updated with your answers on budget, formats and what you like.'}</p>}
       {/* Care first: the prompt-evaluation message sits above her picks. */}
       {!bleeding && careNote && <p className="ay-ob-ready__careline" role="note">{careNote}</p>}
-      {bleeding && <BleedingEvaluationNote className="ay-ob-ready__care" title={bleeding.title} note={bleeding} />}
+      {/* Nov 5 (founder: hard to read, too many words): the short version here; the product page keeps the full text. */}
+      {bleeding && <BleedingEvaluationNote className="ay-ob-ready__care" title={bleeding.title} note={{ ...bleeding, text: 'Bleeding 12 months or more after your last period should be checked promptly by an ob-gyn or your clinician.' }} />}
       {rows.length > 0 ? (
         <section className="ay-ob-needs" aria-labelledby="ay-ob-needs-h">
           <h2 id="ay-ob-needs-h" className="ay-ob-needs__h">What you asked for help with</h2>
@@ -166,7 +167,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                       {pct != null && <em className="ay-ob-picks__pct">{pct}%</em>}
                     </li>;
                   })}</ol>
-                  : <small>{r.held ? r.heldWhy : r.why || 'Nothing strong enough yet. We only show products we can stand behind.'}</small>}
+                  : <small>{r.held ? r.heldWhy : r.why || 'Nothing strong enough yet. We only show what we can stand behind.'}</small>}
               </li>
             ))}
           </ul>
