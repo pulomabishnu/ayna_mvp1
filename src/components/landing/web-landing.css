@@ -390,3 +390,32 @@ html body #ay-landing.wl .lb-stat:nth-child(3) > .lb-ic { background: #f7badd !i
 /* Fewer words: titles carry the reads, the Community and founders blocks keep one line and their link. */
 html body #ay-landing.wl .lb-read__words small, html body #ay-landing.wl .lb-comm .lb-p, html body #ay-landing.wl .lb-us .lb-p { display: none !important; }
 html body #ay-landing.wl .lb-head { align-items: center !important; }
+
+/* Nov 4 v3 (founder: "why do these turn yellow", "play with colours and squiggly transitions,
+   use the inspo"). Product photos sit on their white plates again (white only behind product
+   photos), and the page moves through ayna's colours in bands joined by soft wavy edges, like the
+   inspo's colour-block screens: butter walkthrough, pink picks, butter numbers, butter-deep reads,
+   butter founders, espresso close. */
+html body #ay-landing.wl .lb-picks img { mix-blend-mode: normal !important; background: #fff !important; border-radius: 16px !important; padding: 12px; box-sizing: border-box; }
+html body #ay-landing.wl .lb-picks :is(.ay-pcard__media, .ay-pcard__img, .hm-sticker__img, [class*='media'], [class*='plate']) { background: #fff !important; border-radius: 16px !important; mix-blend-mode: normal !important; }
+html body .app-container #ay-landing.wl .lb { padding-top: 0 !important; padding-bottom: 0 !important; }
+html body #ay-landing.wl .lb > .lb-sec { position: relative; margin: 0 !important; padding: 72px 0 !important; }
+html body #ay-landing.wl .lb > .lb-sec:nth-child(1) { background: #f7badd; }
+html body #ay-landing.wl .lb > .lb-sec:nth-child(2) { background: #ffedac; }
+html body #ay-landing.wl .lb > .lb-sec:nth-child(3) { background: #f6e3a1; }
+html body #ay-landing.wl .lb > .lb-sec:nth-child(4) { background: #ffedac; }
+/* The wavy seam: each band's top edge is a soft wave in its own colour, laid over the band above. */
+html body #ay-landing.wl .lb > .lb-sec::before { content: ''; position: absolute; left: 0; right: 0; top: -23px; height: 24px; background: inherit; pointer-events: none;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px; }
+/* On pink, the picks' words and link stay espresso; the numbers band's pink tile turns espresso so it never matches the band above. */
+html body #ay-landing.wl .lb > .lb-sec:nth-child(1) :is(.lb-h2, .lb-more, .ay-pcard, .ay-pcard *) { color: #3e2723 !important; }
+html body #ay-landing.wl .lb-stat:nth-child(1) { background: #f7badd !important; }
+/* The walkthrough band ends in the same wave into the pink picks. */
+html body #ay-landing.wl .hd { padding-bottom: 56px !important; }
+@media (max-width: 767px) { html body #ay-landing.wl .lb > .lb-sec { padding: 48px 0 !important; } }
+html body #ay-landing.wl .lb-close { position: relative; }
+html body #ay-landing.wl .lb-close::before { content: ''; position: absolute; left: 0; right: 0; top: -23px; height: 24px; background: #3e2723; pointer-events: none;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px; }
+html body #ay-landing.wl .lb-stat { align-content: start !important; padding-top: 68px !important; }

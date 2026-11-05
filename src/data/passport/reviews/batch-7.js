@@ -12,8 +12,10 @@ const head = (notes) => ({ qa_status: 'in_review', reviewed_by: BY, reviewed_at:
 const RAEL_PADS = 'https://www.getrael.com/collections/pads';
 const RAEL_LINERS = 'https://www.getrael.com/products/regular-organic-cotton-liners';
 const NATRACARE = 'https://natracare.com/why-natracare/natural-materials';
+const MONISTAT_LABEL = 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e1b8ad40-5adb-482a-b532-3f8e30d90128';
 
 export default {
+  'p-monistat-3-combo': { ...head('FDA Drug Facts label on DailyMed (Insight Pharmaceuticals). The label lists every inactive ingredient; none is a fragrance.'), facts: { 'composition.fragrance': f('Fragrance-free. Drug Facts inactive ingredients: benzoic acid, cetyl alcohol, isopropyl myristate, polysorbate 60, potassium hydroxide, propylene glycol, purified water, stearyl alcohol. No fragrance or perfume is listed.', 'DailyMed: Monistat 3 Combination Pack label', MONISTAT_LABEL, 'regulatory') } },
   'p-rael-organic-pad': { ...head('Rael pads collection page.'), facts: { 'composition.fragrance': f('Fragrance-free. Brand page: Rael pads "are made without fragrances, dyes, or chlorine bleaching".', 'Rael: Pads collection', RAEL_PADS) } },
   'p-rael-overnight': { ...head('Rael pads collection page.'), facts: { 'composition.fragrance': f('Fragrance-free. Brand page: Rael pads "are made without fragrances, dyes, or chlorine bleaching".', 'Rael: Pads collection', RAEL_PADS) } },
   'p-rael-liners': { ...head('Rael liners product page.'), facts: { 'composition.fragrance': f('Fragrance-free. Brand page: "unscented, non-perfumed panty liners".', 'Rael: Regular Organic Cotton Cover Panty Liners', RAEL_LINERS) } },
