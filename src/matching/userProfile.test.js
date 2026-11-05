@@ -187,7 +187,7 @@ describe('intake spec answer states (2026-10)', () => {
     expect(up.answers.formats).toBe('skipped');
     expect(up.answers.budget).toBe('skipped');
     expect(up.answers.avoid).toBe('skipped');
-    expect(up.shopping.picksPerNeed).toBe(3);
+    expect(up.shopping.picksPerNeed).toBe(5); // Nov 4: the pre-filled 3 is not her choice; the default is 5
     expect(up.trust.touched).toBe(false);
   });
 
