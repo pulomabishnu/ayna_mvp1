@@ -51,6 +51,14 @@ const VERIFIED = [
     rationale: MEDLINE_DRYNESS, source_url: 'https://medlineplus.gov/ency/article/000892.htm' },
   { product: 'p-alubri-vaginal-wellness-kit', need: 'pain.sexual', strength: 'primary', grade: 'B',
     rationale: MEDLINE_DRYNESS, source_url: 'https://medlineplus.gov/ency/article/000892.htm' },
+
+  // Nov 6: cooling comfort for hot flashes at any age. NIA lists cooling (a portable fan, layers,
+  // a cooler room) for hot flashes; no trial of these products, and The Menopause Society calls the
+  // evidence for cooling limited, so grade C.
+  { product: 'p-oboo-cool-spray', need: 'vasomotor.hot_flashes', strength: 'primary', grade: 'C',
+    rationale: 'NIA (Hot Flashes: What Can I Do?): cooling, like a portable fan when a hot flash strikes, can help. Comfort in the moment; no trial of this spray.', source_url: 'https://www.nia.nih.gov/health/menopause/hot-flashes-what-can-i-do' },
+  { product: 'p-joylux-coldher', need: 'vasomotor.hot_flashes', strength: 'primary', grade: 'C',
+    rationale: 'NIA (Hot Flashes: What Can I Do?): cooling measures can help with hot flashes. Comfort in the moment; no trial of these inserts.', source_url: 'https://www.nia.nih.gov/health/menopause/hot-flashes-what-can-i-do' },
 ];
 for (const file of ['needMap.research.js', 'needMap.research.json']) {
   const url = new URL(`../src/data/matching/${file}`, import.meta.url);

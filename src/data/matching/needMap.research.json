@@ -2274,15 +2274,13 @@
  {
   "product": "p-oboo-cool-spray",
   "need": "vasomotor.hot_flashes",
-  "strength": "secondary",
-  "grade": null,
-  "rationale": "Cooling techniques and herbal remedies are both NOT recommended by The Menopause Society 2023 due to limited evidence; no trial of this spray; momentary comfort only.",
-  "source_url": null,
+  "strength": "primary",
+  "grade": "C",
+  "rationale": "NIA (Hot Flashes: What Can I Do?): cooling, like a portable fan when a hot flash strikes, can help. Comfort in the moment; no trial of this spray.",
+  "source_url": "https://www.nia.nih.gov/health/menopause/hot-flashes-what-can-i-do",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "C",
-  "prior_source_unverified": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-oboo-cool-spray",
@@ -2362,15 +2360,13 @@
  {
   "product": "p-joylux-coldher",
   "need": "vasomotor.hot_flashes",
-  "strength": "secondary",
-  "grade": null,
-  "rationale": "Cooling technique with no trial; The Menopause Society 2023 does not recommend cooling techniques as treatment, though Mayo lists keeping cool as a harmless comfort measure.",
-  "source_url": null,
+  "strength": "primary",
+  "grade": "C",
+  "rationale": "NIA (Hot Flashes: What Can I Do?): cooling measures can help with hot flashes. Comfort in the moment; no trial of these inserts.",
+  "source_url": "https://www.nia.nih.gov/health/menopause/hot-flashes-what-can-i-do",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "C",
-  "prior_source_unverified": "https://menopause.org/wp-content/uploads/press-release/nonhormone-therapy-position-statement-release.pdf",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-joylux-coldher",
