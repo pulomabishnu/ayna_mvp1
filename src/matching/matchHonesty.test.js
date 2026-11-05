@@ -230,6 +230,7 @@ describe('distribution across needs stays stable', () => {
     // the ones whose pregnancy or clinician facts are missing wait for them (+5). B6 for PMS mood and
     // bloating, NSAIDs for breast tenderness (womenshealth.gov) add more of the same kind of hold (+7).
     // Nov 5: birth-control services are only adjacent for UTI symptoms (all-hands), fewer holds.
-    expect(holds).toBe(357);
+    // Nov 5 (Ameera): Advil, Aleve and Cystex hidden from the site (NSAIDs), so their holds are gone (-28).
+    expect(holds).toBe(329);
   });
 });

@@ -1726,5 +1726,23 @@
   "by": "Ameera",
   "what": "p-rael-liners.price",
   "note": "Nov 4: fill missing prices from the brand's own site (founder asked: fill in missing info from credible sources)"
+ },
+ {
+  "at": "2026-11-05T21:50:37.269Z",
+  "by": "Ameera",
+  "what": "hidden p-advil-ibuprofen-200",
+  "note": "Nov 5: take out NSAIDs (Cystex: sodium salicylate)"
+ },
+ {
+  "at": "2026-11-05T21:50:37.463Z",
+  "by": "Ameera",
+  "what": "hidden p-aleve-naproxen-220",
+  "note": "Nov 5: take out NSAIDs (Cystex: sodium salicylate)"
+ },
+ {
+  "at": "2026-11-05T21:50:37.617Z",
+  "by": "Ameera",
+  "what": "hidden p-cystex",
+  "note": "Nov 5: take out NSAIDs (Cystex: sodium salicylate)"
  }
 ]

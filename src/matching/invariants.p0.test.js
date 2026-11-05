@@ -4,7 +4,7 @@
 //   2. A sweep over the WHOLE catalog x personas that checks properties that
 //      must hold for every product, whatever the catalog contains.
 import { describe, expect, it } from 'vitest';
-import { ALL_PRODUCTS, getProductMatchDetailsForProduct, fitsHerProfile } from '../data/products.js';
+import { ALL_PRODUCTS, CATALOG_PRODUCTS, getProductMatchDetailsForProduct, fitsHerProfile } from '../data/products.js';
 import { EMPTY } from '../mobile/data/intakeModel.js';
 import { buildProductProfile } from './productProfile.js';
 import { decideProduct, clearedForRecommendation } from './cleared.js';
@@ -109,7 +109,8 @@ describe('P0 catalog sweep: properties every product must keep', () => {
 
 describe('P0: pregnancy and medicines whose label says ask a clinician (Nov 2 audit)', () => {
   it('ibuprofen is never a match in pregnancy (any trimester)', () => {
-    const advil = ALL_PRODUCTS.find((p) => p.id === 'p-advil-ibuprofen-200');
+    // Hidden from the site Nov 5 (NSAIDs), still in the catalog: the rule must still hold.
+    const advil = CATALOG_PRODUCTS.find((p) => p.id === 'p-advil-ibuprofen-200');
     expect(advil).toBeTruthy();
     for (const t of ['First trimester', 'Second trimester', 'Third trimester', '']) {
       const d = decide(advil, { ...base, lifeStageSelections: ['I am pregnant'], pregnancyTrimester: t, supportSelections: ['Cramps or period pain'] });
@@ -117,7 +118,8 @@ describe('P0: pregnancy and medicines whose label says ask a clinician (Nov 2 au
     }
   });
   it('ibuprofen is never recommended (Nov 5 all-hands: no painkillers), pregnant or not', () => {
-    const advil = ALL_PRODUCTS.find((p) => p.id === 'p-advil-ibuprofen-200');
+    // Hidden from the site Nov 5 (NSAIDs), still in the catalog: the rule must still hold.
+    const advil = CATALOG_PRODUCTS.find((p) => p.id === 'p-advil-ibuprofen-200');
     expect(decide(advil, { ...base, lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain'] }).status).not.toBe('cleared');
   });
 });
