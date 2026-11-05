@@ -15,7 +15,7 @@ const byId = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
 describe('v2 golden personas', () => {
   it('G1: regular periods + PMS: the evidence-backed option (calcium), not Flo', () => {
     const got = ids(seed({ lifeStageSelections: ['I get periods regularly'], supportSelections: ['PMS symptoms'], age: 28, takesCurrent: 'No' }));
-    expect(got).toContain('p-citracal-bone-health');
+    // Nov 5 (founder): only 50%+ is recommended. Calcium (secondary, about 42%) no longer fills the shelf.
     expect(got).not.toContain('p-flo-gummies');
   });
   it('G2: pregnant with PMS-like mood and bloating: no Flo, no swallowed product with unknown pregnancy safety', () => {
@@ -114,7 +114,8 @@ describe('persona sweep (release gates)', () => {
     // They come back as the review queue (product_review_queue) closes.
     expect(v2.catalogCoverage).toBeGreaterThanOrEqual(0.24);
     expect(v2.avgPicks).toBeGreaterThanOrEqual(2.3);
-    expect(v2.emptyShelfShare).toBeLessThanOrEqual(0.4);
+    // Nov 5 (founder): only 50%+ picks are recommended, so weak-only needs are empty: 0.38 -> 0.51.
+    expect(v2.emptyShelfShare).toBeLessThanOrEqual(0.55);
   });
 });
 

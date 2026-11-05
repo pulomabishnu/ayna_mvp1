@@ -182,15 +182,10 @@ describe('P0 golden: fallbacks, bands, completeness', () => {
       }
     }
   });
-  it('18. an open clinician review = "Match being reviewed", no percent, for every persona', () => {
-    for (const intake of PERSONAS) {
-      const d = getProductMatchDetailsForProduct(P('p-remifemin'), quiz(intake));
-      expect(d.percent || 0, JSON.stringify(intake)).toBe(0); // never a number above 0
-      if (d.matchStatus === 'safety-hold') expect(['in_review', 'needs_answer', 'confirm']).toContain(d.safetyHold.state);
-    }
-    const peri = getProductMatchDetailsForProduct(P('p-remifemin'), quiz({ ...base, lifeStageSelections: ['I am in perimenopause'], supportSelections: ['Hot flashes'] }));
-    expect(peri.matchStatus).toBe('safety-hold');
-    expect(peri.safetyHold.state).toBe('in_review');
+  it('18. an open clinician review no longer holds the match (founder, Nov 5): scored like any product', () => {
+    const peri = getProductMatchDetailsForProduct(P('p-remifemin'), quiz({ ...base, lifeStageSelections: ['I am in perimenopause'], supportSelections: ['Hot flashes'], takesCurrent: 'No' }));
+    expect(['scored', 'safety-hold']).toContain(peri.matchStatus);
+    if (peri.matchStatus === 'safety-hold') expect(peri.safetyHold.state).not.toBe('in_review');
   });
   it('19. completeness states are ordered: her answers first, then review, then research, then brand-does-not-share', () => {
     const s = (over) => ({ restricted: true, missingFields: [], missingProductInfo: [], undisclosedInfo: [], ...over });

@@ -619,7 +619,9 @@ export function evaluateSafety(productOrProfile, up) {
   else if (up.contradictions?.some((c) => c.affects.includes('safety')) && bodyContact(pp)) penalize('answer_contradiction', 'Some safety answers conflict');
   // A clinician review is open on this product (passport QA): no confident
   // match for anyone until it is done (audit K).
-  if (pp.passport?.qa === 'needs_clinician_review') missingProductInfo.push('clinician_review');
+  // Nov 5 (founder, Ameera): an open clinician review no longer holds the match. Every product gets its
+  // percent, and the review is not mentioned to her. Every other safety rule (allergies, medicines,
+  // pregnancy, breastfeeding, conditions, missing facts) still holds or excludes as before.
   // A product she added herself (not in the catalog): no match until ayna
   // has read its label (P2, add any product). Never a guess from its name.
   if (pp.user_added) missingProductInfo.push('product_facts');

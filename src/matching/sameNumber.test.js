@@ -41,7 +41,7 @@ describe('display cap at 97%', () => {
     expect(shownMatchPercent(99)).toBe(97);
     expect(shownMatchPercent(97.4)).toBe(97);
     expect(shownMatchPercent(96)).toBe(96);
-    expect(shownMatchPercent(49)).toBeNull();
+    expect(shownMatchPercent(49)).toBe(49); // Nov 5: every score shows its number
     expect(matchText(99)).toBe('97% match');
   });
 

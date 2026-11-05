@@ -40,7 +40,8 @@ describe('demo health data changes her Ecosystem (website v2 and app v1 engines)
       // Badges ride along on the picks, never on trackers.
       const sleepPicks = after.shelves.find((s) => s.needId === 'sleep.trouble').picks;
       expect(sleepPicks.every((p) => p.healthBacked?.needId === 'sleep.trouble')).toBe(true);
-      expect(sleepPicks.filter((p) => backedText(p.healthBacked)).length).toBeGreaterThan(0);
+      // Nov 5: only 50%+ picks are recommended; sleep products sit under 50, so the shelf can be empty.
+      if (sleepPicks.length) expect(sleepPicks.filter((p) => backedText(p.healthBacked)).length).toBeGreaterThan(0);
       expect(sleepPicks.filter((p) => p.healthBacked.tracker).every((p) => backedText(p.healthBacked) === null)).toBe(true);
     });
   }

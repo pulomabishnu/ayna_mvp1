@@ -129,7 +129,7 @@ describe('one breakdown, same number everywhere', () => {
         expect(Math.abs(Math.min(99, Math.round(100 * Math.max(0, Math.min(1, sum)))) - d.percent)).toBeLessThanOrEqual(1);
         expect(Math.abs(sum - d.v2.fit)).toBeLessThan(0.01);
         // Oct 29 review: an 80+ the engine did not call Strong (low confidence) reads Good fit.
-        expect(bd.label).toBe(d.percent < 50 ? 'Partial fit' : d.percent >= 80 ? (d.v2?.band === 'strong' ? 'Strong fit' : 'Good fit') : d.percent >= 60 ? 'Good fit' : '');
+        expect(bd.label).toBe(d.percent >= 80 ? (d.v2?.band === 'strong' ? 'Strong fit' : 'Good fit') : d.percent >= 60 ? 'Good fit' : '');
         checked += 1;
       }
     }
@@ -229,6 +229,6 @@ describe('distribution across needs stays stable', () => {
     // Nov 4 (50-profile run): B6 is now a pregnancy-nausea match and acne actives strong acne matches;
     // the ones whose pregnancy or clinician facts are missing wait for them (+5). B6 for PMS mood and
     // bloating, NSAIDs for breast tenderness (womenshealth.gov) add more of the same kind of hold (+7).
-    expect(holds).toBe(519);
+    expect(holds).toBe(365);
   });
 });

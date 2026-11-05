@@ -14,12 +14,8 @@ describe('ProductDetailScreen match display', () => {
     expect(percent).toBeLessThan(75);
     const html = renderToStaticMarkup(<ProductDetailScreen product={product} quizAnswers={quizAnswers} />);
     expect(html).toContain('ay-match-pill');
-    // One rule everywhere (matchDisplay): 50+ shows the number, under 50 shows "Partial fit".
-    if (percent >= 50) expect(html).toContain(`<strong>${percent}%</strong><span>match</span>`);
-    else {
-      expect(html).toContain('Partial fit');
-      expect(html).not.toContain(`${percent}%`);
-    }
+    // Nov 5 (founder): the number shows at any score.
+    expect(html).toContain(`<strong>${percent}%</strong><span>match</span>`);
     // No ring overlay, no raw per-need score chips in the header.
     expect(html).not.toMatch(/PROFILE MATCH/);
     expect(html).not.toContain('ay-pdp-need__rows');

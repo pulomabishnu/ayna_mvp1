@@ -100,12 +100,10 @@ describe('personalized relevance scoring', () => {
         expect(vitex).toBeTruthy();
         expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['Cramps or period pain'] } })).toBe(0);
         expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PCOS support'] } })).toBe(0);
-        // Oct 29 (P0): vitex has an open clinician review (passport QA), so
-        // it shows "Match being reviewed" with no percent, for everyone.
+        // Nov 5 (founder): an open clinician review no longer holds the match; vitex is scored.
         const held = getProductMatchDetailsForProduct(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } });
-        expect(held.matchStatus).toBe('safety-hold');
-        expect(held.safetyHold.state).toBe('in_review');
-        expect(held.percent).toBeNull();
+        expect(held.matchStatus).toBe('scored');
+        expect(held.percent).toBeLessThan(75);
         const pmsMatch = held.v2 ? Math.round(held.v2.fit * 100) : 0;
         expect(pmsMatch).toBeGreaterThan(0);
         // v2: research grade B for PMS (NCCIH: low-to-moderate quality trials) and
@@ -268,9 +266,8 @@ describe('personalized relevance scoring', () => {
         expect(unrelated.percent).toBe(0);
         expect(unrelated.matchStatus).toBe('excluded');
         const diagnosed = getProductMatchDetailsForProduct(iron, { fullHealthIntake: { supportSelections: ['Fatigue or low energy'], diagnosisSelections: ['Anemia or iron deficiency'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } });
-        // 65 mg iron is above the NIH upper limit: open clinician review (P0), so held, not scored.
-        expect(diagnosed.matchStatus).toBe('safety-hold');
-        expect(diagnosed.safetyHold.state).toBe('in_review');
+        // Nov 5 (founder): open clinician reviews no longer hold; with diagnosed anemia it is scored.
+        expect(diagnosed.matchStatus).toBe('scored');
     });
 
     it('returns no personalized percentage when there are no personalization signals', () => {

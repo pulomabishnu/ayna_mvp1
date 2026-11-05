@@ -93,7 +93,8 @@ export const MAX_SHOWN_PERCENT = 97;
 /** The % to print (rounded, at most 97), or null when it is under 50 or not a score. */
 export function shownMatchPercent(score) {
   const n = Math.round(Number(score));
-  return Number.isFinite(n) && n >= MIN_BADGE_SCORE ? Math.min(MAX_SHOWN_PERCENT, n) : null;
+  // Nov 5 (founder): every scored product shows its real percent, under 50 too (no "Partial fit" words).
+  return Number.isFinite(n) && n >= 1 ? Math.min(MAX_SHOWN_PERCENT, n) : null;
 }
 
 /** "82% match", "Partial fit" for 1 to 49, '' for no score. */
@@ -135,7 +136,7 @@ export function matchBadge(details, { needId = null } = {}) {
   if (details && details.matchStatus === 'no-relevance' && details.browseFit && !details.browseFit.hold && Number.isFinite(details.browseFit.percent) && details.browseFit.percent > 0) {
     const bf = details.browseFit;
     const partial = bf.percent < MIN_BADGE_SCORE;
-    return { percent: bf.percent, partial, browse: true, phrase: bf.phrase || '', needId: bf.needId || null, label: partial ? PARTIAL_FIT : needHeadline(bf.percent, bf.phrase || ''), basedOn: BASED_ON_LINE, restricted: false, confidenceLevel: null };
+    return { percent: bf.percent, partial, browse: true, phrase: bf.phrase || '', needId: bf.needId || null, label: needHeadline(bf.percent, bf.phrase || ''), basedOn: BASED_ON_LINE, restricted: false, confidenceLevel: null };
   }
   // Made for a life stage she isn't in (founder, Nov 4): 0%, said plainly.
   if (details && details.matchStatus === 'no-relevance' && details.browseFit?.notForStage) {
@@ -150,7 +151,7 @@ export function matchBadge(details, { needId = null } = {}) {
   // score so MatchPill renders the words; `partial` lets callers tell it apart.
   if (percent < MIN_BADGE_SCORE) {
     return {
-      percent, partial: true, phrase: '', needId: best?.needId || details.needId || null, label: PARTIAL_FIT,
+      percent, partial: true, phrase: best?.phrase || '', needId: best?.needId || details.needId || null, label: needHeadline(percent, best?.phrase || ''),
       basedOn: BASED_ON_LINE, restricted: details.eligibility === 'restricted' || Boolean(best?.restricted), confidenceLevel: best?.confidenceLevel || details.confidence || null,
     };
   }

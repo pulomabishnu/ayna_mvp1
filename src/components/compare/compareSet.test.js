@@ -17,7 +17,7 @@ describe('compareSetRows', () => {
     expect(ids.indexOf('use')).toBeLessThan(ids.indexOf('format'));
     expect(ids.indexOf('format')).toBeLessThan(ids.indexOf('evidence'));
     const match = rows.find((r) => r.id === 'match');
-    expect(match.values).toEqual(['82% match', 'Partial fit']);
+    expect(match.values).toEqual(['82% match', '40% match']);
     expect(rows.find((r) => r.id === 'prefs').values[0]).toBe('Within your budget');
   });
 

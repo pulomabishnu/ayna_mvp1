@@ -760,6 +760,16 @@ export function buildEcosystemV2(up, products, options = {}) {
       emptyReason: picks.length ? null : shelf.emptyReason || 'no_product_meets_quality_bar',
     };
   });
-  const marked = prefFormats.length ? shelves.map((sh) => (formatFallbackNeeds.has(sh.needId) ? { ...sh, formatFallback: true } : sh)) : shelves;
+  // Nov 5 (founder): only real fits are recommended. A pick under 50% never sits on a shelf; the
+  // product keeps its percent everywhere else (browse, search, its page).
+  const MIN_PICK = 50;
+  const firm = shelves.map((sh) => {
+    const picks = (sh.picks || []).filter((p) => (p.score ?? 0) >= MIN_PICK);
+    if (picks.length === (sh.picks || []).length) return sh;
+    const phrase = String(sh.label || 'this').toLowerCase();
+    return { ...sh, picks, shortBy: Math.max(0, perNeed - picks.length), fallback: false,
+      ...(picks.length ? {} : { emptyReason: sh.restrictedCount ? 'needs_safety_details' : 'no_product_meets_quality_bar', quality: 'none', qualityNote: sh.restrictedCount ? sh.qualityNote : `Nothing fits ${phrase} well enough yet, so we are not showing filler.` }) };
+  });
+  const marked = prefFormats.length ? firm.map((sh) => (formatFallbackNeeds.has(sh.needId) ? { ...sh, formatFallback: true } : sh)) : firm;
   return { ...scaffold, shelves: marked, engine: 'v2', coverage: Object.fromEntries(cover) };
 }

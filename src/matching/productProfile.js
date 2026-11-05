@@ -146,6 +146,31 @@ function isCareService(f) {
 // The product's relevance for a need = MAX level over all matching rules,
 // then any CAP from a matching rule is applied (MIN). Needs not set = 0.
 // roles: care pathway role used by the UTI / BV modifiers.
+const NOV5_MAP = {
+  'p-love-wellness-intimate-skin-support': { 'vaginal.irritation': SECONDARY, 'vaginal.odor': ADJACENT },
+  'p-kiero-refining-enzyme-cleanser': { 'skin.acne': ADJACENT, 'skin.hormonal': ADJACENT },
+  'p-kiero-airy-sun-stick-spf50': { 'skin.hormonal': ADJACENT },
+  'p-kiero-comfort-cleansing-balm': { 'skin.hormonal': WEAK },
+  'p-kiero-prime-sun-gel-spf40': { 'skin.hormonal': ADJACENT },
+  'p-kiero-essential-boost-serum': { 'skin.hormonal': ADJACENT },
+  'p-kiero-pure-radiant-eye-cream': { 'skin.hormonal': WEAK },
+  'p-kiero-moisturizing-barrier-cream': { 'skin.hormonal': ADJACENT },
+  'p-kiero-balance-toner-pads': { 'skin.acne': ADJACENT, 'skin.hormonal': ADJACENT },
+  'p-joylux-vfit': { 'sexual.wellness': SECONDARY, 'vaginal.dryness': ADJACENT, 'menopause.body_changes': ADJACENT },
+  'p-joylux-vfit-plus': { 'sexual.wellness': SECONDARY, 'vaginal.dryness': ADJACENT, 'menopause.body_changes': ADJACENT },
+  'p-joylux-shebar': { 'vaginal.odor': ADJACENT },
+  'p-joylux-ilyeo-body': { 'pain.joint': SECONDARY },
+  'p-alubri-rejuvenate-restore-kit': { 'vaginal.dryness': SECONDARY, 'vaginal.irritation': SECONDARY, 'menopause.body_changes': ADJACENT },
+  'p-momotaro-salve': { 'vaginal.irritation': SECONDARY, 'vaginal.dryness': ADJACENT },
+  'p-momotaro-vaginal-suppository': { 'vaginal.yeast': WEAK, 'vaginal.bv': WEAK },
+  'p-momotaro-hydrosol-toner': { 'vaginal.irritation': WEAK },
+  'p-momotaro-bath-body-tonic': { 'vaginal.irritation': WEAK },
+  'p-momotaro-body-oil': { 'skin.hormonal': WEAK, 'postpartum.body_skin': WEAK },
+  'p-estherformula-ceramide-strips': { 'skin.hormonal': WEAK },
+  'p-livi-after-sex-absorption-device': { 'sexual.wellness': SECONDARY, 'vaginal.discharge': ADJACENT },
+  'p-seeking-health-dao-enzyme-formerly-histamine-dig': { 'bloating.digestive': ADJACENT },
+  'p-queen-of-the-thrones-ritual-starter-liver-castor': { 'bloating.digestive': WEAK },
+};
 export const RELEVANCE_RULES = [
   // ── OTC medicines and tests with guideline backing (evidence-backed basics, Oct 17) ──
   { id: 'otc_nsaid', why: 'An NSAID pain reliever; NSAIDs are first-line for period cramps (NHS, MedlinePlus). Nov 5: MedlinePlus lists nonprescription ibuprofen and naproxen for minor aches from muscle aches and arthritis, so joint aches are a direct use. Ibuprofen: NINDS lists OTC pain relievers such as ibuprofen for less-severe migraine (verified row), so a direct use for cycle headaches.',
@@ -437,6 +462,11 @@ export const RELEVANCE_RULES = [
     // MedlinePlus names moisturizers and WATER-SOLUBLE lubricants (oils can damage latex condoms), so oils,
     // silicone lubes, external-only products and devices keep their lower level.
     set: { 'pain.sexual': ctx(STRONG, 'menopause_transition') } },
+  // Nov 5 (founder: "all of them should have a match"): products that mapped to no need now map by
+  // what they are for, at a modest level. These are fit-by-use, not efficacy claims; their grades and
+  // percents stay low unless evidence lifts them.
+  { id: 'nov5_by_id', why: 'Mapped by what the product is used for.',
+    when: (f) => Boolean(NOV5_MAP[f.id]), set: (f) => NOV5_MAP[f.id] },
   { id: 'sex_device', why: 'Sexual wellness device.',
     when: (f) => f.cat === 'sex-tech' && !f.t(/lubricant|\blube\b/),
     set: (f) => ({ 'sexual.wellness': DIRECT, 'sexual.libido': SECONDARY, 'pain.sexual': WEAK,
