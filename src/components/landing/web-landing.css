@@ -357,13 +357,6 @@ html body #ay-landing.wl .hd-steps > li:not(.is-on) small { opacity: .7; }
 html body #ay-landing.wl .lb-picks .hm-sticker, html body #ay-landing.wl .lb-picks .hm-sticker > * { border: 0 !important; box-shadow: none !important; background: transparent !important; }
 html body #ay-landing.wl .lb-picks .hm-sticker { padding: 0 !important; }
 html body #ay-landing.wl .lb-picks img { border-radius: 16px; background: #fff; }
-/* Numbers: one row of big figures split by thin lines, no tiles or icons. */
-html body #ay-landing.wl .lb-stats { gap: 0 !important; }
-html body #ay-landing.wl .lb-stat { min-height: 0 !important; padding: 8px 24px !important; border-radius: 0 !important; background: transparent !important; color: #3e2723 !important; box-shadow: none !important; border: 0 !important; border-left: 1px solid rgba(62, 39, 35, .2) !important; }
-html body #ay-landing.wl .lb-stat:first-child { border-left: 0 !important; padding-left: 0 !important; }
-html body #ay-landing.wl .lb-stat :is(b, span) { color: #3e2723 !important; }
-html body #ay-landing.wl .lb-stat > :is(svg, .lb-ic, [class*='icon']) { display: none !important; }
-@media (max-width: 767px) { html body #ay-landing.wl .lb-stat { padding: 12px 0 !important; border-left: 0 !important; border-top: 1px solid rgba(62, 39, 35, .2) !important; } html body #ay-landing.wl .lb-stat:first-child { border-top: 0 !important; } }
 /* Reads, Community, founders: on the page, not in boxes. */
 html body #ay-landing.wl .lb-card { background: transparent !important; box-shadow: none !important; border: 0 !important; border-radius: 0 !important; padding: 0 !important; color: #3e2723 !important; }
 html body #ay-landing.wl .lb-comm { padding-left: 32px !important; border-left: 1px solid rgba(62, 39, 35, .2) !important; }
@@ -372,3 +365,28 @@ html body #ay-landing.wl .lb-comm :is(.lb-h3, .lb-p, .lb-quote) { color: #3e2723
 html body #ay-landing.wl .lb-us__ph img { border-radius: 16px; }
 /* pcard.css carries id-level weight (#pc1-3); match it for the landing picks. */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body #ay-landing.wl .lb-picks .ay-pcard.ay-pcard { border: 0 !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; }
+
+/* Nov 4 v2 (founder: "why is there a colour difference", "cuter, use the inspo, less words").
+   One butter page from the walkthrough down, less air under the walkthrough, numbers as the inspo's
+   soft tiles (big number, two words, an icon circle), and only the words that carry meaning. */
+html body .app-container #ay-landing.wl .lb { --lb-page: #ffedac; background: #ffedac !important; padding-top: 24px !important; }
+html body .app-container #ay-landing.wl .hd { padding-bottom: 24px !important; }
+html body #ay-landing.wl .hd-steps small { display: none !important; }
+html body #ay-landing.wl .hd-steps > li > button { padding: 14px 0 !important; align-items: center !important; }
+html body #ay-landing.wl .hd-steps b { font-size: 20px !important; }
+html body #ay-landing.wl .lb-stats { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 12px !important; }
+html body #ay-landing.wl .lb-stat { position: relative; display: grid !important; align-content: end; gap: 4px; min-height: 160px !important; padding: 20px !important; border: 0 !important; border-radius: 24px !important; box-shadow: none !important; }
+html body #ay-landing.wl .lb-stat:nth-child(1) { background: #f7badd !important; }
+html body #ay-landing.wl .lb-stat:nth-child(2) { background: #f6e3a1 !important; }
+html body #ay-landing.wl .lb-stat:nth-child(3) { background: #3e2723 !important; }
+html body #ay-landing.wl .lb-stat:nth-child(4) { background: #f6e3a1 !important; }
+html body #ay-landing.wl .lb-stat:nth-child(3) :is(b, span, b *) { color: #ffedac !important; }
+html body #ay-landing.wl .lb-stat:not(:nth-child(3)) :is(b, span, b *) { color: #3e2723 !important; }
+html body #ay-landing.wl .lb-stat b { font: 800 48px/1 var(--ay-font-display, sans-serif) !important; letter-spacing: -.02em; }
+html body #ay-landing.wl .lb-stat > span:last-child { font: 600 14px/1.3 var(--ay-sans-stack, sans-serif) !important; }
+html body #ay-landing.wl .lb-stat > .lb-ic { position: absolute; top: 16px; right: 16px; width: 40px !important; height: 40px !important; background: #ffedac !important; color: #3e2723 !important; }
+html body #ay-landing.wl .lb-stat:nth-child(3) > .lb-ic { background: #f7badd !important; }
+@media (max-width: 767px) { html body #ay-landing.wl .lb-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } html body #ay-landing.wl .lb-stat { min-height: 132px !important; } html body #ay-landing.wl .lb-stat b { font-size: 36px !important; } }
+/* Fewer words: titles carry the reads, the Community and founders blocks keep one line and their link. */
+html body #ay-landing.wl .lb-read__words small, html body #ay-landing.wl .lb-comm .lb-p, html body #ay-landing.wl .lb-us .lb-p { display: none !important; }
+html body #ay-landing.wl .lb-head { align-items: center !important; }

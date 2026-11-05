@@ -182,9 +182,14 @@ const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || '
 const CORE = /pad|tampon|cup|disc|period|intimate|vaginal|menopause|pelvic|uti|cramp|fertility|postpartum|pregnan/i;
 function weeklyLineup() {
   const list = getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product)
-    .filter((p) => p?.image && NEEDS_PHOTO(p) && !/sex|intimacy|toy/i.test(String(p.category || '')) && !/\banal\b|vibrator|dildo|mouth tape/i.test(String(p.name || '')));
+    // Nov 4 (UI check): only photos we host. Brand-site image links can break (The Good Bug and
+    // Hormona showed their name on an empty plate on the landing).
+    .filter((p) => p?.image && String(p.image).startsWith('/') && NEEDS_PHOTO(p) && !/sex|intimacy|toy/i.test(String(p.category || '')) && !/\banal\b|vibrator|dildo|mouth tape/i.test(String(p.name || '')));
   const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
-  return [...core, ...list.filter((p) => !core.includes(p))];
+  // Always four: top up from the rest of the catalog with hosted photos (same filters).
+  const have = new Set(list.map((p) => p.id));
+  const extra = ALL_PRODUCTS.filter((p) => !have.has(p.id) && p?.image && String(p.image).startsWith('/') && NEEDS_PHOTO(p) && CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`) && !/sex|intimacy|toy/i.test(String(p.category || '')));
+  return [...core, ...list.filter((p) => !core.includes(p)), ...extra];
 }
 export function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
   const ready = useCatalogReady();
