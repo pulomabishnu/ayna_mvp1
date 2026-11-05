@@ -2599,7 +2599,7 @@ function App() {
       <a className="ay-skip" href="#ay-content">Skip to content</a>
       {/* The header sits outside <main>. It slides away while scrolling down and
           comes back on any scroll up; its hairline shows only with content under it. */}
-        <div className={`app-nav-wrap${['welcome', 'hero'].includes(currentView) ? ' is-landing' : ''}${headerScroll.scrolled ? ' is-scrolled' : ''}${headerScroll.away ? ' is-away' : ''}`}>
+        <div className={`app-nav-wrap${['welcome', 'hero'].includes(currentView) ? ' is-landing' : ''}${user ? '' : ' is-guest'}${headerScroll.scrolled ? ' is-scrolled' : ''}${headerScroll.away ? ' is-away' : ''}`}>
         <nav
           className={`ay-nav ay-nav--paper${isScrolled ? ' is-scrolled' : ''}${FOCUSED_FLOW_VIEWS.includes(currentView) ? ' is-focused' : ''}`}
           data-on-gradient={navOnGradient ? navGradientVariant || 'yes' : undefined}

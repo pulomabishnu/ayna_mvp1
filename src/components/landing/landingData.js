@@ -19,3 +19,29 @@ export function pickCommunityPost(posts = []) {
   const who = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
   return { body: post.body, meta: post.kind === 'review' && product ? `${who} on ${product.name}` : `Question from ${who}` };
 }
+
+/* Nov 6 (founder: "quote our focus group … put - beta tester"). Real words from ayna's weekly
+   focus group (Google Meet, Gemini transcripts Oct 19, Oct 26, Nov 2 2026), trimmed of filler
+   words only ("like", "um"). No names: every one is signed "Beta tester". */
+export const BETA_QUOTES = [
+  { q: 'Most of the recommendations are really spot-on.', tone: 'pink' },
+  { q: 'Everything is so seamless and easy, and all the information is easy to read. There’s not too much jargon.', tone: 'butter' },
+  { q: 'It really accounts for different price ranges, which is super helpful.', tone: 'butter' },
+  { q: 'The questions were pretty thorough, so I got a lot of good recommendations.', tone: 'pink' },
+];
+
+/* What stops her from starting (objections), answered only with what the site already says
+   elsewhere: the Pro page, the product page disclosure, the privacy policy and the footer. */
+export const LANDING_FAQ = [
+  { q: 'Is ayna free?', a: 'Yes. The quiz, your matches, safety notes and the evidence are free. ayna Pro adds a health dashboard, Apple Health and Oura syncing, every Read and more Ask ayna chats.' },
+  { q: 'Can brands pay for a better match?', a: 'No. Brands can’t pay to change your match. Some links earn ayna a commission, and the product page always says so.' },
+  { q: 'What happens to my health info?', a: 'We use it to match you, and we don’t sell your personal health information. You can delete your account and your answers anytime in Settings.' },
+  { q: 'How does the match work?', a: 'You tell us what you want help with, your life stage and your medicines. We check each product against your answers, its safety notes and the research, then show a % and the reason why.' },
+  { q: 'Is this medical advice?', a: 'No. ayna shares information to help you choose, not a diagnosis. For anything new, severe or worrying, talk to a clinician.' },
+];
+
+export const PAINS = [
+  { t: '20 tabs open', d: 'and still no idea what actually works.', icon: 'tabs' },
+  { t: 'Reviews that disagree', d: 'five stars, one star, same product.', icon: 'stars' },
+  { t: 'Advice that isn’t for you', d: 'nobody asked your age, stage or meds.', icon: 'person' },
+];

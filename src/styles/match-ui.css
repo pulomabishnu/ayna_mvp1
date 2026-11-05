@@ -205,3 +205,22 @@ body .ay-w2-fine a { color: inherit; }
 body .ay-w2-body { display: flex; flex-direction: column; gap: 28px; }
 body .ayna-match-scroll.ay-w2 { display: flex; flex-direction: column; gap: 28px; padding: 8px 20px 32px; }
 body .ay-w2-hero strong, body .ay-w2-ring span, body .ay-w2-pro__lock strong { font-family: 'Bricolage Grotesque', var(--ay-sans-stack, sans-serif) !important; }
+
+/* Nov 6 (founder: "more informative … design it better … I like the blurred-out bullets"). */
+body .ay-w2-list.is-why { gap: 0; }
+body .ay-w2-list.is-why li { display: flex; align-items: center; min-height: 52px; padding: 10px 0 10px 44px; border-bottom: 1.5px dashed rgba(62,39,35,.22); }
+body .ay-w2-list.is-why li:last-child { border-bottom: 0; }
+body .ay-w2-list.is-why li::before { top: 50%; transform: translateY(-50%); width: 30px; height: 30px; font-size: 14px; }
+body .ay-w2-list.is-why li[data-ic='star']::before { content: '★'; background: #3e2723; color: #ffedac; }
+body .ay-w2-list.is-why li[data-ic='stage']::before { content: '♀'; background: #ffedac; box-shadow: inset 0 0 0 2px #3e2723; }
+body .ay-w2-tile.is-ink { background: #3e2723; color: #ffedac; }
+body .ay-w2-tile.is-ink small { color: #f7badd; opacity: 1; }
+body .ay-w2-price { font: 800 28px/1 'Bricolage Grotesque', var(--ay-sans-stack, sans-serif); color: #ffedac; }
+body .ay-w2-range { position: relative; height: 8px; margin-top: 6px; border-radius: 99px; background: linear-gradient(90deg, #f7badd, rgba(247,186,221,.25)); }
+body .ay-w2-range i { position: absolute; top: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: #ffedac; box-shadow: 0 0 0 3px #3e2723, 0 0 0 5px #f7badd; transform: translateY(-50%); animation: ay-w2-in .6s ease both; }
+body .ay-w2-range__ends { display: flex; justify-content: space-between; font: 600 11px/1 var(--ay-sans-stack, sans-serif); opacity: .7; }
+body .ay-w2-range__ends em { font-style: normal; }
+body .ay-w2-tile.is-ink > span:last-child { color: #ffedac; }
+body .ay-w2-fine a { text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+body .ay-w2 .ay-match-feedback, body .ay-w2-body > :is(.ay-mfb, [class*='feedback']) { margin-top: 0; }
+body .ay-w2-tiles { align-items: start; }

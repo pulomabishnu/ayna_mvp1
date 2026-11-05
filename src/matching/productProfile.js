@@ -151,6 +151,9 @@ function isCareService(f) {
 // then any CAP from a matching rule is applied (MIN). Needs not set = 0.
 // roles: care pathway role used by the UTI / BV modifiers.
 const NOV5_MAP = {
+  // Nov 6 (all-hands Nov 5, Puloma: anxiety devices like the vagus nerve stimulator should be matched;
+  // tag a product under what it is marketed for). The brand markets it for worry, stress and sleep.
+  'p-hoolest-verelief-prime': { 'mood.general_anxiety': STRONG, 'sleep.trouble': SECONDARY },
   'p-love-wellness-intimate-skin-support': { 'vaginal.irritation': SECONDARY, 'vaginal.odor': ADJACENT },
   'p-kiero-refining-enzyme-cleanser': { 'skin.acne': ADJACENT, 'skin.hormonal': ADJACENT },
   'p-kiero-airy-sun-stick-spf50': { 'skin.hormonal': ADJACENT },

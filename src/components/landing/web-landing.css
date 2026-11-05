@@ -397,16 +397,11 @@ html body #ay-landing.wl .lb-picks img { mix-blend-mode: normal !important; back
 html body #ay-landing.wl .lb-picks :is(.ay-pcard__media, .ay-pcard__img, .hm-sticker__img, [class*='media'], [class*='plate']) { background: #fff !important; border-radius: 16px !important; mix-blend-mode: normal !important; }
 html body .app-container #ay-landing.wl .lb { padding-top: 0 !important; padding-bottom: 0 !important; }
 html body #ay-landing.wl .lb > .lb-sec { position: relative; margin: 0 !important; padding: 72px 0 !important; }
-html body #ay-landing.wl .lb > .lb-sec:nth-child(1) { background: #f7badd; }
-html body #ay-landing.wl .lb > .lb-sec:nth-child(2) { background: #ffedac; }
-html body #ay-landing.wl .lb > .lb-sec:nth-child(3) { background: #f6e3a1; }
-html body #ay-landing.wl .lb > .lb-sec:nth-child(4) { background: #ffedac; }
 /* The wavy seam: each band's top edge is a soft wave in its own colour, laid over the band above. */
 html body #ay-landing.wl .lb > .lb-sec::before { content: ''; position: absolute; left: 0; right: 0; top: -23px; height: 24px; background: inherit; pointer-events: none;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px;
           mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px; }
 /* On pink, the picks' words and link stay espresso; the numbers band's pink tile turns espresso so it never matches the band above. */
-html body #ay-landing.wl .lb > .lb-sec:nth-child(1) :is(.lb-h2, .lb-more, .ay-pcard, .ay-pcard *) { color: #3e2723 !important; }
 html body #ay-landing.wl .lb-stat:nth-child(1) { background: #f7badd !important; }
 /* The walkthrough band ends in the same wave into the pink picks. */
 html body #ay-landing.wl .hd { padding-bottom: 56px !important; }
@@ -422,11 +417,6 @@ html body #ay-landing.wl .lb-stat { align-content: start !important; padding-top
    butter, then espresso for Pro. The number tiles are pink and espresso, never a second yellow.
    The walkthrough ends below the phone, so the phone never sits on the wave. Reads and Community
    share a band with a gap between them instead of a hairline. */
-html body #ay-landing.wl .lb > .lb-sec:nth-child(1) { background: #f7badd; }
-html body #ay-landing.wl .lb > .lb-sec:nth-child(2) { background: #ffedac; }
-html body #ay-landing.wl .lb > .lb-sec:nth-child(3) { background: #f7badd; }
-html body #ay-landing.wl .lb > .lb-sec:nth-child(4) { background: #ffedac; }
-html body #ay-landing.wl .lb > .lb-sec:nth-child(3) :is(h2, h3, p, a, b, span, small) { color: #3e2723 !important; }
 html body #ay-landing.wl .lb-stat:nth-child(2) { background: #3e2723 !important; }
 html body #ay-landing.wl .lb-stat:nth-child(3) { background: #f7badd !important; }
 html body #ay-landing.wl .lb-stat:nth-child(4) { background: #3e2723 !important; }
@@ -441,7 +431,6 @@ html body #ay-landing.wl .lb > .lb-sec { padding: 80px 0 !important; }
 @media (max-width: 767px) { html body #ay-landing.wl .lb > .lb-sec { padding: 56px 0 !important; } html body .app-container #ay-landing.wl .hd { padding-bottom: 72px !important; } }
 html body #ay-landing.wl .lb-head { margin-bottom: 32px !important; }
 /* Nov 5: the espresso pills in the pink Reads/Community band keep butter text. */
-html body #ay-landing.wl .lb > .lb-sec:nth-child(3) :is(.lb-tag, .lb-pill.is-ink, .lb-pill.is-ink *) { color: #ffedac !important; }
 /* The community column showed a blank gap: bring back its one line. */
 html body #ay-landing.wl .lb-comm .lb-p { display: block !important; max-width: 34ch; margin-top: 12px !important; }
 /* Tile labels inherit from the tile, so the tile itself carries the text color. */

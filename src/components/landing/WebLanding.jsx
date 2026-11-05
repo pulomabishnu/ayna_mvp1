@@ -11,6 +11,9 @@ import { Rain, HeroSearch, BrandBar } from './kit.jsx';
 import { useProStatus } from '../../pro/useProStatus.js';
 import './web-landing.css';
 import HowItWorksDemo from './HowItWorksDemo.jsx';
+import { Problem, Testimonials, Faq, CtaNote } from './LandingStory.jsx';
+import './landing-story.css';
+import { BETA_QUOTES } from './landingData.js';
 import { trackLandingCta } from '../../utils/funnelEvents.js';
 
 /* The website's / (founder, Oct 27 10:40: "i liked how we had the website
@@ -43,7 +46,9 @@ function Hero({ cta, onSearch, banner = null, draftLine = null }) {
           <h1 id="hm-hero-title" className="wl-title">Women’s health products, <span>matched to you.</span></h1>
           <p className="wl-one">Take a 1-minute quiz. See what fits and why.</p>
           <SlideToStart className="wl-sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
-          {draftLine}
+          {draftLine || (!/Home/.test(cta.label) && <CtaNote className="is-light wl-ctanote" />)}
+          {/* Nov 6: social proof right under the main button (a real beta tester's words). */}
+          <p className="wl-proof">“{BETA_QUOTES[0].q}” <small>Beta tester</small></p>
           <HeroSearch onSearch={onSearch} className="wl-search" />
           {banner && <div className="wl-banner">{banner}</div>}
         </div>
@@ -80,6 +85,8 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
     <div id="ay-landing" className="ed ed-home hm hm-uq wl" ref={pageRef}>
       <Hero cta={cta} onSearch={onSearch} banner={home || draftLine ? null : heroBanner} draftLine={draftLine} />
       <BrandBar onOpen={onViewWaitlist} />
+      {/* Nov 6 (founder: high-converting order): the problem in her words, then how ayna solves it. */}
+      <div className="lb lb-top">{!home && <Problem cta={cta} />}</div>
       {/* Nov 4 (founder): the walkthrough on the iPhone, right under the hero. */}
       <HowItWorksDemo onStart={cta.go} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />
       {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the
@@ -87,11 +94,13 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
       {/* Below the hero (./LandingBody.jsx): one calm butter page, then one espresso close. */}
       <div className="lb">
         {/* Nov 4 (founder: "it's just boxes"): the feature bento is gone; the iPhone walkthrough above says it. */}
-        <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={Array.isArray(personalPicks) ? personalPicks : null} />
+        <Picks tone="t-pink" onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={Array.isArray(personalPicks) ? personalPicks : null} />
         {rest && <>
-          <Proof onViewArticles={onViewArticles} />
-          <ReadsAndCommunity onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
-          <Founders onViewAbout={onViewAbout} />
+          <Testimonials cta={home ? null : cta} />
+          <Proof tone="t-butter" onViewArticles={onViewArticles} />
+          <ReadsAndCommunity tone="t-pink" onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
+          <Founders tone="t-butter" onViewAbout={onViewAbout} />
+          <Faq />
         </>}
       </div>
       {rest && <ProAndEnd pro={pro === true} offerOpen={offerOpen} cta={cta} />}

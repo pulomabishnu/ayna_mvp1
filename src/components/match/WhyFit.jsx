@@ -7,6 +7,8 @@ import { usePro } from './WhyTrace.jsx';
 import { breakdownFromDetails } from '../../matching/breakdown.js';
 import { evidenceLevel } from '../pdp/evidenceLevel.js';
 import { openProPaywall } from '../../pro/paywall.js';
+import { ALL_PRODUCTS } from '../../data/catalog.js';
+import { parsePrice } from '../../matching/productProfile.js';
 import '../../styles/match-ui.css';
 
 // "See why" side panel (Nov 5, founder: "just put 69% match, see why … bullet
@@ -33,11 +35,29 @@ function fitReasons(product, details, raised = [], need = '') {
     if (bf.phrase) add(`Made for ${bf.phrase}`);
     if (bf.kind === 'stage') add(`Common in your life stage`);
   }
+  // A rating only when the catalog links where it comes from (glance.js rule: no unsourced ratings).
+  if (product?.userRating && product?.userRatingSourceUrl) add(`Buyers rate it ${product.userRating} out of 5`);
   return out.slice(0, 4);
 }
 
 const CHECK_WORDS = { medications_reviewed: 'Your medicines', pregnancy_reviewed: 'Pregnancy', breastfeeding_reviewed: 'Breastfeeding', passport_verified: 'Product facts', stage_scope: 'Life stage' };
 const checkWord = (c) => CHECK_WORDS[c.code] || (String(c.code).startsWith('allergen_free:') ? cap(String(c.code).slice(14).replace(/_/g, ' ')) : cap(c.text));
+
+/* Where its price sits among the same kind of product on ayna (Nov 6, founder: "make it more
+   informative"). Only one-time USD prices, only with 5+ others to compare, never invented. */
+const oneTime = (p) => { const x = parsePrice(p?.price); return x.currency === 'USD' && !x.recurring && x.amount > 0 ? x.amount : null; };
+function priceSpot(product) {
+  const mine = oneTime(product);
+  if (mine == null || !product?.category) return null;
+  const peers = ALL_PRODUCTS.filter((p) => p.category === product.category && p.type === product.type).map(oneTime).filter((n) => n != null);
+  if (peers.length < 6) return null;
+  const lo = Math.min(...peers); const hi = Math.max(...peers);
+  if (hi <= lo) return null;
+  const cheaper = peers.filter((n) => n > mine).length / peers.length;
+  const word = cheaper >= 0.66 ? 'Costs less than most like it on ayna' : cheaper <= 0.25 ? 'One of the pricier ones like it on ayna' : 'Mid-range for its kind on ayna';
+  return { mine, lo, hi, pos: (mine - lo) / (hi - lo), word, n: peers.length };
+}
+const money = (n) => `$${n % 1 ? n.toFixed(2) : n}`;
 
 function Ring({ percent }) {
   return <div className="ay-w2-ring" style={{ '--a': `${Math.max(0, Math.min(100, percent)) * 3.6}deg` }}><span>{percent}<small>%</small></span></div>;
@@ -67,6 +87,7 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
   const factors = [...(b?.raised || []).map((x) => ({ ...x, up: true })), ...(b?.lowered || []).map((x) => ({ ...x, up: false }))].filter((x) => x.text);
   const ev0 = evidenceLevel(product);
   const tr = b?.evidence || null;
+  const spot = shown != null ? priceSpot(product) : null;
   const ev = ev0.level > 0 ? ev0 : tr ? { level: ({ A: 3, B: 2, C: 1 })[tr.grade] || 0, word: tr.label } : ev0;
   const tierText = shown != null ? tierWord(tier, shown, details?.v2?.band) : '';
   const exLines = excluded ? (exclusionLines(details).length ? exclusionLines(details) : (details.considerations || []).map((c) => c.text).filter(Boolean)) : [];
@@ -87,7 +108,7 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
 
       {reasons.length > 0 && <section>
         <h3>Why</h3>
-        <ul className="ay-w2-list">{reasons.map((r) => <li key={r}>{r}</li>)}</ul>
+        <ul className="ay-w2-list is-why">{reasons.map((r) => <li key={r} data-ic={/rate it/.test(r) ? 'star' : /life stage/i.test(r) ? 'stage' : 'fit'}>{r}</li>)}</ul>
         {browse && onUpdateHealth && <button type="button" className="ay-w2-link" onClick={onUpdateHealth}>Add {bf.phrase || 'this'} to your answers</button>}
       </section>}
 
@@ -96,8 +117,9 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
         <ul className="ay-w2-needs">{rows.map((r) => <li key={r.needId}><span>{cap(r.short)}</span><i aria-hidden="true"><b style={{ width: `${r.score}%` }} /></i><strong>{r.score}%</strong></li>)}</ul>
       </section>}
 
-      {(ev.word || checks.length > 0) && shown != null && <section className="ay-w2-tiles">
+      {(ev.word || checks.length > 0 || spot) && shown != null && <section className="ay-w2-tiles">
         {ev.word && <div className="ay-w2-tile"><small>Evidence</small>{ev.level > 0 && <Bars level={ev.level} />}<span>{ev.word}</span></div>}
+        {spot && <div className="ay-w2-tile is-ink"><small>Price</small><b className="ay-w2-price">{money(spot.mine)}</b><span className="ay-w2-range" aria-hidden="true"><i style={{ left: `${Math.round(spot.pos * 100)}%` }} /></span><span className="ay-w2-range__ends" aria-hidden="true"><em>{money(spot.lo)}</em><em>{money(spot.hi)}</em></span><span>{spot.word}</span></div>}
         {checks.length > 0 && <div className="ay-w2-tile"><small>Checked for you</small><ul className="ay-w2-chips">{checks.map((c) => <li key={c.code} title={c.text}>{checkWord(c)}</li>)}</ul></div>}
       </section>}
 

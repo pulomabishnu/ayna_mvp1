@@ -191,7 +191,7 @@ function weeklyLineup() {
   const extra = ALL_PRODUCTS.filter((p) => !have.has(p.id) && p?.image && String(p.image).startsWith('/') && NEEDS_PHOTO(p) && CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`) && !/sex|intimacy|toy/i.test(String(p.category || '')));
   return [...core, ...list.filter((p) => !core.includes(p)), ...extra];
 }
-export function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
+export function Picks({ onOpenProduct, onViewDiscovery, picks = null, tone = '' }) {
   const ready = useCatalogReady();
   const weekly = useMemo(() => (ready ? weeklyLineup().slice(0, 4) : []), [ready]);
   const personal = useMemo(() => {
@@ -205,13 +205,13 @@ export function Picks({ onOpenProduct, onViewDiscovery, picks = null }) {
   useRecommendationViews(mine ? four : null, 'home_top_picks');
   if (ready && four.length < 2) return null;
   const name = mine ? 'Top picks for you' : 'This week’s picks';
-  return <PicksList name={name} ready={ready} four={four} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />;
+  return <PicksList name={name} ready={ready} four={four} onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} tone={tone} />;
 }
 /* Picks deal in like polaroids dropped on a table, then settle (founder, Nov 2). */
-function PicksList({ name, ready, four, onOpenProduct, onViewDiscovery }) {
+function PicksList({ name, ready, four, onOpenProduct, onViewDiscovery, tone = '' }) {
   const [ref, anim] = usePlayOnView();
   return (
-    <section className="lb-sec" aria-labelledby="lb-picks-h">
+    <section className={`lb-sec lb-picks-sec ${tone}`.trim()} aria-labelledby="lb-picks-h">
       <div className="lb-wrap">
         <header className="lb-head">
           <h2 id="lb-picks-h" className="lb-h2">{name}</h2>
@@ -252,11 +252,11 @@ function useCatalogNumbers() {
     ];
   }, [ready]);
 }
-export function Proof({ onViewArticles }) {
+export function Proof({ onViewArticles, tone = '' }) {
   const nums = useCatalogNumbers();
   const [ref, anim, play] = usePlayOnView();
   return (
-    <section className="lb-sec" aria-labelledby="lb-proof-h">
+    <section className={`lb-sec ${tone}`.trim()} aria-labelledby="lb-proof-h">
       <div className="lb-wrap">
         <header className="lb-head">
           <h2 id="lb-proof-h" className="lb-h2">What’s behind every match</h2>
@@ -273,11 +273,11 @@ export function Proof({ onViewArticles }) {
 }
 
 /* ---------- 4. reads and community ---------- */
-export function ReadsAndCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts = [] }) {
+export function ReadsAndCommunity({ onViewArticle, onViewArticles, onViewCommunity, posts = [], tone = '' }) {
   const post = pickCommunityPost(posts);
   const open = (id) => { if (onViewArticle) onViewArticle(id); else onViewArticles?.(); };
   return (
-    <section className="lb-sec" aria-label="Reads and Community">
+    <section className={`lb-sec ${tone}`.trim()} aria-label="Reads and Community">
       <div className="lb-wrap lb-rc">
         <div className="lb-reads lb-card is-light">
           <header className="lb-head">
@@ -310,9 +310,9 @@ export function ReadsAndCommunity({ onViewArticle, onViewArticles, onViewCommuni
 }
 
 /* ---------- 5. founders ---------- */
-export function Founders({ onViewAbout }) {
+export function Founders({ onViewAbout, tone = '' }) {
   return (
-    <section className="lb-sec" aria-labelledby="lb-us-h">
+    <section className={`lb-sec ${tone}`.trim()} aria-labelledby="lb-us-h">
       <div className="lb-wrap">
         <div className="lb-card is-light lb-us">
           <figure className="lb-us__ph">
@@ -370,6 +370,7 @@ export function ProAndEnd({ pro = false, offerOpen = null, cta }) {
         <div className="lb-end wlx-end">
           <h2 className="lb-end__h">Find what fits <span>your body.</span></h2>
           <SlideToStart className="lb-end__sts" size="lg" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
+          {!/Home/.test(cta.label) && <p className="ls-note is-light">Free · about 1 minute · no card needed</p>}
         </div>
       </div>
     </section>
