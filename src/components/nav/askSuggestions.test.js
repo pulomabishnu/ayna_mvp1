@@ -14,13 +14,13 @@ describe('Ask ayna suggestion row (founder, Oct 26)', () => {
   });
   it('Hide is remembered across visits and can be restored in Settings, and storage errors never throw', () => {
     const had = globalThis.window;
-    // No storage at all (private mode, node): shown, and Hide does not throw.
+    // Nov 4: off until she turns it on. No storage at all: hidden, and Hide does not throw.
     globalThis.window = { get localStorage() { throw new Error('blocked'); } };
-    expect(readSuggestHidden()).toBe(false);
+    expect(readSuggestHidden()).toBe(true);
     expect(() => writeSuggestHidden()).not.toThrow();
     const store = {};
     globalThis.window = { localStorage: { getItem: (k) => store[k] ?? null, setItem: (k, v) => { store[k] = String(v); }, removeItem: (k) => { delete store[k]; } } };
-    expect(readSuggestHidden()).toBe(false);
+    expect(readSuggestHidden()).toBe(true);
     writeSuggestHidden();
     expect(store[ASK_SUGGEST_HIDDEN_KEY]).toBe('1');
     expect(readSuggestHidden()).toBe(true);

@@ -72,13 +72,15 @@ export function navAskSuggestions({ signedIn = false, hasProfile = false, surfac
 }
 
 export function readSuggestHidden() {
-  try { return window.localStorage.getItem(ASK_SUGGEST_HIDDEN_KEY) === '1'; } catch { return false; }
+  // Nov 4 (founder: calm, not overstimulating): the starter-question strip under the header is off
+  // unless she turns it on in Tips settings ('0' = shown).
+  try { return window.localStorage.getItem(ASK_SUGGEST_HIDDEN_KEY) !== '0'; } catch { return true; }
 }
 
 export function writeSuggestHidden(hidden = true) {
   try {
     if (hidden) window.localStorage.setItem(ASK_SUGGEST_HIDDEN_KEY, '1');
-    else window.localStorage.removeItem(ASK_SUGGEST_HIDDEN_KEY);
+    else window.localStorage.setItem(ASK_SUGGEST_HIDDEN_KEY, '0');
     window.dispatchEvent(new CustomEvent(ASK_SUGGEST_EVENT, { detail: { hidden: Boolean(hidden) } }));
   } catch { /* storage unavailable: current component state still updates */ }
 }

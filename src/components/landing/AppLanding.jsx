@@ -33,8 +33,8 @@ export default function AppLanding({ signedIn = false, hasProfile = false, onSta
         <Rain cols={3} onInk className="alx__rain" />
         <div className="alx__head">
           <div className="alx__copy">
-            <h1 id="alx-title" className="alx__title">Find what fits <span>your body.</span></h1>
-            <p className="alx__one">Your products, routine and health data, finally in one place.</p>
+            <h1 id="alx-title" className="alx__title">Women’s health products, <span>matched to you.</span></h1>
+            <p className="alx__one">Take a 1-minute quiz. See what fits and why.</p>
           </div>
         </div>
       </section>

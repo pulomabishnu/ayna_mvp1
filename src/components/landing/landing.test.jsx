@@ -39,7 +39,7 @@ describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
   it('signed out: the main action is Get my matches; signed in with a profile: Go to your Home', () => {
     const out = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} />);
     expect(out).toContain('aria-label="Get my matches. Slide or tap to start."');
-    expect(out).toContain('Find what fits');
+    expect(out).toContain('matched to you'); // Nov 4: same promise as the website
     const home = renderToStaticMarkup(<AppLanding signedIn hasProfile onGoHome={() => {}} onStartQuiz={() => {}} />);
     expect(home).toContain('aria-label="Go to your Home. Slide or tap to start."');
   });
