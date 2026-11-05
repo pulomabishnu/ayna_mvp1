@@ -35,7 +35,8 @@ describe('cramps with the most picks: more than one product, at most two of a ki
     expect(shelf.picks.length).toBeGreaterThanOrEqual(2);
     const counts = {};
     for (const p of shelf.picks) counts[cat(p.productId)] = (counts[cat(p.productId)] || 0) + 1;
-    for (const n of Object.values(counts)) expect(n).toBeLessThanOrEqual(V2.maxPerTypePerNeed);
+    // Nov 4 (founder: 3 to 5 per need): a shelf may hold a third of one kind only while filling to V2.minShelf.
+    for (const n of Object.values(counts)) expect(n).toBeLessThanOrEqual(Math.max(V2.maxPerTypePerNeed, V2.minShelf));
   });
 
   it('a repeated category is a strong fit and from another format or brand', () => {

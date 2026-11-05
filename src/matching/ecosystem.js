@@ -48,6 +48,14 @@ export const INGESTED_RELATIONSHIP_MIN_SCORE = {
   unrelated: 100,
 };
 const WEAK_CLAIM_EVIDENCE = new Set(['none', 'community_only', 'not_for_this_claim']);
+// Any research row for product|need, graded or still a draft (the rationale says what the trials found).
+const REVIEWED_ANY = new Map(NEED_MAP_RESEARCH.map((r) => [`${r.product}|${r.need}`, r]));
+const LOW_RISK_NUTRIENT = /\b(magnesium|calcium|vitamin d3?|psyllium|fiber)\b/;
+const BLEND_WORDS = /complex|blend|\d+[- ]in[- ]1|multi|pack|gumm/;
+export function isLowRiskNutrient(pp) {
+  const name = String(pp?.name || pp?.product_name || '').toLowerCase();
+  return Boolean(pp?.ingested) && !pp?.herbal && String(pp?.category || '').toLowerCase() === 'supplement' && LOW_RISK_NUTRIENT.test(name) && !BLEND_WORDS.test(name);
+}
 
 export function qualificationForEcosystem(result, pp, baseMinScore) {
   let floor = baseMinScore;
@@ -62,6 +70,14 @@ export function qualificationForEcosystem(result, pp, baseMinScore) {
   // breastfeeding safety is unconfirmed for her.
   const stageUnknown = Boolean(result.safety?.sensitiveStage) || (result.safety?.penalties || []).some((x) => /^(pregnancy_unknown|breastfeeding_unknown|ttc_pregnancy_unknown|pregnancy_status_unknown)$/.test(x.code));
   if (graded && graded.strength !== 'none' && (graded.grade === 'A' || (graded.grade === 'B' && !pp.herbal)) && !stageUnknown) return { floor, effectiveScore };
+
+  // Founder, Nov 4 ("magnesium for sleep"): a plain single nutrient at a normal dose (magnesium,
+  // calcium, vitamin D, fiber) is low risk, so when ayna's research found trials for this exact use
+  // (even small or low-certainty ones), it gets the normal bar instead of the stricter supplement
+  // bar. Blends, herbals and anything unconfirmed for pregnancy or breastfeeding keep the strict bar.
+  const reviewed = REVIEWED_ANY.get(`${pp.product_id}|${result.needId}`);
+  if (isLowRiskNutrient(pp) && !stageUnknown && reviewed && reviewed.strength !== 'none' && /trial|rct|meta-analys|review/i.test(reviewed.rationale || '')
+    && ['direct', 'strong', 'secondary'].includes(result.relationship)) return { floor, effectiveScore };
 
   floor = Math.max(floor, INGESTED_RELATIONSHIP_MIN_SCORE[result.relationship] ?? baseMinScore);
   const evidenceLevel = result.evidence?.level || 'none';

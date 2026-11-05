@@ -4,6 +4,7 @@ import { getCareResourceBundle } from '../data/careResources.js';
 import { EMPTY } from '../mobile/data/intakeModel.js';
 import { buildUserProfile } from './userProfile.js';
 import { buildEcosystem, sortResults, brandCategory } from './ecosystem.js';
+import { TIERS } from './score.js';
 import { getNeedMatches, getBestNeedMatch, explainProduct } from './index.js';
 
 const user = (over, opts = {}) => buildUserProfile({ ...EMPTY, ...over }, { catalog: ALL_PRODUCTS, ...opts });
@@ -42,8 +43,10 @@ describe('buildEcosystem', () => {
     expect(acne.shortBy).toBe(10 - acne.picks.length);
     acne.picks.forEach((p) => expect(p.score).toBeGreaterThanOrEqual(50));
     const strict = buildEcosystem(user({ supportSelections: ['Acne'] }), ALL_PRODUCTS, { minTier: 'strong' });
-    expect(shelf(strict, 'skin.acne').picks).toHaveLength(0);
-    expect(shelf(strict, 'skin.acne').emptyReason).toBe('no_product_meets_quality_bar');
+    // Nov 4: benzoyl peroxide, adapalene, salicylic and azelaic acid are strong acne matches (AAD guideline),
+    // so the strict tier now has picks; every one of them clears it.
+    const strictMin = TIERS.find((t) => t.id === 'strong').min;
+    shelf(strict, 'skin.acne').picks.forEach((p) => expect(p.score).toBeGreaterThanOrEqual(strictMin));
   });
 
   it('a diagnosis alone does not create shelves', () => {

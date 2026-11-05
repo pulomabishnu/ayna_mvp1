@@ -129,6 +129,8 @@ function facts(product) {
     // Format words also appear in the price text ("$15 for 60 capsules").
     fmt: (re) => re.test(`${text} ${priceText} ${String(product.ingredients || '').toLowerCase()}`),
     isCat: (...c) => c.includes(normalCategory(product.category)),
+    // The ingredient list itself (active ingredients drive the ingredient rules below).
+    ing: (re) => re.test(`${name} ${String(product.ingredients || '').toLowerCase()}`),
   };
 }
 
@@ -451,6 +453,18 @@ export const RELEVANCE_RULES = [
     set: (f) => ({ 'pregnancy.safe_discovery': f.has('pregnancy') ? STRONG : SECONDARY, 'pregnancy.prenatal': ADJACENT }) },
 
   // ── Skin, digestion, joints, cognition, fitness, energy, sleep tags ────
+  // Nov 4 ingredient pass (50-profile run). The acne actives the American Academy of Dermatology
+  // guideline recommends (Reynolds et al., JAAD 2024: benzoyl peroxide and topical retinoids
+  // strongly; salicylic and azelaic acid conditionally) are a strong match for acne in a
+  // leave-on or wash product, not a "secondary" one.
+  { id: 'acne_active', why: 'Contains an acne treatment ingredient dermatologists recommend.',
+    when: (f) => f.isCat('skincare') && f.ing(/benzoyl peroxide|adapalene|salicylic acid|azelaic acid/),
+    set: { 'skin.acne': STRONG, 'skin.hormonal': ADJACENT } },
+  // Plain vitamin B6 (pyridoxine) is ACOG's first treatment for nausea and vomiting of pregnancy
+  // (via NIH ODS, the source on the product). Pregnancy context only: nausea alone never means pregnancy.
+  { id: 'b6_pregnancy_nausea', why: 'Vitamin B6 is a first treatment for pregnancy nausea.',
+    when: (f) => f.cat === 'supplement' && f.n(/vitamin b6|pyridoxine/) && !f.n(/complex|multi|prenatal/),
+    set: { 'digestive.nausea': ctx(STRONG, 'pregnancy'), 'pregnancy.discomfort': ctx(SECONDARY, 'pregnancy') } },
   { id: 'acne_tagged', why: 'Catalog marks this for acne.',
     when: (f) => f.has('acne'), set: { 'skin.acne': SECONDARY, 'skin.hormonal': ADJACENT } },
   { id: 'nausea_text', why: 'Mentions nausea relief.',

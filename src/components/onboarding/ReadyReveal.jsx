@@ -59,20 +59,30 @@ function firstMatches(answers, limit = 3) {
  * order she picked them, all the same size. A need with nothing shown says why
  * in plain words: held until the safety questions, or nothing strong enough yet.
  */
+const CARE_LINE_CODES = ['urgent_yes', 'uti_right_now', 'uti_first_time', 'spotting_check', 'severe_pain', 'very_heavy_flow', 'symptom_check'];
 function perNeed(answers) {
-  if (!answers) return { rows: [], total: 0 };
+  if (!answers) return { rows: [], total: 0, careNote: '' };
   try {
-    const { shelves = [] } = getEcosystemSeedFromQuiz(answers);
+    const { shelves = [], careFlags = null } = getEcosystemSeedFromQuiz(answers);
     const seen = new Set();
     const rows = shelves.map((sh) => {
       const products = (sh.productIds || []).map((id) => getProductById(id)).filter((p) => p && showableAsPick(p, answers));
       products.forEach((p) => seen.add(p.id));
-      const held = !products.length && ((sh.missingSafetyText || []).length > 0 || sh.restrictedCount > 0);
-      return { id: sh.needId, label: sh.label, products, held };
+      const needsAnswers = (sh.missingSafetyText || []).length > 0;
+      const held = !products.length && (needsAnswers || sh.restrictedCount > 0);
+      // Nov 4 (50-profile run): BV with a latex allergy held everything and told her to answer
+      // questions she had already answered. Say what is actually missing.
+      const info = (sh.missingProductInfoText || [])[0] || '';
+      const heldWhy = !held ? '' : needsAnswers ? 'Answer the safety questions below to see these.'
+        : info ? `Held back for now: we don’t have ${info.replace(/ for this product$/, '')} for these yet, and you told us something that makes it matter.`
+          : 'Held back for now: we can’t confirm these are safe for what you told us.';
+      return { id: sh.needId, label: sh.label, products, held, needsAnswers, heldWhy };
     });
-    return { rows, total: seen.size };
+    // Nov 4: one "check with a clinician" line when a need she picked calls for it (spotting, UTI now, severe pain).
+    const careNote = (careFlags?.notes || []).find((n) => CARE_LINE_CODES.includes(n.code))?.text || '';
+    return { rows, total: seen.size, careNote };
   } catch {
-    return { rows: [], total: 0 };
+    return { rows: [], total: 0, careNote: '' };
   }
 }
 
@@ -88,7 +98,7 @@ function MatchPlate({ src, product }) {
 export default function ReadyReveal({ prefsDone = false, answers = null, variant = 'app', signedIn = false, onSeeToday, onWatchWrapped, onCreateAccount, onBack, onMorePersonal, onSafety = null }) {
   const ready = useCatalogReady();
   const matches = useMemo(() => (ready ? firstMatches(answers, 5) : []), [answers, ready]);
-  const { rows, total } = useMemo(() => (ready ? perNeed(answers) : { rows: [], total: 0 }), [answers, ready]);
+  const { rows, total, careNote } = useMemo(() => (ready ? perNeed(answers) : { rows: [], total: 0, careNote: '' }), [answers, ready]);
   // Nov 4 (founder: "the extra questions didn't change my match"): say what changed. The
   // matches before the extra questions are kept for this tab only (ids, no answers).
   const changed = useMemo(() => {
@@ -128,6 +138,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
       {basedOn.length > 0 && <p className="ay-ob-ready__based">Based on: {basedOn.join(' · ')}</p>}
       {prefsDone && <p className="ay-ob-ready__updated" role="status">{changed > 0 ? `Updated: ${changed} new ${changed === 1 ? 'match' : 'matches'} from your budget, formats and what you like.` : changed === 0 ? 'Updated with your answers. Your matches still fit best.' : 'Updated with your answers on budget, formats and what you like.'}</p>}
       {/* Care first: the prompt-evaluation message sits above her picks. */}
+      {!bleeding && careNote && <p className="ay-ob-ready__careline" role="note">{careNote}</p>}
       {bleeding && <BleedingEvaluationNote className="ay-ob-ready__care" title={bleeding.title} note={bleeding} />}
       {rows.length > 0 ? (
         <section className="ay-ob-needs" aria-labelledby="ay-ob-needs-h">
@@ -137,7 +148,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
               <li key={r.id} style={{ '--i': i }}>
                 <span className="ay-ob-needs__top">
                   <b>{r.label}</b>
-                  <em className={r.products.length ? '' : 'is-none'}>{r.products.length ? `${r.products.length} ${r.products.length === 1 ? 'match' : 'matches'}` : r.held ? 'After safety questions' : 'None yet'}</em>
+                  <em className={r.products.length ? '' : 'is-none'}>{r.products.length ? `${r.products.length} ${r.products.length === 1 ? 'match' : 'matches'}` : r.needsAnswers ? 'After safety questions' : r.held ? 'Held for safety' : 'None yet'}</em>
                 </span>
                 {/* Nov 4 (founder: "make it better"): her actual matches, not just thumbnails. */}
                 {r.products.length > 0
@@ -151,7 +162,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                       {pct != null && <em className="ay-ob-picks__pct">{pct}%</em>}
                     </li>;
                   })}</ol>
-                  : <small>{r.held ? 'Answer the safety questions below to see these.' : 'Nothing strong enough yet. We only show products we can stand behind.'}</small>}
+                  : <small>{r.held ? r.heldWhy : 'Nothing strong enough yet. We only show products we can stand behind.'}</small>}
               </li>
             ))}
           </ul>

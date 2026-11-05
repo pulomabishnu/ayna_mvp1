@@ -90,8 +90,8 @@ describe('before and since a product', () => {
     expect(effectChecks(demo, { today: TODAY, products: [{ ...mag, addedAt: undefined }] })).toEqual([]);
     expect(effectChecks(demo, { today: TODAY, products: [{ ...getProductById('p-thermacare'), addedAt: iso(6) }] })).toEqual([]);
     expect(effectChecks(demo, { today: TODAY, products: [{ ...mag, addedAt: iso(2) }] })).toEqual([]);
-    // A draft (non-.gov) sleep grade does not count.
-    expect(effectChecks(demo, { today: TODAY, products: [{ ...getProductById('p-magnesium-glycinate'), addedAt: mag.addedAt }] })).toEqual([]);
+    // A draft (non-.gov) sleep grade does not count (magnesium glycinate's is now verified from NCCIH, Nov 4).
+    expect(effectChecks(demo, { today: TODAY, products: [{ ...getProductById('p-heraure-hermag-magnesium'), addedAt: mag.addedAt }] })).toEqual([]);
   });
 });
 

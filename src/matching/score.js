@@ -1196,7 +1196,7 @@ export function scoreProductForNeed(productOrProfile, up, needIdIn, opts = {}) {
     || (needId === 'pain.menstrual_cramp' && (m.painIntensity ?? 0) >= 0.8)
     || (URINARY_UTI_NEEDS.has(needId) && ['right_now', 'first_time'].includes(m.utiFrequency))
     || (MENSTRUAL_PRODUCT_NEEDS.has(needId) && m.flow === 'very_heavy')
-    || needId === 'urinary.burning' || needId === 'vaginal.discharge' || needId === 'sexual.sti';
+    || needId === 'urinary.burning' || needId === 'vaginal.discharge' || needId === 'sexual.sti' || needId === 'cycle.spotting';
 
   // Explanations: what matched (actual inputs), never why she has a symptom.
   const explanations = [];

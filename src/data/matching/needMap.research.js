@@ -2934,14 +2934,12 @@ export default [
   "product": "p-magnesium-glycinate",
   "need": "sleep.trouble",
   "strength": "secondary",
-  "grade": null,
-  "rationale": "Oral magnesium has small, low-certainty trials for faster sleep onset in older adults; 200 mg is within the supplemental UL.",
-  "source_url": null,
+  "grade": "C",
+  "rationale": "NCCIH: too little rigorous evidence to say magnesium helps insomnia; a 2021 review of 3 small trials (151 older adults) suggested faster sleep onset, low certainty.",
+  "source_url": "https://www.nccih.nih.gov/health/in-the-news-magnesium-supplements-for-sleep-disorders",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "B",
-  "prior_source_unverified": "https://pubmed.ncbi.nlm.nih.gov/33865376/",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-magnumsolace-nighttime-magnesium-cream",
@@ -5336,14 +5334,12 @@ export default [
   "product": "p-advil-ibuprofen-200",
   "need": "pain.cycle_headache",
   "strength": "primary",
-  "grade": null,
-  "rationale": "Cleveland Clinic lists NSAIDs among usual treatments for menstrual migraine, sometimes started 2 to 3 days before the period.",
-  "source_url": null,
+  "grade": "B",
+  "rationale": "NINDS lists over-the-counter pain relievers such as ibuprofen for less-severe migraine episodes and describes menstrual migraine.",
+  "source_url": "https://www.ninds.nih.gov/health-information/disorders/migraine",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "B",
-  "prior_source_unverified": "https://my.clevelandclinic.org/health/diseases/8260-menstrual-migraines-hormone-headaches",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-advil-ibuprofen-200",
@@ -5381,15 +5377,13 @@ export default [
  {
   "product": "p-aleve-naproxen-220",
   "need": "pain.cycle_headache",
-  "strength": "primary",
-  "grade": null,
-  "rationale": "Cleveland Clinic lists NSAIDs among usual treatments for menstrual migraine, sometimes started 2 to 3 days before the period.",
-  "source_url": null,
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "MedlinePlus: nonprescription naproxen relieves mild pain from headaches and menstrual periods. It does not name migraine.",
+  "source_url": "https://medlineplus.gov/druginfo/meds/a681029.html",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "B",
-  "prior_source_unverified": "https://my.clevelandclinic.org/health/diseases/8260-menstrual-migraines-hormone-headaches",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-aleve-naproxen-220",

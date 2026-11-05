@@ -65,6 +65,8 @@ export const V2 = {
   // need may take a second product of a type it already has, never a third,
   // and only a strong fit. List composition only: no percent changes.
   maxPerTypePerNeed: 2,
+  // Founder, Nov 4: a shelf fills to at least this many full fits when the catalog has them.
+  minShelf: 3,
   // A need she did not pick herself (or one her life stage contradicts) while
   // she picked others: its fit counts for this much (team direction 15). It
   // can never read as a Strong match, and it gets one ecosystem pick.
@@ -556,6 +558,22 @@ export function buildEcosystemV2(up, products, options = {}) {
   for (const c of candidates) for (const [needId, x] of c.results) if (!x.partial) fullNeeds.add(needId);
   for (const c of candidates) for (const [needId, x] of [...c.results]) if (x.partial && fullNeeds.has(needId)) c.results.delete(needId);
   for (let i = candidates.length - 1; i >= 0; i -= 1) if (!candidates[i].results.size) candidates.splice(i, 1);
+  // Formats she picked (founder, Nov 4: "gummies only" must mean gummies): for each need where at
+  // least one fitting product comes in a format she picked, products in other formats leave that
+  // shelf. Apps, services and tests are not a format choice and stay. Where nothing comes in her
+  // formats, the shelf keeps the other options (formatFallback) so it is never empty for that reason.
+  const prefFormats = up.shopping?.formats?.noPreference ? [] : (up.shopping?.formats?.preferred || []);
+  const formatExempt = (pp) => !(pp.formats || []).length || (pp.formats || []).some((f) => f === 'app_service' || f === 'test_kit');
+  const inFormat = (pp) => (pp.formats || []).some((f) => prefFormats.includes(f));
+  const formatFallbackNeeds = new Set();
+  if (prefFormats.length) {
+    for (const n of needs) {
+      const any = candidates.some((c) => c.results.has(n.id) && !formatExempt(c.pp) && inFormat(c.pp));
+      if (!any) { formatFallbackNeeds.add(n.id); continue; }
+      for (const c of candidates) if (c.results.has(n.id) && !formatExempt(c.pp) && !inFormat(c.pp)) c.results.delete(n.id);
+    }
+    for (let i = candidates.length - 1; i >= 0; i -= 1) if (!candidates[i].results.size) candidates.splice(i, 1);
+  }
   // No budget answer: nothing physical over the splurge ceiling (founder, Nov 4). Removed after the
   // partial-fit rule so a dropped splurge never lets a below-the-bar product in.
   if (priceRule) for (let i = candidates.length - 1; i >= 0; i -= 1) if (priceRule.overMax(candidates[i].pp)) candidates.splice(i, 1);
@@ -657,11 +675,18 @@ export function buildEcosystemV2(up, products, options = {}) {
       if (isUniversal && universal >= V2.maxUniversal) continue;
       let home = null;
       for (const [needId, x] of c.results) if (!home || x.v2.fit > home.v2.fit) home = { needId, ...x };
-      if (home.partial || home.v2.fit < V2.strongFloor || isWeak(home.needId)) continue;
-      if (chosen.filter((x) => x.home.needId === home.needId).length >= needCap(home.needId)) continue;
+      // Nov 4 (founder: 3 to 5 per need by default; 50-profile run: acne showed only Differin while
+      // patches, benzoyl peroxide and a salicylic cleanser all qualified). Until a shelf has
+      // V2.minShelf picks, any full fit (never a partial, never a weak need) may fill it, a third
+      // of a type is allowed, and a brand already on that shelf waits; past that, strong fits only.
+      const homeHave = chosen.filter((x) => x.home.needId === home.needId);
+      const filling = homeHave.length < V2.minShelf;
+      if (home.partial || home.v2.fit < (filling ? V2.ecosystemFloor : V2.strongFloor) || isWeak(home.needId)) continue;
+      if (homeHave.length >= needCap(home.needId)) continue;
+      if (filling && brand && homeHave.some((x) => x.pp.brand?.key === brand)) continue;
       const tk = typeKey(c.pp, home.needId);
       const same = chosen.filter((x) => x.home.needId === home.needId && typeKey(x.pp, home.needId) === tk);
-      if (same.length >= V2.maxPerTypePerNeed) continue;
+      if (same.length >= (filling ? V2.minShelf : V2.maxPerTypePerNeed)) continue;
       const fmt = (c.pp.formats || []).join();
       const varied = (same.every((x) => (x.pp.formats || []).join() !== fmt) ? 2 : 0) + (same.every((x) => x.pp.brand?.key !== brand) ? 1 : 0);
       const option = { c, home, isUniversal, varied };
@@ -734,5 +759,6 @@ export function buildEcosystemV2(up, products, options = {}) {
       emptyReason: picks.length ? null : shelf.emptyReason || 'no_product_meets_quality_bar',
     };
   });
-  return { ...scaffold, shelves, engine: 'v2', coverage: Object.fromEntries(cover) };
+  const marked = prefFormats.length ? shelves.map((sh) => (formatFallbackNeeds.has(sh.needId) ? { ...sh, formatFallback: true } : sh)) : shelves;
+  return { ...scaffold, shelves: marked, engine: 'v2', coverage: Object.fromEntries(cover) };
 }

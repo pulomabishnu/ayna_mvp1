@@ -223,6 +223,8 @@ describe('distribution across needs stays stable', () => {
     // Nov 4: products that matched nothing are now tagged (vaginal melts, hair serums, an
     // anti-itch cream, the pelvic floor trainers); 3 of them wait on clinician review (+3).
     // Nov 4: Naya's two tampon products are also checked for bleeding (+2).
-    expect(holds).toBe(507);
+    // Nov 4 (50-profile run): B6 is now a pregnancy-nausea match and acne actives strong acne matches;
+    // the ones whose pregnancy or clinician facts are missing wait for them (+5).
+    expect(holds).toBe(512);
   });
 });

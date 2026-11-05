@@ -2026,7 +2026,10 @@ function careFlagsFor(up) {
     const utiFirstTime = ph.utiFrequency === 'first_time';
     const severePain = needIds.has('pain.menstrual_cramp') && (ph.painIntensity ?? 0) >= 0.8;
     const veryHeavyFlow = ph.flow === 'very_heavy';
-    const symptomCare = ['urinary.burning', 'vaginal.discharge', 'sexual.sti'].filter((id) => needIds.has(id));
+    const symptomCare = ['urinary.burning', 'vaginal.discharge', 'sexual.sti', 'vaginal.bv', 'pain.pelvic'].filter((id) => needIds.has(id));
+    // Nov 4 (50-profile run): spotting between periods got liners and no word about getting it checked.
+    // MedlinePlus: call your provider about unexplained bleeding between periods.
+    const spotting = needIds.has('cycle.spotting');
     const notes = [];
     if (up.safety.careFirst) notes.push({ code: 'urgent_yes', text: 'You said something may be urgent. Reach a clinician, urgent care, or emergency services first. Products come second.' });
     else if (up.safety.urgent === 'not_sure') notes.push({ code: 'urgent_not_sure', text: 'You were not sure if something is urgent. If symptoms are severe or getting worse, contact a clinician.' });
@@ -2034,6 +2037,7 @@ function careFlagsFor(up) {
     else if (utiFirstTime && utiNeed) notes.push({ code: 'uti_first_time', text: 'First-time UTI-like symptoms are worth checking with a clinician.' });
     if (severePain) notes.push({ code: 'severe_pain', text: 'Severe period pain is worth raising with a clinician.' });
     if (veryHeavyFlow) notes.push({ code: 'very_heavy_flow', text: 'Very heavy periods are worth raising with a clinician.' });
+    if (spotting) notes.push({ code: 'spotting_check', text: 'Spotting between periods is worth checking with a clinician, especially if it is new or keeps happening. Liners only help with the mess.' });
     if (symptomCare.length) notes.push({ code: 'symptom_check', text: 'Some symptoms you chose are best checked by a clinician.' });
     if (up.safety.pregnant) notes.push({ code: 'pregnancy_unknown', text: 'Pregnancy safety is not confirmed for most products. Check new products with your clinician.' });
     if (up.safety.breastfeeding === 'yes') notes.push({ code: 'breastfeeding_unknown', text: 'Breastfeeding safety is not confirmed for most products. Check new products with your clinician.' });
@@ -2042,7 +2046,7 @@ function careFlagsFor(up) {
     return {
         urgent: up.safety.urgent,
         careFirst: up.safety.careFirst,
-        careProminent: Boolean(up.safety.careProminent || up.contradictions.some((x) => x.code === 'period_need_vs_stage') || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length),
+        careProminent: Boolean(up.safety.careProminent || up.contradictions.some((x) => x.code === 'period_need_vs_stage') || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length || spotting),
         utiRightNow,
         utiFirstTime,
         severePain,
@@ -2273,6 +2277,7 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
             qualityNote: shelf.qualityNote,
             restrictedCount: shelf.restrictedCount,
             missingSafetyText: shelf.missingSafetyText,
+            missingProductInfoText: shelf.missingProductInfoText || [],
             roles: shelf.roles,
             careFirst: shelf.careFirst,
             careProminent: shelf.careProminent,
