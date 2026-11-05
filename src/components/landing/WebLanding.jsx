@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { WhatYouCanDo, Picks, Proof, ReadsAndCommunity, Founders, ProAndEnd, useRiseOnView } from './LandingBody.jsx';
 import MedicalNote from '../MedicalNote.jsx';
-import { isPlainLeftClick } from '../../utils/productRoute';
 import '../../styles/editorial.css';
 import '../../styles/home.css';
 import '../../styles/loop-a-landing.css';
@@ -26,17 +25,15 @@ import { trackLandingCta } from '../../utils/funnelEvents.js';
  * One page for everyone; signed in with a profile, the main action is
  * "Go to your Home". Nothing on the page is sticky. */
 
-const Arrow = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>);
-
 /* ---------- 1. hero ----------
    Founder, Oct 27 11:32-11:36: the rain in the back, faded; the title in the
    middle, not huge; clean, but keep the fun and the brown and pink bar.
    The espresso band she liked, ending in the wavy edge, with the falling
    cut-outs as a faded layer on both sides (soft butter circles on espresso)
    and everything centred on top (13:01: big, not crowded): a big two-line
-   title with "your body." in pink, one line on what ayna connects, the search, Slide to start (the welcome
-   tip's anchor) and How we match. The brown and pink bar runs under it. */
-function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
+   title with "your body." in pink, one line on what ayna connects, the search and Slide to start (the welcome
+   tip's anchor). How we match is in the walkthrough below. The brown and pink bar runs under it. */
+function Hero({ cta, onSearch, banner = null }) {
   return (
     <section className="wl-hero" aria-labelledby="hm-hero-title">
       <div className="wl-hero__band">
@@ -47,7 +44,6 @@ function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
           <p className="wl-one">Take a 1-minute quiz. See what fits and why.</p>
           <SlideToStart className="wl-sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
           <HeroSearch onSearch={onSearch} className="wl-search" />
-          <a className="wl-how" href="/how-it-works" onClick={(e) => { if (!onViewHowItWorks || !isPlainLeftClick(e)) return; e.preventDefault(); onViewHowItWorks(); }}>How we match<Arrow /></a>
           {banner && <div className="wl-banner">{banner}</div>}
         </div>
       </div>
@@ -72,7 +68,7 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
     : { label: 'Sign up free', slide: 'Slide to sign up free', go: () => { trackLandingCta('sign_up_free', 'web', 'Sign up free'); onStartQuiz?.(); } }; // founder's brief: the button says Sign up free
   return (
     <div id="ay-landing" className="ed ed-home hm hm-uq wl" ref={pageRef}>
-      <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />
+      <Hero cta={cta} onSearch={onSearch} banner={home ? null : heroBanner} />
       <BrandBar onOpen={onViewWaitlist} />
       {/* Nov 4 (founder): the walkthrough on the iPhone, right under the hero. */}
       <HowItWorksDemo onStart={cta.go} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />

@@ -111,7 +111,9 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(html).toContain('data-tour="landing-start"');
     expect(html).toContain('class="lsx-search wl-search"');
     expect(html).toMatch(/class="lk-rainbox lk-rainbox--ink wl-rain" aria-hidden="true"/);
-    expect(text(html)).toContain('How we match');
+    // How we match is in the walkthrough, not under the hero search.
+    expect(html).not.toContain('wl-how');
+    expect(html).toContain('class="hd-more"');
     // The website keeps the brown and pink bar, with its pause button; no box behind "your body.".
     expect(html).toContain('class="lk-bar"');
     expect(html).toContain('aria-label="Pause motion"');
