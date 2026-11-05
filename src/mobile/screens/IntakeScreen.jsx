@@ -1020,7 +1020,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const why = [
     step.subtitle && !helperShort ? step.subtitle : '',
     step.why || '',
-    step.info && step.info !== step.why ? step.info : '',
+    // Nov 4: one explanation, not two near-identical paragraphs (the onboarding why wins).
+    step.info && !step.why ? step.info : '',
     step.type === 'lifeStage' && showMidlifeFirst ? 'Midlife stages moved up. You can pick Perimenopause and Regular periods together.' : '',
     { helpTopics: 'Not sure? Tap Continue and we will show everything.', medications: 'Check with a clinician before starting anything new.', zip: 'Only used to find care near you.' }[step.id] || '',
   ];
