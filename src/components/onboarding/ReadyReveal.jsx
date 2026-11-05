@@ -59,7 +59,8 @@ function firstMatches(answers, limit = 3) {
  * order she picked them, all the same size. A need with nothing shown says why
  * in plain words: held until the safety questions, or nothing strong enough yet.
  */
-const CARE_LINE_CODES = ['urgent_yes', 'uti_right_now', 'uti_first_time', 'spotting_check', 'severe_pain', 'very_heavy_flow', 'symptom_check'];
+// Nov 5: the CDC birth control note and the pregnancy constipation first steps join the list, most important first.
+const CARE_LINE_CODES = ['urgent_yes', 'estrogen_bc_condition', 'uti_right_now', 'uti_first_time', 'spotting_check', 'severe_pain', 'very_heavy_flow', 'pregnancy_constipation', 'symptom_check'];
 function perNeed(answers) {
   if (!answers) return { rows: [], total: 0, careNote: '' };
   try {
@@ -76,10 +77,13 @@ function perNeed(answers) {
       const heldWhy = !held ? '' : needsAnswers ? 'Answer the safety questions below to see these.'
         : info ? `Held back for now: we don’t have ${info.replace(/ for this product$/, '')} for these yet, and you told us something that makes it matter.`
           : 'Held back for now: we can’t confirm these are safe for what you told us.';
-      return { id: sh.needId, label: sh.label, products, held, needsAnswers, heldWhy };
+      // Nov 5: an empty shelf that is empty on purpose (pregnancy, bleeding after menopause) says why.
+      const why = !products.length && ['clinician_first_for_stage', 'care_first'].includes(sh.emptyReason) ? sh.qualityNote || '' : '';
+      return { id: sh.needId, label: sh.label, products, held, needsAnswers, heldWhy, why };
     });
     // Nov 4: one "check with a clinician" line when a need she picked calls for it (spotting, UTI now, severe pain).
-    const careNote = (careFlags?.notes || []).find((n) => CARE_LINE_CODES.includes(n.code))?.text || '';
+    const notes = careFlags?.notes || [];
+    const careNote = CARE_LINE_CODES.map((c) => notes.find((n) => n.code === c)).find(Boolean)?.text || '';
     return { rows, total: seen.size, careNote };
   } catch {
     return { rows: [], total: 0, careNote: '' };
@@ -148,7 +152,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
               <li key={r.id} style={{ '--i': i }}>
                 <span className="ay-ob-needs__top">
                   <b>{r.label}</b>
-                  <em className={r.products.length ? '' : 'is-none'}>{r.products.length ? `${r.products.length} ${r.products.length === 1 ? 'match' : 'matches'}` : r.needsAnswers ? 'After safety questions' : r.held ? 'Held for safety' : 'None yet'}</em>
+                  <em className={r.products.length ? '' : 'is-none'}>{r.products.length ? `${r.products.length} ${r.products.length === 1 ? 'match' : 'matches'}` : r.needsAnswers ? 'After safety questions' : r.held ? 'Held for safety' : r.why ? 'Ask a clinician' : 'None yet'}</em>
                 </span>
                 {/* Nov 4 (founder: "make it better"): her actual matches, not just thumbnails. */}
                 {r.products.length > 0
@@ -162,7 +166,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                       {pct != null && <em className="ay-ob-picks__pct">{pct}%</em>}
                     </li>;
                   })}</ol>
-                  : <small>{r.held ? r.heldWhy : 'Nothing strong enough yet. We only show products we can stand behind.'}</small>}
+                  : <small>{r.held ? r.heldWhy : r.why || 'Nothing strong enough yet. We only show products we can stand behind.'}</small>}
               </li>
             ))}
           </ul>
@@ -177,8 +181,8 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
           one optional link to make the matches closer. */}
       <div className="ay-ob-ready__actions ay-ob-next">
         {!signedIn && onCreateAccount
-          ? <button type="button" className="ay-ob-next__main" onClick={onCreateAccount}>Save my {total > 0 ? `${total} ` : ''}matches<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
-          : <button type="button" className="ay-ob-next__main" onClick={onSeeToday}>{total > 0 ? `See all ${total} matches` : (variant === 'web' ? 'See my ecosystem' : 'Go to Home')}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>}
+          ? <button type="button" className="ay-ob-next__main" onClick={onCreateAccount}>{total === 1 ? 'Save my match' : `Save my ${total > 0 ? `${total} ` : ''}matches`}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+          : <button type="button" className="ay-ob-next__main" onClick={onSeeToday}>{total > 1 ? `See all ${total} matches` : total === 1 ? 'See your match' : (variant === 'web' ? 'See my ecosystem' : 'Go to Home')}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>}
         <small className="ay-ob-next__note">{!signedIn && onCreateAccount ? 'A free account keeps them here next time. No card.' : 'They’re saved in Home.'}</small>
         {onMorePersonal && safetyLeft === 0 && remaining > 0 && (
           <button type="button" className="ay-ob-next__more" onClick={onMorePersonal}>
