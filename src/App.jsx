@@ -176,7 +176,6 @@ import HealthRefreshPrompt from './components/health/HealthRefreshPrompt.jsx';
 import ProfileSetupGate from './components/ProfileSetupGate.jsx';
 import { resetRoutineData } from './utils/resetRoutine.js';
 import { outcomesToProductHistory, readTries } from './health/outcomes.js';
-import WebHomeTop from './components/you/WebHomeTop.jsx';
 import { readHomeLook } from './mobile/components/homeLook.js';
 import { webHomeView } from './mobile/utils/navTab.js';
 // Keep the ?homestyle=a|b preview pick before the router rewrites the address (Today loads lazily).
@@ -214,8 +213,8 @@ import { stampFactUpdates } from './matching/factFreshness.js';
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
 // Today · Shop · Services · Community · Library (founder, Oct 26). Shop keeps the 'explore' key.
 const WEB_TAB_VIEWS = {
-  // Website Home = My ecosystem (founder, Oct 27 18:34).
-  today: ['today', 'ecosystem'],
+  // Home shows the original health charts; My ecosystem is a separate You page.
+  today: ['today', 'welcome', 'hero'],
   explore: ['explore', 'explore-topics', 'discovery', 'product'],
   services: ['explore-services'],
   library: ['articles'],
@@ -2547,7 +2546,7 @@ function App() {
   const webTabOn = (key) => WEB_TAB_VIEWS[key].includes(currentView);
   // Where each main tab goes (top nav and phone tab bar).
   const mainTabGo = {
-    // Home opens ecosystem setup for guests and the saved ecosystem for members.
+    // Home opens the health dashboard for signed-in people and the landing for guests.
     today: () => setCurrentView(webHomeView({ signedIn: Boolean(user), authLoading })),
     // Shop is the old Explore page (/explore); Services the same page with Services picked; Library the reads.
     explore: () => openExplore('overview'),
@@ -2614,7 +2613,7 @@ function App() {
           {/* Home leads the desktop navigation; mobile keeps the familiar centre Home tab. */}
           <div className="ay-nav__links">
             {WEB_TOP_TABS.map((t) => (
-              <a key={t.key} href={t.key === 'today' ? '/you/ecosystem' : t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
+              <a key={t.key} href={t.key === 'today' ? (user ? '/today' : '/') : t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
                 {t.key === 'today' && <span className="ay-nav__home-mark" aria-hidden="true"><TabIcon kind="home" /></span>}
                 <span>{t.label}</span>
               </a>
@@ -2908,7 +2907,9 @@ function App() {
         {/* Today: the first main tab and the home for signed-in accounts. Same page /health showed. */}
         {/* Website, signed in: the same dashboard the Ecosystem "Dashboard" tab shows, behind its own
             server-checked Pro gate (Oct 28 audit: a static lock here told Pro members to buy Pro). */}
-        {currentView === 'today' && user && <div className="wx-today">{webHealth}</div>}
+        {/* Founder, Nov 4: signed-in Home is the Home design (greeting band, dials, highlights, your week),
+            not the full data dashboard and not My ecosystem; "See your data" at the bottom opens /health. */}
+        {currentView === 'today' && user && <div className="wx-today">{React.cloneElement(webHealth, { title: 'Home', compact: true })}</div>}
         {currentView === 'today' && !user && (
           <div className="wx-today" data-tour="today">
             {React.cloneElement(webHealth, {
@@ -3210,16 +3211,6 @@ function App() {
         {currentView === 'ecosystem' && user && (
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
-            homeTop={user ? <WebHomeTop
-              firstName={accountFirstName(user) || quizResults?.firstName || ''}
-              healthRows={health?.insightRows || []}
-              quizAnswers={quizResults}
-              products={Object.values(myProducts || {})}
-              onData={() => proDoor('dashboard', () => setCurrentView('today'))}
-              onProducts={() => document.getElementById('weco-tab-mine')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-              onConnect={goHealthData}
-              refresh={quizResults ? <div className="wht__refresh"><HealthRefreshPrompt quizResults={quizResults} onSave={handleUpdateIntake} onUpdate={(step) => { setEditAtStep(step || ''); setCurrentView('profile-edit'); }} /></div> : null}
-            /> : null}
             quizSlot={ecosystemQuizCard}
             quizSlotKind={webQuizDraft ? 'finish' : 'personal'}
             onFixLifeStages={() => { setEditAtStep('lifeStage'); setCurrentView('profile-edit'); }}
