@@ -156,6 +156,9 @@ export function evidenceGrade(pp, needId) {
   // A research row without a grade (draft_unverified: its source was not a
   // .gov page, Oct 24) falls through to the draft grade from the evidence on file.
   if (reviewed?.grade) return reviewed.grade;
+  // Nov 6: a match that rests only on the brand's own marketing (marketed_for) is limited evidence (C)
+  // until a research row grades it. A .gov page that only mentions the condition doesn't back the product.
+  if (pp.health_need_relevance?.[needId]?.rule === 'marketed_for') return 'C';
   const level = evidenceFor(pp, needId).level;
   if (level === 'product_specific') return 'A';
   if (level === 'guideline' || level === 'ingredient_only') return 'B';
@@ -178,7 +181,13 @@ function strengthOf(pp, needId, relationship) {
   if (clinician) return rowStrength(clinician);
   const fromRelevance = V2.S[relationship] || 0;
   const research = REVIEWED.get(key);
-  return research ? Math.min(fromRelevance, rowStrength(research)) : fromRelevance;
+  if (!research) return fromRelevance;
+  // Nov 6 (founder: "fix the algorithm"; empty shelves for PMS, BV, mood...): a research row
+  // marked "secondary" mostly says the evidence is thin, and the evidence grade already lowers the
+  // match for that. For a product made for the need (direct or strong relevance), "secondary"
+  // now costs half as much (0.8, not 0.6), so thin evidence isn't counted twice. "none" still removes it.
+  if (research.strength === 'secondary' && fromRelevance >= V2.S.strong) return 0.8;
+  return Math.min(fromRelevance, rowStrength(research));
 }
 
 /** Share of what the product is for that she actually picked (1 = all of it). */
@@ -768,7 +777,7 @@ export function buildEcosystemV2(up, products, options = {}) {
     if (picks.length === (sh.picks || []).length) return sh;
     const phrase = String(sh.label || 'this').toLowerCase();
     return { ...sh, picks, shortBy: Math.max(0, perNeed - picks.length), fallback: false,
-      ...(picks.length ? {} : { emptyReason: sh.restrictedCount ? 'needs_safety_details' : 'no_product_meets_quality_bar', quality: 'none', qualityNote: sh.restrictedCount ? sh.qualityNote : `Nothing fits ${phrase} well enough yet, so we are not showing filler.` }) };
+      ...(picks.length ? {} : { emptyReason: sh.restrictedCount ? 'needs_safety_details' : 'no_product_meets_quality_bar', quality: 'none', qualityNote: sh.restrictedCount ? sh.qualityNote : `Nothing for ${phrase} is backed well enough to recommend yet. You can still see every option in Shop.` }) };
   });
   const marked = prefFormats.length ? firm.map((sh) => (formatFallbackNeeds.has(sh.needId) ? { ...sh, formatFallback: true } : sh)) : firm;
   return { ...scaffold, shelves: marked, engine: 'v2', coverage: Object.fromEntries(cover) };

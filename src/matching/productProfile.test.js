@@ -25,11 +25,11 @@ describe('relevance rule table', () => {
     expect(prof('p-thermacare').health_need_relevance['pain.menstrual_cramp'].relationship).toBe('direct');
   });
 
-  it('vaginal moisturizer -> dryness 1.0; lube -> dryness 0.55 and sexual pain 0.55', () => {
+  it('vaginal moisturizer -> dryness 1.0; lube -> dryness 0.55 and sexual pain 0.8 at any age (MedlinePlus, Nov 6)', () => {
     expect(rel('p-neycher-vaginal-moisturizer', 'vaginal.dryness')).toBe(1);
     expect(rel('p-kindra-lotion', 'vaginal.dryness')).toBe(1);
     expect(rel('p-uberlube', 'vaginal.dryness')).toBe(0.55);
-    expect(rel('p-uberlube', 'pain.sexual')).toBe(0.55);
+    expect(rel('p-uberlube', 'pain.sexual')).toBe(0.8);
   });
 
   it('BV test -> BV 1.0, but a generic probiotic is at most 0.30 for BV', () => {

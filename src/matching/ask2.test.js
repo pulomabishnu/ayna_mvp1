@@ -452,7 +452,7 @@ describe('B. shelves: diversity, roles, explainability and "do we have a good re
     expect(s.picks).toHaveLength(0);
     expect(s.quality).toBe('none');
     // Pain relievers can fit joint aches now, but wait for her medicines answer first.
-    expect(s.qualityNote).toMatch(/not showing filler|safety details/);
+    expect(s.qualityNote).toMatch(/backed well enough|stand behind|safety details/);
   });
 
   it('only explainable products (at least a secondary relationship) can rank as matches', () => {

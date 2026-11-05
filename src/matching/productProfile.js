@@ -122,6 +122,8 @@ function facts(product) {
   return {
     // tc: text with benefit-denying sentences removed (for "mentions X" rules).
     tc: (re) => re.test(claims),
+    // Claim sentences: a claim verb and the need in the same sentence (marketed_for rule).
+    cs: (re) => claims.split(/(?<=[.!?])\s+/).some((x) => re.test(x) && MARKETED_VERB.test(x) && !FOUNDER_STORY.test(x)),
     limited: product.evidenceStrength === 'limited',
     id: product.id, cat: normalCategory(product.category), type: String(product.type || '').toLowerCase(),
     tags, hf, name, text,
@@ -261,7 +263,42 @@ const NOV5_MAP = {
   'p-poof-poofcorp-com-founder-named-only-as-annie-no-legal-entity-or-loc': { 'energy.fatigue': WEAK },
   'p-queen-of-the-thrones-pelvic-castor-oil-pack': { 'pain.pelvic': WEAK },
 };
+// A founder's own story ("started after her own recurring BV") is not a claim about the product.
+const FOUNDER_STORY = /\b(started|founded|founder|co-founded|after (her|their|his) own|her own|launched)\b/;
+let RULES_CACHE = null;
+const rulesInOrder = () => (RULES_CACHE ||= [...RELEVANCE_RULES.filter((r) => !r.fillOnly), ...RELEVANCE_RULES.filter((r) => r.fillOnly)]);
+const MARKETED_VERB = /\b(for|relieve[sd]?|relief|reduce[sd]?|ease[sd]?|eases|support[sd]?|help(s|ed)?|control|targets?|soothe[sd]?|balance[sd]?|fights?|calms?|eliminate[sd]?|banish|manage[sd]?|formulated|designed|made|marketed|aimed)\b/;
+const INTIMATE = (f) => ['intimate-care', 'supplement', 'diagnostics', 'test'].includes(f.cat) || f.fn('vaginal-health');
+const INGESTIBLE_OR_DEVICE = (f) => !PERIOD_CATEGORIES.has(f.cat) && !['skincare', 'skin', 'body-care', 'hair'].includes(f.cat);
+// Need -> { re: the brand's words, ok: where the claim can count }.
+const MARKETED_FOR = {
+  'vaginal.odor': { re: /\bodou?rs?\b|odor-causing/, ok: (f) => INTIMATE(f) && !f.t(/foot|underarm|deodorant/) },
+  // External balms and washes can ease irritation that comes with BV; they don't treat it.
+  'vaginal.bv': { re: /\bbv\b|bacterial vaginosis/, ok: (f) => INTIMATE(f) && !f.n(/salve|balm|toner|wash|cream|wipes?|spray/) },
+  'vaginal.discharge': { re: /\bdischarge\b/, ok: INTIMATE },
+  'cycle.pms': { re: /\bpms\b|premenstrual/, ok: INGESTIBLE_OR_DEVICE },
+  'mood.swings': { re: /mood swings?|moodiness/, ok: INGESTIBLE_OR_DEVICE },
+  'mood.irritability': { re: /irritab(le|ility)/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.t(/irritat(ed|ion) skin|skin irritat/) },
+  'mood.cycle_related': { re: /(pms|premenstrual|cycle[- ]related|period)\W+(\w+\W+){0,3}mood|mood\W+(\w+\W+){0,3}(before|during) (your )?period/, ok: INGESTIBLE_OR_DEVICE },
+  'urinary.urgency': { re: /urinary urgency|\burge (incontinence|to (pee|urinate))|overactive bladder|\boab\b/, ok: (f) => !PERIOD_CATEGORIES.has(f.cat) },
+  'urinary.frequency': { re: /frequent urination|urinary frequency|overactive bladder|\boab\b/, ok: (f) => !PERIOD_CATEGORIES.has(f.cat) },
+  'condition_support.pcos': { re: /\bpcos\b|\bpmos\b|polycystic ovar/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.cs(/acne|pimple|breakout/) },
+  'sexual.libido': { re: /\blibido\b|sex drive|\barousal\b/, ok: (f) => !PERIOD_CATEGORIES.has(f.cat) },
+  'cognition.brain_fog': { re: /brain fog|mental clarity|cognitive (function|support|health)|\bmemory\b/, ok: (f) => f.cat === 'supplement' || f.cat === 'mental-health' },
+  'digestive.gas': { re: /\bgas\b|gassiness|flatulen/, ok: (f) => f.cat === 'supplement' },
+  'pain.abdominal': { re: /stomach (ache|pain|discomfort|upset)|abdominal (pain|discomfort)|tummy (ache|trouble|troubles)|upset stomach/, ok: (f) => f.cat === 'supplement' || f.cat === 'cramp-relief' },
+};
 export const RELEVANCE_RULES = [
+  // Nov 6 (founder: "just because it's not in the name doesn't mean it's not used for that … one
+  // product can be good for multiple things"; Nov 5 all-hands, Puloma: tag a product under what it
+  // is marketed for). The brand's own claim, in a sentence that is not a denial, makes it a match:
+  // in the name = made for it; in a claim sentence = a strong match. The evidence grade still
+  // decides how high the % goes, and research rows that say "none" still remove it.
+  // fillOnly: it never overrides a need another rule already set (e.g. pms_named keeps a PMS product
+  // whose only backing is its name below the bar; v2.gates G1).
+  { id: 'marketed_for', why: 'The brand markets it for this.', fillOnly: true,
+    when: (f) => f.type !== 'digital' && !f.t(/homeopath|\bdetox/) && Object.entries(MARKETED_FOR).some(([, m]) => m.ok(f) && (f.n(m.re) || f.cs(m.re))),
+    set: (f) => Object.fromEntries(Object.entries(MARKETED_FOR).filter(([, m]) => m.ok(f) && (f.n(m.re) || f.cs(m.re))).map(([need, m]) => [need, f.n(m.re) ? DIRECT : STRONG])) },
   // ── OTC medicines and tests with guideline backing (evidence-backed basics, Oct 17) ──
   { id: 'otc_nsaid', why: 'An NSAID pain reliever; NSAIDs are first-line for period cramps (NHS, MedlinePlus). Nov 5: MedlinePlus lists nonprescription ibuprofen and naproxen for minor aches from muscle aches and arthritis, so joint aches are a direct use. Ibuprofen: NINDS lists OTC pain relievers such as ibuprofen for less-severe migraine (verified row), so a direct use for cycle headaches.',
     when: (f) => f.n(/ibuprofen|naproxen/), set: (f) => ({ 'pain.menstrual_cramp': DIRECT, 'pain.pelvic': SECONDARY, 'pain.cycle_headache': (f.n(/ibuprofen|advil|motrin/) ? DIRECT : SECONDARY), 'pain.joint': DIRECT, 'condition_support.endometriosis': SECONDARY, 'condition_support.adenomyosis': SECONDARY }) },
@@ -559,6 +596,12 @@ export const RELEVANCE_RULES = [
     // MedlinePlus names moisturizers and WATER-SOLUBLE lubricants (oils can damage latex condoms), so oils,
     // silicone lubes, external-only products and devices keep their lower level.
     set: { 'pain.sexual': ctx(STRONG, 'menopause_transition') } },
+  // Nov 6 (founder: every symptom is for everyone). MedlinePlus (Women and sexual problems, any age):
+  // "Use a vaginal lubricant for dryness" to make sex less painful. Water-based lubricants are a
+  // strong fit for pain during sex at any life stage (moisturizers stay tied to the menopause rule).
+  { id: 'lubricant_sex_pain', why: 'MedlinePlus: use a vaginal lubricant to make sex less painful, at any age.',
+    when: (f) => f.t(/lubricant|\blube\b/) && !f.n(/\boil\b|silicone|arousal|warming|tingl|anal/) && f.type !== 'digital',
+    set: { 'pain.sexual': STRONG } },
   // Nov 5 (founder: "all of them should have a match"): products that mapped to no need now map by
   // what they are for, at a modest level. These are fit-by-use, not efficacy claims; their grades and
   // percents stay low unless evidence lifts them.
@@ -1447,7 +1490,7 @@ export function buildProductProfile(product) {
   const roles = new Set();
   const matchedRules = [];
   const entryFor = (need) => { relevance[need] = relevance[need] || { score: 0, rule: null, why: null, contextual: [] }; return relevance[need]; };
-  for (const rule of RELEVANCE_RULES) {
+  for (const rule of rulesInOrder()) {
     if (!rule.when(f)) continue;
     matchedRules.push(rule.id);
     const set = typeof rule.set === 'function' ? rule.set(f) : rule.set;
@@ -1457,6 +1500,8 @@ export function buildProductProfile(product) {
         const level = rule.broad ? Math.min(WEAK, value.level) : value.level;
         e.contextual.push({ level, requires: value.requires, rule: rule.id, why: rule.why });
       } else {
+        // nov5_by_id was a modest by-use placeholder (Nov 5), so a brand claim may raise it.
+        if (rule.fillOnly && e.score > 0 && e.rule !== 'nov5_by_id') continue;
         const level = rule.broad ? Math.min(WEAK, value) : value;
         if (e.score < level) { e.score = level; e.rule = rule.id; e.why = rule.why; e.broad = Boolean(rule.broad); }
       }

@@ -202,7 +202,11 @@ describe('distribution across needs stays stable', () => {
     // Nov 5 (deliberate, 10-person runs): latex is a caution for creams and gels, Advil/Aleve show with
     // their label's ask-a-pharmacist line, so more products are scored (n 662); NSAIDs are direct for
     // joint aches, moisturizers strong for pain during sex in menopause (MedlinePlus); mean 51.9.
-    expect(Math.abs(mean(other) - 51.9)).toBeLessThanOrEqual(1.5);
+    // Nov 6 (deliberate, founder: "fix the algorithm", empty shelves): a research row's "secondary"
+    // costs half as much for a product made for the need (its evidence grade already lowers it),
+    // brands' own claims now tag products (marketed_for), lubricants are strong for pain during sex
+    // at any age (MedlinePlus); mean 54.4.
+    expect(Math.abs(mean(other) - 54.4)).toBeLessThanOrEqual(1.5);
     expect(other.filter((x) => x >= 99).length / other.length).toBeLessThanOrEqual(0.02);
   });
   it('period products: no longer saturated at 99', () => {
