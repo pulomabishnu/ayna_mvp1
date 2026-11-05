@@ -116,8 +116,8 @@ describe('P0: pregnancy and medicines whose label says ask a clinician (Nov 2 au
       expect(d.status, t || 'no trimester').not.toBe('cleared');
     }
   });
-  it('ibuprofen still matches period cramps when not pregnant', () => {
+  it('ibuprofen is never recommended (Nov 5 all-hands: no painkillers), pregnant or not', () => {
     const advil = ALL_PRODUCTS.find((p) => p.id === 'p-advil-ibuprofen-200');
-    expect(decide(advil, { ...base, lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain'] }).status).toBe('cleared');
+    expect(decide(advil, { ...base, lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain'] }).status).not.toBe('cleared');
   });
 });

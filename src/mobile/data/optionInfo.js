@@ -209,6 +209,7 @@ export const OPTION_INFO = {
   'Sleep + energy + cognition': 'Sleep, tiredness and focus.',
   'Digestive health': 'Your gut and bowel habits.',
   'Skin + hair': 'Breakouts, hair growth and hair loss.',
+  Hair: 'Hair growth and hair loss.',
   'Metabolic + physical wellness': 'Weight, strength and bone health.',
   'Care access': 'Finding a clinician in person or online.',
 };

@@ -40,7 +40,7 @@ const group = (label) => SUPPORT_GROUPS.find((g) => g.label === label)?.items ||
 export const HELP_TOPIC_ITEMS = {
   'Periods & cramps': group('Period + cycle'),
   Hormones: group('Hormonal + reproductive'),
-  PCOS: ['PCOS support', 'Irregular periods', 'Missed periods', 'Acne', 'Excess facial or body hair', 'Hair thinning or hair loss'],
+  PCOS: ['PCOS support', 'Irregular periods', 'Missed periods', 'Excess facial or body hair', 'Hair thinning or hair loss'],
   Endometriosis: ['Endometriosis support', 'Cramps or period pain', 'Pelvic pain', 'Heavy periods', 'Pain or discomfort during sex'],
   Fertility: group('Fertility'),
   Pregnancy: group('Pregnancy'),
@@ -56,7 +56,7 @@ export const HELP_TOPIC_ITEMS = {
   Sleep: ['Trouble sleeping', 'Fatigue or low energy'],
   Energy: ['Fatigue or low energy', 'Brain fog', 'Difficulty concentrating', 'Strength or fitness', 'Metabolism or weight support'],
   'Mental wellness': group('Mood + mental wellbeing'),
-  Skin: ['Acne', 'Hormone-related skin concerns', 'Postpartum body or skin changes'],
+  // Nov 5 all-hands: no Skin topic until skin care recommendations are ready.
   Hair: ['Hair thinning or hair loss', 'Excess facial or body hair'],
   Pain: ['Cramps or period pain', 'Pelvic pain', 'Cycle-related headaches or migraines', 'Joint aches', 'Pain or discomfort during sex', 'Abdominal discomfort'],
 };

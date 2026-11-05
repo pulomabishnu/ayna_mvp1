@@ -294,7 +294,12 @@ export const RELEVANCE_RULES = [
     when: (f) => isCareService(f) && (f.has('uti') || f.fn('uti-prevention') || f.t(/\buti\b/)),
     // Frequent urination or urgency alone does not mean a UTI: UTI care is a
     // useful secondary option for those, strong only for UTI-like symptoms.
-    set: { 'urinary.burning': STRONG, 'urinary.frequency': SECONDARY, 'urinary.urgency': SECONDARY, 'urinary.recurrent_uti': STRONG }, roles: ['care'] },
+    // Nov 5 all-hands (Eliz): a birth control service showing up for UTI symptoms read as "birth control
+    // for a UTI". When contraception is what the service is mainly for, UTI care is only adjacent, so it
+    // never sits on a UTI shelf (under 50%); a dedicated UTI service still does.
+    set: (f) => (f.cat === 'contraception' || f.fn('contraception') || f.n(/birth control|\bwisp\b|\bnurx\b/)
+      ? { 'urinary.burning': ADJACENT, 'urinary.frequency': WEAK, 'urinary.urgency': WEAK, 'urinary.recurrent_uti': ADJACENT }
+      : { 'urinary.burning': STRONG, 'urinary.frequency': SECONDARY, 'urinary.urgency': SECONDARY, 'urinary.recurrent_uti': STRONG }), roles: ['care'] },
   { id: 'care_sti', why: 'Telehealth that handles STI care.',
     when: (f) => isCareService(f) && f.t(/\bstis?\b|\bstds?\b|sexually transmitted/), set: { 'sexual.sti': STRONG }, roles: ['care'] },
   { id: 'care_bv', why: 'Telehealth that treats BV.',

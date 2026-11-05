@@ -192,6 +192,8 @@ describe('4. catalog ingestion -> validation -> eligibility -> matching', () => 
     expect(report.map((r) => r.id).sort()).toEqual([
       'p-gina-insertion-applicator-refills', 'p-lim-method-kneeling-pad', 'p-lim-method-shoe-covers',
       'p-mypelvicbra-waistband-extenders', 'p-saalt-cup-steamer', 'p-sootheher-gel-pad-refills',
+      // Nov 5 all-hands: painkillers are never recommended.
+      'p-advil-ibuprofen-200', 'p-aleve-naproxen-220', 'p-cystex', 'p-winx-uti-pain-relief',
     ].filter((id) => byId.has(id)).sort());
     for (const r of report) expect(r.reason).toBeTruthy();
   });

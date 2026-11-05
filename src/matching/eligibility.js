@@ -36,6 +36,10 @@ const hasText = (v) => typeof v === 'string' ? v.trim().length > 0 : v != null;
  * @param {object} [pp] its buildProductProfile() result, when at hand (passport QA)
  * @returns {{ eligible: boolean, code: string|null, reason: string|null }}
  */
+const PAINKILLER_RE = /\b(ibuprofen|naproxen|acetaminophen|paracetamol|aspirin|phenazopyridine|sodium salicylate|ketoprofen|diclofenac)\b/i;
+export function isPainkiller(product) {
+  return PAINKILLER_RE.test(`${product?.name || ''} ${product?.ingredients || ''}`);
+}
 export function recommendationEligibility(product, pp = null) {
   if (!product || typeof product !== 'object') return { eligible: false, code: 'not_a_product', reason: 'Not a catalog product' };
   // Validation recorded at ingestion (scripts set validation.status or qaStatus).
@@ -45,6 +49,10 @@ export function recommendationEligibility(product, pp = null) {
   // gate: 'needs_correction' marks wording fixes in progress on 88 of 281
   // listings (Oct 24), not a failed listing. Only an explicit rejection is.
   if (pp?.passport?.qa === 'rejected') return { eligible: false, code: 'failed_validation', reason: 'This listing did not pass our catalog checks yet' };
+  // Nov 5 all-hands (Puloma, Eliz, Ameera): no painkillers are recommended (NSAIDs, acetaminophen,
+  // aspirin, urinary analgesics), to avoid medicine contraindications and liability. They stay in the
+  // catalog with their percent; they never go on her list on their own.
+  if (isPainkiller(product)) return { eligible: false, code: 'painkiller', reason: 'ayna does not recommend pain medicines. Ask your clinician or pharmacist.' };
   if (product.recommendable === false) return { eligible: false, code: 'not_recommended', reason: product.notRecommendedReason || 'Listed in the catalog, not recommended on its own' };
   const missing = [];
   if (!hasText(product.name)) missing.push('name');

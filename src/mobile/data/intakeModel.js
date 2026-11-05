@@ -27,7 +27,9 @@ export const SUPPORT_GROUPS = [
   { label: 'Mood + mental wellbeing', items: ['Mood swings', 'Irritability', 'Anxiety', 'Low mood', 'Cycle-related mood changes'] },
   { label: 'Sleep + energy + cognition', items: ['Fatigue or low energy', 'Trouble sleeping', 'Brain fog', 'Difficulty concentrating'] },
   { label: 'Digestive health', items: ['Constipation', 'Diarrhea', 'Gas', 'Abdominal discomfort', 'Digestive bloating'] },
-  { label: 'Skin + hair', items: ['Acne', 'Hair thinning or hair loss', 'Excess facial or body hair', 'Hormone-related skin concerns'] },
+  // Nov 5 all-hands: skin care is off the quiz until its recommendations are ready (acne and
+  // hormone-related skin). Old answers that include them still read correctly.
+  { label: 'Hair', items: ['Hair thinning or hair loss', 'Excess facial or body hair'] },
   { label: 'Metabolic + physical wellness', items: ['Metabolism or weight support', 'Strength or fitness', 'Bone health'] },
   { label: 'Care access', items: ['Finding a doctor or specialist', 'Finding a telehealth provider'] },
   { label: 'Right now', items: ['Nothing right now'] },

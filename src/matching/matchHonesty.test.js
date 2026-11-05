@@ -229,6 +229,7 @@ describe('distribution across needs stays stable', () => {
     // Nov 4 (50-profile run): B6 is now a pregnancy-nausea match and acne actives strong acne matches;
     // the ones whose pregnancy or clinician facts are missing wait for them (+5). B6 for PMS mood and
     // bloating, NSAIDs for breast tenderness (womenshealth.gov) add more of the same kind of hold (+7).
-    expect(holds).toBe(365);
+    // Nov 5: birth-control services are only adjacent for UTI symptoms (all-hands), fewer holds.
+    expect(holds).toBe(357);
   });
 });
