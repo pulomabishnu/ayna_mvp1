@@ -250,3 +250,34 @@ html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more:hover
 html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-next__more:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
 html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-ready__actions { max-width: none !important; }
 html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-ready__updated { display: inline-flex; align-items: center; gap: 8px; margin: -16px 0 32px; padding: 8px 14px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 600 14px/1.3 var(--o-sans, sans-serif); }
+
+/* Nov 4 v3 (founder: "make it better", web and app): a calmer headline, every need full width,
+   her actual matches listed (photo, name, brand and price, match %), and a visible main button. */
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready #ay-ob-ready-h { font-size: clamp(30px, 8vw, 40px) !important; line-height: 1.08 !important; letter-spacing: -.02em !important; margin-bottom: 8px !important; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-back ~ #ay-ob-ready-h { margin-top: 24px !important; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-count { display: inline-block; padding: 0 10px; border-radius: 10px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list { grid-template-columns: minmax(0, 1fr) !important; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list > li { display: grid !important; gap: 10px !important; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__top { display: flex !important; align-items: baseline; justify-content: space-between; gap: 12px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-picks { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-picks > li { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-top: 1px solid rgba(62, 39, 35, .12); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-picks > li:first-child { border-top: 0; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-picks .ay-ob-match__plate { flex: none; width: 48px !important; height: 48px !important; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-picks__text { flex: 1; min-width: 0; display: grid; gap: 2px; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-picks__text b { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font: 600 15px/1.3 var(--o-sans, sans-serif); color: #3e2723; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-picks__text small { font: 500 13px/1.3 var(--o-sans, sans-serif); color: rgba(62, 39, 35, .75); }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-picks__pct { flex: none; padding: 4px 10px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 14px/1.2 var(--o-sans, sans-serif); font-style: normal; }
+/* App: the needs card is butter on espresso; the main button is pink so it shows on the dark page. */
+.ayna-mobile.ayna-mobile .ay-ob-ready:not(.is-web) .ay-ob-needs__list > li { padding: 16px !important; border-radius: 16px !important; }
+.ayna-mobile.ayna-mobile .ay-ob-ready:not(.is-web) .ay-ob-needs__top b { font-size: 18px; }
+.ayna-mobile.ayna-mobile .ay-ob-ready:not(.is-web) .ay-ob-next { justify-items: stretch !important; margin-top: 24px; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready:not(.is-web) .ay-ob-next__main { display: flex; justify-content: center; width: 100%; min-height: 56px; background: #ffedac !important; color: #3e2723 !important; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready:not(.is-web) .ay-ob-next__note { color: rgba(255, 237, 172, .8); justify-self: center; }
+/* Web: a little room under the header for the back button. */
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-back { margin: 16px 0 0 !important; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web #ay-ob-ready-h { font-size: clamp(30px, 3.2vw, 40px) !important; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web :is(.ay-ob-picks, .ay-ob-needs__top) { width: 100%; }
+html body .app-container.app-container .ay-ob-ready.is-web.is-web .ay-ob-needs__top b { font-weight: 700; }
+/* The older reveal title rule carries id-level weight (#uq); match it so the calmer size wins. */
+:is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container):is(#uq, .ayna-mobile, .app-container) .uq-reveal #ay-ob-ready-h { font-size: clamp(30px, 8vw, 40px) !important; line-height: 1.08 !important; letter-spacing: -.02em !important; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-needs__list > li { grid-template-columns: minmax(0, 1fr) !important; justify-content: stretch !important; }

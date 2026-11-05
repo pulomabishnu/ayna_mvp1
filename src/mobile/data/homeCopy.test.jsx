@@ -16,8 +16,8 @@ describe('Today in the app and on the website', () => {
   });
   it('ready screen and app landing', () => {
     const app = renderToStaticMarkup(<ReadyReveal variant="app" onSeeToday={() => {}} />);
-    expect(app).toContain('See my Today');
-    expect(app).not.toMatch(/\bHome\b/);
+    // Nov 4: the app's tab bar says Home now, so the reveal points there (no answers: no count).
+    expect(app).toContain('Go to Home');
     expect(renderToStaticMarkup(<ReadyReveal variant="web" onSeeToday={() => {}} />)).toContain('See my ecosystem'); // no answers: no count
     const land = renderToStaticMarkup(<LandingScreen onStart={() => {}} />).replace(/<[^>]+>/g, ' ');
     expect(land).not.toMatch(/\bHome\b/);

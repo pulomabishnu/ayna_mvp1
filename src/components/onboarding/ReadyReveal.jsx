@@ -4,7 +4,8 @@ import { moreRemaining } from '../../mobile/data/onboardingFlow.js';
 import { reconstructIntakeFromSnapshot, isStepAnswered, LIFE_STAGE_LABELS } from '../../mobile/data/intakeModel.js';
 import { Plate } from '../ui/ay';
 import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct, getRecommendationMatchesAndRest, getProductById } from '../../data/products.js';
-import { isSafetyHold, isBleedingEvaluation } from '../../utils/matchDisplay.js';
+import { isSafetyHold, isBleedingEvaluation, shownMatchPercent } from '../../utils/matchDisplay.js';
+import { formatPrice, shownPriceText } from '../../utils/formatPrice.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { bleedingCareNote, showableAsPick } from '../../utils/bleedingCare.js';
 import BleedingEvaluationNote from '../match/BleedingEvaluationNote.jsx';
@@ -138,8 +139,18 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                   <b>{r.label}</b>
                   <em className={r.products.length ? '' : 'is-none'}>{r.products.length ? `${r.products.length} ${r.products.length === 1 ? 'match' : 'matches'}` : r.held ? 'After safety questions' : 'None yet'}</em>
                 </span>
+                {/* Nov 4 (founder: "make it better"): her actual matches, not just thumbnails. */}
                 {r.products.length > 0
-                  ? <span className="ay-ob-needs__pics">{r.products.slice(0, 4).map((p) => <MatchPlate key={p.id} product={p} src={safeProductImageSrc(p.image || p.imageUrl || p.images?.[0], p.type === 'digital')} />)}</span>
+                  ? <ol className="ay-ob-picks">{r.products.slice(0, 5).map((p) => {
+                    const d = getProductMatchDetailsForProduct(p, answers);
+                    const pct = isSafetyHold(d) || isBleedingEvaluation(d) ? null : shownMatchPercent(d?.percent ?? d?.score);
+                    const price = shownPriceText(formatPrice(p).main);
+                    return <li key={p.id}>
+                      <MatchPlate product={p} src={safeProductImageSrc(p.image || p.imageUrl || p.images?.[0], p.type === 'digital')} />
+                      <span className="ay-ob-picks__text"><b>{p.name}</b><small>{[p.brand, price].filter(Boolean).join(' · ')}</small></span>
+                      {pct != null && <em className="ay-ob-picks__pct">{pct}%</em>}
+                    </li>;
+                  })}</ol>
                   : <small>{r.held ? 'Answer the safety questions below to see these.' : 'Nothing strong enough yet. We only show products we can stand behind.'}</small>}
               </li>
             ))}
@@ -156,8 +167,8 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
       <div className="ay-ob-ready__actions ay-ob-next">
         {!signedIn && onCreateAccount
           ? <button type="button" className="ay-ob-next__main" onClick={onCreateAccount}>Save my {total > 0 ? `${total} ` : ''}matches<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
-          : <button type="button" className="ay-ob-next__main" onClick={onSeeToday}>{variant === 'web' ? (total > 0 ? `See all ${total} matches` : 'See my ecosystem') : 'See my Today'}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>}
-        <small className="ay-ob-next__note">{!signedIn && onCreateAccount ? 'A free account keeps them here next time. No card.' : `They’re saved in ${variant === 'web' ? 'Home' : 'Today'}.`}</small>
+          : <button type="button" className="ay-ob-next__main" onClick={onSeeToday}>{total > 0 ? `See all ${total} matches` : (variant === 'web' ? 'See my ecosystem' : 'Go to Home')}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>}
+        <small className="ay-ob-next__note">{!signedIn && onCreateAccount ? 'A free account keeps them here next time. No card.' : 'They’re saved in Home.'}</small>
         {onMorePersonal && safetyLeft === 0 && remaining > 0 && (
           <button type="button" className="ay-ob-next__more" onClick={onMorePersonal}>
             <span><b>Answer a few more questions</b><small>Your goals, budget and what you like, for closer matches.</small></span>
