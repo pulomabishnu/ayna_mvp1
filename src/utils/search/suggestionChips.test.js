@@ -72,7 +72,8 @@ const INTENTS = {
   'low sex drive': { cats: ['sex-tech'], tags: /libido|sexual/ },
   'tired on my period': { tags: /energy|fatigue|iron/ },
   'period headache': { cats: ['medication', 'cramp-relief'], tags: /headache|migraine/ },
-  'endo belly': { tags: /endometriosis/ },
+  // Nov 5: NSAIDs hidden (they were tagged endometriosis); endo belly is bloating, so bloating products count.
+  'endo belly': { cats: ['cramp-relief'], tags: /endometriosis|bloat/ },
   'at-home hormone test': { cats: ['diagnostics'] },
   'postmenopausal bone health supplements': { tags: /bone|calcium|vitamin-d/ },
   'calcium and vitamin d for bone density': { tags: /bone|calcium|vitamin-d/ },

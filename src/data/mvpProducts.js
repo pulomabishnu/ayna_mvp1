@@ -67,6 +67,7 @@ export const MVP_PHYSICAL = [
   },
   {
     id: 'p-cystex',
+    hidden: true, // Nov 5: NSAIDs removed from the site (Ameera; sodium salicylate)
     name: 'Cystex Urinary Pain Relief',
     brand: 'Cystex',
     category: 'medication',

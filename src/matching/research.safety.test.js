@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ALL_PRODUCTS } from '../data/products.js';
+import { ALL_PRODUCTS, CATALOG_PRODUCTS } from '../data/products.js';
 import { EMPTY } from '../mobile/data/intakeModel.js';
 import { buildUserProfile } from './userProfile.js';
 import { buildProductProfile } from './productProfile.js';
@@ -9,7 +9,8 @@ import SAFETY_RESEARCH from '../data/matching/safety.research.js';
 import NEED_MAP_RESEARCH from '../data/matching/needMap.research.js';
 
 // Guards for the evidence research merged in by scripts/merge-research.mjs.
-const P = (id) => ALL_PRODUCTS.find((p) => p.id === id);
+// CATALOG_PRODUCTS keeps hidden entries (Advil, Aleve, Cystex hidden Nov 5), so their rules stay tested.
+const P = (id) => CATALOG_PRODUCTS.find((p) => p.id === id);
 const user = (over) => buildUserProfile({ ...EMPTY, ...over }, { catalog: ALL_PRODUCTS });
 const codes = (r) => [...(r.safety?.reasons || []), ...(r.reasons || [])].map((x) => x.code);
 

@@ -15,6 +15,7 @@ export const BASICS_PRODUCTS = [
   //  - Evidence: https://medlineplus.gov/periodpain.html
   {
     id: 'p-advil-ibuprofen-200',
+    hidden: true, // Nov 5: NSAIDs removed from the site (Ameera)
     name: 'Advil Ibuprofen 200 mg Tablets',
     brand: 'Advil',
     category: 'medication',
@@ -77,6 +78,7 @@ export const BASICS_PRODUCTS = [
   //  - Evidence: https://medlineplus.gov/periodpain.html
   {
     id: 'p-aleve-naproxen-220',
+    hidden: true, // Nov 5: NSAIDs removed from the site (Ameera)
     name: 'Aleve Naproxen Sodium 220 mg Tablets',
     brand: 'Aleve',
     category: 'medication',

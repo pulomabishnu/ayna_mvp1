@@ -1,6 +1,6 @@
 // Nov 5: fixes from two 10-person simulation runs (founder: "keep testing and fixing").
 import { describe, it, expect } from 'vitest';
-import { ALL_PRODUCTS, getEcosystemSeedFromQuiz } from '../data/products.js';
+import { ALL_PRODUCTS, CATALOG_PRODUCTS, getEcosystemSeedFromQuiz } from '../data/products.js';
 import { EMPTY } from '../mobile/data/intakeModel.js';
 import { buildUserProfile } from './userProfile.js';
 import { buildProductProfile } from './productProfile.js';
@@ -9,7 +9,7 @@ import { evaluateSafety, formulaOnly } from './score.js';
 const ok = { allergyStatus: 'No', takesCurrent: 'No', safetyConcern: 'No', diagnosisSelections: ['None that I know of'] };
 const intake = (a) => ({ ...EMPTY, ...ok, ...a });
 const seed = (a) => getEcosystemSeedFromQuiz({ fullHealthIntake: intake(a), personalizationCompleted: true }, null, { engine: 'v2' });
-const pp = (id) => buildProductProfile(ALL_PRODUCTS.find((p) => p.id === id));
+const pp = (id) => buildProductProfile(CATALOG_PRODUCTS.find((p) => p.id === id));
 const safety = (id, a) => evaluateSafety(pp(id), buildUserProfile(intake(a), { catalog: ALL_PRODUCTS }));
 const shelf = (s, label) => s.shelves.find((x) => x.label === label);
 
