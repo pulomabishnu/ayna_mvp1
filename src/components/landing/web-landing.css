@@ -53,9 +53,6 @@ html body .app-container #ay-landing.wl.hm .wl-title.wl-title.wl-title.wl-title 
 .app-container .hm.wl .wl-search .lsx-search__hint b { color: #ffedac; }
 .app-container .hm.wl .wl-search button { width: 36px; height: 36px; right: 5px; background: #ffedac; color: #3e2723; }
 .app-container .hm.wl .wl-sts .ay-sts__hint { font-size: 14px; margin-top: 2px; }
-.app-container .hm.wl .wl-how { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: -6px; color: #ffedac !important; font: 700 16px/1.2 var(--ay-sans-stack, sans-serif) !important; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
-.app-container .hm.wl .wl-how svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.app-container .hm.wl .wl-how:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 8px; }
 .app-container .hm.wl .wl-banner { width: 100%; }
 @media (min-width: 900px) {
   html body .app-container #ay-landing.wl.hm .wl-title.wl-title.wl-title.wl-title { font-size: clamp(56px, 4.6vw, 64px) !important; }

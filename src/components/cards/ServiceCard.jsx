@@ -24,6 +24,12 @@ function monogram(text) {
   return (words.length > 1 ? words[0][0] + words[1][0] : words[0][0]).toUpperCase();
 }
 
+/** Is it an app, for the letter tile's colour? A stated format decides ("Telehealth" with an app is still telehealth); with none, the record's platform or an app store link does. */
+function isAppService(service, format) {
+  if (format) return format === 'App';
+  return /\b(ios|android|app)\b/i.test(String(service?.platform || '')) || /apps\.apple\.com|play\.google\.com/i.test(String(service?.url || ''));
+}
+
 /** The name once: the brand is added only when the name alone would not say whose it is ("Eight Sleep Pod 4"). */
 function serviceTitle(service) {
   const name = String(service?.name || '').trim();
@@ -63,7 +69,7 @@ export default function ServiceCard({
   const Link = as;
   return (
     <article onClick={openFromCard} data-pid={service.id} data-tour="service-card" className={`ay-svc${isSaved ? ' is-saved' : ''}${onToggleSaved ? ' has-heart' : ''} ${className}`.trim()}>
-      <div className="ay-svc__logo">
+      <div className={`ay-svc__logo${logo ? '' : isAppService(service, format) ? ' is-mono-app' : ' is-mono-other'}`}>
         {logo ? <img src={logo} alt={`${title} logo`} loading="lazy" decoding="async" /> : <span className="ay-svc__mono" aria-hidden="true">{monogram(service.brand || title)}</span>}
       </div>
       <div className="ay-svc__body">

@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import './how-it-works-demo.css';
 
 /**
- * "Watch how it works" (founder, Nov 3: add an explainer video). A 24-second
- * animated walkthrough drawn in code, not a video file: four scenes of what
+ * "Watch how it works" (founder, Nov 3: add an explainer video). An animated
+ * walkthrough drawn in code, not a video file: three scenes of what
  * ayna does, in the app's own colours. It plays only while on screen, has a
- * pause button, and shows the four steps still for anyone who asks for
+ * pause button, and shows the steps still for anyone who asks for
  * reduced motion. The words describe what the product does; the products in
  * it are generic (no brand, no claim).
  */
@@ -16,7 +16,7 @@ const SCENES = [
   { k: 'match', step: '2', t: 'Get matched', d: 'Products that fit you, each with a % and the reason why. Safety checked first.' },
   { k: 'shop', step: '3', t: 'Shop what fits', d: 'Compare ratings, prices and sources, then buy from the store. Brands can’t pay for a better match.' },
 ];
-const SCENE_MS = 6000;
+const SCENE_MS = 4500; // Every scene's animations finish by 2.3s (how-it-works-demo.css); the rest is reading time.
 const img = (id) => `/products/catalog/${id}.webp`;
 
 const motionOff = () => {
