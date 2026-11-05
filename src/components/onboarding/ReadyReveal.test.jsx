@@ -18,7 +18,7 @@ describe('ReadyReveal bleeding after menopause', () => {
       const care = html.indexOf('Get bleeding after menopause checked');
       expect(care).toBeGreaterThan(-1);
       expect(care).toBeLessThan(html.indexOf('What you asked for help with'));
-      expect(html).toContain('should be checked promptly');
+      expect(html).toContain('checked promptly');
       expect(html).toContain('medlineplus.gov');
       expect(html).not.toMatch(/—/);
     });

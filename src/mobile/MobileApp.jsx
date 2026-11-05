@@ -1416,6 +1416,7 @@ export default function MobileApp() {
     onWatchWrapped: () => { nav.onSeeMatches(); markOnboardingDone(); setRevealFrom(null); setRevealAtEnd(false); setScreen('reveal'); },
     onReadyCreateAccount: () => { authResumeRef.current = null; authReturnScreenRef.current = 'ready'; setAuthMode('signup'); setScreen('signin'); },
     onReadyBack: () => setScreen('connect'),
+    onReadyConnect: () => setScreen('connect'),
     onMakeMorePersonal: () => { setIntakeFlow('more'); setScreen('quiz'); },
     onQuizConnectSignIn: () => { authResumeRef.current = null; authReturnScreenRef.current = 'connect'; setAuthMode('signup'); setScreen('signin'); },
     planProducts,

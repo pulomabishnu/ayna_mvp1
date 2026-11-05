@@ -387,3 +387,198 @@ html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-dec
 html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-deck__dots i.is-on { background: #ffedac; }
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks .ay-ob-picks__text small { color: #5d4037 !important; opacity: 1 !important; }
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks .ay-ob-picks__text b { color: #3e2723 !important; }
+
+/* ===== Nov 5: one screen, no scrolling, brand colors only (founder: "you shouldn't have to scroll
+   to find anything", "is white a brand color?", the warning took too much space).
+   White is only behind product photos (the plate), per the Oct 26 rule. Everything else is pink,
+   butter, butter-deep or espresso. The page is tightened so the title, the note, the top card,
+   the dots and the main button all fit a phone screen; each card shows its top 3 picks. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-2 { background: #f6e3a1 !important; color: #3e2723 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks { background: #ffedac !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-2 .ay-ob-picks { padding: 2px 12px !important; background: #ffedac !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-1 .ay-ob-picks { background: #ffedac !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__head em { background: #ffedac !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card:is(.is-tone-1, .is-tone-2) .ay-deck__head em { background: #f7badd !important; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-deck__card.is-tone-1 .ay-deck__head em { background: #f7badd !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck.is-single .ay-deck__cards::after { background: #f6e3a1; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-picks .ay-ob-match__plate .ayk-plate__svg path { stroke: none !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks > li { border-top-color: rgba(62, 39, 35, .12) !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__nav button { width: 40px; height: 40px; background: transparent; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-deck__nav button { border-color: #ffedac; color: #ffedac; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__more { justify-content: center; padding: 8px 0 10px !important; font: 600 14px/1.2 var(--o-sans, sans-serif); color: #3e2723; }
+/* Tighter page */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-back { width: 40px !important; height: 40px !important; margin: 4px 0 12px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-back ~ #ay-ob-ready-h { margin-top: 0 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__title { margin: 0 0 4px !important; font-size: 30px !important; line-height: 1.08 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__based { margin: 0 0 14px !important; font-size: 15px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready :is(.ay-ob-ready__careline, .ay-ob-ready__care) { margin: 0 0 16px !important; padding: 10px 14px !important; border-radius: 16px !important; font-size: 15px !important; line-height: 1.4 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__care :is(p, a, b) { margin: 0 !important; font-size: 15px !important; line-height: 1.4 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__care p + p { margin-top: 2px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-needs { margin: 0 0 8px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards { margin-bottom: 26px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards > li.ay-deck__card { padding: 14px 14px 12px !important; gap: 10px !important; min-height: 0 !important; border-radius: 24px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__title { font-size: 24px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks > li { padding: 8px 0 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks > li:first-child { padding-top: 10px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks .ay-ob-match__plate { width: 46px !important; height: 46px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks__text b { font-size: 15px !important; -webkit-line-clamp: 2 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks__text small { font-size: 14px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card > small.ay-deck__empty { font-size: 16px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__nav { margin: 0 0 4px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__actions { margin-top: 12px !important; }
+/* Fit one phone screen (Nov 5): less air above the title, one-line title, tighter rows, the dots
+   tucked into the fan's space, the main button right under the deck. */
+html body .app-container.app-container .qz-page[data-step="ready"] { padding-top: 6px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready { padding-top: 0 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-back { width: 36px !important; height: 36px !important; margin: 0 0 8px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__title { font-size: 28px !important; white-space: nowrap; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__based { margin: 0 0 12px !important; font-size: 14px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready :is(.ay-ob-ready__careline, .ay-ob-ready__care) { margin: 0 0 12px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck { margin: 0 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__title { font-size: 22px !important; line-height: 1.08 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks > li { padding: 6px 0 !important; gap: 10px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks > li:first-child { padding-top: 8px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks .ay-ob-match__plate { width: 42px !important; height: 42px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks__text { gap: 1px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks__text b { line-height: 1.2 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks__pct { padding: 5px 9px !important; font-size: 14px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__more { padding: 6px 0 8px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards { margin-bottom: 30px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__nav { margin: -2px 0 0 !important; gap: 14px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__nav button { width: 34px !important; height: 34px !important; border-width: 1.5px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__actions { margin-top: 10px !important; gap: 6px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-next__main { min-height: 50px !important; }
+html body .app-container.app-container.app-container .ay-ob-ready.is-web.is-web.is-web .ay-ob-back { margin: 0 0 8px !important; }
+html body .app-container.app-container.app-container .ay-ob-ready.is-web.is-web.is-web #ay-ob-ready-h { max-width: none !important; margin: 0 0 14px !important; font-size: 28px !important; white-space: nowrap !important; }
+html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) #ay-ob-ready-h { margin-bottom: 14px !important; }
+/* Back button and title share one row. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready { position: relative; }
+html body .app-container.app-container.app-container .ay-ob-ready.is-web.is-web.is-web .ay-ob-back,
+html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready .ay-ob-back { position: absolute !important; top: 0 !important; left: 0 !important; margin: 0 !important; }
+html body .app-container.app-container.app-container .ay-ob-ready.is-web.is-web.is-web .ay-ob-back ~ #ay-ob-ready-h,
+html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready .ay-ob-back ~ #ay-ob-ready-h { margin-top: 0 !important; padding-left: 50px !important; min-height: 36px; display: flex; align-items: center; }
+html body .app-container.app-container.app-container .ay-ob-ready.is-web.is-web.is-web .ay-ob-back ~ #ay-ob-ready-h,
+html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready .ay-ob-back ~ #ay-ob-ready-h { display: block !important; min-height: 0; font-size: clamp(22px, 6.6vw, 30px) !important; line-height: 36px !important; white-space: nowrap !important; }
+html body :is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready h1#ay-ob-ready-h#ay-ob-ready-h#ay-ob-ready-h#ay-ob-ready-h#ay-ob-ready-h#ay-ob-ready-h { font-size: 25px !important; line-height: 36px !important; white-space: nowrap !important; overflow: visible; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) { padding-top: 14px !important; }
+html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-ob-back { top: 14px !important; }
+
+/* ===== Nov 5, v3: minimal, fewer boxes, a little motion (founder: "stop stacking stuff in boxes",
+   "keep it minimalistic, not overstimulating", "more animated, follow the inspo").
+   Hierarchy comes from type size and space (Figma handbook: "if everything is emphasized, nothing
+   is"), not from containers. The only filled shapes are the deck cards, the round icon blobs and
+   the pills, all in ayna's pink, butter and espresso. Motion is short and stops: rows rise in once,
+   cards deal in once, the top card follows a drag. Nothing loops. */
+@keyframes ay-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes ay-deal { from { opacity: 0; transform: translateY(40px) rotate(-6deg) scale(.96); } }
+@keyframes ay-pop { 0% { transform: scale(.4); } 70% { transform: scale(1.12); } 100% { transform: scale(1); } }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-count { display: inline-block; animation: ay-pop .5s cubic-bezier(.2, 1.4, .4, 1) .15s both !important; }
+
+/* Step 1: make them more you */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz.ay-ob-ready { display: grid; align-content: start; gap: 0; padding: 8px 0 24px !important; text-align: left; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-ob-back { position: static !important; margin: 0 0 26px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__found { margin: 0 0 10px; font: 600 16px/1.3 var(--o-sans, sans-serif); color: inherit; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__found .ay-ob-count { margin-right: 2px; padding: 0 .35em; border-radius: .35em; background: #f7badd; color: #3e2723; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz h1.ay-pz__h { margin: 0 0 12px !important; color: inherit !important; font: 700 44px/1 var(--ay-font-display, var(--o-sans, sans-serif)) !important; letter-spacing: -.03em !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz h1.ay-pz__h em { font-style: normal; background: linear-gradient(transparent 62%, #f7badd 62%, #f7badd 92%, transparent 92%); }
+html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) h1.ay-pz__h em { background: none; color: #f7badd; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__time { display: flex; align-items: center; gap: 6px; margin: 0 0 28px; font: 500 16px/1.3 var(--o-sans, sans-serif); color: inherit; opacity: .85; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__time svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__list { margin: 0 0 28px !important; padding: 0 !important; list-style: none; border-top: 1.5px solid currentColor; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__list > li { margin: 0; padding: 0; border-bottom: 1.5px solid currentColor; animation: ay-rise .45s cubic-bezier(.2, .8, .2, 1) calc(.12s + var(--i) * .08s) both; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__list > li::before { content: none !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__list button { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 84px; padding: 14px 2px !important; border: 0 !important; background: none !important; box-shadow: none !important; color: inherit !important; text-align: left; cursor: pointer; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__list button > svg { flex: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s ease; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__list button:is(:hover, :focus-visible) > svg { transform: translateX(4px); }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__blob { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 46% 54% 52% 48% / 52% 46% 54% 48%; transition: transform .25s cubic-bezier(.2, 1.4, .4, 1); }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__list button:is(:hover, :active) .ay-pz__blob { transform: rotate(-8deg) scale(1.06); }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__blob svg { width: 26px; height: 26px; fill: none; stroke: #3e2723; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__blob.is-pink { background: #f7badd; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__blob.is-butter { background: #f6e3a1; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__blob.is-ink { background: #3e2723; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__blob.is-ink svg { stroke: #ffedac; }
+html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__blob.is-ink { background: #ffedac; }
+html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__blob.is-ink svg { stroke: #3e2723; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__txt { flex: 1; display: grid; gap: 3px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__txt b { font: 700 19px/1.2 var(--o-sans, sans-serif); color: inherit; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__txt small { font: 500 15px/1.3 var(--o-sans, sans-serif); color: inherit; opacity: .8; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__skip { display: inline-flex; align-items: center; justify-self: center; gap: 6px; padding: 10px 8px !important; border: 0 !important; background: none !important; color: inherit !important; font: 600 16px/1.2 var(--o-sans, sans-serif) !important; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; animation: ay-rise .45s ease .45s both; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__skip svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Step 2: the matches. The note is a line with a small flag, not a box. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__careline { display: flex !important; gap: 10px; align-items: flex-start; padding: 0 !important; background: none !important; border-radius: 0 !important; font: 500 15px/1.4 var(--o-sans, sans-serif) !important; color: inherit !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-flag { flex: none; display: grid; place-items: center; width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; background: #f7badd; color: #3e2723; font: 800 14px/1 var(--o-sans, sans-serif); }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__care { padding: 0 0 0 32px !important; background: none !important; position: relative; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__care::after { content: '!'; position: absolute; left: 0; top: 1px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #f7badd; color: #3e2723; font: 800 14px/1 var(--o-sans, sans-serif); }
+/* Products / Services switch */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-rvtabs { position: relative; display: grid; grid-template-columns: 1fr 1fr; margin: 0 0 16px; padding: 4px; border-radius: 999px; background: #f6e3a1; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-rvtabs { background: rgba(255, 237, 172, .14); }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-rvtabs button { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 0 !important; border: 0 !important; border-radius: 999px !important; background: none !important; color: #3e2723 !important; font: 700 15px/1 var(--o-sans, sans-serif) !important; cursor: pointer; transition: color .25s ease; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-rvtabs button { color: #ffedac !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-rvtabs button[aria-selected="true"] { color: #ffedac !important; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-rvtabs button[aria-selected="true"] { color: #3e2723 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-rvtabs button i { font-style: normal; opacity: .7; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-rvtabs__pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 999px; background: #3e2723; transition: transform .35s cubic-bezier(.2, .9, .25, 1.1); }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-rvtabs__pill { background: #ffedac; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-rvtabs[data-on="services"] .ay-rvtabs__pill { transform: translateX(100%); }
+/* Services: a plain list, one line per service */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-svc { margin: 0 0 8px !important; padding: 0 !important; list-style: none; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-svc > li { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1.5px solid rgba(62, 39, 35, .15); animation: ay-rise .4s ease calc(var(--i) * .06s) both; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-svc > li { border-bottom-color: rgba(255, 237, 172, .2); }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-svc > li::before { content: none !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-svc .ay-ob-match__plate { flex: none; width: 46px !important; height: 46px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-svc .ay-ob-picks__text { flex: 1; min-width: 0; display: grid; gap: 2px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-svc .ay-ob-picks__text b { color: inherit !important; font: 600 16px/1.25 var(--o-sans, sans-serif) !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-svc .ay-ob-picks__text small { color: inherit !important; opacity: .8 !important; font: 500 14px/1.3 var(--o-sans, sans-serif) !important; }
+/* Deck: no box inside the card; products sit straight on the card color */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks,
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-1 .ay-ob-picks,
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-2 .ay-ob-picks { padding: 0 !important; border-radius: 0 !important; background: none !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks > li { border-top: 1.5px solid rgba(62, 39, 35, .14) !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks > li:first-child { padding-top: 8px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks .ay-ob-picks__text :is(b, small) { color: inherit !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks .ay-ob-picks__text small { opacity: .8 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-1 .ay-ob-picks > li { border-top-color: rgba(255, 237, 172, .2) !important; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-deck__card.is-tone-1 .ay-ob-picks > li { border-top-color: rgba(62, 39, 35, .14) !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-1 .ay-ob-picks__pct { background: #ffedac !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-0 .ay-ob-picks__pct { background: #ffedac !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__more { border-top: 1.5px solid rgba(62, 39, 35, .14) !important; color: inherit !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__kicker { transform: rotate(-3deg); }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__link { padding: 0 !important; border: 0 !important; background: none !important; color: inherit !important; font: inherit !important; font-weight: 700 !important; text-decoration: underline; cursor: pointer; }
+/* Motion: the cards deal in once; a dragged card follows the finger with no lag */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards { animation: ay-deal .6s cubic-bezier(.2, .9, .25, 1.1) .1s both; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck.is-dragging .ay-deck__card[data-pos="0"] { transition: none !important; cursor: grabbing; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__careline { animation: ay-rise .4s ease both; }
+@media (prefers-reduced-motion: reduce) {
+  html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready :is(.ay-deck__cards, .ay-ob-count, .ay-svc > li, .ay-ob-ready__careline),
+  html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz :is(.ay-pz__list > li, .ay-pz__skip) { animation: none !important; }
+}
+html body .app-container.app-container.app-container .ay-pz.ay-ob-ready.is-web.is-web.is-web .ay-ob-back,
+html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-pz.ay-ob-ready.ay-ob-ready .ay-ob-back { position: static !important; margin: 0 0 24px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz.ay-ob-ready.ay-ob-ready { padding: 4px 24px 24px !important; }
+html body .ayna-mobile.ayna-mobile .ay-pz.ay-ob-ready.ay-ob-ready:not(.is-web) { padding: 18px 20px 24px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-rvtabs { display: grid !important; grid-template-columns: 1fr 1fr !important; margin: 0 0 14px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-rvtabs > button { width: 100% !important; min-width: 0 !important; min-height: 36px !important; margin: 0 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-rvtabs__pill { z-index: 0; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready h1#ay-ob-ready-h#ay-ob-ready-h#ay-ob-ready-h#ay-ob-ready-h#ay-ob-ready-h#ay-ob-ready-h { margin-bottom: 12px !important; }
+/* Tabs side by side; the step-1 headline at its real size; the card's title and count chip share
+   one row (the dots already say "1 of 3"), so the main button fits on the first screen. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-rvtabs { display: flex !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-rvtabs > button { flex: 1 1 0 !important; }
+html body :is(.ayna-mobile, .app-container) .ay-pz h1#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h { margin: 0 0 12px !important; font-size: 44px !important; line-height: 1 !important; white-space: normal !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards > li.ay-deck__card { grid-template-columns: minmax(0, 1fr) auto !important; column-gap: 10px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card > * { grid-column: 1 / -1; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card > .ay-deck__head { display: contents !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-deck__kicker { display: none !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-deck__head em { grid-column: 2; grid-row: 1; align-self: start; margin-top: 2px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card > .ay-deck__title { grid-column: 1; grid-row: 1; padding: 2px 0 0 4px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards > li.ay-deck__card { padding-top: 16px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards { margin-bottom: 24px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-rvtabs { margin-bottom: 10px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards { margin-bottom: 20px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-ready__actions { margin-top: 8px !important; }
+html body .app-container.app-container.app-container .ay-ob-ready.is-web.is-web.is-web:not(.ay-pz) .ay-ob-back { left: 24px !important; }
+html body .app-container.app-container.app-container .ay-ob-ready.is-web.is-web.is-web:not(.ay-pz) .ay-ob-back ~ #ay-ob-ready-h { padding-left: 50px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card > .ay-deck__title { font-size: 20px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards { margin-bottom: 28px !important; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-rvtabs { margin-top: 14px !important; }
