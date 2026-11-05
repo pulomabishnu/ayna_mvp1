@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCatalogReady } from '../../data/catalog.js';
 import { moreRemaining } from '../../mobile/data/onboardingFlow.js';
 import { reconstructIntakeFromSnapshot, isStepAnswered, LIFE_STAGE_LABELS } from '../../mobile/data/intakeModel.js';
@@ -128,6 +128,11 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
     const i = reconstructIntakeFromSnapshot(answers.fullHealthIntake);
     return ['conditions', 'allergies', 'medications'].filter((id) => !isStepAnswered(id, i)).length;
   }, [answers]);
+  // The card deck: which need is on top.
+  const [at, setAt] = useState(0);
+  const swipeX = useRef(null);
+  const swiped = useRef(false);
+  const go = (step) => setAt((i) => (rows.length ? (i + step + rows.length) % rows.length : 0));
   const Tag = variant === 'web' ? 'section' : 'main';
   return (
     <Tag className={`ay-ob-ready uq-reveal is-${variant}`} aria-labelledby="ay-ob-ready-h">
@@ -148,29 +153,44 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
       {rows.length > 0 ? (
         <section className="ay-ob-needs" aria-labelledby="ay-ob-needs-h">
           <h2 id="ay-ob-needs-h" className="ay-ob-needs__h">What you asked for help with</h2>
-          <ul className="ay-ob-needs__list">
-            {rows.map((r, i) => (
-              <li key={r.id} style={{ '--i': i }}>
-                <span className="ay-ob-needs__top">
-                  <b>{r.label}</b>
-                  <em className={r.products.length ? '' : 'is-none'}>{r.products.length ? `${r.products.length} ${r.products.length === 1 ? 'match' : 'matches'}` : r.needsAnswers ? 'After safety questions' : r.held ? 'Held for safety' : r.why ? 'Ask a clinician' : 'None yet'}</em>
-                </span>
-                {/* Nov 4 (founder: "make it better"): her actual matches, not just thumbnails. */}
-                {r.products.length > 0
-                  ? <ol className="ay-ob-picks">{r.products.slice(0, 5).map((p) => {
-                    const d = getProductMatchDetailsForProduct(p, answers);
-                    const pct = isSafetyHold(d) || isBleedingEvaluation(d) ? null : shownMatchPercent(d?.percent ?? d?.score);
-                    const price = shownPriceText(formatPrice(p).main);
-                    return <li key={p.id}>
-                      <MatchPlate product={p} src={safeProductImageSrc(p.image || p.imageUrl || p.images?.[0], p.type === 'digital')} />
-                      <span className="ay-ob-picks__text"><b>{p.name}</b><small>{[p.brand, price].filter(Boolean).join(' · ')}</small></span>
-                      {pct != null && <em className="ay-ob-picks__pct">{pct}%</em>}
-                    </li>;
-                  })}</ol>
-                  : <small>{r.held ? r.heldWhy : r.why || 'Nothing strong enough yet. We only show what we can stand behind.'}</small>}
-              </li>
-            ))}
-          </ul>
+          {/* Nov 5 (founder: "do the card stack thing, be creative"): her needs as a fanned deck of
+              colored cards (inspo: stacked "Today's vibe" tiles, the Arras card fan). Swipe, tap the
+              card behind, or use the arrows. Every card stays in the page for screen readers. */}
+          <div className={`ay-deck${rows.length === 1 ? ' is-single' : ''}`} onPointerDown={(e) => { swipeX.current = e.clientX; }} onPointerUp={(e) => { const dx = e.clientX - (swipeX.current ?? e.clientX); swipeX.current = null; swiped.current = Math.abs(dx) > 40; if (swiped.current && rows.length > 1) go(dx < 0 ? 1 : -1); }} onPointerCancel={() => { swipeX.current = null; }}>
+            <ul className="ay-ob-needs__list ay-deck__cards">
+              {rows.map((r, i) => {
+                const pos = (i - at + rows.length) % rows.length;
+                return (
+                  <li key={r.id} className={`ay-deck__card is-tone-${i % 3}`} data-pos={Math.min(pos, 3)} style={{ '--i': i, zIndex: rows.length - pos }} aria-hidden={pos !== 0 ? 'true' : undefined} onClick={pos !== 0 ? () => { if (!swiped.current) setAt(i); swiped.current = false; } : undefined}>
+                    <span className="ay-deck__head">
+                      <span className="ay-deck__kicker">{rows.length > 1 ? `${i + 1} of ${rows.length}` : 'Your focus'}</span>
+                      <em className={r.products.length ? '' : 'is-none'}>{r.products.length ? `${r.products.length} ${r.products.length === 1 ? 'match' : 'matches'}` : r.needsAnswers ? 'After safety questions' : r.held ? 'Held for safety' : r.why ? 'Ask a clinician' : 'None yet'}</em>
+                    </span>
+                    <b className="ay-deck__title">{r.label}</b>
+                    {r.products.length > 0
+                      ? <ol className="ay-ob-picks">{r.products.slice(0, 5).map((p) => {
+                        const d = getProductMatchDetailsForProduct(p, answers);
+                        const pct = isSafetyHold(d) || isBleedingEvaluation(d) ? null : shownMatchPercent(d?.percent ?? d?.score);
+                        const price = shownPriceText(formatPrice(p).main);
+                        return <li key={p.id}>
+                          <MatchPlate product={p} src={safeProductImageSrc(p.image || p.imageUrl || p.images?.[0], p.type === 'digital')} />
+                          <span className="ay-ob-picks__text"><b>{p.name}</b><small>{[p.brand, price].filter(Boolean).join(' · ')}</small></span>
+                          {pct != null && <em className="ay-ob-picks__pct">{pct}%</em>}
+                        </li>;
+                      })}</ol>
+                      : <small className="ay-deck__empty">{r.held ? r.heldWhy : r.why || 'Nothing strong enough yet. We only show what we can stand behind.'}</small>}
+                  </li>
+                );
+              })}
+            </ul>
+            {rows.length > 1 && (
+              <div className="ay-deck__nav">
+                <button type="button" onClick={() => go(-1)} aria-label="Previous need"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>
+                <span className="ay-deck__dots" aria-live="polite">{rows.map((r, i) => <i key={r.id} className={i === at ? 'is-on' : ''} />)}<span className="ay-sr">{`${rows[at]?.label}, ${at + 1} of ${rows.length}`}</span></span>
+                <button type="button" onClick={() => go(1)} aria-label="Next need"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+              </div>
+            )}
+          </div>
         </section>
       ) : !ready ? (
         <p className="ay-ob-ready__lead" role="status">Getting your matches ready…</p>

@@ -318,3 +318,72 @@ html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-ob-picks__text b { -webkit-line-clamp: 3 !important; }
 /* The app's pink number chip (the inspo's big highlighted number) on the website too, so both read the same. */
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.is-web.is-web .ay-ob-count { display: inline-block; padding: 0 .18em; border-radius: .2em; background: #f7badd; color: #3e2723; }
+
+/* ===== Nov 5: the card deck (founder: "do the card stack thing, be creative, not plain") =====
+   Her needs are a fanned stack of colored cards: pink, espresso, white, in turn (ayna's three).
+   The card on top is fully readable; the ones behind peek out tilted, like a hand of cards.
+   Products always sit on a white panel, so the type stays easy to read on any card. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck { position: relative; margin: 6px 0 4px; touch-action: pan-y; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards { position: relative; display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 0 !important; margin: 0 0 34px !important; padding: 0 !important; list-style: none; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards > li.ay-deck__card { grid-area: 1 / 1; align-self: start; display: grid !important; align-content: start; gap: 14px !important; min-height: 220px; padding: 20px !important; border: 0 !important; border-radius: 28px !important; box-shadow: 0 14px 30px -12px rgba(62, 39, 35, .35) !important; transform-origin: 50% 100%; transition: transform .5s cubic-bezier(.2, .9, .25, 1.15), opacity .3s ease, filter .3s ease; animation: none !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card[data-pos="0"] { transform: none; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card[data-pos="1"] { transform: translate(14px, 18px) rotate(4deg) scale(.95); cursor: pointer; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card[data-pos="2"] { transform: translate(-12px, 30px) rotate(-5deg) scale(.9); cursor: pointer; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card[data-pos="3"] { transform: translate(0, 30px) scale(.86); opacity: 0; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card:not([data-pos="0"]) > * { visibility: hidden; }
+/* Tones */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-0 { background: #f7badd !important; color: #3e2723 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-1 { background: #3e2723 !important; color: #ffedac !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-2 { background: #fff !important; color: #3e2723 !important; }
+/* A single need still reads as a stack: two plain cards fanned behind it. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck.is-single .ay-deck__cards::before,
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck.is-single .ay-deck__cards::after { content: ''; grid-area: 1 / 1; align-self: stretch; border-radius: 28px; transform-origin: 50% 100%; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck.is-single .ay-deck__cards::before { background: #3e2723; transform: translate(12px, 16px) rotate(4deg) scale(.95); }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck.is-single .ay-deck__cards::after { background: #fff; transform: translate(-10px, 26px) rotate(-5deg) scale(.9); z-index: -1; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck.is-single .ay-deck__card { position: relative; z-index: 2 !important; }
+/* Inside a card */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__kicker { justify-self: start; padding: 4px 11px; border: 1.5px solid currentColor; border-radius: 999px; font: 700 13px/1.2 var(--o-sans, sans-serif); letter-spacing: .02em; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-needs__top { align-items: flex-start !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-needs__top b { color: inherit !important; font: 700 26px/1.08 var(--ay-font-display, var(--o-sans, sans-serif)) !important; letter-spacing: -.01em; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-needs__top em { margin-top: 3px; background: #fff !important; color: #3e2723 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-1 .ay-ob-needs__top em { background: #ffedac !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-2 .ay-ob-needs__top em { background: #ffedac !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks { padding: 4px 14px !important; border-radius: 20px; background: #fff; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-2 .ay-ob-picks { padding: 0 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks > li:first-child { padding-top: 12px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card.is-tone-2 .ay-ob-picks > li:first-child { padding-top: 2px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card > small.ay-deck__empty { color: inherit !important; opacity: 1 !important; font: 500 18px/1.45 var(--o-sans, sans-serif) !important; }
+/* Arrows and dots */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 0 0 8px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__nav button { display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: 2px solid #3e2723; border-radius: 50%; background: #fff; color: #3e2723; cursor: pointer; transition: transform .15s ease; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__nav button:active { transform: scale(.92); }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__nav svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__dots { display: flex; align-items: center; gap: 6px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__dots i { width: 8px; height: 8px; border-radius: 999px; background: rgba(62, 39, 35, .3); transition: width .3s ease, background .3s ease; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__dots i.is-on { width: 24px; background: #3e2723; }
+@media (prefers-reduced-motion: reduce) { html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card { transition: none !important; } }
+/* Deck v2: the cards behind are exactly the top card's size (no tall blob below a short card), the
+   count chip moves up beside the "1 of 3" sticker so the need name gets the full width. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards > li.ay-deck__card[data-pos="0"] { position: relative !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards > li.ay-deck__card:not([data-pos="0"]) { position: absolute !important; inset: 0 !important; align-self: stretch !important; justify-self: stretch !important; height: auto !important; min-height: 0 !important; overflow: hidden; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards > li.ay-deck__card { padding: 18px 16px 16px !important; gap: 12px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__head em { flex: none; padding: 5px 12px; border-radius: 999px; background: #fff; color: #3e2723; font: 700 14px/1.2 var(--o-sans, sans-serif); font-style: normal; white-space: nowrap; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card:is(.is-tone-1, .is-tone-2) .ay-deck__head em { background: #ffedac; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__title { display: block; padding: 0 4px; color: inherit !important; font: 700 28px/1.06 var(--ay-font-display, var(--o-sans, sans-serif)) !important; letter-spacing: -.015em; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__kicker { margin-left: 4px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card > small.ay-deck__empty { padding: 0 4px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks { padding: 2px 12px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks .ay-ob-match__plate { width: 54px !important; height: 54px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks > li { gap: 12px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks__pct { padding: 6px 10px !important; font-size: 15px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck { -webkit-user-select: none; user-select: none; }
+/* App: the page is espresso, so the second card is butter (an espresso card would vanish), the
+   dots are butter, and the brand and price under each product stay dark on the white panel. */
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-deck__card.is-tone-1 { background: #ffedac !important; color: #3e2723 !important; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-deck__card.is-tone-1 .ay-deck__head em { background: #fff !important; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-deck.is-single .ay-deck__cards::before { background: #ffedac; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-deck__dots i { background: rgba(255, 237, 172, .35); }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-deck__dots i.is-on { background: #ffedac; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks .ay-ob-picks__text small { color: #5d4037 !important; opacity: 1 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks .ay-ob-picks__text b { color: #3e2723 !important; }
