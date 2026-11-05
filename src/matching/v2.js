@@ -25,7 +25,7 @@
 // (reviewed: false). Reviewed rows in NEED_MAP_REVIEWED override them.
 import { buildProductProfile } from './productProfile.js';
 import { scoreProduct, scoreProductForNeed, evaluateSafety, evidenceFor, budgetFit, MAX_SCORE, EXPERIENCE_POINTS } from './score.js';
-import { qualificationForEcosystem, buildEcosystem } from './ecosystem.js';
+import { qualificationForEcosystem, buildEcosystem, defaultPriceRule } from './ecosystem.js';
 import { needSignals, discoveryValue, historyState, NOT_RECOMMENDED_AGAIN } from './forYou.js';
 import { isRecommendable } from './eligibility.js';
 import { recommendationEligibilityForUser } from './gate.js';
@@ -518,6 +518,7 @@ export function buildEcosystemV2(up, products, options = {}) {
   // need, or tried without help, keeps a product off that shelf.
   const skipForHistory = (pp, needId) => NOT_RECOMMENDED_AGAIN.has(historyState(up, pp.product_id, needId));
 
+  const priceRule = defaultPriceRule(up);
   const candidates = []; // { pp, results: Map(needId -> { r, v2 }) }
   const seen = new Set();
   const profileById = new Map();
@@ -555,6 +556,9 @@ export function buildEcosystemV2(up, products, options = {}) {
   for (const c of candidates) for (const [needId, x] of c.results) if (!x.partial) fullNeeds.add(needId);
   for (const c of candidates) for (const [needId, x] of [...c.results]) if (x.partial && fullNeeds.has(needId)) c.results.delete(needId);
   for (let i = candidates.length - 1; i >= 0; i -= 1) if (!candidates[i].results.size) candidates.splice(i, 1);
+  // No budget answer: nothing physical over the splurge ceiling (founder, Nov 4). Removed after the
+  // partial-fit rule so a dropped splurge never lets a below-the-bar product in.
+  if (priceRule) for (let i = candidates.length - 1; i >= 0; i -= 1) if (priceRule.overMax(candidates[i].pp)) candidates.splice(i, 1);
 
   const cover = new Map(needs.map((n) => [n.id, 0]));
   const chosen = [];
@@ -593,6 +597,8 @@ export function buildEcosystemV2(up, products, options = {}) {
       if ((typesByNeed.get(home.needId) || new Set()).has(typeKey(c.pp, home.needId))) continue;
       const homeCount = chosen.filter((x) => x.home.needId === home.needId).length;
       if (homeCount >= needCap(home.needId)) continue;
+      // No budget answer: one item over $25 per shelf, the rest $25 or less (founder, Nov 4).
+      if (priceRule?.pricey(c.pp) && chosen.some((x) => x.home.needId === home.needId && priceRule.pricey(x.pp))) continue;
       let gain = 0;
       for (const [needId, x] of c.results) {
         const before = cover.get(needId) || 0;

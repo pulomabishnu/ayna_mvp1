@@ -302,7 +302,9 @@ export const RELEVANCE_RULES = [
     set: { 'mood.low': ADJACENT, 'pregnancy.prenatal': ADJACENT, 'postpartum.recovery': ADJACENT, 'fertility.ttc': ADJACENT, 'menopause.body_changes': ADJACENT } },
   { id: 'sleep_product', why: 'Made for sleep.',
     when: (f) => f.cat === 'sleep',
-    set: (f) => ({ 'sleep.trouble': f.t(/heats? and cools?|temperature/) ? STRONG : SECONDARY }) },
+    // Nov 4 (50-profile run): a cooling bed is not the strongest answer to trouble sleeping in general
+    // (it ranked a $2,245 bed first for a 22-year-old); its heat benefit is scored under night sweats.
+    set: () => ({ 'sleep.trouble': SECONDARY }) },
   // Night sweats and hot flashes are heat symptoms. A product whose mechanism
   // is cooling addresses them directly, whatever their cause; no life stage
   // is needed. Menopause positioning only adds the context bonus.
