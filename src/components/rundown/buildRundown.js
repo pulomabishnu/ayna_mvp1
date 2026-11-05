@@ -333,12 +333,14 @@ export function buildRundown(input = {}) {
     // Strongest current need first: a need she only hinted at (needSignal
     // 'weak', src/matching/forYou.js) never takes the card from one she picked.
     const weakLast = (m) => (m.needSignal === 'weak' ? 1 : 0);
-    const rank = (list) => list.sort((a, b) => weakLast(a) - weakLast(b) || b.percent - a.percent)[0];
+    // Something she has not been shown in the last 30 days comes first, so the card brings a new product.
+    const seenLately = (m) => (shownOn(memory, `match:${m.product?.id}`, today, 30) > 0 ? 1 : 0);
+    const rank = (list) => list.sort((a, b) => seenLately(a) - seenLately(b) || weakLast(a) - weakLast(b) || b.percent - a.percent)[0];
     const strong = (m) => m?.product && m.percent >= RUNDOWN_RULES.matchMinPercent;
     // A need ayna is tracking today; with none (e.g. after menopause, hot
     // flashes), her best match for a goal she picked herself. Never filler.
     const best = rank(matches.filter((m) => strong(m) && wanted.has(m.needId))) || (wanted.size ? null : rank(matches.filter((m) => strong(m) && m.needSignal !== 'weak' && (input.needLabels || {})[m.needId])));
-    if (best) add({ key: `match:${best.product.id}`, category: 'match', kind: 'match', kicker: 'Matched to you', title: matchTitle(best, decision?.debug?.needs || {}, input.needLabels || {}), match: best, followUps: [`Why is ${best.product.name} my match?`] });
+    if (best) add({ key: `match:${best.product.id}`, category: 'match', kind: 'match', kicker: 'New for you', title: matchTitle(best, decision?.debug?.needs || {}, input.needLabels || {}), match: best, followUps: [`Why is ${best.product.name} my match?`] });
   }
 
   // 7b. Goes with what she owns (src/matching/complements.js): one a day, never next to care.

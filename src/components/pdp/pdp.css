@@ -3062,3 +3062,6 @@ html body .ayv-lock__pillbtn:focus-visible { outline: 2px solid currentColor; ou
 :is(.app-container, .ayna-mobile) .ay-urgent.is-fold[open] .ay-urgent__chev { transform: rotate(-135deg); }
 :is(.app-container, .ayna-mobile) .ay-urgent.is-fold .ay-urgent__body { padding: 0 16px 16px; }
 :is(.app-container, .ayna-mobile) .ay-urgent.is-fold .ay-urgent__sum:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; border-radius: 16px; }
+/* Nov 5 (founder): "69% match · For period care · See why" on one line. */
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) button.ayv-match:not(.is-hold) { flex-wrap: nowrap !important; max-width: 100%; }
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) button.ayv-match:not(.is-hold) .ayv-match__why { flex: 0 1 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

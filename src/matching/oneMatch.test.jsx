@@ -26,7 +26,7 @@ const PERSONAS = {
 };
 const byId = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
 const pctIn = (html) => { const m = /(\d+)(?:<small>)?%(?:<\/small>)? ?(match|for)?/.exec(html); return m ? Number(m[1]) : null; };
-const ringPct = (html) => { const m = /ayna-match-ring[^>]*><span>(\d+)<small>%/.exec(html); return m ? Number(m[1]) : null; };
+const ringPct = (html) => { const m = /(?:ayna-match-ring|ay-w2-ring)[^>]*><span>(\d+)<small>%/.exec(html); return m ? Number(m[1]) : null; };
 
 describe('one match percent per product (v2) on every surface', () => {
   for (const [name, q] of Object.entries(PERSONAS)) {

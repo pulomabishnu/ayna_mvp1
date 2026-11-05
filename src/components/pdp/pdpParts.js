@@ -51,10 +51,8 @@ export function splitShow(list, n = SHOW_FIRST) {
  */
 /** The one line under a browse fit: what it's for and why the number is what it is. */
 export function browseWhy(bf) {
-  const what = bf.phrase || 'what it’s for';
-  if (bf.kind === 'stage') return `For ${what}, which fits your life stage. You didn’t pick it, so it’s not one of your matches.`;
-  if (bf.kind === 'said_no') return `For ${what}. Your answers say you don’t have this.`;
-  return `For ${what}, which you didn’t pick. If you had, it would be a ${bf.fitIfPicked}% match.`;
+  // Nov 5 (founder): one short line, "69% match · For period care · See why". The why lives in the panel.
+  return `For ${bf.phrase || 'what it’s for'}`;
 }
 
 export function matchLineState({ details = null, percent = null, hasProfile = false, why = '', fallback = '', canQuiz = false } = {}) {

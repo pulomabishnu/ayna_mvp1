@@ -7,7 +7,7 @@ import { markCardSeen, markNotUseful, markPeriodAnswer, markRundownHidden, markR
 import { autoLaunchDecision, listenForExternalOpens, openedExternally, urlIsDeepLink } from './autoLaunch.js';
 import { setTodayAskContext } from '../../utils/askToday.js';
 import { getAskHealthPref } from '../../health/askHealthPref.js';
-import { getProductById, getProductMatchDetailsForProduct, getSelectedNeeds, useCatalogReady } from '../../data/catalog.js';
+import { getProductById, getProductMatchDetailsForProduct, getRecommendations, getSelectedNeeds, useCatalogReady } from '../../data/catalog.js';
 import { whyLine } from '../../utils/whyLine.js';
 import { isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { evidenceLevel } from '../pdp/evidenceLevel.js';
@@ -69,8 +69,14 @@ export default function Rundown({
     if (!intake || !catalogReady) return [];
     const seen = new Set();
     const remembered = rememberedOnDevice({ tries: t.tries, saved: Object.fromEntries((saved || []).filter((p) => p?.id).map((p) => [p.id, true])), prefs: readRoutinePrefs() });
+    // Nov 5 (founder): the Rundown suggests something NEW from her data, never what is already in her
+    // ecosystem or already recommended to her there. Candidates are her best catalog matches (the one
+    // engine, with her health data) minus everything in her ecosystem; she can add it or say no.
+    const inEcosystem = new Set((products || []).map((p) => p?.id).filter(Boolean));
+    let candidates = [];
+    try { candidates = (getRecommendations(intake, healthProfile, matchOpts) || []).filter((p) => p?.id && !inEcosystem.has(p.id)).slice(0, 40); } catch { candidates = []; }
     // No medicine as a Rundown pick (src/health/medicineProduct.js).
-    return withoutMedicines(withoutRemembered(products, remembered)).filter((p) => p?.id && !seen.has(p.id) && seen.add(p.id)).map((product) => {
+    return withoutMedicines(withoutRemembered(candidates, remembered)).filter((p) => p?.id && !seen.has(p.id) && seen.add(p.id)).map((product) => {
       let details = null;
       try { details = getProductMatchDetailsForProduct(product, intake, healthProfile, matchOpts); } catch { details = null; }
       if (!details || details.matchStatus !== 'scored' || !Number.isFinite(details.percent)) return null;

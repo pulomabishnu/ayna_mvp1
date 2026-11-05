@@ -416,3 +416,35 @@ html body #ay-landing.wl .lb-close::before { content: ''; position: absolute; le
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px;
           mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px; }
 html body #ay-landing.wl .lb-stat { align-content: start !important; padding-top: 68px !important; }
+
+/* Nov 5 (founder: "why are there two different yellows", "the spacing", the walkthrough phone
+   poking into the pink band). One yellow only (butter #ffedac): the bands alternate pink and
+   butter, then espresso for Pro. The number tiles are pink and espresso, never a second yellow.
+   The walkthrough ends below the phone, so the phone never sits on the wave. Reads and Community
+   share a band with a gap between them instead of a hairline. */
+html body #ay-landing.wl .lb > .lb-sec:nth-child(1) { background: #f7badd; }
+html body #ay-landing.wl .lb > .lb-sec:nth-child(2) { background: #ffedac; }
+html body #ay-landing.wl .lb > .lb-sec:nth-child(3) { background: #f7badd; }
+html body #ay-landing.wl .lb > .lb-sec:nth-child(4) { background: #ffedac; }
+html body #ay-landing.wl .lb > .lb-sec:nth-child(3) :is(h2, h3, p, a, b, span, small) { color: #3e2723 !important; }
+html body #ay-landing.wl .lb-stat:nth-child(2) { background: #3e2723 !important; }
+html body #ay-landing.wl .lb-stat:nth-child(3) { background: #f7badd !important; }
+html body #ay-landing.wl .lb-stat:nth-child(4) { background: #3e2723 !important; }
+html body #ay-landing.wl .lb-stat:is(:nth-child(2), :nth-child(4)) :is(b, span, b *) { color: #ffedac !important; }
+html body #ay-landing.wl .lb-stat:nth-child(3) :is(b, span, b *) { color: #3e2723 !important; }
+html body #ay-landing.wl .lb-stat:is(:nth-child(2), :nth-child(4)) > .lb-ic { background: #f7badd !important; }
+html body #ay-landing.wl .lb-stat:nth-child(3) > .lb-ic { background: #ffedac !important; }
+html body #ay-landing.wl .lb-comm { border-left: 0 !important; padding-left: 48px !important; }
+@media (max-width: 767px) { html body #ay-landing.wl .lb-comm { border-top: 0 !important; padding: 32px 0 0 !important; } }
+html body .app-container #ay-landing.wl .hd { padding-bottom: 104px !important; }
+html body #ay-landing.wl .lb > .lb-sec { padding: 80px 0 !important; }
+@media (max-width: 767px) { html body #ay-landing.wl .lb > .lb-sec { padding: 56px 0 !important; } html body .app-container #ay-landing.wl .hd { padding-bottom: 72px !important; } }
+html body #ay-landing.wl .lb-head { margin-bottom: 32px !important; }
+/* Nov 5: the espresso pills in the pink Reads/Community band keep butter text. */
+html body #ay-landing.wl .lb > .lb-sec:nth-child(3) :is(.lb-tag, .lb-pill.is-ink, .lb-pill.is-ink *) { color: #ffedac !important; }
+/* The community column showed a blank gap: bring back its one line. */
+html body #ay-landing.wl .lb-comm .lb-p { display: block !important; max-width: 34ch; margin-top: 12px !important; }
+/* Tile labels inherit from the tile, so the tile itself carries the text color. */
+html body .app-container #ay-landing.wl .lb-stats > .lb-stat:is(:nth-child(1), :nth-child(3)) { color: #3e2723 !important; }
+html body .app-container #ay-landing.wl .lb-stats > .lb-stat:is(:nth-child(2), :nth-child(4)) { color: #ffedac !important; }
+html body .app-container #ay-landing.wl .lb-stats > .lb-stat:is(:nth-child(2), :nth-child(4)) > .lb-ic { color: #3e2723 !important; }

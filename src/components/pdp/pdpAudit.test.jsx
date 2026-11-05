@@ -233,14 +233,14 @@ describe('decision block contents (audit 13.1, 14)', () => {
     pos.forEach((x, i) => { expect(x, order[i]).toBeGreaterThan(-1); if (i) expect(x, order[i]).toBeGreaterThan(pos[i - 1]); });
     expect(html).not.toMatch(/We may earn a commission<\/span><span aria-hidden="true">\+/);
     expect(html).toMatch(/ayna partner\. We may earn a commission\./);
-    // The "Why N%?" explainer is in the page (closed), with the engine's note, whenever there is a percent.
+    // Nov 5 (founder): the % is one line with "See why", which opens the full Why view.
     const plain = { fullHealthIntake: { ...IUD_PROFILE.fullHealthIntake, currentMedicationItems: ['Ibuprofen'] }, personalizationCompleted: true };
     const d = getProductMatchDetailsForProduct(byId(SAALT), plain);
     const html2 = renderToStaticMarkup(<ProductDetailScreen product={byId(SAALT)} quizAnswers={plain} />);
     expect(d?.matchStatus).toBe('scored');
     {
-      expect(html2).toMatch(/class="ayv-lock__why"/);
-      expect(html2).toMatch(/Partnerships never change this score\./);
+      expect(html2).toMatch(/class="ayv-match"[^>]*data-tour="pdp-why"/);
+      expect(html2).toMatch(/See why/);
     }
     expect(html).not.toMatch(/ayv-stickybuy/);
   });

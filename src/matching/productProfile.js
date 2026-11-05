@@ -135,6 +135,10 @@ function facts(product) {
 }
 
 // A care service: telehealth / virtual clinic (people, not a product).
+// A care service that is mainly for birth control (Twentyeight, Wisp, Nurx, Planned Parenthood Direct).
+function isContraceptionService(f) {
+  return f.cat === 'contraception' || f.fn('contraception') || f.n(/birth control|\bwisp\b|\bnurx\b/);
+}
 function isCareService(f) {
   if (f.cat === 'diagnostics') return false;
   if (f.cat === 'telehealth') return true;
@@ -297,13 +301,15 @@ export const RELEVANCE_RULES = [
     // Nov 5 all-hands (Eliz): a birth control service showing up for UTI symptoms read as "birth control
     // for a UTI". When contraception is what the service is mainly for, UTI care is only adjacent, so it
     // never sits on a UTI shelf (under 50%); a dedicated UTI service still does.
-    set: (f) => (f.cat === 'contraception' || f.fn('contraception') || f.n(/birth control|\bwisp\b|\bnurx\b/)
+    set: (f) => (isContraceptionService(f)
       ? { 'urinary.burning': ADJACENT, 'urinary.frequency': WEAK, 'urinary.urgency': WEAK, 'urinary.recurrent_uti': ADJACENT }
       : { 'urinary.burning': STRONG, 'urinary.frequency': SECONDARY, 'urinary.urgency': SECONDARY, 'urinary.recurrent_uti': STRONG }), roles: ['care'] },
   { id: 'care_sti', why: 'Telehealth that handles STI care.',
     when: (f) => isCareService(f) && f.t(/\bstis?\b|\bstds?\b|sexually transmitted/), set: { 'sexual.sti': STRONG }, roles: ['care'] },
   { id: 'care_bv', why: 'Telehealth that treats BV.',
-    when: (f) => isCareService(f) && f.t(/\bbv\b|bacterial vaginosis/), set: { 'vaginal.bv': DIRECT, 'vaginal.discharge': SECONDARY, 'vaginal.odor': SECONDARY }, roles: ['care'] },
+    when: (f) => isCareService(f) && f.t(/\bbv\b|bacterial vaginosis/),
+    // Nov 5 audit: a birth control service read as "birth control for BV" (same as UTI, all-hands).
+    set: (f) => (isContraceptionService(f) ? { 'vaginal.bv': ADJACENT, 'vaginal.discharge': WEAK, 'vaginal.odor': WEAK } : { 'vaginal.bv': DIRECT, 'vaginal.discharge': SECONDARY, 'vaginal.odor': SECONDARY }), roles: ['care'] },
   { id: 'care_menopause', why: 'Virtual care focused on perimenopause and menopause.',
     when: (f) => isCareService(f) && (f.has('menopause') || f.cat === 'menopause' || f.t(/menopause/)),
     // A menopause clinic is relevant to hot flashes or night sweats only when

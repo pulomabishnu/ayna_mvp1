@@ -325,7 +325,9 @@ export function MatchExplain({ breakdown = null, onFull = null, onAskWhy = null,
 export function MatchLockup({ state, breakdown = null, onAskWhy = null, onFull = null, onFix = null, onQuiz = null, idBase = 'ay-why' }) {
   const [open, setOpen] = useState(false);
   if (!state) return null;
-  if (state.kind !== 'pct') return <MatchLine state={state} onWhy={onFull} onFix={onFix} onQuiz={onQuiz} />;
+  // Nov 5 (founder): "just put 69% match, see why, and it opens the side bar". With a full view to
+  // open, the % is one line and the why lives there; the inline explainer stays only without one.
+  if (state.kind !== 'pct' || onFull) return <MatchLine state={state} onWhy={onFull} onFix={onFix} onQuiz={onQuiz} />;
   const shown = shownMatchPercent(state.percent);
   const reason = breakdown?.reason || state.why || '';
   return (

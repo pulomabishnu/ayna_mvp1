@@ -7,7 +7,6 @@ import AppProductCard from '../../mobile/components/ProductCard.jsx';
 import { matchText } from '../../utils/matchDisplay.js';
 import { READ_PHOTOS } from '../../data/readCovers.js';
 import { ProductSheetContext } from '../../mobile/productSheetContext.js';
-import { ProductQuickActions } from '../../mobile/components/ProductQuick.jsx';
 import { holdLine } from '../../utils/matchState.js';
 import { DataViz, DATA_KINDS } from './DataCharts.jsx';
 import { StoryTop } from '../story/StoryShell.jsx';
@@ -108,7 +107,10 @@ function Body({ card, h, done }) {
           <div className="ay-rd-product has-open">
             <AppProductCard product={m.product} quizAnswers={h.sheet.quizAnswers || null} matchOpts={h.sheet.matchOpts} onClick={() => h.openSheet(m.product)} onOpenWhyMatch={() => h.openSheet(m.product)} />
             <Evidence level={m.evidence} />
-            <ProductQuickActions product={m.product} saved={h.sheet.isSaved(m.product.id)} onToggleSaved={h.sheetSave} inRoutine={h.sheet.inRoutine(m.product.id)} onAddToRoutine={h.sheetAdd} placement="rundown" />
+            <span className="ay-rd-actions">
+              <button type="button" className="ay-rd-primary" onClick={() => { h.sheetAdd(m.product); h.next(); }}>{h.sheet.inRoutine(m.product.id) ? 'Added' : 'Add to my ecosystem'}</button>
+              {h.notForMe && <button type="button" className="ay-rd-link" onClick={() => h.notForMe(card)}>Not for me</button>}
+            </span>
           </div>
         );
       }
@@ -116,7 +118,10 @@ function Body({ card, h, done }) {
         <div className="ay-rd-product">
           <ProductCard product={m.product} matchPercent={m.percent} matchLabel={matchText(m.percent)} why={m.why} onOpen={h.whyMatch || undefined} onShowWhy={h.whyMatch || null} />
           <Evidence level={m.evidence} />
-          {h.whyMatch && <span className="ay-rd-actions"><button type="button" className="ay-rd-primary" onClick={() => h.whyMatch(m.product)}>Why this match?</button></span>}
+          <span className="ay-rd-actions">
+            {h.whyMatch && <button type="button" className="ay-rd-primary" onClick={() => h.whyMatch(m.product)}>See it and add</button>}
+            {h.notForMe && <button type="button" className="ay-rd-link" onClick={() => h.notForMe(card)}>Not for me</button>}
+          </span>
         </div>
       );
     }

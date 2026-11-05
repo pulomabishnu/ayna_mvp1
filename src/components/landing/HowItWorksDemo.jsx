@@ -32,7 +32,7 @@ function Screen({ k }) {
       <p className="hd-meta">Question 3</p>
       <p className="hd-q">What do you want help with?</p>
       <div className="hd-chips">
-        {['Cramps or period pain', 'Trouble sleeping', 'Heavy periods', 'PMS symptoms', 'Bloating', 'Acne', 'Brain fog', 'Low mood'].map((c, i) => <span key={c} className={i === 0 || i === 1 ? 'is-pick' : ''} style={{ '--i': i }}>{c}</span>)}
+        {['Cramps or period pain', 'Trouble sleeping', 'Heavy periods', 'PMS symptoms', 'Bloating', 'Hot flashes', 'Brain fog', 'Low mood'].map((c, i) => <span key={c} className={i === 0 || i === 1 ? 'is-pick' : ''} style={{ '--i': i }}>{c}</span>)}
       </div>
       <p className="hd-small">Pick all that fit. Each one gets its own matches.</p>
       <span className="hd-next">Next</span>

@@ -234,7 +234,7 @@ const MATCH_CARDS = [
 ];
 
 describe('Rundown product card and the sheet over the story', () => {
-  it('one tap Buy, Save, Add to my routine; tapping the product opens the sheet and the story waits on that card', () => {
+  it('a new pick: one tap adds it to her ecosystem (Nov 5); tapping the product opens the sheet and the story waits on that card', () => {
     vi.useFakeTimers();
     reduce(false);
     const ctx = { open: vi.fn(), isOpen: false, isSaved: () => false, toggleSaved: vi.fn(), inRoutine: () => false, addToRoutine: vi.fn(), matchStateFor: () => ({ kind: 'none' }) };
@@ -244,12 +244,8 @@ describe('Rundown product card and the sheet over the story', () => {
     act(() => btn('Next card').click());
     expect(document.querySelector('[aria-live]').textContent).toContain('Card 2 of 4');
     const story = document.querySelector('.ay-rd');
-    expect(btn(`Save ${product.name}`, story)).toBeTruthy();
-    expect(btn('Add to my routine', story)).toBeTruthy();
-    act(() => btn('Add to my routine', story).click());
-    expect(ctx.addToRoutine).toHaveBeenCalledWith(product);
-    act(() => btn(`Save ${product.name}`, story).click());
-    expect(ctx.toggleSaved).toHaveBeenCalledWith(product);
+    // Nov 5 (founder): the Rundown shows NEW picks and she chooses to add one or not.
+    expect(btn('Add to my ecosystem', story)).toBeTruthy();
     act(() => story.querySelector('.ay-rd-product .ay-pc-main').click());
     expect(ctx.open).toHaveBeenCalledWith(product);
     // The sheet is up: no auto-advance, Escape and arrows are the sheet's.
@@ -262,6 +258,10 @@ describe('Rundown product card and the sheet over the story', () => {
     // Closed: still the same card.
     act(() => root.render(ui({ ...ctx, isOpen: false })));
     expect(document.querySelector('[aria-live]').textContent).toContain('Card 2 of 4');
+    // Adding it moves on to the next card.
+    act(() => btn('Add to my ecosystem', document.querySelector('.ay-rd')).click());
+    expect(ctx.addToRoutine).toHaveBeenCalledWith(product);
+    expect(document.querySelector('[aria-live]').textContent).toContain('Card 3 of 4');
   });
 
   it('a held product never shows a % on its Rundown card', () => {
