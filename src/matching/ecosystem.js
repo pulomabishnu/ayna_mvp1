@@ -50,7 +50,7 @@ export const INGESTED_RELATIONSHIP_MIN_SCORE = {
 const WEAK_CLAIM_EVIDENCE = new Set(['none', 'community_only', 'not_for_this_claim']);
 // Any research row for product|need, graded or still a draft (the rationale says what the trials found).
 const REVIEWED_ANY = new Map(NEED_MAP_RESEARCH.map((r) => [`${r.product}|${r.need}`, r]));
-const LOW_RISK_NUTRIENT = /\b(magnesium|calcium|vitamin d3?|psyllium|fiber)\b/;
+const LOW_RISK_NUTRIENT = /\b(magnesium|calcium|vitamin d3?|vitamin b6|psyllium|fiber)\b/;
 const BLEND_WORDS = /complex|blend|\d+[- ]in[- ]1|multi|pack|gumm/;
 export function isLowRiskNutrient(pp) {
   const name = String(pp?.name || pp?.product_name || '').toLowerCase();
@@ -76,7 +76,7 @@ export function qualificationForEcosystem(result, pp, baseMinScore) {
   // (even small or low-certainty ones), it gets the normal bar instead of the stricter supplement
   // bar. Blends, herbals and anything unconfirmed for pregnancy or breastfeeding keep the strict bar.
   const reviewed = REVIEWED_ANY.get(`${pp.product_id}|${result.needId}`);
-  if (isLowRiskNutrient(pp) && !stageUnknown && reviewed && reviewed.strength !== 'none' && /trial|rct|meta-analys|review/i.test(reviewed.rationale || '')
+  if (isLowRiskNutrient(pp) && !stageUnknown && reviewed && reviewed.strength !== 'none' && (/trial|rct|meta-analys|review/i.test(reviewed.rationale || '') || /\.gov\//.test(reviewed.source_url || ''))
     && ['direct', 'strong', 'secondary'].includes(result.relationship)) return { floor, effectiveScore };
 
   floor = Math.max(floor, INGESTED_RELATIONSHIP_MIN_SCORE[result.relationship] ?? baseMinScore);

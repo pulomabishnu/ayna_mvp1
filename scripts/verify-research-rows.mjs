@@ -14,6 +14,21 @@ const VERIFIED = [
   { product: 'p-magnesium-glycinate', need: 'sleep.trouble', strength: 'secondary', grade: 'C',
     rationale: 'NCCIH: too little rigorous evidence to say magnesium helps insomnia; a 2021 review of 3 small trials (151 older adults) suggested faster sleep onset, low certainty.',
     source_url: 'https://www.nccih.nih.gov/health/in-the-news-magnesium-supplements-for-sleep-disorders' },
+  { product: 'p-rugby-vitamin-b6-25', need: 'cycle.pms', strength: 'secondary', grade: 'C',
+    rationale: 'womenshealth.gov: vitamin B6 may help PMS symptoms including moodiness, irritability, bloating and anxiety; talk to your doctor before taking supplements.', source_url: 'https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome' },
+  { product: 'p-rugby-vitamin-b6-25', need: 'mood.cycle_related', strength: 'secondary', grade: 'C',
+    rationale: 'womenshealth.gov: vitamin B6 may help PMS moodiness, irritability and anxiety.', source_url: 'https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome' },
+  { product: 'p-rugby-vitamin-b6-25', need: 'bloating.cycle_related', strength: 'secondary', grade: 'C',
+    rationale: 'womenshealth.gov: vitamin B6 may help PMS bloating.', source_url: 'https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome' },
+  { product: 'p-advil-ibuprofen-200', need: 'cycle.breast_tenderness', strength: 'secondary', grade: 'B',
+    rationale: 'womenshealth.gov: ibuprofen, naproxen or aspirin may lessen PMS physical symptoms including breast tenderness.', source_url: 'https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome' },
+  { product: 'p-aleve-naproxen-220', need: 'cycle.breast_tenderness', strength: 'secondary', grade: 'B',
+    rationale: 'womenshealth.gov: ibuprofen, naproxen or aspirin may lessen PMS physical symptoms including breast tenderness.', source_url: 'https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome' },
+  { product: 'd-headspace', need: 'mood.swings', strength: 'secondary', grade: 'C',
+    rationale: 'womenshealth.gov: some women find meditation helpful for PMS; find healthy ways to cope with stress.', source_url: 'https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome' },
+  { product: 'd-calm', need: 'mood.swings', strength: 'secondary', grade: 'C',
+    rationale: 'womenshealth.gov: some women find meditation helpful for PMS; find healthy ways to cope with stress.', source_url: 'https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome' },
+
 ];
 for (const file of ['needMap.research.js', 'needMap.research.json']) {
   const url = new URL(`../src/data/matching/${file}`, import.meta.url);

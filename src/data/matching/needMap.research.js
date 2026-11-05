@@ -6811,5 +6811,82 @@ export default [
   "prior_grade_unverified": "B",
   "prior_source_unverified": "https://menopause.org/wp-content/uploads/2024/09/Management_of_genitourinary_syndrome_of_menopause.97565-2.pdf",
   "grade_status": "draft_unverified"
+ },
+ {
+  "product": "p-rugby-vitamin-b6-25",
+  "need": "cycle.pms",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "womenshealth.gov: vitamin B6 may help PMS symptoms including moodiness, irritability, bloating and anxiety; talk to your doctor before taking supplements.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "p-rugby-vitamin-b6-25",
+  "need": "mood.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "womenshealth.gov: vitamin B6 may help PMS moodiness, irritability and anxiety.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "p-rugby-vitamin-b6-25",
+  "need": "bloating.cycle_related",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "womenshealth.gov: vitamin B6 may help PMS bloating.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "p-advil-ibuprofen-200",
+  "need": "cycle.breast_tenderness",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "womenshealth.gov: ibuprofen, naproxen or aspirin may lessen PMS physical symptoms including breast tenderness.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "p-aleve-naproxen-220",
+  "need": "cycle.breast_tenderness",
+  "strength": "secondary",
+  "grade": "B",
+  "rationale": "womenshealth.gov: ibuprofen, naproxen or aspirin may lessen PMS physical symptoms including breast tenderness.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "d-headspace",
+  "need": "mood.swings",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "womenshealth.gov: some women find meditation helpful for PMS; find healthy ways to cope with stress.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "d-calm",
+  "need": "mood.swings",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "womenshealth.gov: some women find meditation helpful for PMS; find healthy ways to cope with stress.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  }
 ];

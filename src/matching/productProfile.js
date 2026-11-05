@@ -298,7 +298,9 @@ export const RELEVANCE_RULES = [
     set: { 'mood.general_anxiety': STRONG, 'mood.low': STRONG, 'mood.irritability': SECONDARY, 'mood.swings': SECONDARY, 'mood.pmdd': ADJACENT, 'mood.cycle_related': ADJACENT, 'care.telehealth': SECONDARY } },
   { id: 'meditation_app', why: 'Meditation and relaxation app.',
     when: (f) => f.cat === 'mental-health' && f.t(/meditat|mindful|sleep stor/),
-    set: (f) => ({ 'mood.general_anxiety': SECONDARY, 'mood.low': ADJACENT, 'mood.irritability': ADJACENT, 'sleep.trouble': f.t(/sleep/) ? SECONDARY : ADJACENT }) },
+    // Nov 4: womenshealth.gov (PMS) says some women find meditation helpful for PMS mood, and to find
+    // healthy ways to cope with stress, so mood swings and irritability are a secondary fit.
+    set: (f) => ({ 'mood.general_anxiety': SECONDARY, 'mood.low': ADJACENT, 'mood.irritability': SECONDARY, 'mood.swings': SECONDARY, 'mood.cycle_related': SECONDARY, 'sleep.trouble': f.t(/sleep/) ? SECONDARY : ADJACENT }) },
   { id: 'community_app', why: 'Peer community app.',
     when: (f) => f.cat === 'mental-health' && f.t(/community|friends/),
     set: { 'mood.low': ADJACENT, 'pregnancy.prenatal': ADJACENT, 'postpartum.recovery': ADJACENT, 'fertility.ttc': ADJACENT, 'menopause.body_changes': ADJACENT } },
@@ -465,6 +467,16 @@ export const RELEVANCE_RULES = [
   { id: 'b6_pregnancy_nausea', why: 'Vitamin B6 is a first treatment for pregnancy nausea.',
     when: (f) => f.cat === 'supplement' && f.n(/vitamin b6|pyridoxine/) && !f.n(/complex|multi|prenatal/),
     set: { 'digestive.nausea': ctx(STRONG, 'pregnancy'), 'pregnancy.discomfort': ctx(SECONDARY, 'pregnancy') } },
+  // Nov 4, womenshealth.gov (PMS): vitamin B6 "may help with PMS symptoms, including moodiness,
+  // irritability, forgetfulness, bloating, and anxiety". Cycle needs only (not pregnancy, menopause).
+  { id: 'b6_pms', why: 'Vitamin B6 may ease PMS moodiness, irritability and bloating.',
+    when: (f) => f.cat === 'supplement' && f.n(/vitamin b6|pyridoxine/) && !f.n(/complex|multi|prenatal/),
+    set: { 'cycle.pms': SECONDARY, 'mood.cycle_related': SECONDARY, 'bloating.cycle_related': SECONDARY, 'mood.swings': ADJACENT, 'mood.irritability': ADJACENT } },
+  // Nov 4, womenshealth.gov (PMS): ibuprofen, naproxen or aspirin "may help lessen physical symptoms,
+  // such as cramps, headaches, backaches, and breast tenderness".
+  { id: 'nsaid_breast_tenderness', why: 'Pain relievers like ibuprofen may ease PMS breast tenderness.',
+    when: (f) => f.cat === 'medication' && f.ing(/ibuprofen|naproxen/),
+    set: { 'cycle.breast_tenderness': SECONDARY } },
   { id: 'acne_tagged', why: 'Catalog marks this for acne.',
     when: (f) => f.has('acne'), set: { 'skin.acne': SECONDARY, 'skin.hormonal': ADJACENT } },
   { id: 'nausea_text', why: 'Mentions nausea relief.',

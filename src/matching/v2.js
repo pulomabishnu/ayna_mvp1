@@ -45,7 +45,7 @@ export const V2 = {
   // (1 point = 1%, up to 20), not the small cap: it is about her body, not a preference.
   experienceDownCap: 0.2,
   ecosystemFloor: 0.5,
-  partialFloor: 0.35,
+  partialFloor: 0.3, // Nov 4 (founder: empty shelves): a secondary use with a C grade (about 0.31) shows as a Partial match when nothing better fits
   strongFloor: 0.75,
   // Strong needs HIGH confidence (score.js confidenceLevel: 0.75+), Nov 2 review:
   // a word that sounds certain only when the answers it needed are complete and recent.

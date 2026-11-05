@@ -224,7 +224,8 @@ describe('distribution across needs stays stable', () => {
     // anti-itch cream, the pelvic floor trainers); 3 of them wait on clinician review (+3).
     // Nov 4: Naya's two tampon products are also checked for bleeding (+2).
     // Nov 4 (50-profile run): B6 is now a pregnancy-nausea match and acne actives strong acne matches;
-    // the ones whose pregnancy or clinician facts are missing wait for them (+5).
-    expect(holds).toBe(512);
+    // the ones whose pregnancy or clinician facts are missing wait for them (+5). B6 for PMS mood and
+    // bloating, NSAIDs for breast tenderness (womenshealth.gov) add more of the same kind of hold (+7).
+    expect(holds).toBe(519);
   });
 });
