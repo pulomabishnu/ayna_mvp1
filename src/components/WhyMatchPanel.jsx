@@ -26,7 +26,7 @@ const TONE = { excellent: 'is-strong', strong: 'is-good', exploratory: 'is-parti
 function browseExplain(bf) {
   if (!bf) return '';
   if (bf.hold) return bf.safetyHold?.reason || 'We’re still checking this product’s safety, so there’s no number yet.';
-  if (bf.notForStage) return `This is made for ${bf.phrase || 'something'} that doesn’t fit your life stage, so we don’t give it a number.`;
+  if (bf.notForStage) return `This is made for ${bf.phrase || 'something'} that doesn’t fit your life stage, so it’s a 0% match for you.`;
   const what = bf.phrase || 'what it’s for';
   const odds = bf.kind === 'stage' ? `${what} is part of your life stage, so we count it as likely for you (75%)` : bf.kind === 'said_no' ? `your answers say you don’t have ${what}, so we count it as very unlikely (5%)` : `you didn’t pick ${what}, so we count it as unlikely for you right now (20%)`;
   return `This isn’t for anything you picked. If it were, it would be a ${bf.fitIfPicked}% fit. But ${odds}. ${bf.fitIfPicked}% × ${Math.round(bf.likelihood * 100)}% = ${bf.percent}%. Pick it in your answers and it becomes one of your matches.`;

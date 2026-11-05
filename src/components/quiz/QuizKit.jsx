@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import '../../styles/quiz.css';
+import '../../styles/quiz-app.css';
 
 // The quiz's shared presentation (app IntakeScreen and website WebIntake).
 // Founder, Oct 27: "keep it simple minimal easy to read at a glance". One

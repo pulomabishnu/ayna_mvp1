@@ -66,7 +66,8 @@ export function matchLineState({ details = null, percent = null, hasProfile = fa
   // Not for anything she picked, but scored as if she wanted help with what it's for (browse fit).
   const bf = details.browseFit;
   if (bf?.hold) return { kind: 'hold', hold: bf.safetyHold || null, text: MATCH_UNAVAILABLE };
-  if (bf?.notForStage) return { kind: 'none', text: bf.phrase ? `Made for ${bf.phrase}, which doesn’t fit your life stage.` : 'Not for your life stage.' };
+  // Nov 4 (founder): every product gets a number; one made for a life stage she isn't in is 0%, with the reason.
+  if (bf?.notForStage) return { kind: 'none', zero: true, text: bf.phrase ? `0% match. Made for ${bf.phrase}, which doesn’t fit your life stage.` : '0% match. Not for your life stage.' };
   if (bf && Number.isFinite(bf.percent) && bf.percent > 0) return { kind: 'browse', percent: Math.round(bf.percent), why: browseWhy(bf) };
   return { kind: 'none', text: 'No clear match for what you told us' };
 }

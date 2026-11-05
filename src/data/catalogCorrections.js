@@ -137,7 +137,7 @@ export const CATALOG_CORRECTIONS = {
   "p-estroven-mood": {
     "name": "Estroven Menopause Relief Mood Boost",
     "image": "/products/verified/p-estroven-mood.jpg",
-    "price": "Varies by pack size (30 or 60 caplets)",
+    "price": "$13.99 for 30 caplets or $24.99 for 60 (estroven.com, Nov 2026)",
     "url": "https://estroven.com/products/menopause-relief-mood-memory-boost",
     "category": "supplement",
     "imageSourceUrl": "https://estroven.com/products/menopause-relief-mood-memory-boost",
@@ -304,7 +304,7 @@ export const CATALOG_CORRECTIONS = {
   "p-rael-liners": {
     "name": "Rael Regular Organic Cotton Cover Panty Liners, 60 Count",
     "image": "/products/verified/p-rael-liners.png",
-    "price": "Check retailer for current price and pack size",
+    "price": "$11.99 (20, 40 or 60 count; getrael.com, Nov 2026)",
     "category": "pad",
     "url": "https://www.getrael.com/products/regular-organic-cotton-liners",
     "imageSourceUrl": "https://www.getrael.com/products/regular-organic-cotton-liners",
@@ -313,7 +313,7 @@ export const CATALOG_CORRECTIONS = {
   "p-rael-organic-pad": {
     "name": "Rael Large Organic Cotton Cover Pads With Wings",
     "image": "/products/verified/p-rael-organic-pad.png",
-    "price": "Check retailer for current price (14 or 24 count)",
+    "price": "$14.99 (14 or 24 count; getrael.com, Nov 2026)",
     "url": "https://www.getrael.com/products/large-organic-cotton-pads",
     "category": "pad",
     "imageSourceUrl": "https://www.getrael.com/products/large-organic-cotton-pads",
@@ -437,7 +437,7 @@ export const CATALOG_CORRECTIONS = {
     "url": "https://www.thorne.com/products/dp/ubiquinol",
     "imageSourceUrl": "https://www.thorne.com/products/dp/ubiquinol",
     "imageVerifiedAt": "2026-09-25",
-    "price": "Check retailer for current price and pack size"
+    "price": "$78 for 60 gelcaps (thorne.com, Nov 2026)"
   },
   "p-zinc": {
     "price": "Check retailer for current price and pack size",

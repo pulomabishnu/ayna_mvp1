@@ -137,6 +137,10 @@ export function matchBadge(details, { needId = null } = {}) {
     const partial = bf.percent < MIN_BADGE_SCORE;
     return { percent: bf.percent, partial, browse: true, phrase: bf.phrase || '', needId: bf.needId || null, label: partial ? PARTIAL_FIT : needHeadline(bf.percent, bf.phrase || ''), basedOn: BASED_ON_LINE, restricted: false, confidenceLevel: null };
   }
+  // Made for a life stage she isn't in (founder, Nov 4): 0%, said plainly.
+  if (details && details.matchStatus === 'no-relevance' && details.browseFit?.notForStage) {
+    return { percent: 0, partial: true, browse: true, zero: true, phrase: details.browseFit.phrase || '', needId: details.browseFit.needId || null, label: '0% · not your life stage', basedOn: BASED_ON_LINE, restricted: false, confidenceLevel: null };
+  }
   if (!details || details.matchStatus !== 'scored' || details.eligible === false) return null;
   const percent = details.percent;
   if (!Number.isFinite(percent) || percent <= 0) return null;

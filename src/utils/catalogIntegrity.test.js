@@ -18,7 +18,7 @@ describe('catalogIntegrity — nothing invented reaches the UI', () => {
   it('replaces stale/saved facts with the current catalog record but keeps personal fields', () => {
     const p = toCatalogProduct({ id: 'p-rael-organic-pad', name: 'Rael Pads 900 pack', price: '$1', url: 'https://evil.example', whyItWorks: 'Soft.', llmGenerated: true });
     expect(p.name).toBe('Rael Large Organic Cotton Cover Pads With Wings');
-    expect(p.price).toBe('Check retailer for current price (14 or 24 count)');
+    expect(p.price).toBe('$14.99 (14 or 24 count; getrael.com, Nov 2026)');
     expect(p.url).not.toBe('https://evil.example');
     expect(p.whyItWorks).toBe('Soft.');
     // "ayna picked this" is a personal flag, not a product fact. It must survive,

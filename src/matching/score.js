@@ -201,7 +201,12 @@ export function carriesIngredients(pp) {
 // Materials and scents are not a question for something only swallowed (a
 // gummy has no latex band or perfume); everything else stays a question.
 const MATERIAL_OR_SCENT = new Set(['latex', 'adhesives', 'nickel', 'synthetic_materials', 'fragrance', 'essential_oils']);
+// Fragrance is an ingredient in a formula (a wash, a lube, a scented pad). A silicone cup, a disc,
+// a vibrator or a pelvic-floor trainer has no formula, so an unknown fragrance status there is a
+// "check the label" caution, never a hold (Nov 4 catalog pass: 45 devices were held for it).
+const NO_FORMULA_CATEGORIES = new Set(['cup', 'disc', 'sex-tech', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'incontinence-device']);
 function allergenApplies(attr, pp) {
+  if (attr === 'fragrance' && NO_FORMULA_CATEGORIES.has(String(pp.category || '').toLowerCase()) && !pp.formats.includes('topical')) return false;
   const touches = pp.formats.includes('topical') || pp.formats.includes('suppository') || pp.formats.includes('period_care') || !pp.ingested;
   return touches || !MATERIAL_OR_SCENT.has(attr);
 }

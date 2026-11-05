@@ -450,7 +450,7 @@ describe('POST /api/search-suggestions — product integrity (catalog only)', ()
 
     const s = res.body.suggestions[0];
     expect(s.name).toBe('Rael Large Organic Cotton Cover Pads With Wings');
-    expect(s.price).toBe('Check retailer for current price (14 or 24 count)');
+    expect(s.price).toBe('$14.99 (14 or 24 count; getrael.com, Nov 2026)');
     expect(s.url).not.toBe('https://sketchy-affiliate-link.example/x');
     expect(s.whereToBuy.some((w) => /https?:/i.test(w))).toBe(false);
     expect(s.catalogVerified).toBe(true);
