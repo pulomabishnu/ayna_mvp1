@@ -8,7 +8,7 @@ import posthog from 'posthog-js';
  * Only names of buttons and questions, never an answer or anything about her
  * health. `platform` is added to every event in src/main.jsx.
  */
-const CTAS = new Set(['start_quiz', 'start_quiz_demo', 'start_quiz_end', 'start_quiz_nav', 'sign_up_free', 'go_home', 'watch_demo', 'sign_up_free_demo', 'go_home_demo', 'go_home_end']);
+const CTAS = new Set(['start_quiz', 'start_quiz_demo', 'start_quiz_end', 'start_quiz_nav', 'sign_up_free', 'go_home', 'watch_demo', 'sign_up_free_demo', 'go_home_demo', 'go_home_end', 'finish_quiz']);
 
 /**
  * The main button's words (Nov 3 research: first person, says what you get, says free).

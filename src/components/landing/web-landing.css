@@ -336,3 +336,39 @@ html body .app-container #ay-landing.wl .lp-rc__in { display: grid; gap: 40px; }
   .app-container.app-container .hm.wl .wl-one { max-width: none; }
   .app-container .hm.wl :is(.wl-sts, .wl-search) { max-width: 440px; }
 }
+
+/* Founder, Nov 4: a started quiz is one quiet line under the slider, not a separate box. */
+.wl .wl-draft { margin: -4px 0 0; text-align: center; color: rgba(255, 237, 172, .78); font: 500 15px/1.4 var(--ay-font-ui, Figtree, sans-serif); }
+.wl .wl-draft__over { all: unset; cursor: pointer; color: #ffedac; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.wl .wl-draft__over:focus-visible { outline: 2px solid #ffedac; outline-offset: 3px; border-radius: 4px; }
+
+/* Nov 4 de-box pass (founder: "it's just boxes, overcrowded, vibe coded"). Editorial rules instead
+   of filled cards: type, white product plates and thin espresso lines carry the structure. */
+/* Hero: product photos only, no decorative dots, rings or chips. */
+html body #ay-landing.wl .wl-hero .lk-w { display: none !important; }
+/* How ayna works: a plain numbered list; the step playing gets the pink number. */
+html body #ay-landing.wl .hd-steps > li, html body #ay-landing.wl .hd-steps > li.is-on { background: transparent !important; box-shadow: none !important; border: 0 !important; border-top: 1px solid rgba(62, 39, 35, .16) !important; border-radius: 0 !important; }
+html body #ay-landing.wl .hd-steps > li:last-child { border-bottom: 1px solid rgba(62, 39, 35, .16) !important; }
+html body #ay-landing.wl .hd-steps > li > button { padding: 16px 0 !important; background: transparent !important; }
+html body #ay-landing.wl .hd-steps .hd-n { background: transparent !important; color: #3e2723 !important; box-shadow: inset 0 0 0 1.5px #3e2723 !important; }
+html body #ay-landing.wl .hd-steps > li.is-on .hd-n { background: #f7badd !important; box-shadow: none !important; }
+html body #ay-landing.wl .hd-steps > li:not(.is-on) small { opacity: .7; }
+/* Picks: the product on its white plate, words underneath, no card frame. */
+html body #ay-landing.wl .lb-picks .hm-sticker, html body #ay-landing.wl .lb-picks .hm-sticker > * { border: 0 !important; box-shadow: none !important; background: transparent !important; }
+html body #ay-landing.wl .lb-picks .hm-sticker { padding: 0 !important; }
+html body #ay-landing.wl .lb-picks img { border-radius: 16px; background: #fff; }
+/* Numbers: one row of big figures split by thin lines, no tiles or icons. */
+html body #ay-landing.wl .lb-stats { gap: 0 !important; }
+html body #ay-landing.wl .lb-stat { min-height: 0 !important; padding: 8px 24px !important; border-radius: 0 !important; background: transparent !important; color: #3e2723 !important; box-shadow: none !important; border: 0 !important; border-left: 1px solid rgba(62, 39, 35, .2) !important; }
+html body #ay-landing.wl .lb-stat:first-child { border-left: 0 !important; padding-left: 0 !important; }
+html body #ay-landing.wl .lb-stat :is(b, span) { color: #3e2723 !important; }
+html body #ay-landing.wl .lb-stat > :is(svg, .lb-ic, [class*='icon']) { display: none !important; }
+@media (max-width: 767px) { html body #ay-landing.wl .lb-stat { padding: 12px 0 !important; border-left: 0 !important; border-top: 1px solid rgba(62, 39, 35, .2) !important; } html body #ay-landing.wl .lb-stat:first-child { border-top: 0 !important; } }
+/* Reads, Community, founders: on the page, not in boxes. */
+html body #ay-landing.wl .lb-card { background: transparent !important; box-shadow: none !important; border: 0 !important; border-radius: 0 !important; padding: 0 !important; color: #3e2723 !important; }
+html body #ay-landing.wl .lb-comm { padding-left: 32px !important; border-left: 1px solid rgba(62, 39, 35, .2) !important; }
+html body #ay-landing.wl .lb-comm :is(.lb-h3, .lb-p, .lb-quote) { color: #3e2723 !important; }
+@media (max-width: 767px) { html body #ay-landing.wl .lb-comm { padding: 24px 0 0 !important; border-left: 0 !important; border-top: 1px solid rgba(62, 39, 35, .2) !important; } }
+html body #ay-landing.wl .lb-us__ph img { border-radius: 16px; }
+/* pcard.css carries id-level weight (#pc1-3); match it for the landing picks. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body #ay-landing.wl .lb-picks .ay-pcard.ay-pcard { border: 0 !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; }

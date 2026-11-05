@@ -128,7 +128,8 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     vi.useRealTimers();
     const page = host.textContent;
     expect(page).toContain('Brands we work with');
-    expect(page).toContain('What you can do on ayna');
+    // Nov 4 (founder: "it's just boxes"): the feature bento is gone; the walkthrough says it.
+    expect(page).not.toContain('What you can do on ayna');
     expect(page).toContain('What’s behind every match');
     expect(page).toContain('Quick reads, with sources');
     expect(page).toContain('More of ayna, when you want it.');
@@ -146,9 +147,8 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     act(() => { vi.runOnlyPendingTimers(); });
     vi.useRealTimers();
     const page = host.querySelector('#ay-landing');
-    // five feature tiles, each with an icon circle; no chip switcher above the picks
-    expect(page.querySelectorAll('.lb-bento > .lb-tile').length).toBe(5);
-    expect(page.querySelectorAll('.lb-bento .lb-ic').length).toBe(5);
+    // Nov 4: no feature bento any more (founder: "it's just boxes").
+    expect(page.querySelectorAll('.lb-bento').length).toBe(0);
     expect(page.querySelector('.lb [role="group"]')).toBeNull();
     // pink is an accent only below the hero: no full pink band, and no checker strip before the close
     expect(page.querySelectorAll('.ayb-band.is-pink').length).toBe(0);

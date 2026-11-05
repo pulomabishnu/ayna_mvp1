@@ -2739,6 +2739,9 @@ function App() {
             loading={authLoading || (!!user && dataLoading)}
             hasProfile={!!quizResults}
             heroBanner={finishQuizCard(true)}
+            quizDraft={webQuizDraft}
+            onResumeQuiz={handleResumeQuiz}
+            onStartQuizOver={handleStartQuizOver}
           />
         )}
         {guestPreview && !guestPreview.done && !user && (

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { WhatYouCanDo, Picks, Proof, ReadsAndCommunity, Founders, ProAndEnd, useRiseOnView } from './LandingBody.jsx';
+import { Picks, Proof, ReadsAndCommunity, Founders, ProAndEnd, useRiseOnView } from './LandingBody.jsx';
 import MedicalNote from '../MedicalNote.jsx';
 import { isPlainLeftClick } from '../../utils/productRoute';
 import '../../styles/editorial.css';
@@ -36,7 +36,7 @@ const Arrow = () => (<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h
    and everything centred on top (13:01: big, not crowded): a big two-line
    title with "your body." in pink, one line on what ayna connects, the search, Slide to start (the welcome
    tip's anchor) and How we match. The brown and pink bar runs under it. */
-function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
+function Hero({ cta, onSearch, onViewHowItWorks, banner = null, draftLine = null }) {
   return (
     <section className="wl-hero" aria-labelledby="hm-hero-title">
       <div className="wl-hero__band">
@@ -46,6 +46,7 @@ function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
           <h1 id="hm-hero-title" className="wl-title">Women’s health products, <span>matched to you.</span></h1>
           <p className="wl-one">Take a 1-minute quiz. See what fits and why.</p>
           <SlideToStart className="wl-sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
+          {draftLine}
           <HeroSearch onSearch={onSearch} className="wl-search" />
           <a className="wl-how" href="/how-it-works" onClick={(e) => { if (!onViewHowItWorks || !isPlainLeftClick(e)) return; e.preventDefault(); onViewHowItWorks(); }}>How we match<Arrow /></a>
           {banner && <div className="wl-banner">{banner}</div>}
@@ -61,7 +62,7 @@ function Hero({ cta, onSearch, onViewHowItWorks, banner = null }) {
 // with a profile, the main action is "Go to your Home", the phrases step
 // aside and the shop cards drop "See your match". `communityPosts` are the
 // most helpful Powder Room posts (one is shown, in the Community half).
-export default function WebLanding({ signedIn = false, userId = null, hasProfile = false, onAsk, personalPicks = null, onStartQuiz, onGoHome, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, communityPosts = [], heroBanner = null }) {
+export default function WebLanding({ signedIn = false, userId = null, hasProfile = false, onAsk, personalPicks = null, onStartQuiz, onGoHome, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onViewHowItWorks, onSearch, communityPosts = [], heroBanner = null, quizDraft = null, onResumeQuiz = null, onStartQuizOver = null }) {
   const rest = useAfterHeroPaint();
   const pageRef = useRef(null);
   useRiseOnView(pageRef, [rest]);
@@ -69,10 +70,19 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
   const home = Boolean(signedIn && hasProfile && onGoHome);
   const cta = home
     ? { label: 'Go to your Home', slide: 'Slide to go to your Home', go: onGoHome }
-    : { label: 'Sign up free', slide: 'Slide to sign up free', go: () => { trackLandingCta('sign_up_free', 'web', 'Sign up free'); onStartQuiz?.(); } }; // founder's brief: the button says Sign up free
+    // Founder, Nov 4: a quiz already started merges into the one slider (no separate "Finish your quiz" box).
+    : quizDraft && onResumeQuiz
+      ? { label: 'Finish your free quiz', slide: 'Slide to finish your free quiz', go: () => { trackLandingCta('finish_quiz', 'web', 'Finish your free quiz'); onResumeQuiz(); } }
+      : { label: 'Sign up free', slide: 'Slide to sign up free', go: () => { trackLandingCta('sign_up_free', 'web', 'Sign up free'); onStartQuiz?.(); } }; // founder's brief: the button says Sign up free
+  const draftLine = !home && quizDraft && onResumeQuiz ? (
+    <p className="wl-draft">
+      {quizDraft.requiredDone ? 'Your answers are saved.' : `Question ${quizDraft.index} of ${quizDraft.total}, saved.`}
+      {onStartQuizOver && <> <button type="button" className="wl-draft__over" onClick={onStartQuizOver}>Start over</button></>}
+    </p>
+  ) : null;
   return (
     <div id="ay-landing" className="ed ed-home hm hm-uq wl" ref={pageRef}>
-      <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home ? null : heroBanner} />
+      <Hero cta={cta} onSearch={onSearch} onViewHowItWorks={onViewHowItWorks} banner={home || draftLine ? null : heroBanner} draftLine={draftLine} />
       <BrandBar onOpen={onViewWaitlist} />
       {/* Nov 4 (founder): the walkthrough on the iPhone, right under the hero. */}
       <HowItWorksDemo onStart={cta.go} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />
@@ -80,7 +90,7 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
           raining pictures and widgets, and use the original website for the rest). */}
       {/* Below the hero (./LandingBody.jsx): one calm butter page, then one espresso close. */}
       <div className="lb">
-        <WhatYouCanDo member={home} onGo={{ match: home ? onGoHome : onStartQuiz, evidence: onViewHowItWorks, ask: onAsk, routine: home ? onGoHome : null, checkin: home ? onGoHome : null }} />
+        {/* Nov 4 (founder: "it's just boxes"): the feature bento is gone; the iPhone walkthrough above says it. */}
         <Picks onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={Array.isArray(personalPicks) ? personalPicks : null} />
         {rest && <>
           <Proof onViewArticles={onViewArticles} />
