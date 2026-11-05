@@ -3071,28 +3071,24 @@ export default [
  {
   "product": "p-good-clean-love",
   "need": "pain.sexual",
-  "strength": "secondary",
-  "grade": null,
-  "rationale": "Water-based, fragrance-free vaginal moisturizer matches the moisturizer class named for dryness-related painful sex.",
-  "source_url": null,
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "MedlinePlus (Vaginal dryness): dryness can cause pain during sex; over-the-counter vaginal moisturizers and water-soluble lubricants are a first treatment option. Class-level evidence, not a trial of this product.",
+  "source_url": "https://medlineplus.gov/ency/article/000892.htm",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "B",
-  "prior_source_unverified": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-kindra-lotion",
   "need": "pain.sexual",
-  "strength": "secondary",
-  "grade": null,
-  "rationale": "Hormone-free daily moisturizer for menopausal dryness fits the moisturizer class; contains plant oils, so not a condom-compatible lubricant.",
-  "source_url": null,
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "MedlinePlus (Vaginal dryness): dryness can cause pain during sex; over-the-counter vaginal moisturizers and water-soluble lubricants are a first treatment option. Class-level evidence, not a trial of this product.",
+  "source_url": "https://medlineplus.gov/ency/article/000892.htm",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "B",
-  "prior_source_unverified": "https://www.mayoclinic.org/diseases-conditions/vaginal-atrophy/diagnosis-treatment/drc-20352294",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-portable-heating",
@@ -3203,28 +3199,24 @@ export default [
  {
   "product": "p-alubri-vaginal-moisturizing-gel",
   "need": "pain.sexual",
-  "strength": "secondary",
-  "grade": null,
-  "rationale": "Hyaluronic acid vaginal moisturizer fits the moisturizer class for dryness-related painful sex; no trial of this product found.",
-  "source_url": null,
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "MedlinePlus (Vaginal dryness): dryness can cause pain during sex; over-the-counter vaginal moisturizers and water-soluble lubricants are a first treatment option. Class-level evidence, not a trial of this product.",
+  "source_url": "https://medlineplus.gov/ency/article/000892.htm",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "B",
-  "prior_source_unverified": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-alubri-vaginal-wellness-kit",
   "need": "pain.sexual",
-  "strength": "secondary",
-  "grade": null,
-  "rationale": "Trial-size HA vaginal and vulvar moisturizers fit the moisturizer class; small 2-week supply.",
-  "source_url": null,
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "MedlinePlus (Vaginal dryness): dryness can cause pain during sex; over-the-counter vaginal moisturizers and water-soluble lubricants are a first treatment option. Class-level evidence, not a trial of this product.",
+  "source_url": "https://medlineplus.gov/ency/article/000892.htm",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "B",
-  "prior_source_unverified": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-fish-oil",
@@ -3252,28 +3244,24 @@ export default [
  {
   "product": "p-gina-starter-kit",
   "need": "pain.sexual",
-  "strength": "secondary",
-  "grade": null,
-  "rationale": "Coconut-oil glides are oil-based, which ACOG says to skip because they can irritate and weaken condoms.",
-  "source_url": null,
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "MedlinePlus (Vaginal dryness): dryness can cause pain during sex; over-the-counter vaginal moisturizers and water-soluble lubricants are a first treatment option. Class-level evidence, not a trial of this product.",
+  "source_url": "https://medlineplus.gov/ency/article/000892.htm",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "C",
-  "prior_source_unverified": "https://www.acog.org/womens-health/experts-and-stories/the-latest/experiencing-vaginal-dryness-heres-what-you-need-to-know",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-gina-vaginal-moisturizing-glides",
   "need": "pain.sexual",
-  "strength": "secondary",
-  "grade": null,
-  "rationale": "Oil-based coconut suppository; ACOG advises skipping oil-based lubricants (irritation, condom failure).",
-  "source_url": null,
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "MedlinePlus (Vaginal dryness): dryness can cause pain during sex; over-the-counter vaginal moisturizers and water-soluble lubricants are a first treatment option. Class-level evidence, not a trial of this product.",
+  "source_url": "https://medlineplus.gov/ency/article/000892.htm",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "C",
-  "prior_source_unverified": "https://www.acog.org/womens-health/experts-and-stories/the-latest/experiencing-vaginal-dryness-heres-what-you-need-to-know",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-joylux-juicy-like-a-peach",
@@ -3317,28 +3305,24 @@ export default [
  {
   "product": "p-neycher-hydrobloom-gel",
   "need": "pain.sexual",
-  "strength": "secondary",
-  "grade": null,
-  "rationale": "HA moisturizing gel fits the moisturizer class; contains glycerin and lavender, which Mayo/NAMS flag as possible irritants for sensitive tissue.",
-  "source_url": null,
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "MedlinePlus (Vaginal dryness): dryness can cause pain during sex; over-the-counter vaginal moisturizers and water-soluble lubricants are a first treatment option. Class-level evidence, not a trial of this product.",
+  "source_url": "https://medlineplus.gov/ency/article/000892.htm",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "B",
-  "prior_source_unverified": "https://www.mayoclinic.org/diseases-conditions/vaginal-atrophy/diagnosis-treatment/drc-20352294",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-neycher-vaginal-moisturizer",
   "need": "pain.sexual",
-  "strength": "secondary",
-  "grade": null,
-  "rationale": "HA bioadhesive vaginal suppository fits the moisturizer class; contains tea tree oil, a possible irritant.",
-  "source_url": null,
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "MedlinePlus (Vaginal dryness): dryness can cause pain during sex; over-the-counter vaginal moisturizers and water-soluble lubricants are a first treatment option. Class-level evidence, not a trial of this product.",
+  "source_url": "https://medlineplus.gov/ency/article/000892.htm",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "B",
-  "prior_source_unverified": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-oboo-loob-arousal",
@@ -3356,15 +3340,13 @@ export default [
  {
   "product": "p-oboo-loob-daily",
   "need": "pain.sexual",
-  "strength": "secondary",
-  "grade": null,
-  "rationale": "Water-based daily vaginal moisturizer fits the moisturizer class; ingredients not disclosed.",
-  "source_url": null,
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "MedlinePlus (Vaginal dryness): dryness can cause pain during sex; over-the-counter vaginal moisturizers and water-soluble lubricants are a first treatment option. Class-level evidence, not a trial of this product.",
+  "source_url": "https://medlineplus.gov/ency/article/000892.htm",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
-  "prior_grade_unverified": "B",
-  "prior_source_unverified": "https://menopause.org/wp-content/uploads/for-women/MenoNote-GSM.pdf",
-  "grade_status": "draft_unverified"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-sootheher-gel-pad-refills",

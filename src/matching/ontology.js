@@ -295,7 +295,7 @@ export const NEED_POLICY = {
   'urinary.urgency': SYM({ prohibited: ['UTI', 'overactive bladder'] }),
   'urinary.recurrent_uti': SYM({ prohibited: ['UTI diagnosis'], care: 'uti_frequency' }),
   'urinary.incontinence': SYM({ unlocks: ['postpartum'], prohibited: ['postpartum', 'menopause'] }),
-  'pain.sexual': SYM({ boosts: ['endometriosis', 'menopause_transition'], prohibited: ['vaginismus', 'vulvodynia', 'endometriosis', 'menopause'] }),
+  'pain.sexual': SYM({ unlocks: ['menopause_transition'], boosts: ['endometriosis', 'menopause_transition'], prohibited: ['vaginismus', 'vulvodynia', 'endometriosis', 'menopause'] }),
   'sexual.libido': SYM({ unlocks: ['menopause_transition'], prohibited: ['hormonal issue', 'menopause', 'depression'] }),
   'sexual.wellness': GOAL(),
   'sexual.contraception': GOAL(),

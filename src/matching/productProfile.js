@@ -138,7 +138,7 @@ function facts(product) {
 function isCareService(f) {
   if (f.cat === 'diagnostics') return false;
   if (f.cat === 'telehealth') return true;
-  return f.fn('telehealth') && f.t(/telehealth|virtual|clinicians?|online (birth control|doctor|clinic)|ob-gyns?/);
+  return f.fn('telehealth') && f.t(/telehealth|virtual|clinicians?|online (birth control|doctor|clinic)|ob-gyns?|licensed (provider|clinician|doctor)s?|prescribes/);
 }
 
 // ─── RELEVANCE RULES ────────────────────────────────────────────────────────
@@ -148,8 +148,8 @@ function isCareService(f) {
 // roles: care pathway role used by the UTI / BV modifiers.
 export const RELEVANCE_RULES = [
   // ── OTC medicines and tests with guideline backing (evidence-backed basics, Oct 17) ──
-  { id: 'otc_nsaid', why: 'An NSAID pain reliever; NSAIDs are first-line for period cramps (NHS, MedlinePlus).',
-    when: (f) => f.n(/ibuprofen|naproxen/), set: { 'pain.menstrual_cramp': DIRECT, 'pain.pelvic': SECONDARY, 'pain.cycle_headache': SECONDARY, 'pain.joint': SECONDARY, 'condition_support.endometriosis': SECONDARY, 'condition_support.adenomyosis': SECONDARY } },
+  { id: 'otc_nsaid', why: 'An NSAID pain reliever; NSAIDs are first-line for period cramps (NHS, MedlinePlus). Nov 5: MedlinePlus lists nonprescription ibuprofen and naproxen for minor aches from muscle aches and arthritis, so joint aches are a direct use. Ibuprofen: NINDS lists OTC pain relievers such as ibuprofen for less-severe migraine (verified row), so a direct use for cycle headaches.',
+    when: (f) => f.n(/ibuprofen|naproxen/), set: (f) => ({ 'pain.menstrual_cramp': DIRECT, 'pain.pelvic': SECONDARY, 'pain.cycle_headache': (f.n(/ibuprofen|advil|motrin/) ? DIRECT : SECONDARY), 'pain.joint': DIRECT, 'condition_support.endometriosis': SECONDARY, 'condition_support.adenomyosis': SECONDARY }) },
   { id: 'otc_azole', why: 'An OTC azole antifungal, the standard treatment for an uncomplicated yeast infection (CDC).',
     when: (f) => f.n(/miconazole|clotrimazole|monistat/), set: { 'vaginal.yeast': DIRECT, 'vaginal.irritation': SECONDARY } },
   { id: 'minoxidil', why: 'Topical minoxidil is the most recommended treatment for female pattern hair loss (AAD).',
@@ -215,7 +215,9 @@ export const RELEVANCE_RULES = [
   // ── Cycle tracking, fertility, contraception ───────────────────────────
   { id: 'cycle_tracker', why: 'Cycle trackers help with irregular cycles and ovulation timing.',
     when: (f) => f.fn('cycle-tracking') && (f.cat === 'tracker' || f.type === 'digital') && !f.t(/menopause/) && !f.t(/chronic pain|pelvic pain/),
-    set: (f) => ({ 'cycle.irregular': STRONG, 'cycle.missed': SECONDARY, 'cycle.pms': ADJACENT, 'mood.cycle_related': ADJACENT,
+    // Nov 5, womenshealth.gov (PMS): "Keep track of which PMS symptoms you have and how severe they are for a
+    // few months" on a calendar or app and bring it to your doctor. Tracking is how PMS is told apart, so secondary.
+    set: (f) => ({ 'cycle.irregular': STRONG, 'cycle.missed': SECONDARY, 'cycle.pms': SECONDARY, 'mood.cycle_related': ADJACENT,
       'fertility.ovulation_tracking': f.n(/ovulation|fertility/) ? DIRECT : f.t(/ovulat|fertil/) ? STRONG : SECONDARY,
       'fertility.ttc': f.t(/fertil|conceive|ovulat/) ? SECONDARY : ADJACENT }) },
   { id: 'menopause_tracker', why: 'A symptom tracker made for perimenopause and menopause.',
@@ -423,6 +425,18 @@ export const RELEVANCE_RULES = [
   { id: 'lubricant', why: 'Lubricant eases friction during sex.',
     when: (f) => f.t(/lubricant|\blube\b/),
     set: { 'sexual.wellness': STRONG, 'vaginal.dryness': SECONDARY, 'pain.sexual': SECONDARY } },
+  // Nov 5 (10-person run: a 57-year-old in menopause with pain during sex saw 35-48% matches).
+  // MedlinePlus (Vaginal dryness, ency 000892): dryness causes pain with sex, and over-the-counter
+  // vaginal moisturizers and water-soluble lubricants are a first treatment option. In the
+  // menopause transition that makes them a strong fit for pain during sex; otherwise the cause of
+  // the pain is unknown and they stay secondary (set by the rules above).
+  { id: 'menopause_dryness_sex_pain', why: 'In menopause, vaginal dryness is a common cause of pain during sex, and moisturizers and water-based lubricants are a first option (MedlinePlus).',
+    when: (f) => (f.cat === 'intimate-care' || f.cat === 'menopause' || f.cat === 'sex-tech' || f.fn('vaginal-health'))
+      && (f.t(/lubricant|\blube\b|vaginal moisturizer|moisturizing gel|vaginal dryness/) || f.n(/moisturi[sz]|\blube\b|lubricant|glides?\b|hydrat|melts?\b/))
+      && !f.t(/\bwash\b|wipes?\b|boric acid/) && !f.n(/arousal|refill|applicator|odor|balm|wash|cleanser|wand|vibrat|\boil\b|silicone|external/),
+    // MedlinePlus names moisturizers and WATER-SOLUBLE lubricants (oils can damage latex condoms), so oils,
+    // silicone lubes, external-only products and devices keep their lower level.
+    set: { 'pain.sexual': ctx(STRONG, 'menopause_transition') } },
   { id: 'sex_device', why: 'Sexual wellness device.',
     when: (f) => f.cat === 'sex-tech' && !f.t(/lubricant|\blube\b/),
     set: (f) => ({ 'sexual.wellness': DIRECT, 'sexual.libido': SECONDARY, 'pain.sexual': WEAK,
@@ -636,7 +650,7 @@ export function parsePrice(raw) {
 export const ATTRIBUTE_RULES = {
   fragrance: {
     variant: /(fragrance[- ]free|unscented) (options?|versions?|variants?)|in scented versions?|scented versions?/,
-    free: /fragrance[- ]free|unscented|no (added )?fragrance|without fragrance|free (from|of)[^.;]{0,60}fragrances?|no synthetic fragrance/,
+    free: /fragrance[- ]free|unscented|non-(perfumed|scented)|no (added )?fragrance|without fragrance|free (from|of)[^.;]{0,60}fragrances?|no synthetic fragrance|(perfume|fragrance)s? and [a-z]+ free/,
     yes: /\bfragrances?\b|\bparfum\b|\bscented\b|\bperfumed?\b/,
     ignore: /fragrance (sensitivit(y|ies)|allerg(y|ies))/,
     avoidKeys: ['fragrance'],
@@ -687,10 +701,14 @@ function attributeStatus(product, attr, rule, ctx) {
   if (rule.variant && rule.variant.test(text)) return { status: 'unknown', variant: true, source: 'catalog text (variant-dependent)' };
   // A negated list in the same clause also counts as a "free of" claim:
   // "no BPA, latex, dyes, or chemicals" -> latex 'no', dyes 'no'.
-  const listFree = rule.yes ? new RegExp(`\\b(no|free (from|of)|without|zero)\\b[^.;:]{0,60}?(${rule.yes.source})`, 'g') : null;
+  // "no fragrance or perfume" frees both words (Nov 4: the second one read as a positive mention).
+  const listFree = rule.yes ? new RegExp(`\\b(no|free (from|of)|without|zero)\\b[^.;:]{0,60}?(${rule.yes.source})((,? (or|and|nor) |, )(${rule.yes.source}))*`, 'g') : null;
   const freeMatch = (rule.free && rule.free.test(text)) || (listFree && listFree.test(text));
-  let stripped = freeMatch ? text.replace(new RegExp(rule.free.source, 'g'), ' ') : text;
-  if (listFree) stripped = stripped.replace(listFree, ' ');
+  // The list form first, so "no fragrance or perfume" goes whole before "no fragrance" is cut out of it.
+  let stripped = listFree ? text.replace(listFree, ' ') : text;
+  if (freeMatch) stripped = stripped.replace(new RegExp(rule.free.source, 'g'), ' ');
+  // "non-perfumed", "non-scented" are free claims, never a positive mention.
+  stripped = stripped.replace(/\bnon-[a-z]+/g, ' ');
   // "-free" tokens never count as a positive mention ("paraben-free" is not a preservative).
   stripped = stripped.replace(/\b[a-z]+(-[a-z]+)?[- ]free\b/g, ' ');
   const yesMatch = rule.yes && rule.yes.test(stripped);

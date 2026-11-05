@@ -205,11 +205,31 @@ const MATERIAL_OR_SCENT = new Set(['latex', 'adhesives', 'nickel', 'synthetic_ma
 // a vibrator or a pelvic-floor trainer has no formula, so an unknown fragrance status there is a
 // "check the label" caution, never a hold (Nov 4 catalog pass: 45 devices were held for it).
 const NO_FORMULA_CATEGORIES = new Set(['cup', 'disc', 'sex-tech', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'incontinence-device']);
+// Latex is a material (condoms, diaphragms, gloves, rubber bands, elastic in clothing: MedlinePlus
+// patient instructions on latex allergy), not an ingredient of a cream, gel or suppository. For a
+// formula-only product an unknown latex status is a "check the label" caution, never a hold
+// (10-person run, Nov 5: 30 vaginal moisturizers were held from a latex-allergic woman). Foods that
+// cross-react with latex (same page) in its ingredients still raise a caution: see LATEX_FOODS.
+const FORMULA_FORMATS = new Set(['topical', 'suppository', 'pill_capsule', 'gummy', 'powder', 'drink_tea']);
+const MATERIAL_CATEGORIES = new Set(['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'sex-tech', 'incontinence', 'pelvic-floor', 'pregnancy', 'postpartum', 'cramp-relief', 'condom', 'contraception']);
+export function formulaOnly(pp) {
+  const f = pp.formats || [];
+  return f.length > 0 && f.every((x) => FORMULA_FORMATS.has(x)) && !MATERIAL_CATEGORIES.has(String(pp.category || '').toLowerCase());
+}
+export const LATEX_FOODS = /\b(banana|avocado|chestnut|kiwi)/;
+export const LATEX_SOURCE = 'https://medlineplus.gov/ency/patientinstructions/000500.htm';
 function allergenApplies(attr, pp) {
   if (attr === 'fragrance' && NO_FORMULA_CATEGORIES.has(String(pp.category || '').toLowerCase()) && !pp.formats.includes('topical')) return false;
+  if (attr === 'latex' && formulaOnly(pp)) return false;
   const touches = pp.formats.includes('topical') || pp.formats.includes('suppository') || pp.formats.includes('period_care') || !pp.ingested;
   return touches || !MATERIAL_OR_SCENT.has(attr);
 }
+// Over-the-counter medicines whose Drug Facts label (DailyMed, read Nov 5 2026) says "Ask a doctor or
+// pharmacist before use if you are taking any other drug". Product id -> label URL.
+export const OTC_LABEL_ASK_PHARMACIST = {
+  'p-advil-ibuprofen-200': 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a665e64-9f30-be37-4a83-38789f1f1e89',
+  'p-aleve-naproxen-220': 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=46e7b298-9e19-49b6-be71-e4fdcb09a5d4',
+};
 // Routes where a medicine interaction matters (swallowed, absorbed inside).
 function systemicRoute(pp, hormoneActive) {
   return Boolean(pp.ingested || pp.formats.includes('suppository') || hormoneActive);
@@ -336,6 +356,12 @@ export function evaluateSafety(productOrProfile, up) {
         } else if (carriesIngredients(pp) && allergenApplies(a.attr, pp)) {
           // Unknown is not safe (audit C): held until we know.
           missingProductInfo.push('allergen_info');
+        } else if (a.attr === 'latex' && formulaOnly(pp)) {
+          const food = ((pp.ingredients || []).join(' ').toLowerCase().match(LATEX_FOODS) || [])[1];
+          penalize('allergen_unknown', 'Latex not confirmed on the label');
+          cautions.push(food
+            ? { code: 'latex_food', text: `Has ${food} in its ingredients. ${capitalize(food)} can react with a latex allergy. Check with your clinician first.`, source: LATEX_SOURCE }
+            : { code: 'allergen_unknown', text: 'Latex is a material, not usually part of a cream or gel. Check the label and any applicator.', source: LATEX_SOURCE });
         } else {
           penalize('allergen_unknown', `We could not confirm it is ${phrase}-free`);
           cautions.push({ code: 'allergen_unknown', text: `We could not confirm it is ${phrase}-free. Check the label.` });
@@ -389,8 +415,13 @@ export function evaluateSafety(productOrProfile, up) {
   {
     const ids = new Set((s.conditions || []).map((c) => c.id));
     for (const r of conditionRulesFor(pp, ids)) {
-      if (r.verdict === 'avoid') reasons.push({ code: 'condition_avoid', condition: r.condition, text: r.message, source: r.source_url });
-      else if (r.verdict === 'caution') {
+      // A care service (a telehealth clinic that prescribes several kinds of birth control) is not the
+      // product the rule is about: its clinician picks the method. So "avoid" becomes a caution she
+      // takes to the visit (Nov 5 run: Twentyeight Health was hidden from a woman with high blood
+      // pressure who asked for contraception, though it offers non-estrogen methods).
+      const service = Boolean(pp.access?.is_care_service || String(pp.category || '').toLowerCase() === 'telehealth');
+      if (r.verdict === 'avoid' && !service) reasons.push({ code: 'condition_avoid', condition: r.condition, text: r.message, source: r.source_url });
+      else if (r.verdict === 'caution' || r.verdict === 'avoid') {
         penalize('condition_caution', r.message);
         cautions.push({ code: 'condition_caution', condition: r.condition, text: r.message, source: r.source_url });
       }
@@ -431,7 +462,14 @@ export function evaluateSafety(productOrProfile, up) {
     // one has reviewed against them: held (audit E). Topical products and a
     // medicine only implied by her life stage keep a caution.
     const listed = s.medications.some((m) => m.source !== 'life_stage');
-    if (listed && systemicRoute(pp, hormoneActive) && interaction.verdict !== 'caution') missingProductInfo.push('interaction_info');
+    const askLabel = OTC_LABEL_ASK_PHARMACIST[pp.product_id];
+    if (listed && askLabel && interaction.verdict !== 'caution') {
+      // Nov 5 (10-person runs: Advil and Aleve held from everyone on the pill or levothyroxine). The FDA
+      // Drug Facts label itself covers this case: "Ask a doctor or pharmacist before use if you are
+      // taking any other drug." So it shows, with that instruction, instead of being hidden.
+      penalize('medication_unknown', 'Interaction with your medicines not reviewed');
+      cautions.push({ code: 'medication_label_ask', text: 'Its Drug Facts label says to ask a doctor or pharmacist before use if you take any other drug. We have not checked it against your medicines.', source: askLabel });
+    } else if (listed && systemicRoute(pp, hormoneActive) && interaction.verdict !== 'caution') missingProductInfo.push('interaction_info');
     else penalize('medication_unknown', 'Interaction with your medicines not reviewed');
   }
   // 6b. Reviewed label / NIH interaction text that names one of her medicines.

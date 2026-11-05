@@ -61,10 +61,11 @@ export const V2 = {
   corroborationBoost: 0.15,
   fallbackPerNeed: 2,
   // Repeat fill (Oct 26 focus group: "only one heating pad although I chose
-  // the most picks"). Once no new TYPE of product qualifies for a need, the
+  // the most picks"). Nov 5 (10-person run: leak shelf stopped at 3 with three more 92% pads
+  // qualifying): up to three of a type. Once no new TYPE of product qualifies for a need, the
   // need may take a second product of a type it already has, never a third,
   // and only a strong fit. List composition only: no percent changes.
-  maxPerTypePerNeed: 2,
+  maxPerTypePerNeed: 3,
   // Founder, Nov 4: a shelf fills to at least this many full fits when the catalog has them.
   minShelf: 3,
   // A need she did not pick herself (or one her life stage contradicts) while

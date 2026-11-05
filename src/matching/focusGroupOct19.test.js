@@ -157,8 +157,13 @@ describe('bug 2: a format preference does not empty the Ecosystem', () => {
   it('an empty shelf still reports no strong matches instead of filler', () => {
     const seed = seedFor({ ...profile, preferredFormats: ['Drinks or teas'] }, 'v1');
     const pms = seed.shelves.find((s) => s.needId === 'cycle.pms');
-    expect(pms.productIds).toHaveLength(0);
-    expect(pms.emptyReason).toBeTruthy();
+    // Nov 5: womenshealth.gov (PMS) says to track symptoms in a calendar or app, so period trackers
+    // now fit PMS. Nothing else that ignores her tea-only choice.
+    for (const id of pms.productIds) {
+      const pp = buildProductProfile(ALL_PRODUCTS.find((p) => p.id === id));
+      expect(pp.category === 'tracker' || pp.formats.every((f) => f === 'app_service' || f === 'drink_tea'), id).toBe(true);
+    }
+    if (!pms.productIds.length) expect(pms.emptyReason).toBeTruthy();
   });
 });
 

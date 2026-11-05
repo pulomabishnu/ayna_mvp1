@@ -199,7 +199,10 @@ describe('distribution across needs stays stable', () => {
     // evidence grade (V2.E_CLAIM), so the mean moved from about 54 to 51.7.
     // Nov 2 (deliberate): 50 products from the founder's sheet joined (brand-sourced
     // evidence, so lower on average); n 601, mean 49.9. Existing products' percents unchanged.
-    expect(Math.abs(mean(other) - 49.9)).toBeLessThanOrEqual(1.5);
+    // Nov 5 (deliberate, 10-person runs): latex is a caution for creams and gels, Advil/Aleve show with
+    // their label's ask-a-pharmacist line, so more products are scored (n 662); NSAIDs are direct for
+    // joint aches, moisturizers strong for pain during sex in menopause (MedlinePlus); mean 51.9.
+    expect(Math.abs(mean(other) - 51.9)).toBeLessThanOrEqual(1.5);
     expect(other.filter((x) => x >= 99).length / other.length).toBeLessThanOrEqual(0.02);
   });
   it('period products: no longer saturated at 99', () => {

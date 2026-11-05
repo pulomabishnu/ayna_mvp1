@@ -4,6 +4,10 @@
 // Usage: node scripts/verify-research-rows.mjs
 import fs from 'node:fs';
 const today = new Date().toISOString().slice(0, 10);
+// Nov 5: class-level, MedlinePlus (Vaginal dryness): dryness causes pain with sex; over-the-counter vaginal
+// moisturizers and water-soluble lubricants are a first treatment option. Primary only lifts a match when
+// relevance allows it (moisturizers are strong for pain during sex only in the menopause transition).
+const MEDLINE_DRYNESS = 'MedlinePlus (Vaginal dryness): dryness can cause pain during sex; over-the-counter vaginal moisturizers and water-soluble lubricants are a first treatment option. Class-level evidence, not a trial of this product.';
 const VERIFIED = [
   { product: 'p-advil-ibuprofen-200', need: 'pain.cycle_headache', strength: 'primary', grade: 'B',
     rationale: 'NINDS lists over-the-counter pain relievers such as ibuprofen for less-severe migraine episodes and describes menstrual migraine.',
@@ -29,6 +33,24 @@ const VERIFIED = [
   { product: 'd-calm', need: 'mood.swings', strength: 'secondary', grade: 'C',
     rationale: 'womenshealth.gov: some women find meditation helpful for PMS; find healthy ways to cope with stress.', source_url: 'https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome' },
 
+  { product: 'p-good-clean-love', need: 'pain.sexual', strength: 'primary', grade: 'B',
+    rationale: MEDLINE_DRYNESS, source_url: 'https://medlineplus.gov/ency/article/000892.htm' },
+  { product: 'p-kindra-lotion', need: 'pain.sexual', strength: 'primary', grade: 'B',
+    rationale: MEDLINE_DRYNESS, source_url: 'https://medlineplus.gov/ency/article/000892.htm' },
+  { product: 'p-neycher-vaginal-moisturizer', need: 'pain.sexual', strength: 'primary', grade: 'B',
+    rationale: MEDLINE_DRYNESS, source_url: 'https://medlineplus.gov/ency/article/000892.htm' },
+  { product: 'p-neycher-hydrobloom-gel', need: 'pain.sexual', strength: 'primary', grade: 'B',
+    rationale: MEDLINE_DRYNESS, source_url: 'https://medlineplus.gov/ency/article/000892.htm' },
+  { product: 'p-oboo-loob-daily', need: 'pain.sexual', strength: 'primary', grade: 'B',
+    rationale: MEDLINE_DRYNESS, source_url: 'https://medlineplus.gov/ency/article/000892.htm' },
+  { product: 'p-gina-vaginal-moisturizing-glides', need: 'pain.sexual', strength: 'primary', grade: 'B',
+    rationale: MEDLINE_DRYNESS, source_url: 'https://medlineplus.gov/ency/article/000892.htm' },
+  { product: 'p-gina-starter-kit', need: 'pain.sexual', strength: 'primary', grade: 'B',
+    rationale: MEDLINE_DRYNESS, source_url: 'https://medlineplus.gov/ency/article/000892.htm' },
+  { product: 'p-alubri-vaginal-moisturizing-gel', need: 'pain.sexual', strength: 'primary', grade: 'B',
+    rationale: MEDLINE_DRYNESS, source_url: 'https://medlineplus.gov/ency/article/000892.htm' },
+  { product: 'p-alubri-vaginal-wellness-kit', need: 'pain.sexual', strength: 'primary', grade: 'B',
+    rationale: MEDLINE_DRYNESS, source_url: 'https://medlineplus.gov/ency/article/000892.htm' },
 ];
 for (const file of ['needMap.research.js', 'needMap.research.json']) {
   const url = new URL(`../src/data/matching/${file}`, import.meta.url);

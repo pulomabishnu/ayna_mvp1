@@ -286,9 +286,13 @@ function careBundleFor(shelfNeeds, up, getCareResourceBundle) {
   return getCareResourceBundle({ frustrations: careFrustrationsFor(shelfNeeds, up) }, null, up.access.zip || '');
 }
 
-function shelfQuality(picks, restrictedCount, needId, userFieldsMissing = true) {
+// Products held only because of pregnancy or breastfeeding (never a hold for missing facts).
+const STAGE_HOLD_CODES = { pregnancy_clinician_only: 'pregnant', pregnancy_contraindicated: 'pregnant', breastfeeding_contraindicated: 'breastfeeding', breastfeeding_clinician_only: 'breastfeeding' };
+function shelfQuality(picks, restrictedCount, needId, userFieldsMissing = true, stageHeld = null) {
   const phrase = needPhrase(needId);
   if (!picks.length) {
+    // Nov 5 (10-person run: pregnant with constipation read "no product we can stand behind").
+    if (!restrictedCount && stageHeld) return { quality: 'none', note: `The products for ${phrase} are ones to check with your clinician first while you are ${stageHeld}, so we are not showing them here.` };
     if (restrictedCount && !userFieldsMissing) return { quality: 'none', note: `We are still checking safety details for the products that fit ${phrase}, so we are holding them back.` };
     return restrictedCount
       ? { quality: 'none', note: `We need a couple of safety details before we can suggest products for ${phrase}.` }
@@ -318,6 +322,7 @@ export function buildEcosystem(up, products, options = {}) {
     let excludedCount = 0;
     let belowThreshold = 0;
     let restrictedCount = 0;
+    let stageHeld = null;
     const missingFields = new Set();
     const missingProductInfo = new Set();
     let careProminent = up.safety.careProminent;
@@ -325,7 +330,12 @@ export function buildEcosystem(up, products, options = {}) {
       if (!pp.health_need_relevance[need.id]) continue;
       const r = scoreProductForNeed(pp, up, need.id, { safety: safetyById.get(pp.product_id) });
       careProminent = careProminent || r.careProminent;
-      if (!r.safety.eligible) { excludedCount += 1; continue; }
+      if (!r.safety.eligible) {
+        excludedCount += 1;
+        const codes = (r.safety.reasons || []).map((x) => x.code);
+        if (codes.length && codes.every((c) => STAGE_HOLD_CODES[c]) && (pp.health_need_relevance[need.id]?.score || 0) >= 0.55) stageHeld = stageHeld || STAGE_HOLD_CODES[codes[0]];
+        continue;
+      }
       if (r.filtered) { excludedCount += 1; continue; }
       const qualification = qualificationForEcosystem(r, pp, minScore);
       if (qualification.effectiveScore < qualification.floor || !r.explainable) { belowThreshold += 1; continue; }
@@ -350,7 +360,12 @@ export function buildEcosystem(up, products, options = {}) {
     });
     anyCareProminent = anyCareProminent || careProminent;
     const care = (careProminent || need.id.startsWith('care.')) ? careBundleFor([need.id], up, options.getCareResourceBundle) : null;
-    const quality = shelfQuality(picks, restrictedCount, need.id, missingFields.size > 0);
+    // Bleeding after menopause: no products by design (founder, Oct 24), so the shelf says why instead of
+    // "nothing we can stand behind" (10-person run #2, Nov 5).
+    const careOnly = !picks.length && (up.contradictions || []).some((c) => c.code === 'period_need_vs_stage' && (c.affects || []).includes(need.id));
+    const quality = careOnly
+      ? { quality: 'none', note: 'Bleeding after menopause should be checked promptly by a clinician, so we do not suggest products for it.' }
+      : shelfQuality(picks, restrictedCount, need.id, missingFields.size > 0, stageHeld);
     shelves.push({
       needId: need.id,
       label: need.label,
@@ -366,7 +381,7 @@ export function buildEcosystem(up, products, options = {}) {
       missingProductInfo: [...missingProductInfo],
       missingProductInfoText: [...missingProductInfo].map((f) => PRODUCT_INFO_TEXT[f]).filter(Boolean),
       shortBy: Math.max(0, picksPerNeed - picks.length),
-      emptyReason: picks.length ? null : restrictedCount ? 'needs_safety_details' : acrossNeeds.length === 0 && belowThreshold > 0 ? 'no_product_meets_quality_bar' : 'no_matching_products',
+      emptyReason: picks.length ? null : careOnly ? 'care_first' : restrictedCount ? 'needs_safety_details' : stageHeld ? 'clinician_first_for_stage' : acrossNeeds.length === 0 && belowThreshold > 0 ? 'no_product_meets_quality_bar' : 'no_matching_products',
       quality: quality.quality,
       qualityNote: quality.note,
       roles,
