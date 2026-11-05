@@ -155,7 +155,20 @@ function isCareService(f) {
 const NOV5_MAP = {
   // Nov 6 (all-hands Nov 5, Puloma: anxiety devices like the vagus nerve stimulator should be matched;
   // tag a product under what it is marketed for). The brand markets it for worry, stress and sleep.
-  'p-hoolest-verelief-prime': { 'mood.general_anxiety': STRONG, 'sleep.trouble': SECONDARY },
+  'p-hoolest-verelief-prime': { 'mood.general_anxiety': STRONG, 'sleep.trouble': SECONDARY, 'mood.irritability': SECONDARY },
+  // Nov 6 (founder: irritability and mood swings need options, "doesn't have to be a pill").
+  // womenshealth.gov (PMS): "Some women report relief from their PMS symptoms with yoga or meditation";
+  // "Vitamin B6 may help with PMS symptoms, including moodiness, irritability"; and "Write down your
+  // symptoms each day on a calendar or with an app on your phone."
+  'd-headspace': { 'mood.swings': STRONG, 'mood.irritability': STRONG, 'mood.cycle_related': STRONG, 'sleep.trouble': STRONG },
+  'd-calm': { 'mood.swings': STRONG, 'mood.irritability': STRONG, 'mood.cycle_related': STRONG, 'sleep.trouble': STRONG },
+  'p-rugby-vitamin-b6-25': { 'mood.irritability': STRONG, 'mood.swings': STRONG, 'mood.cycle_related': STRONG, 'cycle.pms': STRONG, 'bloating.cycle_related': STRONG },
+  'p-citracal-bone-health': { 'cycle.pms': STRONG },
+  'd-clue': { 'mood.cycle_related': STRONG, 'cycle.pms': SECONDARY },
+  'd-stardust': { 'mood.cycle_related': STRONG, 'cycle.pms': SECONDARY },
+  'd-health-her-health-her-app': { 'mood.cycle_related': STRONG, 'cycle.pms': SECONDARY },
+  'd-lively-lively-period-tracker-cycle': { 'mood.cycle_related': STRONG, 'cycle.pms': SECONDARY },
+  'd-apple-health': { 'mood.cycle_related': STRONG, 'cycle.pms': SECONDARY },
   'p-love-wellness-intimate-skin-support': { 'vaginal.irritation': SECONDARY, 'vaginal.odor': ADJACENT },
   'p-kiero-refining-enzyme-cleanser': { 'skin.acne': ADJACENT, 'skin.hormonal': ADJACENT },
   'p-kiero-airy-sun-stick-spf50': { 'skin.hormonal': ADJACENT },
@@ -602,6 +615,11 @@ export const RELEVANCE_RULES = [
   { id: 'lubricant_sex_pain', why: 'MedlinePlus: use a vaginal lubricant to make sex less painful, at any age.',
     when: (f) => f.t(/lubricant|\blube\b/) && !f.n(/\boil\b|silicone|arousal|warming|tingl|anal/) && f.type !== 'digital',
     set: { 'pain.sexual': STRONG } },
+  // Nov 6: MedlinePlus (Urge incontinence) lists Kegel exercises, biofeedback and electrical
+  // stimulation for urge incontinence, so pelvic floor trainers count for urgency and frequency.
+  { id: 'pelvic_trainer_urgency', why: 'MedlinePlus: Kegel exercises, biofeedback and electrical stimulation help urge incontinence.',
+    when: (f) => (f.cat === 'pelvic-floor' || f.cat === 'incontinence') && f.type !== 'digital' && (f.n(/kegel|trainer|perifit|elvie|elitone|exerciser|weights?\b/) || f.t(/biofeedback|kegel|electrical stimulation|e-?stim/)),
+    set: { 'urinary.urgency': STRONG, 'urinary.frequency': SECONDARY } },
   // Nov 5 (founder: "all of them should have a match"): products that mapped to no need now map by
   // what they are for, at a modest level. These are fit-by-use, not efficacy claims; their grades and
   // percents stay low unless evidence lifts them.

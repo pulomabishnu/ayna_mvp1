@@ -370,16 +370,17 @@ export default [
  {
   "product": "p-citracal-bone-health",
   "need": "cycle.pms",
-  "strength": "secondary",
+  "strength": "primary",
   "grade": "B",
-  "rationale": "womenshealth.gov: studies show calcium can help reduce some PMS symptoms, such as fatigue, cravings and depression. This product is made for bone health.",
+  "rationale": "womenshealth.gov (PMS): studies show calcium can help reduce some PMS symptoms, such as fatigue, cravings and depression. This is a calcium and vitamin D product sold for bone health.",
   "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
   "reviewer": "research",
-  "reviewed": "2026-10-24",
+  "reviewed": "2026-11-05",
   "resourced_from_unverified": {
    "grade": "B",
    "source": "https://www.mayoclinic.org/diseases-conditions/premenstrual-syndrome/expert-answers/pmdd/faq-20058315"
-  }
+  },
+  "grade_status": "verified"
  },
  {
   "product": "d-initio",
@@ -2702,12 +2703,13 @@ export default [
  {
   "product": "d-calm",
   "need": "sleep.trouble",
-  "strength": "secondary",
-  "grade": "B",
-  "rationale": "AASM conditionally recommends relaxation therapy and makes no recommendation on mindfulness; music may improve self-reported sleep quality; not CBT-I, so not A.",
-  "source_url": "https://www.nccih.nih.gov/health/sleep-disorders-and-complementary-health-approaches",
+  "strength": "primary",
+  "grade": "C",
+  "rationale": "NCCIH (Meditation and mindfulness): mindfulness meditation practices may help reduce insomnia and improve sleep quality. The sleep academy (AASM) makes no recommendation on mindfulness, so the grade stays C. No trial of this app.",
+  "source_url": "https://www.nccih.nih.gov/health/meditation-and-mindfulness-effectiveness-and-safety",
   "reviewer": "research",
-  "reviewed": "2026-10-17"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "p-creatine-womens",
@@ -2807,12 +2809,13 @@ export default [
  {
   "product": "d-headspace",
   "need": "sleep.trouble",
-  "strength": "secondary",
-  "grade": "B",
-  "rationale": "A 2019 analysis found mindfulness improved sleep quality vs education, but AASM made no recommendation on mindfulness for insomnia.",
+  "strength": "primary",
+  "grade": "C",
+  "rationale": "NCCIH (Meditation and mindfulness): mindfulness meditation practices may help reduce insomnia and improve sleep quality. The sleep academy (AASM) makes no recommendation on mindfulness, so the grade stays C. No trial of this app.",
   "source_url": "https://www.nccih.nih.gov/health/meditation-and-mindfulness-effectiveness-and-safety",
   "reviewer": "research",
-  "reviewed": "2026-10-17"
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
  },
  {
   "product": "d-hers",
@@ -6793,7 +6796,7 @@ export default [
  {
   "product": "p-rugby-vitamin-b6-25",
   "need": "cycle.pms",
-  "strength": "secondary",
+  "strength": "primary",
   "grade": "C",
   "rationale": "womenshealth.gov: vitamin B6 may help PMS symptoms including moodiness, irritability, bloating and anxiety; talk to your doctor before taking supplements.",
   "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
@@ -6804,9 +6807,9 @@ export default [
  {
   "product": "p-rugby-vitamin-b6-25",
   "need": "mood.cycle_related",
-  "strength": "secondary",
+  "strength": "primary",
   "grade": "C",
-  "rationale": "womenshealth.gov: vitamin B6 may help PMS moodiness, irritability and anxiety.",
+  "rationale": "womenshealth.gov (PMS): vitamin B6 may help PMS symptoms including moodiness and irritability; talk to your doctor before taking supplements.",
   "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
   "reviewer": "research",
   "reviewed": "2026-11-05",
@@ -6815,7 +6818,7 @@ export default [
  {
   "product": "p-rugby-vitamin-b6-25",
   "need": "bloating.cycle_related",
-  "strength": "secondary",
+  "strength": "primary",
   "grade": "C",
   "rationale": "womenshealth.gov: vitamin B6 may help PMS bloating.",
   "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
@@ -6848,9 +6851,9 @@ export default [
  {
   "product": "d-headspace",
   "need": "mood.swings",
-  "strength": "secondary",
+  "strength": "primary",
   "grade": "C",
-  "rationale": "womenshealth.gov: some women find meditation helpful for PMS; find healthy ways to cope with stress.",
+  "rationale": "womenshealth.gov (PMS): some women report relief from PMS symptoms, including irritability and mood swings, with yoga or meditation. No trial of this app for it.",
   "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
   "reviewer": "research",
   "reviewed": "2026-11-05",
@@ -6859,9 +6862,130 @@ export default [
  {
   "product": "d-calm",
   "need": "mood.swings",
-  "strength": "secondary",
+  "strength": "primary",
   "grade": "C",
-  "rationale": "womenshealth.gov: some women find meditation helpful for PMS; find healthy ways to cope with stress.",
+  "rationale": "womenshealth.gov (PMS): some women report relief from PMS symptoms, including irritability and mood swings, with yoga or meditation. No trial of this app for it.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "d-headspace",
+  "need": "mood.irritability",
+  "strength": "primary",
+  "grade": "C",
+  "rationale": "womenshealth.gov (PMS): some women report relief from PMS symptoms, including irritability and mood swings, with yoga or meditation. No trial of this app for it.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "d-headspace",
+  "need": "mood.cycle_related",
+  "strength": "primary",
+  "grade": "C",
+  "rationale": "womenshealth.gov (PMS): some women report relief from PMS symptoms, including irritability and mood swings, with yoga or meditation. No trial of this app for it.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "d-calm",
+  "need": "mood.irritability",
+  "strength": "primary",
+  "grade": "C",
+  "rationale": "womenshealth.gov (PMS): some women report relief from PMS symptoms, including irritability and mood swings, with yoga or meditation. No trial of this app for it.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "d-calm",
+  "need": "mood.cycle_related",
+  "strength": "primary",
+  "grade": "C",
+  "rationale": "womenshealth.gov (PMS): some women report relief from PMS symptoms, including irritability and mood swings, with yoga or meditation. No trial of this app for it.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "p-rugby-vitamin-b6-25",
+  "need": "mood.swings",
+  "strength": "primary",
+  "grade": "C",
+  "rationale": "womenshealth.gov (PMS): vitamin B6 may help PMS symptoms including moodiness and irritability; talk to your doctor before taking supplements.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "p-rugby-vitamin-b6-25",
+  "need": "mood.irritability",
+  "strength": "primary",
+  "grade": "C",
+  "rationale": "womenshealth.gov (PMS): vitamin B6 may help PMS symptoms including moodiness and irritability; talk to your doctor before taking supplements.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "d-clue",
+  "need": "mood.cycle_related",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "womenshealth.gov (PMS): write down your symptoms each day on a calendar or with an app, for a few months, and bring it to your doctor. Tracking shows whether mood changes follow your cycle; it does not treat them.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "d-stardust",
+  "need": "mood.cycle_related",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "womenshealth.gov (PMS): write down your symptoms each day on a calendar or with an app, for a few months, and bring it to your doctor. Tracking shows whether mood changes follow your cycle; it does not treat them.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "d-health-her-health-her-app",
+  "need": "mood.cycle_related",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "womenshealth.gov (PMS): write down your symptoms each day on a calendar or with an app, for a few months, and bring it to your doctor. Tracking shows whether mood changes follow your cycle; it does not treat them.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "d-lively-lively-period-tracker-cycle",
+  "need": "mood.cycle_related",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "womenshealth.gov (PMS): write down your symptoms each day on a calendar or with an app, for a few months, and bring it to your doctor. Tracking shows whether mood changes follow your cycle; it does not treat them.",
+  "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
+  "reviewer": "research",
+  "reviewed": "2026-11-05",
+  "grade_status": "verified"
+ },
+ {
+  "product": "d-apple-health",
+  "need": "mood.cycle_related",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "womenshealth.gov (PMS): write down your symptoms each day on a calendar or with an app, for a few months, and bring it to your doctor. Tracking shows whether mood changes follow your cycle; it does not treat them.",
   "source_url": "https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome",
   "reviewer": "research",
   "reviewed": "2026-11-05",

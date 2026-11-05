@@ -68,7 +68,8 @@ const INTENTS = {
   'hair falling out after baby': HAIR,
   'chin hair': { tags: /pcos|pmos|hirsut|facial-hair|hair-removal/ },
   'boob pain before period': { tags: /breast-tenderness/ },
-  pms: PMS, 'pms mood swings': { cats: ['mental-health'], tags: /\bpms\b|mood/ },
+  pms: PMS, // Nov 6: PMS mood matches now include B6, mood trackers and meditation apps (womenshealth.gov PMS page).
+  'pms mood swings': { cats: ['mental-health', 'tracker', 'supplement'], tags: /\bpms\b|mood/ },
   'low sex drive': { cats: ['sex-tech'], tags: /libido|sexual/ },
   'tired on my period': { tags: /energy|fatigue|iron/ },
   'period headache': { cats: ['medication', 'cramp-relief'], tags: /headache|migraine/ },

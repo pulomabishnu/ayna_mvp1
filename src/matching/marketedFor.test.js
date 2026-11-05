@@ -33,3 +33,15 @@ describe('symptoms are for everyone', () => {
     for (const o of ['Vaginal odor', 'Unusual vaginal discharge', 'BV concerns']) expect(shelf(o).productIds.length, o).toBeGreaterThan(0);
   });
 });
+
+describe('irritability, mood swings and sleep have non-pill options (womenshealth.gov, NCCIH)', () => {
+  it('meditation apps for irritability and mood swings; mood trackers for cycle-related mood; meditation for sleep', () => {
+    expect(shelf('Irritability').productIds).toEqual(expect.arrayContaining(['d-headspace', 'd-calm']));
+    expect(shelf('Mood swings').productIds).toEqual(expect.arrayContaining(['d-headspace', 'd-calm']));
+    expect(shelf('Cycle-related mood changes').productIds.length).toBeGreaterThanOrEqual(3);
+    expect(shelf('Trouble sleeping').productIds).toEqual(expect.arrayContaining(['d-headspace', 'd-calm']));
+  });
+  it('urgency: a pelvic floor trainer (MedlinePlus: Kegel exercises, biofeedback)', () => {
+    expect(shelf('Urinary urgency').productIds.length).toBeGreaterThan(0);
+  });
+});

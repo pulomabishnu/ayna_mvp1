@@ -2026,7 +2026,8 @@ function careFlagsFor(up) {
     const utiFirstTime = ph.utiFrequency === 'first_time';
     const severePain = needIds.has('pain.menstrual_cramp') && (ph.painIntensity ?? 0) >= 0.8;
     const veryHeavyFlow = ph.flow === 'very_heavy';
-    const symptomCare = ['urinary.burning', 'vaginal.discharge', 'sexual.sti', 'vaginal.bv', 'pain.pelvic'].filter((id) => needIds.has(id));
+    // Nov 6: MedlinePlus (Frequent or urgent urination): see your provider to find and treat the cause.
+    const symptomCare = ['urinary.burning', 'vaginal.discharge', 'sexual.sti', 'vaginal.bv', 'pain.pelvic', 'urinary.frequency'].filter((id) => needIds.has(id));
     // Nov 4 (50-profile run): spotting between periods got liners and no word about getting it checked.
     // MedlinePlus: call your provider about unexplained bleeding between periods.
     const spotting = needIds.has('cycle.spotting');
