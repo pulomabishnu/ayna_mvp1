@@ -161,8 +161,9 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
     return (
       <Tag className={`ay-ob-ready ay-pz uq-reveal is-${variant}`} aria-labelledby="ay-pz-h">
         {onBack && <button type="button" className="ay-ob-back" onClick={onBack} aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>}
-        <p className="ay-pz__found"><span className="ay-ob-count">{total}</span> {total === 1 ? 'match is' : 'matches are'} ready</p>
-        <h1 id="ay-pz-h" className="ay-pz__h">Make them more <em>you.</em></h1>
+        {/* Inspo: the big stat number (heart-rate and wellness dashboards), not a highlighter. */}
+        <p className="ay-pz__found"><span className="ay-pz__num">{total}</span><span className="ay-pz__lbl">{total === 1 ? 'match' : 'matches'}<br />ready</span></p>
+        <h1 id="ay-pz-h" className="ay-pz__h">Make them more you.</h1>
         <p className="ay-pz__time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>About {(canMore ? moreMin : 0) + (onConnect ? 2 : 0)} minutes · all optional</p>
         <ul className="ay-pz__list">
           {canMore && (
@@ -178,7 +179,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
             <li style={{ '--i': 1 }}>
               <button type="button" onClick={onConnect}>
                 <span className="ay-pz__blob is-butter" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 4h7l4 4v12H7z" /><path d="M14 4v4h4M10 13h5M10 16.5h5" /></svg></span>
-                <span className="ay-pz__txt"><b>Connect your health records</b><small>Allergies, conditions, medicines · 1 min</small></span>
+                <span className="ay-pz__txt"><b>Connect your health records</b><small>Allergies, medicines · 1 min</small></span>
                 <Arrow />
               </button>
             </li>

@@ -582,3 +582,33 @@ html body .app-container.app-container.app-container .ay-ob-ready.is-web.is-web.
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card > .ay-deck__title { font-size: 20px !important; }
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__cards { margin-bottom: 28px !important; }
 html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-rvtabs { margin-top: 14px !important; }
+/* Step 1, v2 (founder: no highlight, better spacing): a big stat number like the inspo dashboards,
+   then the headline in plain espresso, on an 8px rhythm. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-ob-back { margin: 0 0 32px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__found { display: flex; align-items: center; gap: 12px; margin: 0 0 16px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__num { font: 700 72px/.9 var(--ay-font-display, var(--o-sans, sans-serif)); letter-spacing: -.04em; color: inherit; animation: ay-pop .55s cubic-bezier(.2, 1.4, .4, 1) .1s both; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__lbl { font: 600 16px/1.2 var(--o-sans, sans-serif); color: inherit; opacity: .8; }
+html body :is(.ayna-mobile, .app-container) .ay-pz h1#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h { margin: 0 0 8px !important; font-size: 40px !important; line-height: 1.02 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__time { margin: 0 0 32px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__list { margin: 0 0 24px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__list button { min-height: 80px; padding: 16px 0 !important; gap: 16px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__txt small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Calmer color (founder: "the colors don't clash", "stop with the highlight"). The title number is
+   plain type. Cards go pink, then butter-deep (no espresso card next to pink on web). Inside a card
+   everything is espresso: the percent is an espresso pill with butter text, the count chip an
+   espresso outline. One accent per card, never pink-on-butter-on-espresso at once. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready:not(.ay-pz) .ay-ob-count { padding: 0 !important; background: none !important; color: inherit !important; animation: none !important; }
+html body .app-container.app-container .ay-ob-ready.ay-ob-ready.is-web .ay-deck__card.is-tone-1 { background: #f6e3a1 !important; color: #3e2723 !important; }
+html body .app-container.app-container .ay-ob-ready.ay-ob-ready.is-web .ay-deck__card.is-tone-2 { background: #f7badd !important; color: #3e2723 !important; }
+html body .app-container.app-container .ay-ob-ready.ay-ob-ready.is-web .ay-deck__card.is-tone-1 .ay-ob-picks > li { border-top-color: rgba(62, 39, 35, .14) !important; }
+html body .app-container.app-container .ay-ob-ready.ay-ob-ready.is-web .ay-deck.is-single .ay-deck__cards::before { background: #f6e3a1; }
+html body .app-container.app-container .ay-ob-ready.ay-ob-ready.is-web .ay-deck.is-single .ay-deck__cards::after { background: #3e2723; opacity: .12; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-ob-picks__pct,
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card:is(.is-tone-0, .is-tone-1, .is-tone-2) .ay-ob-picks__pct,
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-svc .ay-ob-picks__pct { background: #3e2723 !important; color: #ffedac !important; }
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-svc .ay-ob-picks__pct { background: #ffedac !important; color: #3e2723 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card .ay-deck__head em,
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-ob-ready .ay-deck__card:is(.is-tone-0, .is-tone-1, .is-tone-2) .ay-deck__head em,
+html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-deck__card:is(.is-tone-0, .is-tone-1, .is-tone-2) .ay-deck__head em { background: transparent !important; box-shadow: inset 0 0 0 1.5px #3e2723 !important; color: #3e2723 !important; }
+html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__num { color: #ffedac; }
+html body :is(.ayna-mobile, .app-container) .ay-pz h1#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h { margin-bottom: 12px !important; }
