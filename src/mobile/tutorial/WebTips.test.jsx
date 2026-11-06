@@ -25,10 +25,10 @@ function fakeLayout() {
 }
 
 const NAV = `<div class="app-nav-wrap" data-rect='{"left":0,"top":0,"width":1024,"height":68}'><nav class="ay-nav">nav</nav></div>`;
-const TODAY = `<div data-tour="today"><div data-tour="rundown-card">Rundown</div><ul data-tour="today-things"><li>Check in</li><li>Answer</li></ul></div>`;
+const HOME = `<div data-tour="home"><div data-tour="rundown-card">Rundown</div><ul data-tour="today-things"><li>Check in</li><li>Answer</li></ul></div>`;
 const EXPLORE = `<div data-tour="explore"><form data-tour="explore-search"><input aria-label="Search" /></form><div data-tour="explore-sections">x</div></div>`;
 
-function mountWeb({ view = 'today', html, ready = true }) {
+function mountWeb({ view = 'home', html, ready = true }) {
   page = document.createElement('div');
   page.className = 'app-container';
   page.dataset.view = view;
@@ -65,8 +65,8 @@ afterEach(() => {
 });
 
 describe('website first visit', () => {
-  it('welcome on Today after setup, then Today’s tips, then each screen once', () => {
-    mountWeb({ html: TODAY });
+  it('welcome on Home after setup, then Home’s tips, then each screen once', () => {
+    mountWeb({ html: HOME });
     wait(1000);
     expect(dialog()?.textContent).toContain('Want a quick tour?');
     expect(document.querySelector('.ay-tour').classList.contains('is-web')).toBe(true);
@@ -78,7 +78,7 @@ describe('website first visit', () => {
     // No rings without health data: the Rundown is Home's one tip, then Home's next part.
     expect(document.querySelector('.ay-tour__count')).toBeNull();
     click('Got it');
-    expect(readTour().seen.today).toBeTruthy();
+    expect(readTour().seen.home).toBeTruthy();
     wait(1500);
     expect(dialog().textContent).toContain('A few things for today');
     expect(dialog().textContent).not.toContain('Turn tips off any time');
@@ -121,7 +121,7 @@ describe('website first visit', () => {
 
   it('signed out: browsing tips show, tips about her own data wait for a profile', () => {
     setTipsEnabled(true);
-    mountWeb({ view: 'today', html: TODAY, ready: false });
+    mountWeb({ view: 'home', html: HOME, ready: false });
     wait(3000);
     expect(dialog()).toBeNull();
     swap('explore', EXPLORE);
@@ -137,20 +137,20 @@ describe('website first visit', () => {
   });
 
   it('nothing before setup is done, and never on setup screens', () => {
-    mountWeb({ html: TODAY, ready: false });
+    mountWeb({ html: HOME, ready: false });
     wait(3000);
     expect(dialog()).toBeNull();
     act(() => root.render(<TutorialLayer surface="web" userId={null} ready />));
-    swap('quiz', TODAY);
+    swap('quiz', HOME);
     wait(3000);
     expect(dialog()).toBeNull();
   });
 
-  it('no welcome outside Today, and never over the Daily Rundown story', () => {
+  it('no welcome outside Home, and never over the Daily Rundown story', () => {
     mountWeb({ view: 'explore', html: EXPLORE });
     wait(2000);
     expect(dialog()).toBeNull();
-    swap('today', `${TODAY}<div class="ay-rd" role="dialog" aria-modal="true"></div>`);
+    swap('home', `${HOME}<div class="ay-rd" role="dialog" aria-modal="true"></div>`);
     wait(2000);
     expect(dialog()).toBeNull();
     page.querySelector('.ay-rd').remove();
@@ -189,7 +189,7 @@ describe('website first visit', () => {
 
   it('a safety item first in today’s things is never a tip’s anchor', () => {
     setTipsEnabled(true);
-    mountWeb({ html: '<div data-tour="today"><div data-tour="rundown-card">Rundown</div><ul data-tour="today-things"><li class="ay-today__item is-safety">Get checked</li></ul></div>' });
+    mountWeb({ html: '<div data-tour="home"><div data-tour="rundown-card">Rundown</div><ul data-tour="today-things"><li class="ay-today__item is-safety">Get checked</li></ul></div>' });
     wait(1000);
     expect(dialog().textContent).toContain('Daily Rundown');
     expect(document.querySelector('.ay-tour__count')).toBeNull();
@@ -206,7 +206,7 @@ describe('website first visit', () => {
 
 describe('website opt-out', () => {
   it('No thanks: nothing shows on any screen', () => {
-    mountWeb({ html: TODAY });
+    mountWeb({ html: HOME });
     wait(1000);
     click('No thanks');
     expect(readTour().enabled).toBe(false);
@@ -269,15 +269,15 @@ describe('website Settings and replay', () => {
 });
 
 describe('website registry and placement', () => {
-  it('Today offers the welcome; other screens never do', () => {
+  it('Home offers the welcome; other screens never do', () => {
     const fresh = { enabled: null, seen: {}, welcomeDay: null, offNoteShown: false };
-    expect(tourDecision({ screen: screenById('today', 'web'), prefs: fresh, today: '2026-10-25' }).kind).toBe('welcome');
+    expect(tourDecision({ screen: screenById('home', 'web'), prefs: fresh, today: '2026-10-25' }).kind).toBe('welcome');
     // The landing's welcome tip is the one tip that needs no opt-in.
-    for (const s of WEB_SCREENS.filter((x) => x.id !== 'today' && !x.landing)) expect(tourDecision({ screen: s, prefs: fresh, today: '2026-10-25' }).kind).toBe('none');
+    for (const s of WEB_SCREENS.filter((x) => x.id !== 'home' && !x.landing)) expect(tourDecision({ screen: s, prefs: fresh, today: '2026-10-25' }).kind).toBe('none');
   });
   it('covers the six screens, at most 2 tips each, one short sentence', () => {
     // The page screens, plus parts (within) for long pages and the top bar.
-    expect(WEB_SCREENS.filter((s) => !s.within).map((s) => s.id).sort()).toEqual(['ask', 'community', 'compare', 'explore', 'landing', 'library', 'metric-sheet', 'product-page', 'quiz-hold', 'services', 'today', 'you']);
+    expect(WEB_SCREENS.filter((s) => !s.within).map((s) => s.id).sort()).toEqual(['ask', 'community', 'compare', 'explore', 'landing', 'library', 'metric-sheet', 'product-page', 'quiz-hold', 'services', 'home', 'you']);
     for (const s of WEB_SCREENS) {
       expect(tipsToShow(s, () => true).length).toBeLessThanOrEqual(2);
       for (const t of s.tips) {
