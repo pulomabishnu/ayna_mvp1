@@ -37,6 +37,8 @@ export const CONCERN_CONFIG = [
   { key: 'UTI support', tags: ['uti'], categories: ['supplement', 'telehealth', 'diagnostics'] },
   { key: 'STI support', tags: ['sti', 'std', 'sexual-health'], categories: ['telehealth', 'diagnostics'] },
   { key: 'Gut and vaginal health (probiotics, pH balance)', tags: ['vaginal-health', 'probiotic', 'ph-balance'], categories: ['supplement', 'intimate-care'] },
+  // Match the reported symptom without inferring a menopausal life stage.
+  { key: 'Hot flashes and night sweats', tags: ['cooling', 'hot-flashes', 'night-sweats'], categories: ['tracker', 'sleep', 'telehealth'] },
   { key: 'Perimenopause and menopause support', tags: ['menopause'], categories: ['menopause', 'supplement', 'telehealth'] },
   { key: 'Sexual health and comfort (lubricants, pelvic floor)', tags: ['pelvic-floor'], categories: ['sex-tech', 'intimate-care', 'pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser'] },
   { key: 'Mental health and cycle mood support', tags: ['mood', 'anxiety'], categories: ['mental-health'] },
