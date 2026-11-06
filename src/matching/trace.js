@@ -37,7 +37,7 @@ export function decisionTrace({ safety, pp, best, up }) {
     // Her sensitivities, checked against a known product fact.
     for (const c of safety.confirmed || []) checks.push({ code: `allergen_free:${c.attr}`, text: c.text });
     // A stage-only product, and her stated stage is in it.
-    const scope = stageScopeFor(pp.product_id);
+    const scope = stageScopeFor(pp.product_id, pp.name);
     if (scope) checks.push({ code: 'stage_scope', text: `Made for ${scope.phrase}, which matches the life stage you shared` });
     // Medicines: only a reviewed "compatible" counts as a check.
     if (safety.interaction?.verdict === 'compatible') checks.push({ code: 'medications_reviewed', text: 'Checked against the medicines you listed' });

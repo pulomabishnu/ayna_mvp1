@@ -235,6 +235,7 @@ describe('distribution across needs stays stable', () => {
     // bloating, NSAIDs for breast tenderness (womenshealth.gov) add more of the same kind of hold (+7).
     // Nov 5: birth-control services are only adjacent for UTI symptoms (all-hands), fewer holds.
     // Nov 5 (Ameera): Advil, Aleve and Cystex hidden from the site (NSAIDs), so their holds are gone (-28).
-    expect(holds).toBe(329);
+    // Nov 6: products named for a life stage are scoped to it, and fewer medicine pairs hold (+3 net).
+    expect(holds).toBe(332);
   });
 });

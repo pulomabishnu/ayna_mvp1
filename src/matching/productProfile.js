@@ -298,6 +298,7 @@ const MARKETED_FOR = {
   'condition_support.pcos': { re: /\bpcos\b|\bpmos\b|polycystic ovar/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.cs(/acne|pimple|breakout/) },
   'sexual.libido': { re: /\blibido\b|sex drive|\barousal\b/, ok: (f) => !PERIOD_CATEGORIES.has(f.cat) },
   'cognition.brain_fog': { re: /brain fog|mental clarity|cognitive (function|support|health)|\bmemory\b/, ok: (f) => f.cat === 'supplement' || f.cat === 'mental-health' },
+  'sleep.trouble': { re: /\bsleep\b|insomnia|fall asleep|stay asleep/, ok: (f) => f.cat === 'supplement' || f.cat === 'sleep' },
   'digestive.gas': { re: /\bgas\b|gassiness|flatulen/, ok: (f) => f.cat === 'supplement' },
   'pain.abdominal': { re: /stomach (ache|pain|discomfort|upset)|abdominal (pain|discomfort)|tummy (ache|trouble|troubles)|upset stomach/, ok: (f) => f.cat === 'supplement' || f.cat === 'cramp-relief' },
 };
@@ -615,6 +616,13 @@ export const RELEVANCE_RULES = [
   { id: 'lubricant_sex_pain', why: 'MedlinePlus: use a vaginal lubricant to make sex less painful, at any age.',
     when: (f) => f.t(/lubricant|\blube\b/) && !f.n(/\boil\b|silicone|arousal|warming|tingl|anal/) && f.type !== 'digital',
     set: { 'pain.sexual': STRONG } },
+  // Nov 6 (founder: sleep masks, earplugs, sound machines, sunrise alarms "could be matches"; a product
+  // doesn't need a trial if it does a simple job well). MedlinePlus (Changing your sleep habits): make
+  // sure your sleep area is quiet, dark and at a temperature you like, and wake around the same time.
+  // These are judged on fit, like pads (v2 FIT_JUDGED_RULES), not on a health claim.
+  { id: 'sleep_environment', why: 'MedlinePlus: a quiet, dark sleep area at a temperature you like, and a steady wake time, help sleep.',
+    when: (f) => f.type !== 'digital' && !f.fmt(/capsule|softgel|tablet|gumm|tincture|drops|powder|\btea\b|shot\b/) && (f.n(/sleep mask|eye mask|eye cover|ear ?plugs?|white noise|sound machine|noise[- ]cancel|sleep headphones?|sleep buds|sunrise|wake[- ]up light|sleep (?:light|lamp)|hatch restore|blackout/) || (f.cat === 'sleep' && f.n(/mask|ear|sound|noise|light|alarm|clock/))),
+    set: { 'sleep.trouble': STRONG } },
   // Nov 6: MedlinePlus (Urge incontinence) lists Kegel exercises, biofeedback and electrical
   // stimulation for urge incontinence, so pelvic floor trainers count for urgency and frequency.
   { id: 'pelvic_trainer_urgency', why: 'MedlinePlus: Kegel exercises, biofeedback and electrical stimulation help urge incontinence.',

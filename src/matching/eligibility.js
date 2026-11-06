@@ -106,7 +106,7 @@ export const LIFE_STAGE_TEXT = {
  * @returns {null | { block: {code,text} } | { hold: 'life_stage' | 'confirm_life_stage' }}
  */
 export function stageScopeCheck(pp, up) {
-  const scope = stageScopeFor(pp?.product_id);
+  const scope = stageScopeFor(pp?.product_id, pp?.name);
   if (!scope) return null;
   const stages = up?.physiology?.lifeStages || [];
   const breastfeeding = up?.safety?.breastfeeding === 'yes';

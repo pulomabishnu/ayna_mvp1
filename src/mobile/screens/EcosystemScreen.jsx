@@ -1,4 +1,5 @@
 import './profile/health-connections.css';
+import { groupShelves } from '../../matching/shelfGroups.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { loadMonthlyCheckinStatus } from '../../utils/monthlyCheckinStore.js';
 import EmptyState from '../components/EmptyState.jsx';
@@ -145,7 +146,8 @@ export default function EcosystemScreen({
   // plus care flags (care first when urgent = Yes, calm care notes otherwise).
   const seed = useMemo(() => (quizAnswers ? getEcosystemSeedFromQuiz(quizAnswers, null, matchOpts) : null), [quizAnswers, matchOpts]);
   const phraseById = useMemo(() => new Map((quizAnswers ? getSelectedNeeds(quizAnswers, null, matchOpts) : []).map((n) => [n.id, n.phrase])), [quizAnswers, matchOpts]);
-  const shelves = seed?.shelves || [];
+  // Nov 6: needs one set of products serves share a shelf (src/matching/shelfGroups.js).
+  const shelves = useMemo(() => groupShelves(seed?.shelves || []), [seed]);
   // A need the counts call covered never shows an empty shelf: if the shortlist
   // left it empty, the product of hers that covers it joins that shelf.
   const fits = (p, needId) => scoreFor(p, quizAnswers).needMatches?.some((m) => m.needId === needId && m.relevant && m.score >= MIN_SHELF_SCORE);

@@ -226,6 +226,10 @@ function allergenApplies(attr, pp) {
 }
 // Over-the-counter medicines whose Drug Facts label (DailyMed, read Nov 5 2026) says "Ask a doctor or
 // pharmacist before use if you are taking any other drug". Product id -> label URL.
+// Medicines where an unreviewed supplement stays held (FDA names blood thinners; lithium, isotretinoin and
+// aromatase inhibitors have narrow margins or serious stakes), and medicines herbs are known to affect.
+const INTERACTION_HIGH_RISK = new Set(['anticoagulant', 'vitamin_k_antagonist', 'antiplatelet_salicylate', 'lithium', 'oral_retinoid', 'aromatase_inhibitor']);
+const HERB_SENSITIVE = new Set(['ssri', 'snri', 'ndri', 'antidepressant', 'benzodiazepine', 'cns_stimulant', 'thyroid_hormone', 'combined_hormonal_contraceptive', 'progestin_only_contraceptive', 'hormonal_contraceptive', 'blood_pressure', 'ace_inhibitor', 'arb', 'calcium_channel_blocker']);
 export const OTC_LABEL_ASK_PHARMACIST = {
   'p-advil-ibuprofen-200': 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a665e64-9f30-be37-4a83-38789f1f1e89',
   'p-aleve-naproxen-220': 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=46e7b298-9e19-49b6-be71-e4fdcb09a5d4',
@@ -469,7 +473,24 @@ export function evaluateSafety(productOrProfile, up) {
       // taking any other drug." So it shows, with that instruction, instead of being hidden.
       penalize('medication_unknown', 'Interaction with your medicines not reviewed');
       cautions.push({ code: 'medication_label_ask', text: 'Its Drug Facts label says to ask a doctor or pharmacist before use if you take any other drug. We have not checked it against your medicines.', source: askLabel });
-    } else if (listed && systemicRoute(pp, hormoneActive) && interaction.verdict !== 'caution') missingProductInfo.push('interaction_info');
+    } else if (listed && systemicRoute(pp, hormoneActive) && interaction.verdict !== 'caution') {
+      // Nov 6 (founder: holds hid too much). FDA (Mixing medications and dietary supplements): talk with
+      // a health care professional before combining them; blood thinners, depression, heart, transplant,
+      // HIV and birth-control medicines are the ones named. So the hold stays for a medicine we don't
+      // recognize, a high-risk one, or an herbal with a medicine herbs are known to affect; otherwise the
+      // product shows with an ask-your-pharmacist line instead of disappearing.
+      const classesOf = (m) => m.all_classes || m.classes || [];
+      const listedMeds = s.medications.filter((m) => m.source !== 'life_stage');
+      const unknownMed = listedMeds.some((m) => !classesOf(m).length);
+      const highRisk = listedMeds.some((m) => classesOf(m).some((c) => INTERACTION_HIGH_RISK.has(c)));
+      const herbalRisk = pp.herbal && listedMeds.some((m) => classesOf(m).some((c) => HERB_SENSITIVE.has(c)));
+      if (unknownMed || highRisk || herbalRisk) missingProductInfo.push('interaction_info');
+      else {
+        penalize('medication_unknown', 'Interaction with your medicines not reviewed');
+        const names = listedMeds.map((m) => m.generic || m.raw).filter(Boolean).slice(0, 2).join(' and ');
+        cautions.push({ code: 'medication_ask_pharmacist', text: `Ask your pharmacist before taking this with ${names || 'your medicines'}. We haven’t checked this exact combination.`, source: 'https://www.fda.gov/consumers/consumer-updates/mixing-medications-and-dietary-supplements-can-endanger-your-health' });
+      }
+    }
     else penalize('medication_unknown', 'Interaction with your medicines not reviewed');
   }
   // 6b. Reviewed label / NIH interaction text that names one of her medicines.

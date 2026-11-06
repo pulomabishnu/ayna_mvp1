@@ -53,6 +53,20 @@ export const STAGE_SCOPE = {
   'p-rituals-prenatal': PRENATAL,
 };
 
-export function stageScopeFor(productId) {
-  return productId ? STAGE_SCOPE[productId] || null : null;
+// Nov 6 (founder: a "Perimenopause Support Pack" as someone's first bone-health match is confusing).
+// A product whose NAME says it is for a life stage is scoped to that stage too, unless it is listed
+// above. Tests and trackers that only mention a stage in passing are left out.
+const NAME_SCOPES = [
+  [/\b(peri)?menopaus|\bmidlife\b/i, MENOPAUSE],
+  [/\bprenatal\b|\bpregnan(t|cy)\b/i, PRENATAL],
+  [/\bpost-?partum\b|\bpostnatal\b|\bnursing\b|breastfeed|lactation|\bmom\b/i, NURSING],
+];
+const NAME_EXEMPT = /\btests?\b|\bstrips?\b|safe\b|hot flash|cool/i;
+export function stageScopeFor(productId, name = '') {
+  if (!productId) return null;
+  if (STAGE_SCOPE[productId]) return STAGE_SCOPE[productId];
+  const n = String(name || '');
+  if (!n || NAME_EXEMPT.test(n)) return null;
+  const hit = NAME_SCOPES.find(([re]) => re.test(n));
+  return hit ? hit[1] : null;
 }

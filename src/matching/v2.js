@@ -148,6 +148,7 @@ export function evidenceFactorFor(category, grade) {
   if (HEALTH_CLAIM_CATEGORIES.has(c)) return V2.E_CLAIM[grade] ?? 1;
   return V2.E[grade] ?? 1;
 }
+export const FIT_JUDGED_RULES = new Set(['sleep_environment']);
 const UNIVERSAL_CATEGORIES = new Set(['telehealth', 'therapy']);
 
 /** Draft GRADE-style evidence grade for this product and need. */
@@ -256,7 +257,8 @@ function hash01(s) {
 export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signals?.profile || null) {
   const isEffect = !NO_EFFECT_CATEGORIES.has(String(pp.category || '').toLowerCase());
   const grade = evidenceGrade(pp, r.needId);
-  const E = evidenceFactorFor(pp.category, grade);
+  // Nov 6: products that do a simple job (a dark, quiet room) are judged on fit, like pads.
+  const E = FIT_JUDGED_RULES.has(pp.health_need_relevance?.[r.needId]?.rule) ? 1 : evidenceFactorFor(pp.category, grade);
   const needFit = strengthOf(pp, r.needId, r.relationship) * E;
   const focus = focusOf(pp, needIds);
   // Existing product-fit modifiers (flow capacity, UTI timing, life-stage design) carry over
@@ -580,7 +582,16 @@ export function buildEcosystemV2(up, products, options = {}) {
     for (const n of needs) {
       const any = candidates.some((c) => c.results.has(n.id) && !formatExempt(c.pp) && inFormat(c.pp));
       if (!any) { formatFallbackNeeds.add(n.id); continue; }
-      for (const c of candidates) if (c.results.has(n.id) && !formatExempt(c.pp) && !inFormat(c.pp)) c.results.delete(n.id);
+      // Nov 6 (founder: "always give at least 1-2 products in a format they didn't choose unless they
+      // are totally against that format, we want product discovery"): the best-fitting product in
+      // another format stays (one per need), unless she disliked that format or made her formats strict.
+      const disliked = up.shopping?.formats?.disliked || [];
+      const strict = (up.shopping?.formats?.strict || []).length > 0;
+      const others = candidates.filter((c) => c.results.has(n.id) && !formatExempt(c.pp) && !inFormat(c.pp))
+        .sort((a, b) => (b.results.get(n.id).v2?.fit || 0) - (a.results.get(n.id).v2?.fit || 0));
+      const keep = strict ? null : others.find((c) => !(c.pp.formats || []).some((f) => disliked.includes(f)));
+      for (const c of others) if (c !== keep) c.results.delete(n.id);
+      if (keep) keep.discovery = true;
     }
     for (let i = candidates.length - 1; i >= 0; i -= 1) if (!candidates[i].results.size) candidates.splice(i, 1);
   }

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { groupShelves } from '../../matching/shelfGroups.js';
 import { useCatalogReady } from '../../data/catalog.js';
 import { moreRemaining } from '../../mobile/data/onboardingFlow.js';
 import { reconstructIntakeFromSnapshot, isStepAnswered } from '../../mobile/data/intakeModel.js';
@@ -64,7 +65,9 @@ const CARE_LINE_CODES = ['urgent_yes', 'estrogen_bc_condition', 'uti_right_now',
 function perNeed(answers) {
   if (!answers) return { rows: [], total: 0, careNote: '' };
   try {
-    const { shelves = [], careFlags = null } = getEcosystemSeedFromQuiz(answers);
+    const { shelves: rawShelves = [], careFlags = null } = getEcosystemSeedFromQuiz(answers);
+    // Nov 6: needs one set of products serves share a shelf (src/matching/shelfGroups.js).
+    const shelves = groupShelves(rawShelves);
     const seen = new Set();
     const rows = shelves.map((sh) => {
       const all = (sh.productIds || []).map((id) => getProductById(id)).filter((p) => p && showableAsPick(p, answers));
@@ -261,7 +264,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                           {pct != null && <em className="ay-ob-picks__pct">{pct}%</em>}
                         </li>;
                       })}{r.products.length > 3 && <li className="ay-deck__more">+{r.products.length - 3} more in your list</li>}</ol>
-                      : <small className="ay-deck__empty">{r.careFirst && bleeding ? <>Bleeding after menopause should be checked promptly by an ob-gyn or your clinician. We don’t suggest products for it. {bleeding.source?.url && <a href={bleeding.source.url} target="_blank" rel="noopener noreferrer">{bleeding.source.label || 'Source'}</a>}</> : r.id === careOnCard ? careNote : r.services.length ? <>No products for this yet. {r.services.length === 1 ? 'A service fits it' : `${r.services.length} services fit it`}: <button type="button" className="ay-deck__link" onClick={(e) => { e.stopPropagation(); setTab('services'); }}>see services</button></> : r.held ? r.heldWhy : r.why || 'Nothing is backed well enough to recommend yet. You can still see every option for it in Shop.'}</small>}
+                      : <small className="ay-deck__empty">{r.careFirst && bleeding ? <>Bleeding after menopause should be checked promptly by an ob-gyn or your clinician. We don’t suggest products for it. {bleeding.source?.url && <a href={bleeding.source.url} target="_blank" rel="noopener noreferrer">{bleeding.source.label || 'Source'}</a>}</> : r.id === careOnCard ? careNote : r.services.length ? <>No products for this yet. {r.services.length === 1 ? 'A service fits it' : `${r.services.length} services fit it`}: <button type="button" className="ay-deck__link" onClick={(e) => { e.stopPropagation(); setTab('services'); }}>see services</button></> : r.held ? r.heldWhy : r.why || <>Nothing is backed well enough to recommend yet.{variant === 'web' && <> <a className="ay-deck__link" href={`/explore?q=${encodeURIComponent(String(r.label || '').toLowerCase())}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>Browse it in Shop</a> or <a className="ay-deck__link" href="/explore/services" target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>see services</a>.</>}</>}</small>}
                   </li>
                 );
               })}

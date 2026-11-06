@@ -1,4 +1,5 @@
 import NeedRoutines from './routine/NeedRoutines.jsx';
+import { groupShelves } from '../matching/shelfGroups.js';
 import { useRoutines } from './routine/useRoutines.js';
 import { categoryStarterOptions } from './search/starterOptions.js';
 import { ECOSYSTEM_RESET_COPY } from '../utils/resetRoutine.js';
@@ -1182,7 +1183,8 @@ export default function MyEcosystem({
         () => new Map((quizResults ? getSelectedNeeds(quizResults, healthProfile, matchOpts) : []).map((n) => [n.id, n.phrase])),
         [quizResults, healthProfile, matchOpts]
     );
-    const needShelves = useMemo(() => needSeed?.shelves || [], [needSeed]);
+    // Nov 6: needs one set of products serves share a shelf (src/matching/shelfGroups.js).
+    const needShelves = useMemo(() => groupShelves(needSeed?.shelves || []), [needSeed]);
     const useTabs = myProductList.length > 0;
     const savedList = useMemo(() => Object.values(savedProducts || {}).filter((p) => p?.id && p.name), [savedProducts]);
     const pctFor = useMemo(() => makePctFor(quizResults, (p) => getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts)), [quizResults, healthProfile, matchOpts]);

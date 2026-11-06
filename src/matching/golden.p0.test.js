@@ -86,13 +86,23 @@ describe('P0 golden: unknown is not safe', () => {
     const s = evaluateSafety(noPassport, up);
     expect(s.missingProductInfo).toContain('ingredient_list');
   });
-  it('8. a listed medicine + a swallowed product nobody reviewed against it = "Checking this product"', () => {
-    const up = user({ ...base, takesCurrent: 'Yes', currentMedicationItems: ['Sertraline'], lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain'] });
+  // Nov 6 (founder: holds hid too much; FDA: ask a health care professional before combining). A
+  // high-risk medicine (blood thinner) still holds an unreviewed swallowed product; an ordinary one shows
+  // it with an ask-your-pharmacist line (8b).
+  it('8. a high-risk listed medicine + a swallowed product nobody reviewed against it = "Checking this product"', () => {
+    const up = user({ ...base, takesCurrent: 'Yes', currentMedicationItems: ['Warfarin'], lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain'] });
     const g = gate('p-magnesium-glycinate', up);
     expect(g.decision).toBe('hold');
     expect(g.state).toBe('researching');
     expect(g.holds).toContain('interaction_info');
     expect(g.safety.blockedClaims).toContain('medication_compatible');
+  });
+  it('8b. an ordinary medicine + an unreviewed plain nutrient shows with an ask-your-pharmacist line, never "compatible"', () => {
+    const up = user({ ...base, takesCurrent: 'Yes', currentMedicationItems: ['Sertraline'], lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain'] });
+    const s = safety('p-magnesium-glycinate', up);
+    expect(s.missingProductInfo).not.toContain('interaction_info');
+    expect(s.cautions.map((c) => c.code)).toContain('medication_ask_pharmacist');
+    expect(s.blockedClaims).toContain('medication_compatible');
   });
   it('9. the same medicine never holds a heating pad or a non-hormonal topical', () => {
     const up = user({ ...base, takesCurrent: 'Yes', currentMedicationItems: ['Sertraline'], lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain'] });

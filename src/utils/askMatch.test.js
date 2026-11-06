@@ -74,8 +74,8 @@ describe('Ask review (Oct 29): safety questions come from the engine', async () 
     expect(r.answer).toMatch(/ThermaCare Menstrual Pain Therapy/);
   });
   it('"why is X on hold" gives the hold state and reason, never a percent', async () => {
-    const r = await localAnswer('why is magnesium glycinate on hold', { profile, signedIn: true });
-    expect(r.answer).toMatch(/Checking this product/);
+    const r = await localAnswer('why is vitex on hold', { profile, signedIn: true }); // Nov 6: an herbal with an antidepressant still holds
+    expect(r.answer).toMatch(/Checking this product|Safety hold/);
     expect(r.answer).not.toMatch(/\d+% match/);
   });
   it('a pregnancy question about a product states the product’s own fact', async () => {

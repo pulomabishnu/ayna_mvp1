@@ -320,8 +320,8 @@ describe('budget', () => {
 });
 
 describe('medications', () => {
-  it('unknown interaction on something swallowed holds it (P0: unknown is not safe), never reads as compatible', () => {
-    const up = user({ supportSelections: ['Cramps or period pain'], takesCurrent: 'Yes', currentMedicationItems: ['Ozempic'] });
+  it('unknown interaction on something swallowed holds it for a high-risk medicine (P0; Nov 6: ordinary medicines get an ask-your-pharmacist line), never reads as compatible', () => {
+    const up = user({ supportSelections: ['Cramps or period pain'], takesCurrent: 'Yes', currentMedicationItems: ['Lithium'] });
     const supp = score('p-magnesium-glycinate', up, 'pain.menstrual_cramp');
     expect(supp.safety.restricted).toBe(true);
     expect(supp.safety.missingProductInfo).toContain('interaction_info');
