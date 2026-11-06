@@ -324,12 +324,12 @@ export const WEB_SCREENS = [
   {
     id: 'today',
     profile: true,
-    root: '[data-tour="today"]',
+    root: '[data-tour="home"]',
     rundown: true,
     welcome: true,
     tips: [
-      { id: 'today-rundown', anchor: '[data-tour="today"] [data-tour="rundown-card"]', text: 'Your Daily Rundown is new each morning, 60 seconds long.' },
-      { id: 'home-rings', anchor: '[data-tour="today"] [data-tour="score-rings"]', text: 'Your cycle, sleep and activity; tap a ring for more.' },
+      { id: 'today-rundown', anchor: '[data-tour="home"] [data-tour="rundown-card"]', text: 'Your Daily Rundown is new each morning, 60 seconds long.' },
+      { id: 'home-rings', anchor: '[data-tour="home"] [data-tour="score-rings"]', text: 'Your cycle, sleep and activity; tap a ring for more.' },
     ],
   },
   {
@@ -337,20 +337,20 @@ export const WEB_SCREENS = [
     id: 'today-rundown',
     profile: true,
     within: 'today',
-    root: '[data-tour="today"] [data-tour="rundown-card"]',
+    root: '[data-tour="home"] [data-tour="rundown-card"]',
     tips: [
-      { id: 'today-rundown', anchor: '[data-tour="today"] [data-tour="rundown-card"]', text: 'Your Daily Rundown is new each morning, 60 seconds long.' },
+      { id: 'today-rundown', anchor: '[data-tour="home"] [data-tour="rundown-card"]', text: 'Your Daily Rundown is new each morning, 60 seconds long.' },
     ],
   },
   {
     id: 'today-more',
     profile: true,
     within: 'today',
-    root: '[data-tour="today"] [data-tour="today-things"]',
+    root: '[data-tour="home"] [data-tour="today-things"]',
     tips: [
       // The first of today's things (a safety or care item is never a tip's anchor, so then it's skipped).
-      { id: 'today-things', anchor: '[data-tour="today"] [data-tour="today-things"] > li:first-child', text: 'A few things for today, picked from your answers.' },
-      { id: 'home-views', anchor: '[data-tour="today"] [role="tablist"]', text: 'Switch between Your week and Routine.' },
+      { id: 'today-things', anchor: '[data-tour="home"] [data-tour="today-things"] > li:first-child', text: 'A few things for today, picked from your answers.' },
+      { id: 'home-views', anchor: '[data-tour="home"] [role="tablist"]', text: 'Switch between Your week and Routine.' },
     ],
   },
   {
