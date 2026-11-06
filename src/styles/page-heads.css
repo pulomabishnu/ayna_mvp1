@@ -91,3 +91,6 @@
 }
 
 
+
+/* Nov 6: straight header boundary, no masked wavy rules. */
+:is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container :is(.cm-head.cm-titlerow, .ay-ih.uq-bleed)::after { content: none !important; display: none !important; }
