@@ -69,8 +69,17 @@ function selectedConcerns(intake) {
     const fromSupport = [...new Set(support.flatMap(item => asArray(LEGACY_CONCERN_BY_ITEM[item])))];
     if (fromSupport.length) return fromSupport;
   }
-  if (Array.isArray(intake?.primaryConcerns) && intake.primaryConcerns.length > 0) return intake.primaryConcerns;
-  if (intake?.primaryConcern) return [intake.primaryConcern];
+  const legacy = Array.isArray(intake?.primaryConcerns) && intake.primaryConcerns.length > 0
+    ? intake.primaryConcerns : (intake?.primaryConcern ? [intake.primaryConcern] : []);
+  const profile = intakeProfile(intake);
+  const hasVasomotor = asArray(profile?.supportSelections).some((s) => s === 'Hot flashes' || s === 'Night sweats')
+    || asArray(intake?.symptoms).some((s) => /hot flash|hot flush|night sweat/i.test(String(s)));
+  const namedMenopause = asArray(profile?.lifeStageSelections).some((s) => /^I am (?:in peri|in meno|post-meno)/i.test(String(s)))
+    || asArray(profile?.supportSelections).includes('Menopause-related body changes');
+  if (hasVasomotor && !namedMenopause) {
+    return [...new Set([...legacy.filter((s) => !/menopause|perimenopause/i.test(String(s))), 'Hot flashes and night sweats'])];
+  }
+  if (legacy.length) return legacy;
   return [];
 }
 
@@ -478,7 +487,9 @@ export function generateTieredRecommendations(intake = {}) {
         const needLabels = getSelectedNeeds(intake).filter((n) => needIds.includes(n.id)).map((n) => n.label);
         return {
             concern: concern.key,
-            displayLabel: needLabels.length ? needLabels.join(', ') : concern.key,
+            displayLabel: concern.key === 'Hot flashes and night sweats' ? 'Temperature & sweating'
+                : concern.key === 'Mental health and cycle mood support' ? 'Mental wellbeing'
+                : needLabels.length ? needLabels.join(', ') : concern.key,
             needLabels,
             prompt: buildRecommendationPrompt(intake, concern.key),
             tiers,
