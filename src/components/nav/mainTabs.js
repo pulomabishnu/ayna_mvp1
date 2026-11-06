@@ -1,8 +1,8 @@
 /**
  * The one main tab set for the app (bottom tab bar) and the website (top nav
  * and the phone tab bar): Shop · Services · Home · Community · Library (Home in the
- * middle, founder Oct 26 19:49; "Today" renamed Home, founder Oct 26 21:45: "can today
- * just be home page and make it stand out"; key 'today' and /today stay)
+ * middle, with the canonical website address /home and an old /today redirect.
+ * The historical internal tab key 'today' remains for app analytics compatibility.)
  * (founder, Oct 26 2026: "CAN WE HAVE SHOP services community and library and
  * keep the ask ayna at the top"). Ask ayna is the button at the top of every
  * page; You is the round profile button beside it. Keys stay stable for
@@ -92,7 +92,8 @@ export const LEGACY_REDIRECTS = {
   '/library': '/explore/resources',
   '/ecosystem': '/you/ecosystem',
   '/my-ecosystem': '/you/ecosystem',
-  '/health': '/today',
+  '/health': '/home?view=data',
+  '/today': '/home',
 };
 
 /**
