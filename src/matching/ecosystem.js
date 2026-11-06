@@ -172,14 +172,15 @@ export function sortResults(results, up, profilesById) {
 const DEFAULT_PRICE_CAP = 25;
 // With no budget answer, the one splurge per shelf stays a normal purchase: nothing physical over this
 // (founder, Nov 4: "a 22 year old is not gonna buy a $3k mattress"). Her own budget answer lifts it.
-const DEFAULT_SPLURGE_MAX = 150;
+// An unanswered budget is not permission to hide every wearable over $150.
+// Keep a single higher-price option per need as discovery, not a default purchase.
 /** The default price mix (no budget answer), shared by v1 and v2: null when she answered the budget. */
 export function defaultPriceRule(up) {
   if (!up?.shopping || up.shopping.budget || up.shopping.priceNotImportant) return null;
   const physical = (pp) => !(pp?.formats || []).includes('app_service');
   const amount = (pp) => pp?.price?.amount;
   return {
-    overMax: (pp) => physical(pp) && Number.isFinite(amount(pp)) && amount(pp) > DEFAULT_SPLURGE_MAX,
+    overMax: () => false, // no stated maximum; never invent one
     pricey: (pp) => physical(pp) && Number.isFinite(amount(pp)) && amount(pp) > DEFAULT_PRICE_CAP,
   };
 }
@@ -201,13 +202,8 @@ export function diversify(sorted, profilesById, up, limit = sorted.length, selec
   const defaultBudget = up?.shopping && !up.shopping.budget && !up.shopping.priceNotImportant;
   const pricey = (pp) => { const a = pp?.price?.amount; return Number.isFinite(a) ? a > DEFAULT_PRICE_CAP : false; };
   const physical = (pp) => !(pp?.formats || []).includes('app_service');
-  // Hard limit, never relaxed: with no budget answer, nothing physical over DEFAULT_SPLURGE_MAX.
-  if (defaultBudget) {
-    for (let i = pool.length - 1; i >= 0; i -= 1) {
-      const pp = profilesById.get(pool[i].r.productId);
-      if (physical(pp) && Number.isFinite(pp?.price?.amount) && pp.price.amount > DEFAULT_SPLURGE_MAX) pool.splice(i, 1);
-    }
-  }
+  // Do not hard-reject premium devices without a budget answer. The per-shelf
+  // one-premium-item rule below still prioritizes accessible alternatives.
   while (pool.length && out.length < limit) {
     let bestIdx = 0;
     let bestKey = -Infinity;
