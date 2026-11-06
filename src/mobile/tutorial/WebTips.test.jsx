@@ -121,7 +121,7 @@ describe('website first visit', () => {
 
   it('signed out: browsing tips show, tips about her own data wait for a profile', () => {
     setTipsEnabled(true);
-    mountWeb({ view: 'today', html: TODAY, ready: false });
+    mountWeb({ view: 'home', html: HOME, ready: false });
     wait(3000);
     expect(dialog()).toBeNull();
     swap('explore', EXPLORE);
@@ -137,11 +137,11 @@ describe('website first visit', () => {
   });
 
   it('nothing before setup is done, and never on setup screens', () => {
-    mountWeb({ html: TODAY, ready: false });
+    mountWeb({ html: HOME, ready: false });
     wait(3000);
     expect(dialog()).toBeNull();
     act(() => root.render(<TutorialLayer surface="web" userId={null} ready />));
-    swap('quiz', TODAY);
+    swap('quiz', HOME);
     wait(3000);
     expect(dialog()).toBeNull();
   });
@@ -150,7 +150,7 @@ describe('website first visit', () => {
     mountWeb({ view: 'explore', html: EXPLORE });
     wait(2000);
     expect(dialog()).toBeNull();
-    swap('today', `${TODAY}<div class="ay-rd" role="dialog" aria-modal="true"></div>`);
+    swap('home', `${HOME}<div class="ay-rd" role="dialog" aria-modal="true"></div>`);
     wait(2000);
     expect(dialog()).toBeNull();
     page.querySelector('.ay-rd').remove();
@@ -206,7 +206,7 @@ describe('website first visit', () => {
 
 describe('website opt-out', () => {
   it('No thanks: nothing shows on any screen', () => {
-    mountWeb({ html: TODAY });
+    mountWeb({ html: HOME });
     wait(1000);
     click('No thanks');
     expect(readTour().enabled).toBe(false);
