@@ -25,7 +25,7 @@ export default function TermsOfUse({ onBack, backLabel }) {
         <section data-keep="" id="medical">
           <h2>2. Wellness information, not medical care</h2>
           <p>
-            ayna is a wellness, educational, and product-discovery service. ayna is not a healthcare provider, pharmacy, emergency service, medical device, diagnosis service, or substitute for a qualified healthcare professional. Information, match scores, AI responses, summaries, product comparisons, safety notes, and recommendations may be incomplete or incorrect and should not be used as medical instructions.
+            ayna is a wellness, educational, and product-discovery service. ayna is not a licensed healthcare provider, pharmacy, emergency service, or substitute for professional care. ayna does not intend these consumer education and product-discovery features to diagnose, treat, cure, or prevent disease. The regulatory status of a software function depends on its actual design, claims, and intended use, not this disclaimer. Information, match scores, AI responses, summaries, product comparisons, safety notes, and recommendations may be incomplete or incorrect and should not be used as medical instructions.
           </p>
           <p>
             Always seek appropriate professional care for diagnosis, treatment, medication decisions, pregnancy concerns, severe or worsening symptoms, or emergencies. If you believe you may be experiencing a medical emergency, contact emergency services or an appropriate medical professional rather than relying on ayna.
