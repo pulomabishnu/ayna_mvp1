@@ -14,6 +14,7 @@ import '../../styles/onboarding.css';
 import './ReadyReveal.css';
 import { eventSurface, trackFirstMatchShown } from '../../utils/analyticsEvents.js';
 import { groupRevealRows } from './revealGroups.js';
+import { loadProductCatalog } from '../../utils/productCatalog.js';
 
 /**
  * The first personalized reveal (UX spec section 5), app and website.
@@ -111,7 +112,16 @@ function MatchPlate({ src, product }) {
 }
 
 export default function ReadyReveal({ prefsDone = false, answers = null, variant = 'app', signedIn = false, onSeeToday, onWatchWrapped, onCreateAccount, onBack, onMorePersonal, onSafety = null, onConnect = null }) {
-  const ready = useCatalogReady();
+  const bundledReady = useCatalogReady();
+  const [publishedReady, setPublishedReady] = useState(false);
+  // A result cannot claim the Shop catalog has no matches before the published
+  // server feed has been considered. API failure falls back to the bundle.
+  useEffect(() => {
+    let live = true;
+    loadProductCatalog().catch(() => null).finally(() => { if (live) setPublishedReady(true); });
+    return () => { live = false; };
+  }, []);
+  const ready = bundledReady && publishedReady;
   const matches = useMemo(() => (ready ? firstMatches(answers, 5) : []), [answers, ready]);
   const { rows, total, careNote, careNoteFor } = useMemo(() => (ready ? perNeed(answers) : { rows: [], total: 0, careNote: '', careNoteFor: null }), [answers, ready]);
   // Nov 4 (founder: "the extra questions didn't change my match"): say what changed. The
