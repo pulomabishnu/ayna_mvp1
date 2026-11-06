@@ -1747,11 +1747,34 @@ export default function MyEcosystem({
             .filter(Boolean)
             .filter((section) => section.tiers.length > 0);
 
-        return sections.sort((a, b) => {
+        const ordered = sections.sort((a, b) => {
             const ai = concernRank.has(a.concern.toLowerCase()) ? concernRank.get(a.concern.toLowerCase()) : Number.MAX_SAFE_INTEGER;
             const bi = concernRank.has(b.concern.toLowerCase()) ? concernRank.get(b.concern.toLowerCase()) : Number.MAX_SAFE_INTEGER;
             return ai - bi;
         });
+        const grouped = new Map();
+        for (const section of ordered) {
+            const label = `${section.displayLabel || ''} ${section.concern}`;
+            const group = /hot flash|hot flush|night sweat|temperature|vasomotor/i.test(label)
+                ? { key: 'temperature-sweating', title: 'Temperature & sweating' }
+                : /anxiety|low mood|irritab|stress|mental health|mental wellbeing|mood/i.test(label)
+                    ? { key: 'mental-wellbeing', title: 'Mental wellbeing' } : null;
+            if (!group) {
+                grouped.set(section.id, section);
+                continue;
+            }
+            if (!grouped.has(group.key)) grouped.set(group.key, {
+                ...section, id: group.key, concern: group.title, displayLabel: group.title, tiers: [], notes: [],
+            });
+            const target = grouped.get(group.key);
+            for (const tier of section.tiers) {
+                if (!target.tiers.some((item) => item.product?.id === tier.product?.id)) target.tiers.push(tier);
+            }
+            target.notes.push(...section.notes);
+            target.topProduct = target.tiers[0]?.product || null;
+            target.alternatives = target.tiers[0]?.alternatives || [];
+        }
+        return [...grouped.values()];
     }, [hasCompletedPersonalization, activeTiered, quizResults]);
     // ayna picks (web tabs): the matching engine's picks per need, then the tiered
     // recommendations per concern, never her own products, nothing she marked Not for me.
