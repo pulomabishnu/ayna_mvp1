@@ -4,6 +4,7 @@ import { EdPage } from './editorial/EdPage';
 const PROCESSORS = [
   ['Supabase', 'Authentication and storage of account-linked data, including health-profile data you choose to save.'],
   ['Vercel', 'Website hosting and server-side API infrastructure.'],
+  ['Stripe', 'Payment checkout, payment-card processing and subscription billing when you choose ayna Pro. ayna receives transaction status and subscription reference information, not your full card number.'],
   ['PostHog', 'Optional product analytics are off until you explicitly opt in. If enabled, ayna uses a dedicated analytics identifier instead of your account ID, excludes raw search text, health details and selected product identities from event payloads, and disables session recording and automatic click/text capture. You can opt out again in Privacy Preferences.'],
   ['OpenAI, Anthropic, and Google Gemini', 'Depending on feature availability and server configuration, one provider may process a prompt, product information and limited relevant health context when you intentionally use an AI-powered feature such as Ask ayna or AI product insights. Not every request is sent to every provider.'],
   ['Twilio', 'Phone verification and opted-in SMS features such as safety or recall messaging.'],
