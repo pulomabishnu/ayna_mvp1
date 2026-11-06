@@ -41,10 +41,10 @@ describe('main tabs (founder, Oct 24 2026)', () => {
       expect(r.permanent).toBe(true);
     }
   });
-  it('/ecosystem?view=dashboard goes to Today, before the plain /ecosystem redirect', () => {
+  it('/ecosystem?view=dashboard opens the Home data panel before the plain ecosystem redirect', () => {
     const i = vercel.redirects.findIndex((x) => x.source === '/ecosystem' && x.has);
     const j = vercel.redirects.findIndex((x) => x.source === '/ecosystem' && !x.has);
-    expect(vercel.redirects[i].destination).toBe('/today');
+    expect(vercel.redirects[i].destination).toBe('/home?view=data');
     expect(i).toBeLessThan(j);
   });
   it('maps moved pages to their old address for analytics', () => {
