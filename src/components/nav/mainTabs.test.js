@@ -47,6 +47,23 @@ describe('main tabs (founder, Oct 24 2026)', () => {
     expect(vercel.redirects[i].destination).toBe('/home?view=data');
     expect(i).toBeLessThan(j);
   });
+  it('keeps /home as the only signed-in web Home and preserves the old /today bookmark', () => {
+    const app = fs.readFileSync(new URL('../../App.jsx', import.meta.url), 'utf8');
+    expect(MAIN_TABS.find((t) => t.label === 'Home')?.href).toBe('/home');
+    expect(app).toContain("PATH_TO_VIEW['/today'] = 'home'");
+    expect(app).toContain("currentView === 'home' && user");
+    expect(app).not.toContain("currentView === 'today' && user");
+    expect(vercel.redirects.find((r) => r.source === '/today')).toMatchObject({ destination: '/home', permanent: true });
+    expect(vercel.redirects.find((r) => r.source === '/health')).toMatchObject({ destination: '/home?view=data', permanent: true });
+  });
+  it('renders the falling products AND health widgets on the public landing', () => {
+    const landing = fs.readFileSync(new URL('../landing/WebLanding.jsx', import.meta.url), 'utf8');
+    const css = fs.readFileSync(new URL('../landing/web-landing.css', import.meta.url), 'utf8');
+    expect(landing).toContain('<Rain cols={4} onInk className="wl-rain" />');
+    expect(css).toContain('.wl-hero .lk-w { display: grid !important; }');
+    expect(css).not.toContain('.wl-hero .lk-w { display: none !important; }');
+    expect(css).not.toContain('.wl-rain { z-index: -2;');
+  });
   it('maps moved pages to their old address for analytics', () => {
     expect(legacyPathFor('/explore/products')).toBe('/shop');
     expect(legacyPathFor('/explore/resources/')).toBe('/library');
