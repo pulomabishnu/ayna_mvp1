@@ -696,7 +696,9 @@ function App() {
       : currentView === 'terms-of-use' && window.location.hash === '#medical' ? `${path}#medical`
       : communityQ ? `${path}?q=${encodeURIComponent(communityQ)}`
       // Explore keeps its search (?q=) so a shared search opens with it.
-      : exploreQ ? `${path}?q=${encodeURIComponent(exploreQ)}` : path;
+      : exploreQ ? `${path}?q=${encodeURIComponent(exploreQ)}`
+      // A bookmarked /home?view=data must keep its subview across reloads.
+      : currentView === 'home' && new URLSearchParams(window.location.search).get('view') === 'data' ? `${path}?view=data` : path;
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
