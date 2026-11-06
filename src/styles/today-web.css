@@ -168,3 +168,12 @@ html body .app-container .ay-wh.ay-wh--today .ay-db-bandhead::after {
   -webkit-mask: none !important;
   mask: none !important;
 }
+
+/* Keep the Home hero rectangular even if a legacy pagehead mask is inherited. */
+html body .app-container .ay-wh.ay-wh--today .ay-wh-hello.ay-pagehead,
+html body .app-container .ay-wh.ay-wh--today .ay-db-bandhead.ay-pagehead {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  clip-path: none !important;
+  border-radius: 0 !important;
+}
