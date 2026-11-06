@@ -1,0 +1,61 @@
+// Exact catalog listings sourced from manufacturer product pages (Nov 6 2026).
+// Health functions describe intended use/comfort, NOT efficacy or a diagnosis.
+// They are non-ingestible; price and manufacturer statements are not clinical evidence.
+// All entries keep their existing Supabase product ids for cross-source lookup.
+export const COMFORT_PRODUCTS = [
+  {
+    id:'disc-embr-labs-embr-wave-2-thermal-wristband',
+    name:'Embr Wave 2 Thermal Wristband', brand:'Embr Labs', category:'tracker', type:'physical', internal:false,
+    healthFunctions:['vasomotor','comfort','mental-health'], tags:['hot-flashes','night-sweats','cooling','warming','stress','wearable','non-ingestible'],
+    price:'$299', url:'https://embrlabs.com/products/embr-wave-2', whereToBuy:['Embr Labs'],
+    whereToBuyLinks:{'Embr Labs':'https://embrlabs.com/products/embr-wave-2'},
+    summary:'A wrist-worn warming and cooling device for temporary thermal comfort, with manufacturer-provided modes for hot flashes, sleep, stress, and personal temperature. This does not determine why someone feels hot.',
+    safety:{fdaStatus:'Personal thermal-comfort wearable; no disease-treatment claim verified here.',materials:'Wearable device placed on inner wrist; material composition has not been verified.',recalls:'Current recall status not independently checked for this listing.',sideEffects:'Stop using it if skin becomes uncomfortable or irritated; check manufacturer instructions and ask a clinician about use during pregnancy.'},
+    effectiveness:'Manufacturer markets temperature comfort. Studies on menopausal hot flashes should not be extrapolated to premenstrual or anxiety-associated symptoms.',
+    researchSources:[{url:'https://embrlabs.com/products/embr-wave-2',what:'Manufacturer product, price and intended uses'},{url:'https://support.embrlabs.com/en-US/what-kind-of-waves-does-embr-wave-send-to-my-body-is-it-safe-271986',what:'Manufacturer explains thermal sensation mechanism'}],
+  },
+  {
+    id:'p-komuso-classic-shift-anxiety-breathing-necklace',
+    name:'Komuso Classic Shift Anxiety Breathing Necklace',brand:'Komuso',category:'mental-health',type:'physical',internal:false,
+    healthFunctions:['mental-health','comfort'],tags:['anxiety','stress','breathing','necklace','non-ingestible'],
+    price:'$79',url:'https://www.komusodesign.com/products/the-classic-shift',whereToBuy:['Komuso'],
+    whereToBuyLinks:{Komuso:'https://www.komusodesign.com/products/the-classic-shift'},
+    summary:'A wearable breathing pendant that slows the exhale, marketed as an on-demand stress and anxious-moment coping tool. It is not a treatment for anxiety disorders or low mood.',
+    safety:{fdaStatus:'Not verified as an FDA-cleared medical device.',materials:'Metal breathing pendant; confirm the metal finish of the selected variant with the manufacturer.',recalls:'Current recall status not independently checked for this listing.',sideEffects:'Stop use if you feel dizzy or uncomfortable with the breathing exercise.'},
+    effectiveness:'Maker describes extended-exhale breathing; product-specific therapeutic effectiveness has not been verified.',
+    researchSources:[{url:'https://www.komusodesign.com/products/the-classic-shift',what:'Manufacturer intended use, price, what is included'}],
+  },
+  {
+    id:'p-heartmath-inner-balance-coherence-plus-with-heartmath-app',
+    name:'HeartMath Inner Balance Coherence Plus with HeartMath App',brand:'HeartMath',category:'mental-health',type:'physical',internal:false,
+    healthFunctions:['mental-health','comfort'],tags:['stress','hrv','biofeedback','breathing','wearable'],
+    price:'Check current price',url:'https://www.heartmath.com/products/heartmath-app/',whereToBuy:['HeartMath'],
+    whereToBuyLinks:{HeartMath:'https://www.heartmath.com/products/heartmath-app/'},
+    summary:'An ear-clip HRV biofeedback sensor paired with a guided breathing app for self-directed stress regulation and relaxation. It does not diagnose anxiety or depression.',
+    safety:{fdaStatus:'Manufacturer states Inner Balance is not intended as a disease-diagnosis or treatment device.',materials:'Ear-clip sensor with app; check materials and skin-contact guidance with the manufacturer.',recalls:'Current recall status not independently checked for this listing.',sideEffects:'May not suit everyone; stop if the breathing or sensor is uncomfortable.'},
+    effectiveness:'Biofeedback is offered as a self-management tool; not evidence that this sensor cures a mental-health condition.',
+    researchSources:[{url:'https://www.heartmath.com/products/heartmath-app/',what:'Manufacturer HRV sensor and app instructions'},{url:'https://www.heartmath.com/products/apps/',what:'Manufacturer usage disclaimer'}],
+  },
+  {
+    id:'p-intelligent-change-the-five-minute-journal',
+    name:'Intelligent Change The Five Minute Journal',brand:'Intelligent Change',category:'mental-health',type:'physical',internal:false,
+    healthFunctions:['mental-health','comfort'],tags:['journal','gratitude','stress','mindfulness','mood','non-ingestible'],
+    price:'$32',url:'https://www.intelligentchange.com/products/the-five-minute-journal',whereToBuy:['Intelligent Change'],
+    whereToBuyLinks:{'Intelligent Change':'https://www.intelligentchange.com/products/the-five-minute-journal'},
+    summary:'A guided paper gratitude journal with short morning and evening prompts. The brand positions it for reflection, positivity and wellbeing; not as a therapy or treatment.',
+    safety:{fdaStatus:'Paper journal; not a regulated medical treatment.',materials:'Paper journal; maker describes FSC-certified recycled paper, linen cover and cotton binding.',recalls:'Not a medical device.',sideEffects:'Not a replacement for professional support when needed.'},
+    effectiveness:'Wellbeing and anxiety-reduction statements are manufacturer claims, not validated outcomes for this individual.',
+    researchSources:[{url:'https://www.intelligentchange.com/products/the-five-minute-journal',what:'Manufacturer physical journal materials, price and intended use'}],
+  },
+  {
+    id:'p-lief-smart-patch',
+    name:'Lief Smart Patch',brand:'Lief',category:'mental-health',type:'physical',internal:false,
+    healthFunctions:['mental-health','comfort'],tags:['anxiety','stress','hrv','biofeedback','wearable'],
+    price:'$895',url:'https://www.lief.ai/',whereToBuy:['Lief'],
+    whereToBuyLinks:{Lief:'https://buy.lief.ai/'},
+    summary:'A body-worn HRV biofeedback patch that offers vibration-guided breathing and stress tracking. Optional coaching or app services may have additional costs.',
+    safety:{fdaStatus:'Manufacturer describes HRV biofeedback. Regulatory status and model-specific clearance require separate verification.',materials:'Skin-contact ECG stickers are used; check adhesive sensitivities and replacement requirements.',recalls:'Current recall status not independently checked for this listing.',sideEffects:'Manufacturer advises not to wear it in water; discontinue if adhesive irritates the skin.'},
+    effectiveness:'Marketed for stress self-regulation; no claim is made that the wearable alone treats an anxiety disorder.',
+    researchSources:[{url:'https://www.lief.ai/',what:'Manufacturer intended use and features'},{url:'https://buy.lief.ai/',what:'Manufacturer checkout, price and options'},{url:'https://getlief.com/faq',what:'Manufacturer instructions and limitations'}],
+  },
+];
