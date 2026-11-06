@@ -2083,7 +2083,7 @@ export default function MyEcosystem({
 
     return (
         <>
-            <section id="ayeco" ref={ecoRootRef} className="eco3 ayeco" aria-labelledby="eco3-title">
+            <section id="ayeco" ref={ecoRootRef} className="eco3 ayeco" aria-labelledby={homeTop ? "ayna-home-title" : "eco3-title"}>
             <div className="ay-container">
                 {/* Oct 2026 redesign: the website version of the app's
                     Ecosystem screen. Header + search, the ring overview, then
