@@ -2057,6 +2057,43 @@ function careFlagsFor(up) {
     const spironolactone = (up.safety.medications || []).some(m => /spironolactone/i.test([m.generic, m.raw].filter(Boolean).join(' ')));
     if (up.safety.ttc && spironolactone) notes.push({ code: 'ttc_spironolactone', prominent: true, short: 'Spironolactone needs a prescriber review when planning pregnancy.', text: 'You listed spironolactone while trying to conceive. Its US drug label warns against use during pregnancy because of potential fetal risk. Discuss your medication plan with your prescriber promptly. Do not stop a prescription based only on ayna.', source: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0c45d793-6f2f-4622-b5ed-6875acfbc02b' });
     if (symptomCare.length) notes.push({ code: 'symptom_check', text: 'Some symptoms you chose are best checked by a clinician.' });
+    // Care navigation for needs with limited defensible products. Sources are
+    // professional clinical guidance, NOT supporting evidence for a brand.
+    if (needIds.has('cycle.pms') || needIds.has('mood.cycle_related')) notes.push({
+      code: 'pms_care', short: 'Track symptoms daily for 2 to 3 cycles and discuss bothersome PMS with your ob-gyn.',
+      text: 'ACOG recommends recording symptoms and period dates for 2 to 3 months. Some premenstrual symptoms respond to exercise, counseling or clinician-guided treatment. Most marketed PMS products are not proven to work.',
+      source: 'https://www.acog.org/womens-health/faqs/Premenstrual-Syndrome',
+    });
+    if (needIds.has('mood.pmdd')) notes.push({
+      code: 'pmdd_care', prominent: true, short: 'PMDD symptoms deserve care, not an unverified supplement match.',
+      text: 'ACOG recommends assessment and evidence-based treatment for severe premenstrual mood symptoms, including clinician-managed options such as therapy or medication. Seek prompt help if you feel unsafe.',
+      source: 'https://www.acog.org/clinical/clinical-guidance/clinical-practice-guideline/articles/2023/12/management-of-premenstrual-disorders',
+    });
+    if (needIds.has('condition_support.pcos')) notes.push({
+      code: 'pcos_care', short: 'PCOS care depends on your symptoms and goals; a clinician can help choose an approach.',
+      text: 'NICHD describes different approaches for cycle symptoms, insulin resistance, skin and hair changes, and fertility. No single supplement is a substitute for individualized clinical assessment.',
+      source: 'https://www.nichd.nih.gov/health/topics/pcos/conditioninfo/treatments',
+    });
+    if (needIds.has('condition_support.adenomyosis')) notes.push({
+      code: 'adenomyosis_care', short: 'A heating pad or warm bath may help cramping while a clinician assesses adenomyosis symptoms.',
+      text: 'Mayo Clinic lists heat for symptom relief, while prolonged or heavy bleeding and severe pain may need clinician-guided evaluation and treatment. A heating pad does not treat the underlying adenomyosis.',
+      source: 'https://www.mayoclinic.org/diseases-conditions/adenomyosis/diagnosis-treatment/drc-20369143',
+    });
+    if (up.safety.pregnant && needIds.has('digestive.nausea')) notes.push({
+      code: 'pregnancy_nausea', short: 'Small, frequent bland meals may help pregnancy nausea. Contact your ob-gyn if you cannot keep fluids down.',
+      text: 'ACOG recommends small frequent meals and hydration for pregnancy nausea. If symptoms continue, an obstetric clinician can discuss appropriate treatment. Inability to keep fluids down, very little urine or fainting needs prompt assessment.',
+      source: 'https://www.acog.org/womens-health/faqs/morning-sickness-nausea-and-vomiting-of-pregnancy',
+    });
+    if (utiNeed && ph.utiFrequency === 'recurrent') notes.push({
+      code: 'recurrent_uti_care', short: 'Repeated UTI-like symptoms deserve a clinician evaluation to confirm the cause.',
+      text: 'Repeated urinary symptoms can require evaluation and a personalized prevention plan. A home test does not treat an infection. NIDDK describes clinician-directed treatment and prevention options.',
+      source: 'https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-infection-uti-in-adults/treatment',
+    });
+    if (needIds.has('cognition.brain_fog') && up.contexts?.menopause_transition) notes.push({
+      code: 'peri_brain_fog', short: 'Brain fog is common during perimenopause, but persistent changes deserve evaluation.',
+      text: 'The Menopause Society notes that temporary concentration and memory difficulties are common around perimenopause. ayna should not assume menopause is the only cause of cognitive symptoms.',
+      source: 'https://menopause.org/patient-education/menopause-topics/perimenopause',
+    });
     // womenshealth.gov (Body changes and discomforts): water, fiber-rich food and gentle movement for
     // constipation in pregnancy; tell your doctor if it does not go away.
     if (up.safety.pregnant && up.healthIntent.needs.some((n) => n.id === 'digestive.constipation')) notes.push({ code: 'pregnancy_constipation', short: 'Start with water, fiber-rich food and movement. Ask your doctor before a laxative.', text: 'For constipation in pregnancy, start with water, fiber-rich foods and gentle movement. Ask your doctor before a laxative or fiber supplement, and tell them if it does not go away.', source: 'https://www.womenshealth.gov/pregnancy/youre-pregnant-now-what/body-changes-and-discomforts' });
