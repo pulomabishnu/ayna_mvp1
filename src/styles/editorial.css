@@ -1074,3 +1074,6 @@ html body .app-container .ed .ed-prose > :is(section, .ed-psec) :is(h2, h3) { co
 /* Home step 3: the numeral on the espresso strip was espresso too. */
 html body .app-container .ed .ay-tabcard__strip--espresso { color: #ffedac !important; }
 html body .app-container[data-theme='brand-dark'] .ed .ay-tabcard__strip--espresso { color: #3e2723 !important; }
+
+/* Editorial bands use straight edges, not a scallop/ribbon seam. */
+.ed .ed-scallop::before { content: none !important; display: none !important; }
