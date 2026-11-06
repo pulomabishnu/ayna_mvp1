@@ -156,3 +156,15 @@ html body .app-container .ay-wh.ay-wh--today .ay-wh-home-links { width: 100%; mi
 html body .app-container .ay-wh.ay-wh--today .ay-wh-home-links .ay-hsc { width: 100%; max-width: none; gap: 16px; }
 html body .app-container .ay-wh.ay-wh--today .ay-wh-home-links .ay-hsc__tile { min-height: 132px; }
 @media (max-width: 580px) { html body .app-container .ay-wh.ay-wh--today .ay-wh-home-links .ay-hsc { gap: 10px; } html body .app-container .ay-wh.ay-wh--today .ay-wh-home-links .ay-hsc__tile { min-height: 120px; padding: 12px; } }
+
+/* One clean edge under the website Home and data hero: no decorative scallops,
+   mask cutouts, or wave pseudo-elements. Keep the real rings/charts intact. */
+html body .app-container .ay-wh.ay-wh--today .ay-wh-hello::before,
+html body .app-container .ay-wh.ay-wh--today .ay-wh-hello::after,
+html body .app-container .ay-wh.ay-wh--today .ay-db-bandhead::before,
+html body .app-container .ay-wh.ay-wh--today .ay-db-bandhead::after {
+  content: none !important;
+  display: none !important;
+  -webkit-mask: none !important;
+  mask: none !important;
+}
