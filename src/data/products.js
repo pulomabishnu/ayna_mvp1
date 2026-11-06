@@ -25,6 +25,7 @@ import {
 } from '../matching/index.js';
 import { getListingStatus as passportListingStatus } from './passport/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
+import { pregnancyBleedingCare } from '../matching/carePriority.js';
 import { buildEcosystemV2, scoreProductV2, withV2Score, userKeyOf } from '../matching/v2.js';
 import { isRecommendable, recommendationEligibility } from '../matching/eligibility.js';
 import { holdStateFor } from '../matching/gate.js';
@@ -2030,14 +2031,23 @@ function careFlagsFor(up) {
     // Nov 4 (50-profile run): spotting between periods got liners and no word about getting it checked.
     // MedlinePlus: call your provider about unexplained bleeding between periods.
     const spotting = needIds.has('cycle.spotting');
+    const pregnancyBleeding = pregnancyBleedingCare(up);
     const notes = [];
+    if (pregnancyBleeding) notes.push({ code: pregnancyBleeding.code, prominent: true, short: 'Bleeding during pregnancy needs an ob-gyn assessment before product recommendations.', text: pregnancyBleeding.text, source: pregnancyBleeding.source });
     if (up.safety.careFirst) notes.push({ code: 'urgent_yes', text: 'You said something may be urgent. Reach a clinician, urgent care, or emergency services first. Products come second.' });
     else if (up.safety.urgent === 'not_sure') notes.push({ code: 'urgent_not_sure', text: 'You were not sure if something is urgent. If symptoms are severe or getting worse, contact a clinician.' });
     if (utiRightNow) notes.push({ code: 'uti_right_now', text: 'You have UTI-like symptoms right now. Get tested or see a clinician first. Supplements are not a substitute for treatment.' });
     else if (utiFirstTime && utiNeed) notes.push({ code: 'uti_first_time', text: 'First-time UTI-like symptoms are worth checking with a clinician.' });
     if (severePain) notes.push({ code: 'severe_pain', text: 'Severe period pain is worth raising with a clinician.' });
     if (veryHeavyFlow) notes.push({ code: 'very_heavy_flow', text: 'Very heavy periods are worth raising with a clinician.' });
-    if (spotting) notes.push({ code: 'spotting_check', text: 'Spotting between periods is worth checking with a clinician, especially if it is new or keeps happening. Liners only help with the mess.' });
+    if (spotting && !pregnancyBleeding) notes.push({ code: 'spotting_check', text: 'Spotting between periods is worth checking with a clinician, especially if it is new or keeps happening. Liners only help with the mess.' });
+    // CDC: symptoms alone do not reliably distinguish BV from yeast or other causes.
+    if (['vaginal.bv', 'vaginal.yeast', 'vaginal.discharge', 'vaginal.odor', 'vaginal.irritation'].some(id => needIds.has(id))) {
+      notes.push({ code: 'vaginitis_testing', prominent: true, short: 'Vaginal symptoms alone cannot confirm BV or yeast. Testing or a clinician assessment may be needed.', text: 'Itching, discharge or odor can have several causes. Symptoms alone cannot confirm BV or yeast; a clinician may need to examine or test to identify the cause. Avoid treating an unconfirmed diagnosis as certain.', source: 'https://www.cdc.gov/std/treatment-guidelines/vaginal-discharge.htm' });
+    }
+    // Official DailyMed labeling: spironolactone should be avoided in pregnancy.
+    const spironolactone = (up.safety.medications || []).some(m => /spironolactone/i.test([m.generic, m.raw].filter(Boolean).join(' ')));
+    if (up.safety.ttc && spironolactone) notes.push({ code: 'ttc_spironolactone', prominent: true, short: 'Spironolactone needs a prescriber review when planning pregnancy.', text: 'You listed spironolactone while trying to conceive. Its US drug label warns against use during pregnancy because of potential fetal risk. Discuss your medication plan with your prescriber promptly. Do not stop a prescription based only on ayna.', source: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0c45d793-6f2f-4622-b5ed-6875acfbc02b' });
     if (symptomCare.length) notes.push({ code: 'symptom_check', text: 'Some symptoms you chose are best checked by a clinician.' });
     // womenshealth.gov (Body changes and discomforts): water, fiber-rich food and gentle movement for
     // constipation in pregnancy; tell your doctor if it does not go away.
@@ -2060,7 +2070,7 @@ function careFlagsFor(up) {
     return {
         urgent: up.safety.urgent,
         careFirst: up.safety.careFirst,
-        careProminent: Boolean(up.safety.careProminent || up.contradictions.some((x) => x.code === 'period_need_vs_stage') || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length || spotting),
+        careProminent: Boolean(up.safety.careProminent || pregnancyBleeding || notes.some(n => n.prominent) || up.contradictions.some((x) => x.code === 'period_need_vs_stage') || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length || spotting),
         utiRightNow,
         utiFirstTime,
         severePain,
