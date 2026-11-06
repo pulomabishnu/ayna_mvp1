@@ -36,17 +36,23 @@ export default function WebHomeTop({ firstName = '', healthRows = [], quizAnswer
     <div className="wht">
       <HomeHero name={firstName} today={today} cycle={cycle} hormonalBC={usesHormonalBC(quizAnswers)} sleep={sleep} activity={activity}
         onOpenMetric={onData ? () => onData() : null} onConnect={onConnect} />
-      {refresh}
-      <HomeHighlights items={highlights} today={today} onOpen={onData} />
-      <div className="wht__tiles">
-        <HomeShortcuts cycle={cycle} sleep={sleep} products={products} onData={onData} onProducts={onProducts} />
+      <div className={`wht__dashboard${charts.length || highlights.length ? ' has-metrics' : ' no-metrics'}`}>
+        {(charts.length > 0 || highlights.length > 0) && (
+          <div className="wht__metrics">
+            {charts.length > 0 && (
+              <section className="wht__week" aria-labelledby="wht-week-h">
+                <h2 id="wht-week-h" className="wht__heading">Your week</h2>
+                <WeekBento variant="home" charts={charts} bandOf={bandOf} today={today} onOpen={onData} />
+              </section>
+            )}
+            {highlights.length > 0 && <HomeHighlights items={highlights} today={today} onOpen={onData} />}
+          </div>
+        )}
+        <div className="wht__actions">
+          <HomeShortcuts cycle={cycle} sleep={sleep} products={products} onData={onData} onProducts={onProducts} />
+          {refresh}
+        </div>
       </div>
-      {charts.length > 0 && (
-        <section className="wht__week" aria-labelledby="wht-week-h">
-          <h2 id="wht-week-h" className="sr-only">Your week</h2>
-          <WeekBento variant="home" charts={charts} bandOf={bandOf} today={today} onOpen={onData} />
-        </section>
-      )}
     </div>
   );
 }
