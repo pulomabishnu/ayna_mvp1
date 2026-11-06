@@ -123,7 +123,9 @@ export const MACRO_GROUPS = [
     { id: 'postpartum', label: 'Postpartum', categories: ['postpartum'], keywords: ['postpartum', 'lactation', 'breastfeeding', 'perineal'] },
     { id: 'breast', label: 'Breast Care', categories: ['breast-care', 'lactation'], keywords: ['breast', 'breastfeeding', 'nipple', 'pump', 'lactation'] },
     { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel', 'bladder', 'incontinence', 'bladder leak'] },
-    { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
+    // A hot-flash claim can be made by a menopause product, but does not make
+    // every cooling/vasomotor product a menopause product.
+    { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause'] },
     // 'supplement' is a product-TYPE category shared by dozens of unrelated items (iron for
     // anemia, plain vitamin D, omega-3 for cramps, etc.), it used to be listed here directly,
     // which meant EVERY supplement in the catalog satisfied the Hormones chip regardless of what
