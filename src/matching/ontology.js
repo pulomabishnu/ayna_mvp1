@@ -166,6 +166,8 @@ export const LEGACY_CONCERN_NEEDS = {
   'STI support': ['sexual.sti'],
   'Gut and vaginal health (probiotics, pH balance)': [],
   'Perimenopause and menopause support': ['menopause.body_changes'],
+  // Neutral symptoms: current and legacy profiles must never turn them into menopause.
+  'Hot flashes and night sweats': ['vasomotor.hot_flashes', 'vasomotor.night_sweats'],
   'Sexual health and comfort (lubricants, pelvic floor)': ['sexual.wellness'],
   'Mental health and cycle mood support': ['mood.cycle_related'],
   'Sleep and energy': ['sleep.trouble', 'energy.fatigue'],
