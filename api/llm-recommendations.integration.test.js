@@ -503,6 +503,27 @@ describe('postmenopausal AI candidate gating', () => {
   });
 });
 
+describe('AI concern routing for period-related hot flashes', () => {
+  it('does not revive menopause from a stale concern or cycle field', async () => {
+    const { selectedConcerns } = await import('./llm-recommendations.js');
+    const concerns = selectedConcerns({
+      age: 22, menstrualCycle: 'irregular_perimenopause',
+      primaryConcerns: ['Perimenopause and menopause support'],
+      fullHealthIntake: {
+        age: '22', lifeStageSelections: ['I get periods regularly'],
+        supportSelections: ['Hot flashes', 'Anxiety', 'Low mood', 'Irritability'],
+        vasomotorTimingSelections: ['Before my period / PMS', 'When stressed or anxious'],
+      },
+    });
+    expect(concerns).toContain('Hot flashes and night sweats');
+    expect(concerns).not.toContain('Perimenopause and menopause support');
+  });
+  it('does not pass a model cure or diagnosis promise to the client', async () => {
+    const { supportCopy } = await import('./llm-recommendations.js');
+    expect(supportCopy('This cures anxiety and diagnoses menopause.')).toBe('An option for symptom support or comfort; individual experiences vary.');
+  });
+});
+
 // P0, Nov 2: one gate everywhere. A product on a safety hold used to reach
 // the model because the filter read `eligible` (still true on a hold).
 describe('AI candidates: a held product is never offered or returned', () => {
