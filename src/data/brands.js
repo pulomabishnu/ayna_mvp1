@@ -1356,8 +1356,10 @@ export const BRAND_PRODUCTS = [
         category: 'menopause',
         type: 'physical',
         internal: false,
-        healthFunctions: ['perimenopause'],
-        tags: ['organic', 'hormone-free'],
+        // Brand explicitly markets instant cooling during hot flashes, independent of their cause.
+        // Menopause is one use case, not an inferred diagnosis for the shopper.
+        healthFunctions: ['perimenopause', 'vasomotor', 'comfort'],
+        tags: ['organic', 'hormone-free', 'hot-flashes', 'cooling', 'external-only'],
         price: '$20',
         whereToBuy: [],
         url: 'https://oboo.love/products/cool-spray-for-hot-flashes',
@@ -4121,8 +4123,10 @@ export const BRAND_PRODUCTS = [
         category: 'menopause',
         type: 'physical',
         internal: false,
-        healthFunctions: ['perimenopause'],
-        tags: ['menopause', 'comfort'],
+        // Physical cooling and breast comfort are relevant at any age.
+        // Joylux's own page lists hot flashes, breast soreness and post-exercise cooling.
+        healthFunctions: ['perimenopause', 'vasomotor', 'comfort'],
+        tags: ['menopause', 'comfort', 'cooling', 'hot-flashes', 'reusable'],
         price: '$21 for 2 pads',
         whereToBuy: ['Joylux'],
         url: 'https://joylux.com/products/coldher',

@@ -173,13 +173,20 @@ const DEFAULT_PRICE_CAP = 25;
 // With no budget answer, the one splurge per shelf stays a normal purchase: nothing physical over this
 // (founder, Nov 4: "a 22 year old is not gonna buy a $3k mattress"). Her own budget answer lifts it.
 const DEFAULT_SPLURGE_MAX = 150;
+// Physical temperature/mood tools can be considered without the generic cap
+// if the user chose those symptoms; they are not cures or recommendations to buy.
 /** The default price mix (no budget answer), shared by v1 and v2: null when she answered the budget. */
 export function defaultPriceRule(up) {
   if (!up?.shopping || up.shopping.budget || up.shopping.priceNotImportant) return null;
   const physical = (pp) => !(pp?.formats || []).includes('app_service');
   const amount = (pp) => pp?.price?.amount;
   return {
-    overMax: (pp) => physical(pp) && Number.isFinite(amount(pp)) && amount(pp) > DEFAULT_SPLURGE_MAX,
+    overMax: (pp) => {
+      if (!physical(pp) || !Number.isFinite(amount(pp)) || amount(pp) <= DEFAULT_SPLURGE_MAX) return false;
+      const selectedComfort = (up.healthIntent?.needs || []).filter((n) => /^(mood\.|vasomotor\.)/.test(n.id)).map((n) => n.id);
+      const relevantComfort = selectedComfort.some((id) => (pp.health_need_relevance?.[id]?.score || 0) >= 0.55);
+      return !relevantComfort;
+    },
     pricey: (pp) => physical(pp) && Number.isFinite(amount(pp)) && amount(pp) > DEFAULT_PRICE_CAP,
   };
 }
@@ -201,11 +208,13 @@ export function diversify(sorted, profilesById, up, limit = sorted.length, selec
   const defaultBudget = up?.shopping && !up.shopping.budget && !up.shopping.priceNotImportant;
   const pricey = (pp) => { const a = pp?.price?.amount; return Number.isFinite(a) ? a > DEFAULT_PRICE_CAP : false; };
   const physical = (pp) => !(pp?.formats || []).includes('app_service');
-  // Hard limit, never relaxed: with no budget answer, nothing physical over DEFAULT_SPLURGE_MAX.
+  // Default price preference is still respected for other needs. The
+  // selected mood/thermal comfort exception can surface a premium device.
   if (defaultBudget) {
+    const priceRule = defaultPriceRule(up);
     for (let i = pool.length - 1; i >= 0; i -= 1) {
       const pp = profilesById.get(pool[i].r.productId);
-      if (physical(pp) && Number.isFinite(pp?.price?.amount) && pp.price.amount > DEFAULT_SPLURGE_MAX) pool.splice(i, 1);
+      if (priceRule?.overMax(pp)) pool.splice(i, 1);
     }
   }
   while (pool.length && out.length < limit) {

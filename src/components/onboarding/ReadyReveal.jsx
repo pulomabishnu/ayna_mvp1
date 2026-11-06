@@ -13,11 +13,12 @@ import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import '../../styles/onboarding.css';
 import './ReadyReveal.css';
 import { eventSurface, trackFirstMatchShown } from '../../utils/analyticsEvents.js';
+import { groupSupportShelves } from '../../matching/shelfGroups.js';
 
 /**
  * The first personalized reveal (UX spec section 5), app and website.
- * Nov 3: how many matches she got, one equal row per need she picked (from the
- * matcher's own shelves), then one clear next step and where her matches live.
+ * Shows the matcher's selected needs in compact symptom groups, then one
+ * clear next step and where her matches live.
  * Nothing here is invented: no needs means we say so plainly.
  */
 /**
@@ -55,8 +56,7 @@ function firstMatches(answers, limit = 3) {
 
 /**
  * Nov 3 (founder: "how many matches u got, each category taken into account"):
- * one row per need she picked, straight from the matcher's shelves, in the
- * order she picked them, all the same size. A need with nothing shown says why
+ * one row per symptom group, straight from the matcher's shelves. A need with nothing shown says why
  * in plain words: held until the safety questions, or nothing strong enough yet.
  */
 // Nov 5: the CDC birth control note and the pregnancy constipation first steps join the list, most important first.
@@ -66,14 +66,19 @@ function perNeed(answers) {
   try {
     const { shelves = [], careFlags = null } = getEcosystemSeedFromQuiz(answers);
     const seen = new Set();
-    const rows = shelves.map((sh) => {
+    // The grouped cards show a short selection; the headline still counts every
+    // distinct qualifying product across the underlying need shelves.
+    shelves.forEach((shelf) => (shelf.productIds || []).forEach((id) => {
+      const product = getProductById(id);
+      if (product && showableAsPick(product, answers)) seen.add(id);
+    }));
+    const rows = groupSupportShelves(shelves).map((sh) => {
       const all = (sh.productIds || []).map((id) => getProductById(id)).filter((p) => p && showableAsPick(p, answers));
-      all.forEach((p) => seen.add(p.id));
       // Nov 5 (founder): services (telehealth, apps, memberships) sit apart from products.
       const products = all.filter((p) => p.type !== 'digital');
       const services = all.filter((p) => p.type === 'digital');
       const needsAnswers = (sh.missingSafetyText || []).length > 0;
-      const held = !all.length && (needsAnswers || sh.restrictedCount > 0);
+      const held = !all.length && (needsAnswers || sh.sourceNeeds.some((need) => need.restrictedCount > 0));
       // Nov 4 (50-profile run): BV with a latex allergy held everything and told her to answer
       // questions she had already answered. Say what is actually missing.
       const info = (sh.missingProductInfoText || [])[0] || '';
@@ -82,7 +87,9 @@ function perNeed(answers) {
           : 'Held back for now: we can’t confirm these are safe for what you told us.';
       // Nov 5: an empty shelf that is empty on purpose (pregnancy, bleeding after menopause) says why.
       const why = all.length ? '' : sh.emptyReason === 'care_first' ? 'Best checked by a clinician, not a product.' : sh.emptyReason === 'clinician_first_for_stage' ? sh.qualityNote || '' : '';
-      return { id: sh.needId, label: sh.label, products, services, held, needsAnswers, heldWhy, why, careFirst: !all.length && sh.emptyReason === 'care_first' };
+      const unmet = sh.sourceNeeds.filter((need) => !need.productIds?.length && need.emptyReason);
+      const unmetNote = all.length && unmet.length ? unmet.map((need) => `${need.label}: ${need.emptyReason === 'care_first' || need.emptyReason === 'clinician_first_for_stage' ? 'check with a clinician' : need.emptyReason === 'needs_safety_details' ? 'more safety details needed' : 'no suitable pick yet'}`).join('; ') : '';
+      return { id: sh.id, needIds: sh.needIds, label: sh.label, products, services, held, needsAnswers, heldWhy, why, unmetNote, careFirst: !all.length && sh.emptyReason === 'care_first' };
     });
     // Nov 4: one "check with a clinician" line when a need she picked calls for it (spotting, UTI now, severe pain).
     const notes = careFlags?.notes || [];
@@ -138,7 +145,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   const [dragX, setDragX] = useState(0);
   const go = (step) => setAt((i) => (rows.length ? (i + step + rows.length) % rows.length : 0));
   // Nov 5 (founder: "consolidate"): a note about one need lives on that need's card, not in a box above.
-  const careOnCard = careNoteFor && rows.some((r) => r.id === careNoteFor) ? careNoteFor : null;
+  const careOnCard = careNoteFor && rows.some((r) => r.needIds.includes(careNoteFor)) ? rows.find((r) => r.needIds.includes(careNoteFor)).id : null;
   const bleedOnCard = Boolean(bleeding) && rows.some((r) => r.careFirst);
   // Nov 5 (founder): first a big "make my matches more personal" moment (more questions, connect
   // records and a wearable, with the time each takes), a small "skip" to the matches.
@@ -252,7 +259,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                     </span>
                     <b className="ay-deck__title">{r.label}</b>
                     {r.products.length > 0
-                      ? <ol className="ay-ob-picks">{r.products.slice(0, 3).map((p) => {
+                      ? <><ol className="ay-ob-picks">{r.products.slice(0, 3).map((p) => {
                         const pct = pctFor(p);
                         const price = shownPriceText(formatPrice(p).main);
                         return <li key={p.id}>
@@ -260,7 +267,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                           <span className="ay-ob-picks__text"><b>{p.name}</b><small>{[p.brand, price].filter(Boolean).join(' · ')}</small></span>
                           {pct != null && <em className="ay-ob-picks__pct">{pct}%</em>}
                         </li>;
-                      })}{r.products.length > 3 && <li className="ay-deck__more">+{r.products.length - 3} more in your list</li>}</ol>
+                      })}{r.products.length > 3 && <li className="ay-deck__more">+{r.products.length - 3} more in your list</li>}</ol>{r.unmetNote && <small className="ay-deck__empty">{r.unmetNote}</small>}{r.id === careOnCard && careNote && <small className="ay-deck__empty">{careNote}</small>}</>
                       : <small className="ay-deck__empty">{r.careFirst && bleeding ? <>Bleeding after menopause should be checked promptly by an ob-gyn or your clinician. We don’t suggest products for it. {bleeding.source?.url && <a href={bleeding.source.url} target="_blank" rel="noopener noreferrer">{bleeding.source.label || 'Source'}</a>}</> : r.id === careOnCard ? careNote : r.services.length ? <>No products for this yet. {r.services.length === 1 ? 'A service fits it' : `${r.services.length} services fit it`}: <button type="button" className="ay-deck__link" onClick={(e) => { e.stopPropagation(); setTab('services'); }}>see services</button></> : r.held ? r.heldWhy : r.why || 'Nothing is backed well enough to recommend yet. You can still see every option for it in Shop.'}</small>}
                   </li>
                 );

@@ -68,8 +68,8 @@ export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProd
                   <ProductCard
                     product={p.product}
                     matchPercent={p.score}
-                    matchLabel={needHeadline(p.score, cur.phrase)}
-                    why={whyLineForPick(p, cur.phrase)}
+                    matchLabel={needHeadline(p.score, p.matchPhrase || cur.phrase)}
+                    why={whyLineForPick(p, p.matchPhrase || cur.phrase)}
                     badge={p.healthBacked ? <HealthBackedBadge backed={p.healthBacked} /> : null}
                     onOpen={onOpenProduct}
                     action={onToggleProduct && (

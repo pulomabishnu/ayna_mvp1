@@ -1,3 +1,4 @@
+import { groupSupportShelves, withoutInferredMenopauseSections, outdatedAutoMenopauseProduct, comfortAreaOverride } from '../matching/shelfGroups.js';
 import NeedRoutines from './routine/NeedRoutines.jsx';
 import { useRoutines } from './routine/useRoutines.js';
 import { categoryStarterOptions } from './search/starterOptions.js';
@@ -1128,7 +1129,7 @@ export default function MyEcosystem({
     const myProductIds = ecosystemOrder.length
         ? [...ecosystemOrder.filter(id => myProducts[id]), ...Object.keys(myProducts).filter(id => !ecosystemOrder.includes(id))]
         : Object.keys(myProducts);
-    const myProductList = myProductIds.map(id => myProducts[id]).filter(Boolean);
+    const myProductList = myProductIds.map(id => myProducts[id]).filter((p) => p && !outdatedAutoMenopauseProduct(p, quizResults));
     // On focus, before typing: every category (hers first when she has products), founder Oct 29.
     const ecoCategories = useMemo(() => categoryStarterOptions(myProductList.map((p) => p.category)), [myProductIds.join('|')]); // eslint-disable-line react-hooks/exhaustive-deps
     const ecoSuggest = useMemo(() => (myProductList.length ? { kinds: ['product', 'brand', 'category'], products: myProductList, limit: 6, onEmpty: ecoCategories } : { kinds: ['need', 'category', 'brand', 'product'], limit: 6, onEmpty: ecoCategories }), [myProductIds.join('|'), ecoCategories]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -1154,7 +1155,7 @@ export default function MyEcosystem({
         const byArea = new Map();
         myProductList.forEach((p) => {
             const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
-            const key = area ? area.key : 'other';
+            const key = comfortAreaOverride(p, quizResults) || (area ? area.key : 'other');
             if (!byArea.has(key)) byArea.set(key, []);
             byArea.get(key).push(p);
         });
@@ -1163,7 +1164,7 @@ export default function MyEcosystem({
             .map((a) => ({ ...a, products: byArea.get(a.key) }));
         if (byArea.has('other')) groups.push({ key: 'other', label: 'Other', categories: [], products: byArea.get('other') });
         return groups.sort((a, b) => b.products.length - a.products.length);
-    }, [myProductList]);
+    }, [myProductList, quizResults]);
     // Matching engine shelves: one per selected need (picks, shortBy,
     // emptyReason) plus care flags. Behavior (Not for me, in her ecosystem)
     // is passed so hidden products never come back here.
@@ -1186,11 +1187,13 @@ export default function MyEcosystem({
         [quizResults, healthProfile, matchOpts]
     );
     const needShelves = useMemo(() => needSeed?.shelves || [], [needSeed]);
+    // Combine related symptoms for display; per-need matching stays intact.
+    const visualShelves = useMemo(() => groupSupportShelves(needShelves), [needShelves]);
     const useTabs = myProductList.length > 0;
     const savedList = useMemo(() => Object.values(savedProducts || {}).filter((p) => p?.id && p.name), [savedProducts]);
     const pctFor = useMemo(() => makePctFor(quizResults, (p) => getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts)), [quizResults, healthProfile, matchOpts]);
     // The fold's glance: the top pick of each gap, as photos (real catalog images only).
-    const gapPhotos = needShelves.map((sh) => sh.picks?.[0]?.productId).filter(Boolean).map((id) => getProductById(id)).filter(Boolean).slice(0, 3);
+    const gapPhotos = visualShelves.map((sh) => sh.picks?.[0]?.productId).filter(Boolean).map((id) => getProductById(id)).filter(Boolean).slice(0, 3);
     const careFlags = needSeed?.careFlags || null;
     const careFirst = Boolean(careFlags?.careFirst);
     const careNoteLines = careNotes(careFlags);
@@ -1235,7 +1238,7 @@ export default function MyEcosystem({
             const midlife = stages.has('I am in perimenopause') || stages.has('I am in menopause') || stages.has('I am post-menopause');
             const noPeriods = stages.has('I do not currently get periods');
             const fits = (a) => {
-                if (noProfile) return !['pregnancy', 'postpartum', 'breast'].includes(a.key);
+                if (noProfile) return !['pregnancy', 'postpartum', 'breast', 'menopause', 'fertility', 'temperature'].includes(a.key);
                 switch (a.key) {
                     case 'pregnancy': return pregnant || ttc || /pregnan|prenatal/.test(needs);
                     case 'postpartum': return postpartum;
@@ -1621,10 +1624,10 @@ export default function MyEcosystem({
         return unsubscribe;
     }, [intakeFingerprint, hasCompletedPersonalization, recommendationRefreshNonce]);
 
-    const activeTiered = useMemo(
-        () => (llmTiered.length > 0 ? llmTiered : intakeTieredRecommendations),
-        [llmTiered, intakeTieredRecommendations]
-    );
+    const activeTiered = useMemo(() => {
+        const current = withoutInferredMenopauseSections(llmTiered, quizResults);
+        return current.length ? current : withoutInferredMenopauseSections(intakeTieredRecommendations, quizResults);
+    }, [llmTiered, intakeTieredRecommendations, quizResults]);
     const recommendedProductsForDisplay = useMemo(() => {
         if (!hasCompletedPersonalization) return [];
         if (!Array.isArray(activeTiered) || activeTiered.length === 0) return [];
@@ -1737,10 +1740,10 @@ export default function MyEcosystem({
             picks.forEach((p) => seen.add(p.id));
             if (picks.length) out.push({ id, short, picks });
         };
-        needShelves.forEach((shelf) => push(`need-${shelf.needId}`, shortNeedLabel(shelf.label), (shelf.picks || []).map((pick) => ({ id: pick.productId }))));
+        visualShelves.forEach((shelf) => push(`need-${shelf.id}`, shelf.label, (shelf.picks || []).map((pick) => ({ id: pick.productId }))));
         recommendedProductsForDisplay.forEach((sec) => push(`rec-${sec.id}`, sec.displayLabel || sec.concern, sec.tiers.flatMap((t) => [t.product, ...(t.alternatives || [])])));
         return out;
-    }, [needShelves, recommendedProductsForDisplay, myProducts, omittedProducts]);
+    }, [visualShelves, recommendedProductsForDisplay, myProducts, omittedProducts]);
 
     useEffect(() => {
         setRecommendedSwapByKey({});
@@ -2241,7 +2244,7 @@ export default function MyEcosystem({
                     {/* Same order as the page; the section you're in is underlined. */}
                     {[
                         visibleAreaGroups.length > 0 && ['eco3-shelves-title', 'Shelves'],
-                        !ecoQueryTrimmed && needShelves.length > 0 && ['eco3-needs-title', 'Fill the gaps'],
+                        !ecoQueryTrimmed && visualShelves.length > 0 && ['eco3-needs-title', 'Symptom support'],
                         ['eco3-tools-title', 'Tools'],
                         ['ayna-wishlist', 'Saved'],
                     ].filter(Boolean).map(([id, label]) => (
@@ -2364,26 +2367,26 @@ export default function MyEcosystem({
                     </div>
                 )}
 
-                {!useTabs && !ecoQueryTrimmed && needShelves.length > 0 && (
+                {!useTabs && !ecoQueryTrimmed && visualShelves.length > 0 && (
                     <section className="eco3-gaps" aria-labelledby="eco3-needs-title">
                         {/* Glance first (founder Oct 26 16:54): the gaps as one line + her best picks' photos; the full strip one tap away. */}
                         <details className="ub-fold" ref={gapsFoldRef}>
                         <summary>
                             <span className="ub-fold__text">
-                                <h2 className="eco3-shelves__title ay-h2" id="eco3-needs-title">Fill the gaps</h2>
-                                <span className="ub-fold__line">{needShelves.length} {needShelves.length === 1 ? 'need' : 'needs'} with nothing on your shelves yet{gapPhotos.length ? ' · best picks for each' : ''}</span>
+                                <h2 className="eco3-shelves__title ay-h2" id="eco3-needs-title">Symptom support & comfort</h2>
+                                <span className="ub-fold__line">{visualShelves.length} {visualShelves.length === 1 ? 'area' : 'areas'} to explore for symptom comfort{gapPhotos.length ? ' · products and tools to explore' : ''}</span>
                             </span>
                             {gapPhotos.length > 0 && <span className="ub-fold__plates" aria-hidden="true">{gapPhotos.map((p) => <Plate key={p.id} src={resolveCatalogProductImage(p) || ''} alt="" fallback={p.brand || p.name} className="ub-fold__plate" />)}</span>}
                             <span className="ub-fold__go"><span className="ub-fold__show">Show picks</span><span className="ub-fold__hide">Hide picks</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></span>
                         </summary>
                         <HealthShapedNote shaped={needSeed?.healthShaped} userId={user?.id || null} />
                         <NeedsStrip
-                            needs={[...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => ({
-                                id: shelf.needId,
+                            needs={[...visualShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => ({
+                                id: shelf.id,
                                 label: shelf.label,
-                                short: shortNeedLabel(shelf.label),
-                                phrase: needPhrases.get(shelf.needId) || shelf.label.toLowerCase(),
-                                picks: shelf.picks.map((pick) => ({ ...pick, product: myProducts[pick.productId] || getProductById(pick.productId) })).filter((x) => x.product),
+                                short: shelf.label,
+                                phrase: shelf.needIds.map((id) => needPhrases.get(id)).filter(Boolean).join(', ') || shelf.label.toLowerCase(),
+                                picks: shelf.picks.map((pick) => ({ ...pick, matchPhrase: needPhrases.get(pick.matchedNeedId) || shelf.label.toLowerCase(), product: myProducts[pick.productId] || getProductById(pick.productId) })).filter((x) => x.product),
                                 care: shelf.care && !careFirst ? [...(shelf.care.clinicLinks || []), ...(shelf.care.telehealthLinks || [])].slice(0, 4) : null,
                             }))}
                             isOwned={(id) => Boolean(myProducts[id])}

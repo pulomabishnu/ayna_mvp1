@@ -1,9 +1,12 @@
 // Added on the live site after the packshot passes ran; photos pending.
 import { NOV_2026_PRODUCTS } from './productsNov2026.js';
+import { COMFORT_PRODUCTS } from './comfortProducts.js';
 const PACKSHOT_PENDING = new Set([
   'p-naya-applicator-kit', 'p-naya-regular-tampons', // Naya (Nov 4): pre-launch, brand photos only
   // Founder's sheet (Nov 2): brand photos until packshots are shot.
   ...NOV_2026_PRODUCTS.map((p) => p.id),
+  // New manufacturer-verified wellness/thermal devices; brand imagery pending packshot workflow.
+  ...COMFORT_PRODUCTS.map((p) => p.id),
   'p-heraure-hermag-magnesium',
   'p-tampontribe-organic-tampons',
   'p-tampontribe-organic-pads',

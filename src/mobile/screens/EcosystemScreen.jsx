@@ -1,3 +1,4 @@
+import { groupSupportShelves, outdatedAutoMenopauseProduct, comfortAreaOverride } from '../../matching/shelfGroups.js';
 import './profile/health-connections.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { loadMonthlyCheckinStatus } from '../../utils/monthlyCheckinStore.js';
@@ -92,10 +93,11 @@ export default function EcosystemScreen({
   const rootRef = useRef(null);
   const titleRef = useRef(null);
   const routineRef = useRef(null);
+  const visibleMyProducts = useMemo(() => myProducts.filter((p) => !outdatedAutoMenopauseProduct(p, quizAnswers)), [myProducts, quizAnswers]);
   // Her routines, one per active need (period pain, PMS, sleep): Start here, Track it, Other options.
   const routineSource = {
     userId: authUser?.id || null, quizAnswers, matchOpts,
-    products: myProducts, saved: savedProducts, omitted: omittedProducts, have: routineHave,
+    products: visibleMyProducts, saved: savedProducts, omitted: omittedProducts, have: routineHave,
   };
   const routines = useRoutines({
     ...routineSource,
@@ -136,16 +138,17 @@ export default function EcosystemScreen({
   const goalIds = useMemo(() => (quizAnswers ? getSelectedNeeds(quizAnswers).map((n) => n.id) : []), [quizAnswers]);
   const scoreFor = (product, profile) => getProductMatchDetailsForProduct(product, profile, null, matchOpts);
   const shortlist = quizAnswers
-    ? selectEcosystemProducts(myProducts, quizAnswers, quizAnswers.fullHealthIntake?.recommendedProductsPerArea, scoreFor)
-    : myProducts;
+    ? selectEcosystemProducts(visibleMyProducts, quizAnswers, quizAnswers.fullHealthIntake?.recommendedProductsPerArea, scoreFor)
+    : visibleMyProducts;
   // The hero, Wrapped and the website count from one selector (utils/ecosystemCounts).
-  const counts = ecosystemCounts(myProducts, quizAnswers, { matchOpts });
+  const counts = ecosystemCounts(visibleMyProducts, quizAnswers, { matchOpts });
 
   // Engine shelves: one per selected need (label, picks, shortBy, emptyReason),
   // plus care flags (care first when urgent = Yes, calm care notes otherwise).
   const seed = useMemo(() => (quizAnswers ? getEcosystemSeedFromQuiz(quizAnswers, null, matchOpts) : null), [quizAnswers, matchOpts]);
   const phraseById = useMemo(() => new Map((quizAnswers ? getSelectedNeeds(quizAnswers, null, matchOpts) : []).map((n) => [n.id, n.phrase])), [quizAnswers, matchOpts]);
   const shelves = seed?.shelves || [];
+  const visualShelves = useMemo(() => groupSupportShelves(shelves), [seed]);
   // A need the counts call covered never shows an empty shelf: if the shortlist
   // left it empty, the product of hers that covers it joins that shelf.
   const fits = (p, needId) => scoreFor(p, quizAnswers).needMatches?.some((m) => m.needId === needId && m.relevant && m.score >= MIN_SHELF_SCORE);
@@ -154,17 +157,17 @@ export default function EcosystemScreen({
   if (quizAnswers) {
     shelves.forEach((sh) => {
       if (!counts.coveredNeedIds.includes(sh.needId) || shortlist.some((p) => fits(p, sh.needId))) return;
-      const p = myProducts.find((x) => !shortIds.has(x.id) && !forcedShelf.has(x.id) && fits(x, sh.needId));
+      const p = visibleMyProducts.find((x) => !shortIds.has(x.id) && !forcedShelf.has(x.id) && fits(x, sh.needId));
       if (p) forcedShelf.set(p.id, sh.needId);
     });
   }
-  const currentProducts = forcedShelf.size ? [...shortlist, ...myProducts.filter((p) => forcedShelf.has(p.id))] : shortlist;
+  const currentProducts = forcedShelf.size ? [...shortlist, ...visibleMyProducts.filter((p) => forcedShelf.has(p.id))] : shortlist;
   const currentIds = new Set(currentProducts.map((product) => product.id));
-  const earlierProducts = myProducts.filter((product) => !currentIds.has(product.id));
+  const earlierProducts = visibleMyProducts.filter((product) => !currentIds.has(product.id));
   const careFlags = seed?.careFlags || null;
   const careFirst = Boolean(careFlags?.careFirst);
   const notes = careNotes(careFlags);
-  const myIds = new Set(myProducts.map((p) => p.id));
+  const myIds = new Set(visibleMyProducts.map((p) => p.id));
 
   // Each current pick sits on the shelf of its best need (50+). Picks that fit
   // no selected need keep the old area grouping.
@@ -181,7 +184,7 @@ export default function EcosystemScreen({
       byNeed.get(needId).push(product);
       return;
     }
-    const fallbackKey = product.areaKey || 'other';
+    const fallbackKey = comfortAreaOverride(product, quizAnswers) || product.areaKey || 'other';
     const label = healthAreaLabel(ECOSYSTEM_AREAS.find((area) => area.key === fallbackKey)?.label || 'More care');
     const key = `area-${encodeURIComponent(label.toLowerCase())}`;
     if (!fallback.has(key)) fallback.set(key, { key, label, ringLabel: label, products: [] });
@@ -190,8 +193,8 @@ export default function EcosystemScreen({
 
   const suggestedIds = new Set();
   const sections = [
-    ...shelves.map((shelf) => {
-      const products = byNeed.get(shelf.needId) || [];
+    ...visualShelves.map((shelf) => {
+      const products = [...new Map(shelf.needIds.flatMap((id) => byNeed.get(id) || []).map((p) => [p.id,p])).values()];
       // An empty shelf shows the engine's own picks to add (never padded).
       const picks = products.length ? [] : shelf.productIds
         .filter((id) => !myIds.has(id))
@@ -199,10 +202,10 @@ export default function EcosystemScreen({
         .filter(Boolean);
       picks.forEach((p) => suggestedIds.add(p.id));
       return {
-        key: `need-${encodeURIComponent(shelf.needId)}`,
+        key: `need-${encodeURIComponent(shelf.id)}`,
         label: shelf.label,
-        ringLabel: healthAreaLabel(shelf.label),
-        phrase: phraseById.get(shelf.needId) || shelf.label.toLowerCase(),
+        ringLabel: shelf.label,
+        phrase: shelf.needIds.map((id) => phraseById.get(id)).filter(Boolean).join(', ') || shelf.label.toLowerCase(),
         products,
         picks,
         shelf,
@@ -321,7 +324,7 @@ export default function EcosystemScreen({
       </form>}
       {/* One progress card (counts, needs covered, Wrapped) in place of the ring: the shelf counts live on the chips below. */}
       {/* Summary card: real counts, needs covered, Wrapped (no stamp: QA, Oct 27). */}
-      {ecoTab !== 'dashboard' && myProducts.length > 0 && <div className="eco-app-stack">
+      {ecoTab !== 'dashboard' && visibleMyProducts.length > 0 && <div className="eco-app-stack">
         <span className="eco-app-stack__back" aria-hidden="true" />
         <div className="eco-app-stack__card">
           {/* Counted by utils/ecosystemCounts: the same numbers as Wrapped and the website. */}
@@ -337,7 +340,7 @@ export default function EcosystemScreen({
           </div>}
         </div>
       </div>}
-      {ecoTab !== 'dashboard' && myProducts.length === 0 && forYouButton && <div className="eco-app-stack__row is-loose">{forYouButton}</div>}
+      {ecoTab !== 'dashboard' && visibleMyProducts.length === 0 && forYouButton && <div className="eco-app-stack__row is-loose">{forYouButton}</div>}
       {/* Empty: one clear way in (the quiz), the Shop as the quiet second choice. */}
       {ecoTab !== 'dashboard' && !hasAnything && !quizDraft && (hasAnswers
         ? <EmptyState compact art="search" tone="pink" title="No strong matches yet" body="Nothing in the catalog fits your answers well enough yet. Change an answer, or browse Explore by need." actionLabel={onRetake ? 'Edit my answers' : undefined} onAction={onRetake} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />
@@ -358,10 +361,10 @@ export default function EcosystemScreen({
     {ecoTab === 'dashboard' && showTabs ? <div className="ay-eco-routine">
       {/* The dashboard tab is part of ayna Pro (founder, PR #87). */}
       <ProFeatureGate feature="dashboard" onEcosystem={() => onEcoTab?.('products')}>
-      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length ? () => routineRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }) : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined }} />
-      {myProducts.length > 0 && <div ref={routineRef} className="ay-eco-plan" id="ay-eco-plan">
-        <Routine products={myProducts} insights={healthInsights} needIds={goalIds} outcomes={routineOutcomes} onLogOutcome={onLogRoutineOutcome} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} excluded={routineExcluded} onToggleExcluded={onToggleRoutineProduct} />
-        <ShoppingList products={myProducts} insights={healthInsights} excluded={routineExcluded} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} />
+      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={visibleMyProducts} routineProducts={visibleMyProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={visibleMyProducts.length ? () => routineRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }) : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined }} />
+      {visibleMyProducts.length > 0 && <div ref={routineRef} className="ay-eco-plan" id="ay-eco-plan">
+        <Routine products={visibleMyProducts} insights={healthInsights} needIds={goalIds} outcomes={routineOutcomes} onLogOutcome={onLogRoutineOutcome} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} excluded={routineExcluded} onToggleExcluded={onToggleRoutineProduct} />
+        <ShoppingList products={visibleMyProducts} insights={healthInsights} excluded={routineExcluded} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} />
       </div>}
       {onOpenMonthlyCheckin && checkin}
       </ProFeatureGate>
@@ -386,9 +389,9 @@ export default function EcosystemScreen({
       <details className="eco-more">
         <summary>Full routines, when to use each product and your shopping list</summary>
       {routines.routines.length > 0 && <div className="ay-eco-routines" style={{ padding: '0 var(--d-gutter, 20px)' }}><NeedRoutines state={routines} variant="app" onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} /></div>}
-      {myProducts.length > 0 && <div className="ay-eco-plan" id="ay-eco-plan">
-        <Routine folded products={myProducts} insights={healthInsights} needIds={goalIds} outcomes={routineOutcomes} onLogOutcome={onLogRoutineOutcome} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} excluded={routineExcluded} onToggleExcluded={onToggleRoutineProduct} />
-        <ShoppingList products={myProducts} insights={healthInsights} excluded={routineExcluded} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} />
+      {visibleMyProducts.length > 0 && <div className="ay-eco-plan" id="ay-eco-plan">
+        <Routine folded products={visibleMyProducts} insights={healthInsights} needIds={goalIds} outcomes={routineOutcomes} onLogOutcome={onLogRoutineOutcome} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} excluded={routineExcluded} onToggleExcluded={onToggleRoutineProduct} />
+        <ShoppingList products={visibleMyProducts} insights={healthInsights} excluded={routineExcluded} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} />
       </div>}
       </details>
     </>}
@@ -454,7 +457,7 @@ export default function EcosystemScreen({
           <span className="eco-app-list__ic is-pink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" /></svg></span>
           <span className="eco-app-list__txt"><b>{healthConnectedCount ? 'Your health' : 'Bring in your health data'}</b><small>{healthSummary ? `${healthSummary.title}: ${healthSummary.headline}` : healthConnectedCount ? 'Your trends appear after about two weeks of data.' : 'Connect Apple Health, Oura or upload a file to see your trends.'}</small></span>{chev}
         </button></li>}
-        {(ecoTab !== 'dashboard' || !myProducts.length) && onOpenMonthlyCheckin && <li><button type="button" onClick={onOpenMonthlyCheckin}>
+        {(ecoTab !== 'dashboard' || !visibleMyProducts.length) && onOpenMonthlyCheckin && <li><button type="button" onClick={onOpenMonthlyCheckin}>
           <span className="eco-app-list__ic is-butter" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" /><path d="M8 3v4M16 3v4M4 10h16" /></svg></span>
           <span className="eco-app-list__txt"><b>Monthly check-in</b><small>A few quick questions so your matches keep up with how you feel.</small></span>{chev}
         </button></li>}

@@ -128,7 +128,7 @@ export const MACRO_GROUPS = [
     { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause'] },
     // Neutral symptom area for catalog/LLM products explicitly designated
     // for heat or night sweat tracking, not an inferred menopause diagnosis.
-    { id: 'temperature', label: 'Hot Flashes + Sweats', categories: [], healthFunctions: ['vasomotor'], keywords: [] },
+    { id: 'temperature', label: 'Temperature comfort', categories: [], healthFunctions: ['vasomotor'], keywords: [] },
     // 'supplement' is a product-TYPE category shared by dozens of unrelated items (iron for
     // anemia, plain vitamin D, omega-3 for cramps, etc.), it used to be listed here directly,
     // which meant EVERY supplement in the catalog satisfied the Hormones chip regardless of what
@@ -156,7 +156,7 @@ export const MACRO_GROUPS = [
     // keyword, since "stress" genuinely belongs here for its real (psychological) sense.
     // 'sleep' is a real distinct category value in the live catalog (e.g. Eight Sleep Pod)
     // alongside 'mental-health', both belong under this chip.
-    { id: 'sleep-stress', label: 'Sleep + Stress', categories: ['mental-health', 'sleep'], keywords: ['sleep', 'stress', 'relaxation'] },
+    { id: 'sleep-stress', label: 'Mood & wellbeing', categories: ['mental-health', 'sleep'], keywords: ['sleep', 'stress', 'relaxation'] },
     { id: 'pain-recovery', label: 'Pain + Recovery', categories: ['pain-relief', 'cramp-relief', 'recovery'], keywords: ['pain', 'cramp', 'heat therapy', 'recovery', 'muscle'] },
     // 'test' used to be a bare keyword and matched "clinically tested" (Honey Pot wash),
     // "gynecologist-tested" (Luna wash), and even "testosterone" (spearmint PCOS tea), none
