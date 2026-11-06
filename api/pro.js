@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { verifyUser, getServiceClient, claimEcosystemBuild } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
 import { proFeatureRules } from './_proFeatures.js';
-import { PRO_FLOW, PRO_PLANS, proConfig, proStatus, proStripe, validateProPrices, renewalDate, syncProSubscription } from './_pro.js';
+import { PRO_FLOW, PRO_PLANS, proConfig, proStatus, proStripe, validateProPrices, renewalDate, syncProSubscription, isExpectedPaidTermStart, PRO_PAID_TERM_START_AT } from './_pro.js';
 
 function isAdminUser(user) {
   const email = String(user?.email || '').trim().toLowerCase();
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     const status = await proStatus(admin, user.id);
     const legacyPremium = user?.app_metadata?.is_premium === true;
     const active = legacyPremium || status.active;
-    const offerOpen = config.enabled && Boolean(status.launchAt) && Date.parse(status.launchAt) > Date.now();
+    const offerOpen = config.enabled && isExpectedPaidTermStart(status.launchAt) && Date.parse(status.launchAt) > Date.now();
     const isAdmin = isAdminUser(user);
 
     if (req.method === 'GET') {
@@ -82,6 +82,7 @@ export default async function handler(req, res) {
         accessExpiresAt: legacyPremium ? null : (Math.max(Date.parse(status.termEndsAt) || 0, Date.parse(status.temporaryUntil) || 0) || null),
         offerOpen,
         isAdmin,
+        paidTermStartsAt: PRO_PAID_TERM_START_AT,
         plans: Object.entries(PRO_PLANS).map(([id, plan]) => ({
           id,
           amount: plan.amount,
@@ -163,6 +164,9 @@ export default async function handler(req, res) {
       return res.status(200).json({ canceled: true });
     }
 
+    // Never accept real money if the backend's billing term differs from the
+    // February 1 paid-term promise next to the purchase button.
+    if (!isExpectedPaidTermStart(status.launchAt)) return res.status(503).json({ error: 'pro_temporarily_unavailable' });
     if (!offerOpen) return res.status(409).json({ error: 'early_access_closed' });
     if (status.hasPurchase || legacyPremium) return res.status(409).json({ error: 'already_pro' });
 
@@ -203,7 +207,9 @@ export default async function handler(req, res) {
       cancel_url: `${config.origin}/pro?checkout=canceled`,
       custom_text: {
         submit: {
-          message: 'Your Early Access coupon is applied today. Your purchased period starts at launch; then renews at the regular price shown unless canceled.',
+          message: body.plan === 'month'
+            ? 'Charged $4.99 today. Pro unlocks now. Paid month starts February 1, 2027. First renewal March 1, 2027 at $8.99/month unless canceled before renewal.'
+            : 'Charged $45 today. Pro unlocks now. Paid year starts February 1, 2027. First renewal February 1, 2028 at $90/year unless canceled before renewal.',
         },
       },
     }, { idempotencyKey: `pro:${user.id}:${body.plan}:${body.requestId}` });

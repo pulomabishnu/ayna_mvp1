@@ -9,7 +9,8 @@ import {
   CONDITIONS, EMPTY, FOLLOWUP_QUESTIONS, FREE_TEXT_PROMPTS, FSA_HSA, INTAKE_DRAFT_KEY, LARGE_PURCHASE_FREQUENCY, LIFE_STAGES,
   LIFE_STAGE_LABELS, LIFE_STAGE_VALUE_BY_LABEL, MEDICATION_SUGGESTIONS, MIDLIFE_LIFE_STAGES, PERIMENOPAUSE_LAST_PERIOD,
   PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS,
-  STOP_REASONS, SUPPORT_GROUPS, UTI_FREQUENCY, buildSnapshot, isMultiSelectStep,
+  STOP_REASONS, SUPPORT_GROUPS, VASOMOTOR_TIMING_OPTIONS, needsVasomotorTiming, toggleVasomotorTiming,
+  UTI_FREQUENCY, buildSnapshot, isMultiSelectStep,
   getLifeStages, isMinorAge, normalizeSuggestion, readIntakeDraft, reconstructIntakeFromSnapshot,
   requiredReady, missingAnswerHint, FIRST_NAME_MAX, AGE_MIN, AGE_MAX, asksBreastfeedingOnTiming, ttcDurationOptions, resumeStepId, withSavedOption, isValidUsZip, setPerimenopausePeriods, syncPerimenopausePeriods,
 } from '../mobile/data/intakeModel.js';
@@ -542,6 +543,16 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
     setIntake((prev) => ({ ...prev, helpTopics: (prev.helpTopics || []).includes(value) ? prev.helpTopics.filter((x) => x !== value) : [...(prev.helpTopics || []), value] }));
   };
   const body = () => {
+    // Optional contextual timing belongs with the selected symptom, never
+    // with an assumed life stage or diagnosis.
+    const temperatureTiming = needsVasomotorTiming(intake) ? (
+      <section className="qz-group">
+        <h3>When do you notice the hot flashes or sweats? (optional)</h3>
+        <Chips small items={VASOMOTOR_TIMING_OPTIONS} selected={intake.vasomotorTimingSelections || []}
+          onToggle={(v) => set('vasomotorTimingSelections', toggleVasomotorTiming(intake.vasomotorTimingSelections, v))} />
+        <p className="qz-subtitle">Choose any that apply. Timing doesn't establish the cause.</p>
+      </section>
+    ) : null;
     switch (step.type) {
       case 'topics': return <>
         <Chips label={step.title} items={HELP_TOPICS} selected={[...(intake.helpTopics || []), ...(helpOther ? [SOMETHING_ELSE] : [])]} onToggle={toggleHelpTopic}
@@ -639,6 +650,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
           </div>
           {custom.length > 0 && <section className="qz-group"><h3>Added by you</h3><Chips small items={custom} selected={custom} onToggle={pick} /></section>}
           <Chips small items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={pick} />
+          {temperatureTiming}
         </>;
       } else {
         const q = search.trim().toLowerCase();
@@ -682,6 +694,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
             </>;
           })()}
           {custom.length > 0 && <section className="qz-group"><h3>Added by you</h3><Chips small items={custom} selected={custom} onToggle={(v) => toggleExclusive('supportSelections', v)} /></section>}
+          {temperatureTiming}
         </>;
       }
       // House Blend slider (uniqueness pass A): the same options, saved verbatim.

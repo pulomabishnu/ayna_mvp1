@@ -25,6 +25,7 @@ import {
 } from '../matching/index.js';
 import { getListingStatus as passportListingStatus } from './passport/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
+import { pregnancyBleedingCare } from '../matching/carePriority.js';
 import { buildEcosystemV2, scoreProductV2, withV2Score, userKeyOf } from '../matching/v2.js';
 import { isRecommendable, recommendationEligibility } from '../matching/eligibility.js';
 import { holdStateFor } from '../matching/gate.js';
@@ -1921,6 +1922,14 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
             const note = up.contradictions.find((c) => c.code === 'period_need_vs_stage');
             details = { ...details, percent: null, score: 0, sortScore: 0, matchStatus: 'bleeding-evaluation', tier: 'browse', bleedingEvaluation: { text: note?.text || BLEEDING_EVALUATION_TEXT, source: note?.source || null } };
         }
+        // ACOG: bleeding in pregnancy needs an ob-gyn evaluation. A product
+        // whose only stated use is the blocked bleeding/pelvic-pain need must
+        // not regain a percent through browse-if-you-needed-it.
+        if (!best && needMatches.some((m) => m.filtered === 'pregnancy_bleeding_care')) {
+            const note = pregnancyBleedingCare(up);
+            details = { ...details, percent: null, score: 0, sortScore: 0, matchStatus: 'bleeding-evaluation', tier: 'browse',
+                bleedingEvaluation: { text: note?.text || 'Contact your ob-gyn about bleeding during pregnancy.', source: note ? { label: 'ACOG: Bleeding During Pregnancy', url: note.source } : null } };
+        }
     }
     // Nov 4 (founder: "just because I didn't match the Saalt Cup doesn't mean I don't match with it
     // at all, if I'm browsing and curious"): a product that isn't for anything she picked still
@@ -2030,22 +2039,88 @@ function careFlagsFor(up) {
     // Nov 4 (50-profile run): spotting between periods got liners and no word about getting it checked.
     // MedlinePlus: call your provider about unexplained bleeding between periods.
     const spotting = needIds.has('cycle.spotting');
+    const pregnancyBleeding = pregnancyBleedingCare(up);
     const notes = [];
+    if (pregnancyBleeding) notes.push({ code: pregnancyBleeding.code, prominent: true, short: 'Bleeding during pregnancy needs an ob-gyn assessment before product recommendations.', text: pregnancyBleeding.text, source: pregnancyBleeding.source });
     if (up.safety.careFirst) notes.push({ code: 'urgent_yes', text: 'You said something may be urgent. Reach a clinician, urgent care, or emergency services first. Products come second.' });
     else if (up.safety.urgent === 'not_sure') notes.push({ code: 'urgent_not_sure', text: 'You were not sure if something is urgent. If symptoms are severe or getting worse, contact a clinician.' });
     if (utiRightNow) notes.push({ code: 'uti_right_now', text: 'You have UTI-like symptoms right now. Get tested or see a clinician first. Supplements are not a substitute for treatment.' });
     else if (utiFirstTime && utiNeed) notes.push({ code: 'uti_first_time', text: 'First-time UTI-like symptoms are worth checking with a clinician.' });
     if (severePain) notes.push({ code: 'severe_pain', text: 'Severe period pain is worth raising with a clinician.' });
     if (veryHeavyFlow) notes.push({ code: 'very_heavy_flow', text: 'Very heavy periods are worth raising with a clinician.' });
-    if (spotting) notes.push({ code: 'spotting_check', text: 'Spotting between periods is worth checking with a clinician, especially if it is new or keeps happening. Liners only help with the mess.' });
+    if (spotting && !pregnancyBleeding) notes.push({ code: 'spotting_check', text: 'Spotting between periods is worth checking with a clinician, especially if it is new or keeps happening. Liners only help with the mess.' });
+    // CDC: symptoms alone do not reliably distinguish BV from yeast or other causes.
+    if (['vaginal.bv', 'vaginal.yeast', 'vaginal.discharge', 'vaginal.odor', 'vaginal.irritation'].some(id => needIds.has(id))) {
+      notes.push({ code: 'vaginitis_testing', prominent: true, short: 'Vaginal symptoms alone cannot confirm BV or yeast. Testing or a clinician assessment may be needed.', text: 'Itching, discharge or odor can have several causes. Symptoms alone cannot confirm BV or yeast; a clinician may need to examine or test to identify the cause. Avoid treating an unconfirmed diagnosis as certain.', source: 'https://www.cdc.gov/std/treatment-guidelines/vaginal-discharge.htm' });
+    }
+    // Official DailyMed labeling: spironolactone should be avoided in pregnancy.
+    const spironolactone = (up.safety.medications || []).some(m => /spironolactone/i.test([m.generic, m.raw].filter(Boolean).join(' ')));
+    if (up.safety.ttc && spironolactone) notes.push({ code: 'ttc_spironolactone', prominent: true, short: 'Spironolactone needs a prescriber review when planning pregnancy.', text: 'You listed spironolactone while trying to conceive. Its US drug label warns against use during pregnancy because of potential fetal risk. Discuss your medication plan with your prescriber promptly. Do not stop a prescription based only on ayna.', source: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0c45d793-6f2f-4622-b5ed-6875acfbc02b' });
     if (symptomCare.length) notes.push({ code: 'symptom_check', text: 'Some symptoms you chose are best checked by a clinician.' });
+    // Care navigation for needs with limited defensible products. Sources are
+    // professional clinical guidance, NOT supporting evidence for a brand.
+    if (needIds.has('cycle.pms') || needIds.has('mood.cycle_related')) notes.push({
+      code: 'pms_care', short: 'Track symptoms daily for 2 to 3 cycles and discuss bothersome PMS with your ob-gyn.',
+      text: 'ACOG recommends recording symptoms and period dates for 2 to 3 months. Some premenstrual symptoms respond to exercise, counseling or clinician-guided treatment. Most marketed PMS products are not proven to work.',
+      source: 'https://www.acog.org/womens-health/faqs/Premenstrual-Syndrome',
+    });
+    if (needIds.has('mood.pmdd')) notes.push({
+      code: 'pmdd_care', prominent: true, short: 'PMDD symptoms deserve care, not an unverified supplement match.',
+      text: 'ACOG recommends assessment and evidence-based treatment for severe premenstrual mood symptoms, including clinician-managed options such as therapy or medication. Seek prompt help if you feel unsafe.',
+      source: 'https://www.acog.org/clinical/clinical-guidance/clinical-practice-guideline/articles/2023/12/management-of-premenstrual-disorders',
+    });
+    if (needIds.has('condition_support.pcos')) notes.push({
+      code: 'pcos_care', short: 'PCOS care depends on your symptoms and goals; a clinician can help choose an approach.',
+      text: 'NICHD describes different approaches for cycle symptoms, insulin resistance, skin and hair changes, and fertility. No single supplement is a substitute for individualized clinical assessment.',
+      source: 'https://www.nichd.nih.gov/health/topics/pcos/conditioninfo/treatments',
+    });
+    if (needIds.has('condition_support.adenomyosis')) notes.push({
+      code: 'adenomyosis_care', short: 'A heating pad or warm bath may help cramping while a clinician assesses adenomyosis symptoms.',
+      text: 'Mayo Clinic lists heat for symptom relief, while prolonged or heavy bleeding and severe pain may need clinician-guided evaluation and treatment. A heating pad does not treat the underlying adenomyosis.',
+      source: 'https://www.mayoclinic.org/diseases-conditions/adenomyosis/diagnosis-treatment/drc-20369143',
+    });
+    if (up.safety.pregnant && needIds.has('digestive.nausea')) notes.push({
+      code: 'pregnancy_nausea', short: 'Small, frequent bland meals may help pregnancy nausea. Contact your ob-gyn if you cannot keep fluids down.',
+      text: 'ACOG recommends small frequent meals and hydration for pregnancy nausea. If symptoms continue, an obstetric clinician can discuss appropriate treatment. Inability to keep fluids down, very little urine or fainting needs prompt assessment.',
+      source: 'https://www.acog.org/womens-health/faqs/morning-sickness-nausea-and-vomiting-of-pregnancy',
+    });
+    if (utiNeed && ph.utiFrequency === 'recurrent') notes.push({
+      code: 'recurrent_uti_care', short: 'Repeated UTI-like symptoms deserve a clinician evaluation to confirm the cause.',
+      text: 'Repeated urinary symptoms can require evaluation and a personalized prevention plan. A home test does not treat an infection. NIDDK describes clinician-directed treatment and prevention options.',
+      source: 'https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-infection-uti-in-adults/treatment',
+    });
+    if (needIds.has('cognition.brain_fog') && up.contexts?.menopause_transition) notes.push({
+      code: 'peri_brain_fog', short: 'Brain fog is common during perimenopause, but persistent changes deserve evaluation.',
+      text: 'The Menopause Society notes that temporary concentration and memory difficulties are common around perimenopause. ayna should not assume menopause is the only cause of cognitive symptoms.',
+      source: 'https://menopause.org/patient-education/menopause-topics/perimenopause',
+    });
     // womenshealth.gov (Body changes and discomforts): water, fiber-rich food and gentle movement for
     // constipation in pregnancy; tell your doctor if it does not go away.
     if (up.safety.pregnant && up.healthIntent.needs.some((n) => n.id === 'digestive.constipation')) notes.push({ code: 'pregnancy_constipation', short: 'Start with water, fiber-rich food and movement. Ask your doctor before a laxative.', text: 'For constipation in pregnancy, start with water, fiber-rich foods and gentle movement. Ask your doctor before a laxative or fiber supplement, and tell them if it does not go away.', source: 'https://www.womenshealth.gov/pregnancy/youre-pregnant-now-what/body-changes-and-discomforts' });
     // Nov 6 (founder: hot flashes are for everyone, context only changes what they're filed under).
     // Outside the menopause transition, MedlinePlus (Skin blushing/flushing) lists other causes:
     // some medicines, alcohol, hot or spicy food, heat; contact a provider for persistent flushing.
-    if (!up.contexts?.menopause_transition && up.healthIntent.needs.some((n) => n.id === 'vasomotor.hot_flashes' || n.id === 'vasomotor.night_sweats')) notes.push({ code: 'vasomotor_other_causes', short: 'Hot flashes can also come from some medicines, alcohol, spicy food or heat. If they keep happening, check with a clinician.', text: 'Hot flashes and flushing aren’t only a menopause thing. Some medicines, alcohol, hot or spicy food and heat can cause them too. If they keep happening, check with a clinician.', source: 'https://medlineplus.gov/ency/article/003241.htm' });
+    if (!up.contexts?.menopause_transition && up.healthIntent.needs.some((n) => n.id === 'vasomotor.hot_flashes' || n.id === 'vasomotor.night_sweats')) {
+      const timing = up.vasomotorTiming || [];
+      const periodTimed = timing.some(t => ['before_period', 'during_period', 'around_period_reported'].includes(t));
+      const stressTimed = timing.some(t => ['stress_anxiety', 'with_stress_reported'].includes(t));
+      // Co-selected PMS/anxiety are NOT proof that flushing follows either.
+      // Only explicitly reported temporal context enters this explanation.
+      const timingLine = periodTimed && stressTimed
+        ? 'You reported episodes around your period and during anxiety or stress.'
+        : periodTimed ? 'You reported episodes around your period or PMS.'
+          : stressTimed ? 'You reported episodes while anxious or stressed.'
+            : '';
+      const guide = timingLine
+        ? `${timingLine} That timing is worth tracking, but it does not prove the cause or suggest menopause.`
+        : 'Hot flashes can happen at different ages. The timing and triggers are worth tracking before attributing a cause.';
+      notes.push({
+        code: 'vasomotor_other_causes',
+        short: guide,
+        text: `${guide} Flushing can also be associated with medicines, physical activity, temperature, strong emotions or other medical conditions. If it persists or changes, check with a clinician.`,
+        source: 'https://medlineplus.gov/ency/article/003241.htm',
+      });
+    }
     // Nov 5 (10-person runs: migraine with aura on the pill got no word about it). CDC US MEC: estrogen-
     // containing methods are not recommended with migraine with aura, high blood pressure or a past
     // blood clot. "Birth control pill" may be progestin-only, so the note asks rather than tells.
@@ -2060,7 +2135,7 @@ function careFlagsFor(up) {
     return {
         urgent: up.safety.urgent,
         careFirst: up.safety.careFirst,
-        careProminent: Boolean(up.safety.careProminent || up.contradictions.some((x) => x.code === 'period_need_vs_stage') || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length || spotting),
+        careProminent: Boolean(up.safety.careProminent || pregnancyBleeding || notes.some(n => n.prominent) || up.contradictions.some((x) => x.code === 'period_need_vs_stage') || utiRightNow || (utiFirstTime && utiNeed) || severePain || veryHeavyFlow || symptomCare.length || spotting),
         utiRightNow,
         utiFirstTime,
         severePain,

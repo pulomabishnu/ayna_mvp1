@@ -33,7 +33,7 @@ if (devPreviewOn()) {
 import posthog from 'posthog-js'
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal'
 import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics'
-import { applyStoredConsent, getStoredConsent, isMandatoryGpcVisitor } from './utils/analyticsConsent'
+import { applyStoredConsent, getStoredConsent } from './utils/analyticsConsent'
 import { appErrorProperties } from './utils/errorAnalytics'
 import { sanitizeEventPayload } from './utils/analyticsSanitize'
 import { analyticsPlatform, resolvePosthogKey } from './utils/analyticsPlatform'
@@ -202,21 +202,10 @@ if (!POSTHOG_KEY) {
     mask_all_text: true,
     disable_session_recording: true,
     ip: false,
-    // Usage analytics are on by default, but a prior opt-out or Global
-    // Privacy Control must be honored before PostHog can emit the initial
-    // pageview. Health free text and direct identifiers are still stripped by
-    // before_send below, and session recording/autocapture remain disabled.
-    //
-    // Every GPC sender starts opted out here, synchronously, regardless of
-    // which state they're in. Confirming whether their specific state's law
-    // actually mandates honoring GPC requires an async geolocation lookup
-    // (isMandatoryGpcVisitor() in `loaded` below), which can't complete
-    // before this init call returns. This is the conservative direction to
-    // fail in: worst case a GPC visitor outside a mandatory state stays
-    // opted out a few hundred ms longer than strictly required; capturing
-    // before confirming they're NOT in a mandatory state is not a trade
-    // worth making for a slightly earlier pageview.
-    opt_out_capturing_by_default: GPC_ENABLED || STORED_ANALYTICS_PREF === 'denied',
+    // For a reproductive-health product, optional analytics stays OFF until
+    // the user explicitly opts in. A stale grant also defaults to OFF.
+    // GPC always disables capture here. No region lookup can silently enable it.
+    opt_out_capturing_by_default: GPC_ENABLED || STORED_ANALYTICS_PREF !== 'granted',
     before_send: sanitizePosthogEvent,
     // Automatic exception capture can include raw error messages/stacks. In a
     // health product those may accidentally contain user-entered context, so
@@ -228,26 +217,9 @@ if (!POSTHOG_KEY) {
     errorTracking: { autocaptureExceptions: false },
     loaded: (ph) => {
       window.posthog = ph;
-      if (GPC_ENABLED) {
-        // isMandatoryGpcVisitor() only makes a network call (to
-        // /api/gpc-region) because GPC is active here, see
-        // analyticsConsent.js. If this state's law doesn't actually mandate
-        // honoring GPC, correct the synchronous default above via
-        // set_config rather than opt_in_capturing(): set_config live-updates
-        // opt_out_capturing_by_default without ever recording an explicit
-        // SDK decision, so this visitor ends up in EXACTLY the same state as
-        // anyone else who's never touched the notice: captured by default,
-        // consent still "pending", opt-out notice still showing (see
-        // ConsentBanner.jsx, which asks the same isMandatoryGpcVisitor()
-        // question for that same reason). Calling opt_in_capturing() here
-        // instead would mark their consent explicit and wrongly suppress
-        // the notice, as if they'd already answered it themselves.
-        isMandatoryGpcVisitor().then((mandatory) => {
-          if (!mandatory) ph.set_config?.({ opt_out_capturing_by_default: false });
-        });
-      } else {
-        applyStoredConsent(ph);
-      }
+      // Never override GPC by looking up a region; otherwise restore an
+      // explicitly granted consent or continue with the default-off state.
+      if (!GPC_ENABLED) applyStoredConsent(ph);
       tagFounderAnalyticsIfNeeded(ph);
       tagInternalUserIfNeeded(ph);
       // Every event says where it came from, so app and website separate

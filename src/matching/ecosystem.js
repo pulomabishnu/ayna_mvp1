@@ -28,6 +28,7 @@
 import NEED_MAP_RESEARCH from '../data/matching/needMap.research.js';
 const RESEARCH_GRADES = new Map(NEED_MAP_RESEARCH.map((r) => [`${r.product}|${r.need}`, r]));
 import { buildProductProfile } from './productProfile.js';
+import { careFirstForNeed } from './carePriority.js';
 import { scoreProductForNeed, evaluateSafety, evidenceChannels, TIERS, REQUIRED_FIELD_TEXT, PRODUCT_INFO_TEXT } from './score.js';
 import { NEED_BY_ID, needPhrase } from './ontology.js';
 
@@ -362,9 +363,10 @@ export function buildEcosystem(up, products, options = {}) {
     const care = (careProminent || need.id.startsWith('care.')) ? careBundleFor([need.id], up, options.getCareResourceBundle) : null;
     // Bleeding after menopause: no products by design (founder, Oct 24), so the shelf says why instead of
     // "nothing we can stand behind" (10-person run #2, Nov 5).
-    const careOnly = !picks.length && (up.contradictions || []).some((c) => c.code === 'period_need_vs_stage' && (c.affects || []).includes(need.id));
+    const pregnancyCare = careFirstForNeed(up, need.id);
+    const careOnly = !picks.length && (Boolean(pregnancyCare) || (up.contradictions || []).some((c) => c.code === 'period_need_vs_stage' && (c.affects || []).includes(need.id)));
     const quality = careOnly
-      ? { quality: 'none', note: 'Bleeding after menopause should be checked promptly by a clinician, so we do not suggest products for it.' }
+      ? { quality: 'none', note: pregnancyCare?.text || 'Bleeding after menopause should be checked promptly by a clinician, so we do not suggest products for it.' }
       : shelfQuality(picks, restrictedCount, need.id, missingFields.size > 0, stageHeld);
     shelves.push({
       needId: need.id,

@@ -137,6 +137,7 @@ export const CONCERN_AREAS = [
   'UTI support',
   'STI support',
   'Gut and vaginal health (probiotics, pH balance)',
+  'Hot flashes and night sweats',
   'Perimenopause and menopause support',
   'Sexual health and comfort (lubricants, pelvic floor)',
   'Mental health and cycle mood support',

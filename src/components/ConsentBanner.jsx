@@ -19,16 +19,8 @@ import { hasRecordedChoice, acknowledgeAnalytics, denyConsent, isMandatoryGpcVis
  *  2. There is no dismiss/close control. Silence is not a decision, so the
  *     bar persists across reloads until one of the two buttons is clicked.
  *
- * Hidden only for visitors in a state whose privacy law actually mandates
- * honoring Global Privacy Control (see isMandatoryGpcVisitor() /
- * api/_gpcRegions.js) — GPC's legal scope is narrow (opt-out of sale/
- * sharing, which this app's analytics isn't). A GPC sender OUTSIDE those
- * states is corrected to the same default-on, consent-still-pending state
- * as anyone else in main.jsx (via set_config, not opt_in_capturing — see
- * the comment there), so they see this notice exactly like a normal
- * visitor would, and can decline the same way. The region check is async
- * and only runs at all when GPC is actually active, so most visitors
- * resolve instantly with no network call.
+ * GPC visitors remain opted out. Other visitors can choose to enable optional
+ * analytics after seeing the notice; ignoring it never enables tracking.
  *
  * The copy says "necessary storage", not "necessary cookies", because this
  * app sets no cookies — the necessary thing is the Supabase session living
@@ -101,11 +93,10 @@ export default function ConsentBanner() {
   return (
     <div ref={bannerRef} role="dialog" aria-live="polite" aria-label="Analytics notice" className="consent-banner">
       <p>
-        Usage analytics are on by default so we can understand how people use ayna and improve it.
-        We don&apos;t use analytics for advertising or sell it. Health-search text, account email, direct
-        account IDs and common health-profile fields are stripped from analytics; session recording and
-        automatic text/click capture are off. You can turn analytics off now or anytime from Privacy
-        Preferences. Read our{' '}
+        Optional usage analytics are off until you choose to enable them. Analytics help us improve ayna.
+        We don&apos;t use them for advertising or sell them. Health-search text, account identifiers,
+        product identities and sensitive profile details are excluded; recording and automatic text/click
+        capture are off. You can change your choice in Privacy Preferences. Read our{' '}
         <a href="/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</a>.
       </p>
       <div className="consent-banner__actions">
@@ -114,14 +105,14 @@ export default function ConsentBanner() {
           data-testid="consent-decline"
           onClick={() => { denyConsent(ph); setVisible(false) }}
         >
-          Turn analytics off
+          Keep analytics off
         </button>
         <button
           type="button"
           data-testid="consent-accept"
           onClick={() => { acknowledgeAnalytics(ph); setVisible(false) }}
         >
-          Got it
+          Enable optional analytics
         </button>
       </div>
     </div>

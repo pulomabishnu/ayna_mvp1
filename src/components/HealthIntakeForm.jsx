@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { VASOMOTOR_TIMING_OPTIONS, needsVasomotorTiming, toggleVasomotorTiming } from '../matching/vasomotorContext.js';
 import { AVOID_INGREDIENTS, PREFERENCE_MAP } from '../utils/intakePreferenceMap';
 
 // Plain-language groups so it's obvious what is being preferred; the "X-free"
@@ -36,12 +37,13 @@ const SUPPORT_GROUPS = [
   { label: 'Vaginal health', items: ['Vaginal dryness', 'Vaginal itching or irritation', 'Unusual vaginal discharge', 'Vaginal odor', 'BV concerns', 'Yeast infection concerns'] },
   { label: 'Urinary health', items: ['Burning with urination', 'Frequent urination', 'Urinary urgency', 'Recurrent UTI-like symptoms', 'Bladder leakage or incontinence'] },
   { label: 'Sexual + reproductive health', items: ['Pain or discomfort during sex', 'Low libido or libido changes', 'Sexual wellness or comfort', 'Contraception', 'STI-related concerns'] },
-  { label: 'Perimenopause + menopause + post-menopause', items: ['Hot flashes', 'Night sweats', 'Joint aches', 'Menopause-related body changes'] },
+  { label: 'Temperature + sweating', items: ['Hot flashes', 'Night sweats'] },
+  { label: 'Perimenopause + menopause + post-menopause', items: ['Menopause-related body changes'] },
   { label: 'Mood + mental wellbeing', items: ['Mood swings', 'Irritability', 'Anxiety', 'Low mood', 'Cycle-related mood changes'] },
   { label: 'Sleep + energy + cognition', items: ['Fatigue or low energy', 'Trouble sleeping', 'Brain fog', 'Difficulty concentrating'] },
   { label: 'Digestive health', items: ['Constipation', 'Diarrhea', 'Gas', 'Abdominal discomfort', 'Digestive bloating'] },
   { label: 'Hair', items: ['Hair thinning or hair loss', 'Excess facial or body hair'] }, // Nov 5 all-hands: no skin care in the quiz for now
-  { label: 'Metabolic + physical wellness', items: ['Metabolism or weight support', 'Strength or fitness', 'Bone health'] },
+  { label: 'Metabolic + physical wellness', items: ['Metabolism or weight support', 'Strength or fitness', 'Joint aches', 'Bone health'] },
   { label: 'Care access', items: ['Finding a doctor or specialist', 'Finding a telehealth provider'] },
   { label: 'Other', items: ['Something else', 'Nothing right now'] },
 ];
@@ -236,9 +238,9 @@ const LEGACY_CONCERN_BY_ITEM = {
   'Sexual wellness or comfort': 'Sexual health and comfort (lubricants, pelvic floor)',
   'Contraception': 'Telehealth and provider matching',
   'STI-related concerns': 'STI support',
-  'Hot flashes': 'Perimenopause and menopause support',
-  'Night sweats': 'Perimenopause and menopause support',
-  'Joint aches': 'Perimenopause and menopause support',
+  'Hot flashes': 'Hot flashes and night sweats',
+  'Night sweats': 'Hot flashes and night sweats',
+  'Joint aches': 'Cramp and pain relief (devices, supplements, heat)',
   'Menopause-related body changes': 'Perimenopause and menopause support',
   'Mood swings': 'Mental health and cycle mood support',
   'Irritability': 'Mental health and cycle mood support',
@@ -1383,7 +1385,16 @@ export default function HealthIntakeForm({ onComplete }) {
       </>;
     }
     if (step.type === 'text' && step.id === 'zip') return <input className="ayna-text-input" inputMode="numeric" maxLength={5} value={intake.zipcode} onChange={(e) => set('zipcode', e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="e.g. 10001" />;
-    if (step.type === 'support') return <><SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} />{intake.supportSelections.includes('Something else') && <div className="ayna-other-box"><label>Tell us what else you are looking for support with</label><input className="ayna-text-input" value={intake.supportOtherText} onChange={(e) => set('supportOtherText', e.target.value)} placeholder="Type here..." /></div>}</>;
+    if (step.type === 'support') return <>
+      <SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} />
+      {needsVasomotorTiming(intake) && <div className="ayna-other-box">
+        <label>When do you notice hot flashes or sweats? (optional, choose any)</label>
+        <div className="ayna-pills left">{VASOMOTOR_TIMING_OPTIONS.map((option) =>
+          <Pill key={option} label={option} selected={(intake.vasomotorTimingSelections || []).includes(option)} onClick={() => set('vasomotorTimingSelections', toggleVasomotorTiming(intake.vasomotorTimingSelections, option))} />)}</div>
+        <p className="ayna-mini-note">Timing is useful context, not a diagnosis.</p>
+      </div>}
+      {intake.supportSelections.includes('Something else') && <div className="ayna-other-box"><label>Tell us what else you are looking for support with</label><input className="ayna-text-input" value={intake.supportOtherText} onChange={(e) => set('supportOtherText', e.target.value)} placeholder="Type here..." /></div>}
+    </>;
     if (step.type === 'flow') return <Scale options={PERIOD_FLOW} value={intake.periodFlow} onChange={(value) => set('periodFlow', value)} kind="flow" />;
     if (step.type === 'pain') return <Scale options={PERIOD_PAIN} value={intake.periodPain} onChange={(value) => set('periodPain', value)} kind="pain" />;
     if (step.type === 'timeline') {

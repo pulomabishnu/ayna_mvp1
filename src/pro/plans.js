@@ -7,23 +7,23 @@ const MONTHLY_REGULAR = '$8.99';
 const ANNUAL_PRICE = '$45';
 const ANNUAL_REGULAR = '$90';
 const ANNUAL_PER_MONTH = '$3.75'; // $45 / 12
-export const PAID_TERM_STARTS = 'Jan 1, 2027';
+export const PAID_TERM_STARTS = 'Feb 1, 2027';
 
-// Founder (Oct 27, 17:00): subscribe now, unlock Pro immediately, use it through Dec 31, 2026;
-// the purchased term begins in January 2027.
-export const EARLY_ACCESS_LINE = 'Subscribe now and Pro unlocks immediately. Use it through December 31, 2026, and your purchased subscription term begins in January 2027, so Early Access does not use up the month or year you bought.';
+// Founder clarification (Nov 6): full launch in January 2027; Early Access is included through January 31.
+// The purchased subscription term starts February 1, 2027, after launch month.
+export const EARLY_ACCESS_LINE = 'Subscribe now and Pro unlocks immediately. ayna fully launches in January 2027, and your Early Access continues through January 31. Your purchased month or year begins February 1, 2027. After that paid term, your plan renews at the regular rate unless you cancel.';
 
 // Yearly is chosen first and marked: $45 today vs $4.99 + 11 x $8.99 = $103.88 for a
 // first year paid monthly, and $90/year regular vs 12 x $8.99 = $107.88. 50% off is $45 of $90.
 export const PLANS = [
   { id: 'year', label: 'Yearly', price: ANNUAL_PRICE, regular: ANNUAL_REGULAR, per: 'year', best: true,
     badge: '50% off', sub: `${ANNUAL_PER_MONTH}/month`,
-    renew: `Renews at ${ANNUAL_REGULAR}/year. Cancel anytime.`,
-    terms: `Your purchased year begins in January 2027, then renews at ${ANNUAL_REGULAR}/year unless canceled.` },
+    renew: `First renewal February 1, 2028 at ${ANNUAL_REGULAR}/year, then yearly. Cancel before renewal.`,
+    terms: `Your purchased year begins February 1, 2027, and renews February 1, 2028 at ${ANNUAL_REGULAR}/year unless canceled.` },
   { id: 'month', label: 'Monthly', price: MONTHLY_PRICE, regular: MONTHLY_REGULAR, per: 'month',
     sub: 'first month',
-    renew: `Renews at ${MONTHLY_REGULAR}/month. Cancel anytime.`,
-    terms: `Your purchased month begins in January 2027, then renews at ${MONTHLY_REGULAR}/month unless canceled.` },
+    renew: `First renewal March 1, 2027 at ${MONTHLY_REGULAR}/month, then monthly. Cancel before renewal.`,
+    terms: `Your purchased month begins February 1, 2027, and renews March 1, 2027 at ${MONTHLY_REGULAR}/month unless canceled.` },
 ];
 
 /** Short chip words for each Pro feature, in the founder's wording. */

@@ -293,8 +293,8 @@ describe('C. missing data never equals a bad match', () => {
     // methenamine drug) also has an open clinician review (Oct 29, P0), the
     // only hold left once she answers.
     expect(b.safety.missingFields).not.toContain('pregnancy_status');
-    // Nov 5 (founder): open clinician reviews no longer hold; nothing else is missing once she answers.
-    expect(b.safety.missingProductInfo).toEqual([]);
+    // Her answer resolves the pregnancy question, but the independent product review hold remains.
+    expect(b.safety.missingProductInfo).toContain('clinician_review');
     // Held back from shelves and counted, never shown as a low match.
     const s = shelf(unknown, 'urinary.recurrent_uti');
     expect(s.picks.map((p) => p.productId)).not.toContain('p-winx-uti-daily-defense');

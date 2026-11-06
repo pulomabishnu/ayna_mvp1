@@ -1,6 +1,6 @@
 // Nov 6 (founder: "just because it's not in the name doesn't mean it's not used for that").
 import { describe, it, expect } from 'vitest';
-import { ALL_PRODUCTS, getEcosystemSeedFromQuiz } from '../data/products.js';
+import { ALL_PRODUCTS, getEcosystemSeedFromQuiz, getMatchCareFlags } from '../data/products.js';
 import { buildProductProfile } from './productProfile.js';
 import { EMPTY } from '../mobile/data/intakeModel.js';
 
@@ -29,7 +29,13 @@ describe('symptoms are for everyone', () => {
   it('pain during sex at 24: water-based lubricants (MedlinePlus, any age)', () => {
     expect(shelf('Pain or discomfort during sex').productIds.length).toBeGreaterThan(0);
   });
-  it('odor, discharge and BV at 24 have something to show', () => {
-    for (const o of ['Vaginal odor', 'Unusual vaginal discharge', 'BV concerns']) expect(shelf(o).productIds.length, o).toBeGreaterThan(0);
+  it('odor, discharge and BV at 24 have clinician guidance even if no eligible products', () => {
+    for (const o of ['Vaginal odor', 'Unusual vaginal discharge', 'BV concerns']) {
+      const matched = shelf(o);
+      const note = getMatchCareFlags({ fullHealthIntake: { ...EMPTY, ...ok, age: '24', lifeStageSelections: ['I get periods regularly'], supportSelections: [o] } }).notes.find(n => n.code === 'vaginitis_testing');
+      expect(note?.source, o).toContain('cdc.gov');
+      expect(Array.isArray(matched.productIds)).toBe(true);
+      if (!matched.productIds.length) expect(matched.emptyReason, o).toBeTruthy();
+    }
   });
 });

@@ -111,34 +111,22 @@ Tailoring rules when reader context is present:
 - Summary: ${summary}
 - Tags: ${tags}
 ${brandBlock}${readerBlock}
-CLINICAL AUTHORITY SOURCES TO REFERENCE:
-Ground clinicalNarrative and scienceSummary in guidance from these organizations where relevant:
-- ACOG (American College of Obstetricians and Gynecologists) for OB/GYN conditions: menstrual health, PMOS, endometriosis, menopause, perimenopause, fertility, contraception, UTIs, pelvic floor
-- NIH Office of Dietary Supplements for all supplement categories, ingredient safety, evidence quality, dosing guidance
-- FDA for device and period care product regulatory standing
-- Cochrane Reviews for systematic review evidence on supplement and device categories
-- UpToDate for how clinicians approach a condition or product category at point of care
-- OpenEvidence (grounded in NEJM, JAMA, NCCN, Cochrane) as a reference for clinical evidence quality
-
-EDITORIAL REVIEW SOURCES FOR COMMUNITY CONTEXT:
-When writing communitySummary, reference trusted editorial reviews if relevant to this product category:
-- NYT Wirecutter, independent, lab-tested reviews for menstrual products, fitness trackers, and health gear
-- InStyle, expert-tested reviews for period underwear and personal care
-In communitySummary, you may say things like "Independent testing by outlets like NYT Wirecutter has evaluated products in this category" or "Editorial reviews note [observation]" when it genuinely applies.
-In communitySearchQueries, include one query that would surface editorial reviews (e.g. "best [category] wirecutter review") when relevant.
-
-HOW TO USE THESE SOURCES:
-- In clinicalNarrative: open with or include one phrase grounding the category in clinical guidance, e.g. "ACOG recognizes menstrual pain management as a key area of OB/GYN care" or "The NIH Office of Dietary Supplements notes that evidence for magnesium in menstrual pain is emerging"
-- In scienceSummary: reference the type and quality of evidence, e.g. "Cochrane reviews note limited RCT evidence for most menstrual supplements" or "ACOG clinical guidelines address this condition category"
-- NEVER fabricate specific bulletin numbers, PMIDs, guideline numbers, or direct quotes
-- ONLY say "consistent with", "aligned with", "noted by", or "referenced in", never claim to directly quote
-- Only reference an organization when confident their guidance genuinely covers this area
-- If clinical authority is not relevant to this product type, skip this block
+EVIDENCE AND CLAIM-ATTRIBUTION RULES (mandatory):
+- The catalog's name, tags and summary are a product description and may contain the MANUFACTURER'S claims. They are not independent evidence of efficacy, safety or regulatory authorization.
+- Cite an actual medical organization, guideline, study or clinician ONLY if a concrete supporting passage is included in the retrieved product knowledge context BELOW. Do not rely on assumed general knowledge or invent an organization's position.
+- When a manufacturer claims a benefit, say "the brand describes this as ..." or "according to the manufacturer ..." if that claim must be mentioned. Do not restate it as established fact.
+- Evidence on an individual ingredient, or on a related device category, must NEVER be described as a clinical trial, endorsement, validation or proof for this exact brand or formulation.
+- If source context is missing, do not mention ACOG, NIH, Cochrane, FDA clearance or clinical studies. You may describe neutral intended use or say "the evidence for this exact product has not been established here."
+- If a sourced claim is tentative, conflicting, weak, or negative, communicate that limitation rather than summarizing it as a positive outcome.
+- Do not infer a diagnosis from symptoms or claim the product is safe for this person, in pregnancy, while nursing, or with her medicines. For medication or pregnancy considerations, encourage checking the actual product label and a qualified clinician/pharmacist.
+- Avoid categorical phrases "clinically proven", "doctor approved", "FDA approved", "safe for everyone", "treats", "cures", "prevents" unless the retrieved source supports that exact claim for that exact SKU and intended use.
+- Never invent quotes, statistics, study identifiers, trial outcomes, regulatory classifications, or endorsement.
+- This feature provides educational product-source summaries. It does not establish medical effectiveness or replace care.
 
 ${productKnowledgeContext ? `${productKnowledgeContext}\n\n` : ''}Return a SINGLE JSON object with this exact shape (no markdown, no URLs anywhere in any field):
 {
-  "clinicalNarrative": "2-4 sentences grounded in the clinical knowledge base above. Reference ACOG, NIH ODS, or Cochrane where the knowledge supports it. When reader context is present, open with one clause on relevance to their specific conditions. Educational only - no diagnosis.",
-  "scienceSummary": "1-2 sentences: how evidence or trials are typically discussed for this category (not about this specific product unless clearly a named drug/device). Mention evidence limitations when the reader has complex conditions and evidence may not be product-specific.",
+  "clinicalNarrative": "2-4 sentences: explain the product category and relevant safety limits. Attribute manufacturer claims. Mention an organization only when the retrieved passage below actually supports the statement. Do not diagnose.",
+  "scienceSummary": "1-2 sentences identifying whether the retrieved information describes studies of this exact product, its ingredients, or only its broader category. If none is retrieved, say evidence for this exact product has not been established here.",
   "communitySummary": "1-2 sentences: how patients often discuss this topic in forums, clearly anecdotal, not factual claims. If reader sensitivities apply (e.g. fragrance), note that forum posts are unverified.",
   "quickOverviewPros": ["2-4 concise bullets, each explicitly tied to the reader context when possible"],
   "quickOverviewCons": ["2-4 bullets on ingredient safety concerns, contraindications, or mismatch risks SPECIFIC to this reader's conditions - use the clinical knowledge base above to identify relevant ingredient flags for their conditions"],
@@ -154,7 +142,7 @@ STRICT RULES:
 - pubmedSearchQueries: 2-4 items, each 3-80 characters, MeSH-friendly short phrases (English).
 - patientEducationQueries: 1-2 items for consumer health search (symptom or topic).
 - communitySearchQueries: 1-3 items for social search. When brand/comparison context is provided above, include the brand in at least one query; otherwise use product type + use case.
-- If unsure, use shorter, more generic phrases rather than specific claims.`;
+- If unsure, say what has not been verified rather than filling the gap with a plausible medical claim.`;
 }
 
 function stripJsonFence(s) {
