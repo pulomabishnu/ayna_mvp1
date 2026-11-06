@@ -561,6 +561,7 @@ function holdUnverified(supabase, session) {
 
 function App() {
   const [currentView, setCurrentViewRaw] = useState(getInitialView);
+  const [homeLogRequested, setHomeLogRequested] = useState(false);
   // app_error reports which screen it happened on (production builds minify component names).
   useEffect(() => { try { window.__aynaView = currentView; } catch { /* no window */ } }, [currentView]);
   // Only meaningful when currentView === 'product', the :id segment of
@@ -3188,6 +3189,8 @@ function App() {
               onData={() => { const section = document.getElementById('wht-week-h'); if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' }); else goHealthData(); }}
               onProducts={() => document.getElementById('eco3-shelves-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
               onConnect={goHealthData}
+              autoOpenLog={homeLogRequested}
+              onAutoLogHandled={() => setHomeLogRequested(false)}
               refresh={quizResults ? <div className="wht__refresh"><HealthRefreshPrompt quizResults={quizResults} onSave={handleUpdateIntake} onUpdate={(step) => { setEditAtStep(step || ''); setCurrentView('profile-edit'); }} /></div> : null}
             /> : null}
             quizSlot={ecosystemQuizCard}
@@ -3199,7 +3202,7 @@ function App() {
             onToggleProduct={toggleMyProduct}
             savedProducts={savedProducts}
             onToggleSaved={toggleSavedProduct}
-            onOpenCheckIn={() => { setCurrentView('home'); window.setTimeout(() => { openTodayLog('web'); document.getElementById('home-today')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); }}
+            onOpenCheckIn={() => { setHomeLogRequested(true); setCurrentView('home'); }}
             trackedProducts={trackedProducts}
             toggleTrackProduct={toggleTrackProduct}
             toggleOmitProduct={toggleOmitProduct}
