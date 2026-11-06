@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { FREE_FEATURES, PRO_FEATURES } from './features.js';
 import { RESUME_KEY, RESUME_MAX_AGE_MS, marqueeLength, peekProResume, roundedPerimeter, proFeatureName, proLimitFeature, registerProPaywallHost, resumeStep, saveProResume } from './paywall.js';
 import ProLock from '../components/ProLock.jsx';
-import { PLANS, PRO_GROUPS, proGroups } from './plans.js';
+import { PLANS, PRO_GROUPS, proGroups, PAID_TERM_STARTS, EARLY_ACCESS_LINE } from './plans.js';
 
 const proPage = readFileSync(new URL('../../public/pro.html', import.meta.url), 'utf8');
 const proApi = readFileSync(new URL('../../api/pro.js', import.meta.url), 'utf8');
@@ -84,7 +84,12 @@ describe('the sheet and /pro only promise what is real', () => {
       'Deeper, more detailed personalized insights', 'Advanced tracking + trend insights', 'No connected health data', 'Recommendation explanations']) expect(proPage).toContain(row);
     for (const free of FREE_FEATURES) expect(proPage).toContain(free);
     expect(proPage).toContain('Free helps you find what fits. Pro learns with you.');
-    expect(proPage).toContain('December 31, 2026');
+    expect(proPage).toContain('February 1, 2027');
+    expect(proPage).toContain('January 31');
+    expect(proPage).not.toContain('December 31, 2026');
+    expect(proPage).not.toContain('January 2027, then renews');
+    expect(PAID_TERM_STARTS).toBe('Feb 1, 2027');
+    expect(EARLY_ACCESS_LINE).toContain('January 31');
     expect(proPage).toContain('$45');
     expect(proPage).toContain('$4.99');
     expect(proPage).not.toMatch(/\u2014/);
