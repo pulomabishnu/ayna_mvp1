@@ -61,6 +61,11 @@ export function toClientProduct(row) {
   // Provenance travels with the product so the UI can never present a
   // non-curated row with verified-clinician affordances.
   p.source = row.source || 'curated';
+  // Client-side defense in depth for any approved discovery listing.
+  p.reviewStatus = row.review_status || null;
+  if (p.source === 'discovered' && row.discovery_meta?.humanReviewedAt) {
+    p.discoveryMeta = { humanReviewedAt: row.discovery_meta.humanReviewedAt };
+  }
   // PRODUCT INTEGRITY (2026-09-22 audit): the DB rows skipped the guardrails
   // the bundled catalog already runs (src/data/catalogEvidence.js), so the
   // live feed — which the iOS app renders directly — showed unsourced star

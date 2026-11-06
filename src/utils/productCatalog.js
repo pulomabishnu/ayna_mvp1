@@ -26,6 +26,7 @@ import { applyCatalogCorrections } from '../data/catalogCorrections.js';
  * regenerated, and `--check` proves the export is lossless.
  */
 import { ALL_PRODUCTS as BUNDLED_FALLBACK, loadCatalog } from '../data/catalog.js';
+import { publishProductCatalog } from '../data/publishedCatalog.js';
 
 const API_PATH = '/api/products';
 const CACHE_KEY = 'ayna_product_catalog_v4';
@@ -69,6 +70,9 @@ export async function loadProductCatalog() {
 
   const cached = readCache();
   if (cached) {
+    // The same vetted published inventory powers Shop and the recommendation
+    // engine. Without this, a warm local catalog cache still left quiz on 330.
+    publishProductCatalog(cached);
     memo = { products: cached, source: 'cache' };
     return memo;
   }
@@ -84,6 +88,7 @@ export async function loadProductCatalog() {
       const data = await res.json();
       const products = Array.isArray(data?.products) ? data.products.map(applyCatalogCorrections) : [];
       if (!products.length) throw new Error('empty catalog');
+      publishProductCatalog(products);
       writeCache(products);
       memo = { products, source: 'api' };
       return memo;

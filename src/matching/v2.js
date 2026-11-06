@@ -727,6 +727,29 @@ export function buildEcosystemV2(up, products, options = {}) {
       homed = chosen.filter((x) => x.results.has(shelf.needId))
         .map((x) => ({ ...x, home: { needId: shelf.needId, ...x.results.get(shelf.needId) } }));
     }
+    // Global ranking has a finite set of shared slots. That must not make a
+    // user's other chosen needs falsely read as having zero matching products.
+    // Choose from the SAME safety-, eligibility-, price-, format-, history-
+    // and evidence-filtered candidates, using this need's OWN v2 score.
+    // No cross-need inference, no lower fit bar, no inferred treatments.
+    if (!homed.length && !shelf.careFirst && shelf.emptyReason !== 'care_first'
+      && shelf.emptyReason !== 'clinician_first_for_stage') {
+      const available = candidates.flatMap((candidate) => {
+        const x = candidate.results.get(shelf.needId);
+        return x && !x.partial && x.v2.fit >= V2.ecosystemFloor && x.r.score >= 50
+          ? [{ pp: candidate.pp, home: { needId: shelf.needId, ...x }, results: candidate.results }]
+          : [];
+      });
+      available.sort((a, b) => b.home.r.score - a.home.r.score || b.home.v2.rankKey - a.home.v2.rankKey);
+      const uniqueBrands = new Set();
+      homed = available.filter((x) => {
+        if (uniqueBrands.size >= Math.min(needCap(shelf.needId), perNeed)) return false;
+        const brand = x.pp.brand?.key || x.pp.product_id;
+        if (uniqueBrands.has(brand)) return false;
+        uniqueBrands.add(brand);
+        return true;
+      });
+    }
     // Nothing evidence-graded fits this need: keep v1's safe picks (already
     // through every safety rule) rather than an empty shelf, minus anything
     // the research says does not fit this need. Labelled as partial fits.
