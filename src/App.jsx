@@ -173,6 +173,7 @@ import { openProPaywall } from './pro/paywall.js';
 import { Capacitor } from '@capacitor/core';
 import AppOnlySheet from './components/AppOnlySheet.jsx';
 import HealthRefreshPrompt from './components/health/HealthRefreshPrompt.jsx';
+import WebHomeTop from './components/you/WebHomeTop.jsx';
 import ProfileSetupGate from './components/ProfileSetupGate.jsx';
 import { resetRoutineData } from './utils/resetRoutine.js';
 import { outcomesToProductHistory, readTries } from './health/outcomes.js';
@@ -213,8 +214,8 @@ import { stampFactUpdates } from './matching/factFreshness.js';
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
 // Today · Shop · Services · Community · Library (founder, Oct 26). Shop keeps the 'explore' key.
 const WEB_TAB_VIEWS = {
-  // Home shows the original health charts; My ecosystem is a separate You page.
-  today: ['today', 'welcome', 'hero'],
+  // The web Home is the app-style dashboard at /home. Today stays a separate daily check-in page.
+  today: ['home', 'welcome', 'hero'],
   explore: ['explore', 'explore-topics', 'discovery', 'product'],
   services: ['explore-services'],
   library: ['articles'],
@@ -261,7 +262,7 @@ function clearPendingEcosystemReset(userId) {
 // You > My ecosystem. The old addresses still work (PATH_TO_VIEW below and
 // the permanent redirects in vercel.json).
 const VIEW_TO_PATH = {
-  welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/you/ecosystem', you: '/you', community: '/community',
+  welcome: '/', hero: '/', quiz: '/quiz', home: '/home', ecosystem: '/you/ecosystem', you: '/you', community: '/community',
   today: '/today', explore: '/explore', 'explore-topics': '/explore/topics', 'explore-services': '/explore/services', ask: '/ask',
   discovery: '/explore/products', waitlist: '/partners', recommendations: '/recommendations',
   articles: '/explore/resources', screenings: '/screenings', omitted: '/omitted',
@@ -300,7 +301,7 @@ const VIEW_TO_PATH = {
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
   quiz: 'Get matched', ecosystem: 'My ecosystem', discovery: 'Products', you: 'You', community: 'Community',
-  today: 'Home', explore: 'Shop', 'explore-topics': 'Health topics', 'explore-services': 'Services', ask: 'Ask ayna',
+  home: 'Home', today: 'Today', explore: 'Shop', 'explore-topics': 'Health topics', 'explore-services': 'Services', ask: 'Ask ayna',
   waitlist: 'Partner brands', recommendations: 'Your recommendations', articles: 'Resources', screenings: 'Screenings',
   omitted: 'Omitted products', comparison: 'Compare products', recalls: 'Recalls',
   'doctor-prep': 'Appointment prep', 'profile-edit': 'Edit my answers',
@@ -323,6 +324,7 @@ const VIEW_TITLES = {
 const DEFAULT_DESCRIPTION = HOME_DESCRIPTION;
 const VIEW_DESCRIPTIONS = {
   explore: "Explore women's health: search products, symptoms, topics, services and plain-language reads.",
+  home: 'Your personalized ayna Home dashboard, health snapshot and products.',
   today: 'Today with ayna: what matters for you today, and your daily log.',
   ask: 'Ask ayna about your health and the products you use.',
   you: 'Your profile, saved products, ecosystem and settings on ayna.',
@@ -388,7 +390,6 @@ PATH_TO_VIEW['/ecosystem'] = 'ecosystem';
 PATH_TO_VIEW['/shop'] = 'discovery';
 PATH_TO_VIEW['/library'] = 'articles';
 PATH_TO_VIEW['/health'] = 'today';
-PATH_TO_VIEW['/home'] = 'today'; // "Today" is called Home now (founder Oct 26 21:45); /today stays the address.
 PATH_TO_VIEW['/terms'] = 'terms-of-use';
 PATH_TO_VIEW['/privacy'] = 'privacy-policy';
 PATH_TO_VIEW['/startups'] = 'waitlist'; // old address keeps working
@@ -1047,7 +1048,7 @@ function App() {
       'free-product', 'free-product-reward', 'health', 'shared-answer',
       // A winner's gift box link works without an account.
       'gift', 'admin-gift',
-      'today', 'explore', 'explore-topics', 'explore-services', 'ask',
+      'home', 'today', 'explore', 'explore-topics', 'explore-services', 'ask',
       // Compare works signed out (a shared /compare?ids= link must open, not bounce to the landing).
       'comparison',
     ];
@@ -2532,6 +2533,11 @@ function App() {
     if (currentView !== 'welcome' && currentView !== 'hero') landingPinnedRef.current = false;
   }, [currentView]);
 
+  // Home is a private personalized dashboard. Signed-out visitors go to the public landing.
+  useEffect(() => {
+    if (currentView === 'home' && !user && !authLoading) setCurrentView('welcome', { replace: true });
+  }, [currentView, user, authLoading, setCurrentView]);
+
   // Signed out, Today is never shown from a cold load, reload, Back or a link,
   // whatever answers or fixtures this browser kept (founder, Oct 27 13:46: "if im
   // signed out ... its taking me to an empty dashboard"). Only the quiz's ending
@@ -2546,7 +2552,7 @@ function App() {
   const webTabOn = (key) => WEB_TAB_VIEWS[key].includes(currentView);
   // Where each main tab goes (top nav and phone tab bar).
   const mainTabGo = {
-    // Home opens the health dashboard for signed-in people and the landing for guests.
+    // Home opens the app-style personalized dashboard for members and the landing for guests.
     today: () => setCurrentView(webHomeView({ signedIn: Boolean(user), authLoading })),
     // Shop is the old Explore page (/explore); Services the same page with Services picked; Library the reads.
     explore: () => openExplore('overview'),
@@ -2613,7 +2619,7 @@ function App() {
           {/* Home leads the desktop navigation; mobile keeps the familiar centre Home tab. */}
           <div className="ay-nav__links">
             {WEB_TOP_TABS.map((t) => (
-              <a key={t.key} href={t.key === 'today' ? (user ? '/today' : '/') : t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
+              <a key={t.key} href={t.key === 'today' ? (user ? '/home' : '/') : t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
                 {t.key === 'today' && <span className="ay-nav__home-mark" aria-hidden="true"><TabIcon kind="home" /></span>}
                 <span>{t.label}</span>
               </a>
@@ -2912,7 +2918,7 @@ function App() {
             server-checked Pro gate (Oct 28 audit: a static lock here told Pro members to buy Pro). */}
         {/* Founder, Nov 4: signed-in Home is the Home design (greeting band, dials, highlights, your week),
             not the full data dashboard and not My ecosystem; "See your data" at the bottom opens /health. */}
-        {currentView === 'today' && user && <div className="wx-today">{React.cloneElement(webHealth, { title: 'Home', compact: true })}</div>}
+        {currentView === 'today' && user && <div className="wx-today">{React.cloneElement(webHealth, { title: 'Today', compact: true })}</div>}
         {currentView === 'today' && !user && (
           <div className="wx-today" data-tour="today">
             {React.cloneElement(webHealth, {
@@ -3161,13 +3167,13 @@ function App() {
             else setCurrentView('welcome');
           }} />
         )}
-        {/* My ecosystem (You > My ecosystem, /you/ecosystem). Its old Dashboard tab is Today. */}
-        {currentView === 'ecosystem' && (
+        {/* App-style Home (/home) and My ecosystem (/you/ecosystem) share the same saved product data. */}
+        {['home', 'ecosystem'].includes(currentView) && (
           /* This page is the website Home: no tab rows above it (founder, Oct 29: three rows of tabs read
              as vibe coded). Signed in, the band on top links to her data (the dashboard); signed out,
              a dashboard tab only led to a lock. */
           <EcosystemViewTabs dashboard={null} onHero={!!user && !(dataLoading && Object.keys(myProducts).length === 0)}>
-        {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
+        {['home', 'ecosystem'].includes(currentView) && dataLoading && Object.keys(myProducts).length === 0 && (
           <ViewSkeleton
             label="Loading your ecosystem"
             cards={6}
@@ -3211,9 +3217,19 @@ function App() {
             onBrowse={() => handleViewDiscovery('')}
           />
         )}
-        {currentView === 'ecosystem' && user && (
+        {['home', 'ecosystem'].includes(currentView) && user && (
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
+            homeTop={currentView === 'home' ? <WebHomeTop
+              firstName={accountFirstName(user) || quizResults?.firstName || ''}
+              healthRows={health?.insightRows || []}
+              quizAnswers={quizResults}
+              products={Object.values(myProducts || {})}
+              onData={() => proDoor('dashboard', () => setCurrentView('today'))}
+              onProducts={() => document.getElementById('weco-tab-mine')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              onConnect={goHealthData}
+              refresh={quizResults ? <div className="wht__refresh"><HealthRefreshPrompt quizResults={quizResults} onSave={handleUpdateIntake} onUpdate={(step) => { setEditAtStep(step || ''); setCurrentView('profile-edit'); }} /></div> : null}
+            /> : null}
             quizSlot={ecosystemQuizCard}
             quizSlotKind={webQuizDraft ? 'finish' : 'personal'}
             onFixLifeStages={() => { setEditAtStep('lifeStage'); setCurrentView('profile-edit'); }}

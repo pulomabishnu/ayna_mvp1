@@ -72,8 +72,8 @@ export function showsEmptyHome({ screen, view = null, variant = 'dashboard', sig
   return homeScreenFor({ signedIn }) === 'landing';
 }
 
-/** Website Home: the original charts/dashboard for members, the landing for guests.
- * My ecosystem stays a separate destination under You. */
+/** Website Home is the app-style dashboard at /home for members;
+ * guests see the public landing, while /today remains the daily check-in. */
 export function webHomeView({ signedIn = false } = {}) {
-  return signedIn ? 'today' : 'welcome';
+  return signedIn ? 'home' : 'welcome';
 }

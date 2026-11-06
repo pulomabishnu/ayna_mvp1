@@ -33,7 +33,7 @@ export const SEO_PAGES = {
 };
 
 /**
- * Personal pages: never in search results. Today, Ask and You show her own
+ * Personal pages: never in search results. Home, Today, Ask and You show her own
  * health information; the rest are account, admin and one-off flows.
  * vercel.json sends `X-Robots-Tag: noindex` for each (a header works even when
  * a crawler doesn't run the page's JavaScript); the app sets the same rule in
@@ -41,7 +41,7 @@ export const SEO_PAGES = {
  * the noindex (Google: "Block search indexing with noindex").
  */
 export const NOINDEX_SECTIONS = [
-  'today', 'ask', 'you', 'recommendations', 'compare', 'comparison', 'omitted', 'recalls', 'tracked', 'screenings',
+  'home', 'today', 'ask', 'you', 'recommendations', 'compare', 'comparison', 'omitted', 'recalls', 'tracked', 'screenings',
   'appointment-prep', 'profile', 'text-ayna', 'delete-account', 'health-data', 'auth', 'confirmed',
   'admin', 'internal', 'free-product', 'gift', 'mobile-preview', 'wrapped', 'join', 'a',
 ];

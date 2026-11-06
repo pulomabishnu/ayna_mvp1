@@ -13,7 +13,7 @@
 export const MAIN_TABS = [
   { key: 'explore', label: 'Shop', href: '/explore', icon: 'shop' },
   { key: 'services', label: 'Services', href: '/explore/services', icon: 'services' },
-  { key: 'today', label: 'Home', href: '/today', icon: 'home', center: true },
+  { key: 'today', label: 'Home', href: '/home', icon: 'home', center: true },
   { key: 'community', label: 'Community', href: '/community' },
   { key: 'library', label: 'Library', href: '/explore/resources', icon: 'library' },
 ];
