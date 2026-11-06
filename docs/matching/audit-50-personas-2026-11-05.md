@@ -84,7 +84,7 @@ CI run: https://github.com/pulomabishnu/ayna_mvp1/actions/runs/42157312399
 
 ## After-fix regression comparison
 
-The first complete green full-suite regression after the safety changes (CI run [#446](https://github.com/pulomabishnu/ayna_mvp1/actions/runs/42159523100)) executed the same 50 synthetic profile inputs against the bundled catalog.
+The first complete green full-suite regression after the safety changes (CI run [#448](https://github.com/pulomabishnu/ayna_mvp1/actions/runs/42159523100)) executed the same 50 synthetic profile inputs against the bundled catalog.
 
 | Measure | Before fixes | After safety changes |
 |---|---:|---:|
