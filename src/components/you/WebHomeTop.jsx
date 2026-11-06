@@ -15,7 +15,7 @@ import './web-home-top.css';
  * with none, one Connect button), then the two shortcut tiles, Your data and Your products. The lists
  * (Using, For you, Saved, Routine) follow underneath on the page.
  */
-export default function WebHomeTop({ firstName = '', userId = null, healthRows = [], quizAnswers = null, products = [], saved = [], matchOpts, healthProfile = null, onAsk, onOpenProduct, onOpenRead, onExplore, onEditAnswers, onSaveToProfile, onData, onProducts, onConnect, refresh = null }) {
+export default function WebHomeTop({ firstName = '', userId = null, healthRows = [], quizAnswers = null, products = [], saved = [], matchOpts, healthProfile = null, onAsk, onOpenProduct, onOpenRead, onExplore, onEditAnswers, onSaveToProfile, onData, onProducts, onConnect, autoOpenLog = false, onAutoLogHandled = null, refresh = null }) {
   const today = localToday();
   // Reuse the app Home's real-data charts and weekly highlights, not a second scoring model.
   const { cycle, sleep, activity, highlights, charts, bandOf } = useMemo(() => {
@@ -42,6 +42,7 @@ export default function WebHomeTop({ firstName = '', userId = null, healthRows =
         <h2 className="wht__heading">Today</h2>
         <TodayFeed
           variant="web" compact showHead={false} moreHeading={false} homeLog
+          autoOpenLog={autoOpenLog} onAutoLogHandled={onAutoLogHandled}
           userId={userId} intake={quizAnswers} healthRows={healthRows}
           cycle={cycle} hormonalBC={usesHormonalBC(quizAnswers)} products={products}
           saved={saved} matchOpts={matchOpts} healthProfile={healthProfile}
