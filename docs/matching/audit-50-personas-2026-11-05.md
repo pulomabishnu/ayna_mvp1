@@ -82,6 +82,24 @@ CI run: https://github.com/pulomabishnu/ayna_mvp1/actions/runs/42157312399
 | 49-unknown-stage | Fatigue or low energy, Hair thinning or hair loss | energy.fatigue: none / hair.loss: Women's Rogaine 5% Minoxidil Foam (65%) | energy.fatigue |
 | 50-privacy-limited | Finding a telehealth provider, Low libido or libido changes | care.telehealth: Tia (80%); Nurx (78%); Wisp (75%); Birth control, emergency contraception and urgent care (55%) / sexual.libido: none | sexual.libido |
 
+## After-fix regression comparison
+
+The first complete green full-suite regression after the safety changes (CI run [#446](https://github.com/pulomabishnu/ayna_mvp1/actions/runs/42159523100)) executed the same 50 synthetic profile inputs against the bundled catalog.
+
+| Measure | Before fixes | After safety changes |
+|---|---:|---:|
+| Synthetic profiles | 50 | 50 |
+| Shelves | 93 | 93 |
+| Empty shelves | 23 / 93 (24.7%) | 28 / 93 (30.1%) |
+| Recommendations shown | 186 | 167 |
+| Unique products recommended | 96 | 84 |
+| Profiles with zero product picks | 3 | 5 |
+| Pregnancy bleeding + pelvic pain picks (profile 23) | liners and pelvic wand | **none, care-first** |
+
+These changes are deliberate: stricter review gating eliminates unreviewed recommendations and increases legitimate gaps. Five more empty shelves and twelve fewer unique recommended products are the cost of protecting pending clinical review, not a metric to game by lowering fit thresholds. Product quality and clinical relevance still require human verification. The additional source-backed care lines supply guidance, not invented products.
+
+Other known gaps on post-fix results: PMS/cycle-related mood (profile 8), bleeding after menopause (35), post-menopause requests for ovulation/periods (36), and abnormal vaginal discharge (39) have no personalized product picks. The first three and some of the last are clinically reasonable care or eligibility cases; diagnosis, urgency and clinical review should be verified rather than forcing products into a shelf.
+
 ## Implemented fixes (draft branch, not deployed)
 
 **Evidence-backed care-first logic**: pregnancy with selected bleeding symptoms now has a deterministic ACOG care-first rule, with no product recommendations for the bleeding or co-reported pelvic pain. The same bleeding-evaluation status suppresses percentages on product pages; ordinary period-product interest without a bleeding symptom does not trigger the warning. Regression tests cover pregnancy bleeding, plain pregnancy pelvic pain, menstruating spotting, and postmenopausal spotting.
