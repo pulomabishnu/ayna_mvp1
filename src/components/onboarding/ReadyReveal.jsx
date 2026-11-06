@@ -121,9 +121,12 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
     loadProductCatalog().catch(() => null).finally(() => { if (live) setPublishedReady(true); });
     return () => { live = false; };
   }, []);
-  const ready = bundledReady && publishedReady;
-  const matches = useMemo(() => (ready ? firstMatches(answers, 5) : []), [answers, ready]);
-  const { rows, total, careNote, careNoteFor } = useMemo(() => (ready ? perNeed(answers) : { rows: [], total: 0, careNote: '', careNoteFor: null }), [answers, ready]);
+  // Render the bundled safety-care content on the first paint (including SSR
+  // and the postmenopausal bleeding warning); refresh picks after the full
+  // published Shop feed resolves. Empty cards say checking until then.
+  const ready = bundledReady;
+  const matches = useMemo(() => (ready ? firstMatches(answers, 5) : []), [answers, ready, publishedReady]);
+  const { rows, total, careNote, careNoteFor } = useMemo(() => (ready ? perNeed(answers) : { rows: [], total: 0, careNote: '', careNoteFor: null }), [answers, ready, publishedReady]);
   // Nov 4 (founder: "the extra questions didn't change my match"): say what changed. The
   // matches before the extra questions are kept for this tab only (ids, no answers).
   const changed = useMemo(() => {
@@ -258,7 +261,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
             <ul className="ay-ob-needs__list ay-deck__cards">
               {rows.map((r, i) => {
                 const pos = (i - at + rows.length) % rows.length;
-                const status = r.products.length ? `${r.products.length} ${r.products.length === 1 ? 'product' : 'products'}` : r.services.length ? `${r.services.length} ${r.services.length === 1 ? 'service' : 'services'}` : r.needsAnswers ? 'After safety questions' : r.held ? 'Held for safety' : r.why || r.careFirst ? 'Ask a clinician' : 'None yet';
+                const status = r.products.length ? `${r.products.length} ${r.products.length === 1 ? 'product' : 'products'}` : r.services.length ? `${r.services.length} ${r.services.length === 1 ? 'service' : 'services'}` : r.needsAnswers ? 'After safety questions' : r.held ? 'Held for safety' : r.why || r.careFirst ? 'Ask a clinician' : !publishedReady ? 'Checking Shop' : 'None yet';
                 return (
                   <li key={r.id} className={`ay-deck__card is-tone-${i % 3}`} data-pos={Math.min(pos, 3)} style={{ '--i': i, zIndex: rows.length - pos, ...(pos === 0 && dragX ? { transform: `translateX(${dragX}px) rotate(${dragX / 18}deg)` } : {}) }} aria-hidden={pos !== 0 ? 'true' : undefined} onClick={pos !== 0 ? () => { if (!swiped.current) setAt(i); swiped.current = false; } : undefined}>
                     <span className="ay-deck__head">
@@ -277,7 +280,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                           {pct != null && <em className="ay-ob-picks__pct">{pct}%</em>}
                         </li>;
                       })}{r.products.length > 3 && <li className="ay-deck__more">+{r.products.length - 3} more in your list</li>}</ol>
-                      : <small className="ay-deck__empty">{r.careFirst && bleeding ? <>Bleeding after menopause should be checked promptly by an ob-gyn or your clinician. We don’t suggest products for it. {bleeding.source?.url && <a href={bleeding.source.url} target="_blank" rel="noopener noreferrer">{bleeding.source.label || 'Source'}</a>}</> : r.id === careOnCard ? careNote : r.services.length ? <>No products for this yet. {r.services.length === 1 ? 'A service fits it' : `${r.services.length} services fit it`}: <button type="button" className="ay-deck__link" onClick={(e) => { e.stopPropagation(); setTab('services'); }}>see services</button></> : r.held ? r.heldWhy : r.why || 'No personalized product picks cleared the fit and safety checks for this area yet. You can still explore the category in Shop.'}</small>}
+                      : <small className="ay-deck__empty">{r.careFirst && bleeding ? <>Bleeding after menopause should be checked promptly by an ob-gyn or your clinician. We don’t suggest products for it. {bleeding.source?.url && <a href={bleeding.source.url} target="_blank" rel="noopener noreferrer">{bleeding.source.label || 'Source'}</a>}</> : r.id === careOnCard ? careNote : r.services.length ? <>No products for this yet. {r.services.length === 1 ? 'A service fits it' : `${r.services.length} services fit it`}: <button type="button" className="ay-deck__link" onClick={(e) => { e.stopPropagation(); setTab('services'); }}>see services</button></> : r.held ? r.heldWhy : r.why || (!publishedReady ? 'Checking the full published Shop catalog for more matches…' : 'No personalized product picks cleared the fit and safety checks for this area yet. You can still explore the category in Shop.')}</small>}
                     {r.limitedLabels?.length > 0 && (r.products.length > 0 || r.services.length > 0) && <small className="ay-deck__limitation">More options for {r.limitedLabels.join(', ')} need safety details.</small>}
                   </li>
                 );
