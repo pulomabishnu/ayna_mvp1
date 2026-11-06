@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { groupSupportShelves, withoutInferredMenopauseSections, outdatedAutoMenopauseProduct, comfortAreaOverride } from './shelfGroups.js';
 import { ALL_PRODUCTS, getEcosystemSeedFromQuiz, getProductById } from '../data/products.js';
 import { buildUserProfile } from './userProfile.js';
+import { buildProductProfile } from './productProfile.js';
 import { EMPTY } from '../mobile/data/intakeModel.js';
 const base={...EMPTY,age:'22',lifeStageSelections:['I get periods regularly'],
   supportSelections:['Hot flashes','Night sweats','Anxiety','Low mood','Irritability','Mood swings','PMS symptoms','Trouble sleeping'],
@@ -42,6 +43,22 @@ describe('symptom management shelves without presumed menopause',()=>{
     expect(comfortAreaOverride(p,quiz)).toBe('temperature');
     expect(outdatedAutoMenopauseProduct({...p,name:'Menopause Capsules',summary:'Supplement for menopause'},quiz)).toBe(true);
     expect(outdatedAutoMenopauseProduct({...p,name:'Menopause Capsules',summary:'Supplement',userAdded:true},quiz)).toBe(false);
+  });
+  it('keeps researched non-ingested cooling products age-neutral and mood tools eligible for consideration',()=>{
+    const [oboo,coldher,komuso,heartmath,journal] = [
+      'p-oboo-cool-spray','p-joylux-coldher',
+      'p-komuso-classic-shift-anxiety-breathing-necklace',
+      'p-heartmath-inner-balance-coherence-plus-with-heartmath-app',
+      'p-intelligent-change-the-five-minute-journal',
+    ].map(getProductById);
+    for(const p of [oboo,coldher,komuso,heartmath,journal]) expect(p?.id).toBeTruthy();
+    for(const p of [oboo,coldher]){
+      expect(p.healthFunctions).toContain('vasomotor');
+      expect(comfortAreaOverride(p,quiz)).toBe('temperature');
+    }
+    expect(buildProductProfile(komuso).health_need_relevance['mood.general_anxiety']).toBeTruthy();
+    expect(buildProductProfile(heartmath).health_need_relevance['mood.general_anxiety']).toBeTruthy();
+    expect(buildProductProfile(journal).health_need_relevance['mood.low']).toBeTruthy();
   });
   it('does not turn an intentionally care-first shelf into a product cure',()=>{
     const grouped=groupSupportShelves([{needId:'cycle.spotting',label:'Spotting',picks:[],emptyReason:'care_first',qualityNote:'Seek prompt care'},
