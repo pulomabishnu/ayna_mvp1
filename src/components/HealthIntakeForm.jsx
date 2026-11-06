@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { VASOMOTOR_TIMING_OPTIONS, needsVasomotorTiming, toggleVasomotorTiming } from '../matching/vasomotorContext.js';
 import { AVOID_INGREDIENTS, PREFERENCE_MAP } from '../utils/intakePreferenceMap';
 
 // Plain-language groups so it's obvious what is being preferred; the "X-free"
@@ -1384,7 +1385,16 @@ export default function HealthIntakeForm({ onComplete }) {
       </>;
     }
     if (step.type === 'text' && step.id === 'zip') return <input className="ayna-text-input" inputMode="numeric" maxLength={5} value={intake.zipcode} onChange={(e) => set('zipcode', e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="e.g. 10001" />;
-    if (step.type === 'support') return <><SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} />{intake.supportSelections.includes('Something else') && <div className="ayna-other-box"><label>Tell us what else you are looking for support with</label><input className="ayna-text-input" value={intake.supportOtherText} onChange={(e) => set('supportOtherText', e.target.value)} placeholder="Type here..." /></div>}</>;
+    if (step.type === 'support') return <>
+      <SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} />
+      {needsVasomotorTiming(intake) && <div className="ayna-other-box">
+        <label>When do you notice hot flashes or sweats? (optional, choose any)</label>
+        <div className="ayna-pills left">{VASOMOTOR_TIMING_OPTIONS.map((option) =>
+          <Pill key={option} label={option} selected={(intake.vasomotorTimingSelections || []).includes(option)} onClick={() => set('vasomotorTimingSelections', toggleVasomotorTiming(intake.vasomotorTimingSelections, option))} />)}</div>
+        <p className="ayna-mini-note">Timing is useful context, not a diagnosis.</p>
+      </div>}
+      {intake.supportSelections.includes('Something else') && <div className="ayna-other-box"><label>Tell us what else you are looking for support with</label><input className="ayna-text-input" value={intake.supportOtherText} onChange={(e) => set('supportOtherText', e.target.value)} placeholder="Type here..." /></div>}
+    </>;
     if (step.type === 'flow') return <Scale options={PERIOD_FLOW} value={intake.periodFlow} onChange={(value) => set('periodFlow', value)} kind="flow" />;
     if (step.type === 'pain') return <Scale options={PERIOD_PAIN} value={intake.periodPain} onChange={(value) => set('periodPain', value)} kind="pain" />;
     if (step.type === 'timeline') {
