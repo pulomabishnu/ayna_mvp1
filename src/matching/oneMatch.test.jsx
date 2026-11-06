@@ -18,7 +18,7 @@ import { outcomesToProductHistory } from '../health/outcomes.js';
 // Swipe, Browse, Ecosystem, community).
 const quiz = (intake) => ({ fullHealthIntake: { personalizationCompleted: true, ...intake }, personalizationCompleted: true });
 const PERSONAS = {
-  pms: quiz({ lifeStageSelections: ['I get periods regularly'], supportSelections: ['PMS symptoms'], age: 28, takesCurrent: 'No' }),
+  cramps: quiz({ lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain'], age: 28, takesCurrent: 'No' }),
   heavyLatex: quiz({ lifeStageSelections: ['I get periods regularly'], supportSelections: ['Heavy periods'], allergyStatus: 'Yes', allergyItems: ['Latex'], age: 25 }),
   drynessFragrance: quiz({ lifeStageSelections: ['I am in menopause'], supportSelections: ['Vaginal dryness'], avoidIngredients: ['Fragrance'], age: 52 }),
   crampsHeavy: quiz({ lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain', 'Heavy periods'], age: 27, budget: ['Under $15'] }),
