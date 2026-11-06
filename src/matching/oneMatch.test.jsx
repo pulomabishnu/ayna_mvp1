@@ -112,12 +112,19 @@ describe('one match percent per product (v2) on every surface', () => {
   });
 
   it('an unreviewed research row never lifts a match (vitex: secondary relevance stays secondary)', () => {
-    const d = getProductMatchDetailsForProduct(byId.get('p-vitex'), PERSONAS.pms);
-    expect(d.v2.needFit).toBeLessThanOrEqual(V2.S.secondary);
+    // Review holds prevent a user-facing percent, but the grade itself still
+    // must not inflate relevance when exercised as a pure scoring function.
+    const p = byId.get('p-vitex');
+    const pp = buildProductProfile(p);
+    const rel = pp.health_need_relevance['cycle.pms'];
+    const v2 = scoreV2(pp, { needId: 'cycle.pms', relationship: rel.relationship || 'secondary', components: {}, points: {}, outputs: {}, confidence: 1 }, new Set(['cycle.pms']));
+    expect(v2.needFit).toBeLessThanOrEqual(V2.S.secondary);
+    const details = getProductMatchDetailsForProduct(p, quiz({lifeStageSelections:['I get periods regularly'],supportSelections:['PMS symptoms'],takesCurrent:'No'}));
+    expect(details.matchStatus).toBe('safety-hold');
   });
 
   it('?match=v1 still gives the old numbers for comparison', () => {
-    const q = PERSONAS.pms;
+    const q = PERSONAS.cramps;
     // A product scored (not held) on both engines for this persona.
     const p = [...byId.values()].find((x) => getProductMatchDetailsForProduct(x, q).matchStatus === 'scored' && getProductMatchDetailsForProduct(x, q, null, { engine: 'v1' }).matchStatus === 'scored');
     const v1 = getProductMatchDetailsForProduct(p, q, null, { engine: 'v1' });
