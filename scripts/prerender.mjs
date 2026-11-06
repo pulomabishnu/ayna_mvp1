@@ -27,7 +27,6 @@ const PAGES = SEO_PAGES;
 // header (vercel.json), so the rule is in the HTML even without that header.
 const NOINDEX_PAGES = {
   '/home': ['Home | ayna', 'Your personal dashboard, health snapshot and ecosystem.'],
-  '/today': ['Today | ayna', 'Today with ayna: what matters for you today, and your daily log.'],
   '/ask': ['Ask ayna', 'Ask ayna about your health and the products you use.'],
   '/you': ['You | ayna', 'Your profile, saved products, ecosystem and settings on ayna.'],
 };
