@@ -2500,8 +2500,8 @@ function App() {
     }
   };
 
-  // The website health dashboard: its own page (/health) and the Dashboard
-  // tab on Ecosystem render this same element.
+  // The phone-style health dashboard is the first section of /home. The
+  // full data panel is an optional subview, not a separate Today page.
   const webHealth = (
     <WebHealth
       onEcosystem={() => setCurrentView('ecosystem')}
@@ -2538,22 +2538,22 @@ function App() {
     if (currentView === 'home' && !user && !authLoading) setCurrentView('welcome', { replace: true });
   }, [currentView, user, authLoading, setCurrentView]);
 
-  // Signed out, Today is never shown from a cold load, reload, Back or a link,
-  // whatever answers or fixtures this browser kept (founder, Oct 27 13:46: "if im
-  // signed out ... its taking me to an empty dashboard"). Only the quiz's ending
-  // opens it (guestTodayRef). Nothing in storage is touched.
-  useEffect(() => {
-    if (currentView !== 'home') { guestTodayRef.current = false; return; }
-    if (user || authLoading || guestTodayRef.current) return;
-    setCurrentView('welcome', { replace: true });
-  }, [currentView, user, authLoading, setCurrentView]);
 
   // Which main tab is current. Signed out, the landing is Home.
   const webTabOn = (key) => WEB_TAB_VIEWS[key].includes(currentView);
   // Where each main tab goes (top nav and phone tab bar).
   const mainTabGo = {
     // Home opens the app-style personalized dashboard for members and the landing for guests.
-    today: () => setCurrentView(webHomeView({ signedIn: Boolean(user), authLoading })),
+    today: () => {
+      const view = webHomeView({ signedIn: Boolean(user), authLoading });
+      setCurrentView(view);
+      // Clicking Home while on its full-data panel goes back to the Home overview.
+      if (view === 'home' && window.location.search) {
+        window.history.replaceState({ view: 'home' }, '', '/home');
+        window.dispatchEvent(new PopStateEvent('popstate', { state: { view: 'home' } }));
+        window.scrollTo(0, 0);
+      }
+    },
     // Shop is the old Explore page (/explore); Services the same page with Services picked; Library the reads.
     explore: () => openExplore('overview'),
     services: () => setCurrentView('explore-services'),
