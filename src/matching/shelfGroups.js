@@ -92,9 +92,8 @@ export function outdatedAutoMenopauseProduct(p,quiz){
   const oldConcern=String(p._llmConcern||'').toLowerCase();
   // Cooling goods are useful comfort regardless of cause. Display those under
   // Temperature comfort rather than a presumed menopause stage.
-  const cooling=/cooling|cool spray|cooling fan|hot flash|night sweat/i.test([p.name,p.summary,p.tags?.join(' ')].join(' '));
-  const nonIngested=!/supplement|capsule|pill|gumm|tablet|softgel|herbal/i.test([p.name,p.category,p.summary].join(' '));
-  if(cooling&&nonIngested)return false;
+  const cooling=comfortAreaOverride(p,quiz)==='temperature';
+  if(cooling)return false;
   return category==='menopause'||hf.includes('perimenopause')||hf.includes('menopause')||/menopaus/.test(oldConcern);
 }
 
@@ -102,6 +101,8 @@ export function comfortAreaOverride(p,quiz){
   if(!p||hasExplicitMenopauseContext(quiz))return null;
   const words=[p.name,p.summary,(p.tags||[]).join(' ')].join(' ');
   const ingestible=/supplement|capsule|pill|gumm|tablet|softgel|herbal/i.test([p.name,p.category,p.summary].join(' '));
-  if(!ingestible&&/cooling|cool spray|hot flash|night sweat/i.test(words))return 'temperature';
+  const digital=String(p.type||'').toLowerCase()==='digital'||/app|tracker|telehealth|digital/i.test(String(p.category||''));
+  // An app that logs menopausal flashes is not a cooling product.
+  if(!ingestible&&!digital&&/\\bcool(?:ing|er|s)?\\b|cool spray|cooling fan|chill|coldher/i.test(words))return 'temperature';
   return null;
 }
