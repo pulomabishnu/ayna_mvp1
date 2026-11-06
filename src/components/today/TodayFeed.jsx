@@ -373,6 +373,8 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   compact = false, onOpenFull = null,
   // Home's toggle: ({ things, count }) => the views, placed right under the Rundown card (compact only).
   renderViews = null,
+  // Website /home may render the phone-style compact feed with an inline, persistent log.
+  homeLog = false,
   // Website Today's right column: the weekly recap's lines and what she is trying now (WebHealth).
   onWeekly = null, onTries = null, onSetup = null,
   // Home's streak and "Your month": the days she logged (sorted YYYY-MM-DD keys), then the log by day.
@@ -418,7 +420,14 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   // screen, the log opens from its "Check in" instead of also sitting below it.
   const checkInItem = items.some((it) => (it.actions || []).some((a) => a.id === 'open_check_in'));
   const [logOpen, setLogOpen] = useState(false);
+  const [expandedItemId, setExpandedItemId] = useState(null);
   const showLog = !checkInItem || logOpen;
+  const openCompactDetail = onOpenFull || (homeLog ? (item, opts = {}) => {
+    if (opts.log) {
+      setLogOpen(true);
+      requestAnimationFrame(() => document.getElementById(`ay-checkin-${opts.log}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+    } else setExpandedItemId(item.id);
+  } : null);
   useEffect(() => {
     const open = () => setLogOpen(true);
     window.addEventListener(OPEN_LOG_EVENT, open);
@@ -466,7 +475,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         const tile = (list) => {
           const halves = list.filter((it) => !PROTECTED.has(it.tier) && !chipsy(it));
           const lone = halves.length % 2 === 1 ? halves[halves.length - 1] : null;
-          return list.map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={onOpenFull} onOutcome={onOutcome} wide={item === lone || chipsy(item)} />);
+          return list.map((item) => <CompactItem key={item.id} item={item} t={t} onAsk={onAsk} onFindCare={onFindCare} onOpenFull={openCompactDetail} onOutcome={onOutcome} wide={item === lone || chipsy(item)} />);
         };
         const review = reviewDue && items.length < 3 && <ReviewAsk compact due={reviewDue} t={t} onOpenProduct={onOpenProduct} onDone={() => setReviewTick((n) => n + 1)} />;
         if (!renderViews) {
@@ -497,6 +506,24 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
           })}
         </>;
       })()}
+      {compact && homeLog && <>
+        {expandedItemId && items.some((item) => item.id === expandedItemId) && (
+          <div className="ay-today__detail" role="region" aria-label="More about today">
+            <button type="button" className="ay-today__text" onClick={() => setExpandedItemId(null)}>Close details</button>
+            <ul className="ay-today__list">
+              {items.filter((item) => item.id === expandedItemId).map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} onOpenLog={() => setLogOpen(true)} onOutcome={onOutcome} />)}
+            </ul>
+          </div>
+        )}
+        <div className="ay-today__homelog">
+          <button type="button" className="ay-today__homelog-trigger" aria-expanded={logOpen} aria-controls={checkinId} onClick={() => setLogOpen((open) => !open)}>
+            <span><b>Your log</b><small>Pain, flow, sleep and mood</small></span><span>{logOpen ? 'Close' : 'Check in'}</span>
+          </button>
+          {logOpen && <div id={checkinId} className="ay-today__log">
+            <DailyCheckinCard variant={variant} log={t.log} save={(...args) => { trackCheckin({ surface: eventSurface(), where: 'home' }); return t.saveLog(...args); }} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} />
+          </div>}
+        </div>
+      </>}
       {!compact && (items.length > 0
         ? <ul className="ay-today__list" data-tour="today-things">
           {items.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} onOpenLog={() => setLogOpen(true)} onOutcome={onOutcome} />)}
