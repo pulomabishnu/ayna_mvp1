@@ -207,7 +207,9 @@ export default async function handler(req, res) {
       cancel_url: `${config.origin}/pro?checkout=canceled`,
       custom_text: {
         submit: {
-          message: 'Your Early Access coupon is applied today. Your purchased period starts at launch; then renews at the regular price shown unless canceled.',
+          message: body.plan === 'month'
+            ? 'Charged $4.99 today. Pro unlocks now. Paid month starts February 1, 2027. First renewal March 1, 2027 at $8.99/month unless canceled before renewal.'
+            : 'Charged $45 today. Pro unlocks now. Paid year starts February 1, 2027. First renewal February 1, 2028 at $90/year unless canceled before renewal.',
         },
       },
     }, { idempotencyKey: `pro:${user.id}:${body.plan}:${body.requestId}` });
