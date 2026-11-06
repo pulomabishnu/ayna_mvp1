@@ -10,7 +10,7 @@ describe('main tabs (founder, Oct 24 2026)', () => {
     // The keys stay, so routes, analytics and CSS keep working.
     expect(MAIN_TABS.map((t) => t.key)).toEqual(['explore', 'services', 'today', 'community', 'library']);
     // Shop is the old Explore page (same key and address); Services and Library are its other pages.
-    expect(MAIN_TABS.map((t) => t.href)).toEqual(['/explore', '/explore/services', '/today', '/community', '/explore/resources']);
+    expect(MAIN_TABS.map((t) => t.href)).toEqual(['/explore', '/explore/services', '/home', '/community', '/explore/resources']);
     expect(MAIN_TABS.find((t) => t.label === 'Shop').key).toBe('explore');
     // Ask ayna and You moved to the top bar (the Ask button and the round profile button).
     expect(MAIN_TABS.some((t) => t.key === 'ask' || t.key === 'profile')).toBe(false);
