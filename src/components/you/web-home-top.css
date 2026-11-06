@@ -112,6 +112,15 @@ html body .app-container .wht__actions .wht__refresh { margin: 0; }
 /* Nov 6 one-Home layout: the daily rundown and check-in live on the same
    page as the health charts, with the member's product shelves below. */
 html body .app-container .wht__today {
+  --x-ink: var(--ay-calm-fg, #3e2723);
+  --x-soft: var(--ay-text-muted, rgba(62, 39, 35, .74));
+  --x-group: var(--ay-group, #f6e3a1);
+  --x-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
+  --x-on: var(--ay-calm-fg, #3e2723);
+  --x-on-2: var(--ay-text-muted, rgba(62, 39, 35, .74));
+  --x-serif: var(--ay-font-display, 'ayna Display', serif);
+  --x-sans: var(--ay-font-ui, 'Figtree', sans-serif);
+  --x-scale: 1;
   display: grid;
   min-width: 0;
   gap: 16px;
@@ -146,10 +155,10 @@ html body .app-container .wht__today .ay-today__homelog-trigger {
   min-height: 74px;
   padding: 14px 18px;
   text-align: left;
-  border: 1.5px solid #3e2723;
+  border: 1.5px solid var(--x-ink);
   border-radius: 18px;
   background: transparent;
-  color: #3e2723;
+  color: var(--x-ink);
   box-shadow: none;
   cursor: pointer;
 }
@@ -167,12 +176,12 @@ html body .app-container .wht__today .ay-today__homelog-trigger > span:last-chil
   flex: none;
   border-radius: 999px;
   padding: 10px 16px;
-  background: #3e2723;
-  color: #ffedac;
+  background: var(--x-ink);
+  color: var(--x-group);
   font: 700 14px/1.1 var(--ay-font-ui, inherit);
 }
 html body .app-container .wht__today .ay-today__homelog-trigger:focus-visible {
-  outline: 2px solid #3e2723;
+  outline: 2px solid var(--x-ink);
   outline-offset: 3px;
 }
 html body .app-container .wht__today .ay-today__detail > .ay-today__text { margin-bottom: 12px; }
