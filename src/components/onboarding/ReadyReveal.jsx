@@ -60,7 +60,7 @@ function firstMatches(answers, limit = 3) {
  * in plain words: held until the safety questions, or nothing strong enough yet.
  */
 // Nov 5: the CDC birth control note and the pregnancy constipation first steps join the list, most important first.
-const CARE_LINE_CODES = ['urgent_yes', 'pregnancy_bleeding', 'estrogen_bc_condition', 'ttc_spironolactone', 'uti_right_now', 'uti_first_time', 'vaginitis_testing', 'spotting_check', 'severe_pain', 'very_heavy_flow', 'pregnancy_constipation', 'symptom_check'];
+const CARE_LINE_CODES = ['urgent_yes', 'pregnancy_bleeding', 'estrogen_bc_condition', 'ttc_spironolactone', 'uti_right_now', 'uti_first_time', 'vaginitis_testing', 'spotting_check', 'severe_pain', 'very_heavy_flow', 'pmdd_care', 'pregnancy_nausea', 'pregnancy_constipation', 'recurrent_uti_care', 'pms_care', 'pcos_care', 'adenomyosis_care', 'peri_brain_fog', 'symptom_check'];
 function perNeed(answers) {
   if (!answers) return { rows: [], total: 0, careNote: '' };
   try {
