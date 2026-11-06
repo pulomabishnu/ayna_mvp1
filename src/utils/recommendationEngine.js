@@ -61,6 +61,14 @@ function asArray(value) {
 }
 
 function selectedConcerns(intake) {
+  // A saved primaryConcerns list is often GENERATED from older intake maps.
+  // Fresh support selections (specific needs) are the source of truth; don't
+  // turn a hot-flash symptom back into a menopause concern on resume.
+  const support = asArray(intakeProfile(intake)?.supportSelections);
+  if (support.length) {
+    const fromSupport = [...new Set(support.flatMap(item => asArray(LEGACY_CONCERN_BY_ITEM[item])))];
+    if (fromSupport.length) return fromSupport;
+  }
   if (Array.isArray(intake?.primaryConcerns) && intake.primaryConcerns.length > 0) return intake.primaryConcerns;
   if (intake?.primaryConcern) return [intake.primaryConcern];
   return [];
