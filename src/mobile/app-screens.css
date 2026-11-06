@@ -34,10 +34,8 @@
   background: var(--b-butter) !important; color: var(--b-espresso) !important;
   padding: 26px 24px max(22px, env(safe-area-inset-bottom)) !important;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-actions::before {
-  content: ''; position: absolute; left: 0; right: 0; top: -13px; height: 14px;
-  background: radial-gradient(circle at 12px 14px, var(--b-butter) 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x;
-}
+/* No scalloped/ruffled edge on the native landing's butter action sheet. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-actions::before { content: none; display: none; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start { background: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start-handle { background: var(--b-rose) !important; color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start-fill { background: var(--b-rose) !important; }
