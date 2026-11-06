@@ -37,6 +37,7 @@ import { buildProductProfile, normalizeBrand, CONTEXT_BONUS, productSimilarity, 
 import { checkMedicationInteractions, INTERACTION_TABLE } from './medications.js';
 import { normalizeName } from './userProfile.js';
 import { lifeStageBlock, lifeStageNeedBlock, postmenopausalBleedingBlock, stageScopeCheck } from './eligibility.js';
+import { careFirstForNeed } from './carePriority.js';
 
 // Preference dimension weights (only known + applicable ones count).
 export const DIMENSION_WEIGHTS = { context: 3, format: 2, values: 2, price: 2, evidence: 2, brand: 1, effort: 1 };
@@ -617,11 +618,11 @@ export function evaluateSafety(productOrProfile, up) {
   else if (rec.medications && s.medications.length && pp.interaction_relevant) penalize('stale_medications', 'Your medicine list is from a while ago');
   if (up.contradictions?.some((c) => c.affects.includes('safety')) && carriesIngredients(pp)) missingFields.push('confirm_answers');
   else if (up.contradictions?.some((c) => c.affects.includes('safety')) && bodyContact(pp)) penalize('answer_contradiction', 'Some safety answers conflict');
-  // A clinician review is open on this product (passport QA): no confident
-  // match for anyone until it is done (audit K).
-  // Nov 5 (founder, Ameera): an open clinician review no longer holds the match. Every product gets its
-  // percent, and the review is not mentioned to her. Every other safety rule (allergies, medicines,
-  // pregnancy, breastfeeding, conditions, missing facts) still holds or excludes as before.
+  // Product-specific clinical signoff is not optional. A passport marked
+  // needs_clinician_review stays visible in Shop, but cannot be put forward as
+  // a verified personalized pick until that review is completed.
+  // The same hold applies to bundled products and the v1/v2 recommendation gates.
+  if (pp.passport?.qa === 'needs_clinician_review') missingProductInfo.push('clinician_review');
   // A product she added herself (not in the catalog): no match until ayna
   // has read its label (P2, add any product). Never a guess from its name.
   if (pp.user_added) missingProductInfo.push('product_facts');
@@ -1174,8 +1175,9 @@ export function scoreProductForNeed(productOrProfile, up, needIdIn, opts = {}) {
   // does (period products, cycle trackers, ovulation tests) does not count.
   // Bleeding after menopause: evaluation first, no products for it (founder, Oct 24).
   const bleedingBlocked = rel.base > 0 && postmenopausalBleedingBlock(pp, up, needId);
-  const cycleBlocked = bleedingBlocked || notMenstruatingBlock(rel, up, needId);
-  if (cycleBlocked) notes.filtered = bleedingBlocked ? 'postmenopausal_bleeding' : 'not_menstruating';
+  const pregnancyCareBlocked = rel.base > 0 && Boolean(careFirstForNeed(up, needId));
+  const cycleBlocked = bleedingBlocked || pregnancyCareBlocked || notMenstruatingBlock(rel, up, needId);
+  if (cycleBlocked) notes.filtered = bleedingBlocked ? 'postmenopausal_bleeding' : pregnancyCareBlocked ? 'pregnancy_bleeding_care' : 'not_menstruating';
   const base = cycleBlocked ? 0 : rel.base;
   const health = healthComponent(pp, up, need, base, notes);
   const relationship = cycleBlocked ? 'unrelated' : rel.relationship;
