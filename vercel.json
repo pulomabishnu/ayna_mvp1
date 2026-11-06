@@ -131,7 +131,7 @@
           "value": "dashboard"
         }
       ],
-      "destination": "/today",
+      "destination": "/home?view=data",
       "permanent": true
     },
     {
@@ -161,7 +161,12 @@
     },
     {
       "source": "/health",
-      "destination": "/today",
+      "destination": "/home?view=data",
+      "permanent": true
+    },
+    {
+      "source": "/today",
+      "destination": "/home",
       "permanent": true
     }
   ],
