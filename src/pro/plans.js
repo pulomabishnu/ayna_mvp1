@@ -18,11 +18,11 @@ export const EARLY_ACCESS_LINE = 'Subscribe now and Pro unlocks immediately. ayn
 export const PLANS = [
   { id: 'year', label: 'Yearly', price: ANNUAL_PRICE, regular: ANNUAL_REGULAR, per: 'year', best: true,
     badge: '50% off', sub: `${ANNUAL_PER_MONTH}/month`,
-    renew: `Renews at ${ANNUAL_REGULAR}/year. Cancel anytime.`,
+    renew: `First renewal February 1, 2028 at ${ANNUAL_REGULAR}/year, then yearly. Cancel before renewal.`,
     terms: `Your purchased year begins February 1, 2027, and renews February 1, 2028 at ${ANNUAL_REGULAR}/year unless canceled.` },
   { id: 'month', label: 'Monthly', price: MONTHLY_PRICE, regular: MONTHLY_REGULAR, per: 'month',
     sub: 'first month',
-    renew: `Renews at ${MONTHLY_REGULAR}/month. Cancel anytime.`,
+    renew: `First renewal March 1, 2027 at ${MONTHLY_REGULAR}/month, then monthly. Cancel before renewal.`,
     terms: `Your purchased month begins February 1, 2027, and renews March 1, 2027 at ${MONTHLY_REGULAR}/month unless canceled.` },
 ];
 
