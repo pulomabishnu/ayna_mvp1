@@ -49,6 +49,7 @@ export const HELP_TOPIC_ITEMS = {
   UTIs: group('Urinary health'),
   'Sexual health': group('Sexual + reproductive health'),
   'Gut health': group('Digestive health'),
+  'Temperature changes': group('Temperature + sweating'),
   Perimenopause: [...group('Perimenopause + menopause + post-menopause'), ...group('Temperature + sweating'), 'Irregular periods', 'Trouble sleeping'],
   Menopause: [...group('Perimenopause + menopause + post-menopause'), ...group('Temperature + sweating'), 'Bone health'],
   // Founder, Oct 29: after menopause has its own needs (dryness, bladder, bone).
