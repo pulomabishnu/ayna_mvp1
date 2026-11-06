@@ -66,9 +66,14 @@ function perNeed(answers) {
   try {
     const { shelves = [], careFlags = null } = getEcosystemSeedFromQuiz(answers);
     const seen = new Set();
+    // The grouped cards show a short selection; the headline still counts every
+    // distinct qualifying product across the underlying need shelves.
+    shelves.forEach((shelf) => (shelf.productIds || []).forEach((id) => {
+      const product = getProductById(id);
+      if (product && showableAsPick(product, answers)) seen.add(id);
+    }));
     const rows = groupSupportShelves(shelves).map((sh) => {
       const all = (sh.productIds || []).map((id) => getProductById(id)).filter((p) => p && showableAsPick(p, answers));
-      all.forEach((p) => seen.add(p.id));
       // Nov 5 (founder): services (telehealth, apps, memberships) sit apart from products.
       const products = all.filter((p) => p.type !== 'digital');
       const services = all.filter((p) => p.type === 'digital');

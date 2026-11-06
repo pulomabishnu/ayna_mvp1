@@ -3,6 +3,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { loadCatalog } from '../../data/catalog.js';
 import ReadyReveal from './ReadyReveal.jsx';
 import { EMPTY } from '../../mobile/data/intakeModel.js';
+import { getEcosystemSeedFromQuiz, getProductById } from '../../data/products.js';
+import { showableAsPick } from '../../utils/bleedingCare.js';
 
 // QA3 M2: the persona age 54, post-menopause, Heavy periods with a Heavy flow.
 // Today and the product page lead with the bleeding-evaluation message; the
@@ -49,5 +51,10 @@ describe('ReadyReveal symptom groups', () => {
     expect(html).toContain('Temperature comfort');
     expect(html).not.toContain('Menopause support');
     expect((html.match(/class="ay-deck__card/g) || []).length).toBe(2);
+    const expected = new Set(getEcosystemSeedFromQuiz(answers).shelves.flatMap((shelf) => shelf.productIds).filter((id) => {
+      const product = getProductById(id);
+      return product && showableAsPick(product, answers);
+    })).size;
+    expect(html.replace(/<[^>]*>/g, '')).toContain(`We found ${expected} ${expected === 1 ? 'match' : 'matches'}`);
   });
 });
