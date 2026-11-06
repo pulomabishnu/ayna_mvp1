@@ -278,3 +278,39 @@ html body .app-container .wht__today .ay-fdeck__top > .ay-today__item.is-compact
   html body .app-container .wht__today .ay-today > .ay-rd-hero,
   html body .app-container .wht__today .wht__today-items { grid-column: 1; }
 }
+
+/* Finish the app-style check-in layout on web: the status belongs beside
+   "Check-in", and the explanation link sits with the question, not centered. */
+html body .app-container .wht__today .ay-fdeck__top .ay-today__kicker {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-self: start;
+}
+html body .app-container .wht__today .ay-fdeck__top .ay-today__status {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.1;
+}
+html body .app-container .wht__today .ay-fdeck__top .ay-today__readmore {
+  justify-self: start;
+  align-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--x-ink, #3e2723);
+  font: 600 13px/1.3 var(--ay-font-ui, inherit);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+html body .app-container .wht__today .ay-fdeck__top .ay-today__why[hidden] { display: none !important; }
+html body .app-container .wht__today .ay-fdeck__top .ay-today__actions:empty { display: none !important; }
