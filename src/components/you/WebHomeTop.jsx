@@ -34,7 +34,7 @@ export default function WebHomeTop({ firstName = '', userId = null, healthRows =
     return { cycle, sleep: chartOf('sleep_minutes'), activity: chartOf('steps'), highlights, charts: rows.length ? glanceCharts(week) : [], bandOf };
   }, [healthRows, today, quizAnswers]);
   return (
-    <div className="wht">
+    <div className="wht" data-tour="home">
       <h1 className="sr-only" id="ayna-home-title">Home dashboard</h1>
       <HomeHero name={firstName} today={today} cycle={cycle} hormonalBC={usesHormonalBC(quizAnswers)} sleep={sleep} activity={activity}
         onOpenMetric={onData ? () => onData() : null} onConnect={onConnect} />
