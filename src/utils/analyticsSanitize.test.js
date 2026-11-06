@@ -73,6 +73,7 @@ describe('sanitizeEventPayload', () => {
 
   it('drops event names that directly identify a sensitive health interest', () => {
     expect(sanitizeEventPayload({event:'pregnancy_test_opened',properties:{platform:'web'}})).toBeNull();
+    expect(sanitizeEventPayload({event:'question_submitted',properties:{platform:'web'}})?.event).toBe('question_submitted');
   });
 
   it('cleans nested URL keys too', () => {
