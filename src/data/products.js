@@ -39,6 +39,7 @@ import { withImageOverride } from './productImageOverrides.js';
 import { applyCatalogEvidence } from './catalogEvidence.js';
 import { productRouteKey, productSlug } from '../utils/productRoute.js';
 import { provideCatalog } from './catalogRegistry.js';
+import { subscribePublishedProducts, mergePublishedWithBundled, publishedCatalogRevision } from './publishedCatalog.js';
 import { HEALTH_FUNCTIONS, CATEGORY_LABELS, MACRO_GROUPS, BROWSE_GROUPS, browseGroupIdFor, productSearchText, itemMatchesMacroGroup } from './catalogTaxonomy.js';
 export { HEALTH_FUNCTIONS, CATEGORY_LABELS, MACRO_GROUPS, BROWSE_GROUPS, browseGroupIdFor, productSearchText, itemMatchesMacroGroup };
 import { rawIntakeFromProfile, asStringArray, hasStatedLifeStage, matchEngine } from './profileSignals.js';
@@ -924,6 +925,18 @@ export const CATALOG_PRODUCTS = [
     .map(withImageOverride);
 
 export const ALL_PRODUCTS = CATALOG_PRODUCTS.filter((p) => !p.hidden);
+const BUNDLED_PRODUCTS = [...ALL_PRODUCTS];
+// DB-only published products were visible in Shop but absent from quiz matching.
+// Keep this array object stable: data/catalog.js and other imports share it.
+// Bundle takes precedence for overlapping IDs so local passport/safety facts
+// are not silently overwritten by an older server import.
+function acceptPublishedCatalog(published) {
+    const updated = mergePublishedWithBundled(BUNDLED_PRODUCTS, published);
+    ALL_PRODUCTS.splice(0, ALL_PRODUCTS.length, ...updated);
+    productByIdIndex = null;
+    productByRouteIndex = null;
+}
+
 
 /** Drugstore basics (basicsProducts.js), listed after other picks on Home. */
 export const BASICS_PRODUCT_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
@@ -940,6 +953,7 @@ export const BASICS_PRODUCT_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
 // scoring), then readable route keys/slugs for shared /product/:slug links.
 let productByIdIndex = null;
 let productByRouteIndex = null;
+subscribePublishedProducts(acceptPublishedCatalog);
 
 /**
  * Entries hidden because they were the same product as another one in a
@@ -1505,7 +1519,8 @@ function userProfileFor(quizAnswers, healthProfile = null, opts = {}) {
     const outcomeHistory = Array.isArray(opts?.outcomeHistory) && opts.outcomeHistory.length ? opts.outcomeHistory : null;
     let entries = USER_PROFILE_CACHE.get(key);
     if (!entries) { entries = []; USER_PROFILE_CACHE.set(key, entries); }
-    const hit = entries.find((e) => e.healthProfile === healthProfile && e.behaviorRaw === behaviorRaw && e.healthContext === healthContext && e.healthRecords === healthRecords && e.outcomeHistory === outcomeHistory);
+    const catalogRev = publishedCatalogRevision();
+    const hit = entries.find((e) => e.catalogRev === catalogRev && e.healthProfile === healthProfile && e.behaviorRaw === behaviorRaw && e.healthContext === healthContext && e.healthRecords === healthRecords && e.outcomeHistory === outcomeHistory);
     if (hit) return hit.up;
     const intake = engineIntake(key, withHealthRecords(healthProfile, healthRecords));
     const up = buildUserProfile(outcomeHistory ? withOutcomeHistory(intake.fullHealthIntake && typeof intake.fullHealthIntake === 'object' ? { ...intake, ...intake.fullHealthIntake, fullHealthIntake: undefined } : intake, outcomeHistory) : intake, {
@@ -1513,7 +1528,7 @@ function userProfileFor(quizAnswers, healthProfile = null, opts = {}) {
         behavior: normalizeBehaviorSignals(behaviorRaw) || undefined,
         healthContext: healthContext || undefined,
     });
-    entries.push({ healthProfile, behaviorRaw, healthContext, healthRecords, outcomeHistory, up });
+    entries.push({ catalogRev, healthProfile, behaviorRaw, healthContext, healthRecords, outcomeHistory, up });
     if (entries.length > 6) entries.shift();
     return up;
 }
