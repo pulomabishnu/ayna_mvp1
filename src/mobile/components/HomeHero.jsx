@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import ScoreRings from './ScoreRings.jsx';
 import { Sparkline } from './DashParts.jsx';
-import { ScallopEdge, Plate, SnapCarousel } from '../../components/ui/ay/index.js';
+import { Plate, SnapCarousel } from '../../components/ui/ay/index.js';
 import { resolveCatalogProductImage } from '../../components/ProductTileImage.jsx';
 import { short, lastDays } from '../../health/dashView.js';
 import './home-hero.css';
@@ -99,7 +99,6 @@ export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, s
           </div>
         )}
       </div>
-      <ScallopEdge shape="wave" tone="ink" className="ay-hh__edge" />
     </section>
   );
 }
