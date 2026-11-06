@@ -10,6 +10,7 @@ import { PRODUCT_RESEARCH_CORE } from './productResearchCore.js';
 // and the brand/product exists. Do not add placeholder or fake entries.
 // ============================================================
 import { NOV_2026_PRODUCTS } from './productsNov2026.js';
+import { COMFORT_PRODUCTS } from './comfortProducts.js';
 import { EXTENDED_PHYSICAL, EXTENDED_DIGITAL } from './productsExtended.js';
 import { EXTENDED_PHYSICAL_2, EXTENDED_DIGITAL_2 } from './productsExtended2.js';
 import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
@@ -915,6 +916,8 @@ export const CATALOG_PRODUCTS = [
     ...BASICS_PRODUCTS,
     // Founder's sheet, Nov 2 (researched from brand pages and openFDA).
     ...NOV_2026_PRODUCTS,
+    // Verified physical mood/temperature coping tools that were only in Supabase.
+    ...COMFORT_PRODUCTS,
 ]
     .map(withCatalogEvidence)
     // The research fields matching, search and filters read (safety rules included) ship
