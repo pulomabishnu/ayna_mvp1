@@ -45,6 +45,14 @@ function renders(product) {
 
 // UI labels the redesign renamed or folded into a new control (never product text).
 const RENAMED_LABELS = [
+  // Nov 6 (founder: "is this stuff necessary … hard to read"): provenance filler removed on purpose.
+  /^Note on file: ayna synthesis/, // the "ayna synthesis … not a direct clinician quote" line (the section is titled "What health guides say")
+  'ayna grades only from .gov sources, so these are not graded. They are research, not the brand’s word.',
+  'Not .gov health sources, so ayna has not graded them. Each is labelled by what it is.',
+  'Reviews are people’s experiences, not evidence.',
+  'From the product record. Not tested by ayna.',
+  'Other pages the team used', // now "More reading"
+  'No doctor has reviewed this yet. Here’s what health guides say, in short.',
   'Your match', // the jump row in ayna summary; her match is the line under the price and Is it for you
   'What it is and who it’s for', // now "What it is" (in Read more) and "Is it for you" (above the tabs)
   'Label and regulator facts', // now "Label and regulatory facts" (founder's brief wording)

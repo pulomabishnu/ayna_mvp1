@@ -3,6 +3,7 @@ import { shownMatchPercent, PARTIAL_FIT } from '../utils/matchDisplay.js';
 import { createPortal } from 'react-dom';
 import { getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, getEcosystemSeedFromQuiz } from '../data/products.js';
 import { whyLine } from '../utils/whyLine';
+import { groupShelves } from '../matching/shelfGroups.js';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { buildPersona } from '../mobile/utils/shopperProfile.js';
@@ -87,8 +88,8 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
     if (!quizResults) return [];
     try {
       const byId = new Map(picks.map((p) => [p.id, p]));
-      return (getEcosystemSeedFromQuiz(quizResults, healthProfile, matchOpts).shelves || [])
-        .map((sh) => ({ label: sh.label, items: (sh.productIds || []).map((id) => byId.get(id)).filter(Boolean) }))
+      return groupShelves(getEcosystemSeedFromQuiz(quizResults, healthProfile, matchOpts).shelves || [])
+        .map((sh) => ({ label: sh.label, sub: sh.memberLabels || null, items: (sh.productIds || []).map((id) => byId.get(id)).filter(Boolean) }))
         .filter((g) => g.items.length);
     } catch { return []; }
   })();
@@ -178,7 +179,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
               const p = a.items[at];
               return <li key={a.label} style={{ '--d': `${i * 120}ms` }}>
                 {p && plate(p, 'ay-wr-even__plate')}
-                <span className="ay-wr-even__label">{a.label}</span>
+                <span className="ay-wr-even__label">{a.label}{a.sub?.length > 1 && <small className="ay-wr-even__sub">{a.sub.join(", ")}</small>}</span>
                 <strong className="ay-wr-even__n"><CountUp value={a.items.length} on={active === 'categories'} reduced={reduced} /> {a.items.length === 1 ? 'match' : 'matches'}</strong>
                 {a.items.length > 1 && <button type="button" className="ay-wr-even__swap" onClick={() => setSwap((m) => ({ ...m, [a.label]: (m[a.label] || 0) + 1 }))} aria-label={`Show another ${a.label} match`}>Show another</button>}
               </li>;

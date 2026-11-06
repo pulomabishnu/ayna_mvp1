@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import ProductTileImage, { ProductImageFallback, resolveCatalogProductImage } from '../ProductTileImage';
 import MatchPill from '../MatchPill.jsx';
 import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct } from '../../data/products.js';
 import { isSafetyHold } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
+import { groupShelves } from '../../matching/shelfGroups.js';
 import '../../styles/you-hub.css';
 
 /* Nov 3 (founder: "where you can find all your matches, how many, every category"):
@@ -14,10 +15,10 @@ function groupByNeed(matches, results) {
   const used = new Set();
   let groups = [];
   try {
-    groups = (results ? getEcosystemSeedFromQuiz(results).shelves || [] : []).map((sh) => {
+    groups = groupShelves(results ? getEcosystemSeedFromQuiz(results).shelves || [] : []).map((sh) => {
       const items = (sh.productIds || []).map((id) => byId.get(id)).filter((p) => p && !used.has(p.id));
       items.forEach((p) => used.add(p.id));
-      return { key: sh.needId, label: sh.label, items };
+      return { key: sh.groupId || sh.needId, label: sh.label, members: sh.members || null, items };
     }).filter((g) => g.items.length);
   } catch { groups = []; }
   const rest = matches.filter((p) => !used.has(p.id));
@@ -26,6 +27,43 @@ function groupByNeed(matches, results) {
 }
 function details(p, results) {
   try { const d = getProductMatchDetailsForProduct(p, results); return { d, hold: isSafetyHold(d), why: whyLine(p, d) }; } catch { return { d: null, hold: false, why: '' }; }
+}
+
+/* One grouped shelf. Founder, Nov 6: "shelves with micro shelves like a dropdown". When a shelf
+   covers more than one need (Period products: support and heavy flow), chips under the title
+   narrow it to one of them. */
+function NeedGroup({ g, results, onOpenProduct }) {
+  const [only, setOnly] = useState(null);
+  const subs = (g.members || []).filter((m) => m.productIds.length);
+  const sel = subs.find((m) => m.needId === only);
+  const items = sel ? g.items.filter((p) => sel.productIds.includes(p.id)) : g.items;
+  const n = (k) => `${k} ${k === 1 ? 'match' : 'matches'}`;
+  return (
+    <section className="ay-ecoprev__group" aria-label={`${g.label}, ${n(g.items.length)}`}>
+      <div className="ay-ecoprev__gh"><h2>{g.label}</h2><span className="ay-ecoprev__gcount">{n(g.items.length)}</span></div>
+      {subs.length > 1 && (
+        <div className="ay-ecoprev__subs" role="group" aria-label={`Narrow ${g.label}`}>
+          <button type="button" aria-pressed={!sel} onClick={() => setOnly(null)}>All</button>
+          {subs.map((m) => <button key={m.needId} type="button" aria-pressed={only === m.needId} onClick={() => setOnly(only === m.needId ? null : m.needId)}>{m.label}</button>)}
+        </div>
+      )}
+      <ul className="ay-ecoprev__mine">
+        {items.map((p) => {
+          const { d, hold, why } = results ? details(p, results) : { d: null, hold: false, why: '' };
+          return (
+            <li key={p.id}>
+              <button type="button" onClick={() => onOpenProduct && onOpenProduct(p)}>
+                <span className="ay-ecoprev__mineimg"><ProductTileImage product={p} alt="" letterNode={<ProductImageFallback product={p} />} /></span>
+                {d && <span className="ay-ecoprev__pill"><MatchPill size="sm" percent={d.percent} hold={hold} /></span>}
+                <span className="ay-ecoprev__minename">{p.brand && !String(p.name || '').startsWith(p.brand) ? <small>{p.brand}</small> : null}{p.name}</span>
+                {!hold && why && <span className="ay-ecoprev__why">{why}</span>}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
 }
 
 /* Your ecosystem for someone who is not signed in: the page itself, so she can
@@ -66,26 +104,7 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn, mat
           <h1 id="ay-ecoprev-title" className="ay-ecoprev__title">Your {matches.length} {matches.length === 1 ? 'match' : 'matches'}</h1>
           <p className="ay-ecoprev__lede">Picked from your answers, grouped by what you asked for help with. Tap one to see why it fits.</p>
         </header>
-        {groups.map((g) => (
-          <section key={g.key} className="ay-ecoprev__group" aria-label={`${g.label}, ${g.items.length} ${g.items.length === 1 ? 'match' : 'matches'}`}>
-            <div className="ay-ecoprev__gh"><h2>{g.label}</h2><span className="ay-ecoprev__gcount">{g.items.length} {g.items.length === 1 ? 'match' : 'matches'}</span></div>
-            <ul className="ay-ecoprev__mine">
-              {g.items.map((p) => {
-                const { d, hold, why } = results ? details(p, results) : { d: null, hold: false, why: '' };
-                return (
-                  <li key={p.id}>
-                    <button type="button" onClick={() => onOpenProduct && onOpenProduct(p)}>
-                      <span className="ay-ecoprev__mineimg"><ProductTileImage product={p} alt="" letterNode={<ProductImageFallback product={p} />} /></span>
-                      {d && <span className="ay-ecoprev__pill"><MatchPill size="sm" percent={d.percent} hold={hold} /></span>}
-                      <span className="ay-ecoprev__minename">{p.brand && !String(p.name || '').startsWith(p.brand) ? <small>{p.brand}</small> : null}{p.name}</span>
-                      {!hold && why && <span className="ay-ecoprev__why">{why}</span>}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))}
+        {groups.map((g) => <NeedGroup key={g.key} g={g} results={results} onOpenProduct={onOpenProduct} />)}
         <div className="ay-ecoprev__save" role="note">
           <p><b>Keep these.</b> Save them with a free account so they’re here next time. Until then they stay on this device.</p>
           <div>

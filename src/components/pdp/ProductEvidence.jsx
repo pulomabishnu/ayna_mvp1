@@ -608,7 +608,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           <ShowAll items={ex.sources} className="ayq-srcgrid is-compact ayv-srclist" label="sources" render={(s) => <SourceBody s={s} />} itemClass={(s) => `ayq-src${s.negative ? ' is-negative' : ''}`} />
         </div>
       )}
-      <OtherLinks items={ex.other} label="Other pages the team used" note="Not .gov health sources, so ayna has not graded them. Each is labelled by what it is." />
+      <OtherLinks items={ex.other} label="More reading" />
     </div>
   );
   const expertBody = (ex.opinion.length || ex.note.length || ex.sourceSummary || ex.sources.length || ex.other.length) ? (
@@ -622,11 +622,11 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         </article>
       ) : (
         <>
-          {/* No named clinician: say so plainly, then ayna's own clinical summary, labelled. */}
-          {/* One status sentence, then the content (audit 7.6 / 9.1: it used to say "no clinician" three ways). */}
-          <p className="ayv-empty">No doctor has reviewed this yet. Here’s what health guides say, in short.</p>
-          <section className="ayv-box" aria-label="ayna’s clinical summary">
-            {ex.attribution && <p className={ex.synthesis ? 'ayq-meta' : 'ayq-byline'}>{ex.synthesis ? <Tx>{ex.attribution}</Tx> : <><b>Who wrote this:</b> <Tx>{ex.attribution}</Tx></>}</p>}
+          {/* Nov 6 (founder: "is this stuff necessary … hard to read"): no status sentence and no
+              "synthesis, not a direct quote" line. One heading says what it is; a named author still shows. */}
+          <section className="ayv-box" aria-label="What health guides say">
+            <h4 className="ayq-subh">What health guides say</h4>
+            {ex.attribution && !ex.synthesis && <p className="ayq-byline"><b>Who wrote this:</b> <Tx>{ex.attribution}</Tx></p>}
             {ex.opinion.length > 0 && <ReadShelf list={ex.opinion} label="The full expert view" leadIn />}
           </section>
         </>
@@ -1001,7 +1001,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const otherLinksBlock = (adds('research').length || otherResearch.length || sourcesBody) ? (
     <>
       {adds('research').map((a) => <Addition key={a.id} a={a} />)}
-      <OtherLinks items={otherResearch} label="Other pages the team used" note="Not .gov health sources, so ayna has not graded them. Each is labelled by what it is." />
+      <OtherLinks items={otherResearch} label="More reading" />
       {sourcesBody}
     </>
   ) : null;
@@ -1037,7 +1037,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {gradeBlock}
       {studyCards.length > 0 && <SourceGrid items={studyCards} label={rs.negative.length ? 'Other .gov health sources' : '.gov health sources'} id="ayq-studies" />}
       {/* Level 2: peer-reviewed papers, labelled for what they are (never graded by ayna). */}
-      {peerLinks.length > 0 && <OtherLinks items={peerLinks} label={`Peer-reviewed ${peerLinks.length === 1 ? 'paper' : 'papers'}`} note="ayna grades only from .gov sources, so these are not graded. They are research, not the brand’s word." />}
+      {peerLinks.length > 0 && <OtherLinks items={peerLinks} label={`Peer-reviewed ${peerLinks.length === 1 ? 'paper' : 'papers'}`} />}
       {/* 3. Deeper, closed until she asks. */}
       {whyRated && <Step id="ay-lit-why" title={graded.length ? 'Why ayna rated it this way' : 'The research in short'}>{whyRated}</Step>}
       {ingredientsBlock && <Step id="ay-lit-ings" title={rs.ingredientsAreTopics ? 'Point by point' : 'Ingredient by ingredient'} meta={plural(rs.ingredients.length, rs.ingredientsAreTopics ? 'topic' : 'ingredient')}>{ingredientsBlock}</Step>}
@@ -1060,7 +1060,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const reviewsTab = (
     <div className="ayq-rev">
       {/* Said once, as the tab's first line (audit 7.7). */}
-      <p className="ayv-note">Reviews are people’s experiences, not evidence.</p>
       {(bigRating || breakdown) && (
         <div className={`ayg-bento ayg-rev${bigRating && breakdown ? '' : ' is-one'}`}>
           {bigRating && (

@@ -204,3 +204,6 @@
 @media (prefers-reduced-motion: reduce) {
   .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ay-wr-wall span, .ay-wr-kin span, .ay-wr-even li, .ay-wr-hero, .ay-wr-match) { animation: none !important; }
 }
+
+/* Nov 6: which needs a grouped shelf covers */
+html body .ay-wr-even__sub { display: block; margin-top: 2px; font: 600 12px/1.3 var(--ay-sans-stack, sans-serif); opacity: .75; }

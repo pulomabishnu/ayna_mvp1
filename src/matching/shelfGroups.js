@@ -46,6 +46,7 @@ export function groupShelves(shelves = []) {
       groupId: g.id,
       needIds: ids,
       memberLabels: members.map((m) => m.label),
+      members: members.map((m) => ({ needId: m.needId, label: m.label, productIds: (m.picks || []).map((p) => p.productId) })),
       picks,
       productIds: picks.map((p) => p.productId),
       shortBy: 0,

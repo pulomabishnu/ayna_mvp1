@@ -50,6 +50,7 @@ import { hostLabel } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
 import '../styles/verify-content.css';
 import './pdp/pdp.css';
+import './pdp/pdp-nov6.css';
 import { fetchWithTimeout } from '../utils/network.js';
 import { SaveFollowUpInline } from './save/SaveFollowUp.jsx';
 import { ASK_SIGN_IN, ASK_MONTHLY_LIMIT, ASK_BURST_LIMIT, askLimitCode } from '../pro/askLimitCopy.js';
@@ -865,7 +866,7 @@ export default function ProductModal({
         </div>
 
         {/* The facts that matter, as big numbers (Glossier's claims row, rebuilt as a bento). */}
-        <Highlights items={highlights} note={highlights.length ? 'From the product record. Not tested by ayna.' : ''} />
+        <Highlights items={highlights} />
 
         <div className="ayv-body">
           {/* Tabs: ayna summary (open), Clinical opinion, Scientific literature, Reviews (PDP audit, Oct 25). */}

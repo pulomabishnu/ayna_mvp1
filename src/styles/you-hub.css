@@ -232,3 +232,8 @@ html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__mine { grid-template-c
 html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__mine button { align-content: start; }
 html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__why { font: 500 13px/1.35 var(--ay-sans-stack, sans-serif); color: #3e2723; opacity: .85; }
 html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__save { margin-top: 8px; }
+
+/* Nov 6: micro shelves inside a grouped shelf */
+html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__subs { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
+html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__subs button { min-height: 36px; padding: 7px 14px; border-radius: 999px; border: 1.5px solid #3e2723; background: transparent; color: #3e2723; font: 700 13px/1.2 var(--ay-sans-stack, sans-serif); cursor: pointer; }
+html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__subs button[aria-pressed="true"] { background: #f7badd; }
