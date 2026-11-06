@@ -775,7 +775,7 @@ describe('independent 50-persona matching stress test',()=>{
         need:s.needId||s.title||s.label,
         recommendations:(s.picks||[]).map(x=>({
           id:x.productId,name:byId.get(x.productId)?.name,
-          percent:Number.isFinite(x.v2?.health)?Math.round(100*x.v2.health):null,
+          percent:Number.isFinite(x.score)?x.score:null,
           band:x.v2?.band,
         }))
       })),
