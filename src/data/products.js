@@ -2100,7 +2100,27 @@ function careFlagsFor(up) {
     // Nov 6 (founder: hot flashes are for everyone, context only changes what they're filed under).
     // Outside the menopause transition, MedlinePlus (Skin blushing/flushing) lists other causes:
     // some medicines, alcohol, hot or spicy food, heat; contact a provider for persistent flushing.
-    if (!up.contexts?.menopause_transition && up.healthIntent.needs.some((n) => n.id === 'vasomotor.hot_flashes' || n.id === 'vasomotor.night_sweats')) notes.push({ code: 'vasomotor_other_causes', short: 'Hot flashes can also come from some medicines, alcohol, spicy food or heat. If they keep happening, check with a clinician.', text: 'Hot flashes and flushing aren’t only a menopause thing. Some medicines, alcohol, hot or spicy food and heat can cause them too. If they keep happening, check with a clinician.', source: 'https://medlineplus.gov/ency/article/003241.htm' });
+    if (!up.contexts?.menopause_transition && up.healthIntent.needs.some((n) => n.id === 'vasomotor.hot_flashes' || n.id === 'vasomotor.night_sweats')) {
+      const timing = up.vasomotorTiming || [];
+      const periodTimed = timing.some(t => ['before_period', 'during_period', 'around_period_reported'].includes(t));
+      const stressTimed = timing.some(t => ['stress_anxiety', 'with_stress_reported'].includes(t));
+      // Co-selected PMS/anxiety are NOT proof that flushing follows either.
+      // Only explicitly reported temporal context enters this explanation.
+      const timingLine = periodTimed && stressTimed
+        ? 'You reported episodes around your period and during anxiety or stress.'
+        : periodTimed ? 'You reported episodes around your period or PMS.'
+          : stressTimed ? 'You reported episodes while anxious or stressed.'
+            : '';
+      const guide = timingLine
+        ? `${timingLine} That timing is worth tracking, but it does not prove the cause or suggest menopause.`
+        : 'Hot flashes can happen at different ages. The timing and triggers are worth tracking before attributing a cause.';
+      notes.push({
+        code: 'vasomotor_other_causes',
+        short: guide,
+        text: `${guide} Flushing can also be associated with medicines, physical activity, temperature, strong emotions or other medical conditions. If it persists or changes, check with a clinician.`,
+        source: 'https://medlineplus.gov/ency/article/003241.htm',
+      });
+    }
     // Nov 5 (10-person runs: migraine with aura on the pill got no word about it). CDC US MEC: estrogen-
     // containing methods are not recommended with migraine with aura, high blood pressure or a past
     // blood clot. "Birth control pill" may be progestin-only, so the note asks rather than tells.
