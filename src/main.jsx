@@ -37,6 +37,7 @@ import { applyStoredConsent, getStoredConsent, isMandatoryGpcVisitor } from './u
 import { appErrorProperties } from './utils/errorAnalytics'
 import { sanitizeEventPayload } from './utils/analyticsSanitize'
 import { analyticsPlatform, resolvePosthogKey } from './utils/analyticsPlatform'
+import { nativePosthogTransportConfig } from './utils/nativePosthogTransport.js'
 import { trackAppOpened, eventSurface } from './utils/analyticsEvents.js'
 
 // One origin only. Sign-in keeps its session (and the PKCE code verifier) per
@@ -181,6 +182,10 @@ if (!POSTHOG_KEY) {
 } else {
   posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST,
+    // CapacitorHttp patches fetch/XHR on iOS. Disable compressed Blob bodies
+    // and queued/batched requests ONLY inside native builds so iPhone events
+    // use individual plain fetch requests. Web batching is unchanged.
+    ...nativePosthogTransportConfig(Capacitor.isNativePlatform()),
     // Only meaningful when api_host is a same-origin proxy (the default
     // above), tells the SDK where the real PostHog app lives so in-app
     // links (session recordings, the toolbar) still resolve correctly
@@ -261,7 +266,7 @@ if (!POSTHOG_KEY) {
 function registerNativeAppAnalytics(ph) {
   // Capture the open before loading the native plugin: a missing or slow
   // plugin must not make the most basic app metric disappear.
-  try { ph.capture('Application Opened', { from_background: false }); } catch { /* ignore */ }
+  try { ph.capture('Application Opened', { from_background: false }, { send_instantly: true, transport: 'fetch' }); } catch { /* ignore */ }
   import('@capacitor/app').then(({ App: CapApp }) => {
     try {
       CapApp.getInfo().then((info) => {
