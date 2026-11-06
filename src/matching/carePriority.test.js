@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { careFirstForNeed, pregnancyBleedingCare } from './carePriority.js';
-import { getEcosystemSeedFromQuiz, getMatchCareFlags, ALL_PRODUCTS } from '../data/products.js';
+import { getEcosystemSeedFromQuiz, getMatchCareFlags, getProductMatchDetailsForProduct, ALL_PRODUCTS } from '../data/products.js';
 import { buildUserProfile } from './userProfile.js';
 import { buildProductProfile } from './productProfile.js';
 import { evaluateSafety } from './score.js';
@@ -30,6 +30,13 @@ describe('ACOG care-first / FDA passport review / CDC diagnostic caution', () =>
       expect(shelf.qualityNote).toMatch(/pregnancy|bleeding|pain/i);
     }
     expect(e.careFlags.notes.some(n=>n.code==='pregnancy_bleeding')).toBe(true);
+    // A product page must show the same care-first result as the shelf.
+    const liner = product('p-carefree-liners');
+    expect(liner).toBeTruthy();
+    const details = getProductMatchDetailsForProduct(liner, {fullHealthIntake:pg});
+    expect(details.matchStatus).toBe('bleeding-evaluation');
+    expect(details.percent).toBeNull();
+    expect(details.bleedingEvaluation?.source?.url).toContain('acog.org');
   });
   it('pregnancy pain without bleeding is not automatically called pregnancy bleeding', () => {
     const up = profile(intake(['I am pregnant'], ['Pelvic pain']));
