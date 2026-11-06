@@ -17,7 +17,7 @@
 .app-container .hm.wl .wl-edge path { fill: #3e2723 !important; }
 /* the rain: a see-through layer around the edges (each item carries its own
    opacity, kit), kept clear of the copy by where the columns sit */
-.app-container .hm.wl .wl-rain { z-index: -2; --lk-gap: 0px; --lk-colgap: 28px; --lk-pad: clamp(16px, 3vw, 48px); --lk-slot: 150px; --lk-prod-max: 124px; }
+.app-container .hm.wl .wl-rain { z-index: 0; --lk-gap: 0px; --lk-colgap: 28px; --lk-pad: clamp(16px, 3vw, 48px); --lk-slot: 150px; --lk-prod-max: 124px; }
 @media (min-width: 900px) { .app-container .hm.wl .wl-rain { --lk-slot: 172px; } }
 
 /* phones: the rain is a strip of its own above the words (never behind them) */
@@ -37,7 +37,7 @@
   .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(4) { grid-column: 5; }
 }
 
-.app-container .hm.wl .wl-hero__in { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 560px; text-align: center; }
+.app-container .hm.wl .wl-hero__in { z-index: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 560px; text-align: center; }
 /* (the id and repeated class beat the site's global main h1 size rule) */
 html body .app-container #ay-landing.wl.hm .wl-title.wl-title.wl-title.wl-title { margin: 0; font: 800 clamp(40px, 11vw, 44px)/1.02 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.03em !important; color: #ffedac !important; text-transform: none; max-width: none; }
 .app-container.app-container .hm.wl .wl-title > span { display: block; }
@@ -341,8 +341,8 @@ html body .app-container #ay-landing.wl .lp-rc__in { display: grid; gap: 40px; }
 
 /* Nov 4 de-box pass (founder: "it's just boxes, overcrowded, vibe coded"). Editorial rules instead
    of filled cards: type, white product plates and thin espresso lines carry the structure. */
-/* Hero: product photos only, no decorative dots, rings or chips. */
-html body #ay-landing.wl .wl-hero .lk-w { display: none !important; }
+/* Restore the founder-approved falling product cut-outs AND the app-style mini widgets. */
+html body #ay-landing.wl .wl-hero .lk-w { display: grid !important; }
 /* How ayna works: a plain numbered list; the step playing gets the pink number. */
 html body #ay-landing.wl .hd-steps > li, html body #ay-landing.wl .hd-steps > li.is-on { background: transparent !important; box-shadow: none !important; border: 0 !important; border-top: 1px solid rgba(62, 39, 35, .16) !important; border-radius: 0 !important; }
 html body #ay-landing.wl .hd-steps > li:last-child { border-bottom: 1px solid rgba(62, 39, 35, .16) !important; }
@@ -397,7 +397,7 @@ html body #ay-landing.wl .lb-picks img { mix-blend-mode: normal !important; back
 html body #ay-landing.wl .lb-picks :is(.ay-pcard__media, .ay-pcard__img, .hm-sticker__img, [class*='media'], [class*='plate']) { background: #fff !important; border-radius: 16px !important; mix-blend-mode: normal !important; }
 html body .app-container #ay-landing.wl .lb { padding-top: 0 !important; padding-bottom: 0 !important; }
 html body #ay-landing.wl .lb > .lb-sec { position: relative; margin: 0 !important; padding: 72px 0 !important; }
-/* The wavy seam: each band's top edge is a soft wave in its own colour, laid over the band above. */
+/* Flat, clean section boundaries; the old wave masks are disabled below. */
 html body #ay-landing.wl .lb > .lb-sec::before { content: ''; position: absolute; left: 0; right: 0; top: -23px; height: 24px; background: inherit; pointer-events: none;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px;
           mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px; }
@@ -437,3 +437,7 @@ html body #ay-landing.wl .lb-comm .lb-p { display: block !important; max-width: 
 html body .app-container #ay-landing.wl .lb-stats > .lb-stat:is(:nth-child(1), :nth-child(3)) { color: #3e2723 !important; }
 html body .app-container #ay-landing.wl .lb-stats > .lb-stat:is(:nth-child(2), :nth-child(4)) { color: #ffedac !important; }
 html body .app-container #ay-landing.wl .lb-stats > .lb-stat:is(:nth-child(2), :nth-child(4)) > .lb-ic { color: #3e2723 !important; }
+
+/* Straight transitions only. Remove the old mask-based wavy band seams. */
+html body #ay-landing.wl .lb > .lb-sec::before,
+html body #ay-landing.wl .lb-close::before { content: none !important; display: none !important; }
