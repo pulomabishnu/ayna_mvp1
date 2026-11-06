@@ -12,8 +12,8 @@ export function publishProductCatalog(products) {
     // A cached or API row marked hidden/inactive should never enter matching.
     if (product.hidden || product.is_active === false || product.recommendable === false) continue;
     // Defense in depth: old cached unapproved discovery records do not qualify.
-    if (product.source === 'discovered' && product.reviewStatus !== 'approved'
-      && !product.discoveryMeta?.humanReviewedAt) continue;
+    if (product.source === 'discovered' && (product.reviewStatus !== 'approved'
+      || !product.discoveryMeta?.humanReviewedAt)) continue;
     unique.set(product.id, product);
   }
   if (!unique.size) return false;
