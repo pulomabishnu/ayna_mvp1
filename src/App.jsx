@@ -2548,10 +2548,11 @@ function App() {
     // Home opens the app-style personalized dashboard for members and the landing for guests.
     today: () => {
       const view = webHomeView({ signedIn: Boolean(user), authLoading });
-      setCurrentView(view);
-      // Clicking Home while on its full-data panel goes back to the Home overview.
-      if (view === 'home' && window.location.search) {
-        window.history.replaceState({ view: 'home' }, '', '/home');
+      // The full-data subview lives on /home?view=data, not a second route.
+      // Remember it BEFORE navigation changes the URL, then synchronize WebHealth.
+      const leavingData = view === 'home' && window.location.pathname === '/home' && new URLSearchParams(window.location.search).get('view') === 'data';
+      setCurrentView(view, leavingData ? { replace: true } : {});
+      if (leavingData) {
         window.dispatchEvent(new PopStateEvent('popstate', { state: { view: 'home' } }));
         window.scrollTo(0, 0);
       }
