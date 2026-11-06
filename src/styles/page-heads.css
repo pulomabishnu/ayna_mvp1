@@ -39,12 +39,12 @@
   position: relative; padding-top: var(--phd-top) !important; padding-bottom: var(--phd-bottom) !important; margin-top: 0 !important; margin-bottom: var(--phd-after) !important;
   border: 0 !important; box-shadow: none !important;
 }
-/* The one bottom edge: a full-width wavy rule. */
+/* Page heads use a clean straight bottom rule; no wavy or ruffled edges. */
 :is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container :is(.cm-head.cm-titlerow, .ay-ih.uq-bleed)::after {
   content: '' !important; display: block !important; position: absolute !important; z-index: 0 !important;
-  top: auto !important; bottom: -6px !important; left: 50% !important; right: auto !important; width: 100vw !important; height: 12px !important; margin: 0 0 0 -50vw !important;
+  top: auto !important; bottom: -6px !important; left: 50% !important; right: auto !important; width: 100vw !important; height: 1.5px !important; margin: 0 0 0 -50vw !important;
   background: var(--ay-calm-line, #3e2723) !important; border: 0 !important; border-radius: 0 !important; transform: none !important; pointer-events: none;
-  -webkit-mask: var(--phd-wave) 0 0 / 40px 12px repeat-x !important; mask: var(--phd-wave) 0 0 / 40px 12px repeat-x !important;
+  -webkit-mask: none !important; mask: none !important;
 }
 :is(#ph1, html):is(#ph2, html):is(#ph3, html):is(#ph4, html):is(#ph5, html):is(#ph6, html):is(#ph7, html) body .app-container :is(.cm-head.cm-titlerow, .ay-ih.uq-bleed)::before { content: none !important; }
 
