@@ -203,7 +203,7 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
 
           <ol className="pro-sheet__when" aria-label="How Early Access works">
             <li><b>Today</b><span>Pay {chosen.price}. Pro unlocks right away.</span></li>
-            <li><b>{PAID_TERM_STARTS}</b><span>Your paid {chosen.per} starts. The beta before it is included.</span></li>
+            <li><b>{PAID_TERM_STARTS}</b><span>Your purchased {chosen.per} begins. Early Access through January is included.</span></li>
             <li><b>After that</b><span>{chosen.renew}</span></li>
           </ol>
 
