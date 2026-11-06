@@ -612,3 +612,27 @@ html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay
 html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-deck__card:is(.is-tone-0, .is-tone-1, .is-tone-2) .ay-deck__head em { background: transparent !important; box-shadow: inset 0 0 0 1.5px #3e2723 !important; color: #3e2723 !important; }
 html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__num { color: #ffedac; }
 html body :is(.ayna-mobile, .app-container) .ay-pz h1#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h { margin-bottom: 12px !important; }
+
+/* Broad focus cards keep specific answers visible without turning every
+   symptom into a separate shelf. Inherits the existing brand palette. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready .ay-deck__focus {
+  display: block;
+  margin: -3px 4px 3px;
+  font: 500 13px/1.35 var(--o-sans, sans-serif);
+  color: inherit;
+  opacity: .83;
+  text-wrap: pretty;
+}
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready .ay-deck__picked-for {
+  display: block;
+  font-size: 12px !important;
+  line-height: 1.3 !important;
+  opacity: .8;
+}
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready .ay-deck__limitation {
+  display: block;
+  font: 500 13px/1.3 var(--o-sans, sans-serif);
+  color: inherit;
+  opacity: .88;
+  padding: 2px 4px;
+}
