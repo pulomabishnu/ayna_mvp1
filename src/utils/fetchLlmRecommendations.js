@@ -56,7 +56,15 @@ export function buildIdFromFingerprint(fingerprint) {
 export function fingerprintIntake(intake) {
   if (!intake || typeof intake !== 'object' || Object.keys(intake).length === 0) return '';
   try {
-    return stableStringify(intake);
+    const profile = intake.fullHealthIntake && typeof intake.fullHealthIntake === 'object' ? intake.fullHealthIntake : intake;
+    const needs = Array.isArray(profile.supportSelections) ? profile.supportSelections : [];
+    // A cached AI shelf generated under the old "hot flashes = menopause"
+    // mapping must be refreshed. Only this subgroup's cache is versioned;
+    // other users keep their cached generated recommendations.
+    const hasVasomotor = needs.includes('Hot flashes') || needs.includes('Night sweats');
+    return stableStringify(hasVasomotor
+      ? { ...intake, _careRoutingVersion: 'vasomotor-symptom-v1' }
+      : intake);
   } catch {
     return '';
   }
