@@ -764,9 +764,7 @@ describe('independent 50-persona matching stress test',()=>{
     }
     for(const pick of picks) {
       expect(pick.v2, 'no v2 data for '+pick.productId).toBeDefined();
-      if(pick.v2 && Number.isFinite(pick.v2.health)){
-        expect(pick.v2.health+1e-8,'match below 50% '+pick.productId).toBeGreaterThanOrEqual(0.5);
-      }
+      expect(pick.score, 'shown match below 50% '+pick.productId).toBeGreaterThanOrEqual(50);
     }
     // Emit what a human reviewer needs: unfilled needs and every top recommendation.
     // No clinical adequacy is inferred from these mechanical gates passing.
