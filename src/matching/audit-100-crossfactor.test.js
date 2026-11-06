@@ -49,13 +49,14 @@ const MODES=[
 const byId=new Map(ALL_PRODUCTS.map(p=>[p.id,p]));
 const NO_CYCLE=new Set(['I am pregnant','I am in menopause','I am post-menopause']);
 const cases=STAGES.flatMap((stage,si)=>MODES.map((mode,mi)=>{
-  const intake={...EMPTY,age:String(AGES[mi]),skippedSteps:mi%2?['safety']:[],...mode.extra};
+  const age=mode.onlyAge ? 18+si : AGES[mi];
+  const intake={...EMPTY,age:String(age),skippedSteps:mi%2?['safety']:[],...mode.extra};
   if(!mode.onlyAge)intake.lifeStageSelections=[stage];
   if(!mode.onlyAge&&!mode.onlyStage)intake.supportSelections=[...NEEDS[si]];
   if(stage==='I am pregnant'&&mi>=2)intake.pregnancyTrimester=['First trimester','Second trimester','Third trimester'][mi%3];
   if(stage==='I am postpartum'&&mi>=2)intake.breastfeedingStatus=mi%2?'Yes':'No';
   if(stage==='I get periods regularly'&&mi>=2)intake.vasomotorTimingSelections=['Before my period / PMS','When stressed or anxious'];
-  return {id:'X'+String(si*10+mi+1).padStart(3,'0'),stage,age:AGES[mi],mode:mode.name,intake,partial:mi<=2};
+  return {id:'X'+String(si*10+mi+1).padStart(3,'0'),stage,age,mode:mode.name,intake,partial:mi<=2};
 }));
 function execute(c, extra={},opts={}){
   const snapshot={...c.intake,...extra};
