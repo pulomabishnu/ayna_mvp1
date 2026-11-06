@@ -103,6 +103,6 @@ export function comfortAreaOverride(p,quiz){
   const ingestible=/supplement|capsule|pill|gumm|tablet|softgel|herbal/i.test([p.name,p.category,p.summary].join(' '));
   const digital=String(p.type||'').toLowerCase()==='digital'||/app|tracker|telehealth|digital/i.test(String(p.category||''));
   // An app that logs menopausal flashes is not a cooling product.
-  if(!ingestible&&!digital&&/\\bcool(?:ing|er|s)?\\b|cool spray|cooling fan|chill|coldher/i.test(words))return 'temperature';
+  if(!ingestible&&!digital&&/\bcool(?:ing|er|s)?\b|cool spray|cooling fan|chill|coldher/i.test(words))return 'temperature';
   return null;
 }
