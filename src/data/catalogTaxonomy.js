@@ -126,6 +126,9 @@ export const MACRO_GROUPS = [
     // A hot-flash claim can be made by a menopause product, but does not make
     // every cooling/vasomotor product a menopause product.
     { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause'] },
+    // Neutral symptom area for catalog/LLM products explicitly designated
+    // for heat or night sweat tracking, not an inferred menopause diagnosis.
+    { id: 'temperature', label: 'Hot Flashes + Sweats', categories: [], healthFunctions: ['vasomotor'], keywords: [] },
     // 'supplement' is a product-TYPE category shared by dozens of unrelated items (iron for
     // anemia, plain vitamin D, omega-3 for cramps, etc.), it used to be listed here directly,
     // which meant EVERY supplement in the catalog satisfied the Hormones chip regardless of what
