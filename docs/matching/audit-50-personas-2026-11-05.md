@@ -82,6 +82,33 @@ CI run: https://github.com/pulomabishnu/ayna_mvp1/actions/runs/42157312399
 | 49-unknown-stage | Fatigue or low energy, Hair thinning or hair loss | energy.fatigue: none / hair.loss: Women's Rogaine 5% Minoxidil Foam (65%) | energy.fatigue |
 | 50-privacy-limited | Finding a telehealth provider, Low libido or libido changes | care.telehealth: Tia (80%); Nurx (78%); Wisp (75%); Birth control, emergency contraception and urgent care (55%) / sexual.libido: none | sexual.libido |
 
+## Implemented fixes (draft branch, not deployed)
+
+**Evidence-backed care-first logic**: pregnancy with selected bleeding symptoms now has a deterministic ACOG care-first rule, with no product recommendations for the bleeding or co-reported pelvic pain. The same bleeding-evaluation status suppresses percentages on product pages; ordinary period-product interest without a bleeding symptom does not trigger the warning. Regression tests cover pregnancy bleeding, plain pregnancy pelvic pain, menstruating spotting, and postmenopausal spotting.
+
+**Clinician review**: Passport records marked `needs_clinician_review` once again generate an `in_review` hold in the central safety scorer. The user may browse the listing but receives no confident personalized match or shelf recommendation. Compared the 38 currently open database queue IDs with bundled passport reviews: all 38 are represented as clinician-review flags (two Pippa products get the status through a shared review helper). Caution: open clinical review is not the same thing as having a proven contraindication; the UI must label it clearly as pending review.
+
+**Source-backed care navigation**: added ACOG/CDC/DailyMed notes for vaginal diagnostic uncertainty, spironolactone while trying to conceive, PMS/PMDD, NIH PCOS, pregnancy nausea, recurrent UTI-like symptoms, Mayo adenomyosis, and Menopause Society perimenopause brain fog. Onboarding's short care line prioritizes urgency before lower-acuity care navigation.
+
+**Match meaning**: a displayed percent is now described as personalized *product* fit, based on health and preferences, not a clinical efficacy probability or a guarantee of safety. The independent `v2.health` score is not changed; product fit still legitimately includes price and preference modifiers. Full UI separation of health and shopping fit is future work.
+
+**Catalog QA**: 152 active live Supabase entries have empty `tags` and `health_functions`, many imported discovery (`disc-`) records with brand-homepage URLs rather than verifiable specific-product labels. They were **not automatically tagged, approved, or marked clinically reviewed**. These require SKU-level manufacturer-source verification, authoritative source links and contraindication screening; empty shelves must not be artificially filled from unverified records.
+
+**No new medical efficacy claims or product labels were written to production.** Only branch code, tests and audit docs changed. Final test/run results should be checked on GitHub Actions before merge.
+
+### Primary sources checked for the implemented rules
+
+- https://www.acog.org/womens-health/faqs/bleeding-during-pregnancy
+- https://www.cdc.gov/std/treatment-guidelines/vaginal-discharge.htm
+- https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0c45d793-6f2f-4622-b5ed-6875acfbc02b
+- https://www.acog.org/womens-health/faqs/Premenstrual-Syndrome
+- https://www.acog.org/clinical/clinical-guidance/clinical-practice-guideline/articles/2023/12/management-of-premenstrual-disorders
+- https://www.nichd.nih.gov/health/topics/pcos/conditioninfo/treatments
+- https://www.acog.org/womens-health/faqs/morning-sickness-nausea-and-vomiting-of-pregnancy
+- https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-infection-uti-in-adults/treatment
+- https://www.mayoclinic.org/diseases-conditions/adenomyosis/diagnosis-treatment/drc-20369143
+- https://menopause.org/patient-education/menopause-topics/perimenopause
+
 ## Recommended next steps
 
 **P0 — Care before commerce:** deterministic triage based on pregnancy bleeding with pain, postmenopausal bleeding, abnormal/heavy bleeding, severe pelvic pain, symptomatic infection, migraine aura with combined hormonal contraception. Verify warning first on every recommendation surface, including web/app/Ask/search and shares.
