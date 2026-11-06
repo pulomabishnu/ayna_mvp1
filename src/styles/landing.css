@@ -1042,3 +1042,6 @@
 .app-container .lx .lx-today__fact { justify-content: center; gap: 20px; }
 .app-container .lx .lx-today__fact .lx-today__text { font-size: var(--ay-fs-section); line-height: 1.2; color: var(--bk-ink); font-family: var(--ay-serif); font-weight: 400; letter-spacing: -0.01em; }
 .app-container .lx .lx-today__fact .lx-ghost { margin-top: 8px; }
+
+/* Nov 6: retire decorative waved band seams. */
+.app-container .lx-band::before, .app-container .lx-band::after { content: none !important; display: none !important; }

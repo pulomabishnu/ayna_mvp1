@@ -165,3 +165,7 @@ html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__lin
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__beta { border-width: 0; background: rgba(255, 237, 172, .16); color: #ffedac !important; }
 html body .app-container.app-container.app-container .ay-nav--paper :is(.ay-nav__ask, .ay-nav__icon) { border-width: 1px !important; border-color: rgba(255, 237, 172, .4) !important; }
 html body .app-container.app-container.app-container .ay-nav--paper .ay-nav__login { box-shadow: none !important; }
+
+/* Founder Nov 6: no decorative ruffled or scalloped separators anywhere in the web/app. */
+html body .app-container .app-nav-wrap::after { content: none !important; display: none !important; }
+html body .app-container :is(.ds-scallop, .ay-band--scallop) { clip-path: none !important; mask-image: none !important; }

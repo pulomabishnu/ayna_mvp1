@@ -41,17 +41,17 @@ describe('main tabs (founder, Oct 24 2026)', () => {
       expect(r.permanent).toBe(true);
     }
   });
-  it('/ecosystem?view=dashboard goes to Today, before the plain /ecosystem redirect', () => {
+  it('/ecosystem?view=dashboard goes to Home, before the plain /ecosystem redirect', () => {
     const i = vercel.redirects.findIndex((x) => x.source === '/ecosystem' && x.has);
     const j = vercel.redirects.findIndex((x) => x.source === '/ecosystem' && !x.has);
-    expect(vercel.redirects[i].destination).toBe('/today');
+    expect(vercel.redirects[i].destination).toBe('/home');
     expect(i).toBeLessThan(j);
   });
   it('maps moved pages to their old address for analytics', () => {
     expect(legacyPathFor('/explore/products')).toBe('/shop');
     expect(legacyPathFor('/explore/resources/')).toBe('/library');
     expect(legacyPathFor('/you/ecosystem')).toBe('/ecosystem');
-    expect(legacyPathFor('/today')).toBe('/health');
+    expect(legacyPathFor('/home')).toBe('/health');
     expect(legacyPathFor('/community')).toBe(null);
   });
 });

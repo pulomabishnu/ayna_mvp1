@@ -92,7 +92,8 @@ export const LEGACY_REDIRECTS = {
   '/library': '/explore/resources',
   '/ecosystem': '/you/ecosystem',
   '/my-ecosystem': '/you/ecosystem',
-  '/health': '/today',
+  '/health': '/home',
+  '/today': '/home',
 };
 
 /**
@@ -105,7 +106,7 @@ export function legacyPathFor(pathname) {
   if (p === '/explore/products') return '/shop';
   if (p === '/explore/resources') return '/library';
   if (p === '/you/ecosystem') return '/ecosystem';
-  if (p === '/today') return '/health';
+  if (p === '/home') return '/health';
   return null;
 }
 

@@ -126,3 +126,6 @@ html body .app-container #ay-landing.wl .lb-close { padding-bottom: 48px !import
 html body .app-container #ay-landing.wl .lb-end { padding-bottom: 0 !important; }
 html body .app-container #ay-landing.wl .wl-note { padding-top: 8px !important; }
 @media (min-width: 768px) { html body .app-container #ay-landing.wl .hd-phone { aspect-ratio: 9 / 16 !important; } }
+
+/* Nov 6: flat section transitions, no masked wave. */
+html body #ay-landing.wl .lb-top + .hd::before { content: none !important; display: none !important; }

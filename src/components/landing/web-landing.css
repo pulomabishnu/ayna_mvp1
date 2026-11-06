@@ -398,18 +398,15 @@ html body #ay-landing.wl .lb-picks :is(.ay-pcard__media, .ay-pcard__img, .hm-sti
 html body .app-container #ay-landing.wl .lb { padding-top: 0 !important; padding-bottom: 0 !important; }
 html body #ay-landing.wl .lb > .lb-sec { position: relative; margin: 0 !important; padding: 72px 0 !important; }
 /* The wavy seam: each band's top edge is a soft wave in its own colour, laid over the band above. */
-html body #ay-landing.wl .lb > .lb-sec::before { content: ''; position: absolute; left: 0; right: 0; top: -23px; height: 24px; background: inherit; pointer-events: none;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px;
-          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px; }
+/* Flat section boundaries: no SVG waves or scalloped seams. */
+html body #ay-landing.wl .lb > .lb-sec::before { content: none; display: none; }
 /* On pink, the picks' words and link stay espresso; the numbers band's pink tile turns espresso so it never matches the band above. */
 html body #ay-landing.wl .lb-stat:nth-child(1) { background: #f7badd !important; }
 /* The walkthrough band ends in the same wave into the pink picks. */
 html body #ay-landing.wl .hd { padding-bottom: 56px !important; }
 @media (max-width: 767px) { html body #ay-landing.wl .lb > .lb-sec { padding: 48px 0 !important; } }
 html body #ay-landing.wl .lb-close { position: relative; }
-html body #ay-landing.wl .lb-close::before { content: ''; position: absolute; left: 0; right: 0; top: -23px; height: 24px; background: #3e2723; pointer-events: none;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px;
-          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14C10 14 10 4 20 4s10 10 20 10 10-10 20-10 10 10 20 10 10-10 20-10 10 10 20 10v10Z'/%3E%3C/svg%3E") repeat-x 0 100% / 120px 24px; }
+html body #ay-landing.wl .lb-close::before { content: none; display: none; }
 html body #ay-landing.wl .lb-stat { align-content: start !important; padding-top: 68px !important; }
 
 /* Nov 5 (founder: "why are there two different yellows", "the spacing", the walkthrough phone

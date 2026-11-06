@@ -263,7 +263,7 @@ function clearPendingEcosystemReset(userId) {
 // the permanent redirects in vercel.json).
 const VIEW_TO_PATH = {
   welcome: '/', hero: '/', quiz: '/quiz', home: '/home', ecosystem: '/you/ecosystem', you: '/you', community: '/community',
-  today: '/today', explore: '/explore', 'explore-topics': '/explore/topics', 'explore-services': '/explore/services', ask: '/ask',
+  today: '/home', explore: '/explore', 'explore-topics': '/explore/topics', 'explore-services': '/explore/services', ask: '/ask',
   discovery: '/explore/products', waitlist: '/partners', recommendations: '/recommendations',
   articles: '/explore/resources', screenings: '/screenings', omitted: '/omitted',
   comparison: '/compare', recalls: '/recalls',
@@ -389,7 +389,9 @@ PATH_TO_VIEW['/my-ecosystem'] = 'ecosystem';
 PATH_TO_VIEW['/ecosystem'] = 'ecosystem';
 PATH_TO_VIEW['/shop'] = 'discovery';
 PATH_TO_VIEW['/library'] = 'articles';
-PATH_TO_VIEW['/health'] = 'today';
+PATH_TO_VIEW['/home'] = 'home';
+PATH_TO_VIEW['/today'] = 'home';
+PATH_TO_VIEW['/health'] = 'home';
 PATH_TO_VIEW['/terms'] = 'terms-of-use';
 PATH_TO_VIEW['/privacy'] = 'privacy-policy';
 PATH_TO_VIEW['/startups'] = 'waitlist'; // old address keeps working
@@ -559,6 +561,7 @@ function holdUnverified(supabase, session) {
 
 function App() {
   const [currentView, setCurrentViewRaw] = useState(getInitialView);
+  const [homeLogRequested, setHomeLogRequested] = useState(false);
   // app_error reports which screen it happened on (production builds minify component names).
   useEffect(() => { try { window.__aynaView = currentView; } catch { /* no window */ } }, [currentView]);
   // Only meaningful when currentView === 'product', the :id segment of
@@ -602,6 +605,8 @@ function App() {
     return VIEW_TO_PATH[view] || '/';
   }, []);
   const setCurrentView = useCallback((view, { replace = false, path: pathOverride = null } = {}) => {
+    // Internal legacy requests for Today open the one dashboard at /home.
+    if (view === 'today') view = 'home';
     if (view === 'profile-edit' && currentViewRef.current !== 'profile-edit') profileEditFromRef.current = currentViewRef.current || 'ecosystem';
     // Any explicit navigation (nav tab, "browse products" button, etc.) is a
     // genuine departure from wherever Shop's kept-alive state came from, so
@@ -703,7 +708,8 @@ function App() {
   useEffect(() => {
     const onPop = (e) => {
       const pathProductId = parseProductIdFromPath(window.location.pathname);
-      const view = pathProductId ? 'product' : (viewFromSubPath(window.location.pathname) || e.state?.view || PATH_TO_VIEW[window.location.pathname] || PATH_TO_VIEW[window.location.pathname.replace(/\/+$/, '')] || 'not-found');
+      const resolvedView = pathProductId ? 'product' : (viewFromSubPath(window.location.pathname) || PATH_TO_VIEW[window.location.pathname] || PATH_TO_VIEW[window.location.pathname.replace(/\/+$/, '')] || e.state?.view || 'not-found');
+      const view = resolvedView === 'today' ? 'home' : resolvedView;
       setSelectedArticleId(articleIdFromPath(window.location.pathname));
       setCommunityHandle(communityHandleFromPath(window.location.pathname));
       setYouSection(youSectionFromPath(window.location.pathname));
@@ -1507,7 +1513,7 @@ function App() {
   // Old /you/ecosystem?view=dashboard links: signed in, the dashboard is Today now.
   useEffect(() => {
     if (currentView !== 'ecosystem' || !user) return;
-    try { if (new URLSearchParams(window.location.search).get('view') === 'dashboard') setCurrentView('today'); } catch { /* no URL */ }
+    try { if (new URLSearchParams(window.location.search).get('view') === 'dashboard') setCurrentView('home'); } catch { /* no URL */ }
   }, [currentView, user]);
 
   // Website: Apple Health, Health Connect and Oura connect in the app, so
@@ -1751,7 +1757,7 @@ function App() {
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
   // The old Ecosystem "Dashboard" tab is Today now (Ask's "open my dashboard" lands there).
-  const handleViewEcosystemDashboard = () => setCurrentView('today');
+  const handleViewEcosystemDashboard = () => setCurrentView('home');
   // You's sections: /you/saved, /you/health, ... ('ecosystem' is its own view, /you/ecosystem).
   const openYou = (key = null) => {
     const section = key === 'overview' ? null : key;
@@ -1966,7 +1972,7 @@ function App() {
     });
     // ayna Wrapped after every finished quiz (founder, Oct 29: "what happened
     // to ayna Wrapped"), also when she chose "See my Today" on the reveal.
-    if (toToday) { markOnboardingDone(); setCurrentView('today'); setShowWrapped(true); return; }
+    if (toToday) { markOnboardingDone(); setCurrentView('home'); setShowWrapped(true); return; }
     setCurrentView('ecosystem');
     setShowWrapped(true);
   };
@@ -2695,7 +2701,7 @@ function App() {
               {showAccountMenu && user && (
                 <div className="nav-account-menu" role="menu">
                   <a role="menuitem" href="/you" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('you'); })}>Your profile</a>
-                  <a role="menuitem" href="/today" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('today'); })}>Today</a>
+                  <a role="menuitem" href="/home" {...linkProps(() => { setShowAccountMenu(false); setCurrentView('home'); })}>Home</a>
                   <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); handleOpenHealthProfileEditor(); }}>Health profile</button>
                   <a role="menuitem" href="/you/ecosystem" {...linkProps(() => { setShowAccountMenu(false); handleViewEcosystem(); })}>My ecosystem</a>
                   <a role="menuitem" href="/you/saved" {...linkProps(() => { setShowAccountMenu(false); handleViewWishlist(); })}>Saved{savedCount ? <span className="nav-account-menu__count"> {savedCount}</span> : null}</a>
@@ -2863,7 +2869,7 @@ function App() {
             onDeleteAccount={handleOpenDeleteAccount}
             onOpenHealthData={manageHealthData}
             onConnectHealth={goHealthData}
-            onOpenHealth={() => setCurrentView('today')}
+            onOpenHealth={() => setCurrentView('home')}
             healthSummary={health.insights.sections.find((sec) => sec.status === 'ready') || null}
             healthConnectedCount={health.connected.length}
             theme={themeMode}
@@ -2913,62 +2919,7 @@ function App() {
         {currentView === 'delete-account' && (
           <DeleteAccountPage onBack={() => setCurrentView('you')} />
         )}
-        {/* Today: the first main tab and the home for signed-in accounts. Same page /health showed. */}
-        {/* Website, signed in: the same dashboard the Ecosystem "Dashboard" tab shows, behind its own
-            server-checked Pro gate (Oct 28 audit: a static lock here told Pro members to buy Pro). */}
-        {/* Founder, Nov 4: signed-in Home is the Home design (greeting band, dials, highlights, your week),
-            not the full data dashboard and not My ecosystem; "See your data" at the bottom opens /health. */}
-        {currentView === 'today' && user && <div className="wx-today">{React.cloneElement(webHealth, { title: 'Today', compact: true })}</div>}
-        {currentView === 'today' && !user && (
-          <div className="wx-today" data-tour="today">
-            {React.cloneElement(webHealth, {
-              title: 'Home',
-              // Same model as the app: the Daily Rundown card leads (with no profile
-              // it says how to make one), then the decision items and her log.
-              intro: !quizResults && !dataLoading ? finishQuizCard() || null : null,
-              compact: true,
-              rundown: { ...webHealth.props.rundown, onSetUp: !quizResults && !dataLoading && !finishQuizCard() ? handleStartQuiz : undefined },
-              // More for you (right column on desktop): her routine, short (the full
-              // one is in You > My ecosystem), and one read that fits her answers.
-              aside: (quizResults || myProducts.length > 0) ? (
-                <>
-                  <RoutineTimeline userId={user?.id || null} quizAnswers={quizResults} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts}
-                    onOpenRoutine={() => { handleViewEcosystem(); window.setTimeout(() => document.getElementById('eco-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 600); }}
-                    onOpenProduct={(p) => handleOpenProduct(p, { source: 'today_routine' })}
-                    onCheckIn={() => openTodayLog('web')} />
-                  <TodayRead quizResults={quizResults} healthProfile={healthProfile} onOpen={handleViewArticle} />
-                </>
-              ) : null,
-              // Customize Today: her widgets; none by default, so Today looks as it did.
-              widgets: (
-                <HomeWidgets
-                  surface="web"
-                  userId={user?.id || null}
-                  data={{
-                    healthRows: health?.insightRows || [], healthSummary: user ? (health?.insights?.sections || []).find((sec) => sec.status === 'ready') || null : null,
-                    healthConnectedCount: (health?.connected || []).length, hormonalBC: usesHormonalBC(quizResults), quizAnswers: quizResults,
-                    saved: Object.values(savedProducts || {}), myProducts: Object.values(myProducts || {}),
-                    routineSource: { userId: user?.id || null, quizAnswers: quizResults, matchOpts, products: myProducts, saved: savedProducts, omitted: omittedProducts },
-                    askHistory: chatHistory,
-                  }}
-                  on={{
-                    ask: (q) => openAsk(typeof q === 'string' ? q : q?.question),
-                    openLog: () => openTodayLog('web'),
-                    openHealth: user ? goHealthData : null,
-                    connect: user ? goHealthData : null,
-                    openProduct: (p) => handleOpenProduct(p, { source: 'today_widget' }),
-                    openSaved: handleViewWishlist,
-                    openEcosystem: handleViewEcosystem,
-                    openRoutine: () => { handleViewEcosystem(); window.setTimeout(() => document.getElementById('eco-routines')?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 600); },
-                    openPost: (postId) => { setCommunitySeed({ postId, token: Date.now() }); setCurrentView('community'); },
-                    openCommunity: () => setCurrentView('community'),
-                    openDoctorPrep: () => setCurrentView('doctor-prep'),
-                  }}
-                />
-              ),
-            })}
-          </div>
-        )}
+        {/* Home has the daily feed, health charts and log together above My ecosystem. */}
         {/* Ask ayna as a page: the same conversation as the floating panel. */}
         {currentView === 'ask' && (
           <div className="ay-container wx-askpage" data-tour="ask">
@@ -3222,12 +3173,24 @@ function App() {
           <MyEcosystem
             homeTop={currentView === 'home' ? <WebHomeTop
               firstName={accountFirstName(user) || quizResults?.firstName || ''}
+              userId={user?.id || null}
               healthRows={health?.insightRows || []}
               quizAnswers={quizResults}
               products={Object.values(myProducts || {})}
-              onData={() => proDoor('dashboard', () => setCurrentView('today'))}
-              onProducts={() => document.getElementById('weco-tab-mine')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              saved={Object.values(savedProducts || {})}
+              matchOpts={matchOpts}
+              healthProfile={healthProfile}
+              onAsk={(q, extra) => openAsk(q, extra?.stats)}
+              onOpenProduct={(p) => handleOpenProduct(p, { source: 'home' })}
+              onOpenRead={handleViewArticle}
+              onExplore={() => handleViewDiscovery('')}
+              onEditAnswers={(step) => { setEditAtStep(step || ''); setCurrentView('profile-edit'); }}
+              onSaveToProfile={quizResults?.fullHealthIntake ? handleUpdateIntake : null}
+              onData={() => { const section = document.getElementById('wht-week-h'); if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' }); else goHealthData(); }}
+              onProducts={() => document.getElementById('eco3-shelves-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
               onConnect={goHealthData}
+              autoOpenLog={homeLogRequested}
+              onAutoLogHandled={() => setHomeLogRequested(false)}
               refresh={quizResults ? <div className="wht__refresh"><HealthRefreshPrompt quizResults={quizResults} onSave={handleUpdateIntake} onUpdate={(step) => { setEditAtStep(step || ''); setCurrentView('profile-edit'); }} /></div> : null}
             /> : null}
             quizSlot={ecosystemQuizCard}
@@ -3239,7 +3202,7 @@ function App() {
             onToggleProduct={toggleMyProduct}
             savedProducts={savedProducts}
             onToggleSaved={toggleSavedProduct}
-            onOpenCheckIn={() => { setCurrentView('today'); window.setTimeout(() => openTodayLog('web'), 500); }}
+            onOpenCheckIn={() => { setHomeLogRequested(true); setCurrentView('home'); }}
             trackedProducts={trackedProducts}
             toggleTrackProduct={toggleTrackProduct}
             toggleOmitProduct={toggleOmitProduct}

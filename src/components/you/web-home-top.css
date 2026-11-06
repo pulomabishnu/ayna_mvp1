@@ -108,3 +108,93 @@ html body .app-container .wht__actions .wht__refresh { margin: 0; }
   html body .app-container .wht__actions .ay-hsc { grid-template-columns: minmax(0, 1fr); }
   html body .app-container .wht__actions .ay-hsc__tile { min-height: 112px; }
 }
+
+/* Nov 6 one-Home layout: the daily rundown and check-in live on the same
+   page as the health charts, with the member's product shelves below. */
+html body .app-container .wht__today {
+  --x-ink: var(--ay-calm-fg, #3e2723);
+  --x-soft: var(--ay-text-muted, rgba(62, 39, 35, .74));
+  --x-group: var(--ay-group, #f6e3a1);
+  --x-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
+  --x-on: var(--ay-calm-fg, #3e2723);
+  --x-on-2: var(--ay-text-muted, rgba(62, 39, 35, .74));
+  --x-serif: var(--ay-font-display, 'ayna Display', serif);
+  --x-sans: var(--ay-font-ui, 'Figtree', sans-serif);
+  --x-scale: 1;
+  display: grid;
+  min-width: 0;
+  gap: 16px;
+  margin: 28px clamp(0px, 1.4vw, 24px) 0;
+}
+html body .app-container .wht__today .ay-today {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 16px 24px;
+  min-width: 0;
+  margin: 0;
+}
+html body .app-container .wht__today .ay-rd-hero,
+html body .app-container .wht__today .wht__today-items { min-width: 0; }
+html body .app-container .wht__today .ay-today__list.is-protected,
+html body .app-container .wht__today .ay-today__detail,
+html body .app-container .wht__today .ay-today__homelog {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+html body .app-container .wht__today .ay-today__homelog {
+  display: grid;
+  gap: 12px;
+}
+html body .app-container .wht__today .ay-today__homelog-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: 74px;
+  padding: 14px 18px;
+  text-align: left;
+  border: 1.5px solid var(--x-ink);
+  border-radius: 18px;
+  background: transparent;
+  color: var(--x-ink);
+  box-shadow: none;
+  cursor: pointer;
+}
+html body .app-container .wht__today .ay-today__homelog-trigger > span:first-child {
+  display: grid;
+  gap: 3px;
+}
+html body .app-container .wht__today .ay-today__homelog-trigger b {
+  font: 700 18px/1.2 var(--ay-font-ui, inherit);
+}
+html body .app-container .wht__today .ay-today__homelog-trigger small {
+  font: 500 13px/1.35 var(--ay-font-ui, inherit);
+}
+html body .app-container .wht__today .ay-today__homelog-trigger > span:last-child {
+  flex: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: var(--x-ink);
+  color: var(--x-group);
+  font: 700 14px/1.1 var(--ay-font-ui, inherit);
+}
+html body .app-container .wht__today .ay-today__homelog-trigger:focus-visible {
+  outline: 2px solid var(--x-ink);
+  outline-offset: 3px;
+}
+html body .app-container .wht__today .ay-today__detail > .ay-today__text { margin-bottom: 12px; }
+html body .app-container .wht__today .ay-today__log { scroll-margin-top: 85px; }
+html body .app-container .wht__week { scroll-margin-top: 85px; }
+html body .app-container .wht__today .ay-rd-hero__card { max-width: none; }
+@media (max-width: 800px) {
+  html body .app-container .wht__today { margin: 24px 0 0; }
+  html body .app-container .wht__today .ay-today { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  html body .app-container .wht__today .ay-today__list.is-protected,
+  html body .app-container .wht__today .ay-today__detail,
+  html body .app-container .wht__today .ay-today__homelog { grid-column: 1; }
+}
+@media (max-width: 400px) {
+  html body .app-container .wht__today .ay-today__homelog-trigger { padding: 12px; }
+}

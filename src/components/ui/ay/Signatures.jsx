@@ -8,22 +8,10 @@ import './ay-primitives.css';
  * buttons have their own files; these are the rest. See PRIMITIVES.md.
  */
 
-/**
- * Scallop / wave edge (#8 Nectar header scallops, #10 Hey Georgia and #31
- * Gerry's wavy dividers): ONLY at a section edge (the espresso header band,
- * the footer). Never inside cards. `shape`: 'scallop' (round lobes) | 'wave'.
- * The svg is the colour of the band it hangs from (`tone`).
- */
-export function ScallopEdge({ side = 'bottom', tone = 'ink', shape = 'scallop', className = '' }) {
-  // 24 lobes / 6 waves across; scales with the width, fixed 12px tall.
-  const d = shape === 'wave'
-    ? `M0 0H240V6${Array.from({ length: 6 }, (_, i) => `Q${230 - i * 40} 12 ${220 - i * 40} 6Q${210 - i * 40} 0 ${200 - i * 40} 6`).join('')}Z`
-    : `M0 0H240V6${Array.from({ length: 24 }, (_, i) => `A5 5 0 0 1 ${230 - i * 10} 6`).join('')}Z`;
-  return (
-    <svg className={`ayk-edge is-${side} is-${tone} ${className}`.trim()} viewBox="0 0 240 12" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      <path d={d} />
-    </svg>
-  );
+/** Decorative scalloped/wave dividers are retired across web and native
+ * (founder, Nov 6). Keep the export so older callers remain source-compatible. */
+export function ScallopEdge() {
+  return null;
 }
 
 /**
