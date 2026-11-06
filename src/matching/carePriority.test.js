@@ -47,6 +47,24 @@ describe('ACOG care-first / FDA passport review / CDC diagnostic caution', () =>
     const e = ecosystem(intake(['I get periods regularly'], ['Spotting between periods']));
     expect(e.shelves.find(s=>s.needId==='cycle.spotting').productIds.length).toBeGreaterThan(0);
   });
+  it('period product interest alone does not imply a pregnant user is bleeding', () => {
+    const up = profile(intake(['I am pregnant'], ['Period product support']));
+    expect(pregnancyBleedingCare(up)).toBeNull();
+    expect(careFirstForNeed(up, 'period.product_support')).toBeNull();
+  });
+  it('sourced care guidance remains available for PMS, PMDD, PCOS, nausea and adenomyosis', () => {
+    const cases = [
+      [['I get periods regularly'], ['PMS symptoms'], 'pms_care', 'acog.org'],
+      [['I get periods regularly'], ['PMDD symptoms'], 'pmdd_care', 'acog.org'],
+      [['My periods are irregular'], ['PCOS support'], 'pcos_care', 'nichd.nih.gov'],
+      [['I am pregnant'], ['Nausea'], 'pregnancy_nausea', 'acog.org'],
+      [['I get periods regularly'], ['Adenomyosis-related concerns'], 'adenomyosis_care', 'mayoclinic.org'],
+    ];
+    for (const [stages, needs, code, domain] of cases) {
+      const flags = getMatchCareFlags({fullHealthIntake:intake(stages,needs)});
+      expect(flags.notes.some(n => n.code === code && n.source.includes(domain)), code).toBe(true);
+    }
+  });
   it('postmenopausal bleeding remains an empty care-first shelf', () => {
     const e = ecosystem(intake(['I am post-menopause'], ['Spotting between periods']));
     expect(e.shelves.find(s=>s.needId==='cycle.spotting').productIds).toEqual([]);
