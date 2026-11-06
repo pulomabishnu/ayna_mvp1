@@ -826,7 +826,7 @@ function inferHealthFunctionsFromLlm(product, concern = '', tierSubcategory = ''
     if (c.includes('fertil') || c.includes('ttc') || c.includes('conception') || c.includes('trying to conceive') || c.includes('prenatal') || c.includes('ovulation')) return ['fertility'];
     // A hot-flash concern is not menopause. Don't assign LLM products to
     // a menopause-owned area solely because of a symptom label.
-    if (c.includes('hot flash') || c.includes('night sweat') || c.includes('hot flush')) return ['sleep-energy'];
+    if (c.includes('hot flash') || c.includes('night sweat') || c.includes('hot flush')) return ['vasomotor'];
     if (c.includes('menopause') || c.includes('perimenopause')) return ['perimenopause'];
     if (c.includes('skin') || c.includes('hair') || c.includes('acne') || c.includes('breakout') || c.includes('hair loss') || c.includes('nail')) return ['skin-hair'];
     if (c.includes('cycle tracking') || c.includes('track my cycle') || c.includes('tracking') || c.includes('ovulation test')) return ['cycle-tracking'];
@@ -1245,6 +1245,7 @@ export default function MyEcosystem({
                     // A symptom or age alone never creates a menopause shelf.
                     // Only her own named stage or explicitly menopause-related need does.
                     case 'menopause': return midlife || /menopause-related body changes/.test(needs);
+                    case 'temperature': return /hot flash|night sweat/.test(needs);
                     case 'period': return !pregnant && !midlife && !noPeriods;
                     default: return true;
                 }
