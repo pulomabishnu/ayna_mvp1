@@ -325,10 +325,9 @@ function WebHealthContent({ user, health, products = [], needIds = [], hormonalB
   const [weekInfo, setWeekInfo] = useState(null);
   const [trying, setTrying] = useState([]);
   const [setup, setSetup] = useState([]);
-  // With synced data, Today is still the day (Today audit: items, check-in,
-  // "Your week" and Coming up); "See your data" opens the dashboard view
-  // (/health), and "Back to Today" returns.
-  const onHealthPath = () => typeof window !== 'undefined' && /^\/health\/?$/.test(window.location.pathname);
+  // Home brings daily check-ins, weekly charts and the full health dashboard together.
+  // "See your data" opens the optional /home?view=data panel; Back returns to /home.
+  const onHealthPath = () => typeof window !== 'undefined' && /^\/home\/?$/.test(window.location.pathname) && new URLSearchParams(window.location.search).get('view') === 'data';
   const [dataView, setDataView] = useState(onHealthPath);
   useEffect(() => {
     const sync = () => setDataView(onHealthPath());
@@ -337,7 +336,7 @@ function WebHealthContent({ user, health, products = [], needIds = [], hormonalB
   }, []);
   const goData = (on) => {
     setDataView(on);
-    try { window.history.pushState(window.history.state, '', on ? '/health' : '/today'); } catch { /* sandboxed */ }
+    try { window.history.pushState(window.history.state, '', on ? '/home?view=data' : '/home'); } catch { /* sandboxed */ }
     try { window.scrollTo({ top: 0 }); } catch { /* old browser */ }
   };
   const dayView = compact && (!(signedIn && hasData) || !dataView);
@@ -523,7 +522,7 @@ function WebHealthContent({ user, health, products = [], needIds = [], hormonalB
   return (
     <section className={`ay-wh ay-wh--dash${compact ? ' ay-wh--today has-data' : ''}`} aria-labelledby="ay-wh-title">
       <DashBand title={title} today={today} cycle={week.cycle?.cycleDay ? week.cycle : null} sync={syncState(h.connected)} hormonalBC={hormonalBC} />
-      {compact && <p className="ay-wh-back"><button type="button" className="ay-wh-side__more" onClick={() => goData(false)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg><span>Back to Today</span></button></p>}
+      {compact && <p className="ay-wh-back"><button type="button" className="ay-wh-side__more" onClick={() => goData(false)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg><span>Back to Home</span></button></p>}
       {intro}
       <HealthHome
         hello={false}
