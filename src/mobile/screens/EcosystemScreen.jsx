@@ -1,4 +1,4 @@
-import { groupSupportShelves, outdatedAutoMenopauseProduct } from '../../matching/shelfGroups.js';
+import { groupSupportShelves, outdatedAutoMenopauseProduct, comfortAreaOverride } from '../../matching/shelfGroups.js';
 import './profile/health-connections.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { loadMonthlyCheckinStatus } from '../../utils/monthlyCheckinStore.js';
@@ -184,7 +184,7 @@ export default function EcosystemScreen({
       byNeed.get(needId).push(product);
       return;
     }
-    const fallbackKey = product.areaKey || 'other';
+    const fallbackKey = comfortAreaOverride(product, quizAnswers) || product.areaKey || 'other';
     const label = healthAreaLabel(ECOSYSTEM_AREAS.find((area) => area.key === fallbackKey)?.label || 'More care');
     const key = `area-${encodeURIComponent(label.toLowerCase())}`;
     if (!fallback.has(key)) fallback.set(key, { key, label, ringLabel: label, products: [] });
