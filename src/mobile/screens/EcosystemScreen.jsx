@@ -9,6 +9,7 @@ import ArticleCard from '../components/ArticleCard.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import { getProductMatchDetailsForProduct, getEcosystemSeedFromQuiz, getSelectedNeeds, getProductById } from '../../data/products.js';
 import { ECOSYSTEM_AREAS } from '../data/ecosystemAreas.js';
+import { symptomShelfGroup } from '../../matching/shelfGroups.js';
 import { selectEcosystemProducts } from '../utils/recommendationSelection.js';
 import { careNotes, shortNeedLabel, shownMatchPercent } from '../../utils/matchDisplay.js';
 import { summarizeCareNotes, firstCareLink } from '../../utils/careSummary.js';
@@ -169,6 +170,13 @@ export default function EcosystemScreen({
   // Each current pick sits on the shelf of its best need (50+). Picks that fit
   // no selected need keep the old area grouping.
   const shelfIds = new Set(shelves.map((s) => s.needId));
+  const intake = quizAnswers?.fullHealthIntake || {};
+  const stages = Array.isArray(intake.lifeStageSelections) ? intake.lifeStageSelections : [];
+  const support = Array.isArray(intake.supportSelections) ? intake.supportSelections : [];
+  const namedMenopause = stages.some((stage) => /^I am (?:in peri|in meno|post-meno)/i.test(String(stage)))
+    || support.includes('Menopause-related body changes');
+  const hasVasomotor = support.some((s) => s === 'Hot flashes' || s === 'Night sweats')
+    || (Array.isArray(intake.symptoms) && intake.symptoms.some((s) => /hot flash|hot flush|night sweat/i.test(String(s))));
   const byNeed = new Map();
   const fallback = new Map();
   currentProducts.forEach((product) => {
@@ -181,7 +189,12 @@ export default function EcosystemScreen({
       byNeed.get(needId).push(product);
       return;
     }
-    const fallbackKey = product.areaKey || 'other';
+    let fallbackKey = product.areaKey || 'other';
+    if (fallbackKey === 'menopause' && hasVasomotor && !namedMenopause) {
+      const evidence = [...(product.tags || []), ...(product.healthFunctions || [])].join(' ').toLowerCase();
+      fallbackKey = /hot.flash|night.sweat|vasomotor|cooling/.test(evidence) && !/supplement|capsule|gumm|tablet/i.test(`${product.category} ${product.name}`)
+        ? 'temperature' : 'other';
+    }
     const label = healthAreaLabel(ECOSYSTEM_AREAS.find((area) => area.key === fallbackKey)?.label || 'More care');
     const key = `area-${encodeURIComponent(label.toLowerCase())}`;
     if (!fallback.has(key)) fallback.set(key, { key, label, ringLabel: label, products: [] });
@@ -189,7 +202,7 @@ export default function EcosystemScreen({
   });
 
   const suggestedIds = new Set();
-  const sections = [
+  const rawSections = [
     ...shelves.map((shelf) => {
       const products = byNeed.get(shelf.needId) || [];
       // An empty shelf shows the engine's own picks to add (never padded).
@@ -210,6 +223,26 @@ export default function EcosystemScreen({
     }),
     ...fallback.values(),
   ];
+  const grouped = new Map();
+  rawSections.forEach((section) => {
+    const group = section.shelf && symptomShelfGroup(section.shelf.needId);
+    const key = group ? `need-${group.key}` : section.key;
+    if (!grouped.has(key)) grouped.set(key, group ? {
+      ...section, key, label: group.label, ringLabel: group.label,
+      phrase: group.label.toLowerCase(), products: [], picks: [],
+      shelf: { ...section.shelf, needId: null },
+    } : section);
+    if (!group) return;
+    const target = grouped.get(key);
+    for (const product of section.products) {
+      if (!target.products.some((p) => p.id === product.id)) target.products.push(product);
+    }
+    for (const product of section.picks || []) {
+      if (!target.picks.some((p) => p.id === product.id)) target.picks.push(product);
+    }
+    if (section.shelf?.care && !target.shelf.care) target.shelf.care = section.shelf.care;
+  });
+  const sections = [...grouped.values()];
   // Calm empty shelves go last so her picks lead.
   sections.sort((a, b) => Number(!a.products.length && !a.picks?.length) - Number(!b.products.length && !b.picks?.length));
 

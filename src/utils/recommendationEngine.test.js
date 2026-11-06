@@ -9,6 +9,17 @@ import { generateTieredRecommendations, scoreProduct } from './recommendationEng
 // own test suite.
 
 describe('generateTieredRecommendations — every CONCERN_AREAS checkbox produces a concern entry', () => {
+  it('replaces a stale menopause concern for a menstruating 22-year-old with period-related hot flashes', () => {
+    const result = generateTieredRecommendations({
+      age: '22', lifeStageSelections: ['I get periods regularly'],
+      supportSelections: ['Hot flashes', 'Anxiety', 'Low mood', 'Irritability'],
+      primaryConcerns: ['Perimenopause and menopause support'],
+      vasomotorTimingSelections: ['Before my period / PMS', 'When stressed or anxious'],
+      allergyStatus: 'No', takesCurrent: 'No', safetyConcern: 'No',
+    });
+    expect(result.map((s) => s.concern)).not.toContain('Perimenopause and menopause support');
+    expect(result.map((s) => s.displayLabel)).toEqual(expect.arrayContaining(['Temperature & sweating', 'Mental wellbeing']));
+  });
   it('"Hormonal bloating" is no longer silently dropped (was missing from CONCERN_CONFIG entirely)', () => {
     const result = generateTieredRecommendations({ primaryConcerns: ['Hormonal bloating'] });
     expect(result.length).toBeGreaterThan(0);
