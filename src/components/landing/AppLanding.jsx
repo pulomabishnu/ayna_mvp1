@@ -1,6 +1,5 @@
 import SlideToStart from '../ui/SlideToStart.jsx';
 import MedicalNote from '../MedicalNote.jsx';
-import { ScallopEdge } from '../ui/ay/index.js';
 import { Rain, HeroSearch } from './kit.jsx';
 import './app-landing.css';
 
@@ -38,7 +37,6 @@ export default function AppLanding({ signedIn = false, hasProfile = false, onSta
           </div>
         </div>
       </section>
-      <ScallopEdge shape="wave" tone="ink" className="alx__edge" />
       <div className="alx__act">
         {banner && <div className="alx__banner">{banner}</div>}
         <SlideToStart className="alx__sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="ink" />
