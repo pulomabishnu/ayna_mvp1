@@ -76,10 +76,10 @@ describe('Home signed out', () => {
     expect(showsEmptyHome({ screen: 'ecointro' })).toBe(false);
     expect(showsEmptyHome({ screen: 'ayna', view: 'home', signedIn: true })).toBe(false);
   });
-  it('the website Home tab opens the original chart dashboard for members and the landing for guests', () => {
+  it('the website Home tab opens the app-style dashboard for members and the landing for guests', () => {
     expect(webHomeView({})).toBe('welcome');
     expect(webHomeView({ signedIn: false })).toBe('welcome');
-    expect(webHomeView({ signedIn: true })).toBe('today');
+    expect(webHomeView({ signedIn: true })).toBe('home');
     expect(webHomeView({ signedIn: false, authLoading: true })).toBe('welcome');
   });
 });
