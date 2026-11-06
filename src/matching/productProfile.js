@@ -201,11 +201,14 @@ const NOV5_MAP = {
   'p-panic-panties-no-show-bikini-cut-single-2-pack-no-show-bikini-cut': { 'vaginal.discharge': SECONDARY, 'period.light': ADJACENT },
   'p-pantibiotic-pantibiotic-wearable-intimate-hygiene-underwear-worn-wit': { 'vaginal.odor': ADJACENT, 'vaginal.discharge': ADJACENT },
   'p-megelin-megelin-red-light-therapy-for-intimate-area-wellness': { 'sexual.wellness': WEAK },
-  'p-komuso-classic-shift-anxiety-breathing-necklace': { 'mood.general_anxiety': ADJACENT },
-  'p-heartmath-inner-balance-coherence-plus-with-heartmath-app': { 'mood.general_anxiety': ADJACENT },
-  'p-lief-smart-patch': { 'mood.general_anxiety': ADJACENT },
+  // Brand says the Shift facilitates longer exhales during stressful moments. A coping tool, not treatment.
+  'p-komuso-classic-shift-anxiety-breathing-necklace': { 'mood.general_anxiety': SECONDARY, 'mood.irritability': ADJACENT, 'mood.swings': ADJACENT, 'mood.cycle_related': ADJACENT },
+  // HRV biofeedback for self-guided stress management (manufacturer's intended use).
+  'p-heartmath-inner-balance-coherence-plus-with-heartmath-app': { 'mood.general_anxiety': SECONDARY, 'mood.irritability': ADJACENT, 'mood.swings': ADJACENT },
+  'p-lief-smart-patch': { 'mood.general_anxiety': SECONDARY, 'mood.irritability': ADJACENT },
   'p-flare-audio-calmer': { 'mood.general_anxiety': WEAK },
-  'p-intelligent-change-the-five-minute-journal': { 'mood.low': WEAK, 'mood.general_anxiety': WEAK },
+  // A journal for self-reflection/gratitude: supports a coping routine, not a depression treatment.
+  'p-intelligent-change-the-five-minute-journal': { 'mood.low': SECONDARY, 'mood.general_anxiety': ADJACENT, 'mood.irritability': ADJACENT, 'mood.cycle_related': ADJACENT },
   'p-theraspec-theraspecs-fl-pro-fl-41-tinted-migraine-glasses': { 'pain.cycle_headache': ADJACENT },
   'p-theraice-headache-hat': { 'pain.cycle_headache': ADJACENT },
   'p-saje-natural-wellness-peppermint-halo-cooling-head-roll-on': { 'pain.cycle_headache': WEAK },
@@ -280,6 +283,9 @@ const MARKETED_FOR = {
   'mood.swings': { re: /mood swings?|moodiness/, ok: INGESTIBLE_OR_DEVICE },
   'mood.irritability': { re: /irritab(le|ility)/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.t(/irritat(ed|ion) skin|skin irritat/) },
   'mood.cycle_related': { re: /(pms|premenstrual|cycle[- ]related|period)\W+(\w+\W+){0,3}mood|mood\W+(\w+\W+){0,3}(before|during) (your )?period/, ok: INGESTIBLE_OR_DEVICE },
+  // Distinguish a marketed product's intended self-care use from proof it treats a condition.
+  'mood.general_anxiety': { re: /\banxiety\b|anxious (feelings?|moments?)|stress (?:management|relief|reduction)|relaxation (?:tool|support)/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.t(/stress (?:or |and )?(?:urge|urinary|incontinence)|stress fracture/) },
+  'mood.low': { re: /low mood|mood support|emotional well-?being|emotional wellness|gratitude journal/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.t(/improve mood of skin|mood lighting/) },
   'urinary.urgency': { re: /urinary urgency|\burge (incontinence|to (pee|urinate))|overactive bladder|\boab\b/, ok: (f) => !PERIOD_CATEGORIES.has(f.cat) },
   'urinary.frequency': { re: /frequent urination|urinary frequency|overactive bladder|\boab\b/, ok: (f) => !PERIOD_CATEGORIES.has(f.cat) },
   'condition_support.pcos': { re: /\bpcos\b|\bpmos\b|polycystic ovar/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.cs(/acne|pimple|breakout/) },
