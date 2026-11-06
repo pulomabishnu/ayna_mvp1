@@ -354,3 +354,6 @@ html body .app-container.app-container #ayeco .eco-stack__back { display: none !
 html body .app-container.app-container #ayeco .eco-rail__line .eco-rail__strip { border-radius: 16px !important; min-height: 56px; padding-top: 8px !important; padding-bottom: 8px !important; text-align: left; }
 html body .app-container.app-container #ayeco .eco-rail__striptext { display: grid !important; gap: 2px; min-width: 0; white-space: normal !important; }
 html body .app-container.app-container #ayeco .eco-rail__striptext > * { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+
+/* Nov 6: flat awning instead of the previous lobed lower edge. */
+html body .app-container .eco-awning::before { -webkit-mask: none !important; mask: none !important; }
