@@ -198,3 +198,79 @@ html body .app-container .wht__today .ay-rd-hero__card { max-width: none; }
 @media (max-width: 400px) {
   html body .app-container .wht__today .ay-today__homelog-trigger { padding: 12px; }
 }
+
+/* Nov 6 repair: the web Home must use the same compact Rundown/stack
+   styling as the phone instead of a stretched, half-unstyled grid.
+   These rules deliberately affect only /home, not the rest of the site. */
+html body .app-container .wht__today {
+  grid-auto-rows: max-content;
+  gap: 16px;
+}
+html body .app-container .wht__today > .wht__heading { margin: 0; }
+html body .app-container .wht__today .ay-today {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: max-content;
+  align-content: start;
+  align-items: start;
+  gap: 20px 24px;
+}
+html body .app-container .wht__today .ay-today > .ay-rd-hero {
+  grid-column: 1;
+  align-self: start;
+  --x-feature: #3e2723;
+  --x-on: #ffedac;
+  --x-on-2: rgba(255, 237, 172, .8);
+  --x-on-hair: rgba(255, 237, 172, .2);
+}
+html body .app-container .wht__today .ay-rd-hero__card {
+  background: #3e2723;
+  color: #ffedac;
+  display: grid;
+  align-content: start;
+  min-height: 0;
+  height: auto;
+  padding: 22px !important;
+  gap: 12px;
+}
+html body .app-container .wht__today .wht__today-items {
+  grid-column: 2;
+  align-self: start;
+  min-height: 0;
+}
+html body .app-container .wht__today .ay-fdeck,
+html body .app-container .wht__today .ay-fdeck__stack,
+html body .app-container .wht__today .ay-fdeck__top {
+  min-height: 0;
+  height: auto;
+  align-self: start;
+}
+html body .app-container .wht__today .ay-fdeck__top > .ay-today__item.is-compact {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-auto-rows: max-content;
+  min-height: 0 !important;
+  height: auto !important;
+  align-content: start !important;
+  gap: 12px !important;
+  padding: 18px !important;
+  background: var(--ay-calm-page, #ffedac);
+  border: var(--ay-calm-border, 1px solid #3e2723);
+  border-radius: 20px;
+}
+html body .app-container .wht__today .ay-fdeck__top > .ay-today__item.is-compact > * {
+  grid-column: 1 / -1 !important;
+  grid-row: auto !important;
+  margin: 0 !important;
+  min-width: 0;
+}
+html body .app-container .wht__today .ay-fdeck__top > .ay-today__item.is-compact > .ay-today__glyph { display: none !important; }
+html body .app-container .wht__today .ay-fdeck__top > .ay-today__item.is-compact .ay-today__chips {
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+@media (max-width: 900px) {
+  html body .app-container .wht__today .ay-today { grid-template-columns: minmax(0, 1fr); }
+  html body .app-container .wht__today .ay-today > .ay-rd-hero,
+  html body .app-container .wht__today .wht__today-items { grid-column: 1; }
+}
