@@ -150,3 +150,9 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-co
 /* Home without Pro (founder, Nov 4): one lock line above the day, not a full-page paywall. */
 html body .app-container .ay-wh .ay-wh-prolock { width: 100%; max-width: 1160px; margin: 20px auto 12px; box-sizing: border-box; }
 @media (max-width: 1192px) { html body .app-container .ay-wh .ay-wh-prolock { padding: 0 16px; } }
+
+/* Phone Home's data/products shortcuts, now on the single website /home. */
+html body .app-container .ay-wh.ay-wh--today .ay-wh-home-links { width: 100%; min-width: 0; }
+html body .app-container .ay-wh.ay-wh--today .ay-wh-home-links .ay-hsc { width: 100%; max-width: none; gap: 16px; }
+html body .app-container .ay-wh.ay-wh--today .ay-wh-home-links .ay-hsc__tile { min-height: 132px; }
+@media (max-width: 580px) { html body .app-container .ay-wh.ay-wh--today .ay-wh-home-links .ay-hsc { gap: 10px; } html body .app-container .ay-wh.ay-wh--today .ay-wh-home-links .ay-hsc__tile { min-height: 120px; padding: 12px; } }
