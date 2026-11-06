@@ -184,6 +184,17 @@ function selectedConcerns(intake = {}) {
     if (!hasConcern(dedupKey)) concerns.add(concern);
   }
 
+  // A symptom is not a life-stage diagnosis. Old snapshots may still
+  // carry a generated "Perimenopause and menopause support" concern from
+  // selecting "Hot flashes" or "Night sweats". Fix it at the server entry
+  // point too, otherwise the LLM silently reintroduces menopause products.
+  const stages = Array.isArray(profile.lifeStageSelections) ? profile.lifeStageSelections : [];
+  const explicitMenopause = stages.some(stage => /^(I am in perimenopause|I am in menopause|I am post-menopause)$/.test(String(stage)))
+    || supportSelections.includes('menopause-related body changes');
+  const vasomotor = supportSelections.includes('hot flashes') || supportSelections.includes('night sweats');
+  if (vasomotor) concerns.add('Hot flashes and night sweats');
+  if (vasomotor && !explicitMenopause) concerns.delete('Perimenopause and menopause support');
+
   const result = [...concerns].filter(c => !blocked.has(c.toLowerCase()));
   return result.length ? result : [];
 }
