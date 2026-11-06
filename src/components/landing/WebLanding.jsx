@@ -5,7 +5,6 @@ import '../../styles/editorial.css';
 import '../../styles/home.css';
 import '../../styles/loop-a-landing.css';
 import '../../styles/uq-landing.css';
-import { ScallopEdge } from '../ui/ay';
 import SlideToStart from '../ui/SlideToStart.jsx';
 import { Rain, HeroSearch, BrandBar } from './kit.jsx';
 import { useProStatus } from '../../pro/useProStatus.js';
@@ -53,7 +52,6 @@ function Hero({ cta, onSearch, banner = null, draftLine = null }) {
           {banner && <div className="wl-banner">{banner}</div>}
         </div>
       </div>
-      <ScallopEdge shape="wave" tone="ink" className="wl-edge" />
     </section>
   );
 }
