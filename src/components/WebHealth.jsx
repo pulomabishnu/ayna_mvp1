@@ -10,6 +10,7 @@ import { getProductById } from '../data/products.js';
 import { DEV_HEALTH_DEMO, DEV_HEALTH_DEMO_EMPTY, localToday } from '../mobile/hooks/useHealthData.js';
 import { HealthStarter } from '../mobile/components/HealthBento.jsx';
 import HealthHome from '../mobile/components/HealthHome.jsx';
+import { HomeShortcuts } from '../mobile/components/HomeHero.jsx';
 import TodayFeed from './today/TodayFeed.jsx';
 import { OutlineButton, PillTabs, pillPanelProps } from './ui/ay/index.js';
 import { CurvedRing, CycleRing, DayStrip, ProductStickers, Shapes } from './personality/DS.jsx';
@@ -291,7 +292,7 @@ export default function WebHealth(props) {
   return <ProFeatureGate feature="dashboard" onEcosystem={props.onEcosystem} fallback={free}><WebHealthContent {...props} /></ProFeatureGate>;
 }
 
-function WebHealthContent({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, rundown = {}, title = 'Your health', intro = null, compact = false, aside = null, widgets = null }) {
+function WebHealthContent({ user, health, products = [], needIds = [], hormonalBC = false, quizAnswers = null, onOpenProduct, onAsk, onSignIn, onOpenConnections, onEditAnswers, onSaveToProfile = null, onEcosystem = null, rundown = {}, title = 'Your health', intro = null, compact = false, aside = null, widgets = null }) {
   // DEVELOPMENT ONLY (?healthdemo=1 on the local dev server, signed out):
   // the made-up demo rows from devDemo.js, so the unlocked layout can be
   // checked without an account. import.meta.env.DEV is false in production builds.
@@ -431,6 +432,20 @@ function WebHealthContent({ user, health, products = [], needIds = [], hormonalB
               });
               return <HomeHighlights items={items} today={today} onOpen={signedIn ? () => goData(true) : null} />;
             })()}
+            {/* The same Your data and Your products shortcuts as the phone Home. */}
+            {signedIn && <div className="ay-wh-home-links">
+              <HomeShortcuts
+                cycle={week.cycle?.cycleDay ? week.cycle : null}
+                sleep={weekAll.find((c) => c.metric === 'sleep_minutes') || null}
+                products={demoData?.products || products}
+                onData={() => goData(true)}
+                onProducts={() => {
+                  const shelves = document.getElementById('ayeco');
+                  if (shelves) shelves.scrollIntoView({ block: 'start', behavior: 'smooth' });
+                  else onEcosystem?.();
+                }}
+              />
+            </div>}
             {/* The day column (review, Oct 26: on a desktop it sits on the right, sticky): her things,
                 then setting up, as one place to act; the data stays on the left. */}
             <div className="ay-wh-day__act">
