@@ -4,7 +4,7 @@ import { EdPage } from './editorial/EdPage';
 const PROCESSORS = [
   ['Supabase', 'Authentication and storage of account-linked data, including health-profile data you choose to save.'],
   ['Vercel', 'Website hosting and server-side API infrastructure.'],
-  ['PostHog', 'Product analytics are on by default with an opt-out available from Privacy Preferences and account privacy controls. ayna honors Global Privacy Control where supported, uses a dedicated analytics identifier rather than your Supabase account ID, removes raw health-search text, account email, direct account identifiers and common health-profile fields at the analytics boundary, and has session recording and automatic text/click capture disabled.'],
+  ['PostHog', 'Optional product analytics are off until you explicitly opt in. If enabled, ayna uses a dedicated analytics identifier instead of your account ID, excludes raw search text, health details and selected product identities from event payloads, and disables session recording and automatic click/text capture. You can opt out again in Privacy Preferences.'],
   ['OpenAI, Anthropic, and Google Gemini', 'Depending on feature availability and server configuration, one provider may process a prompt, product information and limited relevant health context when you intentionally use an AI-powered feature such as Ask ayna or AI product insights. Not every request is sent to every provider.'],
   ['Twilio', 'Phone verification and opted-in SMS features such as safety or recall messaging.'],
   ['Resend', 'Transactional and support email.'],
@@ -14,7 +14,7 @@ const PROCESSORS = [
 
 export default function PrivacyPolicy({ onBack, backLabel }) {
   return (
-    <EdPage title="Privacy policy" crumb="Privacy" updated="Last updated October 19, 2026" onBack={onBack} backLabel={backLabel} toc glance bandLabel="In short" band={<div className="uq-legal-intro">
+    <EdPage title="Privacy policy" crumb="Privacy" updated="Last updated November 6, 2026" onBack={onBack} backLabel={backLabel} toc glance bandLabel="In short" band={<div className="uq-legal-intro">
         <p>
           This policy explains how ayna handles personal information when you use www.aynahealth.co and related ayna services. ayna is a wellness, educational and product-discovery service, not a healthcare provider or emergency service. ayna accounts and account-only health features are for adults age 18 and older.
         </p>
@@ -29,7 +29,7 @@ export default function PrivacyPolicy({ onBack, backLabel }) {
             Depending on the features you use, we may collect account information such as your name, email address, authentication details, phone number and notification preferences; health-profile information you choose to provide such as symptoms, concerns, conditions, medications, allergies, cycle information, life stage, preferences and notes; products you save, track, hide, review or add to your ecosystem; support or feedback messages; and technical information needed to operate and secure the service.
           </p>
           <p>
-            We do not currently process payment-card information through the ayna website and the current website does not offer an automatically renewing paid ayna subscription. If paid features are introduced later, this policy and the Terms will be updated to reflect the actual payment flow and provider.
+            ayna Pro offers an Early Access paid subscription with automatic renewal. If you choose it, Stripe Checkout processes your payment-card details and ayna stores the subscription status, amount, plan, payment reference and access period needed to administer your purchase. ayna does not store your full payment-card number. Your purchased subscription term begins February 1, 2027; see the current offer terms on /pro and the Terms of Use.
           </p>
         </section>
 
@@ -53,10 +53,10 @@ export default function PrivacyPolicy({ onBack, backLabel }) {
         <section>
           <h2>4. Analytics and privacy preferences</h2>
           <p>
-            ayna uses PostHog for product analytics that are on by default. You can opt out at any time from Privacy Preferences or account privacy controls, and a prior opt-out is honored before analytics starts on a later visit. Global Privacy Control is also honored where supported. Session recording, automatic click/text capture and automatic exception capture are disabled, and IP collection is disabled in ayna's PostHog configuration.
+            Optional PostHog usage analytics are off until you explicitly opt in. You can withdraw consent at any time in Privacy Preferences or account privacy controls; a prior denial is not silently expired and Global Privacy Control is respected. Session recording, automatic click/text capture and automatic exception capture are disabled, and IP collection is disabled in ayna's PostHog configuration.
           </p>
           <p>
-            Raw health-search text, account email, direct account identifiers and common health-profile fields are removed at the analytics boundary. For signed-in analytics, ayna substitutes a dedicated random analytics identifier rather than using the same user ID stored with your health records. You can change your analytics choice from Privacy Preferences or account privacy controls, and Global Privacy Control is honored where supported.
+            Raw health-search text, account email, direct account identifiers, product identifiers, and known health-profile fields are stripped before optional events are sent. Signed-in usage analytics use a dedicated random analytics identifier, not your health-record account ID. Aggregated usage counts may still be retained after you withdraw consent.
           </p>
           <p>
             We design analytics to minimize health information, but no online system can guarantee that every technical edge case is risk-free. Please avoid putting information you do not want processed into free-text fields.
