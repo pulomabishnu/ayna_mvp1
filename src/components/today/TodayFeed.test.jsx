@@ -35,6 +35,18 @@ describe('Today with ayna', () => {
     expect(host.textContent).toContain('Your log');
   });
 
+  it('single /home uses the compact phone feed and expands the saved log inline', () => {
+    render({ compact: true, homeLog: true, renderViews: ({ things }) => <div>{things}</div> });
+    const trigger = host.querySelector('.ay-today__homelog-trigger');
+    expect(trigger).toBeTruthy();
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(host.querySelector('.ay-today__log')).toBeNull();
+    act(() => trigger.click());
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    expect(host.querySelector('.ay-today__log')).toBeTruthy();
+    expect(host.textContent).toContain('Your log');
+  });
+
   it('no check-in item: the log card shows on its own', () => {
     saveLogEntry(todayKey(), { pain: 0, flow: 'none', pms: 0, sleep: 2, mood: 2, skin: 2 });
     render();

@@ -30,8 +30,8 @@ html body .app-container.app-container.app-container.app-container .lb {
   & .lb-top { position: relative; z-index: 1; --lb-esp: var(--ay-calm-fg); background: var(--ay-calm-page); color: var(--ay-calm-fg); padding: 64px 0 64px; } /* calm (Oct 27): page colour, pink only as the highlight underline */
   & .lb-top :is(.lb-search, .lb-toc) { background: var(--ay-calm-box); }
   & .lb-top__title .lb-hl.lb-hl { background: linear-gradient(transparent 62%, #f7badd 62%, #f7badd 90%, transparent 90%); }
-  & .lb-top::after { top: calc(100% - 6px) !important; height: 12px !important; background: var(--ay-calm-line) !important; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6Q10 0 20 6T40 6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") 0 0 / 40px 12px repeat-x; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6Q10 0 20 6T40 6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") 0 0 / 40px 12px repeat-x; }
-  & .lb-top::after, & .lb-rhead::after { content: ''; position: absolute; left: 0; right: 0; top: calc(100% - 1px); height: 17px; background: radial-gradient(circle at 50% 0, var(--band, var(--lb-pink)) 15.4px, transparent 16px) 50% 0 / 32px 17px repeat-x; pointer-events: none; }
+  & .lb-top::after { content: none; display: none; }
+  & .lb-top::after, & .lb-rhead::after { content: none; display: none; }
   & .lb-top__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 64px; align-items: end; }
   & .lb-top h1.lb-top__title:not(#lb-id) { margin: 0 0 16px !important; max-width: 20ch; font: 700 var(--ay-size-h1, 30px)/1.1 var(--lb-display) !important; letter-spacing: -.01em !important; color: var(--lb-esp) !important; text-wrap: balance; }
   & .lb-top__title .lb-hl { white-space: nowrap; font: inherit !important; letter-spacing: inherit !important; color: inherit !important; padding: 0 .04em; background: linear-gradient(transparent 56%, var(--lb-butter) 56%, var(--lb-butter) 90%, transparent 90%); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
@@ -157,7 +157,7 @@ html body .app-container.app-container.app-container.app-container .lb {
   & .lb-article .ct-care { margin: 0 !important; }
   /* Read next on its own espresso band, scalloped at the top (rule 1) */
   & .lb-band { --band: var(--ay-calm-page); position: relative; margin-top: 80px; padding: 48px 0 64px; background: var(--band); color: var(--ay-calm-fg); border-top: var(--ay-calm-border); } /* calm (Oct 27): no espresso band */
-  & .lb-band::before { content: ''; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: 17px; background: radial-gradient(circle at 50% 100%, var(--band) 15.4px, transparent 16px) 50% 100% / 32px 17px repeat-x; pointer-events: none; }
+  & .lb-band::before { content: none; display: none; }
   & .lb-band .lb-shelf--related { margin-top: 0; }
   & .lb-band :is(.lb-shelf__title, .lb-card, .lb-card__title) { color: var(--ay-calm-fg) !important; }
   & .lb-band :is(.lb-shelf__sub, .lb-card__src) { color: var(--ay-calm-fg-muted); }

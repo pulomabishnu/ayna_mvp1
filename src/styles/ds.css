@@ -53,7 +53,7 @@
 
 /* ---- scalloped bottom edge in the element's own colour ---- */
 .ds-scallop { position: relative; }
-.ds-scallop::after { content: ''; position: absolute; left: 0; right: 0; bottom: -15px; height: 16px; pointer-events: none; background: radial-gradient(circle at 12px 0, var(--sc, #3e2723) 11.5px, transparent 12px) 0 0 / 24px 16px repeat-x; }
+.ds-scallop::after { content: none; display: none; }
 
 @media (prefers-reduced-motion: reduce) { .ds-sticker { transition: none; } }
 

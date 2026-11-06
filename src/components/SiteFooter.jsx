@@ -129,7 +129,7 @@ export default function SiteFooter({
 
         <FooterColumn title="Browse">
           {/* The site's tab names (Home, Shop, Services, Library), not the old Explore / Products / Resources. */}
-          <a className="ay-foot__link" href="/today" onClick={(e) => footerGo(e, onMainTab.today)}>Home</a>
+          <a className="ay-foot__link" href="/home" onClick={(e) => footerGo(e, onMainTab.today)}>Home</a>
           <a className="ay-foot__link" href="/explore" onClick={(e) => footerGo(e, onMainTab.explore || (() => onViewDiscovery?.('')))}>Shop</a>
           <a className="ay-foot__link" href="/explore/services" onClick={(e) => footerGo(e, onMainTab.services)}>Services</a>
           <a className="ay-foot__link" href="/explore/resources" onClick={(e) => footerGo(e, onMainTab.library || onViewArticles)}>Library</a>

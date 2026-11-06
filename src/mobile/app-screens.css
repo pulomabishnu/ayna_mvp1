@@ -146,3 +146,6 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-cta { background: var(--b-butter) !important; color: var(--b-espresso) !important; border-color: var(--b-butter) !important; box-shadow: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-copy strong { color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-discover-go { background: rgba(255, 237, 172, .12) !important; }
+
+/* Nov 6: no scalloped edge above the native app's action sheet. */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-actions::before { content: none !important; display: none !important; }

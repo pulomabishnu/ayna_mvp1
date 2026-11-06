@@ -1,6 +1,10 @@
 import { useMemo } from 'react';
-import { HomeHero, HomeShortcuts } from '../../mobile/components/HomeHero.jsx';
+import { HomeHero, HomeHighlights, HomeShortcuts } from '../../mobile/components/HomeHero.jsx';
 import { buildDashboard } from '../../health/dashboard.js';
+import { explainWeek } from '../../health/weekInsights.js';
+import { findingTitle, usualBand } from '../../health/dashView.js';
+import WeekBento, { glanceCharts } from '../today/WeekBento.jsx';
+import TodayFeed from '../today/TodayFeed.jsx';
 import { usesHormonalBC } from '../../health/weekInsights.js';
 import { localToday } from '../../mobile/hooks/useHealthData.js';
 import './web-home-top.css';
@@ -11,21 +15,59 @@ import './web-home-top.css';
  * with none, one Connect button), then the two shortcut tiles, Your data and Your products. The lists
  * (Using, For you, Saved, Routine) follow underneath on the page.
  */
-export default function WebHomeTop({ firstName = '', healthRows = [], quizAnswers = null, products = [], onData, onProducts, onConnect, refresh = null }) {
+export default function WebHomeTop({ firstName = '', userId = null, healthRows = [], quizAnswers = null, products = [], saved = [], matchOpts, healthProfile = null, onAsk, onOpenProduct, onOpenRead, onExplore, onEditAnswers, onSaveToProfile, onData, onProducts, onConnect, autoOpenLog = false, onAutoLogHandled = null, refresh = null }) {
   const today = localToday();
-  const { cycle, sleep, activity } = useMemo(() => {
-    const w = buildDashboard(healthRows || [], { days: 30, today });
-    const all = w.groups.flatMap((g) => g.charts);
-    const chartOf = (m) => all.find((c) => c.metric === m) || null;
-    return { cycle: w.cycle?.cycleDay ? w.cycle : null, sleep: chartOf('sleep_minutes'), activity: chartOf('steps') };
-  }, [healthRows, today]);
+  // Reuse the app Home's real-data charts and weekly highlights, not a second scoring model.
+  const { cycle, sleep, activity, highlights, charts, bandOf } = useMemo(() => {
+    const rows = healthRows || [];
+    const week = buildDashboard(rows, { days: 30, today });
+    const long = buildDashboard(rows, { days: 90, today });
+    const all = week.groups.flatMap((g) => g.charts);
+    const longAll = long.groups.flatMap((g) => g.charts);
+    const chartOf = (metric) => all.find((c) => c.metric === metric) || null;
+    const bandOf = (metric) => usualBand(longAll.find((c) => c.metric === metric)?.points, today);
+    const cycle = week.cycle?.cycleDay ? week.cycle : null;
+    const highlights = rows.length ? explainWeek(rows, { today, cycle, estimate: null, hormonalBC: usesHormonalBC(quizAnswers), max: 5 }).insights.map((item) => {
+      const chart = chartOf(item.metric);
+      return { id: item.id, metric: chart ? item.metric : null, title: findingTitle(item), label: chart ? (chart.metric === 'sleep_minutes' ? 'Sleep' : chart.metric === 'steps' ? 'Steps' : chart.label) : 'Your week', chart, band: chart ? bandOf(chart.metric) : null };
+    }) : [];
+    return { cycle, sleep: chartOf('sleep_minutes'), activity: chartOf('steps'), highlights, charts: rows.length ? glanceCharts(week) : [], bandOf };
+  }, [healthRows, today, quizAnswers]);
   return (
-    <div className="wht">
+    <div className="wht" data-tour="home">
+      <h1 className="sr-only" id="ayna-home-title">Home dashboard</h1>
       <HomeHero name={firstName} today={today} cycle={cycle} hormonalBC={usesHormonalBC(quizAnswers)} sleep={sleep} activity={activity}
         onOpenMetric={onData ? () => onData() : null} onConnect={onConnect} />
-      {refresh}
-      <div className="wht__tiles">
-        <HomeShortcuts cycle={cycle} sleep={sleep} products={products} onData={onData} onProducts={onProducts} />
+      <div className="wht__today" id="home-today">
+        <h2 className="wht__heading">Today</h2>
+        <TodayFeed
+          variant="web" compact showHead={false} moreHeading={false} homeLog
+          autoOpenLog={autoOpenLog} onAutoLogHandled={onAutoLogHandled}
+          userId={userId} intake={quizAnswers} healthRows={healthRows}
+          cycle={cycle} hormonalBC={usesHormonalBC(quizAnswers)} products={products}
+          saved={saved} matchOpts={matchOpts} healthProfile={healthProfile}
+          onAsk={onAsk} onOpenProduct={onOpenProduct} onOpenRead={onOpenRead}
+          onExplore={onExplore} onEditAnswers={onEditAnswers}
+          onSaveToProfile={onSaveToProfile}
+          renderViews={({ things }) => <div className="wht__today-items">{things}</div>}
+        />
+      </div>
+      <div className={`wht__dashboard${charts.length || highlights.length ? ' has-metrics' : ' no-metrics'}`}>
+        {(charts.length > 0 || highlights.length > 0) && (
+          <div className="wht__metrics">
+            {charts.length > 0 && (
+              <section className="wht__week" aria-labelledby="wht-week-h">
+                <h2 id="wht-week-h" className="wht__heading">Your week</h2>
+                <WeekBento variant="home" charts={charts} bandOf={bandOf} today={today} onOpen={onData} />
+              </section>
+            )}
+            {highlights.length > 0 && <HomeHighlights items={highlights} today={today} onOpen={onData} />}
+          </div>
+        )}
+        <div className="wht__actions">
+          <HomeShortcuts cycle={cycle} sleep={sleep} products={products} onData={onData} onProducts={onProducts} />
+          {refresh}
+        </div>
       </div>
     </div>
   );
