@@ -95,7 +95,7 @@ export function sanitizeAnalyticsObject(value) {
  * posthog-js puts $initial_current_url and $initial_referrer).
  */
 export function sanitizeEventPayload(event, extraProperties = {}) {
-  if (/pregnan|fertil|ovulat|period|menopaus|pcos|endometri|vagin|sti|std|contracepti|miscarriage|abortion|breastfeed/i.test(String(event?.event || ''))) return null;
+  if (/pregnan|fertil|ovulat|period|menopaus|pcos|endometri|vagin|(?:^|_)sti(?:_|$)|(?:^|_)std(?:_|$)|contracepti|miscarriage|abortion|breastfeed/i.test(String(event?.event || ''))) return null;
   if (!event || typeof event !== 'object') return event;
   const out = { ...event };
   if (event.properties) out.properties = { ...extraProperties, ...sanitizeAnalyticsObject(event.properties) };
