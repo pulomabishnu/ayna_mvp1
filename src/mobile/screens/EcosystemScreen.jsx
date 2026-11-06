@@ -175,7 +175,8 @@ export default function EcosystemScreen({
   const support = Array.isArray(intake.supportSelections) ? intake.supportSelections : [];
   const namedMenopause = stages.some((stage) => /^I am (?:in peri|in meno|post-meno)/i.test(String(stage)))
     || support.includes('Menopause-related body changes');
-  const hasVasomotor = support.some((s) => s === 'Hot flashes' || s === 'Night sweats');
+  const hasVasomotor = support.some((s) => s === 'Hot flashes' || s === 'Night sweats')
+    || (Array.isArray(intake.symptoms) && intake.symptoms.some((s) => /hot flash|hot flush|night sweat/i.test(String(s))));
   const byNeed = new Map();
   const fallback = new Map();
   currentProducts.forEach((product) => {
