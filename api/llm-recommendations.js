@@ -75,7 +75,7 @@ function sanitizeIntake(raw) {
   };
 }
 
-function selectedConcerns(intake = {}) {
+export function selectedConcerns(intake = {}) {
   const blocked = new Set(['general discomfort', 'other']);
   const concerns = new Set();
   const profile =
@@ -140,7 +140,7 @@ function selectedConcerns(intake = {}) {
     concerns.add('Cramp and pain relief (devices, supplements, heat)');
   if (symptoms.some(s => s.includes('fatigue') || s.includes('energy')) && !hasConcern('sleep'))
     concerns.add('Sleep and energy');
-  if (symptoms.some(s => s.includes('mood') || s.includes('anxiety') || s.includes('depression')) && !hasConcern('mental'))
+  if (symptoms.some(s => /mood|anxiety|depression|irritab|stress/.test(s)) && !hasConcern('mental'))
     concerns.add('Mental health and cycle mood support');
   if (symptoms.some(s => s.includes('acne') || s.includes('hair loss') || s.includes('hair thin')) && !hasConcern('skin'))
     concerns.add('Skin and hair (hormone-related)');
@@ -156,8 +156,8 @@ function selectedConcerns(intake = {}) {
     concerns.add('Gut and vaginal health (probiotics, pH balance)');
   if ((intake.menstrualCycle === 'irregular' || intake.menstrualCycle === 'irregular_perimenopause') && !hasConcern('hormone') && !hasConcern('pcos'))
     concerns.add('Hormone balance (supplements, lifestyle)');
-  if ((intake.menstrualCycle === 'no_menopause' || intake.menstrualCycle === 'irregular_perimenopause') && !hasConcern('menopause'))
-    concerns.add('Perimenopause and menopause support');
+  // Legacy cycle values are not enough to infer a life stage. The user's
+  // explicit stage or menopause-specific support choice is checked below.
 
   // 5. Direct goal → concern mapping, every selected goal gets its own product track
   // "find safer products" and "reduce chemical exposure" are NOT separate tracks
@@ -191,9 +191,14 @@ function selectedConcerns(intake = {}) {
   const stages = Array.isArray(profile.lifeStageSelections) ? profile.lifeStageSelections : [];
   const explicitMenopause = stages.some(stage => /^(I am in perimenopause|I am in menopause|I am post-menopause)$/.test(String(stage)))
     || supportSelections.includes('menopause-related body changes');
-  const vasomotor = supportSelections.includes('hot flashes') || supportSelections.includes('night sweats');
+  const vasomotor = supportSelections.includes('hot flashes') || supportSelections.includes('night sweats')
+    || symptoms.some(s => /hot flash|hot flush|night sweat/.test(s));
   if (vasomotor) concerns.add('Hot flashes and night sweats');
-  if (vasomotor && !explicitMenopause) concerns.delete('Perimenopause and menopause support');
+  if (vasomotor && !explicitMenopause) {
+    for (const concern of concerns) {
+      if (/menopause|perimenopause/i.test(concern)) concerns.delete(concern);
+    }
+  }
 
   const result = [...concerns].filter(c => !blocked.has(c.toLowerCase()));
   return result.length ? result : [];
@@ -270,7 +275,16 @@ function enrichProduct(p, catalogIndex) {
   if (isRxOnlyProduct(catalogProduct)) return null;
   const hydrated = hydrateFromCatalog(catalogProduct, p, { intakeGenerated: true });
   if (isBlockedRecommendationProduct({ id: hydrated.id, name: hydrated.name, brand: hydrated.brand, category: hydrated.category })) return null;
-  return hydrated;
+  return { ...hydrated, whyItWorks: supportCopy(hydrated.whyItWorks) };
+}
+
+export function supportCopy(value) {
+  const text = String(value || '').trim();
+  // Model prose is never authority for a diagnosis or outcome promise.
+  if (/\b(?:cure[sd]?|treat(?:s|ed|ment)?|fix(?:es|ed)?|diagnos(?:e[sd]?|is)|prevent[sd]?|guarantee[sd]?|solve[sd]?)\b/i.test(text)) {
+    return 'An option for symptom support or comfort; individual experiences vary.';
+  }
+  return text;
 }
 
 function enrichRecommendations(recs, requestedConcern = '', catalogIndex = null) {
@@ -298,7 +312,7 @@ function enrichRecommendations(recs, requestedConcern = '', catalogIndex = null)
             product: tierProduct,
             alternatives: tierAlternatives,
             safetyFlags: Array.isArray(tier?.safetyFlags) ? tier.safetyFlags.slice(0, 5).map((x) => String(x)) : [],
-            matchExplanation: String(tier?.matchExplanation || tierProduct?.whyItWorks || '').trim(),
+            matchExplanation: supportCopy(tier?.matchExplanation || tierProduct?.whyItWorks),
           };
         })
         .filter(Boolean);
@@ -319,7 +333,7 @@ function enrichRecommendations(recs, requestedConcern = '', catalogIndex = null)
               product: fallbackTop,
               alternatives: fallbackAlts.filter((alt) => alt.id !== fallbackTop.id),
               safetyFlags: [],
-              matchExplanation: String(fallbackTop?.whyItWorks || '').trim(),
+              matchExplanation: supportCopy(fallbackTop?.whyItWorks),
             }]
           : []);
       const topProduct = tiers[0]?.product || fallbackTop || null;
@@ -622,10 +636,10 @@ function buildPromptForOneConcern(concern, intake = {}, feedback = {}, searchHit
     : '';
 
   return `
-You are Ayna's clinical recommendation engine. Reason like a skilled OB/GYN or women's health specialist.
+You help people find catalog options for OTC symptom management and comfort. Use the profile only to select relevant options, never to infer a diagnosis or the cause of a symptom.
 
-You CAN: make clinical inferences, recommend OTC products and supplements grounded in evidence, recommend telehealth specialists, explain mechanisms.
-You CANNOT: diagnose, prescribe medications, or guarantee outcomes.
+You CAN: recommend appropriate OTC products, non-ingested comfort options, and support services with clear source limits; explain what each product is designed to do.
+You CANNOT: diagnose, prescribe medication, present an item as a cure or treatment for an underlying condition, or guarantee an outcome. Hot flashes or night sweats alone never establish perimenopause or menopause.
 
 PATIENT PROFILE:
 - Age: ${profile?.age || intake?.age || 'unknown'}, Location: ${intake?.location || profile?.zipcode || 'unknown'}
@@ -675,7 +689,7 @@ ${knowledgeContext ? `\nCLINICAL KNOWLEDGE:\n${knowledgeContext}` : ''}${searchH
 
 SCOPE: Never name a prescription medication as a product recommendation, in any tier or alternative, this includes hormonal birth control (pills, patches, rings, IUDs, implants), hormone replacement therapy, prescription antidepressants/anxiolytics, prescription antibiotics, prescription weight-loss drugs (GLP-1s), and any other drug that legally requires a doctor's prescription in the US, even if it's commonly discussed for this concern. If the best answer to a concern is a prescription drug, say so only inside a telehealth tier's whyItWorks/matchExplanation text (e.g. "a clinician may discuss birth control options") and let the telehealth PRODUCT itself (the platform/service) be the recommendation, never the drug. If a concern requires diagnosis or labs, lead with telehealth. Pain 8+/10: always include telehealth.${saferProductsInstruction}
 
-QUALITY BAR: Pick catalog products with clinical/scientific support for the mechanism and a genuine fit for this concern. Never add a product that is not in the catalog.
+QUALITY BAR: Pick real catalog products relevant to managing the reported symptom. Distinguish a manufacturer-stated purpose from independent evidence of benefit. A comfort product can be useful without a clinical trial of the finished SKU; say plainly when benefit is unverified. Never add a product that is not in the catalog.
 
 TRUST RANKING:
 Use all three trust signals below, but when the patient supplied a Trust ranking above, honor THEIR order when breaking ties and ordering otherwise-comparable products. Their #1 ranked signal matters most, #2 next, #3 least.
@@ -693,19 +707,19 @@ PERSONALIZATION:
 - Explicit allergies, known contraindications, and items the user said to avoid are HARD FILTERS. Other shopping preferences such as format, price, brand openness, sustainability, and trust ranking should influence ordering but should not override safety or clinical relevance.
 - FSA/HSA prioritization: if "FSA/HSA" in the profile above is not "not provided", prioritize FSA/HSA-eligible products (physical products/supplements sold as FSA/HSA-eligible in the US) when choosing between otherwise-comparable candidates for a track, and say so briefly in whyItWorks when it's a real factor in the pick. This is a real stated financial constraint, not a soft preference, weight it accordingly, but don't force a clearly worse product into the top spot just because it's eligible when a genuinely better-fit option isn't.
 - Never recommend a brand she listed as disliked.
-- whyItWorks must be in plain everyday language, no medical jargon. Explain: (1) simply how the product works (mechanism in lay terms), (2) why it fits her specific profile (condition, pain level, preference), (3) what makes it the top pick over the alternatives. A user should read this and immediately understand why you chose THIS product for HER over everything else available.
+- whyItWorks must be in plain everyday language. Explain what the product is designed to do, how it may support this reported symptom, why the format suits her answers, and the evidence limit. Do not imply it will fix her issue or identify its cause.
 - CURRENTLY-USED BRAND COMPARISON: If "Products currently using" lists a brand in the same category as your top product recommendation, you MUST include one sentence in whyItWorks explaining what specifically makes your recommended product a better fit than the brand she already uses, whether it is ingredient quality, clinical evidence strength, organic certification, lower cost, better fit for her conditions, or another concrete reason. Be direct: "Compared to [brand she uses], [recommended product] offers [specific advantage] which matters for [her condition/preference]." If her currently-used product is in the catalog, include it as one of the alternatives so she can still choose it.
 - Never recommend products she has hidden.
 - Never recommend tranexamic acid products.
 
 PRODUCT SPECIFICITY RULES, critical for quality:
-- The physical product tier MUST be a health/wellness product specifically designed for this concern. Do NOT use generic consumer items (water bottles, blankets, heating pads for non-cramp concerns) or period collection products (pads, cups, tampons, period underwear) for any concern other than Period Care.
+- Physical comfort products must have a documented, relevant purpose. Cooling wearables, cooling sleep products, and tracking tools may support temperature discomfort when their catalog facts support that use. Do not use unrelated generic goods or period collection products for non-period needs.
 - The telehealth/app tier MUST use the catalog platform most relevant to this specific concern (e.g. a PMOS-specific service only for PMOS). If no catalog telehealth/app fits, omit that tier.
 - Do not recommend generic hydration (water bottles) or lifestyle items as health products. Every product must be a purpose-built health, wellness, or medical product.
 
 TASK: Generate recommendations for this ONE concern only: "${concern}"${concernFollowup ? `\nUser context: ${JSON.stringify(concernFollowup)}` : ''}
 
-Generate 3 to 5 clinically relevant DISTINCT solution tracks for this concern whenever at least 3 safe, relevant, real options exist. The primary products across tracks must solve meaningfully different parts of the user's need or use meaningfully different formats. Do NOT fill the list with near-duplicates just because they score similarly.
+Generate up to 5 distinct symptom-support tracks when safe, relevant catalog options exist. The primary products across tracks should support different parts of the reported need or use meaningfully different formats. Do not fill the list with near-duplicates or claim that a product solves the underlying issue.
 
 DIVERSITY RULE:
 - Prefer one strong option per distinct solution type before recommending a second product of the same type.
