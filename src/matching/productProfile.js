@@ -465,6 +465,14 @@ export const RELEVANCE_RULES = [
   { id: 'community_app', why: 'Peer community app.',
     when: (f) => f.cat === 'mental-health' && f.t(/community|friends/),
     set: { 'mood.low': ADJACENT, 'pregnancy.prenatal': ADJACENT, 'postpartum.recovery': ADJACENT, 'fertility.ttc': ADJACENT, 'menopause.body_changes': ADJACENT } },
+  // NIH NHLBI sleep-habit guidance recommends a dark, quiet sleep environment.
+  // These devices are environment/comfort tools, NOT evidence of treating
+  // insomnia or another disorder: their use case is direct, efficacy isn't.
+  // https://www.nhlbi.nih.gov/health/insomnia/treatment
+  { id: 'sleep_environment_aid', why: 'Helps create a dark or quiet sleep environment; not an insomnia treatment.',
+    when: (f) => f.cat === 'sleep' && (f.n(/(?:sleep|eye) ?masks?|eyemasks?|earplugs?|sleepbuds|sleep headphones|white noise|sound machines?|noise machines?|blackout/)
+      || f.t(/white.noise machines?|sound machines?|blackout curtains?/)),
+    set: { 'sleep.trouble': STRONG } },
   { id: 'sleep_product', why: 'Made for sleep.',
     when: (f) => f.cat === 'sleep',
     // Nov 4 (50-profile run): a cooling bed is not the strongest answer to trouble sleeping in general
