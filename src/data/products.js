@@ -1922,6 +1922,14 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
             const note = up.contradictions.find((c) => c.code === 'period_need_vs_stage');
             details = { ...details, percent: null, score: 0, sortScore: 0, matchStatus: 'bleeding-evaluation', tier: 'browse', bleedingEvaluation: { text: note?.text || BLEEDING_EVALUATION_TEXT, source: note?.source || null } };
         }
+        // ACOG: bleeding in pregnancy needs an ob-gyn evaluation. A product
+        // whose only stated use is the blocked bleeding/pelvic-pain need must
+        // not regain a percent through browse-if-you-needed-it.
+        if (!best && needMatches.some((m) => m.filtered === 'pregnancy_bleeding_care')) {
+            const note = pregnancyBleedingCare(up);
+            details = { ...details, percent: null, score: 0, sortScore: 0, matchStatus: 'bleeding-evaluation', tier: 'browse',
+                bleedingEvaluation: { text: note?.text || 'Contact your ob-gyn about bleeding during pregnancy.', source: note ? { label: 'ACOG: Bleeding During Pregnancy', url: note.source } : null } };
+        }
     }
     // Nov 4 (founder: "just because I didn't match the Saalt Cup doesn't mean I don't match with it
     // at all, if I'm browsing and curious"): a product that isn't for anything she picked still
