@@ -374,7 +374,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   // Home's toggle: ({ things, count }) => the views, placed right under the Rundown card (compact only).
   renderViews = null,
   // Website /home may render the phone-style compact feed with an inline, persistent log.
-  homeLog = false,
+  homeLog = false, autoOpenLog = false, onAutoLogHandled = null,
   // Website Today's right column: the weekly recap's lines and what she is trying now (WebHealth).
   onWeekly = null, onTries = null, onSetup = null,
   // Home's streak and "Your month": the days she logged (sorted YYYY-MM-DD keys), then the log by day.
@@ -428,6 +428,14 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
       requestAnimationFrame(() => document.getElementById(`ay-checkin-${opts.log}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' }));
     } else setExpandedItemId(item.id);
   } : null);
+  // A check-in opened from My ecosystem is delivered after Home mounts,
+  // not on a timer that can race its lazy-loaded component.
+  useEffect(() => { if (autoOpenLog) setLogOpen(true); }, [autoOpenLog]);
+  useEffect(() => {
+    if (!autoOpenLog || !logOpen) return;
+    document.getElementById(checkinId)?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+    onAutoLogHandled?.();
+  }, [autoOpenLog, logOpen, checkinId, onAutoLogHandled]);
   useEffect(() => {
     const open = () => setLogOpen(true);
     window.addEventListener(OPEN_LOG_EVENT, open);
