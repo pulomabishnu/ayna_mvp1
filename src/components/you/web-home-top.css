@@ -30,19 +30,23 @@ html body .app-container.app-container .wht .ay-hh .ay-hh__edge {
 @media (min-width: 900px) {
   html body .app-container .wht .ay-hh__band {
     grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto auto auto;
     column-gap: clamp(24px, 3vw, 48px);
+    row-gap: 8px;
     align-items: start;
   }
   html body .app-container .wht .ay-hh__band > .ay-dials {
     grid-column: 2;
-    grid-row: 1 / 3;
+    grid-row: 1 / 4;
     align-self: center;
     min-width: 0;
   }
   html body .app-container .wht .ay-hh__band > .ay-hh__row {
     grid-column: 1;
     grid-row: 3;
+    justify-self: start;
+    align-self: start;
+    margin-top: 8px;
   }
 }
 
