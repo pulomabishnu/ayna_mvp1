@@ -387,3 +387,7 @@ html body .app-container.app-container.app-container.app-container .lb .lb-ask__
   html body .app-container.app-container.app-container.app-container .lb .lb-shelf__head > h2 { flex: 1 1 auto; }
   html body .app-container.app-container.app-container.app-container .lb .lb-shelf__head > .lb-shelf__sub { order: 3; flex: 1 1 100%; font-size: 14px; }
 }
+
+/* Flat section boundaries on the Reads library; no wave/scallop pseudo-edge. */
+html body .app-container .lb .lb-top::after,
+html body .app-container .lb .lb-rhead::after { content: none !important; display: none !important; -webkit-mask: none !important; mask: none !important; }
