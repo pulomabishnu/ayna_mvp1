@@ -15,6 +15,7 @@ export const ECOSYSTEM_AREAS = [
   { key: 'breast', label: 'Breast care' },
   { key: 'pelvic', label: 'Pelvic' },
   { key: 'menopause', label: 'Menopause' },
+  { key: 'temperature', label: 'Temperature & sweating' },
   { key: 'hormones', label: 'Hormones' },
   { key: 'skin', label: 'Skin' },
   { key: 'hair', label: 'Hair' },
