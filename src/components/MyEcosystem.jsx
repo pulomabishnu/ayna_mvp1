@@ -2386,7 +2386,7 @@ export default function MyEcosystem({
                                 label: shelf.label,
                                 short: shelf.label,
                                 phrase: shelf.needIds.map((id) => needPhrases.get(id)).filter(Boolean).join(', ') || shelf.label.toLowerCase(),
-                                picks: shelf.picks.map((pick) => ({ ...pick, product: myProducts[pick.productId] || getProductById(pick.productId) })).filter((x) => x.product),
+                                picks: shelf.picks.map((pick) => ({ ...pick, matchPhrase: needPhrases.get(pick.matchedNeedId) || shelf.label.toLowerCase(), product: myProducts[pick.productId] || getProductById(pick.productId) })).filter((x) => x.product),
                                 care: shelf.care && !careFirst ? [...(shelf.care.clinicLinks || []), ...(shelf.care.telehealthLinks || [])].slice(0, 4) : null,
                             }))}
                             isOwned={(id) => Boolean(myProducts[id])}

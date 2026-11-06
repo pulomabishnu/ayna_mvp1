@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { loadCatalog } from '../../data/catalog.js';
 import ReadyReveal from './ReadyReveal.jsx';
+import { EMPTY } from '../../mobile/data/intakeModel.js';
 
 // QA3 M2: the persona age 54, post-menopause, Heavy periods with a Heavy flow.
 // Today and the product page lead with the bleeding-evaluation message; the
@@ -31,5 +32,22 @@ describe('ReadyReveal bleeding after menopause', () => {
     const html = renderToStaticMarkup(<ReadyReveal answers={REGULAR_HEAVY} onSeeToday={() => {}} />);
     expect(html).not.toContain('Get bleeding after menopause checked');
     expect(html).toMatch(/We found .*match/);
+  });
+});
+
+describe('ReadyReveal symptom groups', () => {
+  beforeAll(() => loadCatalog());
+  it('shows one mood card and one temperature card for related symptoms at age 22', () => {
+    const answers = { personalizationCompleted: true, fullHealthIntake: {
+      ...EMPTY, age: '22', lifeStageSelections: ['I get periods regularly'],
+      supportSelections: ['Hot flashes', 'Night sweats', 'Anxiety', 'Low mood', 'Irritability', 'Mood swings'],
+      allergyStatus: 'No', takesCurrent: 'No', diagnosisSelections: ['None that I know of'], safetyConcern: 'No',
+      vasomotorTimingSelections: ['Before my period / PMS', 'When stressed or anxious'],
+    } };
+    const html = renderToStaticMarkup(<ReadyReveal answers={answers} onSeeToday={() => {}} />);
+    expect(html).toContain('Mood &amp; wellbeing');
+    expect(html).toContain('Temperature comfort');
+    expect(html).not.toContain('Menopause support');
+    expect((html.match(/class="ay-deck__card/g) || []).length).toBe(2);
   });
 });
