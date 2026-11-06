@@ -1238,7 +1238,7 @@ export default function MyEcosystem({
             const midlife = stages.has('I am in perimenopause') || stages.has('I am in menopause') || stages.has('I am post-menopause');
             const noPeriods = stages.has('I do not currently get periods');
             const fits = (a) => {
-                if (noProfile) return !['pregnancy', 'postpartum', 'breast'].includes(a.key);
+                if (noProfile) return !['pregnancy', 'postpartum', 'breast', 'menopause', 'fertility', 'temperature'].includes(a.key);
                 switch (a.key) {
                     case 'pregnancy': return pregnant || ttc || /pregnan|prenatal/.test(needs);
                     case 'postpartum': return postpartum;
@@ -2244,7 +2244,7 @@ export default function MyEcosystem({
                     {/* Same order as the page; the section you're in is underlined. */}
                     {[
                         visibleAreaGroups.length > 0 && ['eco3-shelves-title', 'Shelves'],
-                        !ecoQueryTrimmed && visualShelves.length > 0 && ['eco3-needs-title', 'Fill the gaps'],
+                        !ecoQueryTrimmed && visualShelves.length > 0 && ['eco3-needs-title', 'Symptom support'],
                         ['eco3-tools-title', 'Tools'],
                         ['ayna-wishlist', 'Saved'],
                     ].filter(Boolean).map(([id, label]) => (
@@ -2373,8 +2373,8 @@ export default function MyEcosystem({
                         <details className="ub-fold" ref={gapsFoldRef}>
                         <summary>
                             <span className="ub-fold__text">
-                                <h2 className="eco3-shelves__title ay-h2" id="eco3-needs-title">Fill the gaps</h2>
-                                <span className="ub-fold__line">{visualShelves.length} {visualShelves.length === 1 ? 'area' : 'areas'} to explore for symptom comfort{gapPhotos.length ? ' · best picks for each' : ''}</span>
+                                <h2 className="eco3-shelves__title ay-h2" id="eco3-needs-title">Symptom support & comfort</h2>
+                                <span className="ub-fold__line">{visualShelves.length} {visualShelves.length === 1 ? 'area' : 'areas'} to explore for symptom comfort{gapPhotos.length ? ' · products and tools to explore' : ''}</span>
                             </span>
                             {gapPhotos.length > 0 && <span className="ub-fold__plates" aria-hidden="true">{gapPhotos.map((p) => <Plate key={p.id} src={resolveCatalogProductImage(p) || ''} alt="" fallback={p.brand || p.name} className="ub-fold__plate" />)}</span>}
                             <span className="ub-fold__go"><span className="ub-fold__show">Show picks</span><span className="ub-fold__hide">Hide picks</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></span>
