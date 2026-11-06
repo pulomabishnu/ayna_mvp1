@@ -1158,7 +1158,8 @@ export default function MyEcosystem({
         const support = Array.isArray(intake.supportSelections) ? intake.supportSelections : [];
         const namedMenopause = stages.some((stage) => /^I am (?:in peri|in meno|post-meno)/i.test(String(stage)))
             || support.includes('Menopause-related body changes');
-        const hasVasomotor = support.some((s) => s === 'Hot flashes' || s === 'Night sweats');
+        const hasVasomotor = support.some((s) => s === 'Hot flashes' || s === 'Night sweats')
+            || (Array.isArray(intake.symptoms) && intake.symptoms.some((s) => /hot flash|hot flush|night sweat/i.test(String(s))));
         myProductList.forEach((p) => {
             const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
             // Preserve saved products, but do not label their shelf as a life
