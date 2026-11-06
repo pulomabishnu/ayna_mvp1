@@ -3,6 +3,8 @@
 // (src/components/WebIntake.jsx), so both always ask the same questions and
 // save the same answers. Change questions here, not in either screen.
 import { normalizeAge, normalizeLifeStages, selectLifeStage } from '../../utils/intakeSelections.js';
+import { needsVasomotorTiming } from '../../matching/vasomotorContext.js';
+export { VASOMOTOR_TIMING_OPTIONS, toggleVasomotorTiming, needsVasomotorTiming } from '../../matching/vasomotorContext.js';
 
 export const SUPPORT_GROUPS = [
   {
@@ -257,7 +259,7 @@ export const STOP_REASONS = [
 
 export const EMPTY = {
   age: '', lifeStage: '', lifeStageSelections: [], lifeStageOther: '', zipcode: '',
-  supportSelections: [], supportOtherText: '',
+  supportSelections: [], supportOtherText: '', vasomotorTimingSelections: [],
   periodFlow: '', periodPain: '', utiFrequency: '', ttcDuration: '', postpartumTiming: '',
   pregnancyTrimester: '', breastfeedingStatus: '', perimenopauseLastPeriod: '',
   diagnosisSelections: [], conditionOtherText: '',
@@ -287,7 +289,7 @@ export const EMPTY = {
 export const FSA_HSA_REVERSE = { fsa: 'FSA', hsa: 'HSA', both: 'Both', none: 'No', unsure: 'Not sure' };
 export const RESUMABLE_PASSTHROUGH_FIELDS = [
   'age', 'lifeStage', 'lifeStageSelections', 'lifeStageOther', 'zipcode',
-  'supportSelections', 'supportOtherText',
+  'supportSelections', 'supportOtherText', 'vasomotorTimingSelections',
   'periodFlow', 'periodPain', 'utiFrequency', 'ttcDuration', 'postpartumTiming', 'pregnancyTrimester',
   'breastfeedingStatus', 'perimenopauseLastPeriod',
   'diagnosisSelections', 'conditionOtherText',
@@ -668,6 +670,8 @@ export function buildSnapshot(intake) {
     lifeStageOther: [...new Set([...customLifeStages, intake.lifeStageOther.trim()].filter(Boolean))].join('; '),
     supportSelections: intake.supportSelections,
     supportOtherText: customConcerns.join('; '),
+    // Only explicit timing answers. Never derive menopause from hot flashes.
+    vasomotorTimingSelections: needsVasomotorTiming(intake) ? [...new Set(intake.vasomotorTimingSelections || [])] : [],
     primaryConcerns,
     customConcerns,
     concernFollowups: {},
@@ -867,6 +871,7 @@ export function getAnswerStates(intake) {
   put('zip', isValidUsZip(intake.zipcode) ? 'answered' : null);
   const support = intake.supportSelections || [];
   put('support', support.length === 1 && support[0] === 'Nothing right now' ? 'explicit_no' : isStepAnswered('support', intake) ? 'answered' : null);
+  out.vasomotorTiming = needsVasomotorTiming(intake) ? (filled(intake.vasomotorTimingSelections) ? 'answered' : 'skipped') : 'not_asked';
   put('periodFlow', singleAnswerState(intake.periodFlow));
   put('periodPain', singleAnswerState(intake.periodPain, { no: ['None'] }));
   put('ttcDuration', singleAnswerState(intake.ttcDuration, { no: ['Not trying yet'] }));
