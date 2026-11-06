@@ -13,6 +13,7 @@ import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import '../../styles/onboarding.css';
 import './ReadyReveal.css';
 import { eventSurface, trackFirstMatchShown } from '../../utils/analyticsEvents.js';
+import { groupRevealRows } from './revealGroups.js';
 
 /**
  * The first personalized reveal (UX spec section 5), app and website.
@@ -66,7 +67,7 @@ function perNeed(answers) {
   try {
     const { shelves = [], careFlags = null } = getEcosystemSeedFromQuiz(answers);
     const seen = new Set();
-    const rows = shelves.map((sh) => {
+    const detailRows = shelves.map((sh) => {
       const all = (sh.productIds || []).map((id) => getProductById(id)).filter((p) => p && showableAsPick(p, answers));
       all.forEach((p) => seen.add(p.id));
       // Nov 5 (founder): services (telehealth, apps, memberships) sit apart from products.
@@ -82,8 +83,12 @@ function perNeed(answers) {
           : 'Held back for now: we can’t confirm these are safe for what you told us.';
       // Nov 5: an empty shelf that is empty on purpose (pregnancy, bleeding after menopause) says why.
       const why = all.length ? '' : sh.emptyReason === 'care_first' ? 'Best checked by a clinician, not a product.' : sh.emptyReason === 'clinician_first_for_stage' ? sh.qualityNote || '' : '';
-      return { id: sh.needId, label: sh.label, products, services, held, needsAnswers, heldWhy, why, careFirst: !all.length && sh.emptyReason === 'care_first' };
+      const scoreByProduct = Object.fromEntries((sh.picks || []).map((p) => [p.productId, p.score]));
+      return { id: sh.needId, label: sh.label, products, services, held, needsAnswers, heldWhy, why, scoreByProduct, careFirst: !all.length && sh.emptyReason === 'care_first' };
     });
+    // Display broad wellbeing areas; the engine still evaluates every original
+    // symptom and every safety decision separately. Never group PMDD or care-first.
+    const rows = groupRevealRows(detailRows);
     // Nov 4: one "check with a clinician" line when a need she picked calls for it (spotting, UTI now, severe pain).
     const notes = careFlags?.notes || [];
     // Nov 5 (founder: the warning took too much space): the short line when there is one.
@@ -251,17 +256,19 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                       <em className={r.products.length || r.services.length ? '' : 'is-none'}>{status}</em>
                     </span>
                     <b className="ay-deck__title">{r.label}</b>
+                    {r.sourceLabels?.length > 0 && <small className="ay-deck__focus">You selected: {r.sourceLabels.join(' · ')}</small>}
                     {r.products.length > 0
                       ? <ol className="ay-ob-picks">{r.products.slice(0, 3).map((p) => {
-                        const pct = pctFor(p);
+                        const pct = shownMatchPercent(r.scoreByProduct?.[p.id] ?? pctFor(p));
                         const price = shownPriceText(formatPrice(p).main);
                         return <li key={p.id}>
                           <MatchPlate product={p} src={safeProductImageSrc(p.image || p.imageUrl || p.images?.[0], p.type === 'digital')} />
-                          <span className="ay-ob-picks__text"><b>{p.name}</b><small>{[p.brand, price].filter(Boolean).join(' · ')}</small></span>
+                          <span className="ay-ob-picks__text"><b>{p.name}</b><small>{[p.brand, price].filter(Boolean).join(' · ')}</small>{r.fitLabelsByProduct?.[p.id]?.length > 0 && <small className="ay-deck__picked-for">For: {r.fitLabelsByProduct[p.id].join(' · ')}</small>}</span>
                           {pct != null && <em className="ay-ob-picks__pct">{pct}%</em>}
                         </li>;
                       })}{r.products.length > 3 && <li className="ay-deck__more">+{r.products.length - 3} more in your list</li>}</ol>
-                      : <small className="ay-deck__empty">{r.careFirst && bleeding ? <>Bleeding after menopause should be checked promptly by an ob-gyn or your clinician. We don’t suggest products for it. {bleeding.source?.url && <a href={bleeding.source.url} target="_blank" rel="noopener noreferrer">{bleeding.source.label || 'Source'}</a>}</> : r.id === careOnCard ? careNote : r.services.length ? <>No products for this yet. {r.services.length === 1 ? 'A service fits it' : `${r.services.length} services fit it`}: <button type="button" className="ay-deck__link" onClick={(e) => { e.stopPropagation(); setTab('services'); }}>see services</button></> : r.held ? r.heldWhy : r.why || 'Nothing is backed well enough to recommend yet. You can still see every option for it in Shop.'}</small>}
+                      : <small className="ay-deck__empty">{r.careFirst && bleeding ? <>Bleeding after menopause should be checked promptly by an ob-gyn or your clinician. We don’t suggest products for it. {bleeding.source?.url && <a href={bleeding.source.url} target="_blank" rel="noopener noreferrer">{bleeding.source.label || 'Source'}</a>}</> : r.id === careOnCard ? careNote : r.services.length ? <>No products for this yet. {r.services.length === 1 ? 'A service fits it' : `${r.services.length} services fit it`}: <button type="button" className="ay-deck__link" onClick={(e) => { e.stopPropagation(); setTab('services'); }}>see services</button></> : r.held ? r.heldWhy : r.why || 'No personalized product picks cleared the fit and safety checks for this area yet. You can still explore the category in Shop.'}</small>}
+                    {r.limitedLabels?.length > 0 && (r.products.length > 0 || r.services.length > 0) && <small className="ay-deck__limitation">More options for {r.limitedLabels.join(', ')} need safety details.</small>}
                   </li>
                 );
               })}
