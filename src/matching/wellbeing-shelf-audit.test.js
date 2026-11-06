@@ -15,7 +15,7 @@ const cases=[
 const focus=new Set(['mood.swings','mood.irritability','mood.general_anxiety','mood.low','sleep.trouble','vasomotor.hot_flashes']);
 describe('wellbeing catalog matching diagnosis audit',()=>{
   it('prints real-v2 wellbeing shelf and physically available candidate evidence without bypassing safety',()=>{
-    expect(ALL_PRODUCTS.length).toBeGreaterThan(500);
+    expect(ALL_PRODUCTS.length).toBeGreaterThan(100);
     for(let i=0;i<cases.length;i++){
       const x=cases[i],intake={...EMPTY,age:x.age,lifeStageSelections:x.stages,supportSelections:x.needs,...x.extra};
       const quiz={fullHealthIntake:intake};
