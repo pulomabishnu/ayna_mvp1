@@ -47,6 +47,24 @@ describe('main tabs (founder, Oct 24 2026)', () => {
     expect(vercel.redirects[i].destination).toBe('/home');
     expect(i).toBeLessThan(j);
   });
+  it('keeps the original falling app widgets visible on the public landing', () => {
+    const landing = fs.readFileSync(new URL('../landing/WebLanding.jsx', import.meta.url), 'utf8');
+    const css = fs.readFileSync(new URL('../landing/web-landing.css', import.meta.url), 'utf8');
+    expect(landing).toContain('<Rain cols={4} onInk className="wl-rain" />');
+    expect(css).toContain('.wl-hero .lk-w { display: grid !important; }');
+    expect(css).not.toContain('.wl-hero .lk-w { display: none !important; }');
+    expect(css).not.toContain('.wl-rain { z-index: -2;');
+    expect(css).toContain('.wl-rain { z-index: 0;');
+    expect(css).toContain('.wl-hero__in { z-index: 1;');
+  });
+  it('preserves the original app wave and compact rundown on web Home', () => {
+    const hero = fs.readFileSync(new URL('../../mobile/components/HomeHero.jsx', import.meta.url), 'utf8');
+    const homeCss = fs.readFileSync(new URL('../you/web-home-top.css', import.meta.url), 'utf8');
+    const rundownCss = fs.readFileSync(new URL('../rundown/rundown.css', import.meta.url), 'utf8');
+    expect(hero).toContain('<HomeWaveEdge />');
+    expect(homeCss).toContain('.wht__today .ay-fdeck__top .ay-today__kicker');
+    expect(rundownCss).toContain('html body .app-container .wht');
+  });
   it('maps moved pages to their old address for analytics', () => {
     expect(legacyPathFor('/explore/products')).toBe('/shop');
     expect(legacyPathFor('/explore/resources/')).toBe('/library');

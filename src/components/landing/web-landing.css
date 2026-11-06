@@ -17,7 +17,7 @@
 .app-container .hm.wl .wl-edge path { fill: #3e2723 !important; }
 /* the rain: a see-through layer around the edges (each item carries its own
    opacity, kit), kept clear of the copy by where the columns sit */
-.app-container .hm.wl .wl-rain { z-index: -2; --lk-gap: 0px; --lk-colgap: 28px; --lk-pad: clamp(16px, 3vw, 48px); --lk-slot: 150px; --lk-prod-max: 124px; }
+.app-container .hm.wl .wl-rain { z-index: 0; --lk-gap: 0px; --lk-colgap: 28px; --lk-pad: clamp(16px, 3vw, 48px); --lk-slot: 150px; --lk-prod-max: 124px; }
 @media (min-width: 900px) { .app-container .hm.wl .wl-rain { --lk-slot: 172px; } }
 
 /* phones: the rain is a strip of its own above the words (never behind them) */
@@ -37,7 +37,7 @@
   .app-container .hm.wl .wl-rain .lk-rain__col:nth-child(4) { grid-column: 5; }
 }
 
-.app-container .hm.wl .wl-hero__in { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 560px; text-align: center; }
+.app-container .hm.wl .wl-hero__in { z-index: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 560px; text-align: center; }
 /* (the id and repeated class beat the site's global main h1 size rule) */
 html body .app-container #ay-landing.wl.hm .wl-title.wl-title.wl-title.wl-title { margin: 0; font: 800 clamp(40px, 11vw, 44px)/1.02 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.03em !important; color: #ffedac !important; text-transform: none; max-width: none; }
 .app-container.app-container .hm.wl .wl-title > span { display: block; }
@@ -341,8 +341,9 @@ html body .app-container #ay-landing.wl .lp-rc__in { display: grid; gap: 40px; }
 
 /* Nov 4 de-box pass (founder: "it's just boxes, overcrowded, vibe coded"). Editorial rules instead
    of filled cards: type, white product plates and thin espresso lines carry the structure. */
-/* Hero: product photos only, no decorative dots, rings or chips. */
-html body #ay-landing.wl .wl-hero .lk-w { display: none !important; }
+/* Restore the original falling mini widgets (Cycle, Sleep, streak, match, Ask ayna)
+   alongside the catalog packshots. The hero copy stays above the animation. */
+html body #ay-landing.wl .wl-hero .lk-w { display: grid !important; }
 /* How ayna works: a plain numbered list; the step playing gets the pink number. */
 html body #ay-landing.wl .hd-steps > li, html body #ay-landing.wl .hd-steps > li.is-on { background: transparent !important; box-shadow: none !important; border: 0 !important; border-top: 1px solid rgba(62, 39, 35, .16) !important; border-radius: 0 !important; }
 html body #ay-landing.wl .hd-steps > li:last-child { border-bottom: 1px solid rgba(62, 39, 35, .16) !important; }
