@@ -9,7 +9,7 @@ export default function TermsOfUse({ onBack, backLabel }) {
     return () => clearTimeout(t);
   }, []);
   return (
-    <EdPage title="Terms of use" crumb="Terms" updated="Last updated October 19, 2026" onBack={onBack} backLabel={backLabel} toc glance bandLabel="In short" band={<div className="uq-legal-intro">
+    <EdPage title="Terms of use" crumb="Terms" updated="Last updated November 6, 2026" onBack={onBack} backLabel={backLabel} toc glance bandLabel="In short" band={<div className="uq-legal-intro">
         <p>
           These Terms govern your use of www.aynahealth.co and related ayna services (the “Services”). The Services are currently operated by Ayna Health, Inc., doing business as ayna (“ayna,” “we,” “us,” or “our”). By using the Services, you agree to these Terms and our Privacy Policy.
         </p>
@@ -74,9 +74,15 @@ export default function TermsOfUse({ onBack, backLabel }) {
         </section>
 
         <section>
-          <h2>8. No current paid ayna subscription</h2>
+          <h2>8. ayna Pro Early Access and automatic renewal</h2>
           <p>
-            The current website does not offer an automatically renewing paid ayna subscription and does not process payment cards for an ayna membership. If paid features are introduced, the applicable price, billing terms, cancellation terms, and payment provider will be disclosed before purchase and these Terms will be updated as needed.
+            ayna Pro is an optional subscription purchased through Stripe Checkout. Early Access costs $4.99 for the first month or $45 for the first year, charged when you subscribe. Pro access unlocks immediately and is included through January 31, 2027, including ayna's full January launch. Your purchased month or year starts February 1, 2027, without using up that term during Early Access.
+          </p>
+          <p>
+            Unless you cancel automatic renewal, the monthly subscription first renews March 1, 2027 at $8.99 per month and the yearly subscription first renews February 1, 2028 at $90 per year. The subsequent term renews at that regular rate and frequency. Cancellation of automatic renewal is available at <a href="/pro">ayna Pro account and billing</a>; when canceled, paid access continues through the end of the purchased period. Cancel before the applicable renewal date to avoid that charge. Any applicable taxes or payment details appear during checkout.
+          </p>
+          <p>
+            Stripe processes payment-card details; ayna uses subscription and payment-status records to grant access. The current offer and cancellation instructions are available at <a href="/pro">/pro</a> before purchase and in your account after purchase.
           </p>
         </section>
 
