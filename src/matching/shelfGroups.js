@@ -86,7 +86,7 @@ export function withoutInferredMenopauseSections(sections,quiz){
  * menopause-targeted supplements as their new personalized mood/heat picks. */
 export function outdatedAutoMenopauseProduct(p,quiz){
   if(!p||hasExplicitMenopauseContext(quiz)||p.userAdded)return false;
-  if(!p.llmGenerated&&!p.intakeGenerated)return false;
+  if(!p.llmGenerated&&!p.intakeGenerated&&!p._llmConcern)return false;
   const category=String(p.category||'').toLowerCase();
   const hf=Array.isArray(p.healthFunctions)?p.healthFunctions:[];
   const oldConcern=String(p._llmConcern||'').toLowerCase();
