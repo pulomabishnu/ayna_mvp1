@@ -201,8 +201,16 @@ const NOV5_MAP = {
   'p-panic-panties-no-show-bikini-cut-single-2-pack-no-show-bikini-cut': { 'vaginal.discharge': SECONDARY, 'period.light': ADJACENT },
   'p-pantibiotic-pantibiotic-wearable-intimate-hygiene-underwear-worn-wit': { 'vaginal.odor': ADJACENT, 'vaginal.discharge': ADJACENT },
   'p-megelin-megelin-red-light-therapy-for-intimate-area-wellness': { 'sexual.wellness': WEAK },
-  'p-komuso-classic-shift-anxiety-breathing-necklace': { 'mood.general_anxiety': ADJACENT },
-  'p-heartmath-inner-balance-coherence-plus-with-heartmath-app': { 'mood.general_anxiety': ADJACENT },
+  'p-komuso-classic-shift-anxiety-breathing-necklace': { 'mood.general_anxiety': STRONG },
+  'p-heartmath-inner-balance-coherence-plus-with-heartmath-app': { 'mood.general_anxiety': STRONG },
+  'p-calmigo-device': { 'mood.general_anxiety': STRONG },
+  // The stretch waistband supports comfort during period bloating; it does not reduce bloating.
+  'p-pixie-cup-bloatfit-period-underwear': { 'bloating.cycle_related': STRONG },
+  // ACOG says magnesium may help PMS water retention; this is plain magnesium,
+  // not a claim that it addresses digestive gas or cures the cause of bloating.
+  'p-magnesium-glycinate': { 'bloating.cycle_related': SECONDARY },
+  // The brand markets these ginger drops for occasional queasiness beyond pregnancy.
+  'p-tummy-drops-organic-ginger-tummydrops-33-ct': { 'digestive.nausea': STRONG },
   'p-lief-smart-patch': { 'mood.general_anxiety': ADJACENT },
   'p-flare-audio-calmer': { 'mood.general_anxiety': WEAK },
   'p-intelligent-change-the-five-minute-journal': { 'mood.low': WEAK, 'mood.general_anxiety': WEAK },
@@ -959,6 +967,10 @@ function ageFor(product, f, text) {
   const max = num(product.maxAge ?? product.maximumAge ?? product.ageMax);
   if (Number.isFinite(min)) { out.minimum = min; out.source = 'catalog field'; }
   if (Number.isFinite(max)) { out.maximum = max; out.source = 'catalog field'; }
+  // Hormona explicitly describes this perimenopause kit as suitable for women 40+.
+  if (product.id === 'p-hormona-perimenopause-test-kit-app' && (out.minimum == null || out.minimum < 40)) {
+    out.minimum = 40; out.source = 'Hormona product page';
+  }
   const under = text.match(/not (intended )?for children under (\d{1,2})/);
   if (under && out.minimum == null) { out.minimum = Number(under[2]); out.source = 'catalog text'; }
   const policy = AGE_POLICY[f.cat];
