@@ -40,7 +40,7 @@ import { getCareResourceBundle } from './careResources.js';
 import { withImageOverride } from './productImageOverrides.js';
 import { applyCatalogEvidence } from './catalogEvidence.js';
 import { productRouteKey, productSlug } from '../utils/productRoute.js';
-import { provideCatalog } from './catalogRegistry.js';
+import { provideCatalog, refreshCatalog } from './catalogRegistry.js';
 import { HEALTH_FUNCTIONS, CATEGORY_LABELS, MACRO_GROUPS, BROWSE_GROUPS, browseGroupIdFor, productSearchText, itemMatchesMacroGroup } from './catalogTaxonomy.js';
 export { HEALTH_FUNCTIONS, CATEGORY_LABELS, MACRO_GROUPS, BROWSE_GROUPS, browseGroupIdFor, productSearchText, itemMatchesMacroGroup };
 import { rawIntakeFromProfile, asStringArray, hasStatedLifeStage, matchEngine } from './profileSignals.js';
@@ -927,7 +927,20 @@ export const CATALOG_PRODUCTS = [
     .filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id))
     .map(withImageOverride);
 
-export const ALL_PRODUCTS = CATALOG_PRODUCTS.filter((p) => !p.hidden);
+const BUNDLED_PRODUCTS = CATALOG_PRODUCTS.filter((p) => !p.hidden);
+export let ALL_PRODUCTS = BUNDLED_PRODUCTS;
+
+/** The public live catalog is the same universe used by Shop and the API. */
+export function adoptLiveCatalog(products) {
+    if (!Array.isArray(products) || !products.length) return;
+    const byId = new Map(BUNDLED_PRODUCTS.map((p) => [p.id, p]));
+    for (const p of products) if (p?.id && p?.name && !p.hidden) byId.set(p.id, p);
+    ALL_PRODUCTS = [...byId.values()];
+    productByIdIndex = null;
+    productByRouteIndex = null;
+    _telehealthCatalog = null;
+    refreshCatalog(ALL_PRODUCTS);
+}
 
 /** Drugstore basics (basicsProducts.js), listed after other picks on Home. */
 export const BASICS_PRODUCT_IDS = new Set(BASICS_PRODUCTS.map((p) => p.id));
