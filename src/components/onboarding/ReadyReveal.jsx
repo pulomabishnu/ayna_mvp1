@@ -67,10 +67,16 @@ function perNeed(answers) {
   if (!answers) return { rows: [], total: 0, careNote: '' };
   try {
     const { shelves = [], careFlags = null } = getEcosystemSeedFromQuiz(answers);
-    const seen = new Set();
+    const ranked = getRecommendationMatchesAndRest(answers).matches || [];
     const rows = shelves.map((sh) => {
-      const all = (sh.productIds || []).map((id) => getProductById(id)).filter((p) => p && showableAsPick(p, answers));
-      all.forEach((p) => seen.add(p.id));
+      const seeded = (sh.productIds || []).map((id) => getProductById(id)).filter((p) => p && showableAsPick(p, answers));
+      const extra = ranked.filter((p) => {
+        if (!p || seeded.some((item) => item.id === p.id) || !showableAsPick(p, answers)) return false;
+        const d = getProductMatchDetailsForProduct(p, answers);
+        return !isSafetyHold(d) && !isBleedingEvaluation(d)
+          && d?.needMatches?.some((match) => match.needId === sh.needId && match.relevant && match.score >= 50);
+      }).sort((a, b) => Number(a.type === 'digital') - Number(b.type === 'digital'));
+      const all = [...seeded, ...extra].slice(0, 5);
       // Nov 5 (founder): services (telehealth, apps, memberships) sit apart from products.
       const products = all.filter((p) => p.type !== 'digital');
       const services = all.filter((p) => p.type === 'digital');
@@ -92,7 +98,9 @@ function perNeed(answers) {
     const first = CARE_LINE_CODES.map((c) => notes.find((n) => n.code === c)).find(Boolean);
     const careNote = first?.short || first?.text || '';
     const careNoteFor = first?.code === 'pregnancy_constipation' ? 'digestive.constipation' : null;
-    return { rows: groupRevealRows(rows), total: seen.size, careNote, careNoteFor };
+    const grouped = groupRevealRows(rows);
+    const total = new Set(grouped.flatMap((row) => [...row.products, ...row.services].map((p) => p.id))).size;
+    return { rows: grouped, total, careNote, careNoteFor };
   } catch {
     return { rows: [], total: 0, careNote: '' };
   }
@@ -118,7 +126,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   // Nov 4 (founder: "the extra questions didn't change my match"): say what changed. The
   // matches before the extra questions are kept for this tab only (ids, no answers).
   const changed = useMemo(() => {
-    const ids = rows.flatMap((r) => r.products.map((p) => p.id));
+    const ids = rows.flatMap((r) => [...r.products, ...r.services].map((p) => p.id));
     try {
       if (!prefsDone) { if (ids.length) sessionStorage.setItem('ayna:reveal-ids', JSON.stringify(ids)); return null; }
       const before = JSON.parse(sessionStorage.getItem('ayna:reveal-ids') || 'null');
@@ -210,9 +218,9 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                 {picks.length ? <ol className="ay-ob-picks">{picks.map((p) => {
                   const pct = pctFor(p);
                   const price = shownPriceText(formatPrice(p).main);
-                  return <li key={p.id}>
+                  return <li key={p.id} data-kind={p.type === 'digital' ? 'service' : 'product'}>
                     <MatchPlate product={p} src={safeProductImageSrc(p.image || p.imageUrl || p.images?.[0], p.type === 'digital')} />
-                    <span className="ay-ob-picks__text"><b>{p.name}</b><small>{[p.brand, price].filter(Boolean).join(' · ')}</small></span>
+                    <span className="ay-ob-picks__text"><b>{p.name}</b><small>{[p.type === 'digital' ? 'Service' : null, p.brand, price].filter(Boolean).join(' · ')}</small></span>
                     {pct != null && <em className="ay-ob-picks__pct">{pct}%</em>}
                   </li>;
                 })}</ol> : <small className="ay-deck__empty">{r.careFirst && bleeding ? <>Bleeding after menopause should be checked promptly by an ob-gyn or your clinician. We don’t suggest products for it. {bleeding.source?.url && <a href={bleeding.source.url} target="_blank" rel="noopener noreferrer">{bleeding.source.label || 'Source'}</a>}</> : r.held ? r.heldWhy : r.why}</small>}
