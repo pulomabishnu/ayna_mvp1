@@ -706,6 +706,9 @@ export function resolveRelevance(pp, up, needId) {
 export function notMenstruatingBlock(rel, up, needId) {
   const m = up.physiology?.menstruation;
   if (!m || !(rel.base > 0)) return false;
+  // A period-bloating comfort claim needs a current cycle. Pregnancy or
+  // menopause bloating may be real, but it is a different support need.
+  if (m === 'none' && needId === 'bloating.cycle_related') return true;
   const rule = rel.contextUsed?.rule || rel.entry?.rule;
   // After menopause, a claim about a current cycle (PMS, cyclical breast
   // tenderness, conception) does not hold even for a need she picked.
