@@ -100,11 +100,6 @@ export function selectedConcerns(intake = {}) {
       ? profile.diagnosisSelections
       : (Array.isArray(intake.conditions) ? intake.conditions : []);
 
-  const rawMedications =
-    Array.isArray(profile?.currentMedicationItems) && profile.currentMedicationItems.length > 0
-      ? profile.currentMedicationItems
-      : (intake.currentMedications ? [intake.currentMedications] : []);
-
   const conditions = rawConditions.map(c => String(c).toLowerCase());
   const symptoms   = (Array.isArray(intake.symptoms) ? intake.symptoms : []).map(s => String(s).toLowerCase());
   const goals      = (Array.isArray(intake.goals) ? intake.goals : []).map(g => String(g).toLowerCase());
@@ -114,13 +109,13 @@ export function selectedConcerns(intake = {}) {
       ? profile.supportSelections.map(s => String(s).toLowerCase())
       : [];
 
+  // Only self-reported health concerns may create a concern track. Medicines
+  // and disliked products inform safety/preferences, not symptom inference.
   const allText = [
     ...conditions,
     ...symptoms,
     ...goals,
     ...supportSelections,
-    ...rawMedications,
-    String(intake.dislikedProductsText || ''),
   ].join(' ').toLowerCase();
   const has = (...terms) => terms.some(t => allText.includes(t));
   const hasConcern = (substr) => [...concerns].some(c => c.toLowerCase().includes(substr));
@@ -190,7 +185,8 @@ export function selectedConcerns(intake = {}) {
   // point too, otherwise the LLM silently reintroduces menopause products.
   const stages = Array.isArray(profile.lifeStageSelections) ? profile.lifeStageSelections : [];
   const explicitMenopause = stages.some(stage => /^(I am in perimenopause|I am in menopause|I am post-menopause)$/.test(String(stage)))
-    || supportSelections.includes('menopause-related body changes');
+    || supportSelections.includes('menopause-related body changes')
+    || goals.includes('manage perimenopause or menopause');
   const vasomotor = supportSelections.includes('hot flashes') || supportSelections.includes('night sweats')
     || symptoms.some(s => /hot flash|hot flush|night sweat/.test(s));
   if (vasomotor) concerns.add('Hot flashes and night sweats');
