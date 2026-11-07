@@ -522,6 +522,24 @@ describe('AI concern routing for period-related hot flashes', () => {
     const { supportCopy } = await import('./llm-recommendations.js');
     expect(supportCopy('This cures anxiety and diagnoses menopause.')).toBe('An option for symptom support or comfort; individual experiences vary.');
   });
+  it('honors a menopause goal the user explicitly selected alongside hot flashes', async () => {
+    const { selectedConcerns } = await import('./llm-recommendations.js');
+    const concerns = selectedConcerns({
+      goals: ['manage perimenopause or menopause'],
+      fullHealthIntake: { lifeStageSelections: ['I get periods regularly'], supportSelections: ['Hot flashes'] },
+    });
+    expect(concerns).toContain('Perimenopause and menopause support');
+    expect(concerns).toContain('Hot flashes and night sweats');
+  });
+  it('does not turn medication or disliked-product names into health concerns', async () => {
+    const { selectedConcerns } = await import('./llm-recommendations.js');
+    const concerns = selectedConcerns({
+      currentMedications: 'fertility medication',
+      dislikedProductsText: 'I disliked a vaginal moisturizer',
+      fullHealthIntake: { lifeStageSelections: ['I get periods regularly'], supportSelections: ['Hot flashes'] },
+    });
+    expect(concerns).toEqual(['Hot flashes and night sweats']);
+  });
 });
 
 // P0, Nov 2: one gate everywhere. A product on a safety hold used to reach
