@@ -7,6 +7,8 @@ import ReadyReveal from './ReadyReveal.jsx';
 const live = [
   { id: 'p-pixie-cup-bloatfit-period-underwear', name: 'Pixie Cup BloatFit Period Underwear', brand: 'Pixie Cup', category: 'period-underwear', type: 'physical', tags: ['period underwear', 'period care'], healthFunctions: ['period-care'], whereToBuy: ['Brand site'], url: 'https://itspixie.com/products/bloatfit-period-underwear', summary: 'Washable leakproof period underwear with a flexible waistband for bloated days.' },
   { id: 'p-tummy-drops-organic-ginger-tummydrops-33-ct', name: 'Tummy Drops Organic Ginger Tummydrops, 33 ct', brand: 'Tummy Drops', category: 'pregnancy', type: 'physical', tags: ['ginger', 'nausea', 'lozenge'], healthFunctions: ['pregnancy', 'gut'], whereToBuy: ['Brand site'], url: 'https://www.tummydrops.com/products/sweet-pear-ginger-tummydrops-bag', summary: 'Ginger drops for occasional queasiness and motion sickness.' },
+  { id: 'p-calmigo-device', name: 'CalmiGo Device', brand: 'CalmiGo', category: 'mental-health', type: 'physical', tags: ['anxiety', 'breathing', 'stress relief'], healthFunctions: ['stress', 'mood'], whereToBuy: ['Brand site'], url: 'https://calmigo.com/', summary: 'Handheld device that guides slower breathing during moments of stress.' },
+  { id: 'p-heartmath-inner-balance-coherence-plus-with-heartmath-app', name: 'HeartMath Inner Balance Coherence Plus', brand: 'HeartMath', category: 'mental-health', type: 'physical', tags: ['stress', 'breathing', 'biofeedback'], healthFunctions: ['stress', 'mood'], whereToBuy: ['Brand site'], url: 'https://store.heartmath.com/innerbalance', summary: 'HRV biofeedback sensor and app for breathing practice and stress support.' },
 ];
 const intake = (age, stage) => ({ personalizationCompleted: true, fullHealthIntake: { personalizationCompleted: true, age: String(age), lifeStageSelections: [stage], supportSelections: ['Cycle-related bloating', 'Anxiety', 'Low mood', 'Nausea', 'Hormone-related symptoms', 'Hot flashes'], takesCurrent: 'No', allergyStatus: 'No', safetyConcern: 'No' } });
 
@@ -20,6 +22,9 @@ describe('reveal with the published catalog', () => {
     expect(html).toContain('Temperature &amp; sweating');
     expect(html).toContain('Pixie Cup BloatFit');
     expect(html).toContain('Tummy Drops');
+    expect(html).toContain('CalmiGo Device');
+    const mental = html.split('<h3>Mental wellbeing</h3>')[1].split('</ol>')[0];
+    expect((mental.match(/data-kind="product"/g) || []).length).toBeGreaterThan(1);
     expect(html).not.toContain('Perimenopause Test Kit');
     expect(html).not.toContain('None yet');
   });
