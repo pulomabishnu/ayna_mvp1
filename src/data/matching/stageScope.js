@@ -37,6 +37,8 @@ export const STAGE_SCOPE = {
   'd-midi-health': MENOPAUSE,
   'd-evernow': MENOPAUSE,
   'p-gennev-care': MENOPAUSE,
+  'p-hormona-perimenopause-test-kit-app': MENOPAUSE,
+  'p-proov-empower': MENOPAUSE,
   // Pregnancy-only body support
   'p-belly-bandit': PREGNANCY,
   'p-snoogle-pillow': PREGNANCY,
@@ -54,5 +56,7 @@ export const STAGE_SCOPE = {
 };
 
 export function stageScopeFor(productId) {
+  // This published Supabase listing is not part of the bundled fallback.
+  if (productId === 'p-everlywell-perimenopause-check') return MENOPAUSE;
   return productId ? STAGE_SCOPE[productId] || null : null;
 }

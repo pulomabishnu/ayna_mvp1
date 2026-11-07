@@ -69,6 +69,8 @@ export async function loadProductCatalog() {
 
   const cached = readCache();
   if (cached) {
+    const { adoptLiveCatalog } = await import('../data/products.js');
+    adoptLiveCatalog(cached);
     memo = { products: cached, source: 'cache' };
     return memo;
   }
@@ -84,6 +86,8 @@ export async function loadProductCatalog() {
       const data = await res.json();
       const products = Array.isArray(data?.products) ? data.products.map(applyCatalogCorrections) : [];
       if (!products.length) throw new Error('empty catalog');
+      const { adoptLiveCatalog } = await import('../data/products.js');
+      adoptLiveCatalog(products);
       writeCache(products);
       memo = { products, source: 'api' };
       return memo;
