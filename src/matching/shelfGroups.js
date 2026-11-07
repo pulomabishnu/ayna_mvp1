@@ -3,7 +3,7 @@
 export function symptomShelfGroup(needId) {
   if (String(needId).startsWith('mood.')) return { key: 'mental-wellbeing', label: 'Mental wellbeing' };
   if (String(needId).startsWith('vasomotor.')) return { key: 'temperature-sweating', label: 'Temperature & sweating' };
-  if (needId === 'bloating.cycle_related' || needId === 'cycle.pms' || needId === 'hormonal.general') return { key: 'period-pms', label: 'Period & PMS' };
+  if (needId === 'bloating.cycle_related' || needId === 'cycle.pms') return { key: 'period-pms', label: 'Period & PMS' };
   if (needId === 'digestive.nausea' || needId === 'bloating.digestive' || needId === 'digestive.gas') return { key: 'digestive-comfort', label: 'Digestive comfort' };
   return null;
 }
