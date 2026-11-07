@@ -5,6 +5,12 @@ const PACKSHOT_PENDING = new Set([
   // Founder's sheet (Nov 2): brand photos until packshots are shot.
   ...NOV_2026_PRODUCTS.map((p) => p.id),
   'p-heraure-hermag-magnesium',
+  // Official brand photos until local packshots are available for the verified
+  // comfort and breathing products added from the live catalog.
+  'p-embr-labs-embr-wave-2',
+  'p-bedjet-3-climate-comfort-sleep-system',
+  'p-cool-jams-women-s-nightcool-v-neck-nightshirt',
+  'p-komuso-classic-shift-anxiety-breathing-necklace',
   'p-tampontribe-organic-tampons',
   'p-tampontribe-organic-pads',
   'p-tampontribe-pantyliners-bulk-buy',

@@ -462,6 +462,13 @@ export const RELEVANCE_RULES = [
     // Nov 4: womenshealth.gov (PMS) says some women find meditation helpful for PMS mood, and to find
     // healthy ways to cope with stress, so mood swings and irritability are a secondary fit.
     set: (f) => ({ 'mood.general_anxiety': SECONDARY, 'mood.low': ADJACENT, 'mood.irritability': SECONDARY, 'mood.swings': SECONDARY, 'mood.cycle_related': SECONDARY, 'sleep.trouble': f.t(/sleep/) ? SECONDARY : ADJACENT }) },
+  // ACOG describes breathing and meditation as relaxation options for PMS.
+  // This links the practice to symptom support, not evidence for a particular
+  // app or necklace treating PMS or an anxiety disorder.
+  { id: 'breathing_practice', why: 'Offers a breathing exercise for stress support.',
+    when: (f) => f.cat === 'mental-health' && ['p-finch-self-care-pet', 'p-ten-percent-happier-happier-meditation-formerly-ten-percent-happier', 'p-komuso-classic-shift-anxiety-breathing-necklace'].includes(f.id)
+      && f.t(/breathing exercise|guided breathing|mindful breathing/),
+    set: { 'mood.general_anxiety': STRONG, 'mood.irritability': STRONG, 'mood.cycle_related': SECONDARY, 'cycle.pms': STRONG } },
   { id: 'community_app', why: 'Peer community app.',
     when: (f) => f.cat === 'mental-health' && f.t(/community|friends/),
     set: { 'mood.low': ADJACENT, 'pregnancy.prenatal': ADJACENT, 'postpartum.recovery': ADJACENT, 'fertility.ttc': ADJACENT, 'menopause.body_changes': ADJACENT } },
