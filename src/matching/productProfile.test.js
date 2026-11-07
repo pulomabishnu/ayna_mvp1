@@ -54,6 +54,30 @@ describe('relevance rule table', () => {
     expect(rel('p-zinc', 'pain.menstrual_cramp')).toBe(0);
   });
 
+  it('does not treat aromatherapy as therapy or CBT for anxiety and low mood', () => {
+    const diffuser = buildProductProfile({
+      id: 'x-aura-cacia-diffuser', name: 'Aromatherapy Room Diffuser',
+      category: 'mental-health', type: 'physical',
+      summary: 'A room diffuser that spreads scent from essential-oil-soaked pads. Research on aromatherapy for stress and sleep is unclear.',
+      tags: ['aromatherapy', 'diffuser', 'relaxation'], healthFunctions: ['stress', 'sleep'],
+    });
+    expect(diffuser.matched_rules).not.toContain('therapy_app');
+    expect(diffuser.health_need_relevance['mood.general_anxiety']).toBeUndefined();
+    expect(diffuser.health_need_relevance['mood.low']).toBeUndefined();
+    expect(prof('d-bloom').matched_rules).toContain('therapy_app');
+  });
+
+  it('does not treat a cooling eye mask as night-sweat support', () => {
+    const mask = buildProductProfile({
+      id: 'x-cooling-eye-mask', name: 'Cooling Sleep Mask', category: 'sleep', type: 'physical',
+      summary: 'Freezable eye cups hold cold over the eyes and forehead for comfort.',
+      tags: ['cooling eye mask', 'sleep mask'], healthFunctions: ['sleep'],
+    });
+    expect(mask.matched_rules).not.toContain('cooling_sleep');
+    expect(mask.health_need_relevance['vasomotor.night_sweats']).toBeUndefined();
+    expect(prof('p-bedjet-3-climate-comfort-sleep-system').matched_rules).toContain('cooling_sleep');
+  });
+
   it('accessories never rank above secondary', () => {
     expect(rel('p-sootheher-gel-pad-refills', 'pain.menstrual_cramp')).toBe(0.55);
   });

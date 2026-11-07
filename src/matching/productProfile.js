@@ -455,7 +455,9 @@ export const RELEVANCE_RULES = [
 
   // ── Mental health and sleep ────────────────────────────────────────────
   { id: 'therapy_app', why: 'Therapy or CBT program.',
-    when: (f) => f.cat === 'mental-health' && f.t(/therap|\bcbt\b|counsel/),
+    // Match the care practice as a word. "Aromatherapy" is a scent product,
+    // not a therapy/CBT service for anxiety or low mood.
+    when: (f) => f.cat === 'mental-health' && f.t(/\b(?:therap(?:y|ies|ist|eutic)|cbt|counsel(?:ing|ling|or)?)\b/),
     set: { 'mood.general_anxiety': STRONG, 'mood.low': STRONG, 'mood.irritability': SECONDARY, 'mood.swings': SECONDARY, 'mood.pmdd': ADJACENT, 'mood.cycle_related': ADJACENT, 'care.telehealth': SECONDARY } },
   { id: 'meditation_app', why: 'Meditation and relaxation app.',
     when: (f) => f.cat === 'mental-health' && f.t(/meditat|mindful|sleep stor/),
@@ -481,7 +483,9 @@ export const RELEVANCE_RULES = [
   // is cooling addresses them directly, whatever their cause; no life stage
   // is needed. Menopause positioning only adds the context bonus.
   { id: 'cooling_sleep', why: 'Actively cools the bed at night, which directly targets nighttime heat and sweating.',
-    when: (f) => f.cat === 'sleep' && f.t(/\bcool(s|ing)?\b/) && f.t(/heats? and cools?|temperature|cooling/),
+    // A cold eye mask belongs to headache/eye comfort, not a strong match for
+    // whole-body night sweats merely because its category is sleep.
+    when: (f) => f.cat === 'sleep' && f.t(/\bcool(s|ing)?\b/) && f.t(/\b(?:night sweats?|hot sleepers?|bed(?:room|side)?|mattress|sleepwear|nightshirt)\b/),
     set: { 'vasomotor.night_sweats': STRONG, 'vasomotor.hot_flashes': ADJACENT } },
   { id: 'cooling_product', why: 'A cooling product made for hot flashes or night sweats.',
     when: (f) => f.cat !== 'sleep' && f.t(/\bcool(s|ing)?\b/) && f.t(/hot flash|night sweat/) && !f.t(/supplement|capsule|tablet/),
