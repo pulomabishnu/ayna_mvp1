@@ -210,7 +210,10 @@ describe('distribution across needs stays stable', () => {
     // matches from non-menopausal personas. Those product slots no longer
     // enter this broad scored-population mean; protect against drift without
     // treating the old population's exact distribution as a clinical rule.
-    expect(Math.abs(mean(other) - 54.4)).toBeLessThanOrEqual(2.0);
+    // Six manufacturer-verified comfort and wellbeing listings joined the
+    // scored population with cautious draft evidence grades. Keep the broad
+    // drift guard while allowing that deliberate population change.
+    expect(Math.abs(mean(other) - 54.4)).toBeLessThanOrEqual(2.5);
     expect(other.filter((x) => x >= 99).length / other.length).toBeLessThanOrEqual(0.02);
   });
   it('period products: no longer saturated at 99', () => {
