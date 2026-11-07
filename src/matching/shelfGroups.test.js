@@ -27,4 +27,7 @@ describe('symptom shelf presentation', () => {
     expect(groups[0].products).toEqual([product]);
     expect(groups[1].services).toEqual([service]);
   });
+  it('keeps a generic hormone concern separate from period and menopause labels', () => {
+    expect(groupSymptomShelves([{ needId: 'hormonal.general', label: 'Hormone-related symptoms', productIds: [] }])[0].label).toBe('Hormone-related symptoms');
+  });
 });
