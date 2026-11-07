@@ -1,3 +1,15 @@
+/* All qualified options stay visible in grouped shelves on the reveal. */
+.ay-reveal-shelves { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.ay-reveal-shelf { padding: 20px; border-radius: 22px; background: #f7badd; color: #3e2723; }
+.ay-reveal-shelf:nth-child(3n + 2) { background: #ffedac; }
+.ay-reveal-shelf__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.ay-reveal-shelf__head h3 { margin: 0; font: 800 24px/1.15 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); }
+.ay-reveal-shelf__head span { flex: none; font: 700 13px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ay-reveal-shelf .ay-ob-picks { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ay-reveal-shelf .ay-ob-picks > li { display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid rgba(62, 39, 35, .2); }
+.ay-reveal-shelf .ay-ob-picks__text { min-width: 0; }
+.ay-reveal-shelf .ay-ob-picks__pct { font-style: normal; }
+
 /* "Your first matches" on the reveal (ReadyReveal.jsx). The reveal sits on
    espresso; each match is a butter row with the product on a white plate. */
 :is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-matches { display: grid; gap: 10px; margin: 8px 0 0; }
