@@ -12,6 +12,7 @@ const live = [
   { id: 'p-frida-mom-anti-nausea-bands', name: 'Frida Mom Anti-Nausea Bands', brand: 'Frida Mom', category: 'pregnancy', type: 'physical', tags: ['morning sickness', 'nausea', 'acupressure', 'drug-free', 'wristband'], healthFunctions: ['pregnancy'], whereToBuy: ['Brand site'], url: 'https://frida.com/products/anti-nausea-bands', summary: 'Adjustable wristbands that press the P6 point for pregnancy nausea comfort.' },
   { id: 'p-sea-band-mama-band-value-pack', name: 'Sea-Band Mama Band Value Pack', brand: 'Sea-Band', category: 'pregnancy', type: 'physical', tags: ['morning sickness', 'nausea', 'acupressure', 'drug-free', 'wristband'], healthFunctions: ['pregnancy'], whereToBuy: ['Brand site'], url: 'https://sea-band.com/collections/homepage/products/mama-band-value-pack', summary: 'P6 acupressure wristbands made for pregnancy nausea support.' },
   { id: 'p-theraice-headache-hat', name: 'TheraICE Headache Hat', brand: 'TheraICE', category: 'headache', type: 'physical', tags: ['headache', 'cold therapy', 'migraine'], healthFunctions: ['pain'], whereToBuy: ['Brand site'], url: 'https://theraice.com/collections/headache', summary: 'Cooling headache cap for symptom comfort during a headache or migraine.' },
+  { id: 'p-estroven-menopause-relief-sleep-cool', name: 'Estroven Menopause Relief Sleep Cool', brand: 'Estroven', category: 'supplement', type: 'physical', tags: ['menopause', 'night sweats', 'sleep', 'melatonin', 'black cohosh'], healthFunctions: ['sleep'], whereToBuy: ['Brand site'], url: 'https://estroven.com/products/menopause-relief-sleep-cool', summary: 'Nightly caplet with melatonin, black cohosh and soy isoflavones, sold for menopause sleep trouble, hot flashes and night sweats.' },
 ];
 const intake = (age, stage) => ({ personalizationCompleted: true, fullHealthIntake: { personalizationCompleted: true, age: String(age), lifeStageSelections: [stage], supportSelections: ['Cycle-related bloating', 'Anxiety', 'Low mood', 'Nausea', 'Hormone-related symptoms', 'Hot flashes'], takesCurrent: 'No', allergyStatus: 'No', safetyConcern: 'No' } });
 
@@ -29,6 +30,7 @@ describe('reveal with the published catalog', () => {
     const mental = html.split('<h3>Mental wellbeing</h3>')[1].split('</ol>')[0];
     expect((mental.match(/data-kind="product"/g) || []).length).toBeGreaterThan(1);
     expect(html).not.toContain('Perimenopause Test Kit');
+    expect(html).not.toContain('Estroven Menopause Relief Sleep Cool');
     expect(html).not.toContain('None yet');
   });
   it('does not offer the perimenopause kit for a generic hormone concern', () => {
