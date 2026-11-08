@@ -215,7 +215,9 @@ const NOV5_MAP = {
   'p-flare-audio-calmer': { 'mood.general_anxiety': WEAK },
   'p-intelligent-change-the-five-minute-journal': { 'mood.low': WEAK, 'mood.general_anxiety': WEAK },
   'p-theraspec-theraspecs-fl-pro-fl-41-tinted-migraine-glasses': { 'pain.cycle_headache': ADJACENT },
-  'p-theraice-headache-hat': { 'pain.cycle_headache': ADJACENT },
+  // Cold head comfort can support headache symptoms regardless of their trigger;
+  // it does not address the hormonal cause of a cycle-related migraine.
+  'p-theraice-headache-hat': { 'pain.cycle_headache': STRONG },
   'p-saje-natural-wellness-peppermint-halo-cooling-head-roll-on': { 'pain.cycle_headache': WEAK },
   'p-p-volve-signature-bundle': { 'fitness.strength': SECONDARY },
   'p-stakt-the-stakt-mat': { 'fitness.strength': ADJACENT },
@@ -653,6 +655,11 @@ export const RELEVANCE_RULES = [
     when: (f) => f.has('pregnancy') && f.n(/\bband\b|bandit/), set: { 'pregnancy.discomfort': DIRECT, 'pain.pelvic': ctx(ADJACENT, 'pregnancy') } },
   { id: 'pregnancy_pillow', why: 'Made for sleep comfort in pregnancy.',
     when: (f) => f.has('pregnancy') && f.n(/pillow/), set: { 'pregnancy.discomfort': STRONG, 'sleep.trouble': ctx(SECONDARY, 'pregnancy') } },
+  // NHS maternity guidance says P6 wristbands may help some people with pregnancy nausea.
+  // Keep the relevance in pregnancy only; a nausea answer alone cannot imply pregnancy.
+  { id: 'pregnancy_p6_band', why: 'P6 wristband for optional pregnancy-nausea comfort.',
+    when: (f) => (f.cat === 'pregnancy' || f.has('pregnancy')) && f.t(/acupressure|\bp6\b/) && f.t(/nausea|morning sickness/) && f.n(/bands?|bracelets?/),
+    set: { 'digestive.nausea': ctx(STRONG, 'pregnancy') } },
   { id: 'pregnancy_tagged', why: 'Made with pregnancy in mind.',
     when: (f) => f.has('pregnancy') || f.cat === 'pregnancy',
     set: (f) => ({ 'pregnancy.safe_discovery': f.has('pregnancy') ? STRONG : SECONDARY, 'pregnancy.prenatal': ADJACENT }) },
@@ -796,6 +803,8 @@ function formatsFor(f) {
   if (f.type === 'digital' || f.cat === 'telehealth' || (f.cat === 'mental-health' && f.type !== 'physical')) out.add('app_service');
   if (f.cat === 'diagnostics' || f.t(/test strips?|rapid test/)) out.add('test_kit');
   if (f.fmt(/gumm/)) out.add('gummy');
+  // Swallowed lozenges are ingestibles even when cataloged under pregnancy.
+  if (f.has('lozenge') || f.fmt(/lozenges?|hard drops|hard candy|nausea sweets/)) out.add('lozenge');
   if (((f.cat === 'supplement' || f.cat === 'medication') && f.fmt(/capsule|tablet|softgel|caplet|\bcaps\b|\bpills?\b/))
     // A swallowed pill sold in another category (e.g. calcium caplets under Menopause) is still a pill.
     || f.n(/\b(caplets?|capsules?|tablets?|softgels?)\b/)) out.add('pill_capsule');
@@ -967,6 +976,10 @@ function ageFor(product, f, text) {
   const max = num(product.maxAge ?? product.maximumAge ?? product.ageMax);
   if (Number.isFinite(min)) { out.minimum = min; out.source = 'catalog field'; }
   if (Number.isFinite(max)) { out.maximum = max; out.source = 'catalog field'; }
+  // Hers' general telehealth terms require users to be at least 18.
+  if (product.id === 'd-hers' && (out.minimum == null || out.minimum < 18)) {
+    out.minimum = 18; out.source = 'Hers terms of service';
+  }
   // Hormona explicitly describes this perimenopause kit as suitable for women 40+.
   if (product.id === 'p-hormona-perimenopause-test-kit-app' && (out.minimum == null || out.minimum < 40)) {
     out.minimum = 40; out.source = 'Hormona product page';
@@ -1466,7 +1479,7 @@ export function buildProductProfile(product) {
   const f = facts(product);
   const formats = formatsFor(f);
   const isDigital = formats.includes('app_service') && !formats.some((x) => ['device', 'topical', 'pill_capsule', 'test_kit', 'period_care'].includes(x));
-  const ingested = f.cat === 'supplement' || f.cat === 'medication' || f.n(/laxative|miralax|psyllium/) || ['pill_capsule', 'gummy', 'powder', 'drink_tea'].some((x) => formats.includes(x));
+  const ingested = f.cat === 'supplement' || f.cat === 'medication' || f.n(/laxative|miralax|psyllium/) || ['pill_capsule', 'gummy', 'powder', 'drink_tea', 'lozenge'].some((x) => formats.includes(x));
   const sText = safetyText(product);
   const ctx = { isDigital, ingested, text: sText };
 
