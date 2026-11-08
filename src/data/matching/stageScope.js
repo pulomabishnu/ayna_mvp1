@@ -55,8 +55,39 @@ export const STAGE_SCOPE = {
   'p-rituals-prenatal': PRENATAL,
 };
 
+// Published Supabase listings, reviewed by ID. The broad menopause tag is
+// insufficient: cooling sprays, bedding and vaginal comfort work at any age.
+const LIVE_MENOPAUSE_ONLY = new Set([
+  'p-everlywell-perimenopause-check',
+  'd-caria-caria-menopause-midlife',
+  'd-perry-perry-perimenopause-community',
+  'd-stella-stella-menopause-relief',
+  'p-azo-daily-pre-menopause-support-capsules-sold-under-the-azo-menopaus',
+  'p-azo-menopause-relief-daytime-gummies',
+  'p-biologica-midlife-essentials-daily-effervescent-multivitamin-drink-f',
+  'p-biologica-postmenopause-essentials-daily-effervescent-multivitamin-f',
+  'p-elektra-health-my-elektra-inc-elektra-health-menopause-clinical-care',
+  'p-estroven-complete-menopause-relief-gummies',
+  'p-estroven-complete-multi-symptom-menopause-relief',
+  'p-estroven-maximum-strength-menopause-relief',
+  'p-estroven-menopause-relief-pre-menopause',
+  'p-estroven-menopause-relief-sleep-cool',
+  'p-happy-v-the-menopause-complete-kit-menopause-relief-am-pm-d-mannose',
+  'p-life-extension-menopause-relief-formerly-menopause-731-30-enteric-co',
+  'p-maryruth-s-organic-menopause-gummies-strawberry-60-count',
+  'p-menolabs-menofit-probiotic-menopause-relief-metabolism-support',
+  'p-needed-perimenopause-multivitamin',
+  'p-oova-perimenopause-hormone-kit-perimenopause-hormone-tracking-kit',
+  'p-ovul-ai-ai-saliva-based-perimenopause-hormone-monitor-membership-sam',
+  'p-perelel-perimenopause-support-pack',
+  'p-ph-d-feminine-health-creatine-menopause-relief',
+  'p-ph-d-feminine-health-menopause-sleep-relief',
+  'p-pink-stork-menopause-support-60-capsules',
+  'p-ritual-perimenopause-health',
+  'p-stonehenge-health-for-women-menopause-support',
+]);
+
 export function stageScopeFor(productId) {
-  // This published Supabase listing is not part of the bundled fallback.
-  if (productId === 'p-everlywell-perimenopause-check') return MENOPAUSE;
+  if (LIVE_MENOPAUSE_ONLY.has(productId)) return MENOPAUSE;
   return productId ? STAGE_SCOPE[productId] || null : null;
 }
