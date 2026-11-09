@@ -22,6 +22,7 @@ import { markPerf } from './utils/perfTimings.js'
 // free.
 const MobileApp = React.lazy(() => import('./mobile/MobileApp.jsx'))
 import './styles/search-focus.css'
+import './styles/page-tops.css'
 import { installNoEmDash } from './utils/noEmDashDom.js'
 installDelight()
 installMotion()

@@ -57,6 +57,7 @@ import { MyTopicRows, PostInPicker } from './community/topics/TopicBits.jsx';
 import { useUserTopics } from './community/topics/useUserTopics.js';
 import { joinTopicByCode, parseTopicInviteCode } from '../utils/community/userTopics.js';
 import './community/topics/user-topics.css';
+import './community/community-nov9.css';
 import TopicBands from './community/TopicBands.jsx';
 import { Shout } from './ui/ay';
 import { openProPaywall, proLimitFeature } from '../pro/paywall.js';
@@ -1439,7 +1440,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     <span>{l}</span>{k === 'announcements' && newAnns.length > 0 && <b className="cm-folder__new">{newAnns.length} new</b>}
   </button>)}</div>;
   const topicChips = (where) => <div className={`cm-topicset ${where}`}>
-    {topics.map((t) => <button type="button" className="cm-topic" key={t} onClick={() => { if (page) closePage(); setSearch(t); setSearchResults(null); }}>#{t}</button>)}
+    {topics.map((t) => <button type="button" className="cm-topic" key={t} data-i={String(t).replace(/^#/, '').charAt(0).toUpperCase()} onClick={() => { if (page) closePage(); setSearch(t); setSearchResults(null); }}>#{t}</button>)}
     {userTopics.available && where === 'is-row' && <button type="button" className="cm-topic" onClick={openTopics}>Topics by members</button>}
     <button type="button" className="cm-topic is-suggest" onClick={() => setSuggestTopic(true)}><Icon name="plus" size={14} />Suggest a topic</button>
   </div>;

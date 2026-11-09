@@ -1,0 +1,55 @@
+/*
+ * Page tops, Nov 9 (founder: "make sure each of the tops all have the ruffles and are pink").
+ * Every main page opens on the same pink band with a soft wave lower edge (founder picked the Home band's wave over scallops): Shop,
+ * Services, Library, Community, About, Partners, How it works, Contact, Campus resources, You.
+ * Brand colours only (pink band, espresso type). The ruffle is the band's own colour, so it reads
+ * as the band's edge. 8 id-weight groups so older page sheets can't repaint it.
+ */
+:is(#pt1, html):is(#pt2, html):is(#pt3, html):is(#pt4, html):is(#pt5, html):is(#pt6, html):is(#pt7, html):is(#pt8, html) body .app-container :is(.ayshop-hero, .lb-top.lb-shophead, .cm-head.cm-titlerow, .ay-ih.uq-bleed, .cr-edhead, .yh-head, .ay-db-bandhead, .ay-ecoprev__head) {
+  position: relative;
+  background: #f7badd !important;
+  box-shadow: none !important;
+  clip-path: none !important;
+  isolation: isolate;
+  color: #3e2723 !important;
+  margin-bottom: 40px !important;
+  overflow: visible !important;
+}
+:is(#pt1, html):is(#pt2, html):is(#pt3, html):is(#pt4, html):is(#pt5, html):is(#pt6, html):is(#pt7, html):is(#pt8, html) body .app-container :is(.ayshop-hero, .lb-top.lb-shophead, .cm-head.cm-titlerow, .ay-ih.uq-bleed, .cr-edhead, .yh-head, .ay-db-bandhead, .ay-ecoprev__head)::after {
+  content: '' !important;
+  display: block !important;
+  position: absolute !important;
+  top: auto !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: -15px !important;
+  width: 100vw !important;
+  height: 16px !important;
+  transform: translateX(-50%) !important;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 12' preserveAspectRatio='none'%3E%3Cpath fill='%23f7badd' d='M0 0H240V6Q230 12 220 6Q210 0 200 6Q190 12 180 6Q170 0 160 6Q150 12 140 6Q130 0 120 6Q110 12 100 6Q90 0 80 6Q70 12 60 6Q50 0 40 6Q30 12 20 6Q10 0 0 6Z'/%3E%3C/svg%3E") 0 0 / 100% 16px no-repeat !important;
+  -webkit-mask: none !important;
+  mask: none !important;
+  border: 0 !important;
+  pointer-events: none;
+  z-index: 1;
+}
+:is(#pt1, html):is(#pt2, html):is(#pt3, html):is(#pt4, html):is(#pt5, html):is(#pt6, html):is(#pt7, html):is(#pt8, html) body .app-container :is(.ayshop-hero, .lb-top.lb-shophead, .cm-head.cm-titlerow, .ay-ih.uq-bleed, .cr-edhead, .yh-head, .ay-db-bandhead, .ay-ecoprev__head) :is(h1, p, .ct-lede) { color: #3e2723 !important; }
+
+/* Full width: a pink layer behind the band, the width of the window (a box-shadow spread would
+   also paint below the band and hide the ruffle). */
+:is(#pt1, html):is(#pt2, html):is(#pt3, html):is(#pt4, html):is(#pt5, html):is(#pt6, html):is(#pt7, html):is(#pt8, html) body .app-container :is(.ayshop-hero, .lb-top.lb-shophead, .cm-head.cm-titlerow, .ay-ih.uq-bleed, .cr-edhead, .yh-head, .ay-db-bandhead, .ay-ecoprev__head)::before {
+  content: '' !important; display: block !important; position: absolute !important; z-index: -1 !important;
+  top: 0 !important; bottom: 0 !important; left: 50% !important; right: auto !important; width: 100vw !important; height: auto !important;
+  transform: translateX(-50%) !important; margin: 0 !important; background: #f7badd !important; border: 0 !important; border-radius: 0 !important;
+  -webkit-mask: none !important; mask: none !important; pointer-events: none;
+}
+
+/* The app (founder: "don't forget the app too"): Shop, Community and Library heads, same pink and
+   the same ruffle under them. */
+:is(#pt1, html):is(#pt2, html):is(#pt3, html):is(#pt4, html):is(#pt5, html):is(#pt6, html):is(#pt7, html):is(#pt8, html) body .ayna-mobile:not([data-theme*="dark"]) :is(.ayna-shop-heading, .am-top, .al-top.ay-lib-head) {
+  position: relative; background: #f7badd !important; overflow: visible !important; margin-bottom: 22px !important; z-index: 1;
+}
+:is(#pt1, html):is(#pt2, html):is(#pt3, html):is(#pt4, html):is(#pt5, html):is(#pt6, html):is(#pt7, html):is(#pt8, html) body .ayna-mobile:not([data-theme*="dark"]) :is(.ayna-shop-heading, .am-top, .al-top.ay-lib-head)::after {
+  content: '' !important; display: block !important; position: absolute !important; left: 0 !important; right: 0 !important; top: auto !important; bottom: -15px !important; width: auto !important; height: 16px !important;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 12' preserveAspectRatio='none'%3E%3Cpath fill='%23f7badd' d='M0 0H240V6Q230 12 220 6Q210 0 200 6Q190 12 180 6Q170 0 160 6Q150 12 140 6Q130 0 120 6Q110 12 100 6Q90 0 80 6Q70 12 60 6Q50 0 40 6Q30 12 20 6Q10 0 0 6Z'/%3E%3C/svg%3E") 0 0 / 100% 16px no-repeat !important; -webkit-mask: none !important; mask: none !important; border: 0 !important; transform: none !important; pointer-events: none; z-index: 1;
+}

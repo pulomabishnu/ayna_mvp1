@@ -1,0 +1,90 @@
+/*
+ * Community, Nov 9 (founder: "what happened to the community page … shouldn't the top be pink like
+ * all the other pages … use the inspo, Instagram, Reddit, X", plus the social-feed inspo she sent:
+ * soft tinted rounded post cards, round avatars, reaction pills, story bubbles, recommendation
+ * blobs). Same data and controls; only the look changes.
+ *   - the pink page band every other page has (Shop, Services), no wavy line under it;
+ *   - posts as soft tinted cards that take turns (butter, pink, sky), no outline or offset shadow;
+ *   - an action bar with round hover targets, Helpful as a filled pill;
+ *   - topics people are talking about as round story bubbles (Instagram);
+ *   - the right column as plain lists under bold headings (X).
+ * Specificity: 7 id-weight groups, one above post-card.css (6).
+ */
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm { --cmx-ink: #3e2723; --cmx-line: rgba(62, 39, 35, .14); --cmx-pink: #f7badd; --cmx-butter: #ffedac; --cmx-soft-pink: #f7badd; --cmx-soft-butter: #f7badd; --cmx-soft-sky: #3e2723; }
+
+/* 1. Pink page band, full width */
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-head.cm-titlerow { position: relative; margin: -32px 0 28px !important; padding: 44px 0 34px !important; background: var(--cmx-pink) !important; box-shadow: none !important; clip-path: none !important; border: 0 !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-head.cm-titlerow::before { background: var(--cmx-pink) !important; }
+
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-head.cm-titlerow .ct-lede { color: var(--cmx-ink) !important; opacity: .85; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-head.cm-titlerow .cm-search { background: var(--cmx-butter) !important; border: 1.5px solid var(--cmx-ink) !important; }
+
+/* 2. Posts: rounded cards taking turns in brand colours (pink, espresso), never white or deep yellow */
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard { border: 0 !important; box-shadow: none !important; border-radius: 28px !important; padding: 20px 22px 10px !important; margin: 0 0 14px !important; background: var(--cmx-soft-butter) !important; transition: transform .18s ease; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(3n + 2) { background: var(--cmx-soft-pink) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(3n) { background: var(--cmx-soft-sky) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:hover { transform: translateY(-2px); }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-avatar { width: 44px !important; height: 44px !important; box-shadow: 0 0 0 2.5px var(--cmx-butter), 0 0 0 4px var(--cmx-ink); }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .ay-postcard__title { font-size: 18px !important; line-height: 1.3 !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-mention-card { background: var(--cmx-butter) !important; border: 0 !important; box-shadow: none !important; border-radius: 18px !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-more { width: 40px; height: 40px; border-radius: 50% !important; background: var(--cmx-butter) !important; border: 0 !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard :is(.ay-postcard__pill, .ay-postcard__topic) { border: 0 !important; background: var(--cmx-butter) !important; }
+
+/* 3. Action bar: round hover targets, Helpful as a filled pill */
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions { display: flex !important; align-items: center; gap: 4px; margin-top: 4px !important; padding: 8px 0 0 !important; border: 0 !important; border-top: 1px solid rgba(62, 39, 35, .1) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > button { min-height: 40px; padding: 6px 12px !important; border: 0 !important; border-radius: 999px !important; background: transparent !important; box-shadow: none !important; color: var(--cmx-ink) !important; transition: background .15s ease, transform .1s ease; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > button:hover { background: var(--cmx-butter) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > button:active { transform: scale(.95); }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > .cm-act-helpful { background: var(--cmx-ink) !important; color: var(--cmx-butter) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > .cm-act-helpful :is(svg, b, span) { color: var(--cmx-butter) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > .cm-act-helpful[aria-pressed="true"] { background: var(--cmx-pink) !important; color: var(--cmx-ink) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > .cm-act-helpful[aria-pressed="true"] :is(svg, b, span) { color: var(--cmx-ink) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > .cm-save { margin-left: auto; }
+
+/* 4. Story bubbles */
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row { display: flex !important; flex-wrap: nowrap !important; gap: 12px !important; overflow-x: auto; padding: 4px 2px 12px !important; scrollbar-width: none; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row::-webkit-scrollbar { display: none; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row > .cm-topic { flex: none; display: grid !important; justify-items: center; align-content: start; gap: 4px; width: 76px; min-height: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; color: var(--cmx-ink) !important; font: 600 12px/1.2 var(--ay-font-ui, Figtree, sans-serif) !important; text-align: center; white-space: normal !important; word-break: break-word; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row > .cm-topic::before { content: attr(data-i); display: grid; place-items: center; width: 58px; height: 58px; margin: 8px 0 6px; border-radius: 50%; background: var(--cmx-soft-butter); color: var(--cmx-ink); font: 800 24px/1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); box-shadow: 0 0 0 3px var(--cmx-butter), 0 0 0 6px var(--cmx-pink), 0 0 0 7.5px var(--cmx-ink); transition: transform .15s ease; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row > .cm-topic:hover::before { transform: scale(1.06); }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row > .cm-topic:not([data-i])::before { content: '+'; background: transparent; box-shadow: 0 0 0 1.5px var(--cmx-ink); }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row > .cm-topic > svg { display: none; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row > .cm-topic:focus-visible { outline: 3px solid var(--cmx-ink); outline-offset: 2px; border-radius: 12px; }
+
+/* 5. Right column as plain lists */
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-side .cm-mod__list.ay-group { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-side .cm-mod__list > li { border-bottom: 1px solid var(--cmx-line); }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-side .cm-mod__list > li > button { padding: 12px 4px !important; border: 0 !important; border-radius: 12px !important; background: transparent !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-side .cm-mod__list > li > button:hover { background: rgba(62, 39, 35, .04) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-side .cm-mod__tab { font: 800 20px/1.2 var(--ay-font-display, 'Bricolage Grotesque', sans-serif) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  :is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard, :is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row > .cm-topic::before { transition: none; transform: none !important; }
+}
+@media (max-width: 767px) {
+  :is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-head.cm-titlerow { margin-top: -16px !important; padding: 28px 0 22px !important; }
+  :is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard { border-radius: 22px !important; padding: 16px 16px 8px !important; }
+  :is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > button { padding: 6px 8px !important; }
+}
+
+/* 6. Topic filter chips as soft pills (inspo: filled tabs, no outlined boxes) */
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .ub-topics > button { border: 0 !important; box-shadow: none !important; background: var(--cmx-butter) !important; border-radius: 999px !important; color: var(--cmx-ink) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .ub-topics > button:hover { background: var(--cmx-pink) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .ub-topics > button:is([aria-pressed="true"], .is-on) { background: var(--cmx-ink) !important; color: var(--cmx-butter) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .ub-topics > button:is([aria-pressed="true"], .is-on) * { color: var(--cmx-butter) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-guest { border: 0 !important; box-shadow: none !important; border-radius: 24px !important; background: var(--cmx-pink) !important; }
+
+/* Espresso posts (every other one): butter text, butter chips, pink accents */
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(2n) { background: var(--cmx-ink) !important; color: var(--cmx-butter) !important; --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .78); }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(2n) :is(.cm-name, .ay-postcard__title, .ay-postcard__title *, .cm-body, .cm-body *, .cm-post-meta, .cm-post-meta *, .ay-post-views, .ay-post-views *, .ay-likers-more, .cm-stars) { color: var(--cmx-butter) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(2n) .cm-actions { border-top-color: rgba(255, 237, 172, .2) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(2n) .cm-actions > button:not(.cm-act-helpful), :is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(2n) .cm-actions > button:not(.cm-act-helpful) * { color: var(--cmx-butter) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(2n) .cm-actions > button:not(.cm-act-helpful):hover { background: rgba(255, 237, 172, .14) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(2n) .cm-actions > .cm-act-helpful { background: var(--cmx-pink) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(2n) .cm-actions > .cm-act-helpful :is(svg, b, span) { color: var(--cmx-ink) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(2n) .cm-avatar { box-shadow: 0 0 0 2.5px var(--cmx-ink), 0 0 0 4px var(--cmx-pink); }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(2n) .cm-seematch { color: var(--cmx-butter) !important; border-color: var(--cmx-butter) !important; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard:nth-of-type(2n) .cm-mention-card :is(*) { color: var(--cmx-ink) !important; }
+/* bubbles: pink, butter-on-espresso, pink ring */
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row > .cm-topic::before { background: var(--cmx-pink); }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row > .cm-topic:nth-child(2n)::before { background: var(--cmx-ink); color: var(--cmx-butter); }

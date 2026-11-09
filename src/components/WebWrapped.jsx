@@ -254,8 +254,9 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" /></svg>
                   Invite a friend
                 </button>
-                {/* Guest: the main button saves; this one shows her matches without an account. */}
-                <button type="button" className="ays-link" onClick={onBrowse}>{guest ? 'See all your matches' : 'Browse the Shop'}</button>
+                {/* Nov 9 (founder): a guest saves her matches with an account; no "See all your matches"
+                    side door into Shop. She can still close the story (the X) or exit the quiz. */}
+                {!guest && <button type="button" className="ays-link" onClick={onBrowse}>Browse the Shop</button>}
               </div>
               <p id="wrapped-invite-note" className="ay-wr-invite-note">Shares an invitation to ayna, not your health results.</p>
             </div>
