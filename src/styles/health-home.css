@@ -14,7 +14,7 @@
 
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db {
   --db-ink: var(--ay-ink, #3e2723); --db-muted: var(--ay-ink-muted, rgba(62, 39, 35, .78)); --db-deep: rgba(62, 39, 35, .14);
-  --db-surface: transparent; --db-blue: var(--ay-data-blue, #769ebe); --db-rule: rgba(62, 39, 35, .15); --db-on-ink: #ffedac;
+  --db-surface: #ffedac; --db-blue: var(--ay-data-blue, #769ebe); --db-rule: rgba(62, 39, 35, .15); --db-on-ink: #ffedac;
   --db-ui: var(--ay-font-ui, 'Figtree', system-ui, sans-serif); --db-display: var(--ay-font-display, 'ayna Display', 'Bricolage Grotesque', sans-serif);
   --db-scale: var(--ayna-text-scale, 1);
   --legacy-outline: 1.5px solid var(--legacy-ink, #3e2723); /* older rules inside the dashboard */

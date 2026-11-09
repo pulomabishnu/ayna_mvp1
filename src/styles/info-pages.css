@@ -181,7 +181,7 @@ html body .app-container .ed.ed-page--info .ed-hiw li .ed-hiw__n { background: v
 @media (max-width: 1023px) { .app-container.app-container .fp.mockup-page { padding-inline: 24px; } }
 @media (max-width: 767px) { .app-container.app-container .fp.mockup-page { padding-inline: 20px; } }
 /* Founder change (Oct 26 13:38): no white surfaces on info pages; deeper butter + thin espresso rule. */
-.app-container:not([data-theme='brand-dark']) { --ip-tile: transparent; }
+.app-container:not([data-theme='brand-dark']) { --ip-tile: #ffedac; }
 .app-container.app-container:not([data-theme='brand-dark']) .ip-facts > li { background: transparent; border: 1px solid rgba(62, 39, 35, .15); }
 .app-container.app-container:not([data-theme='brand-dark']) .ed.ed-page--info .ed-principles li:nth-child(n) { background: transparent; }
 /* Phones: the folded "On this page" sits right under the hero's rule (two hairlines 32px apart read as a glitch). */

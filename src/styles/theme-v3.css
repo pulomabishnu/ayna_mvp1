@@ -62,10 +62,10 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
   padding-block: clamp(48px, 6vw, 88px);
 }
 .app-container:not([data-theme='dark']) .ay3-band--ink { --ay3-bg: var(--legacy-ink); color: var(--ay-paper); }
-.app-container:not([data-theme='dark']) .ay3-band--sky { --ay3-bg: transparent; }
+.app-container:not([data-theme='dark']) .ay3-band--sky { --ay3-bg: #ffedac; }
 .app-container:not([data-theme='dark']) .ay3-band--rose { --ay3-bg: var(--ay-rose); }
 .app-container:not([data-theme='dark']) .ay3-band--paper { --ay3-bg: var(--ay-paper); }
-.app-container:not([data-theme='dark']) .ay3-band--stripes { --ay3-bg: transparent; border-image: repeating-linear-gradient(90deg, #f7badd 0 28px, var(--ay-paper) 28px 56px) fill 0 / / 0 100vw !important; }
+.app-container:not([data-theme='dark']) .ay3-band--stripes { --ay3-bg: #ffedac; border-image: repeating-linear-gradient(90deg, #f7badd 0 28px, var(--ay-paper) 28px 56px) fill 0 / / 0 100vw !important; }
 .app-container:not([data-theme='dark']) .ay3-band--ink :is(h1, h2, h3, p, span, label, a:not(.btn)) { color: var(--ay-paper) !important; }
 .app-container:not([data-theme='dark']) .ay3-band--ink :is(h1, h2) em { color: var(--ay-rose) !important; }
 
@@ -703,11 +703,11 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 /* nav + footer follow the page colour */
 .app-container:not([data-theme='dark'])[data-view] :is(.app-nav.app-nav, .site-footer) { background: var(--ay-page) !important; }
 /* pages whose header band matches the page colour switch the band */
-.app-container:not([data-theme='dark'])[data-view='community'] .ay3-commhero { --ay3-bg: transparent; }
+.app-container:not([data-theme='dark'])[data-view='community'] .ay3-commhero { --ay3-bg: #ffedac; }
 .app-container:not([data-theme='dark'])[data-view='ecosystem'] .ay3-ecohero { border-image: repeating-linear-gradient(90deg, var(--ay-rose) 0 28px, var(--ay-paper) 28px 56px) fill 0 / / 0 100vw !important; --ay3-bg: var(--ay-rose); }
 .app-container:not([data-theme='dark'])[data-view='recalls'] .ay3-infohero { --ay3-bg: var(--ay-rose); }
 .app-container:not([data-theme='dark'])[data-view='recommendations'] .ay3-pagehead { --ay3-bg: var(--ay-rose); }
-.app-container:not([data-theme='dark'])[data-view='how-it-works'] .ay3-infohero { --ay3-bg: transparent; }
+.app-container:not([data-theme='dark'])[data-view='how-it-works'] .ay3-infohero { --ay3-bg: #ffedac; }
 /* on sky pages, soft grey-brown text becomes full ink for contrast */
 .app-container:not([data-theme='dark'])[data-view]:is([data-view='discovery'], [data-view='ecosystem'], [data-view='contact'], [data-view='recommendations'], [data-view='recalls']) main :is(p, span, small, label, li) { --ay-ink-soft: #3e2723; }
 /* no dark bands in the light theme: rose shop header keeps its scallops */
@@ -2325,7 +2325,7 @@ html body .app-container:not([data-theme='dark']) .ay-saved__item, html body .ap
 /* Shop: pink */
 .app-container:not([data-theme='dark'])[data-view='discovery'] { --ay-page: #f7badd; }
 /* Ecosystem: blue, stripes in blue + butter */
-.app-container:not([data-theme='dark'])[data-view='ecosystem'] .ay3-ecohero { border-image: repeating-linear-gradient(90deg, #f7badd 0 28px, #ffedac 28px 56px) fill 0 / / 0 100vw !important; --ay3-bg: transparent; }
+.app-container:not([data-theme='dark'])[data-view='ecosystem'] .ay3-ecohero { border-image: repeating-linear-gradient(90deg, #f7badd 0 28px, #ffedac 28px 56px) fill 0 / / 0 100vw !important; --ay3-bg: #ffedac; }
 /* Community: butter tiled wall, butter top */
 .app-container:not([data-theme='dark'])[data-view='community'] { --ay-page: #ffedac; }
 .app-container:not([data-theme='dark'])[data-view='community'] main { background:
@@ -4184,7 +4184,7 @@ html.ay-motion-paused .lv .lv-ticker__track, .lv.is-paused .lv-ticker__track { a
    fill bar on top. Same font on every tab; nothing below moves. */
 html body .app-container .lst { --lst-bg: #ffedac; --lst-fg: #3e2723; margin: 56px auto; max-width: 1180px; width: calc(100% - 64px); border: 2px solid #3e2723; border-radius: 22px; background: var(--lst-bg); color: var(--lst-fg); box-shadow: none; overflow: hidden; transition: background .35s ease; }
 html body .app-container .lst.is-rose { --lst-bg: #f7badd; }
-html body .app-container .lst.is-sky { --lst-bg: transparent; }
+html body .app-container .lst.is-sky { --lst-bg: #ffedac; }
 html body .app-container .lst.is-ink { --lst-bg: #3e2723; --lst-fg: #ffedac; }
 html body .app-container .lst__tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); border-bottom: 2px solid #3e2723; }
 html body .app-container .lst__tabs button { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 8px; min-height: 56px; padding: 10px 18px; border: 0; border-right: 2px solid #3e2723; background: transparent; color: var(--lst-fg); font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans); text-align: left; cursor: pointer; }
@@ -4245,7 +4245,7 @@ html body .app-container .lv .lst h3.lst__title { margin: 0; font: 700 var(--ay-
 html body .app-container .lst-band { background: transparent !important; border-block: 0 !important; padding: 0 !important; margin: 72px 0 !important; }
 html body .app-container .lst-band::before { display: none !important; }
 html body .app-container .lv .lst-band h2.lst-band__h em { color: #3e2723 !important; text-shadow: none !important; }
-html body .app-container .lst-band .lst.is-sky { --lst-bg: transparent; }
+html body .app-container .lst-band .lst.is-sky { --lst-bg: #ffedac; }
 html body .app-container[data-theme='brand-dark'] .lst-band { background: transparent !important; }
 html body .app-container[data-theme='brand-dark'] .lv .lst-band h2.lst-band__h, html body .app-container[data-theme='brand-dark'] .lv .lst-band h2.lst-band__h em { color: #ffedac !important; }
 
@@ -5167,7 +5167,7 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li > :is(a, span), html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li { color: #3e2723; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li { display: flex; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li > a, html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:not(:has(> a)) { display: flex; flex-direction: column; justify-content: center; min-width: 92px; padding: 10px 14px; border: 1.5px solid #3e2723; border-radius: 14px; background: #ffedac; text-decoration: none; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:nth-child(1) { --tile: transparent; } html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:nth-child(2) { --tile: transparent; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:nth-child(1) { --tile: #ffedac; } html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:nth-child(2) { --tile: #ffedac; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:nth-child(1):not(:has(> a)), html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li:nth-child(2):not(:has(> a)) { background: var(--tile); }
 html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li.is-gap > a { background: #ffedac; box-shadow: 3px 3px 0 #3e2723; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container .eco3-stats li.is-gap > a:hover { transform: translate(-1px, -1px); box-shadow: none; }
@@ -5344,7 +5344,7 @@ html body .app-container.app-container.app-container.app-container.app-container
 /* What's new on ayna (Oct 16): not boxed. The band takes the slide's colour edge to edge,
    tabs are pills, and some slides show an app-style widget instead of a photo. */
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band { --band: #f7badd; --fg: #3e2723; background: var(--band) !important; border-image: linear-gradient(var(--band), var(--band)) fill 0 / / 0 100vw !important; padding: 64px 0 72px !important; margin: 96px 0 !important; transition: background .45s ease, border-image .45s ease; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-butter { --band: #ffedac; } html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-sky { --band: transparent; } html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-ink { --band: #3e2723; --fg: #ffedac; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-butter { --band: #ffedac; } html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-sky { --band: #ffedac; } html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-ink { --band: #3e2723; --fg: #ffedac; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv .lst-band h2.lst-band__h, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lv .lst-band h2.lst-band__h em { color: var(--fg) !important; text-align: center; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band .lst.lst--open { border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important; overflow: visible !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__tabs { display: flex !important; flex-wrap: wrap; justify-content: center; gap: 10px; border: 0 !important; margin: 0 0 28px; }
@@ -5355,7 +5355,7 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__tabs i { height: 3px !important; background: rgba(62, 39, 35, .2) !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open.is-ink .lst__tabs i { background: rgba(255, 237, 172, .25) !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__tabs button.is-on i b { background: var(--band, #f7badd) !important; }
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-butter .lst { --lst-bg: #ffedac; } html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-sky .lst { --lst-bg: transparent; --lst-fg: #3e2723; } html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-rose .lst { --lst-bg: transparent; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-butter .lst { --lst-bg: #ffedac; } html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-sky .lst { --lst-bg: #ffedac; --lst-fg: #3e2723; } html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst-band.is-rose .lst { --lst-bg: #ffedac; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__slide { height: 360px !important; gap: 40px; align-items: center; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__copy { padding: 0 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container .lst--open .lst__photo { height: 100%; border: 1.5px solid #3e2723 !important; border-radius: 22px; box-shadow: none; overflow: hidden; }

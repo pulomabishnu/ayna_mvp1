@@ -15,7 +15,7 @@
    scale, kept here so these pages read one set of numbers ---------- */
 .app-container .ed, .ed {
   --ed-page: var(--ay-page, #ffedac);
-  --ed-group: var(--ay-group, transparent);
+  --ed-group: var(--ay-group, #ffedac);
   --ed-text: var(--ay-text, #3e2723);
   --ed-text-2: var(--ay-text-2, rgba(62, 39, 35, .78));
   --ed-hairline: var(--ay-hairline, rgba(62, 39, 35, .15));

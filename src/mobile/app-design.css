@@ -16,7 +16,7 @@
 /* ---------- 1. the band: header + title + search are one coloured piece ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile { --band: var(--b-butter); --band-ink: var(--b-espresso); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-screen='browse'] { --band: var(--b-rose); }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-screen='library'] { --band: transparent; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-screen='library'] { --band: #ffedac; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile:is([data-screen='eco'], [data-screen='ecointro']) { --band: var(--b-espresso); --band-ink: var(--b-butter); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-screen='community'] { --band: var(--b-rose); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'][data-screen='browse'] { --band: rgba(255, 237, 172, .12); }
@@ -140,7 +140,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-reel-pause, .ip-info) { position: relative; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-reel-pause, .ip-info)::after { content: ''; position: absolute; inset: -8px; }
 /* You: espresso type on the sky band, header included */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hub { --band: transparent; --band-ink: var(--b-espresso); }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hub { --band: #ffedac; --band-ink: var(--b-espresso); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hub { --band: var(--b-rose); --band-ink: var(--b-espresso); }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hub .ayna-shared-header :is(.ayna-shared-wordmark) { color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hub .ayna-fresh-profile-hero * { color: var(--b-espresso) !important; }

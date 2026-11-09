@@ -14,7 +14,7 @@
   --ut-ink: var(--ay-text, #3e2723);
   --ut-ink-2: var(--ay-text-2, rgba(62, 39, 35, .78));
   --ut-page: var(--ay-page, #ffedac);
-  --ut-group: var(--ay-group, transparent);
+  --ut-group: var(--ay-group, #ffedac);
   --ut-line: var(--ay-outline-color, #3e2723);
   --ut-focus: var(--ay-focus, #3e2723);
 }
@@ -22,7 +22,7 @@
   --ut-ink: var(--d-ink, #3e2723);
   --ut-ink-2: var(--d-ink-2, var(--d-ink, #3e2723));
   --ut-page: var(--d-page, #ffedac);
-  --ut-group: var(--d-group, transparent);
+  --ut-group: var(--d-group, #ffedac);
   --ut-line: var(--d-ink, #3e2723);
   --ut-focus: var(--d-ink, #3e2723);
 }

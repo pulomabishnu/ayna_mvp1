@@ -7,10 +7,10 @@
   --ay-ink: #3e2723; --legacy-ink: #3e2723;
   --ay-ink-muted: rgba(62, 39, 35, .78);
   --ay-butter: #ffedac; --legacy-butter: #ffedac;
-  --ay-butter-deep: transparent;
+  --ay-butter-deep: #ffedac;
   --ay-pink: #f7badd; --legacy-pink: #f7badd;
   --ay-data-blue: #769ebe;
-  --ay-surface: transparent; --legacy-surface: transparent; /* founder Nov 9: no deep yellow, surfaces are pink. founder Oct 26: no white surfaces; white only behind product photos (--ay-plate) */
+  --ay-surface: #ffedac; --legacy-surface: #ffedac; /* founder Nov 9: no deep yellow, surfaces are pink. founder Oct 26: no white surfaces; white only behind product photos (--ay-plate) */
   --ay-r-sm: 8px; --ay-r-md: 16px; --ay-r-pill: 999px; --ay-r-round: 50%;
   --ay-rule: 1px solid rgba(62, 39, 35, .15);
   --ay-outline: 1.5px solid #3e2723; --legacy-outline: 1.5px solid #3e2723; /* always a full border; the bare colour is --ay-outline-color */

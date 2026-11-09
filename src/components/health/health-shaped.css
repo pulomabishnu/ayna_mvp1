@@ -7,7 +7,7 @@
   --hs-ink: var(--ay-text, #3e2723);
   --hs-ink-2: var(--ay-text-2, rgba(62, 39, 35, .78));
   --hs-page: var(--ay-page, #ffedac);
-  --hs-group: var(--ay-group, transparent);
+  --hs-group: var(--ay-group, #ffedac);
   --hs-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
   --hs-line: var(--ay-outline-color, #3e2723);
   --hs-sky: #769ebe;
@@ -18,7 +18,7 @@
   --hs-ink: var(--d-ink, #3e2723);
   --hs-ink-2: var(--d-ink-2, rgba(62, 39, 35, .78));
   --hs-page: var(--d-page, #ffedac);
-  --hs-group: var(--d-group, transparent);
+  --hs-group: var(--d-group, #ffedac);
   --hs-hair: var(--d-hair, rgba(62, 39, 35, .15));
   --hs-line: var(--d-ink, #3e2723);
   --hs-head: var(--ay-app-heading, 'ayna Display', 'Figtree', system-ui, sans-serif);

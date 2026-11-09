@@ -12,7 +12,7 @@
 .app-container .ayp-wps {
   --wps-ink: var(--ay-text, #3e2723);
   --wps-ink2: var(--ay-text-2, rgba(62, 39, 35, .75));
-  --wps-group: var(--ay-group, transparent);
+  --wps-group: var(--ay-group, #ffedac);
   --wps-page: var(--ay-page, #ffedac);
   --wps-line: var(--ay-hairline, rgba(62, 39, 35, .15));
   --wps-ui: var(--ay-sans-stack, 'Figtree', system-ui, sans-serif);
@@ -26,7 +26,7 @@
 .ayna-mobile .ay-pdp .ayp-wps {
   --wps-ink: var(--d-ink, #3e2723);
   --wps-ink2: var(--d-ink-2, rgba(62, 39, 35, .75));
-  --wps-group: var(--d-group, transparent);
+  --wps-group: var(--d-group, #ffedac);
   --wps-page: var(--d-page, #ffedac);
   --wps-line: rgba(62, 39, 35, .15);
   --wps-ui: var(--f-ui, 'Figtree', system-ui, sans-serif);
@@ -131,7 +131,7 @@
 
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet), #ay-tabs#ay-tabs#ay-tabs {
   --v-ink: #3e2723; --v-mute: rgba(62, 39, 35, .78); --v-bg: #ffedac; --v-tint: #f7badd; --v-line: rgba(62, 39, 35, .18); --v-hard: #3e2723;
-  /* PDP audit Oct 25, section 16 tokens (the smallest set; colours are the palette only). */ --legacy-ink: #3e2723; --ay-ink-muted: rgba(62, 39, 35, .78); --legacy-butter: #ffedac; --ay-butter-deep: transparent; --legacy-pink: #f7badd; --ay-data-blue: #769ebe; --legacy-surface: #ffffff;
+  /* PDP audit Oct 25, section 16 tokens (the smallest set; colours are the palette only). */ --legacy-ink: #3e2723; --ay-ink-muted: rgba(62, 39, 35, .78); --legacy-butter: #ffedac; --ay-butter-deep: #ffedac; --legacy-pink: #f7badd; --ay-data-blue: #769ebe; --legacy-surface: #ffffff;
   --ay-r-sm: 8px; --ay-r-md: 16px; --ay-r-pill: 999px; --ay-rule: 1px solid rgba(62, 39, 35, .15); --legacy-outline: 1.5px solid #3e2723; --ay-sticker: 3px 3px 0 #f7badd;
   --ay-dur-press: 120ms; --ay-dur-ui: 180ms; --ay-dur-sheet: 240ms;
   --v-ui: 'Figtree', system-ui, sans-serif; --v-display: 'ayna Display', 'Bricolage Grotesque', 'Figtree', sans-serif;
@@ -701,7 +701,7 @@ html:has(#pdp-v4) { scroll-padding-top: 140px; }
 
 .ayq {
   --q-page: var(--ay-page, #ffedac);
-  --q-group: var(--ay-group, transparent);
+  --q-group: var(--ay-group, #ffedac);
   --q-ink: var(--ay-text, #3e2723);
   --q-ink2: var(--ay-text-2, rgba(62, 39, 35, .78));
   --q-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
@@ -2055,7 +2055,7 @@ html body .app-container #ay-sec-compare .ay-compare__name button.ay-compare__x,
   --v-butter: #f7badd;         /* butter cards on the butter page use the butter tint (founder: no cream) */
   --v-pink: #f7badd; --v-sky: #769ebe;
   --v-accent-text: #3e2723;    /* espresso: palette only (deep rose was off-palette); pink kickers would not read on yellow */
-  --v-next-bg: transparent; --v-next-fg: #3e2723;
+  --v-next-bg: #ffedac; --v-next-fg: #3e2723;
   --v-num: #f7badd;
   --v-btn-bg: #3e2723; --v-btn-fg: #ffedac;
   --v-ink: #3e2723; --v-deep: #2a1a19;

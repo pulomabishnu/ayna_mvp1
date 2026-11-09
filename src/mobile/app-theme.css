@@ -20,7 +20,7 @@
   --b-white: #ffffff;
 
   --r-canvas: var(--b-butter);
-  --r-surface: transparent;             /* deeper butter (founder, Oct 26); white is only for product photos */
+  --r-surface: #ffedac;             /* deeper butter (founder, Oct 26); white is only for product photos */
   --r-surface-2: #f7badd;          /* grouped rows on the same deeper butter */
   --r-ink: var(--b-espresso);
   --r-ink-2: rgba(62, 39, 35, .72);

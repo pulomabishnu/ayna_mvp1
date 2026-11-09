@@ -7,7 +7,7 @@
 /* ---------- shell ---------- */
 
 .ayna-play-intake {
-  --ip-bg: var(--ay-butter-deep, transparent);
+  --ip-bg: var(--ay-butter-deep, #ffedac);
   --ip-deep: transparent;
   --ip-select: var(--legacy-butter);
   position: relative;
@@ -34,7 +34,7 @@
   --ayna-color-ink: var(--legacy-ink);
   --ayna-brown: var(--legacy-ink);
 }
-.ayna-play-intake.ip-tone--peri { --ip-bg: var(--ay-butter-deep, transparent); --ip-deep: transparent; --ip-select: var(--ay-butter); }
+.ayna-play-intake.ip-tone--peri { --ip-bg: var(--ay-butter-deep, #ffedac); --ip-deep: #ffedac; --ip-select: var(--ay-butter); }
 .ayna-play-intake.ip-tone--butter { --ip-bg: var(--legacy-butter); --ip-deep: var(--ay-butter-deep); --ip-select: var(--legacy-pink); }
 .ayna-play-intake.ip-tone--pink { --ip-bg: var(--legacy-pink); --ip-deep: var(--ay-pink-deep); --ip-select: var(--legacy-butter); }
 .ayna-play-intake.ip-tone--mint { --ip-bg: var(--ay-mint); --ip-deep: var(--ay-mint-deep); --ip-select: var(--legacy-butter); }

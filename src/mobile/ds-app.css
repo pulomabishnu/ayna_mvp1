@@ -412,6 +412,6 @@
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:not(.is-care):not(.is-safety):not(:has(.ay-today__chips)):not(:has(.ay-today__actions > :nth-child(3))) .ay-today__actions { grid-row: 1 !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact:is(.is-care, .is-safety):not(:has(.ay-today__chips)):not(:has(.ay-today__actions > :nth-child(3))) .ay-today__actions { grid-row: 1 / span 2 !important; }
 /* Founder 13:38: no white surfaces. Calm surfaces on Today are butter-deep with a thin espresso rule (light only; dark keeps butter at 8%). */
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):not([data-theme='dark']) :is(.ay-homescreen, .ay-hd) { --ay-surface: transparent; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):not([data-theme='dark']) :is(.ay-homescreen, .ay-hd) { --ay-surface: #ffedac; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):not([data-theme='dark']) .ay-homescreen :is(.ay-today__item.is-compact, .ay-w--health, .ay-today__notify),
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):not([data-theme='dark']) .ay-hd .ay-today__item:not(.is-compact) { background: transparent !important; box-shadow: inset 0 0 0 1px rgba(62, 39, 35, .22) !important; }

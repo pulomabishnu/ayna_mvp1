@@ -30,7 +30,7 @@
   --ay-text: #3e2723; --ay-text-2: rgba(62, 39, 35, .82); --ay-ink: #3e2723; --legacy-ink: #3e2723;
   --ay-outline-color: #3e2723; --ay-outline: 1.5px solid #3e2723; --legacy-outline: 1.5px solid #3e2723;
   --ay-hairline: rgba(62, 39, 35, .28); --ay-hover: rgba(62, 39, 35, .08); --ay-focus: #3e2723;
-  --ay-feature-bg: #3e2723; --ay-feature-fg: #ffedac; --ay-surface: transparent; --legacy-surface: transparent;
+  --ay-feature-bg: #3e2723; --ay-feature-fg: #ffedac; --ay-surface: #ffedac; --legacy-surface: #ffedac;
   --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .8); --ay-fill-ink: #3e2723; --ay-on-ink: #ffedac; --ay-border-ink: 1.5px solid #3e2723;
   --ed-text: #3e2723; --ed-text-2: rgba(62, 39, 35, .82); --ed-outline: #3e2723; --ed-hairline: rgba(62, 39, 35, .28);
   --ed-page: #ffedac; --ed-feature-bg: #3e2723; --ed-feature-fg: #ffedac;

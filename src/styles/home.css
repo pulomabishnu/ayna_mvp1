@@ -353,7 +353,7 @@
 /* big-number facts: the shared BigFact tile (deeper butter + thin espresso rule, 13px caption; founder Oct 26: no white surfaces), four in a row */
 .app-container .hm .hm-stats { list-style: none; padding: 0; gap: 16px; }
 .app-container .hm .hm-stats > li { min-width: 0; display: grid; }
-.app-container .hm .hm-stats .ayk-fact { --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .78); --ay-ink: #3e2723; --legacy-ink: #3e2723; --ay-ink-muted: rgba(62, 39, 35, .78); --ay-surface: transparent; --legacy-surface: transparent; background: transparent; border: 1px solid rgba(62, 39, 35, .15); }
+.app-container .hm .hm-stats .ayk-fact { --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .78); --ay-ink: #3e2723; --legacy-ink: #3e2723; --ay-ink-muted: rgba(62, 39, 35, .78); --ay-surface: #ffedac; --legacy-surface: #ffedac; background: transparent; border: 1px solid rgba(62, 39, 35, .15); }
 @media (max-width: 767px) { .app-container .hm .hm-stats { gap: 12px; } }
 /* the Wefunder card's one round seal */
 .app-container .hm .hm-invest { position: relative; overflow: visible; }

@@ -43,7 +43,7 @@
   padding: 22px var(--r-gutter) 22px !important; text-align: center;
   --band: var(--b-rose); background: var(--band) !important; color: var(--b-espresso) !important;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-head { --band: transparent; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-head { --band: #ffedac; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-shop-heading, .ay-lib-head)::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: -13px; height: 14px; pointer-events: none;
   background: radial-gradient(circle at 12px 0, var(--band) 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x;

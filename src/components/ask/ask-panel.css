@@ -7,7 +7,7 @@
    !important) cannot restyle the new parts. */
 
 .ay-askp:is(#ay-askp, .ay-askp) {
-  --askp-bg: transparent; /* founder Oct 26: no white surfaces; butter-deep with espresso rules (white only behind product photos) */
+  --askp-bg: #ffedac; /* founder Oct 26: no white surfaces; butter-deep with espresso rules (white only behind product photos) */
   --askp-page: #ffedac;
   --askp-ink: #3e2723;
   --askp-muted: rgba(62, 39, 35, .74);

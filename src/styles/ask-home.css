@@ -8,7 +8,7 @@
 
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) :is(.ay-askh, .ay-askh-stats) {
   --k-ink: var(--d-ink, var(--ay-text, #3e2723)); --k-soft: var(--d-ink-2, var(--ay-text-2, rgba(62, 39, 35, .78)));
-  --k-group: var(--d-group, var(--ay-group, transparent)); --k-hair: var(--d-hair, var(--ay-hairline, rgba(62, 39, 35, .15)));
+  --k-group: var(--d-group, var(--ay-group, #ffedac)); --k-hair: var(--d-hair, var(--ay-hairline, rgba(62, 39, 35, .15)));
   --k-page: var(--d-page, var(--ay-page, #ffedac));
   --k-display: var(--ay-app-heading, var(--ay-heading, 'ayna Display', serif)); --k-sans: 'Figtree', system-ui, sans-serif;
 }
@@ -109,4 +109,4 @@ html body .app-container .ayna-ask-panel .ay-askh-homebtn svg { width: 22px; hei
   html body .app-container .ayna-ask-panel:not(#ay-none) .ayna-ask-panel__messages.is-home { padding-top: 12px !important; }
 }
 /* Brand dark on the website: the Ask panel stays butter paper, so its ink stays espresso (the greeting and note were butter on butter). */
-html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ayna-ask-panel:not(#ay-none) .ay-askh { --k-ink: #3e2723; --k-soft: rgba(62, 39, 35, .78); --k-hair: rgba(62, 39, 35, .15); --k-group: transparent; --k-page: #ffedac; }
+html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ayna-ask-panel:not(#ay-none) .ay-askh { --k-ink: #3e2723; --k-soft: rgba(62, 39, 35, .78); --k-hair: rgba(62, 39, 35, .15); --k-group: #ffedac; --k-page: #ffedac; }
