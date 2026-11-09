@@ -167,6 +167,22 @@ function matchesLifeStage(item, filter) {
     return itemMatchesMacroGroup(item, filter === 'perimenopause' ? 'menopause' : filter);
 }
 
+/* Nov 6 (founder: "enough filters"; non-pill options count). How she'd take it, from the
+   engine's product profile formats. */
+const PILL_FORMATS = ['pill_capsule', 'gummy', 'powder'];
+function matchesFormat(item, filter) {
+    if (!filter || filter === 'all') return true;
+    let f = [];
+    try { f = buildProductProfile(item)?.formats || []; } catch { f = []; }
+    const pill = item.category === 'supplement' || f.some((x) => PILL_FORMATS.includes(x));
+    if (filter === 'no-pill') return !pill;
+    if (filter === 'pill') return pill;
+    if (filter === 'topical') return f.some((x) => ['topical', 'suppository', 'patch'].includes(x));
+    if (filter === 'device') return f.includes('device') || ['sleep', 'cramp-relief', 'pelvic-floor', 'sex-tech', 'diagnostics'].includes(item.category) && !pill && !f.includes('app_service');
+    if (filter === 'app') return f.includes('app_service') || ['tracker', 'telehealth', 'mental-health'].includes(item.category);
+    return true;
+}
+
 // Kept for sub-filter pills within a selected group
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'incontinence', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 
@@ -536,6 +552,13 @@ function FilterSheet({ sections, personalizedToggle, sort = null, resultCount, a
     );
 }
 
+// Filter words the search treats as must-haves; dropped to offer a wider search when nothing passes.
+const RELAX_RE = /\b(?:vegan|plant[- ]based|organic|cruelty[- ]?free|reusable|washable|fragrance[- ]?free|unscented|scent[- ]?free|latex[- ]?free|non[- ]?hormonal|hormone[- ]?free|hsa|fsa|(?:hsa|fsa)[- ]eligible|cheap(?:er|est)?|affordable|budget|inexpensive|(?:under|below|less than|up to)\s*\$?\s*\d+(?:\.\d+)?(?:\s*(?:dollars|bucks))?)\b/gi;
+export function relaxedQuery(q) {
+    const r = String(q || '').replace(RELAX_RE, ' ').replace(/\s+/g, ' ').trim();
+    return r && r.toLowerCase() !== String(q || '').trim().toLowerCase() && r.split(' ').some((w) => w.length > 2) ? r : '';
+}
+
 export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null, matchOpts: matchOptsProp = null, inExplore = false, initialType = null, onOpenReads = null, lockType = false }) {
     // Arriving with an intent (a category link, a search) starts fresh; plain "Shop" restores her own filters.
     const memoUid = user?.id || '';
@@ -600,6 +623,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [eligibilityFilter, setEligibilityFilter] = useState(() => memo('eligibilityFilter', 'all'));
     const [sustainabilityFilter, setSustainabilityFilter] = useState(() => memo('sustainabilityFilter', 'all'));
     const [lifeStageFilter, setLifeStageFilter] = useState(() => memo('lifeStageFilter', 'all'));
+    const [formatFilter, setFormatFilter] = useState(() => memo('formatFilter', 'all'));
     const [aynaFilter, setAynaFilter] = useState(() => memo('aynaFilter', 'all'));
     // No filter turns itself on from her profile (Oct 16): filters are only what she picks.
     const [preferenceFilter, setPreferenceFilter] = useState(() => memo('preferenceFilter', 'all'));
@@ -623,9 +647,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [padUseCaseFilter, setPadUseCaseFilter] = useState(() => memo('padUseCaseFilter', initialPadUseCase || 'all'));
     const [symptomFilter] = useState(initialSymptom || 'all');
     useEffect(() => {
-        shopMemo.v = { macroGroup, categoryFilter, typeFilter, sortBy, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter };
+        shopMemo.v = { macroGroup, categoryFilter, typeFilter, sortBy, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, formatFilter, aynaFilter, preferenceFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter };
         writeShopMemo(shopMemo.uid, shopMemo.v);
-    }, [macroGroup, categoryFilter, typeFilter, sortBy, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter]);
+    }, [macroGroup, categoryFilter, typeFilter, sortBy, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, formatFilter, aynaFilter, preferenceFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter]);
     const [aiSuggestions, setAiSuggestions] = useState([]);
     const [, setAiQuerySummary] = useState('');
     const [aiRelatedSearches, setAiRelatedSearches] = useState([]);
@@ -924,9 +948,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             if (!matchesSustainability(item, sustainabilityFilter)) return false;
             if (!matchesLifeStage(item, lifeStageFilter)) return false;
+            if (!matchesFormat(item, formatFilter)) return false;
             if (!passesAvoid(item, avoidAttrs)) return false;
             return true;
-    }, [avoidAttrs, omittedProducts, personalizationFilter, eligibilityFilter, personalizedSet, macroGroup, categoryFilter, typeFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, priceFilter, ratingFilter, aynaReviews, aynaFilter, quizResults, healthProfile, myProducts, preferenceFilter, sustainabilityFilter, lifeStageFilter, matchOpts]);
+    }, [avoidAttrs, omittedProducts, personalizationFilter, eligibilityFilter, personalizedSet, macroGroup, categoryFilter, typeFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, priceFilter, ratingFilter, aynaReviews, aynaFilter, quizResults, healthProfile, myProducts, preferenceFilter, sustainabilityFilter, lifeStageFilter, formatFilter, matchOpts]);
 
     const filtered = useMemo(() => {
         const applyFilters = (items, skipCategory = false) => items.filter((item) => passesActiveFilters(item, skipCategory));
@@ -956,6 +981,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 }
             }
 
+            // Nov 6: a strong, specific hit ("heating pad") drops the long tail that only shares one
+            // word with it (every period pad), so the grid isn't 40 off-topic products deep.
+            const topScore = scored.reduce((m, x) => Math.max(m, x.matchScore), 0);
+            if (topScore >= 12 && scored.length > 8) {
+                const strong = scored.filter((x) => x.matchScore >= topScore * 0.25);
+                if (strong.length >= 3) scored = strong;
+            }
             list = scored.map((x) => x.item);
             scoreById = new Map(scored.map((x) => [x.item.id, x.matchScore]));
         }
@@ -1521,15 +1553,19 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
         const categoryNudges = [
             { test: (s) => s.includes('underwear') || s.includes('panty') || s.includes('panties'), cat: 'period-underwear' },
-            { test: (s) => (s.includes('pad') || s.includes('pads')) && !s.includes('underwear'), cat: 'pad' },
-            { test: (s) => s.includes('tampon'), cat: 'tampon' },
-            { test: (s) => (s.includes('cup') && s.includes('menstrual')) || (s.includes('cup') && !s.includes('supplement')), cat: 'cup' },
-            { test: (s) => s.includes('disc') && !s.includes('discover'), cat: 'disc' },
+            // Nov 6 (founder: search must understand sentences): whole words only, and not other kinds
+            // of pad ("heating pad for cramps" was filtered to period pads).
+            { test: (s) => /\bpads?\b/.test(s) && !/underwear|heat|heating|ice|cold|cooling|knee|nursing|breast|bed|mattress|eye|nipple|bra|pelvic|kegel/.test(s), cat: 'pad' },
+            { test: (s) => /\btampons?\b/.test(s), cat: 'tampon' },
+            { test: (s) => /\bcups?\b/.test(s) && !/supplement|cupping|bra\b|nursing|breast/.test(s), cat: 'cup' },
+            { test: (s) => /\bdiscs?\b/.test(s), cat: 'disc' },
             { test: (s) => s.includes('menopause') || s.includes('perimenopause'), cat: 'menopause', macro: 'menopause' },
             { test: (s) => s.includes('pregnancy') || s.includes('prenatal'), cat: 'pregnancy' },
             { test: (s) => s.includes('postpartum') || s.includes('breastfeeding') || s.includes('nursing'), cat: 'postpartum', macro: 'postpartum' },
             { test: (s) => s.includes('fertility') || s.includes('conceive') || s.includes('ttc'), cat: 'fertility' },
-            { test: (s) => s.includes('cramp') || s.includes('dysmenorrhea'), cat: 'cramp-relief' },
+            // Cramps are not narrowed to the cramp-relief aisle: supplements, apps and TENS devices
+            // for cramps live in other categories, and the search ranks heat and TENS first anyway.
+            { test: (s) => /^(?:cramp relief|cramp-relief)$/.test(s.trim()), cat: 'cramp-relief' },
             // Routed through the 'pelvic' macro group, not a strict category filter — a
             // pelvic-floor-exerciser device like Elitone is categorized 'incontinence'
             // (its primary shopping aisle), so a strict `item.category !== 'pelvic-floor'`
@@ -1682,13 +1718,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setPriceFilter('all');
         setEligibilityFilter('all');
         setLifeStageFilter('all');
+        setFormatFilter('all');
         setPreferenceFilter('all');
         setSustainabilityFilter('all');
         setAynaFilter('all');
     };
     const areaOn = inExplore && macroGroup !== 'all' ? 1 : 0;
-    const sheetFilterCount = [lockType ? 'all' : typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length + areaOn;
-    const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, inExplore ? 'all' : typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0) + areaOn + avoidAttrs.length;
+    const sheetFilterCount = [lockType ? 'all' : typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, formatFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length + areaOn;
+    const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, formatFilter, aynaFilter, preferenceFilter, inExplore ? 'all' : typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0) + areaOn + avoidAttrs.length;
     // Explore's Filters sheet picks the area (the folder tabs did this outside Explore).
     const pickArea = (id) => {
         setMacroGroup(id);
@@ -1879,8 +1916,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             {(() => {
                 const AREA_LABEL = (v) => { const g = SHOP_GROUPS.find((x) => x.id === v) || MACRO_GROUPS.find((x) => x.id === v); return g ? sentenceCase(g.label) : v; };
-                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription or membership', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: CLINICAL_SOURCES_LABEL, community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my routine', fertility: 'Trying to conceive', pregnancy: 'Pregnant', postpartum: 'Postpartum', perimenopause: 'Perimenopause and menopause', postmenopause: 'Post-menopause', menopause: 'Menopause', period: 'Period years', products: 'Products', services: 'Apps & services' };
-                const applied = [...(inExplore && macroGroup !== 'all' ? [[macroGroup, () => setMacroGroup('all')]] : []), ...(inExplore ? [] : [[typeFilter, setTypeFilter]]), [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
+                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription or membership', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: CLINICAL_SOURCES_LABEL, community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my routine', fertility: 'Trying to conceive', pregnancy: 'Pregnant', postpartum: 'Postpartum', perimenopause: 'Perimenopause and menopause', postmenopause: 'Post-menopause', menopause: 'Menopause', period: 'Period years', products: 'Products', services: 'Apps & services', 'no-pill': 'Not a pill', pill: 'Pills, gummies and powders', topical: 'Creams, gels and patches', device: 'Devices', app: 'Apps and care' };
+                const applied = [...(inExplore && macroGroup !== 'all' ? [[macroGroup, () => setMacroGroup('all')]] : []), ...(inExplore ? [] : [[typeFilter, setTypeFilter]]), [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [formatFilter, setFormatFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayshop__applied" role="status">
                         <span className="ayshop__count">{!gridReady ? '\u00a0' : submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : shownCount > visibleCount ? `Showing ${visibleCount} of ${shownCount} ${servicesGrid ? 'services' : 'products'}` : (shownCount === 1 ? `1 ${servicesGrid ? 'service' : 'product'}` : `${shownCount} ${servicesGrid ? 'services' : 'products'}`)}</span>
@@ -1905,6 +1942,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         ...(lockType ? [] : [{ title: 'Type', rows: [{ value: typeFilter, set: setTypeFilter, options: [['products', 'Products'], ['services', 'Apps & services']] }] }]),
                         // Fertility, Pregnancy, Postpartum and Menopause are category chips on the page already.
                         { title: 'Life stage', hint: 'Period years to post-menopause', rows: [{ value: lifeStageFilter, set: setLifeStageFilter, options: [['period', 'Period years'], ['fertility', 'Trying to conceive'], ['pregnancy', 'Pregnant'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause and menopause'], ['postmenopause', 'Post-menopause']] }] },
+                        { title: 'Format', hint: 'Not a pill, devices, apps…', rows: [{ value: formatFilter, set: setFormatFilter, options: [['no-pill', 'Not a pill'], ['pill', 'Pills, gummies and powders'], ['topical', 'Creams, gels and patches'], ['device', 'Devices'], ['app', 'Apps and care']] }] },
                         { title: 'Ingredients and values', hint: 'Leave out fragrance, vegan, reusable…', rows: [
                             ...(inExplore ? [{ label: 'Leave out', extra: <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ayshop__avoid" />, count: avoidAttrs.length, options: [] }] : []),
                             // With "Leave out" in the sheet, its fragrance and paraben chips cover the same thing, so they aren't repeated here.
@@ -2067,7 +2105,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         {availableMacroGroups.filter((g) => g.id !== 'all' && g.id !== macroGroup).slice(0, 3).map((g) => (
                             <button key={g.id} type="button" className="ay-chip" onClick={() => { clearBrowseFilters(); setMacroGroup(g.id); }}>{g.label}</button>
                         ))}
-                        {submittedQuery && onAsk && <button type="button" className="ay-btn ay-btn--primary" onClick={() => onAsk(submittedQuery)}>Ask ayna about “{submittedQuery}”</button>}
+                        {/* Nov 6 (founder: search should understand sentences): a sentence with a filter word nothing
+                            passes ("vegan vitamin for energy") offers the same search without that word. */}
+                        {submittedQuery && relaxedQuery(submittedQuery) && <button type="button" className="ay-btn ay-btn--primary" onClick={() => runSearch(relaxedQuery(submittedQuery))}>Search “{relaxedQuery(submittedQuery)}” instead</button>}
+                        {submittedQuery && onAsk && <button type="button" className={`ay-btn ${relaxedQuery(submittedQuery) ? 'ay-btn--secondary' : 'ay-btn--primary'}`} onClick={() => onAsk(submittedQuery)}>Ask ayna about “{submittedQuery}”</button>}
                         {activeFilterCount > 0 && <button type="button" className="ay-btn ay-btn--secondary" onClick={clearBrowseFilters}>Clear filters</button>}
                     </div>
                     <SuggestBox context="shop-empty" prefill={submittedQuery} className="ayna-browse__suggest" />

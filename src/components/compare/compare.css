@@ -142,3 +142,6 @@ html body :is([data-theme='dark'], [data-theme='brand-dark']) :is(#ayd, .ay-cmpd
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmpt[aria-pressed='true'] { background: var(--s-ink) !important; color: var(--s-page) !important; }
 :is(#ayk, .ayna-mobile):is(#ayk, .ayna-mobile):is(#ayk, .ayna-mobile):is(#ayk, .ayna-mobile):is(#ayk, .ayna-mobile) .ay-shop-extras .ay-shop-compare[aria-pressed='true'] { background: var(--ay-fg, #3e2723) !important; color: var(--d-page, #ffedac) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container) .ay-cmp2 .ay-cmp2__this { display: block; margin-top: 4px; font: 600 13px/1.3 var(--s-sans); color: var(--s-soft); }
+/* Nov 6: the product card's link stretches over the whole card (pcard.css ::after); the pick
+   button sat under it, so a click opened the product instead of picking it. Lift it above. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-cmpc { position: relative; z-index: 2; }

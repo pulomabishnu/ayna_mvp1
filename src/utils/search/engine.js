@@ -59,6 +59,8 @@ const NEG_FORMAT_WORDS = [
   ['suppository', 'suppositor(?:y|ies)'],
   ['device', 'devices?|gadgets?'],
   ['app_service', 'apps?'],
+  // Nov 6 (founder: search should understand sentences): "not a supplement", "no vitamins".
+  ['supplement', 'supplements?|vitamins?|herbals?'],
 ];
 const NEGATOR = "(?:not|no|non|without|isn'?t|is not|aren'?t|are not|nothing|never|avoid(?:ing)?|skip(?:ping)?|other than|instead of)";
 const NEG_FORMAT_RES = NEG_FORMAT_WORDS.map(([id, words]) => [id,
@@ -452,6 +454,7 @@ export function createSearchEngine(config = {}) {
     if (f.excludeFormats?.length) {
       const formats = profileOf(item, e)?.formats || [];
       if (f.excludeFormats.some((id) => formats.includes(id))) return false;
+      if (f.excludeFormats.includes('supplement') && (item.category === 'supplement' || formats.some((x) => ['pill_capsule', 'gummy', 'powder'].includes(x)))) return false;
     }
     const p = (f.fragranceFree || f.pregnancy || f.organic || f.vegan || f.reusable || f.crueltyFree || f.latexFree || f.nonHormonal) ? profileOf(item, e) : null;
     if (f.fragranceFree && p && p.safety?.fragrance !== 'no') return false;
