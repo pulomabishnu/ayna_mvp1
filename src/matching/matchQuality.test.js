@@ -190,6 +190,7 @@ describe('4. catalog ingestion -> validation -> eligibility -> matching', () => 
   const report = recommendationGateReport(ALL_PRODUCTS);
   it('lists what the gate keeps out of recommendations, each with a reason', () => {
     expect(report.map((r) => r.id).sort()).toEqual([
+      'd-bloom',
       'p-gina-insertion-applicator-refills', 'p-lim-method-kneeling-pad', 'p-lim-method-shoe-covers',
       'p-mypelvicbra-waistband-extenders', 'p-saalt-cup-steamer', 'p-sootheher-gel-pad-refills',
       // Nov 5 all-hands: painkillers are never recommended.

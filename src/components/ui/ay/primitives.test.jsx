@@ -70,7 +70,7 @@ describe('shared primitives (all-pages brief, Everywhere first)', () => {
     expect(host.querySelectorAll('.is-bad li:not([hidden])')).toHaveLength(2);
     expect(host.textContent).toContain('Show all 4');
     expect(renderToStaticMarkup(<StandardsBand items={['1', '2', '3', '4']} />).match(/<li/g)).toHaveLength(3);
-    expect(renderToStaticMarkup(<ScallopEdge shape="wave" />)).toContain('<path');
+    expect(renderToStaticMarkup(<ScallopEdge shape="wave" />)).toBe('');
   });
 
   it('the stylesheet uses only --ay-* tokens: no raw colours, no 6-7px shadows', () => {

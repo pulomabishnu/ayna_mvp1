@@ -757,9 +757,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [discoveredProducts, setDiscoveredProducts] = useState([]);
     React.useEffect(() => {
         let cancelled = false;
-        loadProductCatalog().then(({ products, source }) => {
+        loadProductCatalog().then(({ source }) => {
             if (cancelled || source === 'bundled') return;
-            setDiscoveredProducts(products.filter((p) => p.source === 'discovered' || p.source === 'imported'));
+            // The live catalog is now adopted by ALL_PRODUCTS for matching too.
+            // Keep this compatibility list empty so Shop does not duplicate rows.
+            setDiscoveredProducts([]);
         }).catch(() => {});
         return () => { cancelled = true; };
     }, []);

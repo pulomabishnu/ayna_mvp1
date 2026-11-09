@@ -10,7 +10,7 @@ describe('main tabs (founder, Oct 24 2026)', () => {
     // The keys stay, so routes, analytics and CSS keep working.
     expect(MAIN_TABS.map((t) => t.key)).toEqual(['explore', 'services', 'today', 'community', 'library']);
     // Shop is the old Explore page (same key and address); Services and Library are its other pages.
-    expect(MAIN_TABS.map((t) => t.href)).toEqual(['/explore', '/explore/services', '/today', '/community', '/explore/resources']);
+    expect(MAIN_TABS.map((t) => t.href)).toEqual(['/explore', '/explore/services', '/home', '/community', '/explore/resources']);
     expect(MAIN_TABS.find((t) => t.label === 'Shop').key).toBe('explore');
     // Ask ayna and You moved to the top bar (the Ask button and the round profile button).
     expect(MAIN_TABS.some((t) => t.key === 'ask' || t.key === 'profile')).toBe(false);
@@ -41,17 +41,35 @@ describe('main tabs (founder, Oct 24 2026)', () => {
       expect(r.permanent).toBe(true);
     }
   });
-  it('/ecosystem?view=dashboard goes to Today, before the plain /ecosystem redirect', () => {
+  it('/ecosystem?view=dashboard goes to Home, before the plain /ecosystem redirect', () => {
     const i = vercel.redirects.findIndex((x) => x.source === '/ecosystem' && x.has);
     const j = vercel.redirects.findIndex((x) => x.source === '/ecosystem' && !x.has);
-    expect(vercel.redirects[i].destination).toBe('/today');
+    expect(vercel.redirects[i].destination).toBe('/home');
     expect(i).toBeLessThan(j);
+  });
+  it('keeps the original falling app widgets visible on the public landing', () => {
+    const landing = fs.readFileSync(new URL('../landing/WebLanding.jsx', import.meta.url), 'utf8');
+    const css = fs.readFileSync(new URL('../landing/web-landing.css', import.meta.url), 'utf8');
+    expect(landing).toContain('<Rain cols={4} onInk className="wl-rain" />');
+    expect(css).toContain('.wl-hero .lk-w { display: grid !important; }');
+    expect(css).not.toContain('.wl-hero .lk-w { display: none !important; }');
+    expect(css).not.toContain('.wl-rain { z-index: -2;');
+    expect(css).toContain('.wl-rain { z-index: 0;');
+    expect(css).toContain('.wl-hero__in { z-index: 1;');
+  });
+  it('preserves the original app wave and compact rundown on web Home', () => {
+    const hero = fs.readFileSync(new URL('../../mobile/components/HomeHero.jsx', import.meta.url), 'utf8');
+    const homeCss = fs.readFileSync(new URL('../you/web-home-top.css', import.meta.url), 'utf8');
+    const rundownCss = fs.readFileSync(new URL('../rundown/rundown.css', import.meta.url), 'utf8');
+    expect(hero).toContain('<HomeWaveEdge />');
+    expect(homeCss).toContain('.wht__today .ay-fdeck__top .ay-today__kicker');
+    expect(rundownCss).toContain('html body .app-container .wht');
   });
   it('maps moved pages to their old address for analytics', () => {
     expect(legacyPathFor('/explore/products')).toBe('/shop');
     expect(legacyPathFor('/explore/resources/')).toBe('/library');
     expect(legacyPathFor('/you/ecosystem')).toBe('/ecosystem');
-    expect(legacyPathFor('/today')).toBe('/health');
+    expect(legacyPathFor('/home')).toBe('/health');
     expect(legacyPathFor('/community')).toBe(null);
   });
 });

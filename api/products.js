@@ -80,8 +80,10 @@ export function toClientProduct(row) {
  */
 export function isPublishable(row) {
   if (!row || row.is_active === false) return false;
-  if ((row.source || 'curated') !== 'discovered') return true;
+  // A row awaiting review must never reach the public feed or AI grounding,
+  // regardless of how it was imported.
   if (row.review_status !== 'approved') return false;
+  if ((row.source || 'curated') !== 'discovered') return true;
   return Boolean(row.discovery_meta?.humanReviewedAt);
 }
 

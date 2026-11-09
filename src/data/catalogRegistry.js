@@ -11,6 +11,12 @@ export function provideCatalog(api) {
   listeners.forEach((fn) => { try { fn(); } catch { /* one listener never stops the rest */ } });
 }
 
+/** Re-render catalog consumers after the live catalog replaces bundled rows. */
+export function refreshCatalog(products) {
+  if (catalog && products) catalog.ALL_PRODUCTS = products;
+  listeners.forEach((fn) => { try { fn(); } catch { /* keep notifying */ } });
+}
+
 /** The catalog API, or null until products.js has run. */
 export function catalogNow() { return catalog; }
 

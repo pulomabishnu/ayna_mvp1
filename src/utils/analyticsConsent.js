@@ -1,10 +1,9 @@
 /**
  * analyticsConsent.js
  *
- * Product analytics are on by default, with a persistent visitor opt-out.
- * Global Privacy Control is enforced in main.jsx before PostHog can emit an
- * initial pageview. Account settings and this notice use the same PostHog SDK
- * opt state, so a visitor can change the choice at any time.
+ * Optional product analytics are OFF by default. The first pageview is
+ * captured only after explicit opt-in; GPC is honored synchronously. Consent
+ * decisions persist and can be changed from account/privacy controls.
  *
  * This controls analytics only. It does not control the Supabase session or
  * necessary local storage used for authentication.
@@ -64,8 +63,7 @@ export function getStoredConsent() {
   // silently turn analytics back on because a timestamp aged out.
   if (record.decision === 'denied') return 'denied';
 
-  // A stale grant may expire back to the product's default-on state without
-  // changing behavior or suppressing a fresh notice forever.
+  // A stale grant expires to default-off, asking the user again.
   if (isExpired(record)) return undefined;
   return record.decision;
 }
@@ -90,11 +88,9 @@ function persist(decision) {
 }
 
 /**
- * Called once from main.jsx's PostHog loaded callback. The default-on state is
- * established by posthog.init itself, so an undecided visitor intentionally
- * gets NO explicit SDK opt-in here. Keeping that state "pending" is what lets
- * the visible opt-out notice distinguish default-on from a real prior choice.
- * GPC is handled in main.jsx before this runs and always takes priority.
+ * Called after PostHog initialises with capture disabled unless a valid grant
+ * already exists. An undecided visitor must remain pending, not get an
+ * implicit SDK opt-out that could hide the consent choice.
  */
 export function applyStoredConsent(ph) {
   const stored = getStoredConsent();
@@ -103,14 +99,12 @@ export function applyStoredConsent(ph) {
 
   if (explicitSdkDecision(ph) !== undefined) return;
 
-  // No explicit action: analytics is already on because init did not set
-  // opt_out_capturing_by_default for this visitor, and the notice stays visible.
+  // No explicit action: capture remains off and the consent bar stays visible.
 }
 
-/** Persist acknowledgement of the default-on analytics notice. */
+/** Explicit opt-in from the consent banner; record the first consented view. */
 export function acknowledgeAnalytics(ph) {
-  persist('granted');
-  ph.opt_in_capturing();
+  grantConsent(ph);
 }
 
 /** Explicit opt-in used by settings controls when re-enabling analytics. */

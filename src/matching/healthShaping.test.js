@@ -32,11 +32,10 @@ describe('demo health data changes her Ecosystem (website v2 and app v1 engines)
       if (firstTracker >= 0) expect(cats.slice(firstTracker).every((c) => ['tracker', 'wearable'].includes(c))).toBe(true);
       // Re-ordering only happens when the shelf has a tracker to move back
       // (v1's sleep shelf has none since Eight Sleep became a physical product, Nov 4).
-      // Nov 6: meditation apps now lead the sleep shelf, so a tracker may already sit last; only a
-      // tracker ahead of a non-tracker has to move.
-      const isTr = (id) => ['tracker', 'wearable'].includes(getProductById(id)?.category);
-      const beforeSleep = picks(before.shelves)['sleep.trouble'];
-      if (beforeSleep.some((id, i) => isTr(id) && beforeSleep.slice(i + 1).some((x) => !isTr(x)))) {
+      const beforeCats = picks(before.shelves)['sleep.trouble'].map((id) => getProductById(id)?.category);
+      const trackerBeforeComfort = beforeCats.some((c, i) => ['tracker', 'wearable'].includes(c)
+        && beforeCats.slice(i + 1).some((later) => !['tracker', 'wearable'].includes(later)));
+      if (trackerBeforeComfort) {
         expect(sleepAfter).not.toEqual(picks(before.shelves)['sleep.trouble']);
       }
       const change = after.healthShaped.changes.find((c) => c.needId === 'sleep.trouble');

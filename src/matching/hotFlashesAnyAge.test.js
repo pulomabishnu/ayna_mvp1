@@ -23,4 +23,24 @@ describe('hot flashes at any age', () => {
     expect(shelf(a).productIds.length).toBeGreaterThanOrEqual(3);
     expect(getMatchCareFlags(q(a)).notes.map((n) => n.code)).not.toContain('vasomotor_other_causes');
   });
+  it('22-year-old with period or stress hot flashes gets cooling, sleepwear and wellbeing support without a menopause shelf', () => {
+    const a = { age: '22', lifeStageSelections: ['I get periods regularly'],
+      supportSelections: ['Hot flashes', 'Night sweats', 'Anxiety', 'Low mood', 'Irritability', 'PMS symptoms'],
+      vasomotorTimingSelections: ['Before my period / PMS', 'When stressed or anxious'] };
+    const shelves = getEcosystemSeedFromQuiz(q(a), null, { engine: 'v2' }).shelves;
+    const idsFor = (needId) => shelves.find((s) => s.needId === needId)?.productIds || [];
+    expect(shelves.some((s) => s.needId === 'menopause.body_changes')).toBe(false);
+    expect(idsFor('vasomotor.hot_flashes')).toContain('p-embr-labs-embr-wave-2');
+    expect(idsFor('vasomotor.night_sweats')).toEqual(expect.arrayContaining([
+      'p-cool-jams-women-s-nightcool-v-neck-nightshirt', 'p-bedjet-3-climate-comfort-sleep-system',
+    ]));
+    expect(idsFor('mood.general_anxiety')).toContain('p-finch-self-care-pet');
+    // Non-pill wellbeing support on the mood and PMS shelves (merged engine: meditation apps or breathing tools).
+    const CALM = ['d-headspace', 'd-calm', 'p-finch-self-care-pet', 'p-komuso-classic-shift-anxiety-breathing-necklace', 'p-ten-percent-happier-happier-meditation-formerly-ten-percent-happier'];
+    expect(idsFor('mood.irritability').some((id) => CALM.includes(id))).toBe(true);
+    expect(idsFor('cycle.pms').some((id) => CALM.includes(id))).toBe(true);
+    for (const id of [...idsFor('vasomotor.hot_flashes'), ...idsFor('vasomotor.night_sweats')]) {
+      expect(MENO.has(id), id).toBe(false);
+    }
+  });
 });

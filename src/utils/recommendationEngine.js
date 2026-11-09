@@ -37,6 +37,8 @@ export const CONCERN_CONFIG = [
   { key: 'UTI support', tags: ['uti'], categories: ['supplement', 'telehealth', 'diagnostics'] },
   { key: 'STI support', tags: ['sti', 'std', 'sexual-health'], categories: ['telehealth', 'diagnostics'] },
   { key: 'Gut and vaginal health (probiotics, pH balance)', tags: ['vaginal-health', 'probiotic', 'ph-balance'], categories: ['supplement', 'intimate-care'] },
+  // Match the reported symptom without inferring a menopausal life stage.
+  { key: 'Hot flashes and night sweats', tags: ['cooling', 'hot-flashes', 'night-sweats'], categories: ['tracker', 'sleep', 'telehealth'] },
   { key: 'Perimenopause and menopause support', tags: ['menopause'], categories: ['menopause', 'supplement', 'telehealth'] },
   { key: 'Sexual health and comfort (lubricants, pelvic floor)', tags: ['pelvic-floor'], categories: ['sex-tech', 'intimate-care', 'pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser'] },
   { key: 'Mental health and cycle mood support', tags: ['mood', 'anxiety'], categories: ['mental-health'] },
@@ -59,8 +61,25 @@ function asArray(value) {
 }
 
 function selectedConcerns(intake) {
-  if (Array.isArray(intake?.primaryConcerns) && intake.primaryConcerns.length > 0) return intake.primaryConcerns;
-  if (intake?.primaryConcern) return [intake.primaryConcern];
+  // A saved primaryConcerns list is often GENERATED from older intake maps.
+  // Fresh support selections (specific needs) are the source of truth; don't
+  // turn a hot-flash symptom back into a menopause concern on resume.
+  const support = asArray(intakeProfile(intake)?.supportSelections);
+  if (support.length) {
+    const fromSupport = [...new Set(support.flatMap(item => asArray(LEGACY_CONCERN_BY_ITEM[item])))];
+    if (fromSupport.length) return fromSupport;
+  }
+  const legacy = Array.isArray(intake?.primaryConcerns) && intake.primaryConcerns.length > 0
+    ? intake.primaryConcerns : (intake?.primaryConcern ? [intake.primaryConcern] : []);
+  const profile = intakeProfile(intake);
+  const hasVasomotor = asArray(profile?.supportSelections).some((s) => s === 'Hot flashes' || s === 'Night sweats')
+    || asArray(intake?.symptoms).some((s) => /hot flash|hot flush|night sweat/i.test(String(s)));
+  const namedMenopause = asArray(profile?.lifeStageSelections).some((s) => /^I am (?:in peri|in meno|post-meno)/i.test(String(s)))
+    || asArray(profile?.supportSelections).includes('Menopause-related body changes');
+  if (hasVasomotor && !namedMenopause) {
+    return [...new Set([...legacy.filter((s) => !/menopause|perimenopause/i.test(String(s))), 'Hot flashes and night sweats'])];
+  }
+  if (legacy.length) return legacy;
   return [];
 }
 
@@ -468,7 +487,9 @@ export function generateTieredRecommendations(intake = {}) {
         const needLabels = getSelectedNeeds(intake).filter((n) => needIds.includes(n.id)).map((n) => n.label);
         return {
             concern: concern.key,
-            displayLabel: needLabels.length ? needLabels.join(', ') : concern.key,
+            displayLabel: concern.key === 'Hot flashes and night sweats' ? 'Temperature & sweating'
+                : concern.key === 'Mental health and cycle mood support' ? 'Mental wellbeing'
+                : needLabels.length ? needLabels.join(', ') : concern.key,
             needLabels,
             prompt: buildRecommendationPrompt(intake, concern.key),
             tiers,

@@ -1,3 +1,4 @@
+import { vasomotorTimingFromIntake } from './vasomotorContext.js';
 // Layered user profile for matching.
 //
 // buildUserProfile(intake, { behavior, catalog }) turns intake answers (the
@@ -826,6 +827,8 @@ export function buildUserProfile(intakeInput, options = {}) {
     contexts,
     recency,
     healthIntent: { needs, unresolvedNeeds, nothingRightNow, reinforcement },
+    // Explicitly reported episode timing; not a guessed diagnosis or cause.
+    vasomotorTiming: vasomotorTimingFromIntake(intake),
     safety: {
       pregnant,
       pregnancyStatus,

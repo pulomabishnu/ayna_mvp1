@@ -866,9 +866,10 @@ export default function MobileApp() {
   const [discoveredProducts, setDiscoveredProducts] = useState([]);
   useEffect(() => {
     let cancelled = false;
-    loadProductCatalog().then(({ products, source }) => {
+    loadProductCatalog().then(({ source }) => {
       if (cancelled || source === 'bundled') return;
-      setDiscoveredProducts(products.filter((p) => p.source === 'discovered' || p.source === 'imported'));
+      // ALL_PRODUCTS now includes the live rows used by personalization.
+      setDiscoveredProducts([]);
     }).catch(() => {});
     return () => { cancelled = true; };
   }, []);

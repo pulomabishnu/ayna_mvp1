@@ -192,10 +192,11 @@ describe('P0 golden: fallbacks, bands, completeness', () => {
       }
     }
   });
-  it('18. an open clinician review no longer holds the match (founder, Nov 5): scored like any product', () => {
+  it('18. an open clinician review withholds a personalized match until signoff', () => {
     const peri = getProductMatchDetailsForProduct(P('p-remifemin'), quiz({ ...base, lifeStageSelections: ['I am in perimenopause'], supportSelections: ['Hot flashes'], takesCurrent: 'No' }));
-    expect(['scored', 'safety-hold']).toContain(peri.matchStatus);
-    if (peri.matchStatus === 'safety-hold') expect(peri.safetyHold.state).not.toBe('in_review');
+    expect(peri.matchStatus).toBe('safety-hold');
+    expect(peri.safetyHold.state).toBe('in_review');
+    expect(peri.percent).toBeNull();
   });
   it('19. completeness states are ordered: her answers first, then review, then research, then brand-does-not-share', () => {
     const s = (over) => ({ restricted: true, missingFields: [], missingProductInfo: [], undisclosedInfo: [], ...over });

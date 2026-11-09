@@ -58,10 +58,12 @@ describe('whyLine is never empty for a scored match', () => {
     expect(whyLine({}, d({ needMatches: [{ needId: 'cycle.pms', label: 'PMS symptoms', relationship: 'secondary' }], needId: 'cycle.pms', reasonDetails: [], outputs: {} }))).toBe('Another option for your PMS symptoms');
     expect(whyLine({}, d({ needMatches: [{ needId: 'cycle.pms', label: 'PMS symptoms' }], needId: 'cycle.pms', reasonDetails: [{ text: 'Something new from the engine' }], outputs: {} }))).toBe('For your PMS symptoms');
   });
-  it('real engine: vitex for PMS is scored (Nov 5: reviews no longer hold) and every scored option has a why line', () => {
-    const q = { age: 24, lifeStageSelections: ['I get periods regularly'], supportSelections: ['PMS symptoms'], takesCurrent: 'No' };
+  it('real engine: an unreviewed PMS supplement is held, while scored products still have why lines', () => {
+    const q = { age: 24, lifeStageSelections: ['I get periods regularly'], supportSelections: ['Cramps or period pain'], takesCurrent: 'No' };
     const p = getProductById('p-vitex');
-    expect(getProductMatchDetailsForProduct(p, q).matchStatus).toBe('scored');
+    const held = getProductMatchDetailsForProduct(p, { ...q, supportSelections: ['PMS symptoms'] });
+    expect(held.matchStatus).toBe('safety-hold');
+    expect(held.safetyHold.state).toBe('in_review');
     const lines = ALL_PRODUCTS.map((x) => [x, getProductMatchDetailsForProduct(x, q)]).filter(([, d]) => d.matchStatus === 'scored' && d.percent >= 1 && d.eligible !== false).map(([x, d]) => whyLine(x, d));
     expect(lines.length).toBeGreaterThan(0);
     for (const l of lines) expect(l).toBeTruthy();

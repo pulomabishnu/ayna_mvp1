@@ -18,7 +18,7 @@ export const RESTRICTED_CONSIDERATION = /^Safety not checked yet/;
 // percent anywhere, never 0%. These words, then the exact reason and what
 // resolves it (details.safetyHold from src/data/products.js).
 // What the Match % means (P1, Oct 29). One sentence, everywhere a percent is explained.
-export const MATCH_MEANING = 'How well this fits what you told us. Not the chance it will work for you.';
+export const MATCH_MEANING = 'Personalized product fit based on your health needs and preferences. Not a guarantee of safety or a prediction it will work.';
 export const SAFETY_HOLD = 'Safety hold';
 export const MATCH_UNAVAILABLE = 'Match unavailable';
 export const SAFETY_HOLD_LINE = 'We need one more safety detail before we can determine your match.';

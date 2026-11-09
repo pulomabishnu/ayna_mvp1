@@ -10,11 +10,12 @@ export const SHELF_GROUPS = [
     name: (ids) => (ids.includes('period.heavy') ? 'Period products for a heavy flow' : ids.includes('period.light') ? 'Period products for a light flow' : 'Period products') },
   { id: 'pain', needs: ['pain.menstrual_cramp', 'pain.pelvic', 'pain.cycle_headache'], name: () => 'Cramps and period pain' },
   { id: 'heat', needs: ['vasomotor.hot_flashes', 'vasomotor.night_sweats'], name: () => 'Hot flashes and night sweats' },
-  { id: 'mood', needs: ['cycle.pms', 'mood.swings', 'mood.irritability', 'mood.cycle_related', 'mood.pmdd'], name: (ids) => (ids.includes('cycle.pms') ? 'PMS and mood' : 'Mood swings and irritability') },
+  { id: 'mood', needs: ['mood.swings', 'mood.irritability', 'mood.cycle_related', 'mood.pmdd'], name: () => 'Mood swings and irritability' },
+  { id: 'pms', needs: ['cycle.pms', 'bloating.cycle_related'], name: () => 'PMS and bloating' },
   { id: 'vaginal', needs: ['vaginal.odor', 'vaginal.discharge', 'vaginal.bv'], name: () => 'Odor, discharge and BV' },
   { id: 'bladder', needs: ['urinary.urgency', 'urinary.frequency', 'urinary.incontinence'], name: () => 'Bladder control and leaks' },
   { id: 'uti', needs: ['urinary.burning', 'urinary.recurrent_uti'], name: () => 'UTIs' },
-  { id: 'gut', needs: ['digestive.gas', 'bloating.digestive', 'pain.abdominal', 'digestive.constipation', 'digestive.diarrhea'], name: () => 'Gut and bloating' },
+  { id: 'gut', needs: ['digestive.gas', 'bloating.digestive', 'digestive.nausea', 'pain.abdominal', 'digestive.constipation', 'digestive.diarrhea'], name: () => 'Gut and bloating' },
   { id: 'focus', needs: ['cognition.brain_fog', 'cognition.concentration', 'energy.fatigue'], name: () => 'Focus and energy' },
   { id: 'fertility', needs: ['fertility.support', 'fertility.ttc', 'fertility.ovulation_tracking'], name: () => 'Trying to conceive' },
 ];
@@ -57,4 +58,64 @@ export function groupShelves(shelves = []) {
       restrictedCount: members.reduce((n, m) => n + (m.restrictedCount || 0), 0),
     };
   });
+}
+
+/* ---- Team grouping from main (Nov 6-7, "Mental wellbeing", "Temperature & sweating", ...) ----
+   Presentation groups only. Matching, safety, and product eligibility stay at the individual need
+   level before shelves are combined for display. A shelf already grouped above (it has `groupId`)
+   joins the team group of the same theme, so the two passes never split or double one theme. */
+const TEAM_GROUP_OF_SHELF_GROUP = { mood: 'mood.swings', heat: 'vasomotor.hot_flashes', pms: 'cycle.pms', gut: 'digestive.gas' };
+export function symptomShelfGroup(needId, groupId = null) {
+  const id = groupId && TEAM_GROUP_OF_SHELF_GROUP[groupId] ? TEAM_GROUP_OF_SHELF_GROUP[groupId] : String(needId);
+  if (id.startsWith('mood.')) return { key: 'mental-wellbeing', label: 'Mental wellbeing' };
+  if (id.startsWith('vasomotor.')) return { key: 'temperature-sweating', label: 'Temperature & sweating' };
+  if (id === 'bloating.cycle_related' || id === 'cycle.pms') return { key: 'period-pms', label: 'Period & PMS' };
+  if (id === 'digestive.nausea' || id === 'bloating.digestive' || id === 'digestive.gas') return { key: 'digestive-comfort', label: 'Digestive comfort' };
+  return null;
+}
+const mergeMembers = (target, src) => {
+  const add = src.members || [{ needId: src.needId || src.id, label: src.label, productIds: (src.productIds || (src.products || []).map((p) => p.id)) }];
+  for (const m of add) if (!target.members.some((x) => x.needId === m.needId)) target.members.push(m);
+  target.memberLabels = target.members.map((m) => m.label);
+};
+
+// Keep each need's eligibility and safety decision; combine only what the reveal shows.
+export function groupRevealRows(rows = []) {
+  const groups = new Map();
+  for (const row of rows) {
+    const group = symptomShelfGroup(row.id, row.groupId);
+    const key = group?.key || row.id;
+    if (!groups.has(key)) groups.set(key, { ...row, id: key, label: group?.label || row.label, products: [], services: [], sourceNeedIds: [], members: [], heldWhy: '', why: '' });
+    const target = groups.get(key);
+    target.sourceNeedIds.push(...(row.needIds || [row.id]));
+    mergeMembers(target, row);
+    for (const type of ['products', 'services']) for (const product of row[type] || []) {
+      if (!target[type].some((item) => item.id === product.id)) target[type].push(product);
+    }
+    target.needsAnswers ||= row.needsAnswers;
+    target.held ||= row.held;
+    target.careFirst ||= row.careFirst;
+    target.heldWhy ||= row.heldWhy;
+    target.why ||= row.why;
+  }
+  return [...groups.values()].filter((row) => row.products.length || row.services.length || row.held || row.careFirst || row.why);
+}
+
+export function groupSymptomShelves(shelves = []) {
+  const groups = new Map();
+  for (const shelf of shelves) {
+    const group = symptomShelfGroup(shelf.needId, shelf.groupId);
+    const key = group?.key || shelf.needId;
+    if (!groups.has(key)) groups.set(key, { ...shelf, needId: key, label: group?.label || shelf.label, sourceNeedIds: [], members: [], picks: [], productIds: [] });
+    const target = groups.get(key);
+    target.sourceNeedIds.push(...(shelf.needIds || [shelf.needId]));
+    mergeMembers(target, shelf);
+    for (const pick of shelf.picks || []) {
+      if (!target.picks.some((item) => item.productId === pick.productId)) target.picks.push(pick);
+    }
+    for (const id of shelf.productIds || []) {
+      if (!target.productIds.includes(id)) target.productIds.push(id);
+    }
+  }
+  return [...groups.values()];
 }

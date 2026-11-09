@@ -10,8 +10,10 @@
 // What changes from v1:
 //   1. Fit is relevance x evidence x focus. A product built for 7 needs, when
 //      she has 1 of them, loses up to a quarter of its fit (v1: at most 4%).
-//   2. Preferences re-order products but never lower the shown fit, so telling
-//      ayna more never makes matches look worse.
+//   2. The underlying health component is preference-independent; formats and
+//      brands affect ranking, while confirmed price/reusable/value facts can
+//      move the displayed overall PRODUCT fit by a few points. It is not a
+//      medical success probability. See MATCH_MEANING (matchDisplay.js).
 //   3. The ecosystem is chosen as a set: each pick is the one that adds the most
 //      new coverage of her needs, one product per type per need (a second of
 //      a type only when no other type is left, strong fits only), at most two

@@ -47,6 +47,7 @@ import { lifeStageClash, STAGE_NOTE_CODE } from './eco/lifeStageFix';
 import '../styles/ecosystem-best.css';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
+import { groupSymptomShelves } from '../matching/shelfGroups.js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import {
     fetchLlmRecommendations,
@@ -825,7 +826,10 @@ function inferHealthFunctionsFromLlm(product, concern = '', tierSubcategory = ''
     if (/\buti\b/.test(c) || c.includes('urinary tract') || c.includes('urinary infection')) return ['uti-prevention'];
     if (/\bsti\b/.test(c) || c.includes('sexually transmitted') || c.includes('sexual health') || c.includes('pelvic floor') || c.includes('lubricant') || c.includes('intimacy') || c.includes('libido') || c.includes('vulva') || c.includes('vaginal dryness')) return ['sexual-health'];
     if (c.includes('fertil') || c.includes('ttc') || c.includes('conception') || c.includes('trying to conceive') || c.includes('prenatal') || c.includes('ovulation')) return ['fertility'];
-    if (c.includes('menopause') || c.includes('perimenopause') || c.includes('hot flash') || c.includes('night sweat')) return ['perimenopause'];
+    // A hot-flash concern is not menopause. Don't assign LLM products to
+    // a menopause-owned area solely because of a symptom label.
+    if (c.includes('hot flash') || c.includes('night sweat') || c.includes('hot flush')) return ['vasomotor'];
+    if (c.includes('menopause') || c.includes('perimenopause')) return ['perimenopause'];
     if (c.includes('skin') || c.includes('hair') || c.includes('acne') || c.includes('breakout') || c.includes('hair loss') || c.includes('nail')) return ['skin-hair'];
     if (c.includes('cycle tracking') || c.includes('track my cycle') || c.includes('tracking') || c.includes('ovulation test')) return ['cycle-tracking'];
     if (c.includes('contracept') || c.includes('birth control') || c.includes('iud') || c.includes('family planning')) return ['contraception'];
@@ -1150,9 +1154,24 @@ export default function MyEcosystem({
     const [ecoQuery, setEcoQuery] = useState('');
     const areaGroups = useMemo(() => {
         const byArea = new Map();
+        const intake = quizResults?.fullHealthIntake || {};
+        const stages = Array.isArray(intake.lifeStageSelections) ? intake.lifeStageSelections : [];
+        const support = Array.isArray(intake.supportSelections) ? intake.supportSelections : [];
+        const namedMenopause = stages.some((stage) => /^I am (?:in peri|in meno|post-meno)/i.test(String(stage)))
+            || support.includes('Menopause-related body changes');
+        const hasVasomotor = support.some((s) => s === 'Hot flashes' || s === 'Night sweats')
+            || (Array.isArray(intake.symptoms) && intake.symptoms.some((s) => /hot flash|hot flush|night sweat/i.test(String(s))));
         myProductList.forEach((p) => {
             const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
-            const key = area ? area.key : 'other';
+            // Preserve saved products, but do not label their shelf as a life
+            // stage inferred from a temperature symptom. Only non-ingested
+            // cooling items can move to the temperature shelf.
+            let key = area ? area.key : 'other';
+            if (key === 'menopause' && hasVasomotor && !namedMenopause) {
+                const evidence = [...(p.tags || []), ...(p.healthFunctions || [])].join(' ').toLowerCase();
+                key = /hot.flash|night.sweat|vasomotor|cooling/.test(evidence) && !/supplement|capsule|gumm|tablet/i.test(`${p.category} ${p.name}`)
+                    ? 'temperature' : 'other';
+            }
             if (!byArea.has(key)) byArea.set(key, []);
             byArea.get(key).push(p);
         });
@@ -1161,7 +1180,7 @@ export default function MyEcosystem({
             .map((a) => ({ ...a, products: byArea.get(a.key) }));
         if (byArea.has('other')) groups.push({ key: 'other', label: 'Other', categories: [], products: byArea.get('other') });
         return groups.sort((a, b) => b.products.length - a.products.length);
-    }, [myProductList]);
+    }, [myProductList, quizResults]);
     // Matching engine shelves: one per selected need (picks, shortBy,
     // emptyReason) plus care flags. Behavior (Not for me, in her ecosystem)
     // is passed so hidden products never come back here.
@@ -1183,8 +1202,10 @@ export default function MyEcosystem({
         () => new Map((quizResults ? getSelectedNeeds(quizResults, healthProfile, matchOpts) : []).map((n) => [n.id, n.phrase])),
         [quizResults, healthProfile, matchOpts]
     );
-    // Nov 6: needs one set of products serves share a shelf (src/matching/shelfGroups.js).
+    // Nov 6: needs one set of products serves share a shelf (src/matching/shelfGroups.js), then the
+    // team's broader theme groups (Mental wellbeing, Temperature & sweating) on top.
     const needShelves = useMemo(() => groupShelves(needSeed?.shelves || []), [needSeed]);
+    const displayNeedShelves = useMemo(() => groupSymptomShelves(needShelves), [needShelves]);
     const useTabs = myProductList.length > 0;
     const savedList = useMemo(() => Object.values(savedProducts || {}).filter((p) => p?.id && p.name), [savedProducts]);
     const pctFor = useMemo(() => makePctFor(quizResults, (p) => getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts)), [quizResults, healthProfile, matchOpts]);
@@ -1241,7 +1262,10 @@ export default function MyEcosystem({
                     case 'breast': return pregnant || postpartum;
                     case 'fertility': return ttc && !midlife;
                     case 'birth-control': return !pregnant && !ttc && !midlife;
-                    case 'menopause': return midlife || (Number.isFinite(age) && age >= 40) || /menopause|hot flash/.test(needs);
+                    // A symptom or age alone never creates a menopause shelf.
+                    // Only her own named stage or explicitly menopause-related need does.
+                    case 'menopause': return midlife || /menopause-related body changes/.test(needs);
+                    case 'temperature': return /hot flash|night sweat/.test(needs);
                     case 'period': return !pregnant && !midlife && !noPeriods;
                     default: return true;
                 }
@@ -1625,6 +1649,13 @@ export default function MyEcosystem({
         if (!hasCompletedPersonalization) return [];
         if (!Array.isArray(activeTiered) || activeTiered.length === 0) return [];
         const blockedConcernLabels = new Set(['general discomfort']);
+        const intake = quizResults?.fullHealthIntake || {};
+        const stages = Array.isArray(intake.lifeStageSelections) ? intake.lifeStageSelections : [];
+        const support = Array.isArray(intake.supportSelections) ? intake.supportSelections : [];
+        const namedMenopause = stages.some((stage) => /^I am (?:in peri|in meno|post-meno)/i.test(String(stage)))
+            || support.includes('Menopause-related body changes');
+        const hasVasomotor = support.some((s) => s === 'Hot flashes' || s === 'Night sweats')
+            || (Array.isArray(intake.symptoms) && intake.symptoms.some((s) => /hot flash|hot flush|night sweat/i.test(String(s))));
 
         const concernPriority = [
             ...(Array.isArray(quizResults?.frustrations) ? quizResults.frustrations : []),
@@ -1639,6 +1670,9 @@ export default function MyEcosystem({
             .map((entry, idx) => {
                 const concern = String(entry?.concern || concernPriority[idx] || `Concern ${idx + 1}`).trim();
                 if (!concern || blockedConcernLabels.has(concern.toLowerCase())) return null;
+                // Old AI responses and saved caches can still contain a
+                // menopause section created from a hot-flash symptom alone.
+                if (hasVasomotor && !namedMenopause && /menopause|perimenopause/i.test(concern)) return null;
                 const concernLower = concern.toLowerCase();
                 const isRoutineConcern = concernLower.includes('routine') || concernLower.includes('apps and services') ||
                     concernLower.includes('wellness app') || concernLower.includes('health app') ||
@@ -1716,11 +1750,34 @@ export default function MyEcosystem({
             .filter(Boolean)
             .filter((section) => section.tiers.length > 0);
 
-        return sections.sort((a, b) => {
+        const ordered = sections.sort((a, b) => {
             const ai = concernRank.has(a.concern.toLowerCase()) ? concernRank.get(a.concern.toLowerCase()) : Number.MAX_SAFE_INTEGER;
             const bi = concernRank.has(b.concern.toLowerCase()) ? concernRank.get(b.concern.toLowerCase()) : Number.MAX_SAFE_INTEGER;
             return ai - bi;
         });
+        const grouped = new Map();
+        for (const section of ordered) {
+            const label = `${section.displayLabel || ''} ${section.concern}`;
+            const group = /hot flash|hot flush|night sweat|temperature|vasomotor/i.test(label)
+                ? { key: 'temperature-sweating', title: 'Temperature & sweating' }
+                : /anxiety|low mood|irritab|stress|mental health|mental wellbeing|mood/i.test(label)
+                    ? { key: 'mental-wellbeing', title: 'Mental wellbeing' } : null;
+            if (!group) {
+                grouped.set(section.id, section);
+                continue;
+            }
+            if (!grouped.has(group.key)) grouped.set(group.key, {
+                ...section, id: group.key, concern: group.title, displayLabel: group.title, tiers: [], notes: [],
+            });
+            const target = grouped.get(group.key);
+            for (const tier of section.tiers) {
+                if (!target.tiers.some((item) => item.product?.id === tier.product?.id)) target.tiers.push(tier);
+            }
+            target.notes.push(...section.notes);
+            target.topProduct = target.tiers[0]?.product || null;
+            target.alternatives = target.tiers[0]?.alternatives || [];
+        }
+        return [...grouped.values()];
     }, [hasCompletedPersonalization, activeTiered, quizResults]);
     // ayna picks (web tabs): the matching engine's picks per need, then the tiered
     // recommendations per concern, never her own products, nothing she marked Not for me.
@@ -1733,10 +1790,10 @@ export default function MyEcosystem({
             picks.forEach((p) => seen.add(p.id));
             if (picks.length) out.push({ id, short, picks });
         };
-        needShelves.forEach((shelf) => push(`need-${shelf.needId}`, shortNeedLabel(shelf.label), (shelf.picks || []).map((pick) => ({ id: pick.productId }))));
+        displayNeedShelves.forEach((shelf) => push(`need-${shelf.needId}`, shortNeedLabel(shelf.label), (shelf.picks || []).map((pick) => ({ id: pick.productId }))));
         recommendedProductsForDisplay.forEach((sec) => push(`rec-${sec.id}`, sec.displayLabel || sec.concern, sec.tiers.flatMap((t) => [t.product, ...(t.alternatives || [])])));
         return out;
-    }, [needShelves, recommendedProductsForDisplay, myProducts, omittedProducts]);
+    }, [displayNeedShelves, recommendedProductsForDisplay, myProducts, omittedProducts]);
 
     useEffect(() => {
         setRecommendedSwapByKey({});
@@ -2079,7 +2136,7 @@ export default function MyEcosystem({
 
     return (
         <>
-            <section id="ayeco" ref={ecoRootRef} className="eco3 ayeco" aria-labelledby="eco3-title">
+            <section id="ayeco" ref={ecoRootRef} className="eco3 ayeco" aria-labelledby={homeTop ? "ayna-home-title" : "eco3-title"}>
             <div className="ay-container">
                 {/* Oct 2026 redesign: the website version of the app's
                     Ecosystem screen. Header + search, the ring overview, then
@@ -2367,18 +2424,18 @@ export default function MyEcosystem({
                         <summary>
                             <span className="ub-fold__text">
                                 <h2 className="eco3-shelves__title ay-h2" id="eco3-needs-title">Fill the gaps</h2>
-                                <span className="ub-fold__line">{needShelves.length} {needShelves.length === 1 ? 'need' : 'needs'} with nothing on your shelves yet{gapPhotos.length ? ' · best picks for each' : ''}</span>
+                                 <span className="ub-fold__line">{displayNeedShelves.length} {displayNeedShelves.length === 1 ? 'area' : 'areas'} to explore{gapPhotos.length ? ' · symptom support picks' : ''}</span>
                             </span>
                             {gapPhotos.length > 0 && <span className="ub-fold__plates" aria-hidden="true">{gapPhotos.map((p) => <Plate key={p.id} src={resolveCatalogProductImage(p) || ''} alt="" fallback={p.brand || p.name} className="ub-fold__plate" />)}</span>}
                             <span className="ub-fold__go"><span className="ub-fold__show">Show picks</span><span className="ub-fold__hide">Hide picks</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></span>
                         </summary>
                         <HealthShapedNote shaped={needSeed?.healthShaped} userId={user?.id || null} />
                         <NeedsStrip
-                            needs={[...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => ({
+                             needs={[...displayNeedShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => ({
                                 id: shelf.needId,
                                 label: shelf.label,
                                 short: shortNeedLabel(shelf.label),
-                                phrase: needPhrases.get(shelf.needId) || shelf.label.toLowerCase(),
+                                 phrase: shelf.sourceNeedIds.length === 1 ? (needPhrases.get(shelf.sourceNeedIds[0]) || shelf.label.toLowerCase()) : shelf.label.toLowerCase(),
                                 picks: shelf.picks.map((pick) => ({ ...pick, product: myProducts[pick.productId] || getProductById(pick.productId) })).filter((x) => x.product),
                                 care: shelf.care && !careFirst ? [...(shelf.care.clinicLinks || []), ...(shelf.care.telehealthLinks || [])].slice(0, 4) : null,
                             }))}

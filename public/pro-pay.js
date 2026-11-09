@@ -273,7 +273,7 @@
     if (!busy) { continueButton.textContent = ctaText(); endButton.textContent = ctaText(); }
     if (renewLine) renewLine.textContent = renewLine.dataset[plan] || '';
     if (whenToday) whenToday.textContent = `Pay ${planPrice[plan]}. Pro unlocks right away.`;
-    if (whenStart) whenStart.textContent = `Your paid ${planPer[plan]} starts. The beta before it is included.`;
+    if (whenStart) whenStart.textContent = `Your purchased ${planPer[plan]} begins. Early Access through January is included.`;
   }
 
   // The repeat CTA at the end shows only while the plans do.

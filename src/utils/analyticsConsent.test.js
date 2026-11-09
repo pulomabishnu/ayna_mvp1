@@ -51,11 +51,11 @@ describe('analyticsConsent', () => {
     expect(getStoredConsent()).toBeUndefined();
   });
 
-  it('has no recorded choice for a fresh PostHog instance in the implicit default-on state', () => {
+  it('has no recorded choice for a fresh PostHog instance in the implicit default-off state', () => {
     expect(hasRecordedChoice(ph)).toBe(false);
   });
 
-  it('applyStoredConsent leaves an undecided visitor implicit so the opt-out notice stays visible', () => {
+  it('applyStoredConsent leaves an undecided visitor pending and capture off', () => {
     applyStoredConsent(ph);
     expect(ph.opt_in_capturing).not.toHaveBeenCalled();
     expect(ph.opt_out_capturing).not.toHaveBeenCalled();
@@ -92,10 +92,10 @@ describe('analyticsConsent', () => {
     expect(ph.opt_out_capturing).not.toHaveBeenCalled();
   });
 
-  it('acknowledgeAnalytics persists the default-on choice without duplicating a pageview', () => {
+  it('acknowledgeAnalytics explicitly opts in and tracks the first consented pageview', () => {
     acknowledgeAnalytics(ph);
     expect(ph.opt_in_capturing).toHaveBeenCalled();
-    expect(ph.capture).not.toHaveBeenCalled();
+    expect(ph.capture).toHaveBeenCalledWith('$pageview');
     expect(JSON.parse(localStorage.getItem(CONSENT_STORAGE_KEY)).decision).toBe('granted');
   });
 
@@ -121,7 +121,7 @@ describe('analyticsConsent', () => {
     expect(hasRecordedChoice(ph)).toBe(true);
   });
 
-  it('an old grant expires to the default-on state, but an opt-out never silently expires', () => {
+  it('an old grant expires to the default-off state, but an opt-out never silently expires', () => {
     const stale = new Date(Date.now() - CONSENT_TTL_MS - 1000).toISOString();
     localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify({ decision: 'granted', timestamp: stale }));
     expect(getStoredConsent()).toBeUndefined();

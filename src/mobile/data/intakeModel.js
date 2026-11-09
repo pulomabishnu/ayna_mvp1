@@ -3,6 +3,8 @@
 // (src/components/WebIntake.jsx), so both always ask the same questions and
 // save the same answers. Change questions here, not in either screen.
 import { normalizeAge, normalizeLifeStages, selectLifeStage } from '../../utils/intakeSelections.js';
+import { needsVasomotorTiming } from '../../matching/vasomotorContext.js';
+export { VASOMOTOR_TIMING_OPTIONS, toggleVasomotorTiming, needsVasomotorTiming } from '../../matching/vasomotorContext.js';
 
 export const SUPPORT_GROUPS = [
   {
@@ -23,14 +25,16 @@ export const SUPPORT_GROUPS = [
   { label: 'Vaginal health', items: ['Vaginal dryness', 'Vaginal itching or irritation', 'Unusual vaginal discharge', 'Vaginal odor', 'BV concerns', 'Yeast infection concerns'] },
   { label: 'Urinary health', items: ['Burning with urination', 'Frequent urination', 'Urinary urgency', 'Recurrent UTI-like symptoms', 'Bladder leakage or incontinence'] },
   { label: 'Sexual + reproductive health', items: ['Pain or discomfort during sex', 'Low libido or libido changes', 'Sexual wellness or comfort', 'Contraception', 'STI-related concerns'] },
-  { label: 'Perimenopause + menopause + post-menopause', items: ['Hot flashes', 'Night sweats', 'Joint aches', 'Menopause-related body changes'] },
+  // Symptoms are not diagnoses. No one is in menopause because they selected a hot flash.
+  { label: 'Temperature + sweating', items: ['Hot flashes', 'Night sweats'] },
+  { label: 'Perimenopause + menopause + post-menopause', items: ['Menopause-related body changes'] },
   { label: 'Mood + mental wellbeing', items: ['Mood swings', 'Irritability', 'Anxiety', 'Low mood', 'Cycle-related mood changes'] },
   { label: 'Sleep + energy + cognition', items: ['Fatigue or low energy', 'Trouble sleeping', 'Brain fog', 'Difficulty concentrating'] },
   { label: 'Digestive health', items: ['Constipation', 'Diarrhea', 'Gas', 'Abdominal discomfort', 'Digestive bloating'] },
   // Nov 5 all-hands: skin care is off the quiz until its recommendations are ready (acne and
   // hormone-related skin). Old answers that include them still read correctly.
   { label: 'Hair', items: ['Hair thinning or hair loss', 'Excess facial or body hair'] },
-  { label: 'Metabolic + physical wellness', items: ['Metabolism or weight support', 'Strength or fitness', 'Bone health'] },
+  { label: 'Metabolic + physical wellness', items: ['Metabolism or weight support', 'Strength or fitness', 'Joint aches', 'Bone health'] },
   { label: 'Care access', items: ['Finding a doctor or specialist', 'Finding a telehealth provider'] },
   { label: 'Right now', items: ['Nothing right now'] },
 ];
@@ -255,7 +259,7 @@ export const STOP_REASONS = [
 
 export const EMPTY = {
   age: '', lifeStage: '', lifeStageSelections: [], lifeStageOther: '', zipcode: '',
-  supportSelections: [], supportOtherText: '',
+  supportSelections: [], supportOtherText: '', vasomotorTimingSelections: [],
   periodFlow: '', periodPain: '', utiFrequency: '', ttcDuration: '', postpartumTiming: '',
   pregnancyTrimester: '', breastfeedingStatus: '', perimenopauseLastPeriod: '',
   diagnosisSelections: [], conditionOtherText: '',
@@ -285,7 +289,7 @@ export const EMPTY = {
 export const FSA_HSA_REVERSE = { fsa: 'FSA', hsa: 'HSA', both: 'Both', none: 'No', unsure: 'Not sure' };
 export const RESUMABLE_PASSTHROUGH_FIELDS = [
   'age', 'lifeStage', 'lifeStageSelections', 'lifeStageOther', 'zipcode',
-  'supportSelections', 'supportOtherText',
+  'supportSelections', 'supportOtherText', 'vasomotorTimingSelections',
   'periodFlow', 'periodPain', 'utiFrequency', 'ttcDuration', 'postpartumTiming', 'pregnancyTrimester',
   'breastfeedingStatus', 'perimenopauseLastPeriod',
   'diagnosisSelections', 'conditionOtherText',
@@ -389,9 +393,9 @@ export const LEGACY_CONCERN_BY_ITEM = {
   'Sexual wellness or comfort': 'Sexual health and comfort (lubricants, pelvic floor)',
   Contraception: 'Telehealth and provider matching',
   'STI-related concerns': 'STI support',
-  'Hot flashes': 'Perimenopause and menopause support',
-  'Night sweats': 'Perimenopause and menopause support',
-  'Joint aches': 'Perimenopause and menopause support',
+  'Hot flashes': 'Hot flashes and night sweats',
+  'Night sweats': 'Hot flashes and night sweats',
+  'Joint aches': 'Cramp and pain relief (devices, supplements, heat)',
   'Menopause-related body changes': 'Perimenopause and menopause support',
   'Mood swings': 'Mental health and cycle mood support',
   Irritability: 'Mental health and cycle mood support',
@@ -666,6 +670,8 @@ export function buildSnapshot(intake) {
     lifeStageOther: [...new Set([...customLifeStages, intake.lifeStageOther.trim()].filter(Boolean))].join('; '),
     supportSelections: intake.supportSelections,
     supportOtherText: customConcerns.join('; '),
+    // Only explicit timing answers. Never derive menopause from hot flashes.
+    vasomotorTimingSelections: needsVasomotorTiming(intake) ? [...new Set(intake.vasomotorTimingSelections || [])] : [],
     primaryConcerns,
     customConcerns,
     concernFollowups: {},
@@ -865,6 +871,7 @@ export function getAnswerStates(intake) {
   put('zip', isValidUsZip(intake.zipcode) ? 'answered' : null);
   const support = intake.supportSelections || [];
   put('support', support.length === 1 && support[0] === 'Nothing right now' ? 'explicit_no' : isStepAnswered('support', intake) ? 'answered' : null);
+  out.vasomotorTiming = needsVasomotorTiming(intake) ? (filled(intake.vasomotorTimingSelections) ? 'answered' : 'skipped') : 'not_asked';
   put('periodFlow', singleAnswerState(intake.periodFlow));
   put('periodPain', singleAnswerState(intake.periodPain, { no: ['None'] }));
   put('ttcDuration', singleAnswerState(intake.ttcDuration, { no: ['Not trying yet'] }));

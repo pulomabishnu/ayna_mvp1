@@ -33,7 +33,7 @@ describe('site page titles and descriptions', () => {
 });
 
 describe('personal pages stay out of search', () => {
-  it.each(['/today', '/ask', '/you', '/you/ecosystem', '/you/saved', '/community/@someone', '/community/p/abc', '/auth/callback', '/a/abcdefghij'])('%s is noindex', (p) => {
+  it.each(['/home', '/today', '/ask', '/you', '/you/ecosystem', '/you/saved', '/community/@someone', '/community/p/abc', '/auth/callback', '/a/abcdefghij'])('%s is noindex', (p) => {
     expect(isNoindexPath(p)).toBe(true);
   });
   it.each(['/', '/explore', '/explore/products', '/community', '/product/saalt-menstrual-cup', '/library/uti-prevention'])('%s is indexable', (p) => {

@@ -37,3 +37,9 @@ jobs:
 
       - name: Production build
         run: npm run build
+
+      - name: Verify native analytics bundle
+        run: node scripts/verify-native-analytics-build.mjs
+
+      - name: Validate historical recovery script syntax
+        run: node --check scripts/recover-posthog-history.mjs

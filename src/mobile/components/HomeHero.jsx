@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import ScoreRings from './ScoreRings.jsx';
 import { Sparkline } from './DashParts.jsx';
-import { ScallopEdge, Plate, SnapCarousel } from '../../components/ui/ay/index.js';
+import { Plate, SnapCarousel } from '../../components/ui/ay/index.js';
 import { resolveCatalogProductImage } from '../../components/ProductTileImage.jsx';
 import { short, lastDays } from '../../health/dashView.js';
 import './home-hero.css';
@@ -82,6 +82,20 @@ export function RundownStory() {
   return count > 0 ? <RundownBubble count={count} done={done} /> : null;
 }
 
+// Preserve the original wave from the phone Home without re-enabling
+// decorative scallops globally on the website.
+function HomeWaveEdge() {
+  const d = 'M0 0H240V6' + Array.from({ length: 6 }, (_, i) =>
+    `Q${230 - i * 40} 12 ${220 - i * 40} 6Q${210 - i * 40} 0 ${200 - i * 40} 6`
+  ).join('') + 'Z';
+  return (
+    <svg className="ayk-edge is-bottom is-ink ay-hh__edge" viewBox="0 0 240 12"
+      preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path d={d} />
+    </svg>
+  );
+}
+
 export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, sleep = null, activity = null, onOpenMetric = null, onConnect = null, streak = null, onLog = null, onMonth = null }) {
   const { count, done } = useRundownCount();
   return (
@@ -99,7 +113,7 @@ export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, s
           </div>
         )}
       </div>
-      <ScallopEdge shape="wave" tone="ink" className="ay-hh__edge" />
+      <HomeWaveEdge />
     </section>
   );
 }

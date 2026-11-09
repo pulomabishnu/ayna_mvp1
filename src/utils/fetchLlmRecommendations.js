@@ -14,8 +14,8 @@ const API_PATH = '/api/llm-recommendations';
 const DEFAULT_FETCH_TIMEOUT_MS = 55_000;
 // v3: bumped in the 2026-09-22 integrity audit so caches holding free-form
 // model products from older builds are never read back.
-const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v4';
-const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v4';
+const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v5';
+const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v5';
 
 function captureRecommendationAnalytics(event, properties) {
   try { posthog.capture(event, properties); } catch { /* analytics must never break recommendations */ }
@@ -56,7 +56,16 @@ export function buildIdFromFingerprint(fingerprint) {
 export function fingerprintIntake(intake) {
   if (!intake || typeof intake !== 'object' || Object.keys(intake).length === 0) return '';
   try {
-    return stableStringify(intake);
+    const profile = intake.fullHealthIntake && typeof intake.fullHealthIntake === 'object' ? intake.fullHealthIntake : intake;
+    const needs = Array.isArray(profile.supportSelections) ? profile.supportSelections : [];
+    // A cached AI shelf generated under the old "hot flashes = menopause"
+    // mapping must be refreshed. Only this subgroup's cache is versioned;
+    // other users keep their cached generated recommendations.
+    const hasVasomotor = needs.includes('Hot flashes') || needs.includes('Night sweats')
+      || (Array.isArray(intake.symptoms) && intake.symptoms.some((s) => /hot flash|hot flush|night sweat/i.test(String(s))));
+    return stableStringify(hasVasomotor
+      ? { ...intake, _careRoutingVersion: 'vasomotor-symptom-v2' }
+      : intake);
   } catch {
     return '';
   }

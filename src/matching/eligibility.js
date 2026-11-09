@@ -42,6 +42,8 @@ export function isPainkiller(product) {
 }
 export function recommendationEligibility(product, pp = null) {
   if (!product || typeof product !== 'object') return { eligible: false, code: 'not_a_product', reason: 'Not a catalog product' };
+  // The original Bloom CBT app says it discontinued in February 2025.
+  if (product.id === 'd-bloom') return { eligible: false, code: 'discontinued', reason: 'This app has been discontinued by its publisher' };
   // Validation recorded at ingestion (scripts set validation.status or qaStatus).
   const v = product.validation?.status || product.qaStatus || null;
   if (v === 'failed' || v === 'rejected') return { eligible: false, code: 'failed_validation', reason: 'This listing did not pass our catalog checks yet' };

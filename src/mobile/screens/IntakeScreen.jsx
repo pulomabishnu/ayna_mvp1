@@ -60,6 +60,9 @@ import {
   PRODUCT_FORMATS,
   STOP_REASONS,
   SUPPORT_GROUPS,
+  VASOMOTOR_TIMING_OPTIONS,
+  needsVasomotorTiming,
+  toggleVasomotorTiming,
   UTI_FREQUENCY,
   WARNING_BG,
   WARNING_BORDER,
@@ -787,14 +790,29 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     );
     if (step.type === 'goals') return <Chips label={step.title} items={GOALS} selected={intake.goals || []} onToggle={(v) => setIntake((prev) => ({ ...prev, goals: (prev.goals || []).includes(v) ? prev.goals.filter((x) => x !== v) : [...(prev.goals || []), v] }))} />;
 
+    // One optional follow-up can carry multiple observed timings. No cause
+    // (PMS/anxiety/menopause) is inferred from a symptom or this selection.
+    const temperatureTiming = needsVasomotorTiming(intake) ? (
+      <div className="ip-gap">
+        <SubQuestion title="When do you notice the hot flashes or sweats? (optional, choose any)">
+          <Chips items={VASOMOTOR_TIMING_OPTIONS} selected={intake.vasomotorTimingSelections || []}
+            onToggle={(v) => set('vasomotorTimingSelections', toggleVasomotorTiming(intake.vasomotorTimingSelections, v))} />
+        </SubQuestion>
+        <p className="ip-hint">This tells us when you notice them, not what caused them.</p>
+      </div>
+    ) : null;
     if (step.type === 'support' && onboarding) return (
       <>
         <TopicPicker key={(intake.helpTopics || []).join('|')} groups={supportGroupsForTopics(intake.helpTopics)} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} onAdd={(value) => addCustomSelection('supportSelections', value, [NOTHING_SPECIFIC])} />
         <div className="ip-gap"><Chips items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} muted={[NOTHING_SPECIFIC]} /></div>
+        {temperatureTiming}
       </>
     );
     if (step.type === 'support') return (
-      <TopicPicker groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} onAdd={(value) => addCustomSelection('supportSelections', value, ['Nothing right now'])} />
+      <>
+        <TopicPicker groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} onAdd={(value) => addCustomSelection('supportSelections', value, ['Nothing right now'])} />
+        {temperatureTiming}
+      </>
     );
 
     // First run: named answers instead of an unlabeled level meter (team direction, section 33).

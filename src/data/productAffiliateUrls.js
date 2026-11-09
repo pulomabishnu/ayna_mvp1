@@ -149,6 +149,62 @@ Joylux Lets Spin Intimacy Gel|B0DHJ4L4Q1
 Joylux revitalizHER Hydrating Serum|B089NZ1FHB
 Joylux SHEbar Intimate Cleansing Bar|B091SVMHVH
 Joylux coldHER Cooling Bra Inserts|B0CM7C8LRW
+Intimina Laselle Kegel Exercisers|B00W88I1YY
+Veeda Natural Cotton Ultra-Thin Pads With Wings|B06XKB611F
+Love Wellness Intimate Skin Support|B0DSQC9NXR
+Luna Daily Intimate Feminine Wash|B0DC1M8X9G
+Maude Vibe|B0BDHX58JB
+Leachco Snoogle Maternity Pillow|B0000635WI
+Seventh Generation Ultra Thin Pads|B07C57MK7P
+FemmyCycle Menstrual Cup|B00NHDLMTA
+Ziggy Cup|B079JYJBF2
+kieró Essential Boost Serum|B0FRMCLFT1
+The Good Bug Gut Balance SuperGut Stick|B0C24JR64C
+Happy Head Hair Growth Supplements|B0DSWM4B42
+Magnum Solace Nighttime Magnesium Cream|B0HFT7JXVZ
+InfiniWell PTD-DBM + Methyl Vanillate|B09J97Z29F
+HerAuré HerMag Magnesium 20-in-1 Complex|B0GXHRXFRP
+Rogaine Women's Rogaine 5% Minoxidil Foam|B00M6I5SMY
+PanOxyl 10% Benzoyl Peroxide Acne Foaming Wash|B081KL2QYJ
+Differin Adapalene Gel 0.1% Acne Treatment|B01M114813
+MiraLAX Osmotic Laxative Powder, Unflavored|B00RXIWWKS
+Nature Made Folic Acid 400 mcg Tablets|B0000DJAPS
+Easy@Home Ovulation Test Strips|B00F3IH58Y
+Rugby Vitamin B6 25 mg Tablets|B00645QDNS
+Kindra V Relief Serum|B09ZYJL8RM
+Kindra V Lube Water-Based Lubricant|B0H7T54TJV
+Womaness Coco Bliss External Vaginal Moisturizer|B09NX4PRTD
+Womaness Daily V Soothe|B09S6SWGVN
+Womaness Melt For You Vaginal Inserts|B0GVZKF8RN
+Stripes Vag of Honor Vaginal Moisturizer|B0BKQZT5TH
+Stripes Oh My Glide Intimate Play Oil|B0BKR1HDBL
+Bonafide Revaree|B07GX9NQ65
+Bonafide Revaree Plus|B0D6HZ1N99
+Bonafide Clairvee Vaginal Pre + Probiotic|B0FZDR66NM
+Vella Meltwater Vaginal Emollient|B0BH838XHB
+Vella Everslide Personal Lubricant|B0BGRT7VHM
+Bonafide Thermella|B0FTT42GK7
+Bonafide Ristela|B07RPV16RQ
+O Positiv URO Urinary Tract Health Capsules|B0D5GG35BW
+Perelel Perimenopause Support Pack|B0DHTV3YJC
+Perelel Hormonal Balance Support|B0CPKZ9Q5P
+Perelel Conception Support Pack|B0CPKSZJGM
+Perelel Fertility+ Support|B0DD5CD2D3
+Perelel Mom Multi Support Pack|B0CPL9CTT8
+Perelel Daily Iron Ease|B0CPKP1FVY
+Thorne 5-MTHF 1 mg|B00FY8IQ7C
+Seeking Health DAO Enzyme|B00EOBH8KG
+Micro Ingredients Myo & D-Chiro Inositol Powder|B0DGRG846L
+Rif Care Organic Cotton and Hemp Fiber Menstrual Pads with Wings|B0B48ZWM9L
+Rif Care Organic Cotton Non-Applicator Tampons|B0CF4KTRRK
+Rif Care Organic Cotton and Hemp Fiber Leakproof Period Undies|B0CCTBP5DJ
+Viv for your V Viv Disc|B0DKZ6H3ZN
+Viv for your V Viv Menstrual Cup|B098HNHL5N
+Viv for your V Viv Organic Cotton Tampons|B0C59JW8C3
+Popmask Big Hug Self-Heating Patches|B09GV7J2H1
+Hoolest VeRelief Prime|B0GYBH7BP9
+Queen of the Thrones Ritual Starter - Liver Castor Oil Pack Kit|B09ZPWBQJ6
+Topicals Faded Brightening + Clearing Serum|B09V9QRHCD
 `.trim().split('\n');
 
 function normalizeProductName(value) {
@@ -253,6 +309,64 @@ const AMAZON_ROW_BY_PRODUCT_ID = {
   'p-joylux-revitalizher': 'joylux revitalizher hydrating serum',
   'p-joylux-shebar': 'joylux shebar intimate cleansing bar',
   'p-joylux-coldher': 'joylux coldher cooling bra inserts',
+  // Nov 5 (Ameera: non-partner products buy through ayna's Amazon tag). Exact brand + product,
+  // matched from Amazon search-result titles.
+  'p-intimina-kegel': 'intimina laselle kegel exercisers',
+  'p-veeda-pad': 'veeda natural cotton ultra thin pads with wings',
+  'p-love-wellness-intimate-skin-support': 'love wellness intimate skin support',
+  'p-luna-wash': 'luna daily intimate feminine wash',
+  'p-maude-vibe': 'maude vibe',
+  'p-snoogle-pillow': 'leachco snoogle maternity pillow',
+  'p-seventh-gen-pad': 'seventh generation ultra thin pads',
+  'p-femmycycle': 'femmycycle menstrual cup',
+  'p-ziggy-disc': 'ziggy cup',
+  'p-kiero-essential-boost-serum': 'kiero essential boost serum',
+  'p-goodbug-gut-balance': 'the good bug gut balance supergut stick',
+  'p-happyhead-hair-growth-supplements': 'happy head hair growth supplements',
+  'p-magnumsolace-nighttime-magnesium-cream': 'magnum solace nighttime magnesium cream',
+  'p-infiniwell-ptd-dbm': 'infiniwell ptd dbm methyl vanillate',
+  'p-heraure-hermag-magnesium': 'heraure hermag magnesium 20 in 1 complex',
+  'p-womens-rogaine-foam': 'rogaine women s rogaine 5 minoxidil foam',
+  'p-panoxyl-bpo-10-wash': 'panoxyl 10 benzoyl peroxide acne foaming wash',
+  'p-differin-adapalene-gel': 'differin adapalene gel 0 1 acne treatment',
+  'p-miralax-peg-3350': 'miralax osmotic laxative powder unflavored',
+  'p-nature-made-folic-acid-400': 'nature made folic acid 400 mcg tablets',
+  'p-easyhome-lh-strips-50': 'easy home ovulation test strips',
+  'p-rugby-vitamin-b6-25': 'rugby vitamin b6 25 mg tablets',
+  'p-kindra-v-relief-serum': 'kindra v relief serum',
+  'p-kindra-v-lube-water-based-lubricant': 'kindra v lube water based lubricant',
+  'p-womaness-coco-bliss-external-vaginal-moisturizer': 'womaness coco bliss external vaginal moisturizer',
+  'p-womaness-daily-v-soothe': 'womaness daily v soothe',
+  'p-womaness-melt-for-you-vaginal-inserts': 'womaness melt for you vaginal inserts',
+  'p-stripes-vag-of-honor-vaginal-moisturizer': 'stripes vag of honor vaginal moisturizer',
+  'p-stripes-oh-my-glide-intimate-play-oil': 'stripes oh my glide intimate play oil',
+  'p-bonafide-revaree': 'bonafide revaree',
+  'p-bonafide-revaree-plus': 'bonafide revaree plus',
+  'p-bonafide-clairvee-vaginal-pre-probiotic': 'bonafide clairvee vaginal pre probiotic',
+  'p-vella-meltwater-vaginal-emollient': 'vella meltwater vaginal emollient',
+  'p-vella-everslide-personal-lubricant': 'vella everslide personal lubricant',
+  'p-bonafide-thermella': 'bonafide thermella',
+  'p-bonafide-ristela': 'bonafide ristela',
+  'p-o-positiv-uro-urinary-tract-health-capsules': 'o positiv uro urinary tract health capsules',
+  'p-perelel-perimenopause-support-pack': 'perelel perimenopause support pack',
+  'p-perelel-hormonal-balance-support': 'perelel hormonal balance support',
+  'p-perelel-conception-support-pack': 'perelel conception support pack',
+  'p-perelel-fertility-support': 'perelel fertility support',
+  'p-perelel-mom-multi-support-pack': 'perelel mom multi support pack',
+  'p-perelel-daily-iron-ease': 'perelel daily iron ease',
+  'p-thorne-5-mthf-1-mg': 'thorne 5 mthf 1 mg',
+  'p-seeking-health-dao-enzyme-formerly-histamine-dig': 'seeking health dao enzyme',
+  'p-micro-ingredients-myo-d-chiro-inositol-powder': 'micro ingredients myo and d chiro inositol powder',
+  'p-rif-care-organic-cotton-and-hemp-fiber-menstrual': 'rif care organic cotton and hemp fiber menstrual pads with wings',
+  'p-rif-care-organic-cotton-non-applicator-tampons': 'rif care organic cotton non applicator tampons',
+  'p-rif-care-organic-cotton-and-hemp-fiber-leakproof': 'rif care organic cotton and hemp fiber leakproof period undies',
+  'p-viv-for-your-v-viv-disc': 'viv for your v viv disc',
+  'p-viv-for-your-v-viv-menstrual-cup': 'viv for your v viv menstrual cup',
+  'p-viv-for-your-v-viv-organic-cotton-tampons': 'viv for your v viv organic cotton tampons',
+  'p-popmask-big-hug-self-heating-patches': 'popmask big hug self heating patches',
+  'p-hoolest-verelief-prime': 'hoolest verelief prime',
+  'p-queen-of-the-thrones-ritual-starter-liver-castor': 'queen of the thrones ritual starter liver castor oil pack kit',
+  'p-topicals-faded-brightening-clearing-serum-unscen': 'topicals faded brightening clearing serum',
 };
 
 export function getAmazonAffiliateUrl(productName) {

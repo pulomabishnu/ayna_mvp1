@@ -188,3 +188,5 @@ html body #ay-landing.wl .ls-faq__list button span { font-size: 19px !important;
 html body .app-container #ay-landing.wl.wl.wl .lb-stats .lb-stat, html body .app-container #ay-landing.wl.wl.wl .lb-stats .lb-stat * { color: #3e2723 !important; }
 html body #ay-landing.wl.wl .lb-comm { display: flex; flex-direction: column; gap: 16px; justify-content: flex-start !important; }
 html body #ay-landing.wl.wl .lb-comm > :last-child { margin-top: 8px !important; align-self: flex-start; }
+/* Nov 6: flat section transitions, no masked wave. */
+html body #ay-landing.wl .lb-top + .hd::before { content: none !important; display: none !important; }

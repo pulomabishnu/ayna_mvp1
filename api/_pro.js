@@ -3,6 +3,14 @@ import Stripe from 'stripe';
 import { getServiceClient } from './_usageLimit.js';
 
 export const PRO_FLOW = 'ayna_pro_early_access_v1';
+// The January 2027 FULL LAUNCH is separate from the prepaid subscription term.
+// The database field is historically called pro_launch.launch_at but functions
+// as the paid-term start in checkout. Fail closed if those drift apart.
+export const PRO_PAID_TERM_START_AT = '2027-02-01T05:00:00.000Z';
+export function isExpectedPaidTermStart(value) {
+  const parsed = Date.parse(value || '');
+  return Number.isFinite(parsed) && parsed === Date.parse(PRO_PAID_TERM_START_AT);
+}
 export const PRO_PLANS = {
   month: {
     amount: 499,

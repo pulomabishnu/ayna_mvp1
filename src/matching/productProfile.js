@@ -214,13 +214,23 @@ const NOV5_MAP = {
   'p-panic-panties-no-show-bikini-cut-single-2-pack-no-show-bikini-cut': { 'vaginal.discharge': SECONDARY, 'period.light': ADJACENT },
   'p-pantibiotic-pantibiotic-wearable-intimate-hygiene-underwear-worn-wit': { 'vaginal.odor': ADJACENT, 'vaginal.discharge': ADJACENT },
   'p-megelin-megelin-red-light-therapy-for-intimate-area-wellness': { 'sexual.wellness': WEAK },
-  'p-komuso-classic-shift-anxiety-breathing-necklace': { 'mood.general_anxiety': ADJACENT },
-  'p-heartmath-inner-balance-coherence-plus-with-heartmath-app': { 'mood.general_anxiety': ADJACENT },
+  'p-komuso-classic-shift-anxiety-breathing-necklace': { 'mood.general_anxiety': STRONG },
+  'p-heartmath-inner-balance-coherence-plus-with-heartmath-app': { 'mood.general_anxiety': STRONG },
+  'p-calmigo-device': { 'mood.general_anxiety': STRONG },
+  // The stretch waistband supports comfort during period bloating; it does not reduce bloating.
+  'p-pixie-cup-bloatfit-period-underwear': { 'bloating.cycle_related': STRONG },
+  // ACOG says magnesium may help PMS water retention; this is plain magnesium,
+  // not a claim that it addresses digestive gas or cures the cause of bloating.
+  'p-magnesium-glycinate': { 'bloating.cycle_related': SECONDARY },
+  // The brand markets these ginger drops for occasional queasiness beyond pregnancy.
+  'p-tummy-drops-organic-ginger-tummydrops-33-ct': { 'digestive.nausea': STRONG },
   'p-lief-smart-patch': { 'mood.general_anxiety': ADJACENT },
   'p-flare-audio-calmer': { 'mood.general_anxiety': WEAK },
   'p-intelligent-change-the-five-minute-journal': { 'mood.low': WEAK, 'mood.general_anxiety': WEAK },
   'p-theraspec-theraspecs-fl-pro-fl-41-tinted-migraine-glasses': { 'pain.cycle_headache': ADJACENT },
-  'p-theraice-headache-hat': { 'pain.cycle_headache': ADJACENT },
+  // Cold head comfort can support headache symptoms regardless of their trigger;
+  // it does not address the hormonal cause of a cycle-related migraine.
+  'p-theraice-headache-hat': { 'pain.cycle_headache': STRONG },
   'p-saje-natural-wellness-peppermint-halo-cooling-head-roll-on': { 'pain.cycle_headache': WEAK },
   'p-p-volve-signature-bundle': { 'fitness.strength': SECONDARY },
   'p-stakt-the-stakt-mat': { 'fitness.strength': ADJACENT },
@@ -469,13 +479,22 @@ export const RELEVANCE_RULES = [
 
   // ── Mental health and sleep ────────────────────────────────────────────
   { id: 'therapy_app', why: 'Therapy or CBT program.',
-    when: (f) => f.cat === 'mental-health' && f.t(/therap|\bcbt\b|counsel/),
+    // Match the care practice as a word. "Aromatherapy" is a scent product,
+    // not a therapy/CBT service for anxiety or low mood.
+    when: (f) => f.cat === 'mental-health' && f.t(/\b(?:therap(?:y|ies|ist|eutic)|cbt|counsel(?:ing|ling|or)?)\b/),
     set: { 'mood.general_anxiety': STRONG, 'mood.low': STRONG, 'mood.irritability': SECONDARY, 'mood.swings': SECONDARY, 'mood.pmdd': ADJACENT, 'mood.cycle_related': ADJACENT, 'care.telehealth': SECONDARY } },
   { id: 'meditation_app', why: 'Meditation and relaxation app.',
     when: (f) => f.cat === 'mental-health' && f.t(/meditat|mindful|sleep stor/),
     // Nov 4: womenshealth.gov (PMS) says some women find meditation helpful for PMS mood, and to find
     // healthy ways to cope with stress, so mood swings and irritability are a secondary fit.
     set: (f) => ({ 'mood.general_anxiety': SECONDARY, 'mood.low': ADJACENT, 'mood.irritability': SECONDARY, 'mood.swings': SECONDARY, 'mood.cycle_related': SECONDARY, 'sleep.trouble': f.t(/sleep/) ? SECONDARY : ADJACENT }) },
+  // ACOG describes breathing and meditation as relaxation options for PMS.
+  // This links the practice to symptom support, not evidence for a particular
+  // app or necklace treating PMS or an anxiety disorder.
+  { id: 'breathing_practice', why: 'Offers a breathing exercise for stress support.',
+    when: (f) => f.cat === 'mental-health' && ['p-finch-self-care-pet', 'p-ten-percent-happier-happier-meditation-formerly-ten-percent-happier', 'p-komuso-classic-shift-anxiety-breathing-necklace'].includes(f.id)
+      && f.t(/breathing exercise|guided breathing|mindful breathing/),
+    set: { 'mood.general_anxiety': STRONG, 'mood.irritability': STRONG, 'mood.cycle_related': SECONDARY, 'cycle.pms': STRONG } },
   { id: 'community_app', why: 'Peer community app.',
     when: (f) => f.cat === 'mental-health' && f.t(/community|friends/),
     set: { 'mood.low': ADJACENT, 'pregnancy.prenatal': ADJACENT, 'postpartum.recovery': ADJACENT, 'fertility.ttc': ADJACENT, 'menopause.body_changes': ADJACENT } },
@@ -488,7 +507,9 @@ export const RELEVANCE_RULES = [
   // is cooling addresses them directly, whatever their cause; no life stage
   // is needed. Menopause positioning only adds the context bonus.
   { id: 'cooling_sleep', why: 'Actively cools the bed at night, which directly targets nighttime heat and sweating.',
-    when: (f) => f.cat === 'sleep' && f.t(/\bcool(s|ing)?\b/) && f.t(/heats? and cools?|temperature|cooling/),
+    // A cold eye mask belongs to headache/eye comfort, not a strong match for
+    // whole-body night sweats merely because its category is sleep.
+    when: (f) => f.cat === 'sleep' && f.t(/\bcool(s|ing)?\b/) && f.t(/\b(?:night sweats?|hot sleepers?|bed(?:room|side)?|mattress|sleepwear|nightshirt)\b/),
     set: { 'vasomotor.night_sweats': STRONG, 'vasomotor.hot_flashes': ADJACENT } },
   { id: 'cooling_product', why: 'A cooling product made for hot flashes or night sweats.',
     when: (f) => f.cat !== 'sleep' && f.t(/\bcool(s|ing)?\b/) && f.t(/hot flash|night sweat/) && !f.t(/supplement|capsule|tablet/),
@@ -660,6 +681,11 @@ export const RELEVANCE_RULES = [
     when: (f) => f.has('pregnancy') && f.n(/\bband\b|bandit/), set: { 'pregnancy.discomfort': DIRECT, 'pain.pelvic': ctx(ADJACENT, 'pregnancy') } },
   { id: 'pregnancy_pillow', why: 'Made for sleep comfort in pregnancy.',
     when: (f) => f.has('pregnancy') && f.n(/pillow/), set: { 'pregnancy.discomfort': STRONG, 'sleep.trouble': ctx(SECONDARY, 'pregnancy') } },
+  // NHS maternity guidance says P6 wristbands may help some people with pregnancy nausea.
+  // Keep the relevance in pregnancy only; a nausea answer alone cannot imply pregnancy.
+  { id: 'pregnancy_p6_band', why: 'P6 wristband for optional pregnancy-nausea comfort.',
+    when: (f) => (f.cat === 'pregnancy' || f.has('pregnancy')) && f.t(/acupressure|\bp6\b/) && f.t(/nausea|morning sickness/) && f.n(/bands?|bracelets?/),
+    set: { 'digestive.nausea': ctx(STRONG, 'pregnancy') } },
   { id: 'pregnancy_tagged', why: 'Made with pregnancy in mind.',
     when: (f) => f.has('pregnancy') || f.cat === 'pregnancy',
     set: (f) => ({ 'pregnancy.safe_discovery': f.has('pregnancy') ? STRONG : SECONDARY, 'pregnancy.prenatal': ADJACENT }) },
@@ -803,6 +829,8 @@ function formatsFor(f) {
   if (f.type === 'digital' || f.cat === 'telehealth' || (f.cat === 'mental-health' && f.type !== 'physical')) out.add('app_service');
   if (f.cat === 'diagnostics' || f.t(/test strips?|rapid test/)) out.add('test_kit');
   if (f.fmt(/gumm/)) out.add('gummy');
+  // Swallowed lozenges are ingestibles even when cataloged under pregnancy.
+  if (f.has('lozenge') || f.fmt(/lozenges?|hard drops|hard candy|nausea sweets/)) out.add('lozenge');
   if (((f.cat === 'supplement' || f.cat === 'medication') && f.fmt(/capsule|tablet|softgel|caplet|\bcaps\b|\bpills?\b/))
     // A swallowed pill sold in another category (e.g. calcium caplets under Menopause) is still a pill.
     || f.n(/\b(caplets?|capsules?|tablets?|softgels?)\b/)) out.add('pill_capsule');
@@ -974,6 +1002,14 @@ function ageFor(product, f, text) {
   const max = num(product.maxAge ?? product.maximumAge ?? product.ageMax);
   if (Number.isFinite(min)) { out.minimum = min; out.source = 'catalog field'; }
   if (Number.isFinite(max)) { out.maximum = max; out.source = 'catalog field'; }
+  // Hers' general telehealth terms require users to be at least 18.
+  if (product.id === 'd-hers' && (out.minimum == null || out.minimum < 18)) {
+    out.minimum = 18; out.source = 'Hers terms of service';
+  }
+  // Hormona explicitly describes this perimenopause kit as suitable for women 40+.
+  if (product.id === 'p-hormona-perimenopause-test-kit-app' && (out.minimum == null || out.minimum < 40)) {
+    out.minimum = 40; out.source = 'Hormona product page';
+  }
   const under = text.match(/not (intended )?for children under (\d{1,2})/);
   if (under && out.minimum == null) { out.minimum = Number(under[2]); out.source = 'catalog text'; }
   const policy = AGE_POLICY[f.cat];
@@ -1469,7 +1505,7 @@ export function buildProductProfile(product) {
   const f = facts(product);
   const formats = formatsFor(f);
   const isDigital = formats.includes('app_service') && !formats.some((x) => ['device', 'topical', 'pill_capsule', 'test_kit', 'period_care'].includes(x));
-  const ingested = f.cat === 'supplement' || f.cat === 'medication' || f.n(/laxative|miralax|psyllium/) || ['pill_capsule', 'gummy', 'powder', 'drink_tea'].some((x) => formats.includes(x));
+  const ingested = f.cat === 'supplement' || f.cat === 'medication' || f.n(/laxative|miralax|psyllium/) || ['pill_capsule', 'gummy', 'powder', 'drink_tea', 'lozenge'].some((x) => formats.includes(x));
   const sText = safetyText(product);
   const ctx = { isDigital, ingested, text: sText };
 

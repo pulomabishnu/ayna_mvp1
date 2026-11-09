@@ -77,6 +77,7 @@ describe('products', () => {
         requires_prescription: false,
         user_rating: 4.5,
         source: 'curated',
+        review_status: 'approved',
         extra: { verificationLinks: { doctor: { aiSummary: 'x' } }, userRatingSourceUrl: 'https://example.com/reviews', communityReviewSourceUrl: 'https://example.com/community' },
       }],
       error: null,
@@ -101,7 +102,7 @@ describe('products', () => {
   });
 
   it('omits requiresPrescription entirely (not false) when the row does not require one', async () => {
-    queryResult = { data: [{ id: 'p1', name: 'x', category: 'c', product_type: 'physical', requires_prescription: false }], error: null };
+    queryResult = { data: [{ id: 'p1', name: 'x', category: 'c', product_type: 'physical', requires_prescription: false, review_status: 'approved' }], error: null };
     const handler = await loadHandler();
     const res = mockRes();
     await handler({ method: 'GET' }, res);
@@ -127,7 +128,7 @@ describe('products', () => {
   });
 
   it('sets a public cache header on a successful response', async () => {
-    queryResult = { data: [{ id: 'p1', name: 'x', category: 'c', product_type: 'physical' }], error: null };
+    queryResult = { data: [{ id: 'p1', name: 'x', category: 'c', product_type: 'physical', review_status: 'approved' }], error: null };
     const handler = await loadHandler();
     const res = mockRes();
     await handler({ method: 'GET' }, res);
@@ -137,7 +138,8 @@ describe('products', () => {
   it('withholds every discovered row that has no human review stamp', async () => {
     queryResult = {
       data: [
-        { id: 'curated-1', name: 'Real Curated', category: 'pad', product_type: 'physical', is_active: true },
+        { id: 'curated-1', name: 'Real Curated', category: 'pad', product_type: 'physical', is_active: true, review_status: 'approved' },
+        { id: 'curated-pending', name: 'Unreviewed', category: 'pad', product_type: 'physical', is_active: true, review_status: 'pending' },
         { id: 'disc-auto', name: 'AI Guess', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'approved', discovery_meta: { autoApproved: true } },
         { id: 'disc-pending', name: 'Pending', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'pending' },
         { id: 'disc-legacy', name: 'Legacy approved, no stamp', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'approved', discovery_meta: {} },
@@ -154,7 +156,7 @@ describe('products', () => {
 
   it('strips unsourced star ratings and community-review claims from DB rows', async () => {
     queryResult = {
-      data: [{ id: 'p2', name: 'Some Pad', category: 'pad', product_type: 'physical', community_review: 'Women love it.', user_rating: 4.8, source: 'curated', extra: {} }],
+      data: [{ id: 'p2', name: 'Some Pad', category: 'pad', product_type: 'physical', community_review: 'Women love it.', user_rating: 4.8, source: 'curated', review_status: 'approved', extra: {} }],
       error: null,
     };
     const handler = await loadHandler();

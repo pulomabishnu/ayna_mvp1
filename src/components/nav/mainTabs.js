@@ -13,7 +13,7 @@
 export const MAIN_TABS = [
   { key: 'explore', label: 'Shop', href: '/explore', icon: 'shop' },
   { key: 'services', label: 'Services', href: '/explore/services', icon: 'services' },
-  { key: 'today', label: 'Home', href: '/today', icon: 'home', center: true },
+  { key: 'today', label: 'Home', href: '/home', icon: 'home', center: true },
   { key: 'community', label: 'Community', href: '/community' },
   { key: 'library', label: 'Library', href: '/explore/resources', icon: 'library' },
 ];
@@ -92,7 +92,8 @@ export const LEGACY_REDIRECTS = {
   '/library': '/explore/resources',
   '/ecosystem': '/you/ecosystem',
   '/my-ecosystem': '/you/ecosystem',
-  '/health': '/today',
+  '/health': '/home',
+  '/today': '/home',
 };
 
 /**
@@ -105,7 +106,7 @@ export function legacyPathFor(pathname) {
   if (p === '/explore/products') return '/shop';
   if (p === '/explore/resources') return '/library';
   if (p === '/you/ecosystem') return '/ecosystem';
-  if (p === '/today') return '/health';
+  if (p === '/home') return '/health';
   return null;
 }
 
