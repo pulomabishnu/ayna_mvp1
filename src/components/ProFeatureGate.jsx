@@ -50,8 +50,12 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
     let timer;
     const check = async () => {
       try {
-        const rules = await loadProFeatureRules(controller.signal);
-        if (typeof rules.enabled !== 'boolean') throw new Error('We couldn’t check Pro access.');
+        // If the rules can't load, a Pro member still gets in (her status is checked next);
+        // everyone else sees the retry message, never an open door.
+        let rules = null;
+        try { rules = await loadProFeatureRules(controller.signal); } catch (e) { if (controller.signal.aborted) throw e; }
+        const rulesKnown = typeof rules?.enabled === 'boolean';
+        if (!rulesKnown) rules = { enabled: true };
         // Every signed-in Read uses the same one-per-week Free allowance. The
         // server's atomic claim lets the same Read reopen during that week;
         // Pro remains unlimited. Other Pro features use the normal active check.
@@ -63,6 +67,7 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
           const status = await requestPro({ signal: controller.signal });
           // The server accounts for overlapping paid, temporary and staff grants.
           expiresAt = status.accessExpiresAt || null;
+          if (!rulesKnown && !status.active) throw new Error('We couldn’t check Pro access.');
           if (feature !== 'reads') allowed = status.active;
           else if (status.active) allowed = true;
           // Reads (founder, Oct 28: "letting you only choose one"): the free

@@ -35,8 +35,15 @@ export default async function handler(req, res) {
   try {
     let config;
     try { config = proConfig(); } catch { config = { enabled: false }; }
-    const status = await proStatus(admin, user.id);
     const legacyPremium = user?.app_metadata?.is_premium === true;
+    // One retry: a single slow database reply should not lock a member out (Nov 9). A staff
+    // grant on the account itself still counts if the ledger can't be read at all.
+    let status;
+    try { status = await proStatus(admin, user.id); }
+    catch {
+      try { status = await proStatus(admin, user.id); }
+      catch (e) { if (!legacyPremium || req.method !== 'GET') throw e; status = { active: false, hasPurchase: false, launchAt: null, termEndsAt: null, temporaryUntil: null }; }
+    }
     const active = legacyPremium || status.active;
     const offerOpen = config.enabled && isExpectedPaidTermStart(status.launchAt) && Date.parse(status.launchAt) > Date.now();
     const isAdmin = isAdminUser(user);
