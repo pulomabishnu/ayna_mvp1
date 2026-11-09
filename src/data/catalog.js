@@ -29,7 +29,11 @@ export let ALL_PRODUCTS = [];
 let catalog = null;
 /** Supplement ids per symptom (products.js): {} until the catalog loads (a live binding). */
 export let SYMPTOM_TO_SUPPLEMENTS = {};
+// Bumps each time the catalog changes (bundled copy, then the live catalog), so useCatalogReady()
+// callers recompute with the full catalog instead of keeping results from the bundled part.
+let version = 0;
 const adopt = () => {
+  version += 1;
   catalog = catalogNow();
   if (catalog) { ALL_PRODUCTS = catalog.ALL_PRODUCTS; SYMPTOM_TO_SUPPLEMENTS = catalog.SYMPTOM_TO_SUPPLEMENTS; }
 };
@@ -42,7 +46,14 @@ adopt();
 export function loadCatalog() {
   if (catalog) return Promise.resolve(catalog);
   if (!pending) {
-    pending = import('./products.js').then(() => { adopt(); return catalog; }).catch((err) => {
+    pending = import('./products.js').then(() => {
+      adopt();
+      // Nov 9 (founder: match on the entire catalog, not some of it): fetch the live catalog
+      // (every product in product_catalog, about 850) as soon as the bundled copy is in, on every
+      // page, not only when Shop opens. Home, For you, Ask and the product page then match on all of it.
+      import('../utils/productCatalog.js').then((m) => m.loadProductCatalog()).catch(() => {});
+      return catalog;
+    }).catch((err) => {
       // A failed chunk (offline mid-deploy) can be retried by the next caller.
       pending = null;
       throw err;
@@ -52,11 +63,15 @@ export function loadCatalog() {
 }
 
 export function isCatalogReady() { return catalog !== null; }
+/** 0 before the catalog loads, then a number that changes whenever it does (live catalog adopted). */
+const catalogVersion = () => (catalog ? version : 0);
 
 /** True once the catalog has loaded; re-renders the caller when it does (and starts the load). */
 export function useCatalogReady() {
   if (!catalog && !pending) loadCatalog().catch(() => {});
-  return useSyncExternalStore(subscribeCatalog, isCatalogReady, isCatalogReady);
+  // Truthy once loaded; a new value when the live catalog replaces the bundled rows, so memos keyed
+  // on it recompute.
+  return useSyncExternalStore(subscribeCatalog, catalogVersion, catalogVersion);
 }
 
 const call = (name, empty) => (...args) => (catalog ? catalog[name](...args) : empty());
