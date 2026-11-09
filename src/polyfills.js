@@ -29,3 +29,8 @@ if (!Array.prototype.findLastIndex) {
 if (typeof globalThis.structuredClone !== 'function') {
   globalThis.structuredClone = (v) => (v === undefined ? v : JSON.parse(JSON.stringify(v)));
 }
+
+/* Nov 9 (founder: "why is the background not moving anymore"): Pause motion used to be saved for
+   good, so one tap froze the falling pictures on every later visit. It now lasts for this visit
+   only (sessionStorage); clear the old saved value once. Reduced-motion settings still stop it. */
+try { globalThis.localStorage?.removeItem('ayna_motion_paused'); } catch { /* storage blocked */ }

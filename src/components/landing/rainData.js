@@ -15,3 +15,33 @@ export const RAIN_COLS = [
   [P(6), W('fit'), P(7, 'l'), W('sleep'), P(8), W('match')],
   [W('month'), P(9), W('spark'), P(10, 'l'), W('streak'), P(11)],
 ];
+
+/* Nov 9 (founder: "why is it the same products"): the website hero (espresso, each packshot on its
+   own butter tile, so no white-drop check is needed) draws from a much bigger pool, a different mix
+   on every visit, five products and five app widgets per column. */
+export const RAIN_POOL_WIDE = [
+  ...RAIN_PRODUCTS,
+  'p-diva-cup', 'p-elvie-trainer', 'p-hello-disc', 'p-knix-underwear', 'p-thinx', 'p-viboos-heating-pad',
+  'p-sootheher-elaris-pod', 'p-joylux-coldher', 'p-oboo-cool-spray', 'p-neycher-vaginal-moisturizer',
+  'p-love-wellness-bloat', 'p-goodbug-gut-balance', 'p-magnesium-glycinate', 'p-proov-complete',
+  'p-surearly-smart-ovulation-test', 'p-intimina-kegel', 'p-mypelvicbra-classic', 'p-snoogle-pillow',
+  'p-frida-mom-kit', 'p-lansinoh-pads', 'p-uqora-control', 'p-gina-starter-kit', 'p-seventh-gen-tampon',
+  'p-organicup', 'p-period-nirvana-disc', 'p-vio2-mouth-tape', 'p-tampax-pure', 'p-modibodi',
+  'p-joylux-juicy-like-a-peach', 'p-portable-heating',
+];
+const WIDGET_TURNS = [
+  ['ring', 'spark', 'ask', 'streak', 'fit'],
+  ['sleep', 'match', 'month', 'spark', 'ring'],
+  ['fit', 'sleep', 'match', 'streak', 'ask'],
+  ['month', 'spark', 'ask', 'ring', 'match'],
+];
+/** Four columns from a shuffled pool: no product twice on screen. `rand` is injectable for tests. */
+export function wideRainCols(rand = Math.random, pool = RAIN_POOL_WIDE) {
+  const ids = [...pool];
+  for (let i = ids.length - 1; i > 0; i -= 1) { const j = Math.floor(rand() * (i + 1)); [ids[i], ids[j]] = [ids[j], ids[i]]; }
+  let n = 0;
+  return WIDGET_TURNS.map((ws, c) => ws.flatMap((w, i) => {
+    const prod = { k: 'p', id: ids[n++ % ids.length], s: (c + i) % 3 === 0 ? 'l' : 'm' };
+    return c % 2 ? [{ k: w }, prod] : [prod, { k: w }];
+  }));
+}

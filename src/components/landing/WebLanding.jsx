@@ -14,6 +14,7 @@ import HowItWorksDemo from './HowItWorksDemo.jsx';
 import { Problem, Testimonials, Faq, CtaNote } from './LandingStory.jsx';
 import './landing-story.css';
 import { BETA_QUOTES } from './landingData.js';
+import { wideRainCols } from './rainData.js';
 import { trackLandingCta } from '../../utils/funnelEvents.js';
 
 /* The website's / (founder, Oct 27 10:40: "i liked how we had the website
@@ -37,10 +38,12 @@ import { trackLandingCta } from '../../utils/funnelEvents.js';
    title with "your body." in pink, one line on what ayna connects, the search and Slide to start (the welcome
    tip's anchor). How we match is in the walkthrough below. The brown and pink bar runs under it. */
 function Hero({ cta, onSearch, banner = null, draftLine = null }) {
+  // A different mix of products on every visit (founder, Nov 9: "why is it the same products").
+  const [rain] = useState(() => wideRainCols());
   return (
     <section className="wl-hero" aria-labelledby="hm-hero-title">
       <div className="wl-hero__band">
-        <Rain cols={4} onInk className="wl-rain" />
+        <Rain cols={4} layout={rain} onInk className="wl-rain" />
         <div className="wl-hero__in">
           {/* One promise on the website and the app (landing audit 4 and 9). */}
           <h1 id="hm-hero-title" className="wl-title">Women’s health products, <span>matched to you.</span></h1>

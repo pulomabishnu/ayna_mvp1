@@ -165,3 +165,19 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page.querySelector('.lb img[src*="founders"], .lb source[srcset*="founders"]')).not.toBeNull();
   });
 });
+
+describe('the website hero rain (Nov 9: "why is it the same products")', () => {
+  it('a different mix each visit, no product twice, real packshots, products and widgets taking turns', async () => {
+    const { existsSync } = await import('node:fs');
+    const { wideRainCols, RAIN_POOL_WIDE } = await import('./rainData.js');
+    const seq = (s) => () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+    const a = wideRainCols(seq(1));
+    const b = wideRainCols(seq(7));
+    const ids = (cols) => cols.flat().filter((t) => t.k === 'p').map((t) => t.id);
+    expect(ids(a)).toHaveLength(20);
+    expect(new Set(ids(a)).size).toBe(20);
+    expect(ids(a)).not.toEqual(ids(b));
+    a.forEach((col) => col.forEach((t, i) => i && expect((t.k === 'p') !== (col[i - 1].k === 'p')).toBe(true)));
+    RAIN_POOL_WIDE.forEach((id) => expect(existsSync(`public/products/catalog/${id}.webp`), id).toBe(true));
+  });
+});

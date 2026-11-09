@@ -155,7 +155,7 @@ function Brands({ onViewWaitlist }) {
   const toggle = () => {
     const next = !paused;
     document.documentElement.classList.toggle('ay-motion-paused', next);
-    try { localStorage.setItem('ayna_motion_paused', next ? '1' : '0'); } catch { /* storage unavailable */ }
+    try { sessionStorage.setItem('ayna_motion_paused', next ? '1' : '0'); } catch { /* storage unavailable */ }
   };
   return (
     <section className="hm-brands hm-marq" aria-labelledby="hm-brands-title">
@@ -540,7 +540,7 @@ function useAfterHeroPaint() {
   return ready;
 }
 function useMotionPaused() {
-  const read = () => { try { return document.documentElement.classList.contains('ay-motion-paused') || localStorage.getItem('ayna_motion_paused') === '1'; } catch { return false; } };
+  const read = () => { try { return document.documentElement.classList.contains('ay-motion-paused') || sessionStorage.getItem('ayna_motion_paused') === '1'; } catch { return false; } };
   const [paused, setPaused] = useState(read);
   useEffect(() => {
     const mo = new MutationObserver(() => setPaused(document.documentElement.classList.contains('ay-motion-paused')));

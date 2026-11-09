@@ -50,7 +50,7 @@ describe('main tabs (founder, Oct 24 2026)', () => {
   it('keeps the original falling app widgets visible on the public landing', () => {
     const landing = fs.readFileSync(new URL('../landing/WebLanding.jsx', import.meta.url), 'utf8');
     const css = fs.readFileSync(new URL('../landing/web-landing.css', import.meta.url), 'utf8');
-    expect(landing).toContain('<Rain cols={4} onInk className="wl-rain" />');
+    expect(landing).toMatch(/<Rain cols={4} (layout={rain} )?onInk className="wl-rain" />/);
     expect(css).toContain('.wl-hero .lk-w { display: grid !important; }');
     expect(css).not.toContain('.wl-hero .lk-w { display: none !important; }');
     expect(css).not.toContain('.wl-rain { z-index: -2;');

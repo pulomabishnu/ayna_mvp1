@@ -72,10 +72,10 @@ function FooterColumn({ title, children }) {
 // Real links (open in a new tab, copy, crawl) that still route in-app on a plain click.
 /* One control that pauses every moving thing on the site (marquees, carousels, film strips). */
 function MotionToggle() {
-  const [paused, setPaused] = React.useState(() => { try { return localStorage.getItem('ayna_motion_paused') === '1'; } catch { return false; } });
+  const [paused, setPaused] = React.useState(() => { try { return sessionStorage.getItem('ayna_motion_paused') === '1'; } catch { return false; } });
   React.useEffect(() => {
     document.documentElement.classList.toggle('ay-motion-paused', paused);
-    try { localStorage.setItem('ayna_motion_paused', paused ? '1' : '0'); } catch { /* storage unavailable */ }
+    try { sessionStorage.setItem('ayna_motion_paused', paused ? '1' : '0'); } catch { /* storage unavailable */ }
   }, [paused]);
   // The home hero has its own Pause motion button (one setting for the page): follow it.
   React.useEffect(() => {
