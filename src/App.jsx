@@ -376,7 +376,7 @@ function setOg(property, value) {
 }
 function setShareCard({ title, image } = {}) {
   setOg('og:title', title || HOME_TITLE);
-  const abs = image ? (/^https?:/i.test(image) ? image : `https://www.aynahealth.co${image.startsWith('/') ? '' : '/'}${image}`) : 'https://www.aynahealth.co/og/wrapped.png';
+  const abs = image ? (/^https?:/i.test(image) ? image : `https://www.aynahealth.co${image.startsWith('/') ? '' : '/'}${image}`) : 'https://www.aynahealth.co/og/ayna-share.png';
   setOg('og:image', abs);
 }
 
