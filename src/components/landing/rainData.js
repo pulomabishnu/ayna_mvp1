@@ -10,8 +10,8 @@ export const RAIN_PRODUCTS = [
 const P = (i, s = 'm') => ({ k: 'p', id: RAIN_PRODUCTS[i], s });
 const W = (k) => ({ k });
 export const RAIN_COLS = [
-  [P(0, 'l'), W('ring'), P(1), W('ask'), P(2, 'l'), W('streak')],
+  [P(0, 'l'), W('ring'), P(1), W('spark'), P(2, 'l'), W('ask')],
   [W('sleep'), P(3, 'l'), W('match'), P(4), W('month'), P(5, 'l')],
-  [P(6), W('streak'), P(7, 'l'), W('sleep'), P(8), W('match')],
-  [W('month'), P(9), W('ask'), P(10, 'l'), W('ring'), P(11)],
+  [P(6), W('fit'), P(7, 'l'), W('sleep'), P(8), W('match')],
+  [W('month'), P(9), W('spark'), P(10, 'l'), W('streak'), P(11)],
 ];

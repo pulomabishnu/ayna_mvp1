@@ -54,6 +54,10 @@ export function Widget({ k }) {
       return <span className="lk-pill"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg>Match</span>;
     case 'ask':
       return <span className="lk-bubble">Ask ayna</span>;
+    case 'spark':
+      return <><svg className="lk-spark" viewBox="0 0 72 32"><path d="M2 26 L14 20 L24 23 L36 12 L48 15 L60 6 L70 9" /><circle cx="60" cy="6" r="3" /></svg><small>Trends</small></>;
+    case 'fit':
+      return <span className="lk-fit"><b>Why it fits</b><i style={{ '--w': .9 }} /><i style={{ '--w': .65 }} /><i style={{ '--w': .4 }} /></span>;
     case 'month':
       return <span className="lk-month">{MONTH.map((m, i) => <i key={i} className={m ? 'is-p' : ''} />)}</span>;
     default:

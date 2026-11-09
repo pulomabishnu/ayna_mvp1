@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { motionOff } from '../../utils/motion.js';
 import { BETA_QUOTES, LANDING_FAQ, PAINS } from './landingData.js';
 import './landing-story.css';
 
@@ -21,48 +22,65 @@ export function CtaNote({ className = '' }) {
   return <p className={`ls-note ${className}`.trim()}>Free · about 1 minute · no card needed</p>;
 }
 
-/* ---------- the problem, from her side ---------- */
+/* ---------- the problem, from her side ----------
+   Nov 6 (founder: "stop with the boxes, use more interactive things"): three pains in big type;
+   picking one opens what ayna does about it. No cards, no sticky notes. */
 export function Problem({ cta }) {
+  const [on, setOn] = useState(0);
   return (
     <section className="lb-sec t-pink ls-pain" aria-labelledby="ls-pain-h">
-      <div className="lb-wrap">
-        <p className="ls-kick">Sound familiar?</p>
-        <h2 id="ls-pain-h" className="lb-h2 ls-h">Shopping for your health shouldn’t feel like homework.</h2>
-        <ul className="ls-notes">
-          {PAINS.map((p, i) => (
-            <li key={p.t} className={`ls-sticky is-${i % 2 ? 'ink' : 'butter'}`} style={{ '--r': `${[-2.5, 1.8, -1.2][i]}deg` }}>
-              <span className="ls-tape" aria-hidden="true" />
-              <span className="ls-ic" aria-hidden="true"><svg viewBox="0 0 24 24">{PAIN_ICONS[p.icon]}</svg></span>
-              <strong>{p.t}</strong>
-              <span>{p.d}</span>
-            </li>
-          ))}
-        </ul>
-        <div className="ls-fix">
-          <p className="ls-fix__p"><b>ayna fixes that.</b> One quiz, then products and care that fit your body, each with a % and the reason why.</p>
+      <div className="lb-wrap ls-pain__in">
+        <div className="ls-pain__side">
+          <p className="ls-kick">Sound familiar?</p>
+          <h2 id="ls-pain-h" className="lb-h2 ls-h">You’ve done the research. Putting it together is still on you.</h2>
+          <p className="ls-pain__lede">ayna connects what you tell us about your body to products and care that fit, and shows you why.</p>
           {cta && <span className="ls-fix__act"><button type="button" className="ls-btn" onClick={cta.go}>{cta.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button><CtaNote /></span>}
         </div>
+        <ul className="ls-pains">
+          {PAINS.map((p, i) => {
+            const open = on === i;
+            return (
+              <li key={p.t} className={open ? 'is-on' : ''}>
+                <button type="button" aria-expanded={open} aria-controls={`ls-pain-${i}`} onClick={() => setOn(i)}>
+                  <span className="ls-ic" aria-hidden="true"><svg viewBox="0 0 24 24">{PAIN_ICONS[p.icon]}</svg></span>
+                  <span className="ls-pains__t"><strong>{p.t}</strong><small>{p.d}</small></span>
+                </button>
+                <div id={`ls-pain-${i}`} className="ls-pains__fix" hidden={!open}>
+                  <p><b>With ayna</b>{p.fix}</p>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );
 }
 
-/* ---------- what beta testers say ---------- */
+/* ---------- what beta testers say ----------
+   Nov 6: one quote at a time, big, moving on by itself every 6 seconds (still under reduced
+   motion); the dots pick one. No quote boxes. */
 export function Testimonials({ cta }) {
+  const [i, setI] = useState(0);
+  const [held, setHeld] = useState(false);
+  useEffect(() => {
+    if (held || motionOff?.()) return undefined;
+    const t = window.setTimeout(() => setI((n) => (n + 1) % BETA_QUOTES.length), 6000);
+    return () => window.clearTimeout(t);
+  }, [i, held]);
+  const x = BETA_QUOTES[i];
   return (
-    <section className="lb-sec t-ink ls-love" aria-labelledby="ls-love-h">
-      <div className="lb-wrap">
+    <section className="lb-sec t-ink ls-love" aria-labelledby="ls-love-h" onMouseEnter={() => setHeld(true)} onMouseLeave={() => setHeld(false)} onFocus={() => setHeld(true)}>
+      <div className="lb-wrap ls-love__in">
         <p className="ls-kick is-pink">From our weekly focus group</p>
-        <h2 id="ls-love-h" className="lb-h2 ls-h">What beta testers say</h2>
-        <ul className="ls-quotes">
-          {BETA_QUOTES.map((x, i) => (
-            <li key={x.q} className={`ls-quote is-${x.tone}`} style={{ '--r': `${[-2, 1.5, -1, 2.2][i]}deg` }}>
-              <span className="ls-mark" aria-hidden="true">“</span>
-              <blockquote><p>{x.q}</p></blockquote>
-              <span className="ls-by">Beta tester</span>
-            </li>
-          ))}
-        </ul>
+        <h2 id="ls-love-h" className="ls-love__h">What beta testers say</h2>
+        <figure className="ls-big" aria-live="polite">
+          <blockquote key={i} className="ls-big__q"><p>“{x.q}”</p></blockquote>
+          <figcaption>Beta tester</figcaption>
+        </figure>
+        <div className="ls-dots" role="group" aria-label="Choose a quote">
+          {BETA_QUOTES.map((q, n) => <button key={q.q} type="button" aria-label={`Quote ${n + 1} of ${BETA_QUOTES.length}`} aria-pressed={n === i} onClick={() => { setI(n); setHeld(true); }} />)}
+        </div>
         {cta && <div className="ls-center"><button type="button" className="ls-btn is-butter" onClick={cta.go}>{cta.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button><CtaNote className="is-light" /></div>}
       </div>
     </section>

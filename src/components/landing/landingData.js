@@ -40,8 +40,14 @@ export const LANDING_FAQ = [
   { q: 'Is this medical advice?', a: 'No. ayna shares information to help you choose, not a diagnosis. For anything new, severe or worrying, talk to a clinician.' },
 ];
 
+/* Nov 6 (founder: "really explanatory, not repetitive, interactive"; pitch brief: "Women collect
+   health information. They still have to connect it themselves."). Each pain opens what ayna does
+   about it, in words the product already backs (the quiz, the % and reason, safety checks, care). */
 export const PAINS = [
-  { t: '20 tabs open', d: 'and still no idea what actually works.', icon: 'tabs' },
-  { t: 'Reviews that disagree', d: 'five stars, one star, same product.', icon: 'stars' },
-  { t: 'Advice that isn’t for you', d: 'nobody asked your age, stage or meds.', icon: 'person' },
+  { t: '20 tabs open', d: 'and still no idea what actually works.', icon: 'tabs',
+    fix: 'One quiz instead. Tell us what you want help with, your life stage, your medicines and what you’d rather use, and ayna narrows the whole Shop to what fits you.' },
+  { t: 'Reviews that disagree', d: 'five stars, one star, same product.', icon: 'stars',
+    fix: 'Every match shows a % and the reason behind it: which of your needs it’s for and how strong the research is, with the sources linked.' },
+  { t: 'Advice that isn’t for you', d: 'nobody asked your age, stage or meds.', icon: 'person',
+    fix: 'Your stage and medicines are checked before anything is matched. If something isn’t right for you, we say why, and point you to care when a product isn’t the answer.' },
 ];

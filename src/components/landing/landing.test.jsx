@@ -70,9 +70,10 @@ describe('the raining cut-outs (a faded layer behind the hero)', () => {
     const words = rain.replace(/<[^>]*>/g, ' ').replace(/^[^>]*>/, '').replace(/<[^>]*$/, '').split(/\s+/).filter(Boolean);
     // Words only (each feature's one-word label), never a number that could read as her data.
     expect(words.join(' ')).not.toMatch(/\d/);
-    expect(new Set(words)).toEqual(new Set(['Cycle', 'Ask', 'ayna', 'Sleep', 'Match']));
+    // Nov 6 (founder: bring back the graphs): a trend line and the "Why it fits" bars join them.
+    expect(new Set(words)).toEqual(new Set(['Cycle', 'Ask', 'ayna', 'Sleep', 'Match', 'Trends', 'Why', 'it', 'fits']));
     expect((rain.match(/<img /g) || []).length).toBeLessThanOrEqual(3 * 3 * 6); // 3 columns, 3 products each, 6 copies
-    expect(new Set(RAIN_COLS.flat().filter((t) => t.k !== 'p').map((t) => t.k))).toEqual(new Set(['ring', 'sleep', 'streak', 'match', 'ask', 'month']));
+    expect(new Set(RAIN_COLS.flat().filter((t) => t.k !== 'p').map((t) => t.k))).toEqual(new Set(['ring', 'sleep', 'streak', 'match', 'ask', 'month', 'spark', 'fit']));
     // products and the app's features take turns down every column
     RAIN_COLS.forEach((col) => col.forEach((t, i) => i && expect((t.k === 'p') !== (col[i - 1].k === 'p')).toBe(true)));
     expect(html).toMatch(/<span class="lk-d lk-prod is-[lms]"><span class="lk-prod__in"><img src="\/products\/catalog\/p-[a-z0-9-]+\.webp" alt=""/);
@@ -151,7 +152,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     const page = host.querySelector('#ay-landing');
     // Nov 4: no feature bento any more (founder: "it's just boxes").
     expect(page.querySelectorAll('.lb-bento').length).toBe(0);
-    expect(page.querySelector('.lb [role="group"]')).toBeNull();
+    expect(page.querySelector('.lb [role="group"]:not(.ls-dots)')).toBeNull();
     // pink is an accent only below the hero: no full pink band, and no checker strip before the close
     expect(page.querySelectorAll('.ayb-band.is-pink').length).toBe(0);
     expect(page.querySelector('.wl-turn')).toBeNull();

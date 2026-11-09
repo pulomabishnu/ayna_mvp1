@@ -341,8 +341,8 @@ html body .app-container #ay-landing.wl .lp-rc__in { display: grid; gap: 40px; }
 
 /* Nov 4 de-box pass (founder: "it's just boxes, overcrowded, vibe coded"). Editorial rules instead
    of filled cards: type, white product plates and thin espresso lines carry the structure. */
-/* Hero: product photos only, no decorative dots, rings or chips. */
-html body #ay-landing.wl .wl-hero .lk-w { display: none !important; }
+/* Founder, Nov 6: "bring back the widgets in the top brown part where it had the graphs and other ayna widgets".
+   The app's widgets fall again between the products (kit.jsx Widget), see landing-kit.css for their ink look. */
 /* How ayna works: a plain numbered list; the step playing gets the pink number. */
 html body #ay-landing.wl .hd-steps > li, html body #ay-landing.wl .hd-steps > li.is-on { background: transparent !important; box-shadow: none !important; border: 0 !important; border-top: 1px solid rgba(62, 39, 35, .16) !important; border-radius: 0 !important; }
 html body #ay-landing.wl .hd-steps > li:last-child { border-bottom: 1px solid rgba(62, 39, 35, .16) !important; }
