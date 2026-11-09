@@ -869,11 +869,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return map;
     }, [combined, quizResults, healthProfile, matchOpts]);
 
-    // "Personalized" = products whose best need reaches the exploratory tier (50+).
+    // "Personalized" = every product that helps with one of her needs and passed her safety
+    // checks, best match first (Nov 9, founder: "we're not finding cures, we're finding symptom
+    // management, make sure every product is accounted for"). Unrelated, held and excluded
+    // products score 0 and stay out; the % still says how strong each fit is.
     const personalizedSet = useMemo(() => {
         const set = new Set();
         combinedRelevance.forEach((score, id) => {
-            if (score != null && score >= 50) set.add(id);
+            if (score != null && score > 0) set.add(id);
         });
         return set;
     }, [combinedRelevance]);

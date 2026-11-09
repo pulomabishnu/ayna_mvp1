@@ -39,3 +39,18 @@ describe('needs that had no matching product', () => {
     expect(s({ id: 'p-t-bloat', name: 'Bye Bloat', category: 'supplement', summary: 'A capsule made for occasional bloating.' }, 'bloating.digestive')).toBeGreaterThanOrEqual(0.55);
   });
 });
+
+// Nov 9 (founder): "we're not finding cures, we're finding symptom management, make sure every product
+// is accounted for". What a product is sold to help with is a match; the evidence grade sets the %.
+describe('symptom management counts', () => {
+  const s = (p, need) => buildProductProfile({ type: 'physical', tags: [], ...p }).health_need_relevance?.[need]?.score || 0;
+  it('fatigue, joint aches, metabolism and bladder leaks', () => {
+    expect(s({ id: 'p-t-energy', name: 'Daily Energy Sticks', category: 'supplement', summary: 'A drink mix made for steady energy without a crash.' }, 'energy.fatigue')).toBeGreaterThanOrEqual(0.55);
+    expect(s({ id: 'p-t-joint', name: 'Collagen Protein', category: 'supplement', summary: 'The brand says it supports joint comfort and skin.' }, 'pain.joint')).toBeGreaterThanOrEqual(0.55);
+    expect(s({ id: 'p-t-metab', name: 'Metabolism Support', category: 'supplement', summary: 'A capsule sold for metabolism and cravings.' }, 'metabolic.weight')).toBeGreaterThanOrEqual(0.55);
+    expect(s({ id: 'p-t-pads', name: 'Bladder Leak Pads', category: 'incontinence', summary: 'Pads designed for light bladder leaks.' }, 'urinary.incontinence')).toBeGreaterThanOrEqual(0.55);
+  });
+  it('a hormone-free product is not marketed for hormone balance', () => {
+    expect(s({ id: 'p-t-hf', name: 'Vaginal Gel', category: 'intimate-care', summary: 'A hormone-free gel made for dryness.' }, 'hormonal.general')).toBeLessThan(0.55);
+  });
+});

@@ -323,13 +323,22 @@ const MARKETED_FOR = {
   'urinary.recurrent_uti': { re: /\butis?\b|urinary tract infections?/, ok: (f) => INGESTIBLE_OR_DEVICE(f) || f.cat === 'supplement' },
   'vaginal.dryness': { re: /\bdryness\b|\bmoistur(e|izer|izing|ize)\b/, ok: (f) => f.cat === 'intimate-care' && f.t(/vagin|vulv|intimate|labia/) && !f.t(/\bwash\b|cleans/) },
   // Nov 9 coverage audit: Gas, Breast tenderness and Abdominal discomfort had no product at all.
-  'digestive.gas': { re: /\bgas\b|\bgassy\b|flatulen/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.t(/gas permeable|natural gas/) },
+  'digestive.gas': { re: /\bgas\b|\bgassy\b|gassiness|flatulen/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.t(/gas permeable|natural gas/) },
   'cycle.breast_tenderness': { re: /breast (tenderness|pain|soreness)|tender breasts|sore breasts|mastalgia/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !['postpartum'].includes(f.cat) },
-  'pain.abdominal': { re: /\bindigestion\b|stomach (ache|upset|discomfort)|upset stomach|abdominal (pain|discomfort)/, ok: INGESTIBLE_OR_DEVICE },
+  'pain.abdominal': { re: /\bindigestion\b|stomach (ache|pain|upset|discomfort)|upset stomach|tummy (ache|trouble|troubles)|abdominal (pain|discomfort)/, ok: INGESTIBLE_OR_DEVICE },
+  // Nov 9 (founder: "we're not finding cures, we're finding symptom management, make sure every product is
+  // accounted for"). What a product is sold to help with is a match; the evidence grade sets the %.
+  'energy.fatigue': { re: /\bfatigue\b|low energy|\btiredness\b|\bexhaustion\b|(steady|sustained|natural|daily|more|boost(s|ed)?( your)?) energy|energy (support|boost|levels?)/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.t(/energy drink warning|not for energy/) },
+  'pain.joint': { re: /joint (pain|aches?|support|health|comfort|stiffness|mobility)|achy joints|aching joints|stiff joints/, ok: INGESTIBLE_OR_DEVICE },
+  'metabolic.weight': { re: /\bmetabolism\b|metabolic (health|support)|weight (management|loss|support)|blood sugar|glucose|insulin (sensitivity|resistance)|cravings/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !['diagnostics'].includes(f.cat) },
+  'urinary.incontinence': { re: /bladder (leaks?|leakage|control|support|weakness)|incontinence|leaks? when you (laugh|sneeze|cough)|light bladder/, ok: (f) => !PERIOD_CATEGORIES.has(f.cat) },
+  'hormonal.general': { re: /hormon(e|al) (balance|support|health|symptoms)|balance (your )?hormones/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.t(/hormone[- ]free/) },
+  'skin.hormonal': { re: /\b(peri)?menopaus(e|al)\b|midlife skin|hormonal (skin|acne|breakouts)|skin (changes|dryness) (in|during|with) (peri)?menopause/, ok: (f) => ['skincare', 'skin', 'body-care'].includes(f.cat) },
   'cognition.concentration': { re: /\bfocus(ed)?\b|\bconcentration\b(?! of)|\bconcentrating\b/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && f.cat !== 'diagnostics' && !f.t(/focus(ed)? on (women|our|the)|we focus/) },
-  'digestive.gas': { re: /\bgas\b|gassiness|flatulen/, ok: (f) => f.cat === 'supplement' },
-  'pain.abdominal': { re: /stomach (ache|pain|discomfort|upset)|abdominal (pain|discomfort)|tummy (ache|trouble|troubles)|upset stomach/, ok: (f) => f.cat === 'supplement' || f.cat === 'cramp-relief' },
 };
+// Rules that only set a placeholder from a tag or category. A brand claim may raise what they set
+// (Nov 9, founder: symptom management counts). Stricter rules (pms_named, safety and evidence gates) stay.
+const MARKETED_MAY_LIFT = new Set(['nov5_by_id', 'postpartum_tagged', 'bloat_text', 'energy_tagged', 'sleep_tagged', 'fitness_tagged', 'joint_text', 'cognition_text', 'hormone_tagged', 'hair_growth_topical_or_oral', 'fertility_supplement']);
 export const RELEVANCE_RULES = [
   // Nov 6 (founder: "just because it's not in the name doesn't mean it's not used for that … one
   // product can be good for multiple things"; Nov 5 all-hands, Puloma: tag a product under what it
@@ -588,7 +597,9 @@ export const RELEVANCE_RULES = [
     when: (f) => f.cat === 'supplement' && f.t(/probiotic|lactobacill/) && !f.t(/bloat/)
       // Nov 9 audit: a greens powder or meal shake with a probiotic in it is not sold for vaginal health.
       && f.t(/vagin|vulv|feminine|intimate|\bph\b|women'?s|urinary|\bbv\b|yeast/),
-    set: (f) => ({ 'vaginal.discharge': ADJACENT, 'vaginal.odor': ADJACENT, 'vaginal.bv': ADJACENT, 'vaginal.yeast': ADJACENT,
+    // Nov 9 (founder: symptom management): a probiotic sold for vaginal health is a lower-% option for
+    // discharge and odor; it is still never a BV or yeast treatment (cap below).
+    set: (f) => ({ 'vaginal.discharge': f.t(/vagin|feminine|\bph\b/) ? SECONDARY : ADJACENT, 'vaginal.odor': f.t(/vagin|feminine|\bph\b/) ? SECONDARY : ADJACENT, 'vaginal.bv': ADJACENT, 'vaginal.yeast': ADJACENT,
       ...(f.has('uti') ? { 'urinary.recurrent_uti': ADJACENT } : {}) }),
     cap: { 'vaginal.bv': ADJACENT, 'vaginal.yeast': ADJACENT }, roles: ['prevention'] },
 
@@ -619,7 +630,8 @@ export const RELEVANCE_RULES = [
     set: { 'vaginal.odor': DIRECT, 'vaginal.discharge': SECONDARY, 'vaginal.irritation': ADJACENT, 'vaginal.bv': ADJACENT } },
   { id: 'intimate_wash', why: 'External intimate washes and wipes are only adjacent to odor concerns.',
     when: (f) => f.fn('vaginal-health') && f.t(/\bwash\b|\bwipes?\b|cleanser/) && !f.t(/peri wash|recovery/),
-    set: (f) => ({ 'vaginal.odor': f.t(/odor/) ? SECONDARY : ADJACENT, 'vaginal.irritation': WEAK }) },
+    // Nov 9 (founder: symptom management): a wash sold for freshness or pH is a lower-% option for odor.
+    set: (f) => ({ 'vaginal.odor': f.t(/odor|fresh|\bph\b/) ? SECONDARY : ADJACENT, 'vaginal.irritation': WEAK }) },
   { id: 'exfoliating_pads', why: 'Exfoliating pads for ingrown hairs and razor burn.',
     when: (f) => f.n(/exfoliat/), set: { 'vaginal.irritation': WEAK } },
   { id: 'vaginal_moisturizer', why: 'Vaginal moisturizers are made for dryness.',
@@ -1584,7 +1596,7 @@ export function buildProductProfile(product) {
         e.contextual.push({ level, requires: value.requires, rule: rule.id, why: rule.why });
       } else {
         // nov5_by_id was a modest by-use placeholder (Nov 5), so a brand claim may raise it.
-        if (rule.fillOnly && e.score > 0 && !['nov5_by_id', 'postpartum_tagged', 'bloat_text'].includes(e.rule)) continue;
+        if (rule.fillOnly && e.score > 0 && !MARKETED_MAY_LIFT.has(e.rule)) continue;
         const level = rule.broad ? Math.min(WEAK, value) : value;
         if (e.score < level) { e.score = level; e.rule = rule.id; e.why = rule.why; e.broad = Boolean(rule.broad); }
       }

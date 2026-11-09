@@ -2247,7 +2247,7 @@ function rankCatalog(quizAnswers, healthProfile, opts) {
         // matches; it stays in Shop with its percent (src/matching/forYou.js).
         const recommendable = isRecommendable(product, pp) && !NOT_RECOMMENDED_AGAIN.has(historyState(up, pp.product_id, best?.needId));
         if (recommendable && best && !best.filtered && !best.restricted && best.explainable && best.score >= MIN_RECOMMEND_SCORE) matched.push({ product, best });
-        else if (best && best.score > 0) weaker.push({ product, best });
+        else if (best && best.score > 0) weaker.push({ product, best, related: recommendable && !best.filtered && !best.restricted });
         else unrelated.push(product);
     }
     // Engine order, then the For you rules (forYou.js): strongest needs first
@@ -2257,7 +2257,7 @@ function rankCatalog(quizAnswers, healthProfile, opts) {
     const order = new Map(sorted.map((r, i) => [r.productId, i]));
     matched.sort((a, b) => order.get(a.best.productId) - order.get(b.best.productId));
     weaker.sort((a, b) => b.best.score - a.best.score);
-    return { up, matches: matched.map((m) => m.product), others: [...weaker.map((w) => w.product), ...unrelated], offShelf };
+    return { up, matches: matched.map((m) => m.product), related: weaker.filter((w) => w.related).map((w) => w.product), others: [...weaker.map((w) => w.product), ...unrelated], offShelf };
 }
 
 /** Ranked lists using the same per-need score shown in personalization UI. */
@@ -2282,8 +2282,11 @@ export function getRecommendations(quizAnswers, healthProfile = null, opts = {})
  * appends the rest of the catalog as a fallback tail.
  */
 export function getPersonalizedProductIds(quizAnswers, healthProfile = null, opts = {}) {
-    const { matches } = getRecommendationMatchesAndRest(quizAnswers, healthProfile, opts);
-    return matches.map((p) => p.id);
+    // Nov 9 (founder: symptom management, every product accounted for): her matches first, then every
+    // other product that helps with one of her needs and passed her checks (a lower %, still hers).
+    const { up, matches, related } = rankCatalog(quizAnswers, healthProfile, opts);
+    if (!hasProfileSignals(up) || !up.healthIntent.needs.length) return [];
+    return [...matches, ...related].map((p) => p.id);
 }
 
 /**

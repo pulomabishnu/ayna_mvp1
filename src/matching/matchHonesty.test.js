@@ -249,3 +249,17 @@ describe('distribution across needs stays stable', () => {
     expect(holds).toBeLessThan(700);
   });
 });
+
+// Nov 9 (founder: "why are LOLA pads and Always pads the same match % … Always pads are way worse for you").
+describe('what a pad is made of counts', () => {
+  const PADS = quiz({ supportSelections: ['Period product support'] });
+  const has = (id) => byId.has(id);
+  it('organic cotton with no added scent ranks above a conventional pad; added scent ranks lower', () => {
+    if (!has('p-lola-pad') || !has('p-always-infinity') || !has('p-honeypot-pad')) return;
+    const lola = details('p-lola-pad', PADS).percent;
+    const always = details('p-always-infinity', PADS).percent;
+    const herbal = details('p-honeypot-pad', PADS);
+    expect(lola).toBeGreaterThan(always);
+    expect(herbal.v2.parts.some((p) => p.factor === 'material' && p.kind === 'lowered')).toBe(true);
+  });
+});

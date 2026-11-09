@@ -114,7 +114,7 @@ export const V2 = {
  */
 export const FACTOR_WEIGHTS = {
   capacity: { roomy: 0.03, enough: 0.01, small: -0.04, midForVeryHeavy: -0.01 },
-  material: { free: 0.02, contains: -0.03 },
+  material: { free: 0.02, contains: -0.03, organicPlain: 0.03, fragranced: -0.06 },
   price: { within: 0.02, slightlyOver: -0.02, over: -0.05 },
   reusable: { yes: 0.02, no: -0.04 },
   values: { each: 0.01, max: 0.02, miss: -0.02 },
@@ -414,6 +414,18 @@ export function productFactors(pp, r, up, { isEffect = false, grade = null } = {
       const words = free.slice(0, 2).map((a, i) => (i ? lowerFirst(FREE_WORDS[a]) : FREE_WORDS[a])).join(' and ');
       add('material', W.material.free, `${words}, which you asked for`, `${words}, which you asked for`);
     }
+  }
+
+  // Nov 9 (founder: "why are LOLA pads and Always pads the same match %"). Pads, tampons, liners and
+  // period underwear sit against the vulva for hours, so what they are made of counts even when she
+  // named no preference: added fragrance can irritate the vulva (MedlinePlus, vaginal itching: avoid
+  // scented products), and organic cotton with no fragrance is what most people ask us for.
+  // Unknown is neutral. Her own stated preferences (above and below) still decide when she gave them.
+  const BODY_CONTACT = new Set(['pad', 'tampon', 'liner', 'panty-liner', 'period-underwear']);
+  if (MENSTRUAL_PRODUCT_NEEDS.has(r.needId) && BODY_CONTACT.has(cat) && !attrs.has('fragrance')) {
+    const fragranced = pp.safety?.fragrance === 'yes' || pp.values?.unscented === 'no';
+    if (fragranced) add('material', W.material.fragranced, 'Has added scent, which can irritate the vulva');
+    else if (pp.values?.organic === 'yes' && (pp.safety?.fragrance === 'no' || pp.values?.unscented === 'yes')) add('material', W.material.organicPlain, 'Organic cotton with no added scent');
   }
 
   // Price vs her budget (upfront price, US dollars).
