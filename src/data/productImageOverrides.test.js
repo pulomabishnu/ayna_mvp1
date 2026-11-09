@@ -16,6 +16,7 @@ const PACKSHOT_PENDING = new Set([
   'p-tampontribe-pantyliners-bulk-buy',
   'p-tampontribe-teen-pads',
   'p-resa-rhythm-bracelet',
+  'p-goodcycle-dailybasis', // GoodCycle (2026-10-27): brand photos from takegoodcycle.com, no studio packshot yet
   // Livi (Nov 4, Eliz's photo): brand photo until a packshot is shot.
   'p-livi-after-sex-absorption-device',
   // Oura Ring, Eight Sleep Pod, Inito monitor: devices moved from Services to Shop (Ameera, Nov 4); brand photos until packshots are shot.

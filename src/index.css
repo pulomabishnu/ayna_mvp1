@@ -3793,8 +3793,11 @@ textarea {
    ============================================================ */
 
 .consent-banner {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000;
-  padding: 1.25rem 1.5rem;
+  /* This notice must sit above the fixed phone tab bar, or its choice buttons
+     end up hidden beneath navigation (including in iOS in-app browsers). */
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 20010;
+  box-sizing: border-box;
+  padding: 1.25rem 3.5rem 1.25rem 1.5rem;
   /* Brand kit (palette v3): espresso bar, butter text, pink link. */
   background: #3e2723;
   border-top: 2px solid #3e2723;
@@ -3816,6 +3819,33 @@ textarea {
 .consent-banner a {
   color: #f7badd;
   text-decoration: underline;
+}
+
+/* Dismissing this control explicitly keeps optional analytics off. */
+.consent-banner__close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #ffedac;
+  font: inherit;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+.consent-banner__close:hover,
+.consent-banner__close:focus-visible {
+  background: rgba(255, 237, 172, .16);
+}
+.consent-banner__close:focus-visible {
+  outline: 2px solid #ffedac;
+  outline-offset: -4px;
 }
 
 .consent-banner__actions {
@@ -3846,11 +3876,44 @@ textarea {
 }
 
 @media (max-width: 560px) {
+  /* Constrain the notice and let its explanation scroll, while the two
+     consent decisions stay visible and tappable on short phone viewports. */
+  .consent-banner {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 12px;
+    max-height: min(440px, calc(100dvh - 12px));
+    overflow: hidden;
+    padding: 18px 16px max(16px, env(safe-area-inset-bottom));
+  }
+  .consent-banner p {
+    flex: 0 1 auto;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 34px;
+    line-height: 1.45;
+  }
+  .consent-banner__close {
+    top: 6px;
+    right: 6px;
+  }
   .consent-banner__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    flex: none;
     width: 100%;
   }
   .consent-banner__actions button {
-    flex: 1;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 9px 14px;
+    line-height: 1.2;
   }
 }
 
