@@ -24,8 +24,8 @@ export function pickCommunityPost(posts = []) {
    focus group (Google Meet, Gemini transcripts Oct 19, Oct 26, Nov 2 2026), trimmed of filler
    words only ("like", "um"). No names: every one is signed "Beta tester". */
 export const BETA_QUOTES = [
-  { q: 'Most of the recommendations are really spot-on.', tone: 'pink' },
   { q: 'Everything is so seamless and easy, and all the information is easy to read. There’s not too much jargon.', tone: 'butter' },
+  { q: 'Most of the recommendations are really spot-on.', tone: 'pink' },
   { q: 'It really accounts for different price ranges, which is super helpful.', tone: 'butter' },
   { q: 'The questions were pretty thorough, so I got a lot of good recommendations.', tone: 'pink' },
 ];

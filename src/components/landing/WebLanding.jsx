@@ -13,7 +13,6 @@ import './web-landing.css';
 import HowItWorksDemo from './HowItWorksDemo.jsx';
 import { Problem, Testimonials, Faq, CtaNote } from './LandingStory.jsx';
 import './landing-story.css';
-import { BETA_QUOTES } from './landingData.js';
 import { wideRainCols } from './rainData.js';
 import { trackLandingCta } from '../../utils/funnelEvents.js';
 
@@ -50,8 +49,7 @@ function Hero({ cta, onSearch, banner = null, draftLine = null }) {
           <p className="wl-one">Take a 1-minute quiz. See what fits and why.</p>
           <SlideToStart className="wl-sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
           {draftLine || (!/Home/.test(cta.label) && <CtaNote className="is-light wl-ctanote" />)}
-          {/* Nov 6: social proof right under the main button (a real beta tester's words). */}
-          <p className="wl-proof">“{BETA_QUOTES[0].q}” <small>Beta tester</small></p>
+          {/* Nov 9 (founder): the tester quote lives in its own section below, not under the button. */}
           <HeroSearch onSearch={onSearch} className="wl-search" />
           {banner && <div className="wl-banner">{banner}</div>}
         </div>
