@@ -16,8 +16,9 @@ import { hasRecordedChoice, acknowledgeAnalytics, denyConsent, isMandatoryGpcVis
  *     Neither is filled or primary. A visually dominant Accept next to a
  *     de-emphasised decline is the exact dark pattern California penalised
  *     Sephora for under CCPA.
- *  2. There is no dismiss/close control. Silence is not a decision, so the
- *     bar persists across reloads until one of the two buttons is clicked.
+ *  2. Closing the notice is an explicit privacy-preserving opt-out,
+ *     exactly like the "Keep analytics off" button. Ignoring the banner
+ *     never turns on analytics.
  *
  * GPC visitors remain opted out. Other visitors can choose to enable optional
  * analytics after seeing the notice; ignoring it never enables tracking.
@@ -90,8 +91,19 @@ export default function ConsentBanner() {
 
   if (!visible) return null
 
+  const keepAnalyticsOff = () => { denyConsent(ph); setVisible(false) }
+
   return (
     <div ref={bannerRef} role="dialog" aria-live="polite" aria-label="Analytics notice" className="consent-banner">
+      <button
+        type="button"
+        className="consent-banner__close"
+        aria-label="Close analytics notice and keep optional analytics off"
+        title="Keep analytics off"
+        onClick={keepAnalyticsOff}
+      >
+        <span aria-hidden="true">×</span>
+      </button>
       <p>
         Optional usage analytics are off until you choose to enable them. Analytics help us improve ayna.
         We don&apos;t use them for advertising or sell them. Health-search text, account identifiers,
@@ -103,7 +115,7 @@ export default function ConsentBanner() {
         <button
           type="button"
           data-testid="consent-decline"
-          onClick={() => { denyConsent(ph); setVisible(false) }}
+          onClick={keepAnalyticsOff}
         >
           Keep analytics off
         </button>
