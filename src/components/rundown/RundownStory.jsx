@@ -75,6 +75,14 @@ function CardArt({ card, count }) {
       </div>
     );
   }
+  if (card.kind === 'together' && card.links?.length) {
+    // Her signals as linked dots, drawn in one after another (founder, Nov 9: insightful, animated).
+    return (
+      <ol className="ay-rd-art ay-rd-links" aria-hidden="true">
+        {card.links.map((l, k) => <li key={l.k} style={{ '--k': k }}><i /><b>{l.k}</b><span>{l.v}</span></li>)}
+      </ol>
+    );
+  }
   if (card.kind === 'community' && card.body) return <blockquote className="ay-rd-art is-quote"><p>{card.body}</p></blockquote>;
   return null;
 }

@@ -86,7 +86,9 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
   const b = scored ? breakdownFromDetails(product, details) : null;
   const checks = (b?.checks || []).slice(0, 4);
   const reasons = shown != null ? fitReasons(product, details, b?.raised || [], forWhat) : [];
-  const factors = [...(b?.raised || []).map((x) => ({ ...x, up: true })), ...(b?.lowered || []).map((x) => ({ ...x, up: false }))].filter((x) => x.text);
+  // Nov 9 (founder: "not saying every factor, not specific"): every row with its points, biggest first,
+  // so the list adds up to the % she sees.
+  const factors = [...(b?.raised || []).map((x) => ({ ...x, up: true })), ...(b?.lowered || []).map((x) => ({ ...x, up: false }))].filter((x) => x.text).sort((a, z) => Math.abs(z.points || 0) - Math.abs(a.points || 0));
   const ev0 = evidenceLevel(product);
   const tr = b?.evidence || null;
   const spot = shown != null ? priceSpot(product) : null;
@@ -134,8 +136,8 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
       </section>}
 
       {scored && factors.length > 0 && (pro ? <section>
-        <h3>Every factor</h3>
-        <ul className="ay-w2-factors">{factors.map((x) => <li key={`${x.up ? 'u' : 'd'}-${x.text}`} className={x.up ? 'is-up' : 'is-down'}><span aria-hidden="true">{x.up ? '+' : '−'}</span>{cap(x.text)}<span className="sr-only">{x.up ? ', raised it' : ', lowered it'}</span></li>)}</ul>
+        <h3>How your {shown}% adds up</h3>
+        <ul className="ay-w2-factors is-points">{factors.map((x) => <li key={`${x.up ? 'u' : 'd'}-${x.text}`} className={x.up ? 'is-up' : 'is-down'}><span className="ay-w2-pts">{x.up ? '+' : '−'}{Math.abs(x.points || 0)}</span>{cap(x.text)}<span className="sr-only">{x.up ? ', raised it' : ', lowered it'}</span></li>)}</ul>
       </section> : pro === false ? <section className="ay-w2-pro">
         <div className="ay-w2-pro__ghost" aria-hidden="true">{factors.slice(0, 3).map((x, i) => <span key={i} className={x.up ? 'is-up' : 'is-down'}><i>{x.up ? '+' : '−'}</i><b style={{ width: `${55 + ((i * 17) % 35)}%` }} /></span>)}</div>
         <div className="ay-w2-pro__lock">

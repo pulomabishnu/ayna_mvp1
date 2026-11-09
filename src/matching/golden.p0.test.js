@@ -192,11 +192,10 @@ describe('P0 golden: fallbacks, bands, completeness', () => {
       }
     }
   });
-  it('18. an open clinician review withholds a personalized match until signoff', () => {
+  it('18. a clinician-review flag never withholds a match (Nov 9, founder)', () => {
     const peri = getProductMatchDetailsForProduct(P('p-remifemin'), quiz({ ...base, lifeStageSelections: ['I am in perimenopause'], supportSelections: ['Hot flashes'], takesCurrent: 'No' }));
-    expect(peri.matchStatus).toBe('safety-hold');
-    expect(peri.safetyHold.state).toBe('in_review');
-    expect(peri.percent).toBeNull();
+    expect(peri.matchStatus).toBe('scored');
+    expect(peri.percent).toBeGreaterThan(0);
   });
   it('19. completeness states are ordered: her answers first, then review, then research, then brand-does-not-share', () => {
     const s = (over) => ({ restricted: true, missingFields: [], missingProductInfo: [], undisclosedInfo: [], ...over });

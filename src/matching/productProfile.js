@@ -123,7 +123,7 @@ function facts(product) {
     // tc: text with benefit-denying sentences removed (for "mentions X" rules).
     tc: (re) => re.test(claims),
     // Claim sentences: a claim verb and the need in the same sentence (marketed_for rule).
-    cs: (re) => claims.replace(/([.!?])\s+/g, '$1\u0000').split('\u0000').some((x) => re.test(x) && MARKETED_VERB.test(x) && !FOUNDER_STORY.test(x) && !AGENCY_VOICE.test(x)),
+    cs: (re) => claims.replace(/([.!?])\s+/g, '$1\u0000').split('\u0000').some((x) => re.test(x) && MARKETED_VERB.test(x) && !FOUNDER_STORY.test(x) && !AGENCY_VOICE.test(x) && !HEDGED_SIDE.test(x)),
     limited: product.evidenceStrength === 'limited',
     id: product.id, cat: normalCategory(product.category), type: String(product.type || '').toLowerCase(),
     tags, hf, name, text,
@@ -289,6 +289,9 @@ const NOV5_MAP = {
 // A founder's own story ("started after her own recurring BV") is not a claim about the product.
 // ayna's own note on what a health agency or study says ("nih says yoga can help stress") is not the brand's claim.
 const AGENCY_VOICE = /\b(nih|nccih|acog|cdc|fda|who|nhs|mayo clinic|research|studies|a study|trials?|reviews?) (says?|shows?|found|suggests?)\b|\b(research|evidence|studies) (on|for)\b|\b(is|are) (unclear|mixed|unproven)\b/;
+// Nov 9 persona test (creatine ranked #1 for trouble sleeping): "may improve sleep when combined with
+// resistance training" is a hedged side effect of something else, not a claim that it is for sleep.
+const HEDGED_SIDE = /\bmay (improve|help|support|reduce|ease)\b[^.]*\bwhen (combined|paired|taken|used) with\b/;
 const FOUNDER_STORY = /\b(started|founded|founder|co-founded|after (her|their|his) own|her own|launched)\b/;
 let RULES_CACHE = null;
 const rulesInOrder = () => (RULES_CACHE ||= [...RELEVANCE_RULES.filter((r) => !r.fillOnly), ...RELEVANCE_RULES.filter((r) => r.fillOnly)]);

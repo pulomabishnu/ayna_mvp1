@@ -43,7 +43,7 @@ export function readinessFor(product, { catalog = [], panel = SENSITIVE_PANEL } 
   if (!cat.eligible) return { level: 'browse_only', missing: [], clinicianOpen: false, stageReviewed, reason: cat.reason };
   if (!needs.length) return { level: 'browse_only', missing: [], clinicianOpen: false, stageReviewed, reason: 'Nothing it is for is mapped yet' };
   const facts = new Map();
-  let clinicianOpen = pp.passport?.qa === 'needs_clinician_review';
+  let clinicianOpen = false; // Nov 9: no clinician holds (founder).
   for (const persona of panel) {
     const up = buildUserProfile({ ...BASE, ...persona.intake, supportSelections: needs.slice(0, 6) }, { catalog });
     const s = evaluateSafety(pp, up);

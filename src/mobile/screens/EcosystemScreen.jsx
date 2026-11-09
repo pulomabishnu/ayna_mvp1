@@ -464,9 +464,10 @@ export default function EcosystemScreen({
           </div>}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
         </section>;
-      }).flatMap((node, index) => (index === 0 ? [
+      }).flatMap((node, index, all) => (index === all.length - 1 && index > 0 && careBanner ? [node, <div key="care-note" className="ay-carenote-slot">{careBanner}</div>] : index === 0 ? [
         node,
-        careBanner ? <div key="care-note" className="ay-carenote-slot">{careBanner}</div> : null,
+        // Nov 9 (founder: the care note read as part of the first shelf): it goes after the last shelf.
+        all.length === 1 && careBanner ? <div key="care-note" className="ay-carenote-slot">{careBanner}</div> : null,
         // How her health data shaped the order (or the invite to connect): after the first shelf, so shelves lead.
         seed ? <HealthShapedNote key="hsn" shaped={seed.healthShaped} userId={authUser?.id || null} onConnect={onConnectHealth || onOpenHealthData} className="ay-eco-hsn" /> : null,
       ].filter(Boolean) : [node]))}

@@ -120,7 +120,8 @@ describe('one match percent per product (v2) on every surface', () => {
     const v2 = scoreV2(pp, { needId: 'cycle.pms', relationship: rel.relationship || 'secondary', components: {}, points: {}, outputs: {}, confidence: 1 }, new Set(['cycle.pms']));
     expect(v2.needFit).toBeLessThanOrEqual(V2.S.secondary);
     const details = getProductMatchDetailsForProduct(p, quiz({lifeStageSelections:['I get periods regularly'],supportSelections:['PMS symptoms'],takesCurrent:'No'}));
-    expect(details.matchStatus).toBe('safety-hold');
+    expect(details.matchStatus).toBe('scored'); // Nov 9: no clinician holds (founder)
+    expect(details.percent).toBeLessThan(75);
   });
 
   it('?match=v1 still gives the old numbers for comparison', () => {

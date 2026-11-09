@@ -245,8 +245,9 @@ describe('distribution across needs stays stable', () => {
     // Earlier snapshot (when product clinical reviews were not held) = 329.
     // With passport clinician-review enforcement this set increases; do not
     // pin to a brittle exact value when more flagged products enter the catalog.
-    expect(holds).toBeGreaterThanOrEqual(450);
-    expect(holds).toBeLessThan(700);
+    // Nov 9 (founder): clinician-review holds removed; only her own missing safety answers hold.
+    expect(holds).toBeGreaterThanOrEqual(250);
+    expect(holds).toBeLessThan(450);
   });
 });
 

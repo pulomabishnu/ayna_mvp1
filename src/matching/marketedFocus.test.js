@@ -63,6 +63,7 @@ describe('persona test fixes', () => {
     expect(s({ id: 'p-t-mon2', name: 'Monistat 3-Dose Yeast Infection Treatment (miconazole)', category: 'intimate-care', summary: 'Miconazole cream.' }, 'vaginal.yeast')).toBeGreaterThanOrEqual(0.8);
     expect(s({ id: 'p-t-hair', name: 'Hair Growth Complex', category: 'supplement', summary: 'A supplement made for postpartum hair shedding and hair growth.' }, 'postpartum.recovery')).toBeLessThan(0.55);
     // The real catalog shape: tagged postpartum + shedding, still not recovery.
+    expect(s({ id: 'p-t-cr', name: 'Creatine', category: 'supplement', summary: 'Creatine supports muscle strength. Helps preserve lean mass, may improve brain fog and sleep when combined with resistance training.' }, 'sleep.trouble')).toBeLessThan(0.55);
     expect(s({ id: 'p-t-hair2', name: 'HAIRLOVE Growth Complex', category: 'supplement', tags: ['hair', 'biotin', 'postpartum', 'shedding'], summary: 'Biotin and keratin for shedding.' }, 'postpartum.recovery')).toBe(0);
   });
 });

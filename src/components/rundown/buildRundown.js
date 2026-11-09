@@ -269,6 +269,36 @@ export function buildRundown(input = {}) {
       break;
     }
   }
+  // 3c. Putting it together (founder, Nov 9: "way more insightful"): when she is after ovulation and
+  //     her sleep is shorter or her resting heart rate is up, say that these often go together in
+  //     this part of the cycle, from studies ayna read (not a diagnosis, not a cause for her).
+  //     Shilaih 2017 (Sci Rep, 91 women, 274 cycles, wrist sensor during sleep): mid-luteal pulse
+  //     about 1.8 bpm above the fertile window and 3.8 bpm above the period. Sleep review (PubMed
+  //     25688329): women often report poorer sleep in the premenstrual week.
+  if (pc?.phase?.id === 'luteal') {
+    const shortSleep = Boolean(sl && /less than usual/.test(sl.title || ''));
+    const hrUp = usedSignals.has(BASELINE_SIGNALS.find((x) => x.metric === 'resting_hr_bpm')?.title) && dataCards.some((c) => c.topic === 'resting_hr_bpm');
+    if (shortSleep || hrUp) {
+      const both = shortSleep && hrUp;
+      const what = both ? 'less sleep, higher heart rate' : shortSleep ? 'less sleep than usual' : 'higher heart rate';
+      const SRC = {
+        hr: { label: 'Shilaih et al. 2017, Scientific Reports (91 women, wrist sensor during sleep)', url: 'https://pubmed.ncbi.nlm.nih.gov/28465583/' },
+        sleep: { label: 'Sleep and women\u2019s health (review, PubMed)', url: 'https://pubmed.ncbi.nlm.nih.gov/25688329/' },
+      };
+      add({
+        key: `together:luteal:${today}`, category: 'pattern', kind: 'together', kicker: 'Putting it together',
+        title: `Day ${pc.cycleDay}: ${what}. Common before a period.`,
+        links: [{ k: 'Cycle', v: `Day ${pc.cycleDay}, after ovulation` }, ...(shortSleep ? [{ k: 'Sleep', v: 'Below your usual' }] : []), ...(hrUp ? [{ k: 'Heart', v: 'Above your usual' }] : [])],
+        body: [hrUp ? 'In a study of 91 women, resting pulse during sleep ran about 2 to 4 beats a minute higher after ovulation.' : null,
+          shortSleep ? 'Many women sleep worse in the week before a period.' : null].filter(Boolean).join(' '),
+        canDo: 'Log how you feel today. If it repeats next cycle, ayna will show you the pattern.',
+        basisLine: 'From your own data and published studies. A pattern, not a diagnosis.',
+        sources: [...(hrUp ? [SRC.hr] : []), ...(shortSleep ? [SRC.sleep] : [])],
+        ask: 'Why do sleep and heart rate change before a period?',
+        followUps: ['Why do sleep and heart rate change before a period?'],
+      });
+    }
+  }
   for (const c of dataCards.slice(0, RUNDOWN_RULES.maxDataCards)) add(c);
   for (const c of dataCards.slice(RUNDOWN_RULES.maxDataCards)) skipped.push({ key: c.key, why: 'data_cap' });
   // Yesterday's own check-in, when it was clearly off her usual.
@@ -418,9 +448,13 @@ export function buildRundown(input = {}) {
     if (!['change', 'data'].includes(c.category) || !c.topic) continue;
     if (kept.slice(0, k).some((x) => ['change', 'data'].includes(x.category) && x.topic === c.topic)) { skipped.push({ key: c.key, why: 'same_topic' }); kept.splice(k, 1); }
   }
-  const protectedCards = kept.filter((c) => c.protected);
-  const rest = kept.filter((c) => !c.protected).slice(0, Math.max(0, RUNDOWN_RULES.maxContentCards - protectedCards.length));
-  const content = [...protectedCards, ...rest];
+  // Nov 9 (founder: "put check in at the end, don't waste things on checking in"): the one-tap
+  // check-in comes last, after everything she came for, and does not take a content slot.
+  const checkins = kept.filter((c) => c.kind === 'checkin').slice(0, 1);
+  const body = kept.filter((c) => c.kind !== 'checkin');
+  const protectedCards = body.filter((c) => c.protected);
+  const rest = body.filter((c) => !c.protected).slice(0, Math.max(0, RUNDOWN_RULES.maxContentCards - protectedCards.length));
+  const content = [...protectedCards, ...rest, ...checkins];
   if (!content.length) return { cards: [], skipped };
   const opening = { key: `opening:${today}`, category: 'frame', kind: 'opening', kicker: 'Your daily rundown', title: `Your ${weekday(today)} rundown`, body: 'Here is your health in 60 seconds.' };
   // End of the rundown: Ask follow-ups about the cards she just saw (max 3).

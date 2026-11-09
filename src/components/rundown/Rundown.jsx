@@ -1,6 +1,7 @@
 import { complementsFor, ownsProduct } from '../../matching/complements.js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { buildRundown, cyclePosition, sleepChange } from './buildRundown.js';
+import { buildRundown, cyclePosition, sleepChange, todaySignals } from './buildRundown.js';
+import { NEED_BY_ID } from '../../matching/ontology.js';
 import { buildWeeklyRecap } from './weeklyRecap.js';
 import RundownStory from './RundownStory.jsx';
 import { markCardSeen, markNotUseful, markPeriodAnswer, markRundownHidden, markRundownViewed, markWeeklySeen, readRundownMemory, setRundownOwner, finishedRundown } from './rundownStore.js';
@@ -65,8 +66,20 @@ export default function Rundown({
   // history), so the Rundown never shows a different number. Not what she
   // already has, said no to, tried without luck, saved (Saved has its own
   // card), or accessories (team direction 65; src/health/remembered.js).
+  // Nov 9 (founder: "every day at least one new product, based on her health data"): what her data
+  // says today (short sleep, pain, period, PMS, low mood, the days before her period) also asks the
+  // one engine for those needs, even when she never picked them as goals. Same safety gates.
+  const signalOptions = useMemo(() => {
+    let sig = [];
+    try { sig = todaySignals({ log: t.log, healthRows: t.healthRows, today, pos: cyclePosition(t.log, today) }); } catch { sig = []; }
+    return [...new Set(sig.flatMap((x) => x.needs).map((id) => NEED_BY_ID[id]?.option).filter(Boolean))];
+  }, [t.log, t.healthRows, today]);
   const matches = useMemo(() => {
-    if (!intake || !catalogReady) return [];
+    if (!catalogReady || (!intake && !signalOptions.length)) return [];
+    const fh = intake?.fullHealthIntake || {};
+    const own = fh.supportSelections || [];
+    const extra = signalOptions.filter((o) => !own.includes(o));
+    const withToday = extra.length ? { ...(intake || {}), fullHealthIntake: { ...fh, supportSelections: [...own, ...extra] } } : intake;
     const seen = new Set();
     const remembered = rememberedOnDevice({ tries: t.tries, saved: Object.fromEntries((saved || []).filter((p) => p?.id).map((p) => [p.id, true])), prefs: readRoutinePrefs() });
     // Nov 5 (founder): the Rundown suggests something NEW from her data, never what is already in her
@@ -74,18 +87,22 @@ export default function Rundown({
     // engine, with her health data) minus everything in her ecosystem; she can add it or say no.
     const inEcosystem = new Set((products || []).map((p) => p?.id).filter(Boolean));
     let candidates = [];
-    try { candidates = (getRecommendations(intake, healthProfile, matchOpts) || []).filter((p) => p?.id && !inEcosystem.has(p.id)).slice(0, 40); } catch { candidates = []; }
+    try { candidates = (intake ? getRecommendations(intake, healthProfile, matchOpts) || [] : []).filter((p) => p?.id && !inEcosystem.has(p.id)).slice(0, 40); } catch { candidates = []; }
+    const scoredWith = new Map(candidates.map((p) => [p.id, intake]));
+    if (withToday !== intake) {
+      try { for (const p of (getRecommendations(withToday, healthProfile, matchOpts) || []).filter((x) => x?.id && !inEcosystem.has(x.id)).slice(0, 40)) if (!scoredWith.has(p.id)) { candidates.push(p); scoredWith.set(p.id, withToday); } } catch { /* her goals still count */ }
+    }
     // No medicine as a Rundown pick (src/health/medicineProduct.js).
     return withoutMedicines(withoutRemembered(candidates, remembered)).filter((p) => p?.id && !seen.has(p.id) && seen.add(p.id)).map((product) => {
       let details = null;
-      try { details = getProductMatchDetailsForProduct(product, intake, healthProfile, matchOpts); } catch { details = null; }
+      try { details = getProductMatchDetailsForProduct(product, scoredWith.get(product.id) || withToday, healthProfile, matchOpts); } catch { details = null; }
       if (!details || details.matchStatus !== 'scored' || !Number.isFinite(details.percent)) return null;
       if (details.recommendable === false || ['dismissed', 'tried', 'not_for_me'].includes(details.history)) return null;
       // Held back for safety: never a Rundown match (founder decision 3).
       if (details.eligibility === 'restricted' || details.restricted === true) return null;
       return { product, percent: details.percent, needId: details.needId, needSignal: details.needSignal || null, why: whyLine(product, details), evidence: evidenceLevel(product).level };
     }).filter(Boolean);
-  }, [products, intake, catalogReady, t.tries, saved, healthProfile, matchOpts]);
+  }, [products, intake, catalogReady, t.tries, saved, healthProfile, matchOpts, signalOptions]);
 
   // Bleeding after menopause: a saved period or bleeding product is not
   // brought back on the Saved card (founder, Oct 24: no products for it).

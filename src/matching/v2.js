@@ -115,7 +115,7 @@ export const V2 = {
 export const FACTOR_WEIGHTS = {
   capacity: { roomy: 0.03, enough: 0.01, small: -0.04, midForVeryHeavy: -0.01 },
   material: { free: 0.02, contains: -0.03, organicPlain: 0.03, fragranced: -0.06 },
-  price: { within: 0.02, slightlyOver: -0.02, over: -0.05 },
+  price: { within: 0.02, slightlyOver: -0.02, over: -0.05, farOver: -0.15 },
   reusable: { yes: 0.02, no: -0.04 },
   values: { each: 0.015, max: 0.03, miss: -0.03 }, // Nov 9 (founder: preferences count): was 0.01 / 0.02
   fsaHsa: { yes: 0.01, no: -0.01 },
@@ -348,7 +348,7 @@ function healthParts(pp, r, needIds, x) {
       // Founder, Nov 2: the old wording read as a penalty for helping more. It is a
       // ranking choice: products made mainly for her need come first, so one
       // all-in-one product doesn't fill everyone's ecosystem.
-      text = others ? `Made for ${others + 1} needs, so products made just for your ${phrase} rank a little higher` : `Made for several needs, so products made just for your ${phrase} rank a little higher`;
+      text = others ? `Also made for ${others} other ${others === 1 ? 'thing' : 'things'}, so products made only for ${phrase} rank above it` : `Made for several things, so products made only for ${phrase} rank above it`;
     } else if (steps[i].factor === 'details') {
       if (delta > 0) text = r.contextUsed?.phrase ? `Designed for ${r.contextUsed.phrase}` : `Suits the details you gave about your ${phrase}`;
       else text = MENSTRUAL_PRODUCT_NEEDS.has(r.needId) && r.flowFit != null && r.flowFit < 1 ? 'Its absorbency is not the best fit for the flow you described' : `Less suited to the details you gave about your ${phrase}`;
@@ -438,7 +438,13 @@ export function productFactors(pp, r, up, { isEffect = false, grade = null } = {
       const fit = budgetFit(price.amount, shopping.budget);
       if (price.amount <= shopping.budget.max) add('price', W.price.within, `${money(price.amount)} fits your budget`, `${money(price.amount)} fits your budget`);
       else if (fit >= 0.85) add('price', W.price.slightlyOver, `${money(price.amount)}, a little over your budget`);
-      else add('price', W.price.over, `${money(price.amount)}, over your budget`);
+      // Nov 9 (founder): the further over her budget, the lower it ranks. Just over: -0.05;
+      // 3x her budget or more: -0.15. A $300 item on a $25 budget sinks; a $35 one barely moves.
+      else {
+        const times = price.amount / Math.max(1, shopping.budget.max);
+        const pen = Math.round((W.price.over + Math.min(1, Math.max(0, (times - 1.15) / 1.85)) * (W.price.farOver - W.price.over)) * 100) / 100; // whole points, so the Why rows add up
+        add('price', pen, times >= 2 ? `${money(price.amount)}, about ${Math.round(times)}x your budget` : `${money(price.amount)}, over your budget`);
+      }
     }
   }
 

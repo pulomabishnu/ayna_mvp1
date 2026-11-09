@@ -1,0 +1,25 @@
+/* Nov 9 product page fixes from the founder's screenshots (website and app). */
+/* The pill and its words never touch. */
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ayv-match__row { display: flex !important; flex-wrap: wrap; align-items: center; gap: 10px !important; }
+/* "When to get help now": the "!" mark shows (butter on espresso), one even outline, no thick left bar. */
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ay-urgent.is-fold .ay-urgent__ic { color: #ffedac !important; background: #3e2723 !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ay-urgent.is-fold { border: 1.5px solid #3e2723 !important; box-shadow: none !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body [data-theme*="dark"] .ay-urgent.is-fold .ay-urgent__ic { color: #3e2723 !important; background: #ffedac !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body [data-theme*="dark"] .ay-urgent.is-fold { border-color: rgba(255, 237, 172, .5) !important; }
+/* Reviews: butter with an outline, not a pink block. */
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ayg-rc { background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body [data-theme*="dark"] .ayg-rc { background: #4a302a !important; color: #ffedac !important; border-color: rgba(255, 237, 172, .45) !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body [data-theme*="dark"] .ayg-rc * { color: inherit !important; }
+/* The checkered strip between sections reads as decoration: gone on product pages (footer keeps its own). */
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body :is(.ayp-strip, .ay-pdp-strip) { display: none !important; }
+/* Beats the id-weighted pdp.css rules (an :is() list counts as its strongest member). */
+html body :is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html) .ay-urgent.is-fold { border: 1.5px solid currentColor !important; border-left-width: 1.5px !important; box-shadow: none !important; }
+/* Care notes on the website too: butter with an outline, first line plus "Read more" (Nov 9). */
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ay-carenote { background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; box-shadow: none !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ay-carenote__more summary { cursor: pointer; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; list-style: none; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ay-carenote__more[open] summary { display: none; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body [data-theme*="dark"] .ay-carenote { background: #4a302a !important; color: #ffedac !important; border-color: rgba(255, 237, 172, .45) !important; }
+/* Why this match: every factor with its points (Nov 9). */
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ay-w2-factors.is-points li { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: baseline; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ay-w2-factors.is-points .ay-w2-pts { font-weight: 800; font-variant-numeric: tabular-nums; text-align: right; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ay-w2-factors.is-points li::before { content: none !important; }

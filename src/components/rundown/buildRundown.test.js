@@ -27,7 +27,8 @@ describe('Daily Rundown', () => {
     const r = buildRundown(fromFixture());
     expect(r.cards[0].kind).toBe('opening');
     expect(r.cards.at(-1).kind).toBe('closing');
-    const content = cats(r).slice(1, -1);
+    // The check-in goes last (founder, Nov 9), so the order check skips it.
+    const content = r.cards.slice(1, -1).filter((c) => c.kind !== 'checkin').map((c) => c.category);
     expect(content[0]).toBe('data'); // her data first: where she is in her cycle
     expect(content[1]).toBe('goal'); // then the due follow-up
     expect(content).toContain('pattern');
@@ -118,7 +119,10 @@ describe('Daily Rundown', () => {
 
   it('never more than the content cap (safety excepted)', () => {
     const r = buildRundown({ ...fromFixture(), matches: [{ product: { id: 'p1', name: 'P' }, percent: 90, needId: 'pain.menstrual_cramp' }], saved: [{ id: 's1', name: 'S' }], reads: true, community: [{ id: 'c1', title: 'Heat or ibuprofen first?', count: 12 }] });
-    expect(r.cards.length - 2).toBeLessThanOrEqual(RUNDOWN_RULES.maxContentCards);
+    // The one-tap check-in sits after the content and does not take a slot (founder, Nov 9).
+    expect(r.cards.filter((c) => c.kind !== 'checkin').length - 2).toBeLessThanOrEqual(RUNDOWN_RULES.maxContentCards);
+    const ci = r.cards.findIndex((c) => c.kind === 'checkin');
+    if (ci >= 0) expect(ci).toBe(r.cards.length - 2);
   });
 
   it('sleep change uses only connected rows and needs a real drop', () => {

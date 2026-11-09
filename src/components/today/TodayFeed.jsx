@@ -74,6 +74,17 @@ function CompactItem({ item, t, onAsk, onFindCare, onOpenFull, onOutcome, wide =
   const fields = item.type === 'check_in' ? ((acts.find((a) => a.id === 'open_check_in')?.fields) || []).filter((f) => FIELD_CHIP[f]) : [];
   const status = statusOf(item, t);
   const full = onOpenFull ? (opts) => onOpenFull(item, opts) : null;
+  // Nov 9 (founder): a check-in on Home is one line with an arrow, not a whole card.
+  if (item.type === 'check_in' && !keep) {
+    return (
+      <li className={`ay-today__item is-compact is-${item.tier} is-check_in is-row${wide ? ' is-wide' : ''}`}>
+        <button type="button" className="ay-today__row" onClick={() => { t.opened(item); full?.(); }}>
+          <span>{/start/i.test(item.title) ? 'Do a quick check-in' : item.title}</span>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </button>
+      </li>
+    );
+  }
   const primaryLabel = acts.some((a) => a.id === 'show_options') ? 'Show options' : acts.some((a) => /^(outcome|answer):|open_triage|try_this|open_check_in/.test(a.id)) ? 'Answer' : 'More';
   return (
     <li className={`ay-today__item is-compact is-${item.tier} is-${item.type}${item.level ? ` is-${item.level}` : ''}${wide || keep ? ' is-wide' : ''}`}>

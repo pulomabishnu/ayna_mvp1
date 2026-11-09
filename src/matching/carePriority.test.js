@@ -70,17 +70,12 @@ describe('ACOG care-first / FDA passport review / CDC diagnostic caution', () =>
     expect(e.shelves.find(s=>s.needId==='cycle.spotting').productIds).toEqual([]);
     expect(e.careFlags.notes.some(n=>n.code==='period_need_vs_stage')).toBe(true);
   });
-  it('open clinician review is a hold with no match recommendation', () => {
+  it('a clinician-review flag is an internal note, never a hold (Nov 9, founder)', () => {
     const p = product('p-winx-uti-test-treat');
     expect(p).toBeTruthy();
     const pp=buildProductProfile(p);
-    expect(pp.passport?.qa).toBe('needs_clinician_review');
     const safety=evaluateSafety(pp,profile(intake(['I get periods regularly'], ['Burning with urination'])));
-    expect(safety.restricted).toBe(true);
-    expect(safety.missingProductInfo).toContain('clinician_review');
-    expect(holdStateFor(safety)).toBe('in_review');
-    const e=ecosystem(intake(['I get periods regularly'], ['Burning with urination']));
-    expect(e.shelves.flatMap(s=>s.productIds)).not.toContain('p-winx-uti-test-treat');
+    expect(safety.missingProductInfo || []).not.toContain('clinician_review');
   });
   it('vaginal symptoms have source-backed diagnostic uncertainty note', () => {
     const notes = getMatchCareFlags({fullHealthIntake:intake(['I get periods regularly'], ['Yeast infection concerns'])}).notes;

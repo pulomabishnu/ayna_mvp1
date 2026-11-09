@@ -24,6 +24,7 @@ const MobileApp = React.lazy(() => import('./mobile/MobileApp.jsx'))
 import './styles/search-focus.css'
 import './styles/page-tops.css'
 import './styles/dark-nov9.css'
+import './styles/pdp-nov9.css'
 import { installNoEmDash } from './utils/noEmDashDom.js'
 installDelight()
 installMotion()

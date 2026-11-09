@@ -639,11 +639,10 @@ export function evaluateSafety(productOrProfile, up) {
   else if (rec.medications && s.medications.length && pp.interaction_relevant) penalize('stale_medications', 'Your medicine list is from a while ago');
   if (up.contradictions?.some((c) => c.affects.includes('safety')) && carriesIngredients(pp)) missingFields.push('confirm_answers');
   else if (up.contradictions?.some((c) => c.affects.includes('safety')) && bodyContact(pp)) penalize('answer_contradiction', 'Some safety answers conflict');
-  // Product-specific clinical signoff is not optional. A passport marked
-  // needs_clinician_review stays visible in Shop, but cannot be put forward as
-  // a verified personalized pick until that review is completed.
-  // The same hold applies to bundled products and the v1/v2 recommendation gates.
-  if (pp.passport?.qa === 'needs_clinician_review') missingProductInfo.push('clinician_review');
+  // Nov 9 (founder, repeated): no product is held for a clinician sign-off. ayna
+  // matches for symptom management, not diagnosis; brand partners' facts come
+  // from the brands. A passport's clinician flag stays an internal audit note
+  // (ProductAudit) and never blocks a match. Her own safety answers still do.
   // A product she added herself (not in the catalog): no match until ayna
   // has read its label (P2, add any product). Never a guess from its name.
   if (pp.user_added) missingProductInfo.push('product_facts');

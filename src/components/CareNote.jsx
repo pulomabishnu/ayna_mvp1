@@ -15,7 +15,9 @@ export default function CareNote({ lines = [], prominent = false, onFindCare, fi
         <svg viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-7.5-10.1A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.8c0 5.5-7.5 10.1-7.5 10.1z" /><path d="M12 10.5v5M9.5 13h5" /></svg>
       </span>
       <div className="ay-carenote__body">
-        {lines.map((line) => <p key={line}>{line}</p>)}
+        {/* Nov 9 (founder: a pink wall of three notes): the first line shows, the rest open on tap. */}
+        <p>{lines[0]}</p>
+        {lines.length > 1 && <details className="ay-carenote__more"><summary>Read more</summary>{lines.slice(1).map((line) => <p key={line}>{line}</p>)}</details>}
         {link}
       </div>
     </aside>

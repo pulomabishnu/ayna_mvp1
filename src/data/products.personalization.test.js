@@ -100,11 +100,9 @@ describe('personalized relevance scoring', () => {
         expect(vitex).toBeTruthy();
         expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['Cramps or period pain'] } })).toBe(0);
         expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PCOS support'] } })).toBe(0);
-        // A product still awaiting clinical signoff must not display a match.
+        // Nov 9 (founder): no clinician holds. It matches PMS, but only as a secondary fit.
         const held = getProductMatchDetailsForProduct(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } });
-        expect(held.matchStatus).toBe('safety-hold');
-        expect(held.safetyHold.state).toBe('in_review');
-        expect(held.percent).toBeNull();
+        expect(held.matchStatus).toBe('scored');
         const pmsMatch = held.v2 ? Math.round(held.v2.fit * 100) : 0;
         expect(pmsMatch).toBeGreaterThan(0);
         // v2: research grade B for PMS (NCCIH: low-to-moderate quality trials) and
@@ -267,9 +265,9 @@ describe('personalized relevance scoring', () => {
         expect(unrelated.percent).toBe(0);
         expect(unrelated.matchStatus).toBe('excluded');
         const diagnosed = getProductMatchDetailsForProduct(iron, { fullHealthIntake: { supportSelections: ['Fatigue or low energy'], diagnosisSelections: ['Anemia or iron deficiency'], takesCurrent: 'No', lifeStageSelections: ['I get periods regularly'] } });
-        // Even with confirmed anemia, its open clinical review means no match yet.
-        expect(diagnosed.matchStatus).toBe('safety-hold');
-        expect(diagnosed.safetyHold.state).toBe('in_review');
+        // Nov 9 (founder): no clinician holds; with confirmed anemia it is a real match.
+        expect(diagnosed.matchStatus).toBe('scored');
+        expect(diagnosed.percent).toBeGreaterThan(0);
     });
 
     it('returns no personalized percentage when there are no personalization signals', () => {
