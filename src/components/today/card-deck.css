@@ -14,7 +14,7 @@
 .ay-fdeck__strips > li:nth-child(2) { z-index: 2; }
 .ay-fdeck__strips > li:nth-child(3) { z-index: 3; }
 .ay-fdeck__strips > li:nth-child(n+4) { z-index: 4; }
-.ay-fdeck__strip { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: flex-start; gap: 10px; width: 100%; height: 64px; padding: 13px 16px 0; border-radius: 16px 16px 0 0; background: transparent; color: #3e2723; box-shadow: inset 0 1.5px 0 rgba(62, 39, 35, .16), inset 1.5px 0 0 rgba(62, 39, 35, .08), inset -1.5px 0 0 rgba(62, 39, 35, .08); }
+.ay-fdeck__strip { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: flex-start; gap: 10px; width: 100%; height: 64px; padding: 13px 16px 0; border-radius: 16px 16px 0 0; background: #ffedac; color: #3e2723; box-shadow: inset 0 1.5px 0 rgba(62, 39, 35, .16), inset 1.5px 0 0 rgba(62, 39, 35, .08), inset -1.5px 0 0 rgba(62, 39, 35, .08); }
 .ay-fdeck__strip:focus-visible { outline: 2px solid #3e2723; outline-offset: -4px; }
 .ay-fdeck__stitle { min-width: 0; flex: 1 1 auto; font: 700 15px/1.3 var(--ay-font-ui, inherit); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ay-fdeck__sgo { flex: none; width: 18px; height: 18px; margin-top: 1px; fill: none; stroke: var(--ay-calm-fg); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; opacity: .7; }
@@ -29,7 +29,7 @@
 
 /* The top card's colour (pink or butter-deep), over the older compact-item rules. */
 .ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top.is-pink > .ay-today__item { background: #f7badd !important; color: #3e2723 !important; }
-.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top.is-butter > .ay-today__item { background: transparent !important; color: #3e2723 !important; }
+.ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top.is-butter > .ay-today__item { background: #ffedac !important; color: #3e2723 !important; }
 .ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top > .ay-today__item :is(.ay-today__title, .ay-today__why, .ay-today__readmore, .ay-today__text, .ay-today__kicker) { color: var(--ay-calm-fg) !important; }
 .ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top > .ay-today__item .ay-chip { background: transparent !important; color: var(--ay-calm-fg) !important; border-color: var(--ay-calm-line) !important; }
 .ayna-mobile:is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile):is(#dk, .ayna-mobile) .ay-homescreen .ay-fdeck .ay-fdeck__top > .ay-today__item .ay-today__primary { background: var(--ay-calm-fg) !important; color: var(--ay-calm-page) !important; border-color: var(--ay-calm-line) !important; }

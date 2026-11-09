@@ -145,7 +145,7 @@ html body .app-container .ay-ih :is(#ay-ih, .ay-ih__h1):is(#ay-ih, .ay-ih__h1):i
 .app-container.app-container .fp .fp-rules .fp-rules__glance li::before { content: none; }
 
 /* contact: the form on the pink band reads the same in light and dark */
-html body .app-container.app-container .uq-contact .ed-form { background: transparent !important; color: #3e2723 !important; border: 1px solid rgba(62, 39, 35, .2) !important; }
+html body .app-container.app-container .uq-contact .ed-form { background: #ffedac !important; color: #3e2723 !important; border: 1px solid rgba(62, 39, 35, .2) !important; }
 html body .app-container.app-container .uq-contact .ed-form :is(label, legend, .ed-field > span, p) { color: #3e2723 !important; }
 html body .app-container.app-container .uq-contact .ed-form :is(input, textarea) { background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; }
 html body .app-container.app-container .uq-contact .ed-form :is(input, textarea)::placeholder { color: rgba(62, 39, 35, .7) !important; }

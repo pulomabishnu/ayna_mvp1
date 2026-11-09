@@ -10,7 +10,7 @@
  *   - the right column as plain lists under bold headings (X).
  * Specificity: 7 id-weight groups, one above post-card.css (6).
  */
-:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm { --cmx-ink: #3e2723; --cmx-line: rgba(62, 39, 35, .14); --cmx-pink: #f7badd; --cmx-butter: #ffedac; --cmx-soft-pink: #f7badd; --cmx-soft-butter: #f7badd; --cmx-soft-sky: #3e2723; }
+:is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm { --cmx-ink: #3e2723; --cmx-line: rgba(62, 39, 35, .14); --cmx-pink: #f7badd; --cmx-butter: #ffedac; --cmx-soft-pink: #ffedac; --cmx-soft-butter: #f7badd; --cmx-soft-sky: #ffedac; }
 
 /* 1. Pink page band, full width */
 :is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-head.cm-titlerow { position: relative; margin: -32px 0 28px !important; padding: 44px 0 34px !important; background: var(--cmx-pink) !important; box-shadow: none !important; clip-path: none !important; border: 0 !important; }
@@ -88,3 +88,19 @@
 /* bubbles: pink, butter-on-espresso, pink ring */
 :is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row > .cm-topic::before { background: var(--cmx-pink); }
 :is(#cx1, html):is(#cx2, html):is(#cx3, html):is(#cx4, html):is(#cx5, html):is(#cx6, html):is(#cx7, html) body .app-container .cm.cm .cm-topicset.is-row > .cm-topic:nth-child(2n)::before { background: var(--cmx-ink); color: var(--cmx-butter); }
+
+/* Nov 9 (founder: colour clashes; "I liked the outline look"): every post is the same card, butter with
+   the espresso outline like the product cards, espresso words. No alternating pink / espresso cards. */
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard { background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; box-shadow: 4px 4px 0 #3e2723 !important; }
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard.ay-postcard :is(h2, h3, p, a, b, span, time, small, strong, button, .cm-name, .cm-body, .ay-postcard__status, .ay-postcard__title) { color: #3e2723 !important; }
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard :is(.ay-postcard__pill, .ay-postcard__topic) { background: #f7badd !important; color: #3e2723 !important; }
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-mention-card { background: #ffedac !important; border: 1.5px solid #3e2723 !important; }
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-more { background: transparent !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; }
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-more :is(svg, span, i) { color: #3e2723 !important; fill: currentColor; }
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > button { color: #3e2723 !important; }
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > button :is(svg, b, span) { color: #3e2723 !important; }
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > button:hover { background: #f7badd !important; }
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions { border-top-color: rgba(62, 39, 35, .14) !important; }
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > .cm-act-helpful, :is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > .cm-act-helpful[aria-pressed] { background: #f7badd !important; color: #3e2723 !important; }
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-actions > .cm-act-helpful :is(svg, b, span) { color: #3e2723 !important; }
+:is(#c1, html):is(#c2, html):is(#c3, html):is(#c4, html):is(#c5, html):is(#c6, html):is(#c7, html):is(#c8, html):is(#c9, html) body .app-container .cm.cm .cm-main > .ay-postcard .cm-seematch { background: transparent !important; color: #3e2723 !important; }

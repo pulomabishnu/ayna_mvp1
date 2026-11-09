@@ -1387,7 +1387,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <div className="cm-row is-split cm-subbar"><div className="cm-seg cm-plswitch" role="group" aria-label="Show playlists from">{[['recent', 'Community'], ['friends', 'Friends'], ['mine', 'My playlists']].map(([k, l]) => <button type="button" key={k} aria-pressed={playlistSection === k} onClick={() => switchSection(k)}>{l}</button>)}</div><button type="button" className="ay-btn ay-btn--primary" onClick={() => openCompose('playlist')}>Create playlist</button></div>
         {firstLoad ? <SkeletonPlaylists /> : playlists.length ? <div className="cm-pl-grid">{playlists.map(playlistCard)}</div> : <div className="cm-empty"><h2>{playlistSection === 'mine' ? 'You haven’t made a playlist yet' : playlistSection === 'friends' ? 'No playlists from friends yet' : 'No playlists yet'}</h2><p>Collect your favorites in one place.</p><button type="button" className="ay-btn ay-btn--primary" onClick={() => openCompose('playlist')}>Create playlist</button></div>}
       </> : <>
-        {tab === 'for-you' && pinnedAnn && <button type="button" className={`cm-pinned-ann ay-group${newAnns.some((a) => a.id === pinnedAnn.id) ? ' is-new' : ''}`} onClick={() => switchTab('announcements')}>
+        {tab === 'for-you' && pinnedAnn && <button type="button" className={`cm-pinned-ann is-main ay-group${newAnns.some((a) => a.id === pinnedAnn.id) ? ' is-new' : ''}`} onClick={() => switchTab('announcements')}>
           <KindLabel kind="announcements">{newAnns.some((a) => a.id === pinnedAnn.id) ? 'New from ayna' : 'From ayna'}</KindLabel>
           <strong>{pinnedAnn.title}</strong>
           <span className="cm-pinned-ann__go">Read the announcement <span aria-hidden="true">→</span></span>
@@ -1491,6 +1491,12 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <button type="button" className="ct-link cm-rules-foot" onClick={openRules}>Community rules</button>
       </div>
       <aside className="cm-side" aria-label="More from Community">
+        {/* Nov 9 (founder): the ayna announcement sits on the right on wide screens (the feed keeps it on phones). */}
+        {onFeed && tab === 'for-you' && pinnedAnn && <button type="button" className={`cm-pinned-ann is-side ay-group${newAnns.some((a) => a.id === pinnedAnn.id) ? ' is-new' : ''}`} onClick={() => switchTab('announcements')}>
+          <KindLabel kind="announcements">{newAnns.some((a) => a.id === pinnedAnn.id) ? 'New from ayna' : 'From ayna'}</KindLabel>
+          <strong>{pinnedAnn.title}</strong>
+          <span className="cm-pinned-ann__go">Read the announcement <span aria-hidden="true">→</span></span>
+        </button>}
         {onFeed && tab === 'for-you' && quoteBlock('is-side')}
         {questionsSide.length > 0 && <section className="cm-mod"><div className="cm-mod__head"><h2 className="cm-mod__tab">Recent questions</h2>{!(onFeed && tab === 'question') && <button type="button" className="ct-shelf__all cm-seeall" onClick={() => switchTab('question')} aria-label="See all questions">See all</button>}</div><ul className="ay-group cm-mod__list">{questionsSide.map((q) => <li key={q.id}><button type="button" className="cm-mod-q" onClick={() => openPost(q)}><span>{q.body}</span><small>{Number(q.comment_count) ? `${q.comment_count} ${Number(q.comment_count) === 1 ? 'answer' : 'answers'}` : 'No answers yet'}</small></button></li>)}</ul></section>}
         {playlistsSide.length > 0 && <section className="cm-mod"><div className="cm-mod__head"><h2 className="cm-mod__tab">Playlists</h2>{!(onFeed && tab === 'playlists') && <button type="button" className="ct-shelf__all cm-seeall" onClick={() => switchTab('playlists')} aria-label="See all playlists">See all</button>}</div><ul className="ay-group cm-mod__list">{playlistsSide.map((p) => <li key={p.id}><button type="button" className="cm-mod-pl" onClick={() => openPlaylist(p)}><PlaylistCover playlist={p} productsById={productsById} /><span><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · {p.owner_display_name || 'ayna community'}</small></span></button></li>)}</ul></section>}

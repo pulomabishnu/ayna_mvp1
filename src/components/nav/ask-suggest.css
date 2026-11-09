@@ -97,7 +97,7 @@
   width: 44px; height: 44px; min-width: 44px;
   border-radius: 999px !important;
   display: inline-flex; align-items: center; justify-content: center;
-  background: transparent !important; color: #3E2723 !important;
+  background: #ffedac !important; color: #3E2723 !important;
   border: 1px solid #3E2723 !important; padding: 0; cursor: pointer;
   box-shadow: none !important;
   font-size: 13px; font-weight: 700;
@@ -109,7 +109,7 @@
   width: 44px; height: 44px; min-width: 44px;
   border-radius: 999px;
   display: inline-flex; align-items: center; justify-content: center;
-  background: transparent; color: #3E2723;
+  background: #ffedac; color: #3E2723;
   border: 1px solid #3E2723;
   text-decoration: none;
 }

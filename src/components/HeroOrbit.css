@@ -37,7 +37,7 @@
 .hero-orbit__bubble:hover, .hero-orbit__bubble:focus-visible { scale: 1.06; box-shadow: 5px 5px 0 #3e2723; }
 .hero-orbit__bubble.is-pink { background: #f7badd; }
 .hero-orbit__bubble.is-butter { background: #ffedac; }
-.hero-orbit__bubble.is-mint { background: transparent; }
+.hero-orbit__bubble.is-mint { background: #ffedac; }
 .hero-orbit__spark { position: absolute; width: 14px; height: 14px; border: 2px solid #3e2723; border-radius: 50%; background: #ffedac;  }
 .hero-orbit__spark.is-a { left: 6%; top: 18%; }
 .hero-orbit__spark.is-b { right: 4%; top: 62%; width: 10px; height: 10px; background: #ffedac; animation-delay: -1.6s; }

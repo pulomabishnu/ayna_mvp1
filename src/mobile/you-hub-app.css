@@ -79,7 +79,7 @@
   .ay-you-body .ay-set-signedout p br { display: none; }
   .ay-you-body .ay-set-signedout .ay-btn { min-height: 48px !important; padding: 0 28px !important; font-size: 15px !important; }
   /* Auth fields: deeper butter with an ink outline (no white), founder Oct 26. */
-  &:not([data-theme='dark']) :is(.ay-auth, .ayna-fresh-auth) .ayna-fresh-auth-field.ayna-fresh-auth-field { background: transparent !important; }
+  &:not([data-theme='dark']) :is(.ay-auth, .ayna-fresh-auth) .ayna-fresh-auth-field.ayna-fresh-auth-field { background: #ffedac !important; }
 }
 
 /* You critique (Oct 27), one colour rule: pink means "for you, now". The set-up card is her next step, so it is

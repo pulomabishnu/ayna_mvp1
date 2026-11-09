@@ -117,7 +117,7 @@ export const FACTOR_WEIGHTS = {
   material: { free: 0.02, contains: -0.03, organicPlain: 0.03, fragranced: -0.06 },
   price: { within: 0.02, slightlyOver: -0.02, over: -0.05 },
   reusable: { yes: 0.02, no: -0.04 },
-  values: { each: 0.01, max: 0.02, miss: -0.02 },
+  values: { each: 0.015, max: 0.03, miss: -0.03 }, // Nov 9 (founder: preferences count): was 0.01 / 0.02
   fsaHsa: { yes: 0.01, no: -0.01 },
   evidence: { reviewedA: 0.02 },
 };

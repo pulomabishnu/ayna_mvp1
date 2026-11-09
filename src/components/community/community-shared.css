@@ -186,7 +186,7 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 
 /* Announcement formatting (Oct 16) */
 .cr-fmt { display: flex; gap: 6px; margin: 4px 0 6px; }
-.cr-fmt__btn { min-width: 36px; height: 34px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 10px; background: transparent; color: #3e2723; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
+.cr-fmt__btn { min-width: 36px; height: 34px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 10px; background: #ffedac; color: #3e2723; font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); cursor: pointer; }
 .cr-fmt__btn.is-underline { text-decoration: underline; }
 .cr-fmt__btn.is-italic { font-style: italic; font-family: var(--ay-serif); font-weight: 400; }
 .cr-fmt__btn:hover { background: #f7badd; }
@@ -229,3 +229,19 @@ button.cr-ann-name:hover { text-decoration: underline; text-underline-offset: 3p
 .cr-product-reviews small { opacity: .75; }
 .ay-pdp-reviews__sum { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
 .ay-card-trust__rating.is-link u { text-underline-offset: 2px; }
+
+/* Nov 9 (founder: announcements "so ugly, so hard to read"). One readable column: a clear title,
+   body at a comfortable size and measure with room between paragraphs, links as links, the legal
+   disclosure as small print, photos shown whole (never cropped), quiet Delete. */
+:is(#an1, html):is(#an2, html):is(#an3, html):is(#an4, html):is(#an5, html):is(#an6, html):is(#an7, html) body :is(.app-container, .ayna-mobile) .cr-ann-list { display: grid; gap: 18px; }
+:is(#an1, html):is(#an2, html):is(#an3, html):is(#an4, html):is(#an5, html):is(#an6, html):is(#an7, html) body :is(.app-container, .ayna-mobile) .cr-ann-card { max-width: 680px; padding: 22px 24px 14px !important; display: grid; gap: 14px; }
+:is(#an1, html):is(#an2, html):is(#an3, html):is(#an4, html):is(#an5, html):is(#an6, html):is(#an7, html) body :is(.app-container, .ayna-mobile) .cr-ann-head { align-items: center; }
+:is(#an1, html):is(#an2, html):is(#an3, html):is(#an4, html):is(#an5, html):is(#an6, html):is(#an7, html) body :is(.app-container, .ayna-mobile) .cr-ann-title { font: 700 22px/1.25 var(--ay-font-display, inherit) !important; margin: 2px 0 0 !important; }
+:is(#an1, html):is(#an2, html):is(#an3, html):is(#an4, html):is(#an5, html):is(#an6, html):is(#an7, html) body :is(.app-container, .ayna-mobile) .cr-ann-body.cr-rich { display: grid; gap: 12px; font: 500 16px/1.65 var(--ay-font-ui, inherit) !important; max-width: 62ch; }
+:is(#an1, html):is(#an2, html):is(#an3, html):is(#an4, html):is(#an5, html):is(#an6, html):is(#an7, html) body :is(.app-container, .ayna-mobile) .cr-ann-body.cr-rich p { margin: 0 !important; }
+:is(#an1, html):is(#an2, html):is(#an3, html):is(#an4, html):is(#an5, html):is(#an6, html):is(#an7, html) body :is(.app-container, .ayna-mobile) .cr-ann-body.cr-rich :is(ul, ol) { margin: 0 !important; padding-left: 1.2em; display: grid; gap: 6px; }
+:is(#an1, html):is(#an2, html):is(#an3, html):is(#an4, html):is(#an5, html):is(#an6, html):is(#an7, html) body :is(.app-container, .ayna-mobile) .cr-rich-link { color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #f7badd; text-decoration-thickness: 3px; overflow-wrap: anywhere; }
+:is(#an1, html):is(#an2, html):is(#an3, html):is(#an4, html):is(#an5, html):is(#an6, html):is(#an7, html) body :is(.app-container, .ayna-mobile) .cr-rich-fine { font-size: 12.5px !important; line-height: 1.5 !important; opacity: .72; padding-top: 10px; border-top: 1px solid rgba(62, 39, 35, .14); }
+:is(#an1, html):is(#an2, html):is(#an3, html):is(#an4, html):is(#an5, html):is(#an6, html):is(#an7, html) body :is(.app-container, .ayna-mobile) .cr-ann-photos img { aspect-ratio: auto !important; height: auto !important; max-height: 520px; object-fit: contain !important; background: #fff; }
+:is(#an1, html):is(#an2, html):is(#an3, html):is(#an4, html):is(#an5, html):is(#an6, html):is(#an7, html) body :is(.app-container, .ayna-mobile) .cr-ann-head .cr-text-btn { font-size: 13px; opacity: .6; }
+:is(#an1, html):is(#an2, html):is(#an3, html):is(#an4, html):is(#an5, html):is(#an6, html):is(#an7, html) body :is(.app-container, .ayna-mobile) .cr-ann-actions { padding-top: 8px; border-top: 1px solid rgba(62, 39, 35, .14); }

@@ -85,7 +85,11 @@ export function renderMarkdownLite(text) {
     const marked = !listOrdered && listBuffer.every((item) => /^[✓△✗]\s/.test(item));
     blocks.push(
       <Tag key={key} className={marked ? 'md-marked' : undefined} style={{ margin: '0.25rem 0', paddingLeft: marked ? 0 : '1.25rem', listStyle: marked ? 'none' : undefined }}>
-        {listBuffer.map((item, i) => <li key={i}>{renderInline(item, `${key}-li-${i}`)}</li>)}
+        {listBuffer.map((item, i) => {
+          // Nov 9 (founder: Ask answers hard to read): the mark gets its own small round badge.
+          const mk = marked ? item.match(/^([✓△✗])\s+(.*)$/) : null;
+          return <li key={i}>{mk ? <><span className={`md-mark is-${mk[1] === '✓' ? 'yes' : mk[1] === '✗' ? 'no' : 'check'}`} aria-hidden="true">{mk[1]}</span><span>{renderInline(mk[2], `${key}-li-${i}`)}</span></> : renderInline(item, `${key}-li-${i}`)}</li>;
+        })}
       </Tag>
     );
     listBuffer = [];
@@ -108,7 +112,10 @@ export function renderMarkdownLite(text) {
     }
     flushList(`list-${i}`);
     if (line.trim()) {
-      blocks.push(<p key={`p-${i}`} style={{ margin: '0.15rem 0' }}>{renderInline(line, `p-${i}`)}</p>);
+      // A line that is only **bold** is a section label; "What ayna used" and the closing note are small print.
+      const t = line.trim();
+      const cls = /^\*\*[^*]+\*\*$/.test(t) ? 'md-kicker' : /^\*\*What ayna used|^The match is how well|^Based on:/.test(t) ? 'md-note' : undefined;
+      blocks.push(<p key={`p-${i}`} className={cls} style={{ margin: '0.15rem 0' }}>{renderInline(cls === 'md-kicker' ? t.slice(2, -2) : line, `p-${i}`)}</p>);
     }
   });
   flushList('list-end');

@@ -12,7 +12,12 @@ function inline(text, keyBase) {
     if (/^\*\*[^*]+\*\*$/.test(part)) return <strong key={k}>{part.slice(2, -2)}</strong>;
     if (/^__[^_]+__$/.test(part)) return <u key={k}>{part.slice(2, -2)}</u>;
     if (/^\*[^*]+\*$/.test(part)) return <em key={k}>{part.slice(1, -1)}</em>;
-    return <Fragment key={k}>{part}</Fragment>;
+    // Nov 9 (founder: announcements hard to read): web addresses are real links.
+    const bits = String(part).split(/((?:https?:\/\/|www\.)[^\s]+[^\s.,!?)])/g);
+    if (bits.length === 1) return <Fragment key={k}>{part}</Fragment>;
+    return <Fragment key={k}>{bits.map((b, j) => (/^(https?:\/\/|www\.)/.test(b)
+      ? <a key={j} className="cr-rich-link" href={b.startsWith('http') ? b : `https://${b}`} target="_blank" rel="noopener noreferrer">{b.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>
+      : <Fragment key={j}>{b}</Fragment>))}</Fragment>;
   });
 }
 
@@ -39,7 +44,9 @@ export function RichText({ text, className = '' }) {
           const L = b.type;
           return <L key={i}>{b.items.map((t, j) => <li key={j}>{inline(t, `${i}-${j}`)}</li>)}</L>;
         }
-        return <p key={i}>{b.items.map((t, j) => <Fragment key={j}>{j > 0 && <br />}{inline(t, `${i}-${j}`)}</Fragment>)}</p>;
+        // Legal disclosures and other fine print read as small print, not body copy.
+        const fine = /^(important )?(legal )?disclosure|^disclaimer|^\*?not medical advice/i.test(String(b.items[0] || '').trim());
+        return <p key={i} className={fine ? 'cr-rich-fine' : undefined}>{b.items.map((t, j) => <Fragment key={j}>{j > 0 && <br />}{inline(t, `${i}-${j}`)}</Fragment>)}</p>;
       })}
     </div>
   );

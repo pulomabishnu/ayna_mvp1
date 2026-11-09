@@ -423,7 +423,7 @@
 .ip-row.is-warning[aria-checked='true'] { background: #fbeee8; border-color: var(--ay-alert); }
 .ip-mark { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border: 2px solid var(--legacy-ink); border-radius: 50%; background: var(--ay-paper); font: 500 13px/1 var(--ay-font-ui); }
 .ip-mark[data-mark='helped'] { background: var(--ay-mint); }
-.ip-mark[data-mark='didnt_help'] { background: var(--ay-butter-deep, transparent); }
+.ip-mark[data-mark='didnt_help'] { background: var(--ay-butter-deep, #ffedac); }
 .ip-mark[data-mark='worse'] { background: #fbeee8; border-color: var(--ay-alert); color: var(--ay-alert); }
 .ip-divider { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font: 500 13px/1 var(--ay-font-ui); }
 .ip-divider::after { content: ''; flex: 1; height: 1.5px; background: var(--ay-ink-faint); order: 1; }

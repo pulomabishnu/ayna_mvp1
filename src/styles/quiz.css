@@ -502,7 +502,7 @@ html body .app-container .aq.aq--web .aq-answer .aq-chip[role='radio']::before {
 html body .app-container .aq.aq--web .aq-answer .aq-row .aq-dot { order: -1; width: 22px; height: 22px; border: 1.5px solid rgba(62, 39, 35, .55); background: transparent; }
 html body .app-container .aq.aq--web .aq-answer .aq-row .aq-dot svg { display: none; }
 /* Picked: a warm fill, bolder label and a filled control with a check (not colour alone). */
-html body .app-container .aq.aq--web .aq-answer :is(.aq-chip.is-on, .aq-chip[aria-checked='true'], .aq-row.is-on) { background: transparent !important; font-weight: 600; }
+html body .app-container .aq.aq--web .aq-answer :is(.aq-chip.is-on, .aq-chip[aria-checked='true'], .aq-row.is-on) { background: #ffedac !important; font-weight: 600; }
 html body .app-container .aq.aq--web .aq-answer :is(.aq-chip.is-on, .aq-chip[aria-checked='true'])::before { border-color: #3e2723 !important; background: #3e2723 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5.5 12.5l4 4L18.5 8' fill='none' stroke='%23ffedac' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat !important; }
 html body .app-container .aq.aq--web .aq-answer .aq-chip[role='radio'][aria-checked='true']::before, html body .app-container .aq.aq--web .aq-answer .aq-row.is-on .aq-dot { background: #3e2723 !important; box-shadow: inset 0 0 0 5px #f7badd !important; border-color: #3e2723 !important; }
 /* "More topics": a quiet text row, not a dashed box. */
@@ -510,7 +510,7 @@ html body .app-container .aq.aq--web .aq-answer .aq-chip.is-muted:not(.is-on) { 
 html body .app-container .aq.aq--web .aq-answer .aq-chip.is-muted:not(.is-on)::before { content: '+' !important; display: grid; place-items: center; border: 0 !important; font: 600 22px/1 var(--aq-ui); color: #3e2723; text-decoration: none; }
 html body .app-container .aq.aq--web .aq-answer .aq-chip > svg { margin-left: auto; }
 /* Follow-ups sit under their answer, indented on the same list: no box inside a box. */
-html body .app-container .aq.aq--web .aq-answer .aq-sub { margin: 0; padding: 4px 0 16px 48px; border: 0; border-bottom: 1.5px solid rgba(62, 39, 35, .14); border-radius: 0; background: transparent; }
+html body .app-container .aq.aq--web .aq-answer .aq-sub { margin: 0; padding: 4px 0 16px 48px; border: 0; border-bottom: 1.5px solid rgba(62, 39, 35, .14); border-radius: 0; background: #ffedac; }
 html body .app-container .aq.aq--web .aq-answer .aq-sub :is(.aq-chips, .aq-rows) { border-top: 0; }
 html body .app-container .aq.aq--web .aq-answer .aq-sub :is(.aq-chip, .aq-row) { min-height: 44px; padding: 8px 12px 8px 0; font-size: 16px; font-weight: 500; border-bottom-color: rgba(62, 39, 35, .1) !important; }
 html body .app-container .aq.aq--web .aq-answer .aq-sub :is(.aq-chip, .aq-row):last-child { border-bottom: 0 !important; }
@@ -557,8 +557,8 @@ html body .app-container .aq.aq--web .aq-bar { height: 6px; }
 
 /* Tiles */
 html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; border-top: 0; }
-html body .app-container .aq.aq--web .aq-answer :is(.aq-chip, .aq-row) { position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 0; min-height: 96px; padding: 16px 52px 16px 16px; border: 0 !important; border-radius: 24px !important; background: transparent !important; color: #3e2723 !important; font: 600 16px/1.25 var(--aq-ui); text-align: left; transition: background-color .18s var(--aq-ease), color .18s var(--aq-ease), transform .12s var(--aq-ease); }
-html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):nth-child(4n + 1), html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):nth-child(4n + 4) { background: transparent !important; }
+html body .app-container .aq.aq--web .aq-answer :is(.aq-chip, .aq-row) { position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 0; min-height: 96px; padding: 16px 52px 16px 16px; border: 0 !important; border-radius: 24px !important; background: #ffedac !important; color: #3e2723 !important; font: 600 16px/1.25 var(--aq-ui); text-align: left; transition: background-color .18s var(--aq-ease), color .18s var(--aq-ease), transform .12s var(--aq-ease); }
+html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):nth-child(4n + 1), html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):nth-child(4n + 4) { background: #ffedac !important; }
 html body .app-container .aq.aq--web .aq-answer :is(.aq-chip, .aq-row):hover:not(.is-on) { transform: translateY(-2px); }
 html body .app-container .aq.aq--web .aq-answer :is(.aq-chip, .aq-row):active { transform: scale(.98); }
 html body .app-container .aq.aq--web .aq-answer :is(.aq-chip, .aq-row):focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
@@ -579,7 +579,7 @@ html body .app-container .aq.aq--web .aq-answer .qz-chip.is-dashed::before { con
 html body .app-container .aq.aq--web .aq-answer .qz-chips.is-small .aq-chip.is-on { background: #3e2723 !important; color: #ffedac !important; box-shadow: none !important; }
 /* Follow-ups open full width under the grid row, as plain text and smaller tiles. */
 html body .app-container .aq.aq--web .aq-answer .aq-sub { grid-column: 1 / -1; margin: 0; padding: 8px 0 8px; border: 0; background: none; text-align: left; }
-html body .app-container .aq.aq--web .aq-answer .aq-sub :is(.aq-chip, .aq-row) { min-height: 64px; padding: 12px 48px 12px 14px; font-size: 15px; border-radius: 20px !important; background: transparent !important; }
+html body .app-container .aq.aq--web .aq-answer .aq-sub :is(.aq-chip, .aq-row) { min-height: 64px; padding: 12px 48px 12px 14px; font-size: 15px; border-radius: 20px !important; background: #ffedac !important; }
 html body .app-container .aq.aq--web .aq-answer .aq-sub :is(.aq-chip, .aq-row)::before { top: 10px; right: 10px; width: 28px !important; height: 28px !important; }
 html body .app-container .aq.aq--web .aq-answer .aq-sub :is(.aq-chip.is-on, .aq-chip[aria-checked='true']) { background: #3e2723 !important; }
 html body .app-container .aq.aq--web .aq-answer .aq-subq-title { margin: 4px 0 8px; font: 600 15px/1.3 var(--aq-ui); color: #3e2723; }
@@ -605,20 +605,20 @@ html body .app-container .aq.aq--web .aq-col > .aq-top .aq-icon:not(.is-spacer) 
   html body .app-container .aq.aq--web .qz-age output.qz-age-out:not(.is-empty) { font-size: 72px !important; }
   html body .app-container .aq.aq--web .aq-cta { max-width: none; }
 }
-html body .app-container .aq.aq--web .aq-answer .aq-sub :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):not(.is-on):not([aria-checked='true']) { background: transparent !important; }
+html body .app-container .aq.aq--web .aq-answer .aq-sub :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):not(.is-on):not([aria-checked='true']) { background: #ffedac !important; }
 html body .app-container .aq.aq--web .aq-answer .aq-chip.has-sub > svg { left: 16px; top: 16px; }
 html body .app-container.app-container .aq.aq--web .aq-answer .qz-chip.is-dashed { border: 0 none !important; outline: 0; }
 /* "None of these" / "Prefer not to say" are normal tiles too (no underline, same corner circle). */
 html body .app-container .aq.aq--web .aq-answer .aq-chip.is-muted:not(.is-on) { text-decoration: none; font-weight: 600; background: transparent !important; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .3) !important; }
-html body .app-container .aq.aq--web .aq-answer .aq-chip.is-muted:not(.is-on)::before { content: '' !important; display: block; border: 0 !important; background: transparent !important; }
+html body .app-container .aq.aq--web .aq-answer .aq-chip.is-muted:not(.is-on)::before { content: '' !important; display: block; border: 0 !important; background: #ffedac !important; }
 
 /* ===== Nov 4, v5 (founder: "why are the things on the quiz so big"). Same inspo tiles, sized
    like real onboarding answers (Typeform, Flo, Noom: one line of text, a 48-56px tap target):
    2 per row, 56px tall, one calm butter fill for every answer, the picked one turns espresso
    with a small pink check (the inspo's dark card). No patchwork of colours. ===== */
 html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) { gap: 8px; }
-html body .app-container .aq.aq--web .aq-answer :is(.aq-chip, .aq-row) { flex-direction: row; align-items: center; justify-content: space-between; min-height: 56px; padding: 10px 12px 10px 16px; border-radius: 16px !important; font: 600 15px/1.25 var(--aq-ui); background: transparent !important; }
-html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):nth-child(4n + 1), html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):nth-child(4n + 4) { background: transparent !important; }
+html body .app-container .aq.aq--web .aq-answer :is(.aq-chip, .aq-row) { flex-direction: row; align-items: center; justify-content: space-between; min-height: 56px; padding: 10px 12px 10px 16px; border-radius: 16px !important; font: 600 15px/1.25 var(--aq-ui); background: #ffedac !important; }
+html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):nth-child(4n + 1), html body .app-container .aq.aq--web .aq-answer :is(.aq-chips, .aq-rows) > :is(.aq-chip, .aq-row):nth-child(4n + 4) { background: #ffedac !important; }
 html body .app-container .aq.aq--web .aq-answer .aq-chip::before { position: static; order: 2; flex: none; width: 22px !important; height: 22px !important; margin-left: 12px; background: #ffedac !important; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .25) !important; }
 html body .app-container .aq.aq--web .aq-answer .aq-row .aq-dot { position: static; order: 2; width: 22px; height: 22px; margin-left: 12px; background: #ffedac; box-shadow: inset 0 0 0 1.5px rgba(62, 39, 35, .25); }
 html body .app-container .aq.aq--web .aq-answer :is(.aq-chip.is-on, .aq-chip[aria-checked='true'])::before, html body .app-container .aq.aq--web .aq-answer .aq-chip[role='radio'][aria-checked='true']::before { background-size: 14px !important; box-shadow: none !important; }

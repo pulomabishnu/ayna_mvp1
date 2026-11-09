@@ -358,7 +358,7 @@ html body .ay-auth-doors:has(.ay-auth-doors__or) { border-bottom: 0 !important; 
 .app-container.app-container .ay-acct-list__text span { color: var(--ay-fg-muted); font: 500 var(--ay-size-meta)/1.35 var(--ay-font-ui); }
 
 /* Account menu (loop E): opaque deeper butter, ink outline, no shadow; espresso in dark so its text reads. */
-html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .nav-account-menu { border: var(--ay-border-ink) !important; border-radius: var(--ay-r-md) !important; background: transparent !important; box-shadow: none !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .nav-account-menu { border: var(--ay-border-ink) !important; border-radius: var(--ay-r-md) !important; background: #ffedac !important; box-shadow: none !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .nav-account-menu { background: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .nav-account-menu > :is(a, button) { min-height: 44px; color: var(--ay-fg) !important; border-radius: var(--ay-r-sm) !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container .nav-account-menu > :is(a, button):is(:hover, :focus-visible) { background: var(--ay-fill-ink) !important; color: var(--ay-on-ink) !important; }

@@ -182,8 +182,8 @@ html body .app-container .ed.ed-page--info .ed-hiw li .ed-hiw__n { background: v
 @media (max-width: 767px) { .app-container.app-container .fp.mockup-page { padding-inline: 20px; } }
 /* Founder change (Oct 26 13:38): no white surfaces on info pages; deeper butter + thin espresso rule. */
 .app-container:not([data-theme='brand-dark']) { --ip-tile: #ffedac; }
-.app-container.app-container:not([data-theme='brand-dark']) .ip-facts > li { background: transparent; border: 1px solid rgba(62, 39, 35, .15); }
-.app-container.app-container:not([data-theme='brand-dark']) .ed.ed-page--info .ed-principles li:nth-child(n) { background: transparent; }
+.app-container.app-container:not([data-theme='brand-dark']) .ip-facts > li { background: #ffedac; border: 1px solid rgba(62, 39, 35, .15); }
+.app-container.app-container:not([data-theme='brand-dark']) .ed.ed-page--info .ed-principles li:nth-child(n) { background: #ffedac; }
 /* Phones: the folded "On this page" sits right under the hero's rule (two hairlines 32px apart read as a glitch). */
 @media (max-width: 1023px) {
   .app-container.app-container .ed.ed-page--info .ed-page__body:has(.ed-toc) { padding-top: 0; }
@@ -233,7 +233,7 @@ html body .app-container .ip-fun__bar { display: grid; justify-items: center; ga
 html body .app-container .ip-fun__bar b { font: 700 clamp(32px, 4vw, 48px)/1 var(--ay-font-display, 'ayna Display', sans-serif); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 html body .app-container .ip-fun__bar span { font: 600 15px/1.25 var(--ay-font-ui, 'Figtree', sans-serif); }
 html body .app-container .ip-fun > .is-all .ip-fun__bar { background: #3e2723; color: #ffedac; }
-html body .app-container .ip-fun > .is-mid .ip-fun__bar { background: transparent; color: #3e2723; border: 1.5px solid #3e2723; }
+html body .app-container .ip-fun > .is-mid .ip-fun__bar { background: #ffedac; color: #3e2723; border: 1.5px solid #3e2723; }
 html body .app-container .ip-fun > .is-you .ip-fun__bar { background: #f7badd; color: #3e2723; }
 html body .app-container[data-theme='brand-dark'] .ip-fun > .is-all .ip-fun__bar { background: #ffedac; color: #3e2723; }
 html body .app-container[data-theme='brand-dark'] .ip-fun > .is-mid .ip-fun__bar { background: rgba(255, 237, 172, .1); color: #ffedac; border-color: #ffedac; }

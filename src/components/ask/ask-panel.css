@@ -164,7 +164,7 @@
 
 /* App: the sheet with two heights (PDP build brief: 50% and 100%) */
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer[data-detent='half'] .ayna-ask-drawer-content { margin-top: 50dvh !important; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { border-radius: 16px 16px 0 0 !important; background: transparent !important; transition: margin-top var(--ay-dur-sheet, 240ms) ease, transform var(--t-sheet, 240ms) var(--ease-out, ease-out); }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { border-radius: 16px 16px 0 0 !important; background: #ffedac !important; transition: margin-top var(--ay-dur-sheet, 240ms) ease, transform var(--t-sheet, 240ms) var(--ease-out, ease-out); }
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-tab .ayna-ask-drawer-content { border-radius: 0 !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-drawer .ayna-ask-drawer-content,
 :is([data-theme='dark'], [data-theme='brand-dark']) .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content,
@@ -172,7 +172,7 @@
 @media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { transition: none !important; } }
 
 /* Website: a 400px panel on the right (PDP build brief), a sheet on phones, and the full page at /ask */
-html body .app-container.app-container .ayna-ask-panel.ay-askp-shell { position: fixed !important; top: 0 !important; right: 0 !important; bottom: 0 !important; left: auto !important; width: 400px !important; max-width: 100vw !important; height: auto !important; max-height: none !important; z-index: 2100 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-left: 1.5px solid #3e2723 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; overflow: hidden !important; animation: ay-askp-in var(--ay-dur-sheet, 240ms) ease-out both; }
+html body .app-container.app-container .ayna-ask-panel.ay-askp-shell { position: fixed !important; top: 0 !important; right: 0 !important; bottom: 0 !important; left: auto !important; width: 400px !important; max-width: 100vw !important; height: auto !important; max-height: none !important; z-index: 2100 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-left: 1.5px solid #3e2723 !important; border-radius: 0 !important; background: #ffedac !important; box-shadow: none !important; overflow: hidden !important; animation: ay-askp-in var(--ay-dur-sheet, 240ms) ease-out both; }
 html body .app-container.app-container:is([data-theme='dark'], [data-theme='brand-dark']) .ayna-ask-panel.ay-askp-shell { background: #3e2723 !important; border-left-color: #ffedac !important; }
 @keyframes ay-askp-in { from { transform: translateX(24px); opacity: .6; } to { transform: none; opacity: 1; } }
 @media (max-width: 899px) {
@@ -186,7 +186,7 @@ html body .app-container.app-container:is([data-theme='dark'], [data-theme='bran
 /* Today's "Ask ayna" sheet (HomeAskSheet), drawn with AskPanel's own parts (Ask audit issue 4: one Ask on every surface):
    butter-deep surface with a 1.5px top edge (no scallop inside a sheet), title + one sparkle, outline pills with the pink arrow
    and the fact each prompt comes from, the same composer. Three ids outrank the older ds-app sheet chain. */
-.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet { display: flex; flex-direction: column; gap: 0; padding: 24px 0 0 !important; border: 0; border-top: 1.5px solid #3e2723; border-radius: 16px 16px 0 0; background: transparent; overflow: hidden; }
+.ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet { display: flex; flex-direction: column; gap: 0; padding: 24px 0 0 !important; border: 0; border-top: 1.5px solid #3e2723; border-radius: 16px 16px 0 0; background: #ffedac; overflow: hidden; }
 :is([data-theme='dark'], [data-theme='brand-dark']).ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet, .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is([data-theme='dark'], [data-theme='brand-dark']) .ay-asksheet { background: #3e2723; border-top-color: #ffedac; }
 .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet::before, .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet::after { content: none; }
 .ayna-mobile:is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile):is(#ay-askp, .ayna-mobile) .ay-asksheet .ay-askp { flex: 1 1 auto; height: auto; min-height: 0; }
@@ -249,3 +249,30 @@ html body .app-container.app-container:is([data-theme='dark'], [data-theme='bran
 html body .app-container.app-container .wx-askpage .ayna-ask-panel.ay-askp-shell.is-page:not(:has(.ay-askp-msg)) { height: auto !important; min-height: 0 !important; }
 html body .app-container.app-container .wx-askpage .ayna-ask-panel.ay-askp-shell.is-page:not(:has(.ay-askp-msg)) .ay-askp-scroll { flex: 0 0 auto; }
 html body .app-container.app-container .wx-askpage { padding-top: 32px; padding-bottom: 48px; }
+
+/* Nov 9 (founder: "these Ask ayna answers are extremely hard to read … animated as she responds, cool
+   graphics and colours but minimal"). The answer arrives block by block; section labels are small pink
+   tags; each reason has a round mark; the "what ayna used" note is small print. */
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text { display: grid; gap: 10px; font: 500 16px/1.6 var(--ay-font-ui) !important; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :first-child { font-size: 18px; line-height: 1.5; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text strong { font-weight: 800; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text .md-kicker { justify-self: start; margin: 8px 0 -4px !important; padding: 4px 12px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 800 12px/1.3 var(--ay-font-ui); letter-spacing: .04em; text-transform: uppercase; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text ul.md-marked { display: grid; gap: 8px; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text ul.md-marked > li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text .md-mark { display: grid; place-items: center; width: 24px; height: 24px; margin-top: 1px; border-radius: 50%; background: #3e2723; color: #ffedac; font: 800 13px/1 var(--ay-font-ui); }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text .md-mark.is-check { background: #f7badd; color: #3e2723; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-text .md-note { font-size: 13px !important; line-height: 1.5 !important; opacity: .75; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > * { animation: askp-in .45s cubic-bezier(.2, .8, .2, 1) both; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :nth-child(2) { animation-delay: 90ms; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :nth-child(3) { animation-delay: 180ms; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :nth-child(4) { animation-delay: 270ms; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :nth-child(5) { animation-delay: 360ms; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :nth-child(6) { animation-delay: 450ms; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :nth-child(7) { animation-delay: 540ms; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :nth-child(8) { animation-delay: 630ms; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :nth-child(9) { animation-delay: 720ms; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :nth-child(10) { animation-delay: 810ms; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :nth-child(11) { animation-delay: 900ms; }
+.ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :nth-child(12) { animation-delay: 990ms; }
+@keyframes askp-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > * { animation: none; } }

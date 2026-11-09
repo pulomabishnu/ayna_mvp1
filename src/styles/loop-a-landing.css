@@ -56,7 +56,7 @@
    butter with a thin espresso rule; white stays only behind product photos. ---- */
 .app-container.app-container .hm .hm-stats .ayk-fact { --ay-surface: #ffedac; --legacy-surface: #ffedac; background: transparent !important; border: 1px solid rgba(62, 39, 35, .15) !important; }
 .app-container.app-container .hm .hm-ui--post,
-.app-container.app-container .hm .hm-rc .hm-post { background: transparent; }
+.app-container.app-container .hm .hm-rc .hm-post { background: #ffedac; }
 
 /* ---- how it works: evidence levels as one ruled three-column row under the steps on wide screens ---- */
 .app-container.app-container .hm .hm-levelswrap { display: grid; justify-items: start; }

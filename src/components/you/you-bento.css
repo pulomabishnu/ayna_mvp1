@@ -33,7 +33,7 @@
 /* layout "list" (app You, critique Oct 27): one espresso feature card, then grouped rows on the butter surface. */
 .yb.yb--list { display: grid; gap: 16px; }
 .yb.yb--list .yb-tile.is-eco { min-height: 0; }
-.yb-list { display: grid; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: transparent; overflow: hidden; }
+.yb-list { display: grid; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #ffedac; overflow: hidden; }
 .yna-mobile[data-theme='dark'] .yb-list, .app-container[data-theme='brand-dark'] .yb-list { background: rgba(255, 237, 172, .08); }
 .yb-list > li + li { border-top: 1px solid rgba(62, 39, 35, .14); }
 .ayna-mobile[data-theme='dark'] .yb-list > li + li, .app-container[data-theme='brand-dark'] .yb-list > li + li { border-top-color: rgba(255, 237, 172, .16); }

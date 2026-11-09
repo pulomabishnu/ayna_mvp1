@@ -267,7 +267,7 @@ html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__back { display: none !important; }
 
 /* Ecosystem lists, one at a time (founder, Oct 28): Mine | ayna picks | Saved | Routine. */
-.ayna-mobile .eco-app .eco-views { display: flex; gap: 2px; margin: 4px var(--d-gutter, 20px) 18px; padding: 4px; border: 1.5px solid #3e2723; border-radius: 999px; background: transparent; overflow-x: auto; scrollbar-width: none; }
+.ayna-mobile .eco-app .eco-views { display: flex; gap: 2px; margin: 4px var(--d-gutter, 20px) 18px; padding: 4px; border: 1.5px solid #3e2723; border-radius: 999px; background: #ffedac; overflow-x: auto; scrollbar-width: none; }
 .ayna-mobile .eco-app .eco-views::-webkit-scrollbar { display: none; }
 .ayna-mobile .eco-app .eco-views button { flex: 1 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 0 9px; border: 0; border-radius: 999px; background: transparent; color: #3e2723; font: 700 13px/1 var(--ay-font-ui, Figtree, sans-serif); white-space: nowrap; cursor: pointer; }
 .ayna-mobile .eco-app .eco-views button.is-on { background: #3e2723; color: #ffedac; }

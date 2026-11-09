@@ -47,7 +47,7 @@
 .ayna-mobile .ay-read-ask__row { display: flex; flex-wrap: wrap; gap: 8px; }
 .ayna-mobile .ay-read-ask__row button { min-height: 44px; padding: 0 16px; border: 1.5px solid currentColor; border-radius: 99px; background: transparent; color: var(--ayna-text, #3e2723); font: 600 15px/1.2 'Figtree', system-ui, sans-serif; cursor: pointer; }
 /* Founder change (no white surfaces): the next-read button sits on deeper butter with a thin rule. */
-.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ayna-read-next button { background: transparent; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ayna-read-next button { background: #ffedac; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ayna-read-next button { background: rgba(255, 237, 172, .08); }
 
 /* Read hero (Library critique, Oct 27): the read's real photo, or its plain colour cover with the title.

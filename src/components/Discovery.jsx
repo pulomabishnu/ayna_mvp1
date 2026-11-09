@@ -1734,10 +1734,17 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setPreferenceFilter('all');
         setSustainabilityFilter('all');
         setAynaFilter('all');
+        // Nov 9 (founder: "it keeps saying there's a filter on when there isn't and you can't clear it"):
+        // Clear all clears everything the count counts.
+        setCategoryFilter('all');
+        setAvoidAttrs([]);
     };
-    const areaOn = inExplore && macroGroup !== 'all' ? 1 : 0;
-    const sheetFilterCount = [lockType ? 'all' : typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, formatFilter, ratingFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length + areaOn;
-    const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, formatFilter, ratingFilter, aynaFilter, preferenceFilter, inExplore ? 'all' : typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0) + areaOn + avoidAttrs.length;
+    // One count for the button and the sheet: only filters she can see and clear in the sheet, plus a
+    // category or "leave out" picked elsewhere (both cleared by Clear all). The need chips above the
+    // grid show their own state, so they are not a hidden "filter on".
+    const sheetFilterCount = [lockType ? 'all' : typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, formatFilter, ratingFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length
+        + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0) + avoidAttrs.length;
+    const activeFilterCount = sheetFilterCount;
     // Explore's Filters sheet picks the area (the folder tabs did this outside Explore).
     const pickArea = (id) => {
         setMacroGroup(id);

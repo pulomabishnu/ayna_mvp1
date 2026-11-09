@@ -73,8 +73,8 @@
 /* No-photo tile: initial in the logo face on a brand tint, brand name under it. */
 .ayna-mobile:is(#ay, .ayna-mobile) .ayna-fresh-photo-placeholder.ay-ph { display: grid !important; place-content: center; justify-items: center; gap: 6px; padding: 10px; border: 0 !important; text-align: center; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-pink { background: #f7badd !important; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-butter { background: transparent !important; }
-.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-sky { background: transparent !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-butter { background: #ffedac !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ay-ph.is-sky { background: #ffedac !important; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-initial { display: grid; place-items: center; width: 56px; height: 56px; border: 1.5px solid #3e2723; border-radius: 50%; background: #ffedac; color: #3e2723; font: 700 28px/1 var(--ay-font-display, 'ayna Display', sans-serif); box-shadow: 2px 2px 0 #3e2723; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-brand { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 13px/1.2 var(--ay-font-ui); color: #3e2723; }
 .ayna-mobile:is(#ay, .ayna-mobile) .ay-ph-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-width: 100%; color: #3e2723; font: 700 18px/1.05 var(--ay-font-display, 'ayna Display', sans-serif); letter-spacing: -.01em; }

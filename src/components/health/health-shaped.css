@@ -135,8 +135,8 @@
 .ay-hwhy a { color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
 /* The switch on the Health data screen (website /health-data and the app). */
-.ay-hc-matchpref { margin: 0 0 18px; padding: 0 16px; border-radius: 20px; background: var(--ay-group, transparent); }
-.ayna-mobile .ay-hc-matchpref { background: var(--d-group, transparent); }
+.ay-hc-matchpref { margin: 0 0 18px; padding: 0 16px; border-radius: 20px; background: var(--ay-group, #ffedac); }
+.ayna-mobile .ay-hc-matchpref { background: var(--d-group, #ffedac); }
 .ay-hc-matchpref .ay-hmt { padding: 14px 0; }
 
 /* App Ecosystem: the note sits in the page gutter like the shelves. */

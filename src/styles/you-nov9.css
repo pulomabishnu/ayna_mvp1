@@ -5,7 +5,7 @@
  */
 :is(#yn1, html):is(#yn2, html):is(#yn3, html):is(#yn4, html):is(#yn5, html):is(#yn6, html):is(#yn7, html):is(#yn8, html) body .app-container .yb.yb--list { grid-auto-rows: auto !important; grid-template-rows: none !important; align-content: start; }
 :is(#yn1, html):is(#yn2, html):is(#yn3, html):is(#yn4, html):is(#yn5, html):is(#yn6, html):is(#yn7, html):is(#yn8, html) body .app-container :is(.yb-list:not(.yb-list--pro), .yh-card, .wy-rows.ay-group, .wy-note.ay-group, .fpc) {
-  background: transparent !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding-left: 0 !important; padding-right: 0 !important;
+  background: #ffedac !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding-left: 0 !important; padding-right: 0 !important;
 }
 :is(#yn1, html):is(#yn2, html):is(#yn3, html):is(#yn4, html):is(#yn5, html):is(#yn6, html):is(#yn7, html):is(#yn8, html) body .app-container .yb-list:not(.yb-list--pro) > li + li { border-top: 1px solid rgba(62, 39, 35, .15) !important; }
 :is(#yn1, html):is(#yn2, html):is(#yn3, html):is(#yn4, html):is(#yn5, html):is(#yn6, html):is(#yn7, html):is(#yn8, html) body .app-container :is(.yb-list--pro, .yb-row--pro) { background: #3e2723 !important; color: #ffedac !important; border: 0 !important; border-radius: 22px !important; }
