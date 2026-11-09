@@ -1,5 +1,6 @@
 import React from 'react';
 import { getSampleFunnel, SAMPLE_LABEL } from '../utils/sampleFunnel';
+import { useCatalogReady } from '../data/catalog.js';
 
 /**
  * The narrowing story with live numbers (audit HW02/HW03), drawn as one
@@ -11,6 +12,7 @@ import { getSampleFunnel, SAMPLE_LABEL } from '../utils/sampleFunnel';
  * The numbers are an example run, labelled as such.
  */
 export default function HowItWorksFunnel() {
+  useCatalogReady(); // recount when the live catalog (every product) arrives
   const f = getSampleFunnel();
   const STAGES = [
     { label: 'Products and services in the ayna catalog today', value: f.catalog, tone: 'all' }, // Nov 2 audit: services are counted here, not in the 'products' captions below

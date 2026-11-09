@@ -9,16 +9,20 @@ import { evidenceFor } from '../components/pdp/evidenceLevels.js';
  * freezes. Used by How it works ("Evidence, by level").
  */
 let cached = null;
+let cachedFor = null;
 let pending = null;
 const tick = () => new Promise((r) => setTimeout(r, 0));
 
 export function evidenceCatalogCounts() {
-  if (cached) return Promise.resolve(cached);
-  if (pending) return pending;
+  // Recounted when the live catalog (every product) replaces the bundled list.
+  if (cached && cachedFor === ALL_PRODUCTS) return Promise.resolve(cached);
+  if (pending && cachedFor === ALL_PRODUCTS) return pending;
+  cachedFor = ALL_PRODUCTS;
+  const list = ALL_PRODUCTS;
   pending = loadResearch().then(async (research) => {
-    const c = { total: ALL_PRODUCTS.length, gov: 0, peer: 0, brand: 0, people: 0 };
-    for (let i = 0; i < ALL_PRODUCTS.length; i += 1) {
-      const e = evidenceFor(withResearch(ALL_PRODUCTS[i], research || {}));
+    const c = { total: list.length, gov: 0, peer: 0, brand: 0, people: 0 };
+    for (let i = 0; i < list.length; i += 1) {
+      const e = evidenceFor(withResearch(list[i], research || {}));
       for (const k of ['gov', 'peer', 'brand', 'people']) if (e.counts[k] > 0) c[k] += 1;
       if (i % 20 === 19) await tick();
     }

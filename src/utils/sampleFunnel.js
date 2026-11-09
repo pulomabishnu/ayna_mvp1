@@ -18,8 +18,11 @@ const SAMPLE_PROFILE = {
 };
 
 let cached = null;
+let cachedFor = null;
 export function getSampleFunnel() {
-  if (cached) return cached;
+  // Keyed on the catalog list: the live catalog (every product) replaces the bundled one after load.
+  if (cached && cachedFor === ALL_PRODUCTS) return cached;
+  cachedFor = ALL_PRODUCTS;
   const scores = ALL_PRODUCTS.map((p) => getProfileMatchPercentForProduct(p, SAMPLE_PROFILE, null) || 0);
   cached = {
     // Same catalog the Shop counts: shoppable products plus released services.

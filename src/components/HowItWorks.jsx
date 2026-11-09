@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import HowItWorksFunnel from './HowItWorksFunnel';
+import { useCatalogReady } from '../data/catalog.js';
 import { SAMPLE_PROFILE_CHIPS } from '../utils/sampleFunnel';
 import { evidenceCatalogCounts } from '../utils/evidenceCatalogCounts';
 import { DIMENSION_WEIGHTS, PREFERENCE_SPAN } from '../matching/score.js';
@@ -30,7 +31,8 @@ const LEVEL_TILES = [
    bars are read one by one, never as parts of a whole. */
 function EvidenceLevels() {
   const [c, setC] = useState(null);
-  useEffect(() => { let live = true; evidenceCatalogCounts().then((r) => { if (live) setC(r); }); return () => { live = false; }; }, []);
+  const catalogVersion = useCatalogReady();
+  useEffect(() => { let live = true; evidenceCatalogCounts().then((r) => { if (live) setC(r); }); return () => { live = false; }; }, [catalogVersion]);
   return (
     <>
       <ul className="ip-levels" aria-busy={!c || undefined}>
