@@ -153,7 +153,7 @@ const FEATURES = [
 ];
 export function WhatYouCanDo({ onGo, member = false }) {
   const [ref, anim, play] = usePlayOnView();
-  const list = member ? FEATURES.map((f) => (f.k === 'match' ? { ...f, t: 'Your matches', d: 'Your products and care, matched to you, and why.', href: '/you/ecosystem', cta: 'Go to your Home' } : f)) : FEATURES;
+  const list = member ? FEATURES.map((f) => (f.k === 'match' ? { ...f, t: 'Your matches', d: 'Your products and care, matched to you, and why.', href: '/home', cta: 'Go to your Home' } : ['checkin', 'routine'].includes(f.k) ? { ...f, href: '/home' } : f)) : FEATURES;
   return (
     <section className="lb-sec" aria-labelledby="lb-do-h">
       <div className="lb-wrap">

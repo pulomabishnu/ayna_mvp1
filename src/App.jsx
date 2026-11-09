@@ -2741,7 +2741,7 @@ function App() {
 
         {(currentView === 'welcome' || currentView === 'hero') && (
           <AynaLanding
-            onViewToday={handleViewEcosystem}
+            onViewToday={() => setCurrentView('home')}
             onLogIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
             onAsk={(q) => openAsk(q)}
             onOpenHealth={() => (user ? goHealthData() : setCurrentView('you'))}
