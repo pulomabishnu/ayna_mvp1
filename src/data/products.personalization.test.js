@@ -327,8 +327,11 @@ describe('matching engine integration', () => {
         const { matches } = getRecommendationMatchesAndRest(spec);
         expect(matches.length).toBeGreaterThan(0);
         for (const p of matches) expect(getProfileMatchPercentForProduct(p, spec), p.id).toBeGreaterThanOrEqual(50);
-        const percents = matches.map((p) => getProfileMatchPercentForProduct(p, spec));
-        for (let i = 1; i < percents.length; i += 1) expect(percents[i]).toBeLessThanOrEqual(percents[i - 1] + 2);
+        // Strongest first within each need; her needs take turns at the top (Nov 9), so the list as a
+        // whole is not one descending run.
+        const byNeed = new Map();
+        for (const p of matches) { const d = getProductMatchDetailsForProduct(p, spec); const list = byNeed.get(d.needId) || []; list.push(d.percent); byNeed.set(d.needId, list); }
+        for (const percents of byNeed.values()) for (let i = 1; i < percents.length; i += 1) expect(percents[i]).toBeLessThanOrEqual(percents[i - 1] + 2);
     });
 
     it('builds one ecosystem shelf per need; picks per need controls quantity, never quality', () => {

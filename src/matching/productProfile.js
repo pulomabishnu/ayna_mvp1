@@ -314,7 +314,7 @@ const MARKETED_FOR = {
   // Nov 9 live-catalog audit (848 products, 120 matched nothing): what brands sell their products for.
   'pain.menstrual_cramp': { re: /\b(period |menstrual )?cramps?\b|period pain|menstrual pain|dysmenorrh/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !['skincare', 'skin', 'hair'].includes(f.cat) },
   'pain.cycle_headache': { re: /\bheadaches?\b|\bmigraines?\b/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !['skincare', 'skin', 'hair'].includes(f.cat) },
-  'postpartum.recovery': { re: /\bpostpartum\b|post-partum|after (giving )?birth|after delivery|c-section|perine(al|um)/, ok: (f) => !PERIOD_CATEGORIES.has(f.cat) },
+  'postpartum.recovery': { re: /\bpostpartum\b|post-partum|after (giving )?birth|after delivery|c-section|perine(al|um)/, ok: (f) => !PERIOD_CATEGORIES.has(f.cat) && !f.t(/hair (growth|loss|shedding|thinning)/) },
   'mood.general_anxiety': { re: /\banxi(ety|ous)\b|\bstress(ed| relief)?\b(?! (urinary )?incontinence)/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !['skincare', 'skin', 'hair', 'intimate-care', 'diagnostics', 'incontinence'].includes(f.cat) && !f.t(/stress(ed)? skin|skin stress|oxidative stress/) },
   'skin.acne': { re: /\bacne\b|breakouts?|blemish(es)?|pimples?/, ok: (f) => ['skincare', 'skin', 'supplement'].includes(f.cat) },
   'hair.loss': { re: /hair (growth|loss|thinning|density|shedding)|thinning hair/, ok: (f) => ['supplement', 'hair', 'skincare'].includes(f.cat) },
@@ -354,7 +354,9 @@ export const RELEVANCE_RULES = [
   { id: 'otc_nsaid', why: 'An NSAID pain reliever; NSAIDs are first-line for period cramps (NHS, MedlinePlus). Nov 5: MedlinePlus lists nonprescription ibuprofen and naproxen for minor aches from muscle aches and arthritis, so joint aches are a direct use. Ibuprofen: NINDS lists OTC pain relievers such as ibuprofen for less-severe migraine (verified row), so a direct use for cycle headaches.',
     when: (f) => f.n(/ibuprofen|naproxen/), set: (f) => ({ 'pain.menstrual_cramp': DIRECT, 'pain.pelvic': SECONDARY, 'pain.cycle_headache': (f.n(/ibuprofen|advil|motrin/) ? DIRECT : SECONDARY), 'pain.joint': DIRECT, 'condition_support.endometriosis': SECONDARY, 'condition_support.adenomyosis': SECONDARY }) },
   { id: 'otc_azole', why: 'An OTC azole antifungal, the standard treatment for an uncomplicated yeast infection (CDC).',
-    when: (f) => f.n(/miconazole|clotrimazole|monistat/), set: { 'vaginal.yeast': DIRECT, 'vaginal.irritation': SECONDARY } },
+    when: (f) => f.n(/miconazole|clotrimazole|tioconazole|monistat/) && !f.n(/cleanser|\bwash\b|wipes?|maintain|chafing/),
+    // Nov 9 persona test: Monistat's cleanser is not an antifungal.
+    set: { 'vaginal.yeast': DIRECT, 'vaginal.irritation': SECONDARY } },
   { id: 'minoxidil', why: 'Topical minoxidil is the most recommended treatment for female pattern hair loss (AAD).',
     when: (f) => f.n(/minoxidil|rogaine/), set: { 'hair.loss': DIRECT } },
   { id: 'sti_home_test', why: 'An FDA-authorized at-home test for chlamydia, gonorrhea and trichomoniasis.',
@@ -709,7 +711,8 @@ export const RELEVANCE_RULES = [
   { id: 'postpartum_body_balm', why: 'Body and skin care positioned for postpartum.',
     when: (f) => f.cat === 'postpartum' && f.t(/dry skin|body|skin/), set: { 'postpartum.body_skin': SECONDARY } },
   { id: 'postpartum_tagged', why: 'Catalog marks this as postpartum-relevant.',
-    when: (f) => f.has('postpartum'), set: { 'postpartum.recovery': ADJACENT } },
+    // Nov 9 persona test: a postpartum hair-shedding supplement is for hair, not recovery.
+    when: (f) => f.has('postpartum') && !f.t(/hair (growth|loss|shedding|thinning)|\bshedding\b/), set: { 'postpartum.recovery': ADJACENT } },
   { id: 'pregnancy_support_band', why: 'Made for pregnancy back and pelvic pressure.',
     when: (f) => f.has('pregnancy') && f.n(/\bband\b|bandit/), set: { 'pregnancy.discomfort': DIRECT, 'pain.pelvic': ctx(ADJACENT, 'pregnancy') } },
   { id: 'pregnancy_pillow', why: 'Made for sleep comfort in pregnancy.',

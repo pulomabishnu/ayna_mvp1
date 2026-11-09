@@ -54,3 +54,15 @@ describe('symptom management counts', () => {
     expect(s({ id: 'p-t-hf', name: 'Vaginal Gel', category: 'intimate-care', summary: 'A hormone-free gel made for dryness.' }, 'hormonal.general')).toBeLessThan(0.55);
   });
 });
+
+// Nov 9 persona tests.
+describe('persona test fixes', () => {
+  const s = (p, need) => buildProductProfile({ type: 'physical', tags: [], ...p }).health_need_relevance?.[need]?.score || 0;
+  it('a cleanser from an antifungal brand is not an antifungal; a hair supplement is not postpartum recovery', () => {
+    expect(s({ id: 'p-t-mon', name: 'Monistat Maintain Feminine Cleanser', category: 'intimate-care', summary: 'A daily cleanser.' }, 'vaginal.yeast')).toBe(0);
+    expect(s({ id: 'p-t-mon2', name: 'Monistat 3-Dose Yeast Infection Treatment (miconazole)', category: 'intimate-care', summary: 'Miconazole cream.' }, 'vaginal.yeast')).toBeGreaterThanOrEqual(0.8);
+    expect(s({ id: 'p-t-hair', name: 'Hair Growth Complex', category: 'supplement', summary: 'A supplement made for postpartum hair shedding and hair growth.' }, 'postpartum.recovery')).toBeLessThan(0.55);
+    // The real catalog shape: tagged postpartum + shedding, still not recovery.
+    expect(s({ id: 'p-t-hair2', name: 'HAIRLOVE Growth Complex', category: 'supplement', tags: ['hair', 'biotin', 'postpartum', 'shedding'], summary: 'Biotin and keratin for shedding.' }, 'postpartum.recovery')).toBe(0);
+  });
+});

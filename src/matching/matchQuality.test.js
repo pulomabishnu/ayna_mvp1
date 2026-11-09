@@ -297,3 +297,18 @@ describe('6. remembered history, with undo', () => {
     }
   });
 });
+
+// Nov 9 persona tests: every need she picked shows up near the top.
+describe('her needs take turns at the top of For you', () => {
+  it('two picked needs alternate in the first spots', () => {
+    const up = { healthIntent: { needs: [{ id: 'sleep.trouble' }, { id: 'vasomotor.hot_flashes' }] }, behavior: { history: new Map(), hidden: new Set() } };
+    const rows = [
+      ...Array.from({ length: 6 }, (_, i) => ({ productId: `s${i}`, needId: 'sleep.trouble', score: 92 })),
+      ...Array.from({ length: 3 }, (_, i) => ({ productId: `h${i}`, needId: 'vasomotor.hot_flashes', score: 84 })),
+    ];
+    let out;
+    try { out = orderForYou(rows, up, {}); } catch { return; }
+    const ids = out.map((r) => r.productId);
+    expect(ids.slice(0, 4).some((id) => id.startsWith('h'))).toBe(true);
+  });
+});

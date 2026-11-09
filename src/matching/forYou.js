@@ -165,6 +165,23 @@ export function varyCategories(rows, profileOf = () => null) {
  * @param {object} up buildUserProfile() result
  * @param {{ profileOf?: (id) => object, commodityIds?: Set }} ctx
  */
+// Every need she picked shows up near the top (Nov 9 persona tests: hot flashes + trouble sleeping
+// showed ten sleep masks and no hot-flash product; acne + irregular periods showed only acne). In the
+// top window her needs take turns (each need's strongest product first, in the engine's order); a
+// weak need is left to its cap. Past the window, order is unchanged. The caps below still apply.
+function takeTurns(list) {
+  const needs = [...new Set(list.slice(0, FOR_YOU.window * 3).filter((x) => x.tier !== 'weak').map((x) => x.r.needId).filter(Boolean))];
+  if (needs.length < 2) return list;
+  const queues = new Map(needs.map((n) => [n, []]));
+  for (const x of list) { const q = queues.get(x.r.needId); if (q && x.tier !== 'weak') q.push(x); }
+  const top = [];
+  while (top.length < FOR_YOU.window && [...queues.values()].some((q) => q.length)) {
+    for (const n of needs) { const q = queues.get(n); if (q.length && top.length < FOR_YOU.window) top.push(q.shift()); }
+  }
+  const used = new Set(top);
+  return [...top, ...list.filter((x) => !used.has(x))];
+}
+
 export function orderForYou(rows, up, ctx = {}) {
   if (!Array.isArray(rows) || rows.length < 2) return rows || [];
   const signals = needSignals(up);
@@ -180,7 +197,7 @@ export function orderForYou(rows, up, ctx = {}) {
   const groups = new Map();
   for (const x of info) { const g = groups.get(x.score) || []; g.push(x); groups.set(x.score, g); }
   const byPercent = [...groups.keys()].sort((a, b) => b - a).flatMap((s) => groups.get(s).sort((a, b) => (a.has - b.has) || (tierRank[a.tier] - tierRank[b.tier]) || (b.disc - a.disc) || (a.i - b.i)));
-  const ordered = varyCategories(byPercent, profileOf);
+  const ordered = takeTurns(varyCategories(byPercent, profileOf));
   // 2. Caps on the top window: a weak need takes at most weakShare of it and
   //    generic drugstore items at most maxCommodityTop of the first spots.
   //    Over the cap, the row waits until the window is filled.
